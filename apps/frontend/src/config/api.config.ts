@@ -426,6 +426,35 @@ export const API_ENDPOINTS = {
       update: (id: string) => `/teacher/reviews/${id}`,
       complete: (id: string) => `/teacher/reviews/${id}/complete`,
     },
+
+    // Student Progress (P1-05: Centralized endpoints)
+    studentsProgress: {
+      base: '/teacher/students',
+      progress: (studentId: string) => `/teacher/students/${studentId}/progress`,
+      overview: (studentId: string) => `/teacher/students/${studentId}/overview`,
+      stats: (studentId: string) => `/teacher/students/${studentId}/stats`,
+      notes: (studentId: string) => `/teacher/students/${studentId}/notes`,
+      addNote: (studentId: string) => `/teacher/students/${studentId}/note`,
+    },
+
+    // Submissions & Grading (P1-05: Centralized endpoints)
+    submissions: {
+      list: '/teacher/submissions',
+      get: (submissionId: string) => `/teacher/submissions/${submissionId}`,
+      feedback: (submissionId: string) => `/teacher/submissions/${submissionId}/feedback`,
+      bulkGrade: '/teacher/submissions/bulk-grade',
+    },
+
+    // Exercise Attempts/Responses (P1-05: Centralized endpoints)
+    attempts: {
+      list: '/teacher/attempts',
+      get: (attemptId: string) => `/teacher/attempts/${attemptId}`,
+      byStudent: (studentId: string) => `/teacher/attempts/student/${studentId}`,
+      exerciseResponses: (exerciseId: string) => `/teacher/exercises/${exerciseId}/responses`,
+    },
+
+    // Economy Config (P1-03: Uses admin gamification endpoint)
+    economyConfig: '/admin/gamification/settings',
   },
 
   /**

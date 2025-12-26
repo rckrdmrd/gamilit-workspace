@@ -9,18 +9,21 @@
 
 ---
 
-## 🎯 ALCANCE MVP DEFINIDO
+## 🎯 ALCANCE IMPLEMENTADO
 
-| Componente | MVP ✅ | Backlog ⏳ |
+| Componente | Estado | Ejercicios |
 |-----------|--------|-----------|
-| **Módulos Educativos** | M1-M3 (15 ejercicios) | M4-M5 (8 ejercicios) |
-| **Épicas** | EXT-001 a EXT-006 (100%) | EXT-007 a EXT-011 (30-50%) |
-| **Portal Student** | 10 páginas funcionales | - |
-| **Portal Teacher** | 10 páginas funcionales | - |
-| **Portal Admin** | 7 páginas (P0+P1) | 2 páginas (P2) |
-| **Tipos de Ejercicios** | 15 mecánicas | 10 mecánicas |
+| **Módulo 1 - Literal** | ✅ Implementado | 5 ejercicios |
+| **Módulo 2 - Inferencial** | ✅ Implementado | 5 ejercicios |
+| **Módulo 3 - Crítica** | ✅ Implementado | 5 ejercicios |
+| **Módulo 4 - Digital** | ✅ Implementado | 5 ejercicios |
+| **Módulo 5 - Producción** | ✅ Implementado | 3 ejercicios |
+| **Portal Student** | ✅ Implementado | 10 páginas |
+| **Portal Teacher** | ✅ Implementado | 10 páginas |
+| **Portal Admin** | ✅ Implementado | 7 páginas |
+| **Total Mecánicas** | ✅ 23 tipos | Todos funcionales |
 
-> Ver documentación completa del backlog en [Fase 4: Backlog](../04-fase-backlog/README.md)
+> **Actualizado:** 2025-12-23 - Todos los módulos están implementados
 
 ---
 
@@ -30,7 +33,7 @@ GAMILIT Platform (Gamilit) es una **plataforma educativa gamificada** que revolu
 
 - **Contenido especializado** sobre Marie Curie (vida, descubrimientos, legado científico)
 - **Gamificación cultural** con sistema de rangos inspirado en la civilización Maya
-- **23 tipos de ejercicios implementados** (Módulos 1-3), 8 adicionales en backlog (M4-M5)
+- **23 tipos de ejercicios implementados** (Módulos 1-5 completos)
 - **Arquitectura multi-tenant** preparada para escalar a 100+ escuelas
 
 **Mercado objetivo:** Estudiantes de nivel medio superior (preparatoria, 15-18 años)
@@ -75,14 +78,14 @@ GAMILIT Platform (Gamilit) es una **plataforma educativa gamificada** que revolu
 
 ### ✅ Fortalezas (85% base técnica sólida)
 
-- **23 tipos de ejercicios implementados (M1-M3)** ✅
+- **23 tipos de ejercicios implementados (M1-M5)** ✅
   - Módulo 1 (Literal): 5 ejercicios ✅
   - Módulo 2 (Inferencial): 5 ejercicios ✅
   - Módulo 3 (Crítica): 5 ejercicios ✅
-  - Módulo 4 (Digital): 5 ejercicios ⚠️ **BACKLOG**
-  - Módulo 5 (Producción): 3 ejercicios ⚠️ **BACKLOG**
+  - Módulo 4 (Digital): 5 ejercicios ✅ (1 auto-calificable, 4 revisión manual)
+  - Módulo 5 (Producción): 3 ejercicios ✅ (todos revisión manual, 500 XP c/u)
 
-  > **Nota:** M4-M5 diseñados pero no implementados. Requieren evaluación con IA o revisión manual. Ver [docs/04-fase-backlog/](../04-fase-backlog/)
+  > **Nota:** M4-M5 completamente implementados. M4 incluye Quiz TikTok (auto-calificable) y 4 ejercicios con revisión docente. M5 requiere revisión manual por docente.
 
 - **Sistema de gamificación 78% completo**
   - Rangos Maya (5 niveles) ✅
@@ -113,10 +116,10 @@ GAMILIT Platform (Gamilit) es una **plataforma educativa gamificada** que revolu
 | **M1** | Comprensión Literal | Identificar información explícita | ✅ Implementado |
 | **M2** | Comprensión Inferencial | Deducir información implícita | ✅ Implementado |
 | **M3** | Comprensión Crítica | Evaluar y argumentar | ✅ Implementado |
-| **M4** | Lectura Digital | Navegar medios digitales, fact-checking | ⚠️ Backlog |
-| **M5** | Producción de Textos | Crear contenido multimedia propio | ⚠️ Backlog |
+| **M4** | Lectura Digital | Navegar medios digitales, fact-checking | ✅ Implementado |
+| **M5** | Producción de Textos | Crear contenido multimedia propio | ✅ Implementado |
 
-> **M4-M5 en Backlog:** Requieren tecnologías avanzadas (IA, análisis multimedia) no disponibles actualmente. Ver [04-fase-backlog/](../04-fase-backlog/) para detalles.
+> **M4-M5 Implementados:** M4 incluye verificación de fake news, análisis de memes, infografías interactivas, navegación hipertextual y quiz TikTok. M5 incluye diario multimedia, comic digital y video-carta.
 
 ### Sistema de Progresión
 
@@ -140,13 +143,15 @@ GAMILIT Platform (Gamilit) es una **plataforma educativa gamificada** que revolu
 
 Progresión inspirada en la jerarquía de la civilización Maya:
 
-| Rango | Requisito | Multiplicador | ML Coins Bonus | Significado |
-|-------|-----------|---------------|----------------|-------------|
-| **Ajaw** (Señor) | 1 módulo completo | 1.0x | 50 | Iniciado en el conocimiento |
-| **Nacom** (Capitán de Guerra) | 2 módulos | 1.25x | 75 | Explorador emergente |
-| **Ah K'in** (Sacerdote del Sol) | 3 módulos | 1.5x | 100 | Analítico distinguido |
-| **Halach Uinic** (Hombre Verdadero) | 4 módulos | 1.75x | 125 | Crítico y líder |
-| **K'uk'ulkan** (Serpiente Emplumada) | 5 módulos | 2.0x | 150 | Maestro supremo |
+| Rango | XP Requerido | Multiplicador | ML Coins Bonus | Significado |
+|-------|--------------|---------------|----------------|-------------|
+| **Ajaw** (Señor) | 0-499 XP | 1.00x | - | Iniciado en el conocimiento |
+| **Nacom** (Capitán de Guerra) | 500-999 XP | 1.10x | +100 | Explorador emergente |
+| **Ah K'in** (Sacerdote del Sol) | 1,000-1,499 XP | 1.15x | +250 | Analítico distinguido |
+| **Halach Uinic** (Hombre Verdadero) | 1,500-1,899 XP | 1.20x | +500 | Crítico y líder |
+| **K'uk'ulkan** (Serpiente Emplumada) | 1,900+ XP | 1.25x | +1,000 | Maestro supremo |
+
+> **Nota:** K'uk'ulkan (1,900 XP) es alcanzable completando M1-M3 con excelencia. M4-M5 proporcionan XP adicional para consolidar el rango.
 
 ### Economía ML Coins
 

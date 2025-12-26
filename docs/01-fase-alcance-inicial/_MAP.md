@@ -12,18 +12,20 @@
 
 ## 📋 Propósito
 
-Establecer las bases técnicas y funcionales de la plataforma GAMILIT con 5 épicas fundamentales que proporcionan:
+Establecer las bases técnicas y funcionales de la plataforma GAMILIT con 7 épicas fundamentales que proporcionan:
 - Autenticación y autorización robusta
 - Contenido educativo interactivo
 - Gamificación básica
 - Analytics y métricas
 - Administración inicial
+- Configuración del sistema
+- Portal de administración completo
 
 ---
 
 ## 📁 Contenido
 
-### Épicas (5)
+### Épicas (7)
 
 | Épica | Nombre | Presupuesto | SP | Estado | Archivos |
 |-------|--------|-------------|----|--------|----------|
@@ -32,8 +34,10 @@ Establecer las bases técnicas y funcionales de la plataforma GAMILIT con 5 épi
 | **[EAI-003](./EAI-003-gamificacion/)** | Gamificación | $22,000 | 40 | ✅ | 17+ |
 | **[EAI-004](./EAI-004-analytics/)** | Analytics | $22,000 | 35 | ✅ | 10+ |
 | **[EAI-005](./EAI-005-admin-base/)** | Admin Base | $22,000 | 50 | ✅ | 15+ |
+| **[EAI-006](./EAI-006-configuracion-sistema/)** | Configuración Sistema | - | - | ✅ | 5+ |
+| **[EAI-008](./EAI-008-portal-admin/)** | Portal Admin | - | - | ✅ | 35+ |
 
-**Total:** 5 épicas, 230 SP, ~80 archivos
+**Total:** 7 épicas, 230+ SP, ~120 archivos
 
 ### Archivos de Fase
 
@@ -158,6 +162,52 @@ Establecer las bases técnicas y funcionales de la plataforma GAMILIT con 5 épi
 - BD: `admin_dashboard`, `auth_management`
 - Backend: `admin` module
 - Frontend: `admin/dashboard`, `admin/users`
+
+---
+
+### [EAI-006: Configuración del Sistema](./EAI-006-configuracion-sistema/)
+
+**Objetivo:** Sistema centralizado de configuración
+
+**Entregables:**
+- Sistema de configuraciones globales (key-value)
+- Feature flags para rollouts graduales
+- Preferencias de notificaciones por usuario
+
+**Documentos clave:**
+- 3 RF (RF-SYS-001 a RF-SYS-003)
+- [TRACEABILITY.yml](./EAI-006-configuracion-sistema/implementacion/TRACEABILITY.yml)
+
+**Módulos afectados:**
+- BD: `system_configuration` schema (3 tablas)
+- Backend: `config` module
+- Frontend: `admin/settings` feature
+
+---
+
+### [EAI-008: Portal de Administración](./EAI-008-portal-admin/)
+
+**Objetivo:** Portal de administración completo con 4 módulos principales
+
+**Entregables:**
+- Módulo de Alertas (sistema FSM, 7 endpoints)
+- Módulo de Analíticas (4 tabs, 7 gráficos)
+- Módulo de Progreso (3 vistas, drill-down, CSV export)
+- Módulo de Monitoreo (4 tabs, auto-refresh)
+
+**Documentos clave:**
+- [README.md](./EAI-008-portal-admin/README.md)
+- [Reporte Final](./EAI-008-portal-admin/99-reportes-progreso/REPORTE-FINAL-PORTAL-ADMIN-COMPLETO-2025-11-24.md)
+
+**Módulos afectados:**
+- BD: `admin_dashboard`, vistas materializadas
+- Backend: `admin` module (25 endpoints, 41 DTOs)
+- Frontend: `admin/*` (21 componentes, 4 hooks)
+
+**Métricas:**
+- 11,437 líneas de código
+- 62+ tests automatizados
+- 11 páginas funcionales
 
 ---
 

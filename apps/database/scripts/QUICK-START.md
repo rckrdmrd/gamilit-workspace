@@ -10,7 +10,7 @@
 ### Para Desarrollo (Primera Vez)
 
 ```bash
-cd /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/scripts
+cd /home/isem/workspace/projects/gamilit/apps/database/scripts
 
 # Inicializar BD completa (crea usuario + BD + DDL + seeds)
 ./init-database.sh --env dev --force

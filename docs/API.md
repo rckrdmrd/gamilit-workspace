@@ -525,9 +525,88 @@ const rank = await client.gamification.getCurrentRank();
 const result = await client.assignments.submit(assignmentId, answers);
 ```
 
+## Teacher Portal API
+
+El modulo Teacher contiene 50+ endpoints para gestion de aulas, calificaciones, analytics e intervenciones.
+
+**Documentacion detallada:** [API-TEACHER-MODULE.md](./90-transversal/api/API-TEACHER-MODULE.md)
+
+### Resumen de Endpoints Teacher (`/api/teacher`)
+
+| Categoria | Endpoints | Descripcion |
+|-----------|-----------|-------------|
+| Dashboard | 5 | Stats, activities, alerts, top performers |
+| Student Progress | 6 | Progress, overview, stats, notes, insights |
+| Grading | 4 | Submissions, feedback, bulk grade |
+| Analytics | 8 | Classroom, assignment, engagement, economy |
+| Reports | 4 | Generate, recent, stats, download |
+| Classrooms | 10 | CRUD, students, permissions, blocking |
+| Communication | 3 | Conversations, announcements |
+| Interventions | 5 | Alerts, acknowledge, resolve |
+| Manual Review | 5 | Pending, start, complete, return |
+| Exercise Responses | 5 | Responses, attempts, history |
+
+## Social Features API
+
+### Friends (`/api/social/friends`)
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/` | Listar amigos | Yes |
+| POST | `/request` | Enviar solicitud | Yes |
+| POST | `/accept/:id` | Aceptar solicitud | Yes |
+| POST | `/reject/:id` | Rechazar solicitud | Yes |
+| DELETE | `/:id` | Eliminar amigo | Yes |
+| GET | `/pending` | Solicitudes pendientes | Yes |
+
+### Guilds/Teams (`/api/social/guilds`)
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/` | Listar guilds | Yes |
+| GET | `/:id` | Detalles de guild | Yes |
+| POST | `/` | Crear guild | Yes |
+| POST | `/:id/join` | Unirse a guild | Yes |
+| POST | `/:id/leave` | Salir de guild | Yes |
+| GET | `/:id/members` | Miembros del guild | Yes |
+| POST | `/:id/invite` | Invitar miembro | Yes |
+
+### Classrooms (`/api/social/classrooms`)
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/` | Listar aulas | Yes |
+| GET | `/:id` | Detalles de aula | Yes |
+| POST | `/enroll` | Inscribirse con codigo | Yes |
+| GET | `/:id/leaderboard` | Leaderboard del aula | Yes |
+
+## Admin Portal API
+
+El modulo Admin contiene 150+ endpoints para gestion completa del sistema:
+
+| Categoria | Endpoints | Descripcion |
+|-----------|-----------|-------------|
+| Dashboard | 11 | Estadisticas y actividad reciente |
+| Users | 10 | CRUD usuarios, suspension, bulk ops |
+| Organizations | 9 | Gestion de tenants y suscripciones |
+| Content | 10 | Aprobacion, media, versiones |
+| Gamification | 9 | Configuracion XP, rangos, parametros |
+| Analytics | 7 | Engagement, retention, export |
+| System | 13 | Health, config, mantenimiento |
+| Feature Flags | 9 | Control de features con rollout |
+
+**Documentacion detallada:** [API-ADMIN-MODULE.md](./90-transversal/api/API-ADMIN-MODULE.md)
+
+---
+
 ## Additional Resources
 
 - **Swagger UI:** http://74.208.126.102:3006/api/docs
 - **Architecture:** [ARCHITECTURE.md](./ARCHITECTURE.md)
 - **Deployment:** [DEPLOYMENT.md](./DEPLOYMENT.md)
 - **Database Schema:** `/apps/database/ddl/`
+- **Teacher API Details:** [API-TEACHER-MODULE.md](./90-transversal/api/API-TEACHER-MODULE.md)
+- **Admin API Details:** [API-ADMIN-MODULE.md](./90-transversal/api/API-ADMIN-MODULE.md)
+- **Frontend Student Portal:** [Student Portal](./frontend/student/README.md)
+- **Database New Tables:** [TABLAS-NUEVAS-2025-12.md](./database/TABLAS-NUEVAS-2025-12.md)
+- **Database Triggers:** [TRIGGERS-INVENTORY.md](./database/TRIGGERS-INVENTORY.md)

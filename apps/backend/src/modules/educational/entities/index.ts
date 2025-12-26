@@ -13,3 +13,4 @@ export * from './media-attachment.entity';
 export * from './exercise-mechanic-mapping.entity';
 export * from './content-approval.entity';
 export * from './difficulty-criteria.entity';
+export * from './classroom-module.entity'; // ✨ NUEVO - P1-002 (Módulos asignados a aulas)

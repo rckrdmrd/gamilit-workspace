@@ -9,9 +9,9 @@
 | **Título** | Sistema de Rangos Maya - Especificación Técnica |
 | **Prioridad** | Alta |
 | **Estado** | ✅ Implementado |
-| **Versión** | 2.3.0 |
+| **Versión** | 2.4.0 |
 | **Fecha Creación** | 2025-11-07 |
-| **Última Actualización** | 2025-11-28 |
+| **Última Actualización** | 2025-12-18 |
 | **Sistema Actual** | [docs/sistema-recompensas/](../../../sistema-recompensas/) v2.3.0 |
 | **Autor** | Backend Team |
 | **Stakeholders** | Backend Team, Frontend Team, Database Team |
@@ -93,6 +93,8 @@ El **Sistema de Rangos Maya** implementa una progresión jerárquica basada en X
 5. **K'uk'ulkan** (1,900+ XP) - Serpiente emplumada (máximo)
 
 > **Nota v2.3.0:** Umbral K'uk'ulkan ajustado de 2,250 a 1,900 XP para ser alcanzable completando Módulos 1-3 (1,950 XP disponibles). Ver [DocumentoDeDiseño v6.5](../../../00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md).
+>
+> **Migracion:** Para detalles tecnicos de la migracion v2.0 → v2.1, ver [MIGRACION-MAYA-RANKS-v2.1.md](../../../../90-transversal/migraciones/MIGRACION-MAYA-RANKS-v2.1.md).
 
 ### Características Técnicas
 
@@ -139,8 +141,8 @@ CREATE TYPE gamification_system.maya_rank AS ENUM (
     'Ajaw',              -- Rango 1: 0-499 XP
     'Nacom',             -- Rango 2: 500-999 XP
     'Ah K''in',          -- Rango 3: 1,000-1,499 XP (nota: comilla escapada)
-    'Halach Uinic',      -- Rango 4: 1,500-2,249 XP
-    'K''uk''ulkan'       -- Rango 5: 2,250+ XP (rango máximo)
+    'Halach Uinic',      -- Rango 4: 1,500-1,899 XP
+    'K''uk''ulkan'       -- Rango 5: 1,900+ XP (rango máximo, v2.1)
 );
 
 COMMENT ON TYPE gamification_system.maya_rank IS
@@ -200,10 +202,11 @@ COMMENT ON TABLE gamification_system.rank_history IS
 Cada registro representa una promoción exitosa de un rango a otro.';
 ```
 
-### 3. Función: check_rank_promotion
+### 3. Función: check_rank_promotion (v2.1 - Lectura dinámica)
 
 ```sql
 -- apps/database/ddl/schemas/gamification_system/functions/check_rank_promotion.sql
+-- v2.1: Lee umbrales dinámicamente desde tabla maya_ranks
 
 CREATE OR REPLACE FUNCTION gamification_system.check_rank_promotion(
     p_user_id UUID
@@ -214,7 +217,9 @@ SECURITY DEFINER -- Ejecuta con permisos del owner
 AS $$
 DECLARE
     v_current_rank gamification_system.maya_rank;
-    v_total_xp INTEGER;
+    v_total_xp BIGINT;
+    v_next_rank gamification_system.maya_rank;
+    v_next_rank_min_xp BIGINT;
     v_promoted BOOLEAN := false;
 BEGIN
     -- Obtener datos actuales del usuario
@@ -229,45 +234,162 @@ BEGIN
         RETURN false;
     END IF;
 
-    -- Verificar promociones según rango actual
-    CASE v_current_rank
-        WHEN 'Ajaw' THEN
-            IF v_total_xp >= 500 THEN
-                PERFORM gamification_system.promote_to_next_rank(p_user_id, 'Nacom');
-                v_promoted := true;
-            END IF;
+    -- v2.1: Leer siguiente rango y umbral dinámicamente desde maya_ranks
+    SELECT mr.next_rank, next_mr.min_xp_required
+    INTO v_next_rank, v_next_rank_min_xp
+    FROM gamification_system.maya_ranks mr
+    LEFT JOIN gamification_system.maya_ranks next_mr
+        ON next_mr.rank_name = mr.next_rank
+    WHERE mr.rank_name = v_current_rank
+      AND mr.is_active = true;
 
-        WHEN 'Nacom' THEN
-            IF v_total_xp >= 1000 THEN
-                PERFORM gamification_system.promote_to_next_rank(p_user_id, 'Ah K''in');
-                v_promoted := true;
-            END IF;
+    -- Si no hay siguiente rango (ya está en máximo), no promocionar
+    IF v_next_rank IS NULL THEN
+        RETURN false;
+    END IF;
 
-        WHEN 'Ah K''in' THEN
-            IF v_total_xp >= 1500 THEN
-                PERFORM gamification_system.promote_to_next_rank(p_user_id, 'Halach Uinic');
-                v_promoted := true;
-            END IF;
-
-        WHEN 'Halach Uinic' THEN
-            IF v_total_xp >= 2250 THEN
-                PERFORM gamification_system.promote_to_next_rank(p_user_id, 'K''uk''ulkan');
-                v_promoted := true;
-            END IF;
-
-        WHEN 'K''uk''ulkan' THEN
-            -- Rango máximo alcanzado, no hay más promociones
-            v_promoted := false;
-    END CASE;
+    -- Verificar si el usuario tiene suficiente XP para el siguiente rango
+    IF v_total_xp >= v_next_rank_min_xp THEN
+        PERFORM gamification_system.promote_to_next_rank(p_user_id, v_next_rank);
+        v_promoted := true;
+    END IF;
 
     RETURN v_promoted;
 END;
 $$;
 
-COMMENT ON FUNCTION gamification_system.check_rank_promotion IS
+COMMENT ON FUNCTION gamification_system.check_rank_promotion(UUID) IS
 'Verifica si un usuario califica para promoción de rango según su total_xp actual.
+Lee configuración dinámica desde maya_ranks table (next_rank y min_xp_required).
 Retorna true si el usuario fue promovido, false en caso contrario.
 Se ejecuta automáticamente mediante trigger después de actualizar total_xp.';
+```
+
+### 3.1 Funciones Helper v2.1: Cálculo de Rangos
+
+```sql
+-- apps/database/ddl/schemas/gamification_system/functions/calculate_maya_rank_helpers.sql
+-- v2.1: Funciones puras IMMUTABLE para cálculo de rangos sin queries a BD
+
+-- Función: calculate_maya_rank_from_xp
+-- Calcula el rango correcto basado en XP total (función pura, sin queries)
+CREATE OR REPLACE FUNCTION gamification_system.calculate_maya_rank_from_xp(xp INTEGER)
+RETURNS TEXT AS $$
+BEGIN
+    -- v2.1 thresholds (sincronizado con 03-maya_ranks.sql seeds)
+    IF xp < 500 THEN
+        RETURN 'Ajaw';          -- 0-499 XP
+    ELSIF xp < 1000 THEN
+        RETURN 'Nacom';         -- 500-999 XP
+    ELSIF xp < 1500 THEN
+        RETURN 'Ah K''in';      -- 1,000-1,499 XP
+    ELSIF xp < 1900 THEN
+        RETURN 'Halach Uinic';  -- 1,500-1,899 XP
+    ELSE
+        RETURN 'K''uk''ulkan';  -- 1,900+ XP (máximo)
+    END IF;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-- Función: calculate_rank_progress_percentage
+-- Calcula porcentaje de progreso dentro de un rango (0-100)
+CREATE OR REPLACE FUNCTION gamification_system.calculate_rank_progress_percentage(
+    xp INTEGER,
+    rank TEXT
+)
+RETURNS NUMERIC(5,2) AS $$
+DECLARE
+    xp_in_rank INTEGER;
+    rank_size INTEGER;
+BEGIN
+    CASE rank
+        WHEN 'Ajaw' THEN
+            xp_in_rank := xp;           -- 0-499 XP
+            rank_size := 500;
+        WHEN 'Nacom' THEN
+            xp_in_rank := xp - 500;     -- 500-999 XP
+            rank_size := 500;
+        WHEN 'Ah K''in' THEN
+            xp_in_rank := xp - 1000;    -- 1,000-1,499 XP
+            rank_size := 500;
+        WHEN 'Halach Uinic' THEN
+            xp_in_rank := xp - 1500;    -- 1,500-1,899 XP
+            rank_size := 400;           -- v2.1: reducido de 750 a 400
+        WHEN 'K''uk''ulkan' THEN
+            RETURN 100.00;              -- Rango máximo siempre 100%
+        ELSE
+            RETURN 0.00;
+    END CASE;
+
+    IF rank_size > 0 THEN
+        RETURN LEAST(100.00, (xp_in_rank::NUMERIC / rank_size::NUMERIC) * 100);
+    ELSE
+        RETURN 0.00;
+    END IF;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+```
+
+### 3.2 Función: calculate_user_rank (CORR-P0-001)
+
+```sql
+-- apps/database/ddl/schemas/gamification_system/functions/calculate_user_rank.sql
+-- CORR-P0-001: Corregido missions_completed → modules_completed
+
+CREATE OR REPLACE FUNCTION gamification_system.calculate_user_rank(p_user_id UUID)
+RETURNS TABLE (
+    user_id UUID,
+    current_rank VARCHAR,
+    next_rank VARCHAR,
+    xp_to_next_rank BIGINT,
+    modules_to_next_rank INTEGER,  -- CORR-P0-001: Renombrado missions → modules
+    rank_percentage NUMERIC(5,2)
+) AS $$
+DECLARE
+    v_total_xp BIGINT;
+    v_modules_completed INTEGER;  -- CORR-P0-001: missions_completed no existe
+    v_current_rank VARCHAR;
+    v_next_rank VARCHAR;
+    v_next_rank_xp BIGINT;
+    v_next_rank_modules INTEGER;
+BEGIN
+    -- CORR-P0-001: Usar modules_completed (missions_completed no existe)
+    SELECT us.total_xp, us.modules_completed INTO v_total_xp, v_modules_completed
+    FROM gamification_system.user_stats us
+    WHERE us.user_id = p_user_id;
+
+    IF NOT FOUND THEN
+        RETURN;
+    END IF;
+
+    -- Determinar rango actual
+    SELECT ur.current_rank INTO v_current_rank
+    FROM gamification_system.user_ranks ur
+    WHERE ur.user_id = p_user_id AND ur.is_current = true;
+
+    -- Obtener siguiente rango desde maya_ranks
+    SELECT rank_name::VARCHAR, min_xp_required, COALESCE(modules_required, 0)
+    INTO v_next_rank, v_next_rank_xp, v_next_rank_modules
+    FROM gamification_system.maya_ranks
+    WHERE rank_name::VARCHAR > COALESCE(v_current_rank, 'Ajaw')
+    ORDER BY min_xp_required ASC
+    LIMIT 1;
+
+    IF v_next_rank IS NULL THEN
+        v_next_rank := v_current_rank;
+        v_next_rank_xp := v_total_xp;
+        v_next_rank_modules := v_modules_completed;
+    END IF;
+
+    RETURN QUERY SELECT
+        p_user_id,
+        COALESCE(v_current_rank, 'Ajaw'::VARCHAR),
+        v_next_rank,
+        GREATEST(0, v_next_rank_xp - v_total_xp),
+        GREATEST(0, COALESCE(v_next_rank_modules, 0) - v_modules_completed),
+        LEAST(100.0::NUMERIC, (v_total_xp::NUMERIC / NULLIF(v_next_rank_xp, 0)) * 100);
+END;
+$$ LANGUAGE plpgsql STABLE;
 ```
 
 ### 4. Función: promote_to_next_rank
@@ -602,12 +724,13 @@ export const RANK_ORDER = [
   MayaRankEnum.KUKULKAN,
 ];
 
+// v2.1 Thresholds - K'uk'ulkan ajustado a 1900 XP para ser alcanzable en Módulos 1-3
 export const RANK_THRESHOLDS: Record<MayaRankEnum, { min: number; max: number | null }> = {
   [MayaRankEnum.AJAW]: { min: 0, max: 499 },
   [MayaRankEnum.NACOM]: { min: 500, max: 999 },
   [MayaRankEnum.AH_KIN]: { min: 1000, max: 1499 },
-  [MayaRankEnum.HALACH_UINIC]: { min: 1500, max: 2249 },
-  [MayaRankEnum.KUKULKAN]: { min: 2250, max: null }, // Sin límite superior
+  [MayaRankEnum.HALACH_UINIC]: { min: 1500, max: 1899 },  // v2.1: max reducido de 2249 a 1899
+  [MayaRankEnum.KUKULKAN]: { min: 1900, max: null },       // v2.1: min reducido de 2250 a 1900
 };
 
 export const RANK_MULTIPLIERS: Record<MayaRankEnum, number> = {

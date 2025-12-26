@@ -17,7 +17,14 @@ import {
 import { Logger, UseGuards } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { WsJwtGuard, AuthenticatedSocket } from './guards/ws-jwt.guard';
-import { SocketEvent } from './types/websocket.types';
+import {
+  SocketEvent,
+  StudentActivityPayload,
+  ClassroomUpdatePayload,
+  NewSubmissionPayload,
+  AlertTriggeredPayload,
+  StudentOnlineStatusPayload,
+} from './types/websocket.types';
 
 @WebSocketGateway({
   cors: {
@@ -174,5 +181,167 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
    */
   getUserSocketCount(userId: string): number {
     return this.userSockets.get(userId)?.size || 0;
+  }
+
+  // ==========================================================================
+  // TEACHER PORTAL METHODS (P2-01: 2025-12-18)
+  // ==========================================================================
+
+  /**
+   * Subscribe teacher to classroom updates
+   */
+  @UseGuards(WsJwtGuard)
+  @SubscribeMessage('teacher:subscribe_classroom')
+  async handleSubscribeClassroom(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() data: { classroomId: string },
+  ) {
+    try {
+      const userId = client.userData!.userId;
+      const { classroomId } = data;
+      const room = `classroom:${classroomId}`;
+
+      await client.join(room);
+      this.logger.debug(`Teacher ${userId} subscribed to classroom ${classroomId}`);
+
+      return { success: true, room };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error('Error subscribing to classroom:', error);
+      return { success: false, error: errorMessage };
+    }
+  }
+
+  /**
+   * Unsubscribe teacher from classroom updates
+   */
+  @UseGuards(WsJwtGuard)
+  @SubscribeMessage('teacher:unsubscribe_classroom')
+  async handleUnsubscribeClassroom(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() data: { classroomId: string },
+  ) {
+    try {
+      const userId = client.userData!.userId;
+      const { classroomId } = data;
+      const room = `classroom:${classroomId}`;
+
+      await client.leave(room);
+      this.logger.debug(`Teacher ${userId} unsubscribed from classroom ${classroomId}`);
+
+      return { success: true };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error('Error unsubscribing from classroom:', error);
+      return { success: false, error: errorMessage };
+    }
+  }
+
+  /**
+   * Emit student activity to classroom teachers
+   */
+  emitStudentActivity(classroomId: string, payload: Omit<StudentActivityPayload, 'timestamp'>) {
+    const room = `classroom:${classroomId}`;
+    this.server.to(room).emit(SocketEvent.STUDENT_ACTIVITY, {
+      ...payload,
+      timestamp: new Date().toISOString(),
+    });
+    this.logger.debug(`Student activity emitted to classroom ${classroomId}`);
+  }
+
+  /**
+   * Emit classroom update to subscribed teachers
+   */
+  emitClassroomUpdate(classroomId: string, payload: Omit<ClassroomUpdatePayload, 'timestamp'>) {
+    const room = `classroom:${classroomId}`;
+    this.server.to(room).emit(SocketEvent.CLASSROOM_UPDATE, {
+      ...payload,
+      timestamp: new Date().toISOString(),
+    });
+    this.logger.debug(`Classroom update emitted to ${classroomId}`);
+  }
+
+  /**
+   * Emit new submission notification to classroom teachers
+   */
+  emitNewSubmission(classroomId: string, payload: Omit<NewSubmissionPayload, 'timestamp'>) {
+    const room = `classroom:${classroomId}`;
+    this.server.to(room).emit(SocketEvent.NEW_SUBMISSION, {
+      ...payload,
+      timestamp: new Date().toISOString(),
+    });
+    this.logger.debug(`New submission emitted to classroom ${classroomId}`);
+  }
+
+  /**
+   * Emit alert to specific teacher and classroom
+   */
+  emitAlertTriggered(
+    teacherId: string,
+    classroomId: string,
+    payload: Omit<AlertTriggeredPayload, 'timestamp'>,
+  ) {
+    // Emit to teacher's personal room
+    this.emitToUser(teacherId, SocketEvent.ALERT_TRIGGERED, payload);
+    // Also emit to classroom room for other subscribed teachers
+    const room = `classroom:${classroomId}`;
+    this.server.to(room).emit(SocketEvent.ALERT_TRIGGERED, {
+      ...payload,
+      timestamp: new Date().toISOString(),
+    });
+    this.logger.debug(`Alert triggered for teacher ${teacherId} in classroom ${classroomId}`);
+  }
+
+  /**
+   * Emit student online/offline status to classroom
+   */
+  emitStudentOnlineStatus(classroomId: string, payload: Omit<StudentOnlineStatusPayload, 'timestamp'>) {
+    const room = `classroom:${classroomId}`;
+    const event = payload.isOnline ? SocketEvent.STUDENT_ONLINE : SocketEvent.STUDENT_OFFLINE;
+    this.server.to(room).emit(event, {
+      ...payload,
+      timestamp: new Date().toISOString(),
+    });
+    this.logger.debug(`Student ${payload.studentId} is now ${payload.isOnline ? 'online' : 'offline'}`);
+  }
+
+  /**
+   * Emit progress update for a student
+   */
+  emitProgressUpdate(
+    teacherIds: string[],
+    classroomId: string,
+    data: {
+      studentId: string;
+      studentName: string;
+      progressType: 'module_complete' | 'exercise_complete' | 'level_up' | 'achievement';
+      details: Record<string, unknown>;
+    },
+  ) {
+    const payload = {
+      ...data,
+      classroomId,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Emit to all relevant teachers
+    teacherIds.forEach((teacherId) => {
+      this.emitToUser(teacherId, SocketEvent.PROGRESS_UPDATE, payload);
+    });
+
+    // Also emit to classroom room
+    const room = `classroom:${classroomId}`;
+    this.server.to(room).emit(SocketEvent.PROGRESS_UPDATE, payload);
+
+    this.logger.debug(`Progress update emitted for student ${data.studentId}`);
+  }
+
+  /**
+   * Get count of teachers subscribed to a classroom
+   */
+  async getClassroomSubscriberCount(classroomId: string): Promise<number> {
+    const room = `classroom:${classroomId}`;
+    const sockets = await this.server.in(room).fetchSockets();
+    return sockets.length;
   }
 }

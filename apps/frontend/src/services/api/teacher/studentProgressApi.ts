@@ -10,7 +10,8 @@
  * @module services/api/teacher/studentProgressApi
  */
 
-import axiosInstance from '../axios.instance';
+import { apiClient } from '../apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 // ============================================================================
 // TYPES
@@ -125,8 +126,6 @@ export interface AddTeacherNoteDto {
  * statistics, overview, and teacher notes management.
  */
 class StudentProgressAPI {
-  private readonly baseUrl = '/teacher/students';
-
   /**
    * Get complete student progress
    *
@@ -160,8 +159,8 @@ class StudentProgressAPI {
     query?: GetStudentProgressQueryDto
   ): Promise<StudentProgress> {
     try {
-      const { data } = await axiosInstance.get<StudentProgress>(
-        `${this.baseUrl}/${studentId}/progress`,
+      const { data } = await apiClient.get<StudentProgress>(
+        API_ENDPOINTS.teacher.studentsProgress.progress(studentId),
         { params: query }
       );
       return data;
@@ -191,8 +190,8 @@ class StudentProgressAPI {
    */
   async getStudentOverview(studentId: string): Promise<StudentOverview> {
     try {
-      const { data } = await axiosInstance.get<StudentOverview>(
-        `${this.baseUrl}/${studentId}/overview`
+      const { data } = await apiClient.get<StudentOverview>(
+        API_ENDPOINTS.teacher.studentsProgress.overview(studentId)
       );
       return data;
     } catch (error) {
@@ -222,8 +221,8 @@ class StudentProgressAPI {
    */
   async getStudentStats(studentId: string): Promise<StudentStats> {
     try {
-      const { data } = await axiosInstance.get<StudentStats>(
-        `${this.baseUrl}/${studentId}/stats`
+      const { data } = await apiClient.get<StudentStats>(
+        API_ENDPOINTS.teacher.studentsProgress.stats(studentId)
       );
       return data;
     } catch (error) {
@@ -253,8 +252,8 @@ class StudentProgressAPI {
    */
   async getStudentNotes(studentId: string): Promise<StudentNote[]> {
     try {
-      const { data } = await axiosInstance.get<StudentNote[]>(
-        `${this.baseUrl}/${studentId}/notes`
+      const { data } = await apiClient.get<StudentNote[]>(
+        API_ENDPOINTS.teacher.studentsProgress.notes(studentId)
       );
       return data;
     } catch (error) {
@@ -292,8 +291,8 @@ class StudentProgressAPI {
     noteDto: AddTeacherNoteDto
   ): Promise<StudentNote> {
     try {
-      const { data } = await axiosInstance.post<StudentNote>(
-        `${this.baseUrl}/${studentId}/note`,
+      const { data } = await apiClient.post<StudentNote>(
+        API_ENDPOINTS.teacher.studentsProgress.addNote(studentId),
         noteDto
       );
       return data;

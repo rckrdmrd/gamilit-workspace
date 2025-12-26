@@ -37,6 +37,7 @@ Esta carpeta contiene documentacion **definitiva y vigente** del estado actual d
 | `README.md` | Indice de la carpeta |
 | `_MAP.md` | Este archivo - mapa de navegacion |
 | `EJERCICIOS-PREGUNTAS-RESPUESTAS.md` | Documentacion de ejercicios |
+| `SSOT-GAMIFICACION.md` | Single Source of Truth para sistema de gamificacion |
 
 ---
 

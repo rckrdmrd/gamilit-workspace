@@ -14,6 +14,9 @@ import { ClassroomMember } from '@/modules/social/entities/classroom-member.enti
 import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { User } from '@/modules/auth/entities/user.entity';
 import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
+// P1-05: Added 2025-12-18 - Educational entities for data enrichment
+import { Module as EducationalModule } from '@/modules/educational/entities/module.entity';
+import { Exercise } from '@/modules/educational/entities/exercise.entity';
 import { GetStudentProgressQueryDto, AddTeacherNoteDto, StudentNoteResponseDto } from '../dto';
 
 export interface StudentOverview {
@@ -101,6 +104,11 @@ export class StudentProgressService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(UserStats, 'gamification')
     private readonly userStatsRepository: Repository<UserStats>,
+    // P1-05: Added 2025-12-18 - Educational repositories for data enrichment
+    @InjectRepository(EducationalModule, 'educational')
+    private readonly moduleRepository: Repository<EducationalModule>,
+    @InjectRepository(Exercise, 'educational')
+    private readonly exerciseRepository: Repository<Exercise>,
   ) {}
 
   /**
@@ -255,20 +263,45 @@ export class StudentProgressService {
       where: { user_id: profile.id },
     });
 
-    // TODO: Join with actual module data to get names and details
-    return moduleProgresses.map((mp, index) => ({
-      module_id: mp.module_id,
-      module_name: `Módulo ${index + 1}`, // TODO: Get from modules table
-      module_order: index + 1,
-      total_activities: 15, // TODO: Get from module
-      completed_activities: Math.round(
-        (mp.progress_percentage / 100) * 15,
-      ),
-      average_score: Math.round(mp.progress_percentage * 0.8), // Estimate
-      time_spent_minutes: 0, // TODO: Calculate from submissions
-      last_activity_date: mp.updated_at, // Using updated_at as proxy for last_activity
-      status: this.calculateModuleStatus(mp.progress_percentage),
-    }));
+    // P1-05: Get module data for enrichment
+    const moduleIds = moduleProgresses.map(mp => mp.module_id);
+    const modules = moduleIds.length > 0
+      ? await this.moduleRepository.find({ where: { id: In(moduleIds) } })
+      : [];
+    const moduleMap = new Map(modules.map(m => [m.id, m]));
+
+    // P1-05: Get submissions for time calculation
+    const submissions = await this.submissionRepository.find({
+      where: { user_id: profile.id },
+    });
+    const timeByModule = new Map<string, number>();
+    for (const sub of submissions) {
+      // Get exercise to find module
+      const exercise = await this.exerciseRepository.findOne({ where: { id: sub.exercise_id } });
+      if (exercise) {
+        const currentTime = timeByModule.get(exercise.module_id) || 0;
+        timeByModule.set(exercise.module_id, currentTime + (sub.time_spent_seconds || 0));
+      }
+    }
+
+    // P1-05: Enriched response with real module data
+    return moduleProgresses.map((mp) => {
+      const moduleData = moduleMap.get(mp.module_id);
+      const timeSpentSeconds = timeByModule.get(mp.module_id) || 0;
+      const totalActivities = moduleData?.total_exercises || 15;
+
+      return {
+        module_id: mp.module_id,
+        module_name: moduleData?.title || `Módulo ${moduleData?.order_index || 1}`,
+        module_order: moduleData?.order_index || 1,
+        total_activities: totalActivities,
+        completed_activities: Math.round((mp.progress_percentage / 100) * totalActivities),
+        average_score: Math.round(mp.average_score || mp.progress_percentage * 0.8),
+        time_spent_minutes: Math.round(timeSpentSeconds / 60),
+        last_activity_date: mp.updated_at,
+        status: this.calculateModuleStatus(mp.progress_percentage),
+      };
+    });
   }
 
   /**
@@ -316,19 +349,37 @@ export class StudentProgressService {
       order: { submitted_at: 'DESC' },
     });
 
-    // TODO: Join with exercise data to get titles and types
-    return submissions.map((sub) => ({
-      id: sub.id,
-      exercise_title: 'Ejercicio', // TODO: Get from exercises table
-      module_name: 'Módulo', // TODO: Get from modules table
-      exercise_type: 'multiple_choice', // TODO: Get from exercises table
-      is_correct: sub.is_correct || false,
-      // Protect against division by zero
-      score_percentage: Math.round((sub.score / (sub.max_score || 1)) * 100),
-      time_spent_seconds: sub.time_spent_seconds || 0,
-      hints_used: sub.hints_count || 0,
-      submitted_at: sub.submitted_at,
-    }));
+    // P1-05: Get exercise and module data for enrichment
+    const exerciseIds = [...new Set(submissions.map(s => s.exercise_id))];
+    const exercises = exerciseIds.length > 0
+      ? await this.exerciseRepository.find({ where: { id: In(exerciseIds) } })
+      : [];
+    const exerciseMap = new Map(exercises.map(e => [e.id, e]));
+
+    // Get module data for exercise modules
+    const moduleIds = [...new Set(exercises.map(e => e.module_id))];
+    const modules = moduleIds.length > 0
+      ? await this.moduleRepository.find({ where: { id: In(moduleIds) } })
+      : [];
+    const moduleMap = new Map(modules.map(m => [m.id, m]));
+
+    // P1-05: Enriched response with real exercise/module data
+    return submissions.map((sub) => {
+      const exercise = exerciseMap.get(sub.exercise_id);
+      const moduleData = exercise ? moduleMap.get(exercise.module_id) : undefined;
+
+      return {
+        id: sub.id,
+        exercise_title: exercise?.title || 'Ejercicio',
+        module_name: moduleData?.title || 'Módulo',
+        exercise_type: exercise?.exercise_type || 'multiple_choice',
+        is_correct: sub.is_correct || false,
+        score_percentage: Math.round((sub.score / (sub.max_score || 1)) * 100),
+        time_spent_seconds: sub.time_spent_seconds || 0,
+        hints_used: sub.hints_count || 0,
+        submitted_at: sub.submitted_at,
+      };
+    });
   }
 
   /**
@@ -351,32 +402,48 @@ export class StudentProgressService {
     });
 
     // Group by exercise to find struggles
-    const exerciseMap = new Map<string, ExerciseSubmission[]>();
+    const submissionsByExercise = new Map<string, ExerciseSubmission[]>();
     submissions.forEach((sub) => {
       const key = sub.exercise_id;
-      if (!exerciseMap.has(key)) {
-        exerciseMap.set(key, []);
+      if (!submissionsByExercise.has(key)) {
+        submissionsByExercise.set(key, []);
       }
-      exerciseMap.get(key)!.push(sub);
+      submissionsByExercise.get(key)!.push(sub);
     });
+
+    // P1-05: Get exercise and module data for enrichment
+    const exerciseIds = [...submissionsByExercise.keys()];
+    const exercises = exerciseIds.length > 0
+      ? await this.exerciseRepository.find({ where: { id: In(exerciseIds) } })
+      : [];
+    const exerciseDataMap = new Map(exercises.map(e => [e.id, e]));
+
+    const moduleIds = [...new Set(exercises.map(e => e.module_id))];
+    const modules = moduleIds.length > 0
+      ? await this.moduleRepository.find({ where: { id: In(moduleIds) } })
+      : [];
+    const moduleDataMap = new Map(modules.map(m => [m.id, m]));
 
     const struggles: StruggleArea[] = [];
 
-    exerciseMap.forEach((subs) => {
+    submissionsByExercise.forEach((subs, exerciseId) => {
       const attempts = subs.length;
       const correctAttempts = subs.filter((s) => s.is_correct).length;
       const successRate = (correctAttempts / attempts) * 100;
 
       // Consider it a struggle if success rate < 70% and multiple attempts
       if (successRate < 70 && attempts >= 2) {
-        // Protect against division by zero in score calculation
         const avgScore =
           subs.reduce((sum, s) => sum + (s.score / (s.max_score || 1)) * 100, 0) /
           attempts;
 
+        // P1-05: Get real exercise/module names
+        const exercise = exerciseDataMap.get(exerciseId);
+        const moduleData = exercise ? moduleDataMap.get(exercise.module_id) : undefined;
+
         struggles.push({
-          topic: 'Tema del ejercicio', // TODO: Get from exercise data
-          module_name: 'Módulo', // TODO: Get from module data
+          topic: exercise?.title || 'Tema del ejercicio',
+          module_name: moduleData?.title || 'Módulo',
           attempts,
           success_rate: Math.round(successRate),
           average_score: Math.round(avgScore),
@@ -390,6 +457,7 @@ export class StudentProgressService {
 
   /**
    * Compare student with class averages
+   * P1-05: Updated 2025-12-18 - Calculate real class averages
    */
   async getClassComparison(studentId: string): Promise<ClassComparison[]> {
     const studentStats = await this.getStudentStats(studentId);
@@ -398,12 +466,14 @@ export class StudentProgressService {
     const allProfiles = await this.profileRepository.find();
     const allSubmissions = await this.submissionRepository.find();
 
+    // P1-05: Get all user stats for real averages
+    const allUserStats = await this.userStatsRepository.find();
+
     // Calculate class averages (with division by zero protection)
     const classAvgScore = allSubmissions.length > 0
       ? Math.round(
         allSubmissions.reduce(
           (sum, sub) => {
-            // Protect against division by zero in score calculation
             const maxScore = sub.max_score || 1;
             return sum + (sub.score / maxScore) * 100;
           },
@@ -415,6 +485,24 @@ export class StudentProgressService {
     // Protect against division by zero when no profiles exist
     const submissionsPerStudent = allProfiles.length > 0
       ? allSubmissions.length / allProfiles.length
+      : 0;
+
+    // P1-05: Calculate real time average from submissions
+    const totalTimeAllStudents = allSubmissions.reduce(
+      (sum, sub) => sum + (sub.time_spent_seconds || 0),
+      0,
+    );
+    const classAvgTimeMinutes = allProfiles.length > 0
+      ? Math.round(totalTimeAllStudents / 60 / allProfiles.length)
+      : 0;
+
+    // P1-05: Calculate real streak average from user_stats
+    const totalStreaks = allUserStats.reduce(
+      (sum, stats) => sum + (stats.current_streak || 0),
+      0,
+    );
+    const classAvgStreak = allUserStats.length > 0
+      ? Math.round(totalStreaks / allUserStats.length)
       : 0;
 
     return [
@@ -439,19 +527,19 @@ export class StudentProgressService {
       {
         metric: 'Tiempo de Estudio (min)',
         student_value: studentStats.total_time_spent_minutes,
-        class_average: 1100, // TODO: Calculate actual class average
+        class_average: classAvgTimeMinutes,
         percentile: this.calculatePercentile(
           studentStats.total_time_spent_minutes,
-          1100,
+          classAvgTimeMinutes,
         ),
       },
       {
         metric: 'Racha Actual (días)',
         student_value: studentStats.current_streak_days,
-        class_average: 5, // TODO: Calculate actual class average
+        class_average: classAvgStreak,
         percentile: this.calculatePercentile(
           studentStats.current_streak_days,
-          5,
+          classAvgStreak,
         ),
       },
     ];

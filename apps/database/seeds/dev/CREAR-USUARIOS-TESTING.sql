@@ -287,53 +287,64 @@ ON CONFLICT (user_id) DO UPDATE SET
 -- =====================================================
 -- PASO 4: INICIALIZAR user_ranks (gamification)
 -- =====================================================
+-- NOTA: La tabla user_ranks tiene estructura actualizada (2025-12)
+-- Columnas requeridas: id, user_id, tenant_id, current_rank, is_current
 
 INSERT INTO gamification_system.user_ranks (
     id,
     user_id,
     tenant_id,
     current_rank,
-    rank_level,
-    total_rank_points,
-    rank_achieved_at,
+    previous_rank,
+    rank_progress_percentage,
+    is_current,
+    achieved_at,
     created_at,
     updated_at
 ) VALUES
+-- Admin rank
 (
     'aaaaaaaa-aaaa-rank-aaaa-aaaaaaaaaaaa'::uuid,
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
     '00000000-0000-0000-0000-000000000001'::uuid,
     'Ajaw'::gamification_system.maya_rank,
-    1,
+    NULL,
     0,
-    NOW(),
-    NOW(),
-    NOW()
+    true,
+    gamilit.now_mexico(),
+    gamilit.now_mexico(),
+    gamilit.now_mexico()
 ),
+-- Teacher rank
 (
     'bbbbbbbb-bbbb-rank-bbbb-bbbbbbbbbbbb'::uuid,
     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
     '00000000-0000-0000-0000-000000000001'::uuid,
     'Ajaw'::gamification_system.maya_rank,
-    1,
+    NULL,
     0,
-    NOW(),
-    NOW(),
-    NOW()
+    true,
+    gamilit.now_mexico(),
+    gamilit.now_mexico(),
+    gamilit.now_mexico()
 ),
+-- Student rank (usuario principal de testing)
 (
     'cccccccc-cccc-rank-cccc-cccccccccccc'::uuid,
     'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid,
     '00000000-0000-0000-0000-000000000001'::uuid,
     'Ajaw'::gamification_system.maya_rank,
-    1,
+    NULL,
     0,
-    NOW(),
-    NOW(),
-    NOW()
+    true,
+    gamilit.now_mexico(),
+    gamilit.now_mexico(),
+    gamilit.now_mexico()
 )
 ON CONFLICT (user_id) DO UPDATE SET
-    updated_at = NOW();
+    current_rank = EXCLUDED.current_rank,
+    is_current = EXCLUDED.is_current,
+    updated_at = gamilit.now_mexico();
 
 -- =====================================================
 -- VERIFICACIÓN FINAL

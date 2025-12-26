@@ -5,6 +5,7 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
 import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
+import { ToastContainer, useToast } from '@shared/components/base/Toast';
 import {
   Users,
   Plus,
@@ -22,6 +23,7 @@ import type { Classroom } from '../types';
 
 export default function TeacherClasses() {
   const navigate = useNavigate();
+  const { toasts, showToast } = useToast();
   const {
     classrooms,
     loading,
@@ -62,7 +64,7 @@ export default function TeacherClasses() {
       setFormData({ name: '', subject: '', grade_level: '' });
     } catch (err: unknown) {
       console.error('[TeacherClasses] Error creating classroom:', err);
-      alert('Error al crear la clase. Por favor intenta nuevamente.');
+      showToast({ type: 'error', message: 'Error al crear la clase. Por favor intenta nuevamente.' });
     }
   };
 
@@ -76,7 +78,7 @@ export default function TeacherClasses() {
       setFormData({ name: '', subject: '', grade_level: '' });
     } catch (err: unknown) {
       console.error('[TeacherClasses] Error updating classroom:', err);
-      alert('Error al actualizar la clase. Por favor intenta nuevamente.');
+      showToast({ type: 'error', message: 'Error al actualizar la clase. Por favor intenta nuevamente.' });
     }
   };
 
@@ -89,7 +91,7 @@ export default function TeacherClasses() {
       setSelectedClassroom(null);
     } catch (err: unknown) {
       console.error('[TeacherClasses] Error deleting classroom:', err);
-      alert('Error al eliminar la clase. Por favor intenta nuevamente.');
+      showToast({ type: 'error', message: 'Error al eliminar la clase. Por favor intenta nuevamente.' });
     }
   };
 
@@ -109,8 +111,10 @@ export default function TeacherClasses() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <main className="detective-container py-8">
+    <>
+      <ToastContainer toasts={toasts} position="top-right" />
+      <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
+        <main className="detective-container py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="mb-2 text-4xl font-bold text-detective-text">Mis Clases</h1>
@@ -378,6 +382,7 @@ export default function TeacherClasses() {
         cancelText="Cancelar"
         variant="danger"
       />
-    </div>
+      </div>
+    </>
   );
 }

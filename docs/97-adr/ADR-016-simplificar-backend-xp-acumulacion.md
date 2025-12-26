@@ -120,13 +120,15 @@ return save(stats);
 
 El documento de diseño (DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md) define:
 
-| Rango | Umbral XP |
-|-------|-----------|
+| Rango | Umbral XP (v2.1) |
+|-------|------------------|
 | Ajaw | 0-499 |
 | Nacom | 500-999 |
 | Ah K'in | 1,000-1,499 |
-| Halach Uinic | 1,500-2,249 |
-| K'uk'ulkan | 2,250+ |
+| Halach Uinic | 1,500-1,899 |
+| K'uk'ulkan | 1,900+ |
+
+> **Nota (v2.1 - Diciembre 2025):** Los umbrales fueron ajustados de 2,250 a 1,900 XP para K'uk'ulkan, permitiendo alcanzar el rango máximo con M1-M3 (~1,950 XP disponibles).
 
 Esto se cumple CON el trigger de DB, NO con la lógica de backend.
 

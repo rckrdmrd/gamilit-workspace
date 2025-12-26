@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
 import * as crypto from 'crypto';
@@ -9,6 +9,7 @@ import {
   ResetPasswordDto,
   } from '../dto';
 import { MailService } from '@/modules/mail/mail.service';
+import { SessionManagementService } from './session-management.service';
 
 /**
  * PasswordRecoveryService
@@ -33,6 +34,8 @@ import { MailService } from '@/modules/mail/mail.service';
  */
 @Injectable()
 export class PasswordRecoveryService {
+  private readonly logger = new Logger(PasswordRecoveryService.name);
+
   private readonly TOKEN_LENGTH_BYTES = 32;
 
   private readonly TOKEN_EXPIRATION_HOURS = 1;
@@ -46,8 +49,7 @@ export class PasswordRecoveryService {
 
     private readonly mailService: MailService,
 
-    // TODO: Inject SessionManagementService for logout
-    // private readonly sessionService: SessionManagementService,
+    private readonly sessionManagementService: SessionManagementService,
   ) {}
 
   /**
@@ -90,13 +92,15 @@ export class PasswordRecoveryService {
     // 7. Enviar email con token plaintext
     try {
       await this.mailService.sendPasswordResetEmail(user.email, plainToken);
+      this.logger.log(`Password reset email sent to: ${user.email}`);
     } catch (error) {
       // Log error pero NO fallar (por seguridad, no revelar errores)
-      console.error(`Failed to send password reset email to ${user.email}:`, error);
+      this.logger.error(`Failed to send password reset email to ${user.email}:`, error);
+      // En desarrollo, mostrar el token para testing
+      if (process.env.NODE_ENV !== 'production') {
+        this.logger.debug(`[DEV] Password reset token for ${user.email}: ${plainToken}`);
+      }
     }
-
-    // Fallback para desarrollo (si SMTP no configurado)
-    console.log(`[DEV] Password reset token for ${user.email}: ${plainToken}`);
 
     return { message: genericMessage };
   }
@@ -159,10 +163,16 @@ export class PasswordRecoveryService {
       { used_at: new Date() },
     );
 
-    // 6. Invalidar todas las sesiones (logout global)
-    // TODO: Implementar con SessionManagementService
-    // await this.sessionService.revokeAllSessions(user.id);
-    console.log(`[DEV] Should revoke all sessions for user ${user.id}`);
+    // 6. Invalidar todas las sesiones (logout global de seguridad)
+    try {
+      // Revocar todas las sesiones excepto ninguna (currentSessionId vacío = revocar todas)
+      // Usamos un UUID inexistente para asegurar que se cierren TODAS las sesiones
+      const result = await this.sessionManagementService.revokeAllSessions(user.id, '00000000-0000-0000-0000-000000000000');
+      this.logger.log(`Revoked ${result.count} sessions for user ${user.id} after password reset`);
+    } catch (error) {
+      // Log pero no fallar - la contraseña ya fue cambiada
+      this.logger.error(`Failed to revoke sessions for user ${user.id}:`, error);
+    }
 
     return { message: 'Contraseña actualizada exitosamente' };
   }

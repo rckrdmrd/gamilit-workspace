@@ -12,7 +12,14 @@ CREATE TABLE social_features.friendships (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
     friend_id UUID NOT NULL,
+    status VARCHAR(20) DEFAULT 'accepted' NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT gamilit.now_mexico(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT gamilit.now_mexico(),
+
+    -- Validacion de estados
+    CONSTRAINT friendships_status_check CHECK (
+        status IN ('pending', 'accepted', 'rejected', 'blocked')
+    ),
 
     -- Evitar duplicados y auto-amistad
     CONSTRAINT friendships_unique UNIQUE (user_id, friend_id),
@@ -20,14 +27,17 @@ CREATE TABLE social_features.friendships (
 );
 
 -- Comentarios
-COMMENT ON TABLE social_features.friendships IS 'Relaciones de amistad aceptadas entre usuarios. Solo amistades confirmadas.';
-COMMENT ON COLUMN social_features.friendships.user_id IS 'ID del usuario que inició la amistad';
+COMMENT ON TABLE social_features.friendships IS 'Relaciones de amistad entre usuarios. Estados: pending, accepted, rejected, blocked.';
+COMMENT ON COLUMN social_features.friendships.user_id IS 'ID del usuario que inicio la amistad';
 COMMENT ON COLUMN social_features.friendships.friend_id IS 'ID del usuario amigo';
-COMMENT ON COLUMN social_features.friendships.created_at IS 'Fecha en que se aceptó la solicitud de amistad';
+COMMENT ON COLUMN social_features.friendships.status IS 'Estado de la amistad: pending, accepted, rejected, blocked';
+COMMENT ON COLUMN social_features.friendships.created_at IS 'Fecha de creacion de la solicitud de amistad';
+COMMENT ON COLUMN social_features.friendships.updated_at IS 'Fecha de ultima actualizacion (cambio de estado)';
 
--- Índices para búsquedas eficientes
+-- Indices para busquedas eficientes
 CREATE INDEX idx_friendships_user_id ON social_features.friendships(user_id);
 CREATE INDEX idx_friendships_friend_id ON social_features.friendships(friend_id);
+CREATE INDEX idx_friendships_status ON social_features.friendships(status);
 
 -- Foreign Keys
 ALTER TABLE social_features.friendships

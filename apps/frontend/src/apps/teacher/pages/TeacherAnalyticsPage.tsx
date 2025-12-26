@@ -34,7 +34,7 @@ export default function TeacherAnalyticsPage() {
     <TeacherLayout
       user={user ?? undefined}
       gamificationData={displayGamificationData}
-      organizationName="GLIT Platform"
+      organizationName={user?.organization?.name || 'Mi Institución'}
       onLogout={handleLogout}
     >
       <TeacherAnalytics />

@@ -1,28 +1,28 @@
 # FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 3.3
+version: 4.0
 generated: 2025-11-08
-updated: 2025-12-18
-source: Inventario Real del Frontend Implementado + Clean Load Policy Validation Phase 4 + M4-M5 Implementation + Achievements Fix + M4-M5 Corrections
-status: Actualizado con correcciones de estructura M4-M5 (types, schemas, mockData)
-last_analysis: 2025-12-18 - IMPL-M4M5-CORRECCIONES-001: 17 archivos creados para estructura M4-M5
+updated: 2025-12-26
+source: Inventario Real del Frontend Implementado + Auditoria Documentacion vs Desarrollo 2025-12-23/26
+status: Actualizado con auditoria completa de componentes, hooks y mecanicas
+last_analysis: 2025-12-26 - Auditoria documentacion vs desarrollo - metricas reales verificadas
 
 # ============================================================================
 # RESUMEN EJECUTIVO
 # ============================================================================
 
 summary:
-  total_files: 862  # ✅ Actualizado 2025-12-18 (+17 archivos M4-M5 structure: 8 M4 + 9 M5)
-  total_components: 483  # ✅ ACTUALIZADO 2025-11-29 (+6: MediaUploader, RubricEvaluator, ReviewPanelPage, ReviewList, ReviewDetail, useVideoRecorder componente)
-  total_hooks: 89  # ✅ ACTUALIZADO 2025-11-29 (+2: useVideoRecorder, useAudioRecorder)
+  total_files: 900+  # ✅ Actualizado 2025-12-26 - auditoria real
+  total_components: 497  # ✅ ACTUALIZADO 2025-12-26 - auditoria: shared(40) + features(31) + gamification(71) + mechanics(156) + apps(180) + otros(19)
+  total_hooks: 103  # ✅ ACTUALIZADO 2025-12-26 - auditoria: shared(12) + apps(57) + features(32) + root(2)
   total_features: 10
-  total_pages: 31  # ✅ ACTUALIZADO 2025-11-29 (+1: ReviewPanelPage)
+  total_pages: 64  # ✅ ACTUALIZADO 2025-12-26 - auditoria real (Student 24 + Teacher 13 + Admin 27)
   total_stores: 11
   total_api_services: 15  # Sin cambios (usa apiClient existente)
-  total_mechanics: 33  # 25 auto-revisables + 8 con revisión manual (1 M4 + 3 M5 + 4 otros)
+  total_mechanics: 30  # ✅ ACTUALIZADO 2025-12-26 - 23 oficiales + 3 extras + 4 auxiliares
   total_routes: 20  # ✅ ACTUALIZADO 2025-11-29
-  lines_of_code: ~98000  # Estimado basado en implementación M4-M5 (+~3000 LOC)
+  lines_of_code: ~100000  # ✅ ACTUALIZADO 2025-12-26
 
   changes_from_v3_0:
     mechanics_implemented: 8  # 5 M4 + 3 M5

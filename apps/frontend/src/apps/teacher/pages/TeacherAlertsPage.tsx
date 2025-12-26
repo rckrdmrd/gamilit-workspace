@@ -7,6 +7,7 @@ import { InterventionAlertsPanel } from '../components/alerts/InterventionAlerts
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { AlertTriangle, Bell, Filter, X, TrendingUp, Activity, AlertCircle } from 'lucide-react';
+import { ALERT_TYPES, ALERT_PRIORITIES } from '../constants/alertTypes';
 import type { AlertPriority, AlertType } from '../types';
 
 /**
@@ -51,54 +52,9 @@ export default function TeacherAlertsPage() {
     window.location.href = '/login';
   };
 
-  // Tipos de alertas con sus configuraciones
-  const alertTypes = [
-    {
-      value: 'no_activity',
-      label: 'Sin Actividad',
-      icon: '🚨',
-      description: 'Estudiantes inactivos >7 días',
-    },
-    { value: 'low_score', label: 'Bajo Rendimiento', icon: '⚠️', description: 'Promedio <60%' },
-    {
-      value: 'declining_trend',
-      label: 'Tendencia Decreciente',
-      icon: '📉',
-      description: 'Rendimiento en declive',
-    },
-    {
-      value: 'repeated_failures',
-      label: 'Fallos Repetidos',
-      icon: '🎯',
-      description: 'Múltiples intentos fallidos',
-    },
-  ];
-
-  // Prioridades con sus configuraciones
-  const priorities = [
-    {
-      value: 'critical',
-      label: 'Crítica',
-      color: 'bg-red-500',
-      textColor: 'text-red-500',
-      icon: '🔴',
-    },
-    {
-      value: 'high',
-      label: 'Alta',
-      color: 'bg-orange-500',
-      textColor: 'text-orange-500',
-      icon: '🟠',
-    },
-    {
-      value: 'medium',
-      label: 'Media',
-      color: 'bg-yellow-500',
-      textColor: 'text-yellow-500',
-      icon: '🟡',
-    },
-    { value: 'low', label: 'Baja', color: 'bg-blue-500', textColor: 'text-blue-500', icon: '🔵' },
-  ];
+  // Use centralized alert types and priorities
+  const alertTypes = ALERT_TYPES;
+  const priorities = ALERT_PRIORITIES;
 
   const clearFilters = () => {
     setFilterPriority('all');
@@ -111,7 +67,7 @@ export default function TeacherAlertsPage() {
     <TeacherLayout
       user={user ?? undefined}
       gamificationData={displayGamificationData}
-      organizationName="GLIT Platform"
+      organizationName={user?.organization?.name || 'Mi Institución'}
       onLogout={handleLogout}
     >
       <div className="space-y-6">

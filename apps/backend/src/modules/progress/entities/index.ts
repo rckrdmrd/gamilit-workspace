@@ -28,3 +28,4 @@ export { LearningPath } from './learning-path.entity'; // ✨ NUEVO - P2 (Rutas 
 export { UserLearningPath } from './user-learning-path.entity'; // ✨ NUEVO - P2 (Usuarios en rutas)
 export { ProgressSnapshot } from './progress-snapshot.entity'; // ✨ NUEVO - P2 (Snapshots históricos)
 export { SkillAssessment } from './skill-assessment.entity'; // ✨ NUEVO - P2 (Evaluaciones de habilidades)
+export { TeacherIntervention, InterventionType, InterventionStatus, InterventionPriority } from './teacher-intervention.entity'; // ✨ NUEVO - P1-002 (Intervenciones docentes)

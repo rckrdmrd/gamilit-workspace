@@ -23,7 +23,7 @@
 
 import { useState, useCallback } from 'react';
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/config/api.config';
+import { FEATURE_FLAGS } from '@/config/api.config';
 import type { FeatureFlag, CreateFlagDto, UpdateFlagDto } from '../types';
 
 export interface UseFeatureFlagsResult {
@@ -83,7 +83,8 @@ const MOCK_FLAGS: FeatureFlag[] = [
   },
 ];
 
-const USE_MOCK_DATA = true; // Set to false when backend is ready
+// HIGH-005 FIX: Usar FEATURE_FLAGS en lugar de valor hardcodeado
+const USE_MOCK_DATA = FEATURE_FLAGS.USE_MOCK_DATA || FEATURE_FLAGS.MOCK_API;
 
 export function useFeatureFlags(): UseFeatureFlagsResult {
   const [flags, setFlags] = useState<FeatureFlag[]>([]);
@@ -105,9 +106,8 @@ export function useFeatureFlags(): UseFeatureFlagsResult {
         return;
       }
 
-      const response = await apiClient.get<FeatureFlag[]>(
-        `${API_ENDPOINTS.admin.base}/feature-flags`,
-      );
+      // HIGH-005 FIX: Usar ruta directa en lugar de API_ENDPOINTS.admin.base
+      const response = await apiClient.get<FeatureFlag[]>('/admin/feature-flags');
       setFlags(response.data);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch feature flags';
@@ -150,10 +150,8 @@ export function useFeatureFlags(): UseFeatureFlagsResult {
           return;
         }
 
-        const response = await apiClient.post<FeatureFlag>(
-          `${API_ENDPOINTS.admin.base}/feature-flags`,
-          data,
-        );
+        // HIGH-005 FIX: Usar ruta directa
+        const response = await apiClient.post<FeatureFlag>('/admin/feature-flags', data);
         setFlags((prev) => [...prev, response.data]);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to create feature flag';
@@ -195,10 +193,8 @@ export function useFeatureFlags(): UseFeatureFlagsResult {
           return;
         }
 
-        const response = await apiClient.put<FeatureFlag>(
-          `${API_ENDPOINTS.admin.base}/feature-flags/${key}`,
-          data,
-        );
+        // HIGH-005 FIX: Usar ruta directa
+        const response = await apiClient.put<FeatureFlag>(`/admin/feature-flags/${key}`, data);
         setFlags((prev) => prev.map((flag) => (flag.key === key ? response.data : flag)));
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to update feature flag';
@@ -228,7 +224,8 @@ export function useFeatureFlags(): UseFeatureFlagsResult {
           return;
         }
 
-        await apiClient.delete(`${API_ENDPOINTS.admin.base}/feature-flags/${key}`);
+        // HIGH-005 FIX: Usar ruta directa
+        await apiClient.delete(`/admin/feature-flags/${key}`);
         setFlags((prev) => prev.filter((flag) => flag.key !== key));
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to delete feature flag';

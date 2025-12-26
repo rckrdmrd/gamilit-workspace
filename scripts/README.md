@@ -55,6 +55,12 @@ export DB_PASSWORD="tu_password_aqui"
 | `update-production.sh` | Actualizacion completa | Despues de pull |
 | `diagnose-production.sh` | Diagnostico del sistema | Para verificar estado |
 | `repair-missing-data.sh` | Reparar datos faltantes | Si faltan seeds |
+| `setup-ssl-certbot.sh` | Configurar SSL/HTTPS | Nuevo servidor o agregar dominio |
+| `validate-deployment.sh` | Validar deployment | Despues de cualquier cambio |
+
+> **Guias detalladas:**
+> - SSL: `docs/95-guias-desarrollo/GUIA-SSL-CERTBOT-DEPLOYMENT.md`
+> - Deployment: `docs/95-guias-desarrollo/GUIA-DEPLOYMENT-RAPIDO.md`
 
 ---
 

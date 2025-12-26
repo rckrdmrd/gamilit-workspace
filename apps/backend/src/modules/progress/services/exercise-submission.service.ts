@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository, InjectEntityManager } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 import { ExerciseSubmission } from '../entities';
@@ -79,6 +79,8 @@ interface FragmentState {
  */
 @Injectable()
 export class ExerciseSubmissionService {
+  private readonly logger = new Logger(ExerciseSubmissionService.name);
+
   constructor(
     @InjectRepository(ExerciseSubmission, 'progress')
     private readonly submissionRepo: Repository<ExerciseSubmission>,
@@ -242,7 +244,7 @@ export class ExerciseSubmissionService {
         );
       }
 
-      console.log(`[BE-P2-009] Diario multimedia validation passed: ${wordCount} palabras`);
+      this.logger.log(`[BE-P2-009] Diario multimedia validation passed: ${wordCount} palabras`);
     }
 
     if (exercise.exercise_type === 'comic_digital') {
@@ -269,7 +271,7 @@ export class ExerciseSubmissionService {
         );
       }
 
-      console.log(`[BE-P2-009] Comic digital validation passed: ${panels.length} paneles`);
+      this.logger.log(`[BE-P2-009] Comic digital validation passed: ${panels.length} paneles`);
     }
 
     if (exercise.exercise_type === 'video_carta') {
@@ -290,11 +292,11 @@ export class ExerciseSubmissionService {
         );
       }
 
-      console.log(`[BE-P2-009] Video carta validation passed: ${videoUrl}`);
+      this.logger.log(`[BE-P2-009] Video carta validation passed: ${videoUrl}`);
     }
 
     // FE-059: Validate answer structure BEFORE saving to database
-    console.log(`[FE-059] Validating answer structure for exercise type: ${exercise.exercise_type}`);
+    this.logger.log(`[FE-059] Validating answer structure for exercise type: ${exercise.exercise_type}`);
     await ExerciseAnswerValidator.validate(exercise.exercise_type, answers);
 
     // Verificar si ya existe un envío previo
@@ -326,7 +328,7 @@ export class ExerciseSubmissionService {
 
     // ✅ FIX BUG-001: Auto-claim rewards después de calificar
     if (submission.is_correct && submission.status === 'graded') {
-      console.log(`[BUG-001 FIX] Auto-claiming rewards for submission ${submission.id}`);
+      this.logger.log(`[BUG-001 FIX] Auto-claiming rewards for submission ${submission.id}`);
       const rewards = await this.claimRewards(submission.id);
 
       // Los campos ya están persistidos en la submission por claimRewards()
@@ -336,13 +338,13 @@ export class ExerciseSubmissionService {
 
     // BE-P2-008: Notificar al docente si el ejercicio requiere revisión manual
     if (exercise.requires_manual_grading) {
-      console.log(`[BE-P2-008] Exercise ${exerciseId} requires manual grading - notifying teacher`);
+      this.logger.log(`[BE-P2-008] Exercise ${exerciseId} requires manual grading - notifying teacher`);
       try {
         await this.notifyTeacherOfSubmission(submission, exercise, profileId);
       } catch (error) {
         // Log error but don't fail submission
         const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error(`[BE-P2-008] Failed to notify teacher: ${errorMessage}`);
+        this.logger.error(`[BE-P2-008] Failed to notify teacher: ${errorMessage}`);
       }
     }
 
@@ -371,7 +373,7 @@ export class ExerciseSubmissionService {
 
     // P1-003: Check if manual grading is requested
     if (manualGrade?.final_score !== undefined) {
-      console.log(`[P1-003] Manual grading requested: score=${manualGrade.final_score}, grader=${manualGrade.grader_id}`);
+      this.logger.log(`[P1-003] Manual grading requested: score=${manualGrade.final_score}, grader=${manualGrade.grader_id}`);
 
       // Validate manual score range
       if (manualGrade.final_score < 0 || manualGrade.final_score > submission.max_score) {
@@ -398,7 +400,7 @@ export class ExerciseSubmissionService {
         submission.feedback = `Calificación manual: ${manualGrade.final_score}/${submission.max_score}`;
       }
 
-      console.log(`[P1-003] Manual grading applied: ${submission.score}/${submission.max_score}, correct=${submission.is_correct}`);
+      this.logger.log(`[P1-003] Manual grading applied: ${submission.score}/${submission.max_score}, correct=${submission.is_correct}`);
 
       const savedSubmission = await this.submissionRepo.save(submission);
 
@@ -406,17 +408,17 @@ export class ExerciseSubmissionService {
       try {
         const earned = await this.achievementsService.detectAndGrantEarned(submission.user_id);
         if (earned.length > 0) {
-          console.log(`[IMPL-004] ✅ Granted ${earned.length} achievements to user ${submission.user_id} after manual grading`);
+          this.logger.log(`[IMPL-004] ✅ Granted ${earned.length} achievements to user ${submission.user_id} after manual grading`);
         }
       } catch (achievementError) {
-        console.error(`[IMPL-004] ❌ Error detecting achievements: ${achievementError instanceof Error ? achievementError.message : String(achievementError)}`);
+        this.logger.error(`[IMPL-004] ❌ Error detecting achievements: ${achievementError instanceof Error ? achievementError.message : String(achievementError)}`);
       }
 
       return savedSubmission;
     }
 
     // Default: Auto-grading using SQL validate_and_audit()
-    console.log('[P1-003] No manual score provided - executing auto-grading');
+    this.logger.log('[P1-003] No manual score provided - executing auto-grading');
 
     const { score, isCorrect, correctAnswers, totalQuestions, feedback, details, auditId } = await this.autoGrade(
       submission.user_id,       // userId (profiles.id)
@@ -433,7 +435,7 @@ export class ExerciseSubmissionService {
 
     // FE-059: Audit ID is stored in educational_content.exercise_validation_audit
     // Can be queried using: exercise_id + user_id + attempt_number
-    console.log(`[FE-059] Validation audit saved with ID: ${auditId}`);
+    this.logger.log(`[FE-059] Validation audit saved with ID: ${auditId}`);
 
     // Store validation results in submission
     (submission as any).correctAnswers = correctAnswers;
@@ -466,10 +468,10 @@ export class ExerciseSubmissionService {
     try {
       const earned = await this.achievementsService.detectAndGrantEarned(submission.user_id);
       if (earned.length > 0) {
-        console.log(`[IMPL-004] ✅ Granted ${earned.length} achievements to user ${submission.user_id} after auto-grading`);
+        this.logger.log(`[IMPL-004] ✅ Granted ${earned.length} achievements to user ${submission.user_id} after auto-grading`);
       }
     } catch (achievementError) {
-      console.error(`[IMPL-004] ❌ Error detecting achievements: ${achievementError instanceof Error ? achievementError.message : String(achievementError)}`);
+      this.logger.error(`[IMPL-004] ❌ Error detecting achievements: ${achievementError instanceof Error ? achievementError.message : String(achievementError)}`);
     }
 
     return savedSubmission;
@@ -512,7 +514,7 @@ export class ExerciseSubmissionService {
 
     // SPECIAL CASE: Completar Espacios - Anti-redundancy validation (Exercise 1.3)
     if (exercise.exercise_type === 'completar_espacios') {
-      console.log('[autoGrade] Checking anti-redundancy for Completar Espacios (Exercise 1.3)');
+      this.logger.log('[autoGrade] Checking anti-redundancy for Completar Espacios (Exercise 1.3)');
 
       // Check if blanks.5 and blanks.6 exist and are identical (case-insensitive)
       const blanks = (answerData.blanks || {}) as Record<string, unknown>;
@@ -521,7 +523,7 @@ export class ExerciseSubmissionService {
         const space6 = String(blanks['6']).toLowerCase().trim();
 
         if (space5 === space6) {
-          console.log(`[autoGrade] REDUNDANCY DETECTED: space5="${space5}" === space6="${space6}"`);
+          this.logger.log(`[autoGrade] REDUNDANCY DETECTED: space5="${space5}" === space6="${space6}"`);
 
           // Create audit record for failed validation
           const auditId = 'redundancy-' + Date.now();
@@ -545,12 +547,12 @@ export class ExerciseSubmissionService {
         }
       }
 
-      console.log('[autoGrade] Anti-redundancy check passed, proceeding with normal validation');
+      this.logger.log('[autoGrade] Anti-redundancy check passed, proceeding with normal validation');
     }
 
     // SPECIAL CASE: Rueda de Inferencias custom validation
     if (exercise.exercise_type === 'rueda_inferencias') {
-      console.log('[autoGrade] Using custom validation for Rueda de Inferencias');
+      this.logger.log('[autoGrade] Using custom validation for Rueda de Inferencias');
 
       // Extract fragmentStates from answerData if available
       const fragmentStates = answerData.fragmentStates as FragmentState[] | undefined;
@@ -583,7 +585,7 @@ export class ExerciseSubmissionService {
     }
 
     // DEFAULT CASE: Use SQL validate_and_audit() for other exercise types
-    console.log(`[FE-059] Validating exercise ${exerciseId} using SQL validate_and_audit()`);
+    this.logger.log(`[FE-059] Validating exercise ${exerciseId} using SQL validate_and_audit()`);
 
     // Call PostgreSQL validate_and_audit() function
     const query = `
@@ -611,7 +613,7 @@ export class ExerciseSubmissionService {
 
       const validation = result[0];
 
-      console.log(`[FE-059] Validation result: score=${validation.score}/${validation.max_score}, correct=${validation.is_correct}, audit_id=${validation.audit_id}`);
+      this.logger.log(`[FE-059] Validation result: score=${validation.score}/${validation.max_score}, correct=${validation.is_correct}, audit_id=${validation.audit_id}`);
 
       return {
         score: validation.score,
@@ -623,7 +625,7 @@ export class ExerciseSubmissionService {
         auditId: validation.audit_id,
       };
     } catch (error) {
-      console.error('[FE-059] Error calling validate_and_audit():', error);
+      this.logger.error('[FE-059] Error calling validate_and_audit():', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new InternalServerErrorException(`Exercise validation failed: ${errorMessage}`);
     }
@@ -780,7 +782,7 @@ export class ExerciseSubmissionService {
         }>;
       };
     } {
-    console.log('[validateRuedaInferencias] Starting validation for Rueda de Inferencias exercise');
+    this.logger.log('[validateRuedaInferencias] Starting validation for Rueda de Inferencias exercise');
 
     // Cast solution to ExerciseSolution interface
     const solution = exercise.solution as unknown as ExerciseSolution;
@@ -816,7 +818,7 @@ export class ExerciseSubmissionService {
 
       // Skip if no answer provided
       if (!userAnswer) {
-        console.log(`[validateRuedaInferencias] No answer provided for fragment ${fragment.id}, skipping`);
+        this.logger.log(`[validateRuedaInferencias] No answer provided for fragment ${fragment.id}, skipping`);
         continue;
       }
 
@@ -830,14 +832,14 @@ export class ExerciseSubmissionService {
         }
       }
 
-      console.log(`[validateRuedaInferencias] Fragment ${fragment.id} using category: ${categoryId}`);
+      this.logger.log(`[validateRuedaInferencias] Fragment ${fragment.id} using category: ${categoryId}`);
 
       // Get expectations for this category (with type safety)
       type CategoryId = 'cat-literal' | 'cat-inferencial' | 'cat-critico' | 'cat-creativo';
       let categoryExpectation = fragment.categoryExpectations?.[categoryId as CategoryId];
 
       if (!categoryExpectation) {
-        console.warn(`[validateRuedaInferencias] No expectations found for category ${categoryId} in fragment ${fragment.id}, using default`);
+        this.logger.warn(`[validateRuedaInferencias] No expectations found for category ${categoryId} in fragment ${fragment.id}, using default`);
         // Fallback: use literal category if available
         categoryExpectation = fragment.categoryExpectations?.['cat-literal'];
         if (!categoryExpectation) {
@@ -847,7 +849,7 @@ export class ExerciseSubmissionService {
 
       // Validate categoryExpectation structure
       if (!categoryExpectation.keywords || !Array.isArray(categoryExpectation.keywords)) {
-        console.warn(`[validateRuedaInferencias] Invalid category expectation for ${categoryId} in fragment ${fragment.id}`);
+        this.logger.warn(`[validateRuedaInferencias] Invalid category expectation for ${categoryId} in fragment ${fragment.id}`);
         continue;
       }
 
@@ -861,7 +863,7 @@ export class ExerciseSubmissionService {
         userAnswerLower.includes(keyword.toLowerCase()),
       );
 
-      console.log(`[validateRuedaInferencias] Fragment ${fragment.id}: Found ${foundKeywords.length}/${expectedKeywords.length} keywords`);
+      this.logger.log(`[validateRuedaInferencias] Fragment ${fragment.id}: Found ${foundKeywords.length}/${expectedKeywords.length} keywords`);
 
       // Calculate score based on keywords found
       let fragmentScore = 0;
@@ -910,7 +912,7 @@ export class ExerciseSubmissionService {
       overallFeedback = 'Necesitas practicar más. Revisa las categorías de inferencias y los ejemplos proporcionados.';
     }
 
-    console.log(`[validateRuedaInferencias] Validation complete: ${totalScore}/${maxScore} points (${overallPercentage.toFixed(1)}%)`);
+    this.logger.log(`[validateRuedaInferencias] Validation complete: ${totalScore}/${maxScore} points (${overallPercentage.toFixed(1)}%)`);
 
     return {
       score: totalScore,
@@ -973,7 +975,7 @@ export class ExerciseSubmissionService {
     let xpEarned = Math.floor(baseXpReward * scoreMultiplier * rankMultiplier);
     let mlCoinsEarned = Math.floor(baseMlCoinsReward * scoreMultiplier);
 
-    console.log(`[claimRewards] XP calculation: base=${baseXpReward}, score=${scoreMultiplier.toFixed(2)}, rank=${rankMultiplier}x, total=${xpEarned}`);
+    this.logger.log(`[claimRewards] XP calculation: base=${baseXpReward}, score=${scoreMultiplier.toFixed(2)}, rank=${rankMultiplier}x, total=${xpEarned}`);
 
     // Bonificación por perfect score
     if (submission.score === submission.max_score && !submission.hint_used) {
@@ -989,7 +991,7 @@ export class ExerciseSubmissionService {
     mlCoinsEarned = Math.max(0, mlCoinsEarned - submission.ml_coins_spent);
 
     // ✅ FIX BUG-001: Actualizar user_stats con XP y ML Coins
-    console.log(`[BUG-001 FIX] Claiming rewards for user ${submission.user_id}: +${xpEarned} XP, +${mlCoinsEarned} ML Coins`);
+    this.logger.log(`[BUG-001 FIX] Claiming rewards for user ${submission.user_id}: +${xpEarned} XP, +${mlCoinsEarned} ML Coins`);
 
     // Obtener rango ANTES de agregar XP
     const userStatsBefore = await this.userStatsService.findByUserId(submission.user_id);
@@ -1048,7 +1050,7 @@ export class ExerciseSubmissionService {
         newMultiplier: rankMultipliers[newRank] || 1.0,
       };
 
-      console.log(`[RANK UP] User ${submission.user_id} promoted from ${previousRank} to ${newRank}`);
+      this.logger.log(`[RANK UP] User ${submission.user_id} promoted from ${previousRank} to ${newRank}`);
     }
 
     // ✅ FIX BUG-002: Actualizar module_progress después de completar ejercicio
@@ -1107,7 +1109,7 @@ export class ExerciseSubmissionService {
 
       return 1.00; // Default si no encuentra
     } catch {
-      console.warn(`[getRankXpMultiplier] Error getting multiplier for user ${userId}, using 1.00`);
+      this.logger.warn(`[getRankXpMultiplier] Error getting multiplier for user ${userId}, using 1.00`);
       return 1.00;
     }
   }
@@ -1133,12 +1135,12 @@ export class ExerciseSubmissionService {
       // Obtener module_id del ejercicio
       const exercise = await this.exerciseRepo.findOne({ where: { id: exerciseId } });
       if (!exercise?.module_id) {
-        console.warn(`[BUG-002 FIX] Exercise ${exerciseId} has no module_id - skipping progress update`);
+        this.logger.warn(`[BUG-002 FIX] Exercise ${exerciseId} has no module_id - skipping progress update`);
         return;
       }
 
       const moduleId = exercise.module_id;
-      console.log(`[BUG-002 FIX] Updating module progress for user ${userId}, module ${moduleId}`);
+      this.logger.log(`[BUG-002 FIX] Updating module progress for user ${userId}, module ${moduleId}`);
 
       // Verificar si es el primer envío correcto para ESTE ejercicio específico
       const previousCorrectSubmissions = await this.submissionRepo.count({
@@ -1156,7 +1158,7 @@ export class ExerciseSubmissionService {
           SET last_accessed_at = NOW(), updated_at = NOW()
           WHERE user_id = $1 AND module_id = $2
         `, [userId, moduleId]);
-        console.log('[BUG-002 FIX] Not first correct submission - only updated timestamps');
+        this.logger.log('[BUG-002 FIX] Not first correct submission - only updated timestamps');
         return;
       }
 
@@ -1192,7 +1194,7 @@ export class ExerciseSubmissionService {
         newStatus = 'not_started';
       }
 
-      console.log(`[BUG-002 FIX] Module progress: ${completedExercises}/${totalExercises} (${progressPercentage}%) - Status: ${newStatus}`);
+      this.logger.log(`[BUG-002 FIX] Module progress: ${completedExercises}/${totalExercises} (${progressPercentage}%) - Status: ${newStatus}`);
 
       // Actualizar o insertar module_progress usando UPSERT
       await this.entityManager.query(`
@@ -1228,12 +1230,12 @@ export class ExerciseSubmissionService {
           updated_at = NOW()
       `, [userId, moduleId, newStatus, progressPercentage, completedExercises, totalExercises, xpEarned, mlCoinsEarned]);
 
-      console.log('[BUG-002 FIX] ✅ Module progress updated successfully');
+      this.logger.log('[BUG-002 FIX] ✅ Module progress updated successfully');
 
     } catch (error) {
       // Log error pero no bloquear el claim de rewards
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(`[BUG-002 FIX] ❌ Error updating module progress: ${errorMessage}`);
+      this.logger.error(`[BUG-002 FIX] ❌ Error updating module progress: ${errorMessage}`);
       // No throw - la actualización de progreso no debe bloquear la respuesta
     }
   }
@@ -1252,7 +1254,7 @@ export class ExerciseSubmissionService {
    */
   private async updateMissionsProgressAfterCompletion(userId: string, xpEarned: number = 0): Promise<void> {
     try {
-      console.log(`[BUG-003 FIX] Updating missions progress for user ${userId}`);
+      this.logger.log(`[BUG-003 FIX] Updating missions progress for user ${userId}`);
 
       // Buscar misiones activas del usuario con objetivo 'complete_exercises'
       const missions = await this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.DAILY);
@@ -1267,7 +1269,7 @@ export class ExerciseSubmissionService {
       );
 
       if (activeMissions.length === 0) {
-        console.log('[BUG-003 FIX] No active missions with \'complete_exercises\' objective found');
+        this.logger.log('[BUG-003 FIX] No active missions with \'complete_exercises\' objective found');
         return;
       }
 
@@ -1280,11 +1282,11 @@ export class ExerciseSubmissionService {
             'complete_exercises',
             1, // Incrementar en 1 por cada ejercicio completado
           );
-          console.log(`[BUG-003 FIX] ✅ Mission ${mission.id} (complete_exercises) updated`);
+          this.logger.log(`[BUG-003 FIX] ✅ Mission ${mission.id} (complete_exercises) updated`);
         } catch (missionError) {
           // Log pero continuar con otras misiones
           const errorMessage = missionError instanceof Error ? missionError.message : String(missionError);
-          console.warn(`[BUG-003 FIX] ⚠️ Error updating mission ${mission.id}: ${errorMessage}`);
+          this.logger.warn(`[BUG-003 FIX] ⚠️ Error updating mission ${mission.id}: ${errorMessage}`);
         }
       }
 
@@ -1304,20 +1306,20 @@ export class ExerciseSubmissionService {
               'earn_xp',
               xpEarned, // Incrementar por cantidad de XP ganado
             );
-            console.log(`[BUG-003 FIX] ✅ Mission ${mission.id} (earn_xp) updated with +${xpEarned} XP`);
+            this.logger.log(`[BUG-003 FIX] ✅ Mission ${mission.id} (earn_xp) updated with +${xpEarned} XP`);
           } catch (missionError) {
             const errorMessage = missionError instanceof Error ? missionError.message : String(missionError);
-            console.warn(`[BUG-003 FIX] ⚠️ Error updating earn_xp mission ${mission.id}: ${errorMessage}`);
+            this.logger.warn(`[BUG-003 FIX] ⚠️ Error updating earn_xp mission ${mission.id}: ${errorMessage}`);
           }
         }
       }
 
-      console.log('[BUG-003 FIX] ✅ Missions progress update completed');
+      this.logger.log('[BUG-003 FIX] ✅ Missions progress update completed');
 
     } catch (error) {
       // Log error pero no bloquear el claim de rewards
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(`[BUG-003 FIX] ❌ Error updating missions progress: ${errorMessage}`);
+      this.logger.error(`[BUG-003 FIX] ❌ Error updating missions progress: ${errorMessage}`);
       // No throw - la actualización de misiones no debe bloquear la respuesta
     }
   }
@@ -1486,7 +1488,7 @@ export class ExerciseSubmissionService {
     exercise: Exercise,
     studentProfileId: string,
   ): Promise<void> {
-    console.log(`[BE-P2-008] Notifying teacher about submission ${submission.id}`);
+    this.logger.log(`[BE-P2-008] Notifying teacher about submission ${submission.id}`);
 
     // 1. Obtener datos del estudiante
     const studentProfile = await this.profileRepo.findOne({
@@ -1495,7 +1497,7 @@ export class ExerciseSubmissionService {
     });
 
     if (!studentProfile) {
-      console.warn(`[BE-P2-008] Student profile ${studentProfileId} not found - skipping notification`);
+      this.logger.warn(`[BE-P2-008] Student profile ${studentProfileId} not found - skipping notification`);
       return;
     }
 
@@ -1524,7 +1526,7 @@ export class ExerciseSubmissionService {
     const teacherResult = await this.entityManager.query(teacherQuery, [studentProfileId]);
 
     if (!teacherResult || teacherResult.length === 0) {
-      console.warn(`[BE-P2-008] No active teacher found for student ${studentProfileId} - skipping notification`);
+      this.logger.warn(`[BE-P2-008] No active teacher found for student ${studentProfileId} - skipping notification`);
       return;
     }
 
@@ -1535,7 +1537,7 @@ export class ExerciseSubmissionService {
     const classroomName = teacher.classroom_name || 'tu aula';
     const teacherPreferences = teacher.teacher_preferences || {};
 
-    console.log(`[BE-P2-008] Found teacher ${teacherId} (${teacherEmail}) for student ${studentProfileId}`);
+    this.logger.log(`[BE-P2-008] Found teacher ${teacherId} (${teacherEmail}) for student ${studentProfileId}`);
 
     // 3. Construir URL de revisión
     const reviewUrl = `/teacher/reviews/${submission.id}`;
@@ -1565,10 +1567,10 @@ export class ExerciseSubmissionService {
         priority: 'high',
       });
 
-      console.log(`[BE-P2-008] ✅ In-app notification sent to teacher ${teacherId}`);
+      this.logger.log(`[BE-P2-008] ✅ In-app notification sent to teacher ${teacherId}`);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(`[BE-P2-008] ❌ Failed to send in-app notification: ${errorMessage}`);
+      this.logger.error(`[BE-P2-008] ❌ Failed to send in-app notification: ${errorMessage}`);
     }
 
     // 5. Enviar email si está habilitado en preferencias
@@ -1576,7 +1578,7 @@ export class ExerciseSubmissionService {
     const exerciseFeedbackEmailEnabled = teacherPreferences?.email_notifications?.exercise_feedback !== false;
 
     if (emailNotificationsEnabled && exerciseFeedbackEmailEnabled && teacherEmail) {
-      console.log(`[BE-P2-008] Email notifications enabled for teacher ${teacherId} - sending email to ${teacherEmail}`);
+      this.logger.log(`[BE-P2-008] Email notifications enabled for teacher ${teacherId} - sending email to ${teacherEmail}`);
 
       const emailSubject = `Nuevo ejercicio para revisar: ${exercise.title}`;
       const emailMessage = `
@@ -1597,19 +1599,19 @@ export class ExerciseSubmissionService {
         );
 
         if (emailSent) {
-          console.log(`[BE-P2-008] ✅ Email notification sent to teacher ${teacherEmail}`);
+          this.logger.log(`[BE-P2-008] ✅ Email notification sent to teacher ${teacherEmail}`);
         } else {
-          console.warn(`[BE-P2-008] ⚠️ Email notification logged but not sent (SMTP not configured)`);
+          this.logger.warn(`[BE-P2-008] ⚠️ Email notification logged but not sent (SMTP not configured)`);
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error(`[BE-P2-008] ❌ Failed to send email notification: ${errorMessage}`);
+        this.logger.error(`[BE-P2-008] ❌ Failed to send email notification: ${errorMessage}`);
       }
     } else {
-      console.log(`[BE-P2-008] Email notifications disabled for teacher ${teacherId} - skipping email`);
+      this.logger.log(`[BE-P2-008] Email notifications disabled for teacher ${teacherId} - skipping email`);
     }
 
-    console.log(`[BE-P2-008] ✅ Teacher notification process completed for submission ${submission.id}`);
+    this.logger.log(`[BE-P2-008] ✅ Teacher notification process completed for submission ${submission.id}`);
   }
 
   /**

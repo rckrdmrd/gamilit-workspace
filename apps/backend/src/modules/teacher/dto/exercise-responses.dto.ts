@@ -273,6 +273,42 @@ export class AttemptDetailDto extends AttemptResponseDto {
 }
 
 /**
+ * Aggregated stats for attempts list
+ * P2-03: Stats calculated on server side
+ */
+export class AttemptsStatsDto {
+  @ApiProperty({
+    description: 'Total number of attempts',
+    example: 150,
+  })
+    total_attempts!: number;
+
+  @ApiProperty({
+    description: 'Number of correct attempts',
+    example: 120,
+  })
+    correct_count!: number;
+
+  @ApiProperty({
+    description: 'Number of incorrect attempts',
+    example: 30,
+  })
+    incorrect_count!: number;
+
+  @ApiProperty({
+    description: 'Average score percentage (0-100)',
+    example: 78,
+  })
+    average_score!: number;
+
+  @ApiProperty({
+    description: 'Success rate percentage (0-100)',
+    example: 80,
+  })
+    success_rate!: number;
+}
+
+/**
  * Paginated list response DTO
  */
 export class AttemptsListResponseDto {
@@ -305,4 +341,11 @@ export class AttemptsListResponseDto {
     example: 8,
   })
     total_pages!: number;
+
+  @ApiProperty({
+    description: 'Aggregated statistics for the filtered attempts',
+    type: AttemptsStatsDto,
+    required: false,
+  })
+    stats?: AttemptsStatsDto;
 }

@@ -10,7 +10,7 @@
  * @module services/api/teacher/analyticsApi
  */
 
-import axiosInstance from '../axios.instance';
+import { apiClient } from '../apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import type { ClassroomAnalytics, EngagementMetrics } from '@apps/teacher/types';
 
@@ -235,7 +235,7 @@ class AnalyticsAPI {
    */
   async getClassroomAnalytics(query?: GetAnalyticsQueryDto): Promise<ClassroomAnalytics> {
     try {
-      const { data } = await axiosInstance.get<ClassroomAnalytics>(
+      const { data } = await apiClient.get<ClassroomAnalytics>(
         API_ENDPOINTS.teacher.analytics,
         { params: query },
       );
@@ -276,7 +276,7 @@ class AnalyticsAPI {
    */
   async getEngagementMetrics(query?: GetEngagementMetricsDto): Promise<EngagementMetrics> {
     try {
-      const { data } = await axiosInstance.get<EngagementMetrics>(
+      const { data } = await apiClient.get<EngagementMetrics>(
         API_ENDPOINTS.teacher.engagementMetrics,
         { params: query },
       );
@@ -335,7 +335,7 @@ class AnalyticsAPI {
    */
   async generateReport(config: GenerateReportsDto): Promise<Report> {
     try {
-      const { data } = await axiosInstance.post<Report>(
+      const { data } = await apiClient.post<Report>(
         API_ENDPOINTS.teacher.generateReport,
         config,
       );
@@ -377,7 +377,7 @@ class AnalyticsAPI {
    */
   async getReportStatus(reportId: string): Promise<Report> {
     try {
-      const { data } = await axiosInstance.get<Report>(
+      const { data } = await apiClient.get<Report>(
         API_ENDPOINTS.teacher.reportStatus(reportId),
       );
       return data;
@@ -421,7 +421,7 @@ class AnalyticsAPI {
    */
   async getStudentInsights(studentId: string): Promise<StudentInsights> {
     try {
-      const { data } = await axiosInstance.get<StudentInsights>(
+      const { data } = await apiClient.get<StudentInsights>(
         API_ENDPOINTS.teacher.studentInsights(studentId),
       );
       return data;
@@ -460,7 +460,7 @@ class AnalyticsAPI {
    */
   async getEconomyAnalytics(query?: GetEconomyAnalyticsDto): Promise<EconomyAnalytics> {
     try {
-      const { data } = await axiosInstance.get<EconomyAnalytics>(
+      const { data } = await apiClient.get<EconomyAnalytics>(
         API_ENDPOINTS.teacher.economyAnalytics,
         { params: query },
       );
@@ -485,7 +485,7 @@ class AnalyticsAPI {
    */
   async getStudentsEconomy(query?: GetEconomyAnalyticsDto): Promise<StudentsEconomyResponse> {
     try {
-      const { data } = await axiosInstance.get<StudentsEconomyResponse>(
+      const { data } = await apiClient.get<StudentsEconomyResponse>(
         API_ENDPOINTS.teacher.studentsEconomy,
         { params: query },
       );
@@ -509,7 +509,7 @@ class AnalyticsAPI {
    */
   async getAchievementsStats(query?: GetEconomyAnalyticsDto): Promise<AchievementsStatsResponse> {
     try {
-      const { data } = await axiosInstance.get<AchievementsStatsResponse>(
+      const { data } = await apiClient.get<AchievementsStatsResponse>(
         API_ENDPOINTS.teacher.achievementsStats,
         { params: query },
       );

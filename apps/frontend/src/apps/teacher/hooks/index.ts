@@ -36,3 +36,22 @@ export type { UseAssignmentsReturn } from './useAssignments';
 export type { UseInterventionAlertsReturn, AlertFilters } from './useInterventionAlerts';
 export type { UseTeacherMessagesReturn, MessageFilters } from './useTeacherMessages';
 export type { UseGrantBonusReturn } from './useGrantBonus';
+
+// P1-06/P1-07: Mission and Mastery tracking hooks (2025-12-18)
+export { useMissionStats, useMissionStatsMultiple } from './useMissionStats';
+export { useMasteryTracking } from './useMasteryTracking';
+export type { UseMissionStatsReturn, MissionStats, ClassroomMission } from './useMissionStats';
+export type { UseMasteryTrackingReturn, MasteryData, SkillMastery } from './useMasteryTracking';
+
+// P2-01: Real-time classroom monitoring (2025-12-18)
+export { useClassroomRealtime } from './useClassroomRealtime';
+export type {
+  UseClassroomRealtimeReturn,
+  StudentActivity,
+  ClassroomUpdate,
+  NewSubmission,
+  AlertTriggered,
+  StudentOnlineStatus,
+  ProgressUpdate,
+  RealtimeEvent,
+} from './useClassroomRealtime';

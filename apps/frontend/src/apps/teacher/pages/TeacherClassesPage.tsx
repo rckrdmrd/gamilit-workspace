@@ -22,7 +22,7 @@ export default function TeacherClassesPage() {
     <TeacherLayout
       user={user ?? undefined}
       gamificationData={gamificationData}
-      organizationName="GLIT Platform"
+      organizationName={user?.organization?.name || 'Mi Institución'}
       onLogout={handleLogout}
     >
       <TeacherClasses />

@@ -154,7 +154,9 @@ export function useAnalytics(): UseAnalyticsReturn {
         fetchRetention(),
       ]);
     } catch (err: unknown) {
-      setError(err.message || 'Error al cargar analíticas');
+      // MED-009 FIX: Validación de tipo para error
+      const errorMessage = err instanceof Error ? err.message : 'Error al cargar analíticas';
+      setError(errorMessage);
       console.error('Error fetching analytics:', err);
     } finally {
       setIsLoading(false);

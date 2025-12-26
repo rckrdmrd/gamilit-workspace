@@ -68,12 +68,13 @@ interface RefreshIntervals {
   activity: number;
 }
 
+// LOW-001 FIX: Ajustados intervalos para reducir carga en servidor
 const DEFAULT_INTERVALS: RefreshIntervals = {
-  health: 10000, // 10 seconds
-  metrics: 30000, // 30 seconds
-  actions: 60000, // 60 seconds
-  alerts: 5000, // 5 seconds (real-time-ish)
-  activity: 300000, // 5 minutes
+  health: 30000, // 30 seconds (was 10s - too aggressive)
+  metrics: 60000, // 60 seconds (was 30s)
+  actions: 120000, // 2 minutes (was 60s)
+  alerts: 30000, // 30 seconds (was 5s - too aggressive)
+  activity: 300000, // 5 minutes (unchanged)
 };
 
 export function useAdminDashboard(

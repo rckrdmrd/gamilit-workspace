@@ -25,6 +25,15 @@ export enum SocketEvent {
   // Missions
   MISSION_COMPLETED = 'mission:completed',
   MISSION_PROGRESS = 'mission:progress',
+
+  // Teacher Portal (P2-01: 2025-12-18)
+  STUDENT_ACTIVITY = 'teacher:student_activity',
+  CLASSROOM_UPDATE = 'teacher:classroom_update',
+  NEW_SUBMISSION = 'teacher:new_submission',
+  ALERT_TRIGGERED = 'teacher:alert_triggered',
+  STUDENT_ONLINE = 'teacher:student_online',
+  STUDENT_OFFLINE = 'teacher:student_offline',
+  PROGRESS_UPDATE = 'teacher:progress_update',
 }
 
 export interface SocketUserData {
@@ -49,5 +58,62 @@ export interface AchievementPayload {
 
 export interface LeaderboardPayload {
   leaderboard: any[]; // Will be typed from gamification module
+  timestamp: string;
+}
+
+// Teacher Portal Payloads (P2-01: 2025-12-18)
+
+export interface StudentActivityPayload {
+  studentId: string;
+  studentName: string;
+  classroomId: string;
+  activityType: 'exercise_start' | 'exercise_complete' | 'hint_used' | 'comodin_used' | 'module_start';
+  exerciseId?: string;
+  exerciseTitle?: string;
+  moduleId?: string;
+  moduleTitle?: string;
+  metadata?: Record<string, unknown>;
+  timestamp: string;
+}
+
+export interface ClassroomUpdatePayload {
+  classroomId: string;
+  classroomName: string;
+  updateType: 'student_joined' | 'student_left' | 'stats_changed';
+  data: Record<string, unknown>;
+  timestamp: string;
+}
+
+export interface NewSubmissionPayload {
+  submissionId: string;
+  studentId: string;
+  studentName: string;
+  exerciseId: string;
+  exerciseTitle: string;
+  classroomId: string;
+  score: number;
+  maxScore: number;
+  requiresReview: boolean;
+  timestamp: string;
+}
+
+export interface AlertTriggeredPayload {
+  alertId: string;
+  studentId: string;
+  studentName: string;
+  classroomId: string;
+  alertType: 'at_risk' | 'low_performance' | 'inactive' | 'struggling';
+  severity: 'low' | 'medium' | 'high';
+  title: string;
+  description: string;
+  timestamp: string;
+}
+
+export interface StudentOnlineStatusPayload {
+  studentId: string;
+  studentName: string;
+  classroomId: string;
+  isOnline: boolean;
+  lastActivity?: string;
   timestamp: string;
 }

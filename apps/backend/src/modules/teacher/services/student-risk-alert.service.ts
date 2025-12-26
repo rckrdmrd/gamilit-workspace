@@ -13,7 +13,9 @@ import { Profile } from '@/modules/auth/entities/profile.entity';
 import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
 import { AnalyticsService } from './analytics.service';
-import { GamilityRoleEnum } from '@/shared/constants/enums.constants';
+// P0-04: Added 2025-12-18 - NotificationsService integration
+import { NotificationsService } from '@/modules/notifications/services/notifications.service';
+import { GamilityRoleEnum, NotificationTypeEnum } from '@/shared/constants/enums.constants';
 
 export interface RiskAlert {
   student_id: string;
@@ -49,6 +51,8 @@ export class StudentRiskAlertService {
     @InjectRepository(ClassroomMember, 'social')
     private readonly classroomMemberRepository: Repository<ClassroomMember>,
     private readonly analyticsService: AnalyticsService,
+    // P0-04: Added 2025-12-18 - NotificationsService injection
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   /**
@@ -205,29 +209,45 @@ export class StudentRiskAlertService {
   /**
    * Send alert notification to teacher about at-risk students
    *
-   * @TODO: Replace with actual notification service call
+   * P0-04: Implemented 2025-12-18 - NotificationsService integration
    */
   private async sendTeacherAlert(teacherId: string, alerts: RiskAlert[]): Promise<void> {
     const highRiskCount = alerts.filter(a => a.risk_level === 'high').length;
     const mediumRiskCount = alerts.filter(a => a.risk_level === 'medium').length;
+    const totalAlerts = highRiskCount + mediumRiskCount;
 
     this.logger.log(
       `[NOTIFICATION] Teacher ${teacherId}: ${highRiskCount} high-risk, ${mediumRiskCount} medium-risk students`,
     );
 
-    // TODO: Integrate with NotificationService
-    // Example:
-    // await this.notificationService.create({
-    //   recipient_id: teacherId,
-    //   type: 'student_risk_alert',
-    //   title: `${highRiskCount + mediumRiskCount} estudiantes requieren atención`,
-    //   message: this.formatAlertMessage(alerts),
-    //   priority: highRiskCount > 0 ? 'high' : 'medium',
-    //   action_url: '/teacher/alerts',
-    //   metadata: { alerts }
-    // });
+    try {
+      // P0-04: Send notification via NotificationsService
+      await this.notificationsService.sendNotification({
+        userId: teacherId,
+        type: NotificationTypeEnum.SYSTEM_ANNOUNCEMENT,
+        title: highRiskCount > 0
+          ? `⚠️ Alerta: ${totalAlerts} estudiantes requieren atención urgente`
+          : `📊 ${totalAlerts} estudiantes requieren seguimiento`,
+        message: this.formatAlertMessage(alerts),
+        data: {
+          alertType: 'student_risk',
+          highRiskCount,
+          mediumRiskCount,
+          studentIds: alerts.map(a => a.student_id),
+          action: {
+            type: 'navigate',
+            url: '/teacher/alerts',
+          },
+        },
+      });
 
-    // For now, just log detailed info
+      this.logger.log(`✅ Notification sent to teacher ${teacherId}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to send notification to teacher ${teacherId}: ${errorMessage}`);
+    }
+
+    // Log detailed info for debugging
     for (const alert of alerts) {
       this.logger.debug(
         `  - ${alert.student_name}: ${alert.risk_level} risk, ${alert.overall_score}% score, ${alert.dropout_risk * 100}% dropout risk`,
@@ -237,21 +257,70 @@ export class StudentRiskAlertService {
 
   /**
    * Send summary to admins about high-risk students across the platform
+   *
+   * P0-04: Implemented 2025-12-18 - NotificationsService integration
    */
   private async sendAdminSummary(highRiskAlerts: RiskAlert[]): Promise<void> {
     this.logger.log(
       `[ADMIN SUMMARY] ${highRiskAlerts.length} high-risk students detected across platform`,
     );
 
-    // TODO: Integrate with NotificationService for admins
-    // Example:
-    // await this.notificationService.createForRole({
-    //   role: GamilityRoleEnum.SUPER_ADMIN,
-    //   type: 'platform_risk_summary',
-    //   title: `Alerta: ${highRiskAlerts.length} estudiantes en alto riesgo`,
-    //   message: this.formatAdminSummary(highRiskAlerts),
-    //   priority: 'high'
-    // });
+    try {
+      // Get all super admins
+      const admins = await this.profileRepository.find({
+        where: { role: GamilityRoleEnum.SUPER_ADMIN },
+      });
+
+      if (admins.length === 0) {
+        this.logger.warn('No super admins found to receive risk summary');
+        return;
+      }
+
+      // Prepare summary message
+      const summaryLines = [
+        `🚨 Resumen de Riesgo de Plataforma`,
+        ``,
+        `Se han detectado ${highRiskAlerts.length} estudiantes en ALTO RIESGO:`,
+        ``,
+      ];
+
+      for (const alert of highRiskAlerts.slice(0, 10)) { // Limit to first 10
+        summaryLines.push(`• ${alert.student_name} - Riesgo abandono: ${Math.round(alert.dropout_risk * 100)}%`);
+      }
+
+      if (highRiskAlerts.length > 10) {
+        summaryLines.push(`... y ${highRiskAlerts.length - 10} más`);
+      }
+
+      summaryLines.push(``);
+      summaryLines.push(`Revisa el panel de administración para acciones.`);
+
+      const summaryMessage = summaryLines.join('\n');
+
+      // P0-04: Send notification to each admin
+      const notifications = admins.map(admin => ({
+        userId: admin.id,
+        type: NotificationTypeEnum.SYSTEM_ANNOUNCEMENT,
+        title: `🚨 Alerta Crítica: ${highRiskAlerts.length} estudiantes en alto riesgo`,
+        message: summaryMessage,
+        data: {
+          alertType: 'platform_risk_summary',
+          highRiskCount: highRiskAlerts.length,
+          studentIds: highRiskAlerts.map(a => a.student_id),
+          action: {
+            type: 'navigate',
+            url: '/admin/alerts',
+          },
+        },
+      }));
+
+      await this.notificationsService.sendBulkNotifications(notifications);
+
+      this.logger.log(`✅ Admin summary sent to ${admins.length} administrators`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to send admin summary: ${errorMessage}`);
+    }
   }
 
   /**

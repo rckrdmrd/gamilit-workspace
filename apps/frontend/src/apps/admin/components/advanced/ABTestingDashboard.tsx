@@ -117,7 +117,7 @@ export const ABTestingDashboard: React.FC = () => {
   };
 
   const handleDeclareWinner = (experimentId: string, variantId: string) => {
-    if (!confirm(`Declare variant ${variantId} as winner and end experiment?`)) return;
+    if (!window.confirm(`¿Declarar la variante ${variantId} como ganadora y finalizar el experimento?`)) return;
 
     setExperiments((prev) =>
       prev.map((exp) =>

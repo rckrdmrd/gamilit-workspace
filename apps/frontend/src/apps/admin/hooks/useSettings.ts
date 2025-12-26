@@ -176,16 +176,21 @@ export function useSettings(initialSection: SettingsCategory = 'general'): UseSe
 
   /**
    * Send test email (SMTP verification)
+   * @deprecated Esta función usa una implementación mock. Backend no tiene endpoint disponible.
    */
   const sendTestEmail = useCallback(async (): Promise<void> => {
+    console.warn(
+      '[useSettings] sendTestEmail() está deprecado y usa una implementación mock. ' +
+      'Esta función no realiza ninguna operación real. Implemente el endpoint en backend primero.'
+    );
     setError(null);
     try {
       // TODO: Add endpoint to adminAPI when available
       // await adminAPI.settings.testEmail();
 
-      // Temporary mock
+      // Temporary mock - NO REAL OPERATION
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSuccessMessage('Email de prueba enviado correctamente');
+      setSuccessMessage('Email de prueba enviado correctamente (MOCK)');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error al enviar email de prueba';
@@ -222,17 +227,22 @@ export function useSettings(initialSection: SettingsCategory = 'general'): UseSe
 
   /**
    * Create database backup
+   * @deprecated Esta función usa una implementación mock. Backend no tiene endpoint disponible.
    */
   const createBackup = useCallback(async (): Promise<void> => {
+    console.warn(
+      '[useSettings] createBackup() está deprecado y usa una implementación mock. ' +
+      'Esta función no realiza ninguna operación real. Implemente el endpoint en backend primero.'
+    );
     setError(null);
     try {
       // TODO: Add endpoint to adminAPI when available
       // await adminAPI.maintenance.createBackup();
 
-      // Temporary mock
+      // Temporary mock - NO REAL OPERATION
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // Update maintenance settings with new backup time
+      // Update maintenance settings with new backup time (MOCK)
       const now = new Date().toISOString();
       setSettings((prev) => ({
         ...prev,
@@ -242,7 +252,7 @@ export function useSettings(initialSection: SettingsCategory = 'general'): UseSe
         },
       }));
 
-      setSuccessMessage('Respaldo de base de datos creado correctamente');
+      setSuccessMessage('Respaldo de base de datos creado correctamente (MOCK)');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error al crear respaldo';
@@ -254,16 +264,21 @@ export function useSettings(initialSection: SettingsCategory = 'general'): UseSe
 
   /**
    * Clear system cache
+   * @deprecated Esta función usa una implementación mock. Backend no tiene endpoint disponible.
    */
   const clearCache = useCallback(async (): Promise<void> => {
+    console.warn(
+      '[useSettings] clearCache() está deprecado y usa una implementación mock. ' +
+      'Esta función no realiza ninguna operación real. Implemente el endpoint en backend primero.'
+    );
     setError(null);
     try {
       // TODO: Add endpoint to adminAPI when available
       // await adminAPI.maintenance.clearCache();
 
-      // Temporary mock
+      // Temporary mock - NO REAL OPERATION
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSuccessMessage('Caché del sistema limpiada correctamente');
+      setSuccessMessage('Caché del sistema limpiada correctamente (MOCK)');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error al limpiar caché';

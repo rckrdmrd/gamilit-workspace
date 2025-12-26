@@ -117,34 +117,7 @@ export class RanksController {
   }
 
   /**
-   * 3. GET /api/gamification/ranks/:id
-   * Obtiene detalles de un registro de rango específico
-   *
-   * @param id - ID del registro de rango (UUID)
-   * @returns Detalles del registro de rango
-   */
-  @Get(':id')
-  @ApiOperation({
-    summary: 'Obtener detalles de un registro de rango',
-    description: 'Obtiene información detallada de un registro de rango por su ID',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID del registro de rango (UUID)',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Detalles del rango obtenidos exitosamente',
-    type: UserRank,
-  })
-  @ApiResponse({ status: 404, description: 'Registro de rango no encontrado' })
-  async getRankDetails(@Param('id') id: string): Promise<UserRank> {
-    return this.ranksService.findById(id);
-  }
-
-  /**
-   * 4. GET /api/gamification/users/:userId/rank-progress
+   * 3. GET /api/gamification/ranks/users/:userId/rank-progress
    * Obtiene el progreso hacia el siguiente rango
    *
    * @param userId - ID del usuario
@@ -177,7 +150,7 @@ export class RanksController {
   }
 
   /**
-   * 5. GET /api/gamification/users/:userId/rank-history
+   * 4. GET /api/gamification/ranks/users/:userId/rank-history
    * Obtiene el historial de rangos del usuario
    *
    * @param userId - ID del usuario
@@ -206,7 +179,7 @@ export class RanksController {
   }
 
   /**
-   * 6. GET /api/gamification/ranks/check-promotion/:userId
+   * 5. GET /api/gamification/ranks/check-promotion/:userId
    * Verifica si el usuario es elegible para promoción
    *
    * @param userId - ID del usuario
@@ -243,7 +216,7 @@ export class RanksController {
   }
 
   /**
-   * 7. POST /api/gamification/ranks/promote/:userId
+   * 6. POST /api/gamification/ranks/promote/:userId
    * Promociona al usuario al siguiente rango
    *
    * @param userId - ID del usuario
@@ -274,12 +247,42 @@ export class RanksController {
     return this.ranksService.promoteToNextRank(userId);
   }
 
+  /**
+   * 7. GET /api/gamification/ranks/:id
+   * Obtiene detalles de un registro de rango específico
+   *
+   * IMPORTANTE: Esta ruta debe estar DESPUÉS de las rutas más específicas
+   * porque :id captura cualquier string (incluyendo "users", "current", etc.)
+   *
+   * @param id - ID del registro de rango (UUID)
+   * @returns Detalles del registro de rango
+   */
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Obtener detalles de un registro de rango',
+    description: 'Obtiene información detallada de un registro de rango por su ID',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del registro de rango (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Detalles del rango obtenidos exitosamente',
+    type: UserRank,
+  })
+  @ApiResponse({ status: 404, description: 'Registro de rango no encontrado' })
+  async getRankDetails(@Param('id') id: string): Promise<UserRank> {
+    return this.ranksService.findById(id);
+  }
+
   // =========================================================================
   // ENDPOINTS ADMIN
   // =========================================================================
 
   /**
-   * 6. POST /api/gamification/admin/ranks
+   * 9. POST /api/gamification/admin/ranks
    * Crea un nuevo registro de rango manualmente (admin)
    *
    * @param createDto - DTO con datos del nuevo rango
@@ -305,7 +308,7 @@ export class RanksController {
   }
 
   /**
-   * 7. PUT /api/gamification/admin/ranks/:id
+   * 10. PUT /api/gamification/admin/ranks/:id
    * Actualiza un registro de rango manualmente (admin)
    *
    * @param id - ID del registro de rango
@@ -341,7 +344,7 @@ export class RanksController {
   }
 
   /**
-   * 8. DELETE /api/gamification/admin/ranks/:id
+   * 11. DELETE /api/gamification/admin/ranks/:id
    * Elimina un registro de rango (admin)
    *
    * @param id - ID del registro de rango

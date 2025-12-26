@@ -215,6 +215,33 @@ export class ExerciseResponsesService {
       const countResult = await this.dataSource.query(countSql, countParams);
       const total = parseInt(countResult[0]?.total || '0', 10);
 
+      // P2-03: Stats query - calculated on server side
+      const statsSql = `
+        SELECT
+          COUNT(DISTINCT attempt.id)::int AS total_attempts,
+          COUNT(DISTINCT attempt.id) FILTER (WHERE attempt.is_correct = true)::int AS correct_count,
+          COUNT(DISTINCT attempt.id) FILTER (WHERE attempt.is_correct = false)::int AS incorrect_count,
+          COALESCE(AVG(attempt.score), 0)::int AS average_score
+        FROM progress_tracking.exercise_attempts attempt
+        LEFT JOIN auth_management.profiles profile ON profile.user_id = attempt.user_id
+        LEFT JOIN social_features.classroom_members cm ON cm.student_id = profile.id
+        LEFT JOIN social_features.classrooms c ON c.id = cm.classroom_id
+        LEFT JOIN educational_content.exercises exercise ON exercise.id = attempt.exercise_id
+        WHERE ${whereClause}
+      `;
+
+      const statsResult = await this.dataSource.query(statsSql, countParams);
+      const statsRow = statsResult[0] || {};
+      const totalAttempts = parseInt(statsRow.total_attempts || '0', 10);
+      const correctCount = parseInt(statsRow.correct_count || '0', 10);
+      const stats = {
+        total_attempts: totalAttempts,
+        correct_count: correctCount,
+        incorrect_count: parseInt(statsRow.incorrect_count || '0', 10),
+        average_score: parseInt(statsRow.average_score || '0', 10),
+        success_rate: totalAttempts > 0 ? Math.round((correctCount / totalAttempts) * 100) : 0,
+      };
+
       // Transform raw results to DTOs
       const data: AttemptResponseDto[] = rawResults.map((row: any) => ({
         id: row.attempt_id,
@@ -241,6 +268,7 @@ export class ExerciseResponsesService {
         page,
         limit,
         total_pages: Math.ceil(total / limit),
+        stats, // P2-03: Include server-calculated stats
       };
     } catch (error: any) {
       console.error('ExerciseResponsesService.getAttempts ERROR:', error);

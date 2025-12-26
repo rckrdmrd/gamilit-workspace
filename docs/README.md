@@ -5,7 +5,7 @@
 **Presupuesto Total:** $601,600 MXN (incluye $15,000 USD @ $20/USD)
 **Story Points:** 714 SP
 **Estado:** ✅ 75% Completado (12/16 épicas completas MVP)
-**Última actualización:** 2025-12-18
+**Ultima actualizacion:** 2025-12-23
 
 ---
 
@@ -111,7 +111,7 @@ docs/
 
 **Transformación realizada:**
 - **Antes:** 1 schema, 44 tablas, estructura plana
-- **Después:** 16 schemas, 123 tablas, arquitectura modular
+- **Despues:** 15 schemas, 132 tablas, arquitectura modular
 
 **Logros destacados:**
 - ✅ **Zero downtime migration** (blue-green deployment)
@@ -262,10 +262,10 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 | **Épicas Parciales (Backlog)** | - | 5 (30-50%) | 5 |
 | **Módulos Educativos** | 3 | 2 | 5 |
 | **Story Points MVP** | 614 SP | 100 SP | 714 SP |
-| **Schemas BD** | 16 | - | 16 |
-| **Tablas BD** | 123 | - | 123 |
-| **Endpoints API MVP** | 417 | 20+ | 437+ |
-| **Componentes Frontend** | 200+ | 30+ | 230+ |
+| **Schemas BD** | 15 | - | 15 |
+| **Tablas BD** | 132 | - | 132 |
+| **Endpoints API MVP** | 300+ | 50+ | 350+ |
+| **Componentes Frontend** | 497 | 50+ | 547+ |
 
 ### Alcance MVP Claro
 
@@ -455,28 +455,32 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 
 **Backend:**
 - NestJS (Node.js + TypeScript)
-- 13 módulos
-- 417 endpoints REST
+- 16 modulos
+- 300+ endpoints REST
+- 76 controllers
+- 103 services
 - JWT Authentication
 - OAuth (5 proveedores)
 
 **Frontend:**
 - React 18 + TypeScript
 - Zustand (state management)
-- 200+ componentes
+- 497 componentes
+- 102 hooks
+- 64 paginas
 - Vite (build tool)
 
 **Base de Datos:**
 - PostgreSQL
-- 16 schemas modulares
-- 123 tablas
-- 127 índices
-- 185 políticas RLS
-- 213 funciones
-- 90 triggers
-- 208 foreign keys
+- 15 schemas modulares
+- 132 tablas
+- 127 indices
+- 31+ politicas RLS
+- 150+ funciones
+- 50 triggers
+- 17 views
 
-**Fuente de métricas BD:** Ver inventarios en `orchestration/inventarios/` (validación física 2025-11-11)
+**Fuente de metricas BD:** Ver inventarios en `orchestration/inventarios/` (auditoria 2025-12-23)
 
 **Testing:**
 - Jest (unit tests)
@@ -518,7 +522,7 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 
 ---
 
-**Última actualización:** 2025-12-18
+**Ultima actualizacion:** 2025-12-23
 **Versión del índice:** 1.1
 **Generado por:** Equipo GAMILIT + Claude Code
 **Actualización:** Módulos M4-M5 implementados, Admin Portal P2 completado

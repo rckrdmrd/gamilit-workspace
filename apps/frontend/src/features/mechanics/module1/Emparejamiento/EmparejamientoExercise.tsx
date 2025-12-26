@@ -4,6 +4,10 @@ import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { MatchingCard } from './MatchingCard';
 import { EmparejamientoExerciseProps } from './emparejamientoTypes';
 import { calculateScore, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+// P0-02: Added 2025-12-18 - Backend submission for progress persistence
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useInvalidateDashboard } from '@/shared/hooks';
 
 export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
   exercise,
@@ -17,6 +21,10 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [startTime] = useState(new Date());
   const [hintsUsed] = useState(0);
+
+  // P0-02: Added 2025-12-18 - Hooks for backend submission
+  const { user } = useAuth();
+  const invalidateDashboard = useInvalidateDashboard();
 
   // FE-055: Notify parent of progress updates WITH user answers
   React.useEffect(() => {
@@ -91,15 +99,70 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
     const isComplete = matched === total;
     const score = calculateScore(matched / 2, total / 2);
 
-    setFeedback({
-      type: isComplete ? 'success' : 'error',
-      title: isComplete ? '¡Completado!' : 'Faltan parejas',
-      message: isComplete
-        ? '¡Emparejaste todas las tarjetas correctamente!'
-        : `Emparejaste ${matched / 2} de ${total / 2} parejas.`,
-      score: isComplete ? score : undefined,
-      showConfetti: isComplete,
-    });
+    // P0-02: Submit to backend when complete
+    if (isComplete && user?.id) {
+      try {
+        // Prepare matched pairs for submission
+        const matchedCards = cards.filter((c) => c.isMatched);
+        const matchGroups: Record<string, typeof cards> = {};
+        matchedCards.forEach((card) => {
+          if (!matchGroups[card.matchId]) {
+            matchGroups[card.matchId] = [];
+          }
+          matchGroups[card.matchId].push(card);
+        });
+
+        const matches = Object.values(matchGroups).map((group) => {
+          const left = group.find((c) => c.type === 'question');
+          const right = group.find((c) => c.type === 'answer');
+          return { leftId: left?.id, rightId: right?.id, matchId: left?.matchId };
+        });
+
+        const response = await submitExercise(exercise.id, user.id, { matches });
+
+        // Invalidate dashboard to reflect new progress
+        invalidateDashboard();
+
+        console.log('✅ [Emparejamiento] Submitted to backend:', response);
+
+        setFeedback({
+          type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+          title: response.isPerfect
+            ? '¡Perfecto!'
+            : response.score >= 70
+              ? '¡Buen trabajo!'
+              : 'Sigue practicando',
+          message: response.isPerfect
+            ? '¡Emparejaste todas las tarjetas correctamente!'
+            : `Obtuviste ${response.score}% de aciertos.`,
+          score: response.score,
+          xpEarned: response.xp_earned,
+          coinsEarned: response.coins_earned,
+          showConfetti: response.isPerfect,
+        });
+      } catch (error) {
+        console.error('❌ [Emparejamiento] Submit error:', error);
+        // Fallback to local feedback on error
+        setFeedback({
+          type: 'success',
+          title: '¡Completado!',
+          message: '¡Emparejaste todas las tarjetas correctamente!',
+          score,
+          showConfetti: true,
+        });
+      }
+    } else {
+      // Not complete or no user - show local feedback
+      setFeedback({
+        type: isComplete ? 'success' : 'error',
+        title: isComplete ? '¡Completado!' : 'Faltan parejas',
+        message: isComplete
+          ? '¡Emparejaste todas las tarjetas correctamente!'
+          : `Emparejaste ${matched / 2} de ${total / 2} parejas.`,
+        score: isComplete ? score : undefined,
+        showConfetti: isComplete,
+      });
+    }
     setShowFeedback(true);
   };
 

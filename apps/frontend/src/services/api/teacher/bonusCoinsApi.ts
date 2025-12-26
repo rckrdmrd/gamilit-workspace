@@ -10,7 +10,7 @@
  * @module services/api/teacher/bonusCoinsApi
  */
 
-import axiosInstance from '../axios.instance';
+import { apiClient } from '../apiClient';
 
 // ============================================================================
 // TYPES
@@ -108,7 +108,7 @@ class BonusCoinsAPI {
         throw new Error('La razón debe tener al menos 10 caracteres');
       }
 
-      const response = await axiosInstance.post<GrantBonusResponse>(
+      const response = await apiClient.post<GrantBonusResponse>(
         `${this.baseUrl}/${studentId}/bonus`,
         data,
       );

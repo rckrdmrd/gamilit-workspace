@@ -781,10 +781,12 @@ Analizar un evento desde múltiples puntos de vista diferentes.
 
 ## MÓDULO 4: LECTURA DIGITAL Y MULTIMODAL
 
-> **⚠️ BACKLOG - NO IMPLEMENTADO**
-> Este módulo está documentado pero NO implementado en la versión actual.
-> Requiere tecnologías avanzadas (verificación de fuentes, análisis multimedia).
-> Ver: [docs/04-fase-backlog/](../../04-fase-backlog/) para roadmap de implementación.
+> **✅ IMPLEMENTADO (v2.1 - Diciembre 2025)**
+> Este módulo está completamente implementado con:
+> - Verificador de Fake News funcional
+> - Infografía Interactiva con tracking de secciones
+> - Quiz TikTok con auto-calificación y anti-farming
+> - Navegación Hipertextual y Análisis de Memes
 
 **Objetivo:** Comprender y analizar textos en formatos digitales.
 **Fuente base:** https://digitalcommons.fiu.edu/led/vol1ss9/3
@@ -967,10 +969,12 @@ Evaluar la precisión y valor educativo de memes sobre Marie Curie o radiactivid
 
 ## MÓDULO 5: PRODUCCIÓN Y EXPRESIÓN LECTORA
 
-> **⚠️ BACKLOG - NO IMPLEMENTADO**
-> Este módulo está documentado pero NO implementado en la versión actual.
-> Requiere evaluación creativa manual o con IA (diario, cómic, video).
-> Ver: [docs/04-fase-backlog/](../../04-fase-backlog/) para roadmap de implementación.
+> **✅ IMPLEMENTADO (v2.1 - Diciembre 2025)**
+> Este módulo está completamente implementado con:
+> - Diario Interactivo de Marie (1-5 entradas)
+> - Cómic Digital (4-6 paneles)
+> - Video-Carta (con opción solo script)
+> - Rúbricas de evaluación para docentes
 
 **Objetivo:** Crear contenido original basado en lo aprendido.
 **Nota:** El usuario debe elegir y completar **SOLO UNO** de los 3 ejercicios disponibles.
@@ -1205,11 +1209,11 @@ Puntos clave:
 
 ## Certificación Final – Rango K´UK´ULKAN
 
-**Al alcanzar 2,250 XP y obtener el rango K´UK´ULKAN:**
+**Al alcanzar 1,900 XP y obtener el rango K´UK´ULKAN:**
 
 - RANGO: **K´UK´ULKAN**
   - Máximo nivel en la jerarquía militar maya.
-  - Alcanzable completando ~4.5 módulos con excelencia (2,250 XP)
+  - Alcanzable completando módulos 1-3 con excelencia (~1,950 XP disponibles)
 
 **Recompensas:**
 
@@ -1231,8 +1235,8 @@ Puntos clave:
 | AJAW           | 0 - 499      | -                   | 1.00x            | 🔸 N/I           | Iniciado  |
 | NACOM          | 500 - 999    | +100 ML             | 1.10x (+10%)     | 🔸 N/I           | Explorador|
 | AH K´IN        | 1,000 - 1,499| +250 ML             | 1.15x (+15%)     | 🔸 N/I           | Analítico |
-| HALACH UINIC   | 1,500 - 2,249| +500 ML             | 1.20x (+20%)     | 🔸 N/I           | Crítico   |
-| K´UK´ULKAN     | 2,250+       | +1,000 ML           | 1.25x (+25%)     | 🔸 N/I           | Maestro   |
+| HALACH UINIC   | 1,500 - 1,899| +500 ML             | 1.20x (+20%)     | 🔸 N/I           | Crítico   |
+| K´UK´ULKAN     | 1,900+       | +1,000 ML           | 1.25x (+25%)     | 🔸 N/I           | Maestro   |
 
 **Notas:**
 - Los rangos se obtienen automáticamente al alcanzar el umbral de XP especificado.

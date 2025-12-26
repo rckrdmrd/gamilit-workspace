@@ -82,7 +82,7 @@ export const FeatureFlagsPanel: React.FC = () => {
   };
 
   const handleDeleteFlag = async (key: string) => {
-    if (confirm('Are you sure you want to delete this feature flag?')) {
+    if (window.confirm('¿Estás seguro de eliminar este feature flag? Esta acción no se puede deshacer.')) {
       await deleteFlag(key);
     }
   };

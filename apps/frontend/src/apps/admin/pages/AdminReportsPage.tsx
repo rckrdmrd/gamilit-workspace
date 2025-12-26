@@ -83,9 +83,10 @@ export default function AdminReportsPage() {
         message: 'Reporte generado exitosamente. Se está procesando...',
       });
     } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al generar reporte';
       setToast({
         type: 'error',
-        message: err.message || 'Error al generar reporte',
+        message: errorMessage,
       });
     } finally {
       setIsGenerating(false);
@@ -104,9 +105,10 @@ export default function AdminReportsPage() {
         message: 'Reporte descargado exitosamente',
       });
     } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al descargar reporte';
       setToast({
         type: 'error',
-        message: err.message || 'Error al descargar reporte',
+        message: errorMessage,
       });
     }
   };
@@ -123,9 +125,10 @@ export default function AdminReportsPage() {
         message: 'Reporte eliminado exitosamente',
       });
     } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al eliminar reporte';
       setToast({
         type: 'error',
-        message: err.message || 'Error al eliminar reporte',
+        message: errorMessage,
       });
     }
   };

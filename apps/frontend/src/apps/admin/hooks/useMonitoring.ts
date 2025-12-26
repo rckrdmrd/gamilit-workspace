@@ -121,7 +121,8 @@ export function useMonitoring(): UseMonitoringReturn {
         fetchErrorTrends(24),
       ]);
     } catch (err: unknown) {
-      const errorMessage = err?.message || 'Error al cargar datos de monitoreo';
+      // MED-007 FIX: Validación de tipo para error
+      const errorMessage = err instanceof Error ? err.message : 'Error al cargar datos de monitoreo';
       setError(errorMessage);
       console.error('[useMonitoring] Error refreshing all:', err);
     } finally {

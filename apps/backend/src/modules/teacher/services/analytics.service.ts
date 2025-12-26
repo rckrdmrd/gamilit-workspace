@@ -579,6 +579,158 @@ export class AnalyticsService {
   }
 
   // =========================================================================
+  // P1-08: CACHE INVALIDATION METHODS (2025-12-18)
+  // =========================================================================
+
+  /**
+   * Invalidate economy analytics cache for a teacher
+   *
+   * Call this when:
+   * - Student earns/spends ML Coins
+   * - New student joins classroom
+   * - Student removed from classroom
+   *
+   * @param teacherId - Teacher's user ID
+   * @param classroomId - Optional specific classroom ID
+   */
+  async invalidateEconomyAnalyticsCache(teacherId: string, classroomId?: string): Promise<void> {
+    const cacheKeys = [
+      `economy-analytics:${teacherId}:all`,
+      `students-economy:${teacherId}:all`,
+    ];
+
+    if (classroomId) {
+      cacheKeys.push(`economy-analytics:${teacherId}:${classroomId}`);
+      cacheKeys.push(`students-economy:${teacherId}:${classroomId}`);
+    }
+
+    try {
+      await Promise.all(cacheKeys.map(key => this.cacheManager.del(key)));
+      this.logger.debug(`Invalidated economy cache for teacher ${teacherId}${classroomId ? `, classroom ${classroomId}` : ''}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.warn(`Error invalidating economy cache: ${errorMessage}`);
+    }
+  }
+
+  /**
+   * Invalidate achievements stats cache for a teacher
+   *
+   * Call this when:
+   * - Student unlocks achievement
+   * - Achievement configuration changes
+   * - Student joins/leaves classroom
+   *
+   * @param teacherId - Teacher's user ID
+   * @param classroomId - Optional specific classroom ID
+   */
+  async invalidateAchievementsStatsCache(teacherId: string, classroomId?: string): Promise<void> {
+    const cacheKeys = [
+      `achievements-stats:${teacherId}:all`,
+    ];
+
+    if (classroomId) {
+      cacheKeys.push(`achievements-stats:${teacherId}:${classroomId}`);
+    }
+
+    try {
+      await Promise.all(cacheKeys.map(key => this.cacheManager.del(key)));
+      this.logger.debug(`Invalidated achievements cache for teacher ${teacherId}${classroomId ? `, classroom ${classroomId}` : ''}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.warn(`Error invalidating achievements cache: ${errorMessage}`);
+    }
+  }
+
+  /**
+   * Invalidate all analytics caches for a teacher
+   *
+   * Call this on major data changes that affect multiple analytics:
+   * - New submission completed
+   * - Score/grade updated
+   * - Bulk student changes
+   *
+   * @param teacherId - Teacher's user ID
+   * @param studentId - Optional student whose insights should be invalidated
+   * @param classroomId - Optional specific classroom ID
+   */
+  async invalidateAllAnalyticsCache(
+    teacherId: string,
+    studentId?: string,
+    classroomId?: string,
+  ): Promise<void> {
+    try {
+      const invalidations = [
+        this.invalidateEconomyAnalyticsCache(teacherId, classroomId),
+        this.invalidateAchievementsStatsCache(teacherId, classroomId),
+      ];
+
+      if (studentId) {
+        invalidations.push(this.invalidateStudentInsightsCache(studentId));
+      }
+
+      await Promise.all(invalidations);
+      this.logger.debug(
+        `Invalidated all analytics caches for teacher ${teacherId}` +
+        (studentId ? `, student ${studentId}` : '') +
+        (classroomId ? `, classroom ${classroomId}` : ''),
+      );
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.warn(`Error invalidating all analytics cache: ${errorMessage}`);
+    }
+  }
+
+  /**
+   * Hook for ExerciseSubmissionService to call when a submission is created/updated
+   *
+   * @param studentId - Student who made the submission
+   * @param teacherIds - Array of teacher IDs who teach this student
+   */
+  async onSubmissionChange(studentId: string, teacherIds: string[]): Promise<void> {
+    try {
+      // Invalidate student's insights
+      await this.invalidateStudentInsightsCache(studentId);
+
+      // Invalidate each teacher's analytics
+      await Promise.all(
+        teacherIds.map(teacherId =>
+          this.invalidateAllAnalyticsCache(teacherId, studentId),
+        ),
+      );
+
+      this.logger.debug(`Invalidated caches after submission change for student ${studentId}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.warn(`Error in onSubmissionChange cache invalidation: ${errorMessage}`);
+    }
+  }
+
+  /**
+   * Hook for ClassroomMemberService to call when membership changes
+   *
+   * @param classroomId - Classroom where change occurred
+   * @param teacherId - Teacher who owns the classroom
+   * @param studentId - Student whose membership changed
+   */
+  async onMembershipChange(classroomId: string, teacherId: string, studentId: string): Promise<void> {
+    try {
+      await Promise.all([
+        this.invalidateStudentInsightsCache(studentId),
+        this.invalidateEconomyAnalyticsCache(teacherId, classroomId),
+        this.invalidateAchievementsStatsCache(teacherId, classroomId),
+      ]);
+
+      this.logger.debug(
+        `Invalidated caches after membership change in classroom ${classroomId} for student ${studentId}`,
+      );
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.warn(`Error in onMembershipChange cache invalidation: ${errorMessage}`);
+    }
+  }
+
+  // =========================================================================
   // ECONOMY ANALYTICS (GAP-ST-005)
   // =========================================================================
 

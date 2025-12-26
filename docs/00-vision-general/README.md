@@ -10,7 +10,7 @@
 
 | Componente | Estado MVP |
 |-----------|------------|
-| **Módulos Educativos** | M1-M3 implementados ✅ (M4-M5 en backlog) |
+| **Módulos Educativos** | M1-M5 implementados ✅ (completo) |
 | **Épicas MVP** | EXT-001 a EXT-006 completas ✅ |
 | **Épicas Backlog** | EXT-007 a EXT-011 parciales ⏳ |
 | **Portales** | Student, Teacher, Admin funcionales ✅ |

@@ -164,9 +164,17 @@ VITE_ENABLE_DEBUG=false
 
 ## SSL CON CERTBOT (NUEVO SERVIDOR)
 
+> **Guia completa:** Ver [GUIA-SSL-CERTBOT-DEPLOYMENT.md](./GUIA-SSL-CERTBOT-DEPLOYMENT.md) para documentacion detallada, troubleshooting y renovacion.
+
 ```bash
-# Automatizado
+# Automatizado con Let's Encrypt
 sudo ./scripts/setup-ssl-certbot.sh gamilit.com www.gamilit.com
+
+# Auto-firmado (sin dominio)
+sudo ./scripts/setup-ssl-certbot.sh --self-signed
+
+# Ayuda
+./scripts/setup-ssl-certbot.sh --help
 
 # Manual
 sudo apt install -y nginx certbot python3-certbot-nginx
@@ -178,11 +186,16 @@ sudo certbot --nginx -d gamilit.com -d www.gamilit.com
 ## VALIDACION
 
 ```bash
-# Basica
+# Basica (sin SSL)
 ./scripts/validate-deployment.sh
 
 # Completa con SSL
 ./scripts/validate-deployment.sh --ssl --verbose
+
+# Opciones disponibles
+./scripts/validate-deployment.sh --help
+#   --ssl       Incluir validaciones de SSL/HTTPS
+#   --verbose   Mostrar informacion adicional
 
 # Manual
 curl http://localhost:3006/api/health
@@ -190,6 +203,8 @@ curl http://localhost:3005
 curl https://gamilit.com/api/health
 pm2 list
 ```
+
+> **Nota:** El script `validate-deployment.sh` verifica archivos .env, builds, PM2, endpoints, SSL (opcional) y base de datos.
 
 ---
 

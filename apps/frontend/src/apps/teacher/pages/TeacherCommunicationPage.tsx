@@ -9,9 +9,8 @@
  * - Filtros y búsqueda
  * - Paginación
  *
- * ESTADO: Descartada para Fase 2 (no depende de actividad del estudiante)
- * La funcionalidad está implementada pero deshabilitada temporalmente.
- * Cambiar SHOW_UNDER_CONSTRUCTION a false para habilitar.
+ * ESTADO: HABILITADO (2025-12-18)
+ * Funcionalidad completa disponible.
  *
  * @module apps/teacher/pages/TeacherCommunicationPage
  */
@@ -34,9 +33,9 @@ import { Message } from '../../../services/api/teacher/teacherMessagesApi';
 import { classroomsApi } from '../../../services/api/teacher/classroomsApi';
 
 // ============================================================================
-// FEATURE FLAG - Cambiar a false para habilitar la funcionalidad completa
+// FEATURE FLAG - Habilitado 2025-12-18
 // ============================================================================
-const SHOW_UNDER_CONSTRUCTION = true;
+const SHOW_UNDER_CONSTRUCTION = false;
 
 // ============================================================================
 // TYPES

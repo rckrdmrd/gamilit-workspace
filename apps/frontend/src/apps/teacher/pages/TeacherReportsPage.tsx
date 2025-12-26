@@ -5,6 +5,7 @@ import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { ReportGenerator } from '../components/reports/ReportGenerator';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { ToastContainer, useToast } from '@shared/components/base/Toast';
 import {
   FileText,
   Download,
@@ -97,6 +98,7 @@ const transformReportStats = (data: ApiReportStats): ReportStats => ({
  */
 export default function TeacherReportsPage() {
   const { user, logout } = useAuth();
+  const { toasts, showToast } = useToast();
   const [selectedClassroom, setSelectedClassroom] = useState<string>('');
   const [classrooms, setClassrooms] = useState<Array<{ id: string; name: string }>>([]);
   const [students, setStudents] = useState<Array<{ id: string; full_name: string }>>([]);
@@ -105,6 +107,7 @@ export default function TeacherReportsPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [filterType, setFilterType] = useState<ReportType | 'all'>('all');
   const [loading, setLoading] = useState(true);
+  const [isUsingMockData, setIsUsingMockData] = useState(false);
 
   // Use useUserGamification hook for real-time gamification data
   const { gamificationData } = useUserGamification(user?.id);
@@ -175,7 +178,8 @@ export default function TeacherReportsPage() {
       }
     } catch (error) {
       console.error('Error loading students:', error);
-      // Fallback con datos mock
+      // Fallback con datos mock - indicar al usuario
+      setIsUsingMockData(true);
       setStudents([
         { id: '1', full_name: 'Ana García Pérez' },
         { id: '2', full_name: 'Carlos Rodríguez López' },
@@ -196,7 +200,8 @@ export default function TeacherReportsPage() {
       setRecentReports(transformedReports);
     } catch (error) {
       console.error('Error loading recent reports:', error);
-      // Fallback con datos mock
+      // Fallback con datos mock - indicar al usuario
+      setIsUsingMockData(true);
       setRecentReports([
         {
           id: '1',
@@ -240,7 +245,8 @@ export default function TeacherReportsPage() {
       setReportStats(transformedStats);
     } catch (error) {
       console.error('Error loading report stats:', error);
-      // Fallback con datos mock
+      // Fallback con datos mock - indicar al usuario
+      setIsUsingMockData(true);
       setReportStats({
         totalReportsGenerated: 47,
         lastGeneratedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
@@ -266,7 +272,7 @@ export default function TeacherReportsPage() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading report:', error);
-      alert('Error al descargar el reporte. Por favor, intenta nuevamente.');
+      showToast({ type: 'error', message: 'Error al descargar el reporte. Por favor, intenta nuevamente.' });
     }
   };
 
@@ -326,30 +332,50 @@ export default function TeacherReportsPage() {
 
   if (loading) {
     return (
-      <TeacherLayout
-        user={user ?? undefined}
-        gamificationData={displayGamificationData}
-        organizationName="GLIT Platform"
-        onLogout={handleLogout}
-      >
-        <div className="flex min-h-screen items-center justify-center">
+      <>
+        <ToastContainer toasts={toasts} position="top-right" />
+        <TeacherLayout
+          user={user ?? undefined}
+          gamificationData={displayGamificationData}
+          organizationName={user?.organization?.name || 'Mi Institución'}
+          onLogout={handleLogout}
+        >
+          <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
             <RefreshCw className="mx-auto mb-4 h-12 w-12 animate-spin text-detective-orange" />
             <p className="text-detective-text-secondary">Cargando datos...</p>
           </div>
-        </div>
-      </TeacherLayout>
+          </div>
+        </TeacherLayout>
+      </>
     );
   }
 
   return (
-    <TeacherLayout
-      user={user ?? undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GLIT Platform"
-      onLogout={handleLogout}
-    >
-      <div className="space-y-6 p-6">
+    <>
+      <ToastContainer toasts={toasts} position="top-right" />
+      <TeacherLayout
+        user={user ?? undefined}
+        gamificationData={displayGamificationData}
+        organizationName={user?.organization?.name || 'Mi Institución'}
+        onLogout={handleLogout}
+      >
+        <div className="space-y-6 p-6">
+        {/* Mock Data Warning Banner */}
+        {isUsingMockData && (
+          <div className="rounded-lg border-l-4 border-yellow-500 bg-yellow-50 p-4">
+            <div className="flex items-center gap-3">
+              <Info className="h-5 w-5 text-yellow-600" />
+              <div>
+                <p className="font-semibold text-yellow-800">Datos de Demostración</p>
+                <p className="text-sm text-yellow-700">
+                  No se pudo conectar al servidor. Mostrando datos de ejemplo que no reflejan información real.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
@@ -688,8 +714,9 @@ export default function TeacherReportsPage() {
               </div>
             </div>
           </DetectiveCard>
+          </div>
         </div>
-      </div>
-    </TeacherLayout>
+      </TeacherLayout>
+    </>
   );
 }

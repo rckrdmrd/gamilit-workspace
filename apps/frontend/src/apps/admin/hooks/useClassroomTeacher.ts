@@ -87,10 +87,11 @@ export function useClassroomTeacher() {
         queryKey: QUERY_KEYS.teacherClassrooms(variables.data.teacherId),
       });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.allAssignments() });
-      toast.success('Teacher asignado correctamente');
+      // LOW-004 FIX: Mensajes en español consistente
+      toast.success('Profesor asignado correctamente');
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al asignar teacher');
+      toast.error(error?.response?.data?.message || 'Error al asignar profesor');
     },
   });
 
@@ -105,10 +106,11 @@ export function useClassroomTeacher() {
         queryKey: QUERY_KEYS.teacherClassrooms(variables.teacherId),
       });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.allAssignments() });
-      toast.success('Teacher removido correctamente');
+      // LOW-004 FIX: Mensajes en español consistente
+      toast.success('Profesor removido correctamente');
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al remover teacher');
+      toast.error(error?.response?.data?.message || 'Error al remover profesor');
     },
   });
 
@@ -123,10 +125,11 @@ export function useClassroomTeacher() {
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.classroomTeachers(classroomId) });
       });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.allAssignments() });
-      toast.success('Classrooms asignados correctamente');
+      // LOW-004 FIX: Mensajes en español consistente
+      toast.success('Aulas asignadas correctamente');
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al asignar classrooms');
+      toast.error(error?.response?.data?.message || 'Error al asignar aulas');
     },
   });
 

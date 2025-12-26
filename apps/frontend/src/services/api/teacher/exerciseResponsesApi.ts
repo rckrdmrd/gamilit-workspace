@@ -12,6 +12,7 @@
  */
 
 import { apiClient } from '../apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -108,9 +109,10 @@ export const exerciseResponsesApi = {
    * @returns Promise with paginated attempts list
    */
   getAttempts: async (query: GetAttemptsQuery = {}): Promise<AttemptsListResponse> => {
-    const response = await apiClient.get<AttemptsListResponse>('/teacher/attempts', {
-      params: query,
-    });
+    const response = await apiClient.get<AttemptsListResponse>(
+      API_ENDPOINTS.teacher.attempts.list,
+      { params: query }
+    );
     return response.data;
   },
 
@@ -122,7 +124,9 @@ export const exerciseResponsesApi = {
    * @returns Promise with detailed attempt information
    */
   getAttemptDetail: async (id: string): Promise<AttemptDetailResponse> => {
-    const response = await apiClient.get<AttemptDetailResponse>(`/teacher/attempts/${id}`);
+    const response = await apiClient.get<AttemptDetailResponse>(
+      API_ENDPOINTS.teacher.attempts.get(id)
+    );
     return response.data;
   },
 
@@ -134,7 +138,7 @@ export const exerciseResponsesApi = {
    */
   getAttemptsByStudent: async (studentId: string): Promise<AttemptResponse[]> => {
     const response = await apiClient.get<AttemptResponse[]>(
-      `/teacher/attempts/student/${studentId}`,
+      API_ENDPOINTS.teacher.attempts.byStudent(studentId)
     );
     return response.data;
   },
@@ -152,8 +156,8 @@ export const exerciseResponsesApi = {
     query: GetAttemptsQuery = {},
   ): Promise<AttemptsListResponse> => {
     const response = await apiClient.get<AttemptsListResponse>(
-      `/teacher/exercises/${exerciseId}/responses`,
-      { params: query },
+      API_ENDPOINTS.teacher.attempts.exerciseResponses(exerciseId),
+      { params: query }
     );
     return response.data;
   },

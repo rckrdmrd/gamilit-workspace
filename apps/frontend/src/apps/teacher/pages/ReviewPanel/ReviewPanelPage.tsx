@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ClipboardList, Search, Filter, ArrowLeft } from 'lucide-react';
 import { manualReviewApi, ManualReview } from '@/shared/api/manualReviewApi';
 import { ReviewList } from './ReviewList';
 import { ReviewDetail } from './ReviewDetail';
+import {
+  MANUAL_REVIEW_MODULES,
+  MANUAL_REVIEW_EXERCISES,
+  getExercisesByModule,
+} from '../../constants/manualReviewExercises';
 
 /**
  * Review Panel Page
@@ -142,13 +147,15 @@ export const ReviewPanelPage: React.FC = () => {
                   <Filter className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                   <select
                     value={filters.moduleId}
-                    onChange={(e) => setFilters({ ...filters, moduleId: e.target.value })}
+                    onChange={(e) => setFilters({ ...filters, moduleId: e.target.value, exerciseId: '' })}
                     className="w-full rounded-detective border border-gray-300 py-2 pl-10 pr-4 focus:border-detective-orange focus:outline-none focus:ring-2 focus:ring-detective-orange/20"
                   >
                     <option value="">Todos los módulos</option>
-                    <option value="module-3">Módulo 3 - Comprensión Crítica</option>
-                    <option value="module-4">Módulo 4 - Lectura Digital</option>
-                    <option value="module-5">Módulo 5 - Producción Lectora</option>
+                    {MANUAL_REVIEW_MODULES.map((module) => (
+                      <option key={module.id} value={module.id}>
+                        Módulo {module.number} - {module.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -161,16 +168,11 @@ export const ReviewPanelPage: React.FC = () => {
                     className="w-full rounded-detective border border-gray-300 py-2 pl-10 pr-4 focus:border-detective-orange focus:outline-none focus:ring-2 focus:ring-detective-orange/20"
                   >
                     <option value="">Todos los ejercicios</option>
-                    {/* Módulo 3 */}
-                    <option value="podcast-argumentativo">Podcast Argumentativo (M3)</option>
-                    {/* Módulo 4 */}
-                    <option value="verificador-fake-news">Verificador de Fake News (M4)</option>
-                    <option value="quiz-tiktok">Quiz TikTok (M4)</option>
-                    <option value="analisis-memes">Análisis de Memes (M4)</option>
-                    {/* Módulo 5 */}
-                    <option value="diario-multimedia">Diario Multimedia (M5)</option>
-                    <option value="comic-digital">Comic Digital (M5)</option>
-                    <option value="video-carta">Video Carta (M5)</option>
+                    {getExercisesByModule(filters.moduleId).map((exercise) => (
+                      <option key={exercise.id} value={exercise.id}>
+                        {exercise.title} (M{exercise.moduleNumber})
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

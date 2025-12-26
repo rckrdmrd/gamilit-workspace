@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ConflictException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
 import * as crypto from 'crypto';
@@ -6,6 +6,7 @@ import { User, EmailVerificationToken } from '../entities';
 import {
   VerifyEmailDto,
   } from '../dto';
+import { MailService } from '@/modules/mail/mail.service';
 
 /**
  * EmailVerificationService
@@ -33,6 +34,8 @@ import {
  */
 @Injectable()
 export class EmailVerificationService {
+  private readonly logger = new Logger(EmailVerificationService.name);
+
   private readonly TOKEN_LENGTH_BYTES = 32;
 
   private readonly TOKEN_EXPIRATION_HOURS = 24;
@@ -44,8 +47,7 @@ export class EmailVerificationService {
     @InjectRepository(EmailVerificationToken, 'auth')
     private readonly tokenRepository: Repository<EmailVerificationToken>,
 
-    // TODO: Inject MailerService
-    // private readonly mailerService: MailerService,
+    private readonly mailService: MailService,
   ) {}
 
   /**
@@ -89,9 +91,17 @@ export class EmailVerificationService {
     await this.tokenRepository.save(verificationToken);
 
     // 8. Enviar email con token plaintext
-    // TODO: Implementar envío de email
-    // await this.mailerService.sendEmailVerification(email, plainToken);
-    console.log(`[DEV] Email verification token for ${email}: ${plainToken}`);
+    try {
+      await this.mailService.sendVerificationEmail(email, plainToken);
+      this.logger.log(`Verification email sent to: ${email}`);
+    } catch (error) {
+      // Log error pero no fallar (el token ya está creado)
+      this.logger.error(`Failed to send verification email to ${email}:`, error);
+      // En desarrollo, mostrar el token para testing
+      if (process.env.NODE_ENV !== 'production') {
+        this.logger.debug(`[DEV] Verification token for ${email}: ${plainToken}`);
+      }
+    }
 
     return { message: 'Email de verificación enviado' };
   }

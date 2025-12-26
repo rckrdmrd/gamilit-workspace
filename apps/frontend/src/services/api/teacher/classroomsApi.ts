@@ -10,7 +10,7 @@
  * @module services/api/teacher/classroomsApi
  */
 
-import axiosInstance from '../axios.instance';
+import { apiClient } from '../apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import type { Classroom, StudentMonitoring } from '@apps/teacher/types';
 import type { PaginatedResponse } from '@shared/types/api-responses';
@@ -121,7 +121,7 @@ class ClassroomsAPI {
    */
   async getClassrooms(query?: GetClassroomsQueryDto): Promise<PaginatedResponse<Classroom>> {
     try {
-      const { data } = await axiosInstance.get<PaginatedResponse<Classroom>>(
+      const { data } = await apiClient.get<PaginatedResponse<Classroom>>(
         API_ENDPOINTS.teacher.classrooms,
         {
           params: query,
@@ -156,7 +156,7 @@ class ClassroomsAPI {
    */
   async getClassroomById(classroomId: string): Promise<Classroom> {
     try {
-      const { data } = await axiosInstance.get<Classroom>(
+      const { data } = await apiClient.get<Classroom>(
         API_ENDPOINTS.teacher.classroom(classroomId),
       );
       return data;
@@ -202,7 +202,7 @@ class ClassroomsAPI {
     query?: GetClassroomStudentsQueryDto,
   ): Promise<PaginatedResponse<StudentMonitoring>> {
     try {
-      const { data } = await axiosInstance.get<PaginatedResponse<StudentMonitoring>>(
+      const { data } = await apiClient.get<PaginatedResponse<StudentMonitoring>>(
         API_ENDPOINTS.teacher.classroomStudents(classroomId),
         { params: query },
       );
@@ -243,7 +243,7 @@ class ClassroomsAPI {
     completed_exercises: number;
   }> {
     try {
-      const { data } = await axiosInstance.get(API_ENDPOINTS.teacher.classroomStats(classroomId));
+      const { data } = await apiClient.get(API_ENDPOINTS.teacher.classroomStats(classroomId));
       return data;
     } catch (error) {
       console.error('[ClassroomsAPI] Error fetching classroom stats:', error);
@@ -281,7 +281,7 @@ class ClassroomsAPI {
    */
   async getClassroomProgress(classroomId: string): Promise<ClassroomProgressResponse> {
     try {
-      const { data } = await axiosInstance.get<ClassroomProgressResponse>(
+      const { data } = await apiClient.get<ClassroomProgressResponse>(
         `${API_ENDPOINTS.teacher.classroom(classroomId)}/progress`,
       );
       return data;
@@ -320,7 +320,7 @@ class ClassroomsAPI {
     grade_level: string;
   }): Promise<Classroom> {
     try {
-      const { data: responseData } = await axiosInstance.post<Classroom>(
+      const { data: responseData } = await apiClient.post<Classroom>(
         API_ENDPOINTS.teacher.createClassroom,
         data,
       );
@@ -358,7 +358,7 @@ class ClassroomsAPI {
     }>,
   ): Promise<Classroom> {
     try {
-      const { data: responseData } = await axiosInstance.put<Classroom>(
+      const { data: responseData } = await apiClient.put<Classroom>(
         API_ENDPOINTS.teacher.updateClassroom(id),
         data,
       );
@@ -386,7 +386,7 @@ class ClassroomsAPI {
    */
   async deleteClassroom(id: string): Promise<void> {
     try {
-      await axiosInstance.delete(API_ENDPOINTS.teacher.deleteClassroom(id));
+      await apiClient.delete(API_ENDPOINTS.teacher.deleteClassroom(id));
     } catch (error) {
       console.error('[ClassroomsAPI] Error deleting classroom:', error);
       throw error;

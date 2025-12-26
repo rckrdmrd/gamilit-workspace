@@ -21,6 +21,8 @@ export { BulkOperation } from './bulk-operation.entity';
 export { AdminReport } from './admin-report.entity';
 export { SystemAlert } from './system-alert.entity';
 
+export { GamificationParameter, ParameterValueType, ParameterScope } from './gamification-parameter.entity'; // ✨ NUEVO - P1-002 (Parámetros de gamificación)
+
 // Re-export AuditLog from audit module
 // Permite queries de auditoría directamente desde admin sin duplicar entity
 export { AuditLog, ActorType, Severity, Status } from '../../audit/entities/audit-log.entity';

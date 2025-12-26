@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, CheckCircle, XCircle, Music, Type, Grid3X3, ListChecks } from 'lucide-react';
+import { FileText, CheckCircle, XCircle, Music, Type, Grid3X3, ListChecks, Link2 } from 'lucide-react';
 
 interface ExerciseContentRendererProps {
   exerciseType: string;
@@ -35,10 +35,22 @@ export const ExerciseContentRenderer: React.FC<ExerciseContentRendererProps> = (
       return <PodcastRenderer data={answerData} />;
 
     case 'verdadero_falso':
-      return <VerdaderoFalsoRenderer data={answerData} correct={correctAnswer} showComparison={showComparison} />;
+      return (
+        <VerdaderoFalsoRenderer
+          data={answerData}
+          correct={correctAnswer}
+          showComparison={showComparison}
+        />
+      );
 
     case 'completar_espacios':
-      return <CompletarEspaciosRenderer data={answerData} correct={correctAnswer} showComparison={showComparison} />;
+      return (
+        <CompletarEspaciosRenderer
+          data={answerData}
+          correct={correctAnswer}
+          showComparison={showComparison}
+        />
+      );
 
     case 'crucigrama':
       return <CrucigramaRenderer data={answerData} />;
@@ -52,20 +64,45 @@ export const ExerciseContentRenderer: React.FC<ExerciseContentRendererProps> = (
     case 'timeline':
       return <TimelineRenderer data={answerData} />;
 
-    // Módulo 2
+    case 'emparejamiento':
+      return (
+        <EmparejamientoRenderer
+          data={answerData}
+          correct={correctAnswer}
+          showComparison={showComparison}
+        />
+      );
+
+    // Módulo 2 - Automáticos (opción múltiple)
     case 'lectura_inferencial':
-    case 'prediccion_narrativa':
     case 'puzzle_contexto':
     case 'detective_textual':
     case 'rueda_inferencias':
     case 'causa_efecto':
-      return <MultipleChoiceRenderer data={answerData} correct={correctAnswer} showComparison={showComparison} />;
+      return (
+        <MultipleChoiceRenderer
+          data={answerData}
+          correct={correctAnswer}
+          showComparison={showComparison}
+        />
+      );
 
-    // Módulo 3
+    // Módulo 2 - Manuales (texto abierto)
+    // P0-03: Moved prediccion_narrativa to TextResponseRenderer (2025-12-18)
+    case 'prediccion_narrativa':
+      return <TextResponseRenderer data={answerData} />;
+
+    // Módulo 3 - Manuales (texto/análisis)
     case 'analisis_fuentes':
     case 'debate_digital':
     case 'matriz_perspectivas':
     case 'tribunal_opiniones':
+      return <TextResponseRenderer data={answerData} />;
+
+    // P0-03: Added missing auxiliary mechanics (2025-12-18)
+    case 'collage_prensa':
+    case 'call_to_action':
+    case 'texto_en_movimiento':
       return <TextResponseRenderer data={answerData} />;
 
     // Módulo 4 y 5 (creativos con multimedia)
@@ -104,7 +141,7 @@ const PodcastRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) 
   return (
     <div className="space-y-4">
       <div className="rounded-lg bg-purple-50 p-4">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="mb-2 flex items-center gap-2">
           <FileText className="h-5 w-5 text-purple-600" />
           <span className="font-semibold text-purple-800">Tema seleccionado</span>
         </div>
@@ -112,16 +149,16 @@ const PodcastRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) 
       </div>
 
       <div className="rounded-lg bg-blue-50 p-4">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="mb-2 flex items-center gap-2">
           <Type className="h-5 w-5 text-blue-600" />
           <span className="font-semibold text-blue-800">Guión del Podcast</span>
         </div>
-        <p className="text-gray-700 whitespace-pre-wrap">{script}</p>
+        <p className="whitespace-pre-wrap text-gray-700">{script}</p>
       </div>
 
       {audioUrl && (
         <div className="rounded-lg bg-green-50 p-4">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="mb-2 flex items-center gap-2">
             <Music className="h-5 w-5 text-green-600" />
             <span className="font-semibold text-green-800">Audio del Podcast</span>
           </div>
@@ -178,16 +215,19 @@ const VerdaderoFalsoRenderer: React.FC<{
 
   const rawCorrectAnswers = correct?.statements || correct?.answers || correct;
   const correctAnswers: Record<string, boolean> | undefined = rawCorrectAnswers
-    ? Object.entries(rawCorrectAnswers as Record<string, unknown>).reduce((acc, [key, val]) => {
-        if (typeof val === 'string') {
-          acc[key] = val.toLowerCase() === 'true';
-        } else if (typeof val === 'boolean') {
-          acc[key] = val;
-        } else {
-          acc[key] = Boolean(val);
-        }
-        return acc;
-      }, {} as Record<string, boolean>)
+    ? Object.entries(rawCorrectAnswers as Record<string, unknown>).reduce(
+        (acc, [key, val]) => {
+          if (typeof val === 'string') {
+            acc[key] = val.toLowerCase() === 'true';
+          } else if (typeof val === 'boolean') {
+            acc[key] = val;
+          } else {
+            acc[key] = Boolean(val);
+          }
+          return acc;
+        },
+        {} as Record<string, boolean>,
+      )
     : undefined;
 
   console.log('[VerdaderoFalsoRenderer] Normalized:', { answers, correctAnswers });
@@ -202,8 +242,8 @@ const VerdaderoFalsoRenderer: React.FC<{
             className={`flex items-center gap-3 rounded-lg p-3 ${
               showComparison && isCorrect !== undefined
                 ? isCorrect
-                  ? 'bg-green-50 border border-green-200'
-                  : 'bg-red-50 border border-red-200'
+                  ? 'border border-green-200 bg-green-50'
+                  : 'border border-red-200 bg-red-50'
                 : 'bg-gray-50'
             }`}
           >
@@ -215,7 +255,7 @@ const VerdaderoFalsoRenderer: React.FC<{
             <span className="font-medium">Pregunta {key}:</span>
             <span>{value ? 'Verdadero' : 'Falso'}</span>
             {showComparison && isCorrect === false && correctAnswers && (
-              <span className="text-sm text-red-600 ml-2">
+              <span className="ml-2 text-sm text-red-600">
                 (Correcto: {correctAnswers[key] ? 'Verdadero' : 'Falso'})
               </span>
             )}
@@ -250,17 +290,15 @@ const CompletarEspaciosRenderer: React.FC<{
             className={`flex items-center gap-3 rounded-lg p-3 ${
               showComparison && isCorrect !== undefined
                 ? isCorrect
-                  ? 'bg-green-50 border border-green-200'
-                  : 'bg-red-50 border border-red-200'
+                  ? 'border border-green-200 bg-green-50'
+                  : 'border border-red-200 bg-red-50'
                 : 'bg-gray-50'
             }`}
           >
             <span className="font-medium text-gray-600">Espacio {key}:</span>
-            <span className="px-2 py-1 bg-yellow-100 rounded font-mono">{value || '(vacío)'}</span>
+            <span className="rounded bg-yellow-100 px-2 py-1 font-mono">{value || '(vacío)'}</span>
             {showComparison && isCorrect === false && correctBlanks && (
-              <span className="text-sm text-green-600 ml-2">
-                → {correctBlanks[key]}
-              </span>
+              <span className="ml-2 text-sm text-green-600">→ {correctBlanks[key]}</span>
             )}
           </div>
         );
@@ -278,13 +316,13 @@ const CrucigramaRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data 
 
   return (
     <div className="rounded-lg bg-gray-50 p-4">
-      <div className="flex items-center gap-2 mb-3">
+      <div className="mb-3 flex items-center gap-2">
         <Grid3X3 className="h-5 w-5 text-gray-600" />
         <span className="font-semibold">Palabras del Crucigrama</span>
       </div>
       <div className="grid grid-cols-2 gap-2">
         {Object.entries(words).map(([key, value]) => (
-          <div key={key} className="flex items-center gap-2 bg-white p-2 rounded">
+          <div key={key} className="flex items-center gap-2 rounded bg-white p-2">
             <span className="text-sm text-gray-500">{key}:</span>
             <span className="font-mono font-medium">{value}</span>
           </div>
@@ -303,13 +341,13 @@ const SopaLetrasRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data 
 
   return (
     <div className="rounded-lg bg-gray-50 p-4">
-      <div className="flex items-center gap-2 mb-3">
+      <div className="mb-3 flex items-center gap-2">
         <ListChecks className="h-5 w-5 text-gray-600" />
         <span className="font-semibold">Palabras Encontradas ({foundWords.length})</span>
       </div>
       <div className="flex flex-wrap gap-2">
         {foundWords.map((word, idx) => (
-          <span key={idx} className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+          <span key={idx} className="rounded-full bg-green-100 px-3 py-1 text-sm text-green-800">
             {word}
           </span>
         ))}
@@ -323,19 +361,27 @@ const SopaLetrasRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data 
  * Muestra las conexiones entre nodos
  */
 const MapaConceptualRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
-  const connections = (data.connections || data.nodes || []) as Array<{from?: string; to?: string; label?: string}>;
+  const connections = (data.connections || data.nodes || []) as Array<{
+    from?: string;
+    to?: string;
+    label?: string;
+  }>;
 
   return (
     <div className="rounded-lg bg-gray-50 p-4">
-      <span className="font-semibold mb-3 block">Conexiones del Mapa Conceptual</span>
+      <span className="mb-3 block font-semibold">Conexiones del Mapa Conceptual</span>
       <div className="space-y-2">
-        {Array.isArray(connections) ? connections.map((conn, idx) => (
-          <div key={idx} className="flex items-center gap-2 text-sm">
-            <span className="bg-blue-100 px-2 py-1 rounded">{conn.from || `Nodo ${idx}`}</span>
-            <span className="text-gray-400">→</span>
-            <span className="bg-green-100 px-2 py-1 rounded">{conn.to || conn.label || 'conecta'}</span>
-          </div>
-        )) : (
+        {Array.isArray(connections) ? (
+          connections.map((conn, idx) => (
+            <div key={idx} className="flex items-center gap-2 text-sm">
+              <span className="rounded bg-blue-100 px-2 py-1">{conn.from || `Nodo ${idx}`}</span>
+              <span className="text-gray-400">→</span>
+              <span className="rounded bg-green-100 px-2 py-1">
+                {conn.to || conn.label || 'conecta'}
+              </span>
+            </div>
+          ))
+        ) : (
           <pre className="text-sm">{JSON.stringify(data, null, 2)}</pre>
         )}
       </div>
@@ -348,22 +394,92 @@ const MapaConceptualRenderer: React.FC<{ data: Record<string, unknown> }> = ({ d
  * Muestra los eventos en orden cronológico
  */
 const TimelineRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
-  const events = (data.events || data.order || []) as Array<{id?: string; position?: number; text?: string}>;
+  const events = (data.events || data.order || []) as Array<{
+    id?: string;
+    position?: number;
+    text?: string;
+  }>;
 
   return (
     <div className="rounded-lg bg-gray-50 p-4">
-      <span className="font-semibold mb-3 block">Orden de Eventos</span>
+      <span className="mb-3 block font-semibold">Orden de Eventos</span>
       <div className="space-y-2">
-        {Array.isArray(events) ? events.map((event, idx) => (
-          <div key={idx} className="flex items-center gap-3">
-            <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
-              {event.position || idx + 1}
-            </span>
-            <span>{event.text || event.id || `Evento ${idx + 1}`}</span>
-          </div>
-        )) : (
+        {Array.isArray(events) ? (
+          events.map((event, idx) => (
+            <div key={idx} className="flex items-center gap-3">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-bold text-white">
+                {event.position || idx + 1}
+              </span>
+              <span>{event.text || event.id || `Evento ${idx + 1}`}</span>
+            </div>
+          ))
+        ) : (
           <pre className="text-sm">{JSON.stringify(data, null, 2)}</pre>
         )}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Renderiza respuestas del ejercicio Emparejamiento
+ * Muestra los pares que el estudiante conectó
+ */
+const EmparejamientoRenderer: React.FC<{
+  data: Record<string, unknown>;
+  correct?: Record<string, unknown>;
+  showComparison: boolean;
+}> = ({ data, correct, showComparison }) => {
+  // El formato de respuesta es { matches: { questionId: answerId } }
+  const matches = (data.matches || data) as Record<string, string>;
+  const correctMatches = (correct?.matches || correct) as Record<string, string> | undefined;
+
+  return (
+    <div className="rounded-lg bg-gray-50 p-4">
+      <div className="mb-3 flex items-center gap-2">
+        <Link2 className="h-5 w-5 text-gray-600" />
+        <span className="font-semibold">Emparejamientos Realizados</span>
+      </div>
+      <div className="space-y-2">
+        {Object.entries(matches).map(([questionId, answerId]) => {
+          const isCorrect = correctMatches
+            ? correctMatches[questionId] === answerId
+            : undefined;
+          return (
+            <div
+              key={questionId}
+              className={`flex items-center gap-3 rounded-lg p-3 ${
+                showComparison && isCorrect !== undefined
+                  ? isCorrect
+                    ? 'border border-green-200 bg-green-50'
+                    : 'border border-red-200 bg-red-50'
+                  : 'bg-white'
+              }`}
+            >
+              <span className="rounded bg-blue-100 px-2 py-1 text-sm font-medium text-blue-800">
+                {questionId}
+              </span>
+              <span className="text-gray-400">↔</span>
+              <span className="rounded bg-purple-100 px-2 py-1 text-sm font-medium text-purple-800">
+                {answerId}
+              </span>
+              {showComparison && isCorrect !== undefined && (
+                isCorrect ? (
+                  <CheckCircle className="ml-auto h-5 w-5 text-green-600" />
+                ) : (
+                  <>
+                    <XCircle className="ml-auto h-5 w-5 text-red-600" />
+                    {correctMatches && (
+                      <span className="text-sm text-green-600">
+                        → {correctMatches[questionId]}
+                      </span>
+                    )}
+                  </>
+                )
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -391,14 +507,14 @@ const MultipleChoiceRenderer: React.FC<{
             className={`rounded-lg p-3 ${
               showComparison && isCorrect !== undefined
                 ? isCorrect
-                  ? 'bg-green-50 border border-green-200'
-                  : 'bg-red-50 border border-red-200'
+                  ? 'border border-green-200 bg-green-50'
+                  : 'border border-red-200 bg-red-50'
                 : 'bg-gray-50'
             }`}
           >
             <span className="font-medium">{key}:</span> {String(value)}
             {showComparison && isCorrect === false && correctAnswers && (
-              <span className="text-sm text-green-600 ml-2">
+              <span className="ml-2 text-sm text-green-600">
                 (Correcto: {String(correctAnswers[key])})
               </span>
             )}
@@ -418,10 +534,10 @@ const TextResponseRenderer: React.FC<{ data: Record<string, unknown> }> = ({ dat
     <div className="space-y-4">
       {Object.entries(data).map(([key, value]) => (
         <div key={key} className="rounded-lg bg-gray-50 p-4">
-          <span className="font-semibold text-gray-700 block mb-2 capitalize">
+          <span className="mb-2 block font-semibold capitalize text-gray-700">
             {key.replace(/_/g, ' ')}
           </span>
-          <p className="text-gray-800 whitespace-pre-wrap">
+          <p className="whitespace-pre-wrap text-gray-800">
             {typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
           </p>
         </div>
@@ -435,7 +551,10 @@ const TextResponseRenderer: React.FC<{ data: Record<string, unknown> }> = ({ dat
  * Usado para ejercicios de Módulos 4 y 5 (creativos)
  * Detecta y renderiza imágenes, videos y audio inline
  */
-const MultimediaRenderer: React.FC<{ data: Record<string, unknown>; type: string }> = ({ data, type: _type }) => {
+const MultimediaRenderer: React.FC<{ data: Record<string, unknown>; type: string }> = ({
+  data,
+  type: _type,
+}) => {
   return (
     <div className="space-y-4">
       {Object.entries(data).map(([key, value]) => {
@@ -447,12 +566,12 @@ const MultimediaRenderer: React.FC<{ data: Record<string, unknown>; type: string
 
         return (
           <div key={key} className="rounded-lg bg-gray-50 p-4">
-            <span className="font-semibold text-gray-700 block mb-2 capitalize">
+            <span className="mb-2 block font-semibold capitalize text-gray-700">
               {key.replace(/_/g, ' ')}
             </span>
 
             {isImageUrl && typeof value === 'string' ? (
-              <img src={value} alt={key} className="max-w-full h-auto rounded-lg" />
+              <img src={value} alt={key} className="h-auto max-w-full rounded-lg" />
             ) : isVideoUrl && typeof value === 'string' ? (
               <video controls className="max-w-full rounded-lg">
                 <source src={value} />
@@ -462,9 +581,9 @@ const MultimediaRenderer: React.FC<{ data: Record<string, unknown>; type: string
                 <source src={value} />
               </audio>
             ) : typeof value === 'string' ? (
-              <p className="text-gray-800 whitespace-pre-wrap">{value}</p>
+              <p className="whitespace-pre-wrap text-gray-800">{value}</p>
             ) : (
-              <pre className="text-sm bg-white p-2 rounded overflow-x-auto">
+              <pre className="overflow-x-auto rounded bg-white p-2 text-sm">
                 {JSON.stringify(value, null, 2)}
               </pre>
             )}
@@ -482,7 +601,7 @@ const MultimediaRenderer: React.FC<{ data: Record<string, unknown>; type: string
 const FallbackRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
   return (
     <div className="rounded-lg bg-gray-100 p-4">
-      <pre className="text-sm overflow-x-auto whitespace-pre-wrap">
+      <pre className="overflow-x-auto whitespace-pre-wrap text-sm">
         {JSON.stringify(data, null, 2)}
       </pre>
     </div>

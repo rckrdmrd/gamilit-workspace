@@ -9,6 +9,7 @@
  */
 
 import { apiClient } from './apiClient';
+import { handleAPIError } from './apiErrorHandler';
 
 // ============================================================================
 // TYPES
@@ -101,8 +102,12 @@ export const profileAPI = {
    * @returns Updated profile data
    */
   updateProfile: async (userId: string, data: UpdateProfileDto): Promise<ProfileUpdateResponse> => {
-    const response = await apiClient.put(`/users/${userId}/profile`, data);
-    return response.data;
+    try {
+      const response = await apiClient.put(`/users/${userId}/profile`, data);
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
   },
 
   /**
@@ -111,8 +116,12 @@ export const profileAPI = {
    * @returns User preferences data
    */
   getPreferences: async (): Promise<{ preferences: Record<string, unknown> }> => {
-    const response = await apiClient.get('/users/preferences');
-    return response.data;
+    try {
+      const response = await apiClient.get('/users/preferences');
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
   },
 
   /**
@@ -126,8 +135,12 @@ export const profileAPI = {
     userId: string,
     preferences: UpdatePreferencesDto,
   ): Promise<PreferencesUpdateResponse> => {
-    const response = await apiClient.put(`/users/${userId}/preferences`, { preferences });
-    return response.data;
+    try {
+      const response = await apiClient.put(`/users/${userId}/preferences`, { preferences });
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
   },
 
   /**
@@ -138,14 +151,18 @@ export const profileAPI = {
    * @returns Avatar URL
    */
   uploadAvatar: async (userId: string, file: File): Promise<AvatarUploadResponse> => {
-    const formData = new FormData();
-    formData.append('avatar', file);
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
 
-    const response = await apiClient.post(`/users/${userId}/avatar`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+      const response = await apiClient.post(`/users/${userId}/avatar`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
   },
 
   /**
@@ -159,8 +176,12 @@ export const profileAPI = {
     userId: string,
     passwords: UpdatePasswordDto,
   ): Promise<PasswordUpdateResponse> => {
-    const response = await apiClient.put(`/users/${userId}/password`, passwords);
-    return response.data;
+    try {
+      const response = await apiClient.put(`/users/${userId}/password`, passwords);
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
   },
 };
 

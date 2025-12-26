@@ -64,8 +64,17 @@ export function useSystemMetrics(refreshInterval = 30000) {
   return { metrics, history, loading, error, refresh: fetchMetrics };
 }
 
+// LOW-005 FIX: Definir tipo para health status
+interface HealthStatus {
+  status: 'healthy' | 'degraded' | 'down';
+  database?: { status: string; latency_ms?: number };
+  api?: { status: string; response_time_ms?: number };
+  uptime_seconds?: number;
+  timestamp?: string;
+}
+
 export function useHealthStatus() {
-  const [health, setHealth] = useState<any>(null);
+  const [health, setHealth] = useState<HealthStatus | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

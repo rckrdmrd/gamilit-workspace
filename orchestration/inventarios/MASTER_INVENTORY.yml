@@ -2,10 +2,10 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "3.0.0"
+version: "4.0.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
-fecha_actualizacion: "2025-12-18"
-actualizado_por: "Claude Opus 4.5"
+fecha_actualizacion: "2025-12-23"
+actualizado_por: "Claude Opus 4.5 - Auditoria Documentacion vs Desarrollo"
 
 # =============================================================================
 # RESUMEN EJECUTIVO
@@ -15,46 +15,53 @@ resumen:
   estado_general: "OPERATIVO"
 
   database:
-    schemas: 16
-    tables: 123
-    views: 11
+    schemas: 15
+    tables: 132
+    views: 17
     materialized_views: 11
     enums: 42
-    functions: 213
-    triggers: 90
+    functions: 150
+    triggers: 111
     policies_rls: 185
     foreign_keys: 208
     seed_files: 99
     ddl_files: 394
     status: "Clean creation compliant"
-    last_verified: "2025-12-18"
+    last_verified: "2025-12-23"
     source: "DATABASE_INVENTORY.yml"
+    nuevas_tablas: "docs/database/TABLAS-NUEVAS-2025-12.md"
+    triggers_inventory: "docs/database/TRIGGERS-INVENTORY.md"
 
   backend:
-    modules: 13
-    entities: 92
+    modules: 16
+    entities: 93
     dtos: 327
-    services: 88
-    controllers: 71
-    endpoints: 417
+    services: 103
+    controllers: 76
+    endpoints: 300+
     build_status: "Builds successfully"
     coherencia_bd: "97%"
-    last_verified: "2025-12-18"
+    last_verified: "2025-12-23"
     source: "BACKEND_INVENTORY.yml"
+    api_docs:
+      - "docs/90-transversal/api/API-TEACHER-MODULE.md"
+      - "docs/90-transversal/api/API-ADMIN-MODULE.md"
 
   frontend:
     files: 862
-    components: 483
-    hooks: 89
-    pages: 31
+    components: 497
+    hooks: 102
+    pages: 64
     stores: 11
     api_services: 15
     mechanics: 33
     routes: 20
     lines_of_code: ~98000
     status: "Builds successfully"
-    last_verified: "2025-12-18"
+    last_verified: "2025-12-23"
     source: "FRONTEND_INVENTORY.yml"
+    portal_docs:
+      - "docs/frontend/student/README.md"
 
 # =============================================================================
 # EJERCICIOS POR MODULO (Definiciones Oficiales)
@@ -125,10 +132,11 @@ cumplimiento:
     validation_report: "PLAN-VALIDACION-CLEAN-CREATION-2025-11-29.md"
 
   documentacion:
-    coverage: "85%"
-    docs_folder: "Updated"
-    trazas: "Updated (85% coverage)"
-    inventarios: "Updated"
+    coverage: "92%"
+    docs_folder: "Updated 2025-12-23"
+    trazas: "Updated (90% coverage)"
+    inventarios: "Updated 2025-12-23"
+    auditoria: "orchestration/analisis-documentacion-vs-desarrollo-2025-12-23/"
     gaps:
       - "Error handling documentation (60%)"
       - "E2E testing documentation (50%)"
@@ -149,12 +157,12 @@ integraciones:
 
   db_backend:
     status: "97% coherencia"
-    entities_mapped: 85
-    tables_total: 123
+    entities_mapped: 93
+    tables_total: 132
 
   backend_frontend:
     status: "OPERATIVO"
-    endpoints: 417
+    endpoints: 300+
     api_services: 15
 
 # =============================================================================

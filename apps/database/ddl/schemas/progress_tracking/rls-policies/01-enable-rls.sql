@@ -14,9 +14,12 @@ ALTER TABLE progress_tracking.module_progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE progress_tracking.exercise_attempts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE progress_tracking.exercise_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE progress_tracking.learning_sessions ENABLE ROW LEVEL SECURITY;
+-- P1-01: Added 2025-12-18 - Teacher notes RLS
+ALTER TABLE progress_tracking.teacher_notes ENABLE ROW LEVEL SECURITY;
 
 -- Comentarios
 COMMENT ON TABLE progress_tracking.module_progress IS 'RLS enabled: Progreso de módulos - lectura propia + teacher + admin';
 COMMENT ON TABLE progress_tracking.exercise_attempts IS 'RLS enabled: Intentos de ejercicios - lectura propia + teacher';
 COMMENT ON TABLE progress_tracking.exercise_submissions IS 'RLS enabled: Entregas de ejercicios - gestión propia + calificación teacher';
 COMMENT ON TABLE progress_tracking.learning_sessions IS 'RLS enabled: Sesiones de aprendizaje de usuarios';
+COMMENT ON TABLE progress_tracking.teacher_notes IS 'RLS enabled: Notas de profesores - lectura/escritura propia';

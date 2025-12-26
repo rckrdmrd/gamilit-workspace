@@ -12,6 +12,10 @@ import { MatchingDragDrop, MatchingPair } from './MatchingDragDrop';
 import { calculateScore, saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { Check, RotateCcw } from 'lucide-react';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+// P0-02-B: Added 2025-12-18 - Backend submission for progress persistence
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useInvalidateDashboard } from '@/shared/hooks';
 
 export interface EmparejamientoDragDropData {
   id: string;
@@ -57,6 +61,10 @@ export const EmparejamientoExerciseDragDrop: React.FC<EmparejamientoDragDropProp
   const [currentScore, setCurrentScore] = useState(0);
   const [checkClicked, setCheckClicked] = useState(false);
 
+  // P0-02-B: Added 2025-12-18 - Hooks for backend submission
+  const { user } = useAuth();
+  const invalidateDashboard = useInvalidateDashboard();
+
   const handleConnect = (itemAId: string, itemBId: string) => {
     const newConnections = new Map(connections);
     newConnections.set(itemBId, itemAId);
@@ -78,7 +86,7 @@ export const EmparejamientoExerciseDragDrop: React.FC<EmparejamientoDragDropProp
     alert(`Pista: ${hint.text}`);
   };
 
-  const handleCheck = () => {
+  const handleCheck = async () => {
     setCheckClicked(true);
     const allConnected = connections.size === exercise.pairs.length;
 
@@ -106,15 +114,61 @@ export const EmparejamientoExerciseDragDrop: React.FC<EmparejamientoDragDropProp
 
     const isSuccess = correctCount === exercise.pairs.length;
 
-    setFeedback({
-      type: isSuccess ? 'success' : 'error',
-      title: isSuccess ? '¡Emparejamiento Completado!' : 'Revisa tus Parejas',
-      message: isSuccess
-        ? '¡Excelente trabajo! Has emparejado todos los elementos correctamente.'
-        : `Has emparejado ${correctCount} de ${exercise.pairs.length} elementos correctamente. Revisa los marcados en rojo.`,
-      score: isSuccess ? score : undefined,
-      showConfetti: isSuccess,
-    });
+    // P0-02-B: Submit to backend when complete
+    if (isSuccess && user?.id) {
+      try {
+        // Prepare connections for submission
+        const matchesData = Array.from(connections.entries()).map(([itemBId, itemAId]) => ({
+          itemBId,
+          itemAId,
+          pairId: exercise.pairs.find(p => p.id === itemBId)?.id,
+        }));
+
+        const response = await submitExercise(exercise.id, user.id, { connections: matchesData });
+
+        // Invalidate dashboard to reflect new progress
+        invalidateDashboard();
+
+        console.log('✅ [EmparejamientoDragDrop] Submitted to backend:', response);
+
+        setFeedback({
+          type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+          title: response.isPerfect
+            ? '¡Perfecto!'
+            : response.score >= 70
+              ? '¡Buen trabajo!'
+              : 'Sigue practicando',
+          message: response.isPerfect
+            ? '¡Excelente trabajo! Has emparejado todos los elementos correctamente.'
+            : `Obtuviste ${response.score}% de aciertos.`,
+          score: response.score,
+          xpEarned: response.xp_earned,
+          coinsEarned: response.coins_earned,
+          showConfetti: response.isPerfect,
+        });
+      } catch (error) {
+        console.error('❌ [EmparejamientoDragDrop] Submit error:', error);
+        // Fallback to local feedback on error
+        setFeedback({
+          type: 'success',
+          title: '¡Emparejamiento Completado!',
+          message: '¡Excelente trabajo! Has emparejado todos los elementos correctamente.',
+          score,
+          showConfetti: true,
+        });
+      }
+    } else {
+      // Not success or no user - show local feedback
+      setFeedback({
+        type: isSuccess ? 'success' : 'error',
+        title: isSuccess ? '¡Emparejamiento Completado!' : 'Revisa tus Parejas',
+        message: isSuccess
+          ? '¡Excelente trabajo! Has emparejado todos los elementos correctamente.'
+          : `Has emparejado ${correctCount} de ${exercise.pairs.length} elementos correctamente. Revisa los marcados en rojo.`,
+        score: isSuccess ? score : undefined,
+        showConfetti: isSuccess,
+      });
+    }
     setShowFeedback(true);
   };
 

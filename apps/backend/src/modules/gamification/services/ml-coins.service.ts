@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserStats, MLCoinsTransaction } from '../entities';
+import { UserStats, MLCoinsTransaction, MayaRankEntity } from '../entities';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { CreateTransactionDto } from '../dto';
 
@@ -21,6 +21,8 @@ export class MLCoinsService {
     private readonly userStatsRepo: Repository<UserStats>,
     @InjectRepository(MLCoinsTransaction, 'gamification')
     private readonly transactionRepo: Repository<MLCoinsTransaction>,
+    @InjectRepository(MayaRankEntity, 'gamification')
+    private readonly mayaRanksRepo: Repository<MayaRankEntity>,
   ) {}
 
   /**
@@ -120,6 +122,71 @@ export class MLCoinsService {
     });
 
     return { balance: balanceAfter, transaction };
+  }
+
+  /**
+   * Añade ML Coins con multiplicador automático basado en el rango del usuario
+   *
+   * @param userId - ID del usuario
+   * @param amount - Cantidad base de ML Coins
+   * @param transactionType - Tipo de transacción
+   * @param description - Descripción opcional
+   * @param referenceId - ID de referencia opcional (ej: exerciseId)
+   * @param referenceType - Tipo de referencia opcional (ej: 'exercise')
+   * @returns Balance actualizado y transacción creada
+   */
+  async addCoinsWithRankMultiplier(
+    userId: string,
+    amount: number,
+    transactionType: TransactionTypeEnum,
+    description?: string,
+    referenceId?: string,
+    referenceType?: string,
+  ): Promise<{ balance: number; transaction: MLCoinsTransaction; multiplierApplied: number }> {
+    // Obtener multiplicador del rango del usuario
+    const multiplier = await this.getRankMultiplier(userId);
+
+    // Llamar a addCoins con el multiplicador
+    const result = await this.addCoins(
+      userId,
+      amount,
+      transactionType,
+      description,
+      referenceId,
+      referenceType,
+      multiplier,
+    );
+
+    return {
+      ...result,
+      multiplierApplied: multiplier,
+    };
+  }
+
+  /**
+   * Obtiene el multiplicador de ML Coins basado en el rango actual del usuario
+   *
+   * Rangos Maya (v2.1):
+   * - Ajaw: 1.00x
+   * - Nacom: 1.10x
+   * - Ah K'in: 1.15x
+   * - Halach Uinic: 1.20x
+   * - K'uk'ulkan: 1.25x
+   */
+  async getRankMultiplier(userId: string): Promise<number> {
+    const userStats = await this.userStatsRepo.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!userStats || !userStats.current_rank) {
+      return 1.0; // Default multiplier if no rank
+    }
+
+    const rank = await this.mayaRanksRepo.findOne({
+      where: { rank_name: userStats.current_rank },
+    });
+
+    return rank?.xp_multiplier || 1.0;
   }
 
   /**

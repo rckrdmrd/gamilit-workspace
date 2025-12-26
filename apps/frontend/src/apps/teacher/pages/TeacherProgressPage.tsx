@@ -10,6 +10,7 @@ import { useAnalytics } from '../hooks/useAnalytics';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FormField } from '@shared/components/common/FormField';
+import { ToastContainer, useToast } from '@shared/components/base/Toast';
 import {
   BarChart3,
   RefreshCw,
@@ -38,6 +39,7 @@ import {
 export default function TeacherProgressPage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { toasts, showToast } = useToast();
   const { classrooms, loading, error, refresh } = useClassrooms();
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('all');
   const [showClassroomDropdown, setShowClassroomDropdown] = useState(false);
@@ -123,7 +125,7 @@ export default function TeacherProgressPage() {
    */
   const exportToCSV = async () => {
     if (selectedClassroomId === 'all') {
-      alert('Por favor selecciona una clase especifica para exportar');
+      showToast({ type: 'warning', message: 'Por favor selecciona una clase especifica para exportar' });
       return;
     }
 
@@ -142,11 +144,11 @@ export default function TeacherProgressPage() {
       if (report.status === 'completed' && report.file_url) {
         window.open(report.file_url, '_blank');
       } else {
-        alert('El reporte esta siendo generado. Por favor intenta nuevamente en unos momentos.');
+        showToast({ type: 'info', message: 'El reporte esta siendo generado. Por favor intenta nuevamente en unos momentos.' });
       }
     } catch (err) {
       console.error('[TeacherProgressPage] Error exporting CSV:', err);
-      alert('Error al generar el reporte. Por favor intenta nuevamente.');
+      showToast({ type: 'error', message: 'Error al generar el reporte. Por favor intenta nuevamente.' });
     }
   };
 
@@ -170,13 +172,15 @@ export default function TeacherProgressPage() {
   }, [aggregateStats]);
 
   return (
-    <TeacherLayout
-      user={user ?? undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GLIT Platform"
-      onLogout={handleLogout}
-    >
-      <div className="space-y-6">
+    <>
+      <ToastContainer toasts={toasts} position="top-right" />
+      <TeacherLayout
+        user={user ?? undefined}
+        gamificationData={displayGamificationData}
+        organizationName={user?.organization?.name || 'Mi Institución'}
+        onLogout={handleLogout}
+      >
+        <div className="space-y-6">
         {/* Header Section */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
@@ -735,10 +739,11 @@ export default function TeacherProgressPage() {
         )}
       </div>
 
-      {/* Click Outside Handler for Dropdown */}
-      {showClassroomDropdown && (
-        <div className="fixed inset-0 z-40" onClick={() => setShowClassroomDropdown(false)} />
-      )}
-    </TeacherLayout>
+        {/* Click Outside Handler for Dropdown */}
+        {showClassroomDropdown && (
+          <div className="fixed inset-0 z-40" onClick={() => setShowClassroomDropdown(false)} />
+        )}
+      </TeacherLayout>
+    </>
   );
 }

@@ -8,6 +8,7 @@
  */
 
 import { apiClient } from './apiClient';
+import { handleAPIError } from './apiErrorHandler';
 
 // ============================================================================
 // TYPES
@@ -71,8 +72,12 @@ export const passwordAPI = {
    * ```
    */
   requestPasswordReset: async (email: string): Promise<PasswordResetRequestResponse> => {
-    const response = await apiClient.post('/auth/reset-password/request', { email });
-    return response.data;
+    try {
+      const response = await apiClient.post('/auth/reset-password/request', { email });
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
   },
 
   /**
@@ -90,11 +95,15 @@ export const passwordAPI = {
    * ```
    */
   resetPassword: async (token: string, newPassword: string): Promise<PasswordResetResponse> => {
-    const response = await apiClient.post('/auth/reset-password', {
-      token,
-      new_password: newPassword,
-    });
-    return response.data;
+    try {
+      const response = await apiClient.post('/auth/reset-password', {
+        token,
+        new_password: newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
   },
 
   /**

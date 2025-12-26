@@ -1,19 +1,49 @@
 # _MAP: Correcciones e Issues
 
 **Carpeta:** docs/90-transversal/correcciones/
-**Ultima Actualizacion:** 2025-12-18
-**Proposito:** Backlog de issues pendientes
+**Ultima Actualizacion:** 2025-12-26
+**Proposito:** Backlog de issues pendientes y reportes de correcciones
 **Estado:** Vigente
 
 ---
 
 ## Contenido Actual
 
-Esta carpeta contiene **solo el backlog de issues pendientes**. Los reportes de correcciones completadas han sido movidos a `orchestration/reportes/correcciones/`.
-
 | Archivo | Descripcion | Estado |
 |---------|-------------|--------|
 | `ISSUES-CRITICOS.md` | Backlog de issues pendientes (66+ issues) | Vigente |
+| `CORRECCIONES-ADMIN-PORTAL-2025-12-26.md` | Correcciones Portal Admin Sprint 1-4 (23 issues) | Completado |
+
+---
+
+## Correcciones Recientes (2025-12-26)
+
+### Portal Admin - Sprint 1-4
+
+**Documento:** `CORRECCIONES-ADMIN-PORTAL-2025-12-26.md`
+
+| Prioridad | Identificados | Corregidos | N/A |
+|-----------|---------------|------------|-----|
+| P0 - CRITICAL | 5 | 5 | 1 |
+| P1 - HIGH | 5 | 2 | 3 |
+| P2 - MEDIUM | 8 | 3 | 5 |
+| P3 - LOW | 5 | 3 | 2 |
+| **TOTAL** | **23** | **13** | **11** |
+
+**Archivos Modificados (13):**
+- `useUserManagement.ts` - Mapeo correcto de campos usuario
+- `AdminReportsPage.tsx` - Error handling tipado
+- `FeatureFlagsPanel.tsx` - Mensajes en español
+- `ABTestingDashboard.tsx` - Mensajes en español
+- `useSettings.ts` - Funciones mock deprecadas
+- `AssignmentFilters.tsx` - Validacion de fechas
+- `useFeatureFlags.ts` - Rutas y flags dinamicos
+- `useMonitoring.ts` - Error handling tipado
+- `useAnalytics.ts` - Error handling tipado
+- `AdminGamificationPage.tsx` - Eliminado hardcode
+- `useAdminDashboard.ts` - Intervalos optimizados
+- `useSystemMetrics.ts` - Tipo HealthStatus
+- `useClassroomTeacher.ts` - Mensajes en español
 
 ---
 
@@ -77,5 +107,5 @@ ESTADO:                          PRODUCTION READY
 
 ---
 
-**Actualizado:** 2025-12-18
-**Por:** Requirements-Analyst
+**Actualizado:** 2025-12-26
+**Por:** Claude Code (Requirements-Analyst)

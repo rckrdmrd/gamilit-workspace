@@ -111,6 +111,7 @@ export const DB_TABLES = {
     CONTENT_APPROVALS: 'content_approvals',
     EXERCISE_MECHANIC_MAPPING: 'exercise_mechanic_mapping', // ✨ NUEVO - DB-113 (Sistema Dual - ADR-008)
     DIFFICULTY_CRITERIA: 'difficulty_criteria', // ✨ NUEVO - P1-001 (Criterios de dificultad CEFR)
+    CLASSROOM_MODULES: 'classroom_modules', // ✨ NUEVO - P1-002 (Módulos asignados a aulas)
     // REMOVED: exercise_options, exercise_answers (legacy dual model - moved to JSONB puro)
   },
 
@@ -133,6 +134,8 @@ export const DB_TABLES = {
     PROGRESS_SNAPSHOTS: 'progress_snapshots', // ✨ NUEVO - P2
     SKILL_ASSESSMENTS: 'skill_assessments', // ✨ NUEVO - P2
     USER_LEARNING_PATHS: 'user_learning_paths', // ✨ NUEVO - P2
+    TEACHER_INTERVENTIONS: 'teacher_interventions', // ✨ NUEVO - P1-002 (Intervenciones docentes)
+    STUDENT_INTERVENTION_ALERTS: 'student_intervention_alerts', // ✨ NUEVO - P1-002 (Alertas de intervención)
   },
 
   /**
@@ -220,6 +223,7 @@ export const DB_TABLES = {
     API_CONFIGURATION: 'api_configuration', // ✨ NUEVO - P2
     ENVIRONMENT_CONFIG: 'environment_config', // ✨ NUEVO - P2
     TENANT_CONFIGURATIONS: 'tenant_configurations', // ✨ NUEVO - P2
+    GAMIFICATION_PARAMETERS: 'gamification_parameters', // ✨ NUEVO - P1-002 (Parámetros de gamificación)
   },
 
   /**

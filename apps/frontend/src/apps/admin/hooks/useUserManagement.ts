@@ -118,9 +118,19 @@ export function useUserManagement(): UseUserManagementResult {
 
         // Convert User[] to SystemUser[] by mapping fields
         const systemUsers: SystemUser[] = response.items.map((user) => {
-          // Extract name from metadata if available (backend stores in raw_user_meta_data)
-          const metadata = (user as any).metadata || (user as any).raw_user_meta_data || {};
-          const fullName = metadata.full_name || metadata.display_name || user.name || user.email;
+          // CRIT-001 FIX: Extract name from metadata - backend stores in raw_user_meta_data
+          // Priority order: raw_user_meta_data.full_name > metadata.full_name > user.name > email fallback
+          const userRecord = user as unknown as Record<string, unknown>;
+          const rawMetadata = userRecord.raw_user_meta_data as Record<string, unknown> | undefined;
+          const legacyMetadata = userRecord.metadata as Record<string, unknown> | undefined;
+          const metadata = rawMetadata || legacyMetadata || {};
+          const fullName = (
+            (metadata.full_name as string) ||
+            (metadata.display_name as string) ||
+            user.name ||
+            user.email?.split('@')[0] ||
+            'Usuario'
+          );
 
           return {
             id: user.id,

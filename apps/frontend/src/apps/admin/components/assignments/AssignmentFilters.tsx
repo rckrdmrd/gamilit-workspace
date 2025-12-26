@@ -27,12 +27,37 @@ export function AssignmentFiltersComponent({
   onClear,
 }: AssignmentFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [dateError, setDateError] = useState<string | null>(null);
+
+  // HIGH-003 FIX: Validar rango de fechas
+  const validateDateRange = (dateFrom: string | undefined, dateTo: string | undefined): boolean => {
+    if (dateFrom && dateTo) {
+      const from = new Date(dateFrom);
+      const to = new Date(dateTo);
+      if (from > to) {
+        setDateError('La fecha "desde" no puede ser mayor que la fecha "hasta"');
+        return false;
+      }
+    }
+    setDateError(null);
+    return true;
+  };
 
   const handleFilterChange = (key: keyof AssignmentFilters, value: string) => {
-    onFiltersChange({
+    const newFilters = {
       ...filters,
       [key]: value || undefined,
-    });
+    };
+
+    // HIGH-003 FIX: Validar fechas al cambiar
+    if (key === 'date_from' || key === 'date_to') {
+      validateDateRange(
+        key === 'date_from' ? value : filters.date_from,
+        key === 'date_to' ? value : filters.date_to
+      );
+    }
+
+    onFiltersChange(newFilters);
   };
 
   const hasActiveFilters = Object.values(filters).some(
@@ -151,9 +176,18 @@ export function AssignmentFiltersComponent({
               type="date"
               value={filters.date_to || ''}
               onChange={(e) => handleFilterChange('date_to', e.target.value)}
-              className="w-full rounded-lg border border-gray-600 bg-detective-bg px-3 py-2 text-detective-text focus:outline-none focus:ring-2 focus:ring-detective-orange"
+              className={`w-full rounded-lg border bg-detective-bg px-3 py-2 text-detective-text focus:outline-none focus:ring-2 ${
+                dateError ? 'border-red-500 focus:ring-red-500' : 'border-gray-600 focus:ring-detective-orange'
+              }`}
             />
           </div>
+
+          {/* HIGH-003 FIX: Mostrar error de validación de fechas */}
+          {dateError && (
+            <div className="col-span-full">
+              <p className="text-sm text-red-400">{dateError}</p>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FormField } from '@shared/components/common/FormField';
+import { ToastContainer, useToast } from '@shared/components/base/Toast';
 import {
   BarChart3,
   TrendingUp,
@@ -50,6 +51,7 @@ const safeFormat = (
 };
 
 export default function TeacherAnalytics() {
+  const { toasts, showToast } = useToast();
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'overview' | 'performance' | 'engagement'>('overview');
   const [dateRange, setDateRange] = useState({ start: '2025-10-01', end: '2025-10-16' });
@@ -174,7 +176,7 @@ export default function TeacherAnalytics() {
 
   const exportToCSV = async () => {
     if (!selectedClassroomId) {
-      alert('Por favor selecciona una clase primero');
+      showToast({ type: 'warning', message: 'Por favor selecciona una clase primero' });
       return;
     }
 
@@ -194,17 +196,19 @@ export default function TeacherAnalytics() {
         // Open download link in new tab
         window.open(report.file_url, '_blank');
       } else {
-        alert('El reporte está siendo generado. Por favor intenta nuevamente en unos momentos.');
+        showToast({ type: 'info', message: 'El reporte está siendo generado. Por favor intenta nuevamente en unos momentos.' });
       }
     } catch (err: unknown) {
       console.error('[TeacherAnalytics] Error exporting CSV:', err);
-      alert('Error al generar el reporte. Por favor intenta nuevamente.');
+      showToast({ type: 'error', message: 'Error al generar el reporte. Por favor intenta nuevamente.' });
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <main className="detective-container py-8">
+    <>
+      <ToastContainer toasts={toasts} position="top-right" />
+      <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
+        <main className="detective-container py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="mb-2 text-4xl font-bold text-detective-text">Analíticas</h1>
@@ -719,8 +723,9 @@ export default function TeacherAnalytics() {
               </p>
             </div>
           </DetectiveCard>
-        )}
-      </main>
-    </div>
+          )}
+        </main>
+      </div>
+    </>
   );
 }

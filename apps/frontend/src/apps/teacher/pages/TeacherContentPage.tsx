@@ -5,16 +5,15 @@ import TeacherContentManagement from './TeacherContentManagement';
 import { UnderConstruction } from '@shared/components/UnderConstruction';
 
 // ============================================================================
-// FEATURE FLAG - Cambiar a false para habilitar la funcionalidad completa
+// FEATURE FLAG - Habilitado 2025-12-18
 // ============================================================================
-const SHOW_UNDER_CONSTRUCTION = true;
+const SHOW_UNDER_CONSTRUCTION = false;
 
 /**
  * TeacherContentPage - Página de gestión de contenido educativo
  *
- * ESTADO: Descartada para Fase 2 (no depende de actividad del estudiante)
- * La funcionalidad está implementada pero deshabilitada temporalmente.
- * Cambiar SHOW_UNDER_CONSTRUCTION a false para habilitar.
+ * ESTADO: HABILITADO (2025-12-18)
+ * Funcionalidad completa disponible.
  */
 export default function TeacherContentPage() {
   const { user, logout } = useAuth();

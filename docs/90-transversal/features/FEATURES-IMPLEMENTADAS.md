@@ -1,9 +1,9 @@
 # FEATURES IMPLEMENTADAS - GAMILIT
 ## Estado de Requisitos Funcionales y Especificaciones Técnicas
 
-**Versión:** 3.2 - Sistema Dual exercise_mechanic ↔ exercise_type (ADR-008)
-**Fecha:** 11 de Noviembre, 2025
-**Estado:** VERIFICADO + RECONCILIACIÓN DOCUMENTACIÓN COMPLETADA (DB-110, DB-111, DB-112)
+**Version:** 4.0 - Actualizacion Metricas Reales Post-Auditoria
+**Fecha:** 23 de Diciembre, 2025
+**Estado:** VERIFICADO - Metricas alineadas con codigo real (Auditoria 2025-12-23)
 
 ---
 
@@ -28,24 +28,24 @@ PRIORIDAD P2 (Media):    2/4   → 50%  🟡
 │ CAPA              │ COMPLETITUD │ ESTADO            │
 ├──────────────────────────────────────────────────────┤
 │ DATABASE          │ 96%         │ ✅ EXCELENTE      │
-│  - Schemas        │ 13/14       │   (public vacío)  │
-│  - Tablas         │ 103         │   (+1 DB-112)     │
-│  - Funciones      │ 64          │                   │
-│  - Vistas         │ 16          │                   │
-│  - Seeds Prod     │ 31          │                   │
+│  - Schemas        │ 15          │   (public vacio)  │
+│  - Tablas         │ 132         │   (Audit 12-23)   │
+│  - Funciones      │ 150+        │                   │
+│  - Vistas         │ 17          │                   │
+│  - Seeds Prod     │ 32          │                   │
 ├──────────────────────────────────────────────────────┤
 │ BACKEND           │ 90%         │ ✅ EXCELENTE      │
-│  - Módulos        │ 14          │                   │
-│  - Entities       │ 64          │                   │
-│  - Services       │ 52          │                   │
-│  - Controllers    │ 38          │                   │
-│  - Endpoints      │ 150+        │                   │
+│  - Modulos        │ 16          │                   │
+│  - Entities       │ 93          │                   │
+│  - Services       │ 103         │                   │
+│  - Controllers    │ 76          │                   │
+│  - Endpoints      │ 300+        │                   │
 ├──────────────────────────────────────────────────────┤
 │ FRONTEND          │ 92%         │ ✅ EXCELENTE      │
-│  - Páginas        │ 72          │   (↑22% post-P0)  │
-│  - Componentes    │ 275         │                   │
-│  - Hooks          │ 19          │                   │
-│  - API Services   │ 11          │                   │
+│  - Paginas        │ 64          │                   │
+│  - Componentes    │ 497         │                   │
+│  - Hooks          │ 102         │                   │
+│  - API Services   │ 15+         │                   │
 ├──────────────────────────────────────────────────────┤
 │ INTEGRACIÓN       │ 90%         │ ✅ EXCELENTE      │
 │  - DB ↔ Backend   │ 95%         │                   │
@@ -839,12 +839,12 @@ metadata, last_sign_in_at, last_activity_at, created_at, updated_at
 
 ---
 
-## MÉTRICAS FINALES
+## METRICAS FINALES
 
-### Cobertura por Capa
-- **Database:** 95% (102 tablas, 62 funciones, 16 vistas)
-- **Backend:** 90% (64 entities, 52 services, 38 controllers, 150+ endpoints)
-- **Frontend:** 92% (72 páginas, 275 componentes, 19 hooks)
+### Cobertura por Capa (Actualizado 2025-12-23)
+- **Database:** 96% (132 tablas, 150+ funciones, 17 vistas, 50 triggers)
+- **Backend:** 90% (93 entities, 103 services, 76 controllers, 300+ endpoints)
+- **Frontend:** 92% (64 paginas, 497 componentes, 102 hooks)
 
 ### Integración
 - **Database ↔ Backend:** 95%

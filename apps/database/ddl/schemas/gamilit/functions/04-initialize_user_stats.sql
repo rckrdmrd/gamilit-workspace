@@ -9,6 +9,7 @@
 --   #1: Added module_progress initialization (CRITICAL)
 --   #2: Added ON CONFLICT to user_ranks (prevents duplicate key errors)
 --   #3: Kept initialize_user_missions commented (function not implemented yet)
+-- Updated: 2025-12-26 - Added is_current and achieved_at explicitly to user_ranks INSERT
 -- =====================================================
 
 CREATE OR REPLACE FUNCTION gamilit.initialize_user_stats()
@@ -44,15 +45,20 @@ BEGIN
 
         -- Create initial user rank (starting with Ajaw - lowest rank)
         -- BUG FIX #2: Use WHERE NOT EXISTS instead of ON CONFLICT (no unique constraint on user_id)
+        -- 2025-12-26: Agregado is_current = true explícitamente
         INSERT INTO gamification_system.user_ranks (
             user_id,
             tenant_id,
-            current_rank
+            current_rank,
+            is_current,
+            achieved_at
         )
         SELECT
             NEW.user_id,
             NEW.tenant_id,
-            'Ajaw'::gamification_system.maya_rank
+            'Ajaw'::gamification_system.maya_rank,
+            true,
+            gamilit.now_mexico()
         WHERE NOT EXISTS (
             SELECT 1 FROM gamification_system.user_ranks WHERE user_id = NEW.user_id
         );

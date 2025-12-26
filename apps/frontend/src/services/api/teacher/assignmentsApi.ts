@@ -7,7 +7,7 @@
  * @module services/api/teacher/assignmentsApi
  */
 
-import axiosInstance from '../axios.instance';
+import { apiClient } from '../apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import type { Assignment, Submission, Exercise } from '@apps/teacher/types';
 
@@ -117,7 +117,7 @@ class AssignmentsAPI {
    */
   async getAssignments(query?: GetAssignmentsQueryDto): Promise<Assignment[]> {
     try {
-      const { data } = await axiosInstance.get<Assignment[]>(API_ENDPOINTS.teacher.assignments, {
+      const { data } = await apiClient.get<Assignment[]>(API_ENDPOINTS.teacher.assignments, {
         params: query,
       });
       return data;
@@ -145,7 +145,7 @@ class AssignmentsAPI {
    */
   async getAssignmentById(assignmentId: string): Promise<Assignment> {
     try {
-      const { data } = await axiosInstance.get<Assignment>(
+      const { data } = await apiClient.get<Assignment>(
         API_ENDPOINTS.teacher.assignment(assignmentId),
       );
       return data;
@@ -178,7 +178,7 @@ class AssignmentsAPI {
    */
   async createAssignment(data: CreateAssignmentDto): Promise<Assignment> {
     try {
-      const { data: responseData } = await axiosInstance.post<Assignment>(
+      const { data: responseData } = await apiClient.post<Assignment>(
         API_ENDPOINTS.teacher.createAssignment,
         data,
       );
@@ -209,7 +209,7 @@ class AssignmentsAPI {
    */
   async updateAssignment(assignmentId: string, data: UpdateAssignmentDto): Promise<Assignment> {
     try {
-      const { data: responseData } = await axiosInstance.put<Assignment>(
+      const { data: responseData } = await apiClient.put<Assignment>(
         API_ENDPOINTS.teacher.updateAssignment(assignmentId),
         data,
       );
@@ -236,7 +236,7 @@ class AssignmentsAPI {
    */
   async deleteAssignment(assignmentId: string): Promise<void> {
     try {
-      await axiosInstance.delete(API_ENDPOINTS.teacher.deleteAssignment(assignmentId));
+      await apiClient.delete(API_ENDPOINTS.teacher.deleteAssignment(assignmentId));
     } catch (error) {
       console.error('[AssignmentsAPI] Error deleting assignment:', error);
       throw error;
@@ -274,7 +274,7 @@ class AssignmentsAPI {
     query?: GetSubmissionsQueryDto,
   ): Promise<Submission[]> {
     try {
-      const { data } = await axiosInstance.get<Submission[]>(
+      const { data } = await apiClient.get<Submission[]>(
         API_ENDPOINTS.teacher.assignmentSubmissions(assignmentId),
         { params: query },
       );
@@ -303,7 +303,7 @@ class AssignmentsAPI {
    */
   async getSubmissionById(submissionId: string): Promise<Submission> {
     try {
-      const { data } = await axiosInstance.get<Submission>(
+      const { data } = await apiClient.get<Submission>(
         API_ENDPOINTS.teacher.submission(submissionId),
       );
       return data;
@@ -334,7 +334,7 @@ class AssignmentsAPI {
    */
   async gradeSubmission(submissionId: string, data: GradeSubmissionDto): Promise<Submission> {
     try {
-      const { data: responseData } = await axiosInstance.post<Submission>(
+      const { data: responseData } = await apiClient.post<Submission>(
         API_ENDPOINTS.teacher.gradeSubmission(submissionId),
         data,
       );
@@ -365,7 +365,7 @@ class AssignmentsAPI {
     assignmentId: string,
   ): Promise<{ notified: number; alreadySubmitted: number; message: string }> {
     try {
-      const { data } = await axiosInstance.post<{
+      const { data } = await apiClient.post<{
         notified: number;
         alreadySubmitted: number;
         message: string;
@@ -394,7 +394,7 @@ class AssignmentsAPI {
    */
   async getUpcomingAssignments(days: number = 7): Promise<UpcomingAssignment[]> {
     try {
-      const { data } = await axiosInstance.get<UpcomingAssignment[]>(
+      const { data } = await apiClient.get<UpcomingAssignment[]>(
         API_ENDPOINTS.teacher.upcomingAssignments,
         { params: { days } },
       );
@@ -421,7 +421,7 @@ class AssignmentsAPI {
    */
   async getAvailableExercises(): Promise<Exercise[]> {
     try {
-      const { data } = await axiosInstance.get<Exercise[]>(API_ENDPOINTS.educational.exercises);
+      const { data } = await apiClient.get<Exercise[]>(API_ENDPOINTS.educational.exercises);
       return data;
     } catch (error) {
       console.error('[AssignmentsAPI] Error fetching exercises:', error);

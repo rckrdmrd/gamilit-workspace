@@ -85,6 +85,10 @@ teacher/
 │   ├── useTeacherContent.ts
 │   ├── useExerciseResponses.ts
 │   └── index.ts
+├── constants/                  # Constantes centralizadas (P2-01, P2-02)
+│   ├── alertTypes.ts           # Tipos y prioridades de alertas
+│   ├── manualReviewExercises.ts # Ejercicios de revision manual
+│   └── index.ts
 └── types/
     └── index.ts                # 40+ interfaces/types
 ```
@@ -759,6 +763,9 @@ if (process.env.NODE_ENV === 'development') {
 |-----------|-------------|
 | [PORTAL-TEACHER-API-REFERENCE.md](./PORTAL-TEACHER-API-REFERENCE.md) | Referencia completa de 45+ APIs con ejemplos |
 | [PORTAL-TEACHER-FLOWS.md](./PORTAL-TEACHER-FLOWS.md) | Flujos de datos, diagramas e integracion |
+| [API-TEACHER-MODULE.md](../90-transversal/api/API-TEACHER-MODULE.md) | Documentacion de endpoints del modulo teacher |
+| [TEACHER-PAGES-SPECIFICATIONS.md](../frontend/teacher/pages/TEACHER-PAGES-SPECIFICATIONS.md) | Especificaciones de paginas del portal |
+| [TEACHER-CONSTANTS-REFERENCE.md](../frontend/teacher/constants/TEACHER-CONSTANTS-REFERENCE.md) | Referencia de constantes centralizadas |
 
 ### Guias Generales
 
@@ -774,5 +781,6 @@ if (process.env.NODE_ENV === 'development') {
 
 | Version | Fecha | Cambios |
 |---------|-------|---------|
+| 1.2.0 | 2025-12-26 | Agregada carpeta constants/ (alertTypes.ts, manualReviewExercises.ts), referencias actualizadas |
 | 1.1.0 | 2025-11-29 | Agregada TeacherSettingsPage (/teacher/settings) |
 | 1.0.0 | 2025-11-29 | Creacion inicial |

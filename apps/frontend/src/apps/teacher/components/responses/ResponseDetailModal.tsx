@@ -14,6 +14,7 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
 import {
   X,
   User,
@@ -28,6 +29,15 @@ import {
   TrendingUp,
   BookOpen,
   ClipboardCheck,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize2,
+  Image as ImageIcon,
+  Video,
+  Music,
+  Download,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAttemptDetail } from '@apps/teacher/hooks/useExerciseResponses';
@@ -66,24 +76,508 @@ const formatDate = (dateString: string): string => {
 
 /**
  * Determines if an exercise requires manual grading
- * Modules 3, 4, 5 (creative exercises) require manual review
+ * P0-03: Updated 2025-12-18 - Complete list of manual mechanics
+ *
+ * 10 manual mechanics identified in analysis:
+ * - Predicción Narrativa, Tribunal de Opiniones, Podcast Argumentativo
+ * - Debate Digital, Cómic Digital, Video Carta, Diario Multimedia
+ * - Collage Prensa, Call to Action, Texto en Movimiento
  */
 const requiresManualGrading = (exerciseType: string): boolean => {
   const manualGradingTypes = [
-    // Módulo 3
+    // Módulo 2 - Manual
+    'prediccion_narrativa',
+    // Módulo 3 - Críticos/Argumentativos
+    'tribunal_opiniones',
     'podcast_argumentativo',
-    // Módulo 4
-    'verificador_fake_news',
-    'quiz_tiktok',
-    'analisis_memes',
-    'infografia_interactiva',
-    'navegacion_hipertextual',
-    // Módulo 5
-    'diario_multimedia',
+    'debate_digital',
+    // Módulo 4 - Alfabetización Mediática (creativos)
+    'analisis_memes', // Semi-auto but needs review
+    // Módulo 5 - Creación de Contenido
     'comic_digital',
     'video_carta',
+    'diario_multimedia',
+    // Auxiliares
+    'collage_prensa',
+    'call_to_action',
+    'texto_en_movimiento',
   ];
   return manualGradingTypes.includes(exerciseType);
+};
+
+/**
+ * P2-03: Multimedia content type detection
+ * Identifies multimedia content types for creative exercises
+ */
+type MediaType = 'video' | 'audio' | 'image' | 'text' | 'unknown';
+
+interface MediaContent {
+  type: MediaType;
+  url?: string;
+  urls?: string[];
+  text?: string;
+  mimeType?: string;
+  thumbnail?: string;
+}
+
+const detectMediaType = (url: string): MediaType => {
+  const extension = url.split('.').pop()?.toLowerCase() || '';
+  const videoExts = ['mp4', 'webm', 'ogg', 'mov', 'avi'];
+  const audioExts = ['mp3', 'wav', 'ogg', 'aac', 'm4a'];
+  const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+
+  if (videoExts.includes(extension)) return 'video';
+  if (audioExts.includes(extension)) return 'audio';
+  if (imageExts.includes(extension)) return 'image';
+  return 'unknown';
+};
+
+/**
+ * Extracts multimedia content from answer data
+ */
+const extractMediaContent = (answerData: Record<string, unknown>): MediaContent[] => {
+  const media: MediaContent[] = [];
+
+  // Check for direct media URLs
+  const mediaFields = ['videoUrl', 'audioUrl', 'imageUrl', 'mediaUrl', 'url', 'file'];
+  for (const field of mediaFields) {
+    if (typeof answerData[field] === 'string' && answerData[field]) {
+      const url = answerData[field] as string;
+      media.push({
+        type: detectMediaType(url),
+        url,
+      });
+    }
+  }
+
+  // Check for arrays of media
+  const arrayFields = ['images', 'videos', 'audios', 'files', 'media'];
+  for (const field of arrayFields) {
+    if (Array.isArray(answerData[field])) {
+      for (const item of answerData[field] as (string | { url: string })[]) {
+        const url = typeof item === 'string' ? item : item?.url;
+        if (url) {
+          media.push({
+            type: detectMediaType(url),
+            url,
+          });
+        }
+      }
+    }
+  }
+
+  // Check for podcast/video specific fields
+  if (answerData.podcast_url && typeof answerData.podcast_url === 'string') {
+    media.push({ type: 'audio', url: answerData.podcast_url });
+  }
+  if (answerData.video_url && typeof answerData.video_url === 'string') {
+    media.push({ type: 'video', url: answerData.video_url });
+  }
+
+  // Check for comic panels (images)
+  if (Array.isArray(answerData.panels)) {
+    for (const panel of answerData.panels as { imageUrl?: string }[]) {
+      if (panel.imageUrl) {
+        media.push({ type: 'image', url: panel.imageUrl });
+      }
+    }
+  }
+
+  // Check for collage images
+  if (Array.isArray(answerData.collage_items)) {
+    for (const item of answerData.collage_items as { url?: string }[]) {
+      if (item.url) {
+        media.push({ type: 'image', url: item.url });
+      }
+    }
+  }
+
+  return media;
+};
+
+/**
+ * Check if exercise type has multimedia content
+ */
+const hasMultimediaContent = (exerciseType: string): boolean => {
+  const multimediaTypes = [
+    'video_carta',
+    'podcast_argumentativo',
+    'comic_digital',
+    'diario_multimedia',
+    'collage_prensa',
+    'infografia_interactiva',
+    'creacion_storyboard',
+  ];
+  return multimediaTypes.includes(exerciseType);
+};
+
+// ============================================================================
+// MULTIMEDIA PLAYER COMPONENTS (P2-03)
+// ============================================================================
+
+/**
+ * Video Player Component
+ */
+const VideoPlayer: React.FC<{ url: string; title?: string }> = ({ url, title }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      setCurrentTime(videoRef.current.currentTime);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (videoRef.current) {
+      setDuration(videoRef.current.duration);
+    }
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = parseFloat(e.target.value);
+    if (videoRef.current) {
+      videoRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
+  };
+
+  const formatVideoTime = (time: number): string => {
+    const mins = Math.floor(time / 60);
+    const secs = Math.floor(time % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleFullscreen = () => {
+    if (videoRef.current) {
+      videoRef.current.requestFullscreen?.();
+    }
+  };
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-black">
+      <video
+        ref={videoRef}
+        src={url}
+        className="aspect-video w-full"
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={() => setIsPlaying(false)}
+      />
+      <div className="flex items-center gap-3 bg-gray-900 px-4 py-2">
+        <button
+          onClick={togglePlay}
+          className="rounded-full p-2 text-white transition-colors hover:bg-white/20"
+        >
+          {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+        </button>
+        <input
+          type="range"
+          min={0}
+          max={duration}
+          value={currentTime}
+          onChange={handleSeek}
+          className="flex-1"
+        />
+        <span className="text-xs text-white">
+          {formatVideoTime(currentTime)} / {formatVideoTime(duration)}
+        </span>
+        <button
+          onClick={toggleMute}
+          className="rounded-full p-2 text-white transition-colors hover:bg-white/20"
+        >
+          {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+        </button>
+        <button
+          onClick={handleFullscreen}
+          className="rounded-full p-2 text-white transition-colors hover:bg-white/20"
+        >
+          <Maximize2 className="h-5 w-5" />
+        </button>
+      </div>
+      {title && <p className="bg-gray-800 px-4 py-2 text-sm text-white">{title}</p>}
+    </div>
+  );
+};
+
+/**
+ * Audio Player Component
+ */
+const AudioPlayer: React.FC<{ url: string; title?: string }> = ({ url, title }) => {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = parseFloat(e.target.value);
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
+  };
+
+  const formatAudioTime = (time: number): string => {
+    const mins = Math.floor(time / 60);
+    const secs = Math.floor(time % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="rounded-xl border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-4">
+      <audio
+        ref={audioRef}
+        src={url}
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={() => setIsPlaying(false)}
+      />
+      <div className="flex items-center gap-4">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 text-white">
+          <Music className="h-6 w-6" />
+        </div>
+        <div className="flex-1">
+          {title && <p className="mb-1 font-medium text-gray-800">{title}</p>}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={togglePlay}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-white transition-colors hover:bg-purple-700"
+            >
+              {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+            </button>
+            <input
+              type="range"
+              min={0}
+              max={duration}
+              value={currentTime}
+              onChange={handleSeek}
+              className="flex-1"
+            />
+            <span className="text-xs text-gray-600">
+              {formatAudioTime(currentTime)} / {formatAudioTime(duration)}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Image Gallery Component
+ */
+const ImageGallery: React.FC<{ images: string[]; title?: string }> = ({ images, title }) => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  if (images.length === 0) return null;
+
+  return (
+    <div className="space-y-3">
+      {title && <p className="font-medium text-gray-800">{title}</p>}
+      {/* Main Image */}
+      <div
+        className="group relative cursor-pointer overflow-hidden rounded-xl border border-gray-200"
+        onClick={() => setIsLightboxOpen(true)}
+      >
+        <img
+          src={images[selectedIndex]}
+          alt={`Imagen ${selectedIndex + 1}`}
+          className="h-64 w-full object-contain bg-gray-100"
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/30">
+          <Maximize2 className="h-8 w-8 text-white opacity-0 transition-opacity group-hover:opacity-100" />
+        </div>
+      </div>
+
+      {/* Thumbnails */}
+      {images.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto py-2">
+          {images.map((img, index) => (
+            <button
+              key={index}
+              onClick={() => setSelectedIndex(index)}
+              className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
+                index === selectedIndex ? 'border-orange-500' : 'border-gray-200'
+              }`}
+            >
+              <img src={img} alt={`Miniatura ${index + 1}`} className="h-full w-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {isLightboxOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setIsLightboxOpen(false)}
+          >
+            <button
+              onClick={() => setIsLightboxOpen(false)}
+              className="absolute right-4 top-4 rounded-full p-2 text-white hover:bg-white/20"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <img
+              src={images[selectedIndex]}
+              alt={`Imagen ${selectedIndex + 1}`}
+              className="max-h-[90vh] max-w-[90vw] object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+            {images.length > 1 && (
+              <div className="absolute bottom-4 flex gap-2">
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedIndex(index);
+                    }}
+                    className={`h-2 w-2 rounded-full ${
+                      index === selectedIndex ? 'bg-white' : 'bg-white/50'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+/**
+ * Multimedia Content Section
+ * Renders all multimedia content found in the answer
+ */
+const MultimediaContent: React.FC<{
+  answerData: Record<string, unknown>;
+  exerciseType: string;
+}> = ({ answerData, exerciseType }) => {
+  const mediaContent = extractMediaContent(answerData);
+
+  if (mediaContent.length === 0 && !hasMultimediaContent(exerciseType)) {
+    return null;
+  }
+
+  const videos = mediaContent.filter((m) => m.type === 'video');
+  const audios = mediaContent.filter((m) => m.type === 'audio');
+  const images = mediaContent.filter((m) => m.type === 'image');
+
+  return (
+    <div className="space-y-4 rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+      <h3 className="flex items-center gap-2 font-bold text-gray-800">
+        {videos.length > 0 && <Video className="h-5 w-5 text-blue-600" />}
+        {audios.length > 0 && <Music className="h-5 w-5 text-purple-600" />}
+        {images.length > 0 && <ImageIcon className="h-5 w-5 text-green-600" />}
+        Contenido Multimedia
+      </h3>
+
+      {/* Videos */}
+      {videos.length > 0 && (
+        <div className="space-y-3">
+          {videos.map((video, index) => (
+            <VideoPlayer
+              key={index}
+              url={video.url!}
+              title={videos.length > 1 ? `Video ${index + 1}` : undefined}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Audios */}
+      {audios.length > 0 && (
+        <div className="space-y-3">
+          {audios.map((audio, index) => (
+            <AudioPlayer
+              key={index}
+              url={audio.url!}
+              title={audios.length > 1 ? `Audio ${index + 1}` : exerciseType === 'podcast_argumentativo' ? 'Podcast' : undefined}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Images */}
+      {images.length > 0 && (
+        <ImageGallery
+          images={images.map((img) => img.url!)}
+          title={exerciseType === 'comic_digital' ? 'Paneles del C\u00f3mic' : exerciseType === 'collage_prensa' ? 'Collage' : undefined}
+        />
+      )}
+
+      {/* Download Links */}
+      {mediaContent.length > 0 && (
+        <div className="flex flex-wrap gap-2 border-t border-blue-200 pt-3">
+          {mediaContent.map((media, index) => (
+            <a
+              key={index}
+              href={media.url}
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 rounded-lg bg-white px-3 py-1 text-sm text-gray-700 transition-colors hover:bg-gray-100"
+            >
+              <Download className="h-4 w-4" />
+              Descargar {media.type === 'video' ? 'Video' : media.type === 'audio' ? 'Audio' : 'Imagen'}{' '}
+              {mediaContent.length > 1 ? index + 1 : ''}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
 
 // ============================================================================
@@ -379,7 +873,7 @@ export const ResponseDetailModal: React.FC<ResponseDetailModalProps> = ({
                   {/* Answer Comparison */}
                   <div>
                     <h3 className="mb-3 text-lg font-bold text-gray-800">
-                      Comparación de Respuestas
+                      Comparaci\u00f3n de Respuestas
                     </h3>
                     <AnswerComparison
                       studentAnswer={attempt.submitted_answers}
@@ -387,6 +881,14 @@ export const ResponseDetailModal: React.FC<ResponseDetailModalProps> = ({
                       exerciseType={attempt.exercise_type}
                     />
                   </div>
+
+                  {/* P2-03: Multimedia Content Section */}
+                  {hasMultimediaContent(attempt.exercise_type) && (
+                    <MultimediaContent
+                      answerData={attempt.submitted_answers}
+                      exerciseType={attempt.exercise_type}
+                    />
+                  )}
 
                   {/* Metadata */}
                   <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">

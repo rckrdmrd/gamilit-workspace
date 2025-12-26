@@ -72,6 +72,8 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
 
 // External modules
 import { ProgressModule } from '@modules/progress/progress.module';
+// P0-04: Added 2025-12-18 - NotificationsModule for StudentRiskAlertService
+import { NotificationsModule } from '@modules/notifications/notifications.module';
 
 /**
  * TeacherModule
@@ -123,6 +125,9 @@ import { ProgressModule } from '@modules/progress/progress.module';
 
     // Import ProgressModule for ExerciseSubmissionService (needed for reward distribution)
     ProgressModule,
+
+    // P0-04: Import NotificationsModule for StudentRiskAlertService
+    NotificationsModule,
 
     // Entities from 'auth' datasource
     TypeOrmModule.forFeature([Profile, User], 'auth'),

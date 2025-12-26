@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Modal } from '@shared/components/common/Modal';
+import { ToastContainer, useToast } from '@shared/components/base/Toast';
 import {
   Plus,
   Clock,
@@ -36,6 +37,7 @@ import { GradeSubmissionModal } from '../components/dashboard/GradeSubmissionMod
 import type { Assignment, Submission, DashboardSubmission, GradeSubmissionData } from '../types';
 
 export default function TeacherAssignments() {
+  const { toasts, showToast } = useToast();
   const {
     assignments,
     exercises,
@@ -81,7 +83,7 @@ export default function TeacherAssignments() {
       setIsWizardOpen(false);
     } catch (err: unknown) {
       console.error('[TeacherAssignments] Error creating assignment:', err);
-      alert('Error al crear la asignación. Por favor intenta nuevamente.');
+      showToast({ type: 'error', message: 'Error al crear la asignación. Por favor intenta nuevamente.' });
     }
   };
 
@@ -97,7 +99,7 @@ export default function TeacherAssignments() {
       setIsSubmissionsModalOpen(true);
     } catch (err: unknown) {
       console.error('[TeacherAssignments] Error fetching submissions:', err);
-      alert('Error al cargar las entregas. Por favor intenta nuevamente.');
+      showToast({ type: 'error', message: 'Error al cargar las entregas. Por favor intenta nuevamente.' });
     } finally {
       setSubmissionsLoading(false);
     }
@@ -165,10 +167,10 @@ export default function TeacherAssignments() {
   const handleSendReminder = async (assignmentId: string) => {
     try {
       const result = await sendReminderAPI(assignmentId);
-      alert(result.message);
+      showToast({ type: 'success', message: result.message });
     } catch (err: unknown) {
       console.error('[TeacherAssignments] Error sending reminder:', err);
-      alert('Error al enviar recordatorio. Por favor intenta nuevamente.');
+      showToast({ type: 'error', message: 'Error al enviar recordatorio. Por favor intenta nuevamente.' });
     }
   };
 
@@ -181,9 +183,11 @@ export default function TeacherAssignments() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <main className="detective-container py-8">
-        {/* Header */}
+    <>
+      <ToastContainer toasts={toasts} position="top-right" />
+      <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
+        <main className="detective-container py-8">
+          {/* Header */}
         <div className="mb-8">
           <h1 className="mb-2 text-4xl font-bold text-detective-text">Asignaciones</h1>
           <p className="text-detective-text-secondary">
@@ -366,6 +370,7 @@ export default function TeacherAssignments() {
         submission={selectedSubmission}
         onSubmit={handleSubmitGrade}
       />
-    </div>
+      </div>
+    </>
   );
 }

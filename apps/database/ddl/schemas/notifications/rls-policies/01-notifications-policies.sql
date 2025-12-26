@@ -157,17 +157,23 @@ DROP POLICY IF EXISTS notification_logs_select_own ON notifications.notification
 DROP POLICY IF EXISTS notification_logs_select_admin ON notifications.notification_logs;
 
 -- Policy: notification_logs_select_own
+-- CORREGIDO 2025-12-26: notification_logs no tiene user_id directamente,
+-- se obtiene a traves de la relacion con notifications
 CREATE POLICY notification_logs_select_own
     ON notifications.notification_logs
     AS PERMISSIVE
     FOR SELECT
     TO public
     USING (
-        user_id = current_setting('app.current_user_id', true)::uuid
+        EXISTS (
+            SELECT 1 FROM notifications.notifications n
+            WHERE n.id = notification_logs.notification_id
+            AND n.user_id = current_setting('app.current_user_id', true)::uuid
+        )
     );
 
 COMMENT ON POLICY notification_logs_select_own ON notifications.notification_logs IS
-    'Usuarios pueden ver logs de sus propias notificaciones';
+    'Usuarios pueden ver logs de sus propias notificaciones (via JOIN con notifications)';
 
 -- Policy: notification_logs_select_admin
 CREATE POLICY notification_logs_select_admin

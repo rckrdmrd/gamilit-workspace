@@ -22,6 +22,7 @@ export { teacherContentApi } from './teacherContentApi';
 export { bonusCoinsApi, BonusCoinsAPI } from './bonusCoinsApi';
 export { exerciseResponsesApi } from './exerciseResponsesApi';
 export type { ExerciseResponsesAPI } from './exerciseResponsesApi';
+export { reportsApi } from './reportsApi'; // P1-003: Teacher Reports services
 
 // ============================================================================
 // TYPES
@@ -131,3 +132,13 @@ export type {
   AttemptDetailResponse,
   AttemptsListResponse,
 } from './exerciseResponsesApi';
+
+// Reports types (P1-003)
+export type {
+  ReportFormat,
+  ReportType,
+  GenerateReportDto,
+  ReportMetadata,
+  TeacherReport,
+  ReportStats,
+} from './reportsApi';

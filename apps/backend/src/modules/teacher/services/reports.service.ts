@@ -9,6 +9,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as ExcelJS from 'exceljs';
+import puppeteer from 'puppeteer';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
@@ -251,27 +252,64 @@ export class ReportsService {
   }
 
   /**
-   * Generate PDF report using HTML/CSS (compatible with Puppeteer)
+   * Generate PDF report using Puppeteer
+   * P0-04: Implemented 2025-12-23
    */
   private async generatePDFReport(reportData: ReportData): Promise<Buffer> {
-    this.logger.log('Generating PDF report...');
+    this.logger.log('Generating PDF report with Puppeteer...');
 
     // Generate HTML for the report
     const html = this.generateReportHTML(reportData);
 
-    // For now, return HTML as buffer (in production, use Puppeteer or similar)
-    // TODO: Integrate with Puppeteer for actual PDF generation
-    //
-    // Example with Puppeteer:
-    // const browser = await puppeteer.launch();
-    // const page = await browser.newPage();
-    // await page.setContent(html);
-    // const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
-    // await browser.close();
-    // return pdfBuffer;
+    let browser;
+    try {
+      // Launch Puppeteer with production-safe settings
+      browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+        ],
+      });
 
-    this.logger.warn('PDF generation using HTML placeholder. Integrate Puppeteer for production.');
-    return Buffer.from(html, 'utf-8');
+      const page = await browser.newPage();
+
+      // Set content and wait for styles to load
+      await page.setContent(html, { waitUntil: 'networkidle0' });
+
+      // Generate PDF with A4 format
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          right: '15mm',
+          bottom: '20mm',
+          left: '15mm',
+        },
+        displayHeaderFooter: true,
+        headerTemplate: '<div></div>',
+        footerTemplate: `
+          <div style="font-size: 10px; color: #6b7280; width: 100%; text-align: center; padding: 10px;">
+            Página <span class="pageNumber"></span> de <span class="totalPages"></span>
+          </div>
+        `,
+      });
+
+      this.logger.log(`PDF generated successfully: ${pdfBuffer.length} bytes`);
+      return Buffer.from(pdfBuffer);
+    } catch (error) {
+      this.logger.error('Failed to generate PDF with Puppeteer', error);
+      // Fallback to HTML if Puppeteer fails
+      this.logger.warn('Falling back to HTML output');
+      return Buffer.from(html, 'utf-8');
+    } finally {
+      if (browser) {
+        await browser.close();
+      }
+    }
   }
 
   /**

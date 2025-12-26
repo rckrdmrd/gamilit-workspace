@@ -605,11 +605,12 @@ export default function AdminGamificationPage() {
         }}
       />
 
+      {/* MED-006 FIX: Eliminado valor hardcodeado 1250, usar undefined para dejar default del componente */}
+      {/* TODO: Obtener totalUsers real de endpoint de usuarios cuando esté disponible */}
       <RestoreDefaultsDialog
         isOpen={restoreDefaultsOpen}
         onClose={() => setRestoreDefaultsOpen(false)}
         parameters={safeParameters}
-        totalUsers={1250}
         onConfirm={async () => {
           await restoreDefaults.mutateAsync();
           setRestoreDefaultsOpen(false);

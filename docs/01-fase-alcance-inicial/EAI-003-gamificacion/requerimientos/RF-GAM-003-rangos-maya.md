@@ -278,8 +278,10 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 
 #### Rango 5: K'uk'ulkan (Serpiente Emplumada) 🐉
 
-**Umbral:** 2,250+ XP
-**Requisito:** Ganar 2,250 XP
+**Umbral:** 1,900+ XP
+**Requisito:** Ganar 1,900 XP
+
+> **Nota v2.1:** Umbral ajustado de 2,250 a 1,900 XP para ser alcanzable completando Módulos 1-3 (~1,950 XP disponibles).
 
 **Significado histórico:**
 > "K'uk'ulkan" (Kukulkán en español) es la deidad maya asociada con el conocimiento, el viento y el planeta Venus. Equivalente a Quetzalcóatl. Representa la máxima sabiduría y trascendencia.
@@ -325,8 +327,10 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 | Ajaw | 0 | 499 | 500 |
 | Nacom | 500 | 999 | 1,000 |
 | Ah K'in | 1,000 | 1,499 | 1,500 |
-| Halach Uinic | 1,500 | 2,249 | 2,250 |
-| K'uk'ulkan | 2,250 | ∞ | - (rango final) |
+| Halach Uinic | 1,500 | 1,899 | 1,900 |
+| K'uk'ulkan | 1,900 | ∞ | - (rango final) |
+
+> **Nota v2.1:** Umbrales actualizados según migración v2.1. K'uk'ulkan ahora alcanzable con M1-M3.
 
 #### Progresión de Dificultad
 
@@ -785,23 +789,25 @@ INSERT INTO audit_logging.audit_logs (
 - [ ] Notificación `rank_up` se envía
 - [ ] Registro en `rank_history` es correcto
 
-### CA-GAM-003-002: Umbrales de XP
+### CA-GAM-003-002: Umbrales de XP (v2.1)
 
-- [ ] Ajaw: 0-999 XP
-- [ ] Nacom: 1,000-4,999 XP
-- [ ] Ah K'in: 5,000-19,999 XP
-- [ ] Halach Uinic: 20,000-99,999 XP
-- [ ] K'uk'ulkan: 2,250+ XP
+- [ ] Ajaw: 0-499 XP
+- [ ] Nacom: 500-999 XP
+- [ ] Ah K'in: 1,000-1,499 XP
+- [ ] Halach Uinic: 1,500-1,899 XP
+- [ ] K'uk'ulkan: 1,900+ XP
 - [ ] Usuario en K'uk'ulkan no puede promover más (es final)
 
-### CA-GAM-003-003: Bonus de XP por Rango
+> **Nota:** Umbrales actualizados en migración v2.1 para ser alcanzables.
 
-- [ ] Ajaw: 1.0x (sin bonus)
-- [ ] Nacom: 1.25x (+25%)
-- [ ] Ah K'in: 1.25x (+25%)
-- [ ] Halach Uinic: 1.25x (+25%)
+### CA-GAM-003-003: Multiplicador XP por Rango (v2.1)
+
+- [ ] Ajaw: 1.00x (sin bonus)
+- [ ] Nacom: 1.10x (+10%)
+- [ ] Ah K'in: 1.15x (+15%)
+- [ ] Halach Uinic: 1.20x (+20%)
 - [ ] K'uk'ulkan: 1.25x (+25%)
-- [ ] Bonus se aplica correctamente en cada ejercicio completado
+- [ ] Multiplicador se aplica correctamente en cada ejercicio completado
 
 ### CA-GAM-003-004: Desbloqueo de Contenido
 

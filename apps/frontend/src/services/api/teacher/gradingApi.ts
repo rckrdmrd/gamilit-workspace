@@ -10,7 +10,8 @@
  * @module services/api/teacher/gradingApi
  */
 
-import axiosInstance from '../axios.instance';
+import { apiClient } from '../apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 import type { Submission } from '@apps/teacher/types';
 
 // ============================================================================
@@ -108,8 +109,6 @@ export interface SubmissionDetail extends Submission {
  * providing feedback, and bulk grading operations.
  */
 class GradingAPI {
-  private readonly baseUrl = '/teacher/submissions';
-
   /**
    * Get submissions with optional filters
    *
@@ -144,9 +143,10 @@ class GradingAPI {
    */
   async getSubmissions(filters?: GetSubmissionsQueryDto): Promise<PaginatedSubmissionsResponse> {
     try {
-      const { data } = await axiosInstance.get<PaginatedSubmissionsResponse>(this.baseUrl, {
-        params: filters,
-      });
+      const { data } = await apiClient.get<PaginatedSubmissionsResponse>(
+        API_ENDPOINTS.teacher.submissions.list,
+        { params: filters }
+      );
       return data;
     } catch (error) {
       console.error('[GradingAPI] Error fetching submissions:', error);
@@ -181,7 +181,9 @@ class GradingAPI {
    */
   async getSubmissionById(submissionId: string): Promise<SubmissionDetail> {
     try {
-      const { data } = await axiosInstance.get<SubmissionDetail>(`${this.baseUrl}/${submissionId}`);
+      const { data } = await apiClient.get<SubmissionDetail>(
+        API_ENDPOINTS.teacher.submissions.get(submissionId)
+      );
       return data;
     } catch (error) {
       console.error('[GradingAPI] Error fetching submission details:', error);
@@ -215,8 +217,8 @@ class GradingAPI {
    */
   async submitFeedback(submissionId: string, feedback: SubmitFeedbackDto): Promise<Submission> {
     try {
-      const { data } = await axiosInstance.post<Submission>(
-        `${this.baseUrl}/${submissionId}/feedback`,
+      const { data } = await apiClient.post<Submission>(
+        API_ENDPOINTS.teacher.submissions.feedback(submissionId),
         feedback,
       );
       return data;
@@ -265,7 +267,7 @@ class GradingAPI {
    */
   async bulkGrade(bulkData: BulkGradeDto): Promise<void> {
     try {
-      await axiosInstance.post(`${this.baseUrl}/bulk-grade`, bulkData);
+      await apiClient.post(API_ENDPOINTS.teacher.submissions.bulkGrade, bulkData);
     } catch (error) {
       console.error('[GradingAPI] Error performing bulk grade:', error);
       throw error;

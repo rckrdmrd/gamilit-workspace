@@ -10,7 +10,7 @@
  * @module services/api/teacher/teacherApi
  */
 
-import axiosInstance from '../axios.instance';
+import { apiClient } from '../apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import type {
   TeacherDashboardStats,
@@ -66,7 +66,7 @@ class TeacherDashboardAPI {
    */
   async getDashboardStats(): Promise<TeacherDashboardStats> {
     try {
-      const { data } = await axiosInstance.get<TeacherDashboardStats>(
+      const { data } = await apiClient.get<TeacherDashboardStats>(
         API_ENDPOINTS.teacher.dashboard.stats,
       );
       return data;
@@ -97,7 +97,7 @@ class TeacherDashboardAPI {
    */
   async getRecentActivities(limit: number = 10): Promise<Activity[]> {
     try {
-      const { data } = await axiosInstance.get<Activity[]>(
+      const { data } = await apiClient.get<Activity[]>(
         API_ENDPOINTS.teacher.dashboard.activities,
         {
           params: { limit },
@@ -131,7 +131,7 @@ class TeacherDashboardAPI {
    */
   async getStudentAlerts(): Promise<InterventionAlert[]> {
     try {
-      const { data } = await axiosInstance.get<InterventionAlert[]>(
+      const { data } = await apiClient.get<InterventionAlert[]>(
         API_ENDPOINTS.teacher.dashboard.alerts,
       );
       return data;
@@ -162,7 +162,7 @@ class TeacherDashboardAPI {
    */
   async getTopPerformers(limit: number = 5): Promise<StudentPerformance[]> {
     try {
-      const { data } = await axiosInstance.get<StudentPerformance[]>(
+      const { data } = await apiClient.get<StudentPerformance[]>(
         API_ENDPOINTS.teacher.dashboard.topPerformers,
         {
           params: { limit },
@@ -195,7 +195,7 @@ class TeacherDashboardAPI {
    */
   async getModuleProgressSummary(): Promise<ModuleProgress[]> {
     try {
-      const { data } = await axiosInstance.get<ModuleProgress[]>(
+      const { data } = await apiClient.get<ModuleProgress[]>(
         API_ENDPOINTS.teacher.dashboard.moduleProgress,
       );
       return data;

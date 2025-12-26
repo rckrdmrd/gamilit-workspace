@@ -6,11 +6,13 @@
 
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, ArrayContains } from 'typeorm';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { ModuleProgress } from '@/modules/progress/entities/module-progress.entity';
-import { GamilityRoleEnum } from '@/shared/constants/enums.constants';
+import { Classroom } from '@/modules/social/entities/classroom.entity';
+import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
+import { GamilityRoleEnum, ClassroomMemberStatusEnum } from '@/shared/constants/enums.constants';
 
 export interface ClassroomStats {
   total_students: number;
@@ -65,19 +67,85 @@ export class TeacherDashboardService {
     private readonly profileRepository: Repository<Profile>,
     @InjectRepository(ModuleProgress, 'progress')
     private readonly moduleProgressRepository: Repository<ModuleProgress>,
+    @InjectRepository(Classroom, 'social')
+    private readonly classroomRepository: Repository<Classroom>,
+    @InjectRepository(ClassroomMember, 'social')
+    private readonly classroomMemberRepository: Repository<ClassroomMember>,
   ) {}
+
+  /**
+   * Get student IDs from teacher's classrooms
+   *
+   * This helper method filters students by:
+   * 1. Classrooms where teacher is the main teacher (teacher_id)
+   * 2. Classrooms where teacher is a co-teacher (co_teachers array)
+   * 3. Only active classroom members
+   */
+  private async getTeacherStudentIds(teacherId: string): Promise<string[]> {
+    // Get classrooms where teacher is main teacher
+    const mainTeacherClassrooms = await this.classroomRepository.find({
+      where: { teacher_id: teacherId, is_active: true },
+      select: ['id'],
+    });
+
+    // Get classrooms where teacher is co-teacher
+    const coTeacherClassrooms = await this.classroomRepository
+      .createQueryBuilder('classroom')
+      .where('classroom.is_active = true')
+      .andWhere(':teacherId = ANY(classroom.co_teachers)', { teacherId })
+      .select(['classroom.id'])
+      .getMany();
+
+    // Combine all classroom IDs
+    const classroomIds = [
+      ...mainTeacherClassrooms.map(c => c.id),
+      ...coTeacherClassrooms.map(c => c.id),
+    ];
+
+    if (classroomIds.length === 0) {
+      return [];
+    }
+
+    // Get active members from these classrooms
+    const members = await this.classroomMemberRepository.find({
+      where: {
+        classroom_id: In(classroomIds),
+        status: ClassroomMemberStatusEnum.ACTIVE,
+      },
+      select: ['student_id'],
+    });
+
+    // Return unique student IDs
+    const studentIds = [...new Set(members.map(m => m.student_id))];
+    return studentIds;
+  }
 
   /**
    * Get classroom statistics overview
    *
-   * Fixed: Removed 'as any' casts, now uses In() operator properly
+   * Fixed: Now filters students by teacher's classrooms (P0-03)
    */
-  async getClassroomStats(_teacherId: string): Promise<ClassroomStats> {
-    // Get all students from teacher's classrooms
-    // TODO: Implement classroom-teacher relationship
-    // For now, we'll get all students
+  async getClassroomStats(teacherId: string): Promise<ClassroomStats> {
+    // Get student IDs from teacher's classrooms
+    const teacherStudentIds = await this.getTeacherStudentIds(teacherId);
+
+    if (teacherStudentIds.length === 0) {
+      return {
+        total_students: 0,
+        active_students: 0,
+        average_score: 0,
+        average_completion: 0,
+        total_submissions_pending: 0,
+        students_at_risk: 0,
+      };
+    }
+
+    // Get profiles for teacher's students
     const students = await this.profileRepository.find({
-      where: { role: GamilityRoleEnum.STUDENT },
+      where: {
+        id: In(teacherStudentIds),
+        role: GamilityRoleEnum.STUDENT,
+      },
     });
 
     const totalStudents = students.length;
@@ -214,12 +282,22 @@ export class TeacherDashboardService {
   /**
    * Get student alerts (low scores, inactive, struggling)
    *
-   * Fixed: Eliminated N+1 query problem, now uses bulk query + grouping in code
+   * Fixed: Now filters by teacher's classrooms (P0-03)
    */
-  async getStudentAlerts(_teacherId: string): Promise<StudentAlert[]> {
-    // 1. Get all students
+  async getStudentAlerts(teacherId: string): Promise<StudentAlert[]> {
+    // 1. Get student IDs from teacher's classrooms
+    const teacherStudentIds = await this.getTeacherStudentIds(teacherId);
+
+    if (teacherStudentIds.length === 0) {
+      return [];
+    }
+
+    // 2. Get profiles for teacher's students
     const students = await this.profileRepository.find({
-      where: { role: GamilityRoleEnum.STUDENT },
+      where: {
+        id: In(teacherStudentIds),
+        role: GamilityRoleEnum.STUDENT,
+      },
     });
 
     if (students.length === 0) {
@@ -297,15 +375,25 @@ export class TeacherDashboardService {
   /**
    * Get top performing students
    *
-   * Fixed: Eliminated N+1 query problem, now uses bulk query + grouping in code
+   * Fixed: Now filters by teacher's classrooms (P0-03)
    */
   async getTopPerformers(
     teacherId: string,
     limit: number = 5,
   ): Promise<TopPerformer[]> {
-    // 1. Get all students
+    // 1. Get student IDs from teacher's classrooms
+    const teacherStudentIds = await this.getTeacherStudentIds(teacherId);
+
+    if (teacherStudentIds.length === 0) {
+      return [];
+    }
+
+    // 2. Get profiles for teacher's students
     const students = await this.profileRepository.find({
-      where: { role: GamilityRoleEnum.STUDENT },
+      where: {
+        id: In(teacherStudentIds),
+        role: GamilityRoleEnum.STUDENT,
+      },
     });
 
     if (students.length === 0) {

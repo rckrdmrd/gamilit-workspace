@@ -19,6 +19,7 @@ import {
   ShopCategory,
   ShopItem,
   UserPurchase,
+  MayaRankEntity,
 } from './entities';
 
 // External entities
@@ -98,6 +99,7 @@ import {
         ShopCategory,
         ShopItem,
         UserPurchase,
+        MayaRankEntity,
       ],
       'gamification',
     ),

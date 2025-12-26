@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Message, MessageParticipant } from '../entities/message.entity';
+import { Profile } from '@/modules/auth/entities/profile.entity';
 import {
   SendMessageDto,
   SendClassroomAnnouncementDto,
@@ -47,7 +48,33 @@ export class TeacherMessagesService {
     private readonly messagesRepository: Repository<Message>,
     @InjectRepository(MessageParticipant, 'communication')
     private readonly participantsRepository: Repository<MessageParticipant>,
+    @InjectRepository(Profile, 'auth')
+    private readonly profileRepository: Repository<Profile>,
   ) {}
+
+  /**
+   * P2-04: Get user display names from user IDs
+   * Fetches full names from auth.profiles to replace truncated User_xxx names
+   */
+  private async getUserNames(userIds: string[]): Promise<Map<string, string>> {
+    if (userIds.length === 0) return new Map();
+
+    const profiles = await this.profileRepository.find({
+      where: { user_id: In(userIds) },
+      select: ['user_id', 'first_name', 'last_name', 'display_name'],
+    });
+
+    const nameMap = new Map<string, string>();
+    for (const profile of profiles) {
+      if (!profile.user_id) continue;
+      const fullName = profile.display_name ||
+        `${profile.first_name || ''} ${profile.last_name || ''}`.trim() ||
+        'Usuario';
+      nameMap.set(profile.user_id, fullName);
+    }
+
+    return nameMap;
+  }
 
   /**
    * Obtener listado de mensajes con filtros y paginación
@@ -106,24 +133,27 @@ export class TeacherMessagesService {
     const messages = await qb.getMany();
 
     // Cargar recipients para cada mensaje
-    // ⚠️ NOTA: user relation deshabilitada por cross-datasource limitation
-    const messagesWithRecipients = await Promise.all(
-      messages.map(async (msg) => {
-        const participants = await this.participantsRepository.find({
-          where: { messageId: msg.id, role: 'recipient' },
-          // relations: ['user'],  // ❌ Disabled - cross-datasource
-        });
+    // P2-04: Enriquecer con nombres reales desde auth.profiles
+    const allParticipants = await this.participantsRepository.find({
+      where: { messageId: In(messages.map(m => m.id)), role: 'recipient' },
+    });
 
-        return {
-          ...msg,
-          recipients: participants.map((p) => ({
-            userId: p.userId,
-            userName: 'User_' + p.userId.substring(0, 8),  // TODO: Hacer join manual con auth.profiles si se necesita nombre real
-            isRead: p.isRead,
-          })),
-        };
-      }),
-    );
+    // Obtener nombres de todos los participantes
+    const allUserIds = [...new Set(allParticipants.map(p => p.userId))];
+    const userNamesMap = await this.getUserNames(allUserIds);
+
+    const messagesWithRecipients = messages.map((msg) => {
+      const participants = allParticipants.filter(p => p.messageId === msg.id);
+
+      return {
+        ...msg,
+        recipients: participants.map((p) => ({
+          userId: p.userId,
+          userName: userNamesMap.get(p.userId) || 'Usuario',
+          isRead: p.isRead,
+        })),
+      };
+    });
 
     return {
       data: messagesWithRecipients.map((msg) => this.mapToResponseDto(msg)),
@@ -161,17 +191,20 @@ export class TeacherMessagesService {
     }
 
     // Cargar recipients
-    // ⚠️ NOTA: user relation deshabilitada por cross-datasource limitation
+    // P2-04: Enriquecer con nombres reales desde auth.profiles
     const participants = await this.participantsRepository.find({
       where: { messageId: message.id, role: 'recipient' },
-      // relations: ['user'],  // ❌ Disabled - cross-datasource
     });
+
+    // Obtener nombres de los participantes
+    const userIds = participants.map(p => p.userId);
+    const userNamesMap = await this.getUserNames(userIds);
 
     const messageWithRecipients = {
       ...message,
       recipients: participants.map((p) => ({
         userId: p.userId,
-        userName: 'User_' + p.userId.substring(0, 8),  // TODO: Hacer join manual con auth.profiles si se necesita nombre real
+        userName: userNamesMap.get(p.userId) || 'Usuario',
         isRead: p.isRead,
       })),
     };
