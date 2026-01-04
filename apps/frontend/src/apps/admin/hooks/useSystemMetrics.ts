@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 export interface SystemMetrics {
   apiResponseTime: {
@@ -34,7 +35,7 @@ export function useSystemMetrics(refreshInterval = 30000) {
 
   const fetchMetrics = async () => {
     try {
-      const response = await apiClient.get('/admin/metrics');
+      const response = await apiClient.get(API_ENDPOINTS.admin.metrics);
       const data = response.data.success ? response.data.data : response.data;
       setMetrics(data);
 
@@ -80,7 +81,7 @@ export function useHealthStatus() {
   useEffect(() => {
     const fetchHealth = async () => {
       try {
-        const response = await apiClient.get('/health/detailed');
+        const response = await apiClient.get(API_ENDPOINTS.health.detailed);
         const data = response.data.success ? response.data.data : response.data;
         setHealth(data);
       } catch (err) {

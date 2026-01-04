@@ -20,7 +20,9 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
-import { TeacherGuard } from '../guards';
+import { RolesGuard } from '@modules/auth/guards/roles.guard';
+import { Roles } from '@modules/auth/decorators/roles.decorator';
+import { GamilityRoleEnum } from '@/shared/constants/enums.constants';
 import { StudentBlockingService } from '../services/student-blocking.service';
 import { TeacherClassroomsCrudService } from '../services/teacher-classrooms-crud.service';
 import {
@@ -71,7 +73,8 @@ import {
  */
 @ApiTags('Teacher - Classrooms')
 @Controller('teacher/classrooms')
-@UseGuards(JwtAuthGuard, TeacherGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
 @ApiBearerAuth()
 export class TeacherClassroomsController {
   constructor(

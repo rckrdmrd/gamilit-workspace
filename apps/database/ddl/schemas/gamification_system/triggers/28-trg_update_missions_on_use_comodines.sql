@@ -2,14 +2,14 @@
 -- Trigger: trg_update_missions_on_use_comodines
 -- Table: gamification_system.comodin_usage_log
 -- Description: Actualiza misiones cuando un usuario usa un comodín
--- Function: gamilit.update_missions_on_use_comodines()
+-- Function: gamilit.trigger_missions_on_use_comodines() (wrapper unificado)
 -- Created: 2025-11-28
 -- =====================================================
 
 CREATE TRIGGER trg_update_missions_on_use_comodines
     AFTER INSERT ON gamification_system.comodin_usage_log
     FOR EACH ROW
-    EXECUTE FUNCTION gamilit.update_missions_on_use_comodines();
+    EXECUTE FUNCTION gamilit.trigger_missions_on_use_comodines();
 
 -- Comentario descriptivo
 COMMENT ON TRIGGER trg_update_missions_on_use_comodines ON gamification_system.comodin_usage_log IS

@@ -203,6 +203,13 @@ export class ExerciseSubmission {
   @Column({ type: 'integer', default: 0 })
     ml_coins_earned!: number;
 
+  /**
+   * Indica si las recompensas ya fueron reclamadas
+   * Previene claims duplicados de XP y ML Coins
+   */
+  @Column({ type: 'boolean', default: false })
+    rewards_claimed!: boolean;
+
   // =====================================================
   // LEGACY NOTE (DEPRECATED)
   // =====================================================

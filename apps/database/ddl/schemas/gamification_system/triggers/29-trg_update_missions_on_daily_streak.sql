@@ -4,7 +4,7 @@
 -- Tabla: gamification_system.user_stats
 -- Evento: AFTER UPDATE
 -- Condición: Cuando current_streak cambia
--- Función: gamilit.update_missions_on_daily_streak()
+-- Funcion: gamilit.trigger_missions_on_daily_streak() (wrapper unificado)
 -- Created: 2025-11-28
 -- =============================================================================
 
@@ -12,7 +12,7 @@ CREATE TRIGGER trg_update_missions_on_daily_streak
     AFTER UPDATE ON gamification_system.user_stats
     FOR EACH ROW
     WHEN (OLD.current_streak IS DISTINCT FROM NEW.current_streak)
-    EXECUTE FUNCTION gamilit.update_missions_on_daily_streak();
+    EXECUTE FUNCTION gamilit.trigger_missions_on_daily_streak();
 
 -- Comentario descriptivo
 COMMENT ON TRIGGER trg_update_missions_on_daily_streak ON gamification_system.user_stats IS

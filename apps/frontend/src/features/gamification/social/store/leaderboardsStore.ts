@@ -1,15 +1,25 @@
 /**
  * Leaderboards Store
  *
- * Now connects to real API instead of mock data
+ * @description Zustand store for managing leaderboard state.
+ * Data is fetched from real backend APIs.
+ *
+ * @updated 2025-12-29 - Removed mock data from initial state
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { create } from 'zustand';
 import type { LeaderboardData, LeaderboardType, TimePeriod } from '../types/leaderboardsTypes';
-import { getLeaderboardByType as getMockLeaderboardByType } from '../mockData/leaderboardsMockData';
 import { getLeaderboard, getUserLeaderboardRank, getClassroomLeaderboard } from '../api/socialAPI';
-import { FEATURE_FLAGS } from '@/config/api.config';
+
+// Empty leaderboard for initial state
+const emptyLeaderboard: LeaderboardData = {
+  type: 'global',
+  period: 'all-time',
+  entries: [],
+  lastUpdated: new Date(),
+  userRank: undefined,
+};
 
 interface LeaderboardsStore {
   currentLeaderboard: LeaderboardData;
@@ -25,22 +35,16 @@ interface LeaderboardsStore {
 }
 
 export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
-  currentLeaderboard: getMockLeaderboardByType('global'),
+  currentLeaderboard: emptyLeaderboard, // Will be populated by API call
   selectedType: 'global',
   selectedPeriod: 'all-time',
-  loading: false,
+  loading: true, // Start loading to trigger initial fetch
   error: null,
 
   setLeaderboardType: async (type: LeaderboardType, classroomId?: string) => {
     set({ loading: true, error: null, selectedType: type });
 
     try {
-      if (FEATURE_FLAGS.USE_MOCK_DATA) {
-        const leaderboard = getMockLeaderboardByType(type);
-        set({ currentLeaderboard: leaderboard, loading: false });
-        return;
-      }
-
       const { selectedPeriod } = get();
       let entries;
 
@@ -97,10 +101,6 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
         error: error instanceof Error ? error.message : 'Failed to load leaderboard',
         loading: false,
       });
-
-      // Fallback to mock data on error
-      const mockLeaderboard = getMockLeaderboardByType(type);
-      set({ currentLeaderboard: mockLeaderboard });
     }
   },
 
@@ -108,11 +108,6 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
     set({ loading: true, error: null, selectedPeriod: period });
 
     try {
-      if (FEATURE_FLAGS.USE_MOCK_DATA) {
-        set({ loading: false });
-        return;
-      }
-
       const { selectedType } = get();
 
       // Fetch new data based on period
@@ -151,12 +146,6 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
     set({ loading: true, error: null });
 
     try {
-      if (FEATURE_FLAGS.USE_MOCK_DATA) {
-        const leaderboard = getMockLeaderboardByType(selectedType);
-        set({ currentLeaderboard: { ...leaderboard, lastUpdated: new Date() }, loading: false });
-        return;
-      }
-
       let entries;
 
       // Get user info for school/friends leaderboards
@@ -212,10 +201,6 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
         error: error instanceof Error ? error.message : 'Failed to refresh leaderboard',
         loading: false,
       });
-
-      // Fallback to mock data on error
-      const mockLeaderboard = getMockLeaderboardByType(selectedType);
-      set({ currentLeaderboard: { ...mockLeaderboard, lastUpdated: new Date() } });
     }
   },
 

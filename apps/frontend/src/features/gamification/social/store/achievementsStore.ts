@@ -1,6 +1,10 @@
 /**
  * Achievements Store
- * Zustand store for managing achievement state
+ *
+ * @description Zustand store for managing achievement state.
+ * Data is fetched from real backend APIs via fetchAchievements.
+ *
+ * @updated 2025-12-29 - Removed mock data from initial state
  */
 
 import { create } from 'zustand';
@@ -9,8 +13,19 @@ import type {
   AchievementUnlockNotification,
   AchievementStats,
 } from '../types/achievementsTypes';
-import { allAchievements } from '../mockData/achievementsMockData';
 import { getUserAchievements } from '../api/achievementsAPI';
+
+// Empty stats for initial state
+const emptyStats: AchievementStats = {
+  totalAchievements: 0,
+  unlockedAchievements: 0,
+  progressAchievements: 0,
+  masteryAchievements: 0,
+  socialAchievements: 0,
+  hiddenAchievements: 0,
+  totalMlCoinsEarned: 0,
+  totalXpEarned: 0,
+};
 
 interface AchievementsStore {
   achievements: Achievement[];
@@ -52,10 +67,10 @@ const calculateStats = (achievements: Achievement[]): AchievementStats => {
 };
 
 export const useAchievementsStore = create<AchievementsStore>((set) => ({
-  achievements: allAchievements,
-  unlockedAchievements: allAchievements.filter((a) => a.isUnlocked),
+  achievements: [], // Fetched from API via fetchAchievements
+  unlockedAchievements: [],
   recentUnlocks: [],
-  stats: calculateStats(allAchievements),
+  stats: emptyStats,
   selectedCategory: null,
   isLoading: false,
   error: null,
@@ -178,17 +193,6 @@ export const useAchievementsStore = create<AchievementsStore>((set) => ({
         error: errorMessage,
       });
       console.error('Error fetching achievements:', error);
-
-      // Fallback to mock data if API fails (development mode)
-      if (import.meta.env.DEV) {
-        console.warn('Using mock data as fallback');
-        set({
-          achievements: allAchievements,
-          unlockedAchievements: allAchievements.filter((a) => a.isUnlocked),
-          stats: calculateStats(allAchievements),
-          isLoading: false,
-        });
-      }
     }
   },
 }));

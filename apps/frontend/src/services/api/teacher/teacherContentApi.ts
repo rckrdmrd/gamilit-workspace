@@ -8,6 +8,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 // ============================================================================
 // TYPES & ENUMS
@@ -180,7 +181,7 @@ export const teacherContentApi = {
    * ```
    */
   getContent: async (params: GetContentParams = {}): Promise<ContentListResponse> => {
-    const response = await apiClient.get('/teacher/content', { params });
+    const response = await apiClient.get(API_ENDPOINTS.teacher.content.list, { params });
     return response.data;
   },
 
@@ -196,7 +197,7 @@ export const teacherContentApi = {
    * ```
    */
   getContentById: async (contentId: string): Promise<TeacherContent> => {
-    const response = await apiClient.get(`/teacher/content/${contentId}`);
+    const response = await apiClient.get(API_ENDPOINTS.teacher.content.get(contentId));
     return response.data;
   },
 
@@ -218,7 +219,7 @@ export const teacherContentApi = {
    * ```
    */
   createContent: async (data: CreateContentData): Promise<TeacherContent> => {
-    const response = await apiClient.post('/teacher/content', data);
+    const response = await apiClient.post(API_ENDPOINTS.teacher.content.create, data);
     return response.data;
   },
 
@@ -238,7 +239,7 @@ export const teacherContentApi = {
    * ```
    */
   updateContent: async (contentId: string, data: UpdateContentData): Promise<TeacherContent> => {
-    const response = await apiClient.put(`/teacher/content/${contentId}`, data);
+    const response = await apiClient.put(API_ENDPOINTS.teacher.content.update(contentId), data);
     return response.data;
   },
 
@@ -254,7 +255,7 @@ export const teacherContentApi = {
    * ```
    */
   deleteContent: async (contentId: string): Promise<SuccessResponse> => {
-    const response = await apiClient.delete(`/teacher/content/${contentId}`);
+    const response = await apiClient.delete(API_ENDPOINTS.teacher.content.delete(contentId));
     return response.data;
   },
 
@@ -273,7 +274,7 @@ export const teacherContentApi = {
    * ```
    */
   cloneContent: async (contentId: string, data?: CloneContentData): Promise<TeacherContent> => {
-    const response = await apiClient.post(`/teacher/content/${contentId}/clone`, data || {});
+    const response = await apiClient.post(API_ENDPOINTS.teacher.content.clone(contentId), data || {});
     return response.data;
   },
 
@@ -289,7 +290,7 @@ export const teacherContentApi = {
    * ```
    */
   publishContent: async (contentId: string): Promise<TeacherContent> => {
-    const response = await apiClient.patch(`/teacher/content/${contentId}/publish`);
+    const response = await apiClient.patch(API_ENDPOINTS.teacher.content.publish(contentId));
     return response.data;
   },
 };

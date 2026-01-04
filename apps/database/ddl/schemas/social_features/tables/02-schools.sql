@@ -117,7 +117,7 @@ CREATE INDEX idx_schools_tenant ON social_features.schools USING btree (tenant_i
 --
 
 ALTER TABLE ONLY social_features.schools
-    ADD CONSTRAINT schools_administrative_contact_id_fkey FOREIGN KEY (administrative_contact_id) REFERENCES auth_management.profiles(id);
+    ADD CONSTRAINT schools_administrative_contact_id_fkey FOREIGN KEY (administrative_contact_id) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
 
 
 --
@@ -125,7 +125,7 @@ ALTER TABLE ONLY social_features.schools
 --
 
 ALTER TABLE ONLY social_features.schools
-    ADD CONSTRAINT schools_principal_id_fkey FOREIGN KEY (principal_id) REFERENCES auth_management.profiles(id);
+    ADD CONSTRAINT schools_principal_id_fkey FOREIGN KEY (principal_id) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
 
 
 --

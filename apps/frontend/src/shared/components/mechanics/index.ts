@@ -23,4 +23,7 @@ export type { ExerciseContainerProps } from './ExerciseContainer';
 
 export { default as ExerciseContentRenderer } from './ExerciseContentRenderer';
 
+export { SubmitExerciseButton } from './SubmitExerciseButton';
+export type { SubmitExerciseButtonProps } from './SubmitExerciseButton';
+
 export * from './mechanicsTypes';

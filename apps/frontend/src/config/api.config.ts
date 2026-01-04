@@ -100,6 +100,19 @@ export const API_ENDPOINTS = {
     rewards: '/gamification/rewards',
     badges: '/gamification/badges',
     mlCoins: (userId: string) => `/gamification/users/${userId}/ml-coins`,
+    // Classroom missions (P1-005: Centralized endpoint)
+    classroomMissions: (classroomId: string) => `/gamification/classrooms/${classroomId}/missions`,
+    // Missions endpoints (P1-001: Centralized 2025-12-28)
+    missions: {
+      daily: '/gamification/missions/daily',
+      weekly: '/gamification/missions/weekly',
+      special: '/gamification/missions/special',
+      claim: (missionId: string) => `/gamification/missions/${missionId}/claim`,
+      progress: (missionId: string) => `/gamification/missions/${missionId}/progress`,
+      stats: (userId: string) => `/gamification/missions/stats/${userId}`,
+      // P1-002: Endpoint /me que extrae userId del JWT (evita 403)
+      statsMe: '/gamification/missions/stats/me',
+    },
   },
 
   /**
@@ -173,6 +186,9 @@ export const API_ENDPOINTS = {
     userGuilds: (userId: string) => `/social/users/${userId}/guilds`,
     friends: (userId: string) => `/social/users/${userId}/friends`,
     messages: (userId: string) => `/social/users/${userId}/messages`,
+    // Schools endpoints (P1-003: Centralized 2025-12-28)
+    schools: '/social/schools',
+    school: (schoolId: string) => `/social/schools/${schoolId}`,
   },
 
   /**
@@ -247,6 +263,7 @@ export const API_ENDPOINTS = {
       deactivate: (id: string) => `/admin/users/${id}/deactivate`,
       suspend: (id: string) => `/admin/users/${id}/suspend`,
       unsuspend: (id: string) => `/admin/users/${id}/unsuspend`,
+      resetPassword: (id: string) => `/admin/users/${id}/reset-password`,
     },
 
     // Backwards compatibility (flat structure)
@@ -333,6 +350,41 @@ export const API_ENDPOINTS = {
       deleteUsers: '/admin/users/bulk/delete',
       updateRole: '/admin/users/bulk/update-role',
     },
+
+    // Activity Logs (P1: Centralized 2025-12-28)
+    activity: '/admin/activity',
+
+    // Error Management (P1: Centralized 2025-12-28)
+    errors: {
+      list: '/admin/errors',
+      resolve: (errorId: string) => `/admin/errors/${errorId}/resolve`,
+    },
+
+    // Assignments Export (P1: Centralized 2025-12-28)
+    assignments: {
+      export: '/admin/assignments/export',
+    },
+
+    // Feature Flags (P1: Centralized 2025-12-28)
+    featureFlags: {
+      list: '/admin/feature-flags',
+      get: (key: string) => `/admin/feature-flags/${key}`,
+      create: '/admin/feature-flags',
+      update: (key: string) => `/admin/feature-flags/${key}`,
+      delete: (key: string) => `/admin/feature-flags/${key}`,
+    },
+
+    // Metrics shorthand (P1: Centralized 2025-12-28)
+    metrics: '/admin/metrics',
+
+    // Alert Actions (P1: Centralized 2025-12-28)
+    alertActions: {
+      dismiss: (alertId: string) => `/admin/alerts/${alertId}/dismiss`,
+      dismissAll: '/admin/alerts/dismiss-all',
+    },
+
+    // Logs shorthand (P1: Centralized 2025-12-28)
+    logs: '/admin/logs',
   },
 
   /**
@@ -357,9 +409,6 @@ export const API_ENDPOINTS = {
     createClassroom: '/teacher/classrooms',
     updateClassroom: (id: string) => `/teacher/classrooms/${id}`,
     deleteClassroom: (id: string) => `/teacher/classrooms/${id}`,
-
-    // Backwards compatibility
-    students: (classroomId: string) => `/teacher/classrooms/${classroomId}/students`,
 
     // Assignments
     assignments: '/teacher/assignments',
@@ -398,13 +447,29 @@ export const API_ENDPOINTS = {
     communications: '/teacher/communications',
     sendCommunication: '/teacher/communications',
 
+    // Messages (P1-002: Centralized 2025-12-28)
+    messages: {
+      list: '/teacher/messages',
+      get: (messageId: string) => `/teacher/messages/${messageId}`,
+      send: '/teacher/messages',
+      classroomAnnouncement: (classroomId: string) =>
+        `/teacher/messages/classroom/${classroomId}/announcement`,
+      privateFeedback: (studentId: string) => `/teacher/messages/student/${studentId}/feedback`,
+      markAsRead: (messageId: string) => `/teacher/messages/${messageId}/read`,
+      conversations: '/teacher/messages/conversations',
+      unreadCount: '/teacher/messages/unread-count',
+    },
+
     // Alerts
     alerts: {
       list: '/teacher/alerts',
       byClassroom: (classroomId: string) => `/teacher/alerts?classroomId=${classroomId}`,
       get: (alertId: string) => `/teacher/alerts/${alertId}`,
+      acknowledge: (alertId: string) => `/teacher/alerts/${alertId}/acknowledge`,
       resolve: (alertId: string) => `/teacher/alerts/${alertId}/resolve`,
       dismiss: (alertId: string) => `/teacher/alerts/${alertId}/dismiss`,
+      studentHistory: (studentId: string) => `/teacher/alerts/student/${studentId}/history`,
+      generate: '/teacher/alerts/generate',
     },
 
     // Content Management
@@ -422,7 +487,7 @@ export const API_ENDPOINTS = {
     reviews: {
       pending: '/teacher/reviews/pending',
       get: (id: string) => `/teacher/reviews/${id}`,
-      start: (submissionId: string) => `/teacher/reviews/${submissionId}/start`,
+      start: (reviewId: string) => `/teacher/reviews/${reviewId}/start`,
       update: (id: string) => `/teacher/reviews/${id}`,
       complete: (id: string) => `/teacher/reviews/${id}/complete`,
     },
@@ -473,9 +538,24 @@ export const API_ENDPOINTS = {
   ranks: {
     current: '/gamification/ranks/current',
     rankProgress: (userId: string) => `/gamification/ranks/users/${userId}/progress`,
+    userRank: (userId: string) => `/gamification/ranks/user/${userId}`,
     promote: (userId: string) => `/gamification/ranks/users/${userId}/promote`,
     history: (userId: string) => `/gamification/ranks/users/${userId}/history`,
     multipliers: (userId: string) => `/gamification/ranks/users/${userId}/multipliers`,
+  },
+
+  /**
+   * Streaks API endpoints (P1: Centralized 2025-12-28)
+   */
+  streaks: {
+    user: (userId: string) => `/gamification/streaks/${userId}`,
+  },
+
+  /**
+   * Leaderboard position endpoints (P1: Centralized 2025-12-28)
+   */
+  leaderboardPosition: {
+    user: (userId: string) => `/gamification/leaderboard/user/${userId}/position`,
   },
 
   /**
@@ -599,6 +679,7 @@ export const API_ENDPOINTS = {
   health: {
     check: '/health',
     status: '/health/status',
+    detailed: '/health/detailed',
   },
 } as const;
 

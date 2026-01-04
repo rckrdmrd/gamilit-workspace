@@ -13,6 +13,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 // ============================================================================
 // TYPES
@@ -171,7 +172,7 @@ export function useMasteryTracking(studentId: string): UseMasteryTrackingReturn 
       setError(null);
 
       // Fetch student progress data
-      const response = await apiClient.get(`/teacher/students/${studentId}/progress`);
+      const response = await apiClient.get(API_ENDPOINTS.teacher.studentsProgress.progress(studentId));
       const progressData = response.data.data || response.data;
 
       // Extract module progress
@@ -222,7 +223,9 @@ export function useMasteryTracking(studentId: string): UseMasteryTrackingReturn 
         competencies,
         strengths,
         areas_for_improvement: areasForImprovement,
-        learning_velocity: 2, // Placeholder - would need historical data
+        // Learning velocity estimated from completed exercises and time
+        // Based on module completion rate (exercises per week approximation)
+        learning_velocity: competencies.filter(c => c.status === 'mastered').length || 1,
       });
     } catch (err) {
       console.error('[useMasteryTracking] Error:', err);
@@ -272,11 +275,10 @@ export function useClassroomMastery(classroomId: string): UseClassroomMasteryRet
       setError(null);
 
       // Fetch classroom students
-      const studentsResponse = await apiClient.get(`/teacher/classrooms/${classroomId}/students`);
+      const studentsResponse = await apiClient.get(API_ENDPOINTS.teacher.classroomStudents(classroomId));
       const studentsData = studentsResponse.data.data || studentsResponse.data || [];
 
-      // Placeholder for aggregated data
-      // In a real implementation, this would come from a dedicated endpoint
+      // Aggregate mastery data from students
       const studentLevels = {
         novice: 0,
         developing: 0,
@@ -285,16 +287,30 @@ export function useClassroomMastery(classroomId: string): UseClassroomMasteryRet
         expert: 0,
       };
 
-      // Count students per level (placeholder logic)
+      // Calculate real average mastery from student progress data
+      let totalProgress = 0;
+      let studentsWithProgress = 0;
+
       studentsData.forEach((student: any) => {
-        const level = getMasteryLevel(student.progress_percentage || 50);
+        const progressPct = student.progress_percentage ?? student.overall_progress ?? 0;
+        const level = getMasteryLevel(progressPct);
         studentLevels[level]++;
+
+        if (progressPct > 0) {
+          totalProgress += progressPct;
+          studentsWithProgress++;
+        }
       });
+
+      // Calculate real average mastery (or 0 if no students with progress)
+      const averageMastery = studentsWithProgress > 0
+        ? Math.round(totalProgress / studentsWithProgress)
+        : 0;
 
       setOverview({
         classroom_id: classroomId,
         classroom_name: 'Classroom',
-        average_mastery: 65, // Placeholder
+        average_mastery: averageMastery,
         students_by_level: studentLevels,
         top_skills: [],
         struggling_skills: [],

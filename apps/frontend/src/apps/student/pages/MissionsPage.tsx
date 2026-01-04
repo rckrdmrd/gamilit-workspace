@@ -33,6 +33,8 @@ import { RewardsPreview } from '@/features/gamification/missions/components/Rewa
 import { useMissions } from '@/features/gamification/missions/hooks/useMissions';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { useInvalidateDashboard } from '@/shared/hooks/useInvalidateDashboard';
+import toast from 'react-hot-toast';
 
 export default function MissionsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,6 +42,9 @@ export default function MissionsPage() {
 
   // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
   const { gamificationData } = useUserGamification(user?.id);
+
+  // Dashboard invalidation hook - FIX: Invalidate cache after claiming missions
+  const { syncAndInvalidate } = useInvalidateDashboard();
 
   // Get tab from URL or default to 'daily'
   const tabFromUrl = (searchParams.get('tab') as MissionType) || 'daily';
@@ -100,9 +105,9 @@ export default function MissionsPage() {
     if (result.success) {
       // Auto-track on start
       trackMission(missionId);
-      // TODO: Show success toast
+      toast.success('¡Misión iniciada! Buena suerte');
     } else {
-      // TODO: Show error toast
+      toast.error(result.message || 'Error al iniciar la misión');
       console.error(result.message);
     }
   };
@@ -111,10 +116,16 @@ export default function MissionsPage() {
   const handleClaimReward = async (missionId: string) => {
     const result = await claimReward(missionId);
     if (result.success) {
-      // TODO: Show success toast with rewards
-      console.log('Claimed!', result.rewards);
+      // FIX: Invalidate dashboard cache to update coins and XP
+      await syncAndInvalidate();
+
+      // Show success toast with rewards
+      const rewardsText = result.rewards
+        ? `+${result.rewards.mlCoins || 0} ML Coins, +${result.rewards.xp || 0} XP`
+        : '';
+      toast.success(`¡Recompensa reclamada! ${rewardsText}`);
     } else {
-      // TODO: Show error toast
+      toast.error(result.message || 'Error al reclamar recompensa');
       console.error(result.message);
     }
   };

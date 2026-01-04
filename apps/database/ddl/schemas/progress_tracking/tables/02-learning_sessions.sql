@@ -127,7 +127,7 @@ CREATE INDEX idx_sessions_user ON progress_tracking.learning_sessions USING btre
 --
 
 ALTER TABLE ONLY progress_tracking.learning_sessions
-    ADD CONSTRAINT learning_sessions_exercise_id_fkey FOREIGN KEY (exercise_id) REFERENCES educational_content.exercises(id);
+    ADD CONSTRAINT learning_sessions_exercise_id_fkey FOREIGN KEY (exercise_id) REFERENCES educational_content.exercises(id) ON DELETE SET NULL;
 
 
 --
@@ -135,7 +135,7 @@ ALTER TABLE ONLY progress_tracking.learning_sessions
 --
 
 ALTER TABLE ONLY progress_tracking.learning_sessions
-    ADD CONSTRAINT learning_sessions_module_id_fkey FOREIGN KEY (module_id) REFERENCES educational_content.modules(id);
+    ADD CONSTRAINT learning_sessions_module_id_fkey FOREIGN KEY (module_id) REFERENCES educational_content.modules(id) ON DELETE SET NULL;
 
 
 --

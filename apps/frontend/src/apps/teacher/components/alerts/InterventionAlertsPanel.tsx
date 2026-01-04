@@ -13,9 +13,17 @@ import toast from 'react-hot-toast';
 
 interface InterventionAlertsPanelProps {
   classroomId?: string;
+  /** Filtro de severidad desde el componente padre (TeacherAlertsPage) */
+  severity?: InterventionAlertSeverity;
+  /** Filtro de tipo de alerta desde el componente padre (TeacherAlertsPage) */
+  alertType?: InterventionAlertType;
 }
 
-export function InterventionAlertsPanel({ classroomId }: InterventionAlertsPanelProps) {
+export function InterventionAlertsPanel({
+  classroomId,
+  severity,
+  alertType,
+}: InterventionAlertsPanelProps) {
   const {
     alerts,
     total,
@@ -30,7 +38,11 @@ export function InterventionAlertsPanel({ classroomId }: InterventionAlertsPanel
     nextPage,
     prevPage,
     refresh,
-  } = useInterventionAlerts(classroomId ? { classroom_id: classroomId } : {});
+  } = useInterventionAlerts({
+    classroom_id: classroomId,
+    severity: severity,
+    alert_type: alertType,
+  });
 
   const [selectedAlert, setSelectedAlert] = useState<StudentInterventionAlert | null>(null);
   const [showResolveModal, setShowResolveModal] = useState(false);

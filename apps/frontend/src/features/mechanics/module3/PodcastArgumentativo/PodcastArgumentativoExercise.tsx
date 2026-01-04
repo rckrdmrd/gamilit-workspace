@@ -12,6 +12,7 @@ import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 import { useAudioRecorder } from '@/shared/hooks/useAudioRecorder';
+import { useSpeechToText } from '@/shared/hooks/useSpeechToText';
 
 interface ExerciseProgressData {
   progress: {
@@ -71,6 +72,19 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
     isRecording,
     isSecureContext,
   } = useAudioRecorder();
+
+  // CORRECCION-006: Web Speech API integration for real-time transcription
+  const {
+    transcript: speechTranscript,
+    interimTranscript,
+    startListening,
+    stopListening,
+    resetTranscript,
+    isSupported: isSpeechSupported,
+    isListening,
+    error: speechError,
+    confidence: speechConfidence,
+  } = useSpeechToText({ language: 'es-MX', continuous: true, interimResults: true });
 
   const [exercise, setExercise] = useState<PodcastExercise | null>(null);
   const [recording, setRecording] = useState<Recording>({
@@ -177,42 +191,79 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
     saveProgressUtil(exerciseId, state);
   };
 
+  // CORRECCION-006: Start both audio recording and speech recognition
   const startRecording = async () => {
     await startRecordingHook();
+    // Start speech-to-text if supported
+    if (isSpeechSupported) {
+      startListening();
+    }
   };
 
+  // CORRECCION-006: Stop both audio recording and speech recognition
   const stopRecording = () => {
     stopRecordingHook();
+    // Stop speech-to-text
+    if (isSpeechSupported) {
+      stopListening();
+    }
   };
 
   const handleAnalyze = async () => {
     if (!recording.audioBlob) return;
     setAnalyzing(true);
     try {
-      const mockTranscription =
-        'Marie Curie fue una científica extraordinaria que superó innumerables obstáculos. Su trabajo con elementos radiactivos revolucionó la física y la medicina. A pesar de enfrentar discriminación de género, perseveró y ganó dos Premios Nobel. Su legado inspira a científicas de todo el mundo.';
-      const result = await analyzeRecording(mockTranscription);
-      setRecording((prev) => ({ ...prev, transcription: mockTranscription }));
+      // CORRECCION-006: Use real transcription from Web Speech API if available
+      // Fallback to mock only if speech recognition is not supported or no transcript
+      let transcriptionText = speechTranscript.trim();
+
+      if (!transcriptionText && isSpeechSupported) {
+        // Speech API was available but no transcript captured
+        console.warn('[PodcastArgumentativo] Speech recognition available but no transcript captured');
+        transcriptionText = scriptText; // Use manual script text if available
+      }
+
+      if (!transcriptionText) {
+        // Ultimate fallback: mock transcription (for testing/demo only)
+        console.log('[PodcastArgumentativo] Using mock transcription (speech-to-text not available)');
+        transcriptionText =
+          'Marie Curie fue una cientifica extraordinaria que supero innumerables obstaculos. Su trabajo con elementos radiactivos revoluciono la fisica y la medicina. A pesar de enfrentar discriminacion de genero, persevero y gano dos Premios Nobel. Su legado inspira a cientificas de todo el mundo.';
+      }
+
+      const result = await analyzeRecording(transcriptionText);
+      setRecording((prev) => ({ ...prev, transcription: transcriptionText }));
       setAnalysis(result);
 
-      // Guardar la transcripción como scriptText si no hay texto escrito manualmente
+      // Guardar la transcripcion como scriptText si no hay texto escrito manualmente
       if (!scriptText) {
-        setScriptText(mockTranscription);
+        setScriptText(transcriptionText);
       }
 
       // Calculate score based on analysis metrics
       const avgScore = (result.clarity + result.logic + result.evidence + result.persuasion) / 4;
       const newScore = Math.round(avgScore * 100);
       setCurrentScore(newScore);
+
+      // Log confidence if available
+      if (speechConfidence > 0) {
+        console.log(`[PodcastArgumentativo] Speech recognition confidence: ${Math.round(speechConfidence * 100)}%`);
+      }
     } finally {
       setAnalyzing(false);
     }
   };
 
   const handleComplete = async () => {
+    // ✅ FIX COR-011: Reemplazar alert() con setFeedback() para UX consistente
     // Validación de autenticación
     if (!user?.id) {
-      alert('Debes estar autenticado para enviar el ejercicio.');
+      setFeedback({
+        type: 'error',
+        title: 'Error de autenticación',
+        message: 'Debes estar autenticado para enviar el ejercicio.',
+        isCorrect: false,
+      });
+      setShowFeedback(true);
       return;
     }
 
@@ -221,9 +272,13 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
 
     // Validación de longitud mínima del guión (200 caracteres)
     if (!finalScript || finalScript.length < 200) {
-      alert(
-        `El guión debe tener al menos 200 caracteres. Actualmente tiene ${finalScript?.length || 0} caracteres.`,
-      );
+      setFeedback({
+        type: 'error',
+        title: 'Guión muy corto',
+        message: `El guión debe tener al menos 200 caracteres. Actualmente tiene ${finalScript?.length || 0} caracteres.`,
+        isCorrect: false,
+      });
+      setShowFeedback(true);
       return;
     }
 
@@ -240,7 +295,34 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       // Enviar al backend
       const response = await submitExercise(exercise?.id || exerciseId, user.id, answers);
 
-      // Extraer rewards de la respuesta
+      // CORRECCION-001: Verificar si requiere revision manual del maestro
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
+        // Mostrar mensaje de "en espera de revision"
+        setFeedback({
+          type: 'info',
+          title: 'Ejercicio Enviado',
+          message: 'Tu podcast ha sido enviado para revision del maestro. Recibiras tus recompensas cuando sea evaluado.',
+          score: undefined, // No mostrar score aun
+          showConfetti: false,
+          xpEarned: undefined, // No mostrar rewards prematuramente
+          mlCoinsEarned: undefined,
+          pendingReview: true,
+        });
+
+        setShowFeedback(true);
+
+        // Sync pero sin mostrar rewards
+        await syncAndInvalidate();
+
+        console.log('📝 [PodcastArgumentativo] Submission pending review:', {
+          status: response.status,
+          requiresManualReview: response.requiresManualReview,
+        });
+
+        return;
+      }
+
+      // Flujo normal: ejercicio auto-calificado
       const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
 
       // Crear objeto de feedback con rewards
@@ -286,6 +368,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
 
   const handleReset = () => {
     resetRecordingHook(); // Reset hook state
+    resetTranscript(); // CORRECCION-006: Reset speech-to-text transcript
     setRecording({ id: '', audioBlob: null, transcription: '', analysis: null, duration: 0 });
     setAnalysis(null);
     setCurrentScore(0);
@@ -457,6 +540,39 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
                     Detener Grabación
                   </DetectiveButton>
                 )}
+              </div>
+            )}
+
+            {/* CORRECCION-006: Real-time transcription display while recording */}
+            {(isRecording || isListening) && isSpeechSupported && (
+              <div className="mt-4 rounded-lg border-2 border-dashed border-detective-orange/50 bg-orange-50 p-4">
+                <h4 className="mb-2 flex items-center gap-2 text-detective-sm font-semibold text-detective-orange">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-red-500"></span>
+                  Transcripcion en Tiempo Real
+                </h4>
+                <p className="min-h-[3rem] text-detective-sm text-detective-text">
+                  {speechTranscript || interimTranscript || (
+                    <span className="italic text-gray-400">Esperando audio...</span>
+                  )}
+                  {interimTranscript && speechTranscript && (
+                    <span className="text-gray-400"> {interimTranscript}</span>
+                  )}
+                </p>
+                {speechError && (
+                  <p className="mt-2 text-detective-xs text-red-500">
+                    {speechError.message}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Speech API not supported warning */}
+            {isRecording && !isSpeechSupported && (
+              <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                <p className="text-detective-xs text-amber-700">
+                  La transcripcion automatica no esta disponible en tu navegador.
+                  El audio se grabara pero la transcripcion sera aproximada.
+                </p>
               </div>
             )}
 

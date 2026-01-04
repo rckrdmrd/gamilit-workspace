@@ -9,7 +9,8 @@
 CREATE TABLE IF NOT EXISTS educational_content.exercise_validation_audit (
     -- Identificadores
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    exercise_id UUID NOT NULL REFERENCES educational_content.exercises(id),
+    -- ON DELETE RESTRICT: No permitir eliminar ejercicio si tiene auditorías
+    exercise_id UUID NOT NULL REFERENCES educational_content.exercises(id) ON DELETE RESTRICT,
     user_id UUID NOT NULL,
     attempt_number INTEGER NOT NULL,
 
@@ -53,7 +54,8 @@ CREATE TABLE IF NOT EXISTS educational_content.exercise_validation_audit (
     recalculated_at TIMESTAMP WITH TIME ZONE,
     recalculated_by UUID,
     recalculation_reason TEXT,
-    original_audit_id UUID REFERENCES educational_content.exercise_validation_audit(id),
+    -- ON DELETE SET NULL: Preservar recálculos si el registro original es eliminado
+    original_audit_id UUID REFERENCES educational_content.exercise_validation_audit(id) ON DELETE SET NULL,
 
     -- Flags de auditoría
     has_discrepancy BOOLEAN DEFAULT false,

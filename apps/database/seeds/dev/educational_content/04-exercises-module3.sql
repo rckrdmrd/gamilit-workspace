@@ -158,7 +158,8 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version,
+        requires_manual_grading
     ) VALUES (
         mod_id,
         'Debate Digital Estructurado',
@@ -266,13 +267,16 @@ BEGIN
         ]::text[],
         true, 15,
         150, 30,
-        true, 1
+        true, 1,
+        true  -- requires_manual_grading = true (COR-M3)
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
+        requires_manual_grading = EXCLUDED.requires_manual_grading,  -- COR-M3
         updated_at = NOW();
 
     -- ========================================================================
     -- EXERCISE 3.3: MATRIZ DE PERSPECTIVAS
+    -- ✅ FIX ALIN-002: Actualizado para requerir evaluación manual según diseño oficial
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
@@ -283,7 +287,8 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version,
+        requires_manual_grading  -- ALIN-002: Ejercicio 3.5 requiere evaluación del maestro
     ) VALUES (
         mod_id,
         'Matriz de Perspectivas: Múltiples Visiones sobre Marie Curie',
@@ -376,9 +381,11 @@ BEGIN
         ]::text[],
         true, 15,
         150, 30,
-        true, 1
+        true, 1,
+        true  -- requires_manual_grading = true (ALIN-002)
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
+        requires_manual_grading = EXCLUDED.requires_manual_grading,  -- ALIN-002
         updated_at = NOW();
 
     -- ========================================================================
@@ -393,7 +400,8 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version,
+        requires_manual_grading
     ) VALUES (
         mod_id,
         'Creación de Podcast Argumentativo',
@@ -471,9 +479,11 @@ BEGIN
         ]::text[],
         true, 15,
         150, 30,
-        true, 1
+        true, 1,
+        true  -- requires_manual_grading = true (COR-M3)
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
+        requires_manual_grading = EXCLUDED.requires_manual_grading,  -- COR-M3
         updated_at = NOW();
 
     -- ========================================================================

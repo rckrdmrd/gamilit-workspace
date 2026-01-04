@@ -8,6 +8,7 @@
  */
 
 import { apiClient } from '../apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 // ============================================================================
 // TYPES & ENUMS
@@ -168,7 +169,7 @@ export const teacherMessagesApi = {
    * ```
    */
   getMessages: async (params: GetMessagesParams = {}): Promise<MessagesListResponse> => {
-    const response = await apiClient.get('/teacher/messages', { params });
+    const response = await apiClient.get(API_ENDPOINTS.teacher.messages.list, { params });
     return response.data;
   },
 
@@ -184,7 +185,7 @@ export const teacherMessagesApi = {
    * ```
    */
   getMessageById: async (messageId: string): Promise<Message> => {
-    const response = await apiClient.get(`/teacher/messages/${messageId}`);
+    const response = await apiClient.get(API_ENDPOINTS.teacher.messages.get(messageId));
     return response.data;
   },
 
@@ -205,7 +206,7 @@ export const teacherMessagesApi = {
    * ```
    */
   sendMessage: async (data: SendMessageData): Promise<Message> => {
-    const response = await apiClient.post('/teacher/messages', data);
+    const response = await apiClient.post(API_ENDPOINTS.teacher.messages.send, data);
     return response.data;
   },
 
@@ -230,7 +231,7 @@ export const teacherMessagesApi = {
     data: SendAnnouncementData,
   ): Promise<Message> => {
     const response = await apiClient.post(
-      `/teacher/messages/classroom/${classroomId}/announcement`,
+      API_ENDPOINTS.teacher.messages.classroomAnnouncement(classroomId),
       data,
     );
     return response.data;
@@ -253,7 +254,10 @@ export const teacherMessagesApi = {
    * ```
    */
   sendPrivateFeedback: async (studentId: string, data: SendFeedbackData): Promise<Message> => {
-    const response = await apiClient.post(`/teacher/messages/student/${studentId}/feedback`, data);
+    const response = await apiClient.post(
+      API_ENDPOINTS.teacher.messages.privateFeedback(studentId),
+      data,
+    );
     return response.data;
   },
 
@@ -269,7 +273,7 @@ export const teacherMessagesApi = {
    * ```
    */
   markAsRead: async (messageId: string): Promise<SuccessResponse> => {
-    const response = await apiClient.post(`/teacher/messages/${messageId}/read`);
+    const response = await apiClient.post(API_ENDPOINTS.teacher.messages.markAsRead(messageId));
     return response.data;
   },
 
@@ -285,7 +289,7 @@ export const teacherMessagesApi = {
    * ```
    */
   getConversations: async (): Promise<Conversation[]> => {
-    const response = await apiClient.get('/teacher/messages/conversations');
+    const response = await apiClient.get(API_ENDPOINTS.teacher.messages.conversations);
     return response.data;
   },
 
@@ -301,7 +305,7 @@ export const teacherMessagesApi = {
    * ```
    */
   getUnreadCount: async (): Promise<UnreadCountResponse> => {
-    const response = await apiClient.get('/teacher/messages/unread-count');
+    const response = await apiClient.get(API_ENDPOINTS.teacher.messages.unreadCount);
     return response.data;
   },
 };

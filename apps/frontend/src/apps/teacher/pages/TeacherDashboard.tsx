@@ -299,10 +299,13 @@ export default function TeacherDashboard() {
                       <div>
                         <p className="mb-1 text-sm text-detective-text-secondary">Score Promedio</p>
                         <p className="text-3xl font-bold text-detective-gold">
-                          {safeFormat(stats?.average_class_score, 1, '%', 'N/A')}
+                          {safeFormat(stats?.average_score, 1, '%', 'N/A')}
                         </p>
                         <p className="mt-1 text-xs text-green-500">
-                          {safeFormat(stats?.engagement_rate, 1, '% engagement', 'N/A')}
+                          {/* Engagement calculated from active/total students */}
+                          {stats?.total_students && stats.total_students > 0
+                            ? `${Math.round((stats.active_students / stats.total_students) * 100)}% engagement`
+                            : 'N/A'}
                         </p>
                       </div>
                       <Award className="h-10 w-10 text-detective-gold" />
@@ -316,7 +319,7 @@ export default function TeacherDashboard() {
                           Tasa de Completitud
                         </p>
                         <p className="text-3xl font-bold text-detective-text">
-                          {safeFormat(stats?.completion_rate, 0, '%', '0%')}
+                          {safeFormat(stats?.average_completion, 0, '%', '0%')}
                         </p>
                         <p className="mt-1 text-xs text-detective-text-secondary">De ejercicios</p>
                       </div>
@@ -328,13 +331,13 @@ export default function TeacherDashboard() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="mb-1 text-sm text-detective-text-secondary">
-                          Alertas Pendientes
+                          Pendientes de Revisión
                         </p>
                         <p className="text-3xl font-bold text-red-500">
-                          {alerts?.length ?? stats?.pending_alerts ?? 0}
+                          {alerts?.length ?? stats?.total_submissions_pending ?? 0}
                         </p>
                         <p className="mt-1 text-xs text-detective-text-secondary">
-                          Requieren atención
+                          {stats?.students_at_risk ? `${stats.students_at_risk} en riesgo` : 'Requieren atención'}
                         </p>
                       </div>
                       <AlertTriangle className="h-10 w-10 text-red-500" />

@@ -1,5 +1,10 @@
 /**
  * Friends Store
+ *
+ * @description Zustand store for managing friend relationships and activities.
+ * Data is fetched from real backend APIs - no mock data is used.
+ *
+ * @updated 2025-12-29 - Removed mock data, added fetchRecommendations and fetchActivities
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -11,10 +16,6 @@ import type {
   FriendRecommendation,
   FriendActivity,
 } from '../types/friendsTypes';
-import {
-  friendRecommendationsMockData,
-  friendActivitiesMockData,
-} from '../mockData/friendsMockData';
 import { friendsAPI } from '@/services/api/friendsAPI';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
@@ -29,6 +30,8 @@ interface FriendsStore {
 
   fetchFriends: (userId: string) => Promise<void>;
   fetchPendingRequests: (userId: string) => Promise<void>;
+  fetchRecommendations: (userId: string) => Promise<void>;
+  fetchActivities: (userId: string, limit?: number) => Promise<void>;
   addFriend: (userId: string) => void;
   removeFriend: (friendId: string) => Promise<void>;
   sendFriendRequest: (friendId: string, message?: string) => Promise<void>;
@@ -44,8 +47,8 @@ export const useFriendsStore = create<FriendsStore>()(
     (set, get) => ({
       friends: [],
       friendRequests: [],
-      recommendations: friendRecommendationsMockData,
-      activities: friendActivitiesMockData,
+      recommendations: [], // Fetched from API via fetchRecommendations
+      activities: [], // Fetched from API via fetchActivities
       onlineFriends: [],
       loading: false,
       error: null,
@@ -103,6 +106,51 @@ export const useFriendsStore = create<FriendsStore>()(
           set({ friendRequests, loading: false });
         } catch (error: unknown) {
           set({ error: error.message || 'Failed to fetch pending requests', loading: false });
+        }
+      },
+
+      fetchRecommendations: async (userId: string) => {
+        set({ loading: true, error: null });
+        try {
+          const recommendations = await friendsAPI.getFriendRecommendations(userId);
+          // Transform API response to store format
+          const mappedRecommendations: FriendRecommendation[] = recommendations.map((r) => ({
+            userId: r.userId,
+            username: r.username,
+            avatar: r.avatar,
+            rank: r.rank as any,
+            level: r.level,
+            mutualFriends: r.mutualFriends,
+            commonInterests: r.commonInterests,
+            matchScore: r.matchScore,
+            reason: r.reason,
+          }));
+          set({ recommendations: mappedRecommendations, loading: false });
+        } catch (error: unknown) {
+          set({ error: error.message || 'Failed to fetch recommendations', loading: false });
+        }
+      },
+
+      fetchActivities: async (userId: string, limit: number = 20) => {
+        set({ loading: true, error: null });
+        try {
+          const activitiesData = await friendsAPI.getFriendActivities(userId, limit);
+          // Transform API response to store format
+          const activities: FriendActivity[] = activitiesData.map((a) => ({
+            id: a.activity_id,
+            userId: a.user_id,
+            userName: '', // TODO: Join with user data
+            userAvatar: '/avatars/default.png',
+            type: a.activity_type as any,
+            description: a.description,
+            metadata: a.metadata || {},
+            timestamp: new Date(a.created_at),
+            praised: false,
+            praiseCount: 0,
+          }));
+          set({ activities, loading: false });
+        } catch (error: unknown) {
+          set({ error: error.message || 'Failed to fetch activities', loading: false });
         }
       },
 
@@ -230,8 +278,13 @@ export const useFriendsStore = create<FriendsStore>()(
       },
 
       refreshFriends: async (userId: string) => {
-        const { fetchFriends, fetchPendingRequests } = get();
-        await Promise.all([fetchFriends(userId), fetchPendingRequests(userId)]);
+        const { fetchFriends, fetchPendingRequests, fetchRecommendations, fetchActivities } = get();
+        await Promise.all([
+          fetchFriends(userId),
+          fetchPendingRequests(userId),
+          fetchRecommendations(userId),
+          fetchActivities(userId),
+        ]);
       },
 
       clearError: () => {

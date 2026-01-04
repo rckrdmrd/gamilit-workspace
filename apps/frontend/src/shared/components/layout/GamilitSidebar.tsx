@@ -244,6 +244,18 @@ const getNavigationItems = (
       path: '/teacher/gamification',
       icon: 'Trophy',
     },
+    {
+      id: 'analytics',
+      label: 'Analiticas',
+      path: '/teacher/analytics',
+      icon: 'BarChart3',
+    },
+    {
+      id: 'settings',
+      label: 'Configuracion',
+      path: '/teacher/settings',
+      icon: 'Settings',
+    },
   ];
 
   const adminItems = [

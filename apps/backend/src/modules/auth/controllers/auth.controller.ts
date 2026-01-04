@@ -19,7 +19,7 @@ import {
   ApiBearerAuth,
   ApiBody,
 } from '@nestjs/swagger';
-import { AuthService, SessionManagementService, SecurityService } from '../services';
+import { AuthService, SessionManagementService, SecurityService, EmailVerificationService, PasswordRecoveryService } from '../services';
 import {
   RegisterUserDto,
   UserResponseDto,
@@ -27,6 +27,9 @@ import {
   RefreshTokenDto,
   UpdateProfileDto,
   UserSessionResponseDto,
+  VerifyEmailDto,
+  RequestPasswordResetDto,
+  ResetPasswordDto,
 } from '../dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AuthRequest } from '@shared/types';
@@ -50,6 +53,8 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly sessionService: SessionManagementService,
     private readonly securityService: SecurityService,
+    private readonly emailVerificationService: EmailVerificationService,
+    private readonly passwordRecoveryService: PasswordRecoveryService,
   ) {}
 
   /**
@@ -241,17 +246,10 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 400, description: 'Token inválido o expirado' })
-  @ApiBody({
-    schema: {
-      properties: {
-        token: { type: 'string' },
-      },
-    },
-  })
-  async verifyEmail(@Body('token') _token: string): Promise<{ message: string }> {
-    // TODO: Implementar lógica de verificación de email
-    // Por ahora retornamos éxito
-    return { message: 'Email verificado exitosamente' };
+  @ApiBody({ type: VerifyEmailDto })
+  async verifyEmail(@Body() dto: VerifyEmailDto): Promise<{ message: string; verified: boolean }> {
+    // P1-002: Conectado al EmailVerificationService
+    return this.emailVerificationService.verifyEmail(dto);
   }
 
   /**
@@ -269,16 +267,10 @@ export class AuthController {
       },
     },
   })
-  @ApiBody({
-    schema: {
-      properties: {
-        email: { type: 'string' },
-      },
-    },
-  })
-  async forgotPassword(@Body('email') _email: string): Promise<{ message: string }> {
-    // TODO: Implementar lógica de forgot password
-    return { message: 'Si el email existe, recibirás instrucciones para resetear tu contraseña' };
+  @ApiBody({ type: RequestPasswordResetDto })
+  async forgotPassword(@Body() dto: RequestPasswordResetDto): Promise<{ message: string }> {
+    // P1-003: Conectado al PasswordRecoveryService
+    return this.passwordRecoveryService.requestReset(dto);
   }
 
   /**
@@ -297,20 +289,10 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 400, description: 'Token inválido o expirado' })
-  @ApiBody({
-    schema: {
-      properties: {
-        token: { type: 'string' },
-        newPassword: { type: 'string' },
-      },
-    },
-  })
-  async resetPassword(
-    @Body('token') _token: string,
-      @Body('newPassword') _newPassword: string,
-  ): Promise<{ message: string }> {
-    // TODO: Implementar lógica de reset password
-    return { message: 'Contraseña reseteada exitosamente' };
+  @ApiBody({ type: ResetPasswordDto })
+  async resetPassword(@Body() dto: ResetPasswordDto): Promise<{ message: string }> {
+    // P1-003: Conectado al PasswordRecoveryService
+    return this.passwordRecoveryService.resetPassword(dto);
   }
 
   /**
@@ -342,12 +324,12 @@ export class AuthController {
   })
   async changePassword(
     @Request() req: AuthRequest,
-      @Body('currentPassword') _currentPassword: string,
-      @Body('newPassword') _newPassword: string,
+      @Body('currentPassword') currentPassword: string,
+      @Body('newPassword') newPassword: string,
   ): Promise<{ message: string }> {
-    const _userId = req.user!.id;
-    // TODO: Implementar lógica de cambio de contraseña
-    return { message: 'Contraseña cambiada exitosamente' };
+    const userId = req.user!.id;
+    // P1-012: Conectado al AuthService.changePassword
+    return this.authService.changePassword(userId, currentPassword, newPassword);
   }
 
   /**

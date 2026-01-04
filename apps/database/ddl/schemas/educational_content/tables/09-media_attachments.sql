@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS educational_content.media_attachments (
     -- Relaciones (al menos una debe estar presente)
     submission_id UUID REFERENCES progress_tracking.exercise_submissions(id) ON DELETE CASCADE,
     exercise_id UUID REFERENCES educational_content.exercises(id) ON DELETE CASCADE,
-    user_id UUID NOT NULL REFERENCES auth_management.profiles(id),
+    -- ON DELETE CASCADE: Eliminar attachments si el usuario es eliminado
+    user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
 
     -- Información del archivo
     file_name VARCHAR(255) NOT NULL,

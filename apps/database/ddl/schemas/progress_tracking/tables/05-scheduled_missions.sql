@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS progress_tracking.scheduled_missions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     mission_id UUID NOT NULL,
     classroom_id UUID NOT NULL,
-    scheduled_by UUID NOT NULL REFERENCES auth_management.profiles(id),
+    -- ON DELETE RESTRICT: No permitir eliminar profesor si tiene misiones programadas
+    scheduled_by UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE RESTRICT,
     starts_at TIMESTAMPTZ NOT NULL,
     ends_at TIMESTAMPTZ NOT NULL,
     is_active BOOLEAN DEFAULT true,

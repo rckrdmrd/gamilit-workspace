@@ -156,10 +156,11 @@ BEGIN
     RAISE NOTICE '✅ Rol student asignado a student@gamilit.com';
 
     -- =====================================================
-    -- 4. ROLES PARA ESTUDIANTES DEMO (Ana, Carlos, María, Luis)
+    -- 4. ROLES PARA ESTUDIANTES DE PRODUCCION (5 usuarios con roles explícitos)
+    -- Nota: Estos son usuarios REALES de producción, no ficticios
     -- =====================================================
 
-    -- Ana García (student)
+    -- Azul Valentina (blu3wt7@gmail.com) - student
     INSERT INTO auth_management.user_roles (
         id, user_id, tenant_id, role, permissions, assigned_by, is_active
     ) VALUES (
@@ -173,7 +174,7 @@ BEGIN
     )
     ON CONFLICT (user_id, tenant_id, role) DO NOTHING;
 
-    -- Carlos Ramírez (student)
+    -- Benjamin Hernandez (hernandezfonsecabenjamin7@gmail.com) - student
     INSERT INTO auth_management.user_roles (
         id, user_id, tenant_id, role, permissions, assigned_by, is_active
     ) VALUES (
@@ -187,7 +188,7 @@ BEGIN
     )
     ON CONFLICT (user_id, tenant_id, role) DO NOTHING;
 
-    -- María Fernanda (student)
+    -- Carlos Marban (marbancarlos916@gmail.com) - student
     INSERT INTO auth_management.user_roles (
         id, user_id, tenant_id, role, permissions, assigned_by, is_active
     ) VALUES (
@@ -201,7 +202,7 @@ BEGIN
     )
     ON CONFLICT (user_id, tenant_id, role) DO NOTHING;
 
-    -- Luis Miguel (student)
+    -- Diego Colores (diego.colores09@gmail.com) - student
     INSERT INTO auth_management.user_roles (
         id, user_id, tenant_id, role, permissions, assigned_by, is_active
     ) VALUES (
@@ -215,10 +216,13 @@ BEGIN
     )
     ON CONFLICT (user_id, tenant_id, role) DO NOTHING;
 
-    RAISE NOTICE '✅ Roles student asignados a estudiantes demo';
+    RAISE NOTICE '✅ Roles student asignados a estudiantes de producción';
 
     -- =====================================================
-    -- 5. ROL TEACHER para Laura Martínez (profesora demo)
+    -- 5. ROL STUDENT para Fernando Barragan (estudiante prod)
+    -- Nota: Corregido de admin_teacher a student (2025-12-28)
+    -- UUID corresponde a barraganfer03@gmail.com
+    -- Requisito: Solo 1 admin, 1 teacher, resto students
     -- =====================================================
     INSERT INTO auth_management.user_roles (
         id, user_id, tenant_id, role, permissions, assigned_by, is_active
@@ -226,14 +230,14 @@ BEGIN
         '10000008-0000-0000-0000-000000000001'::uuid,
         '9951ad75-e9cb-47b3-b478-6bb860ee2530'::uuid,
         v_tenant_id,
-        'admin_teacher',
-        '{"read": true, "write": true, "analytics": true, "manage_students": true}'::jsonb,
+        'student',
+        '{"read": true, "submit_exercises": true, "view_own_progress": true}'::jsonb,
         v_admin_id,
         true
     )
     ON CONFLICT (user_id, tenant_id, role) DO NOTHING;
 
-    RAISE NOTICE '✅ Rol admin_teacher asignado a Laura Martínez';
+    RAISE NOTICE '✅ Rol student asignado a Fernando Barragan';
 
     -- =====================================================
     -- VERIFICACIÓN

@@ -11,7 +11,7 @@
  * - Smooth animations
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Trophy,
@@ -36,6 +36,7 @@ import { useLeaderboards } from '@/features/gamification/social/hooks/useLeaderb
 import { useLeaderboardWebSocket } from '@/features/gamification/social/hooks/useLeaderboardWebSocket';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { useUserClassroom } from '../hooks/useUserClassroom';
+import { useDashboardData } from '../hooks/useDashboardData';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -61,6 +62,9 @@ export default function LeaderboardPage() {
 
   // WebSocket connection for real-time updates
   const { isConnected: isWebSocketConnected } = useLeaderboardWebSocket();
+
+  // Dashboard data for calculating category breakdown
+  const { progress, achievements } = useDashboardData();
 
   // Local State
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -113,13 +117,41 @@ export default function LeaderboardPage() {
       ? currentLeaderboard.entries[userEntry.rank - 2]?.score - userEntry.score
       : 0;
 
-  // Category breakdown stats (mock data - replace with real API)
-  const categoryStats = [
-    { category: 'Ejercicios', value: 45, color: 'bg-blue-500' },
-    { category: 'Logros', value: 30, color: 'bg-purple-500' },
-    { category: 'Bonos', value: 15, color: 'bg-green-500' },
-    { category: 'Social', value: 10, color: 'bg-orange-500' },
-  ];
+  // Category breakdown stats - calculated from real dashboard data
+  const categoryStats = useMemo(() => {
+    // Get counts from real data
+    const exercisesCompleted = progress?.completedExercises || 0;
+    const achievementsEarned = achievements?.filter(a => a.unlocked).length || 0;
+    const modulesCompleted = progress?.completedModules || 0;
+    const currentStreak = progress?.currentStreak || 0;
+
+    // Calculate weighted contributions (approximate XP contribution)
+    // Each exercise gives ~50 XP, each achievement ~100 XP, each module ~200 XP, streaks ~10 XP/day
+    const exerciseContribution = exercisesCompleted * 50;
+    const achievementContribution = achievementsEarned * 100;
+    const moduleContribution = modulesCompleted * 200;
+    const streakContribution = currentStreak * 10;
+
+    // Total contribution
+    const total = exerciseContribution + achievementContribution + moduleContribution + streakContribution;
+
+    // Calculate percentages (handle zero case)
+    if (total === 0) {
+      return [
+        { category: 'Ejercicios', value: 0, color: 'bg-blue-500' },
+        { category: 'Logros', value: 0, color: 'bg-purple-500' },
+        { category: 'Módulos', value: 0, color: 'bg-green-500' },
+        { category: 'Rachas', value: 0, color: 'bg-orange-500' },
+      ];
+    }
+
+    return [
+      { category: 'Ejercicios', value: Math.round((exerciseContribution / total) * 100), color: 'bg-blue-500' },
+      { category: 'Logros', value: Math.round((achievementContribution / total) * 100), color: 'bg-purple-500' },
+      { category: 'Módulos', value: Math.round((moduleContribution / total) * 100), color: 'bg-green-500' },
+      { category: 'Rachas', value: Math.round((streakContribution / total) * 100), color: 'bg-orange-500' },
+    ];
+  }, [progress, achievements]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

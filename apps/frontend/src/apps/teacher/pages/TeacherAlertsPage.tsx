@@ -4,6 +4,10 @@ import { useClassrooms } from '../hooks/useClassrooms';
 import { TeacherLayout } from '../layouts/TeacherLayout';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { InterventionAlertsPanel } from '../components/alerts/InterventionAlertsPanel';
+import {
+  InterventionAlertSeverity,
+  InterventionAlertType,
+} from '@/services/api/teacher/interventionAlertsApi';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { AlertTriangle, Bell, Filter, X, TrendingUp, Activity, AlertCircle } from 'lucide-react';
@@ -264,7 +268,11 @@ export default function TeacherAlertsPage() {
 
         {/* Panel principal de alertas */}
         {selectedClassroomId ? (
-          <InterventionAlertsPanel classroomId={selectedClassroomId} />
+          <InterventionAlertsPanel
+            classroomId={selectedClassroomId}
+            severity={filterPriority !== 'all' ? (filterPriority as InterventionAlertSeverity) : undefined}
+            alertType={filterType !== 'all' ? (filterType as InterventionAlertType) : undefined}
+          />
         ) : (
           <DetectiveCard variant="warning">
             <div className="py-16 text-center">

@@ -143,6 +143,7 @@ ON CONFLICT (email) DO UPDATE SET
     encrypted_password = EXCLUDED.encrypted_password,
     raw_user_meta_data = EXCLUDED.raw_user_meta_data,
     email_confirmed_at = EXCLUDED.email_confirmed_at,
+    gamilit_role = EXCLUDED.gamilit_role,
     updated_at = gamilit.now_mexico();
 
 -- =====================================================

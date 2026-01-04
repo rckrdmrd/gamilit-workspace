@@ -40,6 +40,7 @@ import { UnderConstructionExercise } from '@/features/exercises/components/Under
 import { useExerciseAutoSave } from '../hooks/useExerciseAutoSave';
 import { PowerUpBar } from '../components/PowerUpBar';
 import { useExercisePowerUps } from '../hooks/useExercisePowerUps';
+import { useInvalidateDashboard } from '@/shared/hooks/useInvalidateDashboard';
 
 // ============================================================================
 // TYPES
@@ -240,6 +241,9 @@ export default function ExercisePage() {
     intervalMs: 30000, // 30 seconds
     debounceMs: 2000, // 2 seconds debounce
   });
+
+  // Dashboard invalidation hook - FIX: Invalidate cache after exercise completion
+  const { syncAndInvalidate } = useInvalidateDashboard();
 
   // ============================================================================
   // DATA FETCHING
@@ -502,6 +506,9 @@ export default function ExercisePage() {
       });
 
       console.log('✅ [ExercisePage] Submission result:', result);
+
+      // FIX: Invalidate dashboard cache to update ranks, XP, and coins in real-time
+      await syncAndInvalidate();
 
       // Build feedback message
       let feedbackMessage = `Has obtenido ${result.score} puntos. Ganaste ${result.rewards.xp} XP y ${result.rewards.mlCoins} ML Coins.`;

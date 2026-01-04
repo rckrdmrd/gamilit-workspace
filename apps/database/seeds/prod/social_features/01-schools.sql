@@ -1,7 +1,7 @@
 -- =====================================================
--- Seed: social_features.schools (PROD)
+-- Seed: social_features.schools (DEV)
 -- Description: NO demo schools - Solo escuela default
--- Environment: PRODUCTION
+-- Environment: DEVELOPMENT
 -- Dependencies: auth_management.tenants
 -- Order: 01
 -- Created: 2025-01-11
@@ -17,8 +17,9 @@
 -- - Todas las escuelas adicionales serán creadas por el admin desde la UI
 --
 -- ESCUELAS DEMO REMOVIDAS (v3.0):
--- - Escuela Primaria Marie Curie (CDMX) - REMOVIDA
--- - Instituto de Educación Integral (Guadalajara) - REMOVIDA
+-- - Secundaria Federal No. 15 "Marie Curie" - REMOVIDA
+-- - Secundaria Técnica No. 42 - REMOVIDA
+-- - Colegio Científico "Albert Einstein" - REMOVIDA
 --
 -- =====================================================
 

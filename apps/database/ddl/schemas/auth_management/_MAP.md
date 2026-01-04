@@ -6,11 +6,11 @@ Gestión de autenticación y autorización: usuarios, roles, perfiles, sesiones
 
 - **tables/**: 15 archivos
 - **functions/**: 6 archivos
-- **triggers/**: 6 archivos
+- **triggers/**: 9 archivos
 - **indexes/**: 11 archivos
 - **rls-policies/**: 1 archivos
 
-**Total:** 39 objetos
+**Total:** 42 objetos
 
 ## Contenido Detallado
 
@@ -45,15 +45,18 @@ Gestión de autenticación y autorización: usuarios, roles, perfiles, sesiones
 06-update_user_preferences.sql
 ```
 
-### triggers/ (6 archivos)
+### triggers/ (9 archivos)
 
 ```
+01-trg_set_default_tenant.sql
 02-trg_memberships_updated_at.sql
 03-trg_audit_profile_changes.sql
+03b-trg_ensure_profile_name.sql
 04-trg_initialize_user_stats.sql
 05-trg_profiles_updated_at.sql
 06-trg_tenants_updated_at.sql
 07-trg_user_roles_updated_at.sql
+08-trg_assign_default_classroom.sql
 ```
 
 ### indexes/ (11 archivos)
@@ -80,5 +83,4 @@ idx_user_sessions_user_id.sql
 
 ---
 
-**Última actualización:** 2025-11-09
-**Reorganización:** 2025-11-09
+**Última actualización:** 2025-12-29

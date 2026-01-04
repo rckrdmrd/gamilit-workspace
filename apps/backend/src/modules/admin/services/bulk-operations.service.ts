@@ -310,7 +310,7 @@ export class BulkOperationsService {
       try {
         const user = await this.userRepo.findOne({ where: { id: userId } });
         if (user) {
-          user.role = dto.newRole as any; // Cast to any para evitar error de tipos
+          user.role = dto.newRole;
           await this.userRepo.save(user);
           completed++;
         } else {

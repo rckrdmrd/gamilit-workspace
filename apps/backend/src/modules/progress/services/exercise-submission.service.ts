@@ -959,6 +959,18 @@ export class ExerciseSubmissionService {
       };
     }
 
+    // ✅ FIX GAM-002: Validar que rewards no fueron reclamados previamente
+    // Esto previene duplicación de rewards si claimRewards() se llama múltiples veces
+    if (submission.xp_earned > 0 || submission.ml_coins_earned > 0) {
+      this.logger.warn(`[claimRewards] Rewards already claimed for submission ${id}. Returning existing values.`);
+      return {
+        submission,
+        xp_earned: submission.xp_earned,
+        ml_coins_earned: submission.ml_coins_earned,
+        rankUp: null, // No hay nuevo rankUp si ya se reclamaron
+      };
+    }
+
     // Obtener exercise para usar su xp_reward configurado
     const exercise = await this.exerciseRepo.findOne({ where: { id: submission.exercise_id } });
     const baseXpReward = exercise?.xp_reward || 100; // Fallback a 100 si no existe
@@ -1043,12 +1055,30 @@ export class ExerciseSubmissionService {
         "K'uk'ulkan": 1000,
       };
 
+      const bonusCoins = rankBonuses[newRank] || 0;
+
       rankUpData = {
         newRank: newRank,
         previousRank: previousRank,
-        bonusMLCoins: rankBonuses[newRank] || 0,
+        bonusMLCoins: bonusCoins,
         newMultiplier: rankMultipliers[newRank] || 1.0,
       };
+
+      // ✅ FIX GAM-001: Agregar bonus ML Coins por promoción de rango
+      // Los bonus se agregan directamente a mlCoinsEarned y se persisten
+      // CORREGIDO: Usar EARNED_RANK (valor correcto del enum) en lugar de RANK_UP_BONUS
+      if (bonusCoins > 0) {
+        mlCoinsEarned += bonusCoins;
+        await this.mlCoinsService.addCoins(
+          submission.user_id,
+          bonusCoins,
+          TransactionTypeEnum.EARNED_RANK,
+          `Bonus por ascenso a ${newRank}`,
+          undefined,
+          'rank_promotion',
+        );
+        this.logger.log(`[GAM-001 FIX] Added ${bonusCoins} bonus ML Coins for rank up to ${newRank}`);
+      }
 
       this.logger.log(`[RANK UP] User ${submission.user_id} promoted from ${previousRank} to ${newRank}`);
     }

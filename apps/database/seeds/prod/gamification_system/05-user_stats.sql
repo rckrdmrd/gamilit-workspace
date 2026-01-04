@@ -37,6 +37,173 @@
 SET search_path TO gamification_system, auth_management, public;
 
 -- =====================================================
+-- FASE 0: Asegurar registros base para usuarios de testing
+-- =====================================================
+-- NOTA: Los usuarios de testing (admin, teacher, student) usan UUIDs fijos
+-- y pueden haberse insertado sin activar el trigger initialize_user_stats().
+-- Esta sección garantiza que existan sus registros de gamificación.
+
+DO $$
+DECLARE
+    v_tenant_id uuid := '00000000-0000-0000-0000-000000000001';
+BEGIN
+    -- Usuario Testing: ADMIN (aaaa...)
+    INSERT INTO gamification_system.user_stats (user_id, tenant_id, ml_coins, ml_coins_earned_total)
+    VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, v_tenant_id, 100, 100)
+    ON CONFLICT (user_id) DO NOTHING;
+
+    INSERT INTO gamification_system.user_ranks (user_id, tenant_id, current_rank, is_current, achieved_at)
+    VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, v_tenant_id, 'Ajaw'::gamification_system.maya_rank, true, NOW())
+    ON CONFLICT DO NOTHING;
+
+    INSERT INTO gamification_system.comodines_inventory (user_id)
+    VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid)
+    ON CONFLICT (user_id) DO NOTHING;
+
+    -- Usuario Testing: TEACHER (bbbb...)
+    INSERT INTO gamification_system.user_stats (user_id, tenant_id, ml_coins, ml_coins_earned_total)
+    VALUES ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, v_tenant_id, 100, 100)
+    ON CONFLICT (user_id) DO NOTHING;
+
+    INSERT INTO gamification_system.user_ranks (user_id, tenant_id, current_rank, is_current, achieved_at)
+    VALUES ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, v_tenant_id, 'Ajaw'::gamification_system.maya_rank, true, NOW())
+    ON CONFLICT DO NOTHING;
+
+    INSERT INTO gamification_system.comodines_inventory (user_id)
+    VALUES ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid)
+    ON CONFLICT (user_id) DO NOTHING;
+
+    -- Usuario Testing: STUDENT (cccc...)
+    INSERT INTO gamification_system.user_stats (user_id, tenant_id, ml_coins, ml_coins_earned_total)
+    VALUES ('cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, v_tenant_id, 100, 100)
+    ON CONFLICT (user_id) DO NOTHING;
+
+    INSERT INTO gamification_system.user_ranks (user_id, tenant_id, current_rank, is_current, achieved_at)
+    VALUES ('cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, v_tenant_id, 'Ajaw'::gamification_system.maya_rank, true, NOW())
+    ON CONFLICT DO NOTHING;
+
+    INSERT INTO gamification_system.comodines_inventory (user_id)
+    VALUES ('cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid)
+    ON CONFLICT (user_id) DO NOTHING;
+
+    RAISE NOTICE '✓ Registros base de testing asegurados (admin, teacher, student)';
+END $$;
+
+-- =====================================================
+-- FASE 0.5: Inicializar misiones para usuarios de testing
+-- =====================================================
+-- NOTA: Las misiones normalmente se crean via initialize_user_missions()
+-- pero los usuarios de testing se insertan sin trigger, asi que las creamos aqui.
+
+DO $$
+DECLARE
+    v_today_start TIMESTAMP := NOW()::date;
+    v_today_end TIMESTAMP := v_today_start + INTERVAL '23 hours 59 minutes';
+    v_week_end TIMESTAMP := v_today_start + INTERVAL '7 days';
+    v_test_users uuid[] := ARRAY[
+        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
+        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
+        'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid
+    ];
+    v_user_id uuid;
+BEGIN
+    FOREACH v_user_id IN ARRAY v_test_users LOOP
+        -- Daily Mission 1: Complete exercises
+        INSERT INTO gamification_system.missions (
+            user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
+        ) VALUES (
+            v_user_id, 'daily_complete_exercises', 'Completar 3 ejercicios',
+            'Completa 3 ejercicios hoy para ganar recompensas', 'daily',
+            jsonb_build_array(jsonb_build_object('type', 'complete_exercises', 'target', 3, 'current', 0)),
+            jsonb_build_object('xp', 50, 'ml_coins', 25), 'active', 0, v_today_start, v_today_end
+        ) ON CONFLICT DO NOTHING;
+
+        -- Daily Mission 2: Earn XP
+        INSERT INTO gamification_system.missions (
+            user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
+        ) VALUES (
+            v_user_id, 'daily_earn_xp', 'Ganar 100 XP',
+            'Acumula 100 puntos de experiencia hoy', 'daily',
+            jsonb_build_array(jsonb_build_object('type', 'earn_xp', 'target', 100, 'current', 0)),
+            jsonb_build_object('xp', 30, 'ml_coins', 15), 'active', 0, v_today_start, v_today_end
+        ) ON CONFLICT DO NOTHING;
+
+        -- Daily Mission 3: Use comodin
+        INSERT INTO gamification_system.missions (
+            user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
+        ) VALUES (
+            v_user_id, 'daily_use_comodin', 'Usar un comodin',
+            'Usa al menos un comodin en un ejercicio', 'daily',
+            jsonb_build_array(jsonb_build_object('type', 'use_comodines', 'target', 1, 'current', 0)),
+            jsonb_build_object('xp', 20, 'ml_coins', 10), 'active', 0, v_today_start, v_today_end
+        ) ON CONFLICT DO NOTHING;
+
+        -- Weekly Mission 1: Complete module
+        INSERT INTO gamification_system.missions (
+            user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
+        ) VALUES (
+            v_user_id, 'weekly_complete_module', 'Completar un modulo',
+            'Completa un modulo completo esta semana', 'weekly',
+            jsonb_build_array(jsonb_build_object('type', 'complete_modules', 'target', 1, 'current', 0)),
+            jsonb_build_object('xp', 200, 'ml_coins', 100), 'active', 0, v_today_start, v_week_end
+        ) ON CONFLICT DO NOTHING;
+
+        -- Weekly Mission 2: Daily streak
+        INSERT INTO gamification_system.missions (
+            user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
+        ) VALUES (
+            v_user_id, 'weekly_daily_streak', 'Racha de 5 dias',
+            'Completa al menos un ejercicio durante 5 dias seguidos', 'weekly',
+            jsonb_build_array(jsonb_build_object('type', 'daily_streak', 'target', 5, 'current', 0)),
+            jsonb_build_object('xp', 150, 'ml_coins', 75), 'active', 0, v_today_start, v_week_end
+        ) ON CONFLICT DO NOTHING;
+
+        -- Weekly Mission 3: Perfect scores
+        INSERT INTO gamification_system.missions (
+            user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
+        ) VALUES (
+            v_user_id, 'weekly_perfect_scores', 'Perfeccion absoluta',
+            'Obten 3 puntajes perfectos (100%) en ejercicios', 'weekly',
+            jsonb_build_array(jsonb_build_object('type', 'perfect_scores', 'target', 3, 'current', 0)),
+            jsonb_build_object('xp', 180, 'ml_coins', 90), 'active', 0, v_today_start, v_week_end
+        ) ON CONFLICT DO NOTHING;
+
+        -- Weekly Mission 4: Explorer
+        INSERT INTO gamification_system.missions (
+            user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
+        ) VALUES (
+            v_user_id, 'weekly_explorer', 'Explorador curioso',
+            'Completa ejercicios de 3 modulos diferentes', 'weekly',
+            jsonb_build_array(jsonb_build_object('type', 'explore_modules', 'target', 3, 'current', 0, 'modules_visited', '[]'::jsonb)),
+            jsonb_build_object('xp', 120, 'ml_coins', 60), 'active', 0, v_today_start, v_week_end
+        ) ON CONFLICT DO NOTHING;
+
+        -- Weekly Mission 5: Master learner
+        INSERT INTO gamification_system.missions (
+            user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
+        ) VALUES (
+            v_user_id, 'weekly_master_learner', 'Maestro del aprendizaje',
+            'Completa 15 ejercicios esta semana', 'weekly',
+            jsonb_build_array(jsonb_build_object('type', 'complete_exercises', 'target', 15, 'current', 0)),
+            jsonb_build_object('xp', 250, 'ml_coins', 125), 'active', 0, v_today_start, v_week_end
+        ) ON CONFLICT DO NOTHING;
+
+        -- Special Mission: Complete module with mastery
+        INSERT INTO gamification_system.missions (
+            user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
+        ) VALUES (
+            v_user_id, 'special_module_mastery', 'Dominio del Modulo',
+            'Completa todos los ejercicios de un modulo con al menos 80% de aciertos', 'special',
+            jsonb_build_array(jsonb_build_object('type', 'complete_modules', 'target', 1, 'current', 0, 'min_score', 80)),
+            jsonb_build_object('xp', 500, 'ml_coins', 150), 'active', 0, v_today_start, v_week_end + INTERVAL '23 days'
+        ) ON CONFLICT DO NOTHING;
+
+    END LOOP;
+
+    RAISE NOTICE '✓ Misiones de testing creadas (3 daily + 5 weekly + 1 special por usuario)';
+END $$;
+
+-- =====================================================
 -- FASE 1: Verificar que el trigger creó los registros base
 -- =====================================================
 
@@ -497,6 +664,138 @@ SET
     ),
     updated_at = gamilit.now_mexico()
 WHERE user_id = '30ac4f00-012e-4217-b819-2e199c49b35e'::uuid;
+
+-- =====================================================
+-- FASE 3: Actualizar user_stats para usuarios de testing
+-- =====================================================
+-- Usuarios: admin@gamilit.com, teacher@gamilit.com, student@gamilit.com
+
+-- Testing Admin: Super Admin - Nivel 10, Máximo
+UPDATE gamification_system.user_stats
+SET
+    level = 10,
+    total_xp = 50000,
+    xp_to_next_level = 0,
+    current_rank = 'K''uk''ulkan'::gamification_system.maya_rank,
+    rank_progress = 100.00,
+    ml_coins = 5000,
+    ml_coins_earned_total = 10000,
+    ml_coins_spent_total = 5000,
+    ml_coins_earned_today = 0,
+    last_ml_coins_reset = gamilit.now_mexico() - INTERVAL '12 hours',
+    current_streak = 30,
+    max_streak = 30,
+    streak_started_at = gamilit.now_mexico() - INTERVAL '30 days',
+    days_active_total = 100,
+    exercises_completed = 250,
+    modules_completed = 5,
+    total_score = 24000,
+    average_score = 96.00,
+    perfect_scores = 50,
+    achievements_earned = 20,
+    certificates_earned = 5,
+    total_time_spent = '50:00:00'::interval,
+    weekly_time_spent = '08:00:00'::interval,
+    sessions_count = 100,
+    weekly_xp = 5000,
+    monthly_xp = 50000,
+    weekly_exercises = 50,
+    last_activity_at = gamilit.now_mexico() - INTERVAL '30 minutes',
+    last_login_at = gamilit.now_mexico() - INTERVAL '30 minutes',
+    metadata = jsonb_build_object(
+        'testing_user', true,
+        'role', 'super_admin',
+        'admin_access', 'full'
+    ),
+    updated_at = gamilit.now_mexico()
+WHERE user_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid;
+
+-- Testing Teacher: Profesor - Nivel 5, Activo
+UPDATE gamification_system.user_stats
+SET
+    level = 5,
+    total_xp = 10000,
+    xp_to_next_level = 2000,
+    current_rank = 'Ah K''in'::gamification_system.maya_rank,
+    rank_progress = 33.33,
+    ml_coins = 1000,
+    ml_coins_earned_total = 2000,
+    ml_coins_spent_total = 1000,
+    ml_coins_earned_today = 0,
+    last_ml_coins_reset = gamilit.now_mexico() - INTERVAL '8 hours',
+    current_streak = 15,
+    max_streak = 20,
+    streak_started_at = gamilit.now_mexico() - INTERVAL '15 days',
+    days_active_total = 60,
+    exercises_completed = 100,
+    modules_completed = 5,
+    total_score = 9000,
+    average_score = 92.00,
+    perfect_scores = 25,
+    achievements_earned = 12,
+    certificates_earned = 5,
+    total_time_spent = '25:00:00'::interval,
+    weekly_time_spent = '05:00:00'::interval,
+    sessions_count = 60,
+    weekly_xp = 2500,
+    monthly_xp = 10000,
+    weekly_exercises = 30,
+    last_activity_at = gamilit.now_mexico() - INTERVAL '1 hour',
+    last_login_at = gamilit.now_mexico() - INTERVAL '1 hour',
+    metadata = jsonb_build_object(
+        'testing_user', true,
+        'role', 'teacher',
+        'teacher_stats', jsonb_build_object(
+            'students_count', 10,
+            'classrooms_count', 2,
+            'avg_student_score', 85.00
+        )
+    ),
+    updated_at = gamilit.now_mexico()
+WHERE user_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid;
+
+-- Testing Student: Estudiante - Nivel 3, Progreso Medio-Alto
+UPDATE gamification_system.user_stats
+SET
+    level = 3,
+    total_xp = 3200,
+    xp_to_next_level = 800,
+    current_rank = 'Nacom'::gamification_system.maya_rank,
+    rank_progress = 60.00,
+    ml_coins = 425,
+    ml_coins_earned_total = 800,
+    ml_coins_spent_total = 375,
+    ml_coins_earned_today = 50,
+    last_ml_coins_reset = gamilit.now_mexico() - INTERVAL '2 hours',
+    current_streak = 7,
+    max_streak = 10,
+    streak_started_at = gamilit.now_mexico() - INTERVAL '7 days',
+    days_active_total = 20,
+    exercises_completed = 35,
+    modules_completed = 1,
+    total_score = 2800,
+    average_score = 85.00,
+    perfect_scores = 5,
+    achievements_earned = 6,
+    certificates_earned = 1,
+    total_time_spent = '06:30:00'::interval,
+    weekly_time_spent = '02:00:00'::interval,
+    sessions_count = 20,
+    weekly_xp = 900,
+    monthly_xp = 3200,
+    weekly_exercises = 15,
+    class_rank_position = 1,
+    last_activity_at = gamilit.now_mexico() - INTERVAL '1 hour',
+    last_login_at = gamilit.now_mexico() - INTERVAL '1 hour',
+    metadata = jsonb_build_object(
+        'testing_user', true,
+        'role', 'student',
+        'preferred_theme', 'forest',
+        'favorite_module', 'modulo-02-comprension-inferencial',
+        'learning_pace', 'steady'
+    ),
+    updated_at = gamilit.now_mexico()
+WHERE user_id = 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid;
 
 -- =====================================================
 -- Verification Query

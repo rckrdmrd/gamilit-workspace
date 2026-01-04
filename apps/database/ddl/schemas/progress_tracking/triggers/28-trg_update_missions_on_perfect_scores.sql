@@ -3,7 +3,7 @@
 -- Tabla: progress_tracking.exercise_attempts
 -- Descripción: Actualiza misiones con objetivo 'perfect_scores' cuando se logra score=100
 -- Tipo: AFTER INSERT
--- Función: gamilit.update_missions_on_perfect_scores()
+-- Funcion: gamilit.trigger_missions_on_perfect_scores() (wrapper unificado)
 -- Created: 2025-11-28
 -- =============================================================================
 
@@ -11,7 +11,7 @@ CREATE TRIGGER trg_update_missions_on_perfect_scores
     AFTER INSERT ON progress_tracking.exercise_attempts
     FOR EACH ROW
     WHEN (NEW.is_correct = true AND NEW.score = 100)
-    EXECUTE FUNCTION gamilit.update_missions_on_perfect_scores();
+    EXECUTE FUNCTION gamilit.trigger_missions_on_perfect_scores();
 
 -- Comentario descriptivo
 COMMENT ON TRIGGER trg_update_missions_on_perfect_scores ON progress_tracking.exercise_attempts IS
@@ -45,7 +45,7 @@ COMMENT ON TRIGGER trg_update_missions_on_perfect_scores ON progress_tracking.ex
 -- - No afecta el INSERT original aunque falle la actualización de misiones
 --
 -- DEPENDENCIAS:
--- - Función: gamilit.update_missions_on_perfect_scores()
+-- - Funcion: gamilit.trigger_missions_on_perfect_scores() (wrapper unificado 2025-12-29)
 -- - Tabla: gamification_system.missions (actualizada por la función)
 -- - Índices: idx_missions_user_type_status, GIN index en objectives
 --

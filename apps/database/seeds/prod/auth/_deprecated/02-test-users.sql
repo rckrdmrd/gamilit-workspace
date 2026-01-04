@@ -76,7 +76,7 @@ INSERT INTO auth.users (
 
 ON CONFLICT (email) DO UPDATE SET
     encrypted_password = EXCLUDED.encrypted_password,
-    role = EXCLUDED.role,
+    gamilit_role = EXCLUDED.gamilit_role,
     email_confirmed_at = EXCLUDED.email_confirmed_at,
     raw_user_meta_data = EXCLUDED.raw_user_meta_data,
     status = EXCLUDED.status,
@@ -118,7 +118,7 @@ SELECT
         WHEN u.email = 'teacher@gamilit.com' THEN 'Teacher Gamilit'
         WHEN u.email = 'student@gamilit.com' THEN 'Student Gamilit'
     END as full_name,
-    u.role::auth_management.gamilit_role,
+    u.gamilit_role,
     'active'::auth_management.user_status as status,
     true as email_verified,
     jsonb_build_object(

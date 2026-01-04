@@ -44,6 +44,14 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 COMMENT ON EXTENSION pg_trgm IS 'Fuzzy string matching para validadores de ejercicios (similarity function)';
 
+-- pgcrypto: Cryptographic functions for password hashing
+-- Usado en seeds de demo-users para generar encrypted_password
+-- Funciones: crypt(), gen_salt()
+-- Documentación: https://www.postgresql.org/docs/current/pgcrypto.html
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+COMMENT ON EXTENSION pgcrypto IS 'Cryptographic functions for password hashing (crypt, gen_salt)';
+
 -- ============================================================================
 -- SCHEMAS
 -- ============================================================================

@@ -28,6 +28,9 @@ LANGUAGE plpgsql
 AS $function$
 DECLARE
     v_default_classroom_id UUID;
+    v_error_message TEXT;
+    v_error_detail TEXT;
+    v_error_code TEXT;
 BEGIN
     -- Solo procesar estudiantes
     IF NEW.role != 'student' THEN
@@ -86,6 +89,48 @@ BEGIN
     ON CONFLICT (classroom_id, student_id) DO NOTHING;  -- Evitar duplicados
 
     RETURN NEW;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        -- P1-001: Capturar error sin bloquear creación de perfil
+        GET STACKED DIAGNOSTICS
+            v_error_message = MESSAGE_TEXT,
+            v_error_detail = PG_EXCEPTION_DETAIL,
+            v_error_code = RETURNED_SQLSTATE;
+
+        RAISE WARNING '[P1-001] Error asignando classroom default para usuario %: % (SQLSTATE: %)',
+            NEW.id, v_error_message, v_error_code;
+
+        -- Registrar en pending_user_initialization para retry posterior
+        BEGIN
+            INSERT INTO audit_logging.pending_user_initialization (
+                user_id,
+                profile_id,
+                tenant_id,
+                error_message,
+                error_code,
+                error_detail,
+                trigger_name,
+                function_name,
+                status,
+                next_retry_at
+            ) VALUES (
+                NEW.user_id,
+                NEW.id,
+                NEW.tenant_id,
+                v_error_message,
+                v_error_code,
+                v_error_detail,
+                TG_NAME,
+                'gamilit.assign_default_classroom',
+                'pending',
+                gamilit.now_mexico() + INTERVAL '5 minutes'
+            );
+        EXCEPTION WHEN OTHERS THEN
+            RAISE WARNING '[P1-001] No se pudo registrar error de classroom: %', SQLERRM;
+        END;
+
+        RETURN NEW;  -- Permite creación de perfil aunque falle asignación
 END;
 $function$;
 

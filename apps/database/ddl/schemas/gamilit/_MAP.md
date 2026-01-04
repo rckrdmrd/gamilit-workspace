@@ -1,88 +1,127 @@
 # Schema: gamilit
 
-Funciones y utilidades compartidas del sistema GAMILIT
+Funciones y utilidades compartidas del sistema GAMILIT.
 
 ## Estructura
 
-- **functions/**: 22 archivos
+- **functions/**: 29 archivos SQL activos
+- **functions/_deprecated/**: 8 archivos (funciones unificadas)
 - **views/**: 1 archivo
 
-**Total:** 23 objetos
+**Total:** 30 objetos DDL activos
 
-## Contenido Detallado
+## Arquitectura de Funciones de Misiones
 
-### functions/ (22 archivos)
-
-```
-01-audit_profile_changes.sql
-02-get_current_user_id.sql
-03-get_current_user_role.sql
-04-initialize_user_stats.sql
-05-is_admin.sql
-05b-is_super_admin.sql                           # ✨ NUEVO 2025-11-15
-08-now_mexico.sql
-09-set_profile_defaults.sql
-10-update_classroom_member_count.sql
-11-set_default_tenant.sql                        # ✨ NUEVO 2025-11-19
-11-update_user_last_login.sql
-12-validate_email_format.sql
-13-validate_username.sql
-14-update_user_stats_on_exercise_complete.sql
-15-update_module_progress_on_exercise_complete.sql # ✨ NUEVO 2025-11-26
-15-update_updated_at_column.sql
-16-normalize_text.sql                            # ✨ NUEVO 2025-11-19
-17-update_missions_on_exercise_complete.sql      # ✨ NUEVO 2025-11-26
-18-initialize_user_missions.sql                  # ✨ NUEVO 2025-11-26
-19-update_missions_on_correct_streak.sql         # ✨ NUEVO 2025-11-26
-20-update_module_progress_on_submission_graded.sql # ✨ NUEVO 2025-11-28 (Student Portal)
-validate_date_range.sql
-```
-
-### views/ (1 archivo)
+Las funciones de actualización de misiones siguen una arquitectura unificada:
 
 ```
-number_series.sql    (migrado desde public 2025-11-11)
+                    ┌─────────────────────────────────────┐
+                    │   update_mission_progress()         │
+                    │   (Función central parametrizada)   │
+                    └─────────────────┬───────────────────┘
+                                      │
+        ┌─────────────────────────────┼─────────────────────────────┐
+        │             │               │               │             │
+        ▼             ▼               ▼               ▼             ▼
+┌───────────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐
+│trigger_on_    │ │trigger_on_│ │trigger_on_│ │trigger_on_│ │  ...más   │
+│exercise_      │ │earn_xp()  │ │use_       │ │perfect_   │ │  wrappers │
+│complete()     │ │           │ │comodines()│ │scores()   │ │           │
+└───────────────┘ └───────────┘ └───────────┘ └───────────┘ └───────────┘
 ```
 
-## Descripción
+## Funciones Principales
 
-Funciones y vistas utilitarias reutilizables en todo el sistema:
+### Sistema de Misiones (Arquitectura Unificada)
 
-- **Funciones de auditoría**: audit_profile_changes
-- **Funciones de contexto**: get_current_user_id, get_current_user_role, is_admin
-- **Funciones de inicialización**: initialize_user_stats, set_profile_defaults
-- **Funciones de actualización**: update_*, set_*
-- **Funciones de validación**: validate_*
-- **Funciones de timestamp**: now_mexico (zona horaria Mexico City)
-- **Vistas utilitarias**: number_series (generador de números 1-1000)
+| Función | Archivo | Propósito |
+|---------|---------|-----------|
+| `update_mission_progress(user_id, type, increment)` | 50-update_mission_progress.sql | Función central que actualiza cualquier tipo de misión |
+
+**Wrappers de Trigger (archivo 51-mission_trigger_wrappers.sql):**
+
+| Wrapper | Tipo de Objetivo | Tabla Trigger |
+|---------|------------------|---------------|
+| `trigger_missions_on_exercise_complete()` | complete_exercises | exercise_attempts |
+| `trigger_missions_on_earn_xp()` | earn_xp | user_stats |
+| `trigger_missions_on_correct_streak()` | correct_streak | exercise_attempts |
+| `trigger_missions_on_daily_streak()` | daily_streak | user_stats |
+| `trigger_missions_on_use_comodines()` | use_comodines | comodin_usage_log |
+| `trigger_missions_on_perfect_scores()` | perfect_scores | exercise_attempts |
+| `trigger_missions_on_complete_modules()` | complete_modules | module_progress |
+| `trigger_missions_on_explore_modules()` | explore_modules | module_progress |
+| `trigger_missions_on_submission()` | submit_exercises | exercise_submissions |
+
+### Inicialización de Usuarios
+
+| Función | Propósito |
+|---------|-----------|
+| `initialize_user_stats` | Crea user_stats, comodines, ranks y module_progress al registrar usuario |
+| `initialize_user_missions` | Crea 3 misiones diarias + 5 semanales para usuario nuevo |
+| `assign_default_classroom` | Asigna estudiantes nuevos al classroom default |
+| `set_profile_defaults` | Establece valores por defecto en profiles |
+
+### Auditoría y Seguridad
+
+| Función | Propósito |
+|---------|-----------|
+| `audit_profile_changes` | Registra cambios de rol/status en audit_logs |
+| `get_current_user_id` | Obtiene ID del usuario actual de sesión |
+| `get_current_user_role` | Obtiene rol del usuario actual |
+| `is_admin` / `is_super_admin` | Verifica permisos de administrador |
+
+### Actualización de Progreso
+
+| Función | Propósito |
+|---------|-----------|
+| `update_user_stats_on_exercise_complete` | Actualiza XP/ML tras completar ejercicio |
+| `update_user_stats_on_submission_graded` | Actualiza XP/ML tras calificación manual |
+| `update_module_progress_on_exercise_complete` | Actualiza progreso de módulo |
+| `update_module_progress_on_submission_graded` | Actualiza progreso tras calificación manual |
+
+### Utilidades
+
+| Función | Propósito |
+|---------|-----------|
+| `now_mexico` | Timestamp en zona horaria Mexico City |
+| `normalize_text` | Normaliza texto para comparaciones |
+| `validate_email_format` | Valida formato de email |
+| `validate_username` | Valida formato de username |
+| `validate_date_range` | Valida rangos de fechas |
+| `update_updated_at_column` | Trigger para updated_at automático |
+| `set_default_tenant` | Asigna tenant por defecto |
+| `update_classroom_member_count` | Actualiza conteo de miembros |
+| `update_user_last_login` | Actualiza timestamp de último login |
+
+### Vistas
+
+| Vista | Propósito |
+|-------|-----------|
+| `number_series` | Generador de números 1-1000 |
+
+## Características de Seguridad
+
+Todas las funciones críticas de inicialización incluyen:
+- **EXCEPTION handling**: Captura errores sin bloquear operaciones principales
+- **Logging**: Errores registrados en `audit_logging.pending_user_initialization`
+- **Retry**: Errores pueden reintentarse automáticamente
+- **SECURITY DEFINER**: Permisos elevados controlados
+
+## Directorio _deprecated
+
+Funciones antiguas reemplazadas por la arquitectura unificada (DB-157):
+
+| Archivo Deprecado | Reemplazado Por |
+|-------------------|-----------------|
+| 17-update_missions_on_exercise_complete.sql | trigger_missions_on_exercise_complete() |
+| 19-update_missions_on_correct_streak.sql | trigger_missions_on_correct_streak() |
+| 21-update_missions_on_use_comodines.sql | trigger_missions_on_use_comodines() |
+| 22-update_missions_on_earn_xp.sql | trigger_missions_on_earn_xp() |
+| 23-update_missions_on_daily_streak.sql | trigger_missions_on_daily_streak() |
+| 24-update_missions_on_perfect_scores.sql | trigger_missions_on_perfect_scores() |
+| 25-update_missions_on_complete_modules.sql | trigger_missions_on_complete_modules() |
+| 26-update_missions_on_explore_modules.sql | trigger_missions_on_explore_modules() |
 
 ---
 
-**Última actualización:** 2025-11-28 (Student Portal: +8 funciones misiones/progreso)
-**Reorganización:** 2025-11-11 (agregada vista number_series migrada desde public)
-
-## Changelog
-
-### 2025-11-28 - Student Portal Corrections
-- ✨ **1 función nueva**: update_module_progress_on_submission_graded (progreso para submissions calificadas)
-- **Total objetos**: 22 → 23
-
-### 2025-11-26 - Sistema de Misiones
-- ✨ **4 funciones nuevas**: Sistema de misiones y progreso
-  - 15-update_module_progress_on_exercise_complete.sql
-  - 17-update_missions_on_exercise_complete.sql
-  - 18-initialize_user_missions.sql
-  - 19-update_missions_on_correct_streak.sql
-- **Total objetos**: 18 → 22
-
-### 2025-11-19 - Utilidades
-- ✨ **2 funciones nuevas**: normalize_text, set_default_tenant
-- **Total objetos**: 16 → 18
-
-### 2025-11-15 - Super Admin
-- ✨ **1 función nueva**: is_super_admin
-- **Total objetos**: 15 → 16
-
-### 2025-11-11 - Reorganización DDL
-- Vista number_series migrada desde public
-- **Total objetos**: 15
+**Última actualización:** 2025-12-29

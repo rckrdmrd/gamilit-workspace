@@ -10,6 +10,7 @@ import { Search, Building, Eye, Edit, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 import type { Organization } from '../../types';
 
 export const OrganizationsTable: React.FC = () => {
@@ -24,7 +25,7 @@ export const OrganizationsTable: React.FC = () => {
   const fetchOrganizations = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get('/admin/organizations');
+      const response = await apiClient.get(API_ENDPOINTS.admin.organizations.list);
       const data = response.data.success ? response.data.data : response.data;
       setOrganizations(data);
     } catch (error) {

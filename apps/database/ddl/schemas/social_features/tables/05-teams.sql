@@ -140,7 +140,7 @@ ALTER TABLE ONLY social_features.teams
 --
 
 ALTER TABLE ONLY social_features.teams
-    ADD CONSTRAINT teams_creator_id_fkey FOREIGN KEY (creator_id) REFERENCES auth_management.profiles(id);
+    ADD CONSTRAINT teams_creator_id_fkey FOREIGN KEY (creator_id) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
 
 
 --
@@ -148,7 +148,7 @@ ALTER TABLE ONLY social_features.teams
 --
 
 ALTER TABLE ONLY social_features.teams
-    ADD CONSTRAINT teams_leader_id_fkey FOREIGN KEY (leader_id) REFERENCES auth_management.profiles(id);
+    ADD CONSTRAINT teams_leader_id_fkey FOREIGN KEY (leader_id) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
 
 
 --

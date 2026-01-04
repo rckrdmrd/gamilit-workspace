@@ -1,77 +1,47 @@
 # Schema: system_configuration
 
-Configuración del sistema: feature flags, ajustes, configuración del sistema, rate limiting
+Configuración del sistema: feature flags, ajustes, rate limiting.
 
 ## Estructura
 
 - **tables/**: 8 archivos
 - **functions/**: 2 archivos
 - **triggers/**: 2 archivos
-- **rls-policies/**: 1 archivos
+- **rls-policies/**: 1 archivo
 
-**Total:** 13 objetos
+**Total:** 13 objetos DDL
 
-## Contenido Detallado
+## Tablas
 
-### tables/ (8 archivos)
+| Tabla | Propósito |
+|-------|-----------|
+| `system_settings` | Configuración general del sistema |
+| `feature_flags` | Flags de funcionalidades on/off |
+| `notification_settings` | Preferencias de notificaciones por usuario |
+| `rate_limits` | Límites de rate para API |
+| `notification_settings_global` | Configuración global de notificaciones |
+| `api_configuration` | Configuración de API |
+| `environment_config` | Configuración por ambiente |
+| `tenant_configurations` | Configuración por tenant |
 
-```
-01-system_settings.sql
-02-feature_flags.sql
-03-notification_settings.sql (preferencias POR USUARIO)
-04-rate_limits.sql (NUEVO 2025-11-11)
-05-notification_settings_global.sql (NUEVO 2025-11-11 - configuración GLOBAL)
-api_configuration.sql
-environment_config.sql
-tenant_configurations.sql
-```
+## Funciones
 
-### functions/ (2 archivos)
+| Función | Propósito |
+|---------|-----------|
+| `is_feature_enabled` | Verifica si un feature flag está activo |
+| `update_feature_flag` | Actualiza estado de feature flag |
 
-```
-is_feature_enabled.sql
-update_feature_flag.sql
-```
+## Notificaciones - Dos Tablas Separadas
 
-### triggers/ (2 archivos)
+1. **notification_settings** (por usuario): Preferencias individuales
+2. **notification_settings_global** (sistema): Configuración por defecto global
 
-```
-29-trg_feature_flags_updated_at.sql
-30-trg_system_settings_updated_at.sql
-```
+## Rate Limiting
 
-### rls-policies/ (1 archivos)
-
-```
-01-policies.sql
-```
+Protección de API contra uso excesivo con:
+- Múltiples scopes: ip, user, consumer, global
+- Burst allowance para picos temporales
 
 ---
 
-## Notas Importantes
-
-### Notificaciones - Dos Tablas Separadas
-
-1. **notification_settings** (03-): Preferencias POR USUARIO
-   - Incluye `user_id NOT NULL`
-   - Configuración individual de cada usuario
-   - Ejemplos: quiet hours, max_per_day, frecuencia preferida
-
-2. **notification_settings_global** (05-): Configuración GLOBAL del sistema
-   - SIN user_id (configuración a nivel sistema)
-   - Define comportamiento por defecto para todos los usuarios
-   - Incluye throttling, batching, templates
-   - Seeds: `seeds/prod/system_configuration/03-notification_settings_global.sql`
-
-### Rate Limiting (04-)
-
-- Protección de API contra uso excesivo
-- Soporta múltiples scopes: ip, user, consumer, global
-- Incluye burst allowance para picos temporales
-- Seeds: `seeds/prod/system_configuration/04-rate_limits.sql`
-
----
-
-**Última actualización:** 2025-11-11
-**Reorganización:** 2025-11-09
-**Nuevas tablas:** 2025-11-11 (rate_limits, notification_settings_global)
+**Última actualización:** 2025-12-27

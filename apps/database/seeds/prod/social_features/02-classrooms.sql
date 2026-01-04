@@ -1,7 +1,7 @@
 -- =====================================================
--- Seed: social_features.classrooms (PROD)
+-- Seed: social_features.classrooms (DEV)
 -- Description: SOLO classroom default para asignación automática
--- Environment: PRODUCTION
+-- Environment: DEVELOPMENT
 -- Dependencies: social_features.schools (00-schools-default.sql), auth_management.profiles
 -- Order: 02
 -- Created: 2025-01-11

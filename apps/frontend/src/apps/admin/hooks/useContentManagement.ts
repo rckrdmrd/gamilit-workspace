@@ -575,7 +575,7 @@ export function useExercises() {
 
   const fetchExercises = async () => {
     try {
-      const response = await apiClient.get('/educational/exercises');
+      const response = await apiClient.get(API_ENDPOINTS.educational.exercises);
       const data = response.data.success ? response.data.data : response.data;
       setExercises(data.exercises || []);
     } catch (err) {
@@ -586,18 +586,18 @@ export function useExercises() {
   };
 
   const createExercise = async (exercise: Partial<Exercise>) => {
-    const response = await apiClient.post('/educational/exercises', exercise);
+    const response = await apiClient.post(API_ENDPOINTS.educational.exercises, exercise);
     await fetchExercises();
     return response.data.success ? response.data.data : response.data;
   };
 
   const updateExercise = async (id: string, updates: Partial<Exercise>) => {
-    await apiClient.patch(`/educational/exercises/${id}`, updates);
+    await apiClient.patch(API_ENDPOINTS.educational.exercise(id), updates);
     await fetchExercises();
   };
 
   const deleteExercise = async (id: string) => {
-    await apiClient.delete(`/educational/exercises/${id}`);
+    await apiClient.delete(API_ENDPOINTS.educational.exercise(id));
     await fetchExercises();
   };
 

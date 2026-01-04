@@ -1,5 +1,10 @@
 -- =====================================================
--- Function: gamification_system.update_leaderboard_global
+-- [DEPRECATED] Function: gamification_system.update_leaderboard_global
+-- =====================================================
+-- DEPRECATED: 2025-12-29 (DB-164)
+-- RAZÓN: Función sin uso en backend. Leaderboards se gestionan via materialized views.
+-- REEMPLAZADA POR: mv_global_leaderboard, mv_weekly_leaderboard, mv_classroom_leaderboard
+-- =====================================================
 -- Description: Obtiene la posición del usuario en el leaderboard global
 -- Parameters:
 --   - p_user_id: UUID - ID del usuario
@@ -72,7 +77,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 COMMENT ON FUNCTION gamification_system.update_leaderboard_global(UUID, VARCHAR, VARCHAR) IS
-    'Obtiene la posición del usuario en el leaderboard global';
+    '[DEPRECATED] Obtiene la posición del usuario en el leaderboard global - usar MVs';
 
 -- Grant permissions
 GRANT EXECUTE ON FUNCTION gamification_system.update_leaderboard_global(UUID, VARCHAR, VARCHAR) TO authenticated;

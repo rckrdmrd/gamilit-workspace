@@ -1,7 +1,7 @@
 -- =====================================================
 -- Trigger: trg_update_missions_on_submission
 -- Table: progress_tracking.exercise_submissions
--- Function: gamilit.update_missions_on_exercise_complete
+-- Function: gamilit.trigger_missions_on_exercise_complete (wrapper unificado)
 -- Event: AFTER UPDATE
 -- Level: FOR EACH ROW
 -- Description: Actualiza progreso de misiones cuando se califica un submission
@@ -48,7 +48,7 @@
 -- - Solo afecta submissions calificados como correctos
 -- - Solo afecta misiones no expiradas
 -- - Usa la misma función que exercise_attempts para consistencia
--- - Reutiliza gamilit.update_missions_on_exercise_complete()
+-- - Usa gamilit.trigger_missions_on_exercise_complete() (wrapper unificado 2025-12-29)
 -- =====================================================
 
 DROP TRIGGER IF EXISTS trg_update_missions_on_submission ON progress_tracking.exercise_submissions CASCADE;
@@ -67,7 +67,7 @@ CREATE TRIGGER trg_update_missions_on_submission
             OR OLD.is_correct IS DISTINCT FROM NEW.is_correct
         )
     )
-    EXECUTE FUNCTION gamilit.update_missions_on_exercise_complete();
+    EXECUTE FUNCTION gamilit.trigger_missions_on_exercise_complete();
 
 -- =====================================================
 -- COMENTARIO DEL TRIGGER
@@ -75,7 +75,7 @@ CREATE TRIGGER trg_update_missions_on_submission
 COMMENT ON TRIGGER trg_update_missions_on_submission ON progress_tracking.exercise_submissions IS
     'Actualiza el progreso de misiones diarias/semanales cuando se califica un exercise_submission como correcto. '
     'Complementa el trigger de exercise_attempts para cubrir ejercicios con revisión manual. '
-    'Usa la misma función update_missions_on_exercise_complete() para consistencia.';
+    'Usa la funcion wrapper trigger_missions_on_exercise_complete() (unificada 2025-12-29).';
 
 -- =====================================================
 -- VERIFICACIÓN POST-CREACIÓN

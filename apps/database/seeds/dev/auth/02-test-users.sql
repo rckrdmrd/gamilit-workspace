@@ -28,7 +28,7 @@ INSERT INTO auth.users (
     id,                      -- ✅ UUID predecible explícito
     email,
     encrypted_password,
-    role,
+    gamilit_role,            -- ✅ Cambiado de 'role' a 'gamilit_role'
     email_confirmed_at,
     raw_user_meta_data,
     status,
@@ -40,7 +40,7 @@ INSERT INTO auth.users (
     'dddddddd-dddd-dddd-dddd-dddddddddddd'::uuid,  -- ✅ UUID predecible
     'admin@gamilit.com',
     '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',  -- Password: Test1234
-    'super_admin',
+    'super_admin'::auth_management.gamilit_role,  -- ✅ Cast explícito al ENUM
     NOW(),
     '{"name": "Admin Gamilit", "description": "Usuario administrador de testing"}'::jsonb,
     'active',
@@ -53,7 +53,7 @@ INSERT INTO auth.users (
     'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee'::uuid,  -- ✅ UUID predecible
     'teacher@gamilit.com',
     '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',  -- Password: Test1234
-    'admin_teacher',
+    'admin_teacher'::auth_management.gamilit_role,  -- ✅ Cast explícito al ENUM
     NOW(),
     '{"name": "Teacher Gamilit", "description": "Usuario maestro de testing"}'::jsonb,
     'active',
@@ -66,7 +66,7 @@ INSERT INTO auth.users (
     'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid,  -- ✅ UUID predecible
     'student@gamilit.com',
     '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',  -- Password: Test1234
-    'student',
+    'student'::auth_management.gamilit_role,  -- ✅ Cast explícito al ENUM
     NOW(),
     '{"name": "Student Gamilit", "description": "Usuario estudiante de testing"}'::jsonb,
     'active',
@@ -76,7 +76,7 @@ INSERT INTO auth.users (
 
 ON CONFLICT (email) DO UPDATE SET
     encrypted_password = EXCLUDED.encrypted_password,
-    role = EXCLUDED.role,
+    gamilit_role = EXCLUDED.gamilit_role,
     email_confirmed_at = EXCLUDED.email_confirmed_at,
     raw_user_meta_data = EXCLUDED.raw_user_meta_data,
     status = EXCLUDED.status,
@@ -118,7 +118,7 @@ SELECT
         WHEN u.email = 'teacher@gamilit.com' THEN 'Teacher Gamilit'
         WHEN u.email = 'student@gamilit.com' THEN 'Student Gamilit'
     END as full_name,
-    u.role::auth_management.gamilit_role,
+    u.gamilit_role,
     'active'::auth_management.user_status as status,
     true as email_verified,
     jsonb_build_object(

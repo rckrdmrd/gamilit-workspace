@@ -73,6 +73,10 @@ export interface SubmitExerciseResponse {
   correctAnswers?: unknown; // Correct answers revealed after submission
   explanations?: Record<string, string>;
   createdAt: Date;
+  // Estado de la submission (para ejercicios con revision manual)
+  status?: 'draft' | 'submitted' | 'graded' | 'reviewed' | 'pending_review';
+  // Indica si el ejercicio requiere revision manual del maestro
+  requiresManualReview?: boolean;
 }
 
 /**

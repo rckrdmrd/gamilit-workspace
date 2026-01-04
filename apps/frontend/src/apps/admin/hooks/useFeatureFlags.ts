@@ -23,7 +23,7 @@
 
 import { useState, useCallback } from 'react';
 import { apiClient } from '@/services/api/apiClient';
-import { FEATURE_FLAGS } from '@/config/api.config';
+import { FEATURE_FLAGS, API_ENDPOINTS } from '@/config/api.config';
 import type { FeatureFlag, CreateFlagDto, UpdateFlagDto } from '../types';
 
 export interface UseFeatureFlagsResult {
@@ -224,8 +224,8 @@ export function useFeatureFlags(): UseFeatureFlagsResult {
           return;
         }
 
-        // HIGH-005 FIX: Usar ruta directa
-        await apiClient.delete(`/admin/feature-flags/${key}`);
+        // HIGH-005 FIX: Usar ruta centralizada
+        await apiClient.delete(API_ENDPOINTS.admin.featureFlags.delete(key));
         setFlags((prev) => prev.filter((flag) => flag.key !== key));
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to delete feature flag';

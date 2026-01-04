@@ -557,6 +557,9 @@ export const claimMissionRewards = async (missionId: string): Promise<UserMissio
 /**
  * Get user mission statistics
  *
+ * @deprecated Use getMyMissionStats() instead to avoid 403 errors
+ * caused by userId mismatch between authStore and JWT.
+ *
  * @param userId - User ID
  * @returns Mission statistics
  */
@@ -564,6 +567,26 @@ export const getUserMissionStats = async (userId: string): Promise<MissionStats>
   try {
     const { data } = await apiClient.get<ApiResponse<MissionStats>>(
       `/gamification/missions/stats/${userId}`,
+    );
+    return data.data;
+  } catch (error) {
+    throw handleAPIError(error);
+  }
+};
+
+/**
+ * Get current user's mission statistics
+ *
+ * Uses /stats/me endpoint that extracts userId from JWT token.
+ * This avoids the 403 error "Cannot access stats of another user"
+ * that can occur when authStore.user.id is out of sync with JWT.
+ *
+ * @returns Mission statistics for the authenticated user
+ */
+export const getMyMissionStats = async (): Promise<MissionStats> => {
+  try {
+    const { data } = await apiClient.get<ApiResponse<MissionStats>>(
+      '/gamification/missions/stats/me',
     );
     return data.data;
   } catch (error) {
@@ -909,6 +932,7 @@ export default {
   getMissionProgress,
   claimMissionRewards,
   getUserMissionStats,
+  getMyMissionStats, // P1-002: Usa /stats/me para evitar 403
 
   // Achievements
   getAllAchievements,

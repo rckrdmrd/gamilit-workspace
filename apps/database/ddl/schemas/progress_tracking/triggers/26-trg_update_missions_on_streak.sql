@@ -1,7 +1,7 @@
 -- =====================================================
 -- Trigger: trg_update_missions_on_streak
 -- Table: progress_tracking.exercise_attempts
--- Function: gamilit.update_missions_on_correct_streak
+-- Function: gamilit.trigger_missions_on_correct_streak (wrapper unificado)
 -- Event: AFTER INSERT
 -- Level: FOR EACH ROW
 -- Description: Actualiza progreso de misiones con objetivo 'correct_streak'
@@ -53,7 +53,7 @@ DROP TRIGGER IF EXISTS trg_update_missions_on_streak ON progress_tracking.exerci
 CREATE TRIGGER trg_update_missions_on_streak
     AFTER INSERT ON progress_tracking.exercise_attempts
     FOR EACH ROW
-    EXECUTE FUNCTION gamilit.update_missions_on_correct_streak();
+    EXECUTE FUNCTION gamilit.trigger_missions_on_correct_streak();
 
 -- =====================================================
 -- COMENTARIO DEL TRIGGER
@@ -106,6 +106,6 @@ COMMENT ON TRIGGER trg_update_missions_on_streak ON progress_tracking.exercise_a
 -- =====================================================
 -- 2025-11-26: Creación inicial
 --             - Implementado para cerrar BUG-002 (correct_streak no se actualizaba)
---             - Usa función gamilit.update_missions_on_correct_streak()
+--             - Usa funcion wrapper gamilit.trigger_missions_on_correct_streak() (unificada 2025-12-29)
 --             - Compatible con arquitectura existente
 -- =====================================================

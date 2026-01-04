@@ -15,3 +15,6 @@ export * from './breakpoints';
 
 // ENUMs (SSOT - Shared with Backend)
 export * from './enums.constants';
+
+// Exercise Feedback Messages
+export * from './exerciseFeedback.constants';

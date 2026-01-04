@@ -60,10 +60,25 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
     onSuccess: (result) => {
       setIsSubmitted(true);
       const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+
+      // Verificar si está pendiente de revisión manual
+      if (result.status === 'pending_review' || result.requiresManualReview) {
+        setFeedback({
+          type: 'info',
+          title: 'Cómic Enviado',
+          message: 'Tu cómic digital ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+          pendingReview: true,
+        });
+        setShowFeedback(true);
+        onComplete?.(0, timeSpent);
+        return;
+      }
+
+      // Flujo normal cuando ya está evaluado
       setFeedback({
         type: 'success',
-        title: '¡Ejercicio Enviado!',
-        message: 'Tu cómic digital ha sido enviado para revisión por el docente.',
+        title: '¡Cómic Completado!',
+        message: 'Tu cómic digital ha sido evaluado correctamente.',
         score: result.score,
         xpEarned: result.rewards?.xp || 0,
         mlCoinsEarned: result.rewards?.mlCoins || 0,

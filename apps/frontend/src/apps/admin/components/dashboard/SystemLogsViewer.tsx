@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import { Download } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 import type { SystemLog, LogFilter } from '../../types';
 
 export const SystemLogsViewer: React.FC = () => {
@@ -27,7 +28,7 @@ export const SystemLogsViewer: React.FC = () => {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get('/admin/logs', { params: filter });
+      const response = await apiClient.get(API_ENDPOINTS.admin.logs, { params: filter });
       const data = response.data.success ? response.data.data : response.data;
       setLogs(data);
     } catch (error) {

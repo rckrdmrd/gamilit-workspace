@@ -166,6 +166,9 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
         setRankUpData(response.rankUp);
       }
 
+      // CORRECCION-002: Agregar rewards al feedback
+      const rewards = response.rewards || { mlCoins: 0, xp: 0 };
+
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
@@ -179,6 +182,8 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
           `Has predicho ${response.correctAnswersCount} de ${response.totalQuestions} escenarios correctamente.`,
         score: response.score,
         showConfetti: response.isPerfect,
+        xpEarned: rewards.xp,
+        mlCoinsEarned: rewards.mlCoins,
       });
       setShowFeedback(true);
 

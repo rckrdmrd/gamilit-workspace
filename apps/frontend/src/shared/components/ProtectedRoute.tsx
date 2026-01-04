@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { useWebSocket } from '@/features/notifications/hooks/useWebSocket';
 
 interface ProtectedRouteProps {
   children?: React.ReactNode;
@@ -63,6 +64,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isLoading = useAuthStore((state) => state.isLoading);
   const location = useLocation();
+
+  // Initialize WebSocket for real-time notifications
+  // The hook internally checks for auth token and user before connecting
+  useWebSocket();
 
   // Show loading spinner while checking authentication status
   if (isLoading) {

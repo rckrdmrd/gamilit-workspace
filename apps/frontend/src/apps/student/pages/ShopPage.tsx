@@ -52,6 +52,7 @@ import { UnderConstruction } from '@shared/components/common';
 import { useCoins } from '@/features/gamification/economy/hooks/useCoins';
 import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { useInvalidateDashboard } from '@/shared/hooks/useInvalidateDashboard';
 import type {
   ShopItem,
   ShopCategory,
@@ -109,6 +110,9 @@ export default function ShopPage() {
   // Hooks
   const { balance } = useCoins();
   const fetchBalance = useEconomyStore((state) => state.fetchBalance);
+
+  // Dashboard invalidation hook - FIX: Invalidate cache after purchases
+  const { syncAndInvalidate } = useInvalidateDashboard();
 
   // State
   const [shopItems, setShopItems] = useState<ShopItem[]>([]);
@@ -286,8 +290,8 @@ export default function ShopPage() {
       });
 
       if (response.success) {
-        // Refresh balance (new balance comes from response)
-        await fetchBalance();
+        // FIX: Invalidate dashboard cache to update coins balance
+        await syncAndInvalidate();
 
         // Update local state - mark item as owned
         setShopItems((prev) =>

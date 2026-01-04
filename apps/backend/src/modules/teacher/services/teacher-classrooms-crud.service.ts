@@ -296,11 +296,12 @@ export class TeacherClassroomsCrudService {
     // Obtener IDs de estudiantes
     const studentIds = members.map((m) => m.student_id);
 
-    // Obtener datos en paralelo: progreso, gamificacion y actividad actual
-    const [progressData, userStatsData, currentActivityData] = await Promise.all([
+    // Obtener datos en paralelo: progreso, gamificacion, actividad actual y total de ejercicios
+    const [progressData, userStatsData, currentActivityData, totalExercisesCount] = await Promise.all([
       this.getStudentsProgress(studentIds),
       this.getStudentsUserStats(studentIds),
       this.getStudentsCurrentActivity(studentIds),
+      this.getTotalExercisesForClassroom(),
     ]);
 
     // Mapear a DTO con todos los datos (members ya incluye profile y user info)
@@ -341,6 +342,7 @@ export class TeacherClassroomsCrudService {
         progress,
         userStats,
         currentActivity,
+        totalExercisesCount,
       );
     });
 
@@ -562,8 +564,8 @@ export class TeacherClassroomsCrudService {
       .groupBy('mp.user_id')
       .getCount();
 
-    // Obtener todos los módulos (asumiendo que todos están disponibles para el classroom)
-    // TODO: Si hay una relación específica classroom-modules, usar esa tabla
+    // Obtener todos los módulos publicados (disponibles para todos los classrooms)
+    // NOTA: Actualmente no existe tabla classroom_modules, todos los módulos publicados están disponibles
     const allModules = await this.moduleRepo.find({
       where: { is_published: true },
       order: { order_index: 'ASC' },
@@ -1112,6 +1114,23 @@ export class TeacherClassroomsCrudService {
   }
 
   /**
+   * Obtiene el total de ejercicios activos disponibles
+   * Cuenta todos los ejercicios activos de módulos publicados
+   *
+   * @private
+   */
+  private async getTotalExercisesForClassroom(): Promise<number> {
+    const count = await this.exerciseRepo
+      .createQueryBuilder('e')
+      .innerJoin('e.module', 'm')
+      .where('e.is_active = :isActive', { isActive: true })
+      .andWhere('m.is_published = :isPublished', { isPublished: true })
+      .getCount();
+
+    return count || 50; // Fallback to 50 if no exercises found
+  }
+
+  /**
    * Calcula estadísticas de progreso
    *
    * @private
@@ -1212,14 +1231,14 @@ export class TeacherClassroomsCrudService {
       last_activity_at: Date | null;
     },
     currentActivity?: { current_module: string | null; current_exercise: string | null },
+    totalExercisesInClassroom?: number,
   ): StudentInClassroomDto {
     const fullName = profile
       ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim()
       : 'Unknown Student';
 
-    // Obtener total de ejercicios (valor fijo por ahora, se puede calcular dinámicamente)
-    // TODO: Calcular dinámicamente basado en módulos asignados al classroom
-    const totalExercises = 50; // Valor aproximado de ejercicios totales
+    // Use provided total or default to 50 as fallback
+    const totalExercises = totalExercisesInClassroom ?? 50;
 
     return {
       user_id: member.student_id,

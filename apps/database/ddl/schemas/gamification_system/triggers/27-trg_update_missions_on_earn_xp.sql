@@ -1,7 +1,7 @@
 -- =====================================================
 -- Trigger: trg_update_missions_on_earn_xp
 -- Table: gamification_system.user_stats
--- Function: gamilit.update_missions_on_earn_xp
+-- Function: gamilit.trigger_missions_on_earn_xp (wrapper unificado)
 -- Event: AFTER UPDATE
 -- Level: FOR EACH ROW
 -- Description: Actualiza progreso de misiones al ganar XP
@@ -60,7 +60,7 @@ CREATE TRIGGER trg_update_missions_on_earn_xp
     AFTER UPDATE ON gamification_system.user_stats
     FOR EACH ROW
     WHEN (OLD.total_xp IS DISTINCT FROM NEW.total_xp)
-    EXECUTE FUNCTION gamilit.update_missions_on_earn_xp();
+    EXECUTE FUNCTION gamilit.trigger_missions_on_earn_xp();
 
 -- =====================================================
 -- VERIFICACIÓN POST-CREACIÓN

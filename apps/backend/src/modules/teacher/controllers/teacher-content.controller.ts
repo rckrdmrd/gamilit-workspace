@@ -27,7 +27,9 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
-import { TeacherGuard } from '../guards';
+import { RolesGuard } from '@modules/auth/guards/roles.guard';
+import { Roles } from '@modules/auth/decorators/roles.decorator';
+import { GamilityRoleEnum } from '@/shared/constants/enums.constants';
 import { TeacherContentService } from '../services/teacher-content.service';
 import { AuthRequest } from '@shared/types';
 import {
@@ -65,7 +67,8 @@ import {
  */
 @ApiTags('Teacher - Content')
 @Controller('teacher/content')
-@UseGuards(JwtAuthGuard, TeacherGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
 @ApiBearerAuth()
 export class TeacherContentController {
   constructor(private readonly contentService: TeacherContentService) {}

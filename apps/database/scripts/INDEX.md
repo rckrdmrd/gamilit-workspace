@@ -1,7 +1,7 @@
 # 📚 ÍNDICE MAESTRO - Scripts de Base de Datos GAMILIT
 
-**Actualizado:** 2025-11-08
-**Versión:** 3.0
+**Actualizado:** 2025-12-28
+**Versión:** 3.8
 **Estado:** ✅ Consolidado y Funcional
 
 ---
@@ -51,8 +51,8 @@ cat QUICK-START.md
 
 | Script | Tamaño | Estado | Propósito |
 |--------|--------|--------|-----------|
-| `init-database.sh` | 36K | ✅ Activo | Inicialización completa (v3.0) |
-| `reset-database.sh` | 16K | ✅ Activo | Reset rápido (mantiene usuario) |
+| `init-database.sh` | 55K | ✅ Activo | Inicialización completa (v3.8) |
+| `reset-database.sh` | 26K | ✅ Activo | Reset rápido v2.0 (sincronizado con init) |
 | `recreate-database.sh` | 8.9K | ✅ Activo | Recreación completa (elimina todo) |
 
 ### Scripts de Gestión (3)
@@ -154,7 +154,7 @@ Ubicación: `inventory/`
 │   └── ANALISIS-SCRIPTS-2025-11-08.md   📊 Análisis técnico
 │
 ├── 🛠️ Scripts Principales
-│   ├── init-database.sh                 ⭐ Inicialización (v3.0)
+│   ├── init-database.sh                 ⭐ Inicialización (v3.8)
 │   ├── reset-database.sh                🔄 Reset rápido
 │   └── recreate-database.sh             ⚠️  Recreación completa
 │
@@ -248,23 +248,23 @@ psql -U gamilit_user -d gamilit_platform -c "\dn" | wc -l        # Schemas
 
 ## 📊 ESTADO DE LA BASE DE DATOS
 
-### Objetos Implementados (según INVENTARIO-COMPLETO-BD-2025-11-07.md)
+### Objetos Implementados (según análisis 2025-12-28)
 
 | Tipo de Objeto | Cantidad | Estado |
 |----------------|----------|--------|
-| **Schemas** | 13 | ✅ Completo |
-| **Tablas** | 61 | ✅ Completo |
-| **Funciones** | 61 | ✅ Completo |
-| **Vistas** | 12 | ✅ Completo |
+| **Schemas** | 16 | ✅ Completo |
+| **Tablas** | 156+ | ✅ Completo |
+| **Funciones** | 120+ | ✅ Completo |
+| **Vistas** | 11 | ✅ Completo |
 | **Vistas Materializadas** | 4 | ✅ Completo |
-| **Triggers** | 49 | ✅ Completo |
-| **Índices** | 74 archivos | ✅ Completo |
+| **Triggers** | 61+ | ✅ Completo |
+| **Índices** | 95+ archivos | ✅ Completo |
 | **RLS Policies** | 24 archivos | ✅ Completo |
 | **ENUMs** | 36 | ✅ Completo |
 
-**Total:** 285 archivos SQL
+**Total:** 402+ objetos DDL
 
-**Calidad:** A+ (98.8%)
+**Calidad:** A+ (salud BD: 8.6/10)
 
 ---
 
@@ -354,6 +354,14 @@ Para más detalles: `cat QUICK-START.md | grep -A 10 "Troubleshooting"`
 
 ## 📈 HISTORIAL DE CAMBIOS
 
+### 2025-12-28 - Sincronización v3.8
+
+- ✅ reset-database.sh actualizado a v2.0 (sincronizado con init-database.sh v3.8)
+- ✅ 16 schemas, 56 seeds en 10 fases
+- ✅ Agregada función fix_profiles_and_gamification() a reset-database.sh
+- ✅ Seeds redundantes movidos a _deprecated
+- ✅ Actualizado INDEX.md con conteos reales (402+ objetos DDL)
+
 ### 2025-11-08 - Consolidación v3.0
 
 - ✅ Unificadas versiones múltiples de init-database.sh
@@ -384,9 +392,9 @@ Para más detalles: `cat QUICK-START.md | grep -A 10 "Troubleshooting"`
 
 ---
 
-**Última actualización:** 2025-11-08
+**Última actualización:** 2025-12-28
 **Mantenido por:** Equipo de Base de Datos GAMILIT
-**Versión:** 3.0
+**Versión:** 3.8
 **Estado:** ✅ Consolidado y Funcional
 
 ---

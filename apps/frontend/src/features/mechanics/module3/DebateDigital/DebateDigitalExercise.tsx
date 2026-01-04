@@ -50,6 +50,8 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
   const [backendRewards, setBackendRewards] = useState<{ xp: number; mlCoins: number } | null>(
     null,
   );
+  const [isPendingReview, setIsPendingReview] = useState(false);
+  const [userPosition, setUserPosition] = useState<'a_favor' | 'en_contra' | 'neutral'>('neutral');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const actionsRef = useRef<any>(null);
 
@@ -137,6 +139,12 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
   };
 
   const handleComplete = async () => {
+    // ✅ FIX COR-010: Validar que se seleccionó una posición antes de completar
+    if (userPosition === 'neutral') {
+      console.warn('[DebateDigital] Cannot complete without selecting a position');
+      return; // El mensaje de advertencia ya se muestra en UI (línea 315-319)
+    }
+
     // Validate minimum participation
     const userMessages = messages.filter((m) => m.sender === 'user');
     if (userMessages.length < 3) {
@@ -154,11 +162,8 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
     setIsSubmitting(true);
 
     try {
-      // Determine user position based on their arguments
-      // For now, we'll use 'a_favor' as default, but ideally this should be tracked during the debate
-      const userPosition: 'a_favor' | 'en_contra' | 'neutral' = 'a_favor';
-
       // Prepare answers in the format expected by backend
+      // userPosition is now tracked via state (CORRECCION-005)
       const answers: DebateDigitalAnswers = {
         position: userPosition,
         response: userMessages.map((m) => m.text).join('\n\n'), // Concatenate all user messages
@@ -169,13 +174,33 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       // Submit to backend
       const response = await submitExercise(exerciseId, user.id, answers);
 
-      // Extraer rewards de la respuesta
+      // CORRECCION-001: Verificar si requiere revision manual del maestro
+      if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
+        setIsPendingReview(true);
+        setBackendScore(null); // No mostrar score aun
+        setBackendFeedback('Tu ejercicio ha sido enviado para revision del maestro. Recibiras tus recompensas cuando sea evaluado.');
+        setBackendRewards(null); // No mostrar rewards prematuramente
+
+        // Sync pero sin mostrar rewards
+        await syncAndInvalidate();
+
+        console.log('📝 [DebateDigital] Submission pending review:', {
+          status: response.status,
+          requiresManualReview: response.requiresManualReview,
+        });
+
+        setShowFeedback(true);
+        return;
+      }
+
+      // Flujo normal: ejercicio auto-calificado
       const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
 
       // Store backend response for feedback modal
       setBackendScore(response.score);
       setBackendFeedback(response.feedback?.overall || null);
       setBackendRewards({ xp: rewards.xp, mlCoins: rewards.mlCoins });
+      setIsPendingReview(false);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
       await syncAndInvalidate();
@@ -258,6 +283,46 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
             <div className="rounded-lg bg-white/20 p-3 backdrop-blur-sm">
               <p className="font-medium">{debateTopic.question}</p>
             </div>
+          </motion.div>
+
+          {/* CORRECCION-005: Seleccion de posicion del usuario */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="rounded-detective-lg bg-gray-50 p-4 border border-detective-border-light"
+          >
+            <p className="text-detective-sm font-medium text-detective-text mb-3">
+              Selecciona tu posicion en el debate:
+            </p>
+            <div className="flex gap-2 flex-wrap">
+              <DetectiveButton
+                variant={userPosition === 'a_favor' ? 'primary' : 'secondary'}
+                size="sm"
+                onClick={() => setUserPosition('a_favor')}
+              >
+                A Favor
+              </DetectiveButton>
+              <DetectiveButton
+                variant={userPosition === 'en_contra' ? 'primary' : 'secondary'}
+                size="sm"
+                onClick={() => setUserPosition('en_contra')}
+              >
+                En Contra
+              </DetectiveButton>
+              <DetectiveButton
+                variant={userPosition === 'neutral' ? 'primary' : 'secondary'}
+                size="sm"
+                onClick={() => setUserPosition('neutral')}
+              >
+                Neutral
+              </DetectiveButton>
+            </div>
+            {userPosition === 'neutral' && (
+              <p className="text-detective-xs text-gray-500 mt-2">
+                Selecciona una posicion antes de comenzar el debate.
+              </p>
+            )}
           </motion.div>
 
           {/* Chat Container */}
@@ -356,7 +421,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
             <DetectiveButton
               variant="primary"
               onClick={handleComplete}
-              disabled={userMessageCount < 3 || isSubmitting}
+              disabled={userMessageCount < 3 || isSubmitting || userPosition === 'neutral'}
             >
               {isSubmitting ? 'Enviando...' : 'Completar Ejercicio'}
             </DetectiveButton>
@@ -368,8 +433,9 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       <FeedbackModal
         isOpen={showFeedback}
         feedback={{
-          type:
-            backendScore !== null
+          type: isPendingReview
+            ? 'info'
+            : backendScore !== null
               ? backendScore >= 90
                 ? 'success'
                 : backendScore >= 70
@@ -378,8 +444,9 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
               : userMessageCount >= 5
                 ? 'success'
                 : 'partial',
-          title:
-            backendScore !== null
+          title: isPendingReview
+            ? 'Ejercicio Enviado'
+            : backendScore !== null
               ? backendScore >= 90
                 ? '¡Excelente Debate!'
                 : backendScore >= 70
@@ -391,21 +458,22 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
           message:
             backendFeedback ||
             `Has participado con ${userMessageCount} argumento(s) obteniendo ${currentScore} puntos.`,
-          score: backendScore !== null ? backendScore : calculateFinalScore(),
-          showConfetti: backendScore !== null ? backendScore >= 90 : userMessageCount >= 5,
-          // Agregar rewards si están disponibles
-          xpEarned: backendRewards?.xp,
-          mlCoinsEarned: backendRewards?.mlCoins,
+          score: isPendingReview ? undefined : (backendScore !== null ? backendScore : calculateFinalScore()),
+          showConfetti: isPendingReview ? false : (backendScore !== null ? backendScore >= 90 : userMessageCount >= 5),
+          // Agregar rewards si están disponibles (no mostrar en pending review)
+          xpEarned: isPendingReview ? undefined : backendRewards?.xp,
+          mlCoinsEarned: isPendingReview ? undefined : backendRewards?.mlCoins,
+          pendingReview: isPendingReview,
         }}
         onClose={() => {
           setShowFeedback(false);
           // Note: onComplete is already called in handleComplete when backend response is successful
-          if (backendScore === null && userMessageCount >= 3) {
+          if (backendScore === null && userMessageCount >= 3 && !isPendingReview) {
             // Fallback: call onComplete with local score if backend submission failed
             onComplete?.(calculateFinalScore(), timeSpent);
           }
         }}
-        onRetry={handleReset}
+        onRetry={isPendingReview ? undefined : handleReset}
       />
     </>
   );

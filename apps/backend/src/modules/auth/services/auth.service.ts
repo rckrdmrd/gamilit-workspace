@@ -144,11 +144,31 @@ export class AuthService {
     });
     await this.profileRepository.save(profile);
 
+    // 5.1 P0-003: Verificar que triggers de gamificación ejecutaron correctamente
+    // El trigger initialize_user_stats debería haber creado user_stats automáticamente
+    // DB-125: user_stats.user_id apunta a profiles.id, usar profile.id para buscar
+    const userStatsCreated = await this.userStatsRepository.findOne({
+      where: { user_id: profile.id },
+    });
+
+    if (!userStatsCreated) {
+      // Log el problema pero NO bloquear el registro
+      // El trigger debería haber registrado el error en pending_user_initialization
+      console.warn(
+        `[P0-003] Gamification initialization may have failed for profile ${profile.id}. ` +
+        `Check audit_logging.pending_user_initialization for details.`
+      );
+      // Nota: No lanzamos excepción porque el usuario ya está creado
+      // El admin puede verificar y reinicializar manualmente si es necesario
+    }
+
     // 6. Registrar intento exitoso
     await this.logAuthAttempt(user.id, dto.email, true, ip, userAgent);
 
     // 7. Generar tokens JWT (auto-login después del registro)
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    // DB-125: JWT sub debe ser profile.id para consistencia con FKs de gamification
+    // Nota: En registro, profile.id = user.id por diseño, pero usamos profile.id por claridad
+    const payload = { sub: profile.id, email: user.email, role: profile.role };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
@@ -231,7 +251,9 @@ export class AuthService {
     }
 
     // 6. Generar tokens
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    // DB-125: JWT sub debe ser profile.id (usado por gamification, progress, etc.)
+    // NO user.id (auth.users.id) para consistencia con FKs de la BD
+    const payload = { sub: profile.id, email: user.email, role: profile.role };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
@@ -297,9 +319,22 @@ export class AuthService {
       // 1. Verificar y decodificar refresh token
       const payload = this.jwtService.verify(refreshToken);
 
-      // 2. Validar usuario
-      const user = await this.validateUser(payload.sub);
-      if (!user) {
+      // 2. DB-125: payload.sub ahora es profile.id, buscar profile directamente
+      const profile = await this.profileRepository.findOne({
+        where: { id: payload.sub },
+      });
+      if (!profile) {
+        throw new UnauthorizedException('Perfil no encontrado');
+      }
+
+      // 2.1 Validar que el usuario de auth.users esté activo
+      if (!profile.user_id) {
+        throw new UnauthorizedException('Perfil sin usuario asociado');
+      }
+      const user = await this.userRepository.findOne({
+        where: { id: profile.user_id },
+      });
+      if (!user || user.deleted_at) {
         throw new UnauthorizedException('Usuario no encontrado o inactivo');
       }
 
@@ -307,9 +342,10 @@ export class AuthService {
       const hashedRefreshToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
 
       // 4. Buscar sesión activa con este refresh token
+      // DB-125: session.user_id es profile.id
       const session = await this.sessionRepository.findOne({
         where: {
-          user_id: user.id,
+          user_id: profile.id,
           refresh_token: hashedRefreshToken,
         },
       });
@@ -325,7 +361,8 @@ export class AuthService {
       }
 
       // 6. Generar nuevos tokens
-      const newPayload = { sub: user.id, email: user.email, role: user.role };
+      // DB-125: JWT sub debe ser profile.id para consistencia con FKs
+      const newPayload = { sub: profile.id, email: user.email, role: profile.role };
       const newAccessToken = this.jwtService.sign(newPayload, { expiresIn: '15m' });
       const newRefreshToken = this.jwtService.sign(newPayload, { expiresIn: '7d' });
 

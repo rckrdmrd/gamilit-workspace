@@ -49,14 +49,76 @@ export class ManualReviewController {
   @Get('pending')
   @Roles(GamilityRoleEnum.ADMIN_TEACHER)
   @ApiOperation({ summary: 'Obtener reviews pendientes del docente' })
+  @ApiQuery({
+    name: 'moduleId',
+    required: false,
+    description: 'Filtrar por módulo (UUID)',
+  })
+  @ApiQuery({
+    name: 'classroomId',
+    required: false,
+    description: 'Filtrar por aula (UUID)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Lista de reviews pendientes con submissions',
     type: [ManualReview],
   })
-  async getPendingReviews(@Request() req: AuthRequest): Promise<ManualReview[]> {
+  async getPendingReviews(
+    @Request() req: AuthRequest,
+    @Query('moduleId') moduleId?: string,
+    @Query('classroomId') classroomId?: string,
+  ): Promise<ManualReview[]> {
     const teacherId = req.user!.profile?.id || req.user!.id;
-    return this.reviewService.findPendingReviews(teacherId);
+    return this.reviewService.findPendingReviews(teacherId, { moduleId, classroomId });
+  }
+
+  /**
+   * Obtiene reviews pendientes filtrados por módulo
+   * Usa la vista teacher_pending_reviews para mejor rendimiento
+   */
+  @Get('pending/module/:moduleOrder')
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @ApiOperation({ summary: 'Obtener reviews pendientes por módulo' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de submissions pendientes del módulo',
+  })
+  async getPendingByModule(
+    @Request() req: AuthRequest,
+    @Param('moduleOrder') moduleOrder: string,
+  ): Promise<any[]> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    return this.reviewService.findPendingByModule(teacherId, parseInt(moduleOrder, 10));
+  }
+
+  /**
+   * Obtiene estadísticas de reviews pendientes para el dashboard
+   */
+  @Get('stats')
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @ApiOperation({ summary: 'Obtener estadísticas de reviews pendientes' })
+  @ApiQuery({
+    name: 'classroomId',
+    required: false,
+    description: 'Filtrar por aula (UUID)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Estadísticas de pendientes por prioridad',
+  })
+  async getPendingStats(
+    @Request() req: AuthRequest,
+    @Query('classroomId') classroomId?: string,
+  ): Promise<{
+    totalPending: number;
+    urgentCount: number;
+    highCount: number;
+    mediumCount: number;
+    normalCount: number;
+  }> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    return this.reviewService.getPendingReviewsStats(teacherId, classroomId);
   }
 
   /**

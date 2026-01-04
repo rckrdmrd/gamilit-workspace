@@ -159,6 +159,7 @@ export const DB_TABLES = {
     TEACHER_CLASSROOMS: 'teacher_classrooms', // ✨ NUEVO - P2
     USER_FOLLOWS: 'user_follows', // ✨ NUEVO - P2
     USER_ACTIVITIES: 'user_activities', // ✨ NUEVO - P2 (Activity Feed)
+    FRIEND_REQUESTS: 'friend_requests', // ✨ NUEVO - DB-157 (Solicitudes de amistad)
   },
 
   /**

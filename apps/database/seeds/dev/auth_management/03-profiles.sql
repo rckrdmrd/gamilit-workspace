@@ -81,7 +81,7 @@ SELECT
         )
     END as full_name,
     -- Rol (copiado de auth.users)
-    u.role
+    u.gamilit_role
 FROM auth.users u
 WHERE u.deleted_at IS NULL
 ON CONFLICT (user_id) DO UPDATE SET

@@ -30,17 +30,25 @@ DO $$
 DECLARE
     v_tenant_id UUID;
 BEGIN
-    -- Obtener el tenant principal de GAMILIT Platform
+    -- Buscar tenant principal (primero por nombre exacto, luego por UUID conocido, luego cualquier Gamilit)
     SELECT id INTO v_tenant_id
     FROM auth_management.tenants
     WHERE name = 'GAMILIT Platform'
+       OR id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid
+       OR name ILIKE '%Gamilit%'
+    ORDER BY
+        CASE
+            WHEN name = 'GAMILIT Platform' THEN 1
+            WHEN id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid THEN 2
+            ELSE 3
+        END
     LIMIT 1;
 
     IF v_tenant_id IS NULL THEN
-        RAISE EXCEPTION 'Tenant "GAMILIT Platform" no encontrado. Ejecutar primero seed de tenants.';
+        RAISE EXCEPTION 'No se encontro ningun tenant Gamilit. Ejecutar primero seed de tenants.';
     END IF;
 
-    RAISE NOTICE 'Usando tenant_id: %', v_tenant_id;
+    RAISE NOTICE 'Usando tenant_id: % (busqueda flexible)', v_tenant_id;
 
 -- =====================================================
 -- INSERT: Escuela Default del Sistema

@@ -108,9 +108,8 @@ export class ExerciseRewardsService {
       throw new NotFoundException(`Submission ${submissionId} not found`);
     }
 
-    // Check if rewards already claimed (using metadata since entity doesn't have rewards_claimed)
-    const submissionAny = submission as any;
-    if (submissionAny.rewards_claimed) {
+    // Check if rewards already claimed
+    if (submission.rewards_claimed) {
       throw new BadRequestException('Rewards already claimed for this submission');
     }
 
@@ -188,10 +187,10 @@ export class ExerciseRewardsService {
       );
     }
 
-    // Mark rewards as claimed (using any since entity may not have these properties)
-    (submission as any).rewards_claimed = true;
-    (submission as any).xp_earned = rewards.xpEarned;
-    (submission as any).ml_coins_earned = rewards.mlCoinsEarned;
+    // Mark rewards as claimed and persist earned amounts
+    submission.rewards_claimed = true;
+    submission.xp_earned = rewards.xpEarned;
+    submission.ml_coins_earned = rewards.mlCoinsEarned;
     await this.submissionRepo.save(submission);
 
     this.logger.log(

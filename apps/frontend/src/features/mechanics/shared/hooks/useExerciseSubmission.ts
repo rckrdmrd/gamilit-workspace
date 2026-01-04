@@ -78,6 +78,10 @@ export interface SubmissionResult {
   correctAnswers: Record<string, unknown>;
   explanations: Record<string, string>;
   createdAt: string;
+  // Estado de la submission (para ejercicios con revision manual)
+  status?: 'draft' | 'submitted' | 'graded' | 'reviewed' | 'pending_review';
+  // Indica si el ejercicio requiere revision manual del maestro
+  requiresManualReview?: boolean;
 }
 
 // ============================================================================

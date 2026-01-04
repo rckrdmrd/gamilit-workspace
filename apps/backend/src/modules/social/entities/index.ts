@@ -21,3 +21,4 @@ export { DiscussionThread } from './discussion-thread.entity'; // ✨ NUEVO - P0
 export { TeacherClassroom, TeacherClassroomRole } from './teacher-classroom.entity'; // ✨ NUEVO - P0 (BE-088 - 2025-11-11)
 export { UserActivity } from './user-activity.entity'; // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
 export { ChallengeResult } from './challenge-result.entity'; // ✨ NUEVO - P1-002 (Resultados de desafíos)
+export { FriendRequest } from './friend-request.entity'; // ✨ NUEVO - DB-157 (Solicitudes de amistad)

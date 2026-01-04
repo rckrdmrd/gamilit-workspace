@@ -7,6 +7,7 @@
 
 import { apiClient } from '@/services/api/apiClient';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 /**
  * School type definition
@@ -30,7 +31,7 @@ export interface School {
 export const getSchools = async (tenantId?: string): Promise<School[]> => {
   try {
     const params = tenantId ? { tenantId } : {};
-    const response = await apiClient.get<School[]>('/api/v1/social/schools', { params });
+    const response = await apiClient.get<School[]>(API_ENDPOINTS.social.schools, { params });
 
     // Filter only active schools for registration
     const schools = response.data || [];
@@ -48,7 +49,7 @@ export const getSchools = async (tenantId?: string): Promise<School[]> => {
  */
 export const getSchoolById = async (schoolId: string): Promise<School> => {
   try {
-    const response = await apiClient.get<School>(`/api/v1/social/schools/${schoolId}`);
+    const response = await apiClient.get<School>(API_ENDPOINTS.social.school(schoolId));
     return response.data;
   } catch (error) {
     throw handleAPIError(error);

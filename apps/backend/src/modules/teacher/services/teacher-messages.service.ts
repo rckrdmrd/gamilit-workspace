@@ -87,7 +87,11 @@ export class TeacherMessagesService {
   async getMessages(teacherId: string, tenantId: string, query: GetMessagesQueryDto): Promise<MessagesListResponseDto> {
     // ⚠️ NOTA: sender y classroom relations deshabilitadas por cross-datasource limitation
     // Ver: message.entity.ts - Cross-datasource relations comentadas
-    // TODO: Si necesitas datos de sender/classroom, hacer join manual vía raw query
+    // Para obtener datos de sender/classroom:
+    // 1. Obtener mensajes con esta query
+    // 2. Extraer senderId[] y classroomId[]
+    // 3. Query paralela a auth_management.profiles y social_features.classrooms
+    // 4. Mapear resultados en el response
     const qb = this.messagesRepository
       .createQueryBuilder('msg')
       // .leftJoinAndSelect('msg.sender', 'sender')  // ❌ Disabled - cross-datasource

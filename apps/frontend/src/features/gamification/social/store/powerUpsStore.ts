@@ -1,24 +1,39 @@
 /**
  * Power-ups Store
- * Zustand store for managing power-up state
+ *
+ * @description Zustand store for managing power-up state.
+ * Data is fetched from real backend APIs via fetchPowerUps.
+ *
+ * @updated 2025-12-29 - Removed mock data, added fetchPowerUps
  */
 
 import { create } from 'zustand';
 import type { PowerUp, ActivePowerUp, PowerUpInventory } from '../types/powerUpsTypes';
-import { powerUpsMockData } from '../mockData/powerUpsMockData';
+import { getPowerUps } from '../api/socialAPI';
 
 interface PowerUpsStore {
   powerUps: PowerUp[];
   inventory: PowerUpInventory;
   userMlCoins: number;
+  isLoading: boolean;
+  error: string | null;
 
   // Actions
+  fetchPowerUps: () => Promise<void>;
   purchasePowerUp: (powerUpId: string) => boolean;
   applyPowerUp: (powerUpId: string) => boolean;
   refreshActivePowerUps: () => void;
   addMlCoins: (amount: number) => void;
   deductMlCoins: (amount: number) => boolean;
 }
+
+// Empty inventory for initial state
+const emptyInventory: PowerUpInventory = {
+  owned: [],
+  active: [],
+  totalSpent: 0,
+  totalUsages: 0,
+};
 
 const calculateInventory = (powerUps: PowerUp[]): PowerUpInventory => {
   const owned = powerUps.filter((p) => p.owned);
@@ -42,9 +57,30 @@ const calculateInventory = (powerUps: PowerUp[]): PowerUpInventory => {
 };
 
 export const usePowerUpsStore = create<PowerUpsStore>((set, get) => ({
-  powerUps: powerUpsMockData,
-  inventory: calculateInventory(powerUpsMockData),
-  userMlCoins: 5000, // Mock starting coins
+  powerUps: [], // Fetched from API via fetchPowerUps
+  inventory: emptyInventory,
+  userMlCoins: 0, // Fetched from user stats/economy endpoint
+  isLoading: false,
+  error: null,
+
+  fetchPowerUps: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const powerUps = await getPowerUps();
+      set({
+        powerUps,
+        inventory: calculateInventory(powerUps),
+        isLoading: false,
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch power-ups';
+      set({
+        isLoading: false,
+        error: errorMessage,
+      });
+      console.error('Error fetching power-ups:', error);
+    }
+  },
 
   purchasePowerUp: (powerUpId: string) => {
     const state = get();

@@ -3,14 +3,20 @@
  *
  * Sanitización de HTML basada en roles de usuario
  * Protección contra XSS, DOM clobbering y otros ataques
+ *
+ * @note Roles alineados con DDL gamilit_role ENUM
+ * @see DDL: auth_management.gamilit_role
  */
 
 import sanitizeHtml from 'sanitize-html';
 
+/**
+ * Roles de usuario para sanitización HTML
+ * @note Alineado con GamilityRoleEnum de la BD
+ */
 export enum UserRole {
   STUDENT = 'student',
-  TEACHER = 'teacher',
-  ADMIN = 'admin',
+  ADMIN_TEACHER = 'admin_teacher',
   SUPER_ADMIN = 'super_admin',
 }
 
@@ -45,28 +51,18 @@ const SANITIZE_CONFIGS = {
       },
     },
   },
-  [UserRole.TEACHER]: {
-    allowedTags: [
-      'p',
-      'br',
-      'strong',
-      'b',
-      'em',
-      'i',
-      'u',
-      'span',
-      'div',
+  [UserRole.ADMIN_TEACHER]: {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+      'img',
+      'iframe',
+      'video',
+      'audio',
       'h1',
       'h2',
       'h3',
       'h4',
       'h5',
       'h6',
-      'ul',
-      'ol',
-      'li',
-      'a',
-      'img',
       'blockquote',
       'code',
       'pre',
@@ -76,16 +72,20 @@ const SANITIZE_CONFIGS = {
       'tr',
       'th',
       'td',
-    ],
+    ]),
     allowedAttributes: {
-      '*': ['class', 'id'],
+      ...sanitizeHtml.defaults.allowedAttributes,
+      '*': ['class', 'id', 'style'],
       a: ['href', 'target', 'rel', 'title'],
       img: ['src', 'alt', 'title', 'width', 'height'],
+      iframe: ['src', 'width', 'height', 'frameborder', 'allow'],
+      video: ['src', 'controls', 'width', 'height'],
+      audio: ['src', 'controls'],
       span: ['style'],
       div: ['style'],
       table: ['border', 'cellpadding', 'cellspacing'],
     },
-    allowedSchemes: ['http', 'https', 'mailto'],
+    allowedSchemes: ['http', 'https', 'mailto', 'data'],
     allowedStyles: {
       '*': {
         color: [/^#[0-9a-f]{3,6}$/i, /^rgb\(/, /^rgba\(/],
@@ -94,6 +94,11 @@ const SANITIZE_CONFIGS = {
         'background-color': [/^#[0-9a-f]{3,6}$/i, /^rgb\(/, /^rgba\(/],
       },
     },
+    allowedIframeHostnames: [
+      'www.youtube.com',
+      'player.vimeo.com',
+      'www.google.com',
+    ],
     transformTags: {
       a: (tagName: string, attribs: Record<string, string>) => ({
         tagName,
@@ -104,28 +109,6 @@ const SANITIZE_CONFIGS = {
         },
       }),
     },
-  },
-  [UserRole.ADMIN]: {
-    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-      'img',
-      'iframe',
-      'video',
-      'audio',
-    ]),
-    allowedAttributes: {
-      ...sanitizeHtml.defaults.allowedAttributes,
-      '*': ['class', 'id', 'style'],
-      img: ['src', 'alt', 'title', 'width', 'height'],
-      iframe: ['src', 'width', 'height', 'frameborder', 'allow'],
-      video: ['src', 'controls', 'width', 'height'],
-      audio: ['src', 'controls'],
-    },
-    allowedSchemes: ['http', 'https', 'mailto', 'data'],
-    allowedIframeHostnames: [
-      'www.youtube.com',
-      'player.vimeo.com',
-      'www.google.com',
-    ],
   },
   [UserRole.SUPER_ADMIN]: {
     // Super admin tiene acceso completo, pero aún con protección básica

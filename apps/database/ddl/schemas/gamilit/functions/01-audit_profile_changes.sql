@@ -10,6 +10,8 @@ CREATE OR REPLACE FUNCTION gamilit.audit_profile_changes()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
+DECLARE
+    v_error_message TEXT;
 BEGIN
     IF TG_OP = 'UPDATE' THEN
         -- Log role changes
@@ -60,6 +62,14 @@ BEGIN
     END IF;
 
     RETURN NEW;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        -- P1-001: Capturar error de auditoría sin bloquear operación
+        v_error_message := SQLERRM;
+        RAISE WARNING '[P1-001] Error en auditoría de cambio de perfil %: %', NEW.id, v_error_message;
+        -- Auditoría no es crítica, no bloquear la operación original
+        RETURN NEW;
 END;
 $function$;
 

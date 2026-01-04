@@ -23,6 +23,8 @@ export interface ExerciseFeedback {
   isCorrect?: boolean;
   // Feedback detallado por fragmento (Rueda de Inferencias, etc.)
   details?: Record<string, unknown>;
+  // Indica que el ejercicio requiere revision manual del maestro
+  pendingReview?: boolean;
 }
 
 export interface ExerciseAttempt {

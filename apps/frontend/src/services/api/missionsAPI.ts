@@ -16,6 +16,7 @@
 
 import { apiClient } from '@/services/api/apiClient';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 /**
  * @deprecated Usar Mission de @/features/gamification/missions/types/missionsTypes.ts
@@ -58,7 +59,7 @@ export const missionsAPI = {
    */
   getDailyMissions: async (): Promise<Mission[]> => {
     try {
-      const response = await apiClient.get('/gamification/missions/daily');
+      const response = await apiClient.get(API_ENDPOINTS.gamification.missions.daily);
       return response.data.data.missions;
     } catch (error) {
       throw handleAPIError(error);
@@ -70,7 +71,7 @@ export const missionsAPI = {
    */
   getWeeklyMissions: async (): Promise<Mission[]> => {
     try {
-      const response = await apiClient.get('/gamification/missions/weekly');
+      const response = await apiClient.get(API_ENDPOINTS.gamification.missions.weekly);
       return response.data.data.missions;
     } catch (error) {
       throw handleAPIError(error);
@@ -82,7 +83,7 @@ export const missionsAPI = {
    */
   getSpecialMissions: async (): Promise<Mission[]> => {
     try {
-      const response = await apiClient.get('/gamification/missions/special');
+      const response = await apiClient.get(API_ENDPOINTS.gamification.missions.special);
       return response.data.data.missions;
     } catch (error) {
       throw handleAPIError(error);
@@ -94,7 +95,7 @@ export const missionsAPI = {
    */
   claimRewards: async (missionId: string) => {
     try {
-      const response = await apiClient.post(`/gamification/missions/${missionId}/claim`);
+      const response = await apiClient.post(API_ENDPOINTS.gamification.missions.claim(missionId));
       return response.data.data;
     } catch (error) {
       throw handleAPIError(error);
@@ -106,7 +107,7 @@ export const missionsAPI = {
    */
   getMissionProgress: async (missionId: string) => {
     try {
-      const response = await apiClient.get(`/gamification/missions/${missionId}/progress`);
+      const response = await apiClient.get(API_ENDPOINTS.gamification.missions.progress(missionId));
       return response.data.data;
     } catch (error) {
       throw handleAPIError(error);
@@ -118,7 +119,7 @@ export const missionsAPI = {
    */
   getMissionStats: async (userId: string) => {
     try {
-      const response = await apiClient.get(`/gamification/missions/stats/${userId}`);
+      const response = await apiClient.get(API_ENDPOINTS.gamification.missions.stats(userId));
       return response.data.data;
     } catch (error) {
       throw handleAPIError(error);

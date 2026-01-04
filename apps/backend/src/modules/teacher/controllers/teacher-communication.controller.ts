@@ -42,7 +42,7 @@ import {
  */
 @ApiTags('Teacher - Comunicación')
 @ApiBearerAuth()
-@Controller('teacher/messages')
+@Controller(['teacher/messages', 'teacher/communications'])
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
 export class TeacherCommunicationController {

@@ -744,14 +744,18 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                     Editar Última Respuesta
                   </button>
 
-                  <div className="text-center">
-                    <p className="mb-2 text-sm text-gray-600">
-                      ✅ Todas las respuestas completadas
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Usa el botón "Enviar Respuestas" para finalizar
-                    </p>
-                  </div>
+                  {/* ✅ FIX BTN-001: Agregar botón visible de envío */}
+                  <button
+                    onClick={() => {
+                      setPhase('completed');
+                      handleSubmitExercise();
+                    }}
+                    disabled={isSubmitting || fragmentStates.some((s) => !s.isComplete)}
+                    className="rounded-lg bg-green-600 px-8 py-4 font-bold text-white transition-all hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
+                  >
+                    <Send className="mr-2 inline h-5 w-5" />
+                    {isSubmitting ? 'Enviando...' : 'Enviar Respuestas'}
+                  </button>
                 </div>
               </motion.div>
             </AnimatePresence>

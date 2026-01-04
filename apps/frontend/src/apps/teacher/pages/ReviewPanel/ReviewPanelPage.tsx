@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ClipboardList, Search, Filter, ArrowLeft } from 'lucide-react';
-import { manualReviewApi, ManualReview } from '@/shared/api/manualReviewApi';
+import React, { useState, useMemo } from 'react';
+import { ClipboardList, Search, Filter } from 'lucide-react';
+import { ManualReview } from '@/shared/api/manualReviewApi';
+import { useAuth } from '@features/auth/hooks/useAuth';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { TeacherLayout } from '../../layouts/TeacherLayout';
+import { useManualReviews, useManualReviewDetail } from '../../hooks/useManualReviews';
 import { ReviewList } from './ReviewList';
 import { ReviewDetail } from './ReviewDetail';
 import {
   MANUAL_REVIEW_MODULES,
-  MANUAL_REVIEW_EXERCISES,
   getExercisesByModule,
 } from '../../constants/manualReviewExercises';
 
@@ -15,107 +17,109 @@ import {
  *
  * Main page for teachers to review student submissions from modules 3, 4 and 5.
  * Shows pending reviews and allows teachers to evaluate them.
+ *
+ * Refactored to use React Query via useManualReviews hook for:
+ * - Automatic caching and background refetching
+ * - Better loading and error states
+ * - Optimistic updates
  */
 export const ReviewPanelPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [reviews, setReviews] = useState<ManualReview[]>([]);
-  const [selectedReview, setSelectedReview] = useState<ManualReview | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user, logout } = useAuth();
+
+  // Use useUserGamification hook with real API endpoint
+  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
+
+  // Fallback gamification data while loading or if data not available
+  const displayGamificationData = gamificationData || {
+    userId: user?.id || '',
+    level: gamificationLoading ? 0 : 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
+    rankColor: '#9E9E9E',
+    progressToNextLevel: 0,
+    xpToNextLevel: 100,
+    achievements: [],
+    totalAchievements: 0,
+  };
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
+  };
+
+  // Local state for filters and selection
+  const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     exerciseId: '',
     moduleId: '',
     searchQuery: '',
   });
 
-  /**
-   * Load pending reviews
-   */
-  const loadReviews = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // Use React Query hook for pending reviews
+  const {
+    data: reviews = [],
+    isLoading: loading,
+    error,
+    refetch: loadReviews,
+  } = useManualReviews({
+    exerciseId: filters.exerciseId || undefined,
+    moduleId: filters.moduleId || undefined,
+  });
 
-      const filterParams: any = {};
-      if (filters.exerciseId) filterParams.exerciseId = filters.exerciseId;
-      if (filters.moduleId) filterParams.moduleId = filters.moduleId;
-
-      const data = await manualReviewApi.getPendingReviews(filterParams);
-      setReviews(data);
-    } catch (err) {
-      console.error('Error loading reviews:', err);
-      setError(err instanceof Error ? err.message : 'Error al cargar revisiones');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /**
-   * Load reviews on mount and filter changes
-   */
-  useEffect(() => {
-    loadReviews();
-  }, [filters.exerciseId, filters.moduleId]);
+  // Use React Query hook for selected review details
+  const { data: selectedReview } = useManualReviewDetail(selectedReviewId);
 
   /**
    * Select a review for detailed view
    */
-  const handleSelectReview = async (review: ManualReview) => {
-    try {
-      // Load full review details
-      const fullReview = await manualReviewApi.getReviewById(review.id);
-      setSelectedReview(fullReview);
-    } catch (err) {
-      console.error('Error loading review details:', err);
-      setError(err instanceof Error ? err.message : 'Error al cargar detalles de revisión');
-    }
+  const handleSelectReview = (review: ManualReview) => {
+    setSelectedReviewId(review.id);
   };
 
   /**
    * Close review detail view
    */
   const handleCloseReview = () => {
-    setSelectedReview(null);
-    // Reload reviews to get updated statuses
+    setSelectedReviewId(null);
+    // React Query will automatically refetch when needed
     loadReviews();
   };
 
   /**
-   * Filter reviews by search query
+   * Filter reviews by search query (client-side filtering)
    */
-  const filteredReviews = reviews.filter((review) => {
-    if (!filters.searchQuery) return true;
+  const filteredReviews = useMemo(() => {
+    if (!filters.searchQuery) return reviews;
 
     const query = filters.searchQuery.toLowerCase();
-    return (
-      review.student?.name.toLowerCase().includes(query) ||
-      review.exercise?.title.toLowerCase().includes(query) ||
-      review.id.toLowerCase().includes(query)
+    return reviews.filter(
+      (review) =>
+        review.student?.name.toLowerCase().includes(query) ||
+        review.exercise?.title.toLowerCase().includes(query) ||
+        review.id.toLowerCase().includes(query),
     );
-  });
+  }, [reviews, filters.searchQuery]);
 
   return (
-    <div className="min-h-screen bg-detective-bg p-6">
+    <TeacherLayout
+      user={user ?? undefined}
+      gamificationData={displayGamificationData}
+      organizationName={user?.organization?.name || 'Mi Institucion'}
+      onLogout={handleLogout}
+    >
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-6">
-          <button
-            onClick={() => navigate('/teacher/dashboard')}
-            className="mb-4 flex items-center gap-2 text-detective-orange hover:text-detective-orange/80"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Volver al Dashboard
-          </button>
-
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <ClipboardList className="h-8 w-8 text-detective-orange" />
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Panel de Revisión</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Panel de Revision</h1>
                 <p className="text-gray-600">
                   {selectedReview
-                    ? 'Revisando envío de estudiante'
-                    : `${filteredReviews.length} ${filteredReviews.length === 1 ? 'revisión pendiente' : 'revisiones pendientes'}`}
+                    ? 'Revisando envio de estudiante'
+                    : `${filteredReviews.length} ${filteredReviews.length === 1 ? 'revision pendiente' : 'revisiones pendientes'}`}
                 </p>
               </div>
             </div>
@@ -147,13 +151,15 @@ export const ReviewPanelPage: React.FC = () => {
                   <Filter className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                   <select
                     value={filters.moduleId}
-                    onChange={(e) => setFilters({ ...filters, moduleId: e.target.value, exerciseId: '' })}
+                    onChange={(e) =>
+                      setFilters({ ...filters, moduleId: e.target.value, exerciseId: '' })
+                    }
                     className="w-full rounded-detective border border-gray-300 py-2 pl-10 pr-4 focus:border-detective-orange focus:outline-none focus:ring-2 focus:ring-detective-orange/20"
                   >
-                    <option value="">Todos los módulos</option>
+                    <option value="">Todos los modulos</option>
                     {MANUAL_REVIEW_MODULES.map((module) => (
                       <option key={module.id} value={module.id}>
-                        Módulo {module.number} - {module.name}
+                        Modulo {module.number} - {module.name}
                       </option>
                     ))}
                   </select>
@@ -182,14 +188,14 @@ export const ReviewPanelPage: React.FC = () => {
             <ReviewList
               reviews={filteredReviews}
               loading={loading}
-              error={error}
+              error={error ? error.message : null}
               onSelectReview={handleSelectReview}
-              onRefresh={loadReviews}
+              onRefresh={() => loadReviews()}
             />
           </>
         )}
       </div>
-    </div>
+    </TeacherLayout>
   );
 };
 

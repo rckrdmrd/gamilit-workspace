@@ -19,7 +19,12 @@ GRANT USAGE ON SCHEMA
     progress_tracking,
     audit_logging,
     gamilit,
-    public
+    public,
+    notifications,
+    communication,
+    lti_integration,
+    admin_dashboard,
+    storage
 TO gamilit_user;
 
 -- Grant ALL PRIVILEGES on tables for each schema
@@ -32,6 +37,11 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA content_management TO gamilit_user;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA social_features TO gamilit_user;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA progress_tracking TO gamilit_user;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA audit_logging TO gamilit_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA notifications TO gamilit_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA communication TO gamilit_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA lti_integration TO gamilit_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA admin_dashboard TO gamilit_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA storage TO gamilit_user;
 
 -- Grant ALL PRIVILEGES on sequences for each schema
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA auth TO gamilit_user;
@@ -43,11 +53,19 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA content_management TO gamilit_us
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA social_features TO gamilit_user;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA progress_tracking TO gamilit_user;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA audit_logging TO gamilit_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA notifications TO gamilit_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA communication TO gamilit_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA lti_integration TO gamilit_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA admin_dashboard TO gamilit_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA storage TO gamilit_user;
 
 -- Grant EXECUTE on all functions
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA gamilit TO gamilit_user;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA auth TO gamilit_user;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO gamilit_user;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA notifications TO gamilit_user;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA communication TO gamilit_user;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA lti_integration TO gamilit_user;
 
 -- Set default privileges for future objects
 -- Tables
@@ -60,6 +78,11 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA content_management GRANT ALL ON TABLES TO gam
 ALTER DEFAULT PRIVILEGES IN SCHEMA social_features GRANT ALL ON TABLES TO gamilit_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA progress_tracking GRANT ALL ON TABLES TO gamilit_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA audit_logging GRANT ALL ON TABLES TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA notifications GRANT ALL ON TABLES TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA communication GRANT ALL ON TABLES TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA lti_integration GRANT ALL ON TABLES TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA admin_dashboard GRANT ALL ON TABLES TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA storage GRANT ALL ON TABLES TO gamilit_user;
 
 -- Sequences
 ALTER DEFAULT PRIVILEGES IN SCHEMA auth GRANT ALL ON SEQUENCES TO gamilit_user;
@@ -71,11 +94,19 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA content_management GRANT ALL ON SEQUENCES TO 
 ALTER DEFAULT PRIVILEGES IN SCHEMA social_features GRANT ALL ON SEQUENCES TO gamilit_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA progress_tracking GRANT ALL ON SEQUENCES TO gamilit_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA audit_logging GRANT ALL ON SEQUENCES TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA notifications GRANT ALL ON SEQUENCES TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA communication GRANT ALL ON SEQUENCES TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA lti_integration GRANT ALL ON SEQUENCES TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA admin_dashboard GRANT ALL ON SEQUENCES TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA storage GRANT ALL ON SEQUENCES TO gamilit_user;
 
 -- Functions
 ALTER DEFAULT PRIVILEGES IN SCHEMA gamilit GRANT EXECUTE ON FUNCTIONS TO gamilit_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA auth GRANT EXECUTE ON FUNCTIONS TO gamilit_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA notifications GRANT EXECUTE ON FUNCTIONS TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA communication GRANT EXECUTE ON FUNCTIONS TO gamilit_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA lti_integration GRANT EXECUTE ON FUNCTIONS TO gamilit_user;
 
 -- =====================================================
 -- BYPASS RLS for gamilit_user

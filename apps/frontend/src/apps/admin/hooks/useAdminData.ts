@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 export interface UserActivity {
   id: string;
@@ -35,7 +36,7 @@ export function useUserActivity(filters?: { role?: string; dateFrom?: string; ac
     const fetchActivity = async () => {
       try {
         const params = new URLSearchParams(filters as any);
-        const response = await apiClient.get(`/admin/activity?${params}`);
+        const response = await apiClient.get(`${API_ENDPOINTS.admin.activity}?${params}`);
         const data = response.data.success ? response.data.data : response.data;
 
         setActivities(data.activities || []);
@@ -64,7 +65,7 @@ export function useErrorTracking(filters?: { severity?: string; resolved?: boole
   const fetchErrors = async () => {
     try {
       const params = new URLSearchParams(filters as any);
-      const response = await apiClient.get(`/admin/errors?${params}`);
+      const response = await apiClient.get(`${API_ENDPOINTS.admin.errors.list}?${params}`);
       const data = response.data.success ? response.data.data : response.data;
       setErrors(data.errors || []);
     } catch (err) {
@@ -76,7 +77,7 @@ export function useErrorTracking(filters?: { severity?: string; resolved?: boole
 
   const markAsResolved = async (errorId: string) => {
     try {
-      await apiClient.patch(`/admin/errors/${errorId}/resolve`);
+      await apiClient.patch(API_ENDPOINTS.admin.errors.resolve(errorId));
       fetchErrors(); // Refresh list
     } catch (err) {
       console.error('Failed to mark error as resolved:', err);

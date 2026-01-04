@@ -1,116 +1,70 @@
 # Schema: progress_tracking
 
-Seguimiento de progreso: avance de módulos, intentos, métricas de engagement
+Seguimiento de progreso: avance de modulos, intentos, metricas de engagement.
 
 ## Estructura
 
-- **tables/**: 15 archivos
-- **enums/**: 2 archivos
-- **functions/**: 9 archivos
-- **triggers/**: 8 archivos
-- **indexes/**: 2 archivos
-- **views/**: 1 archivos
+- **tables/**: 17 archivos
+- **enums/**: 5 archivos
+- **functions/**: 12 archivos
+- **triggers/**: 13 archivos
+- **indexes/**: 3 archivos
+- **views/**: 2 archivos
 - **rls-policies/**: 2 archivos
 
-**Total:** 39 objetos
+**Total:** 54 objetos DDL
 
-## Contenido Detallado
+## Tablas Principales
 
-### tables/ (15 archivos)
+| Tabla | Proposito |
+|-------|-----------|
+| `module_progress` | Progreso por modulo (% completado, score promedio) |
+| `learning_sessions` | Sesiones de aprendizaje |
+| `exercise_attempts` | Intentos de ejercicios autocorregibles |
+| `exercise_submissions` | Entregas para ejercicios con calificacion manual |
+| `manual_reviews` | Revisiones manuales por docentes (M3-M5) |
+| `scheduled_missions` | Misiones programadas |
+| `engagement_metrics` | Metricas de engagement |
+| `user_difficulty_progress` | Progreso en niveles CEFR |
+| `user_current_level` | Nivel actual y zona de desarrollo proximo |
 
-```
-01-module_progress.sql
-02-learning_sessions.sql
-03-exercise_attempts.sql
-04-exercise_submissions.sql
-05-scheduled_missions.sql
-engagement_metrics.sql
-learning_paths.sql
-mastery_tracking.sql
-module_completion_tracking.sql
-progress_snapshots.sql
-skill_assessments.sql
-teacher_notes.sql
-user_learning_paths.sql
-15-user_difficulty_progress.sql          # ✨ NUEVO 2025-11-11 (GAP-3)
-16-user_current_level.sql                # ✨ NUEVO 2025-11-11 (GAP-3)
-```
+## Sistema de Progresion CEFR
 
-### enums/ (2 archivos)
+Niveles: beginner (A1) → native (C2+)
 
-```
-attempt_result.sql
-progress_status.sql
-```
+| Funcion | Proposito |
+|---------|-----------|
+| `check_difficulty_promotion_eligibility` | Verifica elegibilidad para promocion |
+| `promote_user_difficulty_level` | Ejecuta promocion de nivel |
+| `update_difficulty_progress` | Actualiza metricas de progreso |
+| `create_manual_review_on_submission` | Crea ManualReview automatico para ejercicios manuales |
 
-### functions/ (9 archivos)
+## Triggers de Actualizacion
 
-```
-01-calculate_module_progress.sql
-03-get_user_progress.sql
-05-get_classroom_analytics.sql
-06-update_mission_progress.sql
-07-update_exercise_submissions_updated_at.sql
-check_difficulty_promotion_eligibility.sql   # ✨ NUEVO 2025-11-11 (GAP-3)
-promote_user_difficulty_level.sql            # ✨ NUEVO 2025-11-11 (GAP-3)
-update_difficulty_progress.sql               # ✨ NUEVO 2025-11-11 (GAP-3)
-```
+| Trigger | Proposito |
+|---------|-----------|
+| `trg_update_user_stats_on_exercise` | Actualiza XP/ML al completar ejercicio |
+| `trg_update_module_progress_on_exercise` | Actualiza progreso de modulo |
+| `trg_update_missions_on_exercise` | Actualiza misiones al completar ejercicio |
+| `trg_update_module_progress_on_submission` | Actualiza progreso tras calificacion manual |
+| `trg_create_manual_review_on_submission` | Crea ManualReview al insertar submission con status=submitted |
 
-### triggers/ (8 archivos)
+## Vistas
 
-```
-21-trg_update_user_stats_on_exercise.sql
-22-exercise_submissions_updated_at.sql
-22-trg_update_module_progress_on_exercise.sql   # ✨ NUEVO 2025-11-26
-23-trg_module_progress_updated_at.sql
-24-trg_update_missions_on_exercise.sql          # ✨ NUEVO 2025-11-26
-25-trg_update_missions_on_submission.sql        # ✨ NUEVO 2025-11-26
-26-trg_update_missions_on_streak.sql            # ✨ NUEVO 2025-11-26
-27-trg_update_module_progress_on_submission.sql # ✨ NUEVO 2025-11-28 (Student Portal)
-```
+| Vista | Proposito |
+|-------|-----------|
+| `teacher_pending_reviews` | Submissions pendientes de revision con prioridad y datos consolidados |
+| `classroom_students_metrics` | Metricas de estudiantes por aula |
 
-### indexes/ (2 archivos)
+## Arquitectura Dual de Ejercicios
 
-```
-01-idx_module_progress_analytics_gin.sql
-02-idx_scheduled_missions_mission.sql
-```
+1. **exercise_attempts**: Ejercicios autocorregibles (M1-M2)
+2. **exercise_submissions**: Ejercicios con calificacion manual (M3-M5)
 
-### views/ (1 archivos)
+Ambos actualizan `user_stats` y `module_progress` mediante triggers.
 
-```
-user_progress_summary.sql
-```
-
-### rls-policies/ (2 archivos)
-
-```
-01-enable-rls.sql
-02-progress-policies.sql
-```
+El trigger `trg_create_manual_review_on_submission` crea automaticamente el registro en `manual_reviews` cuando se inserta un submission para ejercicios con `requires_manual_grading=true`.
 
 ---
 
-**Última actualización:** 2025-11-28 (Student Portal: +5 triggers misiones/progreso)
-**Reorganización:** 2025-11-09
-
-## Changelog
-
-### 2025-11-28 - Student Portal Corrections
-- ✨ **5 triggers nuevos**: Sistema de misiones y progreso de módulos
-  - 22-trg_update_module_progress_on_exercise.sql (progreso en attempts)
-  - 24-trg_update_missions_on_exercise.sql (misiones en attempts)
-  - 25-trg_update_missions_on_submission.sql (misiones en submissions)
-  - 26-trg_update_missions_on_streak.sql (rachas correctas)
-  - 27-trg_update_module_progress_on_submission.sql (progreso en submissions calificadas)
-- **Total objetos**: 34 → 39
-
-### 2025-11-11 - GAP-3 Sistema de Progresión CEFR
-- ✨ **2 tablas nuevas**: user_difficulty_progress (métricas CEFR), user_current_level (ZDP)
-- ✨ **3 funciones nuevas**: check_difficulty_promotion_eligibility, promote_user_difficulty_level, update_difficulty_progress
-- Sistema completo de promoción entre niveles CEFR (A1-Nativo)
-- Zona de desarrollo próximo (ZDP) implementada
-- **Total objetos**: 29 → 34
-
-### 2025-11-09 - Reorganización DDL
-- Reorganización completa de estructura de schemas
+**Ultima actualizacion:** 2025-12-29

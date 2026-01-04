@@ -49,8 +49,9 @@ CREATE TABLE progress_tracking.exercise_submissions (
     updated_at timestamp with time zone DEFAULT now(),
     xp_earned integer DEFAULT 0,
     ml_coins_earned integer DEFAULT 0,
+    rewards_claimed boolean DEFAULT false,
     CONSTRAINT check_score_range CHECK (((score >= 0) AND (score <= max_score))),
-    CONSTRAINT exercise_submissions_status_check CHECK ((status = ANY (ARRAY['draft'::text, 'submitted'::text, 'graded'::text, 'reviewed'::text])))
+    CONSTRAINT exercise_submissions_status_check CHECK ((status = ANY (ARRAY['draft'::text, 'submitted'::text, 'graded'::text, 'reviewed'::text, 'pending_review'::text])))
 );
 
 
@@ -89,6 +90,13 @@ COMMENT ON COLUMN progress_tracking.exercise_submissions.xp_earned IS 'XP earned
 --
 
 COMMENT ON COLUMN progress_tracking.exercise_submissions.ml_coins_earned IS 'ML Coins earned for completing this exercise';
+
+
+--
+-- Name: COLUMN exercise_submissions.rewards_claimed; Type: COMMENT; Schema: progress_tracking; Owner: postgres
+--
+
+COMMENT ON COLUMN progress_tracking.exercise_submissions.rewards_claimed IS 'Indicates if rewards (XP/ML Coins) have already been claimed to prevent duplicate distribution';
 
 
 --
@@ -181,7 +189,7 @@ CREATE POLICY exercise_submissions_update_own ON progress_tracking.exercise_subm
 --
 -- Name: exercise_submissions exercise_submissions_updated_at; Type: TRIGGER; Schema: progress_tracking; Owner: postgres
 -- NOTE: Trigger movido a archivo separado para evitar duplicación
--- Ver: progress_tracking/triggers/22-exercise_submissions_updated_at.sql
+-- Ver: progress_tracking/triggers/20-exercise_submissions_updated_at.sql
 --
 
 

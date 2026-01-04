@@ -244,15 +244,28 @@ export interface ProfessionalDevelopment {
   }>;
 }
 
+/**
+ * TeacherDashboardStats - Aligned with backend TeacherDashboardStatsDto
+ * @see apps/backend/src/modules/teacher/dto/dashboard-stats.dto.ts
+ *
+ * UPDATED 2025-12-27: Fixed mismatch between frontend interface and backend response
+ * Previous fields: average_class_score, completion_rate, pending_alerts, engagement_rate
+ * Backend fields:  average_score, average_completion, total_submissions_pending, students_at_risk
+ */
 export interface TeacherDashboardStats {
   total_students: number;
   active_students: number;
-  total_assignments: number;
-  pending_alerts: number;
-  average_class_score: number;
-  completion_rate: number;
-  engagement_rate: number;
+  average_score: number;           // Backend: average_score (was average_class_score)
+  average_completion: number;      // Backend: average_completion (was completion_rate)
+  total_submissions_pending: number; // Backend: total_submissions_pending (was pending_alerts)
+  students_at_risk: number;        // Backend: students_at_risk (new field)
 }
+
+/**
+ * @deprecated Use TeacherDashboardStats instead. This alias provides backwards compatibility.
+ * Will be removed in next major version.
+ */
+export type TeacherDashboardStatsLegacy = TeacherDashboardStats;
 
 // Filter types
 export interface StudentFilter {

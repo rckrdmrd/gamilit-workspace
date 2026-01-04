@@ -270,6 +270,107 @@ export async function unblockUser(userId: string, friendId: string): Promise<voi
 }
 
 // ============================================================================
+// ACTIVITY TYPES (aligned with backend DTOs)
+// ============================================================================
+
+/**
+ * Activity DTO from backend
+ */
+export interface ActivityDTO {
+  activity_id: string;
+  user_id: string;
+  activity_type: 'achievement' | 'level_up' | 'exercise' | 'rankup' | 'milestone';
+  title: string;
+  description: string;
+  metadata?: Record<string, unknown>;
+  is_public: boolean;
+  created_at: string;
+}
+
+/**
+ * Friend Recommendation type (not yet supported by backend)
+ */
+export interface FriendRecommendation {
+  userId: string;
+  username: string;
+  avatar: string;
+  rank: string;
+  level: number;
+  mutualFriends: number;
+  commonInterests: string[];
+  matchScore: number;
+  reason: string;
+}
+
+// ============================================================================
+// FRIEND ACTIVITIES API
+// ============================================================================
+
+/**
+ * Get friend activities feed
+ *
+ * @description Fetches activity feed for a user's friends
+ *
+ * @param userId - User UUID (to fetch their friends first)
+ * @param limit - Max number of activities (default 20)
+ * @returns Promise<ActivityDTO[]>
+ *
+ * @endpoint GET /api/v1/social/activities/feed?friendIds=...
+ *
+ * @example
+ * ```ts
+ * const activities = await friendsAPI.getFriendActivities('user-id', 20);
+ * ```
+ */
+export async function getFriendActivities(userId: string, limit: number = 20): Promise<ActivityDTO[]> {
+  try {
+    // First get the user's friends
+    const friendships = await getUserFriends(userId);
+    const acceptedFriends = friendships.filter(f => f.status === 'accepted');
+
+    if (acceptedFriends.length === 0) {
+      return []; // No friends, no activities
+    }
+
+    // Get friend IDs
+    const friendIds = acceptedFriends.map(f =>
+      f.friend_id === userId ? f.user_id : f.friend_id
+    );
+
+    // Fetch activities from the feed endpoint
+    const response = await apiClient.get<ActivityDTO[]>(
+      '/social/activities/feed',
+      { params: { friendIds: friendIds.join(','), limit } }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch friend activities');
+  }
+}
+
+/**
+ * Get friend recommendations
+ *
+ * @description Returns friend recommendations for the user
+ *
+ * NOTE: Backend endpoint `/gamification/friends/recommendations` does not exist yet.
+ * This function returns an empty array until the backend is implemented.
+ *
+ * @param _userId - User UUID (not used yet)
+ * @returns Promise<FriendRecommendation[]>
+ *
+ * @todo Implement backend endpoint for friend recommendations
+ *       Potential sources: same classroom, similar level, mutual friends
+ */
+export async function getFriendRecommendations(_userId: string): Promise<FriendRecommendation[]> {
+  // TODO: Backend endpoint not implemented yet
+  // When implemented, this should call: GET /api/v1/gamification/friends/recommendations
+  // Returning empty array to indicate no mock data
+  return [];
+}
+
+// ============================================================================
 // EXPORTS
 // ============================================================================
 
@@ -294,6 +395,8 @@ export const friendsAPI = {
   removeFriend,
   blockUser,
   unblockUser,
+  getFriendActivities,
+  getFriendRecommendations,
 };
 
 export default friendsAPI;

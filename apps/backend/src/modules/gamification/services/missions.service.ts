@@ -51,26 +51,39 @@ export class MissionsService {
   ) {}
 
   /**
-   * Helper method to get profile.id from auth.users.id
+   * Helper method to get profile.id from userId
    *
-   * @description Missions table FK references profiles.id, but JWT contains auth.users.id.
-   * This method converts auth.users.id → profiles.id
+   * @description DB-125 FIX: JWT sub now contains profile.id (NOT auth.users.id).
+   * This method handles both cases for backwards compatibility:
+   * 1. If userId is already a profile.id → return it directly
+   * 2. If userId is auth.users.id → convert to profile.id
    *
-   * @param userId - auth.users.id (from JWT token)
+   * @param userId - Either profile.id or auth.users.id (from JWT token)
    * @returns profiles.id
    * @throws NotFoundException if profile doesn't exist
    */
   private async getProfileId(userId: string): Promise<string> {
-    const profile = await this.profileRepo.findOne({
+    // DB-125: First check if userId is already a profile.id
+    const profileById = await this.profileRepo.findOne({
+      where: { id: userId },
+      select: ['id'],
+    });
+
+    if (profileById) {
+      return profileById.id;
+    }
+
+    // Fallback: userId might be auth.users.id (old JWT format)
+    const profileByUserId = await this.profileRepo.findOne({
       where: { user_id: userId },
       select: ['id'],
     });
 
-    if (!profile) {
+    if (!profileByUserId) {
       throw new NotFoundException(`Profile not found for user ${userId}`);
     }
 
-    return profile.id;
+    return profileByUserId.id;
   }
 
   /**

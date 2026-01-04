@@ -1,5 +1,11 @@
 -- =====================================================
--- Function: gamification_system.update_leaderboard_coins
+-- [DEPRECATED] Function: gamification_system.update_leaderboard_coins
+-- =====================================================
+-- DEPRECATED: 2025-12-29 (DB-164)
+-- RAZÓN: Función sin uso en backend. Contiene BUG (v_old_rank hardcoded = 1).
+--        Leaderboards se gestionan via materialized views.
+-- REEMPLAZADA POR: mv_global_leaderboard (incluye ml_coins ranking)
+-- =====================================================
 -- Description: Actualiza posición del usuario en el leaderboard de monedas ML
 -- Parameters:
 --   - p_user_id: UUID - ID del usuario
@@ -30,6 +36,7 @@ BEGIN
     END IF;
 
     -- Obtener ranking anterior (simulado)
+    -- BUG: Este valor hardcoded hace que position_change siempre sea incorrecto
     v_old_rank := 1;
 
     -- Calcular nuevo ranking
@@ -46,7 +53,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 COMMENT ON FUNCTION gamification_system.update_leaderboard_coins(UUID) IS
-    'Actualiza posición del usuario en leaderboard de monedas ML';
+    '[DEPRECATED] Actualiza posición en leaderboard de monedas - contiene bug, usar MVs';
 
 -- Grant permissions
 GRANT EXECUTE ON FUNCTION gamification_system.update_leaderboard_coins(UUID) TO authenticated;

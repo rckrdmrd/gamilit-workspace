@@ -271,3 +271,5 @@ docs_bkp/
 *.tar.gz
 *.rar
 !assets/**/*.zip
+apps/database/database-credentials-dev.txt
+apps/database/database-credentials-dev.txt

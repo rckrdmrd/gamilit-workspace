@@ -26,5 +26,4 @@ code_challenge_method.sql
 
 ---
 
-**Última actualización:** 2025-11-09
-**Reorganización:** 2025-11-09
+**Última actualización:** 2025-12-27

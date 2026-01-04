@@ -1,16 +1,38 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { ManualReview } from '@modules/progress/entities/manual-review.entity';
 import { ExerciseSubmission } from '@modules/progress/entities/exercise-submission.entity';
 import { CreateReviewDto } from '../dto/create-review.dto';
 import { ExerciseSubmissionService } from '@modules/progress/services/exercise-submission.service';
 
 /**
+ * Filtros opcionales para reviews pendientes
+ */
+export interface PendingReviewFilters {
+  moduleId?: string;
+  moduleOrder?: number;
+  classroomId?: string;
+  exerciseId?: string;
+}
+
+/**
  * Service para gestión de evaluaciones manuales de ejercicios creativos
  *
  * @description Provee operaciones CRUD y lógica de negocio para ManualReview.
  * Utilizado por docentes para evaluar ejercicios de módulos 4 y 5.
+ *
+ * NOTA ARQUITECTURA CROSS-DATABASE:
+ * Este proyecto utiliza múltiples datasources PostgreSQL separados por schema:
+ * - ManualReview, ExerciseSubmission -> datasource 'progress' (progress_tracking)
+ * - Profile (estudiantes) -> datasource 'auth' (auth_management)
+ * - Exercise, Module -> datasource 'educational' (educational_content)
+ *
+ * Las relaciones TypeORM @ManyToOne NO funcionan entre entidades de diferentes
+ * datasources. Por lo tanto, solo usamos `relations: ['submission']` (mismo schema)
+ * y el frontend obtiene datos de estudiante/ejercicio usando los IDs:
+ * - submission.user_id -> Para obtener datos del estudiante
+ * - submission.exercise_id -> Para obtener datos del ejercicio
  */
 @Injectable()
 export class ManualReviewService {
@@ -26,19 +48,51 @@ export class ManualReviewService {
    * Obtiene reviews pendientes para un docente
    *
    * @param teacherId - UUID del docente
+   * @param filters - Filtros opcionales (moduleId, moduleOrder, classroomId, exerciseId)
    * @returns Lista de reviews pendientes con datos del submission
+   *
+   * NOTA: Para filtrar por módulo, usar `moduleOrder` (1-5) que utiliza la vista
+   * teacher_pending_reviews para el join cross-database. Alternativamente,
+   * usar `findPendingByModule()` directamente para obtener datos completos.
    */
-  async findPendingReviews(teacherId: string): Promise<ManualReview[]> {
-    return this.reviewRepo.find({
-      where: {
-        reviewerId: teacherId,
-        status: 'pending',
-      },
-      relations: ['submission'],
-      order: {
-        createdAt: 'ASC',
-      },
-    });
+  async findPendingReviews(
+    teacherId: string,
+    filters?: PendingReviewFilters,
+  ): Promise<ManualReview[]> {
+    // Si se filtra por módulo, usar la vista cross-database
+    if (filters?.moduleOrder) {
+      // Usar findPendingByModule y mapear a ManualReview format
+      const pendingFromView = await this.findPendingByModule(teacherId, filters.moduleOrder);
+      // Obtener los reviews correspondientes
+      if (pendingFromView.length === 0) return [];
+
+      const submissionIds = pendingFromView.map((p: any) => p.submission_id);
+      return this.reviewRepo.find({
+        where: {
+          submissionId: In(submissionIds),
+          reviewerId: teacherId,
+          status: 'pending',
+        },
+        relations: ['submission'],
+      });
+    }
+
+    const queryBuilder = this.reviewRepo
+      .createQueryBuilder('review')
+      .leftJoinAndSelect('review.submission', 'submission')
+      .where('review.reviewerId = :teacherId', { teacherId })
+      .andWhere('review.status = :status', { status: 'pending' });
+
+    // Filtrar por exerciseId si se proporciona
+    if (filters?.exerciseId) {
+      queryBuilder.andWhere('submission.exercise_id = :exerciseId', {
+        exerciseId: filters.exerciseId,
+      });
+    }
+
+    queryBuilder.orderBy('review.createdAt', 'ASC');
+
+    return queryBuilder.getMany();
   }
 
   /**
@@ -269,5 +323,76 @@ export class ManualReviewService {
         createdAt: 'DESC',
       },
     });
+  }
+
+  /**
+   * Obtiene reviews pendientes filtrados por módulo usando la vista teacher_pending_reviews
+   *
+   * @param teacherId - UUID del docente
+   * @param moduleOrder - Número del módulo (1-5)
+   * @returns Lista de submissions pendientes de ese módulo
+   *
+   * NOTA: Esta consulta usa la vista teacher_pending_reviews que ya tiene
+   * el join con educational_content.exercises y modules.
+   */
+  async findPendingByModule(
+    teacherId: string,
+    moduleOrder: number,
+  ): Promise<any[]> {
+    const result = await this.submissionRepo.query(
+      `SELECT *
+       FROM progress_tracking.teacher_pending_reviews
+       WHERE classroom_id IN (
+         SELECT classroom_id
+         FROM social_features.teacher_classrooms
+         WHERE teacher_id = $1
+       )
+       AND module_order = $2
+       ORDER BY
+         CASE priority
+           WHEN 'urgent' THEN 1
+           WHEN 'high' THEN 2
+           WHEN 'medium' THEN 3
+           ELSE 4
+         END,
+         submission_date ASC`,
+      [teacherId, moduleOrder],
+    );
+
+    return result;
+  }
+
+  /**
+   * Obtiene estadísticas de reviews pendientes para el dashboard del docente
+   *
+   * @param teacherId - UUID del docente
+   * @param classroomId - UUID del classroom (opcional)
+   * @returns Estadísticas de pendientes por prioridad
+   *
+   * Utiliza la función get_teacher_pending_reviews_count que ya existe en BD
+   */
+  async getPendingReviewsStats(
+    teacherId: string,
+    classroomId?: string,
+  ): Promise<{
+    totalPending: number;
+    urgentCount: number;
+    highCount: number;
+    mediumCount: number;
+    normalCount: number;
+  }> {
+    const result = await this.submissionRepo.query(
+      `SELECT * FROM progress_tracking.get_teacher_pending_reviews_count($1, $2)`,
+      [teacherId, classroomId || null],
+    );
+
+    const stats = result[0] || {};
+    return {
+      totalPending: parseInt(stats.total_pending || '0', 10),
+      urgentCount: parseInt(stats.urgent_count || '0', 10),
+      highCount: parseInt(stats.high_count || '0', 10),
+      mediumCount: parseInt(stats.medium_count || '0', 10),
+      normalCount: parseInt(stats.normal_count || '0', 10),
+    };
   }
 }

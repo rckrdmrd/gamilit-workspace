@@ -1,165 +1,89 @@
 # Schema: gamification_system
 
-Sistema de gamificación: logros, rangos, monedas ML, comodines, notificaciones
+Sistema de gamificación: logros, rangos Maya, monedas ML, comodines, tienda virtual.
 
 ## Estructura
 
 - **tables/**: 15 archivos
 - **enums/**: 4 archivos
-- **functions/**: 25 archivos
+- **functions/**: 21 archivos activos
+- **functions/_deprecated/**: 4 archivos (funciones updated_at + leaderboard sin uso)
 - **triggers/**: 10 archivos
-- **indexes/**: 23 archivos  # ✨ DB-099: +1 (idx_ml_transactions_tenant_id)
-- **views/**: 4 archivos
+- **indexes/**: 23 archivos
+- **materialized-views/**: 4 archivos (leaderboards activos)
+- **views/_deprecated/**: 4 archivos (views redundantes)
 - **rls-policies/**: 8 archivos
-- **materialized-views/**: 4 archivos
 
-**Total:** 93 objetos  # ✨ DB-099: +1 índice (tenant_id support)
+**Total:** 85 objetos DDL activos
 
-## Contenido Detallado
+## Tablas Principales
 
-### tables/ (15 archivos)
+| Tabla | Propósito |
+|-------|-----------|
+| `user_stats` | Estadísticas principales (XP, ML Coins, nivel, racha) |
+| `user_ranks` | Rangos Maya actuales e históricos |
+| `maya_ranks` | Definición de 7 rangos (Ajaw → Ahau) |
+| `achievements` | Definición de logros |
+| `user_achievements` | Logros desbloqueados por usuario |
+| `ml_coins_transactions` | Historial de transacciones ML Coins |
+| `missions` | Misiones diarias y semanales |
+| `comodines_inventory` | Inventario de comodines por usuario |
+| `leaderboard_metadata` | Configuración de leaderboards |
+| `achievement_categories` | Categorías de logros |
 
-```
-01-user_stats.sql
-02-user_ranks.sql
-03-achievements.sql
-04-user_achievements.sql
-05-ml_coins_transactions.sql
-06-missions.sql
-07-comodines_inventory.sql
-08-notifications.sql
-09-leaderboard_metadata.sql
-10-achievement_categories.sql
-11-active_boosts.sql
-12-inventory_transactions.sql
-13-maya_ranks.sql
-14-comodin_usage_log.sql
-15-comodin_usage_tracking.sql
-```
+## Sistema de Rangos Maya
 
-### enums/ (4 archivos)
+7 rangos progresivos basados en XP acumulada:
+1. Ajaw (0 XP) → Ahau (50,000+ XP)
 
-```
-maya_rank.sql
-notification_priority.sql
-notification_type.sql
-transaction_type.sql
-```
+Cada rango otorga multiplicadores de XP y ML Coins.
 
-### functions/ (25 archivos)
+## Funciones Principales
 
-```
-06-update_missions_updated_at.sql
-07-update_notifications_updated_at.sql
-08-recalculate_level_on_xp_change.sql
-apply_xp_boost.sql
-award_ml_coins.sql
-calculate_level_from_xp.sql
-calculate_user_rank.sql
-check_and_award_achievements.sql
-check_rank_promotion.sql                    # ✨ NUEVO 2025-11-11 (GAP-2)
-claim_achievement_reward.sql
-consume_comodin.sql
-get_rank_benefits.sql                       # ✨ NUEVO 2025-11-11 (GAP-2)
-get_rank_multiplier.sql                     # ✨ NUEVO 2025-11-11 (GAP-2)
-get_user_comodines.sql
-get_user_inventory_summary.sql
-get_user_rank_progress.sql
-get_user_rank_requirements.sql
-process_exercise_completion.sql
-promote_to_next_rank.sql                    # ✨ NUEVO 2025-11-11 (GAP-2)
-send_notification.sql
-update_leaderboard_coins.sql
-update_leaderboard_global.sql
-update_leaderboard_streaks.sql
-update_user_rank.sql                        # 🔄 REFACTORIZADO 2025-11-11 (GAP-2)
-```
+| Función | Propósito |
+|---------|-----------|
+| `check_rank_promotion` | Verifica si usuario califica para promoción |
+| `promote_to_next_rank` | Ejecuta promoción de rango |
+| `get_rank_multiplier` | Obtiene multiplicador por rango |
+| `award_ml_coins` | Otorga ML Coins con transacción |
+| `check_and_award_achievements` | Verifica y otorga logros |
+| `consume_comodin` | Consume comodín del inventario |
+| `process_exercise_completion` | Procesa XP/ML tras ejercicio |
+| `update_leaderboard_streaks` | Actualiza racha de usuario (usado por backend) |
 
-### triggers/ (10 archivos)
+## Vistas Materializadas (Activas)
 
-```
-01-trg_achievement_unlocked.sql
-02-trg_check_rank_promotion.sql
-15-trg_achievements_updated_at.sql
-16-trg_comodines_inventory_updated_at.sql
-17-missions_updated_at.sql
-18-notifications_updated_at.sql
-19-trg_user_ranks_updated_at.sql
-20-trg_user_stats_updated_at.sql
-21-trg_recalculate_level_on_xp_change.sql
-trg_check_rank_promotion_on_xp_gain.sql     # ✨ NUEVO 2025-11-11 (GAP-2)
-```
+| Materialized View | Propósito | Refresh | Estado |
+|-------------------|-----------|---------|--------|
+| `mv_global_leaderboard` | Ranking global por XP | Horario | ✅ OK |
+| `mv_classroom_leaderboard` | Ranking por aula | 30 min | ✅ OK |
+| `mv_weekly_leaderboard` | Ranking semanal | Horario + reset lunes | ✅ OK |
+| `mv_mechanic_leaderboard` | Ranking por mecánica | 2 horas | ⚠️ Sin uso |
 
-### indexes/ (22 archivos)
+**Nota DB-165:** `mv_mechanic_leaderboard` no se usa en backend. Tiene diseño con CROSS JOIN
+que genera producto cartesiano (cada estudiante × cada tipo de misión). Candidata a deprecación
+en futuro refactoring.
 
-```
-01-idx_achievement_categories_active.sql
-02-idx_active_boosts_user.sql
-03-idx_achievements_metadata_gin.sql
-04-idx_inventory_transactions_user.sql
-idx_achievements_active.sql
-idx_achievements_category.sql
-idx_achievements_conditions_gin.sql
-idx_achievements_secret.sql
-idx_user_achievements_completed.sql
-idx_user_achievements_unclaimed.sql
-idx_user_achievements_user_completed.sql
-idx_user_achievements_user_id.sql
-idx_user_ranks_current.sql
-idx_user_ranks_is_current.sql
-idx_user_ranks_user_id.sql
-idx_user_stats_global_rank.sql
-idx_user_stats_level.sql
-idx_user_stats_ml_coins.sql
-idx_user_stats_streak.sql
-idx_user_stats_tenant_id.sql
-idx_user_stats_tenant_level.sql
-idx_user_stats_user_id.sql
-```
+## Directorios _deprecated
 
-### views/ (4 archivos)
+### Views (DB-158)
 
-```
-01-leaderboard_coins.sql
-02-leaderboard_global.sql
-03-leaderboard_streaks.sql
-04-leaderboard_xp.sql
-```
+| View | Razon |
+|------|-------|
+| `leaderboard_coins` | Redundante con mv_global_leaderboard |
+| `leaderboard_global` | Redundante con mv_global_leaderboard |
+| `leaderboard_streaks` | Sin uso en backend |
+| `leaderboard_xp` | Redundante con mv_global_leaderboard |
 
-### rls-policies/ (8 archivos)
+### Funciones (DB-162, DB-164)
 
-```
-01-enable-rls.sql
-02-ml-coins-policies.sql
-02-policies.sql
-03-achievements-policies.sql
-03-grants.sql
-04-user-stats-policies.sql
-05-inventory-missions-policies.sql
-06-notifications-leaderboard-policies.sql
-```
-
-### materialized-views/ (4 archivos)
-
-```
-01-mv_global_leaderboard.sql
-02-mv_classroom_leaderboard.sql
-03-mv_weekly_leaderboard.sql
-04-mv_mechanic_leaderboard.sql
-```
+| Función | Razón | Reemplazada por |
+|---------|-------|-----------------|
+| `update_missions_updated_at` | Redundante | `gamilit.update_updated_at_column()` |
+| `update_notifications_updated_at` | Redundante | `gamilit.update_updated_at_column()` |
+| `update_leaderboard_global` | Sin uso en backend | Materialized views (mv_global_leaderboard) |
+| `update_leaderboard_coins` | Sin uso + bug v_old_rank=1 | Materialized views (mv_global_leaderboard) |
 
 ---
 
-**Última actualización:** 2025-11-11 (GAP-2: +4 funciones rangos maya, +1 trigger)
-**Reorganización:** 2025-11-09
-
-## Changelog
-
-### 2025-11-11 - GAP-2 Correcciones Rangos Maya
-- ✨ **4 funciones nuevas**: check_rank_promotion, get_rank_benefits, get_rank_multiplier, promote_to_next_rank
-- 🔄 **1 función refactorizada**: update_user_rank (migrado a maya_rank ENUM + lectura dinámica)
-- ✨ **1 trigger nuevo**: trg_check_rank_promotion_on_xp_gain (automático en UPDATE total_xp)
-- **Total objetos**: 87 → 92
-
-### 2025-11-09 - Reorganización DDL
-- Reorganización completa de estructura de schemas
+**Última actualización:** 2025-12-29

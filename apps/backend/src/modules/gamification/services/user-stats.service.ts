@@ -5,6 +5,8 @@ import { UserStats } from '../entities';
 import { UserGamificationSummaryDto } from '../dto/user-gamification-summary.dto';
 // CORR-CASCADA-001: Import MayaRank para alinear con entity corregida
 import { MayaRank } from '@shared/constants/enums.constants';
+// P0-001: Import Profile para validación de existencia
+import { Profile } from '@/modules/auth/entities/profile.entity';
 
 /**
  * UserStatsService
@@ -34,7 +36,31 @@ export class UserStatsService {
   constructor(
     @InjectRepository(UserStats, 'gamification')
     private readonly userStatsRepo: Repository<UserStats>,
+    // P0-001: Agregar Profile repository para validación
+    @InjectRepository(Profile, 'auth')
+    private readonly profileRepo: Repository<Profile>,
   ) {}
+
+  /**
+   * P0-001: Verifica que el perfil existe antes de operaciones de gamificación
+   * @param userId - El ID del usuario (profiles.id)
+   * @returns Profile si existe
+   * @throws NotFoundException si el perfil no existe
+   */
+  private async validateProfileExists(userId: string): Promise<Profile> {
+    const profile = await this.profileRepo.findOne({
+      where: { id: userId },
+    });
+
+    if (!profile) {
+      throw new NotFoundException(
+        `Profile not found for user ${userId}. User may not be properly initialized. ` +
+        `Please ensure the user registration process completed successfully.`
+      );
+    }
+
+    return profile;
+  }
 
   /**
    * Encuentra estadísticas de usuario por ID
@@ -53,8 +79,12 @@ export class UserStatsService {
 
   /**
    * Crea un nuevo registro de estadísticas para un usuario
+   * P0-001: Agregada validación de profile antes de crear
    */
   async create(userId: string, tenantId?: string): Promise<UserStats> {
+    // P0-001: Verificar que el profile existe antes de crear stats
+    const profile = await this.validateProfileExists(userId);
+
     const existingStats = await this.userStatsRepo.findOne({
       where: { user_id: userId },
     });
@@ -63,9 +93,12 @@ export class UserStatsService {
       throw new BadRequestException(`User ${userId} already has stats`);
     }
 
+    // Usar tenant_id del profile si no se proporciona
+    const effectiveTenantId = tenantId || profile.tenant_id;
+
     const newStats = this.userStatsRepo.create({
       user_id: userId,
-      tenant_id: tenantId,
+      tenant_id: effectiveTenantId,
       level: 1,
       total_xp: 0,
       xp_to_next_level: this.calculateXpForLevel(2), // XP needed to reach level 2

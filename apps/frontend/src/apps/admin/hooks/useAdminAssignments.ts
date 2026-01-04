@@ -9,6 +9,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 // ============================================================================
 // TYPES
@@ -188,7 +189,7 @@ async function exportAssignments(filters: AssignmentFilters = {}): Promise<Blob>
   if (filters.date_from) params.append('date_from', filters.date_from);
   if (filters.date_to) params.append('date_to', filters.date_to);
 
-  const response = await apiClient.get(`/admin/assignments/export?${params.toString()}`, {
+  const response = await apiClient.get(`${API_ENDPOINTS.admin.assignments.export}?${params.toString()}`, {
     responseType: 'blob',
   });
 

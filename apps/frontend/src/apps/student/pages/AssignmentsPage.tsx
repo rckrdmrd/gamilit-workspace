@@ -281,8 +281,8 @@ export default function AssignmentsPage() {
 
   // Handle assignment click
   const handleAssignmentClick = (assignment: StudentAssignment) => {
-    // Navigate to assignment detail or exercise page
-    navigate(`/student/assignments/${assignment.id}`);
+    // Navigate to assignment detail page
+    navigate(`/assignments/${assignment.id}`);
   };
 
   return (

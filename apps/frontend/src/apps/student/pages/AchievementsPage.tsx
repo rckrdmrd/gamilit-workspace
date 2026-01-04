@@ -38,6 +38,7 @@ import { useAuthStore } from '@/features/auth/store/authStore';
 import { usePersistedFilters } from '@/shared/hooks/usePersistedFilters';
 import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 import { claimAchievementRewards } from '@/features/gamification/social/api/achievementsAPI';
+import { useInvalidateDashboard } from '@/shared/hooks/useInvalidateDashboard';
 import type {
   Achievement,
   AchievementCategory,
@@ -112,6 +113,9 @@ export default function AchievementsPage() {
   // Economy store for balance refresh
   const fetchBalance = useEconomyStore((state) => state.fetchBalance);
 
+  // Dashboard invalidation hook - FIX: Invalidate cache after claiming achievements
+  const { syncAndInvalidate } = useInvalidateDashboard();
+
   // Sync achievements to local state for claim status updates
   useEffect(() => {
     setLocalAchievements(achievements);
@@ -154,8 +158,8 @@ export default function AchievementsPage() {
           )
         );
 
-        // Refresh balance to show new ML Coins
-        await fetchBalance();
+        // FIX: Invalidate dashboard cache to update coins, XP, and achievements
+        await syncAndInvalidate();
 
         // Find the achievement for the toast message
         const achievement = localAchievements.find((a) => a.id === achievementId);

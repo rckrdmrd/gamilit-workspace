@@ -36,7 +36,7 @@ export const ALERT_TYPES: AlertTypeConfig[] = [
     value: 'no_activity',
     label: 'Sin Actividad',
     icon: '🚨',
-    description: 'Estudiantes inactivos >7 días',
+    description: 'Estudiantes inactivos >7 dias',
   },
   {
     value: 'low_score',
@@ -54,7 +54,19 @@ export const ALERT_TYPES: AlertTypeConfig[] = [
     value: 'repeated_failures',
     label: 'Fallos Repetidos',
     icon: '🎯',
-    description: 'Múltiples intentos fallidos',
+    description: 'Multiples intentos fallidos',
+  },
+  {
+    value: 'excessive_time',
+    label: 'Tiempo Excesivo',
+    icon: '⏱️',
+    description: 'Tiempo >2x del promedio',
+  },
+  {
+    value: 'low_engagement',
+    label: 'Bajo Engagement',
+    icon: '📊',
+    description: '<3 ejercicios o <30 min/semana',
   },
 ];
 

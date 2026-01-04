@@ -1,8 +1,8 @@
 # Scripts de Base de Datos GAMILIT
 
 **Ubicación:** `/gamilit/projects/gamilit/apps/database/scripts/`
-**Versión:** 2.0
-**Última actualización:** 2025-11-02
+**Versión:** 3.9
+**Última actualización:** 2025-12-29
 
 ---
 
@@ -44,13 +44,16 @@ Este directorio contiene scripts para gestionar la base de datos PostgreSQL de G
 1. ✅ Crea usuario `gamilit_user` (si no existe)
 2. ✅ Genera password seguro de 32 caracteres
 3. ✅ Crea base de datos `gamilit_platform`
-4. ✅ Ejecuta todos los DDL (9 schemas, 49 tablas actuales)
-5. ✅ Carga seeds del ambiente (dev/staging/production)
+4. ✅ Ejecuta todos los DDL (16 schemas, 156+ tablas, 120+ funciones, 61+ triggers)
+5. ✅ Carga seeds del ambiente (dev/prod)
 6. ✅ Valida instalación
 7. ✅ Guarda credenciales en `database-credentials-{env}.txt`
-8. ✅ **NUEVO:** Actualiza automáticamente archivos .env (ver sección [Gestión de Credenciales](#-gestión-de-credenciales))
+8. ✅ Actualiza automáticamente archivos .env (ver sección [Gestión de Credenciales](#-gestión-de-credenciales))
 
 **Resultado:** Base de datos funcional al 100% + archivos .env sincronizados
+
+**Nota para DEV:** El script requiere sudo. En desarrollo local, el password sudo es `2320`.
+**Nota para PROD:** En producción no se requiere password sudo (el agente tiene permisos configurados).
 
 ---
 
@@ -369,16 +372,22 @@ apps/database/
 │
 ├── ddl/                              # Definiciones SQL
 │   ├── 00-prerequisites.sql          # ENUMs y funciones globales
-│   └── schemas/                      # 9 schemas organizados
+│   └── schemas/                      # 16 schemas organizados
+│       ├── admin_dashboard/
+│       ├── audit_logging/
 │       ├── auth/
 │       ├── auth_management/
-│       ├── system_configuration/
-│       ├── gamification_system/
-│       ├── educational_content/
+│       ├── communication/            # Mensajería maestro-estudiante
 │       ├── content_management/
-│       ├── social_features/
+│       ├── educational_content/
+│       ├── gamification_system/
+│       ├── gamilit/                  # Funciones globales
+│       ├── lti_integration/          # Learning Tools Interoperability
+│       ├── notifications/            # Sistema de notificaciones
 │       ├── progress_tracking/
-│       └── audit_logging/
+│       ├── social_features/
+│       ├── storage/
+│       └── system_configuration/
 │
 ├── seeds/                            # Datos iniciales
 │   ├── dev/                          # Seeds para desarrollo
@@ -476,10 +485,10 @@ Después de ejecutar los scripts, verifica:
 # 1. Base de datos existe
 psql -U gamilit_user -d gamilit_platform -c "SELECT current_database();"
 
-# 2. Schemas creados (debe mostrar 9)
+# 2. Schemas creados (debe mostrar ~16)
 psql -U gamilit_user -d gamilit_platform -c "SELECT count(*) FROM information_schema.schemata WHERE schema_name NOT IN ('pg_catalog', 'information_schema');"
 
-# 3. Tablas creadas (debe mostrar 49 actualmente)
+# 3. Tablas creadas (debe mostrar 114+)
 psql -U gamilit_user -d gamilit_platform -c "SELECT count(*) FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog', 'information_schema');"
 
 # 4. Seeds cargados
@@ -558,7 +567,117 @@ Si encuentras problemas:
 
 ---
 
-**Versión:** 2.0
+**Versión:** 3.9
 **Creado:** 2025-11-02
+**Actualizado:** 2025-12-29
 **Autor:** ATLAS-DATABASE
 **Estado:** ✅ Producción Ready
+
+---
+
+## Changelog v3.9 (2025-12-29)
+
+**Corrección de Arrays de Schemas (Validación Requirements-Analyst)**
+
+Scripts Actualizados:
+- `init-database.sh` v3.9 - Corregidos arrays de indexes y triggers
+- `reset-database.sh` v2.2 - Sincronizado con init-database.sh v3.9
+
+Correcciones Críticas:
+- `execute_indexes`: Agregado `system_configuration` (faltaba)
+- `execute_triggers`: Agregado `lti_integration` (faltaba)
+
+Validación Completa:
+- 56 seeds verificados en ambos ambientes (dev/prod)
+- 6 conflictos de numeración documentados (no afectan ejecución)
+- Orden de ejecución DDL verificado y corregido
+
+---
+
+## Changelog v3.8 (2025-12-28)
+
+**Sincronización y Optimización (Análisis Requirements-Analyst)**
+
+Scripts Actualizados:
+- `reset-database.sh` actualizado a v2.0 - Sincronizado con init-database.sh v3.8
+- Agregada función `fix_profiles_and_gamification()` a reset-database.sh
+- Ambos scripts ahora cargan 16 schemas y 56 seeds en 10 fases
+
+Seeds Optimizados:
+- `04-initialize_user_gamification.sql` movido a _deprecated (redundante con trigger)
+- `11-missions-production-users.sql` movido a _deprecated (redundante con trigger)
+- `06-user_ranks.sql` v2.0 - Convertido a UPDATEs dinámicos
+- `09-comodines_inventory.sql` v2.0 - Reescrito con UUIDs dinámicos
+
+Documentación:
+- INDEX.md actualizado con conteos reales (402+ objetos DDL)
+- DATABASE_INVENTORY.yml actualizado a v6.8.0
+- SEEDS_INVENTORY.yml actualizado a v2.0.0
+- Salud BD mejorada: 7.4/10 → 8.6/10
+
+---
+
+## Changelog v3.7 (2025-12-26)
+
+**Corrección completa de array de seeds (Análisis Requirements-Analyst)**
+
+Seeds ELIMINADOS:
+- `auth/02-test-users.sql` - Conflicto de UUIDs con 01-demo-users.sql
+- `auth_management/04-profiles-testing.sql` - No existía en filesystem
+- `auth_management/05-profiles-demo.sql` - No existía en filesystem
+
+Seeds AGREGADOS:
+- `social_features/00-schools-default.sql` - CRÍTICO: Requerido por classrooms
+- `auth_management/04-profiles-complete.sql` - Reemplaza profiles inexistentes
+- Gamification (05-13): user_stats, user_ranks, ml_coins_transactions, user_achievements, comodines_inventory, mission_templates, shop_categories, shop_items
+- Educational Content (05-12): assignments, difficulty_criteria, exercise_mechanic_mapping, exercise_validation_config, module_dependencies, taxonomies
+- System Configuration: feature_flags_seeds, gamification_parameters_seeds, notification_settings_global, rate_limits
+- Social Features: 04-friendships.sql
+- LTI Integration: 01-lti_consumers.sql
+
+Mejoras:
+- Array reorganizado en 10 fases documentadas
+- Comentarios explicando dependencias
+- Total seeds: 38 → 56 (+18 seeds)
+
+## Changelog v3.6 (2025-12-26)
+
+- Corregidos arrays de schemas en todas las funciones de carga DDL:
+  - Tablas: agregado communication, lti_integration, notifications
+  - Funciones: agregado communication, lti_integration, notifications
+  - Views: agregado auth, gamilit, social_features
+  - Indexes: agregado social_features, system_configuration, removido public
+  - Triggers: agregado lti_integration, removido public
+  - RLS Policies: agregado communication, notifications
+- Sincronizados seeds prod con dev (dev es source of truth)
+- Seeds afectados: educational_content, notifications, social_features, system_configuration
+
+## Changelog v3.5 (2025-12-26)
+
+- Sincronización automática de DB_PASSWORD a backend/.env
+- Actualiza también DB_HOST, DB_PORT, DB_NAME, DB_USER
+- Elimina desincronización entre BD y backend
+
+## Changelog v3.4 (2025-12-26)
+
+- Agregado paso para cargar ENUMs de directorios `schemas/*/enums/`
+- Ahora se cargan 19 ENUMs adicionales (difficulty_level, exercise_mechanic, etc.)
+- Tablas aumentaron de 91 a 114 (modules, exercises, module_progress ahora se crean)
+- Módulos y ejercicios ahora se cargan correctamente
+
+## Changelog v3.3 (2025-12-26)
+
+- Corregido FK error en user_stats: usar `profiles.id` en lugar de `profiles.user_id`
+- El FK `user_stats.user_id` referencia `profiles.id`, no `profiles.user_id`
+
+## Changelog v3.2 (2025-12-26)
+
+- Agregado paso "Post-seeds: fix_profiles_and_gamification" para resolver dependencia circular
+- El script ahora sincroniza automáticamente profiles y user_stats después de cargar seeds
+- Esto resuelve el error de FK cuando el trigger intenta crear user_stats antes de que exista el profile
+
+## Changelog v3.1 (2025-12-26)
+
+- Corregido bug donde postgres no podía leer archivos del home del usuario al usar sudo
+- Actualizada documentación con conteos actuales (12 schemas, 91+ tablas, 162 funciones)
+- Agregadas notas sobre sudo para dev (password: 2320) y prod (sin password)

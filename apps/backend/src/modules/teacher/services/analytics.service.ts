@@ -126,15 +126,23 @@ export class AnalyticsService {
         : 0;
     });
 
+    // Calculate total time spent from submissions (sum of time_spent_seconds / 60)
+    const totalTimeSpentMinutes = Math.round(
+      submissions.reduce((sum, sub) => sum + (sub.time_spent_seconds || 0), 0) / 60,
+    );
+
+    // Count achievements unlocked by all students
+    const achievementsUnlocked = await this.userAchievementRepository.count();
+
     return {
       analytics: {
         total_students: totalStudents,
         active_students: activeStudents,
         average_score: avgScore,
         average_completion_rate: avgCompletionRate,
-        total_time_spent_minutes: 18500, // TODO: Calculate from submissions
+        total_time_spent_minutes: totalTimeSpentMinutes,
         exercises_completed: submissions.length,
-        achievements_unlocked: 456, // TODO: Get from achievements system
+        achievements_unlocked: achievementsUnlocked,
       },
       scoreDistribution: scoreRanges,
     };

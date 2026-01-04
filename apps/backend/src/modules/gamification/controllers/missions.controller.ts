@@ -272,6 +272,28 @@ export class MissionsController {
    *   "longestStreak": 12
    * }
    */
+  // IMPORTANT: /stats/me MUST be defined BEFORE /stats/:userId
+  // Otherwise Express/NestJS will match 'me' as a userId parameter
+  @Get('stats/me')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get my mission stats',
+    description: 'Obtiene estadísticas de misiones del usuario autenticado (extrae userId del JWT)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Estadísticas obtenidas exitosamente',
+    type: MissionStatsDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autenticado - Token JWT inválido o ausente',
+  })
+  async getMyStats(@Request() req: AuthRequest) {
+    const userId = req.user!.id;
+    return this.missionsService.getStats(userId);
+  }
+
   @Get('stats/:userId')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({

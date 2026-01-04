@@ -194,7 +194,7 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
         prev.map((alert) => (alert.id === alertId ? { ...alert, dismissed: true } : alert)),
       );
 
-      await apiClient.post(`/admin/alerts/${alertId}/dismiss`);
+      await apiClient.post(API_ENDPOINTS.admin.alertActions.dismiss(alertId));
 
       // Remove from active alerts after animation
       setTimeout(() => {
@@ -218,7 +218,7 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
       // Optimistic update - store previous for potential revert
       setActiveAlerts([]);
 
-      await apiClient.post('/admin/alerts/dismiss-all');
+      await apiClient.post(API_ENDPOINTS.admin.alertActions.dismissAll);
     } catch (err) {
       console.error('Failed to clear all alerts:', err);
       // Revert on error

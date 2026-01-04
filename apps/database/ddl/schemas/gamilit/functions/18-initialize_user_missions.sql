@@ -44,6 +44,9 @@ DECLARE
     v_today_start TIMESTAMP;
     v_today_end TIMESTAMP;
     v_week_end TIMESTAMP;
+    v_error_message TEXT;
+    v_error_detail TEXT;
+    v_error_code TEXT;
 BEGIN
     -- Calculate mission date ranges using Mexico timezone
     v_today_start := gamilit.now_mexico()::date;
@@ -355,6 +358,44 @@ BEGIN
     )
     ON CONFLICT DO NOTHING;
 
+EXCEPTION
+    WHEN OTHERS THEN
+        -- P1-001: Capturar error sin propagar, ya que initialize_user_stats maneja el error general
+        GET STACKED DIAGNOSTICS
+            v_error_message = MESSAGE_TEXT,
+            v_error_detail = PG_EXCEPTION_DETAIL,
+            v_error_code = RETURNED_SQLSTATE;
+
+        RAISE WARNING '[P1-001] Error inicializando misiones para usuario %: % (SQLSTATE: %)',
+            p_user_id, v_error_message, v_error_code;
+
+        -- Registrar en pending_user_initialization para retry posterior
+        BEGIN
+            INSERT INTO audit_logging.pending_user_initialization (
+                user_id,
+                profile_id,
+                error_message,
+                error_code,
+                error_detail,
+                trigger_name,
+                function_name,
+                status,
+                next_retry_at
+            ) VALUES (
+                p_user_id,
+                p_user_id,
+                v_error_message,
+                v_error_code,
+                v_error_detail,
+                'initialize_user_stats',
+                'gamilit.initialize_user_missions',
+                'pending',
+                gamilit.now_mexico() + INTERVAL '5 minutes'
+            );
+        EXCEPTION WHEN OTHERS THEN
+            RAISE WARNING '[P1-001] No se pudo registrar error de misiones: %', SQLERRM;
+        END;
+        -- No re-lanzar excepción, el usuario aún puede usar la plataforma sin misiones
 END;
 $$;
 

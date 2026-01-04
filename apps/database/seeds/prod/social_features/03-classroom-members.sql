@@ -1,7 +1,7 @@
 -- =====================================================
--- Seed: social_features.classroom_members (PROD)
+-- Seed: social_features.classroom_members (DEV)
 -- Description: Asignar TODOS los estudiantes al classroom DEFAULT
--- Environment: PRODUCTION
+-- Environment: DEVELOPMENT
 -- Dependencies: social_features.classrooms (02-classrooms.sql), auth_management.profiles
 -- Order: 03
 -- Created: 2025-01-11
@@ -15,9 +15,6 @@
 -- - Esto facilita la gestión inicial de usuarios nuevos
 --
 -- ASOCIACIONES DEMO REMOVIDAS (v3.0):
--- - 5to A (Marie Curie) - REMOVIDA
--- - 5to B (Marie Curie) - REMOVIDA
--- - 6to A (Marie Curie) - REMOVIDA
 -- - Todas las asociaciones específicas - REMOVIDAS
 --
 -- =====================================================

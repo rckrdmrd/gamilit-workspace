@@ -237,46 +237,30 @@ export function useMissions(_userId?: string): UseMissionsResult {
   const startMission = useCallback(
     async (missionId: string): Promise<MissionActionResult> => {
       try {
-        // TODO: Call real API
-        // const response = await fetch(`${API_BASE}/${missionId}/start`, {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        // });
-        // const data = await response.json();
+        // Call real API endpoint
+        const response = await apiClient.post(`${API_BASE}/${missionId}/start`);
+        const data = response.data;
 
-        // Mock implementation
-        const allMissions = [...dailyMissions, ...weeklyMissions, ...specialMissions];
-        const mission = allMissions.find((m) => m.id === missionId);
+        if (data.success) {
+          const { mission: updatedMission } = data.data;
 
-        if (!mission) {
+          // Update state
+          updateMissionInState(updatedMission);
+
+          // Refresh missions to sync state
+          await fetchMissions();
+
+          return {
+            success: true,
+            message: 'Misión iniciada con éxito',
+            mission: updatedMission,
+          };
+        } else {
           return {
             success: false,
-            message: 'Misión no encontrada',
+            message: data.error?.message || 'Error al iniciar la misión',
           };
         }
-
-        if (mission.status !== 'not_started') {
-          return {
-            success: false,
-            message: 'La misión ya fue iniciada',
-          };
-        }
-
-        // Update mission status
-        const updatedMission = {
-          ...mission,
-          status: 'in_progress' as const,
-          startedAt: new Date(),
-        };
-
-        // Update state
-        updateMissionInState(updatedMission);
-
-        return {
-          success: true,
-          message: 'Misión iniciada con éxito',
-          mission: updatedMission,
-        };
       } catch (err) {
         console.error('Error starting mission:', err);
         return {
@@ -285,7 +269,7 @@ export function useMissions(_userId?: string): UseMissionsResult {
         };
       }
     },
-    [dailyMissions, weeklyMissions, specialMissions, updateMissionInState],
+    [fetchMissions, updateMissionInState],
   );
 
   /**
@@ -457,18 +441,16 @@ async function fetchMissionsByType(type: MissionType): Promise<Mission[]> {
 
 /**
  * Helper: Fetch mission stats (real API implementation)
+ *
+ * NOTA: Usa /stats/me en lugar de /stats/:userId para evitar el error 403
+ * causado por desincronizacion entre authStore.user.id y JWT.user.id.
+ * El backend extrae el userId directamente del token JWT.
  */
 async function fetchMissionStats(): Promise<MissionStats> {
   try {
-    // Obtener userId del authStore en lugar de localStorage
-    const userId = useAuthStore.getState().user?.id;
-
-    if (!userId) {
-      console.warn('No user ID found in auth store');
-      throw new Error('Usuario no autenticado');
-    }
-
-    const response = await apiClient.get(`${API_BASE}/stats/${userId}`);
+    // Usar endpoint /stats/me que extrae userId del JWT
+    // Esto evita el error 403 "Cannot access stats of another user"
+    const response = await apiClient.get(`${API_BASE}/stats/me`);
     return response.data.success ? response.data.data : response.data;
   } catch (error) {
     console.error('Error fetching mission stats:', error);

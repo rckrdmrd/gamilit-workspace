@@ -1,7 +1,7 @@
 -- =====================================================
 -- Trigger: trg_update_missions_on_exercise
 -- Table: progress_tracking.exercise_attempts
--- Function: gamilit.update_missions_on_exercise_complete
+-- Function: gamilit.trigger_missions_on_exercise_complete (wrapper unificado)
 -- Event: AFTER INSERT
 -- Level: FOR EACH ROW
 -- Description: Actualiza progreso de misiones al completar ejercicios
@@ -44,7 +44,7 @@ DROP TRIGGER IF EXISTS trg_update_missions_on_exercise ON progress_tracking.exer
 CREATE TRIGGER trg_update_missions_on_exercise
     AFTER INSERT ON progress_tracking.exercise_attempts
     FOR EACH ROW
-    EXECUTE FUNCTION gamilit.update_missions_on_exercise_complete();
+    EXECUTE FUNCTION gamilit.trigger_missions_on_exercise_complete();
 
 -- =====================================================
 -- VERIFICACIÓN POST-CREACIÓN

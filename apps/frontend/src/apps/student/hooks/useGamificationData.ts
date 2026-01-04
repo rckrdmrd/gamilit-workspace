@@ -1,5 +1,19 @@
+/**
+ * @deprecated This hook is NOT used by any component in the application.
+ * Use `useUserGamification` from '@/shared/hooks/useUserGamification' instead.
+ *
+ * This file is kept for reference only and will be removed in a future release.
+ * All gamification data should be fetched using React Query via useDashboardData
+ * and useUserGamification hooks.
+ *
+ * @see useUserGamification - Active hook for gamification data
+ * @see useDashboardData - React Query based dashboard hook
+ * @see useInvalidateDashboard - Hook for cache invalidation
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 import type { MLCoinsData, RankData, AchievementData } from './useDashboardData';
 
 export interface LeaderboardEntry {
@@ -80,15 +94,15 @@ export function useGamificationData(userId: string) {
     setError(null);
 
     try {
-      // Fetch all data in parallel
+      // Fetch all data in parallel using centralized API_ENDPOINTS
       const [rankRes, coinsRes, achievementsRes, leaderboardRes, missionsRes, streaksRes] =
         await Promise.all([
-          apiClient.get(`/gamification/ranks/user/${userId}`),
-          apiClient.get(`/gamification/coins/${userId}`),
-          apiClient.get(`/gamification/users/${userId}/achievements?limit=6`),
-          apiClient.get(`/gamification/leaderboard/user/${userId}/position`),
-          apiClient.get(`/gamification/missions/daily`),
-          apiClient.get(`/gamification/streaks/${userId}`),
+          apiClient.get(API_ENDPOINTS.ranks.userRank(userId)),
+          apiClient.get(API_ENDPOINTS.gamification.mlCoins(userId)),
+          apiClient.get(`${API_ENDPOINTS.gamification.userAchievements(userId)}?limit=6`),
+          apiClient.get(API_ENDPOINTS.leaderboardPosition.user(userId)),
+          apiClient.get(API_ENDPOINTS.gamification.missions.daily),
+          apiClient.get(API_ENDPOINTS.streaks.user(userId)),
         ]);
 
       setData({

@@ -1,7 +1,7 @@
 -- =====================================================
 -- Trigger: trg_update_missions_on_explore_modules
 -- Table: progress_tracking.module_progress
--- Function: gamilit.update_missions_on_explore_modules
+-- Function: gamilit.trigger_missions_on_explore_modules (wrapper unificado)
 -- Event: AFTER INSERT OR UPDATE
 -- Level: FOR EACH ROW
 -- Description: Actualiza progreso de misiones al explorar módulos
@@ -63,7 +63,7 @@ DROP TRIGGER IF EXISTS trg_update_missions_on_explore_modules ON progress_tracki
 CREATE TRIGGER trg_update_missions_on_explore_modules
     AFTER INSERT OR UPDATE ON progress_tracking.module_progress
     FOR EACH ROW
-    EXECUTE FUNCTION gamilit.update_missions_on_explore_modules();
+    EXECUTE FUNCTION gamilit.trigger_missions_on_explore_modules();
 
 -- =====================================================
 -- VERIFICACIÓN POST-CREACIÓN

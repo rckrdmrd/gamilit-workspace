@@ -1,10 +1,14 @@
 import { IsArray, IsUUID, IsEnum, ArrayMinSize } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { GamilityRoleEnum } from '@shared/constants';
 
 /**
  * BulkUpdateRoleDto
  * DTO para actualizar roles de múltiples usuarios de forma masiva
  * Relacionado: EXT-002 (Admin Extendido - Bulk Operations)
+ *
+ * @note Usa GamilityRoleEnum alineado con DDL gamilit_role
+ * @see DDL: auth_management.gamilit_role ENUM
  */
 export class BulkUpdateRoleDto {
   @ApiProperty({
@@ -19,11 +23,11 @@ export class BulkUpdateRoleDto {
 
   @ApiProperty({
     description: 'Nuevo rol a asignar',
-    example: 'teacher',
-    enum: ['student', 'teacher', 'admin', 'super_admin'],
+    example: 'admin_teacher',
+    enum: GamilityRoleEnum,
   })
-  @IsEnum(['student', 'teacher', 'admin', 'super_admin'], {
-    message: 'Rol inválido. Debe ser: student, teacher, admin o super_admin',
+  @IsEnum(GamilityRoleEnum, {
+    message: 'Rol inválido. Debe ser: student, admin_teacher o super_admin',
   })
-    newRole!: 'student' | 'teacher' | 'admin' | 'super_admin';
+    newRole!: GamilityRoleEnum;
 }

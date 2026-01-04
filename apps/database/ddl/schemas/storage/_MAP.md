@@ -4,19 +4,19 @@ Schema de configuración de almacenamiento (S3/Storage compatible)
 
 ## Estructura
 
-- **enums/**: 1 archivos
+- **enums/**: 0 archivos activos
+- **enums/_deprecated/**: 1 archivo (buckettype - sin uso)
 
-**Total:** 1 objetos
+**Total:** 0 objetos activos
 
 ## Contenido Detallado
 
-### enums/ (1 archivos)
+### enums/_deprecated/
 
-```
-buckettype.sql
-```
+| ENUM | Razón Deprecación |
+|------|-------------------|
+| `buckettype` | Sin uso en ninguna tabla (DB-158) |
 
 ---
 
-**Última actualización:** 2025-11-09
-**Reorganización:** 2025-11-09
+**Última actualización:** 2025-12-29

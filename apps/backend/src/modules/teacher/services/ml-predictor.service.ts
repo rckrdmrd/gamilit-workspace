@@ -1,18 +1,28 @@
 /**
  * ML Predictor Service (Heuristic Placeholder)
  *
- * Este servicio implementa IMLPredictor usando HEURÍSTICAS simples.
- * NO contiene modelos de Machine Learning reales.
+ * ============================================================================
+ * ADVERTENCIA: IMPLEMENTACION PLACEHOLDER - NO ES ML REAL
+ * ============================================================================
  *
- * Propósito:
- * - Definir la estructura de servicios ML
- * - Proveer funcionalidad básica sin ML
- * - Facilitar futura migración a ML real
+ * Este servicio usa HEURISTICAS SIMPLES, NO modelos de Machine Learning reales.
+ * Las predicciones son APROXIMACIONES y NO deben usarse para decisiones criticas
+ * sobre estudiantes en produccion sin supervision humana.
+ *
+ * Limitaciones actuales:
+ * - predictCompletion(): Promedio ponderado simple (NO regresion ML)
+ * - predictDropoutRisk(): Inverso de completion (NO clasificador ML)
+ * - predictStruggleAreas(): Retorna array vacio (NO implementado)
+ * - calculateFeatureImportance(): Valores estaticos (NO SHAP/LIME)
  *
  * Para implementar ML real, ver:
- * - PythonMLPredictorService (integración con Python/FastAPI)
+ * - PythonMLPredictorService (integracion con Python/FastAPI)
  * - TensorFlowJSPredictorService (TensorFlow.js en Node)
  * - CloudMLPredictorService (AWS SageMaker, Azure ML, etc.)
+ *
+ * @version 0.0.1-heuristic
+ * @status PLACEHOLDER
+ * @priority P0-003 - Documentado 2025-12-28
  */
 
 import { Injectable, Logger } from '@nestjs/common';

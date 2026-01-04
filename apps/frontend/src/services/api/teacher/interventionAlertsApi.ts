@@ -8,6 +8,7 @@
  */
 
 import { apiClient } from '../apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -130,7 +131,7 @@ export const interventionAlertsApi = {
    * @returns Paginated list of alerts
    */
   getAlerts: async (params: GetAlertsParams = {}): Promise<InterventionAlertsListResponse> => {
-    const response = await apiClient.get('/teacher/alerts', { params });
+    const response = await apiClient.get(API_ENDPOINTS.teacher.alerts.list, { params });
     return response.data;
   },
 
@@ -141,7 +142,7 @@ export const interventionAlertsApi = {
    * @returns Alert details
    */
   getAlertById: async (alertId: string): Promise<StudentInterventionAlert> => {
-    const response = await apiClient.get(`/teacher/alerts/${alertId}`);
+    const response = await apiClient.get(API_ENDPOINTS.teacher.alerts.get(alertId));
     return response.data;
   },
 
@@ -152,7 +153,7 @@ export const interventionAlertsApi = {
    * @returns Updated alert
    */
   acknowledgeAlert: async (alertId: string): Promise<StudentInterventionAlert> => {
-    const response = await apiClient.patch(`/teacher/alerts/${alertId}/acknowledge`);
+    const response = await apiClient.patch(API_ENDPOINTS.teacher.alerts.acknowledge(alertId));
     return response.data;
   },
 
@@ -167,7 +168,7 @@ export const interventionAlertsApi = {
     alertId: string,
     data: ResolveAlertData,
   ): Promise<StudentInterventionAlert> => {
-    const response = await apiClient.patch(`/teacher/alerts/${alertId}/resolve`, data);
+    const response = await apiClient.patch(API_ENDPOINTS.teacher.alerts.resolve(alertId), data);
     return response.data;
   },
 
@@ -178,7 +179,7 @@ export const interventionAlertsApi = {
    * @returns Updated alert
    */
   dismissAlert: async (alertId: string): Promise<StudentInterventionAlert> => {
-    const response = await apiClient.patch(`/teacher/alerts/${alertId}/dismiss`);
+    const response = await apiClient.patch(API_ENDPOINTS.teacher.alerts.dismiss(alertId));
     return response.data;
   },
 
@@ -189,7 +190,7 @@ export const interventionAlertsApi = {
    * @returns List of alerts for the student
    */
   getStudentAlertHistory: async (studentId: string): Promise<StudentInterventionAlert[]> => {
-    const response = await apiClient.get(`/teacher/alerts/student/${studentId}/history`);
+    const response = await apiClient.get(API_ENDPOINTS.teacher.alerts.studentHistory(studentId));
     return response.data;
   },
 
@@ -199,7 +200,7 @@ export const interventionAlertsApi = {
    * @returns Success message
    */
   generateAlerts: async (): Promise<{ message: string }> => {
-    const response = await apiClient.post('/teacher/alerts/generate');
+    const response = await apiClient.post(API_ENDPOINTS.teacher.alerts.generate);
     return response.data;
   },
 };

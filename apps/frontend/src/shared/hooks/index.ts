@@ -20,3 +20,11 @@ export { useInvalidateDashboard } from './useInvalidateDashboard';
 export type { UseInvalidateDashboardReturn } from './useInvalidateDashboard';
 export { useUserPreferences } from './useUserPreferences';
 export type { UserPreferences, UseUserPreferencesReturn } from './useUserPreferences';
+export { useSpeechToText } from './useSpeechToText';
+export type {
+  UseSpeechToTextReturn,
+  UseSpeechToTextOptions,
+  SpeechError,
+  SpeechState,
+  SpeechLanguage,
+} from './useSpeechToText';

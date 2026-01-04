@@ -5,7 +5,8 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { VerdaderoFalsoStatement, VerdaderoFalsoExerciseProps } from './verdaderoFalsoTypes';
 import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { CheckCircle, XCircle } from 'lucide-react';
-import { submitExercise } from '@/services/api/educationalAPI';
+// CORRECCION-004: Migrar a progressAPI (API unificada)
+import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -127,16 +128,13 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         payload: answersObj,
       });
 
-      // Submit to backend API - using educationalAPI which handles auto-graded exercises
-      const response = await submitExercise(exercise.id, {
-        answers: answersObj,
-        startedAt: startTime.getTime(),
-        hintsUsed: hintsUsed,
-      });
+      // CORRECCION-004: Submit to progressAPI (API unificada)
+      const response = await submitExercise(exercise.id, user.id, answersObj);
 
-      // Show backend response
-      // Note: educationalAPI returns 'correctAnswers' (number), not 'correctAnswersCount'
-      const correctCount = response.correctAnswers ?? 0;
+      // CORRECCION-004: Usar correctAnswersCount (progressAPI) y agregar rewards
+      const correctCount = response.correctAnswersCount ?? 0;
+      const rewards = response.rewards || { mlCoins: 0, xp: 0 };
+
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
         title: response.isPerfect
@@ -145,12 +143,12 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
             ? '¡Buen trabajo!'
             : 'Intenta de nuevo',
         message:
-          (typeof response.feedback === 'object'
-            ? response.feedback?.overall
-            : response.feedback) ||
+          response.feedback?.overall ||
           `Has obtenido ${correctCount} de ${response.totalQuestions} respuestas correctas.`,
         score: response.score,
         showConfetti: response.isPerfect,
+        xpEarned: rewards.xp,
+        mlCoinsEarned: rewards.mlCoins,
       });
       setShowFeedback(true);
 

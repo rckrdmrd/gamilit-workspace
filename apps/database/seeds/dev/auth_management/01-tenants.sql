@@ -119,6 +119,38 @@ INSERT INTO auth_management.tenants (
     }'::jsonb,
     gamilit.now_mexico(),
     gamilit.now_mexico()
+),
+-- Tenant 4: GAMILIT Platform (Tenant principal para compatibilidad con seeds de produccion)
+-- NOTA: Este UUID es usado en 100+ seeds de gamification, profiles y content
+(
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
+    'GAMILIT Platform',
+    'gamilit-platform',
+    'platform.gamilit.com',
+    NULL,
+    'enterprise',
+    5000,
+    500,
+    true,
+    NULL,
+    '{
+        "theme": "detective",
+        "language": "es",
+        "timezone": "America/Mexico_City",
+        "features": {
+            "analytics_enabled": true,
+            "gamification_enabled": true,
+            "social_features_enabled": true
+        }
+    }'::jsonb,
+    '{
+        "description": "Tenant principal de GAMILIT Platform",
+        "environment": "production",
+        "created_by": "seed_script",
+        "is_primary": true
+    }'::jsonb,
+    gamilit.now_mexico(),
+    gamilit.now_mexico()
 )
 ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,

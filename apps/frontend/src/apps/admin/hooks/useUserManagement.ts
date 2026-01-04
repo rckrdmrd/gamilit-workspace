@@ -10,6 +10,7 @@
 
 import { useState, useCallback } from 'react';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 import * as adminAPI from '@/services/api/adminAPI';
 import type {
   SystemUser,
@@ -322,7 +323,7 @@ export function useUserManagement(): UseUserManagementResult {
    */
   const resetPassword = useCallback(async (userId: string): Promise<void> => {
     try {
-      await apiClient.post(`/admin/users/${userId}/reset-password`);
+      await apiClient.post(API_ENDPOINTS.admin.users.resetPassword(userId));
     } catch (err) {
       console.error('Failed to reset password:', err);
       throw err;

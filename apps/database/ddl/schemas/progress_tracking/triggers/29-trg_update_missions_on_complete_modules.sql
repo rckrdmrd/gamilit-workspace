@@ -1,7 +1,7 @@
 -- =====================================================
 -- Trigger: trg_update_missions_on_complete_modules
 -- Table: progress_tracking.module_progress
--- Function: gamilit.update_missions_on_complete_modules
+-- Function: gamilit.trigger_missions_on_complete_modules (wrapper unificado)
 -- Event: AFTER UPDATE
 -- Level: FOR EACH ROW
 -- Description: Actualiza progreso de misiones al completar módulos
@@ -74,7 +74,7 @@ CREATE TRIGGER trg_update_missions_on_complete_modules
         NEW.status = 'completed'
         AND (OLD.status IS DISTINCT FROM 'completed' OR OLD.status IS NULL)
     )
-    EXECUTE FUNCTION gamilit.update_missions_on_complete_modules();
+    EXECUTE FUNCTION gamilit.trigger_missions_on_complete_modules();
 
 -- =====================================================
 -- VERIFICACIÓN POST-CREACIÓN

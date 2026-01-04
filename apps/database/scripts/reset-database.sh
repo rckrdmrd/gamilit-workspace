@@ -1,9 +1,33 @@
 #!/bin/bash
 ##############################################################################
-# GAMILIT Platform - Database Reset Script
+# GAMILIT Platform - Database Reset Script v2.2
 #
 # Propósito: Reiniciar SOLO la base de datos (mantiene usuario existente)
 #            ⚠️  Elimina datos pero NO el usuario PostgreSQL
+#
+# Versión: 2.2 - Sincronizado con init-database.sh v3.9
+# Fecha: 2025-12-29
+#
+# Cambios v2.2 (2025-12-29):
+#   - Agregado system_configuration a execute_indexes (faltaba)
+#   - Agregado lti_integration a execute_triggers (faltaba)
+#   - Scripts sincronizados con estructura DDL actual
+#
+# Cambios v2.1 (2025-12-29):
+#   - CRÍTICO: Agregado execute_functions() - carga funciones unificadas de missions
+#   - CRÍTICO: Agregado execute_views() - carga vistas necesarias
+#   - CRÍTICO: Agregado execute_indexes() - carga índices de rendimiento
+#   - CRÍTICO: Agregado execute_triggers() - carga triggers de gamificación
+#   - Sin estas funciones, el sistema de misiones NO funcionaba después de reset
+#   - Pasos: 4 → 8 (DDL, funciones, vistas, índices, triggers, seeds, fix)
+#
+# Cambios v2.0 (2025-12-28):
+#   - Sincronizado con init-database.sh v3.8
+#   - 16 schemas (antes 9)
+#   - 56 seeds organizados en 10 fases (antes ~33)
+#   - Agregado gamilit, storage, admin_dashboard, communication, lti_integration, notifications
+#   - Agregado 00-schools-default.sql (crítico para FK)
+#   - Agregado función fix_profiles_and_gamification()
 #
 # Uso:
 #   ./reset-database.sh                         # Modo interactivo
@@ -15,7 +39,7 @@
 # Funcionalidades:
 #   1. ⚠️ Elimina la BD gamilit_platform
 #   2. ✅ Mantiene el usuario gamilit_user
-#   3. Recrea BD, ejecuta DDL y carga seeds
+#   3. Recrea BD, ejecuta DDL y carga seeds (sincronizado con init-database.sh)
 #
 # Ideal para:
 #   - Usuario ya existe con password conocido
@@ -246,9 +270,13 @@ execute_ddl() {
 
     export PGPASSWORD="$DB_PASSWORD"
 
+    # Array de schemas sincronizado con init-database.sh v3.8
     local schemas=(
         "auth"
         "auth_management"
+        "gamilit"
+        "storage"
+        "admin_dashboard"
         "system_configuration"
         "gamification_system"
         "educational_content"
@@ -256,6 +284,9 @@ execute_ddl() {
         "social_features"
         "progress_tracking"
         "audit_logging"
+        "communication"
+        "lti_integration"
+        "notifications"
     )
 
     # Crear schemas
@@ -263,7 +294,7 @@ execute_ddl() {
     for schema in "${schemas[@]}"; do
         psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "CREATE SCHEMA IF NOT EXISTS $schema;" > /dev/null 2>&1
     done
-    print_success "9 schemas creados"
+    print_success "15 schemas creados"
 
     # Crear ENUMs
     print_info "Creando ENUMs..."
@@ -306,45 +337,267 @@ execute_ddl() {
     unset PGPASSWORD
 }
 
-load_seeds() {
-    print_step "PASO 4/4: Cargando seeds..."
+# ============================================================================
+# PASO 4: EJECUTAR FUNCIONES (SINCRONIZADO CON init-database.sh v3.8)
+# ============================================================================
+
+execute_functions() {
+    print_step "PASO 4/8: Ejecutando funciones..."
 
     export PGPASSWORD="$DB_PASSWORD"
 
-    local seeds_base="$SEEDS_DIR/dev"
+    local function_count=0
+    local error_count=0
+    local schemas=(
+        "gamilit"
+        "auth_management"
+        "gamification_system"
+        "educational_content"
+        "content_management"
+        "social_features"
+        "progress_tracking"
+        "audit_logging"
+        "communication"
+        "lti_integration"
+        "notifications"
+        "admin_dashboard"
+        "system_configuration"
+    )
+
+    for schema in "${schemas[@]}"; do
+        local functions_dir="$DDL_DIR/schemas/$schema/functions"
+        if [ -d "$functions_dir" ]; then
+            for function_file in "$functions_dir"/*.sql; do
+                if [ -f "$function_file" ]; then
+                    if execute_sql_file "$function_file" > /dev/null 2>&1; then
+                        function_count=$((function_count + 1))
+                    else
+                        error_count=$((error_count + 1))
+                    fi
+                fi
+            done
+        fi
+    done
+
+    if [ $error_count -gt 0 ]; then
+        print_warning "$function_count funciones creadas, $error_count con errores"
+    else
+        print_success "$function_count funciones creadas exitosamente"
+    fi
+
+    unset PGPASSWORD
+}
+
+# ============================================================================
+# PASO 5: EJECUTAR VISTAS (SINCRONIZADO CON init-database.sh v3.8)
+# ============================================================================
+
+execute_views() {
+    print_step "PASO 5/8: Ejecutando vistas..."
+
+    export PGPASSWORD="$DB_PASSWORD"
+
+    local view_count=0
+    local error_count=0
+    local schemas=(
+        "admin_dashboard"
+        "auth"
+        "gamification_system"
+        "gamilit"
+        "progress_tracking"
+        "educational_content"
+        "social_features"
+    )
+
+    for schema in "${schemas[@]}"; do
+        local views_dir="$DDL_DIR/schemas/$schema/views"
+        if [ -d "$views_dir" ]; then
+            for view_file in "$views_dir"/*.sql; do
+                if [ -f "$view_file" ]; then
+                    if execute_sql_file "$view_file" > /dev/null 2>&1; then
+                        view_count=$((view_count + 1))
+                    else
+                        error_count=$((error_count + 1))
+                    fi
+                fi
+            done
+        fi
+    done
+
+    if [ $error_count -gt 0 ]; then
+        print_warning "$view_count vistas creadas, $error_count con errores"
+    else
+        print_success "$view_count vistas creadas exitosamente"
+    fi
+
+    unset PGPASSWORD
+}
+
+# ============================================================================
+# PASO 6: EJECUTAR ÍNDICES (SINCRONIZADO CON init-database.sh v3.8)
+# ============================================================================
+
+execute_indexes() {
+    print_step "PASO 6/8: Ejecutando índices..."
+
+    export PGPASSWORD="$DB_PASSWORD"
+
+    local index_count=0
+    local error_count=0
+    local schemas=(
+        "auth_management"
+        "content_management"
+        "gamification_system"
+        "educational_content"
+        "audit_logging"
+        "progress_tracking"
+        "social_features"
+        "system_configuration"
+    )
+
+    print_info "Creando índices..."
+
+    for schema in "${schemas[@]}"; do
+        local indexes_dir="$DDL_DIR/schemas/$schema/indexes"
+        if [ -d "$indexes_dir" ]; then
+            for index_file in "$indexes_dir"/*.sql; do
+                if [ -f "$index_file" ]; then
+                    if execute_sql_file "$index_file" > /dev/null 2>&1; then
+                        index_count=$((index_count + 1))
+                    else
+                        error_count=$((error_count + 1))
+                    fi
+                fi
+            done
+        fi
+    done
+
+    if [ $error_count -gt 0 ]; then
+        print_warning "$index_count índices creados, $error_count con errores"
+    else
+        print_success "$index_count índices creados exitosamente"
+    fi
+
+    unset PGPASSWORD
+}
+
+# ============================================================================
+# PASO 7: EJECUTAR TRIGGERS (SINCRONIZADO CON init-database.sh v3.8)
+# ============================================================================
+
+execute_triggers() {
+    print_step "PASO 7/8: Ejecutando triggers..."
+
+    export PGPASSWORD="$DB_PASSWORD"
+
+    local trigger_count=0
+    local error_count=0
+    local schemas=(
+        "auth_management"
+        "content_management"
+        "educational_content"
+        "gamification_system"
+        "social_features"
+        "progress_tracking"
+        "audit_logging"
+        "system_configuration"
+        "lti_integration"
+    )
+
+    for schema in "${schemas[@]}"; do
+        local triggers_dir="$DDL_DIR/schemas/$schema/triggers"
+        if [ -d "$triggers_dir" ]; then
+            for trigger_file in "$triggers_dir"/*.sql; do
+                if [ -f "$trigger_file" ]; then
+                    if execute_sql_file "$trigger_file" > /dev/null 2>&1; then
+                        trigger_count=$((trigger_count + 1))
+                    else
+                        error_count=$((error_count + 1))
+                    fi
+                fi
+            done
+        fi
+    done
+
+    if [ $error_count -gt 0 ]; then
+        print_warning "$trigger_count triggers creados, $error_count con errores"
+    else
+        print_success "$trigger_count triggers creados exitosamente"
+    fi
+
+    unset PGPASSWORD
+}
+
+# ============================================================================
+# PASO 8: CARGAR SEEDS
+# ============================================================================
+
+load_seeds() {
+    print_step "PASO 8/8: Cargando seeds..."
+
+    export PGPASSWORD="$DB_PASSWORD"
+
+    local seeds_base="$SEEDS_DIR/$ENVIRONMENT"
     local loaded=0
     local failed=0
 
-    # Array con orden específico respetando dependencias
+    # ============================================================================
+    # SEEDS SINCRONIZADOS CON init-database.sh v3.8 (56 seeds en 10 fases)
     # IMPORTANTE: Este orden es crítico para evitar errores de FK
+    # ============================================================================
     local seed_files=(
-        # 1. Tenants y auth providers (sin dependencias)
+        # =======================================================================
+        # FASE 1: Auth Base (4 seeds)
+        # =======================================================================
         "$seeds_base/auth_management/01-tenants.sql"
         "$seeds_base/auth_management/02-auth_providers.sql"
-
-        # 2. Users (depende de tenants - opcional)
         "$seeds_base/auth/01-demo-users.sql"
+        "$seeds_base/auth/02-production-users.sql"
 
-        # 3. Profiles (CRÍTICO: depende de users y tenants)
+        # =======================================================================
+        # FASE 2: Profiles (7 seeds)
+        # =======================================================================
         "$seeds_base/auth_management/03-profiles.sql"
-
-        # 4. Resto de auth_management
+        "$seeds_base/auth_management/04-profiles-complete.sql"
+        "$seeds_base/auth_management/06-profiles-production.sql"
         "$seeds_base/auth_management/04-user_roles.sql"
         "$seeds_base/auth_management/05-user_preferences.sql"
         "$seeds_base/auth_management/06-auth_attempts.sql"
         "$seeds_base/auth_management/07-security_events.sql"
 
-        # 5. System configuration
+        # =======================================================================
+        # FASE 3: System Configuration & Notifications (6 seeds)
+        # =======================================================================
         "$seeds_base/system_configuration/01-system_settings.sql"
+        "$seeds_base/system_configuration/01-feature_flags_seeds.sql"
         "$seeds_base/system_configuration/02-feature_flags.sql"
+        "$seeds_base/system_configuration/02-gamification_parameters_seeds.sql"
+        "$seeds_base/system_configuration/03-notification_settings_global.sql"
+        "$seeds_base/notifications/01-notification_templates.sql"
 
-        # 6. Gamificación (depende de users/profiles)
+        # =======================================================================
+        # FASE 4: Gamification Base (4 seeds)
+        # =======================================================================
         "$seeds_base/gamification_system/01-achievement_categories.sql"
-        "$seeds_base/gamification_system/02-achievements.sql"
-        "$seeds_base/gamification_system/03-leaderboard_metadata.sql"
-        "$seeds_base/gamification_system/04-initialize_user_gamification.sql"
+        "$seeds_base/gamification_system/02-leaderboard_metadata.sql"
+        "$seeds_base/gamification_system/03-maya_ranks.sql"
+        "$seeds_base/gamification_system/04-achievements.sql"
 
-        # 7. Educational content
+        # =======================================================================
+        # FASE 5: Gamification Avanzado (9 seeds)
+        # =======================================================================
+        "$seeds_base/gamification_system/05-user_stats.sql"
+        "$seeds_base/gamification_system/06-user_ranks.sql"
+        "$seeds_base/gamification_system/07-ml_coins_transactions.sql"
+        "$seeds_base/gamification_system/08-user_achievements.sql"
+        "$seeds_base/gamification_system/09-comodines_inventory.sql"
+        "$seeds_base/gamification_system/10-mission_templates.sql"
+        "$seeds_base/gamification_system/12-shop_categories.sql"
+        "$seeds_base/gamification_system/13-shop_items.sql"
+
+        # =======================================================================
+        # FASE 6: Educational Content (13 seeds)
+        # =======================================================================
         "$seeds_base/educational_content/01-modules.sql"
         "$seeds_base/educational_content/02-exercises-module1.sql"
         "$seeds_base/educational_content/03-exercises-module2.sql"
@@ -352,25 +605,44 @@ load_seeds() {
         "$seeds_base/educational_content/05-exercises-module4.sql"
         "$seeds_base/educational_content/06-exercises-module5.sql"
         "$seeds_base/educational_content/07-assessment-rubrics.sql"
+        "$seeds_base/educational_content/05-assignments.sql"
+        "$seeds_base/educational_content/08-difficulty_criteria.sql"
+        "$seeds_base/educational_content/09-exercise_mechanic_mapping.sql"
+        "$seeds_base/educational_content/10-exercise_validation_config.sql"
+        "$seeds_base/educational_content/11-module_dependencies.sql"
+        "$seeds_base/educational_content/12-taxonomies.sql"
 
-        # 8. Content management
+        # =======================================================================
+        # FASE 7: Content Management (3 seeds)
+        # =======================================================================
         "$seeds_base/content_management/01-marie-curie-bio.sql"
         "$seeds_base/content_management/02-media-files.sql"
         "$seeds_base/content_management/03-tags.sql"
 
-        # 9. Social features
+        # =======================================================================
+        # FASE 8: Social Features (6 seeds) - 00-schools-default PRIMERO (FK)
+        # =======================================================================
+        "$seeds_base/social_features/00-schools-default.sql"
         "$seeds_base/social_features/01-schools.sql"
         "$seeds_base/social_features/02-classrooms.sql"
         "$seeds_base/social_features/03-classroom-members.sql"
         "$seeds_base/social_features/04-teams.sql"
+        "$seeds_base/social_features/04-friendships.sql"
+        "$seeds_base/social_features/05-teacher-reports.sql"
 
-        # 10. Progress tracking
+        # =======================================================================
+        # FASE 9: Progress & Audit (5 seeds)
+        # =======================================================================
         "$seeds_base/progress_tracking/01-demo-progress.sql"
         "$seeds_base/progress_tracking/02-exercise-attempts.sql"
-
-        # 11. Audit logging
+        "$seeds_base/progress_tracking/03-manual-reviews.sql"
         "$seeds_base/audit_logging/01-audit-logs.sql"
         "$seeds_base/audit_logging/02-system-metrics.sql"
+
+        # =======================================================================
+        # FASE 10: Integraciones (1 seed)
+        # =======================================================================
+        "$seeds_base/lti_integration/01-lti_consumers.sql"
     )
 
     for seed_file in "${seed_files[@]}"; do
@@ -397,6 +669,134 @@ load_seeds() {
     fi
 
     unset PGPASSWORD
+}
+
+# ============================================================================
+# POST-SEEDS: FIX PROFILES Y GAMIFICACIÓN
+# Sincronizado con init-database.sh v3.8
+# ============================================================================
+
+fix_profiles_and_gamification() {
+    print_step "Post-seeds: Sincronizando profiles y gamificación..."
+
+    # Transacción 1: Insertar profiles con triggers deshabilitados
+    local fix_profiles_sql="
+BEGIN;
+ALTER TABLE auth_management.profiles DISABLE TRIGGER ALL;
+
+INSERT INTO auth_management.profiles (
+    user_id,
+    tenant_id,
+    email,
+    first_name,
+    last_name,
+    display_name,
+    full_name,
+    role
+)
+SELECT
+    u.id as user_id,
+    (SELECT id FROM auth_management.tenants ORDER BY created_at ASC LIMIT 1) as tenant_id,
+    u.email,
+    COALESCE(u.raw_user_meta_data->>'firstName', SPLIT_PART(u.email, '@', 1)) as first_name,
+    COALESCE(u.raw_user_meta_data->>'lastName', 'Usuario') as last_name,
+    SPLIT_PART(u.email, '@', 1) as display_name,
+    CONCAT(
+        COALESCE(u.raw_user_meta_data->>'firstName', SPLIT_PART(u.email, '@', 1)),
+        ' ',
+        COALESCE(u.raw_user_meta_data->>'lastName', 'Usuario')
+    ) as full_name,
+    CASE
+        WHEN u.gamilit_role IN ('student', 'admin_teacher', 'super_admin')
+        THEN u.gamilit_role
+        ELSE 'student'::auth_management.gamilit_role
+    END as role
+FROM auth.users u
+WHERE NOT EXISTS (
+    SELECT 1 FROM auth_management.profiles p WHERE p.user_id = u.id
+)
+ON CONFLICT (user_id) DO NOTHING;
+
+ALTER TABLE auth_management.profiles ENABLE TRIGGER ALL;
+COMMIT;
+"
+
+    # Transacción 2: Inicializar user_stats (después de que profiles existan)
+    local fix_stats_sql="
+BEGIN;
+INSERT INTO gamification_system.user_stats (
+    user_id,
+    tenant_id,
+    total_xp,
+    level,
+    current_rank,
+    ml_coins,
+    ml_coins_earned_total
+)
+SELECT
+    p.id,
+    p.tenant_id,
+    0,
+    1,
+    'Ajaw',
+    100,
+    100
+FROM auth_management.profiles p
+WHERE p.role IN ('student', 'admin_teacher', 'super_admin')
+  AND NOT EXISTS (
+    SELECT 1 FROM gamification_system.user_stats us WHERE us.user_id = p.id
+)
+ON CONFLICT (user_id) DO NOTHING;
+COMMIT;
+"
+
+    # Transacción 3: Inicializar user_ranks
+    local fix_ranks_sql="
+BEGIN;
+INSERT INTO gamification_system.user_ranks (
+    user_id,
+    tenant_id,
+    current_rank,
+    is_current,
+    achieved_at
+)
+SELECT
+    p.id,
+    p.tenant_id,
+    'Ajaw'::gamification_system.maya_rank,
+    true,
+    NOW()
+FROM auth_management.profiles p
+WHERE p.role IN ('student', 'admin_teacher', 'super_admin')
+  AND NOT EXISTS (
+    SELECT 1 FROM gamification_system.user_ranks ur WHERE ur.user_id = p.id
+);
+COMMIT;
+"
+
+    local fix_sql="$fix_profiles_sql $fix_stats_sql $fix_ranks_sql"
+
+    # Ejecutar como superuser (postgres) para poder deshabilitar triggers del sistema
+    if [ "$USE_SUDO" = true ]; then
+        if echo "$fix_sql" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1; then
+            local profile_count=$(PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
+                "SELECT COUNT(*) FROM auth_management.profiles;" 2>/dev/null || echo "0")
+            local stats_count=$(PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
+                "SELECT COUNT(*) FROM gamification_system.user_stats;" 2>/dev/null || echo "0")
+            local ranks_count=$(PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
+                "SELECT COUNT(*) FROM gamification_system.user_ranks WHERE is_current = true;" 2>/dev/null || echo "0")
+            print_success "$profile_count profiles, $stats_count user_stats, $ranks_count user_ranks sincronizados"
+        else
+            print_warning "Error sincronizando profiles (algunos seeds pueden haber fallado)"
+        fi
+    else
+        # Sin sudo, intentar con PGPASSWORD
+        if echo "$fix_sql" | PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" > /dev/null 2>&1; then
+            print_success "Profiles y gamificación sincronizados"
+        else
+            print_warning "No se pudo sincronizar profiles (requiere permisos de superuser)"
+        fi
+    fi
 }
 
 # ============================================================================
@@ -485,7 +885,12 @@ main() {
     drop_database
     create_database
     execute_ddl
+    execute_functions
+    execute_views
+    execute_indexes
+    execute_triggers
     load_seeds
+    fix_profiles_and_gamification
 
     print_header "✅ BASE DE DATOS RESETEADA"
 

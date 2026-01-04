@@ -10,7 +10,7 @@ import {
   passwordRecoverySchema,
   PasswordRecoveryFormData,
 } from '@features/auth/schemas/authSchemas';
-import { mockPasswordRecovery } from '@features/auth/mocks/authMocks';
+import { passwordAPI } from '@/services/api/passwordAPI';
 import { Target, Mail, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -37,15 +37,13 @@ export default function PasswordRecoveryPage() {
     setServerError('');
 
     try {
-      const response = await mockPasswordRecovery(data.email);
-
-      if (response.success) {
-        setEmailSent(true);
-      } else {
-        setServerError(response.error || 'Error al enviar el email');
-      }
-    } catch (error) {
-      setServerError('Error de conexión. Intenta nuevamente.');
+      await passwordAPI.requestPasswordReset(data.email);
+      setEmailSent(true);
+    } catch (error: unknown) {
+      const errorMessage =
+        (error as { message?: string })?.message ||
+        'Error al enviar el email. Intenta nuevamente.';
+      setServerError(errorMessage);
     } finally {
       setLoading(false);
     }

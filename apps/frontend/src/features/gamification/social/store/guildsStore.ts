@@ -8,8 +8,8 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { Guild, GuildMember, GuildChallenge, GuildActivity } from '../types/guildsTypes';
-import { guildChallengesMockData, guildActivitiesMockData } from '../mockData/guildsMockData';
 import { teamsAPI, type TeamDTO, type TeamMemberDTO } from '@/services/api/teamsAPI';
+import { apiClient } from '@/services/api/apiClient';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
 interface GuildsStore {
@@ -25,6 +25,7 @@ interface GuildsStore {
   fetchAllGuilds: (classroomId?: string) => Promise<void>;
   fetchUserGuild: (userId: string) => Promise<void>;
   fetchGuildMembers: (guildId: string) => Promise<void>;
+  fetchGuildChallenges: (guildId: string) => Promise<void>;
   joinGuild: (guildId: string) => Promise<void>;
   leaveGuild: (guildId: string) => Promise<void>;
   createGuild: (guild: Partial<Guild>) => Promise<void>;
@@ -88,8 +89,8 @@ export const useGuildsStore = create<GuildsStore>()(
       allGuilds: [],
       userGuild: null,
       guildMembers: [],
-      guildChallenges: guildChallengesMockData,
-      guildActivities: guildActivitiesMockData,
+      guildChallenges: [],
+      guildActivities: [],
       isInGuild: false,
       loading: false,
       error: null,
@@ -101,7 +102,7 @@ export const useGuildsStore = create<GuildsStore>()(
           const guilds = teams.map(mapTeamToGuild);
           set({ allGuilds: guilds, loading: false });
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to fetch guilds', loading: false });
+          set({ error: (error as Error).message || 'Failed to fetch guilds', loading: false });
         }
       },
 
@@ -116,11 +117,14 @@ export const useGuildsStore = create<GuildsStore>()(
             const team = await teamsAPI.getTeamById(teamId);
             const guild = mapTeamToGuild(team);
             set({ userGuild: guild, isInGuild: true, loading: false });
+
+            // Also fetch guild challenges
+            get().fetchGuildChallenges(teamId);
           } else {
-            set({ userGuild: null, isInGuild: false, loading: false });
+            set({ userGuild: null, isInGuild: false, guildChallenges: [], loading: false });
           }
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to fetch user guild', loading: false });
+          set({ error: (error as Error).message || 'Failed to fetch user guild', loading: false });
         }
       },
 
@@ -131,7 +135,50 @@ export const useGuildsStore = create<GuildsStore>()(
           const guildMembers = members.map(mapTeamMemberToGuildMember);
           set({ guildMembers, loading: false });
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to fetch guild members', loading: false });
+          set({ error: (error as Error).message || 'Failed to fetch guild members', loading: false });
+        }
+      },
+
+      fetchGuildChallenges: async (guildId: string) => {
+        set({ loading: true, error: null });
+        try {
+          const response = await apiClient.get(`/social/team-challenges/teams/${guildId}`);
+          const challengesData = response.data;
+
+          // Map backend response to GuildChallenge type
+          const guildChallenges: GuildChallenge[] = (Array.isArray(challengesData) ? challengesData : []).map((c: {
+            id: string;
+            challenge_id: string;
+            status: string;
+            score: number;
+            max_score?: number;
+            started_at?: string;
+            completed_at?: string;
+            created_at?: string;
+            challenge?: {
+              name?: string;
+              description?: string;
+              xp_reward?: number;
+              ml_coins_reward?: number;
+            };
+          }) => ({
+            id: c.id,
+            name: c.challenge?.name || `Challenge ${c.challenge_id}`,
+            description: c.challenge?.description || '',
+            type: 'team' as const,
+            status: c.status === 'completed' ? 'completed' : c.status === 'in_progress' ? 'in_progress' : 'active',
+            progress: c.score || 0,
+            target: c.max_score || 100,
+            xpReward: c.challenge?.xp_reward || 0,
+            mlCoinsReward: c.challenge?.ml_coins_reward || 0,
+            startDate: c.started_at ? new Date(c.started_at) : new Date(c.created_at || Date.now()),
+            endDate: c.completed_at ? new Date(c.completed_at) : undefined,
+          }));
+
+          set({ guildChallenges, loading: false });
+        } catch (error: unknown) {
+          console.error('Failed to fetch guild challenges:', error);
+          set({ guildChallenges: [], error: (error as Error).message || 'Failed to fetch guild challenges', loading: false });
         }
       },
 

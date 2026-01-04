@@ -1,79 +1,70 @@
 # Schema: audit_logging
 
-Auditoría y logging: actividad de usuarios, eventos del sistema, métricas
+Auditoria y logging: actividad de usuarios, eventos del sistema, metricas de rendimiento.
 
 ## Estructura
 
-- **tables/**: 6 archivos
-- **enums/**: 2 archivos
-- **functions/**: 4 archivos
-- **triggers/**: 1 archivos
+- **tables/**: 8 archivos
+- **enums/**: 1 archivo activo
+- **enums/_deprecated/**: 1 archivo (aggregation_period - sin uso)
+- **functions/**: 6 archivos
+- **triggers/**: 1 archivo
 - **indexes/**: 14 archivos
-- **rls-policies/**: 1 archivos
+- **rls-policies/**: 1 archivo
 
-**Total:** 28 objetos
+**Total:** 32 objetos DDL
 
-## Contenido Detallado
+## Tablas Principales
 
-### tables/ (6 archivos)
+| Tabla | Proposito |
+|-------|-----------|
+| `audit_logs` | Registro de eventos de auditoria (cambios de rol, status, etc.) |
+| `performance_metrics` | Metricas de rendimiento del sistema |
+| `system_alerts` | Alertas del sistema |
+| `system_logs` | Logs generales del sistema |
+| `user_activity_logs` | Logs de actividad de usuarios |
+| `activity_log` | Log de actividad detallado |
+| `user_activity` | Resumen de actividad por usuario |
+| `pending_user_initialization` | Usuarios cuya inicializacion de gamificacion fallo (retry automatico) |
 
-```
-01-audit_logs.sql
-02-performance_metrics.sql
-03-system_alerts.sql
-04-system_logs.sql
-05-user_activity_logs.sql
-06-user_activity.sql
-```
+## Funciones
 
-### enums/ (2 archivos)
+| Funcion | Proposito |
+|---------|-----------|
+| `cleanup_old_system_logs` | Limpieza de logs antiguos |
+| `cleanup_old_user_activity` | Limpieza de actividad antigua |
+| `log_audit_event` | Registrar evento de auditoria |
+| `log_system_event` | Registrar evento del sistema |
+| `resolve_pending_initialization` | Marcar inicializacion pendiente como resuelta |
+| `retry_pending_initializations` | Reintenta inicializacion de usuarios con gamificacion fallida |
+| `get_pending_initialization_stats` | Estadisticas de registros pendientes agrupados por status |
 
-```
-aggregation_period.sql
-metric_type.sql
-```
+## Tabla pending_user_initialization
 
-### functions/ (4 archivos)
+Tabla especial para monitorear y reintentar inicializaciones fallidas:
 
-```
-cleanup_old_system_logs.sql
-cleanup_old_user_activity.sql
-log_audit_event.sql
-log_system_event.sql
-```
-
-### triggers/ (1 archivos)
-
-```
-01-trg_system_alerts_updated_at.sql
-```
-
-### indexes/ (14 archivos)
-
-```
-idx_activity_created.sql
-idx_activity_module.sql
-idx_activity_session.sql
-idx_activity_type.sql
-idx_activity_user.sql
-idx_alerts_open.sql
-idx_alerts_severity.sql
-idx_alerts_status.sql
-idx_alerts_triggered.sql
-idx_alerts_type.sql
-idx_audit_logs_actor.sql
-idx_audit_logs_correlation.sql
-idx_audit_logs_created.sql
-idx_audit_logs_event_type.sql
+```sql
+-- Campos principales
+user_id UUID        -- Usuario que fallo
+profile_id UUID     -- Perfil asociado
+error_message TEXT  -- Mensaje de error
+error_code TEXT     -- SQLSTATE
+retry_count INT     -- Intentos realizados
+status TEXT         -- pending, retrying, resolved, failed, manual
+next_retry_at TIMESTAMPTZ  -- Proximo intento programado
 ```
 
-### rls-policies/ (1 archivos)
+**Usos:**
+1. Triggers de gamificacion registran aqui errores sin bloquear creacion de usuario
+2. Funcion `retry_pending_initializations()` reintenta automaticamente
+3. Admin puede revisar y resolver manualmente
 
-```
-01-policies.sql
+**Estadisticas:**
+```sql
+SELECT * FROM audit_logging.get_pending_initialization_stats();
+-- Retorna conteo por status
 ```
 
 ---
 
-**Última actualización:** 2025-11-09
-**Reorganización:** 2025-11-09
+**Ultima actualizacion:** 2025-12-29

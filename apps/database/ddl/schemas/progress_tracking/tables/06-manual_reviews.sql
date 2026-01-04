@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS progress_tracking.manual_reviews (
 
     -- Relaciones
     submission_id UUID NOT NULL REFERENCES progress_tracking.exercise_submissions(id) ON DELETE CASCADE,
-    reviewer_id UUID NOT NULL REFERENCES auth_management.profiles(id),
+    -- ON DELETE RESTRICT: No permitir eliminar profesor si tiene reviews pendientes
+    reviewer_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE RESTRICT,
 
     -- Evaluación con rúbricas (estructura JSONB flexible)
     rubric_scores JSONB NOT NULL DEFAULT '{}',

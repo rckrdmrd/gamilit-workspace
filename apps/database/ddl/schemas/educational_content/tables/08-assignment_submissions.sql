@@ -15,7 +15,8 @@ CREATE TABLE educational_content.assignment_submissions (
     score NUMERIC(5,2),
     feedback TEXT,
     graded_at TIMESTAMP WITH TIME ZONE,
-    graded_by UUID REFERENCES auth_management.profiles(id),
+    -- ON DELETE SET NULL: Preservar calificación si el profesor es eliminado
+    graded_by UUID REFERENCES auth_management.profiles(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(assignment_id, student_id)

@@ -275,7 +275,7 @@ ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     completion_percentage = EXCLUDED.completion_percentage;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- PROFESOR 2: Laura Mart�nez (5 achievements de profesora)
+-- ESTUDIANTE: Fernando Barragan (5 achievements de estudiante)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 INSERT INTO gamification_system.user_achievements

@@ -426,8 +426,9 @@ export class TeacherDashboardService {
 
       if (studentSubmissions.length === 0) continue;
 
+      // Calculate total XP from xp_earned field (stored in each submission)
       const totalXP = studentSubmissions.reduce(
-        (sum, sub) => sum + (sub.is_correct ? 50 : 0), // TODO: Get actual XP from exercise
+        (sum, sub) => sum + (sub.xp_earned || 0),
         0,
       );
 

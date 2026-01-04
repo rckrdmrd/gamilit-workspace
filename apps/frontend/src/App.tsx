@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/app/providers/AuthContext';
-import { ProtectedRoute } from '@/shared/components/ProtectedRoute';
+import { ProtectedRoute, UnauthorizedPage } from '@/shared/components/ProtectedRoute';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
 import { ForgotPasswordPage } from '@/pages/auth/ForgotPasswordPage';
@@ -9,7 +9,7 @@ import DashboardComplete from '@/apps/student/pages/DashboardComplete';
 import { MyProgressPage } from '@/pages/MyProgressPage';
 import { ModuleDetailsPage } from '@/pages/ModuleDetailsPage';
 import { AchievementsPage } from '@/pages/AchievementsPage';
-import { LeaderboardPage } from '@/pages/LeaderboardPage';
+import LeaderboardPage from '@/apps/student/pages/LeaderboardPage';
 import PasswordResetPage from '@/apps/student/pages/PasswordResetPage';
 import EmailVerificationPage from '@/apps/student/pages/EmailVerificationPage';
 import SettingsPage from '@/apps/student/pages/SettingsPage';
@@ -26,6 +26,7 @@ import { NotificationPreferencesPage } from '@/apps/student/pages/NotificationPr
 import { DeviceManagementSection } from '@/apps/student/pages/DeviceManagementSection';
 import NotificationsPage from '@/apps/student/pages/NotificationsPage';
 import AssignmentsPage from '@/apps/student/pages/AssignmentsPage';
+import AssignmentDetailPage from '@/apps/student/pages/AssignmentDetailPage';
 
 // Teacher Portal Pages
 import TeacherDashboardPage from '@/apps/teacher/pages/TeacherDashboardPage';
@@ -127,7 +128,7 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <DashboardComplete />
               </ProtectedRoute>
             }
@@ -137,7 +138,7 @@ function App() {
           <Route
             path="/teacher/dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherDashboardPage />
               </ProtectedRoute>
             }
@@ -145,7 +146,7 @@ function App() {
           <Route
             path="/teacher/alerts"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherAlertsPage />
               </ProtectedRoute>
             }
@@ -153,7 +154,7 @@ function App() {
           <Route
             path="/teacher/analytics"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherAnalyticsPage />
               </ProtectedRoute>
             }
@@ -161,7 +162,7 @@ function App() {
           <Route
             path="/teacher/assignments"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherAssignmentsPage />
               </ProtectedRoute>
             }
@@ -169,7 +170,7 @@ function App() {
           <Route
             path="/teacher/communication"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherCommunicationPage />
               </ProtectedRoute>
             }
@@ -177,7 +178,7 @@ function App() {
           <Route
             path="/teacher/content"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherContentPage />
               </ProtectedRoute>
             }
@@ -185,7 +186,7 @@ function App() {
           <Route
             path="/teacher/gamification"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherGamificationPage />
               </ProtectedRoute>
             }
@@ -193,7 +194,7 @@ function App() {
           <Route
             path="/teacher/monitoring"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherMonitoringPage />
               </ProtectedRoute>
             }
@@ -201,7 +202,7 @@ function App() {
           <Route
             path="/teacher/progress"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherProgressPage />
               </ProtectedRoute>
             }
@@ -209,7 +210,7 @@ function App() {
           <Route
             path="/teacher/reports"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherReportsPage />
               </ProtectedRoute>
             }
@@ -217,7 +218,7 @@ function App() {
           <Route
             path="/teacher/responses"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherExerciseResponsesPage />
               </ProtectedRoute>
             }
@@ -230,7 +231,7 @@ function App() {
           <Route
             path="/teacher/classes"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherClassesPage />
               </ProtectedRoute>
             }
@@ -238,7 +239,7 @@ function App() {
           <Route
             path="/teacher/students"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherStudentsPage />
               </ProtectedRoute>
             }
@@ -246,7 +247,7 @@ function App() {
           <Route
             path="/teacher/settings"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherSettingsPage />
               </ProtectedRoute>
             }
@@ -255,7 +256,7 @@ function App() {
           <Route
             path="/teacher/reviews"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <ReviewPanelPage />
               </ProtectedRoute>
             }
@@ -387,7 +388,7 @@ function App() {
           <Route
             path="/progress"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <MyProgressPage />
               </ProtectedRoute>
             }
@@ -395,7 +396,7 @@ function App() {
           <Route
             path="/progress/modules/:moduleId"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <ModuleDetailsPage />
               </ProtectedRoute>
             }
@@ -405,7 +406,7 @@ function App() {
           <Route
             path="/achievements"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <AchievementsPage />
               </ProtectedRoute>
             }
@@ -415,7 +416,7 @@ function App() {
           <Route
             path="/leaderboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <LeaderboardPage />
               </ProtectedRoute>
             }
@@ -425,7 +426,7 @@ function App() {
           <Route
             path="/exercises/:exerciseId"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <ExercisePage />
               </ProtectedRoute>
             }
@@ -435,7 +436,7 @@ function App() {
           <Route
             path="/missions"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <MissionsPage />
               </ProtectedRoute>
             }
@@ -445,8 +446,16 @@ function App() {
           <Route
             path="/assignments"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <AssignmentsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/assignments/:id"
+            element={
+              <ProtectedRoute allowedRoles={['student']}>
+                <AssignmentDetailPage />
               </ProtectedRoute>
             }
           />
@@ -455,7 +464,7 @@ function App() {
           <Route
             path="/modules/:moduleId"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <ModuleDetailPage />
               </ProtectedRoute>
             }
@@ -465,7 +474,7 @@ function App() {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <EnhancedProfilePage />
               </ProtectedRoute>
             }
@@ -475,7 +484,7 @@ function App() {
           <Route
             path="/settings"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <SettingsPage />
               </ProtectedRoute>
             }
@@ -485,7 +494,7 @@ function App() {
           <Route
             path="/notifications"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <NotificationsPage />
               </ProtectedRoute>
             }
@@ -495,7 +504,7 @@ function App() {
           <Route
             path="/settings/notifications"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <NotificationPreferencesPage />
               </ProtectedRoute>
             }
@@ -504,7 +513,7 @@ function App() {
           <Route
             path="/settings/devices"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <DeviceManagementSection />
               </ProtectedRoute>
             }
@@ -514,7 +523,7 @@ function App() {
           <Route
             path="/friends"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <FriendsPage />
               </ProtectedRoute>
             }
@@ -523,7 +532,7 @@ function App() {
           <Route
             path="/guilds"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <GuildsPage />
               </ProtectedRoute>
             }
@@ -533,7 +542,7 @@ function App() {
           <Route
             path="/shop"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <ShopPage />
               </ProtectedRoute>
             }
@@ -542,11 +551,14 @@ function App() {
           <Route
             path="/inventory"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['student']}>
                 <InventoryPage />
               </ProtectedRoute>
             }
           />
+
+          {/* Unauthorized Page */}
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
           {/* 404 - Not Found */}
           <Route path="*" element={<NotFoundPage />} />

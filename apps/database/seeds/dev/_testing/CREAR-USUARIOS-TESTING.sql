@@ -131,6 +131,7 @@ INSERT INTO auth.users (
 )
 ON CONFLICT (email) DO UPDATE SET
     encrypted_password = EXCLUDED.encrypted_password,
+    gamilit_role = EXCLUDED.gamilit_role,
     updated_at = NOW();
 
 -- =====================================================

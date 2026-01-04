@@ -139,6 +139,9 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
       setShowResults(true);
       setScore(response.score);
 
+      // CORRECCION-003: Agregar rewards al feedback
+      const rewards = response.rewards || { mlCoins: 0, xp: 0 };
+
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
@@ -152,6 +155,8 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
           `Has ordenado ${response.correctAnswersCount} de ${response.totalQuestions} fragmentos correctamente.`,
         score: response.score,
         showConfetti: response.isPerfect,
+        xpEarned: rewards.xp,
+        mlCoinsEarned: rewards.mlCoins,
       });
       setShowFeedback(true);
 

@@ -92,7 +92,7 @@ export interface ManualReview {
  * Request to start a review
  */
 export interface StartReviewRequest {
-  submissionId: string;
+  reviewId: string;
 }
 
 /**
@@ -157,12 +157,12 @@ export const getReviewById = async (reviewId: string): Promise<ManualReview> => 
 /**
  * Start a review (marks it as in_progress and assigns to current teacher)
  *
- * @param submissionId - Submission ID to review
- * @returns Created/started review
+ * @param reviewId - Review ID to start
+ * @returns Started review
  */
-export const startReview = async (submissionId: string): Promise<ManualReview> => {
+export const startReview = async (reviewId: string): Promise<ManualReview> => {
   const { data } = await apiClient.post<ManualReview>(
-    API_ENDPOINTS.teacher.reviews.start(submissionId),
+    API_ENDPOINTS.teacher.reviews.start(reviewId),
     {}
   );
   return data;
