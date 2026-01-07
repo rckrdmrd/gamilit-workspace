@@ -4,6 +4,10 @@ import type {
   UserAchievement,
   AchievementSummary,
 } from '@/shared/types/achievement.types';
+import {
+  transformUserAchievements,
+  type ApiUserAchievementResponse,
+} from '@/features/gamification/achievements/utils/achievementTransformer';
 import type {
   LeaderboardResponse,
   LeaderboardType,
@@ -98,13 +102,16 @@ export const gamificationApi = {
   /**
    * Get user's achievement progress
    * @param userId - User ID
-   * @returns List of user achievements with progress
+   * @returns List of user achievements with progress (transformed from snake_case)
+   *
+   * FIX: CORR-004 - Transformer mapea snake_case del backend a camelCase del frontend
    */
   getUserAchievements: async (userId: string): Promise<UserAchievement[]> => {
-    const { data } = await apiClient.get<UserAchievement[]>(
+    const { data } = await apiClient.get<ApiUserAchievementResponse[]>(
       `/gamification/users/${userId}/achievements`,
     );
-    return data;
+    // Transformar respuesta del backend (snake_case) al formato del frontend (camelCase)
+    return transformUserAchievements(data);
   },
 
   /**

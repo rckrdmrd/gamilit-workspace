@@ -6,7 +6,9 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  NotFoundException,
 } from '@nestjs/common';
+import { CurrentUser, RequestUser } from '@shared/decorators/current-user.decorator';
 import {
   ApiTags,
   ApiOperation,
@@ -140,6 +142,70 @@ export class LeaderboardController {
       parsedOffset,
       timePeriod,
     );
+  }
+
+  /**
+   * Obtiene la posicion del usuario actual en el leaderboard
+   *
+   * FIX: CORR-004 - Endpoint faltante que el frontend necesita
+   *
+   * @param type - Tipo de leaderboard: global, school, classroom (default: global)
+   * @param period - Periodo: all-time, this-week, this-month (default: all-time)
+   * @returns Entrada del leaderboard con posicion del usuario
+   *
+   * @example
+   * GET /api/v1/gamification/leaderboards/user-rank?type=global&period=all-time
+   */
+  @Get('leaderboards/user-rank')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get current user leaderboard position',
+    description: 'Obtiene la posicion del usuario autenticado en el leaderboard',
+  })
+  @ApiQuery({
+    name: 'type',
+    required: false,
+    type: String,
+    description: 'Tipo de leaderboard',
+    example: 'global',
+  })
+  @ApiQuery({
+    name: 'period',
+    required: false,
+    type: String,
+    description: 'Periodo de tiempo',
+    example: 'all-time',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Posicion del usuario en el leaderboard',
+  })
+  async getUserRank(
+    @CurrentUser() user: RequestUser,
+    @Query('type') type: string = 'global',
+    @Query('period') period: string = 'all-time',
+  ) {
+    if (!user?.sub) {
+      throw new NotFoundException('User not authenticated');
+    }
+
+    const userId = user.sub;
+    const userPosition = await this.leaderboardService.getUserPosition(userId);
+
+    return {
+      success: true,
+      data: {
+        rank: userPosition?.rank || null,
+        userId: userId,
+        username: userPosition?.username || null,
+        avatar: userPosition?.avatar || null,
+        totalXP: userPosition?.totalXP || 0,
+        level: userPosition?.level || 1,
+        type: type,
+        period: period,
+        isCurrentUser: true,
+      },
+    };
   }
 
   /**

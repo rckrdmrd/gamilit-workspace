@@ -448,10 +448,14 @@ export const getLeaderboard = async (
  * @param period - Time period
  * @returns User's leaderboard entry
  */
+/**
+ * FIX: CORR-004 - Modificado para retornar null en caso de error 404
+ * en lugar de lanzar excepcion, para no romper el flujo principal
+ */
 export const getUserLeaderboardRank = async (
   type: LeaderboardType,
   period: TimePeriod = 'all-time',
-): Promise<LeaderboardEntry> => {
+): Promise<LeaderboardEntry | null> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 400));
@@ -477,7 +481,15 @@ export const getUserLeaderboardRank = async (
 
     return data.data;
   } catch (error) {
-    throw handleAPIError(error);
+    // Manejar 404 gracefully - el endpoint puede no existir o el usuario no tener rank
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes('404') || errorMessage.includes('Not Found')) {
+      console.warn('[API] User rank endpoint returned 404, returning null');
+      return null;
+    }
+    // Para otros errores, loguear pero no romper el flujo principal
+    console.warn('[API] Could not fetch user rank:', errorMessage);
+    return null;
   }
 };
 
