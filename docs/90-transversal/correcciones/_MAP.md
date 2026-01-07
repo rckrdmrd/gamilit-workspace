@@ -1,7 +1,7 @@
 # _MAP: Correcciones e Issues
 
 **Carpeta:** docs/90-transversal/correcciones/
-**Ultima Actualizacion:** 2026-01-06
+**Ultima Actualizacion:** 2026-01-07
 **Proposito:** Backlog de issues pendientes y reportes de correcciones
 **Estado:** Vigente
 
@@ -42,17 +42,34 @@
 
 ---
 
-## Correcciones Recientes (2026-01-04)
+## Correcciones Recientes (2026-01-07)
 
-### CORR-001: Alineación Páginas Leaderboard y Achievements
+### CORR-002: Bug Critico - LeaderboardPage No Carga Datos
 
-**Documentación:** `orchestration/reportes/correcciones/CORR-001-*.md`
+**Documentacion:** `orchestration/reportes/correcciones/CORR-002-*.md`
 
 | Aspecto | Detalle |
 |---------|---------|
-| **Problema** | LeaderboardPage y AchievementsPage no seguían patrones de UI establecidos |
-| **Causa Raíz** | Falta de uso de GamifiedHeader y estilos inconsistentes |
-| **Solución** | Alineación con patrones de DashboardComplete y MissionsPage |
+| **Problema** | LeaderboardPage no cargaba datos del backend - pagina vacia |
+| **Causa Raiz** | Falta de `useEffect` para inicializar carga de datos del store |
+| **Solucion** | Agregar `useEffect` que llama `setLeaderboardType('global')` al montar |
+| **Archivos modificados** | `LeaderboardPage.tsx` (+5 lineas) |
+| **Archivos eliminados** | `AchievementsPage.tsx` (student) - codigo muerto (-567 lineas) |
+| **Estado** | ✅ COMPLETADO - Build exitoso |
+| **Agente** | Orquestador |
+| **Cambios BD** | ❌ Ninguno |
+| **Commit** | `3ea547e` |
+| **US Afectada** | US-GAM-007 (Leaderboard simple) - 28% → 100% cumplimiento |
+
+### CORR-001: Alineacion Paginas Leaderboard y Achievements (2026-01-04)
+
+**Documentacion:** `orchestration/reportes/correcciones/CORR-001-*.md`
+
+| Aspecto | Detalle |
+|---------|---------|
+| **Problema** | LeaderboardPage y AchievementsPage no seguian patrones de UI establecidos |
+| **Causa Raiz** | Falta de uso de GamifiedHeader y estilos inconsistentes |
+| **Solucion** | Alineacion con patrones de DashboardComplete y MissionsPage |
 | **Archivos modificados** | `LeaderboardPage.tsx`, `AchievementsPage.tsx` |
 | **Estado** | ✅ COMPLETADO - Build exitoso |
 | **Agente** | Orquestador + Frontend-Agent |
@@ -102,6 +119,14 @@
 
 Los siguientes archivos fueron movidos a `orchestration/reportes/correcciones/`:
 
+### 2026-01-07
+
+| Archivo | Razon |
+|---------|-------|
+| `CORR-002-ANALISIS-DETALLADO-LEADERBOARD-ACHIEVEMENTS.md` | Correccion completada - Frontend |
+| `CORR-002-PLAN-EJECUCION.md` | Correccion completada - Frontend |
+| `CORR-002-REPORTE-EJECUCION.md` | Correccion completada - Frontend |
+
 ### 2026-01-04
 
 | Archivo | Razon |
@@ -146,5 +171,5 @@ ESTADO:                          PRODUCTION READY
 
 ---
 
-**Actualizado:** 2026-01-04
+**Actualizado:** 2026-01-07
 **Por:** Claude Code (Orchestrator Agent)
