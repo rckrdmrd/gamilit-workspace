@@ -1,22 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { GamilityRoleEnum } from '@shared/constants';
 // import { UsersService } from '../users/users.service'; // TODO: Implementar UsersService
 import { LoginDto, RefreshTokenDto } from './dto';
-// import { RegisterDto } from './dto'; // TODO: RegisterDto no exportado
-// import { TokenResponse, AuthResponse } from './types'; // TODO: Crear archivo types
-
-// Interfaces temporales hasta crear ./types
-interface TokenResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-}
-
-interface AuthResponse {
-  user: any;
-  tokens: TokenResponse;
-}
+import {
+  TokenResponse,
+  AuthResponse,
+  SanitizedUser,
+  RegisterUserData,
+} from './types/token-response.type';
+import { User } from './entities/user.entity';
 
 /**
  * Auth Service
@@ -33,7 +27,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     // private readonly usersService: UsersService // TODO: Uncomment when UsersService is implemented
-  ) {}
+  ) { }
 
   /**
    * Registro de nuevo usuario
@@ -45,7 +39,7 @@ export class AuthService {
    * 4. Generate JWT tokens
    * 5. Return sanitized user + tokens
    */
-  async register(_dto: any): Promise<AuthResponse> {
+  async register(_dto: RegisterUserData): Promise<AuthResponse> {
     throw new Error('Register method not implemented - UsersService required');
   }
 
@@ -109,19 +103,19 @@ export class AuthService {
   private async generateTokens(
     userId: string,
     email: string,
-    role: string,
+    role: GamilityRoleEnum,
   ): Promise<TokenResponse> {
     const payload = { sub: userId, email, role };
 
     // Access Token (15 minutos)
-    const jwtExpiration = this.configService.get<string>('JWT_EXPIRATION') || '15m';
+    const jwtExpiration = this.configService.get<string>('JWT_EXPIRATION') ?? '15m';
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('JWT_SECRET'),
       expiresIn: jwtExpiration as any,
     });
 
     // Refresh Token (7 días)
-    const jwtRefreshExpiration = this.configService.get<string>('JWT_REFRESH_EXPIRATION') || '7d';
+    const jwtRefreshExpiration = this.configService.get<string>('JWT_REFRESH_EXPIRATION') ?? '7d';
     const refreshToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       expiresIn: jwtRefreshExpiration as any,
@@ -137,8 +131,15 @@ export class AuthService {
   /**
    * Remover campos sensibles del usuario
    */
-  private sanitizeUser(user: any) {
-    const { _password, ...sanitized } = user;
+  private sanitizeUser(user: User): SanitizedUser {
+    // Destructure to exclude password field
+    const {
+      encrypted_password: _password,
+      deleted_at: _deleted,
+      banned_until: _banned,
+      roles: _roles,
+      ...sanitized
+    } = user;
     return sanitized;
   }
 }

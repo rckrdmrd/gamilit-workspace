@@ -1,3 +1,19 @@
+---
+id: "US-PM-004a"
+title: "Analytics de Progreso"
+type: "User Story"
+status: "Backlog"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-001"
+story_points: 7
+budget: "$3,050 MXN"
+sprint: "Sprint-8"
+labels: ["portal-maestros", "analytics", "progress", "student-tracking", "at-risk"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-PM-004a: Analytics de Progreso
 
 **Épica:** EXT-001 - Portal de Maestros Completo
@@ -5,7 +21,7 @@
 **Story Points:** 7 SP
 **Presupuesto:** $3,050 MXN
 **Prioridad:** Media (Extensión Fase 3)
-**Estado:** 📋 Planificada
+**Estado:** Backlog
 **Relación:** Parte de US-PM-004 (dividida en a/b)
 
 ## Descripción

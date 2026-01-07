@@ -6,7 +6,7 @@
 **Presupuesto:** $105,000 MXN
 **Story Points:** 390 SP
 **Estado:** ✅ Completado (6 épicas MVP) + ⏳ Parcial (5 épicas BACKLOG)
-**Última actualización:** 2025-11-29
+**Última actualización:** 2026-01-04
 
 ---
 
@@ -23,10 +23,11 @@ Extensión del producto base con funcionalidades enterprise que habilitan:
 
 ## 📁 Contenido
 
-### Épicas Completas (6)
+### Épicas Completas (7)
 
 | Épica | Nombre | Presupuesto | SP | Estado | Archivos |
 |-------|--------|-------------|----|--------|----------|
+| **[EAI-003-EXT](./EAI-003-EXT-gamificacion-social/)** | Gamificación Social | - | - | ✅ | - |
 | **[EXT-001](./EXT-001-portal-maestros/)** | Portal Maestros | $15,000 | 50 | ✅ | 15+ |
 | **[EXT-002](./EXT-002-admin-extendido/)** | Admin Extendido | $12,000 | 45 | ✅ | 12+ |
 | **[EXT-003](./EXT-003-notificaciones/)** | Notificaciones | $10,000 | 40 | ✅ | 10+ |
@@ -38,7 +39,7 @@ Extensión del producto base con funcionalidades enterprise que habilitan:
 - Presupuesto: $69,000 MXN
 - Story Points: 260 SP
 
-### Épicas Parciales (4)
+### Épicas Parciales (5)
 
 | Épica | Nombre | Presupuesto | SP | Completitud | Archivos |
 |-------|--------|-------------|----|-------------|----------|
@@ -46,6 +47,7 @@ Extensión del producto base con funcionalidades enterprise que habilitan:
 | **[EXT-008](./EXT-008-white-label/)** | White Label | $10,000 | 35 | 🟡 30% | 5+ |
 | **[EXT-009](./EXT-009-peer-challenges/)** | Peer Challenges | $8,000 | 30 | 🟡 50% | 5+ |
 | **[EXT-010](./EXT-010-parent-notifications/)** | Parent Notifications | $6,000 | 20 | 🟡 35% | 4+ |
+| **[EXT-011](./EXT-011-parent-portal/)** | Parent Portal | - | - | 🟡 - | - |
 
 **Subtotales:**
 - Presupuesto: $36,000 MXN
@@ -375,7 +377,7 @@ Continuar con [Fase 4: Transversal](../90-transversal/) - Contenido transversal 
 
 ---
 
-**Generado:** 2025-11-08
+**Generado:** 2026-01-04
 **Sistema:** SIMCO (Sistema Indexado Modular por Contexto)
 **Método:** Migración por fases desde docs_bkp/
 **Versión:** 1.0.0

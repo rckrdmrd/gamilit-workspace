@@ -6,11 +6,12 @@
  * - Report generation form with filters
  * - Reports list with auto-refresh for pending reports
  * - Download and delete capabilities
- * - Beta warning banner (in-memory storage)
+ * - Persisted to database (admin_dashboard.admin_reports)
  *
  * @author Frontend-Agent
  * @date 2025-11-24
- * @status MVP Complete - Backend uses in-memory storage
+ * @status MVP Complete - Database persistence implemented (AUDIT-003)
+ * @updated 2026-01-04 - Clarified that reports persist to PostgreSQL
  */
 
 import { useState, useEffect } from 'react';

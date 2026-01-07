@@ -29,7 +29,28 @@ export const MANUAL_REVIEW_MODULES = [
  * Organized by module for easier filtering
  */
 export const MANUAL_REVIEW_EXERCISES: ManualReviewExercise[] = [
-  // Módulo 3 - Comprensión Crítica
+  // Módulo 3 - Comprensión Crítica (5 ejercicios con evaluación manual)
+  {
+    id: 'tribunal-opiniones',
+    title: 'Tribunal de Opiniones',
+    moduleId: 'module-3',
+    moduleName: 'Comprensión Crítica',
+    moduleNumber: 3,
+  },
+  {
+    id: 'analisis-fuentes',
+    title: 'Análisis de Fuentes',
+    moduleId: 'module-3',
+    moduleName: 'Comprensión Crítica',
+    moduleNumber: 3,
+  },
+  {
+    id: 'debate-digital',
+    title: 'Debate Digital',
+    moduleId: 'module-3',
+    moduleName: 'Comprensión Crítica',
+    moduleNumber: 3,
+  },
   {
     id: 'podcast-argumentativo',
     title: 'Podcast Argumentativo',
@@ -37,11 +58,25 @@ export const MANUAL_REVIEW_EXERCISES: ManualReviewExercise[] = [
     moduleName: 'Comprensión Crítica',
     moduleNumber: 3,
   },
+  {
+    id: 'matriz-perspectivas',
+    title: 'Matriz de Perspectivas',
+    moduleId: 'module-3',
+    moduleName: 'Comprensión Crítica',
+    moduleNumber: 3,
+  },
 
-  // Módulo 4 - Lectura Digital
+  // Módulo 4 - Lectura Digital (5 ejercicios con evaluación manual)
   {
     id: 'verificador-fake-news',
     title: 'Verificador de Fake News',
+    moduleId: 'module-4',
+    moduleName: 'Lectura Digital',
+    moduleNumber: 4,
+  },
+  {
+    id: 'infografia-interactiva',
+    title: 'Infografía Interactiva',
     moduleId: 'module-4',
     moduleName: 'Lectura Digital',
     moduleNumber: 4,
@@ -54,6 +89,13 @@ export const MANUAL_REVIEW_EXERCISES: ManualReviewExercise[] = [
     moduleNumber: 4,
   },
   {
+    id: 'navegacion-hipertextual',
+    title: 'Navegación Hipertextual',
+    moduleId: 'module-4',
+    moduleName: 'Lectura Digital',
+    moduleNumber: 4,
+  },
+  {
     id: 'analisis-memes',
     title: 'Análisis de Memes',
     moduleId: 'module-4',
@@ -61,7 +103,7 @@ export const MANUAL_REVIEW_EXERCISES: ManualReviewExercise[] = [
     moduleNumber: 4,
   },
 
-  // Módulo 5 - Producción Lectora
+  // Módulo 5 - Producción Lectora (3 ejercicios - alumno elige 1)
   {
     id: 'diario-multimedia',
     title: 'Diario Multimedia',

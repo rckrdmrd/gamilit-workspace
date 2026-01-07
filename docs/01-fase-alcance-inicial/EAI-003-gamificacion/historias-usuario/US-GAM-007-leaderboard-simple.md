@@ -1,36 +1,52 @@
+---
+id: "US-GAM-007"
+title: "Leaderboard simple"
+type: "User Story"
+status: "Done"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-003"
+story_points: 8
+budget: "$2,900 MXN"
+sprint: "Sprint-1"
+labels: ["gamificacion", "leaderboard", "alcance-inicial"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-GAM-007: Leaderboard simple
 
-**Épica:** EAI-003 - Gamificación Básica
+**Epica:** EAI-003 - Gamificacion Basica
 **Sprint:** Mes 1, Semana 4
 **Story Points:** 8 SP
 **Presupuesto:** $2,900 MXN
 **Prioridad:** Media (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
-## Descripción
+## Descripcion
 
-Como **estudiante**, quiero **ver una tabla de clasificación** para **compararme con otros estudiantes y sentirme motivado a mejorar**.
+Como **estudiante**, quiero **ver una tabla de clasificacion** para **compararme con otros estudiantes y sentirme motivado a mejorar**.
 
 **Contexto del Alcance Inicial:**
-Leaderboard básico global por XP. Top 10 estudiantes. SIN filtros avanzados (por escuela, amigos, tiempo). SIN comparativas personalizadas.
+Leaderboard basico global por XP. Top 10 estudiantes. SIN filtros avanzados (por escuela, amigos, tiempo). SIN comparativas personalizadas.
 
 ---
 
-## Criterios de Aceptación
+## Criterios de Aceptacion
 
 - [ ] **CA-01:** Muestra top 10 estudiantes por XP total
 - [ ] **CA-02:** Se actualiza en tiempo real (o cada 5 minutos)
-- [ ] **CA-03:** Muestra: posición, nombre, XP, rango
-- [ ] **CA-04:** Resalta posición del usuario actual
-- [ ] **CA-05:** Si el usuario no está en top 10, muestra su posición debajo
+- [ ] **CA-03:** Muestra: posicion, nombre, XP, rango
+- [ ] **CA-04:** Resalta posicion del usuario actual
+- [ ] **CA-05:** Si el usuario no esta en top 10, muestra su posicion debajo
 - [ ] **CA-06:** Accesible desde navbar
 - [ ] **CA-07:** Responsive design
 
 ---
 
-## Especificaciones Técnicas
+## Especificaciones Tecnicas
 
 ### Backend
 
@@ -54,7 +70,7 @@ class LeaderboardService {
   }
 
   async getUserPosition(userId: string) {
-    // Query para obtener posición exacta
+    // Query para obtener posicion exacta
     const result = await this.usersRepository
       .createQueryBuilder('user')
       .select('COUNT(*) + 1', 'position')
@@ -87,7 +103,7 @@ class LeaderboardService {
       }
     }
 
-    // Si no está en top, obtener su posición
+    // Si no esta en top, obtener su posicion
     const userPosition = await this.getUserPosition(userId)
 
     return {
@@ -145,7 +161,7 @@ export function LeaderboardPage() {
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center">
-        🏆 Tabla de Clasificación
+        Tabla de Clasificacion
       </h1>
 
       <Card>
@@ -155,17 +171,17 @@ export function LeaderboardPage() {
               key={user.userId}
               {...user}
               isCurrentUser={user.userId === userId}
-              medal={index < 3 ? ['🥇', '🥈', '🥉'][index] : null}
+              medal={index < 3 ? ['1', '2', '3'][index] : null}
             />
           ))}
         </div>
 
-        {/* Usuario actual si no está en top 10 */}
+        {/* Usuario actual si no esta en top 10 */}
         {leaderboard.currentUser.position > 10 && (
           <>
             <div className="my-4 border-t border-gray-300 relative">
               <span className="absolute top-[-12px] left-1/2 transform -translate-x-1/2 bg-white px-2 text-sm text-gray-500">
-                Tu posición
+                Tu posicion
               </span>
             </div>
 
@@ -210,7 +226,7 @@ export function LeaderboardRow({
         ? 'bg-maya-green-50 border-2 border-maya-green-300 shadow-md'
         : 'bg-white hover:bg-gray-50'
     }`}>
-      {/* Posición */}
+      {/* Posicion */}
       <div className="w-12 text-center">
         {medal ? (
           <span className="text-3xl">{medal}</span>
@@ -229,7 +245,7 @@ export function LeaderboardRow({
       {/* Info */}
       <div className="flex-1">
         <p className={`font-semibold ${isCurrentUser ? 'text-maya-green-700' : 'text-gray-900'}`}>
-          {name} {isCurrentUser && '(Tú)'}
+          {name} {isCurrentUser && '(Tu)'}
         </p>
         <p className="text-sm text-gray-600 capitalize">
           {rank}
@@ -258,10 +274,10 @@ export function LeaderboardRow({
 
 ---
 
-## Definición de Hecho (DoD)
+## Definicion de Hecho (DoD)
 
 - [x] Top 10 por XP funcional
-- [x] Posición del usuario mostrada
+- [x] Posicion del usuario mostrada
 - [x] Auto-refresh cada 30s
 - [x] Responsive design
 - [x] Medallas para top 3
@@ -271,12 +287,12 @@ export function LeaderboardRow({
 
 ## Notas del Alcance Inicial
 
-- ✅ Leaderboard global simple
-- ✅ Solo por XP
-- ✅ Sin filtros (escuela, amigos, tiempo)
-- ✅ Sin paginación (solo top 10)
-- ✅ Sin comparativas avanzadas
-- ⚠️ **Extensión futura:** EXT-028-AdvancedLeaderboards (filtros, múltiples categorías, ligas)
+- Done Leaderboard global simple
+- Done Solo por XP
+- Done Sin filtros (escuela, amigos, tiempo)
+- Done Sin paginacion (solo top 10)
+- Done Sin comparativas avanzadas
+- **Extension futura:** EXT-028-AdvancedLeaderboards (filtros, multiples categorias, ligas)
 
 ---
 
@@ -293,16 +309,16 @@ describe('LeaderboardService', () => {
 
 ---
 
-## Estimación
+## Estimacion
 
-**Desglose de Esfuerzo (8 SP = ~3 días):**
-- Backend: query optimizado: 1 día
-- Frontend: componentes: 1.5 días
-- Auto-refresh: 0.25 días
-- Testing: 0.25 días
+**Desglose de Esfuerzo (8 SP = ~3 dias):**
+- Backend: query optimizado: 1 dia
+- Frontend: componentes: 1.5 dias
+- Auto-refresh: 0.25 dias
+- Testing: 0.25 dias
 
 **Riesgos:**
-- Queries pueden ser lentos con muchos usuarios (optimizar con índices)
+- Queries pueden ser lentos con muchos usuarios (optimizar con indices)
 
 ---
 

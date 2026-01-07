@@ -8,6 +8,8 @@
 -- Created: 2025-11-28
 -- =============================================================================
 
+DROP TRIGGER IF EXISTS trg_update_missions_on_daily_streak ON gamification_system.user_stats;
+
 CREATE TRIGGER trg_update_missions_on_daily_streak
     AFTER UPDATE ON gamification_system.user_stats
     FOR EACH ROW

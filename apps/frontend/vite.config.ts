@@ -36,6 +36,12 @@ export default defineConfig({
         target: 'http://localhost:3006',
         changeOrigin: true,
       },
+      // EXT-003 2026-01-04: WebSocket proxy for Socket.IO connections
+      '/socket.io': {
+        target: 'ws://localhost:3006',
+        ws: true,
+        changeOrigin: true,
+      },
     },
   },
   build: {

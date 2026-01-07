@@ -1,19 +1,36 @@
-# HU-EP010-03: Gestión de Contenido
+---
+id: "US-AE-003"
+title: "Gestion y Moderacion de Contenido"
+type: "User Story"
+status: "Done"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 16
+budget: "$6,400 MXN"
+sprint: "Sprint-3"
+labels: ["admin-extendido", "content-management", "moderation", "media"]
+created_date: "2025-10-28"
+updated_date: "2026-01-04"
+completed_date: "2025-11-15"
+---
 
-## Información General
+# HU-EP010-03: Gestion de Contenido
+
+## Informacion General
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | US-AE-003 |
-| **Épica** | EXT-002 - Admin Extendido |
-| **Título** | Gestión y Moderación de Contenido |
+| **Epica** | EXT-002 - Admin Extendido |
+| **Titulo** | Gestion y Moderacion de Contenido |
 | **Prioridad** | Media (P2) |
 | **Story Points** | 16 SP |
-| **Estado** | ✅ COMPLETED (95%) |
+| **Estado** | Done (95%) |
 | **Sprint** | Sprint 3 |
-| **Duración Estimada** | 4 días |
-| **Duración Real** | 0.25h (FE-059 Day 6) |
-| **Fecha Implementación** | 2025-11-15 |
+| **Duracion Estimada** | 4 dias |
+| **Duracion Real** | 0.25h (FE-059 Day 6) |
+| **Fecha Implementacion** | 2025-11-15 |
 
 ---
 

@@ -10,7 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
-import { ManualReviewService } from '../services/manual-review.service';
+import { ManualReviewService, CompleteReviewResult, PaginatedReviewsResult } from '../services/manual-review.service';
 import { CreateReviewDto, ReturnForRevisionDto } from '../dto/create-review.dto';
 import { ManualReview } from '@modules/progress/entities/manual-review.entity';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
@@ -45,10 +45,11 @@ export class ManualReviewController {
 
   /**
    * Obtiene reviews pendientes para el docente autenticado
+   * FIX GAP-LOW-002: Added pagination support
    */
   @Get('pending')
   @Roles(GamilityRoleEnum.ADMIN_TEACHER)
-  @ApiOperation({ summary: 'Obtener reviews pendientes del docente' })
+  @ApiOperation({ summary: 'Obtener reviews pendientes del docente (paginado)' })
   @ApiQuery({
     name: 'moduleId',
     required: false,
@@ -59,18 +60,49 @@ export class ManualReviewController {
     required: false,
     description: 'Filtrar por aula (UUID)',
   })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Número de página (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Elementos por página (default: 20, max: 100)',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Lista de reviews pendientes con submissions',
-    type: [ManualReview],
+    description: 'Lista paginada de reviews pendientes con submissions',
+    schema: {
+      type: 'object',
+      properties: {
+        reviews: { type: 'array', items: { $ref: '#/components/schemas/ManualReview' } },
+        total: { type: 'number', example: 45 },
+        page: { type: 'number', example: 1 },
+        limit: { type: 'number', example: 20 },
+        totalPages: { type: 'number', example: 3 },
+      },
+    },
   })
   async getPendingReviews(
     @Request() req: AuthRequest,
     @Query('moduleId') moduleId?: string,
     @Query('classroomId') classroomId?: string,
-  ): Promise<ManualReview[]> {
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<PaginatedReviewsResult> {
     const teacherId = req.user!.profile?.id || req.user!.id;
-    return this.reviewService.findPendingReviews(teacherId, { moduleId, classroomId });
+    const parsedPage = page ? parseInt(page, 10) : 1;
+    const parsedLimit = limit ? Math.min(parseInt(limit, 10), 100) : 20; // Max 100
+
+    return this.reviewService.findPendingReviews(teacherId, {
+      moduleId,
+      classroomId,
+      page: parsedPage,
+      limit: parsedLimit,
+    });
   }
 
   /**
@@ -222,18 +254,46 @@ export class ManualReviewController {
   }
 
   /**
-   * Completa un review
+   * Completa un review y distribuye recompensas al estudiante
+   *
+   * FIX GAP-CRIT-001: Ahora retorna información de rewards (XP, ML Coins)
    */
   @Post(':id/complete')
   @Roles(GamilityRoleEnum.ADMIN_TEACHER)
-  @ApiOperation({ summary: 'Completar evaluación manual' })
+  @ApiOperation({
+    summary: 'Completar evaluación manual',
+    description: 'Completa el review, califica el submission y distribuye XP/ML Coins al estudiante',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Review completado exitosamente',
-    type: ManualReview,
+    description: 'Review completado con información de recompensas distribuidas',
+    schema: {
+      type: 'object',
+      properties: {
+        review: { $ref: '#/components/schemas/ManualReview' },
+        rewards: {
+          type: 'object',
+          nullable: true,
+          properties: {
+            xp_earned: { type: 'number', example: 85 },
+            ml_coins_earned: { type: 'number', example: 17 },
+            rankUp: {
+              type: 'object',
+              nullable: true,
+              properties: {
+                newRank: { type: 'string', example: 'Nacom' },
+                previousRank: { type: 'string', example: 'Ajaw' },
+                bonusMLCoins: { type: 'number', example: 100 },
+                newMultiplier: { type: 'number', example: 1.1 },
+              },
+            },
+          },
+        },
+      },
+    },
   })
   @ApiResponse({ status: 404, description: 'Review no encontrado' })
-  async completeReview(@Param('id') id: string): Promise<ManualReview> {
+  async completeReview(@Param('id') id: string): Promise<CompleteReviewResult> {
     return this.reviewService.completeReview(id);
   }
 

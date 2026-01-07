@@ -44,13 +44,18 @@ function getRankIcon(rank: string): string {
   return icons[rank] || '🔍';
 }
 
+/**
+ * Multiplicadores de rango Maya
+ * SINCRONIZADO con backend (ranks.service.ts) y database (award_ml_coins.sql)
+ * @see docs/01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-003-rangos-maya.md
+ */
 function getRankMultiplier(rank: string): number {
   const multipliers: Record<string, number> = {
     Ajaw: 1.0,
-    Nacom: 1.2,
+    Nacom: 1.25,           // FIX 2026-01-04: era 1.2
     "Ah K'in": 1.5,
-    'Halach Uinic': 2.0,
-    "K'uk'ulkan": 3.0,
+    'Halach Uinic': 1.75,  // FIX 2026-01-04: era 2.0
+    "K'uk'ulkan": 2.0,     // FIX 2026-01-04: era 3.0
   };
   return multipliers[rank] || 1.0;
 }
@@ -116,7 +121,7 @@ export interface ProgressData {
 
 interface DashboardData {
   coins: MLCoinsData | null;
-  rank: RankData | null;
+  rank: RankData; // FIX 2026-01-04: Siempre tiene valor (con fallbacks)
   achievements: AchievementData[];
   progress: ProgressData | null;
   recentAchievements: AchievementData[];
@@ -141,20 +146,35 @@ function parseTimeToSeconds(timeStr: string): number {
 async function fetchDashboardData(userId: string): Promise<DashboardData> {
   console.log('🚀 [useDashboardData] Fetching dashboard data for userId:', userId);
 
-  // Fetch all data in parallel
-  const [coinsRes, rankCurrentRes, rankProgressRes, achievementsRes, progressRes] =
-    await Promise.all([
-      apiClient.get(`/gamification/users/${userId}/ml-coins`),
-      apiClient.get(`/gamification/ranks/current`),
-      apiClient.get(`/gamification/ranks/users/${userId}/rank-progress`),
-      apiClient.get(`/gamification/users/${userId}/achievements`),
-      apiClient.get(`/progress/users/${userId}/summary`),
-    ]);
+  // FIX 2026-01-04: Usar Promise.allSettled para que un endpoint fallido no rompa todo
+  // Antes: Promise.all fallaba TODO si un endpoint retornaba 404
+  const results = await Promise.allSettled([
+    apiClient.get(`/gamification/users/${userId}/ml-coins`),
+    apiClient.get(`/gamification/ranks/current`),
+    apiClient.get(`/gamification/ranks/users/${userId}/rank-progress`),
+    apiClient.get(`/gamification/users/${userId}/achievements`),
+    apiClient.get(`/progress/users/${userId}/summary`),
+  ]);
 
-  console.log('✅ [useDashboardData] API calls completed successfully');
+  // Extraer resultados con fallbacks para endpoints que fallaron
+  const coinsRes = results[0].status === 'fulfilled' ? results[0].value : null;
+  const rankCurrentRes = results[1].status === 'fulfilled' ? results[1].value : null;
+  const rankProgressRes = results[2].status === 'fulfilled' ? results[2].value : null;
+  const achievementsRes = results[3].status === 'fulfilled' ? results[3].value : null;
+  const progressRes = results[4].status === 'fulfilled' ? results[4].value : null;
 
-  // Process achievements data
-  const achievementsData = achievementsRes.data?.data || achievementsRes.data || [];
+  // Log de errores para debugging (sin romper flujo)
+  results.forEach((result, index) => {
+    if (result.status === 'rejected') {
+      const endpoints = ['ml-coins', 'ranks/current', 'rank-progress', 'achievements', 'progress'];
+      console.warn(`⚠️ [useDashboardData] Endpoint ${endpoints[index]} failed:`, result.reason);
+    }
+  });
+
+  console.log('✅ [useDashboardData] API calls completed (some may have failed gracefully)');
+
+  // Process achievements data (con fallback si endpoint fallo)
+  const achievementsData = achievementsRes?.data?.data || achievementsRes?.data || [];
   const recentUnlocked = Array.isArray(achievementsData)
     ? achievementsData
         .filter((a: AchievementData) => a.unlocked && a.unlockedAt)
@@ -166,14 +186,15 @@ async function fetchDashboardData(userId: string): Promise<DashboardData> {
     : [];
 
   // Transform rank data from API format to component format
-  // NOTE: apiClient does NOT transform snake_case -> camelCase, we use snake_case
-  const rankCurrent = rankCurrentRes.data;
-  const rankProgress = rankProgressRes.data;
+  // FIX 2026-01-04: Manejar respuestas null de endpoints fallidos
+  const rankCurrent = rankCurrentRes?.data || null;
+  const rankProgress = rankProgressRes?.data || null;
 
   console.log('🔍 [useDashboardData] rankCurrent:', rankCurrent);
   console.log('🔍 [useDashboardData] rankProgress:', rankProgress);
 
   // Backend returns snake_case: current_rank, xp_current, xp_required, progress_percentage
+  // FIX 2026-01-04: Fallback a 'Ajaw' si no hay datos de rango
   const currentRankName =
     rankCurrent?.current_rank ||
     rankProgress?.current_rank ||
@@ -181,41 +202,42 @@ async function fetchDashboardData(userId: string): Promise<DashboardData> {
     rankProgress?.currentRank ||
     'Ajaw';
 
-  const transformedRankData: RankData | null =
-    rankCurrent || rankProgress
-      ? {
-          currentRank: currentRankName,
-          currentXP: rankProgress?.xp_current || rankProgress?.xpCurrent || 0,
-          nextRankXP:
-            rankProgress?.xp_required ||
-            rankProgress?.xpRequired ||
-            (rankProgress?.xp_current || rankProgress?.xpCurrent || 0) + 1000,
-          multiplier: getRankMultiplier(currentRankName),
-          rankIcon: getRankIcon(currentRankName),
-          progress: rankProgress?.progress_percentage || rankProgress?.progressPercentage || 0,
-        }
-      : null;
+  // FIX 2026-01-04: Siempre retornar datos de rango (con fallbacks)
+  // Antes: retornaba null si no habia datos, causando errores en widgets
+  const transformedRankData: RankData = {
+    currentRank: currentRankName,
+    currentXP: rankProgress?.xp_current || rankProgress?.xpCurrent || 0,
+    nextRankXP:
+      rankProgress?.xp_required ||
+      rankProgress?.xpRequired ||
+      500, // XP para siguiente rango (Nacom) por defecto
+    multiplier: getRankMultiplier(currentRankName),
+    rankIcon: getRankIcon(currentRankName),
+    progress: rankProgress?.progress_percentage || rankProgress?.progressPercentage || 0,
+  };
 
   // Process coins data (backend uses snake_case)
+  // FIX 2026-01-04: Manejar coinsRes null si endpoint fallo
   const coinsData: MLCoinsData = {
     balance:
-      coinsRes.data?.current_balance ||
-      coinsRes.data?.currentBalance ||
-      coinsRes.data?.ml_coins ||
-      coinsRes.data?.mlCoins ||
+      coinsRes?.data?.current_balance ||
+      coinsRes?.data?.currentBalance ||
+      coinsRes?.data?.ml_coins ||
+      coinsRes?.data?.mlCoins ||
       0,
     todayEarned:
-      coinsRes.data?.earned_today ||
-      coinsRes.data?.earnedToday ||
-      coinsRes.data?.ml_coins_earned_today ||
-      coinsRes.data?.mlCoinsEarnedToday ||
+      coinsRes?.data?.earned_today ||
+      coinsRes?.data?.earnedToday ||
+      coinsRes?.data?.ml_coins_earned_today ||
+      coinsRes?.data?.mlCoinsEarnedToday ||
       0,
-    todaySpent: coinsRes.data?.spent_today || coinsRes.data?.spentToday || 0,
+    todaySpent: coinsRes?.data?.spent_today || coinsRes?.data?.spentToday || 0,
     recentTransactions: [],
   };
 
   // Transform progress data (backend uses snake_case)
-  const progressRaw = progressRes.data?.data || progressRes.data || null;
+  // FIX 2026-01-04: Manejar progressRes null si endpoint fallo
+  const progressRaw = progressRes?.data?.data || progressRes?.data || null;
   const transformedProgress: ProgressData | null = progressRaw
     ? {
         totalModules: progressRaw.total_modules || progressRaw.totalModules || 0,
@@ -278,9 +300,19 @@ export function useDashboardData() {
     await refetch();
   };
 
+  // FIX 2026-01-04: Fallback para rank cuando query no ha cargado aun
+  const defaultRankData: RankData = {
+    currentRank: 'Ajaw',
+    currentXP: 0,
+    nextRankXP: 500,
+    multiplier: 1.0,
+    rankIcon: '🏹',
+    progress: 0,
+  };
+
   return {
     coins: data?.coins ?? null,
-    rank: data?.rank ?? null,
+    rank: data?.rank ?? defaultRankData, // FIX 2026-01-04: Siempre retorna datos de rango
     achievements: data?.achievements ?? [],
     progress: data?.progress ?? null,
     recentAchievements: data?.recentAchievements ?? [],

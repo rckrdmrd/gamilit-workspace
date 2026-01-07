@@ -1,0 +1,133 @@
+epic_code: EAI-008
+epic_name: Portal de Administracion
+status: Done (Fase 1)
+last_updated: 2026-01-04
+
+documentation:
+  epic: README.md
+  legacy_docs: archivados/modulos-legacy/
+
+  requirements:
+    - requerimientos/_MAP.md
+    # Legacy: archivados/modulos-legacy/00-analisis-inicial/
+
+  specifications:
+    - especificaciones/_MAP.md
+    # Legacy: archivados/modulos-legacy/0X-modulo-*/backend/
+
+  user_stories:
+    - historias-usuario/_MAP.md
+    # Legacy: archivados/modulos-legacy/0X-modulo-*/
+
+implementation:
+  database:
+    schemas:
+      - admin_monitoring
+      - system_administration
+
+    tables:
+      - system_alerts
+      - system_alert_actions
+      - system_metrics_cache
+      - admin_audit_log
+
+    views:
+      - engagement_analytics_view
+      - gamification_analytics_view
+      - user_progress_view
+      - classroom_progress_view
+
+    functions:
+      - get_admin_dashboard_stats()
+      - get_alert_summary()
+      - get_user_engagement_metrics()
+      - get_gamification_leaderboard()
+
+  backend:
+    module_path: apps/backend/src/modules/admin/
+
+    controllers:
+      - admin-alerts.controller.ts
+      - admin-analytics.controller.ts
+      - admin-progress.controller.ts
+      - admin-monitoring.controller.ts
+      - admin-users.controller.ts
+      - admin-institutions.controller.ts
+      - admin-roles.controller.ts
+
+    services:
+      - admin-alerts.service.ts
+      - admin-analytics.service.ts
+      - admin-progress.service.ts
+      - admin-monitoring.service.ts
+
+    dtos:
+      alerts: 12
+      analytics: 20+
+      progress: 15+
+      monitoring: 10+
+      total: ~118
+
+  frontend:
+    module_path: apps/frontend/src/apps/admin/
+
+    pages:
+      - AdminDashboardPage.tsx
+      - AdminUsersPage.tsx
+      - AdminInstitutionsPage.tsx
+      - AdminRolesPage.tsx
+      - AdminAlertsPage.tsx
+      - AdminAnalyticsPage.tsx
+      - AdminProgressPage.tsx
+      - AdminMonitoringPage.tsx
+      - AdminContentPage.tsx
+      - AdminGamificationPage.tsx
+      - AdminClassroomTeacherPage.tsx
+      # Placeholders (Fase 2):
+      - AdminAdvancedPage.tsx
+      - AdminSettingsPage.tsx
+      - AdminReportsPage.tsx
+
+    hooks:
+      - useAlerts.ts
+      - useAnalytics.ts
+      - useProgress.ts
+      - useMonitoring.ts
+      - useUserManagement.ts
+      - useSettings.ts
+      - useFeatureFlags.ts
+
+    components:
+      total: 58
+      by_module:
+        alerts: 7
+        analytics: 12
+        progress: 8
+        monitoring: 10
+        otros: 21
+
+  testing:
+    scripts:
+      - apps/backend/scripts/test-alerts-endpoints.sh
+      - apps/backend/scripts/test-analytics-endpoints.sh
+      - apps/backend/scripts/test-progress-endpoints.sh
+      - apps/backend/scripts/test-monitoring-endpoints.sh
+
+    coverage:
+      endpoints: 25
+      tests: 62+
+
+metrics:
+  endpoints_rest: ~112
+  components_react: 58
+  dtos_backend: 118
+  lines_of_code: 11437
+  tests_automated: 62+
+  pages_admin: 15
+  database_utilization: 90%
+
+notes:
+  - Fase 1 completada 2025-11-24
+  - Fase 2 pendiente (130-180 SP)
+  - Sprints correcciones completados 2025-12-26
+  - Reestructurado a formato SCRUM 2026-01-04

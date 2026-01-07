@@ -253,7 +253,8 @@ export enum TransactionTypeEnum {
 
 /**
  * Categorías de logros (achievements)
- * @see DDL: achievement_category ENUM
+ * @see DDL: gamification_system.achievement_category ENUM
+ * @version 1.1 (2025-12-15) - Agregados 'collection' y 'hidden' para alineación con Frontend
  */
 export enum AchievementCategoryEnum {
   PROGRESS = 'progress',
@@ -263,6 +264,8 @@ export enum AchievementCategoryEnum {
   SPECIAL = 'special',
   MASTERY = 'mastery',
   EXPLORATION = 'exploration',
+  COLLECTION = 'collection',  // v1.1: Logros de colección
+  HIDDEN = 'hidden',          // v1.1: Logros ocultos/secretos
 }
 
 /**

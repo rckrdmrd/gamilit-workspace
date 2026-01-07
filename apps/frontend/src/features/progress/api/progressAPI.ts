@@ -377,16 +377,18 @@ export const submitExercise = async (
       return await mockSubmitExercise({ exerciseId, userId, answers, startedAt: Date.now() });
     }
 
-    // Backend endpoint: POST /api/progress/submissions/submit
-    // Expected format: { userId, exerciseId, answers }
+    // FIX BUG-003: Use correct endpoint for auto-graded exercises
+    // Backend endpoint: POST /api/educational/exercises/:id/submit
+    // The endpoint extracts userId from JWT, so we use the new format
     const backendPayload = {
-      userId,
-      exerciseId,
       answers,
+      startedAt: Date.now(),
+      hintsUsed: 0,
+      powerupsUsed: [],
     };
 
     const { data } = await apiClient.post<ApiResponse<SubmitExerciseResponse>>(
-      '/progress/submissions/submit',
+      `${API_ENDPOINTS.educational.exercise(exerciseId)}/submit`,
       backendPayload,
     );
 

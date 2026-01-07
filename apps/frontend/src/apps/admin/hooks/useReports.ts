@@ -2,11 +2,11 @@
  * useReports Hook
  *
  * Custom hook for managing admin reports with auto-refresh capabilities
- * Integrates with backend Reports API (in-memory storage)
+ * Integrates with backend Reports API (persisted to admin_dashboard.admin_reports)
  *
  * @author Frontend-Agent
  * @date 2025-11-24
- * @updated Complete rewrite with auto-refresh and proper typing
+ * @updated 2026-01-04 - Clarified database persistence (AUDIT-003)
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';

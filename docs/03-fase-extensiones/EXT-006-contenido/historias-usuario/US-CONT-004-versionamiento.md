@@ -1,3 +1,19 @@
+---
+id: "US-CONT-004"
+title: "Versionamiento de Contenido"
+type: "User Story"
+status: "Backlog"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-006"
+story_points: 5
+budget: "$2,900 MXN"
+sprint: "Sprint-3"
+labels: ["ext-006", "versionamiento", "audit-trail", "rollback", "historial", "diff", "git-like", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-CONT-004: Versionamiento de Contenido
 
 ## Información Básica

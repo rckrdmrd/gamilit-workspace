@@ -1,149 +1,122 @@
-# _MAP: docs/00-overview/
+# _MAP: docs/00-vision-general/
 
-**Última actualización:** 2025-11-07
-**Estado:** 🟢 Completo
-**Versión:** 2.0 (RFC-0001)
-**Propósito:** Documentación de alto nivel para onboarding rápido
+**Ultima actualizacion:** 2026-01-04
+**Estado:** Activo
+**Version:** 3.0
+**Proposito:** Vision general, definiciones y documentacion de alto nivel
 
 ---
 
-## 📋 Propósito de esta Carpeta
+## Proposito de esta Carpeta
 
-Esta carpeta contiene **documentación de alto nivel** para entender rápidamente el proyecto GAMILIT sin entrar en detalles técnicos. Es el punto de entrada para nuevos miembros del equipo.
+Esta carpeta contiene la **documentacion de alto nivel y definiciones generales** del proyecto GAMILIT. Es el punto de entrada para entender el producto y sirve como fuente de verdad para las especificaciones que luego se detallan en las carpetas de fases.
 
 **Audiencia:**
 - Nuevos desarrolladores (onboarding)
-- Stakeholders (visión del proyecto)
+- Stakeholders (vision del proyecto)
 - Product Owners (contexto general)
-- Cualquier persona que necesite entender GAMILIT en <30 minutos
+- Arquitectos (documento de diseno)
+- QA (guias de pruebas)
 
 ---
 
-## 📁 Estructura de Contenido
+## Contenido Principal
 
-### Archivos Principales
+### Documentos de Vision y Onboarding
 
-| Archivo | Propósito | Tamaño | Owner | Estado |
-|---------|-----------|--------|-------|--------|
-| **VISION.md** | Visión y misión del producto | 12 KB | @product-owner | ✅ Completo |
-| **ONBOARDING.md** | Guía de setup inicial (2-3 horas) | 18 KB | @tech-lead | ✅ Completo |
-| **README.md** | Índice de la carpeta | 9 KB | @tech-lead | ✅ Completo |
+| Archivo | Descripcion | Estado |
+|---------|-------------|--------|
+| [VISION.md](./VISION.md) | Vision, mision y objetivos estrategicos | Done |
+| [ONBOARDING.md](./ONBOARDING.md) | Guia de setup inicial (2-3 horas) | Done |
+| [GLOSARIO.md](./GLOSARIO.md) | Terminos y definiciones del proyecto | Done |
+| [README.md](./README.md) | Indice de la carpeta | Done |
 
-**Total archivos:** 3
+### Documentos de Diseno (Fuente de Verdad)
 
----
+| Archivo | Descripcion | Estado |
+|---------|-------------|--------|
+| [DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md](./DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md) | **DOCUMENTO PRINCIPAL** - Mecanicas, modulos, ejercicios, sistema de rangos Maya, XP, ML Coins | Done |
+| [DATOS-GAMIFICACION.md](./DATOS-GAMIFICACION.md) | Resumen consolidado de datos de gamificacion | Done |
+| [ANALISIS-HOMOLOGACION-DOC-DISENO-v6.1.md](./ANALISIS-HOMOLOGACION-DOC-DISENO-v6.1.md) | Analisis de alineacion entre documento de diseno e implementacion | Done |
+| [REPORTE-INVESTIGACION-MULTIPLICADOR-ML-COINS.md](./REPORTE-INVESTIGACION-MULTIPLICADOR-ML-COINS.md) | Investigacion sobre multiplicadores de monedas | Done |
 
-## 🗂️ Detalle de Archivos
+### Guias de Pruebas por Modulo
 
-### VISION.md
-
-**Descripción:** Visión, misión y objetivos estratégicos del proyecto
-
-**Contenido:**
-- Visión del producto
-- Misión
-- Objetivos estratégicos
-- Propuesta de valor única
-- Contexto educativo guatemalteco
-
-**Audiencia:** Stakeholders, nuevos team members
-
-**Estado:** ✅ Completo
-
----
-
-### ONBOARDING.md
-
-**Descripción:** Guía completa de onboarding para nuevos desarrolladores
-
-**Contenido:**
-- Setup del entorno local (2-3 horas)
-- Instalación de dependencias
-- Configuración de database
-- Primeros pasos
-- Arquitectura de alto nivel
-- Recursos adicionales
-
-**Audiencia:** Nuevos desarrolladores
-
-**Tiempo estimado:** 2-3 horas
-
-**Estado:** ✅ Completo
+| Archivo | Modulo | Estado |
+|---------|--------|--------|
+| [GUIA-PRUEBAS-MODULO1-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO1-Respuestas-Ejemplo.md) | M1: Comprension Literal | Done |
+| [GUIA-PRUEBAS-MODULO2-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO2-Respuestas-Ejemplo.md) | M2: Comprension Inferencial | Done |
+| [GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md) | M3: Comprension Critica | Done |
+| [GUIA-PRUEBAS-MODULO4-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO4-Respuestas-Ejemplo.md) | M4: Lectura Digital | Done |
+| [GUIA-PRUEBAS-MODULO5-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO5-Respuestas-Ejemplo.md) | M5: Produccion Creativa | Done |
 
 ---
 
-### README.md
+## Subcarpetas
 
-**Descripción:** Índice de la carpeta 00-overview/
+### archivados/
+Versiones anteriores de documentos deprecados.
+- `GUIA-PRUEBAS-MODULO3-Respuestas.md` - Version anterior de guia M3
 
-**Estado:** ✅ Completo
+### directivas/
+Directivas especificas del proyecto.
+- `_INDEX.md` - Indice de directivas
+
+### migracion/
+Documentacion de migracion entre fases.
+- `README.md` - Guia de migracion
+- `README-FASE-5.md` - Detalles fase 5
+- `_MAP-FASE-5.md` - Mapa de fase 5
 
 ---
 
-## 🔗 Interdependencias
+## Documento de Diseno - Contenido Principal
+
+El archivo `DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md` es la **fuente de verdad** para:
+
+### Sistema de Rangos Maya
+| Rango | XP Minimo | XP Maximo | Bonus ML |
+|-------|-----------|-----------|----------|
+| AJAW | 0 | 499 | - |
+| NACOM | 500 | 999 | +100 ML |
+| AH K'IN | 1,000 | 1,499 | +250 ML |
+| HALACH UINIC | 1,500 | 1,899 | +500 ML |
+| K'UK'ULKAN | 1,900 | infinito | +1,000 ML |
+
+### 5 Modulos Educativos (23 Ejercicios)
+1. **M1 - Comprension Literal** (5 ejercicios): Crucigrama, Linea de Tiempo, Completar Espacios, V/F, Sopa de Letras
+2. **M2 - Comprension Inferencial** (5 ejercicios): Detective Textual, Hipotesis, Prediccion, Puzzle Contexto, Rueda Inferencias
+3. **M3 - Comprension Critica** (5 ejercicios): Tribunal Opiniones, Debate Digital, Analisis Fuentes, Podcast, Matriz Perspectivas
+4. **M4 - Lectura Digital** (5 ejercicios): Verificador Fake News, Infografia, Quiz TikTok, Navegacion Hipertextual, Analisis Memes
+5. **M5 - Produccion Creativa** (3 opciones): Diario Interactivo, Comic Digital, Capsula del Tiempo
+
+---
+
+## Interdependencias
 
 ### Esta Carpeta Alimenta A:
-
-- **Nuevos desarrolladores** - Onboarding rápido
-- **Stakeholders** - Comprensión del proyecto
-- **Documentación técnica** - Contexto de alto nivel
+- `01-fase-alcance-inicial/` - Especificaciones detalladas de EPICs
+- `02-fase-robustecimiento/` - Modulos M4-M5
+- `03-fase-extensiones/` - Extensiones futuras
+- `90-transversal/` - Arquitectura y API
+- `apps/database/seeds/` - Datos de gamificacion
 
 ### Esta Carpeta Consume De:
-
-- **Product Owner** - Visión del producto
-- **Tech Lead** - Arquitectura de alto nivel
+- Product Owner - Vision del producto
+- Arquitectura - Decisiones tecnicas (ADRs)
 
 ---
 
-## 📊 Métricas
+## Metricas
 
-| Métrica | Valor |
+| Metrica | Valor |
 |---------|-------|
-| **Total archivos** | 3 |
-| **Completitud** | 100% |
-| **Útil para onboarding** | ✅ Sí |
+| Total archivos principales | 13 |
+| Guias de pruebas | 5 |
+| Subcarpetas | 3 |
+| Version documento diseno | v6.5 |
 
 ---
 
-## 🚨 Issues Conocidos
-
-Ninguno - Carpeta completa
-
----
-
-## 📐 Estándares Aplicables
-
-### Contenido de Alto Nivel
-
-- ✅ Sin detalles técnicos de implementación
-- ✅ Lenguaje accesible para no-técnicos
-- ✅ Enfocado en "qué" y "por qué", no "cómo"
-
----
-
-## 🔍 Validación (Go/No-Go)
-
-- [x] VISION.md completo ✅
-- [x] ONBOARDING.md completo ✅
-- [x] README.md completo ✅
-- [x] _MAP.md creado (este archivo) ✅
-
-**Decisión:** 🟢 **GO** - Carpeta completa
-
----
-
-## 📞 Contacto
-
-**Owner:** @tech-lead, @product-owner
-
----
-
-## 🎯 Próximos Pasos
-
-1. ✅ Carpeta completa
-2. ⬜ Mantener actualizado con cambios del proyecto
-
----
-
-**Generado:** 2025-11-07
-**Versión:** 1.0.0
+**Actualizado:** 2026-01-04
+**Mantenido por:** Architecture Team

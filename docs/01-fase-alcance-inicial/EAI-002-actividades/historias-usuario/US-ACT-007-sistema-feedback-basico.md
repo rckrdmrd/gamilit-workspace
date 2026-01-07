@@ -1,3 +1,19 @@
+---
+id: "US-ACT-007"
+title: "Sistema de feedback básico"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-002"
+story_points: 5
+budget: "$1,800 MXN"
+sprint: "Sprint-1"
+labels: ["actividades", "feedback", "ux", "gamificacion", "frontend"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ACT-007: Sistema de feedback básico
 
 **Épica:** EAI-002 - Actividades Básicas Hardcodeadas
@@ -5,7 +21,7 @@
 **Story Points:** 5 SP
 **Presupuesto:** $1,800 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
@@ -39,15 +55,15 @@ Sistema centralizado de feedback para todas las mecánicas. Mensajes pre-cargado
 ```typescript
 const MOTIVATIONAL_MESSAGES = {
   correct: [
-    '¡Excelente trabajo! Sigues avanzando como un verdadero sabio maya.',
-    '¡Correcto! Tu conocimiento crece como las pirámides mayas.',
-    '¡Muy bien! Los antiguos mayas estarían orgullosos.',
-    '¡Perfecto! Continúa tu camino al conocimiento.',
+    'Excelente trabajo! Sigues avanzando como un verdadero sabio maya.',
+    'Correcto! Tu conocimiento crece como las pirámides mayas.',
+    'Muy bien! Los antiguos mayas estarían orgullosos.',
+    'Perfecto! Continúa tu camino al conocimiento.',
   ],
   incorrect: [
     'No te preocupes, cada error es una oportunidad para aprender.',
     'Sigue intentando, estás en el camino correcto.',
-    'Aprender requiere práctica. ¡Tú puedes!',
+    'Aprender requiere práctica. Tu puedes!',
     'Los sabios mayas también comenzaron desde cero.',
   ]
 }
@@ -115,7 +131,7 @@ export function FeedbackSection({ feedback, onContinue }: FeedbackSectionProps) 
         <h3 className={`text-xl font-bold ${
           feedback.isCorrect ? 'text-green-900' : 'text-blue-900'
         }`}>
-          {feedback.isCorrect ? '¡Correcto!' : 'Sigue intentando'}
+          {feedback.isCorrect ? 'Correcto!' : 'Sigue intentando'}
         </h3>
       </div>
 
@@ -136,7 +152,7 @@ export function FeedbackSection({ feedback, onContinue }: FeedbackSectionProps) 
       {feedback.rewards && (
         <div className="flex gap-4 mb-4">
           <div className="flex items-center gap-2 px-4 py-2 bg-yellow-100 rounded-lg">
-            <span className="text-2xl">⭐</span>
+            <span className="text-2xl">*</span>
             <div>
               <p className="text-xs text-gray-600">XP Ganado</p>
               <p className="text-lg font-bold text-yellow-700">+{feedback.rewards.xp}</p>
@@ -144,7 +160,7 @@ export function FeedbackSection({ feedback, onContinue }: FeedbackSectionProps) 
           </div>
 
           <div className="flex items-center gap-2 px-4 py-2 bg-gold-100 rounded-lg">
-            <span className="text-2xl">💰</span>
+            <span className="text-2xl">$</span>
             <div>
               <p className="text-xs text-gray-600">ML Coins</p>
               <p className="text-lg font-bold text-gold-700">+{feedback.rewards.coins}</p>
@@ -205,8 +221,8 @@ import { toast, Toaster } from 'react-hot-toast'
 
 // Uso en actividades
 const showSuccessToast = () => {
-  toast.success('¡Respuesta correcta! +10 XP', {
-    icon: '✅',
+  toast.success('Respuesta correcta! +10 XP', {
+    icon: 'check',
     duration: 3000,
     position: 'top-center',
   })
@@ -214,7 +230,7 @@ const showSuccessToast = () => {
 
 const showErrorToast = () => {
   toast.error('Respuesta incorrecta. Intenta de nuevo.', {
-    icon: '💡',
+    icon: 'bulb',
     duration: 3000,
     position: 'top-center',
   })
@@ -250,13 +266,13 @@ const showErrorToast = () => {
 
 ## Notas del Alcance Inicial
 
-- ✅ Mensajes pre-escritos (hardcoded)
-- ✅ Feedback genérico para todos los usuarios
-- ✅ Animaciones simples (CSS + confetti)
-- ✅ Sin feedback personalizado con IA
-- ✅ Sin análisis de errores comunes
-- ⚠️ **Extensión futura:** EXT-020-AIFeedback (feedback personalizado con IA)
-- ⚠️ **Extensión futura:** EXT-021-Analytics (análisis de patrones de error)
+- Done Mensajes pre-escritos (hardcoded)
+- Done Feedback genérico para todos los usuarios
+- Done Animaciones simples (CSS + confetti)
+- Done Sin feedback personalizado con IA
+- Done Sin análisis de errores comunes
+- **Extensión futura:** EXT-020-AIFeedback (feedback personalizado con IA)
+- **Extensión futura:** EXT-021-Analytics (análisis de patrones de error)
 
 ---
 
@@ -297,5 +313,5 @@ describe('Motivational Messages', () => {
 ---
 
 **Creado:** 2025-11-02
-**Actualizado:** 2025-11-02
+**Actualizado:** 2026-01-04
 **Responsable:** Equipo Frontend + UX

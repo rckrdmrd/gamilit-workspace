@@ -1,3 +1,19 @@
+---
+id: "US-ADM-002"
+title: "Gestión de Estudiantes en Aula"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-005"
+story_points: 10
+budget: "$4,000 MXN"
+sprint: "Sprint-1"
+labels: ["admin", "students", "classroom-management"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ADM-002: Gestión de Estudiantes en Aula
 
 **Épica:** EAI-005 (Plataforma de Maestro Básica)
@@ -5,7 +21,7 @@
 **Story Points:** 10 SP
 **Presupuesto:** $4,000 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 
@@ -805,21 +821,21 @@ export const CredentialsDisplay = ({ credentials, onClose }) => {
 ## Alcance Básico vs Extensiones
 
 ### EAI-005 (Este alcance - Admin Base):
-- ✅ Ver lista de estudiantes del aula
-- ✅ Agregar estudiante existente (búsqueda manual)
-- ✅ Crear estudiante nuevo con credenciales auto-generadas
-- ✅ Remover estudiante del aula
-- ✅ Búsqueda simple por nombre/email
-- ✅ Límite de 100 estudiantes por aula
+- Ver lista de estudiantes del aula
+- Agregar estudiante existente (búsqueda manual)
+- Crear estudiante nuevo con credenciales auto-generadas
+- Remover estudiante del aula
+- Búsqueda simple por nombre/email
+- Límite de 100 estudiantes por aula
 
 ### EXT-001 (Extensión futura - Portal Maestros Completo):
-- ⏳ Importación masiva desde CSV
-- ⏳ Invitaciones por email con link de auto-registro
-- ⏳ Código de clase para auto-registro de estudiantes
-- ⏳ Transferencia de estudiantes entre aulas
-- ⏳ Edición de datos de estudiante desde el profesor
-- ⏳ Historial de pertenencia a aulas
-- ⏳ Exportación de lista de estudiantes
+- Importación masiva desde CSV
+- Invitaciones por email con link de auto-registro
+- Código de clase para auto-registro de estudiantes
+- Transferencia de estudiantes entre aulas
+- Edición de datos de estudiante desde el profesor
+- Historial de pertenencia a aulas
+- Exportación de lista de estudiantes
 
 ---
 

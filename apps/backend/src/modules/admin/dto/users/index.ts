@@ -5,3 +5,4 @@ export * from './suspend-user.dto';
 export * from './reset-password.dto';
 export * from './user-stats.dto';
 export * from './paginated-users.dto';
+export * from './admin-create-user.dto';

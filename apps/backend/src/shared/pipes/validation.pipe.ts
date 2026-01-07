@@ -4,13 +4,16 @@
  * Enhanced validation pipe with custom error messages.
  */
 
-import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
+import { PipeTransform, Injectable, BadRequestException, ArgumentMetadata } from '@nestjs/common';
 import { validate, ValidationError } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 
+// Type for class constructor
+type ClassType<T = unknown> = new (...args: unknown[]) => T;
+
 @Injectable()
-export class CustomValidationPipe implements PipeTransform<any> {
-  async transform(value: any, { metatype }: any) {
+export class CustomValidationPipe implements PipeTransform<unknown, Promise<unknown>> {
+  async transform(value: unknown, { metatype }: ArgumentMetadata): Promise<unknown> {
     if (!metatype || !this.toValidate(metatype)) {
       return value;
     }
@@ -28,14 +31,15 @@ export class CustomValidationPipe implements PipeTransform<any> {
     return value;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  private toValidate(metatype: Function): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    const types: Function[] = [String, Boolean, Number, Array, Object];
+  private toValidate(metatype: ClassType): boolean {
+    const types: ClassType[] = [String, Boolean, Number, Array, Object] as ClassType[];
     return !types.includes(metatype);
   }
 
-  private formatErrors(errors: ValidationError[]) {
+  private formatErrors(errors: ValidationError[]): Array<{
+    field: string;
+    constraints: ValidationError['constraints'];
+  }> {
     return errors.map((error) => ({
       field: error.property,
       constraints: error.constraints,

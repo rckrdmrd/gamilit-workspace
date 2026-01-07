@@ -1,3 +1,19 @@
+---
+id: "US-ACT-003"
+title: "Mecánicas básicas - Completar texto"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-002"
+story_points: 5
+budget: "$1,800 MXN"
+sprint: "Sprint-1"
+labels: ["actividades", "mecanica", "fill-blank", "fullstack"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ACT-003: Mecánicas básicas - Completar texto
 
 **Épica:** EAI-002 - Actividades Básicas Hardcodeadas
@@ -5,7 +21,7 @@
 **Story Points:** 5 SP
 **Presupuesto:** $1,800 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
@@ -177,10 +193,10 @@ const fillBlankActivities = [
 
 ## Notas del Alcance Inicial
 
-- ✅ Validación simple (igualdad exacta)
-- ✅ Sin validación semántica con IA
-- ✅ Sin autocompletado
-- ⚠️ **Extensión futura:** EXT-018-AIValidation (validación semántica con NLP)
+- Done Validación simple (igualdad exacta)
+- Done Sin validación semántica con IA
+- Done Sin autocompletado
+- **Extensión futura:** EXT-018-AIValidation (validación semántica con NLP)
 
 ---
 
@@ -264,10 +280,11 @@ const fillBlankActivities = [
 
 ---
 
-**Total Estimado:** 20h (5 SP × 4h)
+**Total Estimado:** 20h (5 SP x 4h)
 **Desglose:** Backend 40% | Frontend 35% | Testing 20% | Deploy 5%
 
 ---
 
 **Creado:** 2025-11-02
+**Actualizado:** 2026-01-04
 **Responsable:** Equipo Fullstack

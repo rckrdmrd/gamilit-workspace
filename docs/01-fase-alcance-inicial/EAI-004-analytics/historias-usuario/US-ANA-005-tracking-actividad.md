@@ -1,3 +1,19 @@
+---
+id: "US-ANA-005"
+title: "Tracking de Actividad"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-004"
+story_points: 7
+budget: "$3,400 MXN"
+sprint: "Sprint-1"
+labels: ["analytics", "activity-tracking", "timeline"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ANA-005: Tracking de Actividad
 
 **Épica:** EAI-004 (Analytics Básico)
@@ -5,7 +21,7 @@
 **Story Points:** 7 SP
 **Presupuesto:** $3,400 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 
@@ -611,23 +627,23 @@ function renderActivityDescription(activity) {
 ## Alcance Básico vs Extensiones
 
 ### EAI-004 (Este alcance - Analytics Básico):
-- ✅ Timeline de últimas 50 actividades
-- ✅ Filtro simple por rango de fechas (today, 7d, 30d, all)
-- ✅ Auto-refresh cada 2 minutos
-- ✅ Estadísticas básicas del día
-- ✅ Paginación con "Cargar más"
-- ✅ 4 tipos de actividad básicos
+- Timeline de últimas 50 actividades
+- Filtro simple por rango de fechas (today, 7d, 30d, all)
+- Auto-refresh cada 2 minutos
+- Estadísticas básicas del día
+- Paginación con "Cargar más"
+- 4 tipos de actividad básicos
 
 ### EXT-005 (Extensión futura - Reportes Avanzados):
-- ⏳ Filtros avanzados (por estudiante, módulo, tipo)
-- ⏳ Búsqueda en timeline
-- ⏳ Agrupación por estudiante/módulo
-- ⏳ Análisis de patrones de actividad
-- ⏳ Alertas configurables (ej: estudiante inactivo >X días)
-- ⏳ Exportación de timeline a CSV
-- ⏳ Vista de heatmap de actividad
-- ⏳ Real-time con WebSockets (actualización instantánea)
-- ⏳ Comparativa de actividad entre clases
+- Filtros avanzados (por estudiante, módulo, tipo)
+- Búsqueda en timeline
+- Agrupación por estudiante/módulo
+- Análisis de patrones de actividad
+- Alertas configurables (ej: estudiante inactivo >X días)
+- Exportación de timeline a CSV
+- Vista de heatmap de actividad
+- Real-time con WebSockets (actualización instantánea)
+- Comparativa de actividad entre clases
 
 ---
 

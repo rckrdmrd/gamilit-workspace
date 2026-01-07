@@ -1,3 +1,17 @@
+---
+id: "RF-SYS-002"
+title: "Feature Flags (Banderas de Funcionalidad)"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Configuracion del Sistema"
+epic: "EAI-006"
+version: "1.0"
+labels: ["system", "feature-flags", "rollout", "a-b-testing", "targeting"]
+created_date: "2025-11-08"
+updated_date: "2026-01-04"
+---
+
 # RF-SYS-002: Feature Flags (Banderas de Funcionalidad)
 
 **ID:** RF-SYS-002

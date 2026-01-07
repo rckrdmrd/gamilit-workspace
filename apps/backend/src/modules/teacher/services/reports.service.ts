@@ -59,7 +59,7 @@ export class ReportsService {
     private readonly analyticsService: AnalyticsService,
     private readonly storageService: StorageService,
     private readonly teacherReportsService: TeacherReportsService,
-  ) {}
+  ) { }
 
   /**
    * Generate report based on request DTO
@@ -70,6 +70,7 @@ export class ReportsService {
     userId: string,
     tenantId: string,
   ): Promise<{ buffer: Buffer; metadata: ReportMetadataDto; reportId: string }> {
+    // ISS-BE-001: Enabled after installing exceljs and uuid dependencies (2026-01-04)
     this.logger.log(`Generating ${dto.format} report of type ${dto.type} for user ${userId}`);
 
     // Gather report data
@@ -149,6 +150,7 @@ export class ReportsService {
    * Gather all data needed for the report
    */
   private async gatherReportData(dto: GenerateReportDto, userId: string): Promise<ReportData> {
+    // ISS-BE-001: Enabled after installing exceljs and uuid dependencies (2026-01-04)
     // Get list of students to include
     let studentIds: string[];
 
@@ -504,14 +506,13 @@ export class ReportsService {
     </div>
   </div>
 
-  ${
-  highRiskStudents.length > 0
-    ? `
+  ${highRiskStudents.length > 0
+        ? `
   <div class="section alert">
     <h2>⚠️ Estudiantes que Requieren Atención Inmediata</h2>
     ${highRiskStudents
-    .map(
-      student => `
+          .map(
+            student => `
       <div class="student-card high-risk">
         <div class="student-name">${student.student_name}</div>
         <div class="metrics">
@@ -536,21 +537,20 @@ export class ReportsService {
         </div>
       </div>
     `,
-    )
-    .join('')}
+          )
+          .join('')}
   </div>
   `
-    : ''
-}
+        : ''
+      }
 
-  ${
-  mediumRiskStudents.length > 0
-    ? `
+  ${mediumRiskStudents.length > 0
+        ? `
   <div class="section">
     <h2>Estudiantes con Riesgo Moderado</h2>
     ${mediumRiskStudents
-    .map(
-      student => `
+          .map(
+            student => `
       <div class="student-card medium-risk">
         <div class="student-name">${student.student_name}</div>
         <div class="metrics">
@@ -575,12 +575,12 @@ export class ReportsService {
         </div>
       </div>
     `,
-    )
-    .join('')}
+          )
+          .join('')}
   </div>
   `
-    : ''
-}
+        : ''
+      }
 
   <div class="footer">
     <p>Generado por GAMILIT Platform - Sistema de Análisis Estudiantil</p>
@@ -595,6 +595,7 @@ export class ReportsService {
    * Generate Excel report
    */
   private async generateExcelReport(reportData: ReportData): Promise<Buffer> {
+    // ISS-BE-001: Enabled after installing exceljs dependency (2026-01-04)
     this.logger.log('Generating Excel report...');
 
     const workbook = new ExcelJS.Workbook();

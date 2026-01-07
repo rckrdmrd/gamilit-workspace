@@ -75,7 +75,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
       });
       set({ notifications: data.notifications, isLoading: false });
     } catch (error: unknown) {
-      set({ error: error.message, isLoading: false });
+      const message = error instanceof Error ? error.message : 'Error al cargar notificaciones';
+      set({ error: message, isLoading: false });
     }
   },
 
@@ -98,7 +99,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
         unreadCount: Math.max(0, state.unreadCount - 1),
       }));
     } catch (error: unknown) {
-      set({ error: error.message });
+      const message = error instanceof Error ? error.message : 'Error al marcar como leida';
+      set({ error: message });
     }
   },
 
@@ -110,7 +112,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
         unreadCount: 0,
       }));
     } catch (error: unknown) {
-      set({ error: error.message });
+      const message = error instanceof Error ? error.message : 'Error al marcar todas como leidas';
+      set({ error: message });
     }
   },
 
@@ -126,7 +129,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
         };
       });
     } catch (error: unknown) {
-      set({ error: error.message });
+      const message = error instanceof Error ? error.message : 'Error al eliminar notificacion';
+      set({ error: message });
     }
   },
 
@@ -135,7 +139,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
       await notificationsAPI.clearAll();
       set({ notifications: [], unreadCount: 0 });
     } catch (error: unknown) {
-      set({ error: error.message });
+      const message = error instanceof Error ? error.message : 'Error al limpiar notificaciones';
+      set({ error: message });
     }
   },
 
@@ -153,7 +158,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
       const data = await notificationsAPI.getPreferences();
       set({ preferences: data.preferences, preferencesLoading: false });
     } catch (error: unknown) {
-      set({ error: error.message, preferencesLoading: false });
+      const message = error instanceof Error ? error.message : 'Error al cargar preferencias';
+      set({ error: message, preferencesLoading: false });
       console.error('Failed to fetch preferences:', error);
     }
   },
@@ -189,7 +195,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
         }
       });
     } catch (error: unknown) {
-      set({ error: error.message, preferencesLoading: false });
+      const message = error instanceof Error ? error.message : 'Error al actualizar preferencia';
+      set({ error: message, preferencesLoading: false });
       console.error('Failed to update preference:', error);
     }
   },
@@ -205,7 +212,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
       const data = await notificationsAPI.updateMultiplePreferences(dto);
       set({ preferences: data.preferences, preferencesLoading: false });
     } catch (error: unknown) {
-      set({ error: error.message, preferencesLoading: false });
+      const message = error instanceof Error ? error.message : 'Error al actualizar preferencias';
+      set({ error: message, preferencesLoading: false });
       console.error('Failed to update multiple preferences:', error);
     }
   },
@@ -221,7 +229,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
       const data = await notificationsAPI.getDevices();
       set({ devices: data.devices, devicesLoading: false });
     } catch (error: unknown) {
-      set({ error: error.message, devicesLoading: false });
+      const message = error instanceof Error ? error.message : 'Error al cargar dispositivos';
+      set({ error: message, devicesLoading: false });
       console.error('Failed to fetch devices:', error);
     }
   },
@@ -242,7 +251,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
         devicesLoading: false,
       }));
     } catch (error: unknown) {
-      set({ error: error.message, devicesLoading: false });
+      const message = error instanceof Error ? error.message : 'Error al registrar dispositivo';
+      set({ error: message, devicesLoading: false });
       console.error('Failed to register device:', error);
       throw error; // Re-throw so UI can handle it
     }
@@ -267,7 +277,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
         devicesLoading: false,
       }));
     } catch (error: unknown) {
-      set({ error: error.message, devicesLoading: false });
+      const message = error instanceof Error ? error.message : 'Error al actualizar dispositivo';
+      set({ error: message, devicesLoading: false });
       console.error('Failed to update device name:', error);
       throw error;
     }
@@ -289,7 +300,8 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
         devicesLoading: false,
       }));
     } catch (error: unknown) {
-      set({ error: error.message, devicesLoading: false });
+      const message = error instanceof Error ? error.message : 'Error al eliminar dispositivo';
+      set({ error: message, devicesLoading: false });
       console.error('Failed to delete device:', error);
       throw error;
     }

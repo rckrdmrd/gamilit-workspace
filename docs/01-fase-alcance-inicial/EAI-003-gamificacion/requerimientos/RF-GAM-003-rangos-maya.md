@@ -1,3 +1,17 @@
+---
+id: "RF-GAM-003"
+title: "Sistema de Rangos Maya"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Gamificacion"
+epic: "EAI-003"
+version: "1.0"
+labels: ["gamification", "ranks", "maya-culture", "xp", "progression", "hierarchy"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # RF-GAM-003: Sistema de Rangos Maya
 
 ## 📋 Metadata

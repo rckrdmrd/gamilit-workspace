@@ -18,18 +18,27 @@ Sistema de gamificación: logros, rangos Maya, monedas ML, comodines, tienda vir
 
 ## Tablas Principales
 
-| Tabla | Propósito |
-|-------|-----------|
-| `user_stats` | Estadísticas principales (XP, ML Coins, nivel, racha) |
-| `user_ranks` | Rangos Maya actuales e históricos |
-| `maya_ranks` | Definición de 7 rangos (Ajaw → Ahau) |
-| `achievements` | Definición de logros |
-| `user_achievements` | Logros desbloqueados por usuario |
-| `ml_coins_transactions` | Historial de transacciones ML Coins |
-| `missions` | Misiones diarias y semanales |
-| `comodines_inventory` | Inventario de comodines por usuario |
-| `leaderboard_metadata` | Configuración de leaderboards |
-| `achievement_categories` | Categorías de logros |
+| Tabla | Propósito | Estado |
+|-------|-----------|--------|
+| `user_stats` | Estadísticas principales (XP, ML Coins, nivel, racha) | Activa |
+| `user_ranks` | Rangos Maya actuales e históricos | Activa |
+| `maya_ranks` | Definición de 7 rangos (Ajaw → Ahau) | Activa |
+| `achievements` | Definición de logros | Activa |
+| `user_achievements` | Logros desbloqueados por usuario | Activa |
+| `ml_coins_transactions` | Historial de transacciones ML Coins | Activa |
+| `missions` | Misiones diarias y semanales | Activa |
+| `comodines_inventory` | Inventario de comodines por usuario | Activa |
+| `leaderboard_metadata` | Configuración de leaderboards | Activa |
+| `achievement_categories` | Categorías de logros | Activa |
+| `notifications` | Notificaciones de gamificación | **DEPRECATED** |
+
+## Migracion de Duplicados
+
+**Ver:** `MIGRATION-NOTIFICATIONS.md`
+
+| Tabla Deprecated | Migrar a | Razon |
+|-----------------|----------|-------|
+| `notifications` | `notifications.notifications` | Sistema consolidado multi-canal |
 
 ## Sistema de Rangos Maya
 
@@ -86,4 +95,7 @@ en futuro refactoring.
 
 ---
 
-**Última actualización:** 2025-12-29
+**Última actualización:** 2026-01-04
+**Cambios recientes:**
+- notifications marcada como DEPRECATED (2026-01-04)
+- Agregado MIGRATION-NOTIFICATIONS.md

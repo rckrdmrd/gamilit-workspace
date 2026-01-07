@@ -31,10 +31,14 @@ import { LeaderboardTabs } from '@/features/gamification/social/components/Leade
 import { SeasonSelector } from '@/features/gamification/social/components/Leaderboards/SeasonSelector';
 import { LeaderboardLayout } from '@/features/gamification/social/components/Leaderboards/LeaderboardLayout';
 
+// Layout Components
+import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+
 // Hooks & Types
 import { useLeaderboards } from '@/features/gamification/social/hooks/useLeaderboards';
 import { useLeaderboardWebSocket } from '@/features/gamification/social/hooks/useLeaderboardWebSocket';
-import { useAuthStore } from '@/features/auth/store/authStore';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { useUserClassroom } from '../hooks/useUserClassroom';
 import { useDashboardData } from '../hooks/useDashboardData';
 
@@ -42,8 +46,11 @@ import { useDashboardData } from '../hooks/useDashboardData';
 import { cn } from '@shared/utils/cn';
 
 export default function LeaderboardPage() {
-  // Auth Store
-  const { user } = useAuthStore();
+  // Auth Hook
+  const { user, logout } = useAuth();
+
+  // Gamification data for header
+  const { gamificationData } = useUserGamification(user?.id);
 
   // Get user's primary classroom (type-safe approach)
   const { classroomId: userClassroomId } = useUserClassroom(user?.id);
@@ -154,14 +161,21 @@ export default function LeaderboardPage() {
   }, [progress, achievements]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header con Filtros - Sticky */}
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
+      {/* Global Header */}
+      <GamifiedHeader
+        user={user || undefined}
+        gamificationData={gamificationData}
+        onLogout={logout}
+      />
+
+      {/* Filters Section - Sticky below header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="sticky top-0 z-20 bg-white shadow-md dark:bg-gray-800"
+        className="sticky top-16 z-10 bg-white shadow-md"
       >
-        <div className="container mx-auto px-4 py-4">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           {/* Title and Refresh */}
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -229,7 +243,7 @@ export default function LeaderboardPage() {
       </motion.header>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-6">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
           {/* Main Leaderboard - 3 columns on desktop */}
           <main className="space-y-6 lg:col-span-3">
@@ -523,6 +537,9 @@ export default function LeaderboardPage() {
           </aside>
         </div>
       </div>
+
+      {/* Bottom Spacing */}
+      <div className="h-16" />
     </div>
   );
 }

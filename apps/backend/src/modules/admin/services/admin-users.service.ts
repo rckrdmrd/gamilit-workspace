@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ConflictException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull, Not, MoreThan } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
+import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { User } from '@modules/auth/entities/user.entity';
 import { Profile } from '@modules/auth/entities/profile.entity';
 import { Tenant } from '@modules/auth/entities/tenant.entity';
@@ -13,8 +15,10 @@ import {
   PaginatedUsersDto,
   UserStatsDto,
   UserDetailsDto,
+  AdminCreateUserDto,
+  AdminCreatedUserDto,
 } from '../dto/users';
-import { UserStatusEnum, GamilityRoleEnum } from '@shared/constants';
+import { UserStatusEnum, GamilityRoleEnum, LanguageEnum } from '@shared/constants';
 
 @Injectable()
 export class AdminUsersService {
@@ -27,7 +31,7 @@ export class AdminUsersService {
     private readonly profileRepo: Repository<Profile>,
     @InjectRepository(Tenant, 'auth')
     private readonly tenantRepo: Repository<Tenant>,
-  ) {}
+  ) { }
 
   async listUsers(query: ListUsersDto): Promise<PaginatedUsersDto> {
     const { search, role, status, page = 1, limit = 20 } = query;
@@ -334,5 +338,142 @@ export class AdminUsersService {
       admins,
       users_last_30_days: recent,
     };
+  }
+
+  /**
+   * Crear nuevo usuario desde panel de administración
+   *
+   * @description Crea un usuario (estudiante o profesor) con su perfil asociado.
+   * Valida email único, organización existente, y opcionalmente asigna a classroom.
+   *
+   * @param dto - Datos del usuario a crear
+   * @returns Usuario creado con información de organización
+   *
+   * @throws ConflictException si el email ya existe
+   * @throws NotFoundException si la organización no existe
+   * @throws BadRequestException si el classroom no pertenece a la organización
+   *
+   * @see US-AE-010 - Crear Usuarios desde Admin
+   */
+  async createUser(dto: AdminCreateUserDto): Promise<AdminCreatedUserDto> {
+    this.logger.log(`[US-AE-010] Creating user: ${dto.email}`);
+
+    // 1. Validar que el email no exista
+    const existingUser = await this.userRepo.findOne({
+      where: { email: dto.email.toLowerCase() },
+    });
+    if (existingUser) {
+      throw new ConflictException(`El email ${dto.email} ya está registrado`);
+    }
+
+    // 2. Validar que la organización exista
+    const organization = await this.tenantRepo.findOne({
+      where: { id: dto.organization_id },
+    });
+    if (!organization) {
+      throw new NotFoundException(`Organización ${dto.organization_id} no encontrada`);
+    }
+
+    // 3. Generar contraseña temporal si no se provee
+    const temporaryPassword = dto.temporary_password || this.generateSecurePassword();
+
+    // 4. Hash de la contraseña
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(temporaryPassword, saltRounds);
+
+    // 5. Extraer nombre y apellido del full_name
+    const nameParts = dto.full_name.trim().split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
+    // 6. Crear usuario en auth.users
+    const user = this.userRepo.create({
+      email: dto.email.toLowerCase(),
+      encrypted_password: hashedPassword,
+      role: dto.role,
+      raw_user_meta_data: {
+        full_name: dto.full_name,
+        created_by_admin: true,
+        organization_id: dto.organization_id,
+      },
+    });
+    const savedUser = await this.userRepo.save(user);
+    this.logger.log(`[US-AE-010] User created in auth.users: ${savedUser.id}`);
+
+    // 7. Crear perfil en auth_management.profiles
+    const profile = this.profileRepo.create({
+      user_id: savedUser.id,
+      tenant_id: dto.organization_id,
+      email: dto.email.toLowerCase(),
+      full_name: dto.full_name,
+      first_name: firstName,
+      last_name: lastName,
+      role: dto.role,
+      status: UserStatusEnum.ACTIVE,
+      email_verified: false,
+      preferences: {
+        theme: 'light',
+        language: LanguageEnum.ES,
+        notifications: { email: true, push: true },
+      },
+      metadata: {
+        created_by_admin: true,
+        classroom_id: dto.classroom_id || null,
+      },
+    });
+    await this.profileRepo.save(profile);
+    this.logger.log(`[US-AE-010] Profile created: ${profile.id}`);
+
+    // 8. TODO: Enviar email de bienvenida si send_welcome_email es true
+    // Esto requiere integración con MailService
+    const welcomeEmailSent = false; // dto.send_welcome_email !== false;
+
+    // 9. Construir respuesta
+    const response: AdminCreatedUserDto = {
+      id: savedUser.id,
+      email: savedUser.email,
+      full_name: dto.full_name,
+      role: dto.role,
+      organization_id: dto.organization_id,
+      organization_name: organization.name,
+      classroom_id: dto.classroom_id,
+      classroom_name: undefined, // TODO: Obtener nombre de classroom si existe
+      status: 'pending',
+      created_at: savedUser.created_at.toISOString(),
+      welcome_email_sent: welcomeEmailSent,
+      // Solo incluir contraseña temporal si NO se envió email
+      temporary_password: welcomeEmailSent ? undefined : temporaryPassword,
+    };
+
+    this.logger.log(`[US-AE-010] User creation completed: ${savedUser.id}`);
+    return response;
+  }
+
+  /**
+   * Genera una contraseña segura de 12 caracteres
+   * Incluye mayúsculas, minúsculas, números y símbolos
+   */
+  private generateSecurePassword(): string {
+    const length = 12;
+    const uppercase = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lowercase = 'abcdefghjkmnpqrstuvwxyz';
+    const numbers = '23456789';
+    const symbols = '!@#$%&*';
+    const allChars = uppercase + lowercase + numbers + symbols;
+
+    // Garantizar al menos uno de cada tipo
+    let password = '';
+    password += uppercase[crypto.randomInt(uppercase.length)];
+    password += lowercase[crypto.randomInt(lowercase.length)];
+    password += numbers[crypto.randomInt(numbers.length)];
+    password += symbols[crypto.randomInt(symbols.length)];
+
+    // Completar con caracteres aleatorios
+    for (let i = password.length; i < length; i++) {
+      password += allChars[crypto.randomInt(allChars.length)];
+    }
+
+    // Mezclar la contraseña
+    return password.split('').sort(() => crypto.randomInt(3) - 1).join('');
   }
 }

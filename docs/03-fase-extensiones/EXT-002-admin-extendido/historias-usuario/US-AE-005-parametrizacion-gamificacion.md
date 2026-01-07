@@ -1,19 +1,48 @@
-# US-AE-005: Parametrización Dinámica de Gamificación
+---
+id: "US-AE-005"
+title: "Parametrizacion Dinamica de Gamificacion"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 12
+budget: "$4,800 MXN"
+sprint: "Sprint-FE-059"
+labels: ["admin-extendido", "gamification", "settings", "dynamic-config", "v2-core", "implemented"]
+created_date: "2025-11-08"
+updated_date: "2026-01-06"
+completed_date: "2025-11-19"
+---
 
-## 📋 Metadata
+# US-AE-005: Parametrizacion Dinamica de Gamificacion
+
+## Metadata
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | US-AE-005 |
-| **Épica** | EXT-002 (Admin Extendido CORE) |
-| **Módulo** | Admin - Configuración del Sistema |
+| **Epica** | EXT-002 (Admin Extendido CORE) |
+| **Modulo** | Admin - Configuracion del Sistema |
 | **Prioridad** | Alta (v2 CORE) |
 | **Story Points** | 12 |
 | **Presupuesto** | $4,800 MXN |
-| **Sprint** | TBD |
-| **Estado** | 🆕 Nueva |
-| **Versión** | 1.0 |
-| **Fecha creación** | 2025-11-08 |
+| **Sprint** | Sprint-FE-059 |
+| **Estado** | **Done** |
+| **Version** | 2.0 |
+| **Fecha creacion** | 2025-11-08 |
+| **Fecha completado** | 2025-11-19 |
+
+> **IMPLEMENTACION COMPLETADA** (2025-11-19)
+>
+> Esta US fue implementada durante FE-059 Days 1-9.
+>
+> **Codigo:**
+> - Backend: `apps/backend/src/modules/admin/controllers/admin-gamification-config.controller.ts`
+> - Backend: `apps/backend/src/modules/admin/services/gamification-config.service.ts`
+> - Frontend: `apps/frontend/src/apps/admin/pages/AdminGamificationPage.tsx`
+> - Entity: `apps/backend/src/modules/admin/entities/gamification-parameter.entity.ts`
+> - Tests: `apps/backend/src/modules/admin/__tests__/gamification-config-us-ae-005.service.spec.ts`
 
 ## 🎯 Historia de Usuario
 

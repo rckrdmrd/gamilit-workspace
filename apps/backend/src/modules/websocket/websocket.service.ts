@@ -102,6 +102,38 @@ export class WebSocketService {
   }
 
   /**
+   * FIX GAP-LOW-003: Emit balance updated to user for real-time store updates
+   */
+  emitBalanceUpdated(
+    userId: string,
+    balanceData: {
+      mlCoins: number;
+      xp: number;
+      rank?: string;
+      source: string;
+    },
+  ) {
+    this.gateway.emitToUser(userId, SocketEvent.BALANCE_UPDATED, balanceData);
+    this.logger.debug(`Balance update sent to user ${userId}: ${balanceData.mlCoins} ML Coins, ${balanceData.xp} XP`);
+  }
+
+  /**
+   * FIX GAP-LOW-003: Emit ML Coins earned to user
+   */
+  emitMLCoinsEarned(
+    userId: string,
+    coinsData: {
+      amount: number;
+      source: string;
+      totalCoins: number;
+      bonusMultiplier?: number;
+    },
+  ) {
+    this.gateway.emitToUser(userId, SocketEvent.ML_COINS_EARNED, coinsData);
+    this.logger.debug(`ML Coins earned (${coinsData.amount}) sent to user ${userId}`);
+  }
+
+  /**
    * Emit mission completed to user
    */
   emitMissionCompleted(

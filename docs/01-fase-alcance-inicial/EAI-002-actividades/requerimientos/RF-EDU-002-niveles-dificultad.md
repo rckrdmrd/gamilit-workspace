@@ -1,3 +1,17 @@
+---
+id: "RF-EDU-002"
+title: "Niveles de Dificultad de Ejercicios"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Contenido Educativo"
+epic: "EAI-002"
+version: "1.0"
+labels: ["exercises", "difficulty", "cefr", "progression", "adaptive"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # RF-EDU-002: Niveles de Dificultad de Ejercicios
 
 ## 📋 Metadata

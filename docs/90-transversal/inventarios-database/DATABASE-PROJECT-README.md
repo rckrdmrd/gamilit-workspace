@@ -126,7 +126,7 @@ apps/database/
 #### 📝 Pendientes (a crear después de correcciones)
 
 5. **04-FUNCTIONS-INVENTORY.md** - 61 funciones detalladas
-6. **05-TRIGGERS-INVENTORY.md** - 52 triggers detallados
+6. **05-TRIGGERS-INVENTARIO.md** - 52 triggers detallados
 7. **06-RLS-POLICIES-INVENTORY.md** - 24 policies detalladas
 8. **07-INDEXES-INVENTORY.md** - 74 índices detallados
 9. **08-VIEWS-INVENTORY.md** - 16 vistas detalladas

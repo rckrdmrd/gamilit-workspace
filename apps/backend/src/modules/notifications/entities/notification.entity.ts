@@ -37,31 +37,37 @@ export interface NotificationData {
 }
 
 /**
- * Notification Entity
+ * Notification Entity (SISTEMA BÁSICO - DEPRECATED)
  *
- * Mapea a la tabla: gamification_system.notifications
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * !!!                          DEPRECATED                                  !!!
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ *
+ * @deprecated Usar NotificationService (sistema consolidado) en su lugar
+ * @migration Fecha: 2026-01-04
+ *
+ * MIGRAR A:
+ *   - Entity: entities/multichannel/notification.entity.ts
+ *   - Service: services/notification.service.ts (NotificationService)
+ *   - Schema: notifications.notifications
+ *
+ * RAZÓN DE DEPRECACIÓN:
+ *   - gamification_system.notifications está deprecated
+ *   - El nuevo sistema multi-canal soporta: in_app, email, push
+ *   - Todos los triggers de BD ya usan notifications.notifications
+ *
+ * CAMBIOS DE API:
+ *   - NotificationsService.sendNotification() → NotificationService.create()
+ *   - read: boolean → status: 'pending' | 'sent' | 'read' | 'failed'
+ *   - type: enum → type: string
+ *   - Nuevos campos: channels[], readAt, sentAt, expiresAt, metadata
+ *
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ *
+ * Mapea a la tabla: gamification_system.notifications (DEPRECATED)
  *
  * @description Notificaciones de usuario para eventos del sistema
- * @source docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-NOTIFICATIONS.md
- * @source docs/02-especificaciones-tecnicas/trazabilidad/05-realtime-notifications.md
- * @version 3.0 (2025-11-08) - Agregada columna priority
- *
- * IMPORTANTE:
- * - Esta es la ÚNICA entity Notification válida en el backend
- * - Usa NotificationTypeEnum de @/shared/constants (sincronizado con DDL)
- * - NotificationData sigue la especificación oficial con snake_case
- * - 11 tipos de notificaciones soportados (ver NotificationTypeEnum)
- * - 3 niveles de prioridad (low, medium, high) usando NotificationPriorityEnum
- *
- * Cambios v3.0 (2025-11-08):
- * - Agregada columna priority (NotificationPriorityEnum, default: MEDIUM)
- * - Sincronizado con DDL v3.0 de gamification_system.notifications
- *
- * Cambios v2.0 (2025-11-07):
- * - Actualizado NotificationType a NotificationTypeEnum (11 valores)
- * - NotificationData actualizado según especificación oficial
- * - Agregados índices para optimizar consultas
- * - Documentación completa con referencias cruzadas
+ * @version 3.1 (2026-01-04) - DEPRECATED - Migrar a sistema consolidado
  */
 @Entity({ schema: DB_SCHEMAS.GAMIFICATION, name: DB_TABLES.GAMIFICATION.NOTIFICATIONS })
 @Index(['userId'])

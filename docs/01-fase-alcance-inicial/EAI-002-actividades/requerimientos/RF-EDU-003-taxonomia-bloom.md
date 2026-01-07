@@ -1,3 +1,17 @@
+---
+id: "RF-EDU-003"
+title: "Taxonomia de Bloom para Clasificacion Cognitiva"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Contenido Educativo"
+epic: "EAI-002"
+version: "1.0"
+labels: ["exercises", "bloom-taxonomy", "cognitive-levels", "pedagogy", "education"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # RF-EDU-003: Taxonomía de Bloom para Clasificación Cognitiva
 
 **ID:** RF-EDU-003

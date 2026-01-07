@@ -1,3 +1,19 @@
+---
+id: "US-AE-009"
+title: "Visualización de Assignments para Admin"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 13
+budget: "$5,200 MXN"
+sprint: "Sprint-2025-11-29"
+labels: ["admin-extendido", "assignments", "monitoring", "submissions", "v2-core"]
+created_date: "2025-11-29"
+updated_date: "2026-01-04"
+---
+
 # HU-EP010-09: Visualización de Assignments para Admin
 
 ## Información General

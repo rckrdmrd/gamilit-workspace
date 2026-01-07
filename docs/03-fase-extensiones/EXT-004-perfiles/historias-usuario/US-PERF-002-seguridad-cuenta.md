@@ -1,3 +1,19 @@
+---
+id: "US-PERF-002"
+title: "Sistema de Seguridad y Gestión de Sesiones"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-004"
+story_points: 5
+budget: "$2,500 MXN"
+sprint: "Sprint-Mes3"
+labels: ["ext-004", "seguridad", "2fa", "sesiones", "gdpr", "privacidad", "descarga-datos", "eliminacion-cuenta", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-PERF-002: Gestión Avanzada de Seguridad de Cuenta
 
 ## Información Básica

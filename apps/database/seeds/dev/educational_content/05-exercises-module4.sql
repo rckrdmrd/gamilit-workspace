@@ -1,18 +1,12 @@
 -- =====================================================
--- Seed Data: Exercises Module 4 - Lectura Digital y Multimodal (DEV)
+-- Seed Data: Exercises Module 4 - Textos Digitales (PRODUCTION)
 -- =====================================================
--- Description: 5 ejercicios oficiales del Módulo 4 (según DocumentoDeDiseño v6.4)
+-- Description: 9 ejercicios completos del Módulo 4
 -- Module: MOD-04-DIGITAL
--- Exercises:
---   4.1 Verificador Fake News
---   4.2 Infografía Interactiva
---   4.3 Quiz TikTok
---   4.4 Navegación Hipertextual
---   4.5 Análisis Memes
--- Reference: DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md líneas 782-965
--- Date: 2025-12-18 (Limpieza: eliminados 4 ejercicios no oficiales)
--- NOTA: Ejercicios 4.6-4.9 (resena_critica, chat_literario, email_formal,
---       ensayo_argumentativo) fueron eliminados por no estar en el documento de diseño
+-- Source: Migrado desde /home/isem/workspace/projects/glit/database
+-- Date: 2025-11-03
+-- Migration: ATLAS-DATABASE - ANALISIS-PRE-CORRECCIONES-BD-ORIGEN.md
+-- Changes: Reemplazó 3 ejercicios compactos con 9 ejercicios completos
 -- =====================================================
 
 SET search_path TO educational_content, public;
@@ -35,7 +29,7 @@ BEGIN
         difficulty_level, max_points, passing_score,
         estimated_time_minutes, max_attempts,
         hints, xp_reward, ml_coins_reward,
-        is_active
+        is_active, requires_manual_grading
     ) VALUES (
         mod_id,
         'Verificador de Fake News',
@@ -91,7 +85,7 @@ BEGIN
             'Compara múltiples fuentes confiables'
         ],
         100, 20,
-        true
+        true, true  -- Requiere evaluación manual del maestro
     );
 
     -- Exercise 4.2: Quiz TikTok Style
@@ -102,7 +96,7 @@ BEGIN
         difficulty_level, max_points, passing_score,
         estimated_time_minutes, max_attempts,
         hints, xp_reward, ml_coins_reward,
-        is_active
+        is_active, requires_manual_grading
     ) VALUES (
         mod_id,
         'Quiz TikTok: Datos Rápidos de Marie Curie',
@@ -153,11 +147,10 @@ BEGIN
             'Polonia se llama "Polska" en polaco'
         ],
         100, 20,
-        true
+        true, true  -- Requiere evaluación manual del maestro
     );
 
     -- Exercise 4.3: Navegación Hipertextual
-    -- Estructura: nodes[] con id, title, content, links[{targetId, label}]
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
         exercise_type, order_index,
@@ -165,7 +158,7 @@ BEGIN
         difficulty_level, max_points, passing_score,
         estimated_time_minutes, max_attempts,
         hints, xp_reward, ml_coins_reward,
-        is_active
+        is_active, requires_manual_grading
     ) VALUES (
         mod_id,
         'Navegación Hipertextual: Explora la Red de Conocimiento',
@@ -180,58 +173,26 @@ BEGIN
         }'::jsonb,
         '{
             "researchQuestion": "¿Qué experimentos realizó Marie Curie para aislar el radio?",
-            "nodes": [
-                {
-                    "id": "main-article",
-                    "title": "Marie Curie: Pionera de la Radiactividad",
-                    "content": "Marie Curie (1867-1934) fue una científica polaca-francesa que revolucionó nuestra comprensión de la física y la química. Junto con su esposo Pierre, realizó investigaciones pioneras sobre los fenómenos radiactivos, un término que ella misma acuñó.\n\nSus descubrimientos en radiactividad cambiaron para siempre el campo de la física nuclear. Trabajó intensamente durante años en el aislamiento de elementos radiactivos, un proceso que requirió una dedicación extraordinaria.",
-                    "links": [
-                        { "targetId": "radiactividad", "label": "descubrimientos en radiactividad" },
-                        { "targetId": "aislamiento", "label": "aislamiento de elementos radiactivos" },
-                        { "targetId": "premios", "label": "reconocimientos y premios" }
-                    ]
-                },
-                {
-                    "id": "radiactividad",
-                    "title": "Historia de la Radiactividad",
-                    "content": "El término ''radiactividad'' fue acuñado por Marie Curie en 1898. Henri Becquerel había descubierto en 1896 que las sales de uranio emitían rayos que podían impresionar placas fotográficas.\n\nMarie Curie decidió estudiar este fenómeno como tema de su tesis doctoral. Descubrió que la radiactividad era una propiedad atómica, no molecular, lo que fue revolucionario para la física de la época.",
-                    "links": [
-                        { "targetId": "main-article", "label": "volver al artículo principal" },
-                        { "targetId": "aislamiento", "label": "proceso de aislamiento" }
-                    ]
-                },
-                {
-                    "id": "aislamiento",
-                    "title": "El Proceso de Aislamiento del Radio",
-                    "content": "El aislamiento del radio fue uno de los logros más impresionantes de Marie Curie. Trabajando en condiciones precarias en un cobertizo sin calefacción, procesó toneladas de pechblenda para obtener pequeñas cantidades de radio puro.\n\nEl proceso requirió:\n• Trituración de toneladas de mineral de pechblenda\n• Disolución en ácidos y precipitación química\n• Cristalización fraccionada repetida durante años\n• Mediciones precisas de radiactividad\n\nEn 1902, logró aislar 0.1 gramos de cloruro de radio puro.",
-                    "links": [
-                        { "targetId": "main-article", "label": "volver al artículo principal" },
-                        { "targetId": "experimentos", "label": "experimentos específicos" },
-                        { "targetId": "radiactividad", "label": "qué es la radiactividad" }
-                    ]
-                },
-                {
-                    "id": "experimentos",
-                    "title": "Experimentos de Marie Curie con el Radio",
-                    "content": "Los experimentos de Marie Curie para aislar el radio fueron meticulosos y agotadores:\n\n1. **Análisis de la pechblenda**: Descubrió que era más radiactiva de lo esperado, lo que sugería la presencia de elementos desconocidos.\n\n2. **Separación química**: Usó técnicas de precipitación selectiva para separar diferentes fracciones del mineral.\n\n3. **Cristalización fraccionada**: El proceso más largo. Disolvía cloruros y los cristalizaba repetidamente, separando el radio del bario por sus diferentes solubilidades.\n\n4. **Medición con electrómetro**: Usó un electrómetro piezoeléctrico diseñado por Pierre para medir la radiactividad y seguir el rastro del radio.\n\n¡Este es el objetivo de tu investigación! Has encontrado la información sobre los experimentos.",
-                    "links": [
-                        { "targetId": "aislamiento", "label": "volver a aislamiento" },
-                        { "targetId": "premios", "label": "premios recibidos" }
-                    ]
-                },
-                {
-                    "id": "premios",
-                    "title": "Premios y Reconocimientos",
-                    "content": "Marie Curie recibió numerosos reconocimientos por su trabajo:\n\n• **Premio Nobel de Física (1903)**: Compartido con Pierre Curie y Henri Becquerel por sus investigaciones sobre radiación.\n\n• **Premio Nobel de Química (1911)**: Por el descubrimiento del radio y polonio, y por el aislamiento del radio.\n\nFue la primera persona en ganar dos Premios Nobel en diferentes ciencias.",
-                    "links": [
-                        { "targetId": "main-article", "label": "volver al artículo principal" },
-                        { "targetId": "aislamiento", "label": "proceso de aislamiento" }
-                    ]
-                }
-            ],
-            "startNodeId": "main-article",
-            "targetNodeId": "experimentos",
-            "optimalPath": ["main-article", "aislamiento", "experimentos"]
+            "mainArticle": {
+                "title": "Marie Curie: Pionera de la Radiactividad",
+                "paragraphs": [
+                    "Marie Curie revolucionó la ciencia con sus <link to=radiactividad>descubrimientos en radiactividad</link>...",
+                    "Trabajó intensamente en el <link to=aislamiento>aislamiento de elementos radiactivos</link>..."
+                ],
+                "links": [
+                    {
+                        "text": "radiactividad",
+                        "relevance": "high",
+                        "leadsTo": "Historia de la radiactividad"
+                    },
+                    {
+                        "text": "aislamiento",
+                        "relevance": "very high",
+                        "leadsTo": "Proceso de aislamiento del radio"
+                    }
+                ]
+            },
+            "optimalPath": ["mainArticle", "aislamiento", "proceso experimental"]
         }'::jsonb,
         '{"informationFound": true, "pathEfficiency": 0.8, "relevantLinks": 3}'::jsonb,
         'intermediate', 100, 70,
@@ -242,7 +203,7 @@ BEGIN
             'Sintetiza información de múltiples páginas'
         ],
         100, 20,
-        true
+        true, true  -- Requiere evaluación manual del maestro
     );
 
     -- Exercise 4.4: Análisis de Memes
@@ -253,7 +214,7 @@ BEGIN
         difficulty_level, max_points, passing_score,
         estimated_time_minutes, max_attempts,
         hints, xp_reward, ml_coins_reward,
-        is_active
+        is_active, requires_manual_grading
     ) VALUES (
         mod_id,
         'Análisis de Memes: Comprensión Visual-Textual',
@@ -299,7 +260,7 @@ BEGIN
             'Conocer el contexto histórico ayuda a entender el meme'
         ],
         100, 20,
-        true
+        true, true
     );
 
     -- Exercise 4.5: Infografía Interactiva
@@ -310,7 +271,7 @@ BEGIN
         difficulty_level, max_points, passing_score,
         estimated_time_minutes, max_attempts,
         hints, xp_reward, ml_coins_reward,
-        is_active
+        is_active, requires_manual_grading
     ) VALUES (
         mod_id,
         'Infografía Interactiva: Descubrimientos de Marie Curie',
@@ -366,8 +327,8 @@ BEGIN
             'Lee las leyendas y etiquetas cuidadosamente'
         ],
         100, 20,
-        true
+        true, true  -- Requiere evaluación manual del maestro
     );
 
-    RAISE NOTICE '✓ Module 4 (Lectura Digital y Multimodal) created with 5 exercises';
+    RAISE NOTICE '✓ Module 4 (Textos Digitales) created with 5 exercises (all require manual grading)';
 END $$;

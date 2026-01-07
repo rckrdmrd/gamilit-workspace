@@ -11,15 +11,15 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type {
-  MLCoinsBalance,
-  Transaction,
-  ShopItem,
-  CartItem,
-  PurchaseResult,
-  EarningSource,
-  TransactionFilters,
-  EconomyStats,
+import {
+  type MLCoinsBalance,
+  type Transaction,
+  type ShopItem,
+  type CartItem,
+  type PurchaseResult,
+  TransactionTypeEnum,
+  type TransactionFilters,
+  type EconomyStats,
 } from '../types/economyTypes';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { apiClient } from '@/services/api/apiClient';
@@ -38,8 +38,8 @@ interface EconomyState {
   error: string | null;
 
   // Coin Operations
-  addCoins: (amount: number, source: EarningSource | string, description?: string) => void;
-  spendCoins: (amount: number, itemName: string, itemId?: string) => Promise<boolean>;
+  addCoins: (amount: number, type: TransactionTypeEnum, description?: string) => void;
+  spendCoins: (amount: number, itemName: string, itemId?: string, type?: TransactionTypeEnum) => Promise<boolean>;
   updateBalance: (balance: Partial<MLCoinsBalance>) => void;
 
   // Transaction Operations
@@ -103,7 +103,7 @@ export const useEconomyStore = create<EconomyState>()(
       error: null,
 
       // Add Coins (Earning)
-      addCoins: async (amount, source, description) => {
+      addCoins: async (amount, type, description) => {
         const state = get();
 
         try {
@@ -117,17 +117,17 @@ export const useEconomyStore = create<EconomyState>()(
           // Update stats in backend (increment ML Coins)
           const { data } = await apiClient.patch(`/gamification/users/${userId}/stats`, {
             ml_coins_increment: amount,
-            source,
+            source: type, // Backend uses the Enum value as source/type
             description,
           });
 
           // Create transaction record locally
           const transaction: Transaction = {
             id: crypto.randomUUID(),
-            type: 'earn',
+            type,
             amount,
-            source,
-            description: description || `Earned ${amount} ML from ${source}`,
+            source: type, // Source is now the type enum for consistency
+            description: description || `Earned ${amount} ML from ${type}`,
             timestamp: new Date(),
             balanceAfter: data.ml_coins,
           };
@@ -154,7 +154,7 @@ export const useEconomyStore = create<EconomyState>()(
       },
 
       // Spend Coins
-      spendCoins: async (amount, itemName, itemId) => {
+      spendCoins: async (amount, itemName, itemId, type = TransactionTypeEnum.SPENT_POWERUP) => {
         const state = get();
 
         try {
@@ -174,13 +174,15 @@ export const useEconomyStore = create<EconomyState>()(
             ml_coins_decrement: amount,
             reason: `Purchased ${itemName}`,
             item_id: itemId,
+            // Backend might expect type here too if updated?
+            // Assuming backend derives or we can send metadata
           });
 
           const transaction: Transaction = {
             id: crypto.randomUUID(),
-            type: 'spend',
+            type,
             amount: -amount,
-            source: 'shop',
+            source: 'shop', // Keep generic shop source or use type?
             description: `Purchased ${itemName}`,
             timestamp: new Date(),
             balanceAfter: data.ml_coins,
@@ -337,7 +339,9 @@ export const useEconomyStore = create<EconomyState>()(
         }
 
         // Perform purchase
-        const success = await state.spendCoins(totalCost, item.name, item.id);
+        // NOTE: Defaulting to SPENT_POWERUP for shop items as per current Enum limitations.
+        // Future TODO: Add SPENT_SHOP to backend Enum.
+        const success = await state.spendCoins(totalCost, item.name, item.id, TransactionTypeEnum.SPENT_POWERUP);
 
         if (success) {
           // Add to inventory
@@ -383,7 +387,7 @@ export const useEconomyStore = create<EconomyState>()(
 
         // Perform purchase
         const itemNames = state.cart.map((item) => item.name).join(', ');
-        const success = await state.spendCoins(totalCost, itemNames);
+        const success = await state.spendCoins(totalCost, itemNames, undefined, TransactionTypeEnum.SPENT_POWERUP);
 
         if (success) {
           // Add all items to inventory
@@ -451,8 +455,9 @@ export const useEconomyStore = create<EconomyState>()(
       // Get Economy Statistics
       getEconomyStats: () => {
         const state = get();
-        const earnTransactions = state.transactions.filter((t) => t.type === 'earn');
-        const spendTransactions = state.transactions.filter((t) => t.type === 'spend');
+        // Use string check or category helper if avail, but simple check works since we use enum now
+        const earnTransactions = state.transactions.filter((t) => t.type.startsWith('earned_') || t.type === 'welcome_bonus' || t.type === 'bonus');
+        const spendTransactions = state.transactions.filter((t) => t.type.startsWith('spent_'));
 
         // Calculate favorite category
         const categorySpending: Record<string, number> = {};
@@ -483,24 +488,24 @@ export const useEconomyStore = create<EconomyState>()(
           favoriteCategory: favoriteCategory as any,
           biggestPurchase: biggestTransaction
             ? {
-                item: biggestTransaction.description,
-                amount: Math.abs(biggestTransaction.amount),
-                date: biggestTransaction.timestamp,
-              }
+              item: biggestTransaction.description,
+              amount: Math.abs(biggestTransaction.amount),
+              date: biggestTransaction.timestamp,
+            }
             : {
-                item: 'None',
-                amount: 0,
-                date: new Date(),
-              },
+              item: 'None',
+              amount: 0,
+              date: new Date(),
+            },
           topEarningSource: topSource
             ? {
-                source: topSource[0],
-                amount: topSource[1],
-              }
+              source: topSource[0],
+              amount: topSource[1],
+            }
             : {
-                source: 'None',
-                amount: 0,
-              },
+              source: 'None',
+              amount: 0,
+            },
         };
       },
 

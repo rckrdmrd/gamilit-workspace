@@ -1,5 +1,5 @@
 -- =============================================================================
--- FUNCTION: public.log_system_event
+-- FUNCTION: audit_logging.log_system_event
 -- =============================================================================
 -- Purpose: Logs system events for audit and monitoring purposes
 -- Priority: P2 - System event logging function
@@ -51,7 +51,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, audit_logging;
 
 -- Documentation comment
-COMMENT ON FUNCTION public.log_system_event(TEXT, TEXT, JSONB, TEXT) IS
+COMMENT ON FUNCTION audit_logging.log_system_event(TEXT, TEXT, JSONB, TEXT) IS
 'Logs system events for audit, monitoring and debugging purposes.
 Parameters:
   - p_event_type: Type of event (e.g., ''DATABASE_BACKUP_START'', ''API_ERROR'')

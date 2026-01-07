@@ -63,6 +63,7 @@ import {
   ExerciseResponsesService,
   StorageService,
   TeacherReportsService,
+  RubricScoringService,
 } from './services';
 import { TeacherMessagesService } from './services/teacher-messages.service';
 import { ManualReviewService } from './services/manual-review.service';
@@ -74,6 +75,8 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
 import { ProgressModule } from '@modules/progress/progress.module';
 // P0-04: Added 2025-12-18 - NotificationsModule for StudentRiskAlertService
 import { NotificationsModule } from '@modules/notifications/notifications.module';
+// FIX GAP-LOW-001: AuditModule for review event tracking
+import { AuditModule } from '@modules/audit/audit.module';
 
 /**
  * TeacherModule
@@ -128,6 +131,9 @@ import { NotificationsModule } from '@modules/notifications/notifications.module
 
     // P0-04: Import NotificationsModule for StudentRiskAlertService
     NotificationsModule,
+
+    // FIX GAP-LOW-001: Import AuditModule for review event tracking
+    AuditModule,
 
     // Entities from 'auth' datasource
     TypeOrmModule.forFeature([Profile, User], 'auth'),
@@ -186,6 +192,7 @@ import { NotificationsModule } from '@modules/notifications/notifications.module
     StorageService,
     TeacherReportsService,
     ManualReviewService,
+    RubricScoringService,
 
     // Guards
     TeacherGuard,
@@ -203,6 +210,7 @@ import { NotificationsModule } from '@modules/notifications/notifications.module
     TeacherContentService,
     ExerciseResponsesService,
     ManualReviewService,
+    RubricScoringService,
   ],
 })
 export class TeacherModule {}

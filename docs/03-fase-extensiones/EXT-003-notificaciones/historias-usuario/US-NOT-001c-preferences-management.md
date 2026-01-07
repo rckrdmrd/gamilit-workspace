@@ -1,3 +1,19 @@
+---
+id: "US-NOT-001c"
+title: "Gestión de Preferencias de Notificaciones"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-003"
+story_points: 4
+budget: "$5,260 MXN"
+sprint: "Sprint-Mes3-Sem3"
+labels: ["preferences", "settings", "ui", "backend", "api", "ext-003", "fase3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-NOT-001c: Gestión de Preferencias de Notificaciones
 
 **Épica:** EXT-003 - Sistema de Notificaciones

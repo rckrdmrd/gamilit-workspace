@@ -1,3 +1,19 @@
+---
+id: "US-ANA-003"
+title: "Vista de Estudiante Individual"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-004"
+story_points: 8
+budget: "$4,000 MXN"
+sprint: "Sprint-1"
+labels: ["analytics", "student-profile", "teacher-view"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ANA-003: Vista de Estudiante Individual
 
 **Épica:** EAI-004 (Analytics Básico)
@@ -5,7 +21,7 @@
 **Story Points:** 8 SP
 **Presupuesto:** $4,000 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 
@@ -527,24 +543,24 @@ export const useStudentProfile = (studentId: string, classroomId: string) => {
 ## Alcance Básico vs Extensiones
 
 ### EAI-004 (Este alcance - Analytics Básico):
-- ✅ Vista de perfil básico con métricas actuales
-- ✅ Progreso por módulo (% y actividades)
-- ✅ Lista de actividades completadas (últimas 20)
-- ✅ Métricas de tiempo básicas (total, promedio, sesiones)
-- ✅ Vista de solo lectura
-- ✅ Sin comparativas ni gráficas de tendencia
+- Vista de perfil básico con métricas actuales
+- Progreso por módulo (% y actividades)
+- Lista de actividades completadas (últimas 20)
+- Métricas de tiempo básicas (total, promedio, sesiones)
+- Vista de solo lectura
+- Sin comparativas ni gráficas de tendencia
 
 ### EXT-005 (Extensión futura - Reportes Avanzados):
-- ⏳ Gráficas de tendencia (progreso a lo largo del tiempo)
-- ⏳ Comparación con promedio de la clase
-- ⏳ Análisis de desempeño por tipo de actividad
-- ⏳ Predicción de completitud (ML)
-- ⏳ Alertas personalizadas para el estudiante
-- ⏳ Exportación de perfil a PDF
-- ⏳ Historial completo de actividades (paginado)
-- ⏳ Análisis de patrones de aprendizaje
-- ⏳ Recomendaciones personalizadas
-- ⏳ Vista de fortalezas y debilidades
+- Gráficas de tendencia (progreso a lo largo del tiempo)
+- Comparación con promedio de la clase
+- Análisis de desempeño por tipo de actividad
+- Predicción de completitud (ML)
+- Alertas personalizadas para el estudiante
+- Exportación de perfil a PDF
+- Historial completo de actividades (paginado)
+- Análisis de patrones de aprendizaje
+- Recomendaciones personalizadas
+- Vista de fortalezas y debilidades
 
 ---
 

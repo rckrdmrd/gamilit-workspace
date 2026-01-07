@@ -34,7 +34,7 @@ BEGIN
         hints, enable_hints, hint_cost_ml_coins,
         comodines_allowed, comodines_config,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version, requires_manual_grading
     ) VALUES (
         mod_id,
         'Diario Interactivo de Marie',
@@ -251,7 +251,7 @@ BEGIN
             "vision_lectora": {"cost": 25, "enabled": true, "description": "Muestra ejemplo de entrada de diario"}
         }'::jsonb,
         500, 100,
-        true, 1
+        true, 1, true
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
         config = EXCLUDED.config,
@@ -271,7 +271,7 @@ BEGIN
         hints, enable_hints, hint_cost_ml_coins,
         comodines_allowed, comodines_config,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version, requires_manual_grading
     ) VALUES (
         mod_id,
         'Resumen Visual Progresivo (Cómic Digital)',
@@ -545,7 +545,7 @@ BEGIN
             "vision_lectora": {"cost": 25, "enabled": true, "description": "Muestra ejemplo de panel completado"}
         }'::jsonb,
         500, 100,
-        true, 1
+        true, 1, true
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
         config = EXCLUDED.config,
@@ -565,7 +565,7 @@ BEGIN
         hints, enable_hints, hint_cost_ml_coins,
         comodines_allowed, comodines_config,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version, requires_manual_grading
     ) VALUES (
         mod_id,
         'Cápsula del Tiempo Digital',
@@ -799,7 +799,7 @@ BEGIN
             "vision_lectora": {"cost": 25, "enabled": true, "description": "Muestra guión completo de ejemplo"}
         }'::jsonb,
         500, 100,
-        true, 1
+        true, 1, true
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
         config = EXCLUDED.config,

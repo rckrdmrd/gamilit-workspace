@@ -33,7 +33,8 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { profileAPI } from '@/services/api/profileAPI';
+// ISS-FE-002: Use teacher namespace import for consistency
+import { profileAPI } from '@/services/api/teacher';
 
 // Components
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';

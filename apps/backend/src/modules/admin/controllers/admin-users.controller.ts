@@ -24,6 +24,8 @@ import {
   PaginatedUsersDto,
   UserStatsDto,
   ResetPasswordDto,
+  AdminCreateUserDto,
+  AdminCreatedUserDto,
 } from '../dto/users';
 import {
   BulkSuspendUsersDto,
@@ -48,6 +50,27 @@ export class AdminUsersController {
   @ApiOperation({ summary: 'List users with filters and pagination' })
   async listUsers(@Query() query: ListUsersDto): Promise<PaginatedUsersDto> {
     return this.adminUsersService.listUsers(query);
+  }
+
+  /**
+   * Crear nuevo usuario desde admin
+   *
+   * @description Crea un estudiante o profesor con asignación a organización.
+   * Genera contraseña temporal si no se provee.
+   *
+   * @see US-AE-010 - Crear Usuarios desde Admin
+   */
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Create new user',
+    description:
+      'Create a new student or teacher user with organization assignment. ' +
+      'Generates a temporary password if not provided. ' +
+      'Returns the created user with temporary password (if email not sent).',
+  })
+  async createUser(@Body() dto: AdminCreateUserDto): Promise<AdminCreatedUserDto> {
+    return this.adminUsersService.createUser(dto);
   }
 
   @Get('stats')

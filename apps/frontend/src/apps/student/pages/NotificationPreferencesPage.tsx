@@ -12,63 +12,64 @@ import React, { useEffect, useState } from 'react';
 import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
 import type { UpdatePreferenceDto } from '@/services/api/notificationsAPI';
 
-// Notification types supported (aligned with backend)
+// Notification types supported (aligned with backend - EXT-003)
+// Keys must match DDL notification_type values exactly
 const NOTIFICATION_TYPES = [
   {
-    key: 'achievement',
+    key: 'achievement_unlocked',
     label: 'Logros Desbloqueados',
     description: 'Cuando desbloqueas un nuevo logro',
     icon: '🏆',
-    defaultChannels: { inApp: true, email: true, push: true },
+    defaultChannels: { inAppEnabled: true, emailEnabled: true, pushEnabled: true },
   },
   {
-    key: 'rank_up',
+    key: 'rank_promoted',
     label: 'Subida de Rango',
     description: 'Cuando subes de rango (Maya)',
     icon: '⬆️',
-    defaultChannels: { inApp: true, email: true, push: true },
+    defaultChannels: { inAppEnabled: true, emailEnabled: true, pushEnabled: true },
   },
   {
     key: 'friend_request',
     label: 'Solicitudes de Amistad',
     description: 'Cuando alguien te envía una solicitud',
     icon: '👥',
-    defaultChannels: { inApp: true, email: false, push: true },
+    defaultChannels: { inAppEnabled: true, emailEnabled: false, pushEnabled: true },
   },
   {
-    key: 'assignment_created',
+    key: 'new_assignment',
     label: 'Nuevas Tareas',
     description: 'Cuando el profesor asigna una tarea',
     icon: '📝',
-    defaultChannels: { inApp: true, email: true, push: false },
+    defaultChannels: { inAppEnabled: true, emailEnabled: true, pushEnabled: false },
   },
   {
-    key: 'assignment_graded',
+    key: 'exercise_feedback',
     label: 'Tareas Calificadas',
     description: 'Cuando el profesor califica tu tarea',
     icon: '✅',
-    defaultChannels: { inApp: true, email: true, push: false },
+    defaultChannels: { inAppEnabled: true, emailEnabled: true, pushEnabled: false },
   },
   {
-    key: 'mission_completed',
-    label: 'Misiones Completadas',
-    description: 'Cuando completas una misión',
+    key: 'module_completed',
+    label: 'Módulos Completados',
+    description: 'Cuando completas un módulo',
     icon: '🎯',
-    defaultChannels: { inApp: true, email: false, push: true },
+    defaultChannels: { inAppEnabled: true, emailEnabled: false, pushEnabled: true },
   },
   {
-    key: 'ml_coins_earned',
-    label: 'ML Coins Ganadas',
-    description: 'Cuando ganas ML Coins',
-    icon: '🪙',
-    defaultChannels: { inApp: true, email: false, push: false },
+    key: 'streak_milestone',
+    label: 'Racha de Estudio',
+    description: 'Cuando alcanzas hitos de racha',
+    icon: '🔥',
+    defaultChannels: { inAppEnabled: true, emailEnabled: false, pushEnabled: false },
   },
   {
     key: 'system_announcement',
     label: 'Anuncios del Sistema',
     description: 'Notificaciones importantes del sistema',
     icon: '📢',
-    defaultChannels: { inApp: true, email: true, push: false },
+    defaultChannels: { inAppEnabled: true, emailEnabled: true, pushEnabled: false },
   },
 ];
 

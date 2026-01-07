@@ -1,36 +1,52 @@
-# US-GAM-006: Narrativa básica
+---
+id: "US-GAM-006"
+title: "Narrativa basica"
+type: "User Story"
+status: "Done"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-003"
+story_points: 6
+budget: "$2,200 MXN"
+sprint: "Sprint-1"
+labels: ["gamificacion", "narrativa", "alcance-inicial"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
 
-**Épica:** EAI-003 - Gamificación Básica
+# US-GAM-006: Narrativa basica
+
+**Epica:** EAI-003 - Gamificacion Basica
 **Sprint:** Mes 1, Semana 4
 **Story Points:** 6 SP
 **Presupuesto:** $2,200 MXN
 **Prioridad:** Media (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
-## Descripción
+## Descripcion
 
 Como **estudiante**, quiero **experimentar una narrativa motivacional** para **sentirme parte de una historia mientras aprendo**.
 
 **Contexto del Alcance Inicial:**
-Narrativa simple pre-escrita. Mensajes entre módulos y logros que cuentan una historia básica de descubrimiento de la cultura Maya. NO usa IA.
+Narrativa simple pre-escrita. Mensajes entre modulos y logros que cuentan una historia basica de descubrimiento de la cultura Maya. NO usa IA.
 
 ---
 
-## Criterios de Aceptación
+## Criterios de Aceptacion
 
-- [ ] **CA-01:** Mensajes narrativos al inicio de cada módulo
-- [ ] **CA-02:** Mensajes al completar módulos
+- [ ] **CA-01:** Mensajes narrativos al inicio de cada modulo
+- [ ] **CA-02:** Mensajes al completar modulos
 - [ ] **CA-03:** Storyline lineal pre-escrita
-- [ ] **CA-04:** Personaje guía (ej: "Ixchel, guardiana del conocimiento")
+- [ ] **CA-04:** Personaje guia (ej: "Ixchel, guardiana del conocimiento")
 - [ ] **CA-05:** Los mensajes contextualizan el aprendizaje
-- [ ] **CA-06:** Progresión narrativa visible
+- [ ] **CA-06:** Progresion narrativa visible
 - [ ] **CA-07:** Mensajes formatados con estilo Maya
 
 ---
 
-## Especificaciones Técnicas
+## Especificaciones Tecnicas
 
 ### Backend
 
@@ -62,28 +78,28 @@ const NARRATIVE_SEED = [
     triggerType: 'module_start',
     triggerId: 'numeros-mayas',
     character: 'Ixchel',
-    message: '¡Bienvenido, joven aprendiz! Soy Ixchel, guardiana del conocimiento ancestral maya. Hoy comenzarás tu viaje descubriendo nuestro sistema numérico, una de las creaciones más ingeniosas de nuestra civilización.',
+    message: '¡Bienvenido, joven aprendiz! Soy Ixchel, guardiana del conocimiento ancestral maya. Hoy comenzaras tu viaje descubriendo nuestro sistema numerico, una de las creaciones mas ingeniosas de nuestra civilizacion.',
     order: 1
   },
   {
     triggerType: 'module_complete',
     triggerId: 'numeros-mayas',
     character: 'Ixchel',
-    message: '¡Excelente! Has dominado los números mayas. Los antiguos sabios estarían orgullosos. Ahora estás listo para explorar nuestro calendario, un sistema que medía el tiempo con precisión asombrosa.',
+    message: '¡Excelente! Has dominado los numeros mayas. Los antiguos sabios estarian orgullosos. Ahora estas listo para explorar nuestro calendario, un sistema que media el tiempo con precision asombrosa.',
     order: 2
   },
   {
     triggerType: 'rank_up',
     triggerId: 'aprendiz',
     character: 'Ixchel',
-    message: 'Tu dedicación no pasa desapercibida. Has alcanzado el rango de Aprendiz. Como los jóvenes mayas en las escuelas del saber, comienzas a comprender los secretos de nuestra cultura.',
+    message: 'Tu dedicacion no pasa desapercibida. Has alcanzado el rango de Aprendiz. Como los jovenes mayas en las escuelas del saber, comienzas a comprender los secretos de nuestra cultura.',
     order: null
   },
   {
     triggerType: 'module_start',
     triggerId: 'calendario-haab',
     character: 'Ixchel',
-    message: 'Prepárate para conocer el Haab, nuestro calendario solar de 365 días. Descubrirás cómo nuestros ancestros medían el ciclo del sol con precisión matemática.',
+    message: 'Preparate para conocer el Haab, nuestro calendario solar de 365 dias. Descubriras como nuestros ancestros median el ciclo del sol con precision matematica.',
     order: 3
   }
 ]
@@ -98,7 +114,7 @@ class NarrativeService {
   }
 
   async getStoryProgress(userId: string) {
-    // Obtener módulos completados
+    // Obtener modulos completados
     const completedModules = await this.moduleProgressRepository.find({
       where: { userId },
       order: { completedAt: 'ASC' }
@@ -190,7 +206,7 @@ export function ModuleDetailPage() {
         />
       )}
 
-      {/* Resto del módulo */}
+      {/* Resto del modulo */}
     </div>
   )
 }
@@ -205,7 +221,7 @@ export function StoryProgressPage() {
 
       <div className="mb-6">
         <p className="text-gray-600">
-          Capítulo {progress.currentChapter} • {progress.messagesCount} mensajes recibidos
+          Capitulo {progress.currentChapter} • {progress.messagesCount} mensajes recibidos
         </p>
       </div>
 
@@ -223,37 +239,37 @@ export function StoryProgressPage() {
 
 ## Dependencias
 
-**Antes:** US-ACT-008 (Navegación módulos)
+**Antes:** US-ACT-008 (Navegacion modulos)
 
 ---
 
-## Definición de Hecho (DoD)
+## Definicion de Hecho (DoD)
 
 - [x] Mensajes narrativos en BD
-- [x] Trigger al inicio/fin de módulos
-- [x] Personaje guía diseñado
+- [x] Trigger al inicio/fin de modulos
+- [x] Personaje guia diseñado
 - [x] Storyline coherente
-- [x] Página de progreso narrativo
+- [x] Pagina de progreso narrativo
 - [x] Tests
 
 ---
 
 ## Notas
 
-- ✅ Narrativa lineal pre-escrita
-- ✅ Sin ramificaciones ni decisiones
-- ✅ Sin generación con IA
-- ⚠️ **Extensión futura:** EXT-027-DynamicNarrative (IA genera narrativa personalizada)
+- Done Narrativa lineal pre-escrita
+- Done Sin ramificaciones ni decisiones
+- Done Sin generacion con IA
+- **Extension futura:** EXT-027-DynamicNarrative (IA genera narrativa personalizada)
 
 ---
 
-## Estimación
+## Estimacion
 
-**Desglose (6 SP = ~2 días):**
-- Backend: 0.5 días
-- Frontend: 0.75 días
-- Escritura de narrativa: 0.5 días
-- Diseño personaje: 0.25 días
+**Desglose (6 SP = ~2 dias):**
+- Backend: 0.5 dias
+- Frontend: 0.75 dias
+- Escritura de narrativa: 0.5 dias
+- Diseño personaje: 0.25 dias
 
 ---
 

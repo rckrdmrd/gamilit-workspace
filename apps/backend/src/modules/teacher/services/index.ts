@@ -19,3 +19,4 @@ export * from './exercise-responses.service';
 export * from './storage.service';
 export * from './teacher-reports.service';
 export * from './manual-review.service';
+export * from './rubric-scoring.service';

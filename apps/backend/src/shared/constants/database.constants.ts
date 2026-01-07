@@ -31,6 +31,7 @@ export const DB_SCHEMAS = {
   LTI_INTEGRATION: 'lti_integration',
   STORAGE: 'storage',
   AUTH_BASE: 'auth', // Schema base de autenticación (diferente de auth_management)
+  COMMUNICATION: 'communication', // ✨ NUEVO - Audit 2026-01-04 (Mensajería docente)
 } as const;
 
 /**
@@ -88,6 +89,7 @@ export const DB_TABLES = {
     SHOP_CATEGORIES: 'shop_categories', // ✨ NUEVO - P1 (Sistema de Shop)
     SHOP_ITEMS: 'shop_items', // ✨ NUEVO - P1 (Sistema de Shop)
     USER_PURCHASES: 'user_purchases', // ✨ NUEVO - P1 (Sistema de Shop)
+    CLASSROOM_MISSIONS: 'classroom_missions', // ✨ NUEVO - Audit 2026-01-04 (Misiones de aula)
   },
 
   /**
@@ -112,6 +114,7 @@ export const DB_TABLES = {
     EXERCISE_MECHANIC_MAPPING: 'exercise_mechanic_mapping', // ✨ NUEVO - DB-113 (Sistema Dual - ADR-008)
     DIFFICULTY_CRITERIA: 'difficulty_criteria', // ✨ NUEVO - P1-001 (Criterios de dificultad CEFR)
     CLASSROOM_MODULES: 'classroom_modules', // ✨ NUEVO - P1-002 (Módulos asignados a aulas)
+    TEACHER_CONTENT: 'teacher_content', // ✨ NUEVO - Audit 2026-01-04 (Contenido docente)
     // REMOVED: exercise_options, exercise_answers (legacy dual model - moved to JSONB puro)
   },
 
@@ -136,6 +139,7 @@ export const DB_TABLES = {
     USER_LEARNING_PATHS: 'user_learning_paths', // ✨ NUEVO - P2
     TEACHER_INTERVENTIONS: 'teacher_interventions', // ✨ NUEVO - P1-002 (Intervenciones docentes)
     STUDENT_INTERVENTION_ALERTS: 'student_intervention_alerts', // ✨ NUEVO - P1-002 (Alertas de intervención)
+    CERTIFICATES: 'certificates', // ✨ NUEVO - EPIC 10.2 (Certificados digitales)
   },
 
   /**
@@ -160,6 +164,7 @@ export const DB_TABLES = {
     USER_FOLLOWS: 'user_follows', // ✨ NUEVO - P2
     USER_ACTIVITIES: 'user_activities', // ✨ NUEVO - P2 (Activity Feed)
     FRIEND_REQUESTS: 'friend_requests', // ✨ NUEVO - DB-157 (Solicitudes de amistad)
+    TEACHER_REPORTS: 'teacher_reports', // ✨ NUEVO - Audit 2026-01-04 (Reportes docentes)
   },
 
   /**
@@ -187,7 +192,8 @@ export const DB_TABLES = {
     USER_ACTIVITY_LOGS: 'user_activity_logs', // ✨ NUEVO - P2
     PERFORMANCE_METRICS: 'performance_metrics', // ✨ NUEVO - P2
     SYSTEM_ALERTS: 'system_alerts', // ✨ NUEVO - P2
-    USER_ACTIVITY: 'user_activity', // ✨ NUEVO - P2
+    ACTIVITY_LOG: 'activity_log', // ✨ MIGRADO - Audit 2026-01-04 (reemplaza user_activity)
+    USER_ACTIVITY: 'user_activity', // ⚠️ DEPRECATED - Migrar a ACTIVITY_LOG (Audit 2026-01-04)
   },
 
   /**
@@ -221,6 +227,8 @@ export const DB_TABLES = {
     SYSTEM_SETTINGS: 'system_settings', // ✨ NUEVO - P1 CRÍTICO
     FEATURE_FLAGS: 'feature_flags', // ✨ NUEVO - P1 CRÍTICO
     NOTIFICATION_SETTINGS: 'notification_settings', // ✨ NUEVO - P1
+    RATE_LIMITS: 'rate_limits', // ✨ NUEVO - AUDIT-003 (Rate Limiting)
+    NOTIFICATION_SETTINGS_GLOBAL: 'notification_settings_global', // ✨ NUEVO - AUDIT-003 (Config Global Notificaciones)
     API_CONFIGURATION: 'api_configuration', // ✨ NUEVO - P2
     ENVIRONMENT_CONFIG: 'environment_config', // ✨ NUEVO - P2
     TENANT_CONFIGURATIONS: 'tenant_configurations', // ✨ NUEVO - P2
@@ -243,6 +251,16 @@ export const DB_TABLES = {
    */
   AUTH_BASE: {
     USERS: 'users', // ✨ NUEVO - P0
+  },
+
+  /**
+   * Communication Schema
+   * Mensajería interna entre docentes, estudiantes y padres
+   * ✨ NUEVO - Audit 2026-01-04
+   */
+  COMMUNICATION: {
+    MESSAGES: 'messages', // Mensajes de la plataforma
+    MESSAGE_PARTICIPANTS: 'message_participants', // Participantes de conversaciones
   },
 
   /**
@@ -285,6 +303,8 @@ export type SystemTable = (typeof DB_TABLES.SYSTEM)[keyof typeof DB_TABLES.SYSTE
 export type LTITable = (typeof DB_TABLES.LTI)[keyof typeof DB_TABLES.LTI]; // ✨ NUEVO
 export type AuthBaseTable =
   (typeof DB_TABLES.AUTH_BASE)[keyof typeof DB_TABLES.AUTH_BASE]; // ✨ NUEVO
+export type CommunicationTable =
+  (typeof DB_TABLES.COMMUNICATION)[keyof typeof DB_TABLES.COMMUNICATION]; // ✨ NUEVO - Audit 2026-01-04
 
 /**
  * Validación: Verificar que tabla existe en schema

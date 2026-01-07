@@ -1,3 +1,19 @@
+---
+id: "US-PERF-001"
+title: "Sistema de Personalización y Gestión de Perfil Personal"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-004"
+story_points: 8
+budget: "$4,000 MXN"
+sprint: "Sprint-Mes3"
+labels: ["ext-004", "perfiles-avanzados", "personalizacion", "avatar", "preferencias", "privacidad", "estadisticas", "historial", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-PERF-001: Personalización Avanzada de Perfil
 
 ## Información Básica

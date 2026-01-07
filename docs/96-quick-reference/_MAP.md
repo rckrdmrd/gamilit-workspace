@@ -1,37 +1,34 @@
-# _MAP: docs/QUICK-REFERENCE/
+# _MAP: docs/96-quick-reference/
 
-**Última actualización:** 2025-11-07
-**Estado:** 🟢 Activo
-**Versión:** 2.0 (RFC-0001)
-**Propósito:** Guías rápidas y cheatsheets (<5 min)
+**Ultima actualizacion:** 2026-01-04
+**Estado:** Activo
+**Version:** 2.1
+**Proposito:** Guias rapidas y cheatsheets (<5 min)
 
 ---
 
-## 📋 Propósito de esta Carpeta
+## Proposito
 
-Cheatsheets y guías rápidas para tareas comunes que se pueden completar en <5 minutos.
+Cheatsheets y guias rapidas para tareas comunes que se pueden completar en <5 minutos.
 
 **Audiencia:** Todos los desarrolladores
 
 ---
 
-## 📁 Contenido
+## Contenido
 
-| Archivo | Propósito | Estado |
+| Archivo | Proposito | Estado |
 |---------|-----------|--------|
-| **API-CHEATSHEET.md** | Cheatsheet de APIs | ✅ |
-| **DB-CHEATSHEET.md** | Cheatsheet de Database | ✅ |
-| **README.md** | Índice de cheatsheets | ✅ |
+| [API-CHEATSHEET.md](./API-CHEATSHEET.md) | Endpoints y uso de API | Done |
+| [DB-CHEATSHEET.md](./DB-CHEATSHEET.md) | Comandos de base de datos | Done |
+| [GIT-CHEATSHEET.md](./GIT-CHEATSHEET.md) | Flujo Git y comandos | Done |
+| [TESTING-CHEATSHEET.md](./TESTING-CHEATSHEET.md) | Tests backend y frontend | Done |
+| [DOCKER-CHEATSHEET.md](./DOCKER-CHEATSHEET.md) | Docker y compose | Done |
+| [DEPLOYMENT-CHEATSHEET.md](./DEPLOYMENT-CHEATSHEET.md) | Proceso de deployment | Done |
+| README.md | Indice de cheatsheets | Done |
 
-**Total:** 3 archivos
-
----
-
-## 🎯 Próximos Pasos
-
-- ⬜ Agregar más cheatsheets (Git, Testing, Deploy)
+**Total:** 7 archivos
 
 ---
 
-**Generado:** 2025-11-07
-**Versión:** 1.0.0
+**Actualizado:** 2026-01-04

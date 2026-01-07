@@ -1,0 +1,89 @@
+---
+# TRACEABILITY.yml - EAI-007 Modulos M4-M5
+epic_code: EAI-007
+epic_name: Modulos 4 y 5 - Lectura Digital y Produccion
+status: Done
+last_updated: 2026-01-04
+# Cambios 2026-01-04: Todos los ejercicios M4 con requires_manual_grading=true
+# Incluye integracion con M3.5 (Matriz Perspectivas) para evaluacion docente
+
+# Documentacion
+documentation:
+  epic: EPICA-EAI-007.md
+  requirements:
+    - RF-M4-001-ejercicios-m4.md
+    - RF-M5-001-ejercicios-m5.md
+  specifications:
+    - ET-M4M5-001-schema-bd.md
+    - ET-M4M5-002-backend-apis.md
+  user_stories:
+    - US-M4-001-backend-dtos.md
+    - US-M4-002-gamificacion.md
+    - US-M5-001-backend-dtos.md
+    - US-M5-002-calificacion.md
+    - US-M4M5-001-seeds.md
+    - US-M4M5-002-progreso.md
+    - US-M4M5-003-notificaciones.md
+
+# Implementacion
+implementation:
+  database:
+    schema: educational_content
+    tables:
+      - exercises
+      - student_responses
+      - media_attachments
+    functions:
+      - 23-validate_module4_module5.sql
+    seeds:
+      - exercises_m4.sql
+      - exercises_m5.sql
+      - sample_responses_m4m5.sql
+
+  backend:
+    module: educational
+    controllers:
+      - apps/backend/src/educational/controllers/exercises.controller.ts
+      - apps/backend/src/educational/controllers/responses.controller.ts
+    services:
+      - apps/backend/src/educational/services/manual-review.service.ts
+      - apps/backend/src/educational/services/exercise-validation.service.ts
+    dtos:
+      - apps/backend/src/educational/dto/module4/
+      - apps/backend/src/educational/dto/module5/
+    tests:
+      - apps/backend/src/educational/__tests__/module4.spec.ts
+      - apps/backend/src/educational/__tests__/module5.spec.ts
+
+  frontend:
+    pages:
+      - apps/frontend/src/features/mechanics/module3/  # M3.5 Matriz Perspectivas
+      - apps/frontend/src/features/mechanics/module4/
+      - apps/frontend/src/features/mechanics/module5/
+      - apps/frontend/src/apps/teacher/pages/ReviewPanel/  # Portal Teacher evaluacion
+    components:
+      - apps/frontend/src/features/mechanics/components/MediaViewer.tsx
+      # FIX GAP-CRIT-002: El componente existe como RankProgressWidget
+      - apps/frontend/src/apps/student/components/dashboard/RankProgressWidget.tsx
+      - apps/frontend/src/apps/teacher/components/dashboard/GradeSubmissionModal.tsx
+    constants:
+      - apps/frontend/src/apps/teacher/constants/manualReviewExercises.ts  # 13 ejercicios manuales
+    stores:
+      - apps/frontend/src/stores/exerciseStore.ts
+
+# Metricas
+metrics:
+  story_points: 35
+  sprints: [7, 8]
+  test_coverage: 65%
+
+# Dependencias
+dependencies:
+  requires:
+    - EAI-003: Gamificacion
+    - EAI-002: Actividades
+    - MediaStorageService
+    - ManualReviewService
+  enables:
+    - Certificacion Kukulkan
+    - EAI-003-EXT: Gamificacion Social

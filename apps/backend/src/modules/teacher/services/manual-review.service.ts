@@ -1,19 +1,56 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { ManualReview } from '@modules/progress/entities/manual-review.entity';
 import { ExerciseSubmission } from '@modules/progress/entities/exercise-submission.entity';
 import { CreateReviewDto } from '../dto/create-review.dto';
 import { ExerciseSubmissionService } from '@modules/progress/services/exercise-submission.service';
+// FIX GAP-LOW-001: Import AuditService for event tracking
+import { AuditService } from '@modules/audit/services/audit.service';
+import { Severity, Status } from '@modules/audit/entities/audit-log.entity';
 
 /**
  * Filtros opcionales para reviews pendientes
+ * FIX GAP-LOW-002: Added pagination support
  */
 export interface PendingReviewFilters {
   moduleId?: string;
   moduleOrder?: number;
   classroomId?: string;
   exerciseId?: string;
+  // Pagination
+  page?: number;
+  limit?: number;
+}
+
+/**
+ * Resultado paginado de reviews pendientes
+ * FIX GAP-LOW-002: Added for pagination support
+ */
+export interface PaginatedReviewsResult {
+  reviews: ManualReview[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+/**
+ * Resultado de completar un review con información de recompensas
+ * FIX GAP-CRIT-001: Agregado para retornar rewards al frontend
+ */
+export interface CompleteReviewResult {
+  review: ManualReview;
+  rewards: {
+    xp_earned: number;
+    ml_coins_earned: number;
+    rankUp: {
+      newRank: string;
+      previousRank: string;
+      bonusMLCoins: number;
+      newMultiplier: number;
+    } | null;
+  } | null;
 }
 
 /**
@@ -36,20 +73,26 @@ export interface PendingReviewFilters {
  */
 @Injectable()
 export class ManualReviewService {
+  private readonly logger = new Logger(ManualReviewService.name);
+
   constructor(
     @InjectRepository(ManualReview, 'progress')
     private readonly reviewRepo: Repository<ManualReview>,
     @InjectRepository(ExerciseSubmission, 'progress')
     private readonly submissionRepo: Repository<ExerciseSubmission>,
     private readonly submissionService: ExerciseSubmissionService,
+    // FIX GAP-LOW-001: Inject AuditService for event tracking
+    private readonly auditService: AuditService,
   ) {}
 
   /**
-   * Obtiene reviews pendientes para un docente
+   * Obtiene reviews pendientes para un docente con paginación
    *
    * @param teacherId - UUID del docente
-   * @param filters - Filtros opcionales (moduleId, moduleOrder, classroomId, exerciseId)
-   * @returns Lista de reviews pendientes con datos del submission
+   * @param filters - Filtros opcionales (moduleId, moduleOrder, classroomId, exerciseId, page, limit)
+   * @returns Lista paginada de reviews pendientes con datos del submission
+   *
+   * FIX GAP-LOW-002: Added pagination support with page/limit parameters
    *
    * NOTA: Para filtrar por módulo, usar `moduleOrder` (1-5) que utiliza la vista
    * teacher_pending_reviews para el join cross-database. Alternativamente,
@@ -58,23 +101,42 @@ export class ManualReviewService {
   async findPendingReviews(
     teacherId: string,
     filters?: PendingReviewFilters,
-  ): Promise<ManualReview[]> {
+  ): Promise<PaginatedReviewsResult> {
+    const page = filters?.page || 1;
+    const limit = filters?.limit || 20;
+    const skip = (page - 1) * limit;
+
     // Si se filtra por módulo, usar la vista cross-database
     if (filters?.moduleOrder) {
       // Usar findPendingByModule y mapear a ManualReview format
       const pendingFromView = await this.findPendingByModule(teacherId, filters.moduleOrder);
       // Obtener los reviews correspondientes
-      if (pendingFromView.length === 0) return [];
+      if (pendingFromView.length === 0) {
+        return { reviews: [], total: 0, page, limit, totalPages: 0 };
+      }
 
       const submissionIds = pendingFromView.map((p: any) => p.submission_id);
-      return this.reviewRepo.find({
+      const total = submissionIds.length;
+
+      // Apply pagination to submissionIds
+      const paginatedIds = submissionIds.slice(skip, skip + limit);
+
+      const reviews = await this.reviewRepo.find({
         where: {
-          submissionId: In(submissionIds),
+          submissionId: In(paginatedIds),
           reviewerId: teacherId,
           status: 'pending',
         },
         relations: ['submission'],
       });
+
+      return {
+        reviews,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      };
     }
 
     const queryBuilder = this.reviewRepo
@@ -92,7 +154,21 @@ export class ManualReviewService {
 
     queryBuilder.orderBy('review.createdAt', 'ASC');
 
-    return queryBuilder.getMany();
+    // Get total count before pagination
+    const total = await queryBuilder.getCount();
+
+    // Apply pagination
+    queryBuilder.skip(skip).take(limit);
+
+    const reviews = await queryBuilder.getMany();
+
+    return {
+      reviews,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   /**
@@ -153,7 +229,29 @@ export class ManualReviewService {
       status: 'pending',
     });
 
-    return this.reviewRepo.save(review);
+    const savedReview = await this.reviewRepo.save(review);
+
+    // FIX GAP-LOW-001: Log audit event for review creation
+    await this.auditService.logEvent({
+      eventType: 'manual_review_created',
+      action: 'create',
+      resourceType: 'manual_review',
+      resourceId: savedReview.id,
+      actorId: teacherId,
+      targetId: submission.user_id,
+      targetType: 'student',
+      severity: Severity.INFO,
+      status: Status.SUCCESS,
+      description: `Manual review created for submission ${dto.submissionId}`,
+      newValues: {
+        submissionId: dto.submissionId,
+        totalScore: dto.totalScore,
+        exerciseId: submission.exercise_id,
+      },
+      tags: ['teacher', 'review', 'evaluation', 'create'],
+    });
+
+    return savedReview;
   }
 
   /**
@@ -197,14 +295,16 @@ export class ManualReviewService {
    * Marca un review como completado y distribuye recompensas (XP, ML Coins)
    *
    * @param reviewId - UUID del review
-   * @returns Review actualizado
+   * @returns Review actualizado con información de recompensas distribuidas
    * @throws NotFoundException si el review no existe
    * @description Al completar el review, se llama a gradeSubmission() para:
    *   - Actualizar el submission a status 'graded'
    *   - Asignar el score final
    *   - Distribuir XP y ML Coins al estudiante basados en el score
+   *
+   * FIX GAP-CRIT-001: Ahora retorna información de rewards para mostrar en frontend
    */
-  async completeReview(reviewId: string): Promise<ManualReview> {
+  async completeReview(reviewId: string): Promise<CompleteReviewResult> {
     const review = await this.reviewRepo.findOne({
       where: { id: reviewId },
       relations: ['submission'],
@@ -220,16 +320,59 @@ export class ManualReviewService {
 
     const savedReview = await this.reviewRepo.save(review);
 
-    // Distribuir recompensas llamando a gradeSubmission
+    // Variable para almacenar información de recompensas
+    let rewardsResult: CompleteReviewResult['rewards'] = null;
+
+    // Distribuir recompensas llamando a gradeSubmission y luego claimRewards
     if (review.submissionId && review.totalScore !== undefined && review.totalScore !== null) {
+      // Primero calificar el submission
       await this.submissionService.gradeSubmission(review.submissionId, {
         final_score: review.totalScore ?? undefined,
         grader_id: review.reviewerId,
         feedback: review.generalFeedback || `Calificación manual: ${review.totalScore}/100`,
       });
+
+      // FIX GAP-CRIT-001: Distribuir recompensas y capturar el resultado
+      try {
+        const claimResult = await this.submissionService.claimRewards(review.submissionId);
+        rewardsResult = {
+          xp_earned: claimResult.xp_earned,
+          ml_coins_earned: claimResult.ml_coins_earned,
+          rankUp: claimResult.rankUp,
+        };
+      } catch (error) {
+        // Si ya se reclamaron las recompensas previamente, no es un error crítico
+        // El submission ya está calificado correctamente
+        this.logger.warn(`[completeReview] Rewards may have been claimed already: ${error}`);
+      }
     }
 
-    return savedReview;
+    // FIX GAP-LOW-001: Log audit event for review completion
+    await this.auditService.logEvent({
+      eventType: 'manual_review_completed',
+      action: 'complete',
+      resourceType: 'manual_review',
+      resourceId: reviewId,
+      actorId: review.reviewerId,
+      targetId: review.submission?.user_id,
+      targetType: 'student',
+      severity: Severity.INFO,
+      status: Status.SUCCESS,
+      description: `Manual review completed with score ${review.totalScore}/100`,
+      newValues: {
+        submissionId: review.submissionId,
+        totalScore: review.totalScore,
+        xpEarned: rewardsResult?.xp_earned || 0,
+        mlCoinsEarned: rewardsResult?.ml_coins_earned || 0,
+        rankUp: rewardsResult?.rankUp?.newRank || null,
+      },
+      tags: ['teacher', 'review', 'evaluation', 'complete', 'rewards'],
+    });
+
+    return {
+      review: savedReview,
+      rewards: rewardsResult,
+    };
   }
 
   /**
@@ -268,16 +411,40 @@ export class ManualReviewService {
   async returnForRevision(reviewId: string, feedback: string): Promise<ManualReview> {
     const review = await this.reviewRepo.findOne({
       where: { id: reviewId },
+      relations: ['submission'],
     });
 
     if (!review) {
       throw new NotFoundException(`Review with ID ${reviewId} not found`);
     }
 
+    const previousStatus = review.status;
     review.status = 'returned';
     review.generalFeedback = feedback;
 
-    return this.reviewRepo.save(review);
+    const savedReview = await this.reviewRepo.save(review);
+
+    // FIX GAP-LOW-001: Log audit event for review returned
+    await this.auditService.logEvent({
+      eventType: 'manual_review_returned',
+      action: 'return',
+      resourceType: 'manual_review',
+      resourceId: reviewId,
+      actorId: review.reviewerId,
+      targetId: review.submission?.user_id,
+      targetType: 'student',
+      severity: Severity.INFO,
+      status: Status.SUCCESS,
+      description: `Manual review returned for revision`,
+      oldValues: { status: previousStatus },
+      newValues: {
+        status: 'returned',
+        feedback: feedback.substring(0, 200), // Truncate for audit log
+      },
+      tags: ['teacher', 'review', 'evaluation', 'returned'],
+    });
+
+    return savedReview;
   }
 
   /**

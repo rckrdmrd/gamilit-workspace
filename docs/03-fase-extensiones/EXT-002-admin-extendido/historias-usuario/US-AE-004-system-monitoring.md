@@ -1,19 +1,36 @@
+---
+id: "US-AE-004"
+title: "Monitoreo y Configuracion del Sistema"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 16
+budget: "$6,400 MXN"
+sprint: "Sprint-4"
+labels: ["admin-extendido", "system-monitoring", "health-checks", "maintenance"]
+created_date: "2025-10-28"
+updated_date: "2026-01-04"
+completed_date: "2025-11-19"
+---
+
 # HU-EP010-04: Monitoreo y Sistema
 
-## Información General
+## Informacion General
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | US-AE-004 |
-| **Épica** | EXT-002 - Admin Extendido |
-| **Título** | Monitoreo y Configuración del Sistema |
+| **Epica** | EXT-002 - Admin Extendido |
+| **Titulo** | Monitoreo y Configuracion del Sistema |
 | **Prioridad** | Alta (P1) |
 | **Story Points** | 16 SP |
-| **Estado** | ✅ COMPLETED (90%) |
+| **Estado** | Done (90%) |
 | **Sprint** | Sprint 4 |
-| **Duración Estimada** | 4 días |
-| **Duración Real** | 1h verificación (FE-059 Day 9) |
-| **Fecha Implementación** | 2025-11-19 |
+| **Duracion Estimada** | 4 dias |
+| **Duracion Real** | 1h verificacion (FE-059 Day 9) |
+| **Fecha Implementacion** | 2025-11-19 |
 
 ---
 

@@ -122,6 +122,12 @@ Funciones antiguas reemplazadas por la arquitectura unificada (DB-157):
 | 25-update_missions_on_complete_modules.sql | trigger_missions_on_complete_modules() |
 | 26-update_missions_on_explore_modules.sql | trigger_missions_on_explore_modules() |
 
+## Correcciones Aplicadas
+
+| Archivo | Cambio | Fecha |
+|---------|--------|-------|
+| `51-mission_trigger_wrappers.sql` | DB-166: Corregida funcion `trigger_missions_on_explore_modules()` - eliminada referencia a columna inexistente `modules_explored` | 2026-01-04 |
+
 ---
 
-**Última actualización:** 2025-12-29
+**Última actualización:** 2026-01-04

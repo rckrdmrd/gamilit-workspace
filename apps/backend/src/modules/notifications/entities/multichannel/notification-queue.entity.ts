@@ -105,20 +105,20 @@ export class NotificationQueue {
   /**
    * Estado del item en la cola
    *
-   * Estados del ciclo de vida:
-   * - 'pending' - Pendiente de procesamiento
+   * Estados del ciclo de vida (según DDL):
+   * - 'queued' - Pendiente de procesamiento (default)
    * - 'processing' - Siendo procesado por worker (lock)
-   * - 'completed' - Enviado exitosamente
+   * - 'sent' - Enviado exitosamente
    * - 'failed' - Falló después de max_retries
    *
-   * Worker busca items con status='pending'
+   * Worker busca items con status='queued'
    * Worker actualiza a 'processing' antes de enviar (evita duplicados)
-   * Si envío exitoso: 'completed'
-   * Si fallo y retry_count < max_retries: vuelve a 'pending'
+   * Si envío exitoso: 'sent'
+   * Si fallo y retry_count < max_retries: vuelve a 'queued'
    * Si fallo y retry_count >= max_retries: 'failed'
    */
-  @Column({ type: 'varchar', length: 50, default: 'pending' })
-    status!: string;
+  @Column({ type: 'varchar', length: 50, default: 'queued' })
+    status!: 'queued' | 'processing' | 'sent' | 'failed';
 
   /**
    * Número de intentos realizados

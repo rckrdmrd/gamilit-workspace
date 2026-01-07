@@ -5,6 +5,8 @@
 -- Created: 2025-10-28
 -- =====================================================
 
+DROP TRIGGER IF EXISTS trg_recalculate_level_on_xp_change ON gamification_system.user_stats;
+
 CREATE TRIGGER trg_recalculate_level_on_xp_change
     BEFORE UPDATE OF total_xp
     ON gamification_system.user_stats

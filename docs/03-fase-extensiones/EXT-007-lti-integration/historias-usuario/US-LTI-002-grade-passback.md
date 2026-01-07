@@ -1,3 +1,19 @@
+---
+id: "US-LTI-002"
+title: "Grade Passback (AGS)"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-007"
+story_points: 10
+budget: "$1,500 USD"
+sprint: "Sprint-18"
+labels: ["lti", "ags", "grades", "canvas", "moodle", "sync", "oauth2"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # US-LTI-002: Grade Passback (AGS)
 
 **Épica:** EXT-007: LTI Integration

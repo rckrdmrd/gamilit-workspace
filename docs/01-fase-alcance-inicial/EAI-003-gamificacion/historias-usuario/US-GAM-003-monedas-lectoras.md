@@ -1,3 +1,20 @@
+---
+id: "US-GAM-003"
+title: "Monedas lectoras (ML Coins)"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-003"
+story_points: 6
+budget: "$2,200 MXN"
+sprint: "Sprint-1"
+labels: ["gamification", "coins", "currency", "rewards"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-08-11"
+---
+
 # US-GAM-003: Monedas lectoras (ML Coins)
 
 **Épica:** EAI-003 - Gamificación Básica
@@ -5,7 +22,7 @@
 **Story Points:** 6 SP
 **Presupuesto:** $2,200 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 

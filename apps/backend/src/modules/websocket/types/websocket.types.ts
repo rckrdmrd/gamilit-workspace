@@ -18,6 +18,9 @@ export enum SocketEvent {
   ACHIEVEMENT_UNLOCKED = 'achievement:unlocked',
   RANK_UPDATED = 'rank:updated',
   XP_GAINED = 'xp:gained',
+  // FIX GAP-LOW-003: Added for real-time balance updates
+  BALANCE_UPDATED = 'balance:updated',
+  ML_COINS_EARNED = 'mlcoins:earned',
 
   // Leaderboard
   LEADERBOARD_UPDATED = 'leaderboard:updated',
@@ -43,8 +46,19 @@ export interface SocketUserData {
   tenantId?: string;
 }
 
+// Notification structure for WebSocket payloads
+export interface WebSocketNotification {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  data?: Record<string, unknown>;
+  read: boolean;
+  createdAt: string;
+}
+
 export interface NotificationPayload {
-  notification: any; // Will be typed from notifications module
+  notification: WebSocketNotification;
   timestamp: string;
 }
 
@@ -56,8 +70,20 @@ export interface AchievementPayload {
   timestamp: string;
 }
 
+// Leaderboard entry for WebSocket payloads
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  displayName: string;
+  avatarUrl?: string;
+  xp: number;
+  level: number;
+  weeklyXp?: number;
+  isCurrentUser?: boolean;
+}
+
 export interface LeaderboardPayload {
-  leaderboard: any[]; // Will be typed from gamification module
+  leaderboard: LeaderboardEntry[];
   timestamp: string;
 }
 

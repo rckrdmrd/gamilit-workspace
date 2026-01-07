@@ -1,3 +1,17 @@
+---
+id: "RF-SYS-001"
+title: "Sistema de Configuracion Global"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Configuracion del Sistema"
+epic: "EAI-006"
+version: "1.0"
+labels: ["system", "configuration", "settings", "multi-tenancy", "admin"]
+created_date: "2025-11-08"
+updated_date: "2026-01-04"
+---
+
 # RF-SYS-001: Sistema de Configuración Global
 
 **ID:** RF-SYS-001

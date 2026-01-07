@@ -1,3 +1,19 @@
+---
+id: "US-ADM-007"
+title: "Vista de Actividad de Aula"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-005"
+story_points: 6
+budget: "$2,400 MXN"
+sprint: "Sprint-1"
+labels: ["admin", "activity", "classroom-monitoring"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ADM-007: Vista de Actividad de Aula
 
 **Épica:** EAI-005 (Plataforma de Maestro Básica)
@@ -5,7 +21,7 @@
 **Story Points:** 6 SP
 **Presupuesto:** $2,400 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 
@@ -501,23 +517,23 @@ export const useClassroomActivity = (classroomId: string) => {
 ## Alcance Básico vs Extensiones
 
 ### EAI-005 (Este alcance - Admin Base):
-- ✅ Estudiantes activos hoy (snapshot)
-- ✅ Módulos en progreso (últimos 7 días)
-- ✅ Últimas 10 actividades
-- ✅ Auto-refresh cada 2 minutos
-- ✅ Vista simple sin filtros
+- Estudiantes activos hoy (snapshot)
+- Módulos en progreso (últimos 7 días)
+- Últimas 10 actividades
+- Auto-refresh cada 2 minutos
+- Vista simple sin filtros
 
 ### US-ANA-005 (Tracking de Actividad - parte de EAI-004):
-- ⏳ Timeline completo con paginación
-- ⏳ Filtros por fecha, estudiante, tipo
-- ⏳ Todas las actividades (no solo completadas)
+- Timeline completo con paginación
+- Filtros por fecha, estudiante, tipo
+- Todas las actividades (no solo completadas)
 
 ### EXT-005 (Extensión futura - Reportes Avanzados):
-- ⏳ Heatmap de actividad por hora/día
-- ⏳ Análisis de patrones (horarios pico)
-- ⏳ Métricas de engagement
-- ⏳ Comparativas de actividad entre períodos
-- ⏳ Real-time con WebSockets
+- Heatmap de actividad por hora/día
+- Análisis de patrones (horarios pico)
+- Métricas de engagement
+- Comparativas de actividad entre períodos
+- Real-time con WebSockets
 
 ---
 

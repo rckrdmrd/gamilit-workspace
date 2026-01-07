@@ -13,6 +13,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 
 /**
  * Entity para contenido educativo personalizado de teachers
@@ -22,7 +23,7 @@ import {
  *
  * @see apps/database/ddl/schemas/educational_content/tables/25-teacher_content.sql
  */
-@Entity({ schema: 'educational_content', name: 'teacher_content' })
+@Entity({ schema: DB_SCHEMAS.EDUCATIONAL, name: DB_TABLES.EDUCATIONAL.TEACHER_CONTENT })
 export class TeacherContent {
   @PrimaryGeneratedColumn('uuid')
     id!: string;

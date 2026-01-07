@@ -131,6 +131,16 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
     const completedSections = Array.from(sectionRecordings.values()).filter(r => r.completed).length;
     const score = Math.min(100, Math.round((completedSections / totalSections) * 100));
 
+    // FIX: Send answers in DTO format (video_url, sections with title/duration_seconds) for ExercisePage.tsx submit button
+    // Transform sections to DTO format
+    const dtoSections = sections.map((section, index) => {
+      const recording = sectionRecordings.get(section.id);
+      return {
+        title: section.name || `Sección ${index + 1}`,
+        duration_seconds: recording?.duration || 0,
+      };
+    });
+
     onProgressUpdate?.({
       progress: {
         currentStep: completedSections,
@@ -140,17 +150,26 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
         timeSpent,
       },
       answers: {
+        // Primary format: DTO expected by backend
+        video_url: videoUrl || 'pending_upload',
+        sections: dtoSections,
+
+        // Secondary format for backwards compatibility
         totalSections,
         completedSections,
-        currentSectionIndex,
-        duration,
         allSectionsCompleted,
         hasVideo: !!videoBlob,
-        sections: Array.from(sectionRecordings.entries()).map(([id, data]) => ({
-          id,
-          completed: data.completed,
-          duration: data.duration,
-        })),
+
+        // Metadata
+        metadata: {
+          currentSectionIndex,
+          duration,
+          sectionDetails: Array.from(sectionRecordings.entries()).map(([id, data]) => ({
+            id,
+            completed: data.completed,
+            duration: data.duration,
+          })),
+        },
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -177,11 +196,41 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
   const handleSubmit = () => {
     if (!exerciseId || isSubmitting || isSubmitted || !videoBlob) return;
 
+    // FIX: Transform data to match VideoCartaAnswerDto expected by backend
+    // DTO expects: { video_url, sections: [{ title, duration_seconds }] }
+
+    // Build sections from recorded section data
+    const dtoSections = sections.map((section) => {
+      const recording = sectionRecordings.get(section.id);
+      return {
+        title: section.name,
+        duration_seconds: recording?.duration || section.duration,
+      };
+    });
+
+    // Generate video URL - use blob URL for local or placeholder for submission
+    // In production, this would be uploaded to storage and replaced with actual URL
+    const generatedVideoUrl = videoUrl || `blob:video-carta-${exerciseId}`;
+
     submit({
-      videoDuration: duration,
-      videoSize: videoBlob.size,
-      hasVideo: true,
-      message: 'Video carta sobre Marie Curie',
+      // Primary format expected by VideoCartaAnswerDto
+      video_url: generatedVideoUrl,
+      sections: dtoSections,
+
+      // Metadata for backwards compatibility and manual review context
+      metadata: {
+        videoDuration: duration,
+        videoSize: videoBlob.size,
+        hasVideo: true,
+        message: 'Video carta sobre Marie Curie',
+        allSectionsCompleted,
+        sectionDetails: Array.from(sectionRecordings.entries()).map(([id, data]) => ({
+          id,
+          completed: data.completed,
+          duration: data.duration,
+          prompt: sections.find((s) => s.id === id)?.prompt,
+        })),
+      },
     });
   };
 

@@ -4,21 +4,21 @@
 # Fuente: Validación DB-092 (Ciclo 1-4)
 
 metadata:
-  version: "4.0.0"
+  version: "4.1.0"
   generated_date: "2025-11-11"
-  last_updated: "2025-12-26"
+  last_updated: "2026-01-04"
   database_script: "create-database.sh"
-  total_ddl_files: 394
-  total_seed_files: 99
-  total_schemas: 15
+  total_ddl_files: 395  # +1 (content_management/tables/07-tags.sql)
+  total_seed_files: 100  # +1 (communication/01-system-messages.sql)
+  total_schemas: 16
   script_phases: 17
   seed_breakdown:
     dev_files: 50
-    prod_files: 49
+    prod_files: 50  # +1 (communication seed)
     script_files: 6
   database_counts:
-    schemas: 15
-    tables: 132
+    schemas: 16
+    tables: 133  # +1 (content_management.tags)
     views: 17
     materialized_views: 11
     enums: 42
@@ -27,6 +27,34 @@ metadata:
     indexes: 21
     policies: 185
     foreign_keys: 208
+  audit_2026_01_04:
+    description: "Auditoría exhaustiva DDL, Seeds y Scripts"
+    corrections_p0: 3
+    corrections_p1: 3
+    corrections_p2: 1
+    changes_summary:
+      - "P0-1: UUIDs dinámicos corregidos en 4 seeds (gen_random_uuid() → static UUIDs)"
+      - "P0-2: Tabla content_management.tags creada (DDL 07-tags.sql)"
+      - "P0-3: Renumeración archivos DDL conflictivos (16→17, 01→06, 23→26)"
+      - "P1-2: Seeds content_management agregados a create-database.sh"
+      - "P1-3: Seed communication/01-system-messages.sql creado y agregado"
+      - "P2-1: Inventarios actualizados con cambios"
+    files_modified:
+      seeds:
+        - "auth_management/06-auth_attempts.sql"
+        - "auth_management/07-security_events.sql"
+        - "educational_content/05-assignments.sql"
+        - "social_features/02-classrooms.sql"
+      ddl_created:
+        - "content_management/tables/07-tags.sql"
+      ddl_renamed:
+        - "auth_management/tables/16-add-soft-delete.sql → 17-add-soft-delete.sql"
+        - "system_configuration/tables/01-feature_flags.sql → 06-feature_flags.sql"
+        - "educational_content/tables/23-exercise_validation_audit.sql → 26-exercise_validation_audit.sql"
+      seeds_created:
+        - "communication/01-system-messages.sql"
+      scripts_modified:
+        - "create-database.sh (agregados 3 seeds)"
   audit_2025_12_26:
     discrepancies_found: 10
     corrections_p0: 3
@@ -38,6 +66,13 @@ metadata:
   notes: |
     Historial de cambios disponible en:
     orchestration/reportes/HISTORIAL-CAMBIOS-DATABASE-2025-12.md
+
+    AUDITORIA 2026-01-04:
+    - Corrección UUIDs dinámicos en seeds (Clean Load Policy compliance)
+    - Creación tabla content_management.tags (referenciada por seed)
+    - Renumeración archivos DDL con conflictos de numeración
+    - Seed communication schema para mensajes de sistema
+    - Actualización create-database.sh con nuevos seeds
 
     AUDITORIA 2025-12-26:
     - Análisis exhaustivo DDL vs documentado
@@ -147,15 +182,35 @@ schemas:
   - name: "progress_tracking"
     description: "Seguimiento de progreso de estudiantes"
     phase: 8
-    ddl_files: 42  # 2025-11-29: +3 (student_intervention_alerts table, generate_student_alerts function, manual_reviews table)
-    tables: 17  # ✅ AUDITADO 2025-11-29: 17 tablas reales en /tables/
+    ddl_files: 46  # 2026-01-04: +4 (certificate_enums, certificates table, certificates rls-policies, certificates trigger - EPIC 10.2)
+    tables: 18  # ✅ 2026-01-04: +1 (certificates - EPIC 10.2)
     functions: 11  # 2025-11-29: +1 (generate_student_alerts)
-    triggers: 22  # ✅ AUDITADO 2025-11-29: 12 en /triggers/ + 10 en /tables/ = 22 triggers totales
-    indexes: 20  # 2025-11-29: +8 (5 student_intervention_alerts + 3 manual_reviews)
+    triggers: 23  # ✅ 2026-01-04: +1 (trg_certificates_updated_at - EPIC 10.2)
+    indexes: 29  # ✅ 2026-01-04: +9 (certificates indexes - EPIC 10.2)
     views: 2  # DB-122: +1 (classroom_students_metrics)
-    enums: 5  # 2025-11-29: +3 (alert_type, alert_severity, alert_status)
-    rls_policies: 6  # 2025-11-29: +2 (teacher_view_classroom_alerts, teacher_manage_classroom_alerts)
-    notes: "2025-11-29 AUDITORÍA: Corregidos conteos (tablas 18→17, triggers 6/7→22). student_intervention_alerts table added for automatic student risk detection. manual_reviews table added for teacher evaluation of creative exercises (modules 4-5)"
+    enums: 7  # ✅ 2026-01-04: +2 (certificate_status, certificate_type - EPIC 10.2)
+    rls_policies: 10  # ✅ 2026-01-04: +4 (certificates policies - EPIC 10.2)
+    epic_10_2_certificates:
+      date: "2026-01-04"
+      status: "IMPLEMENTED"
+      objects_added:
+        enums:
+          - "certificate_status (pending, issued, revoked, expired)"
+          - "certificate_type (module_completion, course_completion, achievement, skill_mastery)"
+        tables:
+          - name: "certificates"
+            file: "18-certificates.sql"
+            columns: 25
+            indexes: 9
+            foreign_keys: 4
+        triggers:
+          - "trg_certificates_updated_at"
+        rls_policies:
+          - "certificates_select_own (students see own)"
+          - "certificates_select_teacher (teachers see classroom students)"
+          - "certificates_select_admin (admins see all)"
+          - "certificates_verify_public (anyone can verify)"
+    notes: "2026-01-04: EPIC 10.2 - Sistema de certificados digitales implementado (4 DDL files, 1 tabla, 2 ENUMs, 9 índices, 4 RLS policies, 1 trigger). 2025-11-29 AUDITORÍA: Corregidos conteos (tablas 18→17, triggers 6/7→22). student_intervention_alerts table added for automatic student risk detection. manual_reviews table added for teacher evaluation of creative exercises (modules 4-5)"
 
   - name: "social_features"
     description: "Características sociales (escuelas, aulas, equipos) - SIMPLIFICADO 2025-12-15"
@@ -212,20 +267,21 @@ schemas:
   - name: "content_management"
     description: "Gestión de contenido Marie Curie"
     phase: 10
-    ddl_files: 18
-    tables: 8
+    ddl_files: 19  # +1 (07-tags.sql) - AUDIT 2026-01-04
+    tables: 9  # +1 (tags) - AUDIT 2026-01-04
     tables_list:
       - 01-content_templates.sql
       - 02-marie_curie_content.sql
       - 03-media_files.sql
       - 04-content_versions.sql
       - 05-flagged_content.sql
+      - 07-tags.sql  # NUEVO - AUDIT 2026-01-04
       - content_authors.sql
       - content_categories.sql
       - media_metadata.sql
     functions: 0  # No tiene directorio functions (correcto según diseño)
     triggers: 3
-    indexes: 2
+    indexes: 3  # +1 (tags slug index) - AUDIT 2026-01-04
     views: 0
     enums: 4
     enums_list:
@@ -234,7 +290,13 @@ schemas:
       - media_type          # Creado FASE 1 (2025-11-11)
       - processing_status   # Creado FASE 1 (2025-11-11)
     rls_policies: 1
-    notes: "DB-111: Agregados 2 ENUMs (media_type, processing_status) en FASE 1. Validación DB-111 FASE 1.7: Corregido conteo tablas 6→8, funciones 3→0, triggers 2→3, indexes 4→2, rls_policies 2→1 (valores reales validados)"
+    audit_2026_01_04:
+      table_added: "tags"
+      file: "07-tags.sql"
+      purpose: "Catálogo de tags para contenido Marie Curie (45 tags semilla)"
+      columns: ["id", "tag_name", "tag_slug", "tag_category", "description", "usage_count", "is_active", "created_at", "updated_at"]
+      indexes: ["idx_tags_slug (UNIQUE)", "idx_tags_category"]
+    notes: "AUDIT 2026-01-04: Tabla tags creada (referenciada por seed 03-tags.sql). DB-111: Agregados 2 ENUMs (media_type, processing_status) en FASE 1. Validación DB-111 FASE 1.7: Corregido conteo tablas 6→8, funciones 3→0, triggers 2→3, indexes 4→2, rls_policies 2→1 (valores reales validados)"
 
   - name: "communication"
     description: "Sistema de mensajería y comunicación maestro-estudiante"
@@ -247,7 +309,13 @@ schemas:
     views: 1  # DB-122: recent_classroom_messages
     enums: 0
     rls_policies: 0  # Deshabilitadas por falta de auth.uid()
-    notes: "DB-122: Nuevo schema para comunicación formal maestro-estudiante. Incluye threading, attachments JSONB, reactions, sistema de moderación"
+    seeds: 1  # AUDIT 2026-01-04: 01-system-messages.sql
+    audit_2026_01_04:
+      seed_added: "01-system-messages.sql"
+      purpose: "Mensaje de bienvenida del sistema al classroom DEFAULT"
+      dependencies: ["auth_management.profiles", "social_features.classrooms"]
+      uuids: ["c0000001-0000-0000-0001-000000000001"]
+    notes: "AUDIT 2026-01-04: Seed de sistema agregado. DB-122: Nuevo schema para comunicación formal maestro-estudiante. Incluye threading, attachments JSONB, reactions, sistema de moderación"
 
   - name: "audit_logging"
     description: "Auditoría y logging del sistema"

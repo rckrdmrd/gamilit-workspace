@@ -720,6 +720,8 @@ export const FEATURE_FLAGS = {
   ENABLE_GAMIFICATION: import.meta.env.VITE_ENABLE_GAMIFICATION === 'true',
   ENABLE_SOCIAL_FEATURES: import.meta.env.VITE_ENABLE_SOCIAL_FEATURES === 'true',
   ENABLE_DEBUG: import.meta.env.VITE_ENABLE_DEBUG === 'true',
+  // ISS-FE-003: Feature flag centralizado para páginas en construcción
+  SHOW_UNDER_CONSTRUCTION: import.meta.env.VITE_SHOW_UNDER_CONSTRUCTION === 'true',
 } as const;
 
 // ============================================================================

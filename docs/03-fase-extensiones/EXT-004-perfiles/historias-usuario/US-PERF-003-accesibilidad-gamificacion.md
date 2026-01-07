@@ -1,3 +1,19 @@
+---
+id: "US-PERF-003"
+title: "Configuración de Accesibilidad, Audio y Preferencias de Gamificación"
+type: "User Story"
+status: "Backlog"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-004"
+story_points: 5
+budget: "$2,500 MXN"
+sprint: "Sprint-Mes3"
+labels: ["ext-004", "accesibilidad", "wcag", "audio", "gamificacion", "personalizacion", "inclusividad", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-PERF-003: Accesibilidad y Gamificación Personalizada
 
 ## Información Básica

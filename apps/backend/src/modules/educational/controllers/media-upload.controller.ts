@@ -33,7 +33,7 @@ import { AuthRequest } from '@shared/types';
  * - GET /api/v1/educational/media/exercise/:exerciseId - Archivos por ejercicio
  */
 @ApiTags('Educational - Media Upload')
-@Controller('api/v1/educational/media')
+@Controller('educational/media')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class MediaUploadController {

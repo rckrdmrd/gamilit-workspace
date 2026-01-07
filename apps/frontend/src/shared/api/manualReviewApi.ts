@@ -114,12 +114,27 @@ export interface CompleteReviewRequest {
 }
 
 /**
+ * Reward information returned after completing a review
+ * FIX GAP-CRIT-001: Added to show rewards in frontend
+ */
+export interface ReviewRewards {
+  xp_earned: number;
+  ml_coins_earned: number;
+  rankUp: {
+    newRank: string;
+    previousRank: string;
+    bonusMLCoins: number;
+    newMultiplier: number;
+  } | null;
+}
+
+/**
  * Response when completing a review
+ * FIX GAP-CRIT-001: Now includes rewards information
  */
 export interface CompleteReviewResponse {
-  success: boolean;
   review: ManualReview;
-  notificationSent?: boolean;
+  rewards: ReviewRewards | null;
 }
 
 // ============================================================================

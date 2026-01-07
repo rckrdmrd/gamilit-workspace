@@ -1,3 +1,19 @@
+---
+id: "US-ANA-004"
+title: "Reporte Básico de Progreso"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-004"
+story_points: 6
+budget: "$3,000 MXN"
+sprint: "Sprint-1"
+labels: ["analytics", "reports", "csv-export"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ANA-004: Reporte Básico de Progreso
 
 **Épica:** EAI-004 (Analytics Básico)
@@ -5,7 +21,7 @@
 **Story Points:** 6 SP
 **Presupuesto:** $3,000 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 
@@ -480,22 +496,22 @@ Geometría,12,8,5,68.2%
 ## Alcance Básico vs Extensiones
 
 ### EAI-004 (Este alcance - Analytics Básico):
-- ✅ Reporte simple de progreso por módulo
-- ✅ Resumen general básico
-- ✅ Exportación a CSV únicamente
-- ✅ Vista estática (sin filtros ni configuración)
-- ✅ Ordenamiento alfabético por módulo
+- Reporte simple de progreso por módulo
+- Resumen general básico
+- Exportación a CSV únicamente
+- Vista estática (sin filtros ni configuración)
+- Ordenamiento alfabético por módulo
 
 ### EXT-005 (Extensión futura - Reportes Avanzados):
-- ⏳ Múltiples formatos de exportación (PDF, Excel, CSV)
-- ⏳ Gráficas visuales en el reporte
-- ⏳ Filtros por fechas, módulos, grupos
-- ⏳ Reportes configurables (elegir métricas)
-- ⏳ Comparativas entre períodos
-- ⏳ Reporte individual por estudiante (PDF)
-- ⏳ Programación de reportes automáticos
-- ⏳ Compartir reporte con otros profesores
-- ⏳ Análisis de tendencias
+- Múltiples formatos de exportación (PDF, Excel, CSV)
+- Gráficas visuales en el reporte
+- Filtros por fechas, módulos, grupos
+- Reportes configurables (elegir métricas)
+- Comparativas entre períodos
+- Reporte individual por estudiante (PDF)
+- Programación de reportes automáticos
+- Compartir reporte con otros profesores
+- Análisis de tendencias
 
 ---
 

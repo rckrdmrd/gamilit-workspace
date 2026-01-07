@@ -1,3 +1,19 @@
+---
+id: "US-FUND-008"
+title: "UI/UX base"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-001"
+story_points: 6
+budget: "$2,200 MXN"
+sprint: "Sprint-1"
+labels: ["frontend", "ui", "ux", "design-system", "tailwind", "components"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-FUND-008: UI/UX base
 
 **Épica:** EAI-001 - Fundamentos
@@ -5,7 +21,7 @@
 **Story Points:** 6 SP
 **Presupuesto:** $2,200 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
@@ -447,12 +463,12 @@ export function cn(...inputs: ClassValue[]) {
 
 ## Notas del Alcance Inicial
 
-- ✅ Componentes base esenciales
-- ✅ Tema claro (sin modo oscuro)
-- ✅ Sin animaciones complejas
-- ✅ Sin componentes avanzados (date picker, rich text editor)
-- ✅ Sin design tokens avanzados
-- ⚠️ **Extensión futura:** EXT-016-Design (modo oscuro, animaciones, design system completo)
+- Done Componentes base esenciales
+- Done Tema claro (sin modo oscuro)
+- Done Sin animaciones complejas
+- Done Sin componentes avanzados (date picker, rich text editor)
+- Done Sin design tokens avanzados
+- **Extensión futura:** EXT-016-Design (modo oscuro, animaciones, design system completo)
 
 ---
 
@@ -490,5 +506,5 @@ describe('Input', () => {
 ---
 
 **Creado:** 2025-11-02
-**Actualizado:** 2025-11-02
+**Actualizado:** 2026-01-04
 **Responsable:** Equipo Frontend + Diseño

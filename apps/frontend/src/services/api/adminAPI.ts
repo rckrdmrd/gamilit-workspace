@@ -1121,7 +1121,7 @@ export async function validateConfig(
 /**
  * Generate report
  *
- * Status: Backend IMPLEMENTED ✅ (in-memory storage)
+ * Status: Backend IMPLEMENTED ✅ (persisted to admin_dashboard.admin_reports)
  */
 export async function generateReport(params: GenerateReportParams): Promise<Report> {
   try {
@@ -1135,7 +1135,7 @@ export async function generateReport(params: GenerateReportParams): Promise<Repo
 /**
  * Get list of reports
  *
- * Status: Backend IMPLEMENTED ✅ (in-memory storage)
+ * Status: Backend IMPLEMENTED ✅ (persisted to admin_dashboard.admin_reports)
  */
 export async function getReports(filters?: ReportListFilters): Promise<PaginatedResponse<Report>> {
   try {
@@ -1162,7 +1162,7 @@ export async function getReports(filters?: ReportListFilters): Promise<Paginated
 /**
  * Download report
  *
- * Status: Backend IMPLEMENTED ✅ (in-memory storage)
+ * Status: Backend IMPLEMENTED ✅ (persisted to admin_dashboard.admin_reports)
  */
 export async function downloadReport(reportId: string): Promise<Blob> {
   try {
@@ -1178,7 +1178,7 @@ export async function downloadReport(reportId: string): Promise<Blob> {
 /**
  * Delete report
  *
- * Status: Backend IMPLEMENTED ✅ (in-memory storage)
+ * Status: Backend IMPLEMENTED ✅ (persisted to admin_dashboard.admin_reports)
  */
 export async function deleteReport(reportId: string): Promise<void> {
   try {

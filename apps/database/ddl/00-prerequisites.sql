@@ -70,6 +70,7 @@ CREATE SCHEMA IF NOT EXISTS admin_dashboard;
 CREATE SCHEMA IF NOT EXISTS lti_integration;
 CREATE SCHEMA IF NOT EXISTS notifications;
 CREATE SCHEMA IF NOT EXISTS storage;
+CREATE SCHEMA IF NOT EXISTS communication;
 
 -- ============================================================================
 -- PARTE 1: TODOS LOS ENUMs
@@ -208,12 +209,16 @@ DO $$ BEGIN
 
         -- Module 5: Producción Lectora (3 mecánicas) ⚠️ BACKLOG
         -- Requieren: Rúbricas de evaluación creativa, revisión humana/IA
-        'comic_digital', 'diario_multimedia', 'video_carta'
+        'comic_digital', 'diario_multimedia', 'video_carta',
 
         -- ====================================================================
-        -- ACTUALIZADO 2025-12-18: Agregados 4 tipos M4 previamente comentados
+        -- ACTUALIZADO 2026-01-04: Agregados 4 tipos auxiliares (sincronización con Backend)
+        -- Origen: apps/backend/src/shared/constants/enums.constants.ts (L516-534)
         -- ====================================================================
-        -- Auxiliares potenciales: 'comprension_auditiva', 'collage_prensa', 'texto_movimiento', 'call_to_action'
+        'comprension_auditiva',   -- Ejercicio de comprensión auditiva
+        'collage_prensa',         -- Ejercicio de collage con recortes de prensa
+        'texto_movimiento',       -- Ejercicio de texto en movimiento/animado
+        'call_to_action'          -- Ejercicio de llamada a la acción (CTA)
     );
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
@@ -490,7 +495,7 @@ COMMENT ON TYPE gamification_system.shop_item_category IS 'Categorías de items 
 -- COMMENT ON TYPE gamification_system.notification_priority IS 'Niveles de prioridad de notificaciones (v1.1 - 2025-11-08 - migrado de public)';
 
 -- 3. Contenido Educativo
-COMMENT ON TYPE educational_content.exercise_type IS '25 mecánicas de ejercicios interactivos Gamilit (17 implementadas + 8 backlog) (v2.1 - 2025-11-28 - agregados mapa_conceptual y emparejamiento)';
+COMMENT ON TYPE educational_content.exercise_type IS '28 mecánicas de ejercicios interactivos Gamilit (17 implementadas + 8 backlog + 3 auxiliares) (v2.2 - 2026-01-04 - agregados comprension_auditiva, collage_prensa, texto_movimiento)';
 -- NOTA (2025-11-11): El siguiente comentario está en el archivo de ENUM correspondiente
 -- difficulty_level se crea en FASE 6: educational_content/enums/difficulty_level.sql
 -- COMMENT ON TYPE educational_content.difficulty_level IS 'Niveles de dificultad CEFR - 8 niveles A1→C2+ (v2.0 - 2025-11-11 - migrado a estándar CEFR)';

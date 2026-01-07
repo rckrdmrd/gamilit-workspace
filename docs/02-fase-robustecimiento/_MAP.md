@@ -6,7 +6,7 @@
 **Presupuesto:** $50,000 MXN
 **Story Points:** 80 SP
 **Estado:** ✅ Completado 100%
-**Última actualización:** 2025-11-08
+**Última actualización:** 2026-01-04
 
 ---
 
@@ -22,11 +22,12 @@ Robustecimiento técnico mediante migración completa de arquitectura de base de
 
 ## 📁 Contenido
 
-### Épica Técnica (1)
+### Épicas (2)
 
 | Épica | Nombre | Presupuesto | SP | Estado | Archivos |
 |-------|--------|-------------|----|--------|----------|
 | **[EMR-001](./EMR-001-migracion-bd/)** | Migración BD | $50,000 | 80 | ✅ | 7+ |
+| **[EAI-007](./EAI-007-modulos-m4-m5/)** | Módulos M4-M5 | - | - | ✅ | - |
 
 **Totales:**
 - Presupuesto: $50,000 MXN
@@ -175,7 +176,7 @@ Continuar con [Fase 3: Extensiones](../03-fase-extensiones/) - 10 épicas de nue
 
 ---
 
-**Generado:** 2025-11-08
+**Generado:** 2026-01-04
 **Sistema:** SIMCO (Sistema Indexado Modular por Contexto)
 **Método:** Migración por fases desde docs_bkp/
 **Versión:** 1.0.0

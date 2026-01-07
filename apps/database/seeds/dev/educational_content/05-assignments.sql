@@ -77,7 +77,7 @@ INSERT INTO educational_content.assignments (
 
 -- Assignment 1.1: Completado (vencido hace 7 días)
 (
-    gen_random_uuid(),
+    'a5500001-0000-0000-0000-000000000001'::uuid,
     v_teacher_id,
     'Tarea 1.1: Crucigrama y Vocabulario Científico',
     'Completa el crucigrama sobre términos científicos de Marie Curie y responde 5 preguntas de vocabulario. Incluye los ejercicios: Crucigrama Científico y Sopa de Letras. Esta tarea evaluará tu comprensión literal de los descubrimientos científicos de Marie Curie.',
@@ -91,7 +91,7 @@ INSERT INTO educational_content.assignments (
 
 -- Assignment 1.2: Activo (vence en 2 días - URGENTE)
 (
-    gen_random_uuid(),
+    'a5500001-0000-0000-0000-000000000002'::uuid,
     v_teacher_id,
     'Quiz 1.2: Línea de Tiempo de Marie Curie',
     'Organiza cronológicamente los eventos más importantes de la vida de Marie Curie. Este quiz evaluará tu capacidad para identificar fechas y secuencias temporales del texto biográfico. Duración: 30 minutos.',
@@ -105,7 +105,7 @@ INSERT INTO educational_content.assignments (
 
 -- Assignment 1.3: Pendiente (vence en 10 días)
 (
-    gen_random_uuid(),
+    'a5500001-0000-0000-0000-000000000003'::uuid,
     v_teacher_id,
     'Práctica 1.3: Mapa Conceptual - Descubrimientos',
     'Crea un mapa conceptual que conecte a Marie Curie con sus descubrimientos científicos, instituciones y colaboradores. Esta práctica te permitirá visualizar las relaciones entre conceptos del módulo literal.',
@@ -123,7 +123,7 @@ INSERT INTO educational_content.assignments (
 
 -- Assignment 2.1: OVERDUE (vencido hace 3 días, aún publicado)
 (
-    gen_random_uuid(),
+    'a5500001-0000-0000-0000-000000000004'::uuid,
     v_teacher_id,
     'Tarea 2.1: Relaciones Causa-Efecto',
     'Identifica 3 relaciones causa-efecto en la vida de Marie Curie. Por ejemplo: la muerte de su madre → Marie se dedicó intensamente a los estudios. Debes encontrar al menos 3 ejemplos bien argumentados del texto.',
@@ -137,7 +137,7 @@ INSERT INTO educational_content.assignments (
 
 -- Assignment 2.2: Activo (vence en 5 días)
 (
-    gen_random_uuid(),
+    'a5500001-0000-0000-0000-000000000005'::uuid,
     v_teacher_id,
     'Quiz 2.2: Rueda de Inferencias',
     'Resuelve 5 preguntas de inferencia sobre las motivaciones y decisiones de Marie Curie. Usa la Rueda de Inferencias para analizar contextos implícitos del texto. Duración: 45 minutos.',
@@ -151,7 +151,7 @@ INSERT INTO educational_content.assignments (
 
 -- Assignment 2.3: Pendiente (vence en 15 días)
 (
-    gen_random_uuid(),
+    'a5500001-0000-0000-0000-000000000006'::uuid,
     v_teacher_id,
     'Práctica 2.3: Análisis de Decisiones',
     'Analiza 3 decisiones importantes de Marie Curie (ejemplo: rechazar comercializar el radio) y explica las razones implícitas detrás de cada una. Usa evidencia del texto para respaldar tus inferencias.',
@@ -169,7 +169,7 @@ INSERT INTO educational_content.assignments (
 
 -- Assignment 3.1: Activo (vence en 7 días)
 (
-    gen_random_uuid(),
+    'a5500001-0000-0000-0000-000000000007'::uuid,
     v_teacher_id,
     'Tarea 3.1: Ensayo Crítico - Rol de la Mujer en Ciencia',
     'Escribe un ensayo corto (300-400 palabras) sobre cómo Marie Curie desafió los roles de género de su época. Incluye 3 argumentos fundamentados en el texto y 1 reflexión personal sobre la importancia de su legado.',
@@ -183,7 +183,7 @@ INSERT INTO educational_content.assignments (
 
 -- Assignment 3.2: Activo (vence en 3 días - URGENTE, quiz corto)
 (
-    gen_random_uuid(),
+    'a5500001-0000-0000-0000-000000000008'::uuid,
     v_teacher_id,
     'Quiz 3.2: Evaluación Crítica Express',
     'Quiz corto (15 minutos) con 3 preguntas de evaluación crítica sobre las decisiones éticas de Marie Curie. Ejemplo: ¿Fue correcto que no patentara el proceso de extracción del radio?',
@@ -197,7 +197,7 @@ INSERT INTO educational_content.assignments (
 
 -- Assignment 3.3: Pendiente (vence en 30 días - proyecto final)
 (
-    gen_random_uuid(),
+    'a5500001-0000-0000-0000-000000000009'::uuid,
     v_teacher_id,
     'Proyecto Final: Presentación Multimedia sobre Marie Curie',
     'Crea una presentación multimedia (video, podcast o infografía) que analice críticamente el impacto de Marie Curie en la ciencia moderna y la igualdad de género. Debe incluir: biografía, descubrimientos, obstáculos superados y legado actual. Duración: 5-7 minutos.',
@@ -209,7 +209,13 @@ INSERT INTO educational_content.assignments (
     gamilit.now_mexico() - INTERVAL '1 day'
 )
 
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+    title = EXCLUDED.title,
+    description = EXCLUDED.description,
+    assignment_type = EXCLUDED.assignment_type,
+    total_points = EXCLUDED.total_points,
+    is_published = EXCLUDED.is_published,
+    updated_at = gamilit.now_mexico();
 
 END $$;
 

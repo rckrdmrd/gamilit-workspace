@@ -1,3 +1,20 @@
+---
+id: "US-FUND-004"
+title: "Infraestructura tecnica base"
+type: "User Story"
+status: "Done"
+priority: "Critica"
+assignee: "@Backend-Agent, @Frontend-Agent, @DevOps-Agent"
+epic: "EAI-001"
+story_points: 12
+budget: "$4,400 MXN"
+sprint: "Sprint-1"
+labels: ["infrastructure", "nestjs", "react", "docker", "setup"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-08-08"
+---
+
 # US-FUND-004: Infraestructura técnica base
 
 **Épica:** EAI-001 - Fundamentos
@@ -5,7 +22,7 @@
 **Story Points:** 12 SP
 **Presupuesto:** $4,400 MXN
 **Prioridad:** Crítica (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 

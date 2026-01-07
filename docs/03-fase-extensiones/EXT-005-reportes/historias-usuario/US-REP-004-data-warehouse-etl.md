@@ -1,3 +1,19 @@
+---
+id: "US-REP-004"
+title: "Data Warehouse y Pipeline ETL"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-005"
+story_points: 8
+budget: "$4,000 MXN"
+sprint: "Sprint-3"
+labels: ["ext-005", "data-warehouse", "etl", "analytics", "olap", "clickhouse", "airflow", "performance", "escalabilidad", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-REP-004: Data Warehouse y Pipeline ETL
 
 ## Información Básica

@@ -134,6 +134,11 @@ VAPID_PRIVATE_KEY=aB3cDefGh4IjKlM5nOpQr6StUvWxYz...
 VAPID_SUBJECT=mailto:admin@gamilit.com
 ```
 
+> **IMPORTANTE (2026-01-04):** Las claves VAPID DEBEN ser valores válidos generados por
+> `web-push`. El archivo `.env` contiene valores placeholder por defecto que NO funcionan.
+> Si el backend muestra el error `"Vapid public key must be a URL safe Base 64"`, ejecuta
+> `npm run generate:vapid` y copia las claves generadas al archivo `.env`.
+
 ### 6. Módulo de Notificaciones
 
 **Archivo:** `src/modules/notifications/notifications.module.ts`

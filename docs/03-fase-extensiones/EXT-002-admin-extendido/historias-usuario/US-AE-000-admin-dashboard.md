@@ -1,18 +1,35 @@
+---
+id: "US-AE-000"
+title: "Dashboard Administrativo Principal"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 8
+budget: "$3,200 MXN"
+sprint: "Sprint-1"
+labels: ["admin-extendido", "dashboard", "super-admin", "metrics"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-11-12"
+---
+
 # US-AE-000: Dashboard Administrativo
 
-## Información General
+## Informacion General
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | US-AE-000 |
-| **Épica** | EXT-002 - Admin Extendido |
-| **Título** | Dashboard Administrativo Principal |
-| **Prioridad** | Crítica (P0) |
+| **Epica** | EXT-002 - Admin Extendido |
+| **Titulo** | Dashboard Administrativo Principal |
+| **Prioridad** | Critica (P0) |
 | **Story Points** | 8 SP |
-| **Estado** | ✅ COMPLETED |
+| **Estado** | Done |
 | **Sprint** | Sprint 1 |
-| **Duración Real** | 2.5h (FE-059 Day 2) |
-| **Fecha Implementación** | 2025-11-12 |
+| **Duracion Real** | 2.5h (FE-059 Day 2) |
+| **Fecha Implementacion** | 2025-11-12 |
 
 ---
 

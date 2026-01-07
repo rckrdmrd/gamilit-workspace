@@ -1,6 +1,376 @@
 # Trazas de Tareas - Backend
 
-**Última actualización:** 2025-11-29 (BE-137: Implementación M4-M5 - Sistema de Revisión Manual)
+**Última actualización:** 2026-01-04 (BE-140: Corrección Autenticación WebSocket handleConnection)
+
+---
+
+## BE-139: Corrección VAPID Keys y Validación WebSocket (EXT-003) ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P0 CRÍTICO
+**Asignado:** Orquestador-Agent (PERFIL-ORQUESTADOR)
+**Fecha:** 2026-01-04
+**EPIC:** EXT-003 (Notificaciones)
+**Módulos:** Notifications, WebSocket
+
+### Resumen
+
+Corrección del error de inicialización de Web Push Notifications causado por claves VAPID inválidas (valores dummy) y validación de la configuración de WebSocket.
+
+### Problema Identificado
+
+1. **Error VAPID:** El backend mostraba error al iniciar:
+   ```
+   [PushNotificationService] ERROR: Vapid public key must be a URL safe Base 64 (without "=")
+   ```
+   - **Causa:** Las claves VAPID en `.env` eran valores dummy placeholder (`BMx...dummy_public_key...`)
+   - **Impacto:** Push notifications deshabilitadas (graceful degradation)
+
+2. **WebSocket (puerto 3005):** Se reportó que el frontend intentaba conectar WebSocket al puerto 3005.
+   - **Hallazgo:** Configuración correcta, el frontend conecta a `ws://localhost:3006`
+   - **Aclaración:** El puerto 3005 es solo para el servidor de desarrollo (Vite), no para WebSocket
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `apps/backend/.env` | Claves VAPID actualizadas con valores válidos generados |
+
+### Cambios Implementados
+
+**1. Generación de claves VAPID válidas:**
+```bash
+cd apps/backend
+node scripts/generate-vapid-keys.js
+```
+
+**2. Actualización de .env:**
+```bash
+# Antes (INVÁLIDO):
+VAPID_PUBLIC_KEY=BMx...dummy_public_key...
+VAPID_PRIVATE_KEY=...dummy_private_key...
+
+# Después (VÁLIDO):
+VAPID_PUBLIC_KEY=BOHS1jyZcXORY0PWfbra7Nc9KOCjTqW52hleaQ-mkeImt9uV24YzbioYeYdZ9NYf7ajxdmEMv6DFxaVh5Ho7LvI
+VAPID_PRIVATE_KEY=H1y56XrrCFKHlWB68-cjU1HPOy1DHKQYMy4FQE9Odg4
+```
+
+### Validación de Configuración WebSocket
+
+**Configuración Frontend (correcta):**
+- `apps/frontend/.env`: `VITE_WS_HOST=localhost:3006`
+- `apps/frontend/src/config/api.config.ts`: `WS_BASE_URL = ws://localhost:3006`
+- `apps/frontend/vite.config.ts`: Proxy WebSocket configurado a `ws://localhost:3006`
+
+**Configuración Backend (correcta):**
+- `apps/backend/.env`: `PORT=3006`
+- `apps/backend/src/modules/websocket/notifications.gateway.ts`:
+  - CORS permite `localhost:3005` (frontend) y `localhost:5173` (Vite HMR)
+  - Path: `/socket.io/`
+  - Transports: `['websocket', 'polling']`
+
+### Flujo de Conexión WebSocket
+
+```
+Frontend (localhost:3005) → WebSocket → Backend (localhost:3006/socket.io/)
+                               ↓
+                    API_CONFIG.wsURL = 'ws://localhost:3006'
+```
+
+### Validación
+
+- ✅ Claves VAPID: Formato Base64 URL-safe válido
+- ✅ WebSocket: Configuración correcta (puerto 3006)
+- ✅ CORS: Permite conexiones desde frontend (3005)
+- ✅ Documentación existente: `apps/backend/docs/WEB_PUSH_MIGRATION.md`
+
+### Impacto
+
+**Antes:**
+- Push Notifications: ERROR al inicializar
+- WebSocket: Funcionando (sin cambios requeridos)
+
+**Después:**
+- Push Notifications: Inicialización exitosa con claves VAPID válidas
+- WebSocket: Validado y documentado correctamente
+
+### Próximos Pasos
+
+**Recomendaciones:**
+1. Generar claves VAPID diferentes para producción
+2. Almacenar claves en secrets manager (no en .env para producción)
+3. Configurar `VAPID_SUBJECT` con email de producción
+
+### Referencias
+
+- Documentación: `apps/backend/docs/WEB_PUSH_MIGRATION.md`
+- Script generador: `apps/backend/scripts/generate-vapid-keys.js`
+- Servicio: `apps/backend/src/modules/notifications/services/push-notification.service.ts`
+- Gateway WS: `apps/backend/src/modules/websocket/notifications.gateway.ts`
+
+---
+
+## BE-140: Corrección Autenticación WebSocket handleConnection ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P0 CRÍTICO
+**Asignado:** Orquestador-Agent
+**Fecha:** 2026-01-04
+**EPIC:** EXT-003 (Notificaciones)
+**Módulos:** WebSocket
+
+### Resumen
+
+Corrección del error de conexión WebSocket: "WebSocket is closed before the connection is established".
+
+### Problema Identificado
+
+El frontend mostraba error de conexión WebSocket:
+```
+WebSocket connection to 'ws://localhost:3006/socket.io/?EIO=4&transport=websocket' failed:
+WebSocket is closed before the connection is established.
+```
+
+**Causa raíz:**
+El `@UseGuards(WsJwtGuard)` en `handleConnection` NO funciona porque:
+1. `handleConnection` es un lifecycle hook de Socket.IO, NO un message handler
+2. Los guards de NestJS solo se ejecutan en handlers decorados con `@SubscribeMessage`
+3. Por lo tanto, `client.userData` siempre era `undefined` en la conexión inicial
+4. El gateway rechazaba todas las conexiones por falta de datos de usuario
+
+### Solución Implementada
+
+Mover la lógica de autenticación JWT directamente al método `handleConnection`:
+
+```typescript
+constructor(private readonly jwtService: JwtService) {}
+
+async handleConnection(client: AuthenticatedSocket) {
+  try {
+    // Extract token from handshake
+    const token = client.handshake.auth?.token || client.handshake.query?.token;
+
+    if (!token) {
+      client.emit('error', { message: 'Authentication token required' });
+      client.disconnect();
+      return;
+    }
+
+    // Verify JWT manually
+    const payload = await this.jwtService.verifyAsync(token);
+
+    // Attach user data to socket
+    client.userData = {
+      userId: payload.sub,
+      email: payload.email,
+      role: payload.role,
+      tenantId: payload.tenant_id,
+    };
+
+    // Continue with connection setup...
+  } catch (error) {
+    client.emit('error', { message: 'Authentication failed' });
+    client.disconnect();
+  }
+}
+```
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `apps/backend/src/modules/websocket/notifications.gateway.ts` | Autenticación JWT manual en handleConnection |
+
+### Validación
+
+- ✅ TypeScript Build: Sin errores
+- ✅ JwtService inyectado correctamente
+- ✅ Manejo de errores con mensajes descriptivos
+
+### Impacto
+
+**Antes:**
+- WebSocket: Todas las conexiones rechazadas inmediatamente
+- Error: "WebSocket is closed before the connection is established"
+
+**Después:**
+- WebSocket: Conexiones autenticadas correctamente con JWT
+- Usuarios reciben evento `authenticated` al conectarse
+
+### Referencias
+
+- Gateway: `apps/backend/src/modules/websocket/notifications.gateway.ts:63-116`
+- Guard (para @SubscribeMessage): `apps/backend/src/modules/websocket/guards/ws-jwt.guard.ts`
+
+---
+
+## BE-138: EPIC 10.2 - Sistema de Certificados Digitales ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P0 CRÍTICO
+**Asignado:** Backend-Agent
+**Fecha:** 2026-01-04
+**EPIC:** 10.2
+**Módulos:** Progress
+
+### Resumen
+
+Implementación completa del sistema de certificados digitales para GAMILIT. Los certificados se generan automáticamente cuando un estudiante completa un módulo, incluyendo código QR para verificación pública y generación de PDF descargable.
+
+### Problema Resuelto
+
+Se requería un sistema de certificación digital que:
+- Genere certificados automáticamente al completar módulos
+- Incluya código QR verificable públicamente
+- Permita descargar PDF del certificado
+- Soporte revocación por administradores/profesores
+- Proporcione estadísticas por tenant
+
+### Archivos Creados
+
+#### Entity (1 archivo)
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/progress/entities/certificate.entity.ts` | Entity con 25+ campos, ENUMs CertificateStatus/CertificateType |
+
+#### Service (1 archivo)
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/progress/services/certificate.service.ts` | Generación PDF con Puppeteer, QR codes, verificación |
+
+#### Controller (1 archivo)
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/progress/controllers/certificate.controller.ts` | 6 endpoints con guards de seguridad |
+
+#### DTOs (1 archivo, 6 DTOs)
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/progress/dto/certificate.dto.ts` | GenerateCertificateDto, RevokeCertificateDto, CertificateVerificationDto, CertificateResponseDto, GetCertificatesQueryDto |
+
+#### DDL (4 archivos)
+| Archivo | Descripción |
+|---------|-------------|
+| `ddl/schemas/progress_tracking/enums/certificate_enums.sql` | ENUMs certificate_status, certificate_type |
+| `ddl/schemas/progress_tracking/tables/18-certificates.sql` | Tabla completa con 9 índices |
+| `ddl/schemas/progress_tracking/rls-policies/04-certificates-policies.sql` | 4 políticas RLS |
+| `ddl/schemas/progress_tracking/triggers/32-trg_certificates_updated_at.sql` | Trigger updated_at |
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `modules/progress/services/module-progress.service.ts` | Integración auto-generación en completeModule() |
+| `modules/progress/progress.module.ts` | Registro de CertificateService, Controller |
+| `shared/constants/database.constants.ts` | Agregada constante CERTIFICATES |
+
+### Endpoints Implementados
+
+#### 1. POST /api/certificates/generate
+- **Descripción:** Genera nuevo certificado
+- **Body:** GenerateCertificateDto (user_id, module_id, tenant_id?, classroom_id?)
+- **Guards:** JwtAuthGuard, RolesGuard
+- **Response:** CertificateResponseDto
+
+#### 2. GET /api/certificates/user/:userId
+- **Descripción:** Lista certificados de un usuario
+- **Query:** status?, certificate_type?, limit?, offset?
+- **Guards:** JwtAuthGuard, RolesGuard
+- **Response:** CertificateResponseDto[]
+
+#### 3. GET /api/certificates/verify/:code
+- **Descripción:** Verificación pública de certificado por código QR
+- **Guards:** PUBLIC (sin autenticación)
+- **Response:** CertificateVerificationDto (is_valid, certificate?, error?)
+
+#### 4. POST /api/certificates/:id/revoke
+- **Descripción:** Revocar certificado
+- **Body:** RevokeCertificateDto (reason)
+- **Guards:** JwtAuthGuard, RolesGuard (ADMIN_TEACHER, SUPER_ADMIN)
+- **Response:** CertificateResponseDto
+
+#### 5. GET /api/certificates/:id/download
+- **Descripción:** Descargar PDF del certificado
+- **Guards:** JwtAuthGuard, RolesGuard
+- **Response:** application/pdf stream
+
+#### 6. GET /api/certificates/tenant/:tenantId/stats
+- **Descripción:** Estadísticas de certificados por tenant
+- **Guards:** JwtAuthGuard, RolesGuard (ADMIN_TEACHER, SUPER_ADMIN)
+- **Response:** { total, by_status, by_type, recent_count }
+
+### Características Técnicas
+
+**Seguridad:**
+- ✅ @UseGuards(JwtAuthGuard, RolesGuard) en controller
+- ✅ @Public() decorator para verificación QR
+- ✅ escapeHtml() en template PDF (XSS prevention)
+- ✅ @Transform decorators en query DTOs
+- ✅ ParseUUIDPipe en parámetros UUID
+
+**Generación PDF:**
+- ✅ Puppeteer para renderizado HTML→PDF
+- ✅ Template HTML con estilos inline
+- ✅ Código QR embebido (qrcode library)
+- ✅ Datos dinámicos: nombre, módulo, fecha, score
+
+**Base de Datos:**
+- ✅ 2 ENUMs (certificate_status, certificate_type)
+- ✅ Tabla certificates con 25+ columnas
+- ✅ 9 índices (incluyendo unique constraint)
+- ✅ 4 políticas RLS (estudiante, profesor, admin, público)
+- ✅ Trigger updated_at automático
+
+**Integración:**
+- ✅ Auto-generación en ModuleProgressService.completeModule()
+- ✅ forwardRef() para dependencia circular
+- ✅ Non-blocking: errores de generación no bloquean completación
+
+### Validación
+
+- ✅ TypeScript Build: Sin errores nuevos
+- ✅ Lint: 0 errores
+- ✅ Directiva Recreación Limpia: CUMPLE (solo nuevas tablas)
+- ✅ Security Audit: Vulnerabilidades corregidas
+
+### Base de Datos
+
+Objetos creados (ver DATABASE_INVENTORY.yml):
+- `progress_tracking.certificate_status` (ENUM)
+- `progress_tracking.certificate_type` (ENUM)
+- `progress_tracking.certificates` (TABLE)
+- 4 RLS policies
+- 1 trigger
+
+### Impacto
+
+**Antes:**
+- Sin sistema de certificación
+- Completación de módulos no reconocida formalmente
+- Sin verificación de logros
+
+**Después:**
+- Sistema completo de certificados digitales
+- Auto-generación al completar módulos
+- Verificación pública via QR
+- PDF descargable profesional
+- Estadísticas por tenant
+
+### Próximos Pasos
+
+**Recomendaciones:**
+1. Implementar notificaciones push al generar certificado
+2. Agregar templates personalizables por tenant
+3. Implementar firma digital del certificado
+4. Integrar con LinkedIn para compartir logros
+5. Agregar soporte para certificados de curso completo
+
+### Referencias
+
+- EPIC: 10.2 - Digital Certificates System
+- DDL: apps/database/ddl/schemas/progress_tracking/
+- Backend: apps/backend/src/modules/progress/
+- Validación: 7 sub-agentes (Architecture, Backend, Database, Security, Testing, Docs, Integration)
 
 ---
 

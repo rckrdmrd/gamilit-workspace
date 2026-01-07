@@ -16,7 +16,7 @@
 SET search_path TO gamification_system, public;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- ESTUDIANTE 1: Ana Garc�a (3 achievements)
+-- ESTUDIANTE 1: Ana García (3 achievements)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 -- Primera Visita (completado)
@@ -75,7 +75,7 @@ INSERT INTO gamification_system.user_achievements (
     is_completed = EXCLUDED.is_completed,
     completion_percentage = EXCLUDED.completion_percentage;
 
--- Racha de 3 D�as (completado)
+-- Racha de 3 Días (completado)
 INSERT INTO gamification_system.user_achievements (
     id, user_id, achievement_id, progress, max_progress,
     is_completed, completion_percentage, completed_at,
@@ -126,7 +126,7 @@ INSERT INTO gamification_system.user_achievements (
     completion_percentage = EXCLUDED.completion_percentage;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- ESTUDIANTE 2: Carlos Ram�rez (1 achievement)
+-- ESTUDIANTE 2: Carlos Ramírez (1 achievement)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 -- Primera Visita (completado)
@@ -180,7 +180,7 @@ INSERT INTO gamification_system.user_achievements (
     completion_percentage = EXCLUDED.completion_percentage;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- ESTUDIANTE 3: Mar�a Fernanda (5+ achievements - m�dulo 1 completado)
+-- ESTUDIANTE 3: María Fernanda (5+ achievements - módulo 1 completado)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 INSERT INTO gamification_system.user_achievements
@@ -192,11 +192,11 @@ VALUES
 ('e0000003-0002-0000-0000-000000000003'::uuid, '00c742d9-e5f7-4666-9597-5a8ca54d5478'::uuid, '90000001-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '14 days', true, true, true, jsonb_build_object('xp', 100, 'ml_coins', 50), jsonb_build_object('exercises_completed', 1), ARRAY['first_exercise'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '14 days', gamilit.now_mexico() - INTERVAL '14 days'),
 -- Lector Principiante
 ('e0000003-0003-0000-0000-000000000003'::uuid, '00c742d9-e5f7-4666-9597-5a8ca54d5478'::uuid, '90000001-0000-0000-0000-000000000002'::uuid, 25, 25, true, 100.00, gamilit.now_mexico() - INTERVAL '12 days', true, true, true, jsonb_build_object('xp', 200, 'ml_coins', 75), jsonb_build_object('exercises_completed', 25), ARRAY['milestone_10', 'milestone_20', 'milestone_25'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '13 days', gamilit.now_mexico() - INTERVAL '12 days'),
--- Racha de 7 D�as
+-- Racha de 7 Días
 ('e0000003-0004-0000-0000-000000000003'::uuid, '00c742d9-e5f7-4666-9597-5a8ca54d5478'::uuid, '90000002-0000-0000-0000-000000000002'::uuid, 7, 7, true, 100.00, gamilit.now_mexico() - INTERVAL '7 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('streak_days', 7), ARRAY['day_3', 'day_5', 'day_7'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '10 days', gamilit.now_mexico() - INTERVAL '7 days'),
--- M�dulo 1 Completado
+-- Módulo 1 Completado
 ('e0000003-0005-0000-0000-000000000003'::uuid, '00c742d9-e5f7-4666-9597-5a8ca54d5478'::uuid, '90000003-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '10 days', true, true, true, jsonb_build_object('xp', 500, 'ml_coins', 150, 'certificate_url', '/certificates/modules/modulo-1.pdf'), jsonb_build_object('module_completed', 'modulo-01', 'score', 88), ARRAY['module_1_completed'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '12 days', gamilit.now_mexico() - INTERVAL '10 days'),
--- Lector Experimentado (en progreso 40% por M�dulo 2)
+-- Lector Experimentado (en progreso 40% por Módulo 2)
 ('e0000003-0006-0000-0000-000000000003'::uuid, '00c742d9-e5f7-4666-9597-5a8ca54d5478'::uuid, '90000001-0000-0000-0000-000000000003'::uuid, 35, 100, false, 35.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('exercises_completed', 35, 'target', 100), ARRAY['milestone_25'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '12 days', gamilit.now_mexico() - INTERVAL '10 days')
 ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     progress = EXCLUDED.progress,
@@ -221,7 +221,7 @@ ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     completion_percentage = EXCLUDED.completion_percentage;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- ESTUDIANTE 5: Sof�a Mart�nez (8+ achievements - 2 m�dulos completados, mastery)
+-- ESTUDIANTE 5: Sofía Martínez (8+ achievements - 2 módulos completados, mastery)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 INSERT INTO gamification_system.user_achievements
@@ -235,11 +235,11 @@ VALUES
 ('e0000005-0003-0000-0000-000000000005'::uuid, 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, '90000001-0000-0000-0000-000000000002'::uuid, 25, 25, true, 100.00, gamilit.now_mexico() - INTERVAL '18 days', true, true, true, jsonb_build_object('xp', 200, 'ml_coins', 75), jsonb_build_object('exercises_completed', 25), ARRAY['milestone_10', 'milestone_20', 'milestone_25'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '19 days', gamilit.now_mexico() - INTERVAL '18 days'),
 -- Lector Experimentado
 ('e0000005-0004-0000-0000-000000000005'::uuid, 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, '90000001-0000-0000-0000-000000000003'::uuid, 50, 100, true, 100.00, gamilit.now_mexico() - INTERVAL '15 days', true, true, true, jsonb_build_object('xp', 400, 'ml_coins', 125), jsonb_build_object('exercises_completed', 50), ARRAY['milestone_25', 'milestone_50', 'milestone_75', 'milestone_100'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '18 days', gamilit.now_mexico() - INTERVAL '15 days'),
--- Racha de 7 D�as
+-- Racha de 7 Días
 ('e0000005-0005-0000-0000-000000000005'::uuid, 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, '90000002-0000-0000-0000-000000000002'::uuid, 7, 7, true, 100.00, gamilit.now_mexico() - INTERVAL '14 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('streak_days', 7), ARRAY['day_3', 'day_5', 'day_7'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '16 days', gamilit.now_mexico() - INTERVAL '14 days'),
--- M�dulo 1 Completado
+-- Módulo 1 Completado
 ('e0000005-0006-0000-0000-000000000005'::uuid, 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, '90000003-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '16 days', true, true, true, jsonb_build_object('xp', 500, 'ml_coins', 150, 'certificate_url', '/certificates/modules/modulo-1.pdf'), jsonb_build_object('module_completed', 'modulo-01', 'score', 96), ARRAY['module_1_completed'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '18 days', gamilit.now_mexico() - INTERVAL '16 days'),
--- M�dulo 2 Completado
+-- Módulo 2 Completado
 ('e0000005-0007-0000-0000-000000000005'::uuid, 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, '90000003-0000-0000-0000-000000000002'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '12 days', true, true, true, jsonb_build_object('xp', 500, 'ml_coins', 150, 'certificate_url', '/certificates/modules/modulo-2.pdf'), jsonb_build_object('module_completed', 'modulo-02', 'score', 90), ARRAY['module_2_completed'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '14 days', gamilit.now_mexico() - INTERVAL '12 days'),
 -- Perfeccionista
 ('e0000005-0008-0000-0000-000000000005'::uuid, 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, '90000004-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '16 days', true, true, true, jsonb_build_object('xp', 750, 'ml_coins', 250), jsonb_build_object('perfect_score_module', 'modulo-01'), ARRAY['perfect_module'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '16 days', gamilit.now_mexico() - INTERVAL '16 days'),
@@ -253,7 +253,7 @@ ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     completion_percentage = EXCLUDED.completion_percentage;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- PROFESOR 1: Juan P�rez (5 achievements de profesor)
+-- PROFESOR 1: Juan Pérez (5 achievements de profesor)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 INSERT INTO gamification_system.user_achievements
@@ -261,11 +261,11 @@ INSERT INTO gamification_system.user_achievements
 VALUES
 -- Primera Visita
 ('e0000006-0001-0000-0000-000000000006'::uuid, 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '30 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '30 days', gamilit.now_mexico() - INTERVAL '30 days'),
--- Racha de 7 D�as
+-- Racha de 7 Días
 ('e0000006-0002-0000-0000-000000000006'::uuid, 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, '90000002-0000-0000-0000-000000000002'::uuid, 7, 7, true, 100.00, gamilit.now_mexico() - INTERVAL '22 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('streak_days', 7), ARRAY['day_3', 'day_5', 'day_7'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '25 days', gamilit.now_mexico() - INTERVAL '22 days'),
--- Racha de 30 D�as (en progreso 50%)
+-- Racha de 30 Días (en progreso 50%)
 ('e0000006-0003-0000-0000-000000000006'::uuid, 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, '90000002-0000-0000-0000-000000000003'::uuid, 15, 30, false, 50.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('streak_days', 15, 'target', 30), ARRAY['day_7', 'day_14'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '30 days', gamilit.now_mexico() - INTERVAL '15 days'),
--- Compa�ero de Aula
+-- Compañero de Aula
 ('e0000006-0004-0000-0000-000000000006'::uuid, 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, '90000006-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '28 days', true, true, true, jsonb_build_object('xp', 200, 'ml_coins', 75), jsonb_build_object('classroom_joined', true), ARRAY['join_classroom'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '28 days', gamilit.now_mexico() - INTERVAL '28 days'),
 -- Estudiante Colaborativo
 ('e0000006-0005-0000-0000-000000000006'::uuid, 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, '90000006-0000-0000-0000-000000000002'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '25 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('collaborations', 10), ARRAY['collab_5', 'collab_10'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '26 days', gamilit.now_mexico() - INTERVAL '25 days')
@@ -283,11 +283,11 @@ INSERT INTO gamification_system.user_achievements
 VALUES
 -- Primera Visita
 ('e0000007-0001-0000-0000-000000000007'::uuid, '9951ad75-e9cb-47b3-b478-6bb860ee2530'::uuid, '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '28 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '28 days', gamilit.now_mexico() - INTERVAL '28 days'),
--- Racha de 7 D�as
+-- Racha de 7 Días
 ('e0000007-0002-0000-0000-000000000007'::uuid, '9951ad75-e9cb-47b3-b478-6bb860ee2530'::uuid, '90000002-0000-0000-0000-000000000002'::uuid, 7, 7, true, 100.00, gamilit.now_mexico() - INTERVAL '20 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('streak_days', 7), ARRAY['day_3', 'day_5', 'day_7'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '23 days', gamilit.now_mexico() - INTERVAL '20 days'),
--- Racha de 30 D�as (en progreso 40%)
+-- Racha de 30 Días (en progreso 40%)
 ('e0000007-0003-0000-0000-000000000007'::uuid, '9951ad75-e9cb-47b3-b478-6bb860ee2530'::uuid, '90000002-0000-0000-0000-000000000003'::uuid, 12, 30, false, 40.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('streak_days', 12, 'target', 30), ARRAY['day_7'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '28 days', gamilit.now_mexico() - INTERVAL '16 days'),
--- Compa�ero de Aula
+-- Compañero de Aula
 ('e0000007-0004-0000-0000-000000000007'::uuid, '9951ad75-e9cb-47b3-b478-6bb860ee2530'::uuid, '90000006-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '26 days', true, true, true, jsonb_build_object('xp', 200, 'ml_coins', 75), jsonb_build_object('classroom_joined', true), ARRAY['join_classroom'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '26 days', gamilit.now_mexico() - INTERVAL '26 days'),
 -- Estudiante Colaborativo
 ('e0000007-0005-0000-0000-000000000007'::uuid, '9951ad75-e9cb-47b3-b478-6bb860ee2530'::uuid, '90000006-0000-0000-0000-000000000002'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '23 days', true, true, true, jsonb_build_object('xp', 300, 'ml_coins', 100), jsonb_build_object('collaborations', 10), ARRAY['collab_5', 'collab_10'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '24 days', gamilit.now_mexico() - INTERVAL '23 days')
@@ -305,7 +305,7 @@ INSERT INTO gamification_system.user_achievements
 VALUES
 -- Primera Visita
 ('e0000008-0001-0000-0000-000000000008'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '60 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '60 days', gamilit.now_mexico() - INTERVAL '60 days'),
--- Racha de 30 D�as
+-- Racha de 30 Días
 ('e0000008-0002-0000-0000-000000000008'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '90000002-0000-0000-0000-000000000003'::uuid, 30, 30, true, 100.00, gamilit.now_mexico() - INTERVAL '30 days', true, true, true, jsonb_build_object('xp', 1000, 'ml_coins', 300), jsonb_build_object('streak_days', 30), ARRAY['day_7', 'day_14', 'day_21', 'day_30'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '60 days', gamilit.now_mexico() - INTERVAL '30 days'),
 -- Maestro de la Lectura
 ('e0000008-0003-0000-0000-000000000008'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '90000001-0000-0000-0000-000000000005'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '35 days', true, true, true, jsonb_build_object('xp', 1500, 'ml_coins', 500, 'badge_url', '/badges/achievements/maestro-lectura.png'), jsonb_build_object('exercises_completed', 500), ARRAY['master_level'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '40 days', gamilit.now_mexico() - INTERVAL '35 days'),
@@ -325,9 +325,9 @@ INSERT INTO gamification_system.user_achievements
 VALUES
 -- Primera Visita
 ('e0000009-0001-0000-0000-000000000009'::uuid, '735235f5-260a-4c9b-913c-14a1efd083ea'::uuid, '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '45 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '45 days', gamilit.now_mexico() - INTERVAL '45 days'),
--- Racha de 30 D�as (en progreso 67%)
+-- Racha de 30 Días (en progreso 67%)
 ('e0000009-0002-0000-0000-000000000009'::uuid, '735235f5-260a-4c9b-913c-14a1efd083ea'::uuid, '90000002-0000-0000-0000-000000000003'::uuid, 20, 30, false, 66.67, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('streak_days', 20, 'target', 30), ARRAY['day_7', 'day_14'], jsonb_build_object('demo_achievement', true, 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '45 days', gamilit.now_mexico() - INTERVAL '25 days'),
--- Compa�ero de Aula
+-- Compañero de Aula
 ('e0000009-0003-0000-0000-000000000009'::uuid, '735235f5-260a-4c9b-913c-14a1efd083ea'::uuid, '90000006-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '40 days', true, true, true, jsonb_build_object('xp', 200, 'ml_coins', 75), jsonb_build_object('classroom_joined', true), ARRAY['join_classroom'], jsonb_build_object('demo_achievement', true), gamilit.now_mexico() - INTERVAL '40 days', gamilit.now_mexico() - INTERVAL '40 days')
 ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     progress = EXCLUDED.progress,
@@ -348,7 +348,7 @@ ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     completion_percentage = EXCLUDED.completion_percentage;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- VERIFICACI�N DE USER ACHIEVEMENTS
+-- VERIFICACIÓN DE USER ACHIEVEMENTS
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 DO $$
@@ -375,7 +375,7 @@ BEGIN
     AND is_completed = false;
 
     RAISE NOTICE 'PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP';
-    RAISE NOTICE 'User Achievements - Verificaci�n de Seeds';
+    RAISE NOTICE 'User Achievements - Verificación de Seeds';
     RAISE NOTICE 'PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP';
     RAISE NOTICE 'Total de user achievements insertados: %', v_achievement_count;
     RAISE NOTICE 'Achievements completados: %', v_completed_count;

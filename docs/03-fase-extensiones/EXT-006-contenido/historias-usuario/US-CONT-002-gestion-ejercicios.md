@@ -1,3 +1,19 @@
+---
+id: "US-CONT-002"
+title: "Gestion de Ejercicios y Evaluaciones"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-006"
+story_points: 8
+budget: "$4,600 MXN"
+sprint: "Sprint-3"
+labels: ["ext-006", "ejercicios", "assessment", "evaluacion", "rubricas", "banco-preguntas", "gamificacion", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-CONT-002: Gestión de Ejercicios y Evaluaciones
 
 ## Información Básica

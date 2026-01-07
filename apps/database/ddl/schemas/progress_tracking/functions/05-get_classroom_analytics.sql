@@ -7,7 +7,7 @@
 -- Returns: TABLE (total_students, active_students, avg_completion_rate, total_missions_completed, total_xp_earned, avg_current_streak, top_performer_id, top_performer_name, top_performer_xp)
 -- Example:
 --   SELECT * FROM progress_tracking.get_classroom_analytics('classroom-uuid', NOW() - INTERVAL '30 days', NOW());
--- Dependencies: social_features.classroom_members, gamification_system.user_stats, progress_tracking.module_progress, auth.profiles
+-- Dependencies: social_features.classroom_members, gamification_system.user_stats, progress_tracking.module_progress, auth_management.profiles
 -- Created: 2025-10-28
 -- Modified: 2025-10-28
 -- CORRECTED (2025-12-18): missions_completed -> modules_completed, last_activity_date -> last_activity_at
@@ -59,7 +59,7 @@ BEGIN
         SUM(total_xp)::BIGINT as total_xp_earned,
         AVG(current_streak)::NUMERIC(5,2) as avg_current_streak,
         (SELECT user_id FROM student_stats ORDER BY total_xp DESC LIMIT 1) as top_performer_id,
-        (SELECT full_name FROM auth.profiles WHERE id = (SELECT user_id FROM student_stats ORDER BY total_xp DESC LIMIT 1)) as top_performer_name,
+        (SELECT full_name FROM auth_management.profiles WHERE id = (SELECT user_id FROM student_stats ORDER BY total_xp DESC LIMIT 1)) as top_performer_name,
         (SELECT total_xp FROM student_stats ORDER BY total_xp DESC LIMIT 1) as top_performer_xp
     FROM student_stats ss;
 END;

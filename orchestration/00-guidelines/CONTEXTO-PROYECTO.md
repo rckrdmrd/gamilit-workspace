@@ -1,6 +1,6 @@
 # Contexto del Proyecto - GAMILIT
 
-**Última actualización:** 2025-12-18
+**Última actualización:** 2026-01-04
 
 ## Identificacion
 
@@ -227,7 +227,7 @@ Las siguientes directivas se aplican a TODOS los proyectos del workspace:
 | `PROTOCOLO-ESCALAMIENTO-PO.md` | Protocolo de escalamiento al PO |
 | `ESTANDARES-NOMENCLATURA-BASE.md` | Nomenclatura base del workspace |
 
-**Path:** `~/workspace/core/orchestration/directivas/`
+**Path:** `/home/isem/workspace-v1/orchestration/directivas/`
 
 ### Directivas Específicas de Gamilit
 Directivas que aplican solo a este proyecto:
@@ -262,15 +262,44 @@ Prompts especializados para este proyecto:
 - `docs/01-requerimientos/` (por épica)
 - `docs/02-especificaciones-tecnicas/`
 
-### En Core (Workspace)
-- `~/workspace/core/orchestration/directivas/` (directivas globales)
-- `~/workspace/core/orchestration/prompts/base/` (prompts base)
-- `~/workspace/core/orchestration/templates/` (templates)
-- `~/workspace/core/orchestration/checklists/` (checklists)
+### En Workspace-v1 (Orquestación Global)
+- `/home/isem/workspace-v1/orchestration/directivas/` (directivas globales)
+- `/home/isem/workspace-v1/orchestration/agents/perfiles/` (perfiles de agentes)
+- `/home/isem/workspace-v1/orchestration/templates/` (templates)
+- `/home/isem/workspace-v1/orchestration/referencias/` (referencias)
 
 ### En Knowledge Base
-- `~/workspace/knowledge-base/patterns/` (patrones aplicables)
-- `~/workspace/knowledge-base/reference/gamilit-legacy/` (código anterior)
+- `/home/isem/workspace-v1/shared/knowledge-base/patterns/` (patrones aplicables)
+- `/home/isem/workspace-v1/shared/knowledge-base/lessons-learned/` (lecciones aprendidas)
+- `/home/isem/workspace-v1/shared/catalog/` (catálogo compartido)
 
 ---
-*Contexto del proyecto Gamilit - Sistema NEXUS v2.0*
+
+## Sistema NEXUS v4.0 - Integración
+
+### Resolución Automática de Contexto
+El archivo `CONTEXT-MAP.yml` en este directorio define:
+- Niveles de contexto (L0-L3) con presupuestos de tokens
+- Mapeo tarea → archivos a cargar
+- Integración con docs/
+- Aliases resueltos
+
+### Ciclo CAPVED++
+Todas las tareas siguen el ciclo:
+```
+C: Contexto → A: Análisis → P: Planeación → V: Validación → E: Ejecución → D: Documentación
+```
+
+Cada fase tiene gates de validación obligatorios.
+
+### Registro de Errores
+Antes de ejecutar cualquier tarea, buscar en:
+- `orchestration/errores/REGISTRO-ERRORES.yml` (local)
+- `/home/isem/workspace-v1/orchestration/errores/REGISTRO-ERRORES.yml` (global)
+
+### Integración Scrum
+- Sprint activo: `orchestration/scrum/SPRINT-ACTUAL.yml`
+- HUs deben crearse antes de tareas significativas
+
+---
+*Contexto del proyecto Gamilit - Sistema NEXUS v4.0*

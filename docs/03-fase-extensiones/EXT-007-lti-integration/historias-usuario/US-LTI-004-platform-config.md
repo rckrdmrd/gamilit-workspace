@@ -1,3 +1,19 @@
+---
+id: "US-LTI-004"
+title: "Platform Configuration UI"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-007"
+story_points: 8
+budget: "$1,200 USD"
+sprint: "Sprint-17"
+labels: ["lti", "admin", "configuration", "platform", "canvas", "moodle", "blackboard"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # US-LTI-004: Platform Configuration UI
 
 **Épica:** EXT-007: LTI Integration

@@ -103,7 +103,74 @@ export class MediaController {
   }
 
   /**
+   * Obtiene recursos multimedia por categoría
+   *
+   * IMPORTANTE: Esta ruta DEBE estar ANTES de 'media/:id' para evitar
+   * que NestJS capture 'category' como un ID.
+   *
+   * @param category - Categoría de los recursos multimedia
+   * @returns Array de recursos multimedia de esa categoría
+   *
+   * @example
+   * GET /api/v1/educational/media/category/historical
+   * Response: [
+   *   {
+   *     "id": "550e8400-e29b-41d4-a716-446655440000",
+   *     "title": "Marie Curie Portrait",
+   *     "category": "historical",
+   *     "media_type": "image"
+   *   }
+   * ]
+   */
+  @Get('media/category/:category')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get media resources by category',
+    description: 'Obtiene todos los recursos multimedia de una categoría específica',
+  })
+  @ApiParam({
+    name: 'category',
+    description: 'Categoría del recurso multimedia',
+    type: String,
+    required: true,
+    example: 'historical',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de recursos multimedia filtrados por categoría',
+    type: [MediaResponseDto],
+    schema: {
+      example: [
+        {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          title: 'Marie Curie Portrait',
+          category: 'historical',
+          media_type: 'image',
+          url: 'https://cdn.example.com/marie-curie.jpg',
+          processing_status: 'ready',
+          is_active: true,
+        },
+        {
+          id: '550e8400-e29b-41d4-a716-446655440001',
+          title: 'Laboratory Equipment 1900s',
+          category: 'historical',
+          media_type: 'image',
+          url: 'https://cdn.example.com/lab-equipment.jpg',
+          processing_status: 'ready',
+          is_active: true,
+        },
+      ],
+    },
+  })
+  async findByCategory(@Param('category') category: string) {
+    return this.mediaService.findByCategory(category);
+  }
+
+  /**
    * Obtiene un recurso multimedia específico por ID
+   *
+   * NOTA: Esta ruta debe estar DESPUÉS de rutas específicas como
+   * 'media/category/:category' para evitar conflictos de captura.
    *
    * @param id - ID del recurso multimedia (UUID)
    * @returns Recurso multimedia encontrado
@@ -354,64 +421,4 @@ export class MediaController {
     return this.mediaService.updateProcessingStatus(id, body.status, body.metadata);
   }
 
-  /**
-   * Obtiene recursos multimedia por categoría
-   *
-   * @param category - Categoría de los recursos multimedia
-   * @returns Array de recursos multimedia de esa categoría
-   *
-   * @example
-   * GET /api/v1/educational/media/category/historical
-   * Response: [
-   *   {
-   *     "id": "550e8400-e29b-41d4-a716-446655440000",
-   *     "title": "Marie Curie Portrait",
-   *     "category": "historical",
-   *     "media_type": "image"
-   *   }
-   * ]
-   */
-  @Get('media/category/:category')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Get media resources by category',
-    description: 'Obtiene todos los recursos multimedia de una categoría específica',
-  })
-  @ApiParam({
-    name: 'category',
-    description: 'Categoría del recurso multimedia',
-    type: String,
-    required: true,
-    example: 'historical',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de recursos multimedia filtrados por categoría',
-    type: [MediaResponseDto],
-    schema: {
-      example: [
-        {
-          id: '550e8400-e29b-41d4-a716-446655440000',
-          title: 'Marie Curie Portrait',
-          category: 'historical',
-          media_type: 'image',
-          url: 'https://cdn.example.com/marie-curie.jpg',
-          processing_status: 'ready',
-          is_active: true,
-        },
-        {
-          id: '550e8400-e29b-41d4-a716-446655440001',
-          title: 'Laboratory Equipment 1900s',
-          category: 'historical',
-          media_type: 'image',
-          url: 'https://cdn.example.com/lab-equipment.jpg',
-          processing_status: 'ready',
-          is_active: true,
-        },
-      ],
-    },
-  })
-  async findByCategory(@Param('category') category: string) {
-    return this.mediaService.findByCategory(category);
-  }
 }

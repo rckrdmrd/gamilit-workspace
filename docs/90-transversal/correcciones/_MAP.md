@@ -1,7 +1,7 @@
 # _MAP: Correcciones e Issues
 
 **Carpeta:** docs/90-transversal/correcciones/
-**Ultima Actualizacion:** 2025-12-26
+**Ultima Actualizacion:** 2026-01-06
 **Proposito:** Backlog de issues pendientes y reportes de correcciones
 **Estado:** Vigente
 
@@ -11,12 +11,69 @@
 
 | Archivo | Descripcion | Estado |
 |---------|-------------|--------|
-| `ISSUES-CRITICOS.md` | Backlog de issues pendientes (66+ issues) | Vigente |
-| `CORRECCIONES-ADMIN-PORTAL-2025-12-26.md` | Correcciones Portal Admin Sprint 1-4 (23 issues) | Completado |
+| `BACKEND-CRITICAL-ISSUES-PENDING.md` | Issues P0 Backend - estado actualizado | **SSOT** |
+| `PLAN-RESTRUCTURACION-DOCUMENTACION-2026-01-06.md` | Plan de restructuración documentación | En ejecución |
+| `ANALISIS-ERROR-404-PROGRESS-MODULES.md` | Error 404 en endpoint progress/modules | **CORREGIDO** |
+
+### Archivos Movidos a Archivados (2026-01-06)
+
+| Archivo Original | Destino | Razón |
+|-----------------|---------|-------|
+| `ISSUES-CRITICOS.md` | `archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-DEPRECATED.md` | Deprecado desde Oct 2025, todos los 66 issues resueltos |
+| `CORRECCIONES-ADMIN-PORTAL-2025-12-26.md` | Pendiente mover | Completado - 23/23 resueltos |
 
 ---
 
-## Correcciones Recientes (2025-12-26)
+## Estado de Issues P0 (Actualizado 2025-01-04)
+
+**SSOT:** `BACKEND-CRITICAL-ISSUES-PENDING.md`
+
+### Issues P0 Backend - TODOS IMPLEMENTADOS
+
+| Issue | Descripcion | Estado |
+|-------|-------------|--------|
+| P0-001 | Auto-save userId | IMPLEMENTADO |
+| P0-003 | Inconsistencia IDs BD | IMPLEMENTADO |
+| P0-005 | Password Recovery | IMPLEMENTADO |
+| P0-006 | Change Password | IMPLEMENTADO |
+| P0-007 | Session Management | IMPLEMENTADO |
+
+**Evidencia:** `docs/archivados/historicos-2025/reportes-analisis/EXECUTION-REPORT-2025-11-28.md`
+
+---
+
+## Correcciones Recientes (2026-01-04)
+
+### CORR-001: Alineación Páginas Leaderboard y Achievements
+
+**Documentación:** `orchestration/reportes/correcciones/CORR-001-*.md`
+
+| Aspecto | Detalle |
+|---------|---------|
+| **Problema** | LeaderboardPage y AchievementsPage no seguían patrones de UI establecidos |
+| **Causa Raíz** | Falta de uso de GamifiedHeader y estilos inconsistentes |
+| **Solución** | Alineación con patrones de DashboardComplete y MissionsPage |
+| **Archivos modificados** | `LeaderboardPage.tsx`, `AchievementsPage.tsx` |
+| **Estado** | ✅ COMPLETADO - Build exitoso |
+| **Agente** | Orquestador + Frontend-Agent |
+| **Cambios BD** | ❌ Ninguno |
+
+### CORR-2026-01-04-001: Error 404 en Progress Modules
+
+**Documento:** `ANALISIS-ERROR-404-PROGRESS-MODULES.md`
+
+| Aspecto | Detalle |
+|---------|---------|
+| **Error** | 404 en GET `/api/v1/progress/users/:userId/modules/:moduleId` |
+| **Causa Raíz** | Falta sincronización bidireccional usuarios ↔ módulos |
+| **Solución** | Trigger + función para crear module_progress automáticamente |
+| **Nuevos objetos** | `gamilit.initialize_module_progress_for_users()`, `trg_initialize_module_progress` |
+| **Estado** | ✅ CORREGIDO - Requiere recrear BD |
+| **Sub-agentes** | 4 (Backend, Database, Frontend, Historical) |
+
+---
+
+## Correcciones Anteriores (2025-12-26)
 
 ### Portal Admin - Sprint 1-4
 
@@ -30,69 +87,51 @@
 | P3 - LOW | 5 | 3 | 2 |
 | **TOTAL** | **23** | **13** | **11** |
 
-**Archivos Modificados (13):**
-- `useUserManagement.ts` - Mapeo correcto de campos usuario
-- `AdminReportsPage.tsx` - Error handling tipado
-- `FeatureFlagsPanel.tsx` - Mensajes en español
-- `ABTestingDashboard.tsx` - Mensajes en español
-- `useSettings.ts` - Funciones mock deprecadas
-- `AssignmentFilters.tsx` - Validacion de fechas
-- `useFeatureFlags.ts` - Rutas y flags dinamicos
-- `useMonitoring.ts` - Error handling tipado
-- `useAnalytics.ts` - Error handling tipado
-- `AdminGamificationPage.tsx` - Eliminado hardcode
-- `useAdminDashboard.ts` - Intervalos optimizados
-- `useSystemMetrics.ts` - Tipo HealthStatus
-- `useClassroomTeacher.ts` - Mensajes en español
+---
+
+## Issues Pendientes de Verificacion (P1)
+
+| Issue | Descripcion | Estado |
+|-------|-------------|--------|
+| P1-004 | Trigger exercise_submissions | A VERIFICAR |
+| P1-005 | Validacion roles endpoints teacher | A VERIFICAR |
 
 ---
 
-## Documentacion Movida (2025-12-18)
+## Documentacion Movida
 
 Los siguientes archivos fueron movidos a `orchestration/reportes/correcciones/`:
+
+### 2026-01-04
+
+| Archivo | Razon |
+|---------|-------|
+| `CORR-001-ANALISIS-LEADERBOARD-ACHIEVEMENTS.md` | Correccion completada - Frontend |
+| `CORR-001-PLAN-EJECUCION.md` | Correccion completada - Frontend |
+| `CORR-001-REPORTE-EJECUCION.md` | Correccion completada - Frontend |
+
+### 2025-12-18
 
 | Archivo | Razon |
 |---------|-------|
 | `CORRECCIONES-BUILD-AUTH-2025-11-25.md` | Correccion completada |
 | `CORRECCION-GAMIFICACION-RANGOS-2025-11-29.md` | Correccion completada |
 | `CORRECCION-EJERCICIOS-MODULO3-REQUIRES-MANUAL-GRADING-2025-11-29.md` | Correccion completada |
-| `REPORTE-VALIDACION-DOCS-FE-059-2025-11-19.md` | Reporte completado |
-| `ANALISIS-FORMATOS-DTO-FE-059.md` | Analisis completado |
 
 **Ver traza completa:** `orchestration/trazas/TRAZA-DOCUMENTACION-DEPRECADA.md`
 
 ---
 
-## Issues Criticos Pendientes
-
-Ver detalles en `ISSUES-CRITICOS.md`:
-
-**P0 (Critico):**
-- Testing coverage bajo (12-15%)
-- Monitoring no implementado
-- `check_and_award_achievements()` funcion rota - Requiere refactorizacion JSONB
-
-**P1 (Alto):**
-- Tipo Mission NO EXISTE en Frontend - 14 campos pendientes
-- MayaRank KUKUKULKAN - Typo en backend (debe ser KUKULKAN)
-- MessageTypeEnum - Falta en Frontend
-
-**P2 (Medio):**
-- DeviceTypeEnum falta valor 'unknown' en backend
-- Tipos incompletos en varios componentes
-
----
-
 ## Navegacion
 
-### Para ver issues pendientes:
-- Consultar `ISSUES-CRITICOS.md` en esta carpeta
+### Para ver estado actual de issues:
+- **Consultar:** `BACKEND-CRITICAL-ISSUES-PENDING.md` (SSOT)
 
 ### Para ver correcciones aplicadas:
 - Consultar `orchestration/reportes/correcciones/`
 
-### Para ver historico de cambios:
-- Consultar `orchestration/reportes/historicos/2025-11/`
+### Para ver historico de issues (Oct 2025):
+- Consultar `archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-DEPRECATED.md`
 
 ---
 
@@ -107,5 +146,5 @@ ESTADO:                          PRODUCTION READY
 
 ---
 
-**Actualizado:** 2025-12-26
-**Por:** Claude Code (Requirements-Analyst)
+**Actualizado:** 2026-01-04
+**Por:** Claude Code (Orchestrator Agent)

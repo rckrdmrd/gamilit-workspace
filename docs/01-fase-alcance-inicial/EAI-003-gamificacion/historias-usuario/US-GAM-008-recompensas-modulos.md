@@ -1,36 +1,52 @@
-# US-GAM-008: Recompensas por completar módulos
+---
+id: "US-GAM-008"
+title: "Recompensas por completar modulos"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-003"
+story_points: 5
+budget: "$1,800 MXN"
+sprint: "Sprint-1"
+labels: ["gamificacion", "recompensas", "modulos", "alcance-inicial"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
 
-**Épica:** EAI-003 - Gamificación Básica
+# US-GAM-008: Recompensas por completar modulos
+
+**Epica:** EAI-003 - Gamificacion Basica
 **Sprint:** Mes 1, Semana 4
 **Story Points:** 5 SP
 **Presupuesto:** $1,800 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
-## Descripción
+## Descripcion
 
-Como **estudiante**, quiero **recibir recompensas especiales al completar módulos** para **sentir logro por terminar secciones completas del contenido**.
+Como **estudiante**, quiero **recibir recompensas especiales al completar modulos** para **sentir logro por terminar secciones completas del contenido**.
 
 **Contexto del Alcance Inicial:**
-Recompensas fijas (XP, monedas, insignia) al completar cada módulo. Los valores están hardcoded en la definición de cada módulo.
+Recompensas fijas (XP, monedas, insignia) al completar cada modulo. Los valores estan hardcoded en la definicion de cada modulo.
 
 ---
 
-## Criterios de Aceptación
+## Criterios de Aceptacion
 
-- [ ] **CA-01:** Al completar un módulo, se otorgan: XP fijo, Monedas fijas, Insignia opcional
+- [ ] **CA-01:** Al completar un modulo, se otorgan: XP fijo, Monedas fijas, Insignia opcional
 - [ ] **CA-02:** Valores mayores que actividades individuales (ej: 50 XP, 25 monedas)
-- [ ] **CA-03:** Modal de felicitación muestra todas las recompensas
-- [ ] **CA-04:** Se registra fecha de completitud del módulo
-- [ ] **CA-05:** Dashboard muestra módulos completados
-- [ ] **CA-06:** Badge de "Módulo completado" si aplica
+- [ ] **CA-03:** Modal de felicitacion muestra todas las recompensas
+- [ ] **CA-04:** Se registra fecha de completitud del modulo
+- [ ] **CA-05:** Dashboard muestra modulos completados
+- [ ] **CA-06:** Badge de "Modulo completado" si aplica
 - [ ] **CA-07:** No se puede reclamar recompensa dos veces
 
 ---
 
-## Especificaciones Técnicas
+## Especificaciones Tecnicas
 
 ### Backend
 
@@ -46,7 +62,7 @@ class Module {
   completionCoins: number
 
   @Column({ nullable: true })
-  completionBadgeId?: string // Badge especial por completar este módulo
+  completionBadgeId?: string // Badge especial por completar este modulo
 }
 
 @Entity('module_completion')
@@ -81,7 +97,7 @@ class ModuleCompletion {
 
 class ModulesService {
   async completeModule(userId: string, moduleId: string) {
-    // Verificar que no esté ya completado
+    // Verificar que no este ya completado
     const existingCompletion = await this.moduleCompletionRepository.findOne({
       where: { userId, moduleId }
     })
@@ -90,7 +106,7 @@ class ModulesService {
       throw new BadRequestException('Module already completed')
     }
 
-    // Verificar que todas las actividades estén completadas
+    // Verificar que todas las actividades esten completadas
     const progress = await this.getModuleProgress(moduleId, userId)
     if (progress.progressPercentage < 100) {
       throw new BadRequestException('Not all activities completed')
@@ -118,7 +134,7 @@ class ModulesService {
       completedAt: new Date()
     })
 
-    // Verificar logros adicionales (ej: primer módulo completado)
+    // Verificar logros adicionales (ej: primer modulo completado)
     await this.badgesService.checkAndAwardBadges(userId, 'module_completed', { moduleId })
 
     return {
@@ -184,10 +200,10 @@ export function ModuleCompletionModal({ module, rewards, onClose }) {
   return (
     <Modal isOpen onClose={onClose} size="lg">
       <div className="text-center py-8">
-        <div className="text-6xl mb-4">🎉</div>
+        <div className="text-6xl mb-4">Felicidades!</div>
 
         <h2 className="text-3xl font-bold text-gray-900 mb-3">
-          ¡Módulo Completado!
+          Modulo Completado!
         </h2>
 
         <p className="text-lg text-gray-600 mb-6">
@@ -198,7 +214,7 @@ export function ModuleCompletionModal({ module, rewards, onClose }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {/* XP */}
           <div className="bg-yellow-50 p-6 rounded-lg border-2 border-yellow-200">
-            <div className="text-4xl mb-2">⭐</div>
+            <div className="text-4xl mb-2">Estrella</div>
             <p className="text-sm text-gray-600">Experiencia</p>
             <p className="text-3xl font-bold text-yellow-700">
               +{rewards.xp}
@@ -208,7 +224,7 @@ export function ModuleCompletionModal({ module, rewards, onClose }) {
 
           {/* Monedas */}
           <div className="bg-gold-50 p-6 rounded-lg border-2 border-gold-200">
-            <div className="text-4xl mb-2">💰</div>
+            <div className="text-4xl mb-2">Monedas</div>
             <p className="text-sm text-gray-600">ML Coins</p>
             <p className="text-3xl font-bold text-gold-700">
               +{rewards.coins}
@@ -219,7 +235,7 @@ export function ModuleCompletionModal({ module, rewards, onClose }) {
           {/* Insignia */}
           {rewards.badge && (
             <div className="bg-purple-50 p-6 rounded-lg border-2 border-purple-200">
-              <div className="text-4xl mb-2">🏆</div>
+              <div className="text-4xl mb-2">Trofeo</div>
               <p className="text-sm text-gray-600">Insignia</p>
               <img
                 src={rewards.badge.imageUrl}
@@ -234,7 +250,7 @@ export function ModuleCompletionModal({ module, rewards, onClose }) {
         {/* Mensaje motivacional */}
         <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
           <p className="text-blue-800 italic">
-            "Has dado un gran paso en tu camino del conocimiento maya. Continúa explorando y descubriendo los secretos de esta fascinante civilización."
+            "Has dado un gran paso en tu camino del conocimiento maya. Continua explorando y descubriendo los secretos de esta fascinante civilizacion."
           </p>
           <p className="text-sm text-blue-600 mt-2">- Ixchel, Guardiana del Conocimiento</p>
         </div>
@@ -242,7 +258,7 @@ export function ModuleCompletionModal({ module, rewards, onClose }) {
         {/* Botones */}
         <div className="flex gap-3">
           <Button onClick={() => window.location.href = '/modules'} variant="outline" fullWidth>
-            Ver más módulos
+            Ver mas modulos
           </Button>
           <Button onClick={onClose} variant="primary" fullWidth>
             Volver al Dashboard
@@ -253,14 +269,14 @@ export function ModuleCompletionModal({ module, rewards, onClose }) {
   )
 }
 
-// Dashboard - Módulos completados
+// Dashboard - Modulos completados
 export function CompletedModulesSection({ completedModules }) {
   return (
     <Card>
-      <h3 className="font-bold text-lg mb-3">Módulos Completados</h3>
+      <h3 className="font-bold text-lg mb-3">Modulos Completados</h3>
 
       {completedModules.length === 0 ? (
-        <p className="text-gray-500">Aún no has completado ningún módulo. ¡Comienza tu aventura!</p>
+        <p className="text-gray-500">Aun no has completado ningun modulo. Comienza tu aventura!</p>
       ) : (
         <div className="space-y-2">
           {completedModules.map(module => (
@@ -269,7 +285,7 @@ export function CompletedModulesSection({ completedModules }) {
               className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200"
             >
               <div className="flex items-center gap-3">
-                <div className="text-2xl">✅</div>
+                <div className="text-2xl">Completado</div>
                 <div>
                   <p className="font-medium text-gray-900">{module.moduleName}</p>
                   <p className="text-xs text-gray-600">
@@ -280,7 +296,7 @@ export function CompletedModulesSection({ completedModules }) {
 
               <div className="text-right text-sm">
                 <p className="text-yellow-700">+{module.xpAwarded} XP</p>
-                <p className="text-gold-700">+{module.coinsAwarded} 💰</p>
+                <p className="text-gold-700">+{module.coinsAwarded} monedas</p>
               </div>
             </div>
           ))}
@@ -291,33 +307,33 @@ export function CompletedModulesSection({ completedModules }) {
 }
 ```
 
-### Seed Data - Módulos con recompensas
+### Seed Data - Modulos con recompensas
 
 ```typescript
 const MODULES_SEED = [
   {
     id: 'modulo-numeros-mayas',
-    title: 'Números Mayas',
-    description: 'Aprende el sistema numérico vigesimal maya',
+    title: 'Numeros Mayas',
+    description: 'Aprende el sistema numerico vigesimal maya',
     completionXP: 50,
     completionCoins: 25,
-    completionBadgeId: 'badge-numeros-master' // Badge específico
+    completionBadgeId: 'badge-numeros-master' // Badge especifico
   },
   {
     id: 'modulo-calendario-haab',
     title: 'Calendario Haab',
-    description: 'Descubre el calendario solar de 365 días',
+    description: 'Descubre el calendario solar de 365 dias',
     completionXP: 60,
     completionCoins: 30,
     completionBadgeId: 'badge-calendario-master'
   },
   {
     id: 'modulo-astronomia-maya',
-    title: 'Astronomía Maya',
-    description: 'Explora los conocimientos astronómicos',
+    title: 'Astronomia Maya',
+    description: 'Explora los conocimientos astronomicos',
     completionXP: 75,
     completionCoins: 40,
-    completionBadgeId: null // Sin badge específico
+    completionBadgeId: null // Sin badge especifico
   }
 ]
 ```
@@ -327,31 +343,31 @@ const MODULES_SEED = [
 ## Dependencias
 
 **Antes:**
-- US-ACT-008 (Navegación actividades)
+- US-ACT-008 (Navegacion actividades)
 - US-GAM-002 (XP)
 - US-GAM-003 (Monedas)
 - US-GAM-005 (Insignias)
 
 ---
 
-## Definición de Hecho (DoD)
+## Definicion de Hecho (DoD)
 
 - [x] Sistema de recompensas implementado
 - [x] No se puede reclamar dos veces
 - [x] Modal muestra todas las recompensas
-- [x] Dashboard lista módulos completados
+- [x] Dashboard lista modulos completados
 - [x] Tests unitarios
-- [x] Validación de completitud
+- [x] Validacion de completitud
 
 ---
 
 ## Notas del Alcance Inicial
 
-- ✅ Recompensas fijas por módulo
-- ✅ XP y monedas hardcoded
-- ✅ Badge opcional por módulo
-- ✅ Sin bonificaciones por velocidad de completitud
-- ⚠️ **Extensión futura:** EXT-029-DynamicRewards (bonos por tiempo, precisión, racha)
+- Done Recompensas fijas por modulo
+- Done XP y monedas hardcoded
+- Done Badge opcional por modulo
+- Done Sin bonificaciones por velocidad de completitud
+- **Extension futura:** EXT-029-DynamicRewards (bonos por tiempo, precision, racha)
 
 ---
 
@@ -369,13 +385,13 @@ describe('ModulesService - Completion', () => {
 
 ---
 
-## Estimación
+## Estimacion
 
-**Desglose de Esfuerzo (5 SP = ~1.75 días):**
-- Backend: lógica completitud: 0.75 días
-- Frontend: actualizar modal: 0.5 días
-- Dashboard section: 0.25 días
-- Testing: 0.25 días
+**Desglose de Esfuerzo (5 SP = ~1.75 dias):**
+- Backend: logica completitud: 0.75 dias
+- Frontend: actualizar modal: 0.5 dias
+- Dashboard section: 0.25 dias
+- Testing: 0.25 dias
 
 ---
 

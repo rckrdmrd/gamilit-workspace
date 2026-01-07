@@ -24,6 +24,10 @@ export { exerciseResponsesApi } from './exerciseResponsesApi';
 export type { ExerciseResponsesAPI } from './exerciseResponsesApi';
 export { reportsApi } from './reportsApi'; // P1-003: Teacher Reports services
 
+// Re-export shared profile API for consistency (ISS-FE-002)
+export { profileAPI } from '../profileAPI';
+export type { UpdateProfileDto, UpdatePreferencesDto, UpdatePasswordDto } from '../profileAPI';
+
 // ============================================================================
 // TYPES
 // ============================================================================

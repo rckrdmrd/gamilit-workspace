@@ -1,3 +1,19 @@
+---
+id: "US-LTI-001"
+title: "OIDC Login Flow"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-007"
+story_points: 12
+budget: "$1,800 USD"
+sprint: "Sprint-17"
+labels: ["lti", "oidc", "login", "sso", "canvas", "moodle", "authentication", "security"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # US-LTI-001: OIDC Login Flow
 
 **Épica:** EXT-007: LTI Integration

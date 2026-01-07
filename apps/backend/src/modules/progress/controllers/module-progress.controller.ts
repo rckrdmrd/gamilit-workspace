@@ -22,6 +22,7 @@ import { RecentActivityService } from '../services/recent-activity.service';
 import {
   CreateModuleProgressDto,
   ModuleProgressResponseDto,
+  ModuleExerciseBreakdownDto,
 } from '../dto';
 import {
   GetPendingActivitiesDto,
@@ -183,7 +184,99 @@ export class ModuleProgressController {
   @Param('userId') userId: string,
     @Param('moduleId') moduleId: string,
   ) {
-    return this.progressService.findByUserAndModule(userId, moduleId);
+    // FIX: Use findByUserAndModuleOrEmpty to avoid 404 when user hasn't started module
+    // This provides better UX by returning empty progress instead of error
+    return this.progressService.findByUserAndModuleOrEmpty(userId, moduleId);
+  }
+
+  /**
+   * Obtiene el desglose de ejercicios de un módulo para un usuario
+   * EPIC 10.3 - Module Progress Tracking
+   *
+   * @param userId - ID del usuario (UUID)
+   * @param moduleId - ID del módulo (UUID)
+   * @returns Desglose detallado de ejercicios con estado de completación
+   *
+   * @example
+   * GET /api/v1/progress/users/550e8400-e29b-41d4-a716-446655440000/modules/660e8400-e29b-41d4-a716-446655440000/exercises
+   */
+  @Get('users/:userId/modules/:moduleId/exercises')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get module exercise breakdown',
+    description:
+      'Obtiene un desglose detallado de todos los ejercicios del módulo con su estado de completación, ' +
+      'puntuación, tiempo estimado y recomendación del próximo ejercicio a completar.',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID del usuario en formato UUID',
+    type: String,
+    required: true,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiParam({
+    name: 'moduleId',
+    description: 'ID del módulo educativo en formato UUID',
+    type: String,
+    required: true,
+    example: '660e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Desglose de ejercicios obtenido exitosamente',
+    type: ModuleExerciseBreakdownDto,
+    schema: {
+      example: {
+        user_id: '550e8400-e29b-41d4-a716-446655440000',
+        module_id: '660e8400-e29b-41d4-a716-446655440000',
+        module_title: 'Comprensión Literal - Nivel 1',
+        total_exercises: 10,
+        completed_exercises: 5,
+        in_progress_exercises: 1,
+        pending_exercises: 4,
+        skipped_exercises: 0,
+        progress_percentage: 50,
+        average_score: 85.5,
+        total_xp_earned: 250,
+        total_ml_coins_earned: 125,
+        estimated_remaining_minutes: 45,
+        time_spent: '01:30:00',
+        exercises: [
+          {
+            exercise_id: '770e8400-e29b-41d4-a716-446655440001',
+            title: 'Ejercicio 1: Identificación de Ideas',
+            order_index: 1,
+            exercise_type: 'multiple_choice',
+            difficulty: 'easy',
+            status: 'completed',
+            score: 90,
+            max_score: 100,
+            is_correct: true,
+            xp_reward: 50,
+            ml_coins_reward: 25,
+            estimated_minutes: 10,
+            completed_at: '2025-01-15T10:30:00Z',
+            attempts_count: 1,
+          },
+        ],
+        next_exercise: {
+          exercise_id: '770e8400-e29b-41d4-a716-446655440006',
+          title: 'Ejercicio 6: Análisis de Texto',
+          status: 'pending',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Módulo no encontrado o sin ejercicios',
+  })
+  async getModuleExerciseBreakdown(
+    @Param('userId') userId: string,
+      @Param('moduleId') moduleId: string,
+  ): Promise<ModuleExerciseBreakdownDto> {
+    return this.progressService.getModuleExerciseBreakdown(userId, moduleId);
   }
 
   /**

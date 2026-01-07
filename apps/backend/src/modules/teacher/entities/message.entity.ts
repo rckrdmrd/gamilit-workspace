@@ -9,6 +9,29 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
+import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
+
+/**
+ * Message Type Enum
+ * Tipos de mensaje soportados en el sistema
+ */
+export type MessageType =
+  | 'direct'
+  | 'classroom_announcement'
+  | 'classroom_chat'
+  | 'private_feedback'
+  | 'assignment_comment'
+  | 'system';
+
+/**
+ * Message Priority Enum
+ */
+export type MessagePriority = 'low' | 'normal' | 'high' | 'urgent';
+
+/**
+ * Moderation Status Enum
+ */
+export type ModerationStatus = 'approved' | 'pending' | 'flagged' | 'removed';
 
 /**
  * Message Entity
@@ -17,114 +40,178 @@ import {
  * @table communication.messages
  * @schema communication
  *
+ * ISS-SYNC-001: Entity alineada con DDL 2026-01-04
+ *
  * Tipos de mensaje soportados:
  * - direct: Mensaje directo entre teacher y estudiante
  * - classroom_announcement: Anuncio a classroom completo
  * - classroom_chat: Chat en classroom
  * - private_feedback: Feedback privado sobre tareas
  * - assignment_comment: Comentario en una tarea específica
- *
- * Relaciones:
- * - sender: Usuario que envía el mensaje (teacher)
- * - classroom: Classroom asociado (nullable)
- * - parentMessage: Mensaje padre para respuestas (nullable)
- * - replies: Respuestas a este mensaje
+ * - system: Mensajes del sistema
  *
  * @see DDL: /apps/database/ddl/schemas/communication/tables/01-messages.sql
- * @see Database-Agent: Tabla creada 2025-11-19
  */
-@Entity('messages', { schema: 'communication' })
-@Index('idx_messages_sender_id', ['senderId'])
-@Index('idx_messages_conversation_id', ['conversationId'])
-@Index('idx_messages_classroom_id', ['classroomId'])
-@Index('idx_messages_type', ['type'])
-@Index('idx_messages_tenant_id', ['tenantId'])
-@Index('idx_messages_created_at', ['createdAt'])
+@Entity(DB_TABLES.COMMUNICATION.MESSAGES, { schema: DB_SCHEMAS.COMMUNICATION })
+@Index('idx_messages_sender', ['senderId', 'createdAt'])
+@Index('idx_messages_recipient', ['recipientId', 'createdAt'])
+@Index('idx_messages_classroom', ['classroomId', 'createdAt'])
+@Index('idx_messages_thread', ['threadId', 'createdAt'])
 export class Message {
   @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  id!: string;
+
+  // =========================================================================
+  // Message relationships
+  // =========================================================================
 
   @Column('uuid', { name: 'sender_id' })
   @Index()
-    senderId!: string;
+  senderId!: string;
 
-  // ❌ CROSS-DATASOURCE RELATION DISABLED
-  // TypeORM no soporta @ManyToOne entre diferentes datasources
-  // Message está en 'communication' datasource, Profile está en 'auth' datasource
-  // Solución: Mantener solo senderId UUID, hacer join manual en service cuando sea necesario
-  // Ver: BACKEND_INVENTORY.yml - multi_datasource_architecture.cross_database_pattern
-  // @ManyToOne(() => Profile, { nullable: false })
-  // @JoinColumn({ name: 'sender_id' })
-  // sender!: Profile;
-
-  @Column('uuid', { name: 'conversation_id', nullable: true })
-    conversationId!: string | null;
-
-  @Column({
-    type: 'text',
-    enum: ['direct', 'classroom_announcement', 'classroom_chat', 'private_feedback', 'assignment_comment'],
-  })
-    type!: 'direct' | 'classroom_announcement' | 'classroom_chat' | 'private_feedback' | 'assignment_comment';
-
-  @Column('text')
-    subject!: string;
-
-  @Column('text')
-    content!: string;
-
-  @Column('text', { name: 'attachment_url', nullable: true })
-    attachmentUrl!: string | null;
+  @Column('uuid', { name: 'recipient_id', nullable: true })
+  @Index()
+  recipientId!: string | null;
 
   @Column('uuid', { name: 'classroom_id', nullable: true })
   @Index()
-    classroomId!: string | null;
+  classroomId!: string | null;
 
-  // ❌ CROSS-DATASOURCE RELATION DISABLED
-  // TypeORM no soporta @ManyToOne entre diferentes datasources
-  // Message está en 'communication' datasource, Classroom está en 'social' datasource
-  // Solución: Mantener solo classroomId UUID, hacer join manual en service cuando sea necesario
-  // @ManyToOne(() => Classroom, { nullable: true })
-  // @JoinColumn({ name: 'classroom_id' })
-  // classroom!: Classroom | null;
-
-  @Column('uuid', { name: 'assignment_id', nullable: true })
-    assignmentId!: string | null;
-
-  @Column('boolean', { name: 'is_read', default: false })
-    isRead!: boolean;
-
-  @Column('timestamptz', { name: 'read_at', nullable: true })
-    readAt!: Date | null;
+  @Column('uuid', { name: 'thread_id', nullable: true })
+  threadId!: string | null;
 
   @Column('uuid', { name: 'parent_message_id', nullable: true })
-    parentMessageId!: string | null;
+  parentMessageId!: string | null;
 
-  @ManyToOne(() => Message, message => message.replies, { nullable: true })
+  @ManyToOne(() => Message, (message) => message.replies, { nullable: true })
   @JoinColumn({ name: 'parent_message_id' })
-    parentMessage!: Message | null;
+  parentMessage!: Message | null;
 
-  @OneToMany(() => Message, message => message.parentMessage)
-    replies!: Message[];
+  @OneToMany(() => Message, (message) => message.parentMessage)
+  replies!: Message[];
 
-  @Column('uuid', { name: 'tenant_id' })
-  @Index()
-    tenantId!: string;
+  // =========================================================================
+  // Message content
+  // =========================================================================
 
-  @CreateDateColumn({ name: 'created_at' })
-  @Index()
-    createdAt!: Date;
+  @Column('varchar', { length: 255, nullable: true })
+  subject!: string | null;
 
-  @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt!: Date;
+  @Column('text')
+  content!: string;
+
+  @Column('varchar', { name: 'message_type', length: 50, default: 'direct' })
+  messageType!: MessageType;
+
+  @Column('jsonb', { default: '[]' })
+  attachments!: Record<string, unknown>[];
+
+  // =========================================================================
+  // Message status
+  // =========================================================================
+
+  @Column('boolean', { name: 'is_read', default: false })
+  isRead!: boolean;
+
+  @Column('timestamptz', { name: 'read_at', nullable: true })
+  readAt!: Date | null;
+
+  @Column('boolean', { name: 'is_deleted', default: false })
+  isDeleted!: boolean;
 
   @Column('timestamptz', { name: 'deleted_at', nullable: true })
-    deletedAt!: Date | null;
+  deletedAt!: Date | null;
+
+  @Column('uuid', { name: 'deleted_by', nullable: true })
+  deletedBy!: string | null;
+
+  // =========================================================================
+  // Priority and flags
+  // =========================================================================
+
+  @Column('varchar', { length: 20, default: 'normal' })
+  priority!: MessagePriority;
+
+  @Column('boolean', { name: 'is_pinned', default: false })
+  isPinned!: boolean;
+
+  @Column('boolean', { name: 'is_archived', default: false })
+  isArchived!: boolean;
+
+  @Column('boolean', { name: 'requires_response', default: false })
+  requiresResponse!: boolean;
+
+  @Column('timestamptz', { name: 'response_deadline', nullable: true })
+  responseDeadline!: Date | null;
+
+  // =========================================================================
+  // Reactions and engagement
+  // =========================================================================
+
+  @Column('jsonb', { default: '{}' })
+  reactions!: Record<string, string[]>;
+
+  // =========================================================================
+  // Moderation
+  // =========================================================================
+
+  @Column('boolean', { name: 'is_flagged', default: false })
+  isFlagged!: boolean;
+
+  @Column('text', { name: 'flagged_reason', nullable: true })
+  flaggedReason!: string | null;
+
+  @Column('uuid', { name: 'flagged_by', nullable: true })
+  flaggedBy!: string | null;
+
+  @Column('timestamptz', { name: 'flagged_at', nullable: true })
+  flaggedAt!: Date | null;
+
+  @Column('varchar', { name: 'moderation_status', length: 50, default: 'approved' })
+  moderationStatus!: ModerationStatus;
+
+  // =========================================================================
+  // Metadata
+  // =========================================================================
+
+  @Column('jsonb', { default: '{}' })
+  metadata!: Record<string, unknown>;
+
+  // =========================================================================
+  // Audit fields
+  // =========================================================================
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @Index()
+  createdAt!: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  updatedAt!: Date;
+
+  @Column('timestamptz', { name: 'edited_at', nullable: true })
+  editedAt!: Date | null;
+
+  @Column('int', { name: 'edit_count', default: 0 })
+  editCount!: number;
+
+  // =========================================================================
+  // Virtual fields (loaded via separate queries)
+  // =========================================================================
 
   /**
-   * Virtual field para recipients
-   * Se carga vía query con MessageParticipant
+   * Virtual field para recipients (cargado via MessageParticipant)
    */
   recipients?: { userId: string; userName: string; isRead: boolean }[];
+
+  /**
+   * Virtual field para sender name (cargado via join con profiles)
+   */
+  senderName?: string;
+
+  /**
+   * Virtual field para sender avatar (cargado via join con profiles)
+   */
+  senderAvatar?: string;
 }
 
 /**
@@ -143,45 +230,36 @@ export class Message {
  * - cc: Copia para conocimiento
  *
  * @see DDL: /apps/database/ddl/schemas/communication/tables/02-message_participants.sql
- * @see Database-Agent: Tabla creada 2025-11-19
  */
-@Entity('message_participants', { schema: 'communication' })
+@Entity(DB_TABLES.COMMUNICATION.MESSAGE_PARTICIPANTS, { schema: DB_SCHEMAS.COMMUNICATION })
 @Index('idx_message_participants_message_id', ['messageId'])
 @Index('idx_message_participants_user_id', ['userId'])
-@Index('idx_message_participants_is_read', ['isRead'])
+@Index('idx_message_participants_unread', ['userId', 'messageId'])
 export class MessageParticipant {
   @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  id!: string;
 
   @Column('uuid', { name: 'message_id' })
   @Index()
-    messageId!: string;
+  messageId!: string;
 
   @ManyToOne(() => Message, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'message_id' })
-    message!: Message;
+  message!: Message;
 
   @Column('uuid', { name: 'user_id' })
   @Index()
-    userId!: string;
+  userId!: string;
 
-  // ❌ CROSS-DATASOURCE RELATION DISABLED
-  // TypeORM no soporta @ManyToOne entre diferentes datasources
-  // MessageParticipant está en 'communication' datasource, Profile está en 'auth' datasource
-  // Solución: Mantener solo userId UUID, hacer join manual en service cuando sea necesario
-  // @ManyToOne(() => Profile, { nullable: false })
-  // @JoinColumn({ name: 'user_id' })
-  // user!: Profile;
-
-  @Column({
-    type: 'text',
-    enum: ['sender', 'recipient', 'cc'],
-  })
-    role!: 'sender' | 'recipient' | 'cc';
+  @Column('varchar', { length: 20, default: 'recipient' })
+  role!: 'sender' | 'recipient' | 'cc';
 
   @Column('boolean', { name: 'is_read', default: false })
-    isRead!: boolean;
+  isRead!: boolean;
 
   @Column('timestamptz', { name: 'read_at', nullable: true })
-    readAt!: Date | null;
+  readAt!: Date | null;
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  createdAt!: Date;
 }

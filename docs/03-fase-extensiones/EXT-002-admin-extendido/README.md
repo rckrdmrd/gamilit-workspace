@@ -1,9 +1,9 @@
 # EXT-002: Admin Extendido
 
 **Proyecto:** GAMILIT
-**Versión:** 2.1 (Actualización FE-059)
-**Última actualización:** 2025-11-19
-**Estado:** ✅ P0+P1 Completado (7/9 US - 100%), ⏳ P2 Pendiente (2/9 US - 0%)
+**Versión:** 2.2 (Actualización 2026-01-06)
+**Última actualización:** 2026-01-06
+**Estado:** ✅ COMPLETADO (9/9 US - 100%)
 
 ---
 
@@ -14,15 +14,16 @@
 | **Código** | EXT-002 |
 | **Fase** | Extensiones (Alcance v2 CORE) |
 | **Presupuesto Total** | $35,600 MXN |
-| **Story Points Total** | 89 SP |
-| **User Stories** | 9 historias (7 implementadas, 2 pendientes P2) |
-| **Sprint** | Sprint 1-4 |
-| **Estado P0+P1** | ✅ Completado (7/7 US - 100%) |
-| **Estado P2** | ⏳ Pendiente (2/2 US - 0%) |
+| **Story Points Total** | 114 SP |
+| **User Stories** | 9 historias (9 implementadas) |
+| **Sprint** | Sprint 1-4 + FE-059 |
+| **Estado** | ✅ **COMPLETADO (9/9 US - 100%)** |
 
 **CAMBIOS 2025-11-08:** Añadidas US-AE-005 (Parametrización Gamificación, 12 SP) y US-AE-007 (Asignar Grupos a Maestros, 6 SP). Total añadido: 18 SP ($7,200 MXN).
 
 **CAMBIOS 2025-11-19 (FE-059):** Añadidas US-AE-000 (Dashboard, 8 SP), US-AE-006 (Reports, 10 SP), US-AE-008 (System Settings, 8 SP). Implementadas 7 US P0+P1 durante FE-059 Days 1-9. Total añadido: 26 SP ($10,400 MXN).
+
+**CAMBIOS 2026-01-06:** Verificación de implementación de US-AE-005 y US-AE-007. Ambas US estaban implementadas desde FE-059 pero documentación no había sido actualizada. Estado corregido de "Backlog" a "Done".
 
 ---
 
@@ -71,18 +72,20 @@ Ampliar las capacidades del panel administrativo con herramientas avanzadas de g
 
 ---
 
-### ⏳ Funcionalidades Especificadas P2 (Pendientes Implementación)
+### ✅ Funcionalidades P2 (IMPLEMENTADAS - 2026-01-06 verificación)
 
 **P2 - Funcionalidades Avanzadas:**
-8. **Parametrización de Gamificación (US-AE-005, 12 SP)** - ESPECIFICADO, NO implementado
+8. **Parametrización de Gamificación (US-AE-005, 12 SP)** - ✅ IMPLEMENTADO
    - Configuración dinámica de XP, ML Coins, rangos Maya, ayudas
    - Interfaz admin para ajustar economía de gamificación
+   - **Código:** `AdminGamificationPage.tsx`, `gamification-config.service.ts`
 
-9. **Asignación de Grupos a Maestros (US-AE-007, 6 SP)** - ESPECIFICADO, NO implementado
+9. **Asignación de Grupos a Maestros (US-AE-007, 6 SP)** - ✅ IMPLEMENTADO
    - Gestión de asignación de classrooms a maestros
    - Asignación individual y masiva
+   - **Código:** `AdminClassroomTeacherPage.tsx`
 
-**Total P2:** 2 US, 18 SP especificados, 0% implementado
+**Total P2:** 2 US, 18 SP implementados, **100% completado**
 
 ---
 

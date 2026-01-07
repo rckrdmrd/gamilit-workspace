@@ -156,6 +156,8 @@ END;
 $$;
 
 -- ========== Crear Trigger ==========
+DROP TRIGGER IF EXISTS trg_achievement_unlocked ON gamification_system.user_achievements;
+
 CREATE TRIGGER trg_achievement_unlocked
     AFTER INSERT OR UPDATE ON gamification_system.user_achievements
     FOR EACH ROW

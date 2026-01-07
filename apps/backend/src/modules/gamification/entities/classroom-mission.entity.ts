@@ -7,7 +7,7 @@ import {
   Index,
   Check,
 } from 'typeorm';
-import { DB_SCHEMAS } from '@/shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 import { MissionObjective, MissionRewards } from './mission.entity';
 
 /**
@@ -46,7 +46,7 @@ export interface ClassroomMissionMetadata {
  * @see DDL: /apps/database/ddl/schemas/gamification_system/tables/16-classroom_missions.sql
  * @see Reference: educational_content.classroom_modules
  */
-@Entity({ schema: DB_SCHEMAS.GAMIFICATION, name: 'classroom_missions' })
+@Entity({ schema: DB_SCHEMAS.GAMIFICATION, name: DB_TABLES.GAMIFICATION.CLASSROOM_MISSIONS })
 @Index('idx_classroom_missions_classroom', ['classroom_id'], {
   where: 'is_active = TRUE',
 })

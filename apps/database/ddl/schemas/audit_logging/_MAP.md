@@ -16,16 +16,24 @@ Auditoria y logging: actividad de usuarios, eventos del sistema, metricas de ren
 
 ## Tablas Principales
 
-| Tabla | Proposito |
-|-------|-----------|
-| `audit_logs` | Registro de eventos de auditoria (cambios de rol, status, etc.) |
-| `performance_metrics` | Metricas de rendimiento del sistema |
-| `system_alerts` | Alertas del sistema |
-| `system_logs` | Logs generales del sistema |
-| `user_activity_logs` | Logs de actividad de usuarios |
-| `activity_log` | Log de actividad detallado |
-| `user_activity` | Resumen de actividad por usuario |
-| `pending_user_initialization` | Usuarios cuya inicializacion de gamificacion fallo (retry automatico) |
+| Tabla | Proposito | Estado |
+|-------|-----------|--------|
+| `audit_logs` | Registro de eventos de auditoria (cambios de rol, status, etc.) | Activa |
+| `performance_metrics` | Metricas de rendimiento del sistema | Activa |
+| `system_alerts` | Alertas del sistema | Activa |
+| `system_logs` | Logs generales del sistema | Activa |
+| `user_activity_logs` | Logs de actividad de usuarios (analytics detallado) | Activa |
+| `activity_log` | Log de actividad para admin dashboard | **CANONICA** |
+| `user_activity` | Resumen de actividad por usuario | **DEPRECATED** |
+| `pending_user_initialization` | Usuarios cuya inicializacion de gamificacion fallo (retry automatico) | Activa |
+
+## Migracion de Duplicados
+
+**Ver:** `MIGRATION-DUPLICATE-TABLES.md`
+
+| Tabla Deprecated | Migrar a | Razon |
+|-----------------|----------|-------|
+| `user_activity` | `activity_log` | Funcionalidad duplicada, activity_log tiene mas campos |
 
 ## Funciones
 
@@ -67,4 +75,7 @@ SELECT * FROM audit_logging.get_pending_initialization_stats();
 
 ---
 
-**Ultima actualizacion:** 2025-12-29
+**Ultima actualizacion:** 2026-01-04
+**Cambios recientes:**
+- user_activity marcada como DEPRECATED (2026-01-04)
+- Agregado MIGRATION-DUPLICATE-TABLES.md

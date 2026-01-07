@@ -1,3 +1,17 @@
+---
+id: "RF-INIT-001"
+title: "Inicializacion Automatica de Usuario"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Sistema / Inicializacion"
+epic: "EAI-001"
+version: "1.1"
+labels: ["initialization", "user-setup", "gamification", "trigger", "onboarding"]
+created_date: "2025-11-24"
+updated_date: "2026-01-04"
+---
+
 # RF-INIT-001: Inicialización Automática de Usuario
 
 **Proyecto:** GAMILIT

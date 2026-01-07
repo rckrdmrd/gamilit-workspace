@@ -13,8 +13,8 @@ import { Profile } from '@/modules/auth/entities/profile.entity';
 import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
 import { AnalyticsService } from './analytics.service';
-// P0-04: Added 2025-12-18 - NotificationsService integration
-import { NotificationsService } from '@/modules/notifications/services/notifications.service';
+// P0-04: Migrado a NotificationService consolidado (2026-01-04)
+import { NotificationService } from '@/modules/notifications/services/notification.service';
 import { GamilityRoleEnum, NotificationTypeEnum } from '@/shared/constants/enums.constants';
 
 export interface RiskAlert {
@@ -51,8 +51,8 @@ export class StudentRiskAlertService {
     @InjectRepository(ClassroomMember, 'social')
     private readonly classroomMemberRepository: Repository<ClassroomMember>,
     private readonly analyticsService: AnalyticsService,
-    // P0-04: Added 2025-12-18 - NotificationsService injection
-    private readonly notificationsService: NotificationsService,
+    // P0-04: Migrado a NotificationService consolidado (2026-01-04)
+    private readonly notificationService: NotificationService,
   ) {}
 
   /**
@@ -221,8 +221,8 @@ export class StudentRiskAlertService {
     );
 
     try {
-      // P0-04: Send notification via NotificationsService
-      await this.notificationsService.sendNotification({
+      // P0-04: Migrado a NotificationService.create() (2026-01-04)
+      await this.notificationService.create({
         userId: teacherId,
         type: NotificationTypeEnum.SYSTEM_ANNOUNCEMENT,
         title: highRiskCount > 0
@@ -239,6 +239,7 @@ export class StudentRiskAlertService {
             url: '/teacher/alerts',
           },
         },
+        priority: highRiskCount > 0 ? 'high' : 'normal',
       });
 
       this.logger.log(`✅ Notification sent to teacher ${teacherId}`);
@@ -297,24 +298,25 @@ export class StudentRiskAlertService {
 
       const summaryMessage = summaryLines.join('\n');
 
-      // P0-04: Send notification to each admin
-      const notifications = admins.map(admin => ({
-        userId: admin.id,
-        type: NotificationTypeEnum.SYSTEM_ANNOUNCEMENT,
-        title: `🚨 Alerta Crítica: ${highRiskAlerts.length} estudiantes en alto riesgo`,
-        message: summaryMessage,
-        data: {
-          alertType: 'platform_risk_summary',
-          highRiskCount: highRiskAlerts.length,
-          studentIds: highRiskAlerts.map(a => a.student_id),
-          action: {
-            type: 'navigate',
-            url: '/admin/alerts',
+      // P0-04: Migrado a NotificationService.create() con Promise.all (2026-01-04)
+      await Promise.all(admins.map(admin =>
+        this.notificationService.create({
+          userId: admin.id,
+          type: NotificationTypeEnum.SYSTEM_ANNOUNCEMENT,
+          title: `🚨 Alerta Crítica: ${highRiskAlerts.length} estudiantes en alto riesgo`,
+          message: summaryMessage,
+          data: {
+            alertType: 'platform_risk_summary',
+            highRiskCount: highRiskAlerts.length,
+            studentIds: highRiskAlerts.map(a => a.student_id),
+            action: {
+              type: 'navigate',
+              url: '/admin/alerts',
+            },
           },
-        },
-      }));
-
-      await this.notificationsService.sendBulkNotifications(notifications);
+          priority: 'urgent',
+        }),
+      ));
 
       this.logger.log(`✅ Admin summary sent to ${admins.length} administrators`);
     } catch (error) {

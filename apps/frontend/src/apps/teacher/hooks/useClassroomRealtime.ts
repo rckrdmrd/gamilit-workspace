@@ -15,6 +15,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { API_CONFIG } from '@/config/api.config';
 
 // ============================================================================
 // TYPES
@@ -207,7 +208,8 @@ export function useClassroomRealtime(
   const connect = useCallback(() => {
     if (!enabled || !user || !token) return;
 
-    const wsUrl = import.meta.env.VITE_WS_URL || 'http://localhost:3000';
+    // EXT-003 FIX 2026-01-04: Use centralized WebSocket URL from API_CONFIG
+    const wsUrl = API_CONFIG.wsURL;
 
     setIsConnecting(true);
     setError(null);

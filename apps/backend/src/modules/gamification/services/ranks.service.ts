@@ -125,6 +125,7 @@ export class RanksService {
 
   /**
    * Obtiene el rango actual del usuario
+   * FIX 2026-01-04: Si no existe, crea rango por defecto en lugar de lanzar NotFoundException
    * @param userId - ID del usuario
    * @returns Rango actual (is_current = true)
    */
@@ -137,12 +138,61 @@ export class RanksService {
     });
 
     if (!currentRank) {
-      throw new NotFoundException(
-        `No current rank found for user ${userId}. User may need to be initialized.`,
+      // FIX 2026-01-04: Crear rango por defecto en lugar de lanzar NotFoundException
+      // Esto previene que el dashboard falle completamente si el usuario no fue inicializado
+      this.logger.warn(
+        `User ${userId} has no current rank. Creating default rank (Ajaw).`,
       );
+      return this.initializeDefaultRank(userId);
     }
 
     return currentRank;
+  }
+
+  /**
+   * Inicializa el rango por defecto (Ajaw) para un usuario sin rango
+   * FIX 2026-01-04: Creado para manejar usuarios con datos de gamificacion incompletos
+   * @param userId - ID del usuario
+   * @returns Nuevo registro de rango
+   */
+  private async initializeDefaultRank(userId: string): Promise<UserRank> {
+    // Verificar si ya existe algun rango (aunque no sea current)
+    const existingRank = await this.userRankRepo.findOne({
+      where: { user_id: userId },
+      order: { achieved_at: 'DESC' },
+    });
+
+    if (existingRank) {
+      // Hay rango pero no es current, marcarlo como current
+      existingRank.is_current = true;
+      const saved = await this.userRankRepo.save(existingRank);
+      this.logger.log(
+        `User ${userId} rank ${existingRank.current_rank} marked as current`,
+      );
+      return saved;
+    }
+
+    // No hay ningun rango, crear Ajaw por defecto
+    const newRank = this.userRankRepo.create({
+      user_id: userId,
+      current_rank: MayaRank.AJAW,
+      is_current: true,
+      achieved_at: new Date(),
+      rank_progress_percentage: 0,
+      xp_earned_for_rank: 0,
+      ml_coins_bonus: 0,
+      rank_metadata: {
+        created_by: 'auto_initialize',
+        reason: 'User had no rank on getCurrentRank call',
+        created_at: new Date().toISOString(),
+      },
+    });
+
+    const savedRank = await this.userRankRepo.save(newRank);
+    this.logger.log(
+      `User ${userId} initialized with default rank Ajaw (auto-created)`,
+    );
+    return savedRank;
   }
 
   /**

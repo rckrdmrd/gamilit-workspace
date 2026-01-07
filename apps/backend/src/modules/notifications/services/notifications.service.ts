@@ -14,6 +14,33 @@ import { GetNotificationsQueryDto } from '../dto/get-notifications-query.dto';
 import { PaginatedNotificationsDto } from '../dto/paginated-notifications.dto';
 import { WebSocketService } from '../../websocket/websocket.service';
 
+/**
+ * NotificationsService (SISTEMA BÁSICO - DEPRECATED)
+ *
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * !!!                          DEPRECATED                                  !!!
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ *
+ * @deprecated Usar NotificationService (sistema consolidado) en su lugar
+ * @migration Fecha: 2026-01-04
+ *
+ * MIGRAR A:
+ *   - Service: services/notification.service.ts (NotificationService)
+ *   - Método: NotificationService.create() en lugar de sendNotification()
+ *
+ * EJEMPLO DE MIGRACIÓN:
+ *   // Antes (deprecated):
+ *   await this.notificationsService.sendNotification({
+ *     userId, type, title, message, data
+ *   });
+ *
+ *   // Después (sistema consolidado):
+ *   await this.notificationService.create({
+ *     userId, type: type.toString(), title, message, data
+ *   });
+ *
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ */
 @Injectable()
 export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);

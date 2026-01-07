@@ -38,7 +38,7 @@ Implementar las mecánicas sociales de gamificación que complementan el sistema
 | ID | Historia | Prioridad | SP | Estado |
 |----|----------|-----------|-----|--------|
 | US-GAM-001 | Como estudiante avanzado, quiero ganar más ML Coins por mi rango | P1 | 5 | Backlog |
-| US-GAM-002 | Como estudiante, quiero agregar amigos para competir | P1 | 8 | Backlog |
+| US-GAM-010 | Como estudiante, quiero agregar amigos para competir | P1 | 8 | Backlog |
 | US-GAM-003 | Como estudiante, quiero ver leaderboard de mis amigos | P1 | 5 | Backlog |
 | US-GAM-004 | Como estudiante, quiero crear/unirme a un gremio | P2 | 8 | Backlog |
 | US-GAM-005 | Como miembro de gremio, quiero completar misiones grupales | P2 | 8 | Backlog |

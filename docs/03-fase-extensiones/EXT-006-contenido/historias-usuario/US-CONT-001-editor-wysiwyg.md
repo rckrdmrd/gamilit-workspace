@@ -1,3 +1,19 @@
+---
+id: "US-CONT-001"
+title: "Editor WYSIWYG de Contenido"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-006"
+story_points: 10
+budget: "$5,700 MXN"
+sprint: "Sprint-3"
+labels: ["ext-006", "editor", "wysiwyg", "contenido", "tiptap", "rich-text", "multimedia", "matematicas", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-CONT-001: Editor WYSIWYG de Contenido
 
 ## Información Básica

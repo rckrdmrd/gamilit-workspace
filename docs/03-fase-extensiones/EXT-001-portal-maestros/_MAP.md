@@ -155,10 +155,10 @@ Desarrollar un portal dedicado para maestros que les permita gestionar sus clase
 
 **Tablas nuevas:**
 - `social_features.classrooms` - Classrooms (extendido)
-- `social_features.classroom_enrollments` - Inscripciones
+- `social_features.classroom_members` - Miembros de classroom
 - `educational_content.assignments` - Asignaciones custom
 - `educational_content.assignment_submissions` - Entregas
-- `progress_tracking.teacher_notes` - Notas de maestro
+- `social_features.teacher_reports` - Reportes de maestro
 
 **Funciones:**
 - `assign_to_classroom()` - Asignación masiva

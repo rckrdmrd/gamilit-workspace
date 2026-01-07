@@ -89,11 +89,27 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
   };
 
   // Progress tracking
+  // FIX: Send answers in DTO format (path, information_found) for ExercisePage.tsx submit button
   useEffect(() => {
     if (!exercise || !exercise.nodes || exercise.nodes.length === 0) return;
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     const score = calculateScore();
     const uniqueVisited = new Set(visitedNodes).size;
+
+    // Build information_found in DTO format
+    const information_found: Record<string, unknown> = {};
+    const uniqueVisitedIds = Array.from(new Set(visitedNodes));
+    uniqueVisitedIds.forEach((nodeId) => {
+      const node = exercise?.nodes?.find((n: { id: string }) => n.id === nodeId);
+      if (node) {
+        information_found[nodeId] = {
+          title: node.title || nodeId,
+          timeSpent: timePerDocument[nodeId] || 0,
+          visited: true,
+          contentPreview: node.content?.substring(0, 100) || 'Contenido explorado',
+        };
+      }
+    });
 
     onProgressUpdate?.({
       progress: {
@@ -104,14 +120,24 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
         timeSpent,
       },
       answers: {
+        // Primary format: DTO expected by backend
+        path: visitedNodes,
+        information_found,
+
+        // Secondary format for backwards compatibility
         visitedNodes,
         currentNodeId,
         targetReached: visitedNodes.includes(exercise.targetNodeId || ''),
-        navigationPath: visitedNodes,
+
+        // Metadata
+        metadata: {
+          navigationPath: visitedNodes,
+          timePerDocument,
+        },
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visitedNodes, currentNodeId, exercise]);
+  }, [visitedNodes, currentNodeId, exercise, timePerDocument]);
 
   // Auto-save functionality
   useEffect(() => {
@@ -148,14 +174,41 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
   };
 
   // Handle submit
+  // FIX: Transform data to match NavegacionHipertextualAnswerDto expected by backend
   const handleSubmit = () => {
     if (!exerciseId || isSubmitting || isSubmitted) return;
 
+    // Build information_found object with data collected from each visited node
+    const information_found: Record<string, unknown> = {};
+    const uniqueVisited = Array.from(new Set(visitedNodes));
+
+    uniqueVisited.forEach((nodeId) => {
+      const node = exercise?.nodes?.find((n: HypertextNode) => n.id === nodeId);
+      if (node) {
+        information_found[nodeId] = {
+          title: node.title || nodeId,
+          timeSpent: timePerDocument[nodeId] || 0,
+          visited: true,
+          // Include any content summary if available
+          contentPreview: node.content?.substring(0, 100) || 'Contenido explorado',
+        };
+      }
+    });
+
+    // Submit in DTO format
     submit({
-      navigationPath: visitedNodes,
-      documentsVisited: Array.from(new Set(visitedNodes)),
-      timePerDocument,
-      answers: { targetReached: visitedNodes.includes(exercise?.targetNodeId || '') },
+      // Primary format expected by NavegacionHipertextualAnswerDto
+      path: visitedNodes,
+      information_found,
+
+      // Metadata for backwards compatibility and context
+      metadata: {
+        documentsVisited: uniqueVisited,
+        timePerDocument,
+        targetReached: visitedNodes.includes(exercise?.targetNodeId || ''),
+        totalNodesExplored: uniqueVisited.length,
+        totalNodesAvailable: exercise?.nodes?.length || 0,
+      },
     });
   };
 

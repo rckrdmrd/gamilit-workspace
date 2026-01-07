@@ -1,3 +1,19 @@
+---
+id: "US-ADM-006"
+title: "Configuración Básica de Aula"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-005"
+story_points: 6
+budget: "$2,400 MXN"
+sprint: "Sprint-1"
+labels: ["admin", "settings", "classroom-configuration"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ADM-006: Configuración Básica de Aula
 
 **Épica:** EAI-005 (Plataforma de Maestro Básica)
@@ -5,7 +21,7 @@
 **Story Points:** 6 SP
 **Presupuesto:** $2,400 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 
@@ -434,20 +450,20 @@ export const Toggle = ({ label, ...props }) => {
 ## Alcance Básico vs Extensiones
 
 ### EAI-005 (Este alcance - Admin Base):
-- ✅ Fechas de inicio/fin del aula
-- ✅ Toggle de visibilidad de módulos (global)
-- ✅ Toggle de gamificación (on/off)
-- ✅ Valores de XP/niveles/logros hardcodeados
+- Fechas de inicio/fin del aula
+- Toggle de visibilidad de módulos (global)
+- Toggle de gamificación (on/off)
+- Valores de XP/niveles/logros hardcodeados
 
 ### EXT-001 (Extensión futura - Portal Maestros Completo):
-- ⏳ Configuración de visibilidad por módulo individual
-- ⏳ Programación de fechas de disponibilidad por módulo
-- ⏳ Configuración de XP personalizado por actividad
-- ⏳ Sistema de niveles personalizado
-- ⏳ Logros custom
-- ⏳ Configuración de notificaciones
-- ⏳ Reglas de acceso condicional (desbloquear módulo X al completar Y)
-- ⏳ Tiempo límite por actividad/módulo
+- Configuración de visibilidad por módulo individual
+- Programación de fechas de disponibilidad por módulo
+- Configuración de XP personalizado por actividad
+- Sistema de niveles personalizado
+- Logros custom
+- Configuración de notificaciones
+- Reglas de acceso condicional (desbloquear módulo X al completar Y)
+- Tiempo límite por actividad/módulo
 
 ---
 

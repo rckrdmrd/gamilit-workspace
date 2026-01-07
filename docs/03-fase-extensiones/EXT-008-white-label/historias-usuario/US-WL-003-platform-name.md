@@ -1,6 +1,22 @@
+---
+id: "US-WL-003"
+title: "Platform Name Customization"
+type: "User Story"
+status: "Backlog"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-008"
+story_points: 6
+budget: "6 horas"
+sprint: "Sprint-26"
+labels: ["white-label", "branding", "customization"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # US-WL-003: Platform Name Customization
 
-**Épica:** EXT-008: White-label System
+**Epica:** EXT-008: White-label System
 **Prioridad:** P2
 **Story Points:** 6
 **Esfuerzo:** 6 horas
@@ -8,17 +24,17 @@
 
 ---
 
-## 📋 User Story
+## User Story
 
 ```
-Como estudiante de una institución con white-label,
-Quiero ver el nombre de mi institución en la plataforma (no "GAMILIT Platform")
+Como estudiante de una institucion con white-label,
+Quiero ver el nombre de mi institucion en la plataforma (no "GAMILIT Platform")
 Para sentir que es una herramienta de mi universidad
 ```
 
 ---
 
-## ✅ Criterios de Aceptación
+## Criterios de Aceptacion
 
 ### Backend (2h)
 - [ ] Campo `platform_name` en tenant_branding
@@ -26,7 +42,7 @@ Para sentir que es una herramienta de mi universidad
 - [ ] Validation: max 100 caracteres
 
 ### Frontend (4h)
-- [ ] Dynamic `<title>` tag según platform_name
+- [ ] Dynamic `<title>` tag segun platform_name
 - [ ] Display en:
   - Navbar (en lugar de "GLIT")
   - Login page header

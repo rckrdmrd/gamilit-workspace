@@ -21,7 +21,7 @@ DB_HOST="${DB_HOST:-localhost}"
 DB_PORT="${DB_PORT:-5432}"
 DB_NAME="${DB_NAME:-gamilit_platform}"
 DB_USER="${DB_USER:-gamilit_user}"
-DB_PASSWORD="${DB_PASSWORD:-3RZ2uYhCnJBXQqEwPPbZK3NFfk4T4W4Q}"
+DB_PASSWORD="${DB_PASSWORD:-ULwSaMu5uTNQYTaJTelPY3gGFMTKNOqo}"
 
 # Test configuration
 TEST_EMAIL="validation-test-$(date +%s)@gamilit.local"

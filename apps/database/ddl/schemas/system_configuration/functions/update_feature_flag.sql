@@ -1,5 +1,5 @@
 -- =============================================================================
--- FUNCTION: public.update_feature_flag
+-- FUNCTION: system_configuration.update_feature_flag
 -- =============================================================================
 -- Purpose: Updates feature flag status and manages rollout configurations
 -- Priority: P2 - Feature flag management function
@@ -64,7 +64,7 @@ BEGIN
     END IF;
 
     -- Log the feature flag update
-    PERFORM public.log_system_event(
+    PERFORM audit_logging.log_system_event(
         'FEATURE_FLAG_UPDATED',
         'feature_management',
         jsonb_build_object(
@@ -94,7 +94,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, system_configuration, audit_logging;
 
 -- Documentation comment
-COMMENT ON FUNCTION public.update_feature_flag(TEXT, BOOLEAN, INTEGER, TEXT) IS
+COMMENT ON FUNCTION system_configuration.update_feature_flag(TEXT, BOOLEAN, INTEGER, TEXT) IS
 'Updates feature flag status and manages rollout configurations for gradual feature deployment.
 Parameters:
   - p_feature_key: Unique identifier for the feature flag

@@ -1,3 +1,20 @@
+---
+id: "US-ACT-001"
+title: "Mecanicas basicas - Opcion multiple"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-002"
+story_points: 6
+budget: "$2,200 MXN"
+sprint: "Sprint-1"
+labels: ["activities", "mechanics", "multiple-choice", "educational"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-08-15"
+---
+
 # US-ACT-001: Mecánicas básicas - Opción múltiple
 
 **Épica:** EAI-002 - Actividades Básicas Hardcodeadas
@@ -5,7 +22,7 @@
 **Story Points:** 6 SP
 **Presupuesto:** $2,200 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 

@@ -1,11 +1,28 @@
-# US-FUND-001: Autenticación básica con JWT
+---
+id: "US-FUND-001"
+title: "Autenticacion basica con JWT"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-001"
+story_points: 8
+budget: "$2,900 MXN"
+sprint: "Sprint-1"
+labels: ["auth", "jwt", "seguridad", "fundamentos"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-08-08"
+---
 
-**Épica:** EAI-001 - Fundamentos
+# US-FUND-001: Autenticacion basica con JWT
+
+**Epica:** EAI-001 - Fundamentos
 **Sprint:** Mes 1, Semana 1
 **Story Points:** 8 SP
 **Presupuesto:** $2,900 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 

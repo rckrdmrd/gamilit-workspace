@@ -150,7 +150,7 @@ Orden actual (correcto):
 | Proyecto | Tiene Dependencia | Requiere Cambio |
 |----------|------------------|-----------------|
 | core/orchestration | ❌ No | ❌ No |
-| core/catalog | ❌ No | ❌ No |
+| shared/catalog | ❌ No | ❌ No |
 | trading-platform | ❌ No | ❌ No |
 | erp-suite | ❌ No | ❌ No |
 
@@ -159,7 +159,7 @@ Orden actual (correcto):
 
 ### 5.2 Módulos Compartidos
 
-- [x] core/catalog no requiere actualización
+- [x] shared/catalog no requiere actualización
 - [x] Directivas SIMCO no afectadas
 
 ---

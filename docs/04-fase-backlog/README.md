@@ -1,24 +1,28 @@
 # Fase 4: Backlog - Funcionalidad Futura
 
-**Última actualización:** 2025-11-29
-**Estado:** Planificación y Diseño
+**Ultima actualizacion:** 2026-01-04
+**Estado:** Planificacion y Diseno
 
 ---
 
-## ✅ MÓDULOS 4 Y 5 - IMPLEMENTADOS
+## Documentos de Referencia
 
-> **ACTUALIZACIÓN 2025-11-29:** Los módulos 4 y 5 han sido **completamente implementados**.
-> - Decisión: Revisión manual por docentes con rúbricas (sin IA)
-> - Almacenamiento: Sistema de archivos local (`apps/backend/uploads/`)
-> - Estado: **100% funcional** - Frontend, Backend, Database, Validadores
->
-> **Cambios realizados:**
-> - 8 ejercicios activados en base de datos (`is_active = true`)
-> - Validadores de estructura en backend (`ExercisesService.validateContentByExerciseType`)
-> - Función SQL de validación (`validate_module4_module5_submission`)
-> - Exports completos en frontend barrel files
+| Documento | Descripcion |
+|-----------|-------------|
+| [DEFINITION-OF-READY.md](./DEFINITION-OF-READY.md) | Criterios para items listos para Sprint |
+| [FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md](./FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md) | Features de gamificacion pendientes |
+| [TIPOS-EJERCICIOS-PENDIENTES.md](./TIPOS-EJERCICIOS-PENDIENTES.md) | Tipos de ejercicios pendientes |
 
-Ver [Resumen de Implementación](#resumen-de-implementación-módulos-4-5) para detalles.
+---
+
+## MODULOS 4 Y 5 - MOVIDOS A FASE 02
+
+> **NOTA:** Los Modulos 4 y 5 fueron **completamente implementados** y su documentacion fue movida a:
+> - **Documentacion:** [docs/02-fase-robustecimiento/EAI-007-modulos-m4-m5/](../02-fase-robustecimiento/EAI-007-modulos-m4-m5/)
+> - **Estado:** Done (100% funcional)
+> - **Fecha:** 2025-11-29
+
+Ver [EAI-007](../02-fase-robustecimiento/EAI-007-modulos-m4-m5/README.md) para documentacion completa.
 
 ---
 

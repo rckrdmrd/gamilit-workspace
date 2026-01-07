@@ -1,3 +1,19 @@
+---
+id: "US-ADM-005"
+title: "Gestión de Grupos Básica"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-005"
+story_points: 7
+budget: "$2,800 MXN"
+sprint: "Sprint-1"
+labels: ["admin", "groups", "classroom-management"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ADM-005: Gestión de Grupos Básica
 
 **Épica:** EAI-005 (Plataforma de Maestro Básica)
@@ -5,7 +21,7 @@
 **Story Points:** 7 SP
 **Presupuesto:** $2,800 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 
@@ -563,19 +579,19 @@ export const GroupFormModal = ({ classroomId, group, onClose, onSuccess }) => {
 ## Alcance Básico vs Extensiones
 
 ### EAI-005 (Este alcance - Admin Base):
-- ✅ CRUD de grupos básico
-- ✅ Asignación manual de estudiantes
-- ✅ Estudiante puede estar en múltiples grupos
-- ✅ Color identificador simple
-- ✅ Sin límites
+- CRUD de grupos básico
+- Asignación manual de estudiantes
+- Estudiante puede estar en múltiples grupos
+- Color identificador simple
+- Sin límites
 
 ### EXT-001 (Extensión futura):
-- ⏳ Asignación automática de grupos (aleatoria, por nivel)
-- ⏳ Grupos dinámicos (basados en progreso)
-- ⏳ Rotación automática de grupos
-- ⏳ Analytics por grupo
-- ⏳ Asignar actividades específicas a grupos
-- ⏳ Grupos exclusivos (estudiante en solo un grupo)
+- Asignación automática de grupos (aleatoria, por nivel)
+- Grupos dinámicos (basados en progreso)
+- Rotación automática de grupos
+- Analytics por grupo
+- Asignar actividades específicas a grupos
+- Grupos exclusivos (estudiante en solo un grupo)
 
 ---
 

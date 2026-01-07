@@ -30,11 +30,24 @@ function isTokenValid(token: string): boolean {
   }
 }
 
+// Notification types from backend WebSocket (may differ from API types)
+type WebSocketNotificationType =
+  | 'achievement_unlocked'
+  | 'rank_up'
+  | 'rank_promoted'
+  | 'streak_milestone'
+  | 'coins_earned'
+  | 'xp_earned'
+  | 'module_completed'
+  | 'new_assignment'
+  | 'exercise_feedback'
+  | 'system_announcement';
+
 export interface WebSocketNotification {
   notification: {
     id: string;
     userId: string;
-    type: 'achievement_unlocked' | 'rank_up' | 'streak_milestone' | 'coins_earned' | 'xp_earned';
+    type: WebSocketNotificationType;
     title: string;
     message: string;
     metadata?: Record<string, unknown>;
@@ -114,8 +127,10 @@ export function useWebSocket(): UseWebSocketReturn {
       autoConnect: true,
       reconnection: true,
       reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      reconnectionAttempts: 5,
+      reconnectionDelayMax: 30000, // Aumentado: max 30s entre intentos
+      reconnectionAttempts: Infinity, // Reconectar indefinidamente
+      randomizationFactor: 0.5, // Backoff exponencial con jitter
+      timeout: 20000, // Timeout de conexion 20s
       auth: {
         token: token,
       },
@@ -156,16 +171,26 @@ export function useWebSocket(): UseWebSocketReturn {
     socket.on('new_notification', (data: WebSocketNotification) => {
       console.log('📨 New notification received via WebSocket:', data);
 
-      // Map WebSocket notification type to system notification type
-      const mapNotificationType = (type: string): any => {
-        const typeMap: Record<string, string> = {
+      // Map WebSocket notification type to system notification type (aligned with DDL EXT-003)
+      const mapNotificationType = (wsType: WebSocketNotificationType): string => {
+        const typeMap: Record<WebSocketNotificationType, string> = {
           achievement_unlocked: 'achievement_unlocked',
           rank_up: 'rank_promoted',
-          streak_milestone: 'mission_completed',
+          rank_promoted: 'rank_promoted',
+          streak_milestone: 'streak_milestone',
           coins_earned: 'coins_received',
-          xp_earned: 'coins_received',
+          xp_earned: 'xp_earned',
+          module_completed: 'module_completed',
+          new_assignment: 'new_assignment',
+          exercise_feedback: 'exercise_feedback',
+          system_announcement: 'system_announcement',
         };
-        return typeMap[type] || 'system_announcement';
+        const mapped = typeMap[wsType];
+        if (!mapped) {
+          console.warn(`[WebSocket] Unknown notification type: ${wsType}, defaulting to system_announcement`);
+          return 'system_announcement';
+        }
+        return mapped;
       };
 
       // Transform to match Notification type

@@ -14,18 +14,19 @@ SELECT
 
     -- Student counts
     COUNT(DISTINCT cm.student_id) FILTER (WHERE cm.status = 'active') AS total_students,
-    COUNT(DISTINCT mp.student_id) FILTER (WHERE mp.status = 'completed') AS students_completed,
+    -- ISS-DB-004: Fixed - mp table uses user_id (2026-01-04)
+    COUNT(DISTINCT mp.user_id) FILTER (WHERE mp.status = 'completed') AS students_completed,
 
-    -- Progress metrics
+    -- Progress metrics (ISS-DB-008: Fixed - mp uses average_score, not score)
     COALESCE(ROUND(AVG(mp.progress_percentage)::numeric, 2), 0) AS avg_progress,
-    COALESCE(ROUND(AVG(mp.score)::numeric, 2), 0) AS avg_score,
+    COALESCE(ROUND(AVG(mp.average_score)::numeric, 2), 0) AS avg_score,
 
-    -- Alert counts
-    COUNT(DISTINCT sia.id) FILTER (WHERE sia.status = 'pending') AS pending_alerts,
+    -- Alert counts (ISS-DB-005: Fixed - sia uses 'active', not 'pending')
+    COUNT(DISTINCT sia.id) FILTER (WHERE sia.status = 'active') AS pending_alerts,
     COUNT(DISTINCT sia.id) FILTER (WHERE sia.status = 'acknowledged') AS acknowledged_alerts,
 
-    -- Review counts
-    COUNT(DISTINCT es.id) FILTER (WHERE es.needs_review = true) AS pending_reviews,
+    -- Review counts (ISS-DB-006: Fixed - es uses status='pending_review', not needs_review column)
+    COUNT(DISTINCT es.id) FILTER (WHERE es.status = 'pending_review') AS pending_reviews,
 
     -- Activity metrics
     COUNT(DISTINCT es.id) AS total_submissions,
@@ -42,12 +43,15 @@ SELECT
 FROM social_features.classrooms c
 LEFT JOIN social_features.classroom_members cm
     ON c.id = cm.classroom_id AND cm.status = 'active'
+-- ISS-DB-003: Fixed reference - table has user_id, not student_id (2026-01-04)
 LEFT JOIN progress_tracking.module_progress mp
-    ON cm.student_id = mp.student_id
+    ON cm.student_id = mp.user_id
+-- ISS-DB-002: Fixed reference - table has classroom_id, not teacher_id (2026-01-04)
 LEFT JOIN progress_tracking.student_intervention_alerts sia
-    ON cm.student_id = sia.student_id AND sia.teacher_id = c.teacher_id
+    ON cm.student_id = sia.student_id AND sia.classroom_id = c.id
+-- ISS-DB-007: Fixed reference - es table uses user_id, not student_id (2026-01-04)
 LEFT JOIN progress_tracking.exercise_submissions es
-    ON cm.student_id = es.student_id
+    ON cm.student_id = es.user_id
 WHERE
     c.is_deleted = FALSE
 GROUP BY

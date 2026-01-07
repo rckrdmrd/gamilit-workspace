@@ -1,3 +1,20 @@
+---
+id: "US-FUND-005"
+title: "Sistema de sesiones y estado"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-001"
+story_points: 6
+budget: "$2,200 MXN"
+sprint: "Sprint-1"
+labels: ["auth", "sessions", "refresh-tokens", "zustand", "state"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-08-10"
+---
+
 # US-FUND-005: Sistema de sesiones y estado
 
 **Épica:** EAI-001 - Fundamentos
@@ -5,7 +22,7 @@
 **Story Points:** 6 SP
 **Presupuesto:** $2,200 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 

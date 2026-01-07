@@ -1,9 +1,27 @@
-# EAI-008: Portal de Administracion - Documentacion Completa
+# EAI-008: Portal de Administracion
 
 **Fecha de Creacion:** 2025-11-24
-**Ultima Actualizacion:** 2025-12-26
-**Estado:** En Produccion (Fase 1 Completa, Fase 2 Pendiente, Sprints Correcciones Completos)
+**Ultima Actualizacion:** 2026-01-04
+**Estado:** Done (Fase 1), Backlog (Fase 2)
 **Responsable:** Architecture-Analyst
+
+---
+
+## Estructura SCRUM
+
+```
+EAI-008-portal-admin/
++-- _MAP.md              # Indice principal
++-- README.md            # Este archivo
++-- requerimientos/      # Requerimientos funcionales
++-- especificaciones/    # Especificaciones tecnicas
++-- historias-usuario/   # User Stories
++-- tareas/              # Tareas SCRUM
++-- implementacion/      # Trazabilidad a codigo
++-- archivados/          # Documentacion legacy por modulo
+```
+
+**Nota:** Esta EPIC fue reestructurada a formato SCRUM el 2026-01-04. La documentacion original por modulos se preserva en `archivados/modulos-legacy/`.
 
 ---
 
@@ -39,99 +57,101 @@ El Portal de Administracion de GAMILIT fue completado exitosamente implementando
 
 ---
 
-## 📂 ESTRUCTURA DE DOCUMENTACIÓN
+## ESTRUCTURA DE DOCUMENTACION
 
 ```
 EAI-008-portal-admin/
-├── README.md (este archivo)
-├── 00-analisis-inicial/        # Análisis y planeación del proyecto
-├── 01-modulo-alertas/           # Documentación módulo de Alertas
-│   ├── backend/                 # Backend: endpoints, services, DTOs
-│   └── frontend/                # Frontend: páginas, componentes, hooks
-├── 02-modulo-analiticas/        # Documentación módulo de Analíticas
-│   ├── backend/                 # Backend + guías rápidas
-│   └── frontend/                # Frontend con 4 tabs
-├── 03-modulo-progreso/          # Documentación módulo de Progreso
-│   ├── backend/                 # Backend + summaries
-│   └── frontend/                # Frontend con 3 vistas
-├── 04-modulo-monitoreo/         # Documentación módulo de Monitoreo
-│   ├── backend/                 # Backend + checklists
-│   └── frontend/                # Frontend con 4 tabs
-├── 05-otros-componentes/        # Componentes adicionales (Roles, Reports, Settings)
-└── 99-reportes-progreso/        # Reportes finales del proyecto
++-- _MAP.md                 # Indice y resumen de la EPIC
++-- README.md               # Este archivo
++-- requerimientos/         # RF-ADM-001 a RF-ADM-010
++-- especificaciones/       # ET-ADM-001 a ET-ADM-006
++-- historias-usuario/      # US-ADM-001 a US-ADM-010
++-- tareas/                 # Tareas SCRUM
++-- implementacion/         # TRACEABILITY.yml
++-- archivados/             # Documentacion legacy
+    +-- modulos-legacy/     # Estructura original por modulo
+    +-- reportes-raiz-legacy/  # Reportes originales
+```
+
+### Documentacion Legacy (archivados/modulos-legacy/)
+
+```
+modulos-legacy/
++-- 00-analisis-inicial/     # Analisis y planeacion del proyecto
++-- 01-modulo-alertas/       # Documentacion modulo de Alertas
++-- 02-modulo-analiticas/    # Documentacion modulo de Analiticas
++-- 03-modulo-progreso/      # Documentacion modulo de Progreso
++-- 04-modulo-monitoreo/     # Documentacion modulo de Monitoreo
++-- 05-otros-componentes/    # Roles, Reports, Settings
++-- 99-reportes-progreso/    # Reportes finales del proyecto
 ```
 
 ---
 
-## 🎯 ACCESO RÁPIDO
+## ACCESO RAPIDO
 
-### Documentos Esenciales
+### Documentacion SCRUM
 
-- **[⭐ Reporte Final 100%](./99-reportes-progreso/REPORTE-FINAL-PORTAL-ADMIN-COMPLETO-2025-11-24.md)** - Documento culminante con métricas completas
-- **[Correcciones Sprint 1-4](../../90-transversal/correcciones/CORRECCIONES-ADMIN-PORTAL-2025-12-26.md)** - 23 issues corregidos (2025-12-26)
-- **[Resumen Ejecutivo](./00-analisis-inicial/RESUMEN-EJECUTIVO-IMPLEMENTACION.md)** - Vista general para stakeholders
-- **[Plan de Implementación](./00-analisis-inicial/PLAN-IMPLEMENTACION-INFRAESTRUCTURA-DB-DISPONIBLE.md)** - Plan detallado de 4 módulos
-- **[Análisis Completo](./00-analisis-inicial/REPORTE-ANALISIS-PORTAL-ADMIN.md)** - Análisis técnico exhaustivo
+- **[_MAP.md](./_MAP.md)** - Indice principal de la EPIC
+- **[Requerimientos](./requerimientos/_MAP.md)** - RF-ADM-001 a RF-ADM-010
+- **[Especificaciones](./especificaciones/_MAP.md)** - ET-ADM-001 a ET-ADM-006
+- **[Historias de Usuario](./historias-usuario/_MAP.md)** - US-ADM-001 a US-ADM-010
+- **[TRACEABILITY.yml](./implementacion/TRACEABILITY.yml)** - Trazabilidad a codigo
 
-### Por Módulo (Implementation Reports)
+### Documentos Legacy Esenciales
 
-#### 1. Módulo de Alertas
-- [Backend - Alertas](./01-modulo-alertas/backend/IMPLEMENTATION-REPORT-ADMIN-ALERTS-MODULE-2025-11-24.md) (7 endpoints, FSM)
-- [Frontend - Alertas](./01-modulo-alertas/frontend/IMPLEMENTATION-REPORT-ADMIN-ALERTS-PAGE-2025-11-24.md) (7 componentes)
+- **[Reporte Final 100%](./archivados/modulos-legacy/99-reportes-progreso/REPORTE-FINAL-PORTAL-ADMIN-COMPLETO-2025-11-24.md)** - Documento culminante
+- **[Resumen Ejecutivo](./archivados/modulos-legacy/00-analisis-inicial/RESUMEN-EJECUTIVO-IMPLEMENTACION.md)** - Vista para stakeholders
+- **[Plan de Implementacion](./archivados/modulos-legacy/00-analisis-inicial/PLAN-IMPLEMENTACION-INFRAESTRUCTURA-DB-DISPONIBLE.md)** - Plan detallado
+- **[Correcciones Sprint 1-4](../../90-transversal/correcciones/CORRECCIONES-ADMIN-PORTAL-2025-12-26.md)** - 23 issues corregidos
 
-#### 2. Módulo de Analíticas
-- [Backend - Analíticas](./02-modulo-analiticas/backend/IMPLEMENTATION-REPORT-ADMIN-ANALYTICS-MODULE-2025-11-24.md) (7 endpoints, MVs)
-- [Backend - Guía Rápida](./02-modulo-analiticas/backend/ADMIN-ANALYTICS-QUICK-REFERENCE.md) (referencia rápida)
-- [Frontend - Analíticas](./02-modulo-analiticas/frontend/IMPLEMENTATION-REPORT-ADMIN-ANALYTICS-PAGE-2025-11-24.md) (4 tabs, 7 gráficos)
+### Por Modulo (Legacy - archivados/modulos-legacy/)
 
-#### 3. Módulo de Progreso
-- [Backend - Progreso](./03-modulo-progreso/backend/IMPLEMENTATION-REPORT-ADMIN-PROGRESS-MODULE-2025-11-24.md) (6 endpoints, CSV export)
-- [Backend - Summary](./03-modulo-progreso/backend/ADMIN-PROGRESS-MODULE-SUMMARY.md) (resumen ejecutivo)
-- [Frontend - Progreso](./03-modulo-progreso/frontend/IMPLEMENTATION-REPORT-ADMIN-PROGRESS-PAGE-2025-11-24.md) (3 vistas, drill-down)
+#### 1. Modulo de Alertas
+- [Backend](./archivados/modulos-legacy/01-modulo-alertas/backend/IMPLEMENTATION-REPORT-ADMIN-ALERTS-MODULE-2025-11-24.md) (7 endpoints)
+- [Frontend](./archivados/modulos-legacy/01-modulo-alertas/frontend/IMPLEMENTATION-REPORT-ADMIN-ALERTS-PAGE-2025-11-24.md) (7 componentes)
 
-#### 4. Módulo de Monitoreo
-- [Backend - Endpoints Summary](./04-modulo-monitoreo/backend/ADMIN-MONITORING-ENDPOINTS-SUMMARY.md) (5 endpoints)
-- [Backend - Quick Start](./04-modulo-monitoreo/backend/MONITORING-QUICK-START.md) (guía inicio rápido)
-- [Backend - Deployment Checklist](./04-modulo-monitoreo/backend/DEPLOYMENT-CHECKLIST-MONITORING.md) (checklist producción)
-- [Frontend - Monitoreo](./04-modulo-monitoreo/frontend/IMPLEMENTATION-REPORT-ADMIN-MONITORING-PAGE-2025-11-24.md) (4 tabs, auto-refresh)
-- [Frontend - Implementation Complete](./04-modulo-monitoreo/frontend/ADMIN-MONITORING-IMPLEMENTATION-COMPLETE.md) (reporte completitud)
-- [Frontend - Tabs Summary](./04-modulo-monitoreo/frontend/IMPLEMENTATION-SUMMARY-MONITORING-TABS.md) (resumen tabs)
+#### 2. Modulo de Analiticas
+- [Backend](./archivados/modulos-legacy/02-modulo-analiticas/backend/IMPLEMENTATION-REPORT-ADMIN-ANALYTICS-MODULE-2025-11-24.md) (7 endpoints)
+- [Frontend](./archivados/modulos-legacy/02-modulo-analiticas/frontend/IMPLEMENTATION-REPORT-ADMIN-ANALYTICS-PAGE-2025-11-24.md) (4 tabs)
+
+#### 3. Modulo de Progreso
+- [Backend](./archivados/modulos-legacy/03-modulo-progreso/backend/IMPLEMENTATION-REPORT-ADMIN-PROGRESS-MODULE-2025-11-24.md) (6 endpoints)
+- [Frontend](./archivados/modulos-legacy/03-modulo-progreso/frontend/IMPLEMENTATION-REPORT-ADMIN-PROGRESS-PAGE-2025-11-24.md) (3 vistas)
+
+#### 4. Modulo de Monitoreo
+- [Backend](./archivados/modulos-legacy/04-modulo-monitoreo/backend/ADMIN-MONITORING-ENDPOINTS-SUMMARY.md) (5 endpoints)
+- [Frontend](./archivados/modulos-legacy/04-modulo-monitoreo/frontend/IMPLEMENTATION-REPORT-ADMIN-MONITORING-PAGE-2025-11-24.md) (4 tabs)
 
 #### 5. Otros Componentes
-- [Admin Reports Page](./05-otros-componentes/IMPLEMENTATION-REPORT-ADMIN-REPORTS-PAGE.md)
-- [Admin Settings](./05-otros-componentes/IMPLEMENTATION-REPORT-ADMIN-SETTINGS.md)
-- [Testing Guide - Settings](./05-otros-componentes/MANUAL-TESTING-GUIDE-ADMIN-SETTINGS.md)
-- [Correcciones Roles/Reports](./05-otros-componentes/CORRECCIONES-ADMIN-ROLES-REPORTS-2025-11-24.md)
-- [Solución Final Roles](./05-otros-componentes/SOLUCION-FINAL-ADMIN-ROLES-2025-11-24.md)
-- [Backend Integration Roles](./05-otros-componentes/REPORT-ADMIN-ROLES-PAGE-BACKEND-INTEGRATION-2025-11-24.md)
+- [Admin Reports Page](./archivados/modulos-legacy/05-otros-componentes/IMPLEMENTATION-REPORT-ADMIN-REPORTS-PAGE.md)
+- [Admin Settings](./archivados/modulos-legacy/05-otros-componentes/IMPLEMENTATION-REPORT-ADMIN-SETTINGS.md)
 
 ---
 
-## 🗂️ NAVEGACIÓN POR FASE DEL PROYECTO
+## NAVEGACION
 
-### Fase 0: Análisis Inicial (Pre-implementación)
-📁 **Carpeta:** `00-analisis-inicial/`
+### Documentacion SCRUM (Actual)
 
-Documentos generados antes de iniciar la implementación:
-1. **[README](./00-analisis-inicial/README.md)** - Índice de análisis
-2. **[Resumen Ejecutivo](./00-analisis-inicial/RESUMEN-EJECUTIVO-IMPLEMENTACION.md)** - Para stakeholders (5 min lectura)
-3. **[Análisis Completo](./00-analisis-inicial/REPORTE-ANALISIS-PORTAL-ADMIN.md)** - Análisis técnico exhaustivo (30-40 min)
-4. **[Plan de Implementación](./00-analisis-inicial/PLAN-IMPLEMENTACION-INFRAESTRUCTURA-DB-DISPONIBLE.md)** - Plan detallado de 4 módulos (60-90 min)
+| Carpeta | Contenido |
+|---------|-----------|
+| requerimientos/ | RF-ADM-001 a RF-ADM-010 |
+| especificaciones/ | ET-ADM-001 a ET-ADM-006 |
+| historias-usuario/ | US-ADM-001 a US-ADM-010 |
+| tareas/ | Tareas SCRUM |
+| implementacion/ | TRACEABILITY.yml |
 
-### Fase 1-4: Implementación por Módulos
-📁 **Carpetas:** `01-modulo-alertas/` a `04-modulo-monitoreo/`
+### Documentacion Legacy (archivados/modulos-legacy/)
 
-Cada módulo contiene:
-- **Backend:** Implementation reports con endpoints, services, DTOs, scripts de testing
-- **Frontend:** Implementation reports con páginas, componentes, hooks, integración API
-
-### Fase 5: Reportes Finales
-📁 **Carpeta:** `99-reportes-progreso/`
-
-Documentación final del proyecto:
-1. **[⭐ Reporte Final](./99-reportes-progreso/REPORTE-FINAL-PORTAL-ADMIN-COMPLETO-2025-11-24.md)** - Implementación completa
-2. **[Análisis Comprehensivo](./99-reportes-progreso/REPORTE-ANALISIS-COMPREHENSIVO-2025-11-26.md)** - Análisis post-implementación
-3. **[Correcciones](./99-reportes-progreso/REPORTE-CORRECCIONES-2025-11-26.md)** - Correcciones aplicadas
+| Carpeta | Contenido |
+|---------|-----------|
+| 00-analisis-inicial/ | Analisis y planeacion inicial |
+| 01-modulo-alertas/ | Backend y Frontend alertas |
+| 02-modulo-analiticas/ | Backend y Frontend analiticas |
+| 03-modulo-progreso/ | Backend y Frontend progreso |
+| 04-modulo-monitoreo/ | Backend y Frontend monitoreo |
+| 05-otros-componentes/ | Roles, Reports, Settings |
+| 99-reportes-progreso/ | Reportes finales del proyecto |
 
 ---
 

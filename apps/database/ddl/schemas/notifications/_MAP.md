@@ -64,8 +64,21 @@ Sistema de notificaciones multi-canal (in-app, email, push web)
 - **Priorización**: Sistema de prioridades (urgent, high, normal, low)
 - **Quiet hours**: Respeto de horarios de silencio por usuario
 
+## Correcciones Aplicadas
+
+| Archivo | Cambio | Fecha |
+|---------|--------|-------|
+| `tables/01-notifications.sql` | FK corregida: `auth.users` → `auth_management.profiles` | 2026-01-04 |
+
+## Nota: Sistema Canónico
+
+Este schema (`notifications.notifications`) es el **sistema canónico** de notificaciones.
+El schema `gamification_system.notifications` está **DEPRECATED** y debe migrarse aquí.
+
+**Ver:** `gamification_system/MIGRATION-NOTIFICATIONS.md`
+
 ---
 
-**Última actualización:** 2025-11-11
+**Última actualización:** 2026-01-04
 **Relacionado:** EXT-003 (Notificaciones Multi-Canal)
-**Estado:** Implementado - Capa Database
+**Estado:** Implementado - Capa Database (Sistema Canónico)

@@ -1,5 +1,145 @@
 # CHANGELOG - Plataforma GAMILIT
 
+## [2.5.0] - 2026-01-04
+
+### EPIC 10.2 - Sistema de Certificados Digitales
+
+Esta versión implementa el sistema completo de certificados digitales para GAMILIT, permitiendo reconocer formalmente el logro de los estudiantes al completar módulos.
+
+**EPIC:** 10.2 - Digital Certificates System
+**Tech-Leader:** Claude Opus 4.5
+**Validación:** 7 sub-agentes especializados
+
+---
+
+### Nuevas Funcionalidades
+
+#### Sistema de Certificados
+- ✅ Generación automática de certificados al completar módulos
+- ✅ Código QR único para verificación pública
+- ✅ Descarga de certificado en formato PDF
+- ✅ Revocación de certificados por administradores/profesores
+- ✅ Estadísticas de certificados por tenant
+
+#### Endpoints API
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST | `/certificates/generate` | Genera nuevo certificado |
+| GET | `/certificates/user/:userId` | Lista certificados de usuario |
+| GET | `/certificates/verify/:code` | Verificación pública (sin auth) |
+| POST | `/certificates/:id/revoke` | Revoca certificado |
+| GET | `/certificates/:id/download` | Descarga PDF |
+| GET | `/certificates/tenant/:tenantId/stats` | Estadísticas por tenant |
+
+---
+
+### Archivos Creados
+
+#### Backend (4 archivos)
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/progress/entities/certificate.entity.ts` | Entity con 25+ campos, ENUMs |
+| `modules/progress/services/certificate.service.ts` | Lógica de negocio, PDF, QR |
+| `modules/progress/controllers/certificate.controller.ts` | 6 endpoints REST |
+| `modules/progress/dto/certificate.dto.ts` | 6 DTOs de validación |
+
+#### Database DDL (4 archivos)
+| Archivo | Descripción |
+|---------|-------------|
+| `progress_tracking/enums/certificate_enums.sql` | ENUMs status y type |
+| `progress_tracking/tables/18-certificates.sql` | Tabla con 9 índices |
+| `progress_tracking/rls-policies/04-certificates-policies.sql` | 4 políticas RLS |
+| `progress_tracking/triggers/32-trg_certificates_updated_at.sql` | Trigger updated_at |
+
+---
+
+### Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `module-progress.service.ts` | Integración auto-generación |
+| `progress.module.ts` | Registro de servicios |
+| `database.constants.ts` | Constante CERTIFICATES |
+
+---
+
+### Seguridad
+
+**Correcciones aplicadas:**
+- ✅ `@UseGuards(JwtAuthGuard, RolesGuard)` en controller
+- ✅ `@Public()` decorator para verificación QR
+- ✅ `escapeHtml()` en template PDF (XSS prevention)
+- ✅ `@Transform` decorators en query DTOs
+- ✅ `ParseUUIDPipe` para validación UUID
+
+---
+
+### Base de Datos
+
+**Objetos creados:**
+- 2 ENUMs: `certificate_status`, `certificate_type`
+- 1 Tabla: `progress_tracking.certificates` (25 columnas)
+- 9 Índices (incluyendo unique constraint user+module)
+- 4 Políticas RLS
+- 1 Trigger `updated_at`
+
+**Foreign Keys:**
+- `user_id` → `auth_management.profiles`
+- `module_id` → `educational_content.modules`
+- `tenant_id` → `auth_management.tenants`
+- `classroom_id` → `social_features.classrooms`
+
+---
+
+### Métricas
+
+| Métrica | Valor |
+|---------|-------|
+| Archivos creados | 8 |
+| Endpoints nuevos | 6 |
+| DTOs nuevos | 6 |
+| ENUMs nuevos | 2 |
+| Índices creados | 9 |
+| Políticas RLS | 4 |
+
+---
+
+### Validación
+
+**Agentes de validación ejecutados:**
+1. Architecture Analyst - Estructura y patrones ✅
+2. Backend Developer - Calidad de código ✅
+3. Database Agent - DDL y migraciones ✅
+4. Security Auditor - Vulnerabilidades ✅
+5. Testing Agent - Cobertura de tests ⚠️ (pendiente)
+6. Documentation Agent - Estándares SIMCO ✅
+7. Integration Agent - Dependencias ✅
+
+---
+
+### Próximos Pasos
+
+**P1 - Pendiente:**
+- Tests unitarios para CertificateService (~48 casos)
+- Componentes frontend (CertificateCard, CertificateViewer)
+- Integración con sistema de notificaciones
+
+**P2 - Futuro:**
+- Templates personalizables por tenant
+- Firma digital de certificados
+- Integración con LinkedIn
+- Certificados de curso completo
+
+---
+
+### Referencias
+
+- Traza: `orchestration/trazas/TRAZA-TAREAS-BACKEND.md` (BE-138)
+- Inventario Backend: `orchestration/inventarios/BACKEND_INVENTORY.yml`
+- Inventario Database: `orchestration/inventarios/DATABASE_INVENTORY.yml`
+
+---
+
 ## [2.4.2] - 2025-12-15
 
 ### Simplificación de Estructura Social - Solo Defaults

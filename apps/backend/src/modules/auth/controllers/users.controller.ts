@@ -68,8 +68,8 @@ export class UsersController {
       throw new UnauthorizedException('Usuario no encontrado');
     }
 
-    const { encrypted_password: _encrypted_password, ...userResponse } = user;
-    return userResponse as UserResponseDto;
+    // FIX BUG-005: Usar toUserResponse para incluir campos derivados (emailVerified, isActive)
+    return this.authService.toUserResponse(user);
   }
 
   /**
@@ -99,8 +99,8 @@ export class UsersController {
       throw new UnauthorizedException('Usuario no encontrado');
     }
 
-    const { encrypted_password: _encrypted_password, ...userResponse } = updatedUser;
-    return userResponse as UserResponseDto;
+    // FIX BUG-005: Usar toUserResponse para incluir campos derivados (emailVerified, isActive)
+    return this.authService.toUserResponse(updatedUser);
   }
 
   /**

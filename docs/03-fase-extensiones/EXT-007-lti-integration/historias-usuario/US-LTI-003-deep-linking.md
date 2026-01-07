@@ -1,3 +1,19 @@
+---
+id: "US-LTI-003"
+title: "Deep Linking"
+type: "User Story"
+status: "Backlog"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-007"
+story_points: 10
+budget: "$1,500 USD"
+sprint: "Sprint-18"
+labels: ["lti", "deep-linking", "content-selection", "canvas", "moodle", "integration"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # US-LTI-003: Deep Linking
 
 **Épica:** EXT-007: LTI Integration

@@ -1,3 +1,19 @@
+---
+id: "US-FUND-006"
+title: "API RESTful básica"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-001"
+story_points: 10
+budget: "$3,600 MXN"
+sprint: "Sprint-1"
+labels: ["api", "rest", "backend", "swagger", "authentication"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-FUND-006: API RESTful básica
 
 **Épica:** EAI-001 - Fundamentos
@@ -5,7 +21,7 @@
 **Story Points:** 10 SP
 **Presupuesto:** $3,600 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
@@ -375,14 +391,14 @@ async function bootstrap() {
 
 ## Notas del Alcance Inicial
 
-- ✅ API REST estándar (no GraphQL)
-- ✅ Versionado simple (v1 en prefix)
-- ✅ Sin rate limiting avanzado
-- ✅ Sin API key authentication
-- ✅ Sin caching layer (Redis)
-- ✅ Sin compresión de respuestas (gzip)
-- ⚠️ **Extensión futura:** EXT-012-API (rate limiting, caching, compresión)
-- ⚠️ **Extensión futura:** EXT-013-GraphQL (API GraphQL alternativa)
+- Done API REST estándar (no GraphQL)
+- Done Versionado simple (v1 en prefix)
+- Done Sin rate limiting avanzado
+- Done Sin API key authentication
+- Done Sin caching layer (Redis)
+- Done Sin compresión de respuestas (gzip)
+- **Extensión futura:** EXT-012-API (rate limiting, caching, compresión)
+- **Extensión futura:** EXT-013-GraphQL (API GraphQL alternativa)
 
 ---
 
@@ -440,5 +456,5 @@ describe('API Standards', () => {
 ---
 
 **Creado:** 2025-11-02
-**Actualizado:** 2025-11-02
+**Actualizado:** 2026-01-04
 **Responsable:** Equipo Backend

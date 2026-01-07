@@ -1,3 +1,20 @@
+---
+id: "US-GAM-002"
+title: "Sistema de experiencia (XP)"
+type: "User Story"
+status: "Done"
+priority: "Critica"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-003"
+story_points: 7
+budget: "$2,600 MXN"
+sprint: "Sprint-1"
+labels: ["gamification", "xp", "progression"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-08-10"
+---
+
 # US-GAM-002: Sistema de experiencia (XP)
 
 **Épica:** EAI-003 - Gamificación Básica
@@ -5,7 +22,7 @@
 **Story Points:** 7 SP
 **Presupuesto:** $2,600 MXN
 **Prioridad:** Crítica (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 

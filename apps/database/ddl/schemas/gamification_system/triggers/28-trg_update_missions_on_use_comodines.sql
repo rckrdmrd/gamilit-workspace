@@ -6,6 +6,8 @@
 -- Created: 2025-11-28
 -- =====================================================
 
+DROP TRIGGER IF EXISTS trg_update_missions_on_use_comodines ON gamification_system.comodin_usage_log;
+
 CREATE TRIGGER trg_update_missions_on_use_comodines
     AFTER INSERT ON gamification_system.comodin_usage_log
     FOR EACH ROW

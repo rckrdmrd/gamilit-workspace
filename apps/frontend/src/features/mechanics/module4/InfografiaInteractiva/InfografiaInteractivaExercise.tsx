@@ -271,6 +271,13 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
 
+    // FIX: Send answers in DTO format (sections_explored, answers) for ExercisePage.tsx submit button
+    const sections_explored = cards.filter((c) => c.revealed).map((c) => c.id);
+    const answersData = cards.reduce((acc, card) => ({
+      ...acc,
+      [card.id]: card.revealed ? 'explored' : 'not_explored',
+    }), {} as Record<string, string>);
+
     onProgressUpdate?.({
       progress: {
         currentStep: useDragDrop ? Object.keys(droppedCards).length : revealedCount,
@@ -280,12 +287,21 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
         timeSpent: elapsed,
       },
       answers: {
-        elementsExplored: cards.filter((c) => c.revealed).map((c) => c.id),
+        // Primary format: DTO expected by backend
+        sections_explored,
+        answers: answersData,
+
+        // Secondary format for backwards compatibility
+        elementsExplored: sections_explored,
         droppedCards,
-        interactions: cards.reduce((acc, card) => ({
-          ...acc,
-          [card.id]: card.revealed,
-        }), {}),
+
+        // Metadata
+        metadata: {
+          interactions: cards.reduce((acc, card) => ({
+            ...acc,
+            [card.id]: card.revealed,
+          }), {}),
+        },
       },
     });
 
@@ -389,19 +405,38 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   };
 
   // Handle submit
+  // FIX: Transform data to match InfografiaInteractivaAnswerDto expected by backend
   const handleSubmit = () => {
     if (!exerciseId || isSubmitting || isSubmitted) return;
 
-    const revealedCount = cards.filter(c => c.revealed).length;
-    const completionPercentage = (revealedCount / cards.length) * 100;
+    const revealedCards = cards.filter((c) => c.revealed);
+    const completionPercentage = (revealedCards.length / cards.length) * 100;
+
+    // Build answers object with card details
+    const dtoAnswers: Record<string, unknown> = {};
+    revealedCards.forEach((card) => {
+      dtoAnswers[card.id] = {
+        title: card.title,
+        content: card.content,
+        revealed: true,
+        position: card.position,
+      };
+    });
 
     submit({
-      interactedElements: cards.filter(c => c.revealed).map(c => c.id),
-      answers: cards.reduce((acc, card) => ({
-        ...acc,
-        [card.id]: card.revealed
-      }), {}),
-      completionPercentage,
+      // Primary format expected by InfografiaInteractivaAnswerDto
+      answers: dtoAnswers,
+      sections_explored: revealedCards.map((c) => c.id),
+
+      // Metadata for backwards compatibility
+      metadata: {
+        interactedElements: revealedCards.map((c) => c.id),
+        useDragDrop,
+        droppedCards,
+        completionPercentage,
+        totalCards: cards.length,
+        revealedCards: revealedCards.length,
+      },
     });
   };
 

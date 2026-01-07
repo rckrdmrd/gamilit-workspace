@@ -1,0 +1,127 @@
+# REGISTRO DE ERRORES - GAMILIT
+# Sistema: SIMCO - NEXUS v4.0
+# Propósito: Historial de errores del proyecto gamilit
+# Versión: 1.1.0
+# Fecha: 2026-01-04
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INSTRUCCIONES
+# ═══════════════════════════════════════════════════════════════════════════════
+# 1. Registrar TODO error encontrado durante desarrollo en gamilit
+# 2. Actualizar cuando el error recurra
+# 3. Este archivo es LOCAL al proyecto (además del global en workspace)
+# 4. Usar en FASE C de CAPVED++ para buscar errores previos
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ERRORES REGISTRADOS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+errores:
+  - id: "ERR-DDL-001"
+    fecha: "2026-01-04"
+    dominio: "DDL"
+    titulo: "Carpeta migrations/ viola política de carga limpia"
+    descripcion: |
+      Se creó carpeta migrations/ con archivo de sincronización de ENUM
+      en lugar de modificar directamente el DDL base.
+    causa: "Desconocimiento de política de carga limpia"
+    solucion: |
+      1. Integrar cambios ENUM en 00-prerequisites.sql
+      2. Eliminar carpeta migrations/
+      3. Ejecutar drop-and-recreate-database.sh
+    estado: "resuelto"
+    prevencion: "Revisar SIMCO-DDL.md antes de crear archivos de migración"
+    recurrencias: 0
+
+  - id: "ERR-DOC-001"
+    fecha: "2026-01-04"
+    dominio: "DOCUMENTACION"
+    titulo: "Archivos duplicados en docs/"
+    descripcion: |
+      DATOS-GAMIFICACION.md y DocumentoDeDiseño existían en múltiples ubicaciones
+      con contenido idéntico, violando principio Anti-Duplicación.
+    causa: "Copia de archivos sin verificar existencia previa"
+    solucion: "Eliminar duplicados, mantener fuente única"
+    estado: "resuelto"
+    prevencion: "grep -r 'nombre' docs/ antes de crear archivos"
+    recurrencias: 0
+
+  - id: "ERR-BE-001"
+    fecha: "2026-01-04"
+    dominio: "BACKEND"
+    titulo: "Controller con prefijo API duplicado"
+    descripcion: |
+      media-upload.controller.ts tenía @Controller('api/v1/educational/media')
+      cuando main.ts ya define setGlobalPrefix('api/v1').
+    causa: "Copia de código sin ajustar rutas"
+    solucion: "Cambiar a @Controller('educational/media')"
+    estado: "resuelto"
+    prevencion: "Verificar main.ts antes de definir rutas en controllers"
+    recurrencias: 0
+
+  - id: "ERR-STRUCT-001"
+    fecha: "2026-01-04"
+    dominio: "ESTRUCTURA"
+    titulo: "Archivos .md en raíz del proyecto"
+    descripcion: |
+      10 archivos .md ubicados en raíz del proyecto en lugar de
+      docs/ u orchestration/.
+    causa: "Creación rápida sin seguir estándares de ubicación"
+    solucion: "Mover archivos a ubicaciones correctas según tipo"
+    estado: "resuelto"
+    prevencion: "Consultar SIMCO-ESTRUCTURA-REPOS.md antes de crear archivos"
+    recurrencias: 0
+
+  - id: "ERR-SCRUM-001"
+    fecha: "2026-01-04"
+    dominio: "PROCESO"
+    titulo: "Sprint Backlog vacío/inactivo"
+    descripcion: |
+      SPRINT-ACTUAL.yml existía con estructura correcta pero sin
+      contenido activo (sprint.numero=0, historias=[]).
+    causa: "Sistema configurado pero no activado"
+    solucion: "Poblar con sprint activo y HUs relevantes"
+    estado: "resuelto"
+    prevencion: "Verificar sprint activo al iniciar sesión de trabajo"
+    recurrencias: 0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ÍNDICES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+indices:
+  por_dominio:
+    DDL:
+      - "ERR-DDL-001"
+    BACKEND:
+      - "ERR-BE-001"
+    FRONTEND: []
+    DOCUMENTACION:
+      - "ERR-DOC-001"
+    ESTRUCTURA:
+      - "ERR-STRUCT-001"
+    PROCESO:
+      - "ERR-SCRUM-001"
+
+  por_estado:
+    abiertos: []
+    en_analisis: []
+    resueltos:
+      - "ERR-DDL-001"
+      - "ERR-DOC-001"
+      - "ERR-BE-001"
+      - "ERR-STRUCT-001"
+      - "ERR-SCRUM-001"
+
+  recurrentes: []
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ESTADÍSTICAS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+estadisticas:
+  total_errores: 5
+  abiertos: 0
+  resueltos: 5
+  recurrentes: 0
+  ultima_actualizacion: "2026-01-04"

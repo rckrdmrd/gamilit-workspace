@@ -358,6 +358,8 @@ execute_sql_files "$DDL_DIR/schemas/social_features/enums" "*.sql" "ENUMs social
 execute_sql_files "$DDL_DIR/schemas/social_features/tables" "*.sql" "Tablas sociales"
 execute_sql_files "$DDL_DIR/schemas/social_features/functions" "*.sql" "Funciones sociales"
 execute_sql_files "$DDL_DIR/schemas/social_features/triggers" "*.sql" "Triggers sociales"
+execute_sql_files "$DDL_DIR/schemas/social_features/indexes" "*.sql" "Índices sociales (Teacher Portal)"
+execute_sql_files "$DDL_DIR/schemas/social_features/views" "*.sql" "Vistas sociales (Teacher Portal)"
 execute_sql_files "$DDL_DIR/schemas/social_features/rls-policies" "*.sql" "RLS Policies sociales"
 
 log_success "FASE 9 completada"
@@ -527,8 +529,9 @@ execute_sql "$SEEDS_DIR/system_configuration/02-gamification_parameters_seeds.sq
 execute_sql "$SEEDS_DIR/system_configuration/03-notification_settings_global.sql" "Seeds: notification_settings_global"
 execute_sql "$SEEDS_DIR/system_configuration/04-rate_limits.sql" "Seeds: rate_limits"
 
-# 16.1.1: Notifications (templates y configuración)
-execute_sql "$SEEDS_DIR/notifications/01-notification_templates.sql" "Seeds: notification_templates (8 templates)"
+# 16.1.1: Notifications (templates solamente - EXT-003)
+# NOTA: notification_preferences se carga después de profiles (ver 16.5.0.2)
+execute_sql "$SEEDS_DIR/notifications/01-notification_templates.sql" "Seeds: notification_templates (18 templates - EXT-003, GAP-MED-004)"
 
 # 16.2: Auth Management (tenants y auth_providers)
 execute_sql "$SEEDS_DIR/auth_management/01-tenants.sql" "Seeds: tenants"
@@ -552,10 +555,15 @@ execute_sql "$SEEDS_DIR/educational_content/12-taxonomies.sql" "Seeds: taxonomie
 execute_sql "$SEEDS_DIR/auth_management/04-profiles-complete.sql" "Seeds: profiles (testing + demo - 22)"
 # DEPRECATED: 05-profiles-demo.sql movido a _deprecated/ - requiere auth.users que no existen
 execute_sql "$SEEDS_DIR/auth_management/06-profiles-production.sql" "Seeds: profiles (production - 13 usuarios)"
+execute_sql "$SEEDS_DIR/auth_management/07-profiles-production-additional.sql" "Seeds: profiles (production adicionales - 32 usuarios)"
 
 # 16.5.0.1: Auth Management (roles de usuarios) - P0-SEEDS AUDIT-DB-001
 # MUST BE AFTER profiles (FK user_id references profiles)
 execute_sql "$SEEDS_DIR/auth_management/07-user_roles.sql" "Seeds: user_roles (8 roles - P0 AUDIT-DB-001)"
+
+# 16.5.0.2: Notifications (preferencias de usuarios) - EXT-003 2026-01-04
+# MUST BE AFTER profiles (FK user_id references profiles)
+execute_sql "$SEEDS_DIR/notifications/02-notification_preferences_defaults.sql" "Seeds: notification_preferences (defaults por tipo - EXT-003)"
 
 # 16.5.1: Content Management (templates de contenido)
 execute_sql "$SEEDS_DIR/content_management/01-default-templates.sql" "Seeds: content_templates"
@@ -563,12 +571,21 @@ execute_sql "$SEEDS_DIR/content_management/01-default-templates.sql" "Seeds: con
 # 16.5.1.1: Content Management (contenido Marie Curie) - P0-SEEDS AUDIT-DB-001
 execute_sql "$SEEDS_DIR/content_management/02-marie_curie_content.sql" "Seeds: marie_curie_content (6 artículos - P0 AUDIT-DB-001)"
 
+# 16.5.1.2: Content Management (tags y moderación) - AUDITORIA 2026-01-04
+execute_sql "$SEEDS_DIR/content_management/03-tags.sql" "Seeds: tags (catálogo Marie Curie - 45 tags)"
+execute_sql "$SEEDS_DIR/content_management/04-moderation_rules.sql" "Seeds: moderation_rules"
+
 # 16.5.2: Social Features (escuelas, aulas y miembros)
 execute_sql "$SEEDS_DIR/social_features/00-schools-default.sql" "Seeds: schools (sistema - default)"
 execute_sql "$SEEDS_DIR/social_features/01-schools.sql" "Seeds: schools (demo)"
 execute_sql "$SEEDS_DIR/social_features/02-classrooms.sql" "Seeds: classrooms (demo)"
 execute_sql "$SEEDS_DIR/social_features/03-classroom-members.sql" "Seeds: classroom_members (demo)"
 execute_sql "$SEEDS_DIR/social_features/04-friendships.sql" "Seeds: friendships (10 amistades + 3 pending)"
+
+# 16.5.2.1: Communication (mensajes de sistema) - AUDITORIA 2026-01-04
+# Depende de: auth_management.profiles, social_features.classrooms
+execute_sql "$SEEDS_DIR/communication/01-system-messages.sql" "Seeds: system messages (bienvenida classroom DEFAULT)"
+execute_sql "$SEEDS_DIR/communication/02-message_participants.sql" "Seeds: message participants (ISS-SYNC-002)"
 
 # 16.5.3: Auth Management (asignación de escuela a admins) - 2025-12-15
 # MUST BE AFTER profiles AND schools
@@ -606,7 +623,8 @@ execute_sql "$SEEDS_DIR/gamification_system/04-achievements.sql" "Seeds: achieve
 
 # 16.6.0.1: Mission Templates - P0-SEEDS AUDIT-DB-001
 execute_sql "$SEEDS_DIR/gamification_system/10-mission_templates.sql" "Seeds: mission_templates (11 templates - P0 AUDIT-DB-001)"
-execute_sql "$SEEDS_DIR/gamification_system/11-missions-production-users.sql" "Seeds: missions-production (8 misiones por usuario prod)"
+# NOTA: Archivo no disponible - comentado 2026-01-04
+# execute_sql "$SEEDS_DIR/gamification_system/11-missions-production-users.sql" "Seeds: missions-production (8 misiones por usuario prod)"
 execute_sql "$SEEDS_DIR/gamification_system/12-shop_categories.sql" "Seeds: shop_categories (5 categorías - 2025-11-29 NEW)"
 execute_sql "$SEEDS_DIR/gamification_system/13-shop_items.sql" "Seeds: shop_items (20 items - 2025-11-29 NEW)"
 execute_sql "$SEEDS_DIR/gamification_system/05-user_stats.sql" "Seeds: user_stats"
@@ -617,7 +635,28 @@ execute_sql "$SEEDS_DIR/gamification_system/09-comodines_inventory.sql" "Seeds: 
 # DEPRECADO 2025-11-24: Misiones ahora se crean automáticamente via gamilit.initialize_user_missions()
 # execute_sql "$SEEDS_DIR/gamification_system/10-missions-init.sql" "Seeds: missions initialization (student)"
 
+# 16.8: Admin Dashboard - AUDIT-003 (2026-01-04)
+execute_sql "$SEEDS_DIR/admin_dashboard/01-bulk_operations.sql" "Seeds: bulk_operations (3 ejemplos - AUDIT-003)"
+execute_sql "$SEEDS_DIR/admin_dashboard/02-admin_reports.sql" "Seeds: admin_reports (4 ejemplos - AUDIT-003)"
+
 log_success "FASE 16 completada - Seeds de PROD cargados"
+log ""
+
+# ============================================================================
+# FASE 17: VALIDACIONES POST-SEEDS
+# ============================================================================
+# Esta fase asegura que los datos de inicialización estén completos.
+# Si el trigger trg_initialize_user_stats falló silenciosamente, aquí se corrige.
+# ============================================================================
+
+log "FASE 17: VALIDACIONES POST-SEEDS"
+log ""
+
+# 17.1: Validar y crear module_progress faltantes
+# El trigger debería haber creado estos registros, pero si falló, este script los crea
+execute_sql "$SCRIPT_DIR/scripts/fix-missing-module-progress.sql" "Validation: module_progress (ensure all users have records)"
+
+log_success "FASE 17 completada - Validaciones ejecutadas"
 log ""
 
 # ============================================================================

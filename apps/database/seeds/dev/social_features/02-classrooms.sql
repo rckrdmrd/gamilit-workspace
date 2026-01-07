@@ -211,7 +211,7 @@ END $$;
 
 INSERT INTO social_features.teacher_classrooms (id, teacher_id, classroom_id, tenant_id, role, assigned_at, created_at)
 SELECT
-    gen_random_uuid(),
+    'tc000001-0000-0000-0000-000000000001'::uuid,  -- UUID estático para classroom DEFAULT
     c.teacher_id,
     c.id,
     c.tenant_id,
@@ -221,7 +221,9 @@ SELECT
 FROM social_features.classrooms c
 WHERE c.teacher_id IS NOT NULL
   AND c.code = 'DEFAULT'
-ON CONFLICT DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+    role = EXCLUDED.role,
+    teacher_id = EXCLUDED.teacher_id;
 
 -- Verificar sync
 DO $$

@@ -1,0 +1,75 @@
+---
+# TRACEABILITY.yml - EXT-011 Parent Portal
+epic_code: EXT-011
+epic_name: Portal para Padres de Familia
+status: Backlog
+implementation_percentage: 35
+last_updated: 2026-01-04
+
+# Documentacion
+documentation:
+  map: _MAP.md
+  readme: README.md
+  user_stories:
+    - US-PP-001-data-model.md
+    - US-PP-002-portal-dashboard.md
+    - US-PP-003-notificaciones.md
+    - US-PP-004-reportes.md
+
+# Implementacion
+implementation:
+  database:
+    schema: auth
+    tables:
+      - name: parent_accounts
+        status: done
+        file: apps/database/ddl/schemas/auth/tables/parent_accounts.sql
+      - name: parent_student_links
+        status: done
+        file: apps/database/ddl/schemas/auth/tables/parent_student_links.sql
+    rls:
+      - parent_accounts_policy.sql
+      - parent_student_links_policy.sql
+
+  backend:
+    entities:
+      - name: ParentAccount
+        status: done
+        file: apps/backend/src/auth/entities/parent-account.entity.ts
+      - name: ParentStudentLink
+        status: done
+        file: apps/backend/src/auth/entities/parent-student-link.entity.ts
+    controllers:
+      - name: ParentController
+        status: pending
+    services:
+      - name: ParentService
+        status: pending
+
+  frontend:
+    pages:
+      - name: ParentLoginPage
+        status: pending
+      - name: ParentDashboard
+        status: pending
+    components:
+      - name: ChildProgressCard
+        status: pending
+      - name: WeeklyActivityChart
+        status: pending
+
+# Metricas
+metrics:
+  story_points_total: 20
+  story_points_done: 7
+  budget: 8000
+  sprints: null  # Fuera de MVP
+
+# Dependencias
+dependencies:
+  requires:
+    - EXT-003: Sistema de Notificaciones
+    - EXT-005: Sistema de Reportes
+  enables:
+    - B2C expansion
+    - Parent engagement

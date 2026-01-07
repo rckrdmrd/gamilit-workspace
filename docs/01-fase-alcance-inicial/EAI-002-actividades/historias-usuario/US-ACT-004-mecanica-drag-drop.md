@@ -1,3 +1,19 @@
+---
+id: "US-ACT-004"
+title: "Mecánicas intermedias - Drag & Drop"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-002"
+story_points: 8
+budget: "$2,900 MXN"
+sprint: "Sprint-1"
+labels: ["actividades", "mecanica", "drag-drop", "dnd-kit", "fullstack"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ACT-004: Mecánicas intermedias - Drag & Drop
 
 **Épica:** EAI-002 - Actividades Básicas Hardcodeadas
@@ -5,7 +21,7 @@
 **Story Points:** 8 SP
 **Presupuesto:** $2,900 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
@@ -247,10 +263,10 @@ const dragDropActivities = [
 
 ## Notas del Alcance Inicial
 
-- ✅ Drag & drop básico
-- ✅ Sin multi-drag (arrastrar varios a la vez)
-- ✅ Sin restricciones de cantidad por zona
-- ⚠️ **Extensión futura:** EXT-019-AdvancedInteractions
+- Done Drag & drop básico
+- Done Sin multi-drag (arrastrar varios a la vez)
+- Done Sin restricciones de cantidad por zona
+- **Extensión futura:** EXT-019-AdvancedInteractions
 
 ---
 
@@ -266,4 +282,5 @@ const dragDropActivities = [
 ---
 
 **Creado:** 2025-11-02
+**Actualizado:** 2026-01-04
 **Responsable:** Equipo Fullstack

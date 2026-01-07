@@ -1,3 +1,19 @@
+---
+id: "US-ACT-008"
+title: "Navegación entre actividades"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-002"
+story_points: 4
+budget: "$1,500 MXN"
+sprint: "Sprint-1"
+labels: ["actividades", "navegacion", "progreso", "modulos", "fullstack"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ACT-008: Navegación entre actividades
 
 **Épica:** EAI-002 - Actividades Básicas Hardcodeadas
@@ -5,7 +21,7 @@
 **Story Points:** 4 SP
 **Presupuesto:** $1,500 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
@@ -250,7 +266,7 @@ export function ProgressBar({ progress }) {
                   ? 'bg-maya-green-500 text-white ring-4 ring-maya-green-200'
                   : 'bg-gray-300 text-gray-600'
               }`}>
-                {activity.isCompleted ? '✓' : index + 1}
+                {activity.isCompleted ? 'check' : index + 1}
               </div>
               <p className="text-xs text-gray-500 mt-1 text-center max-w-[60px] truncate">
                 {activity.title}
@@ -281,13 +297,13 @@ export function NavigationButtons({ onPrevious, onNext, onExit }) {
         <div className="flex gap-3">
           {onPrevious && (
             <Button onClick={onPrevious} variant="outline">
-              ← Anterior
+              <- Anterior
             </Button>
           )}
 
           {onNext && (
             <Button onClick={onNext} variant="primary">
-              Siguiente →
+              Siguiente ->
             </Button>
           )}
         </div>
@@ -312,9 +328,9 @@ export function ModuleCompletionModal({ module, rewards, onClose }) {
   return (
     <Modal isOpen onClose={onClose} size="lg">
       <div className="text-center py-6">
-        <div className="text-6xl mb-4">🎉</div>
+        <div className="text-6xl mb-4">Celebration</div>
         <h2 className="text-3xl font-bold text-gray-900 mb-3">
-          ¡Módulo Completado!
+          Módulo Completado!
         </h2>
         <p className="text-lg text-gray-600 mb-6">
           Has completado exitosamente el módulo "{module.title}"
@@ -323,20 +339,20 @@ export function ModuleCompletionModal({ module, rewards, onClose }) {
         {/* Recompensas */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-yellow-50 p-4 rounded-lg">
-            <div className="text-3xl mb-2">⭐</div>
+            <div className="text-3xl mb-2">Star</div>
             <p className="text-sm text-gray-600">XP Ganado</p>
             <p className="text-2xl font-bold text-yellow-700">+{rewards.xp}</p>
           </div>
 
           <div className="bg-gold-50 p-4 rounded-lg">
-            <div className="text-3xl mb-2">💰</div>
+            <div className="text-3xl mb-2">Coins</div>
             <p className="text-sm text-gray-600">ML Coins</p>
             <p className="text-2xl font-bold text-gold-700">+{rewards.coins}</p>
           </div>
 
           {rewards.badge && (
             <div className="bg-purple-50 p-4 rounded-lg">
-              <div className="text-3xl mb-2">🏆</div>
+              <div className="text-3xl mb-2">Trophy</div>
               <p className="text-sm text-gray-600">Insignia</p>
               <p className="text-sm font-bold text-purple-700">Desbloqueada</p>
             </div>
@@ -377,10 +393,10 @@ export function ModuleCompletionModal({ module, rewards, onClose }) {
 
 ## Notas del Alcance Inicial
 
-- ✅ Navegación lineal (secuencial)
-- ✅ Sin navegación libre (skip)
-- ✅ Sin re-intentar actividades completadas
-- ⚠️ **Extensión futura:** EXT-022-Flexibility (navegación libre, re-intentos)
+- Done Navegación lineal (secuencial)
+- Done Sin navegación libre (skip)
+- Done Sin re-intentar actividades completadas
+- **Extensión futura:** EXT-022-Flexibility (navegación libre, re-intentos)
 
 ---
 
@@ -394,4 +410,5 @@ export function ModuleCompletionModal({ module, rewards, onClose }) {
 ---
 
 **Creado:** 2025-11-02
+**Actualizado:** 2026-01-04
 **Responsable:** Equipo Fullstack

@@ -19,6 +19,31 @@ import type {
   BulkActionResult,
 } from '../types';
 
+// Types for createUser - US-AE-010
+export interface CreateUserParams {
+  email: string;
+  full_name: string;
+  role: 'student' | 'admin_teacher';
+  organization_id: string;
+  classroom_id?: string;
+  send_welcome_email?: boolean;
+}
+
+export interface CreatedUserResult {
+  id: string;
+  email: string;
+  full_name: string;
+  role: string;
+  organization_id: string;
+  organization_name: string;
+  classroom_id?: string;
+  classroom_name?: string;
+  status: 'pending' | 'active';
+  created_at: string;
+  welcome_email_sent: boolean;
+  temporary_password?: string;
+}
+
 export interface UseUserManagementResult {
   // Data
   users: SystemUser[];
@@ -41,6 +66,7 @@ export interface UseUserManagementResult {
   toggleUserSelection: (userId: string) => void;
 
   // User operations
+  createUser: (data: CreateUserParams) => Promise<CreatedUserResult>;
   suspendUser: (userId: string, reason?: string) => Promise<void>;
   unsuspendUser: (userId: string) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
@@ -330,6 +356,31 @@ export function useUserManagement(): UseUserManagementResult {
     }
   }, []);
 
+  /**
+   * Create new user (US-AE-010)
+   * Creates a student or teacher with organization assignment
+   */
+  const createUser = useCallback(
+    async (data: CreateUserParams): Promise<CreatedUserResult> => {
+      try {
+        const response = await apiClient.post<{ success: boolean; data: CreatedUserResult }>(
+          '/admin/users',
+          data,
+        );
+
+        // Refresh user list after creation
+        await fetchUsers();
+
+        // Handle wrapped vs direct response
+        return response.data.success ? response.data.data : (response.data as unknown as CreatedUserResult);
+      } catch (err) {
+        console.error('Failed to create user:', err);
+        throw err;
+      }
+    },
+    [fetchUsers],
+  );
+
   // ============================================================================
   // BULK OPERATIONS
   // ============================================================================
@@ -487,6 +538,7 @@ export function useUserManagement(): UseUserManagementResult {
     toggleUserSelection,
 
     // User operations
+    createUser,
     suspendUser,
     unsuspendUser,
     deleteUser,

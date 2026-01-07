@@ -25,7 +25,7 @@ RETURNS TABLE (
 ) AS $$
 DECLARE
     v_user_level INTEGER;
-    v_user_rank maya_rank;
+    v_user_rank gamification_system.maya_rank;
 BEGIN
     -- Obtener nivel y rango del usuario
     SELECT us.level, ur.current_rank

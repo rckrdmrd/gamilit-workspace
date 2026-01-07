@@ -1,3 +1,19 @@
+---
+id: "US-PM-005b"
+title: "Generacion de Reportes"
+type: "User Story"
+status: "Backlog"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-001"
+story_points: 5
+budget: "$2,200 MXN"
+sprint: "Sprint-9"
+labels: ["portal-maestros", "reports", "export", "pdf", "csv"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-PM-005b: Generación de Reportes
 
 **Épica:** EXT-001 - Portal de Maestros Completo
@@ -5,7 +21,7 @@
 **Story Points:** 5 SP
 **Presupuesto:** $2,200 MXN
 **Prioridad:** Media (Extensión Fase 3)
-**Estado:** 📋 Planificada
+**Estado:** Backlog
 **Relación:** Parte de US-PM-005 (dividida en a/b/c)
 
 ## Descripción

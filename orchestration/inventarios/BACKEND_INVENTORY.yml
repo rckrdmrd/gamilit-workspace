@@ -139,10 +139,10 @@ modules:
     description: "Seguimiento de progreso"
     path: "apps/backend/src/modules/progress"
     schema_db: "progress_tracking"
-    entities: 13
-    services: 7
-    controllers: 5
-    dtos: 12
+    entities: 14  # ✅ 2026-01-04: +1 (Certificate entity - EPIC 10.2)
+    services: 8   # ✅ 2026-01-04: +1 (CertificateService - EPIC 10.2)
+    controllers: 6  # ✅ 2026-01-04: +1 (CertificateController - EPIC 10.2)
+    dtos: 18  # ✅ 2026-01-04: +6 (certificate.dto.ts - EPIC 10.2)
     main_features:
       - "Progreso de módulos"
       - "Intentos de ejercicios"
@@ -151,6 +151,7 @@ modules:
       - "Misiones programadas"
       - "Actividad reciente"
       - "Actividades pendientes"
+      - "Certificados digitales (EPIC 10.2)"  # ✅ NUEVO
     status: "✅ Active"
 
   - name: "social"
@@ -695,6 +696,18 @@ entities:
         - "Student (N:1)"
       status: "✅ Active"
       notes: "Implementado en M4-M5 para evaluación manual de contenido creativo"
+
+    - name: "Certificate"
+      file: "certificate.entity.ts"
+      table: "progress_tracking.certificates"
+      description: "Certificados digitales de completación (EPIC 10.2)"
+      relations:
+        - "Profile (N:1) - auth_management.profiles"
+        - "Module (N:1) - educational_content.modules"
+        - "Tenant (N:1) - auth_management.tenants"
+        - "Classroom (N:1) - social_features.classrooms"
+      status: "✅ Active"
+      notes: "EPIC 10.2 - Sistema de certificados digitales con QR, PDF generation y verificación pública"
 
   social_features:
     - name: "Friendship"
@@ -1358,6 +1371,48 @@ notes:
 # CHANGELOG / MODIFICACIONES RECIENTES
 # ============================================================================
 changelog:
+  - date: "2026-01-04"
+    tarea_id: "EPIC-10.2-CERTIFICATES"
+    type: "Epic Implementation - Digital Certificates System"
+    status: "✅ COMPLETADO"
+    modules_affected:
+      - "progress"
+    description: "Sistema completo de certificados digitales para completación de módulos"
+    changes:
+      progress:
+        - "Entity: certificate.entity.ts - 25+ campos con ENUMs CertificateStatus/CertificateType"
+        - "Service: certificate.service.ts - Generación PDF con Puppeteer, QR codes, verificación pública"
+        - "Controller: certificate.controller.ts - CRUD completo con guards de seguridad"
+        - "DTOs: certificate.dto.ts - 6 DTOs (Generate, Revoke, Verification, Response, Query)"
+    ddl_created:
+      - "progress_tracking/enums/certificate_enums.sql (certificate_status, certificate_type)"
+      - "progress_tracking/tables/18-certificates.sql (tabla con 9 índices, constraints)"
+      - "progress_tracking/rls-policies/04-certificates-policies.sql (4 políticas RLS)"
+      - "progress_tracking/triggers/32-trg_certificates_updated_at.sql"
+    security_fixes:
+      - "@UseGuards(JwtAuthGuard, RolesGuard) en controller"
+      - "@Public() decorator para verificación QR"
+      - "escapeHtml() en template PDF para prevenir XSS"
+      - "@Transform decorators en DTOs para query params"
+    integration:
+      - "ModuleProgressService.completeModule() → auto-genera certificado"
+      - "forwardRef() para evitar dependencia circular"
+    endpoints_added:
+      - "POST /certificates/generate"
+      - "GET /certificates/user/:userId"
+      - "GET /certificates/verify/:code (PUBLIC)"
+      - "POST /certificates/:id/revoke"
+      - "GET /certificates/:id/download"
+      - "GET /certificates/tenant/:tenantId/stats"
+    clean_load_policy:
+      violated: false
+      reason: "DDL nuevo sin impacto en tablas existentes"
+    documentation:
+      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
+      - "orchestration/inventarios/DATABASE_INVENTORY.yml"
+      - "orchestration/trazas/TRAZA-TAREAS-BACKEND.md (BE-138)"
+      - "CHANGELOG.md (v2.5.0)"
+
   - date: "2025-12-18"
     tarea_id: "IMPL-M4M5-CORRECCIONES-001"
     type: "Feature Implementation - M4-M5 DTOs"

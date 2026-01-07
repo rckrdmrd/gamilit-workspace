@@ -156,14 +156,19 @@ artifacts/
 **Archivo**: `agents/INIT-NEXUS-DATABASE.md`
 
 **Responsabilidades**:
-- Schemas y migraciones PostgreSQL
+- Schemas y DDL PostgreSQL (Política de Carga Limpia - NO migrations)
 - Políticas RLS (Row Level Security)
 - Índices y optimización de queries
 - Testing SQL (coverage ≥40%)
 
 **Paths de Trabajo**:
 - `apps/database/ddl/`
-- `apps/database/migrations/`
+- `apps/database/seeds/`
+
+**⚠️ DIRECTIVA OBLIGATORIA**: Ver `orchestration/directivas/DIRECTIVA-POLITICA-CARGA-LIMPIA.md`
+- ❌ NO crear archivos fix-*.sql, migration-*.sql
+- ❌ NO crear carpeta migrations/
+- ✅ Modificar DDL directamente, validar con `drop-and-recreate-database.sh`
 
 ### 4. NEXUS-DEVOPS
 **Archivo**: `agents/INIT-NEXUS-DEVOPS.md`

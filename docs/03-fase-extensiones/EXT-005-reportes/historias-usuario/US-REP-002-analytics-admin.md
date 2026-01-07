@@ -1,3 +1,19 @@
+---
+id: "US-REP-002"
+title: "Dashboard Analítico para Administrador de Plataforma"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-005"
+story_points: 13
+budget: "$6,500 MXN"
+sprint: "Sprint-Mes3"
+labels: ["ext-005", "analytics", "admin", "dashboard", "reportes", "metricas", "performance", "economia", "instituciones", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-REP-002: Analytics para Administrador de Plataforma
 
 ## Información Básica

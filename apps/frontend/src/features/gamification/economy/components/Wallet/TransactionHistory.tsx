@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Filter, Calendar, Search, ChevronDown } from 'lucide-react';
 import { useTransactions } from '../../hooks/useTransactions';
-import type { TransactionType } from '../../types/economyTypes';
+import { type TransactionCategory, getTransactionCategory } from '../../types/economyTypes';
 
 interface TransactionHistoryProps {
   limit?: number;
@@ -18,12 +18,16 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   showFilters = true,
 }) => {
   const { transactions, formatTransactionAmount, getTransactionColor } = useTransactions();
-  const [filterType, setFilterType] = useState<TransactionType | 'all'>('all');
+  // Filter by CATEGORY ('earn' | 'spend'), not specific type
+  const [filterCategory, setFilterCategory] = useState<TransactionCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilterMenu, setShowFilterMenu] = useState(false);
 
   const filteredTransactions = transactions
-    .filter((t) => filterType === 'all' || t.type === filterType)
+    .filter((t) => {
+      if (filterCategory === 'all') return true;
+      return getTransactionCategory(t.type) === filterCategory;
+    })
     .filter((t) =>
       searchQuery ? t.description.toLowerCase().includes(searchQuery.toLowerCase()) : true,
     )
@@ -64,24 +68,24 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               >
                 <Filter className="h-4 w-4" />
                 <span className="text-detective-sm">
-                  {filterType === 'all' ? 'All' : filterType === 'earn' ? 'Earned' : 'Spent'}
+                  {filterCategory === 'all' ? 'All' : filterCategory === 'earn' ? 'Earned' : 'Spent'}
                 </span>
                 <ChevronDown className="h-4 w-4" />
               </button>
               {showFilterMenu && (
                 <div className="absolute right-0 z-10 mt-2 w-48 overflow-hidden rounded-detective border border-detective-orange/20 bg-white shadow-card-hover">
-                  {(['all', 'earn', 'spend'] as const).map((type) => (
+                  {(['all', 'earn', 'spend'] as const).map((cat) => (
                     <button
-                      key={type}
+                      key={cat}
                       onClick={() => {
-                        setFilterType(type);
+                        setFilterCategory(cat);
                         setShowFilterMenu(false);
                       }}
                       className="w-full px-4 py-2 text-left transition-colors hover:bg-detective-bg"
                     >
-                      {type === 'all'
+                      {cat === 'all'
                         ? 'All Transactions'
-                        : type === 'earn'
+                        : cat === 'earn'
                           ? 'Earned Only'
                           : 'Spent Only'}
                     </button>
@@ -100,44 +104,49 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
             <p>No transactions found</p>
           </div>
         ) : (
-          filteredTransactions.map((transaction, index) => (
-            <motion.div
-              key={transaction.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="flex items-center justify-between rounded-detective bg-detective-bg p-4 transition-colors hover:bg-detective-bg-secondary"
-            >
-              <div className="flex items-center gap-4">
-                <div
-                  className={`
-                    rounded-full p-2
-                    ${transaction.type === 'earn' ? 'bg-detective-success/20' : 'bg-detective-danger/20'}
-                  `}
-                >
-                  {transaction.type === 'earn' ? (
-                    <TrendingUp className="h-5 w-5 text-detective-success" />
-                  ) : (
-                    <TrendingDown className="h-5 w-5 text-detective-danger" />
-                  )}
+          filteredTransactions.map((transaction, index) => {
+            const category = getTransactionCategory(transaction.type);
+            const isEarn = category === 'earn';
+
+            return (
+              <motion.div
+                key={transaction.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="flex items-center justify-between rounded-detective bg-detective-bg p-4 transition-colors hover:bg-detective-bg-secondary"
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`
+                      rounded-full p-2
+                      ${isEarn ? 'bg-detective-success/20' : 'bg-detective-danger/20'}
+                    `}
+                  >
+                    {isEarn ? (
+                      <TrendingUp className="h-5 w-5 text-detective-success" />
+                    ) : (
+                      <TrendingDown className="h-5 w-5 text-detective-danger" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium text-detective-text">{transaction.description}</p>
+                    <p className="text-detective-sm text-detective-text-secondary">
+                      {formatDate(transaction.timestamp)}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium text-detective-text">{transaction.description}</p>
+                <div className="text-right">
+                  <p className={`text-detective-lg font-bold ${getTransactionColor(transaction)}`}>
+                    {formatTransactionAmount(transaction)}
+                  </p>
                   <p className="text-detective-sm text-detective-text-secondary">
-                    {formatDate(transaction.timestamp)}
+                    Balance: {transaction.balanceAfter.toLocaleString()} ML
                   </p>
                 </div>
-              </div>
-              <div className="text-right">
-                <p className={`text-detective-lg font-bold ${getTransactionColor(transaction)}`}>
-                  {formatTransactionAmount(transaction)}
-                </p>
-                <p className="text-detective-sm text-detective-text-secondary">
-                  Balance: {transaction.balanceAfter.toLocaleString()} ML
-                </p>
-              </div>
-            </motion.div>
-          ))
+              </motion.div>
+            );
+          })
         )}
       </div>
 

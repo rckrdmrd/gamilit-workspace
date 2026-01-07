@@ -1,0 +1,214 @@
+# Configuracion del Sistema de Planificacion GAMILIT
+# Basado en: Estandar-SCRUM.md (Principio SIMCO)
+# Version: 1.0
+# Fecha: 2026-01-04
+
+project:
+  name: "GAMILIT"
+  description: "Plataforma de Gamificacion Educativa"
+  version: "1.0.0"
+  repository: "gamilit"
+
+# Estados validos para elementos de trabajo
+states:
+  user_story:
+    - "Backlog"
+    - "To Do"
+    - "In Progress"
+    - "In Review"
+    - "Done"
+  task:
+    - "To Do"
+    - "In Progress"
+    - "Blocked"
+    - "Done"
+  bug:
+    - "Open"
+    - "In Progress"
+    - "Fixed"
+    - "Done"
+    - "Won't Fix"
+
+# Prioridades
+priorities:
+  - id: "P0"
+    name: "Critico"
+    description: "Bloqueante para produccion o seguridad"
+    sla_hours: 4
+  - id: "P1"
+    name: "Alto"
+    description: "Funcionalidad core, deadline cercano"
+    sla_hours: 24
+  - id: "P2"
+    name: "Medio"
+    description: "Mejoras importantes, puede esperar"
+    sla_hours: 72
+  - id: "P3"
+    name: "Bajo"
+    description: "Nice-to-have, mejoras menores"
+    sla_hours: null
+
+# Prefijos de nomenclatura
+naming:
+  epic_alcance_inicial: "EAI"
+  epic_extension: "EXT"
+  epic_migracion: "EMR"
+  user_story: "US"
+  task: "TASK"
+  bug: "BUG"
+  requirement: "RF"
+  specification: "ET"
+  adr: "ADR"
+
+# Subcategorias de User Stories
+us_categories:
+  - prefix: "FUND"
+    epic: "EAI-001"
+    description: "Fundamentos"
+  - prefix: "ACT"
+    epic: "EAI-002"
+    description: "Actividades"
+  - prefix: "GAM"
+    epic: "EAI-003"
+    description: "Gamificacion"
+  - prefix: "ANA"
+    epic: "EAI-004"
+    description: "Analytics"
+  - prefix: "ADM"
+    epic: "EAI-005"
+    description: "Admin Base"
+  - prefix: "SYS"
+    epic: "EAI-006"
+    description: "Sistema/Configuracion"
+  - prefix: "PM"
+    epic: "EXT-001"
+    description: "Portal Maestros"
+  - prefix: "AE"
+    epic: "EXT-002"
+    description: "Admin Extendido"
+  - prefix: "NOT"
+    epic: "EXT-003"
+    description: "Notificaciones"
+  - prefix: "PERF"
+    epic: "EXT-004"
+    description: "Perfiles"
+  - prefix: "REP"
+    epic: "EXT-005"
+    description: "Reportes"
+  - prefix: "CONT"
+    epic: "EXT-006"
+    description: "Contenido"
+  - prefix: "LTI"
+    epic: "EXT-007"
+    description: "LTI Integration"
+  - prefix: "WL"
+    epic: "EXT-008"
+    description: "White Label"
+  - prefix: "PEER"
+    epic: "EXT-009"
+    description: "Peer Challenges"
+  - prefix: "PARENT"
+    epic: "EXT-010"
+    description: "Parent Notifications"
+  - prefix: "PP"
+    epic: "EXT-011"
+    description: "Parent Portal"
+
+# Configuracion de sprints
+sprint:
+  duration_days: 10
+  velocity_target: 40
+  current_sprint: 9
+  current_phase: 3
+
+# Agentes disponibles
+agents:
+  - id: "@Backend-Agent"
+    specialization: "NestJS, TypeORM, APIs"
+  - id: "@Frontend-Agent"
+    specialization: "React, TypeScript, UI/UX"
+  - id: "@Database-Agent"
+    specialization: "PostgreSQL, Migrations, Seeds"
+  - id: "@Integration-Agent"
+    specialization: "Testing, Validacion, CI/CD"
+  - id: "@DevOps-Agent"
+    specialization: "Docker, Kubernetes, Deployment"
+
+# Columnas del tablero Kanban
+kanban_columns:
+  - id: "backlog"
+    name: "Backlog"
+    description: "Items no planificados"
+  - id: "todo"
+    name: "Por Hacer"
+    description: "Planificado para sprint actual"
+  - id: "in_progress"
+    name: "En Progreso"
+    description: "Trabajo activo"
+  - id: "blocked"
+    name: "Bloqueado"
+    description: "Esperando dependencias"
+  - id: "review"
+    name: "En Revision"
+    description: "Pendiente de validacion"
+  - id: "done"
+    name: "Hecho"
+    description: "Completado y validado"
+
+# Campos requeridos por tipo de documento
+required_fields:
+  user_story:
+    - "id"
+    - "title"
+    - "status"
+    - "epic"
+    - "story_points"
+  task:
+    - "id"
+    - "title"
+    - "status"
+    - "priority"
+  bug:
+    - "id"
+    - "title"
+    - "status"
+    - "severity"
+    - "affected_module"
+  requirement:
+    - "id"
+    - "title"
+    - "status"
+    - "module"
+  specification:
+    - "id"
+    - "title"
+    - "status"
+    - "rf_parent"
+
+# Rutas importantes
+paths:
+  planning: "/docs/planning/"
+  tasks: "/docs/planning/tasks/"
+  bugs: "/docs/planning/bugs/"
+  board: "/docs/planning/Board.md"
+  backlog: "/docs/04-fase-backlog/"
+  sprints: "/docs/90-transversal/sprints/"
+  trazas: "/orchestration/trazas/"
+
+# Metricas del proyecto
+metrics:
+  total_epics: 20
+  total_user_stories: 113
+  total_requirements: 18
+  total_specifications: 22
+  total_maps: 83
+  compliance_target: 100
+  current_compliance: 46
+
+# Configuracion de validacion
+validation:
+  require_yaml_frontmatter: true
+  require_acceptance_criteria: true
+  require_story_points: true
+  max_file_lines: 400
+  enforce_naming_convention: true

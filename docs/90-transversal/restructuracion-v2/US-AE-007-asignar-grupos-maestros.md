@@ -1,12 +1,43 @@
+---
+id: "US-AE-007"
+title: "Asignar Grupos a Maestros"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 6
+budget: "$2,400 MXN"
+sprint: "Sprint-FE-059"
+labels: ["admin-extendido", "classrooms", "teachers", "v2-core", "implemented"]
+created_date: "2025-11-08"
+updated_date: "2026-01-06"
+completed_date: "2025-11-19"
+---
+
 # US-AE-007: Asignar Grupos a Maestros
 
-**Épica:** EXT-002 - Gestión Avanzada Admin
-**Fase:** Fase 3 - Extensiones
-**Alcance:** v2 CORE - Ampliación
-**Prioridad:** ALTA
-**Story Points:** 6 SP
-**Estimación:** $2,400 MXN
-**Estado:** 📝 Especificado
+> **NOTA: COPIA DE REFERENCIA**
+>
+> Este archivo es una copia de trabajo usada durante la restructuración v2.
+>
+> **SSOT (Single Source of Truth):**
+> `docs/03-fase-extensiones/EXT-002-admin-extendido/historias-usuario/US-AE-007-asignar-grupos-maestros.md`
+>
+> **Estado actual:** IMPLEMENTADO (Done) - 2025-11-19
+
+## Informacion General
+
+| Campo | Valor |
+|-------|-------|
+| **ID** | US-AE-007 |
+| **Epica** | EXT-002 - Gestion Avanzada Admin |
+| **Fase** | Fase 3 - Extensiones |
+| **Alcance** | v2 CORE - Ampliacion |
+| **Prioridad** | Alta (P1) |
+| **Story Points** | 6 SP |
+| **Presupuesto** | $2,400 MXN |
+| **Estado** | Backlog |
 
 ---
 
@@ -448,10 +479,10 @@ export class ClassroomAssignmentsService {
   ): Promise<void> {
     // 1. Verificar si hay estudiantes activos
     const { count } = await this.dbClientService.client
-      .from('social_features.classroom_enrollments')
+      .from('social_features.classroom_members')
       .select('*', { count: 'exact', head: true })
       .eq('classroom_id', classroomId)
-      .eq('is_active', true);
+      .eq('status', 'active');
 
     if (count > 0 && !force) {
       throw new ConflictException(

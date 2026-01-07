@@ -1,10 +1,15 @@
 # ROADMAP GENERAL - GAMILITPLATFORM
-## Plan Estratégico de Desarrollo Reestructurado (3 Meses)
+## Plan Estrategico de Desarrollo Reestructurado (3 Meses)
 
-**Versión:** 3.3 - Actualizado con alcance MVP clarificado
+**Version:** 3.4 - Sincronizado con Sprints
 **Fecha:** 29 de Noviembre, 2025
-**Estado:** MVP DEFINIDO - Implementación Core Completada
-**Basado en:** Análisis exhaustivo del código + Verificación de scripts de inicialización
+**Ultima actualizacion:** 2026-01-04
+**Estado:** MVP DEFINIDO - Implementacion Core Completada
+**Basado en:** Analisis exhaustivo del codigo + Verificacion de scripts de inicializacion
+
+**Documentos Relacionados:**
+- [SPRINTS-DETALLADOS.md](../sprints/SPRINTS-DETALLADOS.md) - Plan de ejecucion por sprints
+- [04-fase-backlog/](../../04-fase-backlog/) - Funcionalidad fuera del MVP
 
 ---
 

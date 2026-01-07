@@ -30,6 +30,7 @@ import { HealthModule } from './modules/health/health.module';
 
 // Shared
 import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
+import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor';
 
 @Module({
   imports: [
@@ -154,7 +155,10 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [__dirname + '/modules/social/entities/**/*.entity{.ts,.js}'],
+        entities: [
+          __dirname + '/modules/social/entities/**/*.entity{.ts,.js}',
+          __dirname + '/modules/assignments/entities/**/*.entity{.ts,.js}', // Needed for AssignmentClassroom relation
+        ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),
@@ -267,6 +271,12 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
       provide: APP_INTERCEPTOR,
       useClass: RlsInterceptor,
     },
+    // Global Audit Interceptor for compliance logging
+    // Logs all POST, PUT, PATCH, DELETE requests automatically
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditInterceptor,
+    },
   ],
 })
-export class AppModule {}
+export class AppModule { }

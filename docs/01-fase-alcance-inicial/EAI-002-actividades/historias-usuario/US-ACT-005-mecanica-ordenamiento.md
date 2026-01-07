@@ -1,3 +1,19 @@
+---
+id: "US-ACT-005"
+title: "Mecánicas intermedias - Ordenamiento"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-002"
+story_points: 7
+budget: "$2,600 MXN"
+sprint: "Sprint-1"
+labels: ["actividades", "mecanica", "ordering", "sortable", "fullstack"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ACT-005: Mecánicas intermedias - Ordenamiento
 
 **Épica:** EAI-002 - Actividades Básicas Hardcodeadas
@@ -5,7 +21,7 @@
 **Story Points:** 7 SP
 **Presupuesto:** $2,600 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
@@ -153,4 +169,5 @@ export function OrderingActivity({ activity }) {
 ---
 
 **Creado:** 2025-11-02
+**Actualizado:** 2026-01-04
 **Responsable:** Equipo Fullstack

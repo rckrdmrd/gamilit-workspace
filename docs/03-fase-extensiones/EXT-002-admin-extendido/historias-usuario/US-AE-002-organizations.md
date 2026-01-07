@@ -1,19 +1,36 @@
-# HU-EP010-02: Gestión de Organizaciones
+---
+id: "US-AE-002"
+title: "Gestion de Organizaciones/Escuelas"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 18
+budget: "$7,200 MXN"
+sprint: "Sprint-2"
+labels: ["admin-extendido", "organizations", "subscriptions", "feature-flags"]
+created_date: "2025-10-28"
+updated_date: "2026-01-04"
+completed_date: "2025-11-14"
+---
 
-## Información General
+# HU-EP010-02: Gestion de Organizaciones
+
+## Informacion General
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | US-AE-002 |
-| **Épica** | EXT-002 - Admin Extendido |
-| **Título** | Gestión de Organizaciones/Escuelas |
+| **Epica** | EXT-002 - Admin Extendido |
+| **Titulo** | Gestion de Organizaciones/Escuelas |
 | **Prioridad** | Alta (P1) |
 | **Story Points** | 18 SP |
-| **Estado** | ✅ COMPLETED |
+| **Estado** | Done |
 | **Sprint** | Sprint 2 |
-| **Duración Estimada** | 5 días |
-| **Duración Real** | 2h (FE-059 Day 4) |
-| **Fecha Implementación** | 2025-11-14 |
+| **Duracion Estimada** | 5 dias |
+| **Duracion Real** | 2h (FE-059 Day 4) |
+| **Fecha Implementacion** | 2025-11-14 |
 
 ---
 

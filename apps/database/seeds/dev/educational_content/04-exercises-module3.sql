@@ -148,6 +148,7 @@ BEGIN
 
     -- ========================================================================
     -- EXERCISE 3.2: DEBATE DIGITAL - ÉTICA CIENTÍFICA
+    -- ✅ FIX: Requiere evaluación manual según diseño oficial
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
@@ -268,10 +269,10 @@ BEGIN
         true, 15,
         150, 30,
         true, 1,
-        true  -- requires_manual_grading = true (COR-M3)
+        true  -- requires_manual_grading = true
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
-        requires_manual_grading = EXCLUDED.requires_manual_grading,  -- COR-M3
+        requires_manual_grading = EXCLUDED.requires_manual_grading,
         updated_at = NOW();
 
     -- ========================================================================

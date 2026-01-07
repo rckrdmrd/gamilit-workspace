@@ -39,7 +39,7 @@ export class UserStatsService {
     // P0-001: Agregar Profile repository para validación
     @InjectRepository(Profile, 'auth')
     private readonly profileRepo: Repository<Profile>,
-  ) {}
+  ) { }
 
   /**
    * P0-001: Verifica que el perfil existe antes de operaciones de gamificación
@@ -49,7 +49,7 @@ export class UserStatsService {
    */
   private async validateProfileExists(userId: string): Promise<Profile> {
     const profile = await this.profileRepo.findOne({
-      where: { id: userId },
+      where: { user_id: userId },
     });
 
     if (!profile) {

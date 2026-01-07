@@ -1,15 +1,20 @@
 /**
- * User Stats Types
+ * User Stats Types (Simplified - CamelCase)
  *
  * Type definitions for user statistics and gamification metrics.
  *
  * @description
- * Canonical types for user statistics matching backend entity.
- * This file provides simplified types for use in components and pages.
- * For complete types, see /shared/types/user-stats.types.ts
+ * Simplified types for use in React components and pages.
+ * Uses camelCase naming convention for React/JS consistency.
  *
+ * ⚠️ NOTA DE CONSOLIDACIÓN (Audit 2026-01-04):
+ * - SSOT para UserStats completo: @/shared/types/gamification.types.ts (snake_case, 37 campos)
+ * - Este archivo: versión simplificada para componentes (camelCase, campos básicos)
+ * - Transformación API → Frontend se realiza en los hooks/services
+ *
+ * @see SSOT: @/shared/types/gamification.types.ts
  * @see Backend Entity: gamification_system.user_stats table
- * @see /shared/types/user-stats.types.ts for complete UserStats interface
+ * @see Transformación: @/features/gamification/hooks/useUserStats.ts
  */
 
 import { MayaRank } from '../shared/constants/ranks.constants';

@@ -1,51 +1,63 @@
 # _MAP: docs/97-adr/
 
-**Última actualización:** 2025-11-29
-**Estado:** 🟢 Activo
-**Versión:** 3.0
-**Propósito:** Architecture Decision Records
+**Ultima actualizacion:** 2026-01-04
+**Estado:** Activo
+**Version:** 3.1
+**Proposito:** Architecture Decision Records
 
 ---
 
-## 📋 Propósito de esta Carpeta
+## Proposito
 
-Registro de todas las decisiones arquitectónicas importantes del proyecto GAMILIT.
+Registro de todas las decisiones arquitectonicas importantes del proyecto GAMILIT.
 
-**Formato:** ADR-{NUM}-{título}.md
+**Formato:** ADR-{NUM}-{titulo}.md
 
 **Audiencia:** Tech Leads, Arquitectos, Product Owner
 
 ---
 
-## 📁 Contenido
+## Nota sobre Numeracion
 
-### ADRs Implementados (19)
+Los ADRs tienen gaps en numeracion por decisiones deprecadas o no finalizadas:
+- ADR-004, ADR-005, ADR-006: Nunca creados o deprecados
+- ADR-023, ADR-024, ADR-025: Reservados para uso futuro
 
-| ADR | Título | Estado | Categoría |
+Los ADRs NO se renumeran para mantener estabilidad de referencias.
+
+---
+
+## Contenido
+
+### ADRs Implementados (21)
+
+| ADR | Titulo | Estado | Categoria |
 |-----|--------|--------|-----------|
-| **ADR-0001** | Monorepo Architecture | ✅ Implemented | Architecture |
-| **ADR-0002** | Sistema SIMCO (_MAP.md) | ✅ Implemented | Documentation |
-| **ADR-0003** | Team vs Guild | ✅ Implemented | Social Features |
-| **ADR-007** | Schemas sin Tablas | ✅ Accepted | Database |
-| **ADR-008** | Sistema Dual exercise_type | ✅ Implemented | Database |
-| **ADR-009** | Duración Podcast Ejercicio 3.4 | ✅ Implemented | Content Design |
-| **ADR-010** | Documento Diseño Fuente Verdad | ✅ Accepted | Architecture |
-| **ADR-011** | Frontend API Client Structure | ✅ Accepted | Frontend |
-| **ADR-012** | Automatic User Initialization Trigger | ✅ Implemented | Database |
-| **ADR-013** | React Query Adoption | ✅ Implemented | Frontend |
-| **ADR-014** | Nil-Safety Patterns | ✅ Accepted | Frontend |
-| **ADR-015** | Centralized API Routes | ✅ Implemented | Frontend |
-| **ADR-016** | Simplificar Backend XP | ✅ Implemented | Backend |
-| **ADR-017** | Admin Portal Avanzado | ✅ Accepted | Architecture |
-| **ADR-018** | Removal Migrations Folders | ✅ Accepted | Database |
-| **ADR-019** | Runtime Validation Zod | ✅ Accepted | Frontend |
-| **ADR-020** | Validación Alternativas Fill-in-Blank | ✅ Implemented | Database |
-| **ADR-021** | Estandarización Recompensas XP | ✅ Implemented | Gamification |
-| **ADR-026** | SIMCO v2 Estructura Modular | ✅ Accepted | Documentation |
+| ADR-0001 | Monorepo Architecture | Implemented | Architecture |
+| ADR-0002 | Sistema SIMCO (_MAP.md) | Implemented | Documentation |
+| ADR-0003 | Team vs Guild | Implemented | Social Features |
+| ADR-007 | Schemas sin Tablas | Accepted | Database |
+| ADR-008 | Sistema Dual exercise_type | Implemented | Database |
+| ADR-009 | Duracion Podcast Ejercicio 3.4 | Implemented | Content Design |
+| ADR-010 | Documento Diseno Fuente Verdad | Accepted | Architecture |
+| ADR-011 | Frontend API Client Structure | Accepted | Frontend |
+| ADR-012 | Automatic User Initialization Trigger | Implemented | Database |
+| ADR-013 | React Query Adoption | Implemented | Frontend |
+| ADR-014 | Nil-Safety Patterns | Accepted | Frontend |
+| ADR-015 | Centralized API Routes | Implemented | Frontend |
+| ADR-016 | Simplificar Backend XP | Implemented | Backend |
+| ADR-017 | Admin Portal Avanzado | Accepted | Architecture |
+| ADR-018 | Removal Migrations Folders | Accepted | Database |
+| ADR-019 | Runtime Validation Zod | Accepted | Frontend |
+| ADR-020 | Validacion Alternativas Fill-in-Blank | Implemented | Database |
+| ADR-021 | Estandarizacion Recompensas XP | Implemented | Gamification |
+| ADR-022 | Eliminacion Changelog Deuda Tecnica | Accepted | Maintenance |
+| ADR-026 | SIMCO v2 Estructura Modular | Accepted | Documentation |
+| ADR-027 | Mapeo Triggers de Misiones | Aprobado | Database |
 
-**Total ADRs:** 19 implementados/aceptados
+**Total ADRs:** 21 implementados/aceptados
 
-**Estado:** 🟢 Sistema activo y consolidado
+**Estado:** Activo y consolidado
 
 ---
 
@@ -76,7 +88,7 @@ Registro de todas las decisiones arquitectónicas importantes del proyecto GAMIL
 
 ## 🎯 Próximos ADRs Disponibles
 
-Números disponibles para nuevos ADRs: **ADR-022**, **ADR-023**, **ADR-024**, **ADR-025**, **ADR-027+**
+Numeros disponibles para nuevos ADRs: **ADR-023**, **ADR-024**, **ADR-025**, **ADR-028+**
 
 ---
 

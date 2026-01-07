@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Trophy, AlertCircle, Loader } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
 import { AchievementCard } from '@/shared/components/AchievementCard';
 import { AchievementFilter } from '@/shared/components/AchievementFilter';
@@ -32,6 +33,9 @@ import type {
  */
 export const AchievementsPage: React.FC = () => {
   const { user, logout: _logout } = useAuth();
+
+  // Gamification data for header
+  const { gamificationData } = useUserGamification(user?.id);
 
   // State for data
   const [allAchievements, setAllAchievements] = useState<Achievement[]>([]);
@@ -296,7 +300,7 @@ export const AchievementsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader user={user || undefined} onLogout={_logout} />
+      <GamifiedHeader user={user || undefined} gamificationData={gamificationData} onLogout={_logout} />
 
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Page Header */}
@@ -452,6 +456,9 @@ export const AchievementsPage: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Bottom Spacing */}
+      <div className="h-16" />
     </div>
   );
 };

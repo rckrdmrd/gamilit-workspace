@@ -6,7 +6,7 @@
 
 import { useCallback, useMemo } from 'react';
 import { useEconomyStore } from '../store/economyStore';
-import type { Transaction, AnalyticsPeriod } from '../types/economyTypes';
+import { type Transaction, type AnalyticsPeriod, getTransactionCategory } from '../types/economyTypes';
 
 export const useTransactions = () => {
   const transactions = useEconomyStore((state) => state.transactions);
@@ -14,8 +14,8 @@ export const useTransactions = () => {
   const clearTransactionHistory = useEconomyStore((state) => state.clearTransactionHistory);
 
   /**
-   * Get transactions for a specific period
-   */
+    * Get transactions for a specific period
+    */
   const getTransactionsByPeriod = useCallback(
     (period: AnalyticsPeriod): Transaction[] => {
       const now = new Date();
@@ -45,48 +45,48 @@ export const useTransactions = () => {
   );
 
   /**
-   * Get earn transactions only
-   */
+    * Get earn transactions only
+    */
   const earnTransactions = useMemo(() => {
-    return transactions.filter((t) => t.type === 'earn');
+    return transactions.filter((t) => getTransactionCategory(t.type) === 'earn');
   }, [transactions]);
 
   /**
-   * Get spend transactions only
-   */
+    * Get spend transactions only
+    */
   const spendTransactions = useMemo(() => {
-    return transactions.filter((t) => t.type === 'spend');
+    return transactions.filter((t) => getTransactionCategory(t.type) === 'spend');
   }, [transactions]);
 
   /**
-   * Calculate total earned in period
-   */
+    * Calculate total earned in period
+    */
   const getTotalEarned = useCallback(
     (period: AnalyticsPeriod = 'all'): number => {
       const periodTransactions = getTransactionsByPeriod(period);
       return periodTransactions
-        .filter((t) => t.type === 'earn')
+        .filter((t) => getTransactionCategory(t.type) === 'earn')
         .reduce((sum, t) => sum + t.amount, 0);
     },
     [getTransactionsByPeriod],
   );
 
   /**
-   * Calculate total spent in period
-   */
+    * Calculate total spent in period
+    */
   const getTotalSpent = useCallback(
     (period: AnalyticsPeriod = 'all'): number => {
       const periodTransactions = getTransactionsByPeriod(period);
       return Math.abs(
-        periodTransactions.filter((t) => t.type === 'spend').reduce((sum, t) => sum + t.amount, 0),
+        periodTransactions.filter((t) => getTransactionCategory(t.type) === 'spend').reduce((sum, t) => sum + t.amount, 0),
       );
     },
     [getTransactionsByPeriod],
   );
 
   /**
-   * Get net change (earned - spent)
-   */
+    * Get net change (earned - spent)
+    */
   const getNetChange = useCallback(
     (period: AnalyticsPeriod = 'all'): number => {
       return getTotalEarned(period) - getTotalSpent(period);
@@ -95,25 +95,27 @@ export const useTransactions = () => {
   );
 
   /**
-   * Get transaction count by type
-   */
+    * Get transaction count by type/category
+    * Note: Modified to accept 'earn'|'spend' category or specific TransactionType?
+    * Keeping interface compatible: type argument is interpreted as category if 'earn'/'spend'
+    */
   const getTransactionCount = useCallback(
-    (type?: 'earn' | 'spend', period: AnalyticsPeriod = 'all'): number => {
+    (category?: 'earn' | 'spend', period: AnalyticsPeriod = 'all'): number => {
       const periodTransactions = getTransactionsByPeriod(period);
-      if (!type) return periodTransactions.length;
-      return periodTransactions.filter((t) => t.type === type).length;
+      if (!category) return periodTransactions.length;
+      return periodTransactions.filter((t) => getTransactionCategory(t.type) === category).length;
     },
     [getTransactionsByPeriod],
   );
 
   /**
-   * Get average transaction amount
-   */
+    * Get average transaction amount
+    */
   const getAverageAmount = useCallback(
-    (type?: 'earn' | 'spend', period: AnalyticsPeriod = 'all'): number => {
+    (category?: 'earn' | 'spend', period: AnalyticsPeriod = 'all'): number => {
       const periodTransactions = getTransactionsByPeriod(period);
-      const filtered = type
-        ? periodTransactions.filter((t) => t.type === type)
+      const filtered = category
+        ? periodTransactions.filter((t) => getTransactionCategory(t.type) === category)
         : periodTransactions;
 
       if (filtered.length === 0) return 0;
@@ -125,13 +127,13 @@ export const useTransactions = () => {
   );
 
   /**
-   * Get largest transaction
-   */
+    * Get largest transaction
+    */
   const getLargestTransaction = useCallback(
-    (type?: 'earn' | 'spend', period: AnalyticsPeriod = 'all'): Transaction | null => {
+    (category?: 'earn' | 'spend', period: AnalyticsPeriod = 'all'): Transaction | null => {
       const periodTransactions = getTransactionsByPeriod(period);
-      const filtered = type
-        ? periodTransactions.filter((t) => t.type === type)
+      const filtered = category
+        ? periodTransactions.filter((t) => getTransactionCategory(t.type) === category)
         : periodTransactions;
 
       if (filtered.length === 0) return null;
@@ -144,8 +146,8 @@ export const useTransactions = () => {
   );
 
   /**
-   * Get transactions grouped by source
-   */
+    * Get transactions grouped by source
+    */
   const getTransactionsBySource = useCallback(
     (period: AnalyticsPeriod = 'all'): Record<string, Transaction[]> => {
       const periodTransactions = getTransactionsByPeriod(period);
@@ -164,12 +166,12 @@ export const useTransactions = () => {
   );
 
   /**
-   * Get top earning sources
-   */
+    * Get top earning sources
+    */
   const getTopEarningSources = useCallback(
     (limit: number = 5, period: AnalyticsPeriod = 'all') => {
       const periodTransactions = getTransactionsByPeriod(period);
-      const earnOnly = periodTransactions.filter((t) => t.type === 'earn');
+      const earnOnly = periodTransactions.filter((t) => getTransactionCategory(t.type) === 'earn');
 
       const sourceAmounts: Record<string, number> = {};
       earnOnly.forEach((t) => {
@@ -185,8 +187,8 @@ export const useTransactions = () => {
   );
 
   /**
-   * Get transaction trend (comparing periods)
-   */
+    * Get transaction trend (comparing periods)
+    */
   const getTransactionTrend = useCallback(
     (currentPeriod: AnalyticsPeriod, previousPeriod: AnalyticsPeriod) => {
       const currentTotal = getTotalEarned(currentPeriod);
@@ -200,8 +202,8 @@ export const useTransactions = () => {
   );
 
   /**
-   * Get recent transactions
-   */
+    * Get recent transactions
+    */
   const getRecentTransactions = useCallback(
     (limit: number = 10): Transaction[] => {
       return transactions.slice(0, limit);
@@ -210,19 +212,20 @@ export const useTransactions = () => {
   );
 
   /**
-   * Format transaction amount with sign
-   */
+    * Format transaction amount with sign
+    */
   const formatTransactionAmount = useCallback((transaction: Transaction): string => {
-    const sign = transaction.type === 'earn' ? '+' : '-';
+    const isEarn = getTransactionCategory(transaction.type) === 'earn';
+    const sign = isEarn ? '+' : '-';
     const amount = Math.abs(transaction.amount).toLocaleString('en-US');
     return `${sign}${amount} ML`;
   }, []);
 
   /**
-   * Get transaction color class
-   */
+    * Get transaction color class
+    */
   const getTransactionColor = useCallback((transaction: Transaction): string => {
-    return transaction.type === 'earn' ? 'text-detective-success' : 'text-detective-danger';
+    return getTransactionCategory(transaction.type) === 'earn' ? 'text-detective-success' : 'text-detective-danger';
   }, []);
 
   return {

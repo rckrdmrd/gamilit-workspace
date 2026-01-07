@@ -1,3 +1,19 @@
+---
+id: "US-ACT-006"
+title: "Mecánicas intermedias - Asociación"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-002"
+story_points: 7
+budget: "$2,600 MXN"
+sprint: "Sprint-1"
+labels: ["actividades", "mecanica", "matching", "asociacion", "fullstack"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ACT-006: Mecánicas intermedias - Asociación
 
 **Épica:** EAI-002 - Actividades Básicas Hardcodeadas
@@ -5,7 +21,7 @@
 **Story Points:** 7 SP
 **Presupuesto:** $2,600 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
@@ -169,7 +185,7 @@ export function MatchingActivity({ activity }) {
                     onClick={() => setPairs(pairs.filter((_, i) => i !== index))}
                     className="ml-auto text-red-500 hover:text-red-700"
                   >
-                    ✕
+                    X
                   </button>
                 </div>
               )
@@ -200,10 +216,10 @@ export function MatchingActivity({ activity }) {
   content: {
     instructions: 'Conecta cada símbolo maya con su valor decimal',
     leftColumn: [
-      { id: 'l1', content: '● (un punto)' },
-      { id: 'l2', content: '━ (una barra)' },
-      { id: 'l3', content: '●●● (tres puntos)' },
-      { id: 'l4', content: '━━ (dos barras)' },
+      { id: 'l1', content: '(un punto)' },
+      { id: 'l2', content: '(una barra)' },
+      { id: 'l3', content: '(tres puntos)' },
+      { id: 'l4', content: '(dos barras)' },
     ],
     rightColumn: [
       { id: 'r1', content: '10' },
@@ -245,8 +261,8 @@ export function MatchingActivity({ activity }) {
 
 ## Notas
 
-- ✅ Sin dibujar líneas (simplificado con clicks)
-- ⚠️ **Extensión futura:** EXT-019 (líneas SVG conectando pares)
+- Done Sin dibujar líneas (simplificado con clicks)
+- **Extensión futura:** EXT-019 (líneas SVG conectando pares)
 
 ---
 
@@ -259,7 +275,7 @@ export function MatchingActivity({ activity }) {
 
 ---
 
-## 💻 Implementación Técnica
+## Implementación Técnica
 
 ### Validadores Relacionados
 
@@ -304,16 +320,16 @@ Esta historia de usuario (Asociación/Matching) se implementa en diferentes vari
 ```
 
 **Características:**
-- ✅ Drag & drop de consecuencias hacia causas
-- ✅ Múltiples consecuencias por causa (1 a muchos)
-- ✅ Orden flexible (configurable con `strictOrder`)
-- ✅ Crédito parcial por matches correctos
-- ✅ Feedback detallado por causa con errores específicos
-- ✅ Score proporcional: `(consecuencias correctas / total) × max_points`
+- Done Drag & drop de consecuencias hacia causas
+- Done Múltiples consecuencias por causa (1 a muchos)
+- Done Orden flexible (configurable con `strictOrder`)
+- Done Crédito parcial por matches correctos
+- Done Feedback detallado por causa con errores específicos
+- Done Score proporcional: `(consecuencias correctas / total) x max_points`
 
 **Diferencia vs. Rueda Inferencias:**
-- **Rueda Inferencias:** Matching 1-a-1 (una inferencia → una conclusión)
-- **Causa-Efecto:** Matching 1-a-muchos (una causa → múltiples consecuencias)
+- **Rueda Inferencias:** Matching 1-a-1 (una inferencia -> una conclusión)
+- **Causa-Efecto:** Matching 1-a-muchos (una causa -> múltiples consecuencias)
 
 **Implementado en:** FE-059, DB-117, DB-123 (2025-11-19)
 
@@ -328,5 +344,5 @@ Esta historia de usuario (Asociación/Matching) se implementa en diferentes vari
 ---
 
 **Creado:** 2025-11-02
-**Actualizado:** 2025-11-19 - DB-123 (Agregada sección de implementación técnica)
+**Actualizado:** 2026-01-04
 **Responsable:** Equipo Fullstack

@@ -1,3 +1,19 @@
+---
+id: "US-PERF-005"
+title: "Dashboard Personalizable con Widgets y Layouts"
+type: "User Story"
+status: "Backlog"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-004"
+story_points: 7
+budget: "$3,500 MXN"
+sprint: "Sprint-Mes3"
+labels: ["ext-004", "dashboard", "personalizacion", "widgets", "drag-drop", "layouts", "ux", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-PERF-005: Personalización de Dashboard
 
 ## Información Básica

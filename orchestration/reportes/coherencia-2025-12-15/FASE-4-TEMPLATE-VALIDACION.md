@@ -100,7 +100,7 @@ Para cada corrección, verificar:
 | Proyecto | Tiene Dependencia | Requiere Cambio |
 |----------|------------------|-----------------|
 | core/orchestration | | |
-| core/catalog | | |
+| shared/catalog | | |
 | trading-platform | | |
 | erp-suite | | |
 
@@ -109,7 +109,7 @@ Para cada corrección, verificar:
 
 ### 5.2 Módulos Compartidos
 
-- [ ] core/catalog no requiere actualización (o actualizado)
+- [ ] shared/catalog no requiere actualización (o actualizado)
 - [ ] Directivas SIMCO no afectadas
 
 ---

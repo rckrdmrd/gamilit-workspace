@@ -39,6 +39,9 @@ interface ExerciseProps {
   onExit?: () => void;
 }
 
+// FIX GAP-MED-005: Constante para número mínimo de paneles requeridos
+const MIN_PANELS_REQUIRED = 6;
+
 export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
   exerciseId = 'comic-digital-default',
   onComplete,
@@ -98,29 +101,50 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
   });
 
   // Progress tracking
+  // FIX: Send answers in DTO format (panels with panelNumber, dialogue, narration) for ExercisePage.tsx submit button
   useEffect(() => {
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-    const minPanels = 6;
-    const score = Math.min(100, Math.round((panels.length / minPanels) * 100));
+    // FIX GAP-MED-005: Usar constante MIN_PANELS_REQUIRED
+    const score = Math.min(100, Math.round((panels.length / MIN_PANELS_REQUIRED) * 100));
+
+    // Transform panels to DTO format
+    const dtoPanels = panels.map((p, index) => {
+      const speechBubble = p.speechBubbles.find(b => b.type === 'speech');
+      const thoughtBubble = p.speechBubbles.find(b => b.type === 'thought');
+      return {
+        panelNumber: index + 1,
+        dialogue: speechBubble?.text || p.speechBubbles.map(b => b.text).join(' ') || '',
+        narration: thoughtBubble?.text || p.text || '',
+      };
+    });
 
     onProgressUpdate?.({
       progress: {
         currentStep: panels.length,
-        totalSteps: minPanels,
+        totalSteps: MIN_PANELS_REQUIRED,
         score,
         hintsUsed: 0,
         timeSpent,
       },
       answers: {
+        // Primary format: DTO expected by backend
+        panels: dtoPanels,
+
+        // Secondary format for backwards compatibility
         title,
-        panels: panels.map((p) => ({
+        panelsLegacy: panels.map((p) => ({
           id: p.id,
           layout: p.layout,
           hasImage: !!p.image,
           textLength: p.text.length,
           bubblesCount: p.speechBubbles.length,
         })),
-        totalPanels: panels.length,
+
+        // Metadata
+        metadata: {
+          totalPanels: panels.length,
+          comicTitle: title,
+        },
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -173,22 +197,57 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
   };
 
   const handleSubmit = () => {
-    if (!exerciseId || isSubmitting || isSubmitted || panels.length === 0) return;
+    // FIX GAP-MED-005: Validar mínimo de paneles requeridos
+    if (!exerciseId || isSubmitting || isSubmitted || panels.length < MIN_PANELS_REQUIRED) return;
+
+    // FIX: Transform data to match ComicDigitalAnswerDto expected by backend
+    // DTO expects: panels with { panelNumber, dialogue, narration, imageUrl?, visualDescription? }
+    const dtoPanels = panels.map((panel, index) => {
+      // Extract dialogues from speech bubbles of type 'speech'
+      const dialogues = panel.speechBubbles
+        .filter((b) => b.type === 'speech')
+        .map((b) => b.text)
+        .join(' ');
+
+      // Extract thoughts/captions for narration
+      const captions = panel.speechBubbles
+        .filter((b) => b.type === 'caption' || b.type === 'thought')
+        .map((b) => b.text)
+        .join(' ');
+
+      return {
+        panelNumber: index + 1,
+        dialogue: dialogues || `Panel ${index + 1} - Sin diálogo`,
+        narration: panel.text || captions || `Escena ${index + 1} del cómic sobre Marie Curie`,
+        imageUrl: panel.image,
+        visualDescription: panel.layout === 'full'
+          ? 'Panel completo'
+          : panel.layout === 'half'
+          ? 'Panel mitad'
+          : 'Panel tercio',
+      };
+    });
 
     submit({
-      title,
-      panels: panels.map(panel => ({
-        id: panel.id,
-        layout: panel.layout,
-        text: panel.text,
-        speechBubblesCount: panel.speechBubbles.length,
-        speechBubbles: panel.speechBubbles.map(bubble => ({
-          text: bubble.text,
-          type: bubble.type,
+      // Primary format expected by ComicDigitalAnswerDto
+      panels: dtoPanels,
+
+      // Metadata for backwards compatibility and context
+      metadata: {
+        title,
+        originalPanels: panels.map((panel) => ({
+          id: panel.id,
+          layout: panel.layout,
+          text: panel.text,
+          speechBubblesCount: panel.speechBubbles.length,
+          speechBubbles: panel.speechBubbles.map((bubble) => ({
+            text: bubble.text,
+            type: bubble.type,
+          })),
         })),
-      })),
-      totalPanels: panels.length,
-      totalSpeechBubbles: panels.reduce((acc, panel) => acc + panel.speechBubbles.length, 0),
+        totalPanels: panels.length,
+        totalSpeechBubbles: panels.reduce((acc, panel) => acc + panel.speechBubbles.length, 0),
+      },
     });
   };
 
@@ -219,7 +278,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
             </button>
             <button
               onClick={handleSubmit}
-              disabled={panels.length === 0 || isSubmitting || isSubmitted}
+              disabled={panels.length < MIN_PANELS_REQUIRED || isSubmitting || isSubmitted}
               className="flex items-center gap-2 px-6 py-2 bg-white text-blue-800 rounded-xl hover:bg-white/90 transition-colors font-medium disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
             >
               {isSubmitting ? (
@@ -235,7 +294,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
               ) : (
                 <>
                   <Send className="w-5 h-5" />
-                  Enviar Cómic
+                  Enviar Cómic ({panels.length}/{MIN_PANELS_REQUIRED})
                 </>
               )}
             </button>

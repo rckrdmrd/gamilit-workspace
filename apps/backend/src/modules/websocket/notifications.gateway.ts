@@ -2,6 +2,9 @@
  * Notifications Gateway
  *
  * WebSocket gateway for real-time notifications
+ *
+ * IMPORTANTE (2026-01-04): La autenticación se hace manualmente en handleConnection
+ * porque @UseGuards no funciona en lifecycle hooks de Socket.IO.
  */
 
 import {
@@ -15,6 +18,7 @@ import {
   MessageBody,
 } from '@nestjs/websockets';
 import { Logger, UseGuards } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Server } from 'socket.io';
 import { WsJwtGuard, AuthenticatedSocket } from './guards/ws-jwt.guard';
 import {
@@ -44,40 +48,71 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   private userSockets = new Map<string, Set<string>>(); // userId -> Set of socketIds
 
+  constructor(private readonly jwtService: JwtService) {}
+
   afterInit(_server: Server) {
     this.logger.log('WebSocket Gateway initialized');
   }
 
-  @UseGuards(WsJwtGuard)
+  /**
+   * Handle new WebSocket connection
+   *
+   * NOTA: @UseGuards NO funciona en handleConnection porque es un lifecycle hook
+   * de Socket.IO, no un message handler. La autenticación se hace manualmente aquí.
+   */
   async handleConnection(client: AuthenticatedSocket) {
-    const userId = client.userData?.userId;
-    const userEmail = client.userData?.email;
+    try {
+      // Extract token from auth object or query params
+      const token =
+        client.handshake.auth?.token ||
+        client.handshake.query?.token;
 
-    if (!userId) {
-      this.logger.warn('Connection rejected: no user data');
+      if (!token || typeof token !== 'string') {
+        this.logger.warn(`Connection rejected: no token provided (socket: ${client.id})`);
+        client.emit('error', { message: 'Authentication token required' });
+        client.disconnect();
+        return;
+      }
+
+      // Verify JWT token
+      const payload = await this.jwtService.verifyAsync(token);
+
+      // Attach user data to socket
+      client.userData = {
+        userId: payload.sub,
+        email: payload.email,
+        role: payload.role,
+        tenantId: payload.tenant_id,
+      };
+
+      const userId = client.userData.userId;
+      const userEmail = client.userData.email;
+
+      this.logger.log(`Client connected: ${userEmail} (${client.id})`);
+
+      // Register socket for user
+      if (!this.userSockets.has(userId)) {
+        this.userSockets.set(userId, new Set());
+      }
+      this.userSockets.get(userId)!.add(client.id);
+
+      // Join user's personal room
+      await client.join(`user:${userId}`);
+      this.logger.debug(`Socket ${client.id} joined room: user:${userId}`);
+
+      // Emit authenticated event
+      client.emit(SocketEvent.AUTHENTICATED, {
+        success: true,
+        userId,
+        email: userEmail,
+        socketId: client.id,
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.warn(`Connection rejected: authentication failed - ${errorMessage} (socket: ${client.id})`);
+      client.emit('error', { message: 'Authentication failed' });
       client.disconnect();
-      return;
     }
-
-    this.logger.log(`Client connected: ${userEmail} (${client.id})`);
-
-    // Register socket for user
-    if (!this.userSockets.has(userId)) {
-      this.userSockets.set(userId, new Set());
-    }
-    this.userSockets.get(userId)!.add(client.id);
-
-    // Join user's personal room
-    await client.join(`user:${userId}`);
-    this.logger.debug(`Socket ${client.id} joined room: user:${userId}`);
-
-    // Emit authenticated event
-    client.emit(SocketEvent.AUTHENTICATED, {
-      success: true,
-      userId,
-      email: userEmail,
-      socketId: client.id,
-    });
   }
 
   async handleDisconnect(client: AuthenticatedSocket) {

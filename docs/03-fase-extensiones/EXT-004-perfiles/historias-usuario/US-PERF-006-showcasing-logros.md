@@ -1,3 +1,19 @@
+---
+id: "US-PERF-006"
+title: "Sistema de Exhibición y Showcasing de Logros"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-004"
+story_points: 7
+budget: "$3,500 MXN"
+sprint: "Sprint-Mes3"
+labels: ["ext-004", "logros", "achievements", "gamificacion", "showcasing", "social-sharing", "colecciones", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-PERF-006: Showcasing de Logros
 
 ## Información Básica

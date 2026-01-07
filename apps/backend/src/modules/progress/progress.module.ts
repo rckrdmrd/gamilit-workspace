@@ -11,6 +11,8 @@ import { Profile } from '../auth/entities/profile.entity';
 import { GamificationModule } from '../gamification/gamification.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { MailModule } from '../mail/mail.module';
+// FIX GAP-LOW-003: WebSocket for real-time balance updates
+import { WebSocketModule } from '../websocket/websocket.module';
 
 /**
  * ProgressModule
@@ -24,8 +26,9 @@ import { MailModule } from '../mail/mail.module';
  * - Misiones programadas para aulas (classroom-based)
  * - Analytics y estadísticas de aprendizaje
  * - Notas de profesores sobre estudiantes
+ * - Certificados digitales con verificación QR [EPIC 10.2]
  *
- * Entidades (8):
+ * Entidades (9):
  * - ModuleProgress: Progreso de estudiantes por módulo
  * - LearningSession: Sesiones de aprendizaje con tracking de tiempo
  * - ExerciseAttempt: Intentos individuales de ejercicios
@@ -34,22 +37,25 @@ import { MailModule } from '../mail/mail.module';
  * - TeacherNote: Notas de profesores sobre estudiantes
  * - EngagementMetrics: Métricas diarias de engagement
  * - MasteryTracking: Seguimiento de dominio de temas
+ * - Certificate: Certificados digitales [EPIC 10.2]
  *
- * Services (5):
+ * Services (6):
  * - ModuleProgressService: 11 métodos CRUD + analytics
  * - LearningSessionService: 8 métodos de tracking de sesiones
  * - ExerciseAttemptService: 12 métodos de intentos y scoring
  * - ExerciseSubmissionService: 13 métodos de submissions y grading
  * - ScheduledMissionService: 13 métodos de misiones colectivas
+ * - CertificateService: Generación y verificación de certificados [EPIC 10.2]
  *
- * Controllers (5):
+ * Controllers (6):
  * - ModuleProgressController: 10 endpoints REST
  * - LearningSessionController: 8 endpoints REST
  * - ExerciseAttemptController: 9 endpoints REST
  * - ExerciseSubmissionController: 11 endpoints REST
  * - ScheduledMissionController: 9 endpoints REST
+ * - CertificateController: 7 endpoints REST [EPIC 10.2]
  *
- * Total: 47 endpoints REST API
+ * Total: 54 endpoints REST API
  *
  * @see /docs/02-especificaciones-tecnicas/apis/progress-api/README.md
  */
@@ -70,6 +76,7 @@ import { MailModule } from '../mail/mail.module';
         entities.UserLearningPath, // ✨ NUEVO - P2 (Usuarios en rutas)
         entities.ProgressSnapshot, // ✨ NUEVO - P2 (Snapshots históricos)
         entities.SkillAssessment, // ✨ NUEVO - P2 (Evaluaciones de habilidades)
+        entities.Certificate, // ✨ NUEVO - EPIC 10.2 (Certificados digitales)
       ],
       'progress',
     ),
@@ -83,6 +90,8 @@ import { MailModule } from '../mail/mail.module';
     NotificationsModule,
     // Import MailModule for email notifications (BE-P2-008)
     MailModule,
+    // FIX GAP-LOW-003: WebSocket for real-time balance updates
+    WebSocketModule,
   ],
   providers: [
     services.ModuleProgressService,
@@ -90,6 +99,7 @@ import { MailModule } from '../mail/mail.module';
     services.ExerciseAttemptService,
     services.ExerciseSubmissionService,
     services.ScheduledMissionService,
+    services.CertificateService, // ✨ NUEVO - EPIC 10.2
     PendingActivitiesService,
     RecentActivityService,
   ],
@@ -99,6 +109,7 @@ import { MailModule } from '../mail/mail.module';
     controllers.ExerciseAttemptController,
     controllers.ExerciseSubmissionController,
     controllers.ScheduledMissionController,
+    controllers.CertificateController, // ✨ NUEVO - EPIC 10.2
   ],
   exports: [
     services.ModuleProgressService,
@@ -106,6 +117,7 @@ import { MailModule } from '../mail/mail.module';
     services.ExerciseAttemptService,
     services.ExerciseSubmissionService,
     services.ScheduledMissionService,
+    services.CertificateService, // ✨ NUEVO - EPIC 10.2
   ],
 })
 export class ProgressModule {}

@@ -19,6 +19,7 @@ const emptyLeaderboard: LeaderboardData = {
   entries: [],
   lastUpdated: new Date(),
   userRank: undefined,
+  totalParticipants: 0, // Required to prevent undefined errors in UI
 };
 
 interface LeaderboardsStore {

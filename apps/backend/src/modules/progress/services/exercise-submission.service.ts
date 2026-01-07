@@ -12,9 +12,11 @@ import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service
 import { MissionsService } from '@/modules/gamification/services/missions.service';
 import { AchievementsService } from '@/modules/gamification/services/achievements.service';
 import { MissionTypeEnum } from '@/modules/gamification/entities/mission.entity';
-import { NotificationsService } from '@/modules/notifications/services/notifications.service';
+import { NotificationService } from '@/modules/notifications/services/notification.service';
 import { MailService } from '@/modules/mail/mail.service';
 import { NotificationTypeEnum } from '@shared/constants/enums.constants';
+// FIX GAP-LOW-003: WebSocket for real-time balance updates
+import { WebSocketService } from '@/modules/websocket/websocket.service';
 
 /**
  * CategoryExpectation
@@ -94,8 +96,10 @@ export class ExerciseSubmissionService {
     private readonly mlCoinsService: MLCoinsService,
     private readonly missionsService: MissionsService,
     private readonly achievementsService: AchievementsService,
-    private readonly notificationsService: NotificationsService,
+    private readonly notificationService: NotificationService,
     private readonly mailService: MailService,
+    // FIX GAP-LOW-003: WebSocket for real-time balance updates
+    private readonly webSocketService: WebSocketService,
   ) {}
 
   /**
@@ -1081,6 +1085,26 @@ export class ExerciseSubmissionService {
       }
 
       this.logger.log(`[RANK UP] User ${submission.user_id} promoted from ${previousRank} to ${newRank}`);
+
+      // FIX GAP-LOW-004: Enviar notificación in-app de promoción de rango
+      try {
+        await this.notificationService.create({
+          userId: submission.user_id,
+          type: NotificationTypeEnum.RANK_UP,
+          title: `¡Felicidades! Ascendiste a ${newRank}`,
+          message: `Has sido promovido de ${previousRank} a ${newRank}. Tu nuevo multiplicador de XP es ${rankMultipliers[newRank] || 1.0}x. ¡Sigue así!`,
+          metadata: {
+            previousRank,
+            newRank,
+            bonusMLCoins: bonusCoins,
+            newMultiplier: rankMultipliers[newRank] || 1.0,
+          },
+        });
+        this.logger.log(`[GAP-LOW-004] Rank up notification sent to user ${submission.user_id}`);
+      } catch (notifError) {
+        // Don't fail reward claiming if notification fails
+        this.logger.warn(`[GAP-LOW-004] Failed to send rank up notification: ${notifError}`);
+      }
     }
 
     // ✅ FIX BUG-002: Actualizar module_progress después de completar ejercicio
@@ -1100,6 +1124,54 @@ export class ExerciseSubmissionService {
     submission.xp_earned = xpEarned;
     submission.ml_coins_earned = mlCoinsEarned;
     await this.submissionRepo.save(submission);
+
+    // FIX GAP-LOW-003: Emit real-time balance updates via WebSocket
+    try {
+      // Obtener balance actualizado para emitir
+      const updatedStats = userStatsAfter[0];
+      const totalMlCoins = updatedStats?.ml_coins || 0;
+      const totalXp = updatedStats?.total_xp || 0;
+
+      // Emitir balance actualizado para la tienda
+      this.webSocketService.emitBalanceUpdated(submission.user_id, {
+        mlCoins: totalMlCoins,
+        xp: totalXp,
+        rank: newRank,
+        source: 'exercise_completion',
+      });
+
+      // Emitir ML Coins ganados (para animaciones/notificaciones UI)
+      if (mlCoinsEarned > 0) {
+        this.webSocketService.emitMLCoinsEarned(submission.user_id, {
+          amount: mlCoinsEarned,
+          source: `Ejercicio completado: ${submission.exercise_id}`,
+          totalCoins: totalMlCoins,
+          bonusMultiplier: rankUpData?.newMultiplier,
+        });
+      }
+
+      // Emitir XP ganado
+      if (xpEarned > 0) {
+        this.webSocketService.emitXpGained(submission.user_id, {
+          amount: xpEarned,
+          source: 'exercise_completion',
+          totalXp: totalXp,
+        });
+      }
+
+      // Emitir rank update si hubo promoción
+      if (rankUpData) {
+        this.webSocketService.emitRankUpdated(submission.user_id, {
+          newRank: rankUpData.newRank,
+          oldRank: rankUpData.previousRank,
+        });
+      }
+
+      this.logger.log(`[GAP-LOW-003] WebSocket balance updates emitted for user ${submission.user_id}`);
+    } catch (wsError) {
+      // Don't fail reward claiming if WebSocket fails
+      this.logger.warn(`[GAP-LOW-003] Failed to emit WebSocket updates: ${wsError}`);
+    }
 
     return {
       submission,
@@ -1577,9 +1649,10 @@ export class ExerciseSubmissionService {
     const notificationMessage = `${studentName} ha enviado el ejercicio "${exercise.title}" (${exercise.exercise_type}) y está esperando tu revisión.`;
 
     try {
-      await this.notificationsService.sendNotification({
+      // Migrado de NotificationsService (deprecated) a NotificationService (consolidado)
+      await this.notificationService.create({
         userId: teacherId,
-        type: NotificationTypeEnum.EXERCISE_FEEDBACK,
+        type: NotificationTypeEnum.EXERCISE_FEEDBACK, // string compatible
         title: notificationTitle,
         message: notificationMessage,
         data: {
@@ -1592,8 +1665,10 @@ export class ExerciseSubmissionService {
           reviewUrl: reviewUrl,
           classroomName: classroomName,
         },
-        relatedEntityType: 'exercise_submission',
-        relatedEntityId: submission.id,
+        metadata: {
+          relatedEntityType: 'exercise_submission',
+          relatedEntityId: submission.id,
+        },
         priority: 'high',
       });
 

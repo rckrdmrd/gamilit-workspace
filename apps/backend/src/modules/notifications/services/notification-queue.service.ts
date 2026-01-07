@@ -25,13 +25,15 @@ import { MailService } from '../../mail/mail.service';
  * - Estadísticas de cola y limpieza de registros procesados
  *
  * Flujo de procesamiento:
- * 1. Notificación se encola con enqueue() (status: 'pending')
+ * 1. Notificación se encola con enqueue() (status: 'queued')
  * 2. Worker llama a processQueue() periódicamente (cron)
- * 3. Se procesan items pendientes o a reintentar
- * 4. Si falla, se incrementa retry_count y se agenda retry
+ * 3. Se procesan items pendientes (status='queued')
+ * 4. Si falla, se incrementa retry_count y vuelve a 'queued'
  * 5. Si alcanza max retries (3), status → 'failed'
- * 6. Si éxito, status → 'completed'
+ * 6. Si éxito, status → 'sent'
  * 7. Limpieza periódica de items procesados antiguos
+ *
+ * ISS-SYNC-001: Estados alineados con DDL: 'queued' | 'processing' | 'sent' | 'failed'
  *
  * Tipos de canales procesados por la cola:
  * - 'email' - Envío de emails (SMTP/SendGrid)
@@ -88,17 +90,19 @@ export class NotificationQueueService {
     scheduledFor?: Date;
     priority?: number;
   }): Promise<NotificationQueue> {
+    // ISS-SYNC-001: status 'pending' → 'queued' (alineado con DDL)
     const queueItem = this.queueRepository.create({
       notificationId: data.notificationId,
       channel: data.channel,
       scheduledFor: data.scheduledFor || new Date(),
       priority: data.priority || 0,
-      status: 'pending',
+      status: 'queued',
       attempts: 0,
       maxAttempts: 3,
     });
 
-    return this.queueRepository.save(queueItem);
+    await this.queueRepository.save(queueItem);
+    return queueItem;
   }
 
   /**
@@ -123,19 +127,21 @@ export class NotificationQueueService {
       priority?: number;
     }>,
   ): Promise<NotificationQueue[]> {
+    // ISS-SYNC-001: status 'pending' → 'queued' (alineado con DDL)
     const queueItems = items.map((item) =>
       this.queueRepository.create({
         notificationId: item.notificationId,
         channel: item.channel,
         scheduledFor: item.scheduledFor || new Date(),
         priority: item.priority || 0,
-        status: 'pending',
+        status: 'queued',
         attempts: 0,
         maxAttempts: 3,
       }),
     );
 
-    return this.queueRepository.save(queueItems);
+    await this.queueRepository.save(queueItems);
+    return queueItems;
   }
 
   /**
@@ -206,12 +212,10 @@ export class NotificationQueueService {
   }> {
     const now = new Date();
 
-    // Buscar items pendientes o a reintentar
+    // ISS-SYNC-001: status 'pending'/'retry' → 'queued' (alineado con DDL)
+    // Buscar items pendientes de procesamiento
     const items = await this.queueRepository.find({
-      where: [
-        { status: 'pending' },
-        { status: 'retry' },
-      ],
+      where: { status: 'queued' },
       order: { createdAt: 'ASC' },
       take: limit,
     });
@@ -267,8 +271,8 @@ export class NotificationQueueService {
       const success = await this.sendToChannel(item.channel, item.notificationId);
 
       if (success) {
-        // Éxito: marcar como completado
-        item.status = 'completed';
+        // ISS-SYNC-001: status 'completed' → 'sent' (alineado con DDL)
+        item.status = 'sent';
         item.lastAttemptAt = new Date();
       } else {
         // Fallo: aplicar estrategia de reintentos
@@ -300,8 +304,9 @@ export class NotificationQueueService {
       item.lastAttemptAt = new Date();
       item.errorMessage = error?.message || 'Max retries reached';
     } else {
-      // Programar reintento
-      item.status = 'retry';
+      // ISS-SYNC-001: status 'retry' → 'queued' (alineado con DDL)
+      // Programar reintento - vuelve a la cola
+      item.status = 'queued';
       // Backoff exponencial: 5min, 15min, 45min
       const delayMinutes = 5 * Math.pow(3, item.attempts - 1);
       const nextRetry = new Date();
@@ -414,12 +419,12 @@ export class NotificationQueueService {
       .groupBy('q.status')
       .getRawMany();
 
+    // ISS-SYNC-001: Estados alineados con DDL
     const stats: Record<string, number> = {
-      pending: 0,
+      queued: 0,
       processing: 0,
-      completed: 0,
+      sent: 0,
       failed: 0,
-      retry: 0,
     };
 
     for (const row of counts) {
@@ -497,8 +502,9 @@ export class NotificationQueueService {
       throw new BadRequestException('Only failed items can be retried');
     }
 
+    // ISS-SYNC-001: status 'retry' → 'queued' (alineado con DDL)
     // Resetear para reintento
-    item.status = 'retry';
+    item.status = 'queued';
     item.attempts = 0;
     item.scheduledFor = new Date();
     item.errorMessage = undefined;
@@ -524,11 +530,12 @@ export class NotificationQueueService {
     const threshold = new Date();
     threshold.setDate(threshold.getDate() - olderThanDays);
 
+    // ISS-SYNC-001: status 'completed' → 'sent' (alineado con DDL)
     const result = await this.queueRepository
       .createQueryBuilder()
       .delete()
       .where('created_at < :threshold', { threshold })
-      .andWhere('status IN (:...statuses)', { statuses: ['completed', 'failed'] })
+      .andWhere('status IN (:...statuses)', { statuses: ['sent', 'failed'] })
       .execute();
 
     return result.affected || 0;
@@ -546,12 +553,13 @@ export class NotificationQueueService {
    * await this.queueService.cancelByNotification('uuid...');
    */
   async cancelByNotification(notificationId: string): Promise<number> {
+    // ISS-SYNC-001: status 'pending'/'retry' → 'queued' (alineado con DDL)
     const result = await this.queueRepository
       .createQueryBuilder()
       .update(NotificationQueue)
       .set({ status: 'failed', errorMessage: 'Cancelled by user' })
       .where('notification_id = :notificationId', { notificationId })
-      .andWhere('status IN (:...statuses)', { statuses: ['pending', 'retry'] })
+      .andWhere('status = :status', { status: 'queued' })
       .execute();
 
     return result.affected || 0;

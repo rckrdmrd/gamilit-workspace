@@ -1,3 +1,19 @@
+---
+id: "US-ADM-003"
+title: "Dashboard de Maestro"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-005"
+story_points: 8
+budget: "$3,200 MXN"
+sprint: "Sprint-1"
+labels: ["admin", "dashboard", "teacher-portal"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ADM-003: Dashboard de Maestro
 
 **Épica:** EAI-005 (Plataforma de Maestro Básica)
@@ -5,7 +21,7 @@
 **Story Points:** 8 SP
 **Presupuesto:** $3,200 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 
@@ -343,19 +359,19 @@ const ClassroomDashboardCard = ({ classroom, onClick }) => {
 ## Alcance Básico vs Extensiones
 
 ### EAI-005 (Este alcance - Admin Base):
-- ✅ Dashboard simple con resumen de aulas
-- ✅ Métricas básicas (# estudiantes, progreso promedio)
-- ✅ Grid de aulas con stats básicas
-- ✅ Actividad reciente (últimas 10)
-- ✅ Insights simples (mejor/peor aula)
+- Dashboard simple con resumen de aulas
+- Métricas básicas (# estudiantes, progreso promedio)
+- Grid de aulas con stats básicas
+- Actividad reciente (últimas 10)
+- Insights simples (mejor/peor aula)
 
 ### EXT-001 (Extensión futura - Portal Maestros Completo):
-- ⏳ Gráficas de tendencia de progreso
-- ⏳ Comparativas entre aulas
-- ⏳ Métricas de engagement
-- ⏳ Dashboard personalizable (widgets)
-- ⏳ Filtros por fecha
-- ⏳ Exportación de reportes
+- Gráficas de tendencia de progreso
+- Comparativas entre aulas
+- Métricas de engagement
+- Dashboard personalizable (widgets)
+- Filtros por fecha
+- Exportación de reportes
 
 ---
 

@@ -230,8 +230,9 @@ Evento: AFTER UPDATE (when modules_completed changes)';
 
 -- -----------------------------------------------------------------------------
 -- 8. Wrapper para modulos explorados
--- Trigger: AFTER UPDATE ON gamification_system.user_stats
--- Condicion: Cuando modules_explored aumenta
+-- Trigger: AFTER INSERT ON progress_tracking.module_progress
+-- Condicion: Solo INSERT (primera interaccion con un modulo)
+-- Corregido: DB-166 (2026-01-04) - Eliminada referencia a modules_explored
 -- -----------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION gamilit.trigger_missions_on_explore_modules()
 RETURNS TRIGGER
@@ -239,10 +240,10 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-    -- Solo procesar si se exploro un modulo nuevo
-    IF NEW.modules_explored > COALESCE(OLD.modules_explored, 0) THEN
-        PERFORM gamilit.update_mission_progress(NEW.user_id, 'explore_modules', 1);
-    END IF;
+    -- Cada INSERT en module_progress representa un modulo nuevo siendo explorado
+    -- El trigger solo se dispara en INSERT, no en UPDATE (revisitas)
+    -- La unicidad de modulos se trackea en update_mission_progress via JSONB
+    PERFORM gamilit.update_mission_progress(NEW.user_id, 'explore_modules', 1);
     RETURN NEW;
 EXCEPTION
     WHEN OTHERS THEN
@@ -254,8 +255,9 @@ $$;
 COMMENT ON FUNCTION gamilit.trigger_missions_on_explore_modules() IS
 'Trigger wrapper que actualiza misiones al explorar un modulo nuevo.
 Llama a update_mission_progress con type=explore_modules, increment=1.
-Tabla: gamification_system.user_stats
-Evento: AFTER UPDATE (when modules_explored changes)';
+Tabla: progress_tracking.module_progress
+Evento: AFTER INSERT (primera interaccion con modulo)
+Corregido: DB-166 (2026-01-04)';
 
 -- -----------------------------------------------------------------------------
 -- 9. Wrapper generico para submissions

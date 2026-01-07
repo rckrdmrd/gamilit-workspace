@@ -1,3 +1,19 @@
+---
+id: "US-CONT-003"
+title: "Biblioteca de Recursos Multimedia"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-006"
+story_points: 6
+budget: "$3,400 MXN"
+sprint: "Sprint-3"
+labels: ["ext-006", "media", "biblioteca", "multimedia", "storage", "cdn", "compresion", "s3", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-CONT-003: Biblioteca de Recursos Multimedia
 
 ## Información Básica

@@ -937,6 +937,12 @@ load_seeds() {
         "$SEEDS_DIR/auth_management/07-security_events.sql"
 
         # ==========================================
+        # FASE 2.1: Notification Preferences (después de profiles) - EXT-003
+        # ==========================================
+        "$SEEDS_DIR/notifications/02-notification_preferences_defaults.sql"  # EXT-003: defaults por tipo (2026-01-04)
+        "$SEEDS_DIR/notifications/02-user_devices_dev.sql"  # EXT-003: dispositivos testing (solo dev, 2026-01-04)
+
+        # ==========================================
         # FASE 3: System Configuration & Notifications
         # ==========================================
         "$SEEDS_DIR/system_configuration/01-system_settings.sql"
@@ -945,7 +951,8 @@ load_seeds() {
         "$SEEDS_DIR/system_configuration/02-gamification_parameters_seeds.sql"
         "$SEEDS_DIR/system_configuration/03-notification_settings_global.sql"
         "$SEEDS_DIR/system_configuration/04-rate_limits.sql"
-        "$SEEDS_DIR/notifications/01-notification_templates.sql"  # P0-002: Agregado 2025-12-27
+        "$SEEDS_DIR/notifications/01-notification_templates.sql"  # EXT-003: 17 templates
+        # NOTA: notification_preferences y user_devices se cargan después de profiles (FASE 2.1)
 
         # ==========================================
         # FASE 4: Gamification Base
@@ -1017,6 +1024,18 @@ load_seeds() {
         # FASE 10: Integraciones (Opcional)
         # ==========================================
         "$SEEDS_DIR/lti_integration/01-lti_consumers.sql"
+
+        # ==========================================
+        # FASE 11: Admin Dashboard (AUDIT-003)
+        # ==========================================
+        "$SEEDS_DIR/admin_dashboard/01-bulk_operations.sql"
+        "$SEEDS_DIR/admin_dashboard/02-admin_reports.sql"
+
+        # ==========================================
+        # FASE 12: Communication (ISS-SYNC-002)
+        # ==========================================
+        "$SEEDS_DIR/communication/01-system-messages.sql"
+        "$SEEDS_DIR/communication/02-message_participants.sql"
     )
 
     for seed_file in "${seed_files[@]}"; do

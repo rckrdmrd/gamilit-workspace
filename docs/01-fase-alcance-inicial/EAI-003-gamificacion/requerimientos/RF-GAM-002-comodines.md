@@ -1,3 +1,17 @@
+---
+id: "RF-GAM-002"
+title: "Sistema de Comodines (Power-ups)"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Gamificacion"
+epic: "EAI-003"
+version: "1.0"
+labels: ["gamification", "powerups", "hints", "comodines", "ml-coins"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # RF-GAM-002: Sistema de Comodines (Power-ups)
 
 ## 📋 Metadata

@@ -5,8 +5,9 @@ import {
   HttpStatus,
   UseGuards,
   Body,
-  Request,
+  ForbiddenException,
 } from '@nestjs/common';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
 import {
   ApiTags,
   ApiOperation,
@@ -20,7 +21,6 @@ import {
   SendFromTemplateDto,
   NotificationResponseDto,
 } from '../dto/notifications';
-import { AuthRequest } from '@shared/types';
 
 /**
  * NotificationMultiChannelController
@@ -108,13 +108,13 @@ export class NotificationMultiChannelController {
   })
   async createMultiChannel(
     @Body() createDto: CreateNotificationDto,
-      @Request() req: AuthRequest,
+    @CurrentUser('sub') userId: string,
   ): Promise<NotificationResponseDto> {
     // Validar que el usuario solo crea notificaciones para sí mismo
     // (a menos que sea admin - validación futura)
-    if (createDto.userId !== req.user!.id) {
+    if (createDto.userId !== userId) {
       // TODO: Permitir si es admin
-      throw new Error('Cannot create notifications for other users');
+      throw new ForbiddenException('Cannot create notifications for other users');
     }
 
     const notification = await this.notificationService.create({
@@ -193,12 +193,12 @@ export class NotificationMultiChannelController {
   })
   async sendFromTemplate(
     @Body() sendDto: SendFromTemplateDto,
-      @Request() req: AuthRequest,
+    @CurrentUser('sub') userId: string,
   ): Promise<NotificationResponseDto> {
     // Validar ownership
-    if (sendDto.userId !== req.user!.id) {
+    if (sendDto.userId !== userId) {
       // TODO: Permitir si es admin
-      throw new Error('Cannot create notifications for other users');
+      throw new ForbiddenException('Cannot create notifications for other users');
     }
 
     const notification = await this.notificationService.sendFromTemplate({

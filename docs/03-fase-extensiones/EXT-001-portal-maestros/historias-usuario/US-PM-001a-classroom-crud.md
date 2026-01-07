@@ -1,3 +1,20 @@
+---
+id: "US-PM-001a"
+title: "CRUD de Aulas Virtuales"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-001"
+story_points: 8
+budget: "$3,500 MXN"
+sprint: "Sprint-5"
+labels: ["portal-maestros", "classrooms", "crud", "teacher"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-11-29"
+---
+
 # US-PM-001a: CRUD de Aulas Virtuales
 
 **Épica:** EXT-001 - Portal de Maestros Completo
@@ -5,7 +22,7 @@
 **Story Points:** 8 SP
 **Presupuesto:** $3,500 MXN
 **Prioridad:** Alta (Extensión Fase 3)
-**Estado:** 📋 Planificada
+**Estado:** Done
 **Relación:** Parte de US-PM-001 (dividida en a/b)
 
 ## Descripción

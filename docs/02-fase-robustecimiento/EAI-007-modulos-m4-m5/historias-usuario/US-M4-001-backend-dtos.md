@@ -1,12 +1,28 @@
-# US-M4-001: Backend DTOs para Módulo 4
+---
+id: "US-M4-001"
+title: "Backend DTOs para Modulo 4"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent"
+epic: "EAI-007"
+story_points: 5
+budget: "5 horas"
+sprint: "Sprint-7"
+labels: ["backend", "dtos", "module-4", "validation"]
+created_date: "2025-12-05"
+updated_date: "2026-01-04"
+---
+
+# US-M4-001: Backend DTOs para Modulo 4
 
 ### Metadata
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | US-M4-001 |
-| **Épica** | EAI-007 - Módulos 4 y 5 |
-| **Módulo** | educational, progress |
+| **Epica** | EAI-007 - Modulos 4 y 5 |
+| **Modulo** | educational, progress |
 | **Prioridad** | P0 |
 | **Story Points** | 5 |
 | **Sprint** | Sprint 7 |
@@ -18,70 +34,70 @@
 ### Historia de Usuario
 
 **Como** desarrollador backend,
-**quiero** crear DTOs de respuesta para los 5 tipos de ejercicio del Módulo 4,
-**para** validar correctamente las respuestas de los estudiantes y procesarlas en el flujo de revisión manual.
+**quiero** crear DTOs de respuesta para los 5 tipos de ejercicio del Modulo 4,
+**para** validar correctamente las respuestas de los estudiantes y procesarlas en el flujo de revision manual.
 
-### Descripción Detallada
+### Descripcion Detallada
 
-El Módulo 4 "Lectura Digital y Multimodal" comprende 5 tipos de ejercicios que requieren DTOs específicos para validar la estructura de las respuestas antes de enviarlas a revisión manual por docentes.
+El Modulo 4 "Lectura Digital y Multimodal" comprende 5 tipos de ejercicios que requieren DTOs especificos para validar la estructura de las respuestas antes de enviarlas a revision manual por docentes.
 
 **Tipos de ejercicio:**
-1. `verificador_fake_news` - Verificación de noticias falsas
-2. `infografia_interactiva` - Diseño de infografía
+1. `verificador_fake_news` - Verificacion de noticias falsas
+2. `infografia_interactiva` - Diseno de infografia
 3. `quiz_tiktok` - Quiz estilo TikTok
-4. `navegacion_hipertextual` - Navegación entre páginas
-5. `analisis_memes` - Análisis de memes educativos
+4. `navegacion_hipertextual` - Navegacion entre paginas
+5. `analisis_memes` - Analisis de memes educativos
 
 ---
 
-### Criterios de Aceptación
+### Criterios de Aceptacion
 
-**Escenario 1: Validación de Verificador Fake News**
+**Escenario 1: Validacion de Verificador Fake News**
 ```gherkin
-DADO que un estudiante envía respuesta de verificador_fake_news
+DADO que un estudiante envia respuesta de verificador_fake_news
 CUANDO el DTO valida la estructura
 ENTONCES debe contener claims_verified (array de objetos)
 Y cada claim debe tener claim_id, is_fake (boolean), evidence (string >= 10 chars)
 ```
 
-**Escenario 2: Validación de Infografía Interactiva**
+**Escenario 2: Validacion de Infografia Interactiva**
 ```gherkin
-DADO que un estudiante envía respuesta de infografia_interactiva
+DADO que un estudiante envia respuesta de infografia_interactiva
 CUANDO el DTO valida la estructura
 ENTONCES debe contener answers (objeto) y sections_explored (array >= 1)
 ```
 
-**Escenario 3: Validación de Quiz TikTok**
+**Escenario 3: Validacion de Quiz TikTok**
 ```gherkin
-DADO que un estudiante envía respuesta de quiz_tiktok
+DADO que un estudiante envia respuesta de quiz_tiktok
 CUANDO el DTO valida la estructura
-ENTONCES debe contener answers (array de números >= 0)
+ENTONCES debe contener answers (array de numeros >= 0)
 ```
 
-**Escenario 4: Validación de Navegación Hipertextual**
+**Escenario 4: Validacion de Navegacion Hipertextual**
 ```gherkin
-DADO que un estudiante envía respuesta de navegacion_hipertextual
+DADO que un estudiante envia respuesta de navegacion_hipertextual
 CUANDO el DTO valida la estructura
 ENTONCES debe contener path (array >= 2 elementos) e information_found (objeto)
 ```
 
-**Escenario 5: Validación de Análisis de Memes**
+**Escenario 5: Validacion de Analisis de Memes**
 ```gherkin
-DADO que un estudiante envía respuesta de analisis_memes
+DADO que un estudiante envia respuesta de analisis_memes
 CUANDO el DTO valida la estructura
-ENTONCES debe contener annotations (array) y analysis.message (string no vacío)
+ENTONCES debe contener annotations (array) y analysis.message (string no vacio)
 ```
 
 ### Criterios Adicionales
 
 - [ ] Todos los DTOs heredan de BaseExerciseAnswerDto
-- [ ] Validación con class-validator decorators
-- [ ] Documentación Swagger para cada DTO
-- [ ] Tests unitarios para cada validación
+- [ ] Validacion con class-validator decorators
+- [ ] Documentacion Swagger para cada DTO
+- [ ] Tests unitarios para cada validacion
 
 ---
 
-### Tareas Técnicas
+### Tareas Tecnicas
 
 **Backend:**
 - [ ] BE-M4-001.1: Crear VerificadorFakeNewsAnswerDto
@@ -101,18 +117,18 @@ ENTONCES debe contener annotations (array) y analysis.message (string no vacío)
 - [ ] Validador SQL validate_module4_module5_answer() - Estado: Done
 
 **Bloquea:**
-- [ ] US-M4-002: Integración Gamificación M4
-- [ ] US-M5-002: Sistema de Revisión Manual
+- [ ] US-M4-002: Integracion Gamificacion M4
+- [ ] US-M5-002: Sistema de Revision Manual
 
 ---
 
-### Notas Técnicas
+### Notas Tecnicas
 
 **Endpoints involucrados:**
-| Método | Endpoint | Descripción |
+| Metodo | Endpoint | Descripcion |
 |--------|----------|-------------|
-| POST | /api/v1/exercises/:id/submit | Envío de respuesta |
-| POST | /api/v1/educational/exercises/m4/:type/submit | Nuevo endpoint específico |
+| POST | /api/v1/exercises/:id/submit | Envio de respuesta |
+| POST | /api/v1/educational/exercises/m4/:type/submit | Nuevo endpoint especifico |
 
 **Entidades/Tablas:**
 - `educational_content.exercises`: Ejercicios con JSONB content
@@ -136,8 +152,8 @@ interface VerificadorFakeNewsAnswerDto {
 
 ### Definition of Ready (DoR)
 
-- [x] Historia claramente escrita (quién, qué, por qué)
-- [x] Criterios de aceptación definidos
+- [x] Historia claramente escrita (quien, que, por que)
+- [x] Criterios de aceptacion definidos
 - [x] Story points estimados
 - [x] Dependencias identificadas
 - [x] Sin bloqueadores
@@ -145,11 +161,11 @@ interface VerificadorFakeNewsAnswerDto {
 
 ### Definition of Done (DoD)
 
-- [ ] Código implementado según criterios
+- [ ] Codigo implementado segun criterios
 - [ ] Tests unitarios escritos y pasando
-- [ ] Tests de integración pasando
+- [ ] Tests de integracion pasando
 - [ ] Code review aprobado
-- [ ] Documentación actualizada
+- [ ] Documentacion actualizada
 - [ ] Inventarios actualizados (BACKEND_INVENTORY.yml)
 - [ ] Traza registrada (TRAZA-TAREAS-BACKEND.md)
 
@@ -159,10 +175,10 @@ interface VerificadorFakeNewsAnswerDto {
 
 | Fecha | Cambio | Autor |
 |-------|--------|-------|
-| 2025-12-05 | Creación | Requirements-Analyst |
+| 2025-12-05 | Creacion | Requirements-Analyst |
 
 ---
 
 **Creada por:** Requirements-Analyst
 **Fecha:** 2025-12-05
-**Última actualización:** 2025-12-05
+**Ultima actualizacion:** 2025-12-05

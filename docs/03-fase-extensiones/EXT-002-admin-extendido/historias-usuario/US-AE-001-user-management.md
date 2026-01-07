@@ -1,19 +1,36 @@
-# HU-EP010-01: Gestión de Usuarios
+---
+id: "US-AE-001"
+title: "Gestion de Usuarios del Sistema"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 20
+budget: "$8,000 MXN"
+sprint: "Sprint-1"
+labels: ["admin-extendido", "user-management", "crud", "suspend", "audit"]
+created_date: "2025-10-28"
+updated_date: "2026-01-04"
+completed_date: "2025-11-13"
+---
 
-## Información General
+# HU-EP010-01: Gestion de Usuarios
+
+## Informacion General
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | US-AE-001 |
-| **Épica** | EXT-002 - Admin Extendido |
-| **Título** | Gestión de Usuarios del Sistema |
+| **Epica** | EXT-002 - Admin Extendido |
+| **Titulo** | Gestion de Usuarios del Sistema |
 | **Prioridad** | Alta (P1) |
 | **Story Points** | 20 SP |
-| **Estado** | ✅ COMPLETED |
+| **Estado** | Done |
 | **Sprint** | Sprint 1 |
-| **Duración Estimada** | 6 días |
-| **Duración Real** | 2.5h (FE-059 Day 3) |
-| **Fecha Implementación** | 2025-11-13 |
+| **Duracion Estimada** | 6 dias |
+| **Duracion Real** | 2.5h (FE-059 Day 3) |
+| **Fecha Implementacion** | 2025-11-13 |
 
 ---
 

@@ -1,3 +1,19 @@
+---
+id: "US-PM-003a"
+title: "Cola de Calificaciones"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-001"
+story_points: 8
+budget: "$3,500 MXN"
+sprint: "Sprint-7"
+labels: ["portal-maestros", "grading", "queue", "pending-submissions"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-PM-003a: Cola de Calificaciones
 
 **Épica:** EXT-001 - Portal de Maestros Completo
@@ -5,7 +21,7 @@
 **Story Points:** 8 SP
 **Presupuesto:** $3,500 MXN
 **Prioridad:** Alta (Extensión Fase 3)
-**Estado:** 📋 Planificada
+**Estado:** Backlog
 **Relación:** Parte de US-PM-003 (dividida en a/b)
 
 ## Descripción

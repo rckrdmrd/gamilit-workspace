@@ -1,3 +1,17 @@
+---
+id: "RF-GAM-001"
+title: "Sistema de Logros (Achievements)"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Gamificacion"
+epic: "EAI-003"
+version: "1.0"
+labels: ["gamification", "achievements", "badges", "milestones", "rewards", "motivation"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # RF-GAM-001: Sistema de Logros (Achievements)
 
 ## 📋 Metadata

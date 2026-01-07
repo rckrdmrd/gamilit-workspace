@@ -1,0 +1,292 @@
+# CONTEXT-MAP: GAMILIT
+# Sistema: SIMCO - NEXUS v4.0
+# Propósito: Mapear contexto automático por nivel y tarea
+# Versión: 1.0.0
+# Fecha: 2026-01-04
+
+metadata:
+  proyecto: "gamilit"
+  nivel: "STANDALONE"
+  version: "1.0.0"
+  ultima_actualizacion: "2026-01-04"
+  workspace_root: "/home/isem/workspace-v1"
+  project_root: "/home/isem/workspace-v1/projects/gamilit"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VARIABLES DEL PROYECTO (PRE-RESUELTAS)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+variables:
+  # Identificación
+  PROJECT: "gamilit"
+  PROJECT_NAME: "GAMILIT"
+  PROJECT_LEVEL: "STANDALONE"
+
+  # Base de datos
+  DB_NAME: "gamilit_platform"
+  DB_DDL_PATH: "/home/isem/workspace-v1/projects/gamilit/apps/database/ddl"
+  DB_SCRIPTS_PATH: "/home/isem/workspace-v1/projects/gamilit/apps/database"
+  DB_SEEDS_PATH: "/home/isem/workspace-v1/projects/gamilit/apps/database/seeds"
+  RECREATE_CMD: "drop-and-recreate-database.sh"
+  AUTH_SCHEMA: "auth_management"
+
+  # Backend
+  BACKEND_ROOT: "/home/isem/workspace-v1/projects/gamilit/apps/backend"
+  BACKEND_SRC: "/home/isem/workspace-v1/projects/gamilit/apps/backend/src"
+  BACKEND_TESTS: "/home/isem/workspace-v1/projects/gamilit/apps/backend/tests"
+
+  # Frontend
+  FRONTEND_ROOT: "/home/isem/workspace-v1/projects/gamilit/apps/frontend"
+  FRONTEND_SRC: "/home/isem/workspace-v1/projects/gamilit/apps/frontend/src"
+  FRONTEND_TESTS: "/home/isem/workspace-v1/projects/gamilit/apps/frontend/tests"
+
+  # Documentación
+  DOCS_PATH: "/home/isem/workspace-v1/projects/gamilit/docs"
+  ORCHESTRATION_PATH: "/home/isem/workspace-v1/projects/gamilit/orchestration"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ALIASES RESUELTOS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+aliases:
+  # Directivas globales
+  "@SIMCO": "/home/isem/workspace-v1/orchestration/directivas/simco"
+  "@PRINCIPIOS": "/home/isem/workspace-v1/orchestration/directivas/principios"
+  "@PERFILES": "/home/isem/workspace-v1/orchestration/agents/perfiles"
+  "@CATALOG": "/home/isem/workspace-v1/shared/catalog"
+
+  # Proyecto específico
+  "@DDL": "/home/isem/workspace-v1/projects/gamilit/apps/database/ddl"
+  "@SEEDS": "/home/isem/workspace-v1/projects/gamilit/apps/database/seeds"
+  "@BACKEND": "/home/isem/workspace-v1/projects/gamilit/apps/backend/src"
+  "@FRONTEND": "/home/isem/workspace-v1/projects/gamilit/apps/frontend/src"
+  "@DOCS": "/home/isem/workspace-v1/projects/gamilit/docs"
+
+  # Inventarios
+  "@INVENTORY": "/home/isem/workspace-v1/projects/gamilit/orchestration/inventarios"
+  "@INV_DB": "/home/isem/workspace-v1/projects/gamilit/orchestration/inventarios/DATABASE_INVENTORY.yml"
+  "@INV_BE": "/home/isem/workspace-v1/projects/gamilit/orchestration/inventarios/BACKEND_INVENTORY.yml"
+  "@INV_FE": "/home/isem/workspace-v1/projects/gamilit/orchestration/inventarios/FRONTEND_INVENTORY.yml"
+
+  # Trazas
+  "@TRAZA_DB": "/home/isem/workspace-v1/projects/gamilit/orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
+  "@TRAZA_BE": "/home/isem/workspace-v1/projects/gamilit/orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
+  "@TRAZA_FE": "/home/isem/workspace-v1/projects/gamilit/orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONTEXTO POR NIVEL
+# ═══════════════════════════════════════════════════════════════════════════════
+
+contexto_por_nivel:
+  L0_sistema:
+    descripcion: "Principios fundamentales y perfil de agente"
+    tokens_estimados: 4500
+    obligatorio: true
+    archivos:
+      - path: "/home/isem/workspace-v1/orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
+        proposito: "Ciclo de vida de tareas"
+        tokens: 800
+      - path: "/home/isem/workspace-v1/orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
+        proposito: "Documentación antes de código"
+        tokens: 500
+      - path: "/home/isem/workspace-v1/orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md"
+        proposito: "Verificar catálogo antes de crear"
+        tokens: 600
+      - path: "/home/isem/workspace-v1/orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
+        proposito: "Build/lint deben pasar"
+        tokens: 600
+      - path: "/home/isem/workspace-v1/orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
+        proposito: "Límites de contexto"
+        tokens: 500
+      - path: "/home/isem/workspace-v1/orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
+        proposito: "Preguntar si falta información"
+        tokens: 500
+      - path: "/home/isem/workspace-v1/orchestration/referencias/ALIASES.yml"
+        proposito: "Resolución de @ALIAS"
+        tokens: 400
+
+  L1_proyecto:
+    descripcion: "Contexto específico de GAMILIT"
+    tokens_estimados: 3000
+    obligatorio: true
+    archivos:
+      - path: "/home/isem/workspace-v1/projects/gamilit/orchestration/00-guidelines/CONTEXTO-PROYECTO.md"
+        proposito: "Variables y configuración del proyecto"
+        tokens: 1500
+      - path: "/home/isem/workspace-v1/projects/gamilit/orchestration/PROXIMA-ACCION.md"
+        proposito: "Estado actual y siguiente paso"
+        tokens: 500
+      - path: "/home/isem/workspace-v1/projects/gamilit/orchestration/inventarios/MASTER_INVENTORY.yml"
+        proposito: "Estado de artefactos"
+        tokens: 1000
+
+  L2_operacion:
+    descripcion: "SIMCO específicos según operación y dominio"
+    tokens_estimados: 2500
+    archivos_por_operacion:
+      CREAR:
+        - "/home/isem/workspace-v1/orchestration/directivas/simco/SIMCO-CREAR.md"
+      MODIFICAR:
+        - "/home/isem/workspace-v1/orchestration/directivas/simco/SIMCO-MODIFICAR.md"
+      VALIDAR:
+        - "/home/isem/workspace-v1/orchestration/directivas/simco/SIMCO-VALIDAR.md"
+      DELEGAR:
+        - "/home/isem/workspace-v1/orchestration/directivas/simco/SIMCO-DELEGACION.md"
+    archivos_por_dominio:
+      DDL:
+        - "/home/isem/workspace-v1/orchestration/directivas/simco/SIMCO-DDL.md"
+        - "/home/isem/workspace-v1/projects/gamilit/orchestration/inventarios/DATABASE_INVENTORY.yml"
+      BACKEND:
+        - "/home/isem/workspace-v1/orchestration/directivas/simco/SIMCO-BACKEND.md"
+        - "/home/isem/workspace-v1/projects/gamilit/orchestration/inventarios/BACKEND_INVENTORY.yml"
+      FRONTEND:
+        - "/home/isem/workspace-v1/orchestration/directivas/simco/SIMCO-FRONTEND.md"
+        - "/home/isem/workspace-v1/projects/gamilit/orchestration/inventarios/FRONTEND_INVENTORY.yml"
+
+  L3_tarea:
+    descripcion: "Contexto específico de la tarea"
+    tokens_max: 8000
+    dinamico: true
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INTEGRACIÓN CON DOCUMENTACIÓN (docs/)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+integracion_docs:
+  mapa_docs: "@DOCS/_MAP.md"
+
+  estructura:
+    vision: "@DOCS/00-vision-general/"
+    fase1_alcance: "@DOCS/01-fase-alcance-inicial/"
+    fase2_robustecimiento: "@DOCS/02-fase-robustecimiento/"
+    fase3_extensiones: "@DOCS/03-fase-extensiones/"
+    backlog: "@DOCS/04-fase-backlog/"
+    transversal: "@DOCS/90-transversal/"
+    guias: "@DOCS/95-guias-desarrollo/"
+    quick_ref: "@DOCS/96-quick-reference/"
+    adr: "@DOCS/97-adr/"
+    finiquito: "@DOCS/99-finiquito/"
+
+  archivos_clave:
+    arquitectura: "@DOCS/90-transversal/arquitectura/ARCHITECTURE.md"
+    api: "@DOCS/90-transversal/api/API.md"
+    roadmap: "@DOCS/90-transversal/roadmap/ROADMAP-GENERAL.md"
+    sprints: "@DOCS/90-transversal/sprints/SPRINTS-DETALLADOS.md"
+    deployment: "@DOCS/95-guias-desarrollo/DEPLOYMENT.md"
+    dor: "@DOCS/04-fase-backlog/DEFINITION-OF-READY.md"
+
+  epics_por_fase:
+    fase1: ["EAI-001", "EAI-002", "EAI-003", "EAI-004", "EAI-005", "EAI-006", "EAI-008"]
+    fase2: ["EAI-007"]
+    fase3: ["EXT-001", "EXT-002", "EXT-003", "EXT-004", "EXT-005", "EXT-006", "EXT-007", "EXT-008", "EXT-009", "EXT-010", "EXT-011"]
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MAPA TAREA → ARCHIVOS (Específico GAMILIT)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+mapa_tarea_contexto:
+  database:
+    crear_tabla:
+      simco: ["SIMCO-CREAR.md", "SIMCO-DDL.md"]
+      inventario: "@INV_DB"
+      referencia: "@DDL/schemas/*/tables/*.sql"
+      docs: "@DOCS/02-especificaciones-tecnicas/"
+
+    crear_indice:
+      simco: ["SIMCO-CREAR.md", "SIMCO-DDL.md"]
+      inventario: "@INV_DB"
+      referencia: "DDL de tabla objetivo"
+
+  backend:
+    crear_entity:
+      simco: ["SIMCO-CREAR.md", "SIMCO-BACKEND.md"]
+      inventario: "@INV_BE"
+      referencia: "@BACKEND/modules/*/entities/*.entity.ts"
+
+    crear_service:
+      simco: ["SIMCO-CREAR.md", "SIMCO-BACKEND.md"]
+      inventario: "@INV_BE"
+      referencia: "@BACKEND/modules/*/services/*.service.ts"
+
+    crear_controller:
+      simco: ["SIMCO-CREAR.md", "SIMCO-BACKEND.md"]
+      inventario: "@INV_BE"
+      referencia: "@BACKEND/modules/*/controllers/*.controller.ts"
+
+  frontend:
+    crear_componente:
+      simco: ["SIMCO-CREAR.md", "SIMCO-FRONTEND.md"]
+      inventario: "@INV_FE"
+      referencia: "@FRONTEND/components/**/*.tsx"
+
+    crear_pagina:
+      simco: ["SIMCO-CREAR.md", "SIMCO-FRONTEND.md"]
+      inventario: "@INV_FE"
+      referencia: "@FRONTEND/pages/**/*.tsx"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INFORMACIÓN ESPECÍFICA DEL PROYECTO
+# ═══════════════════════════════════════════════════════════════════════════════
+
+info_proyecto:
+  tipo: "Plataforma EdTech - Gamificación Educativa"
+  estado: "MVP 75% completado"
+  version: "2.0"
+
+  stack:
+    backend: "NestJS 11.x + TypeORM 0.3.x"
+    frontend: "React 19.x + Zustand 5.x + Tailwind CSS 4.x"
+    database: "PostgreSQL 15"
+
+  metricas:
+    schemas: 16
+    tablas: 123
+    endpoints: 417
+    rls_policies: 185
+
+  schemas_principales:
+    - auth_management
+    - gamification_system
+    - educational_content
+    - progress_tracking
+    - admin_dashboard
+    - social_features
+    - notifications
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VALIDACIÓN DE TOKENS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+validacion_tokens:
+  limite_absoluto: 25000
+  limite_seguro: 18000
+  limite_alerta: 20000
+
+  presupuesto:
+    L0_sistema: 4500
+    L1_proyecto: 3000
+    L2_operacion: 2500
+    L3_tarea_max: 8000
+    total_base: 10000
+    disponible_tarea: 8000
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# HERENCIA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+herencia:
+  tipo: "STANDALONE"
+  hereda_de:
+    - "/home/isem/workspace-v1/orchestration/"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BÚSQUEDA DE HISTÓRICO
+# ═══════════════════════════════════════════════════════════════════════════════
+
+busqueda_historico:
+  habilitado: true
+  ubicaciones:
+    - "/home/isem/workspace-v1/projects/gamilit/orchestration/trazas/"
+    - "/home/isem/workspace-v1/orchestration/errores/REGISTRO-ERRORES.yml"
+    - "/home/isem/workspace-v1/shared/knowledge-base/lessons-learned/"
+    - "/home/isem/workspace-v1/shared/knowledge-base/projects/gamilit/"

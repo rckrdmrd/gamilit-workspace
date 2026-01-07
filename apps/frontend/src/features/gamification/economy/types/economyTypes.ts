@@ -17,12 +17,50 @@ export type ShopCategory = 'cosmetics' | 'profile' | 'guild' | 'premium' | 'soci
 export type ItemRarity = 'common' | 'rare' | 'epic' | 'legendary';
 
 /**
- * Transaction Types - For ML Coins flow tracking
+ * Transaction Types - Sincronizado con Backend TransactionTypeEnum
+ * @see backend/src/shared/constants/enums.constants.ts
  */
-export type TransactionType = 'earn' | 'spend';
+export enum TransactionTypeEnum {
+  // ========== EARNED (Ingresos) ==========
+  EARNED_EXERCISE = 'earned_exercise',
+  EARNED_MODULE = 'earned_module',
+  EARNED_ACHIEVEMENT = 'earned_achievement',
+  EARNED_RANK = 'earned_rank',
+  EARNED_STREAK = 'earned_streak',
+  EARNED_DAILY = 'earned_daily',
+  EARNED_BONUS = 'earned_bonus',
+
+  // ========== SPENT (Gastos) ==========
+  SPENT_POWERUP = 'spent_powerup',
+  SPENT_HINT = 'spent_hint',
+  SPENT_RETRY = 'spent_retry',
+
+  // ========== ADMIN/SISTEMA ==========
+  ADMIN_ADJUSTMENT = 'admin_adjustment',
+  REFUND = 'refund',
+  BONUS = 'bonus',
+  WELCOME_BONUS = 'welcome_bonus',
+}
+
+export type TransactionType = `${TransactionTypeEnum}`;
+
+/**
+ * Transaction Category - For high-level filtering/grouping
+ */
+export type TransactionCategory = 'earn' | 'spend' | 'other';
+
+/**
+ * Helper to catalyze transaction types
+ */
+export const getTransactionCategory = (type: TransactionType): TransactionCategory => {
+  if (type.startsWith('earned_') || type === 'welcome_bonus' || type === 'refund' || type === 'bonus') return 'earn';
+  if (type.startsWith('spent_')) return 'spend';
+  return 'other'; // admin_adjustment could be either, but usually handled as specific administrative action
+};
 
 /**
  * Earning Sources - Where ML Coins can be earned from
+ * @deprecated Use TransactionTypeEnum for precise source tracking
  */
 export type EarningSource =
   | 'exercise_completion'
@@ -256,5 +294,6 @@ export interface EconomyStats {
   topEarningSource: {
     source: string;
     amount: number;
+    date: Date;
   };
 }

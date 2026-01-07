@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -7,7 +7,10 @@ import { FeatureBadge, ConfirmDialog } from '@shared/components/common';
 import { useUserManagement } from '../hooks/useUserManagement';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { UserDetailModal } from '../components/users/UserDetailModal';
+import { CreateUserModal } from '../components/users/CreateUserModal';
+import type { CreateUserFormData, CreatedUserResult } from '../components/users/CreateUserModal';
 import { ToastContainer, useToast } from '@shared/components/base/Toast';
+import { getOrganizations } from '@/services/api/adminAPI';
 import type { SystemUser } from '../types';
 import {
   Users,
@@ -34,6 +37,9 @@ export default function AdminUsersPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editingUser, setEditingUser] = useState<SystemUser | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [organizations, setOrganizations] = useState<{ id: string; name: string }[]>([]);
+  const [isLoadingOrganizations, setIsLoadingOrganizations] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     title: string;
@@ -56,6 +62,7 @@ export default function AdminUsersPage() {
     error,
     filters,
     fetchUsers,
+    createUser,
     suspendUser,
     unsuspendUser,
     deleteUser,
@@ -87,6 +94,63 @@ export default function AdminUsersPage() {
     logout();
     window.location.href = '/login';
   };
+
+  // Fetch organizations when create modal opens
+  const fetchOrganizations = useCallback(async () => {
+    setIsLoadingOrganizations(true);
+    try {
+      const response = await getOrganizations({ page: 1, limit: 100 });
+      setOrganizations(response.items.map((org) => ({ id: org.id, name: org.name })));
+    } catch (err) {
+      console.error('Failed to fetch organizations:', err);
+      showToast({
+        type: 'error',
+        title: 'Error',
+        message: 'No se pudieron cargar las organizaciones',
+      });
+    } finally {
+      setIsLoadingOrganizations(false);
+    }
+  }, [showToast]);
+
+  // Handle open create modal
+  const handleOpenCreateModal = useCallback(async () => {
+    setIsCreateModalOpen(true);
+    await fetchOrganizations();
+  }, [fetchOrganizations]);
+
+  // Handle create user submission
+  const handleCreateUser = useCallback(
+    async (data: CreateUserFormData): Promise<CreatedUserResult> => {
+      try {
+        const result = await createUser({
+          email: data.email,
+          full_name: data.full_name,
+          role: data.role,
+          organization_id: data.organization_id,
+          classroom_id: data.classroom_id,
+          send_welcome_email: data.send_welcome_email,
+        });
+
+        showToast({
+          type: 'success',
+          title: 'Usuario creado',
+          message: `El usuario ${result.email} ha sido creado correctamente`,
+        });
+
+        return result;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Error al crear usuario';
+        showToast({
+          type: 'error',
+          title: 'Error',
+          message: errorMessage,
+        });
+        throw err;
+      }
+    },
+    [createUser, showToast],
+  );
 
   // Fetch users on component mount
   useEffect(() => {
@@ -423,17 +487,11 @@ export default function AdminUsersPage() {
                 <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
               </DetectiveButton>
 
-              {/* Add User Button */}
-              <div className="relative">
-                <DetectiveButton
-                  variant="primary"
-                  onClick={() => showToast('Crear usuario - Próximamente', 'info')}
-                >
-                  <UserPlus className="h-5 w-5" />
-                  Nuevo Usuario
-                </DetectiveButton>
-                <FeatureBadge variant="coming-soon" position="top-right" size="sm" />
-              </div>
+              {/* Add User Button - US-AE-010 */}
+              <DetectiveButton variant="primary" onClick={handleOpenCreateModal}>
+                <UserPlus className="h-5 w-5" />
+                Nuevo Usuario
+              </DetectiveButton>
             </div>
           </div>
         </DetectiveCard>
@@ -609,6 +667,15 @@ export default function AdminUsersPage() {
         title={confirmDialog.title}
         message={confirmDialog.message}
         variant={confirmDialog.variant}
+      />
+
+      {/* Create User Modal - US-AE-010 */}
+      <CreateUserModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreateUser}
+        organizations={organizations}
+        isLoadingOrganizations={isLoadingOrganizations}
       />
     </AdminLayout>
   );

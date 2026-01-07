@@ -1,3 +1,17 @@
+---
+id: "RF-AUTH-002"
+title: "Estados de Cuenta de Usuario"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Autenticacion y Autorizacion"
+epic: "EAI-001"
+version: "1.0"
+labels: ["auth", "user-status", "account-lifecycle"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # RF-AUTH-002: Estados de Cuenta de Usuario
 
 ## 📋 Metadata

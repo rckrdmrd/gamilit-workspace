@@ -45,7 +45,9 @@ import TeacherClassesPage from '@/apps/teacher/pages/TeacherClassesPage';
 import TeacherStudentsPage from '@/apps/teacher/pages/TeacherStudentsPage';
 import TeacherExerciseResponsesPage from '@/apps/teacher/pages/TeacherExerciseResponsesPage';
 import TeacherSettingsPage from '@/apps/teacher/pages/TeacherSettingsPage';
-import { ReviewPanelPage } from '@/apps/teacher/pages/ReviewPanel';
+import TeacherNotificationsPage from '@/apps/teacher/pages/TeacherNotificationsPage';
+import TeacherNotificationPreferencesPage from '@/apps/teacher/pages/TeacherNotificationPreferencesPage';
+import { ReviewPanelPage } from '@/apps/teacher/pages/TeacherReviewPanelPage';
 
 // Admin Portal Pages
 import AdminDashboardPage from '@/apps/admin/pages/AdminDashboardPage';
@@ -58,6 +60,8 @@ import AdminMonitoringPage from '@/apps/admin/pages/AdminMonitoringPage';
 import AdminAdvancedPage from '@/apps/admin/pages/AdminAdvancedPage';
 import AdminReportsPage from '@/apps/admin/pages/AdminReportsPage';
 import AdminSettingsPage from '@/apps/admin/pages/AdminSettingsPage';
+import AdminNotificationsPage from '@/apps/admin/pages/AdminNotificationsPage';
+import AdminNotificationPreferencesPage from '@/apps/admin/pages/AdminNotificationPreferencesPage';
 import AdminAlertsPage from '@/apps/admin/pages/AdminAlertsPage';
 import AdminAnalyticsPage from '@/apps/admin/pages/AdminAnalyticsPage';
 import AdminProgressPage from '@/apps/admin/pages/AdminProgressPage';
@@ -252,6 +256,22 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/teacher/notifications"
+            element={
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                <TeacherNotificationsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/settings/notifications"
+            element={
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                <TeacherNotificationPreferencesPage />
+              </ProtectedRoute>
+            }
+          />
           {/* Manual Review Panel for Modules 4 & 5 */}
           <Route
             path="/teacher/reviews"
@@ -340,6 +360,22 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['super_admin']}>
                 <AdminSettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/notifications"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminNotificationsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/settings/notifications"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminNotificationPreferencesPage />
               </ProtectedRoute>
             }
           />

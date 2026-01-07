@@ -34,7 +34,28 @@ SET default_table_access_method = heap;
 -- Source of Truth: docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-NOTIFICATIONS.md
 -- =====================================================================================
 --
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+-- !!!                           TABLA DEPRECADA                                     !!!
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+--
+-- Fecha de deprecación: 2025-01-04
+-- Razón: Funcionalidad duplicada con notifications.notifications
+-- Migrar a: notifications.notifications (schema dedicado con soporte multi-canal)
+--
+-- Diferencias principales:
+--   - gamification_system.notifications usa ENUMs (type, priority)
+--   - notifications.notifications usa VARCHAR con CHECK constraints
+--   - notifications.notifications tiene: channels[], status, read_at, sent_at, expires_at
+--
+-- Los triggers de gamificación YA usan notifications.notifications
+-- Esta tabla se mantiene por compatibilidad con módulos legacy de backend
+--
+-- IMPORTANTE: No eliminar hasta completar migración del módulo notifications de backend
+--
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+--
 -- CHANGELOG:
+-- v3.2 (2025-01-04): DEPRECADA - Migrar a notifications.notifications
 -- v3.1 (2025-11-08): Actualizada priority a 4 niveles (agregado 'critical')
 -- v3.0 (2025-11-08): Agregada columna priority (notification_priority ENUM)
 -- v2.0 (2025-11-07): Actualizado para usar ENUM notification_type
@@ -62,7 +83,7 @@ ALTER TABLE gamification_system.notifications OWNER TO gamilit_user;
 -- Name: TABLE notifications; Type: COMMENT; Schema: gamification_system; Owner: postgres
 --
 
-COMMENT ON TABLE gamification_system.notifications IS 'User notifications for various system events';
+COMMENT ON TABLE gamification_system.notifications IS 'DEPRECATED (2025-01-04): Migrar a notifications.notifications. Tabla legacy para compatibilidad con módulo backend.';
 
 
 --

@@ -14,11 +14,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 
 /**
  * Entity for teacher-generated reports metadata
  */
-@Entity({ name: 'teacher_reports', schema: 'social_features' })
+@Entity({ name: DB_TABLES.SOCIAL.TEACHER_REPORTS, schema: DB_SCHEMAS.SOCIAL })
 export class TeacherReport {
   @PrimaryGeneratedColumn('uuid')
     id!: string;

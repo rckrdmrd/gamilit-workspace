@@ -186,31 +186,41 @@ Ver: modules/notifications/entities/multichannel/notification.entity.ts
 
 ---
 
-### social_features (8 tablas)
+### social_features (19 tablas)
 
 **Ubicación:** `apps/database/ddl/schemas/social_features/tables/`
-**Última actualización:** 2025-11-29
+**Última actualización:** 2026-01-04 (ISS-DB-005: Inventario actualizado)
 
 | # | Tabla | Propósito | Estado Doc |
 |---|-------|-----------|------------|
 | 1 | `friendships` | Relaciones de amistad entre usuarios | ✅ |
 | 2 | `schools` | Escuelas | ✅ |
-| 3 | `classrooms` | Aulas/Clases | ✅ ⚠️ |
-| 4 | `classroom_members` | Miembros de clases | ✅ ⚠️ |
+| 3 | `classrooms` | Aulas/Clases | ✅ |
+| 4 | `classroom_members` | Miembros de clases | ✅ |
 | 5 | `teams` | Equipos de estudiantes | ✅ |
 | 6 | `team_members` | Miembros de equipos | ✅ |
 | 7 | `team_challenges` | Desafíos entre equipos | ✅ |
-| 8 | `assignment_classrooms` | **[MOVIDA 2025-11-29]** Relación assignments ↔ classrooms | ✅ |
+| 8 | `teacher_reports` | Reportes generados por teachers (Portal Teacher) | ✅ |
+| 9 | `user_activities` | Actividades de usuarios | ✅ |
+| 10 | `friend_requests` | Solicitudes de amistad | ✅ |
+| 11 | `peer_challenges` | Desafíos entre pares | ✅ |
+| 12 | `challenge_participants` | Participantes en desafíos | ✅ |
+| 13 | `challenge_results` | Resultados de desafíos | ✅ |
+| 14 | `assignment_classrooms` | Relación assignments ↔ classrooms | ✅ |
+| 15 | `discussion_threads` | Hilos de discusión | ✅ |
+| 16 | `social_interactions` | Interacciones sociales | ✅ |
+| 17 | `teacher_classrooms` | Relación teachers ↔ classrooms | ✅ |
+| 18 | `user_follows` | Seguimiento entre usuarios | ✅ |
 
-**✅ Sin conflictos (Validado 2025-11-29):**
+**✅ Sin conflictos (Validado 2026-01-04):**
 - `social_features.classrooms` es la ÚNICA tabla de classrooms (no existe en public)
 - `social_features.classroom_members` es la ÚNICA tabla de miembros (no existe en public)
-- `social_features.assignment_classrooms` fue movida desde public (2025-11-29)
+- `social_features.teacher_reports` para reportes del Portal Teacher (no confundir con admin_dashboard.admin_reports)
 
 **Referencias SIMCO:**
 - Docs: `docs/03-desarrollo/base-de-datos/schemas/social_features/`
-- Backend: `apps/backend/src/modules/social/`
-- Frontend: `apps/frontend/src/features/social/`
+- Backend: `apps/backend/src/modules/social/`, `apps/backend/src/modules/teacher/`
+- Frontend: `apps/frontend/src/features/social/`, `apps/frontend/src/apps/teacher/`
 
 ---
 

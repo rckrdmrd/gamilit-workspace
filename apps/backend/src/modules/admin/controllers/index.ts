@@ -5,9 +5,7 @@
  * This file provides a single import point for the admin module.
  */
 
-// Dashboard Controllers
-export { AdminDashboardStatsController } from './admin-dashboard-stats.controller';
-export { AdminDashboardActivityController } from './admin-dashboard-activity.controller';
+// Dashboard Controller (ISS-BE-001: consolidated - removed duplicate controllers 2026-01-04)
 export { AdminDashboardController } from './admin-dashboard.controller';
 
 // User Stats Controllers

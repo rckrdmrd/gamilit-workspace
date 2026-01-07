@@ -1,10 +1,28 @@
+---
+id: "RF-TEACH-002"
+title: "Sistema de Asignaciones"
+type: "Requerimiento Funcional"
+status: "Done"
+priority: "Alta"
+epic: "EXT-001"
+module: "Portal Maestros"
+labels: ["teachers", "assignments", "submissions", "grading"]
+created_date: "2025-11-08"
+updated_date: "2026-01-04"
+---
+
 # RF-TEACH-002: Sistema de Asignaciones
 
-**Epic:** EXT-001 - Portal de Maestros
-**Fase:** 3 - Extensiones
-**Prioridad:** ALTA
-**Estado:** ✅ IMPLEMENTADO
-**Tipo:** Feature - Sistema de Gestión de Asignaciones
+## Informacion General
+
+| Campo | Valor |
+|-------|-------|
+| **ID** | RF-TEACH-002 |
+| **Epic** | EXT-001 - Portal de Maestros |
+| **Fase** | 3 - Extensiones |
+| **Prioridad** | Alta |
+| **Estado** | Done |
+| **Tipo** | Feature - Sistema de Gestion de Asignaciones |
 
 ---
 

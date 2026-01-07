@@ -1,6 +1,22 @@
+---
+id: "US-PARENT-003"
+title: "Achievement Unlock Notification"
+type: "User Story"
+status: "Backlog"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-010"
+story_points: 4
+budget: "4 horas"
+sprint: "Sprint-18"
+labels: ["parent-notifications", "email", "achievements", "gamification"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # US-PARENT-003: Achievement Unlock Notification
 
-**Épica:** EXT-010: Parent Notifications
+**Epica:** EXT-010: Parent Notifications
 **Prioridad:** P2
 **Story Points:** 4
 **Esfuerzo:** 4 horas
@@ -8,33 +24,33 @@
 
 ---
 
-## 📋 User Story
+## User Story
 
 ```
 Como padre de familia,
-Quiero recibir una notificación cuando mi hijo desbloquea logros importantes
-Para celebrar sus éxitos y motivarlo
+Quiero recibir una notificacion cuando mi hijo desbloquea logros importantes
+Para celebrar sus exitos y motivarlo
 ```
 
 ---
 
-## ✅ Criterios de Aceptación
+## Criterios de Aceptacion
 
 ### Backend (2h)
 - [ ] Trigger: Achievement de rareza Rare+ desbloqueado
-- [ ] Trigger: Promoción de rango Maya
-- [ ] Trigger: Completó módulo completo
+- [ ] Trigger: Promocion de rango Maya
+- [ ] Trigger: Completo modulo completo
 - [ ] Email con:
-  - Título e imagen del achievement
-  - Descripción del logro
+  - Titulo e imagen del achievement
+  - Descripcion del logro
   - Mensaje motivacional
   - Stats actualizados (nuevo rango, ML Coins totales)
 
 ### Email Template (2h)
-- [ ] Tono celebratorio 🎉
-- [ ] Subject: "¡[Nombre] desbloqueó [Achievement]!"
+- [ ] Tono celebratorio
+- [ ] Subject: "[Nombre] desbloqueo [Achievement]!"
 - [ ] CTA: "Ver perfil de [Nombre]"
-- [ ] Opción de compartir en redes sociales (opcional)
+- [ ] Opcion de compartir en redes sociales (opcional)
 
 ---
 

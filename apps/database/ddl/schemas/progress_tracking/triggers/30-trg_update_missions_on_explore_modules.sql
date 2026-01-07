@@ -2,17 +2,18 @@
 -- Trigger: trg_update_missions_on_explore_modules
 -- Table: progress_tracking.module_progress
 -- Function: gamilit.trigger_missions_on_explore_modules (wrapper unificado)
--- Event: AFTER INSERT OR UPDATE
+-- Event: AFTER INSERT (solo INSERT, no UPDATE)
 -- Level: FOR EACH ROW
 -- Description: Actualiza progreso de misiones al explorar módulos
 -- Created: 2025-11-28
+-- Modified: 2026-01-04 (DB-166) - Cambiado a solo INSERT
 -- =====================================================
 --
 -- PROPÓSITO:
 -- Este trigger conecta la exploración de módulos con el sistema de misiones.
--- Cuando un estudiante interactúa con un módulo (INSERT o UPDATE en module_progress),
+-- Cuando un estudiante interactúa con un módulo por primera vez (INSERT en module_progress),
 -- las misiones diarias/semanales que tengan objetivo 'explore_modules' se actualizan
--- automáticamente.
+-- automáticamente. Los UPDATE (revisitas) no disparan el trigger.
 --
 -- DIFERENCIA CON 'complete_exercises':
 -- - explore_modules: Cuenta módulos ÚNICOS visitados (no importa cuántas veces)
@@ -48,8 +49,8 @@
 -- }
 --
 -- EVENTOS QUE DISPARAN EL TRIGGER:
--- - INSERT: Primera vez que usuario interactúa con un módulo
--- - UPDATE: Usuario regresa a un módulo (no debe contar otra vez)
+-- - INSERT: Primera vez que usuario interactúa con un módulo (CUENTA)
+-- - UPDATE: NO dispara el trigger (DB-166: removido para evitar warning)
 --
 -- NOTAS:
 -- - NO bloquea si falla (errores solo se loggean)
@@ -60,8 +61,10 @@
 
 DROP TRIGGER IF EXISTS trg_update_missions_on_explore_modules ON progress_tracking.module_progress CASCADE;
 
+-- DB-166 (2026-01-04): Cambiado de INSERT OR UPDATE a solo INSERT
+-- UPDATE representa revisita a modulo, no debe contar como exploracion nueva
 CREATE TRIGGER trg_update_missions_on_explore_modules
-    AFTER INSERT OR UPDATE ON progress_tracking.module_progress
+    AFTER INSERT ON progress_tracking.module_progress
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.trigger_missions_on_explore_modules();
 

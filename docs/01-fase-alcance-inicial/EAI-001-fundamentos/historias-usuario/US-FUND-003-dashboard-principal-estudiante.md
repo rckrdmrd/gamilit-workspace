@@ -1,3 +1,20 @@
+---
+id: "US-FUND-003"
+title: "Dashboard principal estudiante"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-001"
+story_points: 8
+budget: "$2,900 MXN"
+sprint: "Sprint-1"
+labels: ["dashboard", "frontend", "fundamentos"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-08-12"
+---
+
 # US-FUND-003: Dashboard principal estudiante
 
 **Épica:** EAI-001 - Fundamentos
@@ -5,7 +22,7 @@
 **Story Points:** 8 SP
 **Presupuesto:** $2,900 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 

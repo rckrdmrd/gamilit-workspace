@@ -22,7 +22,7 @@ Esta carpeta contiene documentacion **definitiva y vigente** del estado actual d
 | Carpeta | Archivos | Descripcion | Estado |
 |---------|----------|-------------|--------|
 | **[arquitectura/](./arquitectura/)** | 5 | Arquitectura del sistema vigente | Definitivo |
-| **[arquitectura-database/](./arquitectura-database/)** | 2 | Arquitectura de BD | Definitivo |
+| **[arquitectura-database/](./arquitectura-database/)** | 16 | Arquitectura de BD, DDL, funciones, runbooks | Definitivo |
 | **[features/](./features/)** | 7 | Features implementadas y pendientes | Definitivo |
 | **[inventarios-database/](./inventarios-database/)** | 7 | Inventarios detallados de BD | Definitivo |
 | **[roadmap/](./roadmap/)** | 1 | Roadmap actual | Definitivo |

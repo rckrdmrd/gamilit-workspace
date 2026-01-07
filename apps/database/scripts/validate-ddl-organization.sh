@@ -10,7 +10,7 @@
 
 set -e
 
-BASE_DIR="/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas"
+BASE_DIR="/home/isem/workspace-v1/projects/gamilit/apps/database/ddl/schemas"
 OUTPUT_FILE="/tmp/ddl-validation-$(date +%Y%m%d-%H%M%S).yaml"
 
 echo "=== VALIDACIÓN DE ORGANIZACIÓN DDL ==="

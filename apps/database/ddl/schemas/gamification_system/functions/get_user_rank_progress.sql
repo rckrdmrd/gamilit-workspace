@@ -4,19 +4,20 @@
 --   - p_user_id: UUID - ID del usuario
 -- Returns: TABLE (current_rank, current_xp, next_rank, next_rank_xp, xp_needed, progress_percentage, modules_completed, missions_required)
 -- CORRECTED (2025-12-18): missions_completed -> modules_completed (alineado con user_stats entity)
+-- FIX (2026-01-04): JOIN con user_ranks ahora filtra por is_current = true
 -- Example:
 --   SELECT * FROM gamification_system.get_user_rank_progress('123e4567-e89b-12d3-a456-426614174000');
 -- Dependencies: gamification_system.user_stats, user_ranks, maya_ranks
 -- Created: 2025-10-28
--- Modified: 2025-10-28
+-- Modified: 2026-01-04
 
 CREATE OR REPLACE FUNCTION gamification_system.get_user_rank_progress(
     p_user_id UUID
 )
 RETURNS TABLE (
-    current_rank maya_rank,
+    current_rank gamification_system.maya_rank,
     current_xp BIGINT,
-    next_rank maya_rank,
+    next_rank gamification_system.maya_rank,
     next_rank_xp BIGINT,
     xp_needed BIGINT,
     progress_percentage NUMERIC(5,2),
@@ -29,10 +30,11 @@ DECLARE
     v_next_rank RECORD;
 BEGIN
     -- Obtener estadísticas del usuario
+    -- FIX 2026-01-04: Agregar is_current = true para evitar duplicados
     SELECT us.*, ur.current_rank
     INTO v_user_stats
     FROM gamification_system.user_stats us
-    JOIN gamification_system.user_ranks ur ON ur.user_id = us.user_id
+    JOIN gamification_system.user_ranks ur ON ur.user_id = us.user_id AND ur.is_current = true
     WHERE us.user_id = p_user_id;
 
     IF NOT FOUND THEN
@@ -45,7 +47,7 @@ BEGIN
     WHERE name = v_user_stats.current_rank::VARCHAR;
 
     -- Obtener siguiente rango
-    SELECT mr.name::maya_rank, mr.min_xp_required, mr.missions_required
+    SELECT mr.name::gamification_system.maya_rank, mr.min_xp_required, mr.missions_required
     INTO v_next_rank
     FROM gamification_system.maya_ranks mr
     WHERE mr.min_xp_required > v_current_rank_xp

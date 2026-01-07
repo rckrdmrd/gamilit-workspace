@@ -84,7 +84,7 @@ export class TeacherMessagesService {
    * @param query - Filtros y parámetros de paginación
    * @returns Lista paginada de mensajes
    */
-  async getMessages(teacherId: string, tenantId: string, query: GetMessagesQueryDto): Promise<MessagesListResponseDto> {
+  async getMessages(teacherId: string, _tenantId: string, query: GetMessagesQueryDto): Promise<MessagesListResponseDto> {
     // ⚠️ NOTA: sender y classroom relations deshabilitadas por cross-datasource limitation
     // Ver: message.entity.ts - Cross-datasource relations comentadas
     // Para obtener datos de sender/classroom:
@@ -92,12 +92,12 @@ export class TeacherMessagesService {
     // 2. Extraer senderId[] y classroomId[]
     // 3. Query paralela a auth_management.profiles y social_features.classrooms
     // 4. Mapear resultados en el response
+    // ISS-SYNC-001: tenantId removido - no existe en DDL communication.messages
     const qb = this.messagesRepository
       .createQueryBuilder('msg')
       // .leftJoinAndSelect('msg.sender', 'sender')  // ❌ Disabled - cross-datasource
       // .leftJoinAndSelect('msg.classroom', 'classroom')  // ❌ Disabled - cross-datasource
-      .where('msg.tenantId = :tenantId', { tenantId })
-      .andWhere('msg.deletedAt IS NULL')
+      .where('msg.isDeleted = false')
       .andWhere(
         '(msg.senderId = :teacherId OR EXISTS (SELECT 1 FROM communication.message_participants mp WHERE mp.message_id = msg.id AND mp.user_id = :teacherId))',
         { teacherId },
@@ -109,7 +109,7 @@ export class TeacherMessagesService {
     }
 
     if (query.type) {
-      qb.andWhere('msg.type = :type', { type: query.type });
+      qb.andWhere('msg.messageType = :type', { type: query.type });
     }
 
     if (query.unread !== undefined) {
@@ -177,10 +177,11 @@ export class TeacherMessagesService {
    * @throws NotFoundException si no existe
    * @throws ForbiddenException si no tiene acceso
    */
-  async getMessageById(messageId: string, teacherId: string, tenantId: string): Promise<MessageResponseDto> {
+  async getMessageById(messageId: string, teacherId: string, _tenantId: string): Promise<MessageResponseDto> {
     // ⚠️ NOTA: sender y classroom relations deshabilitadas por cross-datasource limitation
+    // ISS-SYNC-001: tenantId removido - no existe en DDL communication.messages
     const message = await this.messagesRepository.findOne({
-      where: { id: messageId, tenantId },
+      where: { id: messageId },
       // relations: ['sender', 'classroom'],  // ❌ Disabled - cross-datasource
     });
 
@@ -225,23 +226,27 @@ export class TeacherMessagesService {
    * @returns Mensaje creado
    * @throws BadRequestException si no hay destinatarios
    */
-  async sendMessage(teacherId: string, tenantId: string, dto: SendMessageDto): Promise<MessageResponseDto> {
+  async sendMessage(teacherId: string, _tenantId: string, dto: SendMessageDto): Promise<MessageResponseDto> {
     // Verificar que los recipients existen y son accesibles
     if (dto.recipient_ids.length === 0) {
       throw new BadRequestException('Debe especificar al menos un destinatario');
     }
 
-    // Crear mensaje
+    // ISS-SYNC-001: Alineado con DDL communication.messages
+    // - type → messageType
+    // - assignmentId → metadata.assignment_id
+    // - conversationId → threadId
+    // - tenantId removido (no existe en DDL)
     const message = this.messagesRepository.create({
       senderId: teacherId,
-      type: dto.type || MessageTypeEnum.DIRECT,
+      recipientId: dto.recipient_ids[0] || null, // Primer destinatario como recipient principal
+      messageType: dto.type || MessageTypeEnum.DIRECT,
       subject: dto.subject,
       content: dto.content,
       classroomId: dto.classroom_id || null,
-      assignmentId: dto.assignment_id || null,
       parentMessageId: dto.parent_message_id || null,
-      conversationId: dto.parent_message_id ? await this.getConversationId(dto.parent_message_id) : null,
-      tenantId,
+      threadId: dto.parent_message_id ? await this.getThreadId(dto.parent_message_id) : null,
+      metadata: dto.assignment_id ? { assignment_id: dto.assignment_id } : {},
     });
 
     await this.messagesRepository.save(message);
@@ -276,7 +281,7 @@ export class TeacherMessagesService {
 
     this.logger.log(`Message ${message.id} sent by teacher ${teacherId} to ${dto.recipient_ids.length} recipients`);
 
-    return this.getMessageById(message.id, teacherId, tenantId);
+    return this.getMessageById(message.id, teacherId, _tenantId);
   }
 
   /**
@@ -385,11 +390,11 @@ export class TeacherMessagesService {
    * @param tenantId - ID del tenant
    * @returns Lista de conversaciones
    */
-  async getConversations(teacherId: string, tenantId: string): Promise<ConversationDto[]> {
-    // Query complejo para agrupar mensajes en conversaciones
+  async getConversations(teacherId: string, _tenantId: string): Promise<ConversationDto[]> {
+    // ISS-SYNC-001: Query actualizado - conversation_id → thread_id, tenant_id removido
     const conversations = await this.messagesRepository.query(
       `SELECT
-        COALESCE(m.conversation_id, m.id) as conversation_id,
+        COALESCE(m.thread_id, m.id) as conversation_id,
         CASE
           WHEN m.sender_id = $1 THEN (
             SELECT mp.user_id FROM communication.message_participants mp
@@ -399,11 +404,11 @@ export class TeacherMessagesService {
         END as other_user_id,
         CASE
           WHEN m.sender_id = $1 THEN (
-            SELECT u.name FROM communication.message_participants mp
-            JOIN auth_management.profiles u ON mp.user_id = u.id
+            SELECT u.display_name FROM communication.message_participants mp
+            JOIN auth_management.profiles u ON mp.user_id = u.user_id
             WHERE mp.message_id = m.id AND mp.role = 'recipient' LIMIT 1
           )
-          ELSE s.name
+          ELSE s.display_name
         END as other_user_name,
         m.subject as last_message,
         m.created_at as last_message_at,
@@ -412,13 +417,12 @@ export class TeacherMessagesService {
            AND EXISTS (
              SELECT 1 FROM communication.messages m2
              WHERE m2.id = mp2.message_id
-               AND COALESCE(m2.conversation_id, m2.id) = COALESCE(m.conversation_id, m.id)
+               AND COALESCE(m2.thread_id, m2.id) = COALESCE(m.thread_id, m.id)
            )
         ) as unread_count
        FROM communication.messages m
-       LEFT JOIN auth_management.profiles s ON m.sender_id = s.id
-       WHERE m.tenant_id = $2
-         AND m.deleted_at IS NULL
+       LEFT JOIN auth_management.profiles s ON m.sender_id = s.user_id
+       WHERE m.is_deleted = false
          AND (
            m.sender_id = $1
            OR EXISTS (
@@ -427,7 +431,7 @@ export class TeacherMessagesService {
            )
          )
        ORDER BY m.created_at DESC`,
-      [teacherId, tenantId],
+      [teacherId],
     );
 
     return conversations.map((c: any) => ({
@@ -482,30 +486,33 @@ export class TeacherMessagesService {
    * @param tenantId - ID del tenant
    * @returns true si tiene acceso, false si no
    */
-  private async verifyTeacherClassroomAccess(teacherId: string, classroomId: string, tenantId: string): Promise<boolean> {
+  private async verifyTeacherClassroomAccess(teacherId: string, classroomId: string, _tenantId: string): Promise<boolean> {
+    // ISS-SYNC-001: tenantId removido de query (no existe en social_features.teacher_classrooms DDL)
     const result = await this.messagesRepository.query(
       `SELECT EXISTS (
         SELECT 1 FROM social_features.teacher_classrooms
-        WHERE teacher_id = $1 AND classroom_id = $2 AND tenant_id = $3
+        WHERE teacher_id = $1 AND classroom_id = $2
       ) as has_access`,
-      [teacherId, classroomId, tenantId],
+      [teacherId, classroomId],
     );
     return result[0]?.has_access || false;
   }
 
   /**
-   * Obtener ID de conversación del mensaje padre
+   * Obtener ID de thread del mensaje padre
    *
    * @private
    * @param parentMessageId - ID del mensaje padre
-   * @returns ID de la conversación o null
+   * @returns ID del thread o null
+   *
+   * ISS-SYNC-001: Renombrado de getConversationId → getThreadId
    */
-  private async getConversationId(parentMessageId: string): Promise<string | null> {
+  private async getThreadId(parentMessageId: string): Promise<string | null> {
     const parent = await this.messagesRepository.findOne({
       where: { id: parentMessageId },
-      select: ['conversationId', 'id'],
+      select: ['threadId', 'id'],
     });
-    return parent?.conversationId || parent?.id || null;
+    return parent?.threadId || parent?.id || null;
   }
 
   /**
@@ -534,18 +541,22 @@ export class TeacherMessagesService {
    * @returns DTO de respuesta
    */
   private mapToResponseDto(message: any): MessageResponseDto {
+    // ISS-SYNC-001: Actualizado para usar nombres de campos alineados con DDL
+    // - type → messageType
+    // - assignmentId → metadata.assignment_id
+    // - attachmentUrl → attachments (array)
     return {
       id: message.id,
       sender_id: message.senderId,
-      sender_name: message.sender?.display_name || message.sender?.full_name || 'Desconocido',
+      sender_name: message.senderName || message.sender?.display_name || 'Desconocido',
       recipients: message.recipients || [],
       subject: message.subject,
       content: message.content,
-      type: message.type,
+      type: message.messageType,
       classroom_id: message.classroomId,
       classroom_name: message.classroom?.name || null,
-      assignment_id: message.assignmentId,
-      attachment_url: message.attachmentUrl,
+      assignment_id: message.metadata?.assignment_id || null,
+      attachment_url: message.attachments?.[0]?.url || null, // Primer attachment para compatibilidad
       parent_message_id: message.parentMessageId,
       is_read: message.isRead,
       read_at: message.readAt?.toISOString() || null,

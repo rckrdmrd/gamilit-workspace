@@ -1,3 +1,20 @@
+---
+id: "US-FUND-002"
+title: "Perfiles de usuario basicos"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-001"
+story_points: 5
+budget: "$1,800 MXN"
+sprint: "Sprint-1"
+labels: ["profiles", "users", "fundamentos"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-08-09"
+---
+
 # US-FUND-002: Perfiles de usuario básicos
 
 **Épica:** EAI-001 - Fundamentos
@@ -5,7 +22,7 @@
 **Story Points:** 5 SP
 **Presupuesto:** $1,800 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 

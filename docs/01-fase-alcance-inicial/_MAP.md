@@ -6,7 +6,7 @@
 **Presupuesto:** $110,000 MXN
 **Story Points:** 230 SP
 **Estado:** ✅ Completado 100%
-**Última actualización:** 2025-11-08
+**Última actualización:** 2026-01-04
 
 ---
 
@@ -45,7 +45,7 @@ Establecer las bases técnicas y funcionales de la plataforma GAMILIT con 7 épi
 |---------|-------------|
 | [README.md](./README.md) | Descripción completa de la fase |
 | [TIMELINE.yml](./TIMELINE.yml) | Timeline, sprints, métricas, lessons learned |
-| [_MAP.md](./MAP.md) | Este archivo - Índice maestro |
+| [_MAP.md](./_MAP.md) | Este archivo - Índice maestro |
 
 ---
 
@@ -284,7 +284,7 @@ Continuar con [Fase 2: Robustecimiento](../02-fase-robustecimiento/) - Migració
 
 ---
 
-**Generado:** 2025-11-08
+**Generado:** 2026-01-04
 **Sistema:** SIMCO (Sistema Indexado Modular por Contexto)
 **Método:** Migración por fases desde docs_bkp/
 **Versión:** 1.0.0

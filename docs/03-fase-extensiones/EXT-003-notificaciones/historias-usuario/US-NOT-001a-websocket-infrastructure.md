@@ -1,3 +1,19 @@
+---
+id: "US-NOT-001a"
+title: "Infraestructura WebSocket y Sistema de Entrega en Tiempo Real"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent"
+epic: "EXT-003"
+story_points: 10
+budget: "$13,160 MXN"
+sprint: "Sprint-7"
+labels: ["notifications", "websocket", "socket-io", "redis", "infrastructure"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-NOT-001a: Infraestructura WebSocket y Sistema de Entrega en Tiempo Real
 
 **Épica:** EXT-003 - Sistema de Notificaciones
@@ -5,7 +21,7 @@
 **Story Points:** 10 SP
 **Presupuesto:** $13,160 MXN
 **Prioridad:** Alta (Extensión Fase 3)
-**Estado:** 📋 Planificada
+**Estado:** Backlog
 **Relación:** Parte de US-NOT-001 (dividida en a/b/c por PF-001)
 
 ---

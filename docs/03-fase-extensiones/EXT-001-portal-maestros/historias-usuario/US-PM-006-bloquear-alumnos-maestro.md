@@ -1,19 +1,35 @@
+---
+id: "US-PM-006"
+title: "Bloquear/Desbloquear Alumnos del Maestro"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-001"
+story_points: 8
+budget: "$3,200 MXN"
+sprint: "Sprint-TBD"
+labels: ["portal-maestros", "student-management", "suspension", "access-control", "v2-core"]
+created_date: "2025-11-08"
+updated_date: "2026-01-04"
+---
+
 # US-PM-006: Bloquear/Desbloquear Alumnos del Maestro
 
-## 📋 Metadata
+## Metadata
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | US-PM-006 |
-| **Épica** | EXT-001 (Portal de Maestros CORE) |
-| **Módulo** | Portal de Maestros |
+| **Epica** | EXT-001 (Portal de Maestros CORE) |
+| **Modulo** | Portal de Maestros |
 | **Prioridad** | Alta (v2 CORE) |
 | **Story Points** | 8 |
 | **Presupuesto** | $3,200 MXN |
 | **Sprint** | TBD |
-| **Estado** | 🆕 Nueva |
-| **Versión** | 1.0 |
-| **Fecha creación** | 2025-11-08 |
+| **Estado** | Backlog |
+| **Version** | 1.0 |
+| **Fecha creacion** | 2025-11-08 |
 
 ## 🎯 Historia de Usuario
 
@@ -61,8 +77,8 @@ Esta funcionalidad es parte del **Alcance v2 (Ampliación) - Portal de Maestros 
     gamilit.get_current_user_role() = 'teacher'
     AND user_id IN (
       SELECT student_id
-      FROM social_features.classroom_enrollments ce
-      JOIN social_features.classrooms c ON ce.classroom_id = c.classroom_id
+      FROM social_features.classroom_members cm
+      JOIN social_features.classrooms c ON cm.classroom_id = c.id
       WHERE c.teacher_id = gamilit.get_current_user_id()
     )
   )
@@ -221,14 +237,14 @@ async updateStudentStatus(
   dto: UpdateStudentStatusDto,
 ): Promise<{ success: boolean; message: string }> {
   // 1. Verificar que el alumno pertenece a classroom del maestro
-  const enrollment = await this.dbClient
-    .from('classroom_enrollments')
+  const membership = await this.dbClient
+    .from('classroom_members')
     .select('*, classroom:classrooms(teacher_id)')
     .eq('student_id', studentId)
     .eq('classroom.teacher_id', teacherId)
     .single();
 
-  if (!enrollment) {
+  if (!membership) {
     throw new ForbiddenException(
       'No tienes permiso para modificar el status de este alumno'
     );

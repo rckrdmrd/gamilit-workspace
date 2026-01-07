@@ -7,6 +7,8 @@
 -- Created: 2025-11-28
 -- =============================================================================
 
+DROP TRIGGER IF EXISTS trg_update_missions_on_perfect_scores ON progress_tracking.exercise_attempts;
+
 CREATE TRIGGER trg_update_missions_on_perfect_scores
     AFTER INSERT ON progress_tracking.exercise_attempts
     FOR EACH ROW

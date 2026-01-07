@@ -53,26 +53,32 @@ BEGIN
         ON CONFLICT (user_id) DO NOTHING;  -- Prevent duplicates
 
         -- [2025-12-28] Registrar transaccion de bono de bienvenida para auditoria
+        -- [2026-01-04] CORREGIDO: Eliminada columna 'source' inexistente, usando reference_type y metadata
         INSERT INTO gamification_system.ml_coins_transactions (
             user_id,
             tenant_id,
             amount,
+            balance_before,
             balance_after,
             transaction_type,
             description,
-            source,
+            reason,
+            reference_type,
             metadata
         ) VALUES (
             NEW.id,
             NEW.tenant_id,
             100,  -- Welcome bonus
-            100,  -- Balance inicial
+            0,    -- Balance antes (nuevo usuario)
+            100,  -- Balance despues
             'earn',
             'Bono de bienvenida al registrarte en GAMILIT',
             'system_welcome_bonus',
+            'admin',  -- Tipo admin para acciones del sistema
             jsonb_build_object(
                 'trigger', 'initialize_user_stats',
-                'version', '2.0',
+                'version', '2.1',
+                'source', 'system_welcome_bonus',
                 'created_at', gamilit.now_mexico()::text
             )
         )

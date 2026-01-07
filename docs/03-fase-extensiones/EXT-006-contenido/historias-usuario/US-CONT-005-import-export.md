@@ -1,3 +1,19 @@
+---
+id: "US-CONT-005"
+title: "Importacion y Exportacion de Contenido"
+type: "User Story"
+status: "Backlog"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-006"
+story_points: 6
+budget: "$3,400 MXN"
+sprint: "Sprint-3"
+labels: ["ext-006", "import", "export", "migracion", "moodle", "scorm", "docx", "pdf", "interoperabilidad", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-CONT-005: Importación y Exportación de Contenido
 
 ## Información Básica

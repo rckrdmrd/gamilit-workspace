@@ -1,3 +1,19 @@
+---
+id: "US-REP-005"
+title: "Visualizaciones Avanzadas"
+type: "User Story"
+status: "Backlog"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-005"
+story_points: 7
+budget: "$3,500 MXN"
+sprint: "Sprint-3"
+labels: ["ext-005", "visualizaciones", "charts", "d3js", "interactivo", "drill-down", "heatmap", "analytics", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-REP-005: Visualizaciones Avanzadas
 
 ## Información Básica

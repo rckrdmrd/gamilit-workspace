@@ -120,6 +120,17 @@ export class NotificationLog {
     sentAt?: Date;
 
   /**
+   * Fecha y hora en que fue entregado
+   *
+   * Solo se llena si status='delivered'
+   * Indica confirmación de entrega del proveedor
+   *
+   * @optional
+   */
+  @Column({ name: 'delivered_at', type: 'timestamp with time zone', nullable: true })
+    deliveredAt?: Date;
+
+  /**
    * Mensaje de error si el envío falló
    *
    * Contiene el error devuelto por el proveedor externo
@@ -154,6 +165,22 @@ export class NotificationLog {
    */
   @Column({ name: 'external_id', type: 'varchar', length: 255, nullable: true })
     externalId?: string;
+
+  /**
+   * Respuesta del proveedor externo
+   *
+   * Respuesta completa del proveedor (SendGrid, Firebase, etc.)
+   *
+   * Ejemplos:
+   * - Email (SendGrid): { status_code, message_id, headers }
+   * - Push (FCM): { success, message_id, error_code }
+   *
+   * Útil para debugging y auditoría
+   *
+   * @optional
+   */
+  @Column({ name: 'provider_response', type: 'jsonb', nullable: true })
+    providerResponse?: Record<string, unknown>;
 
   /**
    * Metadata adicional del proveedor en JSONB

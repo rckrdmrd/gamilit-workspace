@@ -1,3 +1,19 @@
+---
+id: "US-REP-003"
+title: "Analytics Predictivo con Machine Learning"
+type: "User Story"
+status: "Backlog"
+priority: "Media"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-005"
+story_points: 10
+budget: "$5,000 MXN"
+sprint: "Sprint-3"
+labels: ["ext-005", "machine-learning", "predicciones", "analytics", "alertas", "riesgo", "recomendaciones", "ml", "ai", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-REP-003: Analytics Predictivo con Machine Learning
 
 ## Información Básica

@@ -1,4 +1,30 @@
+---
+id: "US-AE-007"
+title: "Asignar Grupos a Maestros"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 6
+budget: "$2,400 MXN"
+sprint: "Sprint-FE-059"
+labels: ["admin-extendido", "classrooms", "teachers", "bulk-assign", "v2-core", "implemented"]
+created_date: "2025-11-08"
+updated_date: "2026-01-06"
+completed_date: "2025-11-19"
+---
+
 # US-AE-007: Asignar Grupos a Maestros
+
+> **IMPLEMENTACION COMPLETADA** (2025-11-19)
+>
+> Esta US fue implementada durante FE-059 Days 1-9.
+>
+> **Codigo:**
+> - Backend: Ver endpoints en `apps/backend/src/modules/admin/controllers/`
+> - Frontend: `apps/frontend/src/apps/admin/pages/AdminClassroomTeacherPage.tsx`
+> - Documentacion implementacion: `docs/90-transversal/restructuracion-v2/IMPLEMENTACION-REST-ENDPOINTS-US-AE-007.md`
 
 **Épica:** EXT-002 - Gestión Avanzada Admin
 **Fase:** Fase 3 - Extensiones
@@ -6,7 +32,7 @@
 **Prioridad:** ALTA
 **Story Points:** 6 SP
 **Estimación:** $2,400 MXN
-**Estado:** 📝 Especificado
+**Estado:** **Done**
 
 ---
 
@@ -448,10 +474,10 @@ export class ClassroomAssignmentsService {
   ): Promise<void> {
     // 1. Verificar si hay estudiantes activos
     const { count } = await this.dbClientService.client
-      .from('social_features.classroom_enrollments')
+      .from('social_features.classroom_members')
       .select('*', { count: 'exact', head: true })
       .eq('classroom_id', classroomId)
-      .eq('is_active', true);
+      .eq('status', 'active');
 
     if (count > 0 && !force) {
       throw new ConflictException(

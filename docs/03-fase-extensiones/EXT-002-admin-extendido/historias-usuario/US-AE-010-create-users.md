@@ -1,3 +1,19 @@
+---
+id: "US-AE-010"
+title: "Crear Usuarios desde Admin"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 13
+budget: "$5,200 MXN"
+sprint: "Sprint-TBD"
+labels: ["admin-extendido", "users", "onboarding", "bulk-import", "v2-core"]
+created_date: "2025-11-29"
+updated_date: "2026-01-04"
+---
+
 # HU-EP010-10: Crear Usuarios desde Admin
 
 ## Información General

@@ -1,5 +1,9 @@
 /**
  * DTOs for Exercise Creation
+ *
+ * @note SYNC-ENUM (2026-01-07): Migrado a enums centralizados
+ * Los enums locales fueron reemplazados por los definidos en enums.constants.ts
+ * que están sincronizados con el DDL de PostgreSQL.
  */
 
 import {
@@ -13,25 +17,10 @@ import {
   IsBoolean,
   IsUUID,
   Min,
-  } from 'class-validator';
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-
-export enum ExerciseType {
-  MULTIPLE_CHOICE = 'multiple_choice',
-  TRUE_FALSE = 'true_false',
-  FILL_BLANK = 'fill_blank',
-  DRAG_DROP = 'drag_drop',
-  ORDERING = 'ordering',
-  MATCHING = 'matching',
-}
-
-export enum ExerciseDifficulty {
-  FACIL = 'facil',
-  INTERMEDIO = 'intermedio',
-  AVANZADO = 'avanzado',
-  EXPERTO = 'experto',
-}
+import { ExerciseTypeEnum, DifficultyLevelEnum } from '@shared/constants/enums.constants';
 
 // Hint DTO
 export class HintDto {
@@ -241,13 +230,13 @@ export class CreateExerciseDto {
   @IsNotEmpty()
     instructions!: string;
 
-  @ApiProperty({ enum: ExerciseType })
-  @IsEnum(ExerciseType)
-    type!: ExerciseType;
+  @ApiProperty({ enum: ExerciseTypeEnum, description: 'Exercise type (synchronized with DB ENUM)' })
+  @IsEnum(ExerciseTypeEnum)
+    type!: ExerciseTypeEnum;
 
-  @ApiProperty({ enum: ExerciseDifficulty })
-  @IsEnum(ExerciseDifficulty)
-    difficulty!: ExerciseDifficulty;
+  @ApiProperty({ enum: DifficultyLevelEnum, description: 'Difficulty level (CEFR standard)' })
+  @IsEnum(DifficultyLevelEnum)
+    difficulty!: DifficultyLevelEnum;
 
   @ApiProperty({ description: 'XP reward for completion' })
   @IsNumber()
@@ -309,10 +298,10 @@ export class UpdateExerciseDto {
   @IsOptional()
     instructions?: string;
 
-  @ApiPropertyOptional({ enum: ExerciseDifficulty })
-  @IsEnum(ExerciseDifficulty)
+  @ApiPropertyOptional({ enum: DifficultyLevelEnum })
+  @IsEnum(DifficultyLevelEnum)
   @IsOptional()
-    difficulty?: ExerciseDifficulty;
+    difficulty?: DifficultyLevelEnum;
 
   @ApiPropertyOptional()
   @IsNumber()

@@ -10,7 +10,8 @@ CREATE TABLE notifications.user_devices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Usuario propietario del dispositivo
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    -- FK corregida: auth.users -> auth_management.profiles (2026-01-04, EXT-003 sync)
+    user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
 
     -- Tipo de dispositivo
     -- Valores: 'web', 'mobile', 'desktop'

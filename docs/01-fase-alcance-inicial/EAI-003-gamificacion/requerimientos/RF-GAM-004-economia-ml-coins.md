@@ -1,3 +1,17 @@
+---
+id: "RF-GAM-004"
+title: "Economia de ML Coins (Maya Learning Coins)"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Gamificacion"
+epic: "EAI-003"
+version: "2.1"
+labels: ["gamification", "economy", "ml-coins", "currency", "transactions", "rewards"]
+created_date: "2025-11-08"
+updated_date: "2026-01-04"
+---
+
 # RF-GAM-004: Economía de ML Coins (Maya Learning Coins)
 
 ## 📋 Metadata

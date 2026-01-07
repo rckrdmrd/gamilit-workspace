@@ -91,42 +91,10 @@ export class TeamsController {
   }
 
   /**
-   * Obtiene un equipo por ID
-   *
-   * @param id - ID del equipo (UUID)
-   * @returns Equipo encontrado
-   *
-   * @example
-   * GET /api/v1/social/teams/990e8400-e29b-41d4-a716-446655440040
-   */
-  @Get('teams/:id')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Get team by ID',
-    description: 'Obtiene un equipo específico por su identificador único',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID del equipo en formato UUID',
-    type: String,
-    required: true,
-    example: '990e8400-e29b-41d4-a716-446655440040',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Equipo obtenido exitosamente',
-    type: TeamResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Equipo no encontrado',
-  })
-  async findById(@Param('id') id: string) {
-    return this.teamsService.findById(id);
-  }
-
-  /**
    * Obtiene un equipo por su código único
+   *
+   * IMPORTANTE: Esta ruta DEBE estar ANTES de 'teams/:id' para evitar
+   * que NestJS capture 'code' como un ID.
    *
    * @param code - Código del equipo
    * @returns Equipo encontrado
@@ -159,6 +127,44 @@ export class TeamsController {
   })
   async findByCode(@Param('code') code: string) {
     return this.teamsService.findByCode(code);
+  }
+
+  /**
+   * Obtiene un equipo por ID
+   *
+   * NOTA: Esta ruta debe estar DESPUÉS de rutas específicas como
+   * 'teams/code/:code' para evitar conflictos de captura.
+   *
+   * @param id - ID del equipo (UUID)
+   * @returns Equipo encontrado
+   *
+   * @example
+   * GET /api/v1/social/teams/990e8400-e29b-41d4-a716-446655440040
+   */
+  @Get('teams/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get team by ID',
+    description: 'Obtiene un equipo específico por su identificador único',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del equipo en formato UUID',
+    type: String,
+    required: true,
+    example: '990e8400-e29b-41d4-a716-446655440040',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Equipo obtenido exitosamente',
+    type: TeamResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Equipo no encontrado',
+  })
+  async findById(@Param('id') id: string) {
+    return this.teamsService.findById(id);
   }
 
   /**

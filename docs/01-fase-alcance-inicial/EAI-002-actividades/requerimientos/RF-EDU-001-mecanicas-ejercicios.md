@@ -1,3 +1,17 @@
+---
+id: "RF-EDU-001"
+title: "Mecanicas de Ejercicios"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Contenido Educativo"
+epic: "EAI-002"
+version: "2.0"
+labels: ["exercises", "mechanics", "education", "vocabulary", "grammar", "reading", "writing", "audio", "culture"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # RF-EDU-001: Mecánicas de Ejercicios
 
 ## 📋 Metadata

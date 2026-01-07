@@ -1,3 +1,17 @@
+---
+id: "RF-AUTH-003"
+title: "Proveedores de Autenticacion OAuth"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "Autenticacion y Autorizacion"
+epic: "EAI-001"
+version: "1.0"
+labels: ["auth", "oauth", "social-login", "google", "facebook", "apple", "microsoft", "github"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # RF-AUTH-003: Proveedores de Autenticación OAuth
 
 ## 📋 Metadata

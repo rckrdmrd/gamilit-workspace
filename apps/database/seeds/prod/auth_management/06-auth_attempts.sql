@@ -28,7 +28,7 @@ INSERT INTO auth_management.auth_attempts (
 ) VALUES
 -- Successful login - Student
 (
-    gen_random_uuid(),
+    'a0000001-0000-0000-0000-000000000001'::uuid,
     'student@test.gamilit.com',
     '127.0.0.1'::inet,
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -40,7 +40,7 @@ INSERT INTO auth_management.auth_attempts (
 ),
 -- Successful login - Teacher
 (
-    gen_random_uuid(),
+    'a0000001-0000-0000-0000-000000000002'::uuid,
     'teacher@test.gamilit.com',
     '127.0.0.1'::inet,
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
@@ -52,7 +52,7 @@ INSERT INTO auth_management.auth_attempts (
 ),
 -- Failed login - Wrong password
 (
-    gen_random_uuid(),
+    'a0000001-0000-0000-0000-000000000003'::uuid,
     'student@test.gamilit.com',
     '192.168.1.100'::inet,
     'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X)',
@@ -64,7 +64,7 @@ INSERT INTO auth_management.auth_attempts (
 ),
 -- Failed login - User not found
 (
-    gen_random_uuid(),
+    'a0000001-0000-0000-0000-000000000004'::uuid,
     'nonexistent@test.gamilit.com',
     '192.168.1.200'::inet,
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
@@ -76,7 +76,7 @@ INSERT INTO auth_management.auth_attempts (
 ),
 -- Successful login - Admin
 (
-    gen_random_uuid(),
+    'a0000001-0000-0000-0000-000000000005'::uuid,
     'admin@test.gamilit.com',
     '127.0.0.1'::inet,
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -88,7 +88,7 @@ INSERT INTO auth_management.auth_attempts (
 ),
 -- Failed login - Multiple attempts (suspicious)
 (
-    gen_random_uuid(),
+    'a0000001-0000-0000-0000-000000000006'::uuid,
     'admin@test.gamilit.com',
     '203.0.113.45'::inet,
     'curl/7.68.0',
@@ -97,7 +97,10 @@ INSERT INTO auth_management.auth_attempts (
     'gamilit-test',
     gamilit.now_mexico() - INTERVAL '6 hours',
     '{"device": "bot", "suspicious": true, "attempts": 5, "blocked": true}'::jsonb
-);
+)
+ON CONFLICT (id) DO UPDATE SET
+    metadata = EXCLUDED.metadata,
+    success = EXCLUDED.success;
 
 -- =====================================================
 -- Verification Query

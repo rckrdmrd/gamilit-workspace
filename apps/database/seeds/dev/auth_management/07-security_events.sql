@@ -28,7 +28,7 @@ INSERT INTO auth_management.security_events (
 ) VALUES
 -- Low severity - Successful login
 (
-    gen_random_uuid(),
+    's0000001-0000-0000-0000-000000000001'::uuid,
     '10000000-0000-0000-0000-000000000001'::uuid,
     'login_success',
     'low',
@@ -44,7 +44,7 @@ INSERT INTO auth_management.security_events (
 ),
 -- Medium severity - Password change
 (
-    gen_random_uuid(),
+    's0000001-0000-0000-0000-000000000002'::uuid,
     '20000000-0000-0000-0000-000000000001'::uuid,
     'password_change',
     'medium',
@@ -60,7 +60,7 @@ INSERT INTO auth_management.security_events (
 ),
 -- High severity - Multiple failed login attempts
 (
-    gen_random_uuid(),
+    's0000001-0000-0000-0000-000000000003'::uuid,
     NULL,
     'multiple_failed_logins',
     'high',
@@ -77,7 +77,7 @@ INSERT INTO auth_management.security_events (
 ),
 -- Medium severity - Email verification sent
 (
-    gen_random_uuid(),
+    's0000001-0000-0000-0000-000000000004'::uuid,
     '10000000-0000-0000-0000-000000000002'::uuid,
     'email_verification_sent',
     'low',
@@ -92,7 +92,7 @@ INSERT INTO auth_management.security_events (
 ),
 -- Low severity - Logout
 (
-    gen_random_uuid(),
+    's0000001-0000-0000-0000-000000000005'::uuid,
     '30000000-0000-0000-0000-000000000001'::uuid,
     'logout',
     'low',
@@ -107,7 +107,7 @@ INSERT INTO auth_management.security_events (
 ),
 -- Critical severity - Unauthorized access attempt
 (
-    gen_random_uuid(),
+    's0000001-0000-0000-0000-000000000006'::uuid,
     NULL,
     'unauthorized_access_attempt',
     'critical',
@@ -125,7 +125,7 @@ INSERT INTO auth_management.security_events (
 ),
 -- Medium severity - Permission elevation
 (
-    gen_random_uuid(),
+    's0000001-0000-0000-0000-000000000007'::uuid,
     '20000000-0000-0000-0000-000000000001'::uuid,
     'permission_elevation',
     'medium',
@@ -143,7 +143,7 @@ INSERT INTO auth_management.security_events (
 ),
 -- Low severity - Profile update
 (
-    gen_random_uuid(),
+    's0000001-0000-0000-0000-000000000008'::uuid,
     '10000000-0000-0000-0000-000000000003'::uuid,
     'profile_update',
     'low',
@@ -155,7 +155,10 @@ INSERT INTO auth_management.security_events (
         "verified": true
     }'::jsonb,
     gamilit.now_mexico() - INTERVAL '12 hours'
-);
+)
+ON CONFLICT (id) DO UPDATE SET
+    metadata = EXCLUDED.metadata,
+    severity = EXCLUDED.severity;
 
 -- =====================================================
 -- Verification Query

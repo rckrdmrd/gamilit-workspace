@@ -1,3 +1,19 @@
+---
+id: "US-PM-000"
+title: "Dashboard de Maestro Base"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-001"
+story_points: 8
+budget: "$3,200 MXN"
+sprint: "Fase-3"
+labels: ["portal-maestros", "dashboard", "teacher", "v2-core"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-PM-000: Dashboard de Maestro Base
 
 **Épica:** EXT-001 (Portal de Maestros)
@@ -6,7 +22,7 @@
 **Story Points:** 8 SP
 **Presupuesto:** $3,200 MXN
 **Prioridad:** Alta (Alcance v2 CORE)
-**Estado:** ✅ Completada
+**Estado:** Done
 
 **NOTA:** Esta US fue reclasificada desde EAI-005 a EXT-001 porque requiere rol `teacher` que no existía en alcance v1. Es funcionalidad base del Portal de Maestros (v2).
 

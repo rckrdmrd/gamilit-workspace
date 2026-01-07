@@ -14,7 +14,7 @@ DECLARE
     v_transaction_id UUID;
     v_current_balance INTEGER;
     v_new_balance INTEGER;
-    v_current_rank maya_rank;
+    v_current_rank gamification_system.maya_rank;
     v_multiplier DECIMAL(3,2);
     v_final_amount INTEGER;
 BEGIN

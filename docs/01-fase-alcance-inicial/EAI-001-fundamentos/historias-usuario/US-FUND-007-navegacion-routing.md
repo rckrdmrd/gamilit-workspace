@@ -1,3 +1,19 @@
+---
+id: "US-FUND-007"
+title: "Navegación y routing"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-001"
+story_points: 5
+budget: "$1,800 MXN"
+sprint: "Sprint-1"
+labels: ["frontend", "routing", "navigation", "react-router", "ux"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-FUND-007: Navegación y routing
 
 **Épica:** EAI-001 - Fundamentos
@@ -5,7 +21,7 @@
 **Story Points:** 5 SP
 **Presupuesto:** $1,800 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
@@ -422,13 +438,13 @@ export function NotFoundPage() {
 
 ## Notas del Alcance Inicial
 
-- ✅ Routing básico con React Router v6
-- ✅ Sin lazy loading de rutas
-- ✅ Sin transiciones animadas entre páginas
-- ✅ Sin pre-fetching de datos
-- ✅ Navbar simple sin mega-menu
-- ⚠️ **Extensión futura:** EXT-014-UX (lazy loading, transiciones, pre-fetching)
-- ⚠️ **Extensión futura:** EXT-015-Mobile (app nativa con navegación móvil)
+- Done Routing básico con React Router v6
+- Done Sin lazy loading de rutas
+- Done Sin transiciones animadas entre páginas
+- Done Sin pre-fetching de datos
+- Done Navbar simple sin mega-menu
+- **Extensión futura:** EXT-014-UX (lazy loading, transiciones, pre-fetching)
+- **Extensión futura:** EXT-015-Mobile (app nativa con navegación móvil)
 
 ---
 
@@ -474,5 +490,5 @@ describe('Navigation', () => {
 ---
 
 **Creado:** 2025-11-02
-**Actualizado:** 2025-11-02
+**Actualizado:** 2026-01-04
 **Responsable:** Equipo Frontend

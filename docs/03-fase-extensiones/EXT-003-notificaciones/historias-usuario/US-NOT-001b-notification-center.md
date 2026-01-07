@@ -1,3 +1,19 @@
+---
+id: "US-NOT-001b"
+title: "Centro de Notificaciones In-App"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-003"
+story_points: 5
+budget: "$6,580 MXN"
+sprint: "Sprint-Mes3-Sem2-3"
+labels: ["ui", "frontend", "notifications", "toast", "center", "react", "ext-003", "fase3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-NOT-001b: Centro de Notificaciones In-App
 
 **Épica:** EXT-003 - Sistema de Notificaciones

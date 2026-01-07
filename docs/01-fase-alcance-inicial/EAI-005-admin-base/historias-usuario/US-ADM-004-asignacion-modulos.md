@@ -1,3 +1,19 @@
+---
+id: "US-ADM-004"
+title: "Asignación Básica de Módulos"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-005"
+story_points: 10
+budget: "$4,000 MXN"
+sprint: "Sprint-1"
+labels: ["admin", "modules", "content-management"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ADM-004: Asignación Básica de Módulos
 
 **Épica:** EAI-005 (Plataforma de Maestro Básica)
@@ -5,7 +21,7 @@
 **Story Points:** 10 SP
 **Presupuesto:** $4,000 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 
@@ -520,20 +536,20 @@ export const ModuleCard = ({ module, assigned, onAssign, onRemove }) => {
 ## Alcance Básico vs Extensiones
 
 ### EAI-005 (Este alcance - Admin Base):
-- ✅ Asignar módulos pre-cargados desde catálogo
-- ✅ Remover módulos del aula
-- ✅ Ver módulos asignados con stats básicas
-- ✅ Filtros simples (materia, nivel)
-- ✅ Contenido hardcodeado (no editable)
+- Asignar módulos pre-cargados desde catálogo
+- Remover módulos del aula
+- Ver módulos asignados con stats básicas
+- Filtros simples (materia, nivel)
+- Contenido hardcodeado (no editable)
 
 ### EXT-001 (Extensión futura - Portal Maestros Completo):
-- ⏳ Crear módulos custom
-- ⏳ Editar contenido de módulos
-- ⏳ Clonar/duplicar módulos
-- ⏳ Organizar módulos en secuencias/unidades
-- ⏳ Configurar orden de módulos
-- ⏳ Programar fechas de disponibilidad
-- ⏳ Módulos adaptativos (dificultad dinámica)
+- Crear módulos custom
+- Editar contenido de módulos
+- Clonar/duplicar módulos
+- Organizar módulos en secuencias/unidades
+- Configurar orden de módulos
+- Programar fechas de disponibilidad
+- Módulos adaptativos (dificultad dinámica)
 
 ---
 

@@ -1,3 +1,19 @@
+---
+id: "US-AE-008"
+title: "Configuración del Sistema"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 8
+budget: "$3,200 MXN"
+sprint: "Sprint-2"
+labels: ["admin-extendido", "settings", "configuration", "security", "v2-core"]
+created_date: "2025-11-18"
+updated_date: "2026-01-04"
+---
+
 # US-AE-008: Configuración del Sistema
 
 ## Información General

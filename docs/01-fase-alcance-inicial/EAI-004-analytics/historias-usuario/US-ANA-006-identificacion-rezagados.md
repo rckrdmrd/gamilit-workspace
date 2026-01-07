@@ -1,3 +1,19 @@
+---
+id: "US-ANA-006"
+title: "Identificación de Estudiantes Rezagados"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-004"
+story_points: 8
+budget: "$4,200 MXN"
+sprint: "Sprint-1"
+labels: ["analytics", "at-risk", "intervention"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-ANA-006: Identificación de Estudiantes Rezagados
 
 **Épica:** EAI-004 (Analytics Básico)
@@ -5,7 +21,7 @@
 **Story Points:** 8 SP
 **Presupuesto:** $4,200 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 
@@ -647,23 +663,23 @@ export const StudentRiskDetailModal = ({ student, onClose }) => {
 ## Alcance Básico vs Extensiones
 
 ### EAI-004 (Este alcance - Analytics Básico):
-- ✅ Identificación automática con reglas simples (días inactivos, % progreso)
-- ✅ 3 niveles de riesgo: crítico, advertencia, activo
-- ✅ Vista dedicada con filtros básicos
-- ✅ Indicadores visuales de semáforo
-- ✅ Comparación con promedio de clase
-- ✅ Acciones rápidas como placeholder (UI disabled)
+- Identificación automática con reglas simples (días inactivos, % progreso)
+- 3 niveles de riesgo: crítico, advertencia, activo
+- Vista dedicada con filtros básicos
+- Indicadores visuales de semáforo
+- Comparación con promedio de clase
+- Acciones rápidas como placeholder (UI disabled)
 
 ### EXT-005 (Extensión futura - Reportes Avanzados):
-- ⏳ Análisis predictivo con ML (probabilidad de abandono)
-- ⏳ Alertas automáticas configurables por email
-- ⏳ Reglas de riesgo personalizables por profesor
-- ⏳ Recomendaciones de intervención basadas en datos
-- ⏳ Historial de riesgo (cómo ha cambiado el nivel)
-- ⏳ Exportación de lista de riesgo
-- ⏳ Integración con sistema de mensajería (EXT-001)
-- ⏳ Asignación rápida de actividades de refuerzo
-- ⏳ Dashboard de intervenciones realizadas
+- Análisis predictivo con ML (probabilidad de abandono)
+- Alertas automáticas configurables por email
+- Reglas de riesgo personalizables por profesor
+- Recomendaciones de intervención basadas en datos
+- Historial de riesgo (cómo ha cambiado el nivel)
+- Exportación de lista de riesgo
+- Integración con sistema de mensajería (EXT-001)
+- Asignación rápida de actividades de refuerzo
+- Dashboard de intervenciones realizadas
 
 ---
 

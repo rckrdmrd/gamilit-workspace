@@ -1,16 +1,30 @@
+---
+id: "RF-AUTH-001"
+title: "Sistema de Roles de Usuario"
+type: "Requirement"
+status: "Done"
+priority: "Alta"
+module: "auth_management"
+epic: "EAI-001"
+version: "1.0"
+labels: ["auth", "roles", "rbac", "security"]
+created_date: "2025-11-07"
+updated_date: "2026-01-04"
+---
+
 # RF-AUTH-001: Sistema de Roles de Usuario
 
-## 📋 Metadata
+## Metadata
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | RF-AUTH-001 |
 | **Módulo** | Autenticación y Autorización |
 | **Prioridad** | Alta |
-| **Estado** | ✅ Implementado |
+| **Estado** | Done |
 | **Versión** | 1.0 |
 | **Fecha creación** | 2025-11-07 |
-| **Última actualización** | 2025-11-07 |
+| **Última actualización** | 2026-01-04 |
 
 ## 🔗 Referencias
 

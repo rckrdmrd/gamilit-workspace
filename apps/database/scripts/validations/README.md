@@ -14,7 +14,7 @@
 
 **Uso:**
 ```bash
-cd /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database
+cd /home/isem/workspace-v1/projects/gamilit/apps/database
 PGPASSWORD='C5hq7253pdVyVKUC' psql -h localhost -U gamilit_user -d gamilit_platform -f scripts/quick-validate-xp.sql
 ```
 
@@ -40,7 +40,7 @@ PGPASSWORD='C5hq7253pdVyVKUC' psql -h localhost -U gamilit_user -d gamilit_platf
 
 **Uso:**
 ```bash
-cd /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database
+cd /home/isem/workspace-v1/projects/gamilit/apps/database
 PGPASSWORD='C5hq7253pdVyVKUC' psql -h localhost -U gamilit_user -d gamilit_platform -f scripts/validate-xp-integrity.sql
 ```
 
@@ -63,7 +63,7 @@ PGPASSWORD='C5hq7253pdVyVKUC' psql -h localhost -U gamilit_user -d gamilit_platf
 
 **Uso:**
 ```bash
-cd /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database
+cd /home/isem/workspace-v1/projects/gamilit/apps/database
 PGPASSWORD='C5hq7253pdVyVKUC' psql -h localhost -U gamilit_user -d gamilit_platform -f scripts/fix-historical-xp-ml-coins-v2.sql
 
 # Revisar output cuidadosamente antes de confirmar

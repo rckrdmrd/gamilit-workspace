@@ -1,3 +1,20 @@
+---
+id: "US-ACT-002"
+title: "Mecanicas basicas - Verdadero/Falso"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-002"
+story_points: 4
+budget: "$1,500 MXN"
+sprint: "Sprint-1"
+labels: ["activities", "mechanics", "true-false", "educational"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-08-16"
+---
+
 # US-ACT-002: Mecánicas básicas - Verdadero/Falso
 
 **Épica:** EAI-002 - Actividades Básicas Hardcodeadas
@@ -5,7 +22,7 @@
 **Story Points:** 4 SP
 **Presupuesto:** $1,500 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 

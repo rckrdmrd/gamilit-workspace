@@ -65,7 +65,7 @@ export class PushNotificationService implements OnModuleInit {
   constructor(
     private readonly configService: ConfigService,
     private readonly userDeviceService: UserDeviceService,
-  ) {}
+  ) { }
 
   async onModuleInit() {
     this.initializeWebPush();
@@ -156,7 +156,7 @@ export class PushNotificationService implements OnModuleInit {
    * });
    */
   async sendToSubscription(
-    subscription: webpush.PushSubscription,
+    subscription: any,
     payload: {
       title: string;
       body: string;
@@ -233,7 +233,7 @@ export class PushNotificationService implements OnModuleInit {
       // Parse the subscription from token
       const subscription = JSON.parse(
         deviceToken,
-      ) as webpush.PushSubscription;
+      ) as any;
       return await this.sendToSubscription(subscription, payload);
     } catch (error) {
       if (error instanceof SyntaxError) {

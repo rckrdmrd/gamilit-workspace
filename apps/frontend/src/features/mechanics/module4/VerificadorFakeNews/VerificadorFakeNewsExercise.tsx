@@ -84,12 +84,6 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
     mockArticles.find((a: NewsArticle) => a.id === selectedArticleId);
   const articles = exercise?.articles || mockArticles;
 
-  // Calculate progress
-  const calculateProgress = () => {
-    if (claims.length === 0) return 0;
-    return Math.round((results.length / Math.max(claims.length, 1)) * 100);
-  };
-
   // Calculate score
   const calculateScore = () => {
     if (results.length === 0) return 0;
@@ -108,10 +102,23 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
   };
 
   // Progress tracking
+  // FIX: Send answers in DTO format (claims_verified) for ExercisePage.tsx submit button
   useEffect(() => {
-    const progress = calculateProgress();
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     const score = calculateScore();
+
+    // Transform to DTO format (claims_verified) for backend validation
+    const claims_verified = results.map((r) => {
+      const originalClaim = claims.find((c) => c.id === r.claimId);
+      return {
+        claim_id: r.claimId,
+        is_fake: r.verdict === 'false',
+        evidence: r.explanation && r.explanation.length >= 10
+          ? r.explanation
+          : `Verificado: ${originalClaim?.text?.substring(0, 50) || 'Afirmación analizada'}. Confianza: ${Math.round(r.confidence * 100)}%`,
+      };
+    });
+
     onProgressUpdate?.({
       progress: {
         currentStep: results.length,
@@ -121,13 +128,21 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
         timeSpent,
       },
       answers: {
-        selectedArticleId,
-        claims: claims.map((c) => ({ id: c.id, text: c.text })),
-        verificationResults: results.map((r) => ({
-          claimId: r.claimId,
+        // Primary format: DTO expected by backend (claims_verified)
+        claims_verified,
+
+        // Secondary format for backwards compatibility with validators
+        verifiedClaims: results.map((r) => ({
+          claim: claims.find((c) => c.id === r.claimId)?.text || '',
           verdict: r.verdict,
-          confidence: r.confidence,
+          evidence: r.explanation || `Confianza: ${Math.round(r.confidence * 100)}%`,
         })),
+
+        // Metadata for context
+        metadata: {
+          selectedArticleId,
+          claims: claims.map((c) => ({ id: c.id, text: c.text })),
+        },
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -203,31 +218,56 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
   };
 
   // Submit handler - sends to API for manual review
+  // FIX: Transform data to match VerificadorFakeNewsAnswerDto expected by backend
   const handleSubmit = () => {
     if (!exerciseId || results.length === 0 || isSubmitting || isSubmitted) return;
 
+    // Transform verificationResults to claims_verified format expected by DTO
+    // DTO expects: { claims_verified: [{ claim_id, is_fake, evidence }] }
+    const claims_verified = results.map((r) => {
+      // Find the original claim to get its text for context
+      const originalClaim = claims.find((c) => c.id === r.claimId);
+
+      return {
+        claim_id: r.claimId,
+        // Convert verdict to is_fake boolean: 'false' verdict means IS fake news
+        is_fake: r.verdict === 'false',
+        // Use explanation as evidence, ensure min 10 chars
+        evidence: r.explanation && r.explanation.length >= 10
+          ? r.explanation
+          : `Verificado: ${originalClaim?.text?.substring(0, 50) || 'Afirmación analizada'}. Confianza: ${Math.round(r.confidence * 100)}%`,
+      };
+    });
+
+    // Build submission with both formats for backwards compatibility
     const submissionData = {
-      selectedArticleId,
-      articleTitle: selectedArticle?.title || '',
-      claims: claims.map((c) => ({
-        id: c.id,
-        text: c.text,
-        context: c.context,
-        position: c.position,
-      })),
-      verificationResults: results.map((r) => ({
-        claimId: r.claimId,
+      // Primary format expected by VerificadorFakeNewsAnswerDto
+      claims_verified,
+
+      // Secondary format for exercise-validator.service.ts compatibility
+      verifiedClaims: results.map((r) => ({
+        claim: claims.find((c) => c.id === r.claimId)?.text || '',
         verdict: r.verdict,
-        confidence: r.confidence,
-        sources: r.sources,
-        explanation: r.explanation,
+        evidence: r.explanation || `Confianza: ${Math.round(r.confidence * 100)}%`,
       })),
-      summary: {
-        totalClaims: claims.length,
-        verifiedClaims: results.length,
-        trueClaims: results.filter((r) => r.verdict === 'true').length,
-        falseClaims: results.filter((r) => r.verdict === 'false').length,
-        averageConfidence: results.reduce((sum, r) => sum + r.confidence, 0) / results.length,
+
+      // Metadata for context (not validated but useful for manual review)
+      metadata: {
+        selectedArticleId,
+        articleTitle: selectedArticle?.title || '',
+        claims: claims.map((c) => ({
+          id: c.id,
+          text: c.text,
+          context: c.context,
+          position: c.position,
+        })),
+        summary: {
+          totalClaims: claims.length,
+          verifiedClaims: results.length,
+          trueClaims: results.filter((r) => r.verdict === 'true').length,
+          falseClaims: results.filter((r) => r.verdict === 'false').length,
+          averageConfidence: results.reduce((sum, r) => sum + r.confidence, 0) / results.length,
+        },
       },
     };
 

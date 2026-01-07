@@ -156,6 +156,12 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
 
+    // FIX: Send answers in DTO format (annotations with x,y,text + analysis.message) for ExercisePage.tsx submit button
+    // Build analysis message from annotations
+    const analysisMessage = annotations.length > 0
+      ? `Análisis del meme: Se identificaron ${annotations.length} elementos. ${annotations.map(a => a.text).join('. ')}`
+      : 'Análisis pendiente';
+
     onProgressUpdate?.({
       progress: {
         currentStep: annotations.length,
@@ -165,11 +171,28 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
         timeSpent: elapsed,
       },
       answers: {
+        // Primary format: DTO expected by backend
         annotations: annotations.map((a) => ({
+          x: a.x,
+          y: a.y,
+          text: a.text,
+        })),
+        analysis: {
+          message: analysisMessage,
+        },
+
+        // Secondary format for backwards compatibility
+        memeAnnotations: annotations.map((a) => ({
           memeId: exercise.id,
           category: a.category,
           text: a.text,
         })),
+
+        // Metadata
+        metadata: {
+          memeId: exercise.id,
+          totalAnnotations: annotations.length,
+        },
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -252,14 +275,37 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   };
 
   // Handle submit
+  // FIX: Transform data to match AnalisisMemesAnswerDto expected by backend
   const handleSubmit = () => {
     if (!exerciseId || isSubmitting || isSubmitted) return;
 
+    // Transform annotations to DTO format: { x, y, text } (without id/category)
+    const dtoAnnotations = annotations.map((a) => ({
+      x: a.x,
+      y: a.y,
+      text: a.text,
+    }));
+
+    // Build analysis message from all annotations
+    const analysisMessage = annotations
+      .map((a) => `[${a.category.toUpperCase()}] ${a.text}`)
+      .join('. ');
+
     submit({
-      memeId: exercise.id,
-      annotations,
-      analysisText: annotations.map(a => `${a.category}: ${a.text}`).join('\n'),
-      selectedElements: annotations.map(a => a.category),
+      // Primary format expected by AnalisisMemesAnswerDto
+      annotations: dtoAnnotations,
+      analysis: {
+        message: analysisMessage || 'Análisis del meme sobre Marie Curie',
+      },
+
+      // Metadata for backwards compatibility and context
+      metadata: {
+        memeId: exercise.id,
+        memeTitle: exercise.memeTitle || exercise.title,
+        fullAnnotations: annotations, // Include category info for grading
+        selectedCategories: [...new Set(annotations.map((a) => a.category))],
+        annotationCount: annotations.length,
+      },
     });
   };
 

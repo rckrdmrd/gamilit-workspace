@@ -65,6 +65,13 @@ Ambos actualizan `user_stats` y `module_progress` mediante triggers.
 
 El trigger `trg_create_manual_review_on_submission` crea automaticamente el registro en `manual_reviews` cuando se inserta un submission para ejercicios con `requires_manual_grading=true`.
 
+## Correcciones Aplicadas
+
+| Archivo | Cambio | Fecha |
+|---------|--------|-------|
+| `functions/05-get_classroom_analytics.sql` | FK corregida: `auth.profiles` → `auth_management.profiles` | 2026-01-04 |
+| `triggers/30-trg_update_missions_on_explore_modules.sql` | DB-166: Cambiado de `AFTER INSERT OR UPDATE` a `AFTER INSERT` | 2026-01-04 |
+
 ---
 
-**Ultima actualizacion:** 2025-12-29
+**Ultima actualizacion:** 2026-01-04

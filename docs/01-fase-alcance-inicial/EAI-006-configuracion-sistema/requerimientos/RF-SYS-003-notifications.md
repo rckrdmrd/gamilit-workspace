@@ -1,3 +1,17 @@
+---
+id: "RF-SYS-003"
+title: "Configuracion de Notificaciones"
+type: "Requirement"
+status: "Done"
+priority: "Media"
+module: "Configuracion del Sistema"
+epic: "EAI-006"
+version: "1.0"
+labels: ["system", "notifications", "email", "sms", "push", "preferences"]
+created_date: "2025-11-08"
+updated_date: "2026-01-04"
+---
+
 # RF-SYS-003: Configuración de Notificaciones
 
 **ID:** RF-SYS-003

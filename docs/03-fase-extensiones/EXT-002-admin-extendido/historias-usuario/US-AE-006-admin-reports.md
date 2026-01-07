@@ -1,3 +1,19 @@
+---
+id: "US-AE-006"
+title: "Reportes y Analytics Administrativos"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 10
+budget: "$4,000 MXN"
+sprint: "Sprint-2"
+labels: ["admin-extendido", "reports", "analytics", "export", "v2-core"]
+created_date: "2025-11-18"
+updated_date: "2026-01-04"
+---
+
 # US-AE-006: Reportes y Analytics Administrativos
 
 ## Información General

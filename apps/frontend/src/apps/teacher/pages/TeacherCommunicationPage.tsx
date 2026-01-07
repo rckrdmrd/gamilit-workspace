@@ -31,11 +31,12 @@ import { TeacherLayout } from '../layouts/TeacherLayout';
 import { UnderConstruction } from '@shared/components/UnderConstruction';
 import { Message } from '../../../services/api/teacher/teacherMessagesApi';
 import { classroomsApi } from '../../../services/api/teacher/classroomsApi';
+import { FEATURE_FLAGS } from '@/config/api.config';
 
 // ============================================================================
-// FEATURE FLAG - Habilitado 2025-12-18
+// FEATURE FLAG - ISS-FE-003: Usar flag centralizado
 // ============================================================================
-const SHOW_UNDER_CONSTRUCTION = false;
+const SHOW_UNDER_CONSTRUCTION = FEATURE_FLAGS.SHOW_UNDER_CONSTRUCTION;
 
 // ============================================================================
 // TYPES

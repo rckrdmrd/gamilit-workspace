@@ -1,3 +1,19 @@
+---
+id: "US-AE-011"
+title: "Visor de Audit Logs"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 8
+budget: "$3,200 MXN"
+sprint: "Sprint-TBD"
+labels: ["admin-extendido", "audit-logs", "security", "compliance", "v2-core"]
+created_date: "2025-11-29"
+updated_date: "2026-01-04"
+---
+
 # HU-EP010-11: Visor de Audit Logs
 
 ## Información General

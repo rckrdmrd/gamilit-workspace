@@ -10,6 +10,7 @@
  * - ExerciseAttemptService: Gestión de intentos de ejercicios
  * - ExerciseSubmissionService: Envíos finales y calificaciones
  * - ScheduledMissionService: Misiones programadas para aulas
+ * - CertificateService: Generación y verificación de certificados [EPIC 10.2]
  */
 
 export * from './module-progress.service';
@@ -17,3 +18,4 @@ export * from './learning-session.service';
 export * from './exercise-attempt.service';
 export * from './exercise-submission.service';
 export * from './scheduled-mission.service';
+export * from './certificate.service';

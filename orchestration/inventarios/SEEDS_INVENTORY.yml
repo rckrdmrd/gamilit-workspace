@@ -9,7 +9,7 @@ seeds_inventory:
     modelo_datos: JSONB puro (consistente)
 
   resumen_ejecutivo:
-    total_seeds_prod: 53  # ✅ Actualizado 2025-12-18 (+2 seeds usuarios producción)
+    total_seeds_prod: 54  # ✅ Actualizado 2026-01-04 (+1 communication seed)
     total_seeds_dev: 54   # ✅ Actualizado 2025-12-18
     ejercicios_prod: 23
     ejercicios_dev: 24
@@ -309,6 +309,63 @@ seeds_inventory:
             estado: activo
             audit: AUDIT-DB-001-P0
             fecha_creacion: '2025-12-14'
+
+          - nombre: 03-tags.sql
+            descripcion: Catálogo de tags para contenido Marie Curie (AUDIT 2026-01-04)
+            tablas:
+              - tags
+            registros_estimados: 45
+            categorias:
+              - person (10 tags)
+              - scientific_concept (12 tags)
+              - location (8 tags)
+              - achievement (5 tags)
+              - historical_event (4 tags)
+              - subject (3 tags)
+              - theme (2 tags)
+              - value (1 tag)
+            uuids: 'tag00001-0000-0000-0000-00000000000N'
+            dependencias: []
+            estado: activo
+            audit: AUDIT-2026-01-04
+            fecha_creacion: '2026-01-04'
+
+          - nombre: 04-moderation_rules.sql
+            descripcion: Reglas de moderación de contenido
+            tablas:
+              - moderation_rules
+            registros_estimados: 10
+            dependencias: []
+            estado: activo
+
+      # ===========================================================================
+      # COMMUNICATION (NUEVO - AUDIT 2026-01-04)
+      # ===========================================================================
+      communication:
+        archivos: 1
+        version: 1.0.0
+        fecha_creacion: '2026-01-04'
+        audit: AUDIT-2026-01-04
+        seeds:
+          - nombre: 01-system-messages.sql
+            descripcion: Mensajes de sistema y bienvenida
+            tablas:
+              - messages
+            registros_estimados: 1
+            mensajes:
+              - type: classroom_announcement
+                subject: Bienvenidos a GAMILIT
+                target: classroom DEFAULT
+                is_pinned: true
+            uuids: 'c0000001-0000-0000-0001-000000000001'
+            dependencias:
+              - auth_management.profiles (teacher_id)
+              - social_features.classrooms (classroom_id)
+            estado: activo
+            notas: |
+              Mensaje de bienvenida del sistema.
+              Se crea solo si existe teacher y classroom DEFAULT.
+              Seed opcional - en producción, mensajes son creados por usuarios.
 
       # ===========================================================================
       # EDUCATIONAL CONTENT ⭐ PRINCIPAL

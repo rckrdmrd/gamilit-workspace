@@ -2,11 +2,13 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-  } from '@nestjs/common';
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Notification } from '../entities/multichannel/notification.entity';
 import { NotificationTemplateService } from './notification-template.service';
+import { WebSocketService } from '../../websocket/websocket.service';
 
 /**
  * NotificationService
@@ -31,12 +33,15 @@ import { NotificationTemplateService } from './notification-template.service';
  */
 @Injectable()
 export class NotificationService {
+  private readonly logger = new Logger(NotificationService.name);
+
   constructor(
     @InjectRepository(Notification, 'notifications')
     private readonly notificationRepository: Repository<Notification>,
     private readonly templateService: NotificationTemplateService,
     @InjectDataSource('notifications')
     private readonly dataSource: DataSource,
+    private readonly webSocketService: WebSocketService,
   ) {}
 
   /**
@@ -81,6 +86,16 @@ export class NotificationService {
       data.type,
       channels,
     );
+
+    // Emitir via WebSocket para notificación en tiempo real
+    this.webSocketService.emitNotificationToUser(data.userId, {
+      id: saved.id,
+      type: saved.type,
+      title: saved.title,
+      message: saved.message,
+      data: saved.data,
+      createdAt: saved.createdAt,
+    });
 
     return saved;
   }
@@ -135,6 +150,16 @@ export class NotificationService {
       data.type || 'system',
       channels,
     );
+
+    // 5. Emitir via WebSocket para notificación en tiempo real
+    this.webSocketService.emitNotificationToUser(data.userId, {
+      id: saved.id,
+      type: saved.type,
+      title: saved.title,
+      message: saved.message,
+      data: saved.data,
+      createdAt: saved.createdAt,
+    });
 
     return saved;
   }
@@ -345,7 +370,10 @@ export class NotificationService {
       return result[0]?.notification_id;
     } catch (error) {
       // Log error pero no fallar (la notificación ya fue creada)
-      console.error('Error calling send_notification function:', error);
+      this.logger.error(
+        'Error calling send_notification function',
+        error instanceof Error ? error.stack : String(error),
+      );
       return '';
     }
   }

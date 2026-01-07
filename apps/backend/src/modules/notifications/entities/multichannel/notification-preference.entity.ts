@@ -127,7 +127,7 @@ export class NotificationPreference {
   /**
    * Habilitar notificaciones push (móvil y web)
    *
-   * Default: false (requiere registro explícito de dispositivo)
+   * Default: true (según DDL - usuario puede desactivar)
    *
    * Cuando está habilitado:
    * - Se envía push notification a dispositivos registrados
@@ -142,8 +142,63 @@ export class NotificationPreference {
    *
    * IMPORTANTE: Si no hay dispositivos registrados, este canal se ignora
    */
-  @Column({ name: 'push_enabled', type: 'boolean', default: false })
+  @Column({ name: 'push_enabled', type: 'boolean', default: true })
     pushEnabled!: boolean;
+
+  /**
+   * Frecuencia de emails
+   *
+   * Valores permitidos: 'immediate', 'daily', 'weekly', 'never'
+   * Default: 'immediate'
+   *
+   * Controla cómo se agrupan los emails:
+   * - immediate: Se envía inmediatamente
+   * - daily: Se agrupa en resumen diario
+   * - weekly: Se agrupa en resumen semanal
+   * - never: No se envían emails para este tipo
+   */
+  @Column({
+    name: 'email_frequency',
+    type: 'varchar',
+    length: 20,
+    default: 'immediate',
+  })
+    emailFrequency!: 'immediate' | 'daily' | 'weekly' | 'never';
+
+  /**
+   * Hora de inicio del horario de silencio
+   *
+   * Formato: TIME (ej: '22:00:00')
+   * Durante quiet hours no se envían push/email
+   *
+   * @optional
+   */
+  @Column({ name: 'quiet_hours_start', type: 'time', nullable: true })
+    quietHoursStart?: string;
+
+  /**
+   * Hora de fin del horario de silencio
+   *
+   * Formato: TIME (ej: '08:00:00')
+   *
+   * @optional
+   */
+  @Column({ name: 'quiet_hours_end', type: 'time', nullable: true })
+    quietHoursEnd?: string;
+
+  /**
+   * Zona horaria del usuario
+   *
+   * Default: 'America/Mexico_City'
+   * Se usa para calcular quiet hours correctamente
+   */
+  @Column({
+    name: 'timezone',
+    type: 'varchar',
+    length: 50,
+    default: 'America/Mexico_City',
+  })
+    timezone!: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
     createdAt!: Date;

@@ -1,0 +1,327 @@
+# =============================================================================
+# ENVIRONMENT-INVENTORY.yml - GAMILIT
+# =============================================================================
+# Inventario de Entorno de Desarrollo
+# Generado por: @PERFIL_DEVENV
+# Basado en: orchestration/templates/TEMPLATE-ENVIRONMENT-INVENTORY.yml
+# =============================================================================
+
+version: "1.0.0"
+fecha_creacion: "2026-01-04"
+fecha_actualizacion: "2026-01-04"
+responsable: "@PERFIL_DEVENV"
+
+# -----------------------------------------------------------------------------
+# IDENTIFICACION DEL PROYECTO
+# -----------------------------------------------------------------------------
+
+proyecto:
+  nombre: "Gamilit"
+  alias: "gamilit"
+  nivel: "NIVEL_2A"
+  tipo: "standalone"
+  estado: "produccion"
+  descripcion: "Plataforma de gamificacion empresarial"
+
+# -----------------------------------------------------------------------------
+# HERRAMIENTAS Y RUNTIME
+# -----------------------------------------------------------------------------
+
+herramientas:
+  runtime:
+    node:
+      version: "20.x"
+      requerido: true
+      notas: "LTS recomendado"
+    python:
+      version: ""
+      requerido: false
+      notas: ""
+
+  package_managers:
+    npm:
+      version: "10.x"
+      requerido: true
+    pnpm:
+      version: ""
+      requerido: false
+
+  build_tools:
+    - nombre: "Vite"
+      version: "5.x"
+      uso: "Frontend build"
+    - nombre: "TypeScript"
+      version: "5.x"
+      uso: "Compilacion"
+    - nombre: "NestJS CLI"
+      version: "10.x"
+      uso: "Backend build"
+
+  linters:
+    - nombre: "ESLint"
+      version: "8.x"
+      config: ".eslintrc.js"
+    - nombre: "Prettier"
+      version: "3.x"
+      config: ".prettierrc"
+
+  testing:
+    - nombre: "Jest"
+      version: "29.x"
+      tipo: "unit"
+      config: "jest.config.js"
+    - nombre: "Vitest"
+      version: "1.x"
+      tipo: "unit frontend"
+      config: "vitest.config.ts"
+
+# -----------------------------------------------------------------------------
+# SERVICIOS Y PUERTOS
+# -----------------------------------------------------------------------------
+
+servicios:
+  frontend:
+    nombre: "gamilit-frontend"
+    framework: "React"
+    version: "18.x"
+    puerto: 3005
+    comando_dev: "npm run dev"
+    ubicacion: "apps/frontend/"
+    url_local: "http://localhost:3005"
+
+  backend:
+    nombre: "gamilit-backend"
+    framework: "NestJS"
+    version: "10.x"
+    puerto: 3006
+    comando_dev: "npm run start:dev"
+    ubicacion: "apps/backend/"
+    url_local: "http://localhost:3006"
+    api_prefix: "/api/v1"
+
+  storybook:
+    puerto: 3007
+    comando: "npm run storybook"
+
+# -----------------------------------------------------------------------------
+# BASE DE DATOS
+# -----------------------------------------------------------------------------
+
+base_de_datos:
+  principal:
+    engine: "PostgreSQL"
+    version: "15"
+    host: "localhost"
+    puerto: 5432
+
+    ambientes:
+      development:
+        nombre: "gamilit_platform"
+        usuario: "gamilit_user"
+        password_ref: "DB_PASSWORD en .env"
+
+      test:
+        nombre: "gamilit_test"
+        usuario: "gamilit_user"
+        password_ref: "DB_PASSWORD en .env"
+
+    schemas:
+      - nombre: "public"
+        descripcion: "Schema principal"
+      - nombre: "gamification"
+        descripcion: "Logica de gamificacion"
+      - nombre: "users"
+        descripcion: "Gestion de usuarios"
+
+    conexion_ejemplo: "postgresql://gamilit_user:{password}@localhost:5432/gamilit_platform"
+
+# -----------------------------------------------------------------------------
+# VARIABLES DE ENTORNO
+# -----------------------------------------------------------------------------
+
+variables_entorno:
+  archivo_ejemplo: ".env.example"
+
+  variables:
+    - nombre: "NODE_ENV"
+      descripcion: "Ambiente de ejecucion"
+      requerido: true
+      sensible: false
+      ejemplo: "development"
+
+    - nombre: "PORT"
+      descripcion: "Puerto del servidor backend"
+      requerido: true
+      sensible: false
+      ejemplo: "3006"
+
+    - nombre: "DATABASE_URL"
+      descripcion: "Connection string de PostgreSQL"
+      requerido: true
+      sensible: true
+      ejemplo: "postgresql://gamilit_user:password@localhost:5432/gamilit_platform"
+
+    - nombre: "JWT_SECRET"
+      descripcion: "Secreto para JWT"
+      requerido: true
+      sensible: true
+      ejemplo: ""
+
+    - nombre: "FRONTEND_URL"
+      descripcion: "URL del frontend"
+      requerido: true
+      sensible: false
+      ejemplo: "http://localhost:3005"
+
+# -----------------------------------------------------------------------------
+# CONTENEDORES DOCKER
+# -----------------------------------------------------------------------------
+
+docker:
+  compose_file: "docker-compose.yml"
+
+  services:
+    - nombre: "db"
+      imagen: "postgres:15-alpine"
+      puerto_host: 5432
+      puerto_container: 5432
+      volumes:
+        - "postgres_data:/var/lib/postgresql/data"
+
+  volumes:
+    - nombre: "postgres_data"
+      descripcion: "Datos de PostgreSQL"
+
+  networks:
+    - nombre: "gamilit_network"
+      driver: "bridge"
+
+# -----------------------------------------------------------------------------
+# PROCESOS PM2
+# -----------------------------------------------------------------------------
+
+pm2:
+  config_file: "ecosystem.config.js"
+  apps:
+    - nombre: "gamilit-backend"
+      script: "dist/main.js"
+      cwd: "apps/backend"
+      instances: 1
+      watch: false
+
+# -----------------------------------------------------------------------------
+# SCRIPTS DE DESARROLLO
+# -----------------------------------------------------------------------------
+
+scripts:
+  setup:
+    descripcion: "Configurar entorno desde cero"
+    pasos:
+      - "npm install"
+      - "cp .env.example .env"
+      - "docker-compose up -d db"
+      - "npm run migration:run"
+      - "npm run seed"
+
+  desarrollo:
+    frontend: "cd apps/frontend && npm run dev"
+    backend: "cd apps/backend && npm run start:dev"
+    ambos: "npm run dev:all"
+
+  testing:
+    unit: "npm run test"
+    e2e: "npm run test:e2e"
+    coverage: "npm run test:cov"
+
+  build:
+    frontend: "cd apps/frontend && npm run build"
+    backend: "cd apps/backend && npm run build"
+
+  database:
+    migrations_run: "npm run migration:run"
+    migrations_generate: "npm run migration:generate"
+    seed: "npm run seed"
+
+# -----------------------------------------------------------------------------
+# INSTRUCCIONES DE SETUP
+# -----------------------------------------------------------------------------
+
+setup_instrucciones: |
+  ## Setup del Entorno de Desarrollo - Gamilit
+
+  ### Prerequisitos
+  - Node.js 20.x
+  - PostgreSQL 15 (o Docker)
+  - npm 10.x
+
+  ### Pasos
+
+  1. Clonar repositorio:
+     ```bash
+     git clone <url_repo>
+     cd gamilit
+     ```
+
+  2. Instalar dependencias:
+     ```bash
+     npm install
+     ```
+
+  3. Configurar variables de entorno:
+     ```bash
+     cp .env.example .env
+     # Editar .env con valores locales
+     ```
+
+  4. Levantar base de datos:
+     ```bash
+     docker-compose up -d db
+     # O usar PostgreSQL local
+     ```
+
+  5. Ejecutar migraciones:
+     ```bash
+     npm run migration:run
+     ```
+
+  6. Iniciar desarrollo:
+     ```bash
+     # Terminal 1 - Backend
+     cd apps/backend && npm run start:dev
+
+     # Terminal 2 - Frontend
+     cd apps/frontend && npm run dev
+     ```
+
+  ### Verificar
+  - Frontend: http://localhost:3005
+  - Backend: http://localhost:3006/api/v1
+  - Health: http://localhost:3006/health
+
+# -----------------------------------------------------------------------------
+# TROUBLESHOOTING
+# -----------------------------------------------------------------------------
+
+troubleshooting:
+  - problema: "Puerto 3005 o 3006 en uso"
+    solucion: "Verificar con lsof -i :3005. Terminar proceso o cambiar puerto en .env"
+
+  - problema: "Error de conexion a BD"
+    solucion: "Verificar que PostgreSQL esta corriendo. Revisar credenciales en .env"
+
+  - problema: "Migraciones fallan"
+    solucion: "Verificar que BD gamilit_platform existe y usuario tiene permisos"
+
+# -----------------------------------------------------------------------------
+# REFERENCIAS
+# -----------------------------------------------------------------------------
+
+referencias:
+  perfil_devenv: "orchestration/agents/perfiles/PERFIL-DEVENV.md"
+  inventario_master: "orchestration/inventarios/DEVENV-MASTER-INVENTORY.yml"
+  inventario_puertos: "orchestration/inventarios/DEVENV-PORTS-INVENTORY.yml"
+  contexto_proyecto: "orchestration/00-guidelines/CONTEXTO-PROYECTO.md"
+
+# =============================================================================
+# FIN DE INVENTARIO
+# =============================================================================

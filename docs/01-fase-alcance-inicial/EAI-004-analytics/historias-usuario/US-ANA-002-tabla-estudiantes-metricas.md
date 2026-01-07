@@ -1,25 +1,41 @@
-# US-ANA-002: Tabla de Estudiantes con Métricas
+---
+id: "US-ANA-002"
+title: "Tabla de Estudiantes con Metricas"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-004"
+story_points: 7
+budget: "$3,400 MXN"
+sprint: "Sprint-1"
+labels: ["analytics", "tabla-estudiantes", "metricas", "alcance-inicial"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
 
-**Épica:** EAI-004 (Analytics Básico)
+# US-ANA-002: Tabla de Estudiantes con Metricas
+
+**Epica:** EAI-004 (Analytics Basico)
 **Sprint:** Mes 1, Semana 3
 **Story Points:** 7 SP
 **Presupuesto:** $3,400 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done (Mes 1)
 
 ---
 
-## Descripción
+## Descripcion
 
-Como profesor, quiero ver una tabla completa de todos mis estudiantes con sus métricas principales para identificar rápidamente quién va bien y quién necesita ayuda.
+Como profesor, quiero ver una tabla completa de todos mis estudiantes con sus metricas principales para identificar rapidamente quien va bien y quien necesita ayuda.
 
 **Contexto del Alcance Inicial:**
 
-Esta tabla proporciona una vista de lista de todos los estudiantes de la clase con las métricas más relevantes en columnas. Permite ordenamiento básico y búsqueda simple por nombre. NO incluye filtros avanzados, exportación masiva, ni comparativas entre estudiantes (eso va a EXT-005 Reportes Avanzados).
+Esta tabla proporciona una vista de lista de todos los estudiantes de la clase con las metricas mas relevantes en columnas. Permite ordenamiento basico y busqueda simple por nombre. NO incluye filtros avanzados, exportacion masiva, ni comparativas entre estudiantes (eso va a EXT-005 Reportes Avanzados).
 
 ---
 
-## Criterios de Aceptación
+## Criterios de Aceptacion
 
 ### CA-01: Columnas de la Tabla
 - [ ] Columna: Avatar/Foto del estudiante
@@ -27,43 +43,43 @@ Esta tabla proporciona una vista de lista de todos los estudiantes de la clase c
 - [ ] Columna: Progreso general (% completitud con barra visual)
 - [ ] Columna: Nivel actual (con icono de insignia)
 - [ ] Columna: XP acumulado
-- [ ] Columna: Última actividad (fecha/hora relativa)
-- [ ] Columna: Acciones (botón "Ver Detalle")
+- [ ] Columna: Ultima actividad (fecha/hora relativa)
+- [ ] Columna: Acciones (boton "Ver Detalle")
 
 ### CA-02: Ordenamiento por Columna
 - [ ] Hacer clic en header de columna ordena ascendente
 - [ ] Segundo clic ordena descendente
-- [ ] Indicador visual de columna ordenada (flecha ↑↓)
+- [ ] Indicador visual de columna ordenada (flecha)
 - [ ] Default: ordenado por nombre (A-Z)
 
-### CA-03: Búsqueda Básica
-- [ ] Campo de búsqueda por nombre del estudiante
-- [ ] Búsqueda insensible a mayúsculas/minúsculas
-- [ ] Búsqueda parcial (coincidencia en cualquier parte del nombre)
+### CA-03: Busqueda Basica
+- [ ] Campo de busqueda por nombre del estudiante
+- [ ] Busqueda insensible a mayusculas/minusculas
+- [ ] Busqueda parcial (coincidencia en cualquier parte del nombre)
 - [ ] Resultados se filtran en tiempo real (debounce 300ms)
 
 ### CA-04: Indicadores Visuales
 - [ ] Progreso <30%: barra roja
 - [ ] Progreso 30-70%: barra amarilla
 - [ ] Progreso >70%: barra verde
-- [ ] Última actividad >7 días: fecha en rojo (alerta)
-- [ ] Última actividad 3-7 días: fecha en amarillo (advertencia)
-- [ ] Última actividad <3 días: fecha en verde (activo)
+- [ ] Ultima actividad >7 dias: fecha en rojo (alerta)
+- [ ] Ultima actividad 3-7 dias: fecha en amarillo (advertencia)
+- [ ] Ultima actividad <3 dias: fecha en verde (activo)
 
-### CA-05: Navegación
+### CA-05: Navegacion
 - [ ] Clic en fila lleva a vista de estudiante individual (US-ANA-003)
-- [ ] Botón "Ver Detalle" en cada fila lleva a US-ANA-003
+- [ ] Boton "Ver Detalle" en cada fila lleva a US-ANA-003
 - [ ] Breadcrumb: Dashboard > Estudiantes
 
-### CA-06: Performance y Paginación
-- [ ] Tabla muestra hasta 50 estudiantes por página
-- [ ] Paginación simple (Anterior/Siguiente)
+### CA-06: Performance y Paginacion
+- [ ] Tabla muestra hasta 50 estudiantes por pagina
+- [ ] Paginacion simple (Anterior/Siguiente)
 - [ ] Carga en menos de 1 segundo para clases de hasta 100 estudiantes
 - [ ] Skeleton loaders mientras carga datos
 
 ---
 
-## Especificaciones Técnicas
+## Especificaciones Tecnicas
 
 ### Backend
 
@@ -80,7 +96,7 @@ Query params: ?page=1&limit=50&sortBy=name&order=asc&search=juan
   "students": [
     {
       "id": "student-uuid",
-      "name": "Juan Pérez García",
+      "name": "Juan Perez Garcia",
       "avatarUrl": "/avatars/student-uuid.png",
       "progress": {
         "percentage": 65.5,
@@ -170,7 +186,7 @@ async getClassroomStudents(
     .leftJoinAndSelect('student.progress', 'progress')
     .leftJoinAndSelect('student.lastActivity', 'lastActivity');
 
-  // Búsqueda
+  // Busqueda
   if (query.search) {
     queryBuilder = queryBuilder.where(
       'LOWER(student.name) LIKE LOWER(:search)',
@@ -182,7 +198,7 @@ async getClassroomStudents(
   const sortField = this.mapSortField(query.sortBy);
   queryBuilder = queryBuilder.orderBy(sortField, query.order.toUpperCase());
 
-  // Paginación
+  // Paginacion
   const skip = (query.page - 1) * query.limit;
   queryBuilder = queryBuilder.skip(skip).take(query.limit);
 
@@ -275,7 +291,7 @@ export const StudentListTable = () => {
             onSort={handleSort}
           />
           <SortableColumn
-            label="Última Actividad"
+            label="Ultima Actividad"
             field="lastActivity"
             sortBy={sortBy}
             order={order}
@@ -380,7 +396,7 @@ export const useStudentList = (params: StudentListParams) => {
       setIsLoading(false);
     };
 
-    // Debounce para búsqueda
+    // Debounce para busqueda
     const timer = setTimeout(fetchData, params.search ? 300 : 0);
     return () => clearTimeout(timer);
   }, [params.classroomId, params.sortBy, params.order, params.search, params.page]);
@@ -391,120 +407,120 @@ export const useStudentList = (params: StudentListParams) => {
 
 ---
 
-## Diseño UI/UX
+## Diseno UI/UX
 
 ### Layout Desktop
 ```
 +-------------------------------------------------------------------+
-|  📊 Estudiantes de Matemáticas 6A                    [← Volver]  |
+|  Estudiantes de Matematicas 6A                    [<- Volver]  |
 +-------------------------------------------------------------------+
-|  [🔍 Buscar estudiante...]                      75 estudiantes   |
+|  [Buscar estudiante...]                      75 estudiantes   |
 +-------------------------------------------------------------------+
-| Avatar | Nombre ↑ | Progreso ↓ | Nivel | XP | Última Act. | ... |
+| Avatar | Nombre | Progreso | Nivel | XP | Ultima Act. | ... |
 +-------------------------------------------------------------------+
-| [👤]   | Ana López | [████░░] 65%| 🥉 3  |1250| Hace 2 horas| Ver |
-| [👤]   | Juan Pérez| [███░░░] 45%| 🥉 2  | 850| Hace 5 días | Ver |
-| [👤]   | María Gó..| [█████░] 85%| 🥇 4  |2100| Hace 1 hora | Ver |
+| [Avatar]   | Ana Lopez | [65%]| 3  |1250| Hace 2 horas| Ver |
+| [Avatar]   | Juan Perez| [45%]| 2  | 850| Hace 5 dias | Ver |
+| [Avatar]   | Maria Go..| [85%]| 4  |2100| Hace 1 hora | Ver |
 +-------------------------------------------------------------------+
-|                       [← Anterior] 1 / 2 [Siguiente →]           |
+|                       [<- Anterior] 1 / 2 [Siguiente ->]           |
 +-------------------------------------------------------------------+
 ```
 
 ### Consideraciones Mobile
-- Tabla colapsa a cards con métricas principales
-- Búsqueda en header sticky
-- Scroll infinito en lugar de paginación
+- Tabla colapsa a cards con metricas principales
+- Busqueda en header sticky
+- Scroll infinito en lugar de paginacion
 
 ---
 
-## Alcance Básico vs Extensiones
+## Alcance Basico vs Extensiones
 
-### EAI-004 (Este alcance - Analytics Básico):
-- ✅ Tabla simple con columnas fijas
-- ✅ Ordenamiento por columna (una a la vez)
-- ✅ Búsqueda simple por nombre
-- ✅ Paginación básica (50 por página)
-- ✅ Indicadores visuales de estado (colores)
-- ✅ Sin exportación
+### EAI-004 (Este alcance - Analytics Basico):
+- Done Tabla simple con columnas fijas
+- Done Ordenamiento por columna (una a la vez)
+- Done Busqueda simple por nombre
+- Done Paginacion basica (50 por pagina)
+- Done Indicadores visuales de estado (colores)
+- Done Sin exportacion
 
-### EXT-005 (Extensión futura - Reportes Avanzados):
-- ⏳ Columnas configurables (elegir cuáles mostrar)
-- ⏳ Filtros avanzados (por nivel, progreso, actividad)
-- ⏳ Búsqueda por múltiples campos
-- ⏳ Ordenamiento multi-columna
-- ⏳ Exportación a CSV/Excel con filtros aplicados
-- ⏳ Comparación de estudiantes (selección múltiple)
-- ⏳ Vista de tabla vs vista de cards (toggle)
-- ⏳ Grupos/tags personalizados
-- ⏳ Acciones masivas (asignar módulo a seleccionados)
+### EXT-005 (Extension futura - Reportes Avanzados):
+- Pendiente Columnas configurables (elegir cuales mostrar)
+- Pendiente Filtros avanzados (por nivel, progreso, actividad)
+- Pendiente Busqueda por multiples campos
+- Pendiente Ordenamiento multi-columna
+- Pendiente Exportacion a CSV/Excel con filtros aplicados
+- Pendiente Comparacion de estudiantes (seleccion multiple)
+- Pendiente Vista de tabla vs vista de cards (toggle)
+- Pendiente Grupos/tags personalizados
+- Pendiente Acciones masivas (asignar modulo a seleccionados)
 
 ---
 
 ## Dependencias
 
-### Dependencias Técnicas:
+### Dependencias Tecnicas:
 - **Backend:** Modelo de Student con relaciones a Progress y Activity
-- **Backend:** Sistema de autenticación de profesores
+- **Backend:** Sistema de autenticacion de profesores
 - **Frontend:** Componentes de tabla reutilizables
-- **Frontend:** Hook de debounce para búsqueda
+- **Frontend:** Hook de debounce para busqueda
 
 ### Dependencias de User Stories:
-- US-ANA-003 (para navegación a detalle de estudiante)
+- US-ANA-003 (para navegacion a detalle de estudiante)
 
 ---
 
 ## Pruebas
 
 ### Pruebas Unitarias:
-- [ ] Búsqueda filtra estudiantes correctamente
+- [ ] Busqueda filtra estudiantes correctamente
 - [ ] Ordenamiento por cada columna funciona
-- [ ] Paginación calcula páginas correctamente
-- [ ] Indicadores de color se aplican según reglas
+- [ ] Paginacion calcula paginas correctamente
+- [ ] Indicadores de color se aplican segun reglas
 
-### Pruebas de Integración:
+### Pruebas de Integracion:
 - [ ] Endpoint retorna estudiantes del profesor autenticado
 - [ ] Query params de ordenamiento funcionan
-- [ ] Búsqueda retorna resultados correctos
-- [ ] Paginación retorna el rango correcto
+- [ ] Busqueda retorna resultados correctos
+- [ ] Paginacion retorna el rango correcto
 
 ### Pruebas E2E:
 - [ ] Profesor ve lista completa de sus estudiantes
-- [ ] Búsqueda por nombre funciona en tiempo real
+- [ ] Busqueda por nombre funciona en tiempo real
 - [ ] Clic en columna ordena la tabla
 - [ ] Clic en estudiante navega a detalle
-- [ ] Paginación muestra páginas correctas
+- [ ] Paginacion muestra paginas correctas
 
 ---
 
-## Notas de Implementación
+## Notas de Implementacion
 
 1. **Performance:**
-   - Índice en columna `name` para búsqueda rápida
+   - Indice en columna `name` para busqueda rapida
    - Query con joins limitados (solo datos necesarios)
-   - Cachear conteo total si no hay búsqueda
+   - Cachear conteo total si no hay busqueda
 
 2. **UX:**
-   - Debounce de 300ms en búsqueda para evitar requests excesivos
+   - Debounce de 300ms en busqueda para evitar requests excesivos
    - Skeleton loader con misma estructura de tabla
-   - Highlight de término buscado en resultados
+   - Highlight de termino buscado en resultados
 
 3. **Accesibilidad:**
    - Headers de tabla con aria-sort
    - Filas con rol="button" y accesibles por teclado
-   - Anuncio de resultados de búsqueda para screen readers
+   - Anuncio de resultados de busqueda para screen readers
 
 ---
 
-## Estimación de Esfuerzo
+## Estimacion de Esfuerzo
 
 **Backend:** 2 SP
-- Endpoint con paginación, ordenamiento, búsqueda
+- Endpoint con paginacion, ordenamiento, busqueda
 - Query optimizado
 
 **Frontend:** 4 SP
 - Tabla con ordenamiento
-- Búsqueda con debounce
-- Paginación
+- Busqueda con debounce
+- Paginacion
 - Indicadores visuales
 
 **Testing:** 1 SP
@@ -513,27 +529,27 @@ export const useStudentList = (params: StudentListParams) => {
 
 ---
 
-## Tareas de Implementación
+## Tareas de Implementacion
 
 ### Backend (12.6h - 45%)
 
-#### 1. DTOs y Validación de Query Params (1.5h)
-- [ ] Crear `StudentListQueryDto` con validación class-validator
-- [ ] Validar parámetros: page (min 1), limit (10-100), sortBy, order, search
+#### 1. DTOs y Validacion de Query Params (1.5h)
+- [ ] Crear `StudentListQueryDto` con validacion class-validator
+- [ ] Validar parametros: page (min 1), limit (10-100), sortBy, order, search
 - [ ] Implementar valores por defecto (page=1, limit=50, sortBy=name, order=asc)
 
 #### 2. Repository Query Builder (4h)
 - [ ] Implementar query base con joins a `progress` y `lastActivity`
-- [ ] Implementar búsqueda insensible a mayúsculas (LOWER LIKE)
-- [ ] Implementar ordenamiento dinámico por columna (`mapSortField()`)
-- [ ] Implementar paginación con skip/take
+- [ ] Implementar busqueda insensible a mayusculas (LOWER LIKE)
+- [ ] Implementar ordenamiento dinamico por columna (`mapSortField()`)
+- [ ] Implementar paginacion con skip/take
 - [ ] Optimizar query para evitar N+1 (usar eager loading)
 
 #### 3. Service de Lista de Estudiantes (3.5h)
 - [ ] Implementar `getClassroomStudents()` con todos los filtros
-- [ ] Calcular `studentCount` y `totalPages` con agregación
+- [ ] Calcular `studentCount` y `totalPages` con agregacion
 - [ ] Mapear estudiantes a DTO con campos: progress, level, xp, lastActivity
-- [ ] Implementar indicadores visuales (color según progreso y última actividad)
+- [ ] Implementar indicadores visuales (color segun progreso y ultima actividad)
 - [ ] Manejar edge case: clase sin estudiantes
 
 #### 4. Controller y Endpoint (1.6h)
@@ -543,51 +559,51 @@ export const useStudentList = (params: StudentListParams) => {
 - [ ] Manejar errores 403, 404
 - [ ] Documentar endpoint con ejemplos
 
-#### 5. Índices y Performance (1.2h)
-- [ ] Crear índice en `student.name` para búsqueda rápida
-- [ ] Configurar índice compuesto en `(classroomId, name)`
-- [ ] Cachear conteo total si no hay búsqueda (TTL 5min)
-- [ ] Optimizar con `select` específicos
+#### 5. Indices y Performance (1.2h)
+- [ ] Crear indice en `student.name` para busqueda rapida
+- [ ] Configurar indice compuesto en `(classroomId, name)`
+- [ ] Cachear conteo total si no hay busqueda (TTL 5min)
+- [ ] Optimizar con `select` especificos
 
 #### 6. Testing Backend (0.8h)
-- [ ] Unit tests para búsqueda y ordenamiento
-- [ ] Integration tests para paginación
+- [ ] Unit tests para busqueda y ordenamiento
+- [ ] Integration tests para paginacion
 - [ ] Test de queries con >100 estudiantes
 
 ### Frontend (9.8h - 35%)
 
 #### 1. Setup de Estado y Hook Custom (2h)
-- [ ] Crear hook `useStudentList()` con debounce para búsqueda
+- [ ] Crear hook `useStudentList()` con debounce para busqueda
 - [ ] Implementar estado local: sortBy, order, search, page
-- [ ] Configurar auto-fetch al cambiar parámetros
+- [ ] Configurar auto-fetch al cambiar parametros
 - [ ] Implementar debounce de 300ms en search
 
 #### 2. Componente Principal de Tabla (2.5h)
 - [ ] Crear `StudentListTable.tsx` con routing y estado
 - [ ] Implementar `SearchBar` con input controlado
 - [ ] Implementar skeleton loader `TableSkeleton`
-- [ ] Manejar empty states (sin estudiantes, sin resultados de búsqueda)
+- [ ] Manejar empty states (sin estudiantes, sin resultados de busqueda)
 
 #### 3. Componente de Tabla y Headers (2h)
 - [ ] Crear `Table` y `TableHeader` con columnas fijas
-- [ ] Crear `SortableColumn` con indicadores de orden (↑↓)
-- [ ] Implementar lógica de ordenamiento al hacer clic
+- [ ] Crear `SortableColumn` con indicadores de orden
+- [ ] Implementar logica de ordenamiento al hacer clic
 - [ ] Aplicar estilos Tailwind para tabla responsive
 
 #### 4. Componente de Fila de Estudiante (2h)
 - [ ] Crear `StudentRow` con todos los campos
-- [ ] Implementar `ProgressBar` con colores según porcentaje
+- [ ] Implementar `ProgressBar` con colores segun porcentaje
 - [ ] Implementar `LevelBadge` con iconos de nivel
-- [ ] Implementar `LastActivity` con color según días de inactividad
+- [ ] Implementar `LastActivity` con color segun dias de inactividad
 - [ ] Agregar cursor pointer y hover state
 
-#### 5. Componente de Paginación (0.8h)
+#### 5. Componente de Paginacion (0.8h)
 - [ ] Crear `Pagination` con botones Anterior/Siguiente
-- [ ] Mostrar página actual y total de páginas
-- [ ] Deshabilitar botones en límites (primera/última página)
+- [ ] Mostrar pagina actual y total de paginas
+- [ ] Deshabilitar botones en limites (primera/ultima pagina)
 
-#### 6. Navegación y Mobile (0.5h)
-- [ ] Implementar navegación a perfil de estudiante (onClick en fila)
+#### 6. Navegacion y Mobile (0.5h)
+- [ ] Implementar navegacion a perfil de estudiante (onClick en fila)
 - [ ] Adaptar tabla a mobile (colapsar a cards)
 
 ### Testing (4.2h - 15%)
@@ -597,25 +613,25 @@ export const useStudentList = (params: StudentListParams) => {
 - [ ] Tests de custom hook con debounce
 - [ ] Tests de funciones de color y formateo
 
-#### 2. Testing de Integración (1.5h)
+#### 2. Testing de Integracion (1.5h)
 - [ ] Test E2E: Profesor ve lista completa de estudiantes
-- [ ] Test E2E: Búsqueda funciona en tiempo real
+- [ ] Test E2E: Busqueda funciona en tiempo real
 - [ ] Test E2E: Ordenamiento cambia orden de filas
 - [ ] Test E2E: Clic en fila navega a perfil
 
 #### 3. Testing de Performance (0.9h)
 - [ ] Test de renderizado de tabla con 50+ estudiantes
-- [ ] Test de debounce en búsqueda
+- [ ] Test de debounce en busqueda
 
 ### Deployment (1.4h - 5%)
 
 #### 1. Build y Deploy (1.4h)
-- [ ] Build de producción
+- [ ] Build de produccion
 - [ ] Verificar lazy loading de tabla
 - [ ] Deploy a staging
-- [ ] Smoke tests de búsqueda y ordenamiento
+- [ ] Smoke tests de busqueda y ordenamiento
 
 ---
 
 **Total Horas:** 28h
-**Distribución Real:** Backend 45% | Frontend 35% | Testing 15% | Deploy 5%
+**Distribucion Real:** Backend 45% | Frontend 35% | Testing 15% | Deploy 5%

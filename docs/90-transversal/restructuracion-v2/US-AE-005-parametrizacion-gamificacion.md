@@ -1,19 +1,45 @@
-# US-AE-005: Parametrización Dinámica de Gamificación
+---
+id: "US-AE-005"
+title: "Parametrizacion Dinamica de Gamificacion"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-002"
+story_points: 12
+budget: "$4,800 MXN"
+sprint: "Sprint-FE-059"
+labels: ["admin-extendido", "gamification", "system-config", "v2-core", "implemented"]
+created_date: "2025-11-08"
+updated_date: "2026-01-06"
+completed_date: "2025-11-19"
+---
 
-## 📋 Metadata
+# US-AE-005: Parametrizacion Dinamica de Gamificacion
+
+> **NOTA: COPIA DE REFERENCIA**
+>
+> Este archivo es una copia de trabajo usada durante la restructuración v2.
+>
+> **SSOT (Single Source of Truth):**
+> `docs/03-fase-extensiones/EXT-002-admin-extendido/historias-usuario/US-AE-005-parametrizacion-gamificacion.md`
+>
+> **Estado actual:** IMPLEMENTADO (Done) - 2025-11-19
+
+## Informacion General
 
 | Campo | Valor |
 |-------|-------|
 | **ID** | US-AE-005 |
-| **Épica** | EXT-002 (Admin Extendido CORE) |
-| **Módulo** | Admin - Configuración del Sistema |
+| **Epica** | EXT-002 (Admin Extendido CORE) |
+| **Modulo** | Admin - Configuracion del Sistema |
 | **Prioridad** | Alta (v2 CORE) |
 | **Story Points** | 12 |
 | **Presupuesto** | $4,800 MXN |
 | **Sprint** | TBD |
-| **Estado** | 🆕 Nueva |
-| **Versión** | 1.0 |
-| **Fecha creación** | 2025-11-08 |
+| **Estado** | Backlog |
+| **Version** | 1.0 |
+| **Fecha creacion** | 2025-11-08 |
 
 ## 🎯 Historia de Usuario
 

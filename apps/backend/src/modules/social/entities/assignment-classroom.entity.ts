@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
 import { Classroom } from './classroom.entity';
+import { Assignment } from '../../assignments/entities/assignment.entity';
 
 /**
  * AssignmentClassroom Entity (social_features.assignment_classrooms)
@@ -36,25 +37,25 @@ export class AssignmentClassroom {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  id!: string;
 
   /**
    * ID de la asignación
    */
   @Column({ type: 'uuid' })
-    assignment_id!: string;
+  assignment_id!: string;
 
   /**
    * ID del aula
    */
   @Column({ type: 'uuid' })
-    classroom_id!: string;
+  classroom_id!: string;
 
   /**
    * Fecha y hora de asignación
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-    assigned_at!: Date;
+  assigned_at!: Date;
 
   // =====================================================
   // Relaciones
@@ -69,7 +70,7 @@ export class AssignmentClassroom {
    */
   @ManyToOne(() => Classroom, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'classroom_id', referencedColumnName: 'id' })
-    classroom?: Classroom;
+  classroom?: Classroom;
 
   /**
    * Asignación asociada
@@ -77,7 +78,7 @@ export class AssignmentClassroom {
    * La relación se puede definir cuando se implemente Assignment entity
    * FK: assignment_classrooms.assignment_id → educational_content.assignments.id
    */
-  // @ManyToOne(() => Assignment, { onDelete: 'CASCADE' })
-  // @JoinColumn({ name: 'assignment_id', referencedColumnName: 'id' })
-  // assignment?: Assignment;
+  @ManyToOne(() => Assignment, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'assignment_id', referencedColumnName: 'id' })
+  assignment?: Assignment;
 }

@@ -10,7 +10,8 @@ CREATE TABLE notifications.notifications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Usuario destinatario
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    -- FK corregida: auth.users -> auth_management.profiles (2025-01-04)
+    user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
 
     -- Tipo de notificación
     -- Valores: 'achievement', 'mission', 'assignment', 'social', 'system', 'gamification'

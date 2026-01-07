@@ -1,3 +1,20 @@
+---
+id: "US-ADM-001"
+title: "Gestion de Aulas (CRUD Basico)"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-005"
+story_points: 8
+budget: "$3,200 MXN"
+sprint: "Sprint-1"
+labels: ["admin", "classrooms", "crud", "teacher-platform"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-08-10"
+---
+
 # US-ADM-001: Gestión de Aulas (CRUD Básico)
 
 **Épica:** EAI-005 (Plataforma de Maestro Básica)
@@ -5,7 +22,7 @@
 **Story Points:** 8 SP
 **Presupuesto:** $3,200 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 

@@ -1,3 +1,19 @@
+---
+id: "US-REP-001"
+title: "Dashboard de Analytics y Reportes Detallados para Profesores"
+type: "User Story"
+status: "Backlog"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EXT-005"
+story_points: 12
+budget: "$6,000 MXN"
+sprint: "Sprint-Mes3"
+labels: ["ext-005", "reportes-avanzados", "analytics-profesor", "visualizaciones", "exportacion", "alertas", "mes-3"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+---
+
 # US-REP-001: Analytics Avanzado para Profesores
 
 ## Información Básica

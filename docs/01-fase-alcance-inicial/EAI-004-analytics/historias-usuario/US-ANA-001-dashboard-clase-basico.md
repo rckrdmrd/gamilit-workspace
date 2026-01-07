@@ -1,3 +1,20 @@
+---
+id: "US-ANA-001"
+title: "Dashboard de Clase Basico"
+type: "User Story"
+status: "Done"
+priority: "Alta"
+assignee: "@Backend-Agent, @Frontend-Agent"
+epic: "EAI-004"
+story_points: 8
+budget: "$4,000 MXN"
+sprint: "Sprint-1"
+labels: ["analytics", "dashboard", "teacher", "classroom"]
+created_date: "2025-11-02"
+updated_date: "2026-01-04"
+completed_date: "2025-08-18"
+---
+
 # US-ANA-001: Dashboard de Clase Básico
 
 **Épica:** EAI-004 (Analytics Básico)
@@ -5,7 +22,7 @@
 **Story Points:** 8 SP
 **Presupuesto:** $4,000 MXN
 **Prioridad:** Alta (Alcance Inicial)
-**Estado:** ✅ Completada (Mes 1)
+**Estado:** Done
 
 ---
 

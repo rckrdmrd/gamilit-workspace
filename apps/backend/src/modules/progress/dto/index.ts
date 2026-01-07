@@ -36,3 +36,19 @@ export { ScheduledMissionResponseDto } from './scheduled-mission-response.dto';
 // AutoSave DTOs
 export { AutoSaveProgressDto } from './autosave-progress.dto';
 export { AutoSaveResponseDto } from './autosave-response.dto';
+
+// Module Exercise Breakdown (EPIC 10.3)
+export {
+  ModuleExerciseBreakdownDto,
+  ExerciseStatusDto,
+  ExerciseCompletionStatus,
+} from './module-exercise-breakdown.dto';
+
+// Certificate DTOs (EPIC 10.2)
+export {
+  GenerateCertificateDto,
+  RevokeCertificateDto,
+  CertificateVerificationDto,
+  CertificateResponseDto,
+  GetCertificatesQueryDto,
+} from './certificate.dto';
