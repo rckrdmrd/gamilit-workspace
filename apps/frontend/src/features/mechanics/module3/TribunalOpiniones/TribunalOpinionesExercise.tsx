@@ -40,10 +40,20 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   const currentStatement = statements[currentIndex];
   const totalStatements = statements.length;
 
+  // DEBUG CORR-010: Diagnóstico de statementId vacío
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[TribunalOpiniones DEBUG] exercise.content:', exercise.content);
+    console.log('[TribunalOpiniones DEBUG] statements:', statements);
+    console.log('[TribunalOpiniones DEBUG] currentStatement:', currentStatement);
+    console.log('[TribunalOpiniones DEBUG] currentStatement?.id:', currentStatement?.id);
+  }
+
   // Load existing evaluation when navigating
   useEffect(() => {
     if (currentStatement) {
-      const existing = evaluations.get(currentStatement.id);
+      // CORR-010 FIX: Use fallback ID
+      const stmtId = currentStatement.id || `stmt-${currentIndex + 1}`;
+      const existing = evaluations.get(stmtId);
       if (existing) {
         setCurrentClassification(existing.classification);
         setCurrentVerdict(existing.verdict);
@@ -57,12 +67,41 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   }, [currentIndex, currentStatement, evaluations]);
 
   // Progress updates
+  // CORR-010 FIX v3: Include current (unsaved) evaluation in onProgressUpdate
+  // This ensures ExercisePage.handleSubmit() has all evaluations including the one in progress
   useEffect(() => {
     if (onProgressUpdate) {
-      const evaluatedCount = evaluations.size;
+      // Get all saved evaluations
+      const savedEvaluations = Array.from(evaluations.values());
+
+      // CORR-010 FIX: Include current (unsaved) evaluation if complete
+      let allEvaluations = [...savedEvaluations];
+      if (currentStatement && currentClassification && currentVerdict) {
+        const currentStmtId = currentStatement.id || `stmt-${currentIndex + 1}`;
+        // Check if current evaluation is already saved
+        const alreadySaved = savedEvaluations.some(ev => ev.statementId === currentStmtId);
+        if (!alreadySaved) {
+          allEvaluations.push({
+            statementId: currentStmtId,
+            classification: currentClassification,
+            verdict: currentVerdict,
+            justification: currentJustification.trim() || undefined,
+          });
+        }
+      }
+
+      const evaluatedCount = allEvaluations.length;
       const answers: TribunalOpinionesAnswers = {
-        evaluations: Array.from(evaluations.values()),
+        evaluations: allEvaluations,
       };
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[TribunalOpiniones] onProgressUpdate:', {
+          savedCount: savedEvaluations.length,
+          totalCount: allEvaluations.length,
+          evaluationIds: allEvaluations.map(e => e.statementId),
+        });
+      }
 
       onProgressUpdate({
         progress: {
@@ -75,22 +114,41 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
         answers,
       });
     }
-  }, [evaluations, totalStatements, hintsUsed, onProgressUpdate, startTime]);
+  }, [
+    evaluations,
+    totalStatements,
+    hintsUsed,
+    onProgressUpdate,
+    startTime,
+    // CORR-010: Added dependencies for current evaluation
+    currentStatement,
+    currentClassification,
+    currentVerdict,
+    currentJustification,
+    currentIndex,
+  ]);
 
   // Save current evaluation
   const saveCurrentEvaluation = useCallback(() => {
     if (currentStatement && currentClassification && currentVerdict) {
+      // CORR-010 FIX: Use fallback ID if statement.id is missing
+      const stmtId = currentStatement.id || `stmt-${currentIndex + 1}`;
+
+      if (!currentStatement.id && process.env.NODE_ENV === 'development') {
+        console.warn('[TribunalOpiniones] Statement missing id, using fallback:', stmtId);
+      }
+
       const evaluation: StatementEvaluation = {
-        statementId: currentStatement.id,
+        statementId: stmtId,
         classification: currentClassification,
         verdict: currentVerdict,
         justification: currentJustification.trim() || undefined,
       };
-      setEvaluations((prev) => new Map(prev).set(currentStatement.id, evaluation));
+      setEvaluations((prev) => new Map(prev).set(stmtId, evaluation));
       return true;
     }
     return false;
-  }, [currentStatement, currentClassification, currentVerdict, currentJustification]);
+  }, [currentStatement, currentClassification, currentVerdict, currentJustification, currentIndex]);
 
   // Use hint handler (for future hint system)
   const _useHint = useCallback(() => {
@@ -120,8 +178,10 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     // Create updated evaluations map with current evaluation
     const currentEvaluations = new Map(evaluations);
     if (currentStatement && currentClassification && currentVerdict) {
-      currentEvaluations.set(currentStatement.id, {
-        statementId: currentStatement.id,
+      // CORR-010 FIX: Use fallback ID like saveCurrentEvaluation does
+      const stmtId = currentStatement.id || `stmt-${currentIndex + 1}`;
+      currentEvaluations.set(stmtId, {
+        statementId: stmtId,
         classification: currentClassification,
         verdict: currentVerdict,
         justification: currentJustification.trim() || undefined,
@@ -152,12 +212,51 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     setIsSubmitting(true);
 
     try {
+      // CORR-010 FIX: Validate all evaluations have statementId before sending
+      const evaluationsArray = Array.from(currentEvaluations.values());
+      const invalidEvaluations = evaluationsArray.filter(
+        (ev) => !ev.statementId || ev.statementId.trim() === ''
+      );
+
+      if (invalidEvaluations.length > 0) {
+        console.error('[TribunalOpiniones] Invalid evaluations detected:', invalidEvaluations);
+        setFeedback({
+          type: 'error',
+          title: 'Error de Validación',
+          message: `${invalidEvaluations.length} evaluaciones tienen IDs inválidos. Por favor, vuelve a navegar por las afirmaciones.`,
+        });
+        setShowFeedback(true);
+        return;
+      }
+
       const answers: TribunalOpinionesAnswers = {
-        evaluations: Array.from(currentEvaluations.values()),
+        evaluations: evaluationsArray,
       };
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[TribunalOpiniones] Submitting answers:', JSON.stringify(answers, null, 2));
+      }
 
       const response = await submitExercise(exercise.id, user.id, answers);
 
+      // ✅ FIX M3-M5 2026-01-07: Verificar si está pendiente de revisión manual
+      if (response.status === 'pending_review' || response.requiresManualReview) {
+        setFeedback({
+          type: 'info',
+          title: 'Enviado para Revisión',
+          message: response.message || 'Tu evaluación ha sido enviada para revisión del maestro. Recibirás tus recompensas cuando sea evaluada.',
+          pendingReview: true,
+        });
+        setShowFeedback(true);
+        await syncAndInvalidate();
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log('📤 [TribunalOpiniones] Submission sent for manual review');
+        }
+        return;
+      }
+
+      // Flujo normal cuando ya está evaluado (ejercicios auto-evaluables)
       // Extraer rewards de la respuesta
       const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
 
@@ -205,6 +304,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     currentClassification,
     currentVerdict,
     currentJustification,
+    currentIndex, // CORR-010 FIX: Added for fallback ID
     totalStatements,
     user,
     exercise.id,
@@ -261,23 +361,25 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   }
 
   const isCurrentComplete = currentClassification && currentVerdict;
+  // CORR-010 FIX: Use fallback ID for current statement
+  const currentStmtId = currentStatement?.id || `stmt-${currentIndex + 1}`;
   const evaluatedCount =
-    evaluations.size + (isCurrentComplete && !evaluations.has(currentStatement.id) ? 1 : 0);
+    evaluations.size + (isCurrentComplete && !evaluations.has(currentStmtId) ? 1 : 0);
 
   return (
     <>
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <div className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
+          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center gap-3">
               <Scale className="h-8 w-8" />
-              <h1 className="text-2xl font-bold">Tribunal de Opiniones</h1>
+              <h2 className="text-detective-2xl font-bold">Tribunal de Opiniones</h2>
             </div>
-            <p className="text-white/90">
+            <p className="mb-4 text-detective-base opacity-90">
               Clasifica cada afirmación y evalúa si está bien fundamentada
             </p>
-            <div className="mt-3 flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-4">
               <span className="rounded-full bg-white/20 px-3 py-1">
                 Afirmación {currentIndex + 1} de {totalStatements}
               </span>
@@ -288,7 +390,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
           {/* Current Statement */}
           <AnimatePresence mode="wait">
             <motion.div
-              key={currentStatement.id}
+              key={currentStmtId}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
@@ -402,11 +504,13 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
           {/* Progress Dots */}
           <div className="flex justify-center gap-2 pt-4">
             {statements.map((stmt, idx) => {
+              // CORR-010 FIX: Use fallback ID for each statement
+              const stmtId = stmt.id || `stmt-${idx + 1}`;
               const isEvaluated =
-                evaluations.has(stmt.id) || (idx === currentIndex && isCurrentComplete);
+                evaluations.has(stmtId) || (idx === currentIndex && isCurrentComplete);
               return (
                 <button
-                  key={stmt.id}
+                  key={stmtId}
                   onClick={() => {
                     saveCurrentEvaluation();
                     setCurrentIndex(idx);
