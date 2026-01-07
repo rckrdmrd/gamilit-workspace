@@ -79,6 +79,12 @@ export default function LeaderboardPage() {
   const [showRealtimeIndicator, setShowRealtimeIndicator] = useState(false);
   const userEntryRef = useRef<HTMLDivElement>(null);
 
+  // Auto-fetch leaderboard on component mount
+  // FIX: CORR-002 - El store inicia vacio, necesita llamada inicial para cargar datos
+  useEffect(() => {
+    setLeaderboardType('global');
+  }, [setLeaderboardType]);
+
   // Show real-time indicator briefly when leaderboard updates
   useEffect(() => {
     if (isWebSocketConnected) {
