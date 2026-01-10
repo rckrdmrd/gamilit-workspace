@@ -158,11 +158,15 @@ export class AchievementsController {
    *   ...
    * ]
    */
+  /**
+   * FIX: CORR-005 - Actualizado para retornar TODOS los logros del usuario (no solo completados)
+   * Esto permite al frontend mostrar logros en progreso, bloqueados y completados.
+   */
   @Get('users/:userId/achievements')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get user achievements',
-    description: 'Obtiene todos los logros completados por un usuario específico',
+    description: 'Obtiene todos los logros del usuario con su progreso (completados, en progreso y bloqueados)',
   })
   @ApiParam({
     name: 'userId',
@@ -174,19 +178,24 @@ export class AchievementsController {
     status: 200,
     description: 'Logros del usuario obtenidos exitosamente',
     schema: {
-      example: [
-        {
-          id: '660e8400-e29b-41d4-a716-446655440000',
-          user_id: '550e8400-e29b-41d4-a716-446655440000',
-          achievement_id: '770e8400-e29b-41d4-a716-446655440000',
-          progress: 1,
-          max_progress: 1,
-          is_completed: true,
-          completion_percentage: 100,
-          completed_at: '2024-01-15T10:30:00Z',
-          rewards_claimed: true,
+      example: {
+        data: {
+          achievements: [
+            {
+              id: '660e8400-e29b-41d4-a716-446655440000',
+              user_id: '550e8400-e29b-41d4-a716-446655440000',
+              achievement_id: '770e8400-e29b-41d4-a716-446655440000',
+              progress: 1,
+              max_progress: 1,
+              is_completed: true,
+              completion_percentage: 100,
+              completed_at: '2024-01-15T10:30:00Z',
+              rewards_claimed: true,
+            },
+          ],
+          total: 30,
         },
-      ],
+      },
     },
   })
   @ApiResponse({
@@ -194,7 +203,13 @@ export class AchievementsController {
     description: 'Usuario no encontrado',
   })
   async getUserAchievements(@Param('userId') userId: string) {
-    return this.achievementsService.getCompletedByUser(userId);
+    // FIX: CORR-005 - Usar nuevo metodo que retorna todos los logros con progreso
+    const result = await this.achievementsService.getAllUserAchievements(userId);
+
+    // Envolver en estructura { data: { achievements, total } } para compatibilidad con frontend
+    return {
+      data: result,
+    };
   }
 
   /**

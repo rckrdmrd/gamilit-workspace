@@ -147,7 +147,7 @@ BEGIN
             'Polonia se llama "Polska" en polaco'
         ],
         100, 20,
-        true, true  -- Requiere evaluación manual del maestro
+        true, false  -- AUTO-GRADING: Tiene correctAnswers definidos [1, 1, 2]
     );
 
     -- Exercise 4.3: Navegación Hipertextual

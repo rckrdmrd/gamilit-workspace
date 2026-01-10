@@ -63,6 +63,40 @@ const DEFAULT_GAMIFICATION_CONFIG = {
  *
  * Settings are stored in system_configuration.system_settings table
  * with category='gamification'
+ *
+ * ============================================================================
+ * SECURITY WARNING - CROSS-TENANT ACCESS VULNERABILITY (FIX-2025-01-07)
+ * ============================================================================
+ *
+ * PROBLEMA IDENTIFICADO:
+ * Este servicio NO filtra por tenant_id en las consultas a SystemSetting,
+ * permitiendo que un admin acceda a configuraciones de gamificación de
+ * CUALQUIER organización del sistema.
+ *
+ * MÉTODOS AFECTADOS:
+ * - getGamificationSettings() - where: { setting_category: 'gamification' }
+ * - ensureDefaultSettings() - Same filter, no tenant_id
+ * - getParameters() - Same filter, no tenant_id
+ * - getMayaRanks() - Raw query without tenant filter
+ *
+ * ENTIDAD SystemSetting CON tenant_id NO FILTRADO:
+ * - SystemSetting.tenant_id (nullable, pero indexado)
+ *
+ * IMPACTO:
+ * - Un admin_teacher podría ver/modificar configuración de otras organizaciones
+ * - Violación del aislamiento multi-tenant
+ * - Posible manipulación de XP/coins de competidores
+ *
+ * SOLUCIÓN RECOMENDADA:
+ * 1. Agregar tenantId a todas las consultas de configuración
+ * 2. Filtrar: where: { setting_category: 'gamification', tenant_id: tenantId }
+ * 3. Excepto para super_admin que puede operar cross-tenant por diseño
+ *
+ * NOTA: super_admin puede operar cross-tenant por diseño.
+ *
+ * PRIORIDAD: P0 (Crítico) - Requiere implementación antes de producción
+ * TICKET: Crear issue en backlog para implementar tenant filtering
+ * ============================================================================
  */
 @Injectable()
 export class GamificationConfigService {

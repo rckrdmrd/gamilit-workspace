@@ -101,6 +101,11 @@ export class ModuleProgressService {
       progress_percentage: 0,
       completed_exercises: 0,
       total_exercises: 0,
+      // FEATURE M3-M5 2026-01-08: Tracking de submitted vs graded
+      submitted_exercises: 0,
+      graded_exercises: 0,
+      submitted_progress_percentage: 0,
+      graded_progress_percentage: 0,
       total_score: 0,
       total_xp_earned: 0,
       total_ml_coins_earned: 0,

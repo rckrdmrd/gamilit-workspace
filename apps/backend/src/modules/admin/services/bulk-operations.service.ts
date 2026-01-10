@@ -24,6 +24,56 @@ import { IBulkOperationResult } from '../interfaces/bulk-operation.interface';
  * - Registra progreso en tabla admin_dashboard.bulk_operations
  * - Usa función SQL update_bulk_operation_progress() para tracking
  * - En v2: Integrar con BullMQ para procesamiento en background
+ *
+ * ============================================================================
+ * SECURITY WARNING - CROSS-TENANT ACCESS VULNERABILITY (FIX-2025-01-07)
+ * ============================================================================
+ *
+ * PROBLEMA IDENTIFICADO:
+ * Este servicio NO valida que los usuarios a modificar pertenezcan a la misma
+ * organización/tenant que el administrador que ejecuta la operación.
+ *
+ * ESCENARIO DE RIESGO:
+ * 1. Admin de Organización A llama a bulkSuspendUsers()
+ * 2. Incluye UUIDs de usuarios de Organización B
+ * 3. El AdminGuard solo verifica el rol (admin/super_admin)
+ * 4. La operación se ejecuta sin validar el tenant
+ *
+ * IMPACTO:
+ * - Un admin_teacher podría suspender/eliminar usuarios de otras organizaciones
+ * - Violación del aislamiento multi-tenant
+ * - Posible compliance issue (GDPR, datos de terceros)
+ *
+ * SOLUCIÓN RECOMENDADA:
+ * 1. Agregar validación de tenant en cada método bulk:
+ *    ```typescript
+ *    // Verificar que todos los userIds pertenezcan a la org del admin
+ *    const users = await this.userRepo.findByIds(dto.userIds);
+ *    const invalidUsers = users.filter(u => u.organization_id !== admin.organization_id);
+ *    if (invalidUsers.length > 0 && admin.role !== 'super_admin') {
+ *      throw new ForbiddenException('Cannot modify users from other organizations');
+ *    }
+ *    ```
+ *
+ * 2. O implementar en el Guard:
+ *    ```typescript
+ *    // En AdminGuard o nuevo TenantGuard
+ *    if (user.role === 'admin_teacher') {
+ *      // Verificar que body.userIds solo contenga usuarios del mismo tenant
+ *    }
+ *    ```
+ *
+ * 3. Usar Row Level Security (RLS) en PostgreSQL:
+ *    ```sql
+ *    CREATE POLICY tenant_isolation ON auth.gamilit_user
+ *    FOR ALL USING (organization_id = current_setting('app.current_tenant_id'));
+ *    ```
+ *
+ * NOTA: super_admin puede operar cross-tenant por diseño.
+ *
+ * PRIORIDAD: P1 (Alto) - Requiere implementación antes de producción
+ * TICKET: Crear issue en backlog para implementar validación cross-tenant
+ * ============================================================================
  */
 @Injectable()
 export class BulkOperationsService {
@@ -180,6 +230,7 @@ export class BulkOperationsService {
 
   /**
    * Procesa suspensión masiva de usuarios
+   * Optimizado: Usa batch query en lugar de N+1 queries (FIX-2025-01-07)
    */
   private async processBulkSuspend(
     operationId: string,
@@ -192,22 +243,29 @@ export class BulkOperationsService {
     let completed = 0;
     let failed = 0;
 
-    for (const userId of dto.userIds) {
-      try {
-        const user = await this.userRepo.findOne({ where: { id: userId } });
-        if (!user) {
-          results.push({ userId, success: false, error: 'User not found' });
-          failed++;
-          continue;
-        }
+    // OPTIMIZATION: Batch query - obtener todos los usuarios en una sola consulta
+    const users = await this.userRepo.findByIds(dto.userIds);
+    const userMap = new Map(users.map((u) => [u.id, u]));
+    const notFoundIds = dto.userIds.filter((id) => !userMap.has(id));
 
+    // Registrar usuarios no encontrados
+    for (const userId of notFoundIds) {
+      results.push({ userId, success: false, error: 'User not found' });
+      failed++;
+    }
+
+    // Procesar usuarios encontrados
+    const suspensionDate = dto.durationDays
+      ? new Date(Date.now() + dto.durationDays * 24 * 60 * 60 * 1000)
+      : null;
+
+    for (const user of users) {
+      try {
         // Crear registro de suspensión
         const suspension = this.suspensionRepo.create({
-          user_id: userId,
+          user_id: user.id,
           reason: dto.reason,
-          suspension_until: dto.durationDays
-            ? new Date(Date.now() + dto.durationDays * 24 * 60 * 60 * 1000)
-            : null,
+          suspension_until: suspensionDate,
           suspended_by: adminId,
         });
         await this.suspensionRepo.save(suspension);
@@ -216,11 +274,11 @@ export class BulkOperationsService {
         user.deleted_at = new Date();
         await this.userRepo.save(user);
 
-        results.push({ userId, success: true });
+        results.push({ userId: user.id, success: true });
         completed++;
       } catch (error: any) {
-        this.logger.error(`Error suspending user ${userId}: ${error.message}`);
-        results.push({ userId, success: false, error: error.message });
+        this.logger.error(`Error suspending user ${user.id}: ${error.message}`);
+        results.push({ userId: user.id, success: false, error: error.message });
         failed++;
       }
 
@@ -230,8 +288,9 @@ export class BulkOperationsService {
       }
     }
 
-    // Actualizar progreso final
-    const remaining = (completed + failed) % 10;
+    // Actualizar progreso final (incluye los not found)
+    const totalProcessed = completed + failed;
+    const remaining = totalProcessed % 10;
     if (remaining > 0) {
       await this.updateProgress(operationId, remaining, 0);
     }
@@ -252,6 +311,7 @@ export class BulkOperationsService {
 
   /**
    * Procesa activación masiva de usuarios
+   * Optimizado: Usa batch query en lugar de N+1 queries (FIX-2025-01-07)
    */
   private async processBulkActivate(
     operationId: string,
@@ -262,24 +322,24 @@ export class BulkOperationsService {
     let completed = 0;
     let failed = 0;
 
-    for (const userId of dto.userIds) {
-      try {
-        const user = await this.userRepo.findOne({ where: { id: userId } });
-        if (!user) {
-          failed++;
-          continue;
-        }
+    // OPTIMIZATION: Batch query - obtener todos los usuarios en una sola consulta
+    const users = await this.userRepo.findByIds(dto.userIds);
+    const foundIds = new Set(users.map((u) => u.id));
+    const notFoundCount = dto.userIds.filter((id) => !foundIds.has(id)).length;
+    failed += notFoundCount;
 
+    for (const user of users) {
+      try {
         // Reactivar usuario (quitar soft delete)
         user.deleted_at = undefined;
         await this.userRepo.save(user);
 
         // Eliminar suspensiones activas
-        await this.suspensionRepo.delete({ user_id: userId });
+        await this.suspensionRepo.delete({ user_id: user.id });
 
         completed++;
       } catch (error: any) {
-        this.logger.error(`Error activating user ${userId}: ${error.message}`);
+        this.logger.error(`Error activating user ${user.id}: ${error.message}`);
         failed++;
       }
 
@@ -296,6 +356,7 @@ export class BulkOperationsService {
 
   /**
    * Procesa actualización masiva de roles
+   * Optimizado: Usa batch UPDATE en lugar de N+1 queries (FIX-2025-01-07)
    */
   private async processBulkUpdateRole(
     operationId: string,
@@ -306,34 +367,52 @@ export class BulkOperationsService {
     let completed = 0;
     let failed = 0;
 
-    for (const userId of dto.userIds) {
-      try {
-        const user = await this.userRepo.findOne({ where: { id: userId } });
-        if (user) {
+    try {
+      // OPTIMIZATION: Batch UPDATE - actualizar todos los roles en una sola consulta
+      const result = await this.userRepo
+        .createQueryBuilder()
+        .update()
+        .set({ role: dto.newRole })
+        .whereInIds(dto.userIds)
+        .execute();
+
+      completed = result.affected ?? 0;
+      failed = dto.userIds.length - completed;
+
+      // Actualizar progreso de una vez
+      await this.updateProgress(operationId, completed, failed);
+    } catch (error: any) {
+      this.logger.error(`Error updating roles in batch: ${error.message}`);
+      // Fallback: procesar individualmente si falla el batch
+      const users = await this.userRepo.findByIds(dto.userIds);
+      const foundIds = new Set(users.map((u) => u.id));
+      failed = dto.userIds.filter((id) => !foundIds.has(id)).length;
+
+      for (const user of users) {
+        try {
           user.role = dto.newRole;
           await this.userRepo.save(user);
           completed++;
-        } else {
+        } catch (err: any) {
+          this.logger.error(`Error updating role for user ${user.id}: ${err.message}`);
           failed++;
         }
-      } catch (error: any) {
-        this.logger.error(`Error updating role for user ${userId}: ${error.message}`);
-        failed++;
+
+        if ((completed + failed) % 10 === 0) {
+          await this.updateProgress(operationId, 10, 0);
+        }
       }
 
-      if ((completed + failed) % 10 === 0) {
-        await this.updateProgress(operationId, 10, 0);
+      const remaining = (completed + failed) % 10;
+      if (remaining > 0) {
+        await this.updateProgress(operationId, remaining, 0);
       }
-    }
-
-    const remaining = (completed + failed) % 10;
-    if (remaining > 0) {
-      await this.updateProgress(operationId, remaining, 0);
     }
   }
 
   /**
    * Procesa eliminación masiva de usuarios
+   * Optimizado: Usa batch operations en lugar de N+1 queries (FIX-2025-01-07)
    */
   private async processBulkDelete(
     operationId: string,
@@ -344,33 +423,61 @@ export class BulkOperationsService {
     let completed = 0;
     let failed = 0;
 
-    for (const userId of dto.userIds) {
-      try {
-        if (dto.hardDelete) {
-          // Hard delete (eliminar permanentemente)
-          await this.userRepo.delete(userId);
-        } else {
-          // Soft delete (marcar como eliminado)
-          const user = await this.userRepo.findOne({ where: { id: userId } });
-          if (user) {
-            user.deleted_at = new Date();
-            await this.userRepo.save(user);
+    try {
+      if (dto.hardDelete) {
+        // OPTIMIZATION: Batch DELETE - eliminar todos en una sola consulta
+        const result = await this.userRepo
+          .createQueryBuilder()
+          .delete()
+          .whereInIds(dto.userIds)
+          .execute();
+
+        completed = result.affected ?? 0;
+        failed = dto.userIds.length - completed;
+      } else {
+        // OPTIMIZATION: Batch UPDATE para soft delete
+        const result = await this.userRepo
+          .createQueryBuilder()
+          .update()
+          .set({ deleted_at: new Date() })
+          .whereInIds(dto.userIds)
+          .execute();
+
+        completed = result.affected ?? 0;
+        failed = dto.userIds.length - completed;
+      }
+
+      // Actualizar progreso de una vez
+      await this.updateProgress(operationId, completed, failed);
+    } catch (error: any) {
+      this.logger.error(`Error in batch delete: ${error.message}`);
+      // Fallback: procesar individualmente si falla el batch
+      for (const userId of dto.userIds) {
+        try {
+          if (dto.hardDelete) {
+            await this.userRepo.delete(userId);
+          } else {
+            const user = await this.userRepo.findOne({ where: { id: userId } });
+            if (user) {
+              user.deleted_at = new Date();
+              await this.userRepo.save(user);
+            }
           }
+          completed++;
+        } catch (err: any) {
+          this.logger.error(`Error deleting user ${userId}: ${err.message}`);
+          failed++;
         }
-        completed++;
-      } catch (error: any) {
-        this.logger.error(`Error deleting user ${userId}: ${error.message}`);
-        failed++;
+
+        if ((completed + failed) % 10 === 0) {
+          await this.updateProgress(operationId, 10, 0);
+        }
       }
 
-      if ((completed + failed) % 10 === 0) {
-        await this.updateProgress(operationId, 10, 0);
+      const remaining = (completed + failed) % 10;
+      if (remaining > 0) {
+        await this.updateProgress(operationId, remaining, 0);
       }
-    }
-
-    const remaining = (completed + failed) % 10;
-    if (remaining > 0) {
-      await this.updateProgress(operationId, remaining, 0);
     }
   }
 

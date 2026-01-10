@@ -4,11 +4,13 @@ Sistema de gamificación: logros, rangos Maya, monedas ML, comodines, tienda vir
 
 ## Estructura
 
-- **tables/**: 15 archivos
-- **enums/**: 4 archivos
+- **tables/**: 15 archivos activos, 1 deprecated
+- **enums/**: 8 archivos
 - **functions/**: 21 archivos activos
 - **functions/_deprecated/**: 4 archivos (funciones updated_at + leaderboard sin uso)
-- **triggers/**: 10 archivos
+- **triggers/**: 7 archivos activos (incluye 00-batch_updated_at_triggers.sql con 5 triggers)
+- **triggers/_deprecated/**: 6 archivos (triggers updated_at individuales)
+- **rls-policies/_deprecated/**: 1 archivo (policies de notifications)
 - **indexes/**: 23 archivos
 - **materialized-views/**: 4 archivos (leaderboards activos)
 - **views/_deprecated/**: 4 archivos (views redundantes)
@@ -93,9 +95,25 @@ en futuro refactoring.
 | `update_leaderboard_global` | Sin uso en backend | Materialized views (mv_global_leaderboard) |
 | `update_leaderboard_coins` | Sin uso + bug v_old_rank=1 | Materialized views (mv_global_leaderboard) |
 
+## Consolidacion de Triggers (2026-01-07)
+
+Triggers de `updated_at` consolidados en `00-batch_updated_at_triggers.sql`:
+- `achievements_updated_at`
+- `comodines_inventory_updated_at`
+- `missions_updated_at`
+- `notifications_updated_at`
+- `user_ranks_updated_at`
+- `user_stats_updated_at`
+
+Archivos originales movidos a `triggers/_deprecated/`.
+
 ---
 
-**Última actualización:** 2026-01-04
+**Ultima actualizacion:** 2026-01-07
 **Cambios recientes:**
+- LIMPIEZA: Trigger de notifications removido del batch (2026-01-07)
+- LIMPIEZA: RLS policies de notifications movidas a rls-policies/_deprecated/ (2026-01-07)
+- CONSOLIDACION BD: Triggers updated_at consolidados en 00-batch_updated_at_triggers.sql (2026-01-07)
+- CONSOLIDACION BD: 6 triggers individuales movidos a _deprecated/ (2026-01-07)
 - notifications marcada como DEPRECATED (2026-01-04)
 - Agregado MIGRATION-NOTIFICATIONS.md

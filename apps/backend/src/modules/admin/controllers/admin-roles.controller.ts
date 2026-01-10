@@ -9,6 +9,7 @@ import {
   UpdatePermissionsDto,
   RolePermissionsDto,
 } from '../dto/roles';
+import { CurrentUser, RequestUser } from '@shared/decorators/current-user.decorator';
 
 @ApiTags('Admin - Roles & Permissions')
 @Controller('admin/roles')
@@ -48,6 +49,10 @@ export class AdminRolesController {
     return this.adminRolesService.getRolePermissions(id);
   }
 
+  /**
+   * FIX-2025-01-07 P0: Added audit logging for permission changes
+   * Now captures admin user info for accountability
+   */
   @Put(':id/permissions')
   @ApiOperation({
     summary: 'Update permissions for a specific role',
@@ -56,8 +61,9 @@ export class AdminRolesController {
   })
   async updateRolePermissions(
     @Param('id') id: string,
-      @Body() updateDto: UpdatePermissionsDto,
+    @Body() updateDto: UpdatePermissionsDto,
+    @CurrentUser() admin: RequestUser,
   ): Promise<RolePermissionsDto> {
-    return this.adminRolesService.updateRolePermissions(id, updateDto);
+    return this.adminRolesService.updateRolePermissions(id, updateDto, admin);
   }
 }

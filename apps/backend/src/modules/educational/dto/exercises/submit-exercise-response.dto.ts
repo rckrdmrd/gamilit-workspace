@@ -107,4 +107,27 @@ export class SubmitExerciseResponseDto {
     required: false,
   })
     rankUp?: RankUpDto | null;
+
+  // BUG-M3-SUBMIT-001 FIX 2026-01-07: Campos para ejercicios con revisión manual
+  @ApiProperty({
+    description: 'Estado de la submission (para ejercicios con revisión manual)',
+    enum: ['draft', 'submitted', 'graded', 'reviewed', 'pending_review'],
+    example: 'submitted',
+    required: false,
+  })
+    status?: 'draft' | 'submitted' | 'graded' | 'reviewed' | 'pending_review';
+
+  @ApiProperty({
+    description: 'Indica si el ejercicio requiere revisión manual del maestro',
+    example: true,
+    required: false,
+  })
+    requiresManualReview?: boolean;
+
+  @ApiProperty({
+    description: 'Mensaje del backend para mostrar al usuario',
+    example: 'Tu respuesta ha sido enviada para revisión del maestro.',
+    required: false,
+  })
+    message?: string;
 }

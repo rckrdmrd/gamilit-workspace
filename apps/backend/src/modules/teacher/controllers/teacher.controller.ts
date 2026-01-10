@@ -153,7 +153,7 @@ export class TeacherController {
     @Param('studentId') studentId: string,
       @Request() req: AuthRequest,
   ): Promise<StudentNoteResponseDto[]> {
-    const teacherId = req.user!.profile!.id;
+    const teacherId = req.user!.profile?.id || req.user!.id;
     return this.studentProgressService.getStudentNotes(studentId, teacherId);
   }
 
@@ -167,7 +167,7 @@ export class TeacherController {
       @Body() noteDto: AddTeacherNoteDto,
       @Request() req: AuthRequest,
   ): Promise<StudentNoteResponseDto> {
-    const teacherId = req.user!.profile!.id;
+    const teacherId = req.user!.profile?.id || req.user!.id;
     return this.studentProgressService.addStudentNote(
       studentId,
       teacherId,
@@ -267,7 +267,7 @@ export class TeacherController {
   @Request() req: AuthRequest,
     @Query() query: GetEngagementMetricsDto,
   ) {
-    const teacherId = req.user!.profile!.id;
+    const teacherId = req.user!.profile?.id || req.user!.id;
     return this.analyticsService.getEngagementMetrics(teacherId, query);
   }
 
@@ -281,7 +281,7 @@ export class TeacherController {
   @Request() req: AuthRequest,
     @Query() query: GenerateReportsDto,
   ) {
-    const teacherId = req.user!.profile!.id;
+    const teacherId = req.user!.profile?.id || req.user!.id;
     return this.analyticsService.generateReports(teacherId, query);
   }
 
@@ -302,7 +302,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
       @Query('classroom_id') classroomId?: string,
   ): Promise<EconomyAnalyticsDto> {
-    const teacherId = req.user!.profile!.id;
+    const teacherId = req.user!.profile?.id || req.user!.id;
     return this.analyticsService.getEconomyAnalytics(teacherId, classroomId);
   }
 
@@ -323,7 +323,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
       @Query('classroom_id') classroomId?: string,
   ): Promise<StudentsEconomyResponseDto> {
-    const teacherId = req.user!.profile!.id;
+    const teacherId = req.user!.profile?.id || req.user!.id;
     return this.analyticsService.getStudentsEconomy(teacherId, classroomId);
   }
 
@@ -344,7 +344,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
       @Query('classroom_id') classroomId?: string,
   ): Promise<AchievementsStatsResponseDto> {
-    const teacherId = req.user!.profile!.id;
+    const teacherId = req.user!.profile?.id || req.user!.id;
     return this.analyticsService.getAchievementsStats(teacherId, classroomId);
   }
 
@@ -366,7 +366,7 @@ export class TeacherController {
     @Body() dto: GenerateReportDto,
     @Res() res: Response,
   ) {
-    const userId = req.user!.profile!.id;
+    const userId = req.user!.profile?.id || req.user!.id;
     const tenantId = req.user!.tenantId || req.user!.tenant_id || 'default';
 
     // Generate report (now persists to storage and database)
@@ -425,7 +425,7 @@ export class TeacherController {
       @Body() dto: GrantBonusDto,
       @Request() req: AuthRequest,
   ): Promise<GrantBonusResponseDto> {
-    const teacherId = req.user!.profile!.id;
+    const teacherId = req.user!.profile?.id || req.user!.id;
     return this.bonusCoinsService.grantBonus(teacherId, studentId, dto);
   }
 
@@ -447,7 +447,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
       @Query() query: GetRecentReportsQueryDto,
   ): Promise<ReportMetadataDto[]> {
-    const teacherId = req.user!.profile!.id;
+    const teacherId = req.user!.profile?.id || req.user!.id;
     const limit = query.limit || 10;
     return this.teacherReportsService.getRecentReports(teacherId, limit);
   }
@@ -463,7 +463,7 @@ export class TeacherController {
     type: ReportStatsDto,
   })
   async getReportStats(@Request() req: AuthRequest): Promise<ReportStatsDto> {
-    const teacherId = req.user!.profile!.id;
+    const teacherId = req.user!.profile?.id || req.user!.id;
     return this.teacherReportsService.getReportStats(teacherId);
   }
 
@@ -490,7 +490,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
     @Res() res: Response,
   ) {
-    const teacherId = req.user!.profile!.id;
+    const teacherId = req.user!.profile?.id || req.user!.id;
 
     // Get report with ownership validation
     const report = await this.teacherReportsService.getReportById(reportId, teacherId);

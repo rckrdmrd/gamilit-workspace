@@ -5,13 +5,14 @@ Características sociales: escuelas, aulas, equipos, amistades, reportes de prof
 ## Estructura
 
 - **tables/**: 17 archivos
-- **enums/**: 0 archivos activos
+- **enums/**: 5 archivos activos (classroom_role, friendship_status, team_role, enrollment_method, team_challenge_status)
 - **enums/_deprecated/**: 1 archivo (social_event_type - sin uso)
 - **functions/**: 2 archivos
-- **triggers/**: 6 archivos
+- **triggers/**: 2 archivos activos (incluye 00-batch_updated_at_triggers.sql consolidado)
+- **triggers/_deprecated/**: 5 archivos (triggers updated_at individuales)
 - **rls-policies/**: 10 archivos
 
-**Total:** 35 objetos DDL activos
+**Total:** 37 objetos DDL activos
 
 ## Tablas Principales
 
@@ -42,6 +43,30 @@ Tabla `teacher_reports` para almacenar reportes generados:
 - Asociado a classroom y teacher
 - Tipos: performance, attendance, behavior, etc.
 
+## Consolidacion de Triggers (2026-01-07)
+
+Triggers de `updated_at` consolidados en `00-batch_updated_at_triggers.sql`:
+- `classroom_members_updated_at`
+- `classrooms_updated_at`
+- `schools_updated_at`
+- `teams_updated_at`
+- `teacher_reports_updated_at`
+
+Archivos originales movidos a `triggers/_deprecated/`.
+
+## Migracion de ENUMs (2026-01-07)
+
+ENUMs migrados desde `00-prerequisites.sql` a archivos individuales en `enums/`:
+- `classroom_role` - Roles en aulas
+- `friendship_status` - Estados de amistad
+- `team_role` - Roles en equipos
+
 ---
 
-**Última actualización:** 2025-12-29
+**Ultima actualizacion:** 2026-01-07
+**Cambios recientes:**
+- SINCRONIZACION: Agregados ENUMs enrollment_method y team_challenge_status (2026-01-07)
+- SINCRONIZACION: team_role alineado con backend (owner, admin, member) (2026-01-07)
+- SINCRONIZACION: friendship_status agregado 'rejected' (2026-01-07)
+- CONSOLIDACION BD: Triggers updated_at consolidados (2026-01-07)
+- CONSOLIDACION BD: ENUMs migrados a archivos individuales (2026-01-07)

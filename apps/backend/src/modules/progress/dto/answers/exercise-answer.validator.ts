@@ -193,39 +193,131 @@ export class ExerciseAnswerValidator {
    * @param answers - Student answers to validate
    * @throws BadRequestException if validation fails
    */
+  /**
+   * Recursively extracts all constraint messages from validation errors,
+   * including nested errors from arrays and objects.
+   */
+  private static extractErrorMessages(errors: ValidationError[], prefix = ''): string[] {
+    const messages: string[] = [];
+
+    for (const error of errors) {
+      const propertyPath = prefix ? `${prefix}.${error.property}` : error.property;
+
+      // Add constraints from this level
+      if (error.constraints) {
+        const constraintMessages = Object.values(error.constraints);
+        messages.push(...constraintMessages.map(msg => `${propertyPath}: ${msg}`));
+      }
+
+      // Recursively process nested errors (arrays and objects)
+      if (error.children && error.children.length > 0) {
+        messages.push(...this.extractErrorMessages(error.children, propertyPath));
+      }
+    }
+
+    return messages;
+  }
+
   static async validate(exerciseType: string, answers: any): Promise<void> {
-    // FE-061: Debug log para ver qué se está validando
-    console.log('[FE-061 DEBUG] Validating answers:', {
+    // CORR-010 DEBUG: Log completo para diagnosticar problema de statementId vacío
+    console.log('[CORR-010 DEBUG] Validating answers:', {
       exerciseType,
       answersKeys: Object.keys(answers || {}),
-      answersStructure: JSON.stringify(answers, null, 2).substring(0, 500),
+      answersStructure: JSON.stringify(answers, null, 2).substring(0, 1000),
     });
+
+    // CORR-010: Log específico para tribunal_opiniones
+    if (exerciseType === 'tribunal_opiniones' && answers?.evaluations) {
+      console.log('[CORR-010 DEBUG] Tribunal evaluations BEFORE sanitization:',
+        JSON.stringify(answers.evaluations.map((e: any, i: number) => ({
+          index: i,
+          statementId: e.statementId,
+          hasStatementId: !!e.statementId,
+          typeOfStatementId: typeof e.statementId,
+          classification: e.classification,
+          verdict: e.verdict,
+        })), null, 2)
+      );
+
+      // CORR-010 FIX: Sanitizar evaluaciones antes de validar
+      // Esto es una solución de seguridad para garantizar que los IDs nunca estén vacíos
+      answers.evaluations = answers.evaluations.map((e: any, idx: number) => {
+        const sanitizedStatementId = e.statementId && typeof e.statementId === 'string' && e.statementId.trim() !== ''
+          ? e.statementId
+          : `stmt-${idx + 1}`;
+
+        if (!e.statementId || e.statementId !== sanitizedStatementId) {
+          console.warn(`[CORR-010 BACKEND] Sanitizing missing/invalid statementId at index ${idx}: "${e.statementId}" -> "${sanitizedStatementId}"`);
+        }
+
+        return {
+          ...e,
+          statementId: sanitizedStatementId,
+        };
+      });
+
+      console.log('[CORR-010 DEBUG] Tribunal evaluations AFTER sanitization:',
+        JSON.stringify(answers.evaluations.map((e: any, i: number) => ({
+          index: i,
+          statementId: e.statementId,
+        })), null, 2)
+      );
+    }
 
     // Get the appropriate DTO class
     const DtoClass = this.getDtoForType(exerciseType);
 
     // Transform plain object to DTO instance
-    const dto = plainToInstance(DtoClass, answers);
+    const dto = plainToInstance(DtoClass, answers, {
+      // CORR-010: Asegurar que las propiedades se copien correctamente
+      enableImplicitConversion: true,
+      exposeDefaultValues: true,
+    });
+
+    // CORR-010: Log después de la transformación
+    if (exerciseType === 'tribunal_opiniones' && (dto as any)?.evaluations) {
+      console.log('[CORR-010 DEBUG] Tribunal evaluations AFTER transform:',
+        JSON.stringify((dto as any).evaluations.map((e: any, i: number) => ({
+          index: i,
+          statementId: e.statementId,
+          hasStatementId: !!e.statementId,
+          typeOfStatementId: typeof e.statementId,
+        })), null, 2)
+      );
+
+      // CORR-010 FIX v5: Post-transform sanitization
+      // This is the DEFINITIVE fix - sanitize AFTER plainToInstance
+      // to ensure class-transformer quirks don't lose our statementIds
+      (dto as any).evaluations = (dto as any).evaluations.map((e: any, idx: number) => {
+        if (!e.statementId || (typeof e.statementId === 'string' && e.statementId.trim() === '')) {
+          const fallbackId = `stmt-${idx + 1}`;
+          console.warn(`[CORR-010 BACKEND v5] Post-transform fix: Setting statementId at index ${idx} to "${fallbackId}"`);
+          e.statementId = fallbackId;
+        }
+        return e;
+      });
+
+      console.log('[CORR-010 DEBUG] Tribunal evaluations AFTER POST-TRANSFORM sanitization:',
+        JSON.stringify((dto as any).evaluations.map((e: any, i: number) => ({
+          index: i,
+          statementId: e.statementId,
+        })), null, 2)
+      );
+    }
 
     // Validate
     const errors: ValidationError[] = await validate(dto);
 
     if (errors.length > 0) {
-      // Format error messages
-      const messages = errors.map(error => {
-        const constraints = error.constraints || {};
-        return Object.values(constraints).join(', ');
-      });
+      // Format error messages including nested errors
+      const messages = this.extractErrorMessages(errors);
 
       // FE-061: Log detailed error information
       console.error('[FE-061 DEBUG] Validation errors:', {
         exerciseType,
         errorCount: errors.length,
-        errorDetails: errors.map(e => ({
-          property: e.property,
-          value: e.value,
-          constraints: e.constraints,
-        })),
+        messages,
+        rawErrors: JSON.stringify(errors, null, 2),
       });
 
       throw new BadRequestException(

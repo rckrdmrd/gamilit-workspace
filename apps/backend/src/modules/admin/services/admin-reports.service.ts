@@ -15,6 +15,10 @@ import {
   ReportType,
   ReportFormat,
   ReportStatus,
+  // P2-2026-01-07: Schedule report DTOs
+  ScheduleReportDto,
+  ScheduleReportResponseDto,
+  ReportScheduleConfigDto,
 } from '../dto/reports';
 
 /**
@@ -33,6 +37,33 @@ import {
  * - Similar a BulkOperationsService pero para generación de archivos
  * - Los reportes tienen expiración automática (expires_at)
  * - file_url apunta al archivo generado (local o S3)
+ *
+ * ============================================================================
+ * SECURITY WARNING - CROSS-TENANT ACCESS VULNERABILITY (FIX-2025-01-07)
+ * ============================================================================
+ *
+ * PROBLEMA IDENTIFICADO:
+ * Este servicio NO filtra reportes por tenant_id, permitiendo que cualquier
+ * admin vea y descargue reportes de TODAS las organizaciones.
+ *
+ * MÉTODOS AFECTADOS:
+ * - getReports() - Lista reportes de todos los tenants
+ * - downloadReport() - No verifica propiedad del reporte
+ * - deleteReport() - No verifica propiedad del reporte
+ *
+ * IMPACTO:
+ * - Un admin_teacher podría ver/descargar reportes de otras organizaciones
+ * - Exposición de datos sensibles (exportaciones de usuarios, métricas)
+ * - Violación del aislamiento multi-tenant
+ *
+ * SOLUCIÓN RECOMENDADA:
+ * 1. Agregar tenant_id a AdminReport entity y todas las queries
+ * 2. Filtrar: WHERE tenant_id = :tenantId
+ * 3. Validar propiedad: WHERE requested_by = :userId OR tenant_id = :tenantId
+ * 4. Excepto para super_admin que puede operar cross-tenant por diseño
+ *
+ * PRIORIDAD: P1 (Alto) - Requiere implementación antes de producción
+ * ============================================================================
  */
 @Injectable()
 export class AdminReportsService {
@@ -413,6 +444,127 @@ Fin del Reporte
 `;
 
     return header + body;
+  }
+
+  // =====================================================
+  // P2-2026-01-07: SCHEDULE REPORTS
+  // =====================================================
+
+  /**
+   * Schedule automatic report generation
+   *
+   * @param reportId - ID of the report template to schedule
+   * @param scheduleDto - Schedule configuration
+   * @param userId - ID of the user configuring the schedule
+   * @returns Updated report with schedule configuration
+   *
+   * @task TASK-ADMIN-REPORTS-SCHEDULE
+   *
+   * IMPORTANTE:
+   * - La configuración de schedule se almacena en metadata.schedule
+   * - El cron job de generación se maneja por un servicio separado
+   * - next_run_at se calcula basado en frequency/hour/day
+   */
+  async scheduleReport(
+    reportId: string,
+    scheduleDto: ScheduleReportDto,
+    userId: string,
+  ): Promise<ScheduleReportResponseDto> {
+    // Buscar el reporte
+    const report = await this.reportRepo.findOne({
+      where: { id: reportId },
+    });
+
+    if (!report) {
+      throw new NotFoundException(`Report with ID ${reportId} not found`);
+    }
+
+    // Calcular próxima ejecución
+    const nextRunAt = this.calculateNextRunTime(scheduleDto);
+
+    // Construir configuración de schedule
+    const scheduleConfig: ReportScheduleConfigDto = {
+      enabled: scheduleDto.enabled,
+      frequency: scheduleDto.frequency,
+      hour: scheduleDto.hour ?? 8,
+      day_of_week: scheduleDto.day_of_week,
+      day_of_month: scheduleDto.day_of_month,
+      recipients: scheduleDto.recipients,
+      configured_at: new Date().toISOString(),
+      configured_by: userId,
+      next_run_at: scheduleDto.enabled ? nextRunAt.toISOString() : undefined,
+      last_run_at: undefined,
+    };
+
+    // Actualizar metadata del reporte con schedule
+    const updatedMetadata = {
+      ...report.metadata,
+      schedule: scheduleConfig,
+    };
+
+    await this.reportRepo.update(reportId, {
+      metadata: updatedMetadata,
+    });
+
+    this.logger.log(
+      `Report ${reportId} scheduled: ${scheduleDto.frequency} at ${scheduleDto.hour}:00 by user ${userId}`,
+    );
+
+    return {
+      id: report.id,
+      type: report.report_type,
+      format: report.report_format,
+      schedule: scheduleConfig,
+      message: scheduleDto.enabled
+        ? `Report scheduled successfully. Next run: ${nextRunAt.toISOString()}`
+        : 'Report schedule disabled',
+    };
+  }
+
+  /**
+   * Calculate next run time based on schedule configuration
+   * @private
+   */
+  private calculateNextRunTime(scheduleDto: ScheduleReportDto): Date {
+    const now = new Date();
+    const hour = scheduleDto.hour ?? 8;
+    let nextRun = new Date(now);
+
+    // Set to target hour
+    nextRun.setHours(hour, 0, 0, 0);
+
+    switch (scheduleDto.frequency) {
+      case 'daily':
+        // If target hour has passed today, schedule for tomorrow
+        if (nextRun <= now) {
+          nextRun.setDate(nextRun.getDate() + 1);
+        }
+        break;
+
+      case 'weekly':
+        const targetDay = scheduleDto.day_of_week ?? 1; // Default Monday
+        const currentDay = now.getDay();
+        let daysUntilTarget = targetDay - currentDay;
+
+        if (daysUntilTarget < 0 || (daysUntilTarget === 0 && nextRun <= now)) {
+          daysUntilTarget += 7;
+        }
+
+        nextRun.setDate(nextRun.getDate() + daysUntilTarget);
+        break;
+
+      case 'monthly':
+        const targetDayOfMonth = scheduleDto.day_of_month ?? 1;
+        nextRun.setDate(targetDayOfMonth);
+
+        // If target day has passed this month, schedule for next month
+        if (nextRun <= now) {
+          nextRun.setMonth(nextRun.getMonth() + 1);
+        }
+        break;
+    }
+
+    return nextRun;
   }
 
   /**

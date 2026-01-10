@@ -44,6 +44,40 @@ interface SpecialReqs {
   first_login?: boolean;
 }
 
+// CORR-009: New interfaces for M3-M5 achievement conditions
+interface ModuleFirstExerciseReqs {
+  module_code: string;
+  exercises_completed: number;
+}
+
+interface ExerciseScoreReqs {
+  exercise_type: string;
+  min_score: number;
+}
+
+interface ExerciseRepetitionReqs {
+  exercise_type: string;
+  times_completed: number;
+  min_score: number;
+}
+
+interface ExerciseSpeedReqs {
+  exercise_type: string;
+  max_time_seconds: number;
+  min_score: number;
+}
+
+interface ContentAnalysisReqs {
+  exercise_type: string;
+  analyses_completed: number;
+  min_score: number;
+}
+
+interface ModuleAverageScoreReqs {
+  module_code: string;
+  min_average_score: number;
+}
+
 /**
  * AchievementsService
  *
@@ -128,6 +162,37 @@ export class AchievementsService {
         is_completed: false,
       },
     });
+  }
+
+  /**
+   * FIX: CORR-005 - Nuevo metodo que retorna TODOS los logros con progreso del usuario
+   *
+   * @description Obtiene todos los achievements disponibles junto con el progreso
+   * del usuario para cada uno. Esto permite al frontend mostrar logros:
+   * - Completados (is_completed = true, rewards_claimed = true/false)
+   * - En progreso (progress > 0, is_completed = false)
+   * - Bloqueados (sin registro o progress = 0)
+   *
+   * @param userId - ID del usuario
+   * @returns Objeto con lista de achievements y total
+   */
+  async getAllUserAchievements(
+    userId: string,
+  ): Promise<{ achievements: UserAchievement[]; total: number }> {
+    // Obtener todos los logros del usuario (completados y en progreso)
+    const userAchievements = await this.userAchievementRepo.find({
+      where: { user_id: userId },
+    });
+
+    // Contar total de achievements disponibles (para estadisticas)
+    const allAchievementsCount = await this.achievementRepo.count({
+      where: { is_active: true },
+    });
+
+    return {
+      achievements: userAchievements,
+      total: allAchievementsCount,
+    };
   }
 
   /**
@@ -489,6 +554,143 @@ export class AchievementsService {
         }
 
         // =====================================================
+        // CORR-009: M3-M5 ACHIEVEMENT CONDITION TYPES
+        // =====================================================
+
+        // TIPO: module_first_exercise
+        // Condición: Completar primer ejercicio de un módulo específico
+        case 'module_first_exercise': {
+          const r = reqs as unknown as ModuleFirstExerciseReqs;
+          const result = await this.dataSource.query(
+            `
+            SELECT COUNT(*) as count
+            FROM progress_tracking.exercise_submissions es
+            JOIN educational_content.exercises e ON es.exercise_id = e.id
+            JOIN educational_content.modules m ON e.module_id = m.id
+            WHERE es.user_id = $1
+              AND m.code = $2
+              AND es.status = 'graded'
+            `,
+            [userId, r.module_code],
+          );
+          const count = parseInt(result[0]?.count || '0');
+          const met = count >= (r.exercises_completed || 1);
+          this.logger.debug(`[module_first_exercise] Module ${r.module_code}: ${count} exercises, needs ${r.exercises_completed}: ${met}`);
+          return met;
+        }
+
+        // TIPO: exercise_score
+        // Condición: Obtener score mínimo en un tipo de ejercicio específico
+        case 'exercise_score': {
+          const r = reqs as unknown as ExerciseScoreReqs;
+          const result = await this.dataSource.query(
+            `
+            SELECT MAX(es.score) as max_score
+            FROM progress_tracking.exercise_submissions es
+            JOIN educational_content.exercises e ON es.exercise_id = e.id
+            WHERE es.user_id = $1
+              AND e.exercise_type = $2
+              AND es.status = 'graded'
+            `,
+            [userId, r.exercise_type],
+          );
+          const maxScore = parseFloat(result[0]?.max_score || '0');
+          const met = maxScore >= (r.min_score || 0);
+          this.logger.debug(`[exercise_score] Type ${r.exercise_type}: max ${maxScore}, needs ${r.min_score}: ${met}`);
+          return met;
+        }
+
+        // TIPO: exercise_repetition
+        // Condición: Completar un tipo de ejercicio N veces con score mínimo
+        case 'exercise_repetition': {
+          const r = reqs as unknown as ExerciseRepetitionReqs;
+          const result = await this.dataSource.query(
+            `
+            SELECT COUNT(*) as count
+            FROM progress_tracking.exercise_submissions es
+            JOIN educational_content.exercises e ON es.exercise_id = e.id
+            WHERE es.user_id = $1
+              AND e.exercise_type = $2
+              AND es.status = 'graded'
+              AND es.score >= $3
+            `,
+            [userId, r.exercise_type, r.min_score || 0],
+          );
+          const count = parseInt(result[0]?.count || '0');
+          const met = count >= (r.times_completed || 1);
+          this.logger.debug(`[exercise_repetition] Type ${r.exercise_type}: ${count} times >= ${r.min_score}, needs ${r.times_completed}: ${met}`);
+          return met;
+        }
+
+        // TIPO: exercise_speed
+        // Condición: Completar ejercicio dentro de tiempo límite con score mínimo
+        case 'exercise_speed': {
+          const r = reqs as unknown as ExerciseSpeedReqs;
+          const result = await this.dataSource.query(
+            `
+            SELECT COUNT(*) as count
+            FROM progress_tracking.exercise_submissions es
+            JOIN educational_content.exercises e ON es.exercise_id = e.id
+            WHERE es.user_id = $1
+              AND e.exercise_type = $2
+              AND es.status = 'graded'
+              AND es.score >= $3
+              AND es.time_spent <= $4
+            `,
+            [userId, r.exercise_type, r.min_score || 0, r.max_time_seconds],
+          );
+          const count = parseInt(result[0]?.count || '0');
+          const met = count >= 1;
+          this.logger.debug(`[exercise_speed] Type ${r.exercise_type}: ${count} within ${r.max_time_seconds}s: ${met}`);
+          return met;
+        }
+
+        // TIPO: content_analysis
+        // Condición: Completar N análisis con score mínimo (alias de exercise_repetition)
+        case 'content_analysis': {
+          const r = reqs as unknown as ContentAnalysisReqs;
+          const result = await this.dataSource.query(
+            `
+            SELECT COUNT(*) as count
+            FROM progress_tracking.exercise_submissions es
+            JOIN educational_content.exercises e ON es.exercise_id = e.id
+            WHERE es.user_id = $1
+              AND e.exercise_type = $2
+              AND es.status = 'graded'
+              AND es.score >= $3
+            `,
+            [userId, r.exercise_type, r.min_score || 0],
+          );
+          const count = parseInt(result[0]?.count || '0');
+          const met = count >= (r.analyses_completed || 1);
+          this.logger.debug(`[content_analysis] Type ${r.exercise_type}: ${count} analyses, needs ${r.analyses_completed}: ${met}`);
+          return met;
+        }
+
+        // TIPO: module_average_score
+        // Condición: Obtener promedio de score en todos los ejercicios de un módulo
+        case 'module_average_score': {
+          const r = reqs as unknown as ModuleAverageScoreReqs;
+          const result = await this.dataSource.query(
+            `
+            SELECT AVG(es.score) as avg_score, COUNT(*) as count
+            FROM progress_tracking.exercise_submissions es
+            JOIN educational_content.exercises e ON es.exercise_id = e.id
+            JOIN educational_content.modules m ON e.module_id = m.id
+            WHERE es.user_id = $1
+              AND m.code = $2
+              AND es.status = 'graded'
+            `,
+            [userId, r.module_code],
+          );
+          const avgScore = parseFloat(result[0]?.avg_score || '0');
+          const count = parseInt(result[0]?.count || '0');
+          const met = count > 0 && avgScore >= (r.min_average_score || 0);
+          this.logger.debug(`[module_average_score] Module ${r.module_code}: avg ${avgScore.toFixed(1)}%, needs ${r.min_average_score}: ${met}`);
+          return met;
+        }
+
+        // =====================================================
         // TIPOS LEGACY (mantener compatibilidad)
         // =====================================================
         case 'progress':
@@ -539,21 +741,50 @@ export class AchievementsService {
 
   /**
    * Reclamar recompensas de un achievement completado
+   *
+   * CORR-DUP-003: Actualizado para usar función SQL claim_achievement_reward
+   * que distribuye XP y ML Coins de forma atómica.
+   *
+   * Antes solo marcaba el flag rewards_claimed = true sin dar recompensas.
+   * Ahora llama a la función SQL que:
+   * 1. Valida que el achievement esté completado
+   * 2. Valida que no se haya reclamado antes
+   * 3. Actualiza rewards_claimed = true
+   * 4. Distribuye XP y ML Coins al usuario
+   * 5. Registra transacción de coins
+   *
+   * @see ANALISIS-DUPLICADOS-ACHIEVEMENTS-2026-01-10.md
    */
-  async claimRewards(userId: string, achievementId: string): Promise<UserAchievement> {
+  async claimRewards(userId: string, achievementId: string): Promise<{
+    userAchievement: UserAchievement;
+    xp_granted: number;
+    coins_granted: number;
+  }> {
+    // Llamar función SQL que distribuye recompensas de forma atómica
+    const result = await this.dataSource.query(
+      `SELECT * FROM gamification_system.claim_achievement_reward($1, $2)`,
+      [userId, achievementId]
+    );
+
+    const claimResult = result[0];
+
+    if (!claimResult.success) {
+      throw new BadRequestException(claimResult.message);
+    }
+
+    // Obtener userAchievement actualizado
     const userAchievement = await this.checkProgress(userId, achievementId);
 
-    if (!userAchievement.is_completed) {
-      throw new BadRequestException(`Achievement ${achievementId} is not completed yet`);
-    }
+    this.logger.log(
+      `[CORR-DUP-003] Achievement ${achievementId} rewards claimed for user ${userId}: ` +
+      `XP=${claimResult.xp_granted}, Coins=${claimResult.coins_granted}`
+    );
 
-    if (userAchievement.rewards_claimed) {
-      throw new BadRequestException(`Rewards already claimed for achievement ${achievementId}`);
-    }
-
-    userAchievement.rewards_claimed = true;
-
-    return this.userAchievementRepo.save(userAchievement);
+    return {
+      userAchievement,
+      xp_granted: claimResult.xp_granted,
+      coins_granted: claimResult.coins_granted,
+    };
   }
 
   /**

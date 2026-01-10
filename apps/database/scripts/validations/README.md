@@ -55,7 +55,41 @@ PGPASSWORD='C5hq7253pdVyVKUC' psql -h localhost -U gamilit_user -d gamilit_platf
 
 ---
 
-### 3. `fix-historical-xp-ml-coins-v2.sql`
+### 3. `validate-leaderboard-data.sql`
+
+**Descripción:** Validación de datos necesarios para el sistema de leaderboard.
+
+**Uso:**
+```bash
+cd /home/isem/workspace-v1/projects/gamilit/apps/database
+PGPASSWORD='GO0jAOgw8Yzankwt' psql -h localhost -U gamilit_user -d gamilit_platform -f scripts/validations/validate-leaderboard-data.sql
+```
+
+**Validaciones incluidas:**
+1. Total de registros en `gamification_system.user_stats`
+2. Perfiles vinculados con estadísticas
+3. Simulación de query del leaderboard (Top 10)
+4. Estado de vistas materializadas
+5. Metadata de leaderboard
+6. Diagnóstico automático con recomendaciones
+
+**Salida esperada (sistema saludable):**
+```
+Registros en user_stats: X
+Perfiles de estudiantes: X
+Estudiantes con stats: X
+Estudiantes con XP > 0: X
+
+✅ OK: Datos suficientes para el leaderboard
+```
+
+**Frecuencia recomendada:** Post-deployment o cuando el leaderboard no muestra datos
+
+**Relacionado con:** CORR-006 - Corrección datos mock en leaderboard
+
+---
+
+### 4. `fix-historical-xp-ml-coins-v2.sql`
 
 **Descripción:** Script de corrección automática de datos históricos (solo si se detectan problemas).
 

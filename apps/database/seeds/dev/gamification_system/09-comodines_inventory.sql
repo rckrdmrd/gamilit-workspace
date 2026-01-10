@@ -7,9 +7,14 @@
 --   - auth_management.profiles
 --   - gamification_system.user_stats
 -- Execution Order: 9
--- Version: 2.0.0
+-- Version: 2.1.0
 -- Updated: 2025-12-28 - Reescrito con UUIDs dinámicos (P2-001)
+-- Updated: 2026-01-07 - EXCLUIDOS usuarios de testing (@gamilit.com)
+--                       Los testing users mantienen inventario vacio inicial
 -- =====================================================
+--
+-- IMPORTANTE: Los usuarios de TESTING (admin@, teacher@, student@gamilit.com)
+-- NO reciben comodines demo. Mantienen el inventario vacio creado por el trigger.
 --
 -- Tipos de Comodines:
 -- 1. Pistas Contextuales (15 ML Coins): Ayudas para resolver ejercicios
@@ -40,7 +45,9 @@ BEGIN
     RAISE NOTICE '========================================';
     RAISE NOTICE '';
 
-    -- Iterar sobre estudiantes de demo (@gamilit.com)
+    -- Iterar sobre estudiantes de demo (EXCLUYE testing users)
+    -- NOTA: Usuarios de testing (admin@, teacher@, student@gamilit.com)
+    -- NO reciben comodines demo. Mantienen inventario vacio inicial.
     FOR v_student IN
         SELECT
             p.id,
@@ -48,7 +55,7 @@ BEGIN
             p.display_name
         FROM auth_management.profiles p
         WHERE p.role = 'student'
-          AND p.email LIKE '%@gamilit.com'
+          AND p.email NOT IN ('admin@gamilit.com', 'teacher@gamilit.com', 'student@gamilit.com')
         ORDER BY p.created_at
         LIMIT 10
     LOOP

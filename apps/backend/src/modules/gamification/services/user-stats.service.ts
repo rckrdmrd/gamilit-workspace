@@ -43,18 +43,27 @@ export class UserStatsService {
 
   /**
    * P0-001: Verifica que el perfil existe antes de operaciones de gamificación
-   * @param userId - El ID del usuario (profiles.id)
-   * @returns Profile si existe
+   *
+   * CORR-GAM-002: Este método resuelve auth.users.id → profiles.id
+   *
+   * El frontend envía auth.users.id (o profiles.user_id), pero user_stats.user_id
+   * referencia profiles.id (PK). Este método busca el profile por su FK a auth.users
+   * y retorna el profile completo para que el caller pueda usar profile.id.
+   *
+   * @param authUserId - El ID del usuario en auth.users (= profiles.user_id FK)
+   * @returns Profile si existe (usar profile.id para operaciones con user_stats)
    * @throws NotFoundException si el perfil no existe
    */
-  private async validateProfileExists(userId: string): Promise<Profile> {
+  private async validateProfileExists(authUserId: string): Promise<Profile> {
+    // CORR-GAM-002: Buscar por profiles.user_id (FK a auth.users)
+    // El frontend envía auth.users.id, que corresponde a profiles.user_id
     const profile = await this.profileRepo.findOne({
-      where: { user_id: userId },
+      where: { user_id: authUserId },
     });
 
     if (!profile) {
       throw new NotFoundException(
-        `Profile not found for user ${userId}. User may not be properly initialized. ` +
+        `Profile not found for auth user ${authUserId}. User may not be properly initialized. ` +
         `Please ensure the user registration process completed successfully.`
       );
     }
@@ -63,15 +72,34 @@ export class UserStatsService {
   }
 
   /**
-   * Encuentra estadísticas de usuario por ID
+   * CORR-GAM-002: Resuelve auth.users.id → profiles.id
+   *
+   * @param authUserId - ID del usuario en auth.users (= profiles.user_id)
+   * @returns profiles.id (PK) para usar con user_stats
    */
-  async findByUserId(userId: string): Promise<UserStats> {
+  private async resolveProfileId(authUserId: string): Promise<string> {
+    const profile = await this.validateProfileExists(authUserId);
+    return profile.id;
+  }
+
+  /**
+   * Encuentra estadísticas de usuario por ID
+   *
+   * CORR-GAM-002: Resuelve auth.users.id → profiles.id antes de buscar
+   *
+   * @param authUserId - ID del usuario en auth.users (lo que envía el frontend)
+   * @returns UserStats asociadas al profile
+   */
+  async findByUserId(authUserId: string): Promise<UserStats> {
+    // CORR-GAM-002: Resolver auth.users.id → profiles.id
+    const profileId = await this.resolveProfileId(authUserId);
+
     const stats = await this.userStatsRepo.findOne({
-      where: { user_id: userId },
+      where: { user_id: profileId },  // user_stats.user_id = profiles.id
     });
 
     if (!stats) {
-      throw new NotFoundException(`No stats found for user ${userId}`);
+      throw new NotFoundException(`No stats found for user ${authUserId} (profile: ${profileId})`);
     }
 
     return stats;
@@ -79,25 +107,33 @@ export class UserStatsService {
 
   /**
    * Crea un nuevo registro de estadísticas para un usuario
+   *
    * P0-001: Agregada validación de profile antes de crear
+   * CORR-GAM-002: Usa profile.id (PK) para user_stats.user_id, no auth.users.id
+   *
+   * @param authUserId - ID del usuario en auth.users (lo que envía el frontend)
+   * @param tenantId - Opcional, se usa el del profile si no se proporciona
    */
-  async create(userId: string, tenantId?: string): Promise<UserStats> {
-    // P0-001: Verificar que el profile existe antes de crear stats
-    const profile = await this.validateProfileExists(userId);
+  async create(authUserId: string, tenantId?: string): Promise<UserStats> {
+    // P0-001: Verificar que el profile existe y obtener su ID
+    // CORR-GAM-002: validateProfileExists busca por profiles.user_id = authUserId
+    const profile = await this.validateProfileExists(authUserId);
 
+    // CORR-GAM-002: Buscar existente usando profile.id (PK), no authUserId
     const existingStats = await this.userStatsRepo.findOne({
-      where: { user_id: userId },
+      where: { user_id: profile.id },
     });
 
     if (existingStats) {
-      throw new BadRequestException(`User ${userId} already has stats`);
+      throw new BadRequestException(`User ${authUserId} (profile: ${profile.id}) already has stats`);
     }
 
     // Usar tenant_id del profile si no se proporciona
     const effectiveTenantId = tenantId || profile.tenant_id;
 
+    // CORR-GAM-002: Usar profile.id para user_stats.user_id (FK → profiles.id)
     const newStats = this.userStatsRepo.create({
-      user_id: userId,
+      user_id: profile.id,  // profiles.id (PK), NO auth.users.id
       tenant_id: effectiveTenantId,
       level: 1,
       total_xp: 0,

@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class ToggleMaintenanceDto {
@@ -9,12 +9,17 @@ export class ToggleMaintenanceDto {
   @IsBoolean()
     enabled!: boolean;
 
+  /**
+   * FIX-2025-01-07 P0: Added @MaxLength to prevent DoS attacks
+   */
   @ApiPropertyOptional({
     description: 'Custom maintenance message to display to users',
     example: 'System maintenance in progress. We will be back at 3:00 PM.',
+    maxLength: 500,
   })
   @IsOptional()
   @IsString()
+  @MaxLength(500, { message: 'Maintenance message cannot exceed 500 characters' })
     message?: string;
 }
 

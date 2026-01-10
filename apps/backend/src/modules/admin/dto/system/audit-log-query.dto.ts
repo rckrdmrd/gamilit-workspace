@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsBoolean, IsInt, Min, IsDateString } from 'class-validator';
+import { IsOptional, IsString, IsBoolean, IsInt, Min, Max, IsDateString, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -11,12 +11,17 @@ export class AuditLogQueryDto {
   @IsString()
     user_id?: string;
 
+  /**
+   * FIX-2025-01-07 P0: Added @MaxLength to prevent DoS attacks
+   */
   @ApiPropertyOptional({
     description: 'Filter by email',
     example: 'user@example.com',
+    maxLength: 255,
   })
   @IsOptional()
   @IsString()
+  @MaxLength(255)
     email?: string;
 
   @ApiPropertyOptional({
@@ -63,14 +68,20 @@ export class AuditLogQueryDto {
   @Type(() => Number)
     page?: number;
 
+  /**
+   * FIX-2025-01-07 P0: Added @Max to prevent resource exhaustion
+   */
   @ApiPropertyOptional({
     description: 'Number of items per page',
     example: 50,
     default: 50,
+    minimum: 1,
+    maximum: 100,
   })
   @IsOptional()
   @IsInt()
   @Min(1)
+  @Max(100)
   @Type(() => Number)
     limit?: number;
 }

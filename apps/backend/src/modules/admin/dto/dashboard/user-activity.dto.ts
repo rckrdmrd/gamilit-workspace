@@ -12,6 +12,10 @@ export enum GroupByEnum {
 
 /**
  * DTO for querying user activity analytics
+ *
+ * NOTE: All properties use snake_case to match frontend apiClient interceptor
+ * which transforms all camelCase params to snake_case before sending
+ * @see apps/frontend/src/services/api/apiClient.ts (lines 60-62)
  */
 export class UserActivityQueryDto {
   @ApiPropertyOptional({
@@ -20,7 +24,7 @@ export class UserActivityQueryDto {
   })
   @IsOptional()
   @IsDateString()
-    startDate?: string;
+    start_date?: string;
 
   @ApiPropertyOptional({
     description: 'End date for the analytics period (ISO 8601)',
@@ -28,7 +32,7 @@ export class UserActivityQueryDto {
   })
   @IsOptional()
   @IsDateString()
-    endDate?: string;
+    end_date?: string;
 
   @ApiPropertyOptional({
     description: 'How to group the activity data',
@@ -38,7 +42,7 @@ export class UserActivityQueryDto {
   })
   @IsOptional()
   @IsEnum(GroupByEnum)
-    groupBy?: GroupByEnum = GroupByEnum.DAY;
+    group_by?: GroupByEnum = GroupByEnum.DAY;
 }
 
 /**

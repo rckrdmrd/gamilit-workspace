@@ -267,14 +267,15 @@ export class AdminQueryBuilder {
    * @returns User activity data with labels and detailed metrics
    */
   async getUserActivity(query: UserActivityQueryDto): Promise<UserActivityDto> {
-    const { startDate, endDate, groupBy = GroupByEnum.DAY } = query;
+    // NOTE: Properties use snake_case to match frontend apiClient interceptor
+    const { start_date, end_date, group_by = GroupByEnum.DAY } = query;
 
     // Calculate date range (default: last 30 days)
-    const start = startDate
-      ? new Date(startDate)
+    const start = start_date
+      ? new Date(start_date)
       : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const end = endDate
-      ? new Date(endDate)
+    const end = end_date
+      ? new Date(end_date)
       : new Date();
 
     try {
@@ -282,7 +283,7 @@ export class AdminQueryBuilder {
       let dateFormat: string;
       let dateTrunc: string;
 
-      switch (groupBy) {
+      switch (group_by) {
         case GroupByEnum.WEEK:
           dateFormat = 'YYYY-"W"IW'; // Format: 2025-W47
           dateTrunc = 'week';

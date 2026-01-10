@@ -27,8 +27,8 @@ DECLARE
     v_achievement RECORD;
     v_user_stats RECORD;
     v_condition_met BOOLEAN;
-    v_current_balance INTEGER;
-    v_new_balance INTEGER;
+    -- CORR-DUP-002: Variables v_current_balance y v_new_balance removidas
+    -- ya que las recompensas se otorgan en claim_achievement_reward, no aquí
     v_xp_reward INTEGER;
     v_condition_value INTEGER;
 BEGIN
@@ -99,42 +99,29 @@ BEGIN
             ON CONFLICT (user_id, achievement_id) DO UPDATE
             SET is_completed = true, completed_at = NOW(), progress = 100;
 
-            -- Obtener balance actual ANTES de actualizar (con row lock)
-            SELECT ml_coins INTO v_current_balance
-            FROM gamification_system.user_stats
-            WHERE user_id = p_user_id
-            FOR UPDATE;
+            -- ========== MODELO CLAIM-TO-EARN (CORR-DUP-002) ==========
+            -- NOTA: XP y ML Coins NO se otorgan aquí.
+            -- Se otorgan ÚNICAMENTE al reclamar via claim_achievement_reward()
+            -- Esto evita la doble/triple distribución de rewards detectada en
+            -- ANALISIS-DUPLICADOS-ACHIEVEMENTS-2026-01-10.md
+            --
+            -- El trigger fn_on_achievement_unlocked creará una notificación
+            -- indicando al usuario que debe reclamar sus recompensas.
 
-            -- Calcular nuevo balance
-            v_new_balance := COALESCE(v_current_balance, 0) + COALESCE(v_achievement.ml_coins_reward, 0);
-
-            -- Actualizar estadisticas del usuario
+            -- Solo incrementar contador de achievements earned
             UPDATE gamification_system.user_stats
             SET
-                total_xp = COALESCE(total_xp, 0) + v_xp_reward,
-                ml_coins = v_new_balance,
                 achievements_earned = COALESCE(achievements_earned, 0) + 1,
                 updated_at = NOW()
             WHERE user_id = p_user_id;
 
-            -- Registrar transaccion de coins
-            IF COALESCE(v_achievement.ml_coins_reward, 0) > 0 THEN
-                INSERT INTO gamification_system.ml_coins_transactions (
-                    user_id, amount, balance_before, balance_after, transaction_type, description
-                ) VALUES (
-                    p_user_id,
-                    v_achievement.ml_coins_reward,
-                    COALESCE(v_current_balance, 0),
-                    v_new_balance,
-                    'earned_achievement'::gamification_system.transaction_type,
-                    'Logro desbloqueado: ' || v_achievement.name
-                );
-            END IF;
+            -- NO registrar transaccion de coins aquí - se hace en claim_achievement_reward
 
+            -- Retornar el achievement desbloqueado (rewards pendientes de claim)
             RETURN QUERY SELECT
                 v_achievement.id,
                 v_achievement.name::VARCHAR(100),
-                v_xp_reward,
+                v_xp_reward,  -- Estos son los rewards PENDIENTES, no otorgados
                 COALESCE(v_achievement.ml_coins_reward, 0)::INTEGER;
         END IF;
     END LOOP;

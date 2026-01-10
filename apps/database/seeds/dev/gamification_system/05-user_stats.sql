@@ -666,136 +666,47 @@ SET
 WHERE user_id = '30ac4f00-012e-4217-b819-2e199c49b35e'::uuid;
 
 -- =====================================================
--- FASE 3: Actualizar user_stats para usuarios de testing
+-- FASE 3: DESHABILITADA - Usuarios de Testing con valores iniciales
 -- =====================================================
--- Usuarios: admin@gamilit.com, teacher@gamilit.com, student@gamilit.com
+-- CORRECCION: 2026-01-07
+-- PROBLEMA: Los usuarios de testing (@gamilit.com) iniciaban con
+--           experiencia elevada en lugar de valores iniciales.
+-- SOLUCION: Los usuarios de testing ahora usan los valores creados
+--           por el trigger initialize_user_stats():
+--           - level = 1
+--           - total_xp = 0
+--           - ml_coins = 100 (bono de bienvenida)
+--           - current_rank = 'Ajaw' (rango inicial)
+--
+-- Si necesitas usuarios DEMO con progreso elevado, usa los usuarios
+-- demo definidos en FASE 2 (UUIDs: 01ac4f00..., 02bc5f00..., etc.)
+--
+-- Usuarios de Testing (valores iniciales automaticos):
+-- - admin@gamilit.com   (aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa)
+-- - teacher@gamilit.com (bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb)
+-- - student@gamilit.com (cccccccc-cccc-cccc-cccc-cccccccccccc)
+-- =====================================================
 
--- Testing Admin: Super Admin - Nivel 10, Máximo
+-- NOTA: Los siguientes UPDATEs estan comentados intencionalmente.
+-- Los usuarios de testing deben empezar con valores iniciales
+-- como cualquier usuario nuevo que se registra en la plataforma.
+
+/*
+-- [DESHABILITADO] Testing Admin: Super Admin - Nivel 10
 UPDATE gamification_system.user_stats
-SET
-    level = 10,
-    total_xp = 50000,
-    xp_to_next_level = 0,
-    current_rank = 'K''uk''ulkan'::gamification_system.maya_rank,
-    rank_progress = 100.00,
-    ml_coins = 5000,
-    ml_coins_earned_total = 10000,
-    ml_coins_spent_total = 5000,
-    ml_coins_earned_today = 0,
-    last_ml_coins_reset = gamilit.now_mexico() - INTERVAL '12 hours',
-    current_streak = 30,
-    max_streak = 30,
-    streak_started_at = gamilit.now_mexico() - INTERVAL '30 days',
-    days_active_total = 100,
-    exercises_completed = 250,
-    modules_completed = 5,
-    total_score = 24000,
-    average_score = 96.00,
-    perfect_scores = 50,
-    achievements_earned = 20,
-    certificates_earned = 5,
-    total_time_spent = '50:00:00'::interval,
-    weekly_time_spent = '08:00:00'::interval,
-    sessions_count = 100,
-    weekly_xp = 5000,
-    monthly_xp = 50000,
-    weekly_exercises = 50,
-    last_activity_at = gamilit.now_mexico() - INTERVAL '30 minutes',
-    last_login_at = gamilit.now_mexico() - INTERVAL '30 minutes',
-    metadata = jsonb_build_object(
-        'testing_user', true,
-        'role', 'super_admin',
-        'admin_access', 'full'
-    ),
-    updated_at = gamilit.now_mexico()
+SET level = 10, total_xp = 50000, ml_coins = 5000, ...
 WHERE user_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid;
 
--- Testing Teacher: Profesor - Nivel 5, Activo
+-- [DESHABILITADO] Testing Teacher: Profesor - Nivel 5
 UPDATE gamification_system.user_stats
-SET
-    level = 5,
-    total_xp = 10000,
-    xp_to_next_level = 2000,
-    current_rank = 'Ah K''in'::gamification_system.maya_rank,
-    rank_progress = 33.33,
-    ml_coins = 1000,
-    ml_coins_earned_total = 2000,
-    ml_coins_spent_total = 1000,
-    ml_coins_earned_today = 0,
-    last_ml_coins_reset = gamilit.now_mexico() - INTERVAL '8 hours',
-    current_streak = 15,
-    max_streak = 20,
-    streak_started_at = gamilit.now_mexico() - INTERVAL '15 days',
-    days_active_total = 60,
-    exercises_completed = 100,
-    modules_completed = 5,
-    total_score = 9000,
-    average_score = 92.00,
-    perfect_scores = 25,
-    achievements_earned = 12,
-    certificates_earned = 5,
-    total_time_spent = '25:00:00'::interval,
-    weekly_time_spent = '05:00:00'::interval,
-    sessions_count = 60,
-    weekly_xp = 2500,
-    monthly_xp = 10000,
-    weekly_exercises = 30,
-    last_activity_at = gamilit.now_mexico() - INTERVAL '1 hour',
-    last_login_at = gamilit.now_mexico() - INTERVAL '1 hour',
-    metadata = jsonb_build_object(
-        'testing_user', true,
-        'role', 'teacher',
-        'teacher_stats', jsonb_build_object(
-            'students_count', 10,
-            'classrooms_count', 2,
-            'avg_student_score', 85.00
-        )
-    ),
-    updated_at = gamilit.now_mexico()
+SET level = 5, total_xp = 10000, ml_coins = 1000, ...
 WHERE user_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid;
 
--- Testing Student: Estudiante - Nivel 3, Progreso Medio-Alto
+-- [DESHABILITADO] Testing Student: Estudiante - Nivel 3
 UPDATE gamification_system.user_stats
-SET
-    level = 3,
-    total_xp = 3200,
-    xp_to_next_level = 800,
-    current_rank = 'Nacom'::gamification_system.maya_rank,
-    rank_progress = 60.00,
-    ml_coins = 425,
-    ml_coins_earned_total = 800,
-    ml_coins_spent_total = 375,
-    ml_coins_earned_today = 50,
-    last_ml_coins_reset = gamilit.now_mexico() - INTERVAL '2 hours',
-    current_streak = 7,
-    max_streak = 10,
-    streak_started_at = gamilit.now_mexico() - INTERVAL '7 days',
-    days_active_total = 20,
-    exercises_completed = 35,
-    modules_completed = 1,
-    total_score = 2800,
-    average_score = 85.00,
-    perfect_scores = 5,
-    achievements_earned = 6,
-    certificates_earned = 1,
-    total_time_spent = '06:30:00'::interval,
-    weekly_time_spent = '02:00:00'::interval,
-    sessions_count = 20,
-    weekly_xp = 900,
-    monthly_xp = 3200,
-    weekly_exercises = 15,
-    class_rank_position = 1,
-    last_activity_at = gamilit.now_mexico() - INTERVAL '1 hour',
-    last_login_at = gamilit.now_mexico() - INTERVAL '1 hour',
-    metadata = jsonb_build_object(
-        'testing_user', true,
-        'role', 'student',
-        'preferred_theme', 'forest',
-        'favorite_module', 'modulo-02-comprension-inferencial',
-        'learning_pace', 'steady'
-    ),
-    updated_at = gamilit.now_mexico()
+SET level = 3, total_xp = 3200, ml_coins = 425, ...
 WHERE user_id = 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid;
+*/
 
 -- =====================================================
 -- Verification Query

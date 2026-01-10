@@ -32,7 +32,8 @@ BEGIN
     END IF;
 
     -- Verificar si ya fue reclamado
-    v_already_claimed := v_user_achievement.reward_claimed_at IS NOT NULL;
+    -- CORR-P1-001: Cambiado de reward_claimed_at (no existe) a rewards_claimed (BOOLEAN)
+    v_already_claimed := v_user_achievement.rewards_claimed = TRUE;
 
     IF v_already_claimed THEN
         RETURN QUERY SELECT false, 0, 0, 'Recompensa ya fue reclamada'::VARCHAR;
@@ -50,8 +51,9 @@ BEGIN
     END IF;
 
     -- Marcar recompensa como reclamada
+    -- CORR-P1-002: Cambiado de reward_claimed_at (no existe) a rewards_claimed (BOOLEAN)
     UPDATE gamification_system.user_achievements
-    SET reward_claimed_at = NOW()
+    SET rewards_claimed = TRUE
     WHERE user_id = p_user_id
     AND achievement_id = p_achievement_id;
 
@@ -65,9 +67,10 @@ BEGIN
     v_new_balance := COALESCE(v_current_balance, 0) + v_achievement.ml_coins_reward;
 
     -- Otorgar recompensas
+    -- CORR-P1-003: Cambiado xp_reward (no existe) a rewards->>'xp' con fallback a points_value
     UPDATE gamification_system.user_stats
     SET
-        total_xp = total_xp + v_achievement.xp_reward,
+        total_xp = total_xp + COALESCE((v_achievement.rewards->>'xp')::INTEGER, v_achievement.points_value, 0),
         ml_coins = v_new_balance,
         updated_at = NOW()
     WHERE user_id = p_user_id;
@@ -91,9 +94,10 @@ BEGIN
         );
     END IF;
 
+    -- CORR-P1-004: Usar COALESCE para xp también en el retorno
     RETURN QUERY SELECT
         true,
-        v_achievement.xp_reward,
+        COALESCE((v_achievement.rewards->>'xp')::INTEGER, v_achievement.points_value, 0),
         v_achievement.ml_coins_reward,
         'Recompensa reclamada exitosamente'::VARCHAR;
 END;

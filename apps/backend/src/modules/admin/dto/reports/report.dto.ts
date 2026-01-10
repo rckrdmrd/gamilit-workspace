@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsEnum, IsOptional, IsInt, Min, Max } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ReportType, ReportFormat } from '@shared/dto/reports/generate-report.dto';
 
 export { ReportType, ReportFormat, GenerateReportDto } from '@shared/dto/reports/generate-report.dto';
@@ -86,20 +87,36 @@ export class ListReportsDto {
   @IsEnum(ReportStatus)
     status?: ReportStatus;
 
+  /**
+   * FIX-2025-01-07 P0: Added @IsInt, @Min, @Max for pagination validation
+   */
   @ApiPropertyOptional({
     description: 'Page number',
     example: 1,
     default: 1,
+    minimum: 1,
   })
   @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
     page?: number = 1;
 
+  /**
+   * FIX-2025-01-07 P0: Added @IsInt, @Min, @Max for pagination validation
+   */
   @ApiPropertyOptional({
     description: 'Items per page',
     example: 20,
     default: 20,
+    minimum: 1,
+    maximum: 100,
   })
   @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  @Type(() => Number)
     limit?: number = 20;
 }
 

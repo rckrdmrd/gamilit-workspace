@@ -28,8 +28,4 @@ export class PredictionScenariosAnswersDto {
   @IsObject({ message: 'scenarios must be an object' })
   @IsNotEmpty({ message: 'scenarios object is required' })
     scenarios!: Record<string, string>;
-
-  constructor() {
-    this.scenarios = {};
-  }
 }

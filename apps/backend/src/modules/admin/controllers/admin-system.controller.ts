@@ -19,6 +19,12 @@ import {
   DatabaseOptimizationResultDto,
   CacheClearResultDto,
   SessionCleanupResultDto,
+  // P1-2026-01-07: New DTOs
+  ValidateConfigDto,
+  ConfigValidationResultDto,
+  ConfigCategoryDto,
+  SystemLogsQueryDto,
+  PaginatedSystemLogsDto,
 } from '../dto/system';
 import { AuthRequest } from '@shared/types';
 
@@ -86,6 +92,48 @@ export class AdminSystemController {
   async getSystemConfig(): Promise<SystemConfigDto> {
     return this.adminSystemService.getSystemConfig();
   }
+
+  // =====================================================
+  // P1-2026-01-07: NEW ENDPOINTS
+  // =====================================================
+
+  @Get('logs')
+  @ApiOperation({
+    summary: 'Get system logs',
+    description:
+      'Retrieve paginated system logs from audit_logging.system_logs with filtering options. Different from audit-log which returns authentication attempts.',
+  })
+  async getSystemLogs(
+    @Query() query: SystemLogsQueryDto,
+  ): Promise<PaginatedSystemLogsDto> {
+    return this.adminSystemService.getSystemLogs(query);
+  }
+
+  @Get('config/categories')
+  @ApiOperation({
+    summary: 'Get available configuration categories',
+    description:
+      'Retrieve list of available configuration categories with metadata for UI display',
+  })
+  async getConfigCategories(): Promise<ConfigCategoryDto[]> {
+    return this.adminSystemService.getConfigCategories();
+  }
+
+  @Post('config/validate')
+  @ApiOperation({
+    summary: 'Validate system configuration',
+    description:
+      'Validate configuration values before applying. Returns validation errors and warnings without persisting changes.',
+  })
+  async validateConfig(
+    @Body() configDto: ValidateConfigDto,
+  ): Promise<ConfigValidationResultDto> {
+    return this.adminSystemService.validateConfig(configDto);
+  }
+
+  // =====================================================
+  // END P1-2026-01-07 ENDPOINTS
+  // =====================================================
 
   @Get('config/:category')
   @ApiOperation({

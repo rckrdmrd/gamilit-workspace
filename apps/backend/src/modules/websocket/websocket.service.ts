@@ -166,16 +166,6 @@ export class WebSocketService {
   }
 
   /**
-   * Broadcast leaderboard update to all users
-   */
-  broadcastLeaderboardUpdate(leaderboard: any[]) {
-    this.gateway.broadcast(SocketEvent.LEADERBOARD_UPDATED, {
-      leaderboard,
-    });
-    this.logger.debug('Leaderboard update broadcasted to all users');
-  }
-
-  /**
    * Check if user is connected
    */
   isUserConnected(userId: string): boolean {

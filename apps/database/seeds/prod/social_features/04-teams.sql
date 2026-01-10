@@ -281,7 +281,7 @@ BEGIN
     (
         team_cientificos,
         student1_id,
-        'leader',
+        'owner',
         NOW(),
         'active',
         true,
@@ -313,7 +313,7 @@ BEGIN
     (
         team_exploradores,
         student2_id,
-        'leader',
+        'owner',
         NOW(),
         'active',
         true,
@@ -346,7 +346,7 @@ BEGIN
     (
         team_pioneros,
         student3_id,
-        'leader',
+        'owner',
         NOW(),
         'active',
         true,
@@ -363,7 +363,7 @@ BEGIN
     (
         team_innovadores,
         student1_id,
-        'co-leader',
+        'admin',
         NOW(),
         'active',
         true,

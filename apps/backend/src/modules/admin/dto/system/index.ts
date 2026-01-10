@@ -7,3 +7,7 @@ export * from './update-system-config.dto';
 export * from './system-config.dto';
 export * from './toggle-maintenance.dto';
 export * from './maintenance-operations.dto';
+// P1-2026-01-07: New DTOs for validate-config, config-categories, system-logs
+export * from './validate-config.dto';
+export * from './config-category.dto';
+export * from './system-logs.dto';

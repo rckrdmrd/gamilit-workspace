@@ -1,4 +1,4 @@
-import { IsArray, IsUUID, IsEnum, ArrayMinSize } from 'class-validator';
+import { IsArray, IsUUID, IsEnum, ArrayMinSize, ArrayMaxSize } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { GamilityRoleEnum } from '@shared/constants';
 
@@ -18,6 +18,7 @@ export class BulkUpdateRoleDto {
   })
   @IsArray()
   @ArrayMinSize(1, { message: 'Debe proporcionar al menos un usuario' })
+  @ArrayMaxSize(500, { message: 'Máximo 500 usuarios por operación bulk (FIX-2025-01-07)' })
   @IsUUID('4', { each: true, message: 'Cada ID debe ser un UUID válido' })
     userIds!: string[];
 

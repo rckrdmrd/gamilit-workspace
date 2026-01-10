@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsArray, ValidateNested, IsString, IsEnum, IsOptional } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Expose } from 'class-transformer';
 
 /**
  * Classification type for statements
@@ -22,22 +22,27 @@ export enum StatementVerdict {
 
 /**
  * Individual statement evaluation by user
+ * CORR-010: Added @Expose() decorators to ensure class-transformer copies properties
  */
 export class StatementEvaluation {
+  @Expose()
   @IsString()
   @IsNotEmpty()
     statementId!: string;
 
+  @Expose()
   @IsEnum(StatementClassification, {
     message: 'classification must be hecho, opinion, or interpretacion',
   })
     classification!: StatementClassification;
 
+  @Expose()
   @IsEnum(StatementVerdict, {
     message: 'verdict must be bien_fundamentada, parcialmente_fundamentada, or sin_fundamento',
   })
     verdict!: StatementVerdict;
 
+  @Expose()
   @IsString()
   @IsOptional()
     justification?: string; // 2-3 line justification (optional but recommended)
@@ -71,13 +76,10 @@ export class StatementEvaluation {
  * Aligned with DocumentoDeDiseño_Mecanicas_GAMILIT_v6.3
  */
 export class TribunalOpinionesAnswersDto {
+  @Expose()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => StatementEvaluation)
   @IsNotEmpty({ message: 'evaluations array is required' })
     evaluations!: StatementEvaluation[];
-
-  constructor() {
-    this.evaluations = [];
-  }
 }

@@ -1,30 +1,24 @@
 -- =====================================================
 -- Seed: social_features.classrooms (DEV)
--- Description: SOLO classroom default para asignación automática
--- Environment: DEVELOPMENT
+-- Description: Aula general única de GAMILIT
+-- Environment: ALL
 -- Dependencies: social_features.schools (00-schools-default.sql), auth_management.profiles
 -- Order: 02
 -- Created: 2025-01-11
--- Updated: 2025-12-15 - Simplificado a solo DEFAULT
--- Version: 3.0
+-- Updated: 2026-01-08 - Renombrado a GAMILIT Aula General
+-- Version: 4.0
 -- =====================================================
 --
 -- AULAS INCLUIDAS:
--- - Sin Asignar (DEFAULT - Sistema) - Única aula del sistema
+-- - GAMILIT - Aula General (code: DEFAULT) - Única aula del sistema
 --
--- TOTAL: 1 aula (sistema)
+-- TOTAL: 1 aula
 --
--- DECISIÓN DE DISEÑO:
--- - Solo existe el classroom default para asignación automática
+-- DECISIÓN DE DISEÑO (2026-01-08):
+-- - Solo existe UN aula general donde todos los estudiantes son asignados
+-- - El código 'DEFAULT' se mantiene para compatibilidad con trigger
 -- - Todas las aulas adicionales serán creadas por el admin desde la UI
 -- - Los estudiantes nuevos se asignan automáticamente aquí
---
--- AULAS DEMO REMOVIDAS (v3.0):
--- - 5to A (Marie Curie) - REMOVIDA
--- - 5to B (Marie Curie) - REMOVIDA
--- - 6to A (Marie Curie) - REMOVIDA
--- - Aula de Pruebas (IEI) - REMOVIDA
--- - Demo Parent Portal (IEI) - REMOVIDA
 --
 -- =====================================================
 
@@ -50,14 +44,14 @@ BEGIN
         RAISE EXCEPTION 'Tenant "GAMILIT Platform" no encontrado. Ejecutar primero seed de tenants.';
     END IF;
 
-    -- Obtener la escuela default
+    -- Obtener la escuela/institución principal
     SELECT id INTO v_default_school_id
     FROM social_features.schools
-    WHERE code = 'SYSTEM-UNASSIGNED' AND is_active = true
+    WHERE (code = 'GAMILIT-DEFAULT' OR code = 'SYSTEM-UNASSIGNED') AND is_active = true
     LIMIT 1;
 
     IF v_default_school_id IS NULL THEN
-        RAISE EXCEPTION 'Escuela default (SYSTEM-UNASSIGNED) no encontrada. Ejecutar primero 00-schools-default.sql';
+        RAISE EXCEPTION 'Institución principal no encontrada. Ejecutar primero 00-schools-default.sql';
     END IF;
 
     -- Obtener el teacher default (teacher@gamilit.com)
@@ -103,21 +97,21 @@ INSERT INTO social_features.classrooms (
     updated_at
 ) VALUES
 -- =====================================================
--- CLASSROOM DEFAULT (Sistema - Sin Asignar)
+-- CLASSROOM DEFAULT (GAMILIT - Aula General)
 -- IMPORTANTE: Este classroom es usado automáticamente para
--- asignar estudiantes nuevos que aún no tienen aula.
+-- asignar a TODOS los estudiantes nuevos registrados.
 -- =====================================================
 (
     '00000000-0000-0000-0000-000000000001'::uuid,  -- UUID predecible para default
-    v_default_school_id,                            -- Escuela Sistema - Por Asignar (default)
+    v_default_school_id,                            -- GAMILIT - Institución General
     v_tenant_id,
     v_teacher_id,                                   -- Teacher default (teacher@gamilit.com)
-    'Sin Asignar - Aula Default',
-    'DEFAULT',
+    'GAMILIT - Aula General',
+    'DEFAULT',  -- Código mantenido para compatibilidad con trigger
     'todos',  -- Todos los niveles
-    'DEFAULT',
+    'GENERAL',
     'General',
-    'Aula de sistema para estudiantes pendientes de asignación. Los administradores y profesores pueden reasignar estudiantes a aulas específicas.',
+    'Aula general de GAMILIT. Todos los estudiantes registrados son asignados automáticamente a esta aula. Los administradores pueden crear aulas adicionales desde el panel.',
     999,  -- Capacidad alta para no limitar
     0,
     '2025-01-01'::date,
@@ -139,9 +133,11 @@ INSERT INTO social_features.classrooms (
     ),
     jsonb_build_object(
         'is_default', true,
+        'is_primary', true,
         'system_classroom', true,
         'auto_assignment', true,
-        'description', 'Classroom para asignación automática de estudiantes nuevos'
+        'description', 'Aula general de GAMILIT para todos los estudiantes',
+        'version', '4.0'
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
@@ -190,16 +186,16 @@ BEGIN
 
     IF default_classroom_exists THEN
         RAISE NOTICE '========================================';
-        RAISE NOTICE 'CLASSROOM DEFAULT:';
+        RAISE NOTICE 'AULA GENERAL GAMILIT:';
         RAISE NOTICE '  ID: %', default_classroom.id;
         RAISE NOTICE '  Nombre: %', default_classroom.name;
         RAISE NOTICE '  Código: %', default_classroom.code;
-        RAISE NOTICE '  Escuela: %', default_classroom.school_name;
+        RAISE NOTICE '  Institución: %', default_classroom.school_name;
         RAISE NOTICE '========================================';
-        RAISE NOTICE '✓ Classroom default configurado correctamente';
-        RAISE NOTICE '  Las demás aulas serán creadas por el admin desde la UI';
+        RAISE NOTICE '✓ Aula general configurada correctamente';
+        RAISE NOTICE '  Aulas adicionales pueden ser creadas por el admin';
     ELSE
-        RAISE WARNING '⚠ Classroom default NO encontrado';
+        RAISE WARNING '⚠ Aula general NO encontrada';
     END IF;
 END $$;
 
@@ -211,7 +207,7 @@ END $$;
 
 INSERT INTO social_features.teacher_classrooms (id, teacher_id, classroom_id, tenant_id, role, assigned_at, created_at)
 SELECT
-    'tc000001-0000-0000-0000-000000000001'::uuid,  -- UUID estático para classroom DEFAULT
+    'cc000001-0000-0000-0000-000000000001'::uuid,  -- UUID estático para classroom DEFAULT (hex válido)
     c.teacher_id,
     c.id,
     c.tenant_id,

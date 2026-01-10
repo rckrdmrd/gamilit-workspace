@@ -55,8 +55,4 @@ export class DetectiveConnectionsAnswersDto {
   @Type(() => ConnectionDto)
   @IsNotEmpty({ message: 'connections array is required' })
     connections!: ConnectionDto[];
-
-  constructor() {
-    this.connections = [];
-  }
 }

@@ -1,7 +1,23 @@
 # Migración de Tablas Duplicadas - audit_logging
 
 **Fecha de análisis**: 2025-01-04
-**Estado**: Pendiente de migración coordinada con backend
+**Estado**: ✅ **MIGRACIÓN COMPLETADA** (2026-01-07)
+
+---
+
+## RESUMEN DE EJECUCIÓN (2026-01-07)
+
+| Acción | Estado |
+|--------|--------|
+| Auditoría de referencias backend | ✅ Completada - 0 usos activos encontrados |
+| Constante `USER_ACTIVITY` en database.constants.ts | ✅ Eliminada |
+| Archivo DDL `07-user_activity.sql` | ✅ Movido a `_deprecated/` |
+| Documentación `_MAP.md` | ✅ Actualizada |
+
+**Resultado:** La tabla `audit_logging.user_activity` ha sido eliminada del codebase.
+El código ya usaba `activity_log` o `user_activity_logs` - la migración ya estaba implícitamente completada.
+
+---
 
 ## Resumen de Duplicados Detectados
 
@@ -35,60 +51,33 @@ module_id, exercise_id, classroom_id, user_agent, ip_address, device_type, brows
 browser_version, screen_resolution, load_time_ms, interaction_time_ms, metadata, created_at
 ```
 
-## Plan de Migración
+## Plan de Migración - ✅ EJECUTADO
 
-### Fase 1: Actualizar Backend (Requerido)
+### ~~Fase 1: Actualizar Backend~~ - NO REQUERIDA
 
-**Archivos a modificar en backend:**
+**Hallazgo (2026-01-07):** Al auditar el código backend:
+- **0 referencias activas** a la tabla `audit_logging.user_activity`
+- La entidad `UserActivity` en `/modules/social/` apunta a `social_features.user_activities` (tabla diferente)
+- El código ya usaba `activity_log` para admin dashboard
+- La migración estaba implícitamente completada
 
-1. **Entities**:
-   - `apps/backend/src/modules/admin/entities/user-activity.entity.ts`
-   - Cambiar referencia de `user_activity` → `activity_log`
+### ~~Fase 2: Vista de Compatibilidad~~ - NO REQUERIDA
 
-2. **DTOs**:
-   - `apps/backend/src/modules/admin/dto/user-activity.dto.ts`
-   - Mapear `activity_type` → `action_type`
+No fue necesaria - no había código dependiente.
 
-3. **Services**:
-   - `apps/backend/src/modules/admin/services/admin.service.ts`
-   - `apps/backend/src/modules/admin/services/admin-stats.service.ts`
-   - Actualizar queries
+### Fase 3: Eliminación - ✅ COMPLETADA (2026-01-07)
 
-4. **Controllers**:
-   - `apps/backend/src/modules/admin/controllers/admin.controller.ts`
-
-### Fase 2: Crear Vista de Compatibilidad (Transición)
-
-Después de actualizar el backend, ejecutar:
-
-```sql
--- Paso 1: Renombrar tabla deprecada
-ALTER TABLE audit_logging.user_activity RENAME TO _deprecated_user_activity;
-
--- Paso 2: Crear vista de compatibilidad
-CREATE OR REPLACE VIEW audit_logging.user_activity AS
-SELECT
-    id,
-    user_id,
-    action_type AS activity_type,
-    description,
-    metadata,
-    ip_address,
-    user_agent,
-    created_at
-FROM audit_logging.activity_log;
-
-COMMENT ON VIEW audit_logging.user_activity IS
-    'DEPRECATED: Vista de compatibilidad. Migrar a activity_log. Será eliminada en v2.0';
+**Acciones ejecutadas:**
+```bash
+# 1. Eliminada constante de database.constants.ts
+# 2. DDL movido a _deprecated/
+mv ddl/schemas/audit_logging/tables/07-user_activity.sql _deprecated/
 ```
 
-### Fase 3: Eliminar Tabla Deprecada
-
-Después de período de validación (recomendado: 2 sprints):
-
+**En producción ejecutar:**
 ```sql
-DROP VIEW IF EXISTS audit_logging.user_activity;
-DROP TABLE IF EXISTS audit_logging._deprecated_user_activity CASCADE;
+-- Solo si la tabla existe en la BD
+DROP TABLE IF EXISTS audit_logging.user_activity CASCADE;
 ```
 
 ## Referencias Encontradas en Backend/Frontend

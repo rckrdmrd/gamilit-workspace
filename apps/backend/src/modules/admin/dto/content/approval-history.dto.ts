@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsEnum, IsInt, Min } from 'class-validator';
+import { IsOptional, IsString, IsEnum, IsInt, Min, Max, MaxLength, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
 
 /**
@@ -121,6 +121,7 @@ export class ApprovalHistoryItemDto {
 
 /**
  * DTO for querying approval history
+ * FIX-2025-01-07 P0: Added validation constraints to prevent injection and DoS attacks
  */
 export class ListApprovalHistoryDto {
   @ApiPropertyOptional({
@@ -132,12 +133,15 @@ export class ListApprovalHistoryDto {
   @IsEnum(['module', 'exercise', 'assignment', 'resource'])
     content_type?: string;
 
+  /**
+   * FIX-2025-01-07 P0: Added @IsUUID to validate UUID format
+   */
   @ApiPropertyOptional({
     description: 'Filter by specific content ID',
     example: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   })
   @IsOptional()
-  @IsString()
+  @IsUUID('4', { message: 'content_id must be a valid UUID' })
     content_id?: string;
 
   @ApiPropertyOptional({
@@ -149,28 +153,39 @@ export class ListApprovalHistoryDto {
   @IsEnum(['pending', 'approved', 'rejected', 'needs_revision'])
     status?: string;
 
+  /**
+   * FIX-2025-01-07 P0: Added @IsUUID to validate UUID format
+   */
   @ApiPropertyOptional({
     description: 'Filter by submitter user ID',
     example: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
   })
   @IsOptional()
-  @IsString()
+  @IsUUID('4', { message: 'submitted_by must be a valid UUID' })
     submitted_by?: string;
 
+  /**
+   * FIX-2025-01-07 P0: Added @IsUUID to validate UUID format
+   */
   @ApiPropertyOptional({
     description: 'Filter by reviewer user ID',
     example: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
   })
   @IsOptional()
-  @IsString()
+  @IsUUID('4', { message: 'reviewed_by must be a valid UUID' })
     reviewed_by?: string;
 
+  /**
+   * FIX-2025-01-07 P0: Added @MaxLength to prevent injection attacks
+   */
   @ApiPropertyOptional({
     description: 'Search in content title, reviewer notes, revision notes',
     example: 'mathematics',
+    maxLength: 500,
   })
   @IsOptional()
   @IsString()
+  @MaxLength(500, { message: 'Search term cannot exceed 500 characters' })
     search?: string;
 
   @ApiPropertyOptional({
@@ -184,15 +199,20 @@ export class ListApprovalHistoryDto {
   @Min(1)
     page?: number;
 
+  /**
+   * FIX-2025-01-07 P0: Added @Max to prevent resource exhaustion DoS
+   */
   @ApiPropertyOptional({
     description: 'Number of items per page',
     example: 20,
     default: 20,
+    maximum: 100,
   })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
+  @Max(100, { message: 'Limit cannot exceed 100 items per page' })
     limit?: number;
 }
 

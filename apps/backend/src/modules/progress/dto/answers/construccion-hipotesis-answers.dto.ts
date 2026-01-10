@@ -24,8 +24,4 @@ export class ConstruccionHipotesisAnswersDto {
   @IsObject({ message: 'causes must be an object' })
   @IsNotEmpty({ message: 'causes object is required' })
     causes!: Record<string, string[]>;
-
-  constructor() {
-    this.causes = {};
-  }
 }

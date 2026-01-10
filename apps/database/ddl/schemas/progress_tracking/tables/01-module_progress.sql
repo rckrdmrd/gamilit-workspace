@@ -40,6 +40,11 @@ CREATE TABLE progress_tracking.module_progress (
     progress_percentage integer DEFAULT 0,
     completed_exercises integer DEFAULT 0,
     total_exercises integer DEFAULT 0,
+    -- FEATURE M3-M5 2026-01-08: Tracking de submitted vs graded para ejercicios con revision manual
+    submitted_exercises integer DEFAULT 0,
+    graded_exercises integer DEFAULT 0,
+    submitted_progress_percentage numeric(5,2) DEFAULT 0,
+    graded_progress_percentage numeric(5,2) DEFAULT 0,
     skipped_exercises integer DEFAULT 0,
     total_score integer DEFAULT 0,
     max_possible_score integer,
@@ -88,6 +93,34 @@ COMMENT ON TABLE progress_tracking.module_progress IS 'Progreso del estudiante p
 --
 
 COMMENT ON COLUMN progress_tracking.module_progress.status IS 'Estado: not_started, in_progress, completed, reviewed, mastered';
+
+
+--
+-- Name: COLUMN module_progress.submitted_exercises; Type: COMMENT; Schema: progress_tracking; Owner: postgres
+--
+
+COMMENT ON COLUMN progress_tracking.module_progress.submitted_exercises IS 'FEATURE M3-M5 2026-01-08: Ejercicios enviados (pendientes o validados) para ejercicios con revision manual';
+
+
+--
+-- Name: COLUMN module_progress.graded_exercises; Type: COMMENT; Schema: progress_tracking; Owner: postgres
+--
+
+COMMENT ON COLUMN progress_tracking.module_progress.graded_exercises IS 'FEATURE M3-M5 2026-01-08: Ejercicios calificados por el maestro (score >= 60)';
+
+
+--
+-- Name: COLUMN module_progress.submitted_progress_percentage; Type: COMMENT; Schema: progress_tracking; Owner: postgres
+--
+
+COMMENT ON COLUMN progress_tracking.module_progress.submitted_progress_percentage IS 'FEATURE M3-M5 2026-01-08: Progreso basado en envios (actualiza al enviar)';
+
+
+--
+-- Name: COLUMN module_progress.graded_progress_percentage; Type: COMMENT; Schema: progress_tracking; Owner: postgres
+--
+
+COMMENT ON COLUMN progress_tracking.module_progress.graded_progress_percentage IS 'FEATURE M3-M5 2026-01-08: Progreso basado en calificaciones (actualiza al calificar)';
 
 
 --

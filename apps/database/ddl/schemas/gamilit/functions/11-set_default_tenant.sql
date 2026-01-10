@@ -15,9 +15,10 @@ DECLARE
     v_tenant_count INTEGER;
 BEGIN
     -- Paso 1: Intentar obtener el tenant principal de GAMILIT por slug
+    -- FIX-2026-01-08: Corregido slug de 'gamilit-prod' a 'gamilit-platform'
     SELECT id INTO v_main_tenant_id
     FROM auth_management.tenants
-    WHERE slug = 'gamilit-prod'
+    WHERE slug = 'gamilit-platform'
       AND is_active = true
     LIMIT 1;
 

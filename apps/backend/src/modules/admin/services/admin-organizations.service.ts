@@ -25,6 +25,60 @@ import { MembershipStatusEnum } from '@shared/constants';
 import { User } from '@modules/auth/entities/user.entity';
 import { Profile } from '@modules/auth/entities/profile.entity';
 
+/**
+ * AdminOrganizationsService
+ *
+ * @description Service for managing organizations (tenants) in the admin module.
+ * Handles CRUD operations, subscriptions, and feature flags.
+ *
+ * ============================================================================
+ * SECURITY WARNING - CROSS-TENANT ACCESS VULNERABILITY (FIX-2025-01-07)
+ * ============================================================================
+ *
+ * PROBLEMA IDENTIFICADO:
+ * Este servicio permite que cualquier admin (admin_teacher) acceda y modifique
+ * CUALQUIER organización del sistema, no solo la suya.
+ *
+ * ESCENARIO DE RIESGO:
+ * 1. Admin de Organización A llama a updateSubscription() con ID de Org B
+ * 2. El AdminGuard solo verifica el rol (admin/super_admin)
+ * 3. La operación se ejecuta sin validar el tenant ownership
+ *
+ * IMPACTO:
+ * - Un admin_teacher podría modificar planes/features de otras organizaciones
+ * - Violación del aislamiento multi-tenant
+ * - Posible escalamiento de privilegios (cambiar tier a enterprise)
+ *
+ * SOLUCIÓN RECOMENDADA:
+ * 1. Implementar TenantGuard que verifique ownership:
+ *    ```typescript
+ *    @Injectable()
+ *    export class TenantOwnershipGuard implements CanActivate {
+ *      canActivate(context: ExecutionContext): boolean {
+ *        const request = context.switchToHttp().getRequest();
+ *        const user = request.user;
+ *        const targetTenantId = request.params.id;
+ *        // super_admin puede acceder a todo
+ *        if (user.role === 'super_admin') return true;
+ *        // admin_teacher solo a su tenant
+ *        return user.tenant_id === targetTenantId;
+ *      }
+ *    }
+ *    ```
+ *
+ * 2. O validar en cada método del servicio:
+ *    ```typescript
+ *    if (adminTenantId !== targetTenantId && adminRole !== 'super_admin') {
+ *      throw new ForbiddenException('Cannot modify other organizations');
+ *    }
+ *    ```
+ *
+ * NOTA: super_admin puede operar cross-tenant por diseño.
+ *
+ * PRIORIDAD: P1 (Alto) - Requiere implementación antes de producción
+ * TICKET: Crear issue en backlog para implementar TenantOwnershipGuard
+ * ============================================================================
+ */
 @Injectable()
 export class AdminOrganizationsService {
   constructor(
@@ -347,6 +401,7 @@ export class AdminOrganizationsService {
 
   /**
    * Update organization subscription
+   * FIX-2025-01-07 P0: Added validation for max_users >= active members
    */
   async updateSubscription(
     id: string,
@@ -356,6 +411,23 @@ export class AdminOrganizationsService {
 
     if (!tenant) {
       throw new NotFoundException(`Organization ${id} not found`);
+    }
+
+    // FIX-2025-01-07 P0: Validate max_users is not less than current active members
+    if (updateDto.max_users !== undefined) {
+      const activeMemberCount = await this.membershipRepo.count({
+        where: {
+          tenant_id: id,
+          status: MembershipStatusEnum.ACTIVE,
+        },
+      });
+
+      if (updateDto.max_users < activeMemberCount) {
+        throw new BadRequestException(
+          `Cannot set max_users to ${updateDto.max_users}. Organization has ${activeMemberCount} active members. ` +
+          `Please remove or deactivate members first, or set max_users to at least ${activeMemberCount}.`,
+        );
+      }
     }
 
     // Update subscription fields

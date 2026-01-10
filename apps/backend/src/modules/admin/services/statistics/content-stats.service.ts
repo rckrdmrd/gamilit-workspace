@@ -118,8 +118,9 @@ export class ContentStatsService {
 
   /**
    * Get content statistics for a specific time period.
+   * FIX-2025-01-07 P0: Fixed SQL injection vulnerability by using parameterized queries
    *
-   * @param days - Number of days to look back
+   * @param days - Number of days to look back (validated: 1-365)
    * @returns Object with content creation and modification statistics
    */
   async getContentActivityStats(days: number): Promise<{
@@ -128,21 +129,29 @@ export class ContentStatsService {
     newAssignments: number;
   }> {
     try {
+      // FIX-2025-01-07 P0: Validate and sanitize days parameter to prevent SQL injection
+      // Clamp to valid range: 1-365 days
+      const safeDays = Math.max(1, Math.min(Math.floor(days), 365));
+
+      // FIX-2025-01-07 P0: Use make_interval() with parameterized query instead of string interpolation
       const [modulesResult, exercisesResult, assignmentsResult] = await Promise.all([
         this.authConnection.query(
           `SELECT COUNT(*) as count
            FROM educational_content.modules
-           WHERE created_at >= NOW() - INTERVAL '${days} days'`,
+           WHERE created_at >= NOW() - make_interval(days => $1)`,
+          [safeDays],
         ),
         this.authConnection.query(
           `SELECT COUNT(*) as count
            FROM educational_content.exercises
-           WHERE created_at >= NOW() - INTERVAL '${days} days'`,
+           WHERE created_at >= NOW() - make_interval(days => $1)`,
+          [safeDays],
         ),
         this.authConnection.query(
           `SELECT COUNT(*) as count
            FROM educational_content.assignments
-           WHERE created_at >= NOW() - INTERVAL '${days} days'`,
+           WHERE created_at >= NOW() - make_interval(days => $1)`,
+          [safeDays],
         ),
       ]);
 

@@ -10,6 +10,7 @@ import {
   Query,
   UseGuards,
   Request,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -195,7 +196,7 @@ export class TeacherClassroomsController {
     description: 'Forbidden - Teacher does not have access to this classroom',
   })
   async getClassroomById(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
       @Request() req: AuthRequest,
   ): Promise<TeacherClassroomDetailResponseDto> {
     const teacherId = req.user!.id;
@@ -240,7 +241,7 @@ export class TeacherClassroomsController {
     description: 'Conflict - Classroom code already exists',
   })
   async updateClassroom(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
       @Body() dto: UpdateTeacherClassroomDto,
       @Request() req: AuthRequest,
   ): Promise<TeacherClassroomResponseDto> {
@@ -290,7 +291,7 @@ export class TeacherClassroomsController {
     description: 'Bad request - Cannot delete classroom with active students',
   })
   async deleteClassroom(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
       @Request() req: AuthRequest,
   ): Promise<{ success: boolean; message: string }> {
     const teacherId = req.user!.id;
@@ -345,7 +346,7 @@ export class TeacherClassroomsController {
     description: 'Forbidden - Teacher does not have access to this classroom',
   })
   async getClassroomStudents(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
       @Query() query: GetClassroomStudentsQueryDto,
       @Request() req: AuthRequest,
   ): Promise<PaginatedStudentsResponseDto> {
@@ -386,7 +387,7 @@ export class TeacherClassroomsController {
     description: 'Forbidden - Teacher does not have access to this classroom',
   })
   async getClassroomStats(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
       @Request() req: AuthRequest,
   ): Promise<ClassroomStatsDto> {
     const teacherId = req.user!.id;
@@ -426,7 +427,7 @@ export class TeacherClassroomsController {
     description: 'Forbidden - Teacher does not have access to this classroom',
   })
   async getClassroomTeachers(
-    @Param('classroomId') classroomId: string,
+    @Param('classroomId', new ParseUUIDPipe({ version: '4' })) classroomId: string,
       @Request() req: AuthRequest,
   ): Promise<TeacherInClassroomDto[]> {
     const teacherId = req.user!.id;
@@ -491,7 +492,7 @@ export class TeacherClassroomsController {
     description: 'Forbidden - Teacher does not have access to this classroom',
   })
   async getClassroomProgress(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
       @Request() req: AuthRequest,
   ): Promise<any> {
     const teacherId = req.user!.id;
@@ -545,8 +546,8 @@ export class TeacherClassroomsController {
     description: 'Student is already blocked or invalid block type',
   })
   async blockStudent(
-    @Param('classroomId') classroomId: string,
-      @Param('studentId') studentId: string,
+    @Param('classroomId', new ParseUUIDPipe({ version: '4' })) classroomId: string,
+      @Param('studentId', new ParseUUIDPipe({ version: '4' })) studentId: string,
       @Body() dto: BlockStudentDto,
       @Request() req: AuthRequest,
   ): Promise<StudentPermissionsResponseDto> {
@@ -601,8 +602,8 @@ export class TeacherClassroomsController {
     description: 'Student is not blocked',
   })
   async unblockStudent(
-    @Param('classroomId') classroomId: string,
-      @Param('studentId') studentId: string,
+    @Param('classroomId', new ParseUUIDPipe({ version: '4' })) classroomId: string,
+      @Param('studentId', new ParseUUIDPipe({ version: '4' })) studentId: string,
       @Request() req: AuthRequest,
   ): Promise<StudentPermissionsResponseDto> {
     const teacherId = req.user!.id;
@@ -651,8 +652,8 @@ export class TeacherClassroomsController {
     description: 'Teacher does not have access to this classroom',
   })
   async getStudentPermissions(
-    @Param('classroomId') classroomId: string,
-      @Param('studentId') studentId: string,
+    @Param('classroomId', new ParseUUIDPipe({ version: '4' })) classroomId: string,
+      @Param('studentId', new ParseUUIDPipe({ version: '4' })) studentId: string,
       @Request() req: AuthRequest,
   ): Promise<StudentPermissionsResponseDto> {
     const teacherId = req.user!.id;
@@ -706,8 +707,8 @@ export class TeacherClassroomsController {
     description: 'Invalid permissions or conflicts detected',
   })
   async updateStudentPermissions(
-    @Param('classroomId') classroomId: string,
-      @Param('studentId') studentId: string,
+    @Param('classroomId', new ParseUUIDPipe({ version: '4' })) classroomId: string,
+      @Param('studentId', new ParseUUIDPipe({ version: '4' })) studentId: string,
       @Body() dto: UpdatePermissionsDto,
       @Request() req: AuthRequest,
   ): Promise<StudentPermissionsResponseDto> {

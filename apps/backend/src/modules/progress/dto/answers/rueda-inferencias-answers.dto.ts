@@ -47,8 +47,4 @@ export class RuedaInferenciasAnswersDto {
   @IsNumber({}, { message: 'timeSpent must be a number' })
   @IsOptional()
     timeSpent?: number;
-
-  constructor() {
-    this.fragments = {};
-  }
 }

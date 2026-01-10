@@ -105,6 +105,48 @@ export class ModuleProgress {
     skipped_exercises!: number;
 
   // =====================================================
+  // SUBMITTED vs GRADED TRACKING (M3-M5 Feature)
+  // =====================================================
+
+  /**
+   * Ejercicios enviados (pendientes o ya validados)
+   * Incluye: submitted, graded, reviewed
+   * Se actualiza al ENVIAR, no al calificar
+   *
+   * @version 1.0 (2026-01-08) - Feature M3-M5 Validation
+   */
+  @Column({ type: 'integer', default: 0 })
+    submitted_exercises!: number;
+
+  /**
+   * Ejercicios calificados por el maestro
+   * Solo incluye: graded, reviewed
+   * Se actualiza cuando el maestro califica
+   *
+   * @version 1.0 (2026-01-08) - Feature M3-M5 Validation
+   */
+  @Column({ type: 'integer', default: 0 })
+    graded_exercises!: number;
+
+  /**
+   * Porcentaje de progreso basado en envios
+   * Usado para la barra de progreso visual del estudiante
+   *
+   * @version 1.0 (2026-01-08) - Feature M3-M5 Validation
+   */
+  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
+    submitted_progress_percentage!: number;
+
+  /**
+   * Porcentaje de progreso basado en calificaciones
+   * Usado para calculos de recompensas
+   *
+   * @version 1.0 (2026-01-08) - Feature M3-M5 Validation
+   */
+  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
+    graded_progress_percentage!: number;
+
+  // =====================================================
   // SCORE METRICS
   // =====================================================
 

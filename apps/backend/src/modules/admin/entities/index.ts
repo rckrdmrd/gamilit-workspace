@@ -37,6 +37,9 @@ export { ApiConfiguration, ApiServiceType } from './api-configuration.entity';
 export { EnvironmentConfig, ConfigEnvironment } from './environment-config.entity';
 export { TenantConfiguration, TenantConfigType } from './tenant-configuration.entity';
 
+// Monitoring Entities - P2 (TASK-MONITORING-HISTORY-PERSISTENCE)
+export { MetricsHistory } from './metrics-history.entity';
+
 // Re-export AuditLog from audit module
 // Permite queries de auditoria directamente desde admin sin duplicar entity
 export { AuditLog, ActorType, Severity, Status } from '../../audit/entities/audit-log.entity';

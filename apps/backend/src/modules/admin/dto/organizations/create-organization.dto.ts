@@ -35,12 +35,23 @@ export class CreateOrganizationDto {
   @MaxLength(100)
     slug!: string;
 
+  /**
+   * FIX-2025-01-07 P0: Added hostname validation for domain field
+   * Validates DNS-safe domain name format
+   */
   @ApiPropertyOptional({
-    description: 'Custom domain for the organization',
+    description: 'Custom domain for the organization (DNS-valid hostname)',
     example: 'unam.gamilit.com',
   })
   @IsOptional()
   @IsString()
+  @Matches(
+    /^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/i,
+    {
+      message: 'Domain must be a valid DNS hostname (e.g., subdomain.example.com)',
+    },
+  )
+  @MaxLength(253, { message: 'Domain cannot exceed 253 characters' })
     domain?: string;
 
   @ApiPropertyOptional({

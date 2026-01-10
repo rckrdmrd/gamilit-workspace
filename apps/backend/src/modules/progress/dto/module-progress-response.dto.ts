@@ -53,6 +53,30 @@ export class ModuleProgressResponseDto {
     total_exercises!: number;
 
   /**
+   * FEATURE M3-M5 2026-01-08: Ejercicios enviados (pendientes o validados)
+   */
+  @Expose()
+    submitted_exercises!: number;
+
+  /**
+   * FEATURE M3-M5 2026-01-08: Ejercicios calificados por el maestro
+   */
+  @Expose()
+    graded_exercises!: number;
+
+  /**
+   * FEATURE M3-M5 2026-01-08: Progreso basado en envios (actualiza al enviar)
+   */
+  @Expose()
+    submitted_progress_percentage!: number;
+
+  /**
+   * FEATURE M3-M5 2026-01-08: Progreso basado en calificaciones (actualiza al calificar)
+   */
+  @Expose()
+    graded_progress_percentage!: number;
+
+  /**
    * Ejercicios omitidos
    */
   @Expose()

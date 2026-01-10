@@ -306,27 +306,86 @@ export class ExerciseSubmissionService {
     // Verificar si ya existe un envío previo
     const existingSubmission = await this.findByUserAndExercise(profileId, exerciseId);
 
-    // ✅ FIX 2025-11-24: Para ejercicios de revisión manual, solo una entrega permitida
+    // ✅ CORR-010 v6 2026-01-07: Lógica de reenvío para ejercicios M3-M5
+    // - Si status = 'submitted' (pendiente de revisión): PERMITIR actualización
+    // - Si status = 'graded' o 'reviewed': BLOQUEAR reenvío
+    // - Si status = 'draft': PERMITIR actualización
+    let submission: ExerciseSubmission;
+
     if (existingSubmission) {
-      throw new BadRequestException(
-        'You have already submitted this exercise. ' +
-        'Only one submission is allowed for teacher-graded exercises. ' +
-        'Please wait for your teacher to review your work.',
-      );
+      const canResubmit = ['draft', 'submitted'].includes(existingSubmission.status);
+
+      if (!canResubmit) {
+        // Ya fue calificado por el teacher - no permitir reenvío
+        throw new BadRequestException(
+          'Este ejercicio ya fue calificado por tu maestro. ' +
+          `Estado actual: ${existingSubmission.status}. ` +
+          'No se permiten reenvíos después de la calificación.',
+        );
+      }
+
+      // PERMITIR actualización - actualizar submission existente
+      this.logger.log(`[CORR-010] Updating existing submission ${existingSubmission.id} (status: ${existingSubmission.status})`);
+
+      existingSubmission.answer_data = answers;
+      existingSubmission.submitted_at = new Date();
+      existingSubmission.status = 'submitted';
+      // Incrementar número de intento si era draft
+      if (existingSubmission.status === 'draft') {
+        existingSubmission.attempt_number = (existingSubmission.attempt_number || 0) + 1;
+      }
+
+      submission = await this.submissionRepo.save(existingSubmission);
+      this.logger.log(`[CORR-010] Submission ${submission.id} updated successfully`);
+    } else {
+      // No hay submission previa - crear nueva
+      const submissionData: CreateExerciseSubmissionDto = {
+        user_id: profileId,
+        exercise_id: exerciseId,
+        answer_data: answers,
+        max_score: 100,
+      };
+
+      submission = await this.create(submissionData);
+      this.logger.log(`[CORR-010] New submission ${submission.id} created`);
     }
 
-    // ✅ FIX 2025-11-24: Ya no hay actualización - solo una entrega permitida
-    // Si hay submission previa, ya se rechazó arriba, así que aquí siempre creamos nuevo
-    const submissionData: CreateExerciseSubmissionDto = {
-      user_id: profileId,  // FIXED: usar profileId en lugar de userId
-      exercise_id: exerciseId,
-      answer_data: answers,
-      max_score: 100,
-    };
+    // ✅ FIX M3-M5 2026-01-07: Para ejercicios que requieren revisión manual del teacher
+    // NO auto-grade, NO auto-claim rewards - solo notificar al teacher y esperar evaluación
+    if (exercise.requires_manual_grading) {
+      this.logger.log(`[M3-M5 FIX] Exercise ${exerciseId} requires manual grading - skipping auto-grade and rewards`);
 
-    // Crear nuevo submission (único permitido)
-    let submission = await this.create(submissionData);
+      // ✅ FEATURE M3-M5 2026-01-08: Actualizar progreso del módulo al ENVIAR
+      // El progreso se actualiza inmediatamente para que el estudiante vea su avance
+      // Las recompensas (XP/ML Coins) se asignarán cuando el maestro califique
+      try {
+        await this.updateModuleProgressOnSubmission(profileId, exerciseId);
+        this.logger.log(`[M3-M5 PROGRESS] Module progress updated for user ${profileId} on exercise ${exerciseId}`);
+      } catch (error) {
+        // Log error but don't fail submission - progress update is not critical
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.logger.error(`[M3-M5 PROGRESS] Failed to update module progress: ${errorMessage}`);
+      }
 
+      // BE-P2-008: Notificar al docente
+      try {
+        await this.notifyTeacherOfSubmission(submission, exercise, profileId);
+        this.logger.log(`[M3-M5 FIX] Teacher notified for submission ${submission.id}`);
+      } catch (error) {
+        // Log error but don't fail submission
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.logger.error(`[BE-P2-008] Failed to notify teacher: ${errorMessage}`);
+      }
+
+      // Retornar submission con flag de revisión manual (NO rewards aún)
+      // El frontend mostrará mensaje de "pendiente de evaluación del maestro"
+      return Object.assign(submission, {
+        requiresManualReview: true,
+        message: 'Tu respuesta ha sido enviada para revisión del maestro. Recibirás tus recompensas cuando sea evaluada.',
+      });
+    }
+
+    // Flujo normal para ejercicios autocorregibles (M1-M2)
     // Auto-grade si es posible
     submission = await this.gradeSubmission(submission.id);
 
@@ -338,18 +397,6 @@ export class ExerciseSubmissionService {
       // Los campos ya están persistidos en la submission por claimRewards()
       // Asignar rankUp si existe
       (submission as any).rankUp = rewards.rankUp;
-    }
-
-    // BE-P2-008: Notificar al docente si el ejercicio requiere revisión manual
-    if (exercise.requires_manual_grading) {
-      this.logger.log(`[BE-P2-008] Exercise ${exerciseId} requires manual grading - notifying teacher`);
-      try {
-        await this.notifyTeacherOfSubmission(submission, exercise, profileId);
-      } catch (error) {
-        // Log error but don't fail submission
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        this.logger.error(`[BE-P2-008] Failed to notify teacher: ${errorMessage}`);
-      }
     }
 
     return submission;
@@ -407,6 +454,28 @@ export class ExerciseSubmissionService {
       this.logger.log(`[P1-003] Manual grading applied: ${submission.score}/${submission.max_score}, correct=${submission.is_correct}`);
 
       const savedSubmission = await this.submissionRepo.save(submission);
+
+      // ✅ FIX M3-M5 2026-01-07: Auto-claim rewards después de calificación manual del teacher
+      // Esto asegura que los rewards (XP, ML Coins) se distribuyan automáticamente
+      // igual que en M1-M2 con auto-grading, pero basado en la evaluación del teacher
+      if (savedSubmission.is_correct && savedSubmission.status === 'graded') {
+        try {
+          this.logger.log(`[M3-M5 FIX] Auto-claiming rewards after manual grading for submission ${savedSubmission.id}`);
+          const rewards = await this.claimRewards(savedSubmission.id);
+
+          // Asignar rankUp si existe
+          (savedSubmission as any).rankUp = rewards.rankUp;
+          (savedSubmission as any).rewards = {
+            xp: rewards.xp_earned,
+            mlCoins: rewards.ml_coins_earned,
+          };
+
+          this.logger.log(`[M3-M5 FIX] Rewards claimed: XP=${rewards.xp_earned}, MLCoins=${rewards.ml_coins_earned}`);
+        } catch (rewardError) {
+          // Log error but don't fail grading - rewards can be claimed manually later
+          this.logger.error(`[M3-M5 FIX] Failed to auto-claim rewards: ${rewardError instanceof Error ? rewardError.message : String(rewardError)}`);
+        }
+      }
 
       // IMPL-004: Detectar y otorgar achievements después de calificación manual
       try {
@@ -1041,31 +1110,18 @@ export class ExerciseSubmissionService {
 
     let rankUpData = null;
     if (previousRank !== newRank) {
-      // Hubo promoción - obtener datos del nuevo rango desde maya_ranks
-      // Hardcoded multipliers basados en ESPECIFICACION-TECNICA-RANGOS-MAYA-v2.1.md
-      const rankMultipliers: Record<string, number> = {
-        'Ajaw': 1.00,
-        'Nacom': 1.10,
-        "Ah K'in": 1.15,
-        'Halach Uinic': 1.20,
-        "K'uk'ulkan": 1.25,
-      };
-
-      const rankBonuses: Record<string, number> = {
-        'Ajaw': 0,
-        'Nacom': 100,
-        "Ah K'in": 250,
-        'Halach Uinic': 500,
-        "K'uk'ulkan": 1000,
-      };
-
-      const bonusCoins = rankBonuses[newRank] || 0;
+      // Hubo promoción - obtener datos del nuevo rango desde maya_ranks (BD)
+      // FIX FASE 0.1: Consultar BD en lugar de valores hard-coded
+      // Ver: REFINAMIENTO-PLAN-2026-01-07.md
+      const rankConfig = await this.getRankConfigFromDB(newRank);
+      const bonusCoins = rankConfig.mlCoinsBonus;
+      const newMultiplier = rankConfig.xpMultiplier;
 
       rankUpData = {
         newRank: newRank,
         previousRank: previousRank,
         bonusMLCoins: bonusCoins,
-        newMultiplier: rankMultipliers[newRank] || 1.0,
+        newMultiplier: newMultiplier,
       };
 
       // ✅ FIX GAM-001: Agregar bonus ML Coins por promoción de rango
@@ -1092,12 +1148,12 @@ export class ExerciseSubmissionService {
           userId: submission.user_id,
           type: NotificationTypeEnum.RANK_UP,
           title: `¡Felicidades! Ascendiste a ${newRank}`,
-          message: `Has sido promovido de ${previousRank} a ${newRank}. Tu nuevo multiplicador de XP es ${rankMultipliers[newRank] || 1.0}x. ¡Sigue así!`,
+          message: `Has sido promovido de ${previousRank} a ${newRank}. Tu nuevo multiplicador de XP es ${newMultiplier}x. ¡Sigue así!`,
           metadata: {
             previousRank,
             newRank,
             bonusMLCoins: bonusCoins,
-            newMultiplier: rankMultipliers[newRank] || 1.0,
+            newMultiplier: newMultiplier,
           },
         });
         this.logger.log(`[GAP-LOW-004] Rank up notification sent to user ${submission.user_id}`);
@@ -1213,6 +1269,40 @@ export class ExerciseSubmissionService {
     } catch {
       this.logger.warn(`[getRankXpMultiplier] Error getting multiplier for user ${userId}, using 1.00`);
       return 1.00;
+    }
+  }
+
+  /**
+   * Obtiene la configuración completa de un rango desde la BD
+   *
+   * @description Consulta gamification_system.maya_ranks para obtener xp_multiplier y ml_coins_bonus.
+   * Esto elimina la dependencia de valores hard-coded y permite actualizar rangos sin deploy.
+   *
+   * Ver: FASE 0.1 del plan de consolidación (REFINAMIENTO-PLAN-2026-01-07.md)
+   *
+   * @param rankName - Nombre del rango (ej: 'Ajaw', 'Nacom', etc.)
+   * @returns Objeto con xp_multiplier y ml_coins_bonus, o valores por defecto si no encuentra
+   */
+  private async getRankConfigFromDB(rankName: string): Promise<{ xpMultiplier: number; mlCoinsBonus: number }> {
+    try {
+      const result = await this.entityManager.query(`
+        SELECT xp_multiplier, ml_coins_bonus
+        FROM gamification_system.maya_ranks
+        WHERE rank_name = $1 AND is_active = true
+      `, [rankName]);
+
+      if (result && result.length > 0) {
+        return {
+          xpMultiplier: parseFloat(result[0].xp_multiplier) || 1.00,
+          mlCoinsBonus: parseInt(result[0].ml_coins_bonus, 10) || 0,
+        };
+      }
+
+      this.logger.warn(`[getRankConfigFromDB] Rank '${rankName}' not found in maya_ranks, using defaults`);
+      return { xpMultiplier: 1.00, mlCoinsBonus: 0 };
+    } catch (error) {
+      this.logger.warn(`[getRankConfigFromDB] Error getting config for rank '${rankName}': ${error}`);
+      return { xpMultiplier: 1.00, mlCoinsBonus: 0 };
     }
   }
 
@@ -1737,6 +1827,119 @@ export class ExerciseSubmissionService {
     };
 
     return displayNames[exerciseType] || exerciseType;
+  }
+
+  /**
+   * FEATURE M3-M5 2026-01-08: Actualiza el progreso del módulo cuando se ENVÍA un ejercicio
+   *
+   * @description
+   * Este método se llama inmediatamente al enviar un ejercicio (submitExercise),
+   * NO cuando el maestro lo califica. Esto permite que el estudiante vea su
+   * progreso actualizado de inmediato, aunque las recompensas (XP/ML Coins)
+   * se asignen después de la calificación del maestro.
+   *
+   * Campos actualizados:
+   * - submitted_exercises: Cuenta de ejercicios enviados únicos
+   * - submitted_progress_percentage: Porcentaje basado en envíos
+   * - progress_percentage: Usa el valor de submitted (para barra visual)
+   * - status: Actualiza a in_progress o completed según porcentaje
+   *
+   * @param userId - ID del usuario
+   * @param exerciseId - ID del ejercicio enviado
+   */
+  private async updateModuleProgressOnSubmission(
+    userId: string,
+    exerciseId: string,
+  ): Promise<void> {
+    try {
+      // 1. Obtener module_id del ejercicio
+      const exercise = await this.exerciseRepo.findOne({
+        where: { id: exerciseId },
+        select: ['id', 'module_id'],
+      });
+
+      if (!exercise?.module_id) {
+        this.logger.warn(`[updateModuleProgressOnSubmission] Exercise ${exerciseId} has no module_id`);
+        return;
+      }
+
+      const moduleId = exercise.module_id;
+
+      // 2. Contar ejercicios enviados únicos en el módulo
+      // Incluye: submitted, graded, reviewed (todos los estados post-envío)
+      const submittedResult = await this.entityManager.query(`
+        SELECT COUNT(DISTINCT es.exercise_id) as count
+        FROM progress_tracking.exercise_submissions es
+        JOIN educational_content.exercises e ON e.id = es.exercise_id
+        WHERE es.user_id = $1
+          AND e.module_id = $2
+          AND es.status IN ('submitted', 'graded', 'reviewed')
+      `, [userId, moduleId]);
+
+      const submittedExercises = parseInt(submittedResult[0]?.count || '0', 10);
+
+      // 3. Obtener total de ejercicios activos del módulo
+      const totalExercises = await this.exerciseRepo.count({
+        where: { module_id: moduleId, is_active: true },
+      });
+
+      if (totalExercises === 0) {
+        this.logger.warn(`[updateModuleProgressOnSubmission] Module ${moduleId} has no active exercises`);
+        return;
+      }
+
+      // 4. Calcular porcentaje (capped a 100)
+      const submittedPercentage = Math.min(
+        100,
+        Math.round((submittedExercises / totalExercises) * 100 * 100) / 100
+      );
+
+      // 5. Determinar nuevo status basado en porcentaje
+      // Nota: No degradamos status si ya es 'mastered' o 'reviewed'
+      let newStatus: string;
+      if (submittedPercentage >= 100) {
+        newStatus = 'completed';
+      } else if (submittedPercentage > 0) {
+        newStatus = 'in_progress';
+      } else {
+        newStatus = 'not_started';
+      }
+
+      // 6. UPSERT module_progress
+      // Nota: No sobreescribimos status si ya es 'mastered' o 'reviewed'
+      await this.entityManager.query(`
+        INSERT INTO progress_tracking.module_progress (
+          user_id, module_id, status, progress_percentage,
+          submitted_exercises, submitted_progress_percentage,
+          total_exercises, started_at, last_accessed_at
+        ) VALUES (
+          $1, $2, $3::progress_tracking.progress_status, $4, $5, $4, $6,
+          NOW(), NOW()
+        )
+        ON CONFLICT (user_id, module_id) DO UPDATE SET
+          status = CASE
+            WHEN progress_tracking.module_progress.status = 'mastered' THEN 'mastered'::progress_tracking.progress_status
+            WHEN progress_tracking.module_progress.status = 'reviewed' THEN 'reviewed'::progress_tracking.progress_status
+            ELSE $3::progress_tracking.progress_status
+          END,
+          progress_percentage = $4,
+          submitted_exercises = $5,
+          submitted_progress_percentage = $4,
+          total_exercises = $6,
+          last_accessed_at = NOW(),
+          updated_at = NOW()
+      `, [userId, moduleId, newStatus, submittedPercentage, submittedExercises, totalExercises]);
+
+      this.logger.log(
+        `[updateModuleProgressOnSubmission] User ${userId}, Module ${moduleId}: ` +
+        `${submittedExercises}/${totalExercises} (${submittedPercentage}%) - ${newStatus}`
+      );
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error(`[updateModuleProgressOnSubmission] Error: ${errorMessage}`);
+      // No lanzar error - no debe bloquear el envío del ejercicio
+    }
   }
 
   /**

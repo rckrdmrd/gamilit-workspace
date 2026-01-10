@@ -8,6 +8,11 @@ import { ExerciseSubmissionService } from '@modules/progress/services/exercise-s
 // FIX GAP-LOW-001: Import AuditService for event tracking
 import { AuditService } from '@modules/audit/services/audit.service';
 import { Severity, Status } from '@modules/audit/entities/audit-log.entity';
+// CORR-009: Import NotificationService for review_completed event
+import { NotificationService } from '@modules/notifications/services/notification.service';
+// FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Import Profile and Exercise for data enrichment
+import { Profile } from '@modules/auth/entities/profile.entity';
+import { Exercise } from '@modules/educational/entities/exercise.entity';
 
 /**
  * Filtros opcionales para reviews pendientes
@@ -54,6 +59,24 @@ export interface CompleteReviewResult {
 }
 
 /**
+ * Review enriquecido con datos de estudiante y ejercicio
+ * FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Estructura para retornar datos completos al frontend
+ */
+export interface EnrichedManualReview extends ManualReview {
+  student?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  exercise?: {
+    id: string;
+    title: string;
+    moduleId: string;
+    type?: string;
+  };
+}
+
+/**
  * Service para gestión de evaluaciones manuales de ejercicios creativos
  *
  * @description Provee operaciones CRUD y lógica de negocio para ManualReview.
@@ -80,10 +103,141 @@ export class ManualReviewService {
     private readonly reviewRepo: Repository<ManualReview>,
     @InjectRepository(ExerciseSubmission, 'progress')
     private readonly submissionRepo: Repository<ExerciseSubmission>,
+    // FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Inject Profile and Exercise repos for data enrichment
+    @InjectRepository(Profile, 'auth')
+    private readonly profileRepo: Repository<Profile>,
+    @InjectRepository(Exercise, 'educational')
+    private readonly exerciseRepo: Repository<Exercise>,
     private readonly submissionService: ExerciseSubmissionService,
     // FIX GAP-LOW-001: Inject AuditService for event tracking
     private readonly auditService: AuditService,
+    // CORR-009: Inject NotificationService for review_completed notifications
+    private readonly notificationService: NotificationService,
   ) {}
+
+  /**
+   * Enriquece un review con datos de estudiante y ejercicio
+   * FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Soluciona problema de datos faltantes en frontend
+   *
+   * @param review - ManualReview con submission cargado
+   * @returns Review enriquecido con student y exercise
+   */
+  private async enrichReview(review: ManualReview): Promise<EnrichedManualReview> {
+    const enriched: EnrichedManualReview = { ...review };
+
+    if (review.submission) {
+      // Obtener datos del estudiante
+      if (review.submission.user_id) {
+        try {
+          const profile = await this.profileRepo.findOne({
+            where: { id: review.submission.user_id },
+            select: ['id', 'full_name', 'email'],
+          });
+          if (profile) {
+            enriched.student = {
+              id: profile.id,
+              name: profile.full_name || 'Sin nombre',
+              email: profile.email || '',
+            };
+          }
+        } catch (error) {
+          this.logger.warn(`[enrichReview] Failed to fetch profile for user ${review.submission.user_id}: ${error}`);
+        }
+      }
+
+      // Obtener datos del ejercicio
+      if (review.submission.exercise_id) {
+        try {
+          const exercise = await this.exerciseRepo.findOne({
+            where: { id: review.submission.exercise_id },
+            select: ['id', 'title', 'module_id', 'exercise_type'],
+          });
+          if (exercise) {
+            enriched.exercise = {
+              id: exercise.id,
+              title: exercise.title || 'Sin título',
+              moduleId: exercise.module_id,
+              type: exercise.exercise_type,
+            };
+          }
+        } catch (error) {
+          this.logger.warn(`[enrichReview] Failed to fetch exercise ${review.submission.exercise_id}: ${error}`);
+        }
+      }
+    }
+
+    return enriched;
+  }
+
+  /**
+   * Enriquece múltiples reviews de forma optimizada
+   * FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Batch enrichment para mejor rendimiento
+   *
+   * @param reviews - Array de ManualReview con submissions cargados
+   * @returns Array de reviews enriquecidos
+   */
+  private async enrichReviews(reviews: ManualReview[]): Promise<EnrichedManualReview[]> {
+    if (reviews.length === 0) return [];
+
+    // Extraer IDs únicos de usuarios y ejercicios
+    const userIds = [...new Set(reviews
+      .filter(r => r.submission?.user_id)
+      .map(r => r.submission!.user_id))];
+
+    const exerciseIds = [...new Set(reviews
+      .filter(r => r.submission?.exercise_id)
+      .map(r => r.submission!.exercise_id))];
+
+    // Cargar perfiles en batch
+    const profiles = userIds.length > 0
+      ? await this.profileRepo.find({
+          where: { id: In(userIds) },
+          select: ['id', 'full_name', 'email'],
+        })
+      : [];
+
+    // Cargar ejercicios en batch
+    const exercises = exerciseIds.length > 0
+      ? await this.exerciseRepo.find({
+          where: { id: In(exerciseIds) },
+          select: ['id', 'title', 'module_id', 'exercise_type'],
+        })
+      : [];
+
+    // Crear mapas para acceso rápido
+    const profileMap = new Map(profiles.map(p => [p.id, p]));
+    const exerciseMap = new Map(exercises.map(e => [e.id, e]));
+
+    // Enriquecer cada review
+    return reviews.map(review => {
+      const enriched: EnrichedManualReview = { ...review };
+
+      if (review.submission) {
+        // Agregar datos del estudiante
+        const profile = profileMap.get(review.submission.user_id);
+        if (profile) {
+          enriched.student = {
+            id: profile.id,
+            name: profile.full_name || 'Sin nombre',
+            email: profile.email || '',
+          };
+        }
+
+        // Agregar datos del ejercicio
+        const exercise = exerciseMap.get(review.submission.exercise_id);
+        if (exercise) {
+          enriched.exercise = {
+            id: exercise.id,
+            title: exercise.title || 'Sin título',
+            moduleId: exercise.module_id,
+            type: exercise.exercise_type,
+          };
+        }
+      }
+
+      return enriched;
+    });
+  }
 
   /**
    * Obtiene reviews pendientes para un docente con paginación
@@ -130,8 +284,11 @@ export class ManualReviewService {
         relations: ['submission'],
       });
 
+      // FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Enriquecer reviews con datos de estudiante y ejercicio
+      const enrichedReviews = await this.enrichReviews(reviews);
+
       return {
-        reviews,
+        reviews: enrichedReviews,
         total,
         page,
         limit,
@@ -162,8 +319,11 @@ export class ManualReviewService {
 
     const reviews = await queryBuilder.getMany();
 
+    // FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Enriquecer reviews con datos de estudiante y ejercicio
+    const enrichedReviews = await this.enrichReviews(reviews);
+
     return {
-      reviews,
+      reviews: enrichedReviews,
       total,
       page,
       limit,
@@ -369,6 +529,36 @@ export class ManualReviewService {
       tags: ['teacher', 'review', 'evaluation', 'complete', 'rewards'],
     });
 
+    // CORR-009: Send notification to student when review is completed
+    if (review.submission?.user_id) {
+      try {
+        await this.notificationService.create({
+          userId: review.submission.user_id,
+          type: 'exercise_feedback',
+          title: 'Tu ejercicio ha sido calificado',
+          message: review.generalFeedback
+            ? `Calificacion: ${review.totalScore}/100. ${review.generalFeedback.substring(0, 150)}...`
+            : `Tu ejercicio ha sido calificado con ${review.totalScore}/100 puntos.${
+                rewardsResult ? ` Ganaste ${rewardsResult.xp_earned} XP y ${rewardsResult.ml_coins_earned} ML Coins!` : ''
+              }`,
+          priority: 'normal',
+          channels: ['in_app', 'push'],
+          data: {
+            submissionId: review.submissionId,
+            reviewId: reviewId,
+            score: review.totalScore,
+            xpEarned: rewardsResult?.xp_earned || 0,
+            mlCoinsEarned: rewardsResult?.ml_coins_earned || 0,
+            rankUp: rewardsResult?.rankUp || null,
+          },
+        });
+        this.logger.log(`Notification sent to student ${review.submission.user_id} for review ${reviewId}`);
+      } catch (notifError) {
+        // Log but don't fail the review completion
+        this.logger.warn(`Failed to send notification for review ${reviewId}: ${notifError}`);
+      }
+    }
+
     return {
       review: savedReview,
       rewards: rewardsResult,
@@ -444,6 +634,29 @@ export class ManualReviewService {
       tags: ['teacher', 'review', 'evaluation', 'returned'],
     });
 
+    // CORR-009: Send notification to student when work is returned for revision
+    if (review.submission?.user_id) {
+      try {
+        await this.notificationService.create({
+          userId: review.submission.user_id,
+          type: 'exercise_feedback',
+          title: 'Tu ejercicio requiere revision',
+          message: `Tu profesor te ha devuelto el ejercicio para que lo revises. ${feedback.substring(0, 100)}${feedback.length > 100 ? '...' : ''}`,
+          priority: 'high',
+          channels: ['in_app', 'push'],
+          data: {
+            submissionId: review.submissionId,
+            reviewId: reviewId,
+            status: 'returned',
+            feedback: feedback,
+          },
+        });
+        this.logger.log(`Return notification sent to student ${review.submission.user_id} for review ${reviewId}`);
+      } catch (notifError) {
+        this.logger.warn(`Failed to send return notification for review ${reviewId}: ${notifError}`);
+      }
+    }
+
     return savedReview;
   }
 
@@ -451,10 +664,12 @@ export class ManualReviewService {
    * Obtiene un review por ID
    *
    * @param reviewId - UUID del review
-   * @returns Review encontrado
+   * @returns Review encontrado enriquecido con datos de estudiante y ejercicio
    * @throws NotFoundException si el review no existe
+   *
+   * FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Ahora retorna datos enriquecidos
    */
-  async findById(reviewId: string): Promise<ManualReview> {
+  async findById(reviewId: string): Promise<EnrichedManualReview> {
     const review = await this.reviewRepo.findOne({
       where: { id: reviewId },
       relations: ['submission'],
@@ -464,7 +679,8 @@ export class ManualReviewService {
       throw new NotFoundException(`Review with ID ${reviewId} not found`);
     }
 
-    return review;
+    // FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Enriquecer review con datos de estudiante y ejercicio
+    return this.enrichReview(review);
   }
 
   /**
@@ -472,24 +688,29 @@ export class ManualReviewService {
    *
    * @param teacherId - UUID del docente
    * @param status - Filtro opcional por estado
-   * @returns Lista de reviews
+   * @returns Lista de reviews enriquecidos
+   *
+   * FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Ahora retorna datos enriquecidos
    */
   async findByTeacher(
     teacherId: string,
     status?: 'pending' | 'in_progress' | 'completed' | 'returned',
-  ): Promise<ManualReview[]> {
+  ): Promise<EnrichedManualReview[]> {
     const whereClause: any = { reviewerId: teacherId };
     if (status) {
       whereClause.status = status;
     }
 
-    return this.reviewRepo.find({
+    const reviews = await this.reviewRepo.find({
       where: whereClause,
       relations: ['submission'],
       order: {
         createdAt: 'DESC',
       },
     });
+
+    // FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Enriquecer reviews con datos de estudiante y ejercicio
+    return this.enrichReviews(reviews);
   }
 
   /**

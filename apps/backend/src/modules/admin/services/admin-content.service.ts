@@ -32,6 +32,49 @@ import {
 import { ContentStatusEnum } from '@shared/constants';
 import { MediaFileResponseDto } from '@modules/content/dto/media-file-response.dto';
 
+/**
+ * AdminContentService
+ *
+ * @description Service for managing educational content in the admin module.
+ * Handles content approval, media library, and version management.
+ *
+ * ============================================================================
+ * SECURITY WARNING - CROSS-TENANT ACCESS VULNERABILITY (FIX-2025-01-07)
+ * ============================================================================
+ *
+ * PROBLEMA IDENTIFICADO:
+ * Este servicio NO filtra por tenant_id en múltiples métodos, permitiendo
+ * que un admin acceda a contenido de CUALQUIER organización del sistema.
+ *
+ * MÉTODOS AFECTADOS:
+ * - getPendingContent() - Lista contenido de todos los tenants
+ * - getModules() - No filtra por tenant_id
+ * - getExercises() - No filtra por tenant_id
+ * - getTemplates() - No filtra por tenant_id
+ * - getMediaLibrary() - No filtra por tenant_id
+ * - getApprovalHistory() - No filtra por tenant_id
+ *
+ * ENTIDADES CON tenant_id QUE NO SE FILTRAN:
+ * - Module.tenant_id (idx_modules_tenant_id)
+ * - ContentTemplate.tenant_id (idx_templates_tenant)
+ * - MediaFile.tenant_id (idx_media_files_tenant)
+ *
+ * IMPACTO:
+ * - Un admin_teacher podría ver/aprobar contenido de otras organizaciones
+ * - Violación del aislamiento multi-tenant
+ * - Posible fuga de propiedad intelectual entre instituciones
+ *
+ * SOLUCIÓN RECOMENDADA:
+ * 1. Agregar tenantId como parámetro a todos los métodos de listado
+ * 2. Filtrar todas las queries: .andWhere('entity.tenant_id = :tenantId', { tenantId })
+ * 3. Excepto para super_admin que puede operar cross-tenant por diseño
+ *
+ * NOTA: super_admin puede operar cross-tenant por diseño.
+ *
+ * PRIORIDAD: P0 (Crítico) - Requiere implementación antes de producción
+ * TICKET: Crear issue en backlog para implementar tenant filtering
+ * ============================================================================
+ */
 @Injectable()
 export class AdminContentService {
   constructor(

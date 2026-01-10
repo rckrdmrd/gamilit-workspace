@@ -252,9 +252,9 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 -- 📚 Documentación: content_management.media_type
 -- Requerimiento: docs/01-requerimientos/07-contenido-media/RF-CNT-001-gestion-media.md
 -- Especificación: docs/02-especificaciones-tecnicas/07-contenido-media/ET-CNT-001-gestion-media.md
--- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a content_management
+-- VERSIÓN: 1.2 (2026-01-07) - Agregado 'animation' sincronizado con backend
 DO $$ BEGIN
-    CREATE TYPE content_management.media_type AS ENUM ('image', 'video', 'audio', 'document', 'interactive');
+    CREATE TYPE content_management.media_type AS ENUM ('image', 'video', 'audio', 'document', 'interactive', 'animation');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 📚 Documentación: content_management.processing_status
@@ -289,12 +289,14 @@ DO $$ BEGIN
     CREATE TYPE social_features.classroom_role AS ENUM ('teacher', 'student', 'assistant');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
+-- VERSIÓN: 1.1 (2026-01-07) - Alineado con backend (owner, admin, member)
 DO $$ BEGIN
-    CREATE TYPE social_features.team_role AS ENUM ('leader', 'member', 'coordinator');
+    CREATE TYPE social_features.team_role AS ENUM ('owner', 'admin', 'member');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
+-- VERSIÓN: 1.1 (2026-01-07) - Agregado 'rejected' sincronizado con backend
 DO $$ BEGIN
-    CREATE TYPE social_features.friendship_status AS ENUM ('pending', 'accepted', 'blocked');
+    CREATE TYPE social_features.friendship_status AS ENUM ('pending', 'accepted', 'rejected', 'blocked');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 6. ENUMs de Configuración
@@ -449,29 +451,13 @@ COMMENT ON FUNCTION gamilit.update_classroom_member_count() IS 'Trigger para act
 -- PARTE 3: FUNCIONES DEL SCHEMA gamification_system
 -- ============================================================================
 
--- Función: update_missions_updated_at (trigger)
-CREATE OR REPLACE FUNCTION gamification_system.update_missions_updated_at()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    NEW.updated_at = gamilit.now_mexico();
-    RETURN NEW;
-END;
-$$;
-COMMENT ON FUNCTION gamification_system.update_missions_updated_at() IS 'Trigger para actualizar updated_at en missions';
-
--- Función: update_notifications_updated_at (trigger)
-CREATE OR REPLACE FUNCTION gamification_system.update_notifications_updated_at()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    NEW.updated_at = gamilit.now_mexico();
-    RETURN NEW;
-END;
-$$;
-COMMENT ON FUNCTION gamification_system.update_notifications_updated_at() IS 'Trigger para actualizar updated_at en notifications';
+-- REMOVIDO (2026-01-07): Funciones update_*_updated_at consolidadas
+-- Razon: Reemplazadas por gamilit.update_updated_at_column() (funcion generica)
+-- Ver: PLAN-CONSOLIDACION-BD-2026-01-07.md (FASE 1)
+-- Archivos deprecated:
+--   - gamification_system/functions/_deprecated/06-update_missions_updated_at.sql
+--   - gamification_system/functions/_deprecated/07-update_notifications_updated_at.sql
+-- Limpieza en: migrations/2026-01-07-FASE4-cleanup-deprecated.sql
 
 -- ============================================================================
 -- COMENTARIOS EN TIPOS

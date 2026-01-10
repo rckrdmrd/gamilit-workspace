@@ -24,8 +24,4 @@ export class MatrizPerspectivasAnswersDto {
   @IsObject({ message: 'questions must be an object' })
   @IsNotEmpty({ message: 'questions object is required' })
     questions!: Record<string, string>;
-
-  constructor() {
-    this.questions = {};
-  }
 }

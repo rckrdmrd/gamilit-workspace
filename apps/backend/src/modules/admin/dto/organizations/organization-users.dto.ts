@@ -1,7 +1,11 @@
-import { IsOptional, IsInt, Min, Max } from 'class-validator';
+import { IsOptional, IsInt, Min, Max, IsEnum, ValidateIf } from 'class-validator';
 import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import { GamilityRoleEnum, MembershipStatusEnum } from '@shared/constants';
 
+/**
+ * FIX-2025-01-07 P0: Added @IsEnum validations to prevent SQL injection via filters
+ */
 export class GetOrganizationUsersDto {
   @ApiPropertyOptional({
     description: 'Page number',
@@ -26,19 +30,35 @@ export class GetOrganizationUsersDto {
   @Max(100)
     limit?: number;
 
+  /**
+   * FIX-2025-01-07 P0: Validate role enum to prevent invalid values
+   */
   @ApiPropertyOptional({
     description: 'Filter by role',
     example: 'student',
+    enum: GamilityRoleEnum,
   })
   @IsOptional()
-    role?: string;
+  @ValidateIf((o) => o.role !== undefined && o.role !== '')
+  @IsEnum(GamilityRoleEnum, {
+    message: 'Role must be one of: student, admin_teacher, super_admin',
+  })
+    role?: GamilityRoleEnum;
 
+  /**
+   * FIX-2025-01-07 P0: Validate status enum to prevent invalid values
+   */
   @ApiPropertyOptional({
     description: 'Filter by membership status',
     example: 'active',
+    enum: MembershipStatusEnum,
   })
   @IsOptional()
-    status?: string;
+  @ValidateIf((o) => o.status !== undefined && o.status !== '')
+  @IsEnum(MembershipStatusEnum, {
+    message: 'Status must be one of: active, inactive, pending, suspended',
+  })
+    status?: MembershipStatusEnum;
 }
 
 export class OrganizationUserDto {

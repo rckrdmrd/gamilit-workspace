@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
@@ -81,34 +81,55 @@ export class AdminDashboardController {
     return this.adminDashboardService.getOrganizationStatsSummary();
   }
 
+  /**
+   * @fix FIX-2025-01-07: Added configurable limit parameter (was hardcoded to 50)
+   */
   @Get('moderation-queue')
   @ApiOperation({
     summary: 'Get content moderation queue',
     description:
       'Retrieve pending content moderation items from admin_dashboard.moderation_queue view, prioritized by severity',
   })
-  async getModerationQueue(): Promise<PaginatedModerationQueueDto> {
-    return this.adminDashboardService.getModerationQueue(50);
+  async getModerationQueue(
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
+  ): Promise<PaginatedModerationQueueDto> {
+    // Validate limit bounds (1-200)
+    const safeLimit = Math.max(1, Math.min(limit, 200));
+    return this.adminDashboardService.getModerationQueue(safeLimit);
   }
 
+  /**
+   * @fix FIX-2025-01-07: Added configurable limit parameter (was hardcoded to 100)
+   */
   @Get('classroom-overview')
   @ApiOperation({
     summary: 'Get classroom overview',
     description:
       'Retrieve comprehensive classroom statistics from admin_dashboard.classroom_overview view including student counts, assignments, and progress',
   })
-  async getClassroomOverview(): Promise<PaginatedClassroomOverviewDto> {
-    return this.adminDashboardService.getClassroomOverview(100);
+  async getClassroomOverview(
+    @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit: number,
+  ): Promise<PaginatedClassroomOverviewDto> {
+    // Validate limit bounds (1-500)
+    const safeLimit = Math.max(1, Math.min(limit, 500));
+    return this.adminDashboardService.getClassroomOverview(safeLimit);
   }
 
+  /**
+   * @fix FIX-2025-01-07: Added configurable limit parameter (was hardcoded to 100)
+   */
   @Get('assignment-stats')
   @ApiOperation({
     summary: 'Get assignment submission statistics',
     description:
       'Retrieve assignment submission statistics from admin_dashboard.assignment_submission_stats view including submission rates and scores',
   })
-  async getAssignmentSubmissionStats(): Promise<PaginatedAssignmentSubmissionStatsDto> {
-    return this.adminDashboardService.getAssignmentSubmissionStats(100);
+  async getAssignmentSubmissionStats(
+    @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit: number,
+  ): Promise<PaginatedAssignmentSubmissionStatsDto> {
+    // Validate limit bounds (1-500)
+    const safeLimit = Math.max(1, Math.min(limit, 500));
+    return this.adminDashboardService.getAssignmentSubmissionStats(safeLimit);
   }
 
   // =====================================================

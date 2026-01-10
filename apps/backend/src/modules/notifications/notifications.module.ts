@@ -28,14 +28,12 @@ import {
   NotificationTemplatesController,
 } from './controllers';
 
-// ========== SISTEMA BÁSICO (gamification_system.notifications) ==========
-// Entity básica
-import { Notification as NotificationBasic } from './entities/notification.entity';
+// ========== SISTEMA BÁSICO (MIGRADO 2026-01-07) ==========
+// NOTA: El sistema básico (gamification_system.notifications) fue migrado
+// al sistema consolidado (notifications.notifications).
+// El NotificationsController ahora usa NotificationService.
 
-// Service básico
-import { NotificationsService } from './services/notifications.service';
-
-// Controller básico
+// Controller principal (migrado a NotificationService)
 import { NotificationsController } from './controllers/notifications.controller';
 
 // Other modules
@@ -87,20 +85,20 @@ import { MailModule } from '../mail/mail.module';
       'notifications',
     ),
 
-    // Sistema básico (gamification datasource)
-    TypeOrmModule.forFeature([NotificationBasic], 'gamification'),
+    // NOTA: Sistema básico (gamification datasource) REMOVIDO 2026-01-07
+    // gamification_system.notifications ya no existe - consolidado en notifications.notifications
 
     WebSocketModule,
     MailModule,
   ],
   controllers: [
-    // Sistema consolidado
+    // Sistema consolidado (multi-canal)
     NotificationMultiChannelController,
     NotificationPreferencesController,
     NotificationDevicesController,
     NotificationTemplatesController,
 
-    // Sistema básico
+    // Controller principal (usa NotificationService consolidado)
     NotificationsController,
   ],
   providers: [
@@ -112,14 +110,12 @@ import { MailModule } from '../mail/mail.module';
     UserDeviceService,
     PushNotificationService,
 
-    // Sistema básico
-    NotificationsService,
+    // NOTA: NotificationsService (deprecated) REMOVIDO 2026-01-07
   ],
   exports: [
     // Exportar para uso en otros módulos
     NotificationService, // Sistema consolidado
     NotificationQueueService, // Para workers/cron jobs
-    NotificationsService, // Sistema básico
   ],
 })
 export class NotificationsModule {}

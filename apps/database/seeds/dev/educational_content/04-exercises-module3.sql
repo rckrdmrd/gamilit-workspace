@@ -33,7 +33,8 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version,
+        requires_manual_grading  -- CORR-M3-001: Agregar evaluacion manual
     ) VALUES (
         mod_id,
         'Análisis de Fuentes Históricas sobre Marie Curie',
@@ -141,9 +142,11 @@ BEGIN
         ]::text[],
         true, 15,
         150, 30,
-        true, 1
+        true, 1,
+        true  -- requires_manual_grading = true (CORR-M3-001)
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
+        requires_manual_grading = EXCLUDED.requires_manual_grading,  -- CORR-M3-001
         updated_at = NOW();
 
     -- ========================================================================
@@ -499,7 +502,8 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version,
+        requires_manual_grading  -- CORR-M3-002: Agregar evaluacion manual
     ) VALUES (
         mod_id,
         'Tribunal de Opiniones: Evaluando Afirmaciones',
@@ -598,9 +602,11 @@ BEGIN
         ]::text[],
         true, 15,
         150, 30,
-        true, 1
+        true, 1,
+        true  -- requires_manual_grading = true (CORR-M3-002)
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
+        requires_manual_grading = EXCLUDED.requires_manual_grading,  -- CORR-M3-002
         updated_at = NOW();
 
     -- Update module total_exercises

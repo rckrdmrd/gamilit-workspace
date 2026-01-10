@@ -1,4 +1,4 @@
-import { IsOptional, IsBoolean, IsInt, Min, Max, IsObject } from 'class-validator';
+import { IsOptional, IsBoolean, IsInt, Min, Max, IsObject, IsString, MaxLength } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateSystemConfigDto {
@@ -10,11 +10,17 @@ export class UpdateSystemConfigDto {
   @IsBoolean()
     maintenance_mode?: boolean;
 
+  /**
+   * FIX-2025-01-07 P0: Added @IsString and @MaxLength to prevent DoS attacks
+   */
   @ApiPropertyOptional({
     description: 'Maintenance message to display',
     example: 'System maintenance in progress. We will be back soon.',
+    maxLength: 500,
   })
   @IsOptional()
+  @IsString()
+  @MaxLength(500, { message: 'Maintenance message cannot exceed 500 characters' })
     maintenance_message?: string;
 
   @ApiPropertyOptional({

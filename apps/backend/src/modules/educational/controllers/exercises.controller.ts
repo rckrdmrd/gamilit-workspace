@@ -964,7 +964,39 @@ export class ExercisesController {
     }
 
     // ========================================
-    // 3. VALIDACIÓN PRE-SQL (NUEVA - FE-061)
+    // 3. PRE-SANITIZACIÓN (CORR-010 v5)
+    // ========================================
+    // CORR-010 FIX: Sanitize tribunal_opiniones at controller level
+    // This is defense-in-depth before the validator runs
+    if (exercise.exercise_type === 'tribunal_opiniones') {
+      const answers = normalized.answers as any;
+      console.log('[CORR-010 CONTROLLER] Raw answers received:', {
+        hasEvaluations: !!answers?.evaluations,
+        evaluationsCount: answers?.evaluations?.length || 0,
+        answersKeys: Object.keys(answers || {}),
+      });
+
+      if (answers?.evaluations && Array.isArray(answers.evaluations)) {
+        answers.evaluations = answers.evaluations.map((e: any, idx: number) => {
+          const currentId = e?.statementId;
+          const needsFix = !currentId || (typeof currentId === 'string' && currentId.trim() === '');
+
+          if (needsFix) {
+            const fallbackId = `stmt-${idx + 1}`;
+            console.warn(`[CORR-010 CONTROLLER] Fixing empty statementId at index ${idx}: "${currentId}" -> "${fallbackId}"`);
+            return { ...e, statementId: fallbackId };
+          }
+          return e;
+        });
+
+        console.log('[CORR-010 CONTROLLER] Sanitized evaluations:',
+          answers.evaluations.map((e: any, i: number) => ({ index: i, statementId: e.statementId }))
+        );
+      }
+    }
+
+    // ========================================
+    // 4. VALIDACIÓN PRE-SQL (NUEVA - FE-061)
     // ========================================
     try {
       await ExerciseAnswerValidator.validate(
@@ -983,12 +1015,12 @@ export class ExercisesController {
     }
 
     // ========================================
-    // 4. CONVERSIÓN USUARIO → PERFIL
+    // 5. CONVERSIÓN USUARIO → PERFIL
     // ========================================
     const profileId = await this.getProfileId(normalized.userId);
 
     // ========================================
-    // 5. MANEJO DE EJERCICIOS MANUALES
+    // 6. MANEJO DE EJERCICIOS MANUALES
     // ========================================
     if (exercise.requires_manual_grading) {
       const submission = await this.exerciseSubmissionService.submitExercise(
@@ -997,6 +1029,9 @@ export class ExercisesController {
         normalized.answers,
       );
 
+      // BUG-M3-SUBMIT-001 FIX 2026-01-07: Incluir campos de revisión manual
+      // El frontend necesita status, requiresManualReview y message para mostrar
+      // el mensaje correcto de "pendiente de revisión" al usuario
       return {
         score: submission.score || 0,
         isPerfect: false,
@@ -1007,11 +1042,15 @@ export class ExercisesController {
         },
         rankUp: null,
         feedback: 'Submission sent for teacher review',
+        // Campos para revisión manual (requeridos por el frontend)
+        status: 'submitted' as const,
+        requiresManualReview: true,
+        message: 'Tu respuesta ha sido enviada para revisión del maestro. Recibirás tus recompensas cuando sea evaluada.',
       };
     }
 
     // ========================================
-    // 6. FLUJO PRINCIPAL: AUTOCORREGIBLES
+    // 7. FLUJO PRINCIPAL: AUTOCORREGIBLES
     // ========================================
 
     // 6.1. Obtener intentos previos

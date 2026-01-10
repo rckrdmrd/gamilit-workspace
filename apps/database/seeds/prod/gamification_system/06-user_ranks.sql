@@ -5,13 +5,18 @@
 -- Environment: dev/prod
 -- Dependencies: auth_management.profiles, gamification_system.user_ranks
 -- Order: 06
--- Version: 2.0.0
+-- Version: 2.1.0
 -- Updated: 2025-12-28 - Reescrito con UPDATEs dinámicos (P2-002)
+-- Updated: 2026-01-07 - EXCLUIDOS usuarios de testing (@gamilit.com)
+--                       Los testing users mantienen rango inicial 'Ajaw'
 -- =====================================================
 --
 -- NOTA: El trigger initialize_user_stats ya crea user_ranks base (Ajaw)
 -- para cada usuario nuevo. Este seed ACTUALIZA algunos rankings
 -- para demostrar diferentes niveles en la plataforma.
+--
+-- IMPORTANTE: Los usuarios de TESTING (@gamilit.com) NO son actualizados.
+-- Mantienen sus valores iniciales para simular usuarios recién registrados.
 --
 -- RANGOS MAYA (de menor a mayor):
 -- 1. Ajaw      - Nivel inicial (todos empiezan aquí)
@@ -42,13 +47,15 @@ BEGIN
     RAISE NOTICE '';
 
     -- =========================================
-    -- ESTUDIANTES DE DEMO (@gamilit.com)
+    -- ESTUDIANTES DE DEMO (EXCLUYE testing users)
     -- =========================================
+    -- NOTA: Usuarios de testing (admin@, teacher@, student@gamilit.com)
+    -- NO son actualizados. Mantienen rango inicial 'Ajaw'.
     FOR v_student IN
         SELECT p.id, p.email, p.display_name
         FROM auth_management.profiles p
         WHERE p.role = 'student'
-          AND p.email LIKE '%@gamilit.com'
+          AND p.email NOT IN ('admin@gamilit.com', 'teacher@gamilit.com', 'student@gamilit.com')
         ORDER BY p.created_at
         LIMIT 5
     LOOP
@@ -111,12 +118,13 @@ BEGIN
     END LOOP;
 
     -- =========================================
-    -- TEACHER (@gamilit.com)
+    -- TEACHER (EXCLUYE testing user)
     -- =========================================
+    -- NOTA: teacher@gamilit.com NO es actualizado. Mantiene rango inicial.
     SELECT p.id, p.email, p.display_name INTO v_teacher
     FROM auth_management.profiles p
     WHERE p.role = 'admin_teacher'
-      AND p.email LIKE '%@gamilit.com'
+      AND p.email NOT IN ('admin@gamilit.com', 'teacher@gamilit.com', 'student@gamilit.com')
     LIMIT 1;
 
     IF v_teacher.id IS NOT NULL THEN
@@ -140,12 +148,13 @@ BEGIN
     END IF;
 
     -- =========================================
-    -- SUPER ADMIN (@gamilit.com)
+    -- SUPER ADMIN (EXCLUYE testing user)
     -- =========================================
+    -- NOTA: admin@gamilit.com NO es actualizado. Mantiene rango inicial.
     SELECT p.id, p.email, p.display_name INTO v_admin
     FROM auth_management.profiles p
     WHERE p.role = 'super_admin'
-      AND p.email LIKE '%@gamilit.com'
+      AND p.email NOT IN ('admin@gamilit.com', 'teacher@gamilit.com', 'student@gamilit.com')
     LIMIT 1;
 
     IF v_admin.id IS NOT NULL THEN

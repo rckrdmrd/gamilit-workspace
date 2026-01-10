@@ -99,8 +99,9 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
     // 3. Obtener tenant principal de GAMILIT
+    // FIX-2026-01-08: Corregido slug de 'gamilit-prod' a 'gamilit-platform'
     let mainTenant = await this.tenantRepository.findOne({
-      where: { slug: 'gamilit-prod', is_active: true },
+      where: { slug: 'gamilit-platform', is_active: true },
     });
 
     // Fallback: buscar primer tenant activo

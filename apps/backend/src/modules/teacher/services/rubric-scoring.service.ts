@@ -225,6 +225,81 @@ const M3_MATRIZ_PERSPECTIVAS: ExerciseRubric = {
   ],
 };
 
+// CORR-009: Rubricas faltantes M3
+const M3_ANALISIS_FUENTES: ExerciseRubric = {
+  exerciseType: 'analisis_fuentes',
+  moduleName: 'Comprension Critica',
+  moduleNumber: 3,
+  totalPoints: 100,
+  criteria: [
+    {
+      id: 'orden_confiabilidad',
+      name: 'Orden de Confiabilidad',
+      description: 'Precision al ordenar fuentes por nivel de confiabilidad',
+      maxPoints: 60,
+      weight: 1.0,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'comparacion_relativa',
+      name: 'Comparacion Relativa',
+      description: 'Capacidad de comparar fuentes entre si',
+      maxPoints: 25,
+      weight: 1.0,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'aplicacion_craap',
+      name: 'Aplicacion Criterios CRAAP',
+      description: 'Uso correcto de Currency, Relevance, Authority, Accuracy, Purpose',
+      maxPoints: 15,
+      weight: 1.0,
+      levels: STANDARD_4_LEVELS,
+    },
+  ],
+};
+
+const M3_PODCAST_ARGUMENTATIVO: ExerciseRubric = {
+  exerciseType: 'podcast_argumentativo',
+  moduleName: 'Comprension Critica',
+  moduleNumber: 3,
+  totalPoints: 100,
+  criteria: [
+    {
+      id: 'claridad_audio',
+      name: 'Claridad de Expresion',
+      description: 'Claridad en la expresion oral y calidad de audio',
+      maxPoints: 25,
+      weight: 1.0,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'argumentacion',
+      name: 'Calidad Argumentativa',
+      description: 'Solidez y estructura de los argumentos presentados',
+      maxPoints: 30,
+      weight: 1.2,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'pensamiento_critico',
+      name: 'Pensamiento Critico',
+      description: 'Evidencia de analisis critico del tema',
+      maxPoints: 25,
+      weight: 1.1,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'presentacion',
+      name: 'Presentacion General',
+      description: 'Estructura del podcast, intro, desarrollo, cierre',
+      maxPoints: 20,
+      weight: 1.0,
+      levels: STANDARD_4_LEVELS,
+    },
+  ],
+};
+
 // ============================================================================
 // MODULE 4 RUBRICS - Lectura Digital
 // ============================================================================
@@ -348,6 +423,48 @@ const M4_ANALISIS_MEMES: ExerciseRubric = {
       maxPoints: 25,
       weight: 1.1,
       levels: STANDARD_5_LEVELS,
+    },
+  ],
+};
+
+// CORR-009: Rubrica faltante M4
+const M4_NAVEGACION_HIPERTEXTUAL: ExerciseRubric = {
+  exerciseType: 'navegacion_hipertextual',
+  moduleName: 'Lectura Digital',
+  moduleNumber: 4,
+  totalPoints: 100,
+  criteria: [
+    {
+      id: 'eficiencia',
+      name: 'Eficiencia de Navegacion',
+      description: 'Trayectoria optima para encontrar informacion',
+      maxPoints: 25,
+      weight: 1.0,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'relevancia',
+      name: 'Seleccion de Enlaces Relevantes',
+      description: 'Capacidad de elegir enlaces relevantes para la tarea',
+      maxPoints: 30,
+      weight: 1.2,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'sintesis',
+      name: 'Sintesis de Informacion',
+      description: 'Capacidad de sintetizar informacion de multiples paginas',
+      maxPoints: 25,
+      weight: 1.1,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'respuesta_investigacion',
+      name: 'Respuesta a Pregunta de Investigacion',
+      description: 'Precision en responder la pregunta de investigacion',
+      maxPoints: 20,
+      weight: 1.0,
+      levels: STANDARD_4_LEVELS,
     },
   ],
 };
@@ -484,15 +601,18 @@ const M5_VIDEO_CARTA: ExerciseRubric = {
 // ============================================================================
 
 const RUBRICS_BY_TYPE: Record<string, ExerciseRubric> = {
-  // Module 3
+  // Module 3 - Comprension Critica (5 rubrics)
   tribunal_opiniones: M3_TRIBUNAL_OPINIONES,
   debate_digital: M3_DEBATE_DIGITAL,
   matriz_perspectivas: M3_MATRIZ_PERSPECTIVAS,
-  // Module 4
+  analisis_fuentes: M3_ANALISIS_FUENTES,           // CORR-009
+  podcast_argumentativo: M3_PODCAST_ARGUMENTATIVO, // CORR-009
+  // Module 4 - Lectura Digital (4 rubrics, quiz_tiktok is auto-grading)
   verificador_fake_news: M4_VERIFICADOR_FAKE_NEWS,
   infografia_interactiva: M4_INFOGRAFIA_INTERACTIVA,
   analisis_memes: M4_ANALISIS_MEMES,
-  // Module 5
+  navegacion_hipertextual: M4_NAVEGACION_HIPERTEXTUAL, // CORR-009
+  // Module 5 - Produccion Lectora (3 rubrics)
   diario_multimedia: M5_DIARIO_MULTIMEDIA,
   comic_digital: M5_COMIC_DIGITAL,
   video_carta: M5_VIDEO_CARTA,

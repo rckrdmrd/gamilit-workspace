@@ -20,6 +20,9 @@ import {
   GenerateReportDto,
   ListReportsDto,
   PaginatedReportsDto,
+  // P2-2026-01-07: Schedule report DTOs
+  ScheduleReportDto,
+  ScheduleReportResponseDto,
 } from '../dto/reports';
 import { AuthRequest } from '@shared/types';
 
@@ -72,5 +75,24 @@ export class AdminReportsController {
   })
   async deleteReport(@Param('id') id: string): Promise<void> {
     await this.adminReportsService.deleteReport(id);
+  }
+
+  // =====================================================
+  // P2-2026-01-07: SCHEDULE REPORTS
+  // =====================================================
+
+  @Post(':id/schedule')
+  @ApiOperation({
+    summary: 'Schedule report generation',
+    description:
+      'Configure automatic periodic generation of a report. Schedule config is stored in report metadata.',
+  })
+  async scheduleReport(
+    @Param('id') id: string,
+    @Body() scheduleDto: ScheduleReportDto,
+    @Request() req: AuthRequest,
+  ): Promise<ScheduleReportResponseDto> {
+    const userId = req.user!.id;
+    return this.adminReportsService.scheduleReport(id, scheduleDto, userId);
   }
 }

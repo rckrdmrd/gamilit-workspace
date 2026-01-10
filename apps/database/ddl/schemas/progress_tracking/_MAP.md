@@ -5,14 +5,15 @@ Seguimiento de progreso: avance de modulos, intentos, metricas de engagement.
 ## Estructura
 
 - **tables/**: 17 archivos
-- **enums/**: 5 archivos
+- **enums/**: 4 archivos (attempt_result, attempt_status, certificate_enums, progress_status)
 - **functions/**: 12 archivos
-- **triggers/**: 13 archivos
+- **triggers/**: 14 archivos activos (incluye 00-batch_updated_at_triggers.sql consolidado)
+- **triggers/_deprecated/**: 2 archivos (triggers updated_at individuales)
 - **indexes/**: 3 archivos
 - **views/**: 2 archivos
 - **rls-policies/**: 2 archivos
 
-**Total:** 54 objetos DDL
+**Total:** 56 objetos DDL
 
 ## Tablas Principales
 
@@ -72,6 +73,22 @@ El trigger `trg_create_manual_review_on_submission` crea automaticamente el regi
 | `functions/05-get_classroom_analytics.sql` | FK corregida: `auth.profiles` → `auth_management.profiles` | 2026-01-04 |
 | `triggers/30-trg_update_missions_on_explore_modules.sql` | DB-166: Cambiado de `AFTER INSERT OR UPDATE` a `AFTER INSERT` | 2026-01-04 |
 
+## Consolidacion de Triggers (2026-01-07)
+
+Triggers de `updated_at` consolidados en `00-batch_updated_at_triggers.sql`:
+- `module_progress_updated_at`
+- `certificates_updated_at`
+
+Archivos originales movidos a `triggers/_deprecated/`.
+
+## Migracion de ENUMs (2026-01-07)
+
+ENUMs migrados desde `00-prerequisites.sql` a archivos individuales en `enums/`:
+- `attempt_status` - Estados de intento
+
 ---
 
-**Ultima actualizacion:** 2026-01-04
+**Ultima actualizacion:** 2026-01-07
+**Cambios recientes:**
+- CONSOLIDACION BD: Triggers updated_at consolidados (2026-01-07)
+- CONSOLIDACION BD: ENUMs migrados a archivos individuales (2026-01-07)

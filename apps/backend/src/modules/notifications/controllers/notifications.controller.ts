@@ -18,7 +18,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
   } from '@nestjs/swagger';
-import { NotificationsService } from '../services/notifications.service';
+import { NotificationService } from '../services/notification.service';
 import { NotificationResponseDto } from '../dto/notification-response.dto';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { GetNotificationsQueryDto } from '../dto/get-notifications-query.dto';
@@ -35,13 +35,15 @@ import { PermissionsGuard } from '../../../shared/guards/permissions.guard';
  * Controller para gestión de notificaciones del usuario.
  * Todos los usuarios autenticados pueden gestionar sus propias notificaciones.
  * Solo el endpoint POST requiere permisos especiales (system:webhook).
+ *
+ * @version 4.0 (2026-01-07) - Migrado a NotificationService consolidado (notifications schema)
  */
 @ApiTags('Notifications')
 @Controller('notifications')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, AccountStatusGuard)
 export class NotificationsController {
-  constructor(private readonly notificationsService: NotificationsService) {}
+  constructor(private readonly notificationService: NotificationService) {}
 
   /**
    * GET /notifications
@@ -61,7 +63,49 @@ export class NotificationsController {
     @CurrentUser('sub') userId: string,
       @Query() query: GetNotificationsQueryDto,
   ): Promise<PaginatedNotificationsDto> {
-    return this.notificationsService.getNotifications(userId, query);
+    const { type, status, page = 1, limit = 20 } = query;
+
+    // Convert status filter for consolidated service
+    const statusFilter = status === 'read' ? 'read' :
+      status === 'unread' ? 'sent' : undefined;
+
+    const result = await this.notificationService.findAllByUser(userId, {
+      type,
+      status: statusFilter,
+      limit,
+      offset: (page - 1) * limit,
+    });
+
+    const totalPages = Math.ceil(result.total / limit);
+
+    return {
+      data: result.data.map((n) => this.mapToResponseDto(n)),
+      meta: {
+        total: result.total,
+        page,
+        limit,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
+  }
+
+  /**
+   * Mapea Notification entity a NotificationResponseDto
+   */
+  private mapToResponseDto(notification: any): NotificationResponseDto {
+    return {
+      id: notification.id,
+      userId: notification.userId,
+      type: notification.type,
+      title: notification.title,
+      message: notification.message,
+      data: notification.data,
+      read: notification.status === 'read',
+      createdAt: notification.createdAt,
+      updatedAt: notification.createdAt, // Entity doesn't have updatedAt
+    };
   }
 
   /**
@@ -86,7 +130,7 @@ export class NotificationsController {
   async getUnreadCount(
     @CurrentUser('sub') userId: string,
   ): Promise<{ count: number }> {
-    const count = await this.notificationsService.getUnreadCount(userId);
+    const count = await this.notificationService.getUnreadCount(userId);
     return { count };
   }
 
@@ -122,7 +166,21 @@ export class NotificationsController {
     },
   })
   async getStats(@CurrentUser('sub') userId: string) {
-    return this.notificationsService.getUserNotificationStats(userId);
+    const result = await this.notificationService.findAllByUser(userId, {});
+    const notifications = result.data;
+    const unread = notifications.filter((n) => n.status !== 'read').length;
+
+    // Count by type
+    const byType: Record<string, number> = {};
+    notifications.forEach((n) => {
+      byType[n.type] = (byType[n.type] || 0) + 1;
+    });
+
+    return {
+      total: notifications.length,
+      unread,
+      byType,
+    };
   }
 
   /**
@@ -151,7 +209,9 @@ export class NotificationsController {
     @Param('id', ParseUUIDPipe) notificationId: string,
       @CurrentUser('sub') userId: string,
   ): Promise<NotificationResponseDto> {
-    return this.notificationsService.markAsRead(notificationId, userId);
+    await this.notificationService.markAsRead(notificationId, userId);
+    const notification = await this.notificationService.findOne(notificationId, userId);
+    return this.mapToResponseDto(notification);
   }
 
   /**
@@ -177,7 +237,8 @@ export class NotificationsController {
   async markAllAsRead(
     @CurrentUser('sub') userId: string,
   ): Promise<{ updated: number }> {
-    return this.notificationsService.markAllAsRead(userId);
+    const updated = await this.notificationService.markAllAsRead(userId);
+    return { updated };
   }
 
   /**
@@ -212,7 +273,8 @@ export class NotificationsController {
     @Param('id', ParseUUIDPipe) notificationId: string,
       @CurrentUser('sub') userId: string,
   ): Promise<{ deleted: boolean }> {
-    return this.notificationsService.deleteNotification(notificationId, userId);
+    await this.notificationService.deleteNotification(notificationId, userId);
+    return { deleted: true };
   }
 
   /**
@@ -238,7 +300,20 @@ export class NotificationsController {
   async clearAll(
     @CurrentUser('sub') userId: string,
   ): Promise<{ deleted: number }> {
-    return this.notificationsService.clearAll(userId);
+    // Get all read notifications
+    const result = await this.notificationService.findAllByUser(userId, {
+      status: 'read',
+      limit: 1000, // Process in batches
+    });
+
+    // Delete each one
+    let deleted = 0;
+    for (const notification of result.data) {
+      await this.notificationService.deleteNotification(notification.id, userId);
+      deleted++;
+    }
+
+    return { deleted };
   }
 
   /**
@@ -260,6 +335,13 @@ export class NotificationsController {
   async sendNotification(
     @Body() createDto: CreateNotificationDto,
   ): Promise<NotificationResponseDto> {
-    return this.notificationsService.sendNotification(createDto);
+    const notification = await this.notificationService.create({
+      userId: createDto.userId,
+      type: createDto.type,
+      title: createDto.title,
+      message: createDto.message,
+      data: createDto.data,
+    });
+    return this.mapToResponseDto(notification);
   }
 }

@@ -1,23 +1,24 @@
 -- =====================================================
--- Seed: social_features.schools - SCHOOL DEFAULT (PROD)
--- Description: Escuela del sistema para usuarios pendientes de asignación
--- Environment: PRODUCTION
+-- Seed: social_features.schools - SCHOOL DEFAULT
+-- Description: Institución principal única de GAMILIT
+-- Environment: ALL
 -- Dependencies: auth_management.tenants
 -- Order: 00 (debe ejecutarse ANTES de 01-schools.sql)
 -- Created: 2025-12-15
--- Version: 1.0
+-- Updated: 2026-01-08 - Renombrado y simplificado
+-- Version: 2.0
 -- =====================================================
 --
 -- PROPÓSITO:
--- Esta escuela es utilizada por el sistema para:
--- 1. Asignar automáticamente a usuarios admin nuevos
--- 2. Servir como pool de usuarios "por asignar"
--- 3. El classroom DEFAULT apunta a esta escuela
+-- Esta es la ÚNICA institución del sistema donde:
+-- 1. TODOS los usuarios (demo + registrados) son asignados
+-- 2. El classroom default apunta a esta institución
+-- 3. Los administradores gestionan usuarios desde aquí
 --
 -- UUID FIJO: 99999999-9999-9999-9999-999999999999
--- CÓDIGO: SYSTEM-UNASSIGNED
+-- CÓDIGO: GAMILIT-DEFAULT
 --
--- IMPORTANTE: Esta escuela NO debe eliminarse nunca.
+-- IMPORTANTE: Esta institución NO debe eliminarse nunca.
 -- =====================================================
 
 SET search_path TO social_features, auth_management, public;
@@ -87,10 +88,10 @@ INSERT INTO social_features.schools (
 ) VALUES (
     '99999999-9999-9999-9999-999999999999'::uuid,  -- UUID fija para sistema
     v_tenant_id,
-    'Sistema - Por Asignar',
-    'SYSTEM-UNASSIGNED',
-    'Sistema',
-    'Escuela del sistema para usuarios pendientes de asignación a sus instituciones finales. Los administradores y profesores nuevos se asignan aquí automáticamente.',
+    'GAMILIT - Institución General',
+    'GAMILIT-DEFAULT',
+    'GAMILIT',
+    'Institución principal de GAMILIT. Todos los usuarios registrados pertenecen a esta institución. Los administradores pueden crear aulas adicionales desde el panel de administración.',
     NULL,                                           -- Sin dirección física
     NULL,                                           -- Sin ciudad
     NULL,                                           -- Sin región
@@ -124,15 +125,17 @@ INSERT INTO social_features.schools (
     jsonb_build_object(
         'system_school', true,
         'is_default', true,
+        'is_primary', true,
         'created_by', 'system',
-        'purpose', 'Escuela de sistema para asignación pendiente',
+        'purpose', 'Institución principal única de GAMILIT',
         'policies', jsonb_build_object(
             'allow_student_reassignment', true,
             'allow_admin_reassignment', true,
             'require_approval', false,
-            'auto_assign_new_admins', true
+            'auto_assign_new_users', true
         ),
-        'description', 'Escuela automática del sistema para gestión de usuarios no asignados'
+        'description', 'Institución principal de GAMILIT para todos los usuarios',
+        'version', '2.0'
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
@@ -154,22 +157,21 @@ END $$;
 
 DO $$
 DECLARE
-    v_school_id UUID;
-    v_school_name TEXT;
+    v_school RECORD;
 BEGIN
-    SELECT id, name INTO v_school_id, v_school_name
+    SELECT id, name, code INTO v_school
     FROM social_features.schools
-    WHERE code = 'SYSTEM-UNASSIGNED';
+    WHERE code = 'GAMILIT-DEFAULT' OR code = 'SYSTEM-UNASSIGNED';
 
-    IF v_school_id IS NOT NULL THEN
+    IF v_school.id IS NOT NULL THEN
         RAISE NOTICE '========================================';
-        RAISE NOTICE 'ESCUELA DEFAULT DEL SISTEMA CREADA';
+        RAISE NOTICE 'INSTITUCIÓN PRINCIPAL GAMILIT CREADA';
         RAISE NOTICE '========================================';
-        RAISE NOTICE 'ID: %', v_school_id;
-        RAISE NOTICE 'Nombre: %', v_school_name;
-        RAISE NOTICE 'Código: SYSTEM-UNASSIGNED';
+        RAISE NOTICE 'ID: %', v_school.id;
+        RAISE NOTICE 'Nombre: %', v_school.name;
+        RAISE NOTICE 'Código: %', v_school.code;
         RAISE NOTICE '========================================';
     ELSE
-        RAISE WARNING 'ERROR: No se pudo crear la escuela default del sistema';
+        RAISE WARNING 'ERROR: No se pudo crear la institución principal';
     END IF;
 END $$;

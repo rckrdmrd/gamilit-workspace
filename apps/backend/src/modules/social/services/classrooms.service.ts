@@ -230,10 +230,20 @@ export class ClassroomsService {
   }
 
   /**
-   * Inscribe un estudiante en un aula
+   * @deprecated FIX-2026-01-08: Este metodo NO debe usarse.
+   * El contador current_students_count es manejado automaticamente por el
+   * trigger trg_update_classroom_count cuando se insertan/eliminan/actualizan
+   * registros en classroom_members.
+   *
+   * FLUJO CORRECTO para inscribir estudiantes:
+   * 1. Usar ClassroomMembersService.create() que inserta en classroom_members
+   * 2. El trigger automaticamente incrementa current_students_count
+   *
+   * Este metodo solo verifica capacidad y retorna el classroom sin modificarlo.
+   *
    * @param classroomId - ID del aula
-   * @param studentId - ID del estudiante
-   * @returns Aula actualizada
+   * @param _studentId - ID del estudiante (no usado, use ClassroomMembersService)
+   * @returns Aula sin modificar
    * @throws NotFoundException si el aula no existe
    * @throws BadRequestException si el aula está llena
    */
@@ -249,16 +259,28 @@ export class ClassroomsService {
       throw new BadRequestException('Classroom is at maximum capacity');
     }
 
-    // Incrementar contador de estudiantes
-    classroom.current_students_count += 1;
-    return this.classroomRepo.save(classroom);
+    // FIX-2026-01-08: NO manipular contador directamente.
+    // El trigger trg_update_classroom_count maneja esto automaticamente
+    // cuando se crea el registro en classroom_members.
+    // Solo retornamos el classroom para verificacion de capacidad.
+    return classroom;
   }
 
   /**
-   * Retira un estudiante de un aula
+   * @deprecated FIX-2026-01-08: Este metodo NO debe usarse.
+   * El contador current_students_count es manejado automaticamente por el
+   * trigger trg_update_classroom_count cuando se insertan/eliminan/actualizan
+   * registros en classroom_members.
+   *
+   * FLUJO CORRECTO para retirar estudiantes:
+   * 1. Usar ClassroomMembersService.withdraw() o updateStatus()
+   * 2. El trigger automaticamente decrementa current_students_count
+   *
+   * Este metodo solo retorna el classroom sin modificarlo.
+   *
    * @param classroomId - ID del aula
-   * @param studentId - ID del estudiante
-   * @returns Aula actualizada
+   * @param _studentId - ID del estudiante (no usado, use ClassroomMembersService)
+   * @returns Aula sin modificar
    * @throws NotFoundException si el aula no existe
    */
   async removeStudent(classroomId: string, _studentId: string): Promise<Classroom> {
@@ -268,12 +290,11 @@ export class ClassroomsService {
       throw new NotFoundException(`Classroom with ID ${classroomId} not found`);
     }
 
-    // Decrementar contador de estudiantes (no puede ser negativo)
-    if (classroom.current_students_count > 0) {
-      classroom.current_students_count -= 1;
-    }
-
-    return this.classroomRepo.save(classroom);
+    // FIX-2026-01-08: NO manipular contador directamente.
+    // El trigger trg_update_classroom_count maneja esto automaticamente
+    // cuando se actualiza el status en classroom_members.
+    // Solo retornamos el classroom.
+    return classroom;
   }
 
   /**

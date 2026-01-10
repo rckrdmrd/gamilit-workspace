@@ -554,15 +554,22 @@ export class TeacherClassroomsCrudService {
     }
 
     // Calcular estudiantes activos (con actividad en últimos 7 días)
+    // FIX-2026-01-08: Corregido para usar COUNT(DISTINCT) con raw SQL
+    // PROBLEMA ANTERIOR: .getCount() NO respeta GROUP BY en TypeORM, contaba registros en lugar de usuarios únicos
+    // SOLUCIÓN: Usar raw SQL con COUNT(DISTINCT user_id) para contar usuarios únicos correctamente
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const activeStudentsCount = await this.moduleProgressRepo
-      .createQueryBuilder('mp')
-      .where('mp.user_id IN (:...studentIds)', { studentIds })
-      .andWhere('mp.last_accessed_at >= :sevenDaysAgo', { sevenDaysAgo })
-      .groupBy('mp.user_id')
-      .getCount();
+    // FIX-B2-2026-01-08: Eliminado filtro OR classroom_id IS NULL
+    // Ahora solo cuenta estudiantes activos en el classroom especifico
+    const activeStudentsResult = await this.dataSource.query(`
+      SELECT COUNT(DISTINCT mp.user_id) as active_count
+      FROM progress_tracking.module_progress mp
+      WHERE mp.user_id = ANY($1)
+        AND mp.last_accessed_at >= $2
+        AND mp.classroom_id = $3
+    `, [studentIds, sevenDaysAgo, classroomId]);
+    const activeStudentsCount = parseInt(activeStudentsResult[0]?.active_count || '0');
 
     // Obtener todos los módulos publicados (disponibles para todos los classrooms)
     // NOTA: Actualmente no existe tabla classroom_modules, todos los módulos publicados están disponibles
@@ -591,15 +598,31 @@ export class TeacherClassroomsCrudService {
     const completedExercisesCount = parseInt(completedExercisesResult?.count || '0');
 
     // Calcular promedio de completación de ejercicios por estudiante
-    const completionStats = await this.moduleProgressRepo
-      .createQueryBuilder('mp')
-      .select('AVG(mp.progress_percentage)', 'avg_completion')
-      .addSelect('AVG(mp.average_score)', 'avg_score')
-      .where('mp.user_id IN (:...studentIds)', { studentIds })
-      .getRawOne();
+    // FIX-2026-01-08: Corregido para:
+    // 1. Filtrar por classroom_id (antes no se filtraba, mezclando datos de múltiples classrooms)
+    // 2. Calcular primero promedio por usuario, luego promedio global (antes promediaba registros directamente)
+    // PROBLEMA ANTERIOR: Si estudiante tenía 3 módulos (100%, 50%, 0%) y otro 1 módulo (100%),
+    // el promedio era (100+50+0+100)/4=62.5% en lugar del correcto (50%+100%)/2=75%
+    // FIX-B2-2026-01-08: Eliminado filtro OR classroom_id IS NULL
+    // Ahora solo promedia datos del classroom especifico
+    const completionStats = await this.dataSource.query(`
+      SELECT
+        AVG(user_avg_completion) as avg_completion,
+        AVG(user_avg_score) as avg_score
+      FROM (
+        SELECT
+          mp.user_id,
+          AVG(mp.progress_percentage) as user_avg_completion,
+          AVG(mp.average_score) as user_avg_score
+        FROM progress_tracking.module_progress mp
+        WHERE mp.user_id = ANY($1)
+          AND mp.classroom_id = $2
+        GROUP BY mp.user_id
+      ) user_stats
+    `, [studentIds, classroomId]);
 
-    const averageCompletion = parseFloat(completionStats?.avg_completion || '0');
-    const averageScore = parseFloat(completionStats?.avg_score || '0');
+    const averageCompletion = parseFloat(completionStats[0]?.avg_completion || '0');
+    const averageScore = parseFloat(completionStats[0]?.avg_score || '0');
 
     // Construir classroomData
     const classroomData: ClassroomProgressDataDto = {
@@ -618,6 +641,7 @@ export class TeacherClassroomsCrudService {
 
     for (const module of allModules) {
       // Obtener progreso de estudiantes en este módulo
+      // FIX-2026-01-08: Agregado filtro por classroom_id para evitar mezclar datos de múltiples classrooms
       const moduleProgressData = await this.moduleProgressRepo
         .createQueryBuilder('mp')
         .select('COUNT(*)', 'total_students')
@@ -630,6 +654,7 @@ export class TeacherClassroomsCrudService {
         .addSelect('AVG(EXTRACT(EPOCH FROM mp.time_spent) / 60)', 'avg_time_minutes')
         .where('mp.user_id IN (:...studentIds)', { studentIds })
         .andWhere('mp.module_id = :moduleId', { moduleId: module.id })
+        .andWhere('mp.classroom_id = :classroomId', { classroomId })
         .setParameter('completed', 'completed')
         .getRawOne();
 
@@ -721,14 +746,11 @@ export class TeacherClassroomsCrudService {
 
     const savedClassroom = await this.classroomRepo.save(classroom);
 
-    // Crear relación teacher-classroom con rol 'owner'
-    const teacherClassroom = this.teacherClassroomRepo.create({
-      teacher_id: teacherId,
-      classroom_id: savedClassroom.id,
-      role: TeacherClassroomRole.OWNER,
-    });
-
-    await this.teacherClassroomRepo.save(teacherClassroom);
+    // FIX-2026-01-08: El trigger trg_sync_teacher_classroom_on_insert
+    // ahora crea automaticamente el registro en teacher_classrooms con rol 'owner'
+    // cuando se inserta un nuevo classroom. El codigo anterior fue eliminado
+    // para evitar errores de clave duplicada.
+    // Ver: social_features/triggers/26-trg_sync_teacher_classroom.sql
 
     return this.mapToTeacherClassroomResponseDto(savedClassroom);
   }
@@ -889,8 +911,8 @@ export class TeacherClassroomsCrudService {
     const countSql = `
       SELECT COUNT(*) as total
       FROM social_features.classroom_members cm
-      LEFT JOIN auth_management.profiles p ON p.user_id = cm.student_id
-      LEFT JOIN auth.users u ON u.id = cm.student_id
+      LEFT JOIN auth_management.profiles p ON p.id = cm.student_id
+      LEFT JOIN auth.users u ON u.id = p.user_id
       WHERE cm.classroom_id = $1
         AND ($2::text IS NULL OR $2 = ''
              OR LOWER(COALESCE(p.first_name, '') || ' ' || COALESCE(p.last_name, '')) LIKE LOWER('%' || $2 || '%')
@@ -912,8 +934,8 @@ export class TeacherClassroomsCrudService {
         p.avatar_url,
         u.email
       FROM social_features.classroom_members cm
-      LEFT JOIN auth_management.profiles p ON p.user_id = cm.student_id
-      LEFT JOIN auth.users u ON u.id = cm.student_id
+      LEFT JOIN auth_management.profiles p ON p.id = cm.student_id
+      LEFT JOIN auth.users u ON u.id = p.user_id
       WHERE cm.classroom_id = $1
         AND ($2::text IS NULL OR $2 = ''
              OR LOWER(COALESCE(p.first_name, '') || ' ' || COALESCE(p.last_name, '')) LIKE LOWER('%' || $2 || '%')
@@ -1117,17 +1139,27 @@ export class TeacherClassroomsCrudService {
    * Obtiene el total de ejercicios activos disponibles
    * Cuenta todos los ejercicios activos de módulos publicados
    *
+   * FIX-2026-01-08: Corregido para usar raw SQL en lugar de TypeORM QueryBuilder
+   * PROBLEMA ANTERIOR: .innerJoin('e.module', 'm') fallaba porque la entidad Exercise
+   * NO tiene una relación TypeORM definida hacia Module (solo tiene module_id como columna)
+   * SOLUCION: Usar raw SQL con this.dataSource.query() para el join
+   * Ver: orchestration/reportes/CORRECCION-ERRORES-RUNTIME-2026-01-07.md
+   *
    * @private
    */
   private async getTotalExercisesForClassroom(): Promise<number> {
-    const count = await this.exerciseRepo
-      .createQueryBuilder('e')
-      .innerJoin('e.module', 'm')
-      .where('e.is_active = :isActive', { isActive: true })
-      .andWhere('m.is_published = :isPublished', { isPublished: true })
-      .getCount();
+    // FIX: Usar raw SQL para join entre exercises y modules
+    // TypeORM QueryBuilder NO soporta .innerJoin('e.module', ...) sin relación definida
+    const sql = `
+      SELECT COUNT(*) as count
+      FROM educational_content.exercises e
+      INNER JOIN educational_content.modules m ON m.id = e.module_id
+      WHERE e.is_active = true
+        AND m.is_published = true
+    `;
 
-    return count || 50; // Fallback to 50 if no exercises found
+    const result = await this.dataSource.query(sql);
+    return parseInt(result[0]?.count || '0') || 50; // Fallback to 50 if no exercises found
   }
 
   /**

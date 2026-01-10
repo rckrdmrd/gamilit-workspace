@@ -115,6 +115,9 @@ BEGIN
         completed_exercises = v_completed_exercises,
         total_exercises = v_total_exercises,
         progress_percentage = v_progress_percentage,
+        -- FEATURE M3-M5 2026-01-08: Actualizar graded tracking
+        graded_exercises = v_completed_exercises,
+        graded_progress_percentage = v_progress_percentage,
         status = v_new_status,
         total_xp_earned = total_xp_earned + COALESCE(NEW.xp_earned, 0),
         total_ml_coins_earned = total_ml_coins_earned + COALESCE(NEW.ml_coins_earned, 0),
@@ -142,6 +145,9 @@ BEGIN
             progress_percentage,
             completed_exercises,
             total_exercises,
+            -- FEATURE M3-M5 2026-01-08: Columnas de graded tracking
+            graded_exercises,
+            graded_progress_percentage,
             total_xp_earned,
             total_ml_coins_earned,
             started_at,
@@ -153,6 +159,9 @@ BEGIN
             v_progress_percentage,
             v_completed_exercises,
             v_total_exercises,
+            -- FEATURE M3-M5 2026-01-08: Valores para graded tracking
+            v_completed_exercises,
+            v_progress_percentage,
             COALESCE(NEW.xp_earned, 0),
             COALESCE(NEW.ml_coins_earned, 0),
             gamilit.now_mexico(),

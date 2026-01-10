@@ -22,9 +22,6 @@ export enum SocketEvent {
   BALANCE_UPDATED = 'balance:updated',
   ML_COINS_EARNED = 'mlcoins:earned',
 
-  // Leaderboard
-  LEADERBOARD_UPDATED = 'leaderboard:updated',
-
   // Missions
   MISSION_COMPLETED = 'mission:completed',
   MISSION_PROGRESS = 'mission:progress',
@@ -67,23 +64,6 @@ export interface AchievementPayload {
   title: string;
   description: string;
   icon: string;
-  timestamp: string;
-}
-
-// Leaderboard entry for WebSocket payloads
-export interface LeaderboardEntry {
-  rank: number;
-  userId: string;
-  displayName: string;
-  avatarUrl?: string;
-  xp: number;
-  level: number;
-  weeklyXp?: number;
-  isCurrentUser?: boolean;
-}
-
-export interface LeaderboardPayload {
-  leaderboard: LeaderboardEntry[];
   timestamp: string;
 }
 

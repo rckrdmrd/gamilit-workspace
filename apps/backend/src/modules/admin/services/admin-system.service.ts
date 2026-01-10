@@ -24,8 +24,47 @@ import {
   DatabaseOptimizationResultDto,
   CacheClearResultDto,
   SessionCleanupResultDto,
+  // P1-2026-01-07: New DTOs
+  ValidateConfigDto,
+  ConfigValidationResultDto,
+  ConfigValidationError,
+  ConfigCategoryDto,
+  SystemLogsQueryDto,
+  PaginatedSystemLogsDto,
+  SystemLogDto,
 } from '../dto/system';
 
+/**
+ * AdminSystemService
+ *
+ * @description Servicio para configuración y mantenimiento del sistema
+ *
+ * ============================================================================
+ * SECURITY WARNING - CROSS-TENANT ACCESS VULNERABILITY (FIX-2025-01-07)
+ * ============================================================================
+ *
+ * PROBLEMA IDENTIFICADO:
+ * Este servicio opera a nivel global sin filtrar por tenant_id,
+ * permitiendo que cualquier admin acceda a configuraciones globales.
+ *
+ * MÉTODOS AFECTADOS:
+ * - getAuditLog() - Consulta auth_attempts de todos los usuarios
+ * - getSystemConfig() - Accede a configuraciones globales
+ * - updateSystemConfig() - Modifica configuraciones globales
+ *
+ * DISEÑO INTENCIONADO:
+ * - getSystemHealth(), getSystemMetrics(): Métricas agregadas son aceptables
+ * - Operaciones de mantenimiento (cleanup, optimize): Requieren super_admin
+ *
+ * NOTAS DE SEGURIDAD:
+ * 1. El acceso a estos endpoints DEBE estar restringido a super_admin
+ * 2. admin_teacher NO debería tener acceso a configuración global
+ * 3. Considerar implementar tenant-scoped settings para admins de tenant
+ * 4. getAuditLog() podría filtrar por tenant_id del usuario autenticado
+ *
+ * PRIORIDAD: P2 (Medio) - Verificar guards en controller
+ * ============================================================================
+ */
 @Injectable()
 export class AdminSystemService {
   constructor(
@@ -618,6 +657,256 @@ export class AdminSystemService {
         success: false,
         message: `Failed to cleanup sessions: ${errorMessage}`,
         sessions_terminated: 0,
+      };
+    }
+  }
+
+  // =====================================================
+  // P1-2026-01-07: NEW ENDPOINTS
+  // =====================================================
+
+  /**
+   * Validate system configuration before applying
+   * @task TASK-SETTINGS-VALIDATE-CONFIG
+   */
+  async validateConfig(configDto: ValidateConfigDto): Promise<ConfigValidationResultDto> {
+    const errors: ConfigValidationError[] = [];
+    const warnings: string[] = [];
+
+    // Validate maintenance_mode
+    if (configDto.maintenance_mode === true && !configDto.maintenance_message) {
+      warnings.push('Se recomienda proporcionar un mensaje de mantenimiento cuando se activa el modo mantenimiento');
+    }
+
+    // Validate login attempts
+    if (configDto.max_login_attempts !== undefined) {
+      if (configDto.max_login_attempts < 3) {
+        warnings.push('Un numero bajo de intentos de login (<3) puede bloquear usuarios legitimos frecuentemente');
+      }
+      if (configDto.max_login_attempts > 20) {
+        warnings.push('Un numero alto de intentos de login (>20) puede ser un riesgo de seguridad');
+      }
+    }
+
+    // Validate lockout duration
+    if (configDto.lockout_duration_minutes !== undefined) {
+      if (configDto.lockout_duration_minutes < 5) {
+        warnings.push('Una duracion de bloqueo corta (<5 min) puede no ser efectiva contra ataques');
+      }
+      if (configDto.lockout_duration_minutes > 480) {
+        warnings.push('Una duracion de bloqueo larga (>8 horas) puede afectar la experiencia del usuario');
+      }
+    }
+
+    // Validate session timeout
+    if (configDto.session_timeout_minutes !== undefined) {
+      if (configDto.session_timeout_minutes < 15) {
+        warnings.push('Sesiones muy cortas (<15 min) pueden ser inconvenientes para los usuarios');
+      }
+      if (configDto.session_timeout_minutes > 1440) {
+        warnings.push('Sesiones muy largas (>24 horas) pueden ser un riesgo de seguridad');
+      }
+    }
+
+    // Validate custom_settings if present
+    if (configDto.custom_settings) {
+      for (const [key, value] of Object.entries(configDto.custom_settings)) {
+        // Validate key format
+        if (typeof key !== 'string' || key.length > 100) {
+          errors.push({
+            field: `custom_settings.${key}`,
+            message: 'La clave debe ser un string de maximo 100 caracteres',
+            value: key,
+          });
+        }
+        // Validate key characters (alphanumeric and underscore only)
+        if (!/^[a-zA-Z0-9_]+$/.test(key)) {
+          errors.push({
+            field: `custom_settings.${key}`,
+            message: 'La clave solo puede contener letras, numeros y guiones bajos',
+            value: key,
+          });
+        }
+        // Validate value is not null/undefined
+        if (value === null || value === undefined) {
+          errors.push({
+            field: `custom_settings.${key}`,
+            message: 'El valor no puede ser null o undefined',
+            value,
+          });
+        }
+      }
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings,
+    };
+  }
+
+  /**
+   * Get available configuration categories
+   * @task TASK-SETTINGS-CONFIG-CATEGORIES
+   */
+  async getConfigCategories(): Promise<ConfigCategoryDto[]> {
+    // Categories defined based on system_settings CHECK constraint
+    // See: system_settings_setting_category_check in 01-system_settings.sql
+    return [
+      {
+        key: 'general',
+        name: 'General',
+        description: 'Configuracion general de la plataforma',
+        icon: 'settings',
+        order: 1,
+      },
+      {
+        key: 'security',
+        name: 'Seguridad',
+        description: 'Politicas de autenticacion, acceso y sesiones',
+        icon: 'security',
+        order: 2,
+      },
+      {
+        key: 'email',
+        name: 'Correo Electronico',
+        description: 'Configuracion de servidor de correo y plantillas',
+        icon: 'email',
+        order: 3,
+      },
+      {
+        key: 'gamification',
+        name: 'Gamificacion',
+        description: 'Parametros del sistema de gamificacion y recompensas',
+        icon: 'stars',
+        order: 4,
+      },
+      {
+        key: 'storage',
+        name: 'Almacenamiento',
+        description: 'Configuracion de archivos, media y limites de subida',
+        icon: 'storage',
+        order: 5,
+      },
+      {
+        key: 'analytics',
+        name: 'Analiticas',
+        description: 'Configuracion de metricas, reportes y tracking',
+        icon: 'analytics',
+        order: 6,
+      },
+      {
+        key: 'integrations',
+        name: 'Integraciones',
+        description: 'Servicios externos, APIs y webhooks',
+        icon: 'integration_instructions',
+        order: 7,
+      },
+    ];
+  }
+
+  /**
+   * Get system logs from audit_logging.system_logs
+   * @task TASK-SETTINGS-LOGS-ENDPOINT
+   */
+  async getSystemLogs(query: SystemLogsQueryDto): Promise<PaginatedSystemLogsDto> {
+    const {
+      log_level,
+      source,
+      user_id,
+      start_date,
+      end_date,
+      search,
+      page = 1,
+      limit = 50,
+    } = query;
+    const skip = (page - 1) * limit;
+
+    try {
+      // Build dynamic query
+      let sql = `SELECT * FROM audit_logging.system_logs WHERE 1=1`;
+      const params: unknown[] = [];
+      let paramIndex = 1;
+
+      if (log_level) {
+        sql += ` AND log_level = $${paramIndex++}`;
+        params.push(log_level);
+      }
+
+      if (source) {
+        sql += ` AND source ILIKE $${paramIndex++}`;
+        params.push(`%${source}%`);
+      }
+
+      if (user_id) {
+        sql += ` AND user_id = $${paramIndex++}`;
+        params.push(user_id);
+      }
+
+      if (start_date) {
+        sql += ` AND created_at >= $${paramIndex++}`;
+        params.push(new Date(start_date));
+      }
+
+      if (end_date) {
+        sql += ` AND created_at <= $${paramIndex++}`;
+        params.push(new Date(end_date));
+      }
+
+      if (search) {
+        sql += ` AND (message ILIKE $${paramIndex} OR source ILIKE $${paramIndex})`;
+        params.push(`%${search}%`);
+        paramIndex++;
+      }
+
+      // Count total
+      const countSql = `SELECT COUNT(*) as count FROM (${sql}) subq`;
+      const countResult = await this.authConnection.query(countSql, params);
+      const total = parseInt(countResult[0]?.count || '0', 10);
+
+      // Get paginated data
+      const dataSql = `${sql} ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex}`;
+      params.push(limit, skip);
+
+      const data = await this.authConnection.query(dataSql, params);
+
+      // Map to DTO
+      const logs: SystemLogDto[] = data.map((row: Record<string, unknown>) => ({
+        id: row.id as string,
+        log_level: row.log_level as string,
+        message: row.message as string,
+        context: row.context as Record<string, unknown> | undefined,
+        source: row.source as string,
+        user_id: row.user_id as string | undefined,
+        tenant_id: row.tenant_id as string | undefined,
+        ip_address: row.ip_address as string | undefined,
+        user_agent: row.user_agent as string | undefined,
+        request_path: row.request_path as string | undefined,
+        request_method: row.request_method as string | undefined,
+        response_status: row.response_status as number | undefined,
+        duration_ms: row.duration_ms as number | undefined,
+        stack_trace: row.stack_trace as string | undefined,
+        created_at: row.created_at instanceof Date
+          ? row.created_at.toISOString()
+          : String(row.created_at),
+      }));
+
+      return {
+        data: logs,
+        total,
+        page,
+        limit,
+        total_pages: Math.ceil(total / limit),
+      };
+    } catch (error) {
+      // If table doesn't exist or other error, return empty result
+      console.error('[AdminSystemService] Error fetching system logs:', error);
+      return {
+        data: [],
+        total: 0,
+        page,
+        limit,
+        total_pages: 0,
       };
     }
   }

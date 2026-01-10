@@ -2,7 +2,7 @@
 # ============================================================================
 # Script Maestro: Creación Completa de Base de Datos Gamilit
 # Fecha: 2025-11-08
-# Versión: 1.0
+# Versión: 1.1 (2026-01-07)
 # ============================================================================
 #
 # DESCRIPCIÓN:
@@ -17,6 +17,15 @@
 #
 # VARIABLES DE ENTORNO REQUERIDAS (si no se pasa DATABASE_URL):
 #   - DATABASE_URL: URL de conexión a PostgreSQL
+#
+# CHANGELOG:
+#   v1.1 (2026-01-07): CONSOLIDACION BD
+#     - Agregados ENUMs para auth_management y system_configuration
+#     - Triggers consolidados en 00-batch_updated_at_triggers.sql por schema
+#     - Excluye automaticamente directorios _deprecated/
+#     - Ver: PLAN-CONSOLIDACION-BD-2026-01-07.md
+#
+#   v1.0 (2025-11-08): Versión inicial
 #
 # ============================================================================
 
@@ -259,6 +268,8 @@ log "===========================================================================
 log "FASE 5: AUTH_MANAGEMENT SCHEMA"
 log "============================================================================"
 
+# FASE 2 CONSOLIDACION (2026-01-07): ENUMs migrados a archivos individuales
+execute_sql_files "$DDL_DIR/schemas/auth_management/enums" "*.sql" "ENUMs de auth_management (gamilit_role, user_status, auth_provider)"
 execute_sql_files "$DDL_DIR/schemas/auth_management/tables" "*.sql" "Tablas de gestión de usuarios"
 execute_sql_files "$DDL_DIR/schemas/auth_management/functions" "*.sql" "Funciones de auth_management"
 execute_sql_files "$DDL_DIR/schemas/auth_management/triggers" "*.sql" "Triggers de auth_management"
@@ -340,7 +351,8 @@ execute_sql_files "$DDL_DIR/schemas/progress_tracking/tables" "*.sql" "Tablas de
 execute_sql_files "$DDL_DIR/schemas/progress_tracking/functions" "*.sql" "Funciones de progreso"
 execute_sql_files "$DDL_DIR/schemas/progress_tracking/triggers" "*.sql" "Triggers de progreso"
 execute_sql_files "$DDL_DIR/schemas/progress_tracking/indexes" "*.sql" "Índices de progreso"
-execute_sql_files "$DDL_DIR/schemas/progress_tracking/views" "*.sql" "Vistas de progreso"
+# CORR-009: Solo vistas que NO dependen de social_features (02-teacher_pending_reviews.sql se ejecuta en FASE 9.6)
+execute_sql_files "$DDL_DIR/schemas/progress_tracking/views" "user_progress_summary.sql" "Vistas de progreso (sin dependencias cross-schema)"
 execute_sql_files "$DDL_DIR/schemas/progress_tracking/rls-policies" "*.sql" "RLS Policies de progreso"
 
 log_success "FASE 8 completada"
@@ -376,6 +388,28 @@ log "===========================================================================
 execute_sql_files "$DDL_DIR/schemas/auth_management/fk-constraints" "*.sql" "FK constraints diferidos auth_management"
 
 log_success "FASE 9.5 completada - Dependencias circulares resueltas"
+log ""
+
+# ============================================================================
+# FASE 9.6: VISTAS CROSS-SCHEMA (Dependen de social_features)
+# ============================================================================
+# CORR-009: Vistas que dependen de tablas en múltiples schemas
+# Estas vistas deben crearse después de que social_features esté disponible
+
+log "============================================================================"
+log "FASE 9.6: VISTAS CROSS-SCHEMA (CORR-009)"
+log "============================================================================"
+
+# Vista teacher_pending_reviews depende de:
+# - progress_tracking.exercise_submissions
+# - auth_management.profiles
+# - educational_content.exercises
+# - educational_content.modules
+# - social_features.classroom_members (creado en FASE 9)
+# - social_features.classrooms (creado en FASE 9)
+execute_sql_files "$DDL_DIR/schemas/progress_tracking/views" "02-teacher_pending_reviews.sql" "Vista teacher_pending_reviews (cross-schema)"
+
+log_success "FASE 9.6 completada - Vistas cross-schema creadas"
 log ""
 
 # NOTA: FASE 9.7 (notifications) movida a FASE 6.5 por dependencia con gamification triggers
@@ -443,6 +477,8 @@ log "===========================================================================
 log "FASE 12: SYSTEM_CONFIGURATION SCHEMA"
 log "============================================================================"
 
+# FASE 2 CONSOLIDACION (2026-01-07): ENUMs migrados a archivos individuales
+execute_sql_files "$DDL_DIR/schemas/system_configuration/enums" "*.sql" "ENUMs de system_configuration (setting_type)"
 execute_sql_files "$DDL_DIR/schemas/system_configuration/tables" "*.sql" "Tablas de configuración"
 execute_sql_files "$DDL_DIR/schemas/system_configuration/functions" "*.sql" "Funciones de configuración (feature flags)"
 execute_sql_files "$DDL_DIR/schemas/system_configuration/triggers" "*.sql" "Triggers de configuración"
@@ -602,6 +638,7 @@ execute_sql "$SEEDS_DIR/educational_content/07-assessment-rubrics.sql" "Seeds: a
 execute_sql "$SEEDS_DIR/educational_content/08-difficulty_criteria.sql" "Seeds: difficulty_criteria"
 execute_sql "$SEEDS_DIR/educational_content/09-exercise_mechanic_mapping.sql" "Seeds: exercise_mechanic_mapping"
 execute_sql "$SEEDS_DIR/educational_content/10-exercise_validation_config.sql" "Seeds: exercise_validation_config (15 configs)"
+execute_sql "$SEEDS_DIR/educational_content/13-exercise_type_rubrics.sql" "Seeds: exercise_type_rubrics (12 rubricas M3-M5 - CORR-009)"
 
 # NOTA: Modelo JSONB puro - Seeds legacy movidos a _deprecated/
 # Total: 15 ejercicios production-ready (módulos 1-3) - Módulos 4-5 en backlog
@@ -620,6 +657,7 @@ execute_sql "$SEEDS_DIR/gamification_system/01-achievement_categories.sql" "Seed
 execute_sql "$SEEDS_DIR/gamification_system/02-leaderboard_metadata.sql" "Seeds: leaderboard_metadata"
 execute_sql "$SEEDS_DIR/gamification_system/03-maya_ranks.sql" "Seeds: maya_ranks"
 execute_sql "$SEEDS_DIR/gamification_system/04-achievements.sql" "Seeds: achievements (30 logros demo - 2025-11-29 updated)"
+execute_sql "$SEEDS_DIR/gamification_system/14-achievements-m3-m5.sql" "Seeds: achievements M3-M5 (15 logros modulos 3,4,5 - CORR-009)"
 
 # 16.6.0.1: Mission Templates - P0-SEEDS AUDIT-DB-001
 execute_sql "$SEEDS_DIR/gamification_system/10-mission_templates.sql" "Seeds: mission_templates (11 templates - P0 AUDIT-DB-001)"

@@ -5,8 +5,9 @@ Gestión de contenido: plantillas, archivos media, metadatos
 ## Estructura
 
 - **tables/**: 8 archivos
-- **enums/**: 4 archivos
-- **triggers/**: 3 archivos
+- **enums/**: 4 archivos (content_status, content_type, media_type, processing_status)
+- **triggers/**: 2 archivos activos (incluye 00-batch_updated_at_triggers.sql consolidado)
+- **triggers/_deprecated/**: 3 archivos (triggers updated_at individuales)
 - **indexes/**: 2 archivos
 - **rls-policies/**: 1 archivos
 
@@ -36,7 +37,14 @@ media_type.sql
 processing_status.sql
 ```
 
-### triggers/ (3 archivos)
+### triggers/ (2 archivos activos)
+
+```
+00-batch_updated_at_triggers.sql  # CONSOLIDADO: content_templates, marie_curie_content, media_files
+03-trg_auto_moderate.sql
+```
+
+### triggers/_deprecated/ (3 archivos)
 
 ```
 08-trg_content_templates_updated_at.sql
@@ -57,7 +65,19 @@ processing_status.sql
 01-policies.sql
 ```
 
+## Consolidacion de Triggers (2026-01-07)
+
+Triggers de `updated_at` consolidados en `00-batch_updated_at_triggers.sql`:
+- `content_templates_updated_at`
+- `marie_curie_content_updated_at`
+- `media_files_updated_at`
+
+Archivos originales movidos a `triggers/_deprecated/`.
+
 ---
 
-**Última actualización:** 2025-11-11
-**Corrección:** Actualizado conteo de ENUMs (1→4) y total de objetos (15→18)
+**Ultima actualizacion:** 2026-01-07
+**Cambios recientes:**
+- SINCRONIZACION: media_type agregado 'animation' para alineación con Backend/Frontend (2026-01-07)
+- CONSOLIDACION BD: Triggers updated_at consolidados (2026-01-07)
+- Correccion: Actualizado conteo de ENUMs (1→4) y total de objetos (15→18)

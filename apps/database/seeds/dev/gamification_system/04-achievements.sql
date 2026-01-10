@@ -1,6 +1,6 @@
 -- =====================================================
 -- Seed: gamification_system.achievements (PROD)
--- Description: Logros y achievements demo para testing y producci�n
+-- Description: Logros y achievements demo para testing y producción
 -- Environment: PRODUCTION
 -- Dependencies: gamification_system.achievement_categories
 -- Order: 04
@@ -10,17 +10,17 @@
 --
 -- ACHIEVEMENTS INCLUIDOS:
 -- - Progress (5): Primeros pasos, ejercicios completados, progreso
--- - Streak (3): Rachas de d�as consecutivos
--- - Completion (4): Completaci�n de m�dulos
--- - Mastery (3): Dominio y maestr�a
--- - Exploration (2): Exploraci�n de contenido
--- - Social (2): Interacci�n social
+-- - Streak (3): Rachas de días consecutivos
+-- - Completion (4): Completación de módulos
+-- - Mastery (3): Dominio y maestría
+-- - Exploration (2): Exploración de contenido
+-- - Social (2): Interacción social
 -- - Special (1): Logro especial
 --
 -- TOTAL: 20 achievements demo
 --
 -- IMPORTANTE: Estos achievements cubren casos de uso comunes
--- del sistema educativo de comprensi�n lectora GAMILIT.
+-- del sistema educativo de comprensión lectora GAMILIT.
 -- =====================================================
 
 SET search_path TO gamification_system, educational_content, public;
@@ -85,10 +85,10 @@ INSERT INTO gamification_system.achievements (
     false,
     1,
     50,
-    '�Felicidades! Has dado tus primeros pasos en tu viaje de aprendizaje.',
-    'Completa cualquier ejercicio de comprensi�n lectora para desbloquear este logro.',
+    '¡Felicidades! Has dado tus primeros pasos en tu viaje de aprendizaje.',
+    'Completa cualquier ejercicio de comprensión lectora para desbloquear este logro.',
     ARRAY[
-        'Lee el texto con atenci�n antes de responder',
+        'Lee el texto con atención antes de responder',
         'No tengas miedo de equivocarte, es parte del aprendizaje'
     ],
     jsonb_build_object(
@@ -127,11 +127,11 @@ INSERT INTO gamification_system.achievements (
     false,
     2,
     100,
-    '�Excelente! Ya eres un lector principiante. �Sigue as�!',
-    'Completa 10 ejercicios de comprensi�n lectora en cualquier m�dulo.',
+    '¡Excelente! Ya eres un lector principiante. ¡Sigue así!',
+    'Completa 10 ejercicios de comprensión lectora en cualquier módulo.',
     ARRAY[
         'Practica diferentes tipos de textos',
-        'Lee con atenci�n los detalles'
+        'Lee con atención los detalles'
     ],
     jsonb_build_object(
         'achievement_tier', 'bronze',
@@ -168,11 +168,11 @@ INSERT INTO gamification_system.achievements (
     false,
     3,
     250,
-    '�Impresionante! Tu experiencia como lector est� creciendo enormemente.',
-    'Completa 50 ejercicios de comprensi�n lectora.',
+    '¡Impresionante! Tu experiencia como lector está creciendo enormemente.',
+    'Completa 50 ejercicios de comprensión lectora.',
     ARRAY[
-        'Var�a los tipos de ejercicios',
-        'Intenta ejercicios m�s dif�ciles'
+        'Varía los tipos de ejercicios',
+        'Intenta ejercicios más difíciles'
     ],
     jsonb_build_object(
         'achievement_tier', 'silver',
@@ -187,7 +187,7 @@ INSERT INTO gamification_system.achievements (
     '90000001-0000-0000-0000-000000000004'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Lector Experto',
-    'Completa 100 ejercicios de comprensi�n lectora',
+    'Completa 100 ejercicios de comprensión lectora',
     'footprints',
     'progress'::gamification_system.achievement_category,
     'epic',
@@ -209,10 +209,10 @@ INSERT INTO gamification_system.achievements (
     false,
     4,
     500,
-    '�Extraordinario! Has alcanzado el nivel de lector experto.',
-    'Completa 100 ejercicios de comprensi�n lectora.',
+    '¡Extraordinario! Has alcanzado el nivel de lector experto.',
+    'Completa 100 ejercicios de comprensión lectora.',
     ARRAY[
-        'Mant�n tu constancia',
+        'Mantén tu constancia',
         'Ayuda a otros estudiantes'
     ],
     jsonb_build_object(
@@ -228,7 +228,7 @@ INSERT INTO gamification_system.achievements (
     '90000001-0000-0000-0000-000000000005'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Maestro de la Lectura',
-    'Completa 200 ejercicios de comprensi�n lectora',
+    'Completa 200 ejercicios de comprensión lectora',
     'graduation-cap',
     'progress'::gamification_system.achievement_category,
     'legendary',
@@ -250,11 +250,11 @@ INSERT INTO gamification_system.achievements (
     false,
     5,
     1000,
-    '�LEGENDARIO! Te has convertido en un verdadero Maestro de la Lectura.',
-    'Completa 200 ejercicios de comprensi�n lectora.',
+    '¡LEGENDARIO! Te has convertido en un verdadero Maestro de la Lectura.',
+    'Completa 200 ejercicios de comprensión lectora.',
     ARRAY[
         'Eres un ejemplo para todos',
-        'Tu dedicaci�n es inspiradora'
+        'Tu dedicación es inspiradora'
     ],
     jsonb_build_object(
         'achievement_tier', 'legendary',
@@ -268,12 +268,12 @@ INSERT INTO gamification_system.achievements (
 -- CATEGORY: STREAK (3 achievements)
 -- =====================================================
 
--- 6. Racha de 3 D�as
+-- 6. Racha de 3 Días
 (
     '90000002-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-    'Racha de 3 D�as',
-    'Mant�n una racha de 3 d�as consecutivos practicando',
+    'Racha de 3 Días',
+    'Mantén una racha de 3 días consecutivos practicando',
     'flame',
     'streak'::gamification_system.achievement_category,
     'common',
@@ -295,11 +295,11 @@ INSERT INTO gamification_system.achievements (
     false,
     10,
     75,
-    '�Genial! Has mantenido tu racha por 3 d�as. �La constancia es clave!',
-    'Practica al menos un ejercicio durante 3 d�as consecutivos.',
+    '¡Genial! Has mantenido tu racha por 3 días. ¡La constancia es clave!',
+    'Practica al menos un ejercicio durante 3 días consecutivos.',
     ARRAY[
         'Establece un horario diario para practicar',
-        'Aunque sea un ejercicio corto, mant�n la racha'
+        'Aunque sea un ejercicio corto, mantén la racha'
     ],
     jsonb_build_object(
         'streak_milestone', 3,
@@ -309,12 +309,12 @@ INSERT INTO gamification_system.achievements (
     gamilit.now_mexico()
 ),
 
--- 7. Racha de 7 D�as
+-- 7. Racha de 7 Días
 (
     '90000002-0000-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-    'Racha de 7 D�as',
-    'Mant�n una racha de 7 d�as consecutivos practicando',
+    'Racha de 7 Días',
+    'Mantén una racha de 7 días consecutivos practicando',
     'flame',
     'streak'::gamification_system.achievement_category,
     'rare',
@@ -336,11 +336,11 @@ INSERT INTO gamification_system.achievements (
     false,
     11,
     150,
-    '�Incre�ble! Una semana completa de pr�ctica. �Tu dedicaci�n es admirable!',
-    'Practica al menos un ejercicio durante 7 d�as consecutivos.',
+    '¡Increíble! Una semana completa de práctica. ¡Tu dedicación es admirable!',
+    'Practica al menos un ejercicio durante 7 días consecutivos.',
     ARRAY[
-        'Ya has creado un h�bito s�lido',
-        'Sigue as� para alcanzar rachas m�s largas'
+        'Ya has creado un hábito sólido',
+        'Sigue así para alcanzar rachas más largas'
     ],
     jsonb_build_object(
         'streak_milestone', 7,
@@ -350,12 +350,12 @@ INSERT INTO gamification_system.achievements (
     gamilit.now_mexico()
 ),
 
--- 8. Racha de 30 D�as
+-- 8. Racha de 30 Días
 (
     '90000002-0000-0000-0000-000000000003'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-    'Racha de 30 D�as',
-    'Mant�n una racha de 30 d�as consecutivos practicando',
+    'Racha de 30 Días',
+    'Mantén una racha de 30 días consecutivos practicando',
     'flame',
     'streak'::gamification_system.achievement_category,
     'epic',
@@ -377,10 +377,10 @@ INSERT INTO gamification_system.achievements (
     false,
     12,
     500,
-    '��PICO! 30 d�as de racha. Tu compromiso con el aprendizaje es extraordinario.',
-    'Practica al menos un ejercicio durante 30 d�as consecutivos.',
+    '¡ÉPICO! 30 días de racha. Tu compromiso con el aprendizaje es extraordinario.',
+    'Practica al menos un ejercicio durante 30 días consecutivos.',
     ARRAY[
-        'Has desarrollado un h�bito excepcional',
+        'Has desarrollado un hábito excepcional',
         'Eres un modelo de constancia'
     ],
     jsonb_build_object(
@@ -395,12 +395,12 @@ INSERT INTO gamification_system.achievements (
 -- CATEGORY: COMPLETION (4 achievements)
 -- =====================================================
 
--- 9. M�dulo 1 Completado
+-- 9. Módulo 1 Completado
 (
     '90000003-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-    'Comprensi�n Literal Dominada',
-    'Completa todos los ejercicios del M�dulo 1: Comprensi�n Literal',
+    'Comprensión Literal Dominada',
+    'Completa todos los ejercicios del Módulo 1: Comprensión Literal',
     'brain',
     'completion'::gamification_system.achievement_category,
     'rare',
@@ -423,26 +423,26 @@ INSERT INTO gamification_system.achievements (
     false,
     20,
     200,
-    '�Felicidades! Has dominado la Comprensi�n Literal. �Sigue adelante!',
-    'Completa todos los ejercicios del M�dulo 1 con al menos 60% de aciertos.',
+    '¡Felicidades! Has dominado la Comprensión Literal. ¡Sigue adelante!',
+    'Completa todos los ejercicios del Módulo 1 con al menos 60% de aciertos.',
     ARRAY[
-        'Identifica informaci�n expl�cita en los textos',
-        'Presta atenci�n a los detalles'
+        'Identifica información explícita en los textos',
+        'Presta atención a los detalles'
     ],
     jsonb_build_object(
-        'module', 'M�DULO 1: Comprensi�n Literal',
+        'module', 'MÓDULO 1: Comprensión Literal',
         'demo_achievement', true
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
 ),
 
--- 10. M�dulo 2 Completado
+-- 10. Módulo 2 Completado
 (
     '90000003-0000-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-    'Comprensi�n Inferencial Dominada',
-    'Completa todos los ejercicios del M�dulo 2: Comprensi�n Inferencial',
+    'Comprensión Inferencial Dominada',
+    'Completa todos los ejercicios del Módulo 2: Comprensión Inferencial',
     'brain',
     'completion'::gamification_system.achievement_category,
     'rare',
@@ -465,26 +465,26 @@ INSERT INTO gamification_system.achievements (
     false,
     21,
     250,
-    '�Excelente! Has dominado la Comprensi�n Inferencial. Tu habilidad crece.',
-    'Completa todos los ejercicios del M�dulo 2 con al menos 60% de aciertos.',
+    '¡Excelente! Has dominado la Comprensión Inferencial. Tu habilidad crece.',
+    'Completa todos los ejercicios del Módulo 2 con al menos 60% de aciertos.',
     ARRAY[
-        'Lee entre l�neas para encontrar significados impl�citos',
+        'Lee entre líneas para encontrar significados implícitos',
         'Usa tu conocimiento previo para hacer inferencias'
     ],
     jsonb_build_object(
-        'module', 'M�DULO 2: Comprensi�n Inferencial',
+        'module', 'MÓDULO 2: Comprensión Inferencial',
         'demo_achievement', true
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
 ),
 
--- 11. M�dulo 3 Completado
+-- 11. Módulo 3 Completado
 (
     '90000003-0000-0000-0000-000000000003'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-    'Comprensi�n Cr�tica Dominada',
-    'Completa todos los ejercicios del M�dulo 3: Comprensi�n Cr�tica',
+    'Comprensión Crítica Dominada',
+    'Completa todos los ejercicios del Módulo 3: Comprensión Crítica',
     'brain',
     'completion'::gamification_system.achievement_category,
     'epic',
@@ -507,26 +507,26 @@ INSERT INTO gamification_system.achievements (
     false,
     22,
     300,
-    '�Impresionante! Has dominado la Comprensi�n Cr�tica. Tu pensamiento es agudo.',
-    'Completa todos los ejercicios del M�dulo 3 con al menos 60% de aciertos.',
+    '¡Impresionante! Has dominado la Comprensión Crítica. Tu pensamiento es agudo.',
+    'Completa todos los ejercicios del Módulo 3 con al menos 60% de aciertos.',
     ARRAY[
-        'Eval�a la calidad y veracidad de la informaci�n',
-        'Desarrolla tu pensamiento cr�tico'
+        'Evalúa la calidad y veracidad de la información',
+        'Desarrolla tu pensamiento crítico'
     ],
     jsonb_build_object(
-        'module', 'M�DULO 3: Comprensi�n Cr�tica',
+        'module', 'MÓDULO 3: Comprensión Crítica',
         'demo_achievement', true
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
 ),
 
--- 12. Todos los M�dulos Completados
+-- 12. Todos los Módulos Completados
 (
     '90000003-0000-0000-0000-000000000004'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Completista Total',
-    'Completa todos los m�dulos del sistema',
+    'Completa todos los módulos del sistema',
     'trophy',
     'completion'::gamification_system.achievement_category,
     'legendary',
@@ -549,11 +549,11 @@ INSERT INTO gamification_system.achievements (
     false,
     23,
     1000,
-    '�LEGENDARIO! Has completado todos los m�dulos. Eres un verdadero completista.',
-    'Completa los 5 m�dulos del sistema con promedio de 70% o superior.',
+    '¡LEGENDARIO! Has completado todos los módulos. Eres un verdadero completista.',
+    'Completa los 5 módulos del sistema con promedio de 70% o superior.',
     ARRAY[
-        'Tu dedicaci�n es ejemplar',
-        'Has alcanzado el nivel m�s alto'
+        'Tu dedicación es ejemplar',
+        'Has alcanzado el nivel más alto'
     ],
     jsonb_build_object(
         'achievement_tier', 'ultimate',
@@ -572,7 +572,7 @@ INSERT INTO gamification_system.achievements (
     '90000004-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Perfeccionista',
-    'Obt�n 100% de aciertos en 10 ejercicios',
+    'Obtén 100% de aciertos en 10 ejercicios',
     'target',
     'mastery'::gamification_system.achievement_category,
     'rare',
@@ -595,8 +595,8 @@ INSERT INTO gamification_system.achievements (
     false,
     30,
     300,
-    '�Perfecto! Tu precisi�n es admirable. 10 ejercicios perfectos.',
-    'Obt�n 100% de aciertos en 10 ejercicios diferentes.',
+    '¡Perfecto! Tu precisión es admirable. 10 ejercicios perfectos.',
+    'Obtén 100% de aciertos en 10 ejercicios diferentes.',
     ARRAY[
         'Lee cuidadosamente antes de responder',
         'Revisa tus respuestas antes de enviar'
@@ -614,7 +614,7 @@ INSERT INTO gamification_system.achievements (
     '90000004-0000-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Experto en Inferencias',
-    'Completa 20 ejercicios de inferencia con 90% o m�s de aciertos',
+    'Completa 20 ejercicios de inferencia con 90% o más de aciertos',
     'brain',
     'mastery'::gamification_system.achievement_category,
     'epic',
@@ -638,10 +638,10 @@ INSERT INTO gamification_system.achievements (
     false,
     31,
     400,
-    '�Extraordinario! Eres un experto en hacer inferencias. Tu comprensi�n es profunda.',
-    'Completa 20 ejercicios de comprensi�n inferencial con 90% o m�s.',
+    '¡Extraordinario! Eres un experto en hacer inferencias. Tu comprensión es profunda.',
+    'Completa 20 ejercicios de comprensión inferencial con 90% o más.',
     ARRAY[
-        'Conecta la informaci�n del texto con tu conocimiento',
+        'Conecta la información del texto con tu conocimiento',
         'Busca pistas en el contexto'
     ],
     jsonb_build_object(
@@ -653,12 +653,12 @@ INSERT INTO gamification_system.achievements (
     gamilit.now_mexico()
 ),
 
--- 15. Cr�tico Avanzado
+-- 15. Crítico Avanzado
 (
     '90000004-0000-0000-0000-000000000003'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-    'Cr�tico Avanzado',
-    'Completa 20 ejercicios de pensamiento cr�tico con 90% o m�s',
+    'Crítico Avanzado',
+    'Completa 20 ejercicios de pensamiento crítico con 90% o más',
     'footprints',
     'mastery'::gamification_system.achievement_category,
     'epic',
@@ -682,11 +682,11 @@ INSERT INTO gamification_system.achievements (
     false,
     32,
     500,
-    '��PICO! Tu pensamiento cr�tico es de nivel avanzado. Sobresaliente.',
-    'Completa 20 ejercicios de comprensi�n cr�tica con 90% o m�s.',
+    '¡ÉPICO! Tu pensamiento crítico es de nivel avanzado. Sobresaliente.',
+    'Completa 20 ejercicios de comprensión crítica con 90% o más.',
     ARRAY[
-        'Eval�a argumentos y evidencias',
-        'Cuestiona y analiza la informaci�n'
+        'Evalúa argumentos y evidencias',
+        'Cuestiona y analiza la información'
     ],
     jsonb_build_object(
         'mastery_type', 'skill_expert',
@@ -706,7 +706,7 @@ INSERT INTO gamification_system.achievements (
     '90000005-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Explorador Curioso',
-    'Explora al menos 3 m�dulos diferentes',
+    'Explora al menos 3 módulos diferentes',
     'compass',
     'exploration'::gamification_system.achievement_category,
     'common',
@@ -729,10 +729,10 @@ INSERT INTO gamification_system.achievements (
     false,
     40,
     100,
-    '�Genial! Tu curiosidad te ha llevado a explorar diferentes m�dulos.',
-    'Completa al menos un ejercicio en 3 m�dulos diferentes.',
+    '¡Genial! Tu curiosidad te ha llevado a explorar diferentes módulos.',
+    'Completa al menos un ejercicio en 3 módulos diferentes.',
     ARRAY[
-        'Var�a tus actividades de aprendizaje',
+        'Varía tus actividades de aprendizaje',
         'Descubre nuevos tipos de textos'
     ],
     jsonb_build_object(
@@ -771,10 +771,10 @@ INSERT INTO gamification_system.achievements (
     false,
     41,
     200,
-    '�Incre�ble! Has explorado todos los niveles de dificultad. Eres un verdadero aventurero.',
+    '¡Increíble! Has explorado todos los niveles de dificultad. Eres un verdadero aventurero.',
     'Completa al menos 2 ejercicios de cada nivel de dificultad.',
     ARRAY[
-        'Reta tus l�mites con ejercicios dif�ciles',
+        'Reta tus límites con ejercicios difíciles',
         'La variedad enriquece tu aprendizaje'
     ],
     jsonb_build_object(
@@ -789,12 +789,12 @@ INSERT INTO gamification_system.achievements (
 -- CATEGORY: SOCIAL (2 achievements)
 -- =====================================================
 
--- 18. Compa�ero de Aula
+-- 18. Compañero de Aula
 (
     '90000006-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-    'Compa�ero de Aula',
-    '�nete a tu primera aula virtual',
+    'Compañero de Aula',
+    'Únete a tu primera aula virtual',
     'users',
     'social'::gamification_system.achievement_category,
     'common',
@@ -816,10 +816,10 @@ INSERT INTO gamification_system.achievements (
     false,
     50,
     50,
-    '�Bienvenido! Te has unido a tu primera aula. El aprendizaje colaborativo comienza.',
-    '�nete a un aula virtual para desbloquear este logro.',
+    '¡Bienvenido! Te has unido a tu primera aula. El aprendizaje colaborativo comienza.',
+    'Únete a un aula virtual para desbloquear este logro.',
     ARRAY[
-        'Colabora con tus compa�eros',
+        'Colabora con tus compañeros',
         'Aprende de las experiencias de otros'
     ],
     jsonb_build_object(
@@ -835,7 +835,7 @@ INSERT INTO gamification_system.achievements (
     '90000006-0000-0000-0000-000000000002'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Estudiante Colaborativo',
-    'Participa en 5 actividades sociales (aulas, desaf�os, etc.)',
+    'Participa en 5 actividades sociales (aulas, desafíos, etc.)',
     'handshake',
     'social'::gamification_system.achievement_category,
     'rare',
@@ -857,10 +857,10 @@ INSERT INTO gamification_system.achievements (
     false,
     51,
     150,
-    '�Excelente! Tu participaci�n social es notable. Sigues creciendo con otros.',
-    'Participa en 5 actividades sociales (unirte a aulas, aceptar desaf�os, etc.).',
+    '¡Excelente! Tu participación social es notable. Sigues creciendo con otros.',
+    'Participa en 5 actividades sociales (unirte a aulas, aceptar desafíos, etc.).',
     ARRAY[
-        'El aprendizaje es m�s rico cuando es social',
+        'El aprendizaje es más rico cuando es social',
         'Comparte tus logros con otros'
     ],
     jsonb_build_object(
@@ -880,7 +880,7 @@ INSERT INTO gamification_system.achievements (
     '90000007-0000-0000-0000-000000000001'::uuid,
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'Primera Visita',
-    'Inicia sesi�n por primera vez en GAMILIT',
+    'Inicia sesión por primera vez en GAMILIT',
     'footprints',
     'special'::gamification_system.achievement_category,
     'common',
@@ -902,11 +902,11 @@ INSERT INTO gamification_system.achievements (
     false,
     60,
     25,
-    '�Bienvenido a GAMILIT! Este es el comienzo de tu aventura de aprendizaje.',
-    'Este logro se desbloquea autom�ticamente al iniciar sesi�n por primera vez.',
+    '¡Bienvenido a GAMILIT! Este es el comienzo de tu aventura de aprendizaje.',
+    'Este logro se desbloquea automáticamente al iniciar sesión por primera vez.',
     ARRAY[
         'Explora la plataforma',
-        'Comienza con ejercicios f�ciles'
+        'Comienza con ejercicios fáciles'
     ],
     jsonb_build_object(
         'special_type', 'welcome',
@@ -1001,12 +1001,12 @@ BEGIN
     IF achievement_count = 20 THEN
         RAISE NOTICE ' Todos los achievements demo fueron creados correctamente';
     ELSE
-        RAISE WARNING '� Se esperaban 20 achievements, se crearon %', achievement_count;
+        RAISE WARNING '¡ Se esperaban 20 achievements, se crearon %', achievement_count;
     END IF;
 END $$;
 
 -- =====================================================
--- Listado de achievements por categor�a
+-- Listado de achievements por categoría
 -- =====================================================
 
 DO $$

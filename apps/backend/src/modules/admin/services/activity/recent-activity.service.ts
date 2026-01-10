@@ -181,15 +181,22 @@ export class RecentActivityService {
   /**
    * Get activity count for a specific time period.
    *
-   * @param hours - Number of hours to look back
+   * @param hours - Number of hours to look back (validated: 1-720)
    * @returns Count of activities in the time period
+   *
+   * @security FIX-2025-01-07: Changed from string interpolation to parameterized query
+   *           to prevent SQL injection vulnerability.
    */
   async getActivityCount(hours: number): Promise<number> {
     try {
+      // Validate hours to prevent invalid interval values (max 30 days = 720 hours)
+      const safeHours = Math.max(1, Math.min(Math.floor(hours), 720));
+
       const result = await this.authConnection.query(
         `SELECT COUNT(*) as count
          FROM audit_logging.activity_log
-         WHERE created_at >= NOW() - INTERVAL '${hours} hours'`,
+         WHERE created_at >= NOW() - make_interval(hours => $1)`,
+        [safeHours],
       );
 
       return parseInt(result[0]?.count || '0', 10);

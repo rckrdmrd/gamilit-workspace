@@ -1,80 +1,15 @@
 -- =====================================================
--- RLS Policies for: gamification_system.notifications & leaderboard_metadata
--- Description: Notifications and leaderboard configuration
+-- RLS Policies for: gamification_system.leaderboard_metadata
+-- Description: Leaderboard configuration policies
 -- Created: 2025-10-28
+-- Updated: 2026-01-07 (notifications movido a _deprecated)
 -- =====================================================
 --
--- Security Strategy:
--- - Notifications: Private, users manage their own
--- - Leaderboard metadata: Public configuration data
+-- NOTA (2026-01-07): Policies de notifications movidas a:
+--   _deprecated/06-notifications-policies.sql
+-- Razon: Tabla gamification_system.notifications deprecated
+-- Ver: PLAN-CONSOLIDACION-BD-2026-01-07.md (FASE 3)
 -- =====================================================
-
--- =====================================================
--- TABLE: gamification_system.notifications
--- Policies: 4 (SELECT: 2, UPDATE: 1, INSERT: 1)
--- =====================================================
-
-DROP POLICY IF EXISTS notifications_read_own ON gamification_system.notifications;
-DROP POLICY IF EXISTS notifications_update_own ON gamification_system.notifications;
-DROP POLICY IF EXISTS notifications_insert_system ON gamification_system.notifications;
-
--- Policy: notifications_read_own
--- Purpose: Users can read their own notifications
-CREATE POLICY notifications_read_own
-    ON gamification_system.notifications
-    AS PERMISSIVE
-    FOR SELECT
-    TO public
-    USING (user_id = current_setting('app.current_user_id', true)::uuid);
-
-COMMENT ON POLICY notifications_read_own ON gamification_system.notifications IS
-    'Users can see only their own notifications';
-
--- Policy: notifications_update_own
--- Purpose: Users can update their notifications (mark as read)
-CREATE POLICY notifications_update_own
-    ON gamification_system.notifications
-    AS PERMISSIVE
-    FOR UPDATE
-    TO public
-    USING (user_id = current_setting('app.current_user_id', true)::uuid)
-    WITH CHECK (user_id = current_setting('app.current_user_id', true)::uuid);
-
-COMMENT ON POLICY notifications_update_own ON gamification_system.notifications IS
-    'Users can mark their own notifications as read';
-
--- Policy: notifications_insert_system
--- Purpose: System creates notifications
-CREATE POLICY notifications_insert_system
-    ON gamification_system.notifications
-    AS PERMISSIVE
-    FOR INSERT
-    TO public
-    WITH CHECK (
-        EXISTS (
-            SELECT 1 FROM auth_management.user_roles ur
-            WHERE ur.user_id = current_setting('app.current_user_id', true)::uuid
-                AND ur.role = 'super_admin'
-        )
-    );
-
-COMMENT ON POLICY notifications_insert_system ON gamification_system.notifications IS
-    'Only system can create notifications (via SECURITY DEFINER functions)';
-
--- AGREGADO 2025-11-24: Policy para que admin pueda ver todas las notificaciones (DB-003)
-DROP POLICY IF EXISTS notifications_select_admin ON gamification_system.notifications;
-
--- Policy: notifications_select_admin
--- Purpose: Admins can read all notifications for monitoring and support
-CREATE POLICY notifications_select_admin
-    ON gamification_system.notifications
-    AS PERMISSIVE
-    FOR SELECT
-    TO public
-    USING (gamilit.is_admin());
-
-COMMENT ON POLICY notifications_select_admin ON gamification_system.notifications IS
-    'Admins can view all notifications for monitoring and support purposes';
 
 -- =====================================================
 -- TABLE: gamification_system.leaderboard_metadata
@@ -115,10 +50,10 @@ COMMENT ON POLICY leaderboard_metadata_manage_admin ON gamification_system.leade
     'Admins can configure leaderboard settings and metadata';
 
 -- =====================================================
--- SUMMARY: gamification_system schema
+-- SUMMARY: gamification_system schema (actualizado 2026-01-07)
 -- =====================================================
--- Total policies: 27
--- Tables with policies: 9
+-- Total policies: 23 (antes 27, -4 de notifications deprecated)
+-- Tables with policies: 8 (antes 9)
 -- - ml_coins_transactions: 4 policies (3 SELECT, 1 INSERT)
 -- - achievements: 2 policies (1 SELECT, 1 ALL)
 -- - user_achievements: 3 policies (3 SELECT)
@@ -126,6 +61,7 @@ COMMENT ON POLICY leaderboard_metadata_manage_admin ON gamification_system.leade
 -- - user_stats: 4 policies (3 SELECT, 1 UPDATE)
 -- - user_ranks: 2 policies (1 SELECT, 1 UPDATE)
 -- - missions: 2 policies (1 SELECT, 1 ALL)
--- - notifications: 4 policies (2 SELECT, 1 UPDATE, 1 INSERT)
 -- - leaderboard_metadata: 2 policies (1 SELECT, 1 ALL)
+-- DEPRECATED:
+-- - notifications: 4 policies -> movido a _deprecated/
 -- =====================================================

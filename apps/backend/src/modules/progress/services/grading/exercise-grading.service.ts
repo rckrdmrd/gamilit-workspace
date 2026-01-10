@@ -127,6 +127,12 @@ export class ExerciseGradingService {
       );
     }
 
+    // CORR-009: Quiz TikTok auto-grading using solution.correctAnswers
+    if (exercise.exercise_type === 'quiz_tiktok') {
+      this.logger.log('Using custom validation for Quiz TikTok');
+      return this.gradeQuizTiktok(answerData, exercise);
+    }
+
     // DEFAULT CASE: Use SQL validate_and_audit() for other exercise types
     return this.gradeBySqlFunction(
       userId,
@@ -408,6 +414,110 @@ export class ExerciseGradingService {
     }
 
     return { score, feedback };
+  }
+
+  /**
+   * CORR-009: Auto-grades Quiz TikTok exercise type
+   *
+   * @description Validates multiple choice answers against solution.correctAnswers
+   * Quiz TikTok has structure:
+   *   - content.questions: array of {id, text, options, correct, timeLimit}
+   *   - solution.correctAnswers: array of correct option indices [1, 1, 2]
+   *   - answerData.answers: array of user selected indices
+   *
+   * @param answerData - User submitted answers { answers: number[] }
+   * @param exercise - Exercise entity with solution
+   * @returns GradingResult
+   */
+  private gradeQuizTiktok(
+    answerData: Record<string, unknown>,
+    exercise: Exercise,
+  ): GradingResult {
+    const solution = exercise.solution as {
+      correctAnswers?: number[];
+      totalQuestions?: number;
+    } | undefined;
+
+    if (!solution?.correctAnswers || !Array.isArray(solution.correctAnswers)) {
+      this.logger.warn('Quiz TikTok exercise has no correctAnswers in solution');
+      return {
+        score: 0,
+        maxScore: exercise.max_points || 100,
+        isCorrect: false,
+        correctAnswers: 0,
+        totalQuestions: 0,
+        feedback: 'Error: Exercise solution not configured correctly',
+        details: { error: 'Missing correctAnswers in solution' },
+      };
+    }
+
+    const userAnswers = answerData.answers as number[] | undefined;
+    if (!userAnswers || !Array.isArray(userAnswers)) {
+      this.logger.warn('Quiz TikTok submission has no answers array');
+      return {
+        score: 0,
+        maxScore: exercise.max_points || 100,
+        isCorrect: false,
+        correctAnswers: 0,
+        totalQuestions: solution.correctAnswers.length,
+        feedback: 'No answers submitted',
+        details: { error: 'Missing answers in submission' },
+      };
+    }
+
+    const totalQuestions = solution.correctAnswers.length;
+    let correctCount = 0;
+    const questionResults: { questionIndex: number; userAnswer: number; correctAnswer: number; isCorrect: boolean }[] = [];
+
+    for (let i = 0; i < totalQuestions; i++) {
+      const correctAnswer = solution.correctAnswers[i];
+      const userAnswer = userAnswers[i];
+      const isCorrect = userAnswer === correctAnswer;
+
+      if (isCorrect) {
+        correctCount++;
+      }
+
+      questionResults.push({
+        questionIndex: i,
+        userAnswer: userAnswer ?? -1,
+        correctAnswer,
+        isCorrect,
+      });
+    }
+
+    // Calculate score proportionally
+    const maxScore = exercise.max_points || 100;
+    const score = Math.round((correctCount / totalQuestions) * maxScore);
+    const passingScore = exercise.passing_score || 70;
+    const isPassing = score >= passingScore;
+
+    // Generate feedback
+    let feedback = '';
+    if (correctCount === totalQuestions) {
+      feedback = 'Excelente! Respondiste todas las preguntas correctamente. Eres un experto en Marie Curie!';
+    } else if (isPassing) {
+      feedback = `Buen trabajo! Respondiste ${correctCount} de ${totalQuestions} preguntas correctamente.`;
+    } else {
+      feedback = `Sigue practicando. Respondiste ${correctCount} de ${totalQuestions} correctamente. Revisa los datos sobre Marie Curie.`;
+    }
+
+    this.logger.log(
+      `Quiz TikTok graded: ${correctCount}/${totalQuestions} correct, score=${score}/${maxScore}, passing=${isPassing}`,
+    );
+
+    return {
+      score,
+      maxScore,
+      isCorrect: isPassing,
+      correctAnswers: correctCount,
+      totalQuestions,
+      feedback,
+      details: {
+        questionResults,
+        percentageCorrect: Math.round((correctCount / totalQuestions) * 100),
+      },
+    };
   }
 
   /**

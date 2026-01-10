@@ -28,14 +28,13 @@ SELECT
 
     -- Student info
     p.full_name AS student_name,
-    p.username AS student_username,
+    p.email AS student_email,  -- FIX: Changed from p.username (column does not exist in profiles)
 
     -- Exercise info
     e.title AS exercise_title,
-    e.mechanic_type,
-    e.exercise_type,
+    e.exercise_type,  -- FIX: Removed e.mechanic_type (column does not exist)
     m.title AS module_title,
-    m.module_order,
+    m.order_index AS module_order,  -- FIX: Changed from m.module_order (column name is order_index)
 
     -- Classroom info
     cm.classroom_id,
@@ -43,9 +42,9 @@ SELECT
 
     -- Submission details
     es.score,
-    es.time_spent,
-    es.attempts,
-    es.answers,
+    es.time_spent_seconds,  -- FIX: Changed from time_spent
+    es.attempt_number,      -- FIX: Changed from attempts
+    es.answer_data,         -- FIX: Changed from answers
     es.feedback,
     es.submitted_at,
     es.created_at AS submission_date,
@@ -57,7 +56,7 @@ SELECT
         ELSE 'in_progress'
     END AS review_status,
     es.graded_at,
-    es.graded_by,
+    -- FIX: Removed es.graded_by (column does not exist)
 
     -- Priority calculation
     CASE
@@ -68,11 +67,9 @@ SELECT
     END AS priority,
 
     -- Days waiting
-    EXTRACT(DAY FROM (NOW() - es.submitted_at))::integer AS days_waiting,
+    EXTRACT(DAY FROM (NOW() - es.submitted_at))::integer AS days_waiting
 
-    -- Metadata
-    es.metadata,
-    es.tenant_id
+    -- FIX: Removed es.metadata and es.tenant_id (columns do not exist)
 
 FROM progress_tracking.exercise_submissions es
 -- Join to get student profile
@@ -92,21 +89,8 @@ WHERE
     es.graded_at IS NULL
     AND es.submitted_at IS NOT NULL
     -- Only exercises that require manual grading
-    AND (
-        e.requires_manual_grading = true
-        OR e.mechanic_type IN (
-            'respuesta_abierta',
-            'escritura_creativa',
-            'debate_guiado',
-            'mapa_mental',
-            'proyecto_multimedia',
-            'reflexion_metacognitiva',
-            'podcast_educativo',
-            'infografia_interactiva',
-            'creacion_storyboard',
-            'argumentacion_estructurada'
-        )
-    )
+    -- FIX: Simplified - use only requires_manual_grading flag (removed invalid exercise_type list)
+    AND e.requires_manual_grading = true
 
 ORDER BY
     -- Urgent items first
