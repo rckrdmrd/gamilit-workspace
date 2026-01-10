@@ -141,6 +141,46 @@ export interface User {
    * May be returned by some API endpoints
    */
   schoolId?: string;
+
+  /**
+   * Organization/Tenant data
+   * BACKEND DEPENDENCY: Requires backend to include tenant data in auth response
+   * Currently NOT returned by backend - will work once backend implements it
+   *
+   * @see Organization interface below
+   * @see TenantResponseDto (backend)
+   * @see REPORTE-EJECUCION-CORRECCION-TEACHER-PAGES-2026-01-07.md (deuda técnica DT-001)
+   */
+  organization?: Organization;
+}
+
+// =====================================================
+// ORGANIZATION/TENANT TYPE
+// =====================================================
+
+/**
+ * Organization/Tenant information
+ * Maps to backend TenantResponseDto (auth_management.tenants table)
+ *
+ * BACKEND DEPENDENCY: This data is NOT currently returned by UserResponseDto.
+ * Backend needs to include tenant data in auth response for this to work.
+ *
+ * Fields aligned with TenantResponseDto:
+ * - id, name, slug, domain, logo_url (subset of full tenant data)
+ *
+ * @see TenantResponseDto (backend: apps/backend/src/modules/auth/dto/tenant-response.dto.ts)
+ */
+export interface Organization {
+  /** Tenant UUID */
+  id: string;
+  /** Organization name */
+  name: string;
+  /** URL-friendly slug */
+  slug?: string;
+  /** Custom domain (if any) */
+  domain?: string;
+  /** Organization logo URL */
+  logo_url?: string;
 }
 
 /**

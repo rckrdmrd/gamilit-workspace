@@ -34,14 +34,20 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
   readOnly = false,
   className = '',
 }) => {
-  const [evaluations, setEvaluations] = useState<RubricEvaluation[]>(initialEvaluations);
-  const [generalFeedback, setGeneralFeedback] = useState(initialGeneralFeedback);
+  const [evaluations, setEvaluations] = useState<RubricEvaluation[]>(initialEvaluations ?? []);
+  // Ensure generalFeedback is never null (fallback to empty string)
+  const [generalFeedback, setGeneralFeedback] = useState(initialGeneralFeedback ?? '');
   const [totalScore, setTotalScore] = useState(0);
 
   /**
    * Initialize evaluations for all criteria
    */
   useEffect(() => {
+    // Guard against undefined rubric
+    if (!rubric || !Array.isArray(rubric)) {
+      return;
+    }
+
     const initializedEvaluations = rubric.map((criterion) => {
       const existing = evaluations.find((e) => e.criterionId === criterion.id);
       return existing || {
@@ -148,7 +154,7 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
           Criterios de Evaluación
         </h3>
 
-        {rubric.map((criterion, index) => {
+        {rubric?.map((criterion, index) => {
           const evaluation = getEvaluation(criterion.id);
           const percentage = getScorePercentage(evaluation.score, criterion.maxPoints);
 
@@ -252,7 +258,7 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
           Comentario General
         </label>
         <textarea
-          value={generalFeedback}
+          value={generalFeedback ?? ''}
           onChange={(e) => setGeneralFeedback(e.target.value)}
           disabled={readOnly}
           placeholder="Agrega un comentario general sobre el trabajo del estudiante..."
@@ -270,11 +276,11 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
             <div className="mt-2 space-y-1 text-sm text-blue-800">
               <p>
                 <span className="font-medium">Criterios evaluados:</span>{' '}
-                {evaluations.filter((e) => e.score > 0).length} de {rubric.length}
+                {evaluations.filter((e) => e.score > 0).length} de {rubric?.length ?? 0}
               </p>
               <p>
                 <span className="font-medium">Criterios con feedback:</span>{' '}
-                {evaluations.filter((e) => e.feedback && e.feedback.trim().length > 0).length} de {rubric.length}
+                {evaluations.filter((e) => e.feedback && e.feedback.trim().length > 0).length} de {rubric?.length ?? 0}
               </p>
               <p>
                 <span className="font-medium">Calificación final:</span> {totalScore}/100

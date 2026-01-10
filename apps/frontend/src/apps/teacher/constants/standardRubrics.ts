@@ -187,6 +187,82 @@ export const M3_MATRIZ_PERSPECTIVAS: ExerciseRubric = {
   ],
 };
 
+// CORR-009: Rubrica para Análisis de Fuentes CRAAP
+export const M3_ANALISIS_FUENTES: ExerciseRubric = {
+  exerciseType: 'analisis_fuentes',
+  moduleName: 'Comprensión Crítica',
+  moduleNumber: 3,
+  totalPoints: 100,
+  criteria: [
+    {
+      id: 'orden_confiabilidad',
+      name: 'Orden de Confiabilidad',
+      description: 'Precisión al ordenar fuentes por nivel de confiabilidad',
+      maxPoints: 60,
+      weight: 1.0,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'comparacion_relativa',
+      name: 'Comparación Relativa',
+      description: 'Capacidad de comparar fuentes entre sí',
+      maxPoints: 25,
+      weight: 1.0,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'aplicacion_craap',
+      name: 'Aplicación Criterios CRAAP',
+      description: 'Uso correcto de Currency, Relevance, Authority, Accuracy, Purpose',
+      maxPoints: 15,
+      weight: 1.0,
+      levels: STANDARD_4_LEVELS,
+    },
+  ],
+};
+
+// CORR-009: Rubrica para Podcast Argumentativo
+export const M3_PODCAST_ARGUMENTATIVO: ExerciseRubric = {
+  exerciseType: 'podcast_argumentativo',
+  moduleName: 'Comprensión Crítica',
+  moduleNumber: 3,
+  totalPoints: 100,
+  criteria: [
+    {
+      id: 'claridad_audio',
+      name: 'Claridad de Expresión',
+      description: 'Claridad en la expresión oral y calidad de audio',
+      maxPoints: 25,
+      weight: 1.0,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'argumentacion',
+      name: 'Calidad Argumentativa',
+      description: 'Solidez y estructura de los argumentos presentados',
+      maxPoints: 30,
+      weight: 1.2,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'pensamiento_critico',
+      name: 'Pensamiento Crítico',
+      description: 'Evidencia de análisis crítico del tema',
+      maxPoints: 25,
+      weight: 1.1,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'presentacion',
+      name: 'Presentación General',
+      description: 'Estructura del podcast: intro, desarrollo, cierre',
+      maxPoints: 20,
+      weight: 1.0,
+      levels: STANDARD_4_LEVELS,
+    },
+  ],
+};
+
 // ============================================================================
 // MODULE 4 RUBRICS - Lectura Digital
 // ============================================================================
@@ -310,6 +386,48 @@ export const M4_ANALISIS_MEMES: ExerciseRubric = {
       maxPoints: 25,
       weight: 1.1,
       levels: STANDARD_5_LEVELS,
+    },
+  ],
+};
+
+// CORR-009: Rubrica para Navegación Hipertextual
+export const M4_NAVEGACION_HIPERTEXTUAL: ExerciseRubric = {
+  exerciseType: 'navegacion_hipertextual',
+  moduleName: 'Lectura Digital',
+  moduleNumber: 4,
+  totalPoints: 100,
+  criteria: [
+    {
+      id: 'eficiencia',
+      name: 'Eficiencia de Navegación',
+      description: 'Trayectoria óptima para encontrar información',
+      maxPoints: 25,
+      weight: 1.0,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'relevancia',
+      name: 'Selección de Enlaces Relevantes',
+      description: 'Capacidad de elegir enlaces relevantes para la tarea',
+      maxPoints: 30,
+      weight: 1.2,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'sintesis',
+      name: 'Síntesis de Información',
+      description: 'Capacidad de sintetizar información de múltiples páginas',
+      maxPoints: 25,
+      weight: 1.1,
+      levels: STANDARD_5_LEVELS,
+    },
+    {
+      id: 'respuesta_investigacion',
+      name: 'Respuesta a Pregunta de Investigación',
+      description: 'Precisión en responder la pregunta de investigación',
+      maxPoints: 20,
+      weight: 1.0,
+      levels: STANDARD_4_LEVELS,
     },
   ],
 };
@@ -449,15 +567,18 @@ export const M5_VIDEO_CARTA: ExerciseRubric = {
  * All rubrics indexed by exercise type
  */
 export const RUBRICS_BY_TYPE: Record<string, ExerciseRubric> = {
-  // Module 3
+  // Module 3 - Comprensión Crítica (5 rubrics)
   tribunal_opiniones: M3_TRIBUNAL_OPINIONES,
   debate_digital: M3_DEBATE_DIGITAL,
   matriz_perspectivas: M3_MATRIZ_PERSPECTIVAS,
-  // Module 4
+  analisis_fuentes: M3_ANALISIS_FUENTES,           // CORR-009
+  podcast_argumentativo: M3_PODCAST_ARGUMENTATIVO, // CORR-009
+  // Module 4 - Lectura Digital (4 rubrics, quiz_tiktok is auto-grading)
   verificador_fake_news: M4_VERIFICADOR_FAKE_NEWS,
   infografia_interactiva: M4_INFOGRAFIA_INTERACTIVA,
   analisis_memes: M4_ANALISIS_MEMES,
-  // Module 5
+  navegacion_hipertextual: M4_NAVEGACION_HIPERTEXTUAL, // CORR-009
+  // Module 5 - Producción Lectora (3 rubrics)
   diario_multimedia: M5_DIARIO_MULTIMEDIA,
   comic_digital: M5_COMIC_DIGITAL,
   video_carta: M5_VIDEO_CARTA,

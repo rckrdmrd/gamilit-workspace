@@ -125,9 +125,11 @@ export function useAdminDashboard(
       cpu: apiHealth.cpu?.usage_percent ?? 0,
       memory: apiHealth.memory?.usage_percent ?? 0,
       uptime: apiHealth.uptime_seconds ?? 0,
-      activeUsers: 0, // Not provided by API directly in SystemHealth
-      requestsPerMin: 0, // Not provided by API
-      errorRate: 0, // Not provided by API
+      // FIX-2025-01-07: activeUsers is not in SystemHealth response.
+      // Use metrics.activeSessions (from /admin/system/metrics) for active user count.
+      activeUsers: 0,
+      requestsPerMin: 0, // Not provided by current API
+      errorRate: 0, // Not provided by current API
       database: apiHealth.database?.status ?? 'down',
       apiUptime: uptimePercentage, // Now properly converted to percentage
       lastCheck: apiHealth.timestamp,

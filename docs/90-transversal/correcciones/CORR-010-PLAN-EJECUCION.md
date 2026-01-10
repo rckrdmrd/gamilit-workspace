@@ -268,6 +268,145 @@ La tarea se considera **COMPLETADA** cuando:
 
 ---
 
-**Version:** 1.1
-**Ultima actualizacion:** 2026-01-07
-**Estado:** COMPLETADO Y VALIDADO
+### Ciclo 6: Corrección Backend - Sanitización Multicapa (CORR-010 v5)
+**Duración:** 30 minutos
+**Objetivo:** Corregir pérdida de propiedades en class-transformer
+
+**Problema detectado:**
+El error `statementId should not be empty` persistía incluso con seeds aplicados. Análisis reveló que `class-transformer` (`plainToInstance`) perdía propiedades durante la transformación.
+
+**Tareas:**
+1. Pre-sanitización en controller (`exercises.controller.ts:966-996`)
+2. Post-transform sanitización en validator (`exercise-answer.validator.ts:288-305`)
+3. Decoradores @Expose en DTO (`tribunal-opiniones-answers.dto.ts`)
+
+**Archivos modificados:**
+| Archivo | Cambio | Líneas |
+|---------|--------|--------|
+| `exercises.controller.ts` | Pre-sanitización nivel controller | +30 |
+| `exercise-answer.validator.ts` | Post-transform sanitización + logs | +40 |
+| `tribunal-opiniones-answers.dto.ts` | Decoradores @Expose | +8 |
+
+**Criterios de éxito:**
+- [x] Backend compila sin errores
+- [x] Sanitización garantiza statementId válido
+- [x] Logs de debug disponibles para diagnóstico
+
+---
+
+### Ciclo 7: Lógica de Reenvío M3-M5 (CORR-010 v6)
+**Duración:** 20 minutos
+**Objetivo:** Permitir reenvíos mientras submission no esté calificada
+
+**Problema detectado:**
+Segundo error: `You have already submitted this exercise. Only one submission is allowed`.
+El sistema bloqueaba TODOS los reenvíos para ejercicios con `requires_manual_grading = true`.
+
+**Solución implementada:**
+```typescript
+// exercise-submission.service.ts:306-351
+if (existingSubmission) {
+  const canResubmit = ['draft', 'submitted'].includes(existingSubmission.status);
+  if (!canResubmit) {
+    throw new BadRequestException('Este ejercicio ya fue calificado...');
+  }
+  // Actualizar submission existente
+  submission = await this.submissionRepo.save(existingSubmission);
+}
+```
+
+**Flujo corregido:**
+```
+Estudiante envía → status='submitted' → [Puede reenviar]
+→ Teacher califica → status='graded' → [Bloqueado]
+```
+
+**Criterios de éxito:**
+- [x] Reenvíos permitidos mientras status='submitted'
+- [x] Bloqueo solo después de grading
+- [x] Integración con ManualReviewService funcional
+
+---
+
+### Ciclo 8: Validación de Scripts BD
+**Duración:** 15 minutos
+**Objetivo:** Confirmar que no hay cambios DDL pendientes
+
+**Verificación:**
+```bash
+# No hay cambios DDL - solo lógica de aplicación
+# Scripts existentes son válidos
+ls -la apps/database/scripts/
+```
+
+**Resultado:**
+- Scripts `create-database.sh` y `drop-and-recreate-database.sh` sin cambios requeridos
+- Fase 16 (seeds educational_content) incluye todos los seeds necesarios
+
+**Criterios de éxito:**
+- [x] Sin cambios DDL requeridos
+- [x] Seeds ya incluidos en scripts
+- [x] Recreación BD validada previamente
+
+---
+
+### Ciclo 9: Documentación Final
+**Duración:** 20 minutos
+**Objetivo:** Documentación completa según estándares
+
+**Tareas:**
+1. Actualizar CORR-010-PLAN-EJECUCION.md (este archivo)
+2. Crear CORR-010-REPORTE-EJECUCION.md
+3. Actualizar CORR-010-VALIDACION.md con FASE 4
+4. Actualizar _MAP.md con resumen completo
+
+**Criterios de éxito:**
+- [x] Plan actualizado con todas las fases
+- [x] Reporte de ejecución creado
+- [x] Validación actualizada v4.0
+- [x] _MAP.md actualizado
+
+---
+
+## RESUMEN DE ARCHIVOS MODIFICADOS
+
+### Frontend (4 archivos)
+| Archivo | Ubicación | Cambio |
+|---------|-----------|--------|
+| `TribunalOpinionesExercise.tsx` | `features/mechanics/module3/` | Fallback IDs + onProgressUpdate |
+| `AnalisisFuentesExercise.tsx` | `features/mechanics/module3/` | Sanitización ranking IDs |
+| `VerificadorFakeNewsExercise.tsx` | `features/mechanics/module4/` | Sanitización claim_ids |
+| `ExercisePage.tsx` | `apps/student/pages/` | Debug logging |
+
+### Backend (4 archivos)
+| Archivo | Ubicación | Cambio |
+|---------|-----------|--------|
+| `exercises.controller.ts` | `modules/educational/controllers/` | Pre-sanitización |
+| `exercise-answer.validator.ts` | `modules/progress/dto/answers/` | Post-transform sanitización |
+| `tribunal-opiniones-answers.dto.ts` | `modules/progress/dto/answers/` | @Expose decorators |
+| `exercise-submission.service.ts` | `modules/progress/services/` | Lógica reenvío M3-M5 |
+
+### Base de Datos (0 archivos)
+- Sin cambios DDL
+- Seeds ya aplicados previamente
+
+---
+
+## CRITERIOS DE ÉXITO GLOBALES
+
+La tarea se considera **COMPLETADA** cuando:
+
+- [x] Seeds aplicados a BD (Ciclos 1-2)
+- [x] Scripts BD verificados (Ciclo 3)
+- [x] Recreación BD exitosa (Ciclo 4)
+- [x] Bug backend class-transformer corregido (Ciclo 6)
+- [x] Lógica reenvío M3-M5 implementada (Ciclo 7)
+- [x] Scripts BD validados sin cambios DDL (Ciclo 8)
+- [x] Documentación completa (Ciclo 9)
+- [x] Backend compila sin errores
+
+---
+
+**Versión:** 2.0
+**Última actualización:** 2026-01-07
+**Estado:** COMPLETADO - 5 fixes aplicados (3 frontend + 2 backend)

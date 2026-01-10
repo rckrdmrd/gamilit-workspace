@@ -373,9 +373,6 @@ export const ResponsesTable: React.FC<ResponsesTableProps> = ({
     }
   };
 
-  // Debug: Log data received
-  console.log('[ResponsesTable] Props:', { dataLength: data.length, total, page, limit, loading });
-
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
       <div className="overflow-x-auto">

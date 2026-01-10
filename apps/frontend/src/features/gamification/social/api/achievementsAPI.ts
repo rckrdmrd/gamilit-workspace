@@ -10,6 +10,14 @@
  * - POST /api/gamification/achievements/unlock - Unlock achievement
  * - PUT /api/gamification/achievements/user/:userId/progress/:achievementId - Update progress
  * - POST /api/gamification/achievements/user/:userId/check - Check achievements
+ *
+ * @note 2026-01-10: Este archivo proporciona getUserAchievements que retorna
+ * achievement + progress combinados (AchievementAPIResponse[]). gamificationApi
+ * tiene un método similar pero retorna UserAchievement[] (solo progress).
+ * El store necesita el formato enriquecido de este archivo.
+ *
+ * TODO: Consolidar en gamificationApi agregando getUserAchievementsWithDetails()
+ * que retorne el formato AchievementAPIResponse[].
  */
 
 import { apiClient } from '@/services/api/apiClient';
@@ -340,23 +348,33 @@ export const claimAchievementRewards = async (
 /**
  * Map backend category to frontend category
  *
+ * CORR-P8-001: Expandido mapeo para incluir todas las categorías del ENUM achievement_category:
+ * progress, streak, completion, social, special, mastery, exploration, collection, hidden
+ *
  * @param backendCategory - Backend category name
  * @returns Frontend category type
  */
 const mapCategory = (backendCategory: string): 'progress' | 'mastery' | 'social' | 'hidden' => {
   const categoryMap: Record<string, 'progress' | 'mastery' | 'social' | 'hidden'> = {
+    // Progress-related categories
     educational: 'progress',
     progress: 'progress',
+    streak: 'progress',       // CORR-P8-001: Agregado
+    completion: 'progress',   // CORR-P8-001: Agregado
+    exploration: 'progress',  // CORR-P8-001: Agregado
+    missions: 'progress',
+    // Mastery-related categories
     mastery: 'mastery',
     skill: 'mastery',
+    collection: 'mastery',
+    // Social category
     social: 'social',
+    // Hidden/special categories
     hidden: 'hidden',
     special: 'hidden',
-    collection: 'mastery',
-    missions: 'progress',
   };
 
-  return categoryMap[backendCategory.toLowerCase()] || 'progress';
+  return categoryMap[backendCategory.toLowerCase()] ?? 'progress';
 };
 
 /**

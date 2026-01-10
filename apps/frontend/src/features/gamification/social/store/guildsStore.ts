@@ -74,7 +74,7 @@ function mapTeamMemberToGuildMember(member: TeamMemberDTO): GuildMember {
     userId: member.user_id,
     username: 'Team Member', // TODO: Fetch user details
     avatar: '/avatars/default.png',
-    role: member.role === 'owner' ? 'leader' : member.role === 'admin' ? 'officer' : 'member',
+    role: member.role, // Valores directos: owner, admin, member (sincronizado 2026-01-07)
     joinedAt: new Date(member.joined_at),
     contributionScore: 0, // Not in TeamMember DTO
     lastActive: new Date(), // Not in TeamMember DTO

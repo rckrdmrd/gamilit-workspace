@@ -7,14 +7,13 @@ interface NotificationDropdownProps {
 }
 
 export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) => {
-  const {
-    notifications = [],
-    isLoading,
-    fetchNotifications,
-    markAsRead,
-    markAllAsRead,
-    deleteNotification
-  } = useNotificationsStore();
+  // Using Zustand selectors to prevent unnecessary re-renders
+  const notifications = useNotificationsStore((state) => state.notifications) ?? [];
+  const isLoading = useNotificationsStore((state) => state.isLoading);
+  const fetchNotifications = useNotificationsStore((state) => state.fetchNotifications);
+  const markAsRead = useNotificationsStore((state) => state.markAsRead);
+  const markAllAsRead = useNotificationsStore((state) => state.markAllAsRead);
+  const deleteNotification = useNotificationsStore((state) => state.deleteNotification);
 
   // Ensure notifications is always an array
   const safeNotifications = notifications ?? [];

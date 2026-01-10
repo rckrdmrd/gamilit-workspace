@@ -97,7 +97,8 @@ export function useAlerts(): UseAlertsReturn {
       setAlerts(response.items);
       setPagination(response.pagination);
     } catch (err: unknown) {
-      const errorMessage = err?.message || 'Error al cargar alertas';
+      // FIX-2026-01-07: Proper type guard for unknown error
+      const errorMessage = err instanceof Error ? err.message : 'Error al cargar alertas';
       setError(errorMessage);
       console.error('[useAlerts] Error fetching alerts:', err);
 
@@ -159,7 +160,8 @@ export function useAlerts(): UseAlertsReturn {
         // Refresh stats
         await fetchStats();
       } catch (err: unknown) {
-        const errorMessage = err?.message || 'Error al reconocer alerta';
+        // FIX-2026-01-07: Proper type guard for unknown error
+        const errorMessage = err instanceof Error ? err.message : 'Error al reconocer alerta';
         setError(errorMessage);
         throw err;
       }
@@ -191,7 +193,8 @@ export function useAlerts(): UseAlertsReturn {
         // Refresh stats
         await fetchStats();
       } catch (err: unknown) {
-        const errorMessage = err?.message || 'Error al resolver alerta';
+        // FIX-2026-01-07: Proper type guard for unknown error
+        const errorMessage = err instanceof Error ? err.message : 'Error al resolver alerta';
         setError(errorMessage);
         throw err;
       }
@@ -217,7 +220,8 @@ export function useAlerts(): UseAlertsReturn {
         // Refresh stats
         await fetchStats();
       } catch (err: unknown) {
-        const errorMessage = err?.message || 'Error al suprimir alerta';
+        // FIX-2026-01-07: Proper type guard for unknown error
+        const errorMessage = err instanceof Error ? err.message : 'Error al suprimir alerta';
         setError(errorMessage);
         throw err;
       }

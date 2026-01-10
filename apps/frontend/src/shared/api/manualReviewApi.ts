@@ -80,11 +80,16 @@ export interface ManualReview {
     id: string;
     title: string;
     moduleId: string;
+    // FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Agregar tipo de ejercicio
+    type?: string;
+    exercise_type?: string;
   };
   submission?: {
     id: string;
     answers: unknown;
-    submittedAt: Date;
+    // FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Soportar ambos formatos (camelCase y snake_case)
+    submittedAt?: Date;
+    submitted_at?: Date;
   };
 }
 
@@ -142,20 +147,49 @@ export interface CompleteReviewResponse {
 // ============================================================================
 
 /**
+ * Paginated reviews response from backend
+ * FIX BUG-TEACHER-REVIEWS-001 2026-01-07: Handle paginated response format
+ */
+export interface PaginatedReviewsResponse {
+  reviews: ManualReview[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+/**
  * Get pending reviews for the current teacher
  *
  * @param filters - Optional filters
  * @returns List of pending reviews
+ *
+ * FIX BUG-TEACHER-REVIEWS-001 2026-01-07: Backend returns paginated object,
+ * we extract the reviews array for backwards compatibility with existing components
  */
 export const getPendingReviews = async (filters?: {
   exerciseId?: string;
   moduleId?: string;
   classroomId?: string;
 }): Promise<ManualReview[]> => {
-  const { data } = await apiClient.get<ManualReview[]>(API_ENDPOINTS.teacher.reviews.pending, {
-    params: filters,
-  });
-  return data;
+  const { data } = await apiClient.get<PaginatedReviewsResponse | ManualReview[]>(
+    API_ENDPOINTS.teacher.reviews.pending,
+    { params: filters },
+  );
+
+  // Handle both paginated response (new format) and array (old format for backwards compatibility)
+  if (data && typeof data === 'object' && 'reviews' in data && Array.isArray(data.reviews)) {
+    return data.reviews;
+  }
+
+  // If already an array (old format or fallback), return as-is
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  // Fallback to empty array if data format is unexpected
+  console.warn('[manualReviewApi] Unexpected data format:', data);
+  return [];
 };
 
 /**
@@ -227,10 +261,11 @@ export const completeReview = async (
  * @returns Total score (0-100)
  */
 export const calculateTotalScore = (
-  rubric: RubricCriterion[],
-  evaluations: RubricEvaluation[]
+  rubric: RubricCriterion[] | undefined | null,
+  evaluations: RubricEvaluation[] | undefined | null
 ): number => {
-  if (rubric.length === 0 || evaluations.length === 0) {
+  // Guard against undefined/null arrays
+  if (!rubric || !evaluations || rubric.length === 0 || evaluations.length === 0) {
     return 0;
   }
 
@@ -260,10 +295,15 @@ export const calculateTotalScore = (
  * @returns Validation result
  */
 export const validateEvaluations = (
-  rubric: RubricCriterion[],
-  evaluations: RubricEvaluation[]
+  rubric: RubricCriterion[] | undefined | null,
+  evaluations: RubricEvaluation[] | undefined | null
 ): { valid: boolean; errors: string[] } => {
   const errors: string[] = [];
+
+  // Guard against undefined/null arrays
+  if (!rubric || !evaluations) {
+    return { valid: false, errors: ['Datos de rúbrica no disponibles'] };
+  }
 
   // Check that all criteria are evaluated
   for (const criterion of rubric) {

@@ -2,10 +2,10 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "4.0.0"
+version: "4.0.1"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
-fecha_actualizacion: "2025-12-23"
-actualizado_por: "Claude Opus 4.5 - Auditoria Documentacion vs Desarrollo"
+fecha_actualizacion: "2026-01-07"
+actualizado_por: "Claude Opus 4.5 - Correccion Admin Pages Sprint 3-4"
 
 # =============================================================================
 # RESUMEN EJECUTIVO
@@ -16,18 +16,18 @@ resumen:
 
   database:
     schemas: 15
-    tables: 132
+    tables: 133  # 2026-01-07: +1 (auth_management.roles - catalogo RBAC)
     views: 17
     materialized_views: 11
     enums: 42
     functions: 150
-    triggers: 111
+    triggers: 112  # 2026-01-07: +1 (trg_roles_updated_at)
     policies_rls: 185
     foreign_keys: 208
     seed_files: 99
-    ddl_files: 394
+    ddl_files: 395  # 2026-01-07: +1 (03b-roles.sql)
     status: "Clean creation compliant"
-    last_verified: "2025-12-23"
+    last_verified: "2026-01-07"
     source: "DATABASE_INVENTORY.yml"
     nuevas_tablas: "docs/database/TABLAS-NUEVAS-2025-12.md"
     triggers_inventory: "docs/database/TRIGGERS-INVENTORY.md"

@@ -5,7 +5,9 @@ import './NotificationBell.css';
 
 export const NotificationBell: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { unreadCount, fetchUnreadCount } = useNotificationsStore();
+  // Using Zustand selectors to prevent unnecessary re-renders
+  const unreadCount = useNotificationsStore((state) => state.unreadCount);
+  const fetchUnreadCount = useNotificationsStore((state) => state.fetchUnreadCount);
 
   useEffect(() => {
     // Initial fetch

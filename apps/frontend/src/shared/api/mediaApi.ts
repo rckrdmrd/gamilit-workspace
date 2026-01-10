@@ -14,8 +14,9 @@ import { API_ENDPOINTS } from '@/config/api.config';
 
 /**
  * Supported media types
+ * NOTA (2026-01-07): Sincronizado con MediaTypeEnum en enums.constants.ts
  */
-export type MediaType = 'image' | 'audio' | 'video' | 'document';
+export type MediaType = 'image' | 'audio' | 'video' | 'document' | 'interactive' | 'animation';
 
 /**
  * Media upload options
@@ -69,6 +70,8 @@ export const DEFAULT_MAX_SIZES: Record<MediaType, number> = {
   audio: 50 * 1024 * 1024, // 50 MB
   video: 200 * 1024 * 1024, // 200 MB
   document: 20 * 1024 * 1024, // 20 MB
+  interactive: 50 * 1024 * 1024, // 50 MB
+  animation: 30 * 1024 * 1024, // 30 MB
 };
 
 /**
@@ -79,6 +82,8 @@ export const ALLOWED_MIME_TYPES: Record<MediaType, string[]> = {
   audio: ['audio/mpeg', 'audio/mp4', 'audio/wav', 'audio/webm', 'audio/ogg'],
   video: ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'],
   document: ['application/pdf', 'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+  interactive: ['application/x-shockwave-flash', 'text/html', 'application/javascript'],
+  animation: ['image/gif', 'image/webp', 'application/json'], // JSON para Lottie animations
 };
 
 // ============================================================================

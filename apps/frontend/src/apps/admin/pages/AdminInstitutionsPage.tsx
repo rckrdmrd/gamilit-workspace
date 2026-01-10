@@ -45,6 +45,11 @@ export default function AdminInstitutionsPage() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+  // FIX-2025-01-07 P0: Operation feedback states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [operationError, setOperationError] = useState<string | null>(null);
+  const [operationSuccess, setOperationSuccess] = useState<string | null>(null);
+
   // Selected organization and form data
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [formData, setFormData] = useState({
@@ -64,36 +69,50 @@ export default function AdminInstitutionsPage() {
   const [institutionStats, setInstitutionStats] = useState<InstitutionStatsData | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
 
+  // FIX-2025-01-07 P0: Helper to clear operation messages after delay
+  const clearMessages = useCallback(() => {
+    setTimeout(() => {
+      setOperationError(null);
+      setOperationSuccess(null);
+    }, 5000);
+  }, []);
+
   // Load organization stats when viewing detail
+  // FIX-2025-01-07 P0: Added null coalescing for response validation
   const loadOrganizationStats = useCallback(async (orgId: string) => {
     setStatsLoading(true);
     try {
       const stats = await getOrganizationStats(orgId);
-      // Map API response to InstitutionStatsData format
+      // Validate and map API response with null coalescing (P0 fix)
       setInstitutionStats({
-        totalStudents: stats.totalStudents,
-        activeStudents: stats.activeStudents,
-        totalTeachers: stats.totalTeachers,
-        totalClassrooms: stats.totalClassrooms,
-        averageProgress: stats.averageProgress,
-        storageUsed: stats.storageUsed,
-        lastActivity: stats.lastActivity,
-        trialEndsAt: stats.trialEndsAt,
+        totalStudents: stats?.totalStudents ?? 0,
+        activeStudents: stats?.activeStudents ?? 0,
+        totalTeachers: stats?.totalTeachers ?? 0,
+        totalClassrooms: stats?.totalClassrooms ?? 0,
+        averageProgress: stats?.averageProgress ?? 0,
+        storageUsed: stats?.storageUsed ?? 0,
+        lastActivity: stats?.lastActivity ?? null,
+        trialEndsAt: stats?.trialEndsAt ?? null,
       });
     } catch (err) {
       console.error('Failed to load organization stats:', err);
       setInstitutionStats(null);
+      setOperationError('Error al cargar estadísticas de la organización');
+      clearMessages();
     } finally {
       setStatsLoading(false);
     }
-  }, []);
+  }, [clearMessages]);
 
   const handleLogout = () => {
     logout();
     window.location.href = '/login';
   };
 
+  // FIX-2025-01-07 P0: Added isSubmitting and user feedback
   const handleCreateOrg = async () => {
+    setIsSubmitting(true);
+    setOperationError(null);
     try {
       // Auto-generate slug if empty
       const slug =
@@ -114,13 +133,23 @@ export default function AdminInstitutionsPage() {
       });
       setIsCreateModalOpen(false);
       setFormData({ name: '', slug: '', plan: 'free' });
+      setOperationSuccess(`Organización "${formData.name}" creada exitosamente`);
+      clearMessages();
     } catch (err) {
       console.error('Failed to create organization:', err);
+      const message = err instanceof Error ? err.message : 'Error al crear organización';
+      setOperationError(message);
+      clearMessages();
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  // FIX-2025-01-07 P0: Added isSubmitting and user feedback
   const handleEditOrg = async () => {
     if (!selectedOrg) return;
+    setIsSubmitting(true);
+    setOperationError(null);
     try {
       await updateOrganization(selectedOrg.id, {
         name: formData.name,
@@ -129,19 +158,37 @@ export default function AdminInstitutionsPage() {
       setIsEditModalOpen(false);
       setSelectedOrg(null);
       setFormData({ name: '', slug: '', plan: 'free' });
+      setOperationSuccess(`Organización "${formData.name}" actualizada exitosamente`);
+      clearMessages();
     } catch (err) {
       console.error('Failed to update organization:', err);
+      const message = err instanceof Error ? err.message : 'Error al actualizar organización';
+      setOperationError(message);
+      clearMessages();
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  // FIX-2025-01-07 P0: Added isSubmitting and user feedback
   const handleDeleteOrg = async () => {
     if (!selectedOrg) return;
+    const orgName = selectedOrg.name;
+    setIsSubmitting(true);
+    setOperationError(null);
     try {
       await deleteOrganization(selectedOrg.id);
       setIsDeleteDialogOpen(false);
       setSelectedOrg(null);
+      setOperationSuccess(`Organización "${orgName}" eliminada exitosamente`);
+      clearMessages();
     } catch (err) {
       console.error('Failed to delete organization:', err);
+      const message = err instanceof Error ? err.message : 'Error al eliminar organización';
+      setOperationError(message);
+      clearMessages();
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -190,6 +237,7 @@ export default function AdminInstitutionsPage() {
     setFilters({ search: '', status: [], plan: [] });
   };
 
+  // FIX-2025-01-07 P0: Added user feedback for toggle feature
   const handleToggleFeature = async (feature: string) => {
     // BUG-ADMIN-007: Validate selectedOrg and feature
     if (!selectedOrg?.id || !feature) {
@@ -204,19 +252,26 @@ export default function AdminInstitutionsPage() {
     const previousOrg = { ...selectedOrg };
     // BUG-ADMIN-007: Safe array access with validation
     const currentFeatures = Array.isArray(selectedOrg.features) ? selectedOrg.features : [];
+    const isEnabling = !currentFeatures.includes(feature);
 
     try {
       // Optimistic update
-      const updatedFeatures = currentFeatures.includes(feature)
-        ? currentFeatures.filter((f) => f !== feature)
-        : [...currentFeatures, feature];
+      const updatedFeatures = isEnabling
+        ? [...currentFeatures, feature]
+        : currentFeatures.filter((f) => f !== feature);
       setSelectedOrg({ ...selectedOrg, features: updatedFeatures });
 
       await toggleFeature(selectedOrg.id, feature);
+      // P0 fix: Show success feedback
+      setOperationSuccess(`Feature "${feature}" ${isEnabling ? 'activada' : 'desactivada'}`);
+      clearMessages();
     } catch (err) {
-      // Rollback on error
+      // Rollback on error with user notification (P0 fix)
       console.error('Failed to toggle feature:', err);
       setSelectedOrg(previousOrg);
+      const message = err instanceof Error ? err.message : `Error al ${isEnabling ? 'activar' : 'desactivar'} feature`;
+      setOperationError(message);
+      clearMessages();
     }
   };
 
@@ -290,6 +345,19 @@ export default function AdminInstitutionsPage() {
           </div>
         )}
 
+        {/* FIX-2025-01-07 P0: Operation feedback messages */}
+        {operationError && (
+          <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-400 animate-fade-in">
+            <p className="font-semibold">Error de operación:</p>
+            <p>{operationError}</p>
+          </div>
+        )}
+        {operationSuccess && (
+          <div className="mb-6 rounded-lg border border-green-500/50 bg-green-500/20 p-4 text-green-400 animate-fade-in">
+            <p>{operationSuccess}</p>
+          </div>
+        )}
+
         {/* Filters */}
         <InstitutionFilters onFilter={handleFilterChange} onReset={handleResetFilters} />
 
@@ -357,6 +425,7 @@ export default function AdminInstitutionsPage() {
             ]}
             required
           />
+          {/* FIX-2025-01-07 P0: Loading states on buttons */}
           <div className="flex justify-end gap-3 pt-4">
             <DetectiveButton
               variant="secondary"
@@ -364,11 +433,16 @@ export default function AdminInstitutionsPage() {
                 setIsCreateModalOpen(false);
                 setFormData({ name: '', slug: '', plan: 'free' });
               }}
+              disabled={isSubmitting}
             >
               Cancelar
             </DetectiveButton>
-            <DetectiveButton variant="primary" onClick={handleCreateOrg} disabled={!formData.name}>
-              Crear
+            <DetectiveButton
+              variant="primary"
+              onClick={handleCreateOrg}
+              disabled={!formData.name || isSubmitting}
+            >
+              {isSubmitting ? 'Creando...' : 'Crear'}
             </DetectiveButton>
           </div>
         </div>
@@ -406,6 +480,7 @@ export default function AdminInstitutionsPage() {
             ]}
             required
           />
+          {/* FIX-2025-01-07 P0: Loading states on buttons */}
           <div className="flex justify-end gap-3 pt-4">
             <DetectiveButton
               variant="secondary"
@@ -414,11 +489,16 @@ export default function AdminInstitutionsPage() {
                 setSelectedOrg(null);
                 setFormData({ name: '', slug: '', plan: 'free' });
               }}
+              disabled={isSubmitting}
             >
               Cancelar
             </DetectiveButton>
-            <DetectiveButton variant="primary" onClick={handleEditOrg}>
-              Guardar
+            <DetectiveButton
+              variant="primary"
+              onClick={handleEditOrg}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Guardando...' : 'Guardar'}
             </DetectiveButton>
           </div>
         </div>

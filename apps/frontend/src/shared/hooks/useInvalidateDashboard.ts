@@ -53,9 +53,10 @@ export interface UseInvalidateDashboardReturn {
  */
 export function useInvalidateDashboard(): UseInvalidateDashboardReturn {
   const queryClient = useQueryClient();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
-  const { user } = useAuth();
+  // Using Zustand selectors to prevent unnecessary re-renders
+  const fetchUserProgress = useRanksStore((state) => state.fetchUserProgress);
+  const fetchBalance = useEconomyStore((state) => state.fetchBalance);
+  const { user } = useAuth(); // useAuth now uses selectors internally
 
   const syncAndInvalidate = async () => {
     console.log('🔄 [useInvalidateDashboard] Starting sync and invalidate...');

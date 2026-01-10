@@ -13,6 +13,9 @@ import type {
   AchievementUnlockNotification,
   AchievementStats,
 } from '../types/achievementsTypes';
+// NOTA: Se mantiene achievementsAPI porque retorna AchievementAPIResponse[] (achievement + progress)
+// gamificationApi.getUserAchievements retorna UserAchievement[] (solo progress) - formato incompatible
+// TODO: Agregar método getUserAchievementsWithDetails a gamificationApi para poder consolidar
 import { getUserAchievements } from '../api/achievementsAPI';
 
 // Empty stats for initial state
@@ -162,6 +165,7 @@ export const useAchievementsStore = create<AchievementsStore>((set) => ({
       const achievementsWithProgress = await getUserAchievements(userId);
 
       // Map backend response to frontend Achievement type
+      // CORR-P2-001: Usar ?? (nullish coalescing) en lugar de || para respetar valores de 0
       const achievements: Achievement[] = achievementsWithProgress.map((ach) => ({
         id: ach.id,
         title: ach.name,
@@ -169,14 +173,15 @@ export const useAchievementsStore = create<AchievementsStore>((set) => ({
         category: ach.category as Achievement['category'],
         rarity: ach.rarity,
         icon: ach.icon,
-        mlCoinsReward: ach.rewards?.ml_coins || ach.ml_coins_reward || 0,
-        xpReward: ach.rewards?.xp || 0,
-        isUnlocked: ach.isUnlocked || false,
+        // CORR-P2-001: ?? permite que 0 sea un valor válido (0 ML coins es válido)
+        mlCoinsReward: ach.rewards?.ml_coins ?? ach.ml_coins_reward ?? 0,
+        xpReward: ach.rewards?.xp ?? ach.points_value ?? 0,
+        isUnlocked: ach.isUnlocked ?? false,
         unlockedAt: ach.unlockedAt,
         progress: ach.progress,
         requirements: ach.conditions?.requirements,
-        isHidden: ach.is_secret || ach.category === 'hidden' || ach.category === 'special',
-        rewardsClaimed: ach.rewardsClaimed || false,
+        isHidden: ach.is_secret ?? (ach.category === 'hidden' || ach.category === 'special'),
+        rewardsClaimed: ach.rewardsClaimed ?? false,
       }));
 
       set({

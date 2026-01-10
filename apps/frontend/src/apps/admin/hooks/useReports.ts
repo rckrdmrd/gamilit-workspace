@@ -95,7 +95,9 @@ export function useReports(options: UseReportsOptions = {}): UseReportsReturn {
       }
     } catch (err: unknown) {
       if (isMountedRef.current) {
-        setError(err.message || 'Failed to fetch reports');
+        // FIX-2026-01-07: Proper type guard for unknown error
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch reports';
+        setError(errorMessage);
         console.error('[useReports] Error fetching reports:', err);
       }
     } finally {
@@ -126,7 +128,8 @@ export function useReports(options: UseReportsOptions = {}): UseReportsReturn {
 
         return report;
       } catch (err: unknown) {
-        const errorMessage = err.message || 'Failed to generate report';
+        // FIX-2026-01-07: Proper type guard for unknown error
+        const errorMessage = err instanceof Error ? err.message : 'Failed to generate report';
         setError(errorMessage);
         throw new Error(errorMessage);
       }
@@ -172,7 +175,8 @@ export function useReports(options: UseReportsOptions = {}): UseReportsReturn {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       } catch (err: unknown) {
-        const errorMessage = err.message || 'Failed to download report';
+        // FIX-2026-01-07: Proper type guard for unknown error
+        const errorMessage = err instanceof Error ? err.message : 'Failed to download report';
         setError(errorMessage);
         throw new Error(errorMessage);
       }
@@ -192,7 +196,8 @@ export function useReports(options: UseReportsOptions = {}): UseReportsReturn {
         // Refresh list after deletion
         await fetchReports(filters);
       } catch (err: unknown) {
-        const errorMessage = err.message || 'Failed to delete report';
+        // FIX-2026-01-07: Proper type guard for unknown error
+        const errorMessage = err instanceof Error ? err.message : 'Failed to delete report';
         setError(errorMessage);
         throw new Error(errorMessage);
       }

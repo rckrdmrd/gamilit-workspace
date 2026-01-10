@@ -2,7 +2,7 @@
 id: "CORR-004-PLAN"
 title: "Plan de Ejecucion - Correccion API LeaderboardPage y AchievementsPage"
 type: "Plan"
-status: "Pending Approval"
+status: "Ejecutado"
 priority: "P0"
 assignee: "@Orquestador"
 related_task: "CORR-004"

@@ -8,6 +8,7 @@ import { useUserManagement } from '../hooks/useUserManagement';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { UserDetailModal } from '../components/users/UserDetailModal';
 import { CreateUserModal } from '../components/users/CreateUserModal';
+import { BulkActionsPanel } from '../components/users/BulkActionsPanel';
 import type { CreateUserFormData, CreatedUserResult } from '../components/users/CreateUserModal';
 import { ToastContainer, useToast } from '@shared/components/base/Toast';
 import { getOrganizations } from '@/services/api/adminAPI';
@@ -24,6 +25,8 @@ import {
   Mail,
   Shield,
   RefreshCw,
+  Square,
+  CheckSquare,
 } from 'lucide-react';
 
 /**
@@ -72,6 +75,14 @@ export default function AdminUsersPage() {
     totalPages,
     nextPage,
     prevPage,
+    // Bulk operations (FIX-2025-01-07)
+    selectedUsers,
+    selectAllUsers,
+    deselectAllUsers,
+    toggleUserSelection,
+    bulkSuspend,
+    bulkDelete,
+    bulkUpdateRole,
   } = useUserManagement();
 
   // Toast notifications
@@ -296,6 +307,158 @@ export default function AdminUsersPage() {
     });
   };
 
+  // ========================================
+  // BULK OPERATIONS HANDLERS (FIX-2025-01-07)
+  // ========================================
+
+  /**
+   * Handle bulk suspend - Suspender múltiples usuarios
+   */
+  const handleBulkSuspend = useCallback(
+    async (userIds: string[]) => {
+      try {
+        const result = await bulkSuspend(userIds);
+        showToast({
+          type: 'success',
+          title: 'Usuarios suspendidos',
+          message: `${result.successCount} usuarios suspendidos correctamente`,
+        });
+        await fetchUsers();
+      } catch (err) {
+        showToast({
+          type: 'error',
+          title: 'Error',
+          message: 'No se pudieron suspender los usuarios',
+        });
+        throw err;
+      }
+    },
+    [bulkSuspend, fetchUsers, showToast],
+  );
+
+  /**
+   * Handle bulk activate - Activar múltiples usuarios (unsuspend)
+   */
+  const handleBulkActivate = useCallback(
+    async (userIds: string[]) => {
+      try {
+        // Usar unsuspendUser para cada usuario (no hay bulkActivate en el hook)
+        await Promise.all(userIds.map((id) => unsuspendUser(id)));
+        showToast({
+          type: 'success',
+          title: 'Usuarios activados',
+          message: `${userIds.length} usuarios activados correctamente`,
+        });
+        await fetchUsers();
+      } catch (err) {
+        showToast({
+          type: 'error',
+          title: 'Error',
+          message: 'No se pudieron activar los usuarios',
+        });
+        throw err;
+      }
+    },
+    [unsuspendUser, fetchUsers, showToast],
+  );
+
+  /**
+   * Handle bulk change role - Cambiar rol de múltiples usuarios
+   */
+  const handleBulkChangeRole = useCallback(
+    async (userIds: string[], role: string) => {
+      try {
+        const result = await bulkUpdateRole(userIds, role);
+        showToast({
+          type: 'success',
+          title: 'Roles actualizados',
+          message: `${result.successCount} usuarios actualizados correctamente`,
+        });
+        await fetchUsers();
+      } catch (err) {
+        showToast({
+          type: 'error',
+          title: 'Error',
+          message: 'No se pudieron actualizar los roles',
+        });
+        throw err;
+      }
+    },
+    [bulkUpdateRole, fetchUsers, showToast],
+  );
+
+  /**
+   * Handle bulk delete - Eliminar múltiples usuarios
+   */
+  const handleBulkDelete = useCallback(
+    async (userIds: string[]) => {
+      try {
+        const result = await bulkDelete(userIds);
+        showToast({
+          type: 'success',
+          title: 'Usuarios eliminados',
+          message: `${result.successCount} usuarios eliminados correctamente`,
+        });
+        await fetchUsers();
+      } catch (err) {
+        showToast({
+          type: 'error',
+          title: 'Error',
+          message: 'No se pudieron eliminar los usuarios',
+        });
+        throw err;
+      }
+    },
+    [bulkDelete, fetchUsers, showToast],
+  );
+
+  /**
+   * Handle export CSV - Exportar usuarios seleccionados a CSV
+   */
+  const handleExportCSV = useCallback(
+    (userIds: string[]) => {
+      const selectedUserObjects = users.filter((u) => userIds.includes(u.id));
+      const csvContent = [
+        ['ID', 'Nombre', 'Email', 'Rol', 'Estado', 'Organización', 'Último Acceso'].join(','),
+        ...selectedUserObjects.map((u) =>
+          [
+            u.id,
+            `"${u.full_name}"`,
+            u.email,
+            u.role,
+            u.status,
+            u.organizationName || 'N/A',
+            u.lastLogin || 'Nunca',
+          ].join(','),
+        ),
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `usuarios_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast({
+        type: 'success',
+        title: 'Exportación completada',
+        message: `${selectedUserObjects.length} usuarios exportados a CSV`,
+      });
+    },
+    [users, showToast],
+  );
+
+  /**
+   * Check if all visible users are selected
+   */
+  const allUsersSelected = useMemo(
+    () => users.length > 0 && users.every((u) => selectedUsers.includes(u.id)),
+    [users, selectedUsers],
+  );
+
   // Calculate stats from real data (memoized)
   const stats = useMemo(
     () => ({
@@ -519,6 +682,20 @@ export default function AdminUsersPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-700">
+                      {/* Checkbox para selección masiva (FIX-2025-01-07) */}
+                      <th className="w-12 px-4 py-3 text-left">
+                        <button
+                          onClick={() => (allUsersSelected ? deselectAllUsers() : selectAllUsers())}
+                          className="text-detective-text-secondary hover:text-detective-orange transition-colors"
+                          title={allUsersSelected ? 'Deseleccionar todos' : 'Seleccionar todos'}
+                        >
+                          {allUsersSelected ? (
+                            <CheckSquare className="h-5 w-5 text-detective-orange" />
+                          ) : (
+                            <Square className="h-5 w-5" />
+                          )}
+                        </button>
+                      </th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
                         Usuario
                       </th>
@@ -546,8 +723,24 @@ export default function AdminUsersPage() {
                     {users.map((usr) => (
                       <tr
                         key={usr.id}
-                        className="border-b border-gray-700 transition-colors hover:bg-detective-bg-secondary"
+                        className={`border-b border-gray-700 transition-colors hover:bg-detective-bg-secondary ${
+                          selectedUsers.includes(usr.id) ? 'bg-detective-orange/10' : ''
+                        }`}
                       >
+                        {/* Checkbox de selección individual (FIX-2025-01-07) */}
+                        <td className="w-12 px-4 py-3">
+                          <button
+                            onClick={() => toggleUserSelection(usr.id)}
+                            className="text-detective-text-secondary hover:text-detective-orange transition-colors"
+                            title={selectedUsers.includes(usr.id) ? 'Deseleccionar' : 'Seleccionar'}
+                          >
+                            {selectedUsers.includes(usr.id) ? (
+                              <CheckSquare className="h-5 w-5 text-detective-orange" />
+                            ) : (
+                              <Square className="h-5 w-5" />
+                            )}
+                          </button>
+                        </td>
                         <td className="px-4 py-3 text-sm font-medium text-detective-text">
                           {usr.full_name}
                         </td>
@@ -676,6 +869,18 @@ export default function AdminUsersPage() {
         onSubmit={handleCreateUser}
         organizations={organizations}
         isLoadingOrganizations={isLoadingOrganizations}
+      />
+
+      {/* Bulk Actions Panel - FIX-2025-01-07 */}
+      <BulkActionsPanel
+        selectedUsers={selectedUsers}
+        users={users}
+        onClearSelection={deselectAllUsers}
+        onBulkSuspend={handleBulkSuspend}
+        onBulkActivate={handleBulkActivate}
+        onBulkChangeRole={handleBulkChangeRole}
+        onBulkDelete={handleBulkDelete}
+        onExportCSV={handleExportCSV}
       />
     </AdminLayout>
   );

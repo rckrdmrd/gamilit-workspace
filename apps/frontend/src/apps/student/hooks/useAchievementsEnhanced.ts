@@ -55,8 +55,9 @@ const DEFAULT_FILTERS: AchievementFiltersState = {
 };
 
 export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
-  // Store
-  const { achievements, refreshAchievements } = useAchievementsStore();
+  // Store - Using Zustand selectors to prevent unnecessary re-renders
+  const achievements = useAchievementsStore((state) => state.achievements);
+  const refreshAchievements = useAchievementsStore((state) => state.refreshAchievements);
 
   // Local state
   const [filters, setFilters] = useState<AchievementFiltersState>(DEFAULT_FILTERS);

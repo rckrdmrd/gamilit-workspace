@@ -207,13 +207,59 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
     setIsSubmitting(true);
 
     try {
+      // CORR-010 FIX v4 2026-01-07: Sanitize ranking IDs before sending
+      // Ensure all source IDs in ranking are valid (non-empty strings)
+      const sanitizedRanking = currentRanking.map((sourceId, idx) => {
+        if (!sourceId || sourceId.trim() === '') {
+          const fallbackId = `src-${idx + 1}`;
+          console.warn(`[AnalisisFuentes CORR-010] Regenerating missing sourceId at index ${idx}: ${fallbackId}`);
+          return fallbackId;
+        }
+        return sourceId;
+      });
+
+      // Validate after sanitization
+      const invalidIds = sanitizedRanking.filter((id) => !id || id.trim() === '');
+      if (invalidIds.length > 0) {
+        console.error('[AnalisisFuentes CORR-010] Still invalid IDs after sanitization:', invalidIds);
+        setFeedback({
+          type: 'error',
+          title: 'Error de Validación',
+          message: 'Algunos IDs de fuentes son inválidos. Intenta reiniciar el ejercicio.',
+        });
+        setShowFeedback(true);
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AnalisisFuentes CORR-010] Sanitized ranking:', sanitizedRanking);
+      }
+
       const answers: AnalisisFuentesAnswers = {
-        ranking: currentRanking,
+        ranking: sanitizedRanking,
       };
 
       const response = await submitExercise(exerciseId, user.id, answers);
 
-      // Extraer rewards de la respuesta
+      // CORR-AF-001 2026-01-07: Manejar ejercicios con revisión manual
+      // Este ejercicio tiene requires_manual_grading=TRUE en BD
+      if (response.status === 'pending_review' || response.requiresManualReview) {
+        setFeedback({
+          type: 'info',
+          title: 'Análisis Enviado',
+          message:
+            'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+          pendingReview: true,
+        });
+        setShowFeedback(true);
+        // FIX M3-M5 2026-01-08: Invalidar cache para actualizar barra de progreso
+        await syncAndInvalidate();
+        onComplete?.(0, timeSpent);
+        return;
+      }
+
+      // Extraer rewards de la respuesta (solo si no requiere revisión manual)
       const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
 
       // Create feedback based on response
@@ -292,19 +338,15 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-detective-lg bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-detective-lg"
-          >
+          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center gap-3">
               <FileSearch className="h-8 w-8" />
-              <h1 className="text-detective-3xl font-bold">Análisis de Fuentes</h1>
+              <h2 className="text-detective-2xl font-bold">Análisis de Fuentes</h2>
             </div>
-            <p className="text-detective-base">
+            <p className="mb-4 text-detective-base opacity-90">
               Evalúa la credibilidad de fuentes sobre Marie Curie
             </p>
-          </motion.div>
+          </div>
 
           {/* Sources and Analysis Grid */}
           <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">

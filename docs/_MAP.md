@@ -1,8 +1,8 @@
 # MAPA DE DOCUMENTACION: GAMILIT
 
 **Proyecto:** GAMILIT - Plataforma de Gamificacion Educativa
-**Ultima actualizacion:** 2026-01-04
-**Version:** 2.0.0
+**Ultima actualizacion:** 2026-01-07
+**Version:** 2.1.0 (Post-purga documentacion)
 
 ---
 
@@ -18,9 +18,12 @@ docs/
 +-- 90-transversal/          # Documentacion transversal
 +-- 95-guias-desarrollo/     # Guias para desarrolladores
 +-- 96-quick-reference/      # Cheatsheets (API, DB, Git, Testing, Docker, Deploy)
-+-- 97-adr/                  # 20 Architecture Decision Records
++-- 97-adr/                  # 21 Architecture Decision Records
 +-- 99-finiquito/            # Documentacion de cierre y entrega
++-- 99-troubleshooting/      # Guias de resolucion de problemas
 +-- archivados/              # Documentacion deprecada/historica
++-- audits/                  # Reportes de auditoria
++-- planning/                # Planificacion y tracking
 ```
 
 ---
@@ -104,7 +107,16 @@ Guias para backend, frontend, testing.
 Cheatsheets: API, DB, Git, Testing, Docker, Deployment.
 
 ### 97-adr/
-20 Architecture Decision Records documentados.
+21 Architecture Decision Records documentados.
+
+### 99-troubleshooting/
+Guías de resolución de problemas comunes.
+
+### audits/
+Reportes de auditoría y validación.
+
+### planning/
+Planificación y tracking de tareas.
 
 ### 99-finiquito/
 Documentacion de entrega, manuales, credenciales.
@@ -119,11 +131,12 @@ Documentacion deprecada: 98-standards, frontend-original, database-original.
 | Metrica | Valor |
 |---------|-------|
 | EPICs documentadas | 19 |
-| ADRs | 20 |
-| Cheatsheets | 6 |
+| ADRs | 21 |
+| Cheatsheets | 8 |
 | Guias de desarrollo | 10+ |
 
 ---
 
-**Actualizado:** 2026-01-04
+**Actualizado:** 2026-01-07
 **Sistema:** NEXUS v4.0 + SIMCO
+**Cambios:** Purga de 18 archivos obsoletos, actualización de métricas

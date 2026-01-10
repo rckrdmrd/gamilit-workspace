@@ -60,7 +60,9 @@ const navigationItems: NavigationItem[] = [
 export function BottomNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { unreadCount, fetchUnreadCount } = useNotificationsStore();
+  // Using Zustand selectors to prevent unnecessary re-renders
+  const unreadCount = useNotificationsStore((state) => state.unreadCount);
+  const fetchUnreadCount = useNotificationsStore((state) => state.fetchUnreadCount);
 
   useEffect(() => {
     fetchUnreadCount();

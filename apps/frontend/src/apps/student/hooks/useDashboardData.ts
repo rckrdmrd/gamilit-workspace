@@ -174,16 +174,46 @@ async function fetchDashboardData(userId: string): Promise<DashboardData> {
   console.log('✅ [useDashboardData] API calls completed (some may have failed gracefully)');
 
   // Process achievements data (con fallback si endpoint fallo)
-  const achievementsData = achievementsRes?.data?.data || achievementsRes?.data || [];
-  const recentUnlocked = Array.isArray(achievementsData)
-    ? achievementsData
-        .filter((a: AchievementData) => a.unlocked && a.unlockedAt)
-        .sort(
-          (a: AchievementData, b: AchievementData) =>
-            new Date(b.unlockedAt!).getTime() - new Date(a.unlockedAt!).getTime(),
-        )
-        .slice(0, 5)
-    : [];
+  // FIX: CORR-005 - Handle new response structure { data: { achievements, total } }
+  // and transform backend fields (snake_case) to frontend fields (camelCase)
+  const achievementsRaw = achievementsRes?.data?.data || achievementsRes?.data || {};
+  let achievementsRawArray: any[] = [];
+  if (Array.isArray(achievementsRaw)) {
+    achievementsRawArray = achievementsRaw;
+  } else if (achievementsRaw?.achievements && Array.isArray(achievementsRaw.achievements)) {
+    achievementsRawArray = achievementsRaw.achievements;
+  } else if (achievementsRaw?.data?.achievements && Array.isArray(achievementsRaw.data.achievements)) {
+    achievementsRawArray = achievementsRaw.data.achievements;
+  }
+
+  // Transform backend fields to frontend AchievementData format
+  // Backend: is_completed, completed_at, achievement_id, etc.
+  // Frontend: unlocked, unlockedAt, id, etc.
+  const achievementsData: AchievementData[] = achievementsRawArray.map((raw: any) => ({
+    id: raw.id || raw.achievement_id || raw.achievementId,
+    name: raw.name || raw.achievement?.name || 'Unknown',
+    title: raw.title || raw.achievement?.title || raw.name || raw.achievement?.name,
+    description: raw.description || raw.achievement?.description || '',
+    rarity: raw.rarity || raw.achievement?.rarity || 'common',
+    category: raw.category || raw.achievement?.category,
+    icon: raw.icon || raw.achievement?.icon || '🏆',
+    unlocked: raw.unlocked ?? raw.is_completed ?? raw.isCompleted ?? false,
+    isUnlocked: raw.unlocked ?? raw.is_completed ?? raw.isCompleted ?? false,
+    unlockedAt: raw.unlockedAt || raw.completed_at || raw.completedAt,
+    progress: raw.progress ?? 0,
+    required: raw.required || raw.max_progress || raw.maxProgress || 100,
+    mlCoinsReward: raw.mlCoinsReward || raw.ml_coins_reward || raw.achievement?.ml_coins_reward,
+    xpReward: raw.xpReward || raw.xp_reward || raw.achievement?.xp_reward,
+    rewards: raw.rewards || raw.achievement?.rewards,
+  }));
+
+  const recentUnlocked = achievementsData
+    .filter((a: AchievementData) => a.unlocked && a.unlockedAt)
+    .sort(
+      (a: AchievementData, b: AchievementData) =>
+        new Date(b.unlockedAt!).getTime() - new Date(a.unlockedAt!).getTime(),
+    )
+    .slice(0, 5);
 
   // Transform rank data from API format to component format
   // FIX 2026-01-04: Manejar respuestas null de endpoints fallidos

@@ -421,21 +421,35 @@ export const getLeaderboard = async (
       params: { limit, timePeriod: period },
     });
 
+    // FIX: CORR-005 - Obtener userId actual para calcular isCurrentUser
+    let currentUserId: string | undefined;
+    try {
+      const { useAuthStore } = await import('@/features/auth/store/authStore');
+      currentUserId = useAuthStore.getState().user?.id;
+    } catch {
+      // Si no se puede importar authStore, continuar sin marcar usuario actual
+      currentUserId = undefined;
+    }
+
     // Transform backend response to LeaderboardEntry format
-    const entries = data.data?.entries || data.data || [];
-    return entries.map((entry: any, index: number) => ({
-      rank: entry.rank || index + 1,
-      userId: entry.userId || entry.user_id,
-      username: entry.username || entry.display_name || 'Unknown',
-      avatar: entry.avatar || entry.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username || entry.display_name || 'U')}`,
-      rankBadge: entry.currentRank || entry.current_rank || entry.rankBadge || 'Nacom',
-      score: entry.totalXP || entry.total_xp || entry.score || 0,
-      xp: entry.totalXP || entry.total_xp || 0,
-      mlCoins: entry.ml_coins || 0,
-      change: 0,
-      changeType: 'same' as const,
-      isCurrentUser: false,
-    }));
+    // FIX: CORR-006 - After apiClient interceptor unwraps, entries are at data.entries
+    const entries = data?.entries || data.data?.entries || data.data || [];
+    return entries.map((entry: any, index: number) => {
+      const entryUserId = entry.userId || entry.user_id;
+      return {
+        rank: entry.rank || index + 1,
+        userId: entryUserId,
+        username: entry.username || entry.display_name || 'Unknown',
+        avatar: entry.avatar || entry.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username || entry.display_name || 'U')}`,
+        rankBadge: entry.currentRank || entry.current_rank || entry.rankBadge || 'Nacom',
+        score: entry.totalXP || entry.total_xp || entry.score || 0,
+        xp: entry.totalXP || entry.total_xp || 0,
+        mlCoins: entry.ml_coins || 0,
+        change: 0,
+        changeType: 'same' as const,
+        isCurrentUser: currentUserId ? entryUserId === currentUserId : false,
+      };
+    });
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -538,7 +552,8 @@ export const getXPLeaderboard = async (limit: number = 100, offset: number = 0):
       params: { limit, offset },
     });
 
-    return data.data;
+    // FIX: CORR-006 - After apiClient interceptor unwraps, data is the actual response
+    return data?.entries || data || [];
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -565,7 +580,8 @@ export const getCoinsLeaderboard = async (
       params: { limit, offset },
     });
 
-    return data.data;
+    // FIX: CORR-006 - After apiClient interceptor unwraps, data is the actual response
+    return data?.entries || data || [];
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -592,7 +608,8 @@ export const getStreaksLeaderboard = async (
       params: { limit, offset },
     });
 
-    return data.data;
+    // FIX: CORR-006 - After apiClient interceptor unwraps, data is the actual response
+    return data?.entries || data || [];
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -620,7 +637,8 @@ export const getGlobalLeaderboard = async (
       { params: { limit, offset } },
     );
 
-    return data.data;
+    // FIX: CORR-006 - After apiClient interceptor unwraps, data is the actual response
+    return data?.entries || data || [];
   } catch (error) {
     throw handleAPIError(error);
   }

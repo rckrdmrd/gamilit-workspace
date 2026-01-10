@@ -1,7 +1,7 @@
 # GUÍA DE PRUEBAS: Respuestas de Ejemplo - Módulo 3
 ## COMPRENSIÓN CRÍTICA Y VALORATIVA
 
-**Fecha:** 2025-11-23
+**Fecha:** 2026-01-07 (Actualizado)
 **Propósito:** Documento de referencia para probar los 5 ejercicios del Módulo 3
 **Uso:** Testing manual, QA, validación pedagógica, demos
 **Nivel:** Avanzado (CEFR: B2-C1)
@@ -108,10 +108,7 @@ Creo que es verdad porque leí algo sobre eso, pero no estoy seguro.
 **Veredicto:** Sin fundamento ❌
 **Justificación:**
 ```
-Esta es una opinión con juicio de valor ("más brillante") que carece de criterios objetivos
-de medición. No define qué significa "brillante" ni proporciona métrica verificable para
-comparar con otras científicas del siglo XX (Lise Meitner, Rosalind Franklin, Barbara
-McClintock). Sin criterios claros, no es verificable académicamente.
+Opinión con juicio de valor ("más brillante") sin criterios objetivos. No define "brillante" ni ofrece métrica para comparar con otras científicas (Lise Meitner, Rosalind Franklin). Sin criterios claros, no es verificable académicamente.
 ```
 
 **Por qué es excelente:**
@@ -164,10 +161,7 @@ fue la mejor científica.
 **Veredicto:** Bien fundamentada ✅
 **Justificación:**
 ```
-Esta es una interpretación razonable basada en evidencia médica sólida. Sabemos que Marie
-trabajó con radio sin protección durante décadas, que el radio causa daño a médula ósea,
-y que murió de anemia aplásica (enfermedad hematológica). Aunque no hay prueba causal
-directa del 100%, la evidencia circunstancial es muy fuerte según análisis médicos posteriores.
+Interpretación razonable basada en evidencia médica: Marie trabajó con radio sin protección durante décadas, el radio daña la médula ósea, y murió de anemia aplásica. Aunque no hay prueba causal directa, la evidencia circunstancial es muy fuerte.
 ```
 
 **Por qué es excelente:**
@@ -239,10 +233,7 @@ por descubrimiento de radio y polonio) están documentadas en archivos históric
 **Veredicto:** Sin fundamento ❌
 **Justificación:**
 ```
-Esta es una opinión con juicio de valor ("merecía más") que carece de evidencia histórica.
-Los registros muestran colaboración equitativa y múltiples fuentes (incluidas notas de
-laboratorio) documentan contribuciones equivalentes. Afirmar que uno "merecía más" sin
-criterios objetivos es subjetivo y contradice evidencia histórica de trabajo conjunto.
+Opinión con juicio de valor ("merecía más") sin evidencia histórica. Registros muestran colaboración equitativa; notas de laboratorio documentan contribuciones equivalentes. Afirmar que uno merecía más es subjetivo y contradice la evidencia.
 ```
 
 **Por qué es excelente:**
@@ -260,11 +251,7 @@ criterios objetivos es subjetivo y contradice evidencia histórica de trabajo co
 **Veredicto:** Bien fundamentada ✅
 **Justificación:**
 ```
-Esta es una interpretación contrafactual razonable basada en hechos históricos verificables:
-Polonia estaba bajo ocupación rusa con universidades cerradas a mujeres, mientras Francia
-tenía la Sorbona con mejores recursos y (limitada) apertura a mujeres científicas. La
-evidencia de contexto histórico respalda fuertemente esta interpretación, aunque no sea
-demostrable al 100% (contrafactuales nunca lo son).
+Interpretación contrafactual razonable: Polonia estaba ocupada con universidades cerradas a mujeres; Francia tenía la Sorbona con apertura limitada. La evidencia histórica respalda esta interpretación, aunque los contrafactuales no son 100% demostrables.
 ```
 
 **Por qué es excelente:**
@@ -302,11 +289,7 @@ categoría desde la creación de los premios en 1901.
 **Veredicto:** Sin fundamento ❌
 **Justificación:**
 ```
-Esta es una opinión con juicios de valor negativos ("ingenua", "irresponsable") que ignora
-el contexto ético de la decisión. Fuentes históricas (incluida biografía de Eve Curie)
-documentan que fue decisión deliberada basada en principios éticos de ciencia abierta.
-Calificarla como "ingenua" es anacrónico e ignora valores científicos de la época. Sin
-evidencia de que fuera error o falta de juicio, estos adjetivos carecen de fundamento.
+Opinión con juicios negativos ("ingenua", "irresponsable") que ignora el contexto. Fuentes históricas documentan que fue decisión deliberada basada en ética de ciencia abierta. Calificarla así es anacrónico y estos adjetivos carecen de fundamento.
 ```
 
 **Por qué es excelente:**
@@ -991,30 +974,17 @@ Analizar el segundo Premio Nobel de Marie Curie (1911) desde **6 perspectivas di
 
 **Reacción Emocional:**
 ```
-Excitación profesional mezclada con indignación moral fingida. El periodista ve una
-oportunidad perfecta para vender periódicos mediante el contraste dramático: "científica
-laureada con Nobel vs. mujer de moral cuestionable por romance con hombre casado".
-La emoción dominante es oportunismo: el escándalo personal + logro científico =
-narrativa irresistible para lectores.
+Excitación profesional mezclada con indignación moral fingida. El periodista ve oportunidad para vender periódicos: "Nobel vs. escándalo amoroso" es narrativa irresistible. La emoción dominante es oportunismo comercial.
 ```
 
 **Opinión:**
 ```
-"Este segundo Nobel complica nuestra narrativa del escándalo. Por un lado, confirma su
-genio científico (difícil negar talento de alguien con 2 Nobel), pero por otro, podemos
-usarlo para cuestionar si merece tal honor dada su 'moral dudosa'. La pregunta provocadora
-'¿Merece el Nobel una mujer de reputación cuestionable?' venderá más ejemplares que
-reportar objetivamente sobre química del radio."
+Este Nobel complica nuestra narrativa del escándalo pero podemos usarlo: "¿Merece el Nobel una mujer de moral dudosa?" venderá más que reportar objetivamente. Confirma su genio pero cuestiona su honor.
 ```
 
 **Consecuencias Percibidas:**
 ```
-"Este evento generará polémica prolongada. Defensores argumentarán que ciencia y vida
-personal deben separarse; críticos dirán que premios tan prestigiosos requieren carácter
-intachable. Anticipamos semanas de cartas al editor, debates públicos y oportunidades
-para artículos de seguimiento. Financieramente, este escándalo sostenido beneficiará
-nuestras ventas. Académicamente, probablemente Marie será recordada, pero nosotros
-habremos vendido miles de copias mientras tanto."
+Generará polémica prolongada: debates sobre separar ciencia de vida personal, cartas al editor, artículos de seguimiento. El escándalo sostenido beneficiará ventas. Marie será recordada, pero venderemos miles de copias.
 ```
 
 **Puntuación esperada:** 16-17 puntos
@@ -1035,29 +1005,17 @@ habremos vendido miles de copias mientras tanto."
 
 **Reacción Emocional:**
 ```
-Satisfacción científica con incomodidad política. El Comité siente orgullo por reconocer
-trabajo científico objetivamente excepcional (aislamiento del radio es logro monumental),
-pero también ansiedad ante presión pública por el escándalo Langevin. Existe tensión entre
-mantener estándares científicos rigurosos vs. ceder a presiones moralizantes externas.
+Satisfacción científica con incomodidad política. Orgullo por reconocer trabajo excepcional, pero ansiedad ante presión pública por el escándalo Langevin. Tensión entre estándares científicos vs. presiones moralizantes.
 ```
 
 **Opinión:**
 ```
-"El trabajo de Marie Curie en química del radio es científicamente impecable y merece el
-reconocimiento más alto. Nuestra responsabilidad es evaluar excelencia científica, no
-conducta personal. Establecer precedente de negar Nobel por rumores de vida privada
-destruiría credibilidad e independencia de nuestro premio. Sin embargo, reconocemos que
-este premio será controversial y algunos cuestionarán nuestra decisión. Debemos defender
-principio de que ciencia trasciende escándalos sociales."
+El trabajo de Marie es científicamente impecable. Nuestra responsabilidad es evaluar excelencia científica, no conducta personal. Negar Nobel por rumores destruiría credibilidad del premio. La ciencia trasciende escándalos.
 ```
 
 **Consecuencias Percibidas:**
 ```
-"Anticipamos críticas de sectores conservadores que considerarán nuestra decisión como
-'tolerancia de inmoralidad'. Pero a largo plazo, la historia validará que tomamos decisión
-correcta basada en méritos científicos. Este premio establecerá precedente crucial: los
-Nobel reconocen contribuciones intelectuales, no virtudes personales. Si cedemos a presión
-moral ahora, comprometemos futura independencia del premio."
+Anticipamos críticas de sectores conservadores. Pero la historia validará nuestra decisión basada en méritos. Este premio establece precedente: los Nobel reconocen contribuciones intelectuales, no virtudes personales.
 ```
 
 **Puntuación esperada:** 16-17 puntos
@@ -1077,11 +1035,7 @@ moral ahora, comprometemos futura independencia del premio."
 
 **Reacción Emocional:**
 ```
-División marcada entre admiración por logro científico y preocupación por reputación de
-la ciencia como institución seria. Científicos progresistas sienten orgullo de que colega
-talentosa sea reconocida; científicos conservadores experimentan incomodidad ante idea de
-que mujer con "escándalo" represente ciencia francesa. Existe tensión generacional:
-jóvenes más abiertos, veteranos más tradicionales.
+División marcada: progresistas sienten orgullo por reconocimiento a colega talentosa; conservadores experimentan incomodidad ante mujer con "escándalo" representando ciencia francesa. Tensión generacional evidente.
 ```
 
 **Opinión:**
@@ -1125,45 +1079,17 @@ deteriora por presión social, reforzará prejuicios conservadores."
 
 **Reacción Emocional:**
 ```
-Mezcla compleja de orgullo científico profundo, agotamiento emocional extremo y rabia
-contenida ante injusticia. Siento validación profesional inmensa por reconocimiento a mi
-trabajo independiente en química (este Nobel es SOLO mío, a diferencia del primero que
-compartí con Pierre). Pero simultáneamente experimento indignación: ¿por qué mi vida
-privada es escrutinizada de manera que ningún hombre científico enfrentaría? Estoy
-físicamente exhausta del acoso periodístico y herida por rechazo de Academia de Ciencias
-pese a mis credenciales.
+Orgullo científico profundo mezclado con agotamiento y rabia. Este Nobel es SOLO mío, validación de mi trabajo independiente. Pero me indigna: ¿por qué mi vida privada se escrutiniza como ningún hombre científico enfrentaría?
 ```
 
 **Opinión:**
 ```
-"Este segundo Nobel confirma lo que siempre supe: mi trabajo científico es excelente y
-merece reconocimiento máximo. El aislamiento del radio en forma pura requirió años de
-trabajo meticuloso, cálculos precisos y perseverancia física extrema. Este premio valida
-esos esfuerzos.
-
-Sin embargo, el precio personal ha sido devastador. La hipocresía de la sociedad francesa
-es evidente: aplaudieron mi trabajo cuando me convino a sus narrativas de 'viuda virtuosa
-dedicada a ciencia de su difunto esposo', pero me crucificaron cuando fui mujer completa
-con vida emocional propia. El doble estándar es inaceptable: hombres científicos tienen
-amantes sin que eso cuestione su trabajo.
-
-El Comité Nobel tuvo coraje de separar ciencia de moralina social. Respeto eso."
+Este Nobel confirma que mi trabajo científico merece reconocimiento máximo. El aislamiento del radio requirió años de trabajo meticuloso. Sin embargo, el precio personal fue devastador: hipocresía y doble estándar inaceptables.
 ```
 
 **Consecuencias Percibidas:**
 ```
-"Este Nobel cambiará percepción histórica de mí. Mientras algunos contemporáneos me
-juzgarán más por escándalo que por ciencia, la historia me recordará por descubrimientos.
-Generaciones futuras de mujeres científicas tal vez encontrarán algo de inspiración en
-que persistí pese a todo.
-
-Personalmente, sé que este escándalo me ha dañado irreparablemente en Francia. Aunque
-continúe investigando, nunca seré totalmente aceptada por establishment académico francés.
-Me refugiaré en trabajo científico, que nunca me traiciona como lo hace la sociedad.
-
-A corto plazo, consideraré rechazar el Nobel para evitar más controversia. [Histórico:
-Albert Einstein la convenció de aceptarlo]. A largo plazo, espero que este premio ayude
-a normalizar presencia de mujeres en ciencia, aunque sea a través de mi sufrimiento."
+Este Nobel cambiará percepción histórica. La historia me recordará por descubrimientos, no por escándalos. Generaciones de mujeres científicas encontrarán inspiración en que persistí. Me refugiaré en el trabajo científico.
 ```
 
 **Puntuación esperada:** 16-17 puntos
@@ -1184,47 +1110,17 @@ a normalizar presencia de mujeres en ciencia, aunque sea a través de mi sufrimi
 
 **Reacción Emocional:**
 ```
-[Perspectiva especulativa basada en cartas y escritos de Pierre]
-
-Orgullo profundo por el segundo Nobel de Marie, mezclado con tristeza de no estar presente
-para apoyarla durante el escándalo. Pierre experimentaría frustración intensa ante la
-hipocresía social: él mismo defendió públicamente contribuciones de Marie cuando otros las
-minimizaban, y ahora la sociedad la atacaría de manera que nunca hubieran atacado a un
-hombre científico. Sentiría rabia impotente ante imposibilidad de protegerla del acoso
-periodístico.
+[Perspectiva contrafactual] Orgullo profundo por el segundo Nobel de Marie. Frustración intensa ante hipocresía social: yo defendí públicamente sus contribuciones. Rabia impotente ante imposibilidad de protegerla del acoso.
 ```
 
 **Opinión:**
 ```
-"El segundo Nobel de Marie valida lo que siempre sostuve: ella es científica brillante de
-manera INDEPENDIENTE de mí. Durante años, observé cómo nuestro trabajo conjunto era
-atribuido principalmente a mí por prejuicios de género. Este Nobel en Química, otorgado
-solo a ella por trabajo posterior a mi muerte, demuestra irrefutablemente su genio autónomo.
-
-El escándalo Langevin me indignaría profundamente. La sociedad francesa tiene audacia de
-juzgar vida personal de Marie cuando su contribución científica es monumental. Si yo
-estuviera vivo, habría defendido públicamente su derecho a vida privada y denunciado doble
-estándar. Hubiera escrito cartas a periódicos y usado mi posición para apoyarla.
-
-El hecho de que comité Nobel haya otorgado premio pese a presión social me restauraría
-fe en integridad científica."
+Este Nobel valida lo que siempre sostuve: Marie es científica brillante INDEPENDIENTE de mí. Si estuviera vivo, defendería públicamente su derecho a vida privada y denunciaría el doble estándar imperante.
 ```
 
 **Consecuencias Percibidas:**
 ```
-"De haber estado presente, habría:
-1. Acompañado a Marie a ceremonia en Estocolmo para demostrar apoyo público
-2. Publicado defensa en journals científicos sobre separación ciencia-vida privada
-3. Usado mi influencia en Academia de Ciencias para presionar por su admisión
-4. Protegido físicamente a Marie y nuestras hijas del acoso periodístico
-
-A largo plazo, confío que la historia validará a Marie. Sus descubrimientos perdurarán;
-los escándalos serán olvidados. Futuras generaciones la estudiarán por radiactividad,
-no por supuestas indiscreciones.
-
-Mi tristeza es no poder presenciar este momento de triunfo con ella. Habríamos celebrado
-juntos, sabiendo que este premio confirma lo que siempre supimos: Marie es una de las
-mentes científicas más grandes de nuestra época."
+Habría acompañado a Marie a Estocolmo, publicado defensas en journals, usado mi influencia para presionar por su admisión en la Academia. La historia validará a Marie; los escándalos serán olvidados.
 ```
 
 **Puntuación esperada:** 16-17 puntos
@@ -1244,48 +1140,17 @@ mentes científicas más grandes de nuestra época."
 
 **Reacción Emocional:**
 ```
-Orgullo nacionalista intenso mezclado con frustración compleja. Los polacos sienten
-exaltación patriótica: "Una de los nuestros alcanzó la cima científica mundial pese a
-que Polonia está ocupada y borrada del mapa". Marie representa resiliencia polaca y
-capacidad intelectual que ninguna ocupación puede suprimir. Pero simultáneamente existe
-dolor porque Marie representa oficialmente a FRANCIA, no a Polonia (que no existe como
-país independiente en 1911). Es símbolo de orgullo y pérdida al mismo tiempo.
+Orgullo nacionalista intenso: "Una de los nuestros alcanzó la cima científica pese a ocupación". Pero dolor porque representa a FRANCIA, no a Polonia inexistente en 1911. Símbolo de orgullo y pérdida simultáneamente.
 ```
 
 **Opinión:**
 ```
-"Maria Skłodowska [nombre polaco de Marie] es prueba viviente de que Polonia, aunque
-ocupada militarmente, no está muerta cultural ni intelectualmente. Que una mujer polaca
-nacida en Varsovia bajo ocupación rusa haya alcanzado cumbre científica mundial con DOS
-Premios Nobel demuestra que el espíritu polaco sobrevive y florece incluso en exilio.
-
-El escándalo francés nos parece hipocresía típica de potencias occidentales: cuando les
-conviene, celebran a Maria; cuando no, la crucifican. Nosotros valoramos su legado
-científico independientemente de juicios morales franceses.
-
-Es amargo que Maria tuviera que emigrar para alcanzar su potencial. Si Polonia fuera
-libre, con universidades abiertas a mujeres, ¿cuántas más 'Marie Curie' tendríamos? Ella
-es lo que Polonia podría ser si fuéramos independientes."
+Maria Skłodowska es prueba de que Polonia, aunque ocupada, no está muerta intelectualmente. El escándalo francés es hipocresía típica. Es amargo que emigrara para alcanzar su potencial. Ella es lo que Polonia podría ser libre.
 ```
 
 **Consecuencias Percibidas:**
 ```
-"Este segundo Nobel fortalece narrativa nacionalista polaca de resistencia cultural. En
-escuelas clandestinas (prohibidas por ocupantes), profesores usarán ejemplo de Maria
-para inspirar a estudiantes: 'La opresión política no puede suprimir genio intelectual'.
-
-A largo plazo, cuando Polonia recupere independencia [histórico: 1918], Maria será
-reclamada como heroína nacional. Habrá estatuas, escuelas con su nombre, celebraciones.
-Ella será símbolo dual: excelencia científica Y resiliencia nacional.
-
-El hecho de que ninguna universidad polaca pudo educarla (porque estábamos ocupados) se
-convertirá en acusación contra ocupantes: 'Miren qué perdieron por suprimir educación
-polaca'. Maria es simultáneamente celebración de lo que Polonia ES y lamento de lo que
-Polonia PODRÍA HABER SIDO si fuéramos libres.
-
-Además, el éxito de una mujer polaca desafía tanto ocupación externa como patriarcado
-interno. Maria probará que mujeres polacas, dada oportunidad, pueden igualar a cualquier
-hombre."
+Este Nobel fortalece narrativa nacionalista de resistencia cultural. Cuando Polonia sea independiente (1918), Maria será heroína nacional. Su éxito desafía ocupación externa y patriarcado interno simultáneamente.
 ```
 
 **Puntuación esperada:** 16-17 puntos
@@ -1435,10 +1300,12 @@ Será más famosa.
 
 **FIN DE LA GUÍA DE PRUEBAS**
 
-**Fecha:** 2025-11-23
-**Versión:** 1.0
+**Fecha:** 2026-01-07
+**Versión:** 1.2
 **Uso:** Testing QA, validación pedagógica, capacitación
 **Estado:** ✅ Completa y lista para uso
+**Cambios v1.2:** Ajustados 16 campos del Ejercicio 3.5 (Matriz de Perspectivas) al límite de 300 caracteres
+**Cambios v1.1:** Ajustadas 5 justificaciones del Ejercicio 3.1 al límite de 300 caracteres
 
 **Próximos pasos:**
 1. QA: Usar estas respuestas para probar validadores del Módulo 3

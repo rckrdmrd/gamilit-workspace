@@ -18,7 +18,9 @@ export interface MediaItem {
   metadata?: MediaMetadata;
 }
 
-export type MediaType = 'image' | 'video' | 'audio' | 'document' | 'other';
+// NOTA (2026-01-07): Sincronizado con MediaTypeEnum en enums.constants.ts
+// 'other' es fallback frontend-only para tipos desconocidos
+export type MediaType = 'image' | 'video' | 'audio' | 'document' | 'interactive' | 'animation' | 'other';
 
 export interface MediaMetadata {
   width?: number;

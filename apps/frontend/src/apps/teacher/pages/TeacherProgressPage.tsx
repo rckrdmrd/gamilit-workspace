@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { TeacherLayout } from '../layouts/TeacherLayout';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
@@ -38,10 +38,33 @@ import {
  */
 export default function TeacherProgressPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, logout } = useAuth();
   const { toasts, showToast } = useToast();
   const { classrooms, loading, error, refresh } = useClassrooms();
-  const [selectedClassroomId, setSelectedClassroomId] = useState<string>('all');
+
+  // FIX-F1-2026-01-08: Leer classroomId de query params con fallback a 'all'
+  // Esto permite que la navegacion desde TeacherClasses.tsx funcione correctamente
+  const classroomIdFromUrl = searchParams.get('classroomId');
+  const [selectedClassroomId, setSelectedClassroomId] = useState<string>(
+    classroomIdFromUrl || 'all'
+  );
+
+  // Sincronizar con URL cuando cambia el query param o cuando se cargan los classrooms
+  useEffect(() => {
+    if (classroomIdFromUrl && classrooms.length > 0) {
+      // Validar que el classroomId existe en la lista de classrooms
+      const exists = classrooms.some((c) => c.id === classroomIdFromUrl);
+      if (exists && classroomIdFromUrl !== selectedClassroomId) {
+        setSelectedClassroomId(classroomIdFromUrl);
+      } else if (!exists && classroomIdFromUrl !== 'all') {
+        // Si el classroom no existe, mostrar warning y resetear a 'all'
+        console.warn(
+          `[TeacherProgressPage] Classroom ${classroomIdFromUrl} not found in list`
+        );
+      }
+    }
+  }, [classroomIdFromUrl, classrooms, selectedClassroomId]);
   const [showClassroomDropdown, setShowClassroomDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState<'progress' | 'engagement'>('progress');
   const [dateRange, setDateRange] = useState({

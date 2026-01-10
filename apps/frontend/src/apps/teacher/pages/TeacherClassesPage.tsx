@@ -22,7 +22,7 @@ export default function TeacherClassesPage() {
     <TeacherLayout
       user={user ?? undefined}
       gamificationData={gamificationData}
-      organizationName={user?.organization?.name || 'Mi Institución'}
+      organizationName="Mi Institución"
       onLogout={handleLogout}
     >
       <TeacherClasses />

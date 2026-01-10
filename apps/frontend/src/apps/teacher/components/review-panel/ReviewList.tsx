@@ -167,10 +167,10 @@ export const ReviewList: React.FC<ReviewListProps> = ({
               <span>{review.exercise?.title || 'Sin título'}</span>
             </div>
 
-            {/* Date */}
+            {/* Date - FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Usar fecha de envío del submission */}
             <div className="flex items-center gap-2 text-xs text-gray-500">
               <Clock className="h-4 w-4" />
-              <span>Enviado {formatDate(review.createdAt)}</span>
+              <span>Enviado {formatDate(review.submission?.submitted_at || review.submission?.submittedAt || review.createdAt)}</span>
             </div>
 
             {/* Progress Indicator */}

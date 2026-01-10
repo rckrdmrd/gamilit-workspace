@@ -192,8 +192,8 @@ export const DB_TABLES = {
     USER_ACTIVITY_LOGS: 'user_activity_logs', // ✨ NUEVO - P2
     PERFORMANCE_METRICS: 'performance_metrics', // ✨ NUEVO - P2
     SYSTEM_ALERTS: 'system_alerts', // ✨ NUEVO - P2
-    ACTIVITY_LOG: 'activity_log', // ✨ MIGRADO - Audit 2026-01-04 (reemplaza user_activity)
-    USER_ACTIVITY: 'user_activity', // ⚠️ DEPRECATED - Migrar a ACTIVITY_LOG (Audit 2026-01-04)
+    ACTIVITY_LOG: 'activity_log', // ✨ Admin Dashboard activity tracking
+    // USER_ACTIVITY: ELIMINADO 2026-01-07 - Migrado completamente a ACTIVITY_LOG
   },
 
   /**
@@ -217,6 +217,7 @@ export const DB_TABLES = {
   ADMIN: {
     BULK_OPERATIONS: 'bulk_operations', // ✨ NUEVO - EXT-002 (Bulk Operations)
     ADMIN_REPORTS: 'admin_reports', // ✨ NUEVO - EXT-002 (Admin Reports)
+    METRICS_HISTORY: 'metrics_history', // ✨ NUEVO - P2 (Historial de métricas del sistema)
   },
 
   /**

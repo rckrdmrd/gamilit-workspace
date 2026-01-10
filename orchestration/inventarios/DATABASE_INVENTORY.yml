@@ -4,11 +4,11 @@
 # Fuente: Validación DB-092 (Ciclo 1-4)
 
 metadata:
-  version: "4.1.0"
+  version: "4.3.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-04"
+  last_updated: "2026-01-08"
   database_script: "create-database.sh"
-  total_ddl_files: 395  # +1 (content_management/tables/07-tags.sql)
+  total_ddl_files: 397  # +2 (social_features/functions/sync_teacher_classroom.sql, social_features/triggers/26-trg_sync_teacher_classroom.sql)
   total_seed_files: 100  # +1 (communication/01-system-messages.sql)
   total_schemas: 16
   script_phases: 17
@@ -22,11 +22,77 @@ metadata:
     views: 17
     materialized_views: 11
     enums: 42
-    functions: 150
-    triggers: 111
+    functions: 151  # +1 (social_features.sync_teacher_classroom_on_insert)
+    triggers: 112  # +1 (trg_sync_teacher_classroom_on_insert)
     indexes: 21
     policies: 185
     foreign_keys: 208
+  audit_2026_01_08:
+    description: "FIX-CLASSROOMID: Correccion de triggers para classroom member count y sync teacher_classrooms"
+    task_id: "FIX-CLASSROOMID-2026-01-08"
+    changes_summary:
+      - "DDL MODIFICADO: gamilit/functions/10-update_classroom_member_count.sql - Manejo UPDATE OF status"
+      - "DDL MODIFICADO: social_features/triggers/25-trg_update_classroom_count.sql - Activacion en UPDATE OF status"
+      - "DDL CREADO: social_features/functions/sync_teacher_classroom.sql - Sync teacher_classrooms on classroom insert"
+      - "DDL CREADO: social_features/triggers/26-trg_sync_teacher_classroom.sql - Trigger para sync"
+    files_modified:
+      ddl_modified:
+        - "gamilit/functions/10-update_classroom_member_count.sql (UPDATE OF status handling)"
+        - "social_features/triggers/25-trg_update_classroom_count.sql (UPDATE OF status event)"
+      ddl_created:
+        - "social_features/functions/sync_teacher_classroom.sql"
+        - "social_features/triggers/26-trg_sync_teacher_classroom.sql"
+      backend_modified:
+        - "teacher-classrooms-crud.service.ts (B1: JOIN fix, B2: IS NULL filter removal)"
+        - "teacher-classrooms.controller.ts (B3: ParseUUIDPipe)"
+      frontend_modified:
+        - "TeacherProgressPage.tsx (F1: useSearchParams)"
+        - "validation.ts (F2: isValidUUID, isValidClassroomId)"
+    validation:
+      script: "drop-and-recreate-database.sh"
+      result: "PASSED - 227 funciones, 103 triggers creados correctamente"
+      triggers_verified:
+        - "trg_update_classroom_count: AFTER INSERT OR DELETE OR UPDATE OF status"
+        - "trg_sync_teacher_classroom_on_insert: AFTER INSERT ON classrooms"
+    documentation:
+      - "orchestration/analisis/VALIDACION-EJECUCION-CLASSROOMID-2026-01-08.md"
+      - "orchestration/analisis/ANALISIS-DETALLADO-CLASSROOMID-2026-01-08.md"
+      - "orchestration/analisis/PLAN-IMPLEMENTACION-CLASSROOMID-2026-01-08.md"
+      - "orchestration/analisis/ANALISIS-DEPENDENCIAS-CLASSROOMID-2026-01-08.md"
+    additional_fixes_2026_01_08:
+      description: "Correcciones adicionales por analisis de dependencias"
+      fixes:
+        - file: "teacher-classrooms-crud.service.ts:749-756"
+          issue: "Codigo redundante causaba duplicate key con trigger"
+          fix: "Eliminado codigo que creaba teacher_classrooms manualmente"
+        - file: "classrooms.service.ts:enrollStudent"
+          issue: "Manipulacion directa de current_students_count"
+          fix: "Metodo marcado @deprecated, eliminada manipulacion"
+        - file: "classrooms.service.ts:removeStudent"
+          issue: "Manipulacion directa de current_students_count"
+          fix: "Metodo marcado @deprecated, eliminada manipulacion"
+  audit_2026_01_07:
+    description: "Eliminación tabla deprecated user_activity (análisis duplicados)"
+    task_id: "DB-138"
+    changes_summary:
+      - "DDL: audit_logging/tables/07-user_activity.sql movido a _deprecated/"
+      - "Backend: USER_ACTIVITY constante comentada en database.constants.ts"
+      - "Docs: _MAP.md actualizado (7→6 tablas activas)"
+      - "Docs: MIGRATION-DUPLICATE-TABLES.md marcado COMPLETADO"
+      - "Validación: create-database.sh ya excluye _deprecated/ (línea 142)"
+    files_modified:
+      ddl_deprecated:
+        - "audit_logging/tables/07-user_activity.sql → _deprecated/"
+      backend_modified:
+        - "shared/constants/database.constants.ts (constante comentada)"
+      docs_updated:
+        - "audit_logging/_MAP.md"
+        - "audit_logging/MIGRATION-DUPLICATE-TABLES.md"
+    validation:
+      script: "validate-create-database.sh"
+      result: "PASSED - 7 archivos en audit_logging/tables (excluyendo deprecated)"
+      exclusion_line: "142 (find con ! -path '*/_deprecated/*')"
+    action_pending_production: "DROP TABLE IF EXISTS audit_logging.user_activity CASCADE"
   audit_2026_01_04:
     description: "Auditoría exhaustiva DDL, Seeds y Scripts"
     corrections_p0: 3
@@ -112,19 +178,36 @@ schemas:
   - name: "auth_management"
     description: "Gestión de usuarios y autenticación"
     phase: 5
-    ddl_files: 20
-    tables: 3
+    ddl_files: 21  # 2026-01-07: +1 (03b-roles.sql - tabla catalogo RBAC)
+    tables: 4  # 2026-01-07: +1 (roles - catalogo maestro RBAC)
     functions: 5
-    triggers: 4
-    indexes: 6
+    triggers: 5  # 2026-01-07: +1 (trg_roles_updated_at)
+    indexes: 8  # 2026-01-07: +2 (idx_roles_name, idx_roles_is_active)
     views: 0
     enums: 2
     rls_policies: 3
     fk_constraints_diferidos: 1
+    key_tables:
+      - name: "profiles"
+        file: "03-profiles.sql"
+        description: "Perfiles de usuarios"
+      - name: "roles"
+        file: "03b-roles.sql"
+        description: "Catalogo maestro de roles RBAC (student, admin_teacher, super_admin)"
+        created: "2026-01-07"
+      - name: "user_roles"
+        file: "04-roles.sql"
+        description: "Asignaciones de roles a usuarios"
+      - name: "tenants"
+        file: "01-tenants.sql"
+        description: "Multi-tenancy organizations"
     key_triggers:
       - name: "trg_ensure_profile_name"
         file: "03b-trg_ensure_profile_name.sql"
         description: "Asegura first_name, last_name y full_name en profiles"
+      - name: "trg_roles_updated_at"
+        file: "03b-roles.sql"
+        description: "Actualiza updated_at en tabla roles (2026-01-07)"
 
   - name: "educational_content"
     description: "Contenido educativo (módulos, ejercicios, assignments)"
@@ -215,19 +298,35 @@ schemas:
   - name: "social_features"
     description: "Características sociales (escuelas, aulas, equipos) - SIMPLIFICADO 2025-12-15"
     phase: 9
-    ddl_files: 31  # 2025-11-26: +3 (teacher_reports table, trigger, rls-policies)
+    ddl_files: 33  # 2026-01-08: +2 (sync_teacher_classroom function, 26-trg_sync_teacher_classroom trigger)
     tables: 13  # 2025-11-26: +1 (teacher_reports)
-    functions: 6
-    triggers: 4  # 2025-11-26: +1 (trg_teacher_reports_updated_at)
+    functions: 7  # 2026-01-08: +1 (sync_teacher_classroom_on_insert)
+    triggers: 5  # 2026-01-08: +1 (trg_sync_teacher_classroom_on_insert)
     indexes: 13  # 2025-11-26: +5 (teacher_id, tenant_id, generated_at, classroom_id, report_type)
     views: 1
     enums: 1
     rls_policies: 5  # 2025-11-26: +2 (teacher_reports_teacher_policy, teacher_reports_admin_policy)
+    key_functions:
+      - name: "sync_teacher_classroom_on_insert"
+        file: "functions/sync_teacher_classroom.sql"
+        description: "Auto-crea registro en teacher_classrooms al crear classroom (FIX-DB2 2026-01-08)"
+    key_triggers:
+      - name: "trg_sync_teacher_classroom_on_insert"
+        file: "triggers/26-trg_sync_teacher_classroom.sql"
+        table: "classrooms"
+        event: "AFTER INSERT"
+        description: "Sincroniza teacher_classrooms cuando se crea un classroom (FIX-DB2 2026-01-08)"
     seed_entities_2025_12_15:
       schools: 1  # Solo SYSTEM-UNASSIGNED (escuelas demo removidas)
       classrooms: 1  # Solo DEFAULT (aulas demo removidas)
       classroom_members: dynamic  # Todos los estudiantes → DEFAULT
     notes: |
+      2026-01-08: FIX-CLASSROOMID - SINCRONIZACION DE TEACHER_CLASSROOMS
+      - Funcion sync_teacher_classroom_on_insert() creada
+      - Trigger trg_sync_teacher_classroom_on_insert agregado en classrooms
+      - Garantiza que cada classroom tenga su teacher registrado como 'owner'
+      - Parte de correccion integral del problema classroomId
+
       2025-12-15: SIMPLIFICACIÓN DE ESTRUCTURA
       - Seeds reducidos a solo entidades DEFAULT del sistema
       - Escuelas demo removidas (Marie Curie, IEI)
@@ -957,6 +1056,16 @@ references:
 # NOTAS
 # ============================================================================
 notes:
+  - "🔧 FIX-CLASSROOMID 2026-01-08 (v4.3.0): CORRECCION INTEGRAL CLASSROOMID"
+  - "  ✅ DB1: gamilit.update_classroom_member_count() modificada para UPDATE OF status"
+  - "  ✅ DB2: social_features.sync_teacher_classroom_on_insert() funcion y trigger creados"
+  - "  ✅ B1: JOIN corregido en teacher-classrooms-crud.service.ts (profiles.id, no user_id)"
+  - "  ✅ B2: Filtro OR classroom_id IS NULL eliminado"
+  - "  ✅ B3: ParseUUIDPipe agregado a 11 endpoints"
+  - "  ✅ F1: useSearchParams implementado en TeacherProgressPage"
+  - "  ✅ F2: Funciones isValidUUID, isValidClassroomId agregadas a validation.ts"
+  - "  📊 Validacion: drop-and-recreate-database.sh ejecutado exitosamente"
+  - "  📁 Documentacion: orchestration/analisis/VALIDACION-EJECUCION-CLASSROOMID-2026-01-08.md"
   - "🔍 AUDITORÍA 2025-12-26 (v4.0.0): ANÁLISIS EXHAUSTIVO DB-BACKEND-FRONTEND"
   - "  ✅ P0-001: Friendship status mismatch corregido (DDL actualizado con status column)"
   - "  ✅ P0-002: UUIDs testing consolidados (02-test-users.sql → _deprecated/)"

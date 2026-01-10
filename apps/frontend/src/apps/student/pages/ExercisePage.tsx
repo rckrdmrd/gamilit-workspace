@@ -487,15 +487,17 @@ export default function ExercisePage() {
       // Get used power-ups from hook
       const usedPowerUpsList = getUsedPowerUps();
 
+      // CORR-010 DEBUG: Log full payload to diagnose statementId issue
       console.log('📤 [ExercisePage] Submitting exercise:', {
         exerciseId,
         payload: {
-          answers: userAnswers, // ✅ FE-055: Send REAL user answers
+          answers: userAnswers,
           startedAt: startTime.getTime(),
           hintsUsed: progress.hintsUsed || 0,
           powerupsUsed: usedPowerUpsList || [],
         },
       });
+      console.log('📤 [ExercisePage CORR-010] Full userAnswers:', JSON.stringify(userAnswers, null, 2));
 
       // FE-055: Submit exercise with REAL user answers (not progress metadata)
       const result = await submitExercise(exerciseId, {

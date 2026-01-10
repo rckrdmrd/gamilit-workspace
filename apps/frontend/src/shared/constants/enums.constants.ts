@@ -636,17 +636,9 @@ export enum TeamChallengeStatusEnum {
   CANCELLED = 'cancelled',
 }
 
-/**
- * Tipos de eventos sociales
- * @see DDL: social_features.social_event_type ENUM
- */
-export enum SocialEventTypeEnum {
-  COMPETITION = 'competition',
-  COLLABORATION = 'collaboration',
-  CHALLENGE = 'challenge',
-  TOURNAMENT = 'tournament',
-  WORKSHOP = 'workshop',
-}
+// REMOVIDO (2026-01-07): SocialEventTypeEnum
+// Razon: ENUM deprecado, sin uso en BD/Backend/Frontend
+// Ver: DEUDA-TECNICA-ENUMS-H-034.md
 
 /**
  * System ENUMs

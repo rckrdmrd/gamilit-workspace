@@ -6,9 +6,9 @@
  * - Time period selection (Daily, Weekly, Monthly, All-Time)
  * - Top 3 podium display
  * - Current user position highlight
- * - Real-time updates via WebSocket
  * - Responsive design with side panels
  * - Smooth animations
+ * - Auto-refresh polling (30s)
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -24,6 +24,7 @@ import {
   ArrowUp,
   Sparkles,
   BarChart3,
+  AlertCircle,
 } from 'lucide-react';
 
 // Leaderboard Components
@@ -36,7 +37,6 @@ import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 
 // Hooks & Types
 import { useLeaderboards } from '@/features/gamification/social/hooks/useLeaderboards';
-import { useLeaderboardWebSocket } from '@/features/gamification/social/hooks/useLeaderboardWebSocket';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { useUserClassroom } from '../hooks/useUserClassroom';
@@ -56,10 +56,13 @@ export default function LeaderboardPage() {
   const { classroomId: userClassroomId } = useUserClassroom(user?.id);
 
   // Store & Hooks
+  // FIX: CORR-005 - Agregado loading y error del hook para mostrar estados de carga
   const {
     currentLeaderboard,
     selectedType,
     selectedPeriod,
+    loading,
+    error: leaderboardError,
     setLeaderboardType,
     setTimePeriod,
     refreshLeaderboard,
@@ -67,16 +70,12 @@ export default function LeaderboardPage() {
     getUserPosition,
   } = useLeaderboards();
 
-  // WebSocket connection for real-time updates
-  const { isConnected: isWebSocketConnected } = useLeaderboardWebSocket();
-
   // Dashboard data for calculating category breakdown
   const { progress, achievements } = useDashboardData();
 
   // Local State
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
-  const [showRealtimeIndicator, setShowRealtimeIndicator] = useState(false);
   const userEntryRef = useRef<HTMLDivElement>(null);
 
   // Auto-fetch leaderboard on component mount
@@ -84,15 +83,6 @@ export default function LeaderboardPage() {
   useEffect(() => {
     setLeaderboardType('global');
   }, [setLeaderboardType]);
-
-  // Show real-time indicator briefly when leaderboard updates
-  useEffect(() => {
-    if (isWebSocketConnected) {
-      setShowRealtimeIndicator(true);
-      const timer = setTimeout(() => setShowRealtimeIndicator(false), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [currentLeaderboard.lastUpdated, isWebSocketConnected]);
 
   // Auto-scroll to current user on load
   useEffect(() => {
@@ -197,30 +187,9 @@ export default function LeaderboardPage() {
                     Ultima actualizacion:{' '}
                     {new Date(currentLeaderboard.lastUpdated).toLocaleTimeString()}
                   </p>
-                  {isWebSocketConnected && (
-                    <div className="flex items-center gap-1">
-                      <div className="h-2 w-2 animate-pulse rounded-full bg-green-500"></div>
-                      <span className="text-xs text-green-600 dark:text-green-400">En vivo</span>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
-
-            {/* Real-time update indicator */}
-            {showRealtimeIndicator && isWebSocketConnected && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex items-center gap-2 rounded-lg bg-green-100 px-3 py-2 dark:bg-green-900/30"
-              >
-                <Sparkles className="h-4 w-4 text-green-600 dark:text-green-400" />
-                <span className="text-sm font-medium text-green-700 dark:text-green-300">
-                  Actualizado en tiempo real
-                </span>
-              </motion.div>
-            )}
 
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -417,11 +386,36 @@ export default function LeaderboardPage() {
                 </button>
               </div>
 
-              <LeaderboardLayout
-                entries={currentLeaderboard.entries}
-                showTopThree={true}
-                highlightUser={true}
-              />
+              {/* FIX: CORR-005 - Indicador de loading mientras se cargan datos */}
+              {loading && (
+                <div className="flex items-center justify-center py-12">
+                  <RefreshCw className="h-8 w-8 animate-spin text-detective-orange" />
+                  <span className="ml-3 text-gray-600">Cargando clasificacion...</span>
+                </div>
+              )}
+
+              {/* Error state */}
+              {!loading && leaderboardError && (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <AlertCircle className="mb-4 h-12 w-12 text-red-500" />
+                  <p className="text-gray-600">{leaderboardError}</p>
+                  <button
+                    onClick={() => refreshLeaderboard()}
+                    className="mt-4 rounded-lg bg-detective-orange px-4 py-2 text-white hover:bg-detective-orange/90"
+                  >
+                    Reintentar
+                  </button>
+                </div>
+              )}
+
+              {/* Leaderboard content */}
+              {!loading && !leaderboardError && (
+                <LeaderboardLayout
+                  entries={currentLeaderboard.entries}
+                  showTopThree={true}
+                  highlightUser={true}
+                />
+              )}
 
               {/* User entry ref for scrolling */}
               {userEntry && <div ref={userEntryRef} className="absolute -top-20" />}

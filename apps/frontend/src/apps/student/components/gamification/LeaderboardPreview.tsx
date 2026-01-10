@@ -1,10 +1,13 @@
 /**
  * LeaderboardPreview Component
  *
- * Preview of user's leaderboard position with top 3 and quick filters
+ * Preview of user's leaderboard position with top 3 and quick filters.
+ *
+ * @updated 2026-01-08 - CORR-006: Removed hardcoded mockTop3, now receives topThree as prop
+ *                       or fetches from useLeaderboards hook for real data integration.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Trophy,
@@ -19,42 +22,56 @@ import {
   Globe,
   School,
   UserPlus,
+  RefreshCw,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { LeaderboardPosition } from '../../hooks/useGamificationData';
+import { useLeaderboards } from '@/features/gamification/social/hooks/useLeaderboards';
+
+/**
+ * Top 3 entry structure for the podium display
+ */
+interface TopThreeEntry {
+  rank: number;
+  username: string;
+  avatar: string;
+  score: number;
+  rankBadge: string;
+}
 
 interface LeaderboardPreviewProps {
   position: LeaderboardPosition | null;
+  /** Optional: Pre-fetched top 3 entries. If not provided, will use useLeaderboards hook */
+  topThree?: TopThreeEntry[];
 }
 
 type LeaderboardFilter = 'global' | 'school' | 'grade' | 'friends';
 
-// Mock top 3 data
-const mockTop3 = [
-  {
-    rank: 1,
-    username: 'Albert Einstein',
-    avatar: 'https://ui-avatars.com/api/?name=Albert+Einstein&background=fbbf24&color=fff',
-    score: 5420,
-    rankBadge: "K'uk'ulkan",
-  },
-  {
-    rank: 2,
-    username: 'Isaac Newton',
-    avatar: 'https://ui-avatars.com/api/?name=Isaac+Newton&background=c0c0c0&color=000',
-    score: 5180,
-    rankBadge: 'Halach Uinic',
-  },
-  {
-    rank: 3,
-    username: 'Nikola Tesla',
-    avatar: 'https://ui-avatars.com/api/?name=Nikola+Tesla&background=cd7f32&color=fff',
-    score: 4950,
-    rankBadge: 'Halach Uinic',
-  },
-];
+export function LeaderboardPreview({ position, topThree: propTopThree }: LeaderboardPreviewProps) {
+  // Use leaderboards hook for real data if topThree prop is not provided
+  const { currentLeaderboard, loading: leaderboardLoading } = useLeaderboards();
 
-export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
+  // Derive top 3 from store if not provided as prop
+  const topThree = useMemo(() => {
+    // If prop is provided, use it
+    if (propTopThree && propTopThree.length > 0) {
+      return propTopThree;
+    }
+
+    // Otherwise, derive from currentLeaderboard entries
+    if (currentLeaderboard.entries && currentLeaderboard.entries.length > 0) {
+      return currentLeaderboard.entries.slice(0, 3).map((entry) => ({
+        rank: entry.rank,
+        username: entry.username,
+        avatar: entry.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username)}&background=f97316&color=fff`,
+        score: entry.score,
+        rankBadge: entry.rankBadge || 'Ajaw',
+      }));
+    }
+
+    // Return empty array if no data available
+    return [];
+  }, [propTopThree, currentLeaderboard.entries]);
   const navigate = useNavigate();
   const [filter, setFilter] = useState<LeaderboardFilter>('global');
 
@@ -217,9 +234,30 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
         <h3 className="mb-4 flex items-center gap-2 font-semibold text-detective-text">
           <Sparkles className="h-5 w-5 text-detective-gold" />
           Top 3 Líderes
+          {leaderboardLoading && (
+            <RefreshCw className="h-4 w-4 animate-spin text-detective-text-secondary" />
+          )}
         </h3>
 
-        {/* Podium Display */}
+        {/* Empty State */}
+        {topThree.length === 0 && !leaderboardLoading && (
+          <div className="py-8 text-center">
+            <Trophy className="mx-auto mb-3 h-10 w-10 text-detective-text-secondary" />
+            <p className="text-sm text-detective-text-secondary">
+              No hay datos de clasificación disponibles
+            </p>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {leaderboardLoading && topThree.length === 0 && (
+          <div className="flex items-center justify-center py-8">
+            <RefreshCw className="h-8 w-8 animate-spin text-blue-600" />
+          </div>
+        )}
+
+        {/* Podium Display - Only show if we have data */}
+        {topThree.length >= 3 && (
         <div className="mb-6 flex items-end justify-center gap-4">
           {/* 2nd Place */}
           <motion.div
@@ -229,19 +267,22 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
             className="flex flex-col items-center"
           >
             <img
-              src={mockTop3[1].avatar}
-              alt={mockTop3[1].username}
+              src={topThree[1].avatar}
+              alt={topThree[1].username}
               className="mb-2 h-16 w-16 rounded-full border-4 border-gray-300"
+              onError={(e) => {
+                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(topThree[1].username)}&background=c0c0c0&color=000`;
+              }}
             />
             <div className="flex h-24 w-20 flex-col items-center justify-center rounded-t-lg bg-gradient-to-t from-gray-300 to-gray-400 text-white shadow-lg">
               <Medal className="mb-1 h-8 w-8" />
               <span className="text-2xl font-bold">2</span>
             </div>
             <p className="mt-2 text-center text-xs font-semibold text-detective-text">
-              {mockTop3[1].username.split(' ')[0]}
+              {topThree[1].username.split(' ')[0]}
             </p>
             <p className="text-xs text-detective-text-secondary">
-              {mockTop3[1].score.toLocaleString()}
+              {topThree[1].score.toLocaleString()}
             </p>
           </motion.div>
 
@@ -262,9 +303,12 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
               }}
             >
               <img
-                src={mockTop3[0].avatar}
-                alt={mockTop3[0].username}
+                src={topThree[0].avatar}
+                alt={topThree[0].username}
                 className="mb-2 h-20 w-20 rounded-full border-4 border-yellow-400"
+                onError={(e) => {
+                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(topThree[0].username)}&background=fbbf24&color=fff`;
+                }}
               />
             </motion.div>
             <div className="flex h-32 w-24 flex-col items-center justify-center rounded-t-lg bg-gradient-to-t from-yellow-400 to-yellow-500 text-white shadow-xl">
@@ -272,10 +316,10 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
               <span className="text-3xl font-bold">1</span>
             </div>
             <p className="mt-2 text-center text-sm font-bold text-detective-text">
-              {mockTop3[0].username.split(' ')[0]}
+              {topThree[0].username.split(' ')[0]}
             </p>
             <p className="text-xs text-detective-text-secondary">
-              {mockTop3[0].score.toLocaleString()}
+              {topThree[0].score.toLocaleString()}
             </p>
           </motion.div>
 
@@ -287,22 +331,26 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
             className="flex flex-col items-center"
           >
             <img
-              src={mockTop3[2].avatar}
-              alt={mockTop3[2].username}
+              src={topThree[2].avatar}
+              alt={topThree[2].username}
               className="mb-2 h-16 w-16 rounded-full border-4 border-orange-400"
+              onError={(e) => {
+                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(topThree[2].username)}&background=cd7f32&color=fff`;
+              }}
             />
             <div className="flex h-20 w-20 flex-col items-center justify-center rounded-t-lg bg-gradient-to-t from-orange-400 to-orange-500 text-white shadow-lg">
               <Award className="mb-1 h-8 w-8" />
               <span className="text-2xl font-bold">3</span>
             </div>
             <p className="mt-2 text-center text-xs font-semibold text-detective-text">
-              {mockTop3[2].username.split(' ')[0]}
+              {topThree[2].username.split(' ')[0]}
             </p>
             <p className="text-xs text-detective-text-secondary">
-              {mockTop3[2].score.toLocaleString()}
+              {topThree[2].score.toLocaleString()}
             </p>
           </motion.div>
         </div>
+        )}
       </motion.div>
 
       {/* View Full Leaderboard Button */}

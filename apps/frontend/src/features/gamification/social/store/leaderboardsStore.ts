@@ -32,7 +32,6 @@ interface LeaderboardsStore {
   setLeaderboardType: (type: LeaderboardType, classroomId?: string) => Promise<void>;
   setTimePeriod: (period: TimePeriod) => Promise<void>;
   refreshLeaderboard: (classroomId?: string) => Promise<void>;
-  updateFromWebSocket: (entries: any[]) => void;
 }
 
 export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
@@ -203,29 +202,5 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
         loading: false,
       });
     }
-  },
-
-  updateFromWebSocket: (entries: any[]) => {
-    const { currentLeaderboard } = get();
-
-    // Only update if we have entries
-    if (!entries || entries.length === 0) {
-      console.warn('⚠️ Received empty leaderboard update from WebSocket');
-      return;
-    }
-
-    console.log('🔄 Updating leaderboard from WebSocket:', entries.length, 'entries');
-
-    // Create updated leaderboard data
-    const updatedLeaderboard: LeaderboardData = {
-      ...currentLeaderboard,
-      entries,
-      totalParticipants: entries.length,
-      lastUpdated: new Date(),
-      // Try to find user rank from the updated entries
-      userRank: entries.find((e) => e.isCurrentUser)?.rank || currentLeaderboard.userRank,
-    };
-
-    set({ currentLeaderboard: updatedLeaderboard });
   },
 }));

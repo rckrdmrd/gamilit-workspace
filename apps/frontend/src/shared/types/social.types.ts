@@ -200,10 +200,16 @@ export interface School {
 // TEAM CHALLENGES
 // ==========================================
 
+/**
+ * Estados de desafíos de equipos
+ * NOTA (2026-01-07): Sincronizado con TeamChallengeStatusEnum en enums.constants.ts
+ * @see DDL: social_features.team_challenge_status ENUM
+ */
 export enum TeamChallengeStatus {
-  PENDING = 'pending',
   ACTIVE = 'active',
+  IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
+  FAILED = 'failed',
   CANCELLED = 'cancelled',
 }
 

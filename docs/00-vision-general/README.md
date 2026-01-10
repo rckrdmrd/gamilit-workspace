@@ -204,29 +204,29 @@ Esta carpeta contiene documentación de **alto nivel** para entender rápidament
 
 ---
 
+#### [GLOSARIO.md](./GLOSARIO.md)
+**Audiencia:** Todos (desarrolladores, PMs, stakeholders)
+**Tiempo de lectura:** 10-15 minutos
+**Última actualización:** 2025-11-29
+
+**Qué contiene:**
+- Términos de gamificación (ML Coins, Rangos Maya, achievements, comodines)
+- Términos educativos (modelo Cassany, comprensión literal/inferencial/crítica)
+- Términos técnicos (SSOT, DDL, RLS, schemas, triggers)
+- Acrónimos del proyecto (GLIT, API, JWT, CRUD, ADR)
+- Roles de usuario y portales
+- Schemas de base de datos
+
+**Cuándo leerlo:**
+- Para nuevos miembros que no conocen terminología
+- Como referencia rápida durante code reviews
+- Para entender nomenclatura de BD y arquitectura
+
+---
+
 ### ⏳ Documentos Planeados
 
 Los siguientes documentos están planeados pero aún no creados:
-
-#### GLOSARIO.md (Pendiente)
-**Audiencia:** Todos
-**Prioridad:** P1 (Alta)
-**Esfuerzo estimado:** 2-3 horas
-**Líneas estimadas:** 300-400
-
-**Contenido planeado:**
-- Términos técnicos (multi-tenant, SSOT, DDL, migrations)
-- Términos de gamificación (ML Coins, Rangos Maya, achievements)
-- Términos educativos (comprensión literal, inferencial, crítica, digital, producción)
-- Acrónimos del proyecto (GLIT, API, JWT, RLS, CRUD)
-- Conceptos de arquitectura (monorepo, feature-sliced design, repository pattern)
-
-**Cuándo será útil:**
-- Para nuevos miembros que no conocen terminología
-- Como referencia rápida durante code reviews
-- Para documentar decisiones de naming
-
----
 
 #### QUICK-START.md (Pendiente)
 **Audiencia:** Desarrolladores impacientes
@@ -374,7 +374,7 @@ Los siguientes documentos están planeados pero aún no creados:
 - [docs/98-standards/](../98-standards/)
 
 **No conozco un término técnico:**
-- ⏳ GLOSARIO.md (pendiente)
+- ✅ [GLOSARIO.md](./GLOSARIO.md)
 - [docs/96-quick-reference/](../96-quick-reference/)
 
 **Voy a desarrollar ejercicios o gamificación:**
@@ -400,9 +400,7 @@ Ninguno en esta carpeta actualmente.
 
 ### P1 (Alto)
 
-- **P1-001:** Falta GLOSARIO.md con terminología del proyecto
-  - **Esfuerzo:** 2-3 horas
-  - **Impacto:** Nuevos miembros no entienden términos específicos
+- **P1-001:** ~~Falta GLOSARIO.md con terminología del proyecto~~ ✅ RESUELTO (2026-01-07)
 
 - **P1-002:** Falta QUICK-START.md para setup rápido
   - **Esfuerzo:** 1-2 horas
@@ -416,10 +414,10 @@ Ninguno en esta carpeta actualmente.
 
 ## 🎯 Próximos Pasos
 
-### Fase 1 (Esta Semana - 6-8 horas)
+### Fase 1 (Completada)
 
 1. ✅ README.md creado (este archivo)
-2. ⬜ Crear GLOSARIO.md (2-3 horas)
+2. ✅ GLOSARIO.md creado (2025-11-29)
 3. ⬜ Crear QUICK-START.md (1-2 horas)
 4. ⬜ Crear ARQUITECTURA-ALTO-NIVEL.md (3-4 horas)
 
@@ -441,7 +439,7 @@ Ninguno en esta carpeta actualmente.
 
 ---
 
-**Última actualización:** 2025-11-23
-**Versión:** 1.1
+**Última actualización:** 2026-01-07
+**Versión:** 1.2
 **Método:** Sistema SIMCO - Fase 3 (Option A - Complete Content)
-**Cambios v1.1:** Agregados DocumentoDeDiseño y GUIA-PRUEBAS-MODULO3
+**Cambios v1.2:** Actualizado estado de GLOSARIO.md (ahora completado), sincronización documental

@@ -407,16 +407,54 @@ export async function getOrganizationStats(id: string): Promise<OrganizationStat
  * Get pending content for moderation
  *
  * Status: Backend IMPLEMENTED ✅
+ *
+ * NOTE: Backend returns { data, total, page, limit, total_pages }
+ * but frontend expects { items, pagination: { page, totalPages, totalItems, limit } }
+ * This function transforms the response to match frontend expectations.
+ *
+ * @see TAREA-3: Fix totalItems undefined error (2026-01-07)
  */
 export async function getPendingContent(
   filters?: ContentFilters,
 ): Promise<PaginatedResponse<PendingContent>> {
   try {
-    const response = await apiClient.get<PaginatedResponse<PendingContent>>(
+    // Backend response structure
+    const response = await apiClient.get<any>(
       API_ENDPOINTS.admin.content.pending,
       { params: filters },
     );
-    return response.data;
+
+    const backendData = response.data;
+
+    // Transform backend response to frontend PaginatedResponse format
+    // Backend: { data: T[], total, page, limit, total_pages }
+    // Frontend: { items: T[], pagination: { page, totalPages, totalItems, limit } }
+    if (backendData && typeof backendData === 'object') {
+      // If already has frontend format (items + pagination)
+      if (backendData.items && backendData.pagination) {
+        return backendData;
+      }
+
+      // Transform from backend format
+      if (backendData.data !== undefined || Array.isArray(backendData)) {
+        const items = backendData.data || backendData;
+        return {
+          items: Array.isArray(items) ? items : [],
+          pagination: {
+            page: backendData.page || 1,
+            totalPages: backendData.total_pages || Math.ceil((backendData.total || 0) / (backendData.limit || 20)),
+            totalItems: backendData.total || 0,
+            limit: backendData.limit || 20,
+          },
+        };
+      }
+    }
+
+    // Fallback for unexpected response structure
+    return {
+      items: [],
+      pagination: { page: 1, totalPages: 0, totalItems: 0, limit: 20 },
+    };
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch pending content');
   }

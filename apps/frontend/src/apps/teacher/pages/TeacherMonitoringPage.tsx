@@ -61,7 +61,7 @@ export default function TeacherMonitoringPage() {
       <TeacherLayout
         user={user ?? undefined}
         gamificationData={displayGamificationData}
-        organizationName={user?.organization?.name || 'Mi Institución'}
+        organizationName="Mi Institución"
         onLogout={handleLogout}
       >
         <div className="space-y-6">

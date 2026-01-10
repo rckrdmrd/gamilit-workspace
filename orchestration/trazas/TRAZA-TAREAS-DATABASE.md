@@ -1,11 +1,86 @@
 # Traza de Tareas: ATLAS-DATABASE
 
-**Última actualización:** 2025-11-29 (DB-137: Implementación M4-M5 - Tablas Media y Manual Reviews)
-**Estado:** ✅ PRODUCTION READY - Validación de integración completa + M4-M5 activos
+**Última actualización:** 2026-01-07 (DB-138: Eliminación tabla deprecated user_activity)
+**Estado:** ✅ PRODUCTION READY - Auditoría de duplicados completada
 
 ---
 
 ## 📋 Tareas Actuales
+
+### ✅ DB-138: Eliminación Tabla Deprecated user_activity - COMPLETADO
+
+**Fecha:** 2026-01-07
+**Agente:** Database-Agent
+**Prioridad:** P1 MEJORA
+**Duración:** 30 minutos
+**Estimación:** 0.5 SP
+
+**Objetivo:**
+Eliminar tabla deprecated `audit_logging.user_activity` identificada como duplicado de `user_activity_logs` durante análisis de consolidación de tablas de auditoría.
+
+**Contexto:**
+- Análisis de 8 tablas de auditoría reveló que `user_activity` era duplicado de `user_activity_logs`
+- `user_activity_logs` tiene estructura más completa (9 cols vs 6 cols)
+- Ambas registran acciones de usuario con timestamps
+- Arquitectura general del proyecto validada como correcta (sin otros duplicados reales)
+
+**Solución Implementada:**
+
+#### 1. DDL Movido a _deprecated
+**Archivo original:** `apps/database/ddl/schemas/audit_logging/tables/07-user_activity.sql`
+**Destino:** `apps/database/ddl/schemas/audit_logging/_deprecated/07-user_activity.sql`
+
+#### 2. Backend Actualizado
+**Archivo:** `apps/backend/src/shared/constants/database.constants.ts`
+**Cambio:** Constante `USER_ACTIVITY` comentada con nota de deprecación
+
+```typescript
+// DEPRECATED 2026-01-07: Tabla duplicada de USER_ACTIVITY_LOGS
+// Movida a _deprecated/ - Usar USER_ACTIVITY_LOGS en su lugar
+// USER_ACTIVITY: 'user_activity',
+```
+
+#### 3. Documentación Actualizada
+- **_MAP.md:** Actualizado para reflejar 6 tablas activas (era 7)
+- **MIGRATION-DUPLICATE-TABLES.md:** Marcado como COMPLETADO
+
+#### 4. Validación Script
+**Script:** `validate-create-database.sh`
+**Resultado:** PASSED
+- Línea 142 excluye `_deprecated/` con patrón: `! -path "*/_deprecated/*"`
+- 7 archivos detectados en audit_logging/tables (excluyendo deprecated)
+
+**Tablas activas en audit_logging:**
+1. 01-audit_logs.sql
+2. 02-performance_metrics.sql
+3. 03-system_alerts.sql
+4. 04-system_logs.sql
+5. 05-user_activity_logs.sql (tabla preferida)
+6. 06-activity_log.sql
+7. 08-pending_user_initialization.sql
+
+**Archivos Modificados:**
+| Archivo | Tipo | Cambio |
+|---------|------|--------|
+| audit_logging/tables/07-user_activity.sql | DDL | Movido a _deprecated/ |
+| database.constants.ts | Backend | Constante comentada |
+| audit_logging/_MAP.md | Docs | Tablas 7→6 activas |
+| audit_logging/MIGRATION-DUPLICATE-TABLES.md | Docs | Marcado COMPLETADO |
+
+**Acción Pendiente en Producción:**
+```sql
+-- Ejecutar solo si la tabla existe en BD de producción
+DROP TABLE IF EXISTS audit_logging.user_activity CASCADE;
+```
+
+**Impacto:**
+- **Limpieza:** 1 tabla deprecated eliminada del flujo DDL
+- **Consistencia:** 0 referencias huérfanas en TypeScript
+- **Arquitectura:** Validada como correcta (tablas de progreso son complementarias)
+
+**Reporte completo:** `orchestration/reportes/REPORTE-FINAL-SESION-2026-01-07.md`
+
+---
 
 ### ✅ DB-137: Implementación M4-M5 - Tablas Media Attachments y Manual Reviews - COMPLETADO
 

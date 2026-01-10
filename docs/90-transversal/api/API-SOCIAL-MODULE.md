@@ -19,6 +19,334 @@
 
 ---
 
+## AUTENTICACION Y AUTORIZACION
+
+> **Actualizado:** 2026-01-07 | Revision de documentacion
+
+### Headers Requeridos
+
+| Header | Valor | Requerido | Descripcion |
+|--------|-------|-----------|-------------|
+| `Authorization` | `Bearer {jwt_token}` | Si | Token JWT de sesion |
+| `X-Tenant-ID` | `{tenant_uuid}` | Si | Identificador del tenant (multi-tenant) |
+| `Content-Type` | `application/json` | Si (POST/PATCH) | Tipo de contenido |
+| `Accept` | `application/json` | No | Formato de respuesta esperado |
+
+### Obtencion del Token JWT
+
+El token se obtiene mediante el endpoint de autenticacion:
+
+```http
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "usuario@escuela.edu",
+  "password": "contraseña_segura"
+}
+```
+
+**Response:**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expires_in": 3600,
+  "token_type": "Bearer"
+}
+```
+
+### Roles y Permisos por Endpoint
+
+| Endpoint | Metodo | Roles Permitidos | Notas |
+|----------|--------|------------------|-------|
+| `/schools` | GET | admin, teacher | Listar escuelas del tenant |
+| `/schools` | POST | admin | Solo administradores |
+| `/schools/:id` | PATCH/DELETE | admin | Solo administradores |
+| `/classrooms` | GET | admin, teacher, student | Filtrado por rol |
+| `/classrooms` | POST | admin, teacher | Crear aulas |
+| `/classrooms/:id` | PATCH | admin, teacher (owner) | Solo propietario o admin |
+| `/classrooms/:id` | DELETE | admin | Solo administradores |
+| `/classrooms/:id/members` | GET | admin, teacher, student (member) | Miembros del aula |
+| `/classrooms/:id/students/*` | POST/DELETE | admin, teacher (owner) | Gestionar estudiantes |
+| `/teams/*` | ALL | admin, teacher, student | Segun contexto |
+| `/users/:userId/friends/*` | ALL | owner, admin | Solo propias amistades |
+| `/peer-challenges/*` | ALL | student | Solo estudiantes |
+| `/activities/*` | GET | all | Activity feed publico |
+
+### Codigos de Error HTTP
+
+| Codigo | Significado | Ejemplo |
+|--------|-------------|---------|
+| 200 | OK | Operacion exitosa |
+| 201 | Created | Recurso creado |
+| 400 | Bad Request | Datos invalidos en request |
+| 401 | Unauthorized | Token faltante o invalido |
+| 403 | Forbidden | Sin permisos para esta accion |
+| 404 | Not Found | Recurso no encontrado |
+| 409 | Conflict | Codigo duplicado, capacidad excedida |
+| 422 | Unprocessable Entity | Validacion fallida |
+| 500 | Internal Server Error | Error del servidor |
+
+### Ejemplo de Request Autenticado
+
+```http
+GET /api/v1/social/classrooms HTTP/1.1
+Host: api.gamilit.com
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+X-Tenant-ID: 550e8400-e29b-41d4-a716-446655440000
+Accept: application/json
+```
+
+---
+
+## EJEMPLOS DE REQUEST/RESPONSE
+
+### Schools - Listar Escuelas
+
+**Request:**
+```http
+GET /api/v1/social/schools?page=1&limit=10
+Authorization: Bearer {token}
+X-Tenant-ID: {tenant_id}
+```
+
+**Response (200 OK):**
+```json
+{
+  "data": [
+    {
+      "id": "school-uuid-1",
+      "name": "Escuela Primaria Benito Juarez",
+      "code": "EPBJ001",
+      "tenantId": "tenant-uuid",
+      "address": "Calle Principal 123, Ciudad",
+      "phone": "+52 555 123 4567",
+      "email": "contacto@escuela.edu",
+      "principalId": "user-uuid-principal",
+      "isActive": true,
+      "settings": {
+        "allowTeamCreation": true,
+        "maxClassroomSize": 35
+      },
+      "createdAt": "2026-01-07T10:00:00Z",
+      "updatedAt": "2026-01-07T10:00:00Z"
+    }
+  ],
+  "meta": {
+    "total": 1,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  }
+}
+```
+
+### Schools - Crear Escuela
+
+**Request:**
+```http
+POST /api/v1/social/schools
+Authorization: Bearer {token}
+X-Tenant-ID: {tenant_id}
+Content-Type: application/json
+
+{
+  "name": "Escuela Secundaria Miguel Hidalgo",
+  "code": "ESMH002",
+  "address": "Av. Reforma 456, Ciudad",
+  "phone": "+52 555 987 6543",
+  "email": "info@secundaria.edu",
+  "principalId": "user-uuid-director"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": "school-uuid-new",
+  "name": "Escuela Secundaria Miguel Hidalgo",
+  "code": "ESMH002",
+  "tenantId": "tenant-uuid",
+  "isActive": true,
+  "createdAt": "2026-01-07T15:30:00Z"
+}
+```
+
+### Classrooms - Listar Aulas
+
+**Request:**
+```http
+GET /api/v1/social/classrooms?schoolId={school_id}&isActive=true
+Authorization: Bearer {token}
+X-Tenant-ID: {tenant_id}
+```
+
+**Response (200 OK):**
+```json
+{
+  "data": [
+    {
+      "id": "classroom-uuid-1",
+      "name": "3ro A - Matematicas",
+      "code": "3A-MAT-2026",
+      "schoolId": "school-uuid",
+      "teacherId": "teacher-uuid",
+      "grade": "3ro",
+      "section": "A",
+      "subject": "Matematicas",
+      "capacity": 35,
+      "currentEnrollment": 28,
+      "isActive": true,
+      "schedule": {
+        "days": ["lunes", "miercoles", "viernes"],
+        "startTime": "08:00",
+        "endTime": "09:30"
+      },
+      "createdAt": "2026-01-07T10:00:00Z"
+    }
+  ],
+  "meta": {
+    "total": 5,
+    "page": 1,
+    "limit": 20
+  }
+}
+```
+
+### Classrooms - Inscribir Estudiante
+
+**Request:**
+```http
+POST /api/v1/social/classrooms/{classroom_id}/students/{student_id}
+Authorization: Bearer {token}
+X-Tenant-ID: {tenant_id}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": "membership-uuid",
+  "classroomId": "classroom-uuid",
+  "userId": "student-uuid",
+  "role": "student",
+  "status": "active",
+  "enrolledAt": "2026-01-07T16:00:00Z"
+}
+```
+
+**Response (409 Conflict - Capacidad Excedida):**
+```json
+{
+  "statusCode": 409,
+  "message": "El aula ha alcanzado su capacidad maxima (35 estudiantes)",
+  "error": "Conflict"
+}
+```
+
+### Teams - Crear Equipo
+
+**Request:**
+```http
+POST /api/v1/social/teams
+Authorization: Bearer {token}
+X-Tenant-ID: {tenant_id}
+Content-Type: application/json
+
+{
+  "name": "Los Matematicos",
+  "classroomId": "classroom-uuid",
+  "maxMembers": 5,
+  "description": "Equipo para competencias de matematicas"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": "team-uuid",
+  "name": "Los Matematicos",
+  "code": "TEAM-ABC123",
+  "classroomId": "classroom-uuid",
+  "creatorId": "student-uuid",
+  "maxMembers": 5,
+  "currentMembers": 1,
+  "totalScore": 0,
+  "totalXp": 0,
+  "isActive": true,
+  "createdAt": "2026-01-07T16:30:00Z"
+}
+```
+
+### Friendships - Enviar Solicitud
+
+**Request:**
+```http
+POST /api/v1/social/friendships/request
+Authorization: Bearer {token}
+X-Tenant-ID: {tenant_id}
+Content-Type: application/json
+
+{
+  "friendId": "user-uuid-friend"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": "friendship-uuid",
+  "requesterId": "current-user-uuid",
+  "addresseeId": "user-uuid-friend",
+  "status": "pending",
+  "createdAt": "2026-01-07T17:00:00Z"
+}
+```
+
+### Peer Challenges - Crear Desafio
+
+**Request:**
+```http
+POST /api/v1/social/peer-challenges
+Authorization: Bearer {token}
+X-Tenant-ID: {tenant_id}
+Content-Type: application/json
+
+{
+  "title": "Reto de Lectura Rapida",
+  "description": "Quien complete mas ejercicios de comprension en 30 minutos",
+  "type": "head_to_head",
+  "exerciseIds": ["exercise-uuid-1", "exercise-uuid-2"],
+  "wagerAmount": 50,
+  "maxParticipants": 2,
+  "startAt": "2026-01-08T10:00:00Z",
+  "endAt": "2026-01-08T10:30:00Z"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": "challenge-uuid",
+  "title": "Reto de Lectura Rapida",
+  "type": "head_to_head",
+  "status": "open",
+  "creatorId": "student-uuid",
+  "wagerAmount": 50,
+  "maxParticipants": 2,
+  "currentParticipants": 1,
+  "rewards": {
+    "xp": 100,
+    "mlCoins": 50
+  },
+  "startAt": "2026-01-08T10:00:00Z",
+  "endAt": "2026-01-08T10:30:00Z",
+  "createdAt": "2026-01-07T17:30:00Z"
+}
+```
+
+---
+
 ## CONTROLLERS
 
 1. `SchoolsController` - Instituciones educativas

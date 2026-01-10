@@ -60,7 +60,9 @@ const getDeviceInfo = (): { name: string; type: 'web' | 'ios' | 'android' } => {
 };
 
 export const usePushNotifications = (): UsePushNotificationsReturn => {
-  const { registerDevice, fetchDevices } = useNotificationsStore();
+  // Using Zustand selectors to prevent unnecessary re-renders
+  const registerDevice = useNotificationsStore((state) => state.registerDevice);
+  const fetchDevices = useNotificationsStore((state) => state.fetchDevices);
 
   const [isSupported, setIsSupported] = useState(false);
   const [permissionStatus, setPermissionStatus] = useState<NotificationPermission>('default');

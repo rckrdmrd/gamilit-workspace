@@ -83,18 +83,16 @@ export default function NotificationsPage() {
   const { user, logout } = useAuth();
   const { gamificationData } = useUserGamification(user?.id);
 
-  // Store
-  const {
-    notifications,
-    unreadCount,
-    isLoading,
-    error,
-    fetchNotifications,
-    fetchUnreadCount,
-    markAsRead,
-    markAllAsRead,
-    deleteNotification,
-  } = useNotificationsStore();
+  // Store - Using Zustand selectors to prevent unnecessary re-renders
+  const notifications = useNotificationsStore((state) => state.notifications);
+  const unreadCount = useNotificationsStore((state) => state.unreadCount);
+  const isLoading = useNotificationsStore((state) => state.isLoading);
+  const error = useNotificationsStore((state) => state.error);
+  const fetchNotifications = useNotificationsStore((state) => state.fetchNotifications);
+  const fetchUnreadCount = useNotificationsStore((state) => state.fetchUnreadCount);
+  const markAsRead = useNotificationsStore((state) => state.markAsRead);
+  const markAllAsRead = useNotificationsStore((state) => state.markAllAsRead);
+  const deleteNotification = useNotificationsStore((state) => state.deleteNotification);
 
   // Local state
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');

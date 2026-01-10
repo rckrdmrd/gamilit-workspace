@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, Info, Trophy, Sparkles } from 'lucide-react';
+import { CheckCircle2, XCircle, Info, Trophy, Sparkles, Clock } from 'lucide-react';
 import FocusTrap from 'focus-trap-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -197,6 +197,35 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                           </div>
                         </div>
                       )}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Seccion de Pendiente de Validacion - M3-M5 Feature */}
+                {feedback.pendingReview && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="mb-6 p-4 bg-blue-50 rounded-lg border-2 border-blue-200"
+                  >
+                    <div className="flex items-start gap-3">
+                      <Clock className="h-6 w-6 text-blue-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-blue-900 mb-2">
+                          Tu progreso ha sido actualizado
+                        </h4>
+                        <p className="text-sm text-blue-800 mb-3">
+                          Tu trabajo ha sido enviado exitosamente y esta en espera de validacion por tu maestro.
+                          La barra de progreso del modulo ya refleja este avance.
+                        </p>
+                        <div className="p-3 bg-blue-100 rounded-lg">
+                          <p className="text-xs text-blue-700">
+                            <strong>Nota:</strong> Las recompensas (XP, ML Coins) se asignaran
+                            cuando tu maestro complete la evaluacion.
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </motion.div>
                 )}

@@ -6,7 +6,9 @@ import type {
 } from '@/shared/types/achievement.types';
 import {
   transformUserAchievements,
-  type ApiUserAchievementResponse,
+  transformAchievements,
+  transformAchievement,
+  type ApiAchievementResponse,
 } from '@/features/gamification/achievements/utils/achievementTransformer';
 import type {
   LeaderboardResponse,
@@ -81,22 +83,28 @@ export const gamificationApi = {
   /**
    * Get all available achievements
    * @returns List of all achievements in the system
+   *
+   * FIX: CORR-007 - Transformar respuesta del backend (snake_case) a frontend (camelCase)
    */
   getAllAchievements: async (): Promise<Achievement[]> => {
-    const { data } = await apiClient.get<Achievement[]>('/gamification/achievements');
-    return data;
+    const { data } = await apiClient.get<ApiAchievementResponse[]>('/gamification/achievements');
+    // FIX: CORR-007 - Transformar respuesta del backend
+    return transformAchievements(data);
   },
 
   /**
    * Get a specific achievement by ID
    * @param achievementId - Achievement ID
    * @returns Single achievement details
+   *
+   * FIX: CORR-007 - Transformar respuesta del backend (snake_case) a frontend (camelCase)
    */
   getAchievementById: async (achievementId: string): Promise<Achievement> => {
-    const { data } = await apiClient.get<Achievement>(
+    const { data } = await apiClient.get<ApiAchievementResponse>(
       `/gamification/achievements/${achievementId}`,
     );
-    return data;
+    // FIX: CORR-007 - Transformar respuesta del backend
+    return transformAchievement(data);
   },
 
   /**
@@ -105,13 +113,36 @@ export const gamificationApi = {
    * @returns List of user achievements with progress (transformed from snake_case)
    *
    * FIX: CORR-004 - Transformer mapea snake_case del backend a camelCase del frontend
+   * FIX: CORR-005 - Backend ahora retorna { data: { achievements, total } }, extraer array
    */
   getUserAchievements: async (userId: string): Promise<UserAchievement[]> => {
-    const { data } = await apiClient.get<ApiUserAchievementResponse[]>(
+    const { data } = await apiClient.get<any>(
       `/gamification/users/${userId}/achievements`,
     );
+
+    // FIX: CORR-005 - Extraer array de la nueva estructura de respuesta
+    // Backend puede retornar múltiples estructuras:
+    // 1. Array directo: [...]
+    // 2. Con wrapper: { data: { achievements: [...], total } }
+    // 3. Sin wrapper: { achievements: [...], total }
+    let achievementsArray: any[] = [];
+
+    if (Array.isArray(data)) {
+      // Respuesta es array directo
+      achievementsArray = data;
+    } else if (data?.data?.achievements && Array.isArray(data.data.achievements)) {
+      // Estructura: { data: { achievements: [...] } }
+      achievementsArray = data.data.achievements;
+    } else if (data?.achievements && Array.isArray(data.achievements)) {
+      // Estructura: { achievements: [...] }
+      achievementsArray = data.achievements;
+    } else {
+      console.warn('[gamificationApi.getUserAchievements] Unexpected response structure:', typeof data, data);
+      achievementsArray = [];
+    }
+
     // Transformar respuesta del backend (snake_case) al formato del frontend (camelCase)
-    return transformUserAchievements(data);
+    return transformUserAchievements(achievementsArray);
   },
 
   /**

@@ -3,7 +3,7 @@
 project: GAMILIT
 version: 4.0
 generated: 2025-11-08
-updated: 2025-12-26
+updated: 2026-01-07
 source: Inventario Real del Frontend Implementado + Auditoria Documentacion vs Desarrollo 2025-12-23/26
 status: Actualizado con auditoria completa de componentes, hooks y mecanicas
 last_analysis: 2025-12-26 - Auditoria documentacion vs desarrollo - metricas reales verificadas
@@ -1187,6 +1187,92 @@ m4_m5_implementation:
 # CHANGELOG / MODIFICACIONES RECIENTES
 # ============================================================================
 changelog:
+  - date: "2026-01-07"
+    tarea_id: "FIX-ADMIN-HOOKS-TYPESCRIPT-001"
+    type: "Bug Fix - Admin Portal Hooks TypeScript Errors"
+    status: "✅ COMPLETADO"
+    description: "Correcciones de errores TypeScript en hooks del Admin Portal por acceso a 'unknown' type sin validación"
+    changes:
+      hooks:
+        - "useAlerts.ts: 4 correcciones de err?.message → err instanceof Error ? err.message : '...'"
+        - "useReports.ts: 4 correcciones de err.message → err instanceof Error ? err.message : '...'"
+    files_modified:
+      - "apps/frontend/src/apps/admin/hooks/useAlerts.ts"
+      - "apps/frontend/src/apps/admin/hooks/useReports.ts"
+    errors_fixed:
+      - "useAlerts.ts:100 - fetchAlerts catch block"
+      - "useAlerts.ts:162 - acknowledgeAlert catch block"
+      - "useAlerts.ts:195 - resolveAlert catch block"
+      - "useAlerts.ts:220 - suppressAlert catch block"
+      - "useReports.ts:98 - fetchReports catch block"
+      - "useReports.ts:129 - generateReport catch block"
+      - "useReports.ts:175 - downloadReport catch block"
+      - "useReports.ts:194 - deleteReport catch block"
+    validation:
+      build: "✅ SUCCESS (12.84s)"
+      typescript_errors: 0
+    pages_affected:
+      - "AdminAlertsPage"
+      - "AdminMonitoringPage (AlertasTab)"
+      - "AdminReportsPage"
+    documentation:
+      - "orchestration/analisis/ANALISIS-ERRORES-ADMIN-PORTAL-2026-01-07.md"
+
+  - date: "2026-01-07"
+    tarea_id: "IMPL-USER-ORGANIZATION-001"
+    type: "Type Enhancement - User Organization Field"
+    status: "✅ VIGENTE (Frontend Ready - Backend Pending)"
+    description: "Agregado campo organization al tipo User para soportar datos de organización/tenant"
+    changes:
+      types:
+        - "Organization interface: Nueva interfaz con id, name, slug, domain, logo_url"
+        - "User interface: Agregado campo organization?: Organization"
+    files_modified:
+      - "apps/frontend/src/features/auth/types/auth.types.ts"
+    backend_dependency:
+      status: "PENDIENTE"
+      required_change: "UserResponseDto debe incluir datos del tenant en respuesta de auth"
+      reference: "apps/backend/src/modules/auth/dto/user-response.dto.ts"
+    impact:
+      - "12 archivos teacher pages ahora type-correct para user?.organization"
+      - "Frontend preparado para cuando backend implemente el campo"
+    documentation:
+      - "orchestration/reportes/REPORTE-EJECUCION-CORRECCION-TEACHER-PAGES-2026-01-07.md (deuda técnica DT-001)"
+
+  - date: "2026-01-07"
+    tarea_id: "CORR-TEACHER-PAGES-001"
+    type: "Bug Fix - Teacher Portal Pages (Classes & Monitoring)"
+    status: "✅ VIGENTE"
+    description: "Correcciones TypeScript en páginas Classes y Monitoring del portal Teacher"
+    changes:
+      types:
+        - "StudentFilter interface: Agregado campo performanceLevel?: ('high' | 'medium' | 'low')[]"
+      components:
+        - "StudentMonitoringPanel.tsx: Agregado classroomId prop al StudentDetailModal"
+        - "StudentMonitoringPanel.tsx: Eliminados 6 casts 'as any' (type-safe con performanceLevel)"
+        - "TeacherClasses.tsx: Agregado title: 'Error' a 3 llamadas showToast"
+      pages:
+        - "TeacherClassesPage.tsx: organizationName cambiado a valor fijo 'Mi Institución'"
+        - "TeacherMonitoringPage.tsx: organizationName cambiado a valor fijo 'Mi Institución'"
+    files_modified:
+      - "apps/frontend/src/apps/teacher/types/index.ts"
+      - "apps/frontend/src/apps/teacher/components/monitoring/StudentMonitoringPanel.tsx"
+      - "apps/frontend/src/apps/teacher/pages/TeacherClasses.tsx"
+      - "apps/frontend/src/apps/teacher/pages/TeacherClassesPage.tsx"
+      - "apps/frontend/src/apps/teacher/pages/TeacherMonitoringPage.tsx"
+    errors_fixed:
+      - "Toast missing 'title' property (3 instances)"
+      - "user?.organization?.name TypeScript error (2 instances)"
+      - "classroomId not passed to StudentDetailModal"
+      - "Multiple 'as any' casts for performanceLevel filter (6 instances)"
+    impact:
+      - "Páginas /teacher/classes y /teacher/monitoring ahora funcionales"
+      - "Filtros de rendimiento type-safe sin casts"
+      - "Modal de notas puede guardar correctamente (classroomId pasado)"
+    documentation:
+      - "orchestration/reportes/PLAN-CORRECCION-TEACHER-PAGES-2026-01-07.md"
+      - "orchestration/reportes/REPORTE-EJECUCION-CORRECCION-TEACHER-PAGES-2026-01-07.md"
+
   - date: "2025-12-18"
     tarea_id: "CORR-ERRORES-M4-001"
     type: "Bug Fix - M4-M5 Exercise Adapters"

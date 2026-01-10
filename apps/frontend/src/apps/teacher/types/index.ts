@@ -276,6 +276,8 @@ export interface StudentFilter {
     max: number;
   };
   search?: string;
+  /** Performance level filter for client-side filtering */
+  performanceLevel?: ('high' | 'medium' | 'low')[];
 }
 
 export interface AnalyticsFilter {

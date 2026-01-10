@@ -1,8 +1,8 @@
-# Historial de Correcciones - GAMILIT 2025
+# Historial de Correcciones - GAMILIT 2025-2026
 
-**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
-**Tipo:** Registro histórico de correcciones y ajustes
-**Última actualización:** 2025-12-18
+**Proyecto:** GAMILIT - Sistema de Gamificacion Educativa
+**Tipo:** Registro historico de correcciones y ajustes
+**Ultima actualizacion:** 2026-01-07
 
 > **NOTA:** Este archivo contiene el historial de correcciones realizadas durante el desarrollo.
 > Los inventarios (`MASTER_INVENTORY.yml`, `DATABASE_INVENTORY.yml`, etc.) contienen solo
@@ -10,11 +10,63 @@
 
 ---
 
-## Índice
+## Indice
 
-1. [Correcciones 2025-12-18](#correcciones-2025-12-18)
-2. [Correcciones 2025-12-14](#correcciones-2025-12-14)
-3. [Correcciones 2025-11-29](#correcciones-2025-11-29)
+1. [Correcciones 2026-01-07](#correcciones-2026-01-07)
+2. [Correcciones 2025-12-18](#correcciones-2025-12-18)
+3. [Correcciones 2025-12-14](#correcciones-2025-12-14)
+4. [Correcciones 2025-11-29](#correcciones-2025-11-29)
+
+---
+
+## Correcciones 2026-01-07
+
+### BUG-M3-SUBMIT-001
+
+**Descripcion:** Fallo en Envio de Respuestas M3 - Frontend no mostraba mensaje "pendiente de revision"
+
+**Causa raiz:** El controlador de ejercicios retornaba una respuesta sin los campos `status`, `requiresManualReview` y `message` que el frontend necesita para mostrar el mensaje de revision pendiente.
+
+**Archivos modificados:**
+- `apps/backend/src/modules/educational/dto/exercises/submit-exercise-response.dto.ts`
+- `apps/backend/src/modules/educational/controllers/exercises.controller.ts`
+
+**Cambios realizados:**
+1. Agregados campos opcionales al DTO: `status`, `requiresManualReview`, `message`
+2. Modificada respuesta del controlador para ejercicios con `requires_manual_grading=true`
+3. Agregados decoradores `@ApiProperty` para documentacion Swagger
+
+**Impacto:** Todos los ejercicios M3, M4 y M5 que requieren revision manual ahora muestran correctamente el mensaje "pendiente de revision".
+
+**Documentacion:**
+- `orchestration/reportes/ANALISIS-PRE-EJECUCION-M3-SUBMIT-BUG-2026-01-07.md`
+- `orchestration/reportes/PLAN-EJECUCION-M3-SUBMIT-BUG-2026-01-07.md`
+- `orchestration/reportes/VALIDACION-EJECUCION-M3-SUBMIT-BUG-2026-01-07.md`
+
+**Status:** COMPLETADO
+
+---
+
+### BUG-TEACHER-REVIEWS-001
+
+**Descripcion:** Error en Lista de Revisiones del Portal Maestro - `reviews.map is not a function`
+
+**Causa raiz:** El backend retorna un objeto paginado `{ reviews: [...], total, page, limit, totalPages }` pero el frontend esperaba un array directo `ManualReview[]`.
+
+**Archivos modificados:**
+- `apps/frontend/src/shared/api/manualReviewApi.ts`
+
+**Cambios realizados:**
+1. Agregada interface `PaginatedReviewsResponse`
+2. Modificada funcion `getPendingReviews` para extraer array `reviews` del objeto paginado
+3. Mantenida compatibilidad hacia atras con formato de array directo
+
+**Impacto:** El portal de maestro ahora puede mostrar correctamente la lista de revisiones pendientes.
+
+**Documentacion:**
+- `orchestration/reportes/VALIDACION-EJECUCION-TEACHER-REVIEWS-BUG-2026-01-07.md`
+
+**Status:** COMPLETADO
 
 ---
 

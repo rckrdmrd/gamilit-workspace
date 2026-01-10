@@ -207,7 +207,57 @@ npx tsc --noEmit
 
 ---
 
+## NOTAS TECNICAS
+
+### Causa Raiz Problema 1: Endpoint 404
+
+El frontend llamaba a `GET /api/v1/gamification/leaderboards/user-rank` pero este endpoint no existia en el backend. El controlador `leaderboard.controller.ts` solo tenia endpoints para obtener el leaderboard completo, no la posicion individual del usuario.
+
+**Solucion:** Crear endpoint que utiliza el metodo existente `leaderboardService.getUserPosition(userId)`.
+
+### Causa Raiz Problema 2: AchievementsPage no muestra datos
+
+El backend retorna campos en `snake_case` (ej: `completed_at`, `is_completed`, `rewards_claimed`) pero el frontend espera `camelCase` (ej: `earnedAt`, `status`, `claimedAt`).
+
+**Solucion:** Crear transformer que mapea:
+- `user_id` → `userId`
+- `achievement_id` → `achievementId`
+- `completed_at` → `earnedAt`
+- `is_completed` + `rewards_claimed` → `status` (calculado)
+
+### Patron Utilizado
+
+Se siguio el patron existente en `missionTransformer.ts` para mantener consistencia en el codebase.
+
+---
+
+## CAMBIOS EN BASE DE DATOS
+
+**Estado:** ❌ Ninguno requerido
+
+Esta correccion fue exclusivamente en codigo TypeScript:
+- Backend: Controller y DTO
+- Frontend: Transformer y API client
+
+No se realizaron cambios en:
+- Tablas
+- Funciones SQL
+- Triggers
+- Seeds
+- Scripts de creacion/recreacion
+
+---
+
+## PROXIMOS PASOS RECOMENDADOS
+
+1. **Probar LeaderboardPage** - Verificar que muestra la posicion del usuario
+2. **Probar AchievementsPage** - Verificar que muestra logros correctamente
+3. **Ejecutar CORR-005** - Corregir problemas de WebSocket pendientes
+4. **Monitorear logs** - Verificar ausencia de errores 404
+
+---
+
 **Ejecutado por:** Orquestador (Tech Lead)
 **Fecha:** 2026-01-07
-**Version:** 1.0
+**Version:** 1.1 (Secciones adicionales segun estandar)
 **Estado:** COMPLETADO

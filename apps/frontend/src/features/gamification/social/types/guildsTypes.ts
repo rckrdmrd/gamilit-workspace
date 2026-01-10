@@ -1,9 +1,13 @@
 /**
  * Guild Types
  * Defines all types for the guild/team system
+ *
+ * NOTA (2026-01-07): GuildRole sincronizado con TeamMemberRoleEnum
+ * Mapeo: owner (BD) → owner (UI), admin (BD) → admin (UI)
  */
 
-export type GuildRole = 'leader' | 'officer' | 'member';
+// Sincronizado con TeamMemberRoleEnum en enums.constants.ts
+export type GuildRole = 'owner' | 'admin' | 'member';
 export type GuildStatus = 'active' | 'recruiting' | 'full' | 'inactive';
 export type ChallengeStatus = 'active' | 'completed' | 'failed' | 'upcoming';
 

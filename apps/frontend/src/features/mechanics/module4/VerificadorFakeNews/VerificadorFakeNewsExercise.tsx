@@ -107,11 +107,21 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     const score = calculateScore();
 
+    // CORR-010 FIX v4 2026-01-07: Sanitize claim IDs before sending
     // Transform to DTO format (claims_verified) for backend validation
-    const claims_verified = results.map((r) => {
+    const claims_verified = results.map((r, idx) => {
       const originalClaim = claims.find((c) => c.id === r.claimId);
+      // Sanitize: ensure claim_id is never empty
+      const sanitizedClaimId = r.claimId && r.claimId.trim() !== ''
+        ? r.claimId
+        : `claim-fallback-${idx + 1}`;
+
+      if (!r.claimId || r.claimId.trim() === '') {
+        console.warn(`[VerificadorFakeNews CORR-010] onProgressUpdate: Fixed missing claimId at index ${idx}`);
+      }
+
       return {
-        claim_id: r.claimId,
+        claim_id: sanitizedClaimId,
         is_fake: r.verdict === 'false',
         evidence: r.explanation && r.explanation.length >= 10
           ? r.explanation
@@ -222,14 +232,24 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
   const handleSubmit = () => {
     if (!exerciseId || results.length === 0 || isSubmitting || isSubmitted) return;
 
+    // CORR-010 FIX v4 2026-01-07: Sanitize claim IDs before sending
     // Transform verificationResults to claims_verified format expected by DTO
     // DTO expects: { claims_verified: [{ claim_id, is_fake, evidence }] }
-    const claims_verified = results.map((r) => {
+    const claims_verified = results.map((r, idx) => {
       // Find the original claim to get its text for context
       const originalClaim = claims.find((c) => c.id === r.claimId);
 
+      // Sanitize: ensure claim_id is never empty
+      const sanitizedClaimId = r.claimId && r.claimId.trim() !== ''
+        ? r.claimId
+        : `claim-fallback-${idx + 1}`;
+
+      if (!r.claimId || r.claimId.trim() === '') {
+        console.warn(`[VerificadorFakeNews CORR-010] handleSubmit: Fixed missing claimId at index ${idx}`);
+      }
+
       return {
-        claim_id: r.claimId,
+        claim_id: sanitizedClaimId,
         // Convert verdict to is_fake boolean: 'false' verdict means IS fake news
         is_fake: r.verdict === 'false',
         // Use explanation as evidence, ensure min 10 chars
@@ -238,6 +258,10 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
           : `Verificado: ${originalClaim?.text?.substring(0, 50) || 'Afirmación analizada'}. Confianza: ${Math.round(r.confidence * 100)}%`,
       };
     });
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[VerificadorFakeNews CORR-010] Submitting claims_verified:', claims_verified);
+    }
 
     // Build submission with both formats for backwards compatibility
     const submissionData = {

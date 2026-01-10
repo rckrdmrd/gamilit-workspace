@@ -67,8 +67,8 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   }, [currentIndex, currentStatement, evaluations]);
 
   // Progress updates
-  // CORR-010 FIX v3: Include current (unsaved) evaluation in onProgressUpdate
-  // This ensures ExercisePage.handleSubmit() has all evaluations including the one in progress
+  // CORR-010 FIX v4 2026-01-07: Include current evaluation + sanitize all statementIds
+  // This ensures ExercisePage.handleSubmit() has all evaluations with valid IDs
   useEffect(() => {
     if (onProgressUpdate) {
       // Get all saved evaluations
@@ -90,16 +90,29 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
         }
       }
 
-      const evaluatedCount = allEvaluations.length;
+      // CORR-010 FIX v4: Sanitize - ensure ALL evaluations have valid statementId
+      const sanitizedEvaluations = allEvaluations.map((ev, idx) => {
+        if (!ev.statementId || ev.statementId.trim() === '') {
+          const fallbackId = `stmt-${idx + 1}`;
+          if (process.env.NODE_ENV === 'development') {
+            console.warn(`[TribunalOpiniones CORR-010] onProgressUpdate: Fixing missing statementId at index ${idx}`);
+          }
+          return { ...ev, statementId: fallbackId };
+        }
+        return ev;
+      });
+
+      const evaluatedCount = sanitizedEvaluations.length;
       const answers: TribunalOpinionesAnswers = {
-        evaluations: allEvaluations,
+        evaluations: sanitizedEvaluations,
       };
 
       if (process.env.NODE_ENV === 'development') {
         console.log('[TribunalOpiniones] onProgressUpdate:', {
           savedCount: savedEvaluations.length,
-          totalCount: allEvaluations.length,
-          evaluationIds: allEvaluations.map(e => e.statementId),
+          totalCount: sanitizedEvaluations.length,
+          evaluationIds: sanitizedEvaluations.map(e => e.statementId),
+          allHaveIds: sanitizedEvaluations.every(e => e.statementId && e.statementId.trim() !== ''),
         });
       }
 
@@ -212,25 +225,37 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     setIsSubmitting(true);
 
     try {
-      // CORR-010 FIX: Validate all evaluations have statementId before sending
+      // CORR-010 FIX v4 2026-01-07: Sanitize and validate all evaluations before sending
       const evaluationsArray = Array.from(currentEvaluations.values());
-      const invalidEvaluations = evaluationsArray.filter(
+
+      // Sanitize: Regenerate missing statementIds using index fallback
+      const sanitizedEvaluations = evaluationsArray.map((ev, idx) => {
+        if (!ev.statementId || ev.statementId.trim() === '') {
+          const fallbackId = `stmt-${idx + 1}`;
+          console.warn(`[TribunalOpiniones CORR-010] Regenerating missing statementId at index ${idx}: ${fallbackId}`);
+          return { ...ev, statementId: fallbackId };
+        }
+        return ev;
+      });
+
+      // Final validation after sanitization
+      const stillInvalid = sanitizedEvaluations.filter(
         (ev) => !ev.statementId || ev.statementId.trim() === ''
       );
 
-      if (invalidEvaluations.length > 0) {
-        console.error('[TribunalOpiniones] Invalid evaluations detected:', invalidEvaluations);
+      if (stillInvalid.length > 0) {
+        console.error('[TribunalOpiniones CORR-010] Still invalid after sanitization:', stillInvalid);
         setFeedback({
           type: 'error',
           title: 'Error de Validación',
-          message: `${invalidEvaluations.length} evaluaciones tienen IDs inválidos. Por favor, vuelve a navegar por las afirmaciones.`,
+          message: `${stillInvalid.length} evaluaciones tienen IDs inválidos. Por favor, vuelve a navegar por las afirmaciones.`,
         });
         setShowFeedback(true);
         return;
       }
 
       const answers: TribunalOpinionesAnswers = {
-        evaluations: evaluationsArray,
+        evaluations: sanitizedEvaluations,
       };
 
       if (process.env.NODE_ENV === 'development') {

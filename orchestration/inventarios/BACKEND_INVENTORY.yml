@@ -4,18 +4,18 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.0.0"
+  version: "3.1.0"
   generated_date: "2025-11-11"
-  last_updated: "2025-12-23"
+  last_updated: "2026-01-07"
   generated_by: "Requirements-Analyst - Auditoria Documentacion vs Desarrollo"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
-  total_modules: 16  # ✅ Auditoria 2025-12-23 (admin, auth, educational, gamification, health, notifications, progress, social, teacher, websocket, etc.)
-  total_entities: 93  # ✅ Auditoria 2025-12-23
-  total_dtos: 327  # ✅ Verificado 2025-12-18
-  total_services: 103  # ✅ Auditoria 2025-12-23 (admin:22, teacher:16, +otros)
-  total_controllers: 76  # ✅ Auditoria 2025-12-23 (admin:22, teacher:8, +otros)
+  total_modules: 16  # ✅ Auditoria 2026-01-07 (admin, auth, educational, gamification, health, notifications, progress, social, teacher, websocket, etc.)
+  total_entities: 107  # ✅ Reconciliado 2026-01-07 (conteo real de *.entity.ts)
+  total_dtos: 337  # ✅ Reconciliado 2026-01-07 (conteo real de *.dto.ts)
+  total_services: 103  # ✅ Auditoria 2026-01-07 (coincide con conteo real)
+  total_controllers: 75  # ✅ Reconciliado 2026-01-07 (conteo real de *.controller.ts)
   total_endpoints: "300+"  # ✅ Auditoria 2025-12-23 (admin:150+, teacher:50+, +otros)
   typescript_errors: 0  # ⚠️ 2025-11-28: Backend tiene errores PREEXISTENTES en tests auth (no en admin)
   build_status: "⚠️ PREEXISTING TEST ERRORS"  # 2025-11-28: auth-derived-fields.service.spec.ts (no admin)
@@ -1371,6 +1371,69 @@ notes:
 # CHANGELOG / MODIFICACIONES RECIENTES
 # ============================================================================
 changelog:
+  - date: "2026-01-07"
+    tarea_id: "SECURITY-ADMIN-P0-001"
+    type: "Security Fixes - P0 Critical"
+    status: "✅ COMPLETADO"
+    modules_affected:
+      - "admin"
+      - "shared"
+    description: "Correcciones P0 de seguridad en Admin Portal: SQL injection, DTO validation, authorization"
+    changes:
+      admin_services:
+        - "admin-monitoring.service.ts: 3 SQL injection fixes (getErrorStats, getRecentErrors, getErrorTrends)"
+        - "admin-reports.service.ts: Cross-tenant vulnerability documented"
+        - "admin-system.service.ts: Cross-tenant vulnerability documented"
+        - "content-stats.service.ts: SQL injection fix (make_interval)"
+        - "admin-roles.service.ts: Audit logging + PERMISSION_METADATA"
+      admin_dtos:
+        - "report.dto.ts: @IsInt, @Min, @Max for pagination"
+        - "toggle-maintenance.dto.ts: @MaxLength(500)"
+        - "update-system-config.dto.ts: @IsString, @MaxLength(500)"
+        - "audit-log-query.dto.ts: @MaxLength(255), @Max(100)"
+        - "list-parameters-query.dto.ts: GamificationCategoryEnum, @IsEnum"
+        - "update-parameter.dto.ts: @MaxLength(1000)"
+        - "list-content.dto.ts: @MaxLength, @IsUUID"
+        - "list-media.dto.ts: @MaxLength, @IsUUID"
+        - "approval-history.dto.ts: @MaxLength, @IsUUID"
+        - "approve-content.dto.ts: @IsBoolean"
+      shared_constants:
+        - "enums.constants.ts: PermissionKeyEnum (16 permissions)"
+      shared_validators:
+        - "update-role-permissions.dto.ts: ValidPermissionsConstraint"
+    security_fixes:
+      sql_injection: 6
+      dto_validation: 15
+      authorization: 2
+      cross_tenant_documented: 5
+    impact:
+      - "SQL Injection vulnerabilities: 6 → 0"
+      - "DTOs sin validación crítica: 15 → 0"
+      - "PermissionKeyEnum como single source of truth"
+      - "Audit trail para cambios de permisos"
+    files_modified:
+      - "apps/backend/src/modules/admin/services/admin-monitoring.service.ts"
+      - "apps/backend/src/modules/admin/services/admin-reports.service.ts"
+      - "apps/backend/src/modules/admin/services/admin-system.service.ts"
+      - "apps/backend/src/modules/admin/services/admin-roles.service.ts"
+      - "apps/backend/src/modules/admin/dto/reports/report.dto.ts"
+      - "apps/backend/src/modules/admin/dto/system/toggle-maintenance.dto.ts"
+      - "apps/backend/src/modules/admin/dto/system/update-system-config.dto.ts"
+      - "apps/backend/src/modules/admin/dto/system/audit-log-query.dto.ts"
+      - "apps/backend/src/modules/admin/dto/gamification-config/list-parameters-query.dto.ts"
+      - "apps/backend/src/modules/admin/dto/gamification-config/update-parameter.dto.ts"
+      - "apps/backend/src/shared/constants/enums.constants.ts"
+      - "apps/backend/src/shared/dto/permissions/update-role-permissions.dto.ts"
+    documentation:
+      - "orchestration/reportes/REPORTE-VALIDACION-SEGURIDAD-ADMIN-P0-2026-01-07.md"
+    clean_load_policy:
+      violated: false
+      reason: "Cambios solo en código TypeScript, sin modificaciones DDL"
+    build_status: "✅ Passing"
+    pending_p1:
+      - "Implementar tenant isolation en 5 servicios"
+      - "Agregar guards de autorización en controllers"
+
   - date: "2026-01-04"
     tarea_id: "EPIC-10.2-CERTIFICATES"
     type: "Epic Implementation - Digital Certificates System"

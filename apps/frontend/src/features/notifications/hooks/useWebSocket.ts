@@ -10,6 +10,7 @@ import { useNotificationsStore } from '../store/notificationsStore';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { getAuthToken } from '@/services/api/apiClient';
 import { API_CONFIG } from '@/config/api.config';
+import type { Notification } from '@/services/api/notificationsAPI';
 
 // Use unified API config for WebSocket URL
 const WEBSOCKET_URL = API_CONFIG.wsURL;
@@ -69,8 +70,10 @@ export interface UseWebSocketReturn {
 export function useWebSocket(): UseWebSocketReturn {
   const socketRef = useRef<Socket | null>(null);
   const isConnectedRef = useRef(false);
-  const { user } = useAuthStore();
-  const { addNotification, fetchUnreadCount } = useNotificationsStore();
+  // Use selectors to prevent re-renders on unrelated store changes
+  const user = useAuthStore((state) => state.user);
+  const addNotification = useNotificationsStore((state) => state.addNotification);
+  const fetchUnreadCount = useNotificationsStore((state) => state.fetchUnreadCount);
 
   /**
    * Initialize WebSocket connection
@@ -197,7 +200,7 @@ export function useWebSocket(): UseWebSocketReturn {
       const notification = {
         id: data.notification.id,
         userId: data.notification.userId,
-        type: mapNotificationType(data.notification.type),
+        type: mapNotificationType(data.notification.type) as Notification['type'],
         title: data.notification.title,
         message: data.notification.message,
         data: data.notification.metadata || {},

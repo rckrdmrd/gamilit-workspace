@@ -242,9 +242,10 @@ export default function AdminDashboardPage() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between rounded-lg bg-detective-bg-secondary p-3">
-                    <span className="text-sm text-detective-text">Usuarios Activos</span>
+                    <span className="text-sm text-detective-text">Usuarios Activos (24h)</span>
                     <span className="text-sm font-medium text-blue-500">
-                      {systemHealth.activeUsers}
+                      {/* FIX-2025-01-07: activeUsers comes from metrics.activeSessions, not systemHealth */}
+                      {metrics?.activeSessions ?? systemHealth.activeUsers ?? 0}
                     </span>
                   </div>
                 </div>

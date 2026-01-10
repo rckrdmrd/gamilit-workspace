@@ -164,15 +164,19 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
               <div className="flex items-center gap-2 text-gray-600">
                 <User className="h-4 w-4" />
                 <span className="font-medium">{review.student?.name || 'Estudiante'}</span>
-                <span className="text-gray-400">({review.student?.email})</span>
+                {/* FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Fallback para email */}
+                {review.student?.email && (
+                  <span className="text-gray-400">({review.student.email})</span>
+                )}
               </div>
               <div className="flex items-center gap-2 text-gray-600">
                 <BookOpen className="h-4 w-4" />
                 <span>Módulo: {review.exercise?.moduleId || 'N/A'}</span>
               </div>
+              {/* FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Usar fecha de envío del submission */}
               <div className="flex items-center gap-2 text-gray-600">
                 <Calendar className="h-4 w-4" />
-                <span>Enviado: {formatDate(review.createdAt)}</span>
+                <span>Enviado: {formatDate(review.submission?.submitted_at || review.submission?.submittedAt || review.createdAt)}</span>
               </div>
             </div>
           </div>

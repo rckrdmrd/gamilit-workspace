@@ -79,11 +79,16 @@ interface RankHistoryEntry {
 export default function EnhancedProfilePage() {
   const navigate = useNavigate();
 
-  // Global state
-  const { user, logout } = useAuthStore();
-  const { userProgress, fetchUserProgress } = useRanksStore();
-  const { balance, fetchBalance } = useEconomyStore();
-  const { achievements, stats: achievementStats, fetchAchievements } = useAchievementsStore();
+  // Global state - Using Zustand selectors to prevent unnecessary re-renders
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+  const userProgress = useRanksStore((state) => state.userProgress);
+  const fetchUserProgress = useRanksStore((state) => state.fetchUserProgress);
+  const balance = useEconomyStore((state) => state.balance);
+  const fetchBalance = useEconomyStore((state) => state.fetchBalance);
+  const achievements = useAchievementsStore((state) => state.achievements);
+  const achievementStats = useAchievementsStore((state) => state.stats);
+  const fetchAchievements = useAchievementsStore((state) => state.fetchAchievements);
 
   // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
   const { gamificationData } = useUserGamification(user?.id);

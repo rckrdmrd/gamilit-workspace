@@ -188,6 +188,23 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
         questions: answers,
       } as MatrizPerspectivasAnswers);
 
+      // ✅ FIX M3-M5 2026-01-07: Verificar si está pendiente de revisión manual
+      if (response.status === 'pending_review' || response.requiresManualReview) {
+        const pendingFeedback: FeedbackData = {
+          type: 'info',
+          title: 'Enviado para Revisión',
+          message: response.message || 'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+          pendingReview: true,
+        };
+        setFeedback(pendingFeedback);
+        setShowFeedback(true);
+        await syncAndInvalidate();
+
+        console.log('📤 [MatrizPerspectivas] Submission sent for manual review');
+        return;
+      }
+
+      // Flujo normal cuando ya está evaluado (ejercicios auto-evaluables)
       // Extraer rewards de la respuesta
       const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
 
@@ -265,15 +282,11 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-detective-lg bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-detective-lg"
-          >
+          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Grid3x3 className="h-8 w-8" />
-                <h1 className="text-detective-3xl font-bold">Matriz de Perspectivas</h1>
+                <h2 className="text-detective-2xl font-bold">Matriz de Perspectivas</h2>
               </div>
               {/* Auto-save status indicator */}
               <div className="text-sm">
@@ -282,9 +295,9 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                 {saveStatus === 'error' && <span className="text-red-200">Error al guardar</span>}
               </div>
             </div>
-            <p className="mb-2 text-detective-lg">{exercise.topic}</p>
+            <p className="mb-4 text-detective-base opacity-90">{exercise.topic}</p>
             <p className="text-detective-base opacity-90">{exercise.description}</p>
-          </motion.div>
+          </div>
 
           {/* Generate Button */}
           <div className="text-center">

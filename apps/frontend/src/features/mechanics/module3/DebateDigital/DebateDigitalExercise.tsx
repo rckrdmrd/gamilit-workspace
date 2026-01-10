@@ -270,20 +270,16 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-detective-lg bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-detective-lg"
-          >
+          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center gap-3">
               <MessageCircle className="h-8 w-8" />
-              <h1 className="text-detective-3xl font-bold">Debate Digital</h1>
+              <h2 className="text-detective-2xl font-bold">Debate Digital</h2>
             </div>
-            <p className="mb-2 text-detective-lg">{debateTopic.title}</p>
+            <p className="mb-4 text-detective-base opacity-90">{debateTopic.title}</p>
             <div className="rounded-lg bg-white/20 p-3 backdrop-blur-sm">
               <p className="font-medium">{debateTopic.question}</p>
             </div>
-          </motion.div>
+          </div>
 
           {/* CORRECCION-005: Seleccion de posicion del usuario */}
           <motion.div

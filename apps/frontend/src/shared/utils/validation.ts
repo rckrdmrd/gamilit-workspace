@@ -334,6 +334,53 @@ export function validateFileSize(file: File, maxSizeInMB: number): boolean {
   return file.size <= maxSizeInBytes;
 }
 
+// ==================== UUID VALIDATION ====================
+// FIX-F2-2026-01-08: Agregadas funciones para validar UUID y classroomId
+
+/**
+ * Regex para validar UUID v4
+ * Formato: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+ * donde y es 8, 9, a, o b
+ */
+const UUID_V4_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/**
+ * Valida que un string sea un UUID v4 valido
+ *
+ * @param value - String a validar
+ * @returns true si es un UUID v4 valido, false en caso contrario
+ *
+ * @example
+ * isValidUUID('123e4567-e89b-42d3-a456-426614174000') // true
+ * isValidUUID('invalid-uuid') // false
+ * isValidUUID('') // false
+ */
+export function isValidUUID(value: string | null | undefined): boolean {
+  if (!value || typeof value !== 'string') {
+    return false;
+  }
+  return UUID_V4_REGEX.test(value);
+}
+
+/**
+ * Valida classroomId - puede ser 'all' o un UUID valido
+ *
+ * @param value - String a validar
+ * @returns true si es 'all' o un UUID v4 valido
+ *
+ * @example
+ * isValidClassroomId('all') // true
+ * isValidClassroomId('123e4567-e89b-42d3-a456-426614174000') // true
+ * isValidClassroomId('invalid') // false
+ */
+export function isValidClassroomId(value: string | null | undefined): boolean {
+  if (!value || typeof value !== 'string') {
+    return false;
+  }
+  return value === 'all' || isValidUUID(value);
+}
+
 // ==================== EXPORTS ====================
 
 export default {
@@ -366,4 +413,8 @@ export default {
   // File
   validateFileType,
   validateFileSize,
+
+  // UUID (FIX-F2-2026-01-08)
+  isValidUUID,
+  isValidClassroomId,
 };

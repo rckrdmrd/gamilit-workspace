@@ -228,6 +228,66 @@ Total Sprint 4+: 10 horas
 
 ---
 
+## REPORTES SPRINT 3-4 (2026)
+
+### 4. CORRECCION-ADMIN-PAGES-2026-01-07.md
+**Tipo:** Bug Fix / Correcciones
+**Prioridad:** P0
+**Contenido:**
+- TAREA 1: admin/dashboard - Error group_by (Backend DTO)
+- TAREA 2: admin/roles - Tabla roles no existe (DDL creado)
+- TAREA 3: admin/content - Error totalItems undefined (Frontend API)
+- Validacion de recreacion de BD exitosa
+
+**Archivos modificados:**
+- Backend: user-activity.dto.ts, admin.query-builder.ts
+- Frontend: adminAPI.ts
+- Database: 03b-roles.sql (NUEVO)
+
+**Audiencia:** Developers, QA
+**Tiempo de lectura:** 5 minutos
+
+---
+
+### 5. REPORTE-CORRECCION-TYPEORM-LOOP-INFINITO-2026-01-08.md
+**Tipo:** Bug Fix / Correcciones
+**Prioridad:** P0 (Critico)
+**Contenido:**
+- Error 1: TypeORMError: Relation with property path module in entity was not found (500)
+- Error 2: Maximum update depth exceeded (Loop infinito React)
+- Fases de ejecucion documentadas (8 fases)
+- Validacion de correcciones
+
+**Archivos modificados:**
+- Frontend: useStudentMonitoring.ts (+36/-3 lineas)
+- Backend: Solo reinicio requerido (codigo ya corregido)
+
+**Impacto BD:** NINGUNO (no requiere recreacion)
+
+**Relacionado con:**
+- ANALISIS-TYPEORM-RELATION-ERROR-2026-01-08.md
+- PLAN-CORRECCION-TYPEORM-LOOP-INFINITO-2026-01-08.md (en /analisis/)
+
+**Audiencia:** Developers, QA
+**Tiempo de lectura:** 10 minutos
+
+---
+
+### 6. ANALISIS-TYPEORM-RELATION-ERROR-2026-01-08.md
+**Tipo:** Analisis Pre-Ejecucion
+**Prioridad:** P0
+**Contenido:**
+- Contexto del problema TypeORM
+- Inventario de objetos existentes
+- Analisis de riesgos y duplicacion
+- Decision de approach (raw SQL vs TypeORM relations)
+- Estimacion de esfuerzo
+
+**Audiencia:** Backend developers
+**Tiempo de lectura:** 5 minutos
+
+---
+
 ## CONTACTO Y PREGUNTAS
 
 Para preguntas sobre este análisis:

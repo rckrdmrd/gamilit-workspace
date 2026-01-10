@@ -94,6 +94,12 @@ export interface SubmitExerciseResponse {
   correctAnswers?: unknown; // Correct answers revealed after submission
   explanations?: Record<string, string>;
   createdAt: Date;
+  // Estado de la submission (para ejercicios con revision manual)
+  status?: 'draft' | 'submitted' | 'graded' | 'reviewed' | 'pending_review';
+  // Indica si el ejercicio requiere revision manual del maestro
+  requiresManualReview?: boolean;
+  // Mensaje del backend para mostrar al usuario
+  message?: string;
 }
 
 /**
@@ -188,6 +194,11 @@ export interface ModuleProgressSummary {
   averageScore: number;
   timeSpent: number; // minutes
   lastActivityAt: Date;
+  // FEATURE M3-M5 2026-01-08: Tracking de submitted vs graded
+  submittedExercises?: number;      // Ejercicios enviados (pendientes o validados)
+  gradedExercises?: number;          // Ejercicios calificados por el maestro
+  submittedProgressPercentage?: number; // Progreso basado en envios
+  gradedProgressPercentage?: number;    // Progreso basado en calificaciones
 }
 
 /**

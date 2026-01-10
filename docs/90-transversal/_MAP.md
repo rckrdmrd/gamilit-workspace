@@ -3,7 +3,7 @@
 **Carpeta:** docs/90-transversal/
 **Proposito:** Documentacion transversal que aplica a todas las fases del proyecto
 **Estado:** Actualizado
-**Ultima actualizacion:** 2025-12-18
+**Ultima actualizacion:** 2026-01-07
 
 ---
 
@@ -27,7 +27,7 @@ Esta carpeta contiene documentacion **definitiva y vigente** del estado actual d
 | **[inventarios-database/](./inventarios-database/)** | 7 | Inventarios detallados de BD | Definitivo |
 | **[roadmap/](./roadmap/)** | 1 | Roadmap actual | Definitivo |
 | **[deuda-tecnica/](./deuda-tecnica/)** | 1 | Deuda tecnica documentada | Definitivo |
-| **[correcciones/](./correcciones/)** | 1 | Solo ISSUES-CRITICOS.md (backlog) | Vigente |
+| **[correcciones/](./correcciones/)** | 2+ | BACKEND-CRITICAL-ISSUES-PENDING.md (SSOT), correcciones activas | Vigente |
 | **[restructuracion-v2/](./restructuracion-v2/)** | 5 | Restructuracion y user stories | Definitivo |
 
 ### Archivos Raiz
@@ -105,7 +105,8 @@ Los siguientes directorios fueron movidos a `orchestration/reportes/` el 2025-12
 - `features/FEATURES-PENDIENTES.md`
 
 ### Para ver issues pendientes:
-- `correcciones/ISSUES-CRITICOS.md` (backlog activo)
+- `correcciones/BACKEND-CRITICAL-ISSUES-PENDING.md` (SSOT activo)
+- ISSUES-CRITICOS.md fue archivado a `docs/archivados/historicos-2025/correcciones-obsoletas/`
 
 ### Para ver inventarios detallados:
 - `inventarios-database/inventarios/01-SCHEMAS-INVENTORY.md`
@@ -131,6 +132,7 @@ Los siguientes directorios fueron movidos a `orchestration/reportes/` el 2025-12
 
 ---
 
-**Actualizado:** 2025-12-18
-**Por:** Requirements-Analyst
-**Version:** 2.0
+**Actualizado:** 2026-01-07
+**Por:** Claude Code - Arquitecto de Documentación
+**Version:** 2.1 (Post-purga)
+**Cambios:** Actualización de referencias ISSUES-CRITICOS.md → BACKEND-CRITICAL-ISSUES-PENDING.md

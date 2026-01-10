@@ -133,9 +133,14 @@ Sistema completo de mensajeria y comunicacion entre docentes y estudiantes:
 
 ## 4. FUNCIONES
 
-### get_unread_count()
+> **NOTA:** Las siguientes funciones estan documentadas pero **PENDIENTES DE IMPLEMENTACION**.
+> No existen archivos SQL en `/ddl/schemas/communication/functions/`.
+> Fecha de revision: 2026-01-07
+
+### get_unread_count() - PENDIENTE IMPLEMENTACION
 
 ```sql
+-- PENDIENTE: Crear archivo ddl/schemas/communication/functions/01-get_unread_count.sql
 FUNCTION get_unread_count(
     p_user_id UUID,
     p_classroom_id UUID DEFAULT NULL
@@ -144,16 +149,19 @@ FUNCTION get_unread_count(
 
 **Proposito:** Obtener contador de mensajes no leidos
 
-**Ejemplo:**
+**Estado:** NO IMPLEMENTADA - Requiere creacion de archivo SQL
+
+**Ejemplo (cuando se implemente):**
 ```sql
 SELECT communication.get_unread_count('user-uuid', 'classroom-uuid');
 ```
 
 ---
 
-### mark_conversation_read()
+### mark_conversation_read() - PENDIENTE IMPLEMENTACION
 
 ```sql
+-- PENDIENTE: Crear archivo ddl/schemas/communication/functions/02-mark_conversation_read.sql
 FUNCTION mark_conversation_read(
     p_user_id UUID,
     p_thread_id UUID
@@ -162,7 +170,9 @@ FUNCTION mark_conversation_read(
 
 **Proposito:** Marcar todos los mensajes de un hilo como leidos
 
-**Ejemplo:**
+**Estado:** NO IMPLEMENTADA - Requiere creacion de archivo SQL
+
+**Ejemplo (cuando se implemente):**
 ```sql
 SELECT communication.mark_conversation_read('user-uuid', 'thread-uuid');
 ```

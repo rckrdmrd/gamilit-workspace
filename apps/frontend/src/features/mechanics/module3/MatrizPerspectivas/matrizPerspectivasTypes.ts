@@ -18,13 +18,14 @@ export interface PerspectiveGeneration {
 
 // Feedback data structure
 export interface FeedbackData {
-  type: 'success' | 'partial' | 'error';
+  type: 'success' | 'partial' | 'error' | 'info';
   title: string;
   message: string;
   score?: number;
   showConfetti?: boolean;
   xpEarned?: number;
   mlCoinsEarned?: number;
+  pendingReview?: boolean;
 }
 
 export interface MatrixExercise {

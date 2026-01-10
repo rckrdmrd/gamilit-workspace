@@ -27,16 +27,18 @@ Se identificaron **10 ENUMs sin uso** en schemas `audit_logging` y `social_featu
 | `metric_type` | engagement, performance, completion, time_spent, accuracy, streak, social_interaction | performance_metrics.metric_type | - |
 | `aggregation_period` | daily, weekly, monthly, quarterly, yearly | (sin columna) | Sin uso planeado |
 
-### social_features (4 ENUMs - 25% uso)
+### social_features (5 ENUMs - SINCRONIZADO 2026-01-07)
 
-| ENUM | Valores | Columna Objetivo | Bloqueador |
-|------|---------|------------------|------------|
-| `classroom_role` | teacher, student, assistant | teacher_classrooms.role | ✅ YA IMPLEMENTADO |
-| `team_role` | leader, member, coordinator | team_members.role | ✅ YA IMPLEMENTADO |
-| `friendship_status` | pending, accepted, blocked | friendships.status | Policy RLS |
-| `social_event_type` | competition, collaboration, challenge, tournament, workshop | social_interactions.interaction_type | Requiere análisis |
+| ENUM | Valores | Columna Objetivo | Estado |
+|------|---------|------------------|--------|
+| `classroom_role` | teacher, student, assistant | teacher_classrooms.role | ✅ IMPLEMENTADO |
+| `team_role` | owner, admin, member | team_members.role | ✅ IMPLEMENTADO (sincronizado con backend) |
+| `friendship_status` | pending, accepted, rejected, blocked | friendships.status | ✅ IMPLEMENTADO (sincronizado con backend) |
+| `enrollment_method` | teacher_invite, self_enroll, admin_add, bulk_import | classroom_members.method | ✅ NUEVO (2026-01-07) |
+| `team_challenge_status` | active, in_progress, completed, failed, cancelled | peer_challenges.status | ✅ NUEVO (2026-01-07) |
+| ~~`social_event_type`~~ | ~~competition, collaboration, etc.~~ | ~~social_interactions.interaction_type~~ | ❌ ELIMINADO (sin uso) |
 
-**Total:** 10 ENUMs (3 implementados, 7 pendientes)
+**Total:** 11 ENUMs originales → 5 activos, 1 eliminado, 5 en audit_logging (backlog)
 
 ---
 
@@ -159,21 +161,25 @@ Repetir para todas las tablas afectadas.
 
 ---
 
-## Estado Actual
+## Estado Actual (Actualizado 2026-01-07)
 
-**Implementado:**
-- ✅ audit_logs.action → audit_action ENUM
+**social_features - SINCRONIZADO:**
 - ✅ teacher_classrooms.role → classroom_role ENUM
-- ✅ team_members.role → team_role ENUM
+- ✅ team_members.role → team_role ENUM (valores: owner, admin, member)
+- ✅ friendships.status → friendship_status ENUM (valores: pending, accepted, rejected, blocked)
+- ✅ enrollment_method → NUEVO (2026-01-07)
+- ✅ team_challenge_status → NUEVO (2026-01-07)
+- ❌ social_event_type → ELIMINADO (sin uso en BD/Backend/Frontend)
 
-**Pendiente (backlog):**
+**audit_logging - Implementado:**
+- ✅ audit_logs.action → audit_action ENUM
+
+**audit_logging - Pendiente (backlog):**
 - ⏳ audit_logs.severity → alert_severity ENUM
 - ⏳ system_alerts.severity → alert_severity ENUM
 - ⏳ system_alerts.status → alert_status ENUM
 - ⏳ system_logs.log_level → log_level ENUM
 - ⏳ performance_metrics.metric_type → metric_type ENUM
-- ⏳ friendships.status → friendship_status ENUM
-- ⏳ social_interactions.interaction_type → social_event_type ENUM (requiere análisis)
 
 **Sin uso planeado:**
 - ❌ aggregation_period → (eliminar si no se usa en 6 meses)
@@ -193,7 +199,7 @@ Repetir para todas las tablas afectadas.
 
 ## Revisión
 
-**Próxima revisión:** 2025-05 (6 meses)
+**Próxima revisión:** 2026-07 (6 meses)
 **Criterio de cierre:**
 - Opción A: Migración completa ejecutada
 - Opción B: Se decide eliminar ENUMs sin uso si no hay plan de implementación
@@ -202,3 +208,16 @@ Repetir para todas las tablas afectadas.
 
 **Responsable:** Database Agent
 **Estado:** 📋 BACKLOG (Deuda Técnica Documentada)
+
+---
+
+## Historial de Cambios
+
+| Fecha | Cambio |
+|-------|--------|
+| 2026-01-07 | Sincronización social_features ENUMs con Backend/Frontend |
+| 2026-01-07 | Eliminación SocialEventTypeEnum (sin uso) de Backend/Frontend |
+| 2026-01-07 | Agregados enrollment_method y team_challenge_status |
+| 2026-01-07 | Actualizado team_role (owner, admin, member) |
+| 2026-01-07 | Actualizado friendship_status (agregado 'rejected') |
+| 2025-11-19 | Creación inicial del documento |

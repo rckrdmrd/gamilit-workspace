@@ -3,7 +3,7 @@
 **Proyecto:** GAMILIT - Plataforma de Gamificacion Educativa
 **Sistema:** NEXUS v4.0 + SIMCO
 **Nivel:** STANDALONE (workspace autónomo con herencia de workspace-v1)
-**Última actualización:** 2026-01-04
+**Última actualización:** 2026-01-07
 
 ---
 
@@ -15,7 +15,7 @@ orchestration/
 ├── CONTEXT-MAP.yml          # Mapa de contexto automático (NEXUS v4.0)
 ├── PROXIMA-ACCION.md        # Estado actual y siguiente paso
 ├── agentes/                 # Reportes y logs de agentes
-├── analisis/                # Análisis técnicos
+├── analisis/                # Análisis técnicos (ver sección Análisis Especializados)
 ├── directivas/              # Directivas locales del proyecto
 ├── environment/             # Configuración de entorno
 ├── errores/                 # Registro de errores (CAPVED++)
@@ -30,6 +30,28 @@ orchestration/
 ├── templates/               # Templates locales
 └── trazas/                  # Trazabilidad de tareas
 ```
+
+---
+
+## Análisis Especializados (2025-12)
+
+Las siguientes carpetas contienen análisis técnicos especializados por área:
+
+| Carpeta | Propósito | Estado |
+|---------|-----------|--------|
+| `analisis/` | Análisis genéricos (29 archivos) | Completado |
+| `analisis-admin-portal-2025-12-23/` | Análisis portal admin | Completado |
+| `analisis-backend-2025-12-18/` | Análisis backend | Completado |
+| `analisis-database-2025-12-26/` | Análisis BD | Completado |
+| `analisis-documentacion-vs-desarrollo-2025-12-23/` | Comparación doc vs código | Completado |
+| `analisis-errores-prod-2025-12-18/` | Análisis errores producción | **PENDIENTE EJECUCIÓN** |
+| `analisis-frontend-validacion/` | Validación frontend | Completado |
+| `analisis-homologacion-database-2025-12-18/` | Homologación BD | **PENDIENTE (11 scripts)** |
+| `analisis-modulos-3-4-5/` | Análisis M3-M4-M5 | Completado |
+| `analisis-produccion-2025-12-18/` | Requerimientos producción | **LISTO PARA DEPLOY** |
+| `analisis-teacher-portal-2025-12-18/` | Análisis portal teacher | Completado |
+
+> **Nota:** Las carpetas marcadas como PENDIENTE contienen acciones que aún requieren ejecución.
 
 ---
 
@@ -216,7 +238,7 @@ herencia:
 | Endpoints API | 417 |
 | Políticas RLS | 185 |
 | EPICs documentadas | 19 |
-| ADRs | 20 |
+| ADRs | 21 |
 
 ---
 
@@ -236,5 +258,6 @@ npm run test                   # Todos los tests
 
 ---
 
-**Actualizado:** 2026-01-04
+**Actualizado:** 2026-01-07
 **Sistema:** NEXUS v4.0 + SIMCO
+**Cambios:** Documentación de 10 carpetas de análisis especializados, actualización de métricas

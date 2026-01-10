@@ -2,10 +2,10 @@
  * LiveLeaderboard Component
  *
  * Complete leaderboard with real-time updates and 4 leaderboard types:
- * - XP: Total experience points ranking
- * - Completion: Completion percentage ranking
- * - Streak: Consecutive days streak ranking
- * - Detective: Overall detective ranking
+ * - XP: Total experience points ranking (API: getXPLeaderboard)
+ * - Completion: Completion percentage ranking (API: getGlobalLeaderboard fallback)
+ * - Streak: Consecutive days streak ranking (API: getStreaksLeaderboard)
+ * - Detective: Overall detective ranking (API: getGlobalLeaderboard)
  *
  * Features:
  * - Header with type selector tabs
@@ -17,9 +17,20 @@
  * - Real-time auto-refresh every 30 seconds
  * - Responsive design
  * - Empty states and loading states
+ * - Mock data fallback when API fails or returns empty
  *
  * @example
  * <LiveLeaderboard userId="user-123" initialType="xp" />
+ *
+ * @updated CORR-006 (2026-01-08): Now integrated with real backend APIs.
+ *          Uses mock data as fallback when API fails or returns empty.
+ *          Shows visual indicator when in mock/demo mode.
+ *
+ * API Integration:
+ *   - 'xp' -> socialAPI.getXPLeaderboard()
+ *   - 'streak' -> socialAPI.getStreaksLeaderboard()
+ *   - 'detective' -> socialAPI.getGlobalLeaderboard()
+ *   - 'completion' -> socialAPI.getGlobalLeaderboard() (fallback)
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -40,8 +51,17 @@ import {
   BarChart3,
   Users,
   Clock,
+  AlertTriangle,
 } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
+
+// Import real APIs - CORR-006: Integration with backend
+import {
+  getXPLeaderboard,
+  getStreaksLeaderboard,
+  getGlobalLeaderboard,
+} from '../social/api/socialAPI';
+import { useAuthStore } from '@/features/auth/store/authStore';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -167,6 +187,9 @@ const formatScoreForType = (score: number, type: LeaderboardTypeVariant): string
 // ============================================================================
 // MOCK DATA GENERATOR
 // ============================================================================
+// @warning CORR-006: This function generates FAKE data for demo/storybook purposes.
+// For production, integrate with real APIs from socialAPI.ts:
+// - getXPLeaderboard(), getStreaksLeaderboard(), getGlobalLeaderboard()
 
 const generateMockLeaderboardData = (
   currentUserId: string,
@@ -673,24 +696,84 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Fetch leaderboard data
+  // CORR-006: State for tracking API vs Mock mode
+  const [useMockData, setUseMockData] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  // Get current user ID from auth store for isCurrentUser marking
+  const currentUserId = useAuthStore((state) => state.user?.id);
+
+  // Fetch leaderboard data - CORR-006: Now uses real APIs with mock fallback
   const fetchLeaderboardData = useCallback(async () => {
     setLoading(true);
+    setApiError(null);
 
     try {
-      // Simulate API call - replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      let apiData: any[] = [];
 
-      const data = generateMockLeaderboardData(userId, selectedType);
-      setEntries(data);
+      // Call appropriate API based on selectedType
+      switch (selectedType) {
+        case 'xp':
+          apiData = await getXPLeaderboard(20);
+          break;
+        case 'streak':
+          apiData = await getStreaksLeaderboard(20);
+          break;
+        case 'detective':
+        case 'completion': // Use global as fallback for completion
+          apiData = await getGlobalLeaderboard(20);
+          break;
+        default:
+          apiData = await getGlobalLeaderboard(20);
+      }
+
+      // Transform API response to LeaderboardEntry format
+      if (apiData && apiData.length > 0) {
+        const transformedData: LeaderboardEntry[] = apiData.map((entry: any, index: number) => {
+          const entryUserId = entry.userId || entry.user_id || `user-${index}`;
+          return {
+            rank: entry.rank || index + 1,
+            userId: entryUserId,
+            username: entry.username || entry.display_name || entry.full_name || 'Usuario',
+            avatar: entry.avatar || entry.avatar_url ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username || 'U')}&background=f97316&color=fff`,
+            rankBadge: entry.currentRank || entry.current_rank || entry.maya_rank || 'Ajaw',
+            score: entry.totalXP || entry.total_xp || entry.score || 0,
+            xp: entry.totalXP || entry.total_xp || 0,
+            completionPercentage: entry.completion_percentage || 0,
+            streak: entry.current_streak || entry.streak || 0,
+            mlCoins: entry.ml_coins || 0,
+            change: 0,
+            changeType: 'same' as const,
+            isCurrentUser: currentUserId ? entryUserId === currentUserId : entryUserId === userId,
+          };
+        });
+
+        setEntries(transformedData);
+        setUseMockData(false);
+      } else {
+        // Fallback to mock data if API returns empty
+        console.warn('[LiveLeaderboard] API returned empty data, using mock');
+        const mockData = generateMockLeaderboardData(userId, selectedType);
+        setEntries(mockData);
+        setUseMockData(true);
+      }
+
       setLastUpdated(new Date());
     } catch (error) {
-      console.error('Error fetching leaderboard:', error);
+      console.error('[LiveLeaderboard] API error, falling back to mock:', error);
+      setApiError(error instanceof Error ? error.message : 'Error de conexión');
+
+      // Fallback to mock data on error
+      const mockData = generateMockLeaderboardData(userId, selectedType);
+      setEntries(mockData);
+      setUseMockData(true);
+      setLastUpdated(new Date());
     } finally {
       setLoading(false);
       setIsRefreshing(false);
     }
-  }, [userId, selectedType]);
+  }, [userId, selectedType, currentUserId]);
 
   // Manual refresh
   const handleRefresh = useCallback(() => {
@@ -746,6 +829,25 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
           <span>Actualizar</span>
         </motion.button>
       </div>
+
+      {/* CORR-006: Mock Data Warning Banner */}
+      {useMockData && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm"
+        >
+          <AlertTriangle className="h-5 w-5 flex-shrink-0 text-amber-600" />
+          <div>
+            <span className="font-medium text-amber-800">Modo Demo</span>
+            <span className="text-amber-700">
+              {apiError
+                ? ` — ${apiError}. Mostrando datos de demostración.`
+                : ' — La API no retornó datos. Mostrando datos de demostración.'}
+            </span>
+          </div>
+        </motion.div>
+      )}
 
       {/* Type Selector */}
       <TypeSelector selectedType={selectedType} onTypeChange={handleTypeChange} />

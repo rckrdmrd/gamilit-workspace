@@ -129,7 +129,7 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
   // Handle performance filter
   const handlePerformanceFilter = (level: 'high' | 'medium' | 'low') => {
     setFilters((prev) => {
-      const currentLevels = (prev as any).performanceLevel || [];
+      const currentLevels = prev.performanceLevel || [];
       const newLevels = currentLevels.includes(level)
         ? currentLevels.filter((l: string) => l !== level)
         : [...currentLevels, level];
@@ -137,7 +137,7 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
       return {
         ...prev,
         performanceLevel: newLevels.length > 0 ? newLevels : undefined,
-      } as StudentFilter;
+      };
     });
   };
 
@@ -156,7 +156,7 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
     let filtered = [...students];
 
     // Filter by performance level if specified
-    const performanceLevels = (filters as any).performanceLevel;
+    const performanceLevels = filters.performanceLevel;
     if (performanceLevels && performanceLevels.length > 0) {
       filtered = filtered.filter((student) => {
         const level = calculatePerformanceLevel(student);
@@ -418,21 +418,21 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
 
               {/* Performance Filters */}
               <DetectiveButton
-                variant={(filters as any).performanceLevel?.includes('high') ? 'primary' : 'secondary'}
+                variant={filters.performanceLevel?.includes('high') ? 'primary' : 'secondary'}
                 onClick={() => handlePerformanceFilter('high')}
                 size="sm"
               >
                 Alto
               </DetectiveButton>
               <DetectiveButton
-                variant={(filters as any).performanceLevel?.includes('medium') ? 'primary' : 'secondary'}
+                variant={filters.performanceLevel?.includes('medium') ? 'primary' : 'secondary'}
                 onClick={() => handlePerformanceFilter('medium')}
                 size="sm"
               >
                 Medio
               </DetectiveButton>
               <DetectiveButton
-                variant={(filters as any).performanceLevel?.includes('low') ? 'primary' : 'secondary'}
+                variant={filters.performanceLevel?.includes('low') ? 'primary' : 'secondary'}
                 onClick={() => handlePerformanceFilter('low')}
                 size="sm"
               >
@@ -614,7 +614,11 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
 
       {/* Student Detail Modal */}
       {selectedStudent && (
-        <StudentDetailModal student={selectedStudent} onClose={() => setSelectedStudent(null)} />
+        <StudentDetailModal
+          student={selectedStudent}
+          classroomId={classroomId}
+          onClose={() => setSelectedStudent(null)}
+        />
       )}
     </div>
   );

@@ -1,5 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
+ * @deprecated Este hook está DEPRECADO desde 2026-01-10 (CORR-DUP-005)
+ *
+ * RAZONES:
+ * 1. Contiene 200+ líneas de achievement definitions hardcodeadas
+ * 2. Las recompensas pueden no coincidir con la base de datos
+ * 3. La detección de achievements se hace en el backend (detectAndGrantEarned)
+ * 4. El endpoint /unlock que usa no existe en el backend
+ *
+ * USA EN SU LUGAR:
+ * - useAchievements de '@/features/gamification/social/hooks/useAchievements'
+ * - useAchievementsStore de '@/features/gamification/social/store/achievementsStore'
+ * - gamificationApi de '@/lib/api/gamification.api' para API calls
+ *
+ * @see ANALISIS-DUPLICADOS-ACHIEVEMENTS-2026-01-10.md para detalles
+ * @see VALIDACION-PLAN-DUPLICADOS-2026-01-10.md
+ */
+
+// CORR-DUP-005: Deprecation warning en runtime
+if (typeof window !== 'undefined') {
+  console.warn(
+    '[DEPRECATED] useAchievements from /hooks is deprecated. ' +
+    'Use useAchievements from @/features/gamification/social/hooks instead. ' +
+    'See ANALISIS-DUPLICADOS-ACHIEVEMENTS-2026-01-10.md for details.'
+  );
+}
+
+/**
  * useAchievements Hook
  *
  * ISSUE: #5 (P0) - Achievements Auto-Detection

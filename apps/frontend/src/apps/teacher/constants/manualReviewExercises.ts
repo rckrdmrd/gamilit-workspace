@@ -66,7 +66,8 @@ export const MANUAL_REVIEW_EXERCISES: ManualReviewExercise[] = [
     moduleNumber: 3,
   },
 
-  // Módulo 4 - Lectura Digital (5 ejercicios con evaluación manual)
+  // Módulo 4 - Lectura Digital (4 ejercicios con evaluación manual)
+  // Nota: quiz_tiktok es auto-gradable y NO está en esta lista (CORR-FE-CONST-001)
   {
     id: 'verificador-fake-news',
     title: 'Verificador de Fake News',
@@ -77,13 +78,6 @@ export const MANUAL_REVIEW_EXERCISES: ManualReviewExercise[] = [
   {
     id: 'infografia-interactiva',
     title: 'Infografía Interactiva',
-    moduleId: 'module-4',
-    moduleName: 'Lectura Digital',
-    moduleNumber: 4,
-  },
-  {
-    id: 'quiz-tiktok',
-    title: 'Quiz TikTok',
     moduleId: 'module-4',
     moduleName: 'Lectura Digital',
     moduleNumber: 4,

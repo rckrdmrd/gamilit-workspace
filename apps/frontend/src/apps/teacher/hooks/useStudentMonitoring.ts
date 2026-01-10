@@ -6,6 +6,10 @@
  * y navegar entre paginas de resultados.
  *
  * CORR-2025-12-18: Implementacion de paginacion completa server-side
+ * FIX-2026-01-08: Corregido problema de loops infinitos en useEffect
+ *   - Uso de filtersKey (JSON.stringify) para comparación estable de filtros
+ *   - Contador de errores consecutivos para pausar auto-refresh automáticamente
+ *   - Prevención de re-renders innecesarios por cambios de referencia de objetos
  *
  * @param classroomId - ID of the classroom to monitor
  * @param filters - Optional filters for status, module, score range, and search
@@ -28,7 +32,7 @@
  * ```
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { classroomsApi } from '@services/api/teacher';
 import type { GetClassroomStudentsQueryDto } from '@services/api/teacher';
 import type { PaginationInfo } from '@shared/types/api-responses';
@@ -103,6 +107,14 @@ export function useStudentMonitoring(
   // Ref para trackear si es el primer render
   const isFirstRender = useRef(true);
 
+  // FIX-2026-01-08: Ref para contar errores consecutivos y evitar loops infinitos
+  const consecutiveErrorsRef = useRef(0);
+  const MAX_CONSECUTIVE_ERRORS = 3;
+
+  // FIX-2026-01-08: Memoizar filters como string para evitar re-renders innecesarios
+  // Esto previene que cambios de referencia del objeto filters disparen re-fetches
+  const filtersKey = useMemo(() => JSON.stringify(filters ?? {}), [filters]);
+
   /**
    * Fetch students from API with pagination
    */
@@ -150,16 +162,34 @@ export function useStudentMonitoring(
         setStudents(mappedStudents);
         setPagination(response.pagination);
         setLastUpdate(new Date());
+
+        // FIX-2026-01-08: Resetear contador de errores en caso de éxito
+        consecutiveErrorsRef.current = 0;
       } catch (err) {
+        // FIX-2026-01-08: Incrementar contador de errores consecutivos
+        consecutiveErrorsRef.current += 1;
+
         setError(err instanceof Error ? err : new Error('Unknown error'));
         console.error('[useStudentMonitoring] Error fetching students:', err);
+
+        // FIX-2026-01-08: Pausar auto-refresh después de múltiples errores consecutivos
+        // para evitar loops infinitos y sobrecarga del servidor
+        if (consecutiveErrorsRef.current >= MAX_CONSECUTIVE_ERRORS && refreshInterval > 0) {
+          console.warn(
+            `[useStudentMonitoring] Pausando auto-refresh después de ${MAX_CONSECUTIVE_ERRORS} errores consecutivos`,
+          );
+          setRefreshInterval(0);
+        }
       } finally {
         if (showLoadingState) {
           setLoading(false);
         }
       }
     },
-    [classroomId, page, limit, filters],
+    // FIX-2026-01-08: Usar filtersKey (string) en lugar de filters (object)
+    // para evitar re-renders cuando la referencia del objeto cambia pero el contenido es igual
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [classroomId, page, limit, filtersKey, refreshInterval],
   );
 
   /**
@@ -172,6 +202,7 @@ export function useStudentMonitoring(
 
   /**
    * Resetear a pagina 1 cuando cambian los filtros
+   * FIX-2026-01-08: Usar filtersKey para comparación estable
    */
   useEffect(() => {
     if (isFirstRender.current) {
@@ -179,7 +210,9 @@ export function useStudentMonitoring(
       return;
     }
     setPage(1);
-  }, [filters]);
+    // FIX-2026-01-08: Resetear contador de errores al cambiar filtros
+    consecutiveErrorsRef.current = 0;
+  }, [filtersKey]);
 
   /**
    * Fetch inicial y cuando cambian dependencias

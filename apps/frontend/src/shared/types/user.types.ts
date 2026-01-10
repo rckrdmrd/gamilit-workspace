@@ -14,17 +14,33 @@
  */
 
 /**
- * User Role Enum
+ * User Role Type
  *
- * Available roles in the GAMILIT system
+ * Available roles in the GAMILIT system.
+ *
+ * IMPORTANTE - MAPEO CON BASE DE DATOS:
+ * La BD usa `auth_management.gamilit_role` con solo 3 valores:
+ * - 'student'       → GamilityRoleEnum.STUDENT
+ * - 'admin_teacher' → GamilityRoleEnum.ADMIN_TEACHER (mapea desde 'teacher', 'admin', 'institution_admin')
+ * - 'super_admin'   → GamilityRoleEnum.SUPER_ADMIN
+ *
+ * Los valores 'teacher', 'admin', 'institution_admin', 'content_creator' son ALIASES
+ * usados en el frontend para mayor claridad semántica, pero deben mapearse a
+ * los valores válidos de BD al comunicarse con el backend.
+ *
+ * Ver: FASE 0.3 del plan de consolidación (REFINAMIENTO-PLAN-2026-01-07.md)
+ * Ver: GamilityRoleEnum en @/shared/constants/enums.constants.ts
+ *
+ * @see /apps/database/ddl/00-prerequisites.sql:85 (gamilit_role ENUM)
  */
 export type UserRole =
-  | 'student'           // Regular student user
-  | 'teacher'           // Teacher/instructor (admin_teacher in DB)
-  | 'admin'             // Institution administrator
-  | 'institution_admin' // Institution admin (alias)
-  | 'super_admin'       // Platform super administrator
-  | 'content_creator';  // Content creator role
+  | 'student'           // BD: 'student' → GamilityRoleEnum.STUDENT
+  | 'admin_teacher'     // BD: 'admin_teacher' → GamilityRoleEnum.ADMIN_TEACHER (VALOR CANÓNICO)
+  | 'teacher'           // ALIAS frontend → mapea a 'admin_teacher' en BD
+  | 'admin'             // ALIAS frontend → mapea a 'admin_teacher' en BD
+  | 'institution_admin' // ALIAS frontend → mapea a 'admin_teacher' en BD
+  | 'super_admin'       // BD: 'super_admin' → GamilityRoleEnum.SUPER_ADMIN
+  | 'content_creator';  // ALIAS frontend → mapea a 'admin_teacher' en BD (pendiente definición)
 
 /**
  * User Preferences
@@ -534,4 +550,4 @@ export interface UserSessionInfo {
 }
 
 // Re-export UserRole for convenience
-export { UserRole as GamilityRole };
+export type { UserRole as GamilityRole };

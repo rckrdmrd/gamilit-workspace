@@ -64,7 +64,7 @@ export default function TeacherClasses() {
       setFormData({ name: '', subject: '', grade_level: '' });
     } catch (err: unknown) {
       console.error('[TeacherClasses] Error creating classroom:', err);
-      showToast({ type: 'error', message: 'Error al crear la clase. Por favor intenta nuevamente.' });
+      showToast({ type: 'error', title: 'Error', message: 'Error al crear la clase. Por favor intenta nuevamente.' });
     }
   };
 
@@ -78,7 +78,7 @@ export default function TeacherClasses() {
       setFormData({ name: '', subject: '', grade_level: '' });
     } catch (err: unknown) {
       console.error('[TeacherClasses] Error updating classroom:', err);
-      showToast({ type: 'error', message: 'Error al actualizar la clase. Por favor intenta nuevamente.' });
+      showToast({ type: 'error', title: 'Error', message: 'Error al actualizar la clase. Por favor intenta nuevamente.' });
     }
   };
 
@@ -91,7 +91,7 @@ export default function TeacherClasses() {
       setSelectedClassroom(null);
     } catch (err: unknown) {
       console.error('[TeacherClasses] Error deleting classroom:', err);
-      showToast({ type: 'error', message: 'Error al eliminar la clase. Por favor intenta nuevamente.' });
+      showToast({ type: 'error', title: 'Error', message: 'Error al eliminar la clase. Por favor intenta nuevamente.' });
     }
   };
 

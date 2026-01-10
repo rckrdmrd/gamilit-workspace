@@ -58,8 +58,8 @@ export default function GamificationPage() {
   const [showRankComparison, setShowRankComparison] = useState(false);
   const [showPrestigeModal, setShowPrestigeModal] = useState(false);
 
-  // Auth
-  const { user } = useAuthStore();
+  // Auth - Using Zustand selector to prevent unnecessary re-renders
+  const user = useAuthStore((state) => state.user);
 
   // Zustand Stores
   const userProgress = useRanksStore((state) => state.userProgress);
