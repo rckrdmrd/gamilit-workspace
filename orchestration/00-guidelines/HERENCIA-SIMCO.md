@@ -1,7 +1,7 @@
 # Herencia SIMCO - GAMILIT
 
-**Sistema:** SIMCO v2.3.0 + CAPVED + CCA Protocol
-**Fecha:** 2025-12-18
+**Sistema:** SIMCO v3.8.0 + CAPVED + CCA Protocol + Estándares Documentación + Mantenimiento Docs
+**Fecha:** 2026-01-10
 
 ---
 
@@ -12,7 +12,7 @@
 | **Proyecto** | GAMILIT - Plataforma EdTech Gamificada |
 | **Nivel** | STANDALONE |
 | **Padre** | core/orchestration |
-| **SIMCO Version** | 2.3.0 |
+| **SIMCO Version** | 3.8.0 |
 | **CAPVED** | Habilitado |
 | **CCA Protocol** | Habilitado |
 
@@ -107,6 +107,76 @@ Ubicación: `core/orchestration/`
 | `@OP_FRONTEND` | **SÍ** | React 19, Zustand |
 | `@OP_MOBILE` | NO | (futuro) |
 | `@OP_ML` | NO | - |
+
+---
+
+## Directivas de Documentación (SIMCO v3.7)
+
+Ubicación: `workspace/orchestration/directivas/simco/`
+
+**Nuevas directivas agregadas en v3.7 para estandarización de documentación:**
+
+| Alias | Directiva | Propósito | Aplica |
+|-------|-----------|-----------|--------|
+| `@DOC_PROYECTO` | `SIMCO-DOCUMENTACION-PROYECTO.md` | Estructura base de documentación | **SÍ** |
+| `@NOMENCLATURA` | `SIMCO-NOMENCLATURA.md` | Convenciones de nomenclatura (RF-, ET-, US-) | **SÍ** |
+| `@ESTRUCTURA_DOCS` | `SIMCO-ESTRUCTURA-DOCS.md` | Estructura interna de documentos | **SÍ** |
+| `@INVENTARIOS` | `SIMCO-INVENTARIOS.md` | Estándares de inventarios YAML | **SÍ** |
+| `@TESTING` | `SIMCO-TESTING.md` | Cobertura y estándares de testing | **SÍ** |
+| `@MIGRACIONES` | `SIMCO-MIGRACIONES-BD.md` | Migraciones y DDL | **SÍ** |
+| `@INTEGRACIONES` | `SIMCO-INTEGRACIONES-EXTERNAS.md` | Documentación de integraciones externas | **SÍ** |
+
+### Checklists Asociados
+
+| Alias | Checklist | Items |
+|-------|-----------|-------|
+| `@CHK_DOCUMENTACION` | `CHECKLIST-DOCUMENTACION-PROYECTO.md` | 44 |
+| `@CHK_INVENTARIOS` | `CHECKLIST-INVENTARIOS.md` | 63 |
+| `@CHK_NOMENCLATURA` | `CHECKLIST-NOMENCLATURA.md` | 40 |
+
+### Templates Disponibles
+
+| Alias | Template | Uso |
+|-------|----------|-----|
+| `@TPL_INVENTARIO` | `TEMPLATE-INVENTARIO-PROYECTO.md` | Crear inventarios YAML |
+| `@TPL_INTEGRACION` | `TEMPLATE-INTEGRACION-EXTERNA.md` | Documentar integraciones |
+| `@TPL_MODULO_ESTANDAR` | `TEMPLATE-MODULO-ESTANDAR.md` | Documentar módulos |
+
+---
+
+## Directivas de Mantenimiento de Documentación (SIMCO v3.8)
+
+Ubicación: `workspace/orchestration/directivas/simco/`
+
+**Nuevas directivas agregadas en v3.8 para mantenimiento, purga y sincronización de documentación:**
+
+| Alias | Directiva | Propósito | Aplica |
+|-------|-----------|-----------|--------|
+| `@MANTENIMIENTO_DOCS` | `SIMCO-MANTENIMIENTO-DOCUMENTACION.md` | Ciclo de mantenimiento, purga y deprecación | **SÍ** |
+| `@SYNC_BD` | `SIMCO-SINCRONIZACION-BD.md` | Sincronización BD ↔ Código ↔ Docs | **SÍ** |
+
+### Checklists de Mantenimiento
+
+| Alias | Checklist | Items |
+|-------|-----------|-------|
+| `@CHK_MANTENIMIENTO` | `CHECKLIST-MANTENIMIENTO-DOCS.md` | 80 |
+| `@CHK_SYNC_BD` | `CHECKLIST-SINCRONIZACION-BD.md` | 70 |
+
+### Templates y Perfiles
+
+| Alias | Archivo | Uso |
+|-------|---------|-----|
+| `@TPL_DEPRECACION` | `TEMPLATE-DEPRECACION.md` | Marcar documentos como deprecados |
+| `@PERFIL_DOC_MAINT` | `PERFIL-DOCUMENTATION-MAINTAINER.md` | Perfil especializado en mantenimiento |
+
+### Cuándo Usar
+
+| Evento | Acción |
+|--------|--------|
+| Tarea completada (código) | `@MANTENIMIENTO_DOCS` nivel básico |
+| Cambio en DDL | `@SYNC_BD` + `@CHK_SYNC_BD` |
+| Fin de sprint/fase | `@CHK_MANTENIMIENTO` completo |
+| Deprecar documentos | `@TPL_DEPRECACION` |
 
 ---
 
@@ -312,6 +382,6 @@ CIERRE:
 
 ---
 
-**Sistema:** SIMCO v2.2.0 + CAPVED + CCA Protocol
+**Sistema:** SIMCO v3.8.0 + CAPVED + CCA Protocol + Estándares Documentación + Mantenimiento Docs
 **Nivel:** STANDALONE
-**Última actualización:** 2025-12-08
+**Última actualización:** 2026-01-10

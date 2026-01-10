@@ -220,6 +220,54 @@ export interface PaginatedResponse<T> {
   };
 }
 
+/**
+ * ExerciseHint interface for transformed hints
+ * @version 1.0 (2026-01-10) - P0-003 transform
+ */
+export interface ExerciseHint {
+  id: string;
+  text: string;
+  ml_coins_cost: number;
+  order: number;
+}
+
+// ============================================================================
+// TRANSFORM FUNCTIONS (P0-002, P0-003)
+// ============================================================================
+
+/**
+ * Converts time_limit from minutes (backend) to seconds (frontend)
+ * @param minutes - Time in minutes from backend
+ * @returns Time in seconds for frontend
+ * @version 1.0 (2026-01-10) - P0-002 fix
+ */
+export const transformTimeToSeconds = (
+  minutes: number | undefined,
+): number | undefined => {
+  return minutes !== undefined ? minutes * 60 : undefined;
+};
+
+/**
+ * Transforms hints from string[] (backend) to ExerciseHint[] (frontend)
+ * @param hints - Array of hint strings from backend
+ * @param hintCostMlCoins - Global ML coins cost per hint (default 5)
+ * @returns Array of ExerciseHint objects
+ * @version 1.0 (2026-01-10) - P0-003 fix
+ */
+export const transformHints = (
+  hints: string[] | undefined,
+  hintCostMlCoins: number = 5,
+): ExerciseHint[] => {
+  if (!hints || hints.length === 0) return [];
+
+  return hints.map((text, index) => ({
+    id: `hint-${index + 1}`,
+    text,
+    ml_coins_cost: hintCostMlCoins,
+    order: index + 1,
+  }));
+};
+
 // ============================================================================
 // MOCK DATA (for development)
 // ============================================================================

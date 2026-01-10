@@ -19,13 +19,16 @@ Documentacion de la restructuracion version 2 del sistema Gamilit, incluyendo ar
 | [07-CORRECCION-SISTEMA-MISIONES.md](./07-CORRECCION-SISTEMA-MISIONES.md) | Correccion del sistema de misiones | Completo |
 | [API-MAPPING-TEACHER-MONITORING.md](./API-MAPPING-TEACHER-MONITORING.md) | Mapeo de API para monitoreo de profesores | Completo |
 | [IMPLEMENTACION-REST-ENDPOINTS-US-AE-007.md](./IMPLEMENTACION-REST-ENDPOINTS-US-AE-007.md) | Implementacion de REST endpoints (US-AE-007) | Completo |
-| [US-AE-005-parametrizacion-gamificacion.md](./US-AE-005-parametrizacion-gamificacion.md) | User Story AE-005: Parametrizacion de gamificacion | **Done** (Copia - SSOT en EXT-002) |
-| [US-AE-007-asignar-grupos-maestros.md](./US-AE-007-asignar-grupos-maestros.md) | User Story AE-007: Asignar grupos a maestros | **Done** (Copia - SSOT en EXT-002) |
+| ~~US-AE-005-parametrizacion-gamificacion.md~~ | User Story AE-005: Parametrizacion de gamificacion | **ELIMINADO** - Ver SSOT en EXT-002 |
+| ~~US-AE-007-asignar-grupos-maestros.md~~ | User Story AE-007: Asignar grupos a maestros | **ELIMINADO** - Ver SSOT en EXT-002 |
 
-## Notas de Sincronizacion (2026-01-06)
+## Notas de Sincronizacion (2026-01-10)
 
-Los archivos US-AE-005 y US-AE-007 en esta carpeta son **copias de referencia**. La fuente de verdad (SSOT) para estas historias de usuario está en:
-- `docs/03-fase-extensiones/EXT-002-admin-extendido/historias-usuario/`
+**Auditoria de documentacion (2026-01-10):**
+- Los archivos US-AE-005 y US-AE-007 fueron **ELIMINADOS** de esta carpeta por ser duplicados.
+- La fuente de verdad (SSOT) para estas historias de usuario esta en:
+  - `docs/03-fase-extensiones/EXT-002-admin-extendido/historias-usuario/US-AE-005-parametrizacion-gamificacion.md`
+  - `docs/03-fase-extensiones/EXT-002-admin-extendido/historias-usuario/US-AE-007-asignar-grupos-maestros.md`
 
 Ambas US fueron implementadas durante FE-059 (2025-11-19).
 
@@ -33,4 +36,4 @@ Ambas US fueron implementadas durante FE-059 (2025-11-19).
 - [Directorio padre](../_MAP.md)
 
 ---
-*Ultima actualizacion: 2026-01-06*
+*Ultima actualizacion: 2026-01-10*

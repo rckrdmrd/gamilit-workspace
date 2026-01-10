@@ -6,7 +6,8 @@
  * Backend entity: /src/modules/auth/entities/user.entity.ts (auth.users table)
  * Backend DTO: /src/modules/auth/dto/user-response.dto.ts
  *
- * UPDATED 2025-11-26: Campos adicionales alineados con Backend
+ * UPDATED 2026-01-10: P1-004 - Campos adicionales alineados con Backend
+ * - Agregados: phone_confirmed_at, updated_at, first_name, last_name, display_name
  *
  * ARCHITECTURAL NOTE - User vs Profile:
  * ====================================
@@ -72,6 +73,35 @@ export interface User {
   phone?: string;
 
   // =====================================================
+  // BACKEND-ALIGNED PROFILE FIELDS (P1-004 2026-01-10)
+  // Snake_case fields matching backend UserResponseDto
+  // =====================================================
+
+  /**
+   * First name (snake_case from backend Profile)
+   * P1-004: Direct mapping from UserResponseDto.first_name
+   */
+  first_name?: string;
+
+  /**
+   * Last name (snake_case from backend Profile)
+   * P1-004: Direct mapping from UserResponseDto.last_name
+   */
+  last_name?: string;
+
+  /**
+   * Display name (snake_case from backend Profile)
+   * P1-004: Direct mapping from UserResponseDto.display_name
+   */
+  display_name?: string;
+
+  /**
+   * Tenant ID (snake_case from backend Profile)
+   * P1-004: Direct mapping from UserResponseDto.tenant_id
+   */
+  tenant_id?: string;
+
+  // =====================================================
   // ADMINISTRATION FIELDS (UPDATED 2025-11-26)
   // =====================================================
 
@@ -106,6 +136,13 @@ export interface User {
   last_sign_in_at?: string;
 
   /**
+   * Phone confirmation timestamp (ISO string)
+   * P1-004: Added for backend alignment
+   * Maps to backend: User.phone_confirmed_at field
+   */
+  phone_confirmed_at?: string;
+
+  /**
    * Email verification status (derived field)
    * Computed from email_confirmed_at (true if present)
    * May be returned by some API endpoints
@@ -121,6 +158,13 @@ export interface User {
    * May be returned by some API endpoints
    */
   createdAt?: string;
+
+  /**
+   * Account last update timestamp (ISO string)
+   * P1-004: Added for backend alignment
+   * Maps to backend: User.updated_at field
+   */
+  updated_at?: string;
 
   /**
    * Whether the user account is active (derived field)

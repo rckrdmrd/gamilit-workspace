@@ -1,15 +1,13 @@
 # Planning - Mapa de Contenido
 
 **Propósito:** Planificación de tareas, bugs y sprints del proyecto GAMILIT.
+**Última actualización:** 2026-01-10
 
 ---
 
 ## Estructura
 
-| Carpeta | Descripción |
-|---------|-------------|
-| `tasks/` | Tareas técnicas planificadas |
-| `bugs/` | Bugs identificados pendientes de resolver |
+> **Nota (2026-01-10):** Las carpetas `tasks/` y `bugs/` fueron eliminadas durante la auditoría de documentación por estar vacías. El seguimiento de tareas y bugs se realiza a través de `orchestration/trazas/` y `docs/90-transversal/correcciones/`.
 
 ---
 

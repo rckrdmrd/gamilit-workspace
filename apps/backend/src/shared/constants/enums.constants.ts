@@ -159,11 +159,11 @@ export enum DifficultyLevelEnum {
  * @version 1.0 (2025-11-03) - Homologación de rangos legacy a correctos
  */
 export enum MayaRank {
-  AJAW = 'Ajaw',                    // Nivel 1: Señor, líder supremo (0-999 XP)
-  NACOM = 'Nacom',                  // Nivel 2: Capitán de guerra (1,000-2,999 XP)
-  AH_KIN = 'Ah K\'in',              // Nivel 3: Sacerdote del sol (3,000-5,999 XP)
-  HALACH_UINIC = 'Halach Uinic',    // Nivel 4: Hombre verdadero (6,000-9,999 XP)
-  KUKULKAN = 'K\'uk\'ulkan',        // Nivel 5: Serpiente emplumada (10,000+ XP) - Corregido ortografia 2025-11-26
+  AJAW = 'Ajaw',                    // Nivel 1: Señor (0-499 XP) - @see ranks.constants.ts v2.0
+  NACOM = 'Nacom',                  // Nivel 2: Capitan de guerra (500-999 XP)
+  AH_KIN = 'Ah K\'in',              // Nivel 3: Sacerdote del sol (1,000-1,499 XP)
+  HALACH_UINIC = 'Halach Uinic',    // Nivel 4: Hombre verdadero (1,500-2,249 XP)
+  KUKULKAN = 'K\'uk\'ulkan',        // Nivel 5: Serpiente emplumada (2,250+ XP)
 }
 
 /**

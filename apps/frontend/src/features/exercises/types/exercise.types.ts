@@ -24,9 +24,49 @@ export type ExerciseDifficulty =
   | 'native'; // Nativo
 
 /**
- * Exercise types/mechanics
+ * Exercise types/mechanics (37 tipos - alineado con Backend ExerciseTypeEnum)
+ * @see ExerciseTypeEnum en backend shared/constants/enums.constants.ts
+ * @version 2.0 (2026-01-10) - Sincronizado con DDL educational_content.exercise_type
  */
 export type ExerciseType =
+  // Module 1 - Comprension Literal
+  | 'crucigrama'
+  | 'linea_tiempo'
+  | 'sopa_letras'
+  | 'mapa_conceptual'
+  | 'emparejamiento'
+  | 'verdadero_falso'
+  | 'completar_espacios'
+  // Module 2 - Comprension Inferencial
+  | 'detective_textual'
+  | 'construccion_hipotesis'
+  | 'prediccion_narrativa'
+  | 'puzzle_contexto'
+  | 'rueda_inferencias'
+  // Module 3 - Comprension Critica
+  | 'tribunal_opiniones'
+  | 'debate_digital'
+  | 'analisis_fuentes'
+  | 'podcast_argumentativo'
+  | 'matriz_perspectivas'
+  // Module 4 - Lectura Digital
+  | 'verificador_fake_news'
+  | 'infografia_interactiva'
+  | 'quiz_tiktok'
+  | 'navegacion_hipertextual'
+  | 'analisis_memes'
+  // Module 5 - Produccion Lectora
+  | 'diario_multimedia'
+  | 'comic_digital'
+  | 'video_carta'
+  // Auxiliares
+  | 'comprension_auditiva'
+  | 'collage_prensa'
+  | 'texto_movimiento'
+  | 'call_to_action'
+  | 'diario_interactivo'
+  | 'resumen_visual'
+  // Genericos (compatibilidad)
   | 'multiple_choice'
   | 'true_false'
   | 'fill_blank'
@@ -40,12 +80,23 @@ export type ExerciseType =
 export type SubmissionStatus = 'pending' | 'correct' | 'incorrect' | 'partial';
 
 /**
+ * Comodin (power-up) types
+ * @see ComodinTypeEnum en backend shared/constants/enums.constants.ts
+ * @version 1.0 (2026-01-10) - Sincronizado con DDL gamification_system.comodin_type
+ */
+export type ComodinType = 'pistas' | 'vision_lectora' | 'segunda_oportunidad';
+
+/**
  * Base exercise interface
+ * @version 2.0 (2026-01-10) - Sincronizado con ExerciseResponseDto del backend
+ * @see ExerciseResponseDto en backend modules/educational/dto/exercises/exercise-response.dto.ts
  */
 export interface Exercise {
   id: string;
+  module_id: string;
   type: ExerciseType;
   title: string;
+  subtitle?: string;
   description?: string;
   instructions: string;
   difficulty: ExerciseDifficulty;
@@ -55,6 +106,31 @@ export interface Exercise {
   max_attempts?: number;
   hints: ExerciseHint[];
   content: ExerciseContent;
+
+  // Campos pedagogicos (DB-125: 2025-11-19)
+  objective?: string;
+  how_to_solve?: string;
+  recommended_strategy?: string;
+  pedagogical_notes?: string;
+
+  // Comodines (power-ups)
+  comodines_allowed?: ComodinType[];
+  comodines_config?: Record<string, unknown>;
+
+  // Gamificacion
+  bonus_multiplier?: number;
+  max_points?: number;
+  passing_score?: number;
+
+  // Metadata
+  order_index?: number;
+  config?: Record<string, unknown>;
+  auto_gradable?: boolean;
+
+  // Status
+  is_active?: boolean;
+  is_optional?: boolean;
+  is_bonus?: boolean;
 }
 
 /**

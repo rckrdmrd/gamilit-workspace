@@ -5,10 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 import { GamilityRoleEnum, UserStatusEnum } from '@/shared/constants/enums.constants';
 import { UserPreferencesSchema } from '../dto/user-preferences.schema';
+import { Tenant } from './tenant.entity';
 
 /**
  * Profile Entity
@@ -133,7 +136,7 @@ export class Profile {
   @UpdateDateColumn({ type: 'timestamp with time zone' })
     updated_at!: Date;
 
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ type: 'uuid', nullable: true, unique: true })
     user_id!: string | null;
 
   // Relación a auth.users (schema diferente, se maneja manualmente)
@@ -141,8 +144,8 @@ export class Profile {
   // @JoinColumn({ name: 'user_id' })
   // user?: User;
 
-  // Relación a tenants (pendiente de implementar)
-  // @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
-  // @JoinColumn({ name: 'tenant_id' })
-  // tenant?: Tenant;
+  // Relación a tenants
+  @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'tenant_id' })
+    tenant?: Tenant;
 }

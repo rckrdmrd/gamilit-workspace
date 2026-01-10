@@ -61,10 +61,10 @@ export class UserSession {
   @Column({ type: 'text', nullable: true })
     city!: string | null;
 
-  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamptz', default: () => 'gamilit.now_mexico()' })
     created_at!: Date;
 
-  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamptz', default: () => 'gamilit.now_mexico()' })
     last_activity_at!: Date;
 
   @Column({ type: 'timestamptz' })

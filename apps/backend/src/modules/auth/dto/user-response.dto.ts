@@ -1,5 +1,5 @@
-import { Exclude, Expose } from 'class-transformer';
-import { GamilityRoleEnum } from '@shared/constants';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
+import { GamilityRoleEnum, UserStatusEnum } from '@shared/constants';
 
 /**
  * UserResponseDto
@@ -39,10 +39,13 @@ export class UserResponseDto {
     role!: GamilityRoleEnum;
 
   /**
-   * Fecha y hora de confirmación del email
+   * Fecha y hora de confirmación del email (ISO string)
+   * P0-005: Serializado a ISO para consistencia Frontend
    */
   @Expose()
-    email_confirmed_at?: Date;
+  @Type(() => Date)
+  @Transform(({ value }) => value?.toISOString?.() ?? value)
+    email_confirmed_at?: string;
 
   /**
    * Indica si el email ha sido verificado
@@ -68,11 +71,13 @@ export class UserResponseDto {
     phone?: string;
 
   /**
-   * Fecha y hora de confirmación del teléfono
-   * IMPORTANTE: Campo agregado para alineación con DDL auth.users
+   * Fecha y hora de confirmación del teléfono (ISO string)
+   * P0-005: Serializado a ISO para consistencia Frontend
    */
   @Expose()
-    phone_confirmed_at?: Date;
+  @Type(() => Date)
+  @Transform(({ value }) => value?.toISOString?.() ?? value)
+    phone_confirmed_at?: string;
 
   /**
    * Indica si el usuario es super administrador
@@ -82,17 +87,22 @@ export class UserResponseDto {
     is_super_admin?: boolean;
 
   /**
-   * Fecha y hora hasta la cual el usuario está baneado
-   * IMPORTANTE: Campo agregado para alineación con DDL auth.users
+   * Fecha y hora hasta la cual el usuario está baneado (ISO string)
+   * P0-005: Serializado a ISO para consistencia Frontend
    */
   @Expose()
-    banned_until?: Date;
+  @Type(() => Date)
+  @Transform(({ value }) => value?.toISOString?.() ?? value)
+    banned_until?: string;
 
   /**
-   * Fecha y hora del último inicio de sesión
+   * Fecha y hora del último inicio de sesión (ISO string)
+   * P0-005: Serializado a ISO para consistencia Frontend
    */
   @Expose()
-    last_sign_in_at?: Date;
+  @Type(() => Date)
+  @Transform(({ value }) => value?.toISOString?.() ?? value)
+    last_sign_in_at?: string;
 
   /**
    * Metadatos adicionales del usuario (JSON)
@@ -102,16 +112,69 @@ export class UserResponseDto {
     raw_user_meta_data!: Record<string, unknown>;
 
   /**
-   * Fecha y hora de creación del registro
+   * Fecha y hora de creación del registro (ISO string)
+   * P0-005: Serializado a ISO para consistencia Frontend
    */
   @Expose()
-    created_at!: Date;
+  @Type(() => Date)
+  @Transform(({ value }) => value?.toISOString?.() ?? value)
+    created_at!: string;
 
   /**
-   * Fecha y hora de última actualización del registro
+   * Fecha y hora de última actualización del registro (ISO string)
+   * P0-005: Serializado a ISO para consistencia Frontend
    */
   @Expose()
-    updated_at!: Date;
+  @Type(() => Date)
+  @Transform(({ value }) => value?.toISOString?.() ?? value)
+    updated_at!: string;
+
+  // =====================================================
+  // CAMPOS DE PROFILE (P0-006)
+  // Incluidos para coherencia con Frontend
+  // =====================================================
+
+  /**
+   * Primer nombre del usuario (desde Profile)
+   * P0-006: Campo de Profile incluido en UserResponse
+   */
+  @Expose()
+    first_name?: string;
+
+  /**
+   * Apellido(s) del usuario (desde Profile)
+   * P0-006: Campo de Profile incluido en UserResponse
+   */
+  @Expose()
+    last_name?: string;
+
+  /**
+   * Nombre para mostrar (desde Profile)
+   * P0-006: Campo de Profile incluido en UserResponse
+   */
+  @Expose()
+    display_name?: string;
+
+  /**
+   * URL del avatar (desde Profile)
+   * P0-006: Campo de Profile incluido en UserResponse
+   */
+  @Expose()
+    avatar_url?: string;
+
+  /**
+   * Estado del usuario (desde Profile)
+   * P0-006: Campo de Profile incluido en UserResponse
+   */
+  @Expose()
+    status?: UserStatusEnum;
+
+  /**
+   * ID del tenant (desde Profile)
+   * P0-006: Campo de Profile incluido en UserResponse
+   */
+  @Expose()
+    tenant_id?: string;
 
   // =====================================================
   // Relaciones opcionales

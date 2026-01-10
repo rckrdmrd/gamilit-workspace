@@ -22,15 +22,17 @@ Esta carpeta contiene la documentación del proceso de restructuración de épic
    - 8 SP, $3,200 MXN
    - Épica: EXT-001 (Portal Maestros)
 
-3. **[US-AE-005-parametrizacion-gamificacion.md](./US-AE-005-parametrizacion-gamificacion.md)**
-   - Especificación completa de User Story
+3. **~~US-AE-005-parametrizacion-gamificacion.md~~** → **ELIMINADO**
+   - SSOT: `/docs/03-fase-extensiones/EXT-002-admin-extendido/historias-usuario/US-AE-005-parametrizacion-gamificacion.md`
    - 12 SP, $4,800 MXN
    - Épica: EXT-002 (Gestión Avanzada Admin)
 
-4. **[US-AE-007-asignar-grupos-maestros.md](./US-AE-007-asignar-grupos-maestros.md)**
-   - Especificación completa de User Story
+4. **~~US-AE-007-asignar-grupos-maestros.md~~** → **ELIMINADO**
+   - SSOT: `/docs/03-fase-extensiones/EXT-002-admin-extendido/historias-usuario/US-AE-007-asignar-grupos-maestros.md`
    - 6 SP, $2,400 MXN
    - Épica: EXT-002 (Gestión Avanzada Admin)
+
+> **Nota de Auditoría (2026-01-10):** Los archivos US-AE-005 y US-AE-007 fueron eliminados de esta carpeta para evitar duplicación. Las versiones SSOT se encuentran en EXT-002.
 
 ---
 

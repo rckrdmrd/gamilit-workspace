@@ -12,12 +12,14 @@
 
 | Metrica | Valor |
 |---------|-------|
-| **Tablas** | 1 |
+| **Tablas** | 2 |
 | **Vistas** | 1 |
-| **Funciones** | 2 |
+| **Funciones** | 0 (2 planificadas - ver seccion 4) |
 | **Triggers** | 1 |
 | **Indices** | 11 |
 | **Politicas RLS** | 6 |
+
+> **Nota de Auditoria (2026-01-10):** Las funciones `get_unread_count()` y `mark_conversation_read()` estan documentadas como **planificadas pero no implementadas**. No existen archivos SQL correspondientes.
 
 ---
 
@@ -273,8 +275,9 @@ communication.messages
 GRANT USAGE ON SCHEMA communication TO gamilit_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON communication.messages TO gamilit_user;
 GRANT SELECT ON communication.recent_classroom_messages TO gamilit_user;
-GRANT EXECUTE ON FUNCTION communication.get_unread_count TO gamilit_user;
-GRANT EXECUTE ON FUNCTION communication.mark_conversation_read TO gamilit_user;
+-- NOTA: Los siguientes GRANTs seran necesarios cuando se implementen las funciones:
+-- GRANT EXECUTE ON FUNCTION communication.get_unread_count TO gamilit_user;
+-- GRANT EXECUTE ON FUNCTION communication.mark_conversation_read TO gamilit_user;
 ```
 
 ---

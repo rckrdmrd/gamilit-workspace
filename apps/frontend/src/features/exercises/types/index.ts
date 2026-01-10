@@ -8,6 +8,7 @@ export type {
   ExerciseDifficulty,
   ExerciseType,
   SubmissionStatus,
+  ComodinType,
   Exercise,
   ExerciseHint,
   ExerciseContent,

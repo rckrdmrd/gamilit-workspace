@@ -198,9 +198,9 @@ export class AuthService {
     user.last_sign_in_at = new Date();
     await this.userRepository.save(user);
 
-    // 10. Retornar usuario con tokens
+    // 10. Retornar usuario con tokens (P1-003: incluir profile)
     return {
-      user: this.toUserResponse(user),
+      user: this.toUserResponse(user, profile, mainTenant),
       accessToken,
       refreshToken,
     };
@@ -283,9 +283,9 @@ export class AuthService {
     user.last_sign_in_at = new Date();
     await this.userRepository.save(user);
 
-    // 9. Retornar
+    // 9. Retornar (P1-003: incluir profile con tenant_id)
     return {
-      user: this.toUserResponse(user),
+      user: this.toUserResponse(user, profile),
       accessToken,
       refreshToken,
     };
@@ -692,10 +692,14 @@ export class AuthService {
    * - emailVerified: true si email_confirmed_at tiene valor
    * - isActive: true si NO está deleted_at ni banned_until activo
    *
+   * P1-003: Incluye campos de Profile y Organization cuando se proporciona profile
+   *
    * @param user - User entity de la base de datos
+   * @param profile - (Opcional) Profile entity para incluir campos adicionales
+   * @param tenant - (Opcional) Tenant entity para incluir organization info
    * @returns UserResponseDto con campos derivados calculados
    */
-  public toUserResponse(user: User): UserResponseDto {
+  public toUserResponse(user: User, profile?: Profile, tenant?: Tenant): UserResponseDto {
     const { encrypted_password: _encrypted_password, ...userWithoutPassword } = user;
 
     // Calcular campos derivados para coherencia Frontend-Backend
@@ -704,10 +708,32 @@ export class AuthService {
     const isActive = !user.deleted_at &&
       (!user.banned_until || user.banned_until < now);
 
+    // P0-006: Incluir campos de Profile si está disponible
+    const profileFields = profile ? {
+      first_name: profile.first_name,
+      last_name: profile.last_name,
+      display_name: profile.display_name,
+      avatar_url: profile.avatar_url,
+      status: profile.status,
+      tenant_id: profile.tenant_id,
+    } : {};
+
+    // P0-005: Serializar dates a ISO string para consistencia Frontend
+    const dateFields = {
+      email_confirmed_at: user.email_confirmed_at?.toISOString(),
+      phone_confirmed_at: user.phone_confirmed_at?.toISOString(),
+      banned_until: user.banned_until?.toISOString(),
+      last_sign_in_at: user.last_sign_in_at?.toISOString(),
+      created_at: user.created_at?.toISOString() ?? new Date().toISOString(),
+      updated_at: user.updated_at?.toISOString() ?? new Date().toISOString(),
+    };
+
     return {
       ...userWithoutPassword,
       emailVerified,
       isActive,
+      ...profileFields,
+      ...dateFields,
     } as UserResponseDto;
   }
 
