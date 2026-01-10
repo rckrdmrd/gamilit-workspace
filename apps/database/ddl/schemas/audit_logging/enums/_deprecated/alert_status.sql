@@ -1,0 +1,28 @@
+-- =====================================================
+-- ENUM: audit_logging.alert_status
+--
+-- DEPRECADO: 2026-01-10
+-- RAZON: Este ENUM no es usado por la tabla system_alerts.
+--        La tabla usa CHECK constraints con valores diferentes:
+--        - ENUM: active, acknowledged, resolved, ignored
+--        - CHECK: open, acknowledged, resolved, suppressed
+--        La tabla y el backend entity usan los valores del CHECK.
+--
+-- Migrado de: 00-prerequisites.sql
+-- Fecha de migracion original: 2026-01-07
+-- Ver: TAREA-006 F2-ANALISIS-DETALLADO-AUDIT-2026-01-10.md
+-- =====================================================
+
+-- NOTA: No eliminar hasta confirmar que no hay dependencias externas
+-- DO $$ BEGIN
+--     CREATE TYPE audit_logging.alert_status AS ENUM (
+--         'active',        -- Alerta activa
+--         'acknowledged',  -- Alerta reconocida
+--         'resolved',      -- Alerta resuelta
+--         'ignored'        -- Alerta ignorada
+--     );
+-- EXCEPTION
+--     WHEN duplicate_object THEN null;
+-- END $$;
+
+-- COMMENT ON TYPE audit_logging.alert_status IS 'DEPRECADO - No usado por system_alerts (usa CHECK constraints)';
