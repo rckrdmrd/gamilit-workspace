@@ -142,7 +142,7 @@ const moduleProgressData = await this.moduleProgressRepo
 ### Compilacion TypeScript
 
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/backend && npm run build
+cd /home/isem/workspace-v2/projects/gamilit/apps/backend && npm run build
 ```
 
 **Resultado:** EXITOSO (sin errores)

@@ -68,7 +68,7 @@ Dado que `recreate-database.sh` requiere acceso superusuario PostgreSQL (no disp
 
 **Comandos ejecutados:**
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 
 # Simular FASE 8 de create-database.sh (línea 341)
 for sql_file in ddl/schemas/progress_tracking/triggers/16-trg_create_manual_review.sql \

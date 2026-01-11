@@ -197,7 +197,7 @@ import { CurrentUser } from '@shared/decorators/current-user.decorator';
 La base de datos actual está incompleta (17/140 tablas). Para completar la validación:
 
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/database/scripts
+cd /home/isem/workspace-v2/projects/gamilit/apps/database/scripts
 ./recreate-database.sh --env dev --force
 ```
 

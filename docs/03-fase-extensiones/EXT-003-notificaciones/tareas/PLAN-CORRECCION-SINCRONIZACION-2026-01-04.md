@@ -460,17 +460,17 @@ COMMIT;
 
 ```bash
 # Backend - Build y verificar entities
-cd /home/isem/workspace-v1/projects/gamilit/apps/backend
+cd /home/isem/workspace-v2/projects/gamilit/apps/backend
 npm run build
 npm run lint
 
 # Frontend - Build y verificar tipos
-cd /home/isem/workspace-v1/projects/gamilit/apps/frontend
+cd /home/isem/workspace-v2/projects/gamilit/apps/frontend
 npm run build
 npm run lint
 
 # Database - Recrear y validar seeds
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 ./scripts/recreate-database.sh --env dev
 
 # Verificar tablas de notificaciones

@@ -2,7 +2,7 @@
 
 **Proyecto:** GAMILIT - Plataforma de Gamificacion Educativa
 **Sistema:** NEXUS v4.0 + SIMCO
-**Nivel:** STANDALONE (workspace autónomo con herencia de workspace-v1)
+**Nivel:** STANDALONE (workspace autónomo bajo workspace-v2)
 **Última actualización:** 2026-01-07
 
 ---
@@ -93,7 +93,7 @@ disponible_tarea: 8000   # L2 + L3
 
 ## Principios NEXUS v4.0 (Heredados)
 
-Los siguientes principios se heredan del workspace-v1:
+Los siguientes principios se heredan del workspace-v2:
 
 | Principio | Archivo | Propósito |
 |-----------|---------|-----------|
@@ -104,13 +104,13 @@ Los siguientes principios se heredan del workspace-v1:
 | Economía Tokens | `PRINCIPIO-ECONOMIA-TOKENS.md` | Límites de contexto |
 | No Asumir | `PRINCIPIO-NO-ASUMIR.md` | Preguntar si falta info |
 
-**Path herencia:** `/home/isem/workspace-v1/orchestration/directivas/principios/`
+**Path herencia:** `/home/isem/workspace-v2/orchestration/directivas/principios/`
 
 ---
 
 ## Directivas SIMCO Disponibles
 
-### Directivas Globales (workspace-v1)
+### Directivas Globales (workspace-v2)
 
 | Directiva | Cuándo Usar |
 |-----------|-------------|
@@ -125,7 +125,7 @@ Los siguientes principios se heredan del workspace-v1:
 | `SIMCO-ERROR-RECURRENTE.md` | Manejo de errores repetidos |
 | `SIMCO-SCRUM-INTEGRATION.md` | Integración Scrum |
 
-**Path:** `/home/isem/workspace-v1/orchestration/directivas/simco/`
+**Path:** `/home/isem/workspace-v2/orchestration/directivas/simco/`
 
 ### Directivas Locales (gamilit)
 
@@ -135,7 +135,7 @@ Los siguientes principios se heredan del workspace-v1:
 | `DIRECTIVA-POLITICA-CARGA-LIMPIA.md` | DDL-first, sin migraciones |
 | `ESTANDARES-API-ROUTES.md` | Convenciones REST |
 
-**Path:** `/home/isem/workspace-v1/projects/gamilit/orchestration/directivas/`
+**Path:** `/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/`
 
 ---
 
@@ -212,15 +212,15 @@ El sistema NEXUS v4.0 se integra con la carpeta docs/ del proyecto:
 
 ## Herencia de Workspace
 
-Gamilit hereda configuración de workspace-v1 pero opera como standalone:
+Gamilit hereda configuración de workspace-v2 y opera como proyecto standalone:
 
 ```yaml
 herencia:
   tipo: STANDALONE
   hereda_de:
-    - /home/isem/workspace-v1/orchestration/directivas/
-    - /home/isem/workspace-v1/orchestration/templates/
-    - /home/isem/workspace-v1/shared/catalog/
+    - /home/isem/workspace-v2/orchestration/directivas/
+    - /home/isem/workspace-v2/orchestration/templates/
+    - /home/isem/workspace-v2/shared/catalog/
   autonomia:
     - Puede contener copias de directivas críticas
     - CONTEXT-MAP.yml resuelve todo localmente

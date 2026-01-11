@@ -141,7 +141,7 @@ execute_sql_files "$DDL_DIR/schemas/progress_tracking/triggers" "*.sql" "Trigger
 
 **Comando ejecutado:**
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 
 # Simular flujo de create-database.sh (FASE 8: PROGRESS_TRACKING)
 for sql_file in ddl/schemas/progress_tracking/triggers/16-trg_create_manual_review.sql \

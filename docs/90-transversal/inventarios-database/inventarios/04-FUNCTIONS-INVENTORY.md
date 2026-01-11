@@ -337,7 +337,7 @@ Se excluyen de este inventario:
 
 Todos los archivos se encuentran en:
 ```
-/home/isem/workspace-v1/projects/gamilit/apps/database/ddl/schemas/{schema}/functions/
+/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/{schema}/functions/
 ```
 
 ### Convenciones de Nomenclatura

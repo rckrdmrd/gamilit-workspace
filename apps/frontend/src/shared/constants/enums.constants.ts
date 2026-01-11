@@ -655,6 +655,62 @@ export enum GamilityRoleEnum {
 }
 
 /**
+ * Claves de permisos válidas del sistema
+ * @see AdminRolesService.getAvailablePermissions()
+ * @version 1.0 (FIX-2025-01-07) - Creado para validación de permisos en UpdatePermissionsDto
+ *
+ * CATEGORÍAS:
+ * - content: Gestión de contenido educativo
+ * - users: Gestión de usuarios
+ * - organizations: Gestión de organizaciones/tenants
+ * - system: Configuración del sistema
+ * - reports: Generación y visualización de reportes
+ * - gamification: Sistema de gamificación
+ * - analytics: Visualización de analíticas
+ * - admin: Acceso y gestión del panel de administración
+ */
+export enum PermissionKeyEnum {
+  // Content permissions
+  CAN_CREATE_CONTENT = 'can_create_content',
+  CAN_EDIT_CONTENT = 'can_edit_content',
+  CAN_DELETE_CONTENT = 'can_delete_content',
+  CAN_APPROVE_CONTENT = 'can_approve_content',
+
+  // User management permissions
+  CAN_CREATE_USERS = 'can_create_users',
+  CAN_EDIT_USERS = 'can_edit_users',
+  CAN_DELETE_USERS = 'can_delete_users',
+  CAN_SUSPEND_USERS = 'can_suspend_users',
+
+  // Organization permissions
+  CAN_MANAGE_ORGANIZATIONS = 'can_manage_organizations',
+
+  // System permissions
+  CAN_MANAGE_SETTINGS = 'can_manage_settings',
+
+  // Reports permissions
+  CAN_VIEW_REPORTS = 'can_view_reports',
+  CAN_GENERATE_REPORTS = 'can_generate_reports',
+
+  // Gamification permissions
+  CAN_MANAGE_GAMIFICATION = 'can_manage_gamification',
+
+  // Analytics permissions
+  CAN_VIEW_ANALYTICS = 'can_view_analytics',
+
+  // Admin permissions
+  CAN_ACCESS_ADMIN_PANEL = 'can_access_admin_panel',
+  CAN_MANAGE_ROLES = 'can_manage_roles',
+}
+
+/**
+ * Array de todas las claves de permisos válidas
+ * @see PermissionKeyEnum
+ * @usage Útil para validaciones en DTOs
+ */
+export const VALID_PERMISSION_KEYS = Object.values(PermissionKeyEnum);
+
+/**
  * Niveles de severidad de alertas
  * @see DDL: alert_severity ENUM
  */

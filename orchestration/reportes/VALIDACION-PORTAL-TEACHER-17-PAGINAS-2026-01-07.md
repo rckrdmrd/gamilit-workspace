@@ -328,7 +328,7 @@ Dado que NO se realizaron cambios en la base de datos, **NO es necesario ejecuta
 
 Los scripts estan disponibles en:
 ```
-/home/isem/workspace-v1/projects/gamilit/apps/database/
+/home/isem/workspace-v2/projects/gamilit/apps/database/
 ├── create-database.sh
 ├── drop-and-recreate-database.sh
 ├── validate-create-database.sh

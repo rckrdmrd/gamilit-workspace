@@ -184,7 +184,7 @@ const completionStats = await this.dataSource.query(`
 
 ### Comando de Validacion
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/backend && npm run build
+cd /home/isem/workspace-v2/projects/gamilit/apps/backend && npm run build
 ```
 
 ---

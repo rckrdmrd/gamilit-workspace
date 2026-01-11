@@ -158,7 +158,7 @@ apps/backend/src/modules/admin/controllers/admin-users.controller.ts
 
 ```bash
 # Verificar duplicados user_id antes de P0-001
-cd /home/isem/workspace-v1/projects/gamilit/apps/backend
+cd /home/isem/workspace-v2/projects/gamilit/apps/backend
 npm run build
 
 # Verificar que Tenant entity existe antes de P0-004

@@ -253,14 +253,14 @@ WHERE trigger_name IN ('trg_update_classroom_count', 'trg_sync_teacher_classroom
 
 ### Backend
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/backend
+cd /home/isem/workspace-v2/projects/gamilit/apps/backend
 npm run test -- --testPathPattern=teacher
 npm run build
 ```
 
 ### Frontend
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/frontend
+cd /home/isem/workspace-v2/projects/gamilit/apps/frontend
 npm run test -- --testPathPattern=teacher
 npm run build
 ```

@@ -38,7 +38,7 @@ El archivo `BACKEND-CRITICAL-ISSUES-PENDING.md` documenta 5 issues P0 como "NO R
 
 ### TAREA 1: Corregir BACKEND-CRITICAL-ISSUES-PENDING.md
 
-**Archivo:** `/home/isem/workspace-v1/projects/gamilit/docs/90-transversal/correcciones/BACKEND-CRITICAL-ISSUES-PENDING.md`
+**Archivo:** `/home/isem/workspace-v2/projects/gamilit/docs/90-transversal/correcciones/BACKEND-CRITICAL-ISSUES-PENDING.md`
 
 **Cambios Requeridos:**
 1. Cambiar titulo: "Issues Criticos Pendientes" → "Issues Criticos - Estado Actualizado"
@@ -60,7 +60,7 @@ El archivo `BACKEND-CRITICAL-ISSUES-PENDING.md` documenta 5 issues P0 como "NO R
 
 ### TAREA 2: Actualizar _MAP.md de ADRs
 
-**Archivo:** `/home/isem/workspace-v1/projects/gamilit/docs/97-adr/_MAP.md`
+**Archivo:** `/home/isem/workspace-v2/projects/gamilit/docs/97-adr/_MAP.md`
 
 **Cambios Requeridos:**
 1. Agregar ADR-027 a tabla de "ADRs Implementados"
@@ -80,12 +80,12 @@ El archivo `BACKEND-CRITICAL-ISSUES-PENDING.md` documenta 5 issues P0 como "NO R
 ### TAREA 3: Eliminar Duplicaciones de Trazas
 
 **Archivos a Eliminar:**
-1. `/home/isem/workspace-v1/projects/gamilit/docs/95-guias-desarrollo/student-portal/traces/TRACE-GAP-002.md`
-2. `/home/isem/workspace-v1/projects/gamilit/docs/95-guias-desarrollo/student-portal/traces/TRACE-GAP-008.md`
+1. `/home/isem/workspace-v2/projects/gamilit/docs/95-guias-desarrollo/student-portal/traces/TRACE-GAP-002.md`
+2. `/home/isem/workspace-v2/projects/gamilit/docs/95-guias-desarrollo/student-portal/traces/TRACE-GAP-008.md`
 
 **Archivos a Mantener (SSOT):**
-1. `/home/isem/workspace-v1/projects/gamilit/docs/archivados/historicos-2025/trazas/TRACE-GAP-002.md`
-2. `/home/isem/workspace-v1/projects/gamilit/docs/archivados/historicos-2025/trazas/TRACE-GAP-008.md`
+1. `/home/isem/workspace-v2/projects/gamilit/docs/archivados/historicos-2025/trazas/TRACE-GAP-002.md`
+2. `/home/isem/workspace-v2/projects/gamilit/docs/archivados/historicos-2025/trazas/TRACE-GAP-008.md`
 
 **Cambios Adicionales:**
 1. Actualizar `95-guias-desarrollo/student-portal/_MAP.md` para remover referencias a traces eliminadas
@@ -126,15 +126,15 @@ El archivo `BACKEND-CRITICAL-ISSUES-PENDING.md` documenta 5 issues P0 como "NO R
 
 **Archivos a Actualizar:**
 
-1. `/home/isem/workspace-v1/projects/gamilit/docs/90-transversal/_MAP.md`
+1. `/home/isem/workspace-v2/projects/gamilit/docs/90-transversal/_MAP.md`
    - Actualizar referencia a ISSUES-CRITICOS.md
    - Agregar referencia a BACKEND-CRITICAL-ISSUES-PENDING.md
 
-2. `/home/isem/workspace-v1/projects/gamilit/docs/90-transversal/correcciones/_MAP.md`
+2. `/home/isem/workspace-v2/projects/gamilit/docs/90-transversal/correcciones/_MAP.md`
    - Actualizar lista de archivos
    - Marcar ISSUES-CRITICOS.md como deprecado
 
-3. `/home/isem/workspace-v1/projects/gamilit/docs/archivados/RESUMEN-MIGRACION-CARPETAS-EXCLUIDAS-2025-01-04.md`
+3. `/home/isem/workspace-v2/projects/gamilit/docs/archivados/RESUMEN-MIGRACION-CARPETAS-EXCLUIDAS-2025-01-04.md`
    - Agregar nota sobre correccion de issues P0
 
 **Dependencias:**
@@ -144,7 +144,7 @@ El archivo `BACKEND-CRITICAL-ISSUES-PENDING.md` documenta 5 issues P0 como "NO R
 
 ### TAREA 6: Crear Traza de Correccion
 
-**Archivo a Crear:** `/home/isem/workspace-v1/projects/gamilit/docs/archivados/historicos-2025/trazas/TRACE-CORRECCION-DOCUMENTACION-2025-01-04.md`
+**Archivo a Crear:** `/home/isem/workspace-v2/projects/gamilit/docs/archivados/historicos-2025/trazas/TRACE-CORRECCION-DOCUMENTACION-2025-01-04.md`
 
 **Contenido:**
 1. Descripcion del problema identificado

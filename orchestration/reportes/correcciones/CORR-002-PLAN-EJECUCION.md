@@ -98,7 +98,7 @@ El archivo `/pages/AchievementsPage.tsx` es el que esta EN USO y NO debe modific
 
 ### Comando
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/frontend
+cd /home/isem/workspace-v2/projects/gamilit/apps/frontend
 npm run build
 ```
 

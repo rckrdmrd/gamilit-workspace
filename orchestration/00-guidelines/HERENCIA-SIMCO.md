@@ -227,7 +227,7 @@ Ubicación: `workspace/orchestration/directivas/simco/`
 # Identificación del Proyecto
 PROJECT_NAME: "gamilit"
 PROJECT_LEVEL: "STANDALONE"
-PROJECT_ROOT: "/home/isem/workspace-v1/projects/gamilit"
+PROJECT_ROOT: "/home/isem/workspace-v2/projects/gamilit"
 
 # Rutas principales
 APPS_ROOT: "apps"

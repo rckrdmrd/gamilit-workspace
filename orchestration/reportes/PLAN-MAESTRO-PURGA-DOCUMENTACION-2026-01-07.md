@@ -74,20 +74,20 @@ Este plan detalla la purga y reorganización de la documentación del proyecto G
 #### Acción 1.2.1: Eliminar duplicado student/README.md
 ```bash
 # Verificar que destino existe (ya confirmado)
-ls -la /home/isem/workspace-v1/projects/gamilit/docs/95-guias-desarrollo/frontend/student/README.md
+ls -la ../docs/95-guias-desarrollo/frontend/student/README.md
 
 # Eliminar duplicado en archivados
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/student/README.md
-rmdir /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/student/
+rm ../docs/archivados/frontend-original/student/README.md
+rmdir ../docs/archivados/frontend-original/student/
 ```
 
 #### Acción 1.2.2: Eliminar duplicado MECANICAS-EDUCATIVAS.md
 ```bash
 # Verificar que destino existe (ya confirmado)
-ls -la /home/isem/workspace-v1/projects/gamilit/docs/95-guias-desarrollo/frontend/MECANICAS-EDUCATIVAS.md
+ls -la ../docs/95-guias-desarrollo/frontend/MECANICAS-EDUCATIVAS.md
 
 # Eliminar duplicado en archivados
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/MECANICAS-EDUCATIVAS.md
+rm ../docs/archivados/frontend-original/MECANICAS-EDUCATIVAS.md
 ```
 
 **Archivos a eliminar adicionales (agregados a lista total):** +2 archivos
@@ -101,38 +101,38 @@ rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/ME
 #### 2.1.1 Eliminar correcciones obsoletas
 ```bash
 # Archivos claramente marcados como DEPRECATED
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-DEPRECATED.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-27.md
+rm ../docs/archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-DEPRECATED.md
+rm ../docs/archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-27.md
 
 # Eliminar carpeta vacía después
-rmdir /home/isem/workspace-v1/projects/gamilit/docs/archivados/historicos-2025/correcciones-obsoletas/
+rmdir ../docs/archivados/historicos-2025/correcciones-obsoletas/
 ```
 
 #### 2.1.2 Eliminar especificaciones frontend obsoletas
 ```bash
 # Especificaciones pre-refactoring que ya no existen en código
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/admin/pages/AdminUsersPage-Specification.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/admin/pages/AdminGamificationPage-Specification.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/admin/pages/AdminAlertsPage-Specification.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/admin/hooks/ADMIN-CLASSROOMS-HOOK.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/admin/hooks/ADMIN-GAMIFICATION-CONFIG-HOOK.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/teacher/components/TEACHER-RESPONSE-MANAGEMENT.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/teacher/components/TEACHER-MONITORING-COMPONENTS.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/teacher/pages/TEACHER-PAGES-SPECIFICATIONS.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/teacher/types/TEACHER-TYPES-REFERENCE.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/teacher/constants/TEACHER-CONSTANTS-REFERENCE.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/especificaciones/AdminReportsPage-UI-Specification.md
+rm ../docs/archivados/frontend-original/admin/pages/AdminUsersPage-Specification.md
+rm ../docs/archivados/frontend-original/admin/pages/AdminGamificationPage-Specification.md
+rm ../docs/archivados/frontend-original/admin/pages/AdminAlertsPage-Specification.md
+rm ../docs/archivados/frontend-original/admin/hooks/ADMIN-CLASSROOMS-HOOK.md
+rm ../docs/archivados/frontend-original/admin/hooks/ADMIN-GAMIFICATION-CONFIG-HOOK.md
+rm ../docs/archivados/frontend-original/teacher/components/TEACHER-RESPONSE-MANAGEMENT.md
+rm ../docs/archivados/frontend-original/teacher/components/TEACHER-MONITORING-COMPONENTS.md
+rm ../docs/archivados/frontend-original/teacher/pages/TEACHER-PAGES-SPECIFICATIONS.md
+rm ../docs/archivados/frontend-original/teacher/types/TEACHER-TYPES-REFERENCE.md
+rm ../docs/archivados/frontend-original/teacher/constants/TEACHER-CONSTANTS-REFERENCE.md
+rm ../docs/archivados/frontend-original/especificaciones/AdminReportsPage-UI-Specification.md
 
 # Limpiar carpetas vacías
-find /home/isem/workspace-v1/projects/gamilit/docs/archivados/frontend-original/ -type d -empty -delete
+find ../docs/archivados/frontend-original/ -type d -empty -delete
 ```
 
 #### 2.1.3 Eliminar convenciones supersedidas
 ```bash
 # Standards deprecados (versiones actuales en 95-guias-desarrollo/)
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/98-standards-deprecated/NAMING-CONVENTIONS-COMPLETE.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/98-standards-deprecated/GIT-CONVENTIONS.md
-rm /home/isem/workspace-v1/projects/gamilit/docs/archivados/98-standards-deprecated/NAMING-CONVENTIONS-API.md
+rm ../docs/archivados/98-standards-deprecated/NAMING-CONVENTIONS-COMPLETE.md
+rm ../docs/archivados/98-standards-deprecated/GIT-CONVENTIONS.md
+rm ../docs/archivados/98-standards-deprecated/NAMING-CONVENTIONS-API.md
 ```
 
 **Total archivos a eliminar (Fase 2):** 16 archivos
@@ -238,7 +238,7 @@ Los siguientes archivos en `/archivados/` deben **CONSERVARSE** por su valor de 
 
 ```bash
 # Crear índice
-cat > /home/isem/workspace-v1/projects/gamilit/orchestration/reportes/historicos/INDEX-2025-11.md << 'EOF'
+cat > /home/isem/workspace-v2/projects/gamilit/orchestration/reportes/historicos/INDEX-2025-11.md << 'EOF'
 # Índice de Reportes Históricos - Noviembre 2025
 
 **Período:** 2025-11-08 a 2025-11-29
@@ -277,7 +277,7 @@ EOF
 
 ```bash
 # Crear documento consolidado
-cat > /home/isem/workspace-v1/projects/gamilit/orchestration/reportes/DEUDAS-TECNICAS-MIGRACION-2025-11.md << 'EOF'
+cat > /home/isem/workspace-v2/projects/gamilit/orchestration/reportes/DEUDAS-TECNICAS-MIGRACION-2025-11.md << 'EOF'
 # Deudas Técnicas Identificadas en Migración (Nov 2025)
 
 **Fuente:** /orchestration/reportes/historicos-migracion/
@@ -312,7 +312,7 @@ EOF
 ### 4.3 Crear índice para ciclos-database
 
 ```bash
-cat > /home/isem/workspace-v1/projects/gamilit/orchestration/reportes/ciclos-database/INDEX-CICLOS.md << 'EOF'
+cat > /home/isem/workspace-v2/projects/gamilit/orchestration/reportes/ciclos-database/INDEX-CICLOS.md << 'EOF'
 # Índice de Ciclos de Implementación de Base de Datos
 
 **Período:** Noviembre 2025

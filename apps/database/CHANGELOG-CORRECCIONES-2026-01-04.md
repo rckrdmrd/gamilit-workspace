@@ -143,7 +143,7 @@ v_user_rank gamification_system.maya_rank;
 BASE_DIR="/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas"
 
 # DESPUÉS
-BASE_DIR="/home/isem/workspace-v1/projects/gamilit/apps/database/ddl/schemas"
+BASE_DIR="/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas"
 ```
 
 ```bash
@@ -152,7 +152,7 @@ BASE_DIR="/home/isem/workspace-v1/projects/gamilit/apps/database/ddl/schemas"
 cd /home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database
 
 # DESPUÉS
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 ```
 
 ---

@@ -140,7 +140,7 @@ AND p.email NOT IN ('admin@gamilit.com', 'teacher@gamilit.com', 'student@gamilit
 #### Paso 4.1: Recrear Base de Datos
 
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 ./drop-and-recreate-database.sh
 ```
 
@@ -210,7 +210,7 @@ ORDER BY p.email;
 En caso de fallo, restaurar seeds originales desde git:
 
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 git checkout -- seeds/prod/gamification_system/05-user_stats.sql
 git checkout -- seeds/prod/gamification_system/06-user_ranks.sql
 git checkout -- seeds/prod/gamification_system/08-user_achievements.sql

@@ -291,7 +291,7 @@ La auditoría se considera **COMPLETADA** cuando:
 **Documentación del proyecto:**
 - EXT-001: `/docs/03-fase-extensiones/EXT-001-portal-maestros/`
 - AUDIT-001: `/docs/audits/INTEGRATION-VALIDATION-MATRIX.md`
-- Estándares: `/home/isem/workspace-v1/orchestration/templates/TEMPLATE-PLAN.md`
+- Estándares: `/home/isem/workspace-v2/orchestration/templates/TEMPLATE-PLAN.md`
 
 **Perfiles utilizados:**
 - PERFIL-ORQUESTADOR

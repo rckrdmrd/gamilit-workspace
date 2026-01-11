@@ -120,7 +120,7 @@ ORDER BY e.order_index;
 ### Opcion A: Desarrollo (recrear BD)
 
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 ./scripts/drop-and-recreate-database.sh
 ```
 

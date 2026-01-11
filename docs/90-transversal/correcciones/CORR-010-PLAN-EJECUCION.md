@@ -184,7 +184,7 @@ grep -n "exercises-module" scripts/init-database.sh
 
 **Comandos:**
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 ./scripts/recreate-database.sh --env dev --force
 ```
 

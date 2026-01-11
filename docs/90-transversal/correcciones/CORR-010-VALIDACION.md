@@ -542,7 +542,7 @@ if (existingSubmission) {
 ### Verificación de Cambios Backend
 
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/backend
+cd /home/isem/workspace-v2/projects/gamilit/apps/backend
 npx tsc --noEmit
 # Resultado: Sin errores
 ```

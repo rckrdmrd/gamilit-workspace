@@ -352,16 +352,16 @@ import { NotificationBell } from '@/features/notifications/components/Notificati
 
 ```bash
 # Backend - Build y tests
-cd /home/isem/workspace-v1/projects/gamilit/apps/backend
+cd /home/isem/workspace-v2/projects/gamilit/apps/backend
 npm run build
 npm run test -- --grep "notification"
 
 # Frontend - Build
-cd /home/isem/workspace-v1/projects/gamilit/apps/frontend
+cd /home/isem/workspace-v2/projects/gamilit/apps/frontend
 npm run build
 
 # Database - Recrear y validar
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 ./recreate-database.sh
 ```
 

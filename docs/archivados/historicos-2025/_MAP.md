@@ -111,7 +111,7 @@ Carpeta con screenshots de incidencias resueltas durante 2025.
 
 Esta carpeta fue migrada desde:
 - **Origen:** `/home/isem/workspace/projects/gamilit/docs/_archivos-historicos/`
-- **Destino:** `/home/isem/workspace-v1/projects/gamilit/docs/archivados/historicos-2025/`
+- **Destino:** `/home/isem/workspace-v2/projects/gamilit/docs/archivados/historicos-2025/`
 - **Fecha:** 2025-01-04
 
 ---

@@ -21,7 +21,7 @@ Se realizo una validacion integral de la documentacion de GAMILIT en 7 fases, id
 
 ### FASE 1: Analisis Inicial
 - Identificados 4 agentes de analisis paralelo
-- Scope: /home/isem/workspace-v1/projects/gamilit/docs
+- Scope: /home/isem/workspace-v2/projects/gamilit/docs
 
 ### FASE 2: Analisis Detallado
 

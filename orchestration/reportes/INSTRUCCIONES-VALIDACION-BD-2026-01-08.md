@@ -16,7 +16,7 @@ La correccion del error `TypeORMError: Relation with property path module in ent
 ### Opcion 1: Recreacion Completa (Recomendado para validacion)
 
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 ./scripts/recreate-database.sh --env dev
 ```
 
@@ -28,7 +28,7 @@ cd /home/isem/workspace-v1/projects/gamilit/apps/database
 ### Opcion 2: Solo Validar DDL Existente
 
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 
 # Conectar a PostgreSQL
 sudo -u postgres psql -d gamilit_platform
@@ -45,7 +45,7 @@ sudo -u postgres psql -d gamilit_platform
 ### Opcion 3: Validar Integridad
 
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 ./validar-integridad.sh
 ```
 
@@ -56,7 +56,7 @@ cd /home/isem/workspace-v1/projects/gamilit/apps/database
 La compilacion TypeScript ya fue validada:
 
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/backend
+cd /home/isem/workspace-v2/projects/gamilit/apps/backend
 npx tsc --noEmit
 
 # Resultado: Sin errores

@@ -178,14 +178,14 @@ Lineas 391-433 - PROBLEMA:
 
 #### Backend TypeScript
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/backend
+cd /home/isem/workspace-v2/projects/gamilit/apps/backend
 npx tsc --noEmit --skipLibCheck
 # Resultado: ✅ Sin errores
 ```
 
 #### Frontend TypeScript
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/frontend
+cd /home/isem/workspace-v2/projects/gamilit/apps/frontend
 npx tsc --noEmit 2>&1 | grep -E "(TribunalOpinionesExercise|MatrizPerspectivasExercise)"
 # Resultado: ✅ Solo warning pre-existente (_useHint)
 ```

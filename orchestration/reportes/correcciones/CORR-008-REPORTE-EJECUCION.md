@@ -167,7 +167,7 @@ execute_sql "$SEEDS_DIR/gamification_system/09-comodines_inventory.sql"
 ### Recreacion de Base de Datos
 
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 ./drop-and-recreate-database.sh
 ```
 

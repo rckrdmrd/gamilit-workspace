@@ -30,8 +30,8 @@
 
 #### 0.1 Crear Backup Completo
 ```bash
-# Desde /home/isem/workspace-v1/projects/gamilit
-cd /home/isem/workspace-v1/projects/gamilit
+# Desde /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/workspace-v2/projects/gamilit
 git checkout develop
 git pull
 git checkout -b feature/estandarizacion-scrum-$(date +%Y%m%d)
@@ -66,7 +66,7 @@ Las siguientes tareas pueden ejecutarse EN PARALELO:
 
 #### A.1 Crear AGENTS.md (2h)
 
-**Archivo:** `/home/isem/workspace-v1/projects/gamilit/AGENTS.md`
+**Archivo:** `/home/isem/workspace-v2/projects/gamilit/AGENTS.md`
 
 ```markdown
 # Guía para Agentes de IA - GAMILIT
@@ -258,10 +258,10 @@ Ejemplos:
 
 #### A.2 Crear Board.md (1h)
 
-**Archivo:** `/home/isem/workspace-v1/projects/gamilit/docs/planning/Board.md`
+**Archivo:** `/home/isem/workspace-v2/projects/gamilit/docs/planning/Board.md`
 
 ```bash
-mkdir -p /home/isem/workspace-v1/projects/gamilit/docs/planning
+mkdir -p /home/isem/workspace-v2/projects/gamilit/docs/planning
 ```
 
 (Contenido detallado en plan original - incluir tablero vacío inicial)
@@ -270,7 +270,7 @@ mkdir -p /home/isem/workspace-v1/projects/gamilit/docs/planning
 
 #### A.3 Crear config.yml (1h)
 
-**Archivo:** `/home/isem/workspace-v1/projects/gamilit/docs/planning/config.yml`
+**Archivo:** `/home/isem/workspace-v2/projects/gamilit/docs/planning/config.yml`
 
 (Contenido detallado en plan original)
 
@@ -283,7 +283,7 @@ mkdir -p /home/isem/workspace-v1/projects/gamilit/docs/planning
 
 #### B.0 Script de Migración YAML (4h) - NUEVO
 
-**Archivo:** `/home/isem/workspace-v1/projects/gamilit/scripts/migrate-to-yaml-frontmatter.sh`
+**Archivo:** `/home/isem/workspace-v2/projects/gamilit/scripts/migrate-to-yaml-frontmatter.sh`
 
 ```bash
 #!/bin/bash
@@ -383,7 +383,7 @@ Puede ejecutarse EN PARALELO con FASE B después de B.0
 **Acción:**
 ```bash
 # Renombrar archivo duplicado
-cd /home/isem/workspace-v1/projects/gamilit/docs
+cd /home/isem/workspace-v2/projects/gamilit/docs
 git mv 03-fase-extensiones/EAI-003-EXT-gamificacion-social/historias-usuario/US-GAM-002-sistema-amigos.md \
        03-fase-extensiones/EAI-003-EXT-gamificacion-social/historias-usuario/US-GAM-010-sistema-amigos.md
 
@@ -422,7 +422,7 @@ Crear archivo explicativo o ADRs placeholder
 
 #### D.1 Regenerar _MAP.md (6h) - NUEVO
 
-**Script:** `/home/isem/workspace-v1/projects/gamilit/scripts/regenerate-maps.sh`
+**Script:** `/home/isem/workspace-v2/projects/gamilit/scripts/regenerate-maps.sh`
 
 ```bash
 #!/bin/bash
@@ -462,7 +462,7 @@ Actualizar YAML de tareas activas con campo `assignee`
 
 #### E.1 Crear Validador YAML
 
-**Archivo:** `/home/isem/workspace-v1/projects/gamilit/scripts/validate-yaml-frontmatter.sh`
+**Archivo:** `/home/isem/workspace-v2/projects/gamilit/scripts/validate-yaml-frontmatter.sh`
 
 ```bash
 #!/bin/bash

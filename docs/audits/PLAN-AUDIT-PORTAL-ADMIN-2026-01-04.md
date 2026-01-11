@@ -243,7 +243,7 @@ Correccion incremental por prioridad: P0 primero, luego P1, finalmente P2 (backl
 
 **Validacion:**
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/backend && npm run build
+cd /home/isem/workspace-v2/projects/gamilit/apps/backend && npm run build
 ```
 
 **Criterios de exito:**
@@ -402,7 +402,7 @@ La auditoria se considera **COMPLETADA** cuando:
 - EXT-002: `/docs/03-fase-extensiones/EXT-002-admin-extendido/`
 - EAI-005: `/docs/01-fase-alcance-inicial/EAI-005-admin-base/`
 - AUDIT-002: `/docs/audits/PLAN-AUDIT-PORTAL-TEACHER-2026-01-04.md`
-- Estandares: `/home/isem/workspace-v1/orchestration/templates/TEMPLATE-PLAN.md`
+- Estandares: `/home/isem/workspace-v2/orchestration/templates/TEMPLATE-PLAN.md`
 
 **Archivos clave analizados:**
 - Frontend: `/apps/frontend/src/apps/admin/`

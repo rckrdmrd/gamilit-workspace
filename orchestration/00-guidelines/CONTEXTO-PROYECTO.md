@@ -1,6 +1,8 @@
 # Contexto del Proyecto - GAMILIT
 
-**Última actualización:** 2026-01-04
+**Última actualización:** 2026-01-10
+**Migrado a workspace-v2:** 2026-01-10
+**Nivel de Herencia:** L2 (Proyecto Standalone)
 
 ## Identificacion
 
@@ -27,27 +29,27 @@ PROJECT:             gamilit
 PROJECT_NAME:        GAMILIT
 
 # Paths Principales
-PROJECT_ROOT:        ~/workspace/projects/gamilit
-APPS_ROOT:           ~/workspace/projects/gamilit/apps
-DOCS_ROOT:           ~/workspace/projects/gamilit/docs
-ORCHESTRATION:       ~/workspace/projects/gamilit/orchestration
+PROJECT_ROOT:        /home/isem/workspace-v2/projects/gamilit
+APPS_ROOT:           /home/isem/workspace-v2/projects/gamilit/apps
+DOCS_ROOT:           /home/isem/workspace-v2/projects/gamilit/docs
+ORCHESTRATION:       /home/isem/workspace-v2/projects/gamilit/orchestration
 
 # Base de Datos (para DIRECTIVA-POLITICA-CARGA-LIMPIA y DIRECTIVA-DISENO-BD)
 DB_NAME:             gamilit_platform
-DB_DDL_PATH:         ~/workspace/projects/gamilit/apps/database/ddl
-DB_SCRIPTS_PATH:     ~/workspace/projects/gamilit/apps/database
-DB_SEEDS_PATH:       ~/workspace/projects/gamilit/apps/database/seeds
+DB_DDL_PATH:         /home/isem/workspace-v2/projects/gamilit/apps/database/ddl
+DB_SCRIPTS_PATH:     /home/isem/workspace-v2/projects/gamilit/apps/database
+DB_SEEDS_PATH:       /home/isem/workspace-v2/projects/gamilit/apps/database/seeds
 RECREATE_CMD:        drop-and-recreate-database.sh
 
 # Backend
-BACKEND_ROOT:        ~/workspace/projects/gamilit/apps/backend
-BACKEND_SRC:         ~/workspace/projects/gamilit/apps/backend/src
-BACKEND_TESTS:       ~/workspace/projects/gamilit/apps/backend/tests
+BACKEND_ROOT:        /home/isem/workspace-v2/projects/gamilit/apps/backend
+BACKEND_SRC:         /home/isem/workspace-v2/projects/gamilit/apps/backend/src
+BACKEND_TESTS:       /home/isem/workspace-v2/projects/gamilit/apps/backend/tests
 
 # Frontend
-FRONTEND_ROOT:       ~/workspace/projects/gamilit/apps/frontend
-FRONTEND_SRC:        ~/workspace/projects/gamilit/apps/frontend/src
-FRONTEND_TESTS:      ~/workspace/projects/gamilit/apps/frontend/tests
+FRONTEND_ROOT:       /home/isem/workspace-v2/projects/gamilit/apps/frontend
+FRONTEND_SRC:        /home/isem/workspace-v2/projects/gamilit/apps/frontend/src
+FRONTEND_TESTS:      /home/isem/workspace-v2/projects/gamilit/apps/frontend/tests
 
 # Auth Schema (para referencias en BD)
 AUTH_SCHEMA:         auth_management
@@ -56,7 +58,7 @@ AUTH_SCHEMA:         auth_management
 ### Ejemplo de Resolucion de Placeholders
 
 Cuando una directiva global usa `{DB_DDL_PATH}/schemas/{schema}/tables/`:
-- Se resuelve a: `~/workspace/projects/gamilit/apps/database/ddl/schemas/gamification_system/tables/`
+- Se resuelve a: `/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/gamification_system/tables/`
 
 ---
 
@@ -85,7 +87,7 @@ Cuando una directiva global usa `{DB_DDL_PATH}/schemas/{schema}/tables/`:
 ## Paths de Trabajo
 
 ```
-~/workspace/projects/gamilit/
+/home/isem/workspace-v2/projects/gamilit/
 ├── apps/
 │   ├── backend/          → NestJS API
 │   ├── frontend/         → React SPA
@@ -105,7 +107,7 @@ Cuando una directiva global usa `{DB_DDL_PATH}/schemas/{schema}/tables/`:
 
 | Aspecto | Valor |
 |---------|-------|
-| **Path** | `~/workspace/projects/gamilit` |
+| **Path** | `/home/isem/workspace-v2/projects/gamilit` |
 | **Remote** | `http://72.60.226.4:3000/rckrdmrd/workspace.git` |
 | **Proposito** | Desarrollo activo, agentes, directivas |
 | **Prioridad** | ALTA - Todo desarrollo nuevo aqui |
@@ -227,7 +229,7 @@ Las siguientes directivas se aplican a TODOS los proyectos del workspace:
 | `PROTOCOLO-ESCALAMIENTO-PO.md` | Protocolo de escalamiento al PO |
 | `ESTANDARES-NOMENCLATURA-BASE.md` | Nomenclatura base del workspace |
 
-**Path:** `/home/isem/workspace-v1/orchestration/directivas/`
+**Path:** `/home/isem/workspace-v2/orchestration/directivas/`
 
 ### Directivas Específicas de Gamilit
 Directivas que aplican solo a este proyecto:
@@ -240,7 +242,7 @@ Directivas que aplican solo a este proyecto:
 | `ESTANDARES-TESTING-API.md` | Estándares de testing para API |
 | `PITFALLS-API-ROUTES.md` | Errores comunes a evitar en rutas |
 
-**Path:** `~/workspace/projects/gamilit/orchestration/directivas/`
+**Path:** `/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/`
 
 ### Prompts Específicos de Gamilit
 Prompts especializados para este proyecto:
@@ -253,7 +255,7 @@ Prompts especializados para este proyecto:
 | `PROMPT-FRONTEND-AGENT.md` | Desarrollo frontend React |
 | `PROMPT-ARCHITECTURE-ANALYST.md` | Análisis arquitectónico |
 
-**Path:** `~/workspace/projects/gamilit/orchestration/prompts/`
+**Path:** `/home/isem/workspace-v2/projects/gamilit/orchestration/prompts/`
 
 ## Documentación de Referencia
 
@@ -263,15 +265,15 @@ Prompts especializados para este proyecto:
 - `docs/02-especificaciones-tecnicas/`
 
 ### En Workspace-v1 (Orquestación Global)
-- `/home/isem/workspace-v1/orchestration/directivas/` (directivas globales)
-- `/home/isem/workspace-v1/orchestration/agents/perfiles/` (perfiles de agentes)
-- `/home/isem/workspace-v1/orchestration/templates/` (templates)
-- `/home/isem/workspace-v1/orchestration/referencias/` (referencias)
+- `/home/isem/workspace-v2/orchestration/directivas/` (directivas globales)
+- `/home/isem/workspace-v2/orchestration/agents/perfiles/` (perfiles de agentes)
+- `/home/isem/workspace-v2/orchestration/templates/` (templates)
+- `/home/isem/workspace-v2/orchestration/referencias/` (referencias)
 
 ### En Knowledge Base
-- `/home/isem/workspace-v1/shared/knowledge-base/patterns/` (patrones aplicables)
-- `/home/isem/workspace-v1/shared/knowledge-base/lessons-learned/` (lecciones aprendidas)
-- `/home/isem/workspace-v1/shared/catalog/` (catálogo compartido)
+- `/home/isem/workspace-v2/shared/knowledge-base/patterns/` (patrones aplicables)
+- `/home/isem/workspace-v2/shared/knowledge-base/lessons-learned/` (lecciones aprendidas)
+- `/home/isem/workspace-v2/shared/catalog/` (catálogo compartido)
 
 ---
 
@@ -295,7 +297,7 @@ Cada fase tiene gates de validación obligatorios.
 ### Registro de Errores
 Antes de ejecutar cualquier tarea, buscar en:
 - `orchestration/errores/REGISTRO-ERRORES.yml` (local)
-- `/home/isem/workspace-v1/orchestration/errores/REGISTRO-ERRORES.yml` (global)
+- `/home/isem/workspace-v2/orchestration/errores/REGISTRO-ERRORES.yml` (global)
 
 ### Integración Scrum
 - Sprint activo: `orchestration/scrum/SPRINT-ACTUAL.yml`

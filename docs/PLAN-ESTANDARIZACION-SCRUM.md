@@ -75,7 +75,7 @@ Este documento presenta el plan de estandarización de la documentación del pro
 ### FASE A: Infraestructura Documental (Prioridad Alta)
 
 #### A.1 Crear AGENTS.md
-**Archivo:** `/home/isem/workspace-v1/projects/gamilit/AGENTS.md`
+**Archivo:** `/home/isem/workspace-v2/projects/gamilit/AGENTS.md`
 
 **Contenido propuesto:**
 ```markdown
@@ -110,7 +110,7 @@ Este documento presenta el plan de estandarización de la documentación del pro
 ---
 
 #### A.2 Crear Board.md (Tablero Kanban)
-**Archivo:** `/home/isem/workspace-v1/projects/gamilit/docs/planning/Board.md`
+**Archivo:** `/home/isem/workspace-v2/projects/gamilit/docs/planning/Board.md`
 
 **Contenido propuesto:**
 ```markdown
@@ -158,7 +158,7 @@ Este documento presenta el plan de estandarización de la documentación del pro
 ---
 
 #### A.3 Crear config.yml
-**Archivo:** `/home/isem/workspace-v1/projects/gamilit/docs/planning/config.yml`
+**Archivo:** `/home/isem/workspace-v2/projects/gamilit/docs/planning/config.yml`
 
 **Contenido propuesto:**
 ```yaml

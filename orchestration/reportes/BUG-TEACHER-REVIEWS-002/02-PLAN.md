@@ -121,7 +121,7 @@ AND NOT EXISTS (SELECT 1 FROM manual_reviews mr WHERE mr.submission_id = es.id);
 **Validaciones:**
 ```bash
 # Database - Recreación
-cd /home/isem/workspace-v1/projects/gamilit/apps/database
+cd /home/isem/workspace-v2/projects/gamilit/apps/database
 ./scripts/recreate-database.sh --env dev --force
 # Debe ejecutar sin errores
 

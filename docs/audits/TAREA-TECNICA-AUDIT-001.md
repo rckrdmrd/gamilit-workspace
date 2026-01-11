@@ -142,7 +142,7 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 
 **Comando de validación:**
 ```bash
-cd /home/isem/workspace-v1/projects/gamilit/apps/backend
+cd /home/isem/workspace-v2/projects/gamilit/apps/backend
 npx tsc --noEmit --skipLibCheck
 ```
 
