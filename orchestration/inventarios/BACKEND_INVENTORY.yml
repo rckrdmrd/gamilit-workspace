@@ -11,7 +11,7 @@ metadata:
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
-  total_modules: 16  # ✅ Auditoria 2026-01-07 (admin, auth, educational, gamification, health, notifications, progress, social, teacher, websocket, etc.)
+  total_modules: 16  # ✅ Auditoria 2026-01-10 (admin, assignments, audit, auth, content, educational, gamification, health, mail, notifications, profile, progress, social, tasks, teacher, websocket)
   total_entities: 107  # ✅ Reconciliado 2026-01-07 (conteo real de *.entity.ts)
   total_dtos: 337  # ✅ Reconciliado 2026-01-07 (conteo real de *.dto.ts)
   total_services: 103  # ✅ Auditoria 2026-01-07 (coincide con conteo real)
@@ -246,6 +246,63 @@ modules:
       - "Notificaciones periódicas"
       - "Misiones diarias/semanales"
       - "Limpieza de datos"
+    status: "✅ Active"
+
+  - name: "health"
+    description: "Health checks y monitoreo del sistema"
+    path: "apps/backend/src/modules/health"
+    schema_db: null
+    entities: 0
+    services: 1
+    controllers: 1
+    dtos: 0
+    main_features:
+      - "Health check endpoint"
+      - "Readiness probe"
+      - "Liveness probe"
+    status: "✅ Active"
+
+  - name: "mail"
+    description: "Servicio de correo electrónico"
+    path: "apps/backend/src/modules/mail"
+    schema_db: "communication"
+    entities: 0
+    services: 1
+    controllers: 0
+    dtos: 2
+    main_features:
+      - "Envío de emails transaccionales"
+      - "Templates de correo"
+      - "Queue de emails"
+    status: "✅ Active"
+
+  - name: "profile"
+    description: "Gestión de perfiles de usuario"
+    path: "apps/backend/src/modules/profile"
+    schema_db: "auth_management"
+    entities: 1
+    services: 1
+    controllers: 1
+    dtos: 5
+    main_features:
+      - "Ver perfil de usuario"
+      - "Editar perfil"
+      - "Subir avatar"
+      - "Preferencias de usuario"
+    status: "✅ Active"
+
+  - name: "websocket"
+    description: "Comunicación en tiempo real"
+    path: "apps/backend/src/modules/websocket"
+    schema_db: null
+    entities: 0
+    services: 1
+    controllers: 0
+    dtos: 0
+    main_features:
+      - "Notificaciones en tiempo real"
+      - "Actualizaciones de progreso"
+      - "Eventos del sistema"
     status: "✅ Active"
 
 # ============================================================================

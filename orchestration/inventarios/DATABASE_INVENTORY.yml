@@ -262,6 +262,19 @@ schemas:
     rls_policies: 6
     notes: "2025-11-29: Sistema de tienda virtual agregado (3 tablas, 1 ENUM, 20 items, 10 achievements). DB-099: ml_coins_transactions.tenant_id added"
 
+  - name: "gamilit"
+    description: "Schema principal del sistema - funciones core y vistas globales"
+    phase: 2
+    ddl_files: 28
+    tables: 0
+    functions: 27
+    triggers: 0
+    indexes: 0
+    views: 1
+    enums: 0
+    rls_policies: 0
+    notes: "2026-01-10: Agregado al inventario. Schema core con funciones utilitarias (validate_username, audit_profile_changes, set_defaults, etc) y vistas globales."
+
   - name: "progress_tracking"
     description: "Seguimiento de progreso de estudiantes"
     phase: 8
