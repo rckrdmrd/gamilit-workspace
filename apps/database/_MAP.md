@@ -167,7 +167,9 @@ El script `create-database.sh` ejecuta 16 fases en orden:
 |---------|-------|------------|
 | Archivos DDL | 410 | - |
 | Schemas | 16 | 2026-01-13 |
-| Tablas | 144 | 2026-01-13 |
+| Tablas | 129 | 2026-01-13 |
+| Vistas Materializadas | 4 | 2026-01-13 |
+| Vistas | 15 | 2026-01-13 |
 | Funciones | 219 | 2026-01-13 |
 | Triggers | 105 | 2026-01-13 |
 | RLS Policies | 214 | 2026-01-13 |
