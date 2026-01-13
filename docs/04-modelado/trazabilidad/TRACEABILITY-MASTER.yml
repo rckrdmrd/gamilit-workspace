@@ -1,0 +1,64 @@
+# TRACEABILITY-MASTER: GAMILIT
+# Version: 1.0.0
+# Actualizado: 2026-01-13
+
+metadata:
+  project: gamilit
+  prefix: GAM
+  version: "1.0.0"
+  last_updated: "2026-01-13"
+  workspace: workspace-v2
+
+requirements:
+  total: 150
+  implemented: 112
+  pending: 38
+  coverage: "75%"
+
+modules:
+  auth:
+    requirements: 15
+    implemented: 15
+    coverage: "100%"
+
+  gamification:
+    requirements: 25
+    implemented: 20
+    coverage: "80%"
+
+  educational:
+    requirements: 30
+    implemented: 22
+    coverage: "73%"
+
+  progress:
+    requirements: 20
+    implemented: 15
+    coverage: "75%"
+
+  social:
+    requirements: 15
+    implemented: 10
+    coverage: "67%"
+
+  admin:
+    requirements: 20
+    implemented: 15
+    coverage: "75%"
+
+  teacher:
+    requirements: 25
+    implemented: 15
+    coverage: "60%"
+
+inventories:
+  master: "orchestration/inventarios/MASTER_INVENTORY.yml"
+  database: "orchestration/inventarios/DATABASE_INVENTORY.yml"
+  backend: "orchestration/inventarios/BACKEND_INVENTORY.yml"
+  frontend: "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+
+traces:
+  database: "orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
+  backend: "orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
+  frontend: "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
+  corrections: "orchestration/trazas/TRAZA-CORRECCIONES.md"
