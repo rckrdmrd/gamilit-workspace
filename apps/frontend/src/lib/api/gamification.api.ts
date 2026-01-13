@@ -128,13 +128,10 @@ export const gamificationApi = {
     let achievementsArray: any[] = [];
 
     if (Array.isArray(data)) {
-      // Respuesta es array directo
       achievementsArray = data;
     } else if (data?.data?.achievements && Array.isArray(data.data.achievements)) {
-      // Estructura: { data: { achievements: [...] } }
       achievementsArray = data.data.achievements;
     } else if (data?.achievements && Array.isArray(data.achievements)) {
-      // Estructura: { achievements: [...] }
       achievementsArray = data.achievements;
     } else {
       console.warn('[gamificationApi.getUserAchievements] Unexpected response structure:', typeof data, data);

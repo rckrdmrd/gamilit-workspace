@@ -173,6 +173,9 @@ export class AchievementsService {
    * - En progreso (progress > 0, is_completed = false)
    * - Bloqueados (sin registro o progress = 0)
    *
+   * CORR-ACHIEVEMENTS-004: Agregado relations: ['achievement'] para retornar
+   * el achievement embebido y reducir llamadas API desde frontend.
+   *
    * @param userId - ID del usuario
    * @returns Objeto con lista de achievements y total
    */
@@ -180,8 +183,10 @@ export class AchievementsService {
     userId: string,
   ): Promise<{ achievements: UserAchievement[]; total: number }> {
     // Obtener todos los logros del usuario (completados y en progreso)
+    // CORR-ACHIEVEMENTS-004: Incluir relacion para retornar achievement embebido
     const userAchievements = await this.userAchievementRepo.find({
       where: { user_id: userId },
+      relations: ['achievement'],
     });
 
     // Contar total de achievements disponibles (para estadisticas)

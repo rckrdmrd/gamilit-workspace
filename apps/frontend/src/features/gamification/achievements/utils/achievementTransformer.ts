@@ -9,8 +9,12 @@
  *
  * FIX: CORR-004 - Mapeo de tipos incompatible entre backend y frontend
  * FIX: CORR-007 - Agregado transformador para Achievement (catalogo de logros)
+ * FIX: CORR-ACHIEVEMENTS-006 - Validacion segura de fechas para evitar Invalid Date
+ * FIX: CORR-ACHIEVEMENTS-007 - Removidos logs de debug temporales
  *
  * @updated 2026-01-08 CORR-007: Agregadas funciones transformAchievement y transformAchievements
+ * @updated 2026-01-10 CORR-ACHIEVEMENTS-006: Agregada funcion safeToISOString para validar fechas
+ * @updated 2026-01-10 CORR-ACHIEVEMENTS-007: Removidos logs de debug temporales
  */
 
 import type {
@@ -21,6 +25,34 @@ import type {
   AchievementCategory,
   AchievementConditionsType,
 } from '@/shared/types/achievement.types';
+
+// ============================================================================
+// UTILIDADES
+// ============================================================================
+
+/**
+ * Convierte una fecha a ISO string de forma segura
+ * CORR-ACHIEVEMENTS-006: Evita RangeError: Invalid time value
+ *
+ * @param dateValue - Valor de fecha (string, Date, null, undefined)
+ * @returns ISO string si la fecha es valida, undefined si no
+ */
+const safeToISOString = (dateValue: string | Date | null | undefined): string | undefined => {
+  if (!dateValue) return undefined;
+
+  try {
+    const date = new Date(dateValue);
+    // Verificar si la fecha es valida
+    if (isNaN(date.getTime())) {
+      console.warn('[safeToISOString] Invalid date value:', dateValue);
+      return undefined;
+    }
+    return date.toISOString();
+  } catch (error) {
+    console.warn('[safeToISOString] Error parsing date:', dateValue, error);
+    return undefined;
+  }
+};
 
 // ============================================================================
 // TIPOS PARA ACHIEVEMENT (CATALOGO DE LOGROS)
@@ -149,15 +181,20 @@ export const transformUserAchievement = (
   );
 
   // Mapear earned_at desde completed_at
-  const earnedAt = apiResponse.completed_at
-    ? new Date(apiResponse.completed_at).toISOString()
-    : undefined;
+  // CORR-ACHIEVEMENTS-006: Usar safeToISOString para evitar Invalid Date
+  const earnedAt = safeToISOString(apiResponse.completed_at);
 
   // Mapear claimed_at (si rewards_claimed es true, usar completed_at como aproximacion)
-  const claimedAt =
-    apiResponse.rewards_claimed && apiResponse.completed_at
-      ? new Date(apiResponse.completed_at).toISOString()
-      : undefined;
+  // CORR-ACHIEVEMENTS-006: Usar safeToISOString para evitar Invalid Date
+  const claimedAt = apiResponse.rewards_claimed
+    ? safeToISOString(apiResponse.completed_at)
+    : undefined;
+
+  // CORR-ACHIEVEMENTS-002: No asignar objeto vacio si achievement no viene del backend
+  // El frontend hace merge manual con getAllAchievements() en la pagina
+  const achievement = apiResponse.achievement
+    ? transformAchievement(apiResponse.achievement as unknown as ApiAchievementResponse)
+    : undefined;
 
   return {
     id: apiResponse.id,
@@ -168,7 +205,7 @@ export const transformUserAchievement = (
     claimedAt,
     unlockedAt: earnedAt, // Alias para compatibilidad
     status,
-    achievement: apiResponse.achievement ?? ({} as Achievement),
+    achievement,
   };
 };
 

@@ -221,15 +221,29 @@ ON CONFLICT (user_id, achievement_id) DO UPDATE SET
     completion_percentage = EXCLUDED.completion_percentage;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- DESHABILITADO: ESTUDIANTE DE TESTING (student@gamilit.com)
+-- ESTUDIANTE DE TESTING: student@gamilit.com (4 achievements demo)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- CORRECCION 2026-01-07: Los usuarios de testing NO deben tener achievements
--- preexistentes. Deben empezar desde cero como un usuario recien registrado.
+-- CORRECCION 2026-01-10: Se agregan achievements de demo para permitir testing
+-- visual de la pagina /achievements. Anteriormente deshabilitado (2026-01-07).
 -- UUID: cccccccc-cccc-cccc-cccc-cccccccccccc = student@gamilit.com
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
--- [DESHABILITADO] Los achievements para student@gamilit.com han sido removidos
--- para que el usuario inicie sin achievements previos.
+INSERT INTO gamification_system.user_achievements
+(id, user_id, achievement_id, progress, max_progress, is_completed, completion_percentage, completed_at, notified, viewed, rewards_claimed, rewards_received, progress_data, milestones_reached, metadata, started_at, created_at)
+VALUES
+-- Primera Visita (completado)
+('e0000005-0001-0000-0000-000000000005'::uuid, 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, '90000007-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '5 days', true, true, true, jsonb_build_object('xp', 50, 'ml_coins', 25), jsonb_build_object('first_login', true), ARRAY['first_login'], jsonb_build_object('demo_achievement', true, 'category', 'special'), gamilit.now_mexico() - INTERVAL '5 days', gamilit.now_mexico() - INTERVAL '5 days'),
+-- Primeros Pasos (completado)
+('e0000005-0002-0000-0000-000000000005'::uuid, 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, '90000001-0000-0000-0000-000000000001'::uuid, 1, 1, true, 100.00, gamilit.now_mexico() - INTERVAL '4 days', true, true, true, jsonb_build_object('xp', 100, 'ml_coins', 50), jsonb_build_object('exercises_completed', 1), ARRAY['first_exercise'], jsonb_build_object('demo_achievement', true, 'category', 'progress'), gamilit.now_mexico() - INTERVAL '4 days', gamilit.now_mexico() - INTERVAL '4 days'),
+-- Racha de 3 Dias (completado, rewards sin reclamar)
+('e0000005-0003-0000-0000-000000000005'::uuid, 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, '90000002-0000-0000-0000-000000000001'::uuid, 3, 3, true, 100.00, gamilit.now_mexico() - INTERVAL '2 days', true, true, false, jsonb_build_object('xp', 150, 'ml_coins', 50), jsonb_build_object('streak_days', 3), ARRAY['day_1', 'day_2', 'day_3'], jsonb_build_object('demo_achievement', true, 'category', 'streak'), gamilit.now_mexico() - INTERVAL '4 days', gamilit.now_mexico() - INTERVAL '2 days'),
+-- Lector Principiante (en progreso 60%)
+('e0000005-0004-0000-0000-000000000005'::uuid, 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, '90000001-0000-0000-0000-000000000002'::uuid, 6, 10, false, 60.00, NULL, false, false, false, '{}'::jsonb, jsonb_build_object('exercises_completed', 6, 'target', 10), ARRAY['milestone_5'], jsonb_build_object('demo_achievement', true, 'category', 'progress', 'status', 'in_progress'), gamilit.now_mexico() - INTERVAL '5 days', gamilit.now_mexico() - INTERVAL '3 days')
+ON CONFLICT (user_id, achievement_id) DO UPDATE SET
+    progress = EXCLUDED.progress,
+    is_completed = EXCLUDED.is_completed,
+    completion_percentage = EXCLUDED.completion_percentage,
+    rewards_claimed = EXCLUDED.rewards_claimed;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 -- DESHABILITADO: PROFESOR DE TESTING (teacher@gamilit.com)

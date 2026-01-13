@@ -146,6 +146,10 @@ export interface Achievement {
 /**
  * User Achievement Interface
  * Tracks a user's progress and status for a specific achievement
+ *
+ * CORR-ACHIEVEMENTS-001: `achievement` es opcional porque el backend
+ * puede no retornar el achievement embebido (depende de si se usa relations).
+ * La pagina AchievementsPage.tsx hace merge manual con getAllAchievements().
  */
 export interface UserAchievement {
   id: string;
@@ -155,7 +159,7 @@ export interface UserAchievement {
   earnedAt?: string; // ISO date string when earned
   claimedAt?: string; // ISO date string when rewards claimed
   unlockedAt?: string; // ISO date string when unlocked (canonical field name)
-  achievement: Achievement; // Full achievement details
+  achievement?: Achievement; // Optional - may not be included in API response
   status: AchievementStatus;
 }
 

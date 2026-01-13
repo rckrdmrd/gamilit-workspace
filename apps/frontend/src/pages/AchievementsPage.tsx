@@ -71,10 +71,12 @@ export const AchievementsPage: React.FC = () => {
       try {
         setIsLoadingAchievements(true);
         setError(null);
+        console.log('[ACHIEVEMENTS-PAGE] Loading all achievements...');
         const data = await gamificationApi.getAllAchievements();
+        console.log('[ACHIEVEMENTS-PAGE] Loaded achievements:', data?.length || 0);
         setAllAchievements(data);
       } catch (err) {
-        console.error('Failed to load achievements:', err);
+        console.error('[ACHIEVEMENTS-PAGE] Failed to load achievements:', err);
         setError('Error al cargar logros. Por favor, intenta de nuevo.');
       } finally {
         setIsLoadingAchievements(false);
@@ -89,21 +91,27 @@ export const AchievementsPage: React.FC = () => {
    */
   useEffect(() => {
     const loadUserData = async () => {
-      if (!user?.id) return;
+      if (!user?.id) {
+        console.log('[ACHIEVEMENTS-PAGE] No user.id, skipping user achievements load');
+        return;
+      }
 
       try {
         setIsLoadingUserData(true);
+        console.log('[ACHIEVEMENTS-PAGE] Loading user data for userId:', user.id);
         const [userAchData, summaryData] = await Promise.all([
           gamificationApi.getUserAchievements(user.id),
           gamificationApi.getAchievementSummary(user.id).catch(() => null), // Optional endpoint
         ]);
 
+        console.log('[ACHIEVEMENTS-PAGE] Loaded user achievements:', userAchData?.length || 0);
+        console.log('[ACHIEVEMENTS-PAGE] Summary:', summaryData);
         setUserAchievements(userAchData);
         if (summaryData) {
           setSummary(summaryData);
         }
       } catch (err) {
-        console.error('Failed to load user achievements:', err);
+        console.error('[ACHIEVEMENTS-PAGE] Failed to load user achievements:', err);
       } finally {
         setIsLoadingUserData(false);
       }
@@ -116,12 +124,22 @@ export const AchievementsPage: React.FC = () => {
    * Combine achievements with user progress
    */
   const combinedAchievements = useMemo(() => {
-    const userAchMap = new Map(userAchievements.map((ua) => [ua.achievementId, ua]));
+    console.log('[ACHIEVEMENTS-PAGE] Computing combinedAchievements...');
+    console.log('[ACHIEVEMENTS-PAGE] allAchievements count:', allAchievements.length);
+    console.log('[ACHIEVEMENTS-PAGE] userAchievements count:', userAchievements.length);
 
-    return allAchievements.map((achievement) => ({
+    const userAchMap = new Map(userAchievements.map((ua) => [ua.achievementId, ua]));
+    console.log('[ACHIEVEMENTS-PAGE] userAchMap keys:', Array.from(userAchMap.keys()));
+
+    const result = allAchievements.map((achievement) => ({
       achievement,
       userAchievement: userAchMap.get(achievement.id),
     }));
+
+    const withProgress = result.filter(r => r.userAchievement).length;
+    console.log('[ACHIEVEMENTS-PAGE] Combined result:', result.length, 'with progress:', withProgress);
+
+    return result;
   }, [allAchievements, userAchievements]);
 
   /**

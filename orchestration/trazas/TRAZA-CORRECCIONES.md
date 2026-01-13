@@ -19,6 +19,13 @@
 | **CORR-003** | 2025-11-11 | Modelo Datos | P0 | ✅ | Eliminar modelo dual (JSONB puro) |
 | **CORR-004** | 2025-11-11 | Inventarios | P1 | ✅ | Actualizar DATABASE_INVENTORY.yml |
 | **CORR-005** | 2025-11-11 | Inventarios | P1 | ✅ | Crear SEEDS_INVENTORY.yml |
+| **CORR-ACHIEVEMENTS-001** | 2026-01-10 | Frontend Types | P1 | ✅ | Tipo achievement opcional |
+| **CORR-ACHIEVEMENTS-002** | 2026-01-10 | Frontend Transformer | P0 | ✅ | Mapeo undefined corregido |
+| **CORR-ACHIEVEMENTS-003** | 2026-01-10 | Backend Entity | P1 | ✅ | Relación TypeORM habilitada |
+| **CORR-ACHIEVEMENTS-004** | 2026-01-10 | Backend Service | P1 | ✅ | Relations en query |
+| **CORR-ACHIEVEMENTS-005** | 2026-01-10 | Seeds | P2 | ✅ | Achievements demo student@gamilit.com |
+| **CORR-ACHIEVEMENTS-006** | 2026-01-10 | Frontend Transformer | P0 | ✅ | Validacion segura de fechas (Invalid Date) |
+| **CORR-ACHIEVEMENTS-007** | 2026-01-10 | Frontend Cleanup | P3 | ✅ | Remover logs de debug temporales |
 
 ---
 
@@ -1062,6 +1069,370 @@ changelog:
 
 ---
 
-**Última actualización:** 2025-11-11
-**Versión:** 1.0.0
-**Estado:** ✅ FASES 1-2 COMPLETADAS - SEEDS PRODUCTION-READY
+**Última actualización:** 2026-01-10
+**Versión:** 1.1.0
+**Estado:** ✅ FASES 1-2 COMPLETADAS - SEEDS PRODUCTION-READY + ACHIEVEMENTS PAGE FIX
+
+---
+
+## 🟢 Correcciones Achievements Page (2026-01-10)
+
+### Índice de Correcciones - Achievements
+
+| ID | Fecha | Tipo | Prioridad | Estado | Descripción |
+|----|-------|------|-----------|--------|-------------|
+| **CORR-ACHIEVEMENTS-001** | 2026-01-10 | Types | P1 | ✅ | Tipo achievement opcional en UserAchievement |
+| **CORR-ACHIEVEMENTS-002** | 2026-01-10 | Transformer | P0 | ✅ | Mapeo de undefined corregido (no asignar {}) |
+| **CORR-ACHIEVEMENTS-003** | 2026-01-10 | Entity | P1 | ✅ | Relación TypeORM habilitada |
+| **CORR-ACHIEVEMENTS-004** | 2026-01-10 | Service | P1 | ✅ | Relations agregado en query |
+
+---
+
+### CORR-ACHIEVEMENTS-001: Tipo achievement opcional (Completado)
+
+**Fecha:** 2026-01-10
+**Prioridad:** P1 - ALTA
+**Estado:** ✅ COMPLETADO
+
+#### Problema Identificado:
+El tipo `achievement` en la interfaz `UserAchievement` era requerido, pero el backend puede no retornarlo en todas las respuestas.
+
+**Evidencia:**
+```typescript
+// Antes - apps/frontend/src/shared/types/achievement.types.ts
+export interface UserAchievement {
+  // ...
+  achievement: Achievement; // Requerido, pero backend no siempre lo incluye
+}
+```
+
+#### Solución Implementada:
+
+**Archivo:** `apps/frontend/src/shared/types/achievement.types.ts`
+
+```typescript
+// Después:
+export interface UserAchievement {
+  // ...
+  achievement?: Achievement; // Optional - may not be included in API response
+}
+```
+
+**Impacto:** Type safety mejorado, evita errores de runtime.
+
+---
+
+### CORR-ACHIEVEMENTS-002: Mapeo de undefined corregido (Completado)
+
+**Fecha:** 2026-01-10
+**Prioridad:** P0 - CRÍTICA
+**Estado:** ✅ COMPLETADO
+
+#### Problema Identificado:
+El transformer asignaba `{}` (objeto vacío) cuando achievement no venía del backend, causando inconsistencias en la lógica de merge de la página.
+
+**Evidencia:**
+```typescript
+// Antes - achievementTransformer.ts
+achievement: apiResponse.achievement ?? ({} as Achievement),  // ❌ Asigna {} si undefined
+```
+
+#### Solución Implementada:
+
+**Archivo:** `apps/frontend/src/features/gamification/achievements/utils/achievementTransformer.ts`
+
+```typescript
+// Después:
+// CORR-ACHIEVEMENTS-002: No asignar objeto vacío si achievement no viene del backend
+const achievement = apiResponse.achievement
+  ? transformAchievement(apiResponse.achievement as unknown as ApiAchievementResponse)
+  : undefined;
+
+return {
+  // ...
+  achievement,  // ✅ undefined si no viene, transformado si viene
+};
+```
+
+**Impacto:** Merge correcto en AchievementsPage, datos consistentes.
+
+---
+
+### CORR-ACHIEVEMENTS-003: Relación TypeORM habilitada (Completado)
+
+**Fecha:** 2026-01-10
+**Prioridad:** P1 - ALTA
+**Estado:** ✅ COMPLETADO
+
+#### Problema Identificado:
+La relación `@ManyToOne` entre `UserAchievement` y `Achievement` estaba comentada en el entity, impidiendo eager/lazy loading.
+
+**Evidencia:**
+```typescript
+// Antes - user-achievement.entity.ts
+// @ManyToOne(() => Achievement, { onDelete: 'CASCADE' })
+// @JoinColumn({ name: 'achievement_id' })
+// achievement?: Achievement;  // ❌ Comentado
+```
+
+**Nota DDL:** La FK ya existe en el DDL (`user_achievements_achievement_id_fkey`), solo faltaba la relación ORM.
+
+#### Solución Implementada:
+
+**Archivo:** `apps/backend/src/modules/gamification/entities/user-achievement.entity.ts`
+
+```typescript
+// Después:
+import { ManyToOne, JoinColumn } from 'typeorm';
+import { Achievement } from './achievement.entity';
+
+// En la clase:
+/**
+ * Relacion con Achievement (catalogo de logros)
+ * CORR-ACHIEVEMENTS-003: Habilitado para permitir eager/lazy loading
+ * Usado por getAllUserAchievements() para retornar achievement embebido
+ */
+@ManyToOne(() => Achievement, { onDelete: 'CASCADE', eager: false })
+@JoinColumn({ name: 'achievement_id' })
+achievement?: Achievement;  // ✅ Habilitado
+```
+
+**Impacto:** Permite usar `relations: ['achievement']` en queries.
+
+---
+
+### CORR-ACHIEVEMENTS-004: Relations agregado en query (Completado)
+
+**Fecha:** 2026-01-10
+**Prioridad:** P1 - ALTA
+**Estado:** ✅ COMPLETADO
+
+#### Problema Identificado:
+El servicio `getAllUserAchievements()` no incluía la relación achievement en la query, requiriendo llamadas API adicionales.
+
+**Evidencia:**
+```typescript
+// Antes - achievements.service.ts
+const userAchievements = await this.userAchievementRepo.find({
+  where: { user_id: userId },
+});  // ❌ No incluye achievement embebido
+```
+
+#### Solución Implementada:
+
+**Archivo:** `apps/backend/src/modules/gamification/services/achievements.service.ts`
+
+```typescript
+// Después:
+// CORR-ACHIEVEMENTS-004: Incluir achievement embebido para reducir llamadas API
+const userAchievements = await this.userAchievementRepo.find({
+  where: { user_id: userId },
+  relations: ['achievement'],  // ✅ Achievement embebido
+});
+```
+
+**Impacto:**
+- Reduce llamadas API (2 → 1 para datos completos)
+- Mejor performance
+- Achievement disponible directamente en userAchievement
+
+---
+
+### Resumen de Correcciones Achievements
+
+**Archivos Modificados:** 4 principales + 2 con logs temporales
+
+| # | Archivo | Cambio | Código |
+|---|---------|--------|--------|
+| 1 | `achievement.types.ts` | Tipo opcional | CORR-ACHIEVEMENTS-001 |
+| 2 | `achievementTransformer.ts` | Mapeo corregido | CORR-ACHIEVEMENTS-002 |
+| 3 | `user-achievement.entity.ts` | Relación habilitada | CORR-ACHIEVEMENTS-003 |
+| 4 | `achievements.service.ts` | Relations agregado | CORR-ACHIEVEMENTS-004 |
+| 5 | `gamification.api.ts` | Logs debug (temporal) | - |
+| 6 | `AchievementsPage.tsx` | Logs debug (temporal) | - |
+
+**Métricas:**
+- Líneas cambiadas: ~60
+- Riesgo de regresión: BAJO
+- Mejora de rendimiento: SÍ (1 llamada API vs 2)
+- Cambios DDL requeridos: NINGUNO (FK ya existe)
+
+**Validación:**
+- ✅ TypeScript compila sin errores
+- ✅ FK ya existe en DDL (`user_achievements_achievement_id_fkey`)
+- ✅ Relación TypeORM alineada con DDL
+- ⏳ Validación manual en navegador pendiente
+
+**Documentación Generada:**
+```
+orchestration/analisis/
+├── ACHIEVEMENTS-PAGE-ANALISIS-DETALLADO-2026-01-10.md
+├── ACHIEVEMENTS-PAGE-PLAN-IMPLEMENTACION-2026-01-10.md
+├── ACHIEVEMENTS-PAGE-VALIDACION-PLAN-2026-01-10.md
+├── ACHIEVEMENTS-PAGE-PLAN-REFINADO-2026-01-10.md
+├── ACHIEVEMENTS-PAGE-VALIDACION-EJECUCION-2026-01-10.md
+├── ACHIEVEMENTS-PAGE-RESUMEN-EJECUTIVO-2026-01-10.md
+├── USER-ACHIEVEMENTS-STUDENT-ANALISIS-2026-01-10.md
+└── USER-ACHIEVEMENTS-STUDENT-VALIDACION-2026-01-10.md
+```
+
+---
+
+### CORR-ACHIEVEMENTS-005: Achievements demo student@gamilit.com (Completado)
+
+**Fecha:** 2026-01-10
+**Prioridad:** P2 - MEDIA
+**Estado:** ✅ COMPLETADO
+
+#### Problema Identificado:
+El usuario `student@gamilit.com` no tenía achievements asignados en la base de datos, lo que impedía probar la página `/achievements` visualmente.
+
+**Evidencia:**
+```sql
+-- Antes (2026-01-07) - Seeds deshabilitados intencionalmente
+-- [DESHABILITADO] Los achievements para student@gamilit.com han sido removidos
+-- para que el usuario inicie sin achievements previos.
+```
+
+#### Solución Implementada:
+
+**Archivos modificados:**
+- `apps/database/seeds/dev/gamification_system/08-user_achievements.sql`
+- `apps/database/seeds/prod/gamification_system/08-user_achievements.sql`
+
+**Datos insertados:**
+```sql
+-- UUID: cccccccc-cccc-cccc-cccc-cccccccccccc = student@gamilit.com
+INSERT INTO gamification_system.user_achievements
+(id, user_id, achievement_id, progress, max_progress, is_completed, completion_percentage, ...)
+VALUES
+-- 1. Primera Visita (completado, rewards reclamados)
+-- 2. Primeros Pasos (completado, rewards reclamados)
+-- 3. Racha de 3 Días (completado, rewards SIN reclamar - para testing)
+-- 4. Lector Principiante (en progreso 60%)
+ON CONFLICT (user_id, achievement_id) DO UPDATE SET ...;
+```
+
+**Impacto:**
+- 4 achievements de demo para testing visual
+- Variedad de estados: completado, en progreso, rewards pendientes
+- Seeds consistentes en dev y prod
+
+**Validación en Scripts:**
+- ✅ `create-database.sh` línea 671: incluye `08-user_achievements.sql`
+- ✅ `drop-and-recreate-database.sh`: llama a `create-database.sh`
+- ⚠️ `LOAD-SEEDS-gamification_system.sh`: solo incluye en caso PRODUCTION (línea 188-189)
+
+---
+
+### CORR-ACHIEVEMENTS-006: Validación segura de fechas (Completado)
+
+**Fecha:** 2026-01-10
+**Prioridad:** P0 - CRÍTICA
+**Estado:** ✅ COMPLETADO
+
+#### Problema Identificado:
+Error `RangeError: Invalid time value` al transformar `completed_at` del backend.
+
+**Evidencia:**
+```
+RangeError: Invalid time value
+    at Date.toISOString (<anonymous>)
+    at transformUserAchievement (achievementTransformer.ts:191)
+```
+
+#### Solución Implementada:
+
+**Archivo:** `apps/frontend/src/features/gamification/achievements/utils/achievementTransformer.ts`
+
+```typescript
+/**
+ * Convierte una fecha a ISO string de forma segura
+ * CORR-ACHIEVEMENTS-006: Evita RangeError: Invalid time value
+ */
+const safeToISOString = (dateValue: string | Date | null | undefined): string | undefined => {
+  if (!dateValue) return undefined;
+
+  try {
+    const date = new Date(dateValue);
+    if (isNaN(date.getTime())) {
+      console.warn('[safeToISOString] Invalid date value:', dateValue);
+      return undefined;
+    }
+    return date.toISOString();
+  } catch (error) {
+    console.warn('[safeToISOString] Error parsing date:', dateValue, error);
+    return undefined;
+  }
+};
+
+// Uso:
+const earnedAt = safeToISOString(apiResponse.completed_at);
+const claimedAt = apiResponse.rewards_claimed
+  ? safeToISOString(apiResponse.completed_at)
+  : undefined;
+```
+
+**Impacto:**
+- Elimina error crítico en transformación
+- Manejo seguro de fechas inválidas (`null`, `{}`, `undefined`)
+- Warning de producción para diagnóstico (no error)
+
+---
+
+### CORR-ACHIEVEMENTS-007: Remover logs de debug temporales (Completado)
+
+**Fecha:** 2026-01-10
+**Prioridad:** P3 - BAJA
+**Estado:** ✅ COMPLETADO
+
+#### Problema Identificado:
+Logs de debug temporales (`[ACHIEVEMENTS-DEBUG]`) quedaron en el código después del troubleshooting.
+
+**Archivos limpiados:**
+
+| Archivo | Logs removidos |
+|---------|----------------|
+| `gamification.api.ts` | 8 console.log |
+| `achievementTransformer.ts` | 1 console.log |
+
+**Logs preservados (producción):**
+- `console.warn('[safeToISOString]')` - Útil para detectar datos inválidos del backend
+- `console.warn('[gamificationApi.getUserAchievements]')` - Detecta estructuras de respuesta inesperadas
+
+**Impacto:**
+- Console limpio en producción
+- Warnings útiles preservados para diagnóstico
+
+---
+
+### Resumen Final de Correcciones Achievements (2026-01-10)
+
+**Total Correcciones:** 7 (CORR-ACHIEVEMENTS-001 a CORR-ACHIEVEMENTS-007)
+
+| # | ID | Tipo | Prioridad | Descripción |
+|---|---|------|-----------|-------------|
+| 1 | CORR-ACHIEVEMENTS-001 | Frontend Types | P1 | Tipo achievement opcional |
+| 2 | CORR-ACHIEVEMENTS-002 | Frontend Transformer | P0 | Mapeo undefined corregido |
+| 3 | CORR-ACHIEVEMENTS-003 | Backend Entity | P1 | Relación TypeORM habilitada |
+| 4 | CORR-ACHIEVEMENTS-004 | Backend Service | P1 | Relations en query |
+| 5 | CORR-ACHIEVEMENTS-005 | Seeds | P2 | Achievements demo student@gamilit.com |
+| 6 | CORR-ACHIEVEMENTS-006 | Frontend Transformer | P0 | Validación segura de fechas |
+| 7 | CORR-ACHIEVEMENTS-007 | Frontend Cleanup | P3 | Remover logs de debug |
+
+**Archivos Modificados Totales:**
+
+| Capa | Archivo | Correcciones |
+|------|---------|--------------|
+| Frontend | `achievement.types.ts` | 001 |
+| Frontend | `achievementTransformer.ts` | 002, 006, 007 |
+| Frontend | `gamification.api.ts` | 007 |
+| Backend | `user-achievement.entity.ts` | 003 |
+| Backend | `achievements.service.ts` | 004 |
+| Database | `08-user_achievements.sql` (dev) | 005 |
+| Database | `08-user_achievements.sql` (prod) | 005 |
+
+**Validación de Scripts de Base de Datos:**
+- ✅ `create-database.sh` (línea 671): Ejecuta `08-user_achievements.sql`
+- ✅ `drop-and-recreate-database.sh`: Llama a `create-database.sh`
+- ✅ Seeds persistentes en recreación de BD

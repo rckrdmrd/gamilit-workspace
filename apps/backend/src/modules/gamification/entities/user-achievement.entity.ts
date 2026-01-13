@@ -2,9 +2,12 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-      Index,
+  Index,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants';
+import { Achievement } from './achievement.entity';
 
 /**
  * UserAchievement Entity
@@ -123,12 +126,20 @@ export class UserAchievement {
   @Column({ type: 'timestamptz', default: () => 'gamilit.now_mexico()' })
     created_at!: Date;
 
-  // Relaciones (se pueden agregar después cuando se creen Achievement y Profile entities)
+  // =====================================================
+  // RELACIONES
+  // =====================================================
+
+  /**
+   * Relacion con Achievement (catalogo de logros)
+   * CORR-ACHIEVEMENTS-003: Habilitado para permitir eager/lazy loading
+   * Usado por getAllUserAchievements() para retornar achievement embebido
+   */
+  @ManyToOne(() => Achievement, { onDelete: 'CASCADE', eager: false })
+  @JoinColumn({ name: 'achievement_id' })
+  achievement?: Achievement;
+
   // @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
   // @JoinColumn({ name: 'user_id' })
   // user: Profile;
-
-  // @ManyToOne(() => Achievement, { onDelete: 'CASCADE' })
-  // @JoinColumn({ name: 'achievement_id' })
-  // achievement: Achievement;
 }
