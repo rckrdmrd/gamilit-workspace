@@ -4,10 +4,10 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.3.0"
+  version: "3.4.0"
   generated_date: "2025-11-11"
   last_updated: "2026-01-13"
-  generated_by: "Meta-Orquestador SIMCO - Validacion exhaustiva documentacion + CAPVED Testing"
+  generated_by: "Meta-Orquestador SIMCO - Validacion exhaustiva documentacion + CAPVED Testing + Bugfix Circular Refs"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
@@ -18,12 +18,29 @@ metadata:
   total_controllers: 75
   total_endpoints: 612  # Verificado 2026-01-13 (conteo real de @Get/@Post/@Put/@Delete/@Patch)
   typescript_errors: 0  # ⚠️ 2025-11-28: Backend tiene errores PREEXISTENTES en tests auth (no en admin)
-  build_status: "⚠️ PREEXISTING TEST ERRORS"  # 2025-11-28: auth-derived-fields.service.spec.ts (no admin)
+  build_status: "✅ BUILD PASSING"  # 2026-01-13: Bugfix circular refs aplicado
   coherencia_bd: "97%"  # ✅ Validado 2025-11-11 (87/117 tablas con entity, resto auxiliares)
   discrepancies_found: "ninguna - M4 tiene 5 ejercicios oficiales según DocumentoDeDiseño v6.4"
   api_docs:
     - "docs/90-transversal/api/API-TEACHER-MODULE.md"
     - "docs/90-transversal/api/API-ADMIN-MODULE.md"
+
+# ============================================================================
+# CHANGELOG 2026-01-13 (v3.4.0 - Bugfix)
+# ============================================================================
+bugfixes_2026_01_13:
+  descripcion: "Corrección de errores críticos de circular references y headers sent"
+  archivos_modificados:
+    - path: "src/shared/interceptors/transform-response.interceptor.ts"
+      version: "1.0.0 -> 1.1.0"
+      fix: "Detección de referencias circulares con WeakSet + límite de profundidad"
+    - path: "src/shared/filters/http-exception.filter.ts"
+      version: "1.0.0 -> 1.1.0"
+      fix: "Verificación de headersSent antes de enviar respuesta de error"
+  errores_corregidos:
+    - "RangeError: Maximum call stack size exceeded (recursión infinita)"
+    - "Error: Cannot set headers after they are sent to the client"
+  traza: "orchestration/trazas/TRAZA-BUGFIX-CIRCULAR-REF-2026-01-13.md"
 
 # ============================================================================
 # MÓDULOS (Modules)

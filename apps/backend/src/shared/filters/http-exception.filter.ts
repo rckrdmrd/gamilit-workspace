@@ -39,13 +39,15 @@ export class AppError extends HttpException {
  *
  * Catches ALL exceptions (not just HttpException) and sends appropriate response.
  * IMPORTANT: This catches everything, including plain Errors and TypeORM errors.
+ *
+ * @version 1.1.0 - Fix "Cannot set headers after they are sent" error (2026-01-13)
  */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const _request = ctx.getRequest<Request>();
+    const request = ctx.getRequest<Request>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
@@ -72,17 +74,33 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // Log error
     if (status >= 500) {
       logger.error('Server error:', exception);
-      console.error('AllExceptionsFilter caught:', exception);
+      // Only log to console in development to avoid duplicate logging
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`AllExceptionsFilter caught [${request.method} ${request.url}]:`,
+          exception instanceof Error ? exception.message : exception);
+      }
     }
 
-    response.status(status).json({
-      statusCode: status,
-      message,
-      code,
-      ...(process.env.NODE_ENV === 'development' && exception instanceof Error && {
-        stack: exception.stack?.substring(0, 1000),
-      }),
-    });
+    // CRITICAL: Check if headers have already been sent
+    // This prevents "Cannot set headers after they are sent to the client" error
+    if (response.headersSent) {
+      logger.warn(`Headers already sent for ${request.method} ${request.url}, cannot send error response`);
+      return;
+    }
+
+    try {
+      response.status(status).json({
+        statusCode: status,
+        message,
+        code,
+        ...(process.env.NODE_ENV === 'development' && exception instanceof Error && {
+          stack: exception.stack?.substring(0, 1000),
+        }),
+      });
+    } catch (sendError) {
+      // If we still can't send the response, log it but don't throw
+      logger.error('Failed to send error response:', sendError);
+    }
   }
 
   private mapHttpStatusToCode(status: number): string {

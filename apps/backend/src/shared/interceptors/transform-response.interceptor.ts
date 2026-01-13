@@ -19,9 +19,16 @@ import { map } from 'rxjs/operators';
  * }
  *
  * También transforma strings ISO de fechas a objetos Date
+ *
+ * @version 1.1.0 - Fix circular reference handling (2026-01-13)
  */
 @Injectable()
 export class TransformResponseInterceptor implements NestInterceptor {
+  /**
+   * Maximum depth for recursive transformation to prevent stack overflow
+   */
+  private static readonly MAX_DEPTH = 50;
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
     const { url } = request;
@@ -33,8 +40,9 @@ export class TransformResponseInterceptor implements NestInterceptor {
           return data;
         }
 
-        // Transformar fechas en el objeto
-        const transformedData = this.transformDates(data);
+        // Transformar fechas en el objeto con tracking de referencias circulares
+        const visited = new WeakSet();
+        const transformedData = this.transformDates(data, visited, 0);
 
         // Estructura de respuesta estándar
         return {
@@ -49,8 +57,20 @@ export class TransformResponseInterceptor implements NestInterceptor {
 
   /**
    * Transforma recursivamente strings ISO a objetos Date
+   *
+   * @param obj - Object to transform
+   * @param visited - WeakSet to track visited objects (circular reference detection)
+   * @param depth - Current recursion depth
+   * @returns Transformed object
+   *
+   * @version 1.1.0 - Added circular reference detection and depth limit
    */
-  private transformDates(obj: any): any {
+  private transformDates(obj: any, visited: WeakSet<object>, depth: number): any {
+    // Safety: prevent stack overflow with depth limit
+    if (depth > TransformResponseInterceptor.MAX_DEPTH) {
+      return obj;
+    }
+
     if (obj === null || obj === undefined) {
       return obj;
     }
@@ -60,17 +80,31 @@ export class TransformResponseInterceptor implements NestInterceptor {
       return new Date(obj);
     }
 
-    // Si es un array, transformar cada elemento
-    if (Array.isArray(obj)) {
-      return obj.map((item) => this.transformDates(item));
+    // Si ya es un objeto Date, retornar sin cambios
+    if (obj instanceof Date) {
+      return obj;
     }
 
-    // Si es un objeto, transformar cada propiedad
+    // Si es un array, transformar cada elemento
+    if (Array.isArray(obj)) {
+      return obj.map((item) => this.transformDates(item, visited, depth + 1));
+    }
+
+    // Si es un objeto, verificar referencias circulares
     if (typeof obj === 'object') {
+      // Detectar referencia circular
+      if (visited.has(obj)) {
+        // Retornar placeholder para evitar recursión infinita
+        return '[Circular Reference]';
+      }
+
+      // Marcar objeto como visitado
+      visited.add(obj);
+
       const transformed: Record<string, unknown> = {};
       for (const key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          transformed[key] = this.transformDates(obj[key]);
+          transformed[key] = this.transformDates(obj[key], visited, depth + 1);
         }
       }
       return transformed;
