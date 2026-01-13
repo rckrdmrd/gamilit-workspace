@@ -1,6 +1,6 @@
 # Contexto del Proyecto - GAMILIT
 
-**Última actualización:** 2026-01-10
+**Última actualización:** 2026-01-13
 **Migrado a workspace-v2:** 2026-01-10
 **Nivel de Herencia:** L2 (Proyecto Standalone)
 
@@ -69,20 +69,26 @@ Cuando una directiva global usa `{DB_DDL_PATH}/schemas/{schema}/tables/`:
 - **Lenguaje:** TypeScript 5.3
 - **ORM:** TypeORM 0.3.x
 - **Auth:** JWT + Passport (5 proveedores OAuth)
-- **API:** 417 endpoints REST
+- **API:** 612 endpoints REST
+- **Modules:** 17 modulos NestJS
+- **Entities:** 108 TypeORM entities
 
 ### Frontend
 - **Framework:** React 19.x
 - **Lenguaje:** TypeScript 5.3
-- **State:** Zustand 5.x
+- **State:** Zustand 5.x (12 stores)
 - **Styling:** Tailwind CSS 4.x
 - **Build:** Vite
+- **Components:** 327 componentes React
+- **Pages:** 74 paginas
 
 ### Database
-- **Engine:** PostgreSQL 15
+- **Engine:** PostgreSQL 16
 - **Schemas:** 16 schemas modulares
-- **Tablas:** 123 tablas
-- **RLS:** 185 políticas
+- **Tablas:** 137 tablas
+- **Funciones activas:** 110
+- **Triggers activos:** 35
+- **RLS policies:** 32
 
 ## Paths de Trabajo
 

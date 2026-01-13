@@ -16,10 +16,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { ModuleProgressService } from '../module-progress.service';
-import { ModuleProgress } from '../../entities';
+import { ModuleProgress, ExerciseSubmission } from '../../entities';
 import { createMockRepository } from '@/__mocks__/repositories.mock';
 import { TestDataFactory } from '@/__mocks__/services.mock';
 import { ProgressStatusEnum } from '@shared/constants/enums.constants';
+import { CertificateService } from '../certificate.service';
 
 describe('ModuleProgressService', () => {
   let service: ModuleProgressService;
@@ -61,8 +62,25 @@ describe('ModuleProgressService', () => {
     updated_at: new Date('2025-01-05'),
   };
 
+  const mockExerciseSubmissionRepo = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    createQueryBuilder: jest.fn(() => ({
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue([]),
+    })),
+  };
+
+  const mockCertificateService = {
+    generateModuleCertificate: jest.fn(),
+  };
+
   beforeEach(async () => {
     moduleProgressRepo = createMockRepository<ModuleProgress>();
+    // Add query method to mock for raw SQL queries
+    moduleProgressRepo.query = jest.fn().mockResolvedValue([]);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -70,6 +88,14 @@ describe('ModuleProgressService', () => {
         {
           provide: getRepositoryToken(ModuleProgress, 'progress'),
           useValue: moduleProgressRepo,
+        },
+        {
+          provide: getRepositoryToken(ExerciseSubmission, 'progress'),
+          useValue: mockExerciseSubmissionRepo,
+        },
+        {
+          provide: CertificateService,
+          useValue: mockCertificateService,
         },
       ],
     }).compile();
@@ -473,7 +499,7 @@ describe('ModuleProgressService', () => {
       const result = await service.calculateLearningPath(mockUserId);
 
       expect(result.difficulty_adjustment).toBe('increase');
-      expect(result.reasoning).toContain('High performance detected');
+      expect(result.overall_performance).toBe('excellent');
     });
 
     it('should recommend decreasing difficulty for struggling students', async () => {
@@ -486,7 +512,7 @@ describe('ModuleProgressService', () => {
       const result = await service.calculateLearningPath(mockUserId);
 
       expect(result.difficulty_adjustment).toBe('decrease');
-      expect(result.reasoning).toContain('Additional practice recommended');
+      expect(result.overall_performance).toBe('struggling');
     });
 
     it('should maintain difficulty for average performance', async () => {
@@ -499,7 +525,7 @@ describe('ModuleProgressService', () => {
       const result = await service.calculateLearningPath(mockUserId);
 
       expect(result.difficulty_adjustment).toBe('maintain');
-      expect(result.reasoning).toContain('Continue with current difficulty level');
+      expect(result.overall_performance).toBe('good');
     });
 
     it('should handle users with no progress', async () => {

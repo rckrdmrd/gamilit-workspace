@@ -4,28 +4,33 @@
 # Fuente: Validación DB-092 (Ciclo 1-4)
 
 metadata:
-  version: "4.3.0"
+  version: "4.4.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-08"
+  last_updated: "2026-01-13"
   database_script: "create-database.sh"
-  total_ddl_files: 397  # +2 (social_features/functions/sync_teacher_classroom.sql, social_features/triggers/26-trg_sync_teacher_classroom.sql)
-  total_seed_files: 100  # +1 (communication/01-system-messages.sql)
+  total_ddl_files: 397
+  total_seed_files: 169  # 82 DEV + 81 PROD + 6 STAGING
   total_schemas: 16
   script_phases: 17
   seed_breakdown:
-    dev_files: 50
-    prod_files: 50  # +1 (communication seed)
-    script_files: 6
+    dev_files: 82
+    prod_files: 81
+    staging_files: 6
   database_counts:
     schemas: 16
-    tables: 133  # +1 (content_management.tags)
+    tables: 137
     views: 17
     materialized_views: 11
     enums: 42
-    functions: 151  # +1 (social_features.sync_teacher_classroom_on_insert)
-    triggers: 112  # +1 (trg_sync_teacher_classroom_on_insert)
-    indexes: 21
-    policies: 185
+    functions_active: 110
+    functions_deprecated: 41
+    functions_total: 151
+    triggers_active: 35
+    triggers_deprecated: 77
+    triggers_total: 112
+    indexes_files: 21
+    indexes_statements: 701
+    policies_rls: 32  # Verificado 2026-01-13 - solo RLS activas
     foreign_keys: 208
   audit_2026_01_08:
     description: "FIX-CLASSROOMID: Correccion de triggers para classroom member count y sync teacher_classrooms"

@@ -17,6 +17,8 @@ import { ClassroomMember } from '@/modules/social/entities/classroom-member.enti
 import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { User } from '@/modules/auth/entities/user.entity';
 import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
+import { Module as EducationalModule } from '@/modules/educational/entities/module.entity';
+import { Exercise } from '@/modules/educational/entities/exercise.entity';
 
 describe('StudentProgressService - CORR-001 Fix', () => {
   let service: StudentProgressService;
@@ -27,6 +29,8 @@ describe('StudentProgressService - CORR-001 Fix', () => {
   let _classroomRepository: Repository<Classroom>;
   let _userRepository: Repository<User>;
   let userStatsRepository: Repository<UserStats>;
+  let _moduleRepository: Repository<EducationalModule>;
+  let _exerciseRepository: Repository<Exercise>;
 
   // Mock repositories
   const mockSubmissionRepository = {
@@ -68,6 +72,16 @@ describe('StudentProgressService - CORR-001 Fix', () => {
     findOne: jest.fn(),
   };
 
+  const mockModuleRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+
+  const mockExerciseRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -100,6 +114,14 @@ describe('StudentProgressService - CORR-001 Fix', () => {
           provide: getRepositoryToken(UserStats, 'gamification'),
           useValue: mockUserStatsRepository,
         },
+        {
+          provide: getRepositoryToken(EducationalModule, 'educational'),
+          useValue: mockModuleRepository,
+        },
+        {
+          provide: getRepositoryToken(Exercise, 'educational'),
+          useValue: mockExerciseRepository,
+        },
       ],
     }).compile();
 
@@ -107,10 +129,12 @@ describe('StudentProgressService - CORR-001 Fix', () => {
     submissionRepository = module.get(getRepositoryToken(ExerciseSubmission, 'progress'));
     profileRepository = module.get(getRepositoryToken(Profile, 'auth'));
     moduleProgressRepository = module.get(getRepositoryToken(ModuleProgress, 'progress'));
-    classroomMemberRepository = module.get(getRepositoryToken(ClassroomMember, 'social'));
-    classroomRepository = module.get(getRepositoryToken(Classroom, 'social'));
-    userRepository = module.get(getRepositoryToken(User, 'auth'));
+    _classroomMemberRepository = module.get(getRepositoryToken(ClassroomMember, 'social'));
+    _classroomRepository = module.get(getRepositoryToken(Classroom, 'social'));
+    _userRepository = module.get(getRepositoryToken(User, 'auth'));
     userStatsRepository = module.get(getRepositoryToken(UserStats, 'gamification'));
+    _moduleRepository = module.get(getRepositoryToken(EducationalModule, 'educational'));
+    _exerciseRepository = module.get(getRepositoryToken(Exercise, 'educational'));
   });
 
   afterEach(() => {
@@ -327,6 +351,8 @@ describe('StudentProgressService - CORR-001 Fix', () => {
       jest.spyOn(profileRepository, 'find').mockResolvedValue([mockProfile as any]);
       jest.spyOn(submissionRepository, 'find').mockResolvedValue([]);
       jest.spyOn(moduleProgressRepository, 'find').mockResolvedValue([]);
+      jest.spyOn(userStatsRepository, 'find').mockResolvedValue([]);
+      jest.spyOn(userStatsRepository, 'findOne').mockResolvedValue(null);
 
       await service.getStudentProgress('profile-full', query as any);
 

@@ -18,6 +18,19 @@ import { ExerciseValidatorService } from '../exercise-validator.service';
 import { Exercise } from '@/modules/educational/entities';
 import { createMockRepository } from '@/__mocks__/repositories.mock';
 import { TestDataFactory } from '@/__mocks__/services.mock';
+import { ExerciseAnswerValidator } from '../../../dto/answers';
+
+// Mock the centralized ExerciseAnswerValidator to isolate internal validator tests
+// The internal validators (validateVideoCarta, validateDiarioMultimedia, etc.) accept
+// flexible field names, while ExerciseAnswerValidator expects strict DTO formats.
+// These tests focus on internal validator behavior (word count, panel count, etc.)
+jest.mock('../../../dto/answers', () => ({
+  ExerciseAnswerValidator: {
+    validate: jest.fn().mockResolvedValue(undefined),
+    getDtoForType: jest.fn(),
+    validateAndTransform: jest.fn(),
+  },
+}));
 
 describe('ExerciseValidatorService', () => {
   let service: ExerciseValidatorService;
@@ -123,8 +136,8 @@ describe('ExerciseValidatorService', () => {
 
       // Assert
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        expect.stringContaining('al menos 150 palabras'),
+      expect(result.errors).toEqual(
+        expect.arrayContaining([expect.stringContaining('al menos 150 palabras')]),
       );
       expect(result.metadata?.wordCount).toBe(50);
     });
@@ -207,8 +220,8 @@ describe('ExerciseValidatorService', () => {
 
       // Assert
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        expect.stringContaining('al menos 4 paneles'),
+      expect(result.errors).toEqual(
+        expect.arrayContaining([expect.stringContaining('al menos 4 paneles')]),
       );
     });
 
@@ -228,8 +241,8 @@ describe('ExerciseValidatorService', () => {
 
       // Assert
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        expect.stringContaining('contenido (texto o imagen)'),
+      expect(result.errors).toEqual(
+        expect.arrayContaining([expect.stringContaining('contenido (texto o imagen)')]),
       );
     });
 
@@ -310,8 +323,8 @@ describe('ExerciseValidatorService', () => {
 
       // Assert
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        expect.stringContaining('subir o proporcionar la URL de tu video'),
+      expect(result.errors).toEqual(
+        expect.arrayContaining([expect.stringContaining('subir o proporcionar la URL de tu video')]),
       );
     });
 
@@ -329,8 +342,8 @@ describe('ExerciseValidatorService', () => {
 
       // Assert
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        expect.stringContaining('al menos 30 segundos'),
+      expect(result.errors).toEqual(
+        expect.arrayContaining([expect.stringContaining('al menos 30 segundos')]),
       );
     });
 

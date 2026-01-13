@@ -247,9 +247,26 @@ describe('LearningSessionService', () => {
   // =========================================================================
 
   describe('endSession', () => {
+    // Helper to create fresh active session with recent start time
+    const createActiveSession = (overrides = {}) => ({
+      id: mockSessionId,
+      user_id: mockUserId,
+      module_id: mockModuleId,
+      started_at: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+      ended_at: null,
+      is_active: true,
+      completion_status: 'ongoing',
+      duration: null,
+      active_time: null,
+      idle_time: null,
+      exercises_attempted: 2,
+      exercises_completed: 1,
+      ...overrides,
+    });
+
     beforeEach(() => {
-      sessionRepo.findOne.mockResolvedValue(mockSession as any);
-      sessionRepo.save.mockResolvedValue(mockSession as any);
+      sessionRepo.findOne.mockResolvedValue(createActiveSession() as any);
+      sessionRepo.save.mockImplementation((data) => Promise.resolve(data));
     });
 
     it('should end session and calculate duration', async () => {
@@ -263,19 +280,21 @@ describe('LearningSessionService', () => {
     });
 
     it('should format duration correctly (HH:MM:SS)', async () => {
-      const startTime = new Date('2025-01-10T10:00:00');
-      const sessionWithStart = { ...mockSession, started_at: startTime };
-      sessionRepo.findOne.mockResolvedValue(sessionWithStart as any);
+      // Session started 1 hour ago
+      sessionRepo.findOne.mockResolvedValue(
+        createActiveSession({ started_at: new Date(Date.now() - 60 * 60 * 1000) }) as any,
+      );
 
       const result = await service.endSession(mockSessionId);
 
-      // Just verify duration exists and has correct format
+      // Verify duration exists and has correct format (HH:MM:SS)
       expect(result.duration).toMatch(/^\d{2}:\d{2}:\d{2}$/);
     });
 
     it('should set active_time if not defined', async () => {
-      const sessionNoActiveTime = { ...mockSession, active_time: null };
-      sessionRepo.findOne.mockResolvedValue(sessionNoActiveTime as any);
+      sessionRepo.findOne.mockResolvedValue(
+        createActiveSession({ active_time: null }) as any,
+      );
 
       const result = await service.endSession(mockSessionId);
 
@@ -284,8 +303,9 @@ describe('LearningSessionService', () => {
     });
 
     it('should throw BadRequestException if session already ended', async () => {
-      const endedSession = { ...mockSession, is_active: false };
-      sessionRepo.findOne.mockResolvedValue(endedSession as any);
+      sessionRepo.findOne.mockResolvedValue(
+        createActiveSession({ is_active: false }) as any,
+      );
 
       await expect(service.endSession(mockSessionId)).rejects.toThrow(BadRequestException);
       await expect(service.endSession(mockSessionId)).rejects.toThrow(

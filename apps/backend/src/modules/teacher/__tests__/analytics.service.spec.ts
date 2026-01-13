@@ -15,6 +15,9 @@ import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
 import { Assignment } from '@/modules/assignments/entities/assignment.entity';
 import { AssignmentSubmission } from '@/modules/assignments/entities/assignment-submission.entity';
+import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
+import { Achievement } from '@/modules/gamification/entities/achievement.entity';
+import { UserAchievement } from '@/modules/gamification/entities/user-achievement.entity';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
@@ -49,6 +52,25 @@ describe('AnalyticsService', () => {
 
   const mockAssignmentSubmissionRepository = {
     find: jest.fn(),
+  };
+
+  const mockUserStatsRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    createQueryBuilder: jest.fn(),
+    count: jest.fn(),
+  };
+
+  const mockAchievementRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+
+  const mockUserAchievementRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    createQueryBuilder: jest.fn(),
+    count: jest.fn(),
   };
 
   // Mock StudentProgressService
@@ -88,12 +110,24 @@ describe('AnalyticsService', () => {
           useValue: mockClassroomMemberRepository,
         },
         {
-          provide: getRepositoryToken(Assignment, 'content'),
+          provide: getRepositoryToken(Assignment, 'educational'),
           useValue: mockAssignmentRepository,
         },
         {
-          provide: getRepositoryToken(AssignmentSubmission, 'content'),
+          provide: getRepositoryToken(AssignmentSubmission, 'educational'),
           useValue: mockAssignmentSubmissionRepository,
+        },
+        {
+          provide: getRepositoryToken(UserStats, 'gamification'),
+          useValue: mockUserStatsRepository,
+        },
+        {
+          provide: getRepositoryToken(Achievement, 'gamification'),
+          useValue: mockAchievementRepository,
+        },
+        {
+          provide: getRepositoryToken(UserAchievement, 'gamification'),
+          useValue: mockUserAchievementRepository,
         },
         {
           provide: StudentProgressService,
@@ -107,7 +141,7 @@ describe('AnalyticsService', () => {
     }).compile();
 
     service = module.get<AnalyticsService>(AnalyticsService);
-    studentProgressService = module.get<StudentProgressService>(StudentProgressService);
+    _studentProgressService = module.get<StudentProgressService>(StudentProgressService);
   });
 
   afterEach(() => {

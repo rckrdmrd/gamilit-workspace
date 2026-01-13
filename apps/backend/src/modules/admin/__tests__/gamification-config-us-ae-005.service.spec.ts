@@ -32,6 +32,7 @@ describe('GamificationConfigService - US-AE-005', () => {
     findOne: jest.fn(),
     save: jest.fn(),
     count: jest.fn(),
+    query: jest.fn(),
   };
 
   // Mock parameter data
@@ -105,6 +106,90 @@ describe('GamificationConfigService - US-AE-005', () => {
     updated_at: new Date('2025-11-23T10:00:00.000Z'),
     updated_by: 'admin-1',
   };
+
+  // Mock Maya ranks from database query (new implementation GAP-FE-004)
+  const mockMayaRanksFromDb = [
+    {
+      id: 'rank-1',
+      name: 'Ajaw',
+      level: 1,
+      minXp: '0',
+      maxXp: '99',
+      multiplierXp: '1.0',
+      multiplierMlCoins: '1.0',
+      bonusMlCoins: '0',
+      color: '#6B7280',
+      icon: 'ajaw',
+      description: 'Señor - Nivel inicial',
+      perks: [],
+      isActive: true,
+      order: 1,
+    },
+    {
+      id: 'rank-2',
+      name: 'Nacom',
+      level: 2,
+      minXp: '100',
+      maxXp: '499',
+      multiplierXp: '1.1',
+      multiplierMlCoins: '1.0',
+      bonusMlCoins: '500',
+      color: '#10B981',
+      icon: 'nacom',
+      description: 'Capitán de Guerra',
+      perks: [],
+      isActive: true,
+      order: 2,
+    },
+    {
+      id: 'rank-3',
+      name: 'Ah Kin',
+      level: 3,
+      minXp: '500',
+      maxXp: '1499',
+      multiplierXp: '1.25',
+      multiplierMlCoins: '1.1',
+      bonusMlCoins: '1000',
+      color: '#F59E0B',
+      icon: 'ahkin',
+      description: 'Sacerdote del Sol',
+      perks: [],
+      isActive: true,
+      order: 3,
+    },
+    {
+      id: 'rank-4',
+      name: 'Halach Uinic',
+      level: 4,
+      minXp: '1500',
+      maxXp: '4999',
+      multiplierXp: '1.5',
+      multiplierMlCoins: '1.25',
+      bonusMlCoins: '2500',
+      color: '#8B5CF6',
+      icon: 'halach',
+      description: 'Hombre Verdadero',
+      perks: [],
+      isActive: true,
+      order: 4,
+    },
+    {
+      id: 'rank-5',
+      name: "K'uk'ulkan",
+      level: 5,
+      minXp: '5000',
+      maxXp: null,
+      multiplierXp: '2.0',
+      multiplierMlCoins: '1.5',
+      bonusMlCoins: '5000',
+      color: '#EF4444',
+      icon: 'kukulkan',
+      description: 'Serpiente Emplumada - Rango máximo',
+      perks: ['double_xp', 'exclusive_avatar'],
+      isActive: true,
+      order: 5,
+    },
+  ];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -389,9 +474,10 @@ describe('GamificationConfigService - US-AE-005', () => {
   });
 
   describe('getMayaRanks', () => {
-    it('should return Maya ranks configuration', async () => {
+    // GAP-FE-004: Tests updated for new implementation that queries maya_ranks table directly
+    it('should return Maya ranks configuration from database', async () => {
       // Arrange
-      mockSystemSettingRepository.count.mockResolvedValue(1);
+      mockSystemSettingRepository.query.mockResolvedValue(mockMayaRanksFromDb);
       mockSystemSettingRepository.findOne.mockResolvedValue(
         mockRanksSetting as SystemSetting,
       );
@@ -405,11 +491,67 @@ describe('GamificationConfigService - US-AE-005', () => {
       expect(result.setting_key).toBe('gamification.ranks.thresholds');
       expect(result.setting_id).toBe('ranks-uuid-1');
       expect(result.updated_by).toBe('admin-1');
+      expect(mockSystemSettingRepository.query).toHaveBeenCalled();
     });
 
-    it('should calculate correct rank ranges', async () => {
+    it('should return rank data with complete metadata', async () => {
       // Arrange
-      mockSystemSettingRepository.count.mockResolvedValue(1);
+      mockSystemSettingRepository.query.mockResolvedValue(mockMayaRanksFromDb);
+      mockSystemSettingRepository.findOne.mockResolvedValue(
+        mockRanksSetting as SystemSetting,
+      );
+
+      // Act
+      const result = await service.getMayaRanks();
+
+      // Assert - check first rank has all expected properties
+      const firstRank = result.ranks[0];
+      expect(firstRank).toMatchObject({
+        id: 'rank-1',
+        name: 'Ajaw',
+        level: 1,
+        minXp: 0,
+        maxXp: 99,
+        multiplierXp: 1.0,
+        bonusMlCoins: 0,
+        color: '#6B7280',
+        isActive: true,
+      });
+    });
+
+    it('should return highest rank with null maxXp', async () => {
+      // Arrange
+      mockSystemSettingRepository.query.mockResolvedValue(mockMayaRanksFromDb);
+      mockSystemSettingRepository.findOne.mockResolvedValue(
+        mockRanksSetting as SystemSetting,
+      );
+
+      // Act
+      const result = await service.getMayaRanks();
+
+      // Assert - last rank should have null maxXp
+      const lastRank = result.ranks[4];
+      expect(lastRank.name).toBe("K'uk'ulkan");
+      expect(lastRank.minXp).toBe(5000);
+      expect(lastRank.maxXp).toBeNull();
+    });
+
+    it('should throw NotFoundException if query fails', async () => {
+      // Arrange - simulate database error
+      mockSystemSettingRepository.query.mockRejectedValue(
+        new Error('Database error'),
+      );
+
+      // Act & Assert
+      await expect(service.getMayaRanks()).rejects.toThrow(NotFoundException);
+      await expect(service.getMayaRanks()).rejects.toThrow(
+        'Failed to load Maya ranks configuration',
+      );
+    });
+
+    it('should handle empty ranks array', async () => {
+      // Arrange
+      mockSystemSettingRepository.query.mockResolvedValue([]);
       mockSystemSettingRepository.findOne.mockResolvedValue(
         mockRanksSetting as SystemSetting,
       );
@@ -418,57 +560,23 @@ describe('GamificationConfigService - US-AE-005', () => {
       const result = await service.getMayaRanks();
 
       // Assert
-      const ranks = result.ranks;
-      expect(ranks[0]).toEqual({
-        rank_name: 'novice',
-        min_xp: 0,
-        max_xp: 99,
-        rank_order: 0,
-      });
-      expect(ranks[1]).toEqual({
-        rank_name: 'beginner',
-        min_xp: 100,
-        max_xp: 499,
-        rank_order: 1,
-      });
-      expect(ranks[4]).toEqual({
-        rank_name: 'expert',
-        min_xp: 5000,
-        max_xp: null, // Highest rank has no upper limit
-        rank_order: 4,
-      });
+      expect(result.ranks).toHaveLength(0);
+      expect(result.total).toBe(0);
     });
 
-    it('should throw NotFoundException if ranks setting does not exist', async () => {
+    it('should parse perks from JSONB correctly', async () => {
       // Arrange
-      mockSystemSettingRepository.count.mockResolvedValue(1);
-      mockSystemSettingRepository.findOne.mockResolvedValue(null);
-
-      // Act & Assert
-      await expect(service.getMayaRanks()).rejects.toThrow(NotFoundException);
-      await expect(service.getMayaRanks()).rejects.toThrow(
-        'Maya ranks configuration not found',
-      );
-    });
-
-    it('should throw BadRequestException if JSON is invalid', async () => {
-      // Arrange
-      const invalidRanksSetting = {
-        ...mockRanksSetting,
-        setting_value: '{invalid json',
-      };
-      mockSystemSettingRepository.count.mockResolvedValue(1);
+      mockSystemSettingRepository.query.mockResolvedValue(mockMayaRanksFromDb);
       mockSystemSettingRepository.findOne.mockResolvedValue(
-        invalidRanksSetting as SystemSetting,
+        mockRanksSetting as SystemSetting,
       );
 
-      // Act & Assert
-      await expect(service.getMayaRanks()).rejects.toThrow(
-        BadRequestException,
-      );
-      await expect(service.getMayaRanks()).rejects.toThrow(
-        'Invalid ranks configuration',
-      );
+      // Act
+      const result = await service.getMayaRanks();
+
+      // Assert - highest rank should have perks array
+      const lastRank = result.ranks[4];
+      expect(lastRank.perks).toEqual(['double_xp', 'exclusive_avatar']);
     });
   });
 

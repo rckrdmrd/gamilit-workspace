@@ -2,10 +2,10 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "4.0.1"
+version: "4.1.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
-fecha_actualizacion: "2026-01-07"
-actualizado_por: "Claude Opus 4.5 - Correccion Admin Pages Sprint 3-4"
+fecha_actualizacion: "2026-01-13"
+actualizado_por: "Meta-Orquestador SIMCO - Validacion exhaustiva de documentacion"
 
 # =============================================================================
 # RESUMEN EJECUTIVO
@@ -15,53 +15,71 @@ resumen:
   estado_general: "OPERATIVO"
 
   database:
-    schemas: 15
-    tables: 133  # 2026-01-07: +1 (auth_management.roles - catalogo RBAC)
+    schemas: 16
+    tables: 137
     views: 17
     materialized_views: 11
     enums: 42
-    functions: 150
-    triggers: 112  # 2026-01-07: +1 (trg_roles_updated_at)
-    policies_rls: 185
+    functions_active: 110  # Solo funciones activas (excluye _deprecated/)
+    functions_deprecated: 41
+    functions_total: 151
+    triggers_active: 35  # Solo triggers activos (excluye _deprecated/)
+    triggers_deprecated: 77
+    triggers_total: 112
+    policies_rls: 32
     foreign_keys: 208
-    seed_files: 99
-    ddl_files: 395  # 2026-01-07: +1 (03b-roles.sql)
+    seed_files: 169  # 82 DEV + 81 PROD + 6 STAGING
+    ddl_files: 397
+    indexes_statements: 701
     status: "Clean creation compliant"
-    last_verified: "2026-01-07"
+    last_verified: "2026-01-13"
     source: "DATABASE_INVENTORY.yml"
     nuevas_tablas: "docs/database/TABLAS-NUEVAS-2025-12.md"
     triggers_inventory: "docs/database/TRIGGERS-INVENTORY.md"
 
   backend:
-    modules: 16
-    entities: 93
-    dtos: 327
-    services: 103
-    controllers: 76
-    endpoints: 300+
+    modules: 17
+    entities: 108
+    dtos: 337
+    services: 105
+    controllers: 75
+    endpoints: 612
     build_status: "Builds successfully"
     coherencia_bd: "97%"
-    last_verified: "2025-12-23"
+    last_verified: "2026-01-13"
     source: "BACKEND_INVENTORY.yml"
     api_docs:
       - "docs/90-transversal/api/API-TEACHER-MODULE.md"
       - "docs/90-transversal/api/API-ADMIN-MODULE.md"
 
   frontend:
-    files: 862
-    components: 497
-    hooks: 102
-    pages: 64
-    stores: 11
-    api_services: 15
+    files: 900+
+    components: 327
+    hooks: 103
+    pages: 74
+    stores: 12
+    api_services: 52
     mechanics: 33
-    routes: 20
-    lines_of_code: ~98000
+    routes: 18
+    lines_of_code: ~100000
     status: "Builds successfully"
-    last_verified: "2025-12-23"
+    last_verified: "2026-01-13"
     source: "FRONTEND_INVENTORY.yml"
     portal_docs:
       - "docs/frontend/student/README.md"
+    stores_detail:
+      - authStore.ts
+      - economyStore.ts
+      - ranksStore.ts
+      - achievementsStore.ts
+      - friendsStore.ts
+      - guildsStore.ts
+      - leaderboardsStore.ts
+      - newLeaderboardsStore.ts
+      - powerUpsStore.ts
+      - missionsStore.ts
+      - notificationsStore.ts
+      - studentAssignmentsStore.ts
 
 # =============================================================================
 # EJERCICIOS POR MODULO (Definiciones Oficiales)

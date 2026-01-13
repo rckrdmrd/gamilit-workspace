@@ -1,15 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { AuthController } from '../controllers/auth.controller';
-import { AuthService, SessionManagementService, SecurityService } from '../services';
+import {
+  AuthService,
+  SessionManagementService,
+  SecurityService,
+  EmailVerificationService,
+  PasswordRecoveryService,
+} from '../services';
 import { RegisterUserDto, LoginDto, RefreshTokenDto, UserResponseDto } from '../dto';
 import { GamilityRoleEnum } from '@shared/constants';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  let _authService: AuthService;
-  let _sessionService: SessionManagementService;
-  let _securityService: SecurityService;
+  let authService: AuthService;
+  let sessionService: SessionManagementService;
+  let securityService: SecurityService;
 
   const mockAuthService = {
     register: jest.fn(),
@@ -17,6 +23,11 @@ describe('AuthController', () => {
     logout: jest.fn(),
     refreshToken: jest.fn(),
     validateUser: jest.fn(),
+    toUserResponse: jest.fn().mockImplementation((user) => {
+      // Filter out sensitive fields like the real implementation
+      const { encrypted_password, password, ...safeUser } = user;
+      return safeUser;
+    }),
   };
 
   const mockSessionService = {
@@ -28,6 +39,18 @@ describe('AuthController', () => {
   const mockSecurityService = {
     checkRateLimit: jest.fn(),
     logAttempt: jest.fn(),
+  };
+
+  const mockEmailVerificationService = {
+    sendVerificationEmail: jest.fn(),
+    verifyEmail: jest.fn(),
+    resendVerificationEmail: jest.fn(),
+  };
+
+  const mockPasswordRecoveryService = {
+    requestPasswordReset: jest.fn(),
+    resetPassword: jest.fn(),
+    validateResetToken: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -45,6 +68,14 @@ describe('AuthController', () => {
         {
           provide: SecurityService,
           useValue: mockSecurityService,
+        },
+        {
+          provide: EmailVerificationService,
+          useValue: mockEmailVerificationService,
+        },
+        {
+          provide: PasswordRecoveryService,
+          useValue: mockPasswordRecoveryService,
         },
       ],
     }).compile();

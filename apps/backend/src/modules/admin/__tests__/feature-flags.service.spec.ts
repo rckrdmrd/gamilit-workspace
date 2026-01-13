@@ -231,7 +231,8 @@ describe('FeatureFlagsService', () => {
     it('should update a feature flag successfully', async () => {
       const existingFlag = { ...mockFeatureFlag };
       mockRepository.findOne.mockResolvedValue(existingFlag);
-      mockRepository.save.mockResolvedValue({ ...existingFlag, ...updateDto });
+      // The service updates feature_name from dto.name
+      mockRepository.save.mockImplementation((entity) => Promise.resolve(entity));
 
       const result = await service.update('test_feature', updateDto, 'admin');
 

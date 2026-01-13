@@ -1,12 +1,12 @@
 # FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 4.0
+version: 4.1.0
 generated: 2025-11-08
-updated: 2026-01-10
-source: Inventario Real del Frontend Implementado + Auditoria Documentacion vs Desarrollo 2025-12-23/26
+updated: 2026-01-13
+source: Inventario Real del Frontend Implementado + Auditoria Documentacion vs Desarrollo 2025-12-23/26 + Validacion 2026-01-13
 status: Actualizado con auditoria completa de componentes, hooks y mecanicas
-last_analysis: 2025-12-26 - Auditoria documentacion vs desarrollo - metricas reales verificadas
+last_analysis: 2026-01-13 - Validacion exhaustiva de documentacion - metricas reales verificadas
 structure_audit_2026_01_10: |
   Auditoría de estructura de archivos:
   - Total archivos .tsx: 501
@@ -23,14 +23,14 @@ structure_audit_2026_01_10: |
 
 summary:
   total_files: 900+  # ✅ Actualizado 2025-12-26 - auditoria real
-  total_components: 497  # ✅ ACTUALIZADO 2025-12-26 - auditoria: shared(40) + features(31) + gamification(71) + mechanics(156) + apps(180) + otros(19)
+  total_components: 327  # ✅ ACTUALIZADO 2026-01-13 - validacion exhaustiva (reduccion por limpieza M4 no oficiales)
   total_hooks: 103  # ✅ ACTUALIZADO 2025-12-26 - auditoria: shared(12) + apps(57) + features(32) + root(2)
   total_features: 10
-  total_pages: 64  # ✅ ACTUALIZADO 2025-12-26 - auditoria real (Student 24 + Teacher 13 + Admin 27)
-  total_stores: 11
-  total_api_services: 15  # Sin cambios (usa apiClient existente)
-  total_mechanics: 30  # ✅ ACTUALIZADO 2025-12-26 - 23 oficiales + 3 extras + 4 auxiliares
-  total_routes: 20  # ✅ ACTUALIZADO 2025-11-29
+  total_pages: 74  # ✅ ACTUALIZADO 2026-01-13 - conteo real (Student 26 + Teacher 15 + Admin 30 + Auth 3)
+  total_stores: 12  # ✅ ACTUALIZADO 2026-01-13 - ver stores_detail en MASTER_INVENTORY
+  total_api_services: 52  # ✅ ACTUALIZADO 2026-01-13 - auditoria exhaustiva services/api/
+  total_mechanics: 33  # ✅ ACTUALIZADO 2026-01-13 - 23 oficiales + 5 M4 + 3 M5 + 2 auxiliares
+  total_routes: 18  # ✅ ACTUALIZADO 2026-01-13 - verificado con rutas implementadas
   lines_of_code: ~100000  # ✅ ACTUALIZADO 2025-12-26
 
   changes_from_v3_0:
@@ -1196,6 +1196,25 @@ m4_m5_implementation:
 # CHANGELOG / MODIFICACIONES RECIENTES
 # ============================================================================
 changelog:
+  - date: "2026-01-13"
+    tarea_id: "VALIDACION-DOCS-001"
+    type: "Documentation Validation - Metrics Correction"
+    status: "✅ COMPLETADO"
+    description: "Validación exhaustiva de documentación vs código real - corrección de métricas desactualizadas"
+    changes:
+      metrics_corrected:
+        - "total_components: 497 → 327 (reducción por limpieza M4 no oficiales)"
+        - "total_pages: 64 → 74 (conteo real actualizado)"
+        - "total_stores: 11 → 12 (studentAssignmentsStore agregado)"
+        - "total_api_services: 15 → 52 (auditoria exhaustiva services/api/)"
+        - "total_mechanics: 30 → 33 (5 M4 oficiales + 3 M5)"
+        - "total_routes: 20 → 18 (verificado con implementación)"
+    validation:
+      method: "Conteo directo de archivos físicos con Glob/Grep"
+      cross_reference: "MASTER_INVENTORY.yml v4.1.0"
+    documentation:
+      - "orchestration/analisis-validacion-documentacion-2026-01-13/"
+
   - date: "2026-01-07"
     tarea_id: "FIX-ADMIN-HOOKS-TYPESCRIPT-001"
     type: "Bug Fix - Admin Portal Hooks TypeScript Errors"

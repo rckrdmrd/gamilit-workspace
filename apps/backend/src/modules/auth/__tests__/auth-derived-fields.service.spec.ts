@@ -4,6 +4,12 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { AuthService } from '../services/auth.service';
 import { User, Profile, Tenant, UserSession, AuthAttempt } from '../entities';
+import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
+import { UserRank } from '@/modules/gamification/entities/user-rank.entity';
+import { UserAchievement } from '@/modules/gamification/entities/user-achievement.entity';
+import { Achievement } from '@/modules/gamification/entities/achievement.entity';
+import { MLCoinsTransaction } from '@/modules/gamification/entities/ml-coins-transaction.entity';
+import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
 import { GamilityRoleEnum } from '@shared/constants';
 
 describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
@@ -38,6 +44,35 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
     save: jest.fn(),
   };
 
+  const mockUserStatsRepository = {
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const mockUserRanksRepository = {
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const mockUserAchievementsRepository = {
+    find: jest.fn(),
+  };
+
+  const mockAchievementsRepository = {
+    find: jest.fn(),
+  };
+
+  const mockMLCoinsTransactionsRepository = {
+    find: jest.fn(),
+  };
+
+  const mockExerciseSubmissionsRepository = {
+    find: jest.fn(),
+    count: jest.fn(),
+  };
+
   const mockJwtService = {
     sign: jest.fn(),
     verify: jest.fn(),
@@ -68,6 +103,30 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
           useValue: mockAttemptRepository,
         },
         {
+          provide: getRepositoryToken(UserStats, 'gamification'),
+          useValue: mockUserStatsRepository,
+        },
+        {
+          provide: getRepositoryToken(UserRank, 'gamification'),
+          useValue: mockUserRanksRepository,
+        },
+        {
+          provide: getRepositoryToken(UserAchievement, 'gamification'),
+          useValue: mockUserAchievementsRepository,
+        },
+        {
+          provide: getRepositoryToken(Achievement, 'gamification'),
+          useValue: mockAchievementsRepository,
+        },
+        {
+          provide: getRepositoryToken(MLCoinsTransaction, 'gamification'),
+          useValue: mockMLCoinsTransactionsRepository,
+        },
+        {
+          provide: getRepositoryToken(ExerciseSubmission, 'progress'),
+          useValue: mockExerciseSubmissionsRepository,
+        },
+        {
           provide: JwtService,
           useValue: mockJwtService,
         },
@@ -75,7 +134,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    userRepository = module.get<Repository<User>>(
+    _userRepository = module.get<Repository<User>>(
       getRepositoryToken(User, 'auth'),
     );
   });
@@ -334,14 +393,15 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       expect(result.id).toBe(mockUser.id);
       expect(result.email).toBe(mockUser.email);
       expect(result.role).toBe(GamilityRoleEnum.ADMIN_TEACHER);
-      expect(result.email_confirmed_at).toEqual(mockUser.email_confirmed_at);
+      // Dates are converted to ISO strings in the response
+      expect(result.email_confirmed_at).toBe(mockUser.email_confirmed_at?.toISOString());
       expect(result.phone).toBe('+52123456789');
-      expect(result.phone_confirmed_at).toEqual(mockUser.phone_confirmed_at);
+      expect(result.phone_confirmed_at).toBe(mockUser.phone_confirmed_at?.toISOString());
       expect(result.is_super_admin).toBe(false);
-      expect(result.last_sign_in_at).toEqual(mockUser.last_sign_in_at);
+      expect(result.last_sign_in_at).toBe(mockUser.last_sign_in_at?.toISOString());
       expect(result.raw_user_meta_data).toEqual(mockUser.raw_user_meta_data);
-      expect(result.created_at).toEqual(mockUser.created_at);
-      expect(result.updated_at).toEqual(mockUser.updated_at);
+      expect(result.created_at).toBe(mockUser.created_at.toISOString());
+      expect(result.updated_at).toBe(mockUser.updated_at.toISOString());
       // Derived fields
       expect(result.emailVerified).toBe(true);
       expect(result.isActive).toBe(true);

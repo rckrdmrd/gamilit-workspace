@@ -12,20 +12,30 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getRepositoryToken, getEntityManagerToken } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { ExerciseGradingService } from '../exercise-grading.service';
 import { Exercise } from '@/modules/educational/entities';
 import { ExerciseSubmission } from '../../../entities';
-import { createMockRepository, createMockEntityManager } from '@/__mocks__/repositories.mock';
+import { createMockRepository } from '@/__mocks__/repositories.mock';
 import { TestDataFactory } from '@/__mocks__/services.mock';
+
+/**
+ * Creates a mock EntityManager
+ */
+function createMockEntityManager(): jest.Mocked<EntityManager> {
+  return {
+    query: jest.fn(),
+    transaction: jest.fn(),
+  } as any;
+}
 
 describe('ExerciseGradingService', () => {
   let service: ExerciseGradingService;
   let exerciseRepo: ReturnType<typeof createMockRepository>;
   let submissionRepo: ReturnType<typeof createMockRepository>;
-  let entityManager: ReturnType<typeof createMockEntityManager>;
+  let entityManager: jest.Mocked<EntityManager>;
 
   // Test data
   const mockExercise = TestDataFactory.createExercise();
@@ -49,7 +59,7 @@ describe('ExerciseGradingService', () => {
         ExerciseGradingService,
         { provide: getRepositoryToken(Exercise, 'educational'), useValue: exerciseRepo },
         { provide: getRepositoryToken(ExerciseSubmission, 'progress'), useValue: submissionRepo },
-        { provide: 'progress_EntityManager', useValue: entityManager },
+        { provide: getEntityManagerToken('progress'), useValue: entityManager },
       ],
     }).compile();
 
@@ -182,8 +192,19 @@ describe('ExerciseGradingService', () => {
       feedback: 'Excellent work!',
     };
 
+    // Helper to create fresh submission copy for each test
+    const createFreshSubmission = () => ({
+      id: 'submission-123',
+      user_id: 'user-123',
+      exercise_id: mockExercise.id,
+      score: 0,
+      max_score: 100,
+      status: 'pending',
+      is_correct: false,
+    });
+
     beforeEach(() => {
-      submissionRepo.findOne.mockResolvedValue(mockSubmission as any);
+      submissionRepo.findOne.mockResolvedValue(createFreshSubmission() as any);
       submissionRepo.save.mockImplementation((data) => Promise.resolve(data as any));
     });
 

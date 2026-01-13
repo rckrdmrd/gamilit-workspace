@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { AdminRolesService } from '../services/admin-roles.service';
@@ -45,6 +45,22 @@ describe('AdminRolesService', () => {
     find: jest.fn(),
   };
 
+  const mockDataSource = {
+    query: jest.fn(),
+    createQueryRunner: jest.fn().mockReturnValue({
+      connect: jest.fn(),
+      startTransaction: jest.fn(),
+      commitTransaction: jest.fn(),
+      rollbackTransaction: jest.fn(),
+      release: jest.fn(),
+      manager: {
+        save: jest.fn(),
+        findOne: jest.fn(),
+        find: jest.fn(),
+      },
+    }),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -56,6 +72,10 @@ describe('AdminRolesService', () => {
         {
           provide: getRepositoryToken(UserRole, 'auth'),
           useValue: mockUserRoleRepository,
+        },
+        {
+          provide: getDataSourceToken('auth'),
+          useValue: mockDataSource,
         },
       ],
     }).compile();

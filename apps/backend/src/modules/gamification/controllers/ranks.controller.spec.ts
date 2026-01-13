@@ -63,6 +63,7 @@ describe('RanksController', () => {
 
   const mockRequest = {
     user: {
+      id: mockUserId, // Controller uses req.user.id
       sub: mockUserId,
       email: 'test@example.com',
     },

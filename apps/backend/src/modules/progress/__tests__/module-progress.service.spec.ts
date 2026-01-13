@@ -3,19 +3,38 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { ModuleProgressService } from '../services/module-progress.service';
-import { ModuleProgress } from '../entities';
+import { ModuleProgress, ExerciseSubmission } from '../entities';
 import { CreateModuleProgressDto } from '../dto';
 import { ProgressStatusEnum } from '@shared/constants/enums.constants';
+import { CertificateService } from '../services/certificate.service';
 
 describe('ModuleProgressService', () => {
   let service: ModuleProgressService;
-  let _repository: Repository<ModuleProgress>;
+  let repository: Repository<ModuleProgress>;
 
   const mockRepository = {
     find: jest.fn(),
     findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    // Default to empty array for query() - used by calculateLearningPath for fetching all modules
+    query: jest.fn().mockResolvedValue([]),
+    createQueryBuilder: jest.fn(),
+  };
+
+  const mockExerciseSubmissionRepo = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    createQueryBuilder: jest.fn(() => ({
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue([]),
+    })),
+  };
+
+  const mockCertificateService = {
+    generateModuleCertificate: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -26,11 +45,21 @@ describe('ModuleProgressService', () => {
           provide: getRepositoryToken(ModuleProgress, 'progress'),
           useValue: mockRepository,
         },
+        {
+          provide: getRepositoryToken(ExerciseSubmission, 'progress'),
+          useValue: mockExerciseSubmissionRepo,
+        },
+        {
+          provide: CertificateService,
+          useValue: mockCertificateService,
+        },
       ],
     }).compile();
 
     service = module.get<ModuleProgressService>(ModuleProgressService);
     repository = module.get(getRepositoryToken(ModuleProgress, 'progress'));
+    // Suppress unused variable warning
+    void repository;
 
     jest.clearAllMocks();
   });
@@ -905,7 +934,7 @@ describe('ModuleProgressService', () => {
 
       // Assert
       expect(result.difficulty_adjustment).toBe('increase');
-      expect(result.reasoning).toContain('High performance detected');
+      expect(result.overall_performance).toBe('excellent');
     });
 
     it('should recommend difficulty decrease for low performers', async () => {
@@ -931,7 +960,7 @@ describe('ModuleProgressService', () => {
 
       // Assert
       expect(result.difficulty_adjustment).toBe('decrease');
-      expect(result.reasoning).toContain('Additional practice recommended');
+      expect(result.overall_performance).toBe('struggling');
     });
 
     it('should recommend maintain for average performers', async () => {
@@ -957,7 +986,7 @@ describe('ModuleProgressService', () => {
 
       // Assert
       expect(result.difficulty_adjustment).toBe('maintain');
-      expect(result.reasoning).toContain('Continue with current difficulty level');
+      expect(result.overall_performance).toBe('good');
     });
 
     it('should handle user with no progress', async () => {

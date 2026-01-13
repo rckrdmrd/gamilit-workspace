@@ -3,7 +3,7 @@
 **Proyecto:** GAMILIT - Plataforma de Gamificacion Educativa
 **Sistema:** NEXUS v4.0 + SIMCO
 **Nivel:** STANDALONE (workspace autónomo bajo workspace-v2)
-**Última actualización:** 2026-01-07
+**Última actualización:** 2026-01-13
 
 ---
 
@@ -159,10 +159,10 @@ El sistema NEXUS v4.0 se integra con la carpeta docs/ del proyecto:
 
 | Inventario | Contenido | Path |
 |------------|-----------|------|
-| `MASTER_INVENTORY.yml` | Estado consolidado | `inventarios/` |
-| `DATABASE_INVENTORY.yml` | 16 schemas, 123 tablas | `inventarios/` |
-| `BACKEND_INVENTORY.yml` | Módulos, services, controllers | `inventarios/` |
-| `FRONTEND_INVENTORY.yml` | Componentes, páginas | `inventarios/` |
+| `MASTER_INVENTORY.yml` | Estado consolidado (v4.1.0) | `inventarios/` |
+| `DATABASE_INVENTORY.yml` | 16 schemas, 137 tablas, 110 funciones | `inventarios/` |
+| `BACKEND_INVENTORY.yml` | 17 modulos, 612 endpoints, 108 entities | `inventarios/` |
+| `FRONTEND_INVENTORY.yml` | 327 componentes, 74 paginas, 12 stores | `inventarios/` |
 
 ---
 
@@ -258,6 +258,6 @@ npm run test                   # Todos los tests
 
 ---
 
-**Actualizado:** 2026-01-07
+**Actualizado:** 2026-01-13
 **Sistema:** NEXUS v4.0 + SIMCO
-**Cambios:** Documentación de 10 carpetas de análisis especializados, actualización de métricas
+**Cambios:** Validación exhaustiva de documentación vs código real, corrección de métricas en todos los inventarios

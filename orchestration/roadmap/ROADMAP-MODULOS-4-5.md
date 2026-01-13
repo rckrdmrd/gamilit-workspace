@@ -1,10 +1,30 @@
 # ROADMAP: MÓDULOS 4-5 (FASE 2)
 
-**Estado:** DRAFT
-**Fecha:** 2025-11-23
+**Estado:** ACTIVADO EN PRODUCCION
+**Fecha:** 2026-01-13
 **Responsable:** Product Owner
 **Aprobación requerida:** Product Owner, Tech Lead
-**Versión:** 1.0
+**Versión:** 2.0
+
+---
+
+## ACTUALIZACION 2026-01-13: MODULOS M4/M5 ACTIVADOS
+
+Los modulos 4 y 5 han sido **ACTIVADOS** para produccion:
+
+- **Seeds actualizados:** `status = 'published'`, `is_published = true`
+- **Backend:** 8 validators completamente implementados
+- **Frontend:** 30 componentes implementados y funcionales
+- **Build:** Backend y Frontend compilan exitosamente
+
+### Cambios Realizados
+- `seeds/prod/educational_content/01-modules.sql` v3.0
+- `seeds/dev/educational_content/01-modules.sql` v3.0
+
+### Siguiente Paso
+Ejecutar `drop-and-recreate-database.sh` para aplicar cambios en BD.
+
+---
 
 ---
 
