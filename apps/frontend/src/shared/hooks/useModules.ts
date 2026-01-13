@@ -1,9 +1,13 @@
 /**
  * useModules Hook
  * Custom hook for fetching module and exercise data from the API
+ *
+ * FIX 2026-01-13: Usar educationalAPI en lugar de apiClient directo
+ * para respetar FEATURE_FLAGS.USE_MOCK_DATA
  */
 
 import { useState, useEffect } from 'react';
+import { getModule, getModuleExercises } from '@/services/api/educationalAPI';
 import { apiClient } from '@/services/api/apiClient';
 
 interface Module {
@@ -81,28 +85,21 @@ export function useModuleDetail(moduleId: string, userId?: string): UseModuleDet
       setError(null);
 
       try {
-        // Fetch module details using apiClient
-        const moduleResponse = await apiClient.get(`/educational/modules/${moduleId}`);
+        // FIX 2026-01-13: Usar educationalAPI para respetar FEATURE_FLAGS.USE_MOCK_DATA
+        // Esto permite usar mock data cuando VITE_USE_MOCK_DATA=true
+        console.log(`[useModuleDetail] Fetching module: ${moduleId}`);
+        const moduleData = await getModule(moduleId);
+        setModule(moduleData as Module);
 
-        // apiClient unwraps the response automatically
-        // Backend sends: { success: true, data: {...}, ... }
-        // apiClient extracts: {...}
-        setModule(moduleResponse.data);
-
-        // Fetch exercises for this specific module using the correct endpoint
+        // Fetch exercises for this specific module
         console.log(`[useModuleDetail] Fetching exercises for module: ${moduleId}`);
-        const exercisesResponse = await apiClient.get(`/educational/modules/${moduleId}/exercises`);
-
-        // apiClient unwraps the response automatically
-        // Backend sends: { success: true, data: [...], ... }
-        // apiClient extracts: [...]
-        const moduleExercises = exercisesResponse.data;
-        console.log(`[useModuleDetail] Exercises API response:`, exercisesResponse);
+        const moduleExercises = await getModuleExercises(moduleId);
         console.log(`[useModuleDetail] Module exercises:`, moduleExercises);
 
         // Sort by order_index (backend should already sort, but ensure order)
+        // Cast to local Exercise type for compatibility
         const sortedExercises = Array.isArray(moduleExercises)
-          ? moduleExercises.sort((a: Exercise, b: Exercise) => a.order_index - b.order_index)
+          ? (moduleExercises as unknown as Exercise[]).sort((a, b) => a.order_index - b.order_index)
           : [];
 
         console.log(

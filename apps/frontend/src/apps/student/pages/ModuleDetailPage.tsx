@@ -9,6 +9,7 @@ import { ColorfulCard } from '@shared/components/base/ColorfulCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { ProgressBar } from '@shared/components/base/ProgressBar';
 import {
+  AlertCircle,
   ArrowLeft,
   Target,
   Clock,
@@ -180,15 +181,34 @@ function ExerciseCardContent({ exercise, completed = false }: ExerciseCardConten
 }
 
 export default function ModuleDetailPage() {
-  const { moduleId } = useParams();
+  const { moduleId } = useParams<{ moduleId: string }>();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+
+  // FIX: CORR-002 - Validacion temprana de moduleId
+  if (!moduleId || moduleId === 'undefined' || moduleId.trim() === '') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 flex items-center justify-center">
+        <div className="text-center p-8 bg-white rounded-xl shadow-lg max-w-md">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">Modulo No Encontrado</h1>
+          <p className="text-gray-600 mb-4">El ID del modulo no es valido o no fue proporcionado.</p>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+          >
+            Volver al Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
   const { gamificationData } = useUserGamification(user?.id);
 
   // Fetch module, exercises, and progress from API
-  const { module, exercises, progress, loading, error } = useModuleDetail(moduleId || '', user?.id);
+  const { module, exercises, progress, loading, error } = useModuleDetail(moduleId, user?.id);
 
   const difficultyColors: Record<string, string> = {
     beginner: 'text-green-600',
