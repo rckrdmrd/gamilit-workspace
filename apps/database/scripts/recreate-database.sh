@@ -1,9 +1,17 @@
 #!/bin/bash
 ##############################################################################
-# GAMILIT Platform - Database Recreation Script
+# GAMILIT Platform - Database Recreation Script v1.1-TCP
 #
 # Propósito: ELIMINACIÓN COMPLETA y recreación (usuario + BD)
 #            ⚠️  DESTRUYE TODOS LOS DATOS ⚠️
+#
+# Versión: 1.1-TCP - Soporte conexión TCP para ambientes sin socket local
+#
+# Cambios v1.1-TCP (2026-01-13):
+#   - Soporte conexión TCP con gamilit_user (privilegio CREATEDB)
+#   - Carga password desde backend/.env automáticamente
+#   - drop_user() salta eliminación cuando conectado como gamilit_user
+#   - Compatibilidad con WSL2 y ambientes donde PostgreSQL solo tiene TCP
 #
 # Uso:
 #   ./recreate-database.sh                      # Modo interactivo
@@ -13,7 +21,7 @@
 #
 # Funcionalidades:
 #   1. ⚠️ Elimina completamente la BD gamilit_platform
-#   2. ⚠️ Elimina el usuario gamilit_user
+#   2. ⚠️ Elimina el usuario gamilit_user (excepto en modo TCP)
 #   3. Ejecuta init-database.sh para recrear todo
 #
 ##############################################################################
@@ -40,6 +48,9 @@ POSTGRES_USER="postgres"
 
 ENVIRONMENT=""
 FORCE_MODE=false
+USE_SUDO=false
+USE_GAMILIT_USER=false
+DB_PASSWORD=""
 
 # ============================================================================
 # FUNCIONES AUXILIARES
@@ -106,6 +117,9 @@ execute_as_postgres() {
     local sql="$1"
     if [ "$USE_SUDO" = true ]; then
         echo "$sql" | sudo -u postgres psql 2>&1
+    elif [ "$USE_GAMILIT_USER" = true ]; then
+        # Usar gamilit_user con CREATEDB privilege
+        PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d postgres -c "$sql" 2>&1
     else
         PGPASSWORD="$PGPASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$POSTGRES_USER" -c "$sql" 2>&1
     fi
@@ -115,6 +129,9 @@ query_as_postgres() {
     local sql="$1"
     if [ "$USE_SUDO" = true ]; then
         echo "$sql" | sudo -u postgres psql -t | xargs
+    elif [ "$USE_GAMILIT_USER" = true ]; then
+        # Usar gamilit_user con CREATEDB privilege
+        PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d postgres -t -c "$sql" 2>/dev/null | xargs
     else
         PGPASSWORD="$PGPASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$POSTGRES_USER" -t -c "$sql" | xargs
     fi
@@ -137,15 +154,47 @@ check_prerequisites() {
         exit 1
     fi
 
+    # Cargar configuración del ambiente
+    local config_file="$SCRIPT_DIR/config/${ENVIRONMENT}.conf"
+    if [ -f "$config_file" ]; then
+        source "$config_file"
+        print_info "Configuración cargada: $config_file"
+    fi
+
+    # Cargar DB_PASSWORD desde backend/.env si no está definido
+    local backend_env="$SCRIPT_DIR/../../backend/.env"
+    if [ -z "$DB_PASSWORD" ] && [ -f "$backend_env" ]; then
+        DB_PASSWORD=$(grep -E "^DB_PASSWORD=" "$backend_env" | cut -d'=' -f2- | tr -d '"' | tr -d "'")
+        if [ -n "$DB_PASSWORD" ]; then
+            print_info "Password cargado desde backend/.env"
+        fi
+    fi
+
+    # Usar ENV_DB_HOST/PORT si están definidos
+    [ -n "$ENV_DB_HOST" ] && DB_HOST="$ENV_DB_HOST"
+    [ -n "$ENV_DB_PORT" ] && DB_PORT="$ENV_DB_PORT"
+
     # Verificar conexión PostgreSQL
-    if sudo -n -u postgres psql -c "SELECT 1" &> /dev/null 2>&1; then
-        USE_SUDO=true
-        print_success "Conectado a PostgreSQL (sudo)"
+    # Prioridad 1: Conexión TCP con gamilit_user (tiene CREATEDB)
+    if [ -n "$DB_PASSWORD" ] && PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d postgres -c "SELECT 1" &> /dev/null 2>&1; then
+        USE_SUDO=false
+        USE_GAMILIT_USER=true
+        print_success "Conectado a PostgreSQL (TCP con $DB_USER)"
+    # Prioridad 2: Conexión TCP con postgres user
     elif [ -n "$PGPASSWORD" ] && psql -h "$DB_HOST" -p "$DB_PORT" -U "$POSTGRES_USER" -c "SELECT 1" &> /dev/null 2>&1; then
         USE_SUDO=false
-        print_success "Conectado a PostgreSQL (TCP)"
+        USE_GAMILIT_USER=false
+        print_success "Conectado a PostgreSQL (TCP con postgres)"
+    # Prioridad 3: sudo -u postgres (socket local)
+    elif sudo -n -u postgres psql -c "SELECT 1" &> /dev/null 2>&1; then
+        USE_SUDO=true
+        USE_GAMILIT_USER=false
+        print_success "Conectado a PostgreSQL (sudo)"
     else
         print_error "No se puede conectar a PostgreSQL"
+        print_info "Opciones:"
+        print_info "  1. Verificar que PostgreSQL está corriendo"
+        print_info "  2. Verificar archivo config/${ENVIRONMENT}.conf con DB_PASSWORD"
         exit 1
     fi
 }
@@ -183,6 +232,13 @@ drop_database() {
 
 drop_user() {
     print_step "PASO 2/3: Eliminando usuario..."
+
+    # Si usamos gamilit_user, no podemos eliminarnos a nosotros mismos
+    if [ "$USE_GAMILIT_USER" = true ]; then
+        print_info "Usando conexión TCP con $DB_USER - saltando eliminación de usuario"
+        print_info "El usuario será reutilizado (ya tiene CREATEDB)"
+        return
+    fi
 
     user_exists=$(query_as_postgres "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'")
 

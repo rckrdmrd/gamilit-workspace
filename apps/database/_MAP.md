@@ -1,8 +1,8 @@
 # _MAP: apps/database/
 
-**Ultima actualizacion:** 2026-01-08
+**Ultima actualizacion:** 2026-01-13
 **Estado:** Produccion
-**Version:** 1.0
+**Version:** 1.1
 **Proposito:** Base de datos PostgreSQL multi-schema para plataforma GAMILIT
 
 ---
@@ -73,12 +73,28 @@ apps/database/
 
 ### Gestion de Base de Datos
 
-| Script | Descripcion | Uso |
-|--------|-------------|-----|
-| `create-database.sh` | Crea BD completa desde DDL (16 fases) | `./create-database.sh` |
-| `init-database.sh` | Inicializa BD + usuario + seeds | `./scripts/init-database.sh --env dev` |
-| `recreate-database.sh` | Elimina y recrea BD | `./scripts/recreate-database.sh` |
-| `drop-and-recreate-database.sh` | Drop automatico + recreate | `./drop-and-recreate-database.sh` |
+| Script | Version | Descripcion | Uso |
+|--------|---------|-------------|-----|
+| `create-database.sh` | - | Crea BD completa desde DDL (16 fases) | `./create-database.sh` |
+| `init-database.sh` | **v3.10-TCP** | Inicializa BD + usuario + seeds | `./scripts/init-database.sh --env dev` |
+| `recreate-database.sh` | **v1.1-TCP** | Elimina y recrea BD | `./scripts/recreate-database.sh --env dev --force` |
+| `drop-and-recreate-database.sh` | - | Drop automatico + recreate | `./drop-and-recreate-database.sh` |
+
+#### Modos de Conexion (v3.10-TCP / v1.1-TCP)
+
+Los scripts soportan multiples modos de conexion:
+
+1. **TCP con gamilit_user** (Prioridad 1) - Usa CREATEDB privilege, ideal para WSL2
+2. **TCP con postgres** (Prioridad 2) - Requiere PGPASSWORD para postgres
+3. **sudo -u postgres** (Prioridad 3) - Socket local, requiere sudo
+
+```bash
+# Modo TCP automatico (lee password de backend/.env)
+./scripts/recreate-database.sh --env dev --force
+
+# Verificar modo de conexion
+# El script muestra: "Conectado a PostgreSQL (TCP con gamilit_user)"
+```
 
 ### Inventarios
 
@@ -147,16 +163,18 @@ El script `create-database.sh` ejecuta 16 fases en orden:
 
 ## Metricas
 
-| Metrica | Valor |
-|---------|-------|
-| Archivos DDL | 410 |
-| Schemas | 16 |
-| Tablas | ~280 |
-| Funciones | ~120 |
-| Triggers | ~61 |
-| Indices | ~100+ |
-| Seeds PROD | 34 archivos (100% validados, +2 CORR-009) |
-| Scripts operacionales | 23 |
+| Metrica | Valor | Verificado |
+|---------|-------|------------|
+| Archivos DDL | 410 | - |
+| Schemas | 16 | 2026-01-13 |
+| Tablas | 144 | 2026-01-13 |
+| Funciones | 219 | 2026-01-13 |
+| Triggers | 105 | 2026-01-13 |
+| RLS Policies | 214 | 2026-01-13 |
+| Indices | 852 | 2026-01-13 |
+| Seeds DEV | 40 archivos | 2026-01-13 |
+| Seeds PROD | 34 archivos | - |
+| Scripts operacionales | 23 | - |
 
 ---
 
@@ -197,5 +215,15 @@ export DATABASE_URL="postgresql://usuario:password@localhost:5432/gamilit"
 
 ---
 
-**Actualizado:** 2026-01-07
+## Cambios Recientes
+
+| Fecha | Cambio | Documento |
+|-------|--------|-----------|
+| 2026-01-13 | Scripts TCP (v3.10-TCP, v1.1-TCP) | `TAREA-CAPVED-SCRIPTS-TCP-2026-01-13.md` |
+| 2026-01-13 | Correcciones CORR-002,003,004 | `VALIDACION-CAPVED-2026-01-13.md` |
+| 2026-01-13 | BD recreada via scripts | Verificado |
+
+---
+
+**Actualizado:** 2026-01-13
 **Mantenido por:** Database Team

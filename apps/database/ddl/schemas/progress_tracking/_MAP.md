@@ -4,7 +4,7 @@ Seguimiento de progreso: avance de modulos, intentos, metricas de engagement.
 
 ## Estructura
 
-- **tables/**: 17 archivos
+- **tables/**: 19 archivos activos
 - **enums/**: 4 archivos (attempt_result, attempt_status, certificate_enums, progress_status)
 - **functions/**: 12 archivos
 - **triggers/**: 14 archivos activos (incluye 00-batch_updated_at_triggers.sql consolidado)
@@ -13,21 +13,31 @@ Seguimiento de progreso: avance de modulos, intentos, metricas de engagement.
 - **views/**: 2 archivos
 - **rls-policies/**: 2 archivos
 
-**Total:** 56 objetos DDL
+**Total:** ~58 objetos DDL activos
 
-## Tablas Principales
+## Tablas (19 archivos)
 
-| Tabla | Proposito |
-|-------|-----------|
-| `module_progress` | Progreso por modulo (% completado, score promedio) |
-| `learning_sessions` | Sesiones de aprendizaje |
-| `exercise_attempts` | Intentos de ejercicios autocorregibles |
-| `exercise_submissions` | Entregas para ejercicios con calificacion manual |
-| `manual_reviews` | Revisiones manuales por docentes (M3-M5) |
-| `scheduled_missions` | Misiones programadas |
-| `engagement_metrics` | Metricas de engagement |
-| `user_difficulty_progress` | Progreso en niveles CEFR |
-| `user_current_level` | Nivel actual y zona de desarrollo proximo |
+| # | Archivo | Tabla | Proposito |
+|---|---------|-------|-----------|
+| 01 | `01-module_progress.sql` | module_progress | Progreso por modulo (% completado, score promedio) |
+| 02 | `02-learning_sessions.sql` | learning_sessions | Sesiones de aprendizaje |
+| 03 | `03-exercise_attempts.sql` | exercise_attempts | Intentos de ejercicios autocorregibles |
+| 04 | `04-exercise_submissions.sql` | exercise_submissions | Entregas para ejercicios con calificacion manual |
+| 05 | `05-scheduled_missions.sql` | scheduled_missions | Misiones programadas |
+| 06 | `06-manual_reviews.sql` | manual_reviews | Revisiones manuales por docentes (M3-M5) |
+| 07 | `15-student_intervention_alerts.sql` | student_intervention_alerts | Alertas de intervencion para estudiantes |
+| 08 | `15-user_difficulty_progress.sql` | user_difficulty_progress | Progreso en niveles CEFR |
+| 09 | `16-user_current_level.sql` | user_current_level | Nivel actual y zona de desarrollo proximo |
+| 10 | `17-teacher_interventions.sql` | teacher_interventions | Intervenciones de profesores |
+| 11 | `18-certificates.sql` | certificates | Certificados de completitud |
+| 12 | `engagement_metrics.sql` | engagement_metrics | Metricas de engagement |
+| 13 | `learning_paths.sql` | learning_paths | Rutas de aprendizaje |
+| 14 | `mastery_tracking.sql` | mastery_tracking | Seguimiento de dominio |
+| 15 | `module_completion_tracking.sql` | module_completion_tracking | Tracking de completitud de modulos |
+| 16 | `progress_snapshots.sql` | progress_snapshots | Snapshots de progreso |
+| 17 | `skill_assessments.sql` | skill_assessments | Evaluaciones de habilidades |
+| 18 | `teacher_notes.sql` | teacher_notes | Notas de profesores |
+| 19 | `user_learning_paths.sql` | user_learning_paths | Rutas de aprendizaje por usuario |
 
 ## Sistema de Progresion CEFR
 
@@ -88,7 +98,8 @@ ENUMs migrados desde `00-prerequisites.sql` a archivos individuales en `enums/`:
 
 ---
 
-**Ultima actualizacion:** 2026-01-07
+**Ultima actualizacion:** 2026-01-13
 **Cambios recientes:**
+- AUDITORIA: Inventario de tablas actualizado de 17 a 19 (2026-01-13)
 - CONSOLIDACION BD: Triggers updated_at consolidados (2026-01-07)
 - CONSOLIDACION BD: ENUMs migrados a archivos individuales (2026-01-07)
