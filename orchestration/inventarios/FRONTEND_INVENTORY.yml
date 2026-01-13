@@ -1,12 +1,12 @@
 # FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 4.1.0
+version: 4.2.0
 generated: 2025-11-08
 updated: 2026-01-13
-source: Inventario Real del Frontend Implementado + Auditoria Documentacion vs Desarrollo 2025-12-23/26 + Validacion 2026-01-13
-status: Actualizado con auditoria completa de componentes, hooks y mecanicas
-last_analysis: 2026-01-13 - Validacion exhaustiva de documentacion - metricas reales verificadas
+source: Inventario Real del Frontend Implementado + Auditoria Documentacion vs Desarrollo 2025-12-23/26 + Validacion 2026-01-13 + CAPVED Testing
+status: Actualizado con auditoria completa de componentes, hooks, mecanicas y APIs
+last_analysis: 2026-01-13 - Validacion exhaustiva + 7 APIs creadas + 175 tests agregados
 structure_audit_2026_01_10: |
   Auditoría de estructura de archivos:
   - Total archivos .tsx: 501
@@ -28,10 +28,35 @@ summary:
   total_features: 10
   total_pages: 74  # ✅ ACTUALIZADO 2026-01-13 - conteo real (Student 26 + Teacher 15 + Admin 30 + Auth 3)
   total_stores: 12  # ✅ ACTUALIZADO 2026-01-13 - ver stores_detail en MASTER_INVENTORY
-  total_api_services: 52  # ✅ ACTUALIZADO 2026-01-13 - auditoria exhaustiva services/api/
+  total_api_services: 59  # ✅ ACTUALIZADO 2026-01-13 - +7 APIs nuevas (52 → 59)
   total_mechanics: 33  # ✅ ACTUALIZADO 2026-01-13 - 23 oficiales + 5 M4 + 3 M5 + 2 auxiliares
   total_routes: 18  # ✅ ACTUALIZADO 2026-01-13 - verificado con rutas implementadas
   lines_of_code: ~100000  # ✅ ACTUALIZADO 2025-12-26
+  total_tests: 175  # ✅ AGREGADO 2026-01-13 - tests nuevos creados (105 FE + 70 BE)
+
+  changes_from_v4_1:
+    apis_created: 7  # exerciseAttemptsAPI, learningSessionsAPI, authSessionsAPI, notificationPreferencesAPI, adminGamificationAPI, achievementsAPI, missionsAPI
+    components_modified: 1  # ExerciseHistory.tsx (conectado con API real)
+    tests_created: 6  # exerciseAttemptsAPI.test.ts, authSessionsAPI.test.ts, notificationPreferencesAPI.test.ts, adminGamificationAPI.test.ts, learningSessionsAPI.test.ts, ExerciseHistory.test.tsx
+    total_tests_fe: 105
+    epic: "GAPS-2026-01-13"
+    note: "Cierre de brechas BD-Backend-Frontend: APIs conectadas + Tests completos"
+    files_created:
+      - apps/frontend/src/services/api/exerciseAttemptsAPI.ts
+      - apps/frontend/src/services/api/learningSessionsAPI.ts
+      - apps/frontend/src/services/api/authSessionsAPI.ts
+      - apps/frontend/src/services/api/notificationPreferencesAPI.ts
+      - apps/frontend/src/services/api/adminGamificationAPI.ts
+      - apps/frontend/src/services/api/achievementsAPI.ts
+      - apps/frontend/src/services/api/missionsAPI.ts
+      - apps/frontend/src/services/api/__tests__/exerciseAttemptsAPI.test.ts
+      - apps/frontend/src/services/api/__tests__/authSessionsAPI.test.ts
+      - apps/frontend/src/services/api/__tests__/notificationPreferencesAPI.test.ts
+      - apps/frontend/src/services/api/__tests__/adminGamificationAPI.test.ts
+      - apps/frontend/src/services/api/__tests__/learningSessionsAPI.test.ts
+      - apps/frontend/src/components/feedback/__tests__/ExerciseHistory.test.tsx
+    files_modified:
+      - apps/frontend/src/components/feedback/ExerciseHistory.tsx
 
   changes_from_v3_0:
     mechanics_implemented: 8  # 5 M4 + 3 M5

@@ -125,4 +125,76 @@ export const missionsAPI = {
       throw handleAPIError(error);
     }
   },
+
+  /**
+   * Get current user's mission statistics
+   * Uses /me endpoint to extract userId from JWT token
+   */
+  getMyMissionStats: async () => {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.gamification.missions.statsMe);
+      return response.data.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
+  },
+
+  /**
+   * Start a mission
+   *
+   * @description Marks a mission as 'in_progress'.
+   * Only missions with status 'active' can be started.
+   *
+   * @param missionId - Mission UUID
+   * @returns Updated mission with status 'in_progress'
+   *
+   * @endpoint POST /api/v1/gamification/missions/:id/start
+   */
+  startMission: async (missionId: string): Promise<Mission> => {
+    try {
+      const response = await apiClient.post(API_ENDPOINTS.gamification.missions.start(missionId));
+      return response.data.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
+  },
+
+  /**
+   * Update mission progress
+   *
+   * @description Increments progress of a specific objective within a mission.
+   * Recalculates overall mission progress (0-100%).
+   * If all objectives are completed, marks the mission as 'completed'.
+   *
+   * Supported objective types:
+   * - complete_exercises: Exercises completed
+   * - correct_streak: Correct answer streak
+   * - study_time: Study time in minutes
+   * - consecutive_days: Consecutive login days
+   *
+   * @param missionId - Mission UUID
+   * @param objectiveType - Type of objective to update
+   * @param increment - Amount to increment (default: 1)
+   * @returns Updated mission with new progress
+   *
+   * @endpoint PATCH /api/v1/gamification/missions/:id/progress
+   */
+  updateProgress: async (
+    missionId: string,
+    objectiveType: string,
+    increment: number = 1,
+  ): Promise<Mission> => {
+    try {
+      const response = await apiClient.patch(
+        API_ENDPOINTS.gamification.missions.progress(missionId),
+        {
+          objective_type: objectiveType,
+          increment,
+        },
+      );
+      return response.data.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
+  },
 };

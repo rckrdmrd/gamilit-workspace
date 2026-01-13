@@ -4,6 +4,7 @@
  * ISSUE: #5.1 (P0) - Exercise History & Feedback
  * FECHA: 2025-11-04
  * SPRINT: Sprint 3
+ * UPDATED: 2026-01-13 - Conectado con exerciseAttemptsAPI (eliminado mock data)
  *
  * Muestra el historial de intentos de un ejercicio
  *
@@ -28,6 +29,10 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+import {
+  exerciseAttemptsAPI,
+  type ExerciseAttempt,
+} from '@/services/api/exerciseAttemptsAPI';
 
 interface ExerciseHistoryProps {
   exerciseId: string;
@@ -63,66 +68,52 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
   const [filter, setFilter] = useState<'all' | 'correct' | 'incorrect'>('all');
   const [expandedAttempts, setExpandedAttempts] = useState<Set<string>>(new Set());
 
-  // Fetch attempts
+  /**
+   * Map API response to component's AttemptWithDetails format
+   */
+  const mapAttemptToDetails = (
+    attempt: ExerciseAttempt,
+    index: number,
+    total: number,
+  ): AttemptWithDetails => ({
+    id: attempt.id,
+    user_id: attempt.user_id,
+    exercise_id: attempt.exercise_id,
+    attempt_number: total - index, // Reverse order (most recent = highest number)
+    answer: JSON.stringify(attempt.answers || {}),
+    is_correct: attempt.is_correct ?? false,
+    xp_earned: attempt.xp_earned ?? 0,
+    ml_coins_earned: attempt.ml_coins_earned ?? 0,
+    time_spent_seconds: attempt.time_spent ?? 0,
+    submitted_at: new Date(attempt.completed_at || attempt.created_at),
+    answer_given: attempt.answers
+      ? Object.values(attempt.answers).map(String)
+      : undefined,
+    correct_answer: attempt.feedback ? [attempt.feedback] : undefined,
+    score_percentage: attempt.percentage ?? (attempt.is_correct ? 100 : 0),
+  });
+
+  // Fetch attempts from API
   useEffect(() => {
     const fetchAttempts = async () => {
       try {
         setIsLoading(true);
-        // TODO: Replace with actual API call
-        // const data = await progressApi.getExerciseAttempts(userId, exerciseId);
 
-        // Mock data for demonstration
-        const mockAttempts: AttemptWithDetails[] = [
-          {
-            id: '1',
-            user_id: userId,
-            exercise_id: exerciseId,
-            attempt_number: 3,
-            answer: 'option-c',
-            is_correct: true,
-            score_percentage: 100,
-            xp_earned: 50,
-            ml_coins_earned: 10,
-            time_spent_seconds: 45,
-            submitted_at: new Date('2025-11-04T10:30:00'),
-            answer_given: 'C',
-            correct_answer: 'C',
-          },
-          {
-            id: '2',
-            user_id: userId,
-            exercise_id: exerciseId,
-            attempt_number: 2,
-            answer: 'option-b',
-            is_correct: false,
-            score_percentage: 0,
-            xp_earned: 0,
-            ml_coins_earned: 0,
-            time_spent_seconds: 30,
-            submitted_at: new Date('2025-11-04T10:25:00'),
-            answer_given: 'B',
-            correct_answer: 'C',
-          },
-          {
-            id: '3',
-            user_id: userId,
-            exercise_id: exerciseId,
-            attempt_number: 1,
-            answer: 'option-a',
-            is_correct: false,
-            score_percentage: 0,
-            xp_earned: 0,
-            ml_coins_earned: 0,
-            time_spent_seconds: 60,
-            submitted_at: new Date('2025-11-04T10:20:00'),
-            answer_given: 'A',
-            correct_answer: 'C',
-          },
-        ];
+        // Fetch attempts from real API
+        const data = await exerciseAttemptsAPI.getUserAttempts(userId, {
+          exercise_id: exerciseId,
+        });
 
-        setAttempts(mockAttempts);
+        // Map API response to component format
+        const mappedAttempts = data
+          .filter((a) => a.status === 'completed')
+          .map((attempt, index, arr) => mapAttemptToDetails(attempt, index, arr.length));
+
+        setAttempts(mappedAttempts);
       } catch (error) {
         console.error('Failed to fetch attempts:', error);
+        // Set empty array on error (graceful degradation)
+        setAttempts([]);
       } finally {
         setIsLoading(false);
       }

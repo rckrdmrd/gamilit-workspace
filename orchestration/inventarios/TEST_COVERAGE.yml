@@ -1,26 +1,51 @@
 # TEST COVERAGE - GAMILIT
 # Cobertura de tests por módulo y capa
-# Versión: 1.0.0
-# Fecha: 2025-11-23
-# Fuente: Consolidado desde orchestration_old/
+# Versión: 2.0.0
+# Fecha: 2026-01-13
+# Fuente: Consolidado desde orchestration_old/ + CAPVED Testing Session
 
-version: "1.0.0"
+version: "2.0.0"
 proyecto: "GAMILIT - Sistema de Gamificación Educativa"
-fecha_actualizacion: "2025-11-23"
-fuente: "Estados consolidados desde orchestration_bckp/"
+fecha_actualizacion: "2026-01-13"
+fuente: "Estados consolidados + CAPVED Testing Session 2026-01-13"
 
 # ========================================
 # RESUMEN GENERAL
 # ========================================
 
 resumen:
-  coverage_global: "15%"
-  tests_totales: 50
-  tests_passing: 45
-  tests_failing: 5
+  coverage_global: "~25%"  # Actualizado 2026-01-13
+  tests_totales: 225  # 50 previos + 175 nuevos
+  tests_passing: 220  # 45 previos + 175 nuevos
+  tests_failing: 5  # Sin cambios (tests preexistentes)
   tests_skipped: 0
   objetivo_mvp: "70%"
   objetivo_produccion: "90%"
+
+# ========================================
+# CAMBIOS 2026-01-13 (CAPVED Testing)
+# ========================================
+
+cambios_2026_01_13:
+  descripcion: "Sesión CAPVED Testing - Cierre de brechas"
+  tests_agregados: 175
+  distribucion:
+    frontend_api_tests: 88  # exerciseAttemptsAPI(17) + authSessionsAPI(14) + notificationPreferencesAPI(17) + adminGamificationAPI(12) + learningSessionsAPI(28)
+    frontend_component_tests: 17  # ExerciseHistory.test.tsx
+    backend_entity_tests: 70  # user-activity-log(14) + pending-user-initialization(14) + content-version(15) + flagged-content(17) + user-follow(10)
+  archivos_creados:
+    - "src/services/api/__tests__/exerciseAttemptsAPI.test.ts"
+    - "src/services/api/__tests__/authSessionsAPI.test.ts"
+    - "src/services/api/__tests__/notificationPreferencesAPI.test.ts"
+    - "src/services/api/__tests__/adminGamificationAPI.test.ts"
+    - "src/services/api/__tests__/learningSessionsAPI.test.ts"
+    - "src/components/feedback/__tests__/ExerciseHistory.test.tsx"
+    - "src/modules/audit/entities/__tests__/user-activity-log.entity.spec.ts"
+    - "src/modules/audit/entities/__tests__/pending-user-initialization.entity.spec.ts"
+    - "src/modules/content/entities/__tests__/content-version.entity.spec.ts"
+    - "src/modules/content/entities/__tests__/flagged-content.entity.spec.ts"
+    - "src/modules/social/entities/__tests__/user-follow.entity.spec.ts"
+  estado: "✅ Todos los tests nuevos pasan"
 
 # ========================================
 # DATABASE - Tests

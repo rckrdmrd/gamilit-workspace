@@ -107,6 +107,7 @@ export const API_ENDPOINTS = {
       daily: '/gamification/missions/daily',
       weekly: '/gamification/missions/weekly',
       special: '/gamification/missions/special',
+      start: (missionId: string) => `/gamification/missions/${missionId}/start`,
       claim: (missionId: string) => `/gamification/missions/${missionId}/claim`,
       progress: (missionId: string) => `/gamification/missions/${missionId}/progress`,
       stats: (userId: string) => `/gamification/missions/stats/${userId}`,

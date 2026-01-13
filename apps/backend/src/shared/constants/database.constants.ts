@@ -193,6 +193,7 @@ export const DB_TABLES = {
     PERFORMANCE_METRICS: 'performance_metrics', // ✨ NUEVO - P2
     SYSTEM_ALERTS: 'system_alerts', // ✨ NUEVO - P2
     ACTIVITY_LOG: 'activity_log', // ✨ Admin Dashboard activity tracking
+    PENDING_USER_INITIALIZATION: 'pending_user_initialization', // ✨ NUEVO - GAP-004 (2026-01-13)
     // USER_ACTIVITY: ELIMINADO 2026-01-07 - Migrado completamente a ACTIVITY_LOG
   },
 

@@ -4,15 +4,15 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.2.0"
+  version: "3.3.0"
   generated_date: "2025-11-11"
   last_updated: "2026-01-13"
-  generated_by: "Meta-Orquestador SIMCO - Validacion exhaustiva documentacion"
+  generated_by: "Meta-Orquestador SIMCO - Validacion exhaustiva documentacion + CAPVED Testing"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
   total_modules: 17  # Verificado 2026-01-13 (admin, assignments, audit, auth, content, educational, gamification, health, mail, notifications, profile, progress, social, tasks, teacher, websocket + 1 nuevo)
-  total_entities: 108  # Verificado 2026-01-13
+  total_entities: 113  # Actualizado 2026-01-13 (+5 entities: user-activity-log, pending-user-initialization, content-version, flagged-content, user-follow)
   total_dtos: 337
   total_services: 105  # Verificado 2026-01-13
   total_controllers: 75
