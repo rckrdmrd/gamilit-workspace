@@ -1,0 +1,78 @@
+sprint:
+  numero: 2
+  nombre: "Sprint 2 - Estabilizacion y Tests"
+  inicio: "2026-01-11"
+  fin: "2026-01-25"
+  objetivo: "Estabilizar tests, mejorar coverage, validar M4/M5"
+  estado: "PLANIFICADO"
+
+metricas:
+  velocidad_estimada: 21
+  velocidad_real: 0
+  completado: 0%
+
+tareas:
+  - id: TASK-S2-001
+    titulo: "Corregir tests fallidos en backend"
+    descripcion: "Resolver 500+ tests fallando por memory/mocking issues"
+    estado: "Pendiente"
+    sp: 8
+    prioridad: P0
+    criterios:
+      - Todos los tests pasan
+      - Sin memory leaks en Jest
+      - CI/CD verde
+
+  - id: TASK-S2-002
+    titulo: "Agregar tests E2E para M4/M5"
+    descripcion: "Tests end-to-end para 8 ejercicios nuevos"
+    estado: "Pendiente"
+    sp: 5
+    prioridad: P1
+    criterios:
+      - 1 test E2E por ejercicio M4 (5 tests)
+      - 1 test E2E por ejercicio M5 (3 tests)
+      - Happy path cubierto
+
+  - id: TASK-S2-003
+    titulo: "Validacion pedagogica M4/M5"
+    descripcion: "Probar ejercicios con usuarios reales"
+    estado: "Pendiente"
+    sp: 3
+    prioridad: P1
+    dependencias:
+      - Requiere usuarios de prueba
+      - Requiere ambiente staging
+    criterios:
+      - 5+ usuarios completan M4
+      - 3+ usuarios completan M5
+      - Feedback documentado
+
+  - id: TASK-S2-004
+    titulo: "Incrementar test coverage a 50%"
+    descripcion: "Subir coverage de 13% a 50% (meta intermedia)"
+    estado: "Pendiente"
+    sp: 5
+    prioridad: P2
+    criterios:
+      - Backend coverage >= 50%
+      - Modulos criticos >= 70%
+
+estado_actual:
+  tests_backend: 48 archivos
+  tests_frontend: 22 archivos
+  tests_total: 1156
+  tests_pasando: 661 (57.2%)
+  tests_fallando: 495 (42.8%)
+  coverage_estimado: 13%
+
+progreso_2026_01_10:
+  - health.service.spec.ts: 2 tests corregidos (totalChecked, contentDataSource)
+  - ranks.service.spec.ts: 2 tests corregidos (default rank, xp_min)
+  - ranks.controller.spec.ts: 1 test corregido (mockRequest.user.id)
+  - total_corregidos: 5 tests
+
+notas:
+  - MVP 100% completado, foco en estabilidad
+  - Memory issues en Jest requieren investigacion
+  - M4/M5 implementados pero sin tests E2E
