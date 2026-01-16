@@ -7,13 +7,16 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { ExerciseAttemptService } from '../services';
 import {
   CreateExerciseAttemptDto,
@@ -28,9 +31,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * Endpoints para tracking de intentos, scores y uso de comodines.
  *
  * @route /api/v1/progress/attempts
+ * @security JWT Bearer token required
  */
 @ApiTags('Progress - Exercise Attempts')
 @Controller(extractBasePath(API_ROUTES.PROGRESS.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class ExerciseAttemptController {
   constructor(private readonly attemptService: ExerciseAttemptService) {}
 

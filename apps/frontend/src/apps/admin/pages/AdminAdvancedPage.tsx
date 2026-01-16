@@ -1,6 +1,7 @@
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
-import { UnderConstruction, FeatureBadge } from '@shared/components/common';
+import { FeatureBadge } from '@shared/components/common';
+import { UnderConstruction } from '@/shared/components/UnderConstruction';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { Zap, Beaker, Users, Wrench } from 'lucide-react';

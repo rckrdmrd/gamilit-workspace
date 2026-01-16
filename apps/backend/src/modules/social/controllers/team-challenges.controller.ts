@@ -7,6 +7,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,6 +15,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { TeamChallengesService } from '../services';
 import {
@@ -21,6 +23,7 @@ import {
   TeamChallengeResponseDto,
 } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 
 /**
  * TeamChallengesController
@@ -30,9 +33,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * puntuaciones, completar/fallar desafíos, y leaderboards.
  *
  * @route /api/v1/social
+ * @security JWT Bearer token required
  */
 @ApiTags('Social - Team Challenges')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class TeamChallengesController {
   constructor(
     private readonly teamChallengesService: TeamChallengesService,

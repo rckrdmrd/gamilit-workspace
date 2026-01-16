@@ -1,0 +1,337 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ÍNDICE DE TAREAS - GAMILIT
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Sistema: NEXUS v4.0 + Gobernanza de Documentación
+# Proyecto: GAMILIT
+# Propósito: Registro central de todas las tareas ejecutadas
+#
+# Nomenclatura: TAREA-{NNN}-{NOMBRE} (sistema existente preservado)
+# Mapeo CAPVED: Ver _templates/MAPEO-FASES.md
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+created: "2026-01-16"
+updated: "2026-01-16"
+maintained_by: "META-ORQUESTADOR"
+sistema: "NEXUS v4.0 + Gobernanza"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADÍSTICAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estadisticas:
+  total_tareas: 9
+  completadas: 8
+  en_progreso: 1
+  pendientes: 0
+  por_dominio:
+    auth: 1
+    educational: 1
+    gamification: 1
+    progress: 1
+    social: 1
+    audit: 1
+    shared: 1
+    gobernanza: 1
+    consolidacion: 1
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOMENCLATURA DE TAREAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+nomenclatura:
+  # Sistema existente (preservado)
+  patron_existente: "TAREA-{NNN}-{NOMBRE}"
+  ejemplo_existente: "TAREA-001-AUTH"
+
+  # Sistema nuevo (para nuevas tareas)
+  patron_nuevo: "TAREA-{YYYY-MM-DD}-{NNN}-{NOMBRE}"
+  ejemplo_nuevo: "TAREA-2026-01-16-001-GOBERNANZA"
+
+  # Mapeo de fases: F1-F7 ↔ CAPVED
+  mapeo_fases_archivo: "_templates/MAPEO-FASES.md"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TAREAS EXISTENTES (Indexación Retrospectiva)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+tareas_existentes:
+  - id: "TAREA-001-AUTH"
+    titulo: "Auditoría AUTH_MANAGEMENT"
+    dominio: "auth"
+    tipo: "analysis"
+    agente: "@PERFIL_ORQUESTADOR"
+    fases_completadas: ["F1", "F2", "F3", "F4", "F5", "F6", "F7"]
+    estado: "completada"
+    fecha: "2026-01-10"
+    ruta: "TAREA-001-AUTH/"
+    metricas:
+      tablas_ddl: 8
+      entities: 6
+      alineacion: "100%"
+      correcciones: 0
+
+  - id: "TAREA-002-EDUCATIONAL"
+    titulo: "Auditoría EDUCATIONAL_CONTENT"
+    dominio: "educational"
+    tipo: "analysis"
+    agente: "@PERFIL_ORQUESTADOR"
+    fases_completadas: ["F1", "F2", "F3", "F4", "F5", "F6", "F7"]
+    estado: "completada"
+    fecha: "2026-01-10"
+    ruta: "TAREA-002-EDUCATIONAL/"
+    metricas:
+      tablas_ddl: 14
+      entities: 12
+      alineacion: "100%"
+      correcciones: "Documentación"
+
+  - id: "TAREA-003-GAMIFICATION"
+    titulo: "Auditoría GAMIFICATION_SYSTEM"
+    dominio: "gamification"
+    tipo: "analysis"
+    agente: "@PERFIL_ORQUESTADOR"
+    fases_completadas: ["F1", "F2", "F7"]
+    estado: "completada"
+    fecha: "2026-01-10"
+    ruta: "TAREA-003-GAMIFICATION/"
+    metricas:
+      tablas_ddl: 12
+      entities: 10
+      enums: 8
+      alineacion: "100% post-fix"
+      correcciones: 1
+    fix: "MayaRank XP frontend actualizado a v2.0"
+
+  - id: "TAREA-004-PROGRESS"
+    titulo: "Auditoría PROGRESS_TRACKING"
+    dominio: "progress"
+    tipo: "analysis"
+    agente: "@PERFIL_ORQUESTADOR"
+    fases_completadas: ["F1", "F2", "F7"]
+    estado: "completada"
+    fecha: "2026-01-10"
+    ruta: "TAREA-004-PROGRESS/"
+    metricas:
+      tablas_ddl: 19
+      entities: 15
+      alineacion: "100% post-fix"
+      correcciones: 1
+    fix: "MayaRank XP backend actualizado a v2.0"
+
+  - id: "TAREA-005-SOCIAL"
+    titulo: "Auditoría SOCIAL_FEATURES"
+    dominio: "social"
+    tipo: "analysis"
+    agente: "@PERFIL_ORQUESTADOR"
+    fases_completadas: ["F1", "F2"]
+    estado: "completada"
+    fecha: "2026-01-10"
+    ruta: "TAREA-005-SOCIAL/"
+    metricas:
+      tablas_ddl: 18
+      entities: 16
+      enums_validados: 5
+      alineacion: "100%"
+      correcciones: 0
+    nota: "Ya consolidado 2026-01-07"
+
+  - id: "TAREA-006-AUDIT"
+    titulo: "Auditoría AUDIT_LOGGING"
+    dominio: "audit"
+    tipo: "analysis"
+    agente: "@PERFIL_ORQUESTADOR"
+    fases_completadas: ["F1", "F2"]
+    estado: "completada"
+    fecha: "2026-01-10"
+    ruta: "TAREA-006-AUDIT/"
+    metricas:
+      tablas_ddl: 7
+      entities: 5
+      funciones: 6
+      alineacion: "100%"
+      enums_huerfanos: 2
+    nota: "ENUMs alert_severity y alert_status movidos a _deprecated/"
+
+  - id: "TAREA-007-SHARED"
+    titulo: "Auditoría SHARED SCHEMAS (gamilit + content_management)"
+    dominio: "shared"
+    tipo: "analysis"
+    agente: "@PERFIL_ORQUESTADOR"
+    fases_completadas: ["F1"]
+    estado: "completada"
+    fecha: "2026-01-10"
+    ruta: "TAREA-007-SHARED/"
+    metricas:
+      funciones_gamilit: 29
+      tablas_content_management: 10
+      enums_content_management: 4
+    nota: "gamilit es utility schema sin tablas"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TAREAS ACTIVAS (Nuevas con nomenclatura extendida)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+tareas_activas:
+  - id: "TAREA-2026-01-16-001-GOBERNANZA"
+    titulo: "Integración Sistema de Gobernanza de Documentación"
+    tipo: "documentation"
+    agente: "META-ORQUESTADOR"
+    estado: "en_progreso"
+    fase: "F6"
+    dominio: "docs"
+    fecha_inicio: "2026-01-16"
+    descripcion: |
+      Integración del sistema de gobernanza de documentación de workspace-v2
+      en el proyecto GAMILIT, preservando sistema NEXUS v4.0 existente.
+    archivos_creados:
+      - "analisis/tareas/_INDEX.yml"
+      - "analisis/tareas/_templates/METADATA-TEMPLATE.yml"
+      - "analisis/tareas/_templates/MAPEO-FASES.md"
+      - "trazas/_INDEX.yml"
+      - "trazas/TRAZA-AGENTE-TEMPLATE.md"
+      - "MAPA-DOCUMENTACION-GAMILIT.yml"
+      - "referencias/ALIASES-GOBERNANZA.yml"
+    informes:
+      - "analisis/INFORME-GAP-INTEGRACION-GOBERNANZA-2026-01-16.md"
+      - "reportes/INFORME-INTEGRACION-GOBERNANZA-2026-01-16.md"
+
+# Tarea completada en sesión anterior
+tareas_completadas_2026_01_16:
+  - id: "TAREA-2026-01-16-CONSOLIDACION"
+    titulo: "Consolidación y Validación de Duplicados"
+    tipo: "refactor"
+    agente: "NEXUS-INTEGRATION"
+    estado: "completada"
+    fecha: "2026-01-16"
+    sesiones: 3
+    descripcion: |
+      Reconciliación de inventarios, consolidación de duplicados (P0, P1, P2),
+      y validación independiente del proyecto GAMILIT.
+    resultados:
+      p0: "FK corregido en mission_templates.sql"
+      p1: "Notification entity, AchievementCard, UnderConstruction resueltos"
+      p2: "Gaps documentados EAI-002, EAI-004, DTOs clarificados"
+      extra: "UserStats SSOT establecido"
+      validacion: "32/34 aprobadas"
+    informes:
+      - "reportes/INFORME-CONTINUIDAD-AGENTE-2026-01-16.md"
+      - "reportes/INFORME-CONTINUIDAD-AGENTE-2026-01-16-SESSION-2.md"
+      - "reportes/CHECKLIST-VALIDACION-2026-01-16.md"
+      - "reportes/INFORME-VALIDACION-INDEPENDIENTE-2026-01-16.md"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# HISTORIAL DE SESIONES (2026-01-16)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+historial_sesiones:
+  "2026-01-16":
+    sesion_1:
+      descripcion: "Reconciliación de inventarios"
+      tareas: 12
+      agente: "NEXUS-INTEGRATION"
+      resultado: "Backlog P0, P1, P2 identificado"
+
+    sesion_2:
+      descripcion: "Consolidación de duplicados"
+      tareas: 8
+      agente: "NEXUS-INTEGRATION"
+      resultado: "Todos resueltos, builds passing"
+
+    sesion_3:
+      descripcion: "Validación independiente"
+      tareas: 1
+      agente: "NEXUS-VALIDATION"
+      resultado: "32/34 validaciones aprobadas"
+
+    sesion_4:
+      descripcion: "Integración de Gobernanza"
+      tareas: 1
+      agente: "META-ORQUESTADOR"
+      resultado: "En progreso"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ÍNDICE POR DOMINIO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+por_dominio:
+  auth:
+    - "TAREA-001-AUTH"
+  educational:
+    - "TAREA-002-EDUCATIONAL"
+  gamification:
+    - "TAREA-003-GAMIFICATION"
+  progress:
+    - "TAREA-004-PROGRESS"
+  social:
+    - "TAREA-005-SOCIAL"
+  audit:
+    - "TAREA-006-AUDIT"
+  shared:
+    - "TAREA-007-SHARED"
+  backend: []
+  frontend: []
+  database: []
+  devops: []
+  docs: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ÍNDICE POR TIPO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+por_tipo:
+  analysis:
+    - "TAREA-001-AUTH"
+    - "TAREA-002-EDUCATIONAL"
+    - "TAREA-003-GAMIFICATION"
+    - "TAREA-004-PROGRESS"
+    - "TAREA-005-SOCIAL"
+    - "TAREA-006-AUDIT"
+    - "TAREA-007-SHARED"
+  feature: []
+  bugfix: []
+  refactor: []
+  documentation: []
+  migration: []
+  security: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESUMEN EJECUTIVO DE TAREAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+resumen_ejecutivo:
+  archivo: "RESUMEN-EJECUTIVO-TAREAS-2026-01-10.md"
+  contenido: |
+    Resumen de análisis de 7 dominios del backend GAMILIT.
+    Total de correcciones identificadas: ~40
+    Estado: Mayoría documentados, algunos ejecutados.
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# INSTRUCCIONES DE USO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+instrucciones:
+  crear_tarea_nueva: |
+    1. Generar ID: TAREA-{YYYY-MM-DD}-{NNN}-{NOMBRE}
+    2. Crear carpeta en orchestration/analisis/tareas/
+    3. Copiar template de _templates/METADATA-TEMPLATE.yml
+    4. Completar METADATA.yml con información de la tarea
+    5. Crear archivos de fase según necesidad (F1-F7)
+    6. Actualizar este índice (_INDEX.yml)
+
+  usar_tarea_existente: |
+    1. Consultar tareas existentes por dominio/tipo
+    2. Navegar a carpeta correspondiente
+    3. Leer archivos de fase para contexto
+    4. Continuar desde última fase completada
+
+  consultar: |
+    Por dominio: por_dominio.auth
+    Por tipo: por_tipo.analysis
+    Por estado: estadisticas.completadas
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DEL ÍNDICE
+# ═══════════════════════════════════════════════════════════════════════════════

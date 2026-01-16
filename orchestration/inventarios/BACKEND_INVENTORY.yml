@@ -4,18 +4,19 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.5.0"
+  version: "3.8.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-14"
-  generated_by: "Meta-Orquestador SIMCO - Alineación BD-Backend completa (16 entities)"
+  last_updated: "2026-01-16"
+  last_update_task: "TASK-2026-01-16-005"
+  generated_by: "RECONCILIACION-INTEGRAL Plan Maestro GAMILIT - Conteo real filesystem"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
-  total_modules: 18  # Actualizado 2026-01-14 (+1 módulo LTI)
-  total_entities: 129  # Actualizado 2026-01-14 (+16 entities: alineación BD-Backend)
+  total_modules: 17  # RECONCILIADO 2026-01-16 - 17 módulos con código
+  total_entities: 123  # CONSOLIDADO 2026-01-16 - eliminado notification.entity.ts deprecated
   total_dtos: 337
-  total_services: 105  # Verificado 2026-01-13
-  total_controllers: 75
+  total_services: 104  # CONSOLIDADO 2026-01-16 - eliminado notifications.service.ts deprecated
+  total_controllers: 75  # RECONCILIADO 2026-01-16 ✓
   total_endpoints: 612  # Verificado 2026-01-13 (conteo real de @Get/@Post/@Put/@Delete/@Patch)
   typescript_errors: 0  # ⚠️ 2025-11-28: Backend tiene errores PREEXISTENTES en tests auth (no en admin)
   build_status: "✅ BUILD PASSING"  # 2026-01-14: Alineación BD-Backend completada
@@ -24,6 +25,45 @@ metadata:
   api_docs:
     - "docs/90-transversal/api/API-TEACHER-MODULE.md"
     - "docs/90-transversal/api/API-ADMIN-MODULE.md"
+
+# ============================================================================
+# CHANGELOG 2026-01-16 (v3.8.0 - Tests Auth Guards + Validación BD)
+# ============================================================================
+tests_guards_2026_01_16:
+  descripcion: "Tests unitarios para guards de autenticación y autorización"
+  task_id: "TASK-2026-01-16-005"
+  version: "3.8.0"
+  tests_agregados: 25
+  archivos_creados:
+    - path: "src/modules/auth/guards/__tests__/jwt-auth.guard.spec.ts"
+      tests: 6
+      coverage: "JwtAuthGuard canActivate behavior"
+    - path: "src/modules/auth/guards/__tests__/roles.guard.spec.ts"
+      tests: 19
+      coverage: "RolesGuard con GamilityRoleEnum (STUDENT, ADMIN_TEACHER, SUPER_ADMIN)"
+  validacion:
+    build: "✅ PASSED"
+    tests: "25/25 PASSED"
+  traza: "orchestration/tareas/TASK-2026-01-16-005/METADATA.yml"
+
+# ============================================================================
+# CHANGELOG 2026-01-16 (v3.7.0 - Consolidación Duplicados P1)
+# ============================================================================
+consolidacion_2026_01_16:
+  descripcion: "Eliminación de archivos deprecated en módulo notifications"
+  task_id: "P1-001-CONSOLIDATION"
+  archivos_eliminados:
+    notifications:
+      - "entities/notification.entity.ts (deprecated - usar multichannel/notification.entity.ts)"
+      - "services/notifications.service.ts (deprecated - usar notification.service.ts)"
+  impacto:
+    entities: "-1 (124 → 123)"
+    services: "-1 (105 → 104)"
+  archivos_actualizados:
+    - "modules/gamification/gamification.module.ts (removido import deprecated)"
+  validacion:
+    build: "✅ PASSED"
+  traza: "orchestration/reportes/INFORME-CONTINUIDAD-AGENTE-2026-01-16.md"
 
 # ============================================================================
 # CHANGELOG 2026-01-14 (v3.5.0 - Alineación BD-Backend)

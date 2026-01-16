@@ -1,12 +1,12 @@
 # FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 4.2.0
+version: 4.4.0
 generated: 2025-11-08
-updated: 2026-01-13
-source: Inventario Real del Frontend Implementado + Auditoria Documentacion vs Desarrollo 2025-12-23/26 + Validacion 2026-01-13 + CAPVED Testing
-status: Actualizado con auditoria completa de componentes, hooks, mecanicas y APIs
-last_analysis: 2026-01-13 - Validacion exhaustiva + 7 APIs creadas + 175 tests agregados
+updated: 2026-01-16
+source: RECONCILIACION-INTEGRAL Plan Maestro GAMILIT - Conteo real filesystem
+status: Reconciliado con conteo real de archivos filesystem
+last_analysis: 2026-01-16 - Reconciliacion exhaustiva con agentes exploradores
 structure_audit_2026_01_10: |
   Auditoría de estructura de archivos:
   - Total archivos .tsx: 501
@@ -23,16 +23,32 @@ structure_audit_2026_01_10: |
 
 summary:
   total_files: 900+  # ✅ Actualizado 2025-12-26 - auditoria real
-  total_components: 327  # ✅ ACTUALIZADO 2026-01-13 - validacion exhaustiva (reduccion por limpieza M4 no oficiales)
-  total_hooks: 103  # ✅ ACTUALIZADO 2025-12-26 - auditoria: shared(12) + apps(57) + features(32) + root(2)
+  total_components: 463  # CONSOLIDADO 2026-01-16 - eliminado UnderConstruction duplicado
+  total_hooks: 101  # RECONCILIADO 2026-01-16 - conteo real use*.ts
   total_features: 10
-  total_pages: 74  # ✅ ACTUALIZADO 2026-01-13 - conteo real (Student 26 + Teacher 15 + Admin 30 + Auth 3)
-  total_stores: 12  # ✅ ACTUALIZADO 2026-01-13 - ver stores_detail en MASTER_INVENTORY
-  total_api_services: 59  # ✅ ACTUALIZADO 2026-01-13 - +7 APIs nuevas (52 → 59)
+  total_pages: 74  # RECONCILIADO 2026-01-16 ✓
+  total_stores: 12  # RECONCILIADO 2026-01-16 ✓
+  total_api_services: 26  # RECONCILIADO 2026-01-16 - archivos en services/api/
   total_mechanics: 33  # ✅ ACTUALIZADO 2026-01-13 - 23 oficiales + 5 M4 + 3 M5 + 2 auxiliares
   total_routes: 18  # ✅ ACTUALIZADO 2026-01-13 - verificado con rutas implementadas
   lines_of_code: ~100000  # ✅ ACTUALIZADO 2025-12-26
   total_tests: 175  # ✅ AGREGADO 2026-01-13 - tests nuevos creados (105 FE + 70 BE)
+
+  changes_from_v4_3:  # P1-003 Consolidación Duplicados - 2026-01-16
+    components_deleted: 1  # UnderConstruction en shared/components/common/
+    files_updated: 5  # 4 pages actualizadas + common/index.ts
+    components_documented: 2  # AchievementCard (shared/ y features/) clarificados
+    note: "Consolidación de duplicados P1: UnderConstruction + documentación AchievementCard"
+    files_deleted:
+      - apps/frontend/src/shared/components/common/UnderConstruction.tsx  # Duplicado
+    files_modified:
+      - apps/frontend/src/shared/components/common/index.ts  # Removido export
+      - apps/frontend/src/apps/student/pages/InventoryPage.tsx  # Import actualizado
+      - apps/frontend/src/apps/student/pages/ShopPage.tsx  # Import actualizado
+      - apps/frontend/src/apps/admin/pages/AdminAdvancedPage.tsx  # Import actualizado
+      - apps/frontend/src/apps/admin/pages/AdminSettingsPage.tsx  # Import actualizado
+      - apps/frontend/src/shared/components/AchievementCard.tsx  # Documentación arquitectónica
+      - apps/frontend/src/features/gamification/social/components/Achievements/AchievementCard.tsx  # Documentación arquitectónica
 
   changes_from_v4_1:
     apis_created: 7  # exerciseAttemptsAPI, learningSessionsAPI, authSessionsAPI, notificationPreferencesAPI, adminGamificationAPI, achievementsAPI, missionsAPI
@@ -561,11 +577,26 @@ teacher_portal_enhancement_2025_11_24:
 
   teacher_portal_status_post_fix:
     total_pages: 13
-    fully_functional: 10  # 77% (antes 62%)
+    fully_functional: 11  # 85% (antes 77%) - ACTUALIZADO 2026-01-16
     partially_functional: 2  # 15%
-    placeholder: 1  # 8%
-    improvement: "+15% funcionalidad"
-    remaining_placeholder: "TeacherResourcesPage (GAP-T001 - Fase 3)"
+    placeholder: 0  # 0% - TODOS IMPLEMENTADOS
+    improvement: "+23% funcionalidad vs v4.0"
+    remaining_placeholder: null  # TeacherResourcesPage COMPLETADA - TASK-2026-01-16-005
+
+  # ACTUALIZACIÓN 2026-01-16 - TeacherResourcesPage implementada
+  teacher_resources_page_completion:
+    date: "2026-01-16"
+    task_id: "TASK-2026-01-16-005"
+    file: "apps/frontend/src/apps/teacher/pages/TeacherResourcesPage.tsx"
+    lines_of_code: 806
+    status: "✅ COMPLETADA"
+    features:
+      - "Vista grid/list de recursos"
+      - "Subida de archivos con validación"
+      - "Búsqueda y filtros por tipo"
+      - "Eliminación con confirmación"
+      - "Stats de almacenamiento"
+    api_integration: "mediaApi.ts"
 
 # ============================================================================
 # COHERENCE ANALYSIS FIXES (2025-11-24)

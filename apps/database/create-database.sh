@@ -544,6 +544,26 @@ log_success "FASE 15.5 completada"
 log ""
 
 # ============================================================================
+# FASE 15.6: ENABLE RLS EN TABLAS ADICIONALES (TASK-2026-01-16-003)
+# ============================================================================
+# Esta fase habilita RLS en 25 tablas adicionales que no tenian RLS configurado.
+# Creado durante auditoria de seguridad - ver RLS-COVERAGE-REPORT.md
+# ============================================================================
+
+log "============================================================================"
+log "FASE 15.6: ENABLE RLS EN TABLAS ADICIONALES"
+log "============================================================================"
+
+if [ -f "$DDL_DIR/07-enable-rls.sql" ]; then
+    execute_sql "$DDL_DIR/07-enable-rls.sql" "Habilitar RLS en tablas adicionales (25 tablas Fase 1)"
+    log_success "FASE 15.6 completada - RLS habilitado en tablas adicionales"
+else
+    log_warning "Archivo 07-enable-rls.sql no encontrado - saltando"
+fi
+
+log ""
+
+# ============================================================================
 # FASE 16: SEED DATA - Carga de Datos Iniciales (PROD)
 # ============================================================================
 

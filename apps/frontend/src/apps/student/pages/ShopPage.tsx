@@ -46,7 +46,7 @@ import {
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { Modal } from '@shared/components/common/Modal';
-import { UnderConstruction } from '@shared/components/common';
+import { UnderConstruction } from '@/shared/components/UnderConstruction';
 
 // Hooks
 import { useCoins } from '@/features/gamification/economy/hooks/useCoins';

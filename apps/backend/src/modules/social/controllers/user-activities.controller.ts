@@ -7,6 +7,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,10 +16,12 @@ import {
   ApiParam,
   ApiBody,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { UserActivitiesService } from '../services';
 import { CreateActivityDto, ActivityResponseDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 
 /**
  * UserActivitiesController
@@ -27,9 +30,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * Endpoints para obtener actividades propias, feed de amigos, y registrar nuevas actividades.
  *
  * @route /api/v1/social
+ * @security JWT Bearer token required
  */
 @ApiTags('Social - User Activities')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class UserActivitiesController {
   constructor(private readonly activitiesService: UserActivitiesService) {}
 

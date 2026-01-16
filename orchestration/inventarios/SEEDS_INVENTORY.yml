@@ -1,22 +1,41 @@
 seeds_inventory:
-  version: 1.3.0
-  fecha: '2025-12-18'
+  version: 2.0.0
+  fecha: '2026-01-16'
   metadata:
     proyecto: GAMILIT - Plataforma de Aprendizaje Gamificada
-    proposito: Inventario completo de seeds (datos iniciales) DEV y PROD
+    proposito: Inventario completo de seeds (datos iniciales) DEV, STAGING y PROD
     ubicacion_base: apps/database/seeds/
-    ultima_migracion: '2025-12-18 (Carga usuarios producción desde backup)'
+    ultima_migracion: '2026-01-16 (Validación integral BD - TASK-2026-01-16-005)'
     modelo_datos: JSONB puro (consistente)
+    last_update_task: "TASK-2026-01-16-005"
 
   resumen_ejecutivo:
-    total_seeds_prod: 54  # ✅ Actualizado 2026-01-04 (+1 communication seed)
-    total_seeds_dev: 54   # ✅ Actualizado 2025-12-18
+    total_seeds_prod: 101    # ✅ ACTUALIZADO 2026-01-16 (validación integral)
+    total_seeds_dev: 94      # ✅ ACTUALIZADO 2026-01-16 (93% de prod)
+    total_seeds_staging: 56  # ✅ ACTUALIZADO 2026-01-16 (55% de prod - intencional)
     ejercicios_prod: 23
     ejercicios_dev: 24
     estado_prod: production-ready
     completitud_prod: 100%
-    alineacion_dev_prod: 99%  # ✅ Mejorado: Seeds principales idénticos
+    alineacion_dev_prod: 93%
+    staging_coverage: 55%  # Intencional - ambiente de pruebas limpio
     p0_seeds_coverage: 100%
+
+  # Scripts de carga documentados (TASK-2026-01-16-005)
+  load_scripts:
+    prod:
+      script: "create-database.sh (FASE 16)"
+      fases: 18
+      status: "✅ Documentado"
+    staging:
+      script: "load-staging-seeds.sh"
+      fases: 15
+      status: "✅ Documentado"
+    dev:
+      script: "load-dev-seeds.sh"
+      fases: 18
+      status: "✅ CREADO 2026-01-16"
+      documentacion: "staging/README.md"
     notas_actualizacion: |
       2025-12-18 (Carga Usuarios Producción desde Backup):
       ========================================================

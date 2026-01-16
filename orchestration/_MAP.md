@@ -260,6 +260,45 @@ npm run test                   # Todos los tests
 
 ---
 
-**Actualizado:** 2026-01-14
-**Sistema:** NEXUS v4.0 + SIMCO
-**Cambios:** Auditoría DATABASE_INVENTORY.yml (v4.5.0), reconciliación de métricas BD
+## Sistema de Gobernanza de Documentación (2026-01-16)
+
+Integración del sistema de gobernanza de workspace-v2:
+
+### Archivos de Gobernanza
+
+| Archivo | Propósito | Path |
+|---------|-----------|------|
+| `_INDEX.yml` | Índice de tareas documentadas | `analisis/tareas/` |
+| `METADATA-TEMPLATE.yml` | Template para nuevas tareas | `analisis/tareas/_templates/` |
+| `MAPEO-FASES.md` | Mapeo F1-F7 ↔ CAPVED | `analisis/tareas/_templates/` |
+| `_INDEX.yml` | Índice de trazas | `trazas/` |
+| `TRAZA-AGENTE-TEMPLATE.md` | Template de traza por agente | `trazas/` |
+| `MAPA-DOCUMENTACION-GAMILIT.yml` | Índice central de documentación | `orchestration/` |
+| `ALIASES-GOBERNANZA.yml` | Aliases de navegación rápida | `referencias/` |
+
+### Aliases de Gobernanza
+
+| Alias | Destino |
+|-------|---------|
+| `@TAREAS-GAMILIT` | `analisis/tareas/` |
+| `@INDICE-TAREAS` | `analisis/tareas/_INDEX.yml` |
+| `@NUEVA-TAREA-GAMILIT` | `analisis/tareas/_templates/METADATA-TEMPLATE.yml` |
+| `@MAPA-DOC-GAMILIT` | `MAPA-DOCUMENTACION-GAMILIT.yml` |
+| `@TRAZAS-GAMILIT` | `trazas/` |
+| `@INDICE-TRAZAS` | `trazas/_INDEX.yml` |
+
+### Regla de Documentación Obligatoria
+
+Al completar cualquier tarea:
+1. Crear entrada en `analisis/tareas/_INDEX.yml`
+2. (Opcional) Crear carpeta TAREA-{ID} con METADATA.yml
+3. Actualizar traza correspondiente
+4. Actualizar inventarios si aplica
+
+Ver: `INFORME-GAP-INTEGRACION-GOBERNANZA-2026-01-16.md` en `analisis/`
+
+---
+
+**Actualizado:** 2026-01-16
+**Sistema:** NEXUS v4.0 + SIMCO + Gobernanza
+**Cambios:** Integración sistema de gobernanza de documentación de workspace-v2

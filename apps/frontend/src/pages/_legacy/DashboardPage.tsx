@@ -18,8 +18,9 @@ import { ModulesGrid } from '@/components/_legacy/dashboard-migration-sprint/Mod
 import { PendingActivitiesList } from '@/components/_legacy/dashboard-migration-sprint/PendingActivitiesList';
 import { RecentActivityFeed } from '@/components/_legacy/dashboard-migration-sprint/RecentActivityFeed';
 
-// Local types
-interface UserStats {
+// Local types (view models for this legacy page)
+// NOTA: Para el tipo completo de UserStats, ver: @/shared/types/user-stats.types.ts
+interface DashboardUserStats {
   totalPoints: number;
   level?: number;
   experienceProgress?: number;
@@ -55,7 +56,7 @@ export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
 
   // State for stats
-  const [stats, setStats] = useState<UserStats | null>(null);
+  const [stats, setStats] = useState<DashboardUserStats | null>(null);
   const [achievements, setAchievements] = useState<UserAchievement[]>([]);
   const [mlCoins, setMlCoins] = useState<MLCoinsBalance | null>(null);
 

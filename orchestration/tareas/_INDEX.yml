@@ -1,0 +1,53 @@
+# Índice de Tareas Documentadas - GAMILIT
+# =========================================
+# Registro de todas las tareas completadas siguiendo ciclo CAPVED
+
+version: "1.0.0"
+last_updated: "2026-01-16"
+total_tasks: 1
+
+# =========================================
+# TAREAS POR FECHA
+# =========================================
+
+tasks:
+  # ----------------------------------------
+  # 2026-01-16
+  # ----------------------------------------
+  - id: TASK-2026-01-16-005
+    title: "Validación Integral de BD, Frontend Portales y Tests"
+    date: "2026-01-16"
+    status: completed
+    priority: P1
+    type: validation
+    dominios:
+      - "DOMINIO-3: Test Coverage Backend"
+      - "DOMINIO-4: Frontend Portales"
+      - "DOMINIO-5: Validación Base de Datos"
+    entregables:
+      - "25 tests nuevos para auth guards"
+      - "TeacherResourcesPage implementada (806 líneas)"
+      - "DATABASE-VALIDATION-REPORT.md"
+    path: "orchestration/tareas/TASK-2026-01-16-005/"
+
+# =========================================
+# RESUMEN POR ESTADO
+# =========================================
+summary:
+  completed: 1
+  in_progress: 0
+  pending: 0
+
+# =========================================
+# TAREAS RELACIONADAS (SESIONES ANTERIORES)
+# =========================================
+related_tasks:
+  - id: TASK-2026-01-16-003
+    title: "Corrección de Gaps de Coherencia"
+    status: completed
+    note: "Documentado en sesión anterior"
+
+  - id: TASK-2026-01-16-004
+    title: "Guards Audit Report"
+    status: completed
+    note: "GUARDS-AUDIT-REPORT.md creado"

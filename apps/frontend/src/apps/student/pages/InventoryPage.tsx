@@ -33,7 +33,7 @@ import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { Modal } from '@shared/components/common/Modal';
-import { UnderConstruction } from '@shared/components/common';
+import { UnderConstruction } from '@/shared/components/UnderConstruction';
 
 // Hooks
 import type { ShopItem, ItemRarity } from '@/features/gamification/economy/types/economyTypes';

@@ -1,0 +1,356 @@
+# =====================================================
+# SEEDS GAP ANALYSIS - GAMILIT
+# Fecha: 2026-01-16
+# Task: TASK-2026-01-16-003
+# =====================================================
+
+version: "1.0.0"
+generado_en: "2026-01-16T12:00:00Z"
+
+# =====================================================
+# RESUMEN EJECUTIVO
+# =====================================================
+
+resumen:
+  tablas_ddl: 137
+  seeds_dev: 86
+  seeds_prod: 68
+  seeds_staging: 6
+
+  cobertura:
+    dev: "62.8%"       # 86/137
+    prod: "49.6%"      # 68/137
+    staging: "4.4%"    # 6/137 - CRITICO
+
+  gap_staging: 80      # Diferencia con dev
+  severidad: "P0 - CRITICO"
+  impacto: "Ambiente staging no funcional para pruebas"
+
+# =====================================================
+# SEEDS STAGING - ESTADO ACTUAL (6 archivos)
+# =====================================================
+
+staging_actual:
+  auth_management:
+    total: 2
+    archivos:
+      - "01-tenants.sql"
+      - "02-auth_providers.sql"
+    faltantes:
+      - "03-profiles.sql"
+      - "04-user_roles.sql"
+      - "05-user_preferences.sql"
+      - "06-profiles-production.sql"
+
+  gamification_system:
+    total: 4
+    archivos:
+      - "01-achievement_categories.sql"
+      - "02-achievements.sql"
+      - "03-leaderboard_metadata.sql"
+      - "04-maya_ranks.sql"
+    faltantes:
+      - "05-user_stats.sql"
+      - "06-user_ranks.sql"
+      - "07-ml_coins_transactions.sql"
+      - "08-user_achievements.sql"
+      - "09-comodines_inventory.sql"
+      - "10-mission_templates.sql"
+
+# =====================================================
+# SCHEMAS SIN SEEDS EN STAGING (CRITICO)
+# =====================================================
+
+schemas_faltantes_staging:
+  - schema: "admin_dashboard"
+    prioridad: "MEDIA"
+    seeds_requeridos:
+      - "01-bulk_operations.sql"
+      - "02-admin_reports.sql"
+
+  - schema: "audit_logging"
+    prioridad: "ALTA"
+    seeds_requeridos:
+      - "01-default-config.sql"
+
+  - schema: "auth"
+    prioridad: "CRITICA"
+    seeds_requeridos:
+      - "01-demo-users.sql"
+    nota: "Sin usuarios no se puede autenticar"
+
+  - schema: "communication"
+    prioridad: "MEDIA"
+    seeds_requeridos:
+      - "01-system-messages.sql"
+      - "02-message_participants.sql"
+
+  - schema: "content_management"
+    prioridad: "ALTA"
+    seeds_requeridos:
+      - "01-default-templates.sql"
+      - "02-marie_curie_content.sql"
+      - "03-tags.sql"
+      - "04-moderation_rules.sql"
+
+  - schema: "educational_content"
+    prioridad: "CRITICA"
+    seeds_requeridos:
+      - "01-modules.sql"
+      - "02-exercises-module1.sql"
+      - "03-exercises-module2.sql"
+      - "04-exercises-module3.sql"
+      - "05-exercises-module4.sql"
+      - "06-exercises-module5.sql"
+      - "07-assessment-rubrics.sql"
+      - "08-difficulty_criteria.sql"
+      - "09-exercise_mechanic_mapping.sql"
+      - "10-exercise_validation_config.sql"
+    nota: "Sin ejercicios la plataforma no funciona"
+
+  - schema: "lti_integration"
+    prioridad: "BAJA"
+    seeds_requeridos:
+      - "01-lti_consumers.sql"
+
+  - schema: "notifications"
+    prioridad: "ALTA"
+    seeds_requeridos:
+      - "01-notification_templates.sql"
+      - "02-notification_preferences_defaults.sql"
+
+  - schema: "progress_tracking"
+    prioridad: "ALTA"
+    seeds_requeridos:
+      - "01-module_progress.sql"
+
+  - schema: "social_features"
+    prioridad: "CRITICA"
+    seeds_requeridos:
+      - "00-schools-default.sql"
+      - "01-schools.sql"
+      - "02-classrooms.sql"
+      - "03-classroom-members.sql"
+      - "04-friendships.sql"
+      - "04-teams.sql"
+    nota: "Sin escuelas/aulas usuarios no pueden ser asignados"
+
+  - schema: "system_configuration"
+    prioridad: "CRITICA"
+    seeds_requeridos:
+      - "01-system_settings.sql"
+      - "01-feature_flags_seeds.sql"
+      - "02-gamification_parameters_seeds.sql"
+      - "03-notification_settings_global.sql"
+      - "04-rate_limits.sql"
+    nota: "Sin feature flags sistema no funciona correctamente"
+
+# =====================================================
+# PLAN DE IMPLEMENTACION STAGING
+# =====================================================
+
+plan_staging:
+  fase_1_critica:
+    descripcion: "Seeds minimos para funcionamiento basico"
+    esfuerzo: "8h"
+    archivos:
+      # System config - base del sistema
+      - source: "prod/system_configuration/01-system_settings.sql"
+        target: "staging/system_configuration/01-system_settings.sql"
+      - source: "prod/system_configuration/01-feature_flags_seeds.sql"
+        target: "staging/system_configuration/01-feature_flags_seeds.sql"
+
+      # Auth - usuarios demo
+      - source: "prod/auth/01-demo-users.sql"
+        target: "staging/auth/01-demo-users.sql"
+      - source: "prod/auth_management/04-profiles-complete.sql"
+        target: "staging/auth_management/03-profiles.sql"
+      - source: "prod/auth_management/07-user_roles.sql"
+        target: "staging/auth_management/04-user_roles.sql"
+
+      # Educational content
+      - source: "prod/educational_content/01-modules.sql"
+        target: "staging/educational_content/01-modules.sql"
+      - source: "prod/educational_content/02-exercises-module1.sql"
+        target: "staging/educational_content/02-exercises.sql"
+        nota: "Consolidar ejercicios de todos los modulos"
+
+      # Social features
+      - source: "prod/social_features/00-schools-default.sql"
+        target: "staging/social_features/00-schools-default.sql"
+      - source: "prod/social_features/01-schools.sql"
+        target: "staging/social_features/01-schools.sql"
+      - source: "prod/social_features/02-classrooms.sql"
+        target: "staging/social_features/02-classrooms.sql"
+
+  fase_2_funcional:
+    descripcion: "Seeds para funcionalidad completa"
+    esfuerzo: "8h"
+    archivos:
+      # Gamification completions
+      - source: "prod/gamification_system/05-user_stats.sql"
+        target: "staging/gamification_system/05-user_stats.sql"
+      - source: "prod/gamification_system/10-mission_templates.sql"
+        target: "staging/gamification_system/10-mission_templates.sql"
+
+      # Notifications
+      - source: "prod/notifications/01-notification_templates.sql"
+        target: "staging/notifications/01-notification_templates.sql"
+
+      # Content management
+      - source: "prod/content_management/01-default-templates.sql"
+        target: "staging/content_management/01-default-templates.sql"
+
+  fase_3_completa:
+    descripcion: "Seeds adicionales para cobertura completa"
+    esfuerzo: "8h"
+    archivos:
+      - "Resto de archivos de prod adaptados para staging"
+
+# =====================================================
+# COMPARACION DEV vs PROD
+# =====================================================
+
+diferencias_dev_prod:
+  solo_en_dev:
+    - "audit_logging/01-activity_log_sample.sql"
+    - "audit_logging/01-audit-logs.sql"
+    - "audit_logging/02-system-metrics.sql"
+    - "auth_management/03-profiles.sql"
+    - "auth_management/05-user_preferences.sql"
+    - "auth_management/06-auth_attempts.sql"
+    - "auth_management/07-security_events.sql"
+    - "content_management/01-marie-curie-bio.sql"
+    - "content_management/02-media-files.sql"
+    - "notifications/02-user_devices_dev.sql"
+    - "progress_tracking/01-demo-progress.sql"
+    - "progress_tracking/02-exercise-attempts.sql"
+    - "progress_tracking/03-manual-reviews.sql"
+    - "system_configuration/02-feature_flags.sql"
+
+  descripcion: |
+    Los seeds solo en DEV contienen datos de prueba y ejemplos
+    que no son necesarios en produccion pero si son utiles
+    para desarrollo local.
+
+# =====================================================
+# METRICAS DE COBERTURA
+# =====================================================
+
+cobertura_por_schema:
+  admin_dashboard:
+    tablas: 4
+    seeds_dev: 2
+    seeds_prod: 2
+    seeds_staging: 0
+
+  audit_logging:
+    tablas: 7
+    seeds_dev: 4
+    seeds_prod: 1
+    seeds_staging: 0
+
+  auth:
+    tablas: 1
+    seeds_dev: 2
+    seeds_prod: 2
+    seeds_staging: 0
+    nota: "Supabase maneja auth.users"
+
+  auth_management:
+    tablas: 17
+    seeds_dev: 13
+    seeds_prod: 8
+    seeds_staging: 2
+
+  communication:
+    tablas: 2
+    seeds_dev: 2
+    seeds_prod: 2
+    seeds_staging: 0
+
+  content_management:
+    tablas: 10
+    seeds_dev: 6
+    seeds_prod: 4
+    seeds_staging: 0
+
+  educational_content:
+    tablas: 22
+    seeds_dev: 17
+    seeds_prod: 15
+    seeds_staging: 0
+
+  gamification_system:
+    tablas: 19
+    seeds_dev: 14
+    seeds_prod: 14
+    seeds_staging: 4
+
+  lti_integration:
+    tablas: 3
+    seeds_dev: 1
+    seeds_prod: 1
+    seeds_staging: 0
+
+  notifications:
+    tablas: 6
+    seeds_dev: 3
+    seeds_prod: 2
+    seeds_staging: 0
+
+  progress_tracking:
+    tablas: 19
+    seeds_dev: 4
+    seeds_prod: 1
+    seeds_staging: 0
+
+  social_features:
+    tablas: 18
+    seeds_dev: 7
+    seeds_prod: 7
+    seeds_staging: 0
+
+  system_configuration:
+    tablas: 9
+    seeds_dev: 6
+    seeds_prod: 5
+    seeds_staging: 0
+
+# =====================================================
+# ACCIONES RECOMENDADAS
+# =====================================================
+
+acciones_recomendadas:
+  - id: "ACT-001"
+    prioridad: "P0"
+    accion: "Copiar seeds criticos de prod a staging"
+    schemas: ["system_configuration", "auth", "auth_management", "educational_content", "social_features"]
+    esfuerzo: "8h"
+
+  - id: "ACT-002"
+    prioridad: "P1"
+    accion: "Completar seeds de gamification en staging"
+    schemas: ["gamification_system"]
+    esfuerzo: "4h"
+
+  - id: "ACT-003"
+    prioridad: "P1"
+    accion: "Agregar seeds de notifications y content_management"
+    schemas: ["notifications", "content_management"]
+    esfuerzo: "4h"
+
+  - id: "ACT-004"
+    prioridad: "P2"
+    accion: "Crear script load-staging-seeds.sh"
+    descripcion: "Script para cargar seeds de staging en orden correcto"
+    esfuerzo: "2h"
+
+# =====================================================
+# REFERENCIAS
+# =====================================================
+
+referencias:
+  - "orchestration/reportes/RLS-COVERAGE-REPORT.md"
+  - "apps/database/seeds/DEPRECATED-SEEDS.md"
+  - "apps/database/create-database.sh"

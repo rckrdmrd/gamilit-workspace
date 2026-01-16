@@ -8,6 +8,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,7 +16,9 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { ModuleProgressService } from '../services';
 import { PendingActivitiesService } from '../services/pending-activities.service';
 import { RecentActivityService } from '../services/recent-activity.service';
@@ -41,9 +44,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * Endpoints para tracking de avance, completación y estadísticas de progreso.
  *
  * @route /api/v1/progress
+ * @security JWT Bearer token required
  */
 @ApiTags('Progress - Module Progress')
 @Controller(extractBasePath(API_ROUTES.PROGRESS.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class ModuleProgressController {
   constructor(
     private readonly progressService: ModuleProgressService,

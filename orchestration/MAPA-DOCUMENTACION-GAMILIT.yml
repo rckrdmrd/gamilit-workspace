@@ -1,0 +1,433 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# MAPA DE DOCUMENTACIÓN - GAMILIT
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Sistema: NEXUS v4.0 + Gobernanza de Documentación
+# Proyecto: GAMILIT - Plataforma de Gamificación Educativa
+# Propósito: Índice central que relaciona toda la documentación del proyecto
+# Alias: @MAPA-DOC-GAMILIT
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+created: "2026-01-16"
+updated: "2026-01-16"
+maintained_by: "META-ORQUESTADOR"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADÍSTICAS GLOBALES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estadisticas:
+  total_documentos_md: 1609
+  total_documentos_yml: 27
+  ultima_actualizacion: "2026-01-16"
+  por_ubicacion:
+    docs: 687
+    orchestration: 877
+    claude: 45
+  por_tipo:
+    epicas: 19
+    guias: 35
+    reportes: 375
+    inventarios: 8
+    trazas_dominio: 3
+    trazas_agente: 4
+    analisis_especializados: 11
+    tareas_documentadas: 7
+    templates: 25
+    directivas: 20
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VISTA POR UBICACIÓN PRINCIPAL
+# ─────────────────────────────────────────────────────────────────────────────────
+
+por_ubicacion:
+  docs:
+    ruta: "docs/"
+    indice: "_MAP.md"
+    descripcion: "Documentación funcional y técnica del proyecto"
+    subcarpetas:
+      - ruta: "00-vision-general/"
+        descripcion: "Visión y onboarding"
+        indice: "_MAP.md"
+
+      - ruta: "01-fase-alcance-inicial/"
+        descripcion: "EPIC 1: Alcance inicial (EAI-001 a EAI-008)"
+        indice: "_MAP.md"
+        epicas:
+          - "EAI-001-fundamentos"
+          - "EAI-002-actividades"
+          - "EAI-003-gamificacion"
+          - "EAI-004-analytics"
+          - "EAI-005-admin-base"
+          - "EAI-006-configuracion-sistema"
+          - "EAI-008-portal-admin"
+
+      - ruta: "02-fase-robustecimiento/"
+        descripcion: "EPIC 2: Robustecimiento"
+        indice: "_MAP.md"
+        epicas:
+          - "EAI-007-modulos-m4-m5"
+          - "EMR-001-migracion-bd"
+
+      - ruta: "03-fase-extensiones/"
+        descripcion: "EPIC 3: Extensiones (EXT-001 a EXT-011)"
+        indice: "_MAP.md"
+        epicas:
+          - "EXT-001-portal-maestros"
+          - "EXT-002-admin-extendido"
+          - "EXT-003-notificaciones"
+          - "EXT-004-perfiles"
+          - "EXT-005-reportes"
+          - "EXT-006-contenido"
+          - "EXT-007-lti-integration"
+          - "EXT-008-white-label"
+          - "EXT-009-peer-challenges"
+          - "EXT-010-parent-notifications"
+          - "EXT-011-parent-portal"
+          - "EAI-003-EXT-gamificacion-social"
+
+      - ruta: "04-fase-backlog/"
+        descripcion: "Backlog futuro"
+        indice: "_MAP.md"
+
+      - ruta: "90-transversal/"
+        descripcion: "Arquitectura, API, transversal"
+        indice: "_MAP.md"
+        subcarpetas:
+          - "api/"
+          - "arquitectura/"
+          - "arquitectura-database/"
+          - "ssot/"
+          - "inventarios/"
+
+      - ruta: "95-guias-desarrollo/"
+        descripcion: "Guías de implementación"
+        indice: "_MAP.md"
+
+      - ruta: "97-adr/"
+        descripcion: "Architecture Decision Records (21)"
+        indice: "_MAP.md"
+
+      - ruta: "99-troubleshooting/"
+        descripcion: "Guía de troubleshooting"
+        indice: "_MAP.md"
+
+      - ruta: "archivados/"
+        descripcion: "Documentación archivada/deprecada"
+        indice: "_MAP.md"
+
+  orchestration:
+    ruta: "orchestration/"
+    indice: "_MAP.md"
+    descripcion: "Sistema de orquestación NEXUS + SIMCO"
+    archivos_criticos:
+      - archivo: "CONTEXT-MAP.yml"
+        descripcion: "Mapa de contexto automático NEXUS"
+      - archivo: "PROXIMA-ACCION.md"
+        descripcion: "Estado actual y siguiente paso"
+      - archivo: "MAPA-DOCUMENTACION-GAMILIT.yml"
+        descripcion: "Este archivo (índice de documentación)"
+    subcarpetas:
+      - ruta: "inventarios/"
+        descripcion: "Inventarios consolidados"
+        archivos:
+          - "MASTER_INVENTORY.yml"
+          - "DATABASE_INVENTORY.yml"
+          - "BACKEND_INVENTORY.yml"
+          - "FRONTEND_INVENTORY.yml"
+          - "TRACEABILITY_MATRIX.yml"
+          - "DEPENDENCY_GRAPH.yml"
+
+      - ruta: "analisis/"
+        descripcion: "Análisis técnicos"
+        subcarpetas:
+          - "tareas/"
+
+      - ruta: "trazas/"
+        descripcion: "Trazabilidad de tareas"
+        indice: "_INDEX.yml"
+
+      - ruta: "reportes/"
+        descripcion: "Reportes de ejecución"
+
+      - ruta: "directivas/"
+        descripcion: "Directivas locales"
+
+      - ruta: "prompts/"
+        descripcion: "Prompts de agentes especializados"
+
+      - ruta: "scrum/"
+        descripcion: "Sprints y backlog"
+
+  claude:
+    ruta: ".claude/"
+    indice: "README.md"
+    descripcion: "Sistema de agentes NEXUS v4.0"
+    subcarpetas:
+      - ruta: "agents/"
+        descripcion: "Perfiles de agentes NEXUS (5 principales)"
+
+      - ruta: "directivas/"
+        descripcion: "Directivas de operación"
+        archivos:
+          - "DIRECTIVA-VALIDACION-DOCUMENTACION.md"
+          - "DIRECTIVAS-PRINCIPALES.md"
+          - "GUIA-ORQUESTACION.md"
+
+      - ruta: "referencias/"
+        descripcion: "Contextos y paths"
+
+      - ruta: "constants/"
+        descripcion: "Constantes arquitectónicas"
+
+      - ruta: "templates/"
+        descripcion: "Templates para subagentes"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VISTA POR DOMINIO TÉCNICO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+por_dominio:
+  database:
+    descripcion: "PostgreSQL - 16 schemas, 135 tablas"
+    documentacion:
+      - "docs/90-transversal/arquitectura-database/"
+      - "docs/02-fase-robustecimiento/EMR-001-migracion-bd/"
+      - "orchestration/analisis-database-2025-12-26/"
+    inventario: "orchestration/inventarios/DATABASE_INVENTORY.yml"
+    traza: "orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
+    codigo: "apps/database/"
+
+  backend:
+    descripcion: "NestJS - 17 módulos, 612 endpoints"
+    documentacion:
+      - "docs/95-guias-desarrollo/backend/"
+      - "docs/90-transversal/api/"
+      - "orchestration/analisis-backend-2025-12-18/"
+    inventario: "orchestration/inventarios/BACKEND_INVENTORY.yml"
+    traza: "orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
+    codigo: "apps/backend/"
+
+  frontend:
+    descripcion: "React - 327 componentes, 74 páginas"
+    documentacion:
+      - "docs/95-guias-desarrollo/frontend/"
+      - "docs/95-guias-desarrollo/student-portal/"
+      - "orchestration/analisis-frontend-validacion/"
+    inventario: "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+    traza: "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
+    codigo: "apps/frontend/"
+
+  devops:
+    descripcion: "Docker, CI/CD, deployment"
+    documentacion:
+      - "docs/90-transversal/deuda-tecnica/"
+      - "orchestration/analisis-produccion-2025-12-18/"
+    codigo: "apps/devops/"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VISTA POR PORTAL
+# ─────────────────────────────────────────────────────────────────────────────────
+
+por_portal:
+  admin:
+    descripcion: "Portal administrativo"
+    documentacion:
+      - "docs/01-fase-alcance-inicial/EAI-005-admin-base/"
+      - "docs/01-fase-alcance-inicial/EAI-008-portal-admin/"
+      - "docs/03-fase-extensiones/EXT-002-admin-extendido/"
+      - "orchestration/analisis-admin-portal-2025-12-23/"
+    codigo:
+      - "apps/frontend/src/apps/admin/"
+      - "apps/backend/src/modules/admin/"
+
+  student:
+    descripcion: "Portal de estudiantes"
+    documentacion:
+      - "docs/01-fase-alcance-inicial/EAI-001-fundamentos/"
+      - "docs/01-fase-alcance-inicial/EAI-002-actividades/"
+      - "docs/01-fase-alcance-inicial/EAI-003-gamificacion/"
+      - "docs/01-fase-alcance-inicial/EAI-004-analytics/"
+      - "docs/95-guias-desarrollo/student-portal/"
+    codigo:
+      - "apps/frontend/src/apps/student/"
+
+  teacher:
+    descripcion: "Portal de maestros"
+    documentacion:
+      - "docs/03-fase-extensiones/EXT-001-portal-maestros/"
+      - "orchestration/analisis-teacher-portal-2025-12-18/"
+    codigo:
+      - "apps/frontend/src/apps/teacher/"
+      - "apps/backend/src/modules/teacher/"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VISTA POR AGENTE NEXUS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+por_agente:
+  NEXUS-BACKEND:
+    perfil: ".claude/agents/INIT-NEXUS-BACKEND.md"
+    documentacion_relevante:
+      - "docs/90-transversal/api/"
+      - "docs/95-guias-desarrollo/backend/"
+    inventario: "orchestration/inventarios/BACKEND_INVENTORY.yml"
+    traza: "orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
+
+  NEXUS-FRONTEND:
+    perfil: ".claude/agents/INIT-NEXUS-FRONTEND.md"
+    documentacion_relevante:
+      - "docs/95-guias-desarrollo/frontend/"
+      - "docs/95-guias-desarrollo/student-portal/"
+    inventario: "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+    traza: "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
+
+  NEXUS-DATABASE:
+    perfil: ".claude/agents/INIT-NEXUS-DATABASE.md"
+    documentacion_relevante:
+      - "docs/90-transversal/arquitectura-database/"
+      - "orchestration/directivas/DIRECTIVA-POLITICA-CARGA-LIMPIA.md"
+    inventario: "orchestration/inventarios/DATABASE_INVENTORY.yml"
+    traza: "orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
+
+  NEXUS-DEVOPS:
+    perfil: ".claude/agents/INIT-NEXUS-DEVOPS.md"
+    documentacion_relevante:
+      - "docs/90-transversal/deuda-tecnica/"
+      - "orchestration/analisis-produccion-2025-12-18/"
+    traza: "orchestration/trazas/TRAZA-WORKSPACE-MANAGEMENT.md"
+
+  NEXUS-INTEGRATION:
+    perfil: ".claude/agents/INIT-NEXUS-INTEGRATION.md"
+    documentacion_relevante:
+      - "docs/90-transversal/arquitectura/"
+      - "orchestration/inventarios/TRACEABILITY_MATRIX.yml"
+    traza: "orchestration/trazas/TRAZA-ANALISIS-ARQUITECTURA.md"
+
+  META-ORQUESTADOR:
+    perfil: "workspace-v2/orchestration/agents/perfiles/PERFIL-META-ORQUESTADOR.md"
+    documentacion_relevante:
+      - "orchestration/_MAP.md"
+      - "orchestration/MAPA-DOCUMENTACION-GAMILIT.yml"
+    traza: "orchestration/trazas/TRAZA-WORKSPACE-MANAGEMENT.md"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ANÁLISIS ESPECIALIZADOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+analisis_especializados:
+  - carpeta: "analisis-admin-portal-2025-12-23/"
+    estado: "completado"
+    descripcion: "Análisis portal admin"
+
+  - carpeta: "analisis-backend-2025-12-18/"
+    estado: "completado"
+    descripcion: "Análisis backend"
+
+  - carpeta: "analisis-database-2025-12-26/"
+    estado: "completado"
+    descripcion: "Análisis BD (3 subfases)"
+
+  - carpeta: "analisis-documentacion-vs-desarrollo-2025-12-23/"
+    estado: "completado"
+    descripcion: "Comparación doc vs código"
+
+  - carpeta: "analisis-errores-prod-2025-12-18/"
+    estado: "PENDIENTE EJECUCIÓN"
+    descripcion: "Análisis errores producción"
+
+  - carpeta: "analisis-frontend-validacion/"
+    estado: "completado"
+    descripcion: "Validación frontend"
+
+  - carpeta: "analisis-homologacion-database-2025-12-18/"
+    estado: "PENDIENTE (11 scripts)"
+    descripcion: "Homologación BD"
+
+  - carpeta: "analisis-modulos-3-4-5/"
+    estado: "completado"
+    descripcion: "Análisis M3-M4-M5"
+
+  - carpeta: "analisis-produccion-2025-12-18/"
+    estado: "LISTO PARA DEPLOY"
+    descripcion: "Requerimientos producción"
+
+  - carpeta: "analisis-teacher-portal-2025-12-18/"
+    estado: "completado"
+    descripcion: "Análisis portal teacher"
+
+  - carpeta: "analisis-validacion-documentacion-2026-01-13/"
+    estado: "completado"
+    descripcion: "Validación documentación"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# HISTORIAL RECIENTE (2026-01)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+historial_reciente:
+  "2026-01-16":
+    documentos_creados:
+      - "orchestration/analisis/tareas/_INDEX.yml"
+      - "orchestration/analisis/tareas/_templates/METADATA-TEMPLATE.yml"
+      - "orchestration/analisis/tareas/_templates/MAPEO-FASES.md"
+      - "orchestration/trazas/_INDEX.yml"
+      - "orchestration/trazas/TRAZA-AGENTE-TEMPLATE.md"
+      - "orchestration/trazas/TRAZA-AGENTE-NEXUS-BACKEND.md"
+      - "orchestration/trazas/TRAZA-AGENTE-NEXUS-FRONTEND.md"
+      - "orchestration/trazas/TRAZA-AGENTE-NEXUS-DATABASE.md"
+      - "orchestration/MAPA-DOCUMENTACION-GAMILIT.yml"
+      - "orchestration/referencias/ALIASES-GOBERNANZA.yml"
+      - "orchestration/scripts/update-governance-indexes.sh"
+      - "orchestration/analisis/INFORME-GAP-INTEGRACION-GOBERNANZA-2026-01-16.md"
+      - "orchestration/reportes/INFORME-INTEGRACION-GOBERNANZA-2026-01-16.md"
+      - "orchestration/reportes/INFORME-ANALISIS-COMPARATIVO-WORKSPACES-2026-01-16.md"
+    documentos_modificados:
+      - "orchestration/_MAP.md"
+    tareas:
+      - task_id: "Integración Gobernanza"
+        agente: "META-ORQUESTADOR"
+        estado: "completada"
+      - task_id: "Análisis Comparativo Workspaces"
+        agente: "META-ORQUESTADOR"
+        estado: "completada"
+
+  "2026-01-14":
+    documentos_modificados:
+      - "orchestration/inventarios/DATABASE_INVENTORY.yml"
+      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
+      - "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+    tareas:
+      - task_id: "Auditoría inventarios"
+        agente: "NEXUS-INTEGRATION"
+        estado: "completada"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# INSTRUCCIONES DE MANTENIMIENTO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+mantenimiento:
+  actualizacion: |
+    1. Al crear nuevos archivos de documentación:
+       - Agregar a la sección por_ubicacion correspondiente
+       - Actualizar estadísticas
+       - Agregar a historial_reciente
+
+    2. Al completar una tarea:
+       - Agregar a historial_reciente
+       - Actualizar trazas correspondientes
+
+    3. Al eliminar documentación:
+       - Remover de todas las secciones
+       - Actualizar contadores
+
+  validacion: |
+    Verificar que:
+    - Todos los archivos listados existen
+    - Estadísticas coinciden con realidad
+    - Índices _MAP.md están actualizados
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DEL MAPA DE DOCUMENTACIÓN
+# ═══════════════════════════════════════════════════════════════════════════════

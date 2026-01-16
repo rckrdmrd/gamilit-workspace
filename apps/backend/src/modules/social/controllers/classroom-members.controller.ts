@@ -7,6 +7,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,6 +15,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ClassroomMembersService } from '../services';
 import {
@@ -22,6 +24,7 @@ import {
   UpdateClassroomMemberStatusDto,
 } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 
 /**
  * ClassroomMembersController
@@ -31,9 +34,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * asistencia, y leaderboards por aula.
  *
  * @route /api/v1/social
+ * @security JWT Bearer token required
  */
 @ApiTags('Social - Classroom Members')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class ClassroomMembersController {
   constructor(
     private readonly classroomMembersService: ClassroomMembersService,

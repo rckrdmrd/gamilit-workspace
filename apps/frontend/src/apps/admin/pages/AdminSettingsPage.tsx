@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { GeneralSettings, SecuritySettings } from '../components/settings';
-import { UnderConstruction } from '@shared/components/common';
+import { UnderConstruction } from '@/shared/components/UnderConstruction';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { AlertTriangle, Settings, Shield } from 'lucide-react';

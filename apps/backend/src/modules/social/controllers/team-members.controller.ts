@@ -8,6 +8,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,10 +16,12 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { TeamMembersService } from '../services';
 import { CreateTeamMemberDto, TeamMemberResponseDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 
 /**
  * TeamMembersController
@@ -28,9 +31,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * y obtener miembros activos.
  *
  * @route /api/v1/social
+ * @security JWT Bearer token required
  */
 @ApiTags('Social - Team Members')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class TeamMembersController {
   constructor(private readonly teamMembersService: TeamMembersService) {}
 

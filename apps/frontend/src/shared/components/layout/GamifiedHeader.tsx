@@ -27,7 +27,13 @@ export interface GamifiedHeaderProps {
   organizationName?: string;
 }
 
-interface UserStats {
+/**
+ * HeaderUserStats - Tipo de vista local para el header
+ *
+ * NOTA: Este es un tipo de vista simplificado específico para GamifiedHeader.
+ * Para el tipo completo de UserStats, ver: @/shared/types/user-stats.types.ts
+ */
+interface HeaderUserStats {
   level: number;
   xp: number;
   xpToNext: number;
@@ -59,7 +65,7 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
 
   // Use real gamification data or fallback to default values
   // Support both old (xp, ml, badges) and new (totalXP, mlCoins, achievements) field names for backward compatibility
-  const userStats: UserStats = {
+  const userStats: HeaderUserStats = {
     level: gamificationData?.level || 1,
     xp: (gamificationData as any)?.totalXP || (gamificationData as any)?.xp || 0,
     xpToNext: (gamificationData as any)?.xp_to_next || 100, // Note: not in UserGamificationData type yet

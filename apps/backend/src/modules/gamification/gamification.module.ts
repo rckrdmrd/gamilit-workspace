@@ -24,7 +24,6 @@ import {
 
 // External entities
 import { Profile } from '@/modules/auth/entities';
-import { Notification } from '@/modules/notifications/entities/notification.entity';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
 
 // Services
@@ -92,7 +91,6 @@ import {
         MissionTemplate,
         ClassroomMission,
         ComodinesInventory,
-        Notification,
         LeaderboardMetadata,
         ActiveBoost,
         InventoryTransaction,

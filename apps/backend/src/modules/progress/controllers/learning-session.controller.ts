@@ -8,6 +8,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,7 +16,9 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { LearningSessionService } from '../services';
 import {
   CreateLearningSessionDto,
@@ -30,9 +33,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * Endpoints para iniciar, finalizar y analizar sesiones de estudio.
  *
  * @route /api/v1/progress/sessions
+ * @security JWT Bearer token required
  */
 @ApiTags('Progress - Learning Sessions')
 @Controller(extractBasePath(API_ROUTES.PROGRESS.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class LearningSessionController {
   constructor(private readonly sessionService: LearningSessionService) {}
 

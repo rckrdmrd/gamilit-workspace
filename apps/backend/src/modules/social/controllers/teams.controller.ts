@@ -9,6 +9,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,10 +18,12 @@ import {
   ApiParam,
   ApiQuery,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { TeamsService, TeamMembersService } from '../services';
 import { CreateTeamDto, TeamResponseDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 
 /**
  * TeamsController
@@ -30,9 +33,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * XP, y leaderboards de equipos.
  *
  * @route /api/v1/social
+ * @security JWT Bearer token required
  */
 @ApiTags('Social - Teams')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class TeamsController {
   constructor(
     private readonly teamsService: TeamsService,

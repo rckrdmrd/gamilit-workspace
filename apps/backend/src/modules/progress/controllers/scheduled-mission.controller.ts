@@ -7,13 +7,16 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { ScheduledMissionService } from '../services';
 import {
   CreateScheduledMissionDto,
@@ -28,9 +31,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * Endpoints para crear, asignar y trackear misiones colectivas con deadlines.
  *
  * @route /api/v1/progress/scheduled-missions
+ * @security JWT Bearer token required
  */
 @ApiTags('Progress - Scheduled Missions')
 @Controller(extractBasePath(API_ROUTES.PROGRESS.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class ScheduledMissionController {
   constructor(
     private readonly missionService: ScheduledMissionService,

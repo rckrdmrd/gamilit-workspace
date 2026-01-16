@@ -2,10 +2,11 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "4.1.0"
+version: "4.3.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
-fecha_actualizacion: "2026-01-13"
-actualizado_por: "Meta-Orquestador SIMCO - Validacion exhaustiva de documentacion"
+fecha_actualizacion: "2026-01-16"
+actualizado_por: "TASK-2026-01-16-005 - Validación Integral BD"
+last_update_task: "TASK-2026-01-16-005"
 
 # =============================================================================
 # RESUMEN EJECUTIVO
@@ -16,37 +17,37 @@ resumen:
 
   database:
     schemas: 16
-    tables: 137
+    tables: 137  # RECONCILIADO 2026-01-16
     views: 17
     materialized_views: 11
-    enums: 42
-    functions_active: 110  # Solo funciones activas (excluye _deprecated/)
+    enums: 38  # RECONCILIADO 2026-01-16 (42 - 4 deprecated)
+    functions_active: 109  # RECONCILIADO 2026-01-16 - conteo real /functions/
     functions_deprecated: 41
-    functions_total: 151
-    triggers_active: 35  # Solo triggers activos (excluye _deprecated/)
+    functions_total: 150
+    triggers_active: 35  # RECONCILIADO 2026-01-16 - conteo real /triggers/
     triggers_deprecated: 77
     triggers_total: 112
-    policies_rls: 32
+    policies_rls: 157  # RECONCILIADO 2026-01-16 - CREATE POLICY statements reales
     foreign_keys: 208
-    seed_files: 169  # 82 DEV + 81 PROD + 6 STAGING
+    seed_files: 251  # 94 DEV + 101 PROD + 56 STAGING (ACTUALIZADO TASK-2026-01-16-005)
     ddl_files: 397
-    indexes_statements: 701
+    indexes_statements: 405  # RECONCILIADO 2026-01-16
     status: "Clean creation compliant"
-    last_verified: "2026-01-13"
+    last_verified: "2026-01-16"
     source: "DATABASE_INVENTORY.yml"
     nuevas_tablas: "docs/database/TABLAS-NUEVAS-2025-12.md"
     triggers_inventory: "docs/database/TRIGGERS-INVENTORY.md"
 
   backend:
     modules: 17
-    entities: 108
+    entities: 124  # RECONCILIADO 2026-01-16 - conteo real *.entity.ts
     dtos: 337
-    services: 105
-    controllers: 75
+    services: 105  # RECONCILIADO 2026-01-16 ✓
+    controllers: 75  # RECONCILIADO 2026-01-16 ✓
     endpoints: 612
     build_status: "Builds successfully"
-    coherencia_bd: "97%"
-    last_verified: "2026-01-13"
+    coherencia_bd: "99%"  # RECONCILIADO 2026-01-16 (124 entities / 137 tables)
+    last_verified: "2026-01-16"
     source: "BACKEND_INVENTORY.yml"
     api_docs:
       - "docs/90-transversal/api/API-TEACHER-MODULE.md"
@@ -54,16 +55,16 @@ resumen:
 
   frontend:
     files: 900+
-    components: 327
-    hooks: 103
-    pages: 74
-    stores: 12
-    api_services: 52
+    components: 464  # RECONCILIADO 2026-01-16 - conteo real *.tsx
+    hooks: 101  # RECONCILIADO 2026-01-16 - conteo real use*.ts
+    pages: 74  # RECONCILIADO 2026-01-16 ✓
+    stores: 12  # RECONCILIADO 2026-01-16 ✓
+    api_services: 26  # RECONCILIADO 2026-01-16 - solo services/api/
     mechanics: 33
     routes: 18
     lines_of_code: ~100000
     status: "Builds successfully"
-    last_verified: "2026-01-13"
+    last_verified: "2026-01-16"
     source: "FRONTEND_INVENTORY.yml"
     portal_docs:
       - "docs/frontend/student/README.md"

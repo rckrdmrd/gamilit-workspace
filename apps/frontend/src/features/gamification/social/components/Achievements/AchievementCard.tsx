@@ -1,6 +1,15 @@
 /**
- * AchievementCard Component
- * Displays individual achievement card
+ * AchievementCard Component (View Model Combinado)
+ *
+ * NOTA ARQUITECTÓNICA: Este componente está diseñado para trabajar con
+ * el view model AchievementWithProgress que combina datos del logro con
+ * el estado del usuario. Incluye animaciones framer-motion y botón para
+ * reclamar recompensas. Usado en el módulo de gamificación social.
+ *
+ * Para componentes que usan el modelo relacional separado
+ * (Achievement + UserAchievement), ver: @shared/components/AchievementCard.tsx
+ *
+ * Displays individual achievement card with animations and claim functionality.
  */
 
 import React from 'react';

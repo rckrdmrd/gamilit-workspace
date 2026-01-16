@@ -1,7 +1,15 @@
 /**
- * Gamification Types
- * Type definitions for Gamification Module API responses
+ * Gamification Types (API Raw - snake_case)
  *
+ * Type definitions for Gamification Module API responses.
+ * Usa snake_case para reflejar el formato crudo de la API.
+ *
+ * NOTA ARQUITECTÓNICA (Consolidación SSOT 2026-01-16):
+ * - Este archivo define tipos en formato snake_case (API raw)
+ * - Para tipos transformados (camelCase), usar: user-stats.types.ts
+ * - La transformación snake_case → camelCase se realiza en hooks/services
+ *
+ * @see SSOT camelCase: @/shared/types/user-stats.types.ts
  * @see Backend: modules/gamification/controllers/user-stats.controller.ts
  * @see Database: gamification_system.user_stats
  */

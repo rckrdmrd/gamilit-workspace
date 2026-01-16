@@ -18,20 +18,31 @@ metadata:
     staging_files: 6
   database_counts:
     schemas: 16
-    tables: 135  # Auditado 2026-01-14 - conteo real DDL
+    tables: 137  # RECONCILIADO 2026-01-16 - conteo real archivos DDL/tables/
     views: 18
     materialized_views: 7
     enums: 38  # Auditado 2026-01-14 - 4 deprecated en storage
-    functions_active: 122  # Auditado 2026-01-14 (+12 identificadas)
+    functions_active: 109  # RECONCILIADO 2026-01-16 - conteo real archivos DDL/functions/
     functions_deprecated: 41
-    functions_total: 163
-    triggers_active: 49  # Auditado 2026-01-14 (+14 identificados)
+    functions_total: 150
+    triggers_active: 35  # RECONCILIADO 2026-01-16 - conteo real archivos DDL/triggers/
     triggers_deprecated: 77
-    triggers_total: 126
+    triggers_total: 112
     indexes_files: 21
     indexes_statements: 405  # Auditado 2026-01-14 - statements reales
-    policies_rls: 121  # Auditado 2026-01-14 - todas las RLS (+89)
+    policies_rls: 157  # RECONCILIADO 2026-01-16 - conteo CREATE POLICY statements
     foreign_keys: 208
+  audit_2026_01_16:
+    description: "RECONCILIACION-INTEGRAL: Conteo real filesystem vs inventarios documentados"
+    task_id: "RECONCILIACION-2026-01-16"
+    changes_summary:
+      - "RECONCILIACION: tables 135 -> 137 (conteo real archivos /tables/)"
+      - "RECONCILIACION: functions_active 122 -> 109 (conteo real archivos /functions/)"
+      - "RECONCILIACION: triggers_active 49 -> 35 (conteo real archivos /triggers/)"
+      - "RECONCILIACION: policies_rls 121 -> 157 (conteo CREATE POLICY statements)"
+      - "METODOLOGIA: Exploración paralela con agentes especializados"
+    schemas_verified: 13  # Con tablas activas (excluye gamilit, public, storage)
+    coverage: "100% schemas auditados"
   audit_2026_01_14:
     description: "AUDITORIA-DOCUMENTACION: Analisis exhaustivo y reconciliacion de metricas BD"
     task_id: "DOC-DB-2026-01-14"

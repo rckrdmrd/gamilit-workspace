@@ -8,6 +8,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,6 +16,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { FriendshipsService } from '../services';
 import {
@@ -22,6 +24,7 @@ import {
   FriendshipResponseDto,
 } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 
 /**
  * FriendshipsController
@@ -31,9 +34,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * y gestionar amistades bidireccionales.
  *
  * @route /api/v1/social
+ * @security JWT Bearer token required
  */
 @ApiTags('Social - Friendships')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class FriendshipsController {
   constructor(private readonly friendshipsService: FriendshipsService) {}
 

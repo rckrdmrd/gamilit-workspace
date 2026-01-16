@@ -1,20 +1,15 @@
 /**
  * User Stats Types (Simplified - CamelCase)
  *
- * Type definitions for user statistics and gamification metrics.
+ * @deprecated Este archivo está DEPRECATED. Usar tipos del SSOT:
+ *   - SSOT Principal: @/shared/types/user-stats.types.ts (camelCase, completo)
+ *   - Para API raw: @/shared/types/gamification.types.ts (snake_case)
  *
- * @description
- * Simplified types for use in React components and pages.
- * Uses camelCase naming convention for React/JS consistency.
+ * Este archivo se mantiene por compatibilidad con código existente.
+ * Todo código nuevo debe importar de shared/types/user-stats.types.ts
  *
- * ⚠️ NOTA DE CONSOLIDACIÓN (Audit 2026-01-04):
- * - SSOT para UserStats completo: @/shared/types/gamification.types.ts (snake_case, 37 campos)
- * - Este archivo: versión simplificada para componentes (camelCase, campos básicos)
- * - Transformación API → Frontend se realiza en los hooks/services
- *
- * @see SSOT: @/shared/types/gamification.types.ts
- * @see Backend Entity: gamification_system.user_stats table
- * @see Transformación: @/features/gamification/hooks/useUserStats.ts
+ * @migration 2026-01-16 - Consolidación SSOT UserStats
+ * @see SSOT: @/shared/types/user-stats.types.ts
  */
 
 import { MayaRank } from '../shared/constants/ranks.constants';

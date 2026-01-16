@@ -9,6 +9,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,10 +18,12 @@ import {
   ApiParam,
   ApiQuery,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { SchoolsService } from '../services';
 import { CreateSchoolDto, SchoolResponseDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 
 /**
  * SchoolsController
@@ -30,9 +33,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * Soporte multi-tenant con aislamiento por tenant_id.
  *
  * @route /api/v1/social
+ * @security JWT Bearer token required
  */
 @ApiTags('Social - Schools')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class SchoolsController {
   constructor(private readonly schoolsService: SchoolsService) {}
 

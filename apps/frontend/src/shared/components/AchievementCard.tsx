@@ -59,7 +59,15 @@ const getStatus = (userAchievement?: UserAchievement): AchievementStatus => {
 };
 
 /**
- * AchievementCard Component
+ * AchievementCard Component (Modelo Relacional)
+ *
+ * NOTA ARQUITECTÓNICA: Este componente está diseñado para trabajar con
+ * el modelo de datos relacional donde Achievement y UserAchievement son
+ * entidades separadas. Usado por pages que necesitan manipular estos
+ * datos de forma independiente (ej: AchievementsPage.tsx).
+ *
+ * Para componentes que usan el view model combinado (AchievementWithProgress),
+ * ver: @features/gamification/social/components/Achievements/AchievementCard.tsx
  *
  * Displays a single achievement with icon, name, description, progress, and rewards.
  * Supports different states: locked, in progress, earned, claimed.

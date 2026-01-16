@@ -1,0 +1,230 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ÍNDICE DE TRAZAS - GAMILIT
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Sistema: NEXUS v4.0 + Gobernanza de Documentación
+# Proyecto: GAMILIT
+# Propósito: Índice central de trazabilidad de tareas y actividad de agentes
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+created: "2026-01-16"
+updated: "2026-01-16"
+maintained_by: "META-ORQUESTADOR"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADÍSTICAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estadisticas:
+  total_trazas: 16
+  por_tipo:
+    dominio: 9
+    especializadas: 7
+  ultima_actualizacion: "2026-01-16"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRAZAS POR DOMINIO TÉCNICO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+trazas_por_dominio:
+  database:
+    archivo: "TRAZA-TAREAS-DATABASE.md"
+    descripcion: "Tracking de tareas DDL, seeds, índices, funciones PostgreSQL"
+    estado: "activo"
+    ultima_actualizacion: "2026-01-14"
+
+  backend:
+    archivo: "TRAZA-TAREAS-BACKEND.md"
+    descripcion: "Tracking de tareas NestJS, API, entities, services"
+    estado: "activo"
+    ultima_actualizacion: "2026-01-14"
+
+  frontend:
+    archivo: "TRAZA-TAREAS-FRONTEND.md"
+    descripcion: "Tracking de tareas React, componentes, stores, pages"
+    estado: "activo"
+    ultima_actualizacion: "2026-01-14"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRAZAS ESPECIALIZADAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+trazas_especializadas:
+  analisis_arquitectura:
+    archivo: "TRAZA-ANALISIS-ARQUITECTURA.md"
+    descripcion: "Tracking de análisis arquitectónicos y decisiones"
+    estado: "activo"
+
+  bugs:
+    archivo: "TRAZA-BUGS.md"
+    descripcion: "Tracking de bugs identificados y corregidos"
+    estado: "activo"
+
+  correcciones:
+    archivo: "TRAZA-CORRECCIONES.md"
+    descripcion: "Tracking de correcciones aplicadas"
+    estado: "activo"
+
+  requerimientos:
+    archivo: "TRAZA-REQUERIMIENTOS.md"
+    descripcion: "Tracking de requerimientos y su implementación"
+    estado: "activo"
+
+  documentacion_deprecada:
+    archivo: "TRAZA-DOCUMENTACION-DEPRECADA.md"
+    descripcion: "Tracking de documentación archivada/deprecada"
+    estado: "activo"
+
+  workspace_management:
+    archivo: "TRAZA-WORKSPACE-MANAGEMENT.md"
+    descripcion: "Tracking de gestión del workspace"
+    estado: "activo"
+
+  lessons_learned:
+    archivo: "LESSONS-LEARNED.md"
+    descripcion: "Lecciones aprendidas durante el desarrollo"
+    estado: "activo"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRAZAS RECIENTES (2026-01)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+trazas_recientes:
+  - archivo: "TRAZA-CAPVED-TESTING-APIS-2026-01-13.md"
+    descripcion: "Ciclo CAPVED para testing de APIs"
+    fecha: "2026-01-13"
+    estado: "completada"
+
+  - archivo: "TRAZA-BUGFIX-CIRCULAR-REF-2026-01-13.md"
+    descripcion: "Corrección de referencia circular"
+    fecha: "2026-01-13"
+    estado: "completada"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRAZAS POR AGENTE NEXUS
+# ─────────────────────────────────────────────────────────────────────────────────
+#
+# Nota: GAMILIT usa trazas por DOMINIO, no por AGENTE.
+# Esta sección mapea actividad de agentes a trazas de dominio.
+#
+# ─────────────────────────────────────────────────────────────────────────────────
+
+actividad_por_agente:
+  NEXUS-BACKEND:
+    dominio_principal: "backend"
+    traza_dominio: "TRAZA-TAREAS-BACKEND.md"
+    traza_agente: "TRAZA-AGENTE-NEXUS-BACKEND.md"
+    tareas_recientes:
+      - "Consolidación P1: Notification entity, UpdateUserDto (2026-01-16)"
+      - "Auditoría DDL-Backend: TAREA-001 a 007 (2026-01-10)"
+
+  NEXUS-FRONTEND:
+    dominio_principal: "frontend"
+    traza_dominio: "TRAZA-TAREAS-FRONTEND.md"
+    traza_agente: "TRAZA-AGENTE-NEXUS-FRONTEND.md"
+    tareas_recientes:
+      - "Consolidación P1: UnderConstruction, AchievementCard (2026-01-16)"
+      - "EXTRA: UserStats SSOT (2026-01-16)"
+      - "Auditoría Backend-Frontend: TAREA-003, 004 (2026-01-10)"
+
+  NEXUS-DATABASE:
+    dominio_principal: "database"
+    traza_dominio: "TRAZA-TAREAS-DATABASE.md"
+    traza_agente: "TRAZA-AGENTE-NEXUS-DATABASE.md"
+    tareas_recientes:
+      - "Verificación P0: FK mission_templates (2026-01-16)"
+      - "Auditoría DDL: TAREA-001 a 007 (2026-01-10)"
+
+  NEXUS-DEVOPS:
+    dominio_principal: "devops"
+    traza_dominio: null
+    traza_agente: null  # Pendiente crear
+    tareas_recientes: []
+
+  NEXUS-INTEGRATION:
+    dominio_principal: "integracion"
+    traza_dominio: "TRAZA-ANALISIS-ARQUITECTURA.md"
+    traza_agente: null  # Usa traza de arquitectura
+    tareas_recientes:
+      - "Sesión 1: Reconciliación inventarios (2026-01-16)"
+      - "Sesión 2: Consolidación duplicados (2026-01-16)"
+      - "Sesión 3: Validación independiente (2026-01-16)"
+
+  META-ORQUESTADOR:
+    dominio_principal: "workspace"
+    traza_dominio: "TRAZA-WORKSPACE-MANAGEMENT.md"
+    traza_agente: null  # Agente de nivel workspace-v2
+    tareas_recientes:
+      - "Sesión 4: Integración Gobernanza (2026-01-16)"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRAZAS DE AGENTE (NUEVAS)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+trazas_agente:
+  - archivo: "TRAZA-AGENTE-NEXUS-BACKEND.md"
+    agente: "NEXUS-BACKEND"
+    creado: "2026-01-16"
+
+  - archivo: "TRAZA-AGENTE-NEXUS-FRONTEND.md"
+    agente: "NEXUS-FRONTEND"
+    creado: "2026-01-16"
+
+  - archivo: "TRAZA-AGENTE-NEXUS-DATABASE.md"
+    agente: "NEXUS-DATABASE"
+    creado: "2026-01-16"
+
+  - archivo: "TRAZA-AGENTE-TEMPLATE.md"
+    agente: "TEMPLATE"
+    creado: "2026-01-16"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# HISTORIAL ARCHIVADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+historial_archivado:
+  ubicacion: "docs/archivados/historicos-2025/trazas/"
+  archivos:
+    - "TRACE-GAP-002.md"
+    - "TRACE-GAP-008.md"
+    - "TRACE-VALIDACION-DOCUMENTACION-2026-01-04.md"
+    - "TRACE-CORRECCION-DOCUMENTACION-2025-01-04.md"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# INSTRUCCIONES DE USO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+instrucciones:
+  registrar_tarea: |
+    1. Identificar dominio de la tarea (backend, frontend, database)
+    2. Abrir traza correspondiente (TRAZA-TAREAS-{DOMINIO}.md)
+    3. Agregar entrada con formato estándar
+    4. Actualizar este índice si es necesario
+
+  consultar_historial: |
+    Por dominio: trazas_por_dominio.backend.archivo
+    Por agente: actividad_por_agente.NEXUS-BACKEND.traza
+    Recientes: trazas_recientes
+    Archivadas: historial_archivado.ubicacion
+
+  formato_entrada: |
+    ## [FECHA] TAREA-ID: Título
+    - **Estado:** completada|en_progreso|bloqueada
+    - **Agente:** NEXUS-{PERFIL}
+    - **Cambios:** Resumen de cambios
+    - **Validaciones:** Build OK | Lint OK | Tests OK
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  indice_tareas: "../analisis/tareas/_INDEX.yml"
+  inventarios: "../inventarios/"
+  reportes: "../reportes/"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DEL ÍNDICE
+# ═══════════════════════════════════════════════════════════════════════════════

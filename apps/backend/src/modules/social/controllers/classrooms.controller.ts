@@ -9,6 +9,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,10 +18,12 @@ import {
   ApiParam,
   ApiQuery,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ClassroomsService, ClassroomMembersService } from '../services';
 import { CreateClassroomDto, ClassroomResponseDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 
 /**
  * ClassroomsController
@@ -30,9 +33,12 @@ import { API_ROUTES, extractBasePath } from '@/shared/constants';
  * y configuración de horarios.
  *
  * @route /api/v1/social
+ * @security JWT Bearer token required
  */
 @ApiTags('Social - Classrooms')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class ClassroomsController {
   constructor(
     private readonly classroomsService: ClassroomsService,

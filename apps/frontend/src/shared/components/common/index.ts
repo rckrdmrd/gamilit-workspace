@@ -11,8 +11,8 @@ export type { FormFieldProps } from './FormField';
 export { ConfirmDialog } from './ConfirmDialog';
 export type { ConfirmDialogProps } from './ConfirmDialog';
 
-export { UnderConstruction } from './UnderConstruction';
-export type { UnderConstructionProps } from './UnderConstruction';
+// UnderConstruction ha sido consolidado en @/shared/components/UnderConstruction
+// Ver: shared/components/UnderConstruction.tsx
 
 export { FeatureBadge } from './FeatureBadge';
 export type { FeatureBadgeProps } from './FeatureBadge';
