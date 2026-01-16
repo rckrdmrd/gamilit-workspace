@@ -270,7 +270,7 @@ historial_extraccion_patrones:
       fecha_extraccion: "2025-12"
 
     - patron: "constants_ssot"
-      extraido_a: "shared/knowledge-base/projects/gamilit/"
+      extraido_a: "projects/gamilit/orchestration/"  # Actualizado 2026-01-16: KB projects eliminado
       fecha_extraccion: "2025-12"
 
   proyectos_que_consultaron_catalogo:

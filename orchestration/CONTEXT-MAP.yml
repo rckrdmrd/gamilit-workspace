@@ -289,4 +289,4 @@ busqueda_historico:
     - "/home/isem/workspace-v2/projects/gamilit/orchestration/trazas/"
     - "/home/isem/workspace-v2/orchestration/errores/REGISTRO-ERRORES.yml"
     - "/home/isem/workspace-v2/shared/knowledge-base/lessons-learned/"
-    - "/home/isem/workspace-v2/shared/knowledge-base/projects/gamilit/"
+    # NOTA 2026-01-16: shared/knowledge-base/projects/ eliminado por duplicación
