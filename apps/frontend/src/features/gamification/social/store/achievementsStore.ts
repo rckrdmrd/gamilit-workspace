@@ -159,10 +159,12 @@ export const useAchievementsStore = create<AchievementsStore>((set) => ({
    * @param userId - User ID to fetch achievements for
    */
   fetchAchievements: async (userId: string) => {
+    console.log('[achievementsStore] fetchAchievements called for userId:', userId);
     set({ isLoading: true, error: null });
     try {
       // Fetch user achievements with progress from backend
       const achievementsWithProgress = await getUserAchievements(userId);
+      console.log('[achievementsStore] Raw achievements from API:', achievementsWithProgress.length);
 
       // Map backend response to frontend Achievement type
       // CORR-P2-001: Usar ?? (nullish coalescing) en lugar de || para respetar valores de 0
@@ -184,10 +186,14 @@ export const useAchievementsStore = create<AchievementsStore>((set) => ({
         rewardsClaimed: ach.rewardsClaimed ?? false,
       }));
 
+      const stats = calculateStats(achievements);
+      console.log('[achievementsStore] Mapped achievements:', achievements.length);
+      console.log('[achievementsStore] Stats calculated:', stats);
+
       set({
         achievements,
         unlockedAchievements: achievements.filter((a) => a.isUnlocked),
-        stats: calculateStats(achievements),
+        stats,
         isLoading: false,
         error: null,
       });

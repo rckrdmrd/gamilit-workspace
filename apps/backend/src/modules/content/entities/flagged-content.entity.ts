@@ -3,15 +3,11 @@
  *
  * Mapea a la tabla: content_management.flagged_content
  *
- * @description Sistema de moderación de contenido reportado
- * @source apps/database/ddl/schemas/content_management/tables/05-flagged_content.sql
- * @version 1.0.0 (2026-01-13) - GAP-004
+ * Contenido marcado para revisión/moderación.
+ * Incluye reportes de usuarios y estado de revisión.
  *
- * CARACTERÍSTICAS:
- * - Soporte para múltiples tipos de contenido (exercise, comment, profile, post, message)
- * - Estados de moderación (pending, approved, rejected, removed)
- * - Prioridad configurable
- * - Historial de revisión
+ * @see DDL: apps/database/ddl/schemas/content_management/tables/05-flagged_content.sql
+ * @created 2026-01-14 - Alineación BD-Backend
  */
 
 import {
@@ -21,33 +17,26 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
+import { User } from '../../auth/entities/user.entity';
 
-/**
- * Content types that can be flagged
- */
-export type FlaggableContentType =
-  | 'exercise'
-  | 'comment'
-  | 'profile'
-  | 'post'
-  | 'message';
+export enum FlaggedContentStatus {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+  REMOVED = 'removed',
+}
 
-/**
- * Moderation status
- */
-export type ModerationStatus = 'pending' | 'approved' | 'rejected' | 'removed';
+export enum FlaggedContentPriority {
+  HIGH = 'high',
+  MEDIUM = 'medium',
+  LOW = 'low',
+}
 
-/**
- * Priority levels
- */
-export type ModerationPriority = 'high' | 'medium' | 'low';
-
-@Entity({
-  schema: DB_SCHEMAS.CONTENT,
-  name: DB_TABLES.CONTENT.FLAGGED_CONTENT,
-})
+@Entity({ schema: DB_SCHEMAS.CONTENT, name: DB_TABLES.CONTENT.FLAGGED_CONTENT })
 @Index(['contentType'])
 @Index(['contentId'])
 @Index(['status'])
@@ -59,75 +48,65 @@ export class FlaggedContent {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  /**
-   * Tipo de contenido reportado
-   */
-  @Column({ name: 'content_type', type: 'varchar', length: 50 })
-  contentType!: FlaggableContentType;
+  @Column('varchar', { name: 'content_type', length: 50 })
+  contentType!: string; // 'exercise', 'comment', 'profile', 'post', 'message'
 
-  /**
-   * ID del contenido reportado
-   */
-  @Column({ name: 'content_id', type: 'uuid' })
+  @Column('uuid', { name: 'content_id' })
   contentId!: string;
 
-  /**
-   * Vista previa del contenido para revisión rápida
-   */
-  @Column({ name: 'content_preview', type: 'text', nullable: true })
-  contentPreview?: string;
+  @Column('text', { name: 'content_preview', nullable: true })
+  contentPreview!: string | null;
 
-  /**
-   * Usuario que reportó el contenido
-   */
-  @Column({ name: 'reported_by', type: 'uuid' })
+  @Column('uuid', { name: 'reported_by' })
   reportedBy!: string;
 
-  /**
-   * Razón del reporte
-   */
-  @Column({ name: 'reason', type: 'varchar', length: 255 })
+  @Column('varchar', { length: 255 })
   reason!: string;
 
-  /**
-   * Descripción detallada del reporte
-   */
-  @Column({ name: 'description', type: 'text', nullable: true })
-  description?: string;
+  @Column('text', { nullable: true })
+  description!: string | null;
 
-  /**
-   * Estado de moderación
-   */
-  @Column({ name: 'status', type: 'varchar', length: 20, default: 'pending' })
-  status!: ModerationStatus;
+  @Column({
+    type: 'varchar',
+    length: 20,
+    default: FlaggedContentStatus.PENDING,
+  })
+  status!: FlaggedContentStatus;
 
-  /**
-   * Prioridad del reporte
-   */
-  @Column({ name: 'priority', type: 'varchar', length: 20, default: 'medium' })
-  priority!: ModerationPriority;
+  @Column({
+    type: 'varchar',
+    length: 20,
+    default: FlaggedContentPriority.MEDIUM,
+  })
+  priority!: FlaggedContentPriority;
 
-  /**
-   * Moderador que revisó el reporte
-   */
-  @Column({ name: 'reviewed_by', type: 'uuid', nullable: true })
-  reviewedBy?: string;
+  @Column('uuid', { name: 'reviewed_by', nullable: true })
+  reviewedBy!: string | null;
 
-  /**
-   * Fecha de revisión
-   */
-  @Column({ name: 'reviewed_at', type: 'timestamp with time zone', nullable: true })
-  reviewedAt?: Date;
+  @Column('timestamp with time zone', { name: 'reviewed_at', nullable: true })
+  reviewedAt!: Date | null;
 
-  /**
-   * Notas de la revisión
-   */
-  @Column({ name: 'review_notes', type: 'text', nullable: true })
-  reviewNotes?: string;
+  @Column('text', { name: 'review_notes', nullable: true })
+  reviewNotes!: string | null;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp with time zone',
+  })
   createdAt!: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp with time zone',
+  })
   updatedAt!: Date;
+
+  // Relaciones
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'reported_by' })
+  reporter!: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'reviewed_by' })
+  reviewer!: User | null;
 }

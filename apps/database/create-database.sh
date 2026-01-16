@@ -617,6 +617,8 @@ execute_sql "$SEEDS_DIR/social_features/01-schools.sql" "Seeds: schools (demo)"
 execute_sql "$SEEDS_DIR/social_features/02-classrooms.sql" "Seeds: classrooms (demo)"
 execute_sql "$SEEDS_DIR/social_features/03-classroom-members.sql" "Seeds: classroom_members (demo)"
 execute_sql "$SEEDS_DIR/social_features/04-friendships.sql" "Seeds: friendships (10 amistades + 3 pending)"
+execute_sql "$SEEDS_DIR/social_features/04-teams.sql" "Seeds: teams (equipos colaborativos - 2026-01-14)"
+execute_sql "$SEEDS_DIR/social_features/05-teacher-reports.sql" "Seeds: teacher_reports (reportes docentes - 2026-01-14)"
 
 # 16.5.2.1: Communication (mensajes de sistema) - AUDITORIA 2026-01-04
 # Depende de: auth_management.profiles, social_features.classrooms
@@ -638,10 +640,11 @@ execute_sql "$SEEDS_DIR/educational_content/07-assessment-rubrics.sql" "Seeds: a
 execute_sql "$SEEDS_DIR/educational_content/08-difficulty_criteria.sql" "Seeds: difficulty_criteria"
 execute_sql "$SEEDS_DIR/educational_content/09-exercise_mechanic_mapping.sql" "Seeds: exercise_mechanic_mapping"
 execute_sql "$SEEDS_DIR/educational_content/10-exercise_validation_config.sql" "Seeds: exercise_validation_config (15 configs)"
+execute_sql "$SEEDS_DIR/educational_content/11-exercise_validation_config_m4_m5.sql" "Seeds: exercise_validation_config M4-M5 (8 configs - 2026-01-14)"
 execute_sql "$SEEDS_DIR/educational_content/13-exercise_type_rubrics.sql" "Seeds: exercise_type_rubrics (12 rubricas M3-M5 - CORR-009)"
 
 # NOTA: Modelo JSONB puro - Seeds legacy movidos a _deprecated/
-# Total: 15 ejercicios production-ready (módulos 1-3) - Módulos 4-5 en backlog
+# Total: 23 ejercicios production-ready (módulos 1-5)
 # Total seeds PROD: 38 archivos (actualizado DB-122: +63 registros feature_flags & gamification_parameters)
 
 # 16.7: Progress Tracking (progreso inicial de módulos)

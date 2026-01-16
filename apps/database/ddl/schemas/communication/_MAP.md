@@ -1,9 +1,18 @@
-# COMMUNICATION SCHEMA - DDL MAP
+# _MAP: communication/
 
-**Schema:** `communication`
-**Descripcion:** Sistema de comunicacion y mensajeria para interaccion profesor-estudiante
-**Creado:** 2025-11-19
-**Actualizado:** 2025-12-26
+**Ultima actualizacion:** 2026-01-14
+**Estado:** Produccion
+**Tipo:** Integration/Messaging
+**Objetos activos:** 17
+
+---
+
+## Proposito
+
+Sistema de comunicacion y mensajeria para interaccion profesor-estudiante.
+Soporta mensajes directos, anuncios de aula, chat grupal y feedback privado.
+
+**Audiencia:** Backend Developers, Frontend Developers
 
 ---
 

@@ -1,6 +1,18 @@
-# Schema: lti_integration
+# _MAP: lti_integration/
 
-Integración LTI 1.3 (Learning Tools Interoperability) con plataformas LMS externas
+**Ultima actualizacion:** 2026-01-14
+**Estado:** Produccion
+**Tipo:** Integration/LMS
+**Objetos activos:** 3
+
+---
+
+## Proposito
+
+Integracion LTI 1.3 (Learning Tools Interoperability) con plataformas LMS externas.
+Permite usar GAMILIT como herramienta dentro de Moodle, Canvas, Blackboard, etc.
+
+**Audiencia:** Backend Developers, Integration Team
 
 ## Estructura
 

@@ -2,30 +2,44 @@
 
 ## Arquitectura de Directivas
 
-Este proyecto hereda directivas del workspace (core) y define directivas específicas.
+Este proyecto hereda directivas del workspace-v2 y define directivas específicas.
 
-## Directivas Globales (heredadas de core)
+## Directivas del Workspace-V2 (heredadas)
 
-**Path:** `~/workspace/core/orchestration/directivas/`
+**Path:** `/home/isem/workspace-v2/orchestration/directivas/`
 
 Estas directivas aplican a TODOS los proyectos del workspace:
 
-| Directiva | Propósito |
-|-----------|-----------|
-| `DIRECTIVA-FLUJO-5-FASES.md` | Workflow obligatorio de 5 fases |
-| `DIRECTIVA-VALIDACION-SUBAGENTES.md` | Validación de entregables |
-| `POLITICAS-USO-AGENTES.md` | Reglas de delegación |
-| `DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md` | Documentación requerida |
-| `DIRECTIVA-CALIDAD-CODIGO.md` | Estándares de código |
-| `DIRECTIVA-CONTROL-VERSIONES.md` | Git y versionado |
-| `DIRECTIVA-GESTION-BACKUPS-GITIGNORE.md` | Backups y gitignore |
-| `PROTOCOLO-ESCALAMIENTO-PO.md` | Escalamiento al PO |
-| `ESTANDARES-NOMENCLATURA-BASE.md` | Nomenclatura base |
-| `SISTEMA-RETROALIMENTACION.md` | Mejora continua |
+### Principios Fundamentales
+| Directiva | Path | Propósito |
+|-----------|------|-----------|
+| `PRINCIPIO-CAPVED.md` | `principios/` | Ciclo de 6 fases obligatorio |
+| `PRINCIPIO-DOC-PRIMERO.md` | `principios/` | Documentación antes de implementar |
+| `PRINCIPIO-ANTI-DUPLICACION.md` | `principios/` | Verificar catálogo antes de crear |
+| `PRINCIPIO-VALIDACION-OBLIGATORIA.md` | `principios/` | Build y lint deben pasar |
+| `PRINCIPIO-ECONOMIA-TOKENS.md` | `principios/` | Desglosar tareas grandes |
+
+### Directivas SIMCO
+| Directiva | Path | Propósito |
+|-----------|------|-----------|
+| `SIMCO-TAREA.md` | `simco/` | Punto de entrada para toda tarea |
+| `SIMCO-CREAR.md` | `simco/` | Crear archivos nuevos |
+| `SIMCO-MODIFICAR.md` | `simco/` | Modificar archivos existentes |
+| `SIMCO-VALIDAR.md` | `simco/` | Validar código |
+| `SIMCO-DOCUMENTAR.md` | `simco/` | Documentar trabajo |
+| `SIMCO-DELEGACION.md` | `simco/` | Delegar a subagentes |
+
+### Modos de Ejecución
+| Modo | Path | Propósito |
+|------|------|-----------|
+| `MODE-FULL.md` | `modos/` | Ciclo CAPVED completo |
+| `MODE-QUICK.md` | `modos/` | Solo ejecución y documentación |
+| `MODE-ANALYSIS.md` | `modos/` | Solo investigación |
+| `MODE-PROPAGATION.md` | `modos/` | Propagar cambios entre proyectos |
 
 ## Directivas Específicas de Gamilit
 
-**Path:** `~/workspace/projects/gamilit/orchestration/directivas/`
+**Path:** `/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/`
 
 | Directiva | Propósito |
 |-----------|-----------|
@@ -37,24 +51,21 @@ Estas directivas aplican a TODOS los proyectos del workspace:
 | `AUTOMATIZACION-VALIDACION-RUTAS.md` | Validación automática de rutas |
 | `GUIA-NOMENCLATURA-COMPLETA.md` | Nomenclatura específica Gamilit |
 
-## Prompts Base (heredados de core)
+## Directivas NEXUS (extensiones locales)
 
-**Path:** `~/workspace/core/orchestration/prompts/base/`
+**Path:** `/home/isem/workspace-v2/projects/gamilit/.claude/directivas/`
 
-| Prompt | Uso |
-|--------|-----|
-| `PROMPT-SUBAGENTES-BASE.md` | Instrucciones generales para subagentes |
-| `PROMPT-BUG-FIXER.md` | Corrección de bugs genérico |
-| `PROMPT-CODE-REVIEWER.md` | Revisión de código |
-| `PROMPT-FEATURE-DEVELOPER.md` | Desarrollo de features |
-| `PROMPT-DOCUMENTATION-VALIDATOR.md` | Validación de documentación |
-| `PROMPT-POLICY-AUDITOR.md` | Auditoría de políticas |
-| `PROMPT-REQUIREMENTS-ANALYST.md` | Análisis de requerimientos |
-| `PROMPT-WORKSPACE-MANAGER.md` | Gestión del workspace |
+| Directiva | Propósito |
+|-----------|-----------|
+| `DIRECTIVAS-PRINCIPALES.md` | Consolidado de directivas NEXUS |
+| `DIRECTIVA-VALIDACION-DOCUMENTACION.md` | Validación contra /docs/ |
+| `DIRECTIVAS-MICROCICLOS-ANIDADOS.md` | Microciclos hasta 5 niveles |
+| `POLITICAS-MODULARIZACION.md` | Archivos <400L |
+| `PRINCIPIOS-SOLID-DOCS.md` | SOLID aplicado a documentación |
 
 ## Prompts Específicos de Gamilit
 
-**Path:** `~/workspace/projects/gamilit/orchestration/prompts/`
+**Path:** `/home/isem/workspace-v2/projects/gamilit/orchestration/prompts/`
 
 | Prompt | Uso |
 |--------|-----|
@@ -64,46 +75,37 @@ Estas directivas aplican a TODOS los proyectos del workspace:
 | `PROMPT-FRONTEND-AGENT.md` | Desarrollo frontend React |
 | `PROMPT-ARCHITECTURE-ANALYST.md` | Análisis arquitectónico |
 
-## Templates y Checklists (core)
+## Perfiles de Agentes del Workspace
 
-**Path:** `~/workspace/core/orchestration/templates/`
-- `TEMPLATE-ANALISIS.md`
-- `TEMPLATE-PLAN.md`
-- `TEMPLATE-VALIDACION.md`
-- `TEMPLATE-CONTEXTO-SUBAGENTE.md`
+**Path:** `/home/isem/workspace-v2/orchestration/agents/perfiles/`
 
-**Path:** `~/workspace/core/orchestration/checklists/`
-- `CHECKLIST-CODE-REVIEW-API.md`
-- `CHECKLIST-REFACTORIZACION.md`
+Ver `_MAP.md` para asignación de perfiles según tipo de tarea.
 
 ## Orden de Precedencia
 
 Cuando hay conflicto entre directivas:
 
 1. **Directivas específicas del proyecto** (mayor prioridad)
-2. **Directivas globales del workspace**
+2. **Directivas del workspace-v2**
 3. **Prompts específicos del proyecto**
-4. **Prompts base del workspace**
+4. **Perfiles base del workspace**
 
 ## Uso para Subagentes
 
-Al invocar un subagente, incluir en el contexto:
+Al invocar un subagente, cargar contexto según CCA Protocol:
 
 ```yaml
 DIRECTIVAS_A_LEER:
-  globales:
-    - ~/workspace/core/orchestration/directivas/DIRECTIVA-FLUJO-5-FASES.md
-    - ~/workspace/core/orchestration/directivas/POLITICAS-USO-AGENTES.md
-  especificas:
-    - ~/workspace/projects/gamilit/orchestration/directivas/[DIRECTIVA-RELEVANTE].md
-  prompt_base:
-    - ~/workspace/core/orchestration/prompts/base/PROMPT-SUBAGENTES-BASE.md
-  prompt_especifico:
-    - ~/workspace/projects/gamilit/orchestration/prompts/[PROMPT-AGENTE].md
-  contexto_proyecto:
-    - ~/workspace/projects/gamilit/orchestration/00-guidelines/CONTEXTO-PROYECTO.md
+  workspace:
+    - /home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-CAPVED.md
+    - /home/isem/workspace-v2/orchestration/directivas/simco/SIMCO-TAREA.md
+  proyecto:
+    - /home/isem/workspace-v2/projects/gamilit/orchestration/directivas/[DIRECTIVA-RELEVANTE].md
+  contexto:
+    - /home/isem/workspace-v2/projects/gamilit/orchestration/00-guidelines/CONTEXTO-PROYECTO.md
+    - /home/isem/workspace-v2/projects/gamilit/orchestration/00-guidelines/HERENCIA-SIMCO.md
 ```
 
 ---
-*Sistema NEXUS - Gamilit v2.0*
-*Actualizado: 2025-12-05*
+*Sistema SIMCO v3.8 - Gamilit*
+*Actualizado: 2026-01-13*

@@ -162,101 +162,74 @@ export interface ActivityStats {
 // MOCK DATA (for development)
 // ============================================================================
 
-/**
- * Mock Modules with FIXED UUIDs
- *
- * IMPORTANTE: Estos UUIDs DEBEN coincidir con los seeds de la BD
- * Ver: apps/database/seeds/dev/educational_content/01-modules.sql
- *
- * UUIDs fijos (formato hexadecimal válido):
- * - Módulo 1: a0000001-0001-0001-0001-000000000001
- * - Módulo 2: a0000002-0002-0002-0002-000000000002
- * - Módulo 3: a0000003-0003-0003-0003-000000000003
- * - Módulo 4: a0000004-0004-0004-0004-000000000004
- * - Módulo 5: a0000005-0005-0005-0005-000000000005
- */
 const mockModules: Module[] = [
   {
-    id: 'a0000001-0001-0001-0001-000000000001',
-    title: 'Módulo 1: Comprensión Literal',
-    description: 'Identifica información explícita en textos sobre la vida de Marie Curie',
+    id: '1',
+    title: 'Los Primeros Pasos de Marie Curie',
+    description: 'Descubre los inicios de la carrera científica de Marie Curie',
     order_index: 1,
     progress: 75,
     exercises_count: 20,
     completed_exercises: 15,
   },
   {
-    id: 'a0000002-0002-0002-0002-000000000002',
-    title: 'Módulo 2: Comprensión Inferencial',
-    description: 'Deduce información implícita y relaciones causa-efecto en la vida de Marie Curie',
+    id: '2',
+    title: 'Descubrimientos Científicos',
+    description: 'Explora los grandes descubrimientos de Marie Curie',
     order_index: 2,
     progress: 45,
     exercises_count: 18,
     completed_exercises: 8,
   },
   {
-    id: 'a0000003-0003-0003-0003-000000000003',
-    title: 'Módulo 3: Comprensión Crítica',
-    description: 'Evalúa y analiza críticamente la información sobre Marie Curie',
+    id: '3',
+    title: 'El Nobel de Química',
+    description: 'Conoce el camino hacia el Premio Nobel',
     order_index: 3,
     progress: 20,
     exercises_count: 25,
     completed_exercises: 5,
   },
   {
-    id: 'a0000004-0004-0004-0004-000000000004',
-    title: 'Módulo 4: Lectura Digital y Multimodal',
-    description: 'Desarrolla habilidades de lectura en medios digitales y multimodales',
+    id: '4',
+    title: 'Legado y Contribuciones',
+    description: 'El impacto de Marie Curie en la ciencia moderna',
     order_index: 4,
     progress: 0,
     exercises_count: 15,
     completed_exercises: 0,
   },
-  {
-    id: 'a0000005-0005-0005-0005-000000000005',
-    title: 'Módulo 5: Producción y Expresión Lectora',
-    description: 'Crea textos diversos y expresiones lectoras basadas en Marie Curie',
-    order_index: 5,
-    progress: 0,
-    exercises_count: 12,
-    completed_exercises: 0,
-  },
 ];
 
-/**
- * Mock Exercises with FIXED UUIDs
- *
- * IMPORTANTE: module_id DEBE usar los UUIDs fijos de mockModules (formato hexadecimal)
- */
 const mockExercises: Partial<Exercise>[] = [
   {
-    id: 'e0000001-0001-0001-0001-000000000001',
-    module_id: 'a0000001-0001-0001-0001-000000000001',
+    id: '1',
+    module_id: '1',
     title: 'Crucigrama: Primeros Años',
-    type: ExerciseType.CRUCIGRAMA,
-    difficulty: DifficultyLevel.BEGINNER,
+    type: ExerciseType.CRUCIGRAMA, // Fixed: was 'crucigrama_cientifico'
+    difficulty: DifficultyLevel.BEGINNER, // A1 - Easy
     points: 100,
     completed: true,
     description: 'Resuelve el crucigrama sobre los primeros años de Marie Curie',
     estimatedTime: 15,
   },
   {
-    id: 'e0000002-0002-0002-0002-000000000002',
-    module_id: 'a0000001-0001-0001-0001-000000000001',
+    id: '2',
+    module_id: '1',
     title: 'Línea de Tiempo: Juventud',
-    type: ExerciseType.LINEA_TIEMPO,
-    difficulty: DifficultyLevel.INTERMEDIATE,
+    type: ExerciseType.LINEA_TIEMPO, // Fixed: now uses enum
+    difficulty: DifficultyLevel.INTERMEDIATE, // B2 - Medium
     points: 150,
     completed: true,
     description: 'Ordena los eventos de la juventud de Marie Curie',
     estimatedTime: 20,
   },
   {
-    id: 'e0000003-0003-0003-0003-000000000003',
-    module_id: 'a0000001-0001-0001-0001-000000000001',
+    id: '3',
+    module_id: '1',
     title: 'Sopa de Letras: Conceptos Científicos',
-    type: ExerciseType.SOPA_LETRAS,
-    difficulty: DifficultyLevel.BEGINNER,
+    type: ExerciseType.SOPA_LETRAS, // Fixed: now uses enum
+    difficulty: DifficultyLevel.BEGINNER, // A1 - Easy
     points: 100,
     completed: false,
     description: 'Encuentra términos científicos importantes',

@@ -1,6 +1,18 @@
-# Schema: audit_logging
+# _MAP: audit_logging/
+
+**Ultima actualizacion:** 2026-01-14
+**Estado:** Produccion
+**Tipo:** Integration/Observability
+**Objetos activos:** 36
+
+---
+
+## Proposito
 
 Auditoria y logging: actividad de usuarios, eventos del sistema, metricas de rendimiento.
+Incluye sistema de retry para inicializaciones fallidas de gamificacion.
+
+**Audiencia:** Backend Developers, DevOps, Security Team
 
 ## Estructura
 

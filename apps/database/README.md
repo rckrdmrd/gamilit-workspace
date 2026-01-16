@@ -2,13 +2,31 @@
 
 Proyecto de base de datos PostgreSQL para la plataforma GAMILIT
 
+**Ultima actualizacion:** 2026-01-14
+**Version SSOT:** DATABASE_INVENTORY.yml v4.5.0
+**Cobertura DDL:** 100% (386 archivos)
+**Cobertura Seeds:** 100% (65 archivos activos)
+
+## Metricas Actuales (Auditadas 2026-01-14)
+
+| Objeto | Cantidad |
+|--------|----------|
+| Schemas | 16 |
+| Tablas | 135 |
+| Funciones Activas | 122 |
+| Triggers Activos | 49 |
+| Indices | 405 |
+| RLS Policies | 121 |
+| ENUMs | 38 |
+| Foreign Keys | 208 |
+
 ## Estructura
 
 ```
 apps/database/
 ├── ddl/                     # Definiciones DDL (schemas, tablas, funciones, etc.)
 │   ├── 00-prerequisites.sql # Schemas + ENUMs base (ejecutar primero)
-│   └── schemas/             # 14 schemas con todos los objetos
+│   └── schemas/             # 16 schemas con todos los objetos
 ├── scripts/                 # Scripts operacionales
 │   ├── init-database.sh     # Inicializar BD completa
 │   ├── recreate-database.sh # Recrear BD desde cero

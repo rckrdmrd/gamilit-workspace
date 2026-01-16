@@ -8,6 +8,11 @@ import {
   MediaFile,
   ContentAuthor, // ✨ NUEVO - P2 (Autores de contenido)
   ContentCategory, // ✨ NUEVO - P2 (Categorías jerárquicas)
+  ContentVersion, // ✨ NUEVO - 2026-01-14 (Versionado de contenido)
+  FlaggedContent, // ✨ NUEVO - 2026-01-14 (Moderación de contenido)
+  MediaMetadata, // ✨ NUEVO - 2026-01-14 (Metadatos multimedia)
+  Tag, // ✨ NUEVO - 2026-01-14 (Etiquetas de contenido)
+  ModerationRule, // ✨ NUEVO - 2026-01-14 (Reglas de moderación)
 } from './entities';
 
 // Services
@@ -63,6 +68,11 @@ import {
         MediaFile,
         ContentAuthor, // ✨ NUEVO - P2 (Autores de contenido)
         ContentCategory, // ✨ NUEVO - P2 (Categorías jerárquicas)
+        ContentVersion, // ✨ NUEVO - 2026-01-14 (Versionado de contenido)
+        FlaggedContent, // ✨ NUEVO - 2026-01-14 (Moderación de contenido)
+        MediaMetadata, // ✨ NUEVO - 2026-01-14 (Metadatos multimedia)
+        Tag, // ✨ NUEVO - 2026-01-14 (Etiquetas de contenido)
+        ModerationRule, // ✨ NUEVO - 2026-01-14 (Reglas de moderación)
       ],
       'content',
     ),

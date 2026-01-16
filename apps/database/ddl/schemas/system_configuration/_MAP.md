@@ -1,6 +1,18 @@
-# Schema: system_configuration
+# _MAP: system_configuration/
 
-Configuración del sistema: feature flags, ajustes, rate limiting.
+**Ultima actualizacion:** 2026-01-14
+**Estado:** Produccion
+**Tipo:** System/Configuration
+**Objetos activos:** 14
+
+---
+
+## Proposito
+
+Configuracion del sistema: feature flags, ajustes, rate limiting.
+Soporta configuracion multi-tenant y por ambiente (dev, staging, prod).
+
+**Audiencia:** Backend Developers, DevOps
 
 ## Estructura
 

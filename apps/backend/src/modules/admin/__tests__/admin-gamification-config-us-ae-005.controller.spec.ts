@@ -200,7 +200,7 @@ describe('AdminGamificationConfigController - US-AE-005', () => {
       // Arrange
       const parameterId = 'param-uuid-1';
       const dto: UpdateParameterDto = { value: '15' };
-      const req = { user: { id: 'admin-2' } };
+      const req = { user: { sub: 'admin-2' } };
       const expectedResult: UpdateParameterResponseDto = {
         message: 'Parameter updated successfully',
         parameter: {
@@ -240,7 +240,7 @@ describe('AdminGamificationConfigController - US-AE-005', () => {
       // Arrange
       const parameterId = 'param-uuid-1';
       const dto: UpdateParameterDto = { value: '20' };
-      const req = { user: { id: 'admin-uuid-123' } };
+      const req = { user: { sub: 'admin-uuid-123' } };
       const expectedResult: UpdateParameterResponseDto = {
         message: 'Parameter updated successfully',
         parameter: {
@@ -385,7 +385,7 @@ describe('AdminGamificationConfigController - US-AE-005', () => {
       // Arrange
       const rankName = 'beginner';
       const dto: UpdateMayaRankDto = { min_xp: 150 };
-      const req = { user: { id: 'admin-2' } };
+      const req = { user: { sub: 'admin-2' } };
       const expectedResult: UpdateMayaRankResponseDto = {
         message: 'Maya rank threshold updated successfully',
         rank: {
@@ -453,7 +453,7 @@ describe('AdminGamificationConfigController - US-AE-005', () => {
       // Arrange
       const rankName = 'intermediate';
       const dto: UpdateMayaRankDto = { min_xp: 600 };
-      const req = { user: { id: 'admin-xyz-789' } };
+      const req = { user: { sub: 'admin-xyz-789' } };
       const expectedResult: UpdateMayaRankResponseDto = {
         message: 'Maya rank threshold updated successfully',
         rank: {
@@ -484,7 +484,7 @@ describe('AdminGamificationConfigController - US-AE-005', () => {
       // Arrange
       const validRanks = ['novice', 'beginner', 'intermediate', 'advanced', 'expert'];
       const dto: UpdateMayaRankDto = { min_xp: 100 };
-      const req = { user: { id: 'admin-1' } };
+      const req = { user: { sub: 'admin-1' } };
 
       mockGamificationConfigService.updateMayaRank.mockResolvedValue({
         message: 'Maya rank threshold updated successfully',

@@ -21,7 +21,7 @@ Plataforma educativa gamificada para aprendizaje de matematicas, con sistema de 
 
 ## VARIABLES PARA DIRECTIVAS GLOBALES
 
-Las siguientes variables se usan para resolver placeholders en directivas globales de `core/orchestration/`:
+Las siguientes variables se usan para resolver placeholders en directivas del workspace `/home/isem/workspace-v2/orchestration/`:
 
 ```yaml
 # Identificacion del Proyecto

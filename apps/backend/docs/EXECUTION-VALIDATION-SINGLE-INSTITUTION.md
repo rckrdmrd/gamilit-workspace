@@ -168,7 +168,7 @@ code = 'DEFAULT',                  -- ✅ Código mantenido para compatibilidad
 ### Para aplicar cambios en base de datos:
 
 ```bash
-cd /home/isem/workspace-v2/projects/gamilit/apps/database/scripts
+cd /home/isem/workspace-v1/projects/gamilit/apps/database/scripts
 ./recreate-database.sh --env dev --force
 ```
 

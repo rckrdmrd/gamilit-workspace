@@ -7,6 +7,9 @@ import {
   MediaResource,
   MediaAttachment,
   ContentApproval,
+  ExerciseValidationConfig, // ✨ NUEVO - 2026-01-14 (Sistema Dual ADR-008)
+  ExerciseTypeRubric, // ✨ NUEVO - 2026-01-14 (Rúbricas por tipo M4-M5)
+  ExerciseValidationAudit, // ✨ NUEVO - 2026-01-14 (Auditoría de validaciones)
 } from './entities';
 import { Profile } from '../auth/entities/profile.entity';
 import { ClassroomMember } from '../social/entities/classroom-member.entity';
@@ -58,6 +61,9 @@ import { ProgressModule } from '../progress/progress.module';
         MediaAttachment,
         ContentApproval,
         AssignmentExercise,
+        ExerciseValidationConfig, // ✨ NUEVO - 2026-01-14 (Sistema Dual ADR-008)
+        ExerciseTypeRubric, // ✨ NUEVO - 2026-01-14 (Rúbricas por tipo M4-M5)
+        ExerciseValidationAudit, // ✨ NUEVO - 2026-01-14 (Auditoría de validaciones)
       ],
       'educational',
     ),

@@ -4,26 +4,71 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.4.0"
+  version: "3.5.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-13"
-  generated_by: "Meta-Orquestador SIMCO - Validacion exhaustiva documentacion + CAPVED Testing + Bugfix Circular Refs"
+  last_updated: "2026-01-14"
+  generated_by: "Meta-Orquestador SIMCO - Alineación BD-Backend completa (16 entities)"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
-  total_modules: 17  # Verificado 2026-01-13 (admin, assignments, audit, auth, content, educational, gamification, health, mail, notifications, profile, progress, social, tasks, teacher, websocket + 1 nuevo)
-  total_entities: 113  # Actualizado 2026-01-13 (+5 entities: user-activity-log, pending-user-initialization, content-version, flagged-content, user-follow)
+  total_modules: 18  # Actualizado 2026-01-14 (+1 módulo LTI)
+  total_entities: 129  # Actualizado 2026-01-14 (+16 entities: alineación BD-Backend)
   total_dtos: 337
   total_services: 105  # Verificado 2026-01-13
   total_controllers: 75
   total_endpoints: 612  # Verificado 2026-01-13 (conteo real de @Get/@Post/@Put/@Delete/@Patch)
   typescript_errors: 0  # ⚠️ 2025-11-28: Backend tiene errores PREEXISTENTES en tests auth (no en admin)
-  build_status: "✅ BUILD PASSING"  # 2026-01-13: Bugfix circular refs aplicado
-  coherencia_bd: "97%"  # ✅ Validado 2025-11-11 (87/117 tablas con entity, resto auxiliares)
-  discrepancies_found: "ninguna - M4 tiene 5 ejercicios oficiales según DocumentoDeDiseño v6.4"
+  build_status: "✅ BUILD PASSING"  # 2026-01-14: Alineación BD-Backend completada
+  coherencia_bd: "99%"  # ✅ Actualizado 2026-01-14 (129/134 tablas con entity - 16 nuevas)
+  discrepancies_found: "5 tablas auxiliares sin entity (intencional)"
   api_docs:
     - "docs/90-transversal/api/API-TEACHER-MODULE.md"
     - "docs/90-transversal/api/API-ADMIN-MODULE.md"
+
+# ============================================================================
+# CHANGELOG 2026-01-14 (v3.5.0 - Alineación BD-Backend)
+# ============================================================================
+alineacion_2026_01_14:
+  descripcion: "Implementación de 16 entities faltantes para alineación completa BD-Backend"
+  task_id: "BE-ALIGN-2026-01-14"
+  cobertura_antes: "87.3% (113/134 tablas)"
+  cobertura_despues: "99% (129/134 tablas)"
+  entities_creadas:
+    audit_logging:
+      - "user-activity-log.entity.ts (analytics de actividad)"
+      - "pending-user-initialization.entity.ts (control de inicialización)"
+    auth_management:
+      - "parent-account.entity.ts (Portal de padres EXT-010)"
+      - "parent-student-link.entity.ts (vinculación padre-estudiante)"
+      - "parent-notification.entity.ts (notificaciones a padres)"
+    content_management:
+      - "content-version.entity.ts (versionado de contenido)"
+      - "flagged-content.entity.ts (moderación de contenido)"
+      - "media-metadata.entity.ts (metadatos multimedia)"
+      - "tag.entity.ts (etiquetas de contenido)"
+      - "moderation-rule.entity.ts (reglas de moderación automática)"
+    educational_content:
+      - "exercise-validation-config.entity.ts (Sistema Dual ADR-008)"
+      - "exercise-type-rubric.entity.ts (rúbricas por tipo M4-M5)"
+      - "exercise-validation-audit.entity.ts (auditoría de validaciones)"
+    lti_integration:
+      - "lti-consumer.entity.ts (consumidores LTI)"
+      - "lti-session.entity.ts (sesiones LTI)"
+      - "lti-grade-passback.entity.ts (passback de calificaciones)"
+  modulos_actualizados:
+    - "audit.module.ts (+2 entities)"
+    - "auth.module.ts (+3 entities)"
+    - "content.module.ts (+5 entities)"
+    - "educational.module.ts (+3 entities)"
+  modulos_creados:
+    - "lti/lti.module.ts (nuevo módulo LTI)"
+  archivos_actualizados:
+    - "shared/constants/database.constants.ts (constantes de BD)"
+    - "*/entities/index.ts (barrel exports)"
+  validacion:
+    build: "✅ PASSED"
+    lint: "⚠️ 9 errores preexistentes (no en código nuevo)"
+  traza: "orchestration/trazas/TRAZA-TAREAS-BACKEND.md#BE-ALIGN-2026-01-14"
 
 # ============================================================================
 # CHANGELOG 2026-01-13 (v3.4.0 - Bugfix)

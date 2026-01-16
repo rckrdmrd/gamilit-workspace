@@ -389,11 +389,7 @@ export const getLeaderboard = async (
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 600));
-      // FIX: CORR-001 - Usar datos mock reales en lugar de array vacio
-      const { getLeaderboardByType } = await import('../mockData/leaderboardsMockData');
-      const validType = type as 'global' | 'school' | 'grade' | 'friends' | 'classroom';
-      const mockData = getLeaderboardByType(validType);
-      return mockData.entries;
+      return [];
     }
 
     let endpoint: string;

@@ -3,9 +3,11 @@
  *
  * Mapea a la tabla: audit_logging.user_activity_logs
  *
- * @description Registro de actividad de usuarios para analytics
- * @source apps/database/ddl/schemas/audit_logging/tables/05-user_activity_logs.sql
- * @version 1.0.0 (2026-01-13) - GAP-004
+ * Registro de actividad de usuarios para analytics y tracking de comportamiento.
+ * Diferente de activity_log (admin dashboard) - este es para analytics detallado.
+ *
+ * @see DDL: apps/database/ddl/schemas/audit_logging/tables/05-user_activity_logs.sql
+ * @created 2026-01-14 - Alineación BD-Backend
  */
 
 import {
@@ -14,187 +16,125 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   Index,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
+import { Profile } from '../../auth/entities/profile.entity';
+import { Tenant } from '../../auth/entities/tenant.entity';
 
-/**
- * Activity types allowed in the system
- */
-export type ActivityType =
-  | 'page_view'
-  | 'button_click'
-  | 'form_submit'
-  | 'exercise_start'
-  | 'exercise_complete'
-  | 'module_access'
-  | 'video_play'
-  | 'resource_download'
-  | 'search_query';
+export enum ActivityType {
+  PAGE_VIEW = 'page_view',
+  BUTTON_CLICK = 'button_click',
+  FORM_SUBMIT = 'form_submit',
+  EXERCISE_START = 'exercise_start',
+  EXERCISE_COMPLETE = 'exercise_complete',
+  MODULE_ACCESS = 'module_access',
+  VIDEO_PLAY = 'video_play',
+  RESOURCE_DOWNLOAD = 'resource_download',
+  SEARCH_QUERY = 'search_query',
+}
 
-@Entity({
-  schema: DB_SCHEMAS.AUDIT,
-  name: DB_TABLES.AUDIT.USER_ACTIVITY_LOGS,
-})
+@Entity({ schema: DB_SCHEMAS.AUDIT, name: DB_TABLES.AUDIT.USER_ACTIVITY_LOGS })
 @Index(['userId'])
-@Index(['tenantId'])
 @Index(['activityType'])
 @Index(['sessionId'])
-@Index(['moduleId'])
 @Index(['createdAt'])
+@Index(['moduleId'])
 export class UserActivityLog {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  /**
-   * ID del usuario que realizó la actividad
-   */
-  @Column({ name: 'user_id', type: 'uuid' })
+  @Column('uuid', { name: 'user_id' })
   userId!: string;
 
-  /**
-   * ID del tenant/organización
-   */
-  @Column({ name: 'tenant_id', type: 'uuid', nullable: true })
-  tenantId?: string;
+  @Column('uuid', { name: 'tenant_id', nullable: true })
+  tenantId!: string | null;
 
-  /**
-   * Tipo de actividad
-   */
-  @Column({ name: 'activity_type', type: 'text' })
-  activityType!: ActivityType;
+  @Column({
+    type: 'text',
+    name: 'activity_type',
+  })
+  activityType!: string;
 
-  /**
-   * Detalle de la acción realizada
-   */
-  @Column({ name: 'action_detail', type: 'text', nullable: true })
-  actionDetail?: string;
+  @Column('text', { name: 'action_detail', nullable: true })
+  actionDetail!: string | null;
 
-  /**
-   * URL de la página
-   */
-  @Column({ name: 'page_url', type: 'text', nullable: true })
-  pageUrl?: string;
+  @Column('text', { name: 'page_url', nullable: true })
+  pageUrl!: string | null;
 
-  /**
-   * Título de la página
-   */
-  @Column({ name: 'page_title', type: 'text', nullable: true })
-  pageTitle?: string;
+  @Column('text', { name: 'page_title', nullable: true })
+  pageTitle!: string | null;
 
-  /**
-   * URL de referencia
-   */
-  @Column({ name: 'referrer_url', type: 'text', nullable: true })
-  referrerUrl?: string;
+  @Column('text', { name: 'referrer_url', nullable: true })
+  referrerUrl!: string | null;
 
-  /**
-   * ID de la sesión
-   */
-  @Column({ name: 'session_id', type: 'text', nullable: true })
-  sessionId?: string;
+  @Column('text', { name: 'session_id', nullable: true })
+  sessionId!: string | null;
 
-  /**
-   * Duración de la sesión
-   */
-  @Column({ name: 'session_duration', type: 'interval', nullable: true })
-  sessionDuration?: string;
+  @Column('interval', { name: 'session_duration', nullable: true })
+  sessionDuration!: string | null;
 
-  /**
-   * ID del elemento HTML interactuado
-   */
-  @Column({ name: 'element_id', type: 'text', nullable: true })
-  elementId?: string;
+  @Column('text', { name: 'element_id', nullable: true })
+  elementId!: string | null;
 
-  /**
-   * Tipo de elemento HTML
-   */
-  @Column({ name: 'element_type', type: 'text', nullable: true })
-  elementType?: string;
+  @Column('text', { name: 'element_type', nullable: true })
+  elementType!: string | null;
 
-  /**
-   * Texto del elemento
-   */
-  @Column({ name: 'element_text', type: 'text', nullable: true })
-  elementText?: string;
+  @Column('text', { name: 'element_text', nullable: true })
+  elementText!: string | null;
 
-  /**
-   * Coordenadas del click (punto x,y)
-   */
-  @Column({ name: 'coordinates', type: 'point', nullable: true })
-  coordinates?: string;
+  @Column('point', { nullable: true })
+  coordinates!: string | null;
 
-  /**
-   * ID del módulo educativo (referencia débil intencional)
-   */
-  @Column({ name: 'module_id', type: 'uuid', nullable: true })
-  moduleId?: string;
+  @Column('uuid', { name: 'module_id', nullable: true })
+  moduleId!: string | null;
 
-  /**
-   * ID del ejercicio (referencia débil intencional)
-   */
-  @Column({ name: 'exercise_id', type: 'uuid', nullable: true })
-  exerciseId?: string;
+  @Column('uuid', { name: 'exercise_id', nullable: true })
+  exerciseId!: string | null;
 
-  /**
-   * ID del aula/salón (referencia débil intencional)
-   */
-  @Column({ name: 'classroom_id', type: 'uuid', nullable: true })
-  classroomId?: string;
+  @Column('uuid', { name: 'classroom_id', nullable: true })
+  classroomId!: string | null;
 
-  /**
-   * User agent del navegador
-   */
-  @Column({ name: 'user_agent', type: 'text', nullable: true })
-  userAgent?: string;
+  @Column('text', { name: 'user_agent', nullable: true })
+  userAgent!: string | null;
 
-  /**
-   * Dirección IP del usuario
-   */
-  @Column({ name: 'ip_address', type: 'inet', nullable: true })
-  ipAddress?: string;
+  @Column('inet', { name: 'ip_address', nullable: true })
+  ipAddress!: string | null;
 
-  /**
-   * Tipo de dispositivo (desktop, mobile, tablet)
-   */
-  @Column({ name: 'device_type', type: 'text', nullable: true })
-  deviceType?: string;
+  @Column('text', { name: 'device_type', nullable: true })
+  deviceType!: string | null;
 
-  /**
-   * Nombre del navegador
-   */
-  @Column({ name: 'browser_name', type: 'text', nullable: true })
-  browserName?: string;
+  @Column('text', { name: 'browser_name', nullable: true })
+  browserName!: string | null;
 
-  /**
-   * Versión del navegador
-   */
-  @Column({ name: 'browser_version', type: 'text', nullable: true })
-  browserVersion?: string;
+  @Column('text', { name: 'browser_version', nullable: true })
+  browserVersion!: string | null;
 
-  /**
-   * Resolución de pantalla
-   */
-  @Column({ name: 'screen_resolution', type: 'text', nullable: true })
-  screenResolution?: string;
+  @Column('text', { name: 'screen_resolution', nullable: true })
+  screenResolution!: string | null;
 
-  /**
-   * Tiempo de carga en milisegundos
-   */
-  @Column({ name: 'load_time_ms', type: 'integer', nullable: true })
-  loadTimeMs?: number;
+  @Column('int', { name: 'load_time_ms', nullable: true })
+  loadTimeMs!: number | null;
 
-  /**
-   * Tiempo de interacción en milisegundos
-   */
-  @Column({ name: 'interaction_time_ms', type: 'integer', nullable: true })
-  interactionTimeMs?: number;
+  @Column('int', { name: 'interaction_time_ms', nullable: true })
+  interactionTimeMs!: number | null;
 
-  /**
-   * Metadatos adicionales en formato JSON
-   */
-  @Column({ name: 'metadata', type: 'jsonb', default: '{}' })
-  metadata?: Record<string, unknown>;
+  @Column('jsonb', { default: {} })
+  metadata!: Record<string, unknown>;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp with time zone',
+  })
   createdAt!: Date;
+
+  // Relaciones
+  @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user!: Profile;
+
+  @ManyToOne(() => Tenant, { onDelete: 'CASCADE', nullable: true })
+  @JoinColumn({ name: 'tenant_id' })
+  tenant!: Tenant | null;
 }

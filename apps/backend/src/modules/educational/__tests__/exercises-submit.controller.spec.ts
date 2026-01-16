@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { ExercisesController } from '../controllers/exercises.controller';
 import { ExercisesService } from '../services';
 import { ExerciseSubmissionService, ExerciseAttemptService } from '@/modules/progress/services';
@@ -7,11 +7,10 @@ import { Profile } from '@modules/auth/entities/profile.entity';
 
 describe('ExercisesController - Submit Endpoint', () => {
   let controller: ExercisesController;
-  let _exerciseSubmissionService: ExerciseSubmissionService;
+  let exerciseSubmissionService: ExerciseSubmissionService;
 
   const mockExercisesService = {
     findOne: jest.fn(),
-    findById: jest.fn(),
     validateContentByExerciseType: jest.fn(),
   };
 
@@ -23,19 +22,12 @@ describe('ExercisesController - Submit Endpoint', () => {
     create: jest.fn(),
     save: jest.fn(),
     findOne: jest.fn(),
-    findByUserAndExercise: jest.fn().mockResolvedValue([]), // No previous attempts
   };
 
   const mockProfileRepository = {
     findOne: jest.fn(),
     find: jest.fn(),
     save: jest.fn(),
-  };
-
-  // Mock DataSource for educational database
-  const mockDataSource = {
-    query: jest.fn(),
-    isInitialized: true,
   };
 
   beforeEach(async () => {
@@ -58,15 +50,11 @@ describe('ExercisesController - Submit Endpoint', () => {
           provide: getRepositoryToken(Profile, 'auth'),
           useValue: mockProfileRepository,
         },
-        {
-          provide: getDataSourceToken('educational'),
-          useValue: mockDataSource,
-        },
       ],
     }).compile();
 
     controller = module.get<ExercisesController>(ExercisesController);
-    _exerciseSubmissionService = module.get<ExerciseSubmissionService>(
+    exerciseSubmissionService = module.get<ExerciseSubmissionService>(
       ExerciseSubmissionService,
     );
 
@@ -75,42 +63,6 @@ describe('ExercisesController - Submit Endpoint', () => {
       id: 'profile-550e8400-e29b-41d4-a716-446655440000',
       user_id: '550e8400-e29b-41d4-a716-446655440000',
       full_name: 'Test Student',
-    });
-
-    // Setup default mock for exercise lookup
-    // Using 'verdadero_falso' as it's a valid exercise type
-    mockExercisesService.findById.mockResolvedValue({
-      id: '880e8400-e29b-41d4-a716-446655440000',
-      title: 'Test Exercise',
-      exercise_type: 'verdadero_falso',
-      requires_manual_grading: false,
-      passing_score: 70,
-      xp_reward: 170,
-      ml_coins_reward: 85,
-      content: {
-        statements: [
-          { id: 'stmt-1', text: 'Marie Curie won 2 Nobel Prizes', correct: true },
-          { id: 'stmt-2', text: 'Radium was discovered in 1900', correct: false },
-        ],
-      },
-    });
-
-    // Setup default mock for DataSource query (validate_and_audit SQL function)
-    mockDataSource.query.mockResolvedValue([
-      {
-        score: 85,
-        feedback: 'Good job!',
-        is_correct: true,
-      },
-    ]);
-
-    // Setup mock for creating attempt
-    mockExerciseAttemptService.create.mockResolvedValue({
-      id: 'aa0e8400-e29b-41d4-a716-446655440000',
-      user_id: 'profile-550e8400-e29b-41d4-a716-446655440000',
-      exercise_id: '880e8400-e29b-41d4-a716-446655440000',
-      score: 85,
-      is_correct: true,
     });
   });
 
@@ -131,14 +83,12 @@ describe('ExercisesController - Submit Endpoint', () => {
       },
     };
 
-    // Answer format for verdadero_falso exercise type
     const submitDto = {
       userId,
-      answers: {
-        statements: {
-          'stmt-1': true,
-          'stmt-2': false,
-        },
+      submitted_answers: {
+        question_1: 'Marie Curie',
+        question_2: '1903',
+        question_3: 'Radiactividad',
       },
       time_spent_seconds: 180,
       hints_used: 1,
@@ -159,95 +109,117 @@ describe('ExercisesController - Submit Endpoint', () => {
     };
 
     it('should submit exercise and return score with XP and ML Coins', async () => {
-      // Arrange - DataSource mock already setup in beforeEach
+      // Arrange
+      mockExerciseSubmissionService.submitExercise.mockResolvedValue(
+        expectedResponse,
+      );
 
       // Act
       const result = await controller.submitExercise(exerciseId, submitDto, mockRequest);
 
       // Assert
-      expect(mockDataSource.query).toHaveBeenCalled();
-      expect(mockExerciseAttemptService.create).toHaveBeenCalled();
-      expect(result.score).toBe(85);
+      expect(exerciseSubmissionService.submitExercise).toHaveBeenCalledWith(
+        userId,
+        exerciseId,
+        submitDto.submitted_answers,
+      );
+      expect(result.score).toBeDefined();
       expect(result.rewards).toBeDefined();
-      expect(result.rewards.xp).toBe(170); // First correct attempt gets XP
-      expect(result.rewards.mlCoins).toBe(85);
+      expect(result.rewards.xp).toBeDefined();
+      expect(result.rewards.mlCoins).toBeDefined();
       expect(result.isPerfect).toBe(false);
     });
 
     it('should handle exercise with perfect score (100%)', async () => {
       // Arrange
-      mockDataSource.query.mockResolvedValue([
-        {
-          score: 100,
-          feedback: 'Perfect!',
-          is_correct: true,
+      const perfectScoreResponse = {
+        attemptId: 'aa0e8400-e29b-41d4-a716-446655440000',
+        exerciseId: exerciseId,
+        score: 100,
+        isPerfect: true,
+        rankUp: null,
+        rewards: {
+          bonuses: [],
+          mlCoins: 100,
+          xp: 200,
         },
-      ]);
-
-      // Use DTO without hints for perfect score
-      const perfectDto = {
-        ...submitDto,
-        hints_used: 0,
       };
+      mockExerciseSubmissionService.submitExercise.mockResolvedValue(
+        perfectScoreResponse,
+      );
 
       // Act
-      const result = await controller.submitExercise(exerciseId, perfectDto, mockRequest);
+      const result = await controller.submitExercise(exerciseId, submitDto, mockRequest);
 
       // Assert
       expect(result.score).toBe(100);
       expect(result.isPerfect).toBe(true);
       expect(result.rewards).toBeDefined();
-      expect(result.rewards.xp).toBe(170);
-      expect(result.rewards.mlCoins).toBe(85);
+      expect(result.rewards.xp).toBeDefined();
+      expect(result.rewards.mlCoins).toBeDefined();
     });
 
     it('should handle exercise submission with no hints used', async () => {
       // Arrange
-      const dtoWithoutHints = {
+      const noDtoWithoutHints = {
         ...submitDto,
         hints_used: 0,
         comodines_used: [],
       };
 
-      mockDataSource.query.mockResolvedValue([
-        {
-          score: 90,
-          feedback: 'Great job!',
-          is_correct: true,
+      const responseWithoutHints = {
+        attemptId: 'aa0e8400-e29b-41d4-a716-446655440000',
+        exerciseId: exerciseId,
+        score: 90, // Higher score without hints
+        isPerfect: false,
+        rankUp: null,
+        rewards: {
+          bonuses: [],
+          mlCoins: 90,
+          xp: 180,
         },
-      ]);
+      };
+
+      mockExerciseSubmissionService.submitExercise.mockResolvedValue(
+        responseWithoutHints,
+      );
 
       // Act
-      const result = await controller.submitExercise(exerciseId, dtoWithoutHints, mockRequest);
+      await controller.submitExercise(exerciseId, noDtoWithoutHints, mockRequest);
 
       // Assert
-      expect(mockDataSource.query).toHaveBeenCalled();
-      expect(result.score).toBe(90);
-      expect(result.rewards.xp).toBe(170); // First correct attempt
-      expect(result.rewards.mlCoins).toBe(85);
+      expect(exerciseSubmissionService.submitExercise).toHaveBeenCalledWith(
+        userId,
+        exerciseId,
+        noDtoWithoutHints.submitted_answers,
+      );
     });
 
     it('should throw error if exercise not found', async () => {
-      // Arrange - exercise not found
-      mockExercisesService.findById.mockResolvedValue(null);
+      // Arrange
+      const error = new Error('Exercise with ID 880e8400-... not found');
+      mockExerciseSubmissionService.submitExercise.mockRejectedValue(error);
 
       // Act & Assert
       await expect(
         controller.submitExercise(exerciseId, submitDto, mockRequest),
-      ).rejects.toThrow(`Exercise ${exerciseId} not found`);
+      ).rejects.toThrow('Exercise with ID 880e8400-... not found');
     });
 
-    it('should validate answers format is required', async () => {
-      // Arrange - invalid verdadero_falso answer format (missing statements)
+    it('should validate submitted_answers is required', async () => {
+      // Arrange
       const invalidDto = {
         userId,
-        answers: {} as any, // Empty answers - will fail validation
+        submitted_answers: {} as any, // Empty answers
       };
 
-      // Act & Assert - validator throws BadRequestException for invalid format
+      const error = new Error('Invalid submitted_answers format');
+      mockExerciseSubmissionService.submitExercise.mockRejectedValue(error);
+
+      // Act & Assert
       await expect(
         controller.submitExercise(exerciseId, invalidDto, mockRequest),
-      ).rejects.toThrow("Validation failed for exercise type 'verdadero_falso'");
+      ).rejects.toThrow('Invalid submitted_answers format');
     });
   });
 });

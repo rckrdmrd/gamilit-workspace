@@ -43,18 +43,20 @@ Esta carpeta contiene documentacion **definitiva y vigente** del estado actual d
 
 ## Metricas Actuales del Sistema
 
-### Base de Datos (SSOT: orchestration/inventarios/DATABASE_INVENTORY.yml)
+### Base de Datos (SSOT: orchestration/inventarios/DATABASE_INVENTORY.yml v4.5.0)
 
-| Componente | Cantidad |
-|------------|----------|
-| Schemas | 16 |
-| Tablas | 123 |
-| Views | 11 |
-| Materialized Views | 11 |
-| ENUMs | 42 |
-| Functions | 213 |
-| Triggers | 90 |
-| RLS Policies | 185 |
+| Componente | Cantidad | Notas |
+|------------|----------|-------|
+| Schemas | 16 | Todos documentados |
+| Tablas | 135 | Auditado 2026-01-14 |
+| Views | 18 | +1 vs anterior |
+| Materialized Views | 7 | Corregido |
+| ENUMs | 38 | -4 deprecated |
+| Functions (activas) | 122 | +12 identificadas |
+| Triggers (activos) | 49 | +14 identificados |
+| RLS Policies | 121 | Reconciliado |
+| Indices | 405 | Statements DDL |
+| Foreign Keys | 208 | Sin cambios |
 
 ### Backend (SSOT: orchestration/inventarios/BACKEND_INVENTORY.yml)
 
@@ -132,7 +134,7 @@ Los siguientes directorios fueron movidos a `orchestration/reportes/` el 2025-12
 
 ---
 
-**Actualizado:** 2026-01-07
-**Por:** Claude Code - Arquitecto de Documentación
-**Version:** 2.1 (Post-purga)
-**Cambios:** Actualización de referencias ISSUES-CRITICOS.md → BACKEND-CRITICAL-ISSUES-PENDING.md
+**Actualizado:** 2026-01-14
+**Por:** Claude Code - Arquitecto de Base de Datos
+**Version:** 2.2 (Auditoria BD)
+**Cambios:** Sincronización métricas BD con DATABASE_INVENTORY.yml v4.5.0

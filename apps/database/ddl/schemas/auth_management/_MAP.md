@@ -1,6 +1,18 @@
-# Schema: auth_management
+# _MAP: auth_management/
 
-Gestión de autenticación y autorización: usuarios, roles, perfiles, sesiones
+**Ultima actualizacion:** 2026-01-14
+**Estado:** Produccion (Core)
+**Tipo:** Core/Authorization
+**Objetos activos:** 49
+
+---
+
+## Proposito
+
+Gestion de autenticacion y autorizacion: usuarios, roles, perfiles, sesiones.
+Schema central que extiende `auth.users` con datos de perfil, RBAC y multi-tenancy.
+
+**Audiencia:** Backend Developers, Security Team
 
 ## Estructura
 

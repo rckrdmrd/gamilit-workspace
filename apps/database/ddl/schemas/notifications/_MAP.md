@@ -1,84 +1,123 @@
-# Schema: notifications
+# _MAP: notifications/
 
-Sistema de notificaciones multi-canal (in-app, email, push web)
+**Ultima actualizacion:** 2026-01-14
+**Estado:** Produccion (Sistema Canonico)
+**Tipo:** Integration/Communication
+**Objetos activos:** 10
+
+---
+
+## Proposito
+
+Sistema de notificaciones multi-canal (in-app, email, push web) para comunicacion
+con usuarios. Este es el **sistema canonico** de notificaciones de GAMILIT.
+
+**Audiencia:** Backend Developers, Frontend Developers
+
+---
 
 ## Estructura
 
-- **00-create-schema.sql**: 1 archivo (creación del schema)
-- **tables/**: 6 archivos
-- **functions/**: 3 archivos
-
-**Total:** 10 objetos
-
-## Contenido Detallado
-
-### Schema
-
 ```
-00-create-schema.sql              (creado 2025-11-11 - EXT-003)
-```
-
-### tables/ (6 archivos)
-
-```
-01-notifications.sql              (creado 2025-11-11 - EXT-003)
-02-notification_preferences.sql   (creado 2025-11-11 - EXT-003)
-03-notification_logs.sql          (creado 2025-11-11 - EXT-003)
-04-notification_templates.sql     (creado 2025-11-11 - EXT-003)
-05-notification_queue.sql         (creado 2025-11-11 - EXT-003)
-06-user_devices.sql               (creado 2025-11-11 - EXT-003)
+ddl/schemas/notifications/
+├── 00-create-schema.sql
+├── tables/
+│   ├── 01-notifications.sql
+│   ├── 02-notification_preferences.sql
+│   ├── 03-notification_logs.sql
+│   ├── 04-notification_templates.sql
+│   ├── 05-notification_queue.sql
+│   └── 06-user_devices.sql
+├── functions/
+│   ├── 01-send_notification.sql
+│   ├── 02-get_user_preferences.sql
+│   └── 03-queue_batch_notifications.sql
+└── _MAP.md
 ```
 
-### functions/ (3 archivos)
+**Total objetos DDL:** 10 (1 schema, 6 tablas, 3 funciones)
 
-```
-01-send_notification.sql          (creado 2025-11-11 - EXT-003)
-02-get_user_preferences.sql       (creado 2025-11-11 - EXT-003)
-03-queue_batch_notifications.sql  (creado 2025-11-11 - EXT-003)
-```
+---
 
-## Descripción
+## Tablas
 
-### Tablas
+| Tabla | Archivo | Proposito |
+|-------|---------|-----------|
+| `notifications` | 01-notifications.sql | Notificaciones enviadas (in-app, email, push) |
+| `notification_preferences` | 02-notification_preferences.sql | Preferencias por usuario y tipo |
+| `notification_logs` | 03-notification_logs.sql | Historial de envios por canal |
+| `notification_templates` | 04-notification_templates.sql | Plantillas con variables {{placeholder}} |
+| `notification_queue` | 05-notification_queue.sql | Cola de envio asincrono |
+| `user_devices` | 06-user_devices.sql | Dispositivos para push notifications |
 
-- **notifications**: Notificaciones enviadas a usuarios (in-app, email, push)
-- **notification_preferences**: Preferencias de notificaciones por usuario y tipo
-- **notification_logs**: Historial de envíos por canal con estado y respuesta de proveedor
-- **notification_templates**: Plantillas reutilizables con variables {{placeholder}}
-- **notification_queue**: Cola de envío para procesamiento asíncrono
-- **user_devices**: Dispositivos registrados para push notifications
+## Funciones
 
-### Funciones
+| Funcion | Archivo | Proposito |
+|---------|---------|-----------|
+| `send_notification` | 01-send_notification.sql | Crea y encola notificacion |
+| `get_user_preferences` | 02-get_user_preferences.sql | Obtiene preferencias de usuario |
+| `queue_batch_notifications` | 03-queue_batch_notifications.sql | Encola notificaciones masivas |
 
-- **send_notification()**: Crea notificación respetando preferencias del usuario y la encola
-- **get_user_preferences()**: Obtiene preferencias configuradas por un usuario
-- **queue_batch_notifications()**: Encola notificaciones masivas a múltiples usuarios
+---
 
-## Características
+## Caracteristicas
 
-- **Multi-canal**: Soporte para in-app, email y push notifications
-- **Preferencias de usuario**: Control granular por tipo de notificación
-- **Sistema de cola**: Envío asíncrono con reintentos
-- **Templates**: Plantillas reutilizables con variables
-- **Tracking completo**: Logs de envío por canal
-- **Priorización**: Sistema de prioridades (urgent, high, normal, low)
-- **Quiet hours**: Respeto de horarios de silencio por usuario
+| Feature | Descripcion |
+|---------|-------------|
+| **Multi-canal** | in-app, email, push web |
+| **Preferencias** | Control granular por tipo |
+| **Cola asincrona** | Envio con reintentos |
+| **Templates** | Variables {{placeholder}} |
+| **Tracking** | Logs por canal |
+| **Prioridades** | urgent, high, normal, low |
+| **Quiet hours** | Horarios de silencio |
 
-## Correcciones Aplicadas
+---
 
-| Archivo | Cambio | Fecha |
-|---------|--------|-------|
-| `tables/01-notifications.sql` | FK corregida: `auth.users` → `auth_management.profiles` | 2026-01-04 |
+## Seeds
 
-## Nota: Sistema Canónico
+| Archivo | Proposito |
+|---------|-----------|
+| `01-notification_templates.sql` | 18 templates predefinidos |
+| `02-notification_preferences_defaults.sql` | Defaults por tipo |
 
-Este schema (`notifications.notifications`) es el **sistema canónico** de notificaciones.
-El schema `gamification_system.notifications` está **DEPRECATED** y debe migrarse aquí.
+---
+
+## Dependencias
+
+**Este schema depende de:**
+- `auth_management` (profiles)
+
+**Schemas que dependen de este:**
+- `gamification_system` (triggers insertan aqui)
+
+---
+
+## Migracion: Sistema Canonico
+
+| Schema | Estado | Accion |
+|--------|--------|--------|
+| `notifications.notifications` | **CANONICO** | Usar este |
+| `gamification_system.notifications` | DEPRECATED | Migrar aqui |
 
 **Ver:** `gamification_system/MIGRATION-NOTIFICATIONS.md`
 
 ---
 
-**Última actualización:** 2026-01-04
-**Relacionado:** EXT-003 (Notificaciones Multi-Canal)
-**Estado:** Implementado - Capa Database (Sistema Canónico)
+## Correcciones Aplicadas
+
+| Archivo | Cambio | Fecha |
+|---------|--------|-------|
+| `tables/01-notifications.sql` | FK: `auth.users` → `auth_management.profiles` | 2026-01-04 |
+
+---
+
+## Referencia
+
+- `create-database.sh` Fase 6.5 - notifications (antes de gamification)
+- EXT-003 (Notificaciones Multi-Canal)
+
+---
+
+**Mantenido por:** Database Team
+**Version:** 2.0

@@ -14,3 +14,6 @@ export * from './exercise-mechanic-mapping.entity';
 export * from './content-approval.entity';
 export * from './difficulty-criteria.entity';
 export * from './classroom-module.entity'; // ✨ NUEVO - P1-002 (Módulos asignados a aulas)
+export * from './exercise-validation-config.entity'; // ✨ NUEVO - 2026-01-14 (Sistema Dual ADR-008)
+export * from './exercise-type-rubric.entity'; // ✨ NUEVO - 2026-01-14 (Rúbricas por tipo M4-M5)
+export * from './exercise-validation-audit.entity'; // ✨ NUEVO - 2026-01-14 (Auditoría de validaciones)

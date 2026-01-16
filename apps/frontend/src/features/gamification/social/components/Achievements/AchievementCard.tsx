@@ -188,18 +188,18 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
         </div>
       )}
 
-      {/* Rewards */}
+      {/* Rewards - FIX: CORR-ACH-004 - Manejar valores undefined con ?? 0 */}
       <div className="flex justify-around items-center pt-3 border-t border-gray-200">
         <div className="flex items-center gap-1">
           <Coins className="w-4 h-4 text-detective-gold" />
           <span className="text-detective-sm font-semibold text-detective-text">
-            {achievement.mlCoinsReward} ML
+            {achievement.mlCoinsReward ?? 0} ML
           </span>
         </div>
         <div className="flex items-center gap-1">
           <Zap className="w-4 h-4 text-detective-orange" />
           <span className="text-detective-sm font-semibold text-detective-text">
-            {achievement.xpReward} XP
+            {achievement.xpReward ?? 0} XP
           </span>
         </div>
       </div>

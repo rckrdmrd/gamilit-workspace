@@ -1,17 +1,3 @@
-/**
- * SKIPPED: 2026-01-13 - Infrastructure issue
- *
- * This test file has a TypeORM native module dependency issue:
- * - Importing from 'typeorm' causes path-scurry native module to load
- * - This fails in Jest environment: "Cannot read properties of undefined (reading 'native')"
- * - The error chain: path-scurry → glob → DirectoryExportedClassesLoader → DataSource → typeorm
- *
- * Resolution options:
- * 1. Mock typeorm at Jest config level
- * 2. Use manual mocks for Repository and other typeorm exports
- * 3. Configure Jest to handle native modules
- */
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
@@ -40,7 +26,7 @@ jest.mock('fs', () => ({
   },
 }));
 
-describe.skip('AdminReportsService', () => {
+describe('AdminReportsService', () => {
   let service: AdminReportsService;
   let _reportRepository: Repository<AdminReport>;
   let _userRepository: Repository<User>;

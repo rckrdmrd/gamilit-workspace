@@ -1,6 +1,18 @@
-# Schema: content_management
+# _MAP: content_management/
 
-Gestión de contenido: plantillas, archivos media, metadatos
+**Ultima actualizacion:** 2026-01-14
+**Estado:** Produccion
+**Tipo:** Domain/Content
+**Objetos activos:** 18
+
+---
+
+## Proposito
+
+Gestion de contenido: plantillas, archivos media, metadatos.
+Incluye sistema de moderacion y versionado de contenido.
+
+**Audiencia:** Backend Developers, Content Team
 
 ## Estructura
 

@@ -1,16 +1,9 @@
 #!/bin/bash
 ##############################################################################
-# GAMILIT Platform - Database Initialization Script v3.10-TCP
+# GAMILIT Platform - Database Initialization Script v3.9
 #
 # Propósito: Inicialización COMPLETA de la base de datos con dotenv-vault
-# Versión: 3.10-TCP - Soporte conexión TCP para ambientes sin socket local
-#
-# Cambios v3.10-TCP (2026-01-13):
-#   - Soporte conexión TCP con gamilit_user (privilegio CREATEDB)
-#   - Carga password desde backend/.env (prioridad 2.5 en manage_password)
-#   - Prioridad de conexión: TCP gamilit_user > TCP postgres > sudo
-#   - create_user_and_database() salta creación usuario en modo TCP
-#   - Compatibilidad con WSL2 y ambientes donde PostgreSQL solo tiene TCP
+# Versión: 3.9 - Corrección arrays de schemas para indexes y triggers
 #
 # Cambios v3.9 (2025-12-29):
 #   - Agregado system_configuration a execute_indexes (faltaba)
@@ -281,21 +274,10 @@ manage_password() {
         fi
     fi
 
-    # Prioridad 2: Leer desde vault (por defecto si existe .env.$ENVIRONMENT)
+    # Prioridad 2: Leer desde vault (por defecto si existe .env)
     if [ -z "$DB_PASSWORD" ] && [ -f "$BACKEND_DIR/.env.$ENVIRONMENT" ]; then
         get_password_from_vault
         return
-    fi
-
-    # Prioridad 2.5: Leer desde .env principal si existe
-    if [ -z "$DB_PASSWORD" ] && [ -f "$BACKEND_DIR/.env" ]; then
-        local PASSWORD=$(grep "^DB_PASSWORD=" "$BACKEND_DIR/.env" | cut -d= -f2 | tr -d '"' | tr -d "'")
-        if [ -n "$PASSWORD" ]; then
-            DB_PASSWORD="$PASSWORD"
-            print_success "Usando password de backend/.env"
-            print_info "Password: ${DB_PASSWORD:0:8}...${DB_PASSWORD: -4}"
-            return
-        fi
     fi
 
     # Prioridad 3: Password manual provisto
@@ -346,39 +328,27 @@ check_prerequisites() {
     fi
 
     # Verificar conexión PostgreSQL
-    # Prioridad 1: Conexión TCP con gamilit_user (tiene CREATEDB)
-    if [ -n "$DB_PASSWORD" ] && PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d postgres -c "SELECT 1" &> /dev/null 2>&1; then
-        USE_SUDO=false
-        USE_GAMILIT_USER=true
-        print_success "Conectado a PostgreSQL (TCP con $DB_USER)"
-    # Prioridad 2: Conexión TCP con postgres user
-    elif [ -n "$PGPASSWORD" ] && psql -h "$DB_HOST" -p "$DB_PORT" -U "$POSTGRES_USER" -c "SELECT 1" &> /dev/null 2>&1; then
-        USE_SUDO=false
-        USE_GAMILIT_USER=false
-        print_success "Conectado a PostgreSQL (TCP con postgres)"
-    # Prioridad 3: sudo -u postgres (socket local)
-    elif command -v sudo &> /dev/null; then
+    if command -v sudo &> /dev/null; then
         if printf '2320\n' | sudo -S -u postgres psql -c "SELECT 1" &> /dev/null 2>&1; then
             USE_SUDO=true
-            USE_GAMILIT_USER=false
             SUDO_PASS="2320"
             print_success "Conectado a PostgreSQL (sudo)"
+            # Validar sudo una sola vez para evitar prompts en loops
             sudo -v 2>/dev/null || true
         elif sudo -n -u postgres psql -c "SELECT 1" &> /dev/null 2>&1; then
             USE_SUDO=true
-            USE_GAMILIT_USER=false
             SUDO_PASS=""
             print_success "Conectado a PostgreSQL (sudo sin password)"
+        elif [ -n "$PGPASSWORD" ] && psql -h "$DB_HOST" -p "$DB_PORT" -U "$POSTGRES_USER" -c "SELECT 1" &> /dev/null 2>&1; then
+            USE_SUDO=false
+            print_success "Conectado a PostgreSQL (TCP)"
         else
             print_error "No se puede conectar a PostgreSQL"
-            print_info "Opciones:"
-            print_info "  1. Verificar que PostgreSQL está corriendo"
-            print_info "  2. Usar: --password 'tu_password' (para gamilit_user)"
-            print_info "  3. Verificar archivo .env con DB_PASSWORD"
+            print_info "Intenta: sudo -u postgres psql"
             exit 1
         fi
     else
-        print_error "No se puede conectar a PostgreSQL y sudo no disponible"
+        print_error "sudo no disponible"
         exit 1
     fi
 }
@@ -395,9 +365,6 @@ execute_as_postgres() {
         else
             sudo -u postgres psql -c "$sql" 2>&1
         fi
-    elif [ "$USE_GAMILIT_USER" = true ]; then
-        # Usar gamilit_user con CREATEDB privilege
-        PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d postgres -c "$sql" 2>&1
     else
         PGPASSWORD="$PGPASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$POSTGRES_USER" -c "$sql" 2>&1
     fi
@@ -411,9 +378,6 @@ query_as_postgres() {
         else
             sudo -u postgres psql -t -c "$sql" 2>/dev/null | xargs
         fi
-    elif [ "$USE_GAMILIT_USER" = true ]; then
-        # Usar gamilit_user con CREATEDB privilege
-        PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d postgres -t -c "$sql" 2>/dev/null | xargs
     else
         PGPASSWORD="$PGPASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$POSTGRES_USER" -t -c "$sql" | xargs
     fi
@@ -431,23 +395,17 @@ execute_sql_file() {
 create_user_and_database() {
     print_step "PASO 1/9: Creando usuario y base de datos..."
 
-    # Si usamos gamilit_user (TCP sin superuser), saltar creación de usuario
-    if [ "$USE_GAMILIT_USER" = true ]; then
-        print_info "Usando conexión TCP con $DB_USER (CREATEDB privilege)"
-        print_success "Usuario $DB_USER ya configurado"
-    else
-        # Crear/actualizar usuario (requiere superuser)
-        user_exists=$(query_as_postgres "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'")
+    # Crear/actualizar usuario
+    user_exists=$(query_as_postgres "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'")
 
-        if [ -z "$user_exists" ]; then
-            print_info "Creando usuario $DB_USER..."
-            execute_as_postgres "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD' CREATEDB;" > /dev/null
-            print_success "Usuario creado"
-        else
-            print_info "Usuario $DB_USER ya existe, actualizando password..."
-            execute_as_postgres "ALTER USER $DB_USER WITH PASSWORD '$DB_PASSWORD' CREATEDB;" > /dev/null
-            print_success "Password actualizado"
-        fi
+    if [ -z "$user_exists" ]; then
+        print_info "Creando usuario $DB_USER..."
+        execute_as_postgres "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD' CREATEDB;" > /dev/null
+        print_success "Usuario creado"
+    else
+        print_info "Usuario $DB_USER ya existe, actualizando password..."
+        execute_as_postgres "ALTER USER $DB_USER WITH PASSWORD '$DB_PASSWORD' CREATEDB;" > /dev/null
+        print_success "Password actualizado"
     fi
 
     # Verificar si la BD existe

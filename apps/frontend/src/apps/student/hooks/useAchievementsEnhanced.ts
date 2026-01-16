@@ -54,10 +54,15 @@ const DEFAULT_FILTERS: AchievementFiltersState = {
   sortBy: 'recent',
 };
 
-export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
+/**
+ * FIX: CORR-ACH-002 - Agregar userId como parametro para hacer fetch real
+ * @param userId - ID del usuario para obtener achievements
+ */
+export const useAchievementsEnhanced = (userId?: string): UseAchievementsEnhancedResult => {
   // Store - Using Zustand selectors to prevent unnecessary re-renders
   const achievements = useAchievementsStore((state) => state.achievements);
   const refreshAchievements = useAchievementsStore((state) => state.refreshAchievements);
+  const fetchAchievements = useAchievementsStore((state) => state.fetchAchievements);
 
   // Local state
   const [filters, setFilters] = useState<AchievementFiltersState>(DEFAULT_FILTERS);
@@ -293,25 +298,34 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
   }, [hasPrevious, currentIndex, filteredAchievements]);
 
   // Refresh achievements
+  // FIX: CORR-ACH-002 - Si hay userId, hacer fetch real; sino solo recalcular
   const refresh = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      await refreshAchievements();
+      if (userId) {
+        console.log('[useAchievementsEnhanced] Fetching achievements for userId:', userId);
+        await fetchAchievements(userId);
+      } else {
+        console.log('[useAchievementsEnhanced] No userId, only refreshing stats');
+        refreshAchievements();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load achievements');
     } finally {
       setLoading(false);
     }
-  }, [refreshAchievements]);
+  }, [userId, fetchAchievements, refreshAchievements]);
 
-  // Load achievements on mount
+  // Load achievements on mount or when userId changes
+  // FIX: CORR-ACH-002 - Solo hacer fetch si hay userId y el store esta vacio
   useEffect(() => {
-    if (achievements.length === 0) {
+    if (userId && achievements.length === 0) {
+      console.log('[useAchievementsEnhanced] Initial fetch triggered for userId:', userId);
       refresh();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userId]);
 
   // Save filter preferences to localStorage
   useEffect(() => {

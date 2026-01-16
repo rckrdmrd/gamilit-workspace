@@ -18,6 +18,9 @@ import {
   EmailVerificationToken,
   PasswordResetToken,
   SecurityEvent, // ✨ NUEVO - P0 (Auditoría de seguridad)
+  ParentAccount, // ✨ NUEVO - 2026-01-14 (Portal de padres EXT-010)
+  ParentStudentLink, // ✨ NUEVO - 2026-01-14 (Vinculación padre-estudiante)
+  ParentNotification, // ✨ NUEVO - 2026-01-14 (Notificaciones a padres)
 } from './entities';
 
 // Services
@@ -105,6 +108,9 @@ import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submiss
         EmailVerificationToken,
         PasswordResetToken,
         SecurityEvent, // ✨ NUEVO - P0 (Auditoría de seguridad)
+        ParentAccount, // ✨ NUEVO - 2026-01-14 (Portal de padres EXT-010)
+        ParentStudentLink, // ✨ NUEVO - 2026-01-14 (Vinculación padre-estudiante)
+        ParentNotification, // ✨ NUEVO - 2026-01-14 (Notificaciones a padres)
       ],
       'auth',
     ),

@@ -19,3 +19,6 @@ export * from './password-reset-token.entity';
 export * from './security-event.entity'; // ✨ NUEVO - P0 (Auditoría de seguridad)
 export * from './user-preferences.entity'; // ✨ NUEVO - P0 (DB-100 Ciclo B.1 - 2025-11-11)
 export * from './user-suspension.entity'; // ✨ NUEVO - P0 (DB-100 Ciclo B.2 - 2025-11-11)
+export * from './parent-account.entity'; // ✨ NUEVO - 2026-01-14 (Portal de padres EXT-010)
+export * from './parent-student-link.entity'; // ✨ NUEVO - 2026-01-14 (Vinculación padre-estudiante)
+export * from './parent-notification.entity'; // ✨ NUEVO - 2026-01-14 (Notificaciones a padres)

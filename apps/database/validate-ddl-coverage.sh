@@ -83,7 +83,7 @@ echo -e "${BLUE}=== FASE 3: auth ===${NC}"
 check_coverage "auth" "enums" "yes"
 check_coverage "auth" "tables" "yes"
 check_coverage "auth" "functions" "yes"
-check_coverage "auth" "views" "no"
+check_coverage "auth" "views" "yes"
 echo ""
 
 # FASE 4: storage
@@ -93,6 +93,7 @@ echo ""
 
 # FASE 5: auth_management
 echo -e "${BLUE}=== FASE 5: auth_management ===${NC}"
+check_coverage "auth_management" "enums" "yes"
 check_coverage "auth_management" "tables" "yes"
 check_coverage "auth_management" "functions" "yes"
 check_coverage "auth_management" "triggers" "yes"
@@ -159,7 +160,7 @@ echo ""
 # FASE 10: content_management
 echo -e "${BLUE}=== FASE 10: content_management ===${NC}"
 check_coverage "content_management" "enums" "yes"
-check_coverage "content_management" "functions" "no"
+check_coverage "content_management" "functions" "yes"
 check_coverage "content_management" "tables" "yes"
 check_coverage "content_management" "triggers" "yes"
 check_coverage "content_management" "indexes" "yes"
@@ -189,7 +190,8 @@ echo ""
 
 # FASE 12: system_configuration
 echo -e "${BLUE}=== FASE 12: system_configuration ===${NC}"
-check_coverage "system_configuration" "functions" "no"
+check_coverage "system_configuration" "enums" "yes"
+check_coverage "system_configuration" "functions" "yes"
 check_coverage "system_configuration" "tables" "yes"
 check_coverage "system_configuration" "triggers" "yes"
 check_coverage "system_configuration" "rls-policies" "yes"
@@ -197,8 +199,8 @@ echo ""
 
 # FASE 13: admin_dashboard
 echo -e "${BLUE}=== FASE 13: admin_dashboard ===${NC}"
-check_coverage "admin_dashboard" "tables" "no"
-check_coverage "admin_dashboard" "functions" "no"
+check_coverage "admin_dashboard" "tables" "yes"
+check_coverage "admin_dashboard" "functions" "yes"
 check_coverage "admin_dashboard" "views" "yes"
 echo ""
 

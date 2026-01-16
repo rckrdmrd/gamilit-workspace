@@ -1,6 +1,115 @@
 # Trazas de Tareas - Backend
 
-**Última actualización:** 2026-01-04 (BE-140: Corrección Autenticación WebSocket handleConnection)
+**Última actualización:** 2026-01-14 (BE-ALIGN-2026-01-14: Alineación BD-Backend completa)
+
+---
+
+## BE-ALIGN-2026-01-14: Alineación BD ↔ Backend (16 Entities) ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1 ALTA
+**Asignado:** Meta-Orquestador SIMCO
+**Fecha:** 2026-01-14
+**Ciclo:** CAPVED Completo
+**Schemas:** audit_logging, auth_management, content_management, educational_content, lti_integration
+
+### Resumen
+
+Implementación de 16 entities faltantes para alinear el backend con las tablas de base de datos existentes. La cobertura BD-Backend pasó de 87.3% a 99%.
+
+### Entities Creadas
+
+| Schema | Entity | Tabla BD | Propósito |
+|--------|--------|----------|-----------|
+| audit_logging | `UserActivityLog` | user_activity_logs | Analytics de actividad de usuarios |
+| audit_logging | `PendingUserInitialization` | pending_user_initialization | Control de inicialización fallida |
+| auth_management | `ParentAccount` | parent_accounts | Portal de padres (EXT-010) |
+| auth_management | `ParentStudentLink` | parent_student_links | Vinculación padre-estudiante |
+| auth_management | `ParentNotification` | parent_notifications | Notificaciones a padres |
+| content_management | `ContentVersion` | content_versions | Versionado de contenido |
+| content_management | `FlaggedContent` | flagged_content | Moderación de contenido |
+| content_management | `MediaMetadata` | media_metadata | Metadatos multimedia |
+| content_management | `Tag` | tags | Etiquetas de contenido |
+| content_management | `ModerationRule` | moderation_rules | Reglas de moderación automática |
+| educational_content | `ExerciseValidationConfig` | exercise_validation_config | Sistema Dual ADR-008 |
+| educational_content | `ExerciseTypeRubric` | exercise_type_rubrics | Rúbricas por tipo M4-M5 |
+| educational_content | `ExerciseValidationAudit` | exercise_validation_audit | Auditoría de validaciones |
+| lti_integration | `LtiConsumer` | lti_consumers | Consumidores LTI |
+| lti_integration | `LtiSession` | lti_sessions | Sesiones LTI |
+| lti_integration | `LtiGradePassback` | lti_grade_passback | Passback de calificaciones |
+
+### Archivos Creados
+
+```
+modules/audit/entities/
+├── user-activity-log.entity.ts
+├── pending-user-initialization.entity.ts
+└── index.ts (actualizado)
+
+modules/auth/entities/
+├── parent-account.entity.ts
+├── parent-student-link.entity.ts
+├── parent-notification.entity.ts
+└── index.ts (actualizado)
+
+modules/content/entities/
+├── content-version.entity.ts
+├── flagged-content.entity.ts
+├── media-metadata.entity.ts
+├── tag.entity.ts
+├── moderation-rule.entity.ts
+└── index.ts (actualizado)
+
+modules/educational/entities/
+├── exercise-validation-config.entity.ts
+├── exercise-type-rubric.entity.ts
+├── exercise-validation-audit.entity.ts
+└── index.ts (actualizado)
+
+modules/lti/ (NUEVO módulo)
+├── entities/
+│   ├── lti-consumer.entity.ts
+│   ├── lti-session.entity.ts
+│   ├── lti-grade-passback.entity.ts
+│   └── index.ts
+└── lti.module.ts
+```
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `shared/constants/database.constants.ts` | +6 constantes de tablas |
+| `modules/audit/audit.module.ts` | +2 entities en TypeORM |
+| `modules/auth/auth.module.ts` | +3 entities en TypeORM |
+| `modules/content/content.module.ts` | +5 entities en TypeORM |
+| `modules/educational/educational.module.ts` | +3 entities en TypeORM |
+
+### Validación
+
+| Check | Resultado |
+|-------|-----------|
+| Build (`npm run build`) | ✅ PASSED |
+| Lint (`npm run lint`) | ⚠️ 9 errores preexistentes (no en código nuevo) |
+| Coherencia BD | 99% (129/134 tablas con entity) |
+
+### Impacto
+
+**Antes:**
+- Cobertura BD-Backend: 87.3%
+- Entities totales: 113
+- Módulos: 17
+
+**Después:**
+- Cobertura BD-Backend: 99%
+- Entities totales: 129 (+16)
+- Módulos: 18 (+1 LTI)
+
+### Próximos Pasos
+
+1. **Servicios:** Implementar services para las nuevas entities cuando se activen los Epics correspondientes
+2. **LTI:** Completar implementación del módulo LTI (EXT-007)
+3. **Parent Portal:** Implementar controllers/services para Portal de Padres (EXT-010)
 
 ---
 

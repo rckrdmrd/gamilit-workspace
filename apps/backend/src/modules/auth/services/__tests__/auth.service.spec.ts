@@ -164,13 +164,10 @@ describe('AuthService', () => {
       await service.register(registerDto);
 
       // Assert
-      // Profile is created with id = user.id and user_id = user.id for FK consistency
-      // email comes from user.email (which is the saved user object from mock)
       expect(profileRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          id: mockUser.id,
-          user_id: mockUser.id,
           tenant_id: mockTenant.id,
+          email: registerDto.email,
         }),
       );
     });
@@ -313,17 +310,14 @@ describe('AuthService', () => {
     const mockRefreshToken = 'valid.refresh.token';
     const mockSession = {
       id: 'session-id',
-      user_id: mockProfile.id,  // session.user_id references profile.id
+      user_id: mockUser.id,
       refresh_token: 'hashed-refresh-token',
       expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     };
 
     beforeEach(() => {
-      // JWT payload.sub is profile.id (DB-125 compliance)
-      jwtService.verify.mockReturnValue({ sub: mockProfile.id, email: mockUser.email });
+      jwtService.verify.mockReturnValue({ sub: mockUser.id, email: mockUser.email });
       jwtService.sign.mockReturnValue('new.jwt.token');
-      // refreshToken first looks up profile, then user
-      profileRepository.findOne.mockResolvedValue(mockProfile as any);
       userRepository.findOne.mockResolvedValue(mockUser as any);
       sessionRepository.findOne.mockResolvedValue(mockSession as any);
       sessionRepository.save.mockResolvedValue(mockSession as any);
@@ -352,8 +346,7 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException if user not found', async () => {
-      // Arrange - profile found but user not found
-      profileRepository.findOne.mockResolvedValue(mockProfile as any);
+      // Arrange
       userRepository.findOne.mockResolvedValue(null);
 
       // Act & Assert
@@ -363,9 +356,7 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException if session expired', async () => {
-      // Arrange - profile and user found, but session is expired
-      profileRepository.findOne.mockResolvedValue(mockProfile as any);
-      userRepository.findOne.mockResolvedValue(mockUser as any);
+      // Arrange
       const expiredSession = {
         ...mockSession,
         expires_at: new Date(Date.now() - 1000),
@@ -379,11 +370,6 @@ describe('AuthService', () => {
     });
 
     it('should update session with new refresh token', async () => {
-      // Arrange - ensure mocks are set for full flow
-      profileRepository.findOne.mockResolvedValue(mockProfile as any);
-      userRepository.findOne.mockResolvedValue(mockUser as any);
-      sessionRepository.findOne.mockResolvedValue(mockSession as any);
-
       // Act
       await service.refreshToken(mockRefreshToken);
 

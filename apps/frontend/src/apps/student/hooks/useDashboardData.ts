@@ -189,23 +189,42 @@ async function fetchDashboardData(userId: string): Promise<DashboardData> {
   // Transform backend fields to frontend AchievementData format
   // Backend: is_completed, completed_at, achievement_id, etc.
   // Frontend: unlocked, unlockedAt, id, etc.
-  const achievementsData: AchievementData[] = achievementsRawArray.map((raw: any) => ({
-    id: raw.id || raw.achievement_id || raw.achievementId,
-    name: raw.name || raw.achievement?.name || 'Unknown',
-    title: raw.title || raw.achievement?.title || raw.name || raw.achievement?.name,
-    description: raw.description || raw.achievement?.description || '',
-    rarity: raw.rarity || raw.achievement?.rarity || 'common',
-    category: raw.category || raw.achievement?.category,
-    icon: raw.icon || raw.achievement?.icon || '🏆',
-    unlocked: raw.unlocked ?? raw.is_completed ?? raw.isCompleted ?? false,
-    isUnlocked: raw.unlocked ?? raw.is_completed ?? raw.isCompleted ?? false,
-    unlockedAt: raw.unlockedAt || raw.completed_at || raw.completedAt,
-    progress: raw.progress ?? 0,
-    required: raw.required || raw.max_progress || raw.maxProgress || 100,
-    mlCoinsReward: raw.mlCoinsReward || raw.ml_coins_reward || raw.achievement?.ml_coins_reward,
-    xpReward: raw.xpReward || raw.xp_reward || raw.achievement?.xp_reward,
-    rewards: raw.rewards || raw.achievement?.rewards,
-  }));
+  // FIX: CORR-ACH-001 - Priorizar datos del achievement embebido (relacion)
+  const achievementsData: AchievementData[] = achievementsRawArray.map((raw: any) => {
+    // Extraer achievement embebido (si existe) - el backend envia la relacion
+    const ach = raw.achievement || {};
+
+    return {
+      // ID: Priorizar achievement_id para user_achievements
+      id: raw.achievement_id || raw.achievementId || raw.id || ach.id,
+
+      // Nombre y descripcion del achievement embebido
+      name: ach.name || raw.name || 'Achievement',
+      title: ach.name || raw.name || 'Achievement',
+      description: ach.description || raw.description || '',
+
+      // Rarity y category del achievement
+      rarity: ach.rarity || raw.rarity || 'common',
+      category: ach.category || raw.category || 'progress',
+
+      // Icon del achievement
+      icon: ach.icon || raw.icon || 'trophy',
+
+      // Estado de completado (de user_achievement)
+      unlocked: raw.is_completed ?? raw.isCompleted ?? raw.unlocked ?? false,
+      isUnlocked: raw.is_completed ?? raw.isCompleted ?? raw.unlocked ?? false,
+      unlockedAt: raw.completed_at || raw.completedAt || raw.unlockedAt,
+
+      // Progreso (de user_achievement)
+      progress: raw.progress ?? 0,
+      required: raw.max_progress || raw.maxProgress || ach.max_progress || 100,
+
+      // Rewards: Priorizar achievement embebido, usar ?? para respetar 0
+      mlCoinsReward: ach.ml_coins_reward ?? ach.rewards?.ml_coins ?? raw.ml_coins_reward ?? 0,
+      xpReward: ach.points_value ?? ach.rewards?.xp ?? raw.xp_reward ?? 0,
+      rewards: ach.rewards || raw.rewards,
+    };
+  });
 
   const recentUnlocked = achievementsData
     .filter((a: AchievementData) => a.unlocked && a.unlockedAt)

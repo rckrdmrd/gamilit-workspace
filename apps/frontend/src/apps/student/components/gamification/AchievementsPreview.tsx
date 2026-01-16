@@ -219,18 +219,18 @@ export function AchievementsPreview({ achievements }: AchievementsPreviewProps) 
                 </p>
               )}
 
-              {/* Rewards (IMPL-007: dynamic values from achievement data) */}
+              {/* Rewards - FIX: CORR-ACH-003 - Mostrar valores reales o 0 si no hay datos */}
               <div className="flex items-center justify-around border-t border-gray-200 pt-3">
                 <div className="flex items-center gap-1">
                   <Coins className="h-4 w-4 text-detective-gold" />
                   <span className="text-sm font-semibold text-detective-text">
-                    +{achievement.mlCoinsReward ?? achievement.rewards?.ml_coins ?? 50} ML
+                    +{achievement.mlCoinsReward ?? achievement.rewards?.ml_coins ?? 0} ML
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Zap className="h-4 w-4 text-detective-orange" />
                   <span className="text-sm font-semibold text-detective-text">
-                    +{achievement.xpReward ?? achievement.rewards?.xp ?? 100} XP
+                    +{achievement.xpReward ?? achievement.rewards?.xp ?? 0} XP
                   </span>
                 </div>
               </div>

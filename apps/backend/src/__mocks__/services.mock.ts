@@ -85,9 +85,7 @@ export const createMockRanksService = () => ({
  * Mock MissionTemplatesService
  */
 export const createMockMissionTemplatesService = () => ({
-  getActiveByType: jest.fn(),
   getActiveByTypeAndLevel: jest.fn(),
-  selectRandom: jest.fn(),
   findById: jest.fn(),
   findAll: jest.fn(),
   create: jest.fn(),

@@ -115,6 +115,9 @@ export const DB_TABLES = {
     DIFFICULTY_CRITERIA: 'difficulty_criteria', // ✨ NUEVO - P1-001 (Criterios de dificultad CEFR)
     CLASSROOM_MODULES: 'classroom_modules', // ✨ NUEVO - P1-002 (Módulos asignados a aulas)
     TEACHER_CONTENT: 'teacher_content', // ✨ NUEVO - Audit 2026-01-04 (Contenido docente)
+    EXERCISE_VALIDATION_CONFIG: 'exercise_validation_config', // ✨ NUEVO - 2026-01-14 (Sistema Dual ADR-008)
+    EXERCISE_TYPE_RUBRICS: 'exercise_type_rubrics', // ✨ NUEVO - 2026-01-14 (Rúbricas por tipo M4-M5)
+    EXERCISE_VALIDATION_AUDIT: 'exercise_validation_audit', // ✨ NUEVO - 2026-01-14 (Auditoría de validaciones)
     // REMOVED: exercise_options, exercise_answers (legacy dual model - moved to JSONB puro)
   },
 
@@ -180,6 +183,8 @@ export const DB_TABLES = {
     CONTENT_VERSIONS: 'content_versions', // ✨ NUEVO - P2
     FLAGGED_CONTENT: 'flagged_content', // ✨ NUEVO - P2
     MEDIA_METADATA: 'media_metadata', // ✨ NUEVO - P2
+    TAGS: 'tags', // ✨ NUEVO - 2026-01-14 (Categorización de contenido)
+    MODERATION_RULES: 'moderation_rules', // ✨ NUEVO - 2026-01-14 (Reglas de moderación automática)
   },
 
   /**
@@ -193,7 +198,7 @@ export const DB_TABLES = {
     PERFORMANCE_METRICS: 'performance_metrics', // ✨ NUEVO - P2
     SYSTEM_ALERTS: 'system_alerts', // ✨ NUEVO - P2
     ACTIVITY_LOG: 'activity_log', // ✨ Admin Dashboard activity tracking
-    PENDING_USER_INITIALIZATION: 'pending_user_initialization', // ✨ NUEVO - GAP-004 (2026-01-13)
+    PENDING_USER_INITIALIZATION: 'pending_user_initialization', // ✨ NUEVO - 2026-01-14 (Control de inicialización fallida)
     // USER_ACTIVITY: ELIMINADO 2026-01-07 - Migrado completamente a ACTIVITY_LOG
   },
 

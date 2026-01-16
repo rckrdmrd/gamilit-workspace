@@ -1,6 +1,18 @@
-# Schema: social_features
+# _MAP: social_features/
 
-Características sociales: escuelas, aulas, equipos, amistades, reportes de profesores.
+**Ultima actualizacion:** 2026-01-14
+**Estado:** Produccion
+**Tipo:** Domain/Social
+**Objetos activos:** 37
+
+---
+
+## Proposito
+
+Caracteristicas sociales: escuelas, aulas, equipos, amistades, reportes de profesores.
+Modelo jerarquico School → Classroom → Student con sistema de amistades y equipos colaborativos.
+
+**Audiencia:** Backend Developers, Frontend Developers
 
 ## Estructura
 

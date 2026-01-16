@@ -1,39 +1,39 @@
 -- =====================================================
--- Seed: educational_content.modules (DEV)
--- Description: Módulos educativos de Marie Curie con UUIDs fijos
--- Environment: DEVELOPMENT
+-- Seed: educational_content.modules (PROD)
+-- Description: Módulos educativos de Marie Curie para producción
+-- Environment: PRODUCTION
 -- Dependencies: None
 -- Order: 01
 -- Created: 2025-11-11
--- Updated: 2026-01-13 (v4.0 - UUIDs fijos para consistencia frontend)
--- Version: 4.0.0
+-- Version: 2.1 (módulos 4-5 en backlog)
 -- =====================================================
 --
--- CAMBIOS v4.0.0 (2026-01-13):
--- - UUIDs FIJOS para consistencia con frontend mock data
--- - Resuelve error de navegación /modules/1 vs /modules/<uuid>
--- - UUIDs hexadecimales válidos: a0000001-..., a0000002-..., etc.
+-- CAMBIOS v2.1 (2025-11-23):
+-- - Módulos 4 y 5 cambiados a status 'backlog'
+-- - Módulos 4 y 5 marcados como is_published = false
+-- - Actualizados títulos y descripciones de módulos 4-5 según DocumentoDeDiseño v6.4
+-- - GAP-003 RESUELTO: Módulos visibles en UI con mensaje "En Construcción"
 --
--- CAMBIOS v3.0 (2026-01-13):
--- - Módulos 4 y 5 ACTIVADOS: status 'published', is_published = true
+-- CAMBIOS v2.0:
+-- - Convertido de STRING a UUID
+-- - Agregadas todas las columnas del schema completo
+-- - Cambiado NOW() → gamilit.now_mexico()
+-- - Estructura alineada 100% con DDL
 --
--- UUIDs FIJOS:
--- - Módulo 1: a0000001-0001-0001-0001-000000000001
--- - Módulo 2: a0000002-0002-0002-0002-000000000002
--- - Módulo 3: a0000003-0003-0003-0003-000000000003
--- - Módulo 4: a0000004-0004-0004-0004-000000000004
--- - Módulo 5: a0000005-0005-0005-0005-000000000005
+-- VALIDADO CONTRA:
+-- - DDL: ddl/schemas/educational_content/tables/01-modules.sql
+-- - Template: seeds/dev/educational_content/01-modules.sql
+-- - DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md
 --
 -- =====================================================
 
 SET search_path TO educational_content, public;
 
 -- =====================================================
--- INSERT: 5 Módulos de Marie Curie con UUIDs FIJOS
+-- INSERT: 5 Módulos de Marie Curie (PRODUCTION)
 -- =====================================================
 
 INSERT INTO educational_content.modules (
-    id,
     tenant_id,
     title,
     description,
@@ -51,7 +51,6 @@ INSERT INTO educational_content.modules (
 ) VALUES
 -- Módulo 1: Comprensión Literal
 (
-    'a0000001-0001-0001-0001-000000000001'::uuid,
     NULL,  -- tenant_id NULL = disponible para todos
     'Módulo 1: Comprensión Literal',
     'Identifica información explícita en textos sobre la vida de Marie Curie',
@@ -69,7 +68,6 @@ INSERT INTO educational_content.modules (
 ),
 -- Módulo 2: Comprensión Inferencial
 (
-    'a0000002-0002-0002-0002-000000000002'::uuid,
     NULL,
     'Módulo 2: Comprensión Inferencial',
     'Deduce información implícita y relaciones causa-efecto en la vida de Marie Curie',
@@ -87,7 +85,6 @@ INSERT INTO educational_content.modules (
 ),
 -- Módulo 3: Comprensión Crítica
 (
-    'a0000003-0003-0003-0003-000000000003'::uuid,
     NULL,
     'Módulo 3: Comprensión Crítica',
     'Evalúa y analiza críticamente la información sobre Marie Curie',
@@ -103,9 +100,8 @@ INSERT INTO educational_content.modules (
     gamilit.now_mexico(),
     gamilit.now_mexico()
 ),
--- Módulo 4: Lectura Digital y Multimodal
+-- Módulo 4: Lectura Digital (BACKLOG - Fuera de alcance de entrega actual)
 (
-    'a0000004-0004-0004-0004-000000000004'::uuid,
     NULL,
     'Módulo 4: Lectura Digital y Multimodal',
     'Desarrolla habilidades de lectura en medios digitales y multimodales con contenido de Marie Curie',
@@ -116,14 +112,13 @@ INSERT INTO educational_content.modules (
     ARRAY['Navegar contenido hipertextual', 'Evaluar fuentes digitales', 'Sintetizar información multimedia', 'Analizar memes y contenido visual'],
     175,
     85,
-    'published',
-    true,
+    'backlog',  -- ← Módulo en backlog, visible con mensaje "En Construcción"
+    false,      -- ← No publicado para evitar acceso a ejercicios
     gamilit.now_mexico(),
     gamilit.now_mexico()
 ),
--- Módulo 5: Producción y Expresión Lectora
+-- Módulo 5: Producción y Expresión Lectora (BACKLOG - Fuera de alcance de entrega actual)
 (
-    'a0000005-0005-0005-0005-000000000005'::uuid,
     NULL,
     'Módulo 5: Producción y Expresión Lectora',
     'Crea textos diversos y expresiones lectoras basadas en la vida y obra de Marie Curie',
@@ -134,16 +129,15 @@ INSERT INTO educational_content.modules (
     ARRAY['Producir textos argumentativos', 'Crear contenido multimedia', 'Expresar ideas con claridad', 'Desarrollar presentaciones creativas'],
     250,
     125,
-    'published',
-    true,
+    'backlog',  -- ← Módulo en backlog, visible con mensaje "En Construcción"
+    false,      -- ← No publicado para evitar acceso a ejercicios
     gamilit.now_mexico(),
     gamilit.now_mexico()
 )
-ON CONFLICT (id) DO UPDATE SET
+ON CONFLICT (module_code) DO UPDATE SET
     title = EXCLUDED.title,
     description = EXCLUDED.description,
     order_index = EXCLUDED.order_index,
-    module_code = EXCLUDED.module_code,
     status = EXCLUDED.status,
     is_published = EXCLUDED.is_published,
     updated_at = gamilit.now_mexico();
@@ -156,24 +150,8 @@ DO $$
 DECLARE
     module_count INTEGER;
     published_count INTEGER;
-    v_record RECORD;
 BEGIN
     SELECT COUNT(*) INTO module_count FROM educational_content.modules;
     SELECT COUNT(*) INTO published_count FROM educational_content.modules WHERE is_published = true;
-
-    RAISE NOTICE '=====================================================';
-    RAISE NOTICE 'Modules Seed - Verificacion';
-    RAISE NOTICE '=====================================================';
-    RAISE NOTICE 'Total modulos: % (% publicados)', module_count, published_count;
-    RAISE NOTICE '-----------------------------------------------------';
-
-    FOR v_record IN (
-        SELECT id, order_index, title
-        FROM educational_content.modules
-        ORDER BY order_index
-    ) LOOP
-        RAISE NOTICE '  M%: % | %', v_record.order_index, v_record.id, v_record.title;
-    END LOOP;
-
-    RAISE NOTICE '=====================================================';
+    RAISE NOTICE '✓ Módulos insertados: % total (% publicados)', module_count, published_count;
 END $$;

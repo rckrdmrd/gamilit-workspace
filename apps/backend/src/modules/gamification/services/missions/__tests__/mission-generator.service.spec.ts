@@ -14,7 +14,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { MissionGeneratorService } from '../mission-generator.service';
-import { MissionTemplatesService } from '../../mission-templates.service';
 import { Mission, MissionTypeEnum, MissionStatusEnum } from '../../../entities/mission.entity';
 import { createMockRepository, createMockQueryBuilder } from '@/__mocks__/repositories.mock';
 import { createMockMissionTemplatesService, TestDataFactory } from '@/__mocks__/services.mock';
@@ -70,7 +69,7 @@ describe('MissionGeneratorService', () => {
       providers: [
         MissionGeneratorService,
         { provide: getRepositoryToken(Mission, 'gamification'), useValue: missionsRepo },
-        { provide: MissionTemplatesService, useValue: templatesService },
+        { provide: 'MissionTemplatesService', useValue: templatesService },
       ],
     }).compile();
 
@@ -96,7 +95,7 @@ describe('MissionGeneratorService', () => {
       const mockQueryBuilder = createMockQueryBuilder();
       mockQueryBuilder.execute.mockResolvedValue({ affected: 0 });
       missionsRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder as any);
-      templatesService.getActiveByType.mockResolvedValue(mockTemplates);
+      templatesService.getActiveByTypeAndLevel.mockResolvedValue(mockTemplates);
       missionsRepo.create.mockImplementation((data) => data as any);
       missionsRepo.save.mockImplementation((data) => Promise.resolve(data as any));
     });
@@ -115,7 +114,7 @@ describe('MissionGeneratorService', () => {
       await service.generateDailyMissions(mockProfileId, userLevel);
 
       // Assert
-      expect(templatesService.getActiveByType).toHaveBeenCalledWith('daily', userLevel);
+      expect(templatesService.getActiveByTypeAndLevel).toHaveBeenCalledWith('daily', userLevel);
     });
 
     it('should create missions with correct type', async () => {
@@ -163,7 +162,7 @@ describe('MissionGeneratorService', () => {
 
     it('should return empty array if no templates available', async () => {
       // Arrange
-      templatesService.getActiveByType.mockResolvedValue([]);
+      templatesService.getActiveByTypeAndLevel.mockResolvedValue([]);
 
       // Act
       const result = await service.generateDailyMissions(mockProfileId, userLevel);
@@ -176,7 +175,7 @@ describe('MissionGeneratorService', () => {
     it('should handle fewer templates than requested count', async () => {
       // Arrange
       const limitedTemplates = mockTemplates.slice(0, 2); // Only 2 templates
-      templatesService.getActiveByType.mockResolvedValue(limitedTemplates);
+      templatesService.getActiveByTypeAndLevel.mockResolvedValue(limitedTemplates);
 
       // Act
       const result = await service.generateDailyMissions(mockProfileId, userLevel);
@@ -190,7 +189,7 @@ describe('MissionGeneratorService', () => {
       await service.generateDailyMissions(mockProfileId);
 
       // Assert
-      expect(templatesService.getActiveByType).toHaveBeenCalledWith('daily', 1);
+      expect(templatesService.getActiveByTypeAndLevel).toHaveBeenCalledWith('daily', 1);
     });
   });
 
@@ -227,7 +226,7 @@ describe('MissionGeneratorService', () => {
       const mockQueryBuilder = createMockQueryBuilder();
       mockQueryBuilder.execute.mockResolvedValue({ affected: 0 });
       missionsRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder as any);
-      templatesService.getActiveByType.mockResolvedValue(weeklyTemplates);
+      templatesService.getActiveByTypeAndLevel.mockResolvedValue(weeklyTemplates);
       missionsRepo.create.mockImplementation((data) => data as any);
       missionsRepo.save.mockImplementation((data) => Promise.resolve(data as any));
     });
@@ -246,7 +245,7 @@ describe('MissionGeneratorService', () => {
       await service.generateWeeklyMissions(mockProfileId, userLevel);
 
       // Assert
-      expect(templatesService.getActiveByType).toHaveBeenCalledWith('weekly', userLevel);
+      expect(templatesService.getActiveByTypeAndLevel).toHaveBeenCalledWith('weekly', userLevel);
     });
 
     it('should set end_date to end of week (Sunday)', async () => {
@@ -278,7 +277,7 @@ describe('MissionGeneratorService', () => {
 
     it('should return empty array if no templates available', async () => {
       // Arrange
-      templatesService.getActiveByType.mockResolvedValue([]);
+      templatesService.getActiveByTypeAndLevel.mockResolvedValue([]);
 
       // Act
       const result = await service.generateWeeklyMissions(mockProfileId, userLevel);
@@ -486,7 +485,7 @@ describe('MissionGeneratorService', () => {
       const mockQueryBuilder = createMockQueryBuilder();
       mockQueryBuilder.execute.mockResolvedValue({ affected: 0 });
       missionsRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder as any);
-      templatesService.getActiveByType.mockResolvedValue(mockTemplates);
+      templatesService.getActiveByTypeAndLevel.mockResolvedValue(mockTemplates);
 
       const createdMissions: any[] = [];
       missionsRepo.create.mockImplementation((data) => {
@@ -509,7 +508,7 @@ describe('MissionGeneratorService', () => {
       const mockQueryBuilder = createMockQueryBuilder();
       mockQueryBuilder.execute.mockResolvedValue({ affected: 0 });
       missionsRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder as any);
-      templatesService.getActiveByType.mockResolvedValue(mockTemplates); // Exactly 3
+      templatesService.getActiveByTypeAndLevel.mockResolvedValue(mockTemplates); // Exactly 3
 
       missionsRepo.create.mockImplementation((data) => data as any);
       missionsRepo.save.mockImplementation((data) => Promise.resolve(data as any));

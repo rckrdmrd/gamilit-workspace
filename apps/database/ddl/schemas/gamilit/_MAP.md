@@ -1,6 +1,18 @@
-# Schema: gamilit
+# _MAP: gamilit/
+
+**Ultima actualizacion:** 2026-01-14
+**Estado:** Produccion
+**Tipo:** Utilities/Shared
+**Objetos activos:** 30
+
+---
+
+## Proposito
 
 Funciones y utilidades compartidas del sistema GAMILIT.
+Incluye triggers de inicializacion, validadores, funciones de mision y helpers de auditoria.
+
+**Audiencia:** Backend Developers, DBAs
 
 ## Estructura
 

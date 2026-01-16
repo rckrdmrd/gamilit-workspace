@@ -120,7 +120,7 @@ export class Mission {
   })
     status!: MissionStatusEnum;
 
-  @Column({ type: 'double precision', default: 0 })
+  @Column({ type: 'float', default: 0 })
     progress!: number;
 
   @Column({ type: 'timestamp with time zone', default: () => 'now()' })

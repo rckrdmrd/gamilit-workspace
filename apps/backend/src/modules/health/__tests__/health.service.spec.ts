@@ -198,8 +198,8 @@ describe('HealthService', () => {
       // Act
       const result = await service.checkDatabaseConnection();
 
-      // Assert - Allow small timing variance due to system scheduling
-      expect(result.responseTime).toBeGreaterThanOrEqual(8);
+      // Assert
+      expect(result.responseTime).toBeGreaterThanOrEqual(10);
     });
 
     it('should handle network errors gracefully', async () => {
@@ -223,8 +223,7 @@ describe('HealthService', () => {
       // Assert
       expect(result.status).toBe(HealthStatus.HEALTHY);
       expect(result.message).toBe('All critical tables exist');
-      // Service checks 8 critical tables across auth, educational, gamification, progress, social, audit
-      expect(result.details?.totalChecked).toBe(8);
+      expect(result.details?.totalChecked).toBe(9);
       expect(result.details?.allPresent).toBe(true);
     });
 
@@ -255,13 +254,13 @@ describe('HealthService', () => {
       await service.checkCriticalTables();
 
       // Assert
-      // Verify queries were made to check tables (datasources used by critical tables)
-      // Note: contentDataSource and notificationsDataSource are not used in current criticalTables list
+      // Verify queries were made to check tables
       expect(authDataSource.query).toHaveBeenCalled();
       expect(educationalDataSource.query).toHaveBeenCalled();
       expect(gamificationDataSource.query).toHaveBeenCalled();
       expect(progressDataSource.query).toHaveBeenCalled();
       expect(socialDataSource.query).toHaveBeenCalled();
+      expect(contentDataSource.query).toHaveBeenCalled();
       expect(auditDataSource.query).toHaveBeenCalled();
     });
 

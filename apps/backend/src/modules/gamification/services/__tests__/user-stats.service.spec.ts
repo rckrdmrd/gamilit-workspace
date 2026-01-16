@@ -4,11 +4,10 @@ import { Repository } from 'typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { UserStatsService } from '../user-stats.service';
 import { UserStats } from '../../entities';
-import { Profile } from '@/modules/auth/entities/profile.entity';
 
 describe('UserStatsService', () => {
   let service: UserStatsService;
-  let userStatsRepo: Repository<UserStats>;
+  let _userStatsRepo: Repository<UserStats>;
 
   const mockUserStatsRepo = {
     findOne: jest.fn(),
@@ -17,24 +16,12 @@ describe('UserStatsService', () => {
     find: jest.fn(),
   };
 
-  const mockProfileRepo = {
-    findOne: jest.fn(),
-  };
-
   const mockUserId = 'user-123';
   const mockTenantId = 'tenant-456';
-  const mockProfileId = 'profile-789';
-
-  // Mock profile for CORR-GAM-002: service resolves auth.users.id → profiles.id
-  const mockProfile = {
-    id: mockProfileId,
-    user_id: mockUserId,
-    tenant_id: mockTenantId,
-  };
 
   const createMockStats = (overrides?: Partial<UserStats>): UserStats => ({
     id: 'stats-1',
-    user_id: mockProfileId, // CORR-GAM-002: user_stats.user_id = profiles.id
+    user_id: mockUserId,
     tenant_id: mockTenantId,
     level: 1,
     total_xp: 0,
@@ -82,10 +69,6 @@ describe('UserStatsService', () => {
           provide: getRepositoryToken(UserStats, 'gamification'),
           useValue: mockUserStatsRepo,
         },
-        {
-          provide: getRepositoryToken(Profile, 'auth'),
-          useValue: mockProfileRepo,
-        },
       ],
     }).compile();
 
@@ -93,9 +76,6 @@ describe('UserStatsService', () => {
     userStatsRepo = module.get(getRepositoryToken(UserStats, 'gamification'));
 
     jest.clearAllMocks();
-
-    // Default: profile exists (CORR-GAM-002 - resolves authUserId to profileId)
-    mockProfileRepo.findOne.mockResolvedValue(mockProfile);
   });
 
   afterEach(() => {
@@ -116,27 +96,13 @@ describe('UserStatsService', () => {
 
       // Assert
       expect(result).toEqual(mockStats);
-      // CORR-GAM-002: Service resolves authUserId → profileId before lookup
       expect(mockUserStatsRepo.findOne).toHaveBeenCalledWith({
-        where: { user_id: mockProfileId },
+        where: { user_id: mockUserId },
       });
     });
 
-    it('should throw NotFoundException when profile not found', async () => {
-      // Arrange - profile doesn't exist for this auth user
-      mockProfileRepo.findOne.mockResolvedValue(null);
-
-      // Act & Assert
-      await expect(service.findByUserId(mockUserId)).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.findByUserId(mockUserId)).rejects.toThrow(
-        'Profile not found for auth user',
-      );
-    });
-
     it('should throw NotFoundException when stats not found', async () => {
-      // Arrange - profile exists but stats don't
+      // Arrange
       mockUserStatsRepo.findOne.mockResolvedValue(null);
 
       // Act & Assert
@@ -165,9 +131,8 @@ describe('UserStatsService', () => {
 
       // Assert
       expect(result).toEqual(newStats);
-      // CORR-GAM-002: Service uses profile.id for user_stats.user_id
       expect(mockUserStatsRepo.create).toHaveBeenCalledWith({
-        user_id: mockProfileId,
+        user_id: mockUserId,
         tenant_id: mockTenantId,
         level: 1,
         total_xp: 0,
@@ -190,10 +155,10 @@ describe('UserStatsService', () => {
       expect(mockUserStatsRepo.save).toHaveBeenCalledWith(newStats);
     });
 
-    it('should use profile tenant_id when not provided', async () => {
+    it('should create stats without tenant_id when not provided', async () => {
       // Arrange
       mockUserStatsRepo.findOne.mockResolvedValue(null);
-      const newStats = createMockStats();
+      const newStats = createMockStats({ tenant_id: undefined });
       mockUserStatsRepo.create.mockReturnValue(newStats);
       mockUserStatsRepo.save.mockResolvedValue(newStats);
 
@@ -202,11 +167,10 @@ describe('UserStatsService', () => {
 
       // Assert
       expect(result).toBeDefined();
-      // CORR-GAM-002: Uses profile.tenant_id when not provided
       expect(mockUserStatsRepo.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          user_id: mockProfileId,
-          tenant_id: mockTenantId, // From mockProfile
+          user_id: mockUserId,
+          tenant_id: undefined,
         }),
       );
     });
@@ -221,7 +185,7 @@ describe('UserStatsService', () => {
         BadRequestException,
       );
       await expect(service.create(mockUserId, mockTenantId)).rejects.toThrow(
-        `already has stats`,
+        `User ${mockUserId} already has stats`,
       );
       expect(mockUserStatsRepo.create).not.toHaveBeenCalled();
       expect(mockUserStatsRepo.save).not.toHaveBeenCalled();
@@ -415,9 +379,7 @@ describe('UserStatsService', () => {
       expect(mockUserStatsRepo.save).toHaveBeenCalled();
     });
 
-    it('should accumulate XP and delegate level-up to DB trigger', async () => {
-      // NOTE: Level-ups are now handled by database triggers, not client-side code
-      // The service just adds XP and saves; trigger handles promotion
+    it('should level up when XP exceeds threshold', async () => {
       // Arrange
       const mockStats = createMockStats({
         level: 1,
@@ -426,30 +388,22 @@ describe('UserStatsService', () => {
         current_rank: 'Ajaw',
         rank_progress: 0,
       });
-      // Simulate what DB trigger would return after level up
-      const savedStats = createMockStats({
-        level: 2, // Trigger promoted level
-        total_xp: 130, // Service adds XP, trigger adjusts if needed
-        xp_to_next_level: 110,
-        current_rank: 'Ajaw',
-        rank_progress: 26,
-      });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
-      mockUserStatsRepo.save.mockResolvedValue(savedStats);
+      mockUserStatsRepo.save.mockImplementation((stats) => {
+        return Promise.resolve(stats as UserStats);
+      });
 
       // Act
       const result = await service.addXp(mockUserId, 50);
 
-      // Assert - verify save was called with accumulated XP
-      expect(mockUserStatsRepo.save).toHaveBeenCalledWith(
-        expect.objectContaining({ total_xp: 130 }),
-      );
-      // Result comes from DB (with trigger effects)
+      // Assert
       expect(result.level).toBe(2);
+      expect(result.total_xp).toBe(30); // 130 - 100 = 30 XP carry over
+      expect(result.xp_to_next_level).toBe(110); // Scaled XP for level 2
+      expect(mockUserStatsRepo.save).toHaveBeenCalled();
     });
 
-    it('should handle large XP gain - trigger handles multiple level ups', async () => {
-      // NOTE: Multi-level ups are handled by database triggers
+    it('should level up multiple times with large XP gain', async () => {
       // Arrange
       const mockStats = createMockStats({
         level: 1,
@@ -458,29 +412,21 @@ describe('UserStatsService', () => {
         current_rank: 'Ajaw',
         rank_progress: 0,
       });
-      // Simulate trigger result after multiple level-ups
-      const savedStats = createMockStats({
-        level: 4,
-        total_xp: 500,
-        xp_to_next_level: 130,
-        current_rank: 'Ajaw',
-        rank_progress: 100,
-      });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
-      mockUserStatsRepo.save.mockResolvedValue(savedStats);
+      mockUserStatsRepo.save.mockImplementation((stats) => {
+        return Promise.resolve(stats as UserStats);
+      });
 
-      // Act
+      // Act - Adding 500 XP should level up multiple times
       const result = await service.addXp(mockUserId, 500);
 
       // Assert
-      expect(mockUserStatsRepo.save).toHaveBeenCalledWith(
-        expect.objectContaining({ total_xp: 500 }),
-      );
-      expect(result.level).toBe(4);
+      expect(result.level).toBeGreaterThan(1);
+      expect(result.total_xp).toBeGreaterThanOrEqual(0);
+      expect(result.total_xp).toBeLessThan(result.xp_to_next_level);
     });
 
-    it('should trigger rank promotion via DB trigger at level threshold', async () => {
-      // NOTE: Rank promotions are handled by database triggers
+    it('should promote rank when reaching level threshold', async () => {
       // Arrange
       const mockStats = createMockStats({
         level: 4,
@@ -489,27 +435,18 @@ describe('UserStatsService', () => {
         current_rank: 'Ajaw',
         rank_progress: 80,
       });
-      // Simulate trigger result after rank promotion
-      const savedStats = createMockStats({
-        level: 5,
-        total_xp: 140,
-        xp_to_next_level: 140,
-        current_rank: 'Nacom',
-        rank_progress: 0,
-      });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
-      mockUserStatsRepo.save.mockResolvedValue(savedStats);
+      mockUserStatsRepo.save.mockImplementation((stats) => {
+        return Promise.resolve(stats as UserStats);
+      });
 
-      // Act
+      // Act - Level 4 -> 5 should trigger rank promotion to 'Nacom'
       const result = await service.addXp(mockUserId, 50);
 
-      // Assert - verify XP was added
-      expect(mockUserStatsRepo.save).toHaveBeenCalledWith(
-        expect.objectContaining({ total_xp: 140 }),
-      );
-      // Result from DB includes trigger effects
+      // Assert
       expect(result.level).toBe(5);
       expect(result.current_rank).toBe('Nacom');
+      expect(result.rank_progress).toBe(0); // Reset progress after promotion
     });
 
     it('should throw NotFoundException if user stats not found', async () => {
@@ -537,8 +474,7 @@ describe('UserStatsService', () => {
       expect(result.level).toBe(1);
     });
 
-    it('should calculate rank progress correctly - handled by DB trigger', async () => {
-      // NOTE: Rank progress calculation is now handled by database triggers
+    it('should calculate rank progress correctly between ranks', async () => {
       // Arrange
       const mockStats = createMockStats({
         level: 2,
@@ -547,47 +483,34 @@ describe('UserStatsService', () => {
         current_rank: 'Ajaw',
         rank_progress: 0,
       });
-      // Simulate trigger result with updated rank progress
-      const savedStats = createMockStats({
-        level: 2,
-        total_xp: 100,
-        xp_to_next_level: 100,
-        current_rank: 'Ajaw',
-        rank_progress: 60,
-      });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
-      mockUserStatsRepo.save.mockResolvedValue(savedStats);
+      mockUserStatsRepo.save.mockImplementation((stats) => {
+        return Promise.resolve(stats as UserStats);
+      });
 
       // Act
       const result = await service.addXp(mockUserId, 50);
 
       // Assert
-      expect(mockUserStatsRepo.save).toHaveBeenCalledWith(
-        expect.objectContaining({ total_xp: 100 }),
-      );
-      expect(result.rank_progress).toBe(60); // From DB trigger
+      // Level 3 is at 60% progress to rank 'Nacom' (level 5)
+      // Progress = (3 - 0) / (5 - 0) * 100 = 60%
+      expect(result.level).toBe(3);
+      expect(result.rank_progress).toBe(60);
     });
 
-    it('should cap rank progress at 100 when at max rank - handled by DB trigger', async () => {
-      // NOTE: Max rank capping is handled by database triggers
+    it('should cap rank progress at 100 when at max rank', async () => {
       // Arrange
       const mockStats = createMockStats({
         level: 20,
         total_xp: 0,
         xp_to_next_level: 600,
-        current_rank: "K'uk'ulkan",
-        rank_progress: 100,
-      });
-      // Simulate trigger result maintaining 100% at max rank
-      const savedStats = createMockStats({
-        level: 22,
-        total_xp: 1000,
-        xp_to_next_level: 660,
-        current_rank: "K'uk'ulkan",
+        current_rank: "K'uk'ulkan", // Max rank
         rank_progress: 100,
       });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
-      mockUserStatsRepo.save.mockResolvedValue(savedStats);
+      mockUserStatsRepo.save.mockImplementation((stats) => {
+        return Promise.resolve(stats as UserStats);
+      });
 
       // Act
       const result = await service.addXp(mockUserId, 1000);

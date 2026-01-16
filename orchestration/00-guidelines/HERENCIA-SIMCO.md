@@ -11,7 +11,7 @@
 |-----------|-------|
 | **Proyecto** | GAMILIT - Plataforma EdTech Gamificada |
 | **Nivel** | STANDALONE |
-| **Padre** | core/orchestration |
+| **Padre** | /home/isem/workspace-v2/orchestration |
 | **SIMCO Version** | 3.8.0 |
 | **CAPVED** | Habilitado |
 | **CCA Protocol** | Habilitado |
@@ -19,23 +19,23 @@
 ## Jerarquía de Herencia
 
 ```
-Nivel 0: workspace/orchestration/               ← WORKSPACE (directivas globales)
+Nivel 0: /home/isem/workspace-v2/orchestration/           ← WORKSPACE (51 docs SIMCO)
     │
-Nivel 1: core/orchestration/                    ← CORE (76 docs SIMCO)
-    │
-    └── STANDALONE: gamilit/orchestration/      ← ESTE PROYECTO
-                    gamilit/docs/00-vision-general/directivas/  ← DIRECTIVAS ESPECIFICAS
+    └── STANDALONE: /home/isem/workspace-v2/projects/gamilit/
+                    ├── orchestration/                     ← Orquestación del proyecto
+                    ├── .claude/directivas/                ← Directivas específicas NEXUS
+                    └── docs/00-vision-general/directivas/ ← Directivas de dominio
 ```
 
-**Regla:** Las directivas locales pueden EXTENDER las de core, nunca REDUCIRLAS.
+**Regla:** Las directivas locales pueden EXTENDER las del workspace, nunca REDUCIRLAS.
 
 **Estado del Proyecto:** MVP 75% completado
 
 ---
 
-## Directivas Heredadas de WORKSPACE (OBLIGATORIAS)
+## Directivas Heredadas del WORKSPACE-V2 (OBLIGATORIAS)
 
-Ubicación: `workspace/orchestration/`
+Ubicación: `/home/isem/workspace-v2/orchestration/`
 
 | Alias | Archivo | Propósito |
 |-------|---------|-----------|
@@ -44,18 +44,18 @@ Ubicación: `workspace/orchestration/`
 
 ---
 
-## Directivas Heredadas de CORE (OBLIGATORIAS)
+## Directivas SIMCO del Workspace (OBLIGATORIAS)
 
-Ubicación: `core/orchestration/`
+Ubicación: `/home/isem/workspace-v2/orchestration/directivas/`
 
 ### 1. Ciclo de Vida - USAR SIEMPRE
 
 | Alias | Archivo | Propósito |
 |-------|---------|-----------|
-| `@TAREA` | `directivas/simco/SIMCO-TAREA.md` | Punto de entrada para toda HU |
-| `@CAPVED` | `directivas/principios/PRINCIPIO-CAPVED.md` | Ciclo de 6 fases |
-| `@INICIALIZACION` | `directivas/simco/SIMCO-INICIALIZACION.md` | Bootstrap de agentes |
-| `@DOC-DEFINITIVA` | `directivas/DIRECTIVA-DOCUMENTACION-DEFINITIVA.md` | Docs como estado final |
+| `@TAREA` | `simco/SIMCO-TAREA.md` | Punto de entrada para toda HU |
+| `@CAPVED` | `principios/PRINCIPIO-CAPVED.md` | Ciclo de 6 fases |
+| `@INICIALIZACION` | `simco/SIMCO-INICIALIZACION.md` | Bootstrap de agentes |
+| `@DOCUMENTAR` | `simco/SIMCO-DOCUMENTAR.md` | Documentación como entregable |
 
 ### 2. Operaciones Universales
 

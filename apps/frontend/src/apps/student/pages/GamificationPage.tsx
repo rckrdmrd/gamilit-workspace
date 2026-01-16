@@ -83,11 +83,22 @@ export default function GamificationPage() {
   const achievementsError = useAchievementsStore((state) => state.error);
 
   // Fetch data on mount and set up polling
+  // FIX: CORR-ACH-005 - Agregar logs y validacion de userId
   useEffect(() => {
     // Initial fetch - all in parallel
     const fetchAllData = async () => {
-      if (!user?.id) return;
-      await Promise.all([fetchUserProgress(), fetchBalance(), fetchAchievements(user.id)]);
+      if (!user?.id) {
+        console.warn('[GamificationPage] No user.id available, skipping fetch');
+        return;
+      }
+
+      console.log('[GamificationPage] Fetching all gamification data for user:', user.id);
+
+      await Promise.all([
+        fetchUserProgress(),
+        fetchBalance(),
+        fetchAchievements(user.id),
+      ]);
     };
 
     // Fetch immediately on mount
@@ -95,7 +106,9 @@ export default function GamificationPage() {
 
     // Set up polling every 30 seconds
     const pollingInterval = setInterval(() => {
-      fetchAllData();
+      if (user?.id) {
+        fetchAllData();
+      }
     }, 30000); // 30 seconds
 
     // Cleanup interval on unmount
@@ -103,7 +116,7 @@ export default function GamificationPage() {
       clearInterval(pollingInterval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchUserProgress, fetchBalance, fetchAchievements]);
+  }, [user?.id, fetchUserProgress, fetchBalance, fetchAchievements]);
 
   // Animation variants
   const containerVariants = {

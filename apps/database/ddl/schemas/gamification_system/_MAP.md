@@ -1,10 +1,22 @@
-# Schema: gamification_system
+# _MAP: gamification_system/
 
-Sistema de gamificación: logros, rangos Maya, monedas ML, comodines, tienda virtual.
+**Ultima actualizacion:** 2026-01-14
+**Estado:** Produccion
+**Tipo:** Domain/Gamification
+**Objetos activos:** 85
+
+---
+
+## Proposito
+
+Sistema de gamificacion: logros, rangos Maya, monedas ML, comodines, tienda virtual.
+Incluye leaderboards materializados, misiones diarias/semanales y sistema de recompensas.
+
+**Audiencia:** Backend Developers, Frontend Developers, Game Designers
 
 ## Estructura
 
-- **tables/**: 19 archivos activos
+- **tables/**: 15 archivos activos, 1 deprecated
 - **enums/**: 8 archivos
 - **functions/**: 21 archivos activos
 - **functions/_deprecated/**: 4 archivos (funciones updated_at + leaderboard sin uso)
@@ -16,33 +28,23 @@ Sistema de gamificación: logros, rangos Maya, monedas ML, comodines, tienda vir
 - **views/_deprecated/**: 4 archivos (views redundantes)
 - **rls-policies/**: 8 archivos
 
-**Total:** ~90 objetos DDL activos
+**Total:** 85 objetos DDL activos
 
-## Tablas (19 archivos)
+## Tablas Principales
 
-| # | Archivo | Tabla | Proposito |
-|---|---------|-------|-----------|
-| 01 | `01-user_stats.sql` | user_stats | Estadisticas principales (XP, ML Coins, nivel, racha) |
-| 02 | `02-user_ranks.sql` | user_ranks | Rangos Maya actuales e historicos |
-| 03 | `03-achievements.sql` | achievements | Definicion de logros |
-| 04 | `04-user_achievements.sql` | user_achievements | Logros desbloqueados por usuario |
-| 05 | `05-ml_coins_transactions.sql` | ml_coins_transactions | Historial de transacciones ML Coins |
-| 06 | `06-missions.sql` | missions | Misiones diarias y semanales |
-| 07 | `07-comodines_inventory.sql` | comodines_inventory | Inventario de comodines por usuario |
-| 08 | `09-leaderboard_metadata.sql` | leaderboard_metadata | Configuracion de leaderboards |
-| 09 | `10-achievement_categories.sql` | achievement_categories | Categorias de logros |
-| 10 | `11-active_boosts.sql` | active_boosts | Boosts activos de usuarios |
-| 11 | `12-inventory_transactions.sql` | inventory_transactions | Transacciones de inventario |
-| 12 | `13-maya_ranks.sql` | maya_ranks | Definicion de 7 rangos (Ajaw → Ahau) |
-| 13 | `14-comodin_usage_log.sql` | comodin_usage_log | Log de uso de comodines |
-| 14 | `15-comodin_usage_tracking.sql` | comodin_usage_tracking | Tracking de uso de comodines |
-| 15 | `16-classroom_missions.sql` | classroom_missions | Misiones asignadas a aulas |
-| 16 | `17-shop_categories.sql` | shop_categories | Categorias de tienda virtual |
-| 17 | `18-shop_items.sql` | shop_items | Items de tienda virtual |
-| 18 | `19-user_purchases.sql` | user_purchases | Compras de usuarios |
-| 19 | `20-mission_templates.sql` | mission_templates | Templates de misiones |
-
-**Nota:** Tabla `notifications` movida a schema `notifications` (ver MIGRATION-NOTIFICATIONS.md)
+| Tabla | Propósito | Estado |
+|-------|-----------|--------|
+| `user_stats` | Estadísticas principales (XP, ML Coins, nivel, racha) | Activa |
+| `user_ranks` | Rangos Maya actuales e históricos | Activa |
+| `maya_ranks` | Definición de 7 rangos (Ajaw → Ahau) | Activa |
+| `achievements` | Definición de logros | Activa |
+| `user_achievements` | Logros desbloqueados por usuario | Activa |
+| `ml_coins_transactions` | Historial de transacciones ML Coins | Activa |
+| `missions` | Misiones diarias y semanales | Activa |
+| `comodines_inventory` | Inventario de comodines por usuario | Activa |
+| `leaderboard_metadata` | Configuración de leaderboards | Activa |
+| `achievement_categories` | Categorías de logros | Activa |
+| `notifications` | Notificaciones de gamificación | **DEPRECATED** |
 
 ## Migracion de Duplicados
 
@@ -119,10 +121,8 @@ Archivos originales movidos a `triggers/_deprecated/`.
 
 ---
 
-**Ultima actualizacion:** 2026-01-13
+**Ultima actualizacion:** 2026-01-07
 **Cambios recientes:**
-- AUDITORIA: Inventario de tablas actualizado de 15 a 19 (2026-01-13)
-- AUDITORIA: Timestamps de missions alineados a WITH TIME ZONE (2026-01-13)
 - LIMPIEZA: Trigger de notifications removido del batch (2026-01-07)
 - LIMPIEZA: RLS policies de notifications movidas a rls-policies/_deprecated/ (2026-01-07)
 - CONSOLIDACION BD: Triggers updated_at consolidados en 00-batch_updated_at_triggers.sql (2026-01-07)

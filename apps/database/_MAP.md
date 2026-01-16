@@ -1,8 +1,8 @@
 # _MAP: apps/database/
 
-**Ultima actualizacion:** 2026-01-13
+**Ultima actualizacion:** 2026-01-08
 **Estado:** Produccion
-**Version:** 1.1
+**Version:** 1.0
 **Proposito:** Base de datos PostgreSQL multi-schema para plataforma GAMILIT
 
 ---
@@ -65,7 +65,7 @@ apps/database/
 | **storage** | ENUMs de almacenamiento | - | - | - |
 | **public** | Reservado PostgreSQL (no usar) | - | - | - |
 
-**Totales aproximados:** ~280 tablas, ~120 funciones, ~61 triggers, ~100+ indices
+**Totales auditados (2026-01-14):** 135 tablas, 122 funciones activas, 49 triggers activos, 405 indices, 121 RLS policies
 
 ---
 
@@ -73,28 +73,12 @@ apps/database/
 
 ### Gestion de Base de Datos
 
-| Script | Version | Descripcion | Uso |
-|--------|---------|-------------|-----|
-| `create-database.sh` | - | Crea BD completa desde DDL (16 fases) | `./create-database.sh` |
-| `init-database.sh` | **v3.10-TCP** | Inicializa BD + usuario + seeds | `./scripts/init-database.sh --env dev` |
-| `recreate-database.sh` | **v1.1-TCP** | Elimina y recrea BD | `./scripts/recreate-database.sh --env dev --force` |
-| `drop-and-recreate-database.sh` | - | Drop automatico + recreate | `./drop-and-recreate-database.sh` |
-
-#### Modos de Conexion (v3.10-TCP / v1.1-TCP)
-
-Los scripts soportan multiples modos de conexion:
-
-1. **TCP con gamilit_user** (Prioridad 1) - Usa CREATEDB privilege, ideal para WSL2
-2. **TCP con postgres** (Prioridad 2) - Requiere PGPASSWORD para postgres
-3. **sudo -u postgres** (Prioridad 3) - Socket local, requiere sudo
-
-```bash
-# Modo TCP automatico (lee password de backend/.env)
-./scripts/recreate-database.sh --env dev --force
-
-# Verificar modo de conexion
-# El script muestra: "Conectado a PostgreSQL (TCP con gamilit_user)"
-```
+| Script | Descripcion | Uso |
+|--------|-------------|-----|
+| `create-database.sh` | Crea BD completa desde DDL (16 fases) | `./create-database.sh` |
+| `init-database.sh` | Inicializa BD + usuario + seeds | `./scripts/init-database.sh --env dev` |
+| `recreate-database.sh` | Elimina y recrea BD | `./scripts/recreate-database.sh` |
+| `drop-and-recreate-database.sh` | Drop automatico + recreate | `./drop-and-recreate-database.sh` |
 
 ### Inventarios
 
@@ -161,22 +145,22 @@ El script `create-database.sh` ejecuta 16 fases en orden:
 
 ---
 
-## Metricas
+## Metricas (Auditado 2026-01-14)
 
-| Metrica | Valor | Verificado |
-|---------|-------|------------|
-| Archivos DDL | 410 | - |
-| Schemas | 16 | 2026-01-13 |
-| Tablas | 129 | 2026-01-13 |
-| Vistas Materializadas | 4 | 2026-01-13 |
-| Vistas | 15 | 2026-01-13 |
-| Funciones | 219 | 2026-01-13 |
-| Triggers | 105 | 2026-01-13 |
-| RLS Policies | 214 | 2026-01-13 |
-| Indices | 852 | 2026-01-13 |
-| Seeds DEV | 40 archivos | 2026-01-13 |
-| Seeds PROD | 34 archivos | - |
-| Scripts operacionales | 23 | - |
+| Metrica | Valor |
+|---------|-------|
+| Schemas | 16 |
+| Tablas | 135 |
+| Funciones Activas | 122 |
+| Triggers Activos | 49 |
+| Indices (statements) | 405 |
+| RLS Policies | 121 |
+| ENUMs | 38 |
+| Views | 18 |
+| Materialized Views | 7 |
+| Foreign Keys | 208 |
+| Seeds PROD | 34 archivos (100% validados) |
+| Scripts operacionales | 23 |
 
 ---
 
@@ -217,15 +201,6 @@ export DATABASE_URL="postgresql://usuario:password@localhost:5432/gamilit"
 
 ---
 
-## Cambios Recientes
-
-| Fecha | Cambio | Documento |
-|-------|--------|-----------|
-| 2026-01-13 | Scripts TCP (v3.10-TCP, v1.1-TCP) | `TAREA-CAPVED-SCRIPTS-TCP-2026-01-13.md` |
-| 2026-01-13 | Correcciones CORR-002,003,004 | `VALIDACION-CAPVED-2026-01-13.md` |
-| 2026-01-13 | BD recreada via scripts | Verificado |
-
----
-
-**Actualizado:** 2026-01-13
+**Actualizado:** 2026-01-14
 **Mantenido por:** Database Team
+**Cambios:** Auditoría completa de métricas BD (DATABASE_INVENTORY.yml v4.5.0)

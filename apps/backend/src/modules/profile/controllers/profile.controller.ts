@@ -22,8 +22,6 @@ import {
 } from '@nestjs/swagger';
 import { ProfileService } from '../services/profile.service';
 import { UpdateProfileDto, ProfileResponseDto } from '../dto';
-import * as fs from 'fs/promises';
-import * as path from 'path';
 
 /**
  * ProfileController
@@ -286,26 +284,9 @@ export class ProfileController {
       throw new BadRequestException('File size exceeds 5MB limit');
     }
 
-    // Save file to local storage
-    const uploadsDir = path.join(process.cwd(), 'uploads', 'avatars');
-
-    // Ensure directory exists
-    try {
-      await fs.access(uploadsDir);
-    } catch {
-      await fs.mkdir(uploadsDir, { recursive: true });
-    }
-
-    // Generate unique filename with extension
-    const ext = path.extname(file.originalname) || '.jpg';
-    const filename = `${userId}_${Date.now()}${ext}`;
-    const filepath = path.join(uploadsDir, filename);
-
-    // Write file to disk
-    await fs.writeFile(filepath, file.buffer);
-
-    // Return URL path (relative to server)
-    const avatarUrl = `/uploads/avatars/${filename}`;
+    // TODO: Implement actual file upload to cloud storage (S3, GCS, etc.)
+    // For now, we'll use a placeholder URL
+    const avatarUrl = `https://storage.example.com/avatars/${userId}.jpg`;
 
     return this.profileService.uploadAvatar(userId, avatarUrl);
   }

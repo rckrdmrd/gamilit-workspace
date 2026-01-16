@@ -160,7 +160,7 @@ El sistema NEXUS v4.0 se integra con la carpeta docs/ del proyecto:
 | Inventario | Contenido | Path |
 |------------|-----------|------|
 | `MASTER_INVENTORY.yml` | Estado consolidado (v4.1.0) | `inventarios/` |
-| `DATABASE_INVENTORY.yml` | 16 schemas, 137 tablas, 110 funciones | `inventarios/` |
+| `DATABASE_INVENTORY.yml` | 16 schemas, 135 tablas, 122 funciones | `inventarios/` |
 | `BACKEND_INVENTORY.yml` | 17 modulos, 612 endpoints, 108 entities | `inventarios/` |
 | `FRONTEND_INVENTORY.yml` | 327 componentes, 74 paginas, 12 stores | `inventarios/` |
 
@@ -229,14 +229,16 @@ herencia:
 
 ---
 
-## Métricas del Proyecto
+## Métricas del Proyecto (Auditado 2026-01-14)
 
 | Métrica | Valor |
 |---------|-------|
 | Schemas PostgreSQL | 16 |
-| Tablas | 123 |
+| Tablas | 135 |
+| Funciones Activas | 122 |
+| Triggers Activos | 49 |
+| Políticas RLS | 121 |
 | Endpoints API | 417 |
-| Políticas RLS | 185 |
 | EPICs documentadas | 19 |
 | ADRs | 21 |
 
@@ -258,6 +260,6 @@ npm run test                   # Todos los tests
 
 ---
 
-**Actualizado:** 2026-01-13
+**Actualizado:** 2026-01-14
 **Sistema:** NEXUS v4.0 + SIMCO
-**Cambios:** Validación exhaustiva de documentación vs código real, corrección de métricas en todos los inventarios
+**Cambios:** Auditoría DATABASE_INVENTORY.yml (v4.5.0), reconciliación de métricas BD

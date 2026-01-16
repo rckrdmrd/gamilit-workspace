@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TeacherClassroomsController } from '../controllers/teacher-classrooms.controller';
 import { StudentBlockingService } from '../services/student-blocking.service';
-import { TeacherClassroomsCrudService } from '../services/teacher-classrooms-crud.service';
 import { TeacherGuard, ClassroomOwnershipGuard } from '../guards';
 import {
   BlockStudentDto,
@@ -13,25 +12,13 @@ import { ClassroomMemberStatusEnum } from '@shared/constants/enums.constants';
 
 describe('TeacherClassroomsController', () => {
   let controller: TeacherClassroomsController;
-  let _blockingService: StudentBlockingService;
+  let _service: StudentBlockingService;
 
   const mockStudentBlockingService = {
     blockStudent: jest.fn(),
     unblockStudent: jest.fn(),
     getStudentPermissions: jest.fn(),
     updateStudentPermissions: jest.fn(),
-  };
-
-  const mockTeacherClassroomsCrudService = {
-    getClassrooms: jest.fn(),
-    createClassroom: jest.fn(),
-    getClassroomById: jest.fn(),
-    updateClassroom: jest.fn(),
-    deleteClassroom: jest.fn(),
-    getClassroomStudents: jest.fn(),
-    getClassroomStats: jest.fn(),
-    getClassroomTeachers: jest.fn(),
-    getClassroomProgress: jest.fn(),
   };
 
   const mockGuard = {
@@ -46,10 +33,6 @@ describe('TeacherClassroomsController', () => {
           provide: StudentBlockingService,
           useValue: mockStudentBlockingService,
         },
-        {
-          provide: TeacherClassroomsCrudService,
-          useValue: mockTeacherClassroomsCrudService,
-        },
       ],
     })
       .overrideGuard(TeacherGuard)
@@ -61,7 +44,7 @@ describe('TeacherClassroomsController', () => {
     controller = module.get<TeacherClassroomsController>(
       TeacherClassroomsController,
     );
-    _blockingService = module.get<StudentBlockingService>(StudentBlockingService);
+    service = module.get<StudentBlockingService>(StudentBlockingService);
 
     jest.clearAllMocks();
   });
@@ -72,7 +55,6 @@ describe('TeacherClassroomsController', () => {
 
   const mockRequest = {
     user: {
-      id: 'teacher-1',
       sub: 'teacher-1',
       email: 'teacher@test.com',
       role: 'admin_teacher',

@@ -16,7 +16,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { MLCoinsService } from '../ml-coins.service';
-import { UserStats, MLCoinsTransaction, MayaRankEntity } from '../../entities';
+import { UserStats, MLCoinsTransaction } from '../../entities';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { createMockRepository, createMockQueryBuilder } from '@/__mocks__/repositories.mock';
 import { TestDataFactory } from '@/__mocks__/services.mock';
@@ -25,7 +25,6 @@ describe('MLCoinsService', () => {
   let service: MLCoinsService;
   let userStatsRepo: ReturnType<typeof createMockRepository>;
   let transactionRepo: ReturnType<typeof createMockRepository>;
-  let mayaRanksRepo: ReturnType<typeof createMockRepository>;
 
   // Test data
   const mockUserId = TestDataFactory.createUuid('user');
@@ -41,14 +40,12 @@ describe('MLCoinsService', () => {
   beforeEach(async () => {
     userStatsRepo = createMockRepository<UserStats>();
     transactionRepo = createMockRepository<MLCoinsTransaction>();
-    mayaRanksRepo = createMockRepository<MayaRankEntity>();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MLCoinsService,
         { provide: getRepositoryToken(UserStats, 'gamification'), useValue: userStatsRepo },
         { provide: getRepositoryToken(MLCoinsTransaction, 'gamification'), useValue: transactionRepo },
-        { provide: getRepositoryToken(MayaRankEntity, 'gamification'), useValue: mayaRanksRepo },
       ],
     }).compile();
 

@@ -4,8 +4,6 @@ import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { AdminUsersService } from '../services/admin-users.service';
 import { User } from '@modules/auth/entities/user.entity';
-import { Profile } from '@modules/auth/entities/profile.entity';
-import { Tenant } from '@modules/auth/entities/tenant.entity';
 import { ListUsersDto, UpdateUserDto, SuspendUserDto } from '../dto/users';
 import { GamilityRoleEnum, UserStatusEnum } from '@shared/constants';
 
@@ -18,18 +16,6 @@ describe('AdminUsersService', () => {
     findOne: jest.fn(),
     save: jest.fn(),
     remove: jest.fn(),
-    query: jest.fn(),
-  };
-
-  const mockProfileRepository = {
-    findOne: jest.fn(),
-    save: jest.fn(),
-    find: jest.fn(),
-  };
-
-  const mockTenantRepository = {
-    findOne: jest.fn(),
-    find: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -39,14 +25,6 @@ describe('AdminUsersService', () => {
         {
           provide: getRepositoryToken(User, 'auth'),
           useValue: mockUserRepository,
-        },
-        {
-          provide: getRepositoryToken(Profile, 'auth'),
-          useValue: mockProfileRepository,
-        },
-        {
-          provide: getRepositoryToken(Tenant, 'auth'),
-          useValue: mockTenantRepository,
         },
       ],
     }).compile();
@@ -82,10 +60,7 @@ describe('AdminUsersService', () => {
     it('should list users with default pagination', async () => {
       // Arrange
       const query: ListUsersDto = {};
-      // Service uses raw queries: first for data, second for count
-      mockUserRepository.query
-        .mockResolvedValueOnce(mockUsers)
-        .mockResolvedValueOnce([{ count: '2' }]);
+      mockUserRepository.findAndCount.mockResolvedValue([mockUsers, 2]);
 
       // Act
       const result = await service.listUsers(query);
@@ -102,15 +77,18 @@ describe('AdminUsersService', () => {
     it('should apply pagination correctly', async () => {
       // Arrange
       const query: ListUsersDto = { page: 2, limit: 10 };
-      mockUserRepository.query
-        .mockResolvedValueOnce(mockUsers)
-        .mockResolvedValueOnce([{ count: '25' }]);
+      mockUserRepository.findAndCount.mockResolvedValue([mockUsers, 25]);
 
       // Act
       const result = await service.listUsers(query);
 
       // Assert
-      expect(mockUserRepository.query).toHaveBeenCalled();
+      expect(mockUserRepository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          skip: 10, // (page 2 - 1) * limit 10
+          take: 10,
+        }),
+      );
       expect(result.page).toBe(2);
       expect(result.total_pages).toBe(3); // 25 / 10 = 2.5 => 3
     });
@@ -118,69 +96,77 @@ describe('AdminUsersService', () => {
     it('should filter by search term', async () => {
       // Arrange
       const query: ListUsersDto = { search: 'user1' };
-      mockUserRepository.query
-        .mockResolvedValueOnce([mockUsers[0]])
-        .mockResolvedValueOnce([{ count: '1' }]);
+      mockUserRepository.findAndCount.mockResolvedValue([[mockUsers[0]], 1]);
 
       // Act
-      const result = await service.listUsers(query);
+      await service.listUsers(query);
 
-      // Assert - query is called with search parameter
-      expect(mockUserRepository.query).toHaveBeenCalled();
-      expect(result.total).toBe(1);
+      // Assert
+      expect(mockUserRepository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            email: expect.anything(), // Like filter
+          }),
+        }),
+      );
     });
 
     it('should filter by role', async () => {
       // Arrange
       const query: ListUsersDto = { role: GamilityRoleEnum.STUDENT };
-      mockUserRepository.query
-        .mockResolvedValueOnce([mockUsers[0]])
-        .mockResolvedValueOnce([{ count: '1' }]);
+      mockUserRepository.findAndCount.mockResolvedValue([[mockUsers[0]], 1]);
 
       // Act
-      const result = await service.listUsers(query);
+      await service.listUsers(query);
 
-      // Assert - query is called with role filter
-      expect(mockUserRepository.query).toHaveBeenCalled();
-      expect(result.total).toBe(1);
+      // Assert
+      expect(mockUserRepository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            role: GamilityRoleEnum.STUDENT,
+          }),
+        }),
+      );
     });
 
     it('should filter by status (active)', async () => {
       // Arrange
       const query: ListUsersDto = { status: UserStatusEnum.ACTIVE };
-      mockUserRepository.query
-        .mockResolvedValueOnce(mockUsers)
-        .mockResolvedValueOnce([{ count: '2' }]);
+      mockUserRepository.findAndCount.mockResolvedValue([mockUsers, 2]);
 
       // Act
-      const result = await service.listUsers(query);
+      await service.listUsers(query);
 
       // Assert
-      expect(mockUserRepository.query).toHaveBeenCalled();
-      expect(result.total).toBe(2);
+      expect(mockUserRepository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            deleted_at: null,
+          }),
+        }),
+      );
     });
 
     it('should order by created_at DESC', async () => {
       // Arrange
       const query: ListUsersDto = {};
-      mockUserRepository.query
-        .mockResolvedValueOnce(mockUsers)
-        .mockResolvedValueOnce([{ count: '2' }]);
+      mockUserRepository.findAndCount.mockResolvedValue([mockUsers, 2]);
 
       // Act
-      const result = await service.listUsers(query);
+      await service.listUsers(query);
 
-      // Assert - service should return ordered results
-      expect(mockUserRepository.query).toHaveBeenCalled();
-      expect(result.data).toHaveLength(2);
+      // Assert
+      expect(mockUserRepository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          order: { created_at: 'DESC' },
+        }),
+      );
     });
 
     it('should return empty array when no users found', async () => {
       // Arrange
       const query: ListUsersDto = {};
-      mockUserRepository.query
-        .mockResolvedValueOnce([])
-        .mockResolvedValueOnce([{ count: '0' }]);
+      mockUserRepository.findAndCount.mockResolvedValue([[], 0]);
 
       // Act
       const result = await service.listUsers(query);
@@ -200,17 +186,22 @@ describe('AdminUsersService', () => {
         page: 2,
         limit: 5,
       };
-      mockUserRepository.query
-        .mockResolvedValueOnce([])
-        .mockResolvedValueOnce([{ count: '0' }]);
+      mockUserRepository.findAndCount.mockResolvedValue([[], 0]);
 
       // Act
-      const result = await service.listUsers(query);
+      await service.listUsers(query);
 
-      // Assert - all filters combined in raw query
-      expect(mockUserRepository.query).toHaveBeenCalled();
-      expect(result.page).toBe(2);
-      expect(result.limit).toBe(5);
+      // Assert
+      expect(mockUserRepository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            role: GamilityRoleEnum.STUDENT,
+            deleted_at: null,
+          }),
+          skip: 5,
+          take: 5,
+        }),
+      );
     });
   });
 
@@ -316,21 +307,16 @@ describe('AdminUsersService', () => {
       role: GamilityRoleEnum.STUDENT,
     };
 
-    it('should delete user successfully (soft delete)', async () => {
+    it('should delete user successfully', async () => {
       // Arrange
-      mockUserRepository.findOne.mockResolvedValue({ ...mockUser });
-      mockUserRepository.save.mockImplementation((user) => Promise.resolve(user));
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
+      mockUserRepository.remove.mockResolvedValue(mockUser);
 
       // Act
       await service.deleteUser('user-1');
 
-      // Assert - soft delete uses save, not remove
-      expect(mockUserRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: 'user-1',
-          deleted_at: expect.any(Date),
-        }),
-      );
+      // Assert
+      expect(mockUserRepository.remove).toHaveBeenCalledWith(mockUser);
     });
 
     it('should throw NotFoundException if user not found', async () => {
@@ -339,6 +325,7 @@ describe('AdminUsersService', () => {
 
       // Act & Assert
       await expect(service.deleteUser('non-existent')).rejects.toThrow(NotFoundException);
+      expect(mockUserRepository.remove).not.toHaveBeenCalled();
     });
 
     it('should find user before deleting', async () => {
@@ -426,7 +413,7 @@ describe('AdminUsersService', () => {
   describe('Error Handling', () => {
     it('should handle database errors gracefully', async () => {
       // Arrange
-      mockUserRepository.query.mockRejectedValue(new Error('Database connection failed'));
+      mockUserRepository.findAndCount.mockRejectedValue(new Error('Database connection failed'));
 
       // Act & Assert
       await expect(service.listUsers({})).rejects.toThrow('Database connection failed');
