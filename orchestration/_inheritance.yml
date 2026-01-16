@@ -328,6 +328,56 @@ documentacion_referencia:
     - "orchestration/reportes/"
 
 # ─────────────────────────────────────────────────────────────────────────────────
+# PRINCIPIOS HEREDADOS DEL WORKSPACE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+principios_heredados:
+  source: "workspace"
+  path: "/orchestration/directivas/principios/"
+  politica: "REFERENCIAR_NO_COPIAR"
+  razon: |
+    Los principios fundamentales son recursos del nivel WORKSPACE.
+    Gamilit hereda estos principios via referencia, no copia.
+    Esto evita desincronizacion cuando se actualiza el principio.
+
+  archivos:
+    - nombre: "PRINCIPIO-CAPVED.md"
+      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
+      local: "orchestration/principios/PRINCIPIO-CAPVED.md"
+      tipo: "REFERENCIA"
+      alias: "@CAPVED"
+      nota: "Archivo local es referencia, no copia completa"
+
+    - nombre: "PRINCIPIO-DOC-PRIMERO.md"
+      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
+      uso: "via_alias"
+      alias: "@DOC-PRIMERO"
+
+    - nombre: "PRINCIPIO-ANTI-DUPLICACION.md"
+      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md"
+      uso: "via_alias"
+      alias: "@ANTI-DUP"
+
+    - nombre: "PRINCIPIO-VALIDACION-OBLIGATORIA.md"
+      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
+      uso: "via_alias"
+      alias: "@VALIDAR"
+
+    - nombre: "PRINCIPIO-ECONOMIA-TOKENS.md"
+      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
+      uso: "via_alias"
+      alias: "@ECONOMIA"
+
+    - nombre: "PRINCIPIO-NO-ASUMIR.md"
+      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
+      uso: "via_alias"
+      alias: "@NO-ASUMIR"
+
+  actualizacion:
+    fecha: "2026-01-16"
+    razon: "ISS-002: Consolidar duplicidades de principios"
+
+# ─────────────────────────────────────────────────────────────────────────────────
 # METADATA
 # ─────────────────────────────────────────────────────────────────────────────────
 
