@@ -1,12 +1,12 @@
 # FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 4.4.0
+version: 4.6.0
 generated: 2025-11-08
 updated: 2026-01-16
 source: RECONCILIACION-INTEGRAL Plan Maestro GAMILIT - Conteo real filesystem
 status: Reconciliado con conteo real de archivos filesystem
-last_analysis: 2026-01-16 - Reconciliacion exhaustiva con agentes exploradores
+last_analysis: 2026-01-16 - ETC-001 Consolidación Técnica
 structure_audit_2026_01_10: |
   Auditoría de estructura de archivos:
   - Total archivos .tsx: 501
@@ -28,11 +28,40 @@ summary:
   total_features: 10
   total_pages: 74  # RECONCILIADO 2026-01-16 ✓
   total_stores: 12  # RECONCILIADO 2026-01-16 ✓
-  total_api_services: 26  # RECONCILIADO 2026-01-16 - archivos en services/api/
+  total_api_services: 23  # ACTUALIZADO 2026-01-16 - ETC-001 consolidación gamificationAPI
   total_mechanics: 33  # ✅ ACTUALIZADO 2026-01-13 - 23 oficiales + 5 M4 + 3 M5 + 2 auxiliares
   total_routes: 18  # ✅ ACTUALIZADO 2026-01-13 - verificado con rutas implementadas
   lines_of_code: ~100000  # ✅ ACTUALIZADO 2025-12-26
   total_tests: 175  # ✅ AGREGADO 2026-01-13 - tests nuevos creados (105 FE + 70 BE)
+
+  changes_from_v4_4:  # ETC-001 Consolidación Técnica - 2026-01-16
+    task_id: "ETC-001"
+    epic: "docs/02-fase-robustecimiento/ETC-001-consolidacion-tecnica/"
+    files_deleted: 6
+    imports_updated: 3
+    files_deleted_list:
+      - "features/admin/api/adminAPI.ts (0 imports - nunca usado)"
+      - "apps/student/pages/LoginPage.tsx (duplicado de pages/auth/)"
+      - "apps/student/pages/RegisterPage.tsx (duplicado de pages/auth/)"
+      - "lib/api/educational.api.ts (consolidado en services/api/educationalAPI)"
+      - "services/api/gamificationAPI.ts (V1 - consolidado en V3)"
+      - "features/gamification/api/gamificationAPI.ts (V2 - 0 imports)"
+    files_updated_list:
+      - "pages/ModuleDetailsPage.tsx (imports → services/api/educationalAPI)"
+      - "pages/MyProgressPage.tsx (imports → services/api/educationalAPI)"
+      - "shared/hooks/useUserGamification.ts (imports → lib/api/gamification.api)"
+    apis_consolidadas:
+      - source: "lib/api/educational.api.ts"
+        target: "services/api/educationalAPI.ts"
+        status: "COMPLETADO"
+      - source: "features/admin/api/adminAPI.ts"
+        target: "services/api/adminAPI.ts"
+        status: "COMPLETADO (eliminado sin uso)"
+      - source: "services/api/gamificationAPI.ts + features/gamification/api/gamificationAPI.ts"
+        target: "lib/api/gamification.api.ts"
+        status: "COMPLETADO - V3 es versión canónica"
+    note: "ETC-001: Consolidación completa - 100% completado"
+    build_status: "✅ PASSED"
 
   changes_from_v4_3:  # P1-003 Consolidación Duplicados - 2026-01-16
     components_deleted: 1  # UnderConstruction en shared/components/common/

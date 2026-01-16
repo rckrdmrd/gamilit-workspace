@@ -4,27 +4,70 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.8.0"
+  version: "3.9.0"
   generated_date: "2025-11-11"
   last_updated: "2026-01-16"
-  last_update_task: "TASK-2026-01-16-005"
+  last_update_task: "ETC-001"
   generated_by: "RECONCILIACION-INTEGRAL Plan Maestro GAMILIT - Conteo real filesystem"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
   total_modules: 17  # RECONCILIADO 2026-01-16 - 17 módulos con código
-  total_entities: 123  # CONSOLIDADO 2026-01-16 - eliminado notification.entity.ts deprecated
-  total_dtos: 337
+  total_entities: 124  # ETC-001: +1 UserFollow entity
+  total_dtos: 331  # ETC-001: -6 re-exports eliminados
   total_services: 104  # CONSOLIDADO 2026-01-16 - eliminado notifications.service.ts deprecated
   total_controllers: 75  # RECONCILIADO 2026-01-16 ✓
   total_endpoints: 612  # Verificado 2026-01-13 (conteo real de @Get/@Post/@Put/@Delete/@Patch)
   typescript_errors: 0  # ⚠️ 2025-11-28: Backend tiene errores PREEXISTENTES en tests auth (no en admin)
-  build_status: "✅ BUILD PASSING"  # 2026-01-14: Alineación BD-Backend completada
+  build_status: "✅ BUILD PASSING"  # ETC-001: Validado 2026-01-16
   coherencia_bd: "99%"  # ✅ Actualizado 2026-01-14 (129/134 tablas con entity - 16 nuevas)
-  discrepancies_found: "5 tablas auxiliares sin entity (intencional)"
+  discrepancies_found: "8 tablas auxiliares sin entity (intencional - verificado ETC-001)"
   api_docs:
     - "docs/90-transversal/api/API-TEACHER-MODULE.md"
     - "docs/90-transversal/api/API-ADMIN-MODULE.md"
+
+# ============================================================================
+# CHANGELOG 2026-01-16 (v3.9.0 - ETC-001 Consolidación Técnica)
+# ============================================================================
+consolidacion_etc_001:
+  descripcion: "Consolidación técnica: eliminación de código obsoleto y creación de entities faltantes"
+  task_id: "ETC-001"
+  epic: "docs/02-fase-robustecimiento/ETC-001-consolidacion-tecnica/"
+
+  entities_creadas:
+    social:
+      - path: "modules/social/entities/user-follow.entity.ts"
+        tabla: "social_features.user_follows"
+        descripcion: "Sistema de seguimiento entre usuarios"
+
+  archivos_eliminados:
+    auth:
+      - "modules/auth/auth.service.ts (145 líneas de stubs obsoletos)"
+    notifications_dtos:
+      - "modules/notifications/dto/create-notification.dto.ts (re-export)"
+      - "modules/notifications/dto/notification-response.dto.ts (re-export)"
+      - "modules/notifications/dto/notifications/create-notification.dto.ts (re-export)"
+      - "modules/notifications/dto/notifications/notification-response.dto.ts (re-export)"
+    gamification_dtos:
+      - "modules/gamification/dto/notifications/create-notification.dto.ts (re-export)"
+      - "modules/gamification/dto/notifications/notification-response.dto.ts (re-export)"
+
+  imports_actualizados:
+    - "modules/gamification/dto/index.ts → @shared/dto/notifications"
+    - "modules/notifications/dto/notifications/index.ts → @shared/dto/notifications"
+    - "modules/notifications/dto/paginated-notifications.dto.ts → @shared/dto/notifications"
+    - "modules/notifications/controllers/notifications.controller.ts → @shared/dto/notifications"
+    - "modules/notifications/index.ts → @shared/dto/notifications"
+
+  impacto:
+    entities: "+1 (123 → 124)"
+    dtos: "-6 (337 → 331)"
+
+  validacion:
+    build: "✅ PASSED"
+    lint: "✅ PASSED (sin errores nuevos)"
+
+  traza: "docs/02-fase-robustecimiento/ETC-001-consolidacion-tecnica/tareas/"
 
 # ============================================================================
 # CHANGELOG 2026-01-16 (v3.8.0 - Tests Auth Guards + Validación BD)

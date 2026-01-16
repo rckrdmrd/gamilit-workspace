@@ -14,8 +14,8 @@ export * from './services/user-device.service';
 // Controllers (Sistema Consolidado)
 export * from './controllers';
 
-// DTOs
-export * from './dto/notification-response.dto';
-export * from './dto/create-notification.dto';
+// DTOs (importados desde shared)
+export { NotificationResponseDto } from '@shared/dto/notifications/notification-response.dto';
+export { CreateNotificationDto } from '@shared/dto/notifications/create-notification.dto';
 export * from './dto/get-notifications-query.dto';
 export * from './dto/paginated-notifications.dto';

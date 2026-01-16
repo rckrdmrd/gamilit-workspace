@@ -19,8 +19,8 @@ import {
   ApiBearerAuth,
   } from '@nestjs/swagger';
 import { NotificationService } from '../services/notification.service';
-import { NotificationResponseDto } from '../dto/notification-response.dto';
-import { CreateNotificationDto } from '../dto/create-notification.dto';
+import { NotificationResponseDto } from '@shared/dto/notifications/notification-response.dto';
+import { CreateNotificationDto } from '@shared/dto/notifications/create-notification.dto';
 import { GetNotificationsQueryDto } from '../dto/get-notifications-query.dto';
 import { PaginatedNotificationsDto } from '../dto/paginated-notifications.dto';
 import { CurrentUser } from '../../../shared/decorators/current-user.decorator';

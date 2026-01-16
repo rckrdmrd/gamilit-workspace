@@ -5,7 +5,7 @@ import { useAuth } from '@/app/providers/AuthContext';
 import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
 import { ExerciseAttemptCard } from '@/shared/components/ExerciseAttemptCard';
 import { progressApi } from '@/lib/api/progress.api';
-import { educationalApi } from '@/lib/api/educational.api';
+import { getModule, getModuleExercises } from '@/services/api/educationalAPI';
 import type { Module, Exercise } from '@/shared/types/educational.types';
 import type { ModuleProgress, ExerciseAttempt } from '@/shared/types/progress.types';
 import {
@@ -57,7 +57,7 @@ export const ModuleDetailsPage: React.FC = () => {
       try {
         setIsLoadingModule(true);
         setError(null);
-        const data = await educationalApi.getModuleById(moduleId);
+        const data = await getModule(moduleId);
         setModule(data);
       } catch (err) {
         console.error('Failed to load module:', err);
@@ -97,7 +97,7 @@ export const ModuleDetailsPage: React.FC = () => {
 
       try {
         setIsLoadingExercises(true);
-        const data = await educationalApi.getModuleExercises(moduleId);
+        const data = await getModuleExercises(moduleId);
         setExercises(data);
       } catch (err) {
         console.error('Failed to load exercises:', err);

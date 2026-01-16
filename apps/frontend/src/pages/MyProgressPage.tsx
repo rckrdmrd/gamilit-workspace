@@ -7,7 +7,7 @@ import { ProgressCard } from '@/shared/components/ProgressCard';
 import { ProgressFilter, ProgressFilterState } from '@/shared/components/ProgressFilter';
 import { StatsOverview } from '@/shared/components/StatsOverview';
 import { progressApi } from '@/lib/api/progress.api';
-import { educationalApi } from '@/lib/api/educational.api';
+import { getModules } from '@/services/api/educationalAPI';
 import type { Module } from '@/shared/types/educational.types';
 import type { ModuleProgress, ProgressSummary } from '@/shared/types/progress.types';
 
@@ -100,7 +100,7 @@ export const MyProgressPage: React.FC = () => {
     const loadModules = async () => {
       try {
         setIsLoadingModules(true);
-        const data = await educationalApi.getModules();
+        const data = await getModules();
         setModules(data);
       } catch (err) {
         console.error('Failed to load modules:', err);

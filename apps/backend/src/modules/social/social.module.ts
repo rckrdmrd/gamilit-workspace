@@ -63,6 +63,7 @@ import * as controllers from './controllers';
         entities.PeerChallenge, // ✨ NUEVO - P2 (Epic EXT-009)
         entities.ChallengeParticipant, // ✨ NUEVO - P2 (Epic EXT-009)
         entities.UserActivity, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
+        entities.UserFollow, // ✨ NUEVO - ETC-001 (Consolidacion Tecnica)
       ],
       'social',
     ),

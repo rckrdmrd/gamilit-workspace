@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { NotificationResponseDto } from './notification-response.dto';
+import { NotificationResponseDto } from '@shared/dto/notifications/notification-response.dto';
 
 export class PaginatedNotificationsDto {
   @ApiProperty({

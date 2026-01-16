@@ -4,6 +4,24 @@ import type {
   UserAchievement,
   AchievementSummary,
 } from '@/shared/types/achievement.types';
+
+/**
+ * User Gamification Summary
+ * Consolidated gamification data for Admin/Teacher portals
+ * @see services/api/gamificationAPI.ts (original location - consolidated here)
+ */
+export interface UserGamificationSummary {
+  userId: string;
+  level: number;
+  totalXP: number;
+  mlCoins: number;
+  rank: string;
+  rankColor?: string;
+  progressToNextLevel: number;
+  xpToNextLevel: number;
+  achievements: string[];
+  totalAchievements: number;
+}
 import {
   transformUserAchievements,
   transformAchievements,
@@ -285,5 +303,22 @@ export const gamificationApi = {
       default:
         throw new Error(`Unknown leaderboard type: ${type}`);
     }
+  },
+
+  // ===========================
+  // USER SUMMARY ENDPOINT (Consolidated from services/api/gamificationAPI.ts)
+  // ===========================
+
+  /**
+   * Get user gamification summary
+   * @param userId - User ID
+   * @returns Consolidated gamification data for Admin/Teacher portals
+   * @endpoint GET /gamification/users/:userId/summary
+   */
+  getUserGamificationSummary: async (userId: string): Promise<UserGamificationSummary> => {
+    const { data } = await apiClient.get<UserGamificationSummary>(
+      `/gamification/users/${userId}/summary`,
+    );
+    return data;
   },
 };

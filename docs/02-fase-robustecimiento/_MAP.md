@@ -22,16 +22,17 @@ Robustecimiento técnico mediante migración completa de arquitectura de base de
 
 ## 📁 Contenido
 
-### Épicas (2)
+### Épicas (3)
 
 | Épica | Nombre | Presupuesto | SP | Estado | Archivos |
 |-------|--------|-------------|----|--------|----------|
 | **[EMR-001](./EMR-001-migracion-bd/)** | Migración BD | $50,000 | 80 | ✅ | 7+ |
 | **[EAI-007](./EAI-007-modulos-m4-m5/)** | Módulos M4-M5 | - | - | ✅ | - |
+| **[ETC-001](./ETC-001-consolidacion-tecnica/)** | Consolidacion Tecnica | - | 24 | 📋 En Progreso | 6 |
 
 **Totales:**
 - Presupuesto: $50,000 MXN
-- Story Points: 80 SP
+- Story Points: 104 SP (80 + 24)
 - Migraciones: 15 ejecutadas
 - Objetos BD: 286 creados/migrados
 
@@ -170,13 +171,43 @@ Total: 13 schemas, 62 tablas (ACTUALIZADO 2025-11-08: Fase 3 extensiones no comp
 
 ---
 
+---
+
+## 🔧 Épica Activa: ETC-001 - Consolidacion Tecnica
+
+### [ETC-001: Consolidacion Tecnica](./ETC-001-consolidacion-tecnica/)
+
+**Objetivo:** Consolidar codigo, eliminar duplicidades y validar coherencia entre capas
+
+**Contexto:** Despues de las fases de implementacion (Fase 1 y 3), se requiere consolidacion tecnica para:
+- Eliminar 47 archivos duplicados
+- Alcanzar 98% coherencia DB-Backend
+- Cumplir 99% estandares
+
+**Historias de Usuario:**
+
+| ID | Titulo | SP | Estado |
+|----|--------|----|----|
+| HU-ETC-001 | Consolidacion de APIs Frontend | 8 | Planificada |
+| HU-ETC-002 | Limpieza de Codigo Backend | 5 | Planificada |
+| HU-ETC-003 | Alineacion Entities-Tablas | 5 | Planificada |
+| HU-ETC-004 | Validacion de Integracion E2E | 3 | Planificada |
+| HU-ETC-005 | Actualizacion de Documentacion | 3 | Planificada |
+
+**Sprint:** 2 (2026-01-16 al 2026-01-30)
+**Documentacion:** [ETC-001-consolidacion-tecnica/](./ETC-001-consolidacion-tecnica/)
+
+---
+
 ## 🎯 Siguiente Paso
 
-Continuar con [Fase 3: Extensiones](../03-fase-extensiones/) - 10 épicas de nuevas funcionalidades.
+1. Ejecutar EPIC ETC-001 (Sprint 2)
+2. Continuar con [Fase 3: Extensiones](../03-fase-extensiones/) - 10 épicas de nuevas funcionalidades
 
 ---
 
 **Generado:** 2026-01-04
+**Actualizado:** 2026-01-16 - Agregado ETC-001
 **Sistema:** SIMCO (Sistema Indexado Modular por Contexto)
 **Método:** Migración por fases desde docs_bkp/
 **Versión:** 1.0.0

@@ -41,9 +41,9 @@ export * from './comodines/inventory-response.dto';
 export * from './user-achievements/grant-achievement.dto';
 export * from './user-achievements/user-achievement-response.dto';
 
-// Notifications DTOs
-export * from './notifications/create-notification.dto';
-export * from './notifications/notification-response.dto';
+// Notifications DTOs (importados desde shared)
+export { CreateNotificationDto } from '@shared/dto/notifications/create-notification.dto';
+export { NotificationResponseDto } from '@shared/dto/notifications/notification-response.dto';
 export * from './notifications/mark-read.dto';
 
 // Leaderboard DTOs

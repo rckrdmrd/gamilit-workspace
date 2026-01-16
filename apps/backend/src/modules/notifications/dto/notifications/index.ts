@@ -5,11 +5,11 @@
  * @version 1.0 (2025-11-13)
  */
 
-export { CreateNotificationDto } from './create-notification.dto';
+export { CreateNotificationDto } from '@shared/dto/notifications/create-notification.dto';
 export { SendFromTemplateDto } from './send-from-template.dto';
 export { NotificationFiltersDto } from './notification-filters.dto';
 export {
   NotificationResponseDto,
   PaginatedNotificationsResponseDto,
   UnreadCountResponseDto,
-} from './notification-response.dto';
+} from '@shared/dto/notifications/notification-response.dto';

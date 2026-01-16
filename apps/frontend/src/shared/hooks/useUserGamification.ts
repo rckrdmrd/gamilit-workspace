@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { gamificationAPI } from '@/services/api/gamificationAPI';
-import type { UserGamificationSummary } from '@/services/api/gamificationAPI';
+import { gamificationApi, type UserGamificationSummary } from '@/lib/api/gamification.api';
 
 /**
  * useUserGamification Hook
@@ -52,7 +51,7 @@ export function useUserGamification(
       if (!userId) {
         throw new Error('User ID is required');
       }
-      return gamificationAPI.getUserSummary(userId);
+      return gamificationApi.getUserGamificationSummary(userId);
     },
     enabled: !!userId, // Solo ejecutar query si userId existe
     staleTime: 5 * 60 * 1000, // 5 minutos - datos considerados frescos
