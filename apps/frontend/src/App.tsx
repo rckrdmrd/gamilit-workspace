@@ -1,72 +1,95 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/app/providers/AuthContext';
 import { ProtectedRoute, UnauthorizedPage } from '@/shared/components/ProtectedRoute';
+
+// =====================================================
+// PUBLIC PAGES (Static imports - critical path)
+// =====================================================
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
 import { ForgotPasswordPage } from '@/pages/auth/ForgotPasswordPage';
-import DashboardComplete from '@/apps/student/pages/DashboardComplete';
-import { MyProgressPage } from '@/pages/MyProgressPage';
-import { ModuleDetailsPage } from '@/pages/ModuleDetailsPage';
-import { AchievementsPage } from '@/pages/AchievementsPage';
-import LeaderboardPage from '@/apps/student/pages/LeaderboardPage';
 import PasswordResetPage from '@/apps/student/pages/PasswordResetPage';
 import EmailVerificationPage from '@/apps/student/pages/EmailVerificationPage';
-import SettingsPage from '@/apps/student/pages/SettingsPage';
-import MissionsPage from '@/apps/student/pages/MissionsPage';
-import ExercisePage from '@/apps/student/pages/ExercisePage';
 import NotFoundPage from '@/apps/student/pages/NotFoundPage';
-import FriendsPage from '@/apps/student/pages/FriendsPage';
-import ShopPage from '@/apps/student/pages/ShopPage';
-import InventoryPage from '@/apps/student/pages/InventoryPage';
-import GuildsPage from '@/apps/student/pages/GuildsPage';
-import ModuleDetailPage from '@/apps/student/pages/ModuleDetailPage';
-import EnhancedProfilePage from '@/apps/student/pages/EnhancedProfilePage';
-import { NotificationPreferencesPage } from '@/apps/student/pages/NotificationPreferencesPage';
-import { DeviceManagementSection } from '@/apps/student/pages/DeviceManagementSection';
-import NotificationsPage from '@/apps/student/pages/NotificationsPage';
-import AssignmentsPage from '@/apps/student/pages/AssignmentsPage';
-import AssignmentDetailPage from '@/apps/student/pages/AssignmentDetailPage';
 
-// Teacher Portal Pages
-import TeacherDashboardPage from '@/apps/teacher/pages/TeacherDashboardPage';
-import TeacherAlertsPage from '@/apps/teacher/pages/TeacherAlertsPage';
-import TeacherAnalyticsPage from '@/apps/teacher/pages/TeacherAnalyticsPage';
-import TeacherAssignmentsPage from '@/apps/teacher/pages/TeacherAssignmentsPage';
-import TeacherCommunicationPage from '@/apps/teacher/pages/TeacherCommunicationPage';
-import TeacherContentPage from '@/apps/teacher/pages/TeacherContentPage';
-import TeacherGamificationPage from '@/apps/teacher/pages/TeacherGamificationPage';
-import TeacherMonitoringPage from '@/apps/teacher/pages/TeacherMonitoringPage';
-import TeacherProgressPage from '@/apps/teacher/pages/TeacherProgressPage';
-import TeacherReportsPage from '@/apps/teacher/pages/TeacherReportsPage';
-// FASE 6A: TeacherResourcesPage removido - ruta redirigida a dashboard
-// import TeacherResourcesPage from '@/apps/teacher/pages/TeacherResourcesPage';
-import TeacherClassesPage from '@/apps/teacher/pages/TeacherClassesPage';
-import TeacherStudentsPage from '@/apps/teacher/pages/TeacherStudentsPage';
-import TeacherExerciseResponsesPage from '@/apps/teacher/pages/TeacherExerciseResponsesPage';
-import TeacherSettingsPage from '@/apps/teacher/pages/TeacherSettingsPage';
-import TeacherNotificationsPage from '@/apps/teacher/pages/TeacherNotificationsPage';
-import TeacherNotificationPreferencesPage from '@/apps/teacher/pages/TeacherNotificationPreferencesPage';
-import { ReviewPanelPage } from '@/apps/teacher/pages/TeacherReviewPanelPage';
+// =====================================================
+// LOADING FALLBACK COMPONENT
+// =====================================================
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen bg-gray-900">
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+      <p className="text-gray-400 text-sm">Cargando...</p>
+    </div>
+  </div>
+);
 
-// Admin Portal Pages
-import AdminDashboardPage from '@/apps/admin/pages/AdminDashboardPage';
-import AdminInstitutionsPage from '@/apps/admin/pages/AdminInstitutionsPage';
-import AdminUsersPage from '@/apps/admin/pages/AdminUsersPage';
-import AdminRolesPage from '@/apps/admin/pages/AdminRolesPage';
-import AdminContentPage from '@/apps/admin/pages/AdminContentPage';
-import AdminGamificationPage from '@/apps/admin/pages/AdminGamificationPage';
-import AdminMonitoringPage from '@/apps/admin/pages/AdminMonitoringPage';
-import AdminAdvancedPage from '@/apps/admin/pages/AdminAdvancedPage';
-import AdminReportsPage from '@/apps/admin/pages/AdminReportsPage';
-import AdminSettingsPage from '@/apps/admin/pages/AdminSettingsPage';
-import AdminNotificationsPage from '@/apps/admin/pages/AdminNotificationsPage';
-import AdminNotificationPreferencesPage from '@/apps/admin/pages/AdminNotificationPreferencesPage';
-import AdminAlertsPage from '@/apps/admin/pages/AdminAlertsPage';
-import AdminAnalyticsPage from '@/apps/admin/pages/AdminAnalyticsPage';
-import AdminProgressPage from '@/apps/admin/pages/AdminProgressPage';
-import AdminClassroomTeacherPage from '@/apps/admin/pages/AdminClassroomTeacherPage';
-import AdminAssignmentsPage from '@/apps/admin/pages/AdminAssignmentsPage';
+// =====================================================
+// STUDENT PORTAL PAGES (Lazy loaded)
+// =====================================================
+const DashboardComplete = lazy(() => import('@/apps/student/pages/DashboardComplete'));
+const MyProgressPage = lazy(() => import('@/pages/MyProgressPage').then(m => ({ default: m.MyProgressPage })));
+const ModuleDetailsPage = lazy(() => import('@/pages/ModuleDetailsPage').then(m => ({ default: m.ModuleDetailsPage })));
+const AchievementsPage = lazy(() => import('@/pages/AchievementsPage').then(m => ({ default: m.AchievementsPage })));
+const LeaderboardPage = lazy(() => import('@/apps/student/pages/LeaderboardPage'));
+const SettingsPage = lazy(() => import('@/apps/student/pages/SettingsPage'));
+const MissionsPage = lazy(() => import('@/apps/student/pages/MissionsPage'));
+const ExercisePage = lazy(() => import('@/apps/student/pages/ExercisePage'));
+const FriendsPage = lazy(() => import('@/apps/student/pages/FriendsPage'));
+const ShopPage = lazy(() => import('@/apps/student/pages/ShopPage'));
+const InventoryPage = lazy(() => import('@/apps/student/pages/InventoryPage'));
+const GuildsPage = lazy(() => import('@/apps/student/pages/GuildsPage'));
+const ModuleDetailPage = lazy(() => import('@/apps/student/pages/ModuleDetailPage'));
+const EnhancedProfilePage = lazy(() => import('@/apps/student/pages/EnhancedProfilePage'));
+const NotificationPreferencesPage = lazy(() => import('@/apps/student/pages/NotificationPreferencesPage').then(m => ({ default: m.NotificationPreferencesPage })));
+const DeviceManagementSection = lazy(() => import('@/apps/student/pages/DeviceManagementSection').then(m => ({ default: m.DeviceManagementSection })));
+const NotificationsPage = lazy(() => import('@/apps/student/pages/NotificationsPage'));
+const AssignmentsPage = lazy(() => import('@/apps/student/pages/AssignmentsPage'));
+const AssignmentDetailPage = lazy(() => import('@/apps/student/pages/AssignmentDetailPage'));
+
+// =====================================================
+// TEACHER PORTAL PAGES (Lazy loaded)
+// =====================================================
+const TeacherDashboardPage = lazy(() => import('@/apps/teacher/pages/TeacherDashboardPage'));
+const TeacherAlertsPage = lazy(() => import('@/apps/teacher/pages/TeacherAlertsPage'));
+const TeacherAnalyticsPage = lazy(() => import('@/apps/teacher/pages/TeacherAnalyticsPage'));
+const TeacherAssignmentsPage = lazy(() => import('@/apps/teacher/pages/TeacherAssignmentsPage'));
+const TeacherCommunicationPage = lazy(() => import('@/apps/teacher/pages/TeacherCommunicationPage'));
+const TeacherContentPage = lazy(() => import('@/apps/teacher/pages/TeacherContentPage'));
+const TeacherGamificationPage = lazy(() => import('@/apps/teacher/pages/TeacherGamificationPage'));
+const TeacherMonitoringPage = lazy(() => import('@/apps/teacher/pages/TeacherMonitoringPage'));
+const TeacherProgressPage = lazy(() => import('@/apps/teacher/pages/TeacherProgressPage'));
+const TeacherReportsPage = lazy(() => import('@/apps/teacher/pages/TeacherReportsPage'));
+const TeacherClassesPage = lazy(() => import('@/apps/teacher/pages/TeacherClassesPage'));
+const TeacherStudentsPage = lazy(() => import('@/apps/teacher/pages/TeacherStudentsPage'));
+const TeacherExerciseResponsesPage = lazy(() => import('@/apps/teacher/pages/TeacherExerciseResponsesPage'));
+const TeacherSettingsPage = lazy(() => import('@/apps/teacher/pages/TeacherSettingsPage'));
+const TeacherNotificationsPage = lazy(() => import('@/apps/teacher/pages/TeacherNotificationsPage'));
+const TeacherNotificationPreferencesPage = lazy(() => import('@/apps/teacher/pages/TeacherNotificationPreferencesPage'));
+const ReviewPanelPage = lazy(() => import('@/apps/teacher/pages/TeacherReviewPanelPage').then(m => ({ default: m.ReviewPanelPage })));
+
+// =====================================================
+// ADMIN PORTAL PAGES (Lazy loaded)
+// =====================================================
+const AdminDashboardPage = lazy(() => import('@/apps/admin/pages/AdminDashboardPage'));
+const AdminInstitutionsPage = lazy(() => import('@/apps/admin/pages/AdminInstitutionsPage'));
+const AdminUsersPage = lazy(() => import('@/apps/admin/pages/AdminUsersPage'));
+const AdminRolesPage = lazy(() => import('@/apps/admin/pages/AdminRolesPage'));
+const AdminContentPage = lazy(() => import('@/apps/admin/pages/AdminContentPage'));
+const AdminGamificationPage = lazy(() => import('@/apps/admin/pages/AdminGamificationPage'));
+const AdminMonitoringPage = lazy(() => import('@/apps/admin/pages/AdminMonitoringPage'));
+const AdminAdvancedPage = lazy(() => import('@/apps/admin/pages/AdminAdvancedPage'));
+const AdminReportsPage = lazy(() => import('@/apps/admin/pages/AdminReportsPage'));
+const AdminSettingsPage = lazy(() => import('@/apps/admin/pages/AdminSettingsPage'));
+const AdminNotificationsPage = lazy(() => import('@/apps/admin/pages/AdminNotificationsPage'));
+const AdminNotificationPreferencesPage = lazy(() => import('@/apps/admin/pages/AdminNotificationPreferencesPage'));
+const AdminAlertsPage = lazy(() => import('@/apps/admin/pages/AdminAlertsPage'));
+const AdminAnalyticsPage = lazy(() => import('@/apps/admin/pages/AdminAnalyticsPage'));
+const AdminProgressPage = lazy(() => import('@/apps/admin/pages/AdminProgressPage'));
+const AdminClassroomTeacherPage = lazy(() => import('@/apps/admin/pages/AdminClassroomTeacherPage'));
+const AdminAssignmentsPage = lazy(() => import('@/apps/admin/pages/AdminAssignmentsPage'));
 
 /**
  * App Component
@@ -116,6 +139,7 @@ function App() {
         }}
       />
       <Router>
+        <Suspense fallback={<PageLoader />}>
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
@@ -599,6 +623,7 @@ function App() {
           {/* 404 - Not Found */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </Suspense>
       </Router>
     </AuthProvider>
   );

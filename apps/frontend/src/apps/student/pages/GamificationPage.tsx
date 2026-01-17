@@ -115,7 +115,7 @@ export default function GamificationPage() {
     return () => {
       clearInterval(pollingInterval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [user?.id, fetchUserProgress, fetchBalance, fetchAchievements]);
 
   // Animation variants

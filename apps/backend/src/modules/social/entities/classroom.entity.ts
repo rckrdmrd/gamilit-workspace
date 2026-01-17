@@ -30,6 +30,7 @@ import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 @Index('idx_classrooms_teacher', ['teacher_id'])
 @Index('idx_classrooms_code', ['code'])
 @Index('idx_classrooms_active', ['is_active'], { where: 'is_active = true' })
+@Index('idx_classrooms_not_deleted', ['created_at'], { where: 'is_deleted = false' })
 export class Classroom {
   /**
    * Identificador único del registro (UUID)
@@ -189,6 +190,15 @@ export class Classroom {
    */
   @Column({ type: 'boolean', default: false })
     is_archived!: boolean;
+
+  /**
+   * Soft delete flag
+   * Cuando true, el aula está eliminada pero los datos se preservan para auditoría.
+   * Backend filtra con WHERE is_deleted = FALSE.
+   * @see DDL: idx_classrooms_not_deleted (índice parcial)
+   */
+  @Column({ type: 'boolean', default: false })
+    is_deleted!: boolean;
 
   // =====================================================
   // TIME RANGE

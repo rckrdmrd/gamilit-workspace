@@ -4,34 +4,112 @@
 # Fuente: Validación DB-092 (Ciclo 1-4)
 
 metadata:
-  version: "4.5.0"
+  version: "4.7.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-14"
+  last_updated: "2026-01-17"
   database_script: "create-database.sh"
-  total_ddl_files: 410
+  total_ddl_files: 396  # 2026-01-17 Fase2: +1 creado, -1 eliminado = neto 0
   total_seed_files: 169  # 82 DEV + 81 PROD + 6 STAGING
   total_schemas: 16
-  script_phases: 17
+  script_phases: 18
   seed_breakdown:
     dev_files: 82
     prod_files: 81
     staging_files: 6
   database_counts:
     schemas: 16
-    tables: 137  # RECONCILIADO 2026-01-16 - conteo real archivos DDL/tables/
-    views: 18
-    materialized_views: 7
-    enums: 38  # Auditado 2026-01-14 - 4 deprecated en storage
-    functions_active: 109  # RECONCILIADO 2026-01-16 - conteo real archivos DDL/functions/
-    functions_deprecated: 41
-    functions_total: 150
-    triggers_active: 35  # RECONCILIADO 2026-01-16 - conteo real archivos DDL/triggers/
-    triggers_deprecated: 77
-    triggers_total: 112
-    indexes_files: 21
-    indexes_statements: 405  # Auditado 2026-01-14 - statements reales
-    policies_rls: 157  # RECONCILIADO 2026-01-16 - conteo CREATE POLICY statements
-    foreign_keys: 208
+    tables: 137  # VALIDADO 2026-01-17 Fase2 - conteo real archivos DDL/tables/
+    tables_active: 129  # Excluyendo deprecated embebidos
+    views: 13  # VALIDADO 2026-01-17 Fase2
+    materialized_views: 4  # gamification_system
+    enums: 36  # VALIDADO 2026-01-17 Fase2
+    functions_active: 112  # VALIDADO 2026-01-17 Fase2: +1 retry_helper_functions.sql (2 funciones)
+    functions_deprecated: 14  # Reducido tras consolidación
+    functions_total: 126
+    triggers_active: 35  # VALIDADO 2026-01-17 Fase2
+    triggers_deprecated: 0  # Eliminados completamente
+    triggers_total: 35
+    indexes_files: 23  # VALIDADO 2026-01-17 Fase2
+    indexes_statements: 405
+    policies_rls: 282  # VALIDADO 2026-01-17 Fase2 - conteo CREATE POLICY statements
+    foreign_keys: 241  # VALIDADO 2026-01-17 Fase2 - FKs activas (252 total, 4 comentadas, 7 deprecated)
+  coherence:
+    ddl_backend: "90.5%"  # 124 entities / 137 tablas DDL
+    backend_frontend: "75%"  # 150 endpoints consumidos / 200 definidos
+    global: "88.5%"  # Ponderado
+    entities_total: 124
+    controllers_total: 84
+    endpoints_total: 691
+    tables_with_entity: 124
+    tables_without_entity: 13  # Intencionales (tracking, M:N, audit)
+    tablas_sin_entity_justificadas:
+      - "audit_logging.pending_user_initialization - Tracking automático"
+      - "audit_logging.activity_log - Auditoría automática"
+      - "audit_logging.error_log - Logs de sistema"
+      - "audit_logging.user_login_history - Histórico de logins"
+      - "gamification_system.shop_categories - M:N TypeORM"
+      - "progress_tracking.reading_stats - Vista materializada"
+      - "progress_tracking.skill_assessment - Tracking automático"
+      - "social_features.team_members - M:N TypeORM"
+      - "social_features.discussion_participants - M:N TypeORM"
+      - "communication.message_participants - M:N TypeORM"
+      - "content_management.content_tags - M:N TypeORM"
+      - "educational_content.module_dependencies - M:N TypeORM"
+      - "system_configuration.app_settings - Config de sistema"
+    validation_date: "2026-01-17"
+    analysis_document: "ANALISIS-INTEGRACION-COMPLETO.md"
+  audit_2026_01_17:
+    description: "AUDITORIA-INTEGRAL + RE-AUDITORIA: Consolidación DDL completa en 2 fases"
+    task_id: "TASK-2026-01-17-001"
+    phases:
+      fase_1:
+        description: "Auditoría inicial y correcciones críticas"
+        changes:
+          - "CONSOLIDACION: 9 funciones duplicadas eliminadas de 00-prerequisites.sql"
+          - "CONSOLIDACION: is_feature_enabled() unificada (2 firmas -> 1)"
+          - "ELIMINACION: 28 triggers deprecated eliminados de carpetas _deprecated/"
+          - "ELIMINACION: 1 trigger duplicado activo (trg_roles_updated_at)"
+          - "CREACION: gamilit/functions/09-get_current_tenant_id.sql"
+          - "ACTUALIZACION: README.md con guía de scripts"
+      fase_2:
+        description: "Re-auditoría y correcciones adicionales"
+        changes:
+          - "ELIMINACION: validate_rueda_inferencias_text.sql duplicado"
+          - "ELIMINACION: trg_exercise_type_rubrics_updated_at de tabla (mantenido en batch)"
+          - "ADICION: 4 columnas a feature_flags (target_users, target_roles, starts_at, ends_at)"
+          - "CORRECCION: update_updated_at() -> update_updated_at_column() en manual_reviews.sql"
+          - "CREACION: gamilit/functions/19-retry_helper_functions.sql (2 funciones wrapper)"
+    totals:
+      incidencias_resueltas: 48
+      funciones_duplicadas_eliminadas: 10
+      triggers_eliminados: 30
+      columnas_agregadas: 4
+      referencias_corregidas: 3
+    files_modified:
+      ddl_modified:
+        - "00-prerequisites.sql (funciones movidas a comentarios)"
+        - "system_configuration/functions/is_feature_enabled.sql (unificada)"
+        - "system_configuration/tables/06-feature_flags.sql (función removida, 4 columnas agregadas)"
+        - "auth_management/tables/03b-roles.sql (trigger removido)"
+        - "educational_content/tables/27-exercise_type_rubrics.sql (trigger removido)"
+        - "progress_tracking/tables/06-manual_reviews.sql (referencia función corregida)"
+      ddl_created:
+        - "gamilit/functions/09-get_current_tenant_id.sql"
+        - "gamilit/functions/19-retry_helper_functions.sql"
+      ddl_deleted:
+        - "28 archivos triggers deprecated eliminados"
+        - "educational_content/functions/14-validate_rueda_inferencias_text.sql"
+    validation:
+      epicas_validadas: 6
+      integridad_ddl: "100%"
+      coherencia_ddl_backend: "96.1%"
+      scripts_creacion: "16/16 schemas"
+      politicas_rls: "282 documentadas"
+      fks_validas: "241/241"
+    documentation:
+      - "orchestration/tareas/TASK-2026-01-17-001/AUDITORIA-DDL-CONSOLIDADA.md"
+      - "orchestration/tareas/TASK-2026-01-17-001/PLAN-VALIDACION-EPICAS.md"
+      - "orchestration/tareas/TASK-2026-01-17-001/METADATA.yml"
   audit_2026_01_16:
     description: "RECONCILIACION-INTEGRAL: Conteo real filesystem vs inventarios documentados"
     task_id: "RECONCILIACION-2026-01-16"

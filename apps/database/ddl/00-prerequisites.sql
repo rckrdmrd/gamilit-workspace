@@ -334,118 +334,25 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 -- ============================================================================
 -- PARTE 2: FUNCIONES UTILITARIAS DEL SCHEMA gamilit
 -- ============================================================================
-
--- Función: now_mexico
-CREATE OR REPLACE FUNCTION gamilit.now_mexico()
-RETURNS timestamp with time zone
-LANGUAGE sql STABLE
-AS $$
-    SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Mexico_City';
-$$;
-COMMENT ON FUNCTION gamilit.now_mexico() IS 'Retorna timestamp actual en zona horaria de México';
-
--- Función: update_updated_at_column (trigger genérico)
-CREATE OR REPLACE FUNCTION gamilit.update_updated_at_column()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    NEW.updated_at = gamilit.now_mexico();
-    RETURN NEW;
-END;
-$$;
-COMMENT ON FUNCTION gamilit.update_updated_at_column() IS 'Trigger function para actualizar updated_at';
-
--- Función: get_current_user_role (placeholder)
-CREATE OR REPLACE FUNCTION gamilit.get_current_user_role()
-RETURNS auth_management.gamilit_role
-LANGUAGE sql STABLE
-AS $$
-    SELECT 'student'::auth_management.gamilit_role;
-$$;
-COMMENT ON FUNCTION gamilit.get_current_user_role() IS 'Retorna el rol del usuario actual (placeholder)';
-
--- Función: get_current_user_id (placeholder)
-CREATE OR REPLACE FUNCTION gamilit.get_current_user_id()
-RETURNS uuid
-LANGUAGE sql STABLE
-AS $$
-    SELECT NULL::uuid;
-$$;
-COMMENT ON FUNCTION gamilit.get_current_user_id() IS 'Retorna el ID del usuario actual (placeholder)';
-
--- Función: get_current_tenant_id (placeholder)
-CREATE OR REPLACE FUNCTION gamilit.get_current_tenant_id()
-RETURNS uuid
-LANGUAGE sql STABLE
-AS $$
-    SELECT NULL::uuid;
-$$;
-COMMENT ON FUNCTION gamilit.get_current_tenant_id() IS 'Retorna el ID del tenant actual (placeholder)';
-
--- Función: is_admin
-CREATE OR REPLACE FUNCTION gamilit.is_admin()
-RETURNS boolean
-LANGUAGE sql STABLE
-AS $$
-    SELECT gamilit.get_current_user_role() IN ('admin_teacher', 'super_admin');
-$$;
-COMMENT ON FUNCTION gamilit.is_admin() IS 'Verifica si el usuario actual es administrador';
-
--- Función: audit_profile_changes (trigger)
-CREATE OR REPLACE FUNCTION gamilit.audit_profile_changes()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    -- Placeholder para auditoría de cambios en perfiles
-    -- Se implementará con lógica real de auditoría
-    RETURN NEW;
-END;
-$$;
-COMMENT ON FUNCTION gamilit.audit_profile_changes() IS 'Trigger para auditar cambios en perfiles (placeholder)';
-
--- Función: initialize_user_stats (trigger)
-CREATE OR REPLACE FUNCTION gamilit.initialize_user_stats()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    -- Placeholder para inicializar stats de gamificación
-    -- Inserta registros en gamification_system.user_stats
-    -- Se implementará con lógica real
-    RETURN NEW;
-END;
-$$;
-COMMENT ON FUNCTION gamilit.initialize_user_stats() IS 'Trigger para inicializar stats de usuario (placeholder)';
-
--- Función: update_user_stats_on_exercise_complete (trigger)
-CREATE OR REPLACE FUNCTION gamilit.update_user_stats_on_exercise_complete()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    -- Placeholder para actualizar stats al completar ejercicio
-    -- Actualiza puntos, XP, streak, etc. en gamification_system.user_stats
-    -- Se implementará con lógica real
-    RETURN NEW;
-END;
-$$;
-COMMENT ON FUNCTION gamilit.update_user_stats_on_exercise_complete() IS 'Trigger para actualizar stats al completar ejercicio (placeholder)';
-
--- Función: update_classroom_member_count (trigger)
-CREATE OR REPLACE FUNCTION gamilit.update_classroom_member_count()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    -- Placeholder para actualizar contador de miembros en classroom
-    -- Actualiza member_count en social_features.classrooms
-    -- Se implementará con lógica real
-    RETURN NEW;
-END;
-$$;
-COMMENT ON FUNCTION gamilit.update_classroom_member_count() IS 'Trigger para actualizar contador de miembros en classroom (placeholder)';
+-- CONSOLIDACIÓN 2026-01-17 (TASK-2026-01-17-001):
+-- Las funciones fueron movidas a archivos individuales en schemas/gamilit/functions/
+-- Se cargan en FASE 2 de create-database.sh
+--
+-- Funciones consolidadas:
+--   - gamilit.now_mexico()                          → 08-now_mexico.sql
+--   - gamilit.update_updated_at_column()            → 15-update_updated_at_column.sql
+--   - gamilit.get_current_user_role()               → 03-get_current_user_role.sql
+--   - gamilit.get_current_user_id()                 → 02-get_current_user_id.sql
+--   - gamilit.get_current_tenant_id()               → 09-get_current_tenant_id.sql
+--   - gamilit.is_admin()                            → 05-is_admin.sql
+--   - gamilit.audit_profile_changes()               → 01-audit_profile_changes.sql
+--   - gamilit.initialize_user_stats()               → 04-initialize_user_stats.sql
+--   - gamilit.update_user_stats_on_exercise_complete() → 14-update_user_stats_on_exercise_complete.sql
+--   - gamilit.update_classroom_member_count()       → 10-update_classroom_member_count.sql
+--
+-- Razón: Evitar duplicación y mantener funciones en ubicación canónica
+-- Referencia: Política de Carga Limpia, Auditoría DDL TASK-2026-01-17-001
+-- ============================================================================
 
 -- ============================================================================
 -- PARTE 3: FUNCIONES DEL SCHEMA gamification_system

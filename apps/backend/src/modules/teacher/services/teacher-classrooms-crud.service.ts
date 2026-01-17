@@ -305,7 +305,7 @@ export class TeacherClassroomsCrudService {
     ]);
 
     // Mapear a DTO con todos los datos (members ya incluye profile y user info)
-    let data = members.map((member) => {
+    const data = members.map((member) => {
       const progress = progressData.get(member.student_id);
       const userStats = userStatsData.get(member.student_id);
       const currentActivity = currentActivityData.get(member.student_id);

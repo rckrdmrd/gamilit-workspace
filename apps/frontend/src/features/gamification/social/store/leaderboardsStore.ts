@@ -6,7 +6,7 @@
  *
  * @updated 2025-12-29 - Removed mock data from initial state
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 
 import { create } from 'zustand';
 import type { LeaderboardData, LeaderboardType, TimePeriod } from '../types/leaderboardsTypes';

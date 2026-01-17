@@ -75,7 +75,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       const savedEvaluations = Array.from(evaluations.values());
 
       // CORR-010 FIX: Include current (unsaved) evaluation if complete
-      let allEvaluations = [...savedEvaluations];
+      const allEvaluations = [...savedEvaluations];
       if (currentStatement && currentClassification && currentVerdict) {
         const currentStmtId = currentStatement.id || `stmt-${currentIndex + 1}`;
         // Check if current evaluation is already saved

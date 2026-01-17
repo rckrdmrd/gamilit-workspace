@@ -6,22 +6,29 @@
 # Archivo pequeño (<8KB) - Solo mapeos, sin detalles
 # ============================================================================
 
-version: "1.0.0"
-updated: "2026-01-16"
+version: "1.1.0"
+updated: "2026-01-17"
 purpose: "Índice bidireccional tabla-entity para verificación de coherencia"
 
 # ============================================================================
-# ESTADÍSTICAS DE COHERENCIA
+# ESTADÍSTICAS DE COHERENCIA (AUDITADO 2026-01-17)
 # ============================================================================
 
 coherencia:
-  tablas_totales: 137
-  entities_totales: 124  # CORREGIDO 2026-01-16 - conteo real filesystem
+  tablas_ddl_archivos: 137  # Archivos .sql en /tables/
+  tablas_activas: 129  # Excluyendo deprecated embebidos
+  entities_totales: 124  # Conteo real filesystem (*.entity.ts)
   tablas_con_entity: 124
-  tablas_sin_entity: 13  # 137 - 124 = 13 tablas intencionales sin entity
-  coherencia_porcentaje: "90%"  # CORREGIDO: 124/137 = 90.5%
-  nota: "13 tablas sin entity son intencionales (tracking triggers, deprecated, tablas M:N)"
-  gaps_documentados: "TRACEABILITY_MATRIX.yml#gaps_analysis_2026_01_16"
+  tablas_sin_entity: 5  # 129 - 124 = 5 tablas intencionales sin entity
+  coherencia_porcentaje: "96.1%"  # AUDITADO 2026-01-17: 124/129 = 96.1%
+  tablas_sin_entity_detalle:
+    - "audit_logging.pending_user_initialization - Tracking automatico"
+    - "audit_logging.activity_log - Tracking automatico"
+    - "gamification_system.shop_categories - Catalogo M:N TypeORM"
+    - "progress_tracking.reading_stats - Materializado desde views"
+    - "social_features.team_members - M:N TypeORM"
+  auditoria: "TASK-2026-01-17-001"
+  gaps_documentados: "TRACEABILITY_MATRIX.yml#gaps_analysis_2026_01_17"
 
 # ============================================================================
 # MAPEO POR SCHEMA (Tabla → Entity)

@@ -1546,7 +1546,7 @@ export class ExerciseSubmissionService {
     const profileId = await this.getProfileId(userId);
 
     // Buscar submission draft existente
-    let submission = await this.submissionRepo.findOne({
+    const submission = await this.submissionRepo.findOne({
       where: {
         user_id: profileId,
         exercise_id: exerciseId,

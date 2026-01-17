@@ -51,7 +51,7 @@ CREATE INDEX IF NOT EXISTS idx_manual_reviews_status ON progress_tracking.manual
 CREATE TRIGGER trg_manual_reviews_updated_at
     BEFORE UPDATE ON progress_tracking.manual_reviews
     FOR EACH ROW
-    EXECUTE FUNCTION gamilit.update_updated_at();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();
 
 -- Comentarios
 COMMENT ON TABLE progress_tracking.manual_reviews IS

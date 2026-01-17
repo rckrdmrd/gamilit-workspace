@@ -66,7 +66,12 @@ export class ExerciseResponseDto {
   @Expose()
     content!: Record<string, unknown>;
 
-  @Expose()
+  /**
+   * @deprecated No exponer solution en respuestas de estudiante.
+   *             Usar ExerciseTeacherResponseDto para incluir solution.
+   * @security REMOVIDO @Expose() - defensa en profundidad para evitar
+   *           exposición accidental de respuestas correctas a estudiantes.
+   */
     solution?: Record<string, unknown>;
 
   @Expose()

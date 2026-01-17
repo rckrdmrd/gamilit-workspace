@@ -645,7 +645,7 @@ export class ModuleProgressService {
     let completedCount = 0;
     let inProgressCount = 0;
     let pendingCount = 0;
-    let skippedCount = 0;
+    const skippedCount = 0;
     let totalScore = 0;
     let scoredCount = 0;
     let totalXpEarned = 0;

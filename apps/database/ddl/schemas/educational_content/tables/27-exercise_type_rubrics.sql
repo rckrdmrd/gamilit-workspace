@@ -64,14 +64,9 @@ CREATE INDEX idx_exercise_type_rubrics_type ON educational_content.exercise_type
 CREATE INDEX idx_exercise_type_rubrics_module ON educational_content.exercise_type_rubrics USING btree (module_code);
 CREATE INDEX idx_exercise_type_rubrics_default ON educational_content.exercise_type_rubrics USING btree (is_default) WHERE (is_default = true);
 
--- Trigger para updated_at (usa funcion centralizada - CONSOLIDACION 2026-01-07)
--- NOTA: La funcion educational_content.trg_exercise_type_rubrics_updated_at() fue eliminada
--- y migrada a la funcion centralizada gamilit.update_updated_at_column()
-DROP TRIGGER IF EXISTS trg_exercise_type_rubrics_updated_at ON educational_content.exercise_type_rubrics;
-CREATE TRIGGER trg_exercise_type_rubrics_updated_at
-    BEFORE UPDATE ON educational_content.exercise_type_rubrics
-    FOR EACH ROW
-    EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- Trigger para updated_at: MOVIDO a triggers/00-batch_updated_at_triggers.sql
+-- CONSOLIDACIÓN 2026-01-17 (TASK-2026-01-17-001): Eliminado de este archivo para evitar duplicación
+-- Ver: educational_content/triggers/00-batch_updated_at_triggers.sql:54-62
 
 -- Permissions
 GRANT ALL ON TABLE educational_content.exercise_type_rubrics TO gamilit_user;

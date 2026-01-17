@@ -3,14 +3,80 @@
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
 version: "1.0.0"
-last_updated: "2026-01-16"
-total_tasks: 1
+last_updated: "2026-01-17"
+total_tasks: 2
 
 # =========================================
 # TAREAS POR FECHA
 # =========================================
 
 tasks:
+  # ----------------------------------------
+  # 2026-01-17
+  # ----------------------------------------
+  - id: TASK-2026-01-17-001
+    title: "Auditoría Integral BD + Análisis Coherencia Multi-Capa"
+    date: "2026-01-17"
+    status: completed
+    priority: P0
+    type: audit
+    dominios:
+      - "Base de Datos DDL"
+      - "Scripts de creación"
+      - "Inventarios"
+      - "Trazabilidad"
+      - "Coherencia DDL-Backend"
+      - "Coherencia Backend-Frontend"
+    entregables:
+      - "AUDITORIA-DDL-CONSOLIDADA.md"
+      - "PLAN-VALIDACION-EPICAS.md"
+      - "COHERENCIA-CAPAS-ANALYSIS.md"
+      - "ADMIN-PORTAL-GAPS.md"
+      - "ANALISIS-INTEGRACION-COMPLETO.md"
+      - "METADATA.yml"
+    fases:
+      fase_1:
+        hallazgos: 39
+        correcciones:
+          - "9 funciones duplicadas eliminadas"
+          - "28 triggers deprecated eliminados"
+          - "is_feature_enabled() unificada"
+          - "1 trigger duplicado activo eliminado"
+      fase_2:
+        hallazgos: 9
+        correcciones:
+          - "1 función duplicada eliminada (validate_rueda_inferencias_text)"
+          - "1 trigger duplicado eliminado de tabla"
+          - "4 columnas agregadas a feature_flags"
+          - "3 referencias a funciones corregidas"
+          - "2 funciones wrapper creadas"
+      fase_3_coherencia:
+        analisis:
+          - "DDL vs Entities: 97.1%"
+          - "Tipos DDL vs TypeORM: 94.7%"
+          - "Endpoints consumidos: 82.0%"
+          - "DTOs vs Interfaces: 85.0%"
+        issues_seguridad: 2
+        gaps_identificados: 7
+      fase_4_correcciones:
+        correcciones:
+          - "SEC-001: ExerciseResponseDto - solution @Expose removido"
+          - "SEC-002: ExerciseTeacherResponseDto creado"
+          - "P1: ClassroomEntity.is_deleted agregado"
+          - "P1: FeatureFlagEntity completada (+18 campos)"
+        archivos_modificados: 3
+        archivos_creados: 1
+    totales:
+      incidencias_resueltas: 52
+      correcciones_seguridad: 2
+      correcciones_coherencia: 2
+      coherencia_ddl_backend: "97.1%"
+      coherencia_backend_frontend: "60%"
+      coherencia_global: "89.7%"
+      fks_validas: "241/241"
+      epicas_validadas: 6
+    path: "orchestration/tareas/TASK-2026-01-17-001/"
+
   # ----------------------------------------
   # 2026-01-16
   # ----------------------------------------
@@ -34,7 +100,7 @@ tasks:
 # RESUMEN POR ESTADO
 # =========================================
 summary:
-  completed: 1
+  completed: 2
   in_progress: 0
   pending: 0
 

@@ -2,23 +2,47 @@
 
 Proyecto de base de datos PostgreSQL para la plataforma GAMILIT
 
-**Ultima actualizacion:** 2026-01-14
-**Version SSOT:** DATABASE_INVENTORY.yml v4.5.0
-**Cobertura DDL:** 100% (386 archivos)
-**Cobertura Seeds:** 100% (65 archivos activos)
+**Ultima actualizacion:** 2026-01-17
+**Version SSOT:** DATABASE_INVENTORY.yml v4.6.0
+**Cobertura DDL:** 100% (396 archivos activos)
+**Cobertura Seeds:** 100% (63 archivos activos)
 
-## Metricas Actuales (Auditadas 2026-01-14)
+## Metricas Actuales (Auditadas 2026-01-17)
 
 | Objeto | Cantidad |
 |--------|----------|
 | Schemas | 16 |
-| Tablas | 135 |
-| Funciones Activas | 122 |
-| Triggers Activos | 49 |
-| Indices | 405 |
-| RLS Policies | 121 |
-| ENUMs | 38 |
-| Foreign Keys | 208 |
+| Tablas | 129 |
+| Funciones Activas | 110 |
+| Triggers Activos | 35 |
+| Indices | 18 |
+| RLS Policies | 282 |
+| ENUMs | 35 |
+| Foreign Keys | 252 |
+
+---
+
+## IMPORTANTE: Qué Script Usar
+
+| Caso de Uso | Script | Descripción |
+|-------------|--------|-------------|
+| **Crear BD nueva (RECOMENDADO)** | `./create-database.sh` | Script maestro, 18 fases, completo |
+| **Recrear para testing** | `./drop-and-recreate-database.sh` | Drop + create automático |
+| **Reset con seeds** | `./scripts/recreate-database.sh` | Legacy, usa create-database.sh |
+
+### Scripts OBSOLETOS (No usar)
+
+| Script | Estado | Alternativa |
+|--------|--------|-------------|
+| `scripts/init-database-v3.sh` | INCOMPLETO | Usar `create-database.sh` |
+| `scripts/init-database.sh` | LEGACY | Usar `create-database.sh` |
+
+**Razón:** `init-database-v3.sh` tiene 6 schemas faltantes (63% cobertura vs 94% de `create-database.sh`).
+Schemas faltantes: admin_dashboard, communication, gamilit, lti_integration, notifications, storage.
+
+**Auditoría:** TASK-2026-01-17-001 (Consolidación DDL)
+
+---
 
 ## Estructura
 

@@ -53,14 +53,9 @@ CREATE TABLE auth_management.roles (
 CREATE INDEX IF NOT EXISTS idx_roles_name ON auth_management.roles USING btree (name);
 CREATE INDEX IF NOT EXISTS idx_roles_is_active ON auth_management.roles USING btree (is_active);
 
--- Updated_at trigger (usa funcion centralizada - CONSOLIDACION 2026-01-07)
--- NOTA: La funcion auth_management.trg_roles_updated_at() fue eliminada
--- y migrada a la funcion centralizada gamilit.update_updated_at_column()
-DROP TRIGGER IF EXISTS trg_roles_updated_at ON auth_management.roles;
-CREATE TRIGGER trg_roles_updated_at
-    BEFORE UPDATE ON auth_management.roles
-    FOR EACH ROW
-    EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- Updated_at trigger: MOVIDO a triggers/00-batch_updated_at_triggers.sql
+-- Ver: auth_management/triggers/00-batch_updated_at_triggers.sql:55-62
+-- CONSOLIDACIÓN 2026-01-17 (TASK-2026-01-17-001): Eliminado de este archivo para evitar duplicación
 
 -- Comments
 COMMENT ON TABLE auth_management.roles IS 'Catalogo maestro de roles del sistema para RBAC';

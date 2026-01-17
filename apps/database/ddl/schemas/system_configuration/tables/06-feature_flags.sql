@@ -28,6 +28,14 @@ CREATE TABLE system_configuration.feature_flags (
     rollout_percentage INTEGER DEFAULT 100,  -- For gradual rollout (0-100)
     rollout_strategy VARCHAR(50) DEFAULT 'all',  -- 'all', 'percentage', 'whitelist', 'beta_users'
 
+    -- User targeting (for whitelist and role-based access)
+    target_users UUID[] DEFAULT ARRAY[]::UUID[],  -- User whitelist
+    target_roles auth_management.gamilit_role[] DEFAULT ARRAY[]::auth_management.gamilit_role[],  -- Role-based access
+
+    -- Time windows (for scheduled feature releases)
+    starts_at TIMESTAMPTZ,  -- Feature becomes available at this time
+    ends_at TIMESTAMPTZ,    -- Feature becomes unavailable after this time
+
     -- Dependencies
     depends_on_flags JSONB DEFAULT '[]'::jsonb,  -- Array of flag_keys that must be enabled
     conflicts_with JSONB DEFAULT '[]'::jsonb,    -- Array of flag_keys that cannot be enabled together
@@ -117,57 +125,21 @@ $$ LANGUAGE plpgsql;
 -- Ver: system_configuration/triggers/29-trg_feature_flags_updated_at.sql
 
 -- =============================================================================
--- Helper function to check if feature is enabled for a context
+-- Helper function MOVED to dedicated file
 -- =============================================================================
-
-CREATE OR REPLACE FUNCTION system_configuration.is_feature_enabled(
-    p_flag_key VARCHAR,
-    p_tenant_id UUID DEFAULT NULL,
-    p_classroom_id UUID DEFAULT NULL
-) RETURNS BOOLEAN AS $$
-DECLARE
-    v_flag RECORD;
-    v_is_enabled BOOLEAN;
-BEGIN
-    -- Get flag
-    SELECT * INTO v_flag
-    FROM system_configuration.feature_flags
-    WHERE flag_key = p_flag_key;
-
-    IF NOT FOUND THEN
-        RETURN FALSE;  -- Flag doesn't exist
-    END IF;
-
-    -- Check system-wide status
-    IF NOT v_flag.is_enabled THEN
-        RETURN FALSE;  -- Flag is disabled system-wide
-    END IF;
-
-    -- If system-wide only, return enabled status
-    IF v_flag.is_system_wide THEN
-        RETURN TRUE;
-    END IF;
-
-    -- Check classroom override (highest priority)
-    IF p_classroom_id IS NOT NULL THEN
-        v_is_enabled := (v_flag.classroom_overrides->p_classroom_id::TEXT->>'enabled')::BOOLEAN;
-        IF v_is_enabled IS NOT NULL THEN
-            RETURN v_is_enabled;
-        END IF;
-    END IF;
-
-    -- Check tenant override
-    IF p_tenant_id IS NOT NULL THEN
-        v_is_enabled := (v_flag.tenant_overrides->p_tenant_id::TEXT)::BOOLEAN;
-        IF v_is_enabled IS NOT NULL THEN
-            RETURN v_is_enabled;
-        END IF;
-    END IF;
-
-    -- Default to flag's enabled status
-    RETURN v_flag.is_enabled;
-END;
-$$ LANGUAGE plpgsql STABLE;
+-- NOTE: La función is_feature_enabled() fue consolidada en:
+-- system_configuration/functions/is_feature_enabled.sql
+--
+-- Esta función unificada soporta:
+--   - User targeting (p_user_id)
+--   - Tenant overrides (p_tenant_id)
+--   - Classroom overrides (p_classroom_id)
+--   - Role-based access
+--   - Rollout percentage
+--   - Time windows
+--
+-- Eliminada de este archivo: 2026-01-17 (TASK-2026-01-17-001)
+-- =============================================================================
 
 -- =============================================================================
 -- Comments
@@ -182,6 +154,18 @@ COMMENT ON COLUMN system_configuration.feature_flags.flag_key IS
 
 COMMENT ON COLUMN system_configuration.feature_flags.rollout_percentage IS
 'Percentage of users/tenants that should have this feature enabled (0-100)';
+
+COMMENT ON COLUMN system_configuration.feature_flags.target_users IS
+'Array of user UUIDs that have access to this feature (whitelist)';
+
+COMMENT ON COLUMN system_configuration.feature_flags.target_roles IS
+'Array of roles that have access to this feature (role-based access)';
+
+COMMENT ON COLUMN system_configuration.feature_flags.starts_at IS
+'Feature becomes available at this time (time window start)';
+
+COMMENT ON COLUMN system_configuration.feature_flags.ends_at IS
+'Feature becomes unavailable after this time (time window end)';
 
 COMMENT ON FUNCTION system_configuration.is_feature_enabled IS
 'Check if a feature is enabled for a specific context (tenant and/or classroom).
