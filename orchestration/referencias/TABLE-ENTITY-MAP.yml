@@ -1,0 +1,249 @@
+# TABLE-ENTITY-MAP.yml
+# ============================================================================
+# Mapeo Bidireccional: Tabla DDL ↔ Entity Backend
+# ============================================================================
+# Propósito: Referencia rápida para coherencia DDL-Backend
+# Archivo pequeño (<8KB) - Solo mapeos, sin detalles
+# ============================================================================
+
+version: "1.0.0"
+updated: "2026-01-16"
+purpose: "Índice bidireccional tabla-entity para verificación de coherencia"
+
+# ============================================================================
+# ESTADÍSTICAS DE COHERENCIA
+# ============================================================================
+
+coherencia:
+  tablas_totales: 137
+  entities_totales: 123
+  tablas_con_entity: 121
+  tablas_sin_entity: 16
+  coherencia_porcentaje: "88%"
+  nota: "16 tablas sin entity son intencionales (tracking triggers, tablas M:N automáticas)"
+
+# ============================================================================
+# MAPEO POR SCHEMA (Tabla → Entity)
+# ============================================================================
+
+auth_management:
+  profiles:
+    entity: "profile.entity.ts"
+    path: "modules/auth/entities/"
+    pk: "id (uuid)"
+  user_roles:
+    entity: "user-role.entity.ts"
+    path: "modules/auth/entities/"
+  tenants:
+    entity: "tenant.entity.ts"
+    path: "modules/admin/entities/"
+  roles:
+    entity: "role.entity.ts"
+    path: "modules/admin/entities/"
+    nota: "Catálogo maestro RBAC"
+
+educational_content:
+  modules:
+    entity: "module.entity.ts"
+    path: "modules/educational/entities/"
+  exercises:
+    entity: "exercise.entity.ts"
+    path: "modules/educational/entities/"
+  assignments:
+    entity: "assignment.entity.ts"
+    path: "modules/assignments/entities/"
+  assignment_students:
+    entity: "assignment-student.entity.ts"
+    path: "modules/assignments/entities/"
+  classroom_modules:
+    entity: "classroom-module.entity.ts"
+    path: "modules/teacher/entities/"
+  teacher_content:
+    entity: "teacher-content.entity.ts"
+    path: "modules/teacher/entities/"
+  exercise_options:
+    entity: null
+    motivo: "DEPRECATED - Opciones embebidas en exercise.content JSONB"
+  exercise_answers:
+    entity: null
+    motivo: "DEPRECATED - Respuestas en exercise_attempts"
+
+gamification_system:
+  user_stats:
+    entity: "user-stats.entity.ts"
+    path: "modules/gamification/entities/"
+    tipo_ssot: "shared/types/user-stats.types.ts"
+  achievements:
+    entity: "achievement.entity.ts"
+    path: "modules/gamification/entities/"
+  user_achievements:
+    entity: "user-achievement.entity.ts"
+    path: "modules/gamification/entities/"
+  missions:
+    entity: "mission.entity.ts"
+    path: "modules/gamification/entities/"
+  mission_templates:
+    entity: "mission-template.entity.ts"
+    path: "modules/gamification/entities/"
+  user_missions:
+    entity: "user-mission.entity.ts"
+    path: "modules/gamification/entities/"
+  leaderboards:
+    entity: "leaderboard.entity.ts"
+    path: "modules/gamification/entities/"
+  levels:
+    entity: "level.entity.ts"
+    path: "modules/gamification/entities/"
+  ranks:
+    entity: "rank.entity.ts"
+    path: "modules/gamification/entities/"
+  power_ups:
+    entity: "power-up.entity.ts"
+    path: "modules/gamification/entities/"
+  user_power_ups:
+    entity: "user-power-up.entity.ts"
+    path: "modules/gamification/entities/"
+
+progress_tracking:
+  module_progress:
+    entity: "module-progress.entity.ts"
+    path: "modules/progress/entities/"
+  exercise_attempts:
+    entity: "exercise-attempt.entity.ts"
+    path: "modules/progress/entities/"
+  learning_sessions:
+    entity: "learning-session.entity.ts"
+    path: "modules/progress/entities/"
+  user_difficulty_progress:
+    entity: null
+    motivo: "Tracking automático por triggers BD"
+  user_current_level:
+    entity: null
+    motivo: "Tracking automático por triggers BD"
+  module_completion_tracking:
+    entity: null
+    motivo: "Tracking automático por triggers BD"
+
+social_features:
+  friendships:
+    entity: "friendship.entity.ts"
+    path: "modules/social/entities/"
+  guilds:
+    entity: "guild.entity.ts"
+    path: "modules/social/entities/"
+  guild_members:
+    entity: "guild-member.entity.ts"
+    path: "modules/social/entities/"
+  classrooms:
+    entity: "classroom.entity.ts"
+    path: "modules/social/entities/"
+  classroom_students:
+    entity: "classroom-student.entity.ts"
+    path: "modules/social/entities/"
+  teacher_classrooms:
+    entity: "teacher-classroom.entity.ts"
+    path: "modules/teacher/entities/"
+  user_follows:
+    entity: "user-follow.entity.ts"
+    path: "modules/social/entities/"
+    nota: "Creado ETC-001 2026-01-16"
+
+notifications:
+  notifications:
+    entity: "notification.entity.ts"
+    path: "modules/notifications/entities/"
+    nota: "Multichannel (push, email, in-app)"
+  notification_preferences:
+    entity: "notification-preference.entity.ts"
+    path: "modules/notifications/entities/"
+  push_subscriptions:
+    entity: "push-subscription.entity.ts"
+    path: "modules/notifications/entities/"
+
+lti_integration:
+  lti_consumers:
+    entity: "lti-consumer.entity.ts"
+    path: "modules/lti/entities/"
+  lti_sessions:
+    entity: "lti-session.entity.ts"
+    path: "modules/lti/entities/"
+  lti_grade_passbacks:
+    entity: "lti-grade-passback.entity.ts"
+    path: "modules/lti/entities/"
+
+admin_dashboard:
+  bulk_operations:
+    entity: "bulk-operation.entity.ts"
+    path: "modules/admin/entities/"
+  admin_reports:
+    entity: "admin-report.entity.ts"
+    path: "modules/admin/entities/"
+
+audit_logging:
+  audit_logs:
+    entity: "audit-log.entity.ts"
+    path: "modules/audit/entities/"
+
+# ============================================================================
+# ÍNDICE INVERSO: Entity → Tabla
+# ============================================================================
+
+entity_to_table:
+  # Auth
+  "profile.entity.ts": "auth_management.profiles"
+  "user-role.entity.ts": "auth_management.user_roles"
+  "tenant.entity.ts": "auth_management.tenants"
+  "role.entity.ts": "auth_management.roles"
+
+  # Educational
+  "module.entity.ts": "educational_content.modules"
+  "exercise.entity.ts": "educational_content.exercises"
+  "assignment.entity.ts": "educational_content.assignments"
+
+  # Gamification
+  "user-stats.entity.ts": "gamification_system.user_stats"
+  "achievement.entity.ts": "gamification_system.achievements"
+  "mission.entity.ts": "gamification_system.missions"
+  "leaderboard.entity.ts": "gamification_system.leaderboards"
+
+  # Progress
+  "module-progress.entity.ts": "progress_tracking.module_progress"
+  "exercise-attempt.entity.ts": "progress_tracking.exercise_attempts"
+
+  # Social
+  "friendship.entity.ts": "social_features.friendships"
+  "guild.entity.ts": "social_features.guilds"
+  "classroom.entity.ts": "social_features.classrooms"
+
+  # Notifications
+  "notification.entity.ts": "notifications.notifications"
+
+# ============================================================================
+# TABLAS SIN ENTITY (INTENCIONALES)
+# ============================================================================
+
+tablas_sin_entity:
+  tracking_automatico:
+    - "progress_tracking.user_difficulty_progress"
+    - "progress_tracking.user_current_level"
+    - "progress_tracking.module_completion_tracking"
+    motivo: "Gestionadas por triggers de BD, no expuestas a API"
+
+  deprecated:
+    - "educational_content.exercise_options"
+    - "educational_content.exercise_answers"
+    motivo: "Datos embebidos en JSONB de tablas principales"
+
+  tablas_m2m_typeorm:
+    - "gamification_system.achievement_conditions"
+    - "social_features.guild_achievements"
+    motivo: "Tablas M:N gestionadas automáticamente por TypeORM"
+
+# ============================================================================
+# REFERENCIAS
+# ============================================================================
+
+referencias:
+  inventario_detallado_backend: "orchestration/inventarios/BACKEND_INVENTORY.yml"
+  inventario_detallado_database: "orchestration/inventarios/DATABASE_INVENTORY.yml"
+  matriz_coherencia: "orchestration/inventarios/TRACEABILITY_MATRIX.yml"
