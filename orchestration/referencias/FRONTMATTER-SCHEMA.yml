@@ -1,0 +1,284 @@
+# FRONTMATTER-SCHEMA.yml
+# ============================================================================
+# Schema de Frontmatter para Trazabilidad Jerárquica
+# ============================================================================
+# Propósito: Definir estructura estándar de metadatos para documentación Scrum
+# Uso: Cada archivo RF, ET, US, TASK debe seguir este schema
+# ============================================================================
+
+version: "1.0.0"
+updated: "2026-01-16"
+
+# ============================================================================
+# SCHEMA POR NIVEL
+# ============================================================================
+
+schemas:
+
+  # --------------------------------------------------------------------------
+  # NIVEL 1: ÉPICA (_MAP.md)
+  # --------------------------------------------------------------------------
+  epic:
+    required:
+      - id: "string (EAI-XXX o EXT-XXX)"
+      - name: "string"
+      - phase: "number (1, 2, 3)"
+    optional:
+      - status: "enum (planning, in_progress, completed)"
+      - sprint: "string"
+      - budget_mxn: "number"
+      - story_points: "number"
+    refs:
+      schemas:
+        type: "array<string>"
+        description: "Schemas de BD que implementa esta épica"
+        example: ["gamification_system"]
+      depends_on:
+        type: "array<string>"
+        description: "IDs de épicas requeridas"
+        example: ["EAI-001"]
+      required_by:
+        type: "array<string>"
+        description: "IDs de épicas que dependen de esta"
+        example: ["EAI-002", "EXT-004"]
+
+  # --------------------------------------------------------------------------
+  # NIVEL 2: REQUERIMIENTO (RF-*.md)
+  # --------------------------------------------------------------------------
+  requirement:
+    required:
+      - id: "string (RF-XXX-NNN)"
+      - title: "string"
+      - epic: "string (ID de épica)"
+    optional:
+      - status: "enum (draft, approved, implemented, deprecated)"
+      - priority: "enum (alta, media, baja)"
+      - version: "string"
+    refs:
+      database:
+        enums:
+          type: "array<string>"
+          description: "Nombres de ENUMs en BD"
+        tables:
+          type: "array<string>"
+          description: "Nombres de tablas (sin schema prefix)"
+        functions:
+          type: "array<string>"
+          description: "Nombres de funciones"
+        triggers:
+          type: "array<string>"
+          description: "Nombres de triggers"
+        views:
+          type: "array<string>"
+          description: "Nombres de vistas"
+      backend:
+        module:
+          type: "string"
+          description: "Nombre del módulo NestJS"
+        entities:
+          type: "array<string>"
+          description: "Archivos .entity.ts"
+
+  # --------------------------------------------------------------------------
+  # NIVEL 3: ESPECIFICACIÓN TÉCNICA (ET-*.md)
+  # --------------------------------------------------------------------------
+  specification:
+    required:
+      - id: "string (ET-XXX-NNN)"
+      - title: "string"
+      - rf: "string (ID de requerimiento padre)"
+    optional:
+      - version: "string"
+      - last_updated: "date"
+    refs:
+      backend:
+        services:
+          type: "array<string>"
+          description: "Archivos .service.ts"
+        controllers:
+          type: "array<string>"
+          description: "Archivos .controller.ts"
+        dtos:
+          type: "array<string>"
+          description: "Archivos .dto.ts"
+        guards:
+          type: "array<string>"
+          description: "Archivos .guard.ts"
+        listeners:
+          type: "array<string>"
+          description: "Archivos .listener.ts"
+
+  # --------------------------------------------------------------------------
+  # NIVEL 4: HISTORIA DE USUARIO (US-*.md)
+  # --------------------------------------------------------------------------
+  user_story:
+    required:
+      - id: "string (US-XXX-NNN)"
+      - title: "string"
+      - epic: "string (ID de épica)"
+    optional:
+      - rf: "string (ID de requerimiento, si aplica)"
+      - story_points: "number"
+      - status: "enum (draft, ready, in_progress, done)"
+      - sprint: "string"
+    refs:
+      frontend:
+        feature:
+          type: "string"
+          description: "Carpeta de feature"
+        components:
+          type: "array<string>"
+          description: "Nombres de componentes (sin .tsx)"
+        hooks:
+          type: "array<string>"
+          description: "Nombres de hooks (sin .ts)"
+        stores:
+          type: "array<string>"
+          description: "Nombres de stores"
+        pages:
+          type: "array<string>"
+          description: "Nombres de páginas"
+      cross_refs:
+        type: "array<CrossRef>"
+        description: "Referencias a objetos de otras épicas"
+
+  # --------------------------------------------------------------------------
+  # NIVEL 5: TAREA (TASK-*.md)
+  # --------------------------------------------------------------------------
+  task:
+    required:
+      - id: "string (TASK-YYYY-MM-DD-NNN)"
+      - title: "string"
+    optional:
+      - us: "string (ID de historia de usuario)"
+      - rf: "string (ID de requerimiento)"
+      - status: "enum (pending, in_progress, completed, blocked)"
+      - assignee: "string"
+    refs:
+      files_created:
+        type: "array<string>"
+        description: "Paths relativos de archivos creados"
+      files_modified:
+        type: "array<string>"
+        description: "Paths relativos de archivos modificados"
+      files_deleted:
+        type: "array<string>"
+        description: "Paths relativos de archivos eliminados"
+
+# ============================================================================
+# TIPOS AUXILIARES
+# ============================================================================
+
+types:
+  CrossRef:
+    source:
+      type: "string"
+      description: "ID completo (EPIC/OBJECT o EPIC/RF/OBJECT)"
+      example: "EAI-001/authStore"
+    objects:
+      type: "array<string>"
+      description: "Objetos específicos usados"
+      optional: true
+    type:
+      type: "enum"
+      values: ["depends_on", "triggers", "extends", "uses"]
+      default: "depends_on"
+    reason:
+      type: "string"
+      description: "Por qué se necesita esta referencia"
+      optional: true
+
+# ============================================================================
+# REGLAS DE HERENCIA
+# ============================================================================
+
+inheritance_rules:
+  - from: "epic"
+    to: "requirement"
+    inherits: ["schemas"]
+
+  - from: "requirement"
+    to: "specification"
+    inherits: ["database.tables", "database.enums", "backend.module", "backend.entities"]
+
+  - from: "requirement"
+    to: "user_story"
+    inherits: ["database.tables", "backend.entities"]
+
+  - from: "user_story"
+    to: "task"
+    inherits: ["frontend.components", "frontend.hooks"]
+
+# ============================================================================
+# EJEMPLOS
+# ============================================================================
+
+examples:
+  epic:
+    ```yaml
+    ---
+    id: EAI-003
+    name: "Gamificación"
+    phase: 1
+    status: completed
+    refs:
+      schemas: ["gamification_system"]
+      depends_on: ["EAI-001"]
+      required_by: ["EAI-002", "EXT-004"]
+    ---
+    ```
+
+  requirement:
+    ```yaml
+    ---
+    id: RF-GAM-001
+    title: "Sistema de Logros"
+    epic: EAI-003
+    status: implemented
+    refs:
+      database:
+        enums: ["achievement_type", "achievement_category"]
+        tables: ["achievements", "user_achievements"]
+        functions: ["check_and_unlock_achievement"]
+        triggers: ["trg_achievement_unlocked"]
+      backend:
+        module: "gamification"
+        entities: ["achievement.entity.ts", "user-achievement.entity.ts"]
+    ---
+    ```
+
+  user_story:
+    ```yaml
+    ---
+    id: US-GAM-005
+    title: "Insignias básicas"
+    epic: EAI-003
+    rf: RF-GAM-001
+    story_points: 8
+    status: done
+    refs:
+      frontend:
+        feature: "student/gamification"
+        components: ["AchievementGallery", "AchievementCard", "AchievementModal"]
+        hooks: ["useAchievements"]
+      cross_refs:
+        - source: "EAI-001/authStore"
+          type: depends_on
+          reason: "Requiere usuario autenticado"
+    ---
+    ```
+
+# ============================================================================
+# VALIDACIÓN
+# ============================================================================
+
+validation_rules:
+  - rule: "ID único por tipo en todo el proyecto"
+  - rule: "Epic ID debe existir cuando se referencia"
+  - rule: "RF ID debe existir cuando se referencia en US o ET"
+  - rule: "Cross-refs deben apuntar a épicas existentes"
+  - rule: "Objetos en refs deben existir en implementación"
+
+# Creado por: Claude Opus 4.5
+# Sistema: SIMCO v4.0.0
+# Fecha: 2026-01-16

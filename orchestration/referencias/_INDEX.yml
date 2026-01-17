@@ -46,6 +46,31 @@ archivos:
       - "Búsqueda rápida por objeto"
     ejemplo_consulta: "¿Qué objetos implementan sistema de logros?"
 
+  FRONTMATTER-SCHEMA.yml:
+    proposito: "Schema de metadatos para trazabilidad jerárquica"
+    tamaño_aproximado: "6KB"
+    caso_uso: "Definir estructura de frontmatter para documentación Scrum"
+    contiene:
+      - "Schema por nivel (Epic, RF, ET, US, Task)"
+      - "Tipos de referencias permitidos por nivel"
+      - "Reglas de herencia entre niveles"
+      - "Ejemplos de uso"
+    ejemplo_consulta: "¿Qué campos debe tener el frontmatter de una HU?"
+    estado: "PROPUESTA - Pendiente implementar"
+
+  EPIC-OBJECTS-INDEX.yml:
+    proposito: "Índice consolidado Épica → Objetos (auto-generado)"
+    tamaño_aproximado: "8KB"
+    caso_uso: "Acceso rápido a todos los objetos de una épica"
+    contiene:
+      - "16 épicas con sus objetos"
+      - "Referencias cruzadas consolidadas"
+      - "Búsqueda inversa objeto → épica"
+      - "Estadísticas de cobertura"
+    ejemplo_consulta: "¿Qué tablas y entities tiene EAI-003?"
+    nota: "Este archivo se genera desde frontmatters. No editar manualmente."
+    estado: "EJEMPLO - Pendiente generador automático"
+
 # ============================================================================
 # CÓMO USAR ESTAS REFERENCIAS
 # ============================================================================
