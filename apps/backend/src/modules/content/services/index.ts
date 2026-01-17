@@ -10,3 +10,8 @@ export { MarieCurieContentService } from './marie-curie-content.service';
 export { MediaFilesService } from './media-files.service';
 export { ContentAuthorsService } from './content-authors.service'; // ✨ NUEVO - P2
 export { ContentCategoriesService } from './content-categories.service'; // ✨ NUEVO - P2
+export { TagsService } from './tags.service'; // ✨ NUEVO - P2 (2026-01-16)
+export { ContentVersionsService } from './content-versions.service'; // ✨ NUEVO - P2 (2026-01-16)
+export { FlaggedContentService } from './flagged-content.service'; // ✨ NUEVO - P2 (2026-01-16)
+export { MediaMetadataService } from './media-metadata.service'; // ✨ NUEVO - P2 (2026-01-16)
+export { ModerationRulesService } from './moderation-rules.service'; // ✨ NUEVO - P2 (2026-01-16)

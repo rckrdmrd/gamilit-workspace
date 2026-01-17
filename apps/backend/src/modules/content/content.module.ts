@@ -22,6 +22,11 @@ import {
   MediaFilesService,
   ContentAuthorsService,
   ContentCategoriesService,
+  TagsService,
+  ContentVersionsService,
+  FlaggedContentService,
+  MediaMetadataService,
+  ModerationRulesService,
 } from './services';
 
 // Controllers
@@ -31,6 +36,11 @@ import {
   MediaFilesController,
   ContentAuthorsController,
   ContentCategoriesController,
+  TagsController,
+  ContentVersionsController,
+  FlaggedContentController,
+  MediaMetadataController,
+  ModerationRulesController,
 } from './controllers';
 
 // Constants
@@ -83,6 +93,11 @@ import {
     MediaFilesService,
     ContentAuthorsService, // ✨ NUEVO - P2
     ContentCategoriesService, // ✨ NUEVO - P2
+    TagsService, // ✨ NUEVO - P2 (2026-01-16)
+    ContentVersionsService, // ✨ NUEVO - P2 (2026-01-16)
+    FlaggedContentService, // ✨ NUEVO - P2 (2026-01-16)
+    MediaMetadataService, // ✨ NUEVO - P2 (2026-01-16)
+    ModerationRulesService, // ✨ NUEVO - P2 (2026-01-16)
   ],
   controllers: [
     ContentTemplatesController,
@@ -90,6 +105,11 @@ import {
     MediaFilesController,
     ContentAuthorsController, // ✨ NUEVO - P2
     ContentCategoriesController, // ✨ NUEVO - P2
+    TagsController, // ✨ NUEVO - P2 (2026-01-16)
+    ContentVersionsController, // ✨ NUEVO - P2 (2026-01-16)
+    FlaggedContentController, // ✨ NUEVO - P2 (2026-01-16)
+    MediaMetadataController, // ✨ NUEVO - P2 (2026-01-16)
+    ModerationRulesController, // ✨ NUEVO - P2 (2026-01-16)
   ],
   exports: [
     ContentTemplatesService,
@@ -97,6 +117,11 @@ import {
     MediaFilesService,
     ContentAuthorsService, // ✨ NUEVO - P2
     ContentCategoriesService, // ✨ NUEVO - P2
+    TagsService, // ✨ NUEVO - P2 (2026-01-16)
+    ContentVersionsService, // ✨ NUEVO - P2 (2026-01-16)
+    FlaggedContentService, // ✨ NUEVO - P2 (2026-01-16)
+    MediaMetadataService, // ✨ NUEVO - P2 (2026-01-16)
+    ModerationRulesService, // ✨ NUEVO - P2 (2026-01-16)
   ],
 })
 export class ContentModule {}
