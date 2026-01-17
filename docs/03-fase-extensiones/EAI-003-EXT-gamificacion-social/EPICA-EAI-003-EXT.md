@@ -35,14 +35,17 @@ Implementar las mecánicas sociales de gamificación que complementan el sistema
 
 ### Historias de Usuario
 
-| ID | Historia | Prioridad | SP | Estado |
-|----|----------|-----------|-----|--------|
-| US-GAM-001 | Como estudiante avanzado, quiero ganar más ML Coins por mi rango | P1 | 5 | Backlog |
-| US-GAM-010 | Como estudiante, quiero agregar amigos para competir | P1 | 8 | Backlog |
-| US-GAM-003 | Como estudiante, quiero ver leaderboard de mis amigos | P1 | 5 | Backlog |
-| US-GAM-004 | Como estudiante, quiero crear/unirme a un gremio | P2 | 8 | Backlog |
-| US-GAM-005 | Como miembro de gremio, quiero completar misiones grupales | P2 | 8 | Backlog |
-| US-GAM-006 | Como líder de gremio, quiero gestionar miembros | P2 | 5 | Backlog |
+> **NOTA 2026-01-17:** IDs renumerados para evitar conflictos con EAI-003.
+> Ver archivos individuales para mapeo de IDs anteriores.
+
+| ID | Historia | Prioridad | SP | Estado | Documentacion |
+|----|----------|-----------|-----|--------|---------------|
+| US-GAM-011 | Como estudiante avanzado, quiero ganar mas ML Coins por mi rango | P1 | 5 | Backlog | Detallada |
+| US-GAM-010 | Como estudiante, quiero agregar amigos para competir | P1 | 8 | Backlog | Detallada |
+| US-GAM-012 | Como estudiante, quiero ver leaderboard de mis amigos | P1 | 5 | Backlog | Detallada |
+| US-GAM-013 | Como estudiante, quiero crear/unirme a un gremio | P2 | 8 | Backlog | Detallada |
+| US-GAM-014 | Como miembro de gremio, quiero completar misiones grupales | P2 | 8 | Backlog | Detallada |
+| US-GAM-015 | Como lider de gremio, quiero gestionar miembros | P2 | 5 | Backlog | Detallada |
 
 **Total Story Points:** 39
 
@@ -150,10 +153,11 @@ Implementar las mecánicas sociales de gamificación que complementan el sistema
 
 | Fecha | Cambio | Autor |
 |-------|--------|-------|
-| 2025-12-05 | Creación de épica | Requirements-Analyst |
+| 2025-12-05 | Creacion de epica | Requirements-Analyst |
+| 2026-01-17 | Documentacion completa de 6 USs, renumeracion IDs | Claude-Agent |
 
 ---
 
 **Creada por:** Requirements-Analyst
 **Fecha:** 2025-12-05
-**Última actualización:** 2025-12-05
+**Ultima actualizacion:** 2026-01-17
