@@ -17,7 +17,7 @@ import { VALID_PERMISSION_KEYS } from '@shared/constants';
  */
 @ValidatorConstraint({ name: 'validPermissions', async: false })
 export class ValidPermissionsConstraint implements ValidatorConstraintInterface {
-  validate(permissions: Record<string, unknown>, args: ValidationArguments): boolean {
+  validate(permissions: Record<string, unknown>, _args: ValidationArguments): boolean {
     if (!permissions || typeof permissions !== 'object') {
       return false;
     }

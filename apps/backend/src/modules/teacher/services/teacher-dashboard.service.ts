@@ -6,7 +6,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, ArrayContains } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { ModuleProgress } from '@/modules/progress/entities/module-progress.entity';

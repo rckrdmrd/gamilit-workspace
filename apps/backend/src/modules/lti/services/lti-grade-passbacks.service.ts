@@ -8,8 +8,6 @@ import { Repository, LessThanOrEqual, In } from 'typeorm';
 import {
   LtiGradePassback,
   PassbackStatus,
-  GradingProgress,
-  ActivityProgress,
 } from '../entities';
 import { CreateLtiGradePassbackDto, UpdateLtiGradePassbackDto } from '../dto';
 

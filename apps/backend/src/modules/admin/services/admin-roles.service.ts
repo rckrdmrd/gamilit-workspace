@@ -3,7 +3,8 @@ import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Role } from '@modules/auth/entities/role.entity';
 import { UserRole } from '@modules/auth/entities/user-role.entity';
-import { ActivityLog } from '../entities/activity-log.entity';
+// NOTE: ActivityLog entity removed - not used in this service
+// Audit logging is handled by AuditService instead
 import {
   RoleDto,
   PermissionDto,

@@ -266,8 +266,8 @@ export class ExerciseRewardsService {
    */
   private async updateMissionProgress(
     userId: string,
-    exercise: Exercise,
-    rewards: Omit<RewardClaimResult, 'rankUp' | 'missionsProgressed'>,
+    _exercise: Exercise,
+    _rewards: Omit<RewardClaimResult, 'rankUp' | 'missionsProgressed'>,
   ): Promise<string[]> {
     const progressedMissions: string[] = [];
 

@@ -11,7 +11,7 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { TagsService } from '../services/tags.service';
 import { TagCategory } from '../entities';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';

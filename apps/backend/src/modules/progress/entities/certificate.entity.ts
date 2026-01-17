@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
+import { DB_SCHEMAS } from '@shared/constants/database.constants';
 
 /**
  * Certificate Status Enum
