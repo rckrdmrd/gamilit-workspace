@@ -249,31 +249,69 @@ Solo en GAMILIT:
 
 ---
 
-## SECCIÓN 6: PLAN DE ACCIÓN
+## SECCIÓN 6: PLAN DE ACCIÓN (Cadena de Herencia)
 
-### 6.1 Acciones Inmediatas (P0)
+> **IMPORTANTE**: El plan detallado está en `PLAN-ALINEACION-WORKSPACE-PROYECTOS-2026-01-16.md`
 
-| # | Acción | Responsable | Destino |
-|---|--------|-------------|---------|
-| 1 | Poblar `orchestration/inventarios/` en workspace | TRACEABILITY-MANAGER | workspace-v2 |
-| 2 | Crear `ALIASES.yml` en `orchestration/referencias/` | TRACEABILITY-MANAGER | workspace-v2 |
-| 3 | Sincronizar referencias GAMILIT → workspace | WORKSPACE-ORCHESTRATOR | Ambos |
+### Orden de Ejecución Obligatorio
 
-### 6.2 Acciones a Corto Plazo (P1)
+```
+FASE 1: Workspace (P0) ────► FASE 2: template-saas (P0) ────► FASE 3: erp-core (P0)
+                                                                       │
+                         ┌─────────────────────────────────────────────┘
+                         ▼
+FASE 4: ERPs Verticales (P1)                    FASE 5: Standalone (P2)
+├── erp-clinicas                                ├── gamilit
+│   ├── clinica-dental                          ├── trading-platform
+│   └── clinica-veterinaria                     ├── michangarrito
+├── erp-construccion                            ├── miinventario
+├── erp-retail                                  ├── platform_marketing_content
+├── erp-mecanicas-diesel                        ├── betting-analytics
+└── erp-vidrio-templado                         └── inmobiliaria-analytics
+```
 
-| # | Acción | Responsable | Destino |
-|---|--------|-------------|---------|
-| 4 | Integrar modos de ejecución en GAMILIT | TECH-LEADER | gamilit |
-| 5 | Referenciar triggers del workspace en GAMILIT | TECH-LEADER | gamilit |
-| 6 | Documentar divergencias intencionales | DOCUMENTATION | workspace-v2 |
+### FASE 1: Workspace (P0 - CRÍTICO)
 
-### 6.3 Acciones a Mediano Plazo (P2)
+| # | Acción | Bloquea |
+|---|--------|---------|
+| 1 | Poblar `orchestration/inventarios/` | Todo |
+| 2 | Poblar `orchestration/referencias/` | Todo |
 
-| # | Acción | Responsable | Destino |
-|---|--------|-------------|---------|
-| 7 | Consolidar `simco-redundancia/` con workspace | ARCHITECTURE-ANALYST | Ambos |
-| 8 | Evaluar `directivas-gamilit/` para promoción | TECH-LEADER | Ambos |
-| 9 | Crear CLAUDE.md por proyecto si se requiere | WORKSPACE-MANAGER | Todos |
+### FASE 2: template-saas (P0 - CRÍTICO)
+
+| # | Acción | Depende de |
+|---|--------|------------|
+| 3 | Verificar `_inheritance.yml` (PROVIDER) | Fase 1 |
+| 4 | Alinear directivas con workspace | Fase 1 |
+| 5 | Verificar mirror activo | Fase 1 |
+
+### FASE 3: erp-core (P0 - CRÍTICO)
+
+| # | Acción | Depende de |
+|---|--------|------------|
+| 6 | Verificar `_inheritance.yml` (INTERMEDIATE, parent: template-saas) | Fase 2 |
+| 7 | Documentar estructura especial (.claude/directivas/) | Fase 2 |
+| 8 | Verificar provides_to: 5 verticales | Fase 2 |
+
+### FASE 4: ERPs Verticales (P1)
+
+| # | Proyecto | Parent |
+|---|----------|--------|
+| 9 | erp-clinicas | erp-core |
+| 10 | └── clinica-dental | erp-clinicas |
+| 11 | └── clinica-veterinaria | erp-clinicas |
+| 12 | erp-construccion | erp-core |
+| 13 | erp-retail | erp-core |
+| 14 | erp-mecanicas-diesel | erp-core |
+| 15 | erp-vidrio-templado | erp-core |
+
+### FASE 5: Standalone (P2)
+
+| # | Proyecto | Notas |
+|---|----------|-------|
+| 16 | gamilit | REFERENCIA_INTERNA - Alinear con workspace |
+| 17 | trading-platform | Verificar estructura |
+| 18 | Otros (5 proyectos) | Verificar estructura básica |
 
 ---
 
