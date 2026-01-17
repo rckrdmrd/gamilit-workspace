@@ -528,7 +528,7 @@ Fin del Reporte
   private calculateNextRunTime(scheduleDto: ScheduleReportDto): Date {
     const now = new Date();
     const hour = scheduleDto.hour ?? 8;
-    let nextRun = new Date(now);
+    const nextRun = new Date(now);
 
     // Set to target hour
     nextRun.setHours(hour, 0, 0, 0);
@@ -541,7 +541,7 @@ Fin del Reporte
         }
         break;
 
-      case 'weekly':
+      case 'weekly': {
         const targetDay = scheduleDto.day_of_week ?? 1; // Default Monday
         const currentDay = now.getDay();
         let daysUntilTarget = targetDay - currentDay;
@@ -552,8 +552,9 @@ Fin del Reporte
 
         nextRun.setDate(nextRun.getDate() + daysUntilTarget);
         break;
+      }
 
-      case 'monthly':
+      case 'monthly': {
         const targetDayOfMonth = scheduleDto.day_of_month ?? 1;
         nextRun.setDate(targetDayOfMonth);
 
@@ -562,6 +563,7 @@ Fin del Reporte
           nextRun.setMonth(nextRun.getMonth() + 1);
         }
         break;
+      }
     }
 
     return nextRun;

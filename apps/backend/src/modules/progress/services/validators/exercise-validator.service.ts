@@ -117,12 +117,13 @@ export class ExerciseValidatorService {
 
       // ===== OTHER VALIDATORS =====
 
-      case 'completar_espacios':
+      case 'completar_espacios': {
         const redundancyResult = this.checkAntiRedundancy(answers);
         if (redundancyResult.hasRedundancy) {
           errors.push(redundancyResult.message || 'Redundancy detected');
         }
         break;
+      }
 
       default:
         // Default validation via ExerciseAnswerValidator

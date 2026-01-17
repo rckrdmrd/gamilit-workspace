@@ -30,13 +30,13 @@ export class FeatureFlagsService {
     }
 
     if (query?.category) {
-      queryBuilder.andWhere('ff.metadata @> :category', {
-        category: JSON.stringify({ category: query.category }),
+      queryBuilder.andWhere('ff.category = :category', {
+        category: query.category,
       });
     }
 
     return queryBuilder
-      .orderBy('ff.feature_name', 'ASC')
+      .orderBy('ff.flag_name', 'ASC')
       .getMany();
   }
 
@@ -45,8 +45,8 @@ export class FeatureFlagsService {
    */
   async findOne(key: string): Promise<FeatureFlag> {
     const flag = await this.featureFlagRepo.findOne({
-      where: { feature_key: key },
-      relations: ['creator', 'updater'],
+      where: { flag_key: key },
+      relations: ['creator'],
     });
 
     if (!flag) {
@@ -62,7 +62,7 @@ export class FeatureFlagsService {
   async create(dto: CreateFeatureFlagDto, createdBy?: string): Promise<FeatureFlag> {
     // Verificar que no exista una flag con la misma key
     const existingFlag = await this.featureFlagRepo.findOne({
-      where: { feature_key: dto.key },
+      where: { flag_key: dto.key },
     });
 
     if (existingFlag) {
@@ -70,17 +70,17 @@ export class FeatureFlagsService {
     }
 
     const flag = this.featureFlagRepo.create({
-      feature_key: dto.key,
-      feature_name: dto.name,
+      flag_key: dto.key,
+      flag_name: dto.name,
       description: dto.description,
       is_enabled: dto.isEnabled ?? false,
       rollout_percentage: dto.rolloutPercentage ?? 0,
-      target_users: dto.targetUsers,
-      target_roles: dto.targetRoles,
-      target_conditions: dto.targetConditions ?? {},
-      metadata: {
+      target_users: dto.targetUsers ?? [],
+      target_roles: dto.targetRoles ?? [],
+      category: dto.category as any,
+      config_options: {
         ...dto.metadata,
-        category: dto.category,
+        targetConditions: dto.targetConditions,
       },
       created_by: createdBy,
     });
@@ -91,27 +91,26 @@ export class FeatureFlagsService {
   /**
    * Actualizar una feature flag existente
    */
-  async update(key: string, dto: UpdateFeatureFlagDto, updatedBy?: string): Promise<FeatureFlag> {
+  async update(key: string, dto: UpdateFeatureFlagDto, _updatedBy?: string): Promise<FeatureFlag> {
     const flag = await this.findOne(key);
 
     // Actualizar campos
-    if (dto.name !== undefined) flag.feature_name = dto.name;
+    if (dto.name !== undefined) flag.flag_name = dto.name;
     if (dto.description !== undefined) flag.description = dto.description;
     if (dto.isEnabled !== undefined) flag.is_enabled = dto.isEnabled;
     if (dto.rolloutPercentage !== undefined) flag.rollout_percentage = dto.rolloutPercentage;
     if (dto.targetUsers !== undefined) flag.target_users = dto.targetUsers;
     if (dto.targetRoles !== undefined) flag.target_roles = dto.targetRoles;
-    if (dto.targetConditions !== undefined) flag.target_conditions = dto.targetConditions;
+    if (dto.category !== undefined) flag.category = dto.category as any;
 
-    if (dto.metadata !== undefined || dto.category !== undefined) {
-      flag.metadata = {
-        ...flag.metadata,
+    // Guardar targetConditions y metadata en config_options
+    if (dto.targetConditions !== undefined || dto.metadata !== undefined) {
+      flag.config_options = {
+        ...flag.config_options,
         ...dto.metadata,
-        ...(dto.category && { category: dto.category }),
+        ...(dto.targetConditions && { targetConditions: dto.targetConditions }),
       };
     }
-
-    flag.updated_by = updatedBy;
 
     return this.featureFlagRepo.save(flag);
   }
