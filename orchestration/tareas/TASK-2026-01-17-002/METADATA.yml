@@ -1,0 +1,68 @@
+---
+# TASK-2026-01-17-002: Plan de Correccion de Tests
+# Siguiendo directiva CAPVED
+
+task_id: "TASK-2026-01-17-002"
+titulo: "Correccion Integral de Tests Backend y Frontend"
+tipo: "fix"
+origen: "analisis-validacion"
+estado: "planificado"
+prioridad: "P1"
+fase_capved_actual: "P"
+
+# Vinculacion
+proyecto: "gamilit"
+modulos_afectados:
+  - "apps/backend"
+  - "apps/frontend"
+epica_relacionada: "ETC-001"
+
+# Metricas
+tests_fallando:
+  backend:
+    suites: 30
+    tests: 506
+  frontend:
+    suites: 25
+    tests: 279
+total_fallos: 785
+
+# Story Points estimados
+story_points: 21
+
+# Asignacion
+asignado_a: "Claude-Agent"
+fecha_inicio: "2026-01-17"
+fecha_objetivo: "2026-01-24"
+
+# Fases CAPVED completadas
+fases:
+  C_contexto:
+    completado: true
+    fecha: "2026-01-17"
+    notas: "Cargado PRINCIPIO-CAPVED.md, INIT-NEXUS-TESTING.md"
+  A_analisis:
+    completado: true
+    fecha: "2026-01-17"
+    notas: "Clasificados 785 fallos en 8 categorias"
+  P_planeacion:
+    completado: true
+    fecha: "2026-01-17"
+    notas: "Plan creado con 8 subtareas priorizadas"
+  V_validacion:
+    completado: true
+    fecha: "2026-01-17"
+    notas: "Validado contra jest.config.js, vitest.config.ts, repositories.mock.ts, setup.ts"
+  E_ejecucion:
+    completado: false
+    notas: "Pendiente aprobacion"
+  D_documentacion:
+    completado: true
+    fecha: "2026-01-17"
+    notas: "METADATA.yml, ANALISIS-ERRORES-TESTS.md, PLAN-CORRECCION-TESTS.md creados"
+
+# Archivos generados
+archivos:
+  - "METADATA.yml"
+  - "ANALISIS-ERRORES-TESTS.md"
+  - "PLAN-CORRECCION-TESTS.md"
