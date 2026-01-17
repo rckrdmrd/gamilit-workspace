@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { AchievementsService } from '../achievements.service';
 import { Achievement, UserAchievement, UserStats } from '../../entities';
@@ -36,6 +36,27 @@ describe('AchievementsService', () => {
 
   const mockUserStatsRepo = {
     findOne: jest.fn(),
+  };
+
+  const mockDataSource = {
+    createQueryRunner: jest.fn(() => ({
+      connect: jest.fn(),
+      startTransaction: jest.fn(),
+      commitTransaction: jest.fn(),
+      rollbackTransaction: jest.fn(),
+      release: jest.fn(),
+      manager: {
+        save: jest.fn(),
+        findOne: jest.fn(),
+      },
+    })),
+    getRepository: jest.fn(),
+    manager: {
+      transaction: jest.fn((cb) => cb({
+        save: jest.fn(),
+        findOne: jest.fn(),
+      })),
+    },
   };
 
   const mockUserId = 'user-123';
@@ -142,6 +163,10 @@ describe('AchievementsService', () => {
         {
           provide: getRepositoryToken(UserStats, 'gamification'),
           useValue: mockUserStatsRepo,
+        },
+        {
+          provide: getDataSourceToken('gamification'),
+          useValue: mockDataSource,
         },
       ],
     }).compile();

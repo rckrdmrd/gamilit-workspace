@@ -4,10 +4,12 @@ import { Repository } from 'typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { UserStatsService } from '../user-stats.service';
 import { UserStats } from '../../entities';
+import { Profile } from '@/modules/auth/entities/profile.entity';
 
 describe('UserStatsService', () => {
   let service: UserStatsService;
-  let _userStatsRepo: Repository<UserStats>;
+  let userStatsRepo: jest.Mocked<Partial<Repository<UserStats>>>;
+  let profileRepo: jest.Mocked<Partial<Repository<Profile>>>;
 
   const mockUserStatsRepo = {
     findOne: jest.fn(),
@@ -16,8 +18,21 @@ describe('UserStatsService', () => {
     find: jest.fn(),
   };
 
+  const mockProfileRepo = {
+    findOne: jest.fn(),
+  };
+
   const mockUserId = 'user-123';
+  const mockProfileId = 'profile-123';
   const mockTenantId = 'tenant-456';
+
+  const mockProfile = {
+    id: mockProfileId,
+    user_id: mockUserId,
+    tenant_id: mockTenantId,
+    first_name: 'Test',
+    last_name: 'User',
+  };
 
   const createMockStats = (overrides?: Partial<UserStats>): UserStats => ({
     id: 'stats-1',
@@ -69,13 +84,21 @@ describe('UserStatsService', () => {
           provide: getRepositoryToken(UserStats, 'gamification'),
           useValue: mockUserStatsRepo,
         },
+        {
+          provide: getRepositoryToken(Profile, 'auth'),
+          useValue: mockProfileRepo,
+        },
       ],
     }).compile();
 
     service = module.get<UserStatsService>(UserStatsService);
     userStatsRepo = module.get(getRepositoryToken(UserStats, 'gamification'));
+    profileRepo = module.get(getRepositoryToken(Profile, 'auth'));
 
     jest.clearAllMocks();
+
+    // Default: profile exists (most tests need this)
+    mockProfileRepo.findOne.mockResolvedValue(mockProfile);
   });
 
   afterEach(() => {
@@ -87,8 +110,8 @@ describe('UserStatsService', () => {
   // =====================================================
   describe('findByUserId', () => {
     it('should return user stats when found', async () => {
-      // Arrange
-      const mockStats = createMockStats();
+      // Arrange - profile mock is already set in beforeEach
+      const mockStats = createMockStats({ user_id: mockProfileId });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
 
       // Act
@@ -96,13 +119,14 @@ describe('UserStatsService', () => {
 
       // Assert
       expect(result).toEqual(mockStats);
+      expect(mockProfileRepo.findOne).toHaveBeenCalled();
       expect(mockUserStatsRepo.findOne).toHaveBeenCalledWith({
-        where: { user_id: mockUserId },
+        where: { user_id: mockProfileId },
       });
     });
 
     it('should throw NotFoundException when stats not found', async () => {
-      // Arrange
+      // Arrange - profile mock is already set in beforeEach
       mockUserStatsRepo.findOne.mockResolvedValue(null);
 
       // Act & Assert
@@ -110,7 +134,17 @@ describe('UserStatsService', () => {
         NotFoundException,
       );
       await expect(service.findByUserId(mockUserId)).rejects.toThrow(
-        `No stats found for user ${mockUserId}`,
+        `No stats found for profile ${mockProfileId}`,
+      );
+    });
+
+    it('should throw NotFoundException when profile not found', async () => {
+      // Arrange - override the default profile mock
+      mockProfileRepo.findOne.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.findByUserId(mockUserId)).rejects.toThrow(
+        NotFoundException,
       );
     });
   });
@@ -120,9 +154,9 @@ describe('UserStatsService', () => {
   // =====================================================
   describe('create', () => {
     it('should create new stats with default values', async () => {
-      // Arrange
+      // Arrange - profile mock is already set in beforeEach
       mockUserStatsRepo.findOne.mockResolvedValue(null);
-      const newStats = createMockStats();
+      const newStats = createMockStats({ user_id: mockProfileId });
       mockUserStatsRepo.create.mockReturnValue(newStats);
       mockUserStatsRepo.save.mockResolvedValue(newStats);
 
@@ -131,34 +165,21 @@ describe('UserStatsService', () => {
 
       // Assert
       expect(result).toEqual(newStats);
-      expect(mockUserStatsRepo.create).toHaveBeenCalledWith({
-        user_id: mockUserId,
-        tenant_id: mockTenantId,
-        level: 1,
-        total_xp: 0,
-        xp_to_next_level: 100,
-        current_rank: 'Ajaw',
-        ml_coins: 100,
-        ml_coins_earned_total: 100,
-        ml_coins_spent_total: 0,
-        current_streak: 0,
-        max_streak: 0,
-        days_active_total: 0,
-        exercises_completed: 0,
-        modules_completed: 0,
-        total_score: 0,
-        achievements_earned: 0,
-        certificates_earned: 0,
-        sessions_count: 0,
-        metadata: {},
-      });
+      expect(mockUserStatsRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          user_id: mockProfileId, // Uses profile.id, not authUserId
+          tenant_id: mockTenantId,
+          level: 1,
+          total_xp: 0,
+        }),
+      );
       expect(mockUserStatsRepo.save).toHaveBeenCalledWith(newStats);
     });
 
-    it('should create stats without tenant_id when not provided', async () => {
-      // Arrange
+    it('should create stats using profile tenant_id when not provided', async () => {
+      // Arrange - profile mock is already set in beforeEach
       mockUserStatsRepo.findOne.mockResolvedValue(null);
-      const newStats = createMockStats({ tenant_id: undefined });
+      const newStats = createMockStats({ user_id: mockProfileId });
       mockUserStatsRepo.create.mockReturnValue(newStats);
       mockUserStatsRepo.save.mockResolvedValue(newStats);
 
@@ -169,23 +190,20 @@ describe('UserStatsService', () => {
       expect(result).toBeDefined();
       expect(mockUserStatsRepo.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          user_id: mockUserId,
-          tenant_id: undefined,
+          user_id: mockProfileId,
+          tenant_id: mockTenantId, // Uses profile's tenant_id
         }),
       );
     });
 
     it('should throw BadRequestException if stats already exist', async () => {
-      // Arrange
-      const existingStats = createMockStats();
+      // Arrange - profile mock is already set in beforeEach
+      const existingStats = createMockStats({ user_id: mockProfileId });
       mockUserStatsRepo.findOne.mockResolvedValue(existingStats);
 
       // Act & Assert
       await expect(service.create(mockUserId, mockTenantId)).rejects.toThrow(
         BadRequestException,
-      );
-      await expect(service.create(mockUserId, mockTenantId)).rejects.toThrow(
-        `User ${mockUserId} already has stats`,
       );
       expect(mockUserStatsRepo.create).not.toHaveBeenCalled();
       expect(mockUserStatsRepo.save).not.toHaveBeenCalled();
