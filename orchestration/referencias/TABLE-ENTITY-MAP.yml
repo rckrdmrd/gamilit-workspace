@@ -16,11 +16,12 @@ purpose: "Índice bidireccional tabla-entity para verificación de coherencia"
 
 coherencia:
   tablas_totales: 137
-  entities_totales: 123
-  tablas_con_entity: 121
-  tablas_sin_entity: 16
-  coherencia_porcentaje: "88%"
-  nota: "16 tablas sin entity son intencionales (tracking triggers, tablas M:N automáticas)"
+  entities_totales: 124  # CORREGIDO 2026-01-16 - conteo real filesystem
+  tablas_con_entity: 124
+  tablas_sin_entity: 13  # 137 - 124 = 13 tablas intencionales sin entity
+  coherencia_porcentaje: "90%"  # CORREGIDO: 124/137 = 90.5%
+  nota: "13 tablas sin entity son intencionales (tracking triggers, deprecated, tablas M:N)"
+  gaps_documentados: "TRACEABILITY_MATRIX.yml#gaps_analysis_2026_01_16"
 
 # ============================================================================
 # MAPEO POR SCHEMA (Tabla → Entity)
