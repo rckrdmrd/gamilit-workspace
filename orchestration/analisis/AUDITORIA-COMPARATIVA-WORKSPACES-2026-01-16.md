@@ -370,13 +370,31 @@ coherencia:
 4. **9 entities requieren implementación** - Entities definidas sin service/controller
 5. **NotificationsService migrado** - Verificar que no hay código legacy
 
-### Próximos Pasos
+### Próximos Pasos (Actualizado 2026-01-16)
 
-1. [ ] Buscar referencias a NotificationsService en codebase
-2. [ ] Implementar UserFollowsService/Controller
-3. [ ] Completar módulo LTI (EXT-007)
-4. [ ] Implementar CRUD para entities de CONTENT
-5. [ ] Actualizar inventarios con findings de esta auditoría
+#### Verificaciones Completadas ✅
+1. [x] Buscar referencias a NotificationsService en codebase
+   - **Resultado:** Solo comentarios de documentación, migración YA completada
+   - 4 archivos con menciones (solo comentarios, no código funcional)
+   - `exercise-submission.service.ts:1742` contiene nota de migración
+
+2. [x] Verificar estado de 9 entities sin service/controller
+   - **Confirmado:** 9/9 entities existen, 0/9 services, 0/9 controllers
+
+#### Tareas de Implementación Pendientes (Backlog)
+3. [ ] Implementar UserFollowsService/Controller (SOCIAL)
+   - Entity: `user-follow.entity.ts` existe
+   - Epic: Parte de EAI-005
+
+4. [ ] Completar módulo LTI (EXT-007)
+   - 3 entities: LtiConsumer, LtiSession, LtiGradePassback
+   - Comentario en módulo: "serán implementados cuando se active Epic EXT-007"
+
+5. [ ] Implementar CRUD para 5 entities de CONTENT
+   - ContentVersion, FlaggedContent, MediaMetadata, Tag, ModerationRule
+   - Requiere definir prioridad en roadmap
+
+6. [ ] Actualizar inventarios con findings de esta auditoría
 
 ---
 
