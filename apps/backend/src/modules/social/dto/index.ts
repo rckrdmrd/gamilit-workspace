@@ -54,3 +54,7 @@ export { DiscussionThreadResponseDto } from './discussion-thread-response.dto';
 // UserActivity DTOs ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
 export { CreateActivityDto, ActivityTypeEnum } from './create-activity.dto';
 export { ActivityResponseDto } from './activity-response.dto';
+
+// UserFollow DTOs ✨ NUEVO - P1 (EAI-005 - User Follows)
+export { CreateUserFollowDto } from './create-user-follow.dto';
+export { UserFollowResponseDto, UserFollowCountsDto } from './user-follow-response.dto';

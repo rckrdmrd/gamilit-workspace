@@ -22,6 +22,7 @@ import * as controllers from './controllers';
  * - PeerChallenge: Desafíos peer-to-peer entre estudiantes (Epic EXT-009)
  * - ChallengeParticipant: Participantes de peer challenges con rankings
  * - UserActivity: Actividades de usuarios para el Activity Feed (TASK 2.5)
+ * - UserFollow: Relaciones de seguimiento entre usuarios (EAI-005)
  *
  * @services
  * - FriendshipsService: Gestión de amistades y bloqueos
@@ -32,6 +33,7 @@ import * as controllers from './controllers';
  * - TeamMembersService: Gestión de membresía en equipos
  * - TeamChallengesService: Gestión de desafíos de equipos
  * - UserActivitiesService: Gestión de actividades de usuarios (TASK 2.5)
+ * - UserFollowsService: Gestión de seguimientos entre usuarios (EAI-005)
  *
  * @controllers
  * - FriendshipsController: 10 endpoints para amistades
@@ -44,8 +46,9 @@ import * as controllers from './controllers';
  * - PeerChallengesController: 16 endpoints para peer challenges (Epic EXT-009)
  * - ChallengeParticipantsController: 15 endpoints para participantes (Epic EXT-009)
  * - UserActivitiesController: 5 endpoints para actividades de usuarios (TASK 2.5)
+ * - UserFollowsController: 7 endpoints para seguimientos de usuarios (EAI-005)
  *
- * @totalEndpoints 106 endpoints RESTful con documentación Swagger completa
+ * @totalEndpoints 113 endpoints RESTful con documentación Swagger completa
  */
 @Module({
   imports: [
@@ -79,6 +82,7 @@ import * as controllers from './controllers';
     services.PeerChallengesService, // ✨ NUEVO - P2 (Epic EXT-009)
     services.ChallengeParticipantsService, // ✨ NUEVO - P2 (Epic EXT-009)
     services.UserActivitiesService, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
+    services.UserFollowsService, // ✨ NUEVO - P1 (EAI-005 - User Follows)
   ],
   controllers: [
     controllers.FriendshipsController,
@@ -91,6 +95,7 @@ import * as controllers from './controllers';
     controllers.PeerChallengesController, // ✨ NUEVO - P2 (Epic EXT-009)
     controllers.ChallengeParticipantsController, // ✨ NUEVO - P2 (Epic EXT-009)
     controllers.UserActivitiesController, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
+    controllers.UserFollowsController, // ✨ NUEVO - P1 (EAI-005 - User Follows)
   ],
   exports: [
     services.FriendshipsService,
@@ -103,6 +108,7 @@ import * as controllers from './controllers';
     services.PeerChallengesService, // ✨ NUEVO - P2 (Epic EXT-009)
     services.ChallengeParticipantsService, // ✨ NUEVO - P2 (Epic EXT-009)
     services.UserActivitiesService, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
+    services.UserFollowsService, // ✨ NUEVO - P1 (EAI-005 - User Follows)
   ],
 })
 export class SocialModule {}
