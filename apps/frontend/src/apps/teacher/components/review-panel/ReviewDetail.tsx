@@ -258,11 +258,12 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
         <h3 className="mb-4 text-lg font-semibold text-gray-900">Contenido del Envío</h3>
 
         {/* Submission Answers */}
+        {/* FIX TASK-2026-01-18-008: Support both answers and answer_data field names */}
         <div className="mb-6 rounded-detective bg-gray-50 p-4">
           <h4 className="mb-2 font-medium text-gray-700">Respuestas del Estudiante</h4>
           <ExerciseContentRenderer
-            exerciseType={review.exercise?.type || 'unknown'}
-            answerData={(review.submission?.answers as Record<string, unknown>) || {}}
+            exerciseType={review.exercise?.type || review.exercise?.exercise_type || 'unknown'}
+            answerData={((review.submission as Record<string, unknown>)?.answers || (review.submission as Record<string, unknown>)?.answer_data || {}) as Record<string, unknown>}
           />
         </div>
 

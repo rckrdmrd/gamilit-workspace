@@ -86,7 +86,9 @@ export interface ManualReview {
   };
   submission?: {
     id: string;
-    answers: unknown;
+    answers?: unknown;
+    // FIX TASK-2026-01-18-008: Backend returns answer_data (snake_case)
+    answer_data?: unknown;
     // FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Soportar ambos formatos (camelCase y snake_case)
     submittedAt?: Date;
     submitted_at?: Date;
