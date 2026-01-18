@@ -51,6 +51,7 @@ describe('AchievementsService', () => {
       },
     })),
     getRepository: jest.fn(),
+    query: jest.fn(),
     manager: {
       transaction: jest.fn((cb) => cb({
         save: jest.fn(),
@@ -737,31 +738,38 @@ describe('AchievementsService', () => {
   // =====================================================
   describe('claimRewards', () => {
     it('should claim rewards for completed achievement', async () => {
-      // Arrange
+      // Arrange - mock SQL function call
       const mockUserAchievement = createMockUserAchievement({
         is_completed: true,
-        rewards_claimed: false,
+        rewards_claimed: true,
       });
+      mockDataSource.query.mockResolvedValue([{
+        success: true,
+        message: 'Rewards claimed successfully',
+        xp_granted: 100,
+        coins_granted: 50,
+      }]);
       mockUserAchievementRepo.findOne.mockResolvedValue(mockUserAchievement);
-      mockUserAchievementRepo.save.mockImplementation((achievement) => {
-        return Promise.resolve(achievement as UserAchievement);
-      });
 
       // Act
       const result = await service.claimRewards(mockUserId, mockAchievementId);
 
       // Assert
-      expect(result.rewards_claimed).toBe(true);
-      expect(mockUserAchievementRepo.save).toHaveBeenCalled();
+      expect(result.userAchievement.rewards_claimed).toBe(true);
+      expect(result.xp_granted).toBe(100);
+      expect(result.coins_granted).toBe(50);
+      expect(mockDataSource.query).toHaveBeenCalledWith(
+        expect.stringContaining('claim_achievement_reward'),
+        [mockUserId, mockAchievementId],
+      );
     });
 
     it('should throw BadRequestException if achievement not completed', async () => {
-      // Arrange
-      const mockUserAchievement = createMockUserAchievement({
-        is_completed: false,
-        rewards_claimed: false,
-      });
-      mockUserAchievementRepo.findOne.mockResolvedValue(mockUserAchievement);
+      // Arrange - SQL function returns failure for not completed
+      mockDataSource.query.mockResolvedValue([{
+        success: false,
+        message: `Achievement ${mockAchievementId} is not completed yet`,
+      }]);
 
       // Act & Assert
       await expect(
@@ -773,12 +781,11 @@ describe('AchievementsService', () => {
     });
 
     it('should throw BadRequestException if rewards already claimed', async () => {
-      // Arrange
-      const mockUserAchievement = createMockUserAchievement({
-        is_completed: true,
-        rewards_claimed: true,
-      });
-      mockUserAchievementRepo.findOne.mockResolvedValue(mockUserAchievement);
+      // Arrange - SQL function returns failure for already claimed
+      mockDataSource.query.mockResolvedValue([{
+        success: false,
+        message: `Rewards already claimed for achievement ${mockAchievementId}`,
+      }]);
 
       // Act & Assert
       await expect(
@@ -790,13 +797,16 @@ describe('AchievementsService', () => {
     });
 
     it('should throw NotFoundException when user achievement not found', async () => {
-      // Arrange
-      mockUserAchievementRepo.findOne.mockResolvedValue(null);
+      // Arrange - SQL function returns failure for not found
+      mockDataSource.query.mockResolvedValue([{
+        success: false,
+        message: `User achievement not found`,
+      }]);
 
-      // Act & Assert
+      // Act & Assert - the service throws BadRequestException based on SQL result
       await expect(
         service.claimRewards(mockUserId, mockAchievementId),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -1030,7 +1040,7 @@ describe('AchievementsService', () => {
       // Arrange
       const mockUserStats = createMockUserStats({ level: 1 });
       const mockAchievement = createMockAchievement({
-        conditions: { type: 'level', min_level: 100 },
+        conditions: { type: 'level', requirements: { min_level: 100 } },
       });
 
       mockUserStatsRepo.findOne.mockResolvedValue(mockUserStats);

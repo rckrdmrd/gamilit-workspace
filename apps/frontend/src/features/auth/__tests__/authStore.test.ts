@@ -26,6 +26,23 @@ vi.mock('../api/authAPI', () => ({
   resetPassword: vi.fn(),
 }));
 
+// Mock authCleanup to prevent window.location redirect - use vi.hoisted for variables in mock factories
+const { mockPerformLogout } = vi.hoisted(() => ({
+  mockPerformLogout: vi.fn(),
+}));
+
+vi.mock('@/shared/utils/authCleanup', () => ({
+  performLogout: mockPerformLogout,
+  clearAllAuthData: vi.fn(() => {
+    localStorage.removeItem('auth-token');
+    localStorage.removeItem('refresh-token');
+    localStorage.removeItem('auth-storage');
+  }),
+  isAuthenticated: vi.fn(() => !!localStorage.getItem('auth-token')),
+  getAuthToken: vi.fn(() => localStorage.getItem('auth-token')),
+  getRefreshToken: vi.fn(() => localStorage.getItem('refresh-token')),
+}));
+
 describe('Auth Store', () => {
   // Mock localStorage
   const localStorageMock = (() => {
@@ -51,6 +68,30 @@ describe('Auth Store', () => {
 
     // Clear all mocks
     vi.clearAllMocks();
+
+    // Configure mockPerformLogout to simulate actual behavior (synchronous for testing)
+    mockPerformLogout.mockImplementation((backendLogout?: () => Promise<void>) => {
+      // Call backend logout if provided (fire and forget in test)
+      if (backendLogout) {
+        backendLogout().catch((error) => {
+          console.error('[authCleanup] Backend logout failed:', error);
+        });
+      }
+      // Clear localStorage synchronously
+      localStorage.removeItem('auth-token');
+      localStorage.removeItem('refresh-token');
+      localStorage.removeItem('auth-storage');
+      // Reset zustand store state synchronously
+      useAuthStore.setState({
+        user: null,
+        token: null,
+        refreshToken: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null,
+        sessionExpiresAt: null,
+      });
+    });
 
     // Reset store before each test
     useAuthStore.setState({
@@ -392,9 +433,12 @@ describe('Auth Store', () => {
 
       // Act
       const { logout } = useAuthStore.getState();
-      await logout();
+      logout();
 
-      // Assert
+      // Wait for async error handler to run
+      await new Promise(resolve => setTimeout(resolve, 10));
+
+      // Assert - local logout should succeed even if API fails
       expect(useAuthStore.getState().isAuthenticated).toBe(false);
       expect(localStorage.getItem('auth-token')).toBeNull();
       expect(consoleErrorSpy).toHaveBeenCalled();

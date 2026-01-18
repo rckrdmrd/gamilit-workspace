@@ -485,4 +485,123 @@ export class RanksService {
 
     return rank;
   }
+
+  // =========================================================================
+  // MÉTODOS COMPUESTOS PARA FRONTEND
+  // =========================================================================
+
+  /**
+   * Obtiene el progreso completo del usuario con todos los campos que el frontend necesita
+   *
+   * @task TASK-2026-01-17-002 - FASE 1
+   * @description Compone datos de UserStats + UserRank + campos calculados
+   * @param userId - ID del usuario
+   * @returns UserRankProgressResponseDto con todos los campos necesarios
+   */
+  async getFullUserProgress(userId: string): Promise<{
+    userId: string;
+    currentRank: MayaRank;
+    nextRank: MayaRank | null;
+    level: number;
+    totalXp: number;
+    xpToNextLevel: number;
+    mlCoinsEarned: number;
+    rankProgressPercentage: number;
+    xpRequiredForNextRank: number;
+    xpRemainingForNextRank: number;
+    canRankUp: boolean;
+    isMaxRank: boolean;
+    activityStreak: number;
+    lastActivityAt: Date | null;
+    lastRankUp: Date | null;
+    mlCoinsBonusOnPromotion: number;
+    multiplier: number;
+  }> {
+    // Get base data
+    const userStats = await this.userStatsService.findByUserId(userId);
+    const rankProgress = await this.calculateRankProgress(userId);
+    const currentRankEntity = await this.getCurrentRank(userId);
+
+    // Get rank config for multiplier
+    const rankConfig = this.getRankConfig(userStats.current_rank as MayaRank);
+
+    // Calculate multiplier (base from rank + potential streak bonus)
+    const baseMultiplier = this.calculateMultiplierForRank(userStats.current_rank as MayaRank);
+    const streakBonus = this.calculateStreakBonus(userStats.current_streak);
+    const totalMultiplier = Number((baseMultiplier + streakBonus).toFixed(2));
+
+    return {
+      userId,
+      currentRank: userStats.current_rank as MayaRank,
+      nextRank: rankProgress.next_rank,
+      level: userStats.level,
+      totalXp: userStats.total_xp,
+      xpToNextLevel: userStats.xp_to_next_level,
+      mlCoinsEarned: userStats.ml_coins_earned_total,
+      rankProgressPercentage: rankProgress.progress_percentage,
+      xpRequiredForNextRank: rankProgress.xp_required,
+      xpRemainingForNextRank: rankProgress.xp_remaining,
+      canRankUp: rankProgress.xp_remaining === 0 && !rankProgress.is_max_rank,
+      isMaxRank: rankProgress.is_max_rank,
+      activityStreak: userStats.current_streak,
+      lastActivityAt: userStats.last_activity_at ?? null,
+      lastRankUp: currentRankEntity.achieved_at ?? null,
+      mlCoinsBonusOnPromotion: rankProgress.ml_coins_bonus_on_promotion,
+      multiplier: totalMultiplier,
+    };
+  }
+
+  /**
+   * Calculate base multiplier for a rank
+   */
+  private calculateMultiplierForRank(rank: MayaRank): number {
+    const multipliers: Record<MayaRank, number> = {
+      [MayaRank.AJAW]: 1.0,
+      [MayaRank.NACOM]: 1.1,
+      [MayaRank.AH_KIN]: 1.25,
+      [MayaRank.HALACH_UINIC]: 1.5,
+      [MayaRank.KUKULKAN]: 2.0,
+    };
+    return multipliers[rank] ?? 1.0;
+  }
+
+  /**
+   * Calculate streak bonus (0.01 per day, max 0.25)
+   */
+  private calculateStreakBonus(streak: number): number {
+    const bonusPerDay = 0.01;
+    const maxBonus = 0.25;
+    return Math.min(streak * bonusPerDay, maxBonus);
+  }
+
+  /**
+   * Get multiplier breakdown for a user
+   *
+   * @task TASK-2026-01-17-002 - FASE 1
+   * @description Returns detailed breakdown of all multiplier sources
+   * @param userId - ID del usuario
+   * @returns Object with multiplier breakdown data
+   */
+  async getMultiplierBreakdown(userId: string): Promise<{
+    userId: string;
+    rankName: string;
+    rankMultiplier: number;
+    streakBonus: number;
+    currentStreak: number;
+  }> {
+    const userStats = await this.userStatsService.findByUserId(userId);
+    const rank = userStats.current_rank as MayaRank;
+    const rankConfig = this.getRankConfig(rank);
+
+    const rankMultiplier = this.calculateMultiplierForRank(rank);
+    const streakBonus = this.calculateStreakBonus(userStats.current_streak);
+
+    return {
+      userId,
+      rankName: rankConfig.name,
+      rankMultiplier,
+      streakBonus,
+      currentStreak: userStats.current_streak,
+    };
+  }
 }

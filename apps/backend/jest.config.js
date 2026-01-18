@@ -50,7 +50,9 @@ module.exports = {
     '^@database/(.*)$': '<rootDir>/src/database/$1',
     '^@modules/(.*)$': '<rootDir>/src/modules/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^@__mocks__/(.*)$': '<rootDir>/src/__mocks__/$1'
+    '^@__mocks__/(.*)$': '<rootDir>/src/__mocks__/$1',
+    // Map TypeORM to mock to avoid path-scurry issues in Node 20+
+    '^typeorm$': '<rootDir>/src/__mocks__/typeorm.ts',
   },
   testTimeout: 30000,
   verbose: true

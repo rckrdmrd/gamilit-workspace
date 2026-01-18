@@ -26,11 +26,84 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEconomyStore } from '../store/economyStore';
 import type { ShopItem, ShopCategory } from '../types/economyTypes';
+import {
+  createMockUserStats,
+  createMockShopItem,
+  createMockAuthStore,
+  TEST_USER_ID,
+} from '../../__tests__/helpers/gamificationMockHelpers';
 
 // Mock API
 vi.mock('../api/economyAPI', () => ({
   getBalance: vi.fn(),
   purchaseItem: vi.fn(),
+}));
+
+// Mock auth store - Note: vi.mock is hoisted, so we inline the mock data
+vi.mock('@/features/auth/store/authStore', () => ({
+  useAuthStore: {
+    getState: () => ({
+      user: { id: 'test-user-id' },
+    }),
+  },
+}));
+
+// Mock apiClient to prevent actual network calls
+// Using snake_case to match backend response format
+vi.mock('@/services/api/apiClient', () => ({
+  apiClient: {
+    get: vi.fn().mockImplementation((url: string) => {
+      if (url.includes('/stats')) {
+        return Promise.resolve({
+          data: {
+            user_id: 'test-user-id',
+            level: 5,
+            total_xp: 750,
+            xp_to_next_level: 100,
+            current_rank: 'Nacom',
+            rank_progress: 50,
+            ml_coins: 500,
+            ml_coins_earned_total: 1000,
+            ml_coins_spent_total: 500,
+            current_streak: 3,
+            max_streak: 10,
+          }
+        });
+      }
+      if (url.includes('/shop/items')) {
+        return Promise.resolve({
+          data: [{
+            id: 'item-1',
+            name: 'Detective Hat',
+            description: 'A classic detective hat',
+            icon: 'hat',
+            category: 'cosmetics',
+            rarity: 'rare',
+            tags: ['avatar', 'hat'],
+            price: 100,
+            is_available: true,
+            is_consumable: false,
+          }],
+          pagination: { page: 1, limit: 20, total: 1, totalPages: 1, hasMore: false },
+        });
+      }
+      return Promise.resolve({ data: {} });
+    }),
+    patch: vi.fn().mockImplementation((url: string, data: Record<string, unknown>) => {
+      const currentBalance = 500;
+      const increment = Number(data.ml_coins_increment) || 0;
+      const decrement = Number(data.ml_coins_decrement) || 0;
+      const newBalance = currentBalance + increment - decrement;
+      return Promise.resolve({
+        data: {
+          ml_coins: newBalance,
+          ml_coins_earned_total: 1000 + increment,
+          ml_coins_spent_total: 500 + decrement,
+        }
+      });
+    }),
+    post: vi.fn().mockResolvedValue({ data: {} }),
+  },
 }));
 
 // Test wrapper component for balance display

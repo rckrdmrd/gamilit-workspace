@@ -34,6 +34,16 @@ vi.mock('@/services/api/apiConfig', () => ({
   },
 }));
 
+// Mock auth store - required for leaderboard user rank operations
+vi.mock('@/features/auth/store/authStore', () => ({
+  useAuthStore: {
+    getState: () => ({
+      user: { id: 'test-user-id', email: 'test@test.com' },
+      isAuthenticated: true,
+    }),
+  },
+}));
+
 describe('Leaderboards Integration Tests', () => {
   // ============================================================================
   // SETUP & MOCK DATA

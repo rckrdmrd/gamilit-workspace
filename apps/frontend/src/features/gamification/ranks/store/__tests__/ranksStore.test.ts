@@ -24,11 +24,104 @@ import type {
   MultiplierSourceType,
 } from '../../types/ranksTypes';
 import * as ranksAPI from '../../api/ranksAPI';
+import {
+  createMockUserProgress,
+  createMockUserStats,
+  createMockAuthStore,
+  TEST_USER_ID,
+} from '../../../__tests__/helpers/gamificationMockHelpers';
 
 // Mock the API module
 vi.mock('../../api/ranksAPI', () => ({
   getCurrentRank: vi.fn(),
   updateRank: vi.fn(),
+}));
+
+// Mock auth store - required for addXP and fetchUserProgress
+// Note: vi.mock is hoisted, so we inline the mock data directly
+vi.mock('@/features/auth/store/authStore', () => ({
+  useAuthStore: {
+    getState: () => ({
+      user: {
+        id: 'test-user-id',
+        email: 'test@example.com',
+        fullName: 'Test User',
+      },
+      isAuthenticated: true,
+      token: 'test-token',
+    }),
+  },
+}));
+
+// Mock apiClient to prevent actual network calls
+// Using snake_case to match backend response format
+vi.mock('@/services/api/apiClient', () => ({
+  apiClient: {
+    get: vi.fn().mockImplementation((url: string) => {
+      if (url.includes('/progress')) {
+        return Promise.resolve({
+          data: {
+            user_id: 'test-user-id',
+            current_rank: 'Nacom',
+            next_rank: "Ah K'in",
+            level: 1,
+            total_xp: 0,
+            current_xp: 0,
+            xp_to_next_level: 100,
+            ml_coins_earned: 0,
+            rank_progress_percentage: 0,
+            xp_required_for_next_rank: 1000,
+            xp_remaining_for_next_rank: 1000,
+            can_rank_up: false,
+            is_max_rank: false,
+            prestige_level: 0,
+            can_prestige: false,
+            multiplier: 1.0,
+            activity_streak: 0,
+            last_activity_at: null,
+            last_rank_up: null,
+            ml_coins_bonus_on_promotion: 250,
+          }
+        });
+      }
+      if (url.includes('/stats')) {
+        return Promise.resolve({
+          data: {
+            id: 'stats-1',
+            user_id: 'test-user-id',
+            level: 1,
+            total_xp: 0,
+            xp_to_next_level: 100,
+            current_rank: 'Nacom',
+            rank_progress: 0,
+            ml_coins: 0,
+            ml_coins_earned_total: 0,
+            ml_coins_spent_total: 0,
+            current_streak: 0,
+            max_streak: 0,
+            exercises_completed: 0,
+            modules_completed: 0,
+            achievements_earned: 0,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }
+        });
+      }
+      return Promise.resolve({ data: {} });
+    }),
+    patch: vi.fn().mockResolvedValue({
+      data: {
+        total_xp: 100,
+        level: 1,
+        current_xp: 100,
+        xp_to_next_level: 110,
+        current_rank: 'Nacom',
+        leveled_up: false,
+        ranked_up: false,
+      }
+    }),
+    post: vi.fn().mockResolvedValue({ data: {} }),
+  },
 }));
 
 // Mock crypto.randomUUID
@@ -43,7 +136,8 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-// Mock data
+// Mock data for frontend assertions (camelCase - matching frontend types)
+// This represents what the frontend expects AFTER the API mapper transforms the response
 const mockUserProgress: UserRankProgress = {
   currentRank: 'Nacom',
   currentLevel: 1,
@@ -53,11 +147,11 @@ const mockUserProgress: UserRankProgress = {
   mlCoinsEarned: 0,
   prestigeLevel: 0,
   multiplier: 1.0,
-  lastRankUp: new Date('2025-01-01'),
+  lastRankUp: new Date('2026-01-15'),
   activityStreak: 0,
-  lastActivityDate: new Date('2025-01-01'),
+  lastActivityDate: new Date(),
   canRankUp: false,
-  nextRank: 'Ajaw',
+  nextRank: "Ah K'in", // Corrected: Nacom's next rank is Ah K'in
   canPrestige: false,
 };
 

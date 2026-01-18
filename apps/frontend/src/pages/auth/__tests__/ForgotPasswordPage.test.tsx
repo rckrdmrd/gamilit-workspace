@@ -19,6 +19,16 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { ForgotPasswordPage } from '../ForgotPasswordPage';
+import { passwordAPI } from '@/services/api/passwordAPI';
+
+// Mock the passwordAPI module - it exports an object with methods
+vi.mock('@/services/api/passwordAPI', () => ({
+  passwordAPI: {
+    requestPasswordReset: vi.fn(),
+    validateResetToken: vi.fn(),
+    resetPassword: vi.fn(),
+  },
+}));
 
 describe('ForgotPasswordPage', () => {
   // Helper function to render ForgotPasswordPage
@@ -32,6 +42,8 @@ describe('ForgotPasswordPage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default mock: success response
+    vi.mocked(passwordAPI.requestPasswordReset).mockResolvedValue({ message: 'Reset link sent' });
   });
 
   afterEach(() => {

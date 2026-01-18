@@ -19,22 +19,22 @@ import toast from 'react-hot-toast';
 // MOCKS
 // ============================================================================
 
-jest.mock('@/services/api/profileAPI', () => ({
+vi.mock('@/services/api/profileAPI', () => ({
   profileAPI: {
-    uploadAvatar: jest.fn(),
+    uploadAvatar: vi.fn(),
   },
 }));
 
-jest.mock('react-hot-toast', () => ({
+vi.mock('react-hot-toast', () => ({
   __esModule: true,
   default: {
-    success: jest.fn(),
-    error: jest.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
   },
 }));
 
 // Mock framer-motion to avoid animation issues in tests
-jest.mock('framer-motion', () => ({
+vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   },
@@ -66,7 +66,7 @@ const defaultProps = {
 
 describe('AvatarUpload', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ==========================================================================
@@ -150,7 +150,7 @@ describe('AvatarUpload', () => {
 
   describe('File Validation', () => {
     it('accepts valid image files (JPEG)', async () => {
-      const mockUploadAvatar = jest.spyOn(profileAPI, 'uploadAvatar').mockResolvedValue({
+      const mockUploadAvatar = vi.spyOn(profileAPI, 'uploadAvatar').mockResolvedValue({
         avatar_url: 'https://example.com/new-avatar.jpg',
         updated_at: new Date().toISOString(),
       });
@@ -168,7 +168,7 @@ describe('AvatarUpload', () => {
     });
 
     it('accepts valid image files (PNG)', async () => {
-      const mockUploadAvatar = jest.spyOn(profileAPI, 'uploadAvatar').mockResolvedValue({
+      const mockUploadAvatar = vi.spyOn(profileAPI, 'uploadAvatar').mockResolvedValue({
         avatar_url: 'https://example.com/new-avatar.png',
         updated_at: new Date().toISOString(),
       });
@@ -186,7 +186,7 @@ describe('AvatarUpload', () => {
     });
 
     it('rejects non-image files', async () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
       render(<AvatarUpload {...defaultProps} onUploadError={onError} />);
 
       const input = screen.getByLabelText('Seleccionar imagen') as HTMLInputElement;
@@ -205,7 +205,7 @@ describe('AvatarUpload', () => {
     });
 
     it('rejects files exceeding max size (default 5MB)', async () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
       render(<AvatarUpload {...defaultProps} onUploadError={onError} />);
 
       const input = screen.getByLabelText('Seleccionar imagen') as HTMLInputElement;
@@ -224,7 +224,7 @@ describe('AvatarUpload', () => {
     });
 
     it('rejects files exceeding custom max size', async () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
       render(<AvatarUpload {...defaultProps} maxSizeMB={2} onUploadError={onError} />);
 
       const input = screen.getByLabelText('Seleccionar imagen') as HTMLInputElement;
@@ -250,12 +250,12 @@ describe('AvatarUpload', () => {
   describe('Upload Flow', () => {
     it('uploads file successfully and calls onUploadComplete', async () => {
       const newAvatarUrl = 'https://example.com/new-avatar.jpg';
-      const mockUploadAvatar = jest.spyOn(profileAPI, 'uploadAvatar').mockResolvedValue({
+      const mockUploadAvatar = vi.spyOn(profileAPI, 'uploadAvatar').mockResolvedValue({
         avatar_url: newAvatarUrl,
         updated_at: new Date().toISOString(),
       });
 
-      const onComplete = jest.fn();
+      const onComplete = vi.fn();
       render(<AvatarUpload {...defaultProps} onUploadComplete={onComplete} />);
 
       const input = screen.getByLabelText('Seleccionar imagen') as HTMLInputElement;
@@ -275,9 +275,9 @@ describe('AvatarUpload', () => {
 
     it('handles upload errors correctly', async () => {
       const uploadError = new Error('Network error');
-      jest.spyOn(profileAPI, 'uploadAvatar').mockRejectedValue(uploadError);
+      vi.spyOn(profileAPI, 'uploadAvatar').mockRejectedValue(uploadError);
 
-      const onError = jest.fn();
+      const onError = vi.fn();
       render(<AvatarUpload {...defaultProps} onUploadError={onError} />);
 
       const input = screen.getByLabelText('Seleccionar imagen') as HTMLInputElement;
@@ -299,9 +299,9 @@ describe('AvatarUpload', () => {
           },
         },
       };
-      jest.spyOn(profileAPI, 'uploadAvatar').mockRejectedValue(serverError);
+      vi.spyOn(profileAPI, 'uploadAvatar').mockRejectedValue(serverError);
 
-      const onError = jest.fn();
+      const onError = vi.fn();
       render(<AvatarUpload {...defaultProps} onUploadError={onError} />);
 
       const input = screen.getByLabelText('Seleccionar imagen') as HTMLInputElement;
@@ -382,7 +382,7 @@ describe('AvatarUpload', () => {
     });
 
     it('cleans up preview on error', async () => {
-      jest.spyOn(profileAPI, 'uploadAvatar').mockRejectedValue(new Error('Upload failed'));
+      vi.spyOn(profileAPI, 'uploadAvatar').mockRejectedValue(new Error('Upload failed'));
 
       render(<AvatarUpload {...defaultProps} />);
 

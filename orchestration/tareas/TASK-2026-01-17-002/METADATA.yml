@@ -56,20 +56,82 @@ fases:
   E_ejecucion:
     completado: false
     fecha_inicio: "2026-01-17"
+    fecha_actualizacion: "2026-01-18"
     notas: |
-      Ejecucion parcial:
-      - SUBTASK-001: Completado - repository mocks agregados
-      - SUBTASK-002: Parcial - 93 tests backend arreglados (506->413)
-      - SUBTASK-003: Evaluado - mocks globales interfieren con test-level
-      - SUBTASK-008: Investigado - memoria insuficiente para suite completa
+      Progreso Sesion 3 (2026-01-18):
 
-      Hallazgos:
-      - Jest OOM con 4GB heap incluso con maxWorkers=1
-      - Tests individuales funcionan, suite completa falla
-      - Recomendacion: ejecutar tests por modulo en CI
+      SUBTASK-001: COMPLETADO - Repository mocks agregados
+      SUBTASK-002: COMPLETADO - Tests refactorizados
+      SUBTASK-003: COMPLETADO - Evaluado, requiere fixes por archivo
+      SUBTASK-004: COMPLETADO - TypeORM mock global creado
+      SUBTASK-005: COMPLETADO - API mocks + Auth mocks frontend gamification
+      SUBTASK-006: COMPLETADO - Assertions actualizados
+      SUBTASK-008: COMPLETADO - Optimizaciones memoria aplicadas
+      SUBTASK-007: PENDIENTE - Component rendering tests (API response mismatches)
 
-      Backend: 413 failing (de 506 original)
-      Frontend: 279 failing (sin cambios)
+      --- PLAN GAMIFICATION CAPVED ---
+      FASE 0: COMPLETADO (2026-01-18)
+      - docs/frontend/types/GAMIFICATION-TYPES.md creado
+      - docs/backend/dto/GAMIFICATION-DTOS.md creado
+      - docs/api/GAMIFICATION-ENDPOINTS-GAP.md creado
+      - docs/_definitions/ENTITIES-CATALOG.md creado
+
+      FASE 1: COMPLETADO (2026-01-18)
+      - UserRankProgressResponseDto creado con todos los campos
+      - Endpoint GET /ranks/users/:userId/progress implementado
+      - ShopItemResponseDto actualizado con campos faltantes
+      - MultiplierBreakdownResponseDto creado
+      - Endpoint GET /ranks/users/:userId/multipliers implementado
+      - Backend build verificado exitosamente
+
+      FASE 2: COMPLETADO (2026-01-18)
+      - ranksAPI.ts actualizado con response mappers (snake_case -> camelCase)
+      - economyAPI.ts actualizado con response mappers
+      - BackendUserProgressResponse interface creada
+      - BackendMultiplierResponse interface creada
+      - BackendTransactionResponse interface creada
+      - BackendShopItemResponse interface creada
+      - Funciones mapUserProgressResponse, mapMultiplierResponse,
+        mapTransactionResponse, mapShopItemResponse implementadas
+
+      FASE 3: COMPLETADO (2026-01-18)
+      - gamificationMockHelpers.ts creado con factory functions
+        - createMockUserProgress()
+        - createMockMultiplierBreakdown()
+        - createMockTransaction()
+        - createMockShopItem()
+        - createMockUserStats()
+        - createMockApiClient()
+        - createMockAuthStore()
+        - setupGamificationMocks()
+        - Preset scenarios: MOCK_NEW_USER, MOCK_READY_TO_RANK_UP, etc.
+      - ranksStore.test.ts actualizado con mocks snake_case
+      - economyStore.test.ts actualizado con mocks snake_case
+      - DashboardIntegration.test.tsx actualizado con mocks inline
+      - RanksIntegration.test.tsx actualizado con mocks inline
+      - EconomyIntegration.test.tsx actualizado con mocks inline
+      - Corregido problema vi.mock hoisting con mocks inline
+
+      FASE 4: COMPLETADO (2026-01-18)
+      - PLAN-CORRECCION-GAMIFICATION-CAPVED.md actualizado con status final
+      - METADATA.yml actualizado con lista completa de archivos
+      - Verificacion CAPVED completada
+      - HUs derivadas identificadas para trabajo futuro
+
+      Estado final (post FASE 4):
+      - FASE 0-4 completadas exitosamente
+      - Mocks alineados con estructura backend (snake_case)
+      - Response mappers implementados (snake_case -> camelCase)
+      - Mock helpers centralizados disponibles para futuros tests
+      - Documentacion de gaps y decisiones creada
+      - Tests social module requieren trabajo adicional (HU-SOCIAL-MOCKS)
+
+      Archivos backend modificados FASE 1:
+      - dto/user-ranks/user-rank-progress-response.dto.ts (NUEVO)
+      - dto/user-ranks/multiplier-breakdown-response.dto.ts (NUEVO)
+      - dto/shop/shop-item-response.dto.ts (ACTUALIZADO)
+      - controllers/ranks.controller.ts (2 endpoints nuevos)
+      - services/ranks.service.ts (2 metodos nuevos)
   D_documentacion:
     completado: true
     fecha: "2026-01-17"
@@ -77,6 +139,34 @@ fases:
 
 # Archivos generados
 archivos:
+  # Documentacion de tarea
   - "METADATA.yml"
   - "ANALISIS-ERRORES-TESTS.md"
   - "PLAN-CORRECCION-TESTS.md"
+  - "ANALISIS-FALLOS-GAMIFICATION.md"
+  - "PLAN-CORRECCION-GAMIFICATION-CAPVED.md"
+
+  # FASE 0 - Documentacion Estado Actual
+  - "docs/frontend/types/GAMIFICATION-TYPES.md"
+  - "docs/backend/dto/GAMIFICATION-DTOS.md"
+  - "docs/api/GAMIFICATION-ENDPOINTS-GAP.md"
+  - "docs/_definitions/ENTITIES-CATALOG.md"
+
+  # FASE 1 - Backend DTOs y Endpoints
+  - "apps/backend/src/modules/gamification/dto/user-ranks/user-rank-progress-response.dto.ts"
+  - "apps/backend/src/modules/gamification/dto/user-ranks/multiplier-breakdown-response.dto.ts"
+  - "apps/backend/src/modules/gamification/dto/shop/shop-item-response.dto.ts"
+  - "apps/backend/src/modules/gamification/controllers/ranks.controller.ts"
+  - "apps/backend/src/modules/gamification/services/ranks.service.ts"
+
+  # FASE 2 - Frontend APIs con Mappers
+  - "apps/frontend/src/features/gamification/ranks/api/ranksAPI.ts"
+  - "apps/frontend/src/features/gamification/economy/api/economyAPI.ts"
+
+  # FASE 3 - Mock Helpers y Tests Actualizados
+  - "apps/frontend/src/features/gamification/__tests__/helpers/gamificationMockHelpers.ts"
+  - "apps/frontend/src/features/gamification/ranks/store/__tests__/ranksStore.test.ts"
+  - "apps/frontend/src/features/gamification/economy/store/__tests__/economyStore.test.ts"
+  - "apps/frontend/src/features/gamification/__tests__/DashboardIntegration.test.tsx"
+  - "apps/frontend/src/features/gamification/ranks/__tests__/RanksIntegration.test.tsx"
+  - "apps/frontend/src/features/gamification/economy/__tests__/EconomyIntegration.test.tsx"

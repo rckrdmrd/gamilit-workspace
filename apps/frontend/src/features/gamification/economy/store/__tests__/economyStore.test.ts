@@ -21,6 +21,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useEconomyStore } from '../economyStore';
 import type { ShopItem, MLCoinsBalance, ShopCategory } from '../../types/economyTypes';
 import * as economyAPI from '../../api/economyAPI';
+import {
+  createMockUserStats,
+  createMockShopItem,
+  createMockAuthStore,
+  TEST_USER_ID,
+} from '../../../__tests__/helpers/gamificationMockHelpers';
 
 // Mock the API module
 vi.mock('../../api/economyAPI', () => ({
@@ -29,12 +35,86 @@ vi.mock('../../api/economyAPI', () => ({
   purchaseItem: vi.fn(),
 }));
 
-// Mock the auth store
+// Mock the auth store - Note: vi.mock is hoisted, so we inline the mock data
 vi.mock('@/features/auth/store/authStore', () => ({
   useAuthStore: {
     getState: () => ({
-      user: { id: 'test-user-id' },
+      user: {
+        id: 'test-user-id',
+        email: 'test@example.com',
+        fullName: 'Test User',
+      },
+      isAuthenticated: true,
+      token: 'test-token',
     }),
+  },
+}));
+
+// Mock apiClient to prevent actual network calls
+// Using snake_case to match backend response format
+vi.mock('@/services/api/apiClient', () => ({
+  apiClient: {
+    get: vi.fn().mockImplementation((url: string) => {
+      if (url.includes('/stats')) {
+        return Promise.resolve({
+          data: {
+            id: 'stats-1',
+            user_id: 'test-user-id',
+            level: 5,
+            total_xp: 750,
+            xp_to_next_level: 100,
+            current_rank: 'Nacom',
+            rank_progress: 50,
+            ml_coins: 500,
+            ml_coins_earned_total: 1000,
+            ml_coins_spent_total: 500,
+            current_streak: 3,
+            max_streak: 10,
+            exercises_completed: 25,
+            modules_completed: 2,
+            achievements_earned: 5,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }
+        });
+      }
+      if (url.includes('/shop/items')) {
+        return Promise.resolve({
+          data: [{
+            id: 'item-1',
+            name: 'Detective Hat',
+            description: 'A classic detective hat for your avatar',
+            icon: 'hat',
+            image_url: 'https://example.com/hat.png',
+            category: 'cosmetics',
+            rarity: 'rare',
+            tags: ['avatar', 'hat', 'detective'],
+            price: 100,
+            is_available: true,
+            stock: 50,
+            is_consumable: false,
+            requirements: { level: 5 },
+          }],
+          pagination: { page: 1, limit: 20, total: 1, totalPages: 1, hasMore: false },
+        });
+      }
+      return Promise.resolve({ data: {} });
+    }),
+    patch: vi.fn().mockImplementation((url: string, data: Record<string, unknown>) => {
+      // Return updated balance based on operation
+      const currentBalance = 500;
+      const increment = Number(data.ml_coins_increment) || 0;
+      const decrement = Number(data.ml_coins_decrement) || 0;
+      const newBalance = currentBalance + increment - decrement;
+      return Promise.resolve({
+        data: {
+          ml_coins: newBalance,
+          ml_coins_earned_total: 1000 + increment,
+          ml_coins_spent_total: 500 + decrement,
+        }
+      });
+    }),
+    post: vi.fn().mockResolvedValue({ data: {} }),
   },
 }));
 
@@ -50,7 +130,8 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-// Mock data
+// Mock data for frontend assertions (camelCase - matching frontend types)
+// This represents what the frontend expects AFTER the API mapper transforms the response
 const mockShopItem: ShopItem = {
   id: 'item-1',
   name: 'Power Boost',
@@ -62,6 +143,8 @@ const mockShopItem: ShopItem = {
   rarity: 'rare',
   tags: ['boost', 'xp'],
   isPurchasable: true,
+  isAvailable: true,
+  isConsumable: true,
 };
 
 const mockBalance: MLCoinsBalance = {

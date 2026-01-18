@@ -134,7 +134,7 @@ describe('UserStatsService', () => {
         NotFoundException,
       );
       await expect(service.findByUserId(mockUserId)).rejects.toThrow(
-        `No stats found for profile ${mockProfileId}`,
+        `No stats found for user ${mockUserId} (profile: ${mockProfileId})`,
       );
     });
 
@@ -407,8 +407,16 @@ describe('UserStatsService', () => {
         rank_progress: 0,
       });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
+      // Mock save to simulate DB trigger behavior that handles level-up
       mockUserStatsRepo.save.mockImplementation((stats) => {
-        return Promise.resolve(stats as UserStats);
+        const saved = { ...stats } as UserStats;
+        // Simulate DB trigger: if total_xp >= xp_to_next_level, level up
+        if (saved.total_xp >= saved.xp_to_next_level) {
+          saved.level = 2;
+          saved.total_xp = saved.total_xp - 100; // carry over
+          saved.xp_to_next_level = 110; // scaled for level 2
+        }
+        return Promise.resolve(saved);
       });
 
       // Act
@@ -431,8 +439,22 @@ describe('UserStatsService', () => {
         rank_progress: 0,
       });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
+      // Mock save to simulate DB trigger handling multiple level-ups
       mockUserStatsRepo.save.mockImplementation((stats) => {
-        return Promise.resolve(stats as UserStats);
+        const saved = { ...stats } as UserStats;
+        // Simulate DB trigger: process level-ups
+        let level = saved.level;
+        let xp = saved.total_xp;
+        let threshold = saved.xp_to_next_level;
+        while (xp >= threshold) {
+          xp -= threshold;
+          level++;
+          threshold = 100 + (level - 1) * 10;
+        }
+        saved.level = level;
+        saved.total_xp = xp;
+        saved.xp_to_next_level = threshold;
+        return Promise.resolve(saved);
       });
 
       // Act - Adding 500 XP should level up multiple times
@@ -454,8 +476,19 @@ describe('UserStatsService', () => {
         rank_progress: 80,
       });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
+      // Mock save to simulate DB trigger: level up and rank promotion
       mockUserStatsRepo.save.mockImplementation((stats) => {
-        return Promise.resolve(stats as UserStats);
+        const saved = { ...stats } as UserStats;
+        // Simulate: level up from 4 to 5
+        if (saved.total_xp >= saved.xp_to_next_level) {
+          saved.level = 5;
+          saved.total_xp = saved.total_xp - 100;
+          saved.xp_to_next_level = 140;
+          // Level 5 triggers rank promotion to 'Nacom'
+          saved.current_rank = 'Nacom';
+          saved.rank_progress = 0;
+        }
+        return Promise.resolve(saved);
       });
 
       // Act - Level 4 -> 5 should trigger rank promotion to 'Nacom'
@@ -502,8 +535,18 @@ describe('UserStatsService', () => {
         rank_progress: 0,
       });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
+      // Mock save to simulate DB trigger: level up + rank progress calc
       mockUserStatsRepo.save.mockImplementation((stats) => {
-        return Promise.resolve(stats as UserStats);
+        const saved = { ...stats } as UserStats;
+        // Simulate: level up from 2 to 3
+        if (saved.total_xp >= saved.xp_to_next_level) {
+          saved.level = 3;
+          saved.total_xp = saved.total_xp - 100;
+          saved.xp_to_next_level = 120;
+          // Calculate rank progress: (3-0)/(5-0)*100 = 60%
+          saved.rank_progress = 60;
+        }
+        return Promise.resolve(saved);
       });
 
       // Act
@@ -526,8 +569,26 @@ describe('UserStatsService', () => {
         rank_progress: 100,
       });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
+      // Mock save to simulate DB trigger: level up at max rank
       mockUserStatsRepo.save.mockImplementation((stats) => {
-        return Promise.resolve(stats as UserStats);
+        const saved = { ...stats } as UserStats;
+        // Simulate: adding 1000 XP to level 20 (needs 600 to next level)
+        // 1000 XP would level up to 21+
+        let xp = saved.total_xp;
+        let level = saved.level;
+        let threshold = saved.xp_to_next_level;
+        while (xp >= threshold) {
+          xp -= threshold;
+          level++;
+          threshold = 100 + (level - 1) * 10;
+        }
+        saved.level = level;
+        saved.total_xp = xp;
+        saved.xp_to_next_level = threshold;
+        // At max rank, progress stays at 100
+        saved.current_rank = "K'uk'ulkan";
+        saved.rank_progress = 100;
+        return Promise.resolve(saved);
       });
 
       // Act

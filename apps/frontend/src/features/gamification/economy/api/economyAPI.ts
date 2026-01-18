@@ -58,6 +58,101 @@ import type {
 } from '../types/economyTypes';
 
 // ============================================================================
+// RESPONSE MAPPERS (snake_case -> camelCase)
+// @task TASK-2026-01-17-002 - FASE 2
+// ============================================================================
+
+/**
+ * Backend response type for Transaction (snake_case)
+ */
+interface BackendTransactionResponse {
+  id: string;
+  user_id: string;
+  amount: number;
+  balance_before: number;
+  balance_after: number;
+  transaction_type: string;
+  description: string | null;
+  reason: string | null;
+  reference_id: string | null;
+  reference_type: string | null;
+  multiplier: number;
+  bonus_applied: boolean;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+/**
+ * Backend response type for ShopItem (snake_case)
+ */
+interface BackendShopItemResponse {
+  id: string;
+  name: string;
+  description?: string;
+  icon: string;
+  image_url?: string;
+  category: string;
+  rarity: string;
+  tags: string[];
+  price: number;
+  discount_price?: number;
+  is_available: boolean;
+  stock?: number;
+  is_consumable: boolean;
+  max_per_user?: number;
+  duration_days?: number;
+  effect_data?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
+  requirements?: {
+    rank?: string;
+    level?: number;
+    achievement?: string;
+  };
+}
+
+/**
+ * Map backend transaction response to frontend Transaction
+ * @task TASK-2026-01-17-002 - FASE 2
+ */
+const mapTransactionResponse = (response: BackendTransactionResponse): Transaction => ({
+  id: response.id,
+  type: response.transaction_type as Transaction['type'],
+  amount: response.amount,
+  source: response.reference_type || 'unknown',
+  description: response.description || '',
+  timestamp: new Date(response.created_at),
+  balanceAfter: response.balance_after,
+  metadata: response.metadata as Transaction['metadata'],
+});
+
+/**
+ * Map backend shop item response to frontend ShopItem
+ * @task TASK-2026-01-17-002 - FASE 2
+ */
+const mapShopItemResponse = (response: BackendShopItemResponse): ShopItem => ({
+  id: response.id,
+  name: response.name,
+  description: response.description || '',
+  category: response.category as ShopItem['category'],
+  price: response.price,
+  icon: response.icon,
+  image: response.image_url,
+  rarity: response.rarity as ShopItem['rarity'],
+  tags: response.tags,
+  isOwned: false, // Calculated separately
+  isPurchasable: response.is_available && (response.stock === null || response.stock === undefined || response.stock > 0),
+  requirements: response.requirements,
+  stock: response.stock,
+  available: response.is_available,
+  metadata: response.metadata ? {
+    effectDescription: response.effect_data?.description as string,
+    duration: response.duration_days,
+    stackable: response.metadata?.stackable as boolean,
+    tradeable: response.metadata?.tradeable as boolean,
+  } : undefined,
+});
+
+// ============================================================================
 // MOCK DATA (for development)
 // ============================================================================
 
@@ -277,7 +372,8 @@ export const getTransactions = async (
       };
     }
 
-    const { data } = await apiClient.get<ApiResponse<PaginatedResponse<Transaction>>>(
+    // TASK-2026-01-17-002: Map backend response to frontend types
+    const { data } = await apiClient.get<{ data: BackendTransactionResponse[]; pagination: PaginatedResponse<unknown>['pagination'] }>(
       API_ENDPOINTS.economy.transactions(userId),
       {
         params: {
@@ -287,7 +383,10 @@ export const getTransactions = async (
       },
     );
 
-    return data.data;
+    return {
+      data: data.data.map(mapTransactionResponse),
+      pagination: data.pagination,
+    };
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -358,7 +457,8 @@ export const getShopItems = async (
       };
     }
 
-    const { data } = await apiClient.get<ApiResponse<PaginatedResponse<ShopItem>>>(
+    // TASK-2026-01-17-002: Map backend response to frontend types
+    const { data } = await apiClient.get<{ data: BackendShopItemResponse[]; pagination: PaginatedResponse<unknown>['pagination'] }>(
       API_ENDPOINTS.economy.shopItems,
       {
         params: {
@@ -369,7 +469,10 @@ export const getShopItems = async (
       },
     );
 
-    return data.data;
+    return {
+      data: data.data.map(mapShopItemResponse),
+      pagination: data.pagination,
+    };
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -399,11 +502,12 @@ export const getShopItem = async (itemId: string): Promise<ShopItem> => {
       };
     }
 
-    const { data } = await apiClient.get<ApiResponse<ShopItem>>(
+    // TASK-2026-01-17-002: Map backend response to frontend types
+    const { data } = await apiClient.get<BackendShopItemResponse>(
       API_ENDPOINTS.economy.shopItem(itemId),
     );
 
-    return data.data;
+    return mapShopItemResponse(data);
   } catch (error) {
     throw handleAPIError(error);
   }

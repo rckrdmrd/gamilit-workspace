@@ -44,6 +44,16 @@ vi.mock('framer-motion', () => ({
   },
 }));
 
+// Mock auth store - required for achievement operations that check user
+vi.mock('@/features/auth/store/authStore', () => ({
+  useAuthStore: {
+    getState: () => ({
+      user: { id: 'test-user-id', email: 'test@test.com' },
+      isAuthenticated: true,
+    }),
+  },
+}));
+
 // Test wrapper component that uses the store
 const AchievementsList: React.FC = () => {
   const { achievements, unlockAchievement } = useAchievementsStore();

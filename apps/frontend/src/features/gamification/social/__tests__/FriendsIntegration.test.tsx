@@ -15,9 +15,19 @@
  * Total: 18 tests
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useFriendsStore } from '../store/friendsStore';
 import type { FriendRequest } from '../types/friendsTypes';
+
+// Mock auth store - required for friend operations
+vi.mock('@/features/auth/store/authStore', () => ({
+  useAuthStore: {
+    getState: () => ({
+      user: { id: 'test-user-id', email: 'test@test.com' },
+      isAuthenticated: true,
+    }),
+  },
+}));
 
 describe('Friends Integration Tests', () => {
   // ============================================================================

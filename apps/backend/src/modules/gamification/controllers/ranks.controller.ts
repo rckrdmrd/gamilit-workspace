@@ -22,6 +22,10 @@ import { RanksService, RankProgressDto } from '../services/ranks.service';
 import {
   CreateUserRankDto,
   UpdateUserRankDto,
+  UserRankProgressResponseDto,
+  createUserRankProgressResponse,
+  MultiplierBreakdownResponseDto,
+  createMultiplierBreakdownResponse,
   } from '../dto/user-ranks';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@shared/guards/roles.guard';
@@ -147,6 +151,87 @@ export class RanksController {
     @Param('userId') userId: string,
   ): Promise<RankProgressDto> {
     return this.ranksService.calculateRankProgress(userId);
+  }
+
+  /**
+   * 3b. GET /api/gamification/ranks/users/:userId/progress
+   * Obtiene el progreso COMPLETO del usuario (DTO compuesto)
+   *
+   * @task TASK-2026-01-17-002 - FASE 1
+   * @description Endpoint que provee todos los campos que el frontend necesita
+   *              en un solo request. Combina UserStats + UserRank + campos calculados.
+   *
+   * @param userId - ID del usuario
+   * @returns UserRankProgressResponseDto con información completa
+   */
+  @Get('users/:userId/progress')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Obtener progreso completo del usuario',
+    description:
+      'Retorna información completa de progreso: nivel, XP, rango, multiplicadores, streaks, y elegibilidad para promoción/prestige',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID del usuario',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Progreso completo obtenido exitosamente',
+    type: UserRankProgressResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async getFullUserProgress(
+    @Param('userId') userId: string,
+  ): Promise<UserRankProgressResponseDto> {
+    const data = await this.ranksService.getFullUserProgress(userId);
+    return createUserRankProgressResponse(data);
+  }
+
+  /**
+   * 3c. GET /api/gamification/ranks/users/:userId/multipliers
+   * Obtiene el desglose de multiplicadores del usuario
+   *
+   * @task TASK-2026-01-17-002 - FASE 1
+   * @description Endpoint que provee el desglose completo de multiplicadores:
+   *              rango, racha, eventos, y totales.
+   *
+   * @param userId - ID del usuario
+   * @returns MultiplierBreakdownResponseDto con desglose completo
+   */
+  @Get('users/:userId/multipliers')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Obtener desglose de multiplicadores',
+    description:
+      'Retorna el desglose completo de multiplicadores activos del usuario: rango, racha, eventos temporales, y total calculado',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID del usuario',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Desglose de multiplicadores obtenido exitosamente',
+    type: MultiplierBreakdownResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async getUserMultipliers(
+    @Param('userId') userId: string,
+  ): Promise<MultiplierBreakdownResponseDto> {
+    const data = await this.ranksService.getMultiplierBreakdown(userId);
+    return createMultiplierBreakdownResponse(
+      data.userId,
+      { name: data.rankName, value: data.rankMultiplier },
+      data.streakBonus,
+      data.currentStreak,
+    );
   }
 
   /**

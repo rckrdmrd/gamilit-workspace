@@ -494,6 +494,22 @@ describe('AdminReportsService', () => {
 
   describe('initialization', () => {
     it('should create reports directory on initialization', async () => {
+      // Clear mocks and create a fresh service to test initialization
+      jest.clearAllMocks();
+
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          AdminReportsService,
+          { provide: getRepositoryToken(AdminReport, 'auth'), useValue: mockReportRepository },
+          { provide: getRepositoryToken(User, 'auth'), useValue: mockUserRepository },
+          { provide: getRepositoryToken(Tenant, 'auth'), useValue: mockTenantRepository },
+        ],
+      }).compile();
+
+      module.get<AdminReportsService>(AdminReportsService);
+
+      // Wait for async constructor operations to complete
+      await new Promise(resolve => setTimeout(resolve, 10));
       expect(fs.mkdir).toHaveBeenCalled();
     });
 

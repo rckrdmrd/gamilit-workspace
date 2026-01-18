@@ -24,11 +24,92 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useRanksStore } from '../store/ranksStore';
 import type { UserRankProgress, MultiplierSourceType } from '../types/ranksTypes';
+import {
+  createMockUserProgress,
+  createMockUserStats,
+  createMockAuthStore,
+  TEST_USER_ID,
+} from '../../__tests__/helpers/gamificationMockHelpers';
 
 // Mock API
 vi.mock('../api/ranksAPI', () => ({
   getCurrentRank: vi.fn(),
   updateRankProgress: vi.fn(),
+}));
+
+// Mock auth store - Note: vi.mock is hoisted, so we inline the mock data
+vi.mock('@/features/auth/store/authStore', () => ({
+  useAuthStore: {
+    getState: () => ({
+      user: {
+        id: 'test-user-id',
+        email: 'test@test.com',
+        fullName: 'Test User',
+      },
+      isAuthenticated: true,
+      token: 'test-token',
+    }),
+  },
+}));
+
+// Mock apiClient to prevent actual network calls
+// Using snake_case to match backend response format
+vi.mock('@/services/api/apiClient', () => ({
+  apiClient: {
+    get: vi.fn().mockImplementation((url: string) => {
+      if (url.includes('/progress')) {
+        return Promise.resolve({
+          data: {
+            user_id: 'test-user-id',
+            current_rank: 'Nacom',
+            next_rank: "Ah K'in",
+            level: 1,
+            total_xp: 0,
+            current_xp: 0,
+            xp_to_next_level: 100,
+            ml_coins_earned: 0,
+            rank_progress_percentage: 0,
+            can_rank_up: false,
+            is_max_rank: false,
+            prestige_level: 0,
+            can_prestige: false,
+            multiplier: 1.0,
+            activity_streak: 0,
+          }
+        });
+      }
+      if (url.includes('/stats')) {
+        return Promise.resolve({
+          data: {
+            user_id: 'test-user-id',
+            level: 1,
+            total_xp: 0,
+            xp_to_next_level: 100,
+            current_rank: 'Nacom',
+            rank_progress: 0,
+            ml_coins: 0,
+            ml_coins_earned_total: 0,
+            ml_coins_spent_total: 0,
+            current_streak: 0,
+            max_streak: 0,
+          }
+        });
+      }
+      return Promise.resolve({ data: {} });
+    }),
+    patch: vi.fn().mockResolvedValue({
+      data: {
+        total_xp: 50,
+        current_xp: 50,
+        xp_to_next_level: 100,
+        current_rank: 'Nacom',
+        level: 1,
+        leveled_up: false,
+        ranked_up: false,
+      }
+    }),
+    post: vi.fn().mockResolvedValue({ data: {} }),
+  },
 }));
 
 // Test wrapper for rank display

@@ -52,6 +52,107 @@ import type {
 import { MOCK_USER_NACOM } from '../mockData/ranksMockData';
 
 // ============================================================================
+// RESPONSE MAPPERS (snake_case -> camelCase)
+// ============================================================================
+
+/**
+ * Backend response type for user progress (snake_case)
+ * @task TASK-2026-01-17-002 - FASE 2
+ */
+interface BackendUserProgressResponse {
+  user_id: string;
+  current_rank: string;
+  next_rank: string | null;
+  level: number;
+  total_xp: number;
+  current_xp: number;
+  xp_to_next_level: number;
+  ml_coins_earned: number;
+  rank_progress_percentage: number;
+  xp_required_for_next_rank: number;
+  xp_remaining_for_next_rank: number;
+  can_rank_up: boolean;
+  is_max_rank: boolean;
+  prestige_level: number;
+  can_prestige: boolean;
+  multiplier: number;
+  activity_streak: number;
+  last_activity_at: string | null;
+  last_rank_up: string | null;
+  ml_coins_bonus_on_promotion: number;
+}
+
+/**
+ * Backend response type for multiplier breakdown (snake_case)
+ */
+interface BackendMultiplierSource {
+  type: string;
+  name: string;
+  value: number;
+  expires_at?: string;
+  is_permanent: boolean;
+  description?: string;
+  icon?: string;
+}
+
+interface BackendMultiplierResponse {
+  user_id: string;
+  base: number;
+  rank: BackendMultiplierSource;
+  sources: BackendMultiplierSource[];
+  total: number;
+  has_expiring_soon: boolean;
+  expiring_soon: BackendMultiplierSource[];
+}
+
+/**
+ * Map backend user progress response to frontend UserRankProgress
+ * @task TASK-2026-01-17-002 - FASE 2
+ */
+const mapUserProgressResponse = (response: BackendUserProgressResponse): UserRankProgress => ({
+  currentRank: response.current_rank as UserRankProgress['currentRank'],
+  nextRank: response.next_rank as UserRankProgress['nextRank'],
+  currentLevel: response.level,
+  currentXP: response.current_xp,
+  xpToNextLevel: response.xp_to_next_level,
+  totalXP: response.total_xp,
+  mlCoinsEarned: response.ml_coins_earned,
+  prestigeLevel: response.prestige_level,
+  multiplier: response.multiplier,
+  lastRankUp: response.last_rank_up ? new Date(response.last_rank_up) : new Date(),
+  activityStreak: response.activity_streak,
+  lastActivityDate: response.last_activity_at ? new Date(response.last_activity_at) : new Date(),
+  canRankUp: response.can_rank_up,
+  canPrestige: response.can_prestige,
+});
+
+/**
+ * Map backend multiplier source to frontend MultiplierSource
+ */
+const mapMultiplierSource = (source: BackendMultiplierSource): MultiplierSource => ({
+  type: source.type as MultiplierSource['type'],
+  name: source.name,
+  value: source.value,
+  expiresAt: source.expires_at ? new Date(source.expires_at) : undefined,
+  isPermanent: source.is_permanent,
+  description: source.description,
+  icon: source.icon,
+});
+
+/**
+ * Map backend multiplier response to frontend MultiplierBreakdown
+ * @task TASK-2026-01-17-002 - FASE 2
+ */
+const mapMultiplierResponse = (response: BackendMultiplierResponse): MultiplierBreakdown => ({
+  base: response.base,
+  rank: mapMultiplierSource(response.rank),
+  sources: response.sources.map(mapMultiplierSource),
+  total: response.total,
+  hasExpiringSoon: response.has_expiring_soon,
+  expiringSoon: response.expiring_soon.map(mapMultiplierSource),
+});
+
+// ============================================================================
 // MOCK DATA (for development)
 // ============================================================================
 
@@ -138,6 +239,7 @@ export const getCurrentRank = async (): Promise<UserRankProgress> => {
 /**
  * Get progression statistics
  *
+ * @task TASK-2026-01-17-002 - FASE 2: Updated to use new /progress endpoint with mapper
  * @param userId - User ID (REQUIRED - get from useAuth hook)
  * @returns User progression stats
  * @throws Error if userId is not provided
@@ -156,11 +258,13 @@ export const getProgressionStats = async (userId: string): Promise<UserRankProgr
       return await mockGetCurrentRank();
     }
 
-    const { data } = await apiClient.get<ApiResponse<UserRankProgress>>(
+    // TASK-2026-01-17-002: Use new /progress endpoint that returns complete data
+    const { data } = await apiClient.get<BackendUserProgressResponse>(
       API_ENDPOINTS.ranks.rankProgress(userId),
     );
 
-    return data.data;
+    // Map snake_case response to camelCase frontend type
+    return mapUserProgressResponse(data);
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -374,6 +478,7 @@ export const getProgressionHistory = async (
 /**
  * Get multiplier breakdown
  *
+ * @task TASK-2026-01-17-002 - FASE 2: Updated to use new /multipliers endpoint with mapper
  * @param userId - User ID (REQUIRED - get from useAuth hook)
  * @returns Current multiplier breakdown
  * @throws Error if userId is not provided
@@ -406,12 +511,13 @@ export const getMultipliers = async (userId: string): Promise<MultiplierBreakdow
       };
     }
 
-    // Note: Backend returns multiplier info in rank-progress endpoint
-    const { data } = await apiClient.get<ApiResponse<MultiplierBreakdown>>(
+    // TASK-2026-01-17-002: Use new /multipliers endpoint that returns complete breakdown
+    const { data } = await apiClient.get<BackendMultiplierResponse>(
       API_ENDPOINTS.ranks.multipliers(userId),
     );
 
-    return data.data;
+    // Map snake_case response to camelCase frontend type
+    return mapMultiplierResponse(data);
   } catch (error) {
     throw handleAPIError(error);
   }

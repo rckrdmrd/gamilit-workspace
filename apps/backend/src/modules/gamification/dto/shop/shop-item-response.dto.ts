@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ShopItemCategoryEnum } from '@shared/constants/enums.constants';
 
 /**
@@ -6,6 +6,10 @@ import { ShopItemCategoryEnum } from '@shared/constants/enums.constants';
  *
  * @description DTO para respuesta de items del shop
  * Usado en endpoints GET /api/v1/gamification/shop/items
+ *
+ * @task TASK-2026-01-17-002 - FASE 1
+ * @update 2026-01-18: Agregados campos faltantes para frontend
+ * - max_per_user, duration_days, effect_data, metadata
  */
 export class ShopItemResponseDto {
   @ApiProperty({
@@ -106,5 +110,43 @@ export class ShopItemResponseDto {
     rank?: string;
     level?: number;
     achievement?: string;
+  };
+
+  // =====================================================
+  // CAMPOS AGREGADOS PARA FRONTEND (TASK-2026-01-17-002)
+  // =====================================================
+
+  @ApiPropertyOptional({
+    example: 3,
+    description: 'Máximo de items que un usuario puede comprar (null = sin límite)',
+  })
+    max_per_user?: number;
+
+  @ApiPropertyOptional({
+    example: 7,
+    description: 'Duración en días para items temporales (null = permanente)',
+  })
+    duration_days?: number;
+
+  @ApiPropertyOptional({
+    example: { type: 'xp_boost', multiplier: 2.0, duration_minutes: 60 },
+    description: 'Datos del efecto del item (para consumibles)',
+  })
+    effect_data?: Record<string, unknown>;
+
+  @ApiPropertyOptional({
+    example: {
+      effectDescription: 'Duplica la XP ganada durante 1 hora',
+      stackable: false,
+      tradeable: false,
+    },
+    description: 'Metadatos adicionales del item',
+  })
+    metadata?: {
+    effectDescription?: string;
+    duration?: number;
+    stackable?: boolean;
+    tradeable?: boolean;
+    [key: string]: unknown;
   };
 }

@@ -16,9 +16,19 @@
  * Total: 18 tests
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useGuildsStore } from '../store/guildsStore';
 import type { Guild, GuildMember } from '../types/guildsTypes';
+
+// Mock auth store - required for guild operations
+vi.mock('@/features/auth/store/authStore', () => ({
+  useAuthStore: {
+    getState: () => ({
+      user: { id: 'test-user-id', email: 'test@test.com' },
+      isAuthenticated: true,
+    }),
+  },
+}));
 
 describe('Guilds Integration Tests', () => {
   // ============================================================================
