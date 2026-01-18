@@ -295,7 +295,7 @@ PRIORIDAD P2 (Media):    2/4   → 50%  🟡
 - ✅ Endpoints: GET /exercises, GET /exercises/:id, GET /exercises/module/:moduleId
 
 **Frontend:**
-- ✅ 61 componentes de mecánicas implementados
+- ✅ 57 componentes de mecánicas implementados *(61 - 4 eliminados según spec v6.1)*
 - ✅ **Módulo 1 (7 tipos):**
   - EmparejamientoExerciseDragDrop
   - CrucigramaExercise
@@ -315,16 +315,13 @@ PRIORIDAD P2 (Media):    2/4   → 50%  🟡
   - PodcastArgumentativoExercise
   - TribunalOpinionesExercise
   - DebateDigitalExercise
-- ✅ **Módulo 4 (9 tipos):**
-  - ResenaCriticaExercise
-  - InfografiaInteractivaExercise
+- ✅ **Módulo 4 (5 tipos):** *(Actualizado según DocumentoDeDiseño v6.1)*
   - VerificadorFakeNewsExercise
-  - ChatLiterarioExercise
-  - NavegacionHipertextualExercise
-  - EmailFormalExercise
-  - EnsayoArgumentativoExercise
-  - AnalisisMemesExercise
+  - InfografiaInteractivaExercise
   - QuizTikTokExercise
+  - NavegacionHipertextualExercise
+  - AnalisisMemesExercise
+  - ~~*Eliminados según spec v6.1: EmailFormal, ChatLiterario, EnsayoArgumentativo, ResenaCritica*~~
 - ✅ **Módulo 5 (3 tipos):**
   - VideoCartaExercise
   - ComicDigitalExercise
