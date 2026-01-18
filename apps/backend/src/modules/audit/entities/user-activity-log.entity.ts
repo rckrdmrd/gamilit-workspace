@@ -16,12 +16,12 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   Index,
-  ManyToOne,
-  JoinColumn,
+  // ManyToOne, // Comentado - relaciones cross-connection deshabilitadas
+  // JoinColumn, // Comentado - relaciones cross-connection deshabilitadas
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
-import { Profile } from '../../auth/entities/profile.entity';
-import { Tenant } from '../../auth/entities/tenant.entity';
+// import { Profile } from '../../auth/entities/profile.entity'; // Comentado - conexión separada
+// import { Tenant } from '../../auth/entities/tenant.entity'; // Comentado - conexión separada
 
 export enum ActivityType {
   PAGE_VIEW = 'page_view',
@@ -130,11 +130,15 @@ export class UserActivityLog {
   createdAt!: Date;
 
   // Relaciones
-  @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user!: Profile;
+  // NOTA: Relaciones comentadas - entidades en conexión separada ('audit')
+  // Profile y Tenant están en conexión 'auth', causa error de metadata cross-connection
+  // Los FK columns (user_id, tenant_id) se mantienen para integridad referencial en BD
+  //
+  // @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
+  // @JoinColumn({ name: 'user_id' })
+  // user!: Profile;
 
-  @ManyToOne(() => Tenant, { onDelete: 'CASCADE', nullable: true })
-  @JoinColumn({ name: 'tenant_id' })
-  tenant!: Tenant | null;
+  // @ManyToOne(() => Tenant, { onDelete: 'CASCADE', nullable: true })
+  // @JoinColumn({ name: 'tenant_id' })
+  // tenant!: Tenant | null;
 }

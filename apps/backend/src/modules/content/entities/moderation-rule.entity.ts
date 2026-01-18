@@ -17,11 +17,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  ManyToOne,
-  JoinColumn,
+  // ManyToOne, // Comentado - relaciones cross-connection deshabilitadas
+  // JoinColumn, // Comentado - relaciones cross-connection deshabilitadas
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
-import { User } from '../../auth/entities/user.entity';
+// import { User } from '../../auth/entities/user.entity'; // Comentado - conexión separada
 
 export enum ModerationRuleType {
   KEYWORD = 'keyword',
@@ -121,7 +121,11 @@ export class ModerationRule {
   updatedAt!: Date;
 
   // Relaciones
-  @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'created_by' })
-  creator!: User | null;
+  // NOTA: Relaciones comentadas - entidades en conexión separada ('content')
+  // User está en conexión 'auth', causa error de metadata cross-connection
+  // El FK column (created_by) se mantiene para integridad referencial en BD
+  //
+  // @ManyToOne(() => User, { nullable: true })
+  // @JoinColumn({ name: 'created_by' })
+  // creator!: User | null;
 }
