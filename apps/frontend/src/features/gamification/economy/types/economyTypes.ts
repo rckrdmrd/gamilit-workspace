@@ -74,6 +74,75 @@ export type EarningSource =
   | 'admin_grant';
 
 /**
+ * Maps TransactionTypeEnum values to legacy EarningSource values
+ *
+ * This mapper provides backwards compatibility for components that still use
+ * the deprecated EarningSource type while the backend uses TransactionTypeEnum.
+ *
+ * @param transactionType - The TransactionTypeEnum value from backend
+ * @returns The corresponding EarningSource value, or the original type if no mapping exists
+ *
+ * @example
+ * ```typescript
+ * const source = mapTransactionTypeToEarningSource('earned_exercise');
+ * // Returns: 'exercise_completion'
+ *
+ * const source = mapTransactionTypeToEarningSource('earned_streak');
+ * // Returns: 'streak_bonus'
+ * ```
+ *
+ * @see DISCREPANCIAS-BE-FE-2026-01-18.md - Discrepancia 2
+ */
+export const mapTransactionTypeToEarningSource = (
+  transactionType: TransactionType | string
+): EarningSource | string => {
+  const mapping: Record<string, EarningSource> = {
+    // Earned types
+    [TransactionTypeEnum.EARNED_EXERCISE]: 'exercise_completion',
+    [TransactionTypeEnum.EARNED_STREAK]: 'streak_bonus',
+    [TransactionTypeEnum.EARNED_ACHIEVEMENT]: 'achievement_unlock',
+    [TransactionTypeEnum.EARNED_DAILY]: 'daily_login',
+    [TransactionTypeEnum.EARNED_BONUS]: 'perfect_score', // Closest match for bonus
+    [TransactionTypeEnum.EARNED_RANK]: 'leaderboard_reward', // Rank rewards often tied to leaderboard
+    [TransactionTypeEnum.EARNED_MODULE]: 'exercise_completion', // Module completion similar to exercise
+
+    // Admin/System types
+    [TransactionTypeEnum.ADMIN_ADJUSTMENT]: 'admin_grant',
+    [TransactionTypeEnum.BONUS]: 'referral_bonus', // Generic bonus
+    [TransactionTypeEnum.WELCOME_BONUS]: 'referral_bonus', // Welcome bonus similar to referral
+  };
+
+  return mapping[transactionType] || transactionType;
+};
+
+/**
+ * Maps legacy EarningSource values to TransactionTypeEnum
+ *
+ * Inverse of mapTransactionTypeToEarningSource for cases where frontend
+ * needs to send data to backend.
+ *
+ * @param source - The EarningSource value
+ * @returns The corresponding TransactionTypeEnum value
+ */
+export const mapEarningSourceToTransactionType = (
+  source: EarningSource | string
+): TransactionType => {
+  const mapping: Record<string, TransactionType> = {
+    exercise_completion: TransactionTypeEnum.EARNED_EXERCISE,
+    streak_bonus: TransactionTypeEnum.EARNED_STREAK,
+    perfect_score: TransactionTypeEnum.EARNED_BONUS,
+    achievement_unlock: TransactionTypeEnum.EARNED_ACHIEVEMENT,
+    daily_login: TransactionTypeEnum.EARNED_DAILY,
+    guild_challenge: TransactionTypeEnum.EARNED_BONUS, // No direct match, use bonus
+    leaderboard_reward: TransactionTypeEnum.EARNED_RANK,
+    referral_bonus: TransactionTypeEnum.BONUS,
+    admin_grant: TransactionTypeEnum.ADMIN_ADJUSTMENT,
+  };
+
+  return (mapping[source] || TransactionTypeEnum.EARNED_BONUS) as TransactionType;
+};
+
+/**
  * Economic Health Status - For monitoring system
  */
 export type EconomicHealthStatus = 'healthy' | 'warning' | 'critical';
