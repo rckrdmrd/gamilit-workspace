@@ -1,0 +1,376 @@
+# COMPLETENESS-TRACKER: Rutas de Completitud para Epicas Parciales
+# Version: 1.0.0
+# Actualizado: 2026-01-18
+
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-01-18"
+  purpose: "Definir rutas de completitud para epicas parciales"
+  partial_epics_count: 5
+
+# =============================================================================
+# RESUMEN DE EPICAS PARCIALES
+# =============================================================================
+
+summary:
+  epics:
+    - code: EXT-007
+      name: LTI Integration
+      current: 40%
+      target: 100%
+      priority: P2
+    - code: EXT-008
+      name: White Label
+      current: 50%
+      target: 100%
+      priority: P3
+    - code: EXT-009
+      name: Peer Challenges
+      current: 30%
+      target: 100%
+      priority: P3
+    - code: EXT-010
+      name: Parent Notifications
+      current: 35%
+      target: 100%
+      priority: P2
+    - code: EXT-011
+      name: Parent Portal
+      current: 30%
+      target: 100%
+      priority: P2
+
+  roadmap_summary:
+    q1_2026: "Completar EXT-007 (LTI Deep Linking)"
+    q2_2026: "EXT-010, EXT-011 (Portal Padres MVP)"
+    q3_2026: "EXT-008 (White Label), EXT-009 (Peer Challenges)"
+
+# =============================================================================
+# EXT-007: LTI INTEGRATION
+# =============================================================================
+
+EXT-007:
+  epic_name: "LTI Integration"
+  current_completion: 40%
+  target_completion: 100%
+  priority: P2
+
+  completed_features:
+    - feature: "LTI 1.3 Authentication"
+      completion_date: "2025-11-08"
+      user_story: US-LTI-001
+    - feature: "Basic Launch Flow"
+      completion_date: "2025-11-08"
+      user_story: US-LTI-001
+    - feature: "Tool Registration"
+      completion_date: "2025-11-08"
+      user_story: US-LTI-001
+    - feature: "Database Schema"
+      completion_date: "2025-11-08"
+      tables: [lti_consumers, lti_sessions, lti_grade_passback]
+
+  roadmap:
+    phase_1:
+      name: "Deep Linking"
+      target_quarter: "Q2 2026"
+      completion_increment: "+30%"
+      user_stories: [US-LTI-002]
+      tasks:
+        - "Implementar lti-deep-linking.service.ts"
+        - "UI para seleccion de contenido"
+        - "Tests de integracion Deep Linking"
+      dependencies: []
+      prerequisites:
+        technical: ["Certificacion LTI 1.3 completa"]
+
+    phase_2:
+      name: "Grade Passback (AGS)"
+      target_quarter: "Q3 2026"
+      completion_increment: "+20%"
+      user_stories: [US-LTI-003]
+      tasks:
+        - "Implementar lti-grade-passback.service.ts"
+        - "Logica de retry para fallos"
+        - "Integracion con sistema de calificaciones"
+      dependencies: [phase_1]
+
+    phase_3:
+      name: "NRPS Integration"
+      target_quarter: "Q4 2026"
+      completion_increment: "+10%"
+      user_stories: [US-LTI-004]
+      tasks:
+        - "Sincronizacion de roster"
+        - "Importacion automatica de grupos"
+      dependencies: [phase_2]
+      prerequisites:
+        business: ["Contrato enterprise con LMS"]
+
+  blockers:
+    - id: BLOCK-LTI-001
+      description: "Requiere certificacion LTI 1.3"
+      type: technical
+      status: pending
+
+# =============================================================================
+# EXT-008: WHITE LABEL
+# =============================================================================
+
+EXT-008:
+  epic_name: "White Label"
+  current_completion: 50%
+  target_completion: 100%
+  priority: P3
+
+  completed_features:
+    - feature: "Configuracion de colores y logos"
+      completion_date: "2025-10-15"
+    - feature: "Temas basicos (light/dark)"
+      completion_date: "2025-10-15"
+    - feature: "Database schema para tenants"
+      completion_date: "2025-10-15"
+
+  roadmap:
+    phase_1:
+      name: "Customizacion Avanzada de UI"
+      target_quarter: "Q2 2026"
+      completion_increment: "+25%"
+      tasks:
+        - "Fuentes personalizables"
+        - "Iconografia customizable"
+        - "Layouts alternativos"
+      dependencies: []
+
+    phase_2:
+      name: "Dominios Personalizados"
+      target_quarter: "Q3 2026"
+      completion_increment: "+15%"
+      tasks:
+        - "SSL automatico por dominio"
+        - "Routing multi-tenant"
+        - "DNS configuration guide"
+      dependencies: [phase_1]
+      prerequisites:
+        infrastructure: ["Wildcard SSL", "DNS management"]
+
+    phase_3:
+      name: "Email Templates Personalizados"
+      target_quarter: "Q3 2026"
+      completion_increment: "+10%"
+      tasks:
+        - "Editor de templates email"
+        - "Preview en tiempo real"
+      dependencies: [phase_1]
+
+# =============================================================================
+# EXT-009: PEER CHALLENGES
+# =============================================================================
+
+EXT-009:
+  epic_name: "Peer Challenges"
+  current_completion: 30%
+  target_completion: 100%
+  priority: P3
+
+  completed_features:
+    - feature: "Database schema para challenges"
+      completion_date: "2025-11-20"
+    - feature: "Modelo de datos basico"
+      completion_date: "2025-11-20"
+
+  roadmap:
+    phase_1:
+      name: "Challenge Creation MVP"
+      target_quarter: "Q2 2026"
+      completion_increment: "+25%"
+      user_stories: [US-PEER-001]
+      tasks:
+        - "UI para crear desafios"
+        - "Sistema de invitaciones"
+        - "Matching de participantes"
+      dependencies:
+        epics: [EAI-003-EXT]
+
+    phase_2:
+      name: "Real-time Competition"
+      target_quarter: "Q3 2026"
+      completion_increment: "+25%"
+      user_stories: [US-PEER-002]
+      tasks:
+        - "WebSocket para competencia en vivo"
+        - "Leaderboard en tiempo real"
+        - "Notificaciones de progreso"
+      dependencies: [phase_1]
+      prerequisites:
+        technical: ["WebSocket infrastructure"]
+
+    phase_3:
+      name: "Tournaments"
+      target_quarter: "Q4 2026"
+      completion_increment: "+20%"
+      user_stories: [US-PEER-003]
+      tasks:
+        - "Sistema de brackets"
+        - "Premios y recompensas"
+        - "Historial de torneos"
+      dependencies: [phase_2]
+
+# =============================================================================
+# EXT-010: PARENT NOTIFICATIONS
+# =============================================================================
+
+EXT-010:
+  epic_name: "Parent Notifications"
+  current_completion: 35%
+  target_completion: 100%
+  priority: P2
+
+  completed_features:
+    - feature: "Database schema para parent_users"
+      completion_date: "2025-12-01"
+    - feature: "Vinculacion padre-estudiante"
+      completion_date: "2025-12-01"
+
+  roadmap:
+    phase_1:
+      name: "Email Notifications MVP"
+      target_quarter: "Q1 2026"
+      completion_increment: "+30%"
+      user_stories: [US-PAR-002]
+      tasks:
+        - "Digests semanales de progreso"
+        - "Alertas de inactividad"
+        - "Notificacion de logros"
+      dependencies:
+        epics: [EXT-003]
+
+    phase_2:
+      name: "Push Notifications"
+      target_quarter: "Q2 2026"
+      completion_increment: "+20%"
+      tasks:
+        - "Integracion Firebase/OneSignal"
+        - "Preferencias de notificacion"
+        - "Scheduling de notificaciones"
+      dependencies: [phase_1]
+
+    phase_3:
+      name: "SMS Notifications"
+      target_quarter: "Q3 2026"
+      completion_increment: "+15%"
+      tasks:
+        - "Integracion Twilio/similar"
+        - "Alertas urgentes via SMS"
+      dependencies: [phase_2]
+      prerequisites:
+        business: ["Contrato proveedor SMS"]
+
+# =============================================================================
+# EXT-011: PARENT PORTAL
+# =============================================================================
+
+EXT-011:
+  epic_name: "Parent Portal"
+  current_completion: 30%
+  target_completion: 100%
+  priority: P2
+
+  completed_features:
+    - feature: "Autenticacion de padres"
+      completion_date: "2025-12-01"
+    - feature: "Vista basica de estudiante vinculado"
+      completion_date: "2025-12-01"
+
+  roadmap:
+    phase_1:
+      name: "Dashboard de Progreso"
+      target_quarter: "Q2 2026"
+      completion_increment: "+25%"
+      user_stories: [US-PAR-001]
+      tasks:
+        - "Vista de progreso academico"
+        - "Graficos de rendimiento"
+        - "Historial de actividades"
+      dependencies:
+        epics: [EXT-004, EXT-010]
+
+    phase_2:
+      name: "Comunicacion Maestro-Padre"
+      target_quarter: "Q2 2026"
+      completion_increment: "+20%"
+      tasks:
+        - "Mensajeria con maestros"
+        - "Citas virtuales"
+        - "Reportes descargables"
+      dependencies: [phase_1]
+
+    phase_3:
+      name: "Gamificacion Familiar"
+      target_quarter: "Q3 2026"
+      completion_increment: "+15%"
+      tasks:
+        - "Metas familiares"
+        - "Recompensas por apoyo"
+        - "Leaderboard familiar"
+      dependencies: [phase_2]
+
+    phase_4:
+      name: "Multi-hijo Support"
+      target_quarter: "Q4 2026"
+      completion_increment: "+10%"
+      tasks:
+        - "Dashboard consolidado"
+        - "Comparativas entre hijos"
+        - "Notificaciones agrupadas"
+      dependencies: [phase_3]
+
+# =============================================================================
+# GRAFO DE DEPENDENCIAS ENTRE EPICAS PARCIALES
+# =============================================================================
+
+dependency_graph:
+  edges:
+    - from: EXT-003
+      to: EXT-010
+      type: required
+      reason: "Notificaciones base para notificaciones a padres"
+
+    - from: EXT-004
+      to: EXT-011
+      type: required
+      reason: "Sistema de perfiles para portal padres"
+
+    - from: EXT-010
+      to: EXT-011
+      type: required
+      reason: "Notificaciones antes de portal completo"
+
+    - from: EAI-003-EXT
+      to: EXT-009
+      type: required
+      reason: "Gamificacion social base para peer challenges"
+
+  completion_order:
+    recommended:
+      - "1. EXT-010 (Parent Notifications) - depende de EXT-003 (completada)"
+      - "2. EXT-011 (Parent Portal) - depende de EXT-004 y EXT-010"
+      - "3. EXT-007 (LTI) - independiente, bloqueado por certificacion"
+      - "4. EXT-009 (Peer Challenges) - depende de EAI-003-EXT (completada)"
+      - "5. EXT-008 (White Label) - independiente, baja prioridad"
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+references:
+  ssot:
+    traceability_master: "./TRACEABILITY-MASTER.yml"
+    epic_index: "./EPIC-INDEX.yml"
+    requirements_index: "./REQUIREMENTS-INDEX.yml"
+
+  per_epic_traceability:
+    EXT-007: "../03-fase-extensiones/EXT-007-lti-integration/implementacion/TRACEABILITY.yml"
+    EXT-008: "../03-fase-extensiones/EXT-008-white-label/implementacion/TRACEABILITY.yml"
+    EXT-009: "../03-fase-extensiones/EXT-009-peer-challenges/implementacion/TRACEABILITY.yml"
+    EXT-010: "../03-fase-extensiones/EXT-010-parent-notifications/implementacion/TRACEABILITY.yml"
+    EXT-011: "../03-fase-extensiones/EXT-011-parent-portal/implementacion/TRACEABILITY.yml"

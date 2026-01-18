@@ -1,0 +1,237 @@
+# COMPLETENESS-ROADMAP: EXT-007 - LTI Integration
+# Version: 1.0.0
+# Actualizado: 2026-01-18
+
+# =============================================================================
+# IDENTIFICACION
+# =============================================================================
+
+epic:
+  code: "EXT-007"
+  name: "LTI Integration"
+  current_completion: 40%
+  target_completion: 100%
+  priority: P2
+
+# =============================================================================
+# FEATURES COMPLETADAS
+# =============================================================================
+
+completed_features:
+  - feature: "LTI 1.3 Authentication"
+    completion_date: "2025-11-08"
+    user_story: US-LTI-001
+    implementation:
+      database: completed
+      backend: completed
+      frontend: partial
+
+  - feature: "Basic Launch Flow"
+    completion_date: "2025-11-08"
+    user_story: US-LTI-001
+    description: "Flujo basico de launch desde LMS externo"
+
+  - feature: "Tool Registration"
+    completion_date: "2025-11-08"
+    user_story: US-LTI-001
+    description: "Registro de GAMILIT como herramienta LTI en LMS"
+
+  - feature: "Database Schema"
+    completion_date: "2025-11-08"
+    tables:
+      - lti_consumers
+      - lti_sessions
+      - lti_grade_passback
+
+# =============================================================================
+# ROADMAP DE COMPLETITUD
+# =============================================================================
+
+roadmap:
+  phase_1:
+    name: "Deep Linking"
+    target_quarter: "Q2 2026"
+    completion_increment: "+30%"
+    cumulative_completion: 70%
+    user_stories: [US-LTI-002]
+    tasks:
+      - "Implementar lti-deep-linking.service.ts"
+      - "Crear UI para seleccion de contenido en LMS"
+      - "Implementar respuesta de deep linking"
+      - "Tests de integracion con Canvas/Moodle"
+    acceptance_criteria:
+      - "Profesor puede seleccionar actividad desde LMS"
+      - "Link de retorno funciona correctamente"
+      - "Contenido seleccionado persiste en LMS"
+    dependencies:
+      internal: []
+      external: []
+    prerequisites:
+      technical:
+        - "Certificacion LTI 1.3 Advantage"
+      business: []
+    estimated_effort:
+      story_points: 15
+      sprints: 2
+
+  phase_2:
+    name: "Grade Passback (AGS)"
+    target_quarter: "Q3 2026"
+    completion_increment: "+20%"
+    cumulative_completion: 90%
+    user_stories: [US-LTI-003]
+    tasks:
+      - "Implementar lti-grade-passback.service.ts"
+      - "Logica de retry para fallos de envio"
+      - "Queue de calificaciones pendientes"
+      - "Dashboard de estado de sincronizacion"
+      - "Tests con diferentes LMS"
+    acceptance_criteria:
+      - "Calificaciones se envian automaticamente al LMS"
+      - "Reintentos automaticos en caso de fallo"
+      - "Admin puede ver estado de sincronizacion"
+    dependencies:
+      internal: [phase_1]
+      external: []
+    estimated_effort:
+      story_points: 12
+      sprints: 2
+
+  phase_3:
+    name: "NRPS Integration"
+    target_quarter: "Q4 2026"
+    completion_increment: "+10%"
+    cumulative_completion: 100%
+    user_stories: [US-LTI-004]
+    tasks:
+      - "Implementar sincronizacion de roster"
+      - "Importacion automatica de grupos/clases"
+      - "Sincronizacion periodica de estudiantes"
+      - "UI para mapeo de roles LMS -> GAMILIT"
+    acceptance_criteria:
+      - "Roster se sincroniza automaticamente"
+      - "Nuevos estudiantes se importan sin intervencion"
+      - "Roles se mapean correctamente"
+    dependencies:
+      internal: [phase_2]
+      external: []
+    prerequisites:
+      business:
+        - "Contrato enterprise con institucion educativa"
+        - "Acceso a sandbox de LMS para testing"
+    estimated_effort:
+      story_points: 8
+      sprints: 1
+
+# =============================================================================
+# BLOQUEANTES
+# =============================================================================
+
+blockers:
+  - id: BLOCK-LTI-001
+    description: "Requiere certificacion LTI 1.3 Advantage de IMS Global"
+    type: technical
+    status: active
+    affects: [phase_1]
+    resolution_plan: "Completar proceso de certificacion con IMS Global"
+    target_date: "2026-03-01"
+    owner: "Tech Lead"
+
+# =============================================================================
+# RIESGOS
+# =============================================================================
+
+risks:
+  - id: RISK-LTI-001
+    description: "Diferencias de implementacion entre LMS (Canvas, Moodle, Blackboard)"
+    probability: high
+    impact: medium
+    mitigation: "Implementar capa de abstraccion y testing con multiples LMS"
+
+  - id: RISK-LTI-002
+    description: "Cambios en especificacion LTI 1.3"
+    probability: low
+    impact: high
+    mitigation: "Seguir actualizaciones de IMS Global, diseño modular"
+
+# =============================================================================
+# METRICAS DE PROGRESO
+# =============================================================================
+
+progress_tracking:
+  milestones:
+    - name: "Deep Linking MVP"
+      target_date: "2026-04-15"
+      completion: 0%
+      criteria:
+        - "Deep linking funciona con Canvas"
+        - "Tests de integracion pasan"
+
+    - name: "Grade Passback MVP"
+      target_date: "2026-07-15"
+      completion: 0%
+      criteria:
+        - "Calificaciones se envian a Canvas/Moodle"
+        - "Retry automatico funciona"
+
+    - name: "LTI Integration Completa"
+      target_date: "2026-10-15"
+      completion: 0%
+      criteria:
+        - "NRPS funcional"
+        - "Todos los tests pasan"
+        - "Documentacion completa"
+
+  checkpoints:
+    - date: "2026-03-01"
+      expected_completion: 45%
+      focus: "Certificacion + inicio Deep Linking"
+    - date: "2026-06-01"
+      expected_completion: 70%
+      focus: "Deep Linking completo"
+    - date: "2026-09-01"
+      expected_completion: 90%
+      focus: "Grade Passback completo"
+    - date: "2026-11-01"
+      expected_completion: 100%
+      focus: "NRPS + documentacion"
+
+# =============================================================================
+# RECURSOS REQUERIDOS
+# =============================================================================
+
+resources:
+  technical:
+    - "Sandbox de Canvas para testing"
+    - "Sandbox de Moodle para testing"
+    - "Cuenta de desarrollador IMS Global"
+  documentation:
+    - "LTI 1.3 Specification"
+    - "LTI Advantage Implementation Guide"
+    - "Canvas LTI Developer Guide"
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+references:
+  epic_manifest: "./EPIC-MANIFEST.yml"
+  ssot_tracker: "docs/_SSOT/COMPLETENESS-TRACKER.yml#EXT-007"
+  traceability: "./implementacion/TRACEABILITY.yml"
+  external:
+    - name: "IMS Global LTI 1.3"
+      url: "https://www.imsglobal.org/spec/lti/v1p3/"
+    - name: "Canvas LTI Docs"
+      url: "https://canvas.instructure.com/doc/api/file.lti_dev_key_config.html"
+
+# =============================================================================
+# HISTORIAL DE ACTUALIZACIONES
+# =============================================================================
+
+changelog:
+  - date: "2026-01-18"
+    author: "Agente Documentacion"
+    changes: "Creacion inicial del roadmap de completitud"
+  - date: "2025-11-08"
+    author: "Agente Backend"
+    changes: "Implementacion inicial (40%) - auth, launch, schema"

@@ -1,0 +1,222 @@
+# LESSONS-LEARNED.yml - Lecciones Aprendidas del Proyecto GAMILIT
+# Version: 1.0.0
+# Actualizado: 2026-01-18
+# Proposito: Consolidado de lecciones aprendidas de todas las tareas
+
+metadata:
+  project: gamilit
+  version: "1.0.0"
+  last_updated: "2026-01-18"
+  total_lessons: 15
+  propagation_target: "workspace-v2/orchestration/retrospectivas/LECCIONES-INDEX.yml"
+
+# =============================================================================
+# LECCIONES POR CATEGORIA
+# =============================================================================
+
+lessons:
+  # -------------------------------------------------------------------------
+  # PROCESOS
+  # -------------------------------------------------------------------------
+  process:
+    - id: LL-PROC-001
+      title: "Fetch antes de operar en repositorios"
+      source_task: "INC-2026-01-16-001"
+      date: "2026-01-16"
+      description: |
+        Siempre ejecutar git fetch antes de verificar estado.
+        Otro agente pudo hacer cambios en otra sesion.
+      impact: high
+      category: git
+      action: |
+        Implementar como regla critica en CLAUDE.md:
+        git fetch origin
+        git log HEAD..origin/main --oneline
+      status: implemented
+      propagated: true
+
+    - id: LL-PROC-002
+      title: "Commit + Push obligatorio al finalizar"
+      source_task: "INC-2026-01-16-002"
+      date: "2026-01-16"
+      description: |
+        Sin push, los cambios no persisten entre sesiones.
+        Tarea sin push = tarea incompleta.
+      impact: high
+      category: git
+      status: implemented
+      propagated: true
+
+    - id: LL-PROC-003
+      title: "Validacion anti-alucinacion"
+      source_task: "DV-MASTER"
+      date: "2026-01-10"
+      description: |
+        Validar que funcionalidad existe en docs antes de implementar.
+        Si no existe en docs, DETENER y preguntar.
+      impact: high
+      category: quality
+      status: implemented
+      propagated: true
+
+  # -------------------------------------------------------------------------
+  # TECNICAS
+  # -------------------------------------------------------------------------
+  technical:
+    - id: LL-TECH-001
+      title: "Entity debe coincidir exactamente con DDL"
+      source_task: "TASK-2026-01-17-001"
+      date: "2026-01-17"
+      description: |
+        Campos de TypeORM entity deben coincidir con columnas de tabla PostgreSQL.
+        Tipos deben ser compatibles. Relaciones correctamente definidas.
+      impact: high
+      category: backend
+      code_example: |
+        // DDL: created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+        // Entity:
+        @CreateDateColumn({ type: 'timestamp with time zone' })
+        createdAt: Date;
+      status: implemented
+      propagated: true
+
+    - id: LL-TECH-002
+      title: "DTO no debe exponer campos sensibles"
+      source_task: "TASK-2026-01-17-001"
+      date: "2026-01-17"
+      description: |
+        SEC-001: ExerciseResponseDto exponia 'solution'.
+        Crear DTOs separados para diferentes roles (student vs teacher).
+      impact: critical
+      category: security
+      resolution: |
+        - Remover @Expose de campos sensibles
+        - Crear ExerciseTeacherResponseDto para endpoints de maestro
+      status: implemented
+      propagated: true
+
+    - id: LL-TECH-003
+      title: "Funciones DDL duplicadas causan errores silenciosos"
+      source_task: "TASK-2026-01-17-001"
+      date: "2026-01-17"
+      description: |
+        Funciones con mismo nombre en diferentes schemas pueden
+        causar comportamiento inesperado.
+      impact: medium
+      category: database
+      resolution: "Auditar y unificar funciones duplicadas"
+      status: implemented
+      propagated: false
+
+    - id: LL-TECH-004
+      title: "Triggers deprecated deben removerse"
+      source_task: "TASK-2026-01-17-001"
+      date: "2026-01-17"
+      description: |
+        Triggers deprecated que aun existen en DDL causan confucion
+        y potenciales errores en migraciones.
+      impact: medium
+      category: database
+      resolution: "Eliminar triggers deprecated del DDL"
+      status: implemented
+      propagated: false
+
+  # -------------------------------------------------------------------------
+  # DOCUMENTACION
+  # -------------------------------------------------------------------------
+  documentation:
+    - id: LL-DOC-001
+      title: "Inventarios deben reconciliarse periodicamente"
+      source_task: "ETC-001"
+      date: "2026-01-16"
+      description: |
+        Los inventarios tienden a desincronizarse del codigo real.
+        Reconciliar al menos al cierre de cada epic/sprint.
+      impact: medium
+      category: inventory
+      status: implemented
+      propagated: true
+
+    - id: LL-DOC-002
+      title: "SSOT reduce duplicacion de trazabilidad"
+      source_task: "TASK-2026-01-18-DOC"
+      date: "2026-01-18"
+      description: |
+        Tener un Single Source of Truth centralizado evita
+        inconsistencias entre multiples TRACEABILITY.yml dispersos.
+      impact: high
+      category: architecture
+      status: implemented
+      propagated: false
+
+    - id: LL-DOC-003
+      title: "Epicas parciales necesitan roadmap explicito"
+      source_task: "TASK-2026-01-18-DOC"
+      date: "2026-01-18"
+      description: |
+        Epicas con completion < 100% deben tener COMPLETENESS-ROADMAP.yml
+        con fases, dependencias y fechas objetivo.
+      impact: medium
+      category: planning
+      status: implemented
+      propagated: false
+
+  # -------------------------------------------------------------------------
+  # TOOLING
+  # -------------------------------------------------------------------------
+  tooling:
+    - id: LL-TOOL-001
+      title: "recreate-database.sh como validacion obligatoria"
+      source_task: "Multiple"
+      date: "2025-12-01"
+      description: |
+        Ejecutar recreate-database.sh despues de cualquier cambio DDL.
+        Si falla, el cambio no es valido.
+      impact: high
+      category: database
+      status: implemented
+      propagated: true
+
+    - id: LL-TOOL-002
+      title: "Build+Lint+Test antes de commit"
+      source_task: "Multiple"
+      date: "2025-11-01"
+      description: |
+        Ejecutar validaciones antes de commit evita errores en CI.
+        CP2 checkpoint en fase de ejecucion.
+      impact: high
+      category: quality
+      status: implemented
+      propagated: true
+
+# =============================================================================
+# METRICAS
+# =============================================================================
+
+metrics:
+  by_category:
+    process: 3
+    technical: 4
+    documentation: 3
+    tooling: 2
+
+  by_impact:
+    critical: 1
+    high: 8
+    medium: 4
+
+  by_status:
+    implemented: 12
+    pending: 0
+
+  propagated_to_workspace: 7
+  pending_propagation: 5
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+references:
+  template: "orchestration/tareas/_templates/TASK-TEMPLATE-UNIFIED/LESSONS-LEARNED.yml"
+  workspace_index: "workspace-v2/orchestration/retrospectivas/LECCIONES-INDEX.yml"
+  propagation_status: "shared/mirrors/gamilit/PROPAGATION-STATUS.yml"

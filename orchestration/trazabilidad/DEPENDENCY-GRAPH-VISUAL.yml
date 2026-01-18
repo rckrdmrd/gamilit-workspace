@@ -1,0 +1,444 @@
+# DEPENDENCY-GRAPH-VISUAL: Grafo de Dependencias con Visualizacion
+# Version: 1.0.0
+# Actualizado: 2026-01-18
+# Proposito: Grafo completo de dependencias entre epicas con output Mermaid
+
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-01-18"
+  total_epics: 22
+  total_edges: 28
+  cycles_detected: 0
+
+# =============================================================================
+# CAPAS DE DEPENDENCIAS
+# =============================================================================
+
+layers:
+  L0_foundation:
+    description: "Base del sistema - sin dependencias externas"
+    color: "#3B82F6"  # Blue
+    epics:
+      - code: EAI-001
+        name: Fundamentos
+        dependencies_count: 0
+        dependents_count: 6
+
+  L1_core:
+    description: "Funcionalidades core - dependen de L0"
+    color: "#10B981"  # Green
+    epics:
+      - code: EAI-002
+        name: Actividades
+        dependencies_count: 1
+        dependents_count: 4
+      - code: EAI-003
+        name: Gamificacion
+        dependencies_count: 1
+        dependents_count: 4
+      - code: EAI-004
+        name: Analytics
+        dependencies_count: 2
+        dependents_count: 1
+      - code: EAI-005
+        name: Admin Base
+        dependencies_count: 1
+        dependents_count: 2
+      - code: EAI-006
+        name: Configuracion
+        dependencies_count: 1
+        dependents_count: 1
+
+  L2_portals:
+    description: "Portales principales"
+    color: "#F59E0B"  # Amber
+    epics:
+      - code: EAI-007
+        name: Modulos M4-M5
+        dependencies_count: 2
+        dependents_count: 0
+      - code: EAI-008
+        name: Portal Admin
+        dependencies_count: 2
+        dependents_count: 1
+      - code: EXT-001
+        name: Portal Maestros
+        dependencies_count: 2
+        dependents_count: 1
+
+  L3_extensions:
+    description: "Extensiones completadas"
+    color: "#8B5CF6"  # Purple
+    epics:
+      - code: EXT-002
+        name: Admin Extendido
+        dependencies_count: 3
+        dependents_count: 0
+      - code: EXT-003
+        name: Notificaciones
+        dependencies_count: 1
+        dependents_count: 1
+      - code: EXT-004
+        name: Perfiles
+        dependencies_count: 2
+        dependents_count: 1
+      - code: EXT-005
+        name: Reportes
+        dependencies_count: 2
+        dependents_count: 0
+      - code: EXT-006
+        name: Contenido
+        dependencies_count: 1
+        dependents_count: 0
+      - code: EAI-003-EXT
+        name: Gamificacion Social
+        dependencies_count: 1
+        dependents_count: 1
+
+  L4_advanced:
+    description: "Extensiones avanzadas (parciales)"
+    color: "#EF4444"  # Red (parciales)
+    epics:
+      - code: EXT-007
+        name: LTI Integration
+        dependencies_count: 1
+        dependents_count: 0
+        status: partial
+        completion: 40%
+      - code: EXT-008
+        name: White Label
+        dependencies_count: 1
+        dependents_count: 0
+        status: partial
+        completion: 50%
+      - code: EXT-009
+        name: Peer Challenges
+        dependencies_count: 1
+        dependents_count: 0
+        status: partial
+        completion: 30%
+      - code: EXT-010
+        name: Parent Notifications
+        dependencies_count: 1
+        dependents_count: 1
+        status: partial
+        completion: 35%
+      - code: EXT-011
+        name: Parent Portal
+        dependencies_count: 2
+        dependents_count: 0
+        status: partial
+        completion: 30%
+
+# =============================================================================
+# ARISTAS (EDGES) DEL GRAFO
+# =============================================================================
+
+edges:
+  # L0 -> L1
+  - from: EAI-001
+    to: EAI-002
+    type: hard
+    reason: "Actividades requieren autenticacion"
+
+  - from: EAI-001
+    to: EAI-003
+    type: hard
+    reason: "Gamificacion requiere usuarios"
+
+  - from: EAI-001
+    to: EAI-004
+    type: hard
+    reason: "Analytics requiere datos de usuarios"
+
+  - from: EAI-001
+    to: EAI-005
+    type: hard
+    reason: "Admin base requiere sistema de roles"
+
+  - from: EAI-001
+    to: EAI-006
+    type: hard
+    reason: "Configuracion requiere contexto de tenant"
+
+  - from: EAI-001
+    to: EXT-003
+    type: hard
+    reason: "Notificaciones requieren usuarios"
+
+  # L1 -> L1 (inter-core)
+  - from: EAI-002
+    to: EAI-004
+    type: hard
+    reason: "Analytics usa datos de actividades"
+
+  # L1 -> L2
+  - from: EAI-002
+    to: EAI-007
+    type: hard
+    reason: "Modulos M4-M5 extienden actividades"
+
+  - from: EAI-003
+    to: EAI-007
+    type: soft
+    reason: "Modulos usan gamificacion"
+
+  - from: EAI-005
+    to: EAI-008
+    type: hard
+    reason: "Portal Admin extiende Admin Base"
+
+  - from: EAI-001
+    to: EAI-008
+    type: hard
+    reason: "Portal Admin requiere auth"
+
+  - from: EAI-001
+    to: EXT-001
+    type: hard
+    reason: "Portal Maestros requiere auth"
+
+  - from: EAI-002
+    to: EXT-001
+    type: hard
+    reason: "Maestros gestionan actividades"
+
+  # L2 -> L3
+  - from: EAI-005
+    to: EXT-002
+    type: hard
+    reason: "Admin Extendido extiende Admin Base"
+
+  - from: EAI-008
+    to: EXT-002
+    type: hard
+    reason: "Admin Extendido usa Portal Admin"
+
+  - from: EXT-001
+    to: EXT-002
+    type: soft
+    reason: "Admin Extendido integra datos de maestros"
+
+  - from: EAI-001
+    to: EXT-004
+    type: hard
+    reason: "Perfiles requieren usuarios"
+
+  - from: EAI-003
+    to: EXT-004
+    type: hard
+    reason: "Perfiles muestran gamificacion"
+
+  - from: EAI-003
+    to: EXT-005
+    type: hard
+    reason: "Reportes incluyen metricas de gamificacion"
+
+  - from: EAI-004
+    to: EXT-005
+    type: hard
+    reason: "Reportes usan analytics"
+
+  - from: EAI-002
+    to: EXT-006
+    type: hard
+    reason: "Contenido relacionado con actividades"
+
+  - from: EAI-003
+    to: EAI-003-EXT
+    type: hard
+    reason: "Social extiende gamificacion base"
+
+  # L3 -> L4
+  - from: EAI-001
+    to: EXT-007
+    type: hard
+    reason: "LTI requiere auth para single sign-on"
+
+  - from: EAI-006
+    to: EXT-008
+    type: hard
+    reason: "White Label usa configuracion de sistema"
+
+  - from: EAI-003-EXT
+    to: EXT-009
+    type: hard
+    reason: "Peer Challenges usa social"
+
+  - from: EXT-003
+    to: EXT-010
+    type: hard
+    reason: "Parent Notifications usa sistema de notificaciones"
+
+  - from: EXT-004
+    to: EXT-011
+    type: hard
+    reason: "Parent Portal usa perfiles"
+
+  - from: EXT-010
+    to: EXT-011
+    type: hard
+    reason: "Parent Portal depende de notificaciones"
+
+# =============================================================================
+# VALIDACIONES
+# =============================================================================
+
+validations:
+  circular_dependency_check:
+    result: PASS
+    detected_cycles: []
+    last_check: "2026-01-18"
+
+  orphan_epics:
+    result: PASS
+    orphans: []
+    notes: "Todas las epicas estan conectadas al grafo"
+
+  missing_dependencies:
+    result: PASS
+    missing: []
+
+# =============================================================================
+# CRITICAL PATH (Camino Critico)
+# =============================================================================
+
+critical_paths:
+  student_complete:
+    description: "Camino para funcionalidad completa de estudiante"
+    path: [EAI-001, EAI-002, EAI-003, EAI-004]
+    total_story_points: 180
+
+  teacher_complete:
+    description: "Camino para funcionalidad de maestro"
+    path: [EAI-001, EAI-002, EXT-001]
+    total_story_points: 140
+
+  parent_complete:
+    description: "Camino para funcionalidad de padres"
+    path: [EAI-001, EXT-003, EXT-010, EXT-011]
+    total_story_points: 105
+    status: partial
+    completion: 55%
+
+  social_complete:
+    description: "Camino para funcionalidad social"
+    path: [EAI-001, EAI-003, EAI-003-EXT, EXT-009]
+    total_story_points: 170
+    status: partial
+    completion: 82%
+
+# =============================================================================
+# MERMAID OUTPUT
+# =============================================================================
+
+mermaid:
+  graph_type: "TB"  # Top to Bottom
+  output: |
+    ```mermaid
+    graph TB
+      subgraph L0["L0: Foundation"]
+        EAI001["EAI-001<br/>Fundamentos"]
+      end
+
+      subgraph L1["L1: Core"]
+        EAI002["EAI-002<br/>Actividades"]
+        EAI003["EAI-003<br/>Gamificacion"]
+        EAI004["EAI-004<br/>Analytics"]
+        EAI005["EAI-005<br/>Admin Base"]
+        EAI006["EAI-006<br/>Config"]
+      end
+
+      subgraph L2["L2: Portals"]
+        EAI007["EAI-007<br/>M4-M5"]
+        EAI008["EAI-008<br/>Portal Admin"]
+        EXT001["EXT-001<br/>Portal Maestros"]
+      end
+
+      subgraph L3["L3: Extensions"]
+        EXT002["EXT-002<br/>Admin Ext"]
+        EXT003["EXT-003<br/>Notif"]
+        EXT004["EXT-004<br/>Perfiles"]
+        EXT005["EXT-005<br/>Reportes"]
+        EXT006["EXT-006<br/>Contenido"]
+        EAI003EXT["EAI-003-EXT<br/>Social"]
+      end
+
+      subgraph L4["L4: Advanced (Partial)"]
+        EXT007["EXT-007<br/>LTI 40%"]
+        EXT008["EXT-008<br/>WhiteLabel 50%"]
+        EXT009["EXT-009<br/>PeerChall 30%"]
+        EXT010["EXT-010<br/>ParentNotif 35%"]
+        EXT011["EXT-011<br/>ParentPortal 30%"]
+      end
+
+      %% L0 -> L1
+      EAI001 --> EAI002
+      EAI001 --> EAI003
+      EAI001 --> EAI004
+      EAI001 --> EAI005
+      EAI001 --> EAI006
+      EAI001 --> EXT003
+
+      %% L1 -> L1
+      EAI002 --> EAI004
+
+      %% L1 -> L2
+      EAI002 --> EAI007
+      EAI003 -.-> EAI007
+      EAI005 --> EAI008
+      EAI001 --> EAI008
+      EAI001 --> EXT001
+      EAI002 --> EXT001
+
+      %% L2 -> L3
+      EAI005 --> EXT002
+      EAI008 --> EXT002
+      EXT001 -.-> EXT002
+      EAI001 --> EXT004
+      EAI003 --> EXT004
+      EAI003 --> EXT005
+      EAI004 --> EXT005
+      EAI002 --> EXT006
+      EAI003 --> EAI003EXT
+
+      %% L3 -> L4
+      EAI001 --> EXT007
+      EAI006 --> EXT008
+      EAI003EXT --> EXT009
+      EXT003 --> EXT010
+      EXT004 --> EXT011
+      EXT010 --> EXT011
+
+      %% Styling
+      style EAI001 fill:#3B82F6
+      style EAI002 fill:#10B981
+      style EAI003 fill:#10B981
+      style EAI004 fill:#10B981
+      style EAI005 fill:#10B981
+      style EAI006 fill:#10B981
+      style EAI007 fill:#F59E0B
+      style EAI008 fill:#F59E0B
+      style EXT001 fill:#F59E0B
+      style EXT002 fill:#8B5CF6
+      style EXT003 fill:#8B5CF6
+      style EXT004 fill:#8B5CF6
+      style EXT005 fill:#8B5CF6
+      style EXT006 fill:#8B5CF6
+      style EAI003EXT fill:#8B5CF6
+      style EXT007 fill:#EF4444
+      style EXT008 fill:#EF4444
+      style EXT009 fill:#EF4444
+      style EXT010 fill:#EF4444
+      style EXT011 fill:#EF4444
+    ```
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+references:
+  ssot: "../docs/_SSOT/TRACEABILITY-MASTER.yml"
+  epic_index: "../docs/_SSOT/EPIC-INDEX.yml"
+  sync_status: "./SYNC-STATUS.yml"
+  metrics: "./METRICS-DASHBOARD.yml"

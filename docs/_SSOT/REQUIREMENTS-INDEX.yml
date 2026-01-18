@@ -1,0 +1,277 @@
+# REQUIREMENTS-INDEX: Indice de Requerimientos GAMILIT
+# Version: 1.0.0
+# Actualizado: 2026-01-18
+
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-01-18"
+  total_requirements: 150
+  implemented: 112
+  pending: 38
+  coverage: "75%"
+
+# =============================================================================
+# ESTADISTICAS POR DOMINIO
+# =============================================================================
+
+statistics_by_domain:
+  auth:
+    prefix: RF-AUTH
+    total: 15
+    implemented: 15
+    coverage: "100%"
+    epics: [EAI-001]
+
+  gamification:
+    prefix: RF-GAM
+    total: 25
+    implemented: 20
+    coverage: "80%"
+    epics: [EAI-003, EAI-003-EXT]
+
+  educational:
+    prefix: RF-EDU
+    total: 30
+    implemented: 22
+    coverage: "73%"
+    epics: [EAI-002, EAI-007]
+
+  progress:
+    prefix: RF-PRG
+    total: 20
+    implemented: 15
+    coverage: "75%"
+    epics: [EAI-004]
+
+  social:
+    prefix: RF-SOC
+    total: 15
+    implemented: 10
+    coverage: "67%"
+    epics: [EAI-003-EXT, EXT-009]
+
+  admin:
+    prefix: RF-ADM
+    total: 20
+    implemented: 15
+    coverage: "75%"
+    epics: [EAI-005, EAI-008, EXT-002]
+
+  teacher:
+    prefix: RF-TCH
+    total: 25
+    implemented: 15
+    coverage: "60%"
+    epics: [EXT-001]
+
+# =============================================================================
+# CADENAS DE TRAZABILIDAD RF -> ET -> US
+# =============================================================================
+
+traceability_chains:
+  # --- AUTENTICACION ---
+  RF-AUTH-001:
+    title: "Autenticacion de Usuarios"
+    status: implemented
+    specification: ET-AUTH-001
+    user_stories: [US-FUND-001, US-FUND-002]
+    epic: EAI-001
+    implementation:
+      schema: auth_management
+      module: auth
+
+  RF-AUTH-002:
+    title: "Gestion de Roles y Permisos"
+    status: implemented
+    specification: ET-AUTH-002
+    user_stories: [US-FUND-003]
+    epic: EAI-001
+
+  # --- GAMIFICACION ---
+  RF-GAM-001:
+    title: "Sistema de Logros (Achievements)"
+    status: implemented
+    specification: ET-GAM-001
+    user_stories: [US-GAM-003, US-GAM-005, US-GAM-008]
+    epic: EAI-003
+    implementation:
+      schema: gamification_system
+      module: gamification
+      path: "../01-fase-alcance-inicial/EAI-003-gamificacion/requerimientos/RF-GAM-001-achievements.md"
+
+  RF-GAM-002:
+    title: "Sistema de Comodines (Ayudas)"
+    status: implemented
+    specification: ET-GAM-002
+    user_stories: [US-GAM-003, US-GAM-004]
+    epic: EAI-003
+    implementation:
+      schema: gamification_system
+      module: gamification
+      path: "../01-fase-alcance-inicial/EAI-003-gamificacion/requerimientos/RF-GAM-002-comodines.md"
+
+  RF-GAM-003:
+    title: "Sistema de Rangos Maya"
+    status: implemented
+    specification: ET-GAM-003
+    user_stories: [US-GAM-006, US-GAM-008]
+    epic: EAI-003
+    implementation:
+      schema: gamification_system
+      module: gamification
+      path: "../01-fase-alcance-inicial/EAI-003-gamificacion/requerimientos/RF-GAM-003-rangos-maya.md"
+
+  RF-GAM-004:
+    title: "Sistema de Amigos"
+    status: implemented
+    specification: ET-GAM-004
+    user_stories: [US-SOC-001]
+    epic: EAI-003-EXT
+
+  RF-GAM-005:
+    title: "Sistema de Gremios"
+    status: implemented
+    specification: ET-GAM-005
+    user_stories: [US-SOC-002]
+    epic: EAI-003-EXT
+
+  # --- ACTIVIDADES EDUCATIVAS ---
+  RF-EDU-001:
+    title: "Ejercicios Modulo 1 - Comprension Literal"
+    status: implemented
+    specification: ET-EDU-001
+    user_stories: [US-ACT-001]
+    epic: EAI-002
+    exercises: [crucigrama, linea_tiempo, completar_espacios, verdadero_falso, sopa_letras]
+
+  RF-EDU-002:
+    title: "Ejercicios Modulo 2 - Comprension Inferencial"
+    status: implemented
+    specification: ET-EDU-002
+    user_stories: [US-ACT-002]
+    epic: EAI-002
+    exercises: [seleccion_multiple, ordenar_eventos, relacionar_columnas, analogias, causa_efecto]
+
+  RF-EDU-003:
+    title: "Ejercicios Modulo 3 - Comprension Critica"
+    status: implemented
+    specification: ET-EDU-003
+    user_stories: [US-ACT-003]
+    epic: EAI-002
+    exercises: [opinion_justificada, debate_virtual, evaluacion_textos, puntos_vista, argumentacion]
+
+  RF-EDU-004:
+    title: "Ejercicios Modulo 4 - Vocabulario"
+    status: implemented
+    specification: ET-EDU-004
+    user_stories: [US-ACT-004]
+    epic: EAI-007
+    exercises: [flashcards, contexto_palabra, sinonimos_antonimos, familia_palabras, uso_contextual]
+
+  RF-EDU-005:
+    title: "Ejercicios Modulo 5 - Expresion Escrita"
+    status: implemented
+    specification: ET-EDU-005
+    user_stories: [US-ACT-005]
+    epic: EAI-007
+    exercises: [redaccion_guiada, correccion_texto, parrafo_estructurado, resumen, escritura_creativa]
+
+  # --- ANALYTICS ---
+  RF-PRG-001:
+    title: "Dashboard de Progreso Estudiante"
+    status: implemented
+    specification: ET-PRG-001
+    user_stories: [US-PRG-001]
+    epic: EAI-004
+
+  RF-PRG-002:
+    title: "Estadisticas de Rendimiento"
+    status: implemented
+    specification: ET-PRG-002
+    user_stories: [US-PRG-002]
+    epic: EAI-004
+
+  # --- TEACHER ---
+  RF-TCH-001:
+    title: "Portal de Maestros"
+    status: implemented
+    specification: ET-TCH-001
+    user_stories: [US-TCH-001, US-TCH-002]
+    epic: EXT-001
+
+  RF-TCH-002:
+    title: "Asignacion de Tareas"
+    status: implemented
+    specification: ET-TCH-002
+    user_stories: [US-TCH-003]
+    epic: EXT-001
+
+  # --- NOTIFICACIONES ---
+  RF-NOT-001:
+    title: "Sistema de Notificaciones In-App"
+    status: implemented
+    specification: ET-NOT-001
+    user_stories: [US-NOT-001]
+    epic: EXT-003
+
+  RF-NOT-002:
+    title: "Notificaciones Push"
+    status: partial
+    specification: ET-NOT-002
+    user_stories: [US-NOT-002]
+    epic: EXT-003
+    completion: 60%
+
+  # --- LTI (PARCIAL) ---
+  RF-LTI-001:
+    title: "Autenticacion LTI 1.3"
+    status: implemented
+    specification: ET-LTI-001
+    user_stories: [US-LTI-001]
+    epic: EXT-007
+
+  RF-LTI-002:
+    title: "Deep Linking LTI"
+    status: pending
+    specification: ET-LTI-002
+    user_stories: [US-LTI-002]
+    epic: EXT-007
+    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-007-phase1"
+
+  RF-LTI-003:
+    title: "Grade Passback (AGS)"
+    status: pending
+    specification: ET-LTI-003
+    user_stories: [US-LTI-003]
+    epic: EXT-007
+    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-007-phase2"
+
+  # --- PARENT (PARCIAL) ---
+  RF-PAR-001:
+    title: "Portal de Padres - Vista Basica"
+    status: partial
+    specification: ET-PAR-001
+    user_stories: [US-PAR-001]
+    epic: EXT-011
+    completion: 30%
+
+  RF-PAR-002:
+    title: "Notificaciones a Padres"
+    status: partial
+    specification: ET-PAR-002
+    user_stories: [US-PAR-002]
+    epic: EXT-010
+    completion: 35%
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+references:
+  epic_index: "./EPIC-INDEX.yml"
+  traceability_master: "./TRACEABILITY-MASTER.yml"
+  completeness_tracker: "./COMPLETENESS-TRACKER.yml"
+
+  documentation:
+    vision: "../00-vision-general/"
+    requerimientos_funcionales: "../90-transversal/requerimientos/"

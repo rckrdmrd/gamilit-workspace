@@ -1,0 +1,284 @@
+# TRACEABILITY-MASTER: GAMILIT SSOT
+# Single Source of Truth - Consolidado Central
+# Version: 2.0.0
+# Actualizado: 2026-01-18
+
+metadata:
+  project: gamilit
+  prefix: GAM
+  version: "2.0.0"
+  last_updated: "2026-01-18"
+  workspace: workspace-v2
+  purpose: "Consolidacion central de trazabilidad RF->ET->US->Codigo"
+
+# =============================================================================
+# RESUMEN EJECUTIVO
+# =============================================================================
+
+summary:
+  total_epics: 22
+  epics_by_status:
+    completed: 17
+    partial: 5
+  test_coverage:
+    documented: "89%"
+    actual: "25%"
+    gap: "-64%"
+  layer_sync:
+    database: "99%"
+    backend: "99%"
+    frontend: "60%"
+
+# =============================================================================
+# INDICE DE EPICAS POR FASE
+# =============================================================================
+
+epics_index:
+  phase_1_alcance_inicial:
+    description: "Fundamentos del sistema - MVP Completo"
+    epics:
+      - code: EAI-001
+        name: Fundamentos
+        status: completed
+        completion: 100%
+        traceability: "../01-fase-alcance-inicial/EAI-001-fundamentos/implementacion/TRACEABILITY.yml"
+      - code: EAI-002
+        name: Actividades Educativas
+        status: completed
+        completion: 100%
+        traceability: "../01-fase-alcance-inicial/EAI-002-actividades/implementacion/TRACEABILITY.yml"
+      - code: EAI-003
+        name: Gamificacion
+        status: completed
+        completion: 100%
+        traceability: "../01-fase-alcance-inicial/EAI-003-gamificacion/implementacion/TRACEABILITY.yml"
+        notes: "EPICA MODELO - Referencia para estructura"
+      - code: EAI-004
+        name: Analytics
+        status: completed
+        completion: 100%
+        traceability: "../01-fase-alcance-inicial/EAI-004-analytics/implementacion/TRACEABILITY.yml"
+      - code: EAI-005
+        name: Admin Base
+        status: completed
+        completion: 100%
+        traceability: "../01-fase-alcance-inicial/EAI-005-admin-base/implementacion/TRACEABILITY.yml"
+      - code: EAI-006
+        name: Configuracion Sistema
+        status: completed
+        completion: 100%
+        traceability: "../01-fase-alcance-inicial/EAI-006-configuracion-sistema/implementacion/TRACEABILITY.yml"
+      - code: EAI-008
+        name: Portal Admin
+        status: completed
+        completion: 100%
+        traceability: "../01-fase-alcance-inicial/EAI-008-portal-admin/implementacion/TRACEABILITY.yml"
+
+  phase_2_robustecimiento:
+    description: "Consolidacion y migracion tecnica"
+    epics:
+      - code: EAI-007
+        name: Modulos M4-M5
+        status: completed
+        completion: 100%
+        traceability: "../02-fase-robustecimiento/EAI-007-modulos-m4-m5/implementacion/TRACEABILITY.yml"
+      - code: EMR-001
+        name: Migracion BD
+        status: completed
+        completion: 100%
+        traceability: "../02-fase-robustecimiento/EMR-001-migracion-bd/implementacion/TRACEABILITY.yml"
+      - code: ETC-001
+        name: Consolidacion Tecnica
+        status: completed
+        completion: 100%
+        traceability: "../02-fase-robustecimiento/ETC-001-consolidacion-tecnica/"
+
+  phase_3_extensiones:
+    description: "Funcionalidades extendidas y portales"
+    epics:
+      - code: EXT-001
+        name: Portal Maestros
+        status: completed
+        completion: 100%
+        traceability: "../03-fase-extensiones/EXT-001-portal-maestros/implementacion/TRACEABILITY.yml"
+      - code: EXT-002
+        name: Admin Extendido
+        status: completed
+        completion: 100%
+        traceability: "../03-fase-extensiones/EXT-002-admin-extendido/implementacion/TRACEABILITY.yml"
+      - code: EXT-003
+        name: Notificaciones
+        status: completed
+        completion: 100%
+        traceability: "../03-fase-extensiones/EXT-003-notificaciones/implementacion/TRACEABILITY.yml"
+      - code: EXT-004
+        name: Perfiles
+        status: completed
+        completion: 100%
+        traceability: "../03-fase-extensiones/EXT-004-perfiles/implementacion/TRACEABILITY.yml"
+      - code: EXT-005
+        name: Reportes
+        status: completed
+        completion: 100%
+        traceability: "../03-fase-extensiones/EXT-005-reportes/implementacion/TRACEABILITY.yml"
+      - code: EXT-006
+        name: Contenido
+        status: completed
+        completion: 100%
+        traceability: "../03-fase-extensiones/EXT-006-contenido/implementacion/TRACEABILITY.yml"
+      - code: EXT-007
+        name: LTI Integration
+        status: partial
+        completion: 40%
+        traceability: "../03-fase-extensiones/EXT-007-lti-integration/implementacion/TRACEABILITY.yml"
+        roadmap: "./COMPLETENESS-TRACKER.yml#EXT-007"
+      - code: EXT-008
+        name: White Label
+        status: partial
+        completion: 50%
+        traceability: "../03-fase-extensiones/EXT-008-white-label/implementacion/TRACEABILITY.yml"
+        roadmap: "./COMPLETENESS-TRACKER.yml#EXT-008"
+      - code: EXT-009
+        name: Peer Challenges
+        status: partial
+        completion: 30%
+        traceability: "../03-fase-extensiones/EXT-009-peer-challenges/implementacion/TRACEABILITY.yml"
+        roadmap: "./COMPLETENESS-TRACKER.yml#EXT-009"
+      - code: EXT-010
+        name: Parent Notifications
+        status: partial
+        completion: 35%
+        traceability: "../03-fase-extensiones/EXT-010-parent-notifications/implementacion/TRACEABILITY.yml"
+        roadmap: "./COMPLETENESS-TRACKER.yml#EXT-010"
+      - code: EXT-011
+        name: Parent Portal
+        status: partial
+        completion: 30%
+        traceability: "../03-fase-extensiones/EXT-011-parent-portal/implementacion/TRACEABILITY.yml"
+        roadmap: "./COMPLETENESS-TRACKER.yml#EXT-011"
+
+  phase_3_social:
+    description: "Extension social de gamificacion"
+    epics:
+      - code: EAI-003-EXT
+        name: Gamificacion Social
+        status: completed
+        completion: 100%
+        traceability: "../03-fase-extensiones/EAI-003-EXT-gamificacion-social/"
+
+# =============================================================================
+# CADENAS DE TRAZABILIDAD PRINCIPALES
+# =============================================================================
+
+traceability_chains:
+  authentication:
+    requirement: RF-AUTH-001
+    specification: ET-AUTH-001
+    epic: EAI-001
+    implementation:
+      database:
+        schema: auth_management
+        tables: [users, roles, permissions, user_roles]
+      backend:
+        module: auth
+        entities: [User, Role, Permission]
+      frontend:
+        feature: auth
+        components: [LoginForm, RegisterForm, AuthProvider]
+    status: implemented
+
+  gamification:
+    requirement: RF-GAM-001
+    specification: ET-GAM-001
+    epic: EAI-003
+    implementation:
+      database:
+        schema: gamification_system
+        tables: [achievements, user_achievements, maya_ranks, comodines]
+      backend:
+        module: gamification
+        entities: [Achievement, UserAchievement, MayaRank]
+      frontend:
+        feature: student/gamification
+        components: [AchievementCard, RankBadge, ComodinButton]
+    status: implemented
+
+  activities:
+    requirement: RF-ACT-001
+    specification: ET-ACT-001
+    epic: EAI-002
+    implementation:
+      database:
+        schema: educational_content
+        tables: [activities, activity_types, activity_attempts]
+      backend:
+        module: activities
+        entities: [Activity, ActivityType, ActivityAttempt]
+      frontend:
+        feature: student/activities
+        components: [ActivityCard, ExerciseRenderer, ProgressBar]
+    status: implemented
+
+  teacher_portal:
+    requirement: RF-TCH-001
+    specification: ET-TCH-001
+    epic: EXT-001
+    implementation:
+      database:
+        schema: teacher_portal
+        tables: [teacher_assignments, class_progress]
+      backend:
+        module: teacher
+        entities: [TeacherAssignment, ClassProgress]
+      frontend:
+        feature: teacher
+        components: [TeacherDashboard, ClassView, AssignmentManager]
+    status: implemented
+
+# =============================================================================
+# REFERENCIAS CRUZADAS
+# =============================================================================
+
+cross_references:
+  inventories:
+    master: "../../orchestration/inventarios/MASTER_INVENTORY.yml"
+    database: "../../orchestration/inventarios/DATABASE_INVENTORY.yml"
+    backend: "../../orchestration/inventarios/BACKEND_INVENTORY.yml"
+    frontend: "../../orchestration/inventarios/FRONTEND_INVENTORY.yml"
+
+  ssot_components:
+    epic_index: "./EPIC-INDEX.yml"
+    requirements_index: "./REQUIREMENTS-INDEX.yml"
+    code_mappings: "./CODE-MAPPINGS.yml"
+    completeness_tracker: "./COMPLETENESS-TRACKER.yml"
+
+  traces:
+    database: "../../orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
+    backend: "../../orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
+    frontend: "../../orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
+
+# =============================================================================
+# METRICAS DE SINCRONIZACION
+# =============================================================================
+
+sync_metrics:
+  last_sync: "2026-01-18"
+
+  database_backend:
+    tables_total: 137
+    entities_total: 125
+    coverage: "91%"  # 125/137
+    missing_entities: 12
+    notes: "Tablas M:N gestionadas por TypeORM no requieren entity directa"
+
+  backend_frontend:
+    endpoints_total: 612
+    endpoints_consumed: 380
+    coverage: "62%"
+    notes: "Algunos endpoints son admin-only o batch jobs"
+
+  docs_code:
+    requirements_total: 150
+    implemented: 112
+    coverage: "75%"
+    pending: 38

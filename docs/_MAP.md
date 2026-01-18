@@ -1,8 +1,8 @@
 # MAPA DE DOCUMENTACION: GAMILIT
 
 **Proyecto:** GAMILIT - Plataforma de Gamificacion Educativa
-**Ultima actualizacion:** 2026-01-07
-**Version:** 2.1.0 (Post-purga documentacion)
+**Ultima actualizacion:** 2026-01-18
+**Version:** 2.2.0 (SSOT Consolidado)
 
 ---
 
@@ -10,6 +10,7 @@
 
 ```
 docs/
++-- _SSOT/                   # Single Source of Truth - Consolidado central
 +-- 00-vision-general/       # Vision, glosario, onboarding
 +-- 01-fase-alcance-inicial/ # Fase 1: EAI-001 a EAI-008 (7 EPICs)
 +-- 02-fase-robustecimiento/ # Fase 2: EAI-007 (Modulos M4-M5)
@@ -82,6 +83,17 @@ docs/
 
 ## Subdirectorios
 
+### _SSOT/ (Single Source of Truth)
+Consolidado central de trazabilidad del proyecto.
+
+| Archivo | Proposito | Alias |
+|---------|-----------|-------|
+| TRACEABILITY-MASTER.yml | Consolidado de 22 epicas | @TRACE-MASTER |
+| EPIC-INDEX.yml | Indice de epicas con estados | @EPIC-INDEX |
+| REQUIREMENTS-INDEX.yml | Mapeo RF -> ET -> US | @REQ-INDEX |
+| CODE-MAPPINGS.yml | Mapeo docs <-> codigo | @CODE-MAP |
+| COMPLETENESS-TRACKER.yml | Rutas para epicas parciales | @COMPLETENESS |
+
 ### 00-vision-general/
 Vision del producto, glosario, datos de gamificacion, guias de pruebas.
 
@@ -130,13 +142,16 @@ Documentacion deprecada: 98-standards, frontend-original, database-original.
 
 | Metrica | Valor |
 |---------|-------|
-| EPICs documentadas | 19 |
+| EPICs documentadas | 22 |
+| EPICs completadas | 17 |
+| EPICs parciales | 5 |
 | ADRs | 21 |
 | Cheatsheets | 8 |
 | Guias de desarrollo | 10+ |
+| SSOT archivos | 5 |
 
 ---
 
-**Actualizado:** 2026-01-07
-**Sistema:** NEXUS v4.0 + SIMCO
-**Cambios:** Purga de 18 archivos obsoletos, actualización de métricas
+**Actualizado:** 2026-01-18
+**Sistema:** SIMCO v4.0 + SSOT
+**Cambios:** Agregado _SSOT/ con trazabilidad consolidada

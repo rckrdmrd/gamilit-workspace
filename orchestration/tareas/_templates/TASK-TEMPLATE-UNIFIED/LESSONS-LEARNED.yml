@@ -1,0 +1,184 @@
+# LESSONS-LEARNED.yml - Lecciones Aprendidas de la Tarea
+# Version: 1.0.0
+# Actualizado: 2026-01-18
+#
+# Proposito: Documentar aprendizajes para mejorar futuras tareas
+
+# =============================================================================
+# METADATA
+# =============================================================================
+
+metadata:
+  task_id: "TASK-YYYY-MM-DD-NNN"
+  task_title: "Titulo de la tarea"
+  completed_date: "YYYY-MM-DD"
+  author: "Agente"
+
+# =============================================================================
+# RESUMEN EJECUTIVO
+# =============================================================================
+
+summary:
+  outcome: "success"          # success | partial | failed
+  key_achievement: "Descripcion breve del logro principal"
+  main_challenge: "Descripcion breve del desafio principal"
+  time_deviation: "+2h"       # vs estimado (ej: +2h, -1h, on-time)
+
+# =============================================================================
+# QUE FUNCIONO BIEN
+# =============================================================================
+
+what_worked:
+  - id: WW-001
+    category: "process"       # process | technical | communication | tooling
+    description: "Descripcion de lo que funciono bien"
+    impact: "high"            # high | medium | low
+    replicable: true
+    details: |
+      Contexto adicional sobre por que funciono
+      y como replicarlo en futuras tareas.
+
+  - id: WW-002
+    category: "technical"
+    description: "Descripcion de solucion tecnica efectiva"
+    impact: "medium"
+    replicable: true
+    code_example: |
+      // Ejemplo de codigo si aplica
+      const solution = ...
+
+# =============================================================================
+# QUE NO FUNCIONO / PROBLEMAS
+# =============================================================================
+
+what_didnt_work:
+  - id: WD-001
+    category: "process"
+    description: "Descripcion del problema encontrado"
+    impact: "high"
+    root_cause: "Causa raiz del problema"
+    resolution: "Como se resolvio o mitigó"
+    prevention: "Como prevenir en el futuro"
+
+  - id: WD-002
+    category: "technical"
+    description: "Problema tecnico encontrado"
+    impact: "medium"
+    root_cause: "Causa raiz"
+    resolution: "Solucion aplicada"
+    prevention: "Medida preventiva"
+    related_docs:
+      - "Link a ADR o documentacion relacionada"
+
+# =============================================================================
+# SORPRESAS / DESCUBRIMIENTOS
+# =============================================================================
+
+surprises:
+  - id: SU-001
+    type: "positive"          # positive | negative | neutral
+    description: "Algo inesperado que se descubrio"
+    impact: "medium"
+    action_taken: "Que se hizo al respecto"
+    follow_up: "Acciones futuras si aplica"
+
+# =============================================================================
+# RECOMENDACIONES PARA FUTURAS TAREAS
+# =============================================================================
+
+recommendations:
+  immediate:
+    - id: REC-I-001
+      description: "Accion inmediata recomendada"
+      priority: "high"
+      owner: "Quien debe ejecutar"
+
+  short_term:
+    - id: REC-S-001
+      description: "Mejora para proximas tareas similares"
+      priority: "medium"
+      estimated_effort: "1h"
+
+  long_term:
+    - id: REC-L-001
+      description: "Mejora sistemica para el proyecto"
+      priority: "low"
+      requires_approval: true
+
+# =============================================================================
+# ACTUALIZACIONES A PROCESOS/DOCS
+# =============================================================================
+
+process_updates:
+  triggers:
+    - file: "orchestration/directivas/triggers/TRIGGER-XXX.md"
+      action: "update"        # create | update | deprecate
+      description: "Actualizacion sugerida al trigger"
+
+  checklists:
+    - file: "orchestration/directivas/checklists/CHECKLIST-XXX.md"
+      action: "update"
+      description: "Item a agregar al checklist"
+
+  templates:
+    - file: "orchestration/templates/TEMPLATE-XXX.md"
+      action: "update"
+      description: "Mejora al template"
+
+# =============================================================================
+# METRICAS DE LA TAREA
+# =============================================================================
+
+task_metrics:
+  time:
+    estimated: "Xh"
+    actual: "Yh"
+    variance: "+/-Zh"
+
+  scope:
+    planned_items: 10
+    completed_items: 10
+    added_items: 2
+    removed_items: 0
+
+  quality:
+    bugs_found: 0
+    rework_required: false
+    first_time_right: true
+
+  complexity:
+    estimated: "medium"       # low | medium | high
+    actual: "high"
+    reason_for_variance: "Razon si cambio"
+
+# =============================================================================
+# TAGS PARA BUSQUEDA
+# =============================================================================
+
+tags:
+  domains: [database, backend, frontend]
+  topics: [performance, security, refactoring]
+  technologies: [typescript, postgresql, react]
+  patterns: [repository, factory, observer]
+
+# =============================================================================
+# PROPAGACION
+# =============================================================================
+
+propagation:
+  should_propagate: true
+  target_index: "workspace-v2/orchestration/retrospectivas/LECCIONES-INDEX.yml"
+  propagated: false
+  propagated_date: null
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+references:
+  metadata: "./METADATA.yml"
+  subtasks: "./SUBTASKS.yml"
+  related_tasks:
+    - "TASK-YYYY-MM-DD-XXX: Tarea relacionada"
+  external_docs:
+    - "Link a documentacion externa relevante"

@@ -1,0 +1,147 @@
+# COMPLETENESS-ROADMAP TEMPLATE
+# Version: 1.0.0
+# Uso: Solo para epicas parciales (completion < 100%)
+# Ubicacion: docs/XX-fase-*/EPIC-XXX/COMPLETENESS-ROADMAP.yml
+
+# =============================================================================
+# IDENTIFICACION
+# =============================================================================
+
+epic:
+  code: "EXT-000"
+  name: "Nombre de la Epica"
+  current_completion: 40%
+  target_completion: 100%
+  priority: P2              # P0-P4
+
+# =============================================================================
+# FEATURES COMPLETADAS
+# =============================================================================
+
+completed_features:
+  - feature: "Feature A completada"
+    completion_date: "2025-11-08"
+    user_story: US-XXX-001
+    implementation:
+      database: completed
+      backend: completed
+      frontend: completed
+
+  - feature: "Feature B completada"
+    completion_date: "2025-11-15"
+    user_story: US-XXX-002
+
+# =============================================================================
+# ROADMAP DE COMPLETITUD
+# =============================================================================
+
+roadmap:
+  phase_1:
+    name: "Nombre de la Fase 1"
+    target_quarter: "Q2 2026"
+    completion_increment: "+25%"   # Lo que sumara al completion
+    user_stories: [US-XXX-003]
+    tasks:
+      - "Tarea especifica 1"
+      - "Tarea especifica 2"
+      - "Tarea especifica 3"
+    acceptance_criteria:
+      - "Criterio de aceptacion 1"
+      - "Criterio de aceptacion 2"
+    dependencies:
+      internal: []          # Fases anteriores de esta epica
+      external: []          # Otras epicas
+    prerequisites:
+      technical: []
+      business: []
+
+  phase_2:
+    name: "Nombre de la Fase 2"
+    target_quarter: "Q3 2026"
+    completion_increment: "+20%"
+    user_stories: [US-XXX-004]
+    tasks:
+      - "Tarea especifica A"
+      - "Tarea especifica B"
+    dependencies:
+      internal: [phase_1]   # Depende de fase 1
+      external: []
+
+  phase_3:
+    name: "Nombre de la Fase 3"
+    target_quarter: "Q4 2026"
+    completion_increment: "+15%"
+    user_stories: [US-XXX-005]
+    tasks:
+      - "Tarea final X"
+      - "Tarea final Y"
+    dependencies:
+      internal: [phase_2]
+      external: []
+    prerequisites:
+      business: ["Requisito de negocio si aplica"]
+
+# =============================================================================
+# BLOQUEANTES
+# =============================================================================
+
+blockers:
+  - id: BLOCK-XXX-001
+    description: "Descripcion del bloqueante"
+    type: technical         # technical | business | dependency
+    status: active          # active | resolved
+    resolution_plan: "Como se resolvera"
+    target_date: "2026-03-01"
+
+# =============================================================================
+# RIESGOS
+# =============================================================================
+
+risks:
+  - id: RISK-XXX-001
+    description: "Descripcion del riesgo"
+    probability: medium     # low | medium | high
+    impact: high            # low | medium | high
+    mitigation: "Plan de mitigacion"
+
+# =============================================================================
+# METRICAS DE PROGRESO
+# =============================================================================
+
+progress_tracking:
+  milestones:
+    - name: "MVP de la feature"
+      target_date: "2026-03-01"
+      completion: 0%
+      criteria: ["Criterio 1", "Criterio 2"]
+
+    - name: "Feature completa"
+      target_date: "2026-06-01"
+      completion: 0%
+      criteria: ["Criterio final"]
+
+  checkpoints:
+    - date: "2026-02-01"
+      expected_completion: 50%
+    - date: "2026-04-01"
+      expected_completion: 75%
+    - date: "2026-06-01"
+      expected_completion: 100%
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+references:
+  epic_manifest: "./EPIC-MANIFEST.yml"
+  ssot_tracker: "docs/_SSOT/COMPLETENESS-TRACKER.yml#EPIC-CODE"
+  traceability: "./implementacion/TRACEABILITY.yml"
+
+# =============================================================================
+# HISTORIAL DE ACTUALIZACIONES
+# =============================================================================
+
+changelog:
+  - date: "2026-01-18"
+    author: "Agente"
+    changes: "Creacion inicial del roadmap"

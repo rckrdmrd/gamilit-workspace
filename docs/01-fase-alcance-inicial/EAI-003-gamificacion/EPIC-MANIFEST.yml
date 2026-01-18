@@ -1,0 +1,270 @@
+# EPIC-MANIFEST: EAI-003 - Gamificacion
+# Version: 1.0.0
+# Actualizado: 2026-01-18
+# Nota: Esta es la EPICA MODELO - usar como referencia para otras epicas
+
+# =============================================================================
+# IDENTIFICACION
+# =============================================================================
+
+epic:
+  code: "EAI-003"
+  name: "Gamificacion Basica"
+  phase: 1
+  phase_name: "Alcance Inicial"
+  is_model_epic: true       # Epica de referencia para estructura
+
+# =============================================================================
+# ESTADO Y METRICAS
+# =============================================================================
+
+status:
+  overall: "completed"
+  completion: 100%
+  last_updated: "2026-01-18"
+
+budget:
+  mxn: 22000
+  story_points: 40
+  sprint: "2-3"
+  period: "Mes 1, Semana 2-3"
+
+# =============================================================================
+# ARTEFACTOS DOCUMENTALES
+# =============================================================================
+
+artifacts:
+  requirements:
+    total: 3
+    files:
+      - id: RF-GAM-001
+        file: "requerimientos/RF-GAM-001-achievements.md"
+        title: "Sistema de Logros (Achievements)"
+        status: implemented
+      - id: RF-GAM-002
+        file: "requerimientos/RF-GAM-002-comodines.md"
+        title: "Sistema de Comodines (Ayudas)"
+        status: implemented
+      - id: RF-GAM-003
+        file: "requerimientos/RF-GAM-003-rangos-maya.md"
+        title: "Sistema de Rangos Maya"
+        status: implemented
+
+  specifications:
+    total: 3
+    files:
+      - id: ET-GAM-001
+        file: "especificaciones/ET-GAM-001-achievements.md"
+        rf: RF-GAM-001
+        title: "Implementacion del Sistema de Achievements"
+        status: implemented
+        version: "1.0"
+      - id: ET-GAM-002
+        file: "especificaciones/ET-GAM-002-comodines.md"
+        rf: RF-GAM-002
+        title: "Implementacion del Sistema de Comodines"
+        status: implemented
+        version: "1.1"
+        last_updated: "2025-11-11"
+        changes: "Costos sincronizados con DDL: pistas=15, vision_lectora=25, segunda_oportunidad=40"
+      - id: ET-GAM-003
+        file: "especificaciones/ET-GAM-003-rangos-maya.md"
+        rf: RF-GAM-003
+        title: "Implementacion del Sistema de Rangos Maya"
+        status: implemented
+        version: "1.1"
+        last_updated: "2025-11-11"
+        changes: "Umbrales XP sincronizados"
+
+  user_stories:
+    total: 5
+    implemented: 5
+    files:
+      - id: US-GAM-003
+        file: "historias-usuario/US-GAM-003-monedas-lectoras.md"
+        title: "Monedas lectoras (ML Coins)"
+        rf: [RF-GAM-001, RF-GAM-002]
+        story_points: 6
+        status: completed
+      - id: US-GAM-004
+        file: "historias-usuario/US-GAM-004-sistema-ayudas.md"
+        title: "Sistema de Ayudas (Comodines)"
+        rf: RF-GAM-002
+        story_points: 5
+        status: completed
+      - id: US-GAM-005
+        file: "historias-usuario/US-GAM-005-insignias-basicas.md"
+        title: "Insignias y Achievements"
+        rf: RF-GAM-001
+        story_points: 8
+        status: completed
+      - id: US-GAM-006
+        file: "historias-usuario/US-GAM-006-narrativa-basica.md"
+        title: "Narrativa Maya Basica"
+        rf: RF-GAM-003
+        story_points: 4
+        status: completed
+      - id: US-GAM-008
+        file: "historias-usuario/US-GAM-008-recompensas-modulos.md"
+        title: "Recompensas por Completar Modulos"
+        rf: [RF-GAM-001, RF-GAM-003]
+        story_points: 5
+        status: completed
+
+# =============================================================================
+# IMPLEMENTACION
+# =============================================================================
+
+implementation:
+  database:
+    schema: "gamification_system"
+    status: completed
+    ddl_path: "apps/database/ddl/schemas/gamification_system/"
+    tables_count: 12
+    key_tables:
+      - name: achievements
+        file: "tables/01-achievements.sql"
+        description: "Definiciones de achievements disponibles"
+        columns_using_enums: [achievement_type, achievement_category]
+      - name: user_achievements
+        file: "tables/02-user_achievements.sql"
+        description: "Achievements desbloqueados por usuarios"
+      - name: maya_ranks
+        file: "tables/03-maya_ranks.sql"
+        description: "Configuracion de rangos maya"
+      - name: user_ranks
+        file: "tables/04-user_ranks.sql"
+        description: "Rangos actuales de usuarios"
+      - name: comodines
+        file: "tables/05-comodines.sql"
+        description: "Tipos de comodines/ayudas"
+      - name: user_comodines
+        file: "tables/06-user_comodines.sql"
+        description: "Inventario de comodines por usuario"
+    key_enums:
+      - name: achievement_type
+        values: [badge, milestone, special, rank_promotion]
+        rf: RF-GAM-001
+      - name: achievement_category
+        values: [progress, streak, completion, social, special, mastery, exploration]
+        rf: RF-GAM-001
+      - name: maya_rank
+        values: [Ajaw, Nacom, "Ah K'in", "Halach Uinic", "K'uk'ulkan"]
+        rf: RF-GAM-003
+      - name: comodin_type
+        values: [pistas, vision_lectora, segunda_oportunidad]
+        rf: RF-GAM-002
+
+  backend:
+    module: "gamification"
+    status: completed
+    src_path: "apps/backend/src/modules/gamification/"
+    entities_count: 10
+    key_entities:
+      - name: Achievement
+        file: "entities/achievement.entity.ts"
+        description: "Entity de achievements"
+      - name: UserAchievement
+        file: "entities/user-achievement.entity.ts"
+      - name: MayaRank
+        file: "entities/maya-rank.entity.ts"
+      - name: Comodin
+        file: "entities/comodin.entity.ts"
+    controllers_count: 4
+    key_controllers:
+      - achievements.controller.ts
+      - ranks.controller.ts
+      - comodines.controller.ts
+      - missions.controller.ts
+    services_count: 5
+    key_services:
+      - achievements.service.ts
+      - ranks.service.ts
+      - comodines.service.ts
+      - gamification-events.service.ts
+
+  frontend:
+    feature: "student/gamification"
+    status: completed
+    src_path: "apps/frontend/src/features/student/gamification/"
+    components_count: 35
+    key_components:
+      - name: AchievementCard
+        file: "components/AchievementCard.tsx"
+        description: "Tarjeta de achievement individual"
+      - name: AchievementsList
+        file: "components/AchievementsList.tsx"
+      - name: RankBadge
+        file: "components/RankBadge.tsx"
+        description: "Insignia de rango maya"
+      - name: RankProgress
+        file: "components/RankProgress.tsx"
+      - name: ComodinButton
+        file: "components/ComodinButton.tsx"
+        description: "Boton para usar comodin"
+      - name: ComodinInventory
+        file: "components/ComodinInventory.tsx"
+    stores:
+      - name: achievementsStore
+        file: "stores/achievementsStore.ts"
+      - name: ranksStore
+        file: "stores/ranksStore.ts"
+      - name: powerUpsStore
+        file: "stores/powerUpsStore.ts"
+
+# =============================================================================
+# DEPENDENCIAS
+# =============================================================================
+
+dependencies:
+  depends_on:
+    - epic: EAI-001
+      reason: "Requiere sistema de usuarios y autenticacion"
+
+  required_by:
+    - epic: EAI-002
+      reason: "Actividades usan sistema de recompensas"
+    - epic: EXT-004
+      reason: "Perfiles muestran achievements y rangos"
+    - epic: EXT-005
+      reason: "Reportes incluyen metricas de gamificacion"
+    - epic: EAI-003-EXT
+      reason: "Extension social de gamificacion"
+
+  blockers: []
+
+# =============================================================================
+# TESTING
+# =============================================================================
+
+testing:
+  coverage:
+    overall: 45%
+    backend: 60%
+    frontend: 25%
+    database: 100%
+  key_tests:
+    - "Achievement unlock flow"
+    - "Rank progression calculation"
+    - "Comodin purchase and usage"
+  notes: "Test coverage bajo en frontend - pendiente mejora"
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+references:
+  traceability: "./implementacion/TRACEABILITY.yml"
+  ssot_entry: "docs/_SSOT/TRACEABILITY-MASTER.yml#EAI-003"
+  epic_index: "docs/_SSOT/EPIC-INDEX.yml#EAI-003"
+  design_doc: "docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md"
+
+# =============================================================================
+# NOTAS
+# =============================================================================
+
+notes:
+  - "Epica modelo - usar como referencia para estructura de otras epicas"
+  - "Sistema de rangos maya con 5 niveles basado en cultura maya"
+  - "Comodines con costos: pistas=15ML, vision_lectora=25ML, segunda_oportunidad=40ML"
+  - "XP umbrales: Ajaw(0-1K), Nacom(1K-3K), Ah K'in(3K-6K), Halach Uinic(6K-10K), K'uk'ulkan(10K+)"

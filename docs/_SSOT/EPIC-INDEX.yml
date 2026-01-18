@@ -1,0 +1,488 @@
+# EPIC-INDEX: Indice Maestro de Epicas GAMILIT
+# Version: 1.0.0
+# Actualizado: 2026-01-18
+
+metadata:
+  version: "1.0.0"
+  last_updated: "2026-01-18"
+  total_epics: 22
+  ssot_master: "./TRACEABILITY-MASTER.yml"
+
+# =============================================================================
+# ESTADISTICAS GLOBALES
+# =============================================================================
+
+statistics:
+  by_status:
+    completed: 17
+    partial: 5
+    planned: 0
+
+  by_phase:
+    phase_1: { total: 7, completed: 7, partial: 0 }
+    phase_2: { total: 3, completed: 3, partial: 0 }
+    phase_3: { total: 12, completed: 7, partial: 5 }
+
+  budget_total_mxn: 350000
+  story_points_total: 650
+
+# =============================================================================
+# INDICE COMPLETO DE EPICAS
+# =============================================================================
+
+epics:
+  # --- FASE 1: ALCANCE INICIAL ---
+  EAI-001:
+    name: "Fundamentos"
+    phase: 1
+    status: completed
+    completion: 100%
+    budget_mxn: 30000
+    story_points: 55
+    sprint: "1-2"
+    dependencies:
+      depends_on: []
+      required_by: [EAI-002, EAI-003, EAI-004, EAI-005, EAI-006]
+    artifacts:
+      requirements: 15
+      specifications: 15
+      user_stories: 12
+    implementation:
+      database: { schema: auth_management, tables: 18 }
+      backend: { module: auth, entities: 12 }
+      frontend: { feature: auth, components: 20 }
+    paths:
+      root: "../01-fase-alcance-inicial/EAI-001-fundamentos/"
+      traceability: "../01-fase-alcance-inicial/EAI-001-fundamentos/implementacion/TRACEABILITY.yml"
+
+  EAI-002:
+    name: "Actividades Educativas"
+    phase: 1
+    status: completed
+    completion: 100%
+    budget_mxn: 28000
+    story_points: 50
+    sprint: "2-4"
+    dependencies:
+      depends_on: [EAI-001]
+      required_by: [EAI-003, EAI-004]
+    artifacts:
+      requirements: 20
+      specifications: 18
+      user_stories: 15
+    implementation:
+      database: { schema: educational_content, tables: 22 }
+      backend: { module: activities, entities: 18 }
+      frontend: { feature: activities, components: 45 }
+    paths:
+      root: "../01-fase-alcance-inicial/EAI-002-actividades/"
+      traceability: "../01-fase-alcance-inicial/EAI-002-actividades/implementacion/TRACEABILITY.yml"
+
+  EAI-003:
+    name: "Gamificacion"
+    phase: 1
+    status: completed
+    completion: 100%
+    budget_mxn: 22000
+    story_points: 40
+    sprint: "2-3"
+    is_model_epic: true  # Epica modelo para replicar estructura
+    dependencies:
+      depends_on: [EAI-001]
+      required_by: [EAI-002, EXT-004, EXT-005, EAI-003-EXT]
+    artifacts:
+      requirements: 3
+      specifications: 5
+      user_stories: 8
+    implementation:
+      database: { schema: gamification_system, tables: 12 }
+      backend: { module: gamification, entities: 10 }
+      frontend: { feature: gamification, components: 35 }
+    paths:
+      root: "../01-fase-alcance-inicial/EAI-003-gamificacion/"
+      traceability: "../01-fase-alcance-inicial/EAI-003-gamificacion/implementacion/TRACEABILITY.yml"
+
+  EAI-004:
+    name: "Analytics"
+    phase: 1
+    status: completed
+    completion: 100%
+    budget_mxn: 18000
+    story_points: 35
+    sprint: "4-5"
+    dependencies:
+      depends_on: [EAI-001, EAI-002]
+      required_by: [EXT-005]
+    artifacts:
+      requirements: 12
+      specifications: 10
+      user_stories: 8
+    implementation:
+      database: { schema: analytics, tables: 8 }
+      backend: { module: analytics, entities: 6 }
+      frontend: { feature: analytics, components: 25 }
+    paths:
+      root: "../01-fase-alcance-inicial/EAI-004-analytics/"
+      traceability: "../01-fase-alcance-inicial/EAI-004-analytics/implementacion/TRACEABILITY.yml"
+
+  EAI-005:
+    name: "Admin Base"
+    phase: 1
+    status: completed
+    completion: 100%
+    budget_mxn: 15000
+    story_points: 30
+    sprint: "3-4"
+    dependencies:
+      depends_on: [EAI-001]
+      required_by: [EAI-008, EXT-002]
+    artifacts:
+      requirements: 10
+      specifications: 8
+      user_stories: 6
+    implementation:
+      database: { schema: admin_system, tables: 6 }
+      backend: { module: admin, entities: 5 }
+      frontend: { feature: admin, components: 30 }
+    paths:
+      root: "../01-fase-alcance-inicial/EAI-005-admin-base/"
+      traceability: "../01-fase-alcance-inicial/EAI-005-admin-base/implementacion/TRACEABILITY.yml"
+
+  EAI-006:
+    name: "Configuracion Sistema"
+    phase: 1
+    status: completed
+    completion: 100%
+    budget_mxn: 12000
+    story_points: 25
+    sprint: "4"
+    dependencies:
+      depends_on: [EAI-001]
+      required_by: [EXT-008]
+    artifacts:
+      requirements: 8
+      specifications: 6
+      user_stories: 5
+    implementation:
+      database: { schema: system_config, tables: 10 }
+      backend: { module: config, entities: 8 }
+      frontend: { feature: settings, components: 15 }
+    paths:
+      root: "../01-fase-alcance-inicial/EAI-006-configuracion-sistema/"
+      traceability: "../01-fase-alcance-inicial/EAI-006-configuracion-sistema/implementacion/TRACEABILITY.yml"
+
+  EAI-008:
+    name: "Portal Admin"
+    phase: 1
+    status: completed
+    completion: 100%
+    budget_mxn: 20000
+    story_points: 38
+    sprint: "5-6"
+    dependencies:
+      depends_on: [EAI-001, EAI-005]
+      required_by: [EXT-002]
+    artifacts:
+      requirements: 15
+      specifications: 12
+      user_stories: 10
+    implementation:
+      database: { schema: admin_system, tables: 4 }
+      backend: { module: admin, entities: 4 }
+      frontend: { feature: admin-portal, components: 50 }
+    paths:
+      root: "../01-fase-alcance-inicial/EAI-008-portal-admin/"
+      traceability: "../01-fase-alcance-inicial/EAI-008-portal-admin/implementacion/TRACEABILITY.yml"
+
+  # --- FASE 2: ROBUSTECIMIENTO ---
+  EAI-007:
+    name: "Modulos M4-M5"
+    phase: 2
+    status: completed
+    completion: 100%
+    budget_mxn: 25000
+    story_points: 45
+    sprint: "7-9"
+    dependencies:
+      depends_on: [EAI-002, EAI-003]
+      required_by: []
+    artifacts:
+      requirements: 15
+      specifications: 12
+      user_stories: 10
+    implementation:
+      database: { schema: educational_content, tables: 8 }
+      backend: { module: activities, entities: 6 }
+      frontend: { feature: modules, components: 40 }
+    paths:
+      root: "../02-fase-robustecimiento/EAI-007-modulos-m4-m5/"
+      traceability: "../02-fase-robustecimiento/EAI-007-modulos-m4-m5/implementacion/TRACEABILITY.yml"
+
+  EMR-001:
+    name: "Migracion BD"
+    phase: 2
+    status: completed
+    completion: 100%
+    budget_mxn: 15000
+    story_points: 30
+    sprint: "8-10"
+    dependencies:
+      depends_on: []
+      required_by: [ETC-001]
+    artifacts:
+      requirements: 5
+      specifications: 5
+      user_stories: 3
+    implementation:
+      database: { schema: "_migration", tables: 0 }
+      backend: { module: migration, entities: 0 }
+      frontend: { feature: null, components: 0 }
+    paths:
+      root: "../02-fase-robustecimiento/EMR-001-migracion-bd/"
+      traceability: "../02-fase-robustecimiento/EMR-001-migracion-bd/implementacion/TRACEABILITY.yml"
+
+  ETC-001:
+    name: "Consolidacion Tecnica"
+    phase: 2
+    status: completed
+    completion: 100%
+    budget_mxn: 20000
+    story_points: 40
+    sprint: "10-12"
+    dependencies:
+      depends_on: [EMR-001]
+      required_by: []
+    artifacts:
+      requirements: 10
+      specifications: 8
+      user_stories: 6
+    implementation:
+      database: { schema: "_consolidation", tables: 0 }
+      backend: { module: "_refactor", entities: 0 }
+      frontend: { feature: "_refactor", components: 0 }
+    paths:
+      root: "../02-fase-robustecimiento/ETC-001-consolidacion-tecnica/"
+
+  # --- FASE 3: EXTENSIONES (COMPLETADAS) ---
+  EXT-001:
+    name: "Portal Maestros"
+    phase: 3
+    status: completed
+    completion: 100%
+    budget_mxn: 18000
+    story_points: 35
+    sprint: "11-13"
+    dependencies:
+      depends_on: [EAI-001, EAI-002]
+      required_by: [EXT-002]
+    artifacts:
+      requirements: 12
+      specifications: 10
+      user_stories: 8
+    implementation:
+      database: { schema: teacher_portal, tables: 6 }
+      backend: { module: teacher, entities: 5 }
+      frontend: { feature: teacher, components: 45 }
+    paths:
+      root: "../03-fase-extensiones/EXT-001-portal-maestros/"
+      traceability: "../03-fase-extensiones/EXT-001-portal-maestros/implementacion/TRACEABILITY.yml"
+
+  EXT-002:
+    name: "Admin Extendido"
+    phase: 3
+    status: completed
+    completion: 100%
+    budget_mxn: 15000
+    story_points: 30
+    sprint: "12-14"
+    dependencies:
+      depends_on: [EAI-005, EAI-008, EXT-001]
+      required_by: []
+    paths:
+      root: "../03-fase-extensiones/EXT-002-admin-extendido/"
+      traceability: "../03-fase-extensiones/EXT-002-admin-extendido/implementacion/TRACEABILITY.yml"
+
+  EXT-003:
+    name: "Notificaciones"
+    phase: 3
+    status: completed
+    completion: 100%
+    budget_mxn: 12000
+    story_points: 25
+    sprint: "13-15"
+    dependencies:
+      depends_on: [EAI-001]
+      required_by: [EXT-010]
+    paths:
+      root: "../03-fase-extensiones/EXT-003-notificaciones/"
+      traceability: "../03-fase-extensiones/EXT-003-notificaciones/implementacion/TRACEABILITY.yml"
+
+  EXT-004:
+    name: "Perfiles"
+    phase: 3
+    status: completed
+    completion: 100%
+    budget_mxn: 10000
+    story_points: 20
+    sprint: "14-15"
+    dependencies:
+      depends_on: [EAI-001, EAI-003]
+      required_by: [EXT-011]
+    paths:
+      root: "../03-fase-extensiones/EXT-004-perfiles/"
+      traceability: "../03-fase-extensiones/EXT-004-perfiles/implementacion/TRACEABILITY.yml"
+
+  EXT-005:
+    name: "Reportes"
+    phase: 3
+    status: completed
+    completion: 100%
+    budget_mxn: 14000
+    story_points: 28
+    sprint: "15-17"
+    dependencies:
+      depends_on: [EAI-003, EAI-004]
+      required_by: []
+    paths:
+      root: "../03-fase-extensiones/EXT-005-reportes/"
+      traceability: "../03-fase-extensiones/EXT-005-reportes/implementacion/TRACEABILITY.yml"
+
+  EXT-006:
+    name: "Contenido"
+    phase: 3
+    status: completed
+    completion: 100%
+    budget_mxn: 16000
+    story_points: 32
+    sprint: "16-18"
+    dependencies:
+      depends_on: [EAI-002]
+      required_by: []
+    paths:
+      root: "../03-fase-extensiones/EXT-006-contenido/"
+      traceability: "../03-fase-extensiones/EXT-006-contenido/implementacion/TRACEABILITY.yml"
+
+  EAI-003-EXT:
+    name: "Gamificacion Social"
+    phase: 3
+    status: completed
+    completion: 100%
+    budget_mxn: 18000
+    story_points: 35
+    sprint: "17-19"
+    dependencies:
+      depends_on: [EAI-003]
+      required_by: [EXT-009]
+    paths:
+      root: "../03-fase-extensiones/EAI-003-EXT-gamificacion-social/"
+
+  # --- FASE 3: EXTENSIONES (PARCIALES) ---
+  EXT-007:
+    name: "LTI Integration"
+    phase: 3
+    status: partial
+    completion: 40%
+    budget_mxn: 12000
+    story_points: 45
+    sprint: "TBD"
+    dependencies:
+      depends_on: [EAI-001]
+      required_by: []
+    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-007"
+    paths:
+      root: "../03-fase-extensiones/EXT-007-lti-integration/"
+      traceability: "../03-fase-extensiones/EXT-007-lti-integration/implementacion/TRACEABILITY.yml"
+
+  EXT-008:
+    name: "White Label"
+    phase: 3
+    status: partial
+    completion: 50%
+    budget_mxn: 10000
+    story_points: 40
+    sprint: "TBD"
+    dependencies:
+      depends_on: [EAI-006]
+      required_by: []
+    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-008"
+    paths:
+      root: "../03-fase-extensiones/EXT-008-white-label/"
+      traceability: "../03-fase-extensiones/EXT-008-white-label/implementacion/TRACEABILITY.yml"
+
+  EXT-009:
+    name: "Peer Challenges"
+    phase: 3
+    status: partial
+    completion: 30%
+    budget_mxn: 14000
+    story_points: 50
+    sprint: "TBD"
+    dependencies:
+      depends_on: [EAI-003-EXT]
+      required_by: []
+    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-009"
+    paths:
+      root: "../03-fase-extensiones/EXT-009-peer-challenges/"
+      traceability: "../03-fase-extensiones/EXT-009-peer-challenges/implementacion/TRACEABILITY.yml"
+
+  EXT-010:
+    name: "Parent Notifications"
+    phase: 3
+    status: partial
+    completion: 35%
+    budget_mxn: 8000
+    story_points: 25
+    sprint: "TBD"
+    dependencies:
+      depends_on: [EXT-003]
+      required_by: [EXT-011]
+    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-010"
+    paths:
+      root: "../03-fase-extensiones/EXT-010-parent-notifications/"
+      traceability: "../03-fase-extensiones/EXT-010-parent-notifications/implementacion/TRACEABILITY.yml"
+
+  EXT-011:
+    name: "Parent Portal"
+    phase: 3
+    status: partial
+    completion: 30%
+    budget_mxn: 12000
+    story_points: 45
+    sprint: "TBD"
+    dependencies:
+      depends_on: [EXT-004, EXT-010]
+      required_by: []
+    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-011"
+    paths:
+      root: "../03-fase-extensiones/EXT-011-parent-portal/"
+      traceability: "../03-fase-extensiones/EXT-011-parent-portal/implementacion/TRACEABILITY.yml"
+
+# =============================================================================
+# GRAFO DE DEPENDENCIAS (RESUMEN)
+# =============================================================================
+
+dependency_graph:
+  layers:
+    L0_foundation:
+      epics: [EAI-001]
+      description: "Base del sistema - sin dependencias"
+
+    L1_core:
+      epics: [EAI-002, EAI-003, EAI-004, EAI-005, EAI-006]
+      description: "Funcionalidades core - dependen de L0"
+
+    L2_portals:
+      epics: [EAI-008, EXT-001]
+      description: "Portales principales"
+
+    L3_extensions:
+      epics: [EXT-002, EXT-003, EXT-004, EXT-005, EXT-006, EAI-003-EXT]
+      description: "Extensiones completadas"
+
+    L4_advanced:
+      epics: [EXT-007, EXT-008, EXT-009, EXT-010, EXT-011]
+      description: "Extensiones avanzadas (parciales)"
+
+  critical_path:
+    - EAI-001 -> EAI-002 -> EAI-003 -> EAI-003-EXT -> EXT-009
+    - EAI-001 -> EXT-003 -> EXT-010 -> EXT-011

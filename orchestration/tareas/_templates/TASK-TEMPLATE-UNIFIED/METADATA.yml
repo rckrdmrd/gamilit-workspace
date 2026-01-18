@@ -1,0 +1,230 @@
+# METADATA.yml - Template Unificado de Tarea
+# Version: 2.0.0
+# Actualizado: 2026-01-18
+
+# =============================================================================
+# IDENTIFICACION
+# =============================================================================
+
+task:
+  id: "TASK-YYYY-MM-DD-NNN"
+  title: "Titulo descriptivo de la tarea"
+  created: "YYYY-MM-DD"
+  updated: "YYYY-MM-DD"
+
+# =============================================================================
+# CLASIFICACION
+# =============================================================================
+
+classification:
+  type: "feature"           # feature | bug | refactor | audit | migration | documentation
+  priority: "P1"            # P0 (critico) | P1 (alto) | P2 (medio) | P3 (bajo)
+  mode: "FULL"              # FULL | QUICK | ANALYSIS | PROPAGATION
+  epic: "EAI-003"           # Epica relacionada (si aplica)
+  sprint: "Sprint-XX"       # Sprint actual (si aplica)
+
+# =============================================================================
+# ESTADO
+# =============================================================================
+
+status:
+  current: "pending"        # pending | in_progress | blocked | completed
+  blocked_by: null          # ID de tarea/issue bloqueante
+  completion: 0%
+  last_phase: null          # C | A | P | V | E | D
+
+# =============================================================================
+# DOMINIOS AFECTADOS
+# =============================================================================
+
+domains:
+  - name: "database"
+    affected: true
+    details: "Descripcion de cambios en BD"
+
+  - name: "backend"
+    affected: true
+    details: "Descripcion de cambios en backend"
+
+  - name: "frontend"
+    affected: false
+    details: null
+
+  - name: "documentation"
+    affected: true
+    details: "Actualizacion de inventarios"
+
+# =============================================================================
+# REQUERIMIENTOS Y DEPENDENCIAS
+# =============================================================================
+
+requirements:
+  functional:
+    - "RF-XXX-001: Descripcion"
+  technical:
+    - "ET-XXX-001: Descripcion"
+  user_stories:
+    - "US-XXX-001: Como usuario quiero..."
+
+dependencies:
+  tasks_required:
+    - "TASK-YYYY-MM-DD-NNN: Tarea previa necesaria"
+  tasks_blocked:
+    - "TASK-YYYY-MM-DD-NNN: Tarea que espera esta"
+  epics_related:
+    - "EAI-003: Gamificacion"
+
+# =============================================================================
+# FASES CAPVED
+# =============================================================================
+
+phases:
+  contexto:
+    status: "pending"       # pending | in_progress | completed | skipped
+    started: null
+    completed: null
+    file: "01-CONTEXTO.md"
+    checklist: "CHECKLIST-FASE-C.md"
+
+  analisis:
+    status: "pending"
+    started: null
+    completed: null
+    file: "02-ANALISIS.md"
+    checklist: "CHECKLIST-FASE-A.md"
+
+  plan:
+    status: "pending"
+    started: null
+    completed: null
+    file: "03-PLAN.md"
+    checklist: "CHECKLIST-FASE-P.md"
+
+  validacion:
+    status: "pending"
+    started: null
+    completed: null
+    file: "04-VALIDACION.md"
+    checklist: "CHECKLIST-FASE-V.md"
+
+  ejecucion:
+    status: "pending"
+    started: null
+    completed: null
+    file: "05-EJECUCION.md"
+    checklist: "CHECKLIST-FASE-E.md"
+    checkpoints:
+      CP1_database: "pending"
+      CP2_backend: "pending"
+      CP3_frontend: "pending"
+      CP4_coherencia: "pending"
+
+  documentacion:
+    status: "pending"
+    started: null
+    completed: null
+    file: "06-DOCUMENTACION.md"
+    checklist: "CHECKLIST-FASE-D.md"
+
+# =============================================================================
+# SUBTAREAS
+# =============================================================================
+
+subtasks_file: "SUBTASKS.yml"
+
+subtasks_summary:
+  total: 0
+  completed: 0
+  in_progress: 0
+  pending: 0
+  blocked: 0
+
+# =============================================================================
+# ENTREGABLES
+# =============================================================================
+
+deliverables:
+  code:
+    - path: "apps/backend/src/..."
+      type: "new"           # new | modified | deleted
+      description: "Descripcion del cambio"
+
+  documentation:
+    - path: "docs/..."
+      type: "modified"
+      description: "Actualizacion de documentacion"
+
+  reports:
+    - name: "REPORT-XXX.md"
+      description: "Reporte generado"
+
+# =============================================================================
+# VALIDACIONES
+# =============================================================================
+
+validations:
+  build:
+    backend: null           # pass | fail | pending
+    frontend: null
+    database: null
+
+  lint:
+    backend: null
+    frontend: null
+
+  tests:
+    backend: null
+    frontend: null
+
+  coherence:
+    ddl_backend: null
+    backend_frontend: null
+
+# =============================================================================
+# METRICAS
+# =============================================================================
+
+metrics:
+  time:
+    estimated_hours: null
+    actual_hours: null
+  changes:
+    files_created: 0
+    files_modified: 0
+    files_deleted: 0
+    lines_added: 0
+    lines_removed: 0
+  issues:
+    found: 0
+    fixed: 0
+    deferred: 0
+
+# =============================================================================
+# AGENTE
+# =============================================================================
+
+agent:
+  id: "agente-principal"
+  session: "session-id"
+  workspace: "workspace-v2"
+
+# =============================================================================
+# HISTORIAL
+# =============================================================================
+
+changelog:
+  - date: "YYYY-MM-DD"
+    author: "Agente"
+    action: "created"
+    details: "Tarea creada"
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+references:
+  subtasks: "./SUBTASKS.yml"
+  lessons: "./LESSONS-LEARNED.yml"
+  ssot: "docs/_SSOT/"
+  epic_manifest: "docs/XX-fase-*/EPIC-XXX/EPIC-MANIFEST.yml"
+  checklist_cierre: "orchestration/directivas/checklists/CHECKLIST-CIERRE.md"
