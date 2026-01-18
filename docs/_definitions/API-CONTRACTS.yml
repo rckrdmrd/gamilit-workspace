@@ -1,0 +1,855 @@
+# =============================================================================
+# API-CONTRACTS.yml - Contratos Backend-Frontend GAMILIT
+# =============================================================================
+#
+# SSOT (Single Source of Truth) para contratos de API entre Backend y Frontend.
+#
+# Version: 1.0.0
+# Fecha: 2026-01-18
+# Proyecto: gamilit
+# Autor: Agente Documentation
+#
+# REFERENCIAS:
+# - DISCREPANCIAS-BE-FE-2026-01-18.md (orchestration/analisis/)
+# - ENTITIES-CATALOG.md (docs/_definitions/)
+# - Backend DTOs: apps/backend/src/modules/gamification/dto/
+# - Frontend Types: apps/frontend/src/features/gamification/*/types/
+#
+# CONVENCIONES:
+# - Backend usa snake_case (PostgreSQL style)
+# - Frontend usa camelCase (JavaScript style)
+# - Este archivo documenta ambos formatos y el mapeo entre ellos
+# =============================================================================
+
+metadata:
+  version: "1.0.0"
+  created: "2026-01-18"
+  updated: "2026-01-18"
+  project: gamilit
+  base_api_path: /api/v1
+  swagger_enabled: true
+  swagger_path: /api/docs
+
+# =============================================================================
+# MODULO: RANKS (Sistema de Rangos Maya)
+# =============================================================================
+ranks:
+  description: |
+    Sistema de progresion basado en rangos Maya. Los usuarios progresan
+    a traves de 5 rangos (Ajaw -> Nacom -> Ah K'in -> Halach Uinic -> K'uk'ulkan)
+    acumulando XP y ML Coins.
+
+  # ---------------------------------------------------------------------------
+  # Endpoints
+  # ---------------------------------------------------------------------------
+  endpoints:
+    get_all_ranks:
+      method: GET
+      path: /gamification/ranks
+      description: Obtiene todas las definiciones de rangos Maya
+      auth_required: true
+      response_dto: RankDefinition[]
+      status: OK
+
+    get_current_rank:
+      method: GET
+      path: /gamification/ranks/current
+      description: Obtiene el rango actual del usuario autenticado
+      auth_required: true
+      response_dto: UserRankResponseDto
+      status: OK
+
+    get_user_progress:
+      method: GET
+      path: /gamification/ranks/users/{userId}/progress
+      description: Obtiene el progreso completo del usuario
+      auth_required: true
+      params:
+        userId:
+          type: string
+          format: uuid
+          required: true
+      response_dto: UserRankProgressResponseDto
+      frontend_type: UserRankProgress
+      status: OK
+      notes: |
+        DISCREPANCIA RESUELTA: Frontend mapeaba originalmente a tipos diferentes.
+        Ahora existe mapper en ranksAPI.ts lineas 112-127.
+
+    get_user_multipliers:
+      method: GET
+      path: /gamification/ranks/users/{userId}/multipliers
+      description: Obtiene desglose de multiplicadores del usuario
+      auth_required: true
+      params:
+        userId:
+          type: string
+          format: uuid
+          required: true
+      response_dto: MultiplierBreakdownResponseDto
+      frontend_type: MultiplierBreakdown
+      status: OK
+
+    get_rank_history:
+      method: GET
+      path: /gamification/ranks/users/{userId}/rank-history
+      description: Obtiene historial de cambios de rango
+      auth_required: true
+      params:
+        userId:
+          type: string
+          format: uuid
+          required: true
+      response_dto: UserRankResponseDto[]
+      status: OK
+
+    check_promotion:
+      method: GET
+      path: /gamification/ranks/check-promotion/{userId}
+      description: Verifica elegibilidad para promocion de rango
+      auth_required: true
+      params:
+        userId:
+          type: string
+          format: uuid
+          required: true
+      response_dto: PromotionCheckResponseDto
+      status: OK
+
+    promote_user:
+      method: POST
+      path: /gamification/ranks/promote/{userId}
+      description: Promociona al usuario al siguiente rango
+      auth_required: true
+      roles_required: [admin_teacher, super_admin]
+      params:
+        userId:
+          type: string
+          format: uuid
+          required: true
+      response_dto: RankUpEventResponseDto
+      status: OK
+
+  # ---------------------------------------------------------------------------
+  # Types Mapping (Backend snake_case -> Frontend camelCase)
+  # ---------------------------------------------------------------------------
+  types_mapping:
+    UserRankProgressResponseDto:
+      backend_location: modules/gamification/dto/user-ranks/user-rank-progress-response.dto.ts
+      frontend_type: UserRankProgress
+      frontend_location: features/gamification/ranks/types/ranksTypes.ts
+      field_mappings:
+        # Backend Field           -> Frontend Field
+        user_id:                    userId
+        current_rank:               currentRank
+        next_rank:                  nextRank
+        level:                      currentLevel
+        total_xp:                   totalXP
+        current_xp:                 currentXP
+        xp_to_next_level:           xpToNextLevel
+        ml_coins_earned:            mlCoinsEarned
+        rank_progress_percentage:   rankProgressPercentage
+        xp_required_for_next_rank:  xpRequiredForNextRank
+        xp_remaining_for_next_rank: xpRemainingForNextRank
+        can_rank_up:                canRankUp
+        is_max_rank:                isMaxRank
+        prestige_level:             prestigeLevel
+        can_prestige:               canPrestige
+        multiplier:                 multiplier
+        activity_streak:            activityStreak
+        last_activity_at:           lastActivityDate
+        last_rank_up:               lastRankUp
+        ml_coins_bonus_on_promotion: mlCoinsBonusOnPromotion
+
+    MultiplierBreakdownResponseDto:
+      backend_location: modules/gamification/dto/user-ranks/multiplier-breakdown-response.dto.ts
+      frontend_type: MultiplierBreakdown
+      frontend_location: features/gamification/ranks/types/ranksTypes.ts
+      field_mappings:
+        user_id:          userId
+        base:             base
+        rank:             rank
+        sources:          sources
+        total:            total
+        has_expiring_soon: hasExpiringSoon
+        expiring_soon:    expiringSoon
+
+    MultiplierSourceDto:
+      backend_location: modules/gamification/dto/user-ranks/multiplier-breakdown-response.dto.ts
+      frontend_type: MultiplierSource
+      frontend_location: features/gamification/ranks/types/ranksTypes.ts
+      field_mappings:
+        type:           type
+        name:           name
+        value:          value
+        expires_at:     expiresAt
+        is_permanent:   isPermanent
+        description:    description
+        icon:           icon
+
+  # ---------------------------------------------------------------------------
+  # Enums
+  # ---------------------------------------------------------------------------
+  enums:
+    MayaRank:
+      description: Los 5 rangos Maya del sistema de progresion
+      backend_location: shared/constants/enums.constants.ts
+      frontend_location: shared/constants/ranks.constants.ts
+      values:
+        AJAW:
+          value: "Ajaw"
+          description: "Nivel 1: Senor (0-499 XP)"
+          multiplier: 1.0
+        NACOM:
+          value: "Nacom"
+          description: "Nivel 2: Capitan de guerra (500-999 XP)"
+          multiplier: 1.1
+        AH_KIN:
+          value: "Ah K'in"
+          description: "Nivel 3: Sacerdote del sol (1,000-1,499 XP)"
+          multiplier: 1.25
+        HALACH_UINIC:
+          value: "Halach Uinic"
+          description: "Nivel 4: Hombre verdadero (1,500-2,249 XP)"
+          multiplier: 1.5
+        KUKULKAN:
+          value: "K'uk'ulkan"
+          description: "Nivel 5: Serpiente emplumada (2,250+ XP)"
+          multiplier: 2.0
+
+    XPSource:
+      description: Fuentes de XP
+      frontend_only: true
+      frontend_location: features/gamification/ranks/types/ranksTypes.ts
+      values:
+        - exercise_completion
+        - perfect_score
+        - streak_bonus
+        - achievement_unlock
+        - social_interaction
+        - daily_challenge
+        - guild_activity
+        - event_participation
+
+# =============================================================================
+# MODULO: ECONOMY / ML-COINS
+# =============================================================================
+economy:
+  description: |
+    Sistema de economia virtual basada en ML Coins. Permite ganar monedas
+    por actividades y gastarlas en la tienda.
+
+  # ---------------------------------------------------------------------------
+  # Endpoints
+  # ---------------------------------------------------------------------------
+  endpoints:
+    get_balance:
+      method: GET
+      path: /gamification/economy/balance
+      description: Obtiene balance actual de ML Coins del usuario
+      auth_required: true
+      response_dto: MLCoinsBalanceResponseDto
+      frontend_type: MLCoinsBalance
+      status: OK
+
+    get_transactions:
+      method: GET
+      path: /gamification/economy/transactions
+      description: Obtiene historial de transacciones
+      auth_required: true
+      query_params:
+        page:
+          type: number
+          default: 1
+        limit:
+          type: number
+          default: 20
+        type:
+          type: TransactionTypeEnum
+          optional: true
+        from_date:
+          type: string
+          format: date
+          optional: true
+        to_date:
+          type: string
+          format: date
+          optional: true
+      response_dto: PaginatedResponse<TransactionResponseDto>
+      frontend_type: Transaction[]
+      status: OK
+
+    create_transaction:
+      method: POST
+      path: /gamification/economy/transactions
+      description: Crea una nueva transaccion (uso interno/admin)
+      auth_required: true
+      roles_required: [admin_teacher, super_admin]
+      request_dto: CreateTransactionDto
+      response_dto: TransactionResponseDto
+      status: OK
+
+  # ---------------------------------------------------------------------------
+  # Types Mapping
+  # ---------------------------------------------------------------------------
+  types_mapping:
+    TransactionResponseDto:
+      backend_location: modules/gamification/dto/ml-coins/transaction-response.dto.ts
+      frontend_type: Transaction
+      frontend_location: features/gamification/economy/types/economyTypes.ts
+      field_mappings:
+        id:               id
+        user_id:          userId
+        amount:           amount
+        balance_before:   balanceBefore
+        balance_after:    balanceAfter
+        transaction_type: type
+        description:      description
+        reason:           reason
+        reference_id:     referenceId
+        reference_type:   source          # DISCREPANCIA 2: Ver discrepancias_conocidas
+        multiplier:       multiplier
+        bonus_applied:    bonusApplied
+        metadata:         metadata
+        created_at:       timestamp       # MAPEO: created_at -> timestamp
+      discrepancy_notes: |
+        DISCREPANCIA 2 (PARCIALMENTE RESUELTA):
+        - Backend devuelve 'reference_type' (ej: "exercise")
+        - Frontend esperaba 'source' con valores como 'exercise_completion'
+        - SOLUCION: Mapper mapTransactionTypeToEarningSource() en economyTypes.ts
+
+  # ---------------------------------------------------------------------------
+  # Enums
+  # ---------------------------------------------------------------------------
+  enums:
+    TransactionTypeEnum:
+      description: Tipos de transacciones de ML Coins
+      backend_location: shared/constants/enums.constants.ts
+      frontend_location: features/gamification/economy/types/economyTypes.ts
+      values:
+        # Ingresos (EARNED)
+        EARNED_EXERCISE:
+          value: "earned_exercise"
+          description: "+5-50 coins por ejercicio"
+          category: earn
+        EARNED_MODULE:
+          value: "earned_module"
+          description: "+100-300 coins por modulo"
+          category: earn
+        EARNED_ACHIEVEMENT:
+          value: "earned_achievement"
+          description: "+50-500 coins por logro"
+          category: earn
+        EARNED_RANK:
+          value: "earned_rank"
+          description: "+100-1000 coins por rango"
+          category: earn
+        EARNED_STREAK:
+          value: "earned_streak"
+          description: "+10-100 coins por racha"
+          category: earn
+        EARNED_DAILY:
+          value: "earned_daily"
+          description: "+50 coins por login diario"
+          category: earn
+        EARNED_BONUS:
+          value: "earned_bonus"
+          description: "Bonus especial por eventos"
+          category: earn
+        # Gastos (SPENT)
+        SPENT_POWERUP:
+          value: "spent_powerup"
+          description: "Gasto en power-ups"
+          category: spend
+        SPENT_HINT:
+          value: "spent_hint"
+          description: "Gasto en pistas"
+          category: spend
+        SPENT_RETRY:
+          value: "spent_retry"
+          description: "Gasto en reintentos"
+          category: spend
+        # Admin/Sistema
+        ADMIN_ADJUSTMENT:
+          value: "admin_adjustment"
+          description: "Ajuste administrativo"
+          category: other
+        REFUND:
+          value: "refund"
+          description: "Reembolso"
+          category: earn
+        BONUS:
+          value: "bonus"
+          description: "Bonus generico"
+          category: earn
+        WELCOME_BONUS:
+          value: "welcome_bonus"
+          description: "Bonus de bienvenida"
+          category: earn
+
+    EarningSource:
+      description: Fuentes de ganancia de ML Coins (LEGACY - usar TransactionTypeEnum)
+      frontend_only: true
+      deprecated: true
+      deprecation_note: "Usar TransactionTypeEnum para precision. Ver mapTransactionTypeToEarningSource()"
+      frontend_location: features/gamification/economy/types/economyTypes.ts
+      values:
+        - exercise_completion
+        - streak_bonus
+        - perfect_score
+        - achievement_unlock
+        - daily_login
+        - guild_challenge
+        - leaderboard_reward
+        - referral_bonus
+        - admin_grant
+
+# =============================================================================
+# MODULO: ACHIEVEMENTS (Logros)
+# =============================================================================
+achievements:
+  description: |
+    Sistema de logros y recompensas. Los usuarios desbloquean achievements
+    al cumplir condiciones especificas.
+
+  # ---------------------------------------------------------------------------
+  # Endpoints
+  # ---------------------------------------------------------------------------
+  endpoints:
+    get_all_achievements:
+      method: GET
+      path: /gamification/achievements
+      description: Obtiene todos los achievements disponibles
+      auth_required: true
+      query_params:
+        category:
+          type: AchievementCategoryEnum
+          optional: true
+        active_only:
+          type: boolean
+          default: true
+      response_dto: AchievementResponseDto[]
+      status: OK
+
+    get_user_achievements:
+      method: GET
+      path: /gamification/achievements/user/{userId}
+      description: Obtiene achievements del usuario con progreso
+      auth_required: true
+      params:
+        userId:
+          type: string
+          format: uuid
+          required: true
+      response_dto: UserAchievementResponseDto[]
+      frontend_type: AchievementWithProgress[]
+      status: OK
+
+    grant_achievement:
+      method: POST
+      path: /gamification/achievements/grant
+      description: Otorga un achievement a un usuario
+      auth_required: true
+      roles_required: [admin_teacher, super_admin]
+      request_dto: GrantAchievementDto
+      response_dto: UserAchievementResponseDto
+      status: OK
+
+  # ---------------------------------------------------------------------------
+  # Types Mapping
+  # ---------------------------------------------------------------------------
+  types_mapping:
+    AchievementResponseDto:
+      backend_location: modules/gamification/dto/achievements/achievement-response.dto.ts
+      frontend_type: BaseAchievement
+      frontend_location: shared/types/achievement.types.ts
+      field_mappings:
+        id:               id
+        tenant_id:        tenantId
+        name:             name
+        description:      description
+        icon:             icon
+        category:         category
+        rarity:           rarity
+        difficulty_level: difficultyLevel
+        conditions:       conditions
+        rewards:          rewards
+        ml_coins_reward:  mlCoinsReward
+        is_secret:        isSecret
+        is_active:        isActive
+        is_repeatable:    isRepeatable
+        order_index:      orderIndex
+        points_value:     pointsValue
+        unlock_message:   unlockMessage
+        instructions:     instructions
+        tips:             tips
+        metadata:         metadata
+        created_by:       createdBy
+        created_at:       createdAt
+        updated_at:       updatedAt
+
+  # ---------------------------------------------------------------------------
+  # Enums
+  # ---------------------------------------------------------------------------
+  enums:
+    AchievementCategoryEnum:
+      description: Categorias de achievements
+      backend_location: shared/constants/enums.constants.ts
+      frontend_location: shared/types/achievement.types.ts
+      values:
+        - educational
+        - progress
+        - mastery
+        - skill
+        - social
+        - hidden
+        - special
+      frontend_mapping_notes: |
+        El frontend agrupa algunas categorias para UI:
+        - 'progress' en FE incluye 'educational' y 'progress' de BE
+        - 'mastery' en FE incluye 'mastery' y 'skill' de BE
+        - 'hidden' en FE incluye 'hidden' y 'special' de BE
+
+    AchievementRarity:
+      description: Niveles de rareza de achievements
+      values:
+        - common
+        - rare
+        - epic
+        - legendary
+
+# =============================================================================
+# MODULO: SHOP (Tienda)
+# =============================================================================
+shop:
+  description: |
+    Sistema de tienda virtual donde los usuarios pueden gastar ML Coins
+    en items cosmeticos, power-ups y otros beneficios.
+
+  # ---------------------------------------------------------------------------
+  # Endpoints
+  # ---------------------------------------------------------------------------
+  endpoints:
+    get_shop_items:
+      method: GET
+      path: /gamification/shop/items
+      description: Obtiene items disponibles en la tienda
+      auth_required: true
+      query_params:
+        category:
+          type: ShopItemCategoryEnum
+          optional: true
+        available_only:
+          type: boolean
+          default: true
+        rarity:
+          type: ItemRarity
+          optional: true
+      response_dto: ShopItemResponseDto[]
+      frontend_type: ShopItem[]
+      status: OK
+
+    get_shop_item:
+      method: GET
+      path: /gamification/shop/items/{itemId}
+      description: Obtiene detalle de un item
+      auth_required: true
+      params:
+        itemId:
+          type: string
+          format: uuid
+          required: true
+      response_dto: ShopItemResponseDto
+      status: OK
+
+    purchase_item:
+      method: POST
+      path: /gamification/shop/purchase
+      description: Realiza una compra en la tienda
+      auth_required: true
+      request_dto: CreatePurchaseDto
+      response_dto: PurchaseResponseDto
+      frontend_type: PurchaseResult
+      status: OK
+
+    get_user_purchases:
+      method: GET
+      path: /gamification/shop/purchases
+      description: Obtiene historial de compras del usuario
+      auth_required: true
+      query_params:
+        page:
+          type: number
+          default: 1
+        limit:
+          type: number
+          default: 20
+      response_dto: PaginatedResponse<PurchaseResponseDto>
+      status: OK
+
+  # ---------------------------------------------------------------------------
+  # Types Mapping
+  # ---------------------------------------------------------------------------
+  types_mapping:
+    ShopItemResponseDto:
+      backend_location: modules/gamification/dto/shop/shop-item-response.dto.ts
+      frontend_type: ShopItem
+      frontend_location: features/gamification/economy/types/economyTypes.ts
+      field_mappings:
+        id:              id
+        name:            name
+        description:     description
+        icon:            icon
+        image_url:       image           # MAPEO: image_url -> image
+        category:        category
+        rarity:          rarity
+        tags:            tags
+        price:           price
+        discount_price:  discountPrice
+        is_available:    available       # MAPEO: is_available -> available
+        stock:           stock
+        is_consumable:   isConsumable
+        requirements:    requirements
+        max_per_user:    maxPerUser
+        duration_days:   durationDays
+        effect_data:     effectData
+        metadata:        metadata
+      discrepancy_notes: |
+        DISCREPANCIA 3 (RESUELTA 2026-01-18):
+        - Campos max_per_user, duration_days, effect_data agregados al DTO
+        - Campos calculados (isOwned, isPurchasable) se agregan en frontend
+
+  # ---------------------------------------------------------------------------
+  # Enums
+  # ---------------------------------------------------------------------------
+  enums:
+    ShopItemCategoryEnum:
+      description: Categorias de items de tienda
+      backend_location: shared/constants/enums.constants.ts
+      frontend_location: features/gamification/economy/types/economyTypes.ts
+      values:
+        - cosmetics
+        - profile
+        - guild
+        - premium
+        - social
+        - consumable
+      notes: "'premium' es legacy para power-ups, 'consumable' es nueva categoria unificada"
+
+    ItemRarity:
+      description: Niveles de rareza de items
+      values:
+        - common
+        - rare
+        - epic
+        - legendary
+
+# =============================================================================
+# ROLES MAPPING
+# =============================================================================
+roles:
+  description: |
+    Mapeo de roles entre Base de Datos (3 roles canonicos) y Frontend (7 aliases).
+    Esta discrepancia es INTENCIONAL por diseno para mayor claridad semantica en UI.
+
+  # ---------------------------------------------------------------------------
+  # DISCREPANCIA 5: Roles
+  # ---------------------------------------------------------------------------
+  backend_enum:
+    name: GamilityRoleEnum
+    location: shared/constants/enums.constants.ts
+    values:
+      STUDENT:
+        value: "student"
+        description: "Estudiante - usuario principal de la plataforma"
+      ADMIN_TEACHER:
+        value: "admin_teacher"
+        description: "Docente/Admin - gestiona aulas y estudiantes"
+      SUPER_ADMIN:
+        value: "super_admin"
+        description: "Super Admin - acceso total al sistema"
+
+  frontend_type:
+    name: UserRole
+    location: shared/types/user.types.ts
+    values:
+      student:
+        canonical: "student"
+        description: "Estudiante"
+      admin_teacher:
+        canonical: "admin_teacher"
+        description: "Docente administrador (VALOR CANONICO)"
+      teacher:
+        canonical: "admin_teacher"
+        description: "ALIAS para admin_teacher - uso en UI"
+      admin:
+        canonical: "admin_teacher"
+        description: "ALIAS para admin_teacher - uso en UI"
+      institution_admin:
+        canonical: "admin_teacher"
+        description: "ALIAS para admin_teacher - uso en UI"
+      super_admin:
+        canonical: "super_admin"
+        description: "Super Admin"
+      content_creator:
+        canonical: "admin_teacher"
+        description: "ALIAS para admin_teacher - PENDIENTE definicion"
+        status: PENDING
+
+  mapping_table:
+    # Frontend Value      -> BD Canonical Value
+    student:              student
+    admin_teacher:        admin_teacher
+    teacher:              admin_teacher
+    admin:                admin_teacher
+    institution_admin:    admin_teacher
+    super_admin:          super_admin
+    content_creator:      admin_teacher
+
+  resolution_notes: |
+    DISCREPANCIA 5 (STATUS: REVISION MENOR NECESARIA)
+
+    Esta discrepancia NO es un bug, es una decision de diseno documentada:
+    1. Backend tiene 3 roles canonicos en GamilityRoleEnum (alineados con BD)
+    2. Frontend acepta 7 valores para mayor claridad semantica en UI
+    3. Los alias (teacher, admin, institution_admin) mapean a admin_teacher
+
+    PROBLEMAS IDENTIFICADOS:
+    - content_creator marcado como "pendiente definicion"
+    - No existe helper formal normalizeRole() en frontend
+
+    SOLUCION PROPUESTA:
+    - Crear /shared/utils/roleUtils.ts con normalizeRole()
+    - Documentar mapeo en JSDoc de user.types.ts
+
+# =============================================================================
+# DISCREPANCIAS CONOCIDAS
+# =============================================================================
+discrepancias_conocidas:
+  resumen:
+    total_analizadas: 5
+    resueltas: 3
+    pendientes: 2
+
+  detalle:
+    - id: DISC-001
+      titulo: "UserRankProgress structure"
+      estado: RESUELTO
+      descripcion: |
+        Frontend esperaba currentLevel/currentXP/totalXP,
+        Backend devolvia current_rank/rank_progress_percentage
+      solucion: |
+        - DTO UserRankProgressResponseDto creado con todos los campos
+        - Mapper mapUserProgressResponse() implementado en ranksAPI.ts
+      archivos_afectados:
+        - apps/backend/src/modules/gamification/dto/user-ranks/user-rank-progress-response.dto.ts
+        - apps/frontend/src/features/gamification/ranks/api/ranksAPI.ts
+
+    - id: DISC-002
+      titulo: "Transaction source mapping"
+      estado: ATENCION_MENOR
+      descripcion: |
+        Frontend esperaba source="exercise_completion",
+        Backend devuelve transaction_type="earned_exercise"
+      impacto: BAJO
+      solucion_implementada: |
+        - Mapper mapTransactionTypeToEarningSource() creado
+        - Tipo EarningSource marcado como deprecated
+        - Frontend acepta string como fallback
+      solucion_pendiente: |
+        - Deprecar completamente EarningSource
+        - Usar TransactionTypeEnum directamente
+      archivos_afectados:
+        - apps/frontend/src/features/gamification/economy/types/economyTypes.ts
+
+    - id: DISC-003
+      titulo: "ShopItem campos no expuestos"
+      estado: RESUELTO
+      descripcion: "max_per_user, duration_days no expuestos en DTO"
+      solucion: |
+        Campos agregados al ShopItemResponseDto en TASK-2026-01-17-002
+      archivos_afectados:
+        - apps/backend/src/modules/gamification/dto/shop/shop-item-response.dto.ts
+
+    - id: DISC-004
+      titulo: "Multipliers endpoint"
+      estado: RESUELTO
+      descripcion: "GET /gamification/ranks/:userId/multipliers no existia"
+      solucion: |
+        - Endpoint implementado en ranks.controller.ts
+        - DTO MultiplierBreakdownResponseDto creado
+        - Mapper implementado en ranksAPI.ts
+      archivos_afectados:
+        - apps/backend/src/modules/gamification/controllers/ranks.controller.ts
+        - apps/backend/src/modules/gamification/dto/user-ranks/multiplier-breakdown-response.dto.ts
+        - apps/frontend/src/features/gamification/ranks/api/ranksAPI.ts
+
+    - id: DISC-005
+      titulo: "Role mapping (3 BD vs 7 FE)"
+      estado: REVISION_MENOR
+      descripcion: "Frontend espera 7 roles, Backend tiene 3"
+      impacto: BAJO
+      solucion_pendiente: |
+        - Crear helper normalizeRole() en frontend
+        - Definir rol content_creator formalmente
+        - Documentar decision de diseno en ADR
+
+# =============================================================================
+# CONVENCIONES DE NOMENCLATURA
+# =============================================================================
+naming_conventions:
+  backend:
+    style: snake_case
+    example: user_id, created_at, ml_coins_earned
+    reason: "Alineado con PostgreSQL y convenciones NestJS"
+
+  frontend:
+    style: camelCase
+    example: userId, createdAt, mlCoinsEarned
+    reason: "Convenciones JavaScript/TypeScript estandar"
+
+  mapping_strategy: |
+    Los mappers se ubican en los archivos *API.ts de cada feature.
+    Ejemplo: ranksAPI.ts contiene mapUserProgressResponse()
+
+    Patron de naming para mappers:
+    - map{BackendDto}To{FrontendType}
+    - map{FrontendType}To{BackendDto} (para requests)
+
+# =============================================================================
+# REFERENCIAS EXTERNAS
+# =============================================================================
+referencias:
+  documentacion:
+    - path: orchestration/analisis/DISCREPANCIAS-BE-FE-2026-01-18.md
+      descripcion: Analisis detallado de discrepancias
+    - path: docs/_definitions/ENTITIES-CATALOG.md
+      descripcion: Catalogo de entities de gamification
+
+  archivos_backend:
+    dto_base_path: apps/backend/src/modules/gamification/dto/
+    controllers_path: apps/backend/src/modules/gamification/controllers/
+    services_path: apps/backend/src/modules/gamification/services/
+    enums_path: apps/backend/src/shared/constants/enums.constants.ts
+
+  archivos_frontend:
+    types_base_path: apps/frontend/src/features/gamification/*/types/
+    api_base_path: apps/frontend/src/features/gamification/*/api/
+    shared_types_path: apps/frontend/src/shared/types/
+
+# =============================================================================
+# CHANGELOG
+# =============================================================================
+changelog:
+  - version: "1.0.0"
+    date: "2026-01-18"
+    changes:
+      - "Documento inicial creado"
+      - "Contratos de modulos ranks, economy, achievements, shop"
+      - "Mapeo de tipos Backend/Frontend"
+      - "Documentacion de discrepancias conocidas"
+      - "Mapeo de roles (3 BD vs 7 FE)"
+
+# =============================================================================
+# FIN DEL ARCHIVO
+# =============================================================================
