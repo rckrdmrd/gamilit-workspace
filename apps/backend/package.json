@@ -8,9 +8,9 @@
     "start": "node -r tsconfig-paths/register dist/main.js",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/main.ts",
     "prod": "NODE_ENV=production node -r tsconfig-paths/register dist/main.js",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test": "NODE_OPTIONS='--max-old-space-size=4096' jest",
+    "test:watch": "NODE_OPTIONS='--max-old-space-size=4096' jest --watch",
+    "test:cov": "NODE_OPTIONS='--max-old-space-size=4096' jest --coverage",
     "lint": "eslint \"{src,__tests__}/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\" \"__tests__/**/*.ts\"",
     "generate:vapid": "node scripts/generate-vapid-keys.js"

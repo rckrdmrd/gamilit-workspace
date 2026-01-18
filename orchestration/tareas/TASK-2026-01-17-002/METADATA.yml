@@ -55,7 +55,21 @@ fases:
     notas: "Validado contra jest.config.js, vitest.config.ts, repositories.mock.ts, setup.ts"
   E_ejecucion:
     completado: false
-    notas: "Pendiente aprobacion"
+    fecha_inicio: "2026-01-17"
+    notas: |
+      Ejecucion parcial:
+      - SUBTASK-001: Completado - repository mocks agregados
+      - SUBTASK-002: Parcial - 93 tests backend arreglados (506->413)
+      - SUBTASK-003: Evaluado - mocks globales interfieren con test-level
+      - SUBTASK-008: Investigado - memoria insuficiente para suite completa
+
+      Hallazgos:
+      - Jest OOM con 4GB heap incluso con maxWorkers=1
+      - Tests individuales funcionan, suite completa falla
+      - Recomendacion: ejecutar tests por modulo en CI
+
+      Backend: 413 failing (de 506 original)
+      Frontend: 279 failing (sin cambios)
   D_documentacion:
     completado: true
     fecha: "2026-01-17"

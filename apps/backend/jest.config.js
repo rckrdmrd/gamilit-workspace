@@ -4,6 +4,15 @@ module.exports = {
   roots: ['<rootDir>/src'],
   testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.spec.ts', '**/*.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
+
+  // Memory optimization settings (SUBTASK-008)
+  // Run tests serially to reduce memory footprint
+  maxWorkers: 1,
+  workerIdleMemoryLimit: '512MB',
+  detectOpenHandles: true,
+  forceExit: true,
+  // Disable caching to reduce memory
+  cache: false,
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts',
