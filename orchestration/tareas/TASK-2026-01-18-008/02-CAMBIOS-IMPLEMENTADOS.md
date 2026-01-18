@@ -18,6 +18,11 @@
 - **Causa raíz:** Callback `handleEvaluationChange` no memoizado con `useCallback`
 - **Efecto:** `useEffect` en `RubricEvaluator` disparaba `onChange` continuamente
 
+### Problema 3: Respuestas del estudiante no se muestran
+- **Síntoma:** La sección "Respuestas del Estudiante" aparecía vacía
+- **Causa raíz:** Frontend esperaba `submission.answers` pero backend retorna `answer_data` (snake_case)
+- **Fix:** Actualizar frontend para soportar ambos nombres de campo
+
 ---
 
 ## 2. Archivos Modificados
@@ -31,6 +36,7 @@
 1. Agregado import `useCallback` de React
 2. Memoizado `handleEvaluationChange` con `useCallback`
 3. Memoizado `handleValidationChange` con `useCallback`
+4. Soportar tanto `answers` como `answer_data` para datos del submission
 
 ```typescript
 // Antes
@@ -46,6 +52,26 @@ const handleEvaluationChange = useCallback((newEvaluations, newGeneralFeedback, 
   setGeneralFeedback(newGeneralFeedback);
   setTotalScore(newTotalScore);
 }, []);
+
+// FIX TASK-2026-01-18-008: Support both answers and answer_data field names
+answerData={((review.submission)?.answers || (review.submission)?.answer_data || {})
+```
+
+#### manualReviewApi.ts
+**Path:** `apps/frontend/src/shared/api/manualReviewApi.ts`
+
+**Cambios:**
+1. Agregado campo `answer_data` al tipo `submission` en la interfaz `ManualReview`
+
+```typescript
+submission?: {
+  id: string;
+  answers?: unknown;
+  // FIX TASK-2026-01-18-008: Backend returns answer_data (snake_case)
+  answer_data?: unknown;
+  submittedAt?: Date;
+  submitted_at?: Date;
+};
 ```
 
 #### RubricEvaluator.tsx

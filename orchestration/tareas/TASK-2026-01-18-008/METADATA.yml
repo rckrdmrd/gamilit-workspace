@@ -16,6 +16,7 @@ descripcion: |
   - Error: "Maximum update depth exceeded" (bucle de re-render infinito)
   - Causa raíz 1: Backend no envía rubric al frontend
   - Causa raíz 2: handleEvaluationChange no memoizado en ReviewDetail.tsx
+  - Causa raíz 3: Respuestas no se muestran (field name mismatch answers vs answer_data)
 
 dominios:
   - Backend
@@ -39,6 +40,13 @@ root_cause_analysis:
     problema: "Callback no memoizado con useCallback"
     solucion: "Memoizar callback y corregir useEffect en RubricEvaluator"
 
+  issue_3_answer_data:
+    sintoma: "Respuestas del estudiante no se muestran"
+    ubicacion_frontend: "apps/frontend/src/apps/teacher/components/review-panel/ReviewDetail.tsx"
+    funcion: "ExerciseContentRenderer"
+    problema: "Frontend espera 'answers' pero backend retorna 'answer_data' (snake_case)"
+    solucion: "Soportar ambos nombres de campo en frontend"
+
 # Archivos a Modificar
 archivos_modificar:
   backend:
@@ -47,9 +55,11 @@ archivos_modificar:
 
   frontend:
     - path: "apps/frontend/src/apps/teacher/components/review-panel/ReviewDetail.tsx"
-      cambio: "Memoizar handleEvaluationChange con useCallback"
+      cambio: "Memoizar handleEvaluationChange con useCallback + soportar answer_data"
     - path: "apps/frontend/src/shared/components/mechanics/RubricEvaluator.tsx"
       cambio: "Corregir useEffect para evitar llamadas innecesarias a onChange"
+    - path: "apps/frontend/src/shared/api/manualReviewApi.ts"
+      cambio: "Agregar campo answer_data al tipo submission"
 
 # Verificación Pre-Fix
 verificacion_bd:
@@ -63,9 +73,12 @@ entregables:
   - "01-ANALISIS-ROOT-CAUSE.md"
   - "02-CAMBIOS-IMPLEMENTADOS.md"
 
-# Métricas Esperadas
-metricas_esperadas:
-  archivos_modificados: 3
-  errores_corregidos: 2
+# Métricas Finales
+metricas_finales:
+  archivos_modificados: 5
+  errores_corregidos: 3
+  commits:
+    - "97d517c [TASK-2026-01-18-008] fix: Teacher reviews page - rubric data + infinite loop"
+    - "daa38a3 [TASK-2026-01-18-008] fix: Support answer_data field name from backend"
   build_status: "PASSED"
   lint_status: "PASSED"
