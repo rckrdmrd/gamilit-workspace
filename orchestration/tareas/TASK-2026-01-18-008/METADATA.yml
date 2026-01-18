@@ -72,13 +72,41 @@ entregables:
   - "METADATA.yml"
   - "01-ANALISIS-ROOT-CAUSE.md"
   - "02-CAMBIOS-IMPLEMENTADOS.md"
+  - "03-AUDITORIA-COHERENCIA.md"
 
 # Métricas Finales
 metricas_finales:
-  archivos_modificados: 5
-  errores_corregidos: 3
+  archivos_modificados: 7
+  errores_corregidos: 5
   commits:
     - "97d517c [TASK-2026-01-18-008] fix: Teacher reviews page - rubric data + infinite loop"
     - "daa38a3 [TASK-2026-01-18-008] fix: Support answer_data field name from backend"
+    - "c5cb51a [TASK-2026-01-18-008] docs: Update task documentation with answer_data fix"
+    - "PENDING [AUDIT-TASK-008] fix: Rubric type optional + ReviewList null check"
   build_status: "PASSED"
   lint_status: "PASSED"
+  auditoria_coherencia: "COMPLETADA"
+
+# Auditoría de Coherencia (Post-Fix)
+auditoria:
+  fecha: "2026-01-18"
+  issues_encontrados:
+    - id: TYPE-001
+      severidad: P0
+      archivo: "apps/frontend/src/shared/api/manualReviewApi.ts"
+      descripcion: "Tipo rubric definido como requerido pero backend retorna opcional"
+      estado: RESUELTO
+    - id: BUG-001
+      severidad: P0
+      archivo: "apps/frontend/src/apps/teacher/components/review-panel/ReviewList.tsx"
+      descripcion: "Acceso a review.rubric.length sin null check"
+      estado: RESUELTO
+    - id: ORPHAN-001
+      severidad: P2
+      archivo: "apps/backend/src/modules/teacher/services/rubric-scoring.service.ts"
+      descripcion: "Servicio registrado pero nunca inyectado/usado"
+      estado: IDENTIFICADO
+  coherencia_capas:
+    db_backend: "100%"
+    backend_frontend: "100%"
+    total: "100%"

@@ -60,7 +60,8 @@ export interface ManualReview {
   studentId: string;
   teacherId?: string;
   status: ReviewStatus;
-  rubric: RubricCriterion[];
+  // FIX AUDIT-TASK-008: rubric es opcional, backend puede no tener rubric para algunos tipos
+  rubric?: RubricCriterion[];
   evaluations?: RubricEvaluation[];
   totalScore?: number;
   generalFeedback?: string;

@@ -174,7 +174,8 @@ export const ReviewList: React.FC<ReviewListProps> = ({
             </div>
 
             {/* Progress Indicator */}
-            {review.status === 'in_progress' && review.evaluations && (
+            {/* FIX AUDIT-TASK-008: Verificar rubric antes de acceder a .length */}
+            {review.status === 'in_progress' && review.evaluations && review.rubric && review.rubric.length > 0 && (
               <div className="mt-3 pt-3 border-t border-gray-100">
                 <div className="flex items-center justify-between text-xs text-gray-600">
                   <span>Progreso</span>
