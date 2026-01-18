@@ -247,10 +247,23 @@ export class AttemptResponseDto {
     example: '2024-11-24T10:30:00Z',
   })
     submitted_at!: string;
+
+  @ApiProperty({
+    description: 'Indicates if the exercise requires manual review by teacher',
+    example: false,
+  })
+    requires_manual_review!: boolean;
+
+  @ApiProperty({
+    description: 'Exercise type (mechanic)',
+    example: 'lectura_inferencial',
+  })
+    exercise_type!: string;
 }
 
 /**
  * Detailed response DTO for a single attempt (includes exercise details)
+ * Inherits exercise_type and requires_manual_review from AttemptResponseDto
  */
 export class AttemptDetailDto extends AttemptResponseDto {
   @ApiProperty({
@@ -258,12 +271,6 @@ export class AttemptDetailDto extends AttemptResponseDto {
     example: { correct_answers: ['A', 'C', 'D'] },
   })
     correct_answer!: Record<string, unknown>;
-
-  @ApiProperty({
-    description: 'Exercise type',
-    example: 'multiple_choice',
-  })
-    exercise_type!: string;
 
   @ApiProperty({
     description: 'Maximum score for this exercise',

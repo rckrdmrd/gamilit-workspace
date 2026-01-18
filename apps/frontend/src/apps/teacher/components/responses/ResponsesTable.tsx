@@ -106,6 +106,7 @@ const TableHeader: React.FC<{
           </div>
         </th>
         <th className="px-4 py-3 text-center text-sm font-bold">Correcto</th>
+        <th className="px-4 py-3 text-center text-sm font-bold">Estado</th>
         <th
           className="cursor-pointer px-4 py-3 text-center text-sm font-bold transition-colors hover:bg-white/10"
           onClick={() => onSort('time')}
@@ -191,6 +192,23 @@ const TableRow: React.FC<{
         )}
       </td>
 
+      {/* Estado */}
+      <td className="px-4 py-3 text-center">
+        {attempt.requires_manual_review && !attempt.is_correct ? (
+          <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+            Pendiente
+          </span>
+        ) : attempt.is_correct ? (
+          <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+            Calificado
+          </span>
+        ) : (
+          <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+            Incorrecto
+          </span>
+        )}
+      </td>
+
       {/* Tiempo */}
       <td className="px-4 py-3 text-center">
         <div className="flex items-center justify-center gap-1 text-gray-700">
@@ -243,6 +261,9 @@ const SkeletonRow: React.FC = () => {
         <div className="mx-auto h-5 w-5 rounded-full bg-gray-200" />
       </td>
       <td className="px-4 py-3 text-center">
+        <div className="mx-auto h-5 w-16 rounded-full bg-gray-200" />
+      </td>
+      <td className="px-4 py-3 text-center">
         <div className="mx-auto h-4 w-16 rounded bg-gray-200" />
       </td>
       <td className="px-4 py-3 text-center">
@@ -258,7 +279,7 @@ const SkeletonRow: React.FC = () => {
 const EmptyState: React.FC = () => {
   return (
     <tr>
-      <td colSpan={9} className="px-4 py-12">
+      <td colSpan={10} className="px-4 py-12">
         <div className="text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
             <Award className="h-8 w-8 text-gray-400" />

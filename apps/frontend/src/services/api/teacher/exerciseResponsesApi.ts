@@ -56,6 +56,10 @@ export interface AttemptResponse {
   xp_earned: number;
   ml_coins_earned: number;
   submitted_at: string;
+  /** Exercise type/mechanic identifier */
+  exercise_type: string;
+  /** Indicates if exercise requires manual review by teacher (M3-M5 creative exercises) */
+  requires_manual_review: boolean;
 }
 
 /**

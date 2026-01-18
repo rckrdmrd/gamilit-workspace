@@ -17,7 +17,14 @@ import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
 // P1-05: Added 2025-12-18 - Educational entities for data enrichment
 import { Module as EducationalModule } from '@/modules/educational/entities/module.entity';
 import { Exercise } from '@/modules/educational/entities/exercise.entity';
-import { GetStudentProgressQueryDto, AddTeacherNoteDto, StudentNoteResponseDto } from '../dto';
+import {
+  GetStudentProgressQueryDto,
+  AddTeacherNoteDto,
+  StudentNoteResponseDto,
+  StudentProgressResponseDto,
+  StudentStatsResponseDto,
+  ModuleProgressDto,
+} from '../dto';
 
 export interface StudentOverview {
   id: string;
@@ -727,6 +734,241 @@ export class StudentProgressService {
       classroom_name: classroom.name || undefined,
       teacher_notes: member.teacher_notes || undefined,
       updated_at: member.updated_at,
+    };
+  }
+
+  // =====================================================
+  // FRONTEND-ALIGNED RESPONSE METHODS
+  // =====================================================
+  // FIX TASK-2026-01-18-005: Metodos que retornan estructura alineada con frontend
+  // Resuelve GAP-SDM-001, GAP-SDM-002, GAP-SDM-003
+
+  /**
+   * Get student progress response aligned with frontend interface
+   * Returns flat structure matching StudentProgress in studentProgressApi.ts
+   *
+   * @see apps/frontend/src/services/api/teacher/studentProgressApi.ts:32-51
+   */
+  async getStudentProgressResponse(
+    studentId: string,
+    query: GetStudentProgressQueryDto,
+  ): Promise<StudentProgressResponseDto> {
+    // Get student profile
+    const profile = await this.profileRepository.findOne({
+      where: { user_id: studentId },
+    });
+
+    if (!profile) {
+      throw new NotFoundException(`Student with ID ${studentId} not found`);
+    }
+
+    // Get submissions for this student
+    const submissions = await this.submissionRepository.find({
+      where: { user_id: profile.id },
+    });
+
+    // Get module progress
+    const moduleProgresses = await this.moduleProgressRepository.find({
+      where: { user_id: profile.id },
+    });
+
+    // Get all modules for enrichment
+    const allModules = await this.moduleRepository.find();
+    const moduleMap = new Map(allModules.map(m => [m.id, m]));
+
+    // Calculate overall stats
+    const completedModules = moduleProgresses.filter(
+      mp => mp.progress_percentage === 100,
+    ).length;
+
+    const completedExercises = submissions.filter(s => s.is_correct).length;
+
+    const totalScore = submissions.reduce((sum, sub) => {
+      const maxScore = sub.max_score || 1;
+      return sum + (sub.score / maxScore) * 100;
+    }, 0);
+    const averageScore = submissions.length > 0
+      ? Math.round(totalScore / submissions.length)
+      : 0;
+
+    const totalTimeSpent = submissions.reduce(
+      (sum, sub) => sum + (sub.time_spent_seconds || 0),
+      0,
+    );
+
+    // Calculate overall progress
+    const totalModules = allModules.length || 1;
+    const overallProgress = moduleProgresses.length > 0
+      ? Math.round(
+          moduleProgresses.reduce((sum, mp) => sum + mp.progress_percentage, 0) /
+          moduleProgresses.length,
+        )
+      : 0;
+
+    // Get time by module for module_progress
+    const timeByModule = new Map<string, number>();
+    for (const sub of submissions) {
+      const exercise = await this.exerciseRepository.findOne({
+        where: { id: sub.exercise_id },
+      });
+      if (exercise) {
+        const currentTime = timeByModule.get(exercise.module_id) || 0;
+        timeByModule.set(exercise.module_id, currentTime + (sub.time_spent_seconds || 0));
+      }
+    }
+
+    // Build module_progress array with frontend-expected field names
+    const moduleProgressData: ModuleProgressDto[] = moduleProgresses.map(mp => {
+      const moduleData = moduleMap.get(mp.module_id);
+      const totalActivities = moduleData?.total_exercises || 15;
+      const completedActivities = Math.round((mp.progress_percentage / 100) * totalActivities);
+
+      return {
+        module_id: mp.module_id,
+        module_name: moduleData?.title || `Modulo ${moduleData?.order_index || 1}`,
+        progress_percentage: mp.progress_percentage || 0,
+        score: Math.round(mp.average_score || mp.progress_percentage * 0.8), // Frontend expects 'score'
+        exercises_completed: completedActivities, // Frontend expects 'exercises_completed'
+        exercises_total: totalActivities, // Frontend expects 'exercises_total'
+      };
+    });
+
+    // Get last activity date
+    const lastActivity = profile.last_sign_in_at || profile.updated_at || profile.created_at;
+
+    return {
+      student_id: studentId,
+      student_name: profile.full_name || profile.display_name || 'Unknown',
+      overall_progress: overallProgress,
+      modules_completed: completedModules,
+      modules_total: totalModules,
+      exercises_completed: completedExercises,
+      exercises_total: submissions.length,
+      average_score: averageScore,
+      time_spent_minutes: Math.round(totalTimeSpent / 60),
+      last_activity: lastActivity.toISOString(),
+      module_progress: moduleProgressData,
+    };
+  }
+
+  /**
+   * Get student stats response aligned with frontend interface
+   * Returns structure matching StudentStats in studentProgressApi.ts
+   * Includes gamification fields required by StudentDetailModal
+   *
+   * @see apps/frontend/src/services/api/teacher/studentProgressApi.ts:74-91
+   * @see apps/frontend/src/apps/teacher/components/monitoring/StudentDetailModal.tsx:204-246
+   */
+  async getStudentStatsResponse(studentId: string): Promise<StudentStatsResponseDto> {
+    // Get student profile
+    const profile = await this.profileRepository.findOne({
+      where: { user_id: studentId },
+    });
+
+    if (!profile) {
+      throw new NotFoundException(`Student with ID ${studentId} not found`);
+    }
+
+    // Get all submissions
+    const submissions = await this.submissionRepository.find({
+      where: { user_id: profile.id },
+    });
+
+    // Get user stats from gamification
+    const userStats = await this.userStatsRepository.findOne({
+      where: { user_id: profile.id },
+    });
+
+    // Calculate stats
+    const exercisesCompleted = submissions.filter(s => s.is_correct).length;
+    const exercisesFailed = submissions.filter(s => !s.is_correct).length;
+
+    // Calculate scores
+    const scores = submissions.map(sub => {
+      const maxScore = sub.max_score || 1;
+      return (sub.score / maxScore) * 100;
+    });
+    const averageScore = scores.length > 0
+      ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+      : 0;
+    const highestScore = scores.length > 0 ? Math.round(Math.max(...scores)) : 0;
+    const lowestScore = scores.length > 0 ? Math.round(Math.min(...scores)) : 0;
+
+    // Calculate time stats
+    const totalTimeSpentSeconds = submissions.reduce(
+      (sum, sub) => sum + (sub.time_spent_seconds || 0),
+      0,
+    );
+
+    // Calculate hints used (from submissions)
+    const hintsUsed = submissions.reduce(
+      (sum, sub) => sum + (sub.hints_count || 0),
+      0,
+    );
+
+    // Estimate total sessions (unique days with activity)
+    const uniqueDates = new Set(
+      submissions.map(s => s.submitted_at?.toISOString().split('T')[0]).filter(Boolean),
+    );
+    const totalSessions = uniqueDates.size || 1;
+
+    // Calculate average session duration
+    const averageSessionDuration = totalSessions > 0
+      ? Math.round(totalTimeSpentSeconds / 60 / totalSessions)
+      : 0;
+
+    // Calculate completion rate
+    const completionRate = submissions.length > 0
+      ? Math.round((exercisesCompleted / submissions.length) * 100)
+      : 0;
+
+    // Calculate first attempt success rate
+    // Group submissions by exercise_id and check if first attempt was correct
+    const submissionsByExercise = new Map<string, typeof submissions>();
+    for (const sub of submissions) {
+      if (!submissionsByExercise.has(sub.exercise_id)) {
+        submissionsByExercise.set(sub.exercise_id, []);
+      }
+      submissionsByExercise.get(sub.exercise_id)!.push(sub);
+    }
+
+    let firstAttemptSuccesses = 0;
+    submissionsByExercise.forEach(subs => {
+      // Sort by submitted_at to get first attempt
+      const sorted = subs.sort((a, b) =>
+        (a.submitted_at?.getTime() || 0) - (b.submitted_at?.getTime() || 0),
+      );
+      if (sorted[0]?.is_correct) {
+        firstAttemptSuccesses++;
+      }
+    });
+
+    const firstAttemptSuccessRate = submissionsByExercise.size > 0
+      ? Math.round((firstAttemptSuccesses / submissionsByExercise.size) * 100)
+      : 0;
+
+    // Powerups used - default to 0
+    // TODO: In a full implementation, this would query powerup_transactions table
+    // Note: userStats does not have powerups_used field currently
+    const powerupsUsed = 0;
+
+    return {
+      student_id: studentId,
+      total_sessions: totalSessions,
+      average_session_duration: averageSessionDuration,
+      total_time_spent: totalTimeSpentSeconds,
+      exercises_attempted: submissions.length,
+      exercises_completed: exercisesCompleted,
+      exercises_failed: exercisesFailed,
+      average_score: averageScore,
+      highest_score: highestScore,
+      lowest_score: lowestScore,
+      completion_rate: completionRate,
+      first_attempt_success_rate: firstAttemptSuccessRate,
+      powerups_used: powerupsUsed,
+      hints_used: hintsUsed,
+      streak_current: userStats?.current_streak || 0, // Frontend expects 'streak_current'
+      streak_longest: userStats?.max_streak || 0, // Frontend expects 'streak_longest'
     };
   }
 }

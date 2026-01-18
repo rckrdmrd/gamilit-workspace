@@ -5,10 +5,11 @@ id: TASK-2026-01-18-006
 title: "Análisis y Corrección Teacher/Responses Page"
 type: analysis + bug-fix
 priority: P0-CRITICAL
-status: phase_1_complete
+status: phase_2_complete
 created: 2026-01-18
 updated: 2026-01-18
 phase_1_completed: 2026-01-18
+phase_2_completed: 2026-01-18
 
 description: |
   Análisis profundo de errores técnicos y GAPs funcionales en la página
@@ -92,14 +93,27 @@ artifacts:
   - 01-ANALISIS-TEACHER-RESPONSES.md
   - 02-PLAN-INTEGRACION.md
   - 03-CAMBIOS-FASE1.md
+  - 04-CAMBIOS-FASE2.md
   - METADATA.yml
 
 files_modified:
-  - apps/frontend/src/apps/teacher/components/responses/ResponsesTable.tsx
+  phase_1:
+    - apps/frontend/src/apps/teacher/components/responses/ResponsesTable.tsx
+  phase_2:
+    - apps/backend/src/modules/teacher/dto/exercise-responses.dto.ts
+    - apps/backend/src/modules/teacher/services/exercise-responses.service.ts
+    - apps/frontend/src/services/api/teacher/exerciseResponsesApi.ts
+    - apps/frontend/src/apps/teacher/components/responses/ResponsesTable.tsx
+    - apps/frontend/src/apps/teacher/components/responses/ResponseFilters.tsx
 
 errors_fixed:
   - E2: AnimatePresence mode='wait' with multiple children
   - E3: Maximum update depth exceeded
+
+gaps_fixed:
+  - G2: Campo requires_manual_review agregado (backend + frontend)
+  - G3: Filtro de módulo implementado
+  - G4: Columna Estado agregada a tabla
 
 agent: claude-code-opus
 epic: EXT-001-portal-maestros

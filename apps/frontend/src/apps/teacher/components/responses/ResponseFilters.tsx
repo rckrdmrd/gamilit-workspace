@@ -14,9 +14,16 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Filter, X, Calendar, CheckCircle, XCircle, School, Search } from 'lucide-react';
+import { Filter, X, Calendar, CheckCircle, XCircle, School, Search, BookOpen } from 'lucide-react';
 import { useClassrooms } from '@apps/teacher/hooks/useClassrooms';
+import { apiClient } from '@services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 import type { GetAttemptsQuery } from '@services/api/teacher';
+
+interface ModuleListItem {
+  id: string;
+  title: string;
+}
 
 // ============================================================================
 // TYPES
@@ -56,7 +63,9 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
   const { classrooms } = useClassrooms();
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');
+  const [selectedModuleId, setSelectedModuleId] = useState<string>('');
   const [studentSearchInput, setStudentSearchInput] = useState<string>('');
+  const [modules, setModules] = useState<ModuleListItem[]>([]);
 
   // Use refs to avoid stale closure issues without causing re-renders
   const filtersRef = useRef(filters);
@@ -85,12 +94,33 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
     return () => clearTimeout(timer);
   }, [studentSearchInput]);
 
+  // Fetch modules on mount
+  useEffect(() => {
+    const fetchModules = async () => {
+      try {
+        const response = await apiClient.get<ModuleListItem[]>(API_ENDPOINTS.educational.modules);
+        setModules(response.data || []);
+      } catch (error) {
+        console.error('[ResponseFilters] Error fetching modules:', error);
+      }
+    };
+    fetchModules();
+  }, []);
+
   const handleClassroomChange = (classroomId: string) => {
     setSelectedClassroomId(classroomId);
     onChange({
       ...filters,
       classroom_id: classroomId || undefined,
       student_id: undefined, // Clear student when classroom changes
+    });
+  };
+
+  const handleModuleChange = (moduleId: string) => {
+    setSelectedModuleId(moduleId);
+    onChange({
+      ...filters,
+      module_id: moduleId || undefined,
     });
   };
 
@@ -115,6 +145,7 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
 
   const handleClear = () => {
     setSelectedClassroomId('');
+    setSelectedModuleId('');
     setStudentSearchInput('');
     onClear();
   };
@@ -197,7 +228,26 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
             </FilterSection>
           </div>
 
-          {/* Row 2: Date Range */}
+          {/* Row 2: Module */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {/* Module Selector */}
+            <FilterSection icon={<BookOpen className="h-4 w-4" />} label="Módulo">
+              <select
+                value={selectedModuleId}
+                onChange={(e) => handleModuleChange(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-detective-orange"
+              >
+                <option value="">Todos los módulos</option>
+                {modules.map((module) => (
+                  <option key={module.id} value={module.id}>
+                    {module.title}
+                  </option>
+                ))}
+              </select>
+            </FilterSection>
+          </div>
+
+          {/* Row 3: Date Range */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FilterSection icon={<Calendar className="h-4 w-4" />} label="Fecha Desde">
               <input
@@ -218,7 +268,7 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
             </FilterSection>
           </div>
 
-          {/* Row 3: Correctness Filter */}
+          {/* Row 4: Correctness Filter */}
           <FilterSection icon={<CheckCircle className="h-4 w-4" />} label="Estado de Respuesta">
             <div className="flex gap-3">
               <label className="flex cursor-pointer items-center gap-2">

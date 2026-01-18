@@ -29,6 +29,38 @@ import {
  * - Supports both direct teacher_id and teacher_classrooms relationship
  * - Filters by classroom_id to ensure data isolation
  */
+/**
+ * Exercise types that require manual review by teacher
+ * These are creative/open-ended exercises from Modules 3-5
+ */
+const MANUAL_REVIEW_EXERCISE_TYPES = [
+  // Module 3 - Critical/Argumentative
+  'tribunal_opiniones',
+  'podcast_argumentativo',
+  'debate_digital',
+  'analisis_fuentes',
+  'matriz_perspectivas',
+  // Module 4 - Media Literacy (creative)
+  'analisis_memes',
+  // Module 5 - Content Creation
+  'video_carta',
+  'comic_digital',
+  'diario_multimedia',
+  // Auxiliary creative types
+  'collage_prensa',
+  'call_to_action',
+  'texto_en_movimiento',
+  // Module 2 - Open-ended
+  'prediccion_narrativa',
+];
+
+/**
+ * Check if exercise type requires manual review
+ */
+function requiresManualReview(exerciseType: string): boolean {
+  return MANUAL_REVIEW_EXERCISE_TYPES.includes(exerciseType);
+}
+
 @Injectable()
 export class ExerciseResponsesService {
   constructor(
@@ -181,6 +213,7 @@ export class ExerciseResponsesService {
           profile.last_name AS profile_last_name,
           exercise.id AS exercise_id,
           exercise.title AS exercise_title,
+          exercise.exercise_type AS exercise_type,
           module.id AS module_id,
           module.title AS module_name
         FROM progress_tracking.exercise_attempts attempt
@@ -260,6 +293,8 @@ export class ExerciseResponsesService {
         xp_earned: row.attempt_xp_earned,
         ml_coins_earned: row.attempt_ml_coins_earned,
         submitted_at: row.attempt_submitted_at ? new Date(row.attempt_submitted_at).toISOString() : new Date().toISOString(),
+        exercise_type: row.exercise_type || 'unknown',
+        requires_manual_review: requiresManualReview(row.exercise_type || ''),
       }));
 
       return {
@@ -404,6 +439,8 @@ export class ExerciseResponsesService {
     // Different exercise types store correct answers in different fields
     const correctAnswer = this.extractCorrectAnswers(exerciseContent, row.exercise_type);
 
+    const exerciseType = row.exercise_type || 'unknown';
+
     return {
       id: row.attempt_id,
       student_id: row.attempt_user_id,
@@ -421,9 +458,10 @@ export class ExerciseResponsesService {
       xp_earned: row.attempt_xp_earned,
       ml_coins_earned: row.attempt_ml_coins_earned,
       submitted_at: row.attempt_submitted_at ? new Date(row.attempt_submitted_at).toISOString() : new Date().toISOString(),
+      exercise_type: exerciseType,
+      requires_manual_review: requiresManualReview(exerciseType),
       // Additional detail fields
       correct_answer: correctAnswer,
-      exercise_type: row.exercise_type || 'unknown',
       max_score: row.exercise_max_points || 100,
     };
   }
