@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { X, Save, Send, User, BookOpen, Calendar, FileText, Image as ImageIcon, Video, Music, Award, Coins, TrendingUp } from 'lucide-react';
 import { ManualReview, RubricEvaluation, ReviewRewards, manualReviewApi } from '@/shared/api/manualReviewApi';
 import { RubricEvaluator } from '@/shared/components/mechanics/RubricEvaluator';
@@ -39,8 +39,9 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
 
   /**
    * Handle evaluation changes
+   * FIX TASK-2026-01-18-008: Memoize callback to prevent infinite re-render loop
    */
-  const handleEvaluationChange = (
+  const handleEvaluationChange = useCallback((
     newEvaluations: RubricEvaluation[],
     newGeneralFeedback: string,
     newTotalScore: number
@@ -48,15 +49,16 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
     setEvaluations(newEvaluations);
     setGeneralFeedback(newGeneralFeedback);
     setTotalScore(newTotalScore);
-  };
+  }, []);
 
   /**
    * Handle validation changes
+   * FIX TASK-2026-01-18-008: Memoize callback to prevent infinite re-render loop
    */
-  const handleValidationChange = (valid: boolean, errors: string[]) => {
+  const handleValidationChange = useCallback((valid: boolean, errors: string[]) => {
     setIsValid(valid);
     setValidationErrors(errors);
-  };
+  }, []);
 
   /**
    * Save progress (partial review)

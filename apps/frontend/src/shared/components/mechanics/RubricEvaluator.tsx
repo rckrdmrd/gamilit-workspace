@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Star, MessageSquare, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Star, MessageSquare, CheckCircle, AlertTriangle } from 'lucide-react';
 import { RubricCriterion, RubricEvaluation, calculateTotalScore, validateEvaluations } from '@/shared/api/manualReviewApi';
 
 /**
@@ -39,12 +39,19 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
   const [generalFeedback, setGeneralFeedback] = useState(initialGeneralFeedback ?? '');
   const [totalScore, setTotalScore] = useState(0);
 
+  // FIX TASK-2026-01-18-008: Track if component has initialized to prevent calling onChange on mount
+  const isInitializedRef = useRef(false);
+
+  // FIX TASK-2026-01-18-008: Check if rubric is valid (used for conditional rendering)
+  const hasValidRubric = rubric && Array.isArray(rubric) && rubric.length > 0;
+
   /**
    * Initialize evaluations for all criteria
+   * FIX TASK-2026-01-18-008: Only run once on mount or when rubric changes
    */
   useEffect(() => {
     // Guard against undefined rubric
-    if (!rubric || !Array.isArray(rubric)) {
+    if (!hasValidRubric) {
       return;
     }
 
@@ -58,24 +65,32 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
     });
 
     setEvaluations(initializedEvaluations);
-  }, [rubric]);
+    isInitializedRef.current = true;
+  }, [rubric, hasValidRubric]);
 
   /**
    * Calculate and update total score
    */
   useEffect(() => {
+    if (!hasValidRubric) return;
     const score = calculateTotalScore(rubric, evaluations);
     setTotalScore(score);
-  }, [rubric, evaluations]);
+  }, [rubric, evaluations, hasValidRubric]);
 
   /**
    * Validate and notify parent
+   * FIX TASK-2026-01-18-008: Only call onChange after initialization, not on mount
    */
   useEffect(() => {
+    // Skip if rubric invalid or not initialized
+    if (!hasValidRubric || !isInitializedRef.current) {
+      return;
+    }
+
     const validation = validateEvaluations(rubric, evaluations);
     onValidation?.(validation.valid, validation.errors);
     onChange(evaluations, generalFeedback, totalScore);
-  }, [evaluations, generalFeedback, totalScore, rubric, onChange, onValidation]);
+  }, [evaluations, generalFeedback, totalScore, rubric, onChange, onValidation, hasValidRubric]);
 
   /**
    * Update score for a criterion
@@ -113,6 +128,20 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
       feedback: '',
     };
   }, [evaluations]);
+
+  // FIX TASK-2026-01-18-008: Early return AFTER all hooks if rubric is invalid
+  if (!hasValidRubric) {
+    return (
+      <div className="rounded-detective bg-yellow-50 border border-yellow-200 p-6 text-center">
+        <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-3" />
+        <h4 className="font-semibold text-yellow-900 mb-2">Rubrica no disponible</h4>
+        <p className="text-sm text-yellow-700">
+          Este ejercicio no tiene una rubrica de evaluacion configurada.
+          Contacte al administrador para configurar los criterios de evaluacion.
+        </p>
+      </div>
+    );
+  }
 
   /**
    * Get score percentage

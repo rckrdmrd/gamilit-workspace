@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.4.0"
+version: "1.5.0"
 last_updated: "2026-01-18"
-total_tasks: 7
+total_tasks: 8
 
 # =========================================
 # TAREAS POR FECHA
@@ -14,6 +14,32 @@ tasks:
   # ----------------------------------------
   # 2026-01-18
   # ----------------------------------------
+  - id: TASK-2026-01-18-008
+    title: "Fix Teacher Reviews Page - Rubric Data + Infinite Loop"
+    date: "2026-01-18"
+    status: completed
+    priority: P0
+    type: bug-fix
+    metodologia: CAPVED
+    dominios:
+      - "Frontend"
+      - "Backend"
+      - "Teacher Portal"
+      - "Manual Reviews"
+    entregables:
+      - "METADATA.yml"
+      - "02-CAMBIOS-IMPLEMENTADOS.md"
+    metricas:
+      archivos_modificados: 4
+      problemas_corregidos: 2
+      validaciones_pasadas: 4
+    conclusiones:
+      - "Rubric data ahora se carga desde exercise_type_rubrics"
+      - "Callbacks memoizados con useCallback para evitar bucle infinito"
+      - "UI de fallback cuando rubric no está disponible"
+      - "EnrichedManualReview ahora incluye rubric[]"
+    path: "orchestration/tareas/TASK-2026-01-18-008/"
+
   - id: TASK-2026-01-18-007
     title: "Fix Backend Service - Eliminar constante hardcodeada MANUAL_REVIEW_EXERCISE_TYPES"
     date: "2026-01-18"

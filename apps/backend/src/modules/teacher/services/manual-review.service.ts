@@ -13,6 +13,8 @@ import { NotificationService } from '@modules/notifications/services/notificatio
 // FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Import Profile and Exercise for data enrichment
 import { Profile } from '@modules/auth/entities/profile.entity';
 import { Exercise } from '@modules/educational/entities/exercise.entity';
+// FIX TASK-2026-01-18-008: Import ExerciseTypeRubric for rubric data
+import { ExerciseTypeRubric, RubricCriteria } from '@modules/educational/entities/exercise-type-rubric.entity';
 
 /**
  * Filtros opcionales para reviews pendientes
@@ -59,8 +61,9 @@ export interface CompleteReviewResult {
 }
 
 /**
- * Review enriquecido con datos de estudiante y ejercicio
+ * Review enriquecido con datos de estudiante, ejercicio y rúbrica
  * FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Estructura para retornar datos completos al frontend
+ * FIX TASK-2026-01-18-008: Agregado rubric para evaluación manual
  */
 export interface EnrichedManualReview extends ManualReview {
   student?: {
@@ -74,6 +77,14 @@ export interface EnrichedManualReview extends ManualReview {
     moduleId: string;
     type?: string;
   };
+  // FIX TASK-2026-01-18-008: Rubric criteria for evaluation
+  rubric?: Array<{
+    id: string;
+    name: string;
+    description: string;
+    maxPoints: number;
+    weight?: number;
+  }>;
 }
 
 /**
@@ -108,6 +119,9 @@ export class ManualReviewService {
     private readonly profileRepo: Repository<Profile>,
     @InjectRepository(Exercise, 'educational')
     private readonly exerciseRepo: Repository<Exercise>,
+    // FIX TASK-2026-01-18-008: Inject ExerciseTypeRubric for rubric data
+    @InjectRepository(ExerciseTypeRubric, 'educational')
+    private readonly rubricRepo: Repository<ExerciseTypeRubric>,
     private readonly submissionService: ExerciseSubmissionService,
     // FIX GAP-LOW-001: Inject AuditService for event tracking
     private readonly auditService: AuditService,
@@ -116,14 +130,16 @@ export class ManualReviewService {
   ) {}
 
   /**
-   * Enriquece un review con datos de estudiante y ejercicio
+   * Enriquece un review con datos de estudiante, ejercicio y rúbrica
    * FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Soluciona problema de datos faltantes en frontend
+   * FIX TASK-2026-01-18-008: Agrega rubric desde exercise_type_rubrics
    *
    * @param review - ManualReview con submission cargado
-   * @returns Review enriquecido con student y exercise
+   * @returns Review enriquecido con student, exercise y rubric
    */
   private async enrichReview(review: ManualReview): Promise<EnrichedManualReview> {
     const enriched: EnrichedManualReview = { ...review };
+    let exerciseType: string | null = null;
 
     if (review.submission) {
       // Obtener datos del estudiante
@@ -159,10 +175,32 @@ export class ManualReviewService {
               moduleId: exercise.module_id,
               type: exercise.exercise_type,
             };
+            exerciseType = exercise.exercise_type;
           }
         } catch (error) {
           this.logger.warn(`[enrichReview] Failed to fetch exercise ${review.submission.exercise_id}: ${error}`);
         }
+      }
+    }
+
+    // FIX TASK-2026-01-18-008: Obtener rúbrica por tipo de ejercicio
+    if (exerciseType) {
+      try {
+        const rubricData = await this.rubricRepo.findOne({
+          where: { exerciseType, isDefault: true },
+        });
+        if (rubricData && rubricData.criteria) {
+          // Transformar criterios al formato esperado por frontend
+          enriched.rubric = rubricData.criteria.map((criterion: RubricCriteria, index: number) => ({
+            id: criterion.name?.toLowerCase().replace(/\s+/g, '_') || `criterion_${index}`,
+            name: criterion.name,
+            description: criterion.description,
+            maxPoints: Math.max(...(criterion.levels?.map(l => l.score) || [100])),
+            weight: criterion.weight,
+          }));
+        }
+      } catch (error) {
+        this.logger.warn(`[enrichReview] Failed to fetch rubric for exercise type ${exerciseType}: ${error}`);
       }
     }
 
@@ -172,9 +210,10 @@ export class ManualReviewService {
   /**
    * Enriquece múltiples reviews de forma optimizada
    * FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Batch enrichment para mejor rendimiento
+   * FIX TASK-2026-01-18-008: Agrega rubrics en batch
    *
    * @param reviews - Array de ManualReview con submissions cargados
-   * @returns Array de reviews enriquecidos
+   * @returns Array de reviews enriquecidos con student, exercise y rubric
    */
   private async enrichReviews(reviews: ManualReview[]): Promise<EnrichedManualReview[]> {
     if (reviews.length === 0) return [];
@@ -204,9 +243,22 @@ export class ManualReviewService {
         })
       : [];
 
+    // FIX TASK-2026-01-18-008: Extraer tipos de ejercicio únicos y cargar rúbricas
+    const exerciseTypes = [...new Set(exercises
+      .map(e => e.exercise_type)
+      .filter(Boolean))] as string[];
+
+    const rubrics = exerciseTypes.length > 0
+      ? await this.rubricRepo.find({
+          where: { exerciseType: In(exerciseTypes), isDefault: true },
+        })
+      : [];
+
     // Crear mapas para acceso rápido
     const profileMap = new Map(profiles.map(p => [p.id, p]));
     const exerciseMap = new Map(exercises.map(e => [e.id, e]));
+    // FIX TASK-2026-01-18-008: Mapa de rúbricas por tipo de ejercicio
+    const rubricMap = new Map(rubrics.map(r => [r.exerciseType, r]));
 
     // Enriquecer cada review
     return reviews.map(review => {
@@ -232,6 +284,18 @@ export class ManualReviewService {
             moduleId: exercise.module_id,
             type: exercise.exercise_type,
           };
+
+          // FIX TASK-2026-01-18-008: Agregar rúbrica
+          const rubricData = rubricMap.get(exercise.exercise_type);
+          if (rubricData && rubricData.criteria) {
+            enriched.rubric = rubricData.criteria.map((criterion: RubricCriteria, index: number) => ({
+              id: criterion.name?.toLowerCase().replace(/\s+/g, '_') || `criterion_${index}`,
+              name: criterion.name,
+              description: criterion.description,
+              maxPoints: Math.max(...(criterion.levels?.map(l => l.score) || [100])),
+              weight: criterion.weight,
+            }));
+          }
         }
       }
 

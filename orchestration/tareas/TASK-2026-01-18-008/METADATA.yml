@@ -1,0 +1,71 @@
+# TASK-2026-01-18-008: Fix Teacher Reviews Page Errors
+# ==================================================
+# Ciclo CAPVED: C-A-P-V-E-D
+
+id: TASK-2026-01-18-008
+titulo: "Fix Teacher Reviews Page - Rubric Data + Infinite Loop"
+fecha: "2026-01-18"
+estado: completed
+prioridad: P0
+tipo: bug-fix
+metodologia: CAPVED
+
+# Contexto
+descripcion: |
+  La página teacher/reviews muestra errores al intentar evaluar ejercicios M3-M5.
+  - Error: "Maximum update depth exceeded" (bucle de re-render infinito)
+  - Causa raíz 1: Backend no envía rubric al frontend
+  - Causa raíz 2: handleEvaluationChange no memoizado en ReviewDetail.tsx
+
+dominios:
+  - Backend
+  - Frontend
+  - Teacher Portal
+  - Manual Reviews
+
+# Análisis de Causa Raíz
+root_cause_analysis:
+  issue_1_rubric:
+    sintoma: "RubricEvaluator recibe rubric=undefined"
+    ubicacion_backend: "apps/backend/src/modules/teacher/services/manual-review.service.ts"
+    funcion: "enrichReview()"
+    problema: "No incluye rubric en el enriched review"
+    solucion: "Cargar rubric desde exercise_type_rubrics tabla"
+
+  issue_2_infinite_loop:
+    sintoma: "Maximum update depth exceeded"
+    ubicacion_frontend: "apps/frontend/src/apps/teacher/components/review-panel/ReviewDetail.tsx"
+    funcion: "handleEvaluationChange"
+    problema: "Callback no memoizado con useCallback"
+    solucion: "Memoizar callback y corregir useEffect en RubricEvaluator"
+
+# Archivos a Modificar
+archivos_modificar:
+  backend:
+    - path: "apps/backend/src/modules/teacher/services/manual-review.service.ts"
+      cambio: "Agregar ExerciseTypeRubrics repository y cargar rubric en enrichReview"
+
+  frontend:
+    - path: "apps/frontend/src/apps/teacher/components/review-panel/ReviewDetail.tsx"
+      cambio: "Memoizar handleEvaluationChange con useCallback"
+    - path: "apps/frontend/src/shared/components/mechanics/RubricEvaluator.tsx"
+      cambio: "Corregir useEffect para evitar llamadas innecesarias a onChange"
+
+# Verificación Pre-Fix
+verificacion_bd:
+  exercise_submissions: "M3 tribunal_opiniones: status=submitted, answer_data correcto"
+  manual_reviews: "1 registro pending con reviewer_id asignado"
+  exercise_type_rubrics: "12 rúbricas definidas (M3:5, M4:4, M5:3)"
+
+# Entregables
+entregables:
+  - "METADATA.yml"
+  - "01-ANALISIS-ROOT-CAUSE.md"
+  - "02-CAMBIOS-IMPLEMENTADOS.md"
+
+# Métricas Esperadas
+metricas_esperadas:
+  archivos_modificados: 3
+  errores_corregidos: 2
+  build_status: "PASSED"
+  lint_status: "PASSED"

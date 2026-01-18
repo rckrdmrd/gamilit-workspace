@@ -21,6 +21,8 @@ import { ManualReview } from '@modules/progress/entities/manual-review.entity';
 // Educational entities
 import { Module as EducationalModule } from '@modules/educational/entities/module.entity';
 import { Exercise } from '@modules/educational/entities/exercise.entity';
+// FIX TASK-2026-01-18-008: Import ExerciseTypeRubric for rubric data in manual reviews
+import { ExerciseTypeRubric } from '@modules/educational/entities/exercise-type-rubric.entity';
 
 // Gamification entities
 import { UserStats } from '@modules/gamification/entities/user-stats.entity';
@@ -148,7 +150,8 @@ import { AuditModule } from '@modules/audit/audit.module';
     ),
 
     // Entities from 'educational' datasource
-    TypeOrmModule.forFeature([EducationalModule, Exercise], 'educational'),
+    // FIX TASK-2026-01-18-008: Added ExerciseTypeRubric for rubric data in manual reviews
+    TypeOrmModule.forFeature([EducationalModule, Exercise, ExerciseTypeRubric], 'educational'),
 
     // Entities from 'gamification' datasource
     TypeOrmModule.forFeature([UserStats, Achievement, UserAchievement], 'gamification'),
