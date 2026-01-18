@@ -2,11 +2,11 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "4.4.0"
+version: "4.4.1"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
-fecha_actualizacion: "2026-01-16"
-actualizado_por: "ETC-001 - Consolidacion Tecnica"
-last_update_task: "ETC-001"
+fecha_actualizacion: "2026-01-18"
+actualizado_por: "TASK-2026-01-18-007 - Fix Backend MANUAL_REVIEW_EXERCISE_TYPES"
+last_update_task: "TASK-2026-01-18-007"
 
 # =============================================================================
 # RESUMEN EJECUTIVO

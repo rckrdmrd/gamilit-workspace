@@ -4,10 +4,10 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.9.0"
+  version: "3.9.1"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-16"
-  last_update_task: "ETC-001"
+  last_updated: "2026-01-18"
+  last_update_task: "TASK-2026-01-18-007"
   generated_by: "RECONCILIACION-INTEGRAL Plan Maestro GAMILIT - Conteo real filesystem"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
