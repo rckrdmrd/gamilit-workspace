@@ -96,13 +96,19 @@ resultado:
   error_original: "password authentication failed for user gamilit_user"
   error_resuelto: true
   conexion_exitosa: true
+  backend_inicia: true
   notas_adicionales: |
-    Se detectaron errores adicionales de TypeORM (entity metadata) en modulos
-    audit y content, pero estos son pre-existentes y no relacionados con
-    el problema de autenticacion.
+    Fase 1: Corregido puerto PostgreSQL (5432 -> 5433)
+    Fase 2: Corregidos errores TypeORM cross-connection en entities:
+    - user-activity-log.entity.ts
+    - content-version.entity.ts
+    - flagged-content.entity.ts
+    - moderation-rule.entity.ts
+    Backend inicia correctamente sin errores.
 
 # Archivos Modificados
 archivos_modificados:
+  # Fase 1: Correccion de puerto
   - path: "apps/backend/.env"
     linea: 12
     cambio: "DB_PORT=5433"
@@ -118,6 +124,15 @@ archivos_modificados:
   - path: "orchestration/environment/ENVIRONMENT-INVENTORY.yml"
     lineas: "multiples"
     cambio: "Todas las refs a puerto actualizadas"
+  # Fase 2: Correccion de TypeORM cross-connection
+  - path: "apps/backend/src/modules/audit/entities/user-activity-log.entity.ts"
+    cambio: "Comentar @ManyToOne a Profile y Tenant"
+  - path: "apps/backend/src/modules/content/entities/content-version.entity.ts"
+    cambio: "Comentar @ManyToOne a Tenant y Profile"
+  - path: "apps/backend/src/modules/content/entities/flagged-content.entity.ts"
+    cambio: "Comentar @ManyToOne a User (reporter, reviewer)"
+  - path: "apps/backend/src/modules/content/entities/moderation-rule.entity.ts"
+    cambio: "Comentar @ManyToOne a User (creator)"
 
 # Agente
 agente:

@@ -64,9 +64,9 @@ PGPASSWORD='9rGjYKknaZKnCLUk' psql -h 127.0.0.1 -p 5433 -U gamilit_user -d gamil
 
 ---
 
-## ERRORES RESIDUALES (NO RELACIONADOS)
+## FASE 2: ERRORES TYPEORM CROSS-CONNECTION (RESUELTOS)
 
-Despues del fix, se observaron errores de TypeORM que son pre-existentes:
+Despues del fix de puerto, se detectaron errores de TypeORM:
 
 ```
 ERROR [TypeOrmModule] Unable to connect to the database (audit)
@@ -76,7 +76,29 @@ ERROR [TypeOrmModule] Unable to connect to the database (content)
 TypeORMError: Entity metadata for ContentVersion#tenant was not found
 ```
 
-Estos errores son problemas de configuracion de relaciones en entities TypeORM, **no relacionados con el problema de autenticacion** que se resolvio. Requieren correccion separada de las entities involucradas.
+### Causa
+Entities en conexiones separadas (audit, content) referenciaban Profile/Tenant/User
+de la conexion auth. TypeORM no puede resolver relaciones entre DataSource diferentes.
+
+### Solucion Aplicada
+Comentar decoradores `@ManyToOne` y `@JoinColumn` en:
+
+| Entity | Relaciones Comentadas |
+|--------|----------------------|
+| `user-activity-log.entity.ts` | user (Profile), tenant (Tenant) |
+| `content-version.entity.ts` | tenant (Tenant), creator (Profile) |
+| `flagged-content.entity.ts` | reporter (User), reviewer (User) |
+| `moderation-rule.entity.ts` | creator (User) |
+
+Los FK columns se mantienen para integridad referencial en BD.
+Este patron ya es usado en otros modulos (gamification, assignments).
+
+### Resultado
+Backend inicia correctamente:
+```
+[Nest] LOG [NestApplication] Nest application successfully started
+Server running at: http://localhost:3006
+```
 
 ---
 
@@ -98,13 +120,21 @@ postgresql://gamilit_user:PASSWORD@localhost:5433/gamilit_platform
 
 ---
 
-## RECOMENDACIONES
+## RECOMENDACIONES FUTURAS
 
 1. **Documentar puerto oficial** - El puerto 5433 debe ser el estandar para desarrollo local
-2. **Validar scripts de BD** - Algunos scripts shell todavia referencian puerto 5432
-3. **Resolver errores TypeORM** - Corregir relaciones en entities UserActivityLog y ContentVersion
+2. **Validar scripts de BD** - Algunos scripts shell todavia referencian puerto 5432 (no critico)
+3. **Considerar refactorizacion** - Evaluar unificar conexiones TypeORM si es viable
+
+---
+
+## COMMITS
+
+1. `0a65608` - [TASK-2026-01-18-002] fix: Corregir puerto PostgreSQL 5432 -> 5433
+2. `1532e34` - [TASK-2026-01-18-002] fix: Deshabilitar relaciones TypeORM cross-connection
 
 ---
 
 *Correccion aplicada por: Agente DBA/DevOps*
 *Metodologia: CAPVED*
+*Fecha: 2026-01-18*
