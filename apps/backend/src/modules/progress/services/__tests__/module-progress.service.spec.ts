@@ -16,7 +16,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { ModuleProgressService } from '../module-progress.service';
-import { ModuleProgress } from '../../entities';
+import { CertificateService } from '../certificate.service';
+import { ModuleProgress, ExerciseSubmission } from '../../entities';
 import { createMockRepository } from '@/__mocks__/repositories.mock';
 import { TestDataFactory } from '@/__mocks__/services.mock';
 import { ProgressStatusEnum } from '@shared/constants/enums.constants';
@@ -24,6 +25,14 @@ import { ProgressStatusEnum } from '@shared/constants/enums.constants';
 describe('ModuleProgressService', () => {
   let service: ModuleProgressService;
   let moduleProgressRepo: ReturnType<typeof createMockRepository>;
+  let exerciseSubmissionRepo: ReturnType<typeof createMockRepository>;
+
+  // Mock CertificateService
+  const mockCertificateService = {
+    generateModuleCertificate: jest.fn().mockResolvedValue(undefined),
+    findByUser: jest.fn().mockResolvedValue([]),
+    findByModule: jest.fn().mockResolvedValue([]),
+  };
 
   // Test data
   const mockUserId = TestDataFactory.createUuid('user');
@@ -63,6 +72,7 @@ describe('ModuleProgressService', () => {
 
   beforeEach(async () => {
     moduleProgressRepo = createMockRepository<ModuleProgress>();
+    exerciseSubmissionRepo = createMockRepository<ExerciseSubmission>();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -71,11 +81,23 @@ describe('ModuleProgressService', () => {
           provide: getRepositoryToken(ModuleProgress, 'progress'),
           useValue: moduleProgressRepo,
         },
+        {
+          provide: getRepositoryToken(ExerciseSubmission, 'progress'),
+          useValue: exerciseSubmissionRepo,
+        },
+        {
+          provide: CertificateService,
+          useValue: mockCertificateService,
+        },
       ],
     }).compile();
 
     service = module.get<ModuleProgressService>(ModuleProgressService);
     jest.clearAllMocks();
+
+    // Setup query mock to return empty array by default (needed for calculateLearningPath)
+    // Must be after clearAllMocks()
+    moduleProgressRepo.query.mockResolvedValue([]);
   });
 
   describe('Service Definition', () => {
@@ -473,7 +495,8 @@ describe('ModuleProgressService', () => {
       const result = await service.calculateLearningPath(mockUserId);
 
       expect(result.difficulty_adjustment).toBe('increase');
-      expect(result.reasoning).toContain('High performance detected');
+      // TASK-2026-01-18: 'reasoning' field removed from return type, verify overall_performance instead
+      expect(result.overall_performance).toBe('excellent');
     });
 
     it('should recommend decreasing difficulty for struggling students', async () => {
@@ -486,7 +509,8 @@ describe('ModuleProgressService', () => {
       const result = await service.calculateLearningPath(mockUserId);
 
       expect(result.difficulty_adjustment).toBe('decrease');
-      expect(result.reasoning).toContain('Additional practice recommended');
+      // TASK-2026-01-18: 'reasoning' field removed from return type, verify overall_performance instead
+      expect(result.overall_performance).toBe('struggling');
     });
 
     it('should maintain difficulty for average performance', async () => {
@@ -499,7 +523,8 @@ describe('ModuleProgressService', () => {
       const result = await service.calculateLearningPath(mockUserId);
 
       expect(result.difficulty_adjustment).toBe('maintain');
-      expect(result.reasoning).toContain('Continue with current difficulty level');
+      // TASK-2026-01-18: 'reasoning' field removed from return type, verify overall_performance instead
+      expect(result.overall_performance).toBe('good');
     });
 
     it('should handle users with no progress', async () => {

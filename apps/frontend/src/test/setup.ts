@@ -75,6 +75,24 @@ global.console = {
   warn: vi.fn(),
 };
 
+// Mock auth store with authenticated user
+vi.mock('@/features/auth/store/authStore', () => ({
+  useAuthStore: {
+    getState: vi.fn(() => ({
+      user: {
+        id: 'test-user-id',
+        email: 'test@example.com',
+        name: 'Test User',
+        role: 'student',
+      },
+      isAuthenticated: true,
+      token: 'mock-token',
+    })),
+    subscribe: vi.fn(),
+    setState: vi.fn(),
+  },
+}));
+
 // Set test environment variables
 process.env.VITE_API_URL = 'http://localhost:3006/api';
 process.env.VITE_ENV = 'test';

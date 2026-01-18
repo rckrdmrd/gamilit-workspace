@@ -3,19 +3,41 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { ModuleProgressService } from '../services/module-progress.service';
-import { ModuleProgress } from '../entities';
+import { ModuleProgress, ExerciseSubmission } from '../entities';
+import { CertificateService } from '../services/certificate.service';
 import { CreateModuleProgressDto } from '../dto';
 import { ProgressStatusEnum } from '@shared/constants/enums.constants';
 
 describe('ModuleProgressService', () => {
   let service: ModuleProgressService;
-  let _repository: Repository<ModuleProgress>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let repository: Repository<ModuleProgress>;
 
   const mockRepository = {
     find: jest.fn(),
     findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    query: jest.fn().mockResolvedValue([]),
+  };
+
+  const mockExerciseSubmissionRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+    createQueryBuilder: jest.fn(() => ({
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue([]),
+    })),
+  };
+
+  const mockCertificateService = {
+    generateModuleCertificate: jest.fn().mockResolvedValue(undefined),
+    findByUser: jest.fn().mockResolvedValue([]),
+    findByModule: jest.fn().mockResolvedValue([]),
   };
 
   beforeEach(async () => {
@@ -25,6 +47,14 @@ describe('ModuleProgressService', () => {
         {
           provide: getRepositoryToken(ModuleProgress, 'progress'),
           useValue: mockRepository,
+        },
+        {
+          provide: getRepositoryToken(ExerciseSubmission, 'progress'),
+          useValue: mockExerciseSubmissionRepository,
+        },
+        {
+          provide: CertificateService,
+          useValue: mockCertificateService,
         },
       ],
     }).compile();

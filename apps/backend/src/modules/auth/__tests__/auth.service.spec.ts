@@ -9,6 +9,14 @@ import { User, Profile, Tenant, UserSession, AuthAttempt } from '../entities';
 import { RegisterUserDto } from '../dto';
 import { GamilityRoleEnum, UserStatusEnum, SubscriptionTierEnum } from '@shared/constants';
 
+// Gamification entities for mocks
+import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
+import { UserRank } from '@/modules/gamification/entities/user-rank.entity';
+import { UserAchievement } from '@/modules/gamification/entities/user-achievement.entity';
+import { Achievement } from '@/modules/gamification/entities/achievement.entity';
+import { MLCoinsTransaction } from '@/modules/gamification/entities/ml-coins-transaction.entity';
+import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
+
 // Mock bcrypt globally
 jest.mock('bcrypt', () => ({
   hash: jest.fn().mockResolvedValue('hashed_password'),
@@ -24,7 +32,7 @@ describe('AuthService', () => {
   let _attemptRepository: Repository<AuthAttempt>;
   let _jwtService: JwtService;
 
-  // Mock repositories
+  // Mock repositories - Auth
   const mockUserRepository = {
     findOne: jest.fn(),
     create: jest.fn(),
@@ -53,6 +61,42 @@ describe('AuthService', () => {
     save: jest.fn(),
   };
 
+  // Mock repositories - Gamification (TASK-2026-01-18-003: Added missing mocks)
+  const mockUserStatsRepository = {
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const mockUserRankRepository = {
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const mockUserAchievementRepository = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const mockAchievementRepository = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+  };
+
+  const mockMLCoinsTransactionRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  // Mock repositories - Progress
+  const mockExerciseSubmissionRepository = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+  };
+
   const mockJwtService = {
     sign: jest.fn(),
   };
@@ -61,6 +105,7 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
+        // Auth repositories
         {
           provide: getRepositoryToken(User, 'auth'),
           useValue: mockUserRepository,
@@ -81,6 +126,32 @@ describe('AuthService', () => {
           provide: getRepositoryToken(AuthAttempt, 'auth'),
           useValue: mockAttemptRepository,
         },
+        // Gamification repositories (TASK-2026-01-18-003)
+        {
+          provide: getRepositoryToken(UserStats, 'gamification'),
+          useValue: mockUserStatsRepository,
+        },
+        {
+          provide: getRepositoryToken(UserRank, 'gamification'),
+          useValue: mockUserRankRepository,
+        },
+        {
+          provide: getRepositoryToken(UserAchievement, 'gamification'),
+          useValue: mockUserAchievementRepository,
+        },
+        {
+          provide: getRepositoryToken(Achievement, 'gamification'),
+          useValue: mockAchievementRepository,
+        },
+        {
+          provide: getRepositoryToken(MLCoinsTransaction, 'gamification'),
+          useValue: mockMLCoinsTransactionRepository,
+        },
+        // Progress repositories (TASK-2026-01-18-003)
+        {
+          provide: getRepositoryToken(ExerciseSubmission, 'progress'),
+          useValue: mockExerciseSubmissionRepository,
+        },
         {
           provide: JwtService,
           useValue: mockJwtService,
@@ -89,12 +160,12 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    userRepository = module.get(getRepositoryToken(User, 'auth'));
-    profileRepository = module.get(getRepositoryToken(Profile, 'auth'));
-    tenantRepository = module.get(getRepositoryToken(Tenant, 'auth'));
-    sessionRepository = module.get(getRepositoryToken(UserSession, 'auth'));
-    attemptRepository = module.get(getRepositoryToken(AuthAttempt, 'auth'));
-    jwtService = module.get<JwtService>(JwtService);
+    _userRepository = module.get(getRepositoryToken(User, 'auth'));
+    _profileRepository = module.get(getRepositoryToken(Profile, 'auth'));
+    _tenantRepository = module.get(getRepositoryToken(Tenant, 'auth'));
+    _sessionRepository = module.get(getRepositoryToken(UserSession, 'auth'));
+    _attemptRepository = module.get(getRepositoryToken(AuthAttempt, 'auth'));
+    _jwtService = module.get<JwtService>(JwtService);
 
     // Clear mocks before each test
     jest.clearAllMocks();
@@ -151,6 +222,9 @@ describe('AuthService', () => {
       mockProfileRepository.save.mockResolvedValue(mockProfile);
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
+      mockJwtService.sign.mockReturnValueOnce('access_token').mockReturnValueOnce('refresh_token');
+      mockSessionRepository.create.mockReturnValue({});
+      mockSessionRepository.save.mockResolvedValue({});
 
       // Act
       const result = await service.register(registerDto, '127.0.0.1', 'Test UserAgent');
@@ -204,6 +278,9 @@ describe('AuthService', () => {
       mockProfileRepository.save.mockResolvedValue(mockProfile);
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
+      mockJwtService.sign.mockReturnValueOnce('access_token').mockReturnValueOnce('refresh_token');
+      mockSessionRepository.create.mockReturnValue({});
+      mockSessionRepository.save.mockResolvedValue({});
 
       // Act
       await service.register(registerDto, '127.0.0.1', 'Test UserAgent');
@@ -222,6 +299,9 @@ describe('AuthService', () => {
       mockProfileRepository.save.mockResolvedValue(mockProfile);
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
+      mockJwtService.sign.mockReturnValueOnce('access_token').mockReturnValueOnce('refresh_token');
+      mockSessionRepository.create.mockReturnValue({});
+      mockSessionRepository.save.mockResolvedValue({});
 
       // Act
       await service.register(registerDto, '127.0.0.1', 'Test UserAgent');
@@ -244,6 +324,9 @@ describe('AuthService', () => {
       mockProfileRepository.save.mockResolvedValue(mockProfile);
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
+      mockJwtService.sign.mockReturnValueOnce('access_token').mockReturnValueOnce('refresh_token');
+      mockSessionRepository.create.mockReturnValue({});
+      mockSessionRepository.save.mockResolvedValue({});
 
       // Act
       await service.register(registerDto, '127.0.0.1', 'Test UserAgent');
@@ -256,6 +339,7 @@ describe('AuthService', () => {
         email: mockUser.email,
         first_name: registerDto.first_name,
         last_name: registerDto.last_name,
+        school_id: null,
         role: GamilityRoleEnum.STUDENT,
         status: UserStatusEnum.ACTIVE,
         email_verified: false,
@@ -274,6 +358,9 @@ describe('AuthService', () => {
       mockProfileRepository.save.mockResolvedValue(mockProfile);
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
+      mockJwtService.sign.mockReturnValueOnce('access_token').mockReturnValueOnce('refresh_token');
+      mockSessionRepository.create.mockReturnValue({});
+      mockSessionRepository.save.mockResolvedValue({});
 
       // Act
       await service.register(registerDto, '127.0.0.1', 'Test UserAgent');
@@ -391,9 +478,10 @@ describe('AuthService', () => {
       await service.login('test@example.com', 'Password123!', '127.0.0.1', 'Test UserAgent');
 
       // Assert
+      // DB-125: JWT sub is profile.id (not user.id) for consistency with gamification/progress FKs
       expect(mockJwtService.sign).toHaveBeenNthCalledWith(
         1,
-        { sub: mockUser.id, email: mockUser.email, role: mockUser.role },
+        { sub: mockProfile.id, email: mockUser.email, role: mockProfile.role },
         { expiresIn: '15m' },
       );
     });
@@ -413,9 +501,10 @@ describe('AuthService', () => {
       await service.login('test@example.com', 'Password123!', '127.0.0.1', 'Test UserAgent');
 
       // Assert
+      // DB-125: JWT sub is profile.id (not user.id) for consistency with gamification/progress FKs
       expect(mockJwtService.sign).toHaveBeenNthCalledWith(
         2,
-        { sub: mockUser.id, email: mockUser.email, role: mockUser.role },
+        { sub: mockProfile.id, email: mockUser.email, role: mockProfile.role },
         { expiresIn: '7d' },
       );
     });

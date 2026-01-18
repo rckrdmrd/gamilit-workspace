@@ -15,6 +15,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { MissionsService } from '../missions.service';
+import { MLCoinsService } from '../ml-coins.service';
+import { UserStatsService } from '../user-stats.service';
+import { RanksService } from '../ranks.service';
+import { MissionTemplatesService } from '../mission-templates.service';
 import { Mission, MissionTypeEnum, MissionStatusEnum } from '../../entities/mission.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
@@ -57,10 +61,10 @@ describe('MissionsService', () => {
         { provide: getRepositoryToken(Mission, 'gamification'), useValue: missionsRepo },
         { provide: getRepositoryToken(Profile, 'auth'), useValue: profileRepo },
         { provide: getRepositoryToken(ExerciseSubmission, 'progress'), useValue: exerciseSubmissionRepo },
-        { provide: 'MLCoinsService', useValue: mlCoinsService },
-        { provide: 'UserStatsService', useValue: userStatsService },
-        { provide: 'RanksService', useValue: ranksService },
-        { provide: 'MissionTemplatesService', useValue: templatesService },
+        { provide: MLCoinsService, useValue: mlCoinsService },
+        { provide: UserStatsService, useValue: userStatsService },
+        { provide: RanksService, useValue: ranksService },
+        { provide: MissionTemplatesService, useValue: templatesService },
       ],
     }).compile();
 
