@@ -296,21 +296,26 @@ export function useWebSocket(): UseWebSocketReturn {
   /**
    * Connect on mount, disconnect on unmount
    * Only connect if user is authenticated with a valid token
+   *
+   * FIX E1 (TASK-2026-01-18-006): Use isMounted flag to handle React 18 StrictMode
+   * where components mount/unmount/remount. This prevents "WebSocket closed before
+   * connection established" errors when cleanup runs before connect() completes.
    */
   useEffect(() => {
+    let isMounted = true;
     const token = getAuthToken();
 
-    if (user?.id && token) {
+    if (user?.id && token && isMounted) {
       connect();
-    } else {
+    } else if (!user?.id || !token) {
       console.log('⚠️ Skipping WebSocket connection: User not authenticated or token missing');
     }
 
     return () => {
+      isMounted = false;
       disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id]);
+  }, [user?.id, connect, disconnect]);
 
   return {
     isConnected: isConnectedRef.current,

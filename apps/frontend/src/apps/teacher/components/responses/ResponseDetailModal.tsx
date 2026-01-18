@@ -870,10 +870,78 @@ export const ResponseDetailModal: React.FC<ResponseDetailModalProps> = ({
                     </div>
                   </div>
 
+                  {/* Evaluation Criteria Section - Phase 3 TASK-2026-01-18-006 */}
+                  <div className="rounded-xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 p-4">
+                    <h3 className="mb-3 flex items-center gap-2 font-bold text-gray-800">
+                      <ClipboardCheck className="h-5 w-5 text-indigo-600" />
+                      Criterios de Evaluación
+                    </h3>
+                    {requiresManualGrading(attempt.exercise_type) ? (
+                      <div className="space-y-3">
+                        <div className="rounded-lg bg-yellow-50 border border-yellow-200 p-3">
+                          <p className="text-sm text-yellow-800">
+                            <span className="font-semibold">Tipo de ejercicio:</span> Requiere evaluación manual
+                          </p>
+                          <p className="mt-1 text-xs text-yellow-600">
+                            Este ejercicio creativo necesita ser evaluado por el docente usando criterios cualitativos.
+                          </p>
+                        </div>
+                        <div className="rounded-lg bg-white p-3">
+                          <p className="text-sm font-semibold text-gray-700 mb-2">Aspectos a evaluar:</p>
+                          <ul className="text-sm text-gray-600 space-y-1">
+                            <li className="flex items-center gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                              Coherencia y estructura del contenido
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                              Creatividad y originalidad
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                              Uso correcto del lenguaje
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                              Comprensión del tema tratado
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="rounded-lg bg-green-50 border border-green-200 p-3">
+                          <p className="text-sm text-green-800">
+                            <span className="font-semibold">Tipo de ejercicio:</span> Evaluación automática
+                          </p>
+                          <p className="mt-1 text-xs text-green-600">
+                            Este ejercicio fue evaluado automáticamente por el sistema.
+                          </p>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="rounded-lg bg-white p-3 text-center">
+                            <p className="text-xs text-gray-500">Puntaje obtenido</p>
+                            <p className="text-xl font-bold text-indigo-600">{attempt.score}</p>
+                          </div>
+                          <div className="rounded-lg bg-white p-3 text-center">
+                            <p className="text-xs text-gray-500">Puntaje máximo</p>
+                            <p className="text-xl font-bold text-gray-600">{attempt.max_score}</p>
+                          </div>
+                          <div className="rounded-lg bg-white p-3 text-center">
+                            <p className="text-xs text-gray-500">Porcentaje</p>
+                            <p className="text-xl font-bold text-green-600">
+                              {Math.round((attempt.score / attempt.max_score) * 100)}%
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Answer Comparison */}
                   <div>
                     <h3 className="mb-3 text-lg font-bold text-gray-800">
-                      Comparaci\u00f3n de Respuestas
+                      Comparación de Respuestas
                     </h3>
                     <AnswerComparison
                       studentAnswer={attempt.submitted_answers}

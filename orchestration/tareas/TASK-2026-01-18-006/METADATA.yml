@@ -5,11 +5,12 @@ id: TASK-2026-01-18-006
 title: "Análisis y Corrección Teacher/Responses Page"
 type: analysis + bug-fix
 priority: P0-CRITICAL
-status: phase_2_complete
+status: completed
 created: 2026-01-18
 updated: 2026-01-18
 phase_1_completed: 2026-01-18
 phase_2_completed: 2026-01-18
+phase_3_completed: 2026-01-18
 
 description: |
   Análisis profundo de errores técnicos y GAPs funcionales en la página
@@ -94,6 +95,7 @@ artifacts:
   - 02-PLAN-INTEGRACION.md
   - 03-CAMBIOS-FASE1.md
   - 04-CAMBIOS-FASE2.md
+  - 05-CAMBIOS-FASE3.md
   - METADATA.yml
 
 files_modified:
@@ -105,12 +107,17 @@ files_modified:
     - apps/frontend/src/services/api/teacher/exerciseResponsesApi.ts
     - apps/frontend/src/apps/teacher/components/responses/ResponsesTable.tsx
     - apps/frontend/src/apps/teacher/components/responses/ResponseFilters.tsx
+  phase_3:
+    - apps/frontend/src/features/notifications/hooks/useWebSocket.ts
+    - apps/frontend/src/apps/teacher/components/responses/ResponseDetailModal.tsx
 
 errors_fixed:
+  - E1: WebSocket closed before connection established (Phase 3)
   - E2: AnimatePresence mode='wait' with multiple children
   - E3: Maximum update depth exceeded
 
 gaps_fixed:
+  - G1: Criterios de evaluación UI agregados (Phase 3)
   - G2: Campo requires_manual_review agregado (backend + frontend)
   - G3: Filtro de módulo implementado
   - G4: Columna Estado agregada a tabla
