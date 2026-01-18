@@ -28,39 +28,11 @@ import {
  * - Validates teacher access to student via classroom membership
  * - Supports both direct teacher_id and teacher_classrooms relationship
  * - Filters by classroom_id to ensure data isolation
+ *
+ * Manual Review Detection:
+ * - Uses exercises.requires_manual_grading field from database (source of truth)
+ * - FIX TASK-2026-01-18-007: Removed hardcoded MANUAL_REVIEW_EXERCISE_TYPES constant
  */
-/**
- * Exercise types that require manual review by teacher
- * These are creative/open-ended exercises from Modules 3-5
- */
-const MANUAL_REVIEW_EXERCISE_TYPES = [
-  // Module 3 - Critical/Argumentative
-  'tribunal_opiniones',
-  'podcast_argumentativo',
-  'debate_digital',
-  'analisis_fuentes',
-  'matriz_perspectivas',
-  // Module 4 - Media Literacy (creative)
-  'analisis_memes',
-  // Module 5 - Content Creation
-  'video_carta',
-  'comic_digital',
-  'diario_multimedia',
-  // Auxiliary creative types
-  'collage_prensa',
-  'call_to_action',
-  'texto_en_movimiento',
-  // Module 2 - Open-ended
-  'prediccion_narrativa',
-];
-
-/**
- * Check if exercise type requires manual review
- */
-function requiresManualReview(exerciseType: string): boolean {
-  return MANUAL_REVIEW_EXERCISE_TYPES.includes(exerciseType);
-}
-
 @Injectable()
 export class ExerciseResponsesService {
   constructor(
@@ -193,6 +165,7 @@ export class ExerciseResponsesService {
       const whereClause = conditions.join(' AND ');
 
       // Main query using raw SQL for cross-schema JOINs
+      // FIX TASK-2026-01-18-007: Added exercise.requires_manual_grading from BD (source of truth)
       const sql = `
         SELECT
           attempt.id AS attempt_id,
@@ -214,6 +187,7 @@ export class ExerciseResponsesService {
           exercise.id AS exercise_id,
           exercise.title AS exercise_title,
           exercise.exercise_type AS exercise_type,
+          exercise.requires_manual_grading AS requires_manual_grading,
           module.id AS module_id,
           module.title AS module_name
         FROM progress_tracking.exercise_attempts attempt
@@ -276,6 +250,7 @@ export class ExerciseResponsesService {
       };
 
       // Transform raw results to DTOs
+      // FIX TASK-2026-01-18-007: Use requires_manual_grading from BD instead of hardcoded constant
       const data: AttemptResponseDto[] = rawResults.map((row: any) => ({
         id: row.attempt_id,
         student_id: row.attempt_user_id,
@@ -294,7 +269,7 @@ export class ExerciseResponsesService {
         ml_coins_earned: row.attempt_ml_coins_earned,
         submitted_at: row.attempt_submitted_at ? new Date(row.attempt_submitted_at).toISOString() : new Date().toISOString(),
         exercise_type: row.exercise_type || 'unknown',
-        requires_manual_review: requiresManualReview(row.exercise_type || ''),
+        requires_manual_review: row.requires_manual_grading ?? false,
       }));
 
       return {
@@ -379,6 +354,7 @@ export class ExerciseResponsesService {
     const tenantId = teacherProfile.tenant_id;
 
     // Raw SQL query for cross-schema JOINs
+    // FIX TASK-2026-01-18-007: Added exercise.requires_manual_grading from BD (source of truth)
     const sql = `
       SELECT
         attempt.id AS attempt_id,
@@ -400,6 +376,7 @@ export class ExerciseResponsesService {
         exercise.id AS exercise_id,
         exercise.title AS exercise_title,
         exercise.exercise_type AS exercise_type,
+        exercise.requires_manual_grading AS requires_manual_grading,
         exercise.content AS exercise_content,
         exercise.max_points AS exercise_max_points,
         module.id AS module_id,
@@ -441,6 +418,7 @@ export class ExerciseResponsesService {
 
     const exerciseType = row.exercise_type || 'unknown';
 
+    // FIX TASK-2026-01-18-007: Use requires_manual_grading from BD instead of hardcoded constant
     return {
       id: row.attempt_id,
       student_id: row.attempt_user_id,
@@ -459,7 +437,7 @@ export class ExerciseResponsesService {
       ml_coins_earned: row.attempt_ml_coins_earned,
       submitted_at: row.attempt_submitted_at ? new Date(row.attempt_submitted_at).toISOString() : new Date().toISOString(),
       exercise_type: exerciseType,
-      requires_manual_review: requiresManualReview(exerciseType),
+      requires_manual_review: row.requires_manual_grading ?? false,
       // Additional detail fields
       correct_answer: correctAnswer,
       max_score: row.exercise_max_points || 100,

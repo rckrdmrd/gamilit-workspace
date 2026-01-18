@@ -1,0 +1,56 @@
+# TASK-2026-01-18-007 Metadata
+# Sistema SIMCO v4.0.0
+
+id: TASK-2026-01-18-007
+title: "Fix Backend Service - Eliminar constante hardcodeada MANUAL_REVIEW_EXERCISE_TYPES"
+type: bug-fix + refactor
+priority: P0-CRITICAL
+status: completed
+created: 2026-01-18
+updated: 2026-01-18
+
+description: |
+  Corrección de deuda técnica en exercise-responses.service.ts que usa una
+  constante hardcodeada MANUAL_REVIEW_EXERCISE_TYPES en lugar del campo de BD
+  exercises.requires_manual_grading. Esto causa que 3 ejercicios de Módulo 4
+  (verificador_fake_news, infografia_interactiva, navegacion_hipertextual) no
+  se marquen correctamente como pendientes de revisión manual.
+
+root_cause: |
+  El servicio backend usa una constante local hardcodeada de 14 tipos en lugar
+  de consultar el campo requires_manual_grading de la tabla exercises en BD.
+  Esta constante está desactualizada y tiene errores:
+  - FALTAN: verificador_fake_news, infografia_interactiva, navegacion_hipertextual
+  - EXTRAS incorrectos: prediccion_narrativa (M2 auto), collage_prensa,
+    call_to_action, texto_en_movimiento (auxiliares sin documentar)
+
+source_of_truth:
+  correct: exercises.requires_manual_grading (BD)
+  incorrect: MANUAL_REVIEW_EXERCISE_TYPES (constante hardcodeada)
+
+changes_required:
+  - Modificar query SQL para incluir exercise.requires_manual_grading
+  - Eliminar constante MANUAL_REVIEW_EXERCISE_TYPES
+  - Eliminar función requiresManualReview()
+  - Usar campo de BD directamente en transformación de datos
+
+files_to_modify:
+  - apps/backend/src/modules/teacher/services/exercise-responses.service.ts
+
+validation:
+  - Backend lint
+  - Backend build
+
+related_tasks:
+  - TASK-2026-01-18-006 (análisis que identificó este GAP)
+
+agent: claude-code-opus
+epic: EXT-001-portal-maestros
+module: teacher-portal/exercise-responses
+
+tags:
+  - teacher-portal
+  - bug-fix
+  - refactor
+  - technical-debt
+  - exercise-responses
