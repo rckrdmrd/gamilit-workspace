@@ -39,7 +39,7 @@ tasks:
       scripts_corregidos: 1
     conclusiones:
       - "Passwords hardcodeados eliminados de scripts"
-      - "Puerto PostgreSQL corregido a 5433"
+      - "Puerto PostgreSQL restaurado a 5432 (estandar)"
       - "Directiva oficial de recreacion de BD creada"
       - "Trigger de sincronizacion de credenciales creado"
       - "Respaldo automatico de credenciales implementado"
@@ -64,7 +64,7 @@ tasks:
       error_resuelto: true
       conexion_exitosa: true
     conclusiones:
-      - "Puerto PostgreSQL actualizado de 5432 a 5433"
+      - "Puerto PostgreSQL restaurado a 5432 (estandar)"
       - "Conexion a BD restaurada correctamente"
       - "Errores TypeORM residuales no relacionados"
     path: "orchestration/tareas/TASK-2026-01-18-002/"

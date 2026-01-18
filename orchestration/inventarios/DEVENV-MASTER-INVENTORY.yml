@@ -111,8 +111,9 @@ scripts:
 
 postgresql:
   version: "15"
-  puerto: 5433  # IMPORTANTE: NO es el default 5432
+  puerto: 5432  # Puerto estandar PostgreSQL
   host: "localhost"
+  politica: "Instancia UNICA compartida por todos los proyectos del workspace"
 
   usuarios:
     desarrollo:
@@ -121,7 +122,8 @@ postgresql:
       base_datos: "gamilit_platform"
 
   notas:
-    - "Puerto 5433 configurado para evitar conflictos con otras instancias"
+    - "Puerto 5432 es el estandar - UNICA instancia de PostgreSQL en el workspace"
+    - "Cada proyecto tiene su propio usuario y base de datos"
     - "Password en archivos .env, NUNCA hardcodeado en scripts"
 
 # =============================================================================
@@ -142,7 +144,7 @@ trigger_sincronizacion:
       descripcion: "Passwords sincronizados en todos los archivos"
       criticidad: "alta"
     - id: "SYNC-002"
-      descripcion: "Puerto correcto (5433) en todos los archivos"
+      descripcion: "Puerto correcto (5432) en todos los archivos"
       criticidad: "alta"
     - id: "SYNC-003"
       descripcion: "Conexion funcional a BD"
@@ -175,7 +177,7 @@ checklist_verificacion:
   items:
     - categoria: "Base de Datos"
       checks:
-        - "PostgreSQL corriendo en puerto 5433"
+        - "PostgreSQL corriendo en puerto 5432"
         - "Usuario gamilit_user existe"
         - "BD gamilit_platform existe"
         - "Password en .env coincide con BD"
@@ -190,7 +192,7 @@ checklist_verificacion:
     - categoria: "Sincronizacion"
       checks:
         - "Passwords coinciden en todos los archivos"
-        - "Puerto 5433 configurado en todos los archivos"
+        - "Puerto 5432 configurado en todos los archivos"
         - "Backend puede conectarse a BD"
 
 # =============================================================================

@@ -232,11 +232,11 @@ cmd_generate() {
 
 # Database Configuration
 DB_HOST=$DB_HOST
-DB_PORT=5433
+DB_PORT=5432
 DB_NAME=gamilit_platform
 DB_USER=gamilit_user
 DB_PASSWORD=$DB_PASSWORD
-DATABASE_URL=postgresql://gamilit_user:$DB_PASSWORD@$DB_HOST:5433/gamilit_platform
+DATABASE_URL=postgresql://gamilit_user:$DB_PASSWORD@$DB_HOST:5432/gamilit_platform
 
 # Database Pool
 DB_POOL_MIN=2
@@ -385,13 +385,13 @@ EOF
 # ============================================================================
 
 DB_HOST=${DB_HOST:-localhost}
-DB_PORT=${DB_PORT:-5433}
+DB_PORT=${DB_PORT:-5432}
 DB_NAME=${DB_NAME:-gamilit_platform}
 DB_USER=${DB_USER:-gamilit_user}
 DB_PASSWORD=$DB_PASSWORD
 
 # Connection string
-DATABASE_URL=postgresql://${DB_USER:-gamilit_user}:$DB_PASSWORD@${DB_HOST:-localhost}:${DB_PORT:-5433}/${DB_NAME:-gamilit_platform}
+DATABASE_URL=postgresql://${DB_USER:-gamilit_user}:$DB_PASSWORD@${DB_HOST:-localhost}:${DB_PORT:-5432}/${DB_NAME:-gamilit_platform}
 EOF
     chmod 600 "$DB_ENV_FILE"
     print_success ".env.database actualizado"
@@ -412,13 +412,13 @@ Environment: $ENVIRONMENT
 Generated: $(date)
 ========================================
 
-Host:     ${DB_HOST:-localhost}:${DB_PORT:-5433}
+Host:     ${DB_HOST:-localhost}:${DB_PORT:-5432}
 Database: ${DB_NAME:-gamilit_platform}
 User:     ${DB_USER:-gamilit_user}
 Password: $DB_PASSWORD
 
 Connection String:
-postgresql://${DB_USER:-gamilit_user}:$DB_PASSWORD@${DB_HOST:-localhost}:${DB_PORT:-5433}/${DB_NAME:-gamilit_platform}
+postgresql://${DB_USER:-gamilit_user}:$DB_PASSWORD@${DB_HOST:-localhost}:${DB_PORT:-5432}/${DB_NAME:-gamilit_platform}
 
 ========================================
 EOF

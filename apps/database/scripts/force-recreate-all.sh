@@ -8,7 +8,7 @@
 # Cambios v2.0:
 #   - Eliminar passwords hardcodeados (seguridad)
 #   - Leer credenciales desde archivos de configuracion
-#   - Puerto actualizado a 5433
+#   - Puerto estandar 5432 (instancia unica compartida)
 #   - Validacion de credenciales post-recreacion
 #
 # Uso:
@@ -39,7 +39,7 @@ CREDENTIALS_FILE="$DATABASE_ROOT/database-credentials-dev.txt"
 DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
 DB_HOST="localhost"
-DB_PORT="5433"  # Puerto correcto de PostgreSQL
+DB_PORT="5432"  # Puerto estandar de PostgreSQL (instancia unica compartida)
 DB_PASS=""
 
 # ============================================================================

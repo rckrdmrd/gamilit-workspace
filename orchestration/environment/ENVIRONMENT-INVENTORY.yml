@@ -112,7 +112,7 @@ base_de_datos:
     engine: "PostgreSQL"
     version: "15"
     host: "localhost"
-    puerto: 5433
+    puerto: 5432
 
     ambientes:
       development:
@@ -133,7 +133,7 @@ base_de_datos:
       - nombre: "users"
         descripcion: "Gestion de usuarios"
 
-    conexion_ejemplo: "postgresql://gamilit_user:{password}@localhost:5433/gamilit_platform"
+    conexion_ejemplo: "postgresql://gamilit_user:{password}@localhost:5432/gamilit_platform"
 
 # -----------------------------------------------------------------------------
 # GESTION DE CREDENCIALES (NUEVO - 2026-01-18)
@@ -205,7 +205,7 @@ variables_entorno:
       descripcion: "Connection string de PostgreSQL"
       requerido: true
       sensible: true
-      ejemplo: "postgresql://gamilit_user:password@localhost:5433/gamilit_platform"
+      ejemplo: "postgresql://gamilit_user:password@localhost:5432/gamilit_platform"
 
     - nombre: "JWT_SECRET"
       descripcion: "Secreto para JWT"
@@ -229,8 +229,8 @@ docker:
   services:
     - nombre: "db"
       imagen: "postgres:15-alpine"
-      puerto_host: 5433
-      puerto_container: 5433
+      puerto_host: 5432
+      puerto_container: 5432
       volumes:
         - "postgres_data:/var/lib/postgresql/data"
 

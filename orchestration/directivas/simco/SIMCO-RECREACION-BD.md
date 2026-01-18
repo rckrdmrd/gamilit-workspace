@@ -25,7 +25,7 @@ Esta directiva define el proceso oficial para recrear la base de datos de GAMILI
 ## PREREQUISITOS
 
 1. Acceso sudo para operar como usuario postgres
-2. PostgreSQL corriendo en puerto **5433**
+2. PostgreSQL corriendo en puerto **5432**
 3. Permisos de escritura en:
    - `apps/database/`
    - `apps/backend/`
@@ -115,7 +115,7 @@ El script DEBE validar:
 
 ```bash
 # Verificar conexion
-PGPASSWORD='password' psql -h localhost -p 5433 -U gamilit_user -d gamilit_platform -c "SELECT 1;"
+PGPASSWORD='password' psql -h localhost -p 5432 -U gamilit_user -d gamilit_platform -c "SELECT 1;"
 
 # Verificar archivos sincronizados
 grep "DB_PASSWORD" apps/backend/.env
@@ -175,12 +175,12 @@ grep "DB_PASSWORD" apps/backend/.env
 
 ### Error: "connection refused"
 
-**Causa:** Puerto incorrecto (5432 vs 5433)
+**Causa:** Puerto incorrecto (5432 vs 5432)
 
 **Solucion:**
 ```bash
 # Verificar puerto de PostgreSQL
-sudo lsof -i:5433
+sudo lsof -i:5432
 # Actualizar DB_PORT en archivos .env
 ```
 

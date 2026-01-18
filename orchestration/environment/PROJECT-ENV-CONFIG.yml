@@ -20,7 +20,7 @@ ports:
 
 database:
   host: "localhost"
-  port: 5433
+  port: 5432  # Puerto estandar PostgreSQL (instancia unica compartida en workspace)
   name: "gamilit_platform"
   user: "gamilit_user"
   # password: Ver archivo .env local

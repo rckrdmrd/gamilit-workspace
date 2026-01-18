@@ -42,14 +42,14 @@ done
 
 ### 2. Sincronizacion de Puerto
 
-**Objetivo:** Todos los archivos deben apuntar al puerto correcto (5433)
+**Objetivo:** Todos los archivos deben apuntar al puerto correcto (5432)
 
 ```bash
 # Verificar puerto
-grep -E "^DB_PORT=|:5433|:5432" apps/backend/.env apps/database/.env.database
+grep -E "^DB_PORT=|:5432|:5432" apps/backend/.env apps/database/.env.database
 ```
 
-**Criterio:** Puerto debe ser 5433 en todos los archivos
+**Criterio:** Puerto debe ser 5432 en todos los archivos
 
 ### 3. Conexion Funcional
 
@@ -98,7 +98,7 @@ find apps/database/credentials-backups/ -mtime -1 -type f | head -5
 ⚠️ TRIGGER-CRED-SYNC: Puerto incorrecto detectado
 
    ACCION REQUERIDA:
-   Actualizar DB_PORT=5433 en:
+   Actualizar DB_PORT=5432 en:
    - apps/backend/.env
    - apps/database/.env.database
 ```
@@ -109,7 +109,7 @@ find apps/database/credentials-backups/ -mtime -1 -type f | head -5
 ⚠️ TRIGGER-CRED-SYNC: Conexion a BD fallida
 
    DIAGNOSTICO:
-   1. Verificar que PostgreSQL esta corriendo: sudo lsof -i:5433
+   1. Verificar que PostgreSQL esta corriendo: sudo lsof -i:5432
    2. Verificar usuario existe: sudo -u postgres psql -c "\\du gamilit_user"
    3. Verificar password: Comparar .env con ALTER USER ejecutado
 ```
@@ -154,7 +154,7 @@ else
 fi
 
 # Test conexion
-if PGPASSWORD="$BACKEND_PASS" psql -h localhost -p 5433 -U gamilit_user -d gamilit_platform -c "SELECT 1;" > /dev/null 2>&1; then
+if PGPASSWORD="$BACKEND_PASS" psql -h localhost -p 5432 -U gamilit_user -d gamilit_platform -c "SELECT 1;" > /dev/null 2>&1; then
     echo "✓ Conexion exitosa"
 else
     echo "✗ Conexion FALLIDA"
