@@ -1,0 +1,222 @@
+# =============================================================================
+# DEVENV-MASTER-INVENTORY.yml - GAMILIT
+# =============================================================================
+# Inventario Maestro de Configuracion del Entorno de Desarrollo
+# Responsable: @PERFIL_DEVENV
+# =============================================================================
+
+version: "1.1.0"
+fecha_creacion: "2026-01-18"
+fecha_actualizacion: "2026-01-18"
+responsable: "@PERFIL_DEVENV"
+
+# =============================================================================
+# FLUJO DE CREDENCIALES
+# =============================================================================
+
+credenciales:
+  descripcion: |
+    Flujo centralizado de gestion de credenciales para el proyecto GAMILIT.
+    Las credenciales se generan una vez y se sincronizan automaticamente
+    a todos los archivos de configuracion necesarios.
+
+  fuente_autorizada: "apps/backend/.env"
+
+  archivos_sincronizados:
+    - path: "apps/backend/.env"
+      descripcion: "Archivo principal de configuracion del backend"
+      variables: ["DB_HOST", "DB_PORT", "DB_USER", "DB_PASSWORD", "JWT_SECRET"]
+      permisos: "600"
+      sensible: true
+
+    - path: "apps/database/.env.database"
+      descripcion: "Configuracion de scripts de base de datos"
+      variables: ["DB_HOST", "DB_PORT", "DB_USER", "DB_PASSWORD", "DATABASE_URL"]
+      permisos: "600"
+      sensible: true
+
+    - path: "apps/database/database-credentials-dev.txt"
+      descripcion: "Referencia rapida de credenciales (legible)"
+      formato: "texto plano estructurado"
+      permisos: "600"
+      sensible: true
+
+    - path: "apps/frontend/.env.dev"
+      descripcion: "Variables de frontend (solo no-sensibles)"
+      variables: ["VITE_API_URL", "VITE_ENVIRONMENT"]
+      permisos: "600"
+      sensible: false
+
+  respaldos:
+    ubicacion: "apps/database/credentials-backups/"
+    politica_retencion: "10 ultimos respaldos"
+    formato_nombre: "{archivo}.{YYYYMMDD_HHMMSS}.ext"
+    automatico: true
+
+# =============================================================================
+# SCRIPTS DE GESTION
+# =============================================================================
+
+scripts:
+  recreacion_bd:
+    nombre: "force-recreate-all.sh"
+    path: "apps/database/scripts/force-recreate-all.sh"
+    version: "2.0.0"
+    descripcion: "Recreacion completa de BD con sincronizacion de credenciales"
+    funcionalidades:
+      - "Respalda credenciales antes de recrear"
+      - "Lee password de .env o genera nuevo"
+      - "Elimina y recrea usuario y BD"
+      - "Actualiza TODOS los archivos de configuracion"
+      - "Valida conexion post-recreacion"
+    uso: "./force-recreate-all.sh [--password PASS]"
+    directiva_asociada: "SIMCO-RECREACION-BD.md"
+
+  gestion_secrets:
+    nombre: "manage-secrets.sh"
+    path: "apps/database/scripts/manage-secrets.sh"
+    version: "1.1.0"
+    descripcion: "Gestion centralizada de secrets con dotenv-vault"
+    comandos:
+      - nombre: "generate"
+        descripcion: "Genera nuevos secrets (DB, JWT)"
+        uso: "./manage-secrets.sh generate --env dev"
+      - nombre: "sync"
+        descripcion: "Sincroniza a TODOS los archivos de configuracion"
+        uso: "./manage-secrets.sh sync --env dev"
+        archivos_actualizados:
+          - "backend/.env.{env}"
+          - "frontend/.env.{env}"
+          - "database/.env.database"
+          - "database-credentials-{env}.txt"
+      - nombre: "rotate"
+        descripcion: "Rota passwords existentes"
+        uso: "./manage-secrets.sh rotate --env dev"
+      - nombre: "export"
+        descripcion: "Exporta para uso en otros scripts"
+        uso: "./manage-secrets.sh export --env dev"
+      - nombre: "status"
+        descripcion: "Verifica estado de sincronizacion"
+        uso: "./manage-secrets.sh status --env dev"
+
+  inicializacion_bd:
+    nombre: "init-database-v3.sh"
+    path: "apps/database/scripts/init-database-v3.sh"
+    descripcion: "Inicializacion de esquemas y datos"
+    uso: "./init-database-v3.sh --env dev"
+
+# =============================================================================
+# CONFIGURACION DE POSTGRESQL
+# =============================================================================
+
+postgresql:
+  version: "15"
+  puerto: 5433  # IMPORTANTE: NO es el default 5432
+  host: "localhost"
+
+  usuarios:
+    desarrollo:
+      nombre: "gamilit_user"
+      permisos: ["CREATEDB", "LOGIN"]
+      base_datos: "gamilit_platform"
+
+  notas:
+    - "Puerto 5433 configurado para evitar conflictos con otras instancias"
+    - "Password en archivos .env, NUNCA hardcodeado en scripts"
+
+# =============================================================================
+# TRIGGER DE SINCRONIZACION
+# =============================================================================
+
+trigger_sincronizacion:
+  nombre: "TRIGGER-CREDENCIALES-SINCRONIZADAS"
+  path: "orchestration/directivas/triggers/TRIGGER-CREDENCIALES-SINCRONIZADAS.md"
+
+  activacion:
+    - "Al ejecutar force-recreate-all.sh"
+    - "Al ejecutar manage-secrets.sh rotate"
+    - "Al modificar manualmente DB_PASSWORD"
+
+  verificaciones:
+    - id: "SYNC-001"
+      descripcion: "Passwords sincronizados en todos los archivos"
+      criticidad: "alta"
+    - id: "SYNC-002"
+      descripcion: "Puerto correcto (5433) en todos los archivos"
+      criticidad: "alta"
+    - id: "SYNC-003"
+      descripcion: "Conexion funcional a BD"
+      criticidad: "bloqueante"
+    - id: "SYNC-004"
+      descripcion: "Respaldo existente si hubo recreacion"
+      criticidad: "media"
+
+# =============================================================================
+# DIRECTIVAS ASOCIADAS
+# =============================================================================
+
+directivas_asociadas:
+  - nombre: "SIMCO-RECREACION-BD"
+    path: "orchestration/directivas/simco/SIMCO-RECREACION-BD.md"
+    descripcion: "Proceso oficial de recreacion de BD"
+
+  - nombre: "SIMCO-BACKEND"
+    path: "orchestration/directivas/simco/SIMCO-BACKEND.md"
+    descripcion: "Directiva de desarrollo backend"
+    afectacion: "Conexion a BD"
+
+# =============================================================================
+# CHECKLIST DE VERIFICACION
+# =============================================================================
+
+checklist_verificacion:
+  titulo: "Verificacion de Configuracion de Entorno"
+
+  items:
+    - categoria: "Base de Datos"
+      checks:
+        - "PostgreSQL corriendo en puerto 5433"
+        - "Usuario gamilit_user existe"
+        - "BD gamilit_platform existe"
+        - "Password en .env coincide con BD"
+
+    - categoria: "Archivos de Configuracion"
+      checks:
+        - "apps/backend/.env existe y tiene DB_PASSWORD"
+        - "apps/database/.env.database existe"
+        - "apps/database/database-credentials-dev.txt existe"
+        - "Todos los archivos tienen permisos 600"
+
+    - categoria: "Sincronizacion"
+      checks:
+        - "Passwords coinciden en todos los archivos"
+        - "Puerto 5433 configurado en todos los archivos"
+        - "Backend puede conectarse a BD"
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+referencias:
+  environment_inventory: "orchestration/environment/ENVIRONMENT-INVENTORY.yml"
+  trigger_credenciales: "orchestration/directivas/triggers/TRIGGER-CREDENCIALES-SINCRONIZADAS.md"
+  simco_recreacion: "orchestration/directivas/simco/SIMCO-RECREACION-BD.md"
+  perfil_devenv: "orchestration/agents/perfiles/PERFIL-DEVENV.md"
+  perfil_secrets_manager: "orchestration/agents/perfiles/PERFIL-SECRETS-MANAGER.md"
+
+# =============================================================================
+# HISTORIAL DE CAMBIOS
+# =============================================================================
+
+historial:
+  - version: "1.1.0"
+    fecha: "2026-01-18"
+    cambios:
+      - "Creacion inicial del inventario"
+      - "Documentacion del flujo de credenciales"
+      - "Integracion con manage-secrets.sh v1.1.0"
+      - "Integracion con force-recreate-all.sh v2.0.0"
+
+# =============================================================================
+# FIN DE INVENTARIO
+# =============================================================================

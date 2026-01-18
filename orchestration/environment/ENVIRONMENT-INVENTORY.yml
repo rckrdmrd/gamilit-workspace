@@ -136,6 +136,52 @@ base_de_datos:
     conexion_ejemplo: "postgresql://gamilit_user:{password}@localhost:5433/gamilit_platform"
 
 # -----------------------------------------------------------------------------
+# GESTION DE CREDENCIALES (NUEVO - 2026-01-18)
+# -----------------------------------------------------------------------------
+
+gestion_credenciales:
+  descripcion: |
+    Sistema centralizado de gestion de credenciales para GAMILIT.
+    Las credenciales se gestionan de forma segura con respaldos automaticos.
+
+  fuente_autorizada: "apps/backend/.env"
+
+  archivos_sincronizados:
+    - path: "apps/backend/.env"
+      proposito: "Configuracion principal del backend"
+    - path: "apps/database/.env.database"
+      proposito: "Configuracion de scripts de BD"
+    - path: "apps/database/database-credentials-dev.txt"
+      proposito: "Referencia rapida de credenciales"
+    - path: "apps/frontend/.env.dev"
+      proposito: "Variables de frontend"
+
+  scripts_gestion:
+    recreacion:
+      script: "apps/database/scripts/force-recreate-all.sh"
+      version: "2.0.0"
+      funciones:
+        - "Respaldo automatico de credenciales"
+        - "Sincronizacion a todos los archivos"
+        - "Validacion post-recreacion"
+    secrets:
+      script: "apps/database/scripts/manage-secrets.sh"
+      version: "1.1.0"
+      comandos: ["generate", "sync", "rotate", "export", "status"]
+
+  respaldos:
+    ubicacion: "apps/database/credentials-backups/"
+    retencion: "10 ultimos respaldos"
+
+  directivas:
+    - "orchestration/directivas/simco/SIMCO-RECREACION-BD.md"
+    - "orchestration/directivas/triggers/TRIGGER-CREDENCIALES-SINCRONIZADAS.md"
+
+  inventarios:
+    - "orchestration/inventarios/DEVENV-MASTER-INVENTORY.yml"
+    - "orchestration/inventarios/SECRETS-AUDIT.yml"
+
+# -----------------------------------------------------------------------------
 # VARIABLES DE ENTORNO
 # -----------------------------------------------------------------------------
 
