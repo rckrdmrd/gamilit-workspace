@@ -8,7 +8,7 @@
 
 version: "1.0.0"
 fecha_creacion: "2026-01-04"
-fecha_actualizacion: "2026-01-04"
+fecha_actualizacion: "2026-01-18"
 responsable: "@PERFIL_DEVENV"
 
 # -----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ base_de_datos:
     engine: "PostgreSQL"
     version: "15"
     host: "localhost"
-    puerto: 5432
+    puerto: 5433
 
     ambientes:
       development:
@@ -133,7 +133,7 @@ base_de_datos:
       - nombre: "users"
         descripcion: "Gestion de usuarios"
 
-    conexion_ejemplo: "postgresql://gamilit_user:{password}@localhost:5432/gamilit_platform"
+    conexion_ejemplo: "postgresql://gamilit_user:{password}@localhost:5433/gamilit_platform"
 
 # -----------------------------------------------------------------------------
 # VARIABLES DE ENTORNO
@@ -159,7 +159,7 @@ variables_entorno:
       descripcion: "Connection string de PostgreSQL"
       requerido: true
       sensible: true
-      ejemplo: "postgresql://gamilit_user:password@localhost:5432/gamilit_platform"
+      ejemplo: "postgresql://gamilit_user:password@localhost:5433/gamilit_platform"
 
     - nombre: "JWT_SECRET"
       descripcion: "Secreto para JWT"
@@ -183,8 +183,8 @@ docker:
   services:
     - nombre: "db"
       imagen: "postgres:15-alpine"
-      puerto_host: 5432
-      puerto_container: 5432
+      puerto_host: 5433
+      puerto_container: 5433
       volumes:
         - "postgres_data:/var/lib/postgresql/data"
 
