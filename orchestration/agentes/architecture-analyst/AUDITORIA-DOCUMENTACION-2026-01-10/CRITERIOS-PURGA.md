@@ -17,7 +17,7 @@
 | **MANTENER** | Conservar sin cambios | Ubicación actual |
 | **ACTUALIZAR** | Modificar contenido | Ubicación actual |
 | **CONSOLIDAR** | Fusionar con otro archivo | Archivo destino |
-| **ARCHIVAR** | Mover a históricos | `docs/archivados/` |
+| **ARCHIVAR** | Mover a históricos | `docs/99-archivados/` |
 | **ELIMINAR** | Borrar permanentemente | N/A |
 
 ---
@@ -91,7 +91,7 @@
 | Duplicado exacto | ELIMINAR duplicado |
 | Resumido en otro reporte | ARCHIVAR original |
 
-**Ubicación archivo:** `docs/archivados/historicos-{año}/reportes-analisis/`
+**Ubicación archivo:** `docs/99-archivados/historicos-{año}/reportes-analisis/`
 
 ### 7. Correcciones (CORR-*.md)
 
@@ -103,7 +103,7 @@
 | Múltiples archivos por corrección | EVALUAR, posiblemente CONSOLIDAR |
 
 **Ubicación canónica:** `docs/90-transversal/correcciones/`
-**Ubicación archivo:** `docs/archivados/historicos-{año}/correcciones/`
+**Ubicación archivo:** `docs/99-archivados/historicos-{año}/correcciones/`
 
 ### 8. Manuales de Usuario
 
@@ -188,7 +188,7 @@
 - [lista de aprendizajes clave]
 
 ## Referencias Detalladas
-- Reportes completos disponibles en: `docs/archivados/historicos-YYYY/`
+- Reportes completos disponibles en: `docs/99-archivados/historicos-YYYY/`
 ```
 
 ### Qué NO incluir en el histórico resumido

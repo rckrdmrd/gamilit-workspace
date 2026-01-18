@@ -57,7 +57,7 @@ Este plan detalla las acciones necesarias para alinear la documentacion del proy
 **Problema:** Archivo marcado como DEPRECADO desde Oct 2025 pero aun en carpeta activa.
 
 **Ubicacion actual:** `docs/90-transversal/correcciones/ISSUES-CRITICOS.md`
-**Ubicacion destino:** `docs/archivados/historicos-2025/correcciones-obsoletas/`
+**Ubicacion destino:** `docs/99-archivados/historicos-2025/correcciones-obsoletas/`
 
 **Acciones:**
 | # | Accion |
@@ -166,8 +166,8 @@ Los siguientes modulos existen en codigo pero NO tienen documentacion dedicada:
 Despues de mover archivos, actualizar los siguientes `_MAP.md`:
 
 - `docs/90-transversal/correcciones/_MAP.md`
-- `docs/archivados/_MAP.md`
-- `docs/archivados/historicos-2025/_MAP.md`
+- `docs/99-archivados/_MAP.md`
+- `docs/99-archivados/historicos-2025/_MAP.md`
 - `docs/03-fase-extensiones/EXT-002-admin-extendido/_MAP.md`
 
 **Esfuerzo estimado:** 30 minutos
@@ -195,7 +195,7 @@ Despues de ejecutar el plan, validar:
 grep -r "status.*Backlog" docs/03-fase-extensiones/EXT-002-admin-extendido/
 
 # Verificar archivos movidos
-ls docs/archivados/historicos-2025/correcciones-obsoletas/
+ls docs/99-archivados/historicos-2025/correcciones-obsoletas/
 
 # Verificar consistencia
 grep -r "US-AE-005" docs/ | grep -i status

@@ -88,12 +88,12 @@ rmdir docs/planning/bugs/ docs/planning/tasks/
 
 **Problema:** Trazas duplicadas entre:
 - `docs/95-guias-desarrollo/student-portal/traces/` (VIGENTE)
-- `docs/archivados/historicos-2025/trazas/` (DUPLICADO)
+- `docs/99-archivados/historicos-2025/trazas/` (DUPLICADO)
 
 **Archivos eliminados:**
 ```bash
-rm docs/archivados/historicos-2025/trazas/TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md
-rm docs/archivados/historicos-2025/trazas/TRACE-P0-CORRECTIONS.md
+rm docs/99-archivados/historicos-2025/trazas/TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md
+rm docs/99-archivados/historicos-2025/trazas/TRACE-P0-CORRECTIONS.md
 ```
 
 **Resultado:**
@@ -101,8 +101,8 @@ rm docs/archivados/historicos-2025/trazas/TRACE-P0-CORRECTIONS.md
 - Versiones vigentes mantenidas en student-portal/traces
 
 **Archivos afectados:**
-- `docs/archivados/historicos-2025/trazas/TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md` (ELIMINADO)
-- `docs/archivados/historicos-2025/trazas/TRACE-P0-CORRECTIONS.md` (ELIMINADO)
+- `docs/99-archivados/historicos-2025/trazas/TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md` (ELIMINADO)
+- `docs/99-archivados/historicos-2025/trazas/TRACE-P0-CORRECTIONS.md` (ELIMINADO)
 
 ---
 

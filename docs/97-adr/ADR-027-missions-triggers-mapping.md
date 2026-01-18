@@ -95,7 +95,7 @@ apps/backend/src/modules/gamification/services/missions.service.ts
 
 ## Referencias
 
-- Traza original: `docs/archivados/historicos-2025/trazas/TRACE-GAP-002.md`
+- Traza original: `docs/99-archivados/historicos-2025/trazas/TRACE-GAP-002.md`
 - Servicio de misiones: `apps/backend/src/modules/gamification/services/missions.service.ts`
 
 ---

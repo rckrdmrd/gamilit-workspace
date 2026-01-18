@@ -54,10 +54,10 @@ historias:
     prioridad: "media"
     story_points: 2
     notas: |
-      - [x] docs/archivados/_MAP.md
+      - [x] docs/99-archivados/_MAP.md
       - [x] docs/99-finiquito/_MAP.md
       - [x] docs/planning/_MAP.md
-      - [x] docs/archivados/settings-historicos/_MAP.md
+      - [x] docs/99-archivados/settings-historicos/_MAP.md
 
   - id: "US-AUDIT-004"
     titulo: "Incrementar test coverage a 40%"

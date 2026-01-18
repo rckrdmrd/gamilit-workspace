@@ -38,7 +38,7 @@
 | P0-006 | Change Password | IMPLEMENTADO |
 | P0-007 | Session Management | IMPLEMENTADO |
 
-**Evidencia:** `docs/archivados/historicos-2025/reportes-analisis/EXECUTION-REPORT-2025-11-28.md`
+**Evidencia:** `docs/99-archivados/historicos-2025/reportes-analisis/EXECUTION-REPORT-2025-11-28.md`
 
 ---
 

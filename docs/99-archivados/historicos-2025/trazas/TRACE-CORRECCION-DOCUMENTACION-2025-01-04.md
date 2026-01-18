@@ -59,7 +59,7 @@ El archivo `BACKEND-CRITICAL-ISSUES-PENDING.md` fue creado extrayendo informacio
 ### TAREA 3: Eliminar Duplicaciones
 - Eliminado `/docs/95-guias-desarrollo/student-portal/traces/TRACE-GAP-002.md` (duplicado)
 - Eliminado `/docs/95-guias-desarrollo/student-portal/traces/TRACE-GAP-008.md` (duplicado)
-- SSOT mantenido en `/docs/archivados/historicos-2025/trazas/`
+- SSOT mantenido en `/docs/99-archivados/historicos-2025/trazas/`
 
 ### TAREA 4: Consolidar SSOT de Issues
 - Agregado banner de deprecacion a `ISSUES-CRITICOS.md`
@@ -125,9 +125,9 @@ grep "ADR-027" 97-adr/_MAP.md
 
 ## Referencias
 
-- `docs/archivados/historicos-2025/reportes-analisis/EXECUTION-REPORT-2025-11-28.md`
-- `docs/archivados/historicos-2025/reportes-analisis/VALIDATION-PLAN-2025-11-28.md`
-- `docs/archivados/PLAN-CORRECCION-DOCUMENTACION-2025-01-04.md`
+- `docs/99-archivados/historicos-2025/reportes-analisis/EXECUTION-REPORT-2025-11-28.md`
+- `docs/99-archivados/historicos-2025/reportes-analisis/VALIDATION-PLAN-2025-11-28.md`
+- `docs/99-archivados/PLAN-CORRECCION-DOCUMENTACION-2025-01-04.md`
 
 ---
 

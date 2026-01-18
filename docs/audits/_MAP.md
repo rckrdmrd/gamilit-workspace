@@ -10,12 +10,12 @@ Documentación de auditorías de calidad, integración y consistencia del proyec
 |---------|-------------|--------|
 | [INTEGRATION-VALIDATION-MATRIX.md](./INTEGRATION-VALIDATION-MATRIX.md) | Matriz de validación BD ↔ Backend ↔ Frontend | Completo |
 | [CHANGELOG-AUDIT-2026-01-04.md](./CHANGELOG-AUDIT-2026-01-04.md) | Registro de cambios de auditoría | Completo |
-| [TAREA-TECNICA-AUDIT-001.md](./TAREA-TECNICA-AUDIT-001.md) | Tarea técnica: Corrección referencias hardcoded | Done |
+| [TASK-2026-01-04-001.md](./TASK-2026-01-04-001.md) | Tarea técnica: Corrección referencias hardcoded | Done |
 | [PLAN-AUDIT-PORTAL-TEACHER-2026-01-04.md](./PLAN-AUDIT-PORTAL-TEACHER-2026-01-04.md) | Plan de auditoría Portal Teacher (15 rutas) | Completo |
 | [CHANGELOG-AUDIT-002-PORTAL-TEACHER-2026-01-04.md](./CHANGELOG-AUDIT-002-PORTAL-TEACHER-2026-01-04.md) | Registro de correcciones ejecutadas | Completo |
 | [PLAN-AUDIT-PORTAL-ADMIN-2026-01-04.md](./PLAN-AUDIT-PORTAL-ADMIN-2026-01-04.md) | Plan de auditoria Portal Admin (15 rutas) | Completado |
 | [CHANGELOG-AUDIT-003-PORTAL-ADMIN-2026-01-04.md](./CHANGELOG-AUDIT-003-PORTAL-ADMIN-2026-01-04.md) | Registro de correcciones ejecutadas | Completado |
-| [TAREA-CORRECCION-TEACHER-PORTAL-2026-01-04.md](./TAREA-CORRECCION-TEACHER-PORTAL-2026-01-04.md) | **[P0]** Correcciones Entity Message vs DDL | ✅ Completado |
+| [TASK-2026-01-04-002.md](./TASK-2026-01-04-002.md) | **[P0]** Correcciones Entity Message vs DDL | ✅ Completado |
 | [REPORTE-COMPLETITUD-PORTAL-ADMIN-2026-01-04.md](./REPORTE-COMPLETITUD-PORTAL-ADMIN-2026-01-04.md) | Analisis de completitud Plan vs Implementacion | ✅ Completado |
 
 ## Resumen de Auditorias
@@ -79,7 +79,7 @@ Documentación de auditorías de calidad, integración y consistencia del proyec
 - ✅ `ISS-SYNC-002`: **[P1]** Seed `message_participants` creado (dev + prod)
 - ✅ `ISS-SYNC-003`: Import incorrecto corregido en notificaciones
 
-**Ver:** [TAREA-CORRECCION-TEACHER-PORTAL-2026-01-04.md](./TAREA-CORRECCION-TEACHER-PORTAL-2026-01-04.md)
+**Ver:** [TASK-2026-01-04-002.md](./TASK-2026-01-04-002.md)
 
 ---
 

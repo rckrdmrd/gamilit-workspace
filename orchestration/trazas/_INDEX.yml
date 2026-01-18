@@ -185,7 +185,7 @@ trazas_agente:
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial_archivado:
-  ubicacion: "docs/archivados/historicos-2025/trazas/"
+  ubicacion: "docs/99-archivados/historicos-2025/trazas/"
   archivos:
     - "TRACE-GAP-002.md"
     - "TRACE-GAP-008.md"

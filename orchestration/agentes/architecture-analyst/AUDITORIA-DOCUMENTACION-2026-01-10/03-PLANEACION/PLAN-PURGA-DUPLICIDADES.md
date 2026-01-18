@@ -69,7 +69,7 @@ rm docs/90-transversal/restructuracion-v2/US-AE-005-parametrizacion-gamificacion
 - `TRACE-P0-CORRECTIONS.md`
 
 **Ubicación vigente:** `docs/95-guias-desarrollo/student-portal/traces/`
-**Ubicación duplicada:** `docs/archivados/historicos-2025/trazas/`
+**Ubicación duplicada:** `docs/99-archivados/historicos-2025/trazas/`
 
 **Acción:** VERIFICAR y eliminar si son idénticos
 
@@ -77,11 +77,11 @@ rm docs/90-transversal/restructuracion-v2/US-AE-005-parametrizacion-gamificacion
 ```bash
 # Comparar archivos
 diff docs/95-guias-desarrollo/student-portal/traces/TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md \
-     docs/archivados/historicos-2025/trazas/TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md
+     docs/99-archivados/historicos-2025/trazas/TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md
 
 # Si son idénticos, eliminar de archivados
-rm docs/archivados/historicos-2025/trazas/TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md
-rm docs/archivados/historicos-2025/trazas/TRACE-P0-CORRECTIONS.md
+rm docs/99-archivados/historicos-2025/trazas/TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md
+rm docs/99-archivados/historicos-2025/trazas/TRACE-P0-CORRECTIONS.md
 ```
 
 ---
@@ -95,7 +95,7 @@ rm docs/archivados/historicos-2025/trazas/TRACE-P0-CORRECTIONS.md
 - `RESUMEN_CORRECCIONES_FINALES.md`
 
 **Ubicación vigente:** `docs/99-finiquito/`
-**Ubicación duplicada:** `docs/archivados/historicos-2025/reportes-analisis/`
+**Ubicación duplicada:** `docs/99-archivados/historicos-2025/reportes-analisis/`
 
 **Acción:** CONSOLIDAR en archivados y eliminar de finiquito (son históricos)
 

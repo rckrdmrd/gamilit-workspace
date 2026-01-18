@@ -108,7 +108,7 @@ Los siguientes directorios fueron movidos a `orchestration/reportes/` el 2025-12
 
 ### Para ver issues pendientes:
 - `correcciones/BACKEND-CRITICAL-ISSUES-PENDING.md` (SSOT activo)
-- ISSUES-CRITICOS.md fue archivado a `docs/archivados/historicos-2025/correcciones-obsoletas/`
+- ISSUES-CRITICOS.md fue archivado a `docs/99-archivados/historicos-2025/correcciones-obsoletas/`
 
 ### Para ver inventarios detallados:
 - `inventarios-database/inventarios/01-SCHEMAS-INVENTORY.md`

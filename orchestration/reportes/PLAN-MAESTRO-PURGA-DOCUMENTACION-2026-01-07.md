@@ -42,7 +42,7 @@ Este plan detalla la purga y reorganización de la documentación del proyecto G
 **Estado:** VALIDADO - El archivo fue **archivado correctamente** según plan de 2026-01-06.
 
 **Hallazgos de Validación:**
-- Ubicación actual: `docs/archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-DEPRECATED.md`
+- Ubicación actual: `docs/99-archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-DEPRECATED.md`
 - SSOT actual: `docs/90-transversal/correcciones/BACKEND-CRITICAL-ISSUES-PENDING.md`
 - El `_MAP.md` de `correcciones/` ya está actualizado correctamente
 - **PENDIENTE:** Actualizar referencias en `docs/90-transversal/_MAP.md` y `README.md`
@@ -77,8 +77,8 @@ Este plan detalla la purga y reorganización de la documentación del proyecto G
 ls -la ../docs/95-guias-desarrollo/frontend/student/README.md
 
 # Eliminar duplicado en archivados
-rm ../docs/archivados/frontend-original/student/README.md
-rmdir ../docs/archivados/frontend-original/student/
+rm ../docs/99-archivados/frontend-original/student/README.md
+rmdir ../docs/99-archivados/frontend-original/student/
 ```
 
 #### Acción 1.2.2: Eliminar duplicado MECANICAS-EDUCATIVAS.md
@@ -87,7 +87,7 @@ rmdir ../docs/archivados/frontend-original/student/
 ls -la ../docs/95-guias-desarrollo/frontend/MECANICAS-EDUCATIVAS.md
 
 # Eliminar duplicado en archivados
-rm ../docs/archivados/frontend-original/MECANICAS-EDUCATIVAS.md
+rm ../docs/99-archivados/frontend-original/MECANICAS-EDUCATIVAS.md
 ```
 
 **Archivos a eliminar adicionales (agregados a lista total):** +2 archivos
@@ -96,43 +96,43 @@ rm ../docs/archivados/frontend-original/MECANICAS-EDUCATIVAS.md
 
 ## FASE 2: LIMPIEZA DE ARCHIVOS OBSOLETOS (P1)
 
-### 2.1 Eliminar archivos en /docs/archivados/
+### 2.1 Eliminar archivos en /docs/99-archivados/
 
 #### 2.1.1 Eliminar correcciones obsoletas
 ```bash
 # Archivos claramente marcados como DEPRECATED
-rm ../docs/archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-DEPRECATED.md
-rm ../docs/archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-27.md
+rm ../docs/99-archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-DEPRECATED.md
+rm ../docs/99-archivados/historicos-2025/correcciones-obsoletas/ISSUES-CRITICOS-2025-10-27.md
 
 # Eliminar carpeta vacía después
-rmdir ../docs/archivados/historicos-2025/correcciones-obsoletas/
+rmdir ../docs/99-archivados/historicos-2025/correcciones-obsoletas/
 ```
 
 #### 2.1.2 Eliminar especificaciones frontend obsoletas
 ```bash
 # Especificaciones pre-refactoring que ya no existen en código
-rm ../docs/archivados/frontend-original/admin/pages/AdminUsersPage-Specification.md
-rm ../docs/archivados/frontend-original/admin/pages/AdminGamificationPage-Specification.md
-rm ../docs/archivados/frontend-original/admin/pages/AdminAlertsPage-Specification.md
-rm ../docs/archivados/frontend-original/admin/hooks/ADMIN-CLASSROOMS-HOOK.md
-rm ../docs/archivados/frontend-original/admin/hooks/ADMIN-GAMIFICATION-CONFIG-HOOK.md
-rm ../docs/archivados/frontend-original/teacher/components/TEACHER-RESPONSE-MANAGEMENT.md
-rm ../docs/archivados/frontend-original/teacher/components/TEACHER-MONITORING-COMPONENTS.md
-rm ../docs/archivados/frontend-original/teacher/pages/TEACHER-PAGES-SPECIFICATIONS.md
-rm ../docs/archivados/frontend-original/teacher/types/TEACHER-TYPES-REFERENCE.md
-rm ../docs/archivados/frontend-original/teacher/constants/TEACHER-CONSTANTS-REFERENCE.md
-rm ../docs/archivados/frontend-original/especificaciones/AdminReportsPage-UI-Specification.md
+rm ../docs/99-archivados/frontend-original/admin/pages/AdminUsersPage-Specification.md
+rm ../docs/99-archivados/frontend-original/admin/pages/AdminGamificationPage-Specification.md
+rm ../docs/99-archivados/frontend-original/admin/pages/AdminAlertsPage-Specification.md
+rm ../docs/99-archivados/frontend-original/admin/hooks/ADMIN-CLASSROOMS-HOOK.md
+rm ../docs/99-archivados/frontend-original/admin/hooks/ADMIN-GAMIFICATION-CONFIG-HOOK.md
+rm ../docs/99-archivados/frontend-original/teacher/components/TEACHER-RESPONSE-MANAGEMENT.md
+rm ../docs/99-archivados/frontend-original/teacher/components/TEACHER-MONITORING-COMPONENTS.md
+rm ../docs/99-archivados/frontend-original/teacher/pages/TEACHER-PAGES-SPECIFICATIONS.md
+rm ../docs/99-archivados/frontend-original/teacher/types/TEACHER-TYPES-REFERENCE.md
+rm ../docs/99-archivados/frontend-original/teacher/constants/TEACHER-CONSTANTS-REFERENCE.md
+rm ../docs/99-archivados/frontend-original/especificaciones/AdminReportsPage-UI-Specification.md
 
 # Limpiar carpetas vacías
-find ../docs/archivados/frontend-original/ -type d -empty -delete
+find ../docs/99-archivados/frontend-original/ -type d -empty -delete
 ```
 
 #### 2.1.3 Eliminar convenciones supersedidas
 ```bash
 # Standards deprecados (versiones actuales en 95-guias-desarrollo/)
-rm ../docs/archivados/98-standards-deprecated/NAMING-CONVENTIONS-COMPLETE.md
-rm ../docs/archivados/98-standards-deprecated/GIT-CONVENTIONS.md
-rm ../docs/archivados/98-standards-deprecated/NAMING-CONVENTIONS-API.md
+rm ../docs/99-archivados/98-standards-deprecated/NAMING-CONVENTIONS-COMPLETE.md
+rm ../docs/99-archivados/98-standards-deprecated/GIT-CONVENTIONS.md
+rm ../docs/99-archivados/98-standards-deprecated/NAMING-CONVENTIONS-API.md
 ```
 
 **Total archivos a eliminar (Fase 2):** 16 archivos
@@ -385,7 +385,7 @@ EOF
 2. [x] ~~Mover 2 archivos vigentes de /archivados/ a docs activos~~ ✅ Ya en destino
 
 ### P1 - IMPORTANTE (Hacer esta semana)
-1. [ ] Eliminar 18 archivos obsoletos/duplicados de /docs/archivados/
+1. [ ] Eliminar 18 archivos obsoletos/duplicados de /docs/99-archivados/
 2. [ ] Actualizar referencias ISSUES-CRITICOS en `/docs/90-transversal/_MAP.md`
 3. [ ] Actualizar 3 _MAP.md principales con fechas y carpetas faltantes
 4. [ ] Documentar 10 carpetas de análisis en orchestration/_MAP.md

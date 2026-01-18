@@ -162,10 +162,10 @@ Estos issues estan relacionados con queries que retornan valores correctos pero 
 ## Trazabilidad de Implementacion
 
 **Reportes que confirman implementacion:**
-- `docs/archivados/historicos-2025/reportes-analisis/EXECUTION-REPORT-2025-11-28.md`
+- `docs/99-archivados/historicos-2025/reportes-analisis/EXECUTION-REPORT-2025-11-28.md`
   - "Grupo 1: P0-003, P0-005, P0-006 | Completado"
   - "Grupo 2: P0-001, P0-002, P0-004, P0-007 | Completado"
-- `docs/archivados/historicos-2025/reportes-analisis/VALIDATION-PLAN-2025-11-28.md`
+- `docs/99-archivados/historicos-2025/reportes-analisis/VALIDATION-PLAN-2025-11-28.md`
 
 **Verificacion de codigo:**
 - Realizada el 2025-01-04 por agente Explore
@@ -184,9 +184,9 @@ Estos issues estan relacionados con queries que retornan valores correctos pero 
 ## Referencias
 
 **Documentacion historica:**
-- `docs/archivados/historicos-2025/reportes-analisis/ANALYSIS-2025-11-28.md`
-- `docs/archivados/historicos-2025/reportes-analisis/EXECUTION-REPORT-2025-11-28.md`
-- `docs/archivados/historicos-2025/trazas/TRACE-P0-CORRECTIONS.md`
+- `docs/99-archivados/historicos-2025/reportes-analisis/ANALYSIS-2025-11-28.md`
+- `docs/99-archivados/historicos-2025/reportes-analisis/EXECUTION-REPORT-2025-11-28.md`
+- `docs/99-archivados/historicos-2025/trazas/TRACE-P0-CORRECTIONS.md`
 
 **ADRs relacionados:**
 - `docs/97-adr/ADR-027-missions-triggers-mapping.md`
