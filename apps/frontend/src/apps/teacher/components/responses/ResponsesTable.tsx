@@ -11,7 +11,7 @@
  */
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   ChevronUp,
   ChevronDown,
@@ -379,26 +379,19 @@ export const ResponsesTable: React.FC<ResponsesTableProps> = ({
         <table className="w-full">
           <TableHeader sortField={sortField} sortOrder={sortOrder} onSort={handleSort} />
           <tbody>
-            <AnimatePresence mode="wait">
-              {loading ? (
-                <>
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <SkeletonRow key={i} />
-                  ))}
-                </>
-              ) : data.length === 0 ? (
-                <EmptyState />
-              ) : (
-                data.map((attempt, index) => (
-                  <TableRow
-                    key={attempt.id}
-                    attempt={attempt}
-                    index={index}
-                    onView={onViewDetail}
-                  />
-                ))
-              )}
-            </AnimatePresence>
+            {loading
+              ? [1, 2, 3, 4, 5].map((i) => <SkeletonRow key={`skeleton-${i}`} />)
+              : data.length === 0
+                ? <EmptyState />
+                : data.map((attempt, index) => (
+                    <TableRow
+                      key={attempt.id}
+                      attempt={attempt}
+                      index={index}
+                      onView={onViewDetail}
+                    />
+                  ))
+            }
           </tbody>
         </table>
       </div>
