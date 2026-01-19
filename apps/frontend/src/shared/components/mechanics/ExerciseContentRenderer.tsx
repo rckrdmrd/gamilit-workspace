@@ -1,5 +1,30 @@
 import React from 'react';
-import { FileText, CheckCircle, XCircle, Music, Type, Grid3X3, ListChecks, Link2 } from 'lucide-react';
+import {
+  FileText,
+  CheckCircle,
+  XCircle,
+  Music,
+  Type,
+  Grid3X3,
+  ListChecks,
+  Link2,
+  // TASK-2026-01-19-010: Iconos adicionales para renderers M3-M5
+  Award,
+  BarChart3,
+  MessageSquare,
+  Scale,
+  Shield,
+  Zap,
+  Bookmark,
+  Map,
+  Image,
+  Layers,
+  BookOpen,
+  Palette,
+  Video,
+  Calendar,
+  Hash,
+} from 'lucide-react';
 
 interface ExerciseContentRendererProps {
   exerciseType: string;
@@ -92,12 +117,18 @@ export const ExerciseContentRenderer: React.FC<ExerciseContentRendererProps> = (
     case 'prediccion_narrativa':
       return <TextResponseRenderer data={answerData} />;
 
-    // Módulo 3 - Manuales (texto/análisis)
+    // Módulo 3 - Manuales (texto/análisis) - TASK-2026-01-19-010: Renderers específicos
     case 'analisis_fuentes':
+      return <AnalisisFuentesRenderer data={answerData} />;
+
     case 'debate_digital':
+      return <DebateDigitalRenderer data={answerData} />;
+
     case 'matriz_perspectivas':
+      return <MatrizPerspectivasRenderer data={answerData} />;
+
     case 'tribunal_opiniones':
-      return <TextResponseRenderer data={answerData} />;
+      return <TribunalOpinionesRenderer data={answerData} />;
 
     // P0-03: Added missing auxiliary mechanics (2025-12-18)
     case 'collage_prensa':
@@ -105,16 +136,31 @@ export const ExerciseContentRenderer: React.FC<ExerciseContentRendererProps> = (
     case 'texto_en_movimiento':
       return <TextResponseRenderer data={answerData} />;
 
-    // Módulo 4 y 5 (creativos con multimedia)
+    // Módulo 4 - Alfabetización Digital - TASK-2026-01-19-010: Renderers específicos
     case 'verificador_fake_news':
+      return <VerificadorFakeNewsRenderer data={answerData} />;
+
     case 'quiz_tiktok':
+      return <QuizTikTokRenderer data={answerData} />;
+
     case 'analisis_memes':
+      return <AnalisisMemesRenderer data={answerData} />;
+
     case 'infografia_interactiva':
+      return <InfografiaInteractivaRenderer data={answerData} />;
+
     case 'navegacion_hipertextual':
+      return <NavegacionHipertextualRenderer data={answerData} />;
+
+    // Módulo 5 - Producción Creativa - TASK-2026-01-19-010: Renderers específicos
     case 'diario_multimedia':
+      return <DiarioMultimediaRenderer data={answerData} />;
+
     case 'comic_digital':
+      return <ComicDigitalRenderer data={answerData} />;
+
     case 'video_carta':
-      return <MultimediaRenderer data={answerData} type={exerciseType} />;
+      return <VideoCartaRenderer data={answerData} />;
 
     default:
       // TASK-2026-01-18-010: Pasar tipo para diagnóstico
@@ -172,6 +218,900 @@ const PodcastRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) 
     </div>
   );
 };
+
+// ============================================================================
+// TASK-2026-01-19-010: RENDERERS ESPECÍFICOS MÓDULO 3
+// ============================================================================
+
+/**
+ * Renderiza respuestas del ejercicio Análisis de Fuentes
+ * Muestra el ranking de credibilidad de fuentes ordenado
+ * Formato: { ranking: ["src-3", "src-1", "src-2"] }
+ */
+const AnalisisFuentesRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const ranking = (data.ranking || []) as string[];
+  const startedAt = data.startedAt as string | undefined;
+
+  // Mapeo de IDs de fuentes a nombres legibles (si están disponibles)
+  const sourceNames: Record<string, string> = {
+    'src-1': 'Fuente 1',
+    'src-2': 'Fuente 2',
+    'src-3': 'Fuente 3',
+    'src-4': 'Fuente 4',
+    'src-5': 'Fuente 5',
+  };
+
+  const getMedalColor = (position: number): string => {
+    switch (position) {
+      case 0: return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      case 1: return 'bg-gray-100 text-gray-700 border-gray-300';
+      case 2: return 'bg-orange-100 text-orange-800 border-orange-300';
+      default: return 'bg-blue-50 text-blue-700 border-blue-200';
+    }
+  };
+
+  const getMedalEmoji = (position: number): string => {
+    switch (position) {
+      case 0: return '🥇';
+      case 1: return '🥈';
+      case 2: return '🥉';
+      default: return `#${position + 1}`;
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-lg bg-indigo-50 p-4 border border-indigo-200">
+        <div className="mb-3 flex items-center gap-2">
+          <Award className="h-5 w-5 text-indigo-600" />
+          <span className="font-semibold text-indigo-800">Ranking de Credibilidad</span>
+        </div>
+        <p className="text-sm text-indigo-600 mb-3">
+          Ordenado de más credible a menos credible según el análisis del estudiante:
+        </p>
+        <div className="space-y-2">
+          {ranking.map((sourceId, idx) => (
+            <div
+              key={sourceId}
+              className={`flex items-center gap-3 rounded-lg p-3 border ${getMedalColor(idx)}`}
+            >
+              <span className="text-xl">{getMedalEmoji(idx)}</span>
+              <div className="flex-1">
+                <span className="font-medium">{sourceNames[sourceId] || sourceId}</span>
+                <span className="text-sm ml-2 opacity-75">
+                  (Posición {idx + 1} de {ranking.length})
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {startedAt && (
+        <div className="text-sm text-gray-500 flex items-center gap-2">
+          <Calendar className="h-4 w-4" />
+          <span>Iniciado: {new Date(startedAt).toLocaleString('es-MX')}</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Renderiza respuestas del ejercicio Matriz de Perspectivas
+ * Muestra las respuestas a las 3 preguntas de análisis
+ * Formato: { questions: { q1: "respuesta1", q2: "respuesta2", q3: "respuesta3" } }
+ */
+const MatrizPerspectivasRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const questions = (data.questions || {}) as Record<string, string>;
+
+  const questionLabels: Record<string, string> = {
+    q1: '¿Cuál es la perspectiva principal del autor?',
+    q2: '¿Qué evidencia presenta para apoyar su posición?',
+    q3: '¿Qué perspectivas alternativas podrían existir?',
+  };
+
+  const questionColors: Record<string, string> = {
+    q1: 'bg-purple-50 border-purple-200',
+    q2: 'bg-blue-50 border-blue-200',
+    q3: 'bg-green-50 border-green-200',
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 mb-2">
+        <BarChart3 className="h-5 w-5 text-purple-600" />
+        <span className="font-semibold text-purple-800">Análisis de Perspectivas</span>
+      </div>
+
+      {Object.entries(questions).map(([key, value]) => (
+        <div key={key} className={`rounded-lg p-4 border ${questionColors[key] || 'bg-gray-50 border-gray-200'}`}>
+          <div className="mb-2 text-sm font-medium text-gray-600">
+            {questionLabels[key] || `Pregunta ${key}`}
+          </div>
+          <p className="whitespace-pre-wrap text-gray-800">{value || '(Sin respuesta)'}</p>
+          <div className="mt-2 text-xs text-gray-500">
+            {value ? `${value.length} caracteres` : '0 caracteres'}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+/**
+ * Renderiza respuestas del ejercicio Debate Digital
+ * Muestra la posición, argumentos y mensajes del debate
+ * Formato: { position: 'a_favor'|'en_contra'|'neutral', response: string, arguments: string[], messageCount: number }
+ */
+const DebateDigitalRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const position = data.position as string;
+  const response = data.response as string;
+  const args = (data.arguments || []) as string[];
+  const messageCount = data.messageCount as number;
+
+  const positionConfig: Record<string, { label: string; color: string; icon: string }> = {
+    'a_favor': { label: 'A Favor', color: 'bg-green-100 text-green-800 border-green-300', icon: '👍' },
+    'en_contra': { label: 'En Contra', color: 'bg-red-100 text-red-800 border-red-300', icon: '👎' },
+    'neutral': { label: 'Neutral', color: 'bg-gray-100 text-gray-700 border-gray-300', icon: '⚖️' },
+  };
+
+  const config = positionConfig[position] || positionConfig.neutral;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <MessageSquare className="h-5 w-5 text-blue-600" />
+        <span className="font-semibold text-blue-800">Debate Digital</span>
+      </div>
+
+      {/* Posición */}
+      <div className={`rounded-lg p-4 border ${config.color}`}>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-xl">{config.icon}</span>
+          <span className="font-semibold">Posición: {config.label}</span>
+        </div>
+        {messageCount !== undefined && (
+          <div className="text-sm opacity-75">
+            Mensajes enviados: {messageCount}
+          </div>
+        )}
+      </div>
+
+      {/* Respuesta principal */}
+      {response && (
+        <div className="rounded-lg bg-blue-50 p-4 border border-blue-200">
+          <div className="mb-2 font-medium text-blue-800">Respuesta Principal</div>
+          <p className="whitespace-pre-wrap text-gray-800">{response}</p>
+        </div>
+      )}
+
+      {/* Argumentos */}
+      {args.length > 0 && (
+        <div className="rounded-lg bg-indigo-50 p-4 border border-indigo-200">
+          <div className="mb-3 font-medium text-indigo-800">
+            Argumentos ({args.length})
+          </div>
+          <ul className="space-y-2">
+            {args.map((arg, idx) => (
+              <li key={idx} className="flex items-start gap-2">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-200 text-indigo-800 text-sm flex items-center justify-center font-medium">
+                  {idx + 1}
+                </span>
+                <span className="text-gray-700">{arg}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Renderiza respuestas del ejercicio Tribunal de Opiniones
+ * Muestra las evaluaciones de afirmaciones con clasificación y veredicto
+ * Formato: { evaluations: [{ statementId, classification, verdict, justification? }] }
+ */
+const TribunalOpinionesRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const evaluations = (data.evaluations || []) as Array<{
+    statementId: string;
+    classification: string;
+    verdict: string;
+    justification?: string;
+  }>;
+
+  const verdictConfig: Record<string, { color: string; icon: string }> = {
+    'verdadero': { color: 'bg-green-100 text-green-800 border-green-300', icon: '✅' },
+    'falso': { color: 'bg-red-100 text-red-800 border-red-300', icon: '❌' },
+    'parcial': { color: 'bg-yellow-100 text-yellow-800 border-yellow-300', icon: '⚠️' },
+    'opinion': { color: 'bg-purple-100 text-purple-800 border-purple-300', icon: '💭' },
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Scale className="h-5 w-5 text-purple-600" />
+        <span className="font-semibold text-purple-800">Tribunal de Opiniones</span>
+        <span className="text-sm text-gray-500">({evaluations.length} evaluaciones)</span>
+      </div>
+
+      <div className="space-y-3">
+        {evaluations.map((evaluation, idx) => {
+          const config = verdictConfig[evaluation.verdict?.toLowerCase()] || verdictConfig.parcial;
+          return (
+            <div key={evaluation.statementId || idx} className={`rounded-lg p-4 border ${config.color}`}>
+              <div className="flex items-start gap-3">
+                <span className="text-xl flex-shrink-0">{config.icon}</span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-medium">Afirmación {idx + 1}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-white/50">
+                      {evaluation.classification || 'Sin clasificar'}
+                    </span>
+                  </div>
+                  <div className="text-sm mb-2">
+                    <span className="font-medium">Veredicto:</span> {evaluation.verdict}
+                  </div>
+                  {evaluation.justification && (
+                    <div className="text-sm text-gray-700 mt-2 p-2 bg-white/50 rounded">
+                      <span className="font-medium">Justificación:</span> {evaluation.justification}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// TASK-2026-01-19-010: RENDERERS ESPECÍFICOS MÓDULO 4
+// ============================================================================
+
+/**
+ * Renderiza respuestas del ejercicio Verificador de Fake News
+ * Muestra claims verificados con evidencia
+ * Formato: { claims_verified: [...], verifiedClaims: [...], metadata: {...} }
+ */
+const VerificadorFakeNewsRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const claimsVerified = (data.claims_verified || data.verifiedClaims || []) as Array<{
+    claim_id?: string;
+    claim?: string;
+    is_fake?: boolean;
+    verdict?: string;
+    evidence?: string;
+  }>;
+  const metadata = data.metadata as Record<string, unknown> | undefined;
+  // TASK-2026-01-19-010: Extract to typed variable for TypeScript compatibility
+  const articleTitle = typeof metadata?.articleTitle === 'string' ? metadata.articleTitle : null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Shield className="h-5 w-5 text-blue-600" />
+        <span className="font-semibold text-blue-800">Verificador de Fake News</span>
+        <span className="text-sm text-gray-500">({claimsVerified.length} claims verificados)</span>
+      </div>
+
+      {articleTitle && (
+        <div className="rounded-lg bg-gray-50 p-3 border border-gray-200">
+          <span className="text-sm text-gray-600">Artículo analizado:</span>
+          <p className="font-medium">{articleTitle}</p>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {claimsVerified.map((claim, idx) => {
+          const isFake = claim.is_fake || claim.verdict?.toLowerCase() === 'fake';
+          return (
+            <div
+              key={claim.claim_id || idx}
+              className={`rounded-lg p-4 border ${
+                isFake
+                  ? 'bg-red-50 border-red-200'
+                  : 'bg-green-50 border-green-200'
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <span className="text-xl">{isFake ? '🚫' : '✅'}</span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`font-medium ${isFake ? 'text-red-800' : 'text-green-800'}`}>
+                      {isFake ? 'FALSO' : 'VERIFICADO'}
+                    </span>
+                  </div>
+                  {claim.claim && (
+                    <p className="text-gray-700 mb-2">{claim.claim}</p>
+                  )}
+                  {claim.evidence && (
+                    <div className="text-sm p-2 bg-white/50 rounded">
+                      <span className="font-medium">Evidencia:</span> {claim.evidence}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Renderiza respuestas del ejercicio Quiz TikTok
+ * Muestra respuestas con historial de swipes
+ * Formato: { answers: number[], swipeHistory: number[], score: number }
+ */
+const QuizTikTokRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const answers = (data.answers || []) as number[];
+  const swipeHistory = (data.swipeHistory || []) as number[];
+  const score = data.score as number | undefined;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Zap className="h-5 w-5 text-pink-600" />
+        <span className="font-semibold text-pink-800">Quiz TikTok</span>
+      </div>
+
+      {score !== undefined && (
+        <div className="rounded-lg bg-gradient-to-r from-pink-50 to-purple-50 p-4 border border-pink-200">
+          <div className="text-center">
+            <span className="text-3xl font-bold text-pink-600">{score}</span>
+            <span className="text-pink-600 ml-1">puntos</span>
+          </div>
+        </div>
+      )}
+
+      <div className="rounded-lg bg-pink-50 p-4 border border-pink-200">
+        <div className="mb-3 font-medium text-pink-800">
+          Respuestas ({answers.length} preguntas)
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {answers.map((answer, idx) => (
+            <span
+              key={idx}
+              className="inline-flex items-center px-3 py-1 rounded-full bg-pink-100 text-pink-800 text-sm"
+            >
+              P{idx + 1}: Opción {answer + 1}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {swipeHistory.length > 0 && (
+        <div className="rounded-lg bg-purple-50 p-4 border border-purple-200">
+          <div className="mb-2 text-sm font-medium text-purple-800">
+            Historial de Swipes ({swipeHistory.length})
+          </div>
+          <div className="flex flex-wrap gap-1 text-xs">
+            {swipeHistory.map((swipe, idx) => (
+              <span key={idx} className="px-2 py-0.5 rounded bg-purple-100 text-purple-700">
+                {swipe === 1 ? '👆' : swipe === -1 ? '👇' : '👆'}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Renderiza respuestas del ejercicio Navegación Hipertextual
+ * Muestra el camino de navegación e información encontrada
+ * Formato: { path: string[], information_found: {...}, metadata: {...} }
+ */
+const NavegacionHipertextualRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const path = (data.path || []) as string[];
+  const informationFound = (data.information_found || {}) as Record<string, {
+    title?: string;
+    timeSpent?: number;
+    visited?: boolean;
+    contentPreview?: string;
+  }>;
+  const metadata = data.metadata as Record<string, unknown> | undefined;
+  // TASK-2026-01-19-010: Extract to typed variable for TypeScript compatibility
+  const navigationPath = Array.isArray(metadata?.navigationPath) ? metadata.navigationPath : null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Map className="h-5 w-5 text-teal-600" />
+        <span className="font-semibold text-teal-800">Navegación Hipertextual</span>
+      </div>
+
+      {/* Camino de navegación */}
+      <div className="rounded-lg bg-teal-50 p-4 border border-teal-200">
+        <div className="mb-3 font-medium text-teal-800">
+          Camino de Navegación ({path.length} nodos)
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {path.map((node, idx) => (
+            <React.Fragment key={idx}>
+              <span className="inline-flex items-center px-3 py-1 rounded-lg bg-teal-100 text-teal-800 text-sm font-medium">
+                {node}
+              </span>
+              {idx < path.length - 1 && (
+                <span className="text-teal-400">→</span>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+
+      {/* Información encontrada */}
+      {Object.keys(informationFound).length > 0 && (
+        <div className="rounded-lg bg-cyan-50 p-4 border border-cyan-200">
+          <div className="mb-3 font-medium text-cyan-800">
+            Información Encontrada
+          </div>
+          <div className="space-y-2">
+            {Object.entries(informationFound).map(([nodeId, info]) => (
+              <div key={nodeId} className="flex items-start gap-2 p-2 bg-white/50 rounded">
+                <Bookmark className="h-4 w-4 text-cyan-600 mt-0.5" />
+                <div className="flex-1">
+                  <span className="font-medium text-cyan-800">{info.title || nodeId}</span>
+                  {info.timeSpent && (
+                    <span className="text-xs text-cyan-600 ml-2">
+                      ({info.timeSpent}s)
+                    </span>
+                  )}
+                  {info.contentPreview && (
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                      {info.contentPreview}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {navigationPath && (
+        <div className="text-sm text-gray-500">
+          Total de navegaciones: {navigationPath.length}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Renderiza respuestas del ejercicio Análisis de Memes
+ * Muestra anotaciones sobre el meme
+ * Formato: { annotations: [...], analysis: {...}, metadata: {...} }
+ */
+const AnalisisMemesRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const annotations = (data.annotations || []) as Array<{
+    x?: number;
+    y?: number;
+    text: string;
+  }>;
+  const analysis = data.analysis as { message?: string } | undefined;
+  const metadata = data.metadata as Record<string, unknown> | undefined;
+  // TASK-2026-01-19-010: Extract to typed variables for TypeScript compatibility
+  const memeTitle = typeof metadata?.memeTitle === 'string' ? metadata.memeTitle : null;
+  const selectedCategories = Array.isArray(metadata?.selectedCategories) ? metadata.selectedCategories : null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Image className="h-5 w-5 text-orange-600" />
+        <span className="font-semibold text-orange-800">Análisis de Memes</span>
+      </div>
+
+      {memeTitle && (
+        <div className="rounded-lg bg-orange-50 p-3 border border-orange-200">
+          <span className="text-sm text-orange-600">Meme analizado:</span>
+          <p className="font-medium text-orange-800">{memeTitle}</p>
+        </div>
+      )}
+
+      {/* Anotaciones */}
+      <div className="rounded-lg bg-amber-50 p-4 border border-amber-200">
+        <div className="mb-3 font-medium text-amber-800">
+          Anotaciones ({annotations.length})
+        </div>
+        <div className="space-y-2">
+          {annotations.map((annotation, idx) => (
+            <div key={idx} className="flex items-start gap-2 p-2 bg-white/50 rounded">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-200 text-amber-800 text-sm flex items-center justify-center font-medium">
+                {idx + 1}
+              </span>
+              <div className="flex-1">
+                <p className="text-gray-700">{annotation.text}</p>
+                {annotation.x !== undefined && annotation.y !== undefined && (
+                  <span className="text-xs text-amber-600">
+                    Posición: ({annotation.x}, {annotation.y})
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Análisis general */}
+      {analysis?.message && (
+        <div className="rounded-lg bg-orange-50 p-4 border border-orange-200">
+          <div className="mb-2 font-medium text-orange-800">Análisis General</div>
+          <p className="whitespace-pre-wrap text-gray-700">{analysis.message}</p>
+        </div>
+      )}
+
+      {selectedCategories && (
+        <div className="flex flex-wrap gap-2">
+          {selectedCategories.map((category, idx) => (
+            <span key={idx} className="px-2 py-1 rounded-full bg-orange-100 text-orange-700 text-sm">
+              {String(category)}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Renderiza respuestas del ejercicio Infografía Interactiva
+ * Muestra secciones exploradas y respuestas
+ * Formato: { answers: {...}, sections_explored: string[], metadata: {...} }
+ */
+const InfografiaInteractivaRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const answers = (data.answers || {}) as Record<string, {
+    title?: string;
+    content?: string;
+    revealed?: boolean;
+    position?: number;
+  }>;
+  const sectionsExplored = (data.sections_explored || []) as string[];
+  const metadata = data.metadata as Record<string, unknown> | undefined;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Layers className="h-5 w-5 text-violet-600" />
+        <span className="font-semibold text-violet-800">Infografía Interactiva</span>
+      </div>
+
+      {/* Progreso */}
+      {metadata?.completionPercentage !== undefined && (
+        <div className="rounded-lg bg-violet-50 p-4 border border-violet-200">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-medium text-violet-800">Progreso de Exploración</span>
+            <span className="text-violet-600 font-bold">
+              {metadata.completionPercentage as number}%
+            </span>
+          </div>
+          <div className="w-full bg-violet-200 rounded-full h-2">
+            <div
+              className="bg-violet-600 h-2 rounded-full transition-all"
+              style={{ width: `${metadata.completionPercentage as number}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Secciones exploradas */}
+      {sectionsExplored.length > 0 && (
+        <div className="rounded-lg bg-purple-50 p-4 border border-purple-200">
+          <div className="mb-3 font-medium text-purple-800">
+            Secciones Exploradas ({sectionsExplored.length})
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {sectionsExplored.map((section, idx) => (
+              <span
+                key={idx}
+                className="inline-flex items-center px-3 py-1 rounded-full bg-purple-100 text-purple-800 text-sm"
+              >
+                <CheckCircle className="h-3 w-3 mr-1" />
+                {section}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Respuestas */}
+      {Object.keys(answers).length > 0 && (
+        <div className="rounded-lg bg-indigo-50 p-4 border border-indigo-200">
+          <div className="mb-3 font-medium text-indigo-800">Elementos Revelados</div>
+          <div className="space-y-2">
+            {Object.entries(answers).map(([cardId, card]) => (
+              <div key={cardId} className="p-2 bg-white/50 rounded flex items-start gap-2">
+                <Hash className="h-4 w-4 text-indigo-600 mt-0.5" />
+                <div className="flex-1">
+                  <span className="font-medium text-indigo-800">{card.title || cardId}</span>
+                  {card.content && (
+                    <p className="text-sm text-gray-600 mt-1">{card.content}</p>
+                  )}
+                </div>
+                {card.revealed && <CheckCircle className="h-4 w-4 text-green-500" />}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ============================================================================
+// TASK-2026-01-19-010: RENDERERS ESPECÍFICOS MÓDULO 5
+// ============================================================================
+
+/**
+ * Renderiza respuestas del ejercicio Diario Multimedia
+ * Muestra entradas del diario con contenido y mood
+ * Formato: { entries: [...], totalEntries: number, totalWords: number, metadata: {...} }
+ */
+const DiarioMultimediaRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const entries = (data.entries || []) as Array<{
+    id?: string;
+    date?: string;
+    title?: string;
+    content: string;
+    mood?: string;
+    wordCount?: number;
+    multimedia?: unknown;
+  }>;
+  const totalEntries = data.totalEntries as number | undefined;
+  const totalWords = data.totalWords as number | undefined;
+
+  const moodEmojis: Record<string, string> = {
+    'feliz': '😊',
+    'happy': '😊',
+    'triste': '😢',
+    'sad': '😢',
+    'enojado': '😠',
+    'angry': '😠',
+    'neutral': '😐',
+    'emocionado': '🤩',
+    'excited': '🤩',
+    'reflexivo': '🤔',
+    'thoughtful': '🤔',
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <BookOpen className="h-5 w-5 text-emerald-600" />
+        <span className="font-semibold text-emerald-800">Diario Multimedia</span>
+      </div>
+
+      {/* Estadísticas */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="rounded-lg bg-emerald-50 p-3 border border-emerald-200 text-center">
+          <span className="text-2xl font-bold text-emerald-600">{totalEntries || entries.length}</span>
+          <p className="text-sm text-emerald-700">Entradas</p>
+        </div>
+        <div className="rounded-lg bg-teal-50 p-3 border border-teal-200 text-center">
+          <span className="text-2xl font-bold text-teal-600">{totalWords || 0}</span>
+          <p className="text-sm text-teal-700">Palabras</p>
+        </div>
+      </div>
+
+      {/* Entradas */}
+      <div className="space-y-3">
+        {entries.map((entry, idx) => (
+          <div key={entry.id || idx} className="rounded-lg bg-green-50 p-4 border border-green-200">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-green-600" />
+                <span className="font-medium text-green-800">
+                  {entry.title || `Entrada ${idx + 1}`}
+                </span>
+              </div>
+              {entry.mood && (
+                <span className="text-xl" title={entry.mood}>
+                  {moodEmojis[entry.mood.toLowerCase()] || '📝'}
+                </span>
+              )}
+            </div>
+            {entry.date && (
+              <p className="text-xs text-green-600 mb-2">
+                {new Date(entry.date).toLocaleDateString('es-MX', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            )}
+            <p className="whitespace-pre-wrap text-gray-700 text-sm">
+              {entry.content}
+            </p>
+            {entry.wordCount && (
+              <p className="text-xs text-green-600 mt-2">
+                {entry.wordCount} palabras
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Renderiza respuestas del ejercicio Cómic Digital
+ * Muestra paneles del cómic con diálogos
+ * Formato: { panels: [...], metadata: {...} }
+ */
+const ComicDigitalRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const panels = (data.panels || []) as Array<{
+    panelNumber?: number;
+    dialogue?: string;
+    narration?: string;
+    imageUrl?: string;
+    visualDescription?: string;
+  }>;
+  const metadata = data.metadata as Record<string, unknown> | undefined;
+  // TASK-2026-01-19-010: Extract to typed variables for TypeScript compatibility
+  const comicTitle = typeof metadata?.title === 'string' ? metadata.title : null;
+  const totalPanels = typeof metadata?.totalPanels === 'number' ? metadata.totalPanels : panels.length;
+  const totalSpeechBubbles = typeof metadata?.totalSpeechBubbles === 'number' ? metadata.totalSpeechBubbles : null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Palette className="h-5 w-5 text-rose-600" />
+        <span className="font-semibold text-rose-800">Cómic Digital</span>
+        {comicTitle && (
+          <span className="text-sm text-gray-500">- {comicTitle}</span>
+        )}
+      </div>
+
+      {/* Estadísticas */}
+      <div className="flex gap-4 text-sm text-gray-600">
+        <span>Paneles: {totalPanels}</span>
+        {totalSpeechBubbles !== null && (
+          <span>Diálogos: {totalSpeechBubbles}</span>
+        )}
+      </div>
+
+      {/* Paneles */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {panels.map((panel, idx) => (
+          <div
+            key={idx}
+            className="rounded-lg bg-rose-50 border-2 border-rose-200 overflow-hidden"
+          >
+            <div className="bg-rose-100 px-3 py-1 border-b border-rose-200">
+              <span className="font-medium text-rose-800">
+                Panel {panel.panelNumber || idx + 1}
+              </span>
+            </div>
+            <div className="p-3 space-y-2">
+              {panel.imageUrl && (
+                <img
+                  src={panel.imageUrl}
+                  alt={`Panel ${idx + 1}`}
+                  className="w-full h-32 object-cover rounded"
+                />
+              )}
+              {panel.visualDescription && (
+                <div className="text-xs text-gray-500 italic">
+                  {panel.visualDescription}
+                </div>
+              )}
+              {panel.dialogue && (
+                <div className="bg-white rounded-lg p-2 border border-rose-100 relative">
+                  <div className="absolute -top-1 -left-1 w-3 h-3 bg-white border-l border-t border-rose-100 rotate-45" />
+                  <p className="text-sm text-gray-700">"{panel.dialogue}"</p>
+                </div>
+              )}
+              {panel.narration && (
+                <div className="bg-yellow-50 rounded p-2 border border-yellow-200">
+                  <p className="text-xs text-yellow-800 italic">{panel.narration}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Renderiza respuestas del ejercicio Video Carta
+ * Muestra video y secciones completadas
+ * Formato: { video_url: string, sections: [...], metadata: {...} }
+ */
+const VideoCartaRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
+  const videoUrl = data.video_url as string | undefined;
+  const sections = (data.sections || []) as Array<{
+    title?: string;
+    duration_seconds?: number;
+  }>;
+  const metadata = data.metadata as Record<string, unknown> | undefined;
+
+  const formatDuration = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Video className="h-5 w-5 text-sky-600" />
+        <span className="font-semibold text-sky-800">Video Carta</span>
+      </div>
+
+      {/* Video */}
+      {videoUrl && (
+        <div className="rounded-lg bg-sky-50 p-4 border border-sky-200">
+          <div className="mb-2 font-medium text-sky-800">Video Grabado</div>
+          {videoUrl.startsWith('blob:') ? (
+            <div className="bg-gray-100 rounded-lg p-4 text-center text-gray-500">
+              <Video className="h-12 w-12 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">Video grabado localmente</p>
+              <p className="text-xs">(URL temporal no reproducible después de cerrar sesión)</p>
+            </div>
+          ) : (
+            <video controls className="w-full rounded-lg">
+              <source src={videoUrl} />
+              Tu navegador no soporta video.
+            </video>
+          )}
+          {typeof metadata?.videoDuration === 'number' && (
+            <p className="text-sm text-sky-600 mt-2">
+              Duración: {formatDuration(metadata.videoDuration)}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Secciones */}
+      {sections.length > 0 && (
+        <div className="rounded-lg bg-blue-50 p-4 border border-blue-200">
+          <div className="mb-3 font-medium text-blue-800">
+            Secciones Completadas ({sections.length})
+          </div>
+          <div className="space-y-2">
+            {sections.map((section, idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-between p-2 bg-white/50 rounded"
+              >
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span className="text-gray-700">{section.title || `Sección ${idx + 1}`}</span>
+                </div>
+                {section.duration_seconds && (
+                  <span className="text-sm text-blue-600">
+                    {formatDuration(section.duration_seconds)}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Metadata adicional */}
+      {metadata?.allSectionsCompleted === true && (
+        <div className="flex items-center gap-2 text-green-600">
+          <CheckCircle className="h-5 w-5" />
+          <span className="font-medium">Todas las secciones completadas</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ============================================================================
+// RENDERERS ORIGINALES (No modificados)
+// ============================================================================
 
 /**
  * Renderiza respuestas del ejercicio Verdadero/Falso
@@ -543,54 +1483,6 @@ const TextResponseRenderer: React.FC<{ data: Record<string, unknown> }> = ({ dat
           </p>
         </div>
       ))}
-    </div>
-  );
-};
-
-/**
- * Renderiza respuestas de ejercicios multimedia
- * Usado para ejercicios de Módulos 4 y 5 (creativos)
- * Detecta y renderiza imágenes, videos y audio inline
- */
-const MultimediaRenderer: React.FC<{ data: Record<string, unknown>; type: string }> = ({
-  data,
-  type: _type,
-}) => {
-  return (
-    <div className="space-y-4">
-      {Object.entries(data).map(([key, value]) => {
-        // Detectar si es URL de media
-        const strValue = String(value);
-        const isImageUrl = /\.(jpg|jpeg|png|gif|webp)$/i.test(strValue) || key.includes('image');
-        const isVideoUrl = /\.(mp4|webm|mov)$/i.test(strValue) || key.includes('video');
-        const isAudioUrl = /\.(mp3|wav|ogg|m4a)$/i.test(strValue) || key.includes('audio');
-
-        return (
-          <div key={key} className="rounded-lg bg-gray-50 p-4">
-            <span className="mb-2 block font-semibold capitalize text-gray-700">
-              {key.replace(/_/g, ' ')}
-            </span>
-
-            {isImageUrl && typeof value === 'string' ? (
-              <img src={value} alt={key} className="h-auto max-w-full rounded-lg" />
-            ) : isVideoUrl && typeof value === 'string' ? (
-              <video controls className="max-w-full rounded-lg">
-                <source src={value} />
-              </video>
-            ) : isAudioUrl && typeof value === 'string' ? (
-              <audio controls className="w-full">
-                <source src={value} />
-              </audio>
-            ) : typeof value === 'string' ? (
-              <p className="whitespace-pre-wrap text-gray-800">{value}</p>
-            ) : (
-              <pre className="overflow-x-auto rounded bg-white p-2 text-sm">
-                {JSON.stringify(value, null, 2)}
-              </pre>
-            )}
-          </div>
-        );
-      })}
     </div>
   );
 };
