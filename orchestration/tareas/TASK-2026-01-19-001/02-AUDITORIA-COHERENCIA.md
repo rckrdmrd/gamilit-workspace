@@ -96,17 +96,22 @@ completed_exercises           ->   completed_exercises    OK
 
 ### Validacion de Correccion
 
-El mapeo implementado resuelve el mismatch:
+~~El mapeo implementado resuelve el mismatch:~~
 
 ```typescript
+// OBSOLETO - Reemplazado por transformer en TASK-2026-01-19-004
 // Linea 127 - Mapea avg_score a average_score
-average_score: (data as any).avg_score ?? data.average_score ?? 0,
+// average_score: (data as any).avg_score ?? data.average_score ?? 0,
 
 // Linea 130 - Mapea avg_attendance a engagement_rate
-engagement_rate: data.engagement_rate ?? (data as any).avg_attendance ?? (data as any).avg_progress ?? 0,
+// engagement_rate: data.engagement_rate ?? (data as any).avg_attendance ?? (data as any).avg_progress ?? 0,
 ```
 
-**RESULTADO:** El frontend ahora puede leer correctamente los valores del backend independientemente del nombre del campo.
+**ACTUALIZACION:** En TASK-2026-01-19-004, este workaround fue reemplazado por:
+1. Transformer formal en `classroomsApi.ts` (snake_case -> camelCase)
+2. Calculo real de `engagement_rate` en backend
+
+**RESULTADO:** El frontend ahora recibe datos ya transformados desde el API layer.
 
 ---
 
@@ -140,18 +145,30 @@ engagement_rate: data.engagement_rate ?? (data as any).avg_attendance ?? (data a
 Las siguientes inconsistencias fueron IDENTIFICADAS pero NO CAUSADAS por esta tarea:
 
 ### INC-PRE-001: Nomenclatura inconsistente entre endpoints
-- `/stats` usa: `avg_score`, `avg_attendance`
-- `/progress` usa: `average_score`, `average_completion`
+- `/stats` usa: `avg_score`, `avg_attendance` -> transformado a camelCase
+- `/progress` usa: `average_score`, `average_completion` -> snake_case directo
+- **Estado:** DOCUMENTADO - REQUIERE TAREA DEDICADA
+- **Resolucion Parcial:** `/stats` ahora usa transformer en API layer (TASK-2026-01-19-004)
+- **Analisis 2026-01-19:**
+  - Migrar `/progress` a camelCase afectaria **40+ usages** en componentes
+  - Archivos afectados: TeacherDashboard, TeacherAnalytics, ClassProgressDashboard, etc.
+  - Riesgo: ALTO (breaking changes en multiples componentes)
+  - Recomendacion: Crear tarea P3 dedicada para migracion completa a camelCase
+  - Por ahora: Mantener dos convenciones documentadas (stats=camelCase, progress=snake_case)
 
-### INC-PRE-002: Dos interfaces ClassroomStats con nombres diferentes
-- `useClassroomsStats.ts`: usa snake_case
-- `classroom.types.ts`: usa camelCase
+### INC-PRE-002: Dos interfaces ClassroomStats con nombres diferentes ~~RESUELTO~~
+- ~~`useClassroomsStats.ts`: usa snake_case~~
+- ~~`classroom.types.ts`: usa camelCase~~
+- **Estado:** RESUELTO en TASK-2026-01-19-004
+- **Resolucion:** Interface unificada en camelCase con transformer en API layer
 
-### INC-PRE-003: Campos con significado ambiguo
-- `engagement_rate` en frontend NO existe en backend
-- Se usa `avg_attendance` como fallback (semanticamente incorrecto)
+### INC-PRE-003: Campos con significado ambiguo ~~RESUELTO~~
+- ~~`engagement_rate` en frontend NO existe en backend~~
+- ~~Se usa `avg_attendance` como fallback (semanticamente incorrecto)~~
+- **Estado:** RESUELTO en TASK-2026-01-19-004
+- **Resolucion:** Backend ahora calcula `engagement_rate` formalmente usando submissions de 7 dias
 
-**RECOMENDACION:** Estas inconsistencias deberian ser resueltas en una tarea separada de refactorizacion (P2).
+**ACTUALIZACION 2026-01-19:** INC-PRE-002 e INC-PRE-003 fueron resueltas en TASK-2026-01-19-004.
 
 ---
 
@@ -207,7 +224,10 @@ nothing to commit, working tree clean
 | Analisis | Claude Opus 4.5 | 2026-01-19 |
 | Ejecucion | Claude Opus 4.5 | 2026-01-19 |
 | Auditoria | Claude Opus 4.5 | 2026-01-19 |
+| Actualizacion Post-TASK-004 | Claude Opus 4.5 | 2026-01-19 |
 
 ---
 
 **Estado Final:** TAREA COMPLETADA Y VALIDADA
+
+**Ultima Actualizacion:** 2026-01-19 - Marcadas INC-PRE-002 e INC-PRE-003 como resueltas (ref: TASK-2026-01-19-004)
