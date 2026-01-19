@@ -273,3 +273,11 @@ docs_bkp/
 !assets/**/*.zip
 apps/database/database-credentials-dev.txt
 apps/database/database-credentials-dev.txt
+
+# Credential backups (sensitive)
+apps/database/credentials-backups/
+**/credentials-backups/
+
+# Runtime uploads
+apps/backend/uploads/
+**/uploads/reports/
