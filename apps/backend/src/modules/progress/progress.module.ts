@@ -1,10 +1,14 @@
 import { Module as NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import * as entities from './entities';
 import * as services from './services';
 import * as controllers from './controllers';
 import { PendingActivitiesService } from './services/pending-activities.service';
 import { RecentActivityService } from './services/recent-activity.service';
+// TASK-2026-01-18-015 Sprint 3: Import new services
+import { EngagementMetricsService } from './services/engagement-metrics.service';
+import { SessionCleanupService } from './services/session-cleanup.service';
 import { Module as EducationalModule } from '../educational/entities/module.entity';
 import { Exercise } from '../educational/entities/exercise.entity';
 import { Profile } from '../auth/entities/profile.entity';
@@ -61,6 +65,8 @@ import { WebSocketModule } from '../websocket/websocket.module';
  */
 @NestModule({
   imports: [
+    // TASK-2026-01-18-015 Sprint 3: Schedule module for cron jobs
+    ScheduleModule.forRoot(),
     // Connection 'progress' handles schema 'progress_tracking'
     TypeOrmModule.forFeature(
       [
@@ -102,6 +108,9 @@ import { WebSocketModule } from '../websocket/websocket.module';
     services.CertificateService, // ✨ NUEVO - EPIC 10.2
     PendingActivitiesService,
     RecentActivityService,
+    // TASK-2026-01-18-015 Sprint 3: Backend robustness services
+    EngagementMetricsService,
+    SessionCleanupService,
   ],
   controllers: [
     controllers.ModuleProgressController,
@@ -118,6 +127,8 @@ import { WebSocketModule } from '../websocket/websocket.module';
     services.ExerciseSubmissionService,
     services.ScheduledMissionService,
     services.CertificateService, // ✨ NUEVO - EPIC 10.2
+    // TASK-2026-01-18-015 Sprint 3: Export for use in teacher module
+    EngagementMetricsService,
   ],
 })
 export class ProgressModule {}

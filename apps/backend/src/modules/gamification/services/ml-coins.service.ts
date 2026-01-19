@@ -1,6 +1,6 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { UserStats, MLCoinsTransaction, MayaRankEntity } from '../entities';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { CreateTransactionDto } from '../dto';
@@ -10,12 +10,16 @@ import { CreateTransactionDto } from '../dto';
  *
  * Gestión del sistema económico virtual (ML Coins)
  * - Balance tracking
- * - Transacciones (earnings y gastos)
+ * - Transacciones (earnings y gastos) con locks pesimistas
  * - Validación y auditoría
  * - Historial de movimientos
+ *
+ * TASK-2026-01-18-015 Sprint 3: Added transaction support with pessimistic locking
  */
 @Injectable()
 export class MLCoinsService {
+  private readonly logger = new Logger(MLCoinsService.name);
+
   constructor(
     @InjectRepository(UserStats, 'gamification')
     private readonly userStatsRepo: Repository<UserStats>,
@@ -23,6 +27,9 @@ export class MLCoinsService {
     private readonly transactionRepo: Repository<MLCoinsTransaction>,
     @InjectRepository(MayaRankEntity, 'gamification')
     private readonly mayaRanksRepo: Repository<MayaRankEntity>,
+    // TASK-2026-01-18-015 Sprint 3: Inject DataSource for transactions
+    @InjectDataSource('gamification')
+    private readonly dataSource: DataSource,
   ) {}
 
   /**
@@ -68,6 +75,9 @@ export class MLCoinsService {
   /**
    * Añade ML Coins al balance del usuario
    * Crea transacción de registro
+   *
+   * TASK-2026-01-18-015 Sprint 3: Uses database transaction with pessimistic locking
+   * to prevent race conditions and ensure data consistency
    */
   async addCoins(
     userId: string,
@@ -83,45 +93,57 @@ export class MLCoinsService {
       throw new BadRequestException('Amount must be greater than 0');
     }
 
-    const userStats = await this.userStatsRepo.findOne({
-      where: { user_id: userId },
+    // TASK-2026-01-18-015 Sprint 3: Use transaction with pessimistic lock
+    return this.dataSource.transaction(async (manager) => {
+      // Obtain lock on user stats row
+      const userStats = await manager.findOne(UserStats, {
+        where: { user_id: userId },
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (!userStats) {
+        throw new NotFoundException(`User stats not found for ${userId}`);
+      }
+
+      // Aplicar multiplicador
+      const finalAmount = multiplier ? Math.floor(amount * multiplier) : amount;
+
+      // Actualizar balance
+      const balanceBefore = userStats.ml_coins;
+      const balanceAfter = balanceBefore + finalAmount;
+
+      // Update user stats within transaction
+      userStats.ml_coins = balanceAfter;
+      userStats.ml_coins_earned_total += finalAmount;
+
+      // Actualizar earned today (con validación de reset diario)
+      this.resetDailyCoinsIfNeededSync(userStats);
+      userStats.ml_coins_earned_today += finalAmount;
+
+      await manager.save(userStats);
+
+      // Crear registro de transacción within same transaction
+      const transaction = manager.create(MLCoinsTransaction, {
+        user_id: userId,
+        amount: finalAmount,
+        balance_before: balanceBefore,
+        balance_after: balanceAfter,
+        transaction_type: transactionType,
+        description,
+        reference_id: referenceId,
+        reference_type: referenceType as any,
+        multiplier: multiplier || 1.0,
+        metadata: {},
+      });
+
+      const savedTransaction = await manager.save(transaction);
+
+      this.logger.debug(
+        `Added ${finalAmount} ML Coins to user ${userId}. Balance: ${balanceBefore} -> ${balanceAfter}`,
+      );
+
+      return { balance: balanceAfter, transaction: savedTransaction };
     });
-
-    if (!userStats) {
-      throw new NotFoundException(`User stats not found for ${userId}`);
-    }
-
-    // Aplicar multiplicador
-    const finalAmount = multiplier ? Math.floor(amount * multiplier) : amount;
-
-    // Actualizar balance
-    const balanceBefore = userStats.ml_coins;
-    const balanceAfter = balanceBefore + finalAmount;
-
-    userStats.ml_coins = balanceAfter;
-    userStats.ml_coins_earned_total += finalAmount;
-
-    // Actualizar earned today (con validación de reset diario)
-    await this.resetDailyCoinsIfNeeded(userStats);
-    userStats.ml_coins_earned_today += finalAmount;
-
-    await this.userStatsRepo.save(userStats);
-
-    // Crear registro de transacción
-    const transaction = await this.createTransaction({
-      user_id: userId,
-      amount: finalAmount,
-      balance_before: balanceBefore,
-      balance_after: balanceAfter,
-      transaction_type: transactionType,
-      description,
-      reference_id: referenceId,
-      reference_type: referenceType as any,
-      multiplier: multiplier || 1.0,
-      metadata: {},
-    });
-
-    return { balance: balanceAfter, transaction };
   }
 
   /**
@@ -192,6 +214,9 @@ export class MLCoinsService {
   /**
    * Gasta ML Coins del balance del usuario
    * Incluye validación de saldo suficiente
+   *
+   * TASK-2026-01-18-015 Sprint 3: Uses database transaction with pessimistic locking
+   * to prevent race conditions and ensure data consistency
    */
   async spendCoins(
     userId: string,
@@ -206,44 +231,55 @@ export class MLCoinsService {
       throw new BadRequestException('Amount must be greater than 0');
     }
 
-    const userStats = await this.userStatsRepo.findOne({
-      where: { user_id: userId },
-    });
+    // TASK-2026-01-18-015 Sprint 3: Use transaction with pessimistic lock
+    return this.dataSource.transaction(async (manager) => {
+      // Obtain lock on user stats row
+      const userStats = await manager.findOne(UserStats, {
+        where: { user_id: userId },
+        lock: { mode: 'pessimistic_write' },
+      });
 
-    if (!userStats) {
-      throw new NotFoundException(`User stats not found for ${userId}`);
-    }
+      if (!userStats) {
+        throw new NotFoundException(`User stats not found for ${userId}`);
+      }
 
-    // Validar saldo suficiente
-    if (userStats.ml_coins < amount) {
-      throw new BadRequestException(
-        `Insufficient balance. Required: ${amount}, Available: ${userStats.ml_coins}`,
+      // Validar saldo suficiente (with locked row - consistent read)
+      if (userStats.ml_coins < amount) {
+        throw new BadRequestException(
+          `Insufficient balance. Required: ${amount}, Available: ${userStats.ml_coins}`,
+        );
+      }
+
+      // Actualizar balance
+      const balanceBefore = userStats.ml_coins;
+      const balanceAfter = balanceBefore - amount;
+
+      userStats.ml_coins = balanceAfter;
+      userStats.ml_coins_spent_total += amount;
+
+      await manager.save(userStats);
+
+      // Crear registro de transacción within same transaction
+      const transaction = manager.create(MLCoinsTransaction, {
+        user_id: userId,
+        amount: -amount,
+        balance_before: balanceBefore,
+        balance_after: balanceAfter,
+        transaction_type: transactionType,
+        description,
+        reference_id: referenceId,
+        reference_type: referenceType as any,
+        metadata: {},
+      });
+
+      const savedTransaction = await manager.save(transaction);
+
+      this.logger.debug(
+        `Spent ${amount} ML Coins from user ${userId}. Balance: ${balanceBefore} -> ${balanceAfter}`,
       );
-    }
 
-    // Actualizar balance
-    const balanceBefore = userStats.ml_coins;
-    const balanceAfter = balanceBefore - amount;
-
-    userStats.ml_coins = balanceAfter;
-    userStats.ml_coins_spent_total += amount;
-
-    await this.userStatsRepo.save(userStats);
-
-    // Crear registro de transacción (con monto negativo)
-    const transaction = await this.createTransaction({
-      user_id: userId,
-      amount: -amount,
-      balance_before: balanceBefore,
-      balance_after: balanceAfter,
-      transaction_type: transactionType,
-      description,
-      reference_id: referenceId,
-      reference_type: referenceType as any,
-      metadata: {},
+      return { balance: balanceAfter, transaction: savedTransaction };
     });
-
-    return { balance: balanceAfter, transaction };
   }
 
   /**
@@ -392,8 +428,17 @@ export class MLCoinsService {
 
   /**
    * Reset de coins ganadas hoy (se ejecuta automáticamente si ha pasado 24h)
+   * @deprecated Use resetDailyCoinsIfNeededSync for transaction-safe operations
    */
   private async resetDailyCoinsIfNeeded(userStats: UserStats): Promise<void> {
+    this.resetDailyCoinsIfNeededSync(userStats);
+  }
+
+  /**
+   * Reset de coins ganadas hoy (versión síncrona para uso en transacciones)
+   * TASK-2026-01-18-015 Sprint 3: Sync version for use within database transactions
+   */
+  private resetDailyCoinsIfNeededSync(userStats: UserStats): void {
     const now = new Date();
     const lastReset = userStats.last_ml_coins_reset;
 
