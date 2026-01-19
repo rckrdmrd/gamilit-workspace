@@ -17,26 +17,8 @@ import {
   InterventionAlertStatus,
 } from '@shared/types/intervention-alerts.types';
 
-/**
- * Alias para compatibilidad con código existente
- * @deprecated Use InterventionAlertType from @shared/types
- */
-export const AlertType = InterventionAlertType;
-export type AlertType = InterventionAlertType;
-
-/**
- * Alias para compatibilidad con código existente
- * @deprecated Use InterventionAlertSeverity from @shared/types
- */
-export const AlertSeverity = InterventionAlertSeverity;
-export type AlertSeverity = InterventionAlertSeverity;
-
-/**
- * Alias para compatibilidad con código existente
- * @deprecated Use InterventionAlertStatus from @shared/types
- */
-export const AlertStatus = InterventionAlertStatus;
-export type AlertStatus = InterventionAlertStatus;
+// Re-export types for convenience (no longer deprecated - these are the canonical names)
+export { InterventionAlertType, InterventionAlertSeverity, InterventionAlertStatus };
 
 /**
  * DTO para consultar alertas con filtros y paginación
@@ -49,23 +31,23 @@ export class GetAlertsQueryDto {
   @IsUUID()
     classroom_id?: string;
 
-  @ApiPropertyOptional({ enum: AlertType, description: 'Filtrar por tipo de alerta' })
+  @ApiPropertyOptional({ enum: InterventionAlertType, description: 'Filtrar por tipo de alerta' })
   @IsOptional()
-  @IsEnum(AlertType)
-    alert_type?: AlertType;
+  @IsEnum(InterventionAlertType)
+    alert_type?: InterventionAlertType;
 
   @ApiPropertyOptional({
-    enum: AlertSeverity,
+    enum: InterventionAlertSeverity,
     description: 'Filtrar por nivel de severidad',
   })
   @IsOptional()
-  @IsEnum(AlertSeverity)
-    severity?: AlertSeverity;
+  @IsEnum(InterventionAlertSeverity)
+    severity?: InterventionAlertSeverity;
 
-  @ApiPropertyOptional({ enum: AlertStatus, description: 'Filtrar por estado de la alerta' })
+  @ApiPropertyOptional({ enum: InterventionAlertStatus, description: 'Filtrar por estado de la alerta' })
   @IsOptional()
-  @IsEnum(AlertStatus)
-    status?: AlertStatus;
+  @IsEnum(InterventionAlertStatus)
+    status?: InterventionAlertStatus;
 
   @ApiPropertyOptional({ description: 'Búsqueda por texto (título, descripción, nombre estudiante)' })
   @IsOptional()
@@ -171,11 +153,11 @@ export class InterventionAlertResponseDto {
   @ApiProperty({ description: 'Nombre del classroom', required: false })
     classroom_name?: string | null;
 
-  @ApiProperty({ enum: AlertType, description: 'Tipo de alerta' })
-    alert_type!: AlertType;
+  @ApiProperty({ enum: InterventionAlertType, description: 'Tipo de alerta' })
+    alert_type!: InterventionAlertType;
 
-  @ApiProperty({ enum: AlertSeverity, description: 'Nivel de severidad' })
-    severity!: AlertSeverity;
+  @ApiProperty({ enum: InterventionAlertSeverity, description: 'Nivel de severidad' })
+    severity!: InterventionAlertSeverity;
 
   @ApiProperty({ description: 'Título de la alerta' })
     title!: string;
@@ -190,8 +172,8 @@ export class InterventionAlertResponseDto {
   })
     metrics?: Record<string, unknown> | null;
 
-  @ApiProperty({ enum: AlertStatus, description: 'Estado actual de la alerta' })
-    status!: AlertStatus;
+  @ApiProperty({ enum: InterventionAlertStatus, description: 'Estado actual de la alerta' })
+    status!: InterventionAlertStatus;
 
   @ApiProperty({ description: 'Fecha de generación (ISO 8601)' })
     generated_at!: string;

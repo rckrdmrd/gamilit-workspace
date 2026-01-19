@@ -14,9 +14,9 @@ classification:
   epic: "TECH-DEBT-001"
 
 status:
-  current: "ready"
-  phase: "P"
-  completion_percentage: 0
+  current: "completed"
+  phase: "D"
+  completion_percentage: 100
 
 context:
   descripcion: |
@@ -55,8 +55,22 @@ plan:
       descripcion: "Validar build"
       detalle: "npm run build && npm run lint"
 
+execution:
+  completed_at: "2026-01-19T09:00:00Z"
+  archivos_modificados:
+    - path: "apps/backend/src/modules/teacher/dto/intervention-alerts.dto.ts"
+      cambio: "Eliminados aliases deprecados, usa tipos directos de @shared/types"
+    - path: "apps/backend/src/modules/teacher/entities/student-intervention-alert.entity.ts"
+      cambio: "Eliminados aliases deprecados, usa tipos directos de @shared/types"
+    - path: "apps/backend/src/modules/teacher/services/intervention-alerts.service.ts"
+      cambio: "Import de InterventionAlertStatus desde @shared/types"
+  validacion:
+    build: "PASS"
+    lint: "PASS (0 errors, 880 warnings pre-existentes)"
+
 metadata:
   agente: "claude-opus-4.5"
   impacto: "bajo"
   riesgo: "bajo"
   estimacion: "30min"
+  tiempo_real: "10min"

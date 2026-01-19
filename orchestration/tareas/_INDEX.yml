@@ -128,25 +128,47 @@ tasks:
   - id: TASK-2026-01-19-006
     title: "Migrar tipos deprecados de alertas a @shared/types"
     date: "2026-01-19"
-    status: ready
+    status: completed
     priority: P2
     type: tech-debt
     metodologia: QUICK
     dominios:
       - "Backend"
       - "Shared Types"
+    entregables:
+      - "METADATA.yml"
+    conclusiones:
+      - "Eliminados aliases deprecados AlertType, AlertSeverity, AlertStatus"
+      - "Usados tipos directos InterventionAlertType, InterventionAlertSeverity, InterventionAlertStatus"
+      - "3 archivos actualizados (dto, entity, service)"
+      - "Build y lint pasan sin errores"
     path: "orchestration/tareas/TASK-2026-01-19-006/"
 
   - id: TASK-2026-01-19-007
     title: "Completar datos de seeds - module_progress y alertas"
     date: "2026-01-19"
-    status: ready
+    status: completed
     priority: P2
     type: data-fix
     metodologia: FULL
     dominios:
       - "Database"
       - "Seeds"
+    entregables:
+      - "METADATA.yml"
+      - "populate-test-data.sql"
+    metricas:
+      submissions_antes: 9
+      submissions_despues: 297
+      usuarios_antes: 1
+      usuarios_despues: 31
+      alertas_antes: 5
+      alertas_despues: 103
+    conclusiones:
+      - "Script populate-test-data.sql creado"
+      - "30 estudiantes con submissions aleatorias"
+      - "100% module_progress con datos completos"
+      - "103 alertas de intervención generadas"
     path: "orchestration/tareas/TASK-2026-01-19-007/"
 
   - id: TASK-2026-01-19-008
@@ -694,9 +716,9 @@ tasks:
 # RESUMEN POR ESTADO
 # =========================================
 summary:
-  completed: 18
+  completed: 20
   in_progress: 1
-  ready: 3
+  ready: 1
   planning: 0
   pending: 0
 

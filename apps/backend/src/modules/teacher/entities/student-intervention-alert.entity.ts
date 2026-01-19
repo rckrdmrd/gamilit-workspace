@@ -18,27 +18,6 @@ import {
 } from '@shared/types/intervention-alerts.types';
 
 /**
- * Alias para compatibilidad con código existente
- * @deprecated Use InterventionAlertType from @shared/types
- */
-export const AlertType = InterventionAlertType;
-export type AlertType = InterventionAlertType;
-
-/**
- * Alias para compatibilidad con código existente
- * @deprecated Use InterventionAlertSeverity from @shared/types
- */
-export const AlertSeverity = InterventionAlertSeverity;
-export type AlertSeverity = InterventionAlertSeverity;
-
-/**
- * Alias para compatibilidad con código existente
- * @deprecated Use InterventionAlertStatus from @shared/types
- */
-export const AlertStatus = InterventionAlertStatus;
-export type AlertStatus = InterventionAlertStatus;
-
-/**
  * Student Intervention Alert Entity
  *
  * @description Entity para alertas automáticas de intervención estudiantil.
@@ -121,22 +100,22 @@ export class StudentInterventionAlert {
 
   /**
    * Tipo de alerta
-   * @enum AlertType
+   * @enum InterventionAlertType
    */
   @Column({
     type: 'text',
     name: 'alert_type',
   })
-    alert_type!: AlertType;
+    alert_type!: InterventionAlertType;
 
   /**
    * Nivel de severidad
-   * @enum AlertSeverity
+   * @enum InterventionAlertSeverity
    */
   @Column({
     type: 'text',
   })
-    severity!: AlertSeverity;
+    severity!: InterventionAlertSeverity;
 
   /**
    * Título descriptivo de la alerta (generado automáticamente)
@@ -166,14 +145,14 @@ export class StudentInterventionAlert {
 
   /**
    * Estado actual de la alerta
-   * @enum AlertStatus
+   * @enum InterventionAlertStatus
    * @default 'active'
    */
   @Column({
     type: 'text',
-    default: AlertStatus.ACTIVE,
+    default: InterventionAlertStatus.ACTIVE,
   })
-    status!: AlertStatus;
+    status!: InterventionAlertStatus;
 
   /**
    * Fecha y hora de generación de la alerta

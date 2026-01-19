@@ -14,9 +14,9 @@ import {
   ResolveInterventionAlertDto,
   InterventionAlertResponseDto,
   InterventionAlertsListResponseDto,
-  AlertStatus,
   GenerateAlertsResponseDto,
 } from '../dto/intervention-alerts.dto';
+import { InterventionAlertStatus } from '@shared/types/intervention-alerts.types';
 
 /**
  * Service para gestión de Alertas de Intervención Estudiantil
@@ -105,7 +105,7 @@ export class InterventionAlertsService {
       qb.andWhere('alert.status = :status', { status: query.status });
     } else if (!query.include_dismissed) {
       // Por defecto, no mostrar alertas dismissed
-      qb.andWhere('alert.status != :dismissedStatus', { dismissedStatus: AlertStatus.DISMISSED });
+      qb.andWhere('alert.status != :dismissedStatus', { dismissedStatus: InterventionAlertStatus.DISMISSED });
     }
 
     if (query.search) {
@@ -201,11 +201,11 @@ export class InterventionAlertsService {
 
     const alert = await this.getAlertEntity(alertId, teacherId, tenantId);
 
-    if (alert.status !== AlertStatus.ACTIVE) {
+    if (alert.status !== InterventionAlertStatus.ACTIVE) {
       throw new BadRequestException('Solo se pueden acknowledge alertas activas');
     }
 
-    alert.status = AlertStatus.ACKNOWLEDGED;
+    alert.status = InterventionAlertStatus.ACKNOWLEDGED;
     alert.acknowledged_at = new Date();
     alert.acknowledged_by = teacherId;
 
@@ -236,11 +236,11 @@ export class InterventionAlertsService {
 
     const alert = await this.getAlertEntity(alertId, teacherId, tenantId);
 
-    if (alert.status === AlertStatus.RESOLVED) {
+    if (alert.status === InterventionAlertStatus.RESOLVED) {
       throw new BadRequestException('Esta alerta ya está resuelta');
     }
 
-    alert.status = AlertStatus.RESOLVED;
+    alert.status = InterventionAlertStatus.RESOLVED;
     alert.resolved_at = new Date();
     alert.resolved_by = teacherId;
     alert.resolution_notes = dto.resolution_notes;
@@ -269,7 +269,7 @@ export class InterventionAlertsService {
 
     const alert = await this.getAlertEntity(alertId, teacherId, tenantId);
 
-    alert.status = AlertStatus.DISMISSED;
+    alert.status = InterventionAlertStatus.DISMISSED;
 
     await this.alertsRepository.save(alert);
 
