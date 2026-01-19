@@ -66,6 +66,8 @@ export class CreateReviewDto {
 /**
  * DTO para actualizar una evaluación manual existente
  * TASK-2026-01-18-014: Todos los campos son opcionales para permitir actualizaciones parciales
+ * NOTA: Los nombres usan snake_case porque el frontend transforma camelCase -> snake_case
+ * en el interceptor de axios (apiClient.ts líneas 54-57)
  */
 export class UpdateReviewDto {
   @ApiProperty({
@@ -75,7 +77,7 @@ export class UpdateReviewDto {
   })
   @IsObject()
   @IsOptional()
-    rubricScores?: Record<string, number>;
+    rubric_scores?: Record<string, number>;
 
   @ApiProperty({
     description: 'Puntuación total calculada (0-100)',
@@ -88,7 +90,7 @@ export class UpdateReviewDto {
   @Min(0)
   @Max(100)
   @IsOptional()
-    totalScore?: number;
+    total_score?: number;
 
   @ApiProperty({
     description: 'Comentarios generales del docente',
@@ -97,7 +99,7 @@ export class UpdateReviewDto {
   })
   @IsString()
   @IsOptional()
-    generalFeedback?: string;
+    general_feedback?: string;
 
   @ApiProperty({
     description: 'Feedback detallado por sección/criterio',
@@ -109,7 +111,7 @@ export class UpdateReviewDto {
   })
   @IsObject()
   @IsOptional()
-    detailedFeedback?: Record<string, unknown>;
+    detailed_feedback?: Record<string, unknown>;
 
   @ApiProperty({
     description: 'Estado del review',

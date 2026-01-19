@@ -511,19 +511,23 @@ export class ManualReviewService {
     }
 
     // Actualizar campos si están presentes en el DTO
-    if (dto.rubricScores !== undefined) {
-      this.logger.log(`[updateReview] Setting rubricScores: ${JSON.stringify(dto.rubricScores)}`);
-      review.rubricScores = dto.rubricScores;
+    // NOTA: DTO usa snake_case porque el frontend transforma camelCase -> snake_case
+    if (dto.rubric_scores !== undefined) {
+      this.logger.log(`[updateReview] Setting rubricScores: ${JSON.stringify(dto.rubric_scores)}`);
+      review.rubricScores = dto.rubric_scores;
     }
-    if (dto.totalScore !== undefined) {
-      this.logger.log(`[updateReview] Setting totalScore: ${dto.totalScore}`);
-      review.totalScore = dto.totalScore;
+    if (dto.total_score !== undefined) {
+      this.logger.log(`[updateReview] Setting totalScore: ${dto.total_score}`);
+      review.totalScore = dto.total_score;
     }
-    if (dto.generalFeedback !== undefined) {
-      review.generalFeedback = dto.generalFeedback;
+    if (dto.general_feedback !== undefined) {
+      review.generalFeedback = dto.general_feedback;
     }
-    if (dto.detailedFeedback !== undefined) {
-      review.detailedFeedback = dto.detailedFeedback;
+    if (dto.detailed_feedback !== undefined) {
+      review.detailedFeedback = dto.detailed_feedback;
+    }
+    if (dto.status !== undefined) {
+      review.status = dto.status;
     }
 
     const savedReview = await this.reviewRepo.save(review);
