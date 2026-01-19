@@ -1,0 +1,73 @@
+# METADATA.yml - TASK-2026-01-19-008
+# Version: 2.0.0
+
+task:
+  id: "TASK-2026-01-19-008"
+  title: "Implementar sistema de notificaciones para alertas y reportes"
+  created: "2026-01-19"
+  updated: "2026-01-19"
+
+classification:
+  type: "feature"
+  priority: "P2"
+  mode: "FULL"
+  epic: "NOTIFICATIONS-001"
+
+status:
+  current: "ready"
+  phase: "P"
+  completion_percentage: 0
+
+context:
+  descripcion: |
+    Varios servicios tienen TODOs para integrar notificaciones que aun no estan
+    implementadas:
+
+    1. student-risk-alert.service.ts (linea 179):
+       "@TODO: Integrate with actual notification system"
+
+    2. scheduled-reports.service.ts (linea 154):
+       "// TODO: Send email notification if enabled"
+
+  dependencias:
+    - "Sistema de email (no implementado)"
+    - "Sistema de notificaciones in-app (parcialmente implementado)"
+    - "Configuracion de preferencias de usuario"
+
+  servicios_afectados:
+    - service: "student-risk-alert.service.ts"
+      linea: 179
+      descripcion: "Notificar profesores cuando se detectan estudiantes en riesgo"
+
+    - service: "scheduled-reports.service.ts"
+      linea: 154
+      descripcion: "Enviar reportes programados por email"
+
+plan:
+  fases:
+    - fase: 1
+      titulo: "Disenar sistema de notificaciones"
+      tareas:
+        - "Definir tipos de notificacion (email, in-app, push)"
+        - "Disenar schema de preferencias de usuario"
+        - "Disenar cola de notificaciones"
+
+    - fase: 2
+      titulo: "Implementar infraestructura"
+      tareas:
+        - "Servicio de envio de emails (Nodemailer/SendGrid)"
+        - "Servicio de notificaciones in-app"
+        - "Worker de cola de notificaciones"
+
+    - fase: 3
+      titulo: "Integrar en servicios existentes"
+      tareas:
+        - "Integrar en student-risk-alert.service"
+        - "Integrar en scheduled-reports.service"
+
+metadata:
+  agente: "claude-opus-4.5"
+  impacto: "alto"
+  riesgo: "medio"
+  estimacion: "8-12h"
+  requiere_decision_arquitectura: true

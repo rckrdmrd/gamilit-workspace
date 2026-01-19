@@ -1,0 +1,56 @@
+# METADATA.yml - TASK-2026-01-19-009
+# Version: 2.0.0
+
+task:
+  id: "TASK-2026-01-19-009"
+  title: "Corregir inconsistencias en documentacion de tareas CAPVED"
+  created: "2026-01-19"
+  updated: "2026-01-19"
+
+classification:
+  type: "documentation"
+  priority: "P3"
+  mode: "QUICK"
+  epic: "DOC-QUALITY-001"
+
+status:
+  current: "ready"
+  phase: "P"
+  completion_percentage: 0
+
+context:
+  descripcion: |
+    Algunas tareas tienen inconsistencias entre el status general y los status
+    de las fases CAPVED individuales:
+
+    - TASK-2026-01-19-001: status "completed" pero fases validation/ejecucion/documentacion "pending"
+    - TASK-2026-01-19-004: status "completed" pero fases validation/documentacion "pending"
+
+  impacto: |
+    - Dificil saber el estado real de las tareas
+    - Inconsistencia con el sistema SIMCO/CAPVED
+    - Puede causar confusion en auditorias
+
+plan:
+  steps:
+    - id: 1
+      descripcion: "Auditar TASK-2026-01-19-001"
+      detalle: "Verificar si las fases realmente estan completas y actualizar status"
+
+    - id: 2
+      descripcion: "Auditar TASK-2026-01-19-004"
+      detalle: "Verificar si las fases realmente estan completas y actualizar status"
+
+    - id: 3
+      descripcion: "Actualizar _INDEX.yml"
+      detalle: "Asegurar que el indice refleja el estado correcto"
+
+    - id: 4
+      descripcion: "Documentar hallazgos"
+      detalle: "Si hay trabajo pendiente real, documentar que falta"
+
+metadata:
+  agente: "claude-opus-4.5"
+  impacto: "bajo"
+  riesgo: "bajo"
+  estimacion: "30min"

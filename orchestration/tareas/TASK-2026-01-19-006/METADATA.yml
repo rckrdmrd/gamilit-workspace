@@ -1,0 +1,62 @@
+# METADATA.yml - TASK-2026-01-19-006
+# Version: 2.0.0
+
+task:
+  id: "TASK-2026-01-19-006"
+  title: "Migrar tipos deprecados de alertas a @shared/types"
+  created: "2026-01-19"
+  updated: "2026-01-19"
+
+classification:
+  type: "tech-debt"
+  priority: "P2"
+  mode: "QUICK"
+  epic: "TECH-DEBT-001"
+
+status:
+  current: "ready"
+  phase: "P"
+  completion_percentage: 0
+
+context:
+  descripcion: |
+    Los tipos InterventionAlertType, InterventionAlertSeverity e InterventionAlertStatus
+    estan definidos localmente en intervention-alerts.dto.ts y student-intervention-alert.entity.ts
+    pero ya existen en @shared/types. Los locales estan marcados como @deprecated.
+
+  archivos_afectados:
+    - path: "apps/backend/src/modules/teacher/dto/intervention-alerts.dto.ts"
+      lineas: "22, 29, 36"
+      issue: "Tipos locales deprecados"
+
+    - path: "apps/backend/src/modules/teacher/entities/student-intervention-alert.entity.ts"
+      lineas: "22, 29, 36"
+      issue: "Tipos locales deprecados"
+
+plan:
+  steps:
+    - id: 1
+      descripcion: "Verificar tipos en @shared/types"
+      detalle: "Confirmar que InterventionAlertType, Severity, Status existen"
+
+    - id: 2
+      descripcion: "Actualizar imports en DTOs"
+      detalle: "Cambiar de tipos locales a @shared/types"
+
+    - id: 3
+      descripcion: "Actualizar imports en entities"
+      detalle: "Cambiar de tipos locales a @shared/types"
+
+    - id: 4
+      descripcion: "Eliminar tipos locales deprecados"
+      detalle: "Borrar las definiciones locales"
+
+    - id: 5
+      descripcion: "Validar build"
+      detalle: "npm run build && npm run lint"
+
+metadata:
+  agente: "claude-opus-4.5"
+  impacto: "bajo"
+  riesgo: "bajo"
+  estimacion: "30min"
