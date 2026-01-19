@@ -21,8 +21,8 @@ jest.mock('@shared/constants/enums.constants', () => ({
   ClassroomMemberStatusEnum: {
     ACTIVE: 'active',
     INACTIVE: 'inactive',
-    SUSPENDED: 'suspended',
-    REMOVED: 'removed',
+    WITHDRAWN: 'withdrawn',   // FIX-2026-01-19: Corrected enum value
+    COMPLETED: 'completed',   // FIX-2026-01-19: Corrected enum value
   },
   TeamChallengeStatusEnum: {
     ACTIVE: 'active',

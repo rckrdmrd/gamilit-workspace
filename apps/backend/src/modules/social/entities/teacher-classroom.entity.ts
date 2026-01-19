@@ -6,6 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
   Index,
+  Unique,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 import { Classroom } from './classroom.entity';
@@ -56,6 +57,7 @@ export enum TeacherClassroomRole {
 @Index('idx_teacher_classrooms_classroom_id', ['classroom_id'])
 @Index('idx_teacher_classrooms_role', ['role'])
 @Index('idx_teacher_classrooms_tenant_id', ['tenant_id']) // FIX-2026-01-19: Added missing index
+@Unique('teacher_classrooms_teacher_id_classroom_id_key', ['teacher_id', 'classroom_id']) // FIX-2026-01-19: Added UNIQUE constraint from DDL
 export class TeacherClassroom {
   /**
    * Identificador único del registro (UUID)

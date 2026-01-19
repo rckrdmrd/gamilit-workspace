@@ -1,10 +1,15 @@
 import { Expose, Type } from 'class-transformer';
+import {
+  ClassroomMemberStatusEnum,
+  EnrollmentMethodEnum,
+} from '@shared/constants/enums.constants';
 
 /**
  * ClassroomMemberResponseDto - DTO para respuestas de membresía en aulas
  *
  * @description DTO usado para respuestas HTTP al cliente.
  * Incluye todos los campos de la entidad con sus valores actuales.
+ * FIX-2026-01-19: Tipado con enums para coherencia DDL-Backend-Frontend
  *
  * @see ClassroomMember entity para la estructura de base de datos
  */
@@ -36,9 +41,10 @@ export class ClassroomMemberResponseDto {
 
   /**
    * Método de inscripción
+   * FIX-2026-01-19: Tipado con enum para coherencia
    */
   @Expose()
-    enrollment_method!: string;
+    enrollment_method!: EnrollmentMethodEnum;
 
   /**
    * ID del usuario que inscribió
@@ -48,9 +54,10 @@ export class ClassroomMemberResponseDto {
 
   /**
    * Estado de la membresía
+   * FIX-2026-01-19: Tipado con enum para coherencia
    */
   @Expose()
-    status!: string;
+    status!: ClassroomMemberStatusEnum;
 
   /**
    * Fecha de retiro del aula
