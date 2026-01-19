@@ -447,10 +447,24 @@ execute_ddl_tables() {
     print_step "PASO 2/9: Ejecutando DDL (prerequisites y tablas)..."
 
     # Ejecutar prerequisites (ENUMs y funciones base)
+    # NOTA: Prerequisites requieren superusuario para CREATE EXTENSION y CREATE ROLE
     print_info "Ejecutando prerequisites (ENUMs y funciones base)..."
     local prereq_file="$DDL_DIR/00-prerequisites.sql"
     if [ -f "$prereq_file" ]; then
-        if PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -f "$prereq_file" > /dev/null 2>&1; then
+        local prereq_success=false
+        if [ "$USE_SUDO" = true ]; then
+            # Usar sudo como postgres (superusuario)
+            if sudo -u postgres psql -d "$DB_NAME" -f "$prereq_file" > /dev/null 2>&1; then
+                prereq_success=true
+            fi
+        else
+            # Intentar con PGPASSWORD (requiere que el usuario tenga suficientes permisos)
+            if PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -f "$prereq_file" > /dev/null 2>&1; then
+                prereq_success=true
+            fi
+        fi
+
+        if [ "$prereq_success" = true ]; then
             print_success "Prerequisites ejecutados"
         else
             print_error "Error en prerequisites"

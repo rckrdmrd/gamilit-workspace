@@ -396,13 +396,15 @@ COMMENT ON TYPE educational_content.module_status IS 'Estados del ciclo de vida 
 COMMENT ON TYPE educational_content.cognitive_level IS 'Niveles cognitivos de Bloom para objetivos de aprendizaje (v1.0)';
 
 -- 4. Gestión de Contenido
-COMMENT ON TYPE content_management.content_status IS 'Estados del ciclo de vida del contenido (v1.1 - 2025-11-08 - migrado de public)';
-COMMENT ON TYPE content_management.media_type IS 'Tipos de archivos multimedia soportados (v1.1 - 2025-11-08 - migrado de public)';
-COMMENT ON TYPE content_management.processing_status IS 'Estados de procesamiento de archivos multimedia (v1.1 - 2025-11-08 - migrado de public)';
+-- NOTA (2025-11-11): Los comentarios de content_management.* están en sus archivos de enum específicos:
+-- - content_status: ddl/schemas/content_management/enums/content_status.sql
+-- - media_type: ddl/schemas/content_management/enums/media_type.sql
+-- - processing_status: ddl/schemas/content_management/enums/processing_status.sql
 
 -- 5. Progreso y Tracking
-COMMENT ON TYPE progress_tracking.progress_status IS 'Estados de progreso del estudiante: not_started, in_progress, completed, needs_review, mastered, abandoned (v1.1 - 2025-11-08 - agregados mastered y abandoned)';
-COMMENT ON TYPE progress_tracking.attempt_status IS 'Estados de intentos de ejercicios (v1.0)';
+-- NOTA (2025-11-11): Los comentarios de progress_tracking.* están en sus archivos de enum específicos:
+-- - progress_status: ddl/schemas/progress_tracking/enums/progress_status.sql
+-- - attempt_status: ddl/schemas/progress_tracking/enums/attempt_status.sql
 
 -- 6. Características Sociales
 COMMENT ON TYPE social_features.classroom_role IS 'Roles dentro de un aula virtual (teacher, student, assistant) (v1.0)';
@@ -417,3 +419,23 @@ COMMENT ON TYPE audit_logging.log_level IS 'Niveles de severidad de logs del sis
 COMMENT ON TYPE audit_logging.audit_action IS 'Tipos de acciones auditables en el sistema (v1.0)';
 COMMENT ON TYPE audit_logging.alert_severity IS 'Niveles de severidad de alertas (v1.0)';
 COMMENT ON TYPE audit_logging.alert_status IS 'Estados de alertas del sistema (v1.0)';
+
+-- ============================================================================
+-- FUNCIONES CRÍTICAS (Requeridas antes de crear tablas)
+-- ============================================================================
+
+-- 📚 Documentación: gamilit.now_mexico()
+-- Descripción: Retorna timestamp actual en zona horaria de México
+-- Requerido por: TODAS las tablas que usan DEFAULT timestamps
+-- NOTA: Esta función DEBE cargarse antes de cualquier CREATE TABLE
+CREATE OR REPLACE FUNCTION gamilit.now_mexico()
+ RETURNS timestamp with time zone
+ LANGUAGE plpgsql
+ IMMUTABLE
+AS $function$
+BEGIN
+    RETURN NOW() AT TIME ZONE 'America/Mexico_City';
+END;
+$function$;
+
+COMMENT ON FUNCTION gamilit.now_mexico() IS 'Retorna timestamp actual en zona horaria de México (America/Mexico_City)';
