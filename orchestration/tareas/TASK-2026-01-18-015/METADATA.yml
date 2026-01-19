@@ -71,7 +71,7 @@ fases:
     notas: "Usuario aprobó ejecución de Sprint 1"
   E_ejecucion:
     status: in_progress
-    notas: "Sprint 1 (P0) completado. Sprints 2-5 pendientes."
+    notas: "Sprint 1-2 completados. Sprints 3-5 pendientes."
   D_documentacion:
     status: completed
     notas: "3 documentos entregados"
@@ -92,8 +92,30 @@ sprints:
         status: completed
         archivo: "apps/backend/src/modules/progress/entities/exercise-submission.entity.ts"
   sprint_2_data_integration:
-    status: pending
+    status: completed
+    fecha: 2026-01-19
     estimacion: "20h"
+    verificacion: "2026-01-19 - Verificado que implementacion ya existia"
+    tareas:
+      - task: "2.1 - getMasteryData() en analytics.service.ts"
+        status: completed
+        linea: 1135
+        notas: "Agrupa mastery por topic, calcula avgScore y status"
+      - task: "2.2 - getSkillAssessments() en analytics.service.ts"
+        status: completed
+        linea: 1257
+        notas: "Estructura competencias: literal, inferencial, critico, digital, textual"
+      - task: "2.3 - Integracion en getStudentInsights()"
+        status: completed
+        lineas: "504-505"
+        notas: "Llamadas paralelas con Promise.all"
+      - task: "2.4 - DTOs para mastery y skills"
+        status: completed
+        archivo: "apps/backend/src/modules/teacher/dto/analytics.dto.ts"
+        notas: "MasterySummaryDto, SkillAssessmentsSummaryDto, CompetencyInfoDto"
+      - task: "2.5 - Build verification"
+        status: completed
+        resultado: "npm run build - PASS"
   sprint_3_backend_robustness:
     status: pending
     estimacion: "16h"
