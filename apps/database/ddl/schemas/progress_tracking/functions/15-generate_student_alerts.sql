@@ -48,10 +48,12 @@ BEGIN
   -- - 10-13 días: high
   -- - 14+ días: critical
 
+  -- FIX-2026-01-19: Corregido p.user_id -> p.id
+  -- student_id es FK a profiles(id), no a profiles(user_id)
   INSERT INTO progress_tracking.student_intervention_alerts
     (student_id, classroom_id, alert_type, severity, title, description, metrics, tenant_id)
   SELECT DISTINCT
-    p.user_id,
+    p.id,  -- FIX: Usar profiles.id (no user_id) ya que student_id FK apunta a profiles(id)
     mp.classroom_id,
     'no_activity'::TEXT,
     CASE
@@ -94,10 +96,11 @@ BEGIN
   -- - <40%: critical
   -- Requiere mínimo 3 ejercicios intentados para evitar falsos positivos
 
+  -- FIX-2026-01-19: Corregido p.user_id -> p.id
   INSERT INTO progress_tracking.student_intervention_alerts
     (student_id, classroom_id, alert_type, severity, title, description, metrics, tenant_id)
   SELECT
-    p.user_id,
+    p.id,  -- FIX: Usar profiles.id (no user_id) ya que student_id FK apunta a profiles(id)
     mp.classroom_id,
     'low_score'::TEXT,
     CASE
@@ -141,10 +144,11 @@ BEGIN
   -- - 11+ intentos: high
 
   -- FIX-DB-006-2026-01-18: Corregido attempts -> attempt_number, agregado JOIN a exercises
+  -- FIX-2026-01-19: Corregido p.user_id -> p.id
   INSERT INTO progress_tracking.student_intervention_alerts
     (student_id, classroom_id, alert_type, severity, title, description, metrics, tenant_id)
   SELECT
-    p.user_id,
+    p.id,  -- FIX: Usar profiles.id (no user_id) ya que student_id FK apunta a profiles(id)
     mp.classroom_id,
     'repeated_failures'::TEXT,
     CASE
