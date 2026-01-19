@@ -67,14 +67,42 @@ fases:
     status: completed
     notas: "Plan de 5 sprints creado"
   V_validacion:
-    status: in_progress
-    notas: "Esperando validación con usuario"
+    status: completed
+    notas: "Usuario aprobó ejecución de Sprint 1"
   E_ejecucion:
-    status: pending
-    notas: "Pendiente aprobación del plan"
+    status: in_progress
+    notas: "Sprint 1 (P0) completado. Sprints 2-5 pendientes."
   D_documentacion:
     status: completed
     notas: "3 documentos entregados"
+
+# Progreso de Sprints
+sprints:
+  sprint_1_p0_fixes:
+    status: completed
+    fecha: 2026-01-18
+    tareas:
+      - task: "1.1 - Temporal filtering en gatherReportData"
+        status: completed
+        archivo: "apps/backend/src/modules/teacher/services/reports.service.ts"
+      - task: "1.2 - Trigger graded_exercises verification"
+        status: completed
+        notas: "Trigger ya existía en función update_module_progress_on_submission_graded"
+      - task: "1.3 - Status enum sync DDL-Entity"
+        status: completed
+        archivo: "apps/backend/src/modules/progress/entities/exercise-submission.entity.ts"
+  sprint_2_data_integration:
+    status: pending
+    estimacion: "20h"
+  sprint_3_backend_robustness:
+    status: pending
+    estimacion: "16h"
+  sprint_4_frontend_polish:
+    status: pending
+    estimacion: "5h"
+  sprint_5_advanced_features:
+    status: pending
+    estimacion: "24h"
 
 # Entregables
 entregables:
