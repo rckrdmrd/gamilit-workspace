@@ -102,7 +102,7 @@ INSERT INTO social_features.classrooms (
 -- asignar a TODOS los estudiantes nuevos registrados.
 -- =====================================================
 (
-    '00000000-0000-0000-0000-000000000001'::uuid,  -- UUID predecible para default
+    'a0000000-0000-4000-a000-000000000001'::uuid,  -- UUID v4 valido para classroom DEFAULT (FIX-2026-01-18: ParseUUIDPipe)
     v_default_school_id,                            -- GAMILIT - Institución General
     v_tenant_id,
     v_teacher_id,                                   -- Teacher default (teacher@gamilit.com)
@@ -202,12 +202,15 @@ END $$;
 -- =====================================================
 -- SYNC teacher_classrooms (many-to-many)
 -- =====================================================
--- Asegurar que el classroom default tiene su entrada en teacher_classrooms
+-- FIX-2026-01-18: Asegurar que TODOS los teachers tengan acceso al classroom DEFAULT
+-- Esto corrige el error 403 Forbidden cuando un teacher diferente al owner
+-- intenta acceder al classroom DEFAULT.
 -- =====================================================
 
+-- 1. Agregar al teacher owner del classroom
 INSERT INTO social_features.teacher_classrooms (id, teacher_id, classroom_id, tenant_id, role, assigned_at, created_at)
 SELECT
-    'cc000001-0000-0000-0000-000000000001'::uuid,  -- UUID estático para classroom DEFAULT (hex válido)
+    'cc000001-0000-4000-a000-000000000001'::uuid,  -- UUID v4 valido (FIX-2026-01-18)
     c.teacher_id,
     c.id,
     c.tenant_id,
@@ -220,6 +223,31 @@ WHERE c.teacher_id IS NOT NULL
 ON CONFLICT (id) DO UPDATE SET
     role = EXCLUDED.role,
     teacher_id = EXCLUDED.teacher_id;
+
+-- 2. FIX-2026-01-18: Agregar a TODOS los teachers existentes al classroom DEFAULT
+-- Esto asegura que cualquier teacher pueda acceder al aula general
+-- NOTA: user_roles.role es un ENUM, no FK. Se compara como texto lowercase.
+INSERT INTO social_features.teacher_classrooms (id, teacher_id, classroom_id, tenant_id, role, assigned_at, created_at)
+SELECT
+    gen_random_uuid(),
+    p.user_id,
+    c.id,
+    c.tenant_id,
+    'teacher',  -- Rol valido segun constraint: owner, teacher, assistant
+    NOW(),
+    NOW()
+FROM social_features.classrooms c
+CROSS JOIN auth_management.profiles p
+JOIN auth.users u ON u.id = p.user_id
+JOIN auth_management.user_roles ur ON ur.user_id = u.id
+WHERE c.code = 'DEFAULT'
+  AND ur.role::text IN ('admin_teacher', 'super_admin')  -- Roles en lowercase
+  AND p.user_id != c.teacher_id  -- Evitar duplicar el owner
+  AND NOT EXISTS (
+    SELECT 1 FROM social_features.teacher_classrooms tc
+    WHERE tc.teacher_id = p.user_id AND tc.classroom_id = c.id
+  )
+ON CONFLICT DO NOTHING;
 
 -- Verificar sync
 DO $$

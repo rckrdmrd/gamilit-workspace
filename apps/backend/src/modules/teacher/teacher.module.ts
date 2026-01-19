@@ -65,7 +65,7 @@ import {
   ExerciseResponsesService,
   StorageService,
   TeacherReportsService,
-  RubricScoringService,
+  // TASK-2026-01-18-009: Removed RubricScoringService (orphan code)
 } from './services';
 import { TeacherMessagesService } from './services/teacher-messages.service';
 import { ManualReviewService } from './services/manual-review.service';
@@ -195,7 +195,7 @@ import { AuditModule } from '@modules/audit/audit.module';
     StorageService,
     TeacherReportsService,
     ManualReviewService,
-    RubricScoringService,
+    // TASK-2026-01-18-009: Removed RubricScoringService (orphan code - never injected)
 
     // Guards
     TeacherGuard,
@@ -213,7 +213,7 @@ import { AuditModule } from '@modules/audit/audit.module';
     TeacherContentService,
     ExerciseResponsesService,
     ManualReviewService,
-    RubricScoringService,
+    // TASK-2026-01-18-009: Removed RubricScoringService
   ],
 })
 export class TeacherModule {}

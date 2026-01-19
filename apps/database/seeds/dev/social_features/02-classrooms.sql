@@ -5,7 +5,7 @@
 -- Dependencies: social_features.schools (00-schools-default.sql), auth_management.profiles
 -- Order: 02
 -- Created: 2025-01-11
--- Updated: 2026-01-08 - Renombrado a GAMILIT Aula General
+-- Updated: 2026-01-18 - FIX-UUID-002: Cambiar fallback UUID a formato v4 válido
 -- Version: 4.0
 -- =====================================================
 --
@@ -61,9 +61,9 @@ BEGIN
     LIMIT 1;
 
     IF v_teacher_id IS NULL THEN
-        -- Usar el UUID conocido como fallback
-        v_teacher_id := 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid;
-        RAISE WARNING 'Teacher default no encontrado, usando UUID: %', v_teacher_id;
+        -- FIX-UUID-002: Usar UUID v4 válido como fallback (formato RFC 4122)
+        v_teacher_id := 'b0000000-0000-4000-b000-000000000001'::uuid;
+        RAISE WARNING 'Teacher default no encontrado, usando UUID v4 fallback: %', v_teacher_id;
     END IF;
 
     RAISE NOTICE 'Usando tenant_id: %', v_tenant_id;
@@ -102,7 +102,7 @@ INSERT INTO social_features.classrooms (
 -- asignar a TODOS los estudiantes nuevos registrados.
 -- =====================================================
 (
-    '00000000-0000-0000-0000-000000000001'::uuid,  -- UUID predecible para default
+    'a0000000-0000-4000-a000-000000000001'::uuid,  -- UUID v4 valido para classroom DEFAULT (FIX-2026-01-18: ParseUUIDPipe)
     v_default_school_id,                            -- GAMILIT - Institución General
     v_tenant_id,
     v_teacher_id,                                   -- Teacher default (teacher@gamilit.com)
@@ -202,12 +202,15 @@ END $$;
 -- =====================================================
 -- SYNC teacher_classrooms (many-to-many)
 -- =====================================================
--- Asegurar que el classroom default tiene su entrada en teacher_classrooms
+-- FIX-2026-01-18: Asegurar que TODOS los teachers tengan acceso al classroom DEFAULT
+-- Esto corrige el error 403 Forbidden cuando un teacher diferente al owner
+-- intenta acceder al classroom DEFAULT.
 -- =====================================================
 
+-- 1. Agregar al teacher owner del classroom
 INSERT INTO social_features.teacher_classrooms (id, teacher_id, classroom_id, tenant_id, role, assigned_at, created_at)
 SELECT
-    'cc000001-0000-0000-0000-000000000001'::uuid,  -- UUID estático para classroom DEFAULT (hex válido)
+    'cc000001-0000-4000-a000-000000000001'::uuid,  -- UUID v4 valido (FIX-2026-01-18)
     c.teacher_id,
     c.id,
     c.tenant_id,
@@ -220,6 +223,31 @@ WHERE c.teacher_id IS NOT NULL
 ON CONFLICT (id) DO UPDATE SET
     role = EXCLUDED.role,
     teacher_id = EXCLUDED.teacher_id;
+
+-- 2. FIX-2026-01-18: Agregar a TODOS los teachers existentes al classroom DEFAULT
+-- Esto asegura que cualquier teacher pueda acceder al aula general
+-- NOTA: user_roles.role es un ENUM, no FK. Se compara como texto lowercase.
+INSERT INTO social_features.teacher_classrooms (id, teacher_id, classroom_id, tenant_id, role, assigned_at, created_at)
+SELECT
+    gen_random_uuid(),
+    p.user_id,
+    c.id,
+    c.tenant_id,
+    'teacher',  -- Rol valido segun constraint: owner, teacher, assistant
+    NOW(),
+    NOW()
+FROM social_features.classrooms c
+CROSS JOIN auth_management.profiles p
+JOIN auth.users u ON u.id = p.user_id
+JOIN auth_management.user_roles ur ON ur.user_id = u.id
+WHERE c.code = 'DEFAULT'
+  AND ur.role::text IN ('admin_teacher', 'super_admin')  -- Roles en lowercase
+  AND p.user_id != c.teacher_id  -- Evitar duplicar el owner
+  AND NOT EXISTS (
+    SELECT 1 FROM social_features.teacher_classrooms tc
+    WHERE tc.teacher_id = p.user_id AND tc.classroom_id = c.id
+  )
+ON CONFLICT DO NOTHING;
 
 -- Verificar sync
 DO $$

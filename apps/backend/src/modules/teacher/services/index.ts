@@ -19,4 +19,5 @@ export * from './exercise-responses.service';
 export * from './storage.service';
 export * from './teacher-reports.service';
 export * from './manual-review.service';
-export * from './rubric-scoring.service';
+// TASK-2026-01-18-009: Removed rubric-scoring.service.ts (orphan code - never injected/used)
+// Rubrics now come from educational_content.exercise_type_rubrics via ManualReviewService

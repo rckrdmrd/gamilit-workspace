@@ -847,4 +847,88 @@ export class ManualReviewService {
       normalCount: parseInt(stats.normal_count || '0', 10),
     };
   }
+
+  /**
+   * TASK-2026-01-18-009: Obtiene la configuración de ejercicios con revisión manual
+   *
+   * Retorna todos los ejercicios que requieren revisión manual (requires_manual_grading = true)
+   * junto con la información del módulo al que pertenecen.
+   *
+   * NOTA: Este endpoint reemplaza los datos hardcodeados de:
+   * - Frontend: manualReviewExercises.ts (MANUAL_REVIEW_MODULES, MANUAL_REVIEW_EXERCISES)
+   *
+   * @returns Módulos y ejercicios que requieren revisión manual
+   */
+  async getManualReviewConfig(): Promise<{
+    modules: Array<{
+      id: string;
+      name: string;
+      number: number;
+    }>;
+    exercises: Array<{
+      id: string;
+      title: string;
+      exerciseType: string;
+      moduleId: string;
+      moduleName: string;
+      moduleNumber: number;
+    }>;
+  }> {
+    // Obtener ejercicios con revisión manual
+    const exercises = await this.exerciseRepo
+      .createQueryBuilder('e')
+      .select([
+        'e.id',
+        'e.title',
+        'e.exercise_type',
+        'e.module_id',
+        'e.order_index',
+      ])
+      .where('e.requires_manual_grading = :requiresManual', { requiresManual: true })
+      .andWhere('e.is_active = :isActive', { isActive: true })
+      .orderBy('e.order_index', 'ASC')
+      .getMany();
+
+    if (exercises.length === 0) {
+      return { modules: [], exercises: [] };
+    }
+
+    // Obtener IDs de módulos únicos
+    const moduleIds = [...new Set(exercises.map(e => e.module_id))];
+
+    // Obtener información de los módulos
+    const modules = await this.exerciseRepo.query(
+      `SELECT id, title as name, order_index as number
+       FROM educational_content.modules
+       WHERE id = ANY($1)
+       ORDER BY order_index ASC`,
+      [moduleIds],
+    );
+
+    // Crear mapa de módulos para enriquecer ejercicios
+    const moduleMap = new Map<string, { name: string; number: number }>();
+    for (const mod of modules) {
+      moduleMap.set(mod.id, { name: mod.name, number: parseInt(mod.number, 10) });
+    }
+
+    // Formatear respuesta
+    return {
+      modules: modules.map((m: any) => ({
+        id: m.id,
+        name: m.name,
+        number: parseInt(m.number, 10),
+      })),
+      exercises: exercises.map(e => {
+        const mod = moduleMap.get(e.module_id) || { name: 'Unknown', number: 0 };
+        return {
+          id: e.id,
+          title: e.title,
+          exerciseType: e.exercise_type,
+          moduleId: e.module_id,
+          moduleName: mod.name,
+          moduleNumber: mod.number,
+        };
+      }),
+    };
+  }
 }

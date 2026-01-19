@@ -1,8 +1,23 @@
 /**
  * Manual Review Exercises Configuration
  *
- * Exercises from modules 3, 4, and 5 that require manual teacher review.
- * These exercises have auto_gradable = false in the database.
+ * @deprecated TASK-2026-01-18-009: This file is DEPRECATED.
+ *
+ * Use the new hook instead:
+ * ```typescript
+ * import { useManualReviewConfig } from '../hooks/useManualReviewConfig';
+ *
+ * const { data } = useManualReviewConfig();
+ * const modules = data?.modules || [];
+ * const exercises = data?.exercises || [];
+ * ```
+ *
+ * This file contained hardcoded data that should come from the database.
+ * The data is now served from:
+ * - Backend: GET /api/v1/teacher/reviews/config/exercises
+ * - Database: educational_content.exercises WHERE requires_manual_grading = true
+ *
+ * TODO: Remove this file once all consumers have migrated to the hook.
  *
  * @module apps/teacher/constants/manualReviewExercises
  */

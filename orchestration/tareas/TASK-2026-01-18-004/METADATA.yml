@@ -1,0 +1,51 @@
+id: TASK-2026-01-18-004
+title: "Correccion Error 400 en Teacher/Monitoring - FASE 1"
+type: bug-fix
+priority: P0-CRITICAL
+status: completed
+created: 2026-01-18
+updated: 2026-01-18
+
+description: |
+  Correccion del error 400 Bad Request en la pagina /teacher/monitoring.
+  El error era causado por UUIDs invalidos en seeds y falta de relacion teacher_classrooms.
+
+root_cause:
+  - UUID '00000000-0000-0000-0000-000000000001' no es valido segun RFC 4122
+  - ParseUUIDPipe de NestJS rechazaba el UUID con 400
+  - Falta sync de teacher_classrooms para teachers con roles admin_teacher/super_admin
+
+solution_applied:
+  - Cambiado UUID de classroom DEFAULT a 'a0000000-0000-4000-a000-000000000001' (UUID v4 valido)
+  - Cambiado UUID de teacher_classrooms entry a 'cc000001-0000-4000-a000-000000000001' (UUID v4 valido)
+  - Agregado INSERT para sincronizar TODOS los teachers al classroom DEFAULT
+  - Corregido query para usar ENUM role directamente (lowercase)
+  - Corregido valor de role de 'co_teacher' a 'teacher' (segun constraint)
+
+files_modified:
+  - apps/database/seeds/dev/social_features/02-classrooms.sql
+  - apps/database/seeds/staging/social_features/02-classrooms.sql
+  - apps/database/seeds/prod/social_features/02-classrooms.sql
+
+database_changes:
+  - Classroom DEFAULT ahora usa UUID: a0000000-0000-4000-a000-000000000001
+  - Teachers con roles admin_teacher y super_admin tienen acceso al classroom DEFAULT
+  - admin@gamilit.com (super_admin) agregado como 'teacher' al classroom DEFAULT
+  - teacher@gamilit.com (admin_teacher) mantiene rol 'owner'
+
+validation:
+  queries:
+    - "SELECT id FROM social_features.classrooms WHERE code = 'DEFAULT'"
+    - "SELECT * FROM social_features.teacher_classrooms tc JOIN social_features.classrooms c ON c.id = tc.classroom_id WHERE c.code = 'DEFAULT'"
+  results:
+    - Classroom DEFAULT tiene UUID v4 valido
+    - 2 teachers tienen acceso: owner (teacher@gamilit.com) y teacher (admin@gamilit.com)
+
+pending_validation:
+  - Iniciar backend y verificar que GET /teacher/classrooms/:id retorna 200
+  - Navegar a /teacher/monitoring y verificar que no hay error 400 en consola
+
+related_analysis:
+  - orchestration/analisis/ANALISIS-TEACHER-MONITORING-400-2026-01-18.md
+
+agent: arquitecto-soluciones

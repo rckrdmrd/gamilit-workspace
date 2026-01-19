@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.5.0"
+version: "1.6.0"
 last_updated: "2026-01-18"
-total_tasks: 8
+total_tasks: 10
 
 # =========================================
 # TAREAS POR FECHA
@@ -15,7 +15,7 @@ tasks:
   # 2026-01-18
   # ----------------------------------------
   - id: TASK-2026-01-18-008
-    title: "Fix Teacher Reviews Page - Rubric Data + Infinite Loop"
+    title: "Fix Teacher Reviews Page - Rubric Data + Infinite Loop + Audit Fixes"
     date: "2026-01-18"
     status: completed
     priority: P0
@@ -29,15 +29,20 @@ tasks:
     entregables:
       - "METADATA.yml"
       - "02-CAMBIOS-IMPLEMENTADOS.md"
+      - "03-AUDITORIA-COHERENCIA.md"
     metricas:
-      archivos_modificados: 4
-      problemas_corregidos: 2
+      archivos_modificados: 7
+      problemas_corregidos: 5
       validaciones_pasadas: 4
+      auditorias_realizadas: 1
     conclusiones:
       - "Rubric data ahora se carga desde exercise_type_rubrics"
       - "Callbacks memoizados con useCallback para evitar bucle infinito"
       - "UI de fallback cuando rubric no está disponible"
       - "EnrichedManualReview ahora incluye rubric[]"
+      - "Tipo rubric marcado como opcional en ManualReview interface"
+      - "ReviewList.tsx: acceso seguro a review.rubric con null check"
+      - "RubricScoringService identificado como código huérfano (P2)"
     path: "orchestration/tareas/TASK-2026-01-18-008/"
 
   - id: TASK-2026-01-18-007
@@ -68,6 +73,61 @@ tasks:
       - "Campo BD requires_manual_grading ahora es fuente de verdad"
       - "3 ejercicios M4 ahora marcados correctamente"
     path: "orchestration/tareas/TASK-2026-01-18-007/"
+
+  - id: TASK-2026-01-18-005
+    title: "Correccion Student Detail Modal - Incompatibilidad Frontend/Backend"
+    date: "2026-01-18"
+    status: completed
+    priority: P0
+    type: bug-fix
+    metodologia: CAPVED
+    dominios:
+      - "Backend"
+      - "Teacher Portal"
+      - "DTOs"
+    entregables:
+      - "METADATA.yml"
+      - "01-CONTEXTO.md"
+      - "05-EJECUCION.md"
+      - "06-DOCUMENTACION.md"
+    metricas:
+      archivos_creados: 1
+      archivos_modificados: 3
+      gaps_resueltos: 3
+      campos_agregados: 11
+    conclusiones:
+      - "DTOs alineados con interfaces frontend (StudentProgress, StudentStats)"
+      - "Estructura de respuesta plana implementada"
+      - "Campos de gamificacion agregados (streaks, hints, powerups)"
+      - "Nuevos metodos getStudentProgressResponse y getStudentStatsResponse"
+    path: "orchestration/tareas/TASK-2026-01-18-005/"
+
+  - id: TASK-2026-01-18-004
+    title: "Correccion Error 400 en Teacher/Monitoring - UUID Invalido"
+    date: "2026-01-18"
+    status: completed
+    priority: P0
+    type: bug-fix
+    metodologia: CAPVED
+    dominios:
+      - "Database Seeds"
+      - "Teacher Portal"
+      - "RFC 4122 Compliance"
+    entregables:
+      - "METADATA.yml"
+      - "01-CONTEXTO.md"
+      - "05-EJECUCION.md"
+      - "06-DOCUMENTACION.md"
+    metricas:
+      archivos_modificados: 3
+      uuids_corregidos: 2
+      queries_agregados: 1
+    conclusiones:
+      - "UUID classroom DEFAULT corregido a formato v4 valido"
+      - "Sync de teachers al classroom DEFAULT implementado"
+      - "ParseUUIDPipe ya no rechaza el UUID"
+      - "Error 400 resuelto en GET /teacher/classrooms/:id"
+    path: "orchestration/tareas/TASK-2026-01-18-004/"
 
   - id: TASK-2026-01-18-006
     title: "Analisis y Correccion Teacher/Responses Page"
@@ -276,7 +336,7 @@ tasks:
 # RESUMEN POR ESTADO
 # =========================================
 summary:
-  completed: 7
+  completed: 10
   in_progress: 0
   pending: 0
 

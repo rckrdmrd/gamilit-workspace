@@ -490,6 +490,8 @@ export const API_ENDPOINTS = {
       start: (reviewId: string) => `/teacher/reviews/${reviewId}/start`,
       update: (id: string) => `/teacher/reviews/${id}`,
       complete: (id: string) => `/teacher/reviews/${id}/complete`,
+      // TASK-2026-01-18-009: Endpoint para obtener config de ejercicios (reemplaza hardcoded data)
+      config: '/teacher/reviews/config/exercises',
     },
 
     // Student Progress (P1-05: Centralized endpoints)

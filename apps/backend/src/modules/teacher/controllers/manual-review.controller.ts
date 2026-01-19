@@ -44,6 +44,63 @@ export class ManualReviewController {
   constructor(private readonly reviewService: ManualReviewService) {}
 
   /**
+   * TASK-2026-01-18-009: Obtiene configuración de ejercicios con revisión manual
+   *
+   * Retorna módulos y ejercicios que requieren revisión manual desde la BD.
+   * Este endpoint reemplaza los datos hardcodeados de manualReviewExercises.ts
+   */
+  @Get('config/exercises')
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @ApiOperation({ summary: 'Obtener configuración de ejercicios con revisión manual' })
+  @ApiResponse({
+    status: 200,
+    description: 'Módulos y ejercicios que requieren revisión manual',
+    schema: {
+      type: 'object',
+      properties: {
+        modules: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              name: { type: 'string' },
+              number: { type: 'number' },
+            },
+          },
+        },
+        exercises: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              title: { type: 'string' },
+              exerciseType: { type: 'string' },
+              moduleId: { type: 'string' },
+              moduleName: { type: 'string' },
+              moduleNumber: { type: 'number' },
+            },
+          },
+        },
+      },
+    },
+  })
+  async getManualReviewConfig(): Promise<{
+    modules: Array<{ id: string; name: string; number: number }>;
+    exercises: Array<{
+      id: string;
+      title: string;
+      exerciseType: string;
+      moduleId: string;
+      moduleName: string;
+      moduleNumber: number;
+    }>;
+  }> {
+    return this.reviewService.getManualReviewConfig();
+  }
+
+  /**
    * Obtiene reviews pendientes para el docente autenticado
    * FIX GAP-LOW-002: Added pagination support
    */
