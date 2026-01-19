@@ -105,18 +105,31 @@ export interface StartReviewRequest {
 
 /**
  * Request to update a review (save progress)
+ * TASK-2026-01-18-010: Actualizado para coincidir con backend CreateReviewDto
+ *
+ * Backend espera:
+ * - rubricScores: Record<string, number> (e.g., { creativity: 25, accuracy: 30 })
+ * - totalScore: number (0-100)
+ * - generalFeedback?: string
+ * - detailedFeedback?: Record<string, unknown>
  */
 export interface UpdateReviewRequest {
-  evaluations?: RubricEvaluation[];
+  rubricScores?: Record<string, number>;
+  totalScore?: number;
   generalFeedback?: string;
+  detailedFeedback?: Record<string, unknown>;
   status?: ReviewStatus;
 }
 
 /**
  * Request to complete a review
+ * TASK-2026-01-18-010: El endpoint backend NO acepta body
+ * Las evaluaciones deben guardarse ANTES con updateReview()
+ *
+ * @deprecated Use updateReview() first, then completeReview() without params
  */
 export interface CompleteReviewRequest {
-  evaluations: RubricEvaluation[];
+  evaluations?: RubricEvaluation[];
   generalFeedback?: string;
   notifyStudent?: boolean;
 }
@@ -241,17 +254,28 @@ export const updateReview = async (
 /**
  * Complete a review and send feedback to student
  *
+ * TASK-2026-01-18-010: El endpoint backend NO acepta body.
+ * Las evaluaciones (rubricScores, totalScore, feedback) deben guardarse
+ * ANTES con updateReview().
+ *
+ * Este endpoint:
+ * 1. Marca el review como 'completed'
+ * 2. Llama a gradeSubmission() para calificar el submission
+ * 3. Llama a claimRewards() para distribuir XP y ML Coins
+ * 4. Envía notificación al estudiante
+ *
  * @param reviewId - Review ID
- * @param completion - Final evaluation and feedback
- * @returns Completion response with notification status
+ * @param _completion - DEPRECATED: Body ignorado por backend
+ * @returns Completion response with rewards info
  */
 export const completeReview = async (
   reviewId: string,
-  completion: CompleteReviewRequest
+  _completion?: CompleteReviewRequest
 ): Promise<CompleteReviewResponse> => {
+  // TASK-2026-01-18-010: Backend no acepta body, solo POST con ID
   const { data } = await apiClient.post<CompleteReviewResponse>(
     API_ENDPOINTS.teacher.reviews.complete(reviewId),
-    completion
+    {} // Empty body - backend ignores any sent data
   );
   return data;
 };

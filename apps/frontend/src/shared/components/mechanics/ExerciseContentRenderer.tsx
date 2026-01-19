@@ -117,7 +117,8 @@ export const ExerciseContentRenderer: React.FC<ExerciseContentRendererProps> = (
       return <MultimediaRenderer data={answerData} type={exerciseType} />;
 
     default:
-      return <FallbackRenderer data={answerData} />;
+      // TASK-2026-01-18-010: Pasar tipo para diagnóstico
+      return <FallbackRenderer data={answerData} exerciseType={exerciseType} />;
   }
 };
 
@@ -596,14 +597,89 @@ const MultimediaRenderer: React.FC<{ data: Record<string, unknown>; type: string
 
 /**
  * Renderiza respuestas de tipos de ejercicio no reconocidos
- * Muestra el JSON formateado como fallback
+ * TASK-2026-01-18-010: Mejorado para mostrar datos de forma más legible
+ * y con diagnóstico para desarrolladores
  */
-const FallbackRenderer: React.FC<{ data: Record<string, unknown> }> = ({ data }) => {
-  return (
-    <div className="rounded-lg bg-gray-100 p-4">
-      <pre className="overflow-x-auto whitespace-pre-wrap text-sm">
-        {JSON.stringify(data, null, 2)}
+const FallbackRenderer: React.FC<{ data: Record<string, unknown>; exerciseType?: string }> = ({
+  data,
+  exerciseType,
+}) => {
+  // Si no hay datos o están vacíos
+  if (!data || Object.keys(data).length === 0) {
+    return (
+      <div className="rounded-lg bg-yellow-50 border border-yellow-200 p-4">
+        <p className="text-yellow-800 text-sm">No hay datos de respuesta disponibles.</p>
+      </div>
+    );
+  }
+
+  // Intentar renderizar de forma más legible
+  const renderValue = (key: string, value: unknown): React.ReactNode => {
+    if (value === null || value === undefined) {
+      return <span className="text-gray-400 italic">Sin valor</span>;
+    }
+    if (typeof value === 'string') {
+      // Si es una URL de imagen/video/audio, renderizar media
+      if (/\.(jpg|jpeg|png|gif|webp)$/i.test(value)) {
+        return <img src={value} alt={key} className="max-w-md rounded-lg" />;
+      }
+      if (/\.(mp4|webm|mov)$/i.test(value)) {
+        return (
+          <video controls className="max-w-md rounded-lg">
+            <source src={value} />
+          </video>
+        );
+      }
+      if (/\.(mp3|wav|ogg|m4a)$/i.test(value)) {
+        return (
+          <audio controls className="w-full">
+            <source src={value} />
+          </audio>
+        );
+      }
+      // Texto normal
+      return <p className="whitespace-pre-wrap text-gray-800">{value}</p>;
+    }
+    if (typeof value === 'number' || typeof value === 'boolean') {
+      return <span className="font-mono">{String(value)}</span>;
+    }
+    if (Array.isArray(value)) {
+      return (
+        <ul className="list-disc list-inside space-y-1">
+          {value.map((item, idx) => (
+            <li key={idx} className="text-gray-700">
+              {typeof item === 'object' ? JSON.stringify(item) : String(item)}
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    // Objeto complejo
+    return (
+      <pre className="overflow-x-auto rounded bg-white p-2 text-xs font-mono">
+        {JSON.stringify(value, null, 2)}
       </pre>
+    );
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Advertencia para desarrolladores (solo en desarrollo) */}
+      {process.env.NODE_ENV === 'development' && exerciseType && (
+        <div className="rounded bg-orange-100 border border-orange-200 p-2 text-xs text-orange-800">
+          Tipo de ejercicio no reconocido: <code className="font-mono">{exerciseType}</code>
+        </div>
+      )}
+
+      {/* Renderizar cada campo de forma legible */}
+      {Object.entries(data).map(([key, value]) => (
+        <div key={key} className="rounded-lg bg-gray-50 p-4">
+          <span className="mb-2 block font-semibold capitalize text-gray-700">
+            {key.replace(/_/g, ' ')}
+          </span>
+          {renderValue(key, value)}
+        </div>
+      ))}
     </div>
   );
 };

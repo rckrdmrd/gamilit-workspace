@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.7.0"
+version: "1.8.0"
 last_updated: "2026-01-18"
-total_tasks: 11
+total_tasks: 12
 
 # =========================================
 # TAREAS POR FECHA
@@ -14,6 +14,32 @@ tasks:
   # ----------------------------------------
   # 2026-01-18
   # ----------------------------------------
+  - id: TASK-2026-01-18-010
+    title: "Fix Teacher Reviews - Flujo de Evaluación y Gamificación"
+    date: "2026-01-18"
+    status: completed
+    priority: P0
+    type: bug-fix + enhancement
+    metodologia: CAPVED
+    dominios:
+      - "Frontend"
+      - "Teacher Portal"
+      - "Manual Reviews"
+      - "Gamification"
+    entregables:
+      - "METADATA.yml"
+    metricas:
+      archivos_modificados: 3
+      bugs_corregidos: 5
+      ux_mejoras: 3
+    conclusiones:
+      - "Transformación evaluations[] -> rubricScores{} implementada"
+      - "Flujo corregido: guardar evaluación antes de completar"
+      - "Botones renombrados: 'Guardar Borrador' y 'Calificar Respuesta'"
+      - "FallbackRenderer mejorado con renderizado inteligente"
+      - "Integración gamificación verificada end-to-end"
+    path: "orchestration/tareas/TASK-2026-01-18-010/"
+
   - id: TASK-2026-01-18-009
     title: "Erradicar Datos Hardcodeados - Consumir desde BD/API"
     date: "2026-01-18"
@@ -365,7 +391,7 @@ tasks:
 # RESUMEN POR ESTADO
 # =========================================
 summary:
-  completed: 11
+  completed: 12
   in_progress: 0
   pending: 0
 

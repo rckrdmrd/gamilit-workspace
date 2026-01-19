@@ -1,10 +1,29 @@
 import React, { useState, useCallback } from 'react';
-import { X, Save, Send, User, BookOpen, Calendar, FileText, Image as ImageIcon, Video, Music, Award, Coins, TrendingUp } from 'lucide-react';
+import { X, Save, Send, User, BookOpen, Calendar, FileText, Image as ImageIcon, Video, Music, Award, Coins, TrendingUp, CheckCircle } from 'lucide-react';
 import { ManualReview, RubricEvaluation, ReviewRewards, manualReviewApi } from '@/shared/api/manualReviewApi';
 import { RubricEvaluator } from '@/shared/components/mechanics/RubricEvaluator';
 import { ExerciseContentRenderer } from '@/shared/components/mechanics/ExerciseContentRenderer';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+
+/**
+ * TASK-2026-01-18-010: Helper para transformar evaluaciones frontend a formato backend
+ * Frontend: RubricEvaluation[] = [{ criterionId, score, feedback }]
+ * Backend: rubricScores = { criterionId: score }, detailedFeedback = { criterionId: feedback }
+ */
+const transformEvaluationsToBackend = (evaluations: RubricEvaluation[]) => {
+  const rubricScores: Record<string, number> = {};
+  const detailedFeedback: Record<string, string> = {};
+
+  evaluations.forEach((evaluation) => {
+    rubricScores[evaluation.criterionId] = evaluation.score;
+    if (evaluation.feedback) {
+      detailedFeedback[evaluation.criterionId] = evaluation.feedback;
+    }
+  });
+
+  return { rubricScores, detailedFeedback };
+};
 
 /**
  * ReviewDetail Props
@@ -62,6 +81,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
 
   /**
    * Save progress (partial review)
+   * TASK-2026-01-18-010: Transformar evaluaciones al formato esperado por backend
    */
   const handleSaveProgress = async () => {
     try {
@@ -69,17 +89,22 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
       setError(null);
       setSuccess(null);
 
+      // Transformar evaluaciones al formato backend
+      const { rubricScores, detailedFeedback } = transformEvaluationsToBackend(evaluations);
+
       await manualReviewApi.updateReview(review.id, {
-        evaluations,
+        rubricScores,
+        totalScore: _totalScore,
         generalFeedback,
+        detailedFeedback: Object.keys(detailedFeedback).length > 0 ? detailedFeedback : undefined,
         status: 'in_progress',
       });
 
-      setSuccess('Progreso guardado exitosamente');
+      setSuccess('Evaluación guardada exitosamente');
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
       console.error('Error saving progress:', err);
-      setError(err instanceof Error ? err.message : 'Error al guardar progreso');
+      setError(err instanceof Error ? err.message : 'Error al guardar evaluación');
     } finally {
       setSaving(false);
     }
@@ -88,14 +113,18 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
   /**
    * Complete and submit review
    * FIX GAP-CRIT-001: Now captures and displays rewards assigned to student
+   * TASK-2026-01-18-010: Guardar evaluación ANTES de completar (backend no acepta body en complete)
    */
   const handleCompleteReview = async () => {
     if (!isValid) {
-      setError('Por favor completa todos los criterios antes de enviar');
+      setError('Por favor completa todos los criterios de la rúbrica antes de calificar');
       return;
     }
 
-    if (!window.confirm('¿Estás seguro de enviar esta revisión? El estudiante será notificado.')) {
+    if (!window.confirm(
+      `¿Confirmas la calificación de ${_totalScore}/100 puntos?\n\n` +
+      'El estudiante será notificado y recibirá las recompensas correspondientes (XP y ML Coins).'
+    )) {
       return;
     }
 
@@ -104,28 +133,37 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
       setError(null);
       setSuccess(null);
 
-      // FIX GAP-CRIT-001: Capturar respuesta con rewards
-      const response = await manualReviewApi.completeReview(review.id, {
-        evaluations,
+      // TASK-2026-01-18-010: PASO 1 - Guardar evaluación primero
+      // El endpoint /complete no acepta body, así que debemos guardar antes
+      const { rubricScores, detailedFeedback } = transformEvaluationsToBackend(evaluations);
+
+      await manualReviewApi.updateReview(review.id, {
+        rubricScores,
+        totalScore: _totalScore,
         generalFeedback,
-        notifyStudent: true,
+        detailedFeedback: Object.keys(detailedFeedback).length > 0 ? detailedFeedback : undefined,
+        status: 'in_progress', // Se marcará como 'completed' en el siguiente paso
       });
 
-      // Mostrar recompensas asignadas
+      // TASK-2026-01-18-010: PASO 2 - Completar review y distribuir recompensas
+      // Este endpoint marca como completed, califica submission y distribuye gamificación
+      const response = await manualReviewApi.completeReview(review.id);
+
+      // Mostrar recompensas asignadas al estudiante
       if (response.rewards) {
         setAssignedRewards(response.rewards);
-        setSuccess('¡Revisión completada! Recompensas asignadas al estudiante.');
+        setSuccess(`¡Calificación completada! (${_totalScore}/100)\nRecompensas asignadas al estudiante.`);
       } else {
-        setSuccess('Revisión completada y enviada al estudiante');
+        setSuccess(`Calificación completada: ${_totalScore}/100 puntos`);
       }
 
       // Cerrar después de mostrar los rewards por más tiempo
       setTimeout(() => {
         onClose();
-      }, response.rewards ? 4000 : 2000);
+      }, response.rewards ? 5000 : 2500);
     } catch (err) {
       console.error('Error completing review:', err);
-      setError(err instanceof Error ? err.message : 'Error al completar revisión');
+      setError(err instanceof Error ? err.message : 'Error al completar la calificación');
     } finally {
       setCompleting(false);
     }
@@ -354,22 +392,34 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
         </button>
 
         <div className="flex items-center gap-3">
+          {/* Mostrar puntaje actual */}
+          {_totalScore > 0 && (
+            <div className="flex items-center gap-2 rounded-lg bg-blue-50 px-4 py-2 text-blue-800">
+              <span className="text-sm font-medium">Puntaje:</span>
+              <span className="text-lg font-bold">{_totalScore}/100</span>
+            </div>
+          )}
+
+          {/* TASK-2026-01-18-010: Botón para guardar borrador de evaluación */}
           <button
             onClick={handleSaveProgress}
-            disabled={saving}
+            disabled={saving || evaluations.length === 0}
             className="flex items-center gap-2 rounded-detective border border-detective-orange bg-white px-6 py-2 text-detective-orange hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Guardar evaluación como borrador para continuar después"
           >
             <Save className="h-4 w-4" />
-            {saving ? 'Guardando...' : 'Guardar Progreso'}
+            {saving ? 'Guardando...' : 'Guardar Borrador'}
           </button>
 
+          {/* TASK-2026-01-18-010: Botón principal para calificar y enviar */}
           <button
             onClick={handleCompleteReview}
             disabled={!isValid || completing}
-            className="flex items-center gap-2 rounded-detective bg-detective-orange px-6 py-2 text-white hover:bg-detective-orange/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 rounded-detective bg-gradient-to-r from-green-600 to-green-700 px-6 py-2 text-white hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+            title={!isValid ? 'Completa todos los criterios de la rúbrica primero' : 'Calificar y enviar al estudiante'}
           >
-            <Send className="h-4 w-4" />
-            {completing ? 'Enviando...' : 'Completar y Enviar'}
+            <CheckCircle className="h-4 w-4" />
+            {completing ? 'Calificando...' : 'Calificar Respuesta'}
           </button>
         </div>
       </div>
