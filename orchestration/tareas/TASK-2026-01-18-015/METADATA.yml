@@ -71,7 +71,7 @@ fases:
     notas: "Usuario aprobó ejecución de Sprint 1"
   E_ejecucion:
     status: in_progress
-    notas: "Sprint 1-2 completados. Sprints 3-5 pendientes."
+    notas: "Sprint 1-3 completados. Sprints 4-5 pendientes."
   D_documentacion:
     status: completed
     notas: "3 documentos entregados"
@@ -117,8 +117,29 @@ sprints:
         status: completed
         resultado: "npm run build - PASS"
   sprint_3_backend_robustness:
-    status: pending
+    status: completed
+    fecha: 2026-01-19
     estimacion: "16h"
+    verificacion: "2026-01-19 - Verificado que implementacion ya existia"
+    tareas:
+      - task: "3.1 - Transacciones en MLCoinsService"
+        status: completed
+        archivo: "apps/backend/src/modules/gamification/services/ml-coins.service.ts"
+        lineas: "97-147"
+        notas: "dataSource.transaction con pessimistic_write lock"
+      - task: "3.2 - EngagementMetricsService"
+        status: completed
+        archivo: "apps/backend/src/modules/progress/services/engagement-metrics.service.ts"
+        lineas: "39-81"
+        notas: "@Cron('59 23 * * *') calculo diario de metricas"
+      - task: "3.3 - SessionCleanupService"
+        status: completed
+        archivo: "apps/backend/src/modules/progress/services/session-cleanup.service.ts"
+        lineas: "37-67"
+        notas: "@Cron('0 * * * *') limpieza de sesiones huerfanas cada hora"
+      - task: "3.4 - Build verification"
+        status: completed
+        resultado: "npm run build - PASS (15.83s)"
   sprint_4_frontend_polish:
     status: pending
     estimacion: "5h"

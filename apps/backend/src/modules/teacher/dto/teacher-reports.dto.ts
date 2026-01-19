@@ -88,6 +88,8 @@ export class GetRecentReportsQueryDto {
 
 /**
  * Response DTO for report metadata
+ *
+ * FIX-2026-01-19: Added file_size_bytes field for Sprint 4.1 feature
  */
 export class ReportMetadataDto {
   @ApiProperty({ description: 'Report ID (UUID)' })
@@ -119,6 +121,9 @@ export class ReportMetadataDto {
 
   @ApiProperty({ description: 'Generated at timestamp (ISO string)' })
     generated_at!: string;
+
+  @ApiProperty({ description: 'File size in bytes (optional)', nullable: true, required: false })
+    file_size_bytes?: number | null;
 }
 
 /**

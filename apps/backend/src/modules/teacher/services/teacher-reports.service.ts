@@ -180,6 +180,8 @@ export class TeacherReportsService {
   /**
    * Map TeacherReport entity to ReportMetadataDto
    *
+   * FIX-2026-01-19: Added file_size_bytes mapping for Sprint 4.1
+   *
    * @param report - TeacherReport entity
    * @returns ReportMetadataDto
    */
@@ -193,6 +195,7 @@ export class TeacherReportsService {
       period_start: report.periodStart ? report.periodStart.toISOString() : null,
       period_end: report.periodEnd ? report.periodEnd.toISOString() : null,
       generated_at: report.generatedAt.toISOString(),
+      file_size_bytes: report.fileSizeBytes ?? null,
     };
   }
 }
