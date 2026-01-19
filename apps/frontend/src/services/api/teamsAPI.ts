@@ -12,13 +12,18 @@ import { apiClient } from '@/services/api/apiClient';
 import { handleAPIError } from './apiErrorHandler';
 
 // ============================================================================
-// TYPE DEFINITIONS (aligned with backend DTOs)
+// TYPE DEFINITIONS
 // ============================================================================
 
+// -----------------------------------------------------------------------------
+// Backend DTOs (snake_case - as received from API)
+// -----------------------------------------------------------------------------
+
 /**
- * Team DTO from backend
+ * Team DTO from backend (snake_case)
+ * @internal Use Team interface for frontend consumption
  */
-export interface TeamDTO {
+interface BackendTeamDTO {
   id: string;
   classroom_id: string | null;
   tenant_id: string;
@@ -52,15 +57,132 @@ export interface TeamDTO {
 }
 
 /**
- * Team Member DTO from backend
+ * Team Member DTO from backend (snake_case)
+ * @internal Use TeamMember interface for frontend consumption
  */
-export interface TeamMemberDTO {
+interface BackendTeamMemberDTO {
   id: string;
   team_id: string;
   user_id: string;
   role: string;
   joined_at: string;
   left_at: string | null;
+}
+
+// -----------------------------------------------------------------------------
+// Frontend Interfaces (camelCase - for frontend consumption)
+// FIX-2026-01-19: Added camelCase interfaces for frontend consistency
+// -----------------------------------------------------------------------------
+
+/**
+ * Team interface for frontend (camelCase)
+ */
+export interface Team {
+  id: string;
+  classroomId: string | null;
+  tenantId: string;
+  name: string;
+  description: string | null;
+  motto: string | null;
+  colorPrimary: string;
+  colorSecondary: string;
+  avatarUrl: string | null;
+  bannerUrl: string | null;
+  badges: any[];
+  creatorId: string;
+  leaderId: string | null;
+  teamCode: string | null;
+  maxMembers: number;
+  currentMembersCount: number;
+  isPublic: boolean;
+  allowJoinRequests: boolean;
+  requireApproval: boolean;
+  totalXp: number;
+  totalMlCoins: number;
+  modulesCompleted: number;
+  achievementsEarned: number;
+  isActive: boolean;
+  isVerified: boolean;
+  foundedAt: Date;
+  lastActivityAt: Date | null;
+  metadata: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Team Member interface for frontend (camelCase)
+ */
+export interface TeamMember {
+  id: string;
+  teamId: string;
+  userId: string;
+  role: string;
+  joinedAt: Date;
+  leftAt: Date | null;
+}
+
+// Legacy exports for backward compatibility
+/** @deprecated Use Team instead */
+export type TeamDTO = Team;
+/** @deprecated Use TeamMember instead */
+export type TeamMemberDTO = TeamMember;
+
+// -----------------------------------------------------------------------------
+// Transformers (snake_case -> camelCase)
+// FIX-2026-01-19: Added transformers for backend-frontend coherence
+// -----------------------------------------------------------------------------
+
+/**
+ * Transform backend Team DTO to frontend Team
+ */
+function mapTeamDTO(dto: BackendTeamDTO): Team {
+  return {
+    id: dto.id,
+    classroomId: dto.classroom_id,
+    tenantId: dto.tenant_id,
+    name: dto.name,
+    description: dto.description,
+    motto: dto.motto,
+    colorPrimary: dto.color_primary,
+    colorSecondary: dto.color_secondary,
+    avatarUrl: dto.avatar_url,
+    bannerUrl: dto.banner_url,
+    badges: dto.badges,
+    creatorId: dto.creator_id,
+    leaderId: dto.leader_id,
+    teamCode: dto.team_code,
+    maxMembers: dto.max_members,
+    currentMembersCount: dto.current_members_count,
+    isPublic: dto.is_public,
+    allowJoinRequests: dto.allow_join_requests,
+    requireApproval: dto.require_approval,
+    totalXp: dto.total_xp,
+    totalMlCoins: dto.total_ml_coins,
+    modulesCompleted: dto.modules_completed,
+    achievementsEarned: dto.achievements_earned,
+    isActive: dto.is_active,
+    isVerified: dto.is_verified,
+    foundedAt: new Date(dto.founded_at),
+    lastActivityAt: dto.last_activity_at ? new Date(dto.last_activity_at) : null,
+    metadata: dto.metadata,
+    createdAt: new Date(dto.created_at),
+    updatedAt: new Date(dto.updated_at),
+  };
+}
+
+/**
+ * Transform backend TeamMember DTO to frontend TeamMember
+ */
+function mapTeamMemberDTO(dto: BackendTeamMemberDTO): TeamMember {
+  return {
+    id: dto.id,
+    teamId: dto.team_id,
+    userId: dto.user_id,
+    role: dto.role,
+    joinedAt: new Date(dto.joined_at),
+    leftAt: dto.left_at ? new Date(dto.left_at) : null,
+  };
 }
 
 /**
@@ -103,7 +225,7 @@ export interface CreateTeamMemberRequest {
  * @description Fetches all teams, with optional classroom filter
  *
  * @param classroomId - Optional classroom UUID for filtering
- * @returns Promise<TeamDTO[]>
+ * @returns Promise<Team[]>
  *
  * @endpoint GET /api/v1/social/teams?classroomId=...
  *
@@ -113,11 +235,11 @@ export interface CreateTeamMemberRequest {
  * const classroomTeams = await teamsAPI.getAllTeams('classroom-id');
  * ```
  */
-export async function getAllTeams(classroomId?: string): Promise<TeamDTO[]> {
+export async function getAllTeams(classroomId?: string): Promise<Team[]> {
   try {
     const params = classroomId ? { classroomId } : undefined;
-    const response = await apiClient.get<TeamDTO[]>('/social/teams', { params });
-    return response.data;
+    const response = await apiClient.get<BackendTeamDTO[]>('/social/teams', { params });
+    return response.data.map(mapTeamDTO);
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch teams');
   }
@@ -129,7 +251,7 @@ export async function getAllTeams(classroomId?: string): Promise<TeamDTO[]> {
  * @description Fetches a specific team by its ID
  *
  * @param teamId - Team UUID
- * @returns Promise<TeamDTO>
+ * @returns Promise<Team>
  *
  * @endpoint GET /api/v1/social/teams/:id
  *
@@ -138,10 +260,10 @@ export async function getAllTeams(classroomId?: string): Promise<TeamDTO[]> {
  * const team = await teamsAPI.getTeamById('990e8400-e29b-41d4-a716-446655440040');
  * ```
  */
-export async function getTeamById(teamId: string): Promise<TeamDTO> {
+export async function getTeamById(teamId: string): Promise<Team> {
   try {
-    const response = await apiClient.get<TeamDTO>(`/social/teams/${teamId}`);
-    return response.data;
+    const response = await apiClient.get<BackendTeamDTO>(`/social/teams/${teamId}`);
+    return mapTeamDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch team');
   }
@@ -153,7 +275,7 @@ export async function getTeamById(teamId: string): Promise<TeamDTO> {
  * @description Fetches a team by its unique code
  *
  * @param code - Team code
- * @returns Promise<TeamDTO>
+ * @returns Promise<Team>
  *
  * @endpoint GET /api/v1/social/teams/code/:code
  *
@@ -162,10 +284,10 @@ export async function getTeamById(teamId: string): Promise<TeamDTO> {
  * const team = await teamsAPI.getTeamByCode('AGU2025');
  * ```
  */
-export async function getTeamByCode(code: string): Promise<TeamDTO> {
+export async function getTeamByCode(code: string): Promise<Team> {
   try {
-    const response = await apiClient.get<TeamDTO>(`/social/teams/code/${code}`);
-    return response.data;
+    const response = await apiClient.get<BackendTeamDTO>(`/social/teams/code/${code}`);
+    return mapTeamDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch team by code');
   }
@@ -177,7 +299,7 @@ export async function getTeamByCode(code: string): Promise<TeamDTO> {
  * @description Creates a new team
  *
  * @param data - Team creation data
- * @returns Promise<TeamDTO>
+ * @returns Promise<Team>
  *
  * @endpoint POST /api/v1/social/teams
  *
@@ -190,10 +312,10 @@ export async function getTeamByCode(code: string): Promise<TeamDTO> {
  * });
  * ```
  */
-export async function createTeam(data: CreateTeamRequest): Promise<TeamDTO> {
+export async function createTeam(data: CreateTeamRequest): Promise<Team> {
   try {
-    const response = await apiClient.post<TeamDTO>('/social/teams', data);
-    return response.data;
+    const response = await apiClient.post<BackendTeamDTO>('/social/teams', data);
+    return mapTeamDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to create team');
   }
@@ -206,7 +328,7 @@ export async function createTeam(data: CreateTeamRequest): Promise<TeamDTO> {
  *
  * @param teamId - Team UUID
  * @param data - Fields to update
- * @returns Promise<TeamDTO>
+ * @returns Promise<Team>
  *
  * @endpoint PATCH /api/v1/social/teams/:id
  *
@@ -215,10 +337,10 @@ export async function createTeam(data: CreateTeamRequest): Promise<TeamDTO> {
  * const updated = await teamsAPI.updateTeam('team-id', { description: 'New description' });
  * ```
  */
-export async function updateTeam(teamId: string, data: UpdateTeamRequest): Promise<TeamDTO> {
+export async function updateTeam(teamId: string, data: UpdateTeamRequest): Promise<Team> {
   try {
-    const response = await apiClient.patch<TeamDTO>(`/social/teams/${teamId}`, data);
-    return response.data;
+    const response = await apiClient.patch<BackendTeamDTO>(`/social/teams/${teamId}`, data);
+    return mapTeamDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to update team');
   }
@@ -253,7 +375,7 @@ export async function deleteTeam(teamId: string): Promise<void> {
  * @description Fetches all members of a team
  *
  * @param teamId - Team UUID
- * @returns Promise<TeamMemberDTO[]>
+ * @returns Promise<TeamMember[]>
  *
  * @endpoint GET /api/v1/social/teams/:teamId/members
  *
@@ -262,10 +384,10 @@ export async function deleteTeam(teamId: string): Promise<void> {
  * const members = await teamsAPI.getTeamMembers('team-id');
  * ```
  */
-export async function getTeamMembers(teamId: string): Promise<TeamMemberDTO[]> {
+export async function getTeamMembers(teamId: string): Promise<TeamMember[]> {
   try {
-    const response = await apiClient.get<TeamMemberDTO[]>(`/social/teams/${teamId}/members`);
-    return response.data;
+    const response = await apiClient.get<BackendTeamMemberDTO[]>(`/social/teams/${teamId}/members`);
+    return response.data.map(mapTeamMemberDTO);
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch team members');
   }
@@ -278,7 +400,7 @@ export async function getTeamMembers(teamId: string): Promise<TeamMemberDTO[]> {
  *
  * @param teamId - Team UUID
  * @param userId - User UUID
- * @returns Promise<TeamDTO>
+ * @returns Promise<Team>
  *
  * @endpoint POST /api/v1/social/teams/:teamId/members/:userId
  *
@@ -287,10 +409,10 @@ export async function getTeamMembers(teamId: string): Promise<TeamMemberDTO[]> {
  * const team = await teamsAPI.addTeamMember('team-id', 'user-id');
  * ```
  */
-export async function addTeamMember(teamId: string, userId: string): Promise<TeamDTO> {
+export async function addTeamMember(teamId: string, userId: string): Promise<Team> {
   try {
-    const response = await apiClient.post<TeamDTO>(`/social/teams/${teamId}/members/${userId}`);
-    return response.data;
+    const response = await apiClient.post<BackendTeamDTO>(`/social/teams/${teamId}/members/${userId}`);
+    return mapTeamDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to add team member');
   }
@@ -303,7 +425,7 @@ export async function addTeamMember(teamId: string, userId: string): Promise<Tea
  *
  * @param teamId - Team UUID
  * @param userId - User UUID
- * @returns Promise<TeamDTO>
+ * @returns Promise<Team>
  *
  * @endpoint DELETE /api/v1/social/teams/:teamId/members/:userId
  *
@@ -312,10 +434,10 @@ export async function addTeamMember(teamId: string, userId: string): Promise<Tea
  * const team = await teamsAPI.removeTeamMember('team-id', 'user-id');
  * ```
  */
-export async function removeTeamMember(teamId: string, userId: string): Promise<TeamDTO> {
+export async function removeTeamMember(teamId: string, userId: string): Promise<Team> {
   try {
-    const response = await apiClient.delete<TeamDTO>(`/social/teams/${teamId}/members/${userId}`);
-    return response.data;
+    const response = await apiClient.delete<BackendTeamDTO>(`/social/teams/${teamId}/members/${userId}`);
+    return mapTeamDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to remove team member');
   }
@@ -328,7 +450,7 @@ export async function removeTeamMember(teamId: string, userId: string): Promise<
  *
  * @param teamId - Team UUID
  * @param score - New score value
- * @returns Promise<TeamDTO>
+ * @returns Promise<Team>
  *
  * @endpoint PATCH /api/v1/social/teams/:id/score
  *
@@ -337,10 +459,10 @@ export async function removeTeamMember(teamId: string, userId: string): Promise<
  * const team = await teamsAPI.updateTeamScore('team-id', 1500);
  * ```
  */
-export async function updateTeamScore(teamId: string, score: number): Promise<TeamDTO> {
+export async function updateTeamScore(teamId: string, score: number): Promise<Team> {
   try {
-    const response = await apiClient.patch<TeamDTO>(`/social/teams/${teamId}/score`, { score });
-    return response.data;
+    const response = await apiClient.patch<BackendTeamDTO>(`/social/teams/${teamId}/score`, { score });
+    return mapTeamDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to update team score');
   }
@@ -353,7 +475,7 @@ export async function updateTeamScore(teamId: string, score: number): Promise<Te
  *
  * @param teamId - Team UUID
  * @param xp - XP to add
- * @returns Promise<TeamDTO>
+ * @returns Promise<Team>
  *
  * @endpoint POST /api/v1/social/teams/:id/xp
  *
@@ -362,10 +484,10 @@ export async function updateTeamScore(teamId: string, score: number): Promise<Te
  * const team = await teamsAPI.addTeamXP('team-id', 250);
  * ```
  */
-export async function addTeamXP(teamId: string, xp: number): Promise<TeamDTO> {
+export async function addTeamXP(teamId: string, xp: number): Promise<Team> {
   try {
-    const response = await apiClient.post<TeamDTO>(`/social/teams/${teamId}/xp`, { xp });
-    return response.data;
+    const response = await apiClient.post<BackendTeamDTO>(`/social/teams/${teamId}/xp`, { xp });
+    return mapTeamDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to add team XP');
   }
@@ -401,7 +523,7 @@ export async function getTeamStats(teamId: string): Promise<any> {
  * @description Fetches the leaderboard of teams in a classroom, ordered by score
  *
  * @param classroomId - Classroom UUID
- * @returns Promise<TeamDTO[]>
+ * @returns Promise<Team[]>
  *
  * @endpoint GET /api/v1/social/classrooms/:classroomId/teams/leaderboard
  *
@@ -410,12 +532,12 @@ export async function getTeamStats(teamId: string): Promise<any> {
  * const leaderboard = await teamsAPI.getTeamsLeaderboard('classroom-id');
  * ```
  */
-export async function getTeamsLeaderboard(classroomId: string): Promise<TeamDTO[]> {
+export async function getTeamsLeaderboard(classroomId: string): Promise<Team[]> {
   try {
-    const response = await apiClient.get<TeamDTO[]>(
+    const response = await apiClient.get<BackendTeamDTO[]>(
       `/social/classrooms/${classroomId}/teams/leaderboard`,
     );
-    return response.data;
+    return response.data.map(mapTeamDTO);
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch teams leaderboard');
   }
@@ -431,7 +553,7 @@ export async function getTeamsLeaderboard(classroomId: string): Promise<TeamDTO[
  * @description Fetches all teams a user is a member of
  *
  * @param userId - User UUID
- * @returns Promise<TeamMemberDTO[]>
+ * @returns Promise<TeamMember[]>
  *
  * @endpoint GET /api/v1/social/team-members/users/:userId
  *
@@ -440,10 +562,10 @@ export async function getTeamsLeaderboard(classroomId: string): Promise<TeamDTO[
  * const userTeams = await teamsAPI.getUserTeams('user-id');
  * ```
  */
-export async function getUserTeams(userId: string): Promise<TeamMemberDTO[]> {
+export async function getUserTeams(userId: string): Promise<TeamMember[]> {
   try {
-    const response = await apiClient.get<TeamMemberDTO[]>(`/social/team-members/users/${userId}`);
-    return response.data;
+    const response = await apiClient.get<BackendTeamMemberDTO[]>(`/social/team-members/users/${userId}`);
+    return response.data.map(mapTeamMemberDTO);
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch user teams');
   }
@@ -455,7 +577,7 @@ export async function getUserTeams(userId: string): Promise<TeamMemberDTO[]> {
  * @description Fetches only active members of a team
  *
  * @param teamId - Team UUID
- * @returns Promise<TeamMemberDTO[]>
+ * @returns Promise<TeamMember[]>
  *
  * @endpoint GET /api/v1/social/team-members/teams/:teamId/active
  *
@@ -464,12 +586,12 @@ export async function getUserTeams(userId: string): Promise<TeamMemberDTO[]> {
  * const activeMembers = await teamsAPI.getActiveTeamMembers('team-id');
  * ```
  */
-export async function getActiveTeamMembers(teamId: string): Promise<TeamMemberDTO[]> {
+export async function getActiveTeamMembers(teamId: string): Promise<TeamMember[]> {
   try {
-    const response = await apiClient.get<TeamMemberDTO[]>(
+    const response = await apiClient.get<BackendTeamMemberDTO[]>(
       `/social/team-members/teams/${teamId}/active`,
     );
-    return response.data;
+    return response.data.map(mapTeamMemberDTO);
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch active team members');
   }
@@ -482,7 +604,7 @@ export async function getActiveTeamMembers(teamId: string): Promise<TeamMemberDT
  *
  * @param memberId - Team member UUID
  * @param role - New role
- * @returns Promise<TeamMemberDTO>
+ * @returns Promise<TeamMember>
  *
  * @endpoint PATCH /api/v1/social/team-members/:id/role
  *
@@ -491,12 +613,12 @@ export async function getActiveTeamMembers(teamId: string): Promise<TeamMemberDT
  * const member = await teamsAPI.updateMemberRole('member-id', 'admin');
  * ```
  */
-export async function updateMemberRole(memberId: string, role: string): Promise<TeamMemberDTO> {
+export async function updateMemberRole(memberId: string, role: string): Promise<TeamMember> {
   try {
-    const response = await apiClient.patch<TeamMemberDTO>(`/social/team-members/${memberId}/role`, {
+    const response = await apiClient.patch<BackendTeamMemberDTO>(`/social/team-members/${memberId}/role`, {
       role,
     });
-    return response.data;
+    return mapTeamMemberDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to update member role');
   }

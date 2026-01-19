@@ -6,17 +6,20 @@
  * - Managing user preferences
  * - Uploading avatars
  * - Changing passwords
+ *
+ * FIX-2026-01-19: Implemented snake_case → camelCase transformation
+ * Backend DTOs use snake_case, frontend interfaces use camelCase
  */
 
 import { apiClient } from './apiClient';
 import { handleAPIError } from './apiErrorHandler';
 
 // ============================================================================
-// TYPES
+// INPUT DTOs (snake_case - sent to backend as-is)
 // ============================================================================
 
 /**
- * Data transfer object for updating user profile
+ * Data transfer object for updating user profile (sent to backend)
  */
 export interface UpdateProfileDto {
   display_name?: string;
@@ -27,7 +30,7 @@ export interface UpdateProfileDto {
 }
 
 /**
- * Data transfer object for updating user preferences
+ * Data transfer object for updating user preferences (sent to backend)
  */
 export interface UpdatePreferencesDto {
   theme?: string;
@@ -40,17 +43,22 @@ export interface UpdatePreferencesDto {
 }
 
 /**
- * Data transfer object for changing password
+ * Data transfer object for changing password (sent to backend)
  */
 export interface UpdatePasswordDto {
   current_password: string;
   new_password: string;
 }
 
+// ============================================================================
+// BACKEND RESPONSE DTOs (snake_case - received from API)
+// ============================================================================
+
 /**
- * Response from profile update
+ * Backend profile update response (snake_case)
+ * @internal Used for API communication
  */
-export interface ProfileUpdateResponse {
+interface BackendProfileUpdateResponse {
   id: string;
   display_name?: string;
   first_name?: string;
@@ -62,28 +70,122 @@ export interface ProfileUpdateResponse {
 }
 
 /**
- * Response from preferences update
+ * Backend preferences update response (snake_case)
+ * @internal Used for API communication
  */
-export interface PreferencesUpdateResponse {
+interface BackendPreferencesUpdateResponse {
   id: string;
   preferences: Record<string, unknown>;
   updated_at: string;
 }
 
 /**
- * Response from avatar upload
+ * Backend avatar upload response (snake_case)
+ * @internal Used for API communication
  */
-export interface AvatarUploadResponse {
+interface BackendAvatarUploadResponse {
   avatar_url: string;
   updated_at: string;
 }
 
+// ============================================================================
+// FRONTEND INTERFACES (camelCase - for frontend consumption)
+// ============================================================================
+
 /**
- * Response from password change
+ * Frontend profile update response (camelCase)
  */
-export interface PasswordUpdateResponse {
+export interface ProfileUpdate {
+  id: string;
+  displayName?: string;
+  firstName?: string;
+  lastName?: string;
+  bio?: string;
+  gradeLevel?: string;
+  avatarUrl?: string;
+  updatedAt: Date;
+}
+
+/**
+ * Frontend preferences update response (camelCase)
+ */
+export interface PreferencesUpdate {
+  id: string;
+  preferences: Record<string, unknown>;
+  updatedAt: Date;
+}
+
+/**
+ * Frontend avatar upload response (camelCase)
+ */
+export interface AvatarUpload {
+  avatarUrl: string;
+  updatedAt: Date;
+}
+
+/**
+ * Password update response (no transformation needed - simple types)
+ */
+export interface PasswordUpdate {
   success: boolean;
   message: string;
+}
+
+// ============================================================================
+// DEPRECATED ALIASES (backward compatibility)
+// ============================================================================
+
+/** @deprecated Use ProfileUpdate instead */
+export type ProfileUpdateResponse = ProfileUpdate;
+
+/** @deprecated Use PreferencesUpdate instead */
+export type PreferencesUpdateResponse = PreferencesUpdate;
+
+/** @deprecated Use AvatarUpload instead */
+export type AvatarUploadResponse = AvatarUpload;
+
+/** @deprecated Use PasswordUpdate instead */
+export type PasswordUpdateResponse = PasswordUpdate;
+
+// ============================================================================
+// TRANSFORMERS
+// ============================================================================
+
+/**
+ * Transform backend ProfileUpdateResponse to frontend ProfileUpdate
+ */
+function mapProfileUpdateResponse(dto: BackendProfileUpdateResponse): ProfileUpdate {
+  return {
+    id: dto.id,
+    displayName: dto.display_name,
+    firstName: dto.first_name,
+    lastName: dto.last_name,
+    bio: dto.bio,
+    gradeLevel: dto.grade_level,
+    avatarUrl: dto.avatar_url,
+    updatedAt: new Date(dto.updated_at),
+  };
+}
+
+/**
+ * Transform backend PreferencesUpdateResponse to frontend PreferencesUpdate
+ */
+function mapPreferencesUpdateResponse(dto: BackendPreferencesUpdateResponse): PreferencesUpdate {
+  return {
+    id: dto.id,
+    preferences: dto.preferences,
+    updatedAt: new Date(dto.updated_at),
+  };
+}
+
+/**
+ * Transform backend AvatarUploadResponse to frontend AvatarUpload
+ */
+function mapAvatarUploadResponse(dto: BackendAvatarUploadResponse): AvatarUpload {
+  return {
+    avatarUrl: dto.avatar_url,
+    updatedAt: new Date(dto.updated_at),
+  };
 }
 
 // ============================================================================
@@ -99,12 +201,15 @@ export const profileAPI = {
    *
    * @param userId - User ID
    * @param data - Profile data to update
-   * @returns Updated profile data
+   * @returns Updated profile data (camelCase)
    */
-  updateProfile: async (userId: string, data: UpdateProfileDto): Promise<ProfileUpdateResponse> => {
+  updateProfile: async (userId: string, data: UpdateProfileDto): Promise<ProfileUpdate> => {
     try {
-      const response = await apiClient.put(`/users/${userId}/profile`, data);
-      return response.data;
+      const response = await apiClient.put<BackendProfileUpdateResponse>(
+        `/users/${userId}/profile`,
+        data,
+      );
+      return mapProfileUpdateResponse(response.data);
     } catch (error) {
       throw handleAPIError(error);
     }
@@ -129,15 +234,18 @@ export const profileAPI = {
    *
    * @param userId - User ID
    * @param preferences - Preferences to update
-   * @returns Updated preferences data
+   * @returns Updated preferences data (camelCase)
    */
   updatePreferences: async (
     userId: string,
     preferences: UpdatePreferencesDto,
-  ): Promise<PreferencesUpdateResponse> => {
+  ): Promise<PreferencesUpdate> => {
     try {
-      const response = await apiClient.put(`/users/${userId}/preferences`, { preferences });
-      return response.data;
+      const response = await apiClient.put<BackendPreferencesUpdateResponse>(
+        `/users/${userId}/preferences`,
+        { preferences },
+      );
+      return mapPreferencesUpdateResponse(response.data);
     } catch (error) {
       throw handleAPIError(error);
     }
@@ -148,18 +256,20 @@ export const profileAPI = {
    *
    * @param userId - User ID
    * @param file - Avatar image file
-   * @returns Avatar URL
+   * @returns Avatar URL (camelCase)
    */
-  uploadAvatar: async (userId: string, file: File): Promise<AvatarUploadResponse> => {
+  uploadAvatar: async (userId: string, file: File): Promise<AvatarUpload> => {
     try {
       const formData = new FormData();
       formData.append('avatar', file);
 
-      const response = await apiClient.post(`/users/${userId}/avatar`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const response = await apiClient.post<BackendAvatarUploadResponse>(
+        `/users/${userId}/avatar`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } },
+      );
 
-      return response.data;
+      return mapAvatarUploadResponse(response.data);
     } catch (error) {
       throw handleAPIError(error);
     }
@@ -175,9 +285,12 @@ export const profileAPI = {
   updatePassword: async (
     userId: string,
     passwords: UpdatePasswordDto,
-  ): Promise<PasswordUpdateResponse> => {
+  ): Promise<PasswordUpdate> => {
     try {
-      const response = await apiClient.put(`/users/${userId}/password`, passwords);
+      const response = await apiClient.put<PasswordUpdate>(
+        `/users/${userId}/password`,
+        passwords,
+      );
       return response.data;
     } catch (error) {
       throw handleAPIError(error);

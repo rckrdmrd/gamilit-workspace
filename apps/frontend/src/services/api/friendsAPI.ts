@@ -3,13 +3,16 @@
  *
  * API client for social friendship features including friend requests,
  * friend lists, and friendship management.
+ *
+ * FIX-2026-01-19: Implemented snake_case → camelCase transformation
+ * Backend DTOs use snake_case, frontend interfaces use camelCase
  */
 
 import { apiClient } from '@/services/api/apiClient';
 import { handleAPIError } from './apiErrorHandler';
 
 // ============================================================================
-// TYPE DEFINITIONS (aligned with backend DTOs)
+// BACKEND DTOs (snake_case - as received from API)
 // ============================================================================
 
 /**
@@ -18,9 +21,10 @@ import { handleAPIError } from './apiErrorHandler';
 export type FriendshipStatus = 'pending' | 'accepted' | 'rejected' | 'blocked';
 
 /**
- * Friendship DTO from backend
+ * Backend Friendship DTO (snake_case)
+ * @internal Used for API communication
  */
-export interface FriendshipDTO {
+interface BackendFriendshipDTO {
   id: string;
   user_id: string;
   friend_id: string;
@@ -29,12 +33,51 @@ export interface FriendshipDTO {
   updated_at: string;
 }
 
+// ============================================================================
+// FRONTEND INTERFACES (camelCase - for frontend consumption)
+// ============================================================================
+
 /**
- * Create friendship request payload
+ * Frontend Friendship interface (camelCase)
+ */
+export interface Friendship {
+  id: string;
+  userId: string;
+  friendId: string;
+  status: FriendshipStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * @deprecated Use Friendship instead - maintained for backward compatibility
+ */
+export type FriendshipDTO = Friendship;
+
+/**
+ * Create friendship request payload (snake_case for backend)
  */
 export interface CreateFriendshipRequest {
   user_id: string;
   friend_id: string;
+}
+
+// ============================================================================
+// TRANSFORMERS
+// ============================================================================
+
+/**
+ * Transform backend FriendshipDTO to frontend Friendship
+ */
+function mapFriendshipDTO(dto: BackendFriendshipDTO): Friendship {
+  return {
+    id: dto.id,
+    userId: dto.user_id,
+    friendId: dto.friend_id,
+    status: dto.status,
+    createdAt: new Date(dto.created_at),
+    updatedAt: new Date(dto.updated_at),
+  };
 }
 
 // ============================================================================
@@ -47,7 +90,7 @@ export interface CreateFriendshipRequest {
  * @description Fetches all friendship relationships for a user (friends and requests)
  *
  * @param userId - User UUID
- * @returns Promise<FriendshipDTO[]>
+ * @returns Promise<Friendship[]>
  *
  * @endpoint GET /api/v1/social/users/:userId/friends
  *
@@ -56,10 +99,10 @@ export interface CreateFriendshipRequest {
  * const friends = await friendsAPI.getUserFriends('550e8400-e29b-41d4-a716-446655440000');
  * ```
  */
-export async function getUserFriends(userId: string): Promise<FriendshipDTO[]> {
+export async function getUserFriends(userId: string): Promise<Friendship[]> {
   try {
-    const response = await apiClient.get<FriendshipDTO[]>(`/social/users/${userId}/friends`);
-    return response.data;
+    const response = await apiClient.get<BackendFriendshipDTO[]>(`/social/users/${userId}/friends`);
+    return response.data.map(mapFriendshipDTO);
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch user friends');
   }
@@ -71,7 +114,7 @@ export async function getUserFriends(userId: string): Promise<FriendshipDTO[]> {
  * @description Fetches pending friend requests received by the user
  *
  * @param userId - User UUID
- * @returns Promise<FriendshipDTO[]>
+ * @returns Promise<Friendship[]>
  *
  * @endpoint GET /api/v1/social/users/:userId/friends/pending
  *
@@ -80,12 +123,12 @@ export async function getUserFriends(userId: string): Promise<FriendshipDTO[]> {
  * const pending = await friendsAPI.getPendingRequests('550e8400-e29b-41d4-a716-446655440000');
  * ```
  */
-export async function getPendingRequests(userId: string): Promise<FriendshipDTO[]> {
+export async function getPendingRequests(userId: string): Promise<Friendship[]> {
   try {
-    const response = await apiClient.get<FriendshipDTO[]>(
+    const response = await apiClient.get<BackendFriendshipDTO[]>(
       `/social/users/${userId}/friends/pending`,
     );
-    return response.data;
+    return response.data.map(mapFriendshipDTO);
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch pending friend requests');
   }
@@ -97,7 +140,7 @@ export async function getPendingRequests(userId: string): Promise<FriendshipDTO[
  * @description Fetches friend requests sent by the user
  *
  * @param userId - User UUID
- * @returns Promise<FriendshipDTO[]>
+ * @returns Promise<Friendship[]>
  *
  * @endpoint GET /api/v1/social/users/:userId/friends/sent
  *
@@ -106,10 +149,10 @@ export async function getPendingRequests(userId: string): Promise<FriendshipDTO[
  * const sent = await friendsAPI.getSentRequests('550e8400-e29b-41d4-a716-446655440000');
  * ```
  */
-export async function getSentRequests(userId: string): Promise<FriendshipDTO[]> {
+export async function getSentRequests(userId: string): Promise<Friendship[]> {
   try {
-    const response = await apiClient.get<FriendshipDTO[]>(`/social/users/${userId}/friends/sent`);
-    return response.data;
+    const response = await apiClient.get<BackendFriendshipDTO[]>(`/social/users/${userId}/friends/sent`);
+    return response.data.map(mapFriendshipDTO);
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch sent friend requests');
   }
@@ -121,7 +164,7 @@ export async function getSentRequests(userId: string): Promise<FriendshipDTO[]> 
  * @description Sends a friend request to another user
  *
  * @param data - Friend request data (user_id, friend_id)
- * @returns Promise<FriendshipDTO>
+ * @returns Promise<Friendship>
  *
  * @endpoint POST /api/v1/social/friendships/request
  *
@@ -133,10 +176,10 @@ export async function getSentRequests(userId: string): Promise<FriendshipDTO[]> 
  * });
  * ```
  */
-export async function sendFriendRequest(data: CreateFriendshipRequest): Promise<FriendshipDTO> {
+export async function sendFriendRequest(data: CreateFriendshipRequest): Promise<Friendship> {
   try {
-    const response = await apiClient.post<FriendshipDTO>('/social/friendships/request', data);
-    return response.data;
+    const response = await apiClient.post<BackendFriendshipDTO>('/social/friendships/request', data);
+    return mapFriendshipDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to send friend request');
   }
@@ -148,7 +191,7 @@ export async function sendFriendRequest(data: CreateFriendshipRequest): Promise<
  * @description Accepts a pending friend request
  *
  * @param requestId - Friend request UUID
- * @returns Promise<FriendshipDTO>
+ * @returns Promise<Friendship>
  *
  * @endpoint PATCH /api/v1/social/friendships/:id/accept
  *
@@ -157,12 +200,12 @@ export async function sendFriendRequest(data: CreateFriendshipRequest): Promise<
  * const accepted = await friendsAPI.acceptFriendRequest('660e8400-e29b-41d4-a716-446655440003');
  * ```
  */
-export async function acceptFriendRequest(requestId: string): Promise<FriendshipDTO> {
+export async function acceptFriendRequest(requestId: string): Promise<Friendship> {
   try {
-    const response = await apiClient.patch<FriendshipDTO>(
+    const response = await apiClient.patch<BackendFriendshipDTO>(
       `/social/friendships/${requestId}/accept`,
     );
-    return response.data;
+    return mapFriendshipDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to accept friend request');
   }
@@ -174,7 +217,7 @@ export async function acceptFriendRequest(requestId: string): Promise<Friendship
  * @description Rejects a pending friend request
  *
  * @param requestId - Friend request UUID
- * @returns Promise<FriendshipDTO>
+ * @returns Promise<Friendship>
  *
  * @endpoint PATCH /api/v1/social/friendships/:id/reject
  *
@@ -183,12 +226,12 @@ export async function acceptFriendRequest(requestId: string): Promise<Friendship
  * const rejected = await friendsAPI.rejectFriendRequest('660e8400-e29b-41d4-a716-446655440003');
  * ```
  */
-export async function rejectFriendRequest(requestId: string): Promise<FriendshipDTO> {
+export async function rejectFriendRequest(requestId: string): Promise<Friendship> {
   try {
-    const response = await apiClient.patch<FriendshipDTO>(
+    const response = await apiClient.patch<BackendFriendshipDTO>(
       `/social/friendships/${requestId}/reject`,
     );
-    return response.data;
+    return mapFriendshipDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to reject friend request');
   }
@@ -225,7 +268,7 @@ export async function removeFriend(userId: string, friendId: string): Promise<vo
  *
  * @param userId - User UUID
  * @param friendId - User to block UUID
- * @returns Promise<FriendshipDTO>
+ * @returns Promise<Friendship>
  *
  * @endpoint POST /api/v1/social/users/:userId/block/:friendId
  *
@@ -234,12 +277,12 @@ export async function removeFriend(userId: string, friendId: string): Promise<vo
  * const blocked = await friendsAPI.blockUser('550e8400-e29b-41d4-a716-446655440000', '550e8400-e29b-41d4-a716-446655440002');
  * ```
  */
-export async function blockUser(userId: string, friendId: string): Promise<FriendshipDTO> {
+export async function blockUser(userId: string, friendId: string): Promise<Friendship> {
   try {
-    const response = await apiClient.post<FriendshipDTO>(
+    const response = await apiClient.post<BackendFriendshipDTO>(
       `/social/users/${userId}/block/${friendId}`,
     );
-    return response.data;
+    return mapFriendshipDTO(response.data);
   } catch (error) {
     throw handleAPIError(error, 'Failed to block user');
   }
@@ -270,21 +313,62 @@ export async function unblockUser(userId: string, friendId: string): Promise<voi
 }
 
 // ============================================================================
-// ACTIVITY TYPES (aligned with backend DTOs)
+// ACTIVITY TYPES
 // ============================================================================
 
 /**
- * Activity DTO from backend
+ * Activity type enum
  */
-export interface ActivityDTO {
+export type ActivityType = 'achievement' | 'level_up' | 'exercise' | 'rankup' | 'milestone';
+
+/**
+ * Backend Activity DTO (snake_case)
+ * @internal Used for API communication
+ */
+interface BackendActivityDTO {
   activity_id: string;
   user_id: string;
-  activity_type: 'achievement' | 'level_up' | 'exercise' | 'rankup' | 'milestone';
+  activity_type: ActivityType;
   title: string;
   description: string;
   metadata?: Record<string, unknown>;
   is_public: boolean;
   created_at: string;
+}
+
+/**
+ * Frontend Activity interface (camelCase)
+ */
+export interface Activity {
+  activityId: string;
+  userId: string;
+  activityType: ActivityType;
+  title: string;
+  description: string;
+  metadata?: Record<string, unknown>;
+  isPublic: boolean;
+  createdAt: Date;
+}
+
+/**
+ * @deprecated Use Activity instead - maintained for backward compatibility
+ */
+export type ActivityDTO = Activity;
+
+/**
+ * Transform backend ActivityDTO to frontend Activity
+ */
+function mapActivityDTO(dto: BackendActivityDTO): Activity {
+  return {
+    activityId: dto.activity_id,
+    userId: dto.user_id,
+    activityType: dto.activity_type,
+    title: dto.title,
+    description: dto.description,
+    metadata: dto.metadata,
+    isPublic: dto.is_public,
+    createdAt: new Date(dto.created_at),
+  };
 }
 
 /**
@@ -313,7 +397,7 @@ export interface FriendRecommendation {
  *
  * @param userId - User UUID (to fetch their friends first)
  * @param limit - Max number of activities (default 20)
- * @returns Promise<ActivityDTO[]>
+ * @returns Promise<Activity[]>
  *
  * @endpoint GET /api/v1/social/activities/feed?friendIds=...
  *
@@ -322,7 +406,7 @@ export interface FriendRecommendation {
  * const activities = await friendsAPI.getFriendActivities('user-id', 20);
  * ```
  */
-export async function getFriendActivities(userId: string, limit: number = 20): Promise<ActivityDTO[]> {
+export async function getFriendActivities(userId: string, limit: number = 20): Promise<Activity[]> {
   try {
     // First get the user's friends
     const friendships = await getUserFriends(userId);
@@ -332,18 +416,18 @@ export async function getFriendActivities(userId: string, limit: number = 20): P
       return []; // No friends, no activities
     }
 
-    // Get friend IDs
+    // Get friend IDs (already in camelCase from transformer)
     const friendIds = acceptedFriends.map(f =>
-      f.friend_id === userId ? f.user_id : f.friend_id
+      f.friendId === userId ? f.userId : f.friendId
     );
 
     // Fetch activities from the feed endpoint
-    const response = await apiClient.get<ActivityDTO[]>(
+    const response = await apiClient.get<BackendActivityDTO[]>(
       '/social/activities/feed',
       { params: { friendIds: friendIds.join(','), limit } }
     );
 
-    return response.data;
+    return response.data.map(mapActivityDTO);
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch friend activities');
   }

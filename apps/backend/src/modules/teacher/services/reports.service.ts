@@ -18,7 +18,7 @@ import { AnalyticsService } from './analytics.service';
 import { StorageService } from './storage.service';
 import { TeacherReportsService } from './teacher-reports.service';
 import { StudentInsightsResponseDto, ReportFormat } from '../dto/analytics.dto';
-import { GenerateReportDto, ReportType, GeneratedGeneratedReportMetadataDto } from '../dto/reports.dto';
+import { GenerateReportDto, ReportType, GeneratedReportMetadataDto } from '../dto/reports.dto';
 import { TeacherReportTypeEnum, TeacherReportFormatEnum } from '@shared/constants/enums.constants';
 import { v4 as uuidv4 } from 'uuid';
 
