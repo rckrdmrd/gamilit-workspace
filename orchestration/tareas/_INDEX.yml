@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.16.0"
+version: "1.17.0"
 last_updated: "2026-01-19"
-total_tasks: 19
+total_tasks: 24
 
 # =========================================
 # TAREAS POR FECHA
@@ -100,6 +100,83 @@ tasks:
       - "Eliminado workaround de mapeo manual"
       - "Build y lint pasan sin errores"
     path: "orchestration/tareas/TASK-2026-01-19-004/"
+
+  - id: TASK-2026-01-19-005
+    title: "Sincronizar average_score en module_progress desde exercise_submissions"
+    date: "2026-01-19"
+    status: completed
+    priority: P1
+    type: bug-fix
+    metodologia: CAPVED
+    dominios:
+      - "Database"
+      - "Progress Tracking"
+      - "Alerts"
+    entregables:
+      - "METADATA.yml"
+    metricas:
+      archivos_creados: 2
+      archivos_modificados: 1
+      alertas_generadas: 5
+    conclusiones:
+      - "sync_module_progress_scores() creada para calcular average_score"
+      - "Trigger trg_sync_average_score_on_submission creado"
+      - "generate_student_alerts() corregido (%.1f -> %s con ROUND)"
+      - "5 alertas generadas correctamente (3 low_score, 2 low_engagement)"
+    path: "orchestration/tareas/TASK-2026-01-19-005/"
+
+  - id: TASK-2026-01-19-006
+    title: "Migrar tipos deprecados de alertas a @shared/types"
+    date: "2026-01-19"
+    status: ready
+    priority: P2
+    type: tech-debt
+    metodologia: QUICK
+    dominios:
+      - "Backend"
+      - "Shared Types"
+    path: "orchestration/tareas/TASK-2026-01-19-006/"
+
+  - id: TASK-2026-01-19-007
+    title: "Completar datos de seeds - module_progress y alertas"
+    date: "2026-01-19"
+    status: ready
+    priority: P2
+    type: data-fix
+    metodologia: FULL
+    dominios:
+      - "Database"
+      - "Seeds"
+    path: "orchestration/tareas/TASK-2026-01-19-007/"
+
+  - id: TASK-2026-01-19-008
+    title: "Implementar sistema de notificaciones para alertas y reportes"
+    date: "2026-01-19"
+    status: ready
+    priority: P2
+    type: feature
+    metodologia: FULL
+    dominios:
+      - "Backend"
+      - "Frontend"
+      - "Notifications"
+    path: "orchestration/tareas/TASK-2026-01-19-008/"
+
+  - id: TASK-2026-01-19-009
+    title: "Corregir inconsistencias en documentacion de tareas CAPVED"
+    date: "2026-01-19"
+    status: completed
+    priority: P3
+    type: documentation
+    metodologia: QUICK
+    dominios:
+      - "Documentation"
+      - "Governance"
+    conclusiones:
+      - "TASK-001: Fases V/E/D corregidas a completed"
+      - "TASK-004: Fases V/D corregidas a completed"
+      - "_INDEX.yml actualizado con tareas 005-009"
+    path: "orchestration/tareas/TASK-2026-01-19-009/"
 
   # ----------------------------------------
   # 2026-01-18
@@ -617,8 +694,9 @@ tasks:
 # RESUMEN POR ESTADO
 # =========================================
 summary:
-  completed: 16
+  completed: 18
   in_progress: 1
+  ready: 3
   planning: 0
   pending: 0
 
