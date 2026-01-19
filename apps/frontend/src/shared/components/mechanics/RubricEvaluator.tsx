@@ -41,6 +41,8 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
 
   // FIX TASK-2026-01-18-008: Track if component has initialized to prevent calling onChange on mount
   const isInitializedRef = useRef(false);
+  // FIX TASK-2026-01-18-014: Track rubric IDs to detect actual changes (not just reference changes)
+  const rubricIdsRef = useRef<string>('');
 
   // FIX TASK-2026-01-18-008: Check if rubric is valid (used for conditional rendering)
   const hasValidRubric = rubric && Array.isArray(rubric) && rubric.length > 0;
@@ -48,6 +50,7 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
   /**
    * Initialize evaluations for all criteria
    * FIX TASK-2026-01-18-008: Only run once on mount or when rubric changes
+   * FIX TASK-2026-01-18-014: Use ref to preserve current evaluations when initializing
    */
   useEffect(() => {
     // Guard against undefined rubric
@@ -55,18 +58,44 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
       return;
     }
 
-    const initializedEvaluations = rubric.map((criterion) => {
-      const existing = evaluations.find((e) => e.criterionId === criterion.id);
-      return existing || {
-        criterionId: criterion.id,
-        score: 0,
-        feedback: '',
-      };
+    // FIX TASK-2026-01-18-014: Check if rubric IDs actually changed (not just reference)
+    const currentRubricIds = rubric.map(c => c.id).join(',');
+    if (isInitializedRef.current && currentRubricIds === rubricIdsRef.current) {
+      // Rubric hasn't actually changed, skip re-initialization to preserve user edits
+      return;
+    }
+    rubricIdsRef.current = currentRubricIds;
+
+    // FIX TASK-2026-01-18-014: Use functional update to access current evaluations
+    setEvaluations(currentEvaluations => {
+      const initializedEvaluations = rubric.map((criterion) => {
+        // First check initialEvaluations (from props), then current state
+        const fromInitial = initialEvaluations.find((e) => e.criterionId === criterion.id);
+        const fromCurrent = currentEvaluations.find((e) => e.criterionId === criterion.id);
+
+        // Prefer current state if it has a score > 0, then initial, then default
+        if (fromCurrent && fromCurrent.score > 0) {
+          return fromCurrent;
+        }
+        if (fromInitial) {
+          return fromInitial;
+        }
+        if (fromCurrent) {
+          return fromCurrent;
+        }
+        return {
+          criterionId: criterion.id,
+          score: 0,
+          feedback: '',
+        };
+      });
+
+      console.log('[RubricEvaluator] Initialized evaluations:', initializedEvaluations);
+      return initializedEvaluations;
     });
 
-    setEvaluations(initializedEvaluations);
     isInitializedRef.current = true;
-  }, [rubric, hasValidRubric]);
+  }, [rubric, hasValidRubric, initialEvaluations]);
 
   /**
    * Calculate and update total score

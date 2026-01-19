@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { X, Save, User, BookOpen, Calendar, FileText, Image as ImageIcon, Video, Music, Award, Coins, TrendingUp, CheckCircle, AlertTriangle } from 'lucide-react';
+import { X, Save, User, BookOpen, Calendar, FileText, Image as ImageIcon, Video, Music, CheckCircle, AlertTriangle } from 'lucide-react';
 import { ManualReview, RubricEvaluation, ReviewRewards, manualReviewApi } from '@/shared/api/manualReviewApi';
 import { RubricEvaluator } from '@/shared/components/mechanics/RubricEvaluator';
 import { ExerciseContentRenderer } from '@/shared/components/mechanics/ExerciseContentRenderer';
@@ -59,8 +59,8 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [feedbackData, setFeedbackData] = useState<FeedbackData | null>(null);
-  // FIX GAP-CRIT-001: Estado para mostrar recompensas asignadas
-  const [assignedRewards, setAssignedRewards] = useState<ReviewRewards | null>(null);
+  // FIX GAP-CRIT-001: Estado para mostrar recompensas asignadas (usado en FeedbackModal)
+  const [_assignedRewards, setAssignedRewards] = useState<ReviewRewards | null>(null);
   // Estado para mensaje de guardado de borrador
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -139,8 +139,14 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
    * FIX GAP-CRIT-001: Now captures and displays rewards assigned to student
    * TASK-2026-01-18-010: Guardar evaluación ANTES de completar (backend no acepta body en complete)
    * FIX TASK-2026-01-18-012: Usar FeedbackModal para mostrar resultado
+   * FIX TASK-2026-01-18-014: Mejorado manejo de errores y validaciones
    */
   const handleCompleteReview = async () => {
+    // Capturar valores ANTES de cerrar el modal para evitar problemas de estado
+    const currentEvaluations = [...evaluations];
+    const currentTotalScore = _totalScore;
+    const currentGeneralFeedback = generalFeedback;
+
     setShowConfirmModal(false);
 
     try {
@@ -149,66 +155,108 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
 
       // TASK-2026-01-18-010: PASO 1 - Guardar evaluación primero
       // El endpoint /complete no acepta body, así que debemos guardar antes
-      const { rubricScores, detailedFeedback } = transformEvaluationsToBackend(evaluations);
+      const { rubricScores, detailedFeedback } = transformEvaluationsToBackend(currentEvaluations);
 
       // DEBUG: Log para verificar datos antes de enviar
-      console.log('[ReviewDetail] handleCompleteReview - evaluations:', evaluations);
+      console.log('[ReviewDetail] handleCompleteReview - evaluations:', currentEvaluations);
       console.log('[ReviewDetail] handleCompleteReview - rubricScores:', rubricScores);
-      console.log('[ReviewDetail] handleCompleteReview - totalScore:', _totalScore);
-      console.log('[ReviewDetail] handleCompleteReview - generalFeedback:', generalFeedback);
+      console.log('[ReviewDetail] handleCompleteReview - totalScore:', currentTotalScore);
+      console.log('[ReviewDetail] handleCompleteReview - generalFeedback:', currentGeneralFeedback);
 
-      // Validar que hay datos antes de enviar
-      if (Object.keys(rubricScores).length === 0) {
-        setError('Error: No hay evaluaciones de rúbrica para guardar. Por favor evalúa todos los criterios.');
+      // FIX TASK-2026-01-18-014: Validación más robusta de datos
+      if (!currentEvaluations || currentEvaluations.length === 0) {
+        setError('Error: No hay evaluaciones. Por favor evalúa todos los criterios de la rúbrica.');
         setCompleting(false);
         return;
       }
 
-      if (_totalScore === 0 || _totalScore === undefined) {
-        console.warn('[ReviewDetail] Warning: totalScore es 0 o undefined');
+      if (Object.keys(rubricScores).length === 0) {
+        setError('Error: No hay puntuaciones de rúbrica para guardar. Por favor evalúa todos los criterios.');
+        setCompleting(false);
+        return;
       }
+
+      // FIX TASK-2026-01-18-014: Verificar que al menos un criterio tiene score > 0
+      const hasAnyScore = currentEvaluations.some(e => e.score > 0);
+      if (!hasAnyScore) {
+        setError('Error: Todos los criterios tienen puntuación 0. Por favor asigna al menos un puntaje.');
+        setCompleting(false);
+        return;
+      }
+
+      if (currentTotalScore === undefined || currentTotalScore === null) {
+        console.warn('[ReviewDetail] Warning: totalScore es undefined o null, usando 0');
+      }
+
+      // Usar el totalScore calculado, o 0 si no hay
+      const scoreToSend = currentTotalScore ?? 0;
 
       try {
         console.log('[ReviewDetail] Calling updateReview with:', {
           rubricScores,
-          totalScore: _totalScore,
-          generalFeedback,
+          totalScore: scoreToSend,
+          generalFeedback: currentGeneralFeedback,
         });
 
         const updateResult = await manualReviewApi.updateReview(review.id, {
           rubricScores,
-          totalScore: _totalScore,
-          generalFeedback,
+          totalScore: scoreToSend,
+          generalFeedback: currentGeneralFeedback,
           detailedFeedback: Object.keys(detailedFeedback).length > 0 ? detailedFeedback : undefined,
         });
 
         console.log('[ReviewDetail] updateReview result:', updateResult);
+
+        // FIX TASK-2026-01-18-014: Verificar que el update fue exitoso
+        if (!updateResult || !updateResult.id) {
+          throw new Error('La respuesta del servidor no contiene los datos esperados');
+        }
       } catch (updateError) {
         console.error('[ReviewDetail] updateReview FAILED:', updateError);
-        setError(`Error al guardar la evaluación: ${updateError instanceof Error ? updateError.message : 'Error desconocido'}`);
+        const errorMessage = updateError instanceof Error
+          ? updateError.message
+          : (typeof updateError === 'object' && updateError !== null && 'response' in updateError)
+            ? JSON.stringify((updateError as { response?: { data?: unknown } }).response?.data)
+            : 'Error desconocido al guardar';
+        setError(`Error al guardar la evaluación: ${errorMessage}`);
         setCompleting(false);
         return;
       }
 
       // TASK-2026-01-18-010: PASO 2 - Completar review y distribuir recompensas
       // Este endpoint marca como completed, califica submission y distribuye gamificación
-      const response = await manualReviewApi.completeReview(review.id);
+      console.log('[ReviewDetail] Calling completeReview...');
+      let response;
+      try {
+        response = await manualReviewApi.completeReview(review.id);
+        console.log('[ReviewDetail] completeReview result:', response);
+      } catch (completeError) {
+        console.error('[ReviewDetail] completeReview FAILED:', completeError);
+        const errorMessage = completeError instanceof Error
+          ? completeError.message
+          : (typeof completeError === 'object' && completeError !== null && 'response' in completeError)
+            ? JSON.stringify((completeError as { response?: { data?: unknown } }).response?.data)
+            : 'Error desconocido al completar';
+        setError(`Error al completar la calificación: ${errorMessage}`);
+        setCompleting(false);
+        return;
+      }
 
       // FIX TASK-2026-01-18-012: Mostrar resultado en FeedbackModal
       setAssignedRewards(response.rewards);
       setFeedbackData({
         type: 'success',
         title: 'Revisión Completada',
-        message: `Has calificado el ejercicio de ${review.student?.name || 'el estudiante'} con ${_totalScore}/100 puntos.`,
-        score: _totalScore,
+        message: `Has calificado el ejercicio de ${review.student?.name || 'el estudiante'} con ${scoreToSend}/100 puntos.`,
+        score: scoreToSend,
         xpEarned: response.rewards?.xp_earned || 0,
         mlCoinsEarned: response.rewards?.ml_coins_earned || 0,
         showConfetti: true,
       });
       setShowSuccessModal(true);
     } catch (err) {
-      console.error('Error completing review:', err);
-      setError(err instanceof Error ? err.message : 'Error al completar la calificación');
+      console.error('[ReviewDetail] Unexpected error in handleCompleteReview:', err);
+      setError(err instanceof Error ? err.message : 'Error inesperado al completar la calificación');
     } finally {
       setCompleting(false);
     }
