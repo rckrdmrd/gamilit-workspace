@@ -823,7 +823,7 @@ SELECT * FROM educational_content.validate_module4_module5_answer(
 
 **Checklist de validacion:**
 
-- [ ] Diario Multimedia: Valida entries[] con minimo 3 entradas
+- [ ] Diario Multimedia: Valida entries[] con minimo 1 entrada (máximo 5)
 - [ ] Comic Digital: Valida panels[] con minimo 4 paneles + dialogos + narracion
 - [ ] Video-Carta: Valida script{} con introduccion + body[] + conclusion
 

@@ -374,11 +374,11 @@ El sistema de gestión de contenido permitirá a los administradores controlar e
   - Que los recursos cargan correctamente
 
 **Configurar Puntos y Dificultad:**
-- Ajustar puntos base del ejercicio
-- Configurar multiplicadores por:
-  - Primer intento exitoso (1.5x)
-  - Completado rápidamente (1.2x)
-  - Sin usar hints (1.3x)
+- Ajustar puntos base del ejercicio (xp_reward, ml_coins_reward)
+- Bonificaciones automáticas (fijas, no configurables):
+  - Perfect score sin hints: +50 XP, +10 ML Coins
+  - Penalización por hint: -5 XP por cada hint usado
+  - Multiplicador de rango: según rango Maya del estudiante
 - Establecer umbrales de puntaje:
   - Excelente: 90-100%
   - Bueno: 70-89%

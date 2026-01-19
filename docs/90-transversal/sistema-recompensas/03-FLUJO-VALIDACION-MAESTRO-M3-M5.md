@@ -210,31 +210,32 @@ draft ──────────────> submitted
 ### XP (Experience Points)
 
 ```typescript
-const base_xp = exercise.xp_reward; // Definido por ejercicio (ej: 150)
-const score_percentage = score / 100;
-const difficulty_multiplier = {
-  easy: 1.0,
-  medium: 1.25,
-  hard: 1.5,
-  expert: 2.0
-}[exercise.difficulty];
+// Fórmula real de ExerciseSubmissionService.claimRewards()
+const base_xp = exercise.xp_reward || 100;    // Valor configurado del ejercicio
+const score_multiplier = score / max_score;   // Porcentaje de acierto
+const rank_multiplier = getRankXpMultiplier(userId); // Multiplicador del rango Maya
 
-let xp_earned = Math.round(base_xp * score_percentage * difficulty_multiplier);
+let xp_earned = Math.floor(base_xp * score_multiplier * rank_multiplier);
 
-// Bonuses
-if (score === 100 && !hints_used) xp_earned *= 1.5; // Perfect score
-if (attempt_number === 1) xp_earned *= 1.1;          // First attempt
+// Bonus por perfect score (score=100 y sin hints)
+if (score === max_score && !hint_used) {
+  xp_earned += 50;  // Bonus fijo de 50 XP
+}
+
+// Penalización por hints usados
+xp_earned = Math.max(0, xp_earned - (hints_count * 5));
 ```
 
 ### ML Coins
 
 ```typescript
-const base_coins = exercise.ml_coins_reward; // Definido por ejercicio (ej: 30)
-let coins_earned = Math.round(base_coins * (score / 100));
+const base_coins = exercise.ml_coins_reward || 20; // Valor configurado del ejercicio
+let coins_earned = Math.floor(base_coins * (score / max_score));
 
-// Bonuses
-if (score === 100) coins_earned += 6;  // Perfect score bonus
-if (!hints_used) coins_earned += 3;     // No hints bonus
+// Bonus por perfect score sin hints
+if (score === max_score && !hint_used) {
+  coins_earned += 10;  // Bonus fijo de 10 ML Coins
+}
 
 // Restar coins gastados en comodines
 coins_earned = Math.max(0, coins_earned - ml_coins_spent);

@@ -207,27 +207,27 @@ exercise_submissions
 
 ### 3.2 Calculo de Recompensas
 
-**Formula XP:**
+**Formula XP:** (Actualizada 2026-01-18 - alineada con ExerciseSubmissionService.claimRewards())
 ```
-base_xp = exercise.xp_reward (ej: 150)
-score_percentage = score / 100
-difficulty_multiplier = { easy: 1.0, medium: 1.25, hard: 1.5, expert: 2.0 }
+base_xp = exercise.xp_reward || 100
+score_multiplier = score / max_score
+rank_multiplier = getRankXpMultiplier(userId)  // Multiplicador del rango Maya
 
-xp_earned = base_xp * score_percentage * difficulty_multiplier
+xp_earned = floor(base_xp * score_multiplier * rank_multiplier)
 
 // Bonificaciones
-if (score == 100 && !hints_used) xp_earned *= 1.5  // Perfect
-if (attempt_number == 1) xp_earned *= 1.1           // First attempt
-if (!hints_used) xp_earned *= 1.2                   // No hints
+if (score == max_score && !hint_used) xp_earned += 50  // Perfect score: +50 fijo
+
+// Penalización
+xp_earned = max(0, xp_earned - (hints_count * 5))  // -5 XP por hint usado
 ```
 
-**Formula ML Coins:**
+**Formula ML Coins:** (Actualizada 2026-01-18)
 ```
-base_coins = exercise.ml_coins_reward (ej: 30)
-coins_earned = base_coins * (score / 100)
+base_coins = exercise.ml_coins_reward || 20
+coins_earned = floor(base_coins * (score / max_score))
 
-if (score == 100) coins_earned += 6   // Perfect bonus
-if (!hints_used) coins_earned += 3     // No hints bonus
+if (score == max_score && !hint_used) coins_earned += 10  // Perfect bonus: +10 fijo
 
 net_coins = max(0, coins_earned - ml_coins_spent)
 ```
