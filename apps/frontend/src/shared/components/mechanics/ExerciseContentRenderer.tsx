@@ -876,6 +876,7 @@ const DiarioMultimediaRenderer: React.FC<{ data: Record<string, unknown> }> = ({
     'emocionado': '🤩',
     'excited': '🤩',
     'reflexivo': '🤔',
+    'reflective': '🤔', // TASK-2026-01-19-010: Added English key from actual submission
     'thoughtful': '🤔',
   };
 
