@@ -528,6 +528,71 @@ export class ReportsService {
       margin-bottom: 5px;
       font-size: 13px;
     }
+    /* TASK-2026-01-18-015 Sprint 2: Competencies section styles */
+    .competencies {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .competencies h4 {
+      margin: 0 0 10px 0;
+      color: #1e40af;
+      font-size: 14px;
+    }
+    .competencies-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    .competency-item {
+      background: #f9fafb;
+      padding: 8px;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 11px;
+    }
+    .competency-item .name {
+      font-weight: bold;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+    .competency-item .score {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .competency-item .level {
+      font-size: 10px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+    .competency-item.excellent .score { color: #10b981; }
+    .competency-item.good .score { color: #3b82f6; }
+    .competency-item.average .score { color: #f59e0b; }
+    .competency-item.needs-work .score { color: #dc2626; }
+    .mastery-summary {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+    .mastery-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .mastery-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: bold;
+      color: white;
+    }
+    .mastery-badge.mastered { background: #10b981; }
+    .mastery-badge.needs-review { background: #f59e0b; }
     .footer {
       margin-top: 50px;
       padding-top: 20px;
@@ -606,6 +671,7 @@ export class ReportsService {
             ${student.recommendations.map(rec => `<li>${rec}</li>`).join('')}
           </ul>
         </div>
+        ${this.generateCompetenciesSection(student)}
       </div>
     `,
           )
@@ -644,6 +710,7 @@ export class ReportsService {
             ${student.recommendations.map(rec => `<li>${rec}</li>`).join('')}
           </ul>
         </div>
+        ${this.generateCompetenciesSection(student)}
       </div>
     `,
           )
@@ -838,5 +905,113 @@ export class ReportsService {
     // Generate buffer
     const buffer = await workbook.xlsx.writeBuffer();
     return Buffer.from(buffer);
+  }
+
+  // =========================================================================
+  // COMPETENCIES SECTION GENERATOR (TASK-2026-01-18-015 Sprint 2)
+  // =========================================================================
+
+  /**
+   * Generate HTML for competencies section in PDF report
+   * TASK-2026-01-18-015 Sprint 2: Shows mastery and reading competencies
+   */
+  private generateCompetenciesSection(
+    student: StudentInsightsResponseDto & { student_name: string; student_id: string },
+  ): string {
+    // Check if student has competencies data
+    if (!student.competencies && !student.mastery_summary) {
+      return ''; // No competencies data available
+    }
+
+    const competencySections: string[] = [];
+
+    // Generate mastery summary if available
+    if (student.mastery_summary && student.mastery_summary.totalSkills > 0) {
+      competencySections.push(`
+        <div class="mastery-summary">
+          <div class="mastery-item">
+            <div class="mastery-badge mastered">${student.mastery_summary.masteredSkills}</div>
+            <span>Dominadas</span>
+          </div>
+          <div class="mastery-item">
+            <div class="mastery-badge needs-review">${student.mastery_summary.needsReviewCount}</div>
+            <span>Requieren repaso</span>
+          </div>
+          <div class="mastery-item">
+            <span>Nivel promedio: <strong>${student.mastery_summary.averageMasteryLevel.toFixed(1)}%</strong></span>
+          </div>
+        </div>
+      `);
+    }
+
+    // Generate competencies grid if available
+    if (student.competencies) {
+      const competencyItems = [
+        { name: 'Literal', data: student.competencies.literal },
+        { name: 'Inferencial', data: student.competencies.inferencial },
+        { name: 'Crítico', data: student.competencies.critico },
+        { name: 'Digital', data: student.competencies.digital },
+        { name: 'Textual', data: student.competencies.textual },
+      ];
+
+      const hasAnyData = competencyItems.some(c => c.data.score > 0);
+
+      if (hasAnyData) {
+        const competencyGridItems = competencyItems.map(comp => {
+          const scoreClass = this.getScoreClass(comp.data.score);
+          const levelLabel = this.getLevelLabel(comp.data.level);
+
+          return `
+            <div class="competency-item ${scoreClass}">
+              <div class="name">${comp.name}</div>
+              <div class="score">${comp.data.score > 0 ? comp.data.score.toFixed(0) + '%' : 'N/A'}</div>
+              <div class="level">${levelLabel}</div>
+            </div>
+          `;
+        }).join('');
+
+        competencySections.push(`
+          <div class="competencies-grid">
+            ${competencyGridItems}
+          </div>
+        `);
+      }
+    }
+
+    if (competencySections.length === 0) {
+      return '';
+    }
+
+    return `
+      <div class="competencies">
+        <h4>Competencias de Lectura</h4>
+        ${competencySections.join('')}
+      </div>
+    `;
+  }
+
+  /**
+   * Get CSS class based on score
+   */
+  private getScoreClass(score: number): string {
+    if (score >= 80) return 'excellent';
+    if (score >= 60) return 'good';
+    if (score >= 40) return 'average';
+    return 'needs-work';
+  }
+
+  /**
+   * Get human-readable label for proficiency level
+   */
+  private getLevelLabel(level: string): string {
+    const labels: Record<string, string> = {
+      novice: 'Novato',
+      beginner: 'Principiante',
+      intermediate: 'Intermedio',
+      advanced: 'Avanzado',
+      expert: 'Experto',
+      not_assessed: 'Sin evaluar',
+    };
+    return labels[level] || level;
   }
 }

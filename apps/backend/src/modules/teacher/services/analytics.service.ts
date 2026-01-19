@@ -18,6 +18,9 @@ import { AssignmentSubmission } from '@/modules/assignments/entities/assignment-
 import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
 import { Achievement } from '@/modules/gamification/entities/achievement.entity';
 import { UserAchievement } from '@/modules/gamification/entities/user-achievement.entity';
+// TASK-2026-01-18-015 Sprint 2: Added for mastery and skill assessments
+import { MasteryTracking } from '@/modules/progress/entities/mastery-tracking.entity';
+import { SkillAssessment } from '@/modules/progress/entities/skill-assessment.entity';
 import {
   GetAnalyticsQueryDto,
   GetEngagementMetricsDto,
@@ -64,6 +67,11 @@ export class AnalyticsService {
     private readonly achievementRepository: Repository<Achievement>,
     @InjectRepository(UserAchievement, 'gamification')
     private readonly userAchievementRepository: Repository<UserAchievement>,
+    // TASK-2026-01-18-015 Sprint 2: Added for mastery and skill assessments
+    @InjectRepository(MasteryTracking, 'progress')
+    private readonly masteryTrackingRepository: Repository<MasteryTracking>,
+    @InjectRepository(SkillAssessment, 'progress')
+    private readonly skillAssessmentRepository: Repository<SkillAssessment>,
     private readonly studentProgressService: StudentProgressService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
@@ -487,11 +495,15 @@ export class AnalyticsService {
       // Continue without cache on error
     }
 
-    // Get comprehensive student data
-    const stats = await this.studentProgressService.getStudentStats(studentId);
-    const moduleProgress = await this.studentProgressService.getModuleProgress(studentId);
-    const struggleAreas = await this.studentProgressService.getStruggleAreas(studentId);
-    const classComparison = await this.studentProgressService.getClassComparison(studentId);
+    // Get comprehensive student data (including mastery and skills - TASK-2026-01-18-015 Sprint 2)
+    const [stats, moduleProgress, struggleAreas, classComparison, masteryData, skillsData] = await Promise.all([
+      this.studentProgressService.getStudentStats(studentId),
+      this.studentProgressService.getModuleProgress(studentId),
+      this.studentProgressService.getStruggleAreas(studentId),
+      this.studentProgressService.getClassComparison(studentId),
+      this.getMasteryData(studentId),
+      this.getSkillAssessments(studentId),
+    ]);
 
     // Calculate overall score (weighted average)
     const overall_score = Math.round(
@@ -506,11 +518,11 @@ export class AnalyticsService {
     // Calculate risk level based on multiple factors
     const risk_level = this.calculateRiskLevel(stats, overall_score, struggleAreas.length);
 
-    // Generate strengths based on performance
-    const strengths = this.generateStrengths(stats, moduleProgress, overall_score);
+    // Generate strengths based on performance (enhanced with mastery data - TASK-2026-01-18-015)
+    const strengths = this.generateStrengthsWithMastery(stats, moduleProgress, overall_score, masteryData, skillsData);
 
-    // Generate weaknesses from struggle areas
-    const weaknesses = this.generateWeaknesses(struggleAreas, stats);
+    // Generate weaknesses from struggle areas (enhanced with mastery data - TASK-2026-01-18-015)
+    const weaknesses = this.generateWeaknessesWithMastery(struggleAreas, stats, masteryData, skillsData);
 
     // Calculate predictions
     const predictions = this.calculatePredictions(stats, overall_score, risk_level);
@@ -522,6 +534,18 @@ export class AnalyticsService {
       overall_score,
       risk_level,
     );
+
+    // TASK-2026-01-18-015 Sprint 2: Build mastery_summary for response
+    const mastery_summary = masteryData.totalSkills > 0 ? {
+      totalSkills: masteryData.totalSkills,
+      masteredSkills: masteryData.masteredSkills,
+      needsReviewCount: masteryData.needsReviewCount,
+      averageMasteryLevel: masteryData.averageMasteryLevel,
+      byTopic: masteryData.byTopic,
+    } : undefined;
+
+    // TASK-2026-01-18-015 Sprint 2: Build competencies for response
+    const competencies = skillsData.totalAssessments > 0 ? skillsData.competencies : undefined;
 
     const insights: StudentInsightsResponseDto = {
       overall_score,
@@ -535,6 +559,9 @@ export class AnalyticsService {
       weaknesses,
       predictions,
       recommendations,
+      // TASK-2026-01-18-015 Sprint 2: New fields
+      mastery_summary,
+      competencies,
     };
 
     // Store in cache
@@ -1089,6 +1116,289 @@ export class AnalyticsService {
     return response;
   }
 
+  // =========================================================================
+  // MASTERY TRACKING (TASK-2026-01-18-015 Sprint 2)
+  // =========================================================================
+
+  /**
+   * Get mastery tracking data for a student
+   *
+   * @description Retrieves mastery tracking records and aggregates them by topic
+   * to provide insights into skill development and areas needing attention.
+   *
+   * @param studentId - The student's user ID
+   * @returns MasterySummary with totals and breakdown by topic
+   */
+  async getMasteryData(studentId: string): Promise<{
+    totalSkills: number;
+    masteredSkills: number;
+    needsReviewCount: number;
+    averageMasteryLevel: number;
+    byTopic: Record<string, {
+      total: number;
+      mastered: number;
+      avgScore: number;
+      status: string;
+    }>;
+  }> {
+    const masteryRecords = await this.masteryTrackingRepository.find({
+      where: { user_id: studentId },
+    });
+
+    if (masteryRecords.length === 0) {
+      return {
+        totalSkills: 0,
+        masteredSkills: 0,
+        needsReviewCount: 0,
+        averageMasteryLevel: 0,
+        byTopic: {},
+      };
+    }
+
+    // Group by topic
+    const byTopic: Record<string, {
+      total: number;
+      mastered: number;
+      avgScore: number;
+      status: string;
+      scores: number[];
+    }> = {};
+
+    let totalMasteryLevel = 0;
+    let masteredCount = 0;
+    let needsReviewCount = 0;
+
+    masteryRecords.forEach((record) => {
+      const topic = record.topic || 'General';
+
+      if (!byTopic[topic]) {
+        byTopic[topic] = {
+          total: 0,
+          mastered: 0,
+          avgScore: 0,
+          status: 'learning',
+          scores: [],
+        };
+      }
+
+      byTopic[topic].total++;
+      byTopic[topic].scores.push(Number(record.mastery_level));
+
+      if (record.status === 'mastered') {
+        byTopic[topic].mastered++;
+        masteredCount++;
+      }
+
+      if (record.status === 'needs_review') {
+        needsReviewCount++;
+      }
+
+      // Update status to the most advanced status in the group
+      const statusPriority: Record<string, number> = {
+        not_started: 0,
+        learning: 1,
+        practicing: 2,
+        needs_review: 3,
+        mastered: 4,
+      };
+
+      if (statusPriority[record.status] > statusPriority[byTopic[topic].status]) {
+        byTopic[topic].status = record.status;
+      }
+
+      totalMasteryLevel += Number(record.mastery_level);
+    });
+
+    // Calculate averages for each topic
+    const cleanByTopic: Record<string, {
+      total: number;
+      mastered: number;
+      avgScore: number;
+      status: string;
+    }> = {};
+
+    Object.entries(byTopic).forEach(([topic, data]) => {
+      cleanByTopic[topic] = {
+        total: data.total,
+        mastered: data.mastered,
+        avgScore: Math.round((data.scores.reduce((a, b) => a + b, 0) / data.scores.length) * 100) / 100,
+        status: data.status,
+      };
+    });
+
+    return {
+      totalSkills: masteryRecords.length,
+      masteredSkills: masteredCount,
+      needsReviewCount,
+      averageMasteryLevel: Math.round((totalMasteryLevel / masteryRecords.length) * 100) / 100,
+      byTopic: cleanByTopic,
+    };
+  }
+
+  // =========================================================================
+  // SKILL ASSESSMENTS (TASK-2026-01-18-015 Sprint 2)
+  // =========================================================================
+
+  /**
+   * Get skill assessments for a student
+   *
+   * @description Retrieves skill assessment records and structures them for
+   * the 5 reading competencies: literal, inferencial, crítico, digital, textual.
+   *
+   * @param studentId - The student's user ID
+   * @returns SkillAssessmentsSummary with competencies breakdown
+   */
+  async getSkillAssessments(studentId: string): Promise<{
+    competencies: {
+      literal: { score: number; level: string; trend: string; assessmentCount: number };
+      inferencial: { score: number; level: string; trend: string; assessmentCount: number };
+      critico: { score: number; level: string; trend: string; assessmentCount: number };
+      digital: { score: number; level: string; trend: string; assessmentCount: number };
+      textual: { score: number; level: string; trend: string; assessmentCount: number };
+    };
+    lastAssessedAt: Date | null;
+    overallProficiency: number;
+    totalAssessments: number;
+  }> {
+    const assessments = await this.skillAssessmentRepository.find({
+      where: { user_id: studentId },
+      order: { assessed_at: 'DESC' },
+    });
+
+    // Default empty competency
+    const emptyCompetency = {
+      score: 0,
+      level: 'not_assessed',
+      trend: 'insufficient_data',
+      assessmentCount: 0,
+    };
+
+    if (assessments.length === 0) {
+      return {
+        competencies: {
+          literal: { ...emptyCompetency },
+          inferencial: { ...emptyCompetency },
+          critico: { ...emptyCompetency },
+          digital: { ...emptyCompetency },
+          textual: { ...emptyCompetency },
+        },
+        lastAssessedAt: null,
+        overallProficiency: 0,
+        totalAssessments: 0,
+      };
+    }
+
+    // Map skill names/categories to competency types
+    const competencyMapping: Record<string, string> = {
+      literal: 'literal',
+      'lectura literal': 'literal',
+      'comprensión literal': 'literal',
+      inferencial: 'inferencial',
+      inferential: 'inferencial',
+      inferencia: 'inferencial',
+      critico: 'critico',
+      critical: 'critico',
+      'análisis crítico': 'critico',
+      'comprensión crítica': 'critico',
+      digital: 'digital',
+      'lectura digital': 'digital',
+      textual: 'textual',
+      'producción textual': 'textual',
+    };
+
+    // Group assessments by competency
+    const competencyData: Record<string, SkillAssessment[]> = {
+      literal: [],
+      inferencial: [],
+      critico: [],
+      digital: [],
+      textual: [],
+    };
+
+    assessments.forEach((assessment) => {
+      const skillNameLower = (assessment.skill_name || '').toLowerCase();
+      const categoryLower = (assessment.skill_category || '').toLowerCase();
+
+      // Try to match skill_name first, then category
+      let competencyType = competencyMapping[skillNameLower] || competencyMapping[categoryLower];
+
+      // If no match, try to infer from partial match
+      if (!competencyType) {
+        if (skillNameLower.includes('literal')) competencyType = 'literal';
+        else if (skillNameLower.includes('inferen')) competencyType = 'inferencial';
+        else if (skillNameLower.includes('criti') || skillNameLower.includes('críti')) competencyType = 'critico';
+        else if (skillNameLower.includes('digital')) competencyType = 'digital';
+        else if (skillNameLower.includes('textual') || skillNameLower.includes('producción')) competencyType = 'textual';
+      }
+
+      if (competencyType && competencyData[competencyType]) {
+        competencyData[competencyType].push(assessment);
+      }
+    });
+
+    // Build competencies response
+    const buildCompetency = (records: SkillAssessment[]) => {
+      if (records.length === 0) {
+        return { ...emptyCompetency };
+      }
+
+      // Most recent assessment for current level
+      const latest = records[0];
+      const score = Number(latest.assessment_score);
+      const level = latest.proficiency_level || 'not_assessed';
+
+      // Calculate trend from last 3 assessments
+      let trend: 'improving' | 'stable' | 'declining' | 'insufficient_data' = 'insufficient_data';
+      if (records.length >= 2) {
+        const recentScores = records.slice(0, Math.min(3, records.length)).map((r) => Number(r.assessment_score));
+        const scoreDiff = recentScores[0] - recentScores[recentScores.length - 1];
+
+        if (Math.abs(scoreDiff) < 5) {
+          trend = 'stable';
+        } else if (scoreDiff > 0) {
+          trend = 'improving';
+        } else {
+          trend = 'declining';
+        }
+      }
+
+      return {
+        score: Math.round(score * 100) / 100,
+        level,
+        trend,
+        assessmentCount: records.length,
+      };
+    };
+
+    const competencies = {
+      literal: buildCompetency(competencyData.literal),
+      inferencial: buildCompetency(competencyData.inferencial),
+      critico: buildCompetency(competencyData.critico),
+      digital: buildCompetency(competencyData.digital),
+      textual: buildCompetency(competencyData.textual),
+    };
+
+    // Calculate overall proficiency
+    const competencyScores = [
+      competencies.literal.score,
+      competencies.inferencial.score,
+      competencies.critico.score,
+      competencies.digital.score,
+      competencies.textual.score,
+    ].filter((s) => s > 0);
+
+    const overallProficiency = competencyScores.length > 0
+      ? Math.round((competencyScores.reduce((a, b) => a + b, 0) / competencyScores.length) * 100) / 100
+      : 0;
+
+    return {
+      competencies,
+      lastAssessedAt: assessments[0]?.assessed_at || null,
+      overallProficiency,
+      totalAssessments: assessments.length,
+    };
+  }
+
   /**
    * Calculate distribution of students by ML Coins balance range
    */
@@ -1341,6 +1651,148 @@ export class AnalyticsService {
     }
 
     return weaknesses.slice(0, 5); // Max 5 weaknesses
+  }
+
+  // =========================================================================
+  // ENHANCED STRENGTHS/WEAKNESSES WITH MASTERY DATA (TASK-2026-01-18-015 Sprint 2)
+  // =========================================================================
+
+  /**
+   * Generate student strengths enhanced with mastery and skill assessment data
+   */
+  private generateStrengthsWithMastery(
+    stats: any,
+    moduleProgress: any[],
+    overall_score: number,
+    masteryData: {
+      totalSkills: number;
+      masteredSkills: number;
+      averageMasteryLevel: number;
+      byTopic: Record<string, { avgScore: number; status: string }>;
+    },
+    skillsData: {
+      competencies: {
+        literal: { score: number; level: string };
+        inferencial: { score: number; level: string };
+        critico: { score: number; level: string };
+        digital: { score: number; level: string };
+        textual: { score: number; level: string };
+      };
+      overallProficiency: number;
+    },
+  ): string[] {
+    // Start with base strengths
+    const strengths = this.generateStrengths(stats, moduleProgress, overall_score);
+
+    // Add mastery-based strengths
+    if (masteryData.totalSkills > 0) {
+      const masteryRate = (masteryData.masteredSkills / masteryData.totalSkills) * 100;
+
+      if (masteryRate >= 70) {
+        strengths.push(`Ha dominado ${masteryData.masteredSkills} de ${masteryData.totalSkills} habilidades (${Math.round(masteryRate)}%)`);
+      }
+
+      if (masteryData.averageMasteryLevel >= 75) {
+        strengths.push('Nivel de dominio promedio excelente en las competencias evaluadas');
+      }
+
+      // Find mastered topics
+      const masteredTopics = Object.entries(masteryData.byTopic)
+        .filter(([, data]) => data.status === 'mastered' && data.avgScore >= 80)
+        .map(([topic]) => topic);
+
+      if (masteredTopics.length > 0 && masteredTopics.length <= 3) {
+        strengths.push(`Dominio destacado en: ${masteredTopics.join(', ')}`);
+      }
+    }
+
+    // Add competency-based strengths
+    if (skillsData.overallProficiency >= 70) {
+      const strongCompetencies: string[] = [];
+
+      if (skillsData.competencies.literal.score >= 75) strongCompetencies.push('comprensión literal');
+      if (skillsData.competencies.inferencial.score >= 75) strongCompetencies.push('inferencia');
+      if (skillsData.competencies.critico.score >= 75) strongCompetencies.push('análisis crítico');
+      if (skillsData.competencies.digital.score >= 75) strongCompetencies.push('lectura digital');
+      if (skillsData.competencies.textual.score >= 75) strongCompetencies.push('producción textual');
+
+      if (strongCompetencies.length > 0 && strongCompetencies.length <= 3) {
+        strengths.push(`Competencias destacadas: ${strongCompetencies.join(', ')}`);
+      }
+    }
+
+    // Remove duplicates and limit
+    return [...new Set(strengths)].slice(0, 6);
+  }
+
+  /**
+   * Generate areas for improvement enhanced with mastery and skill assessment data
+   */
+  private generateWeaknessesWithMastery(
+    struggleAreas: any[],
+    stats: any,
+    masteryData: {
+      needsReviewCount: number;
+      averageMasteryLevel: number;
+      byTopic: Record<string, { avgScore: number; status: string }>;
+    },
+    skillsData: {
+      competencies: {
+        literal: { score: number; level: string };
+        inferencial: { score: number; level: string };
+        critico: { score: number; level: string };
+        digital: { score: number; level: string };
+        textual: { score: number; level: string };
+      };
+      overallProficiency: number;
+    },
+  ): string[] {
+    // Start with base weaknesses
+    const weaknesses = this.generateWeaknesses(struggleAreas, stats);
+
+    // Add mastery-based weaknesses
+    if (masteryData.needsReviewCount > 0) {
+      weaknesses.push(`${masteryData.needsReviewCount} tema(s) necesitan repaso para mantener el dominio`);
+    }
+
+    if (masteryData.averageMasteryLevel > 0 && masteryData.averageMasteryLevel < 50) {
+      weaknesses.push('Nivel de dominio promedio bajo - requiere refuerzo en fundamentos');
+    }
+
+    // Find topics needing improvement
+    const weakTopics = Object.entries(masteryData.byTopic)
+      .filter(([, data]) => data.avgScore < 50 && data.status !== 'not_started')
+      .map(([topic]) => topic);
+
+    if (weakTopics.length > 0 && weakTopics.length <= 2) {
+      weaknesses.push(`Áreas que requieren atención: ${weakTopics.join(', ')}`);
+    }
+
+    // Add competency-based weaknesses
+    const weakCompetencies: string[] = [];
+
+    if (skillsData.competencies.literal.score > 0 && skillsData.competencies.literal.score < 50) {
+      weakCompetencies.push('comprensión literal');
+    }
+    if (skillsData.competencies.inferencial.score > 0 && skillsData.competencies.inferencial.score < 50) {
+      weakCompetencies.push('inferencia');
+    }
+    if (skillsData.competencies.critico.score > 0 && skillsData.competencies.critico.score < 50) {
+      weakCompetencies.push('análisis crítico');
+    }
+    if (skillsData.competencies.digital.score > 0 && skillsData.competencies.digital.score < 50) {
+      weakCompetencies.push('lectura digital');
+    }
+    if (skillsData.competencies.textual.score > 0 && skillsData.competencies.textual.score < 50) {
+      weakCompetencies.push('producción textual');
+    }
+
+    if (weakCompetencies.length > 0 && weakCompetencies.length <= 2) {
+      weaknesses.push(`Competencias a desarrollar: ${weakCompetencies.join(', ')}`);
+    }
+
+    // Remove duplicates and limit
+    return [...new Set(weaknesses)].slice(0, 6);
   }
 
   /**

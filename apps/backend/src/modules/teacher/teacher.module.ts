@@ -17,6 +17,9 @@ import { ExerciseSubmission } from '@modules/progress/entities/exercise-submissi
 import { ExerciseAttempt } from '@modules/progress/entities/exercise-attempt.entity';
 import { ModuleProgress } from '@modules/progress/entities/module-progress.entity';
 import { ManualReview } from '@modules/progress/entities/manual-review.entity';
+// TASK-2026-01-18-015 Sprint 2: Added for mastery and skill assessments integration
+import { MasteryTracking } from '@modules/progress/entities/mastery-tracking.entity';
+import { SkillAssessment } from '@modules/progress/entities/skill-assessment.entity';
 
 // Educational entities
 import { Module as EducationalModule } from '@modules/educational/entities/module.entity';
@@ -144,8 +147,9 @@ import { AuditModule } from '@modules/audit/audit.module';
     TypeOrmModule.forFeature([ClassroomMember, TeacherClassroom, Classroom, TeacherReport], 'social'),
 
     // Entities from 'progress' datasource
+    // TASK-2026-01-18-015 Sprint 2: Added MasteryTracking and SkillAssessment
     TypeOrmModule.forFeature(
-      [ExerciseSubmission, ExerciseAttempt, ModuleProgress, ManualReview],
+      [ExerciseSubmission, ExerciseAttempt, ModuleProgress, ManualReview, MasteryTracking, SkillAssessment],
       'progress',
     ),
 

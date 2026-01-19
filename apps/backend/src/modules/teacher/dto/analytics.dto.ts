@@ -3,7 +3,7 @@
  */
 
 import { IsEnum, IsOptional, IsUUID, IsString } from 'class-validator';
-import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ReportFormat } from '@shared/dto/reports/generate-report.dto';
 
 export { ReportFormat } from '@shared/dto/reports/generate-report.dto';
@@ -81,6 +81,8 @@ export class GenerateReportsDto {
 /**
  * Student Insights Response DTO
  * Provides comprehensive analytics and AI-generated insights for individual students
+ *
+ * TASK-2026-01-18-015 Sprint 2: Added mastery_summary and competencies fields
  */
 export class StudentInsightsResponseDto {
   @ApiProperty({ description: 'Overall performance score (0-100)' })
@@ -114,6 +116,35 @@ export class StudentInsightsResponseDto {
 
   @ApiProperty({ description: 'Personalized recommendations', type: [String] })
     recommendations!: string[];
+
+  // TASK-2026-01-18-015 Sprint 2: New fields for mastery and competencies
+
+  @ApiPropertyOptional({
+    description: 'Summary of student mastery tracking data',
+  })
+    mastery_summary?: {
+    totalSkills: number;
+    masteredSkills: number;
+    needsReviewCount: number;
+    averageMasteryLevel: number;
+    byTopic: Record<string, {
+      total: number;
+      mastered: number;
+      avgScore: number;
+      status: string;
+    }>;
+  };
+
+  @ApiPropertyOptional({
+    description: 'Reading competencies assessment data',
+  })
+    competencies?: {
+    literal: { score: number; level: string; trend: string; assessmentCount: number };
+    inferencial: { score: number; level: string; trend: string; assessmentCount: number };
+    critico: { score: number; level: string; trend: string; assessmentCount: number };
+    digital: { score: number; level: string; trend: string; assessmentCount: number };
+    textual: { score: number; level: string; trend: string; assessmentCount: number };
+  };
 }
 
 // ============================================================================
@@ -302,4 +333,126 @@ export class AchievementsStatsResponseDto {
 
   @ApiProperty({ description: 'Total unlocks across all students', example: 156 })
     total_unlocks!: number;
+}
+
+// ============================================================================
+// MASTERY TRACKING DTOs (TASK-2026-01-18-015 Sprint 2)
+// ============================================================================
+
+/**
+ * Skill Mastery Info DTO
+ *
+ * @description Mastery information for a specific skill/topic
+ */
+export class SkillMasteryInfoDto {
+  @ApiProperty({ description: 'Total attempts for this skill', example: 15 })
+    total!: number;
+
+  @ApiProperty({ description: 'Number of mastered items', example: 8 })
+    mastered!: number;
+
+  @ApiProperty({ description: 'Average mastery score (0-100)', example: 72.5 })
+    avgScore!: number;
+
+  @ApiProperty({
+    description: 'Mastery status',
+    enum: ['not_started', 'learning', 'practicing', 'mastered', 'needs_review'],
+  })
+    status!: 'not_started' | 'learning' | 'practicing' | 'mastered' | 'needs_review';
+}
+
+/**
+ * Mastery Summary DTO
+ *
+ * @description Summary of student's mastery across all skills
+ */
+export class MasterySummaryDto {
+  @ApiProperty({ description: 'Total number of tracked skills', example: 12 })
+    totalSkills!: number;
+
+  @ApiProperty({ description: 'Number of skills mastered (mastery_level >= 75)', example: 5 })
+    masteredSkills!: number;
+
+  @ApiProperty({ description: 'Number of skills needing review', example: 2 })
+    needsReviewCount!: number;
+
+  @ApiProperty({ description: 'Average mastery level across all skills', example: 68.5 })
+    averageMasteryLevel!: number;
+
+  @ApiProperty({
+    description: 'Mastery breakdown by topic',
+    type: 'object',
+    additionalProperties: { $ref: '#/components/schemas/SkillMasteryInfoDto' },
+  })
+    byTopic!: Record<string, SkillMasteryInfoDto>;
+}
+
+// ============================================================================
+// SKILL ASSESSMENTS DTOs (TASK-2026-01-18-015 Sprint 2)
+// ============================================================================
+
+/**
+ * Competency Info DTO
+ *
+ * @description Information about a specific reading competency
+ */
+export class CompetencyInfoDto {
+  @ApiProperty({ description: 'Competency score (0-100)', example: 78.5 })
+    score!: number;
+
+  @ApiProperty({
+    description: 'Proficiency level',
+    enum: ['novice', 'beginner', 'intermediate', 'advanced', 'expert', 'not_assessed'],
+  })
+    level!: 'novice' | 'beginner' | 'intermediate' | 'advanced' | 'expert' | 'not_assessed';
+
+  @ApiProperty({
+    description: 'Trend direction based on recent assessments',
+    enum: ['improving', 'stable', 'declining', 'insufficient_data'],
+  })
+    trend!: 'improving' | 'stable' | 'declining' | 'insufficient_data';
+
+  @ApiProperty({ description: 'Number of assessments for this competency', example: 5 })
+    assessmentCount!: number;
+}
+
+/**
+ * Reading Competencies DTO
+ *
+ * @description All 5 reading competencies tracked in the system
+ */
+export class ReadingCompetenciesDto {
+  @ApiProperty({ description: 'Literal comprehension competency' })
+    literal!: CompetencyInfoDto;
+
+  @ApiProperty({ description: 'Inferential comprehension competency' })
+    inferencial!: CompetencyInfoDto;
+
+  @ApiProperty({ description: 'Critical analysis competency' })
+    critico!: CompetencyInfoDto;
+
+  @ApiProperty({ description: 'Digital literacy competency' })
+    digital!: CompetencyInfoDto;
+
+  @ApiProperty({ description: 'Textual production competency' })
+    textual!: CompetencyInfoDto;
+}
+
+/**
+ * Skill Assessments Summary DTO
+ *
+ * @description Summary of student's skill assessments
+ */
+export class SkillAssessmentsSummaryDto {
+  @ApiProperty({ description: 'Reading competencies breakdown' })
+    competencies!: ReadingCompetenciesDto;
+
+  @ApiProperty({ description: 'Date of last assessment', nullable: true })
+    lastAssessedAt!: Date | null;
+
+  @ApiProperty({ description: 'Overall proficiency score (0-100)', example: 72.5 })
+    overallProficiency!: number;
+
+  @ApiProperty({ description: 'Total number of assessments', example: 25 })
+    totalAssessments!: number;
 }
