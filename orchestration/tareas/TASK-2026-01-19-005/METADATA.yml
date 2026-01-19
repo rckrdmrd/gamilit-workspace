@@ -1,0 +1,241 @@
+# METADATA.yml - TASK-2026-01-19-005
+# Version: 2.0.0
+# Actualizado: 2026-01-19
+
+# =============================================================================
+# IDENTIFICACION
+# =============================================================================
+
+task:
+  id: "TASK-2026-01-19-005"
+  title: "Sincronizar average_score en module_progress desde exercise_submissions"
+  created: "2026-01-19"
+  updated: "2026-01-19"
+
+# =============================================================================
+# CLASIFICACION
+# =============================================================================
+
+classification:
+  type: "bug-fix"
+  priority: "P1"  # Bloquea generacion de alertas de bajo rendimiento
+  mode: "FULL"
+  epic: "EXT-001"
+  sprint: null
+
+# =============================================================================
+# ESTADO
+# =============================================================================
+
+status:
+  current: "ready"
+  phase: "P"  # Planeacion completada
+  completion_percentage: 20
+
+# =============================================================================
+# CONTEXTO (FASE C)
+# =============================================================================
+
+context:
+  origen: "Verificacion de generacion de alertas (TASK-2026-01-19-003)"
+
+  descripcion: |
+    Durante la verificacion de la funcion generate_student_alerts(), se descubrio
+    que no se generan alertas de tipo 'low_score' porque el campo average_score
+    en module_progress es NULL para todos los registros.
+
+    La funcion de alertas espera que average_score este poblado, pero no existe
+    ningun mecanismo que sincronice los scores desde exercise_submissions hacia
+    module_progress.
+
+  problema_identificado: |
+    - module_progress.average_score = NULL (para todos los registros)
+    - module_progress.completed_exercises = 0 (no actualizado)
+    - exercise_submissions tiene 9 registros con scores reales
+    - generate_student_alerts() no detecta bajo rendimiento porque:
+      WHERE mp.average_score < 60  -- NULL no es < 60
+
+  datos_actuales:
+    module_progress_total: 144
+    module_progress_con_score: 0
+    exercise_submissions_total: 9
+    usuarios_con_submissions: 1
+    score_promedio_real: "11.11%"
+
+# =============================================================================
+# ANALISIS (FASE A)
+# =============================================================================
+
+analysis:
+  campos_afectados:
+    - campo: "module_progress.average_score"
+      tipo: "numeric(5,2)"
+      estado_actual: "NULL en todos los registros"
+      esperado: "Promedio de scores de submissions del usuario en ese modulo"
+
+    - campo: "module_progress.completed_exercises"
+      tipo: "integer"
+      estado_actual: "0 en todos los registros"
+      esperado: "Conteo de ejercicios completados (is_correct=true o status='graded')"
+
+    - campo: "module_progress.total_exercises"
+      tipo: "integer"
+      estado_actual: "5 (valor de seeds)"
+      esperado: "Total de ejercicios intentados"
+
+  relacion_datos:
+    exercise_submissions:
+      user_id: "FK -> profiles.id"
+      exercise_id: "FK -> exercises.id"
+      score: "Puntuacion obtenida"
+      max_score: "Puntuacion maxima"
+      is_correct: "Si fue correcto"
+
+    exercises:
+      id: "PK"
+      module_id: "FK -> modules.id"
+
+    module_progress:
+      user_id: "FK -> profiles.id"
+      module_id: "FK -> modules.id"
+      average_score: "Debe calcularse desde submissions"
+
+  opciones_solucion:
+    - id: 1
+      titulo: "Trigger en exercise_submissions"
+      descripcion: |
+        Crear trigger AFTER INSERT/UPDATE en exercise_submissions que
+        actualice module_progress.average_score automaticamente.
+      pros:
+        - "Sincronizacion automatica en tiempo real"
+        - "No requiere jobs adicionales"
+      contras:
+        - "Overhead en cada submission"
+        - "Complejidad en transacciones"
+      recomendado: true
+
+    - id: 2
+      titulo: "Funcion de sincronizacion manual"
+      descripcion: |
+        Crear funcion sync_module_progress_scores() que recalcule
+        los scores. Ejecutar via CRON o manualmente.
+      pros:
+        - "Simple de implementar"
+        - "No afecta performance de submissions"
+      contras:
+        - "Datos no en tiempo real"
+        - "Requiere scheduling"
+      recomendado: false
+
+    - id: 3
+      titulo: "Modificar generate_student_alerts()"
+      descripcion: |
+        Cambiar la funcion de alertas para calcular scores dinamicamente
+        desde submissions en lugar de leer de module_progress.
+      pros:
+        - "No requiere cambios en otras tablas"
+        - "Siempre datos actualizados"
+      contras:
+        - "Query mas compleja"
+        - "No resuelve el problema raiz"
+      recomendado: false
+
+  decision: |
+    Se implementara la Opcion 1 (Trigger) porque:
+    - Mantiene los datos sincronizados en tiempo real
+    - Es el patron estandar para este tipo de agregaciones
+    - Beneficia a otras funcionalidades que usen module_progress.average_score
+
+# =============================================================================
+# PLANEACION (FASE P)
+# =============================================================================
+
+plan:
+  estrategia: "Trigger AFTER INSERT/UPDATE en exercise_submissions"
+
+  archivos_a_crear:
+    - path: "apps/database/ddl/schemas/progress_tracking/functions/16-sync_module_progress_scores.sql"
+      tipo: "function"
+      descripcion: "Funcion que sincroniza scores de un usuario/modulo"
+
+    - path: "apps/database/ddl/schemas/progress_tracking/triggers/01-sync_scores_on_submission.sql"
+      tipo: "trigger"
+      descripcion: "Trigger que invoca la funcion de sincronizacion"
+
+  pasos:
+    - id: 1
+      titulo: "Crear funcion de sincronizacion"
+      descripcion: |
+        Crear funcion sync_module_progress_scores(p_user_id UUID, p_module_id UUID)
+        que calcule:
+        - average_score: AVG(score/max_score * 100) de submissions del usuario en el modulo
+        - completed_exercises: COUNT de ejercicios con is_correct=true
+        - total_exercises: COUNT total de ejercicios intentados
+      validacion: "SELECT sync_module_progress_scores(...) ejecuta sin error"
+
+    - id: 2
+      titulo: "Crear trigger en exercise_submissions"
+      descripcion: |
+        Crear trigger AFTER INSERT OR UPDATE que:
+        1. Obtenga module_id del ejercicio
+        2. Llame a sync_module_progress_scores(NEW.user_id, module_id)
+      validacion: "INSERT en exercise_submissions actualiza module_progress"
+
+    - id: 3
+      titulo: "Ejecutar sincronizacion inicial"
+      descripcion: |
+        Ejecutar funcion de sincronizacion para todos los usuarios/modulos
+        existentes que tengan submissions.
+      validacion: "module_progress.average_score != NULL donde hay submissions"
+
+    - id: 4
+      titulo: "Verificar generacion de alertas"
+      descripcion: |
+        Ejecutar generate_student_alerts() y verificar que ahora
+        detecta alertas de tipo 'low_score'.
+      validacion: "Alertas de bajo rendimiento generadas"
+
+    - id: 5
+      titulo: "Validar build y tests"
+      descripcion: "npm run build && npm run lint"
+      validacion: "Sin errores"
+
+# =============================================================================
+# EJECUCION (FASE E) - PENDIENTE
+# =============================================================================
+
+execution:
+  status: "pending"
+  progress:
+    - step: 1
+      status: "pending"
+    - step: 2
+      status: "pending"
+    - step: 3
+      status: "pending"
+    - step: 4
+      status: "pending"
+    - step: 5
+      status: "pending"
+
+# =============================================================================
+# DOCUMENTACION (FASE D) - PENDIENTE
+# =============================================================================
+
+documentation:
+  archivos_documentacion:
+    - "orchestration/tareas/TASK-2026-01-19-005/METADATA.yml"
+
+  trazabilidad:
+    relacionado_con:
+      - "TASK-2026-01-19-003: Alertas de intervencion"
+      - "generate_student_alerts(): Funcion de generacion de alertas"
+
+# =============================================================================
+# METADATA
+# =============================================================================
+
+metadata:
+  agente: "claude-opus-4.5"
+  sesion: "2026-01-19-sync-scores"
+  workspace: "/home/isem/workspace-v2/projects/gamilit"
