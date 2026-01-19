@@ -227,10 +227,12 @@ ON CONFLICT (id) DO UPDATE SET
 -- 2. FIX-2026-01-18: Agregar a TODOS los teachers existentes al classroom DEFAULT
 -- Esto asegura que cualquier teacher pueda acceder al aula general
 -- NOTA: user_roles.role es un ENUM, no FK. Se compara como texto lowercase.
+-- FIX-2026-01-19: Corregido para usar p.id en lugar de p.user_id
+-- teacher_classrooms.teacher_id es FK a profiles(id), no a profiles(user_id)
 INSERT INTO social_features.teacher_classrooms (id, teacher_id, classroom_id, tenant_id, role, assigned_at, created_at)
 SELECT
     gen_random_uuid(),
-    p.user_id,
+    p.id,  -- FIX: Usar profiles.id (no user_id) ya que FK apunta a profiles(id)
     c.id,
     c.tenant_id,
     'teacher',  -- Rol valido segun constraint: owner, teacher, assistant
@@ -242,10 +244,10 @@ JOIN auth.users u ON u.id = p.user_id
 JOIN auth_management.user_roles ur ON ur.user_id = u.id
 WHERE c.code = 'DEFAULT'
   AND ur.role::text IN ('admin_teacher', 'super_admin')  -- Roles en lowercase
-  AND p.user_id != c.teacher_id  -- Evitar duplicar el owner
+  AND p.id != c.teacher_id  -- FIX: Comparar profiles.id con teacher_id
   AND NOT EXISTS (
     SELECT 1 FROM social_features.teacher_classrooms tc
-    WHERE tc.teacher_id = p.user_id AND tc.classroom_id = c.id
+    WHERE tc.teacher_id = p.id AND tc.classroom_id = c.id  -- FIX: Usar p.id
   )
 ON CONFLICT DO NOTHING;
 

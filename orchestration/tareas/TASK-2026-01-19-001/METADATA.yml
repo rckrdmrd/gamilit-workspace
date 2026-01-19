@@ -204,6 +204,10 @@ deliverables:
       type: "new"
       description: "Analisis detallado del problema"
 
+    - path: "orchestration/tareas/TASK-2026-01-19-001/02-AUDITORIA-COHERENCIA.md"
+      type: "new"
+      description: "Auditoria de coherencia y validacion post-task"
+
   code:
     - path: "apps/frontend/src/apps/teacher/hooks/useClassroomsStats.ts"
       type: "modified"
