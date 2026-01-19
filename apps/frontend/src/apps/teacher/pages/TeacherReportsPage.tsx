@@ -18,6 +18,7 @@ import {
   RefreshCw,
   Lock,
   Info,
+  Trash2, // TASK-2026-01-18-015 Sprint 4.2: Delete button icon
 } from 'lucide-react';
 import type { ReportType, ReportFormat } from '../types';
 import axiosInstance from '@services/api/axios.instance';
@@ -51,7 +52,23 @@ interface ApiReportMetadata {
   period_start: string | null;
   period_end: string | null;
   generated_at: string;
+  file_size_bytes?: number; // TASK-2026-01-18-015 Sprint 4.1: File size from backend
 }
+
+/**
+ * TASK-2026-01-18-015 Sprint 4.1: Format file size in human-readable format
+ */
+const formatFileSize = (bytes?: number): string => {
+  if (!bytes || bytes === 0) return 'N/A';
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let size = bytes;
+  let unitIndex = 0;
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+  return `${size.toFixed(1)} ${units[unitIndex]}`;
+};
 
 interface ApiReportStats {
   total_reports_generated: number;
@@ -78,7 +95,7 @@ const transformReportMetadata = (data: ApiReportMetadata): RecentReport => {
     generatedAt: data.generated_at,
     studentCount: data.student_count,
     period: period || 'Sin período definido',
-    size: 'N/A', // Size not available in metadata response
+    size: formatFileSize(data.file_size_bytes), // TASK-2026-01-18-015 Sprint 4.1
   };
 };
 
@@ -108,6 +125,13 @@ export default function TeacherReportsPage() {
   const [filterType, setFilterType] = useState<ReportType | 'all'>('all');
   const [loading, setLoading] = useState(true);
   const [isUsingMockData, setIsUsingMockData] = useState(false);
+  // TASK-2026-01-18-015 Sprint 4.2: Delete confirmation state
+  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; reportId: string | null; reportName: string }>({
+    show: false,
+    reportId: null,
+    reportName: '',
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Use useUserGamification hook for real-time gamification data
   const { gamificationData } = useUserGamification(user?.id);
@@ -276,6 +300,38 @@ export default function TeacherReportsPage() {
     }
   };
 
+  // TASK-2026-01-18-015 Sprint 4.2: Delete report with confirmation
+  const handleDeleteClick = (report: RecentReport) => {
+    setDeleteConfirm({ show: true, reportId: report.id, reportName: report.name });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirm.reportId) return;
+
+    setIsDeleting(true);
+    try {
+      await axiosInstance.delete(API_ENDPOINTS.teacher.reports.delete(deleteConfirm.reportId));
+
+      // Remove from local state
+      setRecentReports((prev) => prev.filter((r) => r.id !== deleteConfirm.reportId));
+
+      // Refresh stats
+      await loadReportStats();
+
+      showToast({ type: 'success', message: 'Reporte eliminado correctamente.' });
+    } catch (error) {
+      console.error('Error deleting report:', error);
+      showToast({ type: 'error', message: 'Error al eliminar el reporte. Por favor, intenta nuevamente.' });
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirm({ show: false, reportId: null, reportName: '' });
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirm({ show: false, reportId: null, reportName: '' });
+  };
+
   const getReportTypeLabel = (type: ReportType): string => {
     const labels: Record<ReportType, string> = {
       progress: 'Progreso',
@@ -354,6 +410,49 @@ export default function TeacherReportsPage() {
   return (
     <>
       <ToastContainer toasts={toasts} position="top-right" />
+
+      {/* TASK-2026-01-18-015 Sprint 4.2: Delete confirmation modal */}
+      {deleteConfirm.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="rounded-full bg-red-100 p-3">
+                <Trash2 className="h-6 w-6 text-red-600" />
+              </div>
+              <h3 className="text-lg font-bold text-detective-text">¿Eliminar reporte?</h3>
+            </div>
+            <p className="mb-2 text-detective-text-secondary">
+              Esta acción no se puede deshacer. Se eliminará permanentemente:
+            </p>
+            <p className="mb-6 truncate rounded bg-detective-bg-secondary p-2 font-medium text-detective-text">
+              {deleteConfirm.reportName}
+            </p>
+            <div className="flex justify-end gap-3">
+              <DetectiveButton variant="secondary" onClick={cancelDelete} disabled={isDeleting}>
+                Cancelar
+              </DetectiveButton>
+              <button
+                onClick={confirmDelete}
+                disabled={isDeleting}
+                className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 font-semibold text-white transition-colors hover:bg-red-600 disabled:opacity-50"
+              >
+                {isDeleting ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    Eliminando...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-4 w-4" />
+                    Eliminar
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <TeacherLayout
         user={user ?? undefined}
         gamificationData={displayGamificationData}
@@ -596,10 +695,20 @@ export default function TeacherReportsPage() {
                         </div>
                       </div>
                     </div>
-                    <DetectiveButton variant="primary" onClick={() => downloadReport(report.id)}>
-                      <Download className="h-4 w-4" />
-                      Descargar
-                    </DetectiveButton>
+                    <div className="flex items-center gap-2">
+                      <DetectiveButton variant="primary" onClick={() => downloadReport(report.id)}>
+                        <Download className="h-4 w-4" />
+                        Descargar
+                      </DetectiveButton>
+                      {/* TASK-2026-01-18-015 Sprint 4.2: Delete button */}
+                      <DetectiveButton
+                        variant="secondary"
+                        onClick={() => handleDeleteClick(report)}
+                        className="text-red-500 hover:bg-red-50 hover:text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </DetectiveButton>
+                    </div>
                   </div>
                 </DetectiveCard>
               ))}

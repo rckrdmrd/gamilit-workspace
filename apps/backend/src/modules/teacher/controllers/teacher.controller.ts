@@ -8,7 +8,8 @@ import {
   Controller,
   Get,
   Post,
-    Body,
+  Delete, // TASK-2026-01-18-015 Sprint 4.2: Add Delete import
+  Body,
   Param,
   Query,
   UseGuards,
@@ -534,5 +535,32 @@ export class TeacherController {
     });
 
     res.status(HttpStatus.OK).send(buffer);
+  }
+
+  // TASK-2026-01-18-015 Sprint 4.2: Delete report endpoint
+  @Delete('reports/:id')
+  @ApiOperation({
+    summary: 'Delete a report',
+    description: 'Delete a previously generated report. Validates teacher ownership.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Report deleted successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Report not found',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Teacher does not have access to this report',
+  })
+  async deleteReport(
+    @Param('id') reportId: string,
+    @Request() req: AuthRequest,
+  ): Promise<{ message: string }> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    await this.teacherReportsService.deleteReport(reportId, teacherId);
+    return { message: 'Report deleted successfully' };
   }
 }

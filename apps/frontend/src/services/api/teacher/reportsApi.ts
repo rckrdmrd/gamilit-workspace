@@ -18,8 +18,9 @@ import { apiClient } from '../apiClient';
 
 /**
  * Report formats available
+ * TASK-2026-01-18-015 Sprint 4.3: Added 'csv' format support
  */
-export type ReportFormat = 'pdf' | 'excel';
+export type ReportFormat = 'pdf' | 'excel' | 'csv';
 
 /**
  * Report types available
@@ -255,6 +256,30 @@ export async function downloadReport(reportId: string): Promise<{
   }
 }
 
+/**
+ * Delete a report
+ *
+ * TASK-2026-01-18-015 Sprint 4.2: Delete report functionality
+ *
+ * @description Delete a report by ID. Validates teacher ownership.
+ *
+ * @param reportId - ID of the report to delete
+ * @returns Promise<void>
+ *
+ * @example
+ * ```typescript
+ * await reportsApi.deleteReport('report-uuid');
+ * ```
+ */
+export async function deleteReport(reportId: string): Promise<void> {
+  try {
+    await apiClient.delete(`/teacher/reports/${reportId}`);
+  } catch (error) {
+    console.error('[ReportsAPI] Error deleting report:', error);
+    throw error;
+  }
+}
+
 // ============================================================================
 // EXPORTS
 // ============================================================================
@@ -276,6 +301,7 @@ export const reportsApi = {
   getRecentReports,
   getReportStats,
   downloadReport,
+  deleteReport, // TASK-2026-01-18-015 Sprint 4.2
 };
 
 export default reportsApi;

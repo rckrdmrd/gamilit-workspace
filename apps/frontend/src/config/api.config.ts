@@ -441,6 +441,7 @@ export const API_ENDPOINTS = {
       stats: '/teacher/reports/stats',
       download: (reportId: string) => `/teacher/reports/${reportId}/download`,
       generate: '/teacher/reports/generate',
+      delete: (reportId: string) => `/teacher/reports/${reportId}`, // TASK-2026-01-18-015 Sprint 4.2
     },
 
     // Communications
