@@ -2,7 +2,7 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.9.0"
+version: "1.10.0"
 last_updated: "2026-01-18"
 total_tasks: 13
 
@@ -15,33 +15,36 @@ tasks:
   # 2026-01-18
   # ----------------------------------------
   - id: TASK-2026-01-18-011
-    title: "Analisis y Correccion Paginas Teacher (Progress, Alerts, Reports)"
+    title: "Correccion Teacher Reviews - Carga de Rubrica y Gamificacion"
     date: "2026-01-18"
-    status: in_progress
+    status: completed
     priority: P0
-    type: analysis + bug-fix
+    type: fix + analysis
     metodologia: CAPVED
     dominios:
       - "Frontend"
       - "Backend"
-      - "Database"
+      - "Gamification"
       - "Teacher Portal"
     entregables:
+      - "01-CONTEXTO.md"
       - "01-ANALISIS-CONSOLIDADO.md"
       - "02-PLAN-CORRECCION.md"
+      - "05-EJECUCION.md"
+      - "06-DOCUMENTACION.md"
       - "METADATA.yml"
     metricas:
-      issues_identificados: 34
-      criticos: 4
-      altos: 9
-      medios: 12
-      bajos: 9
+      archivos_modificados: 2
+      lineas_agregadas: 20
+      tipos_ejercicio_validados: 13
+      achievements_verificados: 15
+      rubricas_validadas: 12
     conclusiones:
-      - "Sistema de alertas inoperativo (CRON no configurado)"
-      - "Vulnerabilidad multi-tenant en AdminReports (CRITICO)"
-      - "Trigger faltante para submitted_progress_percentage"
-      - "Tipos de alertas incompletos en frontend"
-      - "Plan de correccion en 4 fases documentado"
+      - "criterion.id ahora se usa de BD (no generado desde nombre)"
+      - "RubricCriteria interface actualizada con id opcional"
+      - "13 tipos de ejercicio M3-M5 tienen renderizadores apropiados"
+      - "15 achievements M3-M5 configurados correctamente"
+      - "Flujo gamificacion verificado: completeReview -> gradeSubmission -> claimRewards"
     path: "orchestration/tareas/TASK-2026-01-18-011/"
 
   - id: TASK-2026-01-18-010
@@ -421,7 +424,7 @@ tasks:
 # RESUMEN POR ESTADO
 # =========================================
 summary:
-  completed: 12
+  completed: 13
   in_progress: 0
   pending: 0
 
