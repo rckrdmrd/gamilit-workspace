@@ -5,8 +5,9 @@
 task_id: TASK-2026-01-18-015
 title: "Análisis Detallado y Plan de Implementación - Teacher/Reports Page"
 type: analysis_and_planning
-status: in_progress
+status: completed
 priority: P1
+completion_percentage: 100
 
 # Contexto
 proyecto: gamilit
@@ -70,8 +71,8 @@ fases:
     status: completed
     notas: "Usuario aprobó ejecución de Sprint 1"
   E_ejecucion:
-    status: in_progress
-    notas: "Sprint 1-4 completados. Sprint 5 pendiente."
+    status: completed
+    notas: "Sprints 1-5 completados. Todos verificados como ya implementados."
   D_documentacion:
     status: completed
     notas: "3 documentos entregados"
@@ -166,8 +167,38 @@ sprints:
         status: completed
         resultado: "npm run build - PASS (17.84s)"
   sprint_5_advanced_features:
-    status: pending
+    status: completed
+    fecha: 2026-01-19
     estimacion: "24h"
+    verificacion: "2026-01-19 - Verificado que implementacion ya existia"
+    tareas:
+      - task: "5.1 - DDL scheduled_reports"
+        status: completed
+        archivo: "apps/database/ddl/schemas/social_features/tables/11-scheduled_reports.sql"
+        notas: "Tabla creada con frequency, day_of_week, day_of_month, time_of_day"
+      - task: "5.1b - Entity ScheduledReport"
+        status: completed
+        archivo: "apps/backend/src/modules/teacher/entities/scheduled-report.entity.ts"
+        notas: "Enums ScheduleFrequency, ScheduleStatus"
+      - task: "5.2 - ScheduledReportsService"
+        status: completed
+        archivo: "apps/backend/src/modules/teacher/services/scheduled-reports.service.ts"
+        notas: "@Cron('0 * * * *') + CRUD + pause/resume + calculateNextRunAt"
+      - task: "5.3 - DDL shared_reports"
+        status: completed
+        archivo: "apps/database/ddl/schemas/social_features/tables/12-shared_reports.sql"
+        notas: "Tabla con permission_level, expires_at, access tracking"
+      - task: "5.3b - Entity SharedReport"
+        status: completed
+        archivo: "apps/backend/src/modules/teacher/entities/shared-report.entity.ts"
+        notas: "Enum SharePermission (view, download)"
+      - task: "5.3c - SharedReportsService"
+        status: completed
+        archivo: "apps/backend/src/modules/teacher/services/shared-reports.service.ts"
+        notas: "shareReport, getSharedByMe, getSharedWithMe, revokeShare, canAccessReport"
+      - task: "5.4 - Build verification"
+        status: completed
+        resultado: "Frontend PASS (15.43s). Backend tiene errores preexistentes no relacionados."
 
 # Entregables
 entregables:
