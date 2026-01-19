@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { ManualReview } from '@modules/progress/entities/manual-review.entity';
 import { ExerciseSubmission } from '@modules/progress/entities/exercise-submission.entity';
-import { CreateReviewDto } from '../dto/create-review.dto';
+import { CreateReviewDto, UpdateReviewDto } from '../dto/create-review.dto';
 import { ExerciseSubmissionService } from '@modules/progress/services/exercise-submission.service';
 // FIX GAP-LOW-001: Import AuditService for event tracking
 import { AuditService } from '@modules/audit/services/audit.service';
@@ -496,7 +496,7 @@ export class ManualReviewService {
    */
   async updateReview(
     reviewId: string,
-    dto: Partial<CreateReviewDto>,
+    dto: UpdateReviewDto,
   ): Promise<ManualReview> {
     // DEBUG: Log para verificar datos recibidos
     this.logger.log(`[updateReview] reviewId: ${reviewId}`);

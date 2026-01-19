@@ -64,6 +64,65 @@ export class CreateReviewDto {
 }
 
 /**
+ * DTO para actualizar una evaluación manual existente
+ * TASK-2026-01-18-014: Todos los campos son opcionales para permitir actualizaciones parciales
+ */
+export class UpdateReviewDto {
+  @ApiProperty({
+    description: 'Puntuaciones por criterio de rúbrica',
+    example: { creativity: 25, accuracy: 30, presentation: 20 },
+    required: false,
+  })
+  @IsObject()
+  @IsOptional()
+    rubricScores?: Record<string, number>;
+
+  @ApiProperty({
+    description: 'Puntuación total calculada (0-100)',
+    example: 85,
+    minimum: 0,
+    maximum: 100,
+    required: false,
+  })
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  @IsOptional()
+    totalScore?: number;
+
+  @ApiProperty({
+    description: 'Comentarios generales del docente',
+    example: 'Excelente trabajo, muy creativo y bien presentado.',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+    generalFeedback?: string;
+
+  @ApiProperty({
+    description: 'Feedback detallado por sección/criterio',
+    example: {
+      creativity: 'Ideas muy originales',
+      presentation: 'Buena estructura y diseño',
+    },
+    required: false,
+  })
+  @IsObject()
+  @IsOptional()
+    detailedFeedback?: Record<string, unknown>;
+
+  @ApiProperty({
+    description: 'Estado del review',
+    enum: ['pending', 'in_progress', 'completed', 'returned'],
+    example: 'in_progress',
+    required: false,
+  })
+  @IsEnum(['pending', 'in_progress', 'completed', 'returned'])
+  @IsOptional()
+    status?: 'pending' | 'in_progress' | 'completed' | 'returned';
+}
+
+/**
  * DTO para actualizar el estado de una evaluación manual
  */
 export class UpdateReviewStatusDto {

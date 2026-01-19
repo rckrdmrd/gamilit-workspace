@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { ManualReviewService, CompleteReviewResult, PaginatedReviewsResult } from '../services/manual-review.service';
-import { CreateReviewDto, ReturnForRevisionDto } from '../dto/create-review.dto';
+import { CreateReviewDto, UpdateReviewDto, ReturnForRevisionDto } from '../dto/create-review.dto';
 import { ManualReview } from '@modules/progress/entities/manual-review.entity';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@modules/auth/guards/roles.guard';
@@ -277,6 +277,7 @@ export class ManualReviewController {
 
   /**
    * Actualiza un review existente
+   * TASK-2026-01-18-014: Usar UpdateReviewDto con campos opcionales
    */
   @Put(':id')
   @Roles(GamilityRoleEnum.ADMIN_TEACHER)
@@ -289,7 +290,7 @@ export class ManualReviewController {
   @ApiResponse({ status: 404, description: 'Review no encontrado' })
   async updateReview(
     @Param('id') id: string,
-    @Body() dto: Partial<CreateReviewDto>,
+    @Body() dto: UpdateReviewDto,
   ): Promise<ManualReview> {
     // DEBUG: Log para verificar datos recibidos en controlador
     console.log('[ManualReviewController] updateReview - id:', id);
