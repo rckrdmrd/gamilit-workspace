@@ -27,6 +27,7 @@ import { ExerciseSubmission } from '@modules/progress/entities/exercise-submissi
 import { Module } from '@modules/educational/entities/module.entity';
 import { Exercise } from '@modules/educational/entities/exercise.entity';
 import { UserStats } from '@modules/gamification/entities/user-stats.entity';
+import { ClassroomMemberStatusEnum } from '@shared/constants/enums.constants';
 import {
   CreateTeacherClassroomDto,
   UpdateTeacherClassroomDto,
@@ -325,10 +326,11 @@ export class TeacherClassroomsCrudService {
       };
 
       // Reconstruir ClassroomMember desde los datos del raw SQL
+      // FIX-2026-01-19: Cast status from raw SQL string to enum
       const classroomMember: Partial<ClassroomMember> = {
         student_id: member.student_id,
         classroom_id: classroomId,
-        status: member.status,
+        status: member.status as ClassroomMemberStatusEnum,
         enrollment_date: member.enrollment_date,
         attendance_percentage: member.attendance_percentage ?? undefined,
         teacher_notes: member.teacher_notes ?? undefined,
@@ -412,12 +414,12 @@ export class TeacherClassroomsCrudService {
 
     // Estudiantes activos
     const activeStudents = await this.classroomMemberRepo.count({
-      where: { classroom_id: classroomId, status: 'active' },
+      where: { classroom_id: classroomId, status: ClassroomMemberStatusEnum.ACTIVE },
     });
 
     // Obtener IDs de estudiantes activos
     const activeMembers = await this.classroomMemberRepo.find({
-      where: { classroom_id: classroomId, status: 'active' },
+      where: { classroom_id: classroomId, status: ClassroomMemberStatusEnum.ACTIVE },
       select: ['student_id'],
     });
 
@@ -440,7 +442,7 @@ export class TeacherClassroomsCrudService {
       .createQueryBuilder('cm')
       .select('AVG(cm.attendance_percentage)', 'avg_attendance')
       .where('cm.classroom_id = :classroomId', { classroomId })
-      .andWhere('cm.status = :status', { status: 'active' })
+      .andWhere('cm.status = :status', { status: ClassroomMemberStatusEnum.ACTIVE })
       .getRawOne();
 
     const avgAttendance = parseFloat(attendanceResult?.avg_attendance || '0');
@@ -867,7 +869,7 @@ export class TeacherClassroomsCrudService {
 
     // Validar que no tenga estudiantes activos
     const activeStudents = await this.classroomMemberRepo.count({
-      where: { classroom_id: classroomId, status: 'active' },
+      where: { classroom_id: classroomId, status: ClassroomMemberStatusEnum.ACTIVE },
     });
 
     if (activeStudents > 0) {

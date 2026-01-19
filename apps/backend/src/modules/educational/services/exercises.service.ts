@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Exercise } from '../entities';
-import { ExerciseTypeEnum } from '@shared/constants/enums.constants';
+import { ExerciseTypeEnum, ClassroomMemberStatusEnum } from '@shared/constants/enums.constants';
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
 import { AssignmentClassroom } from '@/modules/social/entities/assignment-classroom.entity';
 import { AssignmentExercise } from '@/modules/assignments/entities/assignment-exercise.entity';
@@ -68,7 +68,7 @@ export class ExercisesService {
     const studentClassrooms = await this.classroomMemberRepo.find({
       where: {
         student_id: userId,
-        status: 'active',
+        status: ClassroomMemberStatusEnum.ACTIVE,
       },
       select: ['classroom_id'],
     });

@@ -5,8 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
+import { Profile } from '../../auth/entities/profile.entity';
+import { Tenant } from '../../auth/entities/tenant.entity';
+import { School } from './school.entity';
 
 /**
  * Classroom Entity (social_features.classrooms)
@@ -50,10 +55,26 @@ export class Classroom {
     school_id?: string;
 
   /**
+   * Relación Many-to-One con School (opcional)
+   * FIX-2026-01-19: Agregada relación faltante para coherencia DDL-Backend
+   */
+  @ManyToOne(() => School, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'school_id' })
+    school?: School | null;
+
+  /**
    * ID del tenant propietario (FK → auth_management.tenants)
    */
   @Column({ type: 'uuid' })
     tenant_id!: string;
+
+  /**
+   * Relación Many-to-One con Tenant
+   * FIX-2026-01-19: Agregada relación faltante para coherencia DDL-Backend
+   */
+  @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'tenant_id' })
+    tenant?: Tenant;
 
   // =====================================================
   // BASIC INFORMATION
@@ -121,6 +142,14 @@ export class Classroom {
    */
   @Column({ type: 'uuid' })
     teacher_id!: string;
+
+  /**
+   * Relación Many-to-One con Profile (teacher principal)
+   * FIX-2026-01-19: Agregada relación faltante para coherencia DDL-Backend
+   */
+  @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'teacher_id' })
+    teacher?: Profile;
 
   /**
    * IDs de co-profesores (array de UUIDs)

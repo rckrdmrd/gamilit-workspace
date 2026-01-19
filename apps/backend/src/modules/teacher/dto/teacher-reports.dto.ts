@@ -7,6 +7,7 @@
 import { IsOptional, IsInt, Min, Max, IsString, IsEnum, IsDateString, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { TeacherReportTypeEnum, TeacherReportFormatEnum } from '@shared/constants/enums.constants';
 
 /**
  * DTO for creating a new teacher report record
@@ -26,17 +27,17 @@ export class CreateTeacherReportDto {
 
   @ApiProperty({
     description: 'Report type',
-    enum: ['individual', 'classroom', 'progress', 'analytics'],
+    enum: TeacherReportTypeEnum,
   })
-  @IsEnum(['individual', 'classroom', 'progress', 'analytics'])
-    reportType!: string;
+  @IsEnum(TeacherReportTypeEnum)
+    reportType!: TeacherReportTypeEnum;
 
   @ApiProperty({
     description: 'Report format',
-    enum: ['pdf', 'excel', 'csv'],
+    enum: TeacherReportFormatEnum,
   })
-  @IsEnum(['pdf', 'excel', 'csv'])
-    reportFormat!: string;
+  @IsEnum(TeacherReportFormatEnum)
+    reportFormat!: TeacherReportFormatEnum;
 
   @ApiProperty({ description: 'Classroom ID (optional)', required: false })
   @IsOptional()

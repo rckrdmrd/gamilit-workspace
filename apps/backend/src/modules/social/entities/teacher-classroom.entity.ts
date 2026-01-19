@@ -9,6 +9,8 @@ import {
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 import { Classroom } from './classroom.entity';
+import { Profile } from '../../auth/entities/profile.entity';
+import { Tenant } from '../../auth/entities/tenant.entity';
 
 /**
  * Enum for teacher roles in classroom
@@ -56,11 +58,19 @@ export class TeacherClassroom {
   // =====================================================
 
   /**
-   * ID del teacher (FK → auth.users.id)
-   * Referencia al usuario con rol teacher
+   * ID del teacher (FK → auth_management.profiles.id)
+   * Referencia al perfil del usuario con rol teacher
    */
   @Column({ type: 'uuid' })
     teacher_id!: string;
+
+  /**
+   * Relación Many-to-One con Profile (teacher)
+   * FIX-2026-01-19: Agregada relación faltante para coherencia DDL-Backend
+   */
+  @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'teacher_id' })
+    teacher?: Profile;
 
   /**
    * ID del classroom (FK → social_features.classrooms.id)
@@ -82,6 +92,14 @@ export class TeacherClassroom {
    */
   @Column({ type: 'uuid' })
     tenant_id!: string;
+
+  /**
+   * Relación Many-to-One con Tenant
+   * FIX-2026-01-19: Agregada relación faltante para coherencia DDL-Backend
+   */
+  @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'tenant_id' })
+    tenant?: Tenant;
 
   // =====================================================
   // ROLE & STATUS

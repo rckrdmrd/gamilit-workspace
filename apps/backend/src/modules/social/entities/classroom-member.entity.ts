@@ -6,12 +6,16 @@ import {
   UpdateDateColumn,
   Index,
   Unique,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 import {
   ClassroomMemberStatusEnum,
   EnrollmentMethodEnum,
 } from '@shared/constants/enums.constants';
+import { Classroom } from './classroom.entity';
+import { Profile } from '../../auth/entities/profile.entity';
 
 /**
  * ClassroomMember Entity (social_features.classroom_members)
@@ -60,10 +64,26 @@ export class ClassroomMember {
     classroom_id!: string;
 
   /**
+   * Relación Many-to-One con Classroom
+   * FIX-2026-01-19: Agregada relación faltante para coherencia DDL-Backend
+   */
+  @ManyToOne(() => Classroom, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'classroom_id' })
+    classroom?: Classroom;
+
+  /**
    * ID del estudiante (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
     student_id!: string;
+
+  /**
+   * Relación Many-to-One con Profile (student)
+   * FIX-2026-01-19: Agregada relación faltante para coherencia DDL-Backend
+   */
+  @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'student_id' })
+    student?: Profile;
 
   // =====================================================
   // ENROLLMENT TRACKING
@@ -78,12 +98,13 @@ export class ClassroomMember {
   /**
    * Método de inscripción
    * Valores: teacher_invite, self_enroll, admin_add, bulk_import
+   * FIX-2026-01-19: Tipado con enum para coherencia con CHECK constraint
    */
   @Column({
     type: 'text',
     default: EnrollmentMethodEnum.TEACHER_INVITE,
   })
-    enrollment_method!: string;
+    enrollment_method!: EnrollmentMethodEnum;
 
   /**
    * ID del usuario que inscribió al estudiante (FK → auth_management.profiles)
@@ -92,6 +113,14 @@ export class ClassroomMember {
   @Column({ type: 'uuid', nullable: true })
     enrolled_by?: string;
 
+  /**
+   * Relación Many-to-One con Profile (quien inscribió)
+   * FIX-2026-01-19: Agregada relación faltante para coherencia DDL-Backend
+   */
+  @ManyToOne(() => Profile, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'enrolled_by' })
+    enrolledByProfile?: Profile | null;
+
   // =====================================================
   // STATUS & STATE
   // =====================================================
@@ -99,12 +128,13 @@ export class ClassroomMember {
   /**
    * Estado de la membresía
    * Valores: active, inactive, withdrawn, completed
+   * FIX-2026-01-19: Tipado con enum para coherencia con CHECK constraint
    */
   @Column({
     type: 'text',
     default: ClassroomMemberStatusEnum.ACTIVE,
   })
-    status!: string;
+    status!: ClassroomMemberStatusEnum;
 
   /**
    * Fecha y hora de retiro del aula

@@ -13,12 +13,24 @@ import { API_ENDPOINTS } from '@/config/api.config';
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
-
-/**
- * @synchronized-with backend/shared/types/intervention-alerts.types.ts
- * @last-sync 2025-11-24
- * @verified Frontend-Agent - Types are 100% aligned with backend
- */
+// =============================================================================
+// SINGLE SOURCE OF TRUTH: backend/src/shared/types/intervention-alerts.types.ts
+// =============================================================================
+// These enums MUST be kept synchronized with the backend SSOT.
+// Frontend cannot import directly from backend, so they are duplicated here.
+//
+// WHEN TO UPDATE:
+// - If backend enum values change, update these enums to match
+// - Run validation: npm run typecheck (both frontend and backend)
+// - Verify DDL CHECK constraints still match in database
+//
+// SYNC VERIFICATION COMMAND:
+// grep -A 10 "enum InterventionAlert" apps/backend/src/shared/types/intervention-alerts.types.ts
+// =============================================================================
+// @synchronized-with backend/shared/types/intervention-alerts.types.ts
+// @last-sync 2026-01-19
+// @verified Claude-Opus-4.5 - TASK-2026-01-19-003 coherence validation
+// =============================================================================
 
 export enum InterventionAlertType {
   NO_ACTIVITY = 'no_activity',

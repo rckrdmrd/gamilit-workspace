@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ClassroomMember } from '../entities';
 import { CreateClassroomMemberDto } from '../dto';
-import { ClassroomMemberStatusEnum } from '@shared/constants/enums.constants';
+import { ClassroomMemberStatusEnum, EnrollmentMethodEnum } from '@shared/constants/enums.constants';
 
 /**
  * ClassroomMembersService
@@ -49,11 +49,18 @@ export class ClassroomMembersService {
     }
 
     const member = this.classroomMemberRepo.create({
-      ...dto,
+      classroom_id: dto.classroom_id,
+      student_id: dto.student_id,
       enrollment_date: new Date(),
-      status: ClassroomMemberStatusEnum.ACTIVE,
-      is_active: true,
+      enrollment_method: dto.enrollment_method ?? EnrollmentMethodEnum.TEACHER_INVITE,
+      enrolled_by: dto.enrolled_by,
+      status: dto.status ?? ClassroomMemberStatusEnum.ACTIVE,
+      student_number: dto.student_number,
+      final_grade: dto.final_grade,
+      attendance_percentage: dto.attendance_percentage,
+      is_active: dto.is_active ?? true,
       permissions: dto.permissions || {},
+      teacher_notes: dto.teacher_notes,
       parent_contact_info: dto.parent_contact_info || {},
       metadata: dto.metadata || {},
     });
@@ -119,7 +126,7 @@ export class ClassroomMembersService {
    * @returns Membresía actualizada
    * @throws NotFoundException si no existe la membresía
    */
-  async updateStatus(id: string, status: string): Promise<ClassroomMember> {
+  async updateStatus(id: string, status: ClassroomMemberStatusEnum): Promise<ClassroomMember> {
     const member = await this.classroomMemberRepo.findOne({ where: { id } });
 
     if (!member) {

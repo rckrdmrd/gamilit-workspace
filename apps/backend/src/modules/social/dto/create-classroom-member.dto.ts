@@ -45,10 +45,11 @@ export class CreateClassroomMemberDto {
 
   /**
    * Método de inscripción
+   * FIX-2026-01-19: Tipado con enum para coherencia
    */
   @IsOptional()
   @IsEnum(EnrollmentMethodEnum)
-    enrollment_method?: string;
+    enrollment_method?: EnrollmentMethodEnum;
 
   /**
    * ID del usuario que inscribió
@@ -59,10 +60,11 @@ export class CreateClassroomMemberDto {
 
   /**
    * Estado de la membresía
+   * FIX-2026-01-19: Tipado con enum para coherencia
    */
   @IsOptional()
   @IsEnum(ClassroomMemberStatusEnum)
-    status?: string;
+    status?: ClassroomMemberStatusEnum;
 
   /**
    * Número de matrícula del estudiante

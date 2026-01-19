@@ -19,7 +19,38 @@ import { StorageService } from './storage.service';
 import { TeacherReportsService } from './teacher-reports.service';
 import { StudentInsightsResponseDto, ReportFormat } from '../dto/analytics.dto';
 import { GenerateReportDto, ReportType, ReportMetadataDto } from '../dto/reports.dto';
+import { TeacherReportTypeEnum, TeacherReportFormatEnum } from '@shared/constants/enums.constants';
 import { v4 as uuidv4 } from 'uuid';
+
+/**
+ * Maps API ReportType to database TeacherReportTypeEnum
+ * FIX-2026-01-19: Mapping between API types and DB CHECK constraint values
+ */
+function mapReportTypeToEntity(type: ReportType): TeacherReportTypeEnum {
+  const mapping: Record<ReportType, TeacherReportTypeEnum> = {
+    [ReportType.USERS]: TeacherReportTypeEnum.INDIVIDUAL,
+    [ReportType.PROGRESS]: TeacherReportTypeEnum.PROGRESS,
+    [ReportType.GAMIFICATION]: TeacherReportTypeEnum.ANALYTICS,
+    [ReportType.SYSTEM]: TeacherReportTypeEnum.ANALYTICS,
+    [ReportType.STUDENT_INSIGHTS]: TeacherReportTypeEnum.INDIVIDUAL,
+    [ReportType.CLASSROOM_SUMMARY]: TeacherReportTypeEnum.CLASSROOM,
+    [ReportType.RISK_ANALYSIS]: TeacherReportTypeEnum.ANALYTICS,
+  };
+  return mapping[type] ?? TeacherReportTypeEnum.INDIVIDUAL;
+}
+
+/**
+ * Maps API ReportFormat to database TeacherReportFormatEnum
+ * FIX-2026-01-19: Mapping between API formats and DB CHECK constraint values
+ */
+function mapReportFormatToEntity(format: ReportFormat): TeacherReportFormatEnum {
+  const mapping: Record<ReportFormat, TeacherReportFormatEnum> = {
+    [ReportFormat.PDF]: TeacherReportFormatEnum.PDF,
+    [ReportFormat.EXCEL]: TeacherReportFormatEnum.EXCEL,
+    [ReportFormat.CSV]: TeacherReportFormatEnum.CSV,
+  };
+  return mapping[format] ?? TeacherReportFormatEnum.PDF;
+}
 
 interface ReportData {
   metadata: {
@@ -99,12 +130,13 @@ export class ReportsService {
     );
 
     // Persist metadata to database
+    // FIX-2026-01-19: Use mapping functions for type-safe enum conversion
     const savedReport = await this.teacherReportsService.createReport({
       teacherId: userId,
       tenantId: tenantId,
       reportName: reportName,
-      reportType: dto.type,
-      reportFormat: dto.format === ReportFormat.PDF ? 'pdf' : 'excel',
+      reportType: mapReportTypeToEntity(dto.type),
+      reportFormat: mapReportFormatToEntity(dto.format),
       classroomId: dto.classroom_id,
       studentCount: reportData.student_insights.length,
       periodStart: dto.start_date,

@@ -13,9 +13,10 @@ export class UpdateClassroomMemberStatusDto {
   /**
    * Nuevo estado de la membresía
    * Valores: active, inactive, withdrawn, completed
+   * FIX-2026-01-19: Tipado con enum para coherencia
    */
   @IsEnum(ClassroomMemberStatusEnum)
-    status!: string;
+    status!: ClassroomMemberStatusEnum;
 
   /**
    * Fecha de retiro (si aplica)

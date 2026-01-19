@@ -13,8 +13,17 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
+import {
+  TeacherReportTypeEnum,
+  TeacherReportFormatEnum,
+} from '@/shared/constants/enums.constants';
+import { Profile } from '../../auth/entities/profile.entity';
+import { Tenant } from '../../auth/entities/tenant.entity';
+import { Classroom } from '../../social/entities/classroom.entity';
 
 /**
  * Entity for teacher-generated reports metadata
@@ -27,20 +36,52 @@ export class TeacherReport {
   @Column({ name: 'teacher_id', type: 'uuid' })
     teacherId!: string;
 
+  /**
+   * Relación Many-to-One con Profile (teacher)
+   * FIX-2026-01-19: Agregada relación faltante para coherencia DDL-Backend
+   */
+  @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'teacher_id' })
+    teacher?: Profile;
+
   @Column({ name: 'classroom_id', type: 'uuid', nullable: true })
     classroomId!: string | null;
+
+  /**
+   * Relación Many-to-One con Classroom (opcional)
+   * FIX-2026-01-19: Agregada relación faltante para coherencia DDL-Backend
+   */
+  @ManyToOne(() => Classroom, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'classroom_id' })
+    classroom?: Classroom | null;
 
   @Column({ name: 'tenant_id', type: 'uuid' })
     tenantId!: string;
 
+  /**
+   * Relación Many-to-One con Tenant
+   * FIX-2026-01-19: Agregada relación faltante para coherencia DDL-Backend
+   */
+  @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'tenant_id' })
+    tenant?: Tenant;
+
   @Column({ name: 'report_name', length: 255 })
     reportName!: string;
 
+  /**
+   * Tipo de reporte
+   * FIX-2026-01-19: Tipado con enum para coherencia con CHECK constraint
+   */
   @Column({ name: 'report_type', length: 50 })
-    reportType!: string;
+    reportType!: TeacherReportTypeEnum;
 
+  /**
+   * Formato de exportación
+   * FIX-2026-01-19: Tipado con enum para coherencia con CHECK constraint
+   */
   @Column({ name: 'report_format', length: 10 })
-    reportFormat!: string;
+    reportFormat!: TeacherReportFormatEnum;
 
   @Column({ name: 'student_count', type: 'int', default: 0 })
     studentCount!: number;
