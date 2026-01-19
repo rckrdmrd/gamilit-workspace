@@ -176,8 +176,8 @@ export class StudentRiskAlertService {
   /**
    * Process alerts by sending notifications to teachers
    *
-   * @TODO: Integrate with actual notification system
-   * Currently logs alerts, ready for notification integration
+   * IMPLEMENTED: P0-04 (2026-01-04)
+   * Uses NotificationService.create() for multi-channel delivery
    */
   private async processAlerts(alerts: RiskAlert[]): Promise<void> {
     this.logger.log(`Processing ${alerts.length} risk alerts`);

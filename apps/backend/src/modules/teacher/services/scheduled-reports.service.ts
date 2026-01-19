@@ -17,6 +17,8 @@ import {
 import { ReportsService } from './reports.service';
 import { TeacherReportsService } from './teacher-reports.service';
 import { GenerateReportDto, ReportFormat, ReportType } from '../dto/reports.dto';
+// TASK-2026-01-19-008: MailService for email notifications
+import { MailService } from '@modules/mail/mail.service';
 
 /**
  * DTO for creating a scheduled report
@@ -80,6 +82,8 @@ export class ScheduledReportsService {
     private readonly scheduledReportRepo: Repository<ScheduledReport>,
     private readonly reportsService: ReportsService,
     private readonly teacherReportsService: TeacherReportsService,
+    // TASK-2026-01-19-008: MailService for scheduled reports email notifications
+    private readonly mailService: MailService,
   ) {}
 
   /**
@@ -151,9 +155,9 @@ export class ScheduledReportsService {
 
       this.logger.log(`Successfully executed scheduled report ${schedule.id}. Next run: ${nextRun?.toISOString()}`);
 
-      // TODO: Send email notification if enabled
+      // TASK-2026-01-19-008: Send email notification if enabled
       if (schedule.sendEmail && schedule.emailRecipients?.length) {
-        this.logger.log(`Email notification would be sent to: ${schedule.emailRecipients.join(', ')}`);
+        await this.sendReportNotificationEmail(schedule);
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -404,6 +408,94 @@ export class ScheduledReportsService {
     }
 
     return next;
+  }
+
+  /**
+   * Send email notification for completed scheduled report
+   * TASK-2026-01-19-008: Implemented email notifications
+   */
+  private async sendReportNotificationEmail(schedule: ScheduledReport): Promise<void> {
+    if (!schedule.emailRecipients?.length) {
+      return;
+    }
+
+    try {
+      const reportTypeLabel = this.getReportTypeLabel(schedule.reportType);
+      const frequencyLabel = this.getFrequencyLabel(schedule.frequency);
+
+      const subject = `📊 Reporte Programado: ${schedule.scheduleName}`;
+
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333;">Reporte Programado Generado</h2>
+          <p>Hola,</p>
+          <p>Tu reporte programado <strong>${schedule.scheduleName}</strong> ha sido generado exitosamente.</p>
+
+          <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #555;">Detalles del Reporte</h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li><strong>Tipo:</strong> ${reportTypeLabel}</li>
+              <li><strong>Formato:</strong> ${schedule.reportFormat.toUpperCase()}</li>
+              <li><strong>Frecuencia:</strong> ${frequencyLabel}</li>
+              <li><strong>Generado:</strong> ${new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })}</li>
+              <li><strong>Total de ejecuciones:</strong> ${schedule.totalRuns + 1}</li>
+            </ul>
+          </div>
+
+          <p>Puedes acceder al reporte desde el panel de reportes en GAMILIT.</p>
+
+          <p style="color: #666; font-size: 12px; margin-top: 30px;">
+            Este es un email automático. Por favor no responder a este mensaje.
+          </p>
+        </div>
+      `;
+
+      const sent = await this.mailService.sendEmail(
+        schedule.emailRecipients,
+        subject,
+        html,
+      );
+
+      if (sent) {
+        this.logger.log(`✅ Email notification sent to: ${schedule.emailRecipients.join(', ')}`);
+      } else {
+        this.logger.warn(`Email notification logged (SMTP not configured): ${schedule.emailRecipients.join(', ')}`);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to send email notification for schedule ${schedule.id}: ${errorMessage}`);
+      // Don't throw - email failure shouldn't fail the schedule execution
+    }
+  }
+
+  /**
+   * Get human-readable report type label
+   */
+  private getReportTypeLabel(reportType: string): string {
+    const labels: Record<string, string> = {
+      progress_summary: 'Resumen de Progreso',
+      detailed_progress: 'Progreso Detallado',
+      mastery_report: 'Reporte de Dominio',
+      skill_gaps: 'Brechas de Habilidades',
+      class_overview: 'Vista General de Clase',
+      student_comparison: 'Comparación de Estudiantes',
+      exercise_analysis: 'Análisis de Ejercicios',
+      time_analysis: 'Análisis de Tiempo',
+    };
+    return labels[reportType] || reportType;
+  }
+
+  /**
+   * Get human-readable frequency label
+   */
+  private getFrequencyLabel(frequency: ScheduleFrequency): string {
+    const labels: Record<ScheduleFrequency, string> = {
+      [ScheduleFrequency.DAILY]: 'Diario',
+      [ScheduleFrequency.WEEKLY]: 'Semanal',
+      [ScheduleFrequency.BIWEEKLY]: 'Quincenal',
+      [ScheduleFrequency.MONTHLY]: 'Mensual',
+    };
+    return labels[frequency] || frequency;
   }
 
   /**

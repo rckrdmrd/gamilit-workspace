@@ -88,6 +88,8 @@ import { ProgressModule } from '@modules/progress/progress.module';
 import { NotificationsModule } from '@modules/notifications/notifications.module';
 // FIX GAP-LOW-001: AuditModule for review event tracking
 import { AuditModule } from '@modules/audit/audit.module';
+// TASK-2026-01-19-008: MailModule for scheduled reports email notifications
+import { MailModule } from '@modules/mail/mail.module';
 
 /**
  * TeacherModule
@@ -145,6 +147,9 @@ import { AuditModule } from '@modules/audit/audit.module';
 
     // FIX GAP-LOW-001: Import AuditModule for review event tracking
     AuditModule,
+
+    // TASK-2026-01-19-008: MailModule for scheduled reports email notifications
+    MailModule,
 
     // Entities from 'auth' datasource
     TypeOrmModule.forFeature([Profile, User], 'auth'),

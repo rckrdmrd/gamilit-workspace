@@ -23,6 +23,8 @@ import { AssignmentSubmission } from './entities/assignment-submission.entity';
 import { AssignmentsService } from './services/assignments.service';
 import { AssignmentsController } from './controllers/assignments.controller';
 import { StudentAssignmentsController } from './controllers/student-assignments.controller';
+// TASK-2026-01-19-008: NotificationsModule for assignment notifications
+import { NotificationsModule } from '@/modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -44,6 +46,8 @@ import { StudentAssignmentsController } from './controllers/student-assignments.
       ],
       'social',
     ),
+    // TASK-2026-01-19-008: NotificationsModule for assignment notifications
+    NotificationsModule,
   ],
   controllers: [AssignmentsController, StudentAssignmentsController],
   providers: [AssignmentsService],

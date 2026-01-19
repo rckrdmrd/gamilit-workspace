@@ -21,6 +21,9 @@ import { CreateAssignmentDto } from '../dto/create-assignment.dto';
 import { UpdateAssignmentDto } from '../dto/update-assignment.dto';
 import { AssignToClassroomsDto } from '../dto/assign-to-classrooms.dto';
 import { AssignmentGradeDto } from '../dto/grade-submission.dto';
+// TASK-2026-01-19-008: NotificationService for assignment notifications
+import { NotificationService } from '@/modules/notifications/services/notification.service';
+import { NotificationTypeEnum } from '@/shared/constants/enums.constants';
 
 @Injectable()
 export class AssignmentsService {
@@ -39,6 +42,8 @@ export class AssignmentsService {
     private readonly assignmentStudentRepository: Repository<AssignmentStudent>,
     @InjectRepository(AssignmentSubmission, 'educational')
     private readonly submissionRepository: Repository<AssignmentSubmission>,
+    // TASK-2026-01-19-008: NotificationService for assignment notifications
+    private readonly notificationService: NotificationService,
   ) {}
 
   /**
@@ -325,11 +330,49 @@ export class AssignmentsService {
       result.publishedAt = new Date().toISOString();
     }
 
-    // 5. Send notifications (mock - to be implemented)
-    if (dto.sendNotifications) {
-      // TODO: Integrate with notification service
-      result.notificationsSent = true;
-      this.logger.log(`Notifications sent for assignment ${assignmentId}`);
+    // 5. Send notifications - TASK-2026-01-19-008: Implemented
+    if (dto.sendNotifications && result.studentsSuccess > 0) {
+      try {
+        // Get assignment details for notification
+        const assignment = await this.assignmentRepository.findOne({
+          where: { id: assignmentId },
+        });
+
+        if (assignment) {
+          // Get assigned students
+          const assignedStudents = await this.assignmentStudentRepository.find({
+            where: { assignmentId },
+          });
+
+          // Send notification to each student
+          await Promise.all(assignedStudents.map(student =>
+            this.notificationService.create({
+              userId: student.studentId,
+              type: NotificationTypeEnum.SYSTEM_ANNOUNCEMENT,
+              title: `📚 Nueva tarea asignada: ${assignment.title}`,
+              message: `Se te ha asignado una nueva tarea: "${assignment.title}"${assignment.dueDate ? `. Fecha límite: ${new Date(assignment.dueDate).toLocaleDateString('es-MX')}` : ''}`,
+              data: {
+                assignmentId,
+                assignmentTitle: assignment.title,
+                dueDate: assignment.dueDate?.toISOString() || null,
+                action: {
+                  type: 'navigate',
+                  url: `/student/assignments/${assignmentId}`,
+                },
+              },
+              priority: 'normal',
+            }),
+          ));
+
+          result.notificationsSent = true;
+          this.logger.log(`✅ Notifications sent to ${assignedStudents.length} students for assignment ${assignmentId}`);
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        this.logger.error(`Failed to send assignment notifications: ${errorMessage}`);
+        // Don't fail the distribution if notifications fail
+        result.notificationsSent = false;
+      }
     }
 
     this.logger.log(
@@ -812,9 +855,41 @@ export class AssignmentsService {
 
     this.logger.log(`Assignment ${assignmentId} published by teacher ${teacherId}`);
 
-    // TODO: Integrate with notification service if notifyStudents = true
+    // TASK-2026-01-19-008: Implemented notification integration
     if (notifyStudents) {
-      this.logger.log(`Notifications sent for assignment ${assignmentId}`);
+      try {
+        // Get assigned students
+        const assignedStudents = await this.assignmentStudentRepository.find({
+          where: { assignmentId },
+        });
+
+        if (assignedStudents.length > 0) {
+          await Promise.all(assignedStudents.map(student =>
+            this.notificationService.create({
+              userId: student.studentId,
+              type: NotificationTypeEnum.SYSTEM_ANNOUNCEMENT,
+              title: `📢 Tarea publicada: ${published.title}`,
+              message: `La tarea "${published.title}" ya está disponible${published.dueDate ? `. Fecha límite: ${new Date(published.dueDate).toLocaleDateString('es-MX')}` : ''}`,
+              data: {
+                assignmentId,
+                assignmentTitle: published.title,
+                dueDate: published.dueDate?.toISOString() || null,
+                action: {
+                  type: 'navigate',
+                  url: `/student/assignments/${assignmentId}`,
+                },
+              },
+              priority: 'normal',
+            }),
+          ));
+
+          this.logger.log(`✅ Publish notifications sent to ${assignedStudents.length} students for assignment ${assignmentId}`);
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        this.logger.error(`Failed to send publish notifications: ${errorMessage}`);
+        // Don't fail the publish if notifications fail
+      }
     }
 
     return published;
@@ -1172,16 +1247,39 @@ export class AssignmentsService {
       };
     }
 
-    // Log reminder sent (in production, integrate with NotificationService)
-    // TODO: Integrate with notification-multichannel using template 'assignment_due_reminder'
-    this.logger.log(
-      `Reminder sent for assignment ${assignmentId}: ${studentsToNotify.length} students notified`,
-    );
-
-    // For now, just return the count (notifications will be implemented with full integration)
+    // TASK-2026-01-19-008: Implemented notification integration
     const dueDate = assignment.dueDate
-      ? new Date(assignment.dueDate).toLocaleDateString('es-ES')
+      ? new Date(assignment.dueDate).toLocaleDateString('es-MX')
       : 'Sin fecha límite';
+
+    try {
+      await Promise.all(studentsToNotify.map(student =>
+        this.notificationService.create({
+          userId: student.studentId,
+          type: NotificationTypeEnum.SYSTEM_ANNOUNCEMENT,
+          title: `⏰ Recordatorio: ${assignment.title}`,
+          message: `Aún no has entregado la tarea "${assignment.title}". Fecha límite: ${dueDate}`,
+          data: {
+            assignmentId,
+            assignmentTitle: assignment.title,
+            dueDate: assignment.dueDate?.toISOString() || null,
+            action: {
+              type: 'navigate',
+              url: `/student/assignments/${assignmentId}`,
+            },
+          },
+          priority: assignment.dueDate && new Date(assignment.dueDate) <= new Date(Date.now() + 24 * 60 * 60 * 1000)
+            ? 'high'
+            : 'normal',
+        }),
+      ));
+
+      this.logger.log(`✅ Reminder sent for assignment ${assignmentId}: ${studentsToNotify.length} students notified`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to send reminder notifications: ${errorMessage}`);
+      // Don't fail if notifications fail
+    }
 
     return {
       notified: studentsToNotify.length,
