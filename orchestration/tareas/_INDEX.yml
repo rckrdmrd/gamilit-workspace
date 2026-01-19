@@ -2,15 +2,44 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.13.0"
-last_updated: "2026-01-18"
-total_tasks: 16
+version: "1.14.0"
+last_updated: "2026-01-19"
+total_tasks: 17
 
 # =========================================
 # TAREAS POR FECHA
 # =========================================
 
 tasks:
+  # ----------------------------------------
+  # 2026-01-19
+  # ----------------------------------------
+  - id: TASK-2026-01-19-001
+    title: "Fix Combo Clases Teacher/Progress - Mismatch Campos + Auto-seleccion"
+    date: "2026-01-19"
+    status: completed
+    priority: P1
+    type: bug-fix
+    metodologia: CAPVED
+    dominios:
+      - "Frontend"
+      - "Teacher Portal"
+      - "Progress Page"
+    entregables:
+      - "METADATA.yml"
+      - "01-ANALISIS-CONSOLIDADO.md"
+    metricas:
+      archivos_modificados: 2
+      issues_identificados: 3
+      issues_corregidos: 2
+    conclusiones:
+      - "FIX-2026-01-19: Mapeado avg_score -> average_score en useClassroomsStats"
+      - "FIX-2026-01-19: Mapeado avg_attendance -> engagement_rate"
+      - "FIX-2026-01-19: Auto-seleccion de clase cuando solo hay 1"
+      - "Stats cards ahora muestran datos correctos (no 0)"
+      - "UX mejorada cuando solo existe classroom DEFAULT"
+    path: "orchestration/tareas/TASK-2026-01-19-001/"
+
   # ----------------------------------------
   # 2026-01-18
   # ----------------------------------------
@@ -527,9 +556,9 @@ tasks:
 # RESUMEN POR ESTADO
 # =========================================
 summary:
-  completed: 14
-  in_progress: 0
-  planning: 1
+  completed: 15
+  in_progress: 1
+  planning: 0
   pending: 0
 
 # =========================================

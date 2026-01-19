@@ -111,10 +111,27 @@ export function useClassroomsStats(classrooms: Classroom[]): UseClassroomsStatsR
       setError(null);
 
       // Fetch stats for all classrooms in parallel
+      // FIX-2026-01-19: Mapear nombres de campos del backend al frontend
+      // Backend usa: avg_score, avg_attendance, avg_progress
+      // Frontend espera: average_score, engagement_rate
       const statsPromises = classrooms.map((classroom) =>
         classroomsApi
           .getClassroomStats(classroom.id)
-          .then((data) => ({ id: classroom.id, stats: data }))
+          .then((data) => ({
+            id: classroom.id,
+            stats: {
+              classroom_id: data.classroom_id,
+              total_students: data.total_students ?? 0,
+              active_students: data.active_students ?? 0,
+              // Mapear avg_score -> average_score (backend usa avg_score)
+              average_score: (data as any).avg_score ?? data.average_score ?? 0,
+              completion_rate: data.completion_rate ?? 0,
+              // Mapear avg_attendance o avg_progress -> engagement_rate
+              engagement_rate: data.engagement_rate ?? (data as any).avg_attendance ?? (data as any).avg_progress ?? 0,
+              total_exercises: data.total_exercises ?? 0,
+              completed_exercises: data.completed_exercises ?? 0,
+            },
+          }))
           .catch((err) => {
             console.error(`[useClassroomsStats] Error fetching stats for ${classroom.id}:`, err);
             return null;

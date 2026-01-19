@@ -65,6 +65,20 @@ export default function TeacherProgressPage() {
       }
     }
   }, [classroomIdFromUrl, classrooms, selectedClassroomId]);
+
+  // FIX-2026-01-19: Auto-seleccionar la clase cuando solo hay 1 disponible
+  // Esto mejora la UX cuando el sistema tiene solo el classroom DEFAULT
+  useEffect(() => {
+    if (
+      !loading &&
+      !classroomIdFromUrl &&
+      classrooms.length === 1 &&
+      selectedClassroomId === 'all'
+    ) {
+      setSelectedClassroomId(classrooms[0].id);
+    }
+  }, [loading, classroomIdFromUrl, classrooms, selectedClassroomId]);
+
   const [showClassroomDropdown, setShowClassroomDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState<'progress' | 'engagement'>('progress');
   const [dateRange, setDateRange] = useState({
