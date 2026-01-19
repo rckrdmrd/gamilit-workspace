@@ -77,6 +77,10 @@ export function AlertCard({
         return '📉';
       case 'repeated_failures':
         return '🎯';
+      case 'excessive_time':
+        return '⏱️';
+      case 'low_engagement':
+        return '📊';
       default:
         return '⚠️';
     }

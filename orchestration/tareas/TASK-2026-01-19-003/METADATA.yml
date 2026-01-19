@@ -41,6 +41,13 @@ issues_corregidos:
     archivo: "apps/frontend/src/apps/teacher/types/index.ts"
     linea: "67"
 
+  - id: FE-009
+    severidad: BAJA
+    descripcion: "Funcion getAlertIcon en AlertCard.tsx no incluia iconos para EXCESSIVE_TIME y LOW_ENGAGEMENT"
+    archivo: "apps/frontend/src/apps/teacher/components/alerts/AlertCard.tsx"
+    lineas: "80-83"
+    detectado_en: "Validacion de coherencia post-correccion"
+
 # Archivos modificados
 archivos_modificados:
   - path: apps/frontend/src/apps/teacher/components/alerts/InterventionAlertsPanel.tsx
@@ -50,6 +57,11 @@ archivos_modificados:
   - path: apps/frontend/src/apps/teacher/types/index.ts
     cambio: "Actualizado tipo AlertType para incluir los 6 tipos de alerta"
     lineas_afectadas: "67"
+
+  - path: apps/frontend/src/apps/teacher/components/alerts/AlertCard.tsx
+    cambio: "Agregados iconos para EXCESSIVE_TIME y LOW_ENGAGEMENT en getAlertIcon()"
+    lineas_afectadas: "80-83"
+    detectado_en: "Validacion de coherencia"
 
 # Validaciones
 validaciones:
