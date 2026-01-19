@@ -168,6 +168,8 @@ export const DB_TABLES = {
     USER_ACTIVITIES: 'user_activities', // ✨ NUEVO - P2 (Activity Feed)
     FRIEND_REQUESTS: 'friend_requests', // ✨ NUEVO - DB-157 (Solicitudes de amistad)
     TEACHER_REPORTS: 'teacher_reports', // ✨ NUEVO - Audit 2026-01-04 (Reportes docentes)
+    SCHEDULED_REPORTS: 'scheduled_reports', // ✨ NUEVO - TASK-2026-01-18-015 Sprint 5 (Reportes programados)
+    SHARED_REPORTS: 'shared_reports', // ✨ NUEVO - TASK-2026-01-18-015 Sprint 5 (Reportes compartidos)
   },
 
   /**

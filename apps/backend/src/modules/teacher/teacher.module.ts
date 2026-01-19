@@ -41,6 +41,9 @@ import { StudentInterventionAlert } from './entities/student-intervention-alert.
 import { Message, MessageParticipant } from './entities/message.entity';
 import { TeacherContent } from './entities/teacher-content.entity';
 import { TeacherReport } from './entities/teacher-report.entity';
+// TASK-2026-01-18-015 Sprint 5: Scheduled and shared reports
+import { ScheduledReport } from './entities/scheduled-report.entity';
+import { SharedReport } from './entities/shared-report.entity';
 
 // Controllers
 import { TeacherClassroomsController } from './controllers/teacher-classrooms.controller';
@@ -68,6 +71,9 @@ import {
   ExerciseResponsesService,
   StorageService,
   TeacherReportsService,
+  // TASK-2026-01-18-015 Sprint 5: Scheduled and shared reports
+  ScheduledReportsService,
+  SharedReportsService,
   // TASK-2026-01-18-009: Removed RubricScoringService (orphan code)
 } from './services';
 import { TeacherMessagesService } from './services/teacher-messages.service';
@@ -144,7 +150,11 @@ import { AuditModule } from '@modules/audit/audit.module';
     TypeOrmModule.forFeature([Profile, User], 'auth'),
 
     // Entities from 'social' datasource
-    TypeOrmModule.forFeature([ClassroomMember, TeacherClassroom, Classroom, TeacherReport], 'social'),
+    // TASK-2026-01-18-015 Sprint 5: Added ScheduledReport, SharedReport
+    TypeOrmModule.forFeature(
+      [ClassroomMember, TeacherClassroom, Classroom, TeacherReport, ScheduledReport, SharedReport],
+      'social',
+    ),
 
     // Entities from 'progress' datasource
     // TASK-2026-01-18-015 Sprint 2: Added MasteryTracking and SkillAssessment
@@ -199,6 +209,9 @@ import { AuditModule } from '@modules/audit/audit.module';
     StorageService,
     TeacherReportsService,
     ManualReviewService,
+    // TASK-2026-01-18-015 Sprint 5: Scheduled and shared reports
+    ScheduledReportsService,
+    SharedReportsService,
     // TASK-2026-01-18-009: Removed RubricScoringService (orphan code - never injected)
 
     // Guards

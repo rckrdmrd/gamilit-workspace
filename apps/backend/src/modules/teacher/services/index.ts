@@ -19,5 +19,8 @@ export * from './exercise-responses.service';
 export * from './storage.service';
 export * from './teacher-reports.service';
 export * from './manual-review.service';
+// TASK-2026-01-18-015 Sprint 5: Scheduled and shared reports
+export * from './scheduled-reports.service';
+export * from './shared-reports.service';
 // TASK-2026-01-18-009: Removed rubric-scoring.service.ts (orphan code - never injected/used)
 // Rubrics now come from educational_content.exercise_type_rubrics via ManualReviewService

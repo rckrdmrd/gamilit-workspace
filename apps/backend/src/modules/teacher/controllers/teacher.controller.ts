@@ -8,6 +8,7 @@ import {
   Controller,
   Get,
   Post,
+  Put, // TASK-2026-01-18-015 Sprint 5: Add Put import
   Delete, // TASK-2026-01-18-015 Sprint 4.2: Add Delete import
   Body,
   Param,
@@ -33,7 +34,22 @@ import {
   BonusCoinsService,
   StorageService,
   TeacherReportsService,
+  // TASK-2026-01-18-015 Sprint 5: Scheduled and shared reports
+  ScheduledReportsService,
+  SharedReportsService,
 } from '../services';
+import {
+  CreateScheduledReportDto,
+  UpdateScheduledReportDto,
+  ScheduledReportResponseDto,
+} from '../services/scheduled-reports.service';
+import {
+  ShareReportDto,
+  SharedReportResponseDto,
+  SharedWithMeResponseDto,
+} from '../services/shared-reports.service';
+import { SharePermission } from '../entities/shared-report.entity';
+import { ScheduleStatus } from '../entities/scheduled-report.entity';
 import {
   SubmitFeedbackDto,
   GetSubmissionsQueryDto,
@@ -73,6 +89,9 @@ export class TeacherController {
     private readonly bonusCoinsService: BonusCoinsService,
     private readonly storageService: StorageService,
     private readonly teacherReportsService: TeacherReportsService,
+    // TASK-2026-01-18-015 Sprint 5: Scheduled and shared reports
+    private readonly scheduledReportsService: ScheduledReportsService,
+    private readonly sharedReportsService: SharedReportsService,
   ) {}
 
   // =====================================================
@@ -562,5 +581,211 @@ export class TeacherController {
     const teacherId = req.user!.profile?.id || req.user!.id;
     await this.teacherReportsService.deleteReport(reportId, teacherId);
     return { message: 'Report deleted successfully' };
+  }
+
+  // =====================================================
+  // SCHEDULED REPORTS ENDPOINTS (TASK-2026-01-18-015 Sprint 5)
+  // =====================================================
+
+  @Get('reports/scheduled')
+  @ApiOperation({
+    summary: 'Get scheduled reports',
+    description: 'Retrieve all scheduled report configurations for the teacher',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Scheduled reports retrieved successfully',
+  })
+  async getScheduledReports(@Request() req: AuthRequest): Promise<ScheduledReportResponseDto[]> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    return this.scheduledReportsService.getScheduledReports(teacherId);
+  }
+
+  @Post('reports/scheduled')
+  @ApiOperation({
+    summary: 'Create scheduled report',
+    description: 'Create a new scheduled report configuration',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Scheduled report created successfully',
+  })
+  async createScheduledReport(
+    @Request() req: AuthRequest,
+    @Body() dto: CreateScheduledReportDto,
+  ): Promise<ScheduledReportResponseDto> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    const tenantId = req.user!.tenantId || req.user!.tenant_id || 'default';
+    return this.scheduledReportsService.createScheduledReport(teacherId, tenantId, dto);
+  }
+
+  @Get('reports/scheduled/:id')
+  @ApiOperation({
+    summary: 'Get scheduled report by ID',
+    description: 'Retrieve a specific scheduled report configuration',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Scheduled report retrieved successfully',
+  })
+  async getScheduledReportById(
+    @Param('id') scheduleId: string,
+    @Request() req: AuthRequest,
+  ): Promise<ScheduledReportResponseDto> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    return this.scheduledReportsService.getScheduledReportById(scheduleId, teacherId);
+  }
+
+  @Put('reports/scheduled/:id')
+  @ApiOperation({
+    summary: 'Update scheduled report',
+    description: 'Update a scheduled report configuration',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Scheduled report updated successfully',
+  })
+  async updateScheduledReport(
+    @Param('id') scheduleId: string,
+    @Request() req: AuthRequest,
+    @Body() dto: UpdateScheduledReportDto,
+  ): Promise<ScheduledReportResponseDto> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    return this.scheduledReportsService.updateScheduledReport(scheduleId, teacherId, dto);
+  }
+
+  @Delete('reports/scheduled/:id')
+  @ApiOperation({
+    summary: 'Delete scheduled report',
+    description: 'Delete a scheduled report configuration',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Scheduled report deleted successfully',
+  })
+  async deleteScheduledReport(
+    @Param('id') scheduleId: string,
+    @Request() req: AuthRequest,
+  ): Promise<{ message: string }> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    await this.scheduledReportsService.deleteScheduledReport(scheduleId, teacherId);
+    return { message: 'Scheduled report deleted successfully' };
+  }
+
+  @Post('reports/scheduled/:id/pause')
+  @ApiOperation({
+    summary: 'Pause scheduled report',
+    description: 'Pause a scheduled report execution',
+  })
+  async pauseScheduledReport(
+    @Param('id') scheduleId: string,
+    @Request() req: AuthRequest,
+  ): Promise<ScheduledReportResponseDto> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    return this.scheduledReportsService.pauseScheduledReport(scheduleId, teacherId);
+  }
+
+  @Post('reports/scheduled/:id/resume')
+  @ApiOperation({
+    summary: 'Resume scheduled report',
+    description: 'Resume a paused scheduled report',
+  })
+  async resumeScheduledReport(
+    @Param('id') scheduleId: string,
+    @Request() req: AuthRequest,
+  ): Promise<ScheduledReportResponseDto> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    return this.scheduledReportsService.resumeScheduledReport(scheduleId, teacherId);
+  }
+
+  // =====================================================
+  // SHARED REPORTS ENDPOINTS (TASK-2026-01-18-015 Sprint 5)
+  // =====================================================
+
+  @Post('reports/share')
+  @ApiOperation({
+    summary: 'Share a report',
+    description: 'Share a report with another teacher',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Report shared successfully',
+  })
+  async shareReport(
+    @Request() req: AuthRequest,
+    @Body() dto: ShareReportDto,
+  ): Promise<SharedReportResponseDto> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    return this.sharedReportsService.shareReport(teacherId, dto);
+  }
+
+  @Get('reports/shared/by-me')
+  @ApiOperation({
+    summary: 'Get reports I shared',
+    description: 'Retrieve all reports shared by the current teacher',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Shared reports retrieved successfully',
+  })
+  async getSharedByMe(@Request() req: AuthRequest): Promise<SharedReportResponseDto[]> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    return this.sharedReportsService.getSharedByMe(teacherId);
+  }
+
+  @Get('reports/shared/with-me')
+  @ApiOperation({
+    summary: 'Get reports shared with me',
+    description: 'Retrieve all reports shared with the current teacher',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Shared reports retrieved successfully',
+  })
+  async getSharedWithMe(@Request() req: AuthRequest): Promise<SharedWithMeResponseDto[]> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    return this.sharedReportsService.getSharedWithMe(teacherId);
+  }
+
+  @Post('reports/shared/:id/view')
+  @ApiOperation({
+    summary: 'Mark shared report as viewed',
+    description: 'Mark a shared report as viewed by the current teacher',
+  })
+  async markSharedReportViewed(
+    @Param('id') shareId: string,
+    @Request() req: AuthRequest,
+  ): Promise<{ message: string }> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    await this.sharedReportsService.markAsViewed(shareId, teacherId);
+    return { message: 'Marked as viewed' };
+  }
+
+  @Delete('reports/shared/:id')
+  @ApiOperation({
+    summary: 'Revoke shared report',
+    description: 'Revoke access to a shared report',
+  })
+  async revokeSharedReport(
+    @Param('id') shareId: string,
+    @Request() req: AuthRequest,
+  ): Promise<{ message: string }> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    await this.sharedReportsService.revokeShare(shareId, teacherId);
+    return { message: 'Share revoked successfully' };
+  }
+
+  @Put('reports/shared/:id/permission')
+  @ApiOperation({
+    summary: 'Update share permission',
+    description: 'Update the permission level for a shared report',
+  })
+  async updateSharePermission(
+    @Param('id') shareId: string,
+    @Request() req: AuthRequest,
+    @Body('permission') permission: SharePermission,
+  ): Promise<SharedReportResponseDto> {
+    const teacherId = req.user!.profile?.id || req.user!.id;
+    return this.sharedReportsService.updateSharePermission(shareId, teacherId, permission);
   }
 }
