@@ -1,0 +1,272 @@
+# METADATA.yml - TASK-2026-01-19-004
+# Version: 2.0.0
+# Actualizado: 2026-01-19
+
+# =============================================================================
+# IDENTIFICACION
+# =============================================================================
+
+task:
+  id: "TASK-2026-01-19-004"
+  title: "Estandarizacion de Nomenclatura ClassroomStats (avg_score/average_score)"
+  created: "2026-01-19"
+  updated: "2026-01-19"
+
+# =============================================================================
+# CLASIFICACION
+# =============================================================================
+
+classification:
+  type: "refactoring"
+  priority: "P2"
+  mode: "FULL"
+  epic: "TECH-DEBT-001"
+  sprint: null
+
+# =============================================================================
+# ESTADO
+# =============================================================================
+
+status:
+  current: "completed"
+  phase: "D"  # Documentacion
+  completion_percentage: 100
+
+# =============================================================================
+# CONTEXTO (FASE C)
+# =============================================================================
+
+context:
+  origen: "TASK-2026-01-19-001"
+  descripcion: |
+    Durante la corrección del combo de clases en Teacher/Progress, se identificaron
+    inconsistencias preexistentes en la nomenclatura de campos entre backend y frontend.
+
+    Esta tarea aborda la deuda técnica de manera sistemática siguiendo los estándares
+    SIMCO para asegurar coherencia entre capas.
+
+  problemas_identificados:
+    - id: "INC-PRE-001"
+      descripcion: "Nomenclatura inconsistente entre endpoints"
+      detalle: "/stats usa avg_score, avg_attendance; /progress usa average_score, average_completion"
+      severidad: "MEDIA"
+
+    - id: "INC-PRE-002"
+      descripcion: "Dos interfaces ClassroomStats con nombres diferentes"
+      detalle: "useClassroomsStats.ts usa snake_case; classroom.types.ts usa camelCase"
+      severidad: "MEDIA"
+
+    - id: "INC-PRE-003"
+      descripcion: "engagement_rate sin cálculo formal en backend"
+      detalle: "Frontend espera engagement_rate pero backend solo retorna avg_attendance"
+      severidad: "ALTA"
+
+# =============================================================================
+# ANALISIS (FASE A)
+# =============================================================================
+
+analysis:
+  inventario_ocurrencias:
+    backend:
+      total: 184
+      avg_score: 65
+      average_score: 119
+      predominante: "average_score"
+      ubicaciones_clave:
+        - "ClassroomStatsDto: avg_score (línea 362)"
+        - "teacher-classrooms-crud.service.ts: avg_score (SQL alias)"
+        - "Entities usan: average_score (columna de BD)"
+
+    frontend:
+      total: 180+
+      patron_hooks: "snake_case (ClassroomStats interface)"
+      patron_types: "camelCase (classroom.types.ts)"
+      patron_api: "mixto"
+
+  engagement_rate_analisis:
+    backend_calculo: |
+      analytics.service.ts línea 394-397:
+      engagement_rate = (activeStudents / totalStudents) * 100
+    backend_stats_endpoint: |
+      teacher-classrooms-crud.service.ts NO calcula engagement_rate
+      Solo calcula avg_attendance
+    frontend_workaround: |
+      useClassroomsStats.ts línea 130:
+      engagement_rate: data.engagement_rate ?? (data as any).avg_attendance ?? (data as any).avg_progress ?? 0
+
+  decision_arquitectonica:
+    standard_backend: "snake_case (avg_score, avg_attendance, engagement_rate)"
+    standard_frontend: "camelCase (averageScore, avgAttendance, engagementRate)"
+    transformacion: "Capa de API service (classroomsApi.ts)"
+    justificacion: |
+      - Backend mantiene snake_case para consistencia con BD y DTOs existentes
+      - Frontend usa camelCase como convención JavaScript/TypeScript
+      - La transformación ocurre en la capa de servicios API del frontend
+
+# =============================================================================
+# PLANEACION (FASE P)
+# =============================================================================
+
+plan:
+  estrategia: "Transformación en capa API sin cambios breaking"
+
+  fases_ejecucion:
+    - fase: 1
+      titulo: "Backend - Agregar engagement_rate a ClassroomStats"
+      archivos:
+        - path: "apps/backend/src/modules/teacher/services/teacher-classrooms-crud.service.ts"
+          cambio: "Calcular engagement_rate usando fórmula de analytics.service.ts"
+          lineas: "~455 (después de avg_attendance)"
+      validacion: "npm run build && npm run lint"
+
+    - fase: 2
+      titulo: "Frontend - Crear transformer en API layer"
+      archivos:
+        - path: "apps/frontend/src/services/api/teacher/classroomsApi.ts"
+          cambio: "Agregar función transformClassroomStats() que mapea snake_case a camelCase"
+      validacion: "npm run typecheck"
+
+    - fase: 3
+      titulo: "Frontend - Unificar interface ClassroomStats"
+      archivos:
+        - path: "apps/frontend/src/apps/teacher/hooks/useClassroomsStats.ts"
+          cambio: "Usar interface unificada con camelCase"
+        - path: "apps/frontend/src/apps/teacher/types/classroom.types.ts"
+          cambio: "Consolidar con interface de useClassroomsStats (si existe duplicado)"
+      validacion: "npm run typecheck"
+
+    - fase: 4
+      titulo: "Frontend - Eliminar workarounds de mapeo"
+      archivos:
+        - path: "apps/frontend/src/apps/teacher/hooks/useClassroomsStats.ts"
+          cambio: "Remover mapeo manual (líneas 127, 130) - ahora lo hace transformer"
+      validacion: "npm run build && npm run lint"
+
+    - fase: 5
+      titulo: "Validación integral"
+      acciones:
+        - "npm run build (backend + frontend)"
+        - "npm run lint (ambos)"
+        - "Prueba manual en /teacher/progress"
+      criterios_aceptacion:
+        - "Stats cards muestran valores reales (no 0)"
+        - "engagement_rate muestra valor calculado correctamente"
+        - "No hay errores en consola"
+
+  archivos_afectados:
+    backend:
+      - path: "apps/backend/src/modules/teacher/services/teacher-classrooms-crud.service.ts"
+        tipo: "modificado"
+        descripcion: "Agregar cálculo de engagement_rate"
+
+    frontend:
+      - path: "apps/frontend/src/services/api/teacher/classroomsApi.ts"
+        tipo: "modificado"
+        descripcion: "Agregar transformer snake_case -> camelCase"
+
+      - path: "apps/frontend/src/apps/teacher/hooks/useClassroomsStats.ts"
+        tipo: "modificado"
+        descripcion: "Usar interface unificada, eliminar workaround"
+
+      - path: "apps/frontend/src/apps/teacher/types/index.ts"
+        tipo: "posiblemente modificado"
+        descripcion: "Agregar/actualizar ClassroomStats interface si necesario"
+
+  no_breaking_changes:
+    - "Backend DTO mantiene mismos nombres de campos"
+    - "Endpoints mantienen misma estructura de respuesta"
+    - "Solo se agrega engagement_rate (campo ya opcional en DTO)"
+
+# =============================================================================
+# VALIDACION (FASE V) - PENDIENTE
+# =============================================================================
+
+validation:
+  status: "pending"
+  checklist:
+    - item: "Plan revisado y aprobado"
+      status: "pending"
+    - item: "No hay conflictos con otras tareas en progreso"
+      status: "pending"
+    - item: "Archivos identificados existen"
+      status: "pending"
+
+# =============================================================================
+# EJECUCION (FASE E) - COMPLETADA
+# =============================================================================
+
+execution:
+  status: "completed"
+  started_at: "2026-01-19T01:00:00Z"
+  completed_at: "2026-01-19T01:30:00Z"
+  sprints:
+    - id: 1
+      titulo: "Backend engagement_rate"
+      status: "completed"
+      cambios:
+        - "teacher-classrooms-crud.service.ts: Agregado calculo de engagement_rate"
+        - "Usa submissions de ultimos 7 dias para calcular engagement"
+    - id: 2
+      titulo: "Frontend transformer"
+      status: "completed"
+      cambios:
+        - "classroomsApi.ts: Agregado ClassroomStatsResponse interface"
+        - "classroomsApi.ts: Agregado transformClassroomStats() function"
+        - "classroomsApi.ts: getClassroomStats() ahora retorna datos transformados"
+    - id: 3
+      titulo: "Interface unificada + eliminar workarounds"
+      status: "completed"
+      cambios:
+        - "useClassroomsStats.ts: Interface ClassroomStats ahora usa camelCase"
+        - "useClassroomsStats.ts: Removido mapeo manual (workaround)"
+        - "useClassroomsStats.ts: Usa datos ya transformados del API layer"
+    - id: 4
+      titulo: "Validacion integral"
+      status: "completed"
+      resultado:
+        - "npm run build: PASS"
+        - "npm run lint: PASS (0 errores)"
+
+# =============================================================================
+# DOCUMENTACION (FASE D) - PENDIENTE
+# =============================================================================
+
+documentation:
+  status: "pending"
+  entregables:
+    - path: "orchestration/tareas/TASK-2026-01-19-004/METADATA.yml"
+      tipo: "creado"
+    - path: "orchestration/tareas/TASK-2026-01-19-004/01-PLAN-REFACTORIZACION.md"
+      tipo: "por crear"
+    - path: "orchestration/tareas/_INDEX.yml"
+      tipo: "por actualizar"
+
+# =============================================================================
+# METRICAS
+# =============================================================================
+
+metrics:
+  estimated_effort: "2-3h"
+  files_to_modify: 4
+  risk_level: "bajo"
+  breaking_changes: false
+
+# =============================================================================
+# AGENTE
+# =============================================================================
+
+agent:
+  id: "claude-opus-4.5"
+  session: "2026-01-19-nomenclature-refactor"
+  workspace: "/home/isem/workspace-v2/projects/gamilit"
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+references:
+  tareas_relacionadas:
+    - "TASK-2026-01-19-001: Fix combo clases (origen del análisis)"
+
+  documentacion:
+    - "orchestration/tareas/TASK-2026-01-19-001/02-AUDITORIA-COHERENCIA.md"

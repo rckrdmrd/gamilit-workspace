@@ -70,6 +70,7 @@ export type {
   ClassroomProgressData,
   ModuleProgressItem,
   ClassroomProgressResponse,
+  ClassroomStatsResponse, // TASK-2026-01-19-004: Unified classroom stats type
 } from './classroomsApi';
 
 // Assignments types

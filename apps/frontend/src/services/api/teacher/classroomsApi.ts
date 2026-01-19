@@ -78,6 +78,69 @@ export interface ClassroomProgressResponse {
 }
 
 // ============================================================================
+// TYPES - CLASSROOM STATS (UNIFIED)
+// ============================================================================
+
+/**
+ * Classroom statistics - Frontend interface (camelCase)
+ * TASK-2026-01-19-004: Interface unificada para stats de classroom
+ */
+export interface ClassroomStatsResponse {
+  classroomId: string;
+  totalStudents: number;
+  activeStudents: number;
+  averageScore: number;
+  completionRate: number;
+  engagementRate: number;
+  avgProgress: number;
+  avgAttendance: number;
+  totalExercises?: number;
+  completedExercises?: number;
+}
+
+/**
+ * Backend response type (snake_case) - internal use only
+ */
+interface BackendClassroomStats {
+  classroom_id: string;
+  total_students: number;
+  active_students: number;
+  avg_score: number;
+  completion_rate: number;
+  engagement_rate: number;
+  avg_progress: number;
+  avg_attendance: number;
+  total_exercises?: number;
+  completed_exercises?: number;
+}
+
+// ============================================================================
+// TRANSFORMERS
+// ============================================================================
+
+/**
+ * Transforms ClassroomStats from backend (snake_case) to frontend (camelCase)
+ * TASK-2026-01-19-004: Estandarizacion de nomenclatura
+ *
+ * @param data - Backend response with snake_case fields
+ * @returns Frontend-friendly object with camelCase fields
+ */
+function transformClassroomStats(data: BackendClassroomStats): ClassroomStatsResponse {
+  return {
+    classroomId: data.classroom_id,
+    totalStudents: data.total_students ?? 0,
+    activeStudents: data.active_students ?? 0,
+    averageScore: data.avg_score ?? 0,
+    completionRate: data.completion_rate ?? 0,
+    engagementRate: data.engagement_rate ?? 0,
+    avgProgress: data.avg_progress ?? 0,
+    avgAttendance: data.avg_attendance ?? 0,
+    totalExercises: data.total_exercises,
+    completedExercises: data.completed_exercises,
+  };
+}
+
+// ============================================================================
 // CLASSROOMS API CLASS
 // ============================================================================
 
@@ -219,32 +282,27 @@ class ClassroomsAPI {
    * Returns aggregated statistics for a classroom including average scores,
    * completion rates, engagement metrics, and activity trends.
    *
+   * TASK-2026-01-19-004: Transformed from backend snake_case to frontend camelCase
+   *
    * @param classroomId - ID of the classroom
-   * @returns Promise<ClassroomStats> Classroom statistics
+   * @returns Promise<ClassroomStatsResponse> Classroom statistics (camelCase)
    * @throws Error if request fails
    *
    * @example
    * ```typescript
    * const stats = await classroomsApi.getClassroomStats('classroom-123');
    *
-   * console.log(`Average score: ${stats.average_score}%`);
-   * console.log(`Completion rate: ${stats.completion_rate}%`);
-   * console.log(`Active students: ${stats.active_students}/${stats.total_students}`);
+   * console.log(`Average score: ${stats.averageScore}%`);
+   * console.log(`Completion rate: ${stats.completionRate}%`);
+   * console.log(`Active students: ${stats.activeStudents}/${stats.totalStudents}`);
    * ```
    */
-  async getClassroomStats(classroomId: string): Promise<{
-    classroom_id: string;
-    total_students: number;
-    active_students: number;
-    average_score: number;
-    completion_rate: number;
-    engagement_rate: number;
-    total_exercises: number;
-    completed_exercises: number;
-  }> {
+  async getClassroomStats(classroomId: string): Promise<ClassroomStatsResponse> {
     try {
-      const { data } = await apiClient.get(API_ENDPOINTS.teacher.classroomStats(classroomId));
-      return data;
+      const { data } = await apiClient.get<BackendClassroomStats>(
+        API_ENDPOINTS.teacher.classroomStats(classroomId),
+      );
+      return transformClassroomStats(data);
     } catch (error) {
       console.error('[ClassroomsAPI] Error fetching classroom stats:', error);
       throw error;

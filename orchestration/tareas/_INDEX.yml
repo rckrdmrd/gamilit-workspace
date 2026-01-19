@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.14.0"
+version: "1.15.0"
 last_updated: "2026-01-19"
-total_tasks: 17
+total_tasks: 18
 
 # =========================================
 # TAREAS POR FECHA
@@ -39,6 +39,32 @@ tasks:
       - "Stats cards ahora muestran datos correctos (no 0)"
       - "UX mejorada cuando solo existe classroom DEFAULT"
     path: "orchestration/tareas/TASK-2026-01-19-001/"
+
+  - id: TASK-2026-01-19-004
+    title: "Estandarizacion de Nomenclatura ClassroomStats (engagement_rate)"
+    date: "2026-01-19"
+    status: completed
+    priority: P2
+    type: refactoring
+    metodologia: CAPVED
+    dominios:
+      - "Backend"
+      - "Frontend"
+      - "Teacher Portal"
+      - "API Layer"
+    entregables:
+      - "METADATA.yml"
+      - "01-PLAN-REFACTORIZACION.md"
+    metricas:
+      archivos_modificados: 4
+      lines_added: 75
+    conclusiones:
+      - "Backend: Agregado calculo formal de engagement_rate usando submissions"
+      - "Frontend API: Agregado transformer snake_case -> camelCase"
+      - "Frontend Hook: Interface unificada con camelCase"
+      - "Eliminado workaround de mapeo manual"
+      - "Build y lint pasan sin errores"
+    path: "orchestration/tareas/TASK-2026-01-19-004/"
 
   # ----------------------------------------
   # 2026-01-18

@@ -445,6 +445,26 @@ export class TeacherClassroomsCrudService {
 
     const avgAttendance = parseFloat(attendanceResult?.avg_attendance || '0');
 
+    // TASK-2026-01-19-004: Calcular engagement_rate
+    // engagement_rate = (estudiantes con submissions en últimos 7 días / total) * 100
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    // Contar estudiantes únicos con submissions en los últimos 7 días
+    let activeStudents7d = 0;
+    if (activeStudentIds.length > 0) {
+      const submissionsResult = await this.exerciseSubmissionRepo
+        .createQueryBuilder('sub')
+        .select('COUNT(DISTINCT sub.student_id)', 'count')
+        .where('sub.student_id IN (:...studentIds)', { studentIds: activeStudentIds })
+        .andWhere('sub.submitted_at >= :weekAgo', { weekAgo })
+        .getRawOne();
+
+      activeStudents7d = parseInt(submissionsResult?.count || '0', 10);
+    }
+
+    const engagementRate =
+      totalStudents > 0 ? Math.round((activeStudents7d / totalStudents) * 100) : 0;
+
     return {
       classroom_id: classroomId,
       total_students: totalStudents,
@@ -453,6 +473,7 @@ export class TeacherClassroomsCrudService {
       completion_rate: Math.round(completionRate * 10) / 10,
       avg_score: Math.round(avgScore * 10) / 10,
       avg_attendance: Math.round(avgAttendance * 10) / 10,
+      engagement_rate: engagementRate,
     };
   }
 

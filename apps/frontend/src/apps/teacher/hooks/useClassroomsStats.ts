@@ -4,11 +4,13 @@
  * Fetches statistics for multiple classrooms and calculates aggregate metrics.
  * Used in TeacherProgressPage to display overall statistics across all classes.
  *
+ * TASK-2026-01-19-004: Refactorizado para usar nomenclatura unificada (camelCase)
+ *
  * @module apps/teacher/hooks/useClassroomsStats
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import { classroomsApi } from '@services/api/teacher';
+import { classroomsApi, type ClassroomStatsResponse } from '@services/api/teacher';
 import type { Classroom } from '../types';
 
 // ============================================================================
@@ -16,17 +18,18 @@ import type { Classroom } from '../types';
 // ============================================================================
 
 /**
- * Individual classroom statistics
+ * Individual classroom statistics (camelCase)
+ * TASK-2026-01-19-004: Unificado con ClassroomStatsResponse del API layer
  */
 export interface ClassroomStats {
-  classroom_id: string;
-  total_students: number;
-  active_students: number;
-  average_score: number;
-  completion_rate: number;
-  engagement_rate: number;
-  total_exercises: number;
-  completed_exercises: number;
+  classroomId: string;
+  totalStudents: number;
+  activeStudents: number;
+  averageScore: number;
+  completionRate: number;
+  engagementRate: number;
+  totalExercises: number;
+  completedExercises: number;
 }
 
 /**
@@ -111,25 +114,21 @@ export function useClassroomsStats(classrooms: Classroom[]): UseClassroomsStatsR
       setError(null);
 
       // Fetch stats for all classrooms in parallel
-      // FIX-2026-01-19: Mapear nombres de campos del backend al frontend
-      // Backend usa: avg_score, avg_attendance, avg_progress
-      // Frontend espera: average_score, engagement_rate
+      // TASK-2026-01-19-004: API layer now handles snake_case -> camelCase transformation
       const statsPromises = classrooms.map((classroom) =>
         classroomsApi
           .getClassroomStats(classroom.id)
-          .then((data) => ({
+          .then((data: ClassroomStatsResponse) => ({
             id: classroom.id,
             stats: {
-              classroom_id: data.classroom_id,
-              total_students: data.total_students ?? 0,
-              active_students: data.active_students ?? 0,
-              // Mapear avg_score -> average_score (backend usa avg_score)
-              average_score: (data as any).avg_score ?? data.average_score ?? 0,
-              completion_rate: data.completion_rate ?? 0,
-              // Mapear avg_attendance o avg_progress -> engagement_rate
-              engagement_rate: data.engagement_rate ?? (data as any).avg_attendance ?? (data as any).avg_progress ?? 0,
-              total_exercises: data.total_exercises ?? 0,
-              completed_exercises: data.completed_exercises ?? 0,
+              classroomId: data.classroomId,
+              totalStudents: data.totalStudents,
+              activeStudents: data.activeStudents,
+              averageScore: data.averageScore,
+              completionRate: data.completionRate,
+              engagementRate: data.engagementRate,
+              totalExercises: data.totalExercises ?? 0,
+              completedExercises: data.completedExercises ?? 0,
             },
           }))
           .catch((err) => {
@@ -197,16 +196,16 @@ export function useClassroomsStats(classrooms: Classroom[]): UseClassroomsStatsR
     let activeClassesCount = 0;
 
     stats.forEach((classroomStats) => {
-      const studentCount = classroomStats.total_students;
+      const studentCount = classroomStats.totalStudents;
       totalStudents += studentCount;
-      totalActiveStudents += classroomStats.active_students;
+      totalActiveStudents += classroomStats.activeStudents;
 
       // Weight average score by number of students
-      weightedScoreSum += classroomStats.average_score * studentCount;
+      weightedScoreSum += classroomStats.averageScore * studentCount;
 
       // Weight completion and engagement rates
-      weightedCompletionSum += classroomStats.completion_rate * studentCount;
-      weightedEngagementSum += classroomStats.engagement_rate * studentCount;
+      weightedCompletionSum += classroomStats.completionRate * studentCount;
+      weightedEngagementSum += classroomStats.engagementRate * studentCount;
 
       // Count as active if it has at least one student
       if (studentCount > 0) {
