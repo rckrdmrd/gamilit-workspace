@@ -15,36 +15,35 @@ tasks:
   # 2026-01-18
   # ----------------------------------------
   - id: TASK-2026-01-18-011
-    title: "Correccion Teacher Reviews - Carga de Rubrica y Gamificacion"
+    title: "Analisis y Correccion Paginas Teacher (Progress, Alerts, Reports)"
     date: "2026-01-18"
     status: completed
     priority: P0
     type: fix + analysis
     metodologia: CAPVED
     dominios:
-      - "Frontend"
+      - "Database"
       - "Backend"
-      - "Gamification"
+      - "Frontend"
       - "Teacher Portal"
+      - "Admin Dashboard"
     entregables:
-      - "01-CONTEXTO.md"
       - "01-ANALISIS-CONSOLIDADO.md"
       - "02-PLAN-CORRECCION.md"
-      - "05-EJECUCION.md"
-      - "06-DOCUMENTACION.md"
       - "METADATA.yml"
     metricas:
-      archivos_modificados: 2
-      lineas_agregadas: 20
-      tipos_ejercicio_validados: 13
-      achievements_verificados: 15
-      rubricas_validadas: 12
+      issues_identificados: 34
+      issues_corregidos: 12
+      archivos_creados: 4
+      archivos_modificados: 6
+      vulnerabilidades_seguridad_corregidas: 1
     conclusiones:
-      - "criterion.id ahora se usa de BD (no generado desde nombre)"
-      - "RubricCriteria interface actualizada con id opcional"
-      - "13 tipos de ejercicio M3-M5 tienen renderizadores apropiados"
-      - "15 achievements M3-M5 configurados correctamente"
-      - "Flujo gamificacion verificado: completeReview -> gradeSubmission -> claimRewards"
+      - "FIX-DB-002: final_score -> score en generate_student_alerts"
+      - "FIX-DB-003: Trigger para submitted_progress_percentage"
+      - "FIX-DB-005: RLS policies para manual_reviews"
+      - "FIX-BE-001/002: Vulnerabilidad multi-tenant corregida en AdminReports"
+      - "FIX-BE-004: Validacion de expiracion de reportes"
+      - "CRON job para generacion automatica de alertas"
     path: "orchestration/tareas/TASK-2026-01-18-011/"
 
   - id: TASK-2026-01-18-010

@@ -32,6 +32,9 @@ describe('AdminReportsService', () => {
   let _userRepository: Repository<User>;
   let _tenantRepository: Repository<Tenant>;
 
+  // Test tenant ID para todas las pruebas
+  const testTenantId = 'test-tenant-uuid';
+
   const mockReport: Partial<AdminReport> = {
     id: 'report-1',
     report_type: 'users_summary' as ReportType,
@@ -39,6 +42,7 @@ describe('AdminReportsService', () => {
     status: 'pending' as ReportStatus,
     metadata: {},
     requested_by: 'admin-user',
+    tenant_id: testTenantId, // FIX-BE-001-2026-01-18
     expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     created_at: new Date(),
     updated_at: new Date(),
@@ -56,6 +60,7 @@ describe('AdminReportsService', () => {
     delete: jest.fn(),
     update: jest.fn(),
     createQueryBuilder: jest.fn(() => ({
+      where: jest.fn().mockReturnThis(), // FIX-BE-001: Para filtrar por tenant_id
       andWhere: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
       skip: jest.fn().mockReturnThis(),
@@ -121,7 +126,7 @@ describe('AdminReportsService', () => {
       mockReportRepository.create.mockReturnValue(mockReport);
       mockReportRepository.save.mockResolvedValue(mockReport);
 
-      const result = await service.generateReport(generateDto, 'admin-user');
+      const result = await service.generateReport(generateDto, 'admin-user', testTenantId);
 
       expect(mockReportRepository.create).toHaveBeenCalledWith({
         report_type: 'users_summary',
@@ -129,6 +134,7 @@ describe('AdminReportsService', () => {
         status: 'pending',
         metadata: { startDate: '2024-01-01', endDate: '2024-12-31' },
         requested_by: 'admin-user',
+        tenant_id: testTenantId, // FIX-BE-001-2026-01-18
         expires_at: expect.any(Date),
       });
 
@@ -141,7 +147,7 @@ describe('AdminReportsService', () => {
       mockReportRepository.create.mockReturnValue(mockReport);
       mockReportRepository.save.mockResolvedValue(mockReport);
 
-      await service.generateReport(generateDto, 'admin-user');
+      await service.generateReport(generateDto, 'admin-user', testTenantId);
 
       const createCall = mockReportRepository.create.mock.calls[0][0];
       const expiresAt = new Date(createCall.expires_at);
@@ -164,7 +170,7 @@ describe('AdminReportsService', () => {
         status: 'generating',
       });
 
-      const result = await service.generateReport(generateDto, 'admin-user');
+      const result = await service.generateReport(generateDto, 'admin-user', testTenantId);
 
       // Should return immediately with pending status
       expect(result.status).toBe('pending');
@@ -185,11 +191,12 @@ describe('AdminReportsService', () => {
       mockReportRepository.create.mockReturnValue(mockReport);
       mockReportRepository.save.mockResolvedValue(mockReport);
 
-      await service.generateReport(dtoWithoutFilters, 'admin-user');
+      await service.generateReport(dtoWithoutFilters, 'admin-user', testTenantId);
 
       expect(mockReportRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           metadata: {},
+          tenant_id: testTenantId,
         })
       );
     });
@@ -207,6 +214,7 @@ describe('AdminReportsService', () => {
       ];
 
       const queryBuilder = {
+        where: jest.fn().mockReturnThis(), // FIX-BE-001: tenant filter
         andWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
@@ -217,8 +225,9 @@ describe('AdminReportsService', () => {
       mockReportRepository.createQueryBuilder.mockReturnValue(queryBuilder);
 
       const query: ListReportsDto = { page: 1, limit: 20 };
-      const result = await service.getReports(query);
+      const result = await service.getReports(query, testTenantId);
 
+      expect(queryBuilder.where).toHaveBeenCalledWith('report.tenant_id = :tenantId', { tenantId: testTenantId });
       expect(result.data).toHaveLength(2);
       expect(result.total).toBe(2);
       expect(result.page).toBe(1);
@@ -228,6 +237,7 @@ describe('AdminReportsService', () => {
 
     it('should filter by report type', async () => {
       const queryBuilder = {
+        where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
@@ -238,13 +248,14 @@ describe('AdminReportsService', () => {
       mockReportRepository.createQueryBuilder.mockReturnValue(queryBuilder);
 
       const query: ListReportsDto = { type: 'users_summary' as ReportType, page: 1, limit: 20 };
-      await service.getReports(query);
+      await service.getReports(query, testTenantId);
 
       expect(queryBuilder.andWhere).toHaveBeenCalledWith('report.report_type = :type', { type: 'users_summary' });
     });
 
     it('should filter by status', async () => {
       const queryBuilder = {
+        where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
@@ -255,13 +266,14 @@ describe('AdminReportsService', () => {
       mockReportRepository.createQueryBuilder.mockReturnValue(queryBuilder);
 
       const query: ListReportsDto = { status: 'completed' as ReportStatus, page: 1, limit: 20 };
-      await service.getReports(query);
+      await service.getReports(query, testTenantId);
 
       expect(queryBuilder.andWhere).toHaveBeenCalledWith('report.status = :status', { status: 'completed' });
     });
 
     it('should handle pagination correctly', async () => {
       const queryBuilder = {
+        where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
@@ -272,7 +284,7 @@ describe('AdminReportsService', () => {
       mockReportRepository.createQueryBuilder.mockReturnValue(queryBuilder);
 
       const query: ListReportsDto = { page: 3, limit: 10 };
-      await service.getReports(query);
+      await service.getReports(query, testTenantId);
 
       expect(queryBuilder.skip).toHaveBeenCalledWith(20); // (3-1) * 10
       expect(queryBuilder.take).toHaveBeenCalledWith(10);
@@ -280,6 +292,7 @@ describe('AdminReportsService', () => {
 
     it('should calculate total_pages correctly', async () => {
       const queryBuilder = {
+        where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
@@ -290,7 +303,7 @@ describe('AdminReportsService', () => {
       mockReportRepository.createQueryBuilder.mockReturnValue(queryBuilder);
 
       const query: ListReportsDto = { page: 1, limit: 10 };
-      const result = await service.getReports(query);
+      const result = await service.getReports(query, testTenantId);
 
       expect(result.total_pages).toBe(3); // ceil(25/10)
     });
@@ -310,10 +323,10 @@ describe('AdminReportsService', () => {
 
       mockReportRepository.findOne.mockResolvedValue(completedReport);
 
-      const result = await service.downloadReport('report-1');
+      const result = await service.downloadReport('report-1', testTenantId);
 
       expect(mockReportRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 'report-1' },
+        where: { id: 'report-1', tenant_id: testTenantId },
       });
       expect(result.id).toBe('report-1');
       expect(result.file_url).toBe('/reports/test.pdf');
@@ -322,22 +335,22 @@ describe('AdminReportsService', () => {
     it('should throw NotFoundException when report does not exist', async () => {
       mockReportRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.downloadReport('non-existent')).rejects.toThrow(NotFoundException);
-      await expect(service.downloadReport('non-existent')).rejects.toThrow('Report with ID non-existent not found');
+      await expect(service.downloadReport('non-existent', testTenantId)).rejects.toThrow(NotFoundException);
+      await expect(service.downloadReport('non-existent', testTenantId)).rejects.toThrow('Report with ID non-existent not found');
     });
 
     it('should throw error when report is not completed', async () => {
       const pendingReport = { ...mockReport, status: 'pending' as ReportStatus };
       mockReportRepository.findOne.mockResolvedValue(pendingReport);
 
-      await expect(service.downloadReport('report-1')).rejects.toThrow('Report is not ready for download. Status: pending');
+      await expect(service.downloadReport('report-1', testTenantId)).rejects.toThrow('Report is not ready for download. Status: pending');
     });
 
     it('should allow download for generating status', async () => {
       const generatingReport = { ...mockReport, status: 'generating' as ReportStatus };
       mockReportRepository.findOne.mockResolvedValue(generatingReport);
 
-      await expect(service.downloadReport('report-1')).rejects.toThrow('Report is not ready for download. Status: generating');
+      await expect(service.downloadReport('report-1', testTenantId)).rejects.toThrow('Report is not ready for download. Status: generating');
     });
   });
 
@@ -355,10 +368,10 @@ describe('AdminReportsService', () => {
       mockReportRepository.findOne.mockResolvedValue(reportWithFile);
       mockReportRepository.delete.mockResolvedValue({ affected: 1 });
 
-      await service.deleteReport('report-1');
+      await service.deleteReport('report-1', testTenantId);
 
       expect(mockReportRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 'report-1' },
+        where: { id: 'report-1', tenant_id: testTenantId },
       });
       expect(mockReportRepository.delete).toHaveBeenCalledWith('report-1');
       expect(fs.access).toHaveBeenCalled();
@@ -368,8 +381,8 @@ describe('AdminReportsService', () => {
     it('should throw NotFoundException when report does not exist', async () => {
       mockReportRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.deleteReport('non-existent')).rejects.toThrow(NotFoundException);
-      await expect(service.deleteReport('non-existent')).rejects.toThrow('Report with ID non-existent not found');
+      await expect(service.deleteReport('non-existent', testTenantId)).rejects.toThrow(NotFoundException);
+      await expect(service.deleteReport('non-existent', testTenantId)).rejects.toThrow('Report with ID non-existent not found');
     });
 
     it('should delete report even if file does not exist', async () => {
@@ -384,7 +397,7 @@ describe('AdminReportsService', () => {
       // Mock file not found error
       (fs.access as jest.Mock).mockRejectedValueOnce({ code: 'ENOENT' });
 
-      await service.deleteReport('report-1');
+      await service.deleteReport('report-1', testTenantId);
 
       expect(mockReportRepository.delete).toHaveBeenCalledWith('report-1');
     });
@@ -398,7 +411,7 @@ describe('AdminReportsService', () => {
       mockReportRepository.findOne.mockResolvedValue(reportWithoutFile);
       mockReportRepository.delete.mockResolvedValue({ affected: 1 });
 
-      await service.deleteReport('report-1');
+      await service.deleteReport('report-1', testTenantId);
 
       expect(mockReportRepository.delete).toHaveBeenCalledWith('report-1');
       // Should not attempt to delete file

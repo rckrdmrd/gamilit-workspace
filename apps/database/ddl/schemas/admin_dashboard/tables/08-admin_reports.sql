@@ -39,9 +39,14 @@ CREATE TABLE admin_dashboard.admin_reports (
     -- Por defecto: created_at + 30 días
     expires_at TIMESTAMP,
 
+    -- Multi-tenant: FIX-BE-001-2026-01-18
+    -- Agregado para corregir vulnerabilidad cross-tenant
+    tenant_id UUID NOT NULL,
+
     -- Constraints
     CONSTRAINT chk_admin_reports_status CHECK (status IN ('pending', 'generating', 'completed', 'failed')),
-    CONSTRAINT chk_admin_reports_file_size CHECK (file_size >= 0)
+    CONSTRAINT chk_admin_reports_file_size CHECK (file_size >= 0),
+    CONSTRAINT fk_admin_reports_tenant FOREIGN KEY (tenant_id) REFERENCES auth_management.tenants(id) ON DELETE CASCADE
 );
 
 -- Índices para búsquedas comunes
@@ -50,6 +55,7 @@ CREATE INDEX idx_admin_reports_requested_by ON admin_dashboard.admin_reports(req
 CREATE INDEX idx_admin_reports_type ON admin_dashboard.admin_reports(report_type);
 CREATE INDEX idx_admin_reports_created_at ON admin_dashboard.admin_reports(created_at DESC);
 CREATE INDEX idx_admin_reports_expires_at ON admin_dashboard.admin_reports(expires_at) WHERE expires_at IS NOT NULL;
+CREATE INDEX idx_admin_reports_tenant_id ON admin_dashboard.admin_reports(tenant_id);
 
 -- Comentarios
 COMMENT ON TABLE admin_dashboard.admin_reports IS 'Registra reportes generados por administradores del sistema';
@@ -61,3 +67,4 @@ COMMENT ON COLUMN admin_dashboard.admin_reports.file_size IS 'Tamaño del archiv
 COMMENT ON COLUMN admin_dashboard.admin_reports.metadata IS 'Metadata del reporte (filtros, parámetros, configuración)';
 COMMENT ON COLUMN admin_dashboard.admin_reports.error_message IS 'Mensaje de error si la generación falla';
 COMMENT ON COLUMN admin_dashboard.admin_reports.expires_at IS 'Fecha de expiración para cleanup automático (por defecto: +30 días)';
+COMMENT ON COLUMN admin_dashboard.admin_reports.tenant_id IS 'FIX-BE-001-2026-01-18: UUID del tenant para aislamiento multi-tenant';
