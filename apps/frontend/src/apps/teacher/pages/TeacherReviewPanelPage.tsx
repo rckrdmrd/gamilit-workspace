@@ -1,13 +1,17 @@
 import React, { useState, useMemo } from 'react';
-import { ClipboardList, Search, Filter } from 'lucide-react';
-import { ManualReview } from '@/shared/api/manualReviewApi';
+import { ClipboardList, Search, Filter, Clock, CheckCircle, List } from 'lucide-react';
+import { ManualReview, ReviewStatus } from '@/shared/api/manualReviewApi';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { TeacherLayout } from '../layouts/TeacherLayout';
-import { useManualReviews, useManualReviewDetail } from '../hooks/useManualReviews';
+// TASK-2026-01-18-012: Usar useMyReviews con soporte de status
+import { useMyReviews, useManualReviewDetail } from '../hooks/useManualReviews';
 import { ReviewList, ReviewDetail } from '../components/review-panel';
 // TASK-2026-01-18-009: Consume from API instead of hardcoded constants
 import { useManualReviewConfig, filterExercisesByModule } from '../hooks/useManualReviewConfig';
+
+// TASK-2026-01-18-012: Tipo para filtro de status
+type StatusFilter = ReviewStatus | 'all';
 
 /**
  * Teacher Review Panel Page
@@ -49,10 +53,12 @@ export const TeacherReviewPanelPage: React.FC = () => {
 
   // Local state for filters and selection
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
+  // TASK-2026-01-18-012: Agregar statusFilter para filtrar por estado
   const [filters, setFilters] = useState({
     exerciseId: '',
     moduleId: '',
     searchQuery: '',
+    statusFilter: 'pending' as StatusFilter, // Default: mostrar pendientes
   });
 
   // TASK-2026-01-18-009: Fetch config from API (replaces hardcoded MANUAL_REVIEW_MODULES, MANUAL_REVIEW_EXERCISES)
@@ -60,13 +66,14 @@ export const TeacherReviewPanelPage: React.FC = () => {
   const modules = reviewConfig?.modules || [];
   const allExercises = reviewConfig?.exercises || [];
 
-  // Use React Query hook for pending reviews
+  // TASK-2026-01-18-012: Usar useMyReviews con soporte de status filter
   const {
     data: reviews = [],
     isLoading: loading,
     error,
     refetch: loadReviews,
-  } = useManualReviews({
+  } = useMyReviews({
+    status: filters.statusFilter,
     exerciseId: filters.exerciseId || undefined,
     moduleId: filters.moduleId || undefined,
   });
@@ -128,7 +135,13 @@ export const TeacherReviewPanelPage: React.FC = () => {
                 <p className="text-gray-600">
                   {selectedReview
                     ? 'Revisando envio de estudiante'
-                    : `${filteredReviews.length} ${filteredReviews.length === 1 ? 'revision pendiente' : 'revisiones pendientes'}`}
+                    : `${filteredReviews.length} ${
+                        filters.statusFilter === 'pending'
+                          ? filteredReviews.length === 1 ? 'revision pendiente' : 'revisiones pendientes'
+                          : filters.statusFilter === 'completed'
+                          ? filteredReviews.length === 1 ? 'revision completada' : 'revisiones completadas'
+                          : filteredReviews.length === 1 ? 'revision' : 'revisiones'
+                      }`}
                 </p>
               </div>
             </div>
@@ -140,6 +153,45 @@ export const TeacherReviewPanelPage: React.FC = () => {
           <ReviewDetail review={selectedReview} onClose={handleCloseReview} />
         ) : (
           <>
+            {/* TASK-2026-01-18-012: Status Tabs */}
+            <div className="mb-4">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setFilters({ ...filters, statusFilter: 'pending' })}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-detective font-medium transition-colors ${
+                    filters.statusFilter === 'pending'
+                      ? 'bg-detective-orange text-white'
+                      : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                  }`}
+                >
+                  <Clock className="h-4 w-4" />
+                  Pendientes
+                </button>
+                <button
+                  onClick={() => setFilters({ ...filters, statusFilter: 'completed' })}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-detective font-medium transition-colors ${
+                    filters.statusFilter === 'completed'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                  }`}
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  Completadas
+                </button>
+                <button
+                  onClick={() => setFilters({ ...filters, statusFilter: 'all' })}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-detective font-medium transition-colors ${
+                    filters.statusFilter === 'all'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                  }`}
+                >
+                  <List className="h-4 w-4" />
+                  Todas
+                </button>
+              </div>
+            </div>
+
             {/* Search and Filters */}
             <div className="mb-6 rounded-detective bg-white p-4 shadow-card">
               <div className="grid gap-4 md:grid-cols-3">

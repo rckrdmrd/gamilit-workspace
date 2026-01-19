@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.10.0"
+version: "1.11.0"
 last_updated: "2026-01-18"
-total_tasks: 13
+total_tasks: 14
 
 # =========================================
 # TAREAS POR FECHA
@@ -14,6 +14,42 @@ tasks:
   # ----------------------------------------
   # 2026-01-18
   # ----------------------------------------
+  - id: TASK-2026-01-18-012
+    title: "Mejoras Teacher Reviews - Filtrado, Modales y Validacion de Recompensas"
+    date: "2026-01-18"
+    status: completed
+    priority: P0
+    type: analysis + bug-fix + enhancement
+    metodologia: CAPVED
+    dominios:
+      - "Frontend"
+      - "Backend"
+      - "Teacher Portal"
+      - "Manual Reviews"
+      - "Gamification"
+    entregables:
+      - "01-ANALISIS-CONSOLIDADO.md"
+      - "02-PLAN-CORRECCION.md"
+      - "03-ANALISIS-DEPENDENCIAS.md"
+      - "04-SCRIPT-CORRECCION-BD.sql"
+      - "METADATA.yml"
+    metricas:
+      issues_identificados: 4
+      issues_criticos: 2
+      issues_ux: 1
+      issues_feature: 1
+      dependencias_analizadas: 6
+      flujos_relacionados: 10
+      archivos_modificados: 6
+    conclusiones:
+      - "FASE 1: ReviewDetail guarda evaluacion antes de completar"
+      - "FASE 2: Backend valida totalScore/rubricScores antes de completar"
+      - "FASE 3: FeedbackModal reemplaza alert() nativo con confetti y rewards"
+      - "FASE 4: Tabs de filtrado (Pendientes/Completadas/Todas) con endpoint myReviews"
+      - "FASE 5: Script SQL para corregir reviews afectados documentado"
+      - "Causa raiz corregida: validacion obligatoria de scores antes de completar"
+    path: "orchestration/tareas/TASK-2026-01-18-012/"
+
   - id: TASK-2026-01-18-011
     title: "Analisis y Correccion Paginas Teacher (Progress, Alerts, Reports)"
     date: "2026-01-18"
@@ -33,16 +69,22 @@ tasks:
       - "METADATA.yml"
     metricas:
       issues_identificados: 34
-      issues_corregidos: 12
+      issues_corregidos: 18
       archivos_creados: 4
-      archivos_modificados: 6
+      archivos_modificados: 8
       vulnerabilidades_seguridad_corregidas: 1
     conclusiones:
       - "FIX-DB-002: final_score -> score en generate_student_alerts"
       - "FIX-DB-003: Trigger para submitted_progress_percentage"
       - "FIX-DB-005: RLS policies para manual_reviews"
+      - "FIX-DB-006: attempts -> attempt_number + JOIN exercises para module_id"
       - "FIX-BE-001/002: Vulnerabilidad multi-tenant corregida en AdminReports"
       - "FIX-BE-004: Validacion de expiracion de reportes"
+      - "FIX-BE-007: StudentInterventionAlert agregado a datasource 'progress'"
+      - "FIX-BE-008: TeacherReport agregado a datasource 'social'"
+      - "FIX-BE-009: Creado datasource 'admin_dashboard' para AdminReport"
+      - "FIX-BE-010: Entities relacionadas agregadas a datasources (Profile, Classroom, User)"
+      - "FIX-BE-011: Cascade dependencies agregadas (Tenant, Role)"
       - "CRON job para generacion automatica de alertas"
     path: "orchestration/tareas/TASK-2026-01-18-011/"
 
@@ -425,6 +467,7 @@ tasks:
 summary:
   completed: 13
   in_progress: 0
+  planning: 1
   pending: 0
 
 # =========================================

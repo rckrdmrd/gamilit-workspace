@@ -486,6 +486,8 @@ export const API_ENDPOINTS = {
     // Manual Review (for modules 4 and 5)
     reviews: {
       pending: '/teacher/reviews/pending',
+      // TASK-2026-01-18-012: Endpoint para obtener reviews del profesor actual con filtro de status
+      myReviews: '/teacher/reviews/my-reviews',
       get: (id: string) => `/teacher/reviews/${id}`,
       start: (reviewId: string) => `/teacher/reviews/${reviewId}/start`,
       update: (id: string) => `/teacher/reviews/${id}`,

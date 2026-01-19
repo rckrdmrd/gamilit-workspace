@@ -175,6 +175,55 @@ export interface PaginatedReviewsResponse {
 }
 
 /**
+ * TASK-2026-01-18-012: Filtros para getMyReviews con soporte de status
+ */
+export interface MyReviewsFilters {
+  status?: ReviewStatus | 'all';
+  exerciseId?: string;
+  moduleId?: string;
+  classroomId?: string;
+  page?: number;
+  limit?: number;
+}
+
+/**
+ * Get reviews for the current teacher with status filter
+ * TASK-2026-01-18-012: Permite ver reviews pendientes, completados o todos
+ *
+ * @param filters - Optional filters including status
+ * @returns List of reviews matching filters
+ */
+export const getMyReviews = async (filters?: MyReviewsFilters): Promise<ManualReview[]> => {
+  const params: Record<string, string | number | undefined> = {};
+
+  if (filters?.status && filters.status !== 'all') {
+    params.status = filters.status;
+  }
+  if (filters?.exerciseId) params.exerciseId = filters.exerciseId;
+  if (filters?.moduleId) params.moduleId = filters.moduleId;
+  if (filters?.classroomId) params.classroomId = filters.classroomId;
+  if (filters?.page) params.page = filters.page;
+  if (filters?.limit) params.limit = filters.limit;
+
+  const { data } = await apiClient.get<PaginatedReviewsResponse | ManualReview[]>(
+    API_ENDPOINTS.teacher.reviews.myReviews,
+    { params },
+  );
+
+  // Handle both paginated response and array format
+  if (data && typeof data === 'object' && 'reviews' in data && Array.isArray(data.reviews)) {
+    return data.reviews;
+  }
+
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  console.warn('[manualReviewApi] getMyReviews unexpected data format:', data);
+  return [];
+};
+
+/**
  * Get pending reviews for the current teacher
  *
  * @param filters - Optional filters
@@ -368,6 +417,7 @@ export const validateEvaluations = (
 
 export const manualReviewApi = {
   getPendingReviews,
+  getMyReviews,  // TASK-2026-01-18-012
   getReviewById,
   startReview,
   updateReview,

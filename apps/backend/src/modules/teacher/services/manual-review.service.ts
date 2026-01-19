@@ -546,6 +546,22 @@ export class ManualReviewService {
       throw new NotFoundException(`Review with ID ${reviewId} not found`);
     }
 
+    // FIX TASK-2026-01-18-012: Validar que hay evaluacion ANTES de marcar como completado
+    // Sin esta validacion, el review se marcaba completed pero sin rewards
+    if (review.totalScore === null || review.totalScore === undefined) {
+      throw new BadRequestException(
+        'No se puede completar el review sin una calificación. ' +
+        'Guarda la evaluación con el puntaje usando updateReview() primero.',
+      );
+    }
+
+    if (!review.rubricScores || Object.keys(review.rubricScores).length === 0) {
+      throw new BadRequestException(
+        'No se puede completar el review sin evaluar los criterios de la rúbrica. ' +
+        'Evalúa todos los criterios antes de completar.',
+      );
+    }
+
     // Actualizar estado del review
     review.status = 'completed';
     review.completedAt = new Date();

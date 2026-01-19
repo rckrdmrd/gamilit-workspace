@@ -16,6 +16,8 @@ import {
   UpdateReviewRequest,
   CompleteReviewRequest,
   CompleteReviewResponse,
+  MyReviewsFilters,
+  ReviewStatus,
 } from '@shared/api/manualReviewApi';
 
 // ============================================================================
@@ -25,6 +27,8 @@ import {
 export const manualReviewKeys = {
   all: ['teacher', 'manualReviews'] as const,
   pending: (filters?: ManualReviewFilters) => [...manualReviewKeys.all, 'pending', filters] as const,
+  // TASK-2026-01-18-012: Key para my-reviews con soporte de status
+  myReviews: (filters?: MyReviewsFilters) => [...manualReviewKeys.all, 'myReviews', filters] as const,
   detail: (id: string) => [...manualReviewKeys.all, 'detail', id] as const,
 };
 
@@ -68,6 +72,43 @@ export function useManualReviews(
     queryFn: () => manualReviewApi.getPendingReviews(filters),
     staleTime: 2 * 60 * 1000, // 2 minutes - data considered fresh
     gcTime: 5 * 60 * 1000, // 5 minutes - cache garbage collection
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    retry: 1,
+  });
+}
+
+// ============================================================================
+// HOOK: useMyReviews (TASK-2026-01-18-012)
+// ============================================================================
+
+/**
+ * Hook to fetch reviews with status filter (pending, completed, or all)
+ * TASK-2026-01-18-012: Permite ver reviews pendientes, completados o todos
+ *
+ * @param filters - Optional filters including status
+ * @returns React Query result with filtered reviews
+ *
+ * @example
+ * ```tsx
+ * // Mostrar solo completados
+ * const { data } = useMyReviews({ status: 'completed' });
+ *
+ * // Mostrar todos
+ * const { data } = useMyReviews({ status: 'all' });
+ *
+ * // Mostrar pendientes de un modulo especifico
+ * const { data } = useMyReviews({ status: 'pending', moduleId: 'module-4' });
+ * ```
+ */
+export function useMyReviews(
+  filters?: MyReviewsFilters,
+): UseQueryResult<ManualReview[], Error> {
+  return useQuery<ManualReview[], Error>({
+    queryKey: manualReviewKeys.myReviews(filters),
+    queryFn: () => manualReviewApi.getMyReviews(filters),
+    staleTime: 2 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     retry: 1,
@@ -237,4 +278,11 @@ export function useCompleteReview(): UseMutationResult<CompleteReviewResponse, E
 // EXPORTS
 // ============================================================================
 
-export { manualReviewApi, type ManualReview, type UpdateReviewRequest, type CompleteReviewRequest };
+export {
+  manualReviewApi,
+  type ManualReview,
+  type UpdateReviewRequest,
+  type CompleteReviewRequest,
+  type MyReviewsFilters,  // TASK-2026-01-18-012
+  type ReviewStatus,      // TASK-2026-01-18-012
+};

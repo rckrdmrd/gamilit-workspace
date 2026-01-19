@@ -1,8 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { X, Save, Send, User, BookOpen, Calendar, FileText, Image as ImageIcon, Video, Music, Award, Coins, TrendingUp, CheckCircle } from 'lucide-react';
+import { X, Save, User, BookOpen, Calendar, FileText, Image as ImageIcon, Video, Music, Award, Coins, TrendingUp, CheckCircle, AlertTriangle } from 'lucide-react';
 import { ManualReview, RubricEvaluation, ReviewRewards, manualReviewApi } from '@/shared/api/manualReviewApi';
 import { RubricEvaluator } from '@/shared/components/mechanics/RubricEvaluator';
 import { ExerciseContentRenderer } from '@/shared/components/mechanics/ExerciseContentRenderer';
+// FIX TASK-2026-01-18-012: Usar FeedbackModal en lugar de alert/inline messages
+import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
+import { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -52,9 +55,14 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
   const [saving, setSaving] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  // FIX TASK-2026-01-18-012: Reemplazar success inline con FeedbackModal
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [feedbackData, setFeedbackData] = useState<FeedbackData | null>(null);
   // FIX GAP-CRIT-001: Estado para mostrar recompensas asignadas
   const [assignedRewards, setAssignedRewards] = useState<ReviewRewards | null>(null);
+  // Estado para mensaje de guardado de borrador
+  const [success, setSuccess] = useState<string | null>(null);
 
   /**
    * Handle evaluation changes
@@ -111,27 +119,30 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
   };
 
   /**
-   * Complete and submit review
-   * FIX GAP-CRIT-001: Now captures and displays rewards assigned to student
-   * TASK-2026-01-18-010: Guardar evaluación ANTES de completar (backend no acepta body en complete)
+   * Iniciar proceso de completar review - mostrar confirmacion
+   * FIX TASK-2026-01-18-012: Usar modal en lugar de window.confirm()
    */
-  const handleCompleteReview = async () => {
+  const handleRequestComplete = () => {
     if (!isValid) {
       setError('Por favor completa todos los criterios de la rúbrica antes de calificar');
       return;
     }
+    // Mostrar modal de confirmacion
+    setShowConfirmModal(true);
+  };
 
-    if (!window.confirm(
-      `¿Confirmas la calificación de ${_totalScore}/100 puntos?\n\n` +
-      'El estudiante será notificado y recibirá las recompensas correspondientes (XP y ML Coins).'
-    )) {
-      return;
-    }
+  /**
+   * Complete and submit review
+   * FIX GAP-CRIT-001: Now captures and displays rewards assigned to student
+   * TASK-2026-01-18-010: Guardar evaluación ANTES de completar (backend no acepta body en complete)
+   * FIX TASK-2026-01-18-012: Usar FeedbackModal para mostrar resultado
+   */
+  const handleCompleteReview = async () => {
+    setShowConfirmModal(false);
 
     try {
       setCompleting(true);
       setError(null);
-      setSuccess(null);
 
       // TASK-2026-01-18-010: PASO 1 - Guardar evaluación primero
       // El endpoint /complete no acepta body, así que debemos guardar antes
@@ -149,24 +160,32 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
       // Este endpoint marca como completed, califica submission y distribuye gamificación
       const response = await manualReviewApi.completeReview(review.id);
 
-      // Mostrar recompensas asignadas al estudiante
-      if (response.rewards) {
-        setAssignedRewards(response.rewards);
-        setSuccess(`¡Calificación completada! (${_totalScore}/100)\nRecompensas asignadas al estudiante.`);
-      } else {
-        setSuccess(`Calificación completada: ${_totalScore}/100 puntos`);
-      }
-
-      // Cerrar después de mostrar los rewards por más tiempo
-      setTimeout(() => {
-        onClose();
-      }, response.rewards ? 5000 : 2500);
+      // FIX TASK-2026-01-18-012: Mostrar resultado en FeedbackModal
+      setAssignedRewards(response.rewards);
+      setFeedbackData({
+        type: 'success',
+        title: 'Revisión Completada',
+        message: `Has calificado el ejercicio de ${review.student?.name || 'el estudiante'} con ${_totalScore}/100 puntos.`,
+        score: _totalScore,
+        xpEarned: response.rewards?.xp_earned || 0,
+        mlCoinsEarned: response.rewards?.ml_coins_earned || 0,
+        showConfetti: true,
+      });
+      setShowSuccessModal(true);
     } catch (err) {
       console.error('Error completing review:', err);
       setError(err instanceof Error ? err.message : 'Error al completar la calificación');
     } finally {
       setCompleting(false);
     }
+  };
+
+  /**
+   * Cerrar modal de exito y volver a lista
+   */
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false);
+    onClose();
   };
 
   /**
@@ -237,57 +256,13 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
         </div>
       )}
 
+      {/* Mensaje de exito para guardado de borrador (inline) */}
       {success && (
         <div className="rounded-detective bg-green-50 border border-green-200 p-4">
-          <p className="text-green-800">{success}</p>
-
-          {/* FIX GAP-CRIT-001: Mostrar recompensas asignadas al estudiante */}
-          {assignedRewards && (
-            <div className="mt-4 rounded-lg bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 p-4">
-              <h4 className="flex items-center gap-2 font-semibold text-amber-900 mb-3">
-                <Award className="h-5 w-5 text-amber-600" />
-                Recompensas asignadas al estudiante
-              </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-2 bg-white rounded-lg p-3 shadow-sm">
-                  <TrendingUp className="h-6 w-6 text-blue-600" />
-                  <div>
-                    <p className="text-xs text-gray-500">XP Ganado</p>
-                    <p className="text-lg font-bold text-blue-700">+{assignedRewards.xp_earned}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 bg-white rounded-lg p-3 shadow-sm">
-                  <Coins className="h-6 w-6 text-amber-600" />
-                  <div>
-                    <p className="text-xs text-gray-500">ML Coins</p>
-                    <p className="text-lg font-bold text-amber-700">+{assignedRewards.ml_coins_earned}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Promoción de rango */}
-              {assignedRewards.rankUp && (
-                <div className="mt-3 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-lg p-3 border border-purple-200">
-                  <div className="flex items-center gap-2">
-                    <Award className="h-6 w-6 text-purple-600" />
-                    <div>
-                      <p className="text-sm font-semibold text-purple-900">
-                        ¡Ascenso de rango!
-                      </p>
-                      <p className="text-xs text-purple-700">
-                        {assignedRewards.rankUp.previousRank} → {assignedRewards.rankUp.newRank}
-                        {assignedRewards.rankUp.bonusMLCoins > 0 && (
-                          <span className="ml-2 text-amber-600">
-                            (+{assignedRewards.rankUp.bonusMLCoins} ML Coins bonus)
-                          </span>
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            <p className="text-green-800">{success}</p>
+          </div>
         </div>
       )}
 
@@ -412,8 +387,9 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
           </button>
 
           {/* TASK-2026-01-18-010: Botón principal para calificar y enviar */}
+          {/* FIX TASK-2026-01-18-012: Usar handleRequestComplete para mostrar confirmacion modal */}
           <button
-            onClick={handleCompleteReview}
+            onClick={handleRequestComplete}
             disabled={!isValid || completing}
             className="flex items-center gap-2 rounded-detective bg-gradient-to-r from-green-600 to-green-700 px-6 py-2 text-white hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
             title={!isValid ? 'Completa todos los criterios de la rúbrica primero' : 'Calificar y enviar al estudiante'}
@@ -423,6 +399,51 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
           </button>
         </div>
       </div>
+
+      {/* FIX TASK-2026-01-18-012: Modal de Confirmacion */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-detective p-6 max-w-md mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-amber-100 rounded-full">
+                <AlertTriangle className="h-6 w-6 text-amber-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Confirmar Calificacion</h3>
+            </div>
+            <p className="text-gray-600 mb-2">
+              Estas a punto de calificar este ejercicio con <strong>{_totalScore}/100 puntos</strong>.
+            </p>
+            <p className="text-gray-500 text-sm mb-6">
+              El estudiante sera notificado y recibira las recompensas correspondientes (XP y ML Coins).
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-detective transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleCompleteReview}
+                disabled={completing}
+                className="px-4 py-2 bg-green-600 text-white rounded-detective hover:bg-green-700 transition-colors disabled:opacity-50"
+              >
+                {completing ? 'Calificando...' : 'Confirmar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FIX TASK-2026-01-18-012: FeedbackModal para mostrar exito */}
+      {showSuccessModal && feedbackData && (
+        <FeedbackModal
+          isOpen={showSuccessModal}
+          feedback={feedbackData}
+          onClose={handleSuccessClose}
+          onNext={handleSuccessClose}
+        />
+      )}
     </div>
   );
 };
