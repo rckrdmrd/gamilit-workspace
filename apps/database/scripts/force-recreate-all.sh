@@ -3,7 +3,17 @@
 # GAMILIT Platform - Force Database Recreation
 #
 # Proposito: Eliminar completamente la BD y usuario, luego recrear desde cero
-# Version: 2.0.0 - Sin passwords hardcodeados
+# Version: 2.2.0 - BYPASSRLS y puerto 5433
+#
+# Cambios v2.2 (2026-01-18):
+#   - CRITICO: Agregado paso BYPASSRLS antes de DDL+Seeds
+#   - Puerto actualizado de 5432 a 5433 (PostgreSQL 16)
+#   - Sin BYPASSRLS, seeds fallan con "new row violates row-level security"
+#
+# Cambios v2.1 (2026-01-18):
+#   - Ejecuta create-database.sh automaticamente al final
+#   - Proceso completamente automatico sin intervencion manual
+#   - Integrado con database-master.sh
 #
 # Cambios v2.0:
 #   - Eliminar passwords hardcodeados (seguridad)
@@ -39,7 +49,7 @@ CREDENTIALS_FILE="$DATABASE_ROOT/database-credentials-dev.txt"
 DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
 DB_HOST="localhost"
-DB_PORT="5432"  # Puerto estandar de PostgreSQL (instancia unica compartida)
+DB_PORT="5433"  # PostgreSQL 16 en este sistema usa puerto 5433
 DB_PASS=""
 
 # ============================================================================
@@ -120,7 +130,8 @@ get_password() {
 # ============================================================================
 
 run_psql_sudo() {
-    sudo -u postgres psql -p $DB_PORT -c "$1" 2>/dev/null
+    # No especificar puerto para usar socket local Unix (default)
+    sudo -u postgres psql -c "$1" 2>/dev/null
 }
 
 # ============================================================================
@@ -245,7 +256,7 @@ validate_connection() {
 # ============================================================================
 
 main() {
-    print_header "FORCE DATABASE RECREATION v2.0"
+    print_header "FORCE DATABASE RECREATION v2.2"
 
     # Parsear argumentos
     local MANUAL_PASS=""
@@ -292,44 +303,80 @@ main() {
     backup_credentials
 
     echo ""
-    print_step "[1/6] Terminando conexiones existentes..."
+    print_step "[1/8] Terminando conexiones existentes..."
     run_psql_sudo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$DB_NAME' AND pid <> pg_backend_pid();" || true
     print_success "Conexiones terminadas"
 
-    print_step "[2/6] Eliminando base de datos '$DB_NAME'..."
+    print_step "[2/8] Eliminando base de datos '$DB_NAME'..."
     run_psql_sudo "DROP DATABASE IF EXISTS $DB_NAME;" || true
     print_success "Base de datos eliminada"
 
-    print_step "[3/6] Eliminando usuario '$DB_USER'..."
+    print_step "[3/8] Eliminando usuario '$DB_USER'..."
     run_psql_sudo "DROP OWNED BY $DB_USER CASCADE;" 2>/dev/null || true
     run_psql_sudo "DROP USER IF EXISTS $DB_USER;" || true
     print_success "Usuario eliminado"
 
-    print_step "[4/6] Creando usuario '$DB_USER'..."
+    print_step "[4/8] Creando usuario '$DB_USER'..."
     run_psql_sudo "CREATE USER $DB_USER WITH PASSWORD '$DB_PASS' CREATEDB LOGIN;"
     print_success "Usuario creado"
 
-    print_step "[5/6] Creando base de datos '$DB_NAME'..."
+    print_step "[5/8] Creando base de datos '$DB_NAME'..."
     run_psql_sudo "CREATE DATABASE $DB_NAME OWNER $DB_USER;"
     print_success "Base de datos creada"
+
+    # Paso 6: Habilitar BYPASSRLS (CRITICO para seeds con RLS)
+    print_step "[6/8] Habilitando BYPASSRLS para '$DB_USER'..."
+    run_psql_sudo "ALTER ROLE $DB_USER BYPASSRLS;"
+
+    # Verificar que BYPASSRLS se habilito correctamente
+    local bypassrls_check
+    bypassrls_check=$(sudo -u postgres psql -t -c "SELECT rolbypassrls FROM pg_roles WHERE rolname = '$DB_USER';" 2>/dev/null | tr -d ' ')
+
+    if [ "$bypassrls_check" = "t" ]; then
+        print_success "BYPASSRLS habilitado (requerido para cargar seeds con RLS)"
+    else
+        print_error "No se pudo habilitar BYPASSRLS - los seeds fallaran"
+        print_warning "Ejecutar manualmente: sudo -u postgres psql -c \"ALTER ROLE $DB_USER BYPASSRLS;\""
+        exit 1
+    fi
 
     # Actualizar archivos de configuracion
     update_config_files
 
-    print_step "[6/6] Validando conexion..."
-    if validate_connection; then
-        print_header "DATABASE READY"
+    print_step "[7/8] Validando conexion..."
+    if ! validate_connection; then
+        print_error "La base de datos fue creada pero la conexion fallo"
+        print_warning "Verifica las credenciales manualmente"
+        exit 1
+    fi
+
+    # Paso 8: Ejecutar DDL + Seeds automaticamente
+    print_step "[8/8] Ejecutando DDL y Seeds..."
+    echo ""
+
+    local DATABASE_URL="postgresql://$DB_USER:$DB_PASS@$DB_HOST:$DB_PORT/$DB_NAME"
+    local CREATE_DB_SCRIPT="$DATABASE_ROOT/create-database.sh"
+
+    if [ -f "$CREATE_DB_SCRIPT" ]; then
+        "$CREATE_DB_SCRIPT" "$DATABASE_URL"
+        local exit_code=$?
+
+        if [ $exit_code -ne 0 ]; then
+            print_error "create-database.sh fallo con codigo $exit_code"
+            exit $exit_code
+        fi
+
+        print_header "DATABASE READY - DDL + Seeds Completados"
         echo ""
         echo "Credenciales guardadas en:"
         echo "  - $CREDENTIALS_FILE"
         echo "  - $BACKEND_DIR/.env"
         echo ""
-        echo "Para inicializar esquemas y datos, ejecuta:"
-        echo "  ./init-database-v3.sh --env dev"
+        echo "Base de datos lista para usar."
         echo ""
     else
-        print_error "La base de datos fue creada pero la conexion fallo"
-        print_warning "Verifica las credenciales manualmente"
+        print_error "create-database.sh no encontrado en $DATABASE_ROOT"
+        print_warning "Ejecuta manualmente: ./create-database.sh"
         exit 1
     fi
 }

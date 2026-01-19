@@ -124,12 +124,17 @@ export class TeacherController {
   // =====================================================
 
   @Get('students/:studentId/progress')
-  @ApiOperation({ summary: 'Get complete student progress' })
+  @ApiOperation({
+    summary: 'Get complete student progress',
+    description: 'Returns student progress data aligned with frontend StudentProgress interface. ' +
+      'Includes overall progress, module breakdown, and exercise statistics.',
+  })
   async getStudentProgress(
   @Param('studentId') studentId: string,
     @Query() query: GetStudentProgressQueryDto,
   ) {
-    return this.studentProgressService.getStudentProgress(studentId, query);
+    // FIX TASK-2026-01-18-005: Use frontend-aligned response method
+    return this.studentProgressService.getStudentProgressResponse(studentId, query);
   }
 
   @Get('students/:studentId/overview')
@@ -139,9 +144,14 @@ export class TeacherController {
   }
 
   @Get('students/:studentId/stats')
-  @ApiOperation({ summary: 'Get student statistics' })
+  @ApiOperation({
+    summary: 'Get student statistics',
+    description: 'Returns student statistics aligned with frontend StudentStats interface. ' +
+      'Includes gamification data, streaks, powerups, hints, and performance metrics.',
+  })
   async getStudentStats(@Param('studentId') studentId: string) {
-    return this.studentProgressService.getStudentStats(studentId);
+    // FIX TASK-2026-01-18-005: Use frontend-aligned response method
+    return this.studentProgressService.getStudentStatsResponse(studentId);
   }
 
   @Get('students/:studentId/notes')

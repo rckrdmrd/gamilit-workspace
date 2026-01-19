@@ -1,6 +1,6 @@
 # SIMCO-RECREACION-BD - Directiva de Recreacion de Base de Datos
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Fecha:** 2026-01-18
 **Aplica a:** Proyecto GAMILIT
 **Responsable:** @PERFIL_DBA, @PERFIL_DEVENV
@@ -9,7 +9,7 @@
 
 ## PROPOSITO
 
-Esta directiva define el proceso oficial para recrear la base de datos de GAMILIT, garantizando la sincronizacion de credenciales entre todos los archivos de configuracion y el respaldo adecuado de credenciales anteriores.
+Esta directiva define el proceso oficial para recrear la base de datos de GAMILIT, garantizando la sincronizacion de credenciales entre todos los archivos de configuracion, el respaldo adecuado de credenciales anteriores, y la correcta habilitacion de BYPASSRLS para carga de seeds.
 
 ---
 
@@ -25,7 +25,7 @@ Esta directiva define el proceso oficial para recrear la base de datos de GAMILI
 ## PREREQUISITOS
 
 1. Acceso sudo para operar como usuario postgres
-2. PostgreSQL corriendo en puerto **5432**
+2. PostgreSQL corriendo en puerto **5433** (verificar con `sudo -u postgres psql -c "SHOW port;"`)
 3. Permisos de escritura en:
    - `apps/database/`
    - `apps/backend/`
@@ -34,11 +34,12 @@ Esta directiva define el proceso oficial para recrear la base de datos de GAMILI
 
 ## FLUJO OFICIAL DE RECREACION
 
-### Opcion A: Recreacion Completa (Usuario + BD)
+### Opcion A: Script Maestro (RECOMENDADO)
 
 ```bash
-# Desde apps/database/scripts/
-./force-recreate-all.sh
+# Desde apps/database/
+./database-master.sh --mode full --env dev    # Recreacion completa
+./database-master.sh --mode db-only --env dev # Solo BD (mantiene usuario)
 ```
 
 Este script automaticamente:
@@ -46,17 +47,26 @@ Este script automaticamente:
 2. Obtiene password de `.env` existente o genera uno nuevo
 3. Elimina BD y usuario existentes
 4. Crea nuevo usuario y BD
-5. Actualiza TODOS los archivos .env
-6. Valida conexion con nuevas credenciales
+5. **Habilita BYPASSRLS como superusuario** (CRITICO para seeds con RLS)
+6. Sincroniza TODOS los archivos .env
+7. Ejecuta DDL completo (17 fases) + Seeds (88 archivos)
+8. Valida conexion y datos post-recreacion
 
-### Opcion B: Recreacion Solo BD (Mantener Usuario)
+### Opcion B: Script Legacy (force-recreate-all.sh)
 
 ```bash
 # Desde apps/database/scripts/
-./reset-database.sh --env dev
+./force-recreate-all.sh
 ```
 
-### Opcion C: Recreacion con dotenv-vault (Recomendado para Produccion)
+### Opcion C: Recreacion Solo BD (Mantener Usuario)
+
+```bash
+# Desde apps/database/
+./database-master.sh --mode db-only --env dev
+```
+
+### Opcion D: Recreacion con dotenv-vault (Recomendado para Produccion)
 
 ```bash
 # Paso 1: Generar nuevos secrets
@@ -115,12 +125,29 @@ El script DEBE validar:
 
 ```bash
 # Verificar conexion
-PGPASSWORD='password' psql -h localhost -p 5432 -U gamilit_user -d gamilit_platform -c "SELECT 1;"
+PGPASSWORD='password' psql -h localhost -p 5433 -U gamilit_user -d gamilit_platform -c "SELECT 1;"
 
 # Verificar archivos sincronizados
 grep "DB_PASSWORD" apps/backend/.env
 grep "Password:" apps/database/database-credentials-dev.txt
+
+# Verificar BYPASSRLS activo
+PGPASSWORD='password' psql -h localhost -p 5433 -U gamilit_user -d gamilit_platform \
+  -c "SELECT rolbypassrls FROM pg_roles WHERE rolname = 'gamilit_user';"
+# Debe retornar 't' (true)
 ```
+
+---
+
+## NOTA CRITICA: BYPASSRLS
+
+El usuario `gamilit_user` DEBE tener `BYPASSRLS` habilitado para que los seeds funcionen correctamente con tablas que tienen `FORCE ROW LEVEL SECURITY`.
+
+**IMPORTANTE:** El comando `ALTER ROLE gamilit_user BYPASSRLS;` DEBE ejecutarse como superusuario (postgres), NO como gamilit_user. Un usuario no puede otorgarse BYPASSRLS a si mismo.
+
+El script `database-master.sh` maneja esto automaticamente en el paso [6/8].
+
+Ver: `apps/database/docs/ANALISIS-RLS-SEEDS-2026-01-18.md`
 
 ---
 
@@ -130,6 +157,7 @@ grep "Password:" apps/database/database-credentials-dev.txt
 2. **NUNCA** commitear archivos .env con passwords reales
 3. **NUNCA** recrear BD en produccion sin aprobacion
 4. **NUNCA** omitir el paso de respaldo
+5. **NUNCA** ejecutar seeds sin verificar que BYPASSRLS esta activo
 
 ---
 
@@ -153,9 +181,11 @@ grep "Password:" apps/database/database-credentials-dev.txt
 ## CHECKLIST POST-RECREACION
 
 - [ ] Conexion validada exitosamente
+- [ ] BYPASSRLS verificado (rolbypassrls = t)
 - [ ] Archivos .env actualizados
 - [ ] Backend puede conectarse
 - [ ] Credenciales respaldadas
+- [ ] Seeds cargados correctamente (tenants > 0, profiles > 0)
 - [ ] Inventario actualizado (si cambio puerto/host)
 
 ---
@@ -175,25 +205,39 @@ grep "DB_PASSWORD" apps/backend/.env
 
 ### Error: "connection refused"
 
-**Causa:** Puerto incorrecto (5432 vs 5432)
+**Causa:** Puerto incorrecto (esperado: 5433)
 
 **Solucion:**
 ```bash
 # Verificar puerto de PostgreSQL
-sudo lsof -i:5432
-# Actualizar DB_PORT en archivos .env
+sudo -u postgres psql -c "SHOW port;"
+# Actualizar DB_PORT en archivos .env si es diferente
+```
+
+### Error: "new row violates row-level security policy"
+
+**Causa:** BYPASSRLS no esta habilitado para gamilit_user
+
+**Solucion:**
+```bash
+# Ejecutar como superusuario (postgres)
+sudo -u postgres psql -c "ALTER ROLE gamilit_user BYPASSRLS;"
+# O usar database-master.sh que lo hace automaticamente
+./database-master.sh --mode full --env dev
 ```
 
 ---
 
 ## REFERENCIAS
 
-- Script principal: `apps/database/scripts/force-recreate-all.sh`
+- **Script maestro:** `apps/database/database-master.sh` (RECOMENDADO)
+- Script legacy: `apps/database/scripts/force-recreate-all.sh`
 - Gestion de secrets: `apps/database/scripts/manage-secrets.sh`
 - Inicializacion v3: `apps/database/scripts/init-database-v3.sh`
-- Inventario de entorno: `orchestration/environment/ENVIRONMENT-INVENTORY.yml`
+- Inventario de entorno: `orchestration/inventarios/DEVENV-MASTER-INVENTORY.yml`
+- Analisis RLS: `apps/database/docs/ANALISIS-RLS-SEEDS-2026-01-18.md`
 
 ---
 
 *Directiva creada: 2026-01-18*
-*Ultima actualizacion: 2026-01-18*
+*Ultima actualizacion: 2026-01-18 - v1.1.0 - Agregado database-master.sh, BYPASSRLS, puerto 5433*

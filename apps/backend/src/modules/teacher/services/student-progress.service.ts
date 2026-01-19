@@ -630,19 +630,20 @@ export class StudentProgressService {
       : [];
     const classroomMap = new Map(classrooms.map((c) => [c.id, c]));
 
-    // Map to response DTOs
-    return memberships.map((member) => {
-      const classroom = classroomMap.get(member.classroom_id);
-      return {
+    // Map to response DTOs - FIX TASK-2026-01-18-005: Aligned with frontend StudentNote interface
+    return memberships
+      .filter(member => member.teacher_notes) // Only return memberships with notes
+      .map((member) => ({
+        id: `note-${student.id}-${member.classroom_id}`, // Composite ID for React key
         student_id: student.id,
-        email: studentUser.email,
-        full_name: student.full_name || undefined,
+        teacher_id: teacherId,
         classroom_id: member.classroom_id,
-        classroom_name: classroom?.name || undefined,
-        teacher_notes: member.teacher_notes || undefined,
+        note: member.teacher_notes || '', // Frontend expects 'note' not 'teacher_notes'
+        category: 'general' as const, // Default category
+        is_private: true, // Default to private
+        created_at: member.created_at || member.updated_at, // Use created_at if available
         updated_at: member.updated_at,
-      };
-    });
+      }));
   }
 
   /**
@@ -726,13 +727,16 @@ export class StudentProgressService {
     member.teacher_notes = noteDto.note;
     await this.classroomMemberRepository.save(member);
 
+    // FIX TASK-2026-01-18-005: Return structure aligned with frontend StudentNote interface
     return {
+      id: `note-${student.id}-${member.classroom_id}`, // Composite ID for React key
       student_id: student.id,
-      email: studentUser.email,
-      full_name: student.full_name || undefined,
+      teacher_id: teacherId,
       classroom_id: member.classroom_id,
-      classroom_name: classroom.name || undefined,
-      teacher_notes: member.teacher_notes || undefined,
+      note: member.teacher_notes || '', // Frontend expects 'note' not 'teacher_notes'
+      category: 'general' as const, // Default category
+      is_private: true, // Default to private
+      created_at: member.created_at || member.updated_at,
       updated_at: member.updated_at,
     };
   }

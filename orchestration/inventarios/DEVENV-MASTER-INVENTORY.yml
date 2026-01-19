@@ -5,10 +5,17 @@
 # Responsable: @PERFIL_DEVENV
 # =============================================================================
 
-version: "1.1.0"
+version: "1.2.0"
 fecha_creacion: "2026-01-18"
 fecha_actualizacion: "2026-01-18"
 responsable: "@PERFIL_DEVENV"
+changelog:
+  - version: "1.2.0"
+    fecha: "2026-01-18"
+    cambios:
+      - "Agregado database-master.sh como script principal"
+      - "Actualizado puerto PostgreSQL de 5432 a 5433"
+      - "Documentado requisito BYPASSRLS para seeds"
 
 # =============================================================================
 # FLUJO DE CREDENCIALES
@@ -58,16 +65,47 @@ credenciales:
 # =============================================================================
 
 scripts:
-  recreacion_bd:
-    nombre: "force-recreate-all.sh"
-    path: "apps/database/scripts/force-recreate-all.sh"
-    version: "2.0.0"
-    descripcion: "Recreacion completa de BD con sincronizacion de credenciales"
+  # Script maestro RECOMENDADO (2026-01-18)
+  script_maestro:
+    nombre: "database-master.sh"
+    path: "apps/database/database-master.sh"
+    version: "1.0.0"
+    descripcion: "Script maestro de recreacion de BD - RECOMENDADO"
     funcionalidades:
       - "Respalda credenciales antes de recrear"
       - "Lee password de .env o genera nuevo"
       - "Elimina y recrea usuario y BD"
+      - "Habilita BYPASSRLS como superusuario (CRITICO para seeds)"
+      - "Sincroniza TODOS los archivos de configuracion"
+      - "Ejecuta DDL completo (17 fases) + Seeds (88 archivos)"
+      - "Valida conexion y datos post-recreacion"
+    modos:
+      - nombre: "full"
+        descripcion: "Recreacion completa: usuario + BD + DDL + seeds"
+        uso: "./database-master.sh --mode full --env dev"
+      - nombre: "db-only"
+        descripcion: "Solo BD: mantiene usuario, recrea BD + DDL + seeds"
+        uso: "./database-master.sh --mode db-only --env dev"
+    directiva_asociada: "SIMCO-RECREACION-BD.md"
+    nota_bypassrls: |
+      El paso [6/8] ejecuta ALTER ROLE gamilit_user BYPASSRLS como superusuario.
+      Esto es CRITICO porque un usuario no puede otorgarse BYPASSRLS a si mismo.
+      Sin BYPASSRLS, los seeds fallan con "new row violates row-level security policy".
+
+  # Script legacy (aun funcional)
+  recreacion_bd:
+    nombre: "force-recreate-all.sh"
+    path: "apps/database/scripts/force-recreate-all.sh"
+    version: "2.1.0"
+    descripcion: "Recreacion completa de BD (legacy, usar database-master.sh)"
+    estado: "legacy"
+    funcionalidades:
+      - "Respalda credenciales antes de recrear"
+      - "Lee password de .env o genera nuevo"
+      - "Elimina y recrea usuario y BD"
+      - "Habilita BYPASSRLS como superusuario"
       - "Actualiza TODOS los archivos de configuracion"
+      - "Ejecuta DDL + seeds automaticamente"
       - "Valida conexion post-recreacion"
     uso: "./force-recreate-all.sh [--password PASS]"
     directiva_asociada: "SIMCO-RECREACION-BD.md"
@@ -110,21 +148,26 @@ scripts:
 # =============================================================================
 
 postgresql:
-  version: "15"
-  puerto: 5432  # Puerto estandar PostgreSQL
+  version: "16"
+  puerto: 5433  # PostgreSQL 16 en este sistema usa puerto 5433
   host: "localhost"
   politica: "Instancia UNICA compartida por todos los proyectos del workspace"
 
   usuarios:
     desarrollo:
       nombre: "gamilit_user"
-      permisos: ["CREATEDB", "LOGIN"]
+      permisos: ["CREATEDB", "LOGIN", "BYPASSRLS"]
       base_datos: "gamilit_platform"
+      nota_bypassrls: |
+        BYPASSRLS es CRITICO para cargar seeds en tablas con FORCE RLS.
+        Se habilita automaticamente via database-master.sh paso [6/8].
 
   notas:
-    - "Puerto 5432 es el estandar - UNICA instancia de PostgreSQL en el workspace"
+    - "Puerto 5433 configurado para PostgreSQL 16 en este sistema"
+    - "Verificar puerto con: sudo -u postgres psql -c 'SHOW port;'"
     - "Cada proyecto tiene su propio usuario y base de datos"
     - "Password en archivos .env, NUNCA hardcodeado en scripts"
+    - "BYPASSRLS requerido para seeds con RLS - ver ANALISIS-RLS-SEEDS-2026-01-18.md"
 
 # =============================================================================
 # TRIGGER DE SINCRONIZACION
@@ -144,7 +187,7 @@ trigger_sincronizacion:
       descripcion: "Passwords sincronizados en todos los archivos"
       criticidad: "alta"
     - id: "SYNC-002"
-      descripcion: "Puerto correcto (5432) en todos los archivos"
+      descripcion: "Puerto correcto (5433) en todos los archivos"
       criticidad: "alta"
     - id: "SYNC-003"
       descripcion: "Conexion funcional a BD"
@@ -192,7 +235,7 @@ checklist_verificacion:
     - categoria: "Sincronizacion"
       checks:
         - "Passwords coinciden en todos los archivos"
-        - "Puerto 5432 configurado en todos los archivos"
+        - "Puerto 5433 configurado en todos los archivos"
         - "Backend puede conectarse a BD"
 
 # =============================================================================

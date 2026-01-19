@@ -1,9 +1,10 @@
 # TRIGGER: Credenciales Sincronizadas
 
 **ID:** TRIGGER-CRED-SYNC
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Tipo:** Validacion Post-Accion
 **Aplica a:** Operaciones de recreacion de BD, rotacion de credenciales
+**Actualizado:** 2026-01-18 - Puerto 5433, database-master.sh
 
 ---
 
@@ -11,10 +12,11 @@
 
 Este trigger se activa AUTOMATICAMENTE cuando:
 
-1. Se ejecuta `force-recreate-all.sh`
-2. Se ejecuta `manage-secrets.sh rotate`
-3. Se modifica manualmente `DB_PASSWORD` en cualquier archivo
-4. Se ejecuta `init-database-v3.sh` con `--password`
+1. Se ejecuta `database-master.sh` (RECOMENDADO)
+2. Se ejecuta `force-recreate-all.sh` (legacy)
+3. Se ejecuta `manage-secrets.sh rotate`
+4. Se modifica manualmente `DB_PASSWORD` en cualquier archivo
+5. Se ejecuta `init-database-v3.sh` con `--password`
 
 ---
 
@@ -42,14 +44,14 @@ done
 
 ### 2. Sincronizacion de Puerto
 
-**Objetivo:** Todos los archivos deben apuntar al puerto correcto (5432)
+**Objetivo:** Todos los archivos deben apuntar al puerto correcto (5433 para PostgreSQL 16)
 
 ```bash
 # Verificar puerto
-grep -E "^DB_PORT=|:5432|:5432" apps/backend/.env apps/database/.env.database
+grep -E "^DB_PORT=|:5433|:5433" apps/backend/.env apps/database/.env.database
 ```
 
-**Criterio:** Puerto debe ser 5432 en todos los archivos
+**Criterio:** Puerto debe ser 5433 en todos los archivos (PostgreSQL 16 en este sistema)
 
 ### 3. Conexion Funcional
 
