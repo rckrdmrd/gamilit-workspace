@@ -110,7 +110,7 @@ BEGIN
       ELSE 'low'::TEXT
     END,
     'Bajo rendimiento académico',
-    format('Promedio de calificación: %.1f%% (Umbral recomendado: 60%%)', mp.average_score),
+    format('Promedio de calificación: %s%% (Umbral recomendado: 60%%)', ROUND(mp.average_score, 1)),
     jsonb_build_object(
       'score', mp.average_score,
       'threshold', 60,
@@ -205,8 +205,8 @@ BEGIN
       ELSE 'medium'::TEXT
     END,
     'Tendencia decreciente en rendimiento',
-    format('El rendimiento ha bajado de %.1f%% a %.1f%% en las últimas 2 semanas',
-      prev.avg_score, recent.avg_score),
+    format('El rendimiento ha bajado de %s%% a %s%% en las últimas 2 semanas',
+      ROUND(prev.avg_score, 1), ROUND(recent.avg_score, 1)),
     jsonb_build_object(
       'previous_week_avg', prev.avg_score,
       'recent_week_avg', recent.avg_score,
