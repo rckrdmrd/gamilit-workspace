@@ -17,6 +17,9 @@ import { ClassroomMember } from '@/modules/social/entities/classroom-member.enti
 import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { User } from '@/modules/auth/entities/user.entity';
 import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
+// P1-05: Added educational entities for data enrichment
+import { Module as EducationalModule } from '@/modules/educational/entities/module.entity';
+import { Exercise } from '@/modules/educational/entities/exercise.entity';
 
 describe('StudentProgressService - CORR-001 Fix', () => {
   let service: StudentProgressService;
@@ -68,6 +71,17 @@ describe('StudentProgressService - CORR-001 Fix', () => {
     findOne: jest.fn(),
   };
 
+  // P1-05: Mock educational repositories for data enrichment
+  const mockModuleRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+
+  const mockExerciseRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -99,6 +113,15 @@ describe('StudentProgressService - CORR-001 Fix', () => {
         {
           provide: getRepositoryToken(UserStats, 'gamification'),
           useValue: mockUserStatsRepository,
+        },
+        // P1-05: Educational repositories for data enrichment
+        {
+          provide: getRepositoryToken(EducationalModule, 'educational'),
+          useValue: mockModuleRepository,
+        },
+        {
+          provide: getRepositoryToken(Exercise, 'educational'),
+          useValue: mockExerciseRepository,
         },
       ],
     }).compile();
@@ -327,6 +350,9 @@ describe('StudentProgressService - CORR-001 Fix', () => {
       jest.spyOn(profileRepository, 'find').mockResolvedValue([mockProfile as any]);
       jest.spyOn(submissionRepository, 'find').mockResolvedValue([]);
       jest.spyOn(moduleProgressRepository, 'find').mockResolvedValue([]);
+      // FIX TASK-2026-01-19-002: getClassComparison needs userStats.find to return an array
+      jest.spyOn(userStatsRepository, 'find').mockResolvedValue([]);
+      jest.spyOn(userStatsRepository, 'findOne').mockResolvedValue(null);
 
       await service.getStudentProgress('profile-full', query as any);
 

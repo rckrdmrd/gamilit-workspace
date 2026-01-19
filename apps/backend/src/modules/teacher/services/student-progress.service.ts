@@ -146,9 +146,10 @@ export class StudentProgressService {
    * Get student overview information
    */
   async getStudentOverview(studentId: string): Promise<StudentOverview> {
-    // studentId is actually user_id from frontend (StudentInClassroomDto.user_id)
+    // FIX TASK-2026-01-19-002: studentId is profiles.id (PK), NOT auth.users.id (FK)
+    // ClassroomMember.student_id -> profiles.id, so we receive profiles.id from frontend
     const profile = await this.profileRepository.findOne({
-      where: { user_id: studentId },
+      where: { id: studentId },
     });
 
     if (!profile) {
@@ -187,9 +188,9 @@ export class StudentProgressService {
    * Get student statistics
    */
   async getStudentStats(studentId: string): Promise<StudentStats> {
-    // studentId is actually user_id from frontend
+    // FIX TASK-2026-01-19-002: studentId is profiles.id (PK), NOT auth.users.id (FK)
     const profile = await this.profileRepository.findOne({
-      where: { user_id: studentId },
+      where: { id: studentId },
     });
 
     if (!profile) {
@@ -256,9 +257,9 @@ export class StudentProgressService {
   async getModuleProgress(
     studentId: string,
   ): Promise<ModuleProgressDetail[]> {
-    // studentId is actually user_id from frontend
+    // FIX TASK-2026-01-19-002: studentId is profiles.id (PK), NOT auth.users.id (FK)
     const profile = await this.profileRepository.findOne({
-      where: { user_id: studentId },
+      where: { id: studentId },
     });
 
     if (!profile) {
@@ -318,9 +319,9 @@ export class StudentProgressService {
     studentId: string,
     query: GetStudentProgressQueryDto,
   ): Promise<ExerciseAttempt[]> {
-    // studentId is actually user_id from frontend
+    // FIX TASK-2026-01-19-002: studentId is profiles.id (PK), NOT auth.users.id (FK)
     const profile = await this.profileRepository.findOne({
-      where: { user_id: studentId },
+      where: { id: studentId },
     });
 
     if (!profile) {
@@ -393,9 +394,9 @@ export class StudentProgressService {
    * Identify struggle areas for student
    */
   async getStruggleAreas(studentId: string): Promise<StruggleArea[]> {
-    // studentId is actually user_id from frontend
+    // FIX TASK-2026-01-19-002: studentId is profiles.id (PK), NOT auth.users.id (FK)
     const profile = await this.profileRepository.findOne({
-      where: { user_id: studentId },
+      where: { id: studentId },
     });
 
     if (!profile) {
@@ -586,18 +587,23 @@ export class StudentProgressService {
     studentId: string,
     teacherId: string,
   ): Promise<StudentNoteResponseDto[]> {
-    // Get student profile - studentId is actually user_id from frontend
+    // FIX TASK-2026-01-19-002: studentId is profiles.id (PK), NOT auth.users.id (FK)
     const student = await this.profileRepository.findOne({
-      where: { user_id: studentId },
+      where: { id: studentId },
     });
 
     if (!student) {
       throw new NotFoundException(`Student ${studentId} not found`);
     }
 
-    // Get student user - studentId is the user_id
+    // FIX TASK-2026-01-19-002: Use profile.user_id to find auth.users record
+    // Validate user_id exists (required FK in profiles)
+    if (!student.user_id) {
+      throw new NotFoundException(`Profile ${studentId} has no associated user`);
+    }
+
     const studentUser = await this.userRepository.findOne({
-      where: { id: studentId },
+      where: { id: student.user_id },
     });
 
     if (!studentUser) {
@@ -654,18 +660,23 @@ export class StudentProgressService {
     teacherId: string,
     noteDto: AddTeacherNoteDto,
   ): Promise<StudentNoteResponseDto> {
-    // Get student profile - studentId is actually user_id from frontend
+    // FIX TASK-2026-01-19-002: studentId is profiles.id (PK), NOT auth.users.id (FK)
     const student = await this.profileRepository.findOne({
-      where: { user_id: studentId },
+      where: { id: studentId },
     });
 
     if (!student) {
       throw new NotFoundException(`Student ${studentId} not found`);
     }
 
-    // Get student user - studentId is the user_id
+    // FIX TASK-2026-01-19-002: Use profile.user_id to find auth.users record
+    // Validate user_id exists (required FK in profiles)
+    if (!student.user_id) {
+      throw new NotFoundException(`Profile ${studentId} has no associated user`);
+    }
+
     const studentUser = await this.userRepository.findOne({
-      where: { id: studentId },
+      where: { id: student.user_id },
     });
 
     if (!studentUser) {
@@ -757,9 +768,10 @@ export class StudentProgressService {
     studentId: string,
     query: GetStudentProgressQueryDto,
   ): Promise<StudentProgressResponseDto> {
-    // Get student profile
+    // FIX TASK-2026-01-19-002: studentId is profiles.id (PK), NOT auth.users.id (FK)
+    // ClassroomMember.student_id -> profiles.id, StudentInClassroomDto.user_id = profiles.id
     const profile = await this.profileRepository.findOne({
-      where: { user_id: studentId },
+      where: { id: studentId },
     });
 
     if (!profile) {
@@ -864,9 +876,9 @@ export class StudentProgressService {
    * @see apps/frontend/src/apps/teacher/components/monitoring/StudentDetailModal.tsx:204-246
    */
   async getStudentStatsResponse(studentId: string): Promise<StudentStatsResponseDto> {
-    // Get student profile
+    // FIX TASK-2026-01-19-002: studentId is profiles.id (PK), NOT auth.users.id (FK)
     const profile = await this.profileRepository.findOne({
-      where: { user_id: studentId },
+      where: { id: studentId },
     });
 
     if (!profile) {

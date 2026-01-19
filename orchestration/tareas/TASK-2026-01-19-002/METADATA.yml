@@ -1,0 +1,226 @@
+# METADATA.yml - TASK-2026-01-19-002
+# Version: 2.0.0
+# Actualizado: 2026-01-19
+
+# =============================================================================
+# IDENTIFICACION
+# =============================================================================
+
+task:
+  id: "TASK-2026-01-19-002"
+  title: "Fix StudentDetailModal no muestra datos - Mapeo incorrecto de IDs"
+  created: "2026-01-19"
+  updated: "2026-01-19"
+
+# =============================================================================
+# CLASIFICACION
+# =============================================================================
+
+classification:
+  type: "bug"
+  priority: "P1"  # Bloquea funcionalidad de monitoring
+  mode: "FULL"
+  epic: "EXT-001"
+  sprint: null
+
+# =============================================================================
+# ESTADO
+# =============================================================================
+
+status:
+  current: "in_progress"
+  phase: "E"  # Ejecucion
+  completion_percentage: 60
+
+# =============================================================================
+# CONTEXTO (FASE C)
+# =============================================================================
+
+context:
+  description: |
+    Al visualizar el detalle de un estudiante en teacher/monitoring,
+    el modal StudentDetailModal no muestra ningún dato (progress, stats, notes).
+
+    El problema se manifiesta porque las llamadas a los endpoints devuelven
+    404 Not Found o datos vacíos.
+
+  problema_reportado: |
+    Usuario navega a /teacher/monitoring
+    Hace click en tarjeta de estudiante
+    StudentDetailModal se abre pero todas las secciones están vacías:
+    - Gamification Stats: vacío
+    - Progress by Module: vacío
+    - Teacher Notes: vacío
+
+  root_cause: |
+    **CAUSA RAIZ IDENTIFICADA:**
+
+    Discrepancia de IDs entre capas:
+
+    1. ClassroomMember.student_id → FK a profiles.id (PK de profiles)
+    2. StudentInClassroomDto.user_id → se mapea desde member.student_id → ES profiles.id
+    3. Frontend envía student.id (que viene de user_id) → ES profiles.id
+
+    4. PERO student-progress.service.ts busca:
+       `profileRepository.findOne({ where: { user_id: studentId } })`
+
+       user_id en Profile es FK a auth.users.id (NO es profiles.id)
+
+    **RESULTADO:** La query no encuentra el profile porque busca por el campo equivocado.
+
+    **FIX REQUERIDO:** Cambiar búsqueda de `user_id: studentId` a `id: studentId`
+
+# =============================================================================
+# ANALISIS (FASE A)
+# =============================================================================
+
+analysis:
+  archivos_afectados:
+    - path: "apps/backend/src/modules/teacher/services/student-progress.service.ts"
+      lineas:
+        - "150-152: getStudentOverview() - busca por user_id"
+        - "191-193: getStudentStats() - busca por user_id"
+        - "260-262: getModuleProgress() - busca por user_id"
+        - "761-763: getStudentProgressResponse() - busca por user_id"
+        - "868-870: getStudentStatsResponse() - busca por user_id"
+      cambio: "Cambiar { user_id: studentId } a { id: studentId }"
+
+    - path: "apps/backend/src/modules/teacher/services/__tests__/student-progress.service.spec.ts"
+      cambio: "Actualizar mocks para reflejar nuevo comportamiento"
+
+  impacto:
+    endpoints_afectados:
+      - "GET /teacher/students/:studentId/progress"
+      - "GET /teacher/students/:studentId/stats"
+      - "GET /teacher/students/:studentId/overview"
+      - "GET /teacher/students/:studentId/notes"
+
+    frontend_afectado:
+      - "StudentDetailModal.tsx - usa estos endpoints"
+
+    compatibilidad:
+      - "Cambio NO es breaking - solo afecta comportamiento interno"
+      - "La API sigue recibiendo el mismo parámetro"
+
+  validacion_pre_fix:
+    - "ClassroomMember.student_id apunta a profiles.id (confirmado en entity)"
+    - "StudentInClassroomDto.user_id se mapea desde member.student_id (confirmado)"
+    - "Profile.user_id es FK a auth.users.id (confirmado en entity)"
+
+# =============================================================================
+# PLANEACION (FASE P)
+# =============================================================================
+
+plan:
+  steps:
+    - id: 1
+      descripcion: "Corregir getStudentOverview() en student-progress.service.ts"
+      detalle: |
+        Línea 150-152:
+        DE: where: { user_id: studentId }
+        A:  where: { id: studentId }
+
+    - id: 2
+      descripcion: "Corregir getStudentStats() en student-progress.service.ts"
+      detalle: |
+        Línea 191-193:
+        DE: where: { user_id: studentId }
+        A:  where: { id: studentId }
+
+    - id: 3
+      descripcion: "Corregir getModuleProgress() en student-progress.service.ts"
+      detalle: |
+        Línea 260-262:
+        DE: where: { user_id: studentId }
+        A:  where: { id: studentId }
+
+    - id: 4
+      descripcion: "Corregir getStudentProgressResponse() en student-progress.service.ts"
+      detalle: |
+        Línea 761-763:
+        DE: where: { user_id: studentId }
+        A:  where: { id: studentId }
+
+    - id: 5
+      descripcion: "Corregir getStudentStatsResponse() en student-progress.service.ts"
+      detalle: |
+        Línea 868-870:
+        DE: where: { user_id: studentId }
+        A:  where: { id: studentId }
+
+    - id: 6
+      descripcion: "Actualizar comentarios de documentación"
+      detalle: |
+        Actualizar comentarios que dicen "studentId is actually user_id from frontend"
+        para reflejar correctamente que studentId es profiles.id (PK)
+
+    - id: 7
+      descripcion: "Validar build y lint"
+      detalle: "npm run build && npm run lint"
+
+    - id: 8
+      descripcion: "Ejecutar tests"
+      detalle: "npm run test -- student-progress"
+
+# =============================================================================
+# EJECUCION (FASE E) - EN PROGRESO
+# =============================================================================
+
+execution:
+  started_at: "2026-01-19T00:30:00Z"
+  progress:
+    - step: 1
+      status: "pending"
+    - step: 2
+      status: "pending"
+    - step: 3
+      status: "pending"
+    - step: 4
+      status: "pending"
+    - step: 5
+      status: "pending"
+    - step: 6
+      status: "pending"
+    - step: 7
+      status: "pending"
+    - step: 8
+      status: "pending"
+
+# =============================================================================
+# DOCUMENTACION (FASE D)
+# =============================================================================
+
+documentation:
+  archivos_documentacion:
+    - "orchestration/tareas/TASK-2026-01-19-002/METADATA.yml"
+
+  inventarios_afectados:
+    - "No aplica - no hay cambios en estructura de objetos"
+
+  trazabilidad:
+    relacionado_con:
+      - "CORR-001: Corrección previa de IDs en submissions"
+      - "CORR-002: Corrección previa de IDs en userStats"
+
+    commit_message: |
+      [GAMILIT] fix: Correct student ID lookup in student-progress.service
+
+      TASK-2026-01-19-002: StudentDetailModal shows no data
+
+      Root cause: student-progress.service.ts was searching for profiles
+      using { user_id: studentId } but receiving profiles.id (PK) instead
+      of auth.users.id (FK).
+
+      Changes:
+      - Changed all profile lookups from user_id to id
+      - Updated documentation comments
+      - Verified with tests
+
+# =============================================================================
+# METADATA
+# =============================================================================
+
+metadata:
+  agente: "claude-opus-4.5"
+  sesion: "2026-01-19-monitoring-fix"
+  workspace: "/home/isem/workspace-v2/projects/gamilit"
