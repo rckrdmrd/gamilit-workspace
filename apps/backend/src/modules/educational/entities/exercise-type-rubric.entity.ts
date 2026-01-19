@@ -22,8 +22,10 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 
 /**
  * Estructura de criterio de evaluación
+ * FIX TASK-2026-01-18-011: Agregado campo id opcional (definido en seeds de BD)
  */
 export interface RubricCriteria {
+  id?: string; // ID único del criterio (definido en seeds, ej: "clasificacion", "veredicto")
   name: string;
   description: string;
   weight: number; // Porcentaje (suma total = 100)

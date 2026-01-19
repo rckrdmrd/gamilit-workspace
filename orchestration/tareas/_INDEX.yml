@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.8.0"
+version: "1.9.0"
 last_updated: "2026-01-18"
-total_tasks: 12
+total_tasks: 13
 
 # =========================================
 # TAREAS POR FECHA
@@ -14,6 +14,36 @@ tasks:
   # ----------------------------------------
   # 2026-01-18
   # ----------------------------------------
+  - id: TASK-2026-01-18-011
+    title: "Analisis y Correccion Paginas Teacher (Progress, Alerts, Reports)"
+    date: "2026-01-18"
+    status: in_progress
+    priority: P0
+    type: analysis + bug-fix
+    metodologia: CAPVED
+    dominios:
+      - "Frontend"
+      - "Backend"
+      - "Database"
+      - "Teacher Portal"
+    entregables:
+      - "01-ANALISIS-CONSOLIDADO.md"
+      - "02-PLAN-CORRECCION.md"
+      - "METADATA.yml"
+    metricas:
+      issues_identificados: 34
+      criticos: 4
+      altos: 9
+      medios: 12
+      bajos: 9
+    conclusiones:
+      - "Sistema de alertas inoperativo (CRON no configurado)"
+      - "Vulnerabilidad multi-tenant en AdminReports (CRITICO)"
+      - "Trigger faltante para submitted_progress_percentage"
+      - "Tipos de alertas incompletos en frontend"
+      - "Plan de correccion en 4 fases documentado"
+    path: "orchestration/tareas/TASK-2026-01-18-011/"
+
   - id: TASK-2026-01-18-010
     title: "Fix Teacher Reviews - Flujo de Evaluación y Gamificación"
     date: "2026-01-18"

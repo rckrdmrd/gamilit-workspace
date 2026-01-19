@@ -184,6 +184,7 @@ export class ManualReviewService {
     }
 
     // FIX TASK-2026-01-18-008: Obtener rúbrica por tipo de ejercicio
+    // FIX TASK-2026-01-18-011: Usar criterion.id de BD si existe, no generar desde nombre
     if (exerciseType) {
       try {
         const rubricData = await this.rubricRepo.findOne({
@@ -191,17 +192,23 @@ export class ManualReviewService {
         });
         if (rubricData && rubricData.criteria) {
           // Transformar criterios al formato esperado por frontend
-          enriched.rubric = rubricData.criteria.map((criterion: RubricCriteria, index: number) => ({
-            id: criterion.name?.toLowerCase().replace(/\s+/g, '_') || `criterion_${index}`,
+          // IMPORTANTE: Usar criterion.id de BD para mantener consistencia con seeds
+          enriched.rubric = rubricData.criteria.map((criterion: RubricCriteria & { id?: string }, index: number) => ({
+            id: criterion.id || criterion.name?.toLowerCase().replace(/\s+/g, '_') || `criterion_${index}`,
             name: criterion.name,
             description: criterion.description,
             maxPoints: Math.max(...(criterion.levels?.map(l => l.score) || [100])),
             weight: criterion.weight,
           }));
+          this.logger.log(`[enrichReview] Loaded rubric for ${exerciseType} with ${enriched.rubric.length} criteria`);
+        } else {
+          this.logger.warn(`[enrichReview] No rubric found for exercise type: ${exerciseType}`);
         }
       } catch (error) {
-        this.logger.warn(`[enrichReview] Failed to fetch rubric for exercise type ${exerciseType}: ${error}`);
+        this.logger.error(`[enrichReview] Failed to fetch rubric for exercise type ${exerciseType}: ${error}`);
       }
+    } else {
+      this.logger.warn(`[enrichReview] No exercise type available for rubric lookup`);
     }
 
     return enriched;
@@ -286,10 +293,11 @@ export class ManualReviewService {
           };
 
           // FIX TASK-2026-01-18-008: Agregar rúbrica
+          // FIX TASK-2026-01-18-011: Usar criterion.id de BD si existe
           const rubricData = rubricMap.get(exercise.exercise_type);
           if (rubricData && rubricData.criteria) {
-            enriched.rubric = rubricData.criteria.map((criterion: RubricCriteria, index: number) => ({
-              id: criterion.name?.toLowerCase().replace(/\s+/g, '_') || `criterion_${index}`,
+            enriched.rubric = rubricData.criteria.map((criterion: RubricCriteria & { id?: string }, index: number) => ({
+              id: criterion.id || criterion.name?.toLowerCase().replace(/\s+/g, '_') || `criterion_${index}`,
               name: criterion.name,
               description: criterion.description,
               maxPoints: Math.max(...(criterion.levels?.map(l => l.score) || [100])),

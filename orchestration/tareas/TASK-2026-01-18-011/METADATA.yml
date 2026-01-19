@@ -1,0 +1,181 @@
+# METADATA.yml - TASK-2026-01-18-011
+# Analisis y Correccion Teacher Progress/Alerts/Reports
+
+task:
+  id: "TASK-2026-01-18-011"
+  title: "Analisis y Correccion de Paginas Teacher (Progress, Alerts, Reports)"
+  created: "2026-01-18"
+  updated: "2026-01-18"
+
+classification:
+  type: "analysis"           # Primera fase es analisis
+  priority: "P0"             # Critico - afecta funcionalidad core
+  mode: "FULL"               # Ciclo CAPVED completo
+  epic: "EAI-003"            # Teacher Portal
+  sprint: "Sprint-XX"
+
+status:
+  current: "in_progress"
+  blocked_by: null
+  completion: 40%            # Analisis completado, pendiente ejecucion
+  last_phase: "A"            # Analisis completado
+
+domains:
+  - name: "database"
+    affected: true
+    details: "4 issues criticos/altos: CRON job, trigger, RLS policies, columna incorrecta"
+
+  - name: "backend"
+    affected: true
+    details: "5 issues criticos/altos: Vulnerabilidad multi-tenant, validaciones, cleanup"
+
+  - name: "frontend"
+    affected: true
+    details: "5 issues criticos/altos: Tipos incompletos, validaciones null, mock data"
+
+  - name: "documentation"
+    affected: true
+    details: "Actualizacion de inventarios y documentacion de cambios"
+
+requirements:
+  functional:
+    - "RF-TEACHER-001: Teacher debe ver progreso de estudiantes"
+    - "RF-TEACHER-002: Teacher debe ver alertas de estudiantes en riesgo"
+    - "RF-TEACHER-003: Teacher debe poder generar reportes"
+  technical:
+    - "ET-SEC-001: Aislamiento multi-tenant obligatorio"
+    - "ET-DB-001: Triggers deben actualizar datos automaticamente"
+
+dependencies:
+  tasks_required:
+    - "TASK-2026-01-18-010: Teacher Reviews (completado)"
+  tasks_blocked: []
+  epics_related:
+    - "EAI-003: Teacher Portal"
+    - "EAI-005: Progress Tracking"
+
+phases:
+  contexto:
+    status: "completed"
+    started: "2026-01-18T19:00:00"
+    completed: "2026-01-18T19:10:00"
+    file: null
+    checklist: null
+
+  analisis:
+    status: "completed"
+    started: "2026-01-18T19:10:00"
+    completed: "2026-01-18T19:45:00"
+    file: "01-ANALISIS-CONSOLIDADO.md"
+    checklist: null
+
+  plan:
+    status: "completed"
+    started: "2026-01-18T19:45:00"
+    completed: "2026-01-18T20:00:00"
+    file: "02-PLAN-CORRECCION.md"
+    checklist: null
+
+  validacion:
+    status: "pending"
+    started: null
+    completed: null
+    file: null
+    checklist: null
+
+  ejecucion:
+    status: "pending"
+    started: null
+    completed: null
+    file: null
+    checklist: null
+    checkpoints:
+      CP1_database: "pending"
+      CP2_backend: "pending"
+      CP3_frontend: "pending"
+      CP4_coherencia: "pending"
+
+  documentacion:
+    status: "pending"
+    started: null
+    completed: null
+    file: null
+    checklist: null
+
+subtasks_file: null
+
+subtasks_summary:
+  total: 34
+  completed: 0
+  in_progress: 0
+  pending: 34
+  blocked: 0
+
+deliverables:
+  documentation:
+    - path: "orchestration/tareas/TASK-2026-01-18-011/01-ANALISIS-CONSOLIDADO.md"
+      type: "new"
+      description: "Analisis detallado de 34 issues identificados"
+
+    - path: "orchestration/tareas/TASK-2026-01-18-011/02-PLAN-CORRECCION.md"
+      type: "new"
+      description: "Plan de correccion en 4 fases"
+
+validations:
+  build:
+    backend: "pending"
+    frontend: "pending"
+    database: "pending"
+
+  lint:
+    backend: "pending"
+    frontend: "pending"
+
+  tests:
+    backend: "pending"
+    frontend: "pending"
+
+  coherence:
+    ddl_backend: "pending"
+    backend_frontend: "pending"
+
+metrics:
+  time:
+    estimated_hours: 15
+    actual_hours: null
+  changes:
+    files_created: 2
+    files_modified: 0
+    files_deleted: 0
+    lines_added: 800
+    lines_removed: 0
+  issues:
+    found: 34
+    fixed: 0
+    deferred: 0
+
+agent:
+  id: "claude-opus-4.5"
+  session: "TASK-2026-01-18-011"
+  workspace: "gamilit"
+
+changelog:
+  - date: "2026-01-18"
+    author: "Claude Opus 4.5"
+    action: "created"
+    details: "Tarea creada - Analisis de paginas teacher"
+
+  - date: "2026-01-18"
+    author: "Claude Opus 4.5"
+    action: "analysis_completed"
+    details: "Analisis de 3 capas completado - 34 issues identificados"
+
+  - date: "2026-01-18"
+    author: "Claude Opus 4.5"
+    action: "plan_created"
+    details: "Plan de correccion en 4 fases documentado"
+
+references:
+  analisis: "./01-ANALISIS-CONSOLIDADO.md"
+  plan: "./02-PLAN-CORRECCION.md"
+  ssot: "docs/_SSOT/"
