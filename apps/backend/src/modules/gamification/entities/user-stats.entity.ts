@@ -19,7 +19,7 @@ import { MayaRank } from '@shared/constants/enums.constants';
  *
  * IMPORTANTE:
  * - Tabla principal del sistema de gamificación (~35+ campos)
- * - Relación 1:1 con auth.users (user_id único)
+ * - Relación 1:1 con auth_management.profiles (user_id → profiles.id)
  * - Incluye sistema de niveles, ML Coins, streaks, rankings
  *
  * @see DDL: apps/database/ddl/schemas/gamification_system/tables/01-user_stats.sql
@@ -41,8 +41,9 @@ export class UserStats {
     id!: string;
 
   /**
-   * ID del usuario (FK → auth.users)
-   * UNIQUE: Cada usuario tiene un único registro de stats
+   * ID del usuario (FK → auth_management.profiles.id)
+   * UNIQUE: Cada usuario/profile tiene un único registro de stats
+   * NOTA: Este es el PK de profiles (profiles.id), NO auth.users.id
    */
   @Column({ type: 'uuid', unique: true })
     user_id!: string;

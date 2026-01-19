@@ -129,8 +129,9 @@ export class MasteryTracking {
 
   /**
    * Usuario asociado a este tracking (cross-database, no @ManyToOne)
-   * FK en DDL: mastery_tracking.user_id → auth.users.id (ON DELETE CASCADE)
-   * Para obtener el usuario: inyectar UserRepository desde 'auth' connection
+   * FK en DDL: mastery_tracking.user_id → auth_management.profiles.id (ON DELETE CASCADE)
+   * NOTA: user_id es el PK de profiles (profiles.id), NO auth.users.id
+   * Para obtener el profile: inyectar ProfileRepository desde 'auth' connection
    */
 
   /**

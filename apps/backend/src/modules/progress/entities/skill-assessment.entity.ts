@@ -117,8 +117,9 @@ export class SkillAssessment {
 
   /**
    * Usuario evaluado (cross-database, no @ManyToOne)
-   * FK en DDL: skill_assessments.user_id → auth.users.id (ON DELETE CASCADE)
-   * Para obtener el usuario: inyectar UserRepository desde 'auth' connection
+   * FK en DDL: skill_assessments.user_id → auth_management.profiles.id (ON DELETE CASCADE)
+   * NOTA: user_id es el PK de profiles (profiles.id), NO auth.users.id
+   * Para obtener el profile: inyectar ProfileRepository desde 'auth' connection
    */
 
   /**

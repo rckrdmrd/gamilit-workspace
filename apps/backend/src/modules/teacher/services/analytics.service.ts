@@ -1126,8 +1126,11 @@ export class AnalyticsService {
    * @description Retrieves mastery tracking records and aggregates them by topic
    * to provide insights into skill development and areas needing attention.
    *
-   * @param studentId - The student's user ID
+   * @param studentId - The student's profiles.id (PK)
    * @returns MasterySummary with totals and breakdown by topic
+   *
+   * NOTE: mastery_tracking.user_id is FK to profiles.id (PK) per DDL,
+   * so studentId can be used directly for lookup.
    */
   async getMasteryData(studentId: string): Promise<{
     totalSkills: number;
@@ -1245,8 +1248,11 @@ export class AnalyticsService {
    * @description Retrieves skill assessment records and structures them for
    * the 5 reading competencies: literal, inferencial, crítico, digital, textual.
    *
-   * @param studentId - The student's user ID
+   * @param studentId - The student's profiles.id (PK)
    * @returns SkillAssessmentsSummary with competencies breakdown
+   *
+   * NOTE: skill_assessments.user_id is FK to profiles.id (PK) per DDL,
+   * so studentId can be used directly for lookup.
    */
   async getSkillAssessments(studentId: string): Promise<{
     competencies: {
