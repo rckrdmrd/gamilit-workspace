@@ -5,6 +5,7 @@ import {
   BadRequestException,
   Logger,
 } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StudentInterventionAlert } from '../entities/student-intervention-alert.entity';
@@ -316,13 +317,33 @@ export class InterventionAlertsService {
   }
 
   /**
-   * Ejecuta generación manual de alertas (para testing)
+   * Ejecuta generación de alertas automáticamente (CRON diario a las 2AM)
    *
-   * @returns Mensaje de confirmación
+   * @cron EVERY_DAY_AT_2AM
+   * @note FIX-DB-001-2026-01-18: Agregado CRON job para generación automática
    * @note Ejecuta la función SQL progress_tracking.generate_student_alerts()
    */
+  @Cron(CronExpression.EVERY_DAY_AT_2AM)
+  async generateAlertsScheduled(): Promise<void> {
+    this.logger.log('🔔 [CRON] Starting scheduled alert generation...');
+
+    try {
+      await this.alertsRepository.query('SELECT progress_tracking.generate_student_alerts()');
+      this.logger.log('🔔 [CRON] Alerts generated successfully');
+    } catch (error) {
+      this.logger.error('🔔 [CRON] Error generating alerts', error);
+      // No lanzar error para evitar que el cron falle silenciosamente
+    }
+  }
+
+  /**
+   * Ejecuta generación manual de alertas (para testing/API)
+   *
+   * @returns Mensaje de confirmación
+   * @note Puede ser invocado manualmente vía endpoint POST /teacher/alerts/generate
+   */
   async generateAlerts(): Promise<GenerateAlertsResponseDto> {
-    this.logger.log('Generating alerts manually (testing)');
+    this.logger.log('Generating alerts manually (API call)');
 
     try {
       await this.alertsRepository.query('SELECT progress_tracking.generate_student_alerts()');

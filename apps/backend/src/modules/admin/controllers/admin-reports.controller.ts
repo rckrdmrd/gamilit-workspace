@@ -44,7 +44,8 @@ export class AdminReportsController {
       @Request() req: AuthRequest,
   ): Promise<ReportDto> {
     const userId = req.user!.id;
-    return this.adminReportsService.generateReport(generateDto, userId);
+    const tenantId = req.user!.tenant_id!;
+    return this.adminReportsService.generateReport(generateDto, userId, tenantId);
   }
 
   @Get()
@@ -53,8 +54,12 @@ export class AdminReportsController {
     description:
       'Retrieve a paginated list of reports with optional filters',
   })
-  async getReports(@Query() query: ListReportsDto): Promise<PaginatedReportsDto> {
-    return this.adminReportsService.getReports(query);
+  async getReports(
+    @Query() query: ListReportsDto,
+    @Request() req: AuthRequest,
+  ): Promise<PaginatedReportsDto> {
+    const tenantId = req.user!.tenant_id!;
+    return this.adminReportsService.getReports(query, tenantId);
   }
 
   @Get(':id/download')
@@ -63,8 +68,12 @@ export class AdminReportsController {
     description:
       'Download a completed report. Returns error if report is not ready.',
   })
-  async downloadReport(@Param('id') id: string): Promise<ReportDto> {
-    return this.adminReportsService.downloadReport(id);
+  async downloadReport(
+    @Param('id') id: string,
+    @Request() req: AuthRequest,
+  ): Promise<ReportDto> {
+    const tenantId = req.user!.tenant_id!;
+    return this.adminReportsService.downloadReport(id, tenantId);
   }
 
   @Delete(':id')
@@ -73,8 +82,12 @@ export class AdminReportsController {
     summary: 'Delete a report',
     description: 'Delete a report and its associated file',
   })
-  async deleteReport(@Param('id') id: string): Promise<void> {
-    await this.adminReportsService.deleteReport(id);
+  async deleteReport(
+    @Param('id') id: string,
+    @Request() req: AuthRequest,
+  ): Promise<void> {
+    const tenantId = req.user!.tenant_id!;
+    await this.adminReportsService.deleteReport(id, tenantId);
   }
 
   // =====================================================

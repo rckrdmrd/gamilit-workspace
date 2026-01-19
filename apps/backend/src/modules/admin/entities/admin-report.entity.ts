@@ -110,6 +110,15 @@ export class AdminReport {
     admin!: User;
 
   /**
+   * UUID del tenant (organización) para aislamiento multi-tenant
+   * FIX-BE-001-2026-01-18: Agregado para corregir vulnerabilidad cross-tenant
+   * @required Filtrar TODAS las queries por tenant_id
+   */
+  @Column({ type: 'uuid' })
+  @Index('idx_admin_reports_tenant_id')
+    tenant_id!: string;
+
+  /**
    * Timestamp de creación de la solicitud (Mexico timezone)
    */
   @CreateDateColumn({ type: 'timestamp' })

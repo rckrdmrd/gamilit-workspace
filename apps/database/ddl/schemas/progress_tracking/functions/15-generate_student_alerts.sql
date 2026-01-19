@@ -209,20 +209,22 @@ BEGIN
     p.tenant_id
   FROM (
     -- Promedio última semana
-    SELECT user_id, AVG(final_score) as avg_score, COUNT(*) as count
+    -- FIX-DB-002-2026-01-18: Cambiado final_score -> score (columna correcta)
+    SELECT user_id, AVG(score) as avg_score, COUNT(*) as count
     FROM progress_tracking.exercise_submissions
     WHERE submitted_at > gamilit.now_mexico() - INTERVAL '7 days'
-      AND final_score IS NOT NULL
+      AND score IS NOT NULL
     GROUP BY user_id
     HAVING COUNT(*) >= 2
   ) recent
   JOIN (
     -- Promedio semana anterior
-    SELECT user_id, AVG(final_score) as avg_score
+    -- FIX-DB-002-2026-01-18: Cambiado final_score -> score (columna correcta)
+    SELECT user_id, AVG(score) as avg_score
     FROM progress_tracking.exercise_submissions
     WHERE submitted_at BETWEEN gamilit.now_mexico() - INTERVAL '14 days'
                            AND gamilit.now_mexico() - INTERVAL '7 days'
-      AND final_score IS NOT NULL
+      AND score IS NOT NULL
     GROUP BY user_id
     HAVING COUNT(*) >= 2
   ) prev ON recent.user_id = prev.user_id

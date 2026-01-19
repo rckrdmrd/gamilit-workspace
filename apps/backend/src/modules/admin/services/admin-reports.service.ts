@@ -39,30 +39,23 @@ import {
  * - file_url apunta al archivo generado (local o S3)
  *
  * ============================================================================
- * SECURITY WARNING - CROSS-TENANT ACCESS VULNERABILITY (FIX-2025-01-07)
+ * SECURITY FIX - CROSS-TENANT ACCESS (FIX-BE-001-2026-01-18)
  * ============================================================================
  *
- * PROBLEMA IDENTIFICADO:
- * Este servicio NO filtra reportes por tenant_id, permitiendo que cualquier
- * admin vea y descargue reportes de TODAS las organizaciones.
+ * CORREGIDO: 2026-01-18 - TASK-2026-01-18-011
  *
- * MÉTODOS AFECTADOS:
- * - getReports() - Lista reportes de todos los tenants
- * - downloadReport() - No verifica propiedad del reporte
- * - deleteReport() - No verifica propiedad del reporte
+ * CAMBIOS IMPLEMENTADOS:
+ * 1. ✅ Agregado tenant_id a AdminReport entity
+ * 2. ✅ generateReport() ahora requiere tenantId
+ * 3. ✅ getReports() filtra por tenant_id
+ * 4. ✅ downloadReport() filtra por tenant_id + valida expiración
+ * 5. ✅ deleteReport() filtra por tenant_id
  *
- * IMPACTO:
- * - Un admin_teacher podría ver/descargar reportes de otras organizaciones
- * - Exposición de datos sensibles (exportaciones de usuarios, métricas)
- * - Violación del aislamiento multi-tenant
+ * NOTA: Los controllers que llaman estos métodos deben pasar tenant_id
+ * del usuario autenticado. super_admin puede usar tenant especial si aplica.
  *
- * SOLUCIÓN RECOMENDADA:
- * 1. Agregar tenant_id a AdminReport entity y todas las queries
- * 2. Filtrar: WHERE tenant_id = :tenantId
- * 3. Validar propiedad: WHERE requested_by = :userId OR tenant_id = :tenantId
- * 4. Excepto para super_admin que puede operar cross-tenant por diseño
- *
- * PRIORIDAD: P1 (Alto) - Requiere implementación antes de producción
+ * TAMBIÉN CORREGIDO:
+ * - BE-004: downloadReport() ahora valida expires_at antes de permitir descarga
  * ============================================================================
  */
 @Injectable()
@@ -105,6 +98,7 @@ export class AdminReportsService {
    *
    * @param generateDto - Datos del reporte a generar
    * @param userId - ID del usuario que solicita el reporte
+   * @param tenantId - ID del tenant (FIX-BE-001-2026-01-18)
    * @returns Reporte creado con estado 'pending'
    *
    * IMPORTANTE:
@@ -112,10 +106,12 @@ export class AdminReportsService {
    * - La generación se procesa de forma asíncrona (sin bloquear la respuesta)
    * - expires_at se calcula como created_at + 30 días
    * - En producción: usar BullMQ para procesamiento en background
+   * - FIX-BE-001-2026-01-18: Ahora incluye tenant_id obligatorio
    */
   async generateReport(
     generateDto: GenerateReportDto,
     userId: string,
+    tenantId: string,
   ): Promise<ReportDto> {
     // Crear registro de reporte en BD
     const expiresAt = new Date();
@@ -127,6 +123,7 @@ export class AdminReportsService {
       status: 'pending',
       metadata: generateDto.filters || {},
       requested_by: userId,
+      tenant_id: tenantId, // FIX-BE-001-2026-01-18: Agregado tenant_id
       expires_at: expiresAt,
     });
 
@@ -148,13 +145,19 @@ export class AdminReportsService {
    * Obtiene lista de reportes con filtros y paginación
    *
    * @param query - Filtros y paginación
+   * @param tenantId - ID del tenant (FIX-BE-001-2026-01-18)
    * @returns Lista paginada de reportes
+   *
+   * FIX-BE-001-2026-01-18: Ahora filtra por tenant_id para aislamiento multi-tenant
    */
-  async getReports(query: ListReportsDto): Promise<PaginatedReportsDto> {
+  async getReports(query: ListReportsDto, tenantId: string): Promise<PaginatedReportsDto> {
     const { type, status, page = 1, limit = 20 } = query;
 
     // Construir query con filtros
     const queryBuilder = this.reportRepo.createQueryBuilder('report');
+
+    // FIX-BE-001-2026-01-18: Filtrar por tenant_id SIEMPRE
+    queryBuilder.where('report.tenant_id = :tenantId', { tenantId });
 
     if (type) {
       queryBuilder.andWhere('report.report_type = :type', { type });
@@ -186,17 +189,27 @@ export class AdminReportsService {
    * Descarga un reporte
    *
    * @param reportId - ID del reporte
+   * @param tenantId - ID del tenant (FIX-BE-001-2026-01-18)
    * @returns Reporte con información de descarga
    * @throws NotFoundException si el reporte no existe
    * @throws Error si el reporte no está completado
+   * @throws GoneException si el reporte ha expirado (FIX-BE-004-2026-01-18)
+   *
+   * FIX-BE-001-2026-01-18: Ahora filtra por tenant_id
+   * FIX-BE-004-2026-01-18: Valida expiración del reporte
    */
-  async downloadReport(reportId: string): Promise<ReportDto> {
+  async downloadReport(reportId: string, tenantId: string): Promise<ReportDto> {
     const report = await this.reportRepo.findOne({
-      where: { id: reportId },
+      where: { id: reportId, tenant_id: tenantId }, // FIX-BE-001: Filtrar por tenant
     });
 
     if (!report) {
       throw new NotFoundException(`Report with ID ${reportId} not found`);
+    }
+
+    // FIX-BE-004-2026-01-18: Validar expiración
+    if (report.expires_at && new Date(report.expires_at) < new Date()) {
+      throw new NotFoundException(`Report has expired and is no longer available`);
     }
 
     if (report.status !== 'completed') {
@@ -211,15 +224,17 @@ export class AdminReportsService {
    * Elimina un reporte
    *
    * @param reportId - ID del reporte
+   * @param tenantId - ID del tenant (FIX-BE-001-2026-01-18)
    * @throws NotFoundException si el reporte no existe
    *
    * IMPORTANTE:
    * - Elimina registro de BD y archivo físico de storage
    * - Si el archivo no existe, solo elimina el registro
+   * - FIX-BE-001-2026-01-18: Ahora filtra por tenant_id
    */
-  async deleteReport(reportId: string): Promise<void> {
+  async deleteReport(reportId: string, tenantId: string): Promise<void> {
     const report = await this.reportRepo.findOne({
-      where: { id: reportId },
+      where: { id: reportId, tenant_id: tenantId }, // FIX-BE-001: Filtrar por tenant
     });
 
     if (!report) {
