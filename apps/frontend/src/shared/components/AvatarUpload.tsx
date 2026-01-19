@@ -201,7 +201,8 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
       });
 
       // Callback
-      onUploadComplete?.(result.avatar_url);
+      // FIX-2026-01-19: Use camelCase from transformed API response
+      onUploadComplete?.(result.avatarUrl);
 
       // Reset progress after animation
       setTimeout(() => {

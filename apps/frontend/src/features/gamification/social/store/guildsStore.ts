@@ -8,7 +8,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { Guild, GuildMember, GuildChallenge, GuildActivity } from '../types/guildsTypes';
-import { teamsAPI, type TeamDTO, type TeamMemberDTO } from '@/services/api/teamsAPI';
+import { teamsAPI, type Team, type TeamMember } from '@/services/api/teamsAPI';
 import { apiClient } from '@/services/api/apiClient';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
@@ -34,50 +34,52 @@ interface GuildsStore {
 }
 
 /**
- * Maps Team DTO from backend to Guild type for frontend
+ * Maps Team from API to Guild type for frontend
+ * FIX-2026-01-19: Updated to use camelCase properties (API now returns transformed data)
  */
-function mapTeamToGuild(team: TeamDTO): Guild {
+function mapTeamToGuild(team: Team): Guild {
   return {
     id: team.id,
     name: team.name,
     description: team.description || '',
-    emblem: team.avatar_url || 'shield',
-    leaderId: team.leader_id || team.creator_id,
-    memberCount: team.current_members_count,
-    maxMembers: team.max_members,
-    level: Math.floor(team.total_xp / 1000) + 1, // Calculate level from XP
-    xp: team.total_xp,
-    createdAt: new Date(team.founded_at),
-    isPublic: team.is_public,
-    status: team.is_active
-      ? team.current_members_count >= team.max_members
+    emblem: team.avatarUrl || 'shield',
+    leaderId: team.leaderId || team.creatorId,
+    memberCount: team.currentMembersCount,
+    maxMembers: team.maxMembers,
+    level: Math.floor(team.totalXp / 1000) + 1, // Calculate level from XP
+    xp: team.totalXp,
+    createdAt: team.foundedAt, // Already a Date object from transformer
+    isPublic: team.isPublic,
+    status: team.isActive
+      ? team.currentMembersCount >= team.maxMembers
         ? 'full'
-        : team.allow_join_requests
+        : team.allowJoinRequests
           ? 'recruiting'
           : 'active'
       : 'inactive',
-    requirements: undefined, // Not in Team DTO
+    requirements: undefined, // Not in Team type
     stats: {
-      totalExercisesCompleted: team.modules_completed,
-      totalMlCoinsEarned: team.total_ml_coins,
-      totalAchievements: team.achievements_earned,
+      totalExercisesCompleted: team.modulesCompleted,
+      totalMlCoinsEarned: team.totalMlCoins,
+      totalAchievements: team.achievementsEarned,
       averageScore: 0, // Not directly available
     },
   };
 }
 
 /**
- * Maps TeamMember DTO from backend to GuildMember type for frontend
+ * Maps TeamMember from API to GuildMember type for frontend
+ * FIX-2026-01-19: Updated to use camelCase properties
  */
-function mapTeamMemberToGuildMember(member: TeamMemberDTO): GuildMember {
+function mapTeamMemberToGuildMember(member: TeamMember): GuildMember {
   return {
-    userId: member.user_id,
+    userId: member.userId,
     username: 'Team Member', // TODO: Fetch user details
     avatar: '/avatars/default.png',
     role: member.role, // Valores directos: owner, admin, member (sincronizado 2026-01-07)
-    joinedAt: new Date(member.joined_at),
-    contributionScore: 0, // Not in TeamMember DTO
-    lastActive: new Date(), // Not in TeamMember DTO
+    joinedAt: member.joinedAt, // Already a Date object from transformer
+    contributionScore: 0, // Not in TeamMember type
+    lastActive: new Date(), // Not in TeamMember type
     rank: 'al_mehen' as const,
     level: 1,
   };
@@ -113,7 +115,8 @@ export const useGuildsStore = create<GuildsStore>()(
 
           if (userTeams.length > 0) {
             // Get the first team the user is a member of
-            const teamId = userTeams[0].team_id;
+            // FIX-2026-01-19: Use camelCase teamId from transformed API response
+            const teamId = userTeams[0].teamId;
             const team = await teamsAPI.getTeamById(teamId);
             const guild = mapTeamToGuild(team);
             set({ userGuild: guild, isInGuild: true, loading: false });

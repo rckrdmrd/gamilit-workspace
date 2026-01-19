@@ -107,6 +107,12 @@ export type {
   UpdateProfileDto,
   UpdatePreferencesDto,
   UpdatePasswordDto,
+  // New camelCase types (preferred)
+  ProfileUpdate,
+  PreferencesUpdate,
+  AvatarUpload,
+  PasswordUpdate,
+  // Deprecated aliases (for backward compatibility)
   ProfileUpdateResponse,
   PreferencesUpdateResponse,
   AvatarUploadResponse,

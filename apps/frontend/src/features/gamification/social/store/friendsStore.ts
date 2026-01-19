@@ -61,18 +61,19 @@ export const useFriendsStore = create<FriendsStore>()(
           // Convert friendships to Friend objects
           // Note: This requires fetching user details for each friend
           // For now, we'll create basic Friend objects
+          // FIX-2026-01-19: Use camelCase properties from transformed API response
           const friends: Friend[] = friendships
             .filter((f) => f.status === 'accepted')
             .map((f) => ({
-              userId: f.friend_id === userId ? f.user_id : f.friend_id,
+              userId: f.friendId === userId ? f.userId : f.friendId,
               username: 'Friend User', // TODO: Fetch user details
               avatar: '/avatars/default.png',
               rank: 'al_mehen' as const,
               level: 1,
               xp: 0,
               mlCoins: 0,
-              lastActive: new Date(f.updated_at),
-              friendsSince: new Date(f.created_at),
+              lastActive: f.updatedAt, // Already a Date object from transformer
+              friendsSince: f.createdAt, // Already a Date object from transformer
               isOnline: false,
               commonInterests: [],
               mutualFriends: 0,
@@ -90,15 +91,16 @@ export const useFriendsStore = create<FriendsStore>()(
           const pendingFriendships = await friendsAPI.getPendingRequests(userId);
 
           // Convert to FriendRequest objects
+          // FIX-2026-01-19: Use camelCase properties from transformed API response
           const friendRequests: FriendRequest[] = pendingFriendships.map((f) => ({
             id: f.id,
-            senderId: f.user_id,
+            senderId: f.userId,
             senderName: 'Friend User', // TODO: Fetch user details
             senderAvatar: '/avatars/default.png',
             senderRank: 'al_mehen' as const,
             senderLevel: 1,
-            receiverId: f.friend_id,
-            sentAt: new Date(f.created_at),
+            receiverId: f.friendId,
+            sentAt: f.createdAt, // Already a Date object from transformer
             status: f.status as any,
             message: undefined,
           }));
@@ -136,15 +138,16 @@ export const useFriendsStore = create<FriendsStore>()(
         try {
           const activitiesData = await friendsAPI.getFriendActivities(userId, limit);
           // Transform API response to store format
+          // FIX-2026-01-19: Use camelCase properties from transformed API response
           const activities: FriendActivity[] = activitiesData.map((a) => ({
-            id: a.activity_id,
-            userId: a.user_id,
+            id: a.activityId,
+            userId: a.userId,
             userName: '', // TODO: Join with user data
             userAvatar: '/avatars/default.png',
-            type: a.activity_type as any,
+            type: a.activityType as any,
             description: a.description,
             metadata: a.metadata || {},
-            timestamp: new Date(a.created_at),
+            timestamp: a.createdAt, // Already a Date object from transformer
             praised: false,
             praiseCount: 0,
           }));
@@ -229,6 +232,7 @@ export const useFriendsStore = create<FriendsStore>()(
             const request = state.friendRequests.find((r) => r.id === requestId);
             if (!request) return { loading: false };
 
+            // FIX-2026-01-19: Use camelCase properties from transformed API response
             const newFriend: Friend = {
               userId: request.senderId,
               username: request.senderName,
@@ -238,7 +242,7 @@ export const useFriendsStore = create<FriendsStore>()(
               xp: 0,
               mlCoins: 0,
               lastActive: new Date(),
-              friendsSince: new Date(friendship.updated_at),
+              friendsSince: friendship.updatedAt, // Already a Date object from transformer
               isOnline: false,
               commonInterests: [],
               mutualFriends: 0,
