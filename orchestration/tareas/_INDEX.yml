@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.12.0"
+version: "1.13.0"
 last_updated: "2026-01-18"
-total_tasks: 15
+total_tasks: 16
 
 # =========================================
 # TAREAS POR FECHA
@@ -14,6 +14,41 @@ tasks:
   # ----------------------------------------
   # 2026-01-18
   # ----------------------------------------
+  - id: TASK-2026-01-18-015
+    title: "Análisis Detallado y Plan de Implementación - Teacher/Reports Page"
+    date: "2026-01-18"
+    status: in_progress
+    priority: P1
+    type: analysis + planning
+    metodologia: CAPVED
+    dominios:
+      - "Frontend"
+      - "Backend"
+      - "Database"
+      - "Teacher Portal"
+      - "Reports"
+      - "Analytics"
+    entregables:
+      - "METADATA.yml"
+      - "00-ANALISIS-COMPLETO.md"
+      - "01-GAPS-IDENTIFICADOS.md"
+      - "02-PLAN-IMPLEMENTACION.md"
+    metricas:
+      agentes_paralelos: 4
+      archivos_analizados: 50
+      gaps_identificados: 14
+      esfuerzo_total_estimado: "73h"
+      sprints_planificados: 5
+    conclusiones:
+      - "Documentación completa y coherente de reportes"
+      - "Arquitectura metadata-centric (referencias a archivos)"
+      - "MasteryTracking y SkillAssessment desconectados (GAP crítico)"
+      - "Filtrado temporal no funcional (bug crítico)"
+      - "Backend robusto pero faltan transacciones"
+      - "Frontend 95% implementado"
+      - "Plan de 5 sprints: fixes, integración, robustez, polish, features"
+    path: "orchestration/tareas/TASK-2026-01-18-015/"
+
   - id: TASK-2026-01-18-013
     title: "Mejoras UX Teacher Reviews - Separacion Visual y Formateo de Respuestas"
     date: "2026-01-18"

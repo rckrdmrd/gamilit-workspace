@@ -7,12 +7,13 @@
 
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Between, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 import * as ExcelJS from 'exceljs';
 import puppeteer from 'puppeteer';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
+import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
 import { AnalyticsService } from './analytics.service';
 import { StorageService } from './storage.service';
 import { TeacherReportsService } from './teacher-reports.service';
@@ -56,6 +57,8 @@ export class ReportsService {
     private readonly classroomRepository: Repository<Classroom>,
     @InjectRepository(ClassroomMember, 'social')
     private readonly classroomMemberRepository: Repository<ClassroomMember>,
+    @InjectRepository(ExerciseSubmission, 'progress')
+    private readonly submissionRepository: Repository<ExerciseSubmission>,
     private readonly analyticsService: AnalyticsService,
     private readonly storageService: StorageService,
     private readonly teacherReportsService: TeacherReportsService,
@@ -148,6 +151,7 @@ export class ReportsService {
 
   /**
    * Gather all data needed for the report
+   * TASK-2026-01-18-015: Added temporal filtering support
    */
   private async gatherReportData(dto: GenerateReportDto, userId: string): Promise<ReportData> {
     // ISS-BE-001: Enabled after installing exceljs and uuid dependencies (2026-01-04)
@@ -183,8 +187,25 @@ export class ReportsService {
       throw new NotFoundException('No students found for report generation');
     }
 
+    // TASK-2026-01-18-015: Filter students by activity within date range
+    let filteredStudentIds = studentIds;
+    if (dto.start_date || dto.end_date) {
+      this.logger.log(`Applying temporal filter: ${dto.start_date} to ${dto.end_date}`);
+      const studentsWithActivity = await this.getStudentsWithActivityInPeriod(
+        studentIds,
+        dto.start_date,
+        dto.end_date,
+      );
+      filteredStudentIds = studentsWithActivity;
+      this.logger.log(`Filtered from ${studentIds.length} to ${filteredStudentIds.length} students with activity in period`);
+    }
+
+    if (filteredStudentIds.length === 0) {
+      throw new NotFoundException('No students with activity found in the specified period');
+    }
+
     // Get insights for all students
-    const insightsPromises = studentIds.map(async id => {
+    const insightsPromises = filteredStudentIds.map(async id => {
       try {
         const insights = await this.analyticsService.getStudentInsights(id);
         const student = await this.profileRepository.findOne({ where: { id } });
@@ -251,6 +272,56 @@ export class ReportsService {
     };
 
     return reportData;
+  }
+
+  /**
+   * Get students who had activity (submissions) within the specified date range
+   * TASK-2026-01-18-015: Implements temporal filtering for reports
+   *
+   * @param studentIds - List of student IDs to check
+   * @param startDate - Optional start date (inclusive)
+   * @param endDate - Optional end date (inclusive)
+   * @returns Array of student IDs who had activity in the period
+   */
+  private async getStudentsWithActivityInPeriod(
+    studentIds: string[],
+    startDate?: string,
+    endDate?: string,
+  ): Promise<string[]> {
+    if (studentIds.length === 0) {
+      return [];
+    }
+
+    // Build query with date filters
+    const queryBuilder = this.submissionRepository
+      .createQueryBuilder('submission')
+      .select('DISTINCT submission.user_id', 'user_id')
+      .where('submission.user_id IN (:...studentIds)', { studentIds });
+
+    // Apply date filters
+    if (startDate && endDate) {
+      queryBuilder.andWhere('submission.submitted_at BETWEEN :startDate AND :endDate', {
+        startDate: new Date(startDate),
+        endDate: new Date(endDate + 'T23:59:59.999Z'), // Include full end day
+      });
+    } else if (startDate) {
+      queryBuilder.andWhere('submission.submitted_at >= :startDate', {
+        startDate: new Date(startDate),
+      });
+    } else if (endDate) {
+      queryBuilder.andWhere('submission.submitted_at <= :endDate', {
+        endDate: new Date(endDate + 'T23:59:59.999Z'),
+      });
+    }
+
+    const results = await queryBuilder.getRawMany();
+    const studentsWithActivity = results.map(r => r.user_id);
+
+    this.logger.debug(
+      `Found ${studentsWithActivity.length} students with activity between ${startDate || 'beginning'} and ${endDate || 'now'}`,
+    );
+
+    return studentsWithActivity;
   }
 
   /**

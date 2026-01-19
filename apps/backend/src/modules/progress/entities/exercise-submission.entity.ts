@@ -19,7 +19,7 @@ import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
  * - Registro final de envío de ejercicio (uno por completación)
  * - Diferente de ExerciseAttempt (puede haber múltiples intentos por submission)
  * - Incluye respuesta, feedback, scoring, y comodines utilizados
- * - Soporta estados: draft, submitted, graded, reviewed
+ * - Soporta estados: draft, submitted, graded, reviewed, pending_review
  *
  * @see DDL: apps/database/ddl/schemas/progress_tracking/tables/04-exercise_submissions.sql
  */
@@ -142,7 +142,8 @@ export class ExerciseSubmission {
 
   /**
    * Estado de la sumisión
-   * Valores: draft, submitted, graded, reviewed
+   * Valores: draft, submitted, graded, reviewed, pending_review
+   * TASK-2026-01-18-015: Sincronizado con DDL (5 estados)
    */
   @Column({ type: 'text', default: 'submitted' })
     status!: string;
