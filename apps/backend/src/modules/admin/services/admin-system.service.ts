@@ -10,7 +10,7 @@ import { SystemSetting } from '../entities/system-setting.entity';
 import {
   SystemHealthDto,
   DatabaseHealthDto,
-  SystemMetricsDto,
+  ApplicationMetricsDto,
   AuditLogQueryDto,
   PaginatedAuditLogDto,
   AuditLogDto,
@@ -145,7 +145,7 @@ export class AdminSystemService {
   /**
    * Get system metrics
    */
-  async getSystemMetrics(): Promise<SystemMetricsDto> {
+  async getSystemMetrics(): Promise<ApplicationMetricsDto> {
     const now = new Date();
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);

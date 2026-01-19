@@ -18,7 +18,7 @@ import { AnalyticsService } from './analytics.service';
 import { StorageService } from './storage.service';
 import { TeacherReportsService } from './teacher-reports.service';
 import { StudentInsightsResponseDto, ReportFormat } from '../dto/analytics.dto';
-import { GenerateReportDto, ReportType, ReportMetadataDto } from '../dto/reports.dto';
+import { GenerateReportDto, ReportType, GeneratedGeneratedReportMetadataDto } from '../dto/reports.dto';
 import { TeacherReportTypeEnum, TeacherReportFormatEnum } from '@shared/constants/enums.constants';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -103,7 +103,7 @@ export class ReportsService {
     dto: GenerateReportDto,
     userId: string,
     tenantId: string,
-  ): Promise<{ buffer: Buffer; metadata: ReportMetadataDto; reportId: string }> {
+  ): Promise<{ buffer: Buffer; metadata: GeneratedReportMetadataDto; reportId: string }> {
     // ISS-BE-001: Enabled after installing exceljs and uuid dependencies (2026-01-04)
     this.logger.log(`Generating ${dto.format} report of type ${dto.type} for user ${userId}`);
 
@@ -146,7 +146,7 @@ export class ReportsService {
     });
 
     // Create metadata response
-    const metadata: ReportMetadataDto = {
+    const metadata: GeneratedReportMetadataDto = {
       report_id: savedReport.id,
       type: reportData.metadata.type,
       format: reportData.metadata.format,

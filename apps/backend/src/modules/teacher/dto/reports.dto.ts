@@ -8,9 +8,12 @@ import { ReportFormat, ReportType } from '@shared/dto/reports/generate-report.dt
 export { GenerateReportDto, ReportFormat, ReportType } from '@shared/dto/reports/generate-report.dto';
 
 /**
- * Report metadata for response
+ * Report metadata for in-memory generated reports
+ * FIX-2026-01-19: Renamed to avoid conflict with teacher-reports.dto.ts ReportMetadataDto
+ * This DTO is for reports generated in memory (not persisted)
+ * @see teacher-reports.dto.ts ReportMetadataDto for persisted reports
  */
-export class ReportMetadataDto {
+export class GeneratedReportMetadataDto {
   @ApiProperty({ description: 'Report ID' })
     report_id!: string;
 

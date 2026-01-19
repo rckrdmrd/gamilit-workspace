@@ -35,7 +35,7 @@ INIT_SCRIPT="$SCRIPT_DIR/init-database.sh"
 DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
 DB_HOST="localhost"
-DB_PORT="5432"
+DB_PORT="${DB_PORT:-5433}"
 POSTGRES_USER="postgres"
 
 ENVIRONMENT=""

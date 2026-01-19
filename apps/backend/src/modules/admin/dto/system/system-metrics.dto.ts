@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class SystemMetricsDto {
+/**
+ * Application-level metrics DTO
+ * FIX-2026-01-19: Renamed from SystemMetricsDto to avoid conflict with
+ * monitoring/system-metrics.dto.ts which contains OS-level metrics
+ *
+ * This DTO measures APPLICATION performance (users, exercises, requests)
+ * @see monitoring/system-metrics.dto.ts for OS-level metrics (CPU, memory, process)
+ */
+export class ApplicationMetricsDto {
   @ApiProperty({ description: 'Timestamp of metrics', example: '2025-11-02T18:00:00Z' })
     timestamp!: string;
 

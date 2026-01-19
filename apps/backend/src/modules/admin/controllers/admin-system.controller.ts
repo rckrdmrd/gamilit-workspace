@@ -6,7 +6,7 @@ import { AdminSystemService } from '../services/admin-system.service';
 import { MissionsCronService, CronJobStatus } from '../../tasks/services/missions-cron.service';
 import {
   SystemHealthDto,
-  SystemMetricsDto,
+  ApplicationMetricsDto,
   AuditLogQueryDto,
   PaginatedAuditLogDto,
   UpdateSystemConfigDto,
@@ -54,7 +54,7 @@ export class AdminSystemController {
     description:
       'Retrieve system performance metrics including user activity, request counts, error rates, and resource usage',
   })
-  async getSystemMetrics(): Promise<SystemMetricsDto> {
+  async getSystemMetrics(): Promise<ApplicationMetricsDto> {
     return this.adminSystemService.getSystemMetrics();
   }
 
