@@ -1,36 +1,35 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  InterventionAlertType,
+  InterventionAlertSeverity,
+  InterventionAlertStatus,
+} from '@/shared/types/intervention-alerts.types';
 
-/**
- * Alert type enum for student intervention alerts
- */
-export enum InterventionAlertType {
-  NO_ACTIVITY = 'no_activity',
-  LOW_SCORE = 'low_score',
-  DECLINING_TREND = 'declining_trend',
-  REPEATED_FAILURES = 'repeated_failures',
-  EXCESSIVE_TIME = 'excessive_time',
-  LOW_ENGAGEMENT = 'low_engagement',
-}
+// =============================================================================
+// RE-EXPORTS FROM SHARED TYPES (SINGLE SOURCE OF TRUTH)
+// =============================================================================
+// These enums are defined in @/shared/types/intervention-alerts.types.ts
+// Re-exported here for convenience and backward compatibility
+// =============================================================================
 
-/**
- * Severity levels for intervention alerts
- */
-export enum InterventionSeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical',
-}
+export { InterventionAlertType, InterventionAlertSeverity, InterventionAlertStatus };
 
-/**
- * Status values for intervention alerts
- */
-export enum InterventionStatus {
-  ACTIVE = 'active',
-  ACKNOWLEDGED = 'acknowledged',
-  RESOLVED = 'resolved',
-  DISMISSED = 'dismissed',
-}
+// =============================================================================
+// ALIASES FOR BACKWARD COMPATIBILITY
+// =============================================================================
+// Some code may use the shorter names. These aliases ensure compatibility.
+// @deprecated Use InterventionAlertSeverity/InterventionAlertStatus instead
+// =============================================================================
+
+/** @deprecated Use InterventionAlertSeverity from @/shared/types */
+export const InterventionSeverity = InterventionAlertSeverity;
+/** @deprecated Use InterventionAlertSeverity from @/shared/types */
+export type InterventionSeverity = InterventionAlertSeverity;
+
+/** @deprecated Use InterventionAlertStatus from @/shared/types */
+export const InterventionStatus = InterventionAlertStatus;
+/** @deprecated Use InterventionAlertStatus from @/shared/types */
+export type InterventionStatus = InterventionAlertStatus;
 
 /**
  * DTO for intervention alert response
@@ -64,11 +63,11 @@ export class InterventionAlertDto {
     alert_type!: InterventionAlertType;
 
   @ApiProperty({
-    enum: InterventionSeverity,
+    enum: InterventionAlertSeverity,
     description: 'Severity level of the alert',
     example: 'high',
   })
-    severity!: InterventionSeverity;
+    severity!: InterventionAlertSeverity;
 
   @ApiProperty({ description: 'Alert title/summary' })
     title!: string;
@@ -83,11 +82,11 @@ export class InterventionAlertDto {
     metrics?: Record<string, unknown>;
 
   @ApiProperty({
-    enum: InterventionStatus,
+    enum: InterventionAlertStatus,
     description: 'Current status of the alert',
     default: 'active',
   })
-    status!: InterventionStatus;
+    status!: InterventionAlertStatus;
 
   @ApiProperty({ description: 'When the alert was generated' })
     generated_at!: Date;

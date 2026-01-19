@@ -64,7 +64,19 @@ export interface ModuleProgress {
   average_time_minutes: number;
 }
 
+/**
+ * Alert type values for intervention alerts
+ * @synchronized-with backend/src/shared/types/intervention-alerts.types.ts (InterventionAlertType enum)
+ * @synchronized-with database/ddl/schemas/progress_tracking/tables/19-student_intervention_alerts.sql (CHECK constraint)
+ * @last-sync 2026-01-19
+ */
 export type AlertType = 'no_activity' | 'low_score' | 'declining_trend' | 'repeated_failures' | 'excessive_time' | 'low_engagement';
+
+/**
+ * Alert priority/severity values
+ * @synchronized-with backend/src/shared/types/intervention-alerts.types.ts (InterventionAlertSeverity enum)
+ * @last-sync 2026-01-19
+ */
 export type AlertPriority = 'low' | 'medium' | 'high' | 'critical';
 
 export interface InterventionAlert {

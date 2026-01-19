@@ -172,6 +172,31 @@ documentos_generados:
   - nombre: "04-VALIDACION-COHERENCIA-COMPLETA.md"
     descripcion: "Validacion exhaustiva final de dependencias y documentacion"
 
+  - nombre: "05-CONSOLIDACION-TIPOS-DUPLICADOS.md"
+    descripcion: "Consolidacion de enums duplicados y establecimiento de SSOT"
+
+# Consolidacion de duplicados (2026-01-19)
+consolidacion_duplicados:
+  estado: completado
+  ssot: "apps/backend/src/shared/types/intervention-alerts.types.ts"
+  archivos_consolidados:
+    - archivo: "apps/backend/src/modules/admin/dto/interventions/intervention-alert.dto.ts"
+      cambio: "Reemplazado enums locales con imports de SSOT"
+      aliases_creados: ["InterventionSeverity", "InterventionStatus"]
+
+    - archivo: "apps/frontend/src/services/api/teacher/interventionAlertsApi.ts"
+      cambio: "Agregada documentacion de sincronizacion con SSOT"
+
+    - archivo: "apps/frontend/src/apps/teacher/types/index.ts"
+      cambio: "Agregada documentacion de sincronizacion"
+
+  no_consolidados_intencionalmente:
+    - archivo: "apps/backend/src/modules/admin/dto/alerts/list-alerts.dto.ts"
+      razon: "System Alerts (performance, seguridad) - proposito diferente"
+
+    - archivo: "apps/backend/src/modules/teacher/services/teacher-dashboard.service.ts"
+      razon: "Legacy dashboard alerts - sistema separado"
+
 # Observaciones identificadas (no bloqueantes)
 observaciones:
   - id: OBS-001
