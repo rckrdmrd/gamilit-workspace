@@ -300,7 +300,8 @@ export default function TeacherSettingsPage() {
       setUploadProgress(100);
 
       toast.success('Avatar actualizado correctamente');
-      setProfile({ ...profile, avatar: result.avatar_url });
+      // FIX-2026-01-19: Use camelCase from transformed API response
+      setProfile({ ...profile, avatar: result.avatarUrl });
 
       // Reset progress después de 1 segundo
       setTimeout(() => {
