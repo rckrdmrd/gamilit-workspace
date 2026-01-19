@@ -64,7 +64,7 @@ export interface ModuleProgress {
   average_time_minutes: number;
 }
 
-export type AlertType = 'no_activity' | 'low_score' | 'declining_trend' | 'repeated_failures';
+export type AlertType = 'no_activity' | 'low_score' | 'declining_trend' | 'repeated_failures' | 'excessive_time' | 'low_engagement';
 export type AlertPriority = 'low' | 'medium' | 'high' | 'critical';
 
 export interface InterventionAlert {

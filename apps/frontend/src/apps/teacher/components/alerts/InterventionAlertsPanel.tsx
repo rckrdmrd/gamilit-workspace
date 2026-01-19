@@ -199,6 +199,8 @@ export function InterventionAlertsPanel({
             <option value={InterventionAlertType.LOW_SCORE}>Bajo Rendimiento</option>
             <option value={InterventionAlertType.DECLINING_TREND}>Tendencia Decreciente</option>
             <option value={InterventionAlertType.REPEATED_FAILURES}>Fallos Repetidos</option>
+            <option value={InterventionAlertType.EXCESSIVE_TIME}>Tiempo Excesivo</option>
+            <option value={InterventionAlertType.LOW_ENGAGEMENT}>Bajo Engagement</option>
           </select>
 
           <select
