@@ -71,7 +71,7 @@ fases:
     notas: "Usuario aprobó ejecución de Sprint 1"
   E_ejecucion:
     status: in_progress
-    notas: "Sprint 1-3 completados. Sprints 4-5 pendientes."
+    notas: "Sprint 1-4 completados. Sprint 5 pendiente."
   D_documentacion:
     status: completed
     notas: "3 documentos entregados"
@@ -141,8 +141,30 @@ sprints:
         status: completed
         resultado: "npm run build - PASS (15.83s)"
   sprint_4_frontend_polish:
-    status: pending
+    status: completed
+    fecha: 2026-01-19
     estimacion: "5h"
+    verificacion: "2026-01-19 - Verificado que implementacion ya existia"
+    tareas:
+      - task: "4.1 - File Size Display"
+        status: completed
+        archivo: "apps/frontend/src/apps/teacher/pages/TeacherReportsPage.tsx"
+        lineas: "61-71, 98"
+        notas: "formatFileSize() + uso en transformReportMetadata"
+      - task: "4.2 - Delete Report Button"
+        status: completed
+        archivo: "apps/frontend/src/apps/teacher/pages/TeacherReportsPage.tsx"
+        lineas: "128-134, 304-333"
+        notas: "handleDeleteClick, confirmDelete, cancelDelete con estado de confirmacion"
+      - task: "4.3 - CSV Handling Fix"
+        status: completed
+        archivos:
+          - "apps/frontend/src/services/api/teacher/reportsApi.ts:23"
+          - "apps/frontend/src/apps/teacher/pages/TeacherReportsPage.tsx:359"
+        notas: "'csv' agregado a ReportFormat, getFormatIcon maneja CSV"
+      - task: "4.4 - Build verification"
+        status: completed
+        resultado: "npm run build - PASS (17.84s)"
   sprint_5_advanced_features:
     status: pending
     estimacion: "24h"
