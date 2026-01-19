@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.6.0"
+version: "1.7.0"
 last_updated: "2026-01-18"
-total_tasks: 10
+total_tasks: 11
 
 # =========================================
 # TAREAS POR FECHA
@@ -14,6 +14,35 @@ tasks:
   # ----------------------------------------
   # 2026-01-18
   # ----------------------------------------
+  - id: TASK-2026-01-18-009
+    title: "Erradicar Datos Hardcodeados - Consumir desde BD/API"
+    date: "2026-01-18"
+    status: completed
+    priority: P1
+    type: refactor
+    metodologia: CAPVED
+    dominios:
+      - "Backend"
+      - "Frontend"
+      - "Teacher Portal"
+      - "Educational Content"
+    entregables:
+      - "METADATA.yml"
+      - "01-ANALISIS-DATOS-HARDCODEADOS.md"
+    metricas:
+      archivos_eliminados: 2
+      lineas_eliminadas: 1459
+      endpoints_creados: 1
+      hooks_creados: 1
+    conclusiones:
+      - "Principio: Datos de producción siempre desde BD"
+      - "GET /teacher/reviews/config/exercises creado"
+      - "useManualReviewConfig hook creado"
+      - "standardRubrics.ts eliminado (624 líneas)"
+      - "rubric-scoring.service.ts eliminado (835 líneas)"
+      - "manualReviewExercises.ts deprecado"
+    path: "orchestration/tareas/TASK-2026-01-18-009/"
+
   - id: TASK-2026-01-18-008
     title: "Fix Teacher Reviews Page - Rubric Data + Infinite Loop + Audit Fixes"
     date: "2026-01-18"
@@ -336,7 +365,7 @@ tasks:
 # RESUMEN POR ESTADO
 # =========================================
 summary:
-  completed: 10
+  completed: 11
   in_progress: 0
   pending: 0
 
