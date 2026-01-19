@@ -596,9 +596,239 @@ const MultimediaRenderer: React.FC<{ data: Record<string, unknown>; type: string
 };
 
 /**
+ * TASK-2026-01-18-013: SmartFieldRenderer - Renderiza un campo individual de forma inteligente
+ * Detecta el tipo de dato y lo presenta de la mejor manera posible
+ */
+const SmartFieldRenderer: React.FC<{
+  fieldKey: string;
+  value: unknown;
+  depth?: number;
+}> = ({ fieldKey, value, depth = 0 }) => {
+  // Formatear el nombre del campo para mostrar
+  const formatFieldName = (key: string): string => {
+    return key
+      .replace(/_/g, ' ')
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  };
+
+  // Detectar y renderizar URLs de media
+  const isMediaUrl = (val: unknown): { type: 'image' | 'video' | 'audio' | null; url: string } => {
+    if (typeof val !== 'string') return { type: null, url: '' };
+    const url = val.trim();
+    if (/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url) || url.includes('/image')) {
+      return { type: 'image', url };
+    }
+    if (/\.(mp4|webm|mov|avi)$/i.test(url) || url.includes('/video')) {
+      return { type: 'video', url };
+    }
+    if (/\.(mp3|wav|ogg|m4a|aac)$/i.test(url) || url.includes('/audio')) {
+      return { type: 'audio', url };
+    }
+    return { type: null, url };
+  };
+
+  // Renderizar valor según su tipo
+  const renderValue = (): React.ReactNode => {
+    // Null/undefined
+    if (value === null || value === undefined) {
+      return <span className="text-gray-400 italic text-sm">Sin respuesta</span>;
+    }
+
+    // String
+    if (typeof value === 'string') {
+      // Verificar si es URL de media
+      const media = isMediaUrl(value);
+      if (media.type === 'image') {
+        return (
+          <div className="mt-2">
+            <img
+              src={media.url}
+              alt={fieldKey}
+              className="max-w-full md:max-w-md rounded-lg shadow-sm border border-gray-200"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+            />
+          </div>
+        );
+      }
+      if (media.type === 'video') {
+        return (
+          <div className="mt-2">
+            <video controls className="max-w-full md:max-w-md rounded-lg shadow-sm">
+              <source src={media.url} />
+              Tu navegador no soporta video.
+            </video>
+          </div>
+        );
+      }
+      if (media.type === 'audio') {
+        return (
+          <div className="mt-2">
+            <audio controls className="w-full max-w-md">
+              <source src={media.url} />
+              Tu navegador no soporta audio.
+            </audio>
+          </div>
+        );
+      }
+
+      // Texto largo (más de 100 caracteres) - mostrar en bloque
+      if (value.length > 100) {
+        return (
+          <div className="mt-2 bg-white rounded-lg p-4 border border-gray-200">
+            <p className="whitespace-pre-wrap text-gray-800 leading-relaxed">{value}</p>
+          </div>
+        );
+      }
+
+      // Texto corto
+      return <p className="text-gray-800 mt-1">{value}</p>;
+    }
+
+    // Número
+    if (typeof value === 'number') {
+      return (
+        <span className="inline-flex items-center gap-2 mt-1">
+          <span className="text-2xl font-bold text-detective-orange">{value}</span>
+          {fieldKey.toLowerCase().includes('score') && <span className="text-gray-500">puntos</span>}
+          {fieldKey.toLowerCase().includes('time') && <span className="text-gray-500">segundos</span>}
+        </span>
+      );
+    }
+
+    // Boolean
+    if (typeof value === 'boolean') {
+      return (
+        <span className={`inline-flex items-center gap-2 mt-1 px-3 py-1 rounded-full text-sm font-medium ${
+          value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          {value ? (
+            <>
+              <CheckCircle className="h-4 w-4" />
+              Sí / Verdadero
+            </>
+          ) : (
+            <>
+              <XCircle className="h-4 w-4" />
+              No / Falso
+            </>
+          )}
+        </span>
+      );
+    }
+
+    // Array
+    if (Array.isArray(value)) {
+      if (value.length === 0) {
+        return <span className="text-gray-400 italic text-sm mt-1">Lista vacía</span>;
+      }
+
+      // Si son strings simples, mostrar como tags
+      if (value.every(item => typeof item === 'string')) {
+        return (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {value.map((item, idx) => (
+              <span
+                key={idx}
+                className="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        );
+      }
+
+      // Si son objetos, mostrar como cards
+      return (
+        <div className="mt-2 space-y-2">
+          {value.map((item, idx) => (
+            <div key={idx} className="bg-white rounded-lg p-3 border border-gray-200">
+              <div className="text-xs text-gray-500 mb-1">Elemento {idx + 1}</div>
+              {typeof item === 'object' && item !== null ? (
+                <SmartObjectRenderer data={item as Record<string, unknown>} depth={depth + 1} />
+              ) : (
+                <span className="text-gray-800">{String(item)}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // Objeto
+    if (typeof value === 'object' && value !== null) {
+      return (
+        <div className="mt-2">
+          <SmartObjectRenderer data={value as Record<string, unknown>} depth={depth + 1} />
+        </div>
+      );
+    }
+
+    // Fallback
+    return <span className="text-gray-800 mt-1">{String(value)}</span>;
+  };
+
+  // No mostrar campo si está anidado muy profundo
+  if (depth > 3) {
+    return (
+      <div className="text-xs text-gray-500 bg-gray-100 p-2 rounded">
+        <pre className="overflow-x-auto">{JSON.stringify(value, null, 2)}</pre>
+      </div>
+    );
+  }
+
+  return (
+    <div className={depth === 0 ? 'rounded-lg bg-gray-50 p-4 border border-gray-100' : ''}>
+      <div className="flex items-start gap-2">
+        <span className={`font-semibold ${depth === 0 ? 'text-gray-700' : 'text-gray-600 text-sm'}`}>
+          {formatFieldName(fieldKey)}:
+        </span>
+      </div>
+      {renderValue()}
+    </div>
+  );
+};
+
+/**
+ * TASK-2026-01-18-013: SmartObjectRenderer - Renderiza un objeto completo de forma inteligente
+ */
+const SmartObjectRenderer: React.FC<{
+  data: Record<string, unknown>;
+  depth?: number;
+}> = ({ data, depth = 0 }) => {
+  if (!data || Object.keys(data).length === 0) {
+    return <span className="text-gray-400 italic text-sm">Sin datos</span>;
+  }
+
+  // En niveles profundos, usar grid compacto
+  if (depth > 0) {
+    return (
+      <div className="grid gap-2">
+        {Object.entries(data).map(([key, value]) => (
+          <SmartFieldRenderer key={key} fieldKey={key} value={value} depth={depth} />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {Object.entries(data).map(([key, value]) => (
+        <SmartFieldRenderer key={key} fieldKey={key} value={value} depth={depth} />
+      ))}
+    </div>
+  );
+};
+
+/**
  * Renderiza respuestas de tipos de ejercicio no reconocidos
- * TASK-2026-01-18-010: Mejorado para mostrar datos de forma más legible
- * y con diagnóstico para desarrolladores
+ * TASK-2026-01-18-013: Completamente reescrito para usar SmartObjectRenderer
+ * Muestra las respuestas de forma inteligente y legible
  */
 const FallbackRenderer: React.FC<{ data: Record<string, unknown>; exerciseType?: string }> = ({
   data,
@@ -607,79 +837,30 @@ const FallbackRenderer: React.FC<{ data: Record<string, unknown>; exerciseType?:
   // Si no hay datos o están vacíos
   if (!data || Object.keys(data).length === 0) {
     return (
-      <div className="rounded-lg bg-yellow-50 border border-yellow-200 p-4">
-        <p className="text-yellow-800 text-sm">No hay datos de respuesta disponibles.</p>
+      <div className="rounded-lg bg-amber-50 border border-amber-200 p-4 flex items-start gap-3">
+        <FileText className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+        <div>
+          <p className="font-medium text-amber-800">Sin respuesta registrada</p>
+          <p className="text-amber-700 text-sm mt-1">
+            El estudiante no ha proporcionado una respuesta para este ejercicio.
+          </p>
+        </div>
       </div>
     );
   }
 
-  // Intentar renderizar de forma más legible
-  const renderValue = (key: string, value: unknown): React.ReactNode => {
-    if (value === null || value === undefined) {
-      return <span className="text-gray-400 italic">Sin valor</span>;
-    }
-    if (typeof value === 'string') {
-      // Si es una URL de imagen/video/audio, renderizar media
-      if (/\.(jpg|jpeg|png|gif|webp)$/i.test(value)) {
-        return <img src={value} alt={key} className="max-w-md rounded-lg" />;
-      }
-      if (/\.(mp4|webm|mov)$/i.test(value)) {
-        return (
-          <video controls className="max-w-md rounded-lg">
-            <source src={value} />
-          </video>
-        );
-      }
-      if (/\.(mp3|wav|ogg|m4a)$/i.test(value)) {
-        return (
-          <audio controls className="w-full">
-            <source src={value} />
-          </audio>
-        );
-      }
-      // Texto normal
-      return <p className="whitespace-pre-wrap text-gray-800">{value}</p>;
-    }
-    if (typeof value === 'number' || typeof value === 'boolean') {
-      return <span className="font-mono">{String(value)}</span>;
-    }
-    if (Array.isArray(value)) {
-      return (
-        <ul className="list-disc list-inside space-y-1">
-          {value.map((item, idx) => (
-            <li key={idx} className="text-gray-700">
-              {typeof item === 'object' ? JSON.stringify(item) : String(item)}
-            </li>
-          ))}
-        </ul>
-      );
-    }
-    // Objeto complejo
-    return (
-      <pre className="overflow-x-auto rounded bg-white p-2 text-xs font-mono">
-        {JSON.stringify(value, null, 2)}
-      </pre>
-    );
-  };
-
   return (
     <div className="space-y-4">
-      {/* Advertencia para desarrolladores (solo en desarrollo) */}
-      {process.env.NODE_ENV === 'development' && exerciseType && (
-        <div className="rounded bg-orange-100 border border-orange-200 p-2 text-xs text-orange-800">
-          Tipo de ejercicio no reconocido: <code className="font-mono">{exerciseType}</code>
+      {/* Info de tipo de ejercicio (solo en desarrollo) */}
+      {process.env.NODE_ENV === 'development' && exerciseType && exerciseType !== 'unknown' && (
+        <div className="rounded-lg bg-blue-50 border border-blue-200 p-3 flex items-center gap-2 text-xs text-blue-700">
+          <FileText className="h-4 w-4" />
+          <span>Tipo de ejercicio: <code className="font-mono bg-blue-100 px-1 rounded">{exerciseType}</code></span>
         </div>
       )}
 
-      {/* Renderizar cada campo de forma legible */}
-      {Object.entries(data).map(([key, value]) => (
-        <div key={key} className="rounded-lg bg-gray-50 p-4">
-          <span className="mb-2 block font-semibold capitalize text-gray-700">
-            {key.replace(/_/g, ' ')}
-          </span>
-          {renderValue(key, value)}
-        </div>
-      ))}
+      {/* Renderizado inteligente de las respuestas */}
+      <SmartObjectRenderer data={data} />
     </div>
   );
 };
