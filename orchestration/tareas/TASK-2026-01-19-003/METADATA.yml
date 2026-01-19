@@ -169,6 +169,23 @@ documentos_generados:
   - nombre: "03-VALIDACION-FLUJOS-UPSTREAM.md"
     descripcion: "Validacion completa de flujos de datos upstream"
 
+  - nombre: "04-VALIDACION-COHERENCIA-COMPLETA.md"
+    descripcion: "Validacion exhaustiva final de dependencias y documentacion"
+
+# Observaciones identificadas (no bloqueantes)
+observaciones:
+  - id: OBS-001
+    severidad: INFORMATIVO
+    descripcion: "Sistema legacy de alertas en teacher-dashboard.service.ts usa tipos diferentes"
+    impacto: "NINGUNO - Son sistemas separados"
+    accion: "Documentado para claridad"
+
+  - id: OBS-002
+    severidad: BAJA
+    descripcion: "Duplicacion de enum InterventionAlertType en admin/dto/interventions"
+    impacto: "BAJO - Valores identicos"
+    accion: "Refactorizacion futura recomendada"
+
 # Agente
 agente:
   id: claude-opus-4.5

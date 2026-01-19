@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.15.0"
+version: "1.16.0"
 last_updated: "2026-01-19"
-total_tasks: 18
+total_tasks: 19
 
 # =========================================
 # TAREAS POR FECHA
@@ -39,6 +39,41 @@ tasks:
       - "Stats cards ahora muestran datos correctos (no 0)"
       - "UX mejorada cuando solo existe classroom DEFAULT"
     path: "orchestration/tareas/TASK-2026-01-19-001/"
+
+  - id: TASK-2026-01-19-003
+    title: "Analisis y Correccion de Errores en Teacher Alerts Page"
+    date: "2026-01-19"
+    status: completed
+    priority: P1
+    type: bug-fix
+    metodologia: CAPVED
+    dominios:
+      - "Frontend"
+      - "Backend"
+      - "Database"
+      - "Teacher Portal"
+      - "Intervention Alerts"
+    entregables:
+      - "METADATA.yml"
+      - "01-REPORTE-ANALISIS.md"
+      - "02-VALIDACION-COHERENCIA.md"
+      - "03-VALIDACION-FLUJOS-UPSTREAM.md"
+    metricas:
+      issues_identificados: 3
+      issues_corregidos: 3
+      archivos_modificados: 3
+      triggers_validados: 4
+      seeds_validados: 6
+      coherencia_capas: "100%"
+    conclusiones:
+      - "FE-006: Dropdown de tipos de alerta completo (6 tipos)"
+      - "FE-008: AlertType union type actualizado"
+      - "FE-009: AlertCard getAlertIcon() completo"
+      - "Coherencia validada: Database CHECK = Backend Enum = Frontend Types"
+      - "Flujos upstream validados: triggers de inicializacion funcionando"
+      - "module_progress vacio por diseno (creado via triggers)"
+      - "student_intervention_alerts generado via CRON o endpoint"
+    path: "orchestration/tareas/TASK-2026-01-19-003/"
 
   - id: TASK-2026-01-19-004
     title: "Estandarizacion de Nomenclatura ClassroomStats (engagement_rate)"
@@ -582,7 +617,7 @@ tasks:
 # RESUMEN POR ESTADO
 # =========================================
 summary:
-  completed: 15
+  completed: 16
   in_progress: 1
   planning: 0
   pending: 0
