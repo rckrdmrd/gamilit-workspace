@@ -31,9 +31,17 @@ import { Profile } from '../../auth/entities/profile.entity';
  * - Métodos de inscripción: teacher_invite, self_enroll, admin_add, bulk_import
  * - Tracking de calificaciones, asistencia, y notas del profesor
  * - Trigger: trg_update_classroom_count (actualiza current_students_count)
- * - RLS (Row Level Security): policies para teacher/student/admin
+ *
+ * RLS POLICIES (Row Level Security):
+ * - classroom_members_read_student: Students can read their own memberships
+ *   USING: student_id = current_user_profile_id()
+ * - classroom_members_read_teacher: Teachers can read memberships of their classrooms
+ *   USING: classroom_id IN (SELECT id FROM classrooms WHERE teacher_id = current_user_profile_id())
+ * - classroom_members_manage_teacher: Teachers can INSERT/UPDATE/DELETE memberships
+ *   USING: classroom_id IN (SELECT id FROM classrooms WHERE teacher_id = current_user_profile_id())
  *
  * @see DDL: apps/database/ddl/schemas/social_features/tables/04-classroom_members.sql
+ * @see RLS: apps/database/ddl/schemas/social_features/policies/classroom_members_policies.sql
  */
 @Entity({ schema: DB_SCHEMAS.SOCIAL, name: DB_TABLES.SOCIAL.CLASSROOM_MEMBERS })
 @Index('idx_classroom_members_classroom', ['classroom_id'])

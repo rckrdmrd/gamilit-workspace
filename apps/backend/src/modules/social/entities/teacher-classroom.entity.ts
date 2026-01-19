@@ -37,7 +37,16 @@ export enum TeacherClassroomRole {
  * - Un classroom puede tener múltiples teachers
  * - Constraint UNIQUE(teacher_id, classroom_id) previene duplicados
  *
+ * RLS POLICIES (Row Level Security):
+ * - teacher_classrooms_read_teacher: Teachers can read their own assignments
+ *   USING: teacher_id = current_user_profile_id()
+ * - teacher_classrooms_read_admin: Admins can read all assignments in their tenant
+ *   USING: tenant_id = current_tenant_id() AND is_admin()
+ * - teacher_classrooms_update_admin: Only admins can modify teacher assignments
+ *   USING: tenant_id = current_tenant_id() AND is_admin()
+ *
  * @see DDL: apps/database/ddl/schemas/social_features/tables/teacher_classrooms.sql
+ * @see RLS: apps/database/ddl/schemas/social_features/policies/teacher_classrooms_policies.sql
  */
 @Entity({
   schema: DB_SCHEMAS.SOCIAL,
@@ -46,6 +55,7 @@ export enum TeacherClassroomRole {
 @Index('idx_teacher_classrooms_teacher_id', ['teacher_id'])
 @Index('idx_teacher_classrooms_classroom_id', ['classroom_id'])
 @Index('idx_teacher_classrooms_role', ['role'])
+@Index('idx_teacher_classrooms_tenant_id', ['tenant_id']) // FIX-2026-01-19: Added missing index
 export class TeacherClassroom {
   /**
    * Identificador único del registro (UUID)

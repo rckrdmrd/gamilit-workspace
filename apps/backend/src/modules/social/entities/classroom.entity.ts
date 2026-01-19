@@ -26,9 +26,21 @@ import { School } from './school.entity';
  * - code: Código único de acceso al aula (ej: "MAT-301-2024")
  * - Soporta profesor principal + co-profesores (array)
  * - Configuración de capacidad, horarios, y ajustes de inscripción
- * - RLS (Row Level Security): policies para teacher/student/admin
+ *
+ * RLS POLICIES (Row Level Security):
+ * - classrooms_read_student: Students can read classrooms they belong to
+ *   USING: id IN (SELECT classroom_id FROM classroom_members WHERE student_id = current_user_profile_id())
+ * - classrooms_read_teacher: Teachers can read their own classrooms
+ *   USING: teacher_id = current_user_profile_id() OR current_user_profile_id() = ANY(co_teachers)
+ * - classrooms_read_admin: Admins can read all classrooms in their tenant
+ *   USING: tenant_id = current_tenant_id() AND is_admin()
+ * - classrooms_insert_teacher: Teachers can create classrooms
+ *   WITH CHECK: teacher_id = current_user_profile_id()
+ * - classrooms_update_teacher: Teachers can update their own classrooms
+ *   USING: teacher_id = current_user_profile_id()
  *
  * @see DDL: apps/database/ddl/schemas/social_features/tables/03-classrooms.sql
+ * @see RLS: apps/database/ddl/schemas/social_features/policies/classrooms_policies.sql
  */
 @Entity({ schema: DB_SCHEMAS.SOCIAL, name: DB_TABLES.SOCIAL.CLASSROOMS })
 @Index('idx_classrooms_school', ['school_id'])
@@ -36,6 +48,7 @@ import { School } from './school.entity';
 @Index('idx_classrooms_code', ['code'])
 @Index('idx_classrooms_active', ['is_active'], { where: 'is_active = true' })
 @Index('idx_classrooms_not_deleted', ['created_at'], { where: 'is_deleted = false' })
+@Index('idx_classrooms_teacher_active', ['teacher_id', 'is_active'], { where: 'is_active = true' }) // FIX-2026-01-19: Added composite index from teacher-portal-indexes.sql
 export class Classroom {
   /**
    * Identificador único del registro (UUID)
