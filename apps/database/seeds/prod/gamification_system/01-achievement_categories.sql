@@ -3,15 +3,21 @@
 -- =====================================================
 -- Description: Categorías de logros del sistema de gamificación
 -- Environment: PRODUCTION
--- Records: 5
+-- Records: 9 (sincronizado con ENUM achievement_category v1.1)
 -- Date: 2025-11-02
+-- Updated: 2026-01-18 (CORR-P2-SEED-001)
 -- Migrated by: SA-SEEDS-GAM-01
+-- =====================================================
+-- CORR-P2-SEED-001: Sincronizado con DDL achievement_category ENUM v1.1
+-- Categorías del ENUM: progress, streak, completion, social, special,
+--                      mastery, exploration, collection, hidden
 -- =====================================================
 
 SET search_path TO gamification_system, public;
 
 -- =====================================================
 -- CATEGORÍAS DE LOGROS (CONFIGURACIÓN ESENCIAL)
+-- Sincronizado con gamification_system.achievement_category ENUM v1.1
 -- =====================================================
 
 INSERT INTO gamification_system.achievement_categories (
@@ -21,13 +27,17 @@ INSERT INTO gamification_system.achievement_categories (
     display_order,
     is_active
 ) VALUES
-    ('Progreso', 'Logros relacionados con el avance general del estudiante', '🎯', 1, true),
-    ('Racha', 'Logros de días consecutivos de actividad', '🔥', 2, true),
-    ('Completación', 'Logros de finalización de módulos y ejercicios', '✅', 3, true),
-    ('Maestría', 'Logros de dominio y habilidades avanzadas', '👑', 4, true),
-    ('Exploración', 'Logros de descubrimiento de contenido', '🔍', 5, true),
-    ('Social', 'Logros de colaboración e interacción', '👥', 6, true),
-    ('Especial', 'Logros únicos y eventos especiales', '⭐', 7, true)
+    -- Categorías originales (ENUM v1.0)
+    ('progress', 'Logros relacionados con el avance general del estudiante', '🎯', 1, true),
+    ('streak', 'Logros de días consecutivos de actividad', '🔥', 2, true),
+    ('completion', 'Logros de finalización de módulos y ejercicios', '✅', 3, true),
+    ('social', 'Logros de colaboración e interacción', '👥', 4, true),
+    ('special', 'Logros únicos y eventos especiales', '⭐', 5, true),
+    ('mastery', 'Logros de dominio y habilidades avanzadas', '👑', 6, true),
+    ('exploration', 'Logros de descubrimiento de contenido', '🔍', 7, true),
+    -- Categorías nuevas (ENUM v1.1 - 2025-12-15)
+    ('collection', 'Logros de colección de items y badges', '🏆', 8, true),
+    ('hidden', 'Logros ocultos/secretos hasta ser desbloqueados', '🔒', 9, true)
 ON CONFLICT (name) DO UPDATE SET
     description = EXCLUDED.description,
     icon_url = EXCLUDED.icon_url,
@@ -36,11 +46,45 @@ ON CONFLICT (name) DO UPDATE SET
     updated_at = gamilit.now_mexico();
 
 -- =====================================================
+-- MIGRACIÓN: Renombrar categorías legacy a nombres ENUM
+-- Esto asegura que datos existentes con nombres en español
+-- sean actualizados a los nombres del ENUM
+-- =====================================================
+
+UPDATE gamification_system.achievement_categories
+SET name = 'progress', updated_at = gamilit.now_mexico()
+WHERE name = 'Progreso';
+
+UPDATE gamification_system.achievement_categories
+SET name = 'streak', updated_at = gamilit.now_mexico()
+WHERE name = 'Racha';
+
+UPDATE gamification_system.achievement_categories
+SET name = 'completion', updated_at = gamilit.now_mexico()
+WHERE name = 'Completación';
+
+UPDATE gamification_system.achievement_categories
+SET name = 'mastery', updated_at = gamilit.now_mexico()
+WHERE name = 'Maestría';
+
+UPDATE gamification_system.achievement_categories
+SET name = 'exploration', updated_at = gamilit.now_mexico()
+WHERE name = 'Exploración';
+
+UPDATE gamification_system.achievement_categories
+SET name = 'social', updated_at = gamilit.now_mexico()
+WHERE name = 'Social';
+
+UPDATE gamification_system.achievement_categories
+SET name = 'special', updated_at = gamilit.now_mexico()
+WHERE name = 'Especial';
+
+-- =====================================================
 -- VERIFICACIÓN
 -- =====================================================
 
 SELECT
-    'Achievement Categories (Production)' AS seed_name,
+    'Achievement Categories (Production v1.1)' AS seed_name,
     COUNT(*) AS records_inserted
 FROM gamification_system.achievement_categories;
 
@@ -55,4 +99,8 @@ FROM gamification_system.achievement_categories;
 -- 5. Agregada categoría 'Maestría' (faltaba en backup original)
 -- 6. Agregada categoría 'Especial' (faltaba en backup original)
 -- 7. Uso de ON CONFLICT seguro para production
+-- 8. CORR-P2-SEED-001 (2026-01-18): Sincronizado con ENUM v1.1
+--    - Nombres cambiados de español a inglés (match ENUM)
+--    - Agregadas categorías: collection, hidden
+--    - Total: 9 categorías (= 9 valores del ENUM)
 -- =====================================================

@@ -4,20 +4,27 @@
  * Dedicated API client for achievements system.
  * Provides type-safe methods for interacting with backend achievements endpoints.
  *
- * Backend Routes:
- * - GET /api/gamification/achievements - List all achievements
- * - GET /api/gamification/achievements/:userId - Get user's achievements
- * - POST /api/gamification/achievements/unlock - Unlock achievement
- * - PUT /api/gamification/achievements/user/:userId/progress/:achievementId - Update progress
- * - POST /api/gamification/achievements/user/:userId/check - Check achievements
+ * Backend Routes (all under /api/v1/gamification):
+ * - GET  /achievements                                    - List all achievements
+ * - GET  /achievements/:id                                - Get achievement by ID
+ * - GET  /users/:userId/achievements                      - Get user's achievements with progress
+ * - GET  /users/:userId/achievements/summary              - Get user achievement stats
+ * - POST /users/:userId/achievements/:achievementId       - Grant/update achievement
+ * - POST /users/:userId/achievements/:achievementId/claim - Claim rewards
+ * - GET  /achievements/user/:userId/progress/:achievementId - Get specific progress
+ * - POST /achievements/user/:userId/unlock/:achievementId - Manual unlock (admin)
+ * - PATCH /achievements/:id                               - Toggle active status (admin)
  *
- * @note 2026-01-10: Este archivo proporciona getUserAchievements que retorna
+ * Rate Limiting: Maximum 5 achievements unlocked per minute per user (RF-GAM-001)
+ *
+ * @note 2026-01-18: Este archivo proporciona getUserAchievements que retorna
  * achievement + progress combinados (AchievementAPIResponse[]). gamificationApi
  * tiene un método similar pero retorna UserAchievement[] (solo progress).
  * El store necesita el formato enriquecido de este archivo.
  *
- * TODO: Consolidar en gamificationApi agregando getUserAchievementsWithDetails()
- * que retorne el formato AchievementAPIResponse[].
+ * @fix CORR-P1-API-001 (2026-01-18): mapCategory() ahora preserva las 9 categorías
+ * válidas del DDL v1.1 (progress, streak, completion, social, special, mastery,
+ * exploration, collection, hidden) en lugar de colapsar a solo 4.
  */
 
 import { apiClient } from '@/services/api/apiClient';
@@ -224,9 +231,12 @@ export const getAchievementProgress = async (
 /**
  * Update achievement progress
  *
+ * Uses POST /users/:userId/achievements/:achievementId to update progress.
+ * The backend grantAchievement method handles both creation and updates.
+ *
  * @param userId - User ID
  * @param achievementId - Achievement ID
- * @param increment - Progress increment amount
+ * @param increment - Progress increment amount (added to current progress)
  * @returns Updated progress data
  */
 export const updateAchievementProgress = async (
@@ -235,9 +245,21 @@ export const updateAchievementProgress = async (
   increment: number,
 ): Promise<BackendUserAchievement> => {
   try {
-    const { data } = await apiClient.put<ApiResponse<BackendUserAchievement>>(
-      `/gamification/achievements/user/${userId}/progress/${achievementId}`,
-      { increment },
+    // First get current progress
+    const currentProgress = await getAchievementProgress(userId, achievementId).catch(() => null);
+    const newProgress = (currentProgress?.progress || 0) + increment;
+    const maxProgress = currentProgress?.max_progress || 100;
+
+    // Use grant endpoint to update progress
+    const { data } = await apiClient.post<ApiResponse<BackendUserAchievement>>(
+      `/gamification/users/${userId}/achievements/${achievementId}`,
+      {
+        user_id: userId,
+        achievement_id: achievementId,
+        progress: newProgress,
+        max_progress: maxProgress,
+        is_completed: newProgress >= maxProgress,
+      },
     );
 
     return data.data;
@@ -271,25 +293,42 @@ export const unlockAchievement = async (
 /**
  * Check and unlock achievements based on user stats
  *
+ * NOTE: Achievement detection is handled automatically by the backend
+ * when exercises are completed (via ExerciseSubmissionService.detectAndGrantEarned).
+ * This method is provided for manual/admin triggering if needed.
+ *
+ * The backend evaluates 16+ condition types including:
+ * - exercise_completion, streak, module_completion, all_modules_completion
+ * - perfect_score, skill_mastery, exploration, social, special
+ * - module_first_exercise, exercise_score, exercise_repetition, etc.
+ *
  * @param userId - User ID
- * @param conditionType - Type of condition to check (e.g., 'exercise_completed')
- * @param currentValue - Current value to check against
+ * @param _conditionType - Type of condition (unused - backend checks all)
+ * @param _currentValue - Current value (unused - backend reads from UserStats)
  * @returns List of newly unlocked achievements
+ * @deprecated Use automatic detection. This is a placeholder for future manual check endpoint.
  */
 export const checkAchievements = async (
   userId: string,
-  conditionType: string,
-  currentValue: number,
+  _conditionType: string,
+  _currentValue: number,
 ): Promise<BackendAchievement[]> => {
-  try {
-    const { data } = await apiClient.post<
-      ApiResponse<{ unlockedAchievements: BackendAchievement[]; count: number }>
-    >(`/gamification/achievements/user/${userId}/check`, {
-      conditionType,
-      currentValue,
-    });
+  // Backend auto-detection handles this. Re-fetch user achievements to get latest.
+  console.warn(
+    '[achievementsAPI] checkAchievements: Achievement detection is automatic. ' +
+    'Refreshing user achievements instead.'
+  );
 
-    return data.data.unlockedAchievements;
+  try {
+    // Refresh achievements to get any newly unlocked ones
+    const achievements = await getUserAchievements(userId);
+    // Return recently unlocked (completed in last 5 minutes)
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const recentlyUnlocked = achievements.filter(
+      (a) => a.isUnlocked && a.unlockedAt && a.unlockedAt > fiveMinutesAgo
+    );
+
+    return recentlyUnlocked as unknown as BackendAchievement[];
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -346,35 +385,61 @@ export const claimAchievementRewards = async (
 // ============================================================================
 
 /**
+ * Valid achievement categories from DDL v1.1
+ * @see gamification_system.achievement_category ENUM
+ */
+type ValidAchievementCategory =
+  | 'progress'
+  | 'streak'
+  | 'completion'
+  | 'social'
+  | 'special'
+  | 'mastery'
+  | 'exploration'
+  | 'collection'
+  | 'hidden';
+
+/**
  * Map backend category to frontend category
  *
- * CORR-P8-001: Expandido mapeo para incluir todas las categorías del ENUM achievement_category:
+ * CORR-P1-API-001: Corregido para retornar las 9 categorías válidas del DDL v1.1
+ * en lugar de colapsar a solo 4 categorías.
+ *
+ * Categorías válidas (DDL achievement_category ENUM v1.1):
  * progress, streak, completion, social, special, mastery, exploration, collection, hidden
  *
  * @param backendCategory - Backend category name
- * @returns Frontend category type
+ * @returns Frontend category type (preserva la categoría original)
  */
-const mapCategory = (backendCategory: string): 'progress' | 'mastery' | 'social' | 'hidden' => {
-  const categoryMap: Record<string, 'progress' | 'mastery' | 'social' | 'hidden'> = {
-    // Progress-related categories
-    educational: 'progress',
-    progress: 'progress',
-    streak: 'progress',       // CORR-P8-001: Agregado
-    completion: 'progress',   // CORR-P8-001: Agregado
-    exploration: 'progress',  // CORR-P8-001: Agregado
-    missions: 'progress',
-    // Mastery-related categories
-    mastery: 'mastery',
-    skill: 'mastery',
-    collection: 'mastery',
-    // Social category
-    social: 'social',
-    // Hidden/special categories
-    hidden: 'hidden',
-    special: 'hidden',
+const mapCategory = (backendCategory: string): ValidAchievementCategory => {
+  const normalized = backendCategory.toLowerCase();
+
+  // Lista de categorías válidas del DDL v1.1
+  const validCategories: ValidAchievementCategory[] = [
+    'progress',
+    'streak',
+    'completion',
+    'social',
+    'special',
+    'mastery',
+    'exploration',
+    'collection',
+    'hidden',
+  ];
+
+  // Si la categoría es válida, retornarla directamente
+  if (validCategories.includes(normalized as ValidAchievementCategory)) {
+    return normalized as ValidAchievementCategory;
+  }
+
+  // Mapeo de categorías legacy/alternativas a categorías válidas
+  const legacyMapping: Record<string, ValidAchievementCategory> = {
+    educational: 'progress',  // Legacy: mapear a progress
+    missions: 'progress',     // Legacy: mapear a progress
+    skill: 'mastery',         // Legacy: mapear a mastery
   };
 
-  return categoryMap[backendCategory.toLowerCase()] ?? 'progress';
+  return legacyMapping[normalized] ?? 'progress';
 };
 
 /**

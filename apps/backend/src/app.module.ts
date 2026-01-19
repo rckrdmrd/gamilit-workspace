@@ -125,6 +125,9 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
     }),
 
     // Database connection for 'progress_tracking' schema
+    // FIX-BE-007-2026-01-18: Added StudentInterventionAlert entity from teacher module
+    // FIX-BE-010-2026-01-18: Added Profile and Classroom for cross-datasource relations
+    // FIX-BE-011-2026-01-18: Added Tenant for Profile->Tenant cascade dependency
     TypeOrmModule.forRootAsync({
       name: 'progress',  // Connection name for @InjectRepository(Entity, 'progress')
       imports: [ConfigModule],
@@ -135,7 +138,15 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [__dirname + '/modules/progress/entities/**/*.entity{.ts,.js}'],
+        entities: [
+          __dirname + '/modules/progress/entities/**/*.entity{.ts,.js}',
+          __dirname + '/modules/teacher/entities/student-intervention-alert.entity{.ts,.js}',
+          // FIX-BE-010: Required for StudentInterventionAlert @ManyToOne relations
+          __dirname + '/modules/auth/entities/profile.entity{.ts,.js}',
+          __dirname + '/modules/social/entities/classroom.entity{.ts,.js}',
+          // FIX-BE-011: Required for Profile @ManyToOne -> Tenant cascade
+          __dirname + '/modules/auth/entities/tenant.entity{.ts,.js}',
+        ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),
@@ -145,6 +156,7 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
     }),
 
     // Database connection for 'social_features' schema
+    // FIX-BE-008-2026-01-18: Added TeacherReport entity from teacher module
     TypeOrmModule.forRootAsync({
       name: 'social',  // Connection name for @InjectRepository(Entity, 'social')
       imports: [ConfigModule],
@@ -158,6 +170,7 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
         entities: [
           __dirname + '/modules/social/entities/**/*.entity{.ts,.js}',
           __dirname + '/modules/assignments/entities/**/*.entity{.ts,.js}', // Needed for AssignmentClassroom relation
+          __dirname + '/modules/teacher/entities/teacher-report.entity{.ts,.js}',
         ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
@@ -239,6 +252,35 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
         password: configService.get('database.password'),
         database: configService.get('database.database'),
         entities: [__dirname + '/modules/teacher/entities/message*.entity{.ts,.js}'],
+        synchronize: configService.get('database.synchronize', false),
+        logging: configService.get('database.logging'),
+        ssl: configService.get('database.ssl'),
+        extra: configService.get('database.extra'),
+      }),
+      inject: [ConfigService],
+    }),
+
+    // Database connection for 'admin_dashboard' schema
+    // FIX-BE-009-2026-01-18: Created datasource for AdminReport entity (was incorrectly on 'auth')
+    // FIX-BE-010-2026-01-18: Added User entity for AdminReport @ManyToOne relation
+    // FIX-BE-011-2026-01-18: Added Role for User->Role cascade dependency
+    TypeOrmModule.forRootAsync({
+      name: 'admin_dashboard',  // 10th datasource for admin reports
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('database.host'),
+        port: configService.get('database.port'),
+        username: configService.get('database.username'),
+        password: configService.get('database.password'),
+        database: configService.get('database.database'),
+        entities: [
+          __dirname + '/modules/admin/entities/admin-report.entity{.ts,.js}',
+          // FIX-BE-010: Required for AdminReport @ManyToOne relation to User
+          __dirname + '/modules/auth/entities/user.entity{.ts,.js}',
+          // FIX-BE-011: Required for User @ManyToMany -> Role cascade
+          __dirname + '/modules/auth/entities/role.entity{.ts,.js}',
+        ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),

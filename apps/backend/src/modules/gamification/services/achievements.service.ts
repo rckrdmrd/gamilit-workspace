@@ -79,6 +79,15 @@ interface ModuleAverageScoreReqs {
 }
 
 /**
+ * Rate limit configuration for achievements
+ * RF-GAM-001: Maximum 5 achievements per minute per user
+ */
+interface RateLimitEntry {
+  count: number;
+  windowStart: number;
+}
+
+/**
  * AchievementsService
  *
  * Gestión completa del sistema de logros (achievements)
@@ -86,10 +95,19 @@ interface ModuleAverageScoreReqs {
  * - Otorgamiento de logros a usuarios
  * - Seguimiento de progreso
  * - Detección automática de logros ganados
+ * - Rate limiting (5 achievements/min) según RF-GAM-001
  */
 @Injectable()
 export class AchievementsService {
   private readonly logger = new Logger(AchievementsService.name);
+
+  /**
+   * Rate limiting: 5 achievements per minute per user
+   * Map of userId -> { count, windowStart }
+   */
+  private readonly rateLimitCache = new Map<string, RateLimitEntry>();
+  private readonly RATE_LIMIT_MAX = 5;
+  private readonly RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 
   constructor(
     @InjectRepository(Achievement, 'gamification')
@@ -101,6 +119,60 @@ export class AchievementsService {
     @InjectDataSource('gamification')
     private readonly dataSource: DataSource,
   ) {}
+
+  /**
+   * Verifica y actualiza el rate limit para un usuario
+   * RF-GAM-001: Maximum 5 achievements per minute
+   *
+   * @param userId - ID del usuario
+   * @returns true si está dentro del límite, false si excede
+   * @throws BadRequestException si excede el rate limit
+   */
+  private checkRateLimit(userId: string): void {
+    const now = Date.now();
+    const entry = this.rateLimitCache.get(userId);
+
+    if (!entry) {
+      // Primera vez - crear entrada
+      this.rateLimitCache.set(userId, { count: 1, windowStart: now });
+      return;
+    }
+
+    // Verificar si la ventana expiró
+    if (now - entry.windowStart >= this.RATE_LIMIT_WINDOW_MS) {
+      // Resetear ventana
+      this.rateLimitCache.set(userId, { count: 1, windowStart: now });
+      return;
+    }
+
+    // Dentro de la ventana - verificar límite
+    if (entry.count >= this.RATE_LIMIT_MAX) {
+      const remainingMs = this.RATE_LIMIT_WINDOW_MS - (now - entry.windowStart);
+      const remainingSec = Math.ceil(remainingMs / 1000);
+      this.logger.warn(`[RATE_LIMIT] User ${userId} exceeded achievement rate limit (${this.RATE_LIMIT_MAX}/min)`);
+      throw new BadRequestException(
+        `Rate limit exceeded. Maximum ${this.RATE_LIMIT_MAX} achievements per minute. ` +
+        `Please wait ${remainingSec} seconds.`
+      );
+    }
+
+    // Incrementar contador
+    entry.count++;
+    this.rateLimitCache.set(userId, entry);
+  }
+
+  /**
+   * Limpia entradas expiradas del cache de rate limiting
+   * Se puede llamar periódicamente para liberar memoria
+   */
+  cleanupRateLimitCache(): void {
+    const now = Date.now();
+    for (const [userId, entry] of this.rateLimitCache.entries()) {
+      if (now - entry.windowStart >= this.RATE_LIMIT_WINDOW_MS) {
+        this.rateLimitCache.delete(userId);
+      }
+    }
+  }
 
   /**
    * Obtiene todos los achievements activos
@@ -202,11 +274,18 @@ export class AchievementsService {
 
   /**
    * Otorga un achievement a un usuario
+   * RF-GAM-001: Aplica rate limiting (5/min) cuando se completa un logro
    */
   async grantAchievement(
     userId: string,
     grantDto: GrantAchievementDto,
   ): Promise<UserAchievement> {
+    // Rate limit check solo cuando se completa un logro
+    // (no aplica a actualizaciones de progreso)
+    if (grantDto.is_completed) {
+      this.checkRateLimit(userId);
+    }
+
     // Validar que el achievement existe
     await this.findById(grantDto.achievement_id);
 

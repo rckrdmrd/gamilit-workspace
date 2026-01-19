@@ -64,7 +64,8 @@ export class AdminReportsService {
   private readonly REPORTS_DIR = join(process.cwd(), 'apps', 'backend', 'uploads', 'reports');
 
   constructor(
-    @InjectRepository(AdminReport, 'auth')
+    // FIX-BE-009-2026-01-18: Changed from 'auth' to 'admin_dashboard' (correct schema)
+    @InjectRepository(AdminReport, 'admin_dashboard')
     private readonly reportRepo: Repository<AdminReport>,
     @InjectRepository(User, 'auth')
     private readonly userRepo: Repository<User>,

@@ -9,9 +9,9 @@
 | **Título** | Implementación del Sistema de Achievements |
 | **Prioridad** | Alta |
 | **Estado** | ✅ Implementado |
-| **Versión** | 2.3.0 |
+| **Versión** | 2.4.0 |
 | **Fecha Creación** | 2025-11-07 |
-| **Última Actualización** | 2025-11-28 |
+| **Última Actualización** | 2026-01-18 |
 | **Sistema Actual** | [docs/sistema-recompensas/](../../../sistema-recompensas/) v2.3.0 |
 | **Autor** | Database Team |
 | **Reviewers** | Backend Lead, Frontend Lead, QA Lead |
@@ -42,6 +42,28 @@
 🗄️ **Triggers:**
 - `trg_achievement_unlocked` - Notificación al desbloquear
 - `trg_check_rank_promotion` - Verificar promoción de rango
+
+### API REST Endpoints (v2.4.0)
+
+🌐 **Endpoints Backend (bajo /api/v1/gamification):**
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/achievements` | Listar todos los achievements activos |
+| GET | `/achievements/:id` | Obtener achievement por ID |
+| GET | `/users/:userId/achievements` | Obtener achievements del usuario con progreso |
+| GET | `/users/:userId/achievements/summary` | Estadísticas de achievements del usuario |
+| POST | `/users/:userId/achievements/:achievementId` | Otorgar/actualizar progreso de achievement |
+| POST | `/users/:userId/achievements/:achievementId/claim` | Reclamar recompensas |
+| GET | `/achievements/user/:userId/progress/:achievementId` | Obtener progreso específico |
+| POST | `/achievements/user/:userId/unlock/:achievementId` | Desbloqueo manual (admin) |
+| PATCH | `/achievements/:id` | Activar/desactivar achievement (admin) |
+
+### Rate Limiting (RF-GAM-001)
+
+⚡ **Límite de desbloqueo:** Máximo 5 achievements por minuto por usuario
+- Implementado en `AchievementsService.checkRateLimit()`
+- Caché en memoria con ventana deslizante de 60 segundos
+- Error 400 si se excede el límite con mensaje de tiempo restante
 
 ---
 
@@ -138,10 +160,11 @@ Tipos de achievements:
 
 ### 2. ENUM: achievement_category
 
-**Ubicación:** `apps/database/ddl/00-prerequisites.sql:47-50`
+**Ubicación:** `apps/database/ddl/schemas/gamification_system/enums/achievement_category.sql`
+**Versión:** 1.1 (2025-12-15) - Agregados 'collection' y 'hidden'
 
 ```sql
--- Achievement Categories
+-- Achievement Categories (v1.1)
 CREATE TYPE gamification_system.achievement_category AS ENUM (
     'progress',     -- Progreso en contenido
     'streak',       -- Rachas y consistencia
@@ -149,11 +172,13 @@ CREATE TYPE gamification_system.achievement_category AS ENUM (
     'social',       -- Interacción social
     'special',      -- Eventos especiales
     'mastery',      -- Dominio de temas
-    'exploration'   -- Descubrimiento de contenido
+    'exploration',  -- Descubrimiento de contenido
+    'collection',   -- Colección de items (v1.1)
+    'hidden'        -- Logros ocultos/secretos (v1.1)
 );
 
 COMMENT ON TYPE gamification_system.achievement_category IS '
-Categorías de achievements según comportamiento gamificado:
+Categorías de achievements según comportamiento gamificado (v1.1):
 - progress: Cantidad de ejercicios, XP acumulado
 - streak: Días consecutivos, rachas
 - completion: 100% de módulos
@@ -161,6 +186,8 @@ Categorías de achievements según comportamiento gamificado:
 - special: Eventos, beta testers
 - mastery: Perfección en temas
 - exploration: Explorar todos los niveles
+- collection: Coleccionar items, badges (v1.1)
+- hidden: Logros secretos no visibles hasta desbloquear (v1.1)
 ';
 ```
 
@@ -574,7 +601,8 @@ export enum AchievementTypeEnum {
 }
 ```
 
-**Ubicación:** `apps/backend/src/gamification/enums/achievement-category.enum.ts`
+**Ubicación:** `apps/backend/src/shared/constants/enums.constants.ts`
+**Versión:** 1.1 (2025-12-15) - Agregados COLLECTION y HIDDEN
 
 ```typescript
 export enum AchievementCategoryEnum {
@@ -585,6 +613,8 @@ export enum AchievementCategoryEnum {
   SPECIAL = 'special',
   MASTERY = 'mastery',
   EXPLORATION = 'exploration',
+  COLLECTION = 'collection',  // v1.1: Logros de colección
+  HIDDEN = 'hidden',          // v1.1: Logros ocultos/secretos
 }
 ```
 
@@ -1159,15 +1189,17 @@ export enum AchievementType {
   RANK_PROMOTION = 'rank_promotion',
 }
 
-export enum AchievementCategory {
-  PROGRESS = 'progress',
-  STREAK = 'streak',
-  COMPLETION = 'completion',
-  SOCIAL = 'social',
-  SPECIAL = 'special',
-  MASTERY = 'mastery',
-  EXPLORATION = 'exploration',
-}
+// Type union (recomendado para mejor inferencia de tipos)
+export type AchievementCategory =
+  | 'progress'
+  | 'streak'
+  | 'completion'
+  | 'social'
+  | 'special'
+  | 'mastery'
+  | 'exploration'
+  | 'collection'  // v1.1
+  | 'hidden';     // v1.1
 
 export interface Achievement {
   id: string;
@@ -1593,6 +1625,8 @@ async getGallery(userId: string): Promise<AchievementGallery> {
 | Versión | Fecha | Autor | Cambios |
 |---------|-------|-------|---------|
 | 1.0 | 2025-11-07 | Database Team | Creación del documento |
+| 2.4.0 | 2026-01-18 | Claude Code | Agregados endpoints GET progress y POST unlock; Implementado rate limiting (5/min RF-GAM-001); Documentada API REST completa |
+| 2.5.1 | 2026-01-18 | Claude Code | CORR-DOC-001: Sincronizado ENUM achievement_category con DDL v1.1 (9 categorías: +collection, +hidden); Actualizada ubicación de archivos |
 
 ---
 

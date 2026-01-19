@@ -498,6 +498,10 @@ export class ManualReviewService {
     reviewId: string,
     dto: Partial<CreateReviewDto>,
   ): Promise<ManualReview> {
+    // DEBUG: Log para verificar datos recibidos
+    this.logger.log(`[updateReview] reviewId: ${reviewId}`);
+    this.logger.log(`[updateReview] dto received: ${JSON.stringify(dto)}`);
+
     const review = await this.reviewRepo.findOne({
       where: { id: reviewId },
     });
@@ -508,9 +512,11 @@ export class ManualReviewService {
 
     // Actualizar campos si están presentes en el DTO
     if (dto.rubricScores !== undefined) {
+      this.logger.log(`[updateReview] Setting rubricScores: ${JSON.stringify(dto.rubricScores)}`);
       review.rubricScores = dto.rubricScores;
     }
     if (dto.totalScore !== undefined) {
+      this.logger.log(`[updateReview] Setting totalScore: ${dto.totalScore}`);
       review.totalScore = dto.totalScore;
     }
     if (dto.generalFeedback !== undefined) {
@@ -520,7 +526,9 @@ export class ManualReviewService {
       review.detailedFeedback = dto.detailedFeedback;
     }
 
-    return this.reviewRepo.save(review);
+    const savedReview = await this.reviewRepo.save(review);
+    this.logger.log(`[updateReview] Saved review with totalScore: ${savedReview.totalScore}, rubricScores: ${JSON.stringify(savedReview.rubricScores)}`);
+    return savedReview;
   }
 
   /**

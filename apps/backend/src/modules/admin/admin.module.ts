@@ -66,12 +66,15 @@ import { TasksModule } from '../tasks/tasks.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Profile, Role, UserRole, Tenant, Membership, AuthAttempt, UserSuspension, SystemSetting, FeatureFlag, NotificationSettings, BulkOperation, AdminReport], 'auth'),
+    // FIX-BE-009-2026-01-18: Removed AdminReport from 'auth' - moved to 'admin_dashboard'
+    TypeOrmModule.forFeature([User, Profile, Role, UserRole, Tenant, Membership, AuthAttempt, UserSuspension, SystemSetting, FeatureFlag, NotificationSettings, BulkOperation], 'auth'),
     TypeOrmModule.forFeature([EducationalModule, Exercise, ContentApproval, Assignment, AssignmentStudent, AssignmentSubmission], 'educational'),
     TypeOrmModule.forFeature([ContentTemplate, MediaFile], 'content'),
     TypeOrmModule.forFeature([Classroom, TeacherClassroom, AssignmentClassroom], 'social'),
     TypeOrmModule.forFeature([SystemAlert], 'audit'),
     TypeOrmModule.forFeature([], 'progress'), // For AdminInterventionsService (student_intervention_alerts)
+    // FIX-BE-009-2026-01-18: AdminReport now on correct 'admin_dashboard' datasource
+    TypeOrmModule.forFeature([AdminReport], 'admin_dashboard'),
     TasksModule, // Import TasksModule to access MissionsCronService
   ],
   controllers: [

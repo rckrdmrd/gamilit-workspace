@@ -210,48 +210,114 @@ export const AchievementsPage: React.FC = () => {
   }, [combinedAchievements, filter]);
 
   /**
-   * Separate hidden achievements
+   * Separate achievements into earned, pending, and hidden
+   * FIX: CORR-ACH-UI-002 - Segregación de logros obtenidos vs pendientes
    */
-  const { visibleAchievements, hiddenAchievements } = useMemo(() => {
-    const visible: typeof filteredAchievements = [];
+  const { earnedAchievements, pendingAchievements, hiddenAchievements } = useMemo(() => {
+    const earned: typeof filteredAchievements = [];
+    const pending: typeof filteredAchievements = [];
     const hidden: typeof filteredAchievements = [];
 
     filteredAchievements.forEach((item) => {
-      const isLocked = !item.userAchievement || item.userAchievement.status === 'locked';
+      const status = item.userAchievement?.status || 'locked';
+      const isLocked = status === 'locked';
+      const isEarned = status === 'earned' || status === 'claimed';
+
+      // Hidden achievements that are locked go to hidden section
       if (item.achievement.isHidden && isLocked) {
         hidden.push(item);
-      } else {
-        visible.push(item);
+      }
+      // Earned/claimed achievements go to earned section
+      else if (isEarned) {
+        earned.push(item);
+      }
+      // Everything else (locked, in_progress) goes to pending
+      else {
+        pending.push(item);
       }
     });
 
-    return { visibleAchievements: visible, hiddenAchievements: hidden };
+    // Sort earned by most recent first
+    earned.sort((a, b) => {
+      const dateA = a.userAchievement?.earnedAt ? new Date(a.userAchievement.earnedAt).getTime() : 0;
+      const dateB = b.userAchievement?.earnedAt ? new Date(b.userAchievement.earnedAt).getTime() : 0;
+      return dateB - dateA;
+    });
+
+    return { earnedAchievements: earned, pendingAchievements: pending, hiddenAchievements: hidden };
   }, [filteredAchievements]);
 
   /**
    * Calculate summary if not provided by API
+   * FIX: CORR-ACH-UI-001 - Corregido cálculo de locked para excluir in_progress
+   * FIX: CORR-ACH-UI-003 - Mapear campos del API (snake_case) a frontend (camelCase)
    */
   const displaySummary = useMemo(() => {
-    // If we have a summary from API, ensure it has recentlyEarned array
+    // If we have a summary from API, transform to expected format
+    // API returns: { total_available, completed, completion_percentage, unclaimed_rewards }
+    // UI expects: { total, earned, claimed, inProgress, locked, completionPercentage, recentlyEarned }
     if (summary) {
+      console.log('[ACHIEVEMENTS-PAGE] Using summary from API:', summary);
+      const apiSummary = summary as unknown as {
+        total_available?: number;
+        completed?: number;
+        completion_percentage?: number;
+        unclaimed_rewards?: number;
+        // También puede venir en formato frontend
+        total?: number;
+        earned?: number;
+      };
+
+      const total = apiSummary.total_available ?? apiSummary.total ?? allAchievements.length;
+      const earned = apiSummary.completed ?? apiSummary.earned ?? 0;
+      // unclaimed_rewards indica logros completados pero no reclamados
+      const unclaimedCount = apiSummary.unclaimed_rewards ?? 0;
+      const claimed = earned - unclaimedCount;
+
+      // Calcular in_progress desde userAchievements
+      const inProgress = userAchievements.filter((ua) => ua.status === 'in_progress').length;
+      const locked = total - earned - inProgress;
+
       return {
-        ...summary,
-        recentlyEarned: summary.recentlyEarned ?? [],
+        total,
+        earned,
+        claimed,
+        inProgress,
+        locked,
+        completionPercentage: apiSummary.completion_percentage ?? (total > 0 ? (earned / total) * 100 : 0),
+        recentlyEarned: (summary as AchievementSummary).recentlyEarned ?? [],
       };
     }
 
     const total = allAchievements.length;
+
+    // DEBUG: Log status distribution
+    const statusCounts = userAchievements.reduce((acc, ua) => {
+      acc[ua.status] = (acc[ua.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    console.log('[ACHIEVEMENTS-PAGE] userAchievements status distribution:', statusCounts);
+    console.log('[ACHIEVEMENTS-PAGE] Sample userAchievements:', userAchievements.slice(0, 3).map(ua => ({
+      id: ua.id,
+      achievementId: ua.achievementId,
+      status: ua.status,
+      progress: ua.progress,
+    })));
+
     const earned = userAchievements.filter(
       (ua) => ua.status === 'earned' || ua.status === 'claimed',
     ).length;
     const claimed = userAchievements.filter((ua) => ua.status === 'claimed').length;
     const inProgress = userAchievements.filter((ua) => ua.status === 'in_progress').length;
-    const locked = total - earned;
+    // FIX: CORR-ACH-UI-001 - locked debe excluir tanto earned como inProgress
+    const locked = total - earned - inProgress;
     const completionPercentage = total > 0 ? (earned / total) * 100 : 0;
     const recentlyEarned = userAchievements
       .filter((ua) => ua.earnedAt)
       .sort((a, b) => new Date(b.earnedAt!).getTime() - new Date(a.earnedAt!).getTime())
       .slice(0, 3);
+
+    console.log('[ACHIEVEMENTS-PAGE] Calculated stats:', { total, earned, claimed, inProgress, locked, completionPercentage });
 
     return {
       total,
@@ -377,59 +443,33 @@ export const AchievementsPage: React.FC = () => {
           </div>
         )}
 
-        {/* Latest Earned (mini showcase) */}
-        {!isLoading && displaySummary.recentlyEarned.length > 0 && (
-          <div className="mb-8">
-            <h2 className="mb-4 text-xl font-bold text-gray-900">Recientemente Ganados</h2>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {displaySummary.recentlyEarned.map((userAch) => {
-                const achievement = allAchievements.find((a) => a.id === userAch.achievementId);
-                if (!achievement) return null;
-                return (
-                  <AchievementCard
-                    key={userAch.id}
-                    achievement={achievement}
-                    userAchievement={userAch}
-                    onClick={() => handleAchievementClick(achievement, userAch)}
-                  />
-                );
-              })}
-            </div>
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader className="h-8 w-8 animate-spin text-orange-600" />
+            <span className="ml-3 text-gray-600">Cargando logros...</span>
           </div>
         )}
 
-        {/* Filters */}
-        <div className="mb-6">
-          <AchievementFilter currentFilter={filter} onFilterChange={setFilter} />
-        </div>
-
-        {/* Achievements Grid */}
-        <div className="mb-8">
-          <h2 className="mb-4 text-2xl font-bold text-gray-900">
-            Todos los Logros ({visibleAchievements.length})
-          </h2>
-
-          {/* Loading State */}
-          {isLoading && (
-            <div className="flex items-center justify-center py-12">
-              <Loader className="h-8 w-8 animate-spin text-orange-600" />
-              <span className="ml-3 text-gray-600">Cargando logros...</span>
+        {/* ============================================ */}
+        {/* SECTION: Logros Obtenidos (Earned/Claimed) */}
+        {/* ============================================ */}
+        {!isLoading && earnedAchievements.length > 0 && (
+          <div className="mb-10">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-2xl font-bold text-gray-900">
+                <span className="mr-2 text-green-500">✅</span>
+                Logros Obtenidos ({earnedAchievements.length})
+              </h2>
+              <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
+                {Math.round(displaySummary.completionPercentage)}% completado
+              </span>
             </div>
-          )}
-
-          {/* Empty State */}
-          {!isLoading && visibleAchievements.length === 0 && (
-            <div className="rounded-lg border border-gray-200 bg-white p-12 text-center">
-              <Trophy className="mx-auto mb-4 h-16 w-16 text-gray-300" />
-              <h3 className="mb-2 text-lg font-semibold text-gray-900">No se encontraron logros</h3>
-              <p className="text-gray-600">Intenta ajustar tus filtros para ver más logros.</p>
-            </div>
-          )}
-
-          {/* Grid */}
-          {!isLoading && visibleAchievements.length > 0 && (
+            <p className="mb-4 text-gray-600">
+              ¡Felicidades! Estos son los logros que has desbloqueado.
+            </p>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {visibleAchievements.map((item) => (
+              {earnedAchievements.map((item) => (
                 <AchievementCard
                   key={item.achievement.id}
                   achievement={item.achievement}
@@ -438,8 +478,71 @@ export const AchievementsPage: React.FC = () => {
                 />
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* ============================================ */}
+        {/* SECTION: Logros Pendientes (Locked/In Progress) */}
+        {/* ============================================ */}
+        {!isLoading && (
+          <div className="mb-8">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-2xl font-bold text-gray-900">
+                <span className="mr-2 text-orange-500">🎯</span>
+                Logros Pendientes ({pendingAchievements.length})
+              </h2>
+              {displaySummary.inProgress > 0 && (
+                <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+                  {displaySummary.inProgress} en progreso
+                </span>
+              )}
+            </div>
+            <p className="mb-4 text-gray-600">
+              Completa desafíos y alcanza metas para desbloquear estos logros.
+            </p>
+
+            {/* Filters for pending section */}
+            <div className="mb-6">
+              <AchievementFilter currentFilter={filter} onFilterChange={setFilter} />
+            </div>
+
+            {/* Empty State */}
+            {pendingAchievements.length === 0 && earnedAchievements.length > 0 && (
+              <div className="rounded-lg border border-green-200 bg-green-50 p-8 text-center">
+                <Trophy className="mx-auto mb-4 h-16 w-16 text-green-500" />
+                <h3 className="mb-2 text-lg font-semibold text-green-800">
+                  ¡Increíble! Has completado todos los logros visibles
+                </h3>
+                <p className="text-green-600">
+                  Sigue explorando para descubrir logros ocultos.
+                </p>
+              </div>
+            )}
+
+            {/* Empty State - No achievements at all */}
+            {pendingAchievements.length === 0 && earnedAchievements.length === 0 && (
+              <div className="rounded-lg border border-gray-200 bg-white p-12 text-center">
+                <Trophy className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">No se encontraron logros</h3>
+                <p className="text-gray-600">Intenta ajustar tus filtros para ver más logros.</p>
+              </div>
+            )}
+
+            {/* Pending Grid */}
+            {pendingAchievements.length > 0 && (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {pendingAchievements.map((item) => (
+                  <AchievementCard
+                    key={item.achievement.id}
+                    achievement={item.achievement}
+                    userAchievement={item.userAchievement}
+                    onClick={() => handleAchievementClick(item.achievement, item.userAchievement)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Hidden Achievements Section */}
         {!isLoading && hiddenAchievements.length > 0 && (

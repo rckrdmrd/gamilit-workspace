@@ -6,13 +6,17 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants';
  *
  * @description Categorías para organizar achievements (logros).
  * Características:
- * - Categorías predefinidas: educational, social, missions, special, collection
+ * - Categorías sincronizadas con ENUM achievement_category v1.1:
+ *   progress, streak, completion, social, special, mastery, exploration, collection, hidden
  * - Sistema de ordenamiento (display_order)
  * - Soporte para iconos visuales
  * - Estados activo/inactivo
  *
  * @see DDL: gamification_system.achievement_categories
+ * @see ENUM: gamification_system.achievement_category (v1.1)
  * @constraint UNIQUE(name)
+ *
+ * @updated 2026-01-18 CORR-P3-ENTITY-001: Comentario sincronizado con ENUM v1.1
  */
 @Entity({
   schema: DB_SCHEMAS.GAMIFICATION,
@@ -26,8 +30,8 @@ export class AchievementCategory {
     id!: string;
 
   /**
-   * Nombre único de la categoría
-   * Ejemplos: "educational", "social", "missions", "special", "collection"
+   * Nombre único de la categoría (sincronizado con ENUM v1.1)
+   * Valores válidos: progress, streak, completion, social, special, mastery, exploration, collection, hidden
    */
   @Column({ type: 'varchar', length: 100, unique: true })
     name!: string;

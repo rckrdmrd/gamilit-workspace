@@ -345,6 +345,141 @@ export class AchievementsController {
   }
 
   /**
+   * Obtiene el progreso de un achievement específico para un usuario
+   *
+   * @param userId - ID del usuario (UUID)
+   * @param achievementId - ID del achievement (UUID)
+   * @returns Progreso del achievement para el usuario
+   *
+   * @example
+   * GET /api/v1/gamification/achievements/user/550e8400-e29b-41d4-a716-446655440000/progress/770e8400-e29b-41d4-a716-446655440000
+   * Response: {
+   *   "id": "660e8400-e29b-41d4-a716-446655440000",
+   *   "user_id": "550e8400-e29b-41d4-a716-446655440000",
+   *   "achievement_id": "770e8400-e29b-41d4-a716-446655440000",
+   *   "progress": 5,
+   *   "max_progress": 10,
+   *   "completion_percentage": 50.00,
+   *   "is_completed": false
+   * }
+   */
+  @Get('achievements/user/:userId/progress/:achievementId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get achievement progress',
+    description: 'Obtiene el progreso de un achievement específico para un usuario',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID del usuario en formato UUID',
+    type: String,
+    required: true,
+  })
+  @ApiParam({
+    name: 'achievementId',
+    description: 'ID del achievement en formato UUID',
+    type: String,
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Progreso obtenido exitosamente',
+    schema: {
+      example: {
+        id: '660e8400-e29b-41d4-a716-446655440000',
+        user_id: '550e8400-e29b-41d4-a716-446655440000',
+        achievement_id: '770e8400-e29b-41d4-a716-446655440000',
+        progress: 5,
+        max_progress: 10,
+        completion_percentage: 50.0,
+        is_completed: false,
+        rewards_claimed: false,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Achievement no encontrado para el usuario',
+  })
+  async getAchievementProgress(
+    @Param('userId') userId: string,
+    @Param('achievementId') achievementId: string,
+  ) {
+    return this.achievementsService.checkProgress(userId, achievementId);
+  }
+
+  /**
+   * Desbloquea manualmente un achievement para un usuario (admin)
+   *
+   * @param userId - ID del usuario (UUID)
+   * @param achievementId - ID del achievement (UUID)
+   * @returns Achievement desbloqueado
+   *
+   * @example
+   * POST /api/v1/gamification/achievements/user/550e8400-e29b-41d4-a716-446655440000/unlock/770e8400-e29b-41d4-a716-446655440000
+   * Response: {
+   *   "id": "660e8400-e29b-41d4-a716-446655440000",
+   *   "user_id": "550e8400-e29b-41d4-a716-446655440000",
+   *   "achievement_id": "770e8400-e29b-41d4-a716-446655440000",
+   *   "is_completed": true,
+   *   "completed_at": "2024-01-15T10:30:00Z"
+   * }
+   */
+  @Post('achievements/user/:userId/unlock/:achievementId')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Manually unlock achievement (admin)',
+    description: 'Desbloquea manualmente un achievement para un usuario. Uso administrativo.',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID del usuario en formato UUID',
+    type: String,
+    required: true,
+  })
+  @ApiParam({
+    name: 'achievementId',
+    description: 'ID del achievement en formato UUID',
+    type: String,
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Achievement desbloqueado exitosamente',
+    schema: {
+      example: {
+        id: '660e8400-e29b-41d4-a716-446655440000',
+        user_id: '550e8400-e29b-41d4-a716-446655440000',
+        achievement_id: '770e8400-e29b-41d4-a716-446655440000',
+        progress: 100,
+        max_progress: 100,
+        is_completed: true,
+        completion_percentage: 100,
+        completed_at: '2024-01-15T10:30:00Z',
+        rewards_claimed: false,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Achievement no encontrado',
+  })
+  async unlockAchievement(
+    @Param('userId') userId: string,
+    @Param('achievementId') achievementId: string,
+  ) {
+    const grantDto = new GrantAchievementDto();
+    grantDto.user_id = userId;
+    grantDto.achievement_id = achievementId;
+    grantDto.progress = 100;
+    grantDto.max_progress = 100;
+    grantDto.is_completed = true;
+    grantDto.metadata = { unlocked_manually: true, unlocked_at: new Date().toISOString() };
+
+    return this.achievementsService.grantAchievement(userId, grantDto);
+  }
+
+  /**
    * Reclama las recompensas de un achievement completado
    *
    * @param userId - ID del usuario (UUID)

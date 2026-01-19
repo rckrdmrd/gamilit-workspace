@@ -140,6 +140,7 @@ BEGIN
   -- - 8-10 intentos: medium
   -- - 11+ intentos: high
 
+  -- FIX-DB-006-2026-01-18: Corregido attempts -> attempt_number, agregado JOIN a exercises
   INSERT INTO progress_tracking.student_intervention_alerts
     (student_id, classroom_id, alert_type, severity, title, description, metrics, tenant_id)
   SELECT
@@ -147,23 +148,24 @@ BEGIN
     mp.classroom_id,
     'repeated_failures'::TEXT,
     CASE
-      WHEN es.attempts > 10 THEN 'high'::TEXT
-      WHEN es.attempts > 7 THEN 'medium'::TEXT
+      WHEN es.attempt_number > 10 THEN 'high'::TEXT
+      WHEN es.attempt_number > 7 THEN 'medium'::TEXT
       ELSE 'low'::TEXT
     END,
     'Dificultad persistente en ejercicio',
-    format('El estudiante ha intentado %s veces el mismo ejercicio sin éxito', es.attempts),
+    format('El estudiante ha intentado %s veces el mismo ejercicio sin éxito', es.attempt_number),
     jsonb_build_object(
       'exercise_id', es.exercise_id,
-      'attempts', es.attempts,
-      'module_id', es.module_id
+      'attempts', es.attempt_number,
+      'module_id', e.module_id
     ),
     p.tenant_id
   FROM progress_tracking.exercise_submissions es
+  JOIN educational_content.exercises e ON es.exercise_id = e.id
   JOIN progress_tracking.module_progress mp ON es.user_id = mp.user_id
-    AND es.module_id = mp.module_id
+    AND e.module_id = mp.module_id
   JOIN auth_management.profiles p ON es.user_id = p.id
-  WHERE es.attempts > 5
+  WHERE es.attempt_number > 5
     AND es.status != 'correct'
     AND mp.classroom_id IS NOT NULL
     -- Prevenir alertas duplicadas (no generar si ya existe alerta activa reciente para mismo ejercicio)

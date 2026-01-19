@@ -1,5 +1,216 @@
 # CHANGELOG - Plataforma GAMILIT
 
+## [2.5.1] - 2026-01-18
+
+### CORR-ACH-UI - Correcciones UI Módulo Achievements
+
+Esta versión corrige problemas de visualización en la página de Logros (AchievementsPage) y mejora la segregación de logros obtenidos vs pendientes.
+
+**Tech-Leader:** Claude Opus 4.5
+**Fixes:** CORR-ACH-UI-001, CORR-ACH-UI-002, CORR-ACH-UI-003
+
+---
+
+### Correcciones Aplicadas
+
+#### CORR-ACH-UI-001: Cálculo de Logros Bloqueados
+**Problema:** El cálculo de `locked` no restaba los logros `in_progress`.
+
+**Solución:**
+```typescript
+// Antes (incorrecto)
+const locked = total - earned;
+
+// Después (correcto)
+const locked = total - earned - inProgress;
+```
+
+**Archivo:** `apps/frontend/src/pages/AchievementsPage.tsx:216`
+
+---
+
+#### CORR-ACH-UI-002: Segregación de Logros
+**Problema:** Los logros obtenidos se mezclaban con los pendientes en una sola lista.
+
+**Solución:** Implementada segregación en tres secciones:
+- `earnedAchievements` - Logros ganados y reclamados (ordenados por fecha)
+- `pendingAchievements` - Logros bloqueados y en progreso
+- `hiddenAchievements` - Logros ocultos aún no desbloqueados
+
+**UI actualizada:**
+- Sección "Logros Obtenidos" con grid separado
+- Sección "Logros Pendientes" con filtros y ordenamiento
+- Mensaje informativo cuando no hay logros en cada sección
+
+**Archivo:** `apps/frontend/src/pages/AchievementsPage.tsx:175-210`
+
+---
+
+#### CORR-ACH-UI-003: Mapeo de Campos API
+**Problema:** La API retorna campos en snake_case pero el UI esperaba camelCase.
+
+**Campos mapeados:**
+| API Response | UI Expected |
+|--------------|-------------|
+| `total_available` | `total` |
+| `completed` | `earned` |
+| `completion_percentage` | `completionPercentage` |
+| `unclaimed_rewards` | (calculado) `claimed = earned - unclaimed` |
+
+**Archivo:** `apps/frontend/src/pages/AchievementsPage.tsx:230-260`
+
+---
+
+### Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `pages/AchievementsPage.tsx` | CORR-001, 002, 003 - Stats + Segregación |
+| `achievements/utils/achievementTransformer.ts` | Debug logging agregado |
+
+---
+
+### Validación Técnica
+
+**Dependencias validadas:** ✅
+- AchievementCard (shared) - Compatible
+- AchievementModal (shared) - Compatible
+- useGamificationStore - Compatible
+- achievementTransformer - Compatible
+
+**Tests de integración:** ✅
+- 20 tests en AchievementsIntegration.test.tsx - Compatible
+
+**Coherencia DDL ↔ Backend ↔ Frontend:** ✅
+- Campos de API correctamente mapeados
+- Status calculado client-side (expected behavior)
+
+---
+
+### Métricas
+
+| Métrica | Antes | Después |
+|---------|-------|---------|
+| Stats cards funcionales | 0% | 100% |
+| Segregación earned/pending | No | Sí |
+| Campo locked correcto | No | Sí |
+
+---
+
+### CORR-P1 - Correcciones de Coherencia DDL ↔ Documentación ↔ API
+
+Correcciones de nivel P1 (prioritarias) identificadas en análisis de gaps entre capas.
+
+**Análisis realizado:** DDL → Backend Entity → Frontend Types → API → Documentación
+**Fixes:** CORR-DOC-001, CORR-P1-API-001
+
+---
+
+#### CORR-DOC-001: Documentación Desactualizada
+
+**Problema:** La especificación técnica ET-GAM-001-achievements.md mostraba el ENUM `achievement_category` con solo 7 valores, pero el DDL v1.1 (2025-12-15) ya tenía 9.
+
+**Categorías faltantes en docs:**
+- `collection` - Logros de colección de items
+- `hidden` - Logros ocultos/secretos
+
+**Archivos actualizados:**
+- `docs/01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-001-achievements.md`
+  - Sección DDL ENUM actualizada a v1.1
+  - Sección Backend Enum actualizada
+  - Sección Frontend Types actualizada
+  - Historial de cambios agregado
+
+---
+
+#### CORR-P1-API-001: mapCategory() Colapsaba Categorías
+
+**Problema:** La función `mapCategory()` en `achievementsAPI.ts` mapeaba las 9 categorías del backend a solo 4 valores (`progress`, `mastery`, `social`, `hidden`), perdiendo información.
+
+**Antes (incorrecto):**
+```typescript
+// streak, completion, exploration → 'progress' (perdían identidad)
+// collection → 'mastery' (incorrecto)
+// special → 'hidden' (incorrecto)
+```
+
+**Después (correcto):**
+```typescript
+// Preserva las 9 categorías válidas del DDL v1.1
+// Solo mapea categorías legacy: educational→progress, missions→progress, skill→mastery
+```
+
+**Archivo:** `apps/frontend/src/features/gamification/social/api/achievementsAPI.ts:383-439`
+
+---
+
+#### Validación de Coherencia
+
+| Capa | Objeto | Estado |
+|------|--------|--------|
+| DDL | `achievement_category` ENUM | ✅ 9 valores (v1.1) |
+| Backend | `AchievementCategoryEnum` | ✅ 9 valores |
+| Frontend | `AchievementCategory` type | ✅ 9 valores |
+| API | `mapCategory()` | ✅ Corregido (preserva 9) |
+| Docs | ET-GAM-001 | ✅ Sincronizado con v1.1 |
+
+---
+
+### CORR-P2/P3 - Correcciones de Coherencia Seeds y Entities
+
+Correcciones de nivel P2 y P3 para completar la sincronización de datos entre capas.
+
+**Fixes:** CORR-P2-SEED-001, CORR-P3-ENTITY-001
+
+---
+
+#### CORR-P2-SEED-001: Seeds de achievement_categories Desactualizados
+
+**Problema:** Los archivos seed tenían:
+- Solo 7 categorías (faltaban `collection` y `hidden`)
+- Nombres en español (ej: "Progreso") en lugar de inglés (ej: "progress")
+
+**Solución:**
+- Agregadas las 2 categorías faltantes
+- Nombres cambiados a inglés para coincidir con ENUM
+- Agregadas sentencias UPDATE para migrar datos legacy
+
+**Archivos actualizados:**
+- `seeds/dev/gamification_system/01-achievement_categories.sql`
+- `seeds/prod/gamification_system/01-achievement_categories.sql`
+
+---
+
+#### CORR-P3-ENTITY-001: Comentario de Entity Incorrecto
+
+**Problema:** El comentario de `AchievementCategory` entity mencionaba categorías incorrectas:
+```typescript
+// Antes: "educational", "social", "missions", "special", "collection"
+```
+
+**Solución:**
+```typescript
+// Después: progress, streak, completion, social, special, mastery, exploration, collection, hidden
+```
+
+**Archivo:** `apps/backend/src/modules/gamification/entities/achievement-category.entity.ts`
+
+---
+
+#### Matriz Final de Coherencia
+
+| Capa | Objeto | Valores | Estado |
+|------|--------|---------|--------|
+| DDL | ENUM `achievement_category` | 9 (v1.1) | ✅ |
+| DDL | TABLE `achievement_categories` | 9 (seed) | ✅ |
+| Backend | `AchievementCategoryEnum` | 9 | ✅ |
+| Backend | `AchievementCategory` entity | 9 (comment) | ✅ |
+| Frontend | `AchievementCategory` type | 9 | ✅ |
+| Frontend | `mapCategory()` | 9 (preserva) | ✅ |
+| Docs | ET-GAM-001 | 9 | ✅ |
+
+---
+
 ## [2.5.0] - 2026-01-04
 
 ### EPIC 10.2 - Sistema de Certificados Digitales

@@ -27,7 +27,7 @@ domains:
 
   - name: "backend"
     affected: true
-    details: "Corregido: Vulnerabilidad multi-tenant, CRON job, validaciones"
+    details: "Corregido: Vulnerabilidad multi-tenant, CRON job, validaciones, TypeORM datasources (FIX-BE-007/008/009)"
 
   - name: "frontend"
     affected: true
@@ -152,6 +152,14 @@ deliverables:
       type: "modified"
       description: "FIX-BE-001: Pasar tenant_id a metodos del service"
 
+    - path: "apps/backend/src/app.module.ts"
+      type: "modified"
+      description: "FIX-BE-007/008/009: Agregados entities a datasources correctos, creado admin_dashboard datasource"
+
+    - path: "apps/backend/src/modules/admin/admin.module.ts"
+      type: "modified"
+      description: "FIX-BE-009: Movido AdminReport de 'auth' a 'admin_dashboard' datasource"
+
 validations:
   build:
     backend: "passed"
@@ -182,8 +190,8 @@ metrics:
     lines_removed: 15
   issues:
     found: 34
-    fixed: 12
-    skipped: 22           # Ya implementados o de baja prioridad
+    fixed: 18             # +1 FIX-DB-006, +5 FIX-BE-007/008/009/010/011 (TypeORM datasources)
+    skipped: 16           # Ya implementados o de baja prioridad
 
 agent:
   id: "claude-opus-4.5"
@@ -221,6 +229,11 @@ changelog:
     action: "completed"
     details: "Tarea completada - 12 issues corregidos, 22 ya OK o de baja prioridad"
 
+  - date: "2026-01-18"
+    author: "Claude Opus 4.5"
+    action: "datasource_fixes"
+    details: "FIX-BE-007/008/009: Corregido registro de entities en TypeORM datasources - StudentInterventionAlert, TeacherReport, AdminReport"
+
 references:
   analisis: "./01-ANALISIS-CONSOLIDADO.md"
   plan: "./02-PLAN-CORRECCION.md"
@@ -254,3 +267,36 @@ fixes_applied:
   - id: "FIX-BE-004"
     description: "Validacion de expiracion de reportes"
     file: "admin-reports.service.ts"
+
+  - id: "FIX-DB-006"
+    description: "Corregido attempts -> attempt_number y JOIN exercises para module_id"
+    file: "15-generate_student_alerts.sql"
+
+  - id: "FIX-BE-007"
+    description: "Agregado StudentInterventionAlert a 'progress' datasource en app.module.ts"
+    file: "app.module.ts"
+
+  - id: "FIX-BE-008"
+    description: "Agregado TeacherReport a 'social' datasource en app.module.ts"
+    file: "app.module.ts"
+
+  - id: "FIX-BE-009"
+    description: "Creado 'admin_dashboard' datasource y movido AdminReport del datasource 'auth'"
+    files:
+      - "app.module.ts"
+      - "admin.module.ts"
+      - "admin-reports.service.ts"
+
+  - id: "FIX-BE-010"
+    description: "Agregadas entities relacionadas a datasources para resolver @ManyToOne cross-datasource"
+    details:
+      - "progress: Agregados Profile y Classroom para StudentInterventionAlert"
+      - "admin_dashboard: Agregado User para AdminReport"
+    file: "app.module.ts"
+
+  - id: "FIX-BE-011"
+    description: "Agregadas entities de cascade dependency para resolver errores de metadata"
+    details:
+      - "progress: Agregado Tenant para Profile->Tenant @ManyToOne cascade"
+      - "admin_dashboard: Agregado Role para User->Role @ManyToMany cascade"
+    file: "app.module.ts"
