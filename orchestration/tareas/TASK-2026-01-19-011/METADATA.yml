@@ -1,0 +1,151 @@
+# METADATA.yml - TASK-2026-01-19-011
+# Validación de GAPs Teacher/Reports
+# Version: 2.0.0
+
+task:
+  id: "TASK-2026-01-19-011"
+  title: "Validación de GAPs identificados en Teacher/Reports (TASK-2026-01-18-015)"
+  created: "2026-01-19"
+  updated: "2026-01-19"
+
+classification:
+  type: "validation"
+  priority: "P0"
+  mode: "FULL"
+  epic: "TEACHER-REPORTS-VALIDATION"
+  parent_task: "TASK-2026-01-18-015"
+
+status:
+  current: "completed"
+  phase: "D"
+  completion_percentage: 100
+
+context:
+  origen: |
+    Durante análisis de cierre inesperado, se identificó que TASK-2026-01-18-015 tiene
+    14 GAPs documentados en 01-GAPS-IDENTIFICADOS.md con ~108 horas de trabajo estimado.
+
+    El METADATA de esa tarea indica que los 5 Sprints están "completados" pero con la nota
+    "Verificado que implementación ya existía" - esto requiere validación manual para
+    confirmar que los GAPs realmente están resueltos.
+
+  gaps_a_validar:
+    criticos:
+      - id: "G1"
+        descripcion: "MasteryTracking No Conectado a Reportes"
+        archivo_validar: "apps/backend/src/modules/teacher/services/analytics.service.ts"
+        buscar: "getMasteryData() o uso de masteryTrackingRepo"
+        esfuerzo_si_falta: "8h"
+
+      - id: "G2"
+        descripcion: "SkillAssessment Aislado"
+        archivo_validar: "apps/backend/src/modules/teacher/services/analytics.service.ts"
+        buscar: "getSkillAssessments() o uso de skillAssessmentRepo"
+        esfuerzo_si_falta: "12h"
+
+      - id: "G3"
+        descripcion: "No Rollback en Transacciones de Coins"
+        archivo_validar: "apps/backend/src/modules/gamification/services/ml-coins.service.ts"
+        buscar: "dataSource.transaction o EntityManager"
+        esfuerzo_si_falta: "6h"
+
+    medios:
+      - id: "G4"
+        descripcion: "Filtrado Temporal No Funcional"
+        archivo_validar: "apps/backend/src/modules/teacher/services/reports.service.ts"
+        buscar: "start_date, end_date, Between() en queries"
+        esfuerzo_si_falta: "4h"
+
+      - id: "G5"
+        descripcion: "EngagementMetrics Sin Frecuencia Clara"
+        archivo_validar: "apps/backend/src/modules/progress/services/"
+        buscar: "EngagementMetricsService o @Cron para métricas"
+        esfuerzo_si_falta: "8h"
+
+      - id: "G6"
+        descripcion: "UserAchievement Rewards Async"
+        archivo_validar: "apps/backend/src/modules/gamification/"
+        buscar: "auto-claim o job de reconciliación"
+        esfuerzo_si_falta: "4h"
+
+    menores:
+      - id: "G9"
+        descripcion: "Scheduled Reports No Implementado"
+        archivo_validar: "apps/database/ddl/schemas/social_features/tables/"
+        buscar: "scheduled_reports.sql o report_schedules"
+        esfuerzo_si_falta: "24h"
+
+      - id: "G10"
+        descripcion: "No Automatic Session Cleanup"
+        archivo_validar: "apps/backend/src/modules/progress/services/"
+        buscar: "SessionCleanupService o @Cron para sesiones"
+        esfuerzo_si_falta: "2h"
+
+      - id: "G12"
+        descripcion: "File Size Not Shown"
+        archivo_validar: "apps/frontend/src/apps/teacher/pages/TeacherReportsPage.tsx"
+        buscar: "fileSizeBytes o formatFileSize"
+        esfuerzo_si_falta: "1h"
+
+      - id: "G13"
+        descripcion: "No Report Deletion UI"
+        archivo_validar: "apps/frontend/src/apps/teacher/pages/TeacherReportsPage.tsx"
+        buscar: "handleDeleteReport o deleteReport"
+        esfuerzo_si_falta: "2h"
+
+      - id: "G14"
+        descripcion: "No Report Sharing"
+        archivo_validar: "apps/database/ddl/schemas/social_features/tables/"
+        buscar: "shared_reports.sql o report_sharing"
+        esfuerzo_si_falta: "16h"
+
+plan:
+  fases:
+    - fase: "C"
+      titulo: "Contexto"
+      status: "completed"
+      notas: "GAPs identificados desde TASK-2026-01-18-015"
+
+    - fase: "A"
+      titulo: "Análisis - Validar cada GAP"
+      status: "pending"
+      subtareas:
+        - "Verificar G1-G3 (críticos)"
+        - "Verificar G4-G6 (medios)"
+        - "Verificar G9-G14 (menores)"
+
+    - fase: "P"
+      titulo: "Planificación"
+      status: "pending"
+      subtareas:
+        - "Priorizar GAPs no resueltos"
+        - "Estimar esfuerzo total real"
+
+    - fase: "V"
+      titulo: "Validación"
+      status: "pending"
+      subtareas:
+        - "Aprobación de plan de corrección"
+
+    - fase: "E"
+      titulo: "Ejecución"
+      status: "pending"
+      subtareas:
+        - "Implementar GAPs faltantes"
+
+    - fase: "D"
+      titulo: "Documentación"
+      status: "pending"
+      subtareas:
+        - "Actualizar TASK-2026-01-18-015"
+        - "Actualizar _INDEX.yml"
+
+entregables:
+  - "VALIDACION-GAPS.md"
+  - "PLAN-CORRECCION-GAPS.md (si aplica)"
+
+metadata:
+  agente: "claude-opus-4.5"
+  perfil: "arquitecto-validacion"
+  metodologia: "CAPVED"
+  referencia_gaps: "orchestration/tareas/TASK-2026-01-18-015/01-GAPS-IDENTIFICADOS.md"
