@@ -911,7 +911,8 @@ El metodo `normalizeSubmitData()` maneja compatibilidad entre formatos:
 ### Archivos de Codigo
 
 - Frontend API: `/apps/frontend/src/features/progress/api/progressAPI.ts`
-- Frontend Hook: `/apps/frontend/src/features/mechanics/shared/hooks/useExerciseSubmission.ts`
+- Frontend Hook (Simple): `/apps/frontend/src/features/exercises/hooks/useExerciseSubmission.ts`
+- Frontend Hook (SECURE): `/apps/frontend/src/features/mechanics/shared/hooks/useExerciseSubmission.ts`
 - Backend Controller: `/apps/backend/src/modules/educational/controllers/exercises.controller.ts`
 - Backend DTO: `/apps/backend/src/modules/educational/dto/submit-exercise.dto.ts`
 - Validator: `/apps/backend/src/modules/progress/dto/answers/exercise-answer.validator.ts`
@@ -924,5 +925,455 @@ El metodo `normalizeSubmitData()` maneja compatibilidad entre formatos:
 
 ---
 
+## Formato de Request/Response por Modulo
+
+### M1 - Comprension Literal (Auto-evaluado)
+
+| Mecanica | Formato Answers | Ejemplo |
+|----------|-----------------|---------|
+| **VerdaderoFalso** | `{ statements: { "id": boolean } }` | `{ statements: { "1": true, "2": false } }` |
+| **CompletarEspacios** | `{ blanks: { "blankId": "word" } }` | `{ blanks: { "b1": "revolucion", "b2": "independencia" } }` |
+| **Emparejamiento** | `{ matches: [{ leftId, rightId }] }` | `{ matches: [{ leftId: "l1", rightId: "r2" }] }` |
+| **SopaLetras** | `{ words: string[] }` | `{ words: ["HISTORIA", "MAYA"] }` |
+| **Crucigrama** | `{ clues: { "clueId": "answer" } }` | `{ clues: { "1-across": "CULTURA" } }` |
+| **Timeline** | `{ events: string[] }` | `{ events: ["ev3", "ev1", "ev2"] }` |
+| **MapaConceptual** | `{ connections: string[] }` | `{ connections: ["n1-n2", "n2-n3"] }` |
+
+### M2 - Comprension Inferencial (Auto-evaluado excepto RuedaInferencias)
+
+| Mecanica | Formato Answers | Ejemplo |
+|----------|-----------------|---------|
+| **DetectiveTextual** | `{ selections: { "fragId": "type" } }` | `{ selections: { "f1": "hecho", "f2": "opinion" } }` |
+| **CausaEfecto** | `{ connections: { "causeId": "effectId" } }` | `{ connections: { "c1": "e2" } }` |
+| **PrediccionNarrativa** | `{ prediction: string, reasoning: string }` | `{ prediction: "opt1", reasoning: "..." }` |
+| **PuzzleContexto** | `{ answer: string }` | `{ answer: "significado_correcto" }` |
+| **RuedaInferencias** | `{ inferences: { "catId": string } }` | `{ inferences: { "quien": "...", "que": "..." } }` |
+
+### M3 - Comprension Critica (Evaluacion Manual)
+
+| Mecanica | Formato Answers | Campos Especiales |
+|----------|-----------------|-------------------|
+| **TribunalOpiniones** | `{ evaluations: [...] }` | Array de evaluaciones con justificacion |
+| **DebateDigital** | `{ position: string, response: string }` | Posicion + argumentacion |
+| **AnalisisFuentes** | `{ ranking: [...] }` | Array ordenado de fuentes |
+| **PodcastArgumentativo** | `{ script: string, audioUrl?: string }` | Guion + URL audio grabado |
+| **MatrizPerspectivas** | `{ questions: {...} }` | Respuestas abiertas por pregunta |
+
+### M4 - Lectura Digital (Evaluacion Manual)
+
+| Mecanica | Formato Answers | Campos Especiales |
+|----------|-----------------|-------------------|
+| **VerificadorFakeNews** | `{ analysis: {...} }` | Analisis de fuentes y verificacion |
+| **InfografiaInteractiva** | `{ responses: {...} }` | Respuestas por seccion |
+| **QuizTikTok** | `{ selections: [...] }` | Selecciones con justificacion |
+| **NavegacionHipertextual** | `{ path: [...], synthesis: string }` | Ruta de navegacion + sintesis |
+| **AnalisisMemes** | `{ analysis: {...} }` | Decodificacion de mensajes |
+
+### M5 - Produccion Lectora (Evaluacion Manual + Multimedia)
+
+| Mecanica | Formato Answers | Campos Especiales |
+|----------|-----------------|-------------------|
+| **DiarioMultimedia** | `{ entries: [...], mediaUrls: [...] }` | Entradas + URLs de media |
+| **ComicDigital** | `{ panels: [...] }` | Array de paneles con contenido |
+| **VideoCarta** | `{ videoUrl: string, transcript?: string }` | URL video + transcripcion |
+
+**NOTA IMPORTANTE (GAP-EX-004):** Los ejercicios M5 con multimedia actualmente almacenan URLs `blob:` temporales que no son accesibles por el Teacher Portal. Se requiere implementar servicio de upload a S3/GCS para URLs permanentes.
+
+---
+
+## Manejo de Errores
+
+### Errores Comunes y Respuestas
+
+| Codigo HTTP | Codigo Error | Mensaje | Accion Recomendada |
+|-------------|--------------|---------|-------------------|
+| 400 | `VALIDATION_ERROR` | "Invalid submission data" | Verificar formato de answers |
+| 400 | `SUBMISSION_TOO_FAST` | "Please take time..." | Usuario envio muy rapido |
+| 400 | `SESSION_EXPIRED` | "Session expired" | Refrescar pagina |
+| 401 | `UNAUTHORIZED` | "Authentication required" | Redirigir a login |
+| 404 | `EXERCISE_NOT_FOUND` | "Exercise not found" | Verificar exerciseId |
+| 429 | `RATE_LIMITED` | "Too many attempts" | Esperar retryAfter segundos |
+| 500 | `INTERNAL_ERROR` | "Server error" | Reintentar o contactar soporte |
+
+### Patron de Manejo de Errores
+
+```typescript
+try {
+  const response = await submitExercise(exerciseId, userId, answers);
+  // Exito
+  setFeedback({
+    type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+    title: response.isPerfect ? 'Perfecto!' : 'Buen intento',
+    message: response.feedback?.overall || `Score: ${response.score}%`,
+    score: response.score,
+    xpEarned: response.rewards?.xp,
+    mlCoinsEarned: response.rewards?.mlCoins,
+    showConfetti: response.isPerfect,
+  });
+} catch (error) {
+  // Error
+  console.error('[Exercise Submission Error]', error);
+  setFeedback({
+    type: 'error',
+    title: 'Error al Enviar',
+    message: error.message || 'Hubo un problema. Intenta nuevamente.',
+  });
+}
+```
+
+---
+
+## Ejemplos de Codigo
+
+### Ejemplo 1: Ejercicio M1 Simple (VerdaderoFalso)
+
+```tsx
+// VerdaderoFalsoExercise.tsx
+import { useState } from 'react';
+import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useInvalidateDashboard } from '@/shared/hooks';
+
+export const VerdaderoFalsoExercise = ({ exercise, onComplete }) => {
+  const { user } = useAuth();
+  const { syncAndInvalidate } = useInvalidateDashboard();
+
+  const [statements, setStatements] = useState(
+    exercise.statements.map(stmt => ({ ...stmt, userAnswer: null }))
+  );
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+  const [showResults, setShowResults] = useState(false);
+
+  const handleAnswer = (statementId, answer) => {
+    if (showResults) return;
+    setStatements(prev =>
+      prev.map(stmt =>
+        stmt.id === statementId ? { ...stmt, userAnswer: answer } : stmt
+      )
+    );
+  };
+
+  const handleCheck = async () => {
+    // 1. Validar completitud
+    const allAnswered = statements.every(s => s.userAnswer !== null);
+    if (!allAnswered) {
+      setFeedback({
+        type: 'error',
+        title: 'Ejercicio Incompleto',
+        message: 'Responde todas las preguntas antes de verificar.',
+      });
+      setShowFeedback(true);
+      return;
+    }
+
+    // 2. Validar autenticacion
+    if (!user?.id) {
+      setFeedback({
+        type: 'error',
+        title: 'Error de Autenticacion',
+        message: 'Debes estar autenticado para enviar.',
+      });
+      setShowFeedback(true);
+      return;
+    }
+
+    setShowResults(true);
+
+    try {
+      // 3. Preparar payload
+      const statementsAnswers = {};
+      statements.forEach(s => {
+        statementsAnswers[String(s.id)] = s.userAnswer;
+      });
+
+      // 4. Enviar al backend
+      const response = await submitExercise(
+        exercise.id,
+        user.id,
+        { statements: statementsAnswers }
+      );
+
+      // 5. Mostrar feedback
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect ? 'Perfecto!' : 'Buen trabajo!',
+        message: response.feedback?.overall || `Score: ${response.score}%`,
+        score: response.score,
+        xpEarned: response.rewards?.xp,
+        mlCoinsEarned: response.rewards?.mlCoins,
+        showConfetti: response.isPerfect,
+      });
+      setShowFeedback(true);
+
+      // 6. Sincronizar cache
+      await syncAndInvalidate();
+
+    } catch (error) {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: 'Hubo un problema. Intenta nuevamente.',
+      });
+      setShowFeedback(true);
+    }
+  };
+
+  return (
+    <>
+      {/* ... UI de statements ... */}
+
+      <button onClick={handleCheck} disabled={showResults}>
+        Verificar Respuestas
+      </button>
+
+      {feedback && (
+        <FeedbackModal
+          isOpen={showFeedback}
+          feedback={feedback}
+          onClose={() => {
+            setShowFeedback(false);
+            if (feedback.type === 'success') onComplete?.();
+          }}
+          onRetry={() => {
+            setShowFeedback(false);
+            setShowResults(false);
+            setStatements(exercise.statements.map(s => ({ ...s, userAnswer: null })));
+          }}
+        />
+      )}
+    </>
+  );
+};
+```
+
+### Ejemplo 2: Ejercicio M4 con Hook SECURE
+
+```tsx
+// VerificadorFakeNewsExercise.SECURE.tsx
+import { useState, useCallback } from 'react';
+import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
+export const VerificadorFakeNewsExercise = ({ exercise, onComplete }) => {
+  const [analysis, setAnalysis] = useState({});
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+
+  // Hook SECURE con tracking de hints y powerups
+  const {
+    submit,
+    isSubmitting,
+    data: result,
+    recordHintUsed,
+    recordPowerupUsed,
+    getTimeElapsed,
+  } = useExerciseSubmission(exercise.id, {
+    trackHints: true,
+    trackPowerups: true,
+    onSuccess: (result) => {
+      setFeedback({
+        type: result.isPerfect ? 'success' : 'info',
+        title: 'Analisis Enviado',
+        message: result.feedback?.overall || 'Tu analisis ha sido enviado para revision.',
+        score: result.score,
+        xpEarned: result.rewards?.xp,
+        mlCoinsEarned: result.rewards?.mlCoins,
+        pendingReview: result.requiresManualReview,
+        showConfetti: result.isPerfect,
+      });
+      setShowFeedback(true);
+    },
+    onError: (error) => {
+      setFeedback({
+        type: 'error',
+        title: 'Error',
+        message: error.message || 'Error al enviar.',
+      });
+      setShowFeedback(true);
+    },
+    onRateLimitError: (retryAfter) => {
+      setFeedback({
+        type: 'error',
+        title: 'Demasiados Intentos',
+        message: `Espera ${retryAfter} segundos antes de reintentar.`,
+      });
+      setShowFeedback(true);
+    },
+  });
+
+  const handleHintClick = useCallback(() => {
+    recordHintUsed();
+    // Mostrar hint...
+  }, [recordHintUsed]);
+
+  const handleSubmit = useCallback(() => {
+    // El hook maneja validacion Zod automaticamente
+    submit({ analysis });
+  }, [submit, analysis]);
+
+  return (
+    <>
+      {/* ... UI de analisis ... */}
+
+      <button
+        onClick={handleSubmit}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 'Enviando...' : 'Enviar Analisis'}
+      </button>
+
+      <button onClick={handleHintClick}>
+        Usar Pista (costo: 15 ML Coins)
+      </button>
+
+      {feedback && (
+        <FeedbackModal
+          isOpen={showFeedback}
+          feedback={feedback}
+          onClose={() => {
+            setShowFeedback(false);
+            if (feedback.type === 'success') onComplete?.();
+          }}
+        />
+      )}
+    </>
+  );
+};
+```
+
+### Ejemplo 3: Ejercicio M3 con pendingReview
+
+```tsx
+// TribunalOpinionesExercise.tsx
+import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+
+// ... setup ...
+
+const handleSubmit = async () => {
+  try {
+    const response = await submitExercise(
+      exercise.id,
+      user.id,
+      { evaluations }
+    );
+
+    // Ejercicios M3 siempre requieren revision manual
+    setFeedback({
+      type: 'info',
+      title: 'Evaluacion Enviada',
+      message: response.message || 'Tu trabajo ha sido enviado para revision.',
+      pendingReview: true,  // Activa seccion especial en FeedbackModal
+    });
+    setShowFeedback(true);
+
+  } catch (error) {
+    // ... manejo de error ...
+  }
+};
+
+// En el FeedbackModal con pendingReview=true se muestra:
+// - Icono de reloj
+// - "Tu progreso ha sido actualizado"
+// - "Tu trabajo esta en espera de validacion por tu maestro"
+// - Nota: "Las recompensas se asignaran cuando tu maestro complete la evaluacion"
+```
+
+### Ejemplo 4: Integracion Completa con SubmitExerciseButton
+
+```tsx
+// Ejemplo recomendado para futuros ejercicios
+import { SubmitExerciseButton } from '@shared/components/mechanics/SubmitExerciseButton';
+import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { useExerciseSubmission } from '@/features/exercises/hooks/useExerciseSubmission';
+
+export const NuevoEjercicio = ({ exercise, onComplete }) => {
+  const { submitExercise, isSubmitting, result, reset } = useExerciseSubmission();
+  const [answers, setAnswers] = useState({});
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+
+  const isValid = Object.keys(answers).length >= exercise.minAnswers;
+  const isSubmitted = result !== null;
+
+  const handleSubmit = async () => {
+    const response = await submitExercise({
+      userId: user.id,
+      exerciseId: exercise.id,
+      answers,
+    });
+
+    if (response) {
+      setFeedback({
+        type: response.is_correct ? 'success' : 'error',
+        title: response.is_correct ? 'Correcto!' : 'Intenta de nuevo',
+        message: response.feedback,
+        score: response.score_percentage,
+        xpEarned: response.xp_earned,
+        mlCoinsEarned: response.ml_coins_earned,
+        showConfetti: response.score_percentage === 100,
+      });
+      setShowFeedback(true);
+    }
+  };
+
+  const handleReset = () => {
+    setAnswers({});
+    reset();
+    setShowFeedback(false);
+  };
+
+  return (
+    <>
+      {/* UI del ejercicio */}
+
+      {/* Boton estandarizado */}
+      <SubmitExerciseButton
+        isSubmitting={isSubmitting}
+        isSubmitted={isSubmitted}
+        onClick={handleSubmit}
+        disabled={!isValid}
+        label="Enviar Respuestas"
+        variant="gold"
+        fullWidth
+      />
+
+      {/* Modal de feedback */}
+      {feedback && (
+        <FeedbackModal
+          isOpen={showFeedback}
+          feedback={feedback}
+          onClose={() => {
+            setShowFeedback(false);
+            if (feedback.type === 'success') onComplete?.();
+          }}
+          onRetry={handleReset}
+        />
+      )}
+    </>
+  );
+};
+```
+
+---
+
+## Checklist para Nuevos Ejercicios
+
+Al implementar un nuevo ejercicio, verificar:
+
+- [ ] Usar `submitExercise` de progressAPI (M1-M3) o `useExerciseSubmission` hook (M4-M5)
+- [ ] Validar que usuario este autenticado antes de enviar
+- [ ] Validar que todas las respuestas requeridas esten completas
+- [ ] Preparar payload en formato correcto para el tipo de ejercicio
+- [ ] Implementar `FeedbackModal` con todos los campos (score, xpEarned, mlCoinsEarned)
+- [ ] Para M3-M5: Usar `pendingReview: true` en feedback
+- [ ] Invalidar cache despues de submission exitosa
+- [ ] Manejar errores con mensajes amigables
+- [ ] Permitir retry si score < 70%
+
+---
+
 *Documento SSOT - GAMILIT Student Portal*
-*Version 1.0.0 - 2026-01-20*
+*Version 2.0.0 - 2026-01-20*
