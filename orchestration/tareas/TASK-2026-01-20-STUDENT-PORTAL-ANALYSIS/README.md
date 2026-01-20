@@ -34,10 +34,21 @@ Tarea de analisis detallado de la documentacion y definiciones de todas las pagi
 
 ```
 TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/
-├── README.md           <- Este archivo
-├── METADATA.yml        <- Metadatos de la tarea
-├── SUBTASKS.yml        <- Plan de subtareas CAPVED
-└── PURGE-REPORT.md     <- Reporte de purga de documentacion
+├── README.md                    <- Este archivo
+├── METADATA.yml                 <- Metadatos de la tarea
+├── SUBTASKS.yml                 <- Plan de subtareas CAPVED
+├── PURGE-REPORT.md              <- Reporte de purga de documentacion
+├── INFORME-EJECUCION.md         <- Informe detallado de ejecucion
+├── ANALISIS-MEJORA-CONTINUA.md  <- Analisis para mejora de directivas
+└── prompts/                     <- Prompts usados para subagentes
+    ├── _INDEX.md                <- Indice de prompts
+    ├── PROMPT-EXPLORE-FRONTEND.md
+    ├── PROMPT-EXPLORE-BACKEND.md
+    ├── PROMPT-SUBTASK-1.2.md
+    ├── PROMPT-SUBTASK-2.2.md
+    ├── PROMPT-SUBTASK-2.3.md
+    ├── PROMPT-SUBTASK-3.1.md
+    └── PROMPT-SUBTASK-4.1.md
 ```
 
 ---
@@ -83,12 +94,29 @@ TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/
 
 ---
 
-## Referencias
+## Documentacion de la Tarea
+
+### Informes y Analisis
+- [INFORME-EJECUCION.md](./INFORME-EJECUCION.md) - Informe detallado con definicion, logica, subtareas y archivos
+- [ANALISIS-MEJORA-CONTINUA.md](./ANALISIS-MEJORA-CONTINUA.md) - Propuestas de mejora de directivas y estandares
+- [PURGE-REPORT.md](./PURGE-REPORT.md) - Reporte de documentacion purgada/archivada
+
+### Prompts de Subagentes
+- [prompts/_INDEX.md](./prompts/_INDEX.md) - Indice de prompts documentados
+- 7 prompts de subagentes para reproducibilidad y mejora continua
+
+---
+
+## Referencias Externas
 
 - [Analisis Completo](../../analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md)
+- [Evaluacion Endpoints](../../analisis/EVALUACION-ENDPOINTS-CONSOLIDADOS.md)
+- [Plan de Testing](../../testing/TESTING-PLAN-STUDENT-PORTAL.md)
 - [Frontend Inventory](../../inventarios/FRONTEND_INVENTORY.yml)
 - [Backend Inventory](../../inventarios/BACKEND_INVENTORY.yml)
 - [Guia Student Portal](../../../docs/95-guias-desarrollo/student-portal/README.md)
+- [Estandar Nomenclatura](../../../docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md)
+- [Specs Mecanicas](../../../docs/90-transversal/mecanicas/_MAP.md)
 
 ---
 
