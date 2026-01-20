@@ -26,6 +26,7 @@ El estado del proyecto ha mejorado significativamente tras las remediaciones del
 ### 2.1 Admin Portal
 **Estado:** EXCELENTE (94% Cobertura)
 - **Documentación:** 100% de las 17 páginas cuentan con User Stories y especificaciones técnicas.
+- **Validación de Componentes:** Se verificó `AdminUsersPage-Specification.md` confirmando nivel de detalle exhaustivo: estructura de página, desglose de Stats Cards, definición de columnas de tabla, y lógica de modales (`UserDetailModal`).
 - **Desarrollo:** Implementación completa de gestión de roles, alertas y dashboard de analíticas.
 - **Coherencia:** 100% de alineación entre Backend y Database.
 - **Logros:** Se implementó la página `AdminAuditLogsPage` (750+ líneas) para cerrar un GAP de auditoría.
@@ -33,6 +34,7 @@ El estado del proyecto ha mejorado significativamente tras las remediaciones del
 ### 2.2 Teacher Portal
 **Estado:** EXCELENTE (92% Cobertura)
 - **Mejora:** Subió del 80% al 92% tras la remediación.
+- **Validación de Componentes:** Se verificó `TEACHER-PAGES-SPECIFICATIONS.md` que detalla 12 páginas. Se confirmó el uso del patrón "Component + Wrapper" y la definición dinámica de props como `organizationName` en `TeacherLayout`.
 - **Arquitectura:** Se validó y documentó el patrón "Component + Wrapper" (24 archivos).
 - **User Stories:** Se crearon 6 US faltantes (US-PM-008 a US-PM-013), cubriendo gestión de gamificación, recursos y notificaciones.
 - **GAP Crítico:** Se creó la especificación técnica para `PERFORMANCE-TREND-SPEC.md` para resolver la falta de gráficas en `TeacherProgressPage`.
@@ -40,6 +42,7 @@ El estado del proyecto ha mejorado significativamente tras las remediaciones del
 ### 2.3 Student Portal
 **Estado:** BUENO (82% Cobertura)
 - **Mejora:** Subió del 64% al 82%.
+- **Validación de Componentes:** Se verificó `ASSIGNMENTS-SPEC.md` cubriendo `AssignmentsPage` y `AssignmentDetailPage`. Incluye definición precisa de estados de UI (Loading/Error/Empty), integración con Zustand (`useStudentAssignmentsStore`) y diagramas de flujo.
 - **Documentación Crítica:** Se generó `AUTH-PAGES-SPEC.md` (800+ líneas) cubriendo las 4 páginas críticas de autenticación.
 - **GAPs Resueltos:** 5 de 6 GAPs técnicos fueron resueltos, incluyendo integración de misiones y correcciones en achievements.
 - **Pendiente:** Aún persisten algunas páginas "core" con documentación parcial, aunque las críticas ya están cubiertas.

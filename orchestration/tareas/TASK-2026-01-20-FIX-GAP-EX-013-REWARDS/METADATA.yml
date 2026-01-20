@@ -1,0 +1,31 @@
+id: TASK-2026-01-20-FIX-GAP-EX-013-REWARDS
+type: bug-fix
+status: in_progress
+created: 2026-01-20
+author: Trae AI
+title: Conectar recompensas visuales (XP/Coins) en ejercicios
+description: >
+  Resolucion del GAP-EX-013 donde el 85% de los ejercicios no muestran
+  visualmente la recompensa obtenida en el FeedbackModal.
+objectives:
+  - Identificar ejercicios que usan FeedbackModal sin props de reward
+  - Implementar calculo o recuperacion de rewards (XP/Coins)
+  - Pasar props xpEarned y mlCoinsEarned al modal
+phases:
+  - context: Analisis de componentes afectados
+  - execution: Implementacion de props en ejercicios
+  - validation: Verificacion de props pasados
+deliverables:
+  - Codigo fuente actualizado en ejercicios M1-M5
+related_tasks:
+  - TASK-2026-01-20-ANALISIS-FINAL-PORTALES
+analysis:
+  found_issues:
+    - TimelineExercise.tsx: Missing xpEarned/mlCoinsEarned in setFeedback.
+    - PuzzleContextoExercise.tsx: Correctly implements rewards.
+    - SopaLetrasExercise.tsx: Pending verification.
+    - General Pattern: Most exercises ignore the 'rewards' object from submitExercise response.
+  plan:
+    - Update all exercises to extract { rewards } from submitExercise response.
+    - Pass rewards.xp and rewards.mlCoins to FeedbackModal.
+    - Verify TypeScript types for FeedbackData.
