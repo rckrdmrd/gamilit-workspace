@@ -29,6 +29,7 @@ Esta carpeta contiene documentacion **definitiva y vigente** del estado actual d
 | **[deuda-tecnica/](./deuda-tecnica/)** | 1 | Deuda tecnica documentada | Definitivo |
 | **[correcciones/](./correcciones/)** | 2+ | BACKEND-CRITICAL-ISSUES-PENDING.md (SSOT), correcciones activas | Vigente |
 | **[mecanicas/](./mecanicas/)** | 5 | Especificaciones de mecanicas de ejercicios (30 mecanicas) | Definitivo |
+| **[ejercicios/](./ejercicios/)** | 1 | Documentacion de flujos de ejercicios (envio, validacion) | Definitivo |
 | **[restructuracion-v2/](./restructuracion-v2/)** | 5 | Restructuracion y user stories | Definitivo |
 
 ### Archivos Raiz
@@ -132,6 +133,13 @@ Los siguientes directorios fueron movidos a `orchestration/reportes/` el 2025-12
   - Criterios de evaluacion (auto/manual)
   - Recompensas base (XP, ML Coins)
 
+### Para ver flujos de ejercicios:
+- `ejercicios/FLUJO-ENVIO-RESPUESTAS.md` - Flujo completo de envio de respuestas
+  - Flujo A: progressAPI.submitExercise() (M1-M3)
+  - Flujo B: useExerciseSubmission hook (M4-M5)
+  - Diagrama de secuencia
+  - Tabla comparativa de caracteristicas
+
 ---
 
 ## Referencias
@@ -149,8 +157,8 @@ Los siguientes directorios fueron movidos a `orchestration/reportes/` el 2025-12
 
 **Actualizado:** 2026-01-20
 **Por:** Claude Code - Analista de Requisitos
-**Version:** 2.4 (Mecanicas Detalladas)
+**Version:** 2.5 (Flujos de Ejercicios)
 **Cambios:**
-- Agregados documentos separados: SPEC-MECANICAS-M1-M3.md, SPEC-MECANICAS-M4.md, SPEC-MECANICAS-M5.md
-- Creado _MAP.md para carpeta mecanicas
-- Total: 30 mecanicas documentadas con especificaciones detalladas de entrada/salida
+- Creada carpeta ejercicios/ con FLUJO-ENVIO-RESPUESTAS.md
+- Documentados dos flujos de envio: progressAPI y useExerciseSubmission
+- Incluye diagrama de secuencia ASCII y tabla comparativa
