@@ -1,0 +1,451 @@
+# REFERENCIAS DE ARCHIVOS - PATHS ABSOLUTOS
+# TASK-2026-01-20-001: Analisis Integral de Documentacion GAMILIT
+# Generado: 2026-01-20
+# Uso: Referencia exacta para navegacion y validacion
+
+metadata:
+  tarea_id: "TASK-2026-01-20-001"
+  proyecto: "gamilit"
+  workspace_base: "/home/isem/workspace-v2"
+  proyecto_base: "/home/isem/workspace-v2/projects/gamilit"
+  fecha_generacion: "2026-01-20"
+
+# ==============================================================================
+# ARCHIVOS DE LA TAREA
+# ==============================================================================
+
+tarea:
+  directorio: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL"
+
+  archivos_principales:
+    - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/METADATA.yml"
+      tipo: "metadata"
+      descripcion: "Metadata CAPVED completo de la tarea"
+      lineas: 185
+
+    - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/PLAN-ANALISIS-DETALLADO.md"
+      tipo: "plan"
+      descripcion: "Plan de 6 subtareas con metodologia"
+      lineas: 217
+
+    - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/MATRIZ-VALIDACION-EPICAS.yml"
+      tipo: "validacion"
+      descripcion: "Matriz de validacion de 22 EPICs"
+      lineas: 600
+
+    - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/REPORTE-CONSOLIDADO-FINAL.md"
+      tipo: "reporte"
+      descripcion: "Reporte ejecutivo consolidado"
+      lineas: 454
+
+  informe:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/informe"
+    archivos:
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/informe/_INDEX.md"
+        descripcion: "Indice del informe detallado"
+
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/informe/00-INFORME-EJECUTIVO.md"
+        descripcion: "Resumen ejecutivo, metricas, conclusiones"
+
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/informe/01-LOGICA-EJECUCION.md"
+        descripcion: "Flujo de decision, paralelizacion"
+
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/informe/02-CATALOGO-SUBAGENTES.md"
+        descripcion: "11 subagentes con perfiles y resultados"
+
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/informe/03-MEJORA-CONTINUA.md"
+        descripcion: "Lecciones aprendidas, patrones replicables"
+
+  prompts:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/prompts"
+    archivos:
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/prompts/SA-001-ANALISIS-FASE1.md"
+        descripcion: "Prompt de subagente SA-001 (Analisis Fase 1)"
+
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/prompts/P0-001-RF-ET-EAI004.md"
+        descripcion: "Prompt de subagente P0-001 (RF/ET EAI-004)"
+
+  referencias:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/referencias"
+    archivos:
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/referencias/MAPA-ARCHIVOS-COMPLETO.yml"
+        descripcion: "Mapa completo de archivos con dependencias"
+
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-001-ANALISIS-INTEGRAL/referencias/REFERENCIAS-ARCHIVOS.yml"
+        descripcion: "Este archivo - paths absolutos"
+
+# ==============================================================================
+# ARCHIVOS SSOT (Single Source of Truth)
+# ==============================================================================
+
+ssot:
+  directorio: "/home/isem/workspace-v2/projects/gamilit/docs/_SSOT"
+  archivos:
+    - path: "/home/isem/workspace-v2/projects/gamilit/docs/_SSOT/EPIC-INDEX.yml"
+      descripcion: "Indice de 22 EPICs con estados"
+      usado_por: ["SA-001", "SA-002", "SA-003"]
+
+    - path: "/home/isem/workspace-v2/projects/gamilit/docs/_SSOT/TRACEABILITY-MASTER.yml"
+      descripcion: "Trazabilidad consolidada RF -> ET -> US"
+      usado_por: ["SA-001", "SA-002", "SA-003", "SA-006"]
+
+    - path: "/home/isem/workspace-v2/projects/gamilit/docs/_SSOT/CODE-MAPPINGS.yml"
+      descripcion: "Mapeo documentacion <-> codigo"
+      usado_por: ["SA-004", "P0-005"]
+
+    - path: "/home/isem/workspace-v2/projects/gamilit/docs/_SSOT/REQUIREMENTS-INDEX.yml"
+      descripcion: "Indice de 150 requerimientos"
+      usado_por: ["SA-001", "SA-002", "SA-003"]
+
+    - path: "/home/isem/workspace-v2/projects/gamilit/docs/_SSOT/COMPLETENESS-TRACKER.yml"
+      descripcion: "Tracker de EPICs parciales"
+      usado_por: ["SA-003"]
+
+# ==============================================================================
+# INVENTARIOS
+# ==============================================================================
+
+inventarios:
+  directorio: "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios"
+  archivos:
+    - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/DATABASE_INVENTORY.yml"
+      descripcion: "Inventario de BD (142 tablas)"
+      modificado_por: "P0-005"
+
+    - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/MASTER_INVENTORY.yml"
+      descripcion: "Inventario maestro consolidado"
+
+    - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/BACKEND_INVENTORY.yml"
+      descripcion: "Inventario backend (125 entities)"
+
+    - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/FRONTEND_INVENTORY.yml"
+      descripcion: "Inventario frontend (464 componentes)"
+
+# ==============================================================================
+# MAPAS DE DOCUMENTACION
+# ==============================================================================
+
+mapas:
+  - path: "/home/isem/workspace-v2/projects/gamilit/docs/_MAP.md"
+    descripcion: "Mapa principal de documentacion"
+
+  - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/_MAP.md"
+    descripcion: "Mapa de orquestacion"
+
+# ==============================================================================
+# EPICS FASE 1 (7 EPICs)
+# ==============================================================================
+
+epics_fase_1:
+  directorio_base: "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial"
+
+  EAI-001:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-001-fundamentos"
+    archivos_clave:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-001-fundamentos/README.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-001-fundamentos/_MAP.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-001-fundamentos/implementacion/TRACEABILITY.yml"
+    estado: "OK"
+    score: 85
+
+  EAI-002:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-002-actividades"
+    archivos_clave:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-002-actividades/README.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-002-actividades/_MAP.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-002-actividades/implementacion/TRACEABILITY.yml"
+    estado: "OK"
+    score: 80
+
+  EAI-003:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-003-gamificacion"
+    archivos_clave:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-003-gamificacion/README.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-003-gamificacion/_MAP.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-003-gamificacion/EPIC-MANIFEST.yml"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-003-gamificacion/implementacion/TRACEABILITY.yml"
+    estado: "OK (MODELO)"
+    score: 90
+    nota: "Usado como modelo de referencia"
+
+  EAI-004:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-004-analytics"
+    archivos_clave:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-004-analytics/README.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-004-analytics/_MAP.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-004-analytics/implementacion/TRACEABILITY.yml"
+    archivos_creados_p0:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-004-analytics/requerimientos/RF-ANA-001-visualizacion-progreso.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-004-analytics/requerimientos/RF-ANA-002-metricas-gamificacion.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-004-analytics/requerimientos/RF-ANA-003-reportes-docente.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-004-analytics/especificaciones/ET-ANA-001-dashboard-estudiante.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-004-analytics/especificaciones/ET-ANA-002-api-metricas.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-004-analytics/especificaciones/ET-ANA-003-exportacion-datos.md"
+    estado: "CORREGIDO (P0-001)"
+    score_antes: 40
+    score_despues: 85
+
+  EAI-005:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-005-admin-base"
+    archivos_clave:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-005-admin-base/README.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-005-admin-base/_MAP.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-005-admin-base/implementacion/TRACEABILITY.yml"
+    archivos_creados_p0:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-005-admin-base/especificaciones/ET-ADM-003-dashboard-maestro.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-005-admin-base/especificaciones/ET-ADM-004-asignacion-modulos.md"
+    estado: "CORREGIDO (P0-002)"
+    score_antes: 45
+    score_despues: 85
+
+  EAI-006:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-006-configuracion-sistema"
+    archivos_clave:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-006-configuracion-sistema/README.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-006-configuracion-sistema/_MAP.md"
+    estado: "OK"
+    score: 70
+
+  EAI-008:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-008-portal-admin"
+    archivos_clave:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-008-portal-admin/README.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/01-fase-alcance-inicial/EAI-008-portal-admin/_MAP.md"
+    estado: "REESTRUCTURADO"
+    score: 60
+
+# ==============================================================================
+# EPICS FASE 2 (3 EPICs)
+# ==============================================================================
+
+epics_fase_2:
+  directorio_base: "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento"
+
+  EAI-007:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento/EAI-007-modulos-m4-m5"
+    archivos_clave:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento/EAI-007-modulos-m4-m5/README.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento/EAI-007-modulos-m4-m5/_MAP.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento/EAI-007-modulos-m4-m5/implementacion/TRACEABILITY.yml"
+    estado: "EXCELENTE"
+    score: 95
+
+  EMR-001:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento/EMR-001-migracion-bd"
+    archivos_clave:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento/EMR-001-migracion-bd/README.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento/EMR-001-migracion-bd/_MAP.md"
+    estado: "MUY BUENO"
+    score: 90
+
+  ETC-001:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento/ETC-001-consolidacion-tecnica"
+    archivos_clave:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento/ETC-001-consolidacion-tecnica/README.md"
+      - "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento/ETC-001-consolidacion-tecnica/_MAP.md"
+    archivos_creados_p0:
+      - "/home/isem/workspace-v2/projects/gamilit/docs/02-fase-robustecimiento/ETC-001-consolidacion-tecnica/implementacion/TRACEABILITY.yml"
+    estado: "CORREGIDO (P0-003)"
+    score_antes: 75
+    score_despues: 90
+
+# ==============================================================================
+# EPICS FASE 3 (12 EPICs)
+# ==============================================================================
+
+epics_fase_3:
+  directorio_base: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones"
+
+  completadas:
+    EXT-001:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-001-portal-maestros"
+      estado: "COMPLETADA"
+      score: 90
+
+    EXT-002:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-002-admin-extendido"
+      estado: "COMPLETADA"
+      score: 90
+
+    EXT-003:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-003-notificaciones"
+      estado: "COMPLETADA"
+      score: 85
+
+    EXT-004:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-004-perfiles"
+      estado: "COMPLETADA"
+      score: 85
+
+    EXT-005:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-005-reportes"
+      estado: "COMPLETADA"
+      score: 85
+
+    EXT-006:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-006-contenido"
+      estado: "COMPLETADA"
+      score: 85
+
+  parciales:
+    EXT-007:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-007-lti-integration"
+      estado: "PARCIAL (40%)"
+      score: 75
+
+    EXT-008:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-008-white-label"
+      estado: "PARCIAL (50%)"
+      score: 70
+
+    EXT-009:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-009-peer-challenges"
+      estado: "PARCIAL (30%)"
+      score: 70
+
+    EXT-010:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-010-parent-notifications"
+      estado: "PARCIAL (35%)"
+      score: 70
+
+    EXT-011:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-011-parent-portal"
+      estado: "PARCIAL (30%)"
+      score: 70
+
+  extension_gamificacion:
+    EAI-003-EXT:
+      directorio: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EAI-003-EXT-gamificacion-social"
+      archivos_clave:
+        - "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EAI-003-EXT-gamificacion-social/README.md"
+        - "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EAI-003-EXT-gamificacion-social/_MAP.md"
+      archivos_creados_p0:
+        - "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EAI-003-EXT-gamificacion-social/especificaciones/ET-SOC-002-gremios.md"
+        - "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EAI-003-EXT-gamificacion-social/implementacion/TRACEABILITY.yml"
+      estado: "CORREGIDO (P0-004)"
+      score_antes: 65
+      score_despues: 85
+
+# ==============================================================================
+# BASE DE DATOS
+# ==============================================================================
+
+base_datos:
+  ddl:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl"
+    schemas:
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/01-core.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/02-users.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/03-institutions.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/04-educational.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/05-gamification.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/06-progress.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/07-social.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/08-notifications.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/09-content.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/10-analytics.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/11-admin.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/12-integration.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/13-reports.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/14-audit.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/15-config.sql"
+      - "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl/schemas/16-gamilit.sql"
+
+# ==============================================================================
+# GOBERNANZA
+# ==============================================================================
+
+gobernanza:
+  indice_tareas:
+    path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/_INDEX.yml"
+    descripcion: "Indice de 34 tareas documentadas"
+    modificado: true
+    version: "1.26.0"
+
+  templates:
+    directorio: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/_templates"
+    task_template: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/_templates/TASK-TEMPLATE-UNIFIED"
+
+# ==============================================================================
+# ARCHIVOS A NIVEL WORKSPACE
+# ==============================================================================
+
+workspace:
+  directorio_base: "/home/isem/workspace-v2"
+
+  trazas_agente:
+    - path: "/home/isem/workspace-v2/orchestration/agents/trazas/TRAZA-AGENTE-ORQUESTADOR.md"
+      descripcion: "Traza del agente orquestador"
+      creado: true
+
+    - path: "/home/isem/workspace-v2/orchestration/agents/trazas/_INDEX.yml"
+      descripcion: "Indice de trazas de agentes"
+      modificado: true
+      version: "1.1.0"
+
+  directivas_simco:
+    - path: "/home/isem/workspace-v2/orchestration/directivas/simco/SIMCO-TAREA.md"
+      descripcion: "Punto de entrada para tareas"
+
+    - path: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
+      descripcion: "Ciclo de vida CAPVED"
+
+    - path: "/home/isem/workspace-v2/orchestration/directivas/triggers/TRIGGER-DOCUMENTACION-OBLIGATORIA.md"
+      descripcion: "Trigger de documentacion"
+
+    - path: "/home/isem/workspace-v2/orchestration/directivas/modos/MODE-ANALYSIS.md"
+      descripcion: "Modo de analisis"
+
+  claude_md:
+    path: "/home/isem/workspace-v2/CLAUDE.md"
+    descripcion: "Instrucciones base del workspace"
+
+# ==============================================================================
+# RESUMEN DE TOTALES
+# ==============================================================================
+
+resumen:
+  total_archivos_referenciados: 95
+  archivos_de_tarea: 12
+  archivos_ssot: 5
+  archivos_inventarios: 4
+  archivos_epics: 60
+  archivos_bd: 16
+  archivos_gobernanza: 3
+  archivos_workspace: 7
+
+  archivos_creados_p0:
+    total: 14
+    P0-001: 6
+    P0-002: 2
+    P0-003: 1
+    P0-004: 2
+    P0-005: 1  # modificado
+    gobernanza: 2
+
+# ==============================================================================
+# INSTRUCCIONES DE USO
+# ==============================================================================
+
+instrucciones:
+  para_navegar: |
+    Usa los paths absolutos directamente con:
+    - cat {path}
+    - code {path}
+    - Read tool con file_path: {path}
+
+  para_validar: |
+    Verifica existencia con:
+    - ls -la {path}
+    - test -f {path} && echo "existe"
+
+  para_referencias_cruzadas: |
+    Los archivos SSOT contienen referencias a:
+    - EPIC-INDEX.yml -> directorio de cada EPIC
+    - TRACEABILITY-MASTER.yml -> RF, ET, US por EPIC
+    - CODE-MAPPINGS.yml -> codigo backend/frontend
+
+  para_replicar_tarea: |
+    1. Leer prompts/ para estructura de subagentes
+    2. Adaptar paths a nuevo proyecto
+    3. Usar METADATA.yml como template de ciclo CAPVED
