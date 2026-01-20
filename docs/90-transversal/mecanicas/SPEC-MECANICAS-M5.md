@@ -1,7 +1,8 @@
 # Especificaciones de Mecanicas M5 - Produccion Lectora
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Fecha:** 2026-01-20
+**Ultima Validacion:** 2026-01-20
 **Modulo:** M5 - Produccion Creativa Multimedia
 **Proyecto:** GAMILIT - Student Portal
 
@@ -663,5 +664,133 @@ export { VideoCartaExercise } from './module5/VideoCarta/VideoCartaExercise';
 
 ---
 
+---
+
+## Notas de Validacion 2026-01-20
+
+### Resumen de Validacion
+
+| Aspecto | Estado | Observaciones |
+|---------|--------|---------------|
+| Fecha de validacion | 2026-01-20 | FASE 3 - Validacion de ejercicios |
+| Validado por | Agente Claude | Perfil @PERFIL_DOCUMENTATION |
+| Metodo | Revision de implementacion vs SPEC | Analisis de DTOs y flujos |
+
+### Hallazgos Relevantes
+
+#### GAP-EX-004: Multimedia usa Blob URLs - CONFIRMADO
+
+- **Estado:** GAP CONFIRMADO
+- **Descripcion:** Las mecanicas M5 que manejan multimedia (DiarioMultimedia, ComicDigital, VideoCarta) utilizan `Blob` y `URL.createObjectURL()` para archivos multimedia
+- **Problema:** Los blob URLs son temporales y no persisten entre sesiones. Si el estudiante cierra el navegador antes de enviar, los archivos se pierden
+- **Impacto:** Afecta las 3 mecanicas M5
+- **Solucion requerida:** Implementar servicio de upload que:
+  1. Suba archivos a almacenamiento persistente (S3, CloudStorage, etc.)
+  2. Retorne URLs permanentes
+  3. Gestione limpieza de archivos huerfanos
+
+```typescript
+// Ejemplo de solucion requerida
+interface MediaUploadService {
+  uploadFile(blob: Blob, type: 'image' | 'audio' | 'video'): Promise<string>; // URL permanente
+  deleteFile(url: string): Promise<void>;
+}
+```
+
+**Estado:** PENDIENTE - Requiere implementacion de backend upload service
+
+#### Estructura de Respuestas M5
+
+Las mecanicas M5 envian respuestas al backend, pero los archivos multimedia solo son referencias locales (blob URLs):
+
+| Campo | Tipo Actual | Tipo Requerido |
+|-------|-------------|----------------|
+| `media[].url` | Blob URL (temporal) | URL permanente |
+| `videoBlob` | Blob (memoria) | URL permanente |
+| `sectionRecordings[].blob` | Blob (memoria) | URL permanente |
+| `panels[].image` | Blob URL | URL permanente |
+
+### Estado de Implementacion M5
+
+| Mecanica | Implementada | Funcional | Envia Backend | Multimedia Persiste | Observaciones |
+|----------|--------------|-----------|---------------|---------------------|---------------|
+| M5-01 DiarioMultimedia | Si | Si | Si | NO | GAP-EX-004 |
+| M5-02 ComicDigital | Si | Si | Si | NO | GAP-EX-004 |
+| M5-03 VideoCarta | Si | Si | Si | NO | GAP-EX-004 |
+
+### Requisitos Pendientes para M5
+
+#### 1. Servicio de Upload (Backend)
+
+```yaml
+Endpoint: POST /api/v1/exercises/media/upload
+Funcionalidad:
+  - Recibir archivo multipart/form-data
+  - Validar tipo y tamano
+  - Subir a storage persistente
+  - Retornar URL permanente
+Configuracion:
+  - Max size imagen: 5MB
+  - Max size audio: 10MB
+  - Max size video: 50MB
+  - Formatos imagen: jpg, png, gif, webp
+  - Formatos audio: mp3, wav, webm
+  - Formatos video: mp4, webm
+```
+
+#### 2. Componente de Upload (Frontend)
+
+```yaml
+Componente: MediaUploader
+Funcionalidad:
+  - Preview local con blob URL
+  - Upload en background
+  - Progress indicator
+  - Reemplazo de blob URL por URL permanente
+  - Manejo de errores de upload
+```
+
+#### 3. Migracion de Datos Existentes
+
+- Revisar si hay ejercicios M5 guardados con blob URLs
+- Migrar a URLs permanentes cuando el servicio este disponible
+
+### Componentes UI Sin Uso en M5
+
+| Componente | Uso en M5 | Observacion |
+|------------|-----------|-------------|
+| SubmitExerciseButton | 0% | Mismo patron que M1-M4 |
+| HintModal | 0% | Hints integrados |
+| CompletionModal | 0% | Feedback inline |
+
+### Consideraciones de Privacidad M5
+
+Las notas de privacidad documentadas en la SPEC estan correctamente implementadas:
+
+| Consideracion | Implementado | Observacion |
+|---------------|--------------|-------------|
+| Entradas privadas DiarioMultimedia | Si | Campo `isPrivate` funcional |
+| Alternativa script VideoCarta | Si | Opcion sin camara disponible |
+| Consentimiento grabacion | Parcial | Falta UI explicita de consentimiento |
+
+### Proximos Pasos
+
+1. **CRITICO: Implementar servicio de upload multimedia** - Sin esto, M5 no es production-ready
+2. **Agregar UI de consentimiento** para grabacion de video en VideoCarta
+3. **Definir politica de retencion** de archivos multimedia
+4. **Implementar limpieza de archivos huerfanos** (ejercicios abandonados)
+
+### Prioridad de Resolucion
+
+| Item | Prioridad | Bloqueante | Esfuerzo Est. |
+|------|-----------|------------|---------------|
+| Servicio upload backend | P0 | Si | 3-5 dias |
+| Componente MediaUploader | P0 | Si | 2-3 dias |
+| UI consentimiento video | P1 | No | 1 dia |
+| Politica retencion | P2 | No | 1 dia |
+| Limpieza huerfanos | P2 | No | 1-2 dias |
+
+---
+
 *Documento SSOT - GAMILIT Student Portal*
-*Version 1.0.0 - 2026-01-20*
+*Version 1.1.0 - 2026-01-20*

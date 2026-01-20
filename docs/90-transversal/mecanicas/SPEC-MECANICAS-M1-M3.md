@@ -1,7 +1,8 @@
 # Especificaciones de Mecanicas M1-M3 - Comprension Lectora
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Fecha:** 2026-01-20
+**Ultima Validacion:** 2026-01-20
 **Modulos:** M1, M2, M3 - Comprension Literal, Inferencial y Critica
 **Proyecto:** GAMILIT - Student Portal
 
@@ -1230,5 +1231,84 @@ La validacion siempre se realiza en el servidor para prevenir trampas.
 
 ---
 
+---
+
+## Notas de Validacion 2026-01-20
+
+### Resumen de Validacion
+
+| Aspecto | Estado | Observaciones |
+|---------|--------|---------------|
+| Fecha de validacion | 2026-01-20 | FASE 3 - Validacion de ejercicios |
+| Validado por | Agente Claude | Perfil @PERFIL_DOCUMENTATION |
+| Metodo | Revision de implementacion vs SPEC | Analisis de DTOs y flujos |
+
+### Hallazgos Relevantes
+
+#### GAP-EX-001: Emparejamiento - INVALIDADO
+
+- **Estado anterior:** Se creia que Emparejamiento no enviaba respuestas al backend
+- **Estado actual:** **CONFIRMADO QUE SI ENVIA** - La mecanica Emparejamiento envia correctamente las respuestas al backend mediante el DTO
+- **Accion:** Ninguna requerida, funciona segun SPEC
+
+#### M2-04 PrediccionNarrativa - Discrepancia de Evaluacion
+
+- **SPEC dice:** Evaluacion "Parcial" (seleccion automatica, justificacion manual)
+- **Implementacion actual:** Evaluacion "Automatica" completa
+- **Analisis:** La implementacion actual valida `isCorrect` automaticamente sin requerir justificacion textual del estudiante
+- **Recomendacion:** Si la evaluacion parcial es intencional (requiere justificacion), actualizar implementacion. Si la evaluacion automatica es suficiente, actualizar esta SPEC.
+- **Estado:** PENDIENTE DE DECISION DE DISENO
+
+#### Componentes UI Sin Uso Detectados
+
+Los siguientes componentes estan definidos pero no se utilizan en ninguna mecanica M1-M3:
+
+| Componente | Uso Actual | Observacion |
+|------------|------------|-------------|
+| SubmitExerciseButton | 0% | Cada mecanica implementa su propio boton |
+| HintModal | 0% | Sistema de hints integrado en cada componente |
+| CompletionModal | 0% | Feedback mostrado inline |
+
+**Recomendacion:** Evaluar si estos componentes deben integrarse para uniformidad de UX o eliminarse del codebase.
+
+#### DTOs - Keys Consistentes
+
+Los formatos de respuesta documentados en esta SPEC coinciden con los DTOs implementados. No se detectaron discrepancias significativas en M1-M3.
+
+### Estado de Implementacion M1-M3
+
+| Mecanica | Implementada | Funcional | Envia Backend | Observaciones |
+|----------|--------------|-----------|---------------|---------------|
+| M1-01 VerdaderoFalso | Si | Si | Si | OK |
+| M1-02 CompletarEspacios | Si | Si | Si | OK |
+| M1-03 Emparejamiento | Si | Si | Si | GAP-EX-001 invalidado |
+| M1-04 SopaLetras | Si | Si | Si | OK |
+| M1-05 Crucigrama | Si | Si | Si | OK |
+| M1-06 Timeline | Si | Si | Si | OK |
+| M1-07 MapaConceptual | Si | Si | Si | OK |
+| M2-01 DetectiveTextual | Si | Si | Si | OK |
+| M2-02 LecturaInferencial | Si | Si | Si | OK |
+| M2-03 ConstruccionHipotesis | Si | Si | Si | OK |
+| M2-04 PrediccionNarrativa | Si | Si | Si | Ver discrepancia arriba |
+| M2-05 PuzzleContexto | Si | Si | Si | OK |
+| M2-06 RuedaInferencias | Si | Si | Si | OK (manual) |
+| M3-01 TribunalOpiniones | Si | Si | Si | OK |
+| M3-02 DebateDigital | Si | Si | Si | OK (manual) |
+| M3-03 AnalisisFuentes | Si | Si | Si | OK |
+| M3-04 PodcastArgumentativo | Si | Si | Si | OK (manual) |
+| M3-05 MatrizPerspectivas | Si | Si | Si | OK (manual) |
+| AUX-01 ComprensionAuditiva | Si | Si | Si | OK |
+| AUX-02 CollagePrensa | Si | Si | Si | OK (manual) |
+| AUX-03 TextoEnMovimiento | Si | Si | Si | OK |
+| AUX-04 CallToAction | Si | Si | Si | OK |
+
+### Proximos Pasos
+
+1. **Resolver discrepancia PrediccionNarrativa:** Decidir si mantener evaluacion automatica o implementar evaluacion parcial con justificacion
+2. **Evaluar componentes sin uso:** Decidir si integrar SubmitExerciseButton, HintModal, CompletionModal o deprecar
+3. **Proxima validacion:** Programar validacion post-integracion de Teacher Portal
+
+---
+
 *Documento SSOT - GAMILIT Student Portal*
-*Version 1.0.0 - 2026-01-20*
+*Version 1.1.0 - 2026-01-20*

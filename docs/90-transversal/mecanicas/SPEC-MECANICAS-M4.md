@@ -1,7 +1,8 @@
 # Especificaciones de Mecanicas M4 - Lectura Digital
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Fecha:** 2026-01-20
+**Ultima Validacion:** 2026-01-20
 **Modulo:** M4 - Lectura Digital y Pensamiento Critico
 **Proyecto:** GAMILIT - Student Portal
 
@@ -620,5 +621,68 @@ export { NavegacionHipertextualExercise } from './module4/NavegacionHipertextual
 
 ---
 
+---
+
+## Notas de Validacion 2026-01-20
+
+### Resumen de Validacion
+
+| Aspecto | Estado | Observaciones |
+|---------|--------|---------------|
+| Fecha de validacion | 2026-01-20 | FASE 3 - Validacion de ejercicios |
+| Validado por | Agente Claude | Perfil @PERFIL_DOCUMENTATION |
+| Metodo | Revision de implementacion vs SPEC | Analisis de DTOs y flujos |
+
+### Hallazgos Relevantes
+
+#### Mecanicas Removidas - Documentado Correctamente
+
+Las siguientes mecanicas fueron removidas del M4 oficial segun DocumentoDeDiseño v6.1:
+
+| Mecanica Removida | Estado en SPEC | Observacion |
+|-------------------|----------------|-------------|
+| EmailFormal | No incluida | Correctamente excluida |
+| ChatLiterario | No incluida | Correctamente excluida |
+| EnsayoArgumentativo | No incluida | Correctamente excluida |
+| ResenaCritica | No incluida | Correctamente excluida |
+
+**Estado:** DOCUMENTACION CORRECTA - La SPEC refleja solo las 5 mecanicas oficiales del M4.
+
+#### Componentes UI Sin Uso
+
+Los mismos componentes sin uso detectados en M1-M3 aplican a M4:
+
+| Componente | Uso en M4 | Observacion |
+|------------|-----------|-------------|
+| SubmitExerciseButton | 0% | Cada mecanica usa boton propio |
+| HintModal | 0% | Hints integrados inline |
+| CompletionModal | 0% | Feedback inline |
+
+### Estado de Implementacion M4
+
+| Mecanica | Implementada | Funcional | Envia Backend | Observaciones |
+|----------|--------------|-----------|---------------|---------------|
+| M4-01 VerificadorFakeNews | Si | Si | Si | OK (manual) |
+| M4-02 InfografiaInteractiva | Si | Si | Si | OK (manual) |
+| M4-03 QuizTikTok | Si | Si | Si | OK (automatica) |
+| M4-04 NavegacionHipertextual | Si | Si | Si | OK (manual) |
+| M4-05 AnalisisMemes | Si | Si | Si | OK (manual) |
+
+### Cobertura de Evaluacion M4
+
+| Tipo Evaluacion | Cantidad | Mecanicas |
+|-----------------|----------|-----------|
+| Automatica | 1 | QuizTikTok |
+| Manual | 4 | VerificadorFakeNews, InfografiaInteractiva, NavegacionHipertextual, AnalisisMemes |
+
+**Nota:** M4 tiene mayor proporcion de evaluacion manual (80%) debido a la naturaleza del pensamiento critico digital.
+
+### Proximos Pasos
+
+1. **Integracion Teacher Portal:** Asegurar que las 4 mecanicas manuales esten disponibles para revision docente
+2. **Rubricas de evaluacion:** Verificar que `exercise_type_rubrics` contenga rubricas para M4-01, M4-02, M4-04, M4-05
+
+---
+
 *Documento SSOT - GAMILIT Student Portal*
-*Version 1.0.0 - 2026-01-20*
+*Version 1.1.0 - 2026-01-20*
