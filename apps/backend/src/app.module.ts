@@ -157,6 +157,7 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
 
     // Database connection for 'social_features' schema
     // FIX-BE-008-2026-01-18: Added TeacherReport entity from teacher module
+    // FIX-BE-012-2026-01-19: Added Profile and Tenant for @ManyToOne relations in Classroom, ClassroomMember, TeacherClassroom
     TypeOrmModule.forRootAsync({
       name: 'social',  // Connection name for @InjectRepository(Entity, 'social')
       imports: [ConfigModule],
@@ -171,6 +172,9 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
           __dirname + '/modules/social/entities/**/*.entity{.ts,.js}',
           __dirname + '/modules/assignments/entities/**/*.entity{.ts,.js}', // Needed for AssignmentClassroom relation
           __dirname + '/modules/teacher/entities/teacher-report.entity{.ts,.js}',
+          // FIX-BE-012: Required for Classroom, ClassroomMember, TeacherClassroom @ManyToOne relations
+          __dirname + '/modules/auth/entities/profile.entity{.ts,.js}',
+          __dirname + '/modules/auth/entities/tenant.entity{.ts,.js}',
         ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),

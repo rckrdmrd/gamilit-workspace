@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.19.0"
+version: "1.20.0"
 last_updated: "2026-01-19"
-total_tasks: 27
+total_tasks: 28
 
 # =========================================
 # TAREAS POR FECHA
@@ -297,6 +297,34 @@ tasks:
       - "G11: Actualizado Content-Type a text/csv para formato CSV"
       - "Build y lint pasan sin errores"
     path: "orchestration/tareas/TASK-2026-01-19-012/"
+
+  - id: TASK-2026-01-19-013
+    title: "Fix TypeORM Cross-Datasource Entity Metadata Error"
+    date: "2026-01-19"
+    status: completed
+    priority: P0
+    type: bug-fix
+    metodologia: QUICK
+    dominios:
+      - "Backend"
+      - "TypeORM"
+      - "Datasources"
+      - "Entity Relations"
+    entregables:
+      - "METADATA.yml"
+      - "TRIGGER-TYPEORM-CROSS-DATASOURCE.md"
+    metricas:
+      archivos_modificados: 2
+      entidades_agregadas: 2
+      directivas_creadas: 1
+    conclusiones:
+      - "FIX-BE-012: Agregado Profile y Tenant a datasource 'social'"
+      - "Error: Classroom#tenant y Classroom#school metadata not found"
+      - "Causa: @ManyToOne a entidades de otro datasource sin registrar"
+      - "Creada directiva TRIGGER-TYPEORM-CROSS-DATASOURCE.md"
+      - "Actualizada GUIA-PROBLEMAS-RECURRENTES.md con PATRON 6"
+      - "Build y lint pasan sin errores"
+    path: "orchestration/tareas/TASK-2026-01-19-013/"
 
   # ----------------------------------------
   # 2026-01-18

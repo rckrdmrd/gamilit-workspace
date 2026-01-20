@@ -201,6 +201,79 @@ SELECT gamilit.initialize_user_missions(NEW_USER_ID);
 
 ---
 
+## PATRON 6: TypeORM Cross-Datasource Entity Metadata Error
+
+### Sintoma
+```
+TypeORMError: Entity metadata for Classroom#tenant was not found.
+Check if you specified a correct entity object and if it's connected
+in the connection options.
+```
+
+### Causa Raiz
+TypeORM con **multiples datasources** requiere que TODAS las entidades referenciadas
+en relaciones (`@ManyToOne`, `@OneToMany`, etc.) esten registradas en el **MISMO datasource**.
+
+Ejemplo del error:
+- `Classroom` (en datasource 'social') tiene `@ManyToOne(() => Tenant)`
+- `Tenant` esta en datasource 'auth' pero NO en 'social'
+- TypeORM no puede encontrar los metadatos de `Tenant` dentro del contexto 'social'
+
+### Diagnostico Rapido
+```bash
+# 1. Identificar que entidad falta
+# El error indica: "Entity metadata for X#Y was not found"
+# X = entidad que tiene la relacion
+# Y = campo de la relacion (ej: tenant, profile, school)
+
+# 2. Buscar que datasource usa la entidad X
+grep -n "X.entity" apps/backend/src/app.module.ts
+
+# 3. Verificar si la entidad relacionada (del campo Y) esta en ese datasource
+# Revisar la seccion de entities: [] en app.module.ts
+```
+
+### Solucion
+Agregar la entidad faltante al datasource en `app.module.ts`:
+
+```typescript
+// Datasource 'social' - ANTES (ERROR):
+entities: [
+  __dirname + '/modules/social/entities/**/*.entity{.ts,.js}',
+],
+
+// Datasource 'social' - DESPUES (CORRECTO):
+entities: [
+  __dirname + '/modules/social/entities/**/*.entity{.ts,.js}',
+  // FIX-BE-012: Required for @ManyToOne relations
+  __dirname + '/modules/auth/entities/profile.entity{.ts,.js}',
+  __dirname + '/modules/auth/entities/tenant.entity{.ts,.js}',
+],
+```
+
+### Cascada de Dependencias
+
+Si la entidad agregada tiene sus propias relaciones, tambien deben agregarse:
+
+```
+EntityA -> EntityB -> EntityC
+
+Si EntityA esta en datasource X:
+- EntityB debe estar en datasource X
+- EntityC debe estar en datasource X (por la cascada EntityB -> EntityC)
+```
+
+### Prevencion
+1. **ANTES de agregar `@ManyToOne`:** Verificar que la entidad relacionada esta en el mismo datasource
+2. Revisar la directiva: `orchestration/directivas/triggers/TRIGGER-TYPEORM-CROSS-DATASOURCE.md`
+3. Documentar cada adicion con comentario `// FIX-BE-XXX: Required for...`
+
+### Referencia
+- Tarea de origen: TASK-2026-01-19-013
+- Directiva: `orchestration/directivas/triggers/TRIGGER-TYPEORM-CROSS-DATASOURCE.md`
+
+---
+
 ## CHECKLIST DE RESET DE BASE DE DATOS
 
 Antes de probar la aplicacion despues de cambios de schema:
