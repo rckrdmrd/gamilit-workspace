@@ -5,7 +5,7 @@ rf: [RF-M4-001, RF-M5-001]
 epic: EAI-007
 status: Done
 created: 2025-12-05
-updated: 2026-01-04
+updated: 2026-01-20
 ---
 
 # ET-M4M5-001: Schema Base de Datos
@@ -18,13 +18,19 @@ updated: 2026-01-04
 
 ### exercises (existente)
 
-Tipos de ejercicio agregados:
+Tipos de ejercicio implementados:
 ```sql
--- Modulo 4
-'linea_tiempo', 'mapa_mental', 'infografia', 'podcast', 'video_resumen'
+-- Modulo 4 (4 manual + 1 auto)
+'verificador_fake_news',      -- Manual: Verificar afirmaciones + evidencia
+'infografia_interactiva',     -- Manual: Drag-drop sobre imagen
+'quiz_tiktok',                -- AUTO: Swipe gestures, respuestas verificables
+'navegacion_hipertextual',    -- Manual: Explorar documento, responder preguntas
+'analisis_memes'              -- Manual: Anotaciones visuales sobre meme
 
--- Modulo 5
-'ensayo', 'carta', 'proyecto_multimedia'
+-- Modulo 5 (todos manual, estudiante elige 1)
+'diario_multimedia',          -- Manual: 5 entradas con texto + multimedia
+'comic_digital',              -- Manual: 6 vinetas narrativas
+'video_carta'                 -- Manual: Video 2-3 min con 4 secciones
 ```
 
 ### student_responses (existente)
@@ -69,9 +75,22 @@ Politicas existentes aplican:
 
 ## Trazabilidad
 
-- Funcion: `apps/database/ddl/schemas/educational_content/functions/23-validate_module4_module5.sql`
-- Seeds: `apps/database/seeds/exercises_m4_m5.sql`
+**Funciones:**
+- `apps/database/ddl/schemas/educational_content/functions/23-validate_module4_module5.sql`
+
+**Seeds:**
+- `apps/database/seeds/dev/05-exercises-module4.sql` (5 ejercicios)
+- `apps/database/seeds/dev/06-exercises-module5.sql` (3 ejercicios)
+
+**Entities:**
+- `apps/backend/src/modules/progress/entities/manual-review.entity.ts`
+- `apps/backend/src/modules/educational/entities/media-attachment.entity.ts`
+
+**Triggers:**
+- `apps/database/ddl/schemas/progress_tracking/triggers/16-trg_create_manual_review.sql`
+- `apps/database/ddl/schemas/progress_tracking/triggers/17-trg_create_manual_review_on_update.sql`
 
 ---
 
 **Estado:** Done
+**Actualizado:** 2026-01-20 (TASK-2026-01-20-001: Sincronizar con implementacion real)
