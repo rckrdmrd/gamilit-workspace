@@ -1,124 +1,413 @@
+# Trazabilidad de Implementacion - EAI-005 Admin Base
+# Ultima actualizacion: 2026-01-20
+
 epic_code: EAI-005
-epic_name: Administración Base
+epic_name: Administracion Base
 phase: 1
-budget_mxn: 16800
-story_points: 42
+budget_mxn: 18800
+story_points: 47
 status: completed
+documentation_coverage: 100%
 
 # NOTA: US-ADM-003 (Dashboard Maestro, 8 SP) fue movida a EXT-001 como US-PM-000
 # Ya que pertenece al alcance v2 (Portal Maestros) y no al alcance inicial v1
-# EAI-005 ahora contiene 6 User Stories: US-ADM-001, US-ADM-002, US-ADM-004, US-ADM-005, US-ADM-006, US-ADM-007
+# EAI-005 ahora contiene 7 User Stories: US-ADM-001 a US-ADM-007
+
+# ============================================================================
+# DOCUMENTACION
+# ============================================================================
+
+documentation:
+  user_stories:
+    total: 7
+    documented: 7
+    coverage: 100%
+    items:
+      - id: US-ADM-001
+        title: Gestion de Aulas (CRUD Basico)
+        path: historias-usuario/US-ADM-001-gestion-aulas-crud.md
+        story_points: 8
+        status: Done
+
+      - id: US-ADM-002
+        title: Gestion de Estudiantes en Aula
+        path: historias-usuario/US-ADM-002-gestion-estudiantes-aula.md
+        story_points: 10
+        status: Done
+
+      - id: US-ADM-003
+        title: Dashboard de Maestro
+        path: historias-usuario/US-ADM-003-dashboard-maestro.md
+        story_points: 8
+        status: Done
+
+      - id: US-ADM-004
+        title: Asignacion Basica de Modulos
+        path: historias-usuario/US-ADM-004-asignacion-modulos.md
+        story_points: 10
+        status: Done
+
+      - id: US-ADM-005
+        title: Gestion de Grupos Basica
+        path: historias-usuario/US-ADM-005-gestion-grupos.md
+        story_points: 7
+        status: Done
+
+      - id: US-ADM-006
+        title: Configuracion Basica de Aula
+        path: historias-usuario/US-ADM-006-configuracion-basica-aula.md
+        story_points: 6
+        status: Done
+
+      - id: US-ADM-007
+        title: Vista de Actividad de Aula
+        path: historias-usuario/US-ADM-007-vista-actividad-aula.md
+        story_points: 6
+        status: Done
+
+  requirements:
+    total: 4
+    documented: 4
+    coverage: 100%
+    items:
+      - id: RF-ADM-001
+        title: Gestion de Aulas
+        path: requerimientos/RF-ADM-001-gestion-aulas.md
+        user_stories: [US-ADM-001, US-ADM-006]
+        status: Implemented
+
+      - id: RF-ADM-002
+        title: Gestion de Estudiantes
+        path: requerimientos/RF-ADM-002-gestion-estudiantes.md
+        user_stories: [US-ADM-002, US-ADM-005]
+        status: Implemented
+
+      - id: RF-ADM-003
+        title: Dashboard de Maestro
+        path: requerimientos/RF-ADM-003-dashboard-maestro.md
+        user_stories: [US-ADM-003, US-ADM-007]
+        status: Implemented
+
+      - id: RF-ADM-004
+        title: Asignacion de Modulos
+        path: requerimientos/RF-ADM-004-asignacion-modulos.md
+        user_stories: [US-ADM-004]
+        status: Implemented
+
+  specifications:
+    total: 4
+    documented: 4
+    coverage: 100%
+    items:
+      - id: ET-ADM-001
+        title: Implementacion de Gestion de Aulas
+        path: especificaciones/ET-ADM-001-gestion-aulas.md
+        requirement: RF-ADM-001
+        status: Implemented
+
+      - id: ET-ADM-002
+        title: Implementacion de Gestion de Estudiantes
+        path: especificaciones/ET-ADM-002-gestion-estudiantes.md
+        requirement: RF-ADM-002
+        status: Implemented
+
+      - id: ET-ADM-003
+        title: Implementacion de Dashboard de Maestro
+        path: especificaciones/ET-ADM-003-dashboard-maestro.md
+        requirement: RF-ADM-003
+        status: Implemented
+
+      - id: ET-ADM-004
+        title: Implementacion de Asignacion de Modulos
+        path: especificaciones/ET-ADM-004-asignacion-modulos.md
+        requirement: RF-ADM-004
+        status: Implemented
+
+# ============================================================================
+# IMPLEMENTACION
+# ============================================================================
 
 implementation:
   database:
-    schemas: [admin_dashboard, auth_management]
+    schemas: [social_features, educational_content, progress_tracking, auth]
+    tables:
+      - name: classrooms
+        schema: social_features
+        path: apps/database/ddl/schemas/social_features/tables/classrooms.sql
+
+      - name: classroom_settings
+        schema: social_features
+        path: apps/database/ddl/schemas/social_features/tables/classroom_settings.sql
+
+      - name: classroom_students
+        schema: social_features
+        path: apps/database/ddl/schemas/social_features/tables/classroom_students.sql
+
+      - name: groups
+        schema: social_features
+        path: apps/database/ddl/schemas/social_features/tables/groups.sql
+
+      - name: group_students
+        schema: social_features
+        path: apps/database/ddl/schemas/social_features/tables/group_students.sql
+
+      - name: classroom_modules
+        schema: social_features
+        path: apps/database/ddl/schemas/social_features/tables/classroom_modules.sql
+
+      - name: modules
+        schema: educational_content
+        path: apps/database/ddl/schemas/educational_content/tables/modules.sql
 
   backend:
-    module: admin
-    path: apps/backend/src/modules/admin/
+    module: teacher
+    path: apps/backend/src/teacher/
+
+    entities:
+      - name: classroom.entity.ts
+        path: apps/backend/src/teacher/entities/classroom.entity.ts
+        description: Entity de aula
+
+      - name: classroom-settings.entity.ts
+        path: apps/backend/src/teacher/entities/classroom-settings.entity.ts
+        description: Entity de configuracion de aula
+
+      - name: group.entity.ts
+        path: apps/backend/src/teacher/entities/group.entity.ts
+        description: Entity de grupos
 
     services:
-      - name: admin-dashboard.service.ts
-        path: apps/backend/src/modules/admin/services/admin-dashboard.service.ts
-        description: Servicio de dashboard administrativo
-        implemented: 2025-11-23
-        methods:
-          - getRecentActions()
-          - getAlerts()
-          - getUserActivity()
+      - name: classroom.service.ts
+        path: apps/backend/src/teacher/services/classroom.service.ts
+        description: Servicio de gestion de aulas
+
+      - name: teacher.service.ts
+        path: apps/backend/src/teacher/services/teacher.service.ts
+        description: Servicio general del maestro (dashboard)
+
+      - name: classroom-activity.service.ts
+        path: apps/backend/src/teacher/services/classroom-activity.service.ts
+        description: Servicio de actividad del aula
+
+      - name: group.service.ts
+        path: apps/backend/src/teacher/services/group.service.ts
+        description: Servicio de grupos
+
+      - name: module.service.ts
+        path: apps/backend/src/teacher/services/module.service.ts
+        description: Servicio de modulos (catalogo)
 
     controllers:
-      - name: admin-dashboard.controller.ts
-        path: apps/backend/src/modules/admin/controllers/admin-dashboard.controller.ts
-        description: Controlador de dashboard administrativo
-        implemented: 2025-11-23
+      - name: teacher-classroom.controller.ts
+        path: apps/backend/src/teacher/controllers/teacher-classroom.controller.ts
+        description: Controlador CRUD de aulas
+
+      - name: teacher-dashboard.controller.ts
+        path: apps/backend/src/teacher/controllers/teacher-dashboard.controller.ts
+        description: Controlador del dashboard
+
+      - name: classroom-group.controller.ts
+        path: apps/backend/src/teacher/controllers/classroom-group.controller.ts
+        description: Controlador de grupos
+
+      - name: teacher-module.controller.ts
+        path: apps/backend/src/teacher/controllers/teacher-module.controller.ts
+        description: Controlador de modulos
 
     endpoints:
+      classrooms:
+        - path: /api/teacher/classrooms
+          method: POST
+          description: Crear aula
+          specification: ET-ADM-001
+
+        - path: /api/teacher/classrooms
+          method: GET
+          description: Listar aulas del profesor
+          specification: ET-ADM-001
+
+        - path: /api/teacher/classrooms/:id
+          method: GET
+          description: Obtener aula especifica
+          specification: ET-ADM-001
+
+        - path: /api/teacher/classrooms/:id
+          method: PATCH
+          description: Actualizar aula
+          specification: ET-ADM-001
+
+        - path: /api/teacher/classrooms/:id
+          method: DELETE
+          description: Eliminar aula
+          specification: ET-ADM-001
+
+        - path: /api/teacher/classrooms/:id/settings
+          method: GET
+          description: Obtener configuracion
+          specification: ET-ADM-001
+
+        - path: /api/teacher/classrooms/:id/settings
+          method: PATCH
+          description: Actualizar configuracion
+          specification: ET-ADM-001
+
+      students:
+        - path: /api/teacher/classrooms/:id/students
+          method: GET
+          description: Listar estudiantes del aula
+          specification: ET-ADM-002
+
+        - path: /api/teacher/classrooms/:id/students
+          method: POST
+          description: Agregar estudiante existente
+          specification: ET-ADM-002
+
+        - path: /api/teacher/classrooms/:id/students/create
+          method: POST
+          description: Crear y agregar estudiante
+          specification: ET-ADM-002
+
+        - path: /api/teacher/classrooms/:id/students/:studentId
+          method: DELETE
+          description: Remover estudiante
+          specification: ET-ADM-002
+
+      groups:
+        - path: /api/teacher/classrooms/:id/groups
+          method: GET
+          description: Listar grupos del aula
+          specification: ET-ADM-002
+
+        - path: /api/teacher/classrooms/:id/groups
+          method: POST
+          description: Crear grupo
+          specification: ET-ADM-002
+
+        - path: /api/teacher/classrooms/:id/groups/:groupId
+          method: PATCH
+          description: Actualizar grupo
+          specification: ET-ADM-002
+
+        - path: /api/teacher/classrooms/:id/groups/:groupId
+          method: DELETE
+          description: Eliminar grupo
+          specification: ET-ADM-002
+
+        - path: /api/teacher/classrooms/:id/groups/:groupId/students
+          method: POST
+          description: Asignar estudiantes a grupo
+          specification: ET-ADM-002
+
+        - path: /api/teacher/classrooms/:id/groups/:groupId/students/:studentId
+          method: DELETE
+          description: Remover estudiante de grupo
+          specification: ET-ADM-002
+
       dashboard:
-        - path: /admin/dashboard/actions/recent
+        - path: /api/teacher/dashboard
           method: GET
-          controller: AdminDashboardController
-          service: AdminDashboardService.getRecentActions()
-          dto_request: RecentActionsQueryDto (limit?: number)
-          dto_response: RecentActionDto[]
-          description: Returns recent admin actions from last 7 days
-          implemented: 2025-11-23
-          bug_fix: BUG-ADMIN-002
-          fields_response:
-            - id (string)
-            - action (string)
-            - actionType (string)
-            - adminId (string)
-            - adminName (string)
-            - targetType (string)
-            - targetId (string)
-            - details (object)
-            - timestamp (Date)
-            - success (boolean)
+          description: Dashboard general del maestro
+          specification: ET-ADM-003
 
-        - path: /admin/dashboard/alerts
+        - path: /api/teacher/classrooms/:id/activity-summary
           method: GET
-          controller: AdminDashboardController
-          service: AdminDashboardService.getAlerts()
-          dto_response: AlertDto[]
-          description: Returns active system alerts grouped by severity
-          implemented: 2025-11-23
-          bug_fix: BUG-ADMIN-003
-          fields_response:
-            - id (string)
-            - severity (string - info/warning/error/critical)
-            - title (string)
-            - message (string)
-            - details (object)
-            - timestamp (Date)
-            - acknowledged (boolean)
+          description: Actividad del aula
+          specification: ET-ADM-003
 
-        - path: /admin/dashboard/analytics/user-activity
+      modules:
+        - path: /api/teacher/modules/catalog
           method: GET
-          controller: AdminDashboardController
-          service: AdminDashboardService.getUserActivity()
-          dto_request: UserActivityQueryDto (startDate?: string, endDate?: string, groupBy?: string)
-          dto_response: UserActivityDto (dual format with tableData)
-          description: Returns user activity analytics for charting and tables
-          implemented: 2025-11-23
-          bug_fix: BUG-ADMIN-004
-          response_format: |
-            {
-              labels: string[],      // Para gráficos
-              data: number[],        // Para gráficos
-              tableData: Array<{     // Para tablas
-                date: string,
-                activeUsers: number,
-                newUsers: number,
-                sessions: number
-              }>
-            }
+          description: Catalogo de modulos disponibles
+          specification: ET-ADM-004
+
+        - path: /api/teacher/classrooms/:id/modules
+          method: GET
+          description: Modulos asignados al aula
+          specification: ET-ADM-004
+
+        - path: /api/teacher/classrooms/:id/modules
+          method: POST
+          description: Asignar modulo al aula
+          specification: ET-ADM-004
+
+        - path: /api/teacher/classrooms/:id/modules/:moduleId
+          method: DELETE
+          description: Remover modulo del aula
+          specification: ET-ADM-004
+
+        - path: /api/teacher/classrooms/:id/modules/:moduleId/stats
+          method: GET
+          description: Stats del modulo en aula
+          specification: ET-ADM-004
 
   frontend:
-    features: [admin/dashboard, admin/users]
+    features: [teacher/dashboard, teacher/classrooms, teacher/modules]
 
-    api_modules:
-      - name: adminAPI.ts
-        path: apps/frontend/src/lib/api/adminAPI.ts
-        description: Admin API client functions
-        implemented: 2025-11-23
-        functions:
-          - getRecentActions(limit?: number)
-          - getAlerts()
-          - getUserActivity(params?: UserActivityQuery)
-          - getMayaRanks()
+    pages:
+      - name: TeacherDashboard
+        path: apps/frontend/src/pages/teacher/TeacherDashboard.tsx
+        specification: ET-ADM-003
+
+      - name: ClassroomListView
+        path: apps/frontend/src/pages/teacher/classrooms/ClassroomListView.tsx
+        specification: ET-ADM-001
+
+      - name: ClassroomForm
+        path: apps/frontend/src/pages/teacher/classrooms/ClassroomForm.tsx
+        specification: ET-ADM-001
+
+      - name: ClassroomSettingsView
+        path: apps/frontend/src/pages/teacher/classroom/ClassroomSettingsView.tsx
+        specification: ET-ADM-001
+
+      - name: ClassroomStudentsView
+        path: apps/frontend/src/pages/teacher/classroom/ClassroomStudentsView.tsx
+        specification: ET-ADM-002
+
+      - name: ClassroomGroupsView
+        path: apps/frontend/src/pages/teacher/classroom/ClassroomGroupsView.tsx
+        specification: ET-ADM-002
+
+      - name: ClassroomActivityView
+        path: apps/frontend/src/pages/teacher/classroom/ClassroomActivityView.tsx
+        specification: ET-ADM-003
+
+      - name: AssignedModulesView
+        path: apps/frontend/src/pages/teacher/classroom/AssignedModulesView.tsx
+        specification: ET-ADM-004
+
+      - name: ModuleCatalogView
+        path: apps/frontend/src/pages/teacher/classroom/ModuleCatalogView.tsx
+        specification: ET-ADM-004
 
     hooks:
-      - name: useAdminDashboard.ts
-        path: apps/frontend/src/apps/admin/hooks/useAdminDashboard.ts
-        description: React Query hook for admin dashboard data
-        technology: React Query v5
-        implemented: 2025-11-23
-        related_adr: ADR-013 (React Query Adoption)
-        queries:
-          - recentActions (key: ['adminDashboard', 'recentActions'])
-          - alerts (key: ['adminDashboard', 'alerts'])
-          - userActivity (key: ['adminDashboard', 'userActivity'])
+      - name: useTeacherDashboard
+        path: apps/frontend/src/hooks/teacher/useTeacherDashboard.ts
+        specification: ET-ADM-003
+
+      - name: useClassroomActivity
+        path: apps/frontend/src/hooks/teacher/useClassroomActivity.ts
+        specification: ET-ADM-003
+
+      - name: useModuleCatalog
+        path: apps/frontend/src/hooks/teacher/useModuleCatalog.ts
+        specification: ET-ADM-004
+
+      - name: useAssignedModules
+        path: apps/frontend/src/hooks/teacher/useAssignedModules.ts
+        specification: ET-ADM-004
+
+    routes:
+      - /teacher/dashboard
+      - /teacher/classrooms
+      - /teacher/classrooms/new
+      - /teacher/classrooms/:id/edit
+      - /teacher/classroom/:classroomId/settings
+      - /teacher/classroom/:classroomId/students
+      - /teacher/classroom/:classroomId/groups
+      - /teacher/classroom/:classroomId/activity
+      - /teacher/classroom/:classroomId/modules
+      - /teacher/classroom/:classroomId/modules/catalog
 
 # ============================================================================
 # TESTING
@@ -126,16 +415,79 @@ implementation:
 
 testing:
   coverage:
-    overall: 15%  # REAL (actualizado 2025-11-23)
-    backend: 18%  # REAL (actualizado 2025-11-23)
-    frontend: 10%  # REAL (actualizado 2025-11-23)
-    database: 0%  # REAL (actualizado 2025-11-23)
-    meta_original: 88%  # Estimación inicial del proyecto
-    gap_actual: -73%  # Diferencia entre meta y realidad
+    overall: 15%
+    backend: 18%
+    frontend: 10%
+    database: 0%
+    meta_original: 88%
+    gap_actual: -73%
     ultima_medicion: "2025-11-23"
     nota: |
       Coverage REAL actualizado por Architecture-Analyst (2025-11-23).
       Valores previos eran ESTIMACIONES optimistas del inicio del proyecto.
-      Módulo admin tiene tests parciales en algunos controllers.
+      Modulo teacher tiene tests parciales en algunos controllers.
       Gap actual requiere plan de mejora (ver orchestration/roadmap/ROADMAP-TEST-COVERAGE.md).
-      Próxima medición: Mensual (Q1 2026).
+      Proxima medicion: Mensual (Q1 2026).
+
+# ============================================================================
+# MATRIZ DE TRAZABILIDAD COMPLETA
+# ============================================================================
+
+traceability_matrix:
+  - user_story: US-ADM-001
+    requirement: RF-ADM-001
+    specification: ET-ADM-001
+    endpoints: [POST /classrooms, GET /classrooms, GET /classrooms/:id, PATCH /classrooms/:id, DELETE /classrooms/:id]
+    tables: [classrooms]
+
+  - user_story: US-ADM-002
+    requirement: RF-ADM-002
+    specification: ET-ADM-002
+    endpoints: [GET /students, POST /students, POST /students/create, DELETE /students/:id]
+    tables: [classroom_students]
+
+  - user_story: US-ADM-003
+    requirement: RF-ADM-003
+    specification: ET-ADM-003
+    endpoints: [GET /dashboard]
+    tables: [classrooms, activity_logs]
+
+  - user_story: US-ADM-004
+    requirement: RF-ADM-004
+    specification: ET-ADM-004
+    endpoints: [GET /modules/catalog, GET /modules, POST /modules, DELETE /modules/:id, GET /modules/:id/stats]
+    tables: [modules, classroom_modules]
+
+  - user_story: US-ADM-005
+    requirement: RF-ADM-002
+    specification: ET-ADM-002
+    endpoints: [GET /groups, POST /groups, PATCH /groups/:id, DELETE /groups/:id, POST /groups/:id/students, DELETE /groups/:id/students/:studentId]
+    tables: [groups, group_students]
+
+  - user_story: US-ADM-006
+    requirement: RF-ADM-001
+    specification: ET-ADM-001
+    endpoints: [GET /settings, PATCH /settings]
+    tables: [classroom_settings]
+
+  - user_story: US-ADM-007
+    requirement: RF-ADM-003
+    specification: ET-ADM-003
+    endpoints: [GET /activity-summary]
+    tables: [activity_logs, student_progress]
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created_date: "2025-11-02"
+  updated_date: "2026-01-20"
+  version: "2.0"
+  authors:
+    - Documentation Analyst
+    - Architecture Analyst
+  notes:
+    - "Documentacion completada retroactivamente"
+    - "Especificaciones tecnicas ET-ADM-003 y ET-ADM-004 creadas 2026-01-20"
+    - "Cobertura de documentacion: 100%"
