@@ -1,0 +1,355 @@
+# SUBTASKS.yml - Plan de Subtareas con Metodologia CAPVED
+# Version: 1.0.0
+# Tarea Padre: TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS
+
+plan:
+  total_fases: 4
+  total_subtareas: 9
+  horas_estimadas: 33
+
+fases:
+  - id: FASE-1
+    nombre: "Correccion de Gaps Criticos"
+    prioridad: P0
+    dependencias: []
+    subtareas:
+
+      - id: SUBTASK-1.1
+        titulo: "Alinear Ruta de Rango (GAP-SP-001)"
+        descripcion: >
+          Resolver inconsistencia entre frontend /users/{userId}/rank
+          y backend /ranks/current
+        gap_relacionado: GAP-SP-001
+
+        capved:
+          contexto:
+            - "Gap entre frontend /users/{userId}/rank y backend /ranks/current"
+            - "Impacto en DashboardComplete, GamificationPage, ProfilePage"
+
+          analisis:
+            componentes_afectados:
+              - "apps/frontend/src/lib/api/gamification.api.ts"
+              - "apps/frontend/src/apps/student/pages/DashboardComplete.tsx"
+              - "apps/frontend/src/apps/student/pages/ProfilePage.tsx"
+              - "apps/backend/src/modules/gamification/controllers/ranks.controller.ts"
+            impacto: ALTO
+
+          planeacion:
+            opcion_a:
+              descripcion: "Agregar endpoint /gamification/users/{userId}/rank en backend"
+              pros: ["Frontend no cambia", "Consistente con otros endpoints"]
+              contras: ["Nuevo endpoint a mantener"]
+            opcion_b:
+              descripcion: "Modificar frontend para usar /ranks/current"
+              pros: ["No requiere cambio en backend"]
+              contras: ["Cambio en multiples archivos frontend"]
+            decision: "Pendiente - Evaluar en ejecucion"
+
+          validacion:
+            - "npm run build (backend)"
+            - "npm run build (frontend)"
+            - "npm run lint"
+            - "Test manual: verificar flujos de rango en UI"
+
+          ejecucion:
+            archivos_modificar:
+              - "ranks.controller.ts"
+              - "gamification.api.ts"
+            patron: "Endpoint REST con userId parametrizado"
+
+          documentacion:
+            - "Actualizar docs/90-transversal/api/API.md"
+            - "Actualizar BACKEND_INVENTORY.yml"
+
+        perfil_requerido: "@PERFIL_BACKEND + @PERFIL_FRONTEND"
+        horas_estimadas: 2
+        dependencias: []
+        estado: PENDIENTE
+
+      - id: SUBTASK-1.2
+        titulo: "Normalizar Estructura de Misiones (GAP-SP-002)"
+        descripcion: >
+          Eliminar triple wrapping en respuesta de misiones
+          (response.data.data.missions -> response.data.missions)
+        gap_relacionado: GAP-SP-002
+
+        capved:
+          contexto:
+            - "Frontend espera triple wrapping: response.data.data.missions"
+            - "Backend probablemente retorna { data: { missions } } o { missions }"
+
+          analisis:
+            componentes_afectados:
+              - "apps/frontend/src/features/gamification/api/missionsAPI.ts"
+              - "apps/frontend/src/apps/student/pages/MissionsPage.tsx"
+              - "apps/frontend/src/apps/student/pages/DashboardComplete.tsx"
+              - "apps/backend/src/modules/gamification/controllers/missions.controller.ts"
+            impacto: ALTO
+
+          planeacion:
+            accion: "Normalizar respuesta backend a { missions: [...] }"
+            cambios_requeridos:
+              backend: "Remover wrapper { data: } si existe"
+              frontend: "Simplificar parsing a response.data.missions"
+
+          validacion:
+            - "npm run build"
+            - "Test manual: verificar carga de misiones en UI"
+            - "Verificar MissionsPage y DashboardComplete"
+
+          ejecucion:
+            archivos_modificar:
+              - "missions.controller.ts"
+              - "missionsAPI.ts"
+
+          documentacion:
+            - "Actualizar spec de API de misiones"
+
+        perfil_requerido: "@PERFIL_BACKEND + @PERFIL_FRONTEND"
+        horas_estimadas: 2
+        dependencias: []
+        estado: PENDIENTE
+
+  - id: FASE-2
+    nombre: "Resolucion de Gaps Altos"
+    prioridad: P1
+    dependencias: ["FASE-1"]
+    subtareas:
+
+      - id: SUBTASK-2.1
+        titulo: "Remover Wrapping en Achievements (GAP-SP-003)"
+        descripcion: >
+          Eliminar wrapper { data: result } en respuestas de achievements
+        gap_relacionado: GAP-SP-003
+
+        capved:
+          contexto:
+            - "Backend retorna { data: result } con wrapper innecesario"
+            - "Frontend tiene mappers defensivos para manejar inconsistencia"
+
+          analisis:
+            componentes_afectados:
+              - "apps/backend/src/modules/gamification/controllers/achievements.controller.ts"
+              - "apps/frontend/src/lib/api/gamification.api.ts"
+            impacto: MEDIO
+
+          validacion:
+            - "npm run build"
+            - "Test manual: verificar carga de achievements"
+
+          ejecucion:
+            archivos_modificar:
+              - "achievements.controller.ts"
+              - "gamification.api.ts (simplificar mappers)"
+
+        perfil_requerido: "@PERFIL_BACKEND + @PERFIL_FRONTEND"
+        horas_estimadas: 1.5
+        dependencias: ["SUBTASK-1.1"]
+        estado: PENDIENTE
+
+      - id: SUBTASK-2.2
+        titulo: "Documentar Estandar de Nomenclatura (GAP-SP-004)"
+        descripcion: >
+          Crear documento de estandar para nomenclatura snake_case/camelCase
+          entre backend y frontend
+        gap_relacionado: GAP-SP-004
+
+        capved:
+          contexto:
+            - "Backend usa snake_case: current_balance, avatar_url"
+            - "Frontend espera camelCase: currentBalance, avatarUrl"
+            - "Transformers dispersos en toda la API"
+
+          planeacion:
+            entregables:
+              - "docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md"
+              - "Listado de transformers existentes"
+              - "Guia de implementacion para nuevos endpoints"
+
+          documentacion:
+            - "Crear ESTANDAR-NOMENCLATURA-API.md"
+            - "Actualizar docs/40-estandares/_MAP.md"
+
+        perfil_requerido: "@PERFIL_DOCUMENTATION"
+        horas_estimadas: 2
+        dependencias: []
+        estado: PENDIENTE
+
+      - id: SUBTASK-2.3
+        titulo: "Plan de Testing Prioritario (GAP-SP-006)"
+        descripcion: >
+          Crear plan de testing para incrementar coverage de 13% a 25%
+        gap_relacionado: GAP-SP-006
+
+        capved:
+          contexto:
+            - "Coverage actual: 13%"
+            - "Coverage meta: 40%"
+            - "Gap: -27%"
+            - "8 archivos testeados de 371 componentes"
+
+          planeacion:
+            fase_1_planning:
+              duracion: "4h"
+              entregables:
+                - "orchestration/testing/TESTING-PLAN-STUDENT-PORTAL.md"
+                - "Lista priorizada de componentes a testear"
+                - "Estimacion de esfuerzo por componente"
+
+            fase_2_ejecucion:
+              duracion: "8h"
+              componentes_prioritarios:
+                - "useDashboardData (hook critico)"
+                - "useExerciseAutoSave (funcionalidad core)"
+                - "gamification.api.ts (API principal)"
+                - "educationalAPI.ts (API educativa)"
+
+        perfil_requerido: "@PERFIL_TESTING"
+        horas_estimadas: 12
+        dependencias: []
+        estado: PENDIENTE
+
+  - id: FASE-3
+    nombre: "Optimizaciones"
+    prioridad: P2
+    dependencias: ["FASE-1", "FASE-2"]
+    subtareas:
+
+      - id: SUBTASK-3.1
+        titulo: "Evaluar Migracion a Endpoints Consolidados (GAP-SP-005)"
+        descripcion: >
+          Analizar viabilidad de migrar frontend a endpoints consolidados
+          que backend ya proporciona pero no se usan
+        gap_relacionado: GAP-SP-005
+
+        capved:
+          contexto:
+            endpoints_no_consumidos:
+              - "/gamification/ranks/users/{userId}/progress"
+              - "/gamification/ranks/users/{userId}/multipliers"
+              - "/progress/modules/{moduleId}/stats"
+              - "/progress/users/{userId}/learning-path"
+
+          analisis:
+            beneficio_potencial:
+              - "Reducir numero de requests por pagina"
+              - "Datos mas consistentes"
+              - "Mejor performance"
+            riesgo:
+              - "Cambios en multiples componentes"
+              - "Posible regresion"
+
+          planeacion:
+            entregables:
+              - "orchestration/analisis/EVALUACION-ENDPOINTS-CONSOLIDADOS.md"
+              - "Matriz de decision GO/NO-GO por endpoint"
+              - "Plan de migracion si aplica"
+
+        perfil_requerido: "@PERFIL_ARCHITECT"
+        horas_estimadas: 4
+        dependencias: ["SUBTASK-2.1", "SUBTASK-2.2"]
+        estado: PENDIENTE
+
+      - id: SUBTASK-3.2
+        titulo: "Documentar Especificaciones de Mecanicas (GAP-SP-008)"
+        descripcion: >
+          Crear documentacion detallada de entrada/salida para las 33 mecanicas
+          de ejercicios
+        gap_relacionado: GAP-SP-008
+
+        capved:
+          contexto:
+            mecanicas:
+              M1_M3_basicas: 23
+              M4_creativas: 5
+              M5_multimedia: 3
+              total: 33
+
+          planeacion:
+            estructura_por_mecanica:
+              - "Nombre y descripcion"
+              - "Tipo de contenido (content JSONB)"
+              - "Formato de respuesta esperada"
+              - "Criterios de evaluacion"
+              - "Recompensas (XP, ML Coins)"
+
+            entregables:
+              - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M1-M3.md"
+              - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M4.md"
+              - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M5.md"
+
+        perfil_requerido: "@PERFIL_REQUIREMENTS + @PERFIL_DOCUMENTATION"
+        horas_estimadas: 8
+        dependencias: []
+        estado: PENDIENTE
+
+  - id: FASE-4
+    nombre: "Documentacion y Limpieza"
+    prioridad: P3
+    dependencias: ["FASE-3"]
+    subtareas:
+
+      - id: SUBTASK-4.1
+        titulo: "Actualizar README de Student Portal"
+        descripcion: >
+          Actualizar documentacion principal del Student Portal con todos
+          los cambios realizados
+
+        capved:
+          contexto:
+            - "README actual: 2025-11-29"
+            - "Multiples cambios desde entonces"
+
+          documentacion:
+            archivos_actualizar:
+              - "docs/95-guias-desarrollo/student-portal/README.md"
+              - "docs/95-guias-desarrollo/student-portal/_MAP.md"
+              - "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+
+        perfil_requerido: "@PERFIL_DOCUMENTATION"
+        horas_estimadas: 2
+        dependencias: ["SUBTASK-3.1", "SUBTASK-3.2"]
+        estado: PENDIENTE
+
+      - id: SUBTASK-4.2
+        titulo: "Purgar Documentacion Obsoleta"
+        descripcion: >
+          Identificar y eliminar o archivar documentacion que ya no es relevante
+
+        capved:
+          analisis:
+            candidatos_a_revision:
+              - "Gaps ya resueltos (mantener historico)"
+              - "Analisis antiguos (archivar)"
+              - "Referencias a versiones anteriores"
+
+        perfil_requerido: "@PERFIL_DOCUMENTATION"
+        horas_estimadas: 1
+        dependencias: []
+        estado: PENDIENTE
+
+orden_ejecucion:
+  paralelo_fase_1:
+    - SUBTASK-1.1
+    - SUBTASK-1.2
+
+  secuencial_fase_2:
+    - SUBTASK-2.1  # depende de 1.1
+    - SUBTASK-2.2  # paralelo
+    - SUBTASK-2.3  # paralelo
+
+  secuencial_fase_3:
+    - SUBTASK-3.1  # depende de 2.1, 2.2
+    - SUBTASK-3.2  # paralelo
+
+  final_fase_4:
+    - SUBTASK-4.1  # depende de FASE 3
+    - SUBTASK-4.2  # paralelo
+
+criterios_aceptacion_globales:
+  - "Build exitoso (backend + frontend)"
+  - "Lint sin errores"
+  - "Tests relevantes pasando"
+  - "Documentacion actualizada"
+  - "Inventarios sincronizados"
+  - "_INDEX.yml de tareas actualizado"

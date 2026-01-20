@@ -1,0 +1,109 @@
+# METADATA.yml - Tarea de Analisis Student Portal
+# Version: 1.0.0
+# Sistema: SIMCO v4.0.0 + CAPVED
+
+task:
+  id: TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS
+  titulo: "Analisis Integral del Student Portal"
+  descripcion: >
+    Analisis detallado de la documentacion y definiciones de todas las paginas
+    del portal de estudiantes del frontend, incluyendo funcionalidades, APIs,
+    coherencia backend-frontend, y plan de subtareas con metodologia CAPVED.
+
+  tipo: analysis
+  prioridad: P0
+  dominio: Frontend + Backend + Documentation
+
+  fechas:
+    inicio: 2026-01-20
+    fin_estimada: 2026-01-25
+    ultima_actualizacion: 2026-01-20
+
+  estado: EN_PROGRESO
+  fase_actual: ANALISIS_COMPLETADO
+
+  metricas:
+    paginas_analizadas: 27
+    componentes_identificados: 463
+    hooks_identificados: 12
+    apis_consumidas: 25
+    endpoints_backend: 80
+    gaps_identificados: 8
+    subtareas_planificadas: 9
+    horas_estimadas: 33
+
+contexto:
+  proyecto: gamilit
+  modulo: student-portal
+  portales_afectados:
+    - student
+
+  tecnologias:
+    frontend:
+      - React
+      - TypeScript
+      - React Query
+      - Zustand
+      - Framer Motion
+    backend:
+      - NestJS
+      - TypeORM
+      - PostgreSQL
+
+agentes:
+  orquestador: "@PERFIL_ORQUESTADOR"
+  subagentes_requeridos:
+    - "@PERFIL_BACKEND"
+    - "@PERFIL_FRONTEND"
+    - "@PERFIL_DOCUMENTATION"
+    - "@PERFIL_TESTING"
+    - "@PERFIL_ARCHITECT"
+
+gaps_identificados:
+  criticos:
+    - id: GAP-SP-001
+      titulo: "Ruta de Rango Inconsistente"
+      severidad: CRITICO
+    - id: GAP-SP-002
+      titulo: "Estructura de Misiones Triple-wrapped"
+      severidad: CRITICO
+
+  altos:
+    - id: GAP-SP-003
+      titulo: "Achievements con Wrapping Innecesario"
+      severidad: ALTO
+    - id: GAP-SP-004
+      titulo: "Nomenclatura Inconsistente snake_case/camelCase"
+      severidad: ALTO
+
+  medios:
+    - id: GAP-SP-005
+      titulo: "Endpoints Consolidados No Utilizados"
+      severidad: MEDIO
+    - id: GAP-SP-006
+      titulo: "Test Coverage Critico (13% vs 40%)"
+      severidad: MEDIO
+
+  bajos:
+    - id: GAP-SP-007
+      titulo: "Defensive Mapping en Frontend"
+      severidad: BAJO
+    - id: GAP-SP-008
+      titulo: "Documentacion de Ejercicios Incompleta"
+      severidad: BAJO
+
+documentacion_generada:
+  - ruta: "orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md"
+    tipo: "analisis"
+    lineas: 600
+  - ruta: "orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/METADATA.yml"
+    tipo: "metadata"
+  - ruta: "orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/SUBTASKS.yml"
+    tipo: "subtareas"
+
+referencias:
+  analisis_principal: "orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md"
+  inventario_frontend: "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+  inventario_backend: "orchestration/inventarios/BACKEND_INVENTORY.yml"
+  guia_student_portal: "docs/95-guias-desarrollo/student-portal/README.md"
+  gaps_previos: "docs/95-guias-desarrollo/student-portal/gaps/"
