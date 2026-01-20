@@ -103,22 +103,106 @@ Las siguientes paginas estan implementadas y funcionando pero NO tienen User Sto
 
 ---
 
-### 2.3 Gaps en Coherencia Frontend ↔ Backend
+### 2.3 Gaps en Coherencia Frontend ↔ Backend (Validación T3.1)
 
-#### Gap FE-BE-001: Tipos inconsistentes en DTOs
+**Fecha validación:** 2026-01-20
+**Metodología:** Comparación exhaustiva de 105+ llamadas frontend vs 185+ endpoints backend
+
+---
+
+#### RESUMEN DE COHERENCIA
+
+| Categoría | Frontend | Backend | Coherencia |
+|-----------|----------|---------|------------|
+| **User Management** | 14 endpoints | 14 endpoints | ✅ 100% |
+| **Organizations** | 9 endpoints | 9 endpoints | ✅ 100% |
+| **Content & Approvals** | 10 endpoints | 10 endpoints | ✅ 100% |
+| **Roles & Permissions** | 4 endpoints | 4 endpoints | ✅ 100% |
+| **Gamification** | 5 endpoints | 10 endpoints | ⚠️ 50% (BE tiene más) |
+| **Analytics** | 7 endpoints | 7 endpoints | ✅ 100% |
+| **Reports** | 5 endpoints | 5 endpoints | ✅ 100% |
+| **Alerts** | 8 endpoints | 7 endpoints | ⚠️ 1 extra en FE |
+| **Progress Tracking** | 7 endpoints | 7 endpoints | ✅ 100% |
+| **System/Settings** | 12 endpoints | 17 endpoints | ⚠️ 70% (BE tiene más) |
+| **Monitoring** | 6 endpoints | 5 endpoints | ⚠️ 1 extra en FE |
+| **Feature Flags** | 4 endpoints | 9 endpoints | ⚠️ 44% (BE tiene más) |
+| **Bulk Operations** | 3 endpoints | 6 endpoints | ⚠️ 50% (BE tiene más) |
+
+---
+
+#### Gap FE-BE-001: Endpoints Frontend sin Backend (CRÍTICO)
+
+Los siguientes endpoints son llamados por el frontend pero **NO tienen implementación en backend**:
+
+| # | Endpoint | Archivo Frontend | Estado |
+|---|----------|------------------|--------|
+| 1 | `POST /admin/alerts/:alertId/dismiss` | useAdminDashboard.ts:365 | ❌ NO IMPLEMENTADO |
+| 2 | `GET /admin/system/config/categories` | adminAPI.ts:1090 | ❌ NO IMPLEMENTADO (P1) |
+| 3 | `GET /admin/system/config/:category` | adminAPI.ts:1106 | ✅ Implementado en admin-system.controller |
+| 4 | `PUT /admin/system/config/:category` | adminAPI.ts:1120 | ✅ Implementado en admin-system.controller |
+| 5 | `POST /admin/system/config/validate` | adminAPI.ts:1140 | ✅ Implementado en admin-system.controller |
+| 6 | `GET /admin/content/history` | adminAPI.ts:524 | ⚠️ Parcial (approval-history existe) |
+
+**Impacto:** MEDIO - Funcionalidad limitada en dashboard y settings
+**Acción requerida:** Implementar endpoints faltantes o remover llamadas del frontend
+
+---
+
+#### Gap FE-BE-002: Endpoints Backend sin Frontend (INFO)
+
+Los siguientes endpoints existen en backend pero **NO son consumidos por el frontend**:
+
+| # | Endpoint | Controller | Propósito |
+|---|----------|------------|-----------|
+| 1 | `POST /admin/system/maintenance/cleanup-logs` | admin-system.controller | Limpieza de logs |
+| 2 | `POST /admin/system/maintenance/cleanup-activity` | admin-system.controller | Limpieza actividad |
+| 3 | `POST /admin/system/maintenance/optimize-database` | admin-system.controller | Optimización DB |
+| 4 | `POST /admin/system/maintenance/clear-cache` | admin-system.controller | Limpiar caché |
+| 5 | `POST /admin/system/maintenance/cleanup-sessions` | admin-system.controller | Limpiar sesiones |
+| 6 | `GET /admin/system/cron/status` | admin-system.controller | Estado de CRONs |
+| 7 | `GET /admin/gamification/parameters` | admin-gamification-config.controller | Listar parámetros |
+| 8 | `GET /admin/gamification/parameters/:id` | admin-gamification-config.controller | Detalle parámetro |
+| 9 | `PUT /admin/gamification/parameters/:id` | admin-gamification-config.controller | Actualizar parámetro |
+| 10 | `PUT /admin/gamification/maya-ranks/:rankName` | admin-gamification-config.controller | Actualizar rank |
+| 11 | `POST /admin/feature-flags/:key/check` | feature-flags.controller | Verificar flag |
+| 12 | `POST /admin/feature-flags/:key/enable` | feature-flags.controller | Habilitar flag |
+| 13 | `POST /admin/feature-flags/:key/disable` | feature-flags.controller | Deshabilitar flag |
+| 14 | `PUT /admin/feature-flags/:key/rollout` | feature-flags.controller | Actualizar rollout |
+
+**Impacto:** BAJO - Funcionalidad disponible pero no expuesta en UI
+**Acción requerida:** Evaluar si agregar UI o documentar como API-only
+
+---
+
+#### Gap FE-BE-003: Diferencias en Rutas/Naming
+
+| Frontend llama | Backend tiene | Diferencia |
+|----------------|---------------|------------|
+| `GET /admin/dashboard` | `GET /admin/dashboard` + `/dashboard/stats` | FE espera datos combinados |
+| `POST /admin/users/bulk/suspend` | `POST /admin/bulk-operations/suspend-users` | Ruta diferente |
+| `POST /admin/users/bulk/delete` | `POST /admin/bulk-operations/delete-users` | Ruta diferente |
+| `POST /admin/users/bulk/update-role` | `POST /admin/bulk-operations/update-role` | Ruta diferente |
+
+**Impacto:** ALTO si las rutas no son aliases
+**Acción requerida:** Verificar si `admin-users.controller` tiene aliases a `bulk-operations`
+
+---
+
+#### Gap FE-BE-004: Tipos inconsistentes en DTOs
 
 **Descripcion:** Algunos DTOs del frontend no coinciden exactamente con los del backend.
 
 **Ejemplos identificados:**
 - `AdminAssignmentDto` frontend vs `AdminAssignmentResponseDto` backend
+- `AlertDto` frontend vs `AlertResponseDto` backend
 - Campos opcionales en FE que son requeridos en BE
 
 **Impacto:** BAJO - Funciona pero puede causar errores de tipo
-**Accion:** Sincronizar tipos
+**Accion:** Sincronizar tipos en `apps/frontend/src/services/api/adminTypes.ts`
 
 ---
 
-#### Gap FE-BE-002: Endpoints documentados vs implementados
+#### Gap FE-BE-005: Endpoints documentados vs implementados
 
 **Descripcion:** TRACEABILITY.yml documenta endpoints con prefijo `/api/v1/` pero backend usa `/api/`
 

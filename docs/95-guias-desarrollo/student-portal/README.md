@@ -1,9 +1,9 @@
 # DOCUMENTACIÓN TÉCNICA - STUDENT PORTAL
 ## GAMILIT Platform
 
-**Última actualización:** 2025-11-29
-**Estado:** ✅ Documentación Completa
-**Sprint:** Correcciones P0 (Gaps Críticos)
+**Última actualización:** 2026-01-20
+**Estado:** ✅ Documentación Actualizada
+**Sprint:** Análisis Integral y Optimización
 
 ---
 
@@ -11,15 +11,59 @@
 
 ### 🎯 Resumen Ejecutivo
 
-Este directorio contiene la documentación técnica completa de las **correcciones P0** implementadas en el Student Portal de GAMILIT. Se documentaron 5 gaps críticos que impedían funcionalidad core del sistema:
+Este directorio contiene la documentación técnica completa del **Student Portal de GAMILIT**, incluyendo análisis, gaps resueltos, inventarios y trazas de corrección.
 
-- **GAP-001:** Misiones no otorgaban recompensas reales
-- **GAP-002:** Misiones no actualizaban progreso correctamente (tipos desalineados BD/Backend)
-- **GAP-006:** Perfil mostraba estadísticas hardcodeadas
-- **GAP-007:** Settings no persistía cambios
-- **GAP-008:** Backend getUserStatistics() devolvía mock data
+#### Métricas del Portal (Análisis 2026-01-20)
+
+| Métrica | Valor |
+|---------|-------|
+| **Páginas analizadas** | 27 (15 principales + 12 complementarias) |
+| **Componentes identificados** | 463+ |
+| **Hooks personalizados** | 12+ |
+| **APIs consumidas** | 25+ categorías |
+| **Mecánicas de ejercicios** | 33 |
+| **Test coverage actual** | ~5.2% (meta: 40%) |
+
+#### Gaps P0 Resueltos (Sprint 2025-11)
+
+- **GAP-001:** Misiones no otorgaban recompensas reales ✅
+- **GAP-002:** Misiones no actualizaban progreso correctamente ✅
+- **GAP-006:** Perfil mostraba estadísticas hardcodeadas ✅
+- **GAP-007:** Settings no persistía cambios ✅
+- **GAP-008:** Backend getUserStatistics() devolvía mock data ✅
 
 **Resultado:** 39/39 criterios de aceptación cumplidos ✅
+
+---
+
+## 📎 DOCUMENTOS RELACIONADOS (2026)
+
+### Análisis y Especificaciones
+
+| Documento | Ubicación | Descripción |
+|-----------|-----------|-------------|
+| **Análisis Integral** | `orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md` | Análisis completo de 27 páginas, 8 gaps identificados |
+| **Estándar Nomenclatura API** | `docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md` | Estándar snake_case/camelCase con 100+ campos documentados |
+| **Especificaciones Mecánicas** | `docs/90-transversal/mecanicas/SPEC-MECANICAS-EJERCICIOS.md` | 33 mecánicas detalladas (M1-M5 + auxiliares) |
+
+### Testing y Calidad
+
+| Documento | Ubicación | Descripción |
+|-----------|-----------|-------------|
+| **Plan de Testing** | `orchestration/testing/TESTING-PLAN-STUDENT-PORTAL.md` | Roadmap de testing: 5% → 25% → 40% coverage |
+
+### Inventarios
+
+| Documento | Ubicación | Descripción |
+|-----------|-----------|-------------|
+| **Frontend Inventory** | `orchestration/inventarios/FRONTEND_INVENTORY.yml` | 463+ componentes, 101 hooks, 23 API services |
+| **Backend Inventory** | `orchestration/inventarios/BACKEND_INVENTORY.yml` | 612 endpoints documentados |
+
+### Tarea Activa
+
+| Documento | Ubicación | Descripción |
+|-----------|-----------|-------------|
+| **TASK Metadata** | `orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/` | Tarea de análisis integral en progreso |
 
 ---
 
@@ -547,34 +591,54 @@ docs/student-portal/
 
 ---
 
-### IMPORTANTE (P1) - Próximo Sprint
+### IMPORTANTE (P0) - Gaps Críticos (Análisis 2026-01)
 
-**Tests Unitarios**
-- Estimación: 4-5 horas
-- Tests recomendados:
-  - `MissionsService.claimRewards()` - 4-5 tests
-  - `useUserStatistics` hook - 5-6 tests
-  - `profileAPI` methods - 8-10 tests
+**GAP-SP-001: Alinear Ruta de Rango**
+- Frontend espera: `/gamification/users/{userId}/rank`
+- Backend proporciona: `/gamification/ranks/current`
+- Estimación: 2h
 
-**GAP-003: Ejercicios - Workaround FE-049**
-- Refactorizar parseo de exercises
-- Estimación: 4-6 horas
-
-**GAP-004: Ejercicios - Fallback a mock en producción**
-- Deshabilitar fallback en modo producción
-- Estimación: 30 minutos
+**GAP-SP-002: Normalizar Estructura de Misiones**
+- Frontend espera triple wrapping en respuesta
+- Estimación: 2h
 
 ---
 
-### BACKLOG (P3)
+### IMPORTANTE (P1) - Próximo Sprint
 
-- **GAP-002:** Actividades - Definición de alcance (requiere PO)
-- **GAP-005:** Rangos - Multiplicador calculado localmente (mejora opcional)
-- Tests E2E con Playwright
+**Tests Unitarios (Plan de Testing)**
+- Coverage actual: ~5.2%
+- Coverage meta Sprint 1: 25%
+- Coverage meta final: 40%
+- Ver: `orchestration/testing/TESTING-PLAN-STUDENT-PORTAL.md`
+
+**Hooks Críticos a Testear:**
+- `useDashboardData` - Hook principal del dashboard
+- `useExerciseAutoSave` - Auto-guardado de progreso
+- `gamification.api.ts` - 12 métodos principales
+
+---
+
+### BACKLOG (P2-P3)
+
+- **GAP-SP-005:** Evaluar migración a endpoints consolidados
+- **GAP-SP-003:** Remover wrapping innecesario en Achievements
+- Tests E2E con Playwright (P3)
 
 ---
 
 ## 📊 MÉTRICAS FINALES
+
+### Métricas Actuales (2026-01-20)
+
+| Categoría | Cantidad | Detalle |
+|-----------|----------|---------|
+| **Páginas** | 27 | 15 principales + 12 complementarias |
+| **Componentes** | 463+ | UI, mecánicas, widgets |
+| **Hooks** | 12+ | Dashboard, ejercicios, gamificación |
+| **APIs consumidas** | 25+ | Categorías de endpoints |
+| **Mecánicas** | 33 | 23 M1-M3 + 5 M4 + 3 M5 + 2 aux |
+| **Test coverage** | ~5.2% | Meta: 40% |
 
 ### Estado de Features
 
@@ -594,26 +658,43 @@ docs/student-portal/
 
 ### Estado de Gaps
 
+#### Gaps Históricos (Sprint 2025-11) - RESUELTOS
+
 | Gap | Prioridad | Estado | Sprint |
 |-----|-----------|--------|--------|
 | GAP-001 | P0 | ✅ Resuelto | Completado |
-| **GAP-002** | **P0** | **✅ Resuelto** | **Completado (2025-11-29)** |
+| GAP-002 | P0 | ✅ Resuelto | Completado (2025-11-29) |
 | GAP-006 | P0 | ✅ Resuelto | Completado |
 | GAP-007 | P0 | ✅ Resuelto | Completado |
 | GAP-008 | P0 | ✅ Resuelto | Completado |
-| GAP-003 | P1 | 🟡 Pendiente | Próximo |
-| GAP-004 | P2 | 🟡 Pendiente | Próximo |
-| GAP-005 | P3 | 🟢 Backlog | - |
+
+#### Gaps de Coherencia (Análisis 2026-01-20)
+
+| Gap | Severidad | Descripción | Estado |
+|-----|-----------|-------------|--------|
+| GAP-SP-001 | CRITICO | Ruta de Rango Inconsistente (FE vs BE) | 🔴 Por resolver |
+| GAP-SP-002 | CRITICO | Estructura de Misiones Triple-wrapped | 🔴 Por resolver |
+| GAP-SP-003 | ALTO | Achievements con Wrapping Innecesario | 🟡 Pendiente |
+| GAP-SP-004 | ALTO | Nomenclatura Inconsistente snake_case/camelCase | ✅ Documentado (ver estándar) |
+| GAP-SP-005 | MEDIO | Endpoints Consolidados No Utilizados | 🟡 Evaluación |
+| GAP-SP-006 | MEDIO | Test Coverage Crítico (5% vs 40% meta) | 🟡 Plan creado |
+| GAP-SP-007 | BAJO | Defensive Mapping en Frontend | 🟢 Backlog |
+| GAP-SP-008 | BAJO | Documentación de Ejercicios Incompleta | ✅ Documentado (ver SPEC-MECANICAS) |
+
+**Referencia:** `orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md`
 
 ### Calidad del Código
 
 | Métrica | Valor | Evaluación |
 |---------|-------|------------|
 | TypeScript errors | 0 | ✅ Excelente |
-| Criterios cumplidos | 39/39 (100%) | ✅ Excelente |
-| Unit tests | 0 | ❌ Pendiente |
+| Criterios cumplidos (P0) | 39/39 (100%) | ✅ Excelente |
+| Unit tests (FE) | 47 archivos | 🟡 En progreso |
+| Test coverage | ~5.2% | ⚠️ Meta: 40% |
 | Manual tests | 29 escenarios | ✅ Completo |
-| Documentación | ~5,400 líneas | ✅ Exhaustivo |
+| Documentación | ~5,400+ líneas | ✅ Exhaustivo |
+
+**Plan de Testing:** Ver `orchestration/testing/TESTING-PLAN-STUDENT-PORTAL.md`
 
 ---
 
@@ -658,10 +739,10 @@ docs/student-portal/
 ## 📞 CONTACTO Y MANTENIMIENTO
 
 ### Responsable de Documentación
-**Rol:** Architecture-Analyst
+**Rol:** Architecture-Analyst / Documentation-Agent
 **Fecha de creación:** 2025-11-24
-**Última actualización:** 2025-11-24 (Post-GAP-008)
-**Próxima revisión:** Pre-deploy a producción
+**Última actualización:** 2026-01-20 (Análisis Integral)
+**Próxima revisión:** Al completar gaps GAP-SP-001 y GAP-SP-002
 
 ### Cómo Actualizar Esta Documentación
 
@@ -679,41 +760,60 @@ docs/student-portal/
 
 ## 🏆 CONCLUSIÓN
 
-### Logros del Sprint P0
+### Logros del Sprint P0 (2025-11)
 
-✅ **4 gaps críticos resueltos** (100% de criterios cumplidos)
+✅ **5 gaps críticos resueltos** (100% de criterios cumplidos)
 ✅ **10 archivos implementados** (3 creados, 7 modificados)
 ✅ **~1,080 líneas de código** (alta calidad, 0 errores TypeScript)
 ✅ **~5,150 líneas de documentación** (exhaustiva y bien estructurada)
 ✅ **0 valores hardcodeados** (todo dinámico desde API/BD)
 ✅ **Sistema 98% integrado** (solo PUT/POST endpoints pendientes)
 
-### Estado del Sistema
+### Estado Actual (2026-01-20)
 
-🟢 **SISTEMA FUNCIONAL Y LISTO PARA PRODUCCIÓN**
+🟢 **SISTEMA FUNCIONAL - EN OPTIMIZACIÓN**
 
 **Funcionalidades operativas:**
+- ✅ 27 páginas analizadas y documentadas
+- ✅ 33 mecánicas de ejercicios especificadas
 - ✅ Completar ejercicios y ver progreso real
 - ✅ Sistema de rangos con promoción automática
 - ✅ Achievements con WebSocket real-time
 - ✅ Misiones con recompensas reales (XP + ML Coins)
 - ✅ Perfil dinámico con estadísticas reales desde BD
-- ✅ Settings con frontend funcional (backend GET implementado)
 
-**Limitaciones menores (no bloquean producción):**
-- ℹ️ Endpoints PUT/POST para actualizar perfil/avatar/password pendientes (mejora futura)
-- ℹ️ Backend retorna `total_ml_coins` vs frontend espera `ml_coins` (inconsistencia menor)
+**Áreas en mejora:**
+- 🟡 Test coverage: 5.2% → Meta 40% (plan documentado)
+- 🟡 2 gaps críticos de coherencia FE-BE por resolver (GAP-SP-001, GAP-SP-002)
+- 🟡 Endpoints PUT/POST para actualizar perfil pendientes
 
-**Recomendación:** Sistema listo para deploy. Implementar PUT/POST endpoints en sprint futuro.
+**Documentación nueva creada:**
+- ✅ Estándar de nomenclatura API (100+ campos documentados)
+- ✅ Especificaciones de 33 mecánicas de ejercicios
+- ✅ Plan de testing detallado con roadmap
+
+**Recomendación:** Resolver gaps críticos GAP-SP-001 y GAP-SP-002 antes de siguiente release.
 
 ---
 
 ## 📚 REFERENCIAS EXTERNAS
 
-### Análisis Previo (Sesión Anterior)
-- `orchestration/agentes/architecture-analyst/student-portal-analysis-2025-11-24/README.md`
-- `orchestration/agentes/architecture-analyst/student-portal-analysis-2025-11-24/06-MATRIZ-GAPS.yml`
-- `orchestration/agentes/architecture-analyst/student-portal-analysis-2025-11-24/08-PLAN-CORRECCIONES.md`
+### Análisis Actual (2026-01-20)
+- `orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md`
+- `orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/`
+
+### Documentación Nueva (2026)
+- **Estándar de Nomenclatura:** `docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md`
+- **Especificaciones Mecánicas:** `docs/90-transversal/mecanicas/SPEC-MECANICAS-EJERCICIOS.md`
+- **Plan de Testing:** `orchestration/testing/TESTING-PLAN-STUDENT-PORTAL.md`
+
+### Análisis Histórico (2025-11)
+- `docs/99-archivados/historicos-2025/student-portal-analysis-2025-11/`
+
+### Inventarios
+- `orchestration/inventarios/FRONTEND_INVENTORY.yml` - 463+ componentes
+- `orchestration/inventarios/BACKEND_INVENTORY.yml` - 612 endpoints
+- `orchestration/inventarios/DATABASE_INVENTORY.yml` - 16 schemas, 135+ tablas
 
 ### Codebase
 - Frontend: `apps/frontend/src/apps/student/`
@@ -722,17 +822,19 @@ docs/student-portal/
 
 ### Herramientas
 - TypeScript: `npx tsc --noEmit`
-- Testing: Jest, React Testing Library, Playwright (recomendado)
+- Testing: Vitest, React Testing Library, Playwright (recomendado)
 - Linting: ESLint
 - Git: Commits referencian gaps (ej: `[Backend] Fix GAP-001: ...`)
 
 ---
 
 **README generado:** 2025-11-24
-**Última actualización:** 2025-11-29 (Post-GAP-002)
-**Versión:** 1.2.0
-**Estado:** ✅ COMPLETO
+**Última actualización:** 2026-01-20 (Análisis Integral + Nuevos Documentos)
+**Versión:** 1.3.0
+**Estado:** ✅ ACTUALIZADO
 
 ---
 
-_Para cualquier pregunta sobre esta documentación, revisar la [Traza Completa](./traces/TRACE-P0-CORRECTIONS.md), [TRACE-GAP-002](./traces/TRACE-GAP-002.md) y [TRACE-GAP-008](./traces/TRACE-GAP-008.md) que contienen la cronología detallada de todo el proceso._
+_Para cualquier pregunta sobre esta documentación, revisar:_
+- _Análisis actual: `orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md`_
+- _Trazas históricas: [TRACE-P0-CORRECTIONS](./traces/TRACE-P0-CORRECTIONS.md), [TRACE-GAP-002](./traces/TRACE-GAP-002.md), [TRACE-GAP-008](./traces/TRACE-GAP-008.md)_

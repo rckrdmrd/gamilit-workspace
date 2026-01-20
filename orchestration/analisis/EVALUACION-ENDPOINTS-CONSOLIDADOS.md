@@ -4,6 +4,8 @@
 **GAP:** GAP-SP-005
 **Tipo:** Analisis Arquitectonico
 **Estado:** COMPLETADO
+**SUBTASK:** 3.1
+**Ultima Revision:** 2026-01-20
 
 ---
 
@@ -12,9 +14,10 @@
 | Aspecto | Valor |
 |---------|-------|
 | **Decision General** | **PARCIAL - GO para 2 endpoints** |
-| **Beneficio Estimado** | 2 requests menos por carga de dashboard |
+| **Beneficio Estimado** | 2 requests menos por carga de dashboard (5 -> 4) |
 | **Esfuerzo Total** | 4-6h de desarrollo |
 | **Riesgo** | BAJO |
+| **Requests Reducidos** | 20% por carga de dashboard |
 
 ### Recomendacion
 
@@ -399,3 +402,47 @@ const transformedRankData: RankData = {
 ---
 
 *Documento generado como parte de SUBTASK-3.1 del analisis GAP-SP-005*
+
+---
+
+## Apendice B: Notas de Revision (2026-01-20)
+
+### Verificacion de DTOs en Backend
+
+Los DTOs del backend han sido verificados y coinciden con lo documentado:
+
+- **UserRankProgressResponseDto**: 22 campos, incluye toda la informacion necesaria
+- **MultiplierBreakdownResponseDto**: Desglose completo con soporte para multiplicadores de racha
+
+### Multiplicadores de Rango (Valores Actuales)
+
+Segun `user-rank-progress-response.dto.ts`:
+
+| Rango | Multiplicador Backend | Multiplicador Frontend (calculado) |
+|-------|----------------------|-----------------------------------|
+| Ajaw | 1.0 | 1.0 |
+| Nacom | 1.1 | 1.25 |
+| Ah K'in | 1.25 | 1.5 |
+| Halach Uinic | 1.5 | 1.75 |
+| K'uk'ulkan | 2.0 | 2.0 |
+
+**NOTA:** Existe discrepancia entre multiplicadores calculados en frontend vs backend.
+Al migrar al endpoint consolidado, se utilizaran los valores del backend (mas precisos).
+
+### Hooks Frontend Analizados
+
+| Hook | Archivo | Endpoints Actuales | Migracion Recomendada |
+|------|---------|-------------------|----------------------|
+| `useDashboardData` | `apps/student/hooks/useDashboardData.ts` | 5 requests | Reducir a 4 con `/progress` |
+| `useProgression` | `features/gamification/ranks/hooks/useProgression.ts` | Usa store (Zustand) | No requiere cambios |
+| `useMultipliers` | `features/gamification/ranks/hooks/useMultipliers.ts` | Usa store (Zustand) | Opcional: cargar desde API |
+| `useGamificationData` | `apps/student/hooks/useGamificationData.ts` | 6 requests | **DEPRECATED** - No usar |
+
+### Confirmacion de Endpoints en Backend
+
+Todos los endpoints listados han sido verificados en:
+- `apps/backend/src/modules/gamification/controllers/ranks.controller.ts`
+- `apps/backend/src/modules/progress/controllers/module-progress.controller.ts`
+- `apps/backend/src/shared/constants/routes.constants.ts`
+
+Los endpoints estan documentados en Swagger y listos para consumir.

@@ -258,7 +258,27 @@ fases:
         perfil_requerido: "@PERFIL_ARCHITECT"
         horas_estimadas: 4
         dependencias: ["SUBTASK-2.1", "SUBTASK-2.2"]
-        estado: PENDIENTE
+        estado: COMPLETADO
+        fecha_completado: "2026-01-20"
+        entregable: "orchestration/analisis/EVALUACION-ENDPOINTS-CONSOLIDADOS.md"
+        resultados:
+          decision_general: "PARCIAL - GO para 2 endpoints"
+          endpoints_go:
+            - endpoint: "/gamification/ranks/users/{userId}/progress"
+              beneficio: "Reemplaza 2 requests (/ranks/current + /rank-progress)"
+              esfuerzo: "2-3h"
+              prioridad: "P1"
+            - endpoint: "/gamification/ranks/users/{userId}/multipliers"
+              beneficio: "Mejora precision, habilita UI de desglose"
+              esfuerzo: "1-2h"
+              prioridad: "P2"
+          endpoints_no_go:
+            - endpoint: "/progress/modules/{moduleId}/stats"
+              razon: "Estadisticas agregadas, no aplica a dashboard individual"
+            - endpoint: "/progress/users/{userId}/learning-path"
+              razon: "Funcionalidad futura, no reemplaza nada actual"
+          reduccion_requests: "5 -> 4 (20% menos)"
+          riesgo: "BAJO"
 
       - id: SUBTASK-3.2
         titulo: "Documentar Especificaciones de Mecanicas (GAP-SP-008)"

@@ -28,6 +28,7 @@ Esta carpeta contiene documentacion **definitiva y vigente** del estado actual d
 | **[roadmap/](./roadmap/)** | 1 | Roadmap actual | Definitivo |
 | **[deuda-tecnica/](./deuda-tecnica/)** | 1 | Deuda tecnica documentada | Definitivo |
 | **[correcciones/](./correcciones/)** | 2+ | BACKEND-CRITICAL-ISSUES-PENDING.md (SSOT), correcciones activas | Vigente |
+| **[mecanicas/](./mecanicas/)** | 1 | Especificaciones de mecanicas de ejercicios (33 mecanicas) | Definitivo |
 | **[restructuracion-v2/](./restructuracion-v2/)** | 5 | Restructuracion y user stories | Definitivo |
 
 ### Archivos Raiz
@@ -36,8 +37,9 @@ Esta carpeta contiene documentacion **definitiva y vigente** del estado actual d
 |---------|-------------|
 | `README.md` | Indice de la carpeta |
 | `_MAP.md` | Este archivo - mapa de navegacion |
-| `EJERCICIOS-PREGUNTAS-RESPUESTAS.md` | Documentacion de ejercicios |
+| `EJERCICIOS-PREGUNTAS-RESPUESTAS.md` | Documentacion de preguntas y respuestas de ejercicios |
 | `SSOT-GAMIFICACION.md` | Single Source of Truth para sistema de gamificacion |
+| `mecanicas/SPEC-MECANICAS-EJERCICIOS.md` | Especificaciones tecnicas de entrada/salida de las 33 mecanicas |
 
 ---
 
@@ -119,6 +121,13 @@ Los siguientes directorios fueron movidos a `orchestration/reportes/` el 2025-12
 - `orchestration/reportes/correcciones/` (correcciones aplicadas)
 - `orchestration/reportes/implementacion/` (reportes de desarrollo)
 
+### Para ver especificaciones de mecanicas:
+- `mecanicas/SPEC-MECANICAS-EJERCICIOS.md` - Especificaciones completas de las 33 mecanicas
+  - Estructura JSONB de contenido por mecanica
+  - Formato de respuesta esperada
+  - Criterios de evaluacion (auto/manual)
+  - Recompensas base (XP, ML Coins)
+
 ---
 
 ## Referencias
@@ -134,7 +143,7 @@ Los siguientes directorios fueron movidos a `orchestration/reportes/` el 2025-12
 
 ---
 
-**Actualizado:** 2026-01-14
-**Por:** Claude Code - Arquitecto de Base de Datos
-**Version:** 2.2 (Auditoria BD)
-**Cambios:** Sincronización métricas BD con DATABASE_INVENTORY.yml v4.5.0
+**Actualizado:** 2026-01-20
+**Por:** Claude Code - Analista de Requisitos
+**Version:** 2.3 (Mecanicas)
+**Cambios:** Agregada carpeta mecanicas/ con SPEC-MECANICAS-EJERCICIOS.md (33 mecanicas documentadas)
