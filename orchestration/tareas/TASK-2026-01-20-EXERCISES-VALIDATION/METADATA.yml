@@ -1,0 +1,197 @@
+# METADATA.yml - Tarea de Validacion de Ejercicios M1-M5
+# Version: 1.0.0
+# Sistema: SIMCO v4.0.0 + CAPVED
+
+task:
+  id: TASK-2026-01-20-EXERCISES-VALIDATION
+  titulo: "Validacion de Funcionamiento de Ejercicios M1-M5"
+  descripcion: >
+    Validacion exhaustiva del funcionamiento de cada ejercicio dentro de los
+    5 modulos (M1-M5), verificando que componentes compartidos (botones, hints,
+    acciones) esten correctamente integrados y documentados.
+
+  tipo: validation
+  prioridad: P0
+  dominio: Frontend + Backend + Documentation
+
+  fechas:
+    inicio: 2026-01-20
+    fin_estimada: 2026-01-25
+    ultima_actualizacion: 2026-01-20
+
+  estado: EN_PROGRESO
+  fase_actual: ANALISIS
+
+  metricas:
+    ejercicios_analizados: 30
+    ejercicios_auxiliares: 4
+    modulos_cubiertos: 5
+    componentes_compartidos: 15
+    hooks_compartidos: 6
+    gaps_identificados: 10
+    gaps_criticos: 4
+    gaps_medios: 4
+    gaps_menores: 2
+
+contexto:
+  proyecto: gamilit
+  modulo: exercises
+  portales_afectados:
+    - student
+    - teacher
+
+  tecnologias:
+    frontend:
+      - React
+      - TypeScript
+      - React Query
+      - Framer Motion
+      - Zod
+    backend:
+      - NestJS
+      - TypeORM
+      - PostgreSQL
+
+objetivos:
+  - "Validar integracion de componentes compartidos en 30 ejercicios"
+  - "Documentar flujo de envio de respuestas por mecanica"
+  - "Verificar sistema de hints/ayudas funcional"
+  - "Documentar ciclo de vida de estados de ejercicio"
+  - "Identificar y resolver gaps de integracion"
+  - "Actualizar especificaciones de mecanicas"
+
+agentes:
+  orquestador: "@PERFIL_ORQUESTADOR"
+  subagentes_requeridos:
+    - "@PERFIL_FRONTEND"
+    - "@PERFIL_BACKEND"
+    - "@PERFIL_DOCUMENTATION"
+    - "@PERFIL_TESTING"
+    - "@PERFIL_REQUIREMENTS"
+
+componentes_compartidos_identificados:
+  botones:
+    - id: SubmitExerciseButton
+      path: "/apps/frontend/src/shared/components/mechanics/SubmitExerciseButton.tsx"
+      uso: "Envio de respuestas en todos los ejercicios"
+    - id: DetectiveButton
+      path: "/apps/frontend/src/shared/components/base/DetectiveButton.tsx"
+      uso: "Botones estilizados con variantes"
+
+  feedback:
+    - id: ExerciseFeedback
+      path: "/apps/frontend/src/features/exercises/components/ExerciseFeedback.tsx"
+      uso: "Mostrar resultado con animaciones"
+    - id: FeedbackModal
+      path: "/apps/frontend/src/shared/components/mechanics/FeedbackModal.tsx"
+      uso: "Modal de resultado con confetti"
+    - id: CompletionModal
+      path: "/apps/frontend/src/apps/student/components/exercise/CompletionModal.tsx"
+      uso: "Modal de finalizacion con recompensas"
+
+  hints:
+    - id: HintModal
+      path: "/apps/frontend/src/apps/student/components/exercise/HintModal.tsx"
+      uso: "Sistema de pistas con costo ML Coins"
+    - id: HintSystem
+      path: "/apps/frontend/src/shared/components/mechanics/HintSystem.tsx"
+      uso: "Sistema de pistas sin costo"
+
+  hooks:
+    - id: useExerciseSubmission
+      path: "/apps/frontend/src/features/exercises/hooks/useExerciseSubmission.ts"
+      uso: "Envio seguro de respuestas"
+    - id: useExerciseTimer
+      path: "/apps/frontend/src/features/exercises/hooks/useExerciseTimer.ts"
+      uso: "Timer de ejercicio"
+    - id: useExerciseRewards
+      path: "/apps/frontend/src/features/exercises/hooks/useExerciseRewards.ts"
+      uso: "Manejo de recompensas y hints"
+    - id: useExercisePowerUps
+      path: "/apps/frontend/src/apps/student/hooks/useExercisePowerUps.ts"
+      uso: "Activacion de power-ups"
+    - id: useExerciseAutoSave
+      path: "/apps/frontend/src/apps/student/hooks/useExerciseAutoSave.ts"
+      uso: "Auto-guardado de progreso"
+    - id: useExerciseState
+      path: "/apps/frontend/src/apps/student/hooks/useExerciseState.ts"
+      uso: "Estado local con persistencia"
+
+gaps_identificados:
+  criticos:
+    - id: GAP-EX-001
+      titulo: "Integracion Backend-Frontend Incompleta"
+      descripcion: "Emparejamiento no envia respuesta al backend"
+      impacto: "Progreso no se registra"
+      severidad: CRITICO
+
+    - id: GAP-EX-002
+      titulo: "Progreso No Actualiza en Tiempo Real"
+      descripcion: "Progreso solo actualiza despues de calificacion docente (M3-M5)"
+      impacto: "Estudiante no ve reconocimiento inmediato"
+      severidad: CRITICO
+
+    - id: GAP-EX-003
+      titulo: "Respuestas Abiertas No Visibles en Teacher Portal"
+      descripcion: "Docente no puede ver respuestas de texto abierto M3-M5"
+      impacto: "Imposible evaluar sin interfaz visual"
+      severidad: CRITICO
+
+    - id: GAP-EX-004
+      titulo: "Multimedia No Reproducible"
+      descripcion: "Videos/audios de M5 no se reproducen en Teacher Portal"
+      impacto: "Imposible evaluar contenido multimedia"
+      severidad: CRITICO
+
+  medios:
+    - id: GAP-EX-005
+      titulo: "Rubrica Sin Estructura Formal"
+      descripcion: "Evaluacion manual sin criterios formales"
+      severidad: MEDIO
+
+    - id: GAP-EX-006
+      titulo: "Validacion Semantica Faltante"
+      descripcion: "Solo validacion de longitud, no de calidad"
+      severidad: MEDIO
+
+    - id: GAP-EX-007
+      titulo: "Mecanicas M4 Removidas Sin Documentar"
+      descripcion: "4 mecanicas en doc pero no implementadas"
+      severidad: MEDIO
+
+    - id: GAP-EX-008
+      titulo: "Documentacion de Integracion Faltante"
+      descripcion: "No documentado como integrar componentes compartidos"
+      severidad: MEDIO
+
+  menores:
+    - id: GAP-EX-009
+      titulo: "Alternativas de Respuesta No Documentadas"
+      severidad: BAJO
+
+    - id: GAP-EX-010
+      titulo: "Estados de Validacion Ambiguos"
+      severidad: BAJO
+
+documentacion_relacionada:
+  existente:
+    - path: "docs/90-transversal/mecanicas/SPEC-MECANICAS-M1-M3.md"
+      contenido: "Especificaciones M1-M3 + Auxiliares"
+    - path: "docs/90-transversal/mecanicas/SPEC-MECANICAS-M4.md"
+      contenido: "Especificaciones M4"
+    - path: "docs/90-transversal/mecanicas/SPEC-MECANICAS-M5.md"
+      contenido: "Especificaciones M5"
+    - path: "docs/95-guias-desarrollo/frontend/COMPONENTES-INVENTARIO.md"
+      contenido: "Inventario de 478 componentes"
+    - path: "docs/95-guias-desarrollo/frontend/MECANICAS-EDUCATIVAS.md"
+      contenido: "Mapeo de mecanicas implementadas"
+
+  a_crear:
+    - "docs/90-transversal/ejercicios/INTEGRACION-COMPONENTES-COMPARTIDOS.md"
+    - "docs/90-transversal/ejercicios/CICLO-VIDA-EJERCICIO.md"
+    - "docs/90-transversal/ejercicios/VALIDACION-EJERCICIOS-REPORT.md"
+    - "orchestration/analisis/ANALISIS-EJERCICIOS-VALIDATION-2026-01-20.md"
+
+referencias:
+  tarea_relacionada: "TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS"
+  analisis_previo: "orchestration/analisis/ANALISIS-VALIDACION-EJERCICIOS-M3-M5-2026-01-08.md"

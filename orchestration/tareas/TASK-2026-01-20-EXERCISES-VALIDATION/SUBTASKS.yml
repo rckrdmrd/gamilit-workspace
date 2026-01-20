@@ -1,0 +1,605 @@
+# SUBTASKS.yml - Plan de Subtareas con Metodologia CAPVED
+# Version: 1.0.0
+# Tarea Padre: TASK-2026-01-20-EXERCISES-VALIDATION
+
+plan:
+  total_fases: 5
+  total_subtareas: 12
+  horas_estimadas: 40
+
+fases:
+  # ============================================================
+  # FASE 1: VALIDACION DE COMPONENTES COMPARTIDOS
+  # ============================================================
+  - id: FASE-1
+    nombre: "Validacion de Componentes Compartidos"
+    prioridad: P0
+    dependencias: []
+    descripcion: >
+      Verificar que todos los componentes compartidos (botones, hints, feedback)
+      funcionen correctamente y esten integrados en todos los ejercicios.
+    subtareas:
+
+      - id: SUBTASK-1.1
+        titulo: "Validar SubmitExerciseButton en Todos los Ejercicios"
+        descripcion: >
+          Verificar que el boton de envio este correctamente integrado en los
+          30 ejercicios, con estados (loading, submitted, disabled) funcionando.
+        gap_relacionado: null
+
+        capved:
+          contexto:
+            - "SubmitExerciseButton es el componente principal de envio"
+            - "Debe mostrar estados: default, loading, submitted, disabled"
+            - "Debe llamar a useExerciseSubmission hook"
+            - "30 ejercicios deben usar este componente"
+
+          analisis:
+            componentes_afectados:
+              - "apps/frontend/src/shared/components/mechanics/SubmitExerciseButton.tsx"
+              - "apps/frontend/src/features/mechanics/module1/**/*Exercise.tsx"
+              - "apps/frontend/src/features/mechanics/module2/**/*Exercise.tsx"
+              - "apps/frontend/src/features/mechanics/module3/**/*Exercise.tsx"
+              - "apps/frontend/src/features/mechanics/module4/**/*Exercise.tsx"
+              - "apps/frontend/src/features/mechanics/module5/**/*Exercise.tsx"
+            impacto: ALTO
+            metricas:
+              ejercicios_a_validar: 30
+              estados_a_verificar: 4
+
+          planeacion:
+            acciones:
+              - "Grep para identificar uso de SubmitExerciseButton en cada ejercicio"
+              - "Verificar props pasados (isSubmitting, isSubmitted, onClick, disabled)"
+              - "Identificar ejercicios que NO usan el componente estandar"
+              - "Documentar inconsistencias encontradas"
+
+          validacion:
+            - "Todos los ejercicios usan SubmitExerciseButton o equivalente"
+            - "Props requeridos estan siendo pasados correctamente"
+            - "No hay implementaciones custom innecesarias"
+
+          ejecucion:
+            tipo: "analisis"
+            archivos_a_revisar:
+              - "Todos los *Exercise.tsx en features/mechanics/"
+
+          documentacion:
+            - "Crear matriz de uso de SubmitExerciseButton por ejercicio"
+            - "Documentar inconsistencias en VALIDACION-COMPONENTES-COMPARTIDOS.md"
+
+        perfil_requerido: "@PERFIL_FRONTEND"
+        horas_estimadas: 3
+        dependencias: []
+        estado: PENDIENTE
+
+      - id: SUBTASK-1.2
+        titulo: "Validar Sistema de Hints/Ayudas"
+        descripcion: >
+          Verificar que HintModal y HintSystem funcionen correctamente,
+          con costos de ML Coins y revelacion progresiva.
+        gap_relacionado: null
+
+        capved:
+          contexto:
+            - "HintModal: Sistema con costo en ML Coins"
+            - "HintSystem: Sistema sin costo (collapsible)"
+            - "Ambos deben trackear hints usados para penalizacion de XP"
+
+          analisis:
+            componentes_afectados:
+              - "apps/frontend/src/apps/student/components/exercise/HintModal.tsx"
+              - "apps/frontend/src/shared/components/mechanics/HintSystem.tsx"
+              - "apps/frontend/src/features/exercises/hooks/useExerciseRewards.ts"
+            impacto: MEDIO
+
+          planeacion:
+            acciones:
+              - "Identificar que ejercicios usan HintModal vs HintSystem"
+              - "Verificar integracion con useExerciseRewards"
+              - "Validar que hints se trackean en submission"
+
+          validacion:
+            - "Hints se revelan correctamente"
+            - "Costo de ML Coins se descuenta"
+            - "Penalizacion de XP se aplica correctamente"
+
+          ejecucion:
+            tipo: "analisis"
+
+          documentacion:
+            - "Documentar uso de hints por ejercicio"
+
+        perfil_requerido: "@PERFIL_FRONTEND"
+        horas_estimadas: 2
+        dependencias: []
+        estado: PENDIENTE
+
+      - id: SUBTASK-1.3
+        titulo: "Validar FeedbackModal y ExerciseFeedback"
+        descripcion: >
+          Verificar que los componentes de feedback muestren correctamente
+          resultados, recompensas, y estados especiales (pending_review).
+
+        capved:
+          contexto:
+            - "FeedbackModal: Modal con confetti y acciones"
+            - "ExerciseFeedback: Feedback inline"
+            - "Debe mostrar XP, ML Coins, explicaciones"
+            - "M3-M5: Debe mostrar estado pending_review"
+
+          analisis:
+            componentes_afectados:
+              - "apps/frontend/src/shared/components/mechanics/FeedbackModal.tsx"
+              - "apps/frontend/src/features/exercises/components/ExerciseFeedback.tsx"
+              - "apps/frontend/src/apps/student/components/exercise/CompletionModal.tsx"
+            impacto: ALTO
+
+          planeacion:
+            acciones:
+              - "Verificar tipos de feedback (success, error, partial, info)"
+              - "Verificar manejo de pending_review"
+              - "Verificar animaciones y confetti"
+
+          validacion:
+            - "Feedback se muestra correctamente segun resultado"
+            - "Recompensas visibles con animacion"
+            - "pending_review tiene mensaje apropiado"
+
+          ejecucion:
+            tipo: "analisis"
+
+          documentacion:
+            - "Documentar flujo de feedback por tipo de ejercicio"
+
+        perfil_requerido: "@PERFIL_FRONTEND"
+        horas_estimadas: 2
+        dependencias: []
+        estado: PENDIENTE
+
+  # ============================================================
+  # FASE 2: VALIDACION POR MODULO
+  # ============================================================
+  - id: FASE-2
+    nombre: "Validacion de Ejercicios por Modulo"
+    prioridad: P1
+    dependencias: ["FASE-1"]
+    descripcion: >
+      Validar funcionamiento especifico de cada modulo, verificando
+      mecanicas, integracion backend, y flujo completo.
+    subtareas:
+
+      - id: SUBTASK-2.1
+        titulo: "Validar Modulo 1 - Comprension Literal (7 ejercicios)"
+        descripcion: >
+          Validar Crucigrama, VerdaderoFalso, Emparejamiento, SopaLetras,
+          CompletarEspacios, MapaConceptual, Timeline.
+        gap_relacionado: "GAP-EX-001"
+
+        capved:
+          contexto:
+            - "M1 tiene 7 ejercicios de comprension literal"
+            - "Evaluacion automatica"
+            - "Gap conocido: Emparejamiento no envia respuesta a backend"
+
+          analisis:
+            componentes_afectados:
+              - "apps/frontend/src/features/mechanics/module1/**/"
+            impacto: CRITICO
+            ejercicios:
+              - "CrucigramaExercise"
+              - "VerdaderoFalsoExercise"
+              - "EmparejamientoExercise"
+              - "SopaLetrasExercise"
+              - "CompletarEspaciosExercise"
+              - "MapaConceptualExercise"
+              - "TimelineExercise"
+
+          planeacion:
+            acciones:
+              - "Verificar cada ejercicio llama a submitExercise"
+              - "Verificar formato de respuesta por mecanica"
+              - "Identificar y corregir gap de Emparejamiento"
+
+          validacion:
+            - "Todos los 7 ejercicios envian respuesta a backend"
+            - "Formato de respuesta correcto por mecanica"
+            - "Feedback se muestra correctamente"
+
+          ejecucion:
+            tipo: "validacion + correccion"
+            archivos_a_revisar:
+              - "module1/Crucigrama/CrucigramaExercise.tsx"
+              - "module1/VerdaderoFalso/VerdaderoFalsoExercise.tsx"
+              - "module1/Emparejamiento/EmparejamientoExercise.tsx"
+              - "module1/SopaLetras/SopaLetrasExercise.tsx"
+              - "module1/CompletarEspacios/CompletarEspaciosExercise.tsx"
+              - "module1/MapaConceptual/MapaConceptualExercise.tsx"
+              - "module1/Timeline/TimelineExercise.tsx"
+
+          documentacion:
+            - "Actualizar SPEC-MECANICAS-M1-M3.md con hallazgos"
+
+        perfil_requerido: "@PERFIL_FRONTEND + @PERFIL_BACKEND"
+        horas_estimadas: 4
+        dependencias: ["SUBTASK-1.1"]
+        estado: PENDIENTE
+
+      - id: SUBTASK-2.2
+        titulo: "Validar Modulo 2 - Comprension Inferencial (6 ejercicios)"
+        descripcion: >
+          Validar DetectiveTextual, ConstruccionHipotesis, PrediccionNarrativa,
+          PuzzleContexto, RuedaInferencias, LecturaInferencial.
+
+        capved:
+          contexto:
+            - "M2 tiene 6 ejercicios de inferencia"
+            - "Evaluacion automatica + parcial (RuedaInferencias manual)"
+
+          analisis:
+            componentes_afectados:
+              - "apps/frontend/src/features/mechanics/module2/**/"
+            ejercicios:
+              - "DetectiveTextualExercise"
+              - "ConstruccionHipotesisExercise"
+              - "PrediccionNarrativaExercise"
+              - "PuzzleContextoExercise"
+              - "RuedaInferenciasExercise"
+              - "LecturaInferencialExercise"
+
+          validacion:
+            - "Todos los 6 ejercicios funcionan correctamente"
+            - "RuedaInferencias maneja evaluacion manual"
+
+        perfil_requerido: "@PERFIL_FRONTEND"
+        horas_estimadas: 3
+        dependencias: ["SUBTASK-1.1"]
+        estado: PENDIENTE
+
+      - id: SUBTASK-2.3
+        titulo: "Validar Modulo 3 - Comprension Critica (5 ejercicios)"
+        descripcion: >
+          Validar TribunalOpiniones, DebateDigital, AnalisisFuentes,
+          PodcastArgumentativo, MatrizPerspectivas.
+        gap_relacionado: "GAP-EX-002, GAP-EX-003"
+
+        capved:
+          contexto:
+            - "M3 tiene 5 ejercicios de analisis critico"
+            - "Evaluacion parcial/manual"
+            - "Gaps: Progreso no actualiza, respuestas no visibles en Teacher Portal"
+
+          analisis:
+            componentes_afectados:
+              - "apps/frontend/src/features/mechanics/module3/**/"
+            impacto: CRITICO
+            ejercicios:
+              - "TribunalOpinionesExercise"
+              - "DebateDigitalExercise"
+              - "AnalisisFuentesExercise"
+              - "PodcastArgumentativoExercise"
+              - "MatrizPerspectivasExercise"
+
+          planeacion:
+            acciones:
+              - "Verificar manejo de estado pending_review"
+              - "Verificar arquitectura dual (submitted vs graded)"
+              - "Documentar flujo de evaluacion manual"
+
+          validacion:
+            - "Ejercicios muestran pending_review correctamente"
+            - "Progreso se actualiza al menos parcialmente"
+
+        perfil_requerido: "@PERFIL_FRONTEND + @PERFIL_BACKEND"
+        horas_estimadas: 4
+        dependencias: ["SUBTASK-1.3"]
+        estado: PENDIENTE
+
+      - id: SUBTASK-2.4
+        titulo: "Validar Modulo 4 - Lectura Digital (5 ejercicios)"
+        descripcion: >
+          Validar VerificadorFakeNews, InfografiaInteractiva, QuizTikTok,
+          NavegacionHipertextual, AnalisisMemes.
+        gap_relacionado: "GAP-EX-007"
+
+        capved:
+          contexto:
+            - "M4 tiene 5 ejercicios oficiales (4 removidos)"
+            - "Gap: Mecanicas removidas sin documentar claramente"
+
+          analisis:
+            componentes_afectados:
+              - "apps/frontend/src/features/mechanics/module4/**/"
+            ejercicios:
+              - "VerificadorFakeNewsExercise"
+              - "InfografiaInteractivaExercise"
+              - "QuizTikTokExercise"
+              - "NavegacionHipertextualExercise"
+              - "AnalisisMemesExercise"
+
+          planeacion:
+            acciones:
+              - "Verificar 5 ejercicios oficiales"
+              - "Documentar estado de 4 mecanicas removidas"
+              - "Actualizar SPEC con nota sobre removidas"
+
+        perfil_requerido: "@PERFIL_FRONTEND"
+        horas_estimadas: 3
+        dependencias: ["SUBTASK-1.1"]
+        estado: PENDIENTE
+
+      - id: SUBTASK-2.5
+        titulo: "Validar Modulo 5 - Produccion Lectora (3 ejercicios)"
+        descripcion: >
+          Validar DiarioMultimedia, ComicDigital, VideoCarta.
+          Verificar upload de multimedia y evaluacion manual.
+        gap_relacionado: "GAP-EX-004"
+
+        capved:
+          contexto:
+            - "M5 tiene 3 ejercicios de produccion"
+            - "Evaluacion 100% manual"
+            - "Gap critico: Multimedia no reproducible en Teacher Portal"
+
+          analisis:
+            componentes_afectados:
+              - "apps/frontend/src/features/mechanics/module5/**/"
+            impacto: CRITICO
+            ejercicios:
+              - "DiarioMultimediaExercise"
+              - "ComicDigitalExercise"
+              - "VideoCartaExercise"
+
+          planeacion:
+            acciones:
+              - "Verificar upload de multimedia funciona"
+              - "Verificar almacenamiento de archivos"
+              - "Documentar gap de reproduccion en Teacher Portal"
+
+          validacion:
+            - "Upload de video/audio/imagen funciona"
+            - "Archivos se almacenan correctamente"
+            - "Ejercicios envian referencia a backend"
+
+        perfil_requerido: "@PERFIL_FRONTEND + @PERFIL_BACKEND"
+        horas_estimadas: 4
+        dependencias: ["SUBTASK-1.3"]
+        estado: PENDIENTE
+
+  # ============================================================
+  # FASE 3: DOCUMENTACION DE INTEGRACION
+  # ============================================================
+  - id: FASE-3
+    nombre: "Documentacion de Integracion"
+    prioridad: P1
+    dependencias: ["FASE-2"]
+    descripcion: >
+      Crear documentacion detallada de como se integran los componentes
+      compartidos con los ejercicios.
+    subtareas:
+
+      - id: SUBTASK-3.1
+        titulo: "Documentar Flujo de Envio de Respuestas"
+        descripcion: >
+          Crear documentacion detallada del flujo desde click en Submit
+          hasta recepcion de feedback, incluyendo hooks y APIs.
+        gap_relacionado: "GAP-EX-008"
+
+        capved:
+          contexto:
+            - "Gap: No documentado como integrar componentes"
+            - "Flujo involucra: SubmitExerciseButton -> useExerciseSubmission -> API -> FeedbackModal"
+
+          planeacion:
+            entregables:
+              - "docs/90-transversal/ejercicios/FLUJO-ENVIO-RESPUESTAS.md"
+
+          documentacion:
+            - "Diagrama de secuencia del flujo"
+            - "Props y tipos por componente"
+            - "Ejemplos de codigo"
+
+        perfil_requerido: "@PERFIL_DOCUMENTATION + @PERFIL_FRONTEND"
+        horas_estimadas: 3
+        dependencias: ["SUBTASK-2.1", "SUBTASK-2.2"]
+        estado: PENDIENTE
+
+      - id: SUBTASK-3.2
+        titulo: "Documentar Ciclo de Vida de Estados"
+        descripcion: >
+          Documentar estados de ejercicio: draft, submitted, pending_review,
+          graded, completed. Que mostrar en cada estado.
+        gap_relacionado: "GAP-EX-010"
+
+        capved:
+          contexto:
+            - "Gap: Estados ambiguos en documentacion"
+            - "M1-M2: draft -> submitted -> graded"
+            - "M3-M5: draft -> submitted -> pending_review -> graded"
+
+          planeacion:
+            entregables:
+              - "docs/90-transversal/ejercicios/CICLO-VIDA-EJERCICIO.md"
+
+          documentacion:
+            - "Diagrama de estados"
+            - "UI a mostrar en cada estado"
+            - "Transiciones validas"
+
+        perfil_requerido: "@PERFIL_DOCUMENTATION + @PERFIL_REQUIREMENTS"
+        horas_estimadas: 2
+        dependencias: ["SUBTASK-2.3", "SUBTASK-2.5"]
+        estado: PENDIENTE
+
+      - id: SUBTASK-3.3
+        titulo: "Crear Guia de Patrones de Componentes Compartidos"
+        descripcion: >
+          Documentar patrones de uso para que desarrolladores puedan
+          integrar componentes correctamente en nuevos ejercicios.
+
+        capved:
+          contexto:
+            - "Necesidad: Guia para nuevos desarrolladores"
+            - "Incluir: Cuando usar cada componente, props requeridos, ejemplos"
+
+          planeacion:
+            entregables:
+              - "docs/90-transversal/ejercicios/PATRONES-COMPONENTES-COMPARTIDOS.md"
+
+          documentacion:
+            - "Tabla de componentes con uso"
+            - "Checklist de integracion"
+            - "Ejemplos de codigo por tipo de ejercicio"
+
+        perfil_requerido: "@PERFIL_DOCUMENTATION + @PERFIL_FRONTEND"
+        horas_estimadas: 3
+        dependencias: ["SUBTASK-3.1"]
+        estado: PENDIENTE
+
+  # ============================================================
+  # FASE 4: RESOLUCION DE GAPS CRITICOS
+  # ============================================================
+  - id: FASE-4
+    nombre: "Resolucion de Gaps Criticos"
+    prioridad: P0
+    dependencias: ["FASE-2"]
+    descripcion: >
+      Resolver los 4 gaps criticos identificados que impactan
+      el funcionamiento del sistema.
+    subtareas:
+
+      - id: SUBTASK-4.1
+        titulo: "Resolver GAP-EX-001: Emparejamiento Sin Envio"
+        descripcion: >
+          Corregir EmparejamientoExercise para que envie respuesta
+          al backend correctamente.
+        gap_relacionado: "GAP-EX-001"
+
+        capved:
+          contexto:
+            - "Emparejamiento no llama a submitExercise"
+            - "Progreso no se registra en backend"
+
+          analisis:
+            componentes_afectados:
+              - "apps/frontend/src/features/mechanics/module1/Emparejamiento/EmparejamientoExercise.tsx"
+            impacto: CRITICO
+
+          planeacion:
+            acciones:
+              - "Agregar llamada a useExerciseSubmission"
+              - "Formatear respuesta segun spec"
+              - "Agregar FeedbackModal"
+
+          validacion:
+            - "npm run build"
+            - "Test manual de envio"
+
+          ejecucion:
+            archivos_modificar:
+              - "EmparejamientoExercise.tsx"
+
+        perfil_requerido: "@PERFIL_FRONTEND"
+        horas_estimadas: 2
+        dependencias: ["SUBTASK-2.1"]
+        estado: PENDIENTE
+
+      - id: SUBTASK-4.2
+        titulo: "Documentar Arquitectura Dual de Progreso (GAP-EX-002)"
+        descripcion: >
+          Documentar solucion de arquitectura dual para que estudiante
+          vea progreso parcial mientras espera evaluacion docente.
+        gap_relacionado: "GAP-EX-002"
+
+        capved:
+          contexto:
+            - "Estudiante no ve reconocimiento hasta evaluacion"
+            - "Solucion: progress_submitted vs progress_graded"
+
+          planeacion:
+            entregables:
+              - "Propuesta de arquitectura dual en CICLO-VIDA-EJERCICIO.md"
+
+        perfil_requerido: "@PERFIL_ARCHITECT + @PERFIL_DOCUMENTATION"
+        horas_estimadas: 2
+        dependencias: ["SUBTASK-3.2"]
+        estado: PENDIENTE
+
+  # ============================================================
+  # FASE 5: ACTUALIZACION DE ESPECIFICACIONES
+  # ============================================================
+  - id: FASE-5
+    nombre: "Actualizacion de Especificaciones"
+    prioridad: P2
+    dependencias: ["FASE-3", "FASE-4"]
+    descripcion: >
+      Actualizar documentacion oficial con hallazgos y correcciones.
+    subtareas:
+
+      - id: SUBTASK-5.1
+        titulo: "Actualizar SPEC-MECANICAS con Hallazgos"
+        descripcion: >
+          Actualizar especificaciones de mecanicas con informacion
+          de integracion, estados, y gaps resueltos.
+
+        capved:
+          planeacion:
+            archivos_actualizar:
+              - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M1-M3.md"
+              - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M4.md"
+              - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M5.md"
+
+        perfil_requerido: "@PERFIL_DOCUMENTATION"
+        horas_estimadas: 2
+        dependencias: ["SUBTASK-3.3", "SUBTASK-4.1"]
+        estado: PENDIENTE
+
+      - id: SUBTASK-5.2
+        titulo: "Crear Reporte Final de Validacion"
+        descripcion: >
+          Generar reporte consolidado con todos los hallazgos,
+          correcciones, y documentacion generada.
+
+        capved:
+          planeacion:
+            entregables:
+              - "orchestration/analisis/VALIDACION-EJERCICIOS-REPORT-2026-01-20.md"
+
+        perfil_requerido: "@PERFIL_DOCUMENTATION + @PERFIL_ORQUESTADOR"
+        horas_estimadas: 2
+        dependencias: ["SUBTASK-5.1"]
+        estado: PENDIENTE
+
+orden_ejecucion:
+  paralelo_fase_1:
+    - SUBTASK-1.1
+    - SUBTASK-1.2
+    - SUBTASK-1.3
+
+  secuencial_fase_2:
+    - SUBTASK-2.1  # Depende de 1.1
+    - SUBTASK-2.2  # Depende de 1.1
+    - SUBTASK-2.3  # Depende de 1.3
+    - SUBTASK-2.4  # Depende de 1.1
+    - SUBTASK-2.5  # Depende de 1.3
+
+  paralelo_fase_3:
+    - SUBTASK-3.1  # Depende de 2.1, 2.2
+    - SUBTASK-3.2  # Depende de 2.3, 2.5
+    - SUBTASK-3.3  # Depende de 3.1
+
+  paralelo_fase_4:
+    - SUBTASK-4.1  # Depende de 2.1
+    - SUBTASK-4.2  # Depende de 3.2
+
+  secuencial_fase_5:
+    - SUBTASK-5.1  # Depende de 3.3, 4.1
+    - SUBTASK-5.2  # Depende de 5.1
+
+criterios_aceptacion_globales:
+  - "Todos los 30 ejercicios validan correctamente"
+  - "Componentes compartidos integrados uniformemente"
+  - "Documentacion de integracion completa"
+  - "Gaps criticos documentados o resueltos"
+  - "Build exitoso (frontend)"
+  - "Especificaciones actualizadas"

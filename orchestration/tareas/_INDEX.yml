@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.24.0"
+version: "1.25.0"
 last_updated: "2026-01-20"
-total_tasks: 32
+total_tasks: 33
 
 # =========================================
 # TAREAS POR FECHA
@@ -102,6 +102,57 @@ tasks:
       pendientes: 0
       fases_completadas: 4
     path: "orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/"
+
+  - id: TASK-2026-01-20-EXERCISES-VALIDATION
+    title: "Validacion de Funcionamiento de Ejercicios M1-M5"
+    date: "2026-01-20"
+    status: in_progress
+    priority: P0
+    type: validation
+    metodologia: CAPVED
+    dominios:
+      - "Frontend"
+      - "Backend"
+      - "Documentation"
+      - "Exercises"
+      - "Student Portal"
+      - "Teacher Portal"
+    entregables:
+      - "METADATA.yml"
+      - "SUBTASKS.yml"
+      - "README.md"
+      - "prompts/ (contexto para subagentes)"
+      - "docs/90-transversal/ejercicios/INTEGRACION-COMPONENTES-COMPARTIDOS.md"
+      - "docs/90-transversal/ejercicios/CICLO-VIDA-EJERCICIO.md"
+    metricas:
+      ejercicios_analizados: 30
+      ejercicios_auxiliares: 4
+      modulos_cubiertos: 5
+      componentes_compartidos: 15
+      hooks_compartidos: 6
+      gaps_identificados: 10
+      gaps_criticos: 4
+      gaps_medios: 4
+      gaps_menores: 2
+      subtareas_planificadas: 12
+      horas_estimadas: 40
+    gaps_criticos:
+      - "GAP-EX-001: Emparejamiento sin envio a backend"
+      - "GAP-EX-002: Progreso no actualiza en tiempo real"
+      - "GAP-EX-003: Respuestas abiertas no visibles en Teacher Portal"
+      - "GAP-EX-004: Multimedia no reproducible en Teacher Portal"
+    conclusiones:
+      - "30 ejercicios + 4 auxiliares analizados"
+      - "15 componentes compartidos identificados"
+      - "6 hooks personalizados documentados"
+      - "10 gaps identificados (4 criticos, 4 medios, 2 menores)"
+      - "12 subtareas en 5 fases planificadas"
+      - "Fase de analisis completada, pendiente ejecucion"
+    subtasks_status:
+      completadas: 0
+      pendientes: 12
+      fases_planificadas: 5
+    path: "orchestration/tareas/TASK-2026-01-20-EXERCISES-VALIDATION/"
 
   - id: TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS
     title: "Analisis Integral del Teacher Portal"
@@ -1001,7 +1052,7 @@ tasks:
 # =========================================
 summary:
   completed: 26
-  in_progress: 1
+  in_progress: 2
   ready: 0
   planning: 0
   pending: 0
