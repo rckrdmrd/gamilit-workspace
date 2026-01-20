@@ -14,6 +14,10 @@ docs/95-guias-desarrollo/student-portal/
 |
 +-- README.md                    <- Documento principal (este directorio)
 +-- _MAP.md                      <- Mapa de navegacion (este archivo)
++-- AUTH-PAGES-SPEC.md           <- Especificacion paginas autenticacion (NEW)
+|
++-- analysis/                    <- Analisis de implementacion
+|   +-- (documentos de analisis)
 |
 +-- gaps/                        <- Documentacion de gaps resueltos
 |   +-- STUDENT-GAP-001-missions-rewards.md
@@ -93,7 +97,8 @@ docs/95-guias-desarrollo/student-portal/
 
 1. Comenzar por: `gaps/STUDENT-GAP-006-profile-stats.md`
 2. Revisar: `gaps/STUDENT-GAP-007-settings-persistence.md`
-3. Consultar: `dependencies/DEPENDENCY-MATRIX.md`
+3. Revisar: `AUTH-PAGES-SPEC.md` (paginas de autenticacion)
+4. Consultar: `dependencies/DEPENDENCY-MATRIX.md`
 
 ### Desarrollador Backend
 
@@ -149,6 +154,7 @@ docs/95-guias-desarrollo/student-portal/
 | 2026-01-20 | 1.0.0 | Creacion inicial del mapa de documentacion |
 | 2026-01-20 | - | Integracion de resultados FASE 1-2-3 |
 | 2026-01-20 | - | Referencias a 6 documentos nuevos |
+| 2026-01-20 | 1.1.0 | Agregado AUTH-PAGES-SPEC.md (4 paginas autenticacion) |
 
 ---
 
