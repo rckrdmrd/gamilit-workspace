@@ -1,8 +1,8 @@
 # MAPA DE DOCUMENTACION: GAMILIT
 
 **Proyecto:** GAMILIT - Plataforma de Gamificacion Educativa
-**Ultima actualizacion:** 2026-01-18
-**Version:** 2.2.0 (SSOT Consolidado)
+**Ultima actualizacion:** 2026-01-20
+**Version:** 2.3.0 (SSOT Consolidado + Student Portal Analysis)
 
 ---
 
@@ -16,7 +16,8 @@ docs/
 +-- 02-fase-robustecimiento/ # Fase 2: EAI-007 (Modulos M4-M5)
 +-- 03-fase-extensiones/     # Fase 3: EXT-001 a EXT-011 (11 EPICs)
 +-- 04-fase-backlog/         # Backlog de features pendientes
-+-- 90-transversal/          # Documentacion transversal
++-- 40-estandares/           # Estandares de desarrollo (API, nomenclatura)
++-- 90-transversal/          # Documentacion transversal (mecanicas, arquitectura)
 +-- 95-guias-desarrollo/     # Guias para desarrolladores
 +-- 96-quick-reference/      # Cheatsheets (API, DB, Git, Testing, Docker, Deploy)
 +-- 97-adr/                  # 21 Architecture Decision Records

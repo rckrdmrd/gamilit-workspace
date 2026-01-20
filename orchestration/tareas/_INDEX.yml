@@ -57,7 +57,7 @@ tasks:
   - id: TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS
     title: "Analisis Integral del Student Portal"
     date: "2026-01-20"
-    status: in_progress
+    status: completed
     priority: P0
     type: analysis
     metodologia: CAPVED
@@ -70,7 +70,14 @@ tasks:
       - "METADATA.yml"
       - "SUBTASKS.yml"
       - "README.md"
+      - "PURGE-REPORT.md"
       - "orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md"
+      - "orchestration/analisis/EVALUACION-ENDPOINTS-CONSOLIDADOS.md"
+      - "orchestration/testing/TESTING-PLAN-STUDENT-PORTAL.md"
+      - "docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md"
+      - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M1-M3.md"
+      - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M4.md"
+      - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M5.md"
     metricas:
       paginas_analizadas: 27
       componentes_identificados: 463
@@ -78,18 +85,22 @@ tasks:
       apis_consumidas: 25
       endpoints_backend: 80
       gaps_identificados: 8
-      subtareas_planificadas: 9
-      horas_estimadas: 33
+      gaps_resueltos: 6
+      subtareas_completadas: 9
+      mecanicas_documentadas: 30
+      campos_nomenclatura: 113
     conclusiones:
       - "27 paginas del Student Portal analizadas"
-      - "8 gaps de coherencia identificados (2 criticos, 2 altos)"
-      - "Plan de 9 subtareas con metodologia CAPVED"
-      - "Documentacion existente inventariada"
-      - "Funcionalidades multimedia/PDF documentadas"
+      - "8 gaps identificados, 6 resueltos (GAP-SP-001 a GAP-SP-006)"
+      - "9 subtareas completadas en 4 fases CAPVED"
+      - "30 mecanicas de ejercicios documentadas (M1-M5)"
+      - "113 campos de nomenclatura API documentados"
+      - "5 archivos obsoletos archivados, documentacion actualizada"
+      - "README Student Portal actualizado a v1.4.0"
     subtasks_status:
-      completadas: 1
-      pendientes: 8
-      ultima_completada: "SUBTASK-2.3 - Plan de Testing Prioritario"
+      completadas: 9
+      pendientes: 0
+      fases_completadas: 4
     path: "orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/"
 
   - id: SUBTASK-2026-01-20-2.3
