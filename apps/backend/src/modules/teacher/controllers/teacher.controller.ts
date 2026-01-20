@@ -386,11 +386,11 @@ export class TeacherController {
   @ApiOperation({
     summary: 'Generate student insights report',
     description:
-      'Generate a comprehensive report with student insights in PDF or Excel format. ' +
+      'Generate a comprehensive report with student insights in PDF, Excel, or CSV format. ' +
       'Reports include risk analysis, recommendations, strengths/weaknesses, and predictions. ' +
       'The report is persisted to storage and metadata is saved to the database.',
   })
-  @ApiProduces('application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  @ApiProduces('application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv')
   async generateInsightsReport(
   @Request() req: AuthRequest,
     @Body() dto: GenerateReportDto,
@@ -402,12 +402,28 @@ export class TeacherController {
     // Generate report (now persists to storage and database)
     const { buffer, metadata, reportId } = await this.reportsService.generateReport(dto, userId, tenantId);
 
-    // Set appropriate headers
-    const filename = `student-insights-${reportId}.${dto.format === ReportFormat.PDF ? 'pdf' : 'xlsx'}`;
-    const contentType =
-      dto.format === ReportFormat.PDF
-        ? 'application/pdf'
-        : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    // Determine file extension and content type based on format
+    // FIX-2026-01-20: Added CSV support
+    let fileExtension: string;
+    let contentType: string;
+
+    switch (dto.format) {
+      case ReportFormat.PDF:
+        fileExtension = 'pdf';
+        contentType = 'application/pdf';
+        break;
+      case ReportFormat.CSV:
+        fileExtension = 'csv';
+        contentType = 'text/csv; charset=utf-8';
+        break;
+      case ReportFormat.EXCEL:
+      default:
+        fileExtension = 'xlsx';
+        contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        break;
+    }
+
+    const filename = `student-insights-${reportId}.${fileExtension}`;
 
     res.set({
       'Content-Type': contentType,

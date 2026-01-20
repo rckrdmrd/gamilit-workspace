@@ -112,11 +112,22 @@ export class ReportsService {
 
     // Generate report based on format
     let buffer: Buffer;
-    const fileExtension = dto.format === ReportFormat.PDF ? 'pdf' : 'xlsx';
-    if (dto.format === ReportFormat.PDF) {
-      buffer = await this.generatePDFReport(reportData);
-    } else {
-      buffer = await this.generateExcelReport(reportData);
+    let fileExtension: string;
+
+    switch (dto.format) {
+      case ReportFormat.PDF:
+        buffer = await this.generatePDFReport(reportData);
+        fileExtension = 'pdf';
+        break;
+      case ReportFormat.CSV:
+        buffer = await this.generateCSVReport(reportData);
+        fileExtension = 'csv';
+        break;
+      case ReportFormat.EXCEL:
+      default:
+        buffer = await this.generateExcelReport(reportData);
+        fileExtension = 'xlsx';
+        break;
     }
 
     // Generate report name
@@ -937,6 +948,100 @@ export class ReportsService {
     // Generate buffer
     const buffer = await workbook.xlsx.writeBuffer();
     return Buffer.from(buffer);
+  }
+
+  /**
+   * Generate CSV report
+   * FIX-2026-01-20: Implemented CSV report generation to fix bug where CSV requests generated XLSX
+   */
+  private async generateCSVReport(reportData: ReportData): Promise<Buffer> {
+    this.logger.log('Generating CSV report...');
+
+    const { metadata, insights_summary, student_insights } = reportData;
+
+    // CSV header row
+    const headers = [
+      'Estudiante',
+      'ID Estudiante',
+      'Puntuacion General',
+      'Modulos Completados',
+      'Modulos Totales',
+      'Nivel de Riesgo',
+      'Probabilidad Completitud',
+      'Riesgo Abandono',
+      'Fortalezas',
+      'Debilidades',
+      'Recomendaciones',
+    ];
+
+    // Build CSV rows
+    const rows: string[][] = [];
+
+    // Add metadata header
+    rows.push(['# REPORTE DE ANALISIS ESTUDIANTIL']);
+    rows.push([`# Generado: ${metadata.generated_at.toISOString()}`]);
+    rows.push([`# ID Reporte: ${metadata.report_id}`]);
+    if (metadata.start_date) {
+      rows.push([`# Periodo: ${metadata.start_date} a ${metadata.end_date || 'actual'}`]);
+    }
+    rows.push([]);
+
+    // Add summary section
+    rows.push(['# RESUMEN']);
+    rows.push([`Total Estudiantes,${insights_summary.total_students}`]);
+    rows.push([`Alto Riesgo,${insights_summary.high_risk}`]);
+    rows.push([`Medio Riesgo,${insights_summary.medium_risk}`]);
+    rows.push([`Bajo Riesgo,${insights_summary.low_risk}`]);
+    rows.push([`Puntuacion Promedio,${insights_summary.avg_overall_score}%`]);
+    rows.push([`Tasa Completitud Promedio,${insights_summary.avg_completion_rate}%`]);
+    rows.push([`Riesgo Abandono Promedio,${insights_summary.avg_dropout_risk}%`]);
+    rows.push([]);
+
+    // Add detail header
+    rows.push(['# DETALLE POR ESTUDIANTE']);
+    rows.push(headers);
+
+    // Add student data rows
+    student_insights.forEach(insight => {
+      const row = [
+        this.escapeCSVField(insight.student_name),
+        insight.student_id,
+        `${insight.overall_score}%`,
+        String(insight.modules_completed),
+        String(insight.modules_total),
+        insight.risk_level.toUpperCase(),
+        `${Math.round(insight.predictions.completion_probability * 100)}%`,
+        `${Math.round(insight.predictions.dropout_risk * 100)}%`,
+        this.escapeCSVField(insight.strengths.join('; ')),
+        this.escapeCSVField(insight.weaknesses.join('; ')),
+        this.escapeCSVField(insight.recommendations.join('; ')),
+      ];
+      rows.push(row);
+    });
+
+    // Convert rows to CSV string
+    const csvContent = rows.map(row => row.join(',')).join('\n');
+
+    // Add BOM for Excel compatibility with UTF-8
+    const BOM = '\uFEFF';
+    const csvWithBOM = BOM + csvContent;
+
+    this.logger.log(`CSV generated successfully: ${csvWithBOM.length} characters, ${student_insights.length} students`);
+
+    return Buffer.from(csvWithBOM, 'utf-8');
+  }
+
+  /**
+   * Escape a field for CSV format (handle commas, quotes, newlines)
+   */
+  private escapeCSVField(field: string): string {
+    if (!field) return '';
+
+    // If field contains comma, quote, or newline, wrap in quotes and escape internal quotes
+    if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+      return `"${field.replace(/"/g, '""')}"`;
+    }
+    return field;
   }
 
   // =========================================================================

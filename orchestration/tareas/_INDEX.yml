@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.18.0"
+version: "1.19.0"
 last_updated: "2026-01-19"
-total_tasks: 26
+total_tasks: 27
 
 # =========================================
 # TAREAS POR FECHA
@@ -269,6 +269,34 @@ tasks:
       - "Validacion confirma que TASK-2026-01-18-015 esta correctamente completada"
       - "Esfuerzo pendiente real: 6h (ajustes menores)"
     path: "orchestration/tareas/TASK-2026-01-19-011/"
+
+  - id: TASK-2026-01-19-012
+    title: "Correccion de GAPs parciales (G6, G7, G11)"
+    date: "2026-01-19"
+    status: completed
+    priority: P1
+    type: bug-fix
+    metodologia: CAPVED
+    parent_task: "TASK-2026-01-19-011"
+    dominios:
+      - "Backend"
+      - "Teacher Portal"
+      - "Gamification"
+      - "Reports"
+    entregables:
+      - "METADATA.yml"
+      - "TEACHER-REPORTS-SERVICE-DOC.md"
+    metricas:
+      gaps_corregidos: 3
+      archivos_creados: 1
+      archivos_modificados: 3
+    conclusiones:
+      - "G6: Creado AchievementReconciliationCronService (@Cron cada 5 min)"
+      - "G7: Documentado TeacherReportsService completamente"
+      - "G11: Implementado generateCSVReport() con BOM para Excel"
+      - "G11: Actualizado Content-Type a text/csv para formato CSV"
+      - "Build y lint pasan sin errores"
+    path: "orchestration/tareas/TASK-2026-01-19-012/"
 
   # ----------------------------------------
   # 2026-01-18
@@ -787,7 +815,7 @@ tasks:
 # RESUMEN POR ESTADO
 # =========================================
 summary:
-  completed: 24
+  completed: 25
   in_progress: 0
   ready: 0
   planning: 0
