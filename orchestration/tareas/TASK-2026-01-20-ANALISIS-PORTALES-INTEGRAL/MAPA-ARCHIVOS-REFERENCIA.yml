@@ -1,0 +1,436 @@
+# MAPA DE ARCHIVOS DE REFERENCIA
+# TASK-2026-01-20-ANALISIS-PORTALES-INTEGRAL
+#
+# Propósito: Paths absolutos de todos los archivos relacionados con la tarea
+# Generado: 2026-01-20
+# Uso: Referencia exacta para tareas similares o continuación de trabajo
+
+version: "1.0.0"
+fecha_generacion: "2026-01-20"
+workspace_root: "/home/isem/workspace-v2"
+proyecto_root: "/home/isem/workspace-v2/projects/gamilit"
+
+# ============================================================================
+# CARPETAS DE TAREA PRINCIPALES
+# ============================================================================
+
+carpetas_tarea:
+  tarea_integral:
+    path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-ANALISIS-PORTALES-INTEGRAL"
+    descripcion: "Carpeta principal del informe consolidado"
+
+  teacher_portal:
+    path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS"
+    descripcion: "Análisis del Teacher Portal"
+
+  admin_portal:
+    path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS"
+    descripcion: "Análisis del Admin Portal"
+
+  student_portal:
+    path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS"
+    descripcion: "Análisis del Student Portal"
+
+# ============================================================================
+# ARCHIVOS GENERADOS EN ESTA TAREA
+# ============================================================================
+
+archivos_generados:
+  # --- Informe Principal ---
+  informe_tarea:
+    informe_completo:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-ANALISIS-PORTALES-INTEGRAL/INFORME-TAREA-COMPLETO.md"
+      tipo: "informe"
+      lineas: 450
+
+    contexto_subagentes:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-ANALISIS-PORTALES-INTEGRAL/CONTEXTO-SUBAGENTES.md"
+      tipo: "documentacion"
+      lineas: 500
+
+    mejora_continua:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-ANALISIS-PORTALES-INTEGRAL/MEJORA-CONTINUA.md"
+      tipo: "analisis"
+      lineas: 400
+
+    plantilla_reutilizable:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-ANALISIS-PORTALES-INTEGRAL/PLANTILLA-TAREA-ANALISIS-PORTAL.md"
+      tipo: "template"
+      lineas: 450
+
+  # --- Teacher Portal ---
+  teacher_portal:
+    metadata:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS/METADATA.yml"
+      tipo: "metadata"
+
+    plan_maestro:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS/00-PLAN-MAESTRO.md"
+      tipo: "plan"
+
+    hallazgos:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS/01-HALLAZGOS-CONSOLIDADOS.md"
+      tipo: "analisis"
+
+    investigacion_bug:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS/02-INVESTIGACION-BUG-14-ESTUDIANTES.md"
+      tipo: "investigacion"
+
+    resumen_ejecutivo:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS/03-RESUMEN-EJECUTIVO.md"
+      tipo: "resumen"
+
+    validacion_endpoints:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS/04-VALIDACION-ENDPOINTS-FASE3.md"
+      tipo: "validacion"
+
+  # --- Admin Portal ---
+  admin_portal:
+    metadata:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS/METADATA.yml"
+      tipo: "metadata"
+
+    plan_maestro:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS/PLAN-MAESTRO-ANALISIS.md"
+      tipo: "plan"
+
+    index:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS/_INDEX.md"
+      tipo: "indice"
+
+    reporte_coherencia:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS/entregables/REPORTE-VALIDACION-COHERENCIA.md"
+      tipo: "reporte"
+
+    resumen_ejecutivo:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS/entregables/RESUMEN-EJECUTIVO.md"
+      tipo: "resumen"
+
+  # --- Student Portal ---
+  student_portal:
+    metadata:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/METADATA.yml"
+      tipo: "metadata"
+
+    subtasks:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/SUBTASKS.yml"
+      tipo: "plan"
+
+    purge_report:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/PURGE-REPORT.md"
+      tipo: "reporte"
+
+    informe_ejecucion:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/INFORME-EJECUCION.md"
+      tipo: "informe"
+
+  # --- Documentación Nueva ---
+  documentacion:
+    estandar_nomenclatura_api:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md"
+      tipo: "estandar"
+      bytes: 19198
+
+    spec_mecanicas_ejercicios:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/90-transversal/mecanicas/SPEC-MECANICAS-EJERCICIOS.md"
+      tipo: "especificacion"
+      bytes: 42142
+
+    spec_mecanicas_m1_m3:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/90-transversal/mecanicas/SPEC-MECANICAS-M1-M3.md"
+      tipo: "especificacion"
+      bytes: 24548
+
+    spec_mecanicas_m4:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/90-transversal/mecanicas/SPEC-MECANICAS-M4.md"
+      tipo: "especificacion"
+      bytes: 14194
+
+    spec_mecanicas_m5:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/90-transversal/mecanicas/SPEC-MECANICAS-M5.md"
+      tipo: "especificacion"
+      bytes: 16859
+
+    mecanicas_map:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/90-transversal/mecanicas/_MAP.md"
+      tipo: "mapa"
+
+  # --- Testing ---
+  testing:
+    plan_testing_student:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/testing/TESTING-PLAN-STUDENT-PORTAL.md"
+      tipo: "plan"
+
+  # --- Análisis ---
+  analisis:
+    evaluacion_endpoints:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/analisis/EVALUACION-ENDPOINTS-CONSOLIDADOS.md"
+      tipo: "evaluacion"
+
+  # --- Trazas ---
+  trazas:
+    traza_documentacion:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/trazas/TRAZA-AGENTE-DOCUMENTACION-2026-01.md"
+      tipo: "traza"
+
+    trazas_index:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/trazas/_INDEX.yml"
+      tipo: "indice"
+
+# ============================================================================
+# ARCHIVOS MODIFICADOS
+# ============================================================================
+
+archivos_modificados:
+  # --- Código Frontend ---
+  codigo_frontend:
+    api_config:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/config/api.config.ts"
+      linea_modificada: 555
+      gap: "GAP-SP-001"
+      descripcion: "Corregida ruta userRank"
+
+    use_gamification_data:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/apps/student/hooks/useGamificationData.ts"
+      gap: "GAP-SP-002"
+      descripcion: "Removido doble unwrap"
+
+    use_user_classroom:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/apps/student/hooks/useUserClassroom.ts"
+      gap: "GAP-SP-002"
+      descripcion: "Normalizado manejo de response"
+
+    use_mission_stats:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/apps/teacher/hooks/useMissionStats.ts"
+      gap: "GAP-SP-002"
+      descripcion: "Simplificado parsing de array"
+
+    achievements_api:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/features/gamification/social/api/achievementsAPI.ts"
+      gap: "GAP-SP-003"
+      descripcion: "Removido doble unwrap en 6 funciones"
+
+  # --- Inventarios ---
+  inventarios:
+    frontend_inventory:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/FRONTEND_INVENTORY.yml"
+      descripcion: "Agregado changelog GAP fixes"
+
+    tareas_index:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas/_INDEX.yml"
+      descripcion: "Agregada TEACHER-PORTAL-ANALYSIS"
+
+  # --- Mapas de Documentación ---
+  mapas:
+    docs_map:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/_MAP.md"
+      descripcion: "Agregadas referencias 2026-01-20"
+
+    estandares_map:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/40-estandares/_MAP.md"
+      descripcion: "Agregado ESTANDAR-NOMENCLATURA-API"
+
+    transversal_map:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/90-transversal/_MAP.md"
+      descripcion: "Agregada carpeta mecanicas"
+
+    student_portal_readme:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/95-guias-desarrollo/student-portal/README.md"
+      descripcion: "Actualizado con métricas 2026"
+
+    student_portal_map:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/95-guias-desarrollo/student-portal/_MAP.md"
+      descripcion: "Referencias actualizadas"
+
+    admin_portal_map:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-002-admin-extendido/_MAP.md"
+      descripcion: "Estados de US actualizados"
+
+    teacher_portal_specs_map:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-001-portal-maestros/especificaciones/_MAP.md"
+      descripcion: "Agregadas especificaciones nuevas"
+
+# ============================================================================
+# ARCHIVOS DE REFERENCIA CONSULTADOS
+# ============================================================================
+
+archivos_consultados:
+  # --- Directivas SIMCO ---
+  directivas:
+    claude_md:
+      path: "/home/isem/workspace-v2/CLAUDE.md"
+      descripcion: "Instrucciones base del workspace"
+
+    principio_capved:
+      path: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
+      descripcion: "Ciclo de vida de tareas"
+
+    trigger_coherencia:
+      path: "/home/isem/workspace-v2/orchestration/directivas/triggers/TRIGGER-COHERENCIA-CAPAS.md"
+      descripcion: "Validación de coherencia entre capas"
+
+    trigger_documentacion:
+      path: "/home/isem/workspace-v2/orchestration/directivas/triggers/TRIGGER-DOCUMENTACION-OBLIGATORIA.md"
+      descripcion: "Gobernanza de documentación"
+
+  # --- Inventarios Base ---
+  inventarios_base:
+    frontend_inventory:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/FRONTEND_INVENTORY.yml"
+      descripcion: "Inventario de componentes frontend"
+
+    backend_inventory:
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/BACKEND_INVENTORY.yml"
+      descripcion: "Inventario de módulos backend"
+
+  # --- Documentación de Portales ---
+  documentacion_portales:
+    teacher_portal_map:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-001-portal-maestros/_MAP.md"
+      descripcion: "Índice Teacher Portal"
+
+    teacher_historias_usuario:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-001-portal-maestros/historias-usuario/"
+      tipo: "directorio"
+      descripcion: "15 User Stories del Teacher Portal"
+
+    admin_portal_map:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-002-admin-extendido/_MAP.md"
+      descripcion: "Índice Admin Portal"
+
+    admin_historias_usuario:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-002-admin-extendido/historias-usuario/"
+      tipo: "directorio"
+      descripcion: "19 User Stories del Admin Portal"
+
+    student_portal_guia:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/95-guias-desarrollo/student-portal/"
+      tipo: "directorio"
+      descripcion: "Guía del Student Portal"
+
+  # --- Código Fuente Consultado ---
+  codigo_backend:
+    ranks_controller:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/gamification/controllers/ranks.controller.ts"
+      descripcion: "Controller de rangos"
+
+    missions_controller:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/gamification/controllers/missions.controller.ts"
+      descripcion: "Controller de misiones"
+
+    achievements_controller:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/gamification/controllers/achievements.controller.ts"
+      descripcion: "Controller de achievements"
+
+    user_stats_controller:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/gamification/controllers/user-stats.controller.ts"
+      descripcion: "Controller de estadísticas de usuario"
+
+    module_progress_controller:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/progress/controllers/module-progress.controller.ts"
+      descripcion: "Controller de progreso de módulos"
+
+  codigo_frontend_consultado:
+    api_client:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/lib/api/apiClient.ts"
+      descripcion: "Cliente API con interceptor de unwrap"
+      lineas_relevantes: "99-108"
+
+    gamification_api:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/lib/api/gamification.api.ts"
+      descripcion: "API de gamificación"
+
+    use_dashboard_data:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/apps/student/hooks/useDashboardData.ts"
+      descripcion: "Hook principal del dashboard"
+
+    use_missions:
+      path: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/features/gamification/hooks/useMissions.ts"
+      descripcion: "Hook de misiones"
+
+# ============================================================================
+# ESPECIFICACIONES TÉCNICAS CREADAS/CONSULTADAS
+# ============================================================================
+
+especificaciones:
+  teacher_portal:
+    at_risk_logic:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-001-portal-maestros/especificaciones/AT-RISK-LOGIC-STANDARD.md"
+      descripcion: "Lógica de detección at-risk"
+
+    dashboard_reports:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-001-portal-maestros/especificaciones/DASHBOARD-REPORTS-INTEGRATION.md"
+      descripcion: "Integración Dashboard-Reports"
+
+    performance_trend:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-001-portal-maestros/especificaciones/PERFORMANCE-TREND-SPEC.md"
+      descripcion: "Especificación Performance Trend (GAP-6)"
+
+    user_activity_tracking:
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/03-fase-extensiones/EXT-001-portal-maestros/especificaciones/USER-ACTIVITY-TRACKING-DEPENDENCY.md"
+      descripcion: "Dependencia Activity Tracking (GAP-2)"
+
+# ============================================================================
+# TEMPLATES DE AGENTES
+# ============================================================================
+
+templates_agentes:
+  template_traza:
+    path: "/home/isem/workspace-v2/orchestration/agents/trazas/TRAZA-AGENTE-TEMPLATE.md"
+    descripcion: "Template para trazas de agente"
+
+  perfiles_agentes:
+    path: "/home/isem/workspace-v2/orchestration/agents/perfiles/"
+    tipo: "directorio"
+    descripcion: "Perfiles de agentes disponibles"
+
+# ============================================================================
+# PERFILES UTILIZADOS
+# ============================================================================
+
+perfiles_utilizados:
+  - nombre: "@PERFIL_BACKEND"
+    path: "/home/isem/workspace-v2/orchestration/agents/perfiles/PERFIL-BACKEND.md"
+    usos: 8
+
+  - nombre: "@PERFIL_FRONTEND"
+    path: "/home/isem/workspace-v2/orchestration/agents/perfiles/PERFIL-FRONTEND.md"
+    usos: 10
+
+  - nombre: "@PERFIL_DOCUMENTATION"
+    path: "/home/isem/workspace-v2/orchestration/agents/perfiles/PERFIL-DOCUMENTATION.md"
+    usos: 12
+
+  - nombre: "@PERFIL_TESTING"
+    path: "/home/isem/workspace-v2/orchestration/agents/perfiles/PERFIL-TESTING.md"
+    usos: 1
+
+  - nombre: "@PERFIL_ARCHITECT"
+    path: "/home/isem/workspace-v2/orchestration/agents/perfiles/PERFIL-ARCHITECT.md"
+    usos: 2
+
+  - nombre: "@PERFIL_REQUIREMENTS"
+    path: "/home/isem/workspace-v2/orchestration/agents/perfiles/PERFIL-REQUIREMENTS.md"
+    usos: 3
+
+  - nombre: "@PERFIL_ORQUESTADOR"
+    path: "/home/isem/workspace-v2/orchestration/agents/perfiles/PERFIL-ORQUESTADOR.md"
+    usos: 4
+
+# ============================================================================
+# RESUMEN DE RUTAS POR CATEGORÍA
+# ============================================================================
+
+resumen_rutas:
+  total_archivos_generados: 25
+  total_archivos_modificados: 12
+  total_archivos_consultados: 30
+
+  rutas_clave:
+    workspace: "/home/isem/workspace-v2"
+    proyecto: "/home/isem/workspace-v2/projects/gamilit"
+    docs: "/home/isem/workspace-v2/projects/gamilit/docs"
+    orchestration: "/home/isem/workspace-v2/projects/gamilit/orchestration"
+    tareas: "/home/isem/workspace-v2/projects/gamilit/orchestration/tareas"
+    frontend: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src"
+    backend: "/home/isem/workspace-v2/projects/gamilit/apps/backend/src"
