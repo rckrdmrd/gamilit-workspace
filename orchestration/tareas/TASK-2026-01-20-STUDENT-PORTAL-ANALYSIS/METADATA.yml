@@ -19,8 +19,9 @@ task:
     fin_estimada: 2026-01-25
     ultima_actualizacion: 2026-01-20
 
-  estado: EN_PROGRESO
-  fase_actual: ANALISIS_COMPLETADO
+  estado: COMPLETADO
+  fase_actual: TODAS_COMPLETADAS
+  fecha_fin: 2026-01-20
 
   metricas:
     paginas_analizadas: 27

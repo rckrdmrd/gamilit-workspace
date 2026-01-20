@@ -64,7 +64,10 @@ fases:
         perfil_requerido: "@PERFIL_BACKEND + @PERFIL_FRONTEND"
         horas_estimadas: 2
         dependencias: []
-        estado: PENDIENTE
+        estado: COMPLETADO
+        fecha_completado: "2026-01-20"
+        resultado: "VERIFICADO - Endpoint /gamification/users/:userId/rank ya existia en user-stats.controller.ts"
+        accion_tomada: "Ninguna - no era necesario crear nuevo endpoint"
 
       - id: SUBTASK-1.2
         titulo: "Normalizar Estructura de Misiones (GAP-SP-002)"
@@ -108,7 +111,12 @@ fases:
         perfil_requerido: "@PERFIL_BACKEND + @PERFIL_FRONTEND"
         horas_estimadas: 2
         dependencias: []
-        estado: PENDIENTE
+        estado: COMPLETADO
+        fecha_completado: "2026-01-20"
+        commit: "0ad3cad fix(frontend): Normalize API response unwrap in hooks (GAP-SP-002)"
+        archivos_modificados:
+          - "apps/frontend/src/features/gamification/missions/hooks/useMissions.ts"
+          - "apps/frontend/src/services/api/missionsAPI.ts"
 
   - id: FASE-2
     nombre: "Resolucion de Gaps Altos"
@@ -145,7 +153,11 @@ fases:
         perfil_requerido: "@PERFIL_BACKEND + @PERFIL_FRONTEND"
         horas_estimadas: 1.5
         dependencias: ["SUBTASK-1.1"]
-        estado: PENDIENTE
+        estado: COMPLETADO
+        fecha_completado: "2026-01-20"
+        commit: "1bdfcbd fix(frontend): Remove double unwrap in achievementsAPI.ts (GAP-SP-003)"
+        archivos_modificados:
+          - "apps/frontend/src/lib/api/gamification.api.ts"
 
       - id: SUBTASK-2.2
         titulo: "Documentar Estandar de Nomenclatura (GAP-SP-004)"
@@ -173,7 +185,14 @@ fases:
         perfil_requerido: "@PERFIL_DOCUMENTATION"
         horas_estimadas: 2
         dependencias: []
-        estado: PENDIENTE
+        estado: COMPLETADO
+        fecha_completado: "2026-01-20"
+        entregables:
+          - "docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md"
+          - "docs/40-estandares/_MAP.md"
+        metricas:
+          campos_documentados: 113
+          transformers_identificados: 15
 
       - id: SUBTASK-2.3
         titulo: "Plan de Testing Prioritario (GAP-SP-006)"
@@ -311,7 +330,18 @@ fases:
         perfil_requerido: "@PERFIL_REQUIREMENTS + @PERFIL_DOCUMENTATION"
         horas_estimadas: 8
         dependencias: []
-        estado: PENDIENTE
+        estado: COMPLETADO
+        fecha_completado: "2026-01-20"
+        entregables:
+          - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M1-M3.md"
+          - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M4.md"
+          - "docs/90-transversal/mecanicas/SPEC-MECANICAS-M5.md"
+          - "docs/90-transversal/mecanicas/_MAP.md"
+        metricas:
+          mecanicas_documentadas: 30
+          mecanicas_M1_M3: 22
+          mecanicas_M4: 5
+          mecanicas_M5: 3
 
   - id: FASE-4
     nombre: "Documentacion y Limpieza"
@@ -339,7 +369,16 @@ fases:
         perfil_requerido: "@PERFIL_DOCUMENTATION"
         horas_estimadas: 2
         dependencias: ["SUBTASK-3.1", "SUBTASK-3.2"]
-        estado: PENDIENTE
+        estado: COMPLETADO
+        fecha_completado: "2026-01-20"
+        commit: "bdc2acc [SUBTASK-4.1] docs: Update Student Portal documentation with analysis results"
+        archivos_modificados:
+          - "docs/95-guias-desarrollo/student-portal/README.md"
+          - "docs/95-guias-desarrollo/student-portal/_MAP.md"
+        metricas:
+          version_readme: "1.4.0"
+          documentos_referenciados: 7
+          gaps_documentados: 8
 
       - id: SUBTASK-4.2
         titulo: "Purgar Documentacion Obsoleta"
