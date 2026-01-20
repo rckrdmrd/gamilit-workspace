@@ -3,12 +3,12 @@
 **Épica:** EXT-001
 **Nombre:** Portal de Maestros
 **Fase:** 3 - Extensiones (Alcance v2 CORE)
-**Presupuesto:** $26,400 MXN
-**Story Points:** 66 SP
-**Estado:** ✅ Completado 100%
-**Última actualización:** 2025-11-08
+**Presupuesto:** $28,600 MXN
+**Story Points:** 71 SP
+**Estado:** ⚠️ En Progreso (US-PM-006, US-PM-007 pendientes)
+**Última actualización:** 2026-01-20
 
-**NOTA:** Incluye US-PM-000 (Dashboard Maestro Base, movida desde EAI-005/US-ADM-003, 8 SP) y US-PM-006 (Bloquear Alumnos, 8 SP) - Total añadido: 16 SP
+**NOTA:** Incluye US-PM-000 (Dashboard Maestro Base, 8 SP), US-PM-006 (Bloquear Alumnos, 8 SP), y US-PM-007 (Configuración de Alertas, 5 SP) - Total añadido: 21 SP
 
 ---
 
@@ -22,7 +22,7 @@ Desarrollar un portal dedicado para maestros que les permita gestionar sus clase
 
 ## 📁 Contenido
 
-### Historias de Usuario (14)
+### Historias de Usuario (15)
 
 | Historia | Título | SP | Estado | Origen |
 |----------|--------|----|--------|--------|
@@ -40,8 +40,9 @@ Desarrollar un portal dedicado para maestros que les permita gestionar sus clase
 | **[US-PM-005b](./historias-usuario/US-PM-005b-report-generation.md)** | Generación de Reportes | 5 | ✅ | Original |
 | **[US-PM-005c](./historias-usuario/US-PM-005c-engagement-metrics.md)** | Métricas de Engagement | 3 | ✅ | Original |
 | **[US-PM-006](./historias-usuario/US-PM-006-bloquear-alumnos-maestro.md)** | Bloquear/Desbloquear Alumnos | 8 | 📝 | Nueva - v2 CORE |
+| **[US-PM-007](./historias-usuario/US-PM-007-alert-configuration.md)** | Configuración de Alertas | 5 | 📝 | Nueva - GAP-1 |
 
-**Total:** 66 SP (50 originales + 16 añadidos)
+**Total:** 71 SP (50 originales + 21 añadidos)
 
 ---
 
@@ -170,11 +171,13 @@ Desarrollar un portal dedicado para maestros que les permita gestionar sus clase
 
 | Métrica | Estimado | Real | Varianza |
 |---------|----------|------|----------|
-| **Presupuesto** | $15,000 | $15,800 | +5% |
-| **Story Points** | 50 | 52 | +4% |
-| **Duración** | 2 sprints | 2 sprints | ✅ |
-| **User Stories** | 12 | 12 | ✅ |
+| **Presupuesto** | $15,000 | $28,600 | +91% |
+| **Story Points** | 50 | 71 | +42% |
+| **Duración** | 2 sprints | 3+ sprints | +50% |
+| **User Stories** | 12 | 15 | +25% |
 | **Componentes** | 12 | 15 | +25% |
+
+**Nota:** Incremento debido a US-PM-000, US-PM-006, y US-PM-007 agregadas post-release inicial.
 
 ---
 
@@ -257,7 +260,8 @@ Desarrollar un portal dedicado para maestros que les permita gestionar sus clase
 |---------|-------------|
 | [README.md](./README.md) | Descripción general de la épica |
 | [_MAP.md](./_MAP.md) | Este archivo - Índice maestro |
-| [historias-usuario/](./historias-usuario/) | 12 user stories completadas |
+| [historias-usuario/](./historias-usuario/) | 15 user stories (13 completadas, 2 en backlog) |
+| [especificaciones/](./especificaciones/) | Especificaciones técnicas (2 documentos) |
 | [implementacion/TRACEABILITY.yml](./implementacion/TRACEABILITY.yml) | Trazabilidad código-documentación |
 
 ---
@@ -274,6 +278,7 @@ Portal Maestros **transformó** el producto de individual a institucional:
 ---
 
 **Generado:** 2025-11-08
+**Actualizado:** 2026-01-20 (US-PM-007 + Especificaciones)
 **Sistema:** SIMCO (Sistema Indexado Modular por Contexto)
 **Método:** Migración desde docs_bkp/
-**Versión:** 1.0.0
+**Versión:** 1.1.0

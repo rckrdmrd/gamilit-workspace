@@ -1,0 +1,105 @@
+# METADATA - TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS
+# Sistema SIMCO v4.0
+
+task:
+  id: "TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS"
+  title: "Análisis y Corrección del Teacher Portal (Progress, Alerts, Reports)"
+  type: "analysis"
+  status: "in_progress"
+  priority: "P0"
+  created: "2026-01-20"
+  updated: "2026-01-20"
+
+scope:
+  project: "gamilit"
+  modules:
+    - "teacher-portal"
+    - "progress"
+    - "alerts"
+    - "reports"
+  pages:
+    - "TeacherProgressPage"
+    - "TeacherAlertsPage"
+    - "TeacherReportsPage"
+
+epics:
+  - id: "EPIC-1"
+    title: "Corrección de Bugs Críticos"
+    priority: "P0"
+    subtasks:
+      - "1.1-FIX-STUDENTS-LIMIT"
+      - "1.2-VERIFY-INIT"
+  - id: "EPIC-2"
+    title: "Completar Documentación y Definiciones"
+    priority: "P1"
+    subtasks:
+      - "2.1-US-ALERTS"
+      - "2.2-DASHBOARD-REPORTS"
+      - "2.3-STANDARDIZE-RISK"
+      - "2.4-PERF-TREND"
+  - id: "EPIC-3"
+    title: "Validación y Coherencia Entre Capas"
+    priority: "P1"
+    subtasks:
+      - "3.1-VALIDATE-PROGRESS"
+      - "3.2-VALIDATE-ALERTS"
+      - "3.3-VALIDATE-EXPORT"
+      - "3.4-EVAL-MULTIMEDIA"
+  - id: "EPIC-4"
+    title: "Purga y Limpieza de Documentación"
+    priority: "P2"
+    subtasks:
+      - "4.1-IDENTIFY-OBSOLETE"
+      - "4.2-CONSOLIDATE-DOCS"
+
+findings:
+  critical:
+    - id: "BUG-001"
+      description: "Progress page shows only 14 students instead of >30"
+      location: "Frontend requests limit:100, backend returns 14"
+      status: "pending_fix"
+  gaps:
+    - id: "GAP-1"
+      severity: "MEDIUM"
+      description: "No user story for Alert Configuration"
+    - id: "GAP-2"
+      severity: "HIGH"
+      description: "User Activity Tracking dependency not resolved"
+    - id: "GAP-3"
+      severity: "LOW"
+      description: "Dashboard to Reports integration not documented"
+    - id: "GAP-4"
+      severity: "MEDIUM"
+      description: "US-PM-006 notification criteria incomplete"
+    - id: "GAP-5"
+      severity: "LOW"
+      description: "Performance Trend structure inconsistency"
+  inconsistencies:
+    - id: "INC-4"
+      description: "At-risk logic ambiguous (AND vs OR)"
+    - id: "INC-5"
+      description: "Response time targets inconsistent"
+
+inventory_status:
+  backend_endpoints: 81
+  frontend_pages: 3
+  documentation_coverage: "95%"
+  bd_backend_coherence: "99%"
+
+agents_involved:
+  - role: "Arquitecto de Soluciones"
+    phase: "Orquestación"
+  - role: "Explore Agent"
+    phase: "Documentación EXT-001"
+  - role: "Explore Agent"
+    phase: "Frontend Analysis"
+  - role: "Explore Agent"
+    phase: "Backend Analysis"
+  - role: "Explore Agent"
+    phase: "Inventarios y BD"
+
+documents:
+  - path: "00-PLAN-MAESTRO.md"
+    description: "Plan maestro con subtareas CAPVED"
+  - path: "METADATA.yml"
+    description: "Este archivo"
