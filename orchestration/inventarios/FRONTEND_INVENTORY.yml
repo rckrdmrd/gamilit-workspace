@@ -3,7 +3,7 @@
 project: GAMILIT
 version: 4.6.0
 generated: 2025-11-08
-updated: 2026-01-16
+updated: 2026-01-20
 source: RECONCILIACION-INTEGRAL Plan Maestro GAMILIT - Conteo real filesystem
 status: Reconciliado con conteo real de archivos filesystem
 last_analysis: 2026-01-16 - ETC-001 Consolidación Técnica
@@ -1488,3 +1488,57 @@ changelog:
       - "8 mecánicas creativas implementadas"
       - "Sistema de upload multimedia funcional"
       - "Panel de revisión para docentes"
+
+  - date: "2026-01-20"
+    tarea_id: "GAP-FIXES-COHERENCIA-API"
+    type: "Bug Fix - API Response Unwrap Coherence"
+    status: "✅ COMPLETADO"
+    description: "Corrección de GAPs de coherencia API: rutas incorrectas y doble unwrap de responses"
+    changes:
+      gap_sp_001:
+        title: "Fix ruta userRank en api.config.ts"
+        file: "apps/frontend/src/config/api.config.ts"
+        linea: 555
+        antes: "/gamification/ranks/user/${userId}"
+        despues: "/gamification/users/${userId}/rank"
+        impacto: "Ruta ahora coincide con endpoint real del backend"
+
+      gap_sp_002:
+        title: "Fix doble unwrap .data.data en hooks"
+        descripcion: "Removido doble unwrap innecesario causado por interceptor Axios"
+        archivos_afectados:
+          - archivo: "apps/frontend/src/apps/student/hooks/useGamificationData.ts"
+            cambio: "Removido doble unwrap .data.data"
+            estado: "DEPRECATED - hook marcado como deprecated"
+          - archivo: "apps/frontend/src/apps/student/hooks/useUserClassroom.ts"
+            cambio: "Normalizado manejo de response unwrap"
+          - archivo: "apps/frontend/src/apps/teacher/hooks/useMissionStats.ts"
+            cambio: "Simplificado parsing de array"
+
+      gap_sp_003:
+        title: "Fix doble unwrap en achievementsAPI.ts"
+        file: "apps/frontend/src/features/gamification/social/api/achievementsAPI.ts"
+        descripcion: "Removido doble unwrap en 6 funciones del API"
+        funciones_corregidas:
+          - "getUserAchievements"
+          - "getAchievementById"
+          - "getAchievementProgress"
+          - "updateAchievementProgress"
+          - "unlockAchievement"
+          - "claimAchievementRewards"
+
+    files_modified:
+      - "apps/frontend/src/config/api.config.ts"
+      - "apps/frontend/src/apps/student/hooks/useGamificationData.ts"
+      - "apps/frontend/src/apps/student/hooks/useUserClassroom.ts"
+      - "apps/frontend/src/apps/teacher/hooks/useMissionStats.ts"
+      - "apps/frontend/src/features/gamification/social/api/achievementsAPI.ts"
+
+    validation:
+      typescript_check: "✅ Sin errores"
+      build_status: "✅ Exitoso"
+      coherencia_api: "Rutas y unwrap alineados con backend"
+
+    documentation:
+      task_folder: "orchestration/tareas/TASK-2026-01-20-002/"
+      gap_analysis: "GAPs parciales de coherencia API resueltos"

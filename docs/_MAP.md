@@ -150,9 +150,31 @@ Documentacion deprecada: 98-standards, frontend-original, database-original.
 | Cheatsheets | 8 |
 | Guias de desarrollo | 10+ |
 | SSOT archivos | 5 |
+| Mecanicas documentadas | 33 |
 
 ---
 
-**Actualizado:** 2026-01-18
+## Actualizaciones Recientes (2026-01-20)
+
+### Estandares
+- **[ESTANDAR-NOMENCLATURA-API.md](40-estandares/ESTANDAR-NOMENCLATURA-API.md)** - Convenciones snake_case/camelCase para APIs
+
+### Especificaciones Transversales
+- **[90-transversal/mecanicas/](90-transversal/mecanicas/_MAP.md)** - 33 mecanicas de ejercicios documentadas
+  - SPEC-MECANICAS-M1-M3.md (23 mecanicas basicas)
+  - SPEC-MECANICAS-M4.md (5 mecanicas creativas)
+  - SPEC-MECANICAS-M5.md (3 mecanicas multimedia)
+  - SPEC-MECANICAS-EJERCICIOS.md (consolidado)
+
+### Guias de Desarrollo
+- **[95-guias-desarrollo/student-portal/](95-guias-desarrollo/student-portal/_MAP.md)** - README y _MAP actualizados con metricas 2026
+
+### Extensiones
+- **[EXT-001-portal-maestros](03-fase-extensiones/EXT-001-portal-maestros/_MAP.md)** - 15 US, 4 especificaciones tecnicas
+- **[EXT-002-admin-extendido](03-fase-extensiones/EXT-002-admin-extendido/_MAP.md)** - 19 US (17 implementadas), 204 SP
+
+---
+
+**Actualizado:** 2026-01-20
 **Sistema:** SIMCO v4.0 + SSOT
-**Cambios:** Agregado _SSOT/ con trazabilidad consolidada
+**Cambios:** Agregada seccion Actualizaciones Recientes con referencias a estandares, mecanicas, guias y extensiones
