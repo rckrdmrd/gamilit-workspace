@@ -636,6 +636,29 @@ export enum TeamChallengeStatusEnum {
   CANCELLED = 'cancelled',
 }
 
+/**
+ * Tipos de reportes de profesores
+ * FIX-2026-01-19: Agregado para coherencia con CHECK constraint
+ * @see DDL: social_features.teacher_reports.report_type
+ */
+export enum TeacherReportTypeEnum {
+  INDIVIDUAL = 'individual',
+  CLASSROOM = 'classroom',
+  PROGRESS = 'progress',
+  ANALYTICS = 'analytics',
+}
+
+/**
+ * Formatos de exportación de reportes
+ * FIX-2026-01-19: Agregado para coherencia con CHECK constraint
+ * @see DDL: social_features.teacher_reports.report_format
+ */
+export enum TeacherReportFormatEnum {
+  PDF = 'pdf',
+  EXCEL = 'excel',
+  CSV = 'csv',
+}
+
 // REMOVIDO (2026-01-07): SocialEventTypeEnum
 // Razon: ENUM deprecado, sin uso en BD/Backend/Frontend
 // Ver: DEUDA-TECNICA-ENUMS-H-034.md

@@ -141,15 +141,6 @@ Ver la guía completa de despliegue en: [docs/95-guias-desarrollo/DEPLOYMENT-GUI
 
 ---
 
-## 🧩 Ambiente Local WSL
-
-- El entorno de desarrollo usa WSL2 (Ubuntu-24.04) con PostgreSQL y servicios auxiliares.
-- Para ejecutar DDL desde Windows: wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d gamilit_platform -f '/mnt/c/Empresas/ISEM/workspace-v2/projects/gamilit/apps/database/ddl/00-prerequisites.sql'
-- Directiva operacional: [SIMCO-LOCAL-WSL.md](file:///c:/Empresas/ISEM/workspace-v2/orchestration/directivas/simco/SIMCO-LOCAL-WSL.md)
-- Inventario del ambiente: [LOCAL-WSL-ENVIRONMENT.yml](file:///c:/Empresas/ISEM/workspace-v2/orchestration/inventarios/LOCAL-WSL-ENVIRONMENT.yml)
-
----
-
 ## 📖 Documentación Principal
 
 | Documento | Descripción | Audiencia |
@@ -416,5 +407,5 @@ Ver [CODEOWNERS](./CODEOWNERS) para responsabilidades por módulo.
 ---
 
 **Generado:** 2025-11-01
-**Agente:** Auto Mode (Trae IDE con Gemini/GPT)
+**Método:** Migración RFC-0001 con Claude Code
 **Análisis previo:** [docs-analysis/miniworkspace-migration/](../../docs-analysis/miniworkspace-migration/)

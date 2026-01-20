@@ -212,7 +212,7 @@ reinitialize() {
     print_info "Ejecutando init-database.sh..."
     echo ""
 
-    local init_args="--env $ENVIRONMENT"
+    local init_args="--env $ENVIRONMENT --password gamilit_dev_2026"
     if [ "$FORCE_MODE" = true ]; then
         init_args="$init_args --force"
     fi
