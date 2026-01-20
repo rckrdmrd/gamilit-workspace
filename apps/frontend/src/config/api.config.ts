@@ -539,11 +539,20 @@ export const API_ENDPOINTS = {
 
   /**
    * Ranks API endpoints
+   *
+   * NOTA: Hay dos formas de obtener rango:
+   * - /gamification/ranks/current - Usa JWT, retorna UserRank entity
+   * - /gamification/users/:userId/rank - Recibe userId, retorna objeto simplificado
+   *
+   * El dashboard usa ranks/current y rank-progress.
+   * El gamificationApi.getUserRank usa users/:userId/rank.
    */
   ranks: {
     current: '/gamification/ranks/current',
     rankProgress: (userId: string) => `/gamification/ranks/users/${userId}/progress`,
-    userRank: (userId: string) => `/gamification/ranks/user/${userId}`,
+    // FIX GAP-SP-001: Corregida ruta para alinearse con user-stats.controller.ts
+    // Backend: GET /api/v1/gamification/users/:userId/rank (user-stats.controller.ts:177)
+    userRank: (userId: string) => `/gamification/users/${userId}/rank`,
     promote: (userId: string) => `/gamification/ranks/users/${userId}/promote`,
     history: (userId: string) => `/gamification/ranks/users/${userId}/history`,
     multipliers: (userId: string) => `/gamification/ranks/users/${userId}/multipliers`,
