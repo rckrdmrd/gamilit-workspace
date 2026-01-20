@@ -233,19 +233,25 @@ export function useMissions(_userId?: string): UseMissionsResult {
 
   /**
    * Start a mission
+   *
+   * NOTA: El interceptor de apiClient hace unwrap automático.
+   * Después del unwrap, response.data es directamente el objeto Mission.
    */
   const startMission = useCallback(
     async (missionId: string): Promise<MissionActionResult> => {
       try {
-        // Call real API endpoint
         const response = await apiClient.post(`${API_BASE}/${missionId}/start`);
         const data = response.data;
 
-        if (data.success) {
-          const { mission: updatedMission } = data.data;
+        // Después del unwrap, data es directamente el objeto Mission
+        // El backend retorna Mission, envuelto por TransformResponseInterceptor,
+        // y luego desenvuelto por el interceptor del frontend
+        const updatedMission = data;
 
-          // Update state
-          updateMissionInState(updatedMission);
+        if (updatedMission && updatedMission.id) {
+          // Update state with transformed mission
+          const transformedMission = transformMissions([updatedMission as MissionFromAPI])[0];
+          updateMissionInState(transformedMission);
 
           // Refresh missions to sync state
           await fetchMissions();
@@ -253,12 +259,14 @@ export function useMissions(_userId?: string): UseMissionsResult {
           return {
             success: true,
             message: 'Misión iniciada con éxito',
-            mission: updatedMission,
+            mission: transformedMission,
           };
         } else {
+          // Fallback: si por alguna razón la estructura es diferente
+          console.warn('[startMission] Unexpected response format:', data);
           return {
             success: false,
-            message: data.error?.message || 'Error al iniciar la misión',
+            message: 'Formato de respuesta inesperado',
           };
         }
       } catch (err) {
@@ -274,25 +282,34 @@ export function useMissions(_userId?: string): UseMissionsResult {
 
   /**
    * Claim mission reward
+   *
+   * NOTA: El interceptor de apiClient hace unwrap automático.
+   * Después del unwrap, response.data es { mission, rewards, rewards_granted }.
    */
   const claimReward = useCallback(
     async (missionId: string): Promise<MissionActionResult> => {
       try {
-        // Call real API
         const response = await apiClient.post(`${API_BASE}/${missionId}/claim`);
         const data = response.data;
 
-        if (data.success) {
-          const { mission: updatedMission, rewards } = data.data;
+        // Después del unwrap, data es { mission, rewards, rewards_granted }
+        // El backend retorna este objeto, envuelto por TransformResponseInterceptor,
+        // y luego desenvuelto por el interceptor del frontend
+        const { mission: updatedMission, rewards, rewards_granted } = data;
 
-          // Update state
-          updateMissionInState(updatedMission);
+        if (updatedMission && updatedMission.id) {
+          // Transform mission to frontend format
+          const transformedMission = transformMissions([updatedMission as MissionFromAPI])[0];
+          updateMissionInState(transformedMission);
 
-          // Update stats
+          // Update stats with rewards (usando snake_case del backend)
+          const xpEarned = rewards_granted?.xp_awarded || rewards?.xp || 0;
+          const coinsEarned = rewards_granted?.ml_coins_awarded || rewards?.ml_coins || 0;
+
           setStats((prev) => ({
             ...prev,
-            totalXPEarned: prev.totalXPEarned + rewards.xp,
-            totalMLCoinsEarned: prev.totalMLCoinsEarned + rewards.mlCoins,
+            totalXPEarned: prev.totalXPEarned + xpEarned,
+            totalMLCoinsEarned: prev.totalMLCoinsEarned + coinsEarned,
           }));
 
           // Remove from tracked missions
@@ -304,13 +321,17 @@ export function useMissions(_userId?: string): UseMissionsResult {
           return {
             success: true,
             message: 'Recompensa reclamada',
-            mission: updatedMission,
-            rewards,
+            mission: transformedMission,
+            rewards: {
+              xp: xpEarned,
+              mlCoins: coinsEarned,
+            },
           };
         } else {
+          console.warn('[claimReward] Unexpected response format:', data);
           return {
             success: false,
-            message: data.error?.message || 'Error al reclamar la recompensa',
+            message: 'Formato de respuesta inesperado',
           };
         }
       } catch (err) {
@@ -415,26 +436,42 @@ export function useMissions(_userId?: string): UseMissionsResult {
 
 /**
  * Helper: Fetch missions by type (real API implementation)
+ *
+ * NOTA: El interceptor de apiClient (líneas 99-108) hace unwrap automático
+ * cuando detecta { success, data }. Por lo tanto, response.data ya contiene
+ * directamente el array de misiones (no el wrapper { success, data }).
+ *
+ * Flujo:
+ * 1. Backend controller retorna: Mission[]
+ * 2. Backend interceptor envuelve: { success: true, data: Mission[], ... }
+ * 3. Frontend interceptor desenvuelve: response.data = Mission[]
  */
 async function fetchMissionsByType(type: MissionType): Promise<Mission[]> {
   try {
-    const response = await apiClient.get<{
-      success: boolean;
-      data: { missions: MissionFromAPI[]; count: number };
-    }>(`${API_BASE}/${type}`);
-    // API returns { success: true, data: { missions: [...], count: number } }
-    if (response.data.success && response.data.data?.missions) {
-      // Apply transformer to convert API format to frontend format
-      return transformMissions(response.data.data.missions);
-    }
-    // Fallback if structure is different
+    const response = await apiClient.get(`${API_BASE}/${type}`);
+
+    // Después del unwrap del interceptor, response.data es directamente el array
     if (Array.isArray(response.data)) {
       return transformMissions(response.data as MissionFromAPI[]);
     }
+
+    // Fallback: si por alguna razón el interceptor no hizo unwrap
+    // (por ejemplo, si el backend no usó el TransformResponseInterceptor)
+    if (response.data?.success && response.data?.data) {
+      const data = response.data.data;
+      // Podría ser un array directo o un objeto con missions
+      if (Array.isArray(data)) {
+        return transformMissions(data as MissionFromAPI[]);
+      }
+      if (data?.missions && Array.isArray(data.missions)) {
+        return transformMissions(data.missions as MissionFromAPI[]);
+      }
+    }
+
+    console.warn(`[fetchMissionsByType] Unexpected response format for ${type}:`, response.data);
     return [];
   } catch (error) {
     console.error(`Error fetching ${type} missions:`, error);
-    // Return empty array on error instead of mock data
     throw error;
   }
 }
@@ -445,16 +482,30 @@ async function fetchMissionsByType(type: MissionType): Promise<Mission[]> {
  * NOTA: Usa /stats/me en lugar de /stats/:userId para evitar el error 403
  * causado por desincronizacion entre authStore.user.id y JWT.user.id.
  * El backend extrae el userId directamente del token JWT.
+ *
+ * El interceptor de apiClient hace unwrap automático, así que response.data
+ * ya contiene directamente el objeto de stats (no el wrapper { success, data }).
  */
 async function fetchMissionStats(): Promise<MissionStats> {
   try {
-    // Usar endpoint /stats/me que extrae userId del JWT
-    // Esto evita el error 403 "Cannot access stats of another user"
     const response = await apiClient.get(`${API_BASE}/stats/me`);
-    return response.data.success ? response.data.data : response.data;
+
+    // Después del unwrap del interceptor, response.data es el objeto de stats
+    // Validar que tiene la estructura esperada
+    if (response.data && typeof response.data === 'object' && !response.data.success) {
+      // Es el objeto de stats directamente (después del unwrap)
+      return response.data as MissionStats;
+    }
+
+    // Fallback: si el interceptor no hizo unwrap
+    if (response.data?.success && response.data?.data) {
+      return response.data.data as MissionStats;
+    }
+
+    console.warn('[fetchMissionStats] Unexpected response format:', response.data);
+    return response.data as MissionStats;
   } catch (error) {
     console.error('Error fetching mission stats:', error);
-    // Throw error instead of returning mock data
     throw error;
   }
 }

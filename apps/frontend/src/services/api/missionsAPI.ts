@@ -53,6 +53,16 @@ export interface Mission {
   claimedAt?: string;
 }
 
+/**
+ * NOTA: El interceptor de apiClient (líneas 99-108) hace unwrap automático
+ * cuando detecta { success, data }. Por lo tanto, response.data ya contiene
+ * directamente los datos (no el wrapper { success, data }).
+ *
+ * Flujo:
+ * 1. Backend controller retorna: data
+ * 2. Backend interceptor envuelve: { success: true, data: data, ... }
+ * 3. Frontend interceptor desenvuelve: response.data = data
+ */
 export const missionsAPI = {
   /**
    * Get 3 daily missions (auto-generates if needed)
@@ -60,7 +70,8 @@ export const missionsAPI = {
   getDailyMissions: async (): Promise<Mission[]> => {
     try {
       const response = await apiClient.get(API_ENDPOINTS.gamification.missions.daily);
-      return response.data.data.missions;
+      // Después del unwrap, response.data es directamente el array de misiones
+      return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       throw handleAPIError(error);
     }
@@ -72,7 +83,8 @@ export const missionsAPI = {
   getWeeklyMissions: async (): Promise<Mission[]> => {
     try {
       const response = await apiClient.get(API_ENDPOINTS.gamification.missions.weekly);
-      return response.data.data.missions;
+      // Después del unwrap, response.data es directamente el array de misiones
+      return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       throw handleAPIError(error);
     }
@@ -84,7 +96,8 @@ export const missionsAPI = {
   getSpecialMissions: async (): Promise<Mission[]> => {
     try {
       const response = await apiClient.get(API_ENDPOINTS.gamification.missions.special);
-      return response.data.data.missions;
+      // Después del unwrap, response.data es directamente el array de misiones
+      return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       throw handleAPIError(error);
     }
@@ -96,7 +109,8 @@ export const missionsAPI = {
   claimRewards: async (missionId: string) => {
     try {
       const response = await apiClient.post(API_ENDPOINTS.gamification.missions.claim(missionId));
-      return response.data.data;
+      // Después del unwrap, response.data es { mission, rewards, rewards_granted }
+      return response.data;
     } catch (error) {
       throw handleAPIError(error);
     }
@@ -108,7 +122,8 @@ export const missionsAPI = {
   getMissionProgress: async (missionId: string) => {
     try {
       const response = await apiClient.get(API_ENDPOINTS.gamification.missions.progress(missionId));
-      return response.data.data;
+      // Después del unwrap, response.data es directamente el objeto de progreso
+      return response.data;
     } catch (error) {
       throw handleAPIError(error);
     }
@@ -120,7 +135,8 @@ export const missionsAPI = {
   getMissionStats: async (userId: string) => {
     try {
       const response = await apiClient.get(API_ENDPOINTS.gamification.missions.stats(userId));
-      return response.data.data;
+      // Después del unwrap, response.data es directamente el objeto de stats
+      return response.data;
     } catch (error) {
       throw handleAPIError(error);
     }
