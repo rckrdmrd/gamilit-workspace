@@ -1,0 +1,152 @@
+# TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS
+# Analisis y Documentacion del Portal Admin Frontend
+
+task:
+  id: TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS
+  name: "Analisis Integral del Portal Admin y Documentacion"
+  type: ANALYSIS
+  status: IN_PROGRESS
+  created: 2026-01-20
+  priority: P0
+
+description: |
+  Analisis detallado de la documentacion y definiciones de todas las paginas
+  del portal admin del frontend. Incluye:
+  - Mapeo de funcionalidades por pagina
+  - Coherencia entre capas (Frontend ↔ Backend ↔ BD)
+  - Identificacion de gaps en documentacion
+  - Plan de purga de documentacion obsoleta
+  - Priorizacion por dependencias
+
+scope:
+  project: gamilit
+  area: frontend/admin + backend/admin + documentacion
+  affected_files_estimate: 50+
+
+phases:
+  contexto:
+    status: COMPLETED
+    findings:
+      - "17 paginas admin implementadas"
+      - "20 controladores backend"
+      - "147 DTOs definidos"
+      - "151+ endpoints REST"
+      - "12 User Stories documentadas en EXT-002"
+
+  analisis:
+    status: COMPLETED
+    findings:
+      - "Discrepancia en _MAP.md vs README.md (estados diferentes)"
+      - "US-AE-005 y US-AE-007 marcadas como pendientes en _MAP pero implementadas"
+      - "Paginas implementadas sin US formal: AdminAdvancedPage, AdminNotificationsPage, AdminNotificationPreferencesPage"
+      - "Falta documentacion tecnica de 8 paginas"
+
+  planeacion:
+    status: COMPLETED
+    subtasks_defined: 18
+    output: "PLAN-MAESTRO-ANALISIS.md"
+
+  validacion:
+    status: COMPLETED
+    output: "entregables/REPORTE-VALIDACION-COHERENCIA.md"
+    findings:
+      - "7 paginas sin User Story formal"
+      - "Inconsistencias en estados de US en _MAP.md"
+      - "Coherencia FE-BE al 95%"
+
+  ejecucion:
+    status: PENDING
+    note: "Requiere ejecucion de subtareas T0.1 a T4.2"
+
+  documentacion:
+    status: PENDING
+    note: "Se completara con la ejecucion"
+
+admin_portal_pages:
+  total: 17
+  documented: 9
+  missing_docs: 8
+
+  pages_with_us:
+    - page: AdminDashboardPage
+      us: US-AE-000
+      status: IMPLEMENTED
+    - page: AdminUsersPage
+      us: US-AE-001
+      status: IMPLEMENTED
+    - page: AdminInstitutionsPage
+      us: US-AE-002
+      status: IMPLEMENTED
+    - page: AdminContentPage
+      us: US-AE-003
+      status: IMPLEMENTED_95
+    - page: AdminMonitoringPage
+      us: US-AE-004
+      status: IMPLEMENTED_90
+    - page: AdminGamificationPage
+      us: US-AE-005
+      status: IMPLEMENTED
+    - page: AdminReportsPage
+      us: US-AE-006
+      status: IMPLEMENTED
+    - page: AdminClassroomTeacherPage
+      us: US-AE-007
+      status: IMPLEMENTED
+    - page: AdminSettingsPage
+      us: US-AE-008
+      status: IMPLEMENTED_95
+    - page: AdminAssignmentsPage
+      us: US-AE-009
+      status: IMPLEMENTED
+
+  pages_without_us:
+    - page: AdminRolesPage
+      description: "Gestion de roles y permisos por modulo"
+      needs_us: true
+    - page: AdminAlertsPage
+      description: "Gestion de alertas del sistema (acknowledge, resolve, suppress)"
+      needs_us: true
+    - page: AdminAnalyticsPage
+      description: "Analytics agregados (Overview, Engagement, Gamification, Retention)"
+      needs_us: true
+    - page: AdminProgressPage
+      description: "Seguimiento de progreso de estudiantes (3 vistas)"
+      needs_us: true
+    - page: AdminAdvancedPage
+      description: "Feature flags, A/B testing, interventions"
+      needs_us: true
+    - page: AdminNotificationsPage
+      description: "Filtrado de notificaciones con WebSocket"
+      needs_us: true
+    - page: AdminNotificationPreferencesPage
+      description: "Preferencias de notificacion multicanal"
+      needs_us: true
+
+documentation_gaps:
+  critical:
+    - "7 paginas sin User Story formal"
+    - "Inconsistencia en estados de US en _MAP.md vs README.md"
+    - "US-AE-010 y US-AE-011 especificadas pero no implementadas"
+
+  medium:
+    - "Falta especificacion tecnica de endpoints nuevos"
+    - "Falta documentacion de flujos de exportacion (CSV, PDF)"
+    - "Falta documentacion de operaciones bulk async"
+
+  low:
+    - "TRACEABILITY.yml desactualizado"
+    - "Inventarios con totales incorrectos"
+
+purge_candidates:
+  - file: "docs/03-fase-extensiones/EXT-002-admin-extendido/_MAP.md"
+    issue: "Estados inconsistentes con README.md"
+    action: "ACTUALIZAR para reflejar estado real"
+  - file: "docs/03-fase-extensiones/EXT-002-admin-extendido/implementacion/TRACEABILITY.yml"
+    issue: "Posiblemente desactualizado"
+    action: "VALIDAR y actualizar"
+
+references:
+  frontend_inventory: orchestration/inventarios/FRONTEND_INVENTORY.yml
+  backend_inventory: orchestration/inventarios/BACKEND_INVENTORY.yml
+  ext_002_epic: docs/03-fase-extensiones/EXT-002-admin-extendido/
+  admin_best_practices: docs/03-fase-extensiones/EXT-002-admin-extendido/guias/ADMIN-PORTAL-BEST-PRACTICES.md
