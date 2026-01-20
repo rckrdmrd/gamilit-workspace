@@ -421,21 +421,230 @@ const validTransitions: Record<string, string[]> = {
 
 ---
 
+## Arquitectura Dual de Progreso (GAP-EX-002)
+
+### El Problema
+
+En modulos con evaluacion manual (M3-M5), existe una **brecha temporal** entre cuando el estudiante envia su trabajo y cuando el docente lo califica. Esto genera confunsion en:
+
+1. **Barra de progreso**: Si no se actualiza al enviar, el estudiante no ve avance
+2. **Recompensas**: Las XP/ML Coins solo se otorgan tras la calificacion
+3. **Estado del modulo**: El estudiante no sabe si "completo" o no el ejercicio
+
+### La Solucion: Doble Tracking
+
+La tabla `progress_tracking.module_progress` implementa **dos metricas separadas**:
+
+```
++---------------------------+-------------------------------------------+
+| Metrica                   | Descripcion                               |
++---------------------------+-------------------------------------------+
+| submitted_exercises       | Ejercicios enviados (draft -> submitted)  |
+| submitted_progress_%      | Porcentaje basado en envios               |
+| graded_exercises          | Ejercicios calificados (-> graded)        |
+| graded_progress_%         | Porcentaje basado en calificaciones       |
++---------------------------+-------------------------------------------+
+```
+
+### Campos en module_progress Entity
+
+```typescript
+// progress-tracking.module_progress
+@Column({ type: 'integer', default: 0 })
+  submitted_exercises!: number;  // Se actualiza al ENVIAR
+
+@Column({ type: 'integer', default: 0 })
+  graded_exercises!: number;     // Se actualiza al CALIFICAR
+
+@Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
+  submitted_progress_percentage!: number;  // Para barra visual
+
+@Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
+  graded_progress_percentage!: number;     // Para calculo de recompensas
+```
+
+### Flujo Visual para el Estudiante
+
+```
+MODULO M3 (5 ejercicios)
+
+Escenario: Estudiante envia 3 ejercicios, docente califica 1
+
++-------------------------------------------------------+
+| Progreso del Modulo                                   |
+|                                                       |
+|  Enviados:     [====|====|====|    |    ]  60%       |
+|                   3 de 5 ejercicios enviados          |
+|                                                       |
+|  Calificados:  [====|    |    |    |    ]  20%       |
+|                   1 de 5 ejercicios calificados       |
+|                                                       |
+|  Estado: EN PROGRESO                                  |
+|  Pendientes de revision: 2                            |
++-------------------------------------------------------+
+```
+
+### Cuando Usar Cada Metrica
+
+| Caso de Uso | Metrica a Usar | Razon |
+|-------------|----------------|-------|
+| Barra de progreso visual | `submitted_progress_%` | Motivar al estudiante |
+| Calculo de XP/MLCoins | `graded_progress_%` | Evitar rewards anticipados |
+| Desbloqueo de siguiente modulo | `graded_progress_%` | Garantizar evaluacion |
+| Dashboard de estudiante | Ambas | Mostrar estado completo |
+| Reportes de docente | `graded_progress_%` | Metricas reales de desempeno |
+
+### Codigo de Actualizacion
+
+```typescript
+// Al enviar ejercicio (M3-M5)
+async updateProgressOnSubmit(userId: string, moduleId: string) {
+  await this.moduleProgressRepo.increment(
+    { user_id: userId, module_id: moduleId },
+    'submitted_exercises',
+    1
+  );
+  await this.recalculateSubmittedProgress(userId, moduleId);
+}
+
+// Al calificar ejercicio (docente)
+async updateProgressOnGrade(userId: string, moduleId: string) {
+  await this.moduleProgressRepo.increment(
+    { user_id: userId, module_id: moduleId },
+    'graded_exercises',
+    1
+  );
+  await this.recalculateGradedProgress(userId, moduleId);
+}
+```
+
+---
+
+## UI por Estado
+
+### Vista del Estudiante
+
+| Estado | Barra de Progreso | XP/MLCoins | Mensaje | Acciones |
+|--------|-------------------|------------|---------|----------|
+| `draft` | Sin cambio | - | "Guardando borrador..." | Continuar, Enviar |
+| `submitted` (M1-M2) | +% inmediato | Mostrados | "Ejercicio completado" | Siguiente, Reintentar |
+| `submitted` (M3-M5) | +% submitted | - | "Enviado. Pendiente de revision" | Ver estado |
+| `pending_review` | Sin cambio | - | "Tu maestro esta revisando" | Ver estado |
+| `graded` | +% graded | Mostrados | "Calificado: X/100" | Ver feedback, Siguiente |
+| `reviewed` | Sin cambio | Ya mostrados | "Feedback disponible" | Ver feedback |
+
+### Vista del Docente
+
+| Estado | Ubicacion | Indicador | Acciones |
+|--------|-----------|-----------|----------|
+| `submitted` | Cola de pendientes | Badge "Nuevo" | Iniciar revision |
+| `pending_review` | En revision (si otro docente) | Badge "En proceso" | - |
+| `graded` | Historial | Score mostrado | Ver/Editar feedback |
+| `reviewed` | Historial | Checkmark verde | Ver feedback |
+
+### Componentes de UI por Estado
+
+```typescript
+// Frontend/src/features/exercises/components/ExerciseFeedback.tsx
+
+const FEEDBACK_BY_STATUS = {
+  draft: {
+    title: 'En Progreso',
+    icon: <Edit className="text-gray-500" />,
+    message: 'Tu trabajo se esta guardando automaticamente.',
+    showRewards: false,
+    showConfetti: false,
+  },
+  submitted: {
+    title: 'Enviado',
+    icon: <Send className="text-blue-500" />,
+    message: 'Tu ejercicio ha sido enviado exitosamente.',
+    showRewards: false,  // M3-M5: false, M1-M2: se sobreescribe
+    showConfetti: false,
+  },
+  pending_review: {
+    title: 'Pendiente de Revision',
+    icon: <Clock className="text-yellow-500" />,
+    message: 'Tu maestro revisara tu trabajo pronto.',
+    showRewards: false,
+    showConfetti: false,
+  },
+  graded: {
+    title: 'Calificado',
+    icon: <CheckCircle className="text-green-500" />,
+    message: 'Tu ejercicio ha sido calificado.',
+    showRewards: true,
+    showConfetti: (score >= 80),
+  },
+  reviewed: {
+    title: 'Revisado',
+    icon: <MessageSquare className="text-purple-500" />,
+    message: 'Tu maestro ha dejado comentarios.',
+    showRewards: true,
+    showConfetti: false,
+  },
+};
+```
+
+---
+
+## Logica de Transiciones por Modulo
+
+### Modulo 1-2 (Evaluacion Automatica)
+
+```typescript
+// Transiciones validas
+const M1_M2_TRANSITIONS = {
+  draft: ['submitted'],
+  submitted: ['graded'],  // Transicion automatica e inmediata
+  graded: ['reviewed'],   // Opcional: docente puede agregar feedback
+  reviewed: [],           // Final
+};
+
+// Flujo tipico
+[draft] --submit--> [submitted] --auto-grade--> [graded] --end-->
+```
+
+### Modulo 3-5 (Evaluacion Manual)
+
+```typescript
+// Transiciones validas
+const M3_M5_TRANSITIONS = {
+  draft: ['submitted'],
+  submitted: ['pending_review'],  // Entra a cola de revision
+  pending_review: ['graded'],     // Docente califica
+  graded: ['reviewed'],           // Docente agrega feedback
+  reviewed: [],                   // Final
+};
+
+// Flujo tipico
+[draft] --submit--> [submitted] --queue--> [pending_review]
+                                                  |
+                                           teacher grades
+                                                  v
+                                            [graded] --feedback--> [reviewed]
+```
+
+---
+
 ## Archivos de Referencia
 
 ### Backend
 - `/apps/backend/src/modules/progress/entities/exercise-submission.entity.ts`
 - `/apps/backend/src/modules/progress/entities/manual-review.entity.ts`
+- `/apps/backend/src/modules/progress/entities/module-progress.entity.ts`
 - `/apps/backend/src/modules/progress/services/exercise-submission.service.ts`
 - `/apps/backend/src/modules/teacher/services/manual-review.service.ts`
 
 ### Frontend
-- `/apps/frontend/src/shared/components/mechanics/FeedbackModal.tsx`
-- `/apps/frontend/src/shared/components/mechanics/mechanicsTypes.ts`
+- `/apps/frontend/src/features/exercises/components/ExerciseFeedback.tsx`
+- `/apps/frontend/src/features/mechanics/shared/hooks/useExerciseSubmission.ts`
+- `/apps/frontend/src/apps/student/hooks/useExerciseState.ts`
 
 ### Database DDL
 - `/apps/database/ddl/schemas/progress_tracking/tables/04-exercise_submissions.sql`
 - `/apps/database/ddl/schemas/progress_tracking/tables/06-manual_reviews.sql`
+- `/apps/database/ddl/schemas/progress_tracking/tables/01-module_progress.sql`
 
 ---
 
@@ -443,8 +652,9 @@ const validTransitions: Record<string, string[]> = {
 
 | Fecha | Version | Cambios |
 |-------|---------|---------|
+| 2026-01-20 | 2.0.0 | Agregada arquitectura dual de progreso, UI por estado, logica de transiciones por modulo |
 | 2026-01-20 | 1.0.0 | Documento inicial con ciclo de vida completo |
 
 ---
 
-*Documento generado como parte de TASK-2026-01-20-002*
+*Documento actualizado como parte de SUBTASK-3.2 de TASK-2026-01-20-EXERCISES-VALIDATION*
