@@ -27,9 +27,11 @@
 - **Total Épica Actualizado:** 148 SP (102 SP implementados + 46 SP pendientes)
 - **2026-01-20:** Corrección de estados (TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS):
   - US-AE-005 y US-AE-007 actualizadas de "Especificado" a "COMPLETED" (verificado en código)
-  - Recalculadas métricas: 10 US implementadas (127 SP), 2 US pendientes (21 SP)
-  - Identificadas 7 páginas adicionales sin US formal (ver nota en desglose)
-  - Sincronizado con README.md
+  - **7 nuevas User Stories creadas (US-AE-012 a US-AE-018, 56 SP)**
+  - **3 nuevas especificaciones técnicas (ET-BULK, ET-EXPORT, ET-REPORTS)**
+  - Recalculadas métricas: 17 US implementadas (183 SP), 2 US pendientes (21 SP)
+  - Total épica: 19 US, 204 SP
+  - Coherencia validada: FE-BE 95%, BE-DB 100%
 
 ---
 
@@ -43,7 +45,7 @@ Extender las capacidades administrativas del sistema con herramientas avanzadas 
 
 ## 📁 Contenido
 
-### Historias de Usuario (9 documentadas)
+### Historias de Usuario (19 documentadas)
 
 **Tabla Completa de User Stories:**
 
@@ -61,16 +63,21 @@ Extender las capacidades administrativas del sistema con herramientas avanzadas 
 | **US-AE-009** | Visualización Assignments Admin | 13 | P0 | ✅ COMPLETED | 2025-11-29 | [Ver US](./historias-usuario/US-AE-009-admin-assignments-view.md) |
 | **US-AE-010** | Crear Usuarios desde Admin | 13 | P1 | 📝 Especificado | Pendiente | [Ver US](./historias-usuario/US-AE-010-create-users.md) |
 | **US-AE-011** | Visor de Audit Logs | 8 | P1 | 📝 Especificado | Pendiente | [Ver US](./historias-usuario/US-AE-011-audit-logs-viewer.md) |
-| **Total** | **12 US** | **148 SP** | - | **10 impl, 2 pend** | - | - |
+| **US-AE-012** | Gestión de Roles y Permisos | 6 | P1 | ✅ COMPLETED | 2026-01-20 | [Ver US](./historias-usuario/US-AE-012-roles-management.md) |
+| **US-AE-013** | Gestión de Alertas | 8 | P1 | ✅ COMPLETED | 2026-01-20 | [Ver US](./historias-usuario/US-AE-013-alerts-management.md) |
+| **US-AE-014** | Analytics Dashboard | 10 | P1 | ✅ COMPLETED | 2026-01-20 | [Ver US](./historias-usuario/US-AE-014-analytics-dashboard.md) |
+| **US-AE-015** | Progress Tracking | 10 | P1 | ✅ COMPLETED | 2026-01-20 | [Ver US](./historias-usuario/US-AE-015-progress-tracking.md) |
+| **US-AE-016** | Advanced Admin | 12 | P2 | ✅ COMPLETED | 2026-01-20 | [Ver US](./historias-usuario/US-AE-016-advanced-admin.md) |
+| **US-AE-017** | Notifications Management | 6 | P1 | ✅ COMPLETED | 2026-01-20 | [Ver US](./historias-usuario/US-AE-017-notifications-management.md) |
+| **US-AE-018** | Notification Preferences | 4 | P2 | ✅ COMPLETED | 2026-01-20 | [Ver US](./historias-usuario/US-AE-018-notification-preferences.md) |
+| **Total** | **19 US** | **204 SP** | - | **17 impl, 2 pend** | - | - |
 
 **Desglose por Estado:**
-- ✅ **Implementadas P0+P1+P2:** 10 US, 127 SP
+- ✅ **Implementadas:** 17 US, 183 SP
 - 📝 **Especificadas (pendientes implementación):** 2 US, 21 SP (US-AE-010, US-AE-011)
-- **Total Real:** 12 US, 148 SP
+- **Total Real:** 19 US, 204 SP
 
-> **NOTA 2026-01-20:** Existen 7 páginas admin adicionales implementadas sin User Story formal:
-> AdminRolesPage, AdminAlertsPage, AdminAnalyticsPage, AdminProgressPage,
-> AdminAdvancedPage, AdminNotificationsPage, AdminNotificationPreferencesPage.
+> **NOTA 2026-01-20:** Las 7 páginas que no tenían US formal ahora están documentadas (US-AE-012 a US-AE-018).
 > Ver: [TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS](../../../orchestration/tareas/TASK-2026-01-20-ADMIN-PORTAL-ANALYSIS/)
 
 **Nota:** Total SP en tabla (114) incluye sobreestimación. SP real facturado: 89 SP ($35,600 MXN)
