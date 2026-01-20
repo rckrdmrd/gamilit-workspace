@@ -149,7 +149,7 @@ tasks:
   - id: TASK-2026-01-20-EXERCISES-VALIDATION
     title: "Validacion de Funcionamiento de Ejercicios M1-M5"
     date: "2026-01-20"
-    status: in_progress
+    status: completed
     priority: P0
     type: validation
     metodologia: CAPVED
@@ -164,37 +164,44 @@ tasks:
       - "METADATA.yml"
       - "SUBTASKS.yml"
       - "README.md"
+      - "REPORTE-FINAL.md"
+      - "FASE-1-VALIDACION-COMPONENTES.md"
+      - "FASE-2-VALIDACION-MODULOS.md"
       - "prompts/ (contexto para subagentes)"
-      - "docs/90-transversal/ejercicios/INTEGRACION-COMPONENTES-COMPARTIDOS.md"
+      - "docs/90-transversal/ejercicios/FLUJO-ENVIO-RESPUESTAS.md"
       - "docs/90-transversal/ejercicios/CICLO-VIDA-EJERCICIO.md"
+      - "docs/90-transversal/ejercicios/GUIA-PATRONES-COMPONENTES.md"
+      - "docs/90-transversal/ejercicios/ARQUITECTURA-PROGRESO-DUAL.md"
     metricas:
-      ejercicios_analizados: 30
+      ejercicios_validados: 26
       ejercicios_auxiliares: 4
       modulos_cubiertos: 5
+      backend_funcional: "100%"
       componentes_compartidos: 15
       hooks_compartidos: 6
-      gaps_identificados: 10
-      gaps_criticos: 4
-      gaps_medios: 4
-      gaps_menores: 2
-      subtareas_planificadas: 12
-      horas_estimadas: 40
+      gaps_identificados: 19
+      gaps_invalidados: 3
+      gaps_criticos_activos: 2
+      subtareas_completadas: 12
+      documentacion_generada: 5
     gaps_criticos:
-      - "GAP-EX-001: Emparejamiento sin envio a backend"
-      - "GAP-EX-002: Progreso no actualiza en tiempo real"
-      - "GAP-EX-003: Respuestas abiertas no visibles en Teacher Portal"
-      - "GAP-EX-004: Multimedia no reproducible en Teacher Portal"
+      - "GAP-EX-004: Multimedia no reproducible (CONFIRMADO - CRITICO)"
+      - "GAP-EX-013: 85% ejercicios sin mostrar XP/MLCoins (ALTO)"
+    gaps_invalidados:
+      - "GAP-EX-001: Emparejamiento SI envia al backend"
+      - "GAP-EX-003: Respuestas SI visibles via API"
+      - "GAP-EX-007: Mecanicas M4 removidas SI documentadas"
     conclusiones:
-      - "30 ejercicios + 4 auxiliares analizados"
-      - "15 componentes compartidos identificados"
-      - "6 hooks personalizados documentados"
-      - "10 gaps identificados (4 criticos, 4 medios, 2 menores)"
-      - "12 subtareas en 5 fases planificadas"
-      - "Fase de analisis completada, pendiente ejecucion"
+      - "26 ejercicios validados al 100%"
+      - "M3 implementa pendingReview correctamente (5/5)"
+      - "M4 usa patron SECURE en todos (5/5)"
+      - "M5 bloqueado por GAP multimedia"
+      - "5 documentos de integracion creados"
+      - "3 SPECs actualizados con notas de validacion"
     subtasks_status:
-      completadas: 0
-      pendientes: 12
-      fases_planificadas: 5
+      completadas: 12
+      pendientes: 0
+      fases_completadas: 5
     path: "orchestration/tareas/TASK-2026-01-20-EXERCISES-VALIDATION/"
 
   - id: TASK-2026-01-20-TEACHER-PORTAL-ANALYSIS
