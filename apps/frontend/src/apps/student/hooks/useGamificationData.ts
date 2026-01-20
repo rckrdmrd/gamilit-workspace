@@ -105,18 +105,21 @@ export function useGamificationData(userId: string) {
           apiClient.get(API_ENDPOINTS.streaks.user(userId)),
         ]);
 
+      // NOTE: apiClient interceptor (apiClient.ts:99-108) already unwraps
+      // the backend response { success, data } format, so response.data
+      // contains the actual data directly (not the wrapper).
       setData({
         user: {
           id: userId,
           email: 'detective@glit.com',
           full_name: 'Marie Curie',
         },
-        rankData: rankRes.data.data,
-        mlCoins: coinsRes.data.data,
-        achievements: achievementsRes.data.data,
-        leaderboardPosition: leaderboardRes.data.data,
-        missions: missionsRes.data.data,
-        streaks: streaksRes.data.data,
+        rankData: rankRes.data,
+        mlCoins: coinsRes.data,
+        achievements: achievementsRes.data,
+        leaderboardPosition: leaderboardRes.data,
+        missions: missionsRes.data,
+        streaks: streaksRes.data,
       });
     } catch (err) {
       console.warn('API error, using mock data:', err);

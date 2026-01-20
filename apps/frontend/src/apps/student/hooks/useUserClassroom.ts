@@ -50,11 +50,16 @@ export function useUserClassroom(userId: string | undefined): UseUserClassroomRe
         setLoading(true);
 
         // Fetch all classroom memberships for this user
-        const response = await apiClient.get<{ success: boolean; data: ClassroomMember[] }>(
+        // NOTE: apiClient interceptor unwraps { success, data } format automatically
+        // response.data is already the array after unwrap
+        const response = await apiClient.get<ClassroomMember[]>(
           `/social/classroom-members/users/${userId}`,
         );
 
-        const memberships = response.data.data;
+        // Handle both unwrapped (array) and wrapped (object with data) formats
+        const memberships = Array.isArray(response.data)
+          ? response.data
+          : (response.data as unknown as { data?: ClassroomMember[] })?.data || [];
 
         if (memberships && memberships.length > 0) {
           // Use the first active classroom (you could add more sophisticated logic here)

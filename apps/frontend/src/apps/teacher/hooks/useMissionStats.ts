@@ -80,7 +80,14 @@ export interface UseMissionStatsReturn {
 
 const fetchClassroomMissions = async (classroomId: string): Promise<ClassroomMission[]> => {
   const response = await apiClient.get(API_ENDPOINTS.gamification.classroomMissions(classroomId));
-  return response.data.data || response.data || [];
+  // NOTE: apiClient interceptor unwraps { success, data } format automatically
+  // response.data is already the array after unwrap
+  // Fallback to response.data.data only if interceptor didn't unwrap
+  if (Array.isArray(response.data)) {
+    return response.data;
+  }
+  // Fallback for non-unwrapped response (shouldn't happen but defensive coding)
+  return response.data?.data || [];
 };
 
 // ============================================================================
