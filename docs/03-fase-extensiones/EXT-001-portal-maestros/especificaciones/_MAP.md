@@ -17,6 +17,8 @@ Especificaciones técnicas formales para el Portal de Maestros.
 |----|--------|------|--------|----------|
 | **[SPEC-AT-RISK-001](./AT-RISK-LOGIC-STANDARD.md)** | Lógica de Detección At-Risk | Estándar | ✅ Aprobado | INC-4 |
 | **[SPEC-DASH-REP-001](./DASHBOARD-REPORTS-INTEGRATION.md)** | Integración Dashboard-Reports | Integración | ✅ Aprobado | GAP-3 |
+| **[SPEC-PERF-TREND-001](./PERFORMANCE-TREND-SPEC.md)** | Análisis de Tendencias de Desempeño | Analítica | ⏳ En Progreso | GAP-5 |
+| **[SPEC-UAT-001](./USER-ACTIVITY-TRACKING-DEPENDENCY.md)** | Seguimiento de Actividad de Usuario | Infraestructura | ⏳ En Progreso | INC-5 |
 
 ---
 
@@ -47,6 +49,35 @@ at_risk = (average_grade < 70%) OR (completion_rate < 50%)
 - Navegación desde ClassroomCards
 - Query parameters soportados
 - Componentes de integración
+
+---
+
+### SPEC-PERF-TREND-001: Análisis de Tendencias de Desempeño
+
+**Propósito:** Especificar los algoritmos y métodos para calcular tendencias de desempeño estudiantil a lo largo del tiempo.
+
+**Estado:** ⏳ En Progreso
+
+**Será incluido:**
+- Cálculo de tendencias (ascendente/descendente/estable)
+- Predicción de cambios en desempeño
+- Visualización de tendencias
+- Integración con alerts y reportes
+
+---
+
+### SPEC-UAT-001: Seguimiento de Actividad de Usuario
+
+**Propósito:** Definir el sistema de seguimiento de actividad del usuario para propósitos de auditoría, análisis de uso y cumplimiento de normativas.
+
+**Estado:** ⏳ En Progreso
+
+**Será incluido:**
+- Eventos de actividad a capturar
+- Estructuras de datos para logs
+- Retención y limpieza de datos
+- Reportes de actividad
+- Integración con el sistema de seguridad
 
 ---
 
