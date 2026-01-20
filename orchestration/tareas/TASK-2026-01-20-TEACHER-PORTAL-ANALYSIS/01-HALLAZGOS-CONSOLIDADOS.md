@@ -61,10 +61,22 @@ const response = await classroomsApi.getClassroomStudents(classroomId, { limit: 
 **Impacto:** Flujo de suspensión de estudiantes incompleto.
 **Solución Propuesta:** Completar criterios o referenciar correctamente EXT-010.
 
-### GAP-5: Performance Trend Structure (BAJA)
+### GAP-5: Performance Trend Structure (BAJA → CRÍTICA)
 **Problema:** Estructura diferente en US-PM-004a vs US-PM-005a.
 **Impacto:** Posible inconsistencia en responses.
 **Solución Propuesta:** Estandarizar a incluir siempre `completion_rate`.
+
+### GAP-6: Performance Trend NO IMPLEMENTADO (CRÍTICA) [NUEVO 2026-01-20]
+**Problema:** El backend NO implementa cálculo de tendencias semanales (performance_trend/trend).
+**Descubierto:** Validación FASE 3 - Analytics.service.ts no tiene método de cálculo semanal.
+**Impacto:**
+- US-PM-004a especifica `performance_trend[]` pero endpoint NO lo retorna
+- US-PM-005a especifica `trend[]` pero endpoint NO lo retorna
+- Gráficos de tendencia en frontend sin datos reales
+**Solución Requerida:** Crear tarea técnica para implementar:
+1. DTO `PerformanceTrendDto` con campos: week, average_grade, submissions_count, completion_rate
+2. Método `calculateWeeklyTrends()` en analytics.service.ts
+3. Agregar campo a response de endpoints existentes
 
 ---
 
@@ -131,11 +143,14 @@ const response = await classroomsApi.getClassroomStudents(classroomId, { limit: 
 - **Excel (XLSX):** Vía ExcelJS - funcional
 - **CSV:** Server-side generation - funcional
 
-### Multimedia ❌
-- **Imágenes:** No soportado
-- **Videos:** No soportado
-- **Audios:** No soportado
-- **Storage:** Solo reportes (PDF/Excel/CSV)
+### Multimedia ✅ [ACTUALIZADO 2026-01-20]
+- **Imágenes:** ✅ Soportado (jpeg, png, gif, webp - 10MB max)
+- **Videos:** ✅ Soportado (mp4, webm, ogg - 50MB max)
+- **Audios:** ✅ Soportado (mpeg, wav, ogg, mp3 - 20MB max)
+- **Documentos:** ✅ Soportado (pdf, doc, docx - 10MB max)
+- **Storage:** Local filesystem (uploads/exercises/) - S3/GCS preparado pero no activo
+- **Servicio:** `MediaStorageService` en `/modules/educational/`
+- **Endpoints:** `/educational/media/upload`, `/educational/media/:id`
 
 ### Alertas ✅
 - **6 tipos:** no_activity, low_score, repeated_failures, declining_trend, excessive_time, low_engagement
@@ -186,20 +201,21 @@ La expectativa de ">30 alumnos" debe venir de:
 ## 8. Recomendaciones Prioritarias
 
 ### P0 - Crítico (Inmediato)
-1. **Fix límite de 14 estudiantes**
-   - Investigar backend endpoint
-   - Implementar paginación real
-   - Validar con >30 registros
+1. ~~**Fix límite de 14 estudiantes**~~ → ✅ INVESTIGADO: No es bug de código, es tema de datos
+   - El código es correcto (limit=100)
+   - Usuario debe verificar datos en BD
+   - Queries de verificación en `02-INVESTIGACION-BUG-14-ESTUDIANTES.md`
 
 ### P1 - Alta (Esta semana)
-2. **Crear US-PM-007 Alert Configuration**
-3. **Documentar at-risk logic explícitamente**
-4. **Validar todos los endpoints de progress**
+2. ~~**Crear US-PM-007 Alert Configuration**~~ → ✅ COMPLETADO
+3. ~~**Documentar at-risk logic explícitamente**~~ → ✅ COMPLETADO (AT-RISK-LOGIC-STANDARD.md)
+4. ~~**Validar todos los endpoints de progress**~~ → ✅ COMPLETADO (23 endpoints validados)
+5. **[NUEVO] Implementar Performance Trend** → ⚠️ GAP-6 CRÍTICO
 
 ### P2 - Media (Próxima semana)
-5. **Estandarizar response structures**
-6. **Evaluar necesidad de multimedia**
-7. **Consolidar documentación dispersa**
+6. ~~**Estandarizar response structures**~~ → ✅ VALIDADO (100% coherente)
+7. ~~**Evaluar necesidad de multimedia**~~ → ✅ YA SOPORTADO
+8. ~~**Consolidar documentación dispersa**~~ → ✅ COMPLETADO
 
 ---
 
@@ -218,7 +234,34 @@ La expectativa de ">30 alumnos" debe venir de:
 
 ---
 
+## 10. FASE 3 - Validación de Endpoints (2026-01-20)
+
+### Resultados de Validación
+
+| Área | Endpoints | Estado | Notas |
+|------|-----------|--------|-------|
+| Progress Individual | 3 | ✅ 100% | DTOs coherentes |
+| Progress Classroom | 6 | ✅ 100% | Swagger completo |
+| Alerts | 7 | ✅ 100% | Guards aplicados |
+| Exportación | 3 | ✅ 100% | PDF/Excel/CSV |
+| Multimedia | 3 | ✅ 100% | 4 tipos soportados |
+
+### Inicialización de module_progress
+
+**Verificado:** Se crea AL REGISTRARSE el usuario (trigger `trg_initialize_user_stats`)
+- Valores iniciales: status='not_started', progress=0
+- Triggers de actualización: 32, 27, 33, 22 (ver detalle en 04-VALIDACION-ENDPOINTS-FASE3.md)
+
+### GAP Crítico Descubierto
+
+**GAP-6: Performance Trend NO IMPLEMENTADO**
+- Backend no calcula tendencias semanales
+- US-PM-004a y US-PM-005a especifican campos que no existen
+- Acción requerida: Crear tarea técnica para implementar
+
+---
+
 **Análisis completado:** 2026-01-20
-**Agentes utilizados:** 4 exploradores en paralelo
-**Documentos analizados:** 50+
-**Endpoints verificados:** 81
+**Agentes utilizados:** 8 exploradores en paralelo (4 FASE 1-2 + 4 FASE 3)
+**Documentos analizados:** 60+
+**Endpoints verificados:** 23 detallados + 81 inventariados
