@@ -3,18 +3,28 @@
 ## Descripcion
 Analisis y reportes de ejecucion del portal de estudiante de Gamilit.
 
-## Contenido
+## Nota sobre Archivado
+Los analisis historicos de 2025-11-28 fueron archivados en:
+`docs/99-archivados/historicos-2025/student-portal-analysis-2025-11/`
 
-| Archivo | Descripcion | Estado |
-|---------|-------------|--------|
-| [ANALYSIS-2025-11-28.md](./ANALYSIS-2025-11-28.md) | Analisis del 28 de noviembre 2025 | Completo |
-| [EXECUTION-REPORT-2025-11-28.md](./EXECUTION-REPORT-2025-11-28.md) | Reporte de ejecucion del 28 de noviembre 2025 | Completo |
-| [PLAN-CORRECTIONS-2025-11-28.md](./PLAN-CORRECTIONS-2025-11-28.md) | Plan de correcciones del 28 de noviembre 2025 | Completo |
-| [VALIDATION-PLAN-2025-11-28.md](./VALIDATION-PLAN-2025-11-28.md) | Plan de validacion del 28 de noviembre 2025 | Completo |
-| [VALIDATION-POST-CHANGES-2025-11-28.md](./VALIDATION-POST-CHANGES-2025-11-28.md) | Validacion post-cambios del 28 de noviembre 2025 | Completo |
+Los gaps resueltos se mantienen en `gaps/` como referencia de problemas y soluciones implementadas.
+
+## Contenido Actual
+
+Este directorio se utiliza para analisis en curso. Para analisis completados:
+
+### Analisis Activo (2026)
+- Ver: `orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md`
+- Ver: `orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/`
+
+### Analisis Archivados (2025)
+- Ver: `docs/99-archivados/historicos-2025/student-portal-analysis-2025-11/`
 
 ## Referencias
 - [Directorio padre](../_MAP.md)
+- [Gaps resueltos](../gaps/_MAP.md)
+- [Trazas de correcciones](../traces/_MAP.md)
 
 ---
-*Ultima actualizacion: 2026-01-04*
+*Ultima actualizacion: 2026-01-20*
+*Razon: Purga de documentacion obsoleta - SUBTASK-4.2*

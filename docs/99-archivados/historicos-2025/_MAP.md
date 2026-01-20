@@ -23,12 +23,13 @@ Esta carpeta contiene documentacion historica que ya no es activa pero se conser
 
 ```
 historicos-2025/
-├── correcciones/           # Reportes de correcciones ejecutadas
-├── correcciones-obsoletas/ # Correcciones ya no relevantes
-├── incidencias/            # Screenshots y reportes de incidencias
-├── planes-completados/     # Planes de trabajo ya ejecutados
-├── reportes-analisis/      # Reportes de analisis y validacion
-└── trazas/                 # Trazas de implementacion de cambios
+├── correcciones/                     # Reportes de correcciones ejecutadas
+├── correcciones-obsoletas/           # Correcciones ya no relevantes
+├── incidencias/                      # Screenshots y reportes de incidencias
+├── planes-completados/               # Planes de trabajo ya ejecutados
+├── reportes-analisis/                # Reportes de analisis y validacion
+├── student-portal-analysis-2025-11/  # Analisis Student Portal Nov 2025 (NEW)
+└── trazas/                           # Trazas de implementacion de cambios
 ```
 
 ---
@@ -83,14 +84,28 @@ historicos-2025/
 
 Carpeta con screenshots de incidencias resueltas durante 2025.
 
+### student-portal-analysis-2025-11/ (6 archivos) - NUEVO
+
+| Archivo | Fecha | Descripcion |
+|---------|-------|-------------|
+| README.md | 2026-01-20 | Descripcion del archivado |
+| ANALYSIS-2025-11-28.md | 2025-11-28 | Analisis exhaustivo Student Portal |
+| EXECUTION-REPORT-2025-11-28.md | 2025-11-28 | Reporte de ejecucion |
+| REPORTE-VALIDACION-GAMIFICACION-2025-11-28.md | 2025-11-28 | Validacion gamificacion |
+| VALIDATION-PLAN-2025-11-28.md | 2025-11-28 | Plan de validacion |
+| VALIDATION-POST-CHANGES-2025-11-28.md | 2025-11-28 | Validacion post-cambios |
+
+> **Origen:** Movido desde `docs/95-guias-desarrollo/student-portal/analysis/`
+> **Razon:** Purga de documentacion obsoleta (SUBTASK-4.2)
+
 ---
 
 ## Metricas
 
 | Componente | Cantidad |
 |------------|----------|
-| Carpetas | 6 |
-| Archivos MD | 20 |
+| Carpetas | 7 |
+| Archivos MD | 26 |
 | Screenshots | 2 |
 
 ---
@@ -116,5 +131,5 @@ Esta carpeta fue migrada desde:
 
 ---
 
-**Actualizado:** 2025-01-04
-**Version:** 1.0 (migracion completada)
+**Actualizado:** 2026-01-20
+**Version:** 1.1 (archivado student-portal-analysis-2025-11 agregado)
