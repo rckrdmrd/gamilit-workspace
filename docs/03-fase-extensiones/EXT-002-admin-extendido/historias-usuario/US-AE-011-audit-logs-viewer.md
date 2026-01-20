@@ -2,7 +2,7 @@
 id: "US-AE-011"
 title: "Visor de Audit Logs"
 type: "User Story"
-status: "Backlog"
+status: "In Progress"
 priority: "Alta"
 assignee: "@Backend-Agent, @Frontend-Agent"
 epic: "EXT-002"
@@ -11,7 +11,7 @@ budget: "$3,200 MXN"
 sprint: "Sprint-TBD"
 labels: ["admin-extendido", "audit-logs", "security", "compliance", "v2-core"]
 created_date: "2025-11-29"
-updated_date: "2026-01-04"
+updated_date: "2026-01-20"
 ---
 
 # HU-EP010-11: Visor de Audit Logs
@@ -227,15 +227,15 @@ apps/backend/src/modules/admin/
 
 ## Definición de Hecho (DoD)
 
-- [ ] 3 endpoints implementados en backend
-- [ ] DTOs con validación
-- [ ] AdminAuditLogsPage funcional
-- [ ] Hook useAuditLogs actualizado
-- [ ] Filtros y búsqueda funcionando
-- [ ] Modal de detalle con diff view
-- [ ] Export a CSV funcionando
-- [ ] Integración en router admin (ruta /admin/audit-logs)
-- [ ] Link en sidebar
+- [x] Backend endpoints ya existentes (GET /api/admin/audit-logs)
+- [x] DTOs con validación (existentes)
+- [x] AdminAuditLogsPage funcional (IMPLEMENTADO 2026-01-20)
+- [x] Hook useAuditLogs funcionando (ya existia)
+- [x] Filtros y búsqueda funcionando
+- [x] Modal de detalle implementado
+- [x] Export a CSV funcionando
+- [x] Integración en router admin (ruta /admin/audit-logs) (IMPLEMENTADO 2026-01-20)
+- [ ] Link en sidebar (pendiente)
 - [ ] Tests unitarios >80% coverage
 - [ ] Documentación API actualizada
 

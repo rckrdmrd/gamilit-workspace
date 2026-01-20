@@ -90,6 +90,7 @@ const AdminAnalyticsPage = lazy(() => import('@/apps/admin/pages/AdminAnalyticsP
 const AdminProgressPage = lazy(() => import('@/apps/admin/pages/AdminProgressPage'));
 const AdminClassroomTeacherPage = lazy(() => import('@/apps/admin/pages/AdminClassroomTeacherPage'));
 const AdminAssignmentsPage = lazy(() => import('@/apps/admin/pages/AdminAssignmentsPage'));
+const AdminAuditLogsPage = lazy(() => import('@/apps/admin/pages/AdminAuditLogsPage'));
 
 /**
  * App Component
@@ -440,6 +441,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['super_admin']}>
                 <AdminAssignmentsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/audit-logs"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminAuditLogsPage />
               </ProtectedRoute>
             }
           />
