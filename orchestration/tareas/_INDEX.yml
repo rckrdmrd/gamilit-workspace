@@ -2,9 +2,9 @@
 # =========================================
 # Registro de todas las tareas completadas siguiendo ciclo CAPVED
 
-version: "1.21.0"
+version: "1.22.0"
 last_updated: "2026-01-20"
-total_tasks: 29
+total_tasks: 30
 
 # =========================================
 # TAREAS POR FECHA
@@ -46,7 +46,43 @@ tasks:
       - "Plan de 9 subtareas con metodologia CAPVED"
       - "Documentacion existente inventariada"
       - "Funcionalidades multimedia/PDF documentadas"
+    subtasks_status:
+      completadas: 1
+      pendientes: 8
+      ultima_completada: "SUBTASK-2.3 - Plan de Testing Prioritario"
     path: "orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/"
+
+  - id: SUBTASK-2026-01-20-2.3
+    title: "Plan de Testing Prioritario - Student Portal (GAP-SP-006)"
+    date: "2026-01-20"
+    status: completed
+    priority: P1
+    type: planning
+    metodologia: CAPVED
+    parent_task: "TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS"
+    dominios:
+      - "Frontend"
+      - "Testing"
+      - "Student Portal"
+    entregables:
+      - "orchestration/testing/TESTING-PLAN-STUDENT-PORTAL.md"
+    metricas:
+      tests_existentes_identificados: 47
+      hooks_criticos_sin_tests: 10
+      apis_criticas_sin_tests: 5
+      coverage_actual: "13%"
+      coverage_meta_fase1: "25%"
+      coverage_meta_final: "40%"
+      horas_estimadas_implementacion: "54h"
+      sprints_planificados: 4
+    conclusiones:
+      - "47 archivos de tests existentes identificados"
+      - "10+ hooks criticos sin tests priorizados"
+      - "5+ APIs criticas sin tests priorizadas"
+      - "Plan de 54h de implementacion en 4 fases"
+      - "Roadmap detallado de semana 1-7"
+      - "Estrategia de testing definida (Vitest + RTL + MSW)"
+    path: "orchestration/testing/TESTING-PLAN-STUDENT-PORTAL.md"
 
   # ----------------------------------------
   # 2026-01-19
