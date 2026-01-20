@@ -128,6 +128,7 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
     // FIX-BE-007-2026-01-18: Added StudentInterventionAlert entity from teacher module
     // FIX-BE-010-2026-01-18: Added Profile and Classroom for cross-datasource relations
     // FIX-BE-011-2026-01-18: Added Tenant for Profile->Tenant cascade dependency
+    // FIX-BE-013-2026-01-20: Added School for Classroom->School cascade dependency
     TypeOrmModule.forRootAsync({
       name: 'progress',  // Connection name for @InjectRepository(Entity, 'progress')
       imports: [ConfigModule],
@@ -146,6 +147,8 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
           __dirname + '/modules/social/entities/classroom.entity{.ts,.js}',
           // FIX-BE-011: Required for Profile @ManyToOne -> Tenant cascade
           __dirname + '/modules/auth/entities/tenant.entity{.ts,.js}',
+          // FIX-BE-013: Required for Classroom @ManyToOne -> School cascade
+          __dirname + '/modules/social/entities/school.entity{.ts,.js}',
         ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
