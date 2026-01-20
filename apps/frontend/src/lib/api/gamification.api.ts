@@ -131,30 +131,18 @@ export const gamificationApi = {
    * @returns List of user achievements with progress (transformed from snake_case)
    *
    * FIX: CORR-004 - Transformer mapea snake_case del backend a camelCase del frontend
-   * FIX: CORR-005 - Backend ahora retorna { data: { achievements, total } }, extraer array
+   * FIX: GAP-SP-003 - Backend ahora retorna { achievements, total } directamente
+   *                   (el apiClient interceptor hace unwrap del TransformResponseInterceptor)
    */
   getUserAchievements: async (userId: string): Promise<UserAchievement[]> => {
-    const { data } = await apiClient.get<any>(
+    const { data } = await apiClient.get<{ achievements: any[]; total: number }>(
       `/gamification/users/${userId}/achievements`,
     );
 
-    // FIX: CORR-005 - Extraer array de la nueva estructura de respuesta
-    // Backend puede retornar múltiples estructuras:
-    // 1. Array directo: [...]
-    // 2. Con wrapper: { data: { achievements: [...], total } }
-    // 3. Sin wrapper: { achievements: [...], total }
-    let achievementsArray: any[] = [];
-
-    if (Array.isArray(data)) {
-      achievementsArray = data;
-    } else if (data?.data?.achievements && Array.isArray(data.data.achievements)) {
-      achievementsArray = data.data.achievements;
-    } else if (data?.achievements && Array.isArray(data.achievements)) {
-      achievementsArray = data.achievements;
-    } else {
-      console.warn('[gamificationApi.getUserAchievements] Unexpected response structure:', typeof data, data);
-      achievementsArray = [];
-    }
+    // FIX: GAP-SP-003 - Estructura simplificada despues de remover wrapper innecesario
+    // Backend retorna: { achievements: [...], total: N }
+    // Mantener fallback defensivo por compatibilidad con posibles variaciones
+    const achievementsArray = data?.achievements ?? (Array.isArray(data) ? data : []);
 
     // Transformar respuesta del backend (snake_case) al formato del frontend (camelCase)
     return transformUserAchievements(achievementsArray);
