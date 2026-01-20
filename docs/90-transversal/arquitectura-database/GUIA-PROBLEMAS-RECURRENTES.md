@@ -274,6 +274,47 @@ Si EntityA esta en datasource X:
 
 ---
 
+## PATRON 7: TypeORM Enum Column Type Inference Error
+
+### Sintoma
+```
+DataTypeNotSupportedError: Data type "Object" in "Entity.field" is not supported by "postgres" database.
+```
+
+### Causa Raiz
+TypeORM no puede inferir el tipo de columna PostgreSQL desde un enum TypeScript.
+Cuando se omite el `type` en `@Column()`, TypeORM ve el enum compilado como un objeto JavaScript
+y no sabe mapearlo a un tipo PostgreSQL.
+
+### Ejemplo del Error
+```typescript
+// INCORRECTO - causa error "Object not supported"
+@Column({ name: 'report_type', length: 50 })
+  reportType!: TeacherReportTypeEnum;  // TypeORM no puede inferir tipo
+
+// CORRECTO - tipo explicito
+@Column({ name: 'report_type', type: 'text' })
+  reportType!: TeacherReportTypeEnum;
+```
+
+### Solucion
+Agregar `type: 'text'` o `type: 'varchar'` explicitamente a columnas que usan enums TypeScript:
+
+```typescript
+@Column({ name: 'field_name', type: 'text' })
+  fieldName!: MyEnum;
+```
+
+### Prevencion
+1. **SIEMPRE** usar `type: 'text'` cuando la propiedad TypeScript es un enum
+2. No usar `length: N` sin `type` en columnas con enums
+3. Validar con `npm run build` y `npm run start:dev` despues de agregar columnas enum
+
+### Referencia
+- Fix: FIX-2026-01-20 en TeacherReport entity
+
+---
+
 ## CHECKLIST DE RESET DE BASE DE DATOS
 
 Antes de probar la aplicacion despues de cambios de schema:
