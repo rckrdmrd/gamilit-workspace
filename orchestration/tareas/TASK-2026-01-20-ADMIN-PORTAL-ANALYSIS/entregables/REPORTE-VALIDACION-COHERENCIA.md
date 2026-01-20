@@ -219,6 +219,103 @@ Los siguientes endpoints existen en backend pero **NO son consumidos por el fron
 
 ---
 
+### 2.4 Gaps en Coherencia Backend ↔ Database (Validación T3.2)
+
+**Fecha validación:** 2026-01-20
+**Metodología:** Comparación exhaustiva de 17 entities vs DDL schemas
+
+---
+
+#### RESUMEN DE COHERENCIA BACKEND ↔ DATABASE
+
+| Esquema | Entities | Tablas DDL | Coherencia |
+|---------|----------|------------|------------|
+| **admin_dashboard** | 3 | 3 | ✅ 100% |
+| **system_configuration** | 8 | 8 | ✅ 100% |
+| **audit_logging** | 4 | 4 | ✅ 100% |
+| **Referencias externas** | 3 | 3 | ✅ 100% |
+
+**ESTADO GENERAL: ✅ COHERENCIA TOTAL CONFIRMADA**
+
+Todas las 17 entities del módulo admin tienen sus tablas DDL correspondientes:
+
+| Entity | Tabla DDL | Estado |
+|--------|-----------|--------|
+| SystemSetting | system_configuration.system_settings | ✅ |
+| FeatureFlag | system_configuration.feature_flags | ✅ |
+| NotificationSettings | system_configuration.notification_settings | ✅ |
+| NotificationSettingsGlobal | system_configuration.notification_settings_global | ✅ |
+| BulkOperation | admin_dashboard.bulk_operations | ✅ |
+| AdminReport | admin_dashboard.admin_reports | ✅ |
+| SystemAlert | audit_logging.system_alerts | ✅ |
+| RateLimit | system_configuration.rate_limits | ✅ |
+| GamificationParameter | system_configuration.gamification_parameters | ✅ |
+| PerformanceMetric | audit_logging.performance_metrics | ✅ |
+| SystemLog | audit_logging.system_logs | ✅ |
+| ActivityLog | audit_logging.activity_log | ✅ |
+| EnvironmentConfig | system_configuration.environment_config | ✅ |
+| TenantConfiguration | system_configuration.tenant_configurations | ✅ |
+| ApiConfiguration | system_configuration.api_configuration | ✅ |
+| MetricsHistory | admin_dashboard.metrics_history | ✅ |
+| AuditLog | audit_logging.audit_logs | ✅ (re-export) |
+
+---
+
+#### Gap BE-DB-001: Inconsistencia en FK User vs Profile
+
+**Descripción:** Algunas entities usan `User` como FK mientras otras usan `Profile`.
+
+| Entity | Campo | Referencia Actual | Referencia Recomendada |
+|--------|-------|-------------------|------------------------|
+| BulkOperation | started_by | FK→User | FK→Profile |
+| AdminReport | requested_by | FK→User | FK→Profile |
+
+**Impacto:** BAJO - Funciona pero inconsistente con el resto del sistema
+**Acción:** Normalizar referencias a Profile en futuras refactorizaciones
+
+---
+
+#### Gap BE-DB-002: Relaciones ORM faltantes
+
+**Descripción:** Algunos campos tienen FK en DDL pero no tienen `@ManyToOne` en entity.
+
+| Entity | Campo | Estado DDL | Estado ORM |
+|--------|-------|------------|------------|
+| GamificationParameter | last_modified_by | FK→Profile en DDL | Sin @ManyToOne |
+| AuditLog | tenantId | Referencia en DDL | Sin @ManyToOne |
+| AdminReport | tenant_id | FK manual | Sin @ManyToOne (FIX-BE-001) |
+
+**Impacto:** BAJO - Queries manuales funcionan, pero no hay validación ORM
+**Acción:** Agregar relaciones @ManyToOne para consistencia
+
+---
+
+#### Gap BE-DB-003: Tablas sin RLS
+
+**Descripción:** Algunas tablas no tienen RLS policies definidas.
+
+| Tabla | Estado RLS | Prioridad |
+|-------|------------|-----------|
+| admin_dashboard.metrics_history | ❌ Sin RLS | P3 (baja) |
+| system_configuration.environment_config | ❌ Sin RLS | P2 (media) |
+
+**Impacto:** MEDIO para environment_config (puede tener datos sensibles)
+**Acción:** Evaluar necesidad de RLS según clasificación de datos
+
+---
+
+#### Estadísticas Finales Backend ↔ Database
+
+- **Total entities:** 17
+- **Total campos:** 350+
+- **Total índices:** 50+
+- **Total constraints UNIQUE:** 12
+- **Total constraints CHECK:** 25+
+- **RLS policies:** 15+
+- **Coherencia DDL:** 100%
+
+---
+
 ## 3. Validacion de Codigo Existente
 
 ### 3.1 Paginas Frontend - Todas Existen
