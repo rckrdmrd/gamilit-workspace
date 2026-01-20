@@ -42,7 +42,8 @@ task:
     gaps_altos: 6
     gaps_medios: 4
     gaps_menores: 3
-    documentacion_generada: 5
+    documentacion_generada: 8
+    lineas_documentadas: 4500
     subtareas_completadas: 12
     subtareas_pendientes: 0
 
@@ -265,11 +266,28 @@ documentacion_relacionada:
     - path: "docs/95-guias-desarrollo/frontend/MECANICAS-EDUCATIVAS.md"
       contenido: "Mapeo de mecanicas implementadas"
 
-  a_crear:
-    - "docs/90-transversal/ejercicios/INTEGRACION-COMPONENTES-COMPARTIDOS.md"
-    - "docs/90-transversal/ejercicios/CICLO-VIDA-EJERCICIO.md"
-    - "docs/90-transversal/ejercicios/VALIDACION-EJERCICIOS-REPORT.md"
-    - "orchestration/analisis/ANALISIS-EJERCICIOS-VALIDATION-2026-01-20.md"
+  creada_en_tarea:
+    - path: "docs/90-transversal/ejercicios/FLUJO-ENVIO-RESPUESTAS.md"
+      contenido: "Flujos completos de submission frontend-backend"
+      lineas: 1380
+    - path: "docs/90-transversal/ejercicios/CICLO-VIDA-EJERCICIO.md"
+      contenido: "Estados y transiciones de ejercicio"
+      lineas: 661
+    - path: "docs/90-transversal/ejercicios/GUIA-PATRONES-COMPONENTES.md"
+      contenido: "Patrones de integracion con ejemplos"
+      lineas: 1048
+    - path: "docs/90-transversal/ejercicios/ARQUITECTURA-PROGRESO-DUAL.md"
+      contenido: "Sistema dual de progreso inmediato/diferido"
+      lineas: 583
+    - path: "docs/90-transversal/ejercicios/GAPS-EJERCICIOS-ANALISIS.md"
+      contenido: "Analisis detallado de 19 GAPs"
+      lineas: 623
+    - path: "orchestration/tareas/TASK-.../FASE-1-VALIDACION-COMPONENTES.md"
+      contenido: "Validacion de componentes compartidos"
+    - path: "orchestration/tareas/TASK-.../FASE-2-VALIDACION-MODULOS.md"
+      contenido: "Validacion por modulo M1-M5"
+    - path: "orchestration/tareas/TASK-.../REPORTE-FINAL-VALIDACION.md"
+      contenido: "Reporte final consolidado"
 
 referencias:
   tarea_relacionada: "TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS"
