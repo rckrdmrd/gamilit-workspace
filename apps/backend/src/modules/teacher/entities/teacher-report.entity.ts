@@ -96,15 +96,17 @@ export class TeacherReport {
   /**
    * Tipo de reporte
    * FIX-2026-01-19: Tipado con enum para coherencia con CHECK constraint
+   * FIX-2026-01-20: Agregado type: 'text' explícito para evitar "Object not supported"
    */
-  @Column({ name: 'report_type', length: 50 })
+  @Column({ name: 'report_type', type: 'text' })
     reportType!: TeacherReportTypeEnum;
 
   /**
    * Formato de exportación
    * FIX-2026-01-19: Tipado con enum para coherencia con CHECK constraint
+   * FIX-2026-01-20: Agregado type: 'text' explícito para evitar "Object not supported"
    */
-  @Column({ name: 'report_format', length: 10 })
+  @Column({ name: 'report_format', type: 'text' })
     reportFormat!: TeacherReportFormatEnum;
 
   @Column({ name: 'student_count', type: 'int', default: 0 })
