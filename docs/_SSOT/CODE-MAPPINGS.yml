@@ -3,9 +3,12 @@
 # Actualizado: 2026-01-18
 
 metadata:
-  version: "1.0.0"
-  last_updated: "2026-01-18"
+  version: "1.0.1"
+  last_updated: "2026-01-20"
   purpose: "Mapeo bidireccional entre documentacion y codigo fuente"
+  changes_1_0_1:
+    - "CORREGIDO: notification_system -> notifications (nombre real del schema)"
+    - "ACTUALIZADO: tablas de notifications schema con lista completa"
 
 # =============================================================================
 # MAPEO POR CAPAS
@@ -15,7 +18,7 @@ layers:
   database:
     base_path: "apps/database/ddl/"
     schemas_count: 16
-    tables_count: 137
+    tables_count: 139  # Actualizado 2026-01-20 (+2 tablas)
     coverage: "99%"
 
   backend:
@@ -112,15 +115,19 @@ database_mappings:
         - lti_sessions
         - lti_grade_passback
 
-    notification_system:
-      ddl_path: "apps/database/ddl/schemas/notification_system/"
+    notifications:
+      ddl_path: "apps/database/ddl/schemas/notifications/"
       epic: EXT-003
       documentation:
         - "../03-fase-extensiones/EXT-003-notificaciones/implementacion/TRACEABILITY.yml"
       tables:
         - notifications
+        - notification_preferences
+        - notification_logs
         - notification_templates
-        - user_notification_preferences
+        - notification_queue
+        - user_devices
+      note: "Schema corregido de notification_system a notifications (2026-01-20)"
 
 # =============================================================================
 # MAPEO BACKEND -> DOCS

@@ -18,17 +18,17 @@ metadata:
     staging_files: 6
   database_counts:
     schemas: 16
-    tables: 137  # VALIDADO 2026-01-17 Fase2 - conteo real archivos DDL/tables/
-    tables_active: 129  # Excluyendo deprecated embebidos
+    tables: 139  # VALIDADO 2026-01-20 - conteo real archivos DDL/tables/
+    tables_active: 131  # Excluyendo deprecated embebidos (+2 nuevas)
     views: 13  # VALIDADO 2026-01-17 Fase2
     materialized_views: 4  # gamification_system
-    enums: 36  # VALIDADO 2026-01-17 Fase2
+    enums: 36  # VALIDADO 2026-01-20 - sin cambios
     functions_active: 112  # VALIDADO 2026-01-17 Fase2: +1 retry_helper_functions.sql (2 funciones)
     functions_deprecated: 14  # Reducido tras consolidación
     functions_total: 126
-    triggers_active: 35  # VALIDADO 2026-01-17 Fase2
+    triggers_active: 37  # VALIDADO 2026-01-20 (+2 nuevos triggers)
     triggers_deprecated: 0  # Eliminados completamente
-    triggers_total: 35
+    triggers_total: 37
     indexes_files: 23  # VALIDADO 2026-01-17 Fase2
     indexes_statements: 405
     policies_rls: 282  # VALIDADO 2026-01-17 Fase2 - conteo CREATE POLICY statements
@@ -58,6 +58,29 @@ metadata:
       - "system_configuration.app_settings - Config de sistema"
     validation_date: "2026-01-17"
     analysis_document: "ANALISIS-INTEGRACION-COMPLETO.md"
+  audit_2026_01_20:
+    description: "RECONCILIACION: Objetos faltantes identificados en análisis integral"
+    task_id: "TASK-2026-01-20-001"
+    changes_summary:
+      - "AGREGADO: social_features.scheduled_reports (11-scheduled_reports.sql)"
+      - "AGREGADO: social_features.shared_reports (12-shared_reports.sql)"
+      - "AGREGADO: progress_tracking.trg_update_submitted_progress (32-trg_update_submitted_progress.sql)"
+      - "AGREGADO: progress_tracking.trg_sync_average_score_on_submission (33-trg_sync_average_score_on_submission.sql)"
+      - "CORREGIDO: CODE-MAPPINGS.yml notification_system -> notifications"
+    totales_actualizados:
+      tables: 139  # +2 desde 2026-01-17 (137 -> 139)
+      triggers_active: 37  # +2 desde 2026-01-17 (35 -> 37)
+      enums: 36  # Sin cambios
+    schemas_afectados:
+      social_features:
+        tables_added: ["scheduled_reports", "shared_reports"]
+        new_count: 20  # Era 18 en análisis anterior
+      progress_tracking:
+        triggers_added: ["trg_update_submitted_progress", "trg_sync_average_score_on_submission"]
+        triggers_count: 15  # Era 13 en análisis anterior
+    validation_method: "find + wc -l sobre archivos .sql excluyendo _deprecated"
+    validation_date: "2026-01-20"
+
   audit_2026_01_17:
     description: "AUDITORIA-INTEGRAL + RE-AUDITORIA: Consolidación DDL completa en 2 fases"
     task_id: "TASK-2026-01-17-001"
@@ -395,10 +418,10 @@ schemas:
   - name: "progress_tracking"
     description: "Seguimiento de progreso de estudiantes"
     phase: 8
-    ddl_files: 46  # 2026-01-04: +4 (certificate_enums, certificates table, certificates rls-policies, certificates trigger - EPIC 10.2)
-    tables: 18  # ✅ 2026-01-04: +1 (certificates - EPIC 10.2)
+    ddl_files: 48  # 2026-01-20: +2 (trg_update_submitted_progress, trg_sync_average_score_on_submission)
+    tables: 19  # 2026-01-20: Conteo real del filesystem
     functions: 11  # 2025-11-29: +1 (generate_student_alerts)
-    triggers: 23  # ✅ 2026-01-04: +1 (trg_certificates_updated_at - EPIC 10.2)
+    triggers: 15  # 2026-01-20: Conteo real del filesystem (+2 nuevos triggers)
     indexes: 29  # ✅ 2026-01-04: +9 (certificates indexes - EPIC 10.2)
     views: 2  # DB-122: +1 (classroom_students_metrics)
     enums: 7  # ✅ 2026-01-04: +2 (certificate_status, certificate_type - EPIC 10.2)
@@ -428,10 +451,10 @@ schemas:
   - name: "social_features"
     description: "Características sociales (escuelas, aulas, equipos) - SIMPLIFICADO 2025-12-15"
     phase: 9
-    ddl_files: 33  # 2026-01-08: +2 (sync_teacher_classroom function, 26-trg_sync_teacher_classroom trigger)
-    tables: 13  # 2025-11-26: +1 (teacher_reports)
+    ddl_files: 35  # 2026-01-20: +2 (scheduled_reports, shared_reports)
+    tables: 20  # 2026-01-20: +2 (scheduled_reports, shared_reports) - conteo real del filesystem
     functions: 7  # 2026-01-08: +1 (sync_teacher_classroom_on_insert)
-    triggers: 5  # 2026-01-08: +1 (trg_sync_teacher_classroom_on_insert)
+    triggers: 3  # 2026-01-20: Conteo real del filesystem (00-batch, 25-trg_update_classroom_count, 26-trg_sync_teacher_classroom)
     indexes: 13  # 2025-11-26: +5 (teacher_id, tenant_id, generated_at, classroom_id, report_type)
     views: 1
     enums: 1

@@ -7,11 +7,29 @@
 | **ID** | SPEC-PERF-TREND-001 |
 | **Tipo** | Especificacion Tecnica |
 | **Estado** | Propuesto |
-| **Version** | 1.0.0 |
+| **Version** | 1.1.0 |
 | **Creado** | 2026-01-20 |
 | **Actualizado** | 2026-01-20 |
 | **GAP Relacionado** | GAP-6 |
 | **US Afectadas** | US-PM-004a, US-PM-005a |
+| **Severidad** | BLOQUEANTE |
+| **Story Points** | 5.5 SP |
+
+---
+
+## Resumen Ejecutivo
+
+**GAP-6** es un problema BLOQUEANTE que impide la visualizacion de graficos de tendencia de rendimiento en el Teacher Portal. El frontend (TeacherProgressPage, ClassProgressDashboard) espera datos de tendencia semanal que el backend actualmente NO proporciona.
+
+**Archivos Frontend Afectados:**
+- `/apps/frontend/src/apps/teacher/pages/TeacherProgressPage.tsx`
+- `/apps/frontend/src/apps/teacher/components/progress/ClassProgressDashboard.tsx`
+- `/apps/frontend/src/apps/teacher/components/progress/ProgressChart.tsx` (type='line')
+
+**Archivos Backend Involucrados:**
+- `/apps/backend/src/modules/teacher/services/analytics.service.ts`
+- `/apps/backend/src/modules/teacher/services/student-progress.service.ts`
+- `/apps/backend/src/modules/teacher/services/teacher-classrooms-crud.service.ts`
 
 ---
 
@@ -50,6 +68,142 @@ En la validacion del Teacher Portal se identifico que:
 - Los graficos de tendencia en el frontend no pueden renderizarse
 - Los profesores no pueden visualizar la evolucion del rendimiento
 - El AC-03 de US-PM-004a y AC-06 de US-PM-005a no pueden cumplirse
+
+---
+
+## Diagnostico Detallado
+
+### Frontend: Lo que espera
+
+#### 1. ProgressChart Component (type='line')
+
+Ubicacion: `/apps/frontend/src/apps/teacher/components/progress/ProgressChart.tsx`
+
+El componente `ProgressChart` con `type="line"` espera un array de `DataPoint`:
+
+```typescript
+interface DataPoint {
+  label: string;   // e.g., "W1", "W2", ..., "W12"
+  value: number;   // Valor de 0-100
+  color?: string;  // Opcional
+}
+```
+
+Este componente renderiza una grafica SVG con:
+- Lineas de cuadricula para valores 0, 25, 50, 75, 100
+- Una polilínea conectando los puntos
+- Circulos en cada punto de datos
+- Etiquetas X para cada semana
+
+#### 2. ClassProgressDashboard Component
+
+Ubicacion: `/apps/frontend/src/apps/teacher/components/progress/ClassProgressDashboard.tsx`
+
+Actualmente usa `moduleProgress` para renderizar graficas de tiempo:
+
+```typescript
+<ProgressChart
+  title="Tiempo Promedio por Modulo (minutos)"
+  data={moduleProgress.map((m) => ({
+    label: m.module_name.substring(0, 15) + '...',
+    value: m.average_time_minutes,
+  }))}
+  type="line"
+/>
+```
+
+**NOTA:** Este componente NO tiene un grafico de tendencia de rendimiento semanal. Solo muestra tiempo por modulo. La especificacion US-PM-004a requiere agregar un grafico de `performance_trend`.
+
+#### 3. useClassroomData Hook
+
+Ubicacion: `/apps/frontend/src/apps/teacher/hooks/useClassroomData.ts`
+
+El hook consume:
+```typescript
+const { data: progressData } = await classroomsApi.getClassroomProgress(classroomId);
+```
+
+Retorna `ClassroomProgressDataDto` que incluye:
+- `average_completion`, `average_score`, `student_count`, etc.
+- `moduleProgress[]` con datos por modulo
+- **NO incluye** `performance_trend[]`
+
+### Backend: Lo que retorna actualmente
+
+#### 1. getClassroomProgress (TeacherClassroomsCrudService)
+
+Ubicacion: `/apps/backend/src/modules/teacher/services/teacher-classrooms-crud.service.ts` (lineas 539-709)
+
+**Retorna:**
+```typescript
+{
+  classroomData: {
+    id: string,
+    name: string,
+    student_count: number,
+    active_students: number,
+    average_completion: number,
+    average_score: number,
+    total_exercises: number,
+    completed_exercises: number,
+  },
+  moduleProgress: ModuleProgressItemDto[],  // Por modulo
+}
+```
+
+**NO retorna:** `performance_trend[]`
+
+#### 2. getStudentInsights (AnalyticsService)
+
+Ubicacion: `/apps/backend/src/modules/teacher/services/analytics.service.ts` (lineas 479-578)
+
+**Retorna:**
+```typescript
+{
+  overall_score: number,
+  modules_completed: number,
+  modules_total: number,
+  comparison_to_class: { score_percentile: number },
+  risk_level: 'low' | 'medium' | 'high',
+  strengths: string[],
+  weaknesses: string[],
+  predictions: { completion_probability: number, dropout_risk: number },
+  recommendations: string[],
+  mastery_summary?: { ... },
+  competencies?: { ... },
+}
+```
+
+**NO retorna:** `performance_trend[]`
+
+#### 3. getClassroomAnalytics (AnalyticsService)
+
+Ubicacion: `/apps/backend/src/modules/teacher/services/analytics.service.ts` (lineas 82-157)
+
+**Retorna:**
+```typescript
+{
+  analytics: {
+    total_students: number,
+    active_students: number,
+    average_score: number,
+    average_completion_rate: number,
+    total_time_spent_minutes: number,
+    exercises_completed: number,
+    achievements_unlocked: number,
+  },
+  scoreDistribution: { range: string, count: number, percentage: number }[],
+}
+```
+
+**NO retorna:** `trend[]` o `performance_trend[]`
+
+### Causa Raiz
+
+1. **No existe metodo de calculo semanal**: `AnalyticsService` no tiene ningun metodo que agrupe datos por semana ISO
+2. **No existe DTO**: No hay `PerformanceTrendDto` o `PerformanceTrendItemDto` definido
+3. **No hay query SQL**: No existe query que use `DATE_TRUNC('week', ...)` o `TO_CHAR(..., 'IYYY-WIW')`
+4. **Frontend no consume**: Aunque el frontend puede renderizar graficas de linea, no hay endpoint que le provea datos de tendencia
 
 ---
 
@@ -488,9 +642,49 @@ trend!: PerformanceTrendItemDto[];
 | Version | Fecha | Cambio |
 |---------|-------|--------|
 | 1.0.0 | 2026-01-20 | Documento inicial - Especificacion de Performance Trend (GAP-6) |
+| 1.1.0 | 2026-01-20 | Agregado diagnostico detallado con analisis de codigo frontend y backend |
+
+---
+
+## Plan de Implementacion
+
+### Fase 1: Backend (2 dias)
+
+1. **Dia 1 - DTOs y Metodos:**
+   - Crear `/apps/backend/src/modules/teacher/dto/performance-trend.dto.ts`
+   - Implementar `calculateStudentPerformanceTrend()` en `analytics.service.ts`
+   - Implementar `calculateClassroomPerformanceTrend()` en `analytics.service.ts`
+   - Implementar helpers `fillMissingWeeks()` y `getISOWeek()`
+
+2. **Dia 2 - Integracion y Tests:**
+   - Modificar `StudentProgressResponseDto` para incluir `performance_trend`
+   - Modificar `ClassroomProgressResponseDto` para incluir `performance_trend`
+   - Actualizar endpoints en controllers
+   - Escribir unit tests
+   - Actualizar Swagger docs
+
+### Fase 2: Frontend (1 dia)
+
+1. **Actualizaciones de hooks:**
+   - Actualizar `useClassroomData.ts` para consumir `performance_trend`
+   - Actualizar `useStudentProgress.ts` si aplica
+
+2. **Componentes:**
+   - Agregar nuevo `<ProgressChart type="line" />` en `ClassProgressDashboard.tsx`
+   - Configurar titulo "Tendencia de Rendimiento (Ultimas 12 Semanas)"
+   - Mapear datos de `performance_trend` a `DataPoint[]`
+
+### Fase 3: Validacion (0.5 dias)
+
+1. **Tests E2E:**
+   - Verificar que la grafica renderiza correctamente
+   - Verificar que semanas sin datos muestran valores en 0
+   - Verificar que el cache funciona (response time < 300ms)
 
 ---
 
 **Documento creado:** 2026-01-20
+**Actualizado:** 2026-01-20
 **Autor:** Arquitecto de Soluciones Backend
+**Investigacion GAP-6:** Agente de Investigacion
 **Aprobacion pendiente de:** Tech Lead
