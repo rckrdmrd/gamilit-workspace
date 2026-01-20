@@ -1,17 +1,352 @@
+# TRACEABILITY.yml - EAI-004 Analytics
+# Archivo de trazabilidad completa para la epica EAI-004
+
 epic_code: EAI-004
-epic_name: Analytics y Métricas
+epic_name: Analytics y Metricas Basicas
 phase: 1
+phase_name: Alcance Inicial
 budget_mxn: 22000
 story_points: 35
 status: completed
+sprint: 3-4
+period: "Mes 1, Semana 3-4"
+
+# ============================================================================
+# DOCUMENTACION
+# ============================================================================
+
+documentation:
+  requirements:
+    - id: RF-ANA-001
+      file: requerimientos/RF-ANA-001-visualizacion-progreso.md
+      title: Visualizacion de Progreso del Estudiante
+      status: implemented
+      description: |
+        Dashboard de clase, tabla de estudiantes con metricas, y vista individual
+        de estudiante con progreso por modulo y actividades completadas.
+
+    - id: RF-ANA-002
+      file: requerimientos/RF-ANA-002-metricas-gamificacion.md
+      title: Metricas de Elementos de Gamificacion
+      status: implemented
+      description: |
+        Timeline de actividades, indicadores de actividad diaria, e identificacion
+        de estudiantes en riesgo con sistema de semaforo.
+
+    - id: RF-ANA-003
+      file: requerimientos/RF-ANA-003-reportes-docente.md
+      title: Reportes para Docentes y Administradores
+      status: implemented
+      description: |
+        Reporte de progreso de clase por modulo con exportacion a CSV.
+
+  specifications:
+    - id: ET-ANA-001
+      file: especificaciones/ET-ANA-001-dashboard-estudiante.md
+      rf: RF-ANA-001
+      title: Dashboard del Estudiante y Vistas de Progreso
+      status: implemented
+      components:
+        backend:
+          - TeacherAnalyticsModule
+          - TeacherAnalyticsController
+          - TeacherAnalyticsService
+        frontend:
+          - ClassroomDashboard
+          - StudentListTable
+          - StudentProfileView
+          - MetricsCards
+          - LevelDistributionChart
+
+    - id: ET-ANA-002
+      file: especificaciones/ET-ANA-002-api-metricas.md
+      rf: RF-ANA-002
+      title: API de Metricas y Tracking de Actividad
+      status: implemented
+      components:
+        backend:
+          - ActivityFeedService
+          - AtRiskService
+          - ActivityLogRepository
+        frontend:
+          - ActivityFeedView
+          - ActivityTimeline
+          - AtRiskStudentsView
+          - StudentRiskCard
+        database:
+          - activity_logs table
+
+    - id: ET-ANA-003
+      file: especificaciones/ET-ANA-003-exportacion-datos.md
+      rf: RF-ANA-003
+      title: Exportacion de Datos y Generacion de Reportes
+      status: implemented
+      components:
+        backend:
+          - ProgressReportService
+          - CsvExportService
+          - ProgressReportController
+        frontend:
+          - ProgressReportView
+          - ModuleProgressTable
+          - ExportButton
+
+  user_stories:
+    - id: US-ANA-001
+      file: historias-usuario/US-ANA-001-dashboard-clase-basico.md
+      title: Dashboard de Clase Basico
+      rf: RF-ANA-001
+      story_points: 6
+      status: completed
+      description: Dashboard con metricas generales, graficas de distribucion
+
+    - id: US-ANA-002
+      file: historias-usuario/US-ANA-002-tabla-estudiantes-metricas.md
+      title: Tabla de Estudiantes con Metricas
+      rf: RF-ANA-001
+      story_points: 5
+      status: completed
+      description: Tabla paginada con busqueda y ordenamiento
+
+    - id: US-ANA-003
+      file: historias-usuario/US-ANA-003-vista-estudiante-individual.md
+      title: Vista de Estudiante Individual
+      rf: RF-ANA-001
+      story_points: 6
+      status: completed
+      description: Perfil completo con progreso por modulo y actividades
+
+    - id: US-ANA-004
+      file: historias-usuario/US-ANA-004-reporte-basico-progreso.md
+      title: Reporte Basico de Progreso
+      rf: RF-ANA-003
+      story_points: 5
+      status: completed
+      description: Reporte con resumen y progreso por modulo, exportable a CSV
+
+    - id: US-ANA-005
+      file: historias-usuario/US-ANA-005-tracking-actividad.md
+      title: Tracking de Actividad
+      rf: RF-ANA-002
+      story_points: 5
+      status: completed
+      description: Timeline de actividades con auto-refresh
+
+    - id: US-ANA-006
+      file: historias-usuario/US-ANA-006-identificacion-rezagados.md
+      title: Identificacion de Estudiantes Rezagados
+      rf: RF-ANA-002
+      story_points: 8
+      status: completed
+      description: Sistema de riesgo con semaforo y panel de detalle
+
+# ============================================================================
+# IMPLEMENTACION - BASE DE DATOS
+# ============================================================================
 
 implementation:
   database:
-    schemas: [progress_tracking, admin_dashboard]
+    schemas:
+      - name: analytics
+        path: apps/database/ddl/schemas/analytics/
+        description: Schema para logs de actividad y analytics
+
+      - name: progress_tracking
+        path: apps/database/ddl/schemas/progress_tracking/
+        description: Schema para tracking de progreso
+
+    tables:
+      - name: activity_logs
+        schema: analytics
+        file: apps/database/ddl/schemas/analytics/tables/activity_logs.sql
+        description: Registro de todas las actividades de estudiantes
+        rf: RF-ANA-002
+        columns:
+          - id (UUID PK)
+          - type (VARCHAR)
+          - student_id (UUID FK)
+          - classroom_id (UUID FK)
+          - module_id (UUID FK nullable)
+          - activity_id (UUID FK nullable)
+          - timestamp (TIMESTAMPTZ)
+          - metadata (JSONB)
+          - created_at (TIMESTAMPTZ)
+
+      - name: module_progress
+        schema: progress_tracking
+        file: apps/database/ddl/schemas/progress_tracking/tables/module_progress.sql
+        description: Progreso de estudiantes por modulo
+        rf: RF-ANA-001
+
+    indexes:
+      - name: idx_activity_logs_classroom_timestamp
+        table: activity_logs
+        columns: [classroom_id, timestamp DESC]
+        description: Index para consultas del timeline por clase
+        rf: RF-ANA-002
+
+      - name: idx_activity_logs_student_id
+        table: activity_logs
+        columns: [student_id]
+        description: Index para consultas por estudiante
+        rf: RF-ANA-002
+
+# ============================================================================
+# IMPLEMENTACION - BACKEND
+# ============================================================================
+
   backend:
-    module: analytics
+    module: teacher-analytics
+    path: apps/backend/src/modules/teacher-analytics/
+    rf: [RF-ANA-001, RF-ANA-002, RF-ANA-003]
+
+    services:
+      - name: teacher-analytics.service.ts
+        path: apps/backend/src/modules/teacher-analytics/services/teacher-analytics.service.ts
+        description: Logica de dashboards y vistas de progreso
+        rf: RF-ANA-001
+        methods:
+          - getClassroomDashboard()
+          - getClassroomStudents()
+          - getStudentProfile()
+
+      - name: activity-feed.service.ts
+        path: apps/backend/src/modules/teacher-analytics/services/activity-feed.service.ts
+        description: Logica del timeline de actividades
+        rf: RF-ANA-002
+        methods:
+          - getActivityFeed()
+          - getActivityStats()
+
+      - name: at-risk.service.ts
+        path: apps/backend/src/modules/teacher-analytics/services/at-risk.service.ts
+        description: Logica de identificacion de estudiantes en riesgo
+        rf: RF-ANA-002
+        methods:
+          - getAtRiskStudents()
+          - analyzeStudentRisk()
+          - calculateRiskLevel()
+
+      - name: progress-report.service.ts
+        path: apps/backend/src/modules/teacher-analytics/services/progress-report.service.ts
+        description: Logica de reportes de progreso
+        rf: RF-ANA-003
+        methods:
+          - getProgressReport()
+          - calculateModuleProgressStats()
+
+      - name: csv-export.service.ts
+        path: apps/backend/src/modules/teacher-analytics/services/csv-export.service.ts
+        description: Generacion de archivos CSV
+        rf: RF-ANA-003
+        methods:
+          - exportProgressReportCSV()
+          - generateCSV()
+
+    controllers:
+      - name: teacher-analytics.controller.ts
+        path: apps/backend/src/modules/teacher-analytics/controllers/teacher-analytics.controller.ts
+        description: Endpoints de analytics para profesores
+        rf: [RF-ANA-001, RF-ANA-002, RF-ANA-003]
+        endpoints:
+          - "GET /api/teacher/classroom/:id/dashboard"
+          - "GET /api/teacher/classroom/:id/students"
+          - "GET /api/teacher/student/:id/profile"
+          - "GET /api/teacher/classroom/:id/activity-feed"
+          - "GET /api/teacher/classroom/:id/at-risk-students"
+          - "GET /api/teacher/classroom/:id/progress-report"
+          - "GET /api/teacher/classroom/:id/progress-report/export"
+
+    dtos:
+      - name: student-list-query.dto.ts
+        path: apps/backend/src/modules/teacher-analytics/dto/student-list-query.dto.ts
+        rf: RF-ANA-001
+
+      - name: activity-feed-query.dto.ts
+        path: apps/backend/src/modules/teacher-analytics/dto/activity-feed-query.dto.ts
+        rf: RF-ANA-002
+
+      - name: at-risk-query.dto.ts
+        path: apps/backend/src/modules/teacher-analytics/dto/at-risk-query.dto.ts
+        rf: RF-ANA-002
+
+      - name: progress-report.dto.ts
+        path: apps/backend/src/modules/teacher-analytics/dto/progress-report.dto.ts
+        rf: RF-ANA-003
+
+# ============================================================================
+# IMPLEMENTACION - FRONTEND
+# ============================================================================
+
   frontend:
-    features: [student/dashboard, admin/analytics]
+    feature: teacher/analytics
+    path: apps/frontend/src/features/teacher/analytics/
+    rf: [RF-ANA-001, RF-ANA-002, RF-ANA-003]
+
+    components:
+      # Dashboard Components (RF-ANA-001)
+      - name: ClassroomDashboard.tsx
+        description: Dashboard principal de clase
+        rf: RF-ANA-001
+
+      - name: MetricsCards.tsx
+        description: Cards de metricas generales
+        rf: RF-ANA-001
+
+      - name: StudentListTable.tsx
+        description: Tabla de estudiantes con metricas
+        rf: RF-ANA-001
+
+      - name: StudentProfileView.tsx
+        description: Vista individual de estudiante
+        rf: RF-ANA-001
+
+      # Activity Feed Components (RF-ANA-002)
+      - name: ActivityFeedView.tsx
+        description: Vista de timeline de actividades
+        rf: RF-ANA-002
+
+      - name: AtRiskStudentsView.tsx
+        description: Vista de estudiantes en riesgo
+        rf: RF-ANA-002
+
+      - name: StudentRiskCard.tsx
+        description: Card de estudiante con indicador de riesgo
+        rf: RF-ANA-002
+
+      # Report Components (RF-ANA-003)
+      - name: ProgressReportView.tsx
+        description: Vista principal de reportes
+        rf: RF-ANA-003
+
+      - name: ModuleProgressTable.tsx
+        description: Tabla de progreso por modulo
+        rf: RF-ANA-003
+
+      - name: ExportButton.tsx
+        description: Boton de exportacion a CSV
+        rf: RF-ANA-003
+
+    hooks:
+      - name: useClassroomDashboard.ts
+        description: Hook para datos del dashboard
+        rf: RF-ANA-001
+        technology: React Query
+
+      - name: useActivityFeed.ts
+        description: Hook para timeline de actividades
+        rf: RF-ANA-002
+        technology: React Query
+
+      - name: useAtRiskStudents.ts
+        description: Hook para estudiantes en riesgo
+        rf: RF-ANA-002
+        technology: React Query
+
+      - name: useProgressReport.ts
+        description: Hook para reportes de progreso
+        rf: RF-ANA-003
+        technology: React Query
 
 # ============================================================================
 # TESTING
@@ -23,12 +358,92 @@ testing:
     backend: 12%  # REAL (actualizado 2025-11-23)
     frontend: 8%  # REAL (actualizado 2025-11-23)
     database: 0%  # REAL (actualizado 2025-11-23)
-    meta_original: 85%  # Estimación inicial del proyecto
+    meta_original: 85%  # Estimacion inicial del proyecto
     gap_actual: -75%  # Diferencia entre meta y realidad
     ultima_medicion: "2025-11-23"
     nota: |
       Coverage REAL actualizado por Architecture-Analyst (2025-11-23).
       Valores previos eran ESTIMACIONES optimistas del inicio del proyecto.
-      Módulo analytics tiene muy pocos tests unitarios/integración.
+      Modulo analytics tiene muy pocos tests unitarios/integracion.
       Gap actual requiere plan de mejora (ver orchestration/roadmap/ROADMAP-TEST-COVERAGE.md).
-      Próxima medición: Mensual (Q1 2026).
+      Proxima medicion: Mensual (Q1 2026).
+
+# ============================================================================
+# METRICAS Y RESULTADO
+# ============================================================================
+
+metrics:
+  effort:
+    estimated_sp: 35
+    actual_sp: 35
+    variance: 0%
+
+  budget:
+    estimated: 22000
+    actual: 22000
+    variance: 0%
+
+  deliverables:
+    requirements: 3
+    specifications: 3
+    user_stories: 6
+    database_objects: 4
+    backend_files: 12
+    frontend_components: 18
+    documentation: 9
+
+status:
+  phase_status: completed
+  completion_date: "2026-01-20"
+  notes: |
+    Epica documentada completamente con requerimientos, especificaciones tecnicas
+    y trazabilidad. Historias de usuario estaban previamente documentadas.
+
+# ============================================================================
+# DEPENDENCIAS
+# ============================================================================
+
+dependencies:
+  required_by_epics:
+    - EXT-005  # Reportes Avanzados extiende esta funcionalidad
+
+  depends_on_epics:
+    - EAI-001  # Requiere auth y perfiles de usuario
+    - EAI-003  # Requiere sistema de gamificacion (XP, niveles, logros)
+
+# ============================================================================
+# NOTAS ADICIONALES
+# ============================================================================
+
+notes:
+  - Sistema de riesgo usa reglas hardcodeadas (7 dias, 30%, 50%) - configurables en EXT-005
+  - Exportacion a CSV usa UTF-8 con BOM para compatibilidad con Excel
+  - Auto-refresh del timeline cada 2 minutos (polling, no WebSockets)
+  - Cache de dashboard 5 minutos, cache de reporte 10 minutos
+  - Graficas implementadas con Recharts
+
+# ============================================================================
+# CHANGELOG
+# ============================================================================
+
+changelog:
+  - date: "2026-01-20"
+    version: "2.0"
+    author: "Documentation Team"
+    changes: |
+      Actualizacion completa de documentacion para EAI-004:
+      - 3 Requerimientos funcionales creados (RF-ANA-001, RF-ANA-002, RF-ANA-003)
+      - 3 Especificaciones tecnicas creadas (ET-ANA-001, ET-ANA-002, ET-ANA-003)
+      - TRACEABILITY.yml expandido con trazabilidad completa
+      - _MAP.md actualizado con nueva estructura
+
+  - date: "2025-11-23"
+    version: "1.1"
+    author: "Architecture-Analyst"
+    changes: |
+      Actualizacion de metricas de test coverage con valores reales.
+
+  - date: "2024-08-15"
+    version: "1.0"
+    author: "Development Team"
+    changes: "Implementacion inicial"

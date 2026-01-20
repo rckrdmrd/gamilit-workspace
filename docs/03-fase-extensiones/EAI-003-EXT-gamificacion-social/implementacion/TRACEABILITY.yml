@@ -1,0 +1,945 @@
+# TRACEABILITY.yml - EAI-003-EXT Gamificacion Social
+# Trazabilidad completa entre documentacion y codigo
+
+epic_code: EAI-003-EXT
+epic_name: Gamificacion Social (Amigos y Gremios)
+phase: 3
+phase_name: Extensiones
+story_points: 39
+status: backlog
+sprint: 9-11
+period: "Mes 4-5"
+
+# ============================================================================
+# DOCUMENTACION
+# ============================================================================
+
+documentation:
+  requirements:
+    - id: RF-SOC-001
+      file: requerimientos/RF-SOC-001-sistema-amigos.md
+      title: Sistema de Amigos y Social
+      status: specified
+      user_stories: [US-GAM-010, US-GAM-011, US-GAM-012]
+      description: |
+        Sistema de amigos, leaderboard de amigos, y multiplicador ML Coins por rango.
+
+    - id: RF-SOC-002
+      file: requerimientos/RF-SOC-002-gremios.md
+      title: Sistema de Gremios
+      status: specified
+      user_stories: [US-GAM-013, US-GAM-014, US-GAM-015]
+      description: |
+        Sistema de gremios, misiones colaborativas, y recompensas proporcionales.
+
+  specifications:
+    - id: ET-SOC-001
+      file: especificaciones/ET-SOC-001-sistema-amigos.md
+      rf: RF-SOC-001
+      title: Diseno Tecnico Sistema de Amigos
+      status: specified
+      version: "1.0"
+      last_updated: "2026-01-20"
+      description: |
+        Arquitectura backend (entidades, servicios, controllers), arquitectura frontend
+        (componentes, hooks, stores), estrategia de cache para leaderboard.
+
+    - id: ET-SOC-002
+      file: especificaciones/ET-SOC-002-gremios.md
+      rf: RF-SOC-002
+      title: Diseno Tecnico Sistema de Gremios
+      status: specified
+      version: "1.0"
+      last_updated: "2026-01-20"
+      description: |
+        Arquitectura backend (entidades, servicios, CRON jobs), WebSocket integration,
+        sistema de roles, distribucion de recompensas.
+
+  user_stories:
+    - id: US-GAM-010
+      file: historias-usuario/US-GAM-010-sistema-amigos.md
+      title: Sistema de Amigos
+      rf: RF-SOC-001
+      story_points: 8
+      status: backlog
+      priority: P1
+      description: |
+        Como estudiante, quiero agregar amigos para competir y colaborar con ellos.
+
+    - id: US-GAM-011
+      file: historias-usuario/US-GAM-011-multiplicador-mlcoins.md
+      title: Multiplicador ML Coins por Rango
+      rf: RF-SOC-001
+      story_points: 5
+      status: backlog
+      priority: P1
+      description: |
+        Como estudiante, quiero recibir bonus de ML Coins segun mi rango.
+
+    - id: US-GAM-012
+      file: historias-usuario/US-GAM-012-leaderboard-amigos.md
+      title: Leaderboard de Amigos
+      rf: RF-SOC-001
+      story_points: 5
+      status: backlog
+      priority: P1
+      description: |
+        Como estudiante, quiero ver mi ranking entre mis amigos.
+
+    - id: US-GAM-013
+      file: historias-usuario/US-GAM-013-sistema-gremios.md
+      title: Sistema de Gremios
+      rf: RF-SOC-002
+      story_points: 8
+      status: backlog
+      priority: P2
+      description: |
+        Como estudiante, quiero crear o unirme a un gremio para colaborar.
+
+    - id: US-GAM-014
+      file: historias-usuario/US-GAM-014-misiones-gremio.md
+      title: Misiones de Gremio
+      rf: RF-SOC-002
+      story_points: 8
+      status: backlog
+      priority: P2
+      description: |
+        Como miembro de gremio, quiero completar misiones grupales para ganar recompensas.
+
+    - id: US-GAM-015
+      file: historias-usuario/US-GAM-015-gestion-miembros-gremio.md
+      title: Gestion de Miembros Gremio
+      rf: RF-SOC-002
+      story_points: 5
+      status: backlog
+      priority: P2
+      description: |
+        Como lider de gremio, quiero gestionar miembros y roles.
+
+  tasks:
+    - id: TASK-DB-GAM-003-005
+      file: tareas/TASK-DB-GAM-003-005-tablas-amigos.md
+      title: Tablas de Amigos y Gremios
+      layer: database
+      status: specified
+      rf: [RF-SOC-001, RF-SOC-002]
+
+    - id: TASK-BE-GAM-002-003
+      file: tareas/TASK-BE-GAM-002-003-friends-api.md
+      title: API de Amigos y Social
+      layer: backend
+      status: specified
+      rf: RF-SOC-001
+
+    - id: TASK-FE-GAM-002-003
+      file: tareas/TASK-FE-GAM-002-003-friends-ui.md
+      title: UI de Amigos y Social
+      layer: frontend
+      status: specified
+      rf: RF-SOC-001
+
+# ============================================================================
+# IMPLEMENTACION - BASE DE DATOS
+# ============================================================================
+
+implementation:
+  database:
+    schemas:
+      - name: social_features
+        path: apps/database/ddl/schemas/social_features/
+        description: Schema para funcionalidades sociales (amigos, gremios)
+        status: planned
+
+    enums:
+      - name: friend_request_status
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/enums/friend_request_status.sql
+        values: [pending, accepted, rejected]
+        rf: RF-SOC-001
+        status: planned
+
+      - name: guild_role
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/enums/guild_role.sql
+        values: [leader, officer, member]
+        rf: RF-SOC-002
+        status: planned
+
+      - name: join_request_status
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/enums/join_request_status.sql
+        values: [pending, approved, rejected]
+        rf: RF-SOC-002
+        status: planned
+
+      - name: mission_type
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/enums/mission_type.sql
+        values: [daily, weekly, event]
+        rf: RF-SOC-002
+        status: planned
+
+      - name: mission_status
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/enums/mission_status.sql
+        values: [active, completed, failed]
+        rf: RF-SOC-002
+        status: planned
+
+    tables:
+      # Sistema de Amigos
+      - name: friendships
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/tables/01-friendships.sql
+        description: Relaciones de amistad entre usuarios
+        rf: RF-SOC-001
+        status: planned
+        columns:
+          - id: UUID PRIMARY KEY
+          - user_id: UUID REFERENCES auth.users
+          - friend_id: UUID REFERENCES auth.users
+          - created_at: TIMESTAMPTZ
+
+      - name: friend_requests
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/tables/02-friend_requests.sql
+        description: Solicitudes de amistad pendientes
+        rf: RF-SOC-001
+        status: planned
+        columns:
+          - id: UUID PRIMARY KEY
+          - requester_id: UUID REFERENCES auth.users
+          - recipient_id: UUID REFERENCES auth.users
+          - status: friend_request_status
+          - created_at: TIMESTAMPTZ
+          - responded_at: TIMESTAMPTZ
+
+      # Sistema de Gremios
+      - name: guild_emblems
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/tables/03-guild_emblems.sql
+        description: Catalogo de emblemas disponibles para gremios
+        rf: RF-SOC-002
+        status: planned
+        columns:
+          - id: SERIAL PRIMARY KEY
+          - name: VARCHAR(50)
+          - image_url: TEXT
+
+      - name: guilds
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/tables/04-guilds.sql
+        description: Gremios/grupos de estudiantes
+        rf: RF-SOC-002
+        status: planned
+        columns:
+          - id: UUID PRIMARY KEY
+          - name: VARCHAR(30) UNIQUE
+          - description: TEXT
+          - emblem_id: INTEGER REFERENCES guild_emblems
+          - leader_id: UUID REFERENCES auth.users
+          - member_count: INTEGER DEFAULT 1
+          - is_public: BOOLEAN DEFAULT true
+          - created_at: TIMESTAMPTZ
+          - updated_at: TIMESTAMPTZ
+          - last_activity_at: TIMESTAMPTZ
+
+      - name: guild_members
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/tables/05-guild_members.sql
+        description: Miembros de gremios con roles
+        rf: RF-SOC-002
+        status: planned
+        columns:
+          - guild_id: UUID (PK)
+          - user_id: UUID (PK)
+          - role: guild_role
+          - joined_at: TIMESTAMPTZ
+
+      - name: guild_join_requests
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/tables/06-guild_join_requests.sql
+        description: Solicitudes para unirse a gremios
+        rf: RF-SOC-002
+        status: planned
+        columns:
+          - id: UUID PRIMARY KEY
+          - guild_id: UUID REFERENCES guilds
+          - user_id: UUID REFERENCES auth.users
+          - status: join_request_status
+          - created_at: TIMESTAMPTZ
+          - responded_at: TIMESTAMPTZ
+          - responded_by: UUID
+
+      - name: mission_templates
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/tables/07-mission_templates.sql
+        description: Templates de misiones de gremio
+        rf: RF-SOC-002
+        status: planned
+        columns:
+          - id: UUID PRIMARY KEY
+          - name: VARCHAR(100)
+          - description: TEXT
+          - type: mission_type
+          - base_target: INTEGER
+          - base_ml_coins: INTEGER
+          - base_xp: INTEGER
+          - is_active: BOOLEAN
+
+      - name: guild_missions
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/tables/08-guild_missions.sql
+        description: Misiones activas de gremios
+        rf: RF-SOC-002
+        status: planned
+        columns:
+          - id: UUID PRIMARY KEY
+          - guild_id: UUID REFERENCES guilds
+          - mission_template_id: UUID REFERENCES mission_templates
+          - objective_target: INTEGER
+          - current_progress: INTEGER DEFAULT 0
+          - status: mission_status
+          - reward_ml_coins: INTEGER
+          - reward_xp: INTEGER
+          - started_at: TIMESTAMPTZ
+          - expires_at: TIMESTAMPTZ
+          - completed_at: TIMESTAMPTZ
+
+      - name: guild_mission_contributions
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/tables/09-guild_mission_contributions.sql
+        description: Contribuciones individuales a misiones
+        rf: RF-SOC-002
+        status: planned
+        columns:
+          - guild_mission_id: UUID (PK)
+          - user_id: UUID (PK)
+          - contribution_count: INTEGER DEFAULT 0
+          - last_contribution_at: TIMESTAMPTZ
+
+      - name: guild_audit_log
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/tables/10-guild_audit_log.sql
+        description: Log de acciones administrativas del gremio
+        rf: RF-SOC-002
+        status: planned
+        columns:
+          - id: UUID PRIMARY KEY
+          - guild_id: UUID REFERENCES guilds
+          - action: VARCHAR(50)
+          - actor_id: UUID REFERENCES auth.users
+          - target_id: UUID
+          - details: JSONB
+          - created_at: TIMESTAMPTZ
+
+    functions:
+      - name: calculate_rank_multiplier
+        schema: gamification_system
+        file: apps/database/ddl/schemas/gamification_system/functions/calculate_rank_multiplier.sql
+        description: Calcula multiplicador ML Coins segun rango (1.0x - 2.0x)
+        rf: RF-SOC-001
+        status: planned
+        returns: NUMERIC(3,2)
+        parameters:
+          - p_rank_id: INTEGER
+
+      - name: generate_daily_guild_missions
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/functions/generate_daily_guild_missions.sql
+        description: Genera misiones diarias para todos los gremios
+        rf: RF-SOC-002
+        status: planned
+        returns: VOID
+        note: Llamado por CRON a las 00:00 UTC
+
+      - name: distribute_mission_rewards
+        schema: social_features
+        file: apps/database/ddl/schemas/social_features/functions/distribute_mission_rewards.sql
+        description: Distribuye recompensas proporcionalmente al completar mision
+        rf: RF-SOC-002
+        status: planned
+        returns: VOID
+        parameters:
+          - p_mission_id: UUID
+
+    triggers:
+      - name: trg_friendship_created
+        table: friendships
+        file: apps/database/ddl/schemas/social_features/triggers/trg_friendship_created.sql
+        description: Notifica al crear amistad
+        rf: RF-SOC-001
+        status: planned
+
+      - name: trg_guild_member_count
+        table: guild_members
+        file: apps/database/ddl/schemas/social_features/triggers/trg_guild_member_count.sql
+        description: Actualiza member_count en guilds
+        rf: RF-SOC-002
+        status: planned
+
+      - name: trg_mission_completed
+        table: guild_missions
+        file: apps/database/ddl/schemas/social_features/triggers/trg_mission_completed.sql
+        description: Trigger cuando mision alcanza objetivo
+        rf: RF-SOC-002
+        status: planned
+
+    rls_policies:
+      - name: friendships_policy
+        table: friendships
+        file: apps/database/ddl/schemas/social_features/rls-policies/friendships.sql
+        description: Usuario ve solo sus amistades
+        rf: RF-SOC-001
+        status: planned
+
+      - name: guilds_policy
+        table: guilds
+        file: apps/database/ddl/schemas/social_features/rls-policies/guilds.sql
+        description: Lectura publica, escritura lider
+        rf: RF-SOC-002
+        status: planned
+
+      - name: guild_members_policy
+        table: guild_members
+        file: apps/database/ddl/schemas/social_features/rls-policies/guild_members.sql
+        description: Miembros ven su gremio
+        rf: RF-SOC-002
+        status: planned
+
+      - name: guild_audit_log_policy
+        table: guild_audit_log
+        file: apps/database/ddl/schemas/social_features/rls-policies/guild_audit_log.sql
+        description: Solo lider ve audit log
+        rf: RF-SOC-002
+        status: planned
+
+    seeds:
+      - name: guild_emblems
+        file: apps/database/seeds/prod/social_features/01-guild_emblems.sql
+        description: 20 emblemas predefinidos para gremios
+        rf: RF-SOC-002
+        records: 20
+        status: planned
+
+      - name: mission_templates
+        file: apps/database/seeds/prod/social_features/02-mission_templates.sql
+        description: Templates de misiones diarias y semanales
+        rf: RF-SOC-002
+        records: 10
+        status: planned
+
+  # ============================================================================
+  # IMPLEMENTACION - BACKEND
+  # ============================================================================
+
+  backend:
+    module: social
+    path: apps/backend/src/modules/social/
+    rf: [RF-SOC-001, RF-SOC-002]
+    status: planned
+
+    entities:
+      - name: friendship.entity.ts
+        path: apps/backend/src/modules/social/friends/entities/friendship.entity.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: friend-request.entity.ts
+        path: apps/backend/src/modules/social/friends/entities/friend-request.entity.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: guild.entity.ts
+        path: apps/backend/src/modules/social/guilds/entities/guild.entity.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: guild-member.entity.ts
+        path: apps/backend/src/modules/social/guilds/entities/guild-member.entity.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: guild-join-request.entity.ts
+        path: apps/backend/src/modules/social/guilds/entities/guild-join-request.entity.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: guild-mission.entity.ts
+        path: apps/backend/src/modules/social/guilds/missions/entities/guild-mission.entity.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: guild-mission-contribution.entity.ts
+        path: apps/backend/src/modules/social/guilds/missions/entities/guild-mission-contribution.entity.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: guild-audit-log.entity.ts
+        path: apps/backend/src/modules/social/guilds/entities/guild-audit-log.entity.ts
+        rf: RF-SOC-002
+        status: planned
+
+    services:
+      - name: friends.service.ts
+        path: apps/backend/src/modules/social/friends/friends.service.ts
+        description: Gestion de amigos y solicitudes
+        rf: RF-SOC-001
+        status: planned
+        methods:
+          - searchUsers()
+          - sendRequest()
+          - respondToRequest()
+          - getFriends()
+          - removeFriend()
+          - getPendingRequests()
+
+      - name: friend-leaderboard.service.ts
+        path: apps/backend/src/modules/social/leaderboard/friend-leaderboard.service.ts
+        description: Leaderboard de amigos con cache
+        rf: RF-SOC-001
+        status: planned
+        methods:
+          - getFriendLeaderboard()
+          - invalidateCache()
+
+      - name: rank-multiplier.service.ts
+        path: apps/backend/src/modules/social/multiplier/rank-multiplier.service.ts
+        description: Calculo de multiplicador ML Coins por rango
+        rf: RF-SOC-001
+        status: planned
+        methods:
+          - getMultiplier()
+          - applyMultiplier()
+
+      - name: guilds.service.ts
+        path: apps/backend/src/modules/social/guilds/guilds.service.ts
+        description: Gestion de gremios
+        rf: RF-SOC-002
+        status: planned
+        methods:
+          - createGuild()
+          - searchGuilds()
+          - requestJoin()
+          - approveRequest()
+          - rejectRequest()
+          - kickMember()
+          - changeRole()
+          - transferLeadership()
+          - leaveGuild()
+
+      - name: guild-missions.service.ts
+        path: apps/backend/src/modules/social/guilds/missions/guild-missions.service.ts
+        description: Gestion de misiones de gremio
+        rf: RF-SOC-002
+        status: planned
+        methods:
+          - getActiveMissions()
+          - registerContribution()
+          - completeMission()
+          - distributRewards()
+
+      - name: mission-generator.service.ts
+        path: apps/backend/src/modules/social/guilds/missions/mission-generator.service.ts
+        description: Generador de misiones (CRON jobs)
+        rf: RF-SOC-002
+        status: planned
+        methods:
+          - generateDailyMissions()
+          - generateWeeklyMissions()
+          - expireMissions()
+
+    controllers:
+      - name: friends.controller.ts
+        path: apps/backend/src/modules/social/friends/friends.controller.ts
+        rf: RF-SOC-001
+        status: planned
+        endpoints:
+          - GET /friends
+          - GET /friends/search
+          - POST /friends/request
+          - GET /friends/requests
+          - POST /friends/requests/:id/respond
+          - DELETE /friends/:friendId
+
+      - name: friend-leaderboard.controller.ts
+        path: apps/backend/src/modules/social/leaderboard/friend-leaderboard.controller.ts
+        rf: RF-SOC-001
+        status: planned
+        endpoints:
+          - GET /leaderboards/friends
+
+      - name: multiplier.controller.ts
+        path: apps/backend/src/modules/social/multiplier/multiplier.controller.ts
+        rf: RF-SOC-001
+        status: planned
+        endpoints:
+          - GET /users/me/multiplier
+
+      - name: guilds.controller.ts
+        path: apps/backend/src/modules/social/guilds/guilds.controller.ts
+        rf: RF-SOC-002
+        status: planned
+        endpoints:
+          - POST /guilds
+          - GET /guilds
+          - GET /guilds/:id
+          - PATCH /guilds/:id
+          - POST /guilds/:id/join
+          - DELETE /guilds/:id/leave
+          - GET /guilds/:id/requests
+          - POST /guilds/:id/requests/:requestId/approve
+          - POST /guilds/:id/requests/:requestId/reject
+          - DELETE /guilds/:id/members/:userId
+          - PATCH /guilds/:id/members/:userId/role
+          - POST /guilds/:id/transfer-leadership
+          - GET /guilds/:id/missions
+          - GET /guilds/:id/missions/:missionId
+          - GET /guilds/:id/audit-log
+
+    gateways:
+      - name: guild.gateway.ts
+        path: apps/backend/src/modules/social/guilds/guild.gateway.ts
+        description: WebSocket gateway para actualizaciones en tiempo real
+        rf: RF-SOC-002
+        status: planned
+        events:
+          - mission:progress
+          - mission:completed
+          - member:joined
+          - member:left
+
+    dtos:
+      - name: friend.dto.ts
+        path: apps/backend/src/modules/social/friends/dto/friend.dto.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: send-request.dto.ts
+        path: apps/backend/src/modules/social/friends/dto/send-request.dto.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: friend-leaderboard.dto.ts
+        path: apps/backend/src/modules/social/leaderboard/dto/friend-leaderboard.dto.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: multiplier.dto.ts
+        path: apps/backend/src/modules/social/multiplier/dto/multiplier.dto.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: create-guild.dto.ts
+        path: apps/backend/src/modules/social/guilds/dto/create-guild.dto.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: guild.dto.ts
+        path: apps/backend/src/modules/social/guilds/dto/guild.dto.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: guild-mission.dto.ts
+        path: apps/backend/src/modules/social/guilds/missions/dto/guild-mission.dto.ts
+        rf: RF-SOC-002
+        status: planned
+
+  # ============================================================================
+  # IMPLEMENTACION - FRONTEND
+  # ============================================================================
+
+  frontend:
+    feature: gamification/social
+    path: apps/frontend/src/features/gamification/social/
+    rf: [RF-SOC-001, RF-SOC-002]
+    status: partial
+    note: Paginas existentes con mockData, pendiente conectar a API
+
+    pages:
+      - name: FriendsPage.tsx
+        path: apps/frontend/src/features/gamification/social/pages/FriendsPage.tsx
+        description: Pagina de amigos (existente con mockData)
+        rf: RF-SOC-001
+        status: mock_data
+
+      - name: GuildsPage.tsx
+        path: apps/frontend/src/features/gamification/social/pages/GuildsPage.tsx
+        description: Pagina de gremios (existente con mockData)
+        rf: RF-SOC-002
+        status: mock_data
+
+      - name: GuildDetailPage.tsx
+        path: apps/frontend/src/features/gamification/social/pages/GuildDetailPage.tsx
+        description: Detalle de gremio con misiones y miembros
+        rf: RF-SOC-002
+        status: planned
+
+    components:
+      # Sistema de Amigos
+      - name: FriendCard.tsx
+        path: apps/frontend/src/features/gamification/social/components/FriendCard.tsx
+        rf: RF-SOC-001
+        status: planned
+
+      - name: FriendsList.tsx
+        path: apps/frontend/src/features/gamification/social/components/FriendsList.tsx
+        rf: RF-SOC-001
+        status: planned
+
+      - name: FriendSearch.tsx
+        path: apps/frontend/src/features/gamification/social/components/FriendSearch.tsx
+        rf: RF-SOC-001
+        status: planned
+
+      - name: FriendRequests.tsx
+        path: apps/frontend/src/features/gamification/social/components/FriendRequests.tsx
+        rf: RF-SOC-001
+        status: planned
+
+      - name: AddFriendModal.tsx
+        path: apps/frontend/src/features/gamification/social/components/AddFriendModal.tsx
+        rf: RF-SOC-001
+        status: planned
+
+      - name: FriendLeaderboard.tsx
+        path: apps/frontend/src/features/gamification/social/components/FriendLeaderboard.tsx
+        rf: RF-SOC-001
+        status: planned
+
+      - name: MultiplierBadge.tsx
+        path: apps/frontend/src/features/gamification/social/components/MultiplierBadge.tsx
+        rf: RF-SOC-001
+        status: planned
+
+      # Sistema de Gremios
+      - name: GuildCard.tsx
+        path: apps/frontend/src/features/gamification/social/components/GuildCard.tsx
+        rf: RF-SOC-002
+        status: planned
+
+      - name: GuildSearchList.tsx
+        path: apps/frontend/src/features/gamification/social/components/GuildSearchList.tsx
+        rf: RF-SOC-002
+        status: planned
+
+      - name: CreateGuildModal.tsx
+        path: apps/frontend/src/features/gamification/social/components/CreateGuildModal.tsx
+        rf: RF-SOC-002
+        status: planned
+
+      - name: GuildMissionCard.tsx
+        path: apps/frontend/src/features/gamification/social/components/GuildMissionCard.tsx
+        rf: RF-SOC-002
+        status: planned
+
+      - name: GuildMissionProgress.tsx
+        path: apps/frontend/src/features/gamification/social/components/GuildMissionProgress.tsx
+        rf: RF-SOC-002
+        status: planned
+
+      - name: ContributorsList.tsx
+        path: apps/frontend/src/features/gamification/social/components/ContributorsList.tsx
+        rf: RF-SOC-002
+        status: planned
+
+      - name: PendingRequestsList.tsx
+        path: apps/frontend/src/features/gamification/social/components/PendingRequestsList.tsx
+        rf: RF-SOC-002
+        status: planned
+
+      - name: MemberManagementList.tsx
+        path: apps/frontend/src/features/gamification/social/components/MemberManagementList.tsx
+        rf: RF-SOC-002
+        status: planned
+
+      - name: TransferLeadershipModal.tsx
+        path: apps/frontend/src/features/gamification/social/components/TransferLeadershipModal.tsx
+        rf: RF-SOC-002
+        status: planned
+
+      - name: GuildSettingsForm.tsx
+        path: apps/frontend/src/features/gamification/social/components/GuildSettingsForm.tsx
+        rf: RF-SOC-002
+        status: planned
+
+      - name: GuildAuditLog.tsx
+        path: apps/frontend/src/features/gamification/social/components/GuildAuditLog.tsx
+        rf: RF-SOC-002
+        status: planned
+
+    hooks:
+      - name: useFriends.ts
+        path: apps/frontend/src/features/gamification/social/hooks/useFriends.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: useFriendRequests.ts
+        path: apps/frontend/src/features/gamification/social/hooks/useFriendRequests.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: useFriendLeaderboard.ts
+        path: apps/frontend/src/features/gamification/social/hooks/useFriendLeaderboard.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: useGuild.ts
+        path: apps/frontend/src/features/gamification/social/hooks/useGuild.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: useGuildMembers.ts
+        path: apps/frontend/src/features/gamification/social/hooks/useGuildMembers.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: useGuildMissions.ts
+        path: apps/frontend/src/features/gamification/social/hooks/useGuildMissions.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: useGuildRequests.ts
+        path: apps/frontend/src/features/gamification/social/hooks/useGuildRequests.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: useGuildSocket.ts
+        path: apps/frontend/src/features/gamification/social/hooks/useGuildSocket.ts
+        description: Hook para WebSocket de gremio
+        rf: RF-SOC-002
+        status: planned
+
+    stores:
+      - name: friendsStore.ts
+        path: apps/frontend/src/features/gamification/social/stores/friendsStore.ts
+        description: Zustand store de amigos (existente, pendiente conectar)
+        rf: RF-SOC-001
+        status: mock_data
+
+      - name: guildsStore.ts
+        path: apps/frontend/src/features/gamification/social/stores/guildsStore.ts
+        description: Zustand store de gremios (existente, pendiente conectar)
+        rf: RF-SOC-002
+        status: mock_data
+
+# ============================================================================
+# TESTING
+# ============================================================================
+
+testing:
+  backend:
+    unit_tests:
+      - name: friends.service.spec.ts
+        path: apps/backend/src/modules/social/friends/friends.service.spec.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: rank-multiplier.service.spec.ts
+        path: apps/backend/src/modules/social/multiplier/rank-multiplier.service.spec.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: guilds.service.spec.ts
+        path: apps/backend/src/modules/social/guilds/guilds.service.spec.ts
+        rf: RF-SOC-002
+        status: planned
+
+      - name: guild-missions.service.spec.ts
+        path: apps/backend/src/modules/social/guilds/missions/guild-missions.service.spec.ts
+        rf: RF-SOC-002
+        status: planned
+
+    integration_tests:
+      - name: friends.e2e-spec.ts
+        path: apps/backend/test/social/friends.e2e-spec.ts
+        rf: RF-SOC-001
+        status: planned
+
+      - name: guilds.e2e-spec.ts
+        path: apps/backend/test/social/guilds.e2e-spec.ts
+        rf: RF-SOC-002
+        status: planned
+
+  frontend:
+    component_tests:
+      - name: FriendCard.test.tsx
+        path: apps/frontend/src/features/gamification/social/components/__tests__/FriendCard.test.tsx
+        rf: RF-SOC-001
+        status: planned
+
+      - name: GuildMissionCard.test.tsx
+        path: apps/frontend/src/features/gamification/social/components/__tests__/GuildMissionCard.test.tsx
+        rf: RF-SOC-002
+        status: planned
+
+  coverage:
+    overall: 0%
+    backend: 0%
+    frontend: 0%
+    database: 0%
+    note: "Epica en backlog, tests pendientes de implementacion"
+
+# ============================================================================
+# METRICAS
+# ============================================================================
+
+metrics:
+  effort:
+    estimated_sp: 39
+    actual_sp: null  # Pendiente
+    variance: null
+
+  time:
+    estimated_sprints: 3
+    actual_sprints: null
+
+  deliverables:
+    database_objects: 17  # 5 enums + 10 tables + 2 functions
+    backend_files: 25     # entities + services + controllers + dtos + gateway
+    frontend_components: 21
+    tests: 0  # Pendiente
+
+# ============================================================================
+# ESTADO
+# ============================================================================
+
+status:
+  phase_status: backlog
+  completion_date: null
+  blocked_by: EAI-003  # Requiere gamificacion base completada
+  sprint_planned: 9-11
+  notes: |
+    Epica documentada completamente.
+    Pendiente implementacion backend, frontend y tests.
+    Paginas FriendsPage y GuildsPage existen con mockData.
+
+# ============================================================================
+# DEPENDENCIAS
+# ============================================================================
+
+dependencies:
+  required_by_epics:
+    - Torneos  # Requiere sistema de amigos
+    - Desafios_PvP  # Competencia directa entre amigos
+
+  depends_on_epics:
+    - EAI-003  # Gamificacion base (rangos, XP, ML Coins)
+    - EAI-007  # Sistema de notificaciones
+
+# ============================================================================
+# CHANGELOG
+# ============================================================================
+
+changelog:
+  - date: "2026-01-20"
+    version: "1.0"
+    author: "Claude-Agent"
+    changes: |
+      Creacion de TRACEABILITY.yml con mapeo completo:
+      - 2 requerimientos funcionales (RF-SOC-001, RF-SOC-002)
+      - 2 especificaciones tecnicas (ET-SOC-001, ET-SOC-002)
+      - 6 user stories (US-GAM-010 a US-GAM-015)
+      - 4 tareas tecnicas documentadas
+      - Trazabilidad a codigo planificado (database, backend, frontend)
+      - Estructura de tests planificados
