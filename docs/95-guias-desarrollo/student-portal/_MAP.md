@@ -1,34 +1,156 @@
-# Mapa de Navegacion - Student Portal
+# MAPA DE DOCUMENTACION - STUDENT PORTAL
 
-## Descripcion
-Documentacion completa del portal de estudiante de Gamilit, incluyendo analisis, dependencias, gaps de implementacion, inventarios y trazas de correccion.
-
-## Contenido
-
-| Archivo | Descripcion | Estado |
-|---------|-------------|--------|
-| [README.md](./README.md) | Descripcion general del student portal | Completo |
-
-## Subdirectorios
-
-| Directorio | Descripcion |
-|------------|-------------|
-| [analysis/](./analysis/_MAP.md) | Analisis en curso (historicos archivados) |
-| [dependencies/](./dependencies/_MAP.md) | Matriz de dependencias |
-| [gaps/](./gaps/_MAP.md) | Documentacion de gaps resueltos (5 gaps) |
-| [inventory/](./inventory/_MAP.md) | Inventario de implementaciones |
-| [traces/](./traces/_MAP.md) | Trazas de correcciones |
-
-## Referencias Externas
-
-- Analisis actual (2026): `orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md`
-- Tarea activa: `orchestration/tareas/TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/`
-- Archivados 2025: `docs/99-archivados/historicos-2025/student-portal-analysis-2025-11/`
-
-## Referencias
-- [Directorio padre](../_MAP.md)
-- [Guia completa del Student Portal](../../95-guias-desarrollo/PORTAL-STUDENT-GUIDE.md)
+**Proyecto:** GAMILIT
+**Modulo:** Student Portal
+**Ultima actualizacion:** 2026-01-20
+**Version:** 1.0.0
 
 ---
-*Ultima actualizacion: 2026-01-20*
-*Nota: Purga de documentacion obsoleta realizada (SUBTASK-4.2)*
+
+## ESTRUCTURA DE DOCUMENTACION
+
+```
+docs/95-guias-desarrollo/student-portal/
+|
++-- README.md                    <- Documento principal (este directorio)
++-- _MAP.md                      <- Mapa de navegacion (este archivo)
+|
++-- gaps/                        <- Documentacion de gaps resueltos
+|   +-- STUDENT-GAP-001-missions-rewards.md
+|   +-- STUDENT-GAP-002-missions-update-progress.md
+|   +-- STUDENT-GAP-006-profile-stats.md
+|   +-- STUDENT-GAP-007-settings-persistence.md
+|   +-- STUDENT-GAP-008-backend-statistics.md
+|
++-- inventory/                   <- Inventarios de implementacion
+|   +-- IMPLEMENTATIONS-2025-11-24.md
+|
++-- dependencies/                <- Matrices de dependencias
+|   +-- DEPENDENCY-MATRIX.md
+|
++-- traces/                      <- Trazas de ejecucion
+    +-- TRACE-P0-CORRECTIONS.md
+    +-- TRACE-GAP-002.md
+    +-- TRACE-GAP-008.md
+```
+
+---
+
+## DOCUMENTOS RELACIONADOS (EXTERNOS)
+
+### Analisis (orchestration/analisis/)
+
+| Documento | Proposito |
+|-----------|-----------|
+| `ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md` | Analisis integral de 27 paginas |
+| `EVALUACION-ENDPOINTS-CONSOLIDADOS.md` | Evaluacion GAP-SP-005 |
+
+### Estandares (docs/40-estandares/)
+
+| Documento | Proposito |
+|-----------|-----------|
+| `ESTANDAR-NOMENCLATURA-API.md` | Estandar snake_case/camelCase - 100+ campos |
+
+### Especificaciones de Mecanicas (docs/90-transversal/mecanicas/)
+
+| Documento | Proposito |
+|-----------|-----------|
+| `SPEC-MECANICAS-M1-M3.md` | 23 mecanicas basicas (Modulos 1-3) |
+| `SPEC-MECANICAS-M4.md` | 5 mecanicas avanzadas (Modulo 4) |
+| `SPEC-MECANICAS-M5.md` | 2 mecanicas creativas (Modulo 5) |
+| `SPEC-MECANICAS-EJERCICIOS.md` | Indice general de mecanicas |
+
+### Testing (orchestration/testing/)
+
+| Documento | Proposito |
+|-----------|-----------|
+| `TESTING-PLAN-STUDENT-PORTAL.md` | Plan de testing: 13% -> 25% -> 40% |
+
+### Inventarios (orchestration/inventarios/)
+
+| Documento | Proposito |
+|-----------|-----------|
+| `FRONTEND_INVENTORY.yml` | 463+ componentes, 101 hooks, 23 APIs |
+| `BACKEND_INVENTORY.yml` | 612 endpoints documentados |
+
+### Tareas (orchestration/tareas/)
+
+| Documento | Proposito |
+|-----------|-----------|
+| `TASK-2026-01-20-STUDENT-PORTAL-ANALYSIS/` | Tarea de analisis integral |
+
+---
+
+## GUIA DE NAVEGACION POR ROL
+
+### Product Owner / Stakeholder
+
+1. Comenzar por: `README.md` (Resumen Ejecutivo)
+2. Revisar: `inventory/IMPLEMENTATIONS-2025-11-24.md`
+3. Consultar: `orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md`
+
+### Desarrollador Frontend
+
+1. Comenzar por: `gaps/STUDENT-GAP-006-profile-stats.md`
+2. Revisar: `gaps/STUDENT-GAP-007-settings-persistence.md`
+3. Consultar: `dependencies/DEPENDENCY-MATRIX.md`
+
+### Desarrollador Backend
+
+1. Comenzar por: `gaps/STUDENT-GAP-001-missions-rewards.md`
+2. Revisar: `gaps/STUDENT-GAP-008-backend-statistics.md`
+3. Consultar: `docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md`
+
+### QA / Tester
+
+1. Comenzar por: `orchestration/testing/TESTING-PLAN-STUDENT-PORTAL.md`
+2. Revisar: Secciones "Validacion" en cada gap
+3. Consultar: `traces/TRACE-P0-CORRECTIONS.md`
+
+### Arquitecto / Tech Lead
+
+1. Comenzar por: `dependencies/DEPENDENCY-MATRIX.md`
+2. Revisar: `orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md`
+3. Consultar: `orchestration/analisis/EVALUACION-ENDPOINTS-CONSOLIDADOS.md`
+
+---
+
+## ESTADO DE GAPS (2026-01-20)
+
+### Gaps Historicos (2025-11) - RESUELTOS
+
+| Gap | Estado |
+|-----|--------|
+| GAP-001 | RESUELTO |
+| GAP-002 | RESUELTO |
+| GAP-006 | RESUELTO |
+| GAP-007 | RESUELTO |
+| GAP-008 | RESUELTO |
+
+### Gaps de Coherencia (2026-01) - POST ANALISIS
+
+| Gap | Severidad | Estado |
+|-----|-----------|--------|
+| GAP-SP-001 | CRITICO | VERIFICADO |
+| GAP-SP-002 | CRITICO | CORREGIDO |
+| GAP-SP-003 | ALTO | CORREGIDO |
+| GAP-SP-004 | ALTO | DOCUMENTADO |
+| GAP-SP-005 | MEDIO | PARCIAL GO |
+| GAP-SP-006 | MEDIO | PLAN CREADO |
+| GAP-SP-007 | BAJO | BACKLOG |
+| GAP-SP-008 | BAJO | DOCUMENTADO |
+
+---
+
+## HISTORIAL DE ACTUALIZACIONES
+
+| Fecha | Version | Cambios |
+|-------|---------|---------|
+| 2026-01-20 | 1.0.0 | Creacion inicial del mapa de documentacion |
+| 2026-01-20 | - | Integracion de resultados FASE 1-2-3 |
+| 2026-01-20 | - | Referencias a 6 documentos nuevos |
+
+---
+
+_Mapa generado: 2026-01-20_
+_Autor: Documentation-Agent_
