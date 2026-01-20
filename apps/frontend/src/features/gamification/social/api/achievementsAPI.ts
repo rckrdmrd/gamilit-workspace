@@ -30,7 +30,9 @@
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
-import type { ApiResponse } from '@/services/api/apiTypes';
+// FIX: GAP-SP-003 - Removido import de ApiResponse ya que el apiClient interceptor
+// (apiClient.ts:99-108) hace unwrap automatico del formato { success, data } del backend.
+// Los tipos ahora representan directamente la estructura de datos (post-unwrap).
 import type { Achievement } from '../types/achievementsTypes';
 
 // ============================================================================
@@ -146,6 +148,11 @@ export const getAllAchievements = async (): Promise<BackendAchievement[]> => {
  *
  * @param userId - User ID
  * @returns List of user's achievements with unlock status and progress
+ *
+ * FIX: GAP-SP-003 - El apiClient interceptor (apiClient.ts:99-108) ya hace unwrap
+ * automatico del formato { success, data } del backend. Por lo tanto:
+ * - response.data contiene directamente { achievements, total } (NO ApiResponse wrapper)
+ * - NO hacer data.data.xxx (doble unwrap incorrecto)
  */
 export const getUserAchievements = async (userId: string): Promise<AchievementAPIResponse[]> => {
   try {
@@ -153,11 +160,13 @@ export const getUserAchievements = async (userId: string): Promise<AchievementAP
     const allAchievements = await getAllAchievements();
 
     // Get user's achievement progress
-    const { data } = await apiClient.get<
-      ApiResponse<{ achievements: BackendUserAchievement[]; total: number }>
-    >(`/gamification/users/${userId}/achievements`);
+    // FIX: GAP-SP-003 - Tipar como el objeto real (post-unwrap), no como ApiResponse
+    const { data } = await apiClient.get<{ achievements: BackendUserAchievement[]; total: number }>(
+      `/gamification/users/${userId}/achievements`,
+    );
 
-    const userAchievements = data.data.achievements;
+    // FIX: GAP-SP-003 - data ya es { achievements, total }, no data.data
+    const userAchievements = data.achievements ?? [];
 
     // Merge achievements with user progress
     const achievementsWithProgress: AchievementAPIResponse[] = allAchievements.map(
@@ -193,14 +202,18 @@ export const getUserAchievements = async (userId: string): Promise<AchievementAP
  *
  * @param achievementId - Achievement ID
  * @returns Achievement data
+ *
+ * FIX: GAP-SP-003 - El apiClient interceptor ya hace unwrap automatico
  */
 export const getAchievementById = async (achievementId: string): Promise<BackendAchievement> => {
   try {
-    const { data } = await apiClient.get<ApiResponse<BackendAchievement>>(
+    // FIX: GAP-SP-003 - Tipar como el objeto real (post-unwrap), no como ApiResponse
+    const { data } = await apiClient.get<BackendAchievement>(
       API_ENDPOINTS.gamification.achievement(achievementId),
     );
 
-    return data.data;
+    // FIX: GAP-SP-003 - data ya es BackendAchievement, no data.data
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -212,17 +225,21 @@ export const getAchievementById = async (achievementId: string): Promise<Backend
  * @param userId - User ID
  * @param achievementId - Achievement ID
  * @returns Achievement progress data
+ *
+ * FIX: GAP-SP-003 - El apiClient interceptor ya hace unwrap automatico
  */
 export const getAchievementProgress = async (
   userId: string,
   achievementId: string,
 ): Promise<BackendUserAchievement> => {
   try {
-    const { data } = await apiClient.get<ApiResponse<BackendUserAchievement>>(
+    // FIX: GAP-SP-003 - Tipar como el objeto real (post-unwrap), no como ApiResponse
+    const { data } = await apiClient.get<BackendUserAchievement>(
       `/gamification/achievements/user/${userId}/progress/${achievementId}`,
     );
 
-    return data.data;
+    // FIX: GAP-SP-003 - data ya es BackendUserAchievement, no data.data
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -251,7 +268,8 @@ export const updateAchievementProgress = async (
     const maxProgress = currentProgress?.max_progress || 100;
 
     // Use grant endpoint to update progress
-    const { data } = await apiClient.post<ApiResponse<BackendUserAchievement>>(
+    // FIX: GAP-SP-003 - Tipar como el objeto real (post-unwrap), no como ApiResponse
+    const { data } = await apiClient.post<BackendUserAchievement>(
       `/gamification/users/${userId}/achievements/${achievementId}`,
       {
         user_id: userId,
@@ -262,7 +280,8 @@ export const updateAchievementProgress = async (
       },
     );
 
-    return data.data;
+    // FIX: GAP-SP-003 - data ya es BackendUserAchievement, no data.data
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -274,17 +293,21 @@ export const updateAchievementProgress = async (
  * @param userId - User ID
  * @param achievementId - Achievement ID
  * @returns Unlocked achievement
+ *
+ * FIX: GAP-SP-003 - El apiClient interceptor ya hace unwrap automatico
  */
 export const unlockAchievement = async (
   userId: string,
   achievementId: string,
 ): Promise<BackendAchievement> => {
   try {
-    const { data } = await apiClient.post<ApiResponse<BackendAchievement>>(
+    // FIX: GAP-SP-003 - Tipar como el objeto real (post-unwrap), no como ApiResponse
+    const { data } = await apiClient.post<BackendAchievement>(
       `/gamification/achievements/user/${userId}/unlock/${achievementId}`,
     );
 
-    return data.data;
+    // FIX: GAP-SP-003 - data ya es BackendAchievement, no data.data
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -358,22 +381,22 @@ export const claimAchievementRewards = async (
   xp_awarded?: number;
 }> => {
   try {
-    const { data } = await apiClient.post<
-      ApiResponse<{
-        id: string;
-        user_id: string;
-        achievement_id: string;
-        rewards_claimed: boolean;
-        completed_at: string;
-      }>
-    >(`/gamification/users/${userId}/achievements/${achievementId}/claim`);
+    // FIX: GAP-SP-003 - Tipar como el objeto real (post-unwrap), no como ApiResponse
+    const { data } = await apiClient.post<{
+      id: string;
+      user_id: string;
+      achievement_id: string;
+      rewards_claimed: boolean;
+      completed_at: string;
+    }>(`/gamification/users/${userId}/achievements/${achievementId}/claim`);
 
     // The backend returns the updated user_achievement record
     // We need to get the achievement details to know the rewards
+    // FIX: GAP-SP-003 - data ya es el objeto, no data.data
     return {
       success: true,
       achievement_id: achievementId,
-      rewards_claimed: data.data.rewards_claimed,
+      rewards_claimed: data.rewards_claimed,
     };
   } catch (error) {
     throw handleAPIError(error);
