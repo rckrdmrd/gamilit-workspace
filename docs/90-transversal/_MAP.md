@@ -28,7 +28,7 @@ Esta carpeta contiene documentacion **definitiva y vigente** del estado actual d
 | **[roadmap/](./roadmap/)** | 1 | Roadmap actual | Definitivo |
 | **[deuda-tecnica/](./deuda-tecnica/)** | 1 | Deuda tecnica documentada | Definitivo |
 | **[correcciones/](./correcciones/)** | 2+ | BACKEND-CRITICAL-ISSUES-PENDING.md (SSOT), correcciones activas | Vigente |
-| **[mecanicas/](./mecanicas/)** | 1 | Especificaciones de mecanicas de ejercicios (33 mecanicas) | Definitivo |
+| **[mecanicas/](./mecanicas/)** | 5 | Especificaciones de mecanicas de ejercicios (30 mecanicas) | Definitivo |
 | **[restructuracion-v2/](./restructuracion-v2/)** | 5 | Restructuracion y user stories | Definitivo |
 
 ### Archivos Raiz
@@ -122,7 +122,11 @@ Los siguientes directorios fueron movidos a `orchestration/reportes/` el 2025-12
 - `orchestration/reportes/implementacion/` (reportes de desarrollo)
 
 ### Para ver especificaciones de mecanicas:
-- `mecanicas/SPEC-MECANICAS-EJERCICIOS.md` - Especificaciones completas de las 33 mecanicas
+- `mecanicas/_MAP.md` - Mapa de navegacion de la carpeta
+- `mecanicas/SPEC-MECANICAS-M1-M3.md` - Mecanicas M1-M3 + auxiliares (22 mecanicas)
+- `mecanicas/SPEC-MECANICAS-M4.md` - Mecanicas M4 lectura digital (5 mecanicas)
+- `mecanicas/SPEC-MECANICAS-M5.md` - Mecanicas M5 produccion creativa (3 mecanicas)
+- `mecanicas/SPEC-MECANICAS-EJERCICIOS.md` - Documento consolidado de todas las mecanicas
   - Estructura JSONB de contenido por mecanica
   - Formato de respuesta esperada
   - Criterios de evaluacion (auto/manual)
@@ -145,5 +149,8 @@ Los siguientes directorios fueron movidos a `orchestration/reportes/` el 2025-12
 
 **Actualizado:** 2026-01-20
 **Por:** Claude Code - Analista de Requisitos
-**Version:** 2.3 (Mecanicas)
-**Cambios:** Agregada carpeta mecanicas/ con SPEC-MECANICAS-EJERCICIOS.md (33 mecanicas documentadas)
+**Version:** 2.4 (Mecanicas Detalladas)
+**Cambios:**
+- Agregados documentos separados: SPEC-MECANICAS-M1-M3.md, SPEC-MECANICAS-M4.md, SPEC-MECANICAS-M5.md
+- Creado _MAP.md para carpeta mecanicas
+- Total: 30 mecanicas documentadas con especificaciones detalladas de entrada/salida
