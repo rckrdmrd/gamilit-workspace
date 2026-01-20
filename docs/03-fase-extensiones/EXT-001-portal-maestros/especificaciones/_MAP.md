@@ -17,8 +17,8 @@ Especificaciones técnicas formales para el Portal de Maestros.
 |----|--------|------|--------|----------|
 | **[SPEC-AT-RISK-001](./AT-RISK-LOGIC-STANDARD.md)** | Lógica de Detección At-Risk | Estándar | ✅ Aprobado | INC-4 |
 | **[SPEC-DASH-REP-001](./DASHBOARD-REPORTS-INTEGRATION.md)** | Integración Dashboard-Reports | Integración | ✅ Aprobado | GAP-3 |
-| **[SPEC-PERF-TREND-001](./PERFORMANCE-TREND-SPEC.md)** | Análisis de Tendencias de Desempeño | Analítica | ⏳ En Progreso | GAP-5 |
-| **[SPEC-UAT-001](./USER-ACTIVITY-TRACKING-DEPENDENCY.md)** | Seguimiento de Actividad de Usuario | Infraestructura | ⏳ En Progreso | INC-5 |
+| **[SPEC-PERF-TREND-001](./PERFORMANCE-TREND-SPEC.md)** | Performance Trend (Tendencias de Rendimiento) | Especificacion Tecnica | ⏳ Propuesto | GAP-6 |
+| **[SPEC-UAT-001 (GAP-2)](./USER-ACTIVITY-TRACKING-DEPENDENCY.md)** | Dependencia Activity Tracking para Engagement | Dependency Analysis | ⏳ Documentado | GAP-2 |
 
 ---
 
@@ -52,17 +52,22 @@ at_risk = (average_grade < 70%) OR (completion_rate < 50%)
 
 ---
 
-### SPEC-PERF-TREND-001: Análisis de Tendencias de Desempeño
+### SPEC-PERF-TREND-001: Performance Trend (GAP-6)
 
-**Propósito:** Especificar los algoritmos y métodos para calcular tendencias de desempeño estudiantil a lo largo del tiempo.
+**Propósito:** Especificar la implementacion de `performance_trend[]` y `trend[]` que faltan en el backend para cumplir con US-PM-004a y US-PM-005a.
 
-**Estado:** ⏳ En Progreso
+**Estado:** ⏳ Propuesto (pendiente de aprobacion)
 
-**Será incluido:**
-- Cálculo de tendencias (ascendente/descendente/estable)
-- Predicción de cambios en desempeño
-- Visualización de tendencias
-- Integración con alerts y reportes
+**Resuelve GAP-6:**
+- US-PM-004a especifica `performance_trend[]` pero backend NO lo implementa
+- US-PM-005a especifica `trend[]` pero backend NO lo implementa
+
+**Incluye:**
+- DTOs unificados (`PerformanceTrendItemDto`)
+- Metodos de calculo por semana ISO
+- Query SQL de referencia
+- Criterios de aceptacion
+- Estimacion: 5.5 SP
 
 ---
 
