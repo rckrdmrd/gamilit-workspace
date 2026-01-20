@@ -11,7 +11,7 @@ budget: "$3,200 MXN"
 sprint: "Sprint-TBD"
 labels: ["portal-maestros", "student-management", "suspension", "access-control", "v2-core"]
 created_date: "2025-11-08"
-updated_date: "2026-01-04"
+updated_date: "2026-01-20"
 ---
 
 # US-PM-006: Bloquear/Desbloquear Alumnos del Maestro
@@ -188,18 +188,66 @@ Esta funcionalidad es parte del **Alcance v2 (Ampliación) - Portal de Maestros 
 - ✅ Puedo ver en el panel de auditoría todas las suspensiones por maestro
 - ✅ Puedo revertir suspensiones de maestros si es necesario
 
-### CA-6: Notificaciones
+### CA-6: Notificaciones al Alumno
 
 **Cuando** un maestro suspende a un alumno
 **Entonces:**
 - ✅ El alumno recibe notificación in-app (si está conectado)
 - ✅ El alumno recibe email notificando la suspensión
 - ✅ El email incluye: razón (si fue proporcionada), contacto del maestro
-- ❌ NO se envía notificación a padres (eso es EXT-010)
 
 **Cuando** un maestro reactiva a un alumno
 **Entonces:**
 - ✅ El alumno recibe notificación in-app y email de reactivación
+
+### CA-7: Notificaciones a Padres/Tutores (Dependiente de EXT-010)
+
+> **Dependencia:** Este criterio requiere que EXT-010 (Parent Notifications) esté implementado.
+> Estado actual de EXT-010: 35% implementado (Backlog - fuera del MVP).
+> Ver: [EXT-010 Parent Notifications](../../EXT-010-parent-notifications/README.md)
+
+**Dado** que EXT-010 está implementado y el alumno tiene padre/tutor registrado,
+**Cuando** un maestro suspende a un alumno,
+**Entonces:**
+- ✅ El sistema envía notificación al padre/tutor registrado
+- ✅ Canales de notificación: email (obligatorio) + in-app (si tiene cuenta de portal de padres)
+- ✅ El email incluye:
+  - Nombre del alumno
+  - Nombre del maestro que realizó la suspensión
+  - Razón de la suspensión (si fue proporcionada)
+  - Fecha y hora de la suspensión
+  - Instrucciones para contactar al maestro
+  - Enlace al portal de padres (si aplica)
+- ✅ Asunto del email: "[GAMILIT] Notificación de suspensión temporal - {nombre_alumno}"
+- ✅ Se registra en `notifications.parent_notifications` con type='student_suspended'
+
+**Dado** que EXT-010 está implementado y el alumno tiene padre/tutor registrado,
+**Cuando** un maestro reactiva a un alumno,
+**Entonces:**
+- ✅ El sistema envía notificación al padre/tutor registrado
+- ✅ Canales de notificación: email (obligatorio) + in-app (si tiene cuenta de portal de padres)
+- ✅ El email incluye:
+  - Nombre del alumno
+  - Confirmación de que el acceso ha sido restaurado
+  - Fecha y hora de la reactivación
+- ✅ Asunto del email: "[GAMILIT] Acceso restaurado - {nombre_alumno}"
+- ✅ Se registra en `notifications.parent_notifications` con type='student_reactivated'
+
+**Reglas de negocio para notificaciones a padres:**
+- ✅ Si hay múltiples padres/tutores registrados, se notifica a TODOS los activos
+- ✅ Si el padre no tiene cuenta activa (`is_active = false`), NO se envía notificación
+- ✅ Las notificaciones a padres son adicionales, NO reemplazan las del alumno
+- ✅ Rate limiting: máximo 5 notificaciones por día por padre (evitar spam)
+
+### CA-8: Comportamiento sin EXT-010
+
+**Dado** que EXT-010 NO está implementado,
+**Cuando** un maestro suspende o reactiva a un alumno,
+**Entonces:**
+- ✅ El flujo de suspensión/reactivación funciona normalmente
+- ✅ Solo se envían notificaciones al alumno (CA-6)
+- ❌ NO se intenta enviar notificación a padres
+- ✅ El sistema no genera errores por ausencia de EXT-010
 
 ## 🏗️ Diseño Técnico
 
@@ -286,10 +334,131 @@ async updateStudentStatus(
     channels: ['in_app', 'email'],
   });
 
+  // 5. Notificar a padres/tutores (si EXT-010 está habilitado)
+  await this.notifyParentsIfEnabled(studentId, teacherId, dto);
+
   return {
     success: true,
     message: `Alumno ${dto.status === 'suspended' ? 'suspendido' : 'reactivado'} exitosamente`,
   };
+}
+
+/**
+ * Notifica a padres/tutores sobre cambio de status del alumno
+ * Dependencia: EXT-010 (Parent Notifications)
+ * @see CA-7, CA-8 de US-PM-006
+ */
+private async notifyParentsIfEnabled(
+  studentId: string,
+  teacherId: string,
+  dto: UpdateStudentStatusDto,
+): Promise<void> {
+  // Verificar si EXT-010 está habilitado
+  const isParentNotificationsEnabled = await this.featureFlagService.isEnabled(
+    'parent_notifications'
+  );
+
+  if (!isParentNotificationsEnabled) {
+    // CA-8: Sin EXT-010, no se intenta enviar notificación
+    return;
+  }
+
+  // Obtener padres/tutores activos del alumno
+  const { data: parents } = await this.dbClient
+    .from('parent_accounts')
+    .select('id, parent_email, relationship')
+    .eq('student_id', studentId)
+    .eq('is_active', true);
+
+  if (!parents || parents.length === 0) {
+    return; // No hay padres registrados
+  }
+
+  // Obtener información del alumno y maestro
+  const { data: student } = await this.dbClient
+    .from('profiles')
+    .select('first_name, last_name')
+    .eq('user_id', studentId)
+    .single();
+
+  const { data: teacher } = await this.dbClient
+    .from('profiles')
+    .select('first_name, last_name, email')
+    .eq('user_id', teacherId)
+    .single();
+
+  const studentName = `${student.first_name} ${student.last_name}`;
+  const teacherName = `${teacher.first_name} ${teacher.last_name}`;
+
+  // Notificar a cada padre/tutor
+  for (const parent of parents) {
+    const notificationType = dto.status === 'suspended'
+      ? 'student_suspended'
+      : 'student_reactivated';
+
+    const emailSubject = dto.status === 'suspended'
+      ? `[GAMILIT] Notificación de suspensión temporal - ${studentName}`
+      : `[GAMILIT] Acceso restaurado - ${studentName}`;
+
+    const emailBody = dto.status === 'suspended'
+      ? this.buildSuspensionEmailBody(studentName, teacherName, teacher.email, dto.reason)
+      : this.buildReactivationEmailBody(studentName);
+
+    // Registrar en parent_notifications
+    await this.dbClient.from('parent_notifications').insert({
+      parent_id: parent.id,
+      student_id: studentId,
+      type: notificationType,
+      subject: emailSubject,
+      body: emailBody,
+    });
+
+    // Enviar email
+    await this.emailService.send({
+      to: parent.parent_email,
+      subject: emailSubject,
+      body: emailBody,
+    });
+  }
+}
+
+private buildSuspensionEmailBody(
+  studentName: string,
+  teacherName: string,
+  teacherEmail: string,
+  reason?: string,
+): string {
+  return `
+    Estimado padre/tutor,
+
+    Le informamos que el acceso de ${studentName} a la plataforma GAMILIT
+    ha sido suspendido temporalmente por el maestro ${teacherName}.
+
+    Fecha y hora: ${new Date().toLocaleString('es-MX')}
+    Razón: ${reason || 'No especificada'}
+
+    Si tiene preguntas, puede contactar al maestro en: ${teacherEmail}
+
+    Atentamente,
+    Equipo GAMILIT
+  `;
+}
+
+private buildReactivationEmailBody(studentName: string): string {
+  return `
+    Estimado padre/tutor,
+
+    Le informamos que el acceso de ${studentName} a la plataforma GAMILIT
+    ha sido restaurado.
+
+    Fecha y hora: ${new Date().toLocaleString('es-MX')}
+
+    ${studentName} puede acceder normalmente a todas las funcionalidades
+    de la plataforma.
+
+    Atentamente,
+    Equipo GAMILIT
+  `;
 }
 ```
 
@@ -630,11 +799,18 @@ Si ves el mensaje "Tu cuenta ha sido suspendida temporalmente", tu maestro ha re
 - **RF-AUTH-002:** Estados de cuenta (infraestructura)
 - **ET-AUTH-002:** Implementación de estados
 - **EXT-003 (opcional):** Notificaciones (si está implementado)
+- **EXT-010 (opcional):** [Parent Notifications](../../EXT-010-parent-notifications/README.md) - Para notificaciones a padres (CA-7)
 
 ### Bloqueantes
 - ✅ RF-AUTH-002 debe estar implementado
 - ✅ RLS policies base deben existir
 - ✅ Sistema de auditoría operativo
+
+### Opcionales (Mejoras futuras)
+- ⏳ **EXT-010 (Parent Notifications):** Habilita notificaciones a padres/tutores
+  - Estado actual: 35% implementado, Backlog (fuera del MVP)
+  - Sin EXT-010: US-PM-006 funciona completamente, solo sin notificaciones a padres
+  - Con EXT-010: Se activan criterios CA-7 (notificaciones a padres)
 
 ## 📅 Estimación
 
