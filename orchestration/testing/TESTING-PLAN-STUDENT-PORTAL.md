@@ -466,6 +466,104 @@ El proyecto ya tiene Vitest configurado. Verificar:
 
 ---
 
+---
+
+## 9. Analisis de Complejidad de Hooks
+
+### 9.1 Hooks del Student Portal (por lineas de codigo)
+
+| Hook | Lineas | Complejidad | Esfuerzo Test |
+|------|--------|-------------|---------------|
+| `useAchievementsEnhanced.ts` | 378 | Alta | 4h |
+| `useDashboardData.ts` | 373 | Alta | 4h |
+| `useGamificationData.ts` | 341 | Alta | 3h |
+| `useExerciseAutoSave.ts` | 331 | Alta | 3h |
+| `useExerciseState.ts` | 319 | Media | 3h |
+| `useExercisePowerUps.ts` | 243 | Media | 2h |
+| `useUserModules.ts` | 167 | Media | 2h |
+| `useResponsiveLayout.ts` | 134 | Baja | 1h |
+| `useRecentActivities.ts` | 106 | Baja | 1.5h |
+| `useSwipeGesture.ts` | 104 | Baja | 1h |
+| `useUserClassroom.ts` | 91 | Baja | 1h |
+| **Total** | **2,587** | - | **25.5h** |
+
+### 9.2 Paginas del Student Portal (por lineas de codigo)
+
+| Pagina | Lineas | Complejidad | Esfuerzo Test |
+|--------|--------|-------------|---------------|
+| `ExercisePage.tsx` | 1,091 | Muy Alta | 6h |
+| `SettingsPage.tsx` | 1,023 | Alta | 4h |
+| `GuildsPage.tsx` | 683 | Alta | 3h |
+| `InventoryPage.tsx` | 669 | Alta | 3h |
+| `ShopPage.tsx` | 627 | Media | 3h |
+| `FriendsPage.tsx` | 590 | Media | 2.5h |
+| `ModuleDetailPage.tsx` | 589 | Media | 3h |
+| `EnhancedProfilePage.tsx` | 587 | Media | 2.5h |
+| `GamificationPage.tsx` | 550 | Media | 3h |
+| `LeaderboardPage.tsx` | 545 | Media | 3h |
+| `DeviceManagementSection.tsx` | 545 | Media | 2.5h |
+| `NotificationsPage.tsx` | 529 | Media | 2.5h |
+| `NotificationPreferencesPage.tsx` | 393 | Baja | 2h |
+| `AssignmentsPage.tsx` | 357 | Baja | 2h |
+| `AssignmentDetailPage.tsx` | 347 | Baja | 2h |
+| `DashboardComplete.tsx` | 257 | Baja | 3h |
+| `MissionsPage.tsx` | 248 | Baja | 2h |
+| `TwoFactorAuthPage.tsx` | 248 | Baja | 2h |
+| `PasswordResetPage.tsx` | 195 | Baja | 1.5h |
+| `ProfilePage.tsx` | 178 | Baja | 1.5h |
+| `PasswordRecoveryPage.tsx` | 147 | Baja | 1h |
+| `EmailVerificationPage.tsx` | 88 | Muy Baja | **YA TESTEADO** |
+| `NotFoundPage.tsx` | 38 | Muy Baja | 0.5h |
+| **Total** | **10,524** | - | **56h** |
+
+### 9.3 APIs a Testear (por lineas de codigo)
+
+| API | Lineas | Funciones | Esfuerzo Test |
+|-----|--------|-----------|---------------|
+| `educationalAPI.ts` | 989 | 16+ | 5h |
+| `progressAPI.ts` | 823 | 12+ | 5h |
+| `gamification.api.ts` | 325 | 12 | 4h |
+| **Total** | **2,137** | **40+** | **14h** |
+
+---
+
+## 10. Configuracion Vitest Actual
+
+```typescript
+// vitest.config.ts
+{
+  globals: true,
+  environment: 'jsdom',
+  setupFiles: ['./src/test/setup.ts'],
+  coverage: {
+    provider: 'v8',
+    reporter: ['text', 'json', 'html', 'lcov'],
+    lines: 60,        // Threshold actual
+    functions: 60,
+    branches: 60,
+    statements: 60,
+  }
+}
+```
+
+**Recomendacion:** Reducir thresholds temporalmente durante fase de catch-up:
+- Fase 1 (durante catch-up): 15%
+- Fase 2 (despues de Sprint 4): 25%
+- Fase 3 (objetivo final): 40%
+
+---
+
+## 11. Changelog
+
+| Version | Fecha | Cambios |
+|---------|-------|---------|
+| 1.0.0 | 2026-01-20 | Version inicial del plan de testing |
+
+---
+
+*Documento generado como parte de GAP-SP-006 (Plan de Testing Prioritario)*
+*Proyecto: GAMILIT Student Portal*
+
 **Documento generado:** 2026-01-20
 **Proxima revision:** Al completar Fase 1
 **Estado:** APROBADO PARA EJECUCION
