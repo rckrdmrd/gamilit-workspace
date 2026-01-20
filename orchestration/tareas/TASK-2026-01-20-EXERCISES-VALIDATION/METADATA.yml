@@ -20,7 +20,8 @@ task:
     ultima_actualizacion: 2026-01-20
 
   estado: EN_PROGRESO
-  fase_actual: ANALISIS
+  fase_actual: EJECUCION
+  fase_completada: FASE_1_COMPONENTES
 
   metricas:
     ejercicios_analizados: 30
@@ -28,10 +29,14 @@ task:
     modulos_cubiertos: 5
     componentes_compartidos: 15
     hooks_compartidos: 6
-    gaps_identificados: 10
-    gaps_criticos: 4
+    gaps_identificados: 16
+    gaps_invalidados: 1
+    gaps_criticos: 5
+    gaps_altos: 4
     gaps_medios: 4
-    gaps_menores: 2
+    gaps_menores: 3
+    subtareas_completadas: 3
+    subtareas_pendientes: 9
 
 contexto:
   proyecto: gamilit
@@ -118,12 +123,35 @@ componentes_compartidos_identificados:
       uso: "Estado local con persistencia"
 
 gaps_identificados:
-  criticos:
+  invalidados:
     - id: GAP-EX-001
       titulo: "Integracion Backend-Frontend Incompleta"
       descripcion: "Emparejamiento no envia respuesta al backend"
-      impacto: "Progreso no se registra"
+      estado: INVALIDADO
+      razon: "FASE 1 valido que Emparejamiento SI envia al backend via submitExercise()"
+      fecha_invalidacion: 2026-01-20
+
+  criticos:
+    - id: GAP-EX-011
+      titulo: "SubmitExerciseButton Sin Uso"
+      descripcion: "Componente creado pero no integrado en ningun ejercicio (0%)"
+      impacto: "Componente compartido desperdiciado, inconsistencia UX"
       severidad: CRITICO
+      identificado_en: FASE_1_SUBTASK_1.1
+
+    - id: GAP-EX-012
+      titulo: "HintModal Sin Uso"
+      descripcion: "Sistema de hints con costo ML Coins no usado en ningun ejercicio"
+      impacto: "Sistema de gamificacion de hints desperdiciado"
+      severidad: CRITICO
+      identificado_en: FASE_1_SUBTASK_1.2
+
+    - id: GAP-EX-013
+      titulo: "85% Ejercicios Sin Mostrar Rewards"
+      descripcion: "Solo 4 de 26 ejercicios muestran XP/MLCoins en feedback"
+      impacto: "Gamificacion invisible para estudiantes"
+      severidad: CRITICO
+      identificado_en: FASE_1_SUBTASK_1.3
 
     - id: GAP-EX-002
       titulo: "Progreso No Actualiza en Tiempo Real"
@@ -163,6 +191,49 @@ gaps_identificados:
       titulo: "Documentacion de Integracion Faltante"
       descripcion: "No documentado como integrar componentes compartidos"
       severidad: MEDIO
+
+  altos:
+    - id: GAP-EX-014
+      titulo: "8 Ejercicios Sin pendingReview"
+      descripcion: "Ejercicios M3-M5 con evaluacion manual no indican pendingReview"
+      impacto: "Expectativas incorrectas para estudiantes"
+      severidad: ALTO
+      ejercicios_afectados:
+        - DebateDigital
+        - PodcastArgumentativo
+        - MatrizPerspectivas
+        - InfografiaInteractiva
+        - NavegacionHipertextual
+        - AnalisisMemes
+        - ComicDigital
+        - VideoCarta
+      identificado_en: FASE_1_SUBTASK_1.3
+
+    - id: GAP-EX-015
+      titulo: "27 Ejercicios Sin Sistema de Hints"
+      descripcion: "90% de ejercicios no tienen hints integrados"
+      impacto: "Estudiantes sin ayuda contextual"
+      severidad: ALTO
+      identificado_en: FASE_1_SUBTASK_1.2
+
+    - id: GAP-EX-016
+      titulo: "CompletionModal Sin Uso"
+      descripcion: "Modal avanzado con achievements, rank up, streaks no utilizado"
+      impacto: "Funcionalidades de gamificacion desperdiciadas"
+      severidad: ALTO
+      identificado_en: FASE_1_SUBTASK_1.3
+
+    - id: GAP-EX-017
+      titulo: "4 Auxiliares Sin Backend"
+      descripcion: "Ejercicios auxiliares no persisten progreso"
+      impacto: "Progreso de auxiliares no registrado"
+      severidad: ALTO
+      ejercicios_afectados:
+        - CollagePrensa
+        - CallToAction
+        - ComprensionAuditiva
+        - TextoEnMovimiento
+      identificado_en: FASE_1_SUBTASK_1.1
 
   menores:
     - id: GAP-EX-009
