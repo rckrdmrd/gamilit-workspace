@@ -95,6 +95,8 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
           response.feedback?.overall ||
           `Has ordenado ${response.correctAnswersCount} de ${response.totalQuestions} eventos correctamente.`,
         score: response.score,
+        xpEarned: response.rewards?.xp || 0,
+        mlCoinsEarned: response.rewards?.mlCoins || 0,
         showConfetti: response.isPerfect,
       });
       setShowFeedback(true);

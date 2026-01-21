@@ -225,11 +225,13 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
             ? '¡Buen trabajo!'
             : 'Intenta de nuevo',
         message:
-          response.feedback?.overall ||
-          `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
-        score: response.score,
-        showConfetti: response.isPerfect,
-      });
+            response.feedback?.overall ||
+            `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
+          score: response.score,
+          xpEarned: response.rewards?.xp || 0,
+          mlCoinsEarned: response.rewards?.mlCoins || 0,
+          showConfetti: response.isPerfect,
+        });
       setShowFeedback(true);
 
       // Sync stores with backend (rewards already calculated and saved by backend)

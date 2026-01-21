@@ -155,6 +155,8 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
           `Has respondido correctamente ${response.correctAnswersCount} de ${response.totalQuestions} preguntas (${Math.round(response.score)}%). Ganaste ${response.rewards?.xp || 0} XP y ${response.rewards?.mlCoins || 0} ML Coins.`,
         score: response.score,
         showConfetti: response.isPerfect,
+        xpEarned: response.rewards?.xp || 0,
+        mlCoinsEarned: response.rewards?.mlCoins || 0,
       });
       setShowFeedback(true);
 

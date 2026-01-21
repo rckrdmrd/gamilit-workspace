@@ -251,6 +251,8 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
           message:
             'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
           pendingReview: true,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
         });
         setShowFeedback(true);
         // FIX M3-M5 2026-01-08: Invalidar cache para actualizar barra de progreso
@@ -276,8 +278,8 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
         score: response.score,
         showConfetti: response.isPerfect,
         // Agregar rewards
-        xpEarned: rewards.xp,
-        mlCoinsEarned: rewards.mlCoins,
+        xpEarned: rewards.xp || 0,
+        mlCoinsEarned: rewards.mlCoins || 0,
       });
       setShowFeedback(true);
 

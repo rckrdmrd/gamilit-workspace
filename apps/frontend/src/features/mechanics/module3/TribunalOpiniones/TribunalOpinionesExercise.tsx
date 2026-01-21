@@ -271,6 +271,8 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
           title: 'Enviado para Revisión',
           message: response.message || 'Tu evaluación ha sido enviada para revisión del maestro. Recibirás tus recompensas cuando sea evaluada.',
           pendingReview: true,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
         });
         setShowFeedback(true);
         await syncAndInvalidate();
@@ -298,8 +300,8 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
         score: response.score,
         showConfetti: response.isPerfect,
         // Agregar rewards
-        xpEarned: rewards.xp,
-        mlCoinsEarned: rewards.mlCoins,
+        xpEarned: rewards.xp || 0,
+        mlCoinsEarned: rewards.mlCoins || 0,
       });
       setShowFeedback(true);
 

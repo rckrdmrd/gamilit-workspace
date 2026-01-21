@@ -457,8 +457,8 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
           score: isPendingReview ? undefined : (backendScore !== null ? backendScore : calculateFinalScore()),
           showConfetti: isPendingReview ? false : (backendScore !== null ? backendScore >= 90 : userMessageCount >= 5),
           // Agregar rewards si están disponibles (no mostrar en pending review)
-          xpEarned: isPendingReview ? undefined : backendRewards?.xp,
-          mlCoinsEarned: isPendingReview ? undefined : backendRewards?.mlCoins,
+          xpEarned: isPendingReview ? 0 : (backendRewards?.xp || 0),
+          mlCoinsEarned: isPendingReview ? 0 : (backendRewards?.mlCoins || 0),
           pendingReview: isPendingReview,
         }}
         onClose={() => {

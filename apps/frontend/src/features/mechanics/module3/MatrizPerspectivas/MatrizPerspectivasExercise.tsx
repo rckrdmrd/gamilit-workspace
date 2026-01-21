@@ -195,6 +195,8 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
           title: 'Enviado para Revisión',
           message: response.message || 'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
           pendingReview: true,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
         };
         setFeedback(pendingFeedback);
         setShowFeedback(true);
@@ -221,8 +223,8 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
         score: response.score,
         showConfetti: response.isPerfect,
         // Agregar rewards
-        xpEarned: rewards.xp,
-        mlCoinsEarned: rewards.mlCoins,
+        xpEarned: rewards.xp || 0,
+        mlCoinsEarned: rewards.mlCoins || 0,
       };
 
       setFeedback(finalFeedback);

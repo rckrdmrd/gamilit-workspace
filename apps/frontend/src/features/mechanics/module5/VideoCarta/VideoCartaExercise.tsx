@@ -4,6 +4,7 @@ import { useSectionedRecorder, VideoSection } from '@/shared/hooks/useSectionedR
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { mediaApi } from '@/shared/api/mediaApi';
 
 interface ProgressData {
   progress: {
@@ -43,6 +44,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const {
@@ -88,6 +90,8 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
           title: 'Video Carta Enviada',
           message: 'Tu video carta ha sido enviada para revisión del maestro. Recibirás tus recompensas cuando sea evaluada.',
           pendingReview: true,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
         });
         setShowFeedback(true);
         onComplete?.(0, timeSpent);
@@ -193,8 +197,45 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
     }
   }, [previewUrl, videoUrl, isRecording]);
 
-  const handleSubmit = () => {
-    if (!exerciseId || isSubmitting || isSubmitted || !videoBlob) return;
+  const handleSubmit = async () => {
+    // FIX GAP-EX-004: Upload video to storage before submitting
+    if (!exerciseId || isSubmitting || isSubmitted || !videoBlob || isUploading) return;
+
+    let uploadedUrl = videoUrl;
+    let mediaId: string | undefined;
+
+    try {
+      setIsUploading(true);
+      
+      // Upload video using mediaApi
+      const file = new File([videoBlob], `video-carta-${exerciseId}.webm`, { type: 'video/webm' });
+      const uploadResult = await mediaApi.uploadMedia(file, {
+        type: 'video',
+        exerciseId,
+        onProgress: (progress) => {
+          // Could expose progress state if needed
+          console.log('Upload progress:', progress);
+        }
+      });
+      
+      uploadedUrl = uploadResult.url;
+      mediaId = uploadResult.id;
+      
+    } catch (error) {
+      console.error('Video upload failed:', error);
+      // If upload fails, we might still want to try submitting with the blob URL (local fallback)
+      // or show an error. For now, we'll try to proceed but log the error.
+      // In a strict environment, we should stop and show feedback.
+      setFeedback({
+        type: 'error',
+        title: 'Error de subida',
+        message: 'No se pudo subir el video al servidor. Verifica tu conexión.',
+        score: 0
+      });
+      setShowFeedback(true);
+      setIsUploading(false);
+      return;
+    }
 
     // FIX: Transform data to match VideoCartaAnswerDto expected by backend
     // DTO expects: { video_url, sections: [{ title, duration_seconds }] }
@@ -208,13 +249,9 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
       };
     });
 
-    // Generate video URL - use blob URL for local or placeholder for submission
-    // In production, this would be uploaded to storage and replaced with actual URL
-    const generatedVideoUrl = videoUrl || `blob:video-carta-${exerciseId}`;
-
     submit({
       // Primary format expected by VideoCartaAnswerDto
-      video_url: generatedVideoUrl,
+      video_url: uploadedUrl || '',
       sections: dtoSections,
 
       // Metadata for backwards compatibility and manual review context
@@ -223,6 +260,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
         videoSize: videoBlob.size,
         hasVideo: true,
         message: 'Video carta sobre Marie Curie',
+        uploadedMediaId: mediaId,
         allSectionsCompleted,
         sectionDetails: Array.from(sectionRecordings.entries()).map(([id, data]) => ({
           id,
@@ -232,6 +270,8 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
         })),
       },
     });
+    
+    setIsUploading(false);
   };
 
   const formatDuration = (seconds: number) => {
@@ -529,13 +569,13 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                   </button>
                   <button
                     onClick={handleSubmit}
-                    disabled={!videoBlob || isSubmitting || isSubmitted}
+                    disabled={!videoBlob || isSubmitting || isSubmitted || isUploading}
                     className="flex items-center gap-2 rounded-detective bg-detective-orange px-6 py-3 font-medium text-white transition-colors hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:bg-gray-300"
                   >
-                    {isSubmitting ? (
+                    {isSubmitting || isUploading ? (
                       <>
                         <Loader2 className="h-5 w-5 animate-spin" />
-                        Enviando...
+                        {isUploading ? 'Subiendo...' : 'Enviando...'}
                       </>
                     ) : isSubmitted ? (
                       <>

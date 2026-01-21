@@ -136,8 +136,8 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
             ? '¡Emparejaste todas las tarjetas correctamente!'
             : `Obtuviste ${response.score}% de aciertos.`,
           score: response.score,
-          xpEarned: response.xp_earned,
-          coinsEarned: response.coins_earned,
+          xpEarned: response.rewards?.xp || 0,
+          mlCoinsEarned: response.rewards?.mlCoins || 0,
           showConfetti: response.isPerfect,
         });
       } catch (error) {

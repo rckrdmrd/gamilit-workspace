@@ -80,10 +80,12 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
       // Verificar si está pendiente de revisión manual
       if (result.status === 'pending_review' || result.requiresManualReview) {
         setFeedback({
-          type: 'info',
-          title: 'Análisis Enviado',
-          message: 'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+            type: 'info',
+            title: 'Análisis Enviado',
+            message: 'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
           pendingReview: true,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
         });
         setShowFeedback(true);
         onComplete?.(0, timeSpent);

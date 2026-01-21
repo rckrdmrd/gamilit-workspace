@@ -131,6 +131,8 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
           `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} conexiones correctas (${Math.round(response.score)}%). Ganaste ${response.rewards?.xp || 0} XP y ${response.rewards?.mlCoins || 0} ML Coins.`,
         score: response.score,
         showConfetti: response.isPerfect,
+        xpEarned: response.rewards?.xp || 0,
+        mlCoinsEarned: response.rewards?.mlCoins || 0,
       });
       setShowFeedback(true);
 

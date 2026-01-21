@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, Image as ImageIcon, Save, Eye, Send, Loader2, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Send, Save, Plus, Trash2, Calendar, Image as ImageIcon, Video, Mic, Type } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
@@ -74,6 +74,8 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
           title: 'Diario Enviado',
           message: 'Tu diario multimedia ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
           pendingReview: true,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
         });
         setShowFeedback(true);
         onComplete?.(0, timeSpent);

@@ -299,6 +299,8 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
           `Has respondido correctamente ${response.correctAnswersCount} de ${response.totalQuestions} preguntas.`,
         score: response.score,
         showConfetti: response.isPerfect,
+        xpEarned: response.rewards?.xp || 0,
+        mlCoinsEarned: response.rewards?.mlCoins || 0,
       });
       setShowFeedback(true);
 

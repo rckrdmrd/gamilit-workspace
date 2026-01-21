@@ -71,6 +71,8 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
           title: 'Cómic Enviado',
           message: 'Tu cómic digital ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
           pendingReview: true,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
         });
         setShowFeedback(true);
         onComplete?.(0, timeSpent);
@@ -87,7 +89,6 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
         mlCoinsEarned: result.rewards?.mlCoins || 0,
       });
       setShowFeedback(true);
-      onComplete?.(result.score, timeSpent);
     },
     onError: (err) => {
       setFeedback({

@@ -198,8 +198,8 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
           response.feedback?.overall ||
           `Has establecido ${response.correctAnswersCount} de ${response.totalQuestions} relaciones correctas.`,
         score: response.score,
-        xpEarned: response.rewards?.xp,
-        mlCoinsEarned: response.rewards?.mlCoins,
+        xpEarned: response.rewards?.xp || 0,
+        mlCoinsEarned: response.rewards?.mlCoins || 0,
         showConfetti: response.isPerfect,
       });
       setShowFeedback(true);

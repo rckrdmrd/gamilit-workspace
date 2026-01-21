@@ -191,6 +191,8 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
           `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
         score: response.score,
         showConfetti: response.isPerfect,
+        xpEarned: response.rewards?.xp || 0,
+        mlCoinsEarned: response.rewards?.mlCoins || 0,
       });
       setShowFeedback(true);
 

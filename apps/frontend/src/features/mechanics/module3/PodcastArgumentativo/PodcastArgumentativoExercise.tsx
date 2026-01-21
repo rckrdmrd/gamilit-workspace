@@ -304,8 +304,8 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
           message: 'Tu podcast ha sido enviado para revision del maestro. Recibiras tus recompensas cuando sea evaluado.',
           score: undefined, // No mostrar score aun
           showConfetti: false,
-          xpEarned: undefined, // No mostrar rewards prematuramente
-          mlCoinsEarned: undefined,
+          xpEarned: 0,
+          mlCoinsEarned: 0,
           pendingReview: true,
         });
 
@@ -338,8 +338,8 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
           `Has completado el podcast argumentativo con ${response.score} puntos.`,
         score: response.score,
         showConfetti: response.isPerfect,
-        xpEarned: rewards.xp,
-        mlCoinsEarned: rewards.mlCoins,
+        xpEarned: rewards.xp || 0,
+        mlCoinsEarned: rewards.mlCoins || 0,
       });
 
       // Mostrar feedback con el score del backend

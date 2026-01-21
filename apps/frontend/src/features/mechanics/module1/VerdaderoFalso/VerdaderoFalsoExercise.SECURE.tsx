@@ -102,6 +102,8 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         title: result.isPerfect ? '¡Perfecto!' : '¡Buen intento!',
         message: `Obtuviste ${result.score} puntos (${result.correctAnswers}/${result.totalQuestions} correctas)`,
         score: result.score,
+        xpEarned: result.rewards?.xp,
+        mlCoinsEarned: result.rewards?.mlCoins,
         showConfetti: result.isPerfect,
       });
       setShowFeedback(true);
