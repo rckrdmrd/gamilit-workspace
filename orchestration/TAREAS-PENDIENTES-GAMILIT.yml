@@ -13,10 +13,61 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.0.0"
+version: "1.1.0"
 proyecto: "gamilit"
 actualizado: "2026-01-20"
 mantenido_por: "Claude Code"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ALERTA CRITICA - LEER ANTES DE CUALQUIER TAREA DE BD
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# FECHA: 2026-01-20
+# TAREA ORIGEN: TASK-2026-01-20-INTEGRACION-WORKSPACES
+#
+# Se corrigieron credenciales de BD. Si trabajas con base de datos:
+#
+# 1. CREDENCIALES CORRECTAS (VERIFICAR EN .env):
+#    - Puerto: 5432 (NO 5433)
+#    - Password: gamilit_dev_2026
+#    - Usuario: gamilit_user
+#    - Database: gamilit_platform
+#
+# 2. SI HAY ERROR DE CONEXION:
+#    - Verificar que PostgreSQL usa puerto 5432
+#    - Ejecutar: ./apps/database/scripts/force-recreate-all.sh
+#    - O consultar @RECREAR-DB en workspace-v2
+#
+# 3. FUENTE DE VERDAD:
+#    workspace-v2/orchestration/inventarios/WORKSPACE-INTEGRATION.yml
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+alerta_critica:
+  fecha: "2026-01-20"
+  tipo: "correccion_credenciales"
+  estado: "propagacion_pendiente"
+  tarea_origen: "TASK-2026-01-20-INTEGRACION-WORKSPACES"
+
+  credenciales_correctas:
+    host: "localhost"
+    puerto: 5432
+    database: "gamilit_platform"
+    usuario: "gamilit_user"
+    password: "gamilit_dev_2026"
+
+  archivos_corregidos:
+    - "apps/database/scripts/force-recreate-all.sh"
+    - "apps/database/scripts/init-database.sh"
+    - "apps/database/scripts/recreate-database.sh"
+    - "apps/database/.env.dev"
+    - "apps/database/.env.database"
+
+  accion_requerida: |
+    Si hay errores de conexion a BD, ejecutar:
+    cd apps/database/scripts && ./force-recreate-all.sh
+
+  referencia: "@WORKSPACE-INTEGRATION"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # CONTEXTO DEL PROYECTO (LEER PRIMERO)
