@@ -49,7 +49,7 @@ CREDENTIALS_FILE="$DATABASE_ROOT/database-credentials-dev.txt"
 DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
 DB_HOST="localhost"
-DB_PORT="5433"  # PostgreSQL 16 en este sistema usa puerto 5433
+DB_PORT="5432"  # FUENTE VERDAD: workspace-v2/orchestration/inventarios/WORKSPACE-INTEGRATION.yml
 DB_PASS=""
 
 # ============================================================================

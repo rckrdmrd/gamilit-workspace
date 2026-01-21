@@ -35,7 +35,7 @@ INIT_SCRIPT="$SCRIPT_DIR/init-database.sh"
 DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
 DB_HOST="localhost"
-DB_PORT="${DB_PORT:-5433}"
+DB_PORT="${DB_PORT:-5432}"  # FUENTE VERDAD: workspace-v2/orchestration/inventarios/WORKSPACE-INTEGRATION.yml
 POSTGRES_USER="postgres"
 
 ENVIRONMENT=""
