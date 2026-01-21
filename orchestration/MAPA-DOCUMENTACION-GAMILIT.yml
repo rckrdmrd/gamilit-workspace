@@ -2,10 +2,15 @@
 # MAPA DE DOCUMENTACIÓN - GAMILIT
 # ═══════════════════════════════════════════════════════════════════════════════
 #
-# Sistema: NEXUS v4.0 + Gobernanza de Documentación
+# Sistema: SIMCO v4.0 + Gobernanza de Documentación (hereda de workspace-v2)
 # Proyecto: GAMILIT - Plataforma de Gamificación Educativa
 # Propósito: Índice central que relaciona toda la documentación del proyecto
 # Alias: @MAPA-DOC-GAMILIT
+#
+# NOTA: Este proyecto hereda gobernanza de workspace-v2
+# - Configuración de agentes externos: workspace-v2/.trae/, .gemini/, .windsurf/
+# - Perfiles de agentes: workspace-v2/orchestration/agents/perfiles/
+# - Directivas SIMCO: workspace-v2/orchestration/directivas/
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -161,29 +166,38 @@ por_ubicacion:
       - ruta: "scrum/"
         descripcion: "Sprints y backlog"
 
-  claude:
-    ruta: ".claude/"
-    indice: "README.md"
-    descripcion: "Sistema de agentes NEXUS v4.0"
+  agentes:
+    ruta: "orchestration/agentes/"
+    indice: "AGENTS.md"
+    descripcion: "Sistema de agentes local de Gamilit"
+    nota: |
+      IMPORTANTE: Este proyecto NO tiene carpeta .claude/ propia.
+      Usa los agentes definidos en orchestration/agentes/ y hereda
+      configuración del workspace-v2.
     subcarpetas:
-      - ruta: "agents/"
-        descripcion: "Perfiles de agentes NEXUS (5 principales)"
+      - ruta: "backend/"
+        descripcion: "Agente de backend"
 
-      - ruta: "directivas/"
-        descripcion: "Directivas de operación"
-        archivos:
-          - "DIRECTIVA-VALIDACION-DOCUMENTACION.md"
-          - "DIRECTIVAS-PRINCIPALES.md"
-          - "GUIA-ORQUESTACION.md"
+      - ruta: "frontend/"
+        descripcion: "Agente de frontend"
 
-      - ruta: "referencias/"
-        descripcion: "Contextos y paths"
+      - ruta: "database/"
+        descripcion: "Agente de base de datos"
 
-      - ruta: "constants/"
-        descripcion: "Constantes arquitectónicas"
+      - ruta: "perfiles/"
+        descripcion: "Perfiles de agentes especializados"
 
-      - ruta: "templates/"
-        descripcion: "Templates para subagentes"
+      - ruta: "tech-leader/"
+        descripcion: "Agente líder técnico"
+
+  agentes_externos:
+    descripcion: "Configuración para agentes externos (Trae, Gemini, Windsurf)"
+    hereda_de: "workspace-v2"
+    archivos:
+      - ruta: ".gemini/antigravity/README.md"
+        proposito: "Configuración de Gemini para gamilit"
+      - ruta: "orchestration/TAREAS-PENDIENTES-GAMILIT.yml"
+        proposito: "Tareas estructuradas para agentes externos"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # VISTA POR DOMINIO TÉCNICO
@@ -268,43 +282,75 @@ por_portal:
 # ─────────────────────────────────────────────────────────────────────────────────
 
 por_agente:
-  NEXUS-BACKEND:
-    perfil: ".claude/agents/INIT-NEXUS-BACKEND.md"
+  # ═══════════════════════════════════════════════════════════════════════════
+  # AGENTES LOCALES DE GAMILIT
+  # Ubicados en: orchestration/agentes/
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  BACKEND:
+    perfil_local: "orchestration/agentes/backend/"
+    perfil_workspace: "workspace-v2/orchestration/agents/perfiles/PERFIL-BACKEND.md"
     documentacion_relevante:
       - "docs/90-transversal/api/"
       - "docs/95-guias-desarrollo/backend/"
     inventario: "orchestration/inventarios/BACKEND_INVENTORY.yml"
     traza: "orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
 
-  NEXUS-FRONTEND:
-    perfil: ".claude/agents/INIT-NEXUS-FRONTEND.md"
+  FRONTEND:
+    perfil_local: "orchestration/agentes/frontend/"
+    perfil_workspace: "workspace-v2/orchestration/agents/perfiles/PERFIL-FRONTEND.md"
     documentacion_relevante:
       - "docs/95-guias-desarrollo/frontend/"
       - "docs/95-guias-desarrollo/student-portal/"
     inventario: "orchestration/inventarios/FRONTEND_INVENTORY.yml"
     traza: "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
 
-  NEXUS-DATABASE:
-    perfil: ".claude/agents/INIT-NEXUS-DATABASE.md"
+  DATABASE:
+    perfil_local: "orchestration/agentes/database/"
+    perfil_workspace: "workspace-v2/orchestration/agents/perfiles/PERFIL-DATABASE.md"
     documentacion_relevante:
       - "docs/90-transversal/arquitectura-database/"
       - "orchestration/directivas/DIRECTIVA-POLITICA-CARGA-LIMPIA.md"
     inventario: "orchestration/inventarios/DATABASE_INVENTORY.yml"
     traza: "orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
 
-  NEXUS-DEVOPS:
-    perfil: ".claude/agents/INIT-NEXUS-DEVOPS.md"
+  DEVOPS:
+    perfil_local: "orchestration/agentes/workspace-manager/"
+    perfil_workspace: "workspace-v2/orchestration/agents/perfiles/PERFIL-DEVOPS.md"
     documentacion_relevante:
       - "docs/90-transversal/deuda-tecnica/"
       - "orchestration/analisis-produccion-2025-12-18/"
     traza: "orchestration/trazas/TRAZA-WORKSPACE-MANAGEMENT.md"
 
-  NEXUS-INTEGRATION:
-    perfil: ".claude/agents/INIT-NEXUS-INTEGRATION.md"
+  INTEGRATION:
+    perfil_local: "orchestration/agentes/architecture-analyst/"
+    perfil_workspace: "workspace-v2/orchestration/agents/perfiles/PERFIL-ARCHITECTURE-ANALYST.md"
     documentacion_relevante:
       - "docs/90-transversal/arquitectura/"
       - "orchestration/inventarios/TRACEABILITY_MATRIX.yml"
     traza: "orchestration/trazas/TRAZA-ANALISIS-ARQUITECTURA.md"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # AGENTES EXTERNOS (Trae, Windsurf, Gemini)
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  TRAE:
+    tipo: "externo"
+    config: "workspace-v2/.trae/"
+    rol: "Ejecutor de tareas definidas"
+    tareas: "orchestration/TAREAS-PENDIENTES-GAMILIT.yml"
+
+  WINDSURF:
+    tipo: "externo"
+    config: "workspace-v2/.windsurf/"
+    rol: "Desarrollador full-stack"
+    tareas: "orchestration/TAREAS-PENDIENTES-GAMILIT.yml"
+
+  GEMINI:
+    tipo: "externo"
+    config: ".gemini/antigravity/"
+    rol: "QA/Testing frontend"
+    tareas: "orchestration/TAREAS-PENDIENTES-GAMILIT.yml"
 
   META-ORQUESTADOR:
     perfil: "workspace-v2/orchestration/agents/perfiles/PERFIL-META-ORQUESTADOR.md"

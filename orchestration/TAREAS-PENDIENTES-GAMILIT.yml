@@ -1,0 +1,255 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# TAREAS PENDIENTES - GAMILIT
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Propósito: Lista estructurada de tareas para agentes externos (Trae, Windsurf, Gemini)
+# Formato: Pasos atómicos ejecutables sin necesidad de razonamiento complejo
+# Actualizado: 2026-01-20
+#
+# USO:
+# - Trae/Windsurf: Ejecutar tareas tipo "development"
+# - Gemini: Ejecutar tareas tipo "testing"
+# - Cualquier agente: Seguir pasos en orden, marcar progreso
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+proyecto: "gamilit"
+actualizado: "2026-01-20"
+mantenido_por: "Claude Code"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CONTEXTO DEL PROYECTO (LEER PRIMERO)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+contexto:
+  descripcion: "Plataforma de Gamificación Educativa"
+  stack:
+    backend: "NestJS 11"
+    frontend: "React 18"
+    database: "PostgreSQL 15"
+  estructura:
+    monorepo: true
+    apps:
+      backend: "apps/backend/"
+      frontend: "apps/frontend/"
+      database: "apps/database/"
+  completitud: "60%"
+  portales:
+    - nombre: "student"
+      ruta: "/student"
+      url_local: "http://localhost:3000/student"
+    - nombre: "teacher"
+      ruta: "/teacher"
+      url_local: "http://localhost:3000/teacher"
+    - nombre: "admin"
+      ruta: "/admin"
+      url_local: "http://localhost:3000/admin"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARCHIVOS A CARGAR SEGÚN TIPO DE TAREA
+# ─────────────────────────────────────────────────────────────────────────────────
+
+carga_contexto:
+  siempre:
+    - archivo: "orchestration/PROXIMA-ACCION.md"
+      proposito: "Estado actual del proyecto"
+    - archivo: "orchestration/CONTEXT-MAP.yml"
+      proposito: "Contexto automático NEXUS"
+
+  backend:
+    - archivo: "apps/backend/src/app.module.ts"
+      proposito: "Módulos registrados"
+    - archivo: "orchestration/inventarios/BACKEND_INVENTORY.yml"
+      proposito: "Inventario de backend"
+
+  frontend:
+    - archivo: "apps/frontend/src/App.tsx"
+      proposito: "Rutas principales"
+    - archivo: "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+      proposito: "Inventario de frontend"
+
+  database:
+    - archivo: "apps/database/ddl/"
+      proposito: "Esquemas DDL"
+    - archivo: "orchestration/inventarios/DATABASE_INVENTORY.yml"
+      proposito: "Inventario de base de datos"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES OBLIGATORIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  backend:
+    - comando: "cd apps/backend && npm run build"
+      debe_pasar: true
+    - comando: "cd apps/backend && npm run lint"
+      debe_pasar: true
+    - comando: "cd apps/backend && npm run test"
+      debe_pasar: "si existen tests"
+
+  frontend:
+    - comando: "cd apps/frontend && npm run build"
+      debe_pasar: true
+    - comando: "cd apps/frontend && npm run lint"
+      debe_pasar: true
+    - comando: "cd apps/frontend && npm run typecheck"
+      debe_pasar: true
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TAREAS PENDIENTES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+tareas:
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # TAREAS PLACEHOLDER - REEMPLAZAR CON TAREAS REALES
+  # ═══════════════════════════════════════════════════════════════════════════════
+  #
+  # Claude Code debe poblar esta sección con tareas específicas del sprint actual.
+  # Cada tarea debe seguir el formato estándar mostrado abajo.
+  #
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: "GAM-TASK-TEMPLATE"
+    titulo: "[TEMPLATE] Ejemplo de tarea bien estructurada"
+    tipo: "development"  # development | testing | documentation
+    agente_recomendado: "trae|windsurf|gemini"
+    prioridad: "P1"
+    estado: "template"  # pending | in_progress | completed | blocked
+    dependencias: []
+
+    contexto:
+      descripcion: |
+        Descripción clara de qué se debe hacer y por qué.
+        Incluir contexto suficiente para que el agente no tenga que buscar.
+      archivos_leer:
+        - "ruta/al/archivo1.ts"
+        - "ruta/al/archivo2.ts"
+      archivos_modificar:
+        - "ruta/al/archivo3.ts"
+      documentacion_referencia:
+        - "docs/ruta/al/doc.md"
+
+    pasos:
+      - paso: 1
+        accion: "Leer archivo X para entender estructura actual"
+        tipo: "lectura"
+        archivo: "ruta/al/archivo.ts"
+
+      - paso: 2
+        accion: "Crear/modificar función Y con comportamiento Z"
+        tipo: "codigo"
+        archivo: "ruta/al/archivo.ts"
+        lineas: "50-80"
+
+      - paso: 3
+        accion: "Ejecutar validación"
+        tipo: "comando"
+        comando: "npm run build"
+        validacion: "Exit code 0"
+
+    validacion_final:
+      - "npm run build pasa sin errores"
+      - "npm run lint pasa sin errores"
+      - "Funcionalidad X funciona según especificación"
+
+    notas: |
+      Notas adicionales para el agente.
+      - Cuidado con X
+      - No olvidar Y
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # TAREAS REALES DEL SPRINT ACTUAL
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  # Agregar tareas aquí siguiendo el formato del template
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TAREAS DE TESTING (Para Gemini)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+tareas_testing:
+
+  - id: "GAM-TEST-TEMPLATE"
+    titulo: "[TEMPLATE] Ejemplo de tarea de testing"
+    tipo: "testing"
+    agente_recomendado: "gemini"
+    prioridad: "P2"
+    estado: "template"
+
+    contexto:
+      portal: "student"
+      url: "http://localhost:3000/student"
+      prerequisitos:
+        - "Backend corriendo en puerto 3100"
+        - "Frontend corriendo en puerto 3000"
+        - "Usuario de prueba: test@example.com / password123"
+
+    casos_prueba:
+      - caso: "TC-001"
+        nombre: "Login exitoso"
+        pasos:
+          - "Navegar a /student/login"
+          - "Ingresar email: test@example.com"
+          - "Ingresar password: password123"
+          - "Click en botón 'Iniciar Sesión'"
+        resultado_esperado: "Redirige a /student/dashboard"
+
+      - caso: "TC-002"
+        nombre: "Login fallido"
+        pasos:
+          - "Navegar a /student/login"
+          - "Ingresar email: wrong@example.com"
+          - "Ingresar password: wrongpass"
+          - "Click en botón 'Iniciar Sesión'"
+        resultado_esperado: "Muestra mensaje de error 'Credenciales inválidas'"
+
+    reporte:
+      formato: "markdown"
+      ubicacion: "orchestration/testing/reportes/"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# HISTORIAL DE CAMBIOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+historial:
+  - fecha: "2026-01-20"
+    accion: "Creación inicial del archivo"
+    autor: "Claude Code"
+    descripcion: "Estructura base para agentes externos"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# INSTRUCCIONES PARA AGENTES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+instrucciones_agentes:
+
+  antes_de_empezar:
+    - "Ejecutar: git fetch origin && git pull (si hay cambios)"
+    - "Verificar que no hay tareas en estado 'in_progress' (evitar conflictos)"
+    - "Leer contexto de la tarea completamente"
+    - "Cargar archivos listados en 'archivos_leer'"
+
+  durante_ejecucion:
+    - "Marcar tarea como 'in_progress' antes de iniciar"
+    - "Seguir pasos en orden"
+    - "Si un paso falla, documentar y marcar como 'blocked'"
+    - "Si contexto > 50%, crear checkpoint y pedir limpieza"
+
+  al_terminar:
+    - "Ejecutar validaciones listadas"
+    - "Marcar tarea como 'completed' solo si todas las validaciones pasan"
+    - "Actualizar historial con fecha y agente"
+    - "Commit: git add . && git commit -m '[GAM-TASK-XXX] tipo: descripción'"
+    - "Push: git push origin main"
+
+  checkpoint_template: |
+    ## Checkpoint - [ID_TAREA]
+    **Fecha:** YYYY-MM-DD HH:MM
+    **Agente:** [nombre]
+    **Progreso:** X de Y pasos
+    **Último paso completado:** [descripción]
+    **Siguiente paso:** [descripción]
+    **Archivos modificados:** [lista]
+    **Notas:** [observaciones]

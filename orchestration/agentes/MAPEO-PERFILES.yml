@@ -1,0 +1,360 @@
+# MAPEO-PERFILES.yml - Gamilit
+# Mapeo de agentes locales a perfiles del workspace
+#
+# Sistema: SIMCO v4.0
+# Proyecto: Gamilit - Plataforma de Gamificación Educativa
+# Actualizado: 2026-01-20
+
+version: "1.0.0"
+proyecto: "gamilit"
+
+# =============================================================================
+# PROPÓSITO
+# =============================================================================
+# Este archivo mapea los agentes locales de Gamilit (en orchestration/agentes/)
+# a los perfiles centralizados del workspace-v2 (en orchestration/agents/perfiles/).
+#
+# Los agentes externos (Trae, Windsurf, Gemini) deben usar este mapeo para
+# saber qué perfil cargar según el tipo de tarea.
+
+# =============================================================================
+# MAPEO DE AGENTES LOCALES → PERFILES WORKSPACE
+# =============================================================================
+
+mapeo_perfiles:
+  # ---------------------------------------------------------------------------
+  # BACKEND
+  # ---------------------------------------------------------------------------
+  backend:
+    agente_local:
+      ruta: "orchestration/agentes/backend/"
+      archivos:
+        - "AGENTS.md"
+        - "prompts/"
+    perfil_workspace:
+      ruta: "orchestration/agents/perfiles/PERFIL-BACKEND.md"
+      ruta_absoluta: "workspace-v2/orchestration/agents/perfiles/PERFIL-BACKEND.md"
+    triggers:
+      keywords:
+        - "endpoint"
+        - "API"
+        - "NestJS"
+        - "service"
+        - "controller"
+        - "module"
+        - "guard"
+        - "interceptor"
+        - "pipe"
+        - "dto"
+      extensiones:
+        - ".controller.ts"
+        - ".service.ts"
+        - ".module.ts"
+        - ".guard.ts"
+        - ".dto.ts"
+      rutas:
+        - "apps/backend/src/"
+    validaciones:
+      build: "npm run build --prefix apps/backend"
+      lint: "npm run lint --prefix apps/backend"
+      test: "npm run test --prefix apps/backend"
+
+  # ---------------------------------------------------------------------------
+  # FRONTEND
+  # ---------------------------------------------------------------------------
+  frontend:
+    agente_local:
+      ruta: "orchestration/agentes/frontend/"
+      archivos:
+        - "AGENTS.md"
+        - "prompts/"
+    perfil_workspace:
+      ruta: "orchestration/agents/perfiles/PERFIL-FRONTEND.md"
+      ruta_absoluta: "workspace-v2/orchestration/agents/perfiles/PERFIL-FRONTEND.md"
+    triggers:
+      keywords:
+        - "componente"
+        - "React"
+        - "UI"
+        - "frontend"
+        - "hook"
+        - "context"
+        - "portal"
+        - "student"
+        - "teacher"
+        - "admin"
+      extensiones:
+        - ".tsx"
+        - ".jsx"
+        - ".css"
+        - ".scss"
+      rutas:
+        - "apps/frontend/src/"
+    validaciones:
+      build: "npm run build --prefix apps/frontend"
+      lint: "npm run lint --prefix apps/frontend"
+      typecheck: "npm run typecheck --prefix apps/frontend"
+
+  # ---------------------------------------------------------------------------
+  # DATABASE
+  # ---------------------------------------------------------------------------
+  database:
+    agente_local:
+      ruta: "orchestration/agentes/database/"
+      archivos:
+        - "AGENTS.md"
+        - "prompts/"
+    perfil_workspace:
+      ruta: "orchestration/agents/perfiles/PERFIL-DATABASE.md"
+      ruta_absoluta: "workspace-v2/orchestration/agents/perfiles/PERFIL-DATABASE.md"
+    triggers:
+      keywords:
+        - "tabla"
+        - "DDL"
+        - "migración"
+        - "schema"
+        - "PostgreSQL"
+        - "entity"
+        - "column"
+        - "index"
+        - "constraint"
+      extensiones:
+        - ".sql"
+        - ".entity.ts"
+      rutas:
+        - "apps/database/"
+        - "apps/backend/src/**/*.entity.ts"
+    validaciones:
+      ddl: "psql -d gamilit_platform -f apps/database/ddl/*.sql"
+    credenciales:
+      database: "gamilit_platform"
+      user: "gamilit_user"
+      password: "gamilit_dev_2026"
+      host: "localhost"
+      port: 5432
+
+  # ---------------------------------------------------------------------------
+  # TESTING
+  # ---------------------------------------------------------------------------
+  testing:
+    agente_local:
+      ruta: "orchestration/agentes/testing/"
+      archivos:
+        - "AGENTS.md"
+        - "prompts/"
+    perfil_workspace:
+      ruta: "orchestration/agents/perfiles/PERFIL-TESTING.md"
+      ruta_absoluta: "workspace-v2/orchestration/agents/perfiles/PERFIL-TESTING.md"
+    triggers:
+      keywords:
+        - "test"
+        - "jest"
+        - "coverage"
+        - "spec"
+        - "e2e"
+        - "unit"
+        - "integration"
+      extensiones:
+        - ".spec.ts"
+        - ".test.ts"
+        - ".e2e-spec.ts"
+      rutas:
+        - "apps/backend/src/**/*.spec.ts"
+        - "apps/frontend/src/**/*.test.tsx"
+    validaciones:
+      unit_backend: "npm run test --prefix apps/backend"
+      unit_frontend: "npm run test --prefix apps/frontend"
+      e2e: "npm run test:e2e --prefix apps/backend"
+
+  # ---------------------------------------------------------------------------
+  # DEVOPS
+  # ---------------------------------------------------------------------------
+  devops:
+    agente_local:
+      ruta: "orchestration/agentes/devops/"
+      archivos:
+        - "AGENTS.md"
+        - "prompts/"
+    perfil_workspace:
+      ruta: "orchestration/agents/perfiles/PERFIL-DEVOPS.md"
+      ruta_absoluta: "workspace-v2/orchestration/agents/perfiles/PERFIL-DEVOPS.md"
+    triggers:
+      keywords:
+        - "Docker"
+        - "CI/CD"
+        - "pipeline"
+        - "deploy"
+        - "container"
+        - "Dockerfile"
+        - "compose"
+      extensiones:
+        - "Dockerfile"
+        - "docker-compose.yml"
+        - ".yml" # en .github/workflows/
+      rutas:
+        - "docker/"
+        - ".github/workflows/"
+        - "scripts/"
+
+  # ---------------------------------------------------------------------------
+  # ARCHITECTURE ANALYST
+  # ---------------------------------------------------------------------------
+  architecture:
+    agente_local:
+      ruta: null  # No hay agente local específico
+      nota: "Usa perfil del workspace directamente"
+    perfil_workspace:
+      ruta: "orchestration/agents/perfiles/PERFIL-ARCHITECTURE-ANALYST.md"
+      ruta_absoluta: "workspace-v2/orchestration/agents/perfiles/PERFIL-ARCHITECTURE-ANALYST.md"
+    triggers:
+      keywords:
+        - "arquitectura"
+        - "diseño"
+        - "estructura"
+        - "refactoring"
+        - "modularización"
+        - "patrones"
+        - "SOLID"
+
+# =============================================================================
+# AGENTES EXTERNOS Y SUS ROLES
+# =============================================================================
+
+agentes_externos:
+  trae:
+    config_workspace: "workspace-v2/.trae/"
+    rol: "Ejecutor de tareas definidas"
+    capacidades:
+      - "Desarrollo full-stack"
+      - "Refactoring multi-archivo"
+      - "Implementación de features"
+    limitaciones:
+      - "No subagentes"
+      - "No web search"
+      - "Contexto limitado"
+    uso_para_gamilit:
+      tareas_file: "orchestration/TAREAS-PENDIENTES-GAMILIT.yml"
+      perfiles_a_cargar:
+        - backend
+        - frontend
+        - database
+      comando_arranque: |
+        Leer: .trae/AGENT-CAPABILITIES.md
+        Leer: .trae/rules/project_rules.md
+        Leer: CLAUDE.md
+        Leer: projects/gamilit/orchestration/TAREAS-PENDIENTES-GAMILIT.yml
+        Buscar tarea con status "pending" y empezar
+
+  windsurf:
+    config_workspace: "workspace-v2/.windsurf/"
+    rol: "Full-Stack Developer"
+    capacidades:
+      - "Cascade AI assistance"
+      - "Multi-file context"
+      - "Desarrollo rápido"
+    limitaciones:
+      - "No subagentes"
+      - "No web search"
+      - "PowerShell env var issues"
+    uso_para_gamilit:
+      tareas_file: "orchestration/TAREAS-PENDIENTES-GAMILIT.yml"
+      perfiles_a_cargar:
+        - backend
+        - frontend
+        - database
+      comando_arranque: |
+        Leer: .windsurf/AGENT-CAPABILITIES.md
+        Leer: .windsurf/rules/project_rules.md
+        Leer: CLAUDE.md
+        Leer: projects/gamilit/orchestration/TAREAS-PENDIENTES-GAMILIT.yml
+        Buscar tarea con status "pending" y empezar
+
+  gemini:
+    config_workspace: "workspace-v2/.gemini/antigravity/"
+    config_local: "projects/gamilit/.gemini/antigravity/"
+    rol: "QA/Testing Frontend"
+    capacidades:
+      - "Web browser automation"
+      - "Visual testing"
+      - "Screenshot capture"
+      - "Form interaction"
+      - "Multi-tab support"
+    limitaciones:
+      - "Frontend-focused"
+      - "Requiere app corriendo"
+    uso_para_gamilit:
+      tareas_section: "tareas_testing"  # En TAREAS-PENDIENTES-GAMILIT.yml
+      portales_a_testear:
+        - nombre: "Student Portal"
+          url: "http://localhost:3000/student"
+        - nombre: "Teacher Portal"
+          url: "http://localhost:3000/teacher"
+        - nombre: "Admin Portal"
+          url: "http://localhost:3000/admin"
+      comando_arranque: |
+        Leer: .gemini/antigravity/BOOTLOADER_PROTOCOL.md
+        Leer: projects/gamilit/.gemini/antigravity/README.md
+        Leer: projects/gamilit/orchestration/TAREAS-PENDIENTES-GAMILIT.yml
+        Buscar en sección "tareas_testing" una tarea pendiente
+
+# =============================================================================
+# FLUJO DE SELECCIÓN DE PERFIL
+# =============================================================================
+
+flujo_seleccion:
+  descripcion: |
+    Cuando un agente externo recibe una tarea, debe seguir este flujo
+    para determinar qué perfil del workspace cargar.
+
+  pasos:
+    1_identificar_dominio:
+      descripcion: "Analizar keywords de la tarea"
+      accion: "Buscar coincidencias en mapeo_perfiles[*].triggers.keywords"
+
+    2_verificar_archivos:
+      descripcion: "Si la tarea menciona archivos específicos"
+      accion: "Buscar coincidencias en mapeo_perfiles[*].triggers.extensiones"
+
+    3_verificar_rutas:
+      descripcion: "Si la tarea indica rutas específicas"
+      accion: "Buscar coincidencias en mapeo_perfiles[*].triggers.rutas"
+
+    4_cargar_perfil:
+      descripcion: "Cargar el perfil identificado"
+      accion: |
+        Leer: {perfil_workspace.ruta_absoluta}
+        Aplicar reglas del perfil a la tarea actual
+
+    5_self_persona_switch:
+      descripcion: "Si el agente no tiene subagentes"
+      accion: |
+        - Adoptar temporalmente el rol del perfil cargado
+        - Aplicar sus validaciones específicas
+        - Volver al rol general al terminar
+
+# =============================================================================
+# EJEMPLO DE USO
+# =============================================================================
+
+ejemplo:
+  tarea: "Crear endpoint GET /api/achievements para listar logros del estudiante"
+
+  analisis:
+    keywords_detectados:
+      - "endpoint" → backend
+      - "API" → backend
+    rutas_implicitas:
+      - "apps/backend/src/achievements/" → backend
+
+  perfil_a_cargar: "backend"
+  archivo_perfil: "workspace-v2/orchestration/agents/perfiles/PERFIL-BACKEND.md"
+
+  validaciones_requeridas:
+    - "npm run build --prefix apps/backend"
+    - "npm run lint --prefix apps/backend"
+    - "npm run test --prefix apps/backend"
+
+  coherencia_requerida:
+    - "Entity Achievement debe existir"
+    - "DTO para response debe crearse"
+    - "Documentar en Swagger"
