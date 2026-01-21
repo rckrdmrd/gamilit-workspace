@@ -318,22 +318,62 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                   <ImageIcon className="h-5 w-5" />
                   Multimedia:
                 </label>
-                <input
-                  type="file"
-                  accept="image/*,video/*,audio/*"
-                  multiple
-                  onChange={(e) => {
-                    const files = Array.from(e.target.files || []);
-                    const uploaded = files.map((file) => ({
-                      id: Date.now().toString() + Math.random(),
-                      name: file.name,
-                      url: URL.createObjectURL(file),
-                      type: file.type,
-                    }));
-                    setCurrentMedia((prev) => [...prev, ...uploaded]);
-                  }}
-                  className="w-full rounded-detective border-2 border-gray-300 px-4 py-2"
-                />
+                <div className="space-y-2">
+                  <input
+                    type="file"
+                    accept="image/*,video/*,audio/*"
+                    multiple
+                    disabled={isUploading}
+                    onChange={async (e) => {
+                      const files = Array.from(e.target.files || []);
+                      if (files.length === 0) return;
+
+                      setIsUploading(true);
+                      try {
+                        const uploadPromises = files.map(async (file) => {
+                          // Determinar tipo de medio
+                          let mediaType: 'image' | 'video' | 'audio' = 'image';
+                          if (file.type.startsWith('video/')) mediaType = 'video';
+                          else if (file.type.startsWith('audio/')) mediaType = 'audio';
+
+                          // Subir a mediaApi
+                          const response = await mediaApi.uploadMedia(file, {
+                            type: mediaType,
+                            exerciseId,
+                            onProgress: (progress) => {
+                              console.log(`Uploading ${file.name}: ${progress}%`);
+                            }
+                          });
+
+                          return {
+                            id: response.id || Date.now().toString() + Math.random(),
+                            name: file.name,
+                            url: response.url, // URL remota retornada por mediaApi
+                            type: file.type,
+                          };
+                        });
+
+                        const uploadedFiles = await Promise.all(uploadPromises);
+                        setCurrentMedia((prev) => [...prev, ...uploadedFiles]);
+                      } catch (error) {
+                        console.error('Error uploading media:', error);
+                        // Fallback opcional o notificación de error
+                        alert('Error al subir archivos multimedia. Intenta de nuevo.');
+                      } finally {
+                        setIsUploading(false);
+                        // Limpiar input
+                        e.target.value = '';
+                      }
+                    }}
+                    className="w-full rounded-detective border-2 border-gray-300 px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                  {isUploading && (
+                    <div className="flex items-center gap-2 text-sm text-detective-orange">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Subiendo archivos...
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center gap-3">

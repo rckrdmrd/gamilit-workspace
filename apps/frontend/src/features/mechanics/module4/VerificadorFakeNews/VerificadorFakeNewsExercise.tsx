@@ -435,7 +435,11 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
       {feedback && (
         <FeedbackModal
           isOpen={showFeedback}
-          feedback={feedback}
+          feedback={{
+            ...feedback,
+            xpEarned: feedback.xpEarned || 0,
+            mlCoinsEarned: feedback.mlCoinsEarned || 0,
+          }}
           onClose={() => {
             setShowFeedback(false);
             if (feedback.type === 'success' && onComplete) {

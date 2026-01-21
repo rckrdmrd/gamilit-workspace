@@ -14,6 +14,29 @@ tasks:
   # ----------------------------------------
   # 2026-01-20
   # ----------------------------------------
+  - id: TASK-2026-01-20-FIX-GAP-EX-013-REWARDS
+    title: "Conectar recompensas visuales (XP/Coins) en ejercicios"
+    date: "2026-01-20"
+    status: completed
+    priority: P1
+    type: bug-fix
+    metodologia: CAPVED
+    dominios:
+      - "Frontend"
+      - "Mechanics"
+    entregables:
+      - "METADATA.yml"
+      - "Source Code Updates"
+    metricas:
+      archivos_modificados: 16
+      ejercicios_corregidos: 12
+      gaps_resueltos: 2
+    conclusiones:
+      - "FeedbackModal ahora muestra XP/Coins correctamente con fallbacks"
+      - "Implementada subida de media en ejercicios M5 (GAP-EX-004)"
+      - "Estandarización de props en FeedbackModal completada"
+    path: "orchestration/tareas/TASK-2026-01-20-FIX-GAP-EX-013-REWARDS/"
+
   - id: TASK-2026-01-20-ANALISIS-FINAL-PORTALES
     title: "Analisis Integral Final de Portales y Documentacion"
     date: "2026-01-20"

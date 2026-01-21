@@ -1,22 +1,25 @@
 id: TASK-2026-01-20-FIX-GAP-EX-013-REWARDS
 type: bug-fix
-status: in_progress
+status: completed
 created: 2026-01-20
 author: Trae AI
 title: Conectar recompensas visuales (XP/Coins) en ejercicios
 description: >
   Resolucion del GAP-EX-013 donde el 85% de los ejercicios no muestran
   visualmente la recompensa obtenida en el FeedbackModal.
+  Incluye resolucion de GAP-EX-004 (Media Upload) en M5.
 objectives:
   - Identificar ejercicios que usan FeedbackModal sin props de reward
   - Implementar calculo o recuperacion de rewards (XP/Coins)
   - Pasar props xpEarned y mlCoinsEarned al modal
+  - SOLUCIONADO ADICIONAL: Implementar subida de media en ejercicios M5 (GAP-EX-004)
 phases:
   - context: Analisis de componentes afectados
-  - execution: Implementacion de props en ejercicios
-  - validation: Verificacion de props pasados
+  - execution: Implementacion de props en ejercicios y mediaApi
+  - validation: Verificacion de props pasados y DTOs
 deliverables:
   - Codigo fuente actualizado en ejercicios M1-M5
+  - Documentacion actualizada
 related_tasks:
   - TASK-2026-01-20-ANALISIS-FINAL-PORTALES
 analysis:
