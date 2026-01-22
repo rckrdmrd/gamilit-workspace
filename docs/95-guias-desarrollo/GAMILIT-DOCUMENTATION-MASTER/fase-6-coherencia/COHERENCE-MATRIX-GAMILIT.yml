@@ -1,0 +1,381 @@
+# COHERENCE-MATRIX-GAMILIT.yml
+# Matriz de Coherencia entre Capas DDL ↔ Backend ↔ Frontend
+# Generado: 2026-01-22
+# Fase: 6 - Validación de Coherencia
+
+metadata:
+  version: "1.0.0"
+  generated: "2026-01-22"
+  methodology: "CAPVED"
+  sources:
+    - "DATABASE_INVENTORY.yml"
+    - "BACKEND_INVENTORY.yml"
+    - "FRONTEND_INVENTORY.yml"
+    - "TRACEABILITY_MATRIX.yml"
+
+# ============================================================================
+# RESUMEN EJECUTIVO
+# ============================================================================
+summary:
+  global_coherence: "88.5%"  # Ponderado
+
+  ddl_to_backend:
+    percentage: "90.5%"
+    entities: 124
+    tables: 137
+    status: "ALTO"
+    trend: "ESTABLE"
+
+  backend_to_frontend:
+    percentage: "75%"
+    endpoints_consumed: 150
+    endpoints_total: 200
+    status: "MEDIO-ALTO"
+    trend: "MEJORANDO"
+
+  objectives:
+    ddl_backend_target: "95%"
+    backend_frontend_target: "85%"
+    global_target: "90%"
+
+# ============================================================================
+# COHERENCIA POR ÉPICA
+# ============================================================================
+coherence_by_epic:
+
+  EAI_001_Auth:
+    name: "Fundamentos/Auth"
+    coherence: "100%"
+    status: "HIGH"
+    database:
+      tables: 16
+      functions: 6
+      triggers: 6
+      rls_policies: 23
+    backend:
+      entities: 17
+      services: 5
+      controllers: 3
+    frontend:
+      components: 12
+      hooks: 4
+      pages: 4
+    gaps: []
+
+  EAI_002_Educational:
+    name: "Actividades Educativas"
+    coherence: "63%"
+    status: "MEDIUM"
+    database:
+      tables: 23
+      functions: 28
+      triggers: 3
+    backend:
+      entities: 13
+      services: 4
+      controllers: 4
+    frontend:
+      mechanics: 26
+      components: 45
+    gaps:
+      documented:
+        - table: "exercise_answers"
+          reason: "DEPRECATED - no requiere entity"
+        - table: "exercise_options"
+          reason: "DEPRECATED - no requiere entity"
+        - table: "content_tags"
+          reason: "GAP intencional - tabla polimórfica sin uso activo"
+        - table: "taxonomies"
+          reason: "GAP intencional - datos maestros sin uso activo"
+      resolved:
+        - table: "teacher_content"
+          resolution: "YA TIENE entity en teacher/entities/"
+
+  EAI_003_Gamification:
+    name: "Gamificación"
+    coherence: "95%"
+    status: "HIGH"
+    database:
+      tables: 19
+      functions: 20
+      triggers: 7
+    backend:
+      entities: 18
+      services: 13
+      controllers: 10
+    frontend:
+      components: 76
+      stores: 11
+    gaps:
+      minor:
+        - "shop_categories table sin entity directa (M:N TypeORM)"
+
+  EAI_004_Progress:
+    name: "Progress/Analytics"
+    coherence: "75%"
+    status: "MEDIUM-HIGH"
+    database:
+      tables: 19
+      functions: 10
+      triggers: 13
+    backend:
+      entities: 15
+      services: 11
+      controllers: 6
+    frontend:
+      components: 30
+      hooks: 8
+    gaps:
+      documented:
+        - table: "user_difficulty_progress"
+          reason: "GAP intencional - tracking por triggers BD"
+        - table: "user_current_level"
+          reason: "GAP intencional - tracking por triggers BD"
+        - table: "module_completion_tracking"
+          reason: "GAP intencional - tracking por triggers BD"
+      resolved:
+        - table: "student_intervention_alerts"
+          resolution: "YA TIENE entity en teacher/entities/"
+
+  EAI_005_Admin:
+    name: "Admin Dashboard"
+    coherence: "95%"
+    status: "EXCELLENT"
+    database:
+      tables: 23
+      schemas: ["admin_dashboard", "system_configuration"]
+    backend:
+      entities: 17
+      services: 25
+      controllers: 21
+    frontend:
+      pages: 17
+      components: 86
+      hooks: 25
+    gaps: []
+
+# ============================================================================
+# TABLAS SIN ENTITY (JUSTIFICADAS)
+# ============================================================================
+tables_without_entity:
+  total: 13
+  justified:
+    tracking_automatic:
+      - "audit_logging.pending_user_initialization"
+      - "audit_logging.activity_log"
+      - "audit_logging.error_log"
+      - "audit_logging.user_login_history"
+      - "progress_tracking.reading_stats"
+      - "progress_tracking.skill_assessment"
+
+    m2n_typeorm:
+      - "gamification_system.shop_categories"
+      - "social_features.team_members"
+      - "social_features.discussion_participants"
+      - "communication.message_participants"
+      - "content_management.content_tags"
+      - "educational_content.module_dependencies"
+
+    system_config:
+      - "system_configuration.app_settings"
+
+# ============================================================================
+# ENDPOINTS POR MÓDULO
+# ============================================================================
+endpoints_analysis:
+  total_backend: 612
+  consumed_frontend: ~460  # 75%
+
+  by_module:
+    auth:
+      total: 8
+      consumed: 8
+      coherence: "100%"
+
+    educational:
+      total: 15
+      consumed: 14
+      coherence: "93%"
+
+    gamification:
+      total: 45
+      consumed: 40
+      coherence: "89%"
+
+    progress:
+      total: 25
+      consumed: 20
+      coherence: "80%"
+
+    social:
+      total: 30
+      consumed: 22
+      coherence: "73%"
+
+    admin:
+      total: 150
+      consumed: 100
+      coherence: "67%"
+      note: "Muchos endpoints son operaciones bulk internas"
+
+    teacher:
+      total: 60
+      consumed: 45
+      coherence: "75%"
+
+    notifications:
+      total: 12
+      consumed: 10
+      coherence: "83%"
+
+# ============================================================================
+# GAPS CRÍTICOS
+# ============================================================================
+critical_gaps:
+  count: 0
+  description: "No hay gaps críticos. Todos los gaps han sido documentados y justificados."
+
+high_priority_gaps:
+  count: 2
+  items:
+    - id: "GAP-H-001"
+      area: "Backend → Frontend"
+      description: "Admin Portal tiene ~33% de endpoints no consumidos"
+      impact: "BAJO - Son operaciones internas/bulk"
+      recommendation: "Documentar endpoints internos vs públicos"
+
+    - id: "GAP-H-002"
+      area: "DDL → Backend"
+      description: "Educational content tiene 63% coherencia"
+      impact: "MEDIO - Algunos ejercicios M4-M5 pendientes"
+      recommendation: "Completar entities para ejercicios nuevos"
+
+medium_priority_gaps:
+  count: 3
+  items:
+    - id: "GAP-M-001"
+      area: "Frontend"
+      description: "Teacher Portal tiene duplicación de archivos (TeacherX vs TeacherXPage)"
+      recommendation: "Consolidar archivos duplicados"
+
+    - id: "GAP-M-002"
+      area: "Backend → Frontend"
+      description: "Social features tiene 27% endpoints no consumidos"
+      recommendation: "Evaluar si son features pendientes o deprecadas"
+
+    - id: "GAP-M-003"
+      area: "Frontend"
+      description: "Algunas páginas no usan GamifiedHeader consistentemente"
+      recommendation: "Estandarizar uso de headers"
+
+# ============================================================================
+# FLUJO DE DATOS DDL → BACKEND → FRONTEND
+# ============================================================================
+data_flow_tracing:
+
+  example_flows:
+    - name: "Flujo de Gamificación"
+      ddl:
+        tables: ["user_stats", "user_ranks", "achievements", "user_achievements"]
+        functions: ["award_achievement_rewards", "check_and_unlock_achievement"]
+      backend:
+        entities: ["UserStats", "UserRank", "Achievement", "UserAchievement"]
+        services: ["UserStatsService", "RanksService", "AchievementsService"]
+        endpoints: ["GET /gamification/stats", "GET /gamification/ranks"]
+      frontend:
+        stores: ["ranksStore", "achievementsStore"]
+        hooks: ["useUserGamification", "useRanksStore"]
+        components: ["RankBadge", "AchievementCard"]
+      coherence: "95%"
+
+    - name: "Flujo de Progreso"
+      ddl:
+        tables: ["module_progress", "exercise_attempts", "exercise_submissions"]
+        triggers: ["trg_update_progress_on_completion"]
+      backend:
+        entities: ["ModuleProgress", "ExerciseAttempt", "ExerciseSubmission"]
+        services: ["ProgressService", "ExerciseAttemptService"]
+        endpoints: ["GET /progress/modules/:id", "POST /progress/attempts"]
+      frontend:
+        hooks: ["useModuleProgress", "useExerciseAttempts"]
+        components: ["ProgressBar", "ExercisePlayer"]
+      coherence: "85%"
+
+    - name: "Flujo de Asignaciones"
+      ddl:
+        tables: ["assignments", "assignment_students", "assignment_submissions"]
+      backend:
+        entities: ["Assignment", "AssignmentStudent", "AssignmentSubmission"]
+        services: ["AssignmentsService"]
+        endpoints: ["GET /assignments", "POST /assignments/:id/submit"]
+      frontend:
+        stores: ["studentAssignmentsStore"]
+        hooks: ["useStudentAssignmentsStore"]
+        pages: ["AssignmentsPage", "AssignmentDetailPage"]
+      coherence: "90%"
+
+# ============================================================================
+# RECOMENDACIONES
+# ============================================================================
+recommendations:
+  immediate:
+    - action: "Documentar endpoints internos vs públicos del Admin Portal"
+      priority: "P1"
+      impact: "Mejora métricas de coherencia percibida"
+
+    - action: "Consolidar archivos duplicados en Teacher Portal"
+      priority: "P2"
+      impact: "Reduce confusión y mejora mantenibilidad"
+
+  short_term:
+    - action: "Completar entities faltantes para ejercicios M4-M5"
+      priority: "P2"
+      impact: "Aumenta coherencia DDL-Backend de 63% a 85%"
+
+    - action: "Evaluar endpoints no consumidos en Social Features"
+      priority: "P3"
+      impact: "Clarifica estado de features"
+
+  long_term:
+    - action: "Implementar validación automática de coherencia en CI/CD"
+      priority: "P3"
+      impact: "Detecta regresiones tempranamente"
+
+# ============================================================================
+# HISTORIAL DE CAMBIOS
+# ============================================================================
+changelog:
+  - date: "2026-01-16"
+    change: "Reconciliación integral de métricas"
+    impact: "Actualización de conteos reales"
+
+  - date: "2026-01-14"
+    change: "Creación de 16 entities faltantes para alineación BD-Backend"
+    impact: "Coherencia DDL-Backend: 87.3% → 99%"
+
+  - date: "2025-12-26"
+    change: "Auditoría exhaustiva DB-Backend-Frontend"
+    impact: "Identificación de 10 discrepancias, 3 correcciones P0"
+
+# ============================================================================
+# MÉTRICAS OBJETIVO
+# ============================================================================
+targets:
+  current:
+    ddl_backend: "90.5%"
+    backend_frontend: "75%"
+    global: "88.5%"
+
+  target_q1_2026:
+    ddl_backend: "95%"
+    backend_frontend: "85%"
+    global: "90%"
+
+  actions_to_reach_target:
+    ddl_backend:
+      - "Completar 5 entities faltantes para ejercicios"
+      - "GAP: +4.5%"
+    backend_frontend:
+      - "Documentar endpoints internos (no consumibles)"
+      - "Implementar endpoints de Social Features pendientes"
+      - "GAP: +10%"

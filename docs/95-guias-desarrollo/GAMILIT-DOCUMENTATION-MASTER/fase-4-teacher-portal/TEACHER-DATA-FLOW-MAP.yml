@@ -1,0 +1,329 @@
+# TEACHER-DATA-FLOW-MAP.yml
+# Mapeo completo del Teacher Portal: Páginas → Componentes → Hooks → Stores
+# Generado: 2026-01-22
+# Fase: 4 - Mapeo Teacher Portal
+
+metadata:
+  version: "1.0.0"
+  generated: "2026-01-22"
+  methodology: "CAPVED"
+  portal: "Teacher"
+  total_pages: 17
+  base_path: "apps/frontend/src/apps/teacher/pages/"
+
+# ============================================================================
+# PÁGINAS POR DOMINIO FUNCIONAL
+# ============================================================================
+domains:
+
+  dashboard:
+    pages:
+      - TeacherDashboardPage
+    description: "Vista general de actividad de clases"
+    components:
+      - TeacherStatsOverview
+      - ClassroomQuickActions
+      - RecentActivityFeed
+      - AlertsSummary
+    hooks:
+      - useTeacherDashboard
+      - useTeacherClasses
+
+  classroom_management:
+    pages:
+      - TeacherClassesPage
+      - TeacherStudentsPage
+      - TeacherMonitoringPage
+    description: "Gestión de aulas y estudiantes"
+    components:
+      - ClassroomList
+      - ClassroomCard
+      - StudentTable
+      - StudentProgressCard
+      - MonitoringGrid
+      - LiveActivityIndicator
+    hooks:
+      - useTeacherClassrooms
+      - useClassroomStudents
+      - useStudentProgress
+      - useRealTimeMonitoring
+
+  assignments:
+    pages:
+      - TeacherAssignmentsPage
+      - TeacherExerciseResponsesPage
+      - TeacherReviewPanelPage
+    description: "Gestión de tareas y evaluaciones"
+    components:
+      - AssignmentList
+      - AssignmentCreator
+      - AssignmentCalendar
+      - ResponsesList
+      - ResponseDetailCard
+      - RubricEvaluator
+      - ManualReviewPanel
+    hooks:
+      - useTeacherAssignments
+      - useExerciseResponses
+      - useManualReviews
+
+  content:
+    pages:
+      - TeacherContentPage
+      - TeacherResourcesPage
+    description: "Gestión de contenido y recursos"
+    components:
+      - ContentBrowser
+      - ContentEditor
+      - ResourceLibrary
+      - ModuleSelector
+    hooks:
+      - useTeacherContent
+      - useResourceLibrary
+
+  analytics:
+    pages:
+      - TeacherAnalyticsPage
+      - TeacherProgressPage
+      - TeacherReportsPage
+    description: "Analytics y reportes de rendimiento"
+    components:
+      - AnalyticsDashboard
+      - ProgressCharts
+      - ComparisonTables
+      - ReportGenerator
+      - ExportButtons
+    hooks:
+      - useTeacherAnalytics
+      - useClassProgress
+      - useReportGenerator
+
+  gamification:
+    pages:
+      - TeacherGamificationPage
+      - TeacherAlertsPage
+    description: "Configuración de gamificación y alertas"
+    components:
+      - GamificationSettings
+      - RewardMultipliers
+      - AlertsList
+      - InterventionPanel
+    hooks:
+      - useClassroomGamification
+      - useInterventionAlerts
+
+  communication:
+    pages:
+      - TeacherCommunicationPage
+      - TeacherNotificationsPage
+    description: "Mensajería y notificaciones"
+    components:
+      - MessageCenter
+      - ConversationList
+      - ComposeMessage
+      - NotificationCenter
+    hooks:
+      - useTeacherMessages
+      - useNotifications
+
+  settings:
+    pages:
+      - TeacherSettingsPage
+    description: "Configuración personal del profesor"
+    components:
+      - ProfileSettings
+      - PreferencesPanel
+      - NotificationPreferences
+    hooks:
+      - useTeacherSettings
+
+# ============================================================================
+# HOOKS ESPECÍFICOS DEL TEACHER PORTAL
+# ============================================================================
+teacher_hooks:
+  useTeacherClassrooms:
+    file: "features/teacher/hooks/useTeacherClassrooms.ts"
+    provides:
+      - classrooms
+      - createClassroom
+      - updateClassroom
+      - archiveClassroom
+    api_calls:
+      - "GET /teacher/classrooms"
+      - "POST /teacher/classrooms"
+      - "PUT /teacher/classrooms/:id"
+
+  useClassroomStudents:
+    file: "features/teacher/hooks/useClassroomStudents.ts"
+    provides:
+      - students
+      - addStudent
+      - removeStudent
+      - updateStudentStatus
+    api_calls:
+      - "GET /teacher/classrooms/:id/students"
+      - "POST /teacher/classrooms/:id/students"
+
+  useTeacherAssignments:
+    file: "features/teacher/hooks/useTeacherAssignments.ts"
+    provides:
+      - assignments
+      - createAssignment
+      - updateAssignment
+      - deleteAssignment
+      - assignToClassroom
+    api_calls:
+      - "GET /teacher/assignments"
+      - "POST /teacher/assignments"
+      - "PUT /teacher/assignments/:id"
+
+  useExerciseResponses:
+    file: "features/teacher/hooks/useExerciseResponses.ts"
+    provides:
+      - responses
+      - responseDetail
+      - gradeResponse
+    api_calls:
+      - "GET /teacher/exercises/:id/responses"
+      - "PUT /teacher/responses/:id/grade"
+
+  useManualReviews:
+    file: "features/teacher/hooks/useManualReviews.ts"
+    provides:
+      - pendingReviews
+      - submitReview
+      - reviewHistory
+    api_calls:
+      - "GET /teacher/reviews/pending"
+      - "POST /teacher/reviews/:id"
+
+  useTeacherAnalytics:
+    file: "features/teacher/hooks/useTeacherAnalytics.ts"
+    provides:
+      - classAnalytics
+      - studentAnalytics
+      - trendData
+    api_calls:
+      - "GET /teacher/analytics/class/:id"
+      - "GET /teacher/analytics/student/:id"
+
+  useClassProgress:
+    file: "features/teacher/hooks/useClassProgress.ts"
+    provides:
+      - classProgress
+      - moduleCompletion
+      - averageScores
+    api_calls:
+      - "GET /teacher/progress/class/:id"
+      - "GET /teacher/progress/modules"
+
+  useInterventionAlerts:
+    file: "features/teacher/hooks/useInterventionAlerts.ts"
+    provides:
+      - alerts
+      - markAsReviewed
+      - createIntervention
+    api_calls:
+      - "GET /teacher/alerts"
+      - "PUT /teacher/alerts/:id/reviewed"
+
+  useClassroomGamification:
+    file: "features/teacher/hooks/useClassroomGamification.ts"
+    provides:
+      - gamificationSettings
+      - updateSettings
+      - rewardMultipliers
+    api_calls:
+      - "GET /teacher/classrooms/:id/gamification"
+      - "PUT /teacher/classrooms/:id/gamification"
+
+  useReportGenerator:
+    file: "features/teacher/hooks/useReportGenerator.ts"
+    provides:
+      - generateReport
+      - reportHistory
+      - exportReport
+    api_calls:
+      - "POST /teacher/reports/generate"
+      - "GET /teacher/reports/:id/export"
+
+# ============================================================================
+# COMPONENTES COMPARTIDOS
+# ============================================================================
+shared_components:
+  layout:
+    - TeacherHeader
+    - TeacherSidebar
+    - TeacherPageLayout
+  common:
+    - DataTable
+    - FilterBar
+    - DateRangePicker
+    - ExportButton
+    - LoadingSpinner
+    - EmptyState
+  charts:
+    - ProgressChart
+    - ComparisonBarChart
+    - TrendLineChart
+    - PieChart
+
+# ============================================================================
+# FLUJO DE DATOS TÍPICO
+# ============================================================================
+typical_flows:
+  - name: "Ver progreso de clase"
+    steps:
+      1: "TeacherClassesPage: Select classroom"
+      2: "Navigate to TeacherProgressPage with classroomId"
+      3: "useClassProgress(classroomId)"
+      4: "Render ProgressCharts with data"
+      5: "User can export via useReportGenerator"
+
+  - name: "Crear asignación"
+    steps:
+      1: "TeacherAssignmentsPage: Click 'Nueva Asignación'"
+      2: "AssignmentCreator modal opens"
+      3: "Select exercises, set deadline"
+      4: "useTeacherAssignments.createAssignment()"
+      5: "Assign to classrooms"
+      6: "Students receive notification"
+
+  - name: "Revisar ejercicio creativo"
+    steps:
+      1: "TeacherAlertsPage: See pending reviews"
+      2: "Navigate to TeacherReviewPanelPage"
+      3: "useManualReviews.pendingReviews"
+      4: "Open RubricEvaluator"
+      5: "Submit scores and feedback"
+      6: "Student notified of grade"
+
+# ============================================================================
+# ESTADÍSTICAS
+# ============================================================================
+statistics:
+  pages_by_domain:
+    classroom_management: 3
+    assignments: 3
+    analytics: 3
+    gamification: 2
+    content: 2
+    communication: 2
+    dashboard: 1
+    settings: 1
+
+  hooks_count: 10
+  api_endpoints_consumed: ~45
+
+# ============================================================================
+# GAPS IDENTIFICADOS
+# ============================================================================
+gaps:
+  - id: "TEACHER-GAP-001"
+    description: "Archivos duplicados (TeacherX.tsx vs TeacherXPage.tsx)"
+    affected: 8 archivos
+    recommendation: "Consolidar en versión *Page.tsx"
+
+  - id: "TEACHER-GAP-002"
+    description: "TeacherNotificationPreferencesPage sin uso visible"
+    recommendation: "Verificar si está integrada en settings"
