@@ -59,7 +59,7 @@ import {
  * @see Frontend: apps/frontend/src/services/api/admin/classroomTeacherApi.ts
  * @see Original: apps/backend/src/modules/admin/controllers/classroom-assignments.controller.ts
  */
-@ApiTags('Admin - Classroom Teachers (REST)')
+@ApiTags('admin-public', 'Admin - Classroom Teachers (REST)')
 @Controller('admin')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

@@ -46,7 +46,7 @@ import { Classroom } from '@modules/social/entities/classroom.entity';
  * - GET /admin/classrooms/available - Listar aulas disponibles
  * - GET /admin/classrooms/:classroomId/history - Historial de asignaciones
  */
-@ApiTags('Admin - Classroom Assignments')
+@ApiTags('admin-public', 'Admin - Classroom Assignments')
 @Controller('admin/classrooms')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

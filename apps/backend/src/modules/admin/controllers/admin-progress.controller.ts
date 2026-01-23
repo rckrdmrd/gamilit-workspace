@@ -38,7 +38,7 @@ import {
 @Controller('admin/progress')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()
-@ApiTags('Admin - Progress')
+@ApiTags('admin-public', 'Admin - Progress')
 export class AdminProgressController {
   constructor(private readonly progressService: AdminProgressService) {}
 

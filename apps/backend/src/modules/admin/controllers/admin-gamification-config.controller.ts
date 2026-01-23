@@ -71,7 +71,7 @@ import { AuthRequest } from '@shared/types';
  * GET /api/admin/gamification/maya-ranks
  * PUT /api/admin/gamification/maya-ranks/:rankName
  */
-@ApiTags('Admin - Gamification Config')
+@ApiTags('admin-public', 'Admin - Gamification Config')
 @Controller('admin/gamification')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

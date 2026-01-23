@@ -11,7 +11,7 @@ import {
 } from '../dto/roles';
 import { CurrentUser, RequestUser } from '@shared/decorators/current-user.decorator';
 
-@ApiTags('Admin - Roles & Permissions')
+@ApiTags('admin-public', 'Admin - Roles & Permissions')
 @Controller('admin/roles')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

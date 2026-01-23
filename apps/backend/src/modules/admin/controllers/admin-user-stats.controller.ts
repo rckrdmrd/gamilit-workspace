@@ -9,7 +9,7 @@ import { UserStatsSummaryDto } from '../dto/dashboard';
  * AdminUserStatsController
  * Controller for user statistics in admin dashboard
  */
-@ApiTags('Admin - User Stats')
+@ApiTags('admin-public', 'Admin - User Stats')
 @Controller('admin/users')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

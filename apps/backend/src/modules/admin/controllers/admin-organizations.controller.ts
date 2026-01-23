@@ -29,7 +29,7 @@ import {
   UpdateFeaturesDto,
 } from '../dto/organizations';
 
-@ApiTags('Admin - Organizations')
+@ApiTags('admin-public', 'Admin - Organizations')
 @Controller('admin/organizations')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

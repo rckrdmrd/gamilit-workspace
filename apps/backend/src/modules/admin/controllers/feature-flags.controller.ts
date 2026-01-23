@@ -31,7 +31,7 @@ import { AuthRequest } from '@shared/types';
  * @route /admin/feature-flags
  * @guards JwtAuthGuard, AdminGuard (solo super_admin)
  */
-@ApiTags('Admin - Feature Flags')
+@ApiTags('admin-public', 'Admin - Feature Flags')
 @Controller('admin/feature-flags')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

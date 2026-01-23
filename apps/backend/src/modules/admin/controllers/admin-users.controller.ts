@@ -36,7 +36,7 @@ import {
 import { User } from '@modules/auth/entities/user.entity';
 import { AuthRequest } from '@shared/types';
 
-@ApiTags('Admin - Users')
+@ApiTags('admin-public', 'Admin - Users')
 @Controller('admin/users')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

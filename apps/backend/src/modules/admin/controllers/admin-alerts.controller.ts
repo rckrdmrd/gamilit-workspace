@@ -46,7 +46,7 @@ import { AuthRequest } from '@shared/types';
  * - Documentación completa con Swagger
  * - Validación automática de DTOs con ValidationPipe
  */
-@ApiTags('Admin - Alerts')
+@ApiTags('admin-public', 'Admin - Alerts')
 @Controller('admin/alerts')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

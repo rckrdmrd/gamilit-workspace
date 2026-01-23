@@ -36,7 +36,7 @@ import { AuthRequest } from '@shared/types';
  * - GET  /admin/bulk-operations/:id
  * - GET  /admin/bulk-operations
  */
-@ApiTags('Admin - Bulk Operations')
+@ApiTags('admin-internal', 'Admin - Bulk Operations')
 @Controller('admin/bulk-operations')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

@@ -52,7 +52,7 @@ import { AuthRequest } from '@shared/types';
  * @see student_intervention_alerts table in progress_tracking schema
  * @see generate_student_alerts() function for alert generation logic
  */
-@ApiTags('Admin - Interventions')
+@ApiTags('admin-public', 'Admin - Interventions')
 @Controller('admin/interventions')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

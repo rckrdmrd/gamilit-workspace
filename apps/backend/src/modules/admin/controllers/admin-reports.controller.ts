@@ -26,7 +26,7 @@ import {
 } from '../dto/reports';
 import { AuthRequest } from '@shared/types';
 
-@ApiTags('Admin - Reports')
+@ApiTags('admin-public', 'Admin - Reports')
 @Controller('admin/reports')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

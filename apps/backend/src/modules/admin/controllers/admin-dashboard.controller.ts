@@ -20,7 +20,7 @@ import {
   UserActivityDto,
 } from '../dto/dashboard';
 
-@ApiTags('Admin - Dashboard')
+@ApiTags('admin-public', 'Admin - Dashboard')
 @Controller('admin/dashboard')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

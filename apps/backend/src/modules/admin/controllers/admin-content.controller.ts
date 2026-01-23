@@ -30,7 +30,7 @@ import {
 } from '../dto/content';
 import { AuthRequest } from '@shared/types';
 
-@ApiTags('Admin - Content')
+@ApiTags('admin-public', 'Admin - Content')
 @Controller('admin/content')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

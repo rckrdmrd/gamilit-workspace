@@ -16,7 +16,7 @@ import { AuditLogQueryDto, PaginatedAuditLogDto } from '../dto/system';
  *
  * Both routes are supported for compatibility.
  */
-@ApiTags('Admin - Logs')
+@ApiTags('admin-internal', 'Admin - Logs')
 @Controller('admin/logs')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()

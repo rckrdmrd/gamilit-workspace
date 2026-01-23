@@ -27,7 +27,7 @@ import {
 @Controller('admin/monitoring')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()
-@ApiTags('Admin - Monitoring')
+@ApiTags('admin-internal', 'Admin - Monitoring')
 export class AdminMonitoringController {
   constructor(private readonly monitoringService: AdminMonitoringService) {}
 

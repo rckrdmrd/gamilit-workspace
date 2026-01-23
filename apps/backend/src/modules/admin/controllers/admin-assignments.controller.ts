@@ -36,7 +36,7 @@ import {
 @Controller('admin/assignments')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()
-@ApiTags('Admin - Assignments')
+@ApiTags('admin-public', 'Admin - Assignments')
 export class AdminAssignmentsController {
   constructor(
     private readonly assignmentsService: AdminAssignmentsService,

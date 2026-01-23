@@ -25,7 +25,7 @@ import {
 @Controller('admin/analytics')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()
-@ApiTags('Admin - Analytics')
+@ApiTags('admin-internal', 'Admin - Analytics')
 export class AdminAnalyticsController {
   constructor(private readonly analyticsService: AdminAnalyticsService) {}
 

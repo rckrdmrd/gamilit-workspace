@@ -28,7 +28,7 @@ import {
 } from '../dto/system';
 import { AuthRequest } from '@shared/types';
 
-@ApiTags('Admin - System')
+@ApiTags('admin-internal', 'Admin - System')
 @Controller('admin/system')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()
