@@ -60,8 +60,10 @@ docs/95-guias-desarrollo/GAMILIT-DOCUMENTATION-MASTER/
 ├── fase-6-coherencia/
 │   └── COHERENCE-MATRIX-GAMILIT.yml
 │
-└── fase-7-consolidacion/
-    └── EXECUTIVE-SUMMARY.md
+├── fase-7-consolidacion/
+│   └── EXECUTIVE-SUMMARY.md
+│
+└── ANALISIS-HALLAZGOS-DETALLADO.md  ← Análisis profundo de hallazgos
 ```
 
 ---
