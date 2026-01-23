@@ -50,20 +50,49 @@ const AssignmentsPage = lazy(() => import('@/apps/student/pages/AssignmentsPage'
 const AssignmentDetailPage = lazy(() => import('@/apps/student/pages/AssignmentDetailPage'));
 
 // =====================================================
-// TEACHER PORTAL PAGES (Lazy loaded)
+// TEACHER PORTAL PAGES (Lazy loaded with HOC)
 // =====================================================
-const TeacherDashboardPage = lazy(() => import('@/apps/teacher/pages/TeacherDashboardPage'));
+import { withTeacherLayout } from '@/apps/teacher/components/withTeacherLayout';
+
+// Pages using withTeacherLayout HOC (consolidated from *Page.tsx wrappers)
+const TeacherDashboardPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherDashboard').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+const TeacherAnalyticsPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherAnalytics').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+const TeacherAssignmentsPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherAssignments').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+const TeacherClassesPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherClasses').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+const TeacherGamificationPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherGamification').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+const TeacherStudentsPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherStudents').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+
+// Pages that remain as separate files (have additional logic beyond simple wrapper)
 const TeacherAlertsPage = lazy(() => import('@/apps/teacher/pages/TeacherAlertsPage'));
-const TeacherAnalyticsPage = lazy(() => import('@/apps/teacher/pages/TeacherAnalyticsPage'));
-const TeacherAssignmentsPage = lazy(() => import('@/apps/teacher/pages/TeacherAssignmentsPage'));
 const TeacherCommunicationPage = lazy(() => import('@/apps/teacher/pages/TeacherCommunicationPage'));
-const TeacherContentPage = lazy(() => import('@/apps/teacher/pages/TeacherContentPage'));
-const TeacherGamificationPage = lazy(() => import('@/apps/teacher/pages/TeacherGamificationPage'));
+const TeacherContentPage = lazy(() => import('@/apps/teacher/pages/TeacherContentPage')); // Has feature flag logic
 const TeacherMonitoringPage = lazy(() => import('@/apps/teacher/pages/TeacherMonitoringPage'));
 const TeacherProgressPage = lazy(() => import('@/apps/teacher/pages/TeacherProgressPage'));
 const TeacherReportsPage = lazy(() => import('@/apps/teacher/pages/TeacherReportsPage'));
-const TeacherClassesPage = lazy(() => import('@/apps/teacher/pages/TeacherClassesPage'));
-const TeacherStudentsPage = lazy(() => import('@/apps/teacher/pages/TeacherStudentsPage'));
 const TeacherExerciseResponsesPage = lazy(() => import('@/apps/teacher/pages/TeacherExerciseResponsesPage'));
 const TeacherSettingsPage = lazy(() => import('@/apps/teacher/pages/TeacherSettingsPage'));
 const TeacherNotificationsPage = lazy(() => import('@/apps/teacher/pages/TeacherNotificationsPage'));

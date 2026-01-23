@@ -1,3 +1,6 @@
+// HOC
+export { withTeacherLayout } from './withTeacherLayout';
+
 // Monitoring Components
 export { StudentMonitoringPanel } from './monitoring/StudentMonitoringPanel';
 export { StudentStatusCard } from './monitoring/StudentStatusCard';
