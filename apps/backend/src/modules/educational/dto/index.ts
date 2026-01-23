@@ -33,3 +33,12 @@ export * from './module4';
 
 // Module 5 Exercise Answer DTOs
 export * from './module5';
+
+// Exercise Type Rubric DTOs (M4-M5 Manual Grading)
+export * from './exercise-type-rubric';
+
+// Exercise Validation Config DTOs (Sistema Dual ADR-008)
+export * from './exercise-validation-config';
+
+// Exercise Validation Audit DTOs (Audit trail)
+export * from './exercise-validation-audit';

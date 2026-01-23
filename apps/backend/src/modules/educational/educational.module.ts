@@ -19,6 +19,9 @@ import {
   ModulesService,
   ExercisesService,
   MediaService,
+  ExerciseTypeRubricService,
+  ExerciseValidationConfigService,
+  ExerciseValidationAuditService,
 } from './services';
 import { MediaStorageService } from './services/media-storage.service';
 import {
@@ -27,6 +30,7 @@ import {
   MediaController,
 } from './controllers';
 import { MediaUploadController } from './controllers/media-upload.controller';
+import { ExerciseValidationController } from './controllers/exercise-validation.controller';
 import { ProgressModule } from '../progress/progress.module';
 
 /**
@@ -74,8 +78,30 @@ import { ProgressModule } from '../progress/progress.module';
     // Import ProgressModule to access ExerciseSubmissionService for submit endpoint
     ProgressModule,
   ],
-  controllers: [ModulesController, ExercisesController, MediaController, MediaUploadController],
-  providers: [ModulesService, ExercisesService, MediaService, MediaStorageService],
-  exports: [ModulesService, ExercisesService, MediaService, MediaStorageService],
+  controllers: [
+    ModulesController,
+    ExercisesController,
+    MediaController,
+    MediaUploadController,
+    ExerciseValidationController,
+  ],
+  providers: [
+    ModulesService,
+    ExercisesService,
+    MediaService,
+    MediaStorageService,
+    ExerciseTypeRubricService,
+    ExerciseValidationConfigService,
+    ExerciseValidationAuditService,
+  ],
+  exports: [
+    ModulesService,
+    ExercisesService,
+    MediaService,
+    MediaStorageService,
+    ExerciseTypeRubricService,
+    ExerciseValidationConfigService,
+    ExerciseValidationAuditService,
+  ],
 })
 export class EducationalModule {}
