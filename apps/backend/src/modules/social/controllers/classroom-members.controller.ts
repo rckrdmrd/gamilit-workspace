@@ -35,8 +35,12 @@ import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
  *
  * @route /api/v1/social
  * @security JWT Bearer token required
+ *
+ * @category social-admin
+ * @status Endpoints consumidos desde panel de administracion (Teacher Portal).
+ *         El endpoint de leaderboard puede consumirse desde Student Portal.
  */
-@ApiTags('Social - Classroom Members')
+@ApiTags('Social - Classroom Members', 'social-admin')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()

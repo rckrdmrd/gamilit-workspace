@@ -38,8 +38,12 @@ import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
  *
  * @route /api/v1/social
  * @security JWT Bearer token required
+ *
+ * @category social-future
+ * @status Backend completo. Dependencia de PeerChallenges (EXT-009).
+ *         Se activara cuando se implemente UI de challenges.
  */
-@ApiTags('Social - Challenge Participants')
+@ApiTags('Social - Challenge Participants', 'social-future')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()

@@ -34,8 +34,12 @@ import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
  *
  * @route /api/v1/social
  * @security JWT Bearer token required
+ *
+ * @category social-public
+ * @status Parcialmente consumido via teamsAPI.ts (GET teams, GET team/:id).
+ *         Otros endpoints usados desde admin o pendientes de UI.
  */
-@ApiTags('Social - Teams')
+@ApiTags('Social - Teams', 'social-public')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()

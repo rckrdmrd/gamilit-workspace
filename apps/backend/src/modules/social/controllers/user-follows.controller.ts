@@ -32,8 +32,13 @@ import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
  *
  * @route /api/v1/social/follows
  * @security JWT Bearer token required
+ *
+ * @category social-future
+ * @status Endpoints implementados en backend, pendientes de integracion en frontend.
+ *         Feature planificada para Sprint de redes sociales (EXT-010).
+ *         Frontend deberia crear hook useFollows para consumir estos endpoints.
  */
-@ApiTags('Social - User Follows')
+@ApiTags('Social - User Follows', 'social-future')
 @Controller('api/v1/social/follows')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()

@@ -31,8 +31,12 @@ import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
  *
  * @route /api/v1/social
  * @security JWT Bearer token required
+ *
+ * @category social-public
+ * @status Parcialmente consumido via friendsAPI.ts (activity feed).
+ *         El endpoint /activities/feed se usa desde getFriendActivities().
  */
-@ApiTags('Social - User Activities')
+@ApiTags('Social - User Activities', 'social-public')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()

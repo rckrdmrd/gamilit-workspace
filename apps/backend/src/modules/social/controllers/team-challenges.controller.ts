@@ -34,8 +34,12 @@ import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
  *
  * @route /api/v1/social
  * @security JWT Bearer token required
+ *
+ * @category social-future
+ * @status Backend completo. Feature de Team Challenges planificada
+ *         para Sprint 4 junto con Peer Challenges (EXT-009).
  */
-@ApiTags('Social - Team Challenges')
+@ApiTags('Social - Team Challenges', 'social-future')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()

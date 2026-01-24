@@ -35,8 +35,12 @@ import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
  *
  * @route /api/v1/social
  * @security JWT Bearer token required
+ *
+ * @category social-public
+ * @status Consumido desde frontend via friendsAPI.ts.
+ *         9 de 11 endpoints integrados con Student Portal.
  */
-@ApiTags('Social - Friendships')
+@ApiTags('Social - Friendships', 'social-public')
 @Controller(extractBasePath(API_ROUTES.SOCIAL.BASE))
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
