@@ -1,304 +1,153 @@
 # MAPA DE ORQUESTACION: GAMILIT
 
 **Proyecto:** GAMILIT - Plataforma de Gamificacion Educativa
-**Sistema:** NEXUS v4.0 + SIMCO
-**Nivel:** STANDALONE (workspace autónomo bajo workspace-v2)
-**Última actualización:** 2026-01-13
+**Nivel:** CONSUMER (L2) - Hereda de workspace-v2
+**Sistema:** NEXUS v4.0 + SIMCO v4.3.0
+**Estandar:** SIMCO-ESTANDAR-ORCHESTRATION v1.0.0
+**Ultima actualizacion:** 2026-01-24
 
 ---
 
-## Estructura de Orquestación
+## Estructura (Estandarizada)
 
 ```
 orchestration/
-├── 00-guidelines/           # Contexto del proyecto y herencia
-├── CONTEXT-MAP.yml          # Mapa de contexto automático (NEXUS v4.0)
-├── PROXIMA-ACCION.md        # Estado actual y siguiente paso
-├── agentes/                 # Reportes y logs de agentes
-├── analisis/                # Análisis técnicos (ver sección Análisis Especializados)
-├── directivas/              # Directivas locales del proyecto
-├── environment/             # Configuración de entorno
-├── errores/                 # Registro de errores (CAPVED++)
-├── estados/                 # Estados del sistema
-├── inventarios/             # Inventarios de artefactos
-├── migracion-consolidado-2025-12/  # Documentación de migración
-├── prompts/                 # Prompts de agentes específicos
-├── reportes/                # Reportes de ejecución
-├── roadmap/                 # Planificación estratégica
-├── scripts/                 # Scripts de orquestación
-├── scrum/                   # Sprints y backlog (NEXUS v4.0)
-├── templates/               # Templates locales
-└── trazas/                  # Trazabilidad de tareas
+├── _MAP.md                     # [ESTE ARCHIVO] Mapa de navegacion
+├── _inheritance.yml            # Herencia: workspace-v2 -> gamilit
+├── BOOTLOADER.md               # Protocolo de arranque NEXUS
+├── CONTEXT-MAP.yml             # Configuracion contexto automatico
+├── PROJECT-PROFILE.yml         # Perfil y metadata del proyecto
+├── PROJECT-STATUS.md           # Estado actual del proyecto
+├── PROXIMA-ACCION.md           # Checkpoint de sesion
+├── DEPENDENCY-GRAPH.yml        # Grafo de dependencias
+├── TRACEABILITY.yml            # Trazabilidad del proyecto
+├── MAPA-DOCUMENTACION.yml      # Mapa de documentacion
+│
+├── 00-guidelines/              # Contexto y guias del proyecto
+│   ├── CONTEXTO-PROYECTO.md
+│   └── HERENCIA-DIRECTIVAS.md
+│
+├── inventarios/                # INVENTARIOS (SSOT)
+│   ├── MASTER_INVENTORY.yml
+│   ├── BACKEND_INVENTORY.yml
+│   ├── DATABASE_INVENTORY.yml
+│   └── FRONTEND_INVENTORY.yml
+│
+├── trazas/                     # Trazas de ejecucion
+│   ├── TRAZA-TAREAS-BACKEND.md
+│   ├── TRAZA-TAREAS-DATABASE.md
+│   └── TRAZA-TAREAS-FRONTEND.md
+│
+├── directivas/                 # Directivas locales
+│   ├── DIRECTIVA-DISENO-BASE-DATOS.md
+│   ├── DIRECTIVA-POLITICA-CARGA-LIMPIA.md
+│   └── ESTANDARES-API-ROUTES.md
+│
+├── tareas/                     # Tareas documentadas CAPVED
+│   ├── _INDEX.yml
+│   └── TASK-*/
+│
+└── _archive/                   # Contenido historico (consolidado 2026-01-24)
+    ├── root-files/             # Archivos root movidos
+    ├── agentes/                # Reportes y logs de agentes
+    ├── analisis-*/             # 10 carpetas de analisis historicos
+    ├── environment/            # Configuracion de entorno
+    ├── errores/                # Registro de errores
+    ├── prompts/                # Prompts de agentes
+    └── ...                     # Otras carpetas consolidadas
 ```
 
 ---
 
-## Análisis Especializados (2025-12)
+## Archivos Principales (10 - Estandar CONSUMER)
 
-Las siguientes carpetas contienen análisis técnicos especializados por área:
-
-| Carpeta | Propósito | Estado |
-|---------|-----------|--------|
-| `analisis/` | Análisis genéricos (29 archivos) | Completado |
-| `analisis-admin-portal-2025-12-23/` | Análisis portal admin | Completado |
-| `analisis-backend-2025-12-18/` | Análisis backend | Completado |
-| `analisis-database-2025-12-26/` | Análisis BD | Completado |
-| `analisis-documentacion-vs-desarrollo-2025-12-23/` | Comparación doc vs código | Completado |
-| `analisis-errores-prod-2025-12-18/` | Análisis errores producción | **PENDIENTE EJECUCIÓN** |
-| `analisis-frontend-validacion/` | Validación frontend | Completado |
-| `analisis-homologacion-database-2025-12-18/` | Homologación BD | **PENDIENTE (11 scripts)** |
-| `analisis-modulos-3-4-5/` | Análisis M3-M4-M5 | Completado |
-| `analisis-produccion-2025-12-18/` | Requerimientos producción | **LISTO PARA DEPLOY** |
-| `analisis-teacher-portal-2025-12-18/` | Análisis portal teacher | Completado |
-
-> **Nota:** Las carpetas marcadas como PENDIENTE contienen acciones que aún requieren ejecución.
-
----
-
-## Archivos Críticos NEXUS v4.0
-
-| Archivo | Propósito | Obligatorio |
-|---------|-----------|-------------|
-| `CONTEXT-MAP.yml` | Resolución automática de contexto por nivel/tarea | Sí |
-| `PROXIMA-ACCION.md` | Estado actual del proyecto | Sí |
-| `errores/REGISTRO-ERRORES.yml` | Historial de errores para CAPVED++ | Sí |
-| `scrum/SPRINT-ACTUAL.yml` | Sprint backlog activo | Sí |
-| `inventarios/MASTER_INVENTORY.yml` | Estado de todos los artefactos | Sí |
-| `trazas/TRAZA-TAREAS-*.md` | Trazabilidad por dominio | Sí |
-
----
-
-## Sistema NEXUS v4.0 - Gamilit Standalone
-
-### Niveles de Contexto
-
-| Nivel | Tokens | Contenido |
-|-------|--------|-----------|
-| **L0 Sistema** | ~4500 | Principios CAPVED++, directivas globales |
-| **L1 Proyecto** | ~3000 | CONTEXTO-PROYECTO.md, PROXIMA-ACCION.md, MASTER_INVENTORY |
-| **L2 Operación** | ~2500 | SIMCO por operación (CREAR/MODIFICAR/VALIDAR) y dominio (DDL/BE/FE) |
-| **L3 Tarea** | max 8000 | docs/ específicos, código similar, histórico |
-
-### Límites de Tokens
-
-```yaml
-limite_absoluto: 25000
-limite_seguro: 18000
-limite_alerta: 20000
-presupuesto_base: 10000  # L0 + L1
-disponible_tarea: 8000   # L2 + L3
-```
-
----
-
-## Principios NEXUS v4.0 (Heredados)
-
-Los siguientes principios se heredan del workspace-v2:
-
-| Principio | Archivo | Propósito |
-|-----------|---------|-----------|
-| CAPVED++ | `PRINCIPIO-CAPVED.md` | Ciclo de vida con gates |
-| Doc-Primero | `PRINCIPIO-DOC-PRIMERO.md` | Documentación antes de código |
-| Anti-Duplicación | `PRINCIPIO-ANTI-DUPLICACION.md` | Verificar catálogo |
-| Validación Obligatoria | `PRINCIPIO-VALIDACION-OBLIGATORIA.md` | Build/lint deben pasar |
-| Economía Tokens | `PRINCIPIO-ECONOMIA-TOKENS.md` | Límites de contexto |
-| No Asumir | `PRINCIPIO-NO-ASUMIR.md` | Preguntar si falta info |
-
-**Path herencia:** `/home/isem/workspace-v2/orchestration/directivas/principios/`
-
----
-
-## Directivas SIMCO Disponibles
-
-### Directivas Globales (workspace-v2)
-
-| Directiva | Cuándo Usar |
-|-----------|-------------|
-| `SIMCO-CREAR.md` | Crear nuevos artefactos |
-| `SIMCO-MODIFICAR.md` | Modificar artefactos existentes |
-| `SIMCO-VALIDAR.md` | Validar coherencia/calidad |
-| `SIMCO-DELEGACION.md` | Delegar a subagentes |
-| `SIMCO-DDL.md` | Tareas de base de datos |
-| `SIMCO-BACKEND.md` | Tareas de backend NestJS |
-| `SIMCO-FRONTEND.md` | Tareas de frontend React |
-| `SIMCO-CAPVED-PLUS.md` | Ciclo extendido con gates |
-| `SIMCO-ERROR-RECURRENTE.md` | Manejo de errores repetidos |
-| `SIMCO-SCRUM-INTEGRATION.md` | Integración Scrum |
-
-**Path:** `/home/isem/workspace-v2/orchestration/directivas/simco/`
-
-### Directivas Locales (gamilit)
-
-| Directiva | Propósito |
-|-----------|-----------|
-| `DIRECTIVA-DISENO-BASE-DATOS.md` | Diseño BD 16 schemas |
-| `DIRECTIVA-POLITICA-CARGA-LIMPIA.md` | DDL-first, sin migraciones |
-| `ESTANDARES-API-ROUTES.md` | Convenciones REST |
-
-**Path:** `/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/`
-
----
-
-## Integración con docs/
-
-El sistema NEXUS v4.0 se integra con la carpeta docs/ del proyecto:
-
-| Recurso docs/ | Uso en NEXUS |
-|---------------|--------------|
-| `docs/_MAP.md` | Navegación de documentación |
-| `docs/90-transversal/arquitectura/` | Referencia arquitectónica |
-| `docs/90-transversal/api/API.md` | Contratos de API |
-| `docs/95-guias-desarrollo/` | Guías de implementación |
-| `docs/01-fase-*/EAI-*/` | Especificaciones por EPIC |
-| `docs/04-fase-backlog/` | Features pendientes |
-| `docs/97-adr/` | Decisiones arquitectónicas |
-
----
-
-## Inventarios
-
-| Inventario | Contenido | Path |
-|------------|-----------|------|
-| `MASTER_INVENTORY.yml` | Estado consolidado (v4.1.0) | `inventarios/` |
-| `DATABASE_INVENTORY.yml` | 16 schemas, 135 tablas, 122 funciones | `inventarios/` |
-| `BACKEND_INVENTORY.yml` | 17 modulos, 612 endpoints, 108 entities | `inventarios/` |
-| `FRONTEND_INVENTORY.yml` | 327 componentes, 74 paginas, 12 stores | `inventarios/` |
-
----
-
-## Trazas
-
-| Traza | Dominio | Path |
-|-------|---------|------|
-| `TRAZA-TAREAS-DATABASE.md` | DDL, seeds, índices | `trazas/` |
-| `TRAZA-TAREAS-BACKEND.md` | NestJS, API | `trazas/` |
-| `TRAZA-TAREAS-FRONTEND.md` | React, UI | `trazas/` |
-
----
-
-## Prompts de Agentes
-
-| Prompt | Especialización |
-|--------|-----------------|
-| `PROMPT-DATABASE-AGENT.md` | PostgreSQL, DDL, RLS |
-| `PROMPT-DATABASE-AUDITOR.md` | Auditoría de BD |
-| `PROMPT-BACKEND-AGENT.md` | NestJS, TypeORM |
-| `PROMPT-FRONTEND-AGENT.md` | React, Zustand |
-| `PROMPT-ARCHITECTURE-ANALYST.md` | Análisis arquitectónico |
-
-**Path:** `prompts/`
-
----
-
-## SCRUM (NEXUS v4.0)
-
-| Archivo | Propósito |
+| Archivo | Proposito |
 |---------|-----------|
-| `scrum/SPRINT-ACTUAL.yml` | Sprint backlog activo |
-| (workspace) `TEMPLATE-SPRINT-BACKLOG.yml` | Template de sprint |
-| (workspace) `TEMPLATE-HISTORIA-USUARIO.md` | Template de HU |
-| (workspace) `TEMPLATE-RETROSPECTIVA.yml` | Template retrospectiva |
+| `_MAP.md` | Mapa de navegacion (este archivo) |
+| `_inheritance.yml` | Modelo de herencia |
+| `BOOTLOADER.md` | Protocolo de arranque NEXUS |
+| `CONTEXT-MAP.yml` | Configuracion contexto automatico |
+| `PROJECT-PROFILE.yml` | Perfil para agentes |
+| `PROJECT-STATUS.md` | Estado actual del proyecto |
+| `PROXIMA-ACCION.md` | Checkpoint de sesion |
+| `DEPENDENCY-GRAPH.yml` | Grafo de dependencias |
+| `TRACEABILITY.yml` | Trazabilidad del proyecto |
+| `MAPA-DOCUMENTACION.yml` | Mapa de documentacion |
 
 ---
 
-## Registro de Errores
+## Carpetas Estandar (5 + _archive)
 
-| Archivo | Propósito |
-|---------|-----------|
-| `errores/REGISTRO-ERRORES.yml` | Historial local de errores |
-| (workspace) `REGISTRO-ERRORES.yml` | Historial global |
-
----
-
-## Herencia de Workspace
-
-Gamilit hereda configuración de workspace-v2 y opera como proyecto standalone:
-
-```yaml
-herencia:
-  tipo: STANDALONE
-  hereda_de:
-    - /home/isem/workspace-v2/orchestration/directivas/
-    - /home/isem/workspace-v2/orchestration/templates/
-    - /home/isem/workspace-v2/shared/catalog/
-  autonomia:
-    - Puede contener copias de directivas críticas
-    - CONTEXT-MAP.yml resuelve todo localmente
-    - Inventarios y trazas son locales
-```
+| Carpeta | Proposito | Contenido |
+|---------|-----------|-----------|
+| `00-guidelines/` | Guias del proyecto | Contexto, herencia directivas |
+| `inventarios/` | SSOT de objetos | 4 inventarios por capa |
+| `trazas/` | Trazas de tareas | Por dominio (DB, Backend, Frontend) |
+| `directivas/` | Directivas locales | Especificas de gamilit |
+| `tareas/` | Gobernanza | Tareas documentadas CAPVED |
+| `_archive/` | Historico | Contenido consolidado |
 
 ---
 
-## Métricas del Proyecto (Auditado 2026-01-14)
+## Inventarios (SSOT)
 
-| Métrica | Valor |
+| Inventario | Descripcion | Estado |
+|------------|-------------|--------|
+| MASTER_INVENTORY.yml | Inventario maestro consolidado | Activo |
+| BACKEND_INVENTORY.yml | 17 modulos, 612 endpoints | Activo |
+| DATABASE_INVENTORY.yml | 16 schemas, 135 tablas | Activo |
+| FRONTEND_INVENTORY.yml | 327 componentes, 74 paginas | Activo |
+
+---
+
+## Metricas del Proyecto
+
+| Metrica | Valor |
 |---------|-------|
 | Schemas PostgreSQL | 16 |
 | Tablas | 135 |
-| Funciones Activas | 122 |
-| Triggers Activos | 49 |
-| Políticas RLS | 121 |
-| Endpoints API | 417 |
-| EPICs documentadas | 19 |
-| ADRs | 21 |
+| Endpoints API | 612 |
+| Entities | 108 |
+| Componentes | 327 |
+| Paginas | 74 |
+| Estado MVP | 75% |
 
 ---
 
-## Comandos Útiles
+## Navegacion
 
-```bash
-# Desarrollo
-npm run dev                    # Backend + Frontend
-npm run validate:all           # Todas las validaciones
-
-# Base de datos
-./apps/database/drop-and-recreate-database.sh  # Recrear BD
-
-# Testing
-npm run test                   # Todos los tests
-```
+| Destino | Enlace |
+|---------|--------|
+| CLAUDE.md local | [../.claude/CLAUDE.md](../.claude/CLAUDE.md) |
+| Documentacion proyecto | [../docs/_MAP.md](../docs/_MAP.md) |
+| Orchestration Central | [../../orchestration/_MAP.md](../../orchestration/_MAP.md) |
+| Directivas SIMCO | [../../orchestration/directivas/simco/](../../orchestration/directivas/simco/) |
+| Estandar Orchestration | [../../orchestration/directivas/simco/SIMCO-ESTANDAR-ORCHESTRATION.md](../../orchestration/directivas/simco/SIMCO-ESTANDAR-ORCHESTRATION.md) |
+| Inventarios | [inventarios/](inventarios/) |
+| Tareas | [tareas/_INDEX.yml](tareas/_INDEX.yml) |
 
 ---
 
-## Sistema de Gobernanza de Documentación (2026-01-16)
+## Consolidacion 2026-01-24
 
-Integración del sistema de gobernanza de workspace-v2:
+Carpetas movidas a `_archive/`:
+- 35 carpetas no estandar incluyendo:
+  - 10 carpetas analisis-* (historicos)
+  - agentes, agents-gamilit (duplicado)
+  - 4 carpetas *-redundancia
+  - environment, errores, estados
+  - prompts, reportes, roadmap
+  - scrum, scripts, templates
+  - migracion-*, referencias
 
-### Archivos de Gobernanza
+Archivos root archivados:
+- CHANGELOG-SISTEMA-SUBAGENTES.md
+- README-*.md (5 archivos)
+- SPRINT-*.yml (2 archivos)
 
-| Archivo | Propósito | Path |
-|---------|-----------|------|
-| `_INDEX.yml` | Índice de tareas documentadas | `analisis/tareas/` |
-| `METADATA-TEMPLATE.yml` | Template para nuevas tareas | `analisis/tareas/_templates/` |
-| `MAPEO-FASES.md` | Mapeo F1-F7 ↔ CAPVED | `analisis/tareas/_templates/` |
-| `_INDEX.yml` | Índice de trazas | `trazas/` |
-| `TRAZA-AGENTE-TEMPLATE.md` | Template de traza por agente | `trazas/` |
-| `MAPA-DOCUMENTACION-GAMILIT.yml` | Índice central de documentación | `orchestration/` |
-| `ALIASES-GOBERNANZA.yml` | Aliases de navegación rápida | `referencias/` |
-
-### Aliases de Gobernanza
-
-| Alias | Destino |
-|-------|---------|
-| `@TAREAS-GAMILIT` | `analisis/tareas/` |
-| `@INDICE-TAREAS` | `analisis/tareas/_INDEX.yml` |
-| `@NUEVA-TAREA-GAMILIT` | `analisis/tareas/_templates/METADATA-TEMPLATE.yml` |
-| `@MAPA-DOC-GAMILIT` | `MAPA-DOCUMENTACION-GAMILIT.yml` |
-| `@TRAZAS-GAMILIT` | `trazas/` |
-| `@INDICE-TRAZAS` | `trazas/_INDEX.yml` |
-
-### Regla de Documentación Obligatoria
-
-Al completar cualquier tarea:
-1. Crear entrada en `analisis/tareas/_INDEX.yml`
-2. (Opcional) Crear carpeta TAREA-{ID} con METADATA.yml
-3. Actualizar traza correspondiente
-4. Actualizar inventarios si aplica
-
-Ver: `INFORME-GAP-INTEGRACION-GOBERNANZA-2026-01-16.md` en `analisis/`
+**Reduccion:** 41 carpetas → 6 carpetas (85%)
 
 ---
 
-**Actualizado:** 2026-01-16
-**Sistema:** NEXUS v4.0 + SIMCO + Gobernanza
-**Cambios:** Integración sistema de gobernanza de documentación de workspace-v2
+*Estandarizado segun SIMCO-ESTANDAR-ORCHESTRATION v1.0.0*
+*Consolidacion: 2026-01-24*
