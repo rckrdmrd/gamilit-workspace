@@ -12,6 +12,13 @@ import React, { useEffect, useState } from 'react';
 import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
 import type { UpdatePreferenceDto } from '@/services/api/notificationsAPI';
 
+// Layout Components
+import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+
+// Auth & Gamification Hooks
+import { useAuth } from '@/app/providers/AuthContext';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
+
 // Notification types supported (aligned with backend - EXT-003)
 // Keys must match DDL notification_type values exactly
 const NOTIFICATION_TYPES = [
@@ -74,6 +81,10 @@ const NOTIFICATION_TYPES = [
 ];
 
 export const NotificationPreferencesPage: React.FC = () => {
+  // Auth & Gamification
+  const { user, logout } = useAuth();
+  const { gamificationData } = useUserGamification(user?.id);
+
   const {
     preferences,
     preferencesLoading,
@@ -165,14 +176,33 @@ export const NotificationPreferencesPage: React.FC = () => {
 
   if (preferencesLoading && preferences.length === 0) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
-        <p>Cargando preferencias...</p>
+      <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
+        <GamifiedHeader
+          user={user ?? undefined}
+          gamificationData={gamificationData}
+          onLogout={async () => {
+            await logout();
+          }}
+        />
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <p>Cargando preferencias...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
+      {/* GamifiedHeader - Standard header for student pages */}
+      <GamifiedHeader
+        user={user ?? undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+        }}
+      />
+
+      <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
       <div style={{ marginBottom: '2rem' }}>
         <h1>Preferencias de Notificaciones</h1>
         <p style={{ color: '#666' }}>
@@ -387,6 +417,7 @@ export const NotificationPreferencesPage: React.FC = () => {
             registrar dispositivo)
           </li>
         </ul>
+      </div>
       </div>
     </div>
   );

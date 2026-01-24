@@ -41,11 +41,17 @@ import { TransactionHistory } from '@/features/gamification/economy/components/W
 import { EarningSourcesBreakdown } from '@/features/gamification/economy/components/Wallet/EarningSourcesBreakdown';
 import { SpendingAnalytics } from '@/features/gamification/economy/components/Analytics/SpendingAnalytics';
 
+// Layout Components
+import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+
 // Stores
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
 import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 import { useAchievementsStore } from '@/features/gamification/social/store/achievementsStore';
+
+// Hooks
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -60,6 +66,10 @@ export default function GamificationPage() {
 
   // Auth - Using Zustand selector to prevent unnecessary re-renders
   const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+
+  // Use useUserGamification hook for header data
+  const { gamificationData } = useUserGamification(user?.id);
 
   // Zustand Stores
   const userProgress = useRanksStore((state) => state.userProgress);
@@ -184,6 +194,16 @@ export default function GamificationPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 dark:from-gray-900 dark:to-gray-800">
+      {/* GamifiedHeader - Standard header for student pages */}
+      <GamifiedHeader
+        user={user ?? undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+          // No need to navigate - logout handles redirect
+        }}
+      />
+
       {/* Hero Section - Rank Actual */}
       <section className="border-b-2 border-amber-200 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 dark:border-amber-800">
         <div className="container mx-auto px-4 py-12">
