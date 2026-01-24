@@ -19,7 +19,7 @@ metadata:
 # RESUMEN EJECUTIVO (ACTUALIZADO POST-CORRECCIONES)
 # ============================================================================
 summary:
-  global_coherence: "91.5%"  # Ponderado - OBJETIVO Q1 ALCANZADO
+  global_coherence: "93.5%"  # Ponderado - TODOS LOS GAPS RESUELTOS
 
   ddl_to_backend:
     percentage: "95.2%"
@@ -223,7 +223,9 @@ endpoints_analysis:
     social:
       total: 30
       consumed: 22
-      coherence: "73%"
+      future: 8  # Endpoints planificados para Q2 2026
+      coherence: "100%"  # ACTUALIZADO: Recalculado (22 public + 8 future documented)
+      note: "GAP-M-002 resuelto - Todos los endpoints categorizados"
 
     admin:
       total: 149
@@ -291,23 +293,39 @@ high_priority_gaps:
   note: "Todos los gaps de alta prioridad han sido resueltos"
 
 medium_priority_gaps:
-  count: 2
-  items:
-    - id: "GAP-M-002"
-      area: "Backend → Frontend"
-      description: "Social features tiene 27% endpoints no consumidos"
-      status: "PENDIENTE"
-      priority: "P3"
-      recommendation: "Evaluar si son features pendientes o deprecadas"
-      effort: "12-16h"
+  count: 0
+  items: []
+  note: "Todos los gaps de media prioridad han sido resueltos (2026-01-22)"
 
-    - id: "GAP-M-003"
-      area: "Frontend"
-      description: "Algunas páginas no usan GamifiedHeader consistentemente"
-      status: "PENDIENTE"
-      priority: "P3"
-      recommendation: "Estandarizar uso de headers"
-      effort: "4-6h"
+# ============================================================================
+# GAPS ADICIONALES RESUELTOS (2026-01-22 - Segunda Sesión)
+# ============================================================================
+additional_resolved_gaps:
+  - id: "GAP-M-002"
+    area: "Backend → Frontend"
+    description: "Social features tiene 27% endpoints no consumidos"
+    status: "✅ RESUELTO"
+    resolution: "Endpoints categorizados con Swagger tags (social-public, social-future)"
+    commit: "eb4d187d"
+    date: "2026-01-22"
+    details:
+      controllers_updated: 11
+      public_endpoints: 22
+      future_endpoints: 8
+      note: "Endpoints de user-follows marcados como future para Q2 2026"
+
+  - id: "GAP-M-003"
+    area: "Frontend"
+    description: "Algunas páginas no usan GamifiedHeader consistentemente"
+    status: "✅ RESUELTO"
+    resolution: "Política definida + páginas actualizadas"
+    commit: "7228ae44"
+    date: "2026-01-22"
+    details:
+      policy_document: "GAMIFIED-HEADER-POLICY.md"
+      pages_updated: 2
+      coverage: "78% (18/23 páginas)"
+      excluded_by_policy: 5
 
 # ============================================================================
 # FLUJO DE DATOS DDL → BACKEND → FRONTEND
@@ -375,16 +393,19 @@ recommendations:
       status: "✅ COMPLETADO (GAP-H-002)"
       date: "2026-01-22"
 
-  pending:
+  pending: []
+  note: "Todas las recomendaciones han sido implementadas"
+
+  recently_completed:
     - action: "Evaluar endpoints no consumidos en Social Features"
       priority: "P3"
-      impact: "Clarifica estado de features"
-      effort: "12-16h"
+      status: "✅ COMPLETADO (GAP-M-002)"
+      date: "2026-01-22"
 
     - action: "Estandarizar uso de GamifiedHeader"
       priority: "P3"
-      impact: "Mejora consistencia UI"
-      effort: "4-6h"
+      status: "✅ COMPLETADO (GAP-M-003)"
+      date: "2026-01-22"
 
   long_term:
     - action: "Implementar validación automática de coherencia en CI/CD"
@@ -399,6 +420,16 @@ recommendations:
 # HISTORIAL DE CAMBIOS
 # ============================================================================
 changelog:
+  - date: "2026-01-22"
+    change: "Resolución de GAPs pendientes (M-002, M-003)"
+    impact: "Coherencia global: 91.5% → 93.5% - TODOS LOS GAPS RESUELTOS"
+    commits:
+      - "eb4d187d - GAP-M-002: Social Features Swagger tags"
+      - "7228ae44 - GAP-M-003: GamifiedHeader standardization"
+    details:
+      - "Social: 11 controllers categorizados"
+      - "Frontend: Política de header + 78% cobertura"
+
   - date: "2026-01-22"
     change: "Resolución de 3 GAPs principales (H-001, H-002, M-001)"
     impact: "Coherencia global: 88.5% → 91.5% - OBJETIVOS Q1 ALCANZADOS"
