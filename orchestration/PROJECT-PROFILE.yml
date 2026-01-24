@@ -1,0 +1,179 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROJECT-PROFILE.yml - Gamilit
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Sistema: SIMCO v4.3.0 + NEXUS v4.0
+# Propósito: Perfil y metadata del proyecto
+# Fecha: 2026-01-24
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ─────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────
+
+proyecto:
+  nombre: "Gamilit"
+  codigo: "gamilit"
+  tipo: "STANDALONE"
+  nivel: "2A"
+  version: "2.5.0"
+  rol_especial: "REFERENCIA_INTERNA"
+
+descripcion: |
+  Plataforma EdTech con gamificación educativa.
+  Sistema académico completo con módulos de:
+  - Autenticación y roles académicos
+  - Gestión de cursos y materias
+  - Sistema de gamificación (puntos, rangos, logros)
+  - Leaderboards competitivos
+  - Reportes de progreso
+
+  Es el proyecto más maduro del workspace y sirve como fuente
+  de patrones reutilizables.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STACK TECNOLÓGICO
+# ─────────────────────────────────────────────────────────────────────────────
+
+stack:
+  backend:
+    framework: "NestJS"
+    version: "^10.0.0"
+    lenguaje: "TypeScript"
+    orm: "TypeORM"
+    auth: "JWT + Passport + RBAC"
+
+  frontend:
+    framework: "React"
+    version: "^18.2.0"
+    lenguaje: "TypeScript"
+    ui: "Tailwind CSS"
+    estado: "Zustand"
+    build: "Vite"
+
+  database:
+    motor: "PostgreSQL"
+    version: "15+"
+    schemas: 16
+    rls: true
+
+  infraestructura:
+    contenedores: "Docker"
+    orquestacion: "docker-compose"
+    cache: "Redis"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RUTAS DEL PROYECTO
+# ─────────────────────────────────────────────────────────────────────────────
+
+rutas:
+  proyecto: "projects/gamilit"
+  backend: "projects/gamilit/apps/backend"
+  frontend: "projects/gamilit/apps/frontend"
+  database: "projects/gamilit/apps/database"
+  docs: "projects/gamilit/docs"
+  orchestration: "projects/gamilit/orchestration"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MÉTRICAS
+# ─────────────────────────────────────────────────────────────────────────────
+
+metricas:
+  database:
+    schemas: 16
+    tablas: 137
+    views: 23
+    functions: 45
+    rls_policies: 32
+
+  backend:
+    modulos: 17
+    entities: 123
+    services: 89
+    controllers: 45
+    endpoints: 612
+
+  frontend:
+    componentes: 464
+    hooks: 78
+    stores: 12
+
+  cobertura:
+    tests_unitarios: "~60%"
+    coherencia_3_capas: "99%"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MÓDULOS PRINCIPALES
+# ─────────────────────────────────────────────────────────────────────────────
+
+modulos:
+  core:
+    - nombre: "auth"
+      estado: "100%"
+      descripcion: "Autenticación con roles académicos"
+
+    - nombre: "users"
+      estado: "100%"
+      descripcion: "Usuarios: estudiantes, profesores, admin"
+
+    - nombre: "courses"
+      estado: "90%"
+      descripcion: "Gestión de cursos y materias"
+
+    - nombre: "evaluations"
+      estado: "85%"
+      descripcion: "Sistema de evaluaciones"
+
+  gamification:
+    - nombre: "gamification-core"
+      estado: "95%"
+      descripcion: "Motor de gamificación"
+
+    - nombre: "points"
+      estado: "100%"
+      descripcion: "Sistema de puntos con multiplicadores"
+
+    - nombre: "ranks"
+      estado: "100%"
+      descripcion: "Rangos jerárquicos (5 niveles)"
+
+    - nombre: "achievements"
+      estado: "90%"
+      descripcion: "Logros e insignias"
+
+    - nombre: "leaderboards"
+      estado: "85%"
+      descripcion: "Leaderboards competitivos"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────
+
+estado:
+  general: "activo"
+  madurez: "producción"
+  mvp: "75%"
+  en_produccion: true
+  usuarios_activos: true
+
+# ─────────────────────────────────────────────────────────────────────────────
+# EQUIPO
+# ─────────────────────────────────────────────────────────────────────────────
+
+equipo:
+  owner: "ISEM Development"
+  agentes_principales:
+    - "Claude Code"
+    - "Trae"
+    - "Windsurf"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NOTAS
+# ─────────────────────────────────────────────────────────────────────────────
+
+notas:
+  - "Proyecto STANDALONE más maduro del workspace"
+  - "Sirve como fuente de patrones reutilizables"
+  - "No hereda de otros proyectos"
+  - "Sus patrones están extraídos en shared/catalog/"
