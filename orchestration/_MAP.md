@@ -8,7 +8,7 @@
 
 ---
 
-## Estructura (Estandar CONSUMER/STANDALONE - 3 carpetas + _archive)
+## Estructura (Estandar STANDALONE - 3 carpetas + _archive)
 
 ```
 orchestration/
@@ -30,9 +30,7 @@ orchestration/
 │   ├── HERENCIA-DIRECTIVAS.md
 │   ├── HERENCIA-SIMCO.md
 │   ├── PATHS-DOCUMENTACION.md
-│   ├── PATHS-TRABAJO.md
-│   └── directivas-locales/     # Directivas especificas de gamilit
-│       └── DIRECTIVA-*.md      # 11 directivas
+│   └── PATHS-TRABAJO.md
 │
 ├── inventarios/                # INVENTARIOS (SSOT)
 │   ├── MASTER_INVENTORY.yml
@@ -48,14 +46,14 @@ orchestration/
 │   ├── TRAZA-TAREAS-FRONTEND.md
 │   └── LESSONS-LEARNED.yml
 │
-└── _archive/                   # Contenido historico (consolidado 2026-01-24)
-    ├── checklists/             # Checklists CAPVED (8 archivos)
-    ├── triggers/               # Triggers locales (6 archivos)
-    ├── tareas/                 # Tareas historicas TASK-2026-01-*
-    ├── root-files/             # Archivos root movidos
+└── _archive/                   # Contenido historico consolidado
+    ├── _definitions/           # Definiciones (checklists, etc.)
     ├── agentes/                # Reportes y logs de agentes
+    ├── agents-gamilit/         # Agentes duplicados
     ├── analisis-*/             # 10 carpetas de analisis historicos
-    └── ...                     # Otras carpetas consolidadas
+    ├── directivas-gamilit/     # Directivas locales historicas
+    ├── root-files/             # Archivos root movidos
+    └── ...                     # Otras carpetas consolidadas (35 total)
 ```
 
 ---
@@ -81,10 +79,10 @@ orchestration/
 
 | Carpeta | Proposito | Contenido |
 |---------|-----------|-----------|
-| `00-guidelines/` | Guias del proyecto | Contexto, herencia, directivas-locales/ |
+| `00-guidelines/` | Guias del proyecto | Contexto, herencia, paths |
 | `inventarios/` | SSOT de objetos | 12 inventarios por capa |
 | `trazas/` | Trazas de tareas | Por dominio (DB, Backend, Frontend) |
-| `_archive/` | Historico | Contenido consolidado (checklists, triggers, tareas) |
+| `_archive/` | Historico | 35 carpetas consolidadas (analisis, agentes, etc.) |
 
 ---
 
@@ -123,38 +121,34 @@ orchestration/
 | Directivas SIMCO | [../../orchestration/directivas/simco/](../../orchestration/directivas/simco/) |
 | Estandar Orchestration | [../../orchestration/directivas/simco/SIMCO-ESTANDAR-ORCHESTRATION.md](../../orchestration/directivas/simco/SIMCO-ESTANDAR-ORCHESTRATION.md) |
 | Inventarios | [inventarios/](inventarios/) |
-| Tareas (archive) | [_archive/tareas/_INDEX.yml](_archive/tareas/_INDEX.yml) |
+| Directivas locales (archive) | [_archive/directivas-gamilit/](_archive/directivas-gamilit/) |
 
 ---
 
-## Consolidacion 2026-01-24 (Completada)
+## Consolidacion 2026-01-24
 
-### Fase 1: Consolidacion Inicial
-Carpetas movidas a `_archive/`:
-- 35 carpetas no estandar incluyendo:
-  - 10 carpetas analisis-* (historicos)
-  - agentes, agents-gamilit (duplicado)
-  - 4 carpetas *-redundancia
-  - environment, errores, estados
-  - prompts, reportes, roadmap
-  - scrum, scripts, templates
-  - migracion-*, referencias
+### Estado Actual
+Estructura consolidada a estandar STANDALONE:
+- 3 carpetas activas: 00-guidelines/, inventarios/, trazas/
+- 1 carpeta archivo: _archive/ (35 carpetas historicas)
 
-### Fase 2: Reorganizacion de Directivas
-- Directivas renombradas con prefijo DIRECTIVA-*
-- Directivas movidas a 00-guidelines/directivas-locales/
-
-### Fase 3: Consolidacion Final
-- checklists/ → _archive/checklists/
-- triggers/ → _archive/triggers/
-- tareas/ → _archive/tareas/
+### Contenido de _archive/
+Carpetas consolidadas incluyendo:
+- 10 carpetas analisis-* (historicos de auditorias)
+- agentes/, agents-gamilit/ (reportes de agentes)
+- 4 carpetas *-redundancia (analisis de redundancias)
+- directivas-gamilit/ (directivas locales historicas)
+- _definitions/ (checklists y definiciones)
+- environment, errores, estados
+- prompts, reportes, roadmap
+- scrum, scripts, templates
+- migracion-*, referencias, testing, validaciones
 
 ### Archivos Root Archivados
-- CHANGELOG-SISTEMA-SUBAGENTES.md
-- README-*.md (5 archivos)
-- SPRINT-*.yml (2 archivos)
+- PROJECT-STATUS-2026-01-13-HISTORICAL.md
+- Otros archivos movidos a root-files/
 
-**Reduccion Final:** 41 carpetas → 3 carpetas + _archive (93%)
+**Estructura Final:** 3 carpetas activas + _archive
 
 ---
 
