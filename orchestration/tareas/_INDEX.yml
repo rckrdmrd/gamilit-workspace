@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 9
-  completadas: 9
+  total_tareas: 10
+  completadas: 10
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -47,6 +47,24 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  - task_id: "TASK-009"
+    titulo: "Fix cache invalidation en Teacher Reviews - Completadas no aparecen"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-009-fix-teacher-reviews-cache/"
+    commit: "f63bafc5"
+    story_points: 2
+    capas_afectadas:
+      - "frontend"
+    descripcion: |
+      Corrección de bug donde los reviews completados no aparecían en la
+      pestaña "Completadas" hasta refrescar la página. Causa: falta de
+      invalidación de cache de React Query después de completeReview().
+      Fix: Agregar queryClient.invalidateQueries() con manualReviewKeys.all.
+
   - task_id: "TASK-008"
     titulo: "Fix notifDate.getTime is not a function en NotificationDropdown"
     tipo: "bugfix"

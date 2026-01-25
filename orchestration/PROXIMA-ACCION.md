@@ -3,7 +3,7 @@
 **Ultima Actualizacion:** 2026-01-25
 **Estado del Proyecto:** MVP 80% completado | **orchestration REPLICA_COMPLETA** | **Production Ready**
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Tarea Completada:** TASK-2026-01-25-VALIDACION-PORTAL-TEACHER
+**Tarea Completada:** TASK-009-fix-teacher-reviews-cache
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
@@ -28,6 +28,22 @@ host    all    all    0.0.0.0/0    scram-sha-256
 **Documentacion:** `workspace-v2/orchestration/inventarios/LOCAL-WSL-ENVIRONMENT.yml` v1.1.0
 
 **Nota:** El IP de WSL (172.21.220.31) puede cambiar al reiniciar. Actualizar port forward si es necesario.
+
+---
+
+### TASK-009 COMPLETADA (2026-01-25)
+
+**Fix cache invalidation en Teacher Reviews.**
+
+| Campo | Valor |
+|-------|-------|
+| Bug | Reviews completados no aparecían en pestaña "Completadas" |
+| Causa | Falta de invalidación de cache React Query |
+| Fix | Agregar `queryClient.invalidateQueries()` |
+| Archivo | `ReviewDetail.tsx` (+8 líneas) |
+| Commits | f63bafc5 (gamilit), 71094d55 (workspace) |
+
+**Ver detalles:** `orchestration/tareas/TASK-009-fix-teacher-reviews-cache/`
 
 ---
 
