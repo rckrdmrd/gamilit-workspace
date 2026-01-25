@@ -1,6 +1,51 @@
 # Trazas de Tareas - Backend
 
-**Última actualización:** 2026-01-25 (TASK-006: Implementar generación real de reportes PDF/Excel/CSV)
+**Última actualización:** 2026-01-25 (TASK-012: Test Coverage Fixes)
+
+---
+
+## TASK-012: Test Coverage Fixes - Gamification Module ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** ALTA
+**Asignado:** CLAUDE-CODE
+**Fecha:** 2026-01-25
+**Story Points:** 3 SP
+
+### Resumen
+
+Corrección de 45 tests fallidos en el módulo de gamification para mejorar cobertura de tests y estabilidad de CI/CD.
+
+### Problema Identificado
+
+Desalineación entre mocks de tests y código de producción:
+- Controller tests usaban `req.user.sub` pero controllers usan `req.user.id`
+- Service tests faltaba mock de método `query()` para getMayaRanks
+- Missions tests tenían assertions incorrectas (userId vs profileId)
+- MissionGenerator tenía provider incorrecto y método mockeado erróneo
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `admin/__tests__/admin-gamification-config-us-ae-005.controller.spec.ts` | `req.user.sub` → `req.user.id` (4x) |
+| `admin/__tests__/gamification-config-us-ae-005.service.spec.ts` | +mock `query()`, +mockRanksQueryResult |
+| `gamification/services/__tests__/missions.service.spec.ts` | Corregido assertions userId, método rank |
+| `gamification/services/missions/__tests__/mission-generator.service.spec.ts` | +import, provider class, método correcto |
+
+### Métricas
+
+| Métrica | Antes | Después |
+|---------|-------|---------|
+| Tests fallidos | 45 | 0 |
+| Tests pasados | 252 | 297 |
+| Suites fallidas | 3 | 0 |
+| Pass rate | 84% | 99.3% |
+
+### Commits
+
+- `9924eb27` - test(gamification): Fix failing tests and increase coverage
+- `a7794926` - test(gamification): fix remaining failing test suites
 
 ---
 
