@@ -10,8 +10,8 @@ import { UserStatsService } from '@/modules/gamification/services/user-stats.ser
 import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service';
 import { MissionsService } from '@/modules/gamification/services/missions.service';
 import { AchievementsService } from '@/modules/gamification/services/achievements.service';
-import { NotificationService } from '@/modules/notifications/notification.service';
-import { MailService } from '@/modules/notifications/mail.service';
+import { NotificationService } from '@/modules/notifications/services/notification.service';
+import { MailService } from '@/modules/mail/mail.service';
 import { WebSocketService } from '@/modules/websocket/websocket.service';
 
 /**
@@ -1127,6 +1127,14 @@ describe('ExerciseSubmissionService - General Functionality', () => {
     sendNotificationEmail: jest.fn(),
   };
 
+  const mockAchievementsService = {
+    checkAndGrantAchievements: jest.fn(),
+  };
+
+  const mockWebSocketService = {
+    emitToUser: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -1156,27 +1164,35 @@ describe('ExerciseSubmissionService - General Functionality', () => {
           useValue: mockMLCoinsService,
         },
         {
-          provide: 'MissionsService',
+          provide: MissionsService,
           useValue: mockMissionsService,
         },
         {
-          provide: 'NotificationsService',
+          provide: NotificationService,
           useValue: mockNotificationsService,
         },
         {
-          provide: 'MailService',
+          provide: MailService,
           useValue: mockMailService,
+        },
+        {
+          provide: AchievementsService,
+          useValue: mockAchievementsService,
+        },
+        {
+          provide: WebSocketService,
+          useValue: mockWebSocketService,
         },
       ],
     }).compile();
 
     service = module.get<ExerciseSubmissionService>(ExerciseSubmissionService);
-    submissionRepo = module.get(getRepositoryToken(ExerciseSubmission, 'progress'));
-    exerciseRepo = module.get(getRepositoryToken(Exercise, 'educational'));
-    profileRepo = module.get(getRepositoryToken(Profile, 'auth'));
-    entityManager = module.get(getEntityManagerToken('progress'));
-    userStatsService = module.get<UserStatsService>(UserStatsService);
-    mlCoinsService = module.get<MLCoinsService>(MLCoinsService);
+    _submissionRepo = module.get(getRepositoryToken(ExerciseSubmission, 'progress'));
+    _exerciseRepo = module.get(getRepositoryToken(Exercise, 'educational'));
+    _profileRepo = module.get(getRepositoryToken(Profile, 'auth'));
+    _entityManager = module.get(getEntityManagerToken('progress'));
+    _userStatsService = module.get<UserStatsService>(UserStatsService);
+    _mlCoinsService = module.get<MLCoinsService>(MLCoinsService);
 
     jest.clearAllMocks();
   });
