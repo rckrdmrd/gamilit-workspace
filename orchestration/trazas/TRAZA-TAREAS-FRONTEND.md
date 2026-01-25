@@ -1,9 +1,72 @@
 # Traza de Tareas: NEXUS-FRONTEND
 
-**Última actualización:** 2026-01-25 (TASK-008: Fix notifDate.getTime en NotificationDropdown)
+**Última actualización:** 2026-01-25 (TASK-009: Fix cache invalidation en Teacher Reviews)
 **Revisado en auditoría:** 2026-01-10 (Sin cambios - contenido vigente)
 **Estado:** ✅ Portal Teacher COMPLETO - 14 páginas funcionales, navegación 100%
 **Estado:** ✅ Portal Student - Módulos 4 y 5 ACTIVOS - 8 ejercicios creativos funcionales
+
+---
+
+## TASK-009: Fix cache invalidation en Teacher Reviews - Completadas no aparecen ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1
+**Asignado:** CLAUDE-CODE
+**Fecha:** 2026-01-25
+**Story Points:** 2 SP
+
+### Resumen
+
+Corrección de bug donde los reviews completados no aparecían en la pestaña "Completadas" del Teacher Portal hasta refrescar la página manualmente.
+
+### Problema
+
+Después de calificar un ejercicio:
+1. El review se marcaba como completed en BD correctamente
+2. El modal de éxito se mostraba
+3. Al cerrar modal y volver a lista, el review NO aparecía en "Completadas"
+4. Solo aparecía después de F5 (refresh manual)
+
+### Causa Raíz
+
+En `ReviewDetail.tsx:231`, se llamaba directamente a `manualReviewApi.completeReview()` en lugar de usar el hook `useCompleteReview()`. El hook tiene la lógica de invalidar la cache de React Query en `onSuccess`, pero al llamar directamente a la API, la cache quedaba desactualizada.
+
+### Solución
+
+| Archivo | Líneas | Cambio |
+|---------|--------|--------|
+| `apps/teacher/components/review-panel/ReviewDetail.tsx` | +8 | Agregar invalidación manual de cache |
+
+### Código
+
+**Imports agregados:**
+```typescript
+import { useQueryClient } from '@tanstack/react-query';
+import { manualReviewKeys } from '../../hooks/useManualReviews';
+```
+
+**Hook agregado:**
+```typescript
+const queryClient = useQueryClient();
+```
+
+**Invalidación agregada (después de completeReview exitoso):**
+```typescript
+queryClient.invalidateQueries({ queryKey: manualReviewKeys.all });
+```
+
+### Validación
+
+| Check | Resultado |
+|-------|-----------|
+| Build Frontend | ✅ `built in 27.54s` |
+| Lint | ✅ 0 errores nuevos |
+| TypeScript | ✅ Sin errores |
+
+### Referencias
+
+- Documentación: `orchestration/tareas/TASK-009-fix-teacher-reviews-cache/`
+- Commit: `f63bafc5`
 
 ---
 
