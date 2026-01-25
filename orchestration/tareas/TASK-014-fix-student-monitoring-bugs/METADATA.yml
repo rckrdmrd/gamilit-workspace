@@ -1,0 +1,247 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA - TASK-014
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Fix bugs en Student Monitoring del Portal Teacher
+# - "Última actividad" mal mostrada en cards
+# - Pantalla negra al hacer clic en card de estudiante
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.2.0"  # Updated: Added additional files fixed in session 2
+task_id: "TASK-014"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "Fix bugs en Student Monitoring - última actividad y pantalla negra"
+  descripcion: |
+    Corrección de dos bugs críticos en el portal de Teacher, página de monitoreo:
+
+    Bug 1: "Última actividad" se muestra incorrectamente en los cards de estudiantes
+    - Causa raíz: El backend puede devolver last_activity como null, pero el frontend
+      no validaba este caso, causando que new Date(null) mostrara epoch (1970)
+
+    Bug 2: Pantalla negra al hacer clic en un card de estudiante
+    - Causa raíz: Si student.id era undefined (mapeo fallido de user_id), las APIs
+      fallaban y el modal mostraba solo el overlay negro sin contenido
+
+    Solución: Añadir validaciones defensivas en 5 archivos del frontend.
+  tipo: "bugfix"
+  prioridad: "P1"
+  tags:
+    - "teacher-portal"
+    - "student-monitoring"
+    - "null-safety"
+    - "defensive-coding"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "claude-opus-4-5-20251101"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "teacher/monitoring"
+  capas_afectadas:
+    - "frontend"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: "2026-01-25 14:00"
+  fecha_fin: "2026-01-25 15:00"
+  duracion_estimada: "1h"
+  duracion_real: "1h"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "completada"
+    archivo: "01-CONTEXTO.md"
+    completado_en: "2026-01-25 14:10"
+
+  analisis:
+    estado: "completada"
+    archivo: "02-ANALISIS.md"
+    completado_en: "2026-01-25 14:25"
+
+  plan:
+    estado: "omitida"
+    archivo: null
+    completado_en: null
+    notas: "Plan incluido en análisis por ser bugfix directo"
+
+  validacion:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25 14:50"
+    notas: "Build y lint exitosos"
+
+  ejecucion:
+    estado: "completada"
+    archivo: "05-EJECUCION.md"
+    completado_en: "2026-01-25 14:50"
+
+  documentacion:
+    estado: "completada"
+    archivo: "06-DOCUMENTACION.md"
+    completado_en: "2026-01-25 15:00"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARTEFACTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+artefactos:
+  archivos_creados: []
+
+  archivos_modificados:
+    # === Sesión 1: Fixes iniciales ===
+    - ruta: "apps/frontend/src/apps/teacher/types/index.ts"
+      cambio: "last_activity: string → string | null"
+    - ruta: "apps/frontend/src/apps/teacher/hooks/useStudentMonitoring.ts"
+      cambio: "Añadida validación de ID y valores por defecto para campos numéricos"
+    - ruta: "apps/frontend/src/apps/teacher/components/monitoring/StudentStatusCard.tsx"
+      cambio: "Validación null en getStatusInfo() y getTimeSinceLastActivity()"
+    - ruta: "apps/frontend/src/apps/teacher/components/monitoring/StudentDetailModal.tsx"
+      cambio: "Validación student.id antes de API calls, operador ?? en time_spent_minutes"
+    - ruta: "apps/frontend/src/apps/teacher/components/monitoring/StudentMonitoringPanel.tsx"
+      cambio: "Validación null en getStudentStatus() y sorting"
+    # === Sesión 2: Fixes adicionales post-análisis de impacto ===
+    - ruta: "apps/frontend/src/apps/teacher/components/monitoring/StudentMonitoringPanel.tsx"
+      cambio: "FIX líneas 71-76: Validación null en detección de eventos de conexión"
+    - ruta: "apps/frontend/src/apps/teacher/components/progress/StudentProgressList.tsx"
+      cambio: "FIX líneas 47-48: Validación null en sort por lastActivity. FIX líneas 116-129: getTimeSinceLastActivity acepta null"
+    - ruta: "apps/frontend/src/apps/teacher/pages/TeacherStudents.tsx"
+      cambio: "FIX línea 28: Tipo last_active cambiado a string | null"
+
+  archivos_eliminados: []
+
+  commits: []
+    # Pendiente de commit por usuario
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas:
+    - "TASK-011"  # Teacher Portal Validation Fixes (relacionado)
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "pasa"
+    output: "built in 25.60s"
+  lint:
+    estado: "pasa"
+    errores: 0
+    warnings: 47  # Pre-existentes
+  tests:
+    estado: "na"
+    passed: 0
+    failed: 0
+  typecheck:
+    estado: "pasa"
+    errores: 0
+  documentacion_completa: true
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  documentos_consultados:
+    - "@SIMCO-TAREA"
+    - "@SIMCO-EDICION-SEGURA"
+    - "apps/backend/src/modules/teacher/services/teacher-classrooms-crud.service.ts"
+    - "apps/backend/src/modules/teacher/dto/classroom-response.dto.ts"
+
+  directivas_aplicadas:
+    - "@QUICK"
+    - "@MODIFY-SAFE"
+
+  epica: null
+  user_story: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRACKING DE CONTEXTO/TOKENS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+context_tracking:
+  estimated_tokens:
+    initial_context: 30000
+    files_loaded: 25000
+    total_conversation: 80000
+
+  context_cleanups: 0
+  checkpoints_created: 0
+
+  subagents:
+    - id: "explore-agent-monitoring"
+      profile: "EXPLORE"
+      estimated_tokens: 8000
+      files_loaded: 15
+      task_description: "Explorar arquitectura de Student Monitoring en portal Teacher"
+
+  efficiency_metrics:
+    tokens_per_file_modified: 16000
+    tasks_completed_per_cleanup: 1
+    context_utilization_peak: "35%"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS Y LECCIONES APRENDIDAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  Bug reportado por usuario durante sesión de trabajo en gamilit.
+  Los bugs estaban relacionados con manejo defensivo de valores null/undefined
+  que el backend puede devolver legítimamente.
+
+  La discrepancia de tipos entre backend (Date | null) y frontend (string)
+  era la causa raíz principal.
+
+lecciones_aprendidas:
+  - "Siempre validar valores null/undefined antes de operaciones con Date"
+  - "Los tipos del frontend deben reflejar la realidad del backend (nullable)"
+  - "Añadir fallbacks en mapeo de datos para evitar errores de renderizado"
+  - "El operador ?? es preferible a || para valores por defecto numéricos"
+  - "Validar IDs antes de llamar APIs para evitar requests con undefined"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════

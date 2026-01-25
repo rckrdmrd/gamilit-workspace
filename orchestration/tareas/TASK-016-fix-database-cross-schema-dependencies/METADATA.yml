@@ -1,0 +1,228 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA - TASK-016
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Fix dependencias cross-schema en create-database.sh
+# - classroom_modules table no se creaba (FK a social_features antes de FASE 9)
+# - Seeds de classroom_modules no se cargaban
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+task_id: "TASK-016"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "Fix database cross-schema dependencies - classroom_modules table"
+  descripcion: |
+    Corrección de bug crítico en create-database.sh donde la tabla
+    educational_content.classroom_modules no se creaba correctamente.
+
+    Problema:
+    - classroom_modules tiene FK a social_features.classrooms
+    - El DDL estaba en FASE 6 (educational_content) pero la dependencia (social_features)
+      no se crea hasta FASE 9
+    - Resultado: La tabla no se creaba y student portal no mostraba módulos
+
+    Solución:
+    1. Mover DDL a subdirectorio _cross_schema/ (excluido de carga automática)
+    2. Agregar FASE 9.7 en create-database.sh para ejecutar tablas cross-schema
+    3. Crear seed 14-classroom_modules.sql para asignar módulos al classroom DEFAULT
+    4. Actualizar execute_sql_files para excluir _cross_schema/
+  tipo: "bugfix"
+  prioridad: "P0"
+  tags:
+    - "database"
+    - "cross-schema"
+    - "student-portal"
+    - "create-database"
+    - "foreign-key"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "claude-opus-4-5-20251101"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "database"
+  capas_afectadas:
+    - "database"
+    - "devops"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: "2026-01-25 18:00"
+  fecha_fin: "2026-01-25 19:30"
+  duracion_estimada: "1.5h"
+  duracion_real: "1.5h"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "completada"
+    archivo: "01-CONTEXTO.md"
+    completado_en: "2026-01-25 18:10"
+
+  analisis:
+    estado: "completada"
+    archivo: "02-ANALISIS.md"
+    completado_en: "2026-01-25 18:30"
+
+  plan:
+    estado: "omitida"
+    archivo: null
+    completado_en: null
+    notas: "Plan incluido en análisis por ser bugfix directo"
+
+  validacion:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25 19:20"
+    notas: "Base de datos recreada exitosamente con 146 tablas, 108 triggers"
+
+  ejecucion:
+    estado: "completada"
+    archivo: "05-EJECUCION.md"
+    completado_en: "2026-01-25 19:20"
+
+  documentacion:
+    estado: "completada"
+    archivo: "06-DOCUMENTACION.md"
+    completado_en: "2026-01-25 19:30"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARTEFACTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+artefactos:
+  archivos_creados:
+    - ruta: "apps/database/ddl/schemas/educational_content/tables/_cross_schema/23-classroom_modules.sql"
+      cambio: "DDL movido a subdirectorio para ejecución en FASE 9.7"
+    - ruta: "apps/database/seeds/prod/educational_content/14-classroom_modules.sql"
+      cambio: "Nuevo seed para asignar módulos publicados al classroom DEFAULT"
+
+  archivos_modificados:
+    - ruta: "apps/database/create-database.sh"
+      cambio: |
+        - Agregada FASE 9.7 para tablas cross-schema (líneas 892-907)
+        - Actualizado execute_sql_files para excluir _cross_schema/ (líneas 98, 100)
+        - Agregada ejecución de seed 14-classroom_modules.sql (líneas 1040-1042)
+
+  archivos_eliminados:
+    - ruta: "apps/database/ddl/schemas/educational_content/tables/23-classroom_modules.sql"
+      cambio: "Movido a _cross_schema/ (no eliminado, reubicado)"
+
+  commits: []  # Pendiente commit
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas:
+    - "TASK-014"  # Fix student monitoring (mismo contexto de investigación)
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "na"
+    output: "N/A - cambios de base de datos"
+  lint:
+    estado: "na"
+    errores: 0
+    warnings: 0
+  tests:
+    estado: "na"
+    passed: 0
+    failed: 0
+  typecheck:
+    estado: "na"
+    errores: 0
+  database_recreation:
+    estado: "pasa"
+    tablas: 146
+    triggers: 108
+    classroom_modules_records: 3
+    modules_records: 5
+  documentacion_completa: true
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  documentos_consultados:
+    - "@SIMCO-TAREA"
+    - "@SIMCO-DDL-UNIFIED"
+    - "@TRIGGER-DDL-WSL"
+    - "apps/database/create-database.sh"
+
+  directivas_aplicadas:
+    - "@QUICK"
+    - "@MODIFY-SAFE"
+
+  epica: null
+  user_story: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS Y LECCIONES APRENDIDAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  Bug descubierto durante investigación de TASK-014 cuando student portal
+  no mostraba módulos. El análisis de impacto confirmó que los cambios de
+  TASK-014 NO causaron el problema - era un bug pre-existente en el script
+  de creación de base de datos.
+
+  La tabla classroom_modules es especial porque tiene FKs a dos schemas:
+  - educational_content.modules (FASE 6)
+  - social_features.classrooms (FASE 9)
+
+  Esto requiere que se ejecute DESPUÉS de ambas fases.
+
+lecciones_aprendidas:
+  - "Las tablas con FKs cross-schema deben ejecutarse después de todas las dependencias"
+  - "Usar subdirectorio _cross_schema/ para aislar tablas con dependencias especiales"
+  - "Siempre verificar que create-database.sh recrea la BD completa antes de hacer commit"
+  - "El orden de ejecución de DDL en scripts debe seguir el grafo de dependencias FK"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════

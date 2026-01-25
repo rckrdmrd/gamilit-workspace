@@ -7,7 +7,7 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.6.0"
+version: "1.7.0"
 created: "2026-01-24"
 updated: "2026-01-25"
 proyecto: "gamilit"
@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 18
-  completadas: 18
+  total_tareas: 21
+  completadas: 21
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -67,6 +67,84 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  - task_id: "TASK-020"
+    titulo: "Fix SET LOCAL RLS Error - syntax error at or near $1"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-020-fix-set-local-rls/"
+    commits: []  # Pendiente commit
+    story_points: 1
+    capas_afectadas:
+      - "backend"
+    metricas:
+      archivos_modificados: 1
+      lineas_cambiadas: 16
+      bugs_corregidos: 1
+    descripcion: |
+      Fix crítico en TeacherReportsService donde SET LOCAL usaba queries
+      parametrizadas ($1) que PostgreSQL no soporta. Cambiado a literal
+      string con validación UUID previa para seguridad.
+      Líneas corregidas: 49, 74, 144, 207.
+
+  - task_id: "TASK-019"
+    titulo: "US-PM-007: Implementar Configuración de Alertas (Full Stack)"
+    tipo: "feature"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-019-us-pm-007-config-alertas/"
+    commits: []  # Pendiente commit
+    story_points: 8
+    capas_afectadas:
+      - "database"
+      - "backend"
+      - "frontend"
+    metricas:
+      archivos_creados: 8
+      archivos_modificados: 9
+      endpoints_agregados: 7
+      lineas_codigo: 1650
+    descripcion: |
+      Implementación full-stack de US-PM-007 (Configuración de Alertas):
+      - DDL: tabla teacher_alert_configurations con RLS
+      - Backend: Entity + DTOs + Service + Controller (7 endpoints)
+      - Frontend: API Client + Hook + TeacherAlertConfigPage
+      6 tipos de alertas configurables con umbrales y notificaciones.
+      Análisis de impacto confirmó CERO afectación a Student Portal.
+
+  - task_id: "TASK-018"
+    titulo: "US-PM-006: Implementar Bloqueo/Desbloqueo de Alumnos (Frontend)"
+    tipo: "feature"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-018-us-pm-006-bloquear-alumnos/"
+    commits: []  # Pendiente commit
+    story_points: 4
+    capas_afectadas:
+      - "frontend"
+    metricas:
+      archivos_creados: 3
+      archivos_modificados: 3
+      componentes_nuevos: 2
+      hooks_nuevos: 1
+    descripcion: |
+      Implementación frontend de US-PM-006 (Bloquear/Desbloquear Alumnos).
+      Backend ya existía en student-blocking.service.ts.
+      - Hook useStudentBlocking para gestión de estado
+      - SuspendStudentModal con tipo de bloqueo (completo/parcial)
+      - StudentActionsMenu con opciones contextuales
+      - Integración en StudentMonitoringPanel
+      Análisis de impacto confirmó CERO afectación a Student Portal.
+
   - task_id: "TASK-017"
     titulo: "Fix CASE alias error en servicios de alertas - Error 500"
     tipo: "bugfix"

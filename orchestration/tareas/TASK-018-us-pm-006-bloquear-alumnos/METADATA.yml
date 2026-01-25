@@ -1,0 +1,240 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.1.0"
+task_id: "TASK-018"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "US-PM-006: Implementar Bloqueo/Desbloqueo de Alumnos (Frontend)"
+  descripcion: |
+    Implementación del frontend para la funcionalidad de bloqueo/desbloqueo de
+    estudiantes en el Portal del Maestro. El backend ya existía implementado
+    en student-blocking.service.ts y TeacherClassroomsController.
+
+    Features implementadas:
+    - Modal de suspensión con tipo de bloqueo (completo/parcial)
+    - Menú de acciones contextual para cada estudiante
+    - Hook useStudentBlocking para gestión de estado
+    - Integración con API existente de bloqueo
+    - Badge visual de estado "Bloqueado" en listados
+  tipo: "feature"
+  prioridad: "P1"
+  tags:
+    - "teacher-portal"
+    - "student-management"
+    - "blocking"
+    - "US-PM-006"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "claude-opus-4-5-20251101"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "teacher"
+  capas_afectadas:
+    - "frontend"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: "2026-01-25 10:00"
+  fecha_fin: "2026-01-25 12:00"
+  duracion_estimada: "4h"
+  duracion_real: "2h"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+    nota: "Plan detallado proporcionado por usuario"
+
+  analisis:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+    nota: "Análisis de backend existente confirmó endpoints disponibles"
+
+  plan:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+    nota: "Plan en wondrous-tinkering-pony.md"
+
+  validacion:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+    nota: "Análisis de impacto confirmó CERO afectación a Student Portal"
+
+  ejecucion:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+
+  documentacion:
+    estado: "completada"
+    archivo: "METADATA.yml"
+    completado_en: "2026-01-25"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARTEFACTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+artefactos:
+  archivos_creados:
+    - ruta: "apps/frontend/src/apps/teacher/hooks/useStudentBlocking.ts"
+      tipo: "hook"
+      lineas: 160
+      descripcion: "Hook para gestión de bloqueo/desbloqueo de estudiantes"
+
+    - ruta: "apps/frontend/src/apps/teacher/components/monitoring/SuspendStudentModal.tsx"
+      tipo: "component"
+      lineas: 180
+      descripcion: "Modal para suspender estudiante con tipo de bloqueo"
+
+    - ruta: "apps/frontend/src/apps/teacher/components/monitoring/StudentActionsMenu.tsx"
+      tipo: "component"
+      lineas: 150
+      descripcion: "Menú dropdown de acciones por estudiante"
+
+  archivos_modificados:
+    - ruta: "apps/frontend/src/services/api/teacher/classroomsApi.ts"
+      cambio: "Agregados tipos BlockType, BlockStudentDto, StudentPermissionsResponse y 3 métodos de API"
+
+    - ruta: "apps/frontend/src/apps/teacher/hooks/index.ts"
+      cambio: "Export de useStudentBlocking y BlockType"
+
+    - ruta: "apps/frontend/src/apps/teacher/components/monitoring/StudentMonitoringPanel.tsx"
+      cambio: "Integración de StudentActionsMenu, SuspendStudentModal y badge de bloqueado"
+
+  archivos_eliminados: []
+
+  commits: []  # Pendiente commit junto con US-PM-007
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas:
+    - "TASK-019 (US-PM-007 Alert Config)"
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "pendiente"
+    output: null
+  lint:
+    estado: "pendiente"
+    errores: 0
+    warnings: 0
+  tests:
+    estado: "na"
+    passed: 0
+    failed: 0
+  typecheck:
+    estado: "pendiente"
+    errores: 0
+  documentacion_completa: true
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  documentos_consultados:
+    - "Plan wondrous-tinkering-pony.md"
+    - "student-blocking.service.ts (backend existente)"
+    - "teacher-classrooms.controller.ts (endpoints existentes)"
+
+  directivas_aplicadas:
+    - "@SIMCO-FRONTEND"
+    - "@SIMCO-TAREA"
+    - "@EDICION-SEGURA"
+
+  epica: "EXT-001"
+  user_story: "US-PM-006"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRACKING DE CONTEXTO/TOKENS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+context_tracking:
+  estimated_tokens:
+    initial_context: 20000
+    files_loaded: 15000
+    total_conversation: 50000
+
+  context_cleanups: 1
+  checkpoints_created: 0
+
+  subagents: []
+
+  efficiency_metrics:
+    tokens_per_file_modified: 8333
+    tasks_completed_per_cleanup: 1
+    context_utilization_peak: "35%"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS Y LECCIONES APRENDIDAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  Implementación de US-PM-006 (Bloquear/Desbloquear Alumnos) - SOLO FRONTEND.
+  El backend ya existía completamente implementado:
+  - POST /teacher/classrooms/:classroomId/students/:studentId/block
+  - POST /teacher/classrooms/:classroomId/students/:studentId/unblock
+  - GET /teacher/classrooms/:classroomId/students/:studentId/permissions
+
+  Se crearon componentes visuales y hook de integración.
+  Análisis de impacto confirmó CERO afectación al Student Portal.
+
+lecciones_aprendidas:
+  - "Verificar existencia de backend antes de planificar full-stack evita duplicación"
+  - "El patrón de hooks existente facilita agregar nuevas funcionalidades"
+  - "Separar modal y menú en componentes distintos mejora reutilización"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
