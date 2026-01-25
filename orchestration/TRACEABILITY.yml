@@ -8,16 +8,34 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.0.0"
+version: "1.1.0"
 proyecto: "gamilit"
 tipo: "STANDALONE"
-fecha_actualizacion: "2026-01-24"
+fecha_actualizacion: "2026-01-25"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # HISTORIAL DE VERSIONES
 # ─────────────────────────────────────────────────────────────────────────────
 
 versiones:
+  - version: "2.6.0"
+    fecha: "2026-01-25"
+    descripcion: "REPLICA_COMPLETA - Sincronizacion orchestration/ desde workspace-v2"
+    cambios:
+      - "Agregado agents/ (66 archivos): perfiles, configs, trazas"
+      - "Agregado directivas/ (124 archivos): SIMCO completo, triggers, modos"
+      - "Agregado _definitions/ (29 archivos): checklists, protocols, schemas"
+      - "Agregado referencias/ (29 archivos): aliases, prompts, matrices"
+      - "Agregado templates/ (60 archivos): por contexto, ciclo, proceso"
+      - "Agregado _quick/ (4 archivos): indices rapidos"
+      - "Actualizado _inheritance.yml: politica REPLICA_COMPLETA"
+      - "Actualizado BOOTLOADER.md: paths locales"
+    metricas:
+      archivos_nuevos: 312
+      lineas_agregadas: 93908
+    commit: "d81d8e16"
+    task_id: "TASK-005"
+
   - version: "2.5.0"
     fecha: "2026-01-24"
     descripcion: "Estandarización orchestration/ según SIMCO v4.3.0"
@@ -93,6 +111,23 @@ patrones_extraidos:
 # ─────────────────────────────────────────────────────────────────────────────
 
 tareas_recientes:
+  - id: "TASK-005"
+    titulo: "Sincronizacion orchestration/ desde workspace-v2"
+    estado: "completado"
+    fecha: "2026-01-25"
+    archivos_creados:
+      - "agents/ (66 archivos)"
+      - "directivas/ (124 archivos)"
+      - "_definitions/ (29 archivos)"
+      - "referencias/ (29 archivos)"
+      - "templates/ (60 archivos)"
+      - "_quick/ (4 archivos)"
+    archivos_modificados:
+      - "_inheritance.yml"
+      - "BOOTLOADER.md"
+    commit: "d81d8e16"
+    notas: "Politica cambiada a REPLICA_COMPLETA para independencia total"
+
   - id: "TASK-2026-01-24-ESTANDARIZACION"
     titulo: "Estandarización orchestration/ como STANDALONE"
     estado: "completado"
@@ -114,7 +149,7 @@ tareas_recientes:
 # ─────────────────────────────────────────────────────────────────────────────
 
 validaciones:
-  ultima_validacion: "2026-01-24"
+  ultima_validacion: "2026-01-25"
   resultado: "passed"
 
   archivos_obligatorios:
@@ -129,6 +164,18 @@ validaciones:
     TRACEABILITY.yml: true
     MAPA-DOCUMENTACION.yml: false  # Usa MAPA-DOCUMENTACION-GAMILIT.yml
 
+  carpetas_orchestration:
+    agents: true           # 66 archivos (sincronizado 2026-01-25)
+    directivas: true       # 124 archivos (sincronizado 2026-01-25)
+    _definitions: true     # 29 archivos (sincronizado 2026-01-25)
+    referencias: true      # 29 archivos (sincronizado 2026-01-25)
+    templates: true        # 60 archivos (sincronizado 2026-01-25)
+    _quick: true           # 4 archivos (sincronizado 2026-01-25)
+    inventarios: true
+    tareas: true
+    trazas: true
+
+  politica_herencia: "REPLICA_COMPLETA"  # Actualizado 2026-01-25
   coherencia_3_capas: "99%"
   build_status: "passing"
   lint_status: "passing"

@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 4
-  completadas: 4
+  total_tareas: 5
+  completadas: 5
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -47,6 +47,22 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  - task_id: "TASK-005"
+    titulo: "Sincronizacion orchestration/ desde workspace-v2"
+    tipo: "migration"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-005-sync-orchestration-from-workspace/"
+    commit: "d81d8e16"
+    story_points: 5
+    capas_afectadas:
+      - "orchestration"
+    descripcion: |
+      Replica completa de orchestration/ para independencia total.
+      312 archivos copiados (agents, directivas, _definitions, referencias, templates, _quick).
+
   - task_id: "TASK-004"
     titulo: "Corregir serializacion last_sign_in_at en admin users"
     tipo: "bugfix"

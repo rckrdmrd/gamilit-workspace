@@ -1,14 +1,37 @@
 # PROXIMA ACCION - GAMILIT
 
 **Ultima Actualizacion:** 2026-01-25
-**Estado del Proyecto:** MVP 80% completado
+**Estado del Proyecto:** MVP 80% completado | **orchestration REPLICA_COMPLETA**
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Tarea Completada:** TASK-002 (Correcciones Contratos API Backend-Frontend)
+**Tarea Completada:** TASK-005 (Sincronizacion orchestration/ desde workspace-v2)
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
 
 ## Estado Actual
+
+### TASK-005 COMPLETADA (2026-01-25)
+
+**Sincronizacion orchestration/ desde workspace-v2 para independencia total.**
+
+| Carpeta | Archivos | Descripcion |
+|---------|----------|-------------|
+| agents/ | 66 | Perfiles de agentes, configs, trazas |
+| directivas/ | 124 | SIMCO completo, triggers, modos |
+| _definitions/ | 29 | Checklists, protocols, schemas |
+| referencias/ | 29 | Aliases, prompts, matrices |
+| templates/ | 60 | Por contexto, ciclo, proceso |
+| _quick/ | 4 | Indices rapidos |
+| **TOTAL** | **312** | |
+
+**Cambios de Configuracion:**
+- `_inheritance.yml`: Politica `REFERENCIAR_NO_COPIAR` → `REPLICA_COMPLETA`
+- `BOOTLOADER.md`: Paths actualizados a locales
+
+**Commit:** d81d8e16
+**Ver detalles:** `orchestration/tareas/TASK-005-sync-orchestration-from-workspace/`
+
+---
 
 ### TASK-002 COMPLETADA (2026-01-25)
 
