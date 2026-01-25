@@ -8,7 +8,7 @@
 
 ---
 
-## Estructura (Estandarizada)
+## Estructura (Estandar CONSUMER/STANDALONE - 3 carpetas + _archive)
 
 ```
 orchestration/
@@ -24,36 +24,37 @@ orchestration/
 ├── MAPA-DOCUMENTACION.yml      # Mapa de documentacion
 │
 ├── 00-guidelines/              # Contexto y guias del proyecto
+│   ├── _MAP.md
 │   ├── CONTEXTO-PROYECTO.md
-│   └── HERENCIA-DIRECTIVAS.md
+│   ├── CONTEXTO-REFERENCIAS.md
+│   ├── HERENCIA-DIRECTIVAS.md
+│   ├── HERENCIA-SIMCO.md
+│   ├── PATHS-DOCUMENTACION.md
+│   ├── PATHS-TRABAJO.md
+│   └── directivas-locales/     # Directivas especificas de gamilit
+│       └── DIRECTIVA-*.md      # 11 directivas
 │
 ├── inventarios/                # INVENTARIOS (SSOT)
 │   ├── MASTER_INVENTORY.yml
 │   ├── BACKEND_INVENTORY.yml
 │   ├── DATABASE_INVENTORY.yml
-│   └── FRONTEND_INVENTORY.yml
+│   ├── FRONTEND_INVENTORY.yml
+│   └── ...                     # Otros inventarios
 │
 ├── trazas/                     # Trazas de ejecucion
+│   ├── _INDEX.yml
 │   ├── TRAZA-TAREAS-BACKEND.md
 │   ├── TRAZA-TAREAS-DATABASE.md
-│   └── TRAZA-TAREAS-FRONTEND.md
-│
-├── directivas/                 # Directivas locales
-│   ├── DIRECTIVA-DISENO-BASE-DATOS.md
-│   ├── DIRECTIVA-POLITICA-CARGA-LIMPIA.md
-│   └── ESTANDARES-API-ROUTES.md
-│
-├── tareas/                     # Tareas documentadas CAPVED
-│   ├── _INDEX.yml
-│   └── TASK-*/
+│   ├── TRAZA-TAREAS-FRONTEND.md
+│   └── LESSONS-LEARNED.yml
 │
 └── _archive/                   # Contenido historico (consolidado 2026-01-24)
+    ├── checklists/             # Checklists CAPVED (8 archivos)
+    ├── triggers/               # Triggers locales (6 archivos)
+    ├── tareas/                 # Tareas historicas TASK-2026-01-*
     ├── root-files/             # Archivos root movidos
     ├── agentes/                # Reportes y logs de agentes
     ├── analisis-*/             # 10 carpetas de analisis historicos
-    ├── environment/            # Configuracion de entorno
-    ├── errores/                # Registro de errores
-    ├── prompts/                # Prompts de agentes
     └── ...                     # Otras carpetas consolidadas
 ```
 
@@ -76,16 +77,14 @@ orchestration/
 
 ---
 
-## Carpetas Estandar (5 + _archive)
+## Carpetas Estandar (3 + _archive)
 
 | Carpeta | Proposito | Contenido |
 |---------|-----------|-----------|
-| `00-guidelines/` | Guias del proyecto | Contexto, herencia directivas |
-| `inventarios/` | SSOT de objetos | 4 inventarios por capa |
+| `00-guidelines/` | Guias del proyecto | Contexto, herencia, directivas-locales/ |
+| `inventarios/` | SSOT de objetos | 12 inventarios por capa |
 | `trazas/` | Trazas de tareas | Por dominio (DB, Backend, Frontend) |
-| `directivas/` | Directivas locales | Especificas de gamilit |
-| `tareas/` | Gobernanza | Tareas documentadas CAPVED |
-| `_archive/` | Historico | Contenido consolidado |
+| `_archive/` | Historico | Contenido consolidado (checklists, triggers, tareas) |
 
 ---
 
@@ -124,12 +123,13 @@ orchestration/
 | Directivas SIMCO | [../../orchestration/directivas/simco/](../../orchestration/directivas/simco/) |
 | Estandar Orchestration | [../../orchestration/directivas/simco/SIMCO-ESTANDAR-ORCHESTRATION.md](../../orchestration/directivas/simco/SIMCO-ESTANDAR-ORCHESTRATION.md) |
 | Inventarios | [inventarios/](inventarios/) |
-| Tareas | [tareas/_INDEX.yml](tareas/_INDEX.yml) |
+| Tareas (archive) | [_archive/tareas/_INDEX.yml](_archive/tareas/_INDEX.yml) |
 
 ---
 
-## Consolidacion 2026-01-24
+## Consolidacion 2026-01-24 (Completada)
 
+### Fase 1: Consolidacion Inicial
 Carpetas movidas a `_archive/`:
 - 35 carpetas no estandar incluyendo:
   - 10 carpetas analisis-* (historicos)
@@ -140,12 +140,21 @@ Carpetas movidas a `_archive/`:
   - scrum, scripts, templates
   - migracion-*, referencias
 
-Archivos root archivados:
+### Fase 2: Reorganizacion de Directivas
+- Directivas renombradas con prefijo DIRECTIVA-*
+- Directivas movidas a 00-guidelines/directivas-locales/
+
+### Fase 3: Consolidacion Final
+- checklists/ → _archive/checklists/
+- triggers/ → _archive/triggers/
+- tareas/ → _archive/tareas/
+
+### Archivos Root Archivados
 - CHANGELOG-SISTEMA-SUBAGENTES.md
 - README-*.md (5 archivos)
 - SPRINT-*.yml (2 archivos)
 
-**Reduccion:** 41 carpetas → 6 carpetas (85%)
+**Reduccion Final:** 41 carpetas → 3 carpetas + _archive (93%)
 
 ---
 
