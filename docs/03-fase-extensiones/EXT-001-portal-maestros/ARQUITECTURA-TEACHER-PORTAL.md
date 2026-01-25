@@ -1,8 +1,8 @@
 # Arquitectura Teacher Portal
 
-**Version:** 1.0.0
+**Version:** 2.0.0
 **Proyecto:** GAMILIT - EXT-001 Portal de Maestros
-**Fecha:** 2026-01-20
+**Fecha:** 2026-01-25
 **Autor:** @PERFIL_FRONTEND + @PERFIL_ARCHITECT
 
 ---
@@ -54,7 +54,7 @@ TeacherDashboardPage.tsx → Wrapper con LAYOUT (contexto de aplicacion)
 
 ## 2. Estructura de Archivos
 
-### 2.1 Paginas (12 Pares Component + Wrapper)
+### 2.1 Paginas (18 Pares Component + Wrapper)
 
 ```
 apps/frontend/src/apps/teacher/pages/
@@ -71,14 +71,14 @@ apps/frontend/src/apps/teacher/pages/
 ├── (Monitoring)                  + TeacherMonitoringPage.tsx
 ├── (Communication)               + TeacherCommunicationPage.tsx
 ├── (Exercise Responses)          + TeacherExerciseResponsesPage.tsx
+├── (Review Panel)                + TeacherReviewPanelPage.tsx
 ├── (Resources)                   + TeacherResourcesPage.tsx
 ├── (Settings)                    + TeacherSettingsPage.tsx
 ├── (Notifications)               + TeacherNotificationsPage.tsx
-├── (Notification Prefs)          + TeacherNotificationPreferencesPage.tsx
-└── (Review Panel)                + TeacherReviewPanelPage.tsx
+└── (Notification Prefs)          + TeacherNotificationPreferencesPage.tsx
 ```
 
-**Total: 25 paginas** (12 con patron explicitamente identificado)
+**Total: 18 paginas** (todas con patron Component + Wrapper)
 
 ### 2.2 Hooks (23 hooks especializados)
 
@@ -141,7 +141,7 @@ apps/frontend/src/apps/teacher/
 | `/teacher/students` | TeacherStudentsPage | teacher, admin_teacher |
 | `/teacher/assignments` | TeacherAssignmentsPage | teacher, admin_teacher |
 | `/teacher/responses` | TeacherExerciseResponsesPage | teacher, admin_teacher |
-| `/teacher/reviews` | ReviewPanelPage | teacher, admin_teacher |
+| `/teacher/reviews` | TeacherReviewPanelPage | teacher, admin_teacher |
 | `/teacher/progress` | TeacherProgressPage | teacher, admin_teacher |
 | `/teacher/alerts` | TeacherAlertsPage | teacher, admin_teacher |
 | `/teacher/reports` | TeacherReportsPage | teacher, admin_teacher |
@@ -150,10 +150,10 @@ apps/frontend/src/apps/teacher/
 | `/teacher/gamification` | TeacherGamificationPage | teacher, admin_teacher |
 | `/teacher/content` | TeacherContentPage | teacher, admin_teacher |
 | `/teacher/communication` | TeacherCommunicationPage | teacher, admin_teacher |
+| `/teacher/resources` | TeacherResourcesPage | teacher, admin_teacher |
 | `/teacher/settings` | TeacherSettingsPage | teacher, admin_teacher |
 | `/teacher/notifications` | TeacherNotificationsPage | teacher, admin_teacher |
 | `/teacher/settings/notifications` | TeacherNotificationPreferencesPage | teacher, admin_teacher |
-| `/teacher/resources` | Redirect → dashboard | N/A (placeholder) |
 
 ### 3.2 Layouts
 
@@ -483,5 +483,6 @@ El Teacher Portal usa el **Detective Theme**:
 ---
 
 **Documento generado:** 2026-01-20
+**Actualizado:** 2026-01-25 (18 páginas documentadas)
 **Metodologia:** CAPVED + SIMCO v4.0.0
 **Tarea:** P2-2 - Estandarizar documentacion de arquitectura Teacher Portal

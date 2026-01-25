@@ -2,7 +2,7 @@
 id: "US-PM-002c"
 title: "Vista de Envios"
 type: "User Story"
-status: "Backlog"
+status: "Done"
 priority: "Alta"
 assignee: "@Backend-Agent, @Frontend-Agent"
 epic: "EXT-001"
@@ -11,7 +11,7 @@ budget: "$1,750 MXN"
 sprint: "Sprint-6"
 labels: ["portal-maestros", "submissions", "view", "late-detection"]
 created_date: "2025-11-02"
-updated_date: "2026-01-04"
+updated_date: "2026-01-25"
 ---
 
 # US-PM-002c: Vista de Envíos
@@ -21,7 +21,7 @@ updated_date: "2026-01-04"
 **Story Points:** 4 SP
 **Presupuesto:** $1,750 MXN
 **Prioridad:** Alta (Extensión Fase 3)
-**Estado:** Backlog
+**Estado:** Done
 **Relación:** Parte de US-PM-002 (dividida en a/b/c)
 
 ## Descripción

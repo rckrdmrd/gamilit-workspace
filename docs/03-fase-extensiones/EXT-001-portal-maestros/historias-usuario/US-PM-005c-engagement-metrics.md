@@ -2,7 +2,7 @@
 id: "US-PM-005c"
 title: "Metricas de Engagement"
 type: "User Story"
-status: "Backlog"
+status: "Done"
 priority: "Media"
 assignee: "@Backend-Agent, @Frontend-Agent"
 epic: "EXT-001"
@@ -11,7 +11,7 @@ budget: "$1,300 MXN"
 sprint: "Sprint-9"
 labels: ["portal-maestros", "engagement", "metrics", "alerts", "activity-tracking"]
 created_date: "2025-11-02"
-updated_date: "2026-01-04"
+updated_date: "2026-01-25"
 ---
 
 # US-PM-005c: Métricas de Engagement
@@ -21,7 +21,7 @@ updated_date: "2026-01-04"
 **Story Points:** 3 SP
 **Presupuesto:** $1,300 MXN
 **Prioridad:** Media (Extensión Fase 3)
-**Estado:** Backlog
+**Estado:** Done
 **Relación:** Parte de US-PM-005 (dividida en a/b/c)
 
 ## Descripción

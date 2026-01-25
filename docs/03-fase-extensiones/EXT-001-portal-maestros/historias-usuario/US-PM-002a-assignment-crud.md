@@ -2,7 +2,7 @@
 id: "US-PM-002a"
 title: "CRUD de Asignaciones"
 type: "User Story"
-status: "Backlog"
+status: "Done"
 priority: "Alta"
 assignee: "@Backend-Agent, @Frontend-Agent"
 epic: "EXT-001"
@@ -11,7 +11,7 @@ budget: "$4,400 MXN"
 sprint: "Sprint-6"
 labels: ["portal-maestros", "assignments", "crud", "rich-text"]
 created_date: "2025-11-02"
-updated_date: "2026-01-04"
+updated_date: "2026-01-25"
 ---
 
 # US-PM-002a: CRUD de Asignaciones
@@ -21,7 +21,7 @@ updated_date: "2026-01-04"
 **Story Points:** 10 SP
 **Presupuesto:** $4,400 MXN
 **Prioridad:** Alta (Extensión Fase 3)
-**Estado:** Backlog
+**Estado:** Done
 **Relación:** Parte de US-PM-002 (dividida en a/b/c)
 
 ## Descripción

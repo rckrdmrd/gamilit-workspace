@@ -22,27 +22,33 @@ Desarrollar un portal dedicado para maestros que les permita gestionar sus clase
 
 ## 📁 Contenido
 
-### Historias de Usuario (15)
+### Historias de Usuario (21)
 
 | Historia | Título | SP | Estado | Origen |
 |----------|--------|----|--------|--------|
 | **[US-PM-000](./historias-usuario/US-PM-000-dashboard-maestro.md)** | Dashboard Maestro Base | 8 | ✅ | Movida de EAI-005 |
 | **[US-PM-001a](./historias-usuario/US-PM-001a-classroom-crud.md)** | CRUD de Classrooms | 3 | ✅ | Original |
 | **[US-PM-001b](./historias-usuario/US-PM-001b-student-enrollment.md)** | Inscripción de Estudiantes | 5 | ✅ | Original |
-| **[US-PM-002a](./historias-usuario/US-PM-002a-assignment-crud.md)** | CRUD de Assignments | 3 | ✅ | Original |
+| **[US-PM-002a](./historias-usuario/US-PM-002a-assignment-crud.md)** | CRUD de Assignments | 10 | ✅ | Original |
 | **[US-PM-002b](./historias-usuario/US-PM-002b-assignment-distribution.md)** | Distribución de Assignments | 5 | ✅ | Original |
 | **[US-PM-002c](./historias-usuario/US-PM-002c-submissions-view.md)** | Vista de Submissions | 4 | ✅ | Original |
-| **[US-PM-003a](./historias-usuario/US-PM-003a-grading-queue.md)** | Cola de Calificaciones | 4 | ✅ | Original |
+| **[US-PM-003a](./historias-usuario/US-PM-003a-grading-queue.md)** | Cola de Calificaciones | 8 | ✅ | Original |
 | **[US-PM-003b](./historias-usuario/US-PM-003b-grading-interface.md)** | Interfaz de Calificación | 5 | ✅ | Original |
 | **[US-PM-004a](./historias-usuario/US-PM-004a-progress-analytics.md)** | Analytics de Progreso | 5 | ✅ | Original |
 | **[US-PM-004b](./historias-usuario/US-PM-004b-teacher-notes.md)** | Notas de Maestro | 3 | ✅ | Original |
-| **[US-PM-005a](./historias-usuario/US-PM-005a-classroom-analytics.md)** | Analytics de Classroom | 5 | ✅ | Original |
+| **[US-PM-005a](./historias-usuario/US-PM-005a-classroom-analytics.md)** | Analytics de Classroom | 8 | ✅ | Original |
 | **[US-PM-005b](./historias-usuario/US-PM-005b-report-generation.md)** | Generación de Reportes | 5 | ✅ | Original |
 | **[US-PM-005c](./historias-usuario/US-PM-005c-engagement-metrics.md)** | Métricas de Engagement | 3 | ✅ | Original |
 | **[US-PM-006](./historias-usuario/US-PM-006-bloquear-alumnos-maestro.md)** | Bloquear/Desbloquear Alumnos | 8 | 📝 | Nueva - v2 CORE |
 | **[US-PM-007](./historias-usuario/US-PM-007-alert-configuration.md)** | Configuración de Alertas | 5 | 📝 | Nueva - GAP-1 |
+| **[US-PM-008](./historias-usuario/US-PM-008-gamification-management.md)** | Gestión de Gamificación | 8 | ✅ | Nueva - Fase 3 |
+| **[US-PM-009](./historias-usuario/US-PM-009-resources-management.md)** | Gestión de Recursos | 5 | ✅ | Nueva - Fase 3 |
+| **[US-PM-010](./historias-usuario/US-PM-010-communication-center.md)** | Centro de Comunicación | 8 | ✅ | Nueva - Fase 3 |
+| **[US-PM-011](./historias-usuario/US-PM-011-teacher-settings.md)** | Configuración de Maestro | 5 | ✅ | Nueva - Fase 3 |
+| **[US-PM-012](./historias-usuario/US-PM-012-notifications-center.md)** | Centro de Notificaciones | 8 | ✅ | Nueva - Fase 3 |
+| **[US-PM-013](./historias-usuario/US-PM-013-notification-preferences.md)** | Preferencias de Notificaciones | 5 | ✅ | Nueva - Fase 3 |
 
-**Total:** 71 SP (50 originales + 21 añadidos)
+**Total:** 113 SP (50 originales + 63 añadidos)
 
 ---
 
@@ -171,10 +177,10 @@ Desarrollar un portal dedicado para maestros que les permita gestionar sus clase
 
 | Métrica | Estimado | Real | Varianza |
 |---------|----------|------|----------|
-| **Presupuesto** | $15,000 | $28,600 | +91% |
-| **Story Points** | 50 | 71 | +42% |
-| **Duración** | 2 sprints | 3+ sprints | +50% |
-| **User Stories** | 12 | 15 | +25% |
+| **Presupuesto** | $15,000 | $45,200 | +201% |
+| **Story Points** | 50 | 113 | +126% |
+| **Duración** | 2 sprints | 5+ sprints | +150% |
+| **User Stories** | 12 | 21 | +75% |
 | **Componentes** | 12 | 15 | +25% |
 
 **Nota:** Incremento debido a US-PM-000, US-PM-006, y US-PM-007 agregadas post-release inicial.
@@ -260,7 +266,7 @@ Desarrollar un portal dedicado para maestros que les permita gestionar sus clase
 |---------|-------------|
 | [README.md](./README.md) | Descripción general de la épica |
 | [_MAP.md](./_MAP.md) | Este archivo - Índice maestro |
-| [historias-usuario/](./historias-usuario/) | 15 user stories (13 completadas, 2 en backlog) |
+| [historias-usuario/](./historias-usuario/) | 21 user stories (19 completadas, 2 en backlog) |
 | [especificaciones/](./especificaciones/) | Especificaciones técnicas (2 documentos) |
 | [implementacion/TRACEABILITY.yml](./implementacion/TRACEABILITY.yml) | Trazabilidad código-documentación |
 
@@ -278,7 +284,7 @@ Portal Maestros **transformó** el producto de individual a institucional:
 ---
 
 **Generado:** 2025-11-08
-**Actualizado:** 2026-01-20 (US-PM-007 + Especificaciones)
+**Actualizado:** 2026-01-25 (21 User Stories, estados actualizados, métricas corregidas)
 **Sistema:** SIMCO (Sistema Indexado Modular por Contexto)
 **Método:** Migración desde docs_bkp/
 **Versión:** 1.1.0
