@@ -1,9 +1,72 @@
 # Traza de Tareas: NEXUS-FRONTEND
 
-**Última actualización:** 2026-01-25 (TASK-009: Fix cache invalidation en Teacher Reviews)
+**Última actualización:** 2026-01-25 (TASK-011: Correcciones Portal Teacher Fases 1-4)
 **Revisado en auditoría:** 2026-01-10 (Sin cambios - contenido vigente)
 **Estado:** ✅ Portal Teacher COMPLETO - 14 páginas funcionales, navegación 100%
 **Estado:** ✅ Portal Student - Módulos 4 y 5 ACTIVOS - 8 ejercicios creativos funcionales
+
+---
+
+## TASK-011: Correcciones del Portal Teacher - Validación Integral (Fases 1-4) ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** ALTA
+**Asignado:** CLAUDE-CODE (claude-opus-4-5-20251101)
+**Fecha:** 2026-01-25
+**Story Points:** 8 SP
+**Commits:** f37ecee3, d3269316, 9a8e92ae, 66fb4dcd
+
+### Resumen
+
+Validación exhaustiva del Portal Teacher identificando 31 issues y corrigiendo 15 de ellos organizados en 4 fases por severidad.
+
+### Issues Corregidos
+
+#### Fase 1 - CRÍTICOS (5)
+| Issue | Archivo | Corrección |
+|-------|---------|------------|
+| Tipos InterventionAlert desincronizados | types/index.ts, AlertCard.tsx | Renombrar priority→severity, message→title, resolved→status |
+| Datos mock como fallback | AssignmentCreator.tsx | Eliminar mock, agregar toast.error |
+| Fallback silencioso a 0 | ReviewDetail.tsx | Validar explícitamente totalScore |
+| console.log en backend | manual-review.controller.ts | Eliminar logs de debug |
+| Validación classroom_id | - | Verificado OK via RLS |
+
+#### Fase 2 - ALTA (3)
+| Issue | Archivo | Corrección |
+|-------|---------|------------|
+| RLS validation | exercise-responses.service.ts | Verificado implementación existente |
+| Error sin feedback UI | ResponseFilters.tsx | Agregar toast.error |
+| Error genérico | manual-review.controller.ts | Usar UnauthorizedException |
+
+#### Fase 3 - MEDIA (3)
+| Issue | Archivo | Corrección |
+|-------|---------|------------|
+| Archivo deprecado | manualReviewExercises.ts | ELIMINADO (156 líneas) |
+| useEffects superpuestos | TeacherProgressPage.tsx | Consolidar en 1 effect |
+| Respuestas vacías | - | Verificado patrón REST correcto |
+
+#### Fase 4 - BAJA (4)
+| Issue | Archivo | Corrección |
+|-------|---------|------------|
+| 12 console.log debug | ReviewDetail.tsx | Eliminados todos |
+| Tipos 'any' | StudentProgressList.tsx | Cambiar a string\|number |
+| console.warn sin UI | TeacherProgressPage.tsx | Reemplazar con toast |
+| eslint-disable innecesario | StudentProgressList.tsx | Eliminado |
+
+### Métricas
+- Issues identificados: 31
+- Issues corregidos: 15
+- Archivos modificados: 10
+- Archivo eliminado: 1
+- Líneas eliminadas: ~195
+- Líneas agregadas: ~45
+
+### Documentación
+- Carpeta: `orchestration/tareas/TASK-011-teacher-portal-validation-fixes/`
+- METADATA.yml: Completo con CAPVED
+- Contexto: 01-CONTEXTO.md
+- Análisis: 02-ANALISIS.md
+- Ejecución: 03-EJECUCION.md
 
 ---
 

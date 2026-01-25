@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 11
-  completadas: 11
+  total_tareas: 12
+  completadas: 12
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -47,6 +47,38 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  - task_id: "TASK-011"
+    titulo: "Correcciones del Portal Teacher - Validacion Integral (Fases 1-4)"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    session: "adredsi"
+    carpeta: "TASK-011-teacher-portal-validation-fixes/"
+    commits:
+      - "f37ecee3"
+      - "d3269316"
+      - "9a8e92ae"
+      - "66fb4dcd"
+    story_points: 8
+    capas_afectadas:
+      - "frontend"
+      - "backend"
+    metricas:
+      issues_identificados: 31
+      issues_corregidos: 15
+      archivos_modificados: 10
+      archivos_eliminados: 1
+      lineas_eliminadas: 195
+    descripcion: |
+      Validacion exhaustiva del Portal Teacher con correccion de 15 issues
+      organizados en 4 fases por severidad:
+      - Fase 1 (Criticos): Tipos InterventionAlert, datos mock, validacion score
+      - Fase 2 (Alta): Error handling UI, UnauthorizedException
+      - Fase 3 (Media): Archivo deprecado, useEffects refactorizados
+      - Fase 4 (Baja): console.log debug, tipos 'any' corregidos
+
   - task_id: "TASK-010"
     titulo: "Consolidar RLS Policies para teacher_content (ALTA-001)"
     tipo: "bugfix"
