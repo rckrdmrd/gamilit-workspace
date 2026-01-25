@@ -23,6 +23,9 @@ import { WebSocketService } from '@/modules/websocket/websocket.service';
  * TODO: These tests require integration-level setup with proper exercise DTO validation.
  * Skipped until the validation DTOs and exercise types are fully aligned.
  */
+// FIXME: These tests need proper mock implementation to preserve entity modifications
+// The mocked save() returns static objects without preserving feedback/details set by the service.
+// To fix: Use mockImplementation that properly captures entity mutations.
 describe.skip('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
   let service: ExerciseSubmissionService;
   let submissionRepo: jest.Mocked<Repository<ExerciseSubmission>>;
@@ -36,6 +39,7 @@ describe.skip('ExerciseSubmissionService - Rueda de Inferencias Validation', () 
   const mockExercise: Partial<Exercise> = {
     id: 'exercise-123',
     exercise_type: 'rueda_inferencias' as any,
+    requires_manual_grading: true,
     passing_score: 70,
     max_points: 100,
     solution: {
@@ -590,6 +594,9 @@ describe.skip('ExerciseSubmissionService - Rueda de Inferencias Validation', () 
  * TODO: These tests require integration-level setup with proper exercise DTO validation.
  * Skipped until the validation DTOs and exercise types are fully aligned.
  */
+// FIXME: These tests need proper mock implementation to preserve entity modifications
+// The mocked save() returns static objects without preserving feedback/details set by the service.
+// To fix: Use mockImplementation that properly captures entity mutations.
 describe.skip('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () => {
   let service: ExerciseSubmissionService;
   let submissionRepo: jest.Mocked<Repository<ExerciseSubmission>>;
@@ -603,6 +610,7 @@ describe.skip('ExerciseSubmissionService - Completar Espacios Anti-redundancy', 
   const mockExerciseCompletarEspacios: Partial<Exercise> = {
     id: 'exercise-1.3',
     exercise_type: 'completar_espacios' as any,
+    requires_manual_grading: true,
     passing_score: 70,
     max_points: 100,
   };
@@ -731,7 +739,8 @@ describe.skip('ExerciseSubmissionService - Completar Espacios Anti-redundancy', 
         .mockResolvedValueOnce(mockSubmission)
         .mockResolvedValue({ ...mockSubmission, status: 'graded' as any });
       submissionRepo.create.mockReturnValue(mockSubmission);
-      submissionRepo.save.mockResolvedValue({ ...mockSubmission, status: 'graded' as any });
+      // Use mockImplementation to preserve entity modifications (feedback, details, etc.)
+      submissionRepo.save.mockImplementation((entity) => Promise.resolve({ ...entity, id: entity.id || 'submission-123' }));
 
       const result = await service.submitExercise('user-123', 'exercise-1.3', answers);
 
