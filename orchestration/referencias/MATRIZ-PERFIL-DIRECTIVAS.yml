@@ -1,0 +1,428 @@
+# MATRIZ-PERFIL-DIRECTIVAS.yml
+# Sistema de Mapeo Explicito: Perfil -> Directivas SIMCO
+# Version: 1.0.1
+# Fecha: 2026-01-20
+# Ubicacion: orchestration/referencias/MATRIZ-PERFIL-DIRECTIVAS.yml
+# Nota: Corregido formato YAML multi-documento (TASK-2026-01-20-003)
+
+# PROPOSITO
+# Este archivo define EXPLICITAMENTE que directivas debe cargar cada perfil de agente.
+# Usar este archivo para:
+# 1. Saber que leer al iniciar sesion segun tu perfil
+# 2. Delegar tareas con las directivas correctas
+# 3. Validar que un agente sigue las directivas apropiadas
+
+# ESTRUCTURA DE CADA PERFIL:
+# - obligatorias: Directivas que SIEMPRE debe cargar
+# - segun_operacion: Directivas adicionales segun la tarea
+# - referencia: Documentos de consulta (no carga obligatoria)
+# - tokens_estimados: Presupuesto aproximado de tokens
+
+perfiles:
+
+  # ============================================================================
+  # ORQUESTADORES Y COORDINADORES
+  # ============================================================================
+
+  META-ORQUESTADOR:
+    descripcion: "Agente coordinador del sistema SAAD"
+    alias: "@PERFIL_META_ORQUESTADOR"
+    obligatorias:
+      - CLAUDE.md (raiz workspace)
+      - orchestration/directivas/modos/MODE-FULL.md
+      - orchestration/directivas/triggers/_INDEX.md
+      - orchestration/directivas/principios/PRINCIPIO-CAPVED.md
+      - orchestration/referencias/INVOCACIONES.yml
+    segun_operacion:
+      delegacion:
+        - SIMCO-DELEGACION.md
+        - SIMCO-ASIGNACION-PERFILES.md
+      propagacion:
+        - orchestration/directivas/modos/MODE-PROPAGATION.md
+        - SIMCO-PROPAGACION.md
+    referencia:
+      - orchestration/agents/perfiles/_MAP.md
+      - MATRIZ-PERFIL-DIRECTIVAS.yml (este archivo)
+    tokens_estimados: 8000
+
+  ORQUESTADOR:
+    descripcion: "Tech Leader que coordina equipos de agentes"
+    alias: "@PERFIL_ORQUESTADOR"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-TAREA.md
+      - SIMCO-DELEGACION.md
+      - SIMCO-CONTEXT-ENGINEERING.md
+      - SIMCO-CONTROL-TOKENS.md
+    segun_operacion:
+      planificacion:
+        - SIMCO-ALINEACION.md
+        - SIMCO-DECISION-MATRIZ.md
+      validacion:
+        - SIMCO-VALIDAR.md
+    referencia:
+      - SIMCO-ASIGNACION-PERFILES.md
+      - orchestration/agents/perfiles/_MAP.md
+    tokens_estimados: 24500
+
+  TECH-LEADER:
+    descripcion: "Lider tecnico con vision arquitectonica"
+    alias: "@PERFIL_TECH_LEADER"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-TAREA.md
+      - SIMCO-DELEGACION.md
+      - SIMCO-CONTEXT-ENGINEERING.md
+    segun_operacion:
+      arquitectura:
+        - SIMCO-ARQUITECTURA.md
+        - SIMCO-ALINEACION.md
+      delegacion:
+        - SIMCO-ASIGNACION-PERFILES.md
+    referencia:
+      - SIMCO-CONTROL-TOKENS.md
+    tokens_estimados: 24000
+
+  # ============================================================================
+  # AGENTES DE DESARROLLO POR CAPA
+  # ============================================================================
+
+  DATABASE-AGENT:
+    descripcion: "Especialista en PostgreSQL y DDL"
+    alias: "@PERFIL_DATABASE"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-DDL.md
+      - SIMCO-CREAR.md
+      - SIMCO-VALIDAR.md
+      - SIMCO-DOCUMENTAR.md
+    segun_operacion:
+      modificacion:
+        - SIMCO-MODIFICAR.md
+        - SIMCO-MIGRACIONES-BD.md
+      sincronizacion:
+        - SIMCO-ALINEACION.md
+        - SIMCO-SINCRONIZACION-BD.md
+    referencia:
+      - DATABASE_INVENTORY.yml del proyecto
+      - TRAZA-TAREAS-DATABASE.md del proyecto
+    validaciones_requeridas:
+      - ./scripts/recreate-database.sh
+      - psql -c "\dt" para verificar tablas
+    tokens_estimados: 17000
+
+  BACKEND-AGENT:
+    descripcion: "Especialista en NestJS/TypeORM"
+    alias: "@PERFIL_BACKEND"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-BACKEND.md
+      - SIMCO-CREAR.md
+      - SIMCO-VALIDAR.md
+      - SIMCO-DOCUMENTAR.md
+    segun_operacion:
+      entity:
+        - SIMCO-ALINEACION.md (DDL -> Entity)
+      modificacion:
+        - SIMCO-MODIFICAR.md
+      testing:
+        - SIMCO-TESTING.md
+    referencia:
+      - BACKEND_INVENTORY.yml del proyecto
+      - TRAZA-TAREAS-BACKEND.md del proyecto
+    validaciones_requeridas:
+      - npm run build
+      - npm run lint
+      - npm run test
+    tokens_estimados: 19500
+
+  FRONTEND-AGENT:
+    descripcion: "Especialista en React/TypeScript"
+    alias: "@PERFIL_FRONTEND"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-FRONTEND.md
+      - SIMCO-CREAR.md
+      - SIMCO-VALIDAR.md
+      - SIMCO-DOCUMENTAR.md
+    segun_operacion:
+      componente:
+        - SIMCO-ALINEACION.md (DTO -> Types)
+      modificacion:
+        - SIMCO-MODIFICAR.md
+      testing:
+        - SIMCO-TESTING.md
+    referencia:
+      - FRONTEND_INVENTORY.yml del proyecto
+      - TRAZA-TAREAS-FRONTEND.md del proyecto
+    validaciones_requeridas:
+      - npm run build
+      - npm run lint
+      - npm run typecheck
+    tokens_estimados: 18000
+
+  MOBILE-AGENT:
+    descripcion: "Especialista en React Native"
+    alias: "@PERFIL_MOBILE"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-MOBILE.md
+      - SIMCO-CREAR.md
+      - SIMCO-VALIDAR.md
+    segun_operacion:
+      componente:
+        - SIMCO-FRONTEND.md (patrones compartidos)
+      integracion:
+        - SIMCO-INTEGRACIONES-EXTERNAS.md
+    referencia:
+      - MOBILE_INVENTORY.yml del proyecto
+    tokens_estimados: 20000
+
+  # ============================================================================
+  # AGENTES ESPECIALIZADOS
+  # ============================================================================
+
+  ML-SPECIALIST:
+    descripcion: "Especialista en Machine Learning y Python"
+    alias: "@PERFIL_ML_SPECIALIST"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-ML.md
+      - SIMCO-CREAR.md
+      - SIMCO-VALIDAR.md
+    segun_operacion:
+      modelo:
+        - SIMCO-TESTING.md (testing de modelos)
+      integracion:
+        - SIMCO-BACKEND.md (APIs FastAPI)
+    referencia:
+      - ML_INVENTORY.yml del proyecto
+    tokens_estimados: 22000
+
+  DEVOPS-AGENT:
+    descripcion: "Especialista en CI/CD y Docker"
+    alias: "@PERFIL_DEVOPS"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-DEVOPS.md
+      - SIMCO-CREAR.md
+      - SIMCO-VALIDAR.md
+    segun_operacion:
+      deployment:
+        - SIMCO-GIT.md
+        - SIMCO-GIT-REMOTES.md
+      monitoreo:
+        - PATRON-LOGGING.md
+    referencia:
+      - DEPLOYMENT-INVENTORY.yml
+      - CICD-PIPELINES-INVENTORY.yml
+    tokens_estimados: 22000
+
+  MCP-DEVELOPER:
+    descripcion: "Desarrollador de MCP Servers"
+    alias: "@PERFIL_MCP_DEVELOPER"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-MCP.md
+      - SIMCO-CREAR.md
+    segun_operacion:
+      import:
+        - SIMCO-MCP-IMPORT.md
+    referencia:
+      - MCP_INVENTORY.yml
+    tokens_estimados: 13500
+
+  RAG-ENGINEER:
+    descripcion: "Ingeniero de Retrieval-Augmented Generation"
+    alias: "@PERFIL_RAG_ENGINEER"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-RAG.md
+      - SIMCO-NIVELES.md
+    segun_operacion:
+      integracion:
+        - SIMCO-BACKEND.md
+    referencia:
+      - shared/knowledge-base/
+    tokens_estimados: 10500
+
+  # ============================================================================
+  # AGENTES DE CALIDAD Y VALIDACION
+  # ============================================================================
+
+  TESTING-AGENT:
+    descripcion: "Especialista en testing y QA"
+    alias: "@PERFIL_TESTING"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-TESTING.md
+      - SIMCO-CREAR.md
+      - SIMCO-VALIDAR.md
+    segun_operacion:
+      backend:
+        - PATRON-TESTING.md
+      frontend:
+        - SIMCO-FRONTEND.md (testing de componentes)
+    referencia:
+      - Inventarios de cada capa
+    tokens_estimados: 22000
+
+  CODE-REVIEWER:
+    descripcion: "Revisor de codigo"
+    alias: "@PERFIL_CODE_REVIEWER"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-VALIDAR.md
+      - checklists/CHECKLIST-CODE-REVIEW-API.md
+    segun_operacion:
+      backend:
+        - SIMCO-BACKEND.md
+      frontend:
+        - SIMCO-FRONTEND.md
+    referencia:
+      - PATRON-SEGURIDAD.md
+      - ANTIPATRONES.md
+    tokens_estimados: 18000
+
+  SECURITY-AUDITOR:
+    descripcion: "Auditor de seguridad"
+    alias: "@PERFIL_SECURITY_AUDITOR"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-VALIDAR.md
+      - PATRON-SEGURIDAD.md
+    segun_operacion:
+      auditoria:
+        - checklists/CHECKLIST-SEGURIDAD.md
+    referencia:
+      - Todos los inventarios
+    tokens_estimados: 20000
+
+  DATABASE-AUDITOR:
+    descripcion: "Auditor de base de datos"
+    alias: "@PERFIL_DATABASE_AUDITOR"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-DDL.md
+      - SIMCO-VALIDAR.md
+    segun_operacion:
+      sincronizacion:
+        - SIMCO-ALINEACION.md
+    referencia:
+      - DATABASE_INVENTORY.yml
+    tokens_estimados: 21000
+
+  # ============================================================================
+  # AGENTES DE DOCUMENTACION
+  # ============================================================================
+
+  DOCUMENTATION-AGENT:
+    descripcion: "Agente de documentacion"
+    alias: "@PERFIL_DOCUMENTADOR"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-DOCUMENTAR.md
+      - SIMCO-ESTRUCTURA-DOCS.md
+      - SIMCO-NOMENCLATURA.md
+    segun_operacion:
+      inventarios:
+        - SIMCO-INVENTARIOS.md
+      proyecto:
+        - SIMCO-DOCUMENTACION-PROYECTO.md
+    referencia:
+      - templates/
+    tokens_estimados: 14000
+
+  PROPAGATION-TRACKER:
+    descripcion: "Rastreador de propagaciones entre proyectos"
+    alias: "@PERFIL_PROPAGATION_TRACKER"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-PROPAGACION.md
+      - SIMCO-NIVELES.md
+      - SIMCO-VALIDAR.md
+    segun_operacion:
+      erp:
+        - Matriz de propagacion ERP
+    referencia:
+      - shared/knowledge-base/TRAZABILIDAD-PROPAGACION.yml
+    tokens_estimados: 18500
+
+  # ============================================================================
+  # AGENTES ARQUITECTURA Y ANALISIS
+  # ============================================================================
+
+  ARCHITECTURE-ANALYST:
+    descripcion: "Analista de arquitectura"
+    alias: "@PERFIL_ARCHITECTURE"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-ALINEACION.md
+      - SIMCO-VALIDAR.md
+      - SIMCO-DECISION-MATRIZ.md
+    segun_operacion:
+      integracion:
+        - SIMCO-INTEGRACIONES-EXTERNAS.md
+    referencia:
+      - patrones/
+      - ADRs del proyecto
+    tokens_estimados: 24000
+
+  REQUIREMENTS-ANALYST:
+    descripcion: "Analista de requerimientos"
+    alias: "@PERFIL_REQUIREMENTS"
+    obligatorias:
+      - directivas/principios/ (6 archivos)
+      - SIMCO-BUSCAR.md
+      - SIMCO-DOCUMENTAR.md
+    segun_operacion:
+      scrum:
+        - SIMCO-SCRUM-INTEGRATION.md
+    referencia:
+      - docs/ del proyecto
+    tokens_estimados: 22000
+
+# ============================================================================
+# REGLAS DE USO
+# ============================================================================
+
+reglas:
+  1_al_iniciar_sesion:
+    descripcion: "Cargar directivas obligatorias de tu perfil"
+    proceso:
+      - Identificar tu perfil
+      - Leer directivas en seccion 'obligatorias'
+      - Cargar CONTEXTO-PROYECTO del proyecto asignado
+
+  2_al_recibir_tarea:
+    descripcion: "Cargar directivas segun operacion"
+    proceso:
+      - Identificar tipo de operacion (crear, modificar, validar, etc.)
+      - Leer directivas en seccion 'segun_operacion' correspondiente
+      - Si no existe, usar 'obligatorias' base
+
+  3_al_delegar:
+    descripcion: "Incluir directivas en delegacion"
+    proceso:
+      - Buscar perfil del subagente en esta matriz
+      - Incluir directivas obligatorias en contexto heredado
+      - Incluir directivas segun operacion relevantes
+
+  4_validar_carga:
+    descripcion: "Verificar que cargaste lo correcto"
+    checklist:
+      - "[ ] Lei los 6 principios fundamentales"
+      - "[ ] Lei mi perfil en agents/perfiles/"
+      - "[ ] Lei las directivas obligatorias de mi perfil"
+      - "[ ] Lei el CONTEXTO-PROYECTO del proyecto"
+      - "[ ] Lei la PROXIMA-ACCION si existe"
+
+# ============================================================================
+# NOTAS
+# ============================================================================
+
+notas:
+  actualizacion: "Actualizar este archivo cuando se creen nuevos perfiles o directivas"
+  ubicacion_perfiles: "orchestration/agents/perfiles/"
+  ubicacion_directivas: "orchestration/directivas/simco/"
+  consulta_rapida: "Usar SIMCO-QUICK-REFERENCE.md para referencia de directivas"

@@ -1,0 +1,312 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONTEXT LAYER MAP - Sistema GCA (Gestion de Contexto Activa)
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Version: 1.0.0
+# Sistema: GCA + SIMCO
+# Proposito: Definir las 4 capas de contexto y sus reglas de gestion
+# Fecha: 2026-01-20
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+sistema: "GCA"
+fecha: "2026-01-20"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESUMEN DE CAPAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+resumen:
+  total_capas: 4
+  tokens_base_objetivo: 4500  # Capas 0 + 1
+  tokens_trabajo_max: 10000   # Capa 2
+  memoria_externa: "SESSION-TRACE.yml"  # Capa 3
+
+  distribucion:
+    capa_0_inmutable: 3000
+    capa_1_referencias: 1500
+    capa_2_trabajo: "variable (5000-10000)"
+    capa_3_traza: 0  # En disco
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CAPA 0: CONTEXTO INMUTABLE
+# ─────────────────────────────────────────────────────────────────────────────────
+# NUNCA se purga durante la sesion
+# Contiene identidad, principios resumidos, aliases
+
+capa_0_inmutable:
+  descripcion: "Contexto base que NUNCA se purga"
+  tokens_max: 3000
+  purga: "NUNCA"
+
+  componentes:
+    identidad:
+      descripcion: "Quien soy y donde estoy"
+      archivos:
+        - tipo: "perfil_compact"
+          path: "orchestration/agents/perfiles/compact/PERFIL-{TIPO}-COMPACT.md"
+          tokens: 250
+          incluir: "completo"
+        - tipo: "contexto_proyecto"
+          path: "{proyecto}/orchestration/CONTEXTO-PROYECTO.md"
+          tokens: 500
+          incluir: "solo seccion variables_resueltas + stack"
+      tokens_subtotal: 750
+
+    principios:
+      descripcion: "Principios fundamentales resumidos"
+      archivos:
+        - tipo: "resumen"
+          path: "orchestration/_internal/PRINCIPIOS-RESUMEN.md"
+          tokens: 300
+          incluir: "completo"
+      tokens_subtotal: 300
+
+    aliases:
+      descripcion: "Aliases pre-resueltos para navegacion"
+      archivos:
+        - tipo: "aliases_resolved"
+          path: "orchestration/referencias/ALIASES-RESOLVED.yml"
+          tokens: 350
+          incluir: "completo"
+      tokens_subtotal: 350
+
+  validacion:
+    al_inicio_sesion: true
+    verificar:
+      - "Perfil cargado correctamente"
+      - "Variables de proyecto resueltas"
+      - "Aliases disponibles"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CAPA 1: CONTEXTO DE REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+# Mapas de archivos (paths + descripciones, NO contenido)
+# Se purga solo al cambiar de proyecto
+
+capa_1_referencias:
+  descripcion: "Mapas de navegacion (referencias, no contenido)"
+  tokens_max: 1500
+  purga: "AL_CAMBIAR_PROYECTO"
+
+  componentes:
+    mapa_directivas:
+      descripcion: "Indice de todas las directivas"
+      archivos:
+        - tipo: "mapa"
+          path: "orchestration/_internal/MAPA-DIRECTIVAS.yml"
+          tokens: 400
+          incluir: "completo"
+      tokens_subtotal: 400
+
+    mapa_inventarios:
+      descripcion: "Indice de inventarios con conteos"
+      archivos:
+        - tipo: "mapa"
+          path: "orchestration/_internal/MAPA-INVENTARIOS.yml"
+          tokens: 300
+          incluir: "completo"
+      tokens_subtotal: 300
+
+    mapa_docs_proyecto:
+      descripcion: "Indice de docs del proyecto actual"
+      archivos:
+        - tipo: "mapa"
+          path: "{proyecto}/orchestration/_internal/MAPA-DOCS.yml"
+          tokens: 400
+          incluir: "completo"
+          opcional: true  # Puede no existir
+      tokens_subtotal: 400
+
+  uso:
+    proposito: "Consultar ANTES de cargar archivos a Capa 2"
+    flujo:
+      1: "Recibir tarea"
+      2: "Consultar mapas de Capa 1"
+      3: "Identificar archivos necesarios"
+      4: "Cargar solo esos archivos a Capa 2"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CAPA 2: CONTEXTO DE TRABAJO
+# ─────────────────────────────────────────────────────────────────────────────────
+# Contenido cargado bajo demanda
+# Se purga activamente (LRU + post-tarea)
+
+capa_2_trabajo:
+  descripcion: "Contexto activo de trabajo (bajo demanda)"
+  tokens_max: 10000
+  purga: "LRU + POST_TAREA"
+
+  tipos_contenido:
+    simco_activo:
+      descripcion: "SIMCO de operacion actual"
+      carga_cuando: "tarea_asignada"
+      purga_cuando: "tarea_completada + 5min"
+      tokens_tipicos: 800
+
+    simco_dominio:
+      descripcion: "SIMCO de dominio (DDL/BE/FE)"
+      carga_cuando: "tarea_requiere_dominio_especifico"
+      purga_cuando: "cambio_de_dominio + 10min"
+      tokens_tipicos: 800
+
+    inventario_extracto:
+      descripcion: "Seccion relevante del inventario"
+      carga_cuando: "necesidad_consulta_estado"
+      purga_cuando: "consulta_completada + 10min"
+      tokens_tipicos: 300
+
+    spec_documento:
+      descripcion: "Especificacion de la tarea"
+      carga_cuando: "inicio_tarea"
+      purga_cuando: "tarea_completada"
+      tokens_tipicos: 500
+
+    codigo_referencia:
+      descripcion: "Codigo de referencia (file:lines)"
+      carga_cuando: "antes_implementar"
+      purga_cuando: "implementacion_completada"
+      tokens_tipicos: 400
+
+  tracking:
+    por_item:
+      - id
+      - tipo
+      - path
+      - tokens
+      - timestamp_carga
+      - timestamp_ultimo_uso
+    proposito: "Permitir purga por LRU"
+
+  reglas_purga:
+    tiempo_inactivo: "10 minutos sin uso"
+    al_completar_tarea: "purgar spec y codigo de esa tarea"
+    umbral_alerta: 8000  # tokens
+    umbral_forzar: 10000  # tokens
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CAPA 3: TRAZA DE SESION (Memoria Externa)
+# ─────────────────────────────────────────────────────────────────────────────────
+# Archivo en disco, 0 tokens en contexto
+# Registro persistente de la sesion
+
+capa_3_traza:
+  descripcion: "Memoria externa en disco (SESSION-TRACE)"
+  tokens_contexto: 0
+  purga: "N/A - persistente"
+
+  archivo:
+    ubicacion: "{proyecto}/orchestration/trazas/SESSION-TRACE-{fecha}.yml"
+    crear_al: "inicio_sesion"
+    actualizar_en:
+      - "tarea_completada"
+      - "purga_ejecutada"
+      - "decision_tomada"
+      - "error_encontrado"
+
+  contenido:
+    sesion:
+      - inicio
+      - agente
+      - proyecto
+    tareas_ejecutadas:
+      - id
+      - descripcion
+      - inicio_fin
+      - resultado
+      - archivos_creados
+      - archivos_modificados
+    purgas_ejecutadas:
+      - timestamp
+      - razon
+      - items_purgados
+      - tokens_liberados
+    metricas:
+      - pico_tokens
+      - purgas_totales
+      - tareas_completadas
+
+  consulta:
+    metodo: "Read tool bajo demanda"
+    cuando: "Necesito recordar tarea anterior o contexto purgado"
+    tokens_consulta: "variable (solo lo necesario)"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FLUJO DE CARGA
+# ─────────────────────────────────────────────────────────────────────────────────
+
+flujo_carga:
+  inicio_sesion:
+    paso_1:
+      accion: "Cargar Capa 0 completa"
+      tokens: 3000
+    paso_2:
+      accion: "Cargar Capa 1 completa"
+      tokens: 1500
+    paso_3:
+      accion: "Crear SESSION-TRACE.yml"
+      tokens: 0
+    resultado: "Listo para recibir tareas (~4500 tokens)"
+
+  al_recibir_tarea:
+    paso_1:
+      accion: "Analizar keywords de tarea"
+    paso_2:
+      accion: "Consultar mapas de Capa 1"
+    paso_3:
+      accion: "Identificar archivos necesarios"
+    paso_4:
+      accion: "Cargar a Capa 2 con timestamp"
+
+  al_completar_tarea:
+    paso_1:
+      accion: "Registrar resultado en SESSION-TRACE"
+    paso_2:
+      accion: "Evaluar purga de Capa 2"
+    paso_3:
+      accion: "Ejecutar purga si necesario"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REGLAS DE PURGA
+# ─────────────────────────────────────────────────────────────────────────────────
+
+reglas_purga:
+  R1_nunca_purgar:
+    descripcion: "Capa 0 es inmutable"
+    aplica_a: "capa_0"
+
+  R2_purga_por_proyecto:
+    descripcion: "Capa 1 se recarga al cambiar proyecto"
+    aplica_a: "capa_1"
+
+  R3_purga_por_tiempo:
+    descripcion: "Items de Capa 2 sin uso por 10min"
+    aplica_a: "capa_2"
+    criterio: "timestamp_ultimo_uso + 10min < ahora"
+
+  R4_purga_post_tarea:
+    descripcion: "Contexto de tarea al completar"
+    aplica_a: "capa_2"
+    items: ["spec_documento", "codigo_referencia"]
+
+  R5_purga_preventiva:
+    descripcion: "Forzar purga si tokens > umbral"
+    aplica_a: "capa_2"
+    umbral: 10000
+    estrategia: "LRU hasta < 8000"
+
+  R6_registrar_siempre:
+    descripcion: "Toda purga se registra en SESSION-TRACE"
+    aplica_a: "todas"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  directiva_principal: "SIMCO-CONTEXT-MANAGEMENT.md"
+  principio_base: "PRINCIPIO-ECONOMIA-TOKENS.md"
+  cca_original: "SIMCO-INICIALIZACION.md"
+  analisis: "orchestration/analisis/ANALISIS-GESTION-CONTEXTO-AGENTES-2026-01-20.md"
+  adr: "docs/90-adr/ADR-0003-sistema-gca-gestion-contexto-activa.md"

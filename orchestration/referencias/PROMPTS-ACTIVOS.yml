@@ -1,0 +1,100 @@
+# PROMPTS-ACTIVOS.yml
+# Prompts de tareas actualmente en ejecución por agentes externos
+#
+# Sistema: SIMCO v4.0
+# Directiva: SIMCO-PROMPTS-AGENTES.md
+# Actualizado: 2026-01-20
+
+version: "1.0.0"
+actualizado: "2026-01-20"
+
+# =============================================================================
+# INSTRUCCIONES DE USO
+# =============================================================================
+#
+# AGREGAR PROMPT:
+#   1. Generar ID: PROMPT-{YYYY-MM-DD}-{NNN}
+#   2. Copiar template de abajo
+#   3. Llenar todos los campos obligatorios
+#   4. Verificar que prompt incluye todas las secciones estándar
+#
+# ACTUALIZAR ESTADO:
+#   - pendiente: Prompt creado, agente no ha iniciado
+#   - en_ejecucion: Agente trabajando activamente
+#   - pausado: Agente pausó (contexto alto, bloqueado, etc.)
+#
+# CERRAR PROMPT:
+#   1. Mover entrada completa a PROMPTS-HISTORICO.yml
+#   2. Agregar fecha_fin, resultado, commits
+#   3. Eliminar de este archivo
+#
+# =============================================================================
+
+# Contador para IDs del día actual
+contador_dia:
+  fecha: "2026-01-20"
+  ultimo_numero: 0
+
+# =============================================================================
+# PROMPTS ACTIVOS
+# =============================================================================
+
+prompts_activos: []
+
+# =============================================================================
+# TEMPLATE (copiar para nuevo prompt)
+# =============================================================================
+
+_template:
+  id: "PROMPT-YYYY-MM-DD-NNN"
+  tarea_ref: "ID-TAREA"  # Referencia a tarea en TAREAS-PENDIENTES
+  titulo: "Título descriptivo de la tarea"
+  agente_asignado: "trae|windsurf|gemini"
+  proyecto: "nombre-proyecto"
+
+  # Metadatos
+  fecha_creacion: "YYYY-MM-DDTHH:MM:SS"
+  creado_por: "claude-code|humano"
+  estado: "pendiente"  # pendiente | en_ejecucion | pausado
+  prioridad: "P0|P1|P2|P3"
+
+  # Prompt completo (usar | para multiline)
+  prompt: |
+    Hola, [rol] para [proyecto].
+
+    CONTEXTO:
+    - Proyecto: [ruta]
+    - Stack: [tecnologías]
+    - Completitud: [%]
+
+    ARCHIVOS A LEER (en orden):
+    1. [archivo1] - [propósito]
+    2. [archivo2] - [propósito]
+
+    TAREA: [título]
+
+    PASOS:
+    1. [paso 1]
+    2. [paso 2]
+    ...
+
+    CRITERIOS DE ACEPTACIÓN:
+    - [ ] [criterio 1]
+    - [ ] [criterio 2]
+
+    VALIDACIONES:
+    - npm run build
+    - npm run lint
+
+    GIT:
+    - Commit en submodulo primero
+    - Mensaje: "[ID] tipo: descripción"
+    - Push al terminar
+
+    Listo para ejecutar.
+
+  # Checkpoint (si pausado)
+  checkpoint_actual: null
+
+  # Notas durante ejecución
+  notas: []

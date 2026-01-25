@@ -1,0 +1,237 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# CATÁLOGO DE ERRORES COMUNES POR DOMINIO
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Alias: @DEF_SEC_ERRORS
+# Versión: 1.0.0
+# Actualizado: 2026-01-16
+#
+# Propósito: Catálogo centralizado de errores comunes y sus soluciones
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+updated: "2026-01-16"
+maintained_by: "@WS_ORCHESTRATOR"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ERRORES DE BACKEND (NestJS/TypeORM)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+backend:
+  build_errors:
+    - code: "BE-001"
+      error: "Cannot find module"
+      causa: "Import incorrecto o módulo no instalado"
+      solucion:
+        - "Verificar ruta de import (relativa vs absoluta)"
+        - "Ejecutar `npm install`"
+        - "Verificar tsconfig.json paths"
+
+    - code: "BE-002"
+      error: "Type X is not assignable to type Y"
+      causa: "Incompatibilidad de tipos TypeScript"
+      solucion:
+        - "Verificar tipos en DTOs y entities"
+        - "Sincronizar tipos entre capas"
+        - "Revisar @DEF_VAL_BE para validaciones"
+
+    - code: "BE-003"
+      error: "Circular dependency detected"
+      causa: "Módulos importándose mutuamente"
+      solucion:
+        - "Usar forwardRef() en imports"
+        - "Extraer interfaz común a módulo shared"
+        - "Revisar arquitectura de módulos"
+
+  runtime_errors:
+    - code: "BE-010"
+      error: "Entity not found"
+      causa: "Registro no existe en BD"
+      solucion:
+        - "Verificar ID correcto"
+        - "Implementar manejo de NotFoundException"
+        - "Verificar datos seed/migraciones"
+
+    - code: "BE-011"
+      error: "Duplicate key violation"
+      causa: "Constraint unique violado"
+      solucion:
+        - "Verificar lógica de creación"
+        - "Implementar validación previa"
+        - "Revisar índices únicos en DDL"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ERRORES DE FRONTEND (React/Next.js)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+frontend:
+  build_errors:
+    - code: "FE-001"
+      error: "Module not found"
+      causa: "Componente o librería no encontrada"
+      solucion:
+        - "Verificar instalación: `npm install`"
+        - "Verificar ruta de import"
+        - "Verificar next.config.js transpilePackages"
+
+    - code: "FE-002"
+      error: "Hydration mismatch"
+      causa: "Server y client renderizaron diferente HTML"
+      solucion:
+        - "Usar useEffect para código client-only"
+        - "Verificar fechas/timestamps renderizados"
+        - "Usar suppressHydrationWarning con precaución"
+
+    - code: "FE-003"
+      error: "Invalid hook call"
+      causa: "Hook fuera de componente o en condicional"
+      solucion:
+        - "Mover hook a top-level del componente"
+        - "Verificar no hay múltiples versiones de React"
+        - "Revisar reglas de hooks"
+
+  runtime_errors:
+    - code: "FE-010"
+      error: "Cannot read property of undefined"
+      causa: "Acceso a propiedad de objeto null/undefined"
+      solucion:
+        - "Usar optional chaining (?.)"
+        - "Verificar datos antes de renderizar"
+        - "Implementar loading states"
+
+    - code: "FE-011"
+      error: "CORS error"
+      causa: "API bloqueando requests cross-origin"
+      solucion:
+        - "Configurar CORS en backend"
+        - "Usar proxy en desarrollo"
+        - "Verificar URLs de API"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ERRORES DE DATABASE (PostgreSQL/TypeORM)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+database:
+  ddl_errors:
+    - code: "DB-001"
+      error: "Relation does not exist"
+      causa: "Tabla no creada o nombre incorrecto"
+      solucion:
+        - "Ejecutar scripts DDL"
+        - "Verificar nombre de tabla (schema.tabla)"
+        - "Ejecutar ./scripts/recreate-database.sh"
+
+    - code: "DB-002"
+      error: "Column does not exist"
+      causa: "Columna no existe en tabla"
+      solucion:
+        - "Verificar DDL tiene la columna"
+        - "Sincronizar entity con DDL"
+        - "Ejecutar migration si falta"
+
+    - code: "DB-003"
+      error: "Foreign key constraint violation"
+      causa: "Referencia a registro inexistente"
+      solucion:
+        - "Verificar orden de inserts"
+        - "Verificar datos seed"
+        - "Implementar cascade si apropiado"
+
+  typeorm_errors:
+    - code: "DB-010"
+      error: "Entity metadata not found"
+      causa: "Entity no registrada en módulo"
+      solucion:
+        - "Agregar entity a TypeOrmModule.forFeature()"
+        - "Verificar @Entity() decorator"
+        - "Verificar import del entity"
+
+    - code: "DB-011"
+      error: "Query runner already released"
+      causa: "Transacción mal manejada"
+      solucion:
+        - "Usar queryRunner.release() solo al final"
+        - "Verificar try/catch/finally"
+        - "Revisar manejo de transacciones"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ERRORES DE GOBERNANZA SIMCO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+governance:
+  simco_errors:
+    - code: "GOV-001"
+      error: "Tarea marcada completa sin carpeta TASK-*"
+      causa: "No se siguió TRIGGER-DOC-OBLIGATORIA"
+      solucion:
+        - "Crear carpeta en orchestration/tareas/"
+        - "Completar METADATA.yml"
+        - "Actualizar _INDEX.yml"
+
+    - code: "GOV-002"
+      error: "Objeto creado sin verificar catálogo"
+      causa: "No se siguió TRIGGER-ANTI-DUPLICACION"
+      solucion:
+        - "Verificar shared/catalog/CATALOG-INDEX.yml"
+        - "Verificar inventario del proyecto"
+        - "Consolidar si hay duplicado"
+
+    - code: "GOV-003"
+      error: "Incoherencia entre DDL y Entity"
+      causa: "No se siguió TRIGGER-COHERENCIA-CAPAS"
+      solucion:
+        - "Sincronizar columnas DDL con campos entity"
+        - "Verificar tipos compatibles"
+        - "Actualizar inventarios"
+
+    - code: "GOV-004"
+      error: "Inventario desactualizado"
+      causa: "No se siguió TRIGGER-INVENTARIOS-SINCRONIZADOS"
+      solucion:
+        - "Actualizar DATABASE_INVENTORY.yml"
+        - "Actualizar BACKEND_INVENTORY.yml"
+        - "Actualizar MASTER_INVENTORY.yml"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ERRORES DE PROPAGACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+propagation:
+  errors:
+    - code: "PROP-001"
+      error: "Cambio no propagado a verticales"
+      causa: "Cambio en erp-core no distribuido"
+      solucion:
+        - "Consultar DEPENDENCY-GRAPH.yml"
+        - "Ejecutar @PROPAGATE-ERP"
+        - "Validar build en cada vertical"
+
+    - code: "PROP-002"
+      error: "Conflicto de merge en propagación"
+      causa: "Vertical tiene cambios locales incompatibles"
+      solucion:
+        - "Resolver conflictos manualmente"
+        - "Priorizar versión de erp-core"
+        - "Documentar excepciones"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# INSTRUCCIONES DE USO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+instructions:
+  como_usar: |
+    1. Buscar error por código o mensaje
+    2. Identificar causa raíz
+    3. Aplicar solución recomendada
+    4. Si persiste, escalar según DELEGATION-PROTOCOL
+
+  como_agregar_error: |
+    1. Identificar categoría (backend, frontend, database, governance)
+    2. Asignar código único (XX-NNN)
+    3. Documentar error, causa y solución
+    4. Incluir ejemplos si aplica
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DEL CATÁLOGO
+# ═══════════════════════════════════════════════════════════════════════════════

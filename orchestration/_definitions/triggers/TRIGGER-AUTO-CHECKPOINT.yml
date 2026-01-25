@@ -1,0 +1,222 @@
+# TRIGGER-AUTO-CHECKPOINT.yml
+# Sistema NEXUS v4.1 - Gestión de Contexto
+# Fecha: 2026-01-24
+# Versión: 1.0.0
+
+version: "1.0.0"
+descripcion: |
+  Define los eventos que disparan checkpoint automático.
+  Objetivo: Preservar estado crítico antes de potencial pérdida por compactación.
+
+# ============================================================================
+# EVENTOS DE CHECKPOINT
+# ============================================================================
+
+eventos:
+  # ─────────────────────────────────────────────────────────────────────────
+  # TOKEN_THRESHOLD_70 - Alerta temprana
+  # ─────────────────────────────────────────────────────────────────────────
+  TOKEN_THRESHOLD_70:
+    descripcion: "Disparado al alcanzar 70% de tokens (14,000)"
+    tipo: "warning"
+    accion:
+      nombre: "checkpoint_sugerido"
+      automatico: false
+      pasos:
+        - "Mostrar alerta: 'Tokens al 70%, considerar checkpoint'"
+        - "Ofrecer opción de checkpoint manual"
+        - "Continuar operación normal"
+    frecuencia: "una_vez_por_umbral"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # TOKEN_THRESHOLD_85 - Checkpoint automático
+  # ─────────────────────────────────────────────────────────────────────────
+  TOKEN_THRESHOLD_85:
+    descripcion: "Disparado al alcanzar 85% de tokens (17,000)"
+    tipo: "critical"
+    accion:
+      nombre: "checkpoint_automatico"
+      automatico: true
+      pasos:
+        - "Pausar operación actual (punto seguro)"
+        - "Ejecutar CHECKPOINT-PROTOCOL completo"
+        - "Purgar L3 items no esenciales"
+        - "Resumir operación"
+    frecuencia: "cada_vez_que_alcanza"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # DECISION_ARQUITECTURAL - Después de decisión importante
+  # ─────────────────────────────────────────────────────────────────────────
+  DECISION_ARQUITECTURAL:
+    descripcion: "Disparado después de tomar decisión arquitectural"
+    tipo: "milestone"
+    detectores:
+      - "Mención de 'decidido', 'elegido', 'arquitectura'"
+      - "Creación de ADR"
+      - "Cambio de patrón de diseño"
+      - "Selección de tecnología"
+    accion:
+      nombre: "checkpoint_decision"
+      automatico: true
+      pasos:
+        - "Extraer decisión y contexto"
+        - "Registrar en DECISIONES-SESION.yml"
+        - "Crear checkpoint parcial (solo decisiones)"
+    frecuencia: "cada_decision"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # SUBTAREA_COMPLETADA - Al completar subtarea
+  # ─────────────────────────────────────────────────────────────────────────
+  SUBTAREA_COMPLETADA:
+    descripcion: "Disparado al completar una subtarea"
+    tipo: "progress"
+    detectores:
+      - "Validación exitosa (build/lint pass)"
+      - "Commit realizado"
+      - "Mensaje 'subtarea completada'"
+    accion:
+      nombre: "checkpoint_progreso"
+      automatico: true
+      pasos:
+        - "Registrar subtarea como completada"
+        - "Actualizar PROXIMA-ACCION.md"
+        - "Opcional: purgar L3 de subtarea si no se necesita"
+    frecuencia: "cada_subtarea"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # TIEMPO_30_MIN - Checkpoint por tiempo
+  # ─────────────────────────────────────────────────────────────────────────
+  TIEMPO_30_MIN:
+    descripcion: "Disparado cada 30 minutos de trabajo continuo"
+    tipo: "time_based"
+    intervalo: "30 minutos"
+    accion:
+      nombre: "checkpoint_periodico"
+      automatico: true
+      pasos:
+        - "Verificar si hay cambios no guardados"
+        - "Si hay cambios: ejecutar checkpoint"
+        - "Si no hay cambios: skip"
+        - "Resetear timer"
+    frecuencia: "periodica"
+
+# ============================================================================
+# PROTOCOLO DE CHECKPOINT
+# ============================================================================
+
+checkpoint_protocol:
+  nombre: "CHECKPOINT-PROTOCOL"
+  referencia: "@DEF_CHECKPOINT"
+
+  pasos:
+    1_pausar:
+      descripcion: "Encontrar punto seguro para pausar"
+      acciones:
+        - "Completar operación atómica actual"
+        - "No interrumpir en medio de escritura"
+        - "Esperar confirmación de I/O"
+
+    2_extraer:
+      descripcion: "Extraer información crítica"
+      campos:
+        - tarea_actual: "ID y descripción"
+        - fase_capved: "C|A|P|V|E|D"
+        - subtarea_actual: "Descripción"
+        - decisiones: "Lista de decisiones tomadas"
+        - archivos_modificados: "Lista de paths"
+        - errores: "Errores encontrados"
+        - proxima_accion: "Siguiente paso"
+
+    3_persistir:
+      descripcion: "Guardar checkpoint en disco"
+      archivo: "CHECKPOINT-{YYYY-MM-DD-HHmm}.yml"
+      ubicacion: "{proyecto}/orchestration/trazas/"
+
+    4_confirmar:
+      descripcion: "Verificar checkpoint válido"
+      validaciones:
+        - "Archivo existe y es válido YAML"
+        - "Campos obligatorios presentes"
+        - "Timestamp correcto"
+
+    5_limpiar:
+      descripcion: "Opcional: purgar contexto no esencial"
+      condicion: "Si tokens > 85%"
+      acciones:
+        - "Purgar L3 items > 10 min sin uso"
+        - "Mantener referencias (paths)"
+
+# ============================================================================
+# FORMATO DE CHECKPOINT
+# ============================================================================
+
+formato_checkpoint:
+  version: "1.0.0"
+
+  campos_obligatorios:
+    - timestamp
+    - agente_id
+    - proyecto
+    - tarea_id
+    - fase_capved
+    - proxima_accion
+
+  campos_opcionales:
+    - decisiones
+    - archivos_modificados
+    - errores
+    - bloqueos
+    - notas
+
+  ejemplo: |
+    # CHECKPOINT-2026-01-24-1430.yml
+    timestamp: "2026-01-24T14:30:00Z"
+    agente_id: "claude-code-session-xyz"
+    proyecto: "gamilit"
+    tarea_id: "TASK-2026-01-24-001"
+    fase_capved: "E"
+    subtarea: "Crear tabla de usuarios"
+
+    decisiones:
+      - id: DEC-001
+        descripcion: "Usar UUID para primary keys"
+        razon: "Consistencia con otras tablas"
+
+    archivos_modificados:
+      - "apps/database/ddl/schemas/01_users/tables/users.sql"
+
+    proxima_accion: |
+      Crear entity correspondiente en backend.
+      Archivo: apps/backend/src/modules/users/entities/user.entity.ts
+
+    tokens_usados: 15000
+    tokens_disponibles: 5000
+
+# ============================================================================
+# RECOVERY DESDE CHECKPOINT
+# ============================================================================
+
+recovery:
+  descripcion: "Cómo recuperar sesión desde checkpoint"
+
+  pasos:
+    1: "Cargar L0 (BOOTLOADER)"
+    2: "Identificar último checkpoint del proyecto"
+    3: "Cargar checkpoint"
+    4: "Restaurar estado de tarea"
+    5: "Cargar contexto mínimo necesario (L1+L2)"
+    6: "Continuar desde proxima_accion"
+
+  tiempo_estimado: "< 3 minutos"
+
+  referencia: "@DEF_RECOVERY"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  creado: "2026-01-24"
+  autor: "Claude Code (Arquitecto NEXUS)"
+  sistema: "NEXUS v4.1"
+  alias: "@DEF_TRG_CHECKPOINT"

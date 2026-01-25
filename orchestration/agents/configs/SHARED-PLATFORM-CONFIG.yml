@@ -1,0 +1,367 @@
+# =============================================================================
+# SHARED-PLATFORM-CONFIG.yml - Cross-Platform Configuration
+# =============================================================================
+# Sistema: SIMCO v4.0.0 + NEXUS v4.0
+# Version: 1.1.0
+# Fecha: 2026-01-24
+# Scope: all-agents (Claude Code, Gemini CLI, Trae, Windsurf)
+# Migrado desde: .gemini/antigravity/PLATFORM-CONFIG.yml
+# =============================================================================
+
+version: "1.1.0"
+updated: "2026-01-24"
+scope: "all-agents"
+
+# =============================================================================
+# PLATFORM DETECTION
+# =============================================================================
+detection:
+
+  auto_detect:
+    # Method 1: Path format analysis (fastest)
+    by_path:
+      windows_indicators:
+        - "C:\\"
+        - "D:\\"
+        - "E:\\"
+      linux_indicators:
+        - "/home/"
+        - "/usr/"
+        - "/var/"
+      wsl_indicators:
+        - "/mnt/c/"
+        - "/mnt/d/"
+
+    # Method 2: Environment variables
+    by_env:
+      windows:
+        var: "OS"
+        expected: "Windows_NT"
+        command: "echo %OS%"
+      linux:
+        var: "OSTYPE"
+        expected: "linux-gnu"
+        command: "echo $OSTYPE"
+      wsl:
+        var: "WSL_DISTRO_NAME"
+        expected: "*"
+        command: "echo $WSL_DISTRO_NAME"
+
+    # Method 3: Command availability
+    by_command:
+      windows:
+        test: "where cmd"
+        expect_success: true
+      linux:
+        test: "which bash"
+        expect_success: true
+
+  fallback:
+    default: "windows"
+    reason: "Primary development on Windows"
+    action: "Use CMD syntax and Windows paths"
+
+# =============================================================================
+# PLATFORM CONFIGURATIONS
+# =============================================================================
+platforms:
+
+  # ---------------------------------------------------------------------------
+  # WINDOWS
+  # ---------------------------------------------------------------------------
+  windows:
+    name: "Windows"
+    shell:
+      default: "cmd"
+      alternative: "powershell"
+      recommendation: "Use CMD for npm scripts (more compatible)"
+
+    paths:
+      separator: "\\"
+      temp_dir: "%TEMP%"
+      home_dir: "%USERPROFILE%"
+      example: "C:\\Empresas\\ISEM\\workspace-v2"
+
+    environment_variables:
+      syntax:
+        cmd:
+          set: "set VAR=value"
+          use: "%VAR%"
+          chain: "set VAR=value && command"
+          example: "set NODE_ENV=test && npm test"
+        powershell:
+          set: "$env:VAR='value'"
+          use: "$env:VAR"
+          chain: "$env:VAR='value'; command"
+          example: "$env:NODE_ENV='test'; npm test"
+
+    npm:
+      command: "npm"
+      cross_env_required: true
+      cross_env_example: "cross-env NODE_OPTIONS=--max-old-space-size=4096 jest"
+
+    commands:
+      list_files: "dir"
+      current_dir: "cd"
+      clear_screen: "cls"
+      env_vars: "set"
+      find_process: "tasklist | findstr {name}"
+      kill_process: "taskkill /F /PID {pid}"
+
+  # ---------------------------------------------------------------------------
+  # LINUX
+  # ---------------------------------------------------------------------------
+  linux:
+    name: "Linux"
+    shell:
+      default: "bash"
+      alternative: "sh"
+
+    paths:
+      separator: "/"
+      temp_dir: "/tmp"
+      home_dir: "$HOME"
+      example: "/home/isem/workspace-v2"
+
+    environment_variables:
+      syntax:
+        bash:
+          set: "export VAR=value"
+          use: "$VAR"
+          inline: "VAR=value command"
+          example: "NODE_ENV=test npm test"
+
+    npm:
+      command: "npm"
+      cross_env_required: false
+      native_example: "NODE_OPTIONS='--max-old-space-size=4096' jest"
+
+    commands:
+      list_files: "ls -la"
+      current_dir: "pwd"
+      clear_screen: "clear"
+      env_vars: "env"
+      find_process: "ps aux | grep {name}"
+      kill_process: "kill -9 {pid}"
+
+  # ---------------------------------------------------------------------------
+  # WSL (Windows Subsystem for Linux)
+  # ---------------------------------------------------------------------------
+  wsl:
+    name: "WSL"
+    shell:
+      default: "bash"
+      note: "Linux shell running inside Windows"
+
+    # AMBIENTE LOCAL DE DESARROLLO (IMPORTANTE PARA TODOS LOS AGENTES)
+    local_environment:
+      distribucion: "Ubuntu-24.04"
+      estado: "configurado"
+
+      credenciales:
+        usuario: "developer"
+        password: "developer_wsl_2026"
+        tiene_sudo: true
+        home: "/home/developer"
+
+      servicios:
+        postgresql:
+          puerto: 5432
+          usuario_admin: "postgres"
+        redis:
+          puerto: 6379
+        nginx:
+          puerto: 80
+        docker:
+          instalado: true
+
+      databases:
+        gamilit:
+          db_name: "gamilit_platform"
+          db_user: "gamilit_user"
+          db_pass: "gamilit_dev_2026"
+          redis_db: 0
+        erp:
+          db_name: "erp_generic"
+          db_user: "erp_admin"
+          db_pass: "erp_dev_2026"
+          redis_db: 2
+        template_saas:
+          db_name: "template_saas_dev"
+          db_user: "template_saas_user"
+          db_pass: "saas_dev_2026"
+          redis_db: 9
+        michangarrito:
+          db_name: "michangarrito_dev"
+          db_user: "michangarrito_dev"
+          db_pass: "mch_dev_2026"
+          redis_db: 8
+
+      workspace_infra:
+        path: "/home/developer/workspaces/workspace-infra"
+        estado: "clonado con submodules"
+
+    paths:
+      separator: "/"
+      temp_dir: "/tmp"
+      home_dir: "$HOME"
+      windows_mount: "/mnt/c/"
+      example: "/mnt/c/Empresas/ISEM/workspace-v2"
+
+    path_conversion:
+      windows_to_wsl: "C:\\path\\to\\file → /mnt/c/path/to/file"
+      wsl_to_windows: "/mnt/c/path/to/file → C:\\path\\to\\file"
+
+    npm:
+      command: "npm"
+      cross_env_required: false
+      note: "Native bash syntax works"
+
+    commands:
+      list_files: "ls -la"
+      current_dir: "pwd"
+      access_windows: "cd /mnt/c/"
+      run_windows_exe: "cmd.exe /c {command}"
+      wsl_execute: "wsl -d Ubuntu-24.04 -u developer -- {command}"
+      wsl_psql: "wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d {database}"
+      wsl_services: "wsl -d Ubuntu-24.04 -u developer -- sudo systemctl {action} {service}"
+
+# =============================================================================
+# CROSS-PLATFORM COMMANDS
+# =============================================================================
+cross_platform:
+
+  universal:
+    - "git status"
+    - "git add ."
+    - "git commit -m 'message'"
+    - "git push"
+    - "git pull"
+    - "git fetch"
+    - "npm install"
+    - "npm run build"
+    - "npm test"
+    - "node script.js"
+
+  requires_adaptation:
+    list_directory:
+      windows_cmd: "dir"
+      windows_ps: "Get-ChildItem"
+      linux: "ls -la"
+      cross_platform: "npm ls"
+
+    find_files:
+      windows_cmd: "dir /s /b *.ts"
+      windows_ps: "Get-ChildItem -Recurse -Filter *.ts"
+      linux: "find . -name '*.ts'"
+      note: "Use agent's Glob tool instead when available"
+
+    search_content:
+      windows_cmd: "findstr /s /i 'pattern' *.ts"
+      windows_ps: "Select-String -Path *.ts -Pattern 'pattern'"
+      linux: "grep -r 'pattern' --include='*.ts'"
+      note: "Use agent's Grep tool instead when available"
+
+    create_directory:
+      windows: "mkdir path\\to\\dir"
+      linux: "mkdir -p path/to/dir"
+
+    delete_file:
+      windows: "del file.txt"
+      linux: "rm file.txt"
+
+    copy_file:
+      windows: "copy source.txt dest.txt"
+      linux: "cp source.txt dest.txt"
+
+# =============================================================================
+# NPM SCRIPTS COMPATIBILITY
+# =============================================================================
+npm_scripts:
+
+  problematic_patterns:
+    - pattern: "NODE_OPTIONS='...'"
+      problem: "Bash-only syntax"
+      solution: "cross-env NODE_OPTIONS=..."
+
+    - pattern: "NODE_ENV=production"
+      problem: "Inline env var (bash)"
+      solution: "cross-env NODE_ENV=production"
+
+    - pattern: "$(command)"
+      problem: "Command substitution (bash)"
+      solution: "Use Node.js script instead"
+
+  recommended_tools:
+    - name: "cross-env"
+      purpose: "Cross-platform environment variables"
+      install: "npm install --save-dev cross-env"
+
+    - name: "shx"
+      purpose: "Cross-platform shell commands"
+      install: "npm install --save-dev shx"
+
+# =============================================================================
+# AGENT-SPECIFIC RECOMMENDATIONS
+# =============================================================================
+agent_recommendations:
+
+  claude_code:
+    terminal_preference: "bash"
+    reason: "Claude's Bash tool is optimized for bash"
+    on_windows: "Commands are translated appropriately"
+
+  gemini_cli:
+    terminal_preference: "cmd"
+    reason: "More predictable behavior with npm scripts"
+    when_to_use_powershell: "Only for PowerShell-specific tasks"
+    when_to_use_wsl: "When bash scripts are required"
+
+  trae:
+    terminal_preference: "integrated_terminal"
+    reason: "Uses VS Code terminal"
+    note: "Follow same rules as environment"
+
+  windsurf:
+    terminal_preference: "cmd"
+    reason: "Similar to Gemini, runs in VS Code context"
+
+# =============================================================================
+# TROUBLESHOOTING
+# =============================================================================
+troubleshooting:
+
+  npm_test_fails:
+    symptoms:
+      - "'NODE_OPTIONS' is not recognized"
+    diagnosis: "Package.json uses bash syntax for env vars"
+    fix:
+      - "Install cross-env: npm install --save-dev cross-env"
+      - "Update script: \"test\": \"cross-env NODE_OPTIONS=... jest\""
+
+  script_not_found:
+    symptoms:
+      - "bash: script.sh: command not found"
+    diagnosis: "Trying to run .sh script on Windows"
+    fix:
+      - "Use Git Bash: bash ./script.sh"
+      - "Use WSL: wsl bash ./script.sh"
+
+  path_issues:
+    symptoms:
+      - "ENOENT: no such file or directory"
+    diagnosis: "Path format mismatch"
+    fix:
+      - "Windows: Use backslashes or escaped forward slashes"
+      - "Linux/WSL: Use forward slashes"
+      - "Node.js: Use path.join() for cross-platform paths"
+
+# =============================================================================
+# REFERENCES
+# =============================================================================
+references:
+  original_location: ".gemini/antigravity/PLATFORM-CONFIG.yml"
+  symlinks_from:
+    - ".gemini/antigravity/PLATFORM-CONFIG.yml"
+    - ".windsurf/PLATFORM-CONFIG.yml"
+    - ".trae/PLATFORM-CONFIG.yml"

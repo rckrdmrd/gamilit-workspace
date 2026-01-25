@@ -1,0 +1,294 @@
+# CHECKPOINT.schema.yml
+# Sistema NEXUS v4.1 - Schema de Validación
+# Fecha: 2026-01-24
+# Versión: 1.0.0
+
+version: "1.0.0"
+descripcion: |
+  Schema para validar archivos de checkpoint.
+  Los checkpoints son snapshots del estado para recuperación post-compactación.
+
+# ============================================================================
+# SCHEMA DEFINITION
+# ============================================================================
+
+schema:
+  type: object
+  required:
+    - version
+    - timestamp
+    - checkpoint_id
+    - trigger
+    - agente
+    - proyecto
+    - tarea
+    - proxima_accion
+
+  properties:
+    version:
+      type: string
+      pattern: "^\\d+\\.\\d+\\.\\d+$"
+
+    timestamp:
+      type: string
+      format: "date-time"
+      descripcion: "Momento exacto del checkpoint"
+
+    checkpoint_id:
+      type: string
+      pattern: "^CHK-\\d{4}-\\d{2}-\\d{2}-\\d{4}$"
+      descripcion: "ID único del checkpoint (CHK-YYYY-MM-DD-HHmm)"
+
+    trigger:
+      type: string
+      enum:
+        - "TOKEN_THRESHOLD_70"
+        - "TOKEN_THRESHOLD_85"
+        - "DECISION_ARQUITECTURAL"
+        - "SUBTAREA_COMPLETADA"
+        - "TIEMPO_30_MIN"
+        - "CAMBIO_DOMINIO"
+        - "CAMBIO_PROYECTO"
+        - "FIN_SESION"
+        - "MANUAL"
+      descripcion: "Evento que disparó el checkpoint"
+
+    agente:
+      type: object
+      required:
+        - id
+        - tipo
+      properties:
+        id:
+          type: string
+        tipo:
+          type: string
+        perfil:
+          type: string
+
+    proyecto:
+      type: object
+      required:
+        - nombre
+      properties:
+        nombre:
+          type: string
+        path:
+          type: string
+
+    tarea:
+      type: object
+      required:
+        - id
+        - fase_capved
+      properties:
+        id:
+          type: string
+        descripcion:
+          type: string
+        fase_capved:
+          type: string
+          enum: ["C", "A", "P", "V", "E", "D"]
+        subtarea:
+          type: string
+        progreso:
+          type: string
+
+    tokens:
+      type: object
+      properties:
+        usados:
+          type: integer
+        disponibles:
+          type: integer
+        porcentaje:
+          type: number
+
+    decisiones:
+      type: array
+      descripcion: "Decisiones arquitecturales tomadas hasta este punto"
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          descripcion:
+            type: string
+          razon:
+            type: string
+
+    archivos_modificados:
+      type: array
+      descripcion: "Lista de archivos modificados en la sesión"
+      items:
+        type: string
+
+    errores:
+      type: array
+      descripcion: "Errores encontrados (para no repetirlos)"
+      items:
+        type: object
+        properties:
+          descripcion:
+            type: string
+          resolucion:
+            type: string
+
+    bloqueos:
+      type: array
+      descripcion: "Bloqueos activos al momento del checkpoint"
+      items:
+        type: object
+        properties:
+          tipo:
+            type: string
+          descripcion:
+            type: string
+
+    contexto_cargado:
+      type: object
+      descripcion: "Qué contexto estaba cargado"
+      properties:
+        L0:
+          type: array
+          items:
+            type: string
+        L1:
+          type: array
+          items:
+            type: string
+        L2:
+          type: array
+          items:
+            type: string
+        L3:
+          type: array
+          items:
+            type: string
+
+    proxima_accion:
+      type: string
+      minLength: 10
+      descripcion: "OBLIGATORIO: Qué hacer después de recovery"
+
+    notas:
+      type: string
+      descripcion: "Notas adicionales del agente"
+
+# ============================================================================
+# UBICACIÓN Y NAMING
+# ============================================================================
+
+ubicacion:
+  path: "{proyecto}/orchestration/trazas/"
+  pattern: "CHECKPOINT-{YYYY-MM-DD-HHmm}.yml"
+  ejemplo: "projects/gamilit/orchestration/trazas/CHECKPOINT-2026-01-24-1530.yml"
+
+retention:
+  mantener_ultimos: 10
+  eliminar_antiguos: true
+  dias_retencion: 7
+
+# ============================================================================
+# EJEMPLO VÁLIDO
+# ============================================================================
+
+ejemplo_valido: |
+  version: "1.0.0"
+  timestamp: "2026-01-24T15:30:00Z"
+  checkpoint_id: "CHK-2026-01-24-1530"
+  trigger: "TOKEN_THRESHOLD_85"
+
+  agente:
+    id: "claude-opus-4.5"
+    tipo: "claude-code"
+    perfil: "PERFIL-ORQUESTADOR.md"
+
+  proyecto:
+    nombre: "gamilit"
+    path: "projects/gamilit"
+
+  tarea:
+    id: "TASK-2026-01-24-001"
+    descripcion: "Implementar sistema de checkpoints"
+    fase_capved: "E"
+    subtarea: "Crear schemas de validación"
+    progreso: "4/6"
+
+  tokens:
+    usados: 17000
+    disponibles: 3000
+    porcentaje: 85
+
+  decisiones:
+    - id: "DEC-001"
+      descripcion: "Usar YAML para schemas"
+      razon: "Consistencia con workspace"
+    - id: "DEC-002"
+      descripcion: "Checkpoints cada 30 min o 85% tokens"
+      razon: "Balance entre seguridad y overhead"
+
+  archivos_modificados:
+    - "orchestration/_definitions/_INDEX.yml"
+    - "orchestration/_definitions/triggers/TRIGGER-AUTO-CHECKPOINT.yml"
+    - "orchestration/_definitions/schemas/SESSION-STATE.schema.yml"
+
+  errores: []
+
+  bloqueos: []
+
+  contexto_cargado:
+    L0:
+      - "CLAUDE.md"
+      - "SIMCO-TAREA.md"
+    L1:
+      - "gamilit/CONTEXTO-PROYECTO.md"
+    L2:
+      - "SIMCO-DOCUMENTAR.md"
+    L3:
+      - "_definitions/_INDEX.yml"
+
+  proxima_accion: |
+    Crear DECISIONES-SESION.schema.yml como último schema.
+    Luego actualizar estadísticas en _INDEX.yml.
+    Finalmente, crear protocolos CHECKPOINT-PROTOCOL.md y RECOVERY-PROTOCOL.md.
+
+  notas: |
+    Checkpoint automático por alcanzar 85% de tokens.
+    Sesión productiva, 4 de 6 subtareas completadas.
+
+# ============================================================================
+# RECOVERY DESDE CHECKPOINT
+# ============================================================================
+
+recovery:
+  pasos:
+    1:
+      nombre: "Identificar checkpoint"
+      comando: "ls -t {proyecto}/orchestration/trazas/CHECKPOINT-*.yml | head -1"
+
+    2:
+      nombre: "Cargar checkpoint"
+      accion: "Leer archivo YAML"
+
+    3:
+      nombre: "Restaurar contexto mínimo"
+      archivos:
+        - "CLAUDE.md"
+        - "checkpoint.proyecto.path/CONTEXTO-PROYECTO.md"
+
+    4:
+      nombre: "Posicionarse"
+      accion: "Leer proxima_accion y continuar desde ahí"
+
+  tiempo_estimado: "< 3 minutos"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  creado: "2026-01-24"
+  autor: "Claude Code (Arquitecto NEXUS)"
+  sistema: "NEXUS v4.1"
+  alias: "@DEF_SCHEMA_CHECKPOINT"

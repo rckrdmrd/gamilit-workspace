@@ -1,0 +1,89 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ÍNDICE RÁPIDO DE DIRECTIVAS SIMCO
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Propósito: Localizar directivas por tipo/operación en <100 líneas
+# Base: orchestration/directivas/
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+base_path: "directivas/"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# PRINCIPIOS FUNDAMENTALES (7)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+principios:
+  path: "principios/"
+  archivos:
+    - "PRINCIPIO-CAPVED.md"           # Ciclo de vida
+    - "PRINCIPIO-CATALOGACION.md"      # Anti-duplicación
+    - "PRINCIPIO-COHERENCIA.md"        # Entre capas
+    - "PRINCIPIO-TRAZABILIDAD.md"      # Documentación
+    - "PRINCIPIO-VALIDACION.md"        # Build/lint/test
+    - "PRINCIPIO-PROPAGACION.md"       # Entre proyectos
+    - "PRINCIPIO-JERARQUIA.md"         # ERP suite
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# DIRECTIVAS SIMCO POR OPERACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+simco:
+  path: "simco/"
+
+  entrada:
+    tarea: "SIMCO-TAREA.md"
+    niveles: "SIMCO-NIVELES.md"
+
+  operaciones:
+    crear: "SIMCO-CREAR.md"
+    modificar: "SIMCO-MODIFICAR.md"
+    eliminar: "SIMCO-ELIMINAR.md"
+    validar: "SIMCO-VALIDAR.md"
+
+  dominios:
+    backend: "SIMCO-BACKEND.md"
+    frontend: "SIMCO-FRONTEND.md"
+    ddl: "SIMCO-DDL.md"
+    devops: "SIMCO-DEVOPS.md"
+    ml: "SIMCO-ML.md"
+
+  git:
+    workflow: "SIMCO-GIT-WORKFLOW.md"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# MODOS DE EJECUCIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+modos:
+  path: "modos/"
+  archivos:
+    full: "MODE-FULL.md"           # CAPVED completo
+    quick: "MODE-QUICK.md"         # Solo E+D
+    analysis: "MODE-ANALYSIS.md"   # Sin modificar
+    propagation: "MODE-PROPAGATION.md"  # Entre proyectos
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRIGGERS AUTOMÁTICOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+triggers:
+  path: "triggers/"
+  archivos:
+    anti_duplicacion: "TRIGGER-ANTI-DUPLICACION.md"
+    dependencias: "TRIGGER-ANALISIS-DEPENDENCIAS.md"
+    propagacion: "TRIGGER-PROPAGACION-AUTOMATICA.md"
+    duplicados: "TRIGGER-DUPLICADOS.md"
+    scheduler: "TRIGGER-SCHEDULER.md"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS RÁPIDAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  indice_completo: "INDICE-DIRECTIVAS-WORKSPACE.yml"
+  validaciones: "@DEF_VAL_*"
+  nota: "Para validaciones específicas usar aliases @DEF_VAL_BE, @DEF_VAL_FE, etc."
+
+# ═══════════════════════════════════════════════════════════════════════════════

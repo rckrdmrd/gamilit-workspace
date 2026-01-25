@@ -1,0 +1,146 @@
+# ==============================================================================
+# SERVICE DESCRIPTOR TEMPLATE
+# ==============================================================================
+# Copiar este archivo a la raiz de cada servicio y completar los valores
+# Archivo: service.descriptor.yml
+#
+# Placeholders a reemplazar:
+#   {{SERVICE_NAME}}     - Nombre del servicio (ej: gamilit-api)
+#   {{SERVICE_TYPE}}     - Tipo: backend | frontend | database | ml | worker
+#   {{RUNTIME}}          - Runtime: node | python | go | static
+#   {{VERSION}}          - Version semver (ej: 1.0.0)
+#   {{DESCRIPTION}}      - Descripcion breve
+#   {{OWNER_AGENT}}      - Agente: NEXUS-BACKEND | NEXUS-FRONTEND | etc
+#   {{REPO_NAME}}        - Nombre del repo (ej: gamilit-platform)
+#   {{SERVICE_PATH}}     - Path relativo (ej: apps/backend)
+#   {{PORT}}             - Puerto interno (ej: 3000)
+#   {{PORT_REGISTRY_REF}}- Ref al registry (ej: projects.gamilit.api)
+#   {{DOMAIN_REF}}       - Ref a domains (ej: gamilit)
+#   {{DB_REF}}           - Ref a database (ej: gamilit) o null
+#   {{HEALTHCHECK_PATH}} - Path del healthcheck (ej: /health)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# IDENTIFICACION DEL SERVICIO
+# ------------------------------------------------------------------------------
+service:
+  name: "{{SERVICE_NAME}}"
+  type: "{{SERVICE_TYPE}}"
+  runtime: "{{RUNTIME}}"
+  version: "{{VERSION}}"
+  description: "{{DESCRIPTION}}"
+  owner_agent: "{{OWNER_AGENT}}"
+
+# ------------------------------------------------------------------------------
+# REPOSITORIO
+# ------------------------------------------------------------------------------
+repository:
+  name: "{{REPO_NAME}}"
+  path: "{{SERVICE_PATH}}"
+  main_branch: "main"
+
+# ------------------------------------------------------------------------------
+# PUERTOS
+# ------------------------------------------------------------------------------
+ports:
+  internal: {{PORT}}
+  registry_ref: "{{PORT_REGISTRY_REF}}"
+  protocol: "http"
+
+# ------------------------------------------------------------------------------
+# DOMINIOS
+# ------------------------------------------------------------------------------
+domains:
+  registry_ref: "{{DOMAIN_REF}}"
+  overrides:
+    local: "{{SERVICE_NAME}}.localhost"
+
+# ------------------------------------------------------------------------------
+# BASE DE DATOS (omitir si no aplica)
+# ------------------------------------------------------------------------------
+database:
+  registry_ref: "{{DB_REF}}"
+  role: "runtime"
+  schemas:
+    - "public"
+
+# ------------------------------------------------------------------------------
+# AMBIENTES
+# ------------------------------------------------------------------------------
+environments:
+  deployed_to:
+    - "local"
+    - "development"
+    - "production"
+  default: "local"
+
+# ------------------------------------------------------------------------------
+# HEALTH CHECK
+# ------------------------------------------------------------------------------
+healthcheck:
+  path: "{{HEALTHCHECK_PATH}}"
+  interval: "30s"
+  timeout: "5s"
+  retries: 3
+
+# ------------------------------------------------------------------------------
+# DEPENDENCIAS
+# ------------------------------------------------------------------------------
+dependencies:
+  services: []
+  databases: []
+  external: []
+
+# ------------------------------------------------------------------------------
+# CI/CD
+# ------------------------------------------------------------------------------
+ci:
+  pipeline: "node-backend-standard"
+  tests: true
+  lint: true
+  build: true
+  docker: true
+  docker_image: "{{SERVICE_NAME}}"
+  docker_registry: "ghcr.io/tu-org"
+
+# ------------------------------------------------------------------------------
+# OBSERVABILIDAD
+# ------------------------------------------------------------------------------
+observability:
+  metrics:
+    enabled: true
+    path: "/metrics"
+  logging:
+    level: "info"
+    format: "json"
+  tracing:
+    enabled: false
+
+# ------------------------------------------------------------------------------
+# RECURSOS
+# ------------------------------------------------------------------------------
+resources:
+  cpu:
+    request: "100m"
+    limit: "500m"
+  memory:
+    request: "256Mi"
+    limit: "512Mi"
+  replicas:
+    min: 1
+    max: 3
+
+# ------------------------------------------------------------------------------
+# METADATA
+# ------------------------------------------------------------------------------
+metadata:
+  created: "2025-12-18"
+  updated: "2025-12-18"
+  maintainers:
+    - name: "Team"
+      email: "team@example.com"
+  tags:
+    - "{{SERVICE_TYPE}}"
+  links:
+    documentation: "/docs"
+    repository: "https://github.com/tu-org/{{REPO_NAME}}"

@@ -332,50 +332,56 @@ documentacion_referencia:
 # ─────────────────────────────────────────────────────────────────────────────────
 
 principios_heredados:
-  source: "workspace"
-  path: "/orchestration/directivas/principios/"
-  politica: "REFERENCIAR_NO_COPIAR"
+  source: "local"
+  path: "orchestration/"
+  politica: "REPLICA_COMPLETA"
   razon: |
-    Los principios fundamentales son recursos del nivel WORKSPACE.
-    Gamilit hereda estos principios via referencia, no copia.
-    Esto evita desincronizacion cuando se actualiza el principio.
+    Gamilit ahora es un workspace independiente con todas las
+    definiciones replicadas localmente para autonomia total.
+    Sincronizado desde workspace-v2 el 2026-01-25.
+
+    Estructura replicada:
+      - agents/ (66 archivos)
+      - directivas/ (124 archivos)
+      - _definitions/ (29 archivos)
+      - referencias/ (29 archivos)
+      - templates/ (60 archivos)
+      - _quick/ (4 archivos)
 
   archivos:
     - nombre: "PRINCIPIO-CAPVED.md"
-      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
-      local: "orchestration/principios/PRINCIPIO-CAPVED.md"
-      tipo: "REFERENCIA"
+      local: "orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
+      tipo: "COPIA_LOCAL"
       alias: "@CAPVED"
-      nota: "Archivo local es referencia, no copia completa"
 
     - nombre: "PRINCIPIO-DOC-PRIMERO.md"
-      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
-      uso: "via_alias"
+      local: "orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
+      tipo: "COPIA_LOCAL"
       alias: "@DOC-PRIMERO"
 
     - nombre: "PRINCIPIO-ANTI-DUPLICACION.md"
-      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md"
-      uso: "via_alias"
+      local: "orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md"
+      tipo: "COPIA_LOCAL"
       alias: "@ANTI-DUP"
 
     - nombre: "PRINCIPIO-VALIDACION-OBLIGATORIA.md"
-      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
-      uso: "via_alias"
+      local: "orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
+      tipo: "COPIA_LOCAL"
       alias: "@VALIDAR"
 
     - nombre: "PRINCIPIO-ECONOMIA-TOKENS.md"
-      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
-      uso: "via_alias"
+      local: "orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
+      tipo: "COPIA_LOCAL"
       alias: "@ECONOMIA"
 
     - nombre: "PRINCIPIO-NO-ASUMIR.md"
-      ssot: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
-      uso: "via_alias"
+      local: "orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
+      tipo: "COPIA_LOCAL"
       alias: "@NO-ASUMIR"
 
   actualizacion:
-    fecha: "2026-01-16"
-    razon: "ISS-002: Consolidar duplicidades de principios"
+    fecha: "2026-01-25"
+    razon: "Sincronizacion completa orchestration/ workspace-v2 a gamilit"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # METADATA

@@ -1,0 +1,291 @@
+# =============================================================================
+# SHARED-CHECKPOINT-CONFIG.yml - Configuración de Checkpoints Multi-Agente
+# =============================================================================
+# Sistema: SIMCO v4.0.0 + NEXUS v4.1
+# Version: 1.0.0
+# Fecha: 2026-01-24
+# Scope: all-agents (Claude Code, Gemini CLI, Trae, Windsurf)
+# =============================================================================
+
+version: "1.0.0"
+updated: "2026-01-24"
+scope: "all-agents"
+nexus_version: "4.1"
+
+# =============================================================================
+# PROPÓSITO
+# =============================================================================
+proposito: |
+  Configuración compartida para el sistema de checkpoints automáticos.
+  Todos los agentes deben seguir estas reglas para mantener consistencia
+  en la preservación y recuperación de estado.
+
+# =============================================================================
+# UMBRALES DE TOKENS
+# =============================================================================
+token_thresholds:
+  descripcion: "Umbrales que disparan acciones de checkpoint"
+
+  warning:
+    porcentaje: 70
+    tokens: 14000  # De 20,000 base
+    accion: "alerta_amarilla"
+    automatico: false
+    mensaje: "Tokens al 70%. Considerar checkpoint manual."
+
+  critical:
+    porcentaje: 85
+    tokens: 17000
+    accion: "checkpoint_automatico"
+    automatico: true
+    mensaje: "Tokens al 85%. Ejecutando checkpoint automático."
+
+  emergency:
+    porcentaje: 95
+    tokens: 19000
+    accion: "purga_forzada"
+    automatico: true
+    mensaje: "Tokens al 95%. Purga forzada de L3."
+
+  max:
+    porcentaje: 100
+    tokens: 20000
+    descripcion: "Límite absoluto del presupuesto base"
+
+# =============================================================================
+# TRIGGERS DE TIEMPO
+# =============================================================================
+time_triggers:
+  checkpoint_periodico:
+    intervalo_minutos: 30
+    descripcion: "Checkpoint automático cada 30 minutos de trabajo activo"
+    condicion: "Si hay cambios no guardados desde último checkpoint"
+
+  inactividad_warning:
+    minutos: 15
+    accion: "recordatorio"
+    mensaje: "15 minutos sin actividad. Considerar checkpoint."
+
+  inactividad_timeout:
+    minutos: 30
+    accion: "checkpoint_automatico"
+    mensaje: "30 minutos sin actividad. Checkpoint automático."
+
+# =============================================================================
+# TRIGGERS DE EVENTOS
+# =============================================================================
+event_triggers:
+  subtarea_completada:
+    disparador: "Validación exitosa (build/lint pass) + commit"
+    accion: "checkpoint_progreso"
+    nivel: "L3"
+
+  cambio_dominio:
+    disparador: "Cambio de DDL a Backend, Backend a Frontend, etc."
+    accion: "checkpoint_completo + purga L2"
+    nivel: "L2"
+
+  cambio_proyecto:
+    disparador: "Cambio de proyecto activo"
+    accion: "checkpoint_completo + purga L1+L2+L3"
+    nivel: "L1"
+
+  decision_arquitectural:
+    disparadores:
+      - "Mención de 'decidido', 'elegido', 'usaremos'"
+      - "Creación de ADR"
+      - "Selección de tecnología"
+    accion: "registrar_decision"
+    archivo: "DECISIONES-SESION.yml"
+
+  fin_sesion:
+    disparadores:
+      - "Mensaje de despedida"
+      - "Comando /exit"
+      - "Timeout prolongado"
+    accion: "checkpoint_final + PROXIMA-ACCION.md"
+
+# =============================================================================
+# FORMATO DE CHECKPOINT
+# =============================================================================
+checkpoint_format:
+  ubicacion: "{proyecto}/orchestration/trazas/"
+  nombre: "CHECKPOINT-{YYYY-MM-DD-HHmm}.yml"
+  schema: "@DEF_SCHEMA_CHECKPOINT"
+
+  campos_obligatorios:
+    - version
+    - timestamp
+    - checkpoint_id
+    - trigger
+    - agente
+    - proyecto
+    - tarea
+    - proxima_accion
+
+  campos_recomendados:
+    - tokens
+    - decisiones
+    - archivos_modificados
+    - errores
+    - bloqueos
+    - contexto_cargado
+
+  ejemplo_id: "CHK-2026-01-24-1530"
+
+# =============================================================================
+# RETENCIÓN
+# =============================================================================
+retention:
+  mantener_ultimos: 10
+  dias_maximos: 7
+  limpieza_automatica: true
+
+  comando_limpieza:
+    windows: 'Get-ChildItem CHECKPOINT-*.yml | Sort-Object LastWriteTime -Descending | Select-Object -Skip 10 | Remove-Item'
+    linux: "ls -t CHECKPOINT-*.yml | tail -n +11 | xargs rm -f"
+
+# =============================================================================
+# RECOVERY
+# =============================================================================
+recovery:
+  orden_preferencia:
+    1: "PROXIMA-ACCION.md"
+    2: "Último CHECKPOINT-*.yml"
+    3: "SESSION-STATE.yml"
+    4: "HANDOFF-CONTRACT.md"
+
+  tiempo_objetivo: "< 3 minutos"
+  tokens_objetivo: "< 8500"
+  informacion_preservada: "> 90%"
+
+  protocolo: "@DEF_RECOVERY"
+  checklist: "@DEF_CHK_RECOVERY"
+
+# =============================================================================
+# CONFIGURACIÓN POR AGENTE
+# =============================================================================
+agentes:
+  claude_code:
+    checkpoint_habilitado: true
+    triggers_automaticos: true
+    formato_preferido: "checkpoint_completo"
+    protocolo: "@DEF_CHECKPOINT"
+    notas: |
+      Claude Code es el agente principal para checkpoints.
+      Tiene contexto completo y puede ejecutar todos los triggers.
+
+  trae:
+    checkpoint_habilitado: true
+    triggers_automaticos: true
+    formato_preferido: "checkpoint_ligero"
+    notas: |
+      Trae ejecuta Fase 2 (planificación).
+      Checkpoints enfocados en plan y tareas atómicas.
+
+  windsurf:
+    checkpoint_habilitado: false
+    triggers_automaticos: false
+    formato_preferido: "sin_checkpoint"
+    notas: |
+      Windsurf es ejecutor de tareas atómicas.
+      No mantiene estado entre tareas.
+      El checkpoint lo maneja el agente orquestador.
+
+  gemini_cli:
+    checkpoint_habilitado: true
+    triggers_automaticos: true
+    formato_preferido: "checkpoint_ligero"
+    notas: |
+      Gemini CLI para testing.
+      Checkpoints enfocados en estado de tests y screenshots.
+
+# =============================================================================
+# DECISIONES
+# =============================================================================
+decisiones:
+  archivo: "DECISIONES-SESION.yml"
+  ubicacion: "{proyecto}/orchestration/trazas/"
+  schema: "@DEF_SCHEMA_DECISIONES"
+
+  tipos_registrados:
+    - arquitectura
+    - tecnologia
+    - patron
+    - nomenclatura
+    - estructura
+    - proceso
+
+  campos_obligatorios:
+    - id
+    - timestamp
+    - tipo
+    - descripcion
+    - decision
+    - razon
+
+# =============================================================================
+# PROXIMA-ACCION
+# =============================================================================
+proxima_accion:
+  archivo: "PROXIMA-ACCION.md"
+  ubicacion: "{proyecto}/orchestration/"
+  schema: "@DEF_SCHEMA_PROXIMA"
+  actualizar_en_checkpoint: true
+
+  secciones_obligatorias:
+    - "## Estado Actual"
+    - "## Contexto Crítico"
+    - "## Siguiente Paso"
+    - "## Para Recuperar Sesión"
+
+# =============================================================================
+# MÉTRICAS DE ÉXITO
+# =============================================================================
+metricas:
+  checkpoint:
+    tiempo_objetivo: "< 30 segundos"
+    tamaño_archivo: "< 5 KB"
+    tasa_exito: "> 99%"
+
+  recovery:
+    tiempo_objetivo: "< 3 minutos"
+    tokens_usados: "< 8500"
+    informacion_preservada: "> 90%"
+    decisiones_re_tomadas: 0
+
+  general:
+    compactaciones_por_sesion: "< 1"
+    checkpoints_por_sesion: "2-5"
+    overhead_tokens: "< 5%"
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+referencias:
+  protocolos:
+    checkpoint: "orchestration/_definitions/protocols/CHECKPOINT-PROTOCOL.md"
+    recovery: "orchestration/_definitions/protocols/RECOVERY-PROTOCOL.md"
+
+  schemas:
+    checkpoint: "orchestration/_definitions/schemas/CHECKPOINT.schema.yml"
+    session_state: "orchestration/_definitions/schemas/SESSION-STATE.schema.yml"
+    proxima_accion: "orchestration/_definitions/schemas/PROXIMA-ACCION.schema.yml"
+    decisiones: "orchestration/_definitions/schemas/DECISIONES-SESION.schema.yml"
+
+  triggers:
+    auto_checkpoint: "orchestration/_definitions/triggers/TRIGGER-AUTO-CHECKPOINT.yml"
+    context_purge: "orchestration/_definitions/triggers/TRIGGER-CONTEXT-PURGE.yml"
+    session_cleanup: "orchestration/_definitions/triggers/TRIGGER-SESSION-CLEANUP.yml"
+
+  checklists:
+    recovery: "orchestration/_definitions/checklists/CHECKLIST-RECOVERY.md"
+
+# =============================================================================
+# METADATA
+# =============================================================================
+metadata:
+  creado: "2026-01-24"
+  autor: "Claude Code (Arquitecto NEXUS)"
+  sistema: "NEXUS v4.1"
+  proposito: "Configuración compartida de checkpoints para todos los agentes"

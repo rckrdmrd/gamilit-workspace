@@ -1,0 +1,465 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ÍNDICE DE DEFINICIONES CANÓNICAS
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Versión: 2.0.0
+# Fecha: 2026-01-24
+# Propósito: Registro único de todas las definiciones canónicas
+#
+# PRINCIPIO: Una Definición, Múltiples Referencias
+# - Cada concepto tiene EXACTAMENTE UN archivo de definición
+# - Todos los demás archivos REFERENCIAN usando @DEF_* aliases
+# - Cambios se hacen en UN solo lugar
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "2.0.0"
+updated: "2026-01-24"
+maintained_by: "@WS_ORCHESTRATOR"
+migration_status: "COMPLETADO"
+migration_date: "2026-01-16"
+nexus_version: "4.1"
+enhancement: "NEXUS-TOKEN-MANAGEMENT"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SSOT - Single Source of Truth Registry (NUEVO v1.2.0)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+ssot:
+  SSOT-REGISTRY:
+    alias: "@SSOT"
+    path: "SSOT.yml"
+    descripcion: "Registro central de fuentes de verdad únicas del workspace"
+    estado: "IMPLEMENTADO"
+    fecha_creacion: "2026-01-24"
+    proposito: |
+      Define las ubicaciones canónicas de cada tipo de dato.
+      Evita duplicación mediante referencias @tipo:id.
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# PROTOCOLOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+protocols:
+  CCA-PROTOCOL:
+    alias: "@DEF_CCA"
+    path: "protocols/CCA-PROTOCOL.md"
+    descripcion: "Protocolo de Carga de Contexto Automática - Versión completa"
+    estado: "IMPLEMENTADO"
+    usado_por:
+      - "31 perfiles de agentes (migrados de inline a referencia)"
+      - "Variantes: #backend, #frontend, #ddl, #devops, #ml"
+    lineas: 245
+    migracion:
+      fecha: "2026-01-16"
+      archivos_actualizados: 31
+      lineas_eliminadas: "~1,800"
+
+  CCA-LIGHT:
+    alias: "@DEF_CCA_LIGHT"
+    path: "protocols/CCA-LIGHT.md"
+    descripcion: "CCA versión ligera para subagentes"
+    estado: "IMPLEMENTADO"
+    usado_por:
+      - "Perfiles compact"
+      - "Subagentes delegados"
+    lineas: 70
+
+  CAPVED-CYCLE:
+    alias: "@DEF_CAPVED"
+    path: "protocols/CAPVED-CYCLE.md"
+    descripcion: "Ciclo CAPVED base - 6 fases obligatorias"
+    estado: "IMPLEMENTADO"
+    lineas: 245
+    fecha_creacion: "2026-01-16"
+
+  DELEGATION-PROTOCOL:
+    alias: "@DEF_DELEGATION"
+    path: "protocols/DELEGATION-PROTOCOL.md"
+    descripcion: "Protocolo de delegación entre agentes"
+    estado: "IMPLEMENTADO"
+    lineas: 320
+    fecha_creacion: "2026-01-16"
+
+  CHECKPOINT-PROTOCOL:
+    alias: "@DEF_CHECKPOINT"
+    path: "protocols/CHECKPOINT-PROTOCOL.md"
+    descripcion: "Protocolo de checkpoint automático para preservar estado (NEXUS v4.1)"
+    estado: "IMPLEMENTADO"
+    lineas: 280
+    fecha_creacion: "2026-01-24"
+
+  RECOVERY-PROTOCOL:
+    alias: "@DEF_RECOVERY"
+    path: "protocols/RECOVERY-PROTOCOL.md"
+    descripcion: "Protocolo de recuperación de sesión post-compactación (NEXUS v4.1)"
+    estado: "IMPLEMENTADO"
+    lineas: 310
+    fecha_creacion: "2026-01-24"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validations:
+  VALIDATION-BACKEND:
+    alias: "@DEF_VAL_BE"
+    path: "validations/VALIDATION-BACKEND.md"
+    descripcion: "Validaciones para Backend NestJS/TypeScript"
+    estado: "IMPLEMENTADO"
+    comandos: ["npm run build", "npm run lint", "npm run test"]
+    usado_por:
+      - "PERFIL-BACKEND.md"
+      - "SIMCO-BACKEND.md"
+      - "SIMCO-VALIDAR.md"
+    lineas: 81
+
+  VALIDATION-FRONTEND:
+    alias: "@DEF_VAL_FE"
+    path: "validations/VALIDATION-FRONTEND.md"
+    descripcion: "Validaciones para Frontend React/TypeScript"
+    estado: "IMPLEMENTADO"
+    comandos: ["npm run build", "npm run lint", "npm run typecheck"]
+    usado_por:
+      - "PERFIL-FRONTEND.md"
+      - "SIMCO-FRONTEND.md"
+      - "SIMCO-VALIDAR.md"
+    lineas: 81
+
+  VALIDATION-DDL:
+    alias: "@DEF_VAL_DDL"
+    path: "validations/VALIDATION-DDL.md"
+    descripcion: "Validaciones para Database DDL PostgreSQL"
+    estado: "IMPLEMENTADO"
+    comandos: ["psql execution", "recreate-database.sh"]
+    usado_por:
+      - "PERFIL-DATABASE.md"
+      - "SIMCO-VALIDAR.md"
+    lineas: 89
+
+  VALIDATION-DEVOPS:
+    alias: "@DEF_VAL_DEVOPS"
+    path: "validations/VALIDATION-DEVOPS.md"
+    descripcion: "Validaciones para Docker/CI-CD"
+    estado: "IMPLEMENTADO"
+    comandos: ["docker build", "docker-compose config"]
+    usado_por:
+      - "PERFIL-DEVOPS.md"
+    lineas: 91
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SECCIONES REUTILIZABLES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+sections:
+  SECTION-IDENTITY:
+    alias: "@DEF_SEC_IDENTITY"
+    path: "sections/SECTION-IDENTITY.md"
+    descripcion: "Template de sección IDENTIDAD para perfiles"
+    estado: "IMPLEMENTADO"
+    lineas: 95
+    fecha_creacion: "2026-01-16"
+
+  SECTION-RESPONSIBILITIES:
+    alias: "@DEF_SEC_RESP"
+    path: "sections/SECTION-RESPONSIBILITIES.md"
+    descripcion: "Template de sección RESPONSABILIDADES"
+    estado: "IMPLEMENTADO"
+    lineas: 130
+    fecha_creacion: "2026-01-16"
+
+  SECTION-REFERENCES:
+    alias: "@DEF_SEC_REFS"
+    path: "sections/SECTION-REFERENCES.md"
+    descripcion: "Referencias estándar para documentos"
+    estado: "IMPLEMENTADO"
+    lineas: 145
+    fecha_creacion: "2026-01-16"
+
+  SECTION-ERRORS:
+    alias: "@DEF_SEC_ERRORS"
+    path: "sections/SECTION-ERRORS.yml"
+    descripcion: "Catálogo de errores comunes por dominio"
+    estado: "IMPLEMENTADO"
+    lineas: 230
+    fecha_creacion: "2026-01-16"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CHECKLISTS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+checklists:
+  CHECKLIST-GOBERNANZA-TAREA:
+    alias: "@DEF_CHK_GOB"
+    path: "checklists/CHECKLIST-GOBERNANZA-TAREA.md"
+    descripcion: "Gobernanza de tarea - BLOQUEANTE, ejecutar PRIMERO"
+    estado: "IMPLEMENTADO"
+    lineas: 180
+    fecha_creacion: "2026-01-16"
+    prioridad: "P0 - BLOQUEANTE"
+    nota: "Debe ejecutarse ANTES de CHECKLIST-POST-TASK"
+
+  CHECKLIST-PRE-CREATE:
+    alias: "@DEF_CHK_CREATE"
+    path: "checklists/CHECKLIST-PRE-CREATE.md"
+    descripcion: "Verificaciones antes de crear cualquier objeto"
+    estado: "IMPLEMENTADO"
+    lineas: 95
+    fecha_creacion: "2026-01-16"
+
+  CHECKLIST-PRE-MODIFY:
+    alias: "@DEF_CHK_MODIFY"
+    path: "checklists/CHECKLIST-PRE-MODIFY.md"
+    descripcion: "Verificaciones antes de modificar"
+    estado: "IMPLEMENTADO"
+    lineas: 145
+    fecha_creacion: "2026-01-16"
+
+  CHECKLIST-POST-TASK:
+    alias: "@DEF_CHK_POST"
+    path: "checklists/CHECKLIST-POST-TASK.md"
+    descripcion: "Verificaciones después de completar tarea (incluye referencia a @DEF_CHK_GOB)"
+    estado: "IMPLEMENTADO"
+    lineas: 200
+    fecha_creacion: "2026-01-16"
+    actualizado: "2026-01-16"
+    nota: "Actualizado para incluir gobernanza como paso 0"
+
+  CHECKLIST-RECOVERY:
+    alias: "@DEF_CHK_RECOVERY"
+    path: "checklists/CHECKLIST-RECOVERY.md"
+    descripcion: "Verificaciones para recuperación de sesión (NEXUS v4.1)"
+    estado: "IMPLEMENTADO"
+    lineas: 180
+    fecha_creacion: "2026-01-24"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADÍSTICAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+statistics:
+  total_definitions: 26
+  implemented: 26
+  pending: 0
+
+  by_category:
+    protocols:
+      total: 6
+      implementados: 6  # CCA-PROTOCOL, CCA-LIGHT, CAPVED-CYCLE, DELEGATION-PROTOCOL, CHECKPOINT-PROTOCOL, RECOVERY-PROTOCOL
+      pendientes: 0
+    validations:
+      total: 4
+      implementados: 4  # BACKEND, FRONTEND, DDL, DEVOPS
+      pendientes: 0
+    sections:
+      total: 4
+      implementados: 4  # IDENTITY, RESPONSIBILITIES, REFERENCES, ERRORS
+      pendientes: 0
+    checklists:
+      total: 5
+      implementados: 5  # GOBERNANZA-TAREA, PRE-CREATE, PRE-MODIFY, POST-TASK, RECOVERY
+      pendientes: 0
+    triggers:
+      total: 3
+      implementados: 3  # CONTEXT-PURGE, AUTO-CHECKPOINT, SESSION-CLEANUP
+      pendientes: 0
+    schemas:
+      total: 4
+      implementados: 4  # SESSION-STATE, PROXIMA-ACCION, CHECKPOINT, DECISIONES-SESION
+      pendientes: 0
+
+  migracion_completada:
+    fecha: "2026-01-16"
+    perfiles_migrados: 31
+    directivas_actualizadas: 3
+    lineas_duplicadas_eliminadas: "~1,800"
+    commits: 7
+
+  nexus_v41_implementado:
+    fecha: "2026-01-24"
+    nuevos_archivos: 10
+    categorias_nuevas: ["triggers", "schemas"]
+    protocolos_nuevos: ["CHECKPOINT-PROTOCOL", "RECOVERY-PROTOCOL"]
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRIGGERS DE CONTEXTO (NEXUS v4.1)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+triggers:
+  CONTEXT-PURGE:
+    alias: "@DEF_TRG_PURGE"
+    path: "triggers/TRIGGER-CONTEXT-PURGE.yml"
+    descripcion: "Eventos que disparan purga automática de contexto"
+    estado: "IMPLEMENTADO"
+    fecha_creacion: "2026-01-24"
+    eventos:
+      - POST_SUBTAREA
+      - CAMBIO_DOMINIO
+      - CAMBIO_PROYECTO
+      - UMBRAL_TOKENS
+
+  AUTO-CHECKPOINT:
+    alias: "@DEF_TRG_CHECKPOINT"
+    path: "triggers/TRIGGER-AUTO-CHECKPOINT.yml"
+    descripcion: "Eventos que disparan checkpoint automático"
+    estado: "IMPLEMENTADO"
+    fecha_creacion: "2026-01-24"
+    eventos:
+      - TOKEN_THRESHOLD_70
+      - TOKEN_THRESHOLD_85
+      - DECISION_ARQUITECTURAL
+      - SUBTAREA_COMPLETADA
+
+  SESSION-CLEANUP:
+    alias: "@DEF_TRG_CLEANUP"
+    path: "triggers/TRIGGER-SESSION-CLEANUP.yml"
+    descripcion: "Eventos de limpieza al finalizar sesión"
+    estado: "IMPLEMENTADO"
+    fecha_creacion: "2026-01-24"
+    eventos:
+      - FIN_SESION
+      - CAMBIO_AGENTE
+      - TIMEOUT_INACTIVIDAD
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SCHEMAS DE VALIDACIÓN (NEXUS v4.1)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+schemas:
+  SESSION-STATE:
+    alias: "@DEF_SCHEMA_STATE"
+    path: "schemas/SESSION-STATE.schema.yml"
+    descripcion: "Schema para archivos SESSION-STATE.yml"
+    estado: "IMPLEMENTADO"
+    fecha_creacion: "2026-01-24"
+    formato: "YAML"
+
+  PROXIMA-ACCION:
+    alias: "@DEF_SCHEMA_PROXIMA"
+    path: "schemas/PROXIMA-ACCION.schema.yml"
+    descripcion: "Schema para archivos PROXIMA-ACCION.md"
+    estado: "IMPLEMENTADO"
+    fecha_creacion: "2026-01-24"
+    formato: "Markdown estructurado"
+
+  CHECKPOINT:
+    alias: "@DEF_SCHEMA_CHECKPOINT"
+    path: "schemas/CHECKPOINT.schema.yml"
+    descripcion: "Schema para archivos de checkpoint"
+    estado: "IMPLEMENTADO"
+    fecha_creacion: "2026-01-24"
+    formato: "YAML"
+
+  DECISIONES-SESION:
+    alias: "@DEF_SCHEMA_DECISIONES"
+    path: "schemas/DECISIONES-SESION.schema.yml"
+    descripcion: "Schema para registro de decisiones arquitecturales"
+    estado: "IMPLEMENTADO"
+    fecha_creacion: "2026-01-24"
+    formato: "YAML"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IoC RESOLUTION - MAPA DE KEYWORDS A CONTEXTO (NEXUS v4.1)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+ioc_resolution:
+  descripcion: |
+    Sistema de Inversión de Control para resolución automática de contexto.
+    El agente declara QUÉ necesita, el sistema resuelve DÓNDE está.
+
+  keywords_ddl:
+    - keyword: tabla
+      dominio: DDL
+      cargar: [SIMCO-DDL.md, DATABASE_INVENTORY.yml]
+    - keyword: schema
+      dominio: DDL
+      cargar: [SIMCO-DDL.md, DATABASE_INVENTORY.yml]
+    - keyword: constraint
+      dominio: DDL
+      cargar: [SIMCO-DDL.md, DATABASE_INVENTORY.yml]
+    - keyword: index
+      dominio: DDL
+      cargar: [SIMCO-DDL.md, DATABASE_INVENTORY.yml]
+
+  keywords_backend:
+    - keyword: entity
+      dominio: BACKEND
+      cargar: [SIMCO-BACKEND.md, BACKEND_INVENTORY.yml]
+    - keyword: endpoint
+      dominio: BACKEND
+      cargar: [SIMCO-BACKEND.md, BACKEND_INVENTORY.yml]
+    - keyword: service
+      dominio: BACKEND
+      cargar: [SIMCO-BACKEND.md, BACKEND_INVENTORY.yml]
+    - keyword: controller
+      dominio: BACKEND
+      cargar: [SIMCO-BACKEND.md, BACKEND_INVENTORY.yml]
+
+  keywords_frontend:
+    - keyword: componente
+      dominio: FRONTEND
+      cargar: [SIMCO-FRONTEND.md, FRONTEND_INVENTORY.yml]
+    - keyword: page
+      dominio: FRONTEND
+      cargar: [SIMCO-FRONTEND.md, FRONTEND_INVENTORY.yml]
+    - keyword: hook
+      dominio: FRONTEND
+      cargar: [SIMCO-FRONTEND.md, FRONTEND_INVENTORY.yml]
+
+  keywords_operacion:
+    - keyword: crear
+      operacion: CREAR
+      cargar: [SIMCO-CREAR.md]
+    - keyword: modificar
+      operacion: MODIFICAR
+      cargar: [SIMCO-MODIFICAR.md]
+    - keyword: bug
+      operacion: MODIFICAR
+      cargar: [SIMCO-MODIFICAR.md, REGISTRO-ERRORES.yml]
+    - keyword: test
+      operacion: VALIDAR
+      cargar: [SIMCO-VALIDAR.md]
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TOKEN BUDGET - PRESUPUESTO POR NIVEL (NEXUS v4.1)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+token_budget:
+  total: 20000
+  por_nivel:
+    L0_sistema: 8000
+    L1_proyecto: 5000
+    L2_operacion: 4000
+    L3_tarea: 3000
+  umbrales:
+    warning: 14000      # 70% - Alerta amarilla
+    critical: 17000     # 85% - Checkpoint automático
+    emergency: 19000    # 95% - Purga forzada
+    max: 20000          # 100% - Límite absoluto
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# INSTRUCCIONES DE USO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+instructions:
+  para_referenciar: |
+    En lugar de copiar contenido, usar:
+    ```markdown
+    ## PROTOCOLO CCA
+    > Definición: @DEF_CCA
+    ```
+
+  para_agregar_definicion: |
+    1. Crear archivo en subdirectorio apropiado
+    2. Agregar entrada en este índice
+    3. Agregar alias en ALIASES.yml sección 'definitions'
+    4. Actualizar archivos que tenían copias
+
+  para_modificar_definicion: |
+    1. Modificar SOLO el archivo en _definitions/
+    2. Todas las referencias automáticamente usan versión actualizada
+    3. NO modificar archivos que referencian
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DEL ÍNDICE
+# ═══════════════════════════════════════════════════════════════════════════════

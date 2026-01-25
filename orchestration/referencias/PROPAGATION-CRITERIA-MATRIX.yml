@@ -1,0 +1,222 @@
+# PROPAGATION CRITERIA MATRIX
+# Sistema: SIMCO - NEXUS v4.0
+# Propósito: Criterios de decisión para propagación de mejoras
+# Versión: 1.0.0
+# Fecha: 2026-01-04
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TIPOS DE CAMBIO Y SU PROPAGACIÓN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+tipos_cambio:
+  security_fix:
+    descripcion: "Corrección de vulnerabilidad de seguridad"
+    propagacion: "OBLIGATORIA"
+    sla: "24h"
+    prioridad: "critica"
+    requiere:
+      - Análisis de impacto en todos los proyectos
+      - Notificación inmediata
+      - Verificación post-propagación
+    destinos:
+      - Todos los proyectos que usen el componente afectado
+      - Knowledge Base (antipatrón)
+
+  bug_fix:
+    descripcion: "Corrección de error funcional"
+    propagacion: "OBLIGATORIA"
+    sla: "72h"
+    prioridad: "alta"
+    requiere:
+      - Verificar si otros proyectos tienen el mismo bug
+      - Test de regresión
+    destinos:
+      - Proyectos con código similar
+      - Registro de errores
+
+  feature_generica:
+    descripcion: "Funcionalidad reutilizable entre proyectos"
+    propagacion: "EVALUAR"
+    prioridad: "media"
+    criterios_evaluacion:
+      - "¿Es genérico (no específico de negocio)?"
+      - "¿Beneficia a otros proyectos?"
+      - "¿Ya existe en KB?"
+    destinos:
+      - Knowledge Base si es nuevo
+      - Proyectos que lo necesiten
+
+  refactor:
+    descripcion: "Mejora de estructura sin cambio funcional"
+    propagacion: "OPCIONAL"
+    prioridad: "baja"
+    criterios_evaluacion:
+      - "¿Mejora significativa de mantenibilidad?"
+      - "¿Afecta interfaces públicas?"
+    destinos:
+      - Knowledge Base (patrón)
+      - Solo si otros equipos lo solicitan
+
+  documentacion:
+    descripcion: "Mejora de documentación"
+    propagacion: "EVALUAR"
+    prioridad: "media"
+    criterios_evaluacion:
+      - "¿Es documentación de referencia común?"
+      - "¿Corrige errores en docs existentes?"
+    destinos:
+      - Knowledge Base
+      - Templates si aplica
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FLUJO DE DECISIÓN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+flujo_decision:
+  paso_1:
+    pregunta: "¿Es genérico (no específico de negocio)?"
+    si_no: "NO propagar - Es lógica de negocio específica"
+    si_si: "Continuar a paso 2"
+
+  paso_2:
+    pregunta: "¿Es corrección de seguridad o bug?"
+    si_si: "PROPAGAR OBLIGATORIO - Ver tipo correspondiente"
+    si_no: "Continuar a paso 3"
+
+  paso_3:
+    pregunta: "¿Existe algo similar en Knowledge Base?"
+    si_si: "ACTUALIZAR KB existente"
+    si_no: "CONTRIBUIR nuevo a KB"
+
+  paso_4:
+    pregunta: "¿Beneficia directamente a otros proyectos activos?"
+    si_si: "PROPAGAR a proyectos identificados"
+    si_no: "Solo contribuir a KB"
+
+  paso_5:
+    pregunta: "¿Es un breaking change?"
+    si_si: "Crear migration guide antes de propagar"
+    si_no: "Propagar directamente"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MATRIZ DE DECISIÓN RÁPIDA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+matriz_rapida:
+  # Formato: [tipo_cambio, es_generico, afecta_otros] → accion
+
+  "[security, *, *]": "PROPAGAR INMEDIATO"
+  "[bug_fix, true, true]": "PROPAGAR"
+  "[bug_fix, true, false]": "KB SOLO"
+  "[bug_fix, false, *]": "NO PROPAGAR"
+
+  "[feature, true, true]": "PROPAGAR + KB"
+  "[feature, true, false]": "KB SOLO"
+  "[feature, false, *]": "NO PROPAGAR"
+
+  "[refactor, true, solicitado]": "PROPAGAR"
+  "[refactor, *, *]": "KB OPCIONAL"
+
+  "[docs, common, *]": "KB"
+  "[docs, proyecto, *]": "NO PROPAGAR"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DESTINOS DE PROPAGACIÓN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+destinos:
+  knowledge_base:
+    ubicacion: "shared/knowledge-base/"
+    categorias:
+      patterns: "patterns/"               # Patrones reutilizables
+      lessons_learned: "lessons-learned/" # Lecciones aprendidas
+      reference: "reference/"             # Documentación de referencia
+      antipatterns: "antipatterns/"       # Qué NO hacer
+
+  proyectos:
+    standalone:
+      - gamilit
+      - trading-platform
+      - betting-analytics
+      - inmobiliaria-analytics
+      - platform_marketing_content
+
+    suite_erp:
+      - erp-suite                         # Suite padre
+      - erp-core                          # Core compartido
+      - erp-clinicas
+      - erp-construccion
+      - erp-mecanicas-diesel
+      - erp-retail
+      - erp-vidrio-templado
+
+  catalog:
+    ubicacion: "shared/catalog/"
+    tipos:
+      components: "components/"
+      utils: "utils/"
+      hooks: "hooks/"
+      services: "services/"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROCESO DE PROPAGACIÓN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+proceso_propagacion:
+  1_identificar:
+    - Clasificar tipo de cambio
+    - Evaluar según matriz rápida
+    - Identificar destinos aplicables
+
+  2_preparar:
+    - Documentar cambio claramente
+    - Crear migration guide si breaking
+    - Preparar tests de verificación
+
+  3_ejecutar:
+    por_cada_destino:
+      - Crear branch de propagación
+      - Aplicar cambios
+      - Ejecutar tests locales
+      - Verificar build
+
+  4_verificar:
+    - Confirmar funcionalidad en destino
+    - Actualizar documentación de destino
+    - Registrar en TRAZABILIDAD-PROPAGACION.yml
+
+  5_cerrar:
+    - Merge a branch principal del destino
+    - Notificar a equipos afectados
+    - Actualizar estado en tracking
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# EXCEPCIONES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+excepciones:
+  no_propagar_nunca:
+    - Credenciales o secretos
+    - Configuraciones de ambiente específicas
+    - Datos de prueba con información real
+    - Código con licencias incompatibles
+
+  requiere_aprobacion_po:
+    - Breaking changes mayores
+    - Cambios que afecten >3 proyectos
+    - Refactors que cambien arquitectura
+    - Deprecación de funcionalidades
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MÉTRICAS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+metricas:
+  sla_cumplimiento:
+    security: "100% en <24h"
+    bug_fix: "100% en <72h"
+    feature: "No aplica SLA"
+
+  calidad:
+    propagaciones_exitosas: "Objetivo: >95%"
+    rollbacks_requeridos: "Objetivo: <5%"

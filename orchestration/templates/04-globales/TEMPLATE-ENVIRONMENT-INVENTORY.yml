@@ -1,0 +1,410 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# TEMPLATE: INVENTARIO DE ENTORNO DE DESARROLLO
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Proposito: Documentar toda la configuracion de entorno de un proyecto
+# Ubicacion: projects/{proyecto}/orchestration/environment/ENVIRONMENT-INVENTORY.yml
+# Responsable: @PERFIL_DEVENV
+#
+# INSTRUCCIONES:
+# 1. Copiar este template a la ubicacion del proyecto
+# 2. Reemplazar todos los placeholders {xxx}
+# 3. Completar todas las secciones aplicables
+# 4. Eliminar secciones que no apliquen
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+fecha_creacion: "{YYYY-MM-DD}"
+fecha_actualizacion: "{YYYY-MM-DD}"
+responsable: "@PERFIL_DEVENV"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACION DEL PROYECTO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+proyecto:
+  nombre: "{NOMBRE_PROYECTO}"
+  alias: "{alias_corto}"
+  nivel: "{NIVEL_2A | NIVEL_2B | NIVEL_2B.x}"
+  tipo: "{standalone | suite | vertical}"
+  estado: "{desarrollo | mvp | produccion}"
+  descripcion: "{Descripcion breve del proyecto}"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# HERRAMIENTAS Y RUNTIME
+# ─────────────────────────────────────────────────────────────────────────────────
+
+herramientas:
+  # Runtime principal
+  runtime:
+    node:
+      version: "{20.x | 18.x | ...}"
+      requerido: true
+      notas: ""
+    python:
+      version: "{3.11 | 3.10 | ...}"
+      requerido: false
+      notas: ""
+
+  # Package managers
+  package_managers:
+    npm:
+      version: "{10.x}"
+      requerido: true
+    pnpm:
+      version: ""
+      requerido: false
+    pip:
+      version: ""
+      requerido: false
+
+  # Build tools
+  build_tools:
+    - nombre: "Vite"
+      version: "{5.x}"
+      uso: "Frontend build"
+    - nombre: "TypeScript"
+      version: "{5.x}"
+      uso: "Compilacion"
+    # Agregar mas segun necesidad
+
+  # Linters y formatters
+  linters:
+    - nombre: "ESLint"
+      version: "{8.x}"
+      config: ".eslintrc.js"
+    - nombre: "Prettier"
+      version: "{3.x}"
+      config: ".prettierrc"
+    # Agregar mas segun necesidad
+
+  # Testing
+  testing:
+    - nombre: "Jest"
+      version: "{29.x}"
+      tipo: "unit"
+      config: "jest.config.js"
+    - nombre: "Vitest"
+      version: ""
+      tipo: "unit"
+      config: ""
+    # Agregar mas segun necesidad
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SERVICIOS Y PUERTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+servicios:
+  # Frontend
+  frontend:
+    nombre: "{nombre_app_frontend}"
+    framework: "{React | Vue | Next.js | ...}"
+    version: "{version_framework}"
+    puerto: {PUERTO_FRONTEND}
+    comando_dev: "npm run dev"
+    ubicacion: "apps/frontend/"
+    url_local: "http://localhost:{PUERTO_FRONTEND}"
+
+  # Backend
+  backend:
+    nombre: "{nombre_app_backend}"
+    framework: "{NestJS | Express | FastAPI | ...}"
+    version: "{version_framework}"
+    puerto: {PUERTO_BACKEND}
+    comando_dev: "npm run start:dev"
+    ubicacion: "apps/backend/"
+    url_local: "http://localhost:{PUERTO_BACKEND}"
+    api_prefix: "/api/v1"
+
+  # Servicios adicionales (descomentar si aplica)
+  # ml_service:
+  #   nombre: ""
+  #   framework: "FastAPI"
+  #   puerto: {PUERTO}
+  #   ubicacion: ""
+
+  # workers:
+  #   nombre: ""
+  #   tipo: "Bull | Celery | ..."
+  #   puerto: {PUERTO}
+
+  # storybook:
+  #   puerto: {PUERTO}
+  #   comando: "npm run storybook"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# BASE DE DATOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+base_de_datos:
+  # Base de datos principal
+  principal:
+    engine: "{PostgreSQL | MySQL | MongoDB}"
+    version: "{15 | 8 | ...}"
+    host: "localhost"
+    puerto: {5432 | 3306 | 27017}
+
+    ambientes:
+      development:
+        nombre: "{proyecto}_development"
+        usuario: "{proyecto}_dev"
+        password_ref: "DB_PASSWORD en .env"
+
+      test:
+        nombre: "{proyecto}_test"
+        usuario: "{proyecto}_dev"
+        password_ref: "DB_PASSWORD en .env"
+
+    schemas:
+      - nombre: "public"
+        descripcion: "Schema principal"
+      # Agregar schemas adicionales
+      # - nombre: "auth_management"
+      #   descripcion: "Autenticacion y usuarios"
+
+    conexion_ejemplo: "postgresql://{usuario}:{password}@localhost:5432/{nombre_bd}"
+
+  # Cache (si aplica)
+  # redis:
+  #   host: "localhost"
+  #   puerto: 6379
+  #   uso: "cache | sessions | queues"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VARIABLES DE ENTORNO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+variables_entorno:
+  # Referencia al archivo .env.example
+  archivo_ejemplo: ".env.example"
+
+  # Listado de variables
+  variables:
+    # Aplicacion
+    - nombre: "NODE_ENV"
+      descripcion: "Ambiente de ejecucion"
+      requerido: true
+      sensible: false
+      ejemplo: "development"
+
+    - nombre: "PORT"
+      descripcion: "Puerto del servidor"
+      requerido: true
+      sensible: false
+      ejemplo: "{PUERTO_BACKEND}"
+
+    # Base de datos
+    - nombre: "DATABASE_URL"
+      descripcion: "Connection string de PostgreSQL"
+      requerido: true
+      sensible: true
+      ejemplo: "postgresql://user:pass@localhost:5432/db"
+
+    - nombre: "DB_HOST"
+      descripcion: "Host de la base de datos"
+      requerido: true
+      sensible: false
+      ejemplo: "localhost"
+
+    - nombre: "DB_PORT"
+      descripcion: "Puerto de la base de datos"
+      requerido: true
+      sensible: false
+      ejemplo: "5432"
+
+    - nombre: "DB_USERNAME"
+      descripcion: "Usuario de la base de datos"
+      requerido: true
+      sensible: true
+      ejemplo: ""
+
+    - nombre: "DB_PASSWORD"
+      descripcion: "Password de la base de datos"
+      requerido: true
+      sensible: true
+      ejemplo: ""
+
+    - nombre: "DB_DATABASE"
+      descripcion: "Nombre de la base de datos"
+      requerido: true
+      sensible: false
+      ejemplo: "{proyecto}_development"
+
+    # Auth (si aplica)
+    - nombre: "JWT_SECRET"
+      descripcion: "Secreto para JWT"
+      requerido: true
+      sensible: true
+      ejemplo: ""
+
+    # Agregar mas variables segun necesidad
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CONTENEDORES DOCKER
+# ─────────────────────────────────────────────────────────────────────────────────
+
+docker:
+  # docker-compose.yml
+  compose_file: "docker-compose.yml"
+  compose_dev_file: "docker-compose.dev.yml"
+
+  services:
+    - nombre: "db"
+      imagen: "postgres:15-alpine"
+      puerto_host: 5432
+      puerto_container: 5432
+      volumes:
+        - "postgres_data:/var/lib/postgresql/data"
+
+    # Agregar mas services si aplica
+    # - nombre: "redis"
+    #   imagen: "redis:7-alpine"
+    #   puerto_host: 6379
+    #   puerto_container: 6379
+
+  volumes:
+    - nombre: "postgres_data"
+      descripcion: "Datos de PostgreSQL"
+
+  networks:
+    - nombre: "{proyecto}_network"
+      driver: "bridge"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# PROCESOS PM2 (si aplica)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+pm2:
+  config_file: "ecosystem.config.js"
+  apps:
+    - nombre: "{proyecto}-backend"
+      script: "dist/main.js"
+      cwd: "apps/backend"
+      instances: 1
+      watch: false
+
+    # Agregar mas apps si aplica
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SCRIPTS DE DESARROLLO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+scripts:
+  setup:
+    descripcion: "Configurar entorno desde cero"
+    pasos:
+      - "npm install"
+      - "cp .env.example .env"
+      - "docker-compose up -d db"
+      - "npm run migration:run"
+      - "npm run seed"
+
+  desarrollo:
+    frontend: "npm run dev"
+    backend: "npm run start:dev"
+    ambos: "npm run dev:all"
+
+  testing:
+    unit: "npm run test"
+    e2e: "npm run test:e2e"
+    coverage: "npm run test:cov"
+
+  build:
+    frontend: "npm run build"
+    backend: "npm run build"
+
+  database:
+    migrations_run: "npm run migration:run"
+    migrations_generate: "npm run migration:generate"
+    seed: "npm run seed"
+    reset: "npm run db:reset"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# INSTRUCCIONES DE SETUP
+# ─────────────────────────────────────────────────────────────────────────────────
+
+setup_instrucciones: |
+  ## Setup del Entorno de Desarrollo
+
+  ### Prerequisitos
+  - Node.js {version}
+  - PostgreSQL {version} (o Docker)
+  - npm/pnpm
+
+  ### Pasos
+
+  1. Clonar repositorio:
+     ```bash
+     git clone {url_repo}
+     cd {proyecto}
+     ```
+
+  2. Instalar dependencias:
+     ```bash
+     npm install
+     ```
+
+  3. Configurar variables de entorno:
+     ```bash
+     cp .env.example .env
+     # Editar .env con valores locales
+     ```
+
+  4. Levantar base de datos:
+     ```bash
+     docker-compose up -d db
+     # O usar PostgreSQL local
+     ```
+
+  5. Ejecutar migraciones:
+     ```bash
+     npm run migration:run
+     ```
+
+  6. (Opcional) Cargar datos de prueba:
+     ```bash
+     npm run seed
+     ```
+
+  7. Iniciar desarrollo:
+     ```bash
+     # Terminal 1 - Backend
+     npm run start:dev
+
+     # Terminal 2 - Frontend
+     cd apps/frontend && npm run dev
+     ```
+
+  ### Verificar
+  - Frontend: http://localhost:{PUERTO_FRONTEND}
+  - Backend: http://localhost:{PUERTO_BACKEND}/api/v1
+  - Health: http://localhost:{PUERTO_BACKEND}/health
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TROUBLESHOOTING
+# ─────────────────────────────────────────────────────────────────────────────────
+
+troubleshooting:
+  - problema: "Puerto en uso"
+    solucion: "Verificar con lsof -i :{puerto}. Cambiar puerto en .env"
+
+  - problema: "Error de conexion a BD"
+    solucion: "Verificar que PostgreSQL esta corriendo. Revisar credenciales en .env"
+
+  - problema: "Migraciones fallan"
+    solucion: "Verificar que BD existe y usuario tiene permisos"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  perfil_devenv: "orchestration/agents/perfiles/PERFIL-DEVENV.md"
+  inventario_master: "orchestration/inventarios/DEVENV-MASTER-INVENTORY.yml"
+  inventario_puertos: "orchestration/inventarios/DEVENV-PORTS-INVENTORY.yml"
+  contexto_proyecto: "orchestration/00-guidelines/CONTEXTO-PROYECTO.md"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE INVENTARIO
+# ═══════════════════════════════════════════════════════════════════════════════

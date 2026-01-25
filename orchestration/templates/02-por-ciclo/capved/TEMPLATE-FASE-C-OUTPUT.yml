@@ -1,0 +1,86 @@
+# TEMPLATE: Salida Fase C (Contexto)
+# Sistema: SIMCO - NEXUS v4.0
+# Versión: 1.0.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INSTRUCCIONES: Completar TODOS los campos obligatorios (*) antes de GATE-C
+# ═══════════════════════════════════════════════════════════════════════════════
+
+fase_c_output:
+  metadata:
+    fase: "C - Contexto"
+    timestamp: "{YYYY-MM-DD HH:MM}"      # *Obligatorio
+    proyecto: "{nombre_proyecto}"         # *Obligatorio
+    agente: "{id_agente}"                 # *Obligatorio
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # IDENTIFICACIÓN DE TAREA
+  # ─────────────────────────────────────────────────────────────────────────────
+  identificacion:
+    descripcion_original: |
+      # *Obligatorio: Copiar descripción exacta de la tarea recibida
+      {descripcion}
+
+    hu_vinculada:
+      id: "{HU-XXX}"                      # *Obligatorio: ID de Historia de Usuario
+      existe: true | false                # Si false, crear HU derivada
+      titulo: "{titulo_hu}"
+
+    tipo_tarea:                           # *Obligatorio: Seleccionar uno
+      valor: "{CREAR | MODIFICAR | VALIDAR | REFACTORIZAR | INVESTIGAR}"
+      justificacion: "{por qué este tipo}"
+
+    dominio:                              # *Obligatorio: Seleccionar uno o más
+      principal: "{DDL | BACKEND | FRONTEND}"
+      secundarios: []                     # Si aplica
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # VERIFICACIÓN ANTI-DUPLICACIÓN
+  # ─────────────────────────────────────────────────────────────────────────────
+  verificacion_catalogo:
+    verificado: true | false              # *Obligatorio
+    ubicacion_catalogo: "{ruta_catalog}"
+    resultado:
+      existe_similar: true | false
+      si_existe:
+        referencia: "{ruta_existente}"
+        decision: "{REUTILIZAR | EXTENDER | NUEVO_JUSTIFICADO}"
+        justificacion: "{por qué}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # BÚSQUEDA DE HISTORIAL
+  # ─────────────────────────────────────────────────────────────────────────────
+  busqueda_historial:
+    ejecutada: true | false               # *Obligatorio
+    ubicaciones_buscadas:
+      - "{proyecto}/orchestration/trazas/"
+      - "orchestration/errores/REGISTRO-ERRORES.yml"
+      - "shared/knowledge-base/lessons-learned/"
+
+    resultados:
+      tareas_similares:
+        encontradas: 0                    # Número de tareas similares
+        referencias: []                   # Lista de IDs/rutas si > 0
+
+      errores_previos:
+        encontrados: 0                    # Número de errores relacionados
+        referencias: []                   # Lista de IDs si > 0
+        requiere_analisis_profundo: false # true si error repetido
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # GATE-C: CHECKLIST
+  # ─────────────────────────────────────────────────────────────────────────────
+  gate_c:
+    checklist:
+      hu_identificada: false              # *Debe ser true para pasar
+      tipo_clasificado: false             # *Debe ser true para pasar
+      dominio_identificado: false         # *Debe ser true para pasar
+      catalogo_verificado: false          # *Debe ser true para pasar
+      historial_buscado: false            # *Debe ser true para pasar
+
+    estado: "PENDIENTE"                   # PENDIENTE | APROBADO | BLOQUEADO
+    notas: ""                             # Si bloqueado, explicar por qué
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SIGUIENTE: Si GATE-C = APROBADO → Proceder a FASE A (Análisis)
+# ═══════════════════════════════════════════════════════════════════════════════

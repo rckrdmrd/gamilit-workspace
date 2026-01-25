@@ -1,0 +1,280 @@
+# =============================================================================
+# SHARED-PROJECT-REGISTRY.yml - Unified Project Registry for All Agents
+# =============================================================================
+# Sistema: SIMCO v4.0.0 + NEXUS v4.0
+# Version: 1.0.0
+# Fecha: 2026-01-24
+# Scope: all-agents (Claude Code, Gemini CLI, Trae, Windsurf)
+# Consolidado de: .windsurf/PROJECT_REGISTRY.yml, .gemini/antigravity/PROJECT_REGISTRY.yml
+# =============================================================================
+
+version: "1.0.0"
+updated: "2026-01-24"
+scope: "all-agents"
+
+# =============================================================================
+# PURPOSE
+# =============================================================================
+# Enables agents to find project context automatically without paths.
+# When user says "Work on {Alias}", look up the project here.
+#
+# USAGE:
+# 1. User mentions project alias (e.g., "Work on Gamilit")
+# 2. Agent finds matching entry in this registry
+# 3. Agent sets PROJECT_ROOT to project's root path
+# 4. Agent loads project's config file
+# 5. Agent continues with task execution
+
+# =============================================================================
+# PROJECT TYPE HIERARCHY
+# =============================================================================
+# PROVIDER → INTERMEDIATE → CONSUMER
+#
+# template-saas (PROVIDER)
+#     ↓
+# erp-core (INTERMEDIATE)
+#     ↓
+# erp-construccion, erp-clinicas, etc. (CONSUMERS)
+#
+# STANDALONE projects have no dependencies
+
+# =============================================================================
+# MANAGED PROJECTS
+# =============================================================================
+
+projects:
+
+  # ---------------------------------------------------------------------------
+  # WORKSPACE ROOT
+  # ---------------------------------------------------------------------------
+  workspace:
+    aliases: ["workspace", "root", "base", "workspace-v2"]
+    root: "./"
+    config: "CLAUDE.md"
+    map: "orchestration/CONTEXT-MAP.yml"
+    type: "ROOT"
+    description: "Workspace root - multi-project orchestration hub"
+    nivel_nexus: "L0"
+
+  # ---------------------------------------------------------------------------
+  # TEMPLATES AND PROVIDERS (L2)
+  # ---------------------------------------------------------------------------
+  template_saas:
+    aliases: ["template-saas", "template", "saas"]
+    root: "projects/template-saas/"
+    config: "projects/template-saas/orchestration/BOOTLOADER.md"
+    type: "PROVIDER"
+    description: "SaaS Template - base architecture for all projects"
+    nivel_nexus: "L2"
+    stack: ["NestJS", "React", "PostgreSQL", "TypeORM"]
+    exports_to: ["erp-core"]
+    database:
+      name: "template_saas_dev"
+      user: "template_saas_user"
+      pass: "saas_dev_2026"
+
+  shared:
+    aliases: ["shared", "common", "modules"]
+    root: "shared/"
+    config: "shared/README.md"
+    type: "PROVIDER"
+    description: "Shared modules, types, and utilities"
+    nivel_nexus: "L2"
+
+  # ---------------------------------------------------------------------------
+  # ERP SUITE (HIERARCHICAL)
+  # ---------------------------------------------------------------------------
+  erp_suite:
+    aliases: ["erp-suite", "erp", "suite"]
+    root: "projects/erp-suite/"
+    type: "SUITE"
+    description: "ERP Suite - parent container for ERP projects"
+    nivel_nexus: "L2"
+
+  erp_core:
+    aliases: ["erp-core", "core"]
+    root: "projects/erp-core/"
+    config: "projects/erp-core/orchestration/BOOTLOADER.md"
+    type: "INTERMEDIATE"
+    description: "ERP Core - shared modules for all ERP verticals"
+    nivel_nexus: "L2"
+    stack: ["NestJS", "React", "PostgreSQL", "TypeORM"]
+    inherits_from: "template-saas"
+    exports_to:
+      - "erp-construccion"
+      - "erp-clinicas"
+      - "erp-mecanicas-diesel"
+      - "erp-retail"
+      - "erp-vidrio-templado"
+    database:
+      name: "erp_generic"
+      user: "erp_admin"
+      pass: "erp_dev_2026"
+
+  # ---------------------------------------------------------------------------
+  # ERP VERTICALS (CONSUMERS - L1)
+  # ---------------------------------------------------------------------------
+  erp_construccion:
+    aliases: ["erp-construccion", "construccion", "obra"]
+    root: "projects/erp-construccion/"
+    config: "projects/erp-construccion/orchestration/BOOTLOADER.md"
+    type: "CONSUMER"
+    description: "ERP for Construction Industry"
+    nivel_nexus: "L1"
+    inherits_from: "erp-core"
+    stack: ["NestJS", "React", "PostgreSQL"]
+
+  erp_clinicas:
+    aliases: ["erp-clinicas", "clinicas", "salud"]
+    root: "projects/erp-clinicas/"
+    type: "CONSUMER"
+    description: "ERP for Healthcare Clinics"
+    nivel_nexus: "L1"
+    inherits_from: "erp-core"
+
+  erp_mecanicas_diesel:
+    aliases: ["erp-mecanicas-diesel", "mecanicas", "diesel", "taller"]
+    root: "projects/erp-mecanicas-diesel/"
+    type: "CONSUMER"
+    description: "ERP for Diesel Mechanics Workshops"
+    nivel_nexus: "L1"
+    inherits_from: "erp-core"
+
+  erp_retail:
+    aliases: ["erp-retail", "retail", "tienda"]
+    root: "projects/erp-retail/"
+    type: "CONSUMER"
+    description: "ERP for Retail Stores"
+    nivel_nexus: "L1"
+    inherits_from: "erp-core"
+
+  erp_vidrio_templado:
+    aliases: ["erp-vidrio-templado", "vidrio", "templado", "cristal"]
+    root: "projects/erp-vidrio-templado/"
+    type: "CONSUMER"
+    description: "ERP for Tempered Glass Industry"
+    nivel_nexus: "L1"
+    inherits_from: "erp-core"
+
+  # ---------------------------------------------------------------------------
+  # STANDALONE PROJECTS (L1)
+  # ---------------------------------------------------------------------------
+  gamilit:
+    aliases: ["gamilit", "gamification", "gamilit-v2"]
+    root: "projects/gamilit/"
+    config: "projects/gamilit/orchestration/BOOTLOADER.md"
+    map: "projects/gamilit/orchestration/CONTEXT-MAP.yml"
+    type: "STANDALONE"
+    description: "Educational Gamification Platform"
+    nivel_nexus: "L1"
+    stack: ["NestJS", "React", "PostgreSQL", "Redis"]
+    database:
+      name: "gamilit_platform"
+      user: "gamilit_user"
+      pass: "gamilit_dev_2026"
+    notes: "Modelo de referencia para estructura L3"
+
+  trading_platform:
+    aliases: ["trading", "trading-platform", "inversiones"]
+    root: "projects/trading-platform/"
+    config: "projects/trading-platform/orchestration/BOOTLOADER.md"
+    type: "STANDALONE"
+    description: "Trading and Investment Platform with ML"
+    nivel_nexus: "L1"
+    stack: ["NestJS", "React", "PostgreSQL", "ML"]
+
+  michangarrito:
+    aliases: ["michangarrito", "changarrito"]
+    root: "projects/michangarrito/"
+    config: "projects/michangarrito/orchestration/BOOTLOADER.md"
+    type: "STANDALONE"
+    description: "Small Business POS"
+    nivel_nexus: "L1"
+    database:
+      name: "michangarrito_dev"
+      user: "michangarrito_dev"
+      pass: "mch_dev_2026"
+
+  # ---------------------------------------------------------------------------
+  # OTHER STANDALONE PROJECTS (L1)
+  # ---------------------------------------------------------------------------
+  clinica_dental:
+    aliases: ["clinica-dental", "dental"]
+    root: "projects/clinica-dental/"
+    type: "STANDALONE"
+    description: "Dental Clinic Management"
+    nivel_nexus: "L1"
+
+  clinica_veterinaria:
+    aliases: ["clinica-veterinaria", "veterinaria", "vet"]
+    root: "projects/clinica-veterinaria/"
+    type: "STANDALONE"
+    description: "Veterinary Clinic Management"
+    nivel_nexus: "L1"
+
+  inmobiliaria_analytics:
+    aliases: ["inmobiliaria-analytics", "inmobiliaria", "real-estate"]
+    root: "projects/inmobiliaria-analytics/"
+    type: "STANDALONE"
+    description: "Real Estate Analytics"
+    nivel_nexus: "L1"
+
+  miinventario:
+    aliases: ["miinventario", "inventario"]
+    root: "projects/miinventario/"
+    type: "STANDALONE"
+    description: "Inventory Management"
+    nivel_nexus: "L1"
+
+  betting_analytics:
+    aliases: ["betting-analytics", "betting", "apuestas"]
+    root: "projects/betting-analytics/"
+    type: "STANDALONE"
+    description: "Betting Analytics Platform"
+    nivel_nexus: "L1"
+
+  platform_marketing_content:
+    aliases: ["platform-marketing-content", "marketing", "content"]
+    root: "projects/platform_marketing_content/"
+    type: "STANDALONE"
+    description: "Marketing Content Platform"
+    nivel_nexus: "L1"
+
+  student_portal:
+    aliases: ["student-portal", "portal", "estudiantes"]
+    root: "projects/student-portal/"
+    type: "STANDALONE"
+    description: "Student Portal with Gamification"
+    nivel_nexus: "L2"
+
+# =============================================================================
+# STATISTICS
+# =============================================================================
+statistics:
+  total_projects: 18
+  by_type:
+    ROOT: 1
+    PROVIDER: 2
+    SUITE: 1
+    INTERMEDIATE: 1
+    CONSUMER: 5
+    STANDALONE: 8
+  by_nexus_level:
+    L0: 1
+    L1: 12
+    L2: 5
+
+# =============================================================================
+# REFERENCES
+# =============================================================================
+references:
+  original_locations:
+    - ".windsurf/PROJECT_REGISTRY.yml"
+    - ".gemini/antigravity/PROJECT_REGISTRY.yml"
+  symlinks_from:
+    - ".windsurf/PROJECT_REGISTRY.yml"
+    - ".gemini/antigravity/PROJECT_REGISTRY.yml"
+    - ".trae/PROJECT_REGISTRY.yml"
+  related_files:
+    - "orchestration/inventarios/SUBMODULES-INVENTORY.yml"
+    - "orchestration/DEPENDENCY-GRAPH.yml"

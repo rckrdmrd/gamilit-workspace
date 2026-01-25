@@ -1,0 +1,163 @@
+# TRIGGER-CONTEXT-PURGE.yml
+# Sistema NEXUS v4.1 - Gestión de Contexto
+# Fecha: 2026-01-24
+# Versión: 1.0.0
+
+version: "1.0.0"
+descripcion: |
+  Define los eventos que disparan purga automática de contexto.
+  Objetivo: Mantener el uso de tokens bajo control sin perder información crítica.
+
+# ============================================================================
+# EVENTOS DE PURGA
+# ============================================================================
+
+eventos:
+  # ─────────────────────────────────────────────────────────────────────────
+  # POST_SUBTAREA - Al completar una subtarea
+  # ─────────────────────────────────────────────────────────────────────────
+  POST_SUBTAREA:
+    descripcion: "Disparado al completar una subtarea"
+    nivel_afectado: "L3"
+    accion:
+      tipo: "purga_selectiva"
+      pasos:
+        - "Identificar archivos de L3 usados en subtarea"
+        - "Preservar decisiones tomadas en DECISIONES-SESION.yml"
+        - "Purgar contenido de archivos específicos de subtarea"
+        - "Mantener referencias (paths) en memoria"
+    preservar:
+      - "decisiones_tomadas"
+      - "archivos_modificados"
+      - "estado_validaciones"
+    tokens_recuperados: "500-1500"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # CAMBIO_DOMINIO - Al cambiar de DDL a Backend, etc.
+  # ─────────────────────────────────────────────────────────────────────────
+  CAMBIO_DOMINIO:
+    descripcion: "Disparado al cambiar de dominio (DDL -> Backend, etc.)"
+    nivel_afectado: "L2"
+    accion:
+      tipo: "reemplazo"
+      pasos:
+        - "Guardar checkpoint del dominio actual"
+        - "Purgar L2 completo (SIMCO dominio + inventario)"
+        - "Purgar L3 completamente"
+        - "Cargar nuevo L2 según dominio destino"
+    preservar:
+      - "estado_tarea_padre"
+      - "decisiones_arquitecturales"
+    tokens_recuperados: "3000-5000"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # CAMBIO_PROYECTO - Al cambiar de proyecto
+  # ─────────────────────────────────────────────────────────────────────────
+  CAMBIO_PROYECTO:
+    descripcion: "Disparado al cambiar de proyecto activo"
+    nivel_afectado: "L1, L2, L3"
+    accion:
+      tipo: "purga_completa"
+      pasos:
+        - "Guardar PROXIMA-ACCION.md del proyecto actual"
+        - "Ejecutar checkpoint completo"
+        - "Purgar L1 + L2 + L3"
+        - "Cargar nuevo L1 del proyecto destino"
+    preservar:
+      - "contexto_L0"
+      - "checkpoint_proyecto_anterior"
+    tokens_recuperados: "8000-12000"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # UMBRAL_TOKENS - Al alcanzar límite de tokens
+  # ─────────────────────────────────────────────────────────────────────────
+  UMBRAL_TOKENS:
+    descripcion: "Disparado al alcanzar umbrales de tokens"
+    nivel_afectado: "variable"
+    umbrales:
+      warning:
+        valor: 14000  # 70%
+        accion: "alerta_amarilla"
+        mensaje: "Tokens al 70%. Considerar checkpoint manual."
+      critical:
+        valor: 17000  # 85%
+        accion: "checkpoint_automatico"
+        mensaje: "Tokens al 85%. Ejecutando checkpoint automático."
+      emergency:
+        valor: 19000  # 95%
+        accion: "purga_forzada"
+        mensaje: "Tokens al 95%. Purga forzada de L3."
+    acciones:
+      alerta_amarilla:
+        - "Mostrar advertencia al agente"
+        - "Sugerir checkpoint manual"
+      checkpoint_automatico:
+        - "Ejecutar CHECKPOINT-PROTOCOL"
+        - "Guardar estado actual"
+        - "Purgar L3 items no usados en últimos 10 min"
+      purga_forzada:
+        - "Guardar estado de emergencia"
+        - "Purgar L3 completo"
+        - "Evaluar purga de L2 si no es dominio activo"
+        - "Mantener solo L0 + L1 core"
+
+# ============================================================================
+# ACCIONES DE PURGA
+# ============================================================================
+
+acciones:
+  purga_selectiva:
+    descripcion: "Elimina items específicos preservando estado"
+    pasos:
+      1: "Identificar items a purgar por timestamp/uso"
+      2: "Extraer información crítica a preservar"
+      3: "Eliminar contenido de contexto"
+      4: "Actualizar contador de tokens"
+
+  reemplazo:
+    descripcion: "Reemplaza un nivel completo por otro"
+    pasos:
+      1: "Checkpoint del nivel actual"
+      2: "Purga completa del nivel"
+      3: "Carga del nuevo nivel"
+      4: "Validar carga exitosa"
+
+  purga_completa:
+    descripcion: "Purga múltiples niveles"
+    pasos:
+      1: "Checkpoint de todos los niveles afectados"
+      2: "Purga en orden: L3 -> L2 -> L1"
+      3: "Verificar L0 intacto"
+      4: "Log de purga realizada"
+
+# ============================================================================
+# PRESERVACIÓN DE ESTADO
+# ============================================================================
+
+preservacion:
+  siempre_preservar:
+    - "Identidad del agente (perfil)"
+    - "Tarea actual (ID, descripción)"
+    - "Decisiones arquitecturales tomadas"
+    - "Archivos modificados en sesión"
+    - "Errores encontrados"
+
+  formato_checkpoint:
+    archivo: "CHECKPOINT-{timestamp}.yml"
+    ubicacion: "{proyecto}/orchestration/trazas/"
+    contenido:
+      - estado_tarea
+      - decisiones
+      - archivos_modificados
+      - proxima_accion
+      - tokens_usados
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  creado: "2026-01-24"
+  autor: "Claude Code (Arquitecto NEXUS)"
+  sistema: "NEXUS v4.1"
+  alias: "@DEF_TRG_PURGE"

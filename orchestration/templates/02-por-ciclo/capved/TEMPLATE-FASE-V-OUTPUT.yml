@@ -1,0 +1,122 @@
+# TEMPLATE: Salida Fase V (Validación de Plan)
+# Sistema: SIMCO - NEXUS v4.0
+# Versión: 1.0.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ⚠️ IMPORTANTE: Esta fase NO SE DELEGA - Solo el agente principal la ejecuta
+# ═══════════════════════════════════════════════════════════════════════════════
+
+fase_v_output:
+  metadata:
+    fase: "V - Validación de Plan"
+    timestamp: "{YYYY-MM-DD HH:MM}"
+    proyecto: "{nombre_proyecto}"
+    tarea_id: "{HU-XXX}"
+    ejecutor: "agente_principal"          # NO subagente
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # VERIFICACIÓN DE COBERTURA
+  # ─────────────────────────────────────────────────────────────────────────────
+  cobertura:
+    objetos_analisis: 0                   # Total de objetos en Fase A
+    objetos_plan: 0                       # Total cubiertos en Fase P
+    porcentaje: 0                         # *Debe ser 100%
+
+    detalle:
+      cubiertos:
+        - objeto: "{ruta/objeto}"
+          subtarea: "ST-XXX"
+
+      no_cubiertos:                       # *Debe estar vacío
+        - objeto: "{ruta/objeto}"
+          razon: "{por qué no está en plan}"
+          accion: "{agregar subtarea | justificar exclusión}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # VALIDACIÓN DE DEPENDENCIAS
+  # ─────────────────────────────────────────────────────────────────────────────
+  dependencias:
+    total_identificadas: 0
+    resueltas: 0
+    porcentaje: 0                         # *Debe ser 100%
+
+    huerfanas:                            # *Debe estar vacío
+      - dependencia: "{descripción}"
+        subtarea_origen: "ST-XXX"
+        resolucion: "{cómo resolver}"
+
+    circulares:                           # *Debe estar vacío
+      - ciclo: ["ST-001", "ST-002", "ST-001"]
+        resolucion: "{cómo romper ciclo}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # SCOPE CREEP
+  # ─────────────────────────────────────────────────────────────────────────────
+  scope_creep:
+    detectado: false
+
+    si_detectado:
+      items:
+        - descripcion: "{qué se detectó fuera de scope}"
+          decision: "{incluir | HU_derivada | descartar}"
+          justificacion: "{por qué}"
+
+      hus_derivadas:                      # HUs a crear para scope creep
+        - id_propuesto: "HU-XXX-D1"
+          titulo: "{título de HU derivada}"
+          descripcion: "{descripción breve}"
+          prioridad: "{alta | media | baja}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # VIABILIDAD TÉCNICA
+  # ─────────────────────────────────────────────────────────────────────────────
+  viabilidad:
+    confirmada: true | false              # *Debe ser true para aprobar
+
+    evaluacion:
+      complejidad: "{baja | media | alta}"
+      recursos_disponibles: true | false
+      conocimiento_suficiente: true | false
+      bloqueos_identificados: []
+
+    si_no_viable:
+      razon: "{por qué no es viable}"
+      alternativas:
+        - "{alternativa 1}"
+        - "{alternativa 2}"
+      escalar_a_po: true | false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # APROBACIÓN
+  # ─────────────────────────────────────────────────────────────────────────────
+  aprobacion:
+    plan_aprobado: false                  # *Obligatorio: true para continuar
+
+    decision_final: "{APROBADO | RECHAZADO | AJUSTES_REQUERIDOS}"
+
+    si_ajustes:
+      cambios_requeridos:
+        - "{descripción del ajuste}"
+      volver_a_fase: "P"                  # Regresar a Planeación
+
+    firma:
+      agente: "{id_agente}"
+      timestamp: "{YYYY-MM-DD HH:MM}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # GATE-V: CHECKLIST
+  # ─────────────────────────────────────────────────────────────────────────────
+  gate_v:
+    checklist:
+      cobertura_100: false                # *Debe ser true
+      dependencias_resueltas: false       # *Debe ser true
+      scope_creep_capturado: false        # *Debe ser true
+      viabilidad_confirmada: false        # *Debe ser true
+      plan_aprobado: false                # *Debe ser true
+
+    estado: "PENDIENTE"
+    notas: ""
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SIGUIENTE: Si GATE-V = APROBADO → Proceder a FASE E (Ejecución)
+# ═══════════════════════════════════════════════════════════════════════════════

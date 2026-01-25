@@ -1,0 +1,188 @@
+# TEMPLATE: Session Tracking
+# Sistema: SIMCO - NEXUS v4.0
+# Versión: 1.0.0
+# Uso: Copiar a orchestration/tracking/SESSION-TRACKING-{uuid}.yml
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE SESIÓN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+session_tracking:
+  # Identificación única
+  session_id: "{uuid}"                    # Generado automáticamente
+
+  # Contexto de tarea
+  tarea_principal:
+    id: "HU-XXX"
+    descripcion: "{descripción breve}"
+    proyecto: "{nombre_proyecto}"
+
+  # Tiempos
+  tiempos:
+    inicio: "{YYYY-MM-DD HH:MM}"
+    fin: ""                               # Se completa al cerrar
+    duracion_minutos: 0
+
+  # Estado general
+  estado: "activa"                        # activa | completada | fallida | pausada
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PLAN DE EJECUCIÓN (Copiado de Fase P)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+plan_ejecucion:
+  total_grupos: 0
+  total_subtareas: 0
+
+  grupos:
+    - numero: 1
+      tipo: "secuencial"
+      subtareas: []                       # IDs de subtareas
+      estado: "pendiente"                 # pendiente | activo | completado | fallido
+
+    # Agregar más grupos según plan...
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SUBAGENTES Y SU ESTADO
+# ═══════════════════════════════════════════════════════════════════════════════
+
+subagentes:
+  - id: "SA-001"                          # ID único del subagente
+    subtarea_id: "ST-001"
+    perfil: "PERFIL-DATABASE-AGENT"
+    dominio: "DDL"
+    grupo: 1
+
+    # Estado
+    estado: "pendiente"                   # pendiente | activo | completado | fallido
+    intentos: 0                           # Número de intentos
+
+    # Tiempos
+    tiempos:
+      delegado: ""                        # Cuando se delegó
+      inicio: ""                          # Cuando empezó a ejecutar
+      fin: ""                             # Cuando terminó
+
+    # Archivos
+    archivos:
+      crear:
+        - ruta: "{ruta/archivo}"
+          estado: "pendiente"             # pendiente | creado | fallido
+          lineas: 0
+
+      modificar:
+        - ruta: "{ruta/archivo}"
+          estado: "pendiente"             # pendiente | modificado | fallido
+          cambios: ""
+
+    # Validaciones
+    validaciones:
+      build:
+        ejecutado: false
+        resultado: ""                     # pass | fail
+        errores: []
+
+      lint:
+        ejecutado: false
+        resultado: ""
+        warnings: 0
+        errores: []
+
+      criterios:
+        - descripcion: "{criterio}"
+          cumplido: false
+
+    # Errores (si aplica)
+    errores:
+      - timestamp: ""
+        tipo: ""                          # build | lint | runtime | otro
+        mensaje: ""
+        resuelto: false
+
+    # Notas
+    notas: ""
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SINCRONIZACIÓN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+sincronizacion:
+  grupo_actual: 0
+  grupos_completados: []
+  grupos_pendientes: []
+
+  bloqueos:
+    - grupo: 0
+      bloqueado_por: "ST-XXX"
+      razon: "{descripción}"
+      desde: "{timestamp}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MÉTRICAS EN TIEMPO REAL
+# ═══════════════════════════════════════════════════════════════════════════════
+
+metricas:
+  subtareas:
+    total: 0
+    pendientes: 0
+    activas: 0
+    completadas: 0
+    fallidas: 0
+    porcentaje_completado: 0
+
+  subagentes:
+    total: 0
+    activos: 0
+    completados: 0
+    fallidos: 0
+
+  validaciones:
+    builds_pasados: 0
+    builds_fallidos: 0
+    lints_pasados: 0
+    lints_fallidos: 0
+
+  archivos:
+    creados: 0
+    modificados: 0
+    fallidos: 0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LOG DE EVENTOS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+log_eventos:
+  - timestamp: "{YYYY-MM-DD HH:MM:SS}"
+    tipo: "session_iniciada"
+    descripcion: "Sesión de tracking iniciada"
+
+  # Eventos se agregan cronológicamente:
+  # - subagente_delegado
+  # - subagente_iniciado
+  # - archivo_creado
+  # - validacion_ejecutada
+  # - error_detectado
+  # - subagente_completado
+  # - grupo_completado
+  # - session_completada
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CIERRE DE SESIÓN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+cierre:
+  completado: false
+
+  resumen:
+    exito: true | false
+    subtareas_exitosas: 0
+    subtareas_fallidas: 0
+    errores_totales: 0
+
+  archivos_finales:
+    creados: []
+    modificados: []
+
+  proximos_pasos: []
+
+  notas_cierre: ""

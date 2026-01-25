@@ -1,0 +1,89 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ÍNDICE RÁPIDO DE PERFILES DE AGENTES
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Propósito: Localizar perfiles por dominio/rol en <100 líneas
+# Base: orchestration/agents/perfiles/
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+base_path: "agents/perfiles/"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# PERFILES POR DOMINIO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+dominios:
+
+  backend:
+    principal: "PERFIL-BACKEND.md"
+    alias: "@PERFIL_BACKEND"
+    compact: "compact/PERFIL-BACKEND-COMPACT.md"
+
+  frontend:
+    principal: "PERFIL-FRONTEND.md"
+    alias: "@PERFIL_FRONTEND"
+    compact: "compact/PERFIL-FRONTEND-COMPACT.md"
+
+  database:
+    principal: "PERFIL-DATABASE.md"
+    alias: "@PERFIL_DATABASE"
+    compact: "compact/PERFIL-DATABASE-COMPACT.md"
+
+  devops:
+    principal: "PERFIL-DEVOPS.md"
+    alias: "@PERFIL_DEVOPS"
+    compact: "compact/PERFIL-DEVOPS-COMPACT.md"
+
+  qa:
+    principal: "PERFIL-QA.md"
+    alias: "@PERFIL_QA"
+    compact: "compact/PERFIL-QA-COMPACT.md"
+
+  ml:
+    principal: "PERFIL-ML.md"
+    alias: "@PERFIL_ML"
+    compact: "compact/PERFIL-ML-COMPACT.md"
+
+  security:
+    principal: "PERFIL-SECURITY.md"
+    alias: "@PERFIL_SECURITY"
+
+  orchestrator:
+    principal: "PERFIL-WORKSPACE-ORCHESTRATOR.md"
+    alias: "@WS_ORCHESTRATOR"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# PERFILES ESPECIALES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+especiales:
+
+  erp:
+    - "PERFIL-ERP-CORE.md"
+    - "PERFIL-ERP-VERTICAL.md"
+
+  proyectos:
+    - "PERFIL-GAMILIT.md"
+    - "PERFIL-STUDENT-PORTAL.md"
+    - "PERFIL-TEMPLATE-SAAS.md"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# MAPA DE NAVEGACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+navegacion:
+  mapa_completo: "agents/perfiles/_MAP.md"
+  indice_perfiles: "agents/perfiles/_INDEX.yml"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# PROTOCOLO DE PERFILES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+protocolos:
+  cca_completo: "@DEF_CCA"
+  cca_light: "@DEF_CCA_LIGHT"
+  nota: "Todos los perfiles usan @DEF_CCA para protocolo CCA"
+
+# ═══════════════════════════════════════════════════════════════════════════════

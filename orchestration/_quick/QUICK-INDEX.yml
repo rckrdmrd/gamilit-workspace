@@ -1,0 +1,74 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ÍNDICE RÁPIDO DE NAVEGACIÓN - WORKSPACE V2
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Propósito: Navegación rápida a recursos del workspace (~50 tokens)
+# Uso: Punto de entrada para encontrar cualquier recurso
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+updated: "2026-01-16"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ÍNDICES QUICK (Este directorio)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+quick:
+  perfiles: "_quick/QUICK-PERFILES.yml"
+  directivas: "_quick/QUICK-DIRECTIVAS.yml"
+  descripcion: "Índices de navegación rápida (<100 líneas cada uno)"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# DEFINICIONES CANÓNICAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+definitions:
+  indice: "_definitions/_INDEX.yml"
+  protocolos: "_definitions/protocols/"
+  validaciones: "_definitions/validations/"
+  secciones: "_definitions/sections/"
+  checklists: "_definitions/checklists/"
+  descripcion: "Fuente única de verdad - usar @DEF_* para referencias"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTRUCTURA PRINCIPAL
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estructura:
+  orchestration:
+    directivas: "directivas/"
+    perfiles: "agents/perfiles/"
+    referencias: "referencias/"
+    inventarios: "inventarios/"
+    templates: "templates/"
+
+  shared:
+    catalog: "shared/catalog/"
+    modules: "shared/modules/"
+    types: "shared/types/"
+    mirrors: "shared/mirrors/"
+
+  projects: "projects/"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS CLAVE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  aliases: "referencias/ALIASES.yml"
+  mapa: "_MAP.md"
+  readme: "README.md"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# PUNTO DE ENTRADA SEGÚN NECESIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+entrada_rapida:
+  buscar_perfil: "_quick/QUICK-PERFILES.yml"
+  buscar_directiva: "_quick/QUICK-DIRECTIVAS.yml"
+  buscar_definicion: "_definitions/_INDEX.yml"
+  buscar_alias: "referencias/ALIASES.yml"
+  buscar_proyecto: "projects/"
+
+# ═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,103 @@
+# =============================================================================
+# SSOT.yml - Single Source of Truth Registry
+# Sistema de Referencias Centralizadas
+# =============================================================================
+# Este archivo define las fuentes de verdad únicas para cada tipo de dato.
+# NUNCA duplicar datos - siempre referenciar desde aquí.
+# =============================================================================
+
+version: "1.0.0"
+fecha_creacion: "2026-01-24"
+descripcion: "Registro de fuentes de verdad únicas del workspace"
+
+# =============================================================================
+# FUENTES DE VERDAD POR CATEGORÍA
+# =============================================================================
+
+fuentes:
+  # Proyectos
+  proyectos:
+    ssot: orchestration/inventarios/PROYECTOS-TRAZABILIDAD-COMPLETA.yml
+    alias: "@proyectos"
+    descripcion: "Lista maestra de todos los proyectos"
+
+  # Directivas
+  directivas:
+    ssot: orchestration/INDICE-DIRECTIVAS-WORKSPACE.yml
+    alias: "@directivas"
+    descripcion: "Índice maestro de todas las directivas SIMCO"
+
+  # Agentes/Perfiles
+  agentes:
+    ssot: orchestration/agents/perfiles/_MAP.md
+    alias: "@agentes"
+    descripcion: "Catálogo de perfiles de agentes disponibles"
+
+  # Tareas
+  tareas:
+    ssot: orchestration/tareas/_INDEX.yml
+    alias: "@tareas"
+    descripcion: "Índice de todas las tareas documentadas"
+
+  # Features
+  features:
+    ssot: orchestration/features/_MAP.yml
+    alias: "@features"
+    descripcion: "Mapa de features del workspace"
+
+  # Inventarios
+  inventarios:
+    ssot: orchestration/inventarios/MASTER_INVENTORY.yml
+    alias: "@inventarios"
+    descripcion: "Inventario consolidado del workspace"
+
+  # Contexto
+  contexto:
+    ssot: orchestration/CONTEXT-MAP.yml
+    alias: "@contexto"
+    descripcion: "Mapa de contexto NEXUS v4.0"
+
+  # Dependencias
+  dependencias:
+    ssot: orchestration/DEPENDENCY-GRAPH.yml
+    alias: "@dependencias"
+    descripcion: "Grafo de dependencias entre proyectos"
+
+  # Trazabilidad
+  trazabilidad:
+    ssot: orchestration/TRACEABILITY-MASTER.yml
+    alias: "@trazabilidad"
+    descripcion: "Trazabilidad maestra del workspace"
+
+# =============================================================================
+# REGLAS DE REFERENCIA
+# =============================================================================
+
+reglas:
+  formato_alias: "@{tipo}:{id}"
+
+  ejemplos:
+    - "@proyecto:template-saas"
+    - "@agente:BACKEND"
+    - "@directiva:SIMCO-DDL"
+    - "@feature:AUTH"
+    - "@tarea:TASK-2026-01-24-001"
+
+  prohibiciones:
+    - "Nunca copiar datos que existan en SSOT"
+    - "Nunca usar rutas absolutas (/home/...)"
+    - "Nunca hardcodear valores que cambien"
+
+  preferencias:
+    - "Siempre usar @ALIAS cuando exista"
+    - "Siempre validar que SSOT esté actualizado"
+    - "Siempre reportar datos desactualizados"
+
+# =============================================================================
+# METADATA
+# =============================================================================
+
+metadata:
+  creado_por: "Claude Code (Opus 4.5)"
+  creado_en: "2026-01-24"
+  tarea: "TASK-2026-01-24-REESTRUCTURACION-WORKSPACE"

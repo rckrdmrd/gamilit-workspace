@@ -1,0 +1,376 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# VALIDATION-CHECKLIST-PHASE-4.yml
+# Checklist Completo para Validación en Fase 4 del Flujo Optimizado
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Sistema: SIMCO v4.0.0 + NEXUS v4.0
+# Propósito: Guiar la validación detallada de tareas completadas por Windsurf/Trae
+# Agentes: Claude Code (Principal), Gemini CLI (Secundario), Trae (Alternativo)
+# Versión: 1.0.0
+# Fecha: 2026-01-24
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+sistema: "SIMCO v4.0.0"
+actualizado: "2026-01-24"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CONTEXTO DE FASE 4
+# ─────────────────────────────────────────────────────────────────────────────────
+
+contexto:
+  fase: 4
+  nombre: "Validación Detallada"
+  porcentaje_tokens: 15
+  agentes_responsables:
+    principal: "claude-code"
+    secundario: "gemini-cli"
+    alternativo: "trae"
+
+  entrada:
+    - "Código implementado por Windsurf en Fase 3"
+    - "Plan atómico original de Fase 2"
+    - "Requerimientos originales de Fase 1"
+    - "DECISIONS-ACTIVE.yml con decisiones tomadas"
+
+  salida:
+    - "Veredicto: APROBADA | RECHAZADA | REQUIERE_CORRECCION"
+    - "Lista de issues si aplica"
+    - "Actualización de inventarios si APROBADA"
+    - "Movimiento a PROMPTS-HISTORICO.yml"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CHECKLIST DE VALIDACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+checklist:
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # SECCIÓN 1: VALIDACIÓN DE REQUERIMIENTOS
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  seccion_1_requerimientos:
+    nombre: "Validación de Requerimientos"
+    prioridad: "BLOQUEANTE"
+    items:
+      - id: "REQ-001"
+        descripcion: "Requerimientos funcionales cumplidos"
+        verificacion: |
+          1. Leer requerimientos originales de Fase 1
+          2. Verificar que CADA requerimiento está implementado
+          3. Probar funcionalmente si es posible
+        criterio_aprobacion: "Todos los RF implementados"
+
+      - id: "REQ-002"
+        descripcion: "Criterios de aceptación verificados"
+        verificacion: |
+          1. Listar criterios de aceptación del plan
+          2. Verificar cada criterio uno por uno
+          3. Documentar resultado de cada verificación
+        criterio_aprobacion: "Todos los criterios pasan"
+
+      - id: "REQ-003"
+        descripcion: "No hay funcionalidad faltante"
+        verificacion: |
+          1. Comparar plan atómico vs código implementado
+          2. Verificar que todas las tareas atómicas se completaron
+          3. Verificar que no hay TODOs sin implementar
+        criterio_aprobacion: "Plan 100% implementado"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # SECCIÓN 2: VALIDACIONES TÉCNICAS
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  seccion_2_tecnicas:
+    nombre: "Validaciones Técnicas"
+    prioridad: "BLOQUEANTE"
+    items:
+      - id: "TECH-001"
+        descripcion: "Build pasa sin errores"
+        comando: "npm run build"
+        criterio_aprobacion: "Exit code 0, sin errores"
+
+      - id: "TECH-002"
+        descripcion: "Lint pasa sin errores"
+        comando: "npm run lint"
+        criterio_aprobacion: "Exit code 0, sin warnings críticos"
+
+      - id: "TECH-003"
+        descripcion: "Tests pasan (si existen)"
+        comando: "npm run test"
+        criterio_aprobacion: "Todos los tests pasan o N/A si no hay tests"
+
+      - id: "TECH-004"
+        descripcion: "TypeCheck pasa (frontend)"
+        comando: "npm run typecheck"
+        criterio_aprobacion: "Sin errores de tipos"
+        nota: "Solo para cambios en frontend"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # SECCIÓN 3: COHERENCIA ENTRE CAPAS
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  seccion_3_coherencia:
+    nombre: "Coherencia Entre Capas"
+    prioridad: "BLOQUEANTE"
+    items:
+      - id: "COH-001"
+        descripcion: "DDL ↔ Backend coherente"
+        verificacion: |
+          1. Por cada tabla nueva/modificada en DDL:
+             - Verificar que existe entity correspondiente
+             - Verificar que campos coinciden exactamente
+             - Verificar tipos compatibles (PostgreSQL ↔ TypeScript)
+          2. Excepciones permitidas:
+             - Tablas M:N de TypeORM (documentar en ENTITIES-CATALOG)
+             - Tablas de auditoría automática
+             - Tablas de sistema/migración
+        criterio_aprobacion: "Todas las tablas tienen entity o excepción documentada"
+
+      - id: "COH-002"
+        descripcion: "Backend ↔ Frontend coherente (si aplica)"
+        verificacion: |
+          1. Por cada endpoint nuevo/modificado:
+             - Verificar que frontend lo consume correctamente
+             - Verificar que DTOs/interfaces coinciden
+          2. Por cada componente nuevo:
+             - Verificar que está integrado donde corresponde
+             - Verificar que datos fluyen correctamente
+        criterio_aprobacion: "Integración frontend-backend funcional"
+
+      - id: "COH-003"
+        descripcion: "No hay gaps entre capas"
+        verificacion: |
+          1. Ejecutar: grep -r "TODO" en archivos modificados
+          2. Verificar que no hay stubs sin implementar
+          3. Verificar que no hay imports faltantes
+        criterio_aprobacion: "Sin gaps ni stubs"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # SECCIÓN 4: ANTI-DUPLICACIÓN
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  seccion_4_antiduplicacion:
+    nombre: "Anti-Duplicación"
+    prioridad: "BLOQUEANTE"
+    items:
+      - id: "DUP-001"
+        descripcion: "No hay archivos duplicados"
+        verificacion: |
+          1. Por cada archivo CREADO, buscar similares:
+             find . -name "*{nombre_base}*"
+          2. Verificar que no existe funcionalidad similar en:
+             - shared/catalog/
+             - Mismo módulo con otro nombre
+             - Otro módulo que debería reutilizarse
+        criterio_aprobacion: "Sin duplicados encontrados"
+
+      - id: "DUP-002"
+        descripcion: "No hay código repetido"
+        verificacion: |
+          1. Revisar si código nuevo repite patrones existentes
+          2. Verificar si debería usar helpers/utils existentes
+          3. Verificar si debería extraerse a shared
+        criterio_aprobacion: "Código sigue DRY"
+
+      - id: "DUP-003"
+        descripcion: "Catálogo verificado"
+        verificacion: |
+          1. Consultar shared/catalog/CATALOG-INDEX.yml
+          2. Verificar que funcionalidad nueva no existe en catálogo
+          3. Si existe similar, verificar que se reutiliza
+        criterio_aprobacion: "Sin duplicados en catálogo"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # SECCIÓN 5: CALIDAD DE CÓDIGO
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  seccion_5_calidad:
+    nombre: "Calidad de Código"
+    prioridad: "ALTA"
+    items:
+      - id: "QUAL-001"
+        descripcion: "Código legible y mantenible"
+        verificacion: |
+          1. Variables y funciones tienen nombres descriptivos
+          2. Complejidad razonable (no más de 3 niveles de anidación)
+          3. Funciones no exceden ~50 líneas
+        criterio_aprobacion: "Código claro y estructurado"
+
+      - id: "QUAL-002"
+        descripcion: "Patrones del proyecto respetados"
+        verificacion: |
+          1. Naming conventions del proyecto
+          2. Estructura de carpetas
+          3. Patrones de imports
+          4. Estilo de documentación
+        criterio_aprobacion: "Consistente con codebase existente"
+
+      - id: "QUAL-003"
+        descripcion: "Sin placeholders ni código incompleto"
+        verificacion: |
+          grep -rn "// ..." archivos_modificados
+          grep -rn "TODO:" archivos_modificados
+          grep -rn "FIXME:" archivos_modificados
+        criterio_aprobacion: "Sin placeholders ni TODOs"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # SECCIÓN 6: SEGURIDAD
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  seccion_6_seguridad:
+    nombre: "Seguridad"
+    prioridad: "BLOQUEANTE"
+    items:
+      - id: "SEC-001"
+        descripcion: "Sin vulnerabilidades obvias"
+        verificacion: |
+          1. No hay credenciales hardcodeadas
+          2. No hay SQL injection (usar prepared statements)
+          3. No hay XSS (sanitizar inputs)
+          4. No hay exposición de datos sensibles en logs
+        criterio_aprobacion: "Sin vulnerabilidades OWASP Top 10"
+
+      - id: "SEC-002"
+        descripcion: "Validación de inputs"
+        verificacion: |
+          1. Endpoints validan inputs (DTOs, class-validator)
+          2. Frontend sanitiza inputs antes de enviar
+          3. Tipos correctamente definidos
+        criterio_aprobacion: "Inputs validados"
+
+      - id: "SEC-003"
+        descripcion: "Autorización correcta"
+        verificacion: |
+          1. Endpoints protegidos con guards apropiados
+          2. Multi-tenancy respetado (tenant_id)
+          3. Roles y permisos verificados
+        criterio_aprobacion: "Autorización implementada"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # SECCIÓN 7: GOBERNANZA
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  seccion_7_gobernanza:
+    nombre: "Gobernanza SIMCO"
+    prioridad: "BLOQUEANTE"
+    items:
+      - id: "GOV-001"
+        descripcion: "Carpeta de tarea existe"
+        verificacion: |
+          ls orchestration/tareas/TASK-{YYYY-MM-DD}-{NNN}/
+        criterio_aprobacion: "Carpeta existe con estructura"
+
+      - id: "GOV-002"
+        descripcion: "METADATA.yml completo"
+        verificacion: |
+          1. Verificar que METADATA.yml existe
+          2. Verificar fases documentadas (mínimo C, E, D)
+          3. Verificar estado y responsable
+        criterio_aprobacion: "Metadata completa"
+
+      - id: "GOV-003"
+        descripcion: "Inventarios actualizados"
+        verificacion: |
+          1. Si cambio DDL → DATABASE_INVENTORY.yml actualizado
+          2. Si cambio backend → BACKEND_INVENTORY.yml actualizado
+          3. Si cambio frontend → FRONTEND_INVENTORY.yml actualizado
+          4. MASTER_INVENTORY.yml con totales correctos
+        criterio_aprobacion: "Inventarios sincronizados"
+
+      - id: "GOV-004"
+        descripcion: "Git finalizado"
+        verificacion: |
+          1. git status = working tree clean
+          2. git log origin/main..HEAD = vacío (push hecho)
+          3. Mensaje de commit sigue formato
+        criterio_aprobacion: "Cambios committeados y pusheados"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VEREDICTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+veredictos:
+
+  APROBADA:
+    condicion: "Todos los items BLOQUEANTES pasan"
+    acciones:
+      - "Actualizar inventarios si no están actualizados"
+      - "Mover prompt a PROMPTS-HISTORICO.yml con estado: exitoso"
+      - "Actualizar traza de agente"
+      - "Notificar usuario: Tarea completada exitosamente"
+
+  RECHAZADA:
+    condicion: "Algún item BLOQUEANTE falla gravemente"
+    acciones:
+      - "Documentar issues encontrados"
+      - "Mover prompt a PROMPTS-HISTORICO.yml con estado: fallido"
+      - "Crear nueva tarea para corregir issues"
+      - "Notificar usuario con lista de problemas"
+
+  REQUIERE_CORRECCION:
+    condicion: "Items menores fallan o hay mejoras necesarias"
+    acciones:
+      - "Documentar correcciones necesarias"
+      - "Asignar corrección al agente apropiado"
+      - "Re-validar después de corrección"
+      - "No mover a HISTORICO hasta resolver"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FORMATO DE REPORTE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+formato_reporte:
+  template: |
+    ## Reporte de Validación Fase 4
+
+    **Tarea:** {TASK-ID}
+    **Fecha:** {fecha}
+    **Validador:** {agente}
+
+    ### Resumen Ejecutivo
+
+    | Sección | Items | Pasados | Fallados | Estado |
+    |---------|-------|---------|----------|--------|
+    | Requerimientos | X | Y | Z | ✅/❌ |
+    | Técnicas | X | Y | Z | ✅/❌ |
+    | Coherencia | X | Y | Z | ✅/❌ |
+    | Anti-Duplicación | X | Y | Z | ✅/❌ |
+    | Calidad | X | Y | Z | ✅/❌ |
+    | Seguridad | X | Y | Z | ✅/❌ |
+    | Gobernanza | X | Y | Z | ✅/❌ |
+
+    ### Veredicto: **{APROBADA|RECHAZADA|REQUIERE_CORRECCION}**
+
+    ### Issues Encontrados
+
+    {lista de issues si aplica}
+
+    ### Acciones Requeridas
+
+    {lista de acciones si aplica}
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALIASES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+aliases:
+  "@VALIDATION-F4": "Este archivo"
+  "@CHECKLIST-F4": "Sección checklist de este archivo"
+  "@VEREDICTO-F4": "Sección veredictos de este archivo"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  - "orchestration/directivas/simco/SIMCO-FLUJO-AGENTES.md"
+  - "orchestration/directivas/triggers/TRIGGER-COHERENCIA-CAPAS.md"
+  - "orchestration/directivas/triggers/TRIGGER-ANTI-DUPLICACION.md"
+  - "orchestration/directivas/triggers/TRIGGER-CIERRE-TAREA-OBLIGATORIO.md"
+  - "orchestration/agents/AGENT-ROLES.md"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE VALIDATION-CHECKLIST-PHASE-4.yml
+# ═══════════════════════════════════════════════════════════════════════════════

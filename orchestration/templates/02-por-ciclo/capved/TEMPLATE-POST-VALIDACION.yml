@@ -1,0 +1,149 @@
+# TEMPLATE: Post-Validación
+# Sistema: SIMCO - NEXUS v4.0
+# Versión: 1.0.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INSTRUCCIONES: Validación final comparando plan vs realidad
+# ═══════════════════════════════════════════════════════════════════════════════
+
+post_validacion:
+  metadata:
+    fase: "POST - Validación Final"
+    timestamp: "{YYYY-MM-DD HH:MM}"
+    proyecto: "{nombre_proyecto}"
+    tarea_id: "{HU-XXX}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # COMPARACIÓN PLAN VS REAL
+  # ─────────────────────────────────────────────────────────────────────────────
+  comparacion:
+    subtareas:
+      planificadas: 0
+      ejecutadas: 0
+      omitidas: 0
+      adicionales: 0                      # No planificadas pero ejecutadas
+      desviacion_porcentaje: 0            # *Objetivo: < 10%
+
+    archivos:
+      planificados: 0
+      creados: 0
+      modificados: 0
+      adicionales: 0                      # No planificados
+      omitidos: 0                         # Planificados pero no tocados
+
+    tokens:
+      estimados: 0
+      reales: 0                           # Aproximación
+      desviacion_porcentaje: 0
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CONSISTENCIA ENTRE CAPAS
+  # ─────────────────────────────────────────────────────────────────────────────
+  consistencia:
+    ddl_backend:
+      verificado: true | false
+      inconsistencias: []                 # *Debe estar vacío
+      # Ejemplo: Columna en DDL sin campo en Entity
+
+    backend_frontend:
+      verificado: true | false
+      inconsistencias: []                 # *Debe estar vacío
+      # Ejemplo: Endpoint sin consumidor en frontend
+
+    inventarios_codigo:
+      verificado: true | false
+      inconsistencias: []                 # *Debe estar vacío
+      # Ejemplo: Archivo en código no registrado en inventario
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # VALIDACIONES TÉCNICAS
+  # ─────────────────────────────────────────────────────────────────────────────
+  validaciones_tecnicas:
+    build_final:
+      ejecutado: true | false
+      resultado: "{pass | fail}"
+      comando: "{npm run build | pnpm build | etc.}"
+
+    lint_final:
+      ejecutado: true | false
+      resultado: "{pass | fail}"
+      warnings: 0
+      errores: 0
+
+    tests_final:
+      ejecutados: true | false
+      resultado: "{pass | fail}"
+      total: 0
+      pasados: 0
+      fallidos: 0
+      cobertura: 0                        # Porcentaje
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # LECCIONES APRENDIDAS
+  # ─────────────────────────────────────────────────────────────────────────────
+  lecciones_aprendidas:
+    registradas: true | false
+
+    items:
+      - categoria: "{proceso | tecnico | estimacion | otro}"
+        descripcion: "{qué se aprendió}"
+        aplicable_a: "{este_proyecto | todos_proyectos}"
+        accion_sugerida: "{qué hacer diferente}"
+
+    contribuir_kb: true | false           # Si aplica a todos los proyectos
+    archivo_kb: "shared/knowledge-base/lessons-learned/{archivo}.md"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # REGISTRO DE ERRORES (Si aplica)
+  # ─────────────────────────────────────────────────────────────────────────────
+  registro_errores:
+    errores_nuevos: false
+
+    si_errores:
+      - id: "ERR-{YYYY-MM-DD}-001"
+        descripcion: "{descripción del error}"
+        causa_raiz: "{por qué ocurrió}"
+        solucion_aplicada: "{cómo se resolvió}"
+        prevencion: "{cómo evitar que vuelva a pasar}"
+        registrado_en: "orchestration/errores/REGISTRO-ERRORES.yml"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # MÉTRICAS DE ÉXITO
+  # ─────────────────────────────────────────────────────────────────────────────
+  metricas:
+    completitud:
+      gates_pasados: "{N de 7}"           # *Objetivo: 7 de 7
+      cobertura_plan: 0                   # Porcentaje, *Objetivo: 100%
+      documentacion_completa: true | false
+
+    calidad:
+      build: "{pass | fail}"              # *Debe ser pass
+      lint: "{pass | fail}"               # *Debe ser pass
+      tests: "{pass | fail | skip}"
+
+    proceso:
+      desviacion_plan: 0                  # Porcentaje, *Objetivo: < 10%
+      scope_creep: "{capturado | no_hubo}"
+      errores_repetidos: 0                # *Objetivo: 0
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CIERRE
+  # ─────────────────────────────────────────────────────────────────────────────
+  cierre:
+    tarea_completada: true | false        # *Obligatorio para cerrar
+
+    estado_final: "{COMPLETADA | COMPLETADA_CON_OBSERVACIONES | FALLIDA}"
+
+    observaciones: |
+      # Notas finales sobre la tarea
+
+    proximos_pasos:
+      - "{siguiente acción si aplica}"
+
+    firma:
+      agente: "{id_agente}"
+      timestamp: "{YYYY-MM-DD HH:MM}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DEL CICLO CAPVED++
+# ═══════════════════════════════════════════════════════════════════════════════

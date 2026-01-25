@@ -1,0 +1,190 @@
+# TRIGGER-SESSION-CLEANUP.yml
+# Sistema NEXUS v4.1 - Gestión de Contexto
+# Fecha: 2026-01-24
+# Versión: 1.0.0
+
+version: "1.0.0"
+descripcion: |
+  Define los eventos de limpieza al finalizar sesión.
+  Objetivo: Persistir estado para recuperación y limpiar recursos.
+
+# ============================================================================
+# EVENTOS DE CLEANUP
+# ============================================================================
+
+eventos:
+  # ─────────────────────────────────────────────────────────────────────────
+  # FIN_SESION - Usuario termina sesión
+  # ─────────────────────────────────────────────────────────────────────────
+  FIN_SESION:
+    descripcion: "Disparado cuando el usuario termina la sesión"
+    detectores:
+      - "Mensaje de despedida del usuario"
+      - "Comando /exit o similar"
+      - "Timeout de inactividad prolongado"
+    accion:
+      nombre: "cleanup_completo"
+      pasos:
+        - "Guardar PROXIMA-ACCION.md actualizado"
+        - "Ejecutar checkpoint final"
+        - "Registrar fin de sesión en traza"
+        - "Actualizar _INDEX de tareas si corresponde"
+    persistir:
+      - proxima_accion: "Obligatorio"
+      - checkpoint_final: "Obligatorio"
+      - traza_sesion: "Recomendado"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # CAMBIO_AGENTE - Transferencia a otro agente
+  # ─────────────────────────────────────────────────────────────────────────
+  CAMBIO_AGENTE:
+    descripcion: "Disparado al transferir trabajo a otro agente"
+    detectores:
+      - "Delegación explícita a Trae/Windsurf/Gemini"
+      - "Handoff documentado"
+    accion:
+      nombre: "handoff_cleanup"
+      pasos:
+        - "Documentar estado actual para agente destino"
+        - "Crear HANDOFF-CONTRACT con contexto necesario"
+        - "Actualizar PROMPTS-ACTIVOS.yml"
+        - "Preservar decisiones para continuidad"
+    formato_handoff:
+      archivo: "HANDOFF-{timestamp}.md"
+      secciones:
+        - contexto_tarea
+        - decisiones_tomadas
+        - archivos_modificados
+        - proxima_accion_para_agente
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # TIMEOUT_INACTIVIDAD - Sin actividad prolongada
+  # ─────────────────────────────────────────────────────────────────────────
+  TIMEOUT_INACTIVIDAD:
+    descripcion: "Disparado tras periodo de inactividad"
+    umbrales:
+      warning: "15 minutos"
+      timeout: "30 minutos"
+    accion:
+      nombre: "auto_checkpoint"
+      en_warning:
+        - "Mostrar recordatorio de checkpoint"
+      en_timeout:
+        - "Ejecutar checkpoint automático"
+        - "Registrar timeout en traza"
+        - "Mantener sesión pausada (no cerrar)"
+
+# ============================================================================
+# PROXIMA-ACCION.md - FORMATO OBLIGATORIO
+# ============================================================================
+
+proxima_accion_format:
+  descripcion: |
+    Formato estándar para PROXIMA-ACCION.md que permite recuperación rápida.
+
+  ubicacion: "{proyecto}/orchestration/PROXIMA-ACCION.md"
+
+  secciones_obligatorias:
+    estado_actual:
+      campos:
+        - proyecto
+        - tarea_activa
+        - fase_capved
+        - subtarea_actual
+
+    contexto_critico:
+      campos:
+        - ultimo_archivo_modificado
+        - dependencias_pendientes
+        - bloqueos_conocidos
+
+    siguiente_paso:
+      campos:
+        - descripcion_clara
+        - archivos_involucrados
+
+    para_recuperar:
+      campos:
+        - cargar_archivos
+        - verificar_estado
+        - continuar_desde
+
+  template: |
+    # PROXIMA-ACCION.md
+
+    ## Estado Actual
+    - **Proyecto:** {nombre}
+    - **Tarea Activa:** {TASK-ID}
+    - **Fase CAPVED:** {C|A|P|V|E|D}
+    - **Subtarea:** {descripción}
+
+    ## Contexto Crítico
+    - **Último archivo modificado:** {path}
+    - **Dependencias pendientes:** {lista}
+    - **Bloqueos conocidos:** {lista}
+
+    ## Siguiente Paso
+    {Descripción clara y específica de la próxima acción}
+
+    ## Para Recuperar Sesión
+    1. **Cargar:** {archivos necesarios}
+    2. **Verificar:** {estado a validar}
+    3. **Continuar:** {desde donde}
+
+    ---
+    *Última actualización: {timestamp}*
+    *Agente: {agente_id}*
+
+# ============================================================================
+# TRAZA DE SESIÓN
+# ============================================================================
+
+traza_sesion:
+  descripcion: "Registro de actividad de la sesión para auditoría"
+
+  ubicacion: "{proyecto}/orchestration/trazas/SESSION-{fecha}.yml"
+
+  formato:
+    session_id: "uuid"
+    inicio: "timestamp"
+    fin: "timestamp"
+    agente: "identificador"
+
+    actividad:
+      - timestamp: "ISO8601"
+        tipo: "inicio|checkpoint|decision|cambio_dominio|fin"
+        detalle: "descripción"
+
+    metricas:
+      tokens_usados: "número"
+      checkpoints_realizados: "número"
+      decisiones_tomadas: "número"
+      archivos_modificados: "número"
+
+# ============================================================================
+# CLEANUP CHECKLIST
+# ============================================================================
+
+cleanup_checklist:
+  descripcion: "Verificaciones antes de cerrar sesión"
+
+  obligatorio:
+    - "[ ] PROXIMA-ACCION.md actualizado"
+    - "[ ] Checkpoint final guardado"
+    - "[ ] Sin cambios no commiteados (git status clean)"
+    - "[ ] Trazas actualizadas"
+
+  recomendado:
+    - "[ ] Inventarios sincronizados si hubo cambios"
+    - "[ ] _INDEX de tareas actualizado"
+    - "[ ] Notificar bloqueos pendientes"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  creado: "2026-01-24"
+  autor: "Claude Code (Arquitecto NEXUS)"
+  sistema: "NEXUS v4.1"
+  alias: "@DEF_TRG_CLEANUP"

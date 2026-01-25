@@ -1,0 +1,332 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ÍNDICE MAESTRO DE TEMPLATES
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Sistema: SIMCO v4.3.0
+# Propósito: Catálogo centralizado de todos los templates del workspace
+# Actualizado: 2026-01-24
+# Reorganizado: TASK-2026-01-24-REESTRUCTURACION (FASE 3)
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+ultima_actualizacion: "2026-01-24"
+total_templates: 57
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTRUCTURA DE CARPETAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estructura:
+  01-por-contexto:
+    proposito: "Templates según nivel de proyecto"
+    subcarpetas:
+      standalone:
+        descripcion: "Proyectos independientes (gamilit, michangarrito)"
+        templates: 2
+      suite:
+        descripcion: "Proyectos suite/core (erp-core, template-saas)"
+        templates: 4
+      provider:
+        descripcion: "Proyectos que exportan a otros"
+        templates: 1
+
+  02-por-ciclo:
+    proposito: "Templates del ciclo CAPVED"
+    subcarpetas:
+      capved:
+        descripcion: "Outputs de cada fase del ciclo"
+        templates: 7
+
+  03-por-proceso:
+    proposito: "Templates por proceso de trabajo"
+    subcarpetas:
+      delegacion:
+        descripcion: "Delegación a subagentes"
+        templates: 6
+      scrum:
+        descripcion: "Artefactos Scrum"
+        templates: 6
+      session-tracking:
+        descripcion: "Tracking de sesiones y recuperación"
+        templates: 4
+
+  04-globales:
+    proposito: "Templates de uso general"
+    descripcion: "ADR, análisis, épicas, inventarios, etc."
+    templates: 24
+
+  _legacy:
+    proposito: "Templates en revisión o deprecated"
+    descripcion: "Migración v2, service-descriptor"
+    templates: 3
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# 01-POR-CONTEXTO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+por_contexto:
+  standalone:
+    - archivo: "CONTEXTO-NIVEL-STANDALONE.md"
+      proposito: "Contexto para proyectos standalone"
+      uso: "Crear CONTEXTO-PROYECTO.md en proyectos independientes"
+
+    - archivo: "CONTEXTO-VERTICAL-TEMPLATE.md"
+      proposito: "Template para verticales que heredan"
+      uso: "Crear contexto en verticales ERP"
+
+  suite:
+    - archivo: "CONTEXTO-NIVEL-SUITE.md"
+      proposito: "Contexto para proyectos suite"
+      uso: "Proyectos que son parte de una suite mayor"
+
+    - archivo: "CONTEXTO-NIVEL-SUITE-CORE.md"
+      proposito: "Contexto para core de suite"
+      uso: "erp-core y similares"
+
+    - archivo: "HERENCIA-ERP-CORE-TEMPLATE.md"
+      proposito: "Template de herencia ERP"
+      uso: "Definir herencia en verticales ERP"
+
+    - archivo: "TEMPLATE-ESTRUCTURA-VERTICAL.md"
+      proposito: "Estructura de proyecto vertical"
+      uso: "Crear nueva vertical ERP"
+
+  provider:
+    - archivo: "CONTEXTO-NIVEL-VERTICAL.md"
+      proposito: "Contexto nivel vertical/provider"
+      uso: "Proyectos que exportan a consumidores"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# 02-POR-CICLO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+por_ciclo:
+  capved:
+    - archivo: "TEMPLATE-FASE-C-OUTPUT.yml"
+      proposito: "Output de Fase Contexto"
+      fase: "C"
+
+    - archivo: "TEMPLATE-FASE-A-OUTPUT.yml"
+      proposito: "Output de Fase Análisis"
+      fase: "A"
+
+    - archivo: "TEMPLATE-FASE-P-OUTPUT.yml"
+      proposito: "Output de Fase Planeación"
+      fase: "P"
+
+    - archivo: "TEMPLATE-FASE-V-OUTPUT.yml"
+      proposito: "Output de Fase Validación"
+      fase: "V"
+
+    - archivo: "TEMPLATE-FASE-E-OUTPUT.yml"
+      proposito: "Output de Fase Ejecución"
+      fase: "E"
+
+    - archivo: "TEMPLATE-FASE-D-OUTPUT.yml"
+      proposito: "Output de Fase Documentación"
+      fase: "D"
+
+    - archivo: "TEMPLATE-POST-VALIDACION.yml"
+      proposito: "Validación post-ejecución"
+      fase: "POST"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# 03-POR-PROCESO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+por_proceso:
+  delegacion:
+    - archivo: "TEMPLATE-DELEGACION-MINIMA.md"
+      proposito: "Delegación simple a subagente"
+      tokens: "~500"
+
+    - archivo: "TEMPLATE-DELEGACION-ESTANDAR.md"
+      proposito: "Delegación con contexto moderado"
+      tokens: "~1000"
+
+    - archivo: "TEMPLATE-DELEGACION-COMPLETA.md"
+      proposito: "Delegación con contexto completo"
+      tokens: "~2000"
+
+    - archivo: "TEMPLATE-DELEGACION-SUBAGENTE.md"
+      proposito: "Template genérico de delegación"
+      tokens: "variable"
+
+    - archivo: "TEMPLATE-CONTEXTO-SUBAGENTE.md"
+      proposito: "Contexto para subagentes"
+      tokens: "~800"
+
+    - archivo: "TEMPLATES-SUBAGENTES.md"
+      proposito: "Catálogo de templates de subagentes"
+      tokens: "referencia"
+
+  scrum:
+    - archivo: "TEMPLATE-ACTA-SPRINT-PLANNING.md"
+      proposito: "Acta de sprint planning"
+      uso: "Documentar planning session"
+
+    - archivo: "TEMPLATE-DEFINICION-READY.md"
+      proposito: "Definition of Ready"
+      uso: "Criterios para HU lista"
+
+    - archivo: "TEMPLATE-HISTORIA-USUARIO.md"
+      proposito: "Historia de Usuario"
+      uso: "Crear nueva HU"
+
+    - archivo: "TEMPLATE-RETROSPECTIVA.yml"
+      proposito: "Retrospectiva de sprint"
+      uso: "Documentar retrospectiva"
+
+    - archivo: "TEMPLATE-SPRINT-BACKLOG.yml"
+      proposito: "Backlog de sprint"
+      uso: "Tracking de sprint"
+
+    - archivo: "TEMPLATE-TASK-DEVENV.md"
+      proposito: "Tarea de desarrollo"
+      uso: "Crear tarea técnica"
+
+  session-tracking:
+    - archivo: "SESSION-TRACKING-TEMPLATE.yml"
+      proposito: "Tracking de sesión activa"
+      uso: "Registrar progreso de sesión"
+
+    - archivo: "SESSION-TRACE-TEMPLATE.yml"
+      proposito: "Traza de sesión"
+      uso: "Log de acciones por sesión"
+
+    - archivo: "PROXIMA-ACCION-TEMPLATE.md"
+      proposito: "Checkpoint de sesión"
+      uso: "Guardar estado para recuperación"
+
+    - archivo: "TEMPLATE-RECOVERY-CONTEXT.md"
+      proposito: "Recuperación de contexto"
+      uso: "Restaurar estado después de compactación"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# 04-GLOBALES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+globales:
+  documentacion:
+    - archivo: "TEMPLATE-ADR.md"
+      proposito: "Architecture Decision Record"
+
+    - archivo: "TEMPLATE-MAP.md"
+      proposito: "Mapa de navegación"
+
+    - archivo: "TEMPLATE-DEPRECACION.md"
+      proposito: "Marcar archivo como deprecated"
+
+  analisis:
+    - archivo: "TEMPLATE-ANALISIS.md"
+      proposito: "Análisis general"
+
+    - archivo: "TEMPLATE-ANALISIS-IMPACTO.md"
+      proposito: "Análisis de impacto de cambios"
+
+    - archivo: "TEMPLATE-VALIDACION.md"
+      proposito: "Validación de entregables"
+
+  proyecto:
+    - archivo: "TEMPLATE-CONTEXTO-PROYECTO.md"
+      proposito: "Contexto de proyecto"
+
+    - archivo: "TEMPLATE-CONTEXT-MAP.yml"
+      proposito: "Mapa de contexto NEXUS"
+
+    - archivo: "TEMPLATE-INVENTARIO-PROYECTO.md"
+      proposito: "Inventario de proyecto"
+
+    - archivo: "TEMPLATE-ENVIRONMENT-INVENTORY.yml"
+      proposito: "Inventario de ambiente"
+
+    - archivo: "CHECKLIST-ESTRUCTURA-PROYECTO.md"
+      proposito: "Verificar estructura de proyecto"
+
+  herencia:
+    - archivo: "HERENCIA-SIMCO.md"
+      proposito: "Herencia de directivas SIMCO"
+
+    - archivo: "TEMPLATE-HERENCIA-CONTEXTO.md"
+      proposito: "Herencia de contexto"
+
+  modulos:
+    - archivo: "TEMPLATE-MODULO-ESTANDAR.md"
+      proposito: "Crear módulo estándar"
+
+    - archivo: "TEMPLATE-MODULO-COMPARTIDO.md"
+      proposito: "Crear módulo compartido"
+
+    - archivo: "TEMPLATE-INTEGRACION-EXTERNA.md"
+      proposito: "Integración con sistema externo"
+
+  scrum_global:
+    - archivo: "TEMPLATE-EPICA.md"
+      proposito: "Crear épica"
+
+    - archivo: "TEMPLATE-HISTORIA-USUARIO.md"
+      proposito: "Crear historia de usuario"
+
+    - archivo: "TEMPLATE-HU-DERIVADA.md"
+      proposito: "HU derivada de otra"
+
+    - archivo: "TEMPLATE-REPORTE-SPRINT.md"
+      proposito: "Reporte de sprint"
+
+  tareas:
+    - archivo: "TEMPLATE-TAREA-CAPVED.md"
+      proposito: "Tarea siguiendo CAPVED"
+
+    - archivo: "TEMPLATE-TAREA-TECNICA.md"
+      proposito: "Tarea técnica"
+
+    - archivo: "TEMPLATE-PLAN.md"
+      proposito: "Plan de ejecución"
+
+    - archivo: "TEMPLATE-PROMPT-SIMPLIFICADO.md"
+      proposito: "Prompt simplificado para agentes"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# _LEGACY
+# ─────────────────────────────────────────────────────────────────────────────────
+
+legacy:
+  v2-migration:
+    - archivo: "MIGRATION-CHECKLIST-TEMPLATE.md"
+      proposito: "Checklist de migración a v2"
+      estado: "deprecated"
+
+    - archivo: "TRACEABILITY-MASTER-TEMPLATE.yml"
+      proposito: "Template de trazabilidad"
+      estado: "revisar"
+
+  service-descriptor:
+    - archivo: "SERVICE-DESCRIPTOR-TEMPLATE.yml"
+      proposito: "Descriptor de servicio"
+      estado: "revisar"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# GUÍA DE USO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+guia_uso:
+  seleccion_template:
+    paso_1: "Identificar tipo de proyecto (standalone/suite/provider)"
+    paso_2: "Seleccionar template de 01-por-contexto/"
+    paso_3: "Si es tarea CAPVED, usar 02-por-ciclo/capved/"
+    paso_4: "Para procesos específicos, ver 03-por-proceso/"
+    paso_5: "Templates generales en 04-globales/"
+
+  creacion_nuevo_template:
+    ubicacion: "Según categoría en estructura"
+    formato: "TEMPLATE-{NOMBRE}.md o .yml"
+    requerido:
+      - "Header con propósito y versión"
+      - "Secciones claramente marcadas"
+      - "Ejemplos de uso"
+      - "Agregar a este índice"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DEL ÍNDICE
+# ═══════════════════════════════════════════════════════════════════════════════

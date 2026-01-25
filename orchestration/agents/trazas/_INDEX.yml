@@ -1,0 +1,188 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ÍNDICE DE TRAZAS DE AGENTES
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Sistema: SIMCO v4.0.0 + Gobernanza de Documentación
+# Propósito: Registro de actividad de cada perfil de agente
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.1.0"
+created: "2026-01-16"
+updated: "2026-01-24"
+maintained_by: "@WS_ORCHESTRATOR"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADÍSTICAS GLOBALES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estadisticas:
+  total_agentes_activos: 3
+  total_tareas_ejecutadas: 5
+  ultimo_registro: "2026-01-24"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# PERFILES REGISTRADOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+perfiles:
+  # Orquestación y Liderazgo
+  ORQUESTADOR:
+    archivo: "TRAZA-AGENTE-ORQUESTADOR.md"
+    total_tareas: 3
+    ultima_actividad: "2026-01-24"
+    estado: "activo"
+
+  TECH-LEADER:
+    archivo: "TRAZA-AGENTE-TECH-LEADER.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  WORKSPACE-ORCHESTRATOR:
+    archivo: "TRAZA-AGENTE-WORKSPACE-ORCHESTRATOR.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  # Desarrollo Backend
+  BACKEND:
+    archivo: "TRAZA-AGENTE-BACKEND.md"
+    total_tareas: 1
+    ultima_actividad: "2026-01-18"
+    estado: "activo"
+
+  BACKEND-EXPRESS:
+    archivo: "TRAZA-AGENTE-BACKEND-EXPRESS.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  # Desarrollo Frontend
+  FRONTEND:
+    archivo: "TRAZA-AGENTE-FRONTEND.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  # Base de Datos
+  DATABASE:
+    archivo: "TRAZA-AGENTE-DATABASE.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  DATABASE-AUDITOR:
+    archivo: "TRAZA-AGENTE-DATABASE-AUDITOR.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  # DevOps e Infraestructura
+  DEVOPS:
+    archivo: "TRAZA-AGENTE-DEVOPS.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  CICD-SPECIALIST:
+    archivo: "TRAZA-AGENTE-CICD-SPECIALIST.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  # Testing y Calidad
+  TESTING:
+    archivo: "TRAZA-AGENTE-TESTING.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  # Agente AI
+  TRAE:
+    archivo: "TRAZA-AGENTE-TRAE.md"
+    total_tareas: 2
+    ultima_actividad: "2026-01-20"
+    estado: "activo"
+
+  CODE-REVIEWER:
+    archivo: "TRAZA-AGENTE-CODE-REVIEWER.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  # Seguridad
+  SECURITY-AUDITOR:
+    archivo: "TRAZA-AGENTE-SECURITY-AUDITOR.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  SECRETS-MANAGER:
+    archivo: "TRAZA-AGENTE-SECRETS-MANAGER.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  # Arquitectura
+  ARCHITECTURE-ANALYST:
+    archivo: "TRAZA-AGENTE-ARCHITECTURE-ANALYST.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  MCP-ARCHITECT:
+    archivo: "TRAZA-AGENTE-MCP-ARCHITECT.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  # Especialistas
+  BUG-FIXER:
+    archivo: "TRAZA-AGENTE-BUG-FIXER.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  ML-SPECIALIST:
+    archivo: "TRAZA-AGENTE-ML-SPECIALIST.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+  RAG-ENGINEER:
+    archivo: "TRAZA-AGENTE-RAG-ENGINEER.md"
+    total_tareas: 0
+    ultima_actividad: null
+    estado: "activo"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# INSTRUCCIONES DE USO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+instrucciones:
+  registrar_actividad: |
+    1. Abrir/crear archivo TRAZA-AGENTE-{PERFIL}.md
+    2. Agregar entrada con formato del template
+    3. Actualizar contador total_tareas en este índice
+    4. Actualizar ultima_actividad
+
+  consultar_historial: |
+    - Por agente: Abrir archivo específico
+    - Resumen global: Revisar este índice
+    - Estadísticas: Ver sección estadisticas
+
+  crear_nuevo_perfil: |
+    1. Agregar entrada en sección perfiles
+    2. Crear archivo usando TRAZA-AGENTE-TEMPLATE.md
+    3. Actualizar estadisticas.total_agentes_activos
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPLATE DE REFERENCIA
+# ─────────────────────────────────────────────────────────────────────────────────
+
+template_referencia: "TRAZA-AGENTE-TEMPLATE.md"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DEL ÍNDICE
+# ═══════════════════════════════════════════════════════════════════════════════

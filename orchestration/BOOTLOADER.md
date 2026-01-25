@@ -95,20 +95,23 @@ obligatorio:
 ```yaml
 por_dominio:
   DDL:
-    - "workspace-v2/orchestration/directivas/simco/SIMCO-DDL.md"
+    - "directivas/simco/SIMCO-DDL.md"                      # LOCAL
     - "inventarios/DATABASE_INVENTORY.yml"
 
   Backend:
-    - "workspace-v2/orchestration/directivas/simco/SIMCO-BACKEND.md"
+    - "directivas/simco/SIMCO-BACKEND.md"                  # LOCAL
     - "inventarios/BACKEND_INVENTORY.yml"
 
   Frontend:
-    - "workspace-v2/orchestration/directivas/simco/SIMCO-FRONTEND.md"
+    - "directivas/simco/SIMCO-FRONTEND.md"                 # LOCAL
     - "inventarios/FRONTEND_INVENTORY.yml"
 
   Documentacion:
-    - "workspace-v2/orchestration/directivas/simco/SIMCO-DOCUMENTAR.md"
+    - "directivas/simco/SIMCO-DOCUMENTAR.md"               # LOCAL
 ```
+
+> **Nota:** Desde 2026-01-25, todas las directivas SIMCO estan replicadas
+> localmente en orchestration/directivas/. Ya no se requiere acceso al workspace.
 
 ---
 
@@ -204,11 +207,15 @@ Si detectas compactacion o reinicio de sesion:
 
 ## 8. Referencias
 
-- **BOOTLOADER Global:** `workspace-v2/orchestration/directivas/simco/SIMCO-BOOTLOADER.md`
-- **CONTEXT-MAP:** `orchestration/CONTEXT-MAP.yml`
-- **PROXIMA-ACCION:** `orchestration/PROXIMA-ACCION.md`
-- **Herencia:** `orchestration/_inheritance.yml`
+- **BOOTLOADER Global:** `directivas/simco/SIMCO-BOOTLOADER.md` (LOCAL)
+- **CONTEXT-MAP:** `CONTEXT-MAP.yml`
+- **PROXIMA-ACCION:** `PROXIMA-ACCION.md`
+- **Herencia:** `_inheritance.yml`
+- **Agentes:** `agents/`
+- **Directivas SIMCO:** `directivas/simco/`
+- **Definiciones:** `_definitions/`
 
 ---
 
-*BOOTLOADER GAMILIT v1.0.0 - Sistema NEXUS v4.0*
+*BOOTLOADER GAMILIT v1.1.0 - Sistema NEXUS v4.0 + REPLICA_COMPLETA*
+*Actualizado: 2026-01-25 - Sincronizacion orchestration/*

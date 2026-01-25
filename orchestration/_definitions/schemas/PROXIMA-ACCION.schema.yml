@@ -1,0 +1,201 @@
+# PROXIMA-ACCION.schema.yml
+# Sistema NEXUS v4.1 - Schema de Validación
+# Fecha: 2026-01-24
+# Versión: 1.0.0
+
+version: "1.0.0"
+descripcion: |
+  Schema para validar archivos PROXIMA-ACCION.md.
+  Este archivo es CRÍTICO para recuperación de sesiones.
+  Formato: Markdown estructurado con secciones obligatorias.
+
+# ============================================================================
+# FORMATO MARKDOWN
+# ============================================================================
+
+formato: "markdown"
+extension: ".md"
+
+# ============================================================================
+# SECCIONES OBLIGATORIAS
+# ============================================================================
+
+secciones:
+  estado_actual:
+    titulo: "## Estado Actual"
+    obligatorio: true
+    campos:
+      - nombre: "Proyecto"
+        obligatorio: true
+        formato: "texto"
+      - nombre: "Tarea Activa"
+        obligatorio: true
+        formato: "TASK-YYYY-MM-DD-NNN"
+      - nombre: "Fase CAPVED"
+        obligatorio: true
+        formato: "C|A|P|V|E|D"
+      - nombre: "Subtarea"
+        obligatorio: false
+        formato: "texto"
+
+  contexto_critico:
+    titulo: "## Contexto Crítico"
+    obligatorio: true
+    campos:
+      - nombre: "Último archivo modificado"
+        obligatorio: false
+        formato: "path"
+      - nombre: "Dependencias pendientes"
+        obligatorio: false
+        formato: "lista"
+      - nombre: "Bloqueos conocidos"
+        obligatorio: false
+        formato: "lista o 'Ninguno'"
+
+  siguiente_paso:
+    titulo: "## Siguiente Paso"
+    obligatorio: true
+    contenido:
+      tipo: "texto libre"
+      minimo_caracteres: 20
+      descripcion: "Descripción clara y accionable del próximo paso"
+
+  para_recuperar:
+    titulo: "## Para Recuperar Sesión"
+    obligatorio: true
+    subsecciones:
+      - numero: 1
+        titulo: "Cargar"
+        descripcion: "Archivos necesarios para contexto"
+      - numero: 2
+        titulo: "Verificar"
+        descripcion: "Estado a validar antes de continuar"
+      - numero: 3
+        titulo: "Continuar"
+        descripcion: "Desde qué punto específico"
+
+  metadata_footer:
+    obligatorio: true
+    formato: |
+      ---
+      *Última actualización: {timestamp}*
+      *Agente: {agente_id}*
+
+# ============================================================================
+# TEMPLATE COMPLETO
+# ============================================================================
+
+template: |
+  # PROXIMA-ACCION.md
+
+  ## Estado Actual
+  - **Proyecto:** {{proyecto}}
+  - **Tarea Activa:** {{task_id}}
+  - **Fase CAPVED:** {{fase}}
+  - **Subtarea:** {{subtarea}}
+
+  ## Contexto Crítico
+  - **Último archivo modificado:** {{ultimo_archivo}}
+  - **Dependencias pendientes:** {{dependencias}}
+  - **Bloqueos conocidos:** {{bloqueos}}
+
+  ## Siguiente Paso
+  {{descripcion_siguiente_paso}}
+
+  ## Para Recuperar Sesión
+  1. **Cargar:** {{archivos_a_cargar}}
+  2. **Verificar:** {{que_verificar}}
+  3. **Continuar:** {{desde_donde}}
+
+  ---
+  *Última actualización: {{timestamp}}*
+  *Agente: {{agente_id}}*
+
+# ============================================================================
+# EJEMPLO VÁLIDO
+# ============================================================================
+
+ejemplo_valido: |
+  # PROXIMA-ACCION.md
+
+  ## Estado Actual
+  - **Proyecto:** gamilit
+  - **Tarea Activa:** TASK-2026-01-24-001
+  - **Fase CAPVED:** E
+  - **Subtarea:** Crear schemas de validación para NEXUS v4.1
+
+  ## Contexto Crítico
+  - **Último archivo modificado:** orchestration/_definitions/schemas/SESSION-STATE.schema.yml
+  - **Dependencias pendientes:**
+    - Crear CHECKPOINT.schema.yml
+    - Crear DECISIONES-SESION.schema.yml
+  - **Bloqueos conocidos:** Ninguno
+
+  ## Siguiente Paso
+  Crear el archivo CHECKPOINT.schema.yml que define el formato para
+  archivos de checkpoint automático. Debe incluir campos para timestamp,
+  estado de tarea, decisiones, y archivos modificados.
+
+  ## Para Recuperar Sesión
+  1. **Cargar:**
+     - orchestration/_definitions/_INDEX.yml
+     - orchestration/_definitions/schemas/SESSION-STATE.schema.yml (como referencia)
+  2. **Verificar:**
+     - Que SESSION-STATE.schema.yml existe y es válido
+     - Que _INDEX.yml tiene la entrada para schemas
+  3. **Continuar:**
+     - Crear CHECKPOINT.schema.yml siguiendo el mismo patrón
+     - Luego crear DECISIONES-SESION.schema.yml
+
+  ---
+  *Última actualización: 2026-01-24T15:45:00Z*
+  *Agente: claude-opus-4.5*
+
+# ============================================================================
+# VALIDACIÓN
+# ============================================================================
+
+validacion:
+  metodo: "Parseo de markdown"
+
+  checks:
+    estructura:
+      - "Contiene '## Estado Actual'"
+      - "Contiene '## Contexto Crítico'"
+      - "Contiene '## Siguiente Paso'"
+      - "Contiene '## Para Recuperar Sesión'"
+      - "Contiene footer con timestamp"
+
+    contenido:
+      - "Proyecto no está vacío"
+      - "Tarea tiene formato TASK-YYYY-MM-DD"
+      - "Fase CAPVED es una de: C, A, P, V, E, D"
+      - "Siguiente Paso tiene al menos 20 caracteres"
+
+  comando_ejemplo: |
+    # Verificar secciones obligatorias
+    grep -E "^## (Estado Actual|Contexto Crítico|Siguiente Paso|Para Recuperar)" PROXIMA-ACCION.md | wc -l
+    # Debe retornar 4
+
+# ============================================================================
+# TIEMPO DE RECUPERACIÓN
+# ============================================================================
+
+recovery:
+  tiempo_estimado: "2-3 minutos"
+
+  proceso:
+    1: "Leer PROXIMA-ACCION.md (30 seg)"
+    2: "Cargar archivos indicados en 'Cargar' (1 min)"
+    3: "Ejecutar verificaciones de 'Verificar' (30 seg)"
+    4: "Posicionarse en 'Continuar' (30 seg)"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  creado: "2026-01-24"
+  autor: "Claude Code (Arquitecto NEXUS)"
+  sistema: "NEXUS v4.1"
+  alias: "@DEF_SCHEMA_PROXIMA"

@@ -1,0 +1,371 @@
+# INVOCACIONES.yml - Aliases de Invocacion Rapida
+# Sistema SAAD (Sistema de Activacion Automatica de Directivas)
+# Version: 1.0.0
+
+---
+
+# ============================================================================
+# MODOS DE EJECUCION
+# Usar: @ALIAS seguido de la descripcion de la tarea
+# ============================================================================
+
+modos:
+  "@FULL":
+    nombre: "Ejecucion Completa CAPVED"
+    descripcion: "Ejecuta el ciclo CAPVED completo con todas las validaciones"
+    equivale_a:
+      - "6 fases: C (Contexto) -> A (Analisis) -> P (Planeacion) -> V (Validacion) -> E (Ejecucion) -> D (Documentacion)"
+      - "Triggers automaticos: Anti-duplicacion, Analisis de dependencias, Propagacion"
+      - "Validaciones: Build + Lint + Tests"
+    cuando_usar:
+      - "Nuevas features"
+      - "Bug fixes que modifican codigo"
+      - "Refactorizaciones"
+      - "Cambios en base de datos"
+      - "Nuevos endpoints o componentes"
+    directiva: "orchestration/directivas/modos/MODE-FULL.md"
+    ejemplo: "@FULL Implementar sistema de pagos en erp-construccion"
+
+  "@QUICK":
+    nombre: "Ejecucion Rapida"
+    descripcion: "Solo fases E+D para cambios menores"
+    equivale_a:
+      - "2 fases: E (Ejecucion) -> D (Documentacion)"
+      - "Validacion basica: Build + Lint"
+      - "Sin analisis de dependencias (escalar si falla)"
+    cuando_usar:
+      - "Typos en documentacion"
+      - "Fixes menores sin impacto"
+      - "Updates de versiones de deps"
+      - "Cambios de configuracion simples"
+    directiva: "orchestration/directivas/modos/MODE-QUICK.md"
+    ejemplo: "@QUICK Corregir typo en README de erp-core"
+
+  "@ANALYSIS":
+    nombre: "Solo Analisis"
+    descripcion: "Investigacion sin modificar codigo"
+    equivale_a:
+      - "3 fases: C (Contexto) -> A (Analisis) -> P (Planeacion propuesta)"
+      - "Genera reporte con hallazgos y recomendaciones"
+      - "NO modifica codigo"
+    cuando_usar:
+      - "Investigacion de problemas"
+      - "Auditoria de codigo"
+      - "Exploracion de codebase"
+      - "Propuestas de arquitectura"
+    directiva: "orchestration/directivas/modos/MODE-ANALYSIS.md"
+    ejemplo: "@ANALYSIS Investigar por que falla el login en Student Portal"
+
+  "@PROPAGATE":
+    nombre: "Propagacion de Cambios"
+    descripcion: "Propagar cambio existente a proyectos relacionados"
+    equivale_a:
+      - "6 fases con enfoque en distribucion"
+      - "Identifica proyectos destino automaticamente"
+      - "Aplica cambio en cada proyecto con validacion"
+    cuando_usar:
+      - "Distribuir fix de seguridad"
+      - "Sincronizar cambio de erp-core a verticales"
+      - "Actualizar modulo compartido en proyectos"
+    directiva: "orchestration/directivas/modos/MODE-PROPAGATION.md"
+    ejemplo: "@PROPAGATE Distribuir fix de JWT a todas las verticales ERP"
+
+# ============================================================================
+# OPERACIONES SEGURAS
+# Operaciones con verificaciones automaticas incorporadas
+# ============================================================================
+
+operaciones_seguras:
+  "@CREATE-SAFE":
+    nombre: "Crear con Verificacion Completa"
+    descripcion: "Crear objeto nuevo verificando catalogo y duplicados"
+    proceso:
+      - "1. Verificar catalogo global (shared/catalog/)"
+      - "2. Verificar inventario del proyecto"
+      - "3. Buscar archivos similares en codigo"
+      - "4. Si OK -> crear con SIMCO correspondiente"
+      - "5. Registrar en inventario"
+    trigger: "TRIGGER-ANTI-DUPLICACION"
+    ejemplo: "@CREATE-SAFE Agregar entidad PaymentMethod en erp-construccion"
+
+  "@MODIFY-SAFE":
+    nombre: "Modificar con Analisis de Dependencias"
+    descripcion: "Modificar archivo analizando impacto completo"
+    proceso:
+      - "1. Analizar dependencias del archivo (imports)"
+      - "2. Analizar dependientes (archivos que lo importan)"
+      - "3. Evaluar impacto (ALTO/MEDIO/BAJO)"
+      - "4. Incluir dependientes en plan si necesario"
+      - "5. Modificar siguiendo orden correcto"
+      - "6. Validar build/lint"
+    trigger: "TRIGGER-ANALISIS-DEPENDENCIAS"
+    ejemplo: "@MODIFY-SAFE Actualizar UserService para agregar metodo de validacion"
+
+  "@DELETE-SAFE":
+    nombre: "Eliminar con Verificacion de Referencias"
+    descripcion: "Eliminar objeto verificando que no hay referencias activas"
+    proceso:
+      - "1. Buscar TODOS los archivos que referencian el objeto"
+      - "2. Verificar que no hay dependientes activos"
+      - "3. Si hay duplicado, verificar consolidacion completa"
+      - "4. Actualizar todas las referencias"
+      - "5. Eliminar"
+      - "6. Validar build/lint"
+    trigger: "TRIGGER-DUPLICADOS (si es consolidacion)"
+    ejemplo: "@DELETE-SAFE Eliminar UserServiceOld (duplicado de UserService)"
+
+# ============================================================================
+# PROPAGACION ERP
+# Aliases especificos para jerarquia de proyectos ERP
+# ============================================================================
+
+propagacion_erp:
+  "@PROPAGATE-ERP":
+    nombre: "Propagar a Verticales ERP"
+    descripcion: "Propagar cambio desde erp-core a todas las verticales"
+    destinos:
+      - erp-construccion
+      - erp-clinicas
+      - erp-mecanicas-diesel
+      - erp-retail
+      - erp-vidrio-templado
+    proceso:
+      - "1. Identificar cambio en erp-core"
+      - "2. Evaluar aplicabilidad a cada vertical"
+      - "3. Aplicar cambio en cada una con adaptaciones"
+      - "4. Validar build/lint en cada proyecto"
+      - "5. Documentar propagacion"
+    sla_security: "24 horas"
+    sla_bugfix: "72 horas"
+    ejemplo: "@PROPAGATE-ERP Distribuir fix de autenticacion JWT"
+
+  "@PROPAGATE-CORE":
+    nombre: "Propagar Mejora a Core"
+    descripcion: "Propagar mejora generica de vertical a erp-core"
+    destino: "erp-core"
+    condiciones:
+      - "Mejora debe ser generica (no especifica de vertical)"
+      - "Debe beneficiar a otras verticales"
+      - "Requiere review de arquitectura"
+    proceso:
+      - "1. Generalizar mejora si necesario"
+      - "2. Crear PR a erp-core"
+      - "3. Una vez aprobado, usar @PROPAGATE-ERP"
+    ejemplo: "@PROPAGATE-CORE Mejora de performance en queries de inventario"
+
+  "@PROPAGATE-CATALOG":
+    nombre: "Propagar Cambio de Catalogo"
+    descripcion: "Propagar cambio en modulo compartido a proyectos que lo usan"
+    proceso:
+      - "1. Identificar funcionalidad modificada en catalog"
+      - "2. Buscar proyectos que importan esa funcionalidad"
+      - "3. Notificar/propagar segun tipo de cambio"
+    tipos_cambio:
+      security: "Propagar inmediatamente"
+      bugfix: "Propagar con prioridad"
+      feature: "Notificar, proyectos deciden"
+      breaking: "Coordinar migracion"
+    ejemplo: "@PROPAGATE-CATALOG Actualizar modulo de notificaciones"
+
+# ============================================================================
+# VALIDACIONES
+# Aliases para ejecutar validaciones especificas
+# ============================================================================
+
+validaciones:
+  "@VALIDATE-ALL":
+    nombre: "Validacion Completa"
+    descripcion: "Ejecutar todas las validaciones disponibles"
+    comandos:
+      backend:
+        - "npm run build"
+        - "npm run lint"
+        - "npm run test"
+      frontend:
+        - "npm run build"
+        - "npm run lint"
+        - "npm run typecheck"
+      database:
+        - "./scripts/recreate-database.sh"
+    ejemplo: "@VALIDATE-ALL Verificar estado del proyecto erp-construccion"
+
+  "@CHECK-DEPS":
+    nombre: "Verificar Dependencias"
+    descripcion: "Solo analizar dependencias sin modificar"
+    proceso:
+      - "Identificar dependencias del archivo"
+      - "Identificar dependientes"
+      - "Generar reporte de impacto"
+      - "NO modifica nada"
+    ejemplo: "@CHECK-DEPS Analizar impacto de modificar UserEntity"
+
+  "@CHECK-DUPLICATES":
+    nombre: "Buscar Duplicados"
+    descripcion: "Buscar objetos duplicados o similares"
+    proceso:
+      - "Buscar archivos con nombres similares"
+      - "Buscar funcionalidades duplicadas"
+      - "Generar reporte con recomendaciones"
+    ejemplo: "@CHECK-DUPLICATES Buscar servicios duplicados en modulo de pagos"
+
+# ============================================================================
+# DOCUMENTACION
+# Aliases para operaciones de documentacion
+# ============================================================================
+
+documentacion:
+  "@UPDATE-INVENTORY":
+    nombre: "Actualizar Inventarios"
+    descripcion: "Actualizar inventarios del proyecto"
+    archivos:
+      - "orchestration/inventarios/MASTER_INVENTORY.yml"
+      - "orchestration/inventarios/DATABASE_INVENTORY.yml"
+      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
+      - "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+    ejemplo: "@UPDATE-INVENTORY Sincronizar inventario de erp-construccion"
+
+  "@UPDATE-TRACE":
+    nombre: "Registrar en Traza"
+    descripcion: "Agregar entrada en traza correspondiente"
+    archivos:
+      - "orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
+      - "orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
+      - "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
+    ejemplo: "@UPDATE-TRACE Registrar creacion de modulo de reportes"
+
+# ============================================================================
+# COMBINACIONES COMUNES
+# Secuencias de operaciones frecuentes
+# ============================================================================
+
+combinaciones:
+  "@NEW-MODULE":
+    nombre: "Nuevo Modulo Completo"
+    descripcion: "Crear modulo nuevo con todas sus capas"
+    secuencia:
+      - "@CREATE-SAFE para cada componente"
+      - "DDL -> Entity -> Service -> Controller -> DTOs"
+      - "@VALIDATE-ALL al final"
+    ejemplo: "@NEW-MODULE Crear modulo de reportes en erp-construccion"
+
+  "@MIGRATE-TABLE":
+    nombre: "Migrar Estructura de Tabla"
+    descripcion: "Modificar tabla con todas las actualizaciones"
+    secuencia:
+      - "@MODIFY-SAFE DDL"
+      - "Actualizar Entity"
+      - "Actualizar DTOs"
+      - "Recrear BD"
+      - "@VALIDATE-ALL"
+    ejemplo: "@MIGRATE-TABLE Agregar columnas a tabla payments"
+
+  "@SECURITY-FIX":
+    nombre: "Fix de Seguridad Urgente"
+    descripcion: "Aplicar y propagar fix de seguridad"
+    secuencia:
+      - "@FULL para aplicar fix"
+      - "@PROPAGATE-ERP inmediatamente"
+      - "Notificar a todos los proyectos"
+    sla: "24 horas"
+    ejemplo: "@SECURITY-FIX Corregir vulnerabilidad XSS en AuthGuard"
+
+# ============================================================================
+# NOTAS DE USO
+# ============================================================================
+
+notas:
+  formato_uso: "@ALIAS Descripcion de la tarea"
+
+  ejemplos_correctos:
+    - "@FULL Implementar feature X en proyecto Y"
+    - "@QUICK Corregir typo en archivo Z"
+    - "@ANALYSIS Investigar problema W"
+    - "@CREATE-SAFE Agregar entidad E en proyecto P"
+
+  ejemplos_incorrectos:
+    - "FULL Implementar feature"  # Falta @
+    - "@FULL"  # Falta descripcion
+    - "Implementar feature @FULL"  # Orden incorrecto
+
+  combinacion_con_proyecto:
+    - "@FULL Implementar X en erp-construccion"
+    - "@PROPAGATE-ERP desde commit abc123"
+
+  si_no_especifica_modo:
+    comportamiento: "Se asume MODE-FULL por defecto"
+    nota: "El Meta-Orquestador puede sugerir otro modo si detecta que es mas apropiado"
+
+# ============================================================================
+# PROPAGACION AUTOMATICA (MIRRORS)
+# Aliases para sistema de propagacion via repositorios espejo
+# ============================================================================
+
+propagacion_mirrors:
+  "@PROPAGATE-DOC":
+    nombre: "Propagar Documentacion"
+    descripcion: "Propagar solo documentacion (inmediato, sin validacion)"
+    proceso:
+      - "1. Identificar archivos de documentacion modificados"
+      - "2. Sincronizar a shared/mirrors/{proyecto}/"
+      - "3. Notificar proyectos dependientes"
+    validacion: "Ninguna"
+    sla: "Inmediato"
+    ejemplo: "@PROPAGATE-DOC Actualizar README de template-saas"
+
+  "@PROPAGATE-DEF":
+    nombre: "Propagar Definiciones"
+    descripcion: "Propagar archivos YAML de definiciones con validacion de sintaxis"
+    proceso:
+      - "1. Validar sintaxis YAML"
+      - "2. Sincronizar a shared/mirrors/{proyecto}/definitions/"
+      - "3. Notificar proyectos dependientes"
+    validacion: "Sintaxis YAML"
+    sla: "Inmediato"
+    ejemplo: "@PROPAGATE-DEF Actualizar definiciones de modulos en erp-core"
+
+  "@PROPAGATE-CODE":
+    nombre: "Propagar Codigo Validado"
+    descripcion: "Propagar codigo con validacion completa pre-propagacion"
+    proceso:
+      - "1. Ejecutar build local"
+      - "2. Ejecutar lint"
+      - "3. Ejecutar tests"
+      - "4. Si pasa: sincronizar a mirrors"
+      - "5. Notificar proyectos dependientes"
+    validacion: "build + lint + tests"
+    sla: "Segun tipo de cambio"
+    ejemplo: "@PROPAGATE-CODE Propagar fix de AuthService a verticales"
+
+  "@SYNC-MIRRORS":
+    nombre: "Sincronizar Mirrors"
+    descripcion: "Sincronizar todos los mirrors con sus proyectos origen"
+    proceso:
+      - "1. Leer shared/mirrors/MIRRORS-INDEX.yml"
+      - "2. Para cada mirror: comparar version"
+      - "3. Sincronizar archivos desactualizados"
+      - "4. Actualizar PROPAGATION-STATUS.yml"
+    ejemplo: "@SYNC-MIRRORS"
+
+# ============================================================================
+# TRAZABILIDAD
+# Aliases para consulta de trazabilidad del workspace
+# ============================================================================
+
+trazabilidad:
+  "@TRACEABILITY":
+    nombre: "Ver Trazabilidad del Workspace"
+    descripcion: "Consultar TRACEABILITY-MASTER.yml"
+    archivo: "orchestration/TRACEABILITY-MASTER.yml"
+    ejemplo: "@TRACEABILITY Ver estado de proyectos"
+
+  "@DEPENDENCY-GRAPH":
+    nombre: "Ver Grafo de Dependencias"
+    descripcion: "Consultar DEPENDENCY-GRAPH.yml"
+    archivo: "orchestration/DEPENDENCY-GRAPH.yml"
+    ejemplo: "@DEPENDENCY-GRAPH Ver dependencias de erp-core"
+
+  "@MIRRORS":
+    nombre: "Ver Estado de Mirrors"
+    descripcion: "Consultar MIRRORS-INDEX.yml"
+    archivo: "shared/mirrors/MIRRORS-INDEX.yml"
+    ejemplo: "@MIRRORS Ver estado de sincronizacion"

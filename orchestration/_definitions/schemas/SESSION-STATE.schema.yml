@@ -1,0 +1,237 @@
+# SESSION-STATE.schema.yml
+# Sistema NEXUS v4.1 - Schema de Validación
+# Fecha: 2026-01-24
+# Versión: 1.0.0
+
+version: "1.0.0"
+descripcion: |
+  Schema para validar archivos SESSION-STATE.yml.
+  Estos archivos capturan el estado completo de una sesión de trabajo.
+
+# ============================================================================
+# SCHEMA DEFINITION
+# ============================================================================
+
+schema:
+  type: object
+  required:
+    - version
+    - timestamp
+    - session_id
+    - agente
+    - estado
+
+  properties:
+    version:
+      type: string
+      pattern: "^\\d+\\.\\d+\\.\\d+$"
+      descripcion: "Versión del schema"
+
+    timestamp:
+      type: string
+      format: "date-time"
+      descripcion: "Momento de captura del estado"
+
+    session_id:
+      type: string
+      pattern: "^[a-z0-9-]+$"
+      descripcion: "Identificador único de sesión"
+
+    agente:
+      type: object
+      required:
+        - id
+        - tipo
+      properties:
+        id:
+          type: string
+          descripcion: "Identificador del agente"
+        tipo:
+          type: string
+          enum: ["claude-code", "trae", "windsurf", "gemini-cli"]
+        perfil:
+          type: string
+          descripcion: "Perfil activo del agente"
+
+    proyecto:
+      type: object
+      properties:
+        nombre:
+          type: string
+        path:
+          type: string
+        tipo:
+          type: string
+          enum: ["STANDALONE", "PROVIDER", "INTERMEDIATE", "CONSUMER"]
+
+    tarea:
+      type: object
+      properties:
+        id:
+          type: string
+          pattern: "^TASK-\\d{4}-\\d{2}-\\d{2}"
+        descripcion:
+          type: string
+        fase_capved:
+          type: string
+          enum: ["C", "A", "P", "V", "E", "D"]
+        subtarea_actual:
+          type: string
+        progreso:
+          type: string
+          pattern: "^\\d+/\\d+$"
+
+    estado:
+      type: object
+      required:
+        - tokens
+      properties:
+        tokens:
+          type: object
+          properties:
+            usados:
+              type: integer
+              minimum: 0
+            disponibles:
+              type: integer
+              minimum: 0
+            porcentaje:
+              type: number
+              minimum: 0
+              maximum: 100
+        niveles_cargados:
+          type: array
+          items:
+            type: string
+            enum: ["L0", "L1", "L2", "L3"]
+        ultimo_checkpoint:
+          type: string
+          format: "date-time"
+
+    decisiones:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          timestamp:
+            type: string
+            format: "date-time"
+          descripcion:
+            type: string
+          razon:
+            type: string
+          impacto:
+            type: string
+            enum: ["bajo", "medio", "alto", "critico"]
+
+    archivos_modificados:
+      type: array
+      items:
+        type: object
+        properties:
+          path:
+            type: string
+          tipo:
+            type: string
+            enum: ["creado", "modificado", "eliminado"]
+          timestamp:
+            type: string
+            format: "date-time"
+
+    bloqueos:
+      type: array
+      items:
+        type: object
+        properties:
+          tipo:
+            type: string
+          descripcion:
+            type: string
+          desde:
+            type: string
+            format: "date-time"
+
+    proxima_accion:
+      type: string
+      minLength: 10
+      descripcion: "Descripción clara del siguiente paso"
+
+# ============================================================================
+# EJEMPLO VÁLIDO
+# ============================================================================
+
+ejemplo_valido: |
+  version: "1.0.0"
+  timestamp: "2026-01-24T15:30:00Z"
+  session_id: "claude-code-2026-01-24-1530"
+
+  agente:
+    id: "claude-opus-4.5"
+    tipo: "claude-code"
+    perfil: "PERFIL-ORQUESTADOR.md"
+
+  proyecto:
+    nombre: "gamilit"
+    path: "projects/gamilit"
+    tipo: "STANDALONE"
+
+  tarea:
+    id: "TASK-2026-01-24-001"
+    descripcion: "Implementar sistema de checkpoints automáticos"
+    fase_capved: "E"
+    subtarea_actual: "Crear schemas de validación"
+    progreso: "3/6"
+
+  estado:
+    tokens:
+      usados: 12500
+      disponibles: 7500
+      porcentaje: 62.5
+    niveles_cargados: ["L0", "L1", "L2"]
+    ultimo_checkpoint: "2026-01-24T15:00:00Z"
+
+  decisiones:
+    - id: "DEC-001"
+      timestamp: "2026-01-24T14:30:00Z"
+      descripcion: "Usar YAML para schemas en lugar de JSON Schema"
+      razon: "Consistencia con otros archivos del workspace"
+      impacto: "bajo"
+
+  archivos_modificados:
+    - path: "orchestration/_definitions/schemas/SESSION-STATE.schema.yml"
+      tipo: "creado"
+      timestamp: "2026-01-24T15:25:00Z"
+
+  bloqueos: []
+
+  proxima_accion: |
+    Crear CHECKPOINT.schema.yml con formato para archivos de checkpoint.
+    Validar que todos los schemas tengan ejemplos válidos.
+
+# ============================================================================
+# VALIDACIÓN
+# ============================================================================
+
+validacion:
+  herramienta: "yq o similar"
+
+  comando_ejemplo: |
+    yq eval '. | has("version") and has("timestamp") and has("session_id")' archivo.yml
+
+  campos_criticos:
+    - "timestamp"
+    - "session_id"
+    - "estado.tokens"
+    - "proxima_accion"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  creado: "2026-01-24"
+  autor: "Claude Code (Arquitecto NEXUS)"
+  sistema: "NEXUS v4.1"
+  alias: "@DEF_SCHEMA_STATE"

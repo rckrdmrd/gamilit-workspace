@@ -1,0 +1,73 @@
+# QUICK-SYNC - Referencia Rápida de Sincronización
+
+**Alias:** `@SYNC`, `@SYNC-WORKSPACE`
+
+---
+
+## Comando Rápido (Sin Conflictos)
+
+```bash
+cd /home/isem/workspace-v2
+git fetch origin && git pull origin main
+git submodule update --init --recursive
+for p in projects/*/; do cd "$p" && git fetch origin && git pull origin main 2>/dev/null; [ -f .gitmodules ] && git submodule foreach 'git fetch origin && git pull origin main 2>/dev/null || true'; cd /home/isem/workspace-v2; done
+```
+
+---
+
+## Verificación Rápida
+
+```bash
+cd /home/isem/workspace-v2
+echo "Workspace: $(git rev-parse --short HEAD) vs $(git rev-parse --short origin/main)"
+git submodule status | grep "^+" && echo "⚠️ Hay diferencias" || echo "✅ Todo sincronizado"
+```
+
+---
+
+## Resolución Rápida de Errores
+
+### "upload-pack: not our ref"
+```bash
+cd projects/PROYECTO
+git fetch origin && git checkout -B main origin/main
+cd ../.. && git add projects/PROYECTO && git commit -m "fix: Reset PROYECTO" && git push
+```
+
+### Divergent history
+```bash
+cd projects/PROYECTO
+git fetch origin && git checkout -B main origin/main  # Mantener remoto
+# O: git push --force origin main                      # Mantener local
+```
+
+### Detached HEAD
+```bash
+cd projects/PROYECTO/SUBMODULO
+git checkout main && git pull origin main
+```
+
+---
+
+## Bottom-Up Commit (OBLIGATORIO)
+
+```
+Nivel 2: cd submodulo && git add . && git commit && git push
+    ↓
+Nivel 1: cd proyecto && git add submodulo && git commit && git push
+    ↓
+Nivel 0: cd workspace && git add proyecto && git commit && git push
+```
+
+---
+
+## Estado Esperado (2026-01-20)
+
+| Repositorio | Commit |
+|-------------|--------|
+| workspace-v2 | 479d9296+ |
+| erp-core | df57a2e |
+
+---
+
+**Directiva completa:** `orchestration/directivas/simco/SIMCO-SYNC-WORKSPACE.md`

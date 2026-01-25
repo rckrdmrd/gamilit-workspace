@@ -1,0 +1,273 @@
+# PROMPTS-HISTORICO.yml
+# Log hist\u00f3rico de prompts completados - FORMATO INFORME DETALLADO
+#
+# Sistema: SIMCO v4.0
+# Directiva: SIMCO-PROMPTS-AGENTES.md
+# Flujo: SIMCO-FLUJO-AGENTES.md
+# Version: 2.0.0
+# Actualizado: 2026-01-20
+
+version: "2.0.0"
+actualizado: "2026-01-20"
+
+# =============================================================================
+# ESTAD\u00cdSTICAS GLOBALES
+# =============================================================================
+
+estadisticas:
+  total_ejecutados: 0
+  exitosos: 0
+  fallidos: 0
+  abandonados: 0
+  parciales: 0
+
+  # Por agente
+  por_agente:
+    trae:
+      total: 0
+      exitosos: 0
+      fallidos: 0
+      rol_principal: "Fase 2 - An\u00e1lisis Detallado"
+    windsurf:
+      total: 0
+      exitosos: 0
+      fallidos: 0
+      rol_principal: "Fase 3 - Ejecuci\u00f3n At\u00f3mica"
+    gemini:
+      total: 0
+      exitosos: 0
+      fallidos: 0
+      rol_principal: "Testing E2E"
+
+  # Por proyecto
+  por_proyecto: {}
+
+  # M\u00e9tricas de eficiencia
+  metricas:
+    tiempo_promedio_minutos: 0
+    tokens_claude_promedio: 0
+    tokens_claude_total: 0
+    tasa_exito_global: "0%"
+    tasa_exito_por_agente:
+      trae: "0%"
+      windsurf: "0%"
+      gemini: "0%"
+
+# =============================================================================
+# INSTRUCCIONES DE USO
+# =============================================================================
+#
+# BUSCAR POR ERROR:
+#   1. Identificar commit problem\u00e1tico con: git log --oneline
+#   2. Buscar en historico[].commits[] el hash
+#   3. Revisar prompt original (prompt_fase1, prompt_fase2)
+#   4. Revisar notas_postmortem si existe
+#   5. Determinar: \u00bfFue error de prompt o de ejecuci\u00f3n?
+#
+# ANALIZAR EFECTIVIDAD:
+#   1. Ver estadisticas.por_agente para ratios
+#   2. Filtrar historico por resultado="fallido"
+#   3. Agrupar errores por tipo
+#   4. Identificar patrones de fallo
+#   5. Mejorar prompts basado en an\u00e1lisis
+#
+# AGREGAR ENTRADA:
+#   1. Copiar desde PROMPTS-ACTIVOS.yml
+#   2. Completar secci\u00f3n 'flujo' con datos de cada fase
+#   3. Agregar commits y archivos_modificados
+#   4. Calcular m\u00e9tricas (duraci\u00f3n, tokens)
+#   5. Actualizar estad\u00edsticas globales
+#
+# =============================================================================
+
+# =============================================================================
+# HIST\u00d3RICO (m\u00e1s reciente primero)
+# =============================================================================
+
+historico: []
+
+# =============================================================================
+# TEMPLATE DE ENTRADA HIST\u00d3RICA v2.0 (FORMATO INFORME)
+# =============================================================================
+
+_template_v2:
+  # ====================================
+  # IDENTIFICACI\u00d3N
+  # ====================================
+  id: "PROMPT-YYYY-MM-DD-NNN"
+  tarea_ref: "TASK-ID"
+  titulo: "T\u00edtulo descriptivo de la tarea"
+  tipo: "feature|bug|refactor|test|docs"
+  proyecto: "nombre-proyecto"
+  prioridad: "P0|P1|P2|P3"
+
+  # ====================================
+  # CADENA DE EJECUCI\u00d3N (Flujo 4 Fases)
+  # ====================================
+  flujo:
+    fase1_analisis_inicial:
+      agente: "claude-code"
+      inicio: "YYYY-MM-DDTHH:MM:SS"
+      fin: "YYYY-MM-DDTHH:MM:SS"
+      duracion_minutos: 0
+      tokens_usados: 0
+      output: "Plan de alto nivel generado"
+
+    fase2_analisis_detallado:
+      agente: "trae"
+      inicio: "YYYY-MM-DDTHH:MM:SS"
+      fin: "YYYY-MM-DDTHH:MM:SS"
+      duracion_minutos: 0
+      tareas_atomicas_generadas: 0
+      output: "Plan ultra-detallado para Windsurf"
+
+    fase3_ejecucion:
+      agente: "windsurf"
+      inicio: "YYYY-MM-DDTHH:MM:SS"
+      fin: "YYYY-MM-DDTHH:MM:SS"
+      duracion_minutos: 0
+      tareas_completadas: 0
+      tareas_fallidas: 0
+      tareas_bloqueadas: 0
+      ambiguedades_encontradas: 0
+      output: "Archivos creados/modificados"
+
+    fase4_validacion:
+      agente: "claude-code|trae"
+      inicio: "YYYY-MM-DDTHH:MM:SS"
+      fin: "YYYY-MM-DDTHH:MM:SS"
+      duracion_minutos: 0
+      veredicto: "APROBADA|RECHAZADA|REQUIERE_CORRECCION"
+      tokens_usados: 0
+      output: "Validaci\u00f3n completada"
+
+  # ====================================
+  # RESULTADO FINAL
+  # ====================================
+  resultado: "exitoso|fallido|parcial|abandonado"
+
+  # ====================================
+  # TRAZABILIDAD DE CAMBIOS
+  # ====================================
+  commits:
+    - hash: "abc123"
+      mensaje: "[TASK-ID] tipo: descripci\u00f3n"
+      archivos:
+        - "path/to/file1.ts"
+        - "path/to/file2.ts"
+    - hash: "def456"
+      mensaje: "[WS] chore: Update submodule"
+      archivos:
+        - "projects/proyecto"
+
+  archivos_creados:
+    - "path/to/new_file.ts"
+
+  archivos_modificados:
+    - "path/to/existing_file.ts"
+
+  archivos_eliminados: []
+
+  # ====================================
+  # PROMPTS ORIGINALES (Para Auditor\u00eda)
+  # ====================================
+  prompts:
+    fase1_claude_a_trae: |
+      [Prompt original de Claude Code para Trae]
+
+    fase2_trae_a_windsurf: |
+      [Plan ultra-detallado de Trae para Windsurf]
+
+  # ====================================
+  # M\u00c9TRICAS
+  # ====================================
+  metricas:
+    duracion_total_minutos: 0
+    tokens_claude_total: 0
+    tokens_claude_fase1: 0
+    tokens_claude_fase4: 0
+    lineas_codigo_agregadas: 0
+    lineas_codigo_modificadas: 0
+    lineas_codigo_eliminadas: 0
+    tests_agregados: 0
+    cobertura_antes: "0%"
+    cobertura_despues: "0%"
+
+  # ====================================
+  # VALIDACIONES T\u00c9CNICAS
+  # ====================================
+  validaciones:
+    build: "PASS|FAIL"
+    lint: "PASS|FAIL"
+    typecheck: "PASS|FAIL"
+    tests: "PASS|FAIL|N/A"
+
+  # ====================================
+  # ERRORES (Si aplica)
+  # ====================================
+  errores:
+    - fase: "fase1|fase2|fase3|fase4"
+      tipo: "build_failed|lint_error|test_failed|runtime_error|ambiguedad"
+      mensaje: "Descripci\u00f3n del error"
+      archivo: "path/to/archivo.ts"
+      linea: 0
+      resolucion: "C\u00f3mo se resolvi\u00f3 o por qu\u00e9 se abandon\u00f3"
+
+  # ====================================
+  # AN\u00c1LISIS POST-MORTEM
+  # ====================================
+  notas_postmortem: |
+    ## An\u00e1lisis de la Ejecuci\u00f3n
+
+    ### Qu\u00e9 sali\u00f3 bien:
+    - [Punto 1]
+    - [Punto 2]
+
+    ### Qu\u00e9 se puede mejorar:
+    - [Punto 1]
+    - [Punto 2]
+
+    ### Lecciones aprendidas:
+    - [Lecci\u00f3n 1]
+
+  # ====================================
+  # CHECKPOINTS
+  # ====================================
+  checkpoints:
+    total_creados: 0
+    motivos:
+      - "contexto_alto"
+      - "interrupcion_usuario"
+
+# =============================================================================
+# \u00cdNDICE POR FECHA (para navegaci\u00f3n r\u00e1pida)
+# =============================================================================
+
+indice_por_fecha: {}
+  # "2026-01-20":
+  #   - id: "PROMPT-2026-01-20-001"
+  #     titulo: "..."
+  #     resultado: "exitoso"
+  #   - id: "PROMPT-2026-01-20-002"
+  #     titulo: "..."
+  #     resultado: "fallido"
+
+# =============================================================================
+# \u00cdNDICE POR PROYECTO
+# =============================================================================
+
+indice_por_proyecto: {}
+  # "gamilit":
+  #   total: 0
+  #   exitosos: 0
+  #   prompts:
+  #     - "PROMPT-2026-01-20-001"
+
+# =============================================================================
+# \u00cdNDICE POR AGENTE
+# =============================================================================
+
+indice_por_agente:
+  trae: []
+  windsurf: []
+  gemini: []

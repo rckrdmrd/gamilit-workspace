@@ -1,0 +1,62 @@
+# SPRINT RETROSPECTIVA
+# Version: 1.0.0
+# Sistema: SIMCO v4.0.0
+# Alias: @TPL_RETROSPECTIVA
+
+retrospectiva:
+  numero_sprint: 0
+  fecha: "YYYY-MM-DD"
+  duracion_minutos: 60
+  participantes:
+    facilitador: ""
+    team: []
+
+continue_funcionando_bien:
+  - titulo: ""
+    descripcion: ""
+    frecuencia: ""
+    beneficio: ""
+    seguimos: true
+
+start_nuevas_practicas:
+  - titulo: ""
+    razon: ""
+    responsable: ""
+    fecha_inicio: "YYYY-MM-DD"
+    exito_seria: ""
+
+stop_practicas_inefectivas:
+  - titulo: ""
+    razon: ""
+    alternativa: ""
+    responsable: ""
+    fecha_fin: "YYYY-MM-DD"
+
+action_items:
+  - id: ""
+    accion: ""
+    responsable: ""
+    fecha_entrega: "YYYY-MM-DD"
+    metrica_exito: ""
+    prioridad: "P1"
+    estado: "pendiente"
+
+metricas:
+  velocity_anterior: 0
+  velocity_actual: 0
+  velocity_objetivo: 0
+  hus_derivadas_generadas: 0
+  errores_repetidos: 0
+  satisfaction_team: 0
+
+comparativa:
+  mejoras_logradas: []
+  areas_pendientes: []
+  tendencia: ""
+
+resumen:
+  estado_general: ""
+  top_3_logros: []
+  top_3_mejoras: []
+
+notas: ""

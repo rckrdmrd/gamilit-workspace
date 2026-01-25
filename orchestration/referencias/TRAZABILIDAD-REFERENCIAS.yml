@@ -1,0 +1,368 @@
+# TRAZABILIDAD DE REFERENCIAS - WORKSPACE V1
+# ============================================
+# Sistema: SIMCO - NEXUS v4.0
+# Proposito: Mapeo completo de referencias entre componentes
+# Version: 1.0.0
+# Fecha: 2026-01-04
+# Generado por: Architecture-Analyst
+
+version: "1.1.0"
+fecha_actualizacion: "2026-01-16"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ESTRUCTURA DE RECURSOS COMPARTIDOS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+estructura_shared:
+  ruta_base: "/home/isem/workspace-v2/shared/"
+
+  componentes:
+    catalog:
+      ruta: "shared/catalog/"
+      descripcion: "Catalogo de funcionalidades reutilizables"
+      elementos:
+        - auth
+        - session-management
+        - rate-limiting
+        - notifications
+        - multi-tenancy
+        - feature-flags
+        - websocket
+        - payments
+        - audit-logs
+        - portales
+        - template-saas
+
+    modules:
+      ruta: "shared/modules/"
+      descripcion: "Codigo ejecutable compartido"
+      elementos:
+        - utils
+        - auth
+        - billing
+        - notifications
+        - payments
+        - multitenant
+
+    constants:
+      ruta: "shared/constants/"
+      descripcion: "Constantes globales TypeScript"
+      archivos:
+        - enums.constants.ts
+        - regex.constants.ts
+        - index.ts
+
+    types:
+      ruta: "shared/types/"
+      descripcion: "Tipos TypeScript compartidos"
+      archivos:
+        - api.types.ts
+        - common.types.ts
+        - index.ts
+
+    knowledge_base:
+      ruta: "shared/knowledge-base/"
+      descripcion: "Base de conocimiento"
+      subcarpetas:
+        - modules
+        - platforms
+        - projects
+        - standards
+        - architecture
+        - patterns
+        - propagacion
+        - templates
+        - reference
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ESTRUCTURA DE CORE (Arquitectura)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+estructura_core:
+  ruta_base: "/home/isem/workspace-v2/orchestration/"
+  nota: "Core fue migrado a orchestration/ en workspace-v2"
+
+  componentes:
+    orchestration:
+      ruta: "core/orchestration/"
+      descripcion: "Sistema de orquestacion SIMCO"
+      subcarpetas:
+        - directivas
+        - templates
+        - agents
+        - patrones
+        - impactos
+        - checklists
+        - referencias
+        - inventarios
+
+    mcp_servers:
+      ruta: "core/mcp-servers/"
+      descripcion: "MCP servers especializados"
+      estado: "pendiente"
+
+    devtools:
+      ruta: "core/devtools/"
+      descripcion: "Herramientas de desarrollo ambiente"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MAPA DE ALIASES Y SU UBICACION FISICA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+mapa_aliases:
+  archivos_fuente:
+    - orchestration/referencias/ALIASES.yml
+    - orchestration/agents/ALIASES.yml
+    - core/orchestration/referencias/ALIASES.yml
+
+  aliases_principales:
+    # Catalogo
+    "@CATALOG": "shared/catalog/"
+    "@CATALOG_INDEX": "shared/catalog/CATALOG-INDEX.yml"
+    "@CATALOG_AUTH": "shared/catalog/auth/"
+    "@CATALOG_SESSION": "shared/catalog/session-management/"
+    "@CATALOG_RATELIMIT": "shared/catalog/rate-limiting/"
+    "@CATALOG_NOTIFY": "shared/catalog/notifications/"
+    "@CATALOG_TENANT": "shared/catalog/multi-tenancy/"
+    "@CATALOG_FLAGS": "shared/catalog/feature-flags/"
+    "@CATALOG_WS": "shared/catalog/websocket/"
+    "@CATALOG_PAYMENTS": "shared/catalog/payments/"
+
+    # Modulos
+    "@MODULES": "shared/modules/"
+    "@MOD_UTILS": "shared/modules/utils/"
+    "@MOD_AUTH": "shared/modules/auth/"
+    "@MOD_NOTIFY": "shared/modules/notifications/"
+    "@MOD_PAYMENTS": "shared/modules/payments/"
+    "@MOD_BILLING": "shared/modules/billing/"
+    "@MOD_TENANT": "shared/modules/multitenant/"
+
+    # Directivas
+    "@SIMCO": "orchestration/directivas/simco/"
+    "@PRINCIPIOS": "orchestration/directivas/principios/"
+
+    # Knowledge Base
+    "@KB": "shared/knowledge-base/"
+    "@KB_MODULES": "shared/knowledge-base/modules/"
+    "@KB_PLATFORMS": "shared/knowledge-base/platforms/"
+    # "@KB_PROJECTS": ELIMINADO - Era duplicado de projects/
+    # Usar directamente: "projects/{nombre}/" para documentación de proyectos
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DEPENDENCIAS POR PROYECTO
+# ═══════════════════════════════════════════════════════════════════════════════
+
+dependencias_proyectos:
+  gamilit:
+    tipo: "STANDALONE"
+    usa_catalog:
+      - auth
+      - session-management
+      - rate-limiting
+      - notifications
+      - multi-tenancy
+      - feature-flags
+    usa_modules:
+      - utils
+    archivos_referencia:
+      - projects/gamilit/orchestration/CONTEXT-MAP.yml
+
+  trading_platform:
+    tipo: "STANDALONE"
+    usa_catalog:
+      - auth
+      - websocket
+      - payments
+      - rate-limiting
+    usa_modules:
+      - utils
+      - payments
+    archivos_referencia:
+      - projects/trading-platform/orchestration/CONTEXT-MAP.yml
+
+  erp_suite:
+    tipo: "MULTI-VERTICAL"
+    verticales:
+      - erp-core
+      - erp-clinicas
+      - erp-construccion
+      - erp-mecanicas-diesel
+      - erp-retail
+      - erp-vidrio-templado
+    usa_catalog:
+      - auth
+      - multi-tenancy
+      - notifications
+      - rate-limiting
+      - audit-logs
+    archivos_referencia:
+      - projects/erp-suite/orchestration/CONTEXT-MAP.yml
+      - projects/erp-core/orchestration/CONTEXT-MAP.yml
+      - projects/erp-*/orchestration/referencias/DEPENDENCIAS-SHARED.yml
+
+  betting_analytics:
+    tipo: "STANDALONE"
+    usa_catalog:
+      - auth
+      - websocket
+      - rate-limiting
+    archivos_referencia:
+      - projects/betting-analytics/orchestration/CONTEXT-MAP.yml
+
+  inmobiliaria_analytics:
+    tipo: "STANDALONE"
+    usa_catalog:
+      - auth
+      - multi-tenancy
+    archivos_referencia:
+      - projects/inmobiliaria-analytics/orchestration/CONTEXT-MAP.yml
+
+  platform_marketing_content:
+    tipo: "STANDALONE"
+    usa_catalog:
+      - auth
+      - multi-tenancy
+      - notifications
+    archivos_referencia:
+      - projects/platform_marketing_content/orchestration/CONTEXT-MAP.yml
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MIGRACION DE REFERENCIAS (LOG DE CAMBIOS)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+migracion_2026_01_04:
+  descripcion: "Reorganizacion core/ → shared/"
+
+  cambios_realizados:
+    - origen: "core/catalog/"
+      destino: "shared/catalog/"
+      archivos_afectados: 130+
+      estado: "COMPLETADO"
+
+    - origen: "core/modules/"
+      destino: "shared/modules/"
+      archivos_afectados: 23+
+      estado: "COMPLETADO"
+
+    - origen: "core/constants/"
+      destino: "shared/constants/"
+      archivos_afectados: 5+
+      estado: "COMPLETADO"
+
+    - origen: "core/types/"
+      destino: "shared/types/"
+      archivos_afectados: 5+
+      estado: "COMPLETADO"
+
+    - origen: "core/standards/"
+      destino: "shared/knowledge-base/standards/"
+      archivos_afectados: 1
+      estado: "COMPLETADO"
+
+    - origen: "shared/libs/"
+      destino: "ELIMINADO (duplicado de catalog)"
+      archivos_afectados: 34
+      estado: "COMPLETADO"
+
+  referencias_corregidas:
+    - archivo: "projects/erp-suite/docs/VERTICAL-GUIDE.md"
+      linea: 763
+      antes: "workspace/core/knowledge-base/patterns/PATRON-CORE-ODOO.md"
+      despues: "erp-core/orchestration/directivas/DIRECTIVA-PATRONES-ODOO.md"
+
+    - archivo: "projects/erp-suite/docs/ARCHITECTURE.md"
+      linea: 384
+      antes: "/home/isem/workspace/core/knowledge-base/patterns/PATRON-CORE-ODOO.md"
+      despues: "erp-core/orchestration/directivas/DIRECTIVA-PATRONES-ODOO.md"
+
+    - archivo: "projects/erp-suite/docs/ARCHITECTURE.md"
+      linea: 563
+      antes: "workspace/core/knowledge-base/patterns/PATRON-CORE-ODOO.md"
+      despues: "erp-core/orchestration/directivas/DIRECTIVA-PATRONES-ODOO.md"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VALIDACION DE REFERENCIAS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+validacion:
+  fecha: "2026-01-04"
+  estado: "COMPLETADO"
+
+  archivos_verificados:
+    ALIASES_yml:
+      cantidad: 3
+      ubicaciones:
+        - orchestration/referencias/ALIASES.yml
+        - orchestration/agents/ALIASES.yml
+        - core/orchestration/referencias/ALIASES.yml
+      estado: "OK - Apuntan a shared/"
+
+    CONTEXT_MAP_yml:
+      cantidad: 12
+      proyectos:
+        - gamilit
+        - trading-platform
+        - betting-analytics
+        - inmobiliaria-analytics
+        - platform_marketing_content
+        - erp-suite
+        - erp-core
+        - erp-clinicas
+        - erp-construccion
+        - erp-mecanicas-diesel
+        - erp-retail
+        - erp-vidrio-templado
+      estado: "OK - Sin referencias a core/catalog o core/modules"
+
+    DEPENDENCIAS_SHARED_yml:
+      cantidad: 5
+      proyectos:
+        - erp-clinicas
+        - erp-vidrio-templado
+        - erp-mecanicas-diesel
+        - erp-retail
+        - erp-construccion
+      estado: "OK - Apuntan a shared/catalog/"
+
+  referencias_legacy_historicas:
+    descripcion: "175 archivos con rutas /home/isem/workspace/ (historicos)"
+    accion: "No requieren correccion - son documentos de auditoria historica"
+    ubicacion_principal: "projects/gamilit/orchestration/reportes/"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MANTENIMIENTO FUTURO
+# ═══════════════════════════════════════════════════════════════════════════════
+
+mantenimiento:
+  al_agregar_funcionalidad_catalog:
+    pasos:
+      - Agregar a shared/catalog/{nombre}/
+      - Actualizar shared/catalog/CATALOG-INDEX.yml
+      - Agregar alias @CATALOG_{NOMBRE} en orchestration/referencias/ALIASES.yml
+      - Actualizar shared/README.md si es necesario
+
+  al_agregar_modulo_shared:
+    pasos:
+      - Agregar a shared/modules/{nombre}/
+      - Agregar alias @MOD_{NOMBRE} en orchestration/referencias/ALIASES.yml
+      - Actualizar shared/README.md
+
+  al_crear_nuevo_proyecto:
+    pasos:
+      - Crear CONTEXT-MAP.yml con aliases apuntando a shared/
+      - Crear DEPENDENCIAS-SHARED.yml si usa modulos del catalogo
+      - Actualizar TRAZABILIDAD-PROYECTOS.yml en knowledge-base
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+metadata:
+  creado_por: "Architecture-Analyst"
+  fecha_creacion: "2026-01-04"
+  proposito: "Trazabilidad de referencias post-reorganizacion"
+  relacionado_con:
+    - shared/README.md
+    - core/README.md
+    - orchestration/referencias/ALIASES.yml
+    - shared/knowledge-base/TRAZABILIDAD-PROYECTOS.yml

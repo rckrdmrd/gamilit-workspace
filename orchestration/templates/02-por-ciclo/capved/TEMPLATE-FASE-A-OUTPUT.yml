@@ -1,0 +1,124 @@
+# TEMPLATE: Salida Fase A (Análisis)
+# Sistema: SIMCO - NEXUS v4.0
+# Versión: 1.0.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INSTRUCCIONES: Completar análisis completo antes de GATE-A
+# ═══════════════════════════════════════════════════════════════════════════════
+
+fase_a_output:
+  metadata:
+    fase: "A - Análisis"
+    timestamp: "{YYYY-MM-DD HH:MM}"
+    proyecto: "{nombre_proyecto}"
+    tarea_id: "{HU-XXX}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # MAPEO DE OBJETOS AFECTADOS
+  # ─────────────────────────────────────────────────────────────────────────────
+  objetos_afectados:
+    total: 0                              # *Obligatorio: Número total
+
+    por_dominio:
+      ddl:                                # Objetos de base de datos
+        tablas: []                        # Lista: schema.tabla
+        indices: []
+        triggers: []
+        funciones: []
+        rls_policies: []
+
+      backend:                            # Objetos de backend
+        entities: []                      # Lista: modulo/entity.ts
+        services: []
+        controllers: []
+        dtos: []
+        modules: []
+
+      frontend:                           # Objetos de frontend
+        componentes: []                   # Lista: ruta/Componente.tsx
+        paginas: []
+        hooks: []
+        stores: []
+
+      documentacion:                      # Archivos de docs
+        specs: []
+        inventarios: []
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # DEPENDENCIAS
+  # ─────────────────────────────────────────────────────────────────────────────
+  dependencias:
+    hacia_arriba:                         # Lo que este cambio necesita
+      - objeto: "{ruta/objeto}"
+        tipo: "{entity | service | tabla}"
+        estado: "{existe | por_crear}"
+
+    hacia_abajo:                          # Lo que depende de este cambio
+      - objeto: "{ruta/objeto}"
+        tipo: "{entity | service | componente}"
+        impacto: "{actualizar | verificar | ninguno}"
+
+    orden_ejecucion:                      # Orden necesario
+      1: "{objeto_primero}"               # DDL antes de Backend
+      2: "{objeto_segundo}"               # Backend antes de Frontend
+      # ...
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # ANÁLISIS DE RIESGOS
+  # ─────────────────────────────────────────────────────────────────────────────
+  riesgos:
+    identificados:
+      - id: "R1"
+        descripcion: "{descripción del riesgo}"
+        probabilidad: "{alta | media | baja}"
+        impacto: "{alto | medio | bajo}"
+        mitigacion: "{cómo mitigar}"
+
+    nivel_general: "{alto | medio | bajo}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # ANÁLISIS PROFUNDO (Si error repetido)
+  # ─────────────────────────────────────────────────────────────────────────────
+  analisis_profundo:
+    requerido: false                      # true si viene de error repetido
+    si_requerido:
+      error_original_id: "{ERR-XXX}"
+      ocurrencias_previas: 0
+      causa_raiz_identificada: |
+        # Explicación de por qué falló antes
+
+      solucion_definitiva: |
+        # Qué se hará diferente esta vez
+
+      objetos_adicionales:                # Objetos que antes no se tocaron
+        - "{ruta/objeto}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # ARCHIVOS DE REFERENCIA
+  # ─────────────────────────────────────────────────────────────────────────────
+  referencias:
+    archivos_patron:                      # Archivos similares para seguir patrón
+      - ruta: "{ruta/archivo}"
+        proposito: "{por qué es referencia}"
+
+    documentacion_relevante:
+      - ruta: "{docs/spec.md}"
+        seccion: "{sección específica}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # GATE-A: CHECKLIST
+  # ─────────────────────────────────────────────────────────────────────────────
+  gate_a:
+    checklist:
+      objetos_mapeados: false             # *Debe ser true
+      dependencias_identificadas: false   # *Debe ser true
+      riesgos_documentados: false         # *Debe ser true
+      referencias_identificadas: false    # *Debe ser true
+      analisis_profundo_si_requerido: false  # *true si error repetido
+
+    estado: "PENDIENTE"
+    notas: ""
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SIGUIENTE: Si GATE-A = APROBADO → Proceder a FASE P (Planeación)
+# ═══════════════════════════════════════════════════════════════════════════════

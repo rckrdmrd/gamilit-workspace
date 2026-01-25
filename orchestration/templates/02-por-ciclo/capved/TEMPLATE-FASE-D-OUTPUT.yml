@@ -1,0 +1,133 @@
+# TEMPLATE: Salida Fase D (Documentación)
+# Sistema: SIMCO - NEXUS v4.0
+# Versión: 1.0.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INSTRUCCIONES: Documentar todos los cambios y actualizar inventarios
+# ═══════════════════════════════════════════════════════════════════════════════
+
+fase_d_output:
+  metadata:
+    fase: "D - Documentación"
+    timestamp: "{YYYY-MM-DD HH:MM}"
+    proyecto: "{nombre_proyecto}"
+    tarea_id: "{HU-XXX}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # INVENTARIOS ACTUALIZADOS
+  # ─────────────────────────────────────────────────────────────────────────────
+  inventarios:
+    actualizados:
+      - archivo: "DATABASE_INVENTORY.yml"
+        cambios:
+          - tipo: "{agregado | modificado | eliminado}"
+            objeto: "{schema.tabla}"
+            descripcion: "{qué cambió}"
+
+      - archivo: "BACKEND_INVENTORY.yml"
+        cambios:
+          - tipo: "{agregado | modificado | eliminado}"
+            objeto: "{module/entity.ts}"
+            descripcion: "{qué cambió}"
+
+      - archivo: "FRONTEND_INVENTORY.yml"
+        cambios:
+          - tipo: "{agregado | modificado | eliminado}"
+            objeto: "{component/Component.tsx}"
+            descripcion: "{qué cambió}"
+
+    verificacion:
+      todos_actualizados: true | false    # *Debe ser true
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # TRAZAS REGISTRADAS
+  # ─────────────────────────────────────────────────────────────────────────────
+  trazas:
+    registradas:
+      - archivo: "TRAZA-TAREAS-DATABASE.md"
+        entrada:
+          id: "{tarea_id}"
+          fecha: "{YYYY-MM-DD}"
+          descripcion: "{descripción breve}"
+          archivos_afectados: []
+          estado: "completada"
+
+      - archivo: "TRAZA-TAREAS-BACKEND.md"
+        entrada:
+          id: "{tarea_id}"
+          fecha: "{YYYY-MM-DD}"
+          descripcion: "{descripción breve}"
+          archivos_afectados: []
+          estado: "completada"
+
+    verificacion:
+      todas_registradas: true | false     # *Debe ser true
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PROPAGACIÓN
+  # ─────────────────────────────────────────────────────────────────────────────
+  propagacion:
+    evaluada: true | false                # *Obligatorio
+
+    decision:
+      aplica: true | false
+      criterio_cumplido: "{seguridad | bug_fix | feature_generica | ninguno}"
+
+    si_aplica:
+      destinos:
+        - proyecto: "{proyecto_destino}"
+          tipo: "{propagar | contribuir_kb}"
+          estado: "{pendiente | ejecutado}"
+
+      contribucion_kb:
+        habilitada: true | false
+        ubicacion: "shared/knowledge-base/{categoria}/"
+        archivo: "{nombre_archivo}"
+
+    si_no_aplica:
+      razon: "{específico_de_negocio | no_genérico | otro}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # HUs DERIVADAS
+  # ─────────────────────────────────────────────────────────────────────────────
+  hus_derivadas:
+    generadas: false
+
+    si_generadas:
+      - id: "HU-XXX-D1"
+        titulo: "{título}"
+        origen: "{scope_creep | mejora_identificada | deuda_tecnica}"
+        prioridad: "{alta | media | baja}"
+        descripcion: "{descripción breve}"
+        archivo_creado: "{ruta/HU-XXX-D1.md}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PROXIMA ACCIÓN
+  # ─────────────────────────────────────────────────────────────────────────────
+  proxima_accion:
+    actualizada: true | false             # *Debe ser true
+    archivo: "PROXIMA-ACCION.md"
+
+    contenido:
+      siguiente_tarea: "{descripción}"
+      prioridad: "{alta | media | baja}"
+      dependencias: []
+      notas: ""
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # GATE-D: CHECKLIST
+  # ─────────────────────────────────────────────────────────────────────────────
+  gate_d:
+    checklist:
+      inventarios_actualizados: false     # *Debe ser true
+      trazas_registradas: false           # *Debe ser true
+      propagacion_evaluada: false         # *Debe ser true
+      hus_derivadas_creadas: false        # *Si aplica
+      proxima_accion_actualizada: false   # *Debe ser true
+
+    estado: "PENDIENTE"
+    notas: ""
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SIGUIENTE: Proceder a POST-VALIDACIÓN
+# ═══════════════════════════════════════════════════════════════════════════════

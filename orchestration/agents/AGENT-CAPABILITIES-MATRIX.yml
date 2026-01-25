@@ -1,0 +1,346 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# MATRIZ DE CAPACIDADES DE AGENTES
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Sistema: SIMCO v4.3.0 + NEXUS v4.0
+# Propósito: Documentar capacidades, limitaciones y uso óptimo de cada agente
+# Creado: 2026-01-24
+# Tarea: TASK-2026-01-24-REESTRUCTURACION (FASE 6)
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+ultima_actualizacion: "2026-01-24"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CLASIFICACIÓN DE AGENTES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+clasificacion:
+  razonadores:
+    descripcion: "Modelos con capacidad de razonamiento complejo"
+    agentes:
+      - claude-code
+      - gemini-cli
+      - trae
+
+  no_razonadores:
+    descripcion: "Modelos de ejecución literal"
+    agentes:
+      - windsurf-swe
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# AGENTE: CLAUDE CODE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+claude_code:
+  nombre: "Claude Code"
+  modelo: "Claude Opus 4.5"
+  tipo: "RAZONADOR"
+  rol: "Orquestador Principal"
+
+  capacidades:
+    orquestacion:
+      subagentes: true
+      delegacion: true
+      coordinacion_multi_proyecto: true
+    analisis:
+      razonamiento_complejo: true
+      arquitectura: true
+      code_review: true
+    ejecucion:
+      escribir_codigo: true
+      editar_archivos: true
+      ejecutar_comandos: true
+    herramientas:
+      web_search: true
+      web_fetch: true
+      git: true
+      mcp_servers: true
+
+  limitaciones:
+    - "Alto consumo de tokens"
+    - "Sin acceso a APIs privadas sin MCP"
+    - "Contexto limitado (requiere gestión NEXUS)"
+
+  uso_optimo:
+    fases: ["Fase 1", "Fase 4"]
+    tareas:
+      - "Orquestación de múltiples agentes"
+      - "Decisiones arquitectónicas"
+      - "Análisis inicial de tareas"
+      - "Validación final"
+      - "Tareas que requieren web search"
+    evitar:
+      - "Tareas de ejecución repetitiva"
+      - "Cambios masivos de archivos"
+      - "Tareas que pueden delegarse"
+
+  tokens:
+    presupuesto_sesion: 200000
+    alerta: 160000
+    critico: 180000
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# AGENTE: GEMINI CLI
+# ─────────────────────────────────────────────────────────────────────────────────
+
+gemini_cli:
+  nombre: "Gemini CLI"
+  modelo: "Gemini 3"
+  tipo: "RAZONADOR"
+  rol: "Secundario/Analista"
+
+  capacidades:
+    orquestacion:
+      subagentes: false
+      delegacion: false
+      coordinacion_multi_proyecto: false
+    analisis:
+      razonamiento_complejo: true
+      arquitectura: true
+      code_review: true
+    ejecucion:
+      escribir_codigo: true
+      editar_archivos: true
+      ejecutar_comandos: true
+    herramientas:
+      web_search: false
+      web_fetch: false
+      git: true
+      mcp_servers: false
+
+  limitaciones:
+    - "Sin subagentes"
+    - "Sin web search"
+    - "Sin MCP servers"
+
+  uso_optimo:
+    fases: ["Fase 1 (alternativo)", "Fase 2 (alternativo)", "Fase 4 (alternativo)"]
+    tareas:
+      - "Análisis de código"
+      - "Validación de cambios"
+      - "Code review"
+      - "Refactoring"
+      - "Sustituto de Claude cuando no disponible"
+    evitar:
+      - "Tareas que requieren web search"
+      - "Orquestación multi-agente"
+
+  tokens:
+    presupuesto_sesion: "ilimitado (externo)"
+    nota: "No consume tokens de Claude"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# AGENTE: TRAE (Gemini Pro)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+trae:
+  nombre: "Trae"
+  modelo: "Gemini 3 Pro"
+  tipo: "RAZONADOR"
+  rol: "Planificador/Analista Detallado"
+
+  capacidades:
+    orquestacion:
+      subagentes: false
+      delegacion: false
+      coordinacion_multi_proyecto: false
+    analisis:
+      razonamiento_complejo: true
+      arquitectura: true
+      code_review: true
+      generacion_planes: true
+    ejecucion:
+      escribir_codigo: true
+      editar_archivos: true
+      ejecutar_comandos: true
+    herramientas:
+      web_search: false
+      web_fetch: false
+      git: true
+      mcp_servers: false
+
+  limitaciones:
+    - "Sin subagentes"
+    - "Sin web search"
+    - "Requiere contexto completo en prompt"
+
+  uso_optimo:
+    fases: ["Fase 2"]
+    tareas:
+      - "Generar planes ultra-detallados"
+      - "Descomponer tareas en atómicas"
+      - "Análisis de patrones de código"
+      - "Crear especificaciones detalladas"
+    evitar:
+      - "Orquestación"
+      - "Tareas que requieren decisiones de alto nivel"
+
+  tokens:
+    presupuesto_sesion: "ilimitado (externo)"
+    nota: "No consume tokens de Claude"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# AGENTE: WINDSURF SWE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+windsurf_swe:
+  nombre: "Windsurf SWE"
+  modelo: "Cascade AI"
+  tipo: "NO-RAZONADOR"
+  rol: "Ejecutor Atómico"
+
+  capacidades:
+    orquestacion:
+      subagentes: false
+      delegacion: false
+      coordinacion_multi_proyecto: false
+    analisis:
+      razonamiento_complejo: false
+      arquitectura: false
+      code_review: false
+    ejecucion:
+      escribir_codigo: true
+      editar_archivos: true
+      ejecutar_comandos: true
+    herramientas:
+      web_search: false
+      web_fetch: false
+      git: true
+      mcp_servers: false
+
+  limitaciones:
+    - "NO razona - solo ejecuta literalmente"
+    - "NO toma decisiones"
+    - "Requiere instrucciones ULTRA-DETALLADAS"
+    - "Si hay ambigüedad: comportamiento impredecible"
+
+  uso_optimo:
+    fases: ["Fase 3"]
+    tareas:
+      - "Ejecutar tareas atómicas definidas"
+      - "Escribir código literal especificado"
+      - "Aplicar cambios mecánicos"
+      - "Ejecutar comandos de build/lint"
+    evitar:
+      - "CUALQUIER tarea que requiera decisiones"
+      - "Refactoring sin plan detallado"
+      - "Análisis de código"
+      - "Tareas ambiguas"
+
+  tokens:
+    presupuesto_sesion: "ilimitado (externo)"
+    nota: "No consume tokens de Claude"
+
+  reglas_prompt:
+    obligatorio:
+      - "Código LITERAL a escribir (no pseudocódigo)"
+      - "Path EXACTO del archivo"
+      - "Líneas ESPECÍFICAS a modificar"
+      - "Resultado esperado verificable"
+    prohibido:
+      - "Instrucciones ambiguas"
+      - "Decisiones implícitas"
+      - "Referencias a 'patrones existentes'"
+      - "Código a 'completar'"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# MATRIZ DE DECISIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+matriz_decision:
+  por_tarea:
+    orquestacion: "claude-code"
+    analisis_inicial: "claude-code | gemini-cli"
+    plan_detallado: "trae | gemini-cli"
+    ejecucion_atomica: "windsurf-swe"
+    validacion: "claude-code | gemini-cli"
+    code_review: "gemini-cli | trae"
+    web_search: "claude-code (único)"
+    mcp_integration: "claude-code (único)"
+
+  por_fase:
+    fase_1_analisis:
+      principal: "claude-code"
+      alternativo: "gemini-cli"
+    fase_2_plan:
+      principal: "trae"
+      alternativo: "gemini-cli"
+    fase_3_ejecucion:
+      principal: "windsurf-swe"
+      alternativo: null
+    fase_4_validacion:
+      principal: "claude-code"
+      alternativo: "gemini-cli"
+
+  escalamiento:
+    - condicion: "Claude no disponible"
+      accion: "Usar gemini-cli para fases 1, 2, 4"
+    - condicion: "Trae no disponible"
+      accion: "Usar gemini-cli para fase 2"
+    - condicion: "Windsurf no disponible"
+      accion: "DETENER - no hay alternativa para ejecución no-razonadora"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FLUJO DE 4 FASES RESUMIDO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+flujo_4_fases:
+  fase_1:
+    nombre: "Análisis Inicial"
+    agente: "Claude Code"
+    tokens_claude: "10%"
+    entregables:
+      - "Clasificación de tarea"
+      - "Plan de alto nivel"
+      - "Registro en PROMPTS-ACTIVOS.yml"
+
+  fase_2:
+    nombre: "Plan Detallado"
+    agente: "Trae / Gemini CLI"
+    tokens_claude: "0%"
+    entregables:
+      - "Tareas atómicas (max 1 archivo, max 50 líneas)"
+      - "Código LITERAL a escribir"
+      - "Plan actualizado"
+
+  fase_3:
+    nombre: "Ejecución"
+    agente: "Windsurf SWE"
+    tokens_claude: "0%"
+    entregables:
+      - "Código escrito"
+      - "Build/lint pasando"
+      - "Reporte de ejecución"
+
+  fase_4:
+    nombre: "Validación"
+    agente: "Claude Code / Gemini CLI"
+    tokens_claude: "15%"
+    entregables:
+      - "Veredicto: APROBADA/RECHAZADA"
+      - "Registro en PROMPTS-HISTORICO.yml"
+      - "Cierre de tarea"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  directivas:
+    - "@FLUJO_AGENTES: orchestration/directivas/simco/SIMCO-FLUJO-AGENTES.md"
+    - "@PROMPTS_AGENTES: orchestration/directivas/simco/SIMCO-PROMPTS-AGENTES.md"
+    - "@EDICION_SEGURA: orchestration/directivas/simco/SIMCO-EDICION-SEGURA.md"
+
+  templates:
+    - "orchestration/referencias/prompts/PROMPT-WINDSURF-ATOMICO.md"
+    - "orchestration/referencias/prompts/PROMPT-GEMINI-CLI.md"
+    - "orchestration/referencias/prompts/PROMPT-TRAE.md"
+
+  perfiles:
+    - "orchestration/agents/perfiles/"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE LA MATRIZ
+# ═══════════════════════════════════════════════════════════════════════════════

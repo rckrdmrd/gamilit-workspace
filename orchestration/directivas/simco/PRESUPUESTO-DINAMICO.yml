@@ -1,0 +1,435 @@
+# =============================================================================
+# PRESUPUESTO-DINAMICO.yml - Sistema de Tokens Adaptativo
+# =============================================================================
+# Sistema: SIMCO v4.3.0 + NEXUS v4.0
+# Proposito: Calcular presupuesto de tokens segun complejidad de tarea
+# Version: 1.0.0
+# Fecha: 2026-01-24
+# Extiende: SIMCO-MEMORIA-TOKENS.md
+# =============================================================================
+#
+# PROBLEMA QUE RESUELVE:
+# El presupuesto fijo (10% F1, 25% F2, 50% F3, 15% F4) no se adapta a la
+# complejidad real de las tareas. Una tarea simple desperdicia tokens,
+# una tarea compleja se queda corta.
+#
+# SOLUCION:
+# Presupuesto base + delta por complejidad + ajuste por scope
+#
+# =============================================================================
+
+version: "1.0.0"
+fecha_creacion: "2026-01-24"
+actualizado: "2026-01-24"
+
+# =============================================================================
+# 1. PRESUPUESTO BASE (Tokens Fijos)
+# =============================================================================
+
+presupuesto_base:
+  descripcion: "Tokens mínimos siempre disponibles, independiente de complejidad"
+
+  por_nivel_nexus:
+    L0_sistema: 4000      # CLAUDE.md + BOOTLOADER (fijo)
+    L1_proyecto: 3000     # Contexto de proyecto (fijo)
+    L2_dominio: 2000      # Directivas SIMCO del dominio (fijo)
+    L3_tarea: 1000        # Contexto de tarea (mínimo)
+    total_base: 10000     # Siempre disponible
+
+  reserva_sistema:
+    compactacion: 10000   # Reserva para evitar compactación abrupta
+    output: 5000          # Reserva para generar respuestas
+    total_reserva: 15000
+
+  disponible_trabajo:
+    maximo_absoluto: 175000  # 200K - 25K reserva
+    recomendado: 150000      # Margen de seguridad
+
+# =============================================================================
+# 2. CLASIFICACION DE COMPLEJIDAD
+# =============================================================================
+
+clasificacion_complejidad:
+  descripcion: "Cómo determinar la complejidad de una tarea"
+
+  niveles:
+    simple:
+      descripcion: "Cambios menores, correcciones puntuales"
+      criterios:
+        lineas_codigo: "< 30"
+        archivos_afectados: "1"
+        dominios: "1 (solo backend O solo frontend O solo DDL)"
+        requiere_analisis: false
+        ejemplos:
+          - "Corregir typo en mensaje de error"
+          - "Agregar un campo a una entity"
+          - "Cambiar color de un botón"
+      tokens_adicionales: 5000
+
+    media:
+      descripcion: "Features pequeñas, refactorizaciones locales"
+      criterios:
+        lineas_codigo: "30-100"
+        archivos_afectados: "2-3"
+        dominios: "1-2"
+        requiere_analisis: true
+        ejemplos:
+          - "Agregar validación a un formulario"
+          - "Implementar un nuevo endpoint"
+          - "Crear un componente React reutilizable"
+      tokens_adicionales: 15000
+
+    alta:
+      descripcion: "Features medianas, cambios multi-archivo"
+      criterios:
+        lineas_codigo: "100-300"
+        archivos_afectados: "4-8"
+        dominios: "2-3 (DDL + Backend + Frontend)"
+        requiere_analisis: true
+        ejemplos:
+          - "Agregar un nuevo módulo completo"
+          - "Implementar autenticación"
+          - "Refactorizar un servicio con sus tests"
+      tokens_adicionales: 40000
+
+    critica:
+      descripcion: "Refactorizaciones mayores, migraciones, features complejas"
+      criterios:
+        lineas_codigo: "> 300"
+        archivos_afectados: "> 8"
+        dominios: "3 (full-stack)"
+        requiere_analisis: true
+        multi_proyecto: true
+        ejemplos:
+          - "Migración de base de datos"
+          - "Refactorización arquitectónica"
+          - "Feature que afecta múltiples proyectos"
+      tokens_adicionales: 80000
+
+# =============================================================================
+# 3. FORMULAS DE CALCULO
+# =============================================================================
+
+formulas:
+  descripcion: "Cálculo del presupuesto total para una tarea"
+
+  formula_general: |
+    presupuesto_total =
+      presupuesto_base.total_base
+      + complejidad.tokens_adicionales
+      + (archivos_afectados * tokens_por_archivo)
+      + ajuste_por_fase
+
+  tokens_por_archivo:
+    lectura: 500      # Por cada archivo que se lee
+    edicion: 1000     # Por cada archivo que se modifica
+    creacion: 800     # Por cada archivo nuevo
+
+  ajuste_por_fase:
+    descripcion: "Multiplicador según fase del flujo de 4 fases"
+    fase_1_analisis: 1.0      # Base (análisis inicial)
+    fase_2_planificacion: 1.3 # +30% para plan detallado
+    fase_3_ejecucion: 1.5     # +50% para implementación
+    fase_4_validacion: 0.8    # -20% (solo validar, no implementar)
+
+  ejemplos_calculo:
+    tarea_simple:
+      base: 10000
+      complejidad_simple: 5000
+      archivos: "1 edicion = 1000"
+      fase_4: "0.8x"
+      total: "(10000 + 5000 + 1000) * 0.8 = 12,800 tokens"
+
+    tarea_media:
+      base: 10000
+      complejidad_media: 15000
+      archivos: "3 lectura + 2 edicion = 1500 + 2000"
+      fase_3: "1.5x"
+      total: "(10000 + 15000 + 3500) * 1.5 = 42,750 tokens"
+
+    tarea_alta:
+      base: 10000
+      complejidad_alta: 40000
+      archivos: "5 lectura + 4 edicion = 2500 + 4000"
+      fase_3: "1.5x"
+      total: "(10000 + 40000 + 6500) * 1.5 = 84,750 tokens"
+
+# =============================================================================
+# 4. REDISTRIBUCION ENTRE FASES
+# =============================================================================
+
+redistribucion:
+  descripcion: "Mecanismo para transferir tokens no usados entre fases"
+
+  reglas:
+    fase_1_a_2:
+      descripcion: "Tokens no usados en F1 pasan a F2"
+      porcentaje_transferible: 80  # 80% de lo no usado
+      ejemplo: "F1 usa 15K de 20K asignados → 4K pasan a F2"
+
+    fase_2_a_3:
+      descripcion: "Tokens no usados en F2 pasan a F3"
+      porcentaje_transferible: 90  # 90% de lo no usado
+      ejemplo: "F2 usa 40K de 50K → 9K pasan a F3"
+
+    fase_3_a_4:
+      descripcion: "Tokens no usados en F3 pasan a F4"
+      porcentaje_transferible: 50  # 50% (F4 necesita menos)
+      ejemplo: "F3 usa 80K de 100K → 10K pasan a F4"
+
+  limites:
+    maximo_transferencia: 30000  # Nunca transferir más de 30K
+    minimo_fase: 5000            # Cada fase mantiene mínimo 5K
+
+  mecanismo:
+    paso_1: "Al finalizar fase, calcular tokens_usados"
+    paso_2: "tokens_sobrantes = asignados - usados"
+    paso_3: "tokens_transferir = sobrantes * porcentaje_transferible"
+    paso_4: "Agregar a presupuesto de fase siguiente"
+    paso_5: "Registrar en ACTIVE-FILES.yml o log de sesión"
+
+# =============================================================================
+# 5. DISTRIBUCION POR DEFECTO (Flujo 4 Fases)
+# =============================================================================
+
+distribucion_4_fases:
+  descripcion: "Distribución base que se ajusta según complejidad"
+
+  # Distribución porcentual (de tokens disponibles, no total)
+  fija:
+    fase_1_claude: 12    # 12% (~21K de 175K)
+    fase_2_trae: 28      # 28% (~49K) - Trae/Gemini, no cuenta Claude
+    fase_3_windsurf: 45  # 45% (~79K) - Windsurf, no cuenta Claude
+    fase_4_validacion: 15 # 15% (~26K)
+
+  # Distribución ajustada por complejidad
+  dinamica:
+    simple:
+      fase_1: 15   # Más análisis relativo
+      fase_2: 25
+      fase_3: 40
+      fase_4: 20   # Más validación relativo
+
+    media:
+      fase_1: 12   # Distribución estándar
+      fase_2: 28
+      fase_3: 45
+      fase_4: 15
+
+    alta:
+      fase_1: 10   # Menos análisis, más ejecución
+      fase_2: 30
+      fase_3: 50
+      fase_4: 10
+
+    critica:
+      fase_1: 8    # Mínimo análisis (ya analizado antes)
+      fase_2: 32   # Máximo planificación
+      fase_3: 52   # Máxima ejecución
+      fase_4: 8    # Mínima validación
+
+# =============================================================================
+# 6. ALERTAS Y UMBRALES DINAMICOS
+# =============================================================================
+
+alertas:
+  descripcion: "Umbrales que se ajustan según presupuesto asignado"
+
+  calculo_umbrales:
+    alerta_amarilla: "presupuesto_fase * 0.70"  # 70% del presupuesto de fase
+    alerta_roja: "presupuesto_fase * 0.85"      # 85% del presupuesto de fase
+    critico: "presupuesto_fase * 0.95"          # 95% del presupuesto de fase
+
+  acciones:
+    amarilla:
+      - "Log: Tokens al 70% del presupuesto de fase"
+      - "Evaluar: ¿Puedo terminar con lo que queda?"
+      - "Preparar: Identificar qué purgar si es necesario"
+
+    roja:
+      - "Log: Tokens al 85% del presupuesto de fase"
+      - "Accion: Purgar contexto no esencial"
+      - "Evaluar: ¿Necesito escalar a siguiente fase?"
+
+    critico:
+      - "DETENER: No iniciar nuevas operaciones"
+      - "Guardar: PROXIMA-ACCION.md inmediatamente"
+      - "Escalar: Notificar que fase actual necesita más tokens"
+
+# =============================================================================
+# 7. ESCENARIOS DE USO
+# =============================================================================
+
+escenarios:
+
+  tarea_rapida:
+    descripcion: "Fix de typo, cambio de configuración"
+    complejidad: "simple"
+    skip_fases: [2, 3]  # Solo F1 y F4
+    presupuesto_total: 15000
+    flujo: |
+      F1 (Claude): Identificar cambio → Ejecutar → F4: Validar
+      Sin Trae ni Windsurf (no vale la pena delegar)
+
+  feature_estandar:
+    descripcion: "Nuevo endpoint con entity y servicio"
+    complejidad: "media"
+    fases: [1, 2, 3, 4]
+    presupuesto_total: 50000
+    flujo: |
+      F1 (Claude): Analizar → Plan alto nivel
+      F2 (Trae): Plan atómico detallado
+      F3 (Windsurf): Implementar paso a paso
+      F4 (Claude): Validar coherencia
+
+  refactorizacion_grande:
+    descripcion: "Cambiar estructura de autenticación"
+    complejidad: "alta"
+    fases: [1, 2, 3, 4]
+    presupuesto_total: 90000
+    flujo: |
+      F1 (Claude): Análisis de impacto
+      F2 (Trae): Descomposición en 10+ tareas atómicas
+      F3 (Windsurf): Ejecutar una a una
+      F4 (Claude): Validación exhaustiva
+
+  migracion_multi_proyecto:
+    descripcion: "Propagar cambio de template-saas a verticales"
+    complejidad: "critica"
+    fases: [1, 2, 3, 4]
+    presupuesto_total: 120000
+    notas: "Considerar dividir en múltiples sesiones"
+    flujo: |
+      F1 (Claude): Analizar impacto en cada proyecto
+      F2 (Trae): Plan por proyecto, priorizar por dependencias
+      F3 (Windsurf): Ejecutar proyecto por proyecto
+      F4 (Claude): Validar propagación completa
+
+# =============================================================================
+# 8. PROTOCOLO DE EVALUACION DE COMPLEJIDAD
+# =============================================================================
+
+protocolo_evaluacion:
+  descripcion: "Cómo determinar la complejidad antes de iniciar"
+
+  checklist:
+    paso_1_scope:
+      pregunta: "¿Cuántos archivos se modificarán?"
+      opciones:
+        - "1 archivo → simple"
+        - "2-3 archivos → media"
+        - "4-8 archivos → alta"
+        - "> 8 archivos → critica"
+
+    paso_2_dominios:
+      pregunta: "¿Qué capas se afectan?"
+      opciones:
+        - "Solo DDL O solo Backend O solo Frontend → simple/media"
+        - "DDL + Backend O Backend + Frontend → media/alta"
+        - "DDL + Backend + Frontend → alta/critica"
+
+    paso_3_analisis:
+      pregunta: "¿Requiere análisis previo de código existente?"
+      opciones:
+        - "No, es cambio trivial → simple"
+        - "Sí, debo entender el código → media+"
+
+    paso_4_dependencias:
+      pregunta: "¿Afecta a otros proyectos?"
+      opciones:
+        - "No → según pasos anteriores"
+        - "Sí, 1-2 proyectos → alta"
+        - "Sí, 3+ proyectos → critica"
+
+  resultado:
+    formula: "max(paso_1, paso_2, paso_3, paso_4)"
+    ejemplo: |
+      Tarea: Agregar campo a tabla y mostrar en UI
+      paso_1: 3 archivos (DDL, entity, component) → media
+      paso_2: DDL + Backend + Frontend → alta
+      paso_3: Sí, debo ver estructura actual → media+
+      paso_4: No afecta otros proyectos → -
+      RESULTADO: alta
+
+# =============================================================================
+# 9. INTEGRACION CON ARCHIVOS DE COORDINACION
+# =============================================================================
+
+integracion:
+
+  active_files:
+    descripcion: "Registrar presupuesto asignado por archivo"
+    campo_adicional: "tokens_estimados"
+    ejemplo: |
+      - path: "src/auth/auth.service.ts"
+        agente: "windsurf"
+        fase: 3
+        tokens_estimados: 2500
+
+  blocked_tasks:
+    descripcion: "Escalar si presupuesto insuficiente"
+    tipo_bloqueo: "presupuesto_insuficiente"
+    ejemplo: |
+      - id: "BLOCK-001"
+        bloqueo:
+          tipo: "presupuesto_insuficiente"
+          descripcion: "Tarea requiere 50K, solo quedan 20K"
+          contexto_faltante:
+            - "Aprobación para expandir presupuesto"
+            - "Alternativa: dividir tarea"
+
+  decisions_active:
+    descripcion: "Registrar decisiones de presupuesto"
+    ejemplo: |
+      - id: "DECISION-BUDGET-001"
+        titulo: "Expandir presupuesto F3 en 20K"
+        decision: "Tarea más compleja de lo estimado, redistribuir de F4"
+        metadata:
+          tipo: "presupuesto"
+
+# =============================================================================
+# 10. METRICAS Y MEJORA CONTINUA
+# =============================================================================
+
+metricas:
+
+  por_sesion:
+    - tokens_estimados_inicial
+    - tokens_usados_real
+    - precision_estimacion: "(estimado - real) / estimado * 100"
+    - redistribuciones_realizadas
+    - escaladas_por_presupuesto
+
+  objetivos:
+    precision_estimacion: "> 80%"  # Estimaciones dentro del 20% de lo real
+    redistribuciones_sesion: "< 3"  # Pocas redistribuciones = buena estimación
+    escaladas_presupuesto: "< 1"    # Evitar escalar por falta de tokens
+
+  mejora:
+    descripcion: "Ajustar clasificación basado en métricas reales"
+    frecuencia: "Mensual"
+    accion: |
+      Si precision_estimacion < 70%:
+        - Revisar criterios de clasificación
+        - Ajustar tokens_adicionales por nivel
+        - Documentar casos que fallaron
+
+# =============================================================================
+# 11. ALIASES Y REFERENCIAS
+# =============================================================================
+
+aliases:
+  "@PRESUPUESTO-DINAMICO": "Este archivo"
+  "@CALCULAR-TOKENS": "Sección formulas de este archivo"
+  "@CLASIFICAR-COMPLEJIDAD": "Sección clasificacion_complejidad"
+  "@REDISTRIBUIR-TOKENS": "Sección redistribucion"
+
+referencias:
+  - "orchestration/directivas/simco/SIMCO-MEMORIA-TOKENS.md"
+  - "orchestration/trazas/ACTIVE-FILES.yml"
+  - "orchestration/trazas/BLOCKED-TASKS.yml"
+  - "orchestration/trazas/DECISIONS-ACTIVE.yml"
+
+# =============================================================================
+# FIN DEL ARCHIVO
+# =============================================================================

@@ -1,0 +1,88 @@
+# SPRINT BACKLOG - Sprint {N}
+# Version: 1.0.0
+# Sistema: SIMCO v4.0.0
+# Alias: @TPL_SPRINT_BACKLOG
+
+sprint:
+  numero: 0
+  proyecto: ""
+  inicio: "YYYY-MM-DD"
+  fin: "YYYY-MM-DD"
+  duracion_dias: 10
+  objetivo: ""
+
+  metricas_planificadas:
+    story_points_meta: 0
+    velocity_esperado: 0
+    hus_estimadas: 0
+
+planning:
+  fecha: "YYYY-MM-DD"
+  participantes:
+    po: ""
+    scrum_master: ""
+    dev_team: []
+  duracion_minutos: 120
+  acta: ""
+
+historias:
+  - id: ""
+    titulo: ""
+    epic: ""
+    prioridad: "P1"
+    story_points: 0
+    estado: "pendiente"
+    asignado_a: ""
+
+    subtareas:
+      - id: ""
+        descripcion: ""
+        archivos_impactados: []
+        asignado_a: ""
+        estado: "pendiente"
+        validacion:
+          build: "no-ejecutado"
+          lint: "no-ejecutado"
+          criterios: "no-validado"
+
+    tracking:
+      fecha_inicio: ""
+      fecha_completada: ""
+      horas_estimadas: 0
+      horas_reales: 0
+      desviacion: ""
+      bloqueos: []
+      notas: ""
+
+    validacion_dod:
+      codigo_implementado: false
+      tests_pasando: false
+      build_sin_errores: false
+      lint_sin_warnings: false
+      documentacion_actualizada: false
+      inventarios_actualizados: false
+      lecciones_registradas: false
+      criterios_aceptacion: "no-validados"
+
+    hus_derivadas: []
+
+metricas_reales:
+  story_points_completados: 0
+  velocity_real: 0
+  porcentaje_completado: 0
+  hus_completadas: 0
+  hus_bloqueadas: 0
+  hus_derivadas_totales: 0
+
+review:
+  fecha: "YYYY-MM-DD"
+  duracion_minutos: 60
+  hus_demostradas: []
+  hus_incompletas: []
+  velocity_calculado: 0
+
+retrospectiva:
+  fecha: "YYYY-MM-DD"
+  archivo: ""
+
+notas: ""

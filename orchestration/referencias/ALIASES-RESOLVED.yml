@@ -1,0 +1,111 @@
+# ALIASES PRE-RESUELTOS (Rutas Completas)
+# Version: 1.0.0 | Sistema: GCA | Tokens: ~350
+# Proposito: Aliases con rutas absolutas para carga inmediata
+
+version: "1.0.0"
+generado: "2026-01-20"
+workspace: "C:/Empresas/ISEM/workspace-v2"
+
+# Resolucion: {workspace}/{base_path}/{path}
+
+# ─────────────────────────────────────────────────────────────────
+# PRINCIPIOS (base: orchestration/directivas/principios)
+# ─────────────────────────────────────────────────────────────────
+principios:
+  "@CAPVED": "orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
+  "@DOC_PRIMERO": "orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
+  "@ANTI_DUP": "orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md"
+  "@VALIDACION": "orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
+  "@ECONOMIA": "orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
+  "@NO_ASUMIR": "orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
+
+# ─────────────────────────────────────────────────────────────────
+# SIMCO OPERACIONES (base: orchestration/directivas/simco)
+# ─────────────────────────────────────────────────────────────────
+simco_ops:
+  "@TAREA": "orchestration/directivas/simco/SIMCO-TAREA.md"
+  "@CREAR": "orchestration/directivas/simco/SIMCO-CREAR.md"
+  "@MODIFICAR": "orchestration/directivas/simco/SIMCO-MODIFICAR.md"
+  "@VALIDAR": "orchestration/directivas/simco/SIMCO-VALIDAR.md"
+  "@BUSCAR": "orchestration/directivas/simco/SIMCO-BUSCAR.md"
+
+# ─────────────────────────────────────────────────────────────────
+# SIMCO DOMINIOS (base: orchestration/directivas/simco)
+# ─────────────────────────────────────────────────────────────────
+simco_dom:
+  "@DDL": "orchestration/directivas/simco/SIMCO-DDL.md"
+  "@BACKEND": "orchestration/directivas/simco/SIMCO-BACKEND.md"
+  "@FRONTEND": "orchestration/directivas/simco/SIMCO-FRONTEND.md"
+  "@DEVOPS": "orchestration/directivas/simco/SIMCO-DEVOPS.md"
+
+# ─────────────────────────────────────────────────────────────────
+# SIMCO CONTEXTO (base: orchestration/directivas/simco)
+# ─────────────────────────────────────────────────────────────────
+simco_ctx:
+  "@CTX_ENG": "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+  "@CTX_RES": "orchestration/directivas/simco/SIMCO-CONTEXT-RESOLUTION.md"
+  "@INIT": "orchestration/directivas/simco/SIMCO-INICIALIZACION.md"
+  "@CCA_SUB": "orchestration/directivas/simco/SIMCO-CCA-SUBAGENTE.md"
+  "@TOKENS": "orchestration/directivas/simco/SIMCO-CONTROL-TOKENS.md"
+  # GCA (nuevos)
+  "@GCA": "orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT.md"
+  "@GCA_LAYERS": "orchestration/directivas/simco/CONTEXT-LAYER-MAP.yml"
+
+# ─────────────────────────────────────────────────────────────────
+# SIMCO GIT (base: orchestration/directivas/simco)
+# ─────────────────────────────────────────────────────────────────
+simco_git:
+  "@GIT": "orchestration/directivas/simco/SIMCO-GIT.md"
+  "@SUBMODULOS": "orchestration/directivas/simco/SIMCO-SUBMODULOS.md"
+
+# ─────────────────────────────────────────────────────────────────
+# INVENTARIOS (base: orchestration/inventarios)
+# ─────────────────────────────────────────────────────────────────
+inventarios:
+  "@INV_MASTER": "orchestration/inventarios/MASTER_INVENTORY.yml"
+  "@INV_DB": "orchestration/inventarios/DATABASE_INVENTORY.yml"
+  "@INV_BE": "orchestration/inventarios/BACKEND_INVENTORY.yml"
+  "@INV_FE": "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+  "@INV_SUBS": "orchestration/inventarios/SUBMODULES-INVENTORY.yml"
+
+# ─────────────────────────────────────────────────────────────────
+# PERFILES (base: orchestration/agents/perfiles)
+# ─────────────────────────────────────────────────────────────────
+perfiles:
+  "@PERFIL_ORQUESTADOR": "orchestration/agents/perfiles/PERFIL-ORQUESTADOR.md"
+  "@PERFIL_DATABASE": "orchestration/agents/perfiles/PERFIL-DATABASE.md"
+  "@PERFIL_BACKEND": "orchestration/agents/perfiles/PERFIL-BACKEND.md"
+  "@PERFIL_FRONTEND": "orchestration/agents/perfiles/PERFIL-FRONTEND.md"
+
+perfiles_compact:
+  "@PERFIL_DB_C": "orchestration/agents/perfiles/compact/PERFIL-DATABASE-COMPACT.md"
+  "@PERFIL_BE_C": "orchestration/agents/perfiles/compact/PERFIL-BACKEND-COMPACT.md"
+  "@PERFIL_FE_C": "orchestration/agents/perfiles/compact/PERFIL-FRONTEND-COMPACT.md"
+
+# ─────────────────────────────────────────────────────────────────
+# TEMPLATES (base: orchestration/templates)
+# ─────────────────────────────────────────────────────────────────
+templates:
+  "@TPL_HERENCIA": "orchestration/templates/TEMPLATE-HERENCIA-CONTEXTO.md"
+  "@TPL_RECOVERY": "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+  "@TPL_DELEGACION": "orchestration/templates/TEMPLATE-DELEGACION-SUBAGENTE.md"
+
+# ─────────────────────────────────────────────────────────────────
+# GCA INTERNOS (base: orchestration/_internal)
+# ─────────────────────────────────────────────────────────────────
+gca_internal:
+  "@PRINCIPIOS_RES": "orchestration/_internal/PRINCIPIOS-RESUMEN.md"
+  "@MAPA_DIR": "orchestration/_internal/MAPA-DIRECTIVAS.yml"
+  "@MAPA_INV": "orchestration/_internal/MAPA-INVENTARIOS.yml"
+
+# ─────────────────────────────────────────────────────────────────
+# CATALOGO (base: shared/catalog)
+# ─────────────────────────────────────────────────────────────────
+catalogo:
+  "@CATALOG": "shared/catalog/CATALOG-INDEX.yml"
+  "@CATALOG_AUTH": "shared/catalog/auth/"
+  "@CATALOG_NOTIFY": "shared/catalog/notifications/"
+  "@CATALOG_TENANT": "shared/catalog/multi-tenancy/"
+
+# Uso: Referenciar alias para obtener ruta completa
+# El sistema GCA usa estos alias pre-resueltos para carga rapida

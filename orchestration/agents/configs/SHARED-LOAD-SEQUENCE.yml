@@ -1,0 +1,414 @@
+# =============================================================================
+# SHARED-LOAD-SEQUENCE.yml - Context Loading Sequence for All Agents
+# =============================================================================
+# Sistema: SIMCO v4.0.0 + NEXUS v4.1
+# Version: 1.1.0
+# Fecha: 2026-01-24
+# Scope: all-agents (Claude Code, Gemini CLI, Trae, Windsurf)
+# Consolidado de: .gemini/antigravity/LOAD-MAP.yml, .windsurf/LOAD-MAP.yml
+# Actualizado: Integración de SHARED-CHECKPOINT-CONFIG.yml
+# =============================================================================
+
+version: "1.1.0"
+updated: "2026-01-24"
+scope: "all-agents"
+nexus_version: "4.1"
+
+# =============================================================================
+# BOOT SEQUENCE
+# =============================================================================
+# Execute these steps IN ORDER when starting any task
+# Each step builds on the previous one
+
+boot_sequence:
+
+  # ---------------------------------------------------------------------------
+  # STEP 0: Platform Detection (CRITICAL)
+  # ---------------------------------------------------------------------------
+  - step: 0
+    name: "detect_platform"
+    description: "Determine if running on Windows, Linux, or WSL"
+    action: "run_detection"
+    reference: "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
+    method: |
+      1. Check working directory path format:
+         - Starts with C:\ or D:\ → Windows
+         - Starts with /home/ → Linux
+         - Starts with /mnt/c/ → WSL
+      2. If uncertain, run: echo %OS% (Windows) or uname -s (Linux)
+      3. Set shell preference accordingly
+    on_result:
+      windows:
+        shell: "cmd"
+        npm_command: "npm"
+        path_style: "backslash"
+      linux:
+        shell: "bash"
+        npm_command: "npm"
+        path_style: "forward_slash"
+      wsl:
+        shell: "bash"
+        npm_command: "npm"
+        path_style: "forward_slash"
+        note: "Windows paths via /mnt/c/"
+
+  # ---------------------------------------------------------------------------
+  # STEP 1: Project Registry Check
+  # ---------------------------------------------------------------------------
+  - step: 1
+    name: "check_project_registry"
+    description: "Check if user mentioned a known project alias"
+    action: "read_file"
+    file: "orchestration/agents/configs/SHARED-PROJECT-REGISTRY.yml"
+    logic: |
+      IF user mentions project alias (e.g., "Gamilit", "ERP Core"):
+        → Load that project's config immediately
+        → Set PROJECT_ROOT to project path
+      ELSE:
+        → Continue with workspace-level context
+
+  # ---------------------------------------------------------------------------
+  # STEP 2: Load Base Governance
+  # ---------------------------------------------------------------------------
+  - step: 2
+    name: "load_base_governance"
+    description: "Load fundamental workspace rules"
+    action: "read_files"
+    files:
+      - path: "CLAUDE.md"
+        purpose: "Base rules, aliases, behaviors"
+        priority: "critical"
+        note: "Applies to ALL agents in this workspace"
+
+      - path: "{AGENT_CONFIG}"
+        purpose: "Agent-specific capabilities and limitations"
+        priority: "critical"
+        agent_paths:
+          claude_code: "N/A (uses CLAUDE.md directly)"
+          gemini_cli: ".gemini/antigravity/AGENT-CAPABILITIES.yml"
+          trae: ".trae/AGENT-CAPABILITIES.md"
+          windsurf: ".windsurf/AGENT-CAPABILITIES.yml"
+
+  # ---------------------------------------------------------------------------
+  # STEP 3: Load SIMCO Core Directives
+  # ---------------------------------------------------------------------------
+  - step: 3
+    name: "load_simco_core"
+    description: "Load essential SIMCO directives"
+    action: "read_files"
+    files:
+      - path: "orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
+        purpose: "6-phase execution cycle (CAPVED)"
+        priority: "critical"
+
+      - path: "orchestration/directivas/simco/SIMCO-TAREA.md"
+        purpose: "Task execution entry point"
+        priority: "critical"
+
+      - path: "orchestration/directivas/simco/SIMCO-GIT.md"
+        purpose: "Git operations protocol"
+        priority: "high"
+
+      - path: "orchestration/directivas/simco/SIMCO-EDICION-SEGURA.md"
+        purpose: "Safe editing protocol (NO placeholders)"
+        priority: "high"
+
+  # ---------------------------------------------------------------------------
+  # STEP 4: Identify Task Type and Load Specific Directive
+  # ---------------------------------------------------------------------------
+  - step: 4
+    name: "load_task_directive"
+    description: "Load directive based on task type"
+    action: "conditional_read"
+    rules:
+      - condition: "Task involves creating new objects"
+        load: "orchestration/directivas/simco/SIMCO-CREAR.md"
+
+      - condition: "Task involves modifying existing code"
+        load: "orchestration/directivas/simco/SIMCO-MODIFICAR.md"
+
+      - condition: "Task involves database/DDL"
+        load: "orchestration/directivas/simco/SIMCO-DDL.md"
+
+      - condition: "Task involves backend development"
+        load: "orchestration/directivas/simco/SIMCO-BACKEND.md"
+
+      - condition: "Task involves frontend development"
+        load: "orchestration/directivas/simco/SIMCO-FRONTEND.md"
+
+      - condition: "Task involves testing"
+        load: "orchestration/directivas/simco/SIMCO-VALIDAR.md"
+
+      - condition: "Task involves documentation"
+        load: "orchestration/directivas/simco/SIMCO-DOCUMENTAR.md"
+
+  # ---------------------------------------------------------------------------
+  # STEP 5: Load Project-Specific Context (if applicable)
+  # ---------------------------------------------------------------------------
+  - step: 5
+    name: "load_project_context"
+    description: "Load project-specific configuration"
+    action: "conditional_read"
+    condition: "PROJECT_ROOT is set"
+    files:
+      - path: "{PROJECT_ROOT}/orchestration/BOOTLOADER.md"
+        purpose: "Project bootstrap and context"
+        optional: true
+
+      - path: "{PROJECT_ROOT}/orchestration/CONTEXT-MAP.yml"
+        purpose: "Project context mapping"
+        optional: true
+
+      - path: "{PROJECT_ROOT}/.claude/constants/CONSTANTS-PROJECT.yml"
+        purpose: "Technical stack and configuration"
+        optional: true
+
+  # ---------------------------------------------------------------------------
+  # STEP 6: Load Coordination Files (Multi-Agent)
+  # ---------------------------------------------------------------------------
+  - step: 6
+    name: "load_coordination_files"
+    description: "Load multi-agent coordination state"
+    action: "read_files"
+    files:
+      - path: "orchestration/trazas/ACTIVE-FILES.yml"
+        purpose: "Check for file locks"
+        priority: "high"
+
+      - path: "orchestration/trazas/BLOCKED-TASKS.yml"
+        purpose: "Check for blocked tasks"
+        priority: "medium"
+
+      - path: "orchestration/trazas/DECISIONS-ACTIVE.yml"
+        purpose: "Load active architectural decisions"
+        priority: "high"
+
+  # ---------------------------------------------------------------------------
+  # STEP 7: Load Profile (Self-Persona Switch)
+  # ---------------------------------------------------------------------------
+  - step: 7
+    name: "load_profile"
+    description: "Load relevant agent profile for task domain"
+    action: "conditional_read"
+    logic: |
+      Based on task keywords, load appropriate profile:
+      - Database keywords → PERFIL-DATABASE.md
+      - Backend keywords → PERFIL-BACKEND.md
+      - Frontend keywords → PERFIL-FRONTEND.md
+      - Testing keywords → PERFIL-TESTING.md
+      - DevOps keywords → PERFIL-DEVOPS.md
+    base_path: "orchestration/agents/perfiles/"
+
+# =============================================================================
+# CONTEXT LAYERS (NEXUS v4.0)
+# =============================================================================
+# Hierarchical context loading - higher layers override lower
+
+context_layers:
+
+  layer_0_workspace:
+    name: "Workspace Governance (L0)"
+    tokens_budget: 4000
+    files:
+      - "CLAUDE.md"
+      - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
+      - "orchestration/agents/configs/SHARED-CHECKPOINT-CONFIG.yml"
+    always_load: true
+
+  layer_1_simco:
+    name: "SIMCO Directives (L1)"
+    tokens_budget: 3000
+    base_path: "orchestration/directivas/"
+    core_files:
+      - "principios/PRINCIPIO-CAPVED.md"
+      - "simco/SIMCO-TAREA.md"
+      - "simco/SIMCO-GIT.md"
+    load_on_demand: true
+
+  layer_2_project:
+    name: "Project Configuration (L2)"
+    tokens_budget: 2000
+    condition: "PROJECT_ROOT is set"
+    files:
+      - "{PROJECT_ROOT}/orchestration/BOOTLOADER.md"
+      - "{PROJECT_ROOT}/orchestration/CONTEXT-MAP.yml"
+    optional: true
+
+  layer_3_task:
+    name: "Task Context (L3)"
+    tokens_budget: 1000
+    condition: "Task requires specialized knowledge"
+    files:
+      - "orchestration/agents/perfiles/{PROFILE}.md"
+      - "{PROJECT_ROOT}/orchestration/tareas/{TASK_ID}/"
+    load_on_demand: true
+
+# =============================================================================
+# QUICK LOAD PATTERNS
+# =============================================================================
+# Common task patterns with pre-defined load sequences
+
+quick_patterns:
+
+  backend_task:
+    description: "Developing backend code (NestJS)"
+    load_sequence:
+      - "CLAUDE.md"
+      - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
+      - "orchestration/directivas/simco/SIMCO-BACKEND.md"
+      - "orchestration/agents/perfiles/PERFIL-BACKEND-DEVELOPER.md"
+      - "{PROJECT_ROOT}/orchestration/BOOTLOADER.md"
+
+  database_task:
+    description: "Creating/modifying database schema"
+    load_sequence:
+      - "CLAUDE.md"
+      - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
+      - "orchestration/directivas/simco/SIMCO-DDL.md"
+      - "orchestration/agents/perfiles/PERFIL-DDL-SPECIALIST.md"
+      - "{PROJECT_ROOT}/database/ddl/"
+
+  testing_task:
+    description: "Writing or fixing tests"
+    load_sequence:
+      - "CLAUDE.md"
+      - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
+      - "orchestration/directivas/simco/SIMCO-VALIDAR.md"
+      - "orchestration/agents/perfiles/PERFIL-QA-AUTOMATION.md"
+
+  frontend_task:
+    description: "Developing frontend code (React)"
+    load_sequence:
+      - "CLAUDE.md"
+      - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
+      - "orchestration/directivas/simco/SIMCO-FRONTEND.md"
+      - "orchestration/agents/perfiles/PERFIL-FRONTEND-DEVELOPER.md"
+
+  git_task:
+    description: "Git operations (commit, push, etc.)"
+    load_sequence:
+      - "CLAUDE.md"
+      - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
+      - "orchestration/directivas/simco/SIMCO-GIT.md"
+      - "orchestration/directivas/simco/SIMCO-SUBMODULOS.md"
+
+  multi_agent_task:
+    description: "Task involving multiple agents"
+    load_sequence:
+      - "CLAUDE.md"
+      - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
+      - "orchestration/trazas/ACTIVE-FILES.yml"
+      - "orchestration/trazas/BLOCKED-TASKS.yml"
+      - "orchestration/trazas/DECISIONS-ACTIVE.yml"
+      - "orchestration/referencias/templates/PROMPT-TEMPLATE.md"
+
+# =============================================================================
+# TRIGGERS TO WATCH
+# =============================================================================
+# Automatic triggers that should activate during any task
+
+triggers:
+  always_active:
+    - name: "TRIGGER-FETCH-OBLIGATORIO"
+      file: "orchestration/directivas/triggers/TRIGGER-FETCH-OBLIGATORIO.md"
+      when: "Before any git status check"
+
+    - name: "TRIGGER-COMMIT-PUSH-OBLIGATORIO"
+      file: "orchestration/directivas/triggers/TRIGGER-COMMIT-PUSH-OBLIGATORIO.md"
+      when: "Before reporting task as completed"
+
+  on_create:
+    - name: "TRIGGER-ANTI-DUPLICACION"
+      file: "orchestration/directivas/triggers/TRIGGER-ANTI-DUPLICACION.md"
+      when: "Before creating any new object"
+
+  on_modify:
+    - name: "TRIGGER-ANALISIS-DEPENDENCIAS"
+      file: "orchestration/directivas/triggers/TRIGGER-ANALISIS-DEPENDENCIAS.md"
+      when: "Before modifying existing files"
+
+  on_edit:
+    - name: "SIMCO-EDICION-SEGURA"
+      file: "orchestration/directivas/simco/SIMCO-EDICION-SEGURA.md"
+      when: "Before any code edit"
+      rule: "NO placeholders, max 50 lines"
+
+  # NEXUS v4.1 - Checkpoint Triggers
+  on_token_threshold:
+    - name: "TRIGGER-AUTO-CHECKPOINT"
+      file: "orchestration/_definitions/triggers/TRIGGER-AUTO-CHECKPOINT.yml"
+      when: "Token usage > 70% (warning) or > 85% (auto-checkpoint)"
+      config: "orchestration/agents/configs/SHARED-CHECKPOINT-CONFIG.yml"
+
+  on_subtask_complete:
+    - name: "CHECKPOINT-PROGRESS"
+      file: "orchestration/_definitions/protocols/CHECKPOINT-PROTOCOL.md"
+      when: "After successful validation (build/lint pass) + commit"
+
+  on_session_end:
+    - name: "TRIGGER-SESSION-CLEANUP"
+      file: "orchestration/_definitions/triggers/TRIGGER-SESSION-CLEANUP.yml"
+      when: "Before ending session or handoff"
+      action: "Save PROXIMA-ACCION.md + checkpoint final"
+
+# =============================================================================
+# ERROR RECOVERY
+# =============================================================================
+error_recovery:
+
+  context_lost:
+    description: "If you lose track of what you were doing"
+    steps:
+      - "Re-read CLAUDE.md for base rules"
+      - "Check orchestration/trazas/ACTIVE-FILES.yml for current state"
+      - "Re-read last modified files"
+
+  command_failed:
+    description: "If a terminal command fails"
+    steps:
+      - "Check SHARED-PLATFORM-CONFIG.yml for correct syntax"
+      - "Verify you're using correct shell (CMD vs PowerShell vs Bash)"
+      - "Check agent capabilities file for known limitations"
+
+  file_not_found:
+    description: "If a referenced file doesn't exist"
+    steps:
+      - "Check path format (Windows vs Linux)"
+      - "Verify PROJECT_ROOT is set correctly"
+      - "Use Glob tool to find similar files"
+
+  multi_agent_conflict:
+    description: "If another agent has locked a file"
+    steps:
+      - "Check orchestration/trazas/ACTIVE-FILES.yml"
+      - "Wait for lock to expire or"
+      - "Report in orchestration/trazas/BLOCKED-TASKS.yml"
+
+  session_compacted:
+    description: "If Claude compacted and lost context (NEXUS v4.1)"
+    steps:
+      - "Load PROXIMA-ACCION.md from project"
+      - "Or load latest CHECKPOINT-*.yml from orchestration/trazas/"
+      - "Follow RECOVERY-PROTOCOL.md"
+      - "Restore state in < 3 minutes"
+    reference: "orchestration/_definitions/protocols/RECOVERY-PROTOCOL.md"
+    checklist: "orchestration/_definitions/checklists/CHECKLIST-RECOVERY.md"
+
+# =============================================================================
+# REFERENCES
+# =============================================================================
+references:
+  original_locations:
+    - ".gemini/antigravity/LOAD-MAP.yml"
+    - ".windsurf/LOAD-MAP.yml"
+  symlinks_from:
+    - ".gemini/antigravity/LOAD-MAP.yml"
+    - ".windsurf/LOAD-MAP.yml"
+    - ".trae/LOAD-MAP.yml"
+  related_files:
+    - "orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md"
+    - "orchestration/CONTEXT-MAP.yml"
+    - "orchestration/directivas/simco/SIMCO-BOOTLOADER.md"
+    - "orchestration/agents/configs/SHARED-CHECKPOINT-CONFIG.yml"
+    - "orchestration/_definitions/protocols/CHECKPOINT-PROTOCOL.md"
+    - "orchestration/_definitions/protocols/RECOVERY-PROTOCOL.md"

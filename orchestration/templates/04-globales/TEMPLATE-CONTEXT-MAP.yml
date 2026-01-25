@@ -1,0 +1,323 @@
+# TEMPLATE: CONTEXT-MAP
+# Sistema: SIMCO - NEXUS v4.0
+# Propósito: Mapear contexto automático por nivel y tarea
+# Versión: 1.0.0
+# Fecha: 2026-01-04
+#
+# INSTRUCCIONES:
+# 1. Copiar este template a {proyecto}/orchestration/CONTEXT-MAP.yml
+# 2. Resolver todas las variables entre llaves {VARIABLE}
+# 3. Ajustar archivos específicos del proyecto
+# 4. Verificar que tokens_estimados no excedan límites
+
+metadata:
+  proyecto: "{PROJECT_NAME}"
+  nivel: "{STANDALONE | SUITE | SUITE_CORE | VERTICAL}"
+  version: "1.0.0"
+  ultima_actualizacion: "{YYYY-MM-DD}"
+  workspace_root: "/home/isem/workspace-v1"
+  project_root: "{PROJECT_ROOT}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VARIABLES DEL PROYECTO (PRE-RESUELTAS)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+variables:
+  # Identificación
+  PROJECT_NAME: "{nombre_proyecto}"
+  PROJECT_LEVEL: "{nivel}"
+
+  # Base de datos
+  DB_NAME: "{nombre_bd}"
+  DB_DDL_PATH: "{ruta_ddl}"
+  DB_SCRIPTS_PATH: "{ruta_scripts}"
+  DB_SEEDS_PATH: "{ruta_seeds}"
+  RECREATE_CMD: "{comando_recrear}"
+
+  # Backend
+  BACKEND_ROOT: "{ruta_backend}"
+  BACKEND_SRC: "{ruta_src_backend}"
+
+  # Frontend
+  FRONTEND_ROOT: "{ruta_frontend}"
+  FRONTEND_SRC: "{ruta_src_frontend}"
+
+  # Documentación
+  DOCS_PATH: "{ruta_docs}"
+  ORCHESTRATION_PATH: "{ruta_orchestration}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ALIASES RESUELTOS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+aliases:
+  # Directivas globales
+  "@SIMCO": "orchestration/directivas/simco"
+  "@PRINCIPIOS": "orchestration/directivas/principios"
+  "@PERFILES": "orchestration/agents/perfiles"
+  "@CATALOG": "shared/catalog"
+
+  # Proyecto específico
+  "@DDL": "{DB_DDL_PATH}"
+  "@SEEDS": "{DB_SEEDS_PATH}"
+  "@BACKEND": "{BACKEND_SRC}"
+  "@FRONTEND": "{FRONTEND_SRC}"
+  "@DOCS": "{DOCS_PATH}"
+
+  # Inventarios
+  "@INVENTORY": "{ORCHESTRATION_PATH}/inventarios"
+  "@INV_DB": "{ORCHESTRATION_PATH}/inventarios/DATABASE_INVENTORY.yml"
+  "@INV_BE": "{ORCHESTRATION_PATH}/inventarios/BACKEND_INVENTORY.yml"
+  "@INV_FE": "{ORCHESTRATION_PATH}/inventarios/FRONTEND_INVENTORY.yml"
+
+  # Trazas
+  "@TRAZA_DB": "{ORCHESTRATION_PATH}/trazas/TRAZA-TAREAS-DATABASE.md"
+  "@TRAZA_BE": "{ORCHESTRATION_PATH}/trazas/TRAZA-TAREAS-BACKEND.md"
+  "@TRAZA_FE": "{ORCHESTRATION_PATH}/trazas/TRAZA-TAREAS-FRONTEND.md"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONTEXTO POR NIVEL (con estimación de tokens)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+contexto_por_nivel:
+  L0_sistema:
+    descripcion: "Principios fundamentales y perfil de agente"
+    tokens_estimados: 4500
+    obligatorio: true
+    archivos:
+      - path: "orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
+        proposito: "Ciclo de vida de tareas"
+        tokens: 800
+        prioridad: 1
+      - path: "orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
+        proposito: "Documentación antes de código"
+        tokens: 500
+        prioridad: 2
+      - path: "orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md"
+        proposito: "Verificar catálogo antes de crear"
+        tokens: 600
+        prioridad: 2
+      - path: "orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
+        proposito: "Build/lint deben pasar"
+        tokens: 600
+        prioridad: 2
+      - path: "orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
+        proposito: "Límites de contexto"
+        tokens: 500
+        prioridad: 3
+      - path: "orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
+        proposito: "Preguntar si falta información"
+        tokens: 500
+        prioridad: 3
+      - path: "orchestration/referencias/ALIASES.yml"
+        proposito: "Resolución de @ALIAS"
+        tokens: 400
+        prioridad: 1
+    validacion:
+      checklist:
+        - "Conoce los 6 principios"
+        - "Puede resolver @ALIAS básicos"
+
+  L1_proyecto:
+    descripcion: "Contexto específico del proyecto"
+    tokens_estimados: 3000
+    obligatorio: true
+    archivos:
+      - path: "{ORCHESTRATION_PATH}/00-guidelines/CONTEXTO-PROYECTO.md"
+        proposito: "Variables y configuración del proyecto"
+        tokens: 1500
+        prioridad: 1
+      - path: "{ORCHESTRATION_PATH}/PROXIMA-ACCION.md"
+        proposito: "Estado actual y siguiente paso"
+        tokens: 500
+        prioridad: 1
+      - path: "{ORCHESTRATION_PATH}/inventarios/MASTER_INVENTORY.yml"
+        proposito: "Estado de artefactos"
+        tokens: 1000
+        prioridad: 2
+    validacion:
+      checklist:
+        - "Resuelve {DB_NAME}, {BACKEND_ROOT}, etc."
+        - "Conoce estado del proyecto"
+        - "Sabe próxima acción prioritaria"
+
+  L2_operacion:
+    descripcion: "SIMCO específicos según operación y dominio"
+    tokens_estimados: 2500
+    obligatorio: true
+    archivos_por_operacion:
+      CREAR:
+        - path: "orchestration/directivas/simco/SIMCO-CREAR.md"
+          tokens: 1000
+      MODIFICAR:
+        - path: "orchestration/directivas/simco/SIMCO-MODIFICAR.md"
+          tokens: 1000
+      VALIDAR:
+        - path: "orchestration/directivas/simco/SIMCO-VALIDAR.md"
+          tokens: 800
+      BUSCAR:
+        - path: "orchestration/directivas/simco/SIMCO-BUSCAR.md"
+          tokens: 600
+      DELEGAR:
+        - path: "orchestration/directivas/simco/SIMCO-DELEGACION.md"
+          tokens: 1200
+    archivos_por_dominio:
+      DDL:
+        - path: "orchestration/directivas/simco/SIMCO-DDL.md"
+          tokens: 1000
+        - path: "{ORCHESTRATION_PATH}/inventarios/DATABASE_INVENTORY.yml"
+          tokens: 800
+      BACKEND:
+        - path: "orchestration/directivas/simco/SIMCO-BACKEND.md"
+          tokens: 1000
+        - path: "{ORCHESTRATION_PATH}/inventarios/BACKEND_INVENTORY.yml"
+          tokens: 800
+      FRONTEND:
+        - path: "orchestration/directivas/simco/SIMCO-FRONTEND.md"
+          tokens: 1000
+        - path: "{ORCHESTRATION_PATH}/inventarios/FRONTEND_INVENTORY.yml"
+          tokens: 800
+
+  L3_tarea:
+    descripcion: "Contexto específico de la tarea"
+    tokens_max: 8000
+    dinamico: true
+    resolucion_automatica:
+      por_keyword:
+        tabla:
+          archivos:
+            - "{DB_DDL_PATH}/schemas/{schema}/*.sql"
+            - "{DOCS_PATH}/especificaciones/modelo-datos.md"
+        entity:
+          archivos:
+            - "{DDL de tabla relacionada}"
+            - "{BACKEND_SRC}/modules/{modulo}/entities/*.entity.ts"
+        componente:
+          archivos:
+            - "{DOCS_PATH}/especificaciones/wireframes.md"
+            - "{FRONTEND_SRC}/components/{similar}/*.tsx"
+        endpoint:
+          archivos:
+            - "{DOCS_PATH}/especificaciones/api/*.md"
+            - "{BACKEND_SRC}/modules/{modulo}/controllers/*.controller.ts"
+        bug:
+          archivos:
+            - "orchestration/errores/REGISTRO-ERRORES.yml"
+            - "{código_afectado}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MAPA TAREA → ARCHIVOS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+mapa_tarea_contexto:
+  database:
+    crear_tabla:
+      simco: ["SIMCO-CREAR.md", "SIMCO-DDL.md"]
+      inventario: "@INV_DB"
+      referencia: "{DB_DDL_PATH}/schemas/*/tables/*.sql"
+      docs: "{DOCS_PATH}/especificaciones/modelo-datos.md"
+
+    crear_indice:
+      simco: ["SIMCO-CREAR.md", "SIMCO-DDL.md"]
+      inventario: "@INV_DB"
+      referencia: "DDL de tabla objetivo"
+
+    modificar_tabla:
+      simco: ["SIMCO-MODIFICAR.md", "SIMCO-DDL.md"]
+      inventario: "@INV_DB"
+      referencia: "DDL actual + Entities afectadas"
+
+  backend:
+    crear_entity:
+      simco: ["SIMCO-CREAR.md", "SIMCO-BACKEND.md"]
+      inventario: "@INV_BE"
+      referencia: "DDL de tabla + Entity similar"
+
+    crear_service:
+      simco: ["SIMCO-CREAR.md", "SIMCO-BACKEND.md"]
+      inventario: "@INV_BE"
+      referencia: "Entity + Service similar"
+
+    crear_controller:
+      simco: ["SIMCO-CREAR.md", "SIMCO-BACKEND.md"]
+      inventario: "@INV_BE"
+      referencia: "Service + API spec"
+
+    crear_dto:
+      simco: ["SIMCO-CREAR.md", "SIMCO-BACKEND.md"]
+      inventario: "@INV_BE"
+      referencia: "Entity + DTO similar"
+
+  frontend:
+    crear_componente:
+      simco: ["SIMCO-CREAR.md", "SIMCO-FRONTEND.md"]
+      inventario: "@INV_FE"
+      referencia: "Wireframe + Componente similar"
+
+    crear_pagina:
+      simco: ["SIMCO-CREAR.md", "SIMCO-FRONTEND.md"]
+      inventario: "@INV_FE"
+      referencia: "Wireframe + API endpoints"
+
+    crear_hook:
+      simco: ["SIMCO-CREAR.md", "SIMCO-FRONTEND.md"]
+      inventario: "@INV_FE"
+      referencia: "API endpoint + Hook similar"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VALIDACIÓN DE TOKENS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+validacion_tokens:
+  limite_absoluto: 25000
+  limite_seguro: 18000
+  limite_alerta: 20000
+
+  presupuesto:
+    L0_sistema: 4500
+    L1_proyecto: 3000
+    L2_operacion: 2500
+    L3_tarea_max: 8000
+    total_base: 10000
+    disponible_tarea: 8000
+
+  estrategia_exceso:
+    si_excede_alerta:
+      - "Usar referencias file:line en lugar de contenido"
+      - "Eliminar archivos menos relevantes de L3"
+    si_excede_seguro:
+      - "Desglosar tarea en subtareas"
+      - "Ejecutar secuencialmente"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# HERENCIA (si aplica)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+herencia:
+  # Completar según nivel del proyecto
+  STANDALONE:
+    hereda_de:
+      - "orchestration/"  # Workspace root
+  VERTICAL:
+    hereda_de:
+      - "../../../orchestration/"  # Suite
+      - "orchestration/"           # Workspace root
+  SUITE_CORE:
+    hereda_de:
+      - "../../orchestration/"     # Suite
+      - "orchestration/"           # Workspace root
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BÚSQUEDA DE HISTÓRICO
+# ═══════════════════════════════════════════════════════════════════════════════
+
+busqueda_historico:
+  habilitado: true
+  ubicaciones:
+    - "orchestration/trazas/"
+    - "orchestration/errores/REGISTRO-ERRORES.yml"
+    - "shared/knowledge-base/lessons-learned/"
+
+  si_encuentra_similar:
+    accion: "Agregar a L3_tarea"
+    prioridad: "alta"

@@ -1,0 +1,110 @@
+# SESSION-TRACE TEMPLATE
+# Sistema: GCA (Gestion de Contexto Activa)
+# Proposito: Memoria externa de sesion (Capa 3)
+# Uso: Copiar a {proyecto}/orchestration/trazas/SESSION-TRACE-{fecha}.yml
+
+version: "1.0.0"
+sistema: "GCA"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# INFORMACION DE SESION
+# ─────────────────────────────────────────────────────────────────────────────────
+
+sesion:
+  inicio: "{YYYY-MM-DDTHH:MM:SS}"
+  agente: "{PERFIL}"  # ORQUESTADOR, BACKEND, DATABASE, etc.
+  proyecto: "{NOMBRE_PROYECTO}"
+  modelo: "{MODELO}"  # opus-4.5, sonnet, etc.
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CONTEXTO INICIAL
+# ─────────────────────────────────────────────────────────────────────────────────
+
+contexto_inicial:
+  capa_0_tokens: 0  # Actualizar con valor real
+  capa_1_tokens: 0  # Actualizar con valor real
+  capa_2_tokens: 0  # Inicia en 0
+  total_tokens: 0   # Suma de capas
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TAREAS EJECUTADAS
+# ─────────────────────────────────────────────────────────────────────────────────
+# Agregar entrada por cada tarea completada
+
+tareas_ejecutadas: []
+  # Ejemplo de entrada:
+  # - id: "ST-001"
+  #   descripcion: "Crear tabla notifications"
+  #   inicio: "10:05:00"
+  #   fin: "10:15:00"
+  #   resultado: "completada"  # completada | fallida | parcial
+  #   archivos_creados:
+  #     - "schemas/notification/tables/notifications.sql"
+  #   archivos_modificados:
+  #     - "orchestration/inventarios/DATABASE_INVENTORY.yml"
+  #   contexto_usado:
+  #     - path: "SIMCO-DDL.md"
+  #       tokens: 800
+  #       cargado: "10:05:15"
+  #       purgado: "10:20:00"  # null si aun en contexto
+  #   notas: ""
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# PURGAS EJECUTADAS
+# ─────────────────────────────────────────────────────────────────────────────────
+# Registro de cada purga de contexto
+
+purgas_ejecutadas: []
+  # Ejemplo de entrada:
+  # - timestamp: "10:20:00"
+  #   razon: "tarea_completada"  # tarea_completada | tiempo_inactivo | umbral_excedido
+  #   items:
+  #     - "SIMCO-DDL.md"
+  #     - "spec_notifications.md"
+  #   tokens_liberados: 1200
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# DECISIONES TOMADAS
+# ─────────────────────────────────────────────────────────────────────────────────
+# Registro de decisiones importantes durante la sesion
+
+decisiones: []
+  # Ejemplo de entrada:
+  # - timestamp: "10:10:00"
+  #   contexto: "Elegir patron para notificaciones"
+  #   decision: "Usar patron Observer con EventEmitter"
+  #   razon: "Consistente con modulo de audit existente"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ERRORES ENCONTRADOS
+# ─────────────────────────────────────────────────────────────────────────────────
+# Registro de errores para referencia futura
+
+errores: []
+  # Ejemplo de entrada:
+  # - timestamp: "10:12:00"
+  #   tipo: "build_error"
+  #   descripcion: "TypeORM relation mal definida"
+  #   resolucion: "Agregar @JoinColumn() a relacion ManyToOne"
+  #   archivo: "notification.entity.ts"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# METRICAS DE SESION
+# ─────────────────────────────────────────────────────────────────────────────────
+# Actualizar al final de la sesion
+
+metricas:
+  pico_tokens: 0          # Maximo de tokens durante sesion
+  purgas_ejecutadas: 0    # Numero de purgas
+  tareas_completadas: 0   # Numero de tareas exitosas
+  tareas_fallidas: 0      # Numero de tareas fallidas
+  errores_encontrados: 0  # Numero de errores
+  recovery_necesario: false  # true si hubo compactacion
+  duracion_sesion: ""     # HH:MM:SS
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS DE SESION
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: ""
+  # Notas libres sobre la sesion

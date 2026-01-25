@@ -1,0 +1,135 @@
+# TEMPLATE: Salida Fase E (Ejecución)
+# Sistema: SIMCO - NEXUS v4.0
+# Versión: 1.0.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INSTRUCCIONES: Registrar ejecución de cada subtarea con validaciones
+# ═══════════════════════════════════════════════════════════════════════════════
+
+fase_e_output:
+  metadata:
+    fase: "E - Ejecución"
+    inicio: "{YYYY-MM-DD HH:MM}"
+    fin: "{YYYY-MM-DD HH:MM}"
+    proyecto: "{nombre_proyecto}"
+    tarea_id: "{HU-XXX}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # RESUMEN DE EJECUCIÓN
+  # ─────────────────────────────────────────────────────────────────────────────
+  resumen:
+    subtareas_total: 0
+    subtareas_completadas: 0
+    subtareas_fallidas: 0
+    porcentaje_completado: 0
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # EJECUCIÓN POR SUBTAREA
+  # ─────────────────────────────────────────────────────────────────────────────
+  subtareas_ejecutadas:
+    - id: "ST-001"
+      descripcion: "{descripción}"
+      agente: "{id_agente o subagente}"
+
+      estado: "{completada | fallida | en_progreso | omitida}"
+
+      tiempos:
+        inicio: "{HH:MM}"
+        fin: "{HH:MM}"
+
+      archivos_afectados:
+        creados:
+          - ruta: "{ruta/archivo}"
+            lineas: 0
+        modificados:
+          - ruta: "{ruta/archivo}"
+            lineas_agregadas: 0
+            lineas_eliminadas: 0
+
+      validaciones:
+        build:
+          ejecutado: true | false
+          resultado: "{pass | fail}"
+          errores: []                     # Si fail
+
+        lint:
+          ejecutado: true | false
+          resultado: "{pass | fail}"
+          warnings: 0
+          errores: []
+
+        tests:
+          ejecutados: true | false
+          resultado: "{pass | fail}"
+          cobertura: 0                    # Porcentaje
+
+      criterios_aceptacion:
+        - criterio: "{descripción}"
+          cumplido: true | false
+          evidencia: "{cómo se verificó}"
+
+      notas: ""
+
+    # Repetir para cada subtarea...
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PROBLEMAS ENCONTRADOS
+  # ─────────────────────────────────────────────────────────────────────────────
+  problemas:
+    total: 0
+
+    detalle:
+      - id: "P-001"
+        subtarea: "ST-XXX"
+        descripcion: "{qué pasó}"
+        severidad: "{bloqueante | alto | medio | bajo}"
+        resolucion: "{cómo se resolvió}"
+        tiempo_resolucion: "{minutos}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # DESVIACIONES DEL PLAN
+  # ─────────────────────────────────────────────────────────────────────────────
+  desviaciones:
+    detectadas: false
+
+    si_detectadas:
+      - tipo: "{archivo_adicional | archivo_omitido | cambio_scope}"
+        descripcion: "{qué se desvió}"
+        justificacion: "{por qué}"
+        impacto: "{documentación | HU_derivada | ninguno}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # SESSION TRACKING (si delegación)
+  # ─────────────────────────────────────────────────────────────────────────────
+  session_tracking:
+    habilitado: true | false
+    archivo: "{ruta/SESSION-TRACKING-{id}.yml}"
+
+    subagentes:
+      - id: "{subagente_id}"
+        subtareas: ["ST-001", "ST-002"]
+        estado: "{completado | fallido | activo}"
+        archivos_creados: []
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # GATE-E: CHECKLIST (Por cada subtarea)
+  # ─────────────────────────────────────────────────────────────────────────────
+  gate_e:
+    por_subtarea:
+      - id: "ST-001"
+        codigo_creado: true | false
+        build_pasa: true | false
+        lint_pasa: true | false
+        criterios_cumplidos: true | false
+        gate_aprobado: true | false
+
+    resumen:
+      todas_aprobadas: false              # *Debe ser true para continuar
+      subtareas_bloqueadas: []
+
+    estado: "PENDIENTE"
+    notas: ""
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SIGUIENTE: Si GATE-E = APROBADO → Proceder a FASE D (Documentación)
+# ═══════════════════════════════════════════════════════════════════════════════

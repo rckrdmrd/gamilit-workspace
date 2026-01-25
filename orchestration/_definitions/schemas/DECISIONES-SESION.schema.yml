@@ -1,0 +1,252 @@
+# DECISIONES-SESION.schema.yml
+# Sistema NEXUS v4.1 - Schema de Validación
+# Fecha: 2026-01-24
+# Versión: 1.0.0
+
+version: "1.0.0"
+descripcion: |
+  Schema para validar archivos DECISIONES-SESION.yml.
+  Registra decisiones arquitecturales tomadas durante una sesión.
+  Crítico para mantener consistencia post-compactación.
+
+# ============================================================================
+# PROPÓSITO
+# ============================================================================
+
+proposito:
+  principal: |
+    Las decisiones arquitecturales son el contexto MÁS VALIOSO que se puede
+    perder en una compactación. Este archivo las preserva explícitamente.
+
+  beneficios:
+    - "Evitar re-tomar decisiones ya tomadas"
+    - "Mantener consistencia en la implementación"
+    - "Documentar el 'por qué' de las elecciones"
+    - "Facilitar handoff entre agentes"
+
+# ============================================================================
+# SCHEMA DEFINITION
+# ============================================================================
+
+schema:
+  type: object
+  required:
+    - version
+    - session_id
+    - proyecto
+    - decisiones
+
+  properties:
+    version:
+      type: string
+      pattern: "^\\d+\\.\\d+\\.\\d+$"
+
+    session_id:
+      type: string
+      descripcion: "ID de la sesión donde se tomaron las decisiones"
+
+    proyecto:
+      type: string
+      descripcion: "Proyecto donde aplican las decisiones"
+
+    tarea_id:
+      type: string
+      descripcion: "Tarea asociada (opcional si son decisiones generales)"
+
+    inicio_sesion:
+      type: string
+      format: "date-time"
+
+    ultima_actualizacion:
+      type: string
+      format: "date-time"
+
+    decisiones:
+      type: array
+      minItems: 1
+      items:
+        type: object
+        required:
+          - id
+          - timestamp
+          - tipo
+          - descripcion
+          - decision
+        properties:
+          id:
+            type: string
+            pattern: "^DEC-\\d{3}$"
+            descripcion: "ID único de la decisión (DEC-001, DEC-002...)"
+
+          timestamp:
+            type: string
+            format: "date-time"
+
+          tipo:
+            type: string
+            enum:
+              - "arquitectura"
+              - "tecnologia"
+              - "patron"
+              - "nomenclatura"
+              - "estructura"
+              - "proceso"
+              - "otro"
+
+          descripcion:
+            type: string
+            minLength: 10
+            descripcion: "Qué se decidió"
+
+          decision:
+            type: string
+            descripcion: "La decisión tomada (valor elegido)"
+
+          alternativas_consideradas:
+            type: array
+            items:
+              type: string
+            descripcion: "Otras opciones que se evaluaron"
+
+          razon:
+            type: string
+            descripcion: "Por qué se eligió esta opción"
+
+          impacto:
+            type: string
+            enum: ["bajo", "medio", "alto", "critico"]
+
+          archivos_afectados:
+            type: array
+            items:
+              type: string
+            descripcion: "Archivos impactados por esta decisión"
+
+          reversible:
+            type: boolean
+            default: true
+            descripcion: "Si la decisión puede revertirse fácilmente"
+
+          notas:
+            type: string
+            descripcion: "Notas adicionales"
+
+    resumen:
+      type: string
+      descripcion: "Resumen ejecutivo de las decisiones de la sesión"
+
+# ============================================================================
+# UBICACIÓN
+# ============================================================================
+
+ubicacion:
+  por_sesion: "{proyecto}/orchestration/trazas/DECISIONES-{session_id}.yml"
+  acumulado: "{proyecto}/orchestration/trazas/DECISIONES-HISTORICO.yml"
+
+# ============================================================================
+# EJEMPLO VÁLIDO
+# ============================================================================
+
+ejemplo_valido: |
+  version: "1.0.0"
+  session_id: "claude-2026-01-24-1400"
+  proyecto: "gamilit"
+  tarea_id: "TASK-2026-01-24-001"
+  inicio_sesion: "2026-01-24T14:00:00Z"
+  ultima_actualizacion: "2026-01-24T16:30:00Z"
+
+  decisiones:
+    - id: "DEC-001"
+      timestamp: "2026-01-24T14:15:00Z"
+      tipo: "arquitectura"
+      descripcion: "Formato de archivos de checkpoint"
+      decision: "YAML en lugar de JSON"
+      alternativas_consideradas:
+        - "JSON"
+        - "TOML"
+        - "Markdown estructurado"
+      razon: "YAML es consistente con otros archivos del workspace y más legible"
+      impacto: "bajo"
+      archivos_afectados:
+        - "orchestration/_definitions/schemas/*.yml"
+      reversible: true
+
+    - id: "DEC-002"
+      timestamp: "2026-01-24T14:45:00Z"
+      tipo: "proceso"
+      descripcion: "Umbrales de checkpoint automático"
+      decision: "70% warning, 85% auto-checkpoint, 95% purga forzada"
+      alternativas_consideradas:
+        - "Solo checkpoint manual"
+        - "Checkpoint cada X minutos fijo"
+      razon: "Balance entre seguridad (no perder trabajo) y overhead (no interrumpir mucho)"
+      impacto: "medio"
+      archivos_afectados:
+        - "orchestration/_definitions/triggers/TRIGGER-AUTO-CHECKPOINT.yml"
+      reversible: true
+      notas: "Estos umbrales pueden ajustarse basados en experiencia"
+
+    - id: "DEC-003"
+      timestamp: "2026-01-24T15:30:00Z"
+      tipo: "estructura"
+      descripcion: "Ubicación de archivos de checkpoint"
+      decision: "{proyecto}/orchestration/trazas/"
+      alternativas_consideradas:
+        - "Carpeta global en workspace"
+        - "Junto a PROXIMA-ACCION.md"
+      razon: "Por proyecto permite mejor organización y no mezcla trazas de diferentes proyectos"
+      impacto: "bajo"
+      archivos_afectados:
+        - "Todos los proyectos con orchestration/"
+      reversible: true
+
+  resumen: |
+    Sesión enfocada en diseño del sistema de checkpoints NEXUS v4.1.
+    3 decisiones arquitecturales tomadas, todas de impacto bajo-medio.
+    Sistema diseñado para ser conservador (preservar trabajo) pero no intrusivo.
+
+# ============================================================================
+# USO EN RECOVERY
+# ============================================================================
+
+uso_en_recovery:
+  descripcion: |
+    Al recuperar una sesión, las decisiones previas DEBEN cargarse
+    para mantener consistencia.
+
+  proceso:
+    1: "Identificar sesión previa"
+    2: "Cargar DECISIONES-{session_id}.yml"
+    3: "Leer resumen para contexto rápido"
+    4: "Tener decisiones disponibles para referencia"
+
+  importante: |
+    Si una decisión ya fue tomada, NO re-evaluarla a menos que
+    haya nueva información que la invalide.
+
+# ============================================================================
+# TRIGGERS PARA REGISTRAR DECISIÓN
+# ============================================================================
+
+triggers_registro:
+  detectores:
+    - "Mención de 'decidido', 'elegido', 'usaremos'"
+    - "Comparación entre alternativas seguida de elección"
+    - "Creación de ADR"
+    - "Cambio de patrón o tecnología"
+
+  accion_automatica:
+    1: "Extraer decisión y contexto"
+    2: "Generar ID incremental"
+    3: "Agregar a DECISIONES-SESION.yml"
+    4: "Confirmar registro al agente"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  creado: "2026-01-24"
+  autor: "Claude Code (Arquitecto NEXUS)"
+  sistema: "NEXUS v4.1"
+  alias: "@DEF_SCHEMA_DECISIONES"

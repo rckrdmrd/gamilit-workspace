@@ -1,0 +1,120 @@
+# TEMPLATE: Salida Fase P (Planeación)
+# Sistema: SIMCO - NEXUS v4.0
+# Versión: 1.0.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INSTRUCCIONES: Definir plan ejecutable con subtareas <= 2 archivos c/u
+# ═══════════════════════════════════════════════════════════════════════════════
+
+fase_p_output:
+  metadata:
+    fase: "P - Planeación"
+    timestamp: "{YYYY-MM-DD HH:MM}"
+    proyecto: "{nombre_proyecto}"
+    tarea_id: "{HU-XXX}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # RESUMEN DEL PLAN
+  # ─────────────────────────────────────────────────────────────────────────────
+  resumen:
+    total_subtareas: 0                    # *Obligatorio
+    total_archivos: 0
+    tokens_estimados_max: 0               # Por subtarea más grande
+    ejecucion_tipo: "{secuencial | paralela | mixta}"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # SUBTAREAS
+  # ─────────────────────────────────────────────────────────────────────────────
+  subtareas:
+    - id: "ST-001"
+      descripcion: "{descripción breve}"
+      dominio: "{DDL | BACKEND | FRONTEND}"
+      agente_asignado: "{perfil_agente}"
+
+      archivos:                           # Máximo 2 archivos
+        crear:
+          - "{ruta/nuevo_archivo}"
+        modificar:
+          - "{ruta/archivo_existente}"
+
+      dependencias:
+        requiere: []                      # IDs de subtareas previas
+        bloquea: []                       # IDs de subtareas posteriores
+
+      tokens_estimados: 0                 # Debe ser < 3000
+      contexto_especifico:                # Archivos adicionales a cargar
+        - "{ruta/referencia}"
+
+      criterios_aceptacion:
+        - "[ ] {criterio 1}"
+        - "[ ] {criterio 2}"
+
+      validacion:
+        build_requerido: true | false
+        lint_requerido: true | false
+        test_requerido: true | false
+
+    # Repetir estructura para cada subtarea...
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # ORDEN DE EJECUCIÓN
+  # ─────────────────────────────────────────────────────────────────────────────
+  orden_ejecucion:
+    secuencial:                           # Deben ejecutarse en orden
+      - grupo: 1
+        subtareas: ["ST-001"]
+        razon: "DDL primero"
+      - grupo: 2
+        subtareas: ["ST-002", "ST-003"]
+        razon: "Backend depende de DDL"
+
+    paralelas:                            # Pueden ejecutarse juntas
+      - grupo: 3
+        subtareas: ["ST-004", "ST-005"]
+        razon: "Frontend independiente entre sí"
+        max_paralelas: 2
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # DELEGACIÓN
+  # ─────────────────────────────────────────────────────────────────────────────
+  delegacion:
+    habilitada: true | false
+    max_subagentes_paralelos: 5
+
+    asignaciones:
+      - subtarea_id: "ST-001"
+        perfil: "PERFIL-DATABASE-AGENT"
+        contexto_heredado:
+          - "CONTEXT-MAP variables resueltas"
+          - "DDL de referencia"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # VERIFICACIÓN DE TOKENS
+  # ─────────────────────────────────────────────────────────────────────────────
+  verificacion_tokens:
+    por_subtarea:
+      - id: "ST-001"
+        tokens: 0
+        dentro_limite: true | false       # < 3000
+
+    subtarea_max: 0                       # La más grande
+    cumple_limite: true | false           # Todas < 3000
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # GATE-P: CHECKLIST
+  # ─────────────────────────────────────────────────────────────────────────────
+  gate_p:
+    checklist:
+      subtareas_definidas: false          # *Debe ser true
+      max_2_archivos_por_subtarea: false  # *Debe ser true
+      agentes_asignados: false            # *Debe ser true
+      orden_establecido: false            # *Debe ser true
+      tokens_verificados: false           # *Debe ser true
+      criterios_definidos: false          # *Debe ser true
+
+    estado: "PENDIENTE"
+    notas: ""
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SIGUIENTE: Si GATE-P = APROBADO → Proceder a FASE V (Validación de Plan)
+# ═══════════════════════════════════════════════════════════════════════════════

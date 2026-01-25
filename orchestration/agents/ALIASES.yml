@@ -1,0 +1,298 @@
+# ==============================================================================
+# ALIASES.yml - Registro de Agentes NEXUS
+# ==============================================================================
+# Proposito: Mapeo de agentes a sus perfiles y aliases
+# Mantenido por: Tech-Leader
+# Actualizado: 2025-12-18
+# ==============================================================================
+
+version: "2.0.0"
+updated: "2025-12-18"
+
+# ------------------------------------------------------------------------------
+# AGENTES DE DESARROLLO
+# ------------------------------------------------------------------------------
+agents:
+
+  NEXUS-BACKEND:
+    profile: "perfiles/PERFIL-BACKEND.md"
+    role: "Desarrollo de APIs y logica de negocio"
+    aliases:
+      - "backend-agent"
+      - "api-agent"
+      - "backend"
+    capabilities:
+      - "api-development"
+      - "business-logic"
+      - "database-queries"
+    directivas:
+      - "SIMCO-BACKEND.md"
+      - "SIMCO-SERVICE-DESCRIPTOR.md"
+
+  NEXUS-FRONTEND:
+    profile: "perfiles/PERFIL-FRONTEND.md"
+    role: "Desarrollo de interfaces de usuario"
+    aliases:
+      - "frontend-agent"
+      - "ui-agent"
+      - "frontend"
+    capabilities:
+      - "ui-development"
+      - "state-management"
+      - "api-integration"
+    directivas:
+      - "SIMCO-FRONTEND.md"
+      - "SIMCO-SERVICE-DESCRIPTOR.md"
+
+  NEXUS-DATABASE:
+    profile: "perfiles/PERFIL-DATABASE.md"
+    role: "Diseño y gestion de bases de datos"
+    aliases:
+      - "database-agent"
+      - "db-agent"
+      - "ddl-agent"
+      - "database"
+    capabilities:
+      - "schema-design"
+      - "migrations"
+      - "query-optimization"
+    directivas:
+      - "SIMCO-DDL.md"
+
+  NEXUS-ML:
+    profile: "perfiles/PERFIL-ML.md"
+    role: "Machine Learning y modelos"
+    aliases:
+      - "ml-agent"
+      - "ai-agent"
+      - "data-science-agent"
+    capabilities:
+      - "model-training"
+      - "data-pipelines"
+      - "inference"
+    directivas:
+      - "SIMCO-ML.md"
+
+# ------------------------------------------------------------------------------
+# AGENTES DE OPERACIONES
+# ------------------------------------------------------------------------------
+
+  NEXUS-DEVOPS:
+    profile: "perfiles/PERFIL-DEVOPS.md"
+    role: "Operaciones, CI/CD, Infraestructura"
+    aliases:
+      - "devops-agent"
+      - "infra-agent"
+      - "ci-agent"
+      - "ops-agent"
+      - "devops"
+    capabilities:
+      - "registry-management"
+      - "ci-cd"
+      - "docker"
+      - "deployment"
+    directivas:
+      - "SIMCO-DEVOPS.md"
+      - "SIMCO-SERVICE-DESCRIPTOR.md"
+
+  NEXUS-QA:
+    profile: "perfiles/PERFIL-QA.md"
+    role: "Quality Assurance y Testing"
+    aliases:
+      - "qa-agent"
+      - "test-agent"
+      - "quality-agent"
+    capabilities:
+      - "testing"
+      - "test-automation"
+      - "quality-metrics"
+    directivas:
+      - "SIMCO-QA.md"
+
+  NEXUS-SECURITY:
+    profile: "perfiles/PERFIL-SECURITY.md"
+    role: "Seguridad y Compliance"
+    aliases:
+      - "security-agent"
+      - "sec-agent"
+      - "audit-agent"
+    capabilities:
+      - "security-audit"
+      - "vulnerability-scan"
+      - "compliance"
+    directivas:
+      - "SIMCO-SECURITY.md"
+
+# ------------------------------------------------------------------------------
+# AGENTES DE COORDINACION
+# ------------------------------------------------------------------------------
+
+  NEXUS-TECH-LEADER:
+    profile: "perfiles/PERFIL-TECH-LEADER.md"
+    role: "Arquitectura y decisiones tecnicas"
+    aliases:
+      - "tech-leader"
+      - "architect"
+      - "lead"
+    capabilities:
+      - "architecture-design"
+      - "technical-decisions"
+      - "code-review"
+      - "coordination"
+    directivas:
+      - "SIMCO-ARQUITECTURA.md"
+      - "Todas las directivas"
+
+  NEXUS-WORKSPACE:
+    profile: "perfiles/PERFIL-WORKSPACE-MANAGER.md"
+    role: "Organizacion y estructura del workspace"
+    aliases:
+      - "workspace-agent"
+      - "ws-agent"
+      - "org-agent"
+    capabilities:
+      - "workspace-organization"
+      - "project-structure"
+      - "inventory-management"
+    directivas:
+      - "SIMCO-NIVELES.md"
+      - "SIMCO-PROPAGACION.md"
+
+  NEXUS-DOCS:
+    profile: "perfiles/PERFIL-DOCUMENTATION.md"
+    role: "Documentacion y estandares"
+    aliases:
+      - "docs-agent"
+      - "documentation-agent"
+      - "doc-agent"
+    capabilities:
+      - "documentation"
+      - "api-docs"
+      - "knowledge-base"
+    directivas:
+      - "SIMCO-DOCUMENTAR.md"
+
+# ------------------------------------------------------------------------------
+# CONFIGURACION DE DELEGACION
+# ------------------------------------------------------------------------------
+delegation:
+  # Quien puede delegar a quien
+  rules:
+    NEXUS-TECH-LEADER:
+      can_delegate_to: "all"
+
+    NEXUS-BACKEND:
+      can_delegate_to:
+        - "NEXUS-DATABASE"
+        - "NEXUS-DEVOPS"
+        - "NEXUS-QA"
+
+    NEXUS-FRONTEND:
+      can_delegate_to:
+        - "NEXUS-BACKEND"
+        - "NEXUS-DEVOPS"
+        - "NEXUS-QA"
+
+    NEXUS-DEVOPS:
+      can_delegate_to:
+        - "NEXUS-DATABASE"
+
+    NEXUS-DATABASE:
+      can_delegate_to: []
+
+  # Tareas que requieren coordinacion
+  requires_coordination:
+    - "architecture-change"
+    - "new-service"
+    - "breaking-change"
+    - "security-issue"
+
+# ------------------------------------------------------------------------------
+# PROTOCOLOS
+# ------------------------------------------------------------------------------
+protocols:
+  initialization:
+    directive: "SIMCO-INICIALIZACION.md"
+    required: true
+
+  validation:
+    directive: "SIMCO-VALIDAR.md"
+    required: true
+
+  documentation:
+    directive: "SIMCO-DOCUMENTAR.md"
+    required: true
+
+# ------------------------------------------------------------------------------
+# LOOKUP
+# ------------------------------------------------------------------------------
+# Para busqueda rapida de agente por alias
+lookup:
+  backend-agent: "NEXUS-BACKEND"
+  api-agent: "NEXUS-BACKEND"
+  frontend-agent: "NEXUS-FRONTEND"
+  ui-agent: "NEXUS-FRONTEND"
+  database-agent: "NEXUS-DATABASE"
+  db-agent: "NEXUS-DATABASE"
+  ddl-agent: "NEXUS-DATABASE"
+  devops-agent: "NEXUS-DEVOPS"
+  infra-agent: "NEXUS-DEVOPS"
+  ci-agent: "NEXUS-DEVOPS"
+  ml-agent: "NEXUS-ML"
+  qa-agent: "NEXUS-QA"
+  test-agent: "NEXUS-QA"
+  security-agent: "NEXUS-SECURITY"
+  tech-leader: "NEXUS-TECH-LEADER"
+  architect: "NEXUS-TECH-LEADER"
+  workspace-agent: "NEXUS-WORKSPACE"
+  docs-agent: "NEXUS-DOCS"
+
+# ------------------------------------------------------------------------------
+# PATH ALIASES - Referencias a recursos del workspace
+# ------------------------------------------------------------------------------
+paths:
+  # Control Plane
+  "@CONTROL_PLANE": "control-plane/"
+  "@REGISTRIES": "control-plane/registries/"
+  "@MANIFESTS": "control-plane/manifests/"
+  "@ORCHESTRATION": "control-plane/orchestration/"
+  "@DEVTOOLS": "control-plane/devtools/"
+  "@CI": "control-plane/ci/"
+
+  # Registries
+  "@PORTS": "control-plane/registries/ports.registry.yml"
+  "@DOMAINS": "control-plane/registries/domains.registry.yml"
+  "@DATABASES": "control-plane/registries/databases.registry.yml"
+  "@SERVICES": "control-plane/registries/services.registry.yml"
+
+  # Directivas SIMCO
+  "@SIMCO": "control-plane/orchestration/directivas/simco/"
+  "@SIMCO_INDEX": "control-plane/orchestration/directivas/simco/_INDEX.md"
+  "@PRINCIPIOS": "control-plane/orchestration/directivas/principios/"
+
+  # Perfiles
+  "@PERFILES": "control-plane/orchestration/agents/perfiles/"
+
+  # Catalogo de funcionalidades
+  "@CATALOG": "shared/catalog/"
+  "@CATALOG_INDEX": "shared/catalog/README.md"
+  "@CATALOG_AUTH": "shared/catalog/auth/"
+  "@CATALOG_SESSION": "shared/catalog/session-management/"
+  "@CATALOG_RATELIMIT": "shared/catalog/rate-limiting/"
+  "@CATALOG_NOTIFY": "shared/catalog/notifications/"
+  "@CATALOG_TENANT": "shared/catalog/multi-tenancy/"
+  "@CATALOG_FLAGS": "shared/catalog/feature-flags/"
+  "@CATALOG_WS": "shared/catalog/websocket/"
+  "@CATALOG_PAYMENTS": "shared/catalog/payments/"
+
+  # Knowledge Base
+  "@KNOWLEDGE": "shared/knowledge-base/"
+
+  # Proyectos
+  "@GAMILIT": "projects/gamilit/"
+  "@ERP": "projects/erp-suite/"
+  "@TRADING": "projects/trading-platform/"
+  "@BETTING": "projects/betting-analytics/"
+
+  # Scripts de validacion
+  "@VALIDATE": "control-plane/devtools/scripts/validation/"
