@@ -101,8 +101,8 @@ export const useInterventionAlerts = (
       setAlerts(response.data);
       setTotal(response.total);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err : new Error(err.message || 'Error al cargar alertas'));
-      console.error('Error fetching alerts:', err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(new Error(errorMessage || 'Error al cargar alertas'));
     } finally {
       setLoading(false);
     }
@@ -135,7 +135,8 @@ export const useInterventionAlerts = (
         ),
       );
     } catch (err: unknown) {
-      setError(err instanceof Error ? err : new Error(err.message || 'Error al reconocer alerta'));
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(new Error(errorMessage || 'Error al reconocer alerta'));
       throw err;
     }
   };
@@ -165,7 +166,8 @@ export const useInterventionAlerts = (
         ),
       );
     } catch (err: unknown) {
-      setError(err instanceof Error ? err : new Error(err.message || 'Error al resolver alerta'));
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(new Error(errorMessage || 'Error al resolver alerta'));
       throw err;
     }
   };
@@ -183,7 +185,8 @@ export const useInterventionAlerts = (
       setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
       setTotal((prev) => prev - 1);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err : new Error(err.message || 'Error al descartar alerta'));
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(new Error(errorMessage || 'Error al descartar alerta'));
       throw err;
     }
   };

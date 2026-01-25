@@ -19,6 +19,7 @@ import { useClassrooms } from '@apps/teacher/hooks/useClassrooms';
 import { apiClient } from '@services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import type { GetAttemptsQuery } from '@services/api/teacher';
+import toast from 'react-hot-toast';
 
 interface ModuleListItem {
   id: string;
@@ -101,7 +102,11 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
         const response = await apiClient.get<ModuleListItem[]>(API_ENDPOINTS.educational.modules);
         setModules(response.data || []);
       } catch (error) {
-        console.error('[ResponseFilters] Error fetching modules:', error);
+        // Show user feedback when modules fail to load
+        toast.error('No se pudieron cargar los módulos. Intenta recargar la página.', {
+          duration: 4000,
+          id: 'modules-load-error', // Prevent duplicate toasts
+        });
       }
     };
     fetchModules();

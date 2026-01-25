@@ -8,6 +8,7 @@ import {
   UseGuards,
   Request,
   Query,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { ManualReviewService, CompleteReviewResult, PaginatedReviewsResult } from '../services/manual-review.service';
@@ -270,7 +271,7 @@ export class ManualReviewController {
   ): Promise<ManualReview> {
     const teacherId = req.user?.profile?.id || req.user?.sub || req.user?.id;
     if (!teacherId) {
-      throw new Error('Teacher ID not found in request');
+      throw new UnauthorizedException('Teacher profile not found. Please ensure you are logged in with a valid teacher account.');
     }
     return this.reviewService.createReview(teacherId, dto);
   }
