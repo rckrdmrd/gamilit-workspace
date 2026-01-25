@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { X, Save, User, BookOpen, Calendar, FileText, Image as ImageIcon, Video, Music, CheckCircle, AlertTriangle } from 'lucide-react';
 import { ManualReview, RubricEvaluation, ReviewRewards, manualReviewApi } from '@/shared/api/manualReviewApi';
 import { RubricEvaluator } from '@/shared/components/mechanics/RubricEvaluator';
@@ -8,6 +9,7 @@ import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { manualReviewKeys } from '../../hooks/useManualReviews';
 
 /**
  * TASK-2026-01-18-010: Helper para transformar evaluaciones frontend a formato backend
@@ -63,6 +65,8 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
   const [_assignedRewards, setAssignedRewards] = useState<ReviewRewards | null>(null);
   // Estado para mensaje de guardado de borrador
   const [success, setSuccess] = useState<string | null>(null);
+  // FIX BUG-CACHE-INVALIDATION: Query client para invalidar cache después de completar
+  const queryClient = useQueryClient();
 
   /**
    * Handle evaluation changes
@@ -230,6 +234,10 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
       try {
         response = await manualReviewApi.completeReview(review.id);
         console.log('[ReviewDetail] completeReview result:', response);
+
+        // FIX BUG-CACHE-INVALIDATION: Invalidar cache de reviews para que la lista se actualice
+        // Sin esto, la lista muestra datos cacheados y el review no aparece en "Completadas"
+        queryClient.invalidateQueries({ queryKey: manualReviewKeys.all });
       } catch (completeError) {
         console.error('[ReviewDetail] completeReview FAILED:', completeError);
         const errorMessage = completeError instanceof Error
