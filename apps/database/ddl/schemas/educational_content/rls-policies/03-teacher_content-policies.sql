@@ -1,16 +1,43 @@
 -- =============================================================================
--- RLS Policies for educational_content.teacher_content (FIXED)
+-- RLS Policies for educational_content.teacher_content
+-- =============================================================================
 -- Created: 2026-01-25 (TASK-2026-01-25-VALIDACION-PORTAL-TEACHER)
--- Agent: Claude Code (adredsi)
+-- Updated: 2026-01-25 (TASK-010 - Consolidación y corrección)
+-- Agent: Claude Code
 -- Priority: HIGH - Security / Tenant Isolation
--- Fixed: Usar current_setting() en lugar de auth.uid()
+--
+-- SECURITY MODEL:
+-- - Teachers can CRUD their own content
+-- - Teachers can VIEW content based on visibility:
+--   * private: only owner
+--   * classroom: same classroom members
+--   * school: same tenant
+--   * public: everyone
+-- - Admins can manage all content in their tenant
+-- - Explicitly shared content is accessible
+-- - Students can view published content in their classrooms
+--
+-- NOTA: Este proyecto usa current_setting() para obtener el user_id y tenant_id
+--       NO usa auth.uid() (sintaxis de Supabase)
 -- =============================================================================
 
--- Drop existing policy if exists
+-- =============================================================================
+-- DROP EXISTING POLICIES (idempotent)
+-- =============================================================================
+
+DROP POLICY IF EXISTS teacher_content_view_own ON educational_content.teacher_content;
 DROP POLICY IF EXISTS teacher_content_view_public ON educational_content.teacher_content;
+DROP POLICY IF EXISTS teacher_content_view_school ON educational_content.teacher_content;
+DROP POLICY IF EXISTS teacher_content_view_shared ON educational_content.teacher_content;
+DROP POLICY IF EXISTS teacher_content_create_own ON educational_content.teacher_content;
+DROP POLICY IF EXISTS teacher_content_update_own ON educational_content.teacher_content;
+DROP POLICY IF EXISTS teacher_content_update_shared ON educational_content.teacher_content;
+DROP POLICY IF EXISTS teacher_content_delete_own ON educational_content.teacher_content;
+DROP POLICY IF EXISTS teacher_content_admin_manage_all ON educational_content.teacher_content;
+DROP POLICY IF EXISTS teacher_content_student_view_classroom ON educational_content.teacher_content;
 
 -- =============================================================================
--- POLICIES FOR TEACHERS
+-- 1. POLICIES FOR TEACHERS
 -- =============================================================================
 
 -- Policy: Teachers view own content
@@ -131,7 +158,7 @@ COMMENT ON POLICY teacher_content_delete_own ON educational_content.teacher_cont
 'Teachers can delete (soft-delete via is_active) their own content';
 
 -- =============================================================================
--- POLICIES FOR ADMINS
+-- 2. POLICIES FOR ADMINS
 -- =============================================================================
 
 -- Policy: Admins manage ALL content in their tenant
@@ -159,7 +186,7 @@ COMMENT ON POLICY teacher_content_admin_manage_all ON educational_content.teache
 'Super admins can manage all content in their tenant';
 
 -- =============================================================================
--- POLICIES FOR STUDENTS (read-only, published content only)
+-- 3. POLICIES FOR STUDENTS (read-only, published content only)
 -- =============================================================================
 
 -- Policy: Students view content assigned to their classrooms
