@@ -1,11 +1,57 @@
 # Traza de Tareas: ATLAS-DATABASE
 
-**Última actualización:** 2026-01-24 (TASK-001: Tabla two_factor_tokens para 2FA)
+**Última actualización:** 2026-01-25 (TASK-010: Fix RLS Policies teacher_content)
 **Estado:** ✅ PRODUCTION READY - Validación integral completada
 
 ---
 
 ## 📋 Tareas Actuales (2026)
+
+### ✅ TASK-010: Fix RLS Policies para teacher_content - COMPLETADO
+
+**Fecha:** 2026-01-25
+**Agente:** CLAUDE-CODE
+**Prioridad:** P1 (Hallazgo ALTA-001)
+**Story Points:** 2 SP
+
+**Problema:**
+Existían 2 archivos de políticas RLS para `teacher_content` con sintaxis incompatible:
+- `02-teacher_content-policies.sql` usaba `auth.uid()` (Supabase - NO funciona)
+- `02-teacher_content-policies-fixed.sql` usaba `current_setting()` (correcto)
+
+**Solución:**
+Consolidar en archivo único `03-teacher_content-policies.sql` con:
+- Sintaxis correcta (`current_setting()`)
+- `DROP IF EXISTS` para todas las políticas (idempotente)
+- Documentación del patrón correcto
+
+**Archivo DDL Creado:**
+`apps/database/ddl/schemas/educational_content/rls-policies/03-teacher_content-policies.sql`
+
+**Políticas RLS (10):**
+1. `teacher_content_view_own` - SELECT propio contenido
+2. `teacher_content_view_public` - SELECT público
+3. `teacher_content_view_school` - SELECT mismo tenant
+4. `teacher_content_view_shared` - SELECT compartido
+5. `teacher_content_create_own` - INSERT en tenant
+6. `teacher_content_update_own` - UPDATE propio
+7. `teacher_content_update_shared` - UPDATE compartido
+8. `teacher_content_delete_own` - DELETE propio
+9. `teacher_content_admin_manage_all` - ALL para admins
+10. `teacher_content_student_view_classroom` - SELECT para estudiantes
+
+**Archivos Eliminados:**
+- `02-teacher_content-policies.sql` (sintaxis incorrecta)
+- `02-teacher_content-policies-fixed.sql` (consolidado)
+
+**Commit:** `499edb23`
+
+**Para Aplicar:**
+```bash
+wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/workspace-v2/scripts/database/unified-recreate-db.sh' gamilit --drop
+```
+
+---
 
 ### ✅ TASK-001: Tabla two_factor_tokens para 2FA - COMPLETADO
 

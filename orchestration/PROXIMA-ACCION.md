@@ -3,7 +3,7 @@
 **Ultima Actualizacion:** 2026-01-25
 **Estado del Proyecto:** MVP 80% completado | **orchestration REPLICA_COMPLETA** | **Production Ready**
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Tarea Completada:** TASK-009-fix-teacher-reviews-cache
+**Tarea Completada:** TASK-010-fix-rls-teacher-content
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
@@ -28,6 +28,24 @@ host    all    all    0.0.0.0/0    scram-sha-256
 **Documentacion:** `workspace-v2/orchestration/inventarios/LOCAL-WSL-ENVIRONMENT.yml` v1.1.0
 
 **Nota:** El IP de WSL (172.21.220.31) puede cambiar al reiniciar. Actualizar port forward si es necesario.
+
+---
+
+### TASK-010 COMPLETADA (2026-01-25)
+
+**Fix RLS Policies para teacher_content (ALTA-001).**
+
+| Campo | Valor |
+|-------|-------|
+| Hallazgo | ALTA-001 - RLS Policies de teacher_content |
+| Problema | Dos archivos con sintaxis incompatible (auth.uid vs current_setting) |
+| Solución | Consolidado en archivo único idempotente |
+| Archivos | +1 creado, -2 eliminados |
+| Commits | 499edb23 (gamilit), 2c0b9dcd (workspace) |
+
+**Nota:** Requiere recrear BD para aplicar: `unified-recreate-db.sh gamilit --drop`
+
+**Ver detalles:** `orchestration/tareas/TASK-010-fix-rls-teacher-content/`
 
 ---
 

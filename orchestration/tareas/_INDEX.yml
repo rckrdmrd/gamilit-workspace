@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 10
-  completadas: 10
+  total_tareas: 11
+  completadas: 11
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -47,6 +47,23 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  - task_id: "TASK-010"
+    titulo: "Consolidar RLS Policies para teacher_content (ALTA-001)"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-010-fix-rls-teacher-content/"
+    commit: "499edb23"
+    story_points: 2
+    capas_afectadas:
+      - "database"
+    descripcion: |
+      Fix del hallazgo ALTA-001. Existían 2 archivos de políticas RLS para
+      teacher_content con sintaxis incompatible. Consolidado en archivo único
+      usando patrón correcto (current_setting en lugar de auth.uid).
+
   - task_id: "TASK-009"
     titulo: "Fix cache invalidation en Teacher Reviews - Completadas no aparecen"
     tipo: "bugfix"
