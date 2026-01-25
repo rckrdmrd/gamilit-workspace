@@ -281,7 +281,9 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* FASE 6A: /teacher/resources redirige a dashboard (placeholder sin funcionalidad) */}
+          {/* DEPRECADO (2026-01-25): /teacher/resources eliminado
+              La funcionalidad de recursos multimedia se integró en TeacherContentPage.
+              Redirect mantenido por compatibilidad con URLs existentes. */}
           <Route
             path="/teacher/resources"
             element={<Navigate to="/teacher/dashboard" replace />}
