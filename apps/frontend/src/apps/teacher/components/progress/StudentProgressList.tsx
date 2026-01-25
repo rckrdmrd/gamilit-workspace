@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useMemo } from 'react';
 import { ArrowUpDown, ArrowUp, ArrowDown, Users, AlertTriangle, CheckCircle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -28,8 +27,8 @@ export function StudentProgressList({ students, onStudentClick }: StudentProgres
   // Ordenar estudiantes
   const sortedStudents = useMemo(() => {
     const sorted = [...students].sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
+      let aValue: string | number;
+      let bValue: string | number;
 
       switch (sortField) {
         case 'name':

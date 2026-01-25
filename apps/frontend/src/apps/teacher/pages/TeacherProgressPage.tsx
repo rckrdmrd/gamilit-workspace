@@ -62,9 +62,12 @@ export default function TeacherProgressPage() {
       if (exists) {
         setSelectedClassroomId(classroomIdFromUrl);
       } else if (classroomIdFromUrl !== 'all') {
-        console.warn(
-          `[TeacherProgressPage] Classroom ${classroomIdFromUrl} not found in list`
-        );
+        // FIX FASE4: User feedback instead of console.warn when classroom not found
+        setSelectedClassroomId('all');
+        showToast({
+          type: 'warning',
+          message: 'La clase solicitada no existe o no tienes acceso. Mostrando todas las clases.',
+        });
       }
       return;
     }
@@ -73,7 +76,7 @@ export default function TeacherProgressPage() {
     if (classrooms.length === 1) {
       setSelectedClassroomId(classrooms[0].id);
     }
-  }, [loading, classroomIdFromUrl, classrooms]);
+  }, [loading, classroomIdFromUrl, classrooms, showToast]);
 
   const [showClassroomDropdown, setShowClassroomDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState<'progress' | 'engagement'>('progress');

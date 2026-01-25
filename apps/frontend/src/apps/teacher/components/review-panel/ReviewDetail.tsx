@@ -77,9 +77,6 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
     newGeneralFeedback: string,
     newTotalScore: number
   ) => {
-    // DEBUG: Log para verificar que las evaluaciones se reciben
-    console.log('[ReviewDetail] handleEvaluationChange - evaluations:', newEvaluations);
-    console.log('[ReviewDetail] handleEvaluationChange - totalScore:', newTotalScore);
     setEvaluations(newEvaluations);
     setGeneralFeedback(newGeneralFeedback);
     setTotalScore(newTotalScore);
@@ -161,12 +158,6 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
       // El endpoint /complete no acepta body, así que debemos guardar antes
       const { rubricScores, detailedFeedback } = transformEvaluationsToBackend(currentEvaluations);
 
-      // DEBUG: Log para verificar datos antes de enviar
-      console.log('[ReviewDetail] handleCompleteReview - evaluations:', currentEvaluations);
-      console.log('[ReviewDetail] handleCompleteReview - rubricScores:', rubricScores);
-      console.log('[ReviewDetail] handleCompleteReview - totalScore:', currentTotalScore);
-      console.log('[ReviewDetail] handleCompleteReview - generalFeedback:', currentGeneralFeedback);
-
       // FIX TASK-2026-01-18-014: Validación más robusta de datos
       if (!currentEvaluations || currentEvaluations.length === 0) {
         setError('Error: No hay evaluaciones. Por favor evalúa todos los criterios de la rúbrica.');
@@ -205,20 +196,12 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
       const scoreToSend = currentTotalScore;
 
       try {
-        console.log('[ReviewDetail] Calling updateReview with:', {
-          rubricScores,
-          totalScore: scoreToSend,
-          generalFeedback: currentGeneralFeedback,
-        });
-
         const updateResult = await manualReviewApi.updateReview(review.id, {
           rubricScores,
           totalScore: scoreToSend,
           generalFeedback: currentGeneralFeedback,
           detailedFeedback: Object.keys(detailedFeedback).length > 0 ? detailedFeedback : undefined,
         });
-
-        console.log('[ReviewDetail] updateReview result:', updateResult);
 
         // FIX TASK-2026-01-18-014: Verificar que el update fue exitoso
         if (!updateResult || !updateResult.id) {
@@ -238,11 +221,9 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
 
       // TASK-2026-01-18-010: PASO 2 - Completar review y distribuir recompensas
       // Este endpoint marca como completed, califica submission y distribuye gamificación
-      console.log('[ReviewDetail] Calling completeReview...');
       let response;
       try {
         response = await manualReviewApi.completeReview(review.id);
-        console.log('[ReviewDetail] completeReview result:', response);
 
         // FIX BUG-CACHE-INVALIDATION: Invalidar cache de reviews para que la lista se actualice
         // Sin esto, la lista muestra datos cacheados y el review no aparece en "Completadas"
