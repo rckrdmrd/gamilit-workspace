@@ -236,9 +236,9 @@ export function StudentProgressList({ students, onStudentClick }: StudentProgres
               </tr>
             </thead>
             <tbody>
-              {sortedStudents.map((student) => (
+              {sortedStudents.map((student, index) => (
                 <tr
-                  key={student.id}
+                  key={student.id || `student-${index}`}
                   onClick={() => onStudentClick?.(student)}
                   className="border-detective-border cursor-pointer border-b transition-colors hover:bg-detective-bg-secondary"
                 >
