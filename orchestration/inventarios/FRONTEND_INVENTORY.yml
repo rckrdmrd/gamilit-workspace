@@ -629,6 +629,21 @@ teacher_portal_enhancement_2025_11_24:
         - sendMessage
         - markAsRead
 
+    - name: manualReviewApi  # TASK-2026-01-25: GAP-API-001 resolved
+      path: "apps/frontend/src/services/api/teacher/manualReviewApi.ts"
+      methods:
+        - getConfig
+        - getPendingReviews
+        - getPendingByModule
+        - getStats
+        - getMyReviews
+        - getById
+        - create
+        - update
+        - start
+        - complete
+        - returnForRevision
+
   new_hooks:
     - name: useTeacherContent
       path: "apps/frontend/src/apps/teacher/hooks/useTeacherContent.ts"

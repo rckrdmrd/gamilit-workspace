@@ -487,12 +487,16 @@ export const API_ENDPOINTS = {
     // Manual Review (for modules 4 and 5)
     reviews: {
       pending: '/teacher/reviews/pending',
+      pendingByModule: (moduleOrder: number) => `/teacher/reviews/pending/module/${moduleOrder}`,
       // TASK-2026-01-18-012: Endpoint para obtener reviews del profesor actual con filtro de status
       myReviews: '/teacher/reviews/my-reviews',
+      stats: '/teacher/reviews/stats', // TASK-2026-01-25: GAP-API-001 resolved
       get: (id: string) => `/teacher/reviews/${id}`,
+      create: '/teacher/reviews', // TASK-2026-01-25: GAP-API-001 resolved
       start: (reviewId: string) => `/teacher/reviews/${reviewId}/start`,
       update: (id: string) => `/teacher/reviews/${id}`,
       complete: (id: string) => `/teacher/reviews/${id}/complete`,
+      return: (id: string) => `/teacher/reviews/${id}/return`, // TASK-2026-01-25: GAP-API-001 resolved
       // TASK-2026-01-18-009: Endpoint para obtener config de ejercicios (reemplaza hardcoded data)
       config: '/teacher/reviews/config/exercises',
     },
