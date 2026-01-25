@@ -7,7 +7,7 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.3.0"
+version: "1.6.0"
 created: "2026-01-24"
 updated: "2026-01-25"
 proyecto: "gamilit"
@@ -18,12 +18,32 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 14
-  completadas: 14
+  total_tareas: 18
+  completadas: 18
   en_progreso: 0
   pendientes: 0
   canceladas: 0
   bloqueadas: 0
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TAREAS RELACIONADAS DEL WORKSPACE
+# ─────────────────────────────────────────────────────────────────────────────────
+# Tareas que afectan a gamilit pero residen en workspace-v2/orchestration/tareas/
+
+tareas_workspace_relacionadas:
+  - task_id: "TASK-2026-01-25-001-GAMILIT-ADMIN-PORTAL-ANALYSIS"
+    titulo: "Analisis Detallado y Documentacion del Portal Admin de GAMILIT"
+    ubicacion: "workspace-v2/orchestration/tareas/TASK-2026-01-25-001-GAMILIT-ADMIN-PORTAL-ANALYSIS/"
+    estado: "completada"
+    fecha: "2026-01-25"
+    descripcion: |
+      Analisis exhaustivo del portal admin incluyendo:
+      - 6 especificaciones tecnicas (ET-ADM-005 a ET-ADM-010)
+      - Catalogo de 92 componentes admin
+      - Mapa de 193+ endpoints API
+      - 3 componentes implementados (ExercisePreviewModal, UserAdvancedFilters, RoleActionsMenu)
+      - Manual actualizado a v1.3
+      - Validacion de impacto en portal de estudiantes
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # FORMATO DE ID DE TAREA
@@ -47,6 +67,106 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  - task_id: "TASK-017"
+    titulo: "Fix CASE alias error en servicios de alertas - Error 500"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-017-fix-alerts-case-alias/"
+    commits: []
+    story_points: 1
+    capas_afectadas:
+      - "backend"
+    metricas:
+      bugs_corregidos: 1
+      archivos_modificados: 2
+      lineas_cambiadas: 2
+    descripcion: |
+      Fix Error 500 en GET /teacher/alerts por expresion CASE con alias incorrecto
+      en TypeORM QueryBuilder. Cambio: "CASE alert.severity" → "CASE severity".
+      Archivos: intervention-alerts.service.ts, admin-alerts.service.ts
+
+  - task_id: "TASK-016"
+    titulo: "Fix database cross-schema dependencies - classroom_modules table"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-016-fix-database-cross-schema-dependencies/"
+    commits: []  # Pendiente commit
+    story_points: 5
+    capas_afectadas:
+      - "database"
+      - "devops"
+    metricas:
+      archivos_modificados: 1
+      archivos_creados: 1
+      archivos_movidos: 1
+      tablas_verificadas: 146
+      triggers_verificados: 108
+    descripcion: |
+      Corrección de bug crítico en create-database.sh donde la tabla
+      educational_content.classroom_modules no se creaba debido a FK
+      cross-schema a social_features.classrooms. Solución: patrón
+      _cross_schema/ + FASE 9.7 dedicada. Seed agregado para asignar
+      módulos publicados al classroom DEFAULT.
+
+  - task_id: "TASK-015"
+    titulo: "Fix Teacher Reports RLS - SET LOCAL para soporte de Row Level Security"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-015-fix-teacher-reports-rls/"
+    commits: []  # Pendiente commit
+    story_points: 3
+    capas_afectadas:
+      - "backend"
+    metricas:
+      archivos_modificados: 1
+      lineas_cambiadas: 85
+    descripcion: |
+      Correccion de pagina Reports en Teacher Portal que no mostraba datos.
+      Causa raiz: RLS habilitado en teacher_reports pero RlsInterceptor no
+      ejecutaba SET LOCAL. Solucion: Agregar DataSource injection y usar
+      transacciones con SET LOCAL app.current_user_id en TeacherReportsService.
+      Metodos modificados: getRecentReports, getReportStats, getReportById, deleteReport.
+      Analisis de impacto confirmo que el cambio NO afecta otros modulos.
+
+  - task_id: "TASK-014"
+    titulo: "Fix bugs en Student Monitoring - última actividad y pantalla negra"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-014-fix-student-monitoring-bugs/"
+    commits: []  # Pendiente
+    story_points: 5
+    capas_afectadas:
+      - "frontend"
+    metricas:
+      bugs_corregidos: 4
+      archivos_modificados: 8
+      lineas_cambiadas: 180
+    descripcion: |
+      Correccion de 4 bugs criticos en portal Teacher - monitoreo:
+      1. "Ultima actividad" mostraba "Hace 55 anos" cuando last_activity era null
+      2. Pantalla negra al clic en card por student.id undefined
+      3. Sort por lastActivity fallaba con valores null (StudentProgressList)
+      4. Deteccion eventos de conexion fallaba (StudentMonitoringPanel:71-76)
+      Archivos: types/index.ts, useStudentMonitoring.ts, StudentStatusCard.tsx,
+      StudentDetailModal.tsx, StudentMonitoringPanel.tsx, StudentProgressList.tsx,
+      TeacherStudents.tsx. Causa raiz: Discrepancia tipos backend vs frontend.
+
   - task_id: "TASK-013"
     titulo: "Admin Module Test Coverage Fixes - US-AUDIT-004 Continuation"
     tipo: "bugfix"
