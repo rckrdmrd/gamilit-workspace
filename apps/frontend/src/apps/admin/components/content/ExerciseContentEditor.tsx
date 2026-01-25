@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useExercises, Exercise } from '../../hooks/useContentManagement';
+import { ExercisePreviewModal } from './ExercisePreviewModal';
 import { Plus, Edit, Copy, Trash2, Eye, Save, X } from 'lucide-react';
 
 export const ExerciseContentEditor: React.FC = () => {
@@ -10,6 +11,7 @@ export const ExerciseContentEditor: React.FC = () => {
   const [editingExercise, setEditingExercise] = useState<Partial<Exercise> | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [previewExercise, setPreviewExercise] = useState<Exercise | null>(null);
 
   const handleCreate = () => {
     setEditingExercise({
@@ -299,6 +301,13 @@ export const ExerciseContentEditor: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <button
+                    onClick={() => setPreviewExercise(exercise)}
+                    className="rounded p-2 text-detective-orange transition-colors hover:bg-detective-orange/20"
+                    title="Preview"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
+                  <button
                     onClick={() => handleEdit(exercise)}
                     className="rounded p-2 text-blue-500 transition-colors hover:bg-blue-500/20"
                     title="Edit"
@@ -345,6 +354,13 @@ export const ExerciseContentEditor: React.FC = () => {
           ))}
         </div>
       </DetectiveCard>
+
+      {/* Preview Modal */}
+      <ExercisePreviewModal
+        isOpen={previewExercise !== null}
+        exercise={previewExercise}
+        onClose={() => setPreviewExercise(null)}
+      />
     </div>
   );
 };
