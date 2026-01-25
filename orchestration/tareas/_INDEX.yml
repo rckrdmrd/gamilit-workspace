@@ -7,9 +7,9 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.0.0"
+version: "1.1.0"
 created: "2026-01-24"
-updated: "2026-01-24"
+updated: "2026-01-25"
 proyecto: "gamilit"
 maintained_by: "@WS_ORCHESTRATOR"
 
@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 1
-  completadas: 1
+  total_tareas: 3
+  completadas: 3
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -47,6 +47,33 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  - task_id: "TASK-003"
+    titulo: "Correccion school_id usuarios - Institucion Default"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-003-fix-school-id/"
+    commit: "4e5aa582"
+    story_points: 3
+    capas_afectadas:
+      - "database"
+
+  - task_id: "TASK-002"
+    titulo: "Correcciones Contratos API Backend-Frontend"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-002-fix-api-response-contracts/"
+    commit: "pendiente"
+    story_points: 8
+    capas_afectadas:
+      - "backend"
+      - "frontend"
+
   - task_id: "TASK-001"
     titulo: "Resolver 5 Gaps P0 Críticos en Student Portal"
     tipo: "feature"
