@@ -87,13 +87,14 @@ export class NotificationResponseDto {
     data?: Record<string, unknown> | null;
 
   /**
-   * Indica si la notificación fue leída
+   * Estado de la notificación
    */
   @ApiProperty({
-    description: 'Indica si la notificación fue leída',
-    example: false,
+    description: 'Estado de la notificación',
+    example: 'unread',
+    enum: ['unread', 'read'],
   })
-    read!: boolean;
+    status!: 'unread' | 'read';
 
   /**
    * Fecha de creación

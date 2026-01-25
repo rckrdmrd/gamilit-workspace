@@ -37,9 +37,15 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
     }
   };
 
-  const formatTimestamp = (date: Date | string) => {
+  const formatTimestamp = (date: Date | string | undefined | null) => {
+    if (!date) return '';
+
     const now = new Date();
     const notifDate = typeof date === 'string' ? new Date(date) : date;
+
+    // Validate date is valid
+    if (isNaN(notifDate.getTime())) return '';
+
     const diffMs = now.getTime() - notifDate.getTime();
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);

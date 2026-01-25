@@ -228,7 +228,7 @@ export class NotificationMultiChannelController {
       title: notification.title,
       message: notification.message,
       data: notification.data,
-      read: notification.status === 'read',
+      status: notification.status === 'read' ? 'read' : 'unread',
       createdAt: notification.createdAt,
       updatedAt: notification.createdAt, // Entity doesn't have updatedAt, use createdAt
     };

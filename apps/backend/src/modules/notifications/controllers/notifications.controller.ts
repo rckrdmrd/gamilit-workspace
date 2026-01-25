@@ -79,15 +79,11 @@ export class NotificationsController {
     const totalPages = Math.ceil(result.total / limit);
 
     return {
-      data: result.data.map((n) => this.mapToResponseDto(n)),
-      meta: {
-        total: result.total,
-        page,
-        limit,
-        totalPages,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
-      },
+      notifications: result.data.map((n) => this.mapToResponseDto(n)),
+      total: result.total,
+      page,
+      limit,
+      hasMore: page < totalPages,
     };
   }
 
@@ -102,7 +98,7 @@ export class NotificationsController {
       title: notification.title,
       message: notification.message,
       data: notification.data,
-      read: notification.status === 'read',
+      status: notification.status === 'read' ? 'read' : 'unread',
       createdAt: notification.createdAt,
       updatedAt: notification.createdAt, // Entity doesn't have updatedAt
     };

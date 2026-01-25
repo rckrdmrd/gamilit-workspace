@@ -591,7 +591,6 @@ export class MissionsController {
   })
   async claimRewards(@Param('id') missionId: string, @Request() req: AuthRequest) {
     const userId = req.user!.id;
-    const result = await this.missionsService.claimRewards(missionId, userId);
-    return { success: true, data: result };
+    return this.missionsService.claimRewards(missionId, userId);
   }
 }

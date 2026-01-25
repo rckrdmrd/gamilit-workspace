@@ -1,14 +1,56 @@
 # PROXIMA ACCION - GAMILIT
 
-**Ultima Actualizacion:** 2026-01-16
+**Ultima Actualizacion:** 2026-01-25
 **Estado del Proyecto:** MVP 80% completado
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Tarea Completada:** TASK-2026-01-16-005 (Validación Integral BD, Frontend, Tests)
+**Tarea Completada:** TASK-002 (Correcciones Contratos API Backend-Frontend)
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
 
 ## Estado Actual
+
+### TASK-002 COMPLETADA (2026-01-25)
+
+| Correccion | Capa | Estado |
+|------------|------|--------|
+| claimReward doble envoltorio | Backend | ✅ COMPLETADO |
+| GET /notifications estructura | Backend | ✅ COMPLETADO |
+| Campo status vs read | Backend | ✅ COMPLETADO |
+| formatTimestamp crash | Frontend | ✅ COMPLETADO |
+
+**Archivos Modificados:**
+- `missions.controller.ts` - Removido doble envoltorio
+- `notifications.controller.ts` - Estructura respuesta + campo status
+- `notification-multichannel.controller.ts` - Campo status
+- `paginated-notifications.dto.ts` - Nueva estructura
+- `notification-response.dto.ts` - Campo status: 'unread' | 'read'
+- `NotificationDropdown.tsx` - Validacion null/undefined
+
+**Validaciones:**
+- Build Backend: ✅ OK
+- Build Frontend: ✅ OK
+
+**Ver detalles:** `orchestration/tareas/TASK-002-fix-api-response-contracts/`
+
+---
+
+### TASK-001 COMPLETADA (2026-01-24)
+
+| Gap | Modulo | Estado |
+|-----|--------|--------|
+| GAP-P0-001 | 2FA Auth | ✅ COMPLETADO |
+| GAP-P0-002 | Password Reset | ✅ COMPLETADO |
+| GAP-P0-003 | User Search | ✅ COMPLETADO |
+| GAP-P0-004 | WebSocket | ✅ COMPLETADO |
+| GAP-P0-005 | Email Verification | ✅ COMPLETADO |
+
+**Story Points:** 21
+**Commit:** 430e2792
+
+**Ver detalles:** `orchestration/tareas/TASK-001-fix-p0-gaps/`
+
+---
 
 ### TASK-2026-01-16-005 COMPLETADA (2026-01-16)
 
