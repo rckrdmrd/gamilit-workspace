@@ -142,14 +142,16 @@ passwordAPI.validateResetToken(token)  // GET /auth/reset-password/validate
 
 ## Inventarios Actualizados
 
-### Pendiente de Actualizar
+### Completado (2026-01-24)
 
-Los siguientes inventarios deben actualizarse manualmente:
+Los siguientes inventarios fueron actualizados:
 
-- [ ] `orchestration/inventarios/DATABASE_INVENTORY.yml` - Agregar two_factor_tokens
-- [ ] `orchestration/inventarios/BACKEND_INVENTORY.yml` - Agregar TwoFactorAuthService, TwoFactorToken
-- [ ] `orchestration/inventarios/FRONTEND_INVENTORY.yml` - Agregar twoFactorAPI.ts
-- [ ] `orchestration/inventarios/MASTER_INVENTORY.yml` - Actualizar totales
+- [x] `orchestration/inventarios/DATABASE_INVENTORY.yml` v4.8.0 - Agregado two_factor_tokens
+- [x] `orchestration/inventarios/BACKEND_INVENTORY.yml` v3.11.0 - Agregado TwoFactorAuthService, TwoFactorToken
+- [x] `orchestration/inventarios/FRONTEND_INVENTORY.yml` v4.7.0 - Agregado twoFactorAPI.ts
+- [x] `orchestration/inventarios/MASTER_INVENTORY.yml` v4.7.0 - Totales actualizados
+
+Commit: `f992ad5a`
 
 ---
 
