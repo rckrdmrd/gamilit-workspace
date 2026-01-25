@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 3
-  completadas: 3
+  total_tareas: 4
+  completadas: 4
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -47,6 +47,19 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  - task_id: "TASK-004"
+    titulo: "Corregir serializacion last_sign_in_at en admin users"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-004-fix-last-sign-in-at/"
+    commit: "b8df6049"
+    story_points: 3
+    capas_afectadas:
+      - "backend"
+
   - task_id: "TASK-003"
     titulo: "Correccion school_id usuarios - Institucion Default"
     tipo: "bugfix"
@@ -68,7 +81,7 @@ historial:
     fecha_fin: "2026-01-25"
     agente: "CLAUDE-CODE"
     carpeta: "TASK-002-fix-api-response-contracts/"
-    commit: "pendiente"
+    commit: "5adb9dd8"
     story_points: 8
     capas_afectadas:
       - "backend"
