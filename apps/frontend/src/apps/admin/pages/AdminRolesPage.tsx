@@ -43,7 +43,7 @@ import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { Card } from '@shared/components/Card';
 import { Button } from '@shared/components/Button';
 import { LoadingSpinner } from '@shared/components/LoadingSpinner';
-import { RolesTable, RoleEditor } from '../components/roles';
+import { RolesTable, RoleEditor, RoleActionsMenu } from '../components/roles';
 import type { Permission } from '@/services/api/adminTypes';
 
 export default function AdminRolesPage() {
@@ -68,6 +68,11 @@ export default function AdminRolesPage() {
 
   // Use useUserGamification hook with real API endpoint
   const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
+
+  // Get the currently selected role object
+  const selectedRole = selectedRoleId
+    ? roles.find((role) => role.roleId === selectedRoleId) || null
+    : null;
 
   // Fallback gamification data while loading or if data not available
   const displayGamificationData = gamificationData || {
@@ -167,16 +172,27 @@ export default function AdminRolesPage() {
     >
       <div className="space-y-6 p-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Roles y Permisos</h1>
             <p className="mt-1 text-gray-600">
               Gestiona los roles del sistema y sus permisos granulares
             </p>
           </div>
-          <Button onClick={() => refetch()} disabled={rolesLoading} variant="secondary">
-            🔄 Actualizar
-          </Button>
+          <div className="flex items-center gap-2">
+            <RoleActionsMenu
+              selectedRole={selectedRole}
+              onEditPermissions={() => {
+                if (selectedRoleId) {
+                  fetchRolePermissions(selectedRoleId);
+                }
+              }}
+              onRefresh={refetch}
+            />
+            <Button onClick={() => refetch()} disabled={rolesLoading} variant="secondary">
+              Actualizar
+            </Button>
+          </div>
         </div>
 
         {/* Error Messages */}

@@ -3,34 +3,39 @@
 **Tarea:** TASK-2026-01-25-ANALISIS-PORTAL-TEACHER
 **Fase:** FASE-1 - Auditoría de Coherencia
 **Fecha:** 2026-01-25
+**Actualizado:** 2026-01-25 (Corrección crítica)
+
+> **CORRECCIÓN IMPORTANTE (2026-01-25):** Este documento contenía información INCORRECTA.
+> Los gaps GAP-IMPL-001 y GAP-IMPL-002 fueron marcados como "no implementados" pero
+> en realidad están **100% IMPLEMENTADOS** en el código. Ver diagnóstico completo en:
+> TASK-2026-01-25-DIAGNOSTICO-ANALISIS-GAMILIT
 
 ---
 
-## 1. User Stories NO Implementadas
+## 1. User Stories - Estado Actualizado
 
-### GAP-IMPL-001: US-PM-006 - Bloquear/Desbloquear Alumnos
+### GAP-IMPL-001: US-PM-006 - Bloquear/Desbloquear Alumnos ✅ IMPLEMENTADO
 
-**Severidad:** 🔴 CRÍTICA
+**Estado:** ✅ **100% IMPLEMENTADO** (Corregido 2026-01-25)
+**Severidad:** ~~🔴 CRÍTICA~~ → Ninguna
 **Story Points:** 8 SP
 **Presupuesto:** $3,200 MXN
 **Dependencias:** RF-AUTH-002, ET-AUTH-002, EXT-010 (opcional)
 
-#### Estado de Componentes
+#### Estado de Componentes (ACTUALIZADO 2026-01-25)
 
 | Capa | Componente | Estado | Notas |
 |------|-----------|--------|-------|
 | **BD** | Columna `profiles.status` | ✅ Existe | Valores: active, inactive, suspended |
-| **BD** | Columna `profiles.status_changed_at` | ❌ Falta | Timestamp de cambio |
-| **BD** | Columna `profiles.status_changed_by` | ❌ Falta | UUID del teacher |
-| **BD** | Columna `profiles.status_reason` | ❌ Falta | Motivo de suspensión |
-| **BD** | RLS policy para suspend | ❌ Falta | Solo teacher del classroom |
-| **Backend** | `UpdateStudentStatusDto` | ❌ Falta | DTO para el endpoint |
-| **Backend** | `TeacherService.updateStudentStatus()` | ❌ Falta | Método del servicio |
-| **Backend** | `PATCH /teacher/students/:id/status` | ❌ Falta | Endpoint |
-| **Frontend** | `useStudentStatus` hook | ❌ Falta | Hook para gestión |
-| **Frontend** | `SuspendStudentModal.tsx` | ❌ Falta | Modal de suspensión |
-| **Frontend** | `StudentActionsMenu.tsx` | ❌ Falta | Menú de acciones |
-| **Frontend** | Integración en TeacherStudentsPage | ❌ Falta | Botón/menú |
+| **BD** | Columnas de bloqueo | ✅ Existe | block_type, blocked_at, blocked_by, block_reason |
+| **BD** | RLS policy para suspend | ✅ Existe | Solo teacher del classroom |
+| **Backend** | `StudentBlockingService` | ✅ Implementado | student-blocking.service.ts |
+| **Backend** | `POST /classrooms/:id/students/:id/block` | ✅ Implementado | teacher-classrooms.controller.ts |
+| **Backend** | `POST /classrooms/:id/students/:id/unblock` | ✅ Implementado | teacher-classrooms.controller.ts |
+| **Frontend** | `useStudentBlocking` hook | ✅ Implementado | hooks/useStudentBlocking.ts |
+| **Frontend** | `SuspendStudentModal.tsx` | ✅ Implementado | monitoring/SuspendStudentModal.tsx |
+| **Frontend** | `StudentActionsMenu.tsx` | ✅ Implementado | monitoring/StudentActionsMenu.tsx |
+| **Frontend** | Integración en StudentMonitoringPanel | ✅ Implementado | Usado en 2 lugares |
 
 #### Plan de Implementación
 
@@ -60,33 +65,32 @@ Fase 3: Frontend (4h)
 
 ---
 
-### GAP-IMPL-002: US-PM-007 - Configuración de Alertas
+### GAP-IMPL-002: US-PM-007 - Configuración de Alertas ✅ IMPLEMENTADO
 
-**Severidad:** 🔴 CRÍTICA
+**Estado:** ✅ **100% IMPLEMENTADO** (Corregido 2026-01-25)
+**Severidad:** ~~🔴 CRÍTICA~~ → ⚠️ Menor (solo falta navegación UI)
 **Story Points:** 5 SP
 **Presupuesto:** $2,200 MXN
 **Dependencias:** US-PM-001a, Intervention Alerts System
 
-#### Estado de Componentes
+#### Estado de Componentes (ACTUALIZADO 2026-01-25)
 
 | Capa | Componente | Estado | Notas |
 |------|-----------|--------|-------|
-| **BD** | Tabla `teacher_alert_configurations` | ❌ Falta | Config por classroom |
-| **BD** | Columnas: classroom_id, alert_type, enabled, threshold, config | ❌ Falta | Estructura |
-| **BD** | RLS policies | ❌ Falta | Teacher del classroom |
-| **Backend** | `AlertConfigService` | ❌ Falta | Servicio completo |
-| **Backend** | `AlertConfigController` | ❌ Falta | Controlador |
-| **Backend** | DTOs (Get, Update, Preview) | ❌ Falta | Todos |
-| **Backend** | `GET /classrooms/:id/alert-config` | ❌ Falta | Obtener config |
-| **Backend** | `PATCH /classrooms/:id/alert-config` | ❌ Falta | Actualizar |
-| **Backend** | `POST /classrooms/:id/alert-config/preview` | ❌ Falta | Preview |
-| **Backend** | `GET /classrooms/:id/alert-config/history` | ❌ Falta | Historial |
-| **Frontend** | `TeacherAlertConfigPage.tsx` | ❌ Falta | Página principal |
-| **Frontend** | `AlertConfigCard.tsx` | ❌ Falta | Card de config |
-| **Frontend** | `ThresholdSlider.tsx` | ❌ Falta | Slider de umbral |
-| **Frontend** | `AffectedStudentsPreview.tsx` | ❌ Falta | Preview |
-| **Frontend** | `useAlertConfig` hook | ❌ Falta | Hook |
-| **Frontend** | Ruta `/teacher/classrooms/:id/alert-config` | ❌ Falta | Ruta |
+| **Backend** | `AlertConfigService` | ✅ Implementado | alert-config.service.ts |
+| **Backend** | `AlertConfigController` | ✅ Implementado | alert-config.controller.ts |
+| **Backend** | DTOs (Get, Update, Create, Delete) | ✅ Implementado | Todos |
+| **Backend** | `GET /teacher/alert-config` | ✅ Implementado | Obtener configs |
+| **Backend** | `GET /teacher/alert-config/defaults` | ✅ Implementado | Valores por defecto |
+| **Backend** | `POST /teacher/alert-config` | ✅ Implementado | Crear config |
+| **Backend** | `PUT /teacher/alert-config/:id` | ✅ Implementado | Actualizar |
+| **Backend** | `DELETE /teacher/alert-config/:id` | ✅ Implementado | Eliminar |
+| **Backend** | `POST /teacher/alert-config/initialize` | ✅ Implementado | Inicializar defaults |
+| **Frontend** | `TeacherAlertConfigPage.tsx` | ✅ Implementado | Página completa con 6 tipos de alerta |
+| **Frontend** | `useAlertConfig` hook | ✅ Implementado | CRUD completo |
+| **Frontend** | `alertConfigApi.ts` | ✅ Implementado | API client |
+| **Frontend** | Ruta `/teacher/settings/alerts` | ✅ Registrada | App.tsx línea 333-340 |
+| **Frontend** | Navegación desde UI | ⚠️ Falta | No hay link en sidebar ni settings |
 
 #### Plan de Implementación
 
@@ -309,26 +313,30 @@ Endpoints implementados en backend pero no consumidos completamente en frontend:
 
 ---
 
-## 4. Resumen de Trabajo Pendiente
+## 4. Resumen de Trabajo Pendiente (ACTUALIZADO 2026-01-25)
 
 ### Por Prioridad
 
-| Prioridad | Item | Tipo | Horas |
-|-----------|------|------|-------|
-| ~~P0~~ | ~~Crear manualReviewApi.ts~~ | ~~Código~~ | ~~2h~~ ✅ HECHO |
-| P1 | Implementar US-PM-006 (Bloquear Alumnos) | Full-stack | 10h |
-| P1 | Implementar US-PM-007 (Config Alertas) | Full-stack | 15h |
-| P2 | Resolver US-PM-009 (Recursos) | Frontend | 4h |
-| P3 | Integrar endpoints no usados | Frontend | 4h |
+| Prioridad | Item | Tipo | Horas | Estado |
+|-----------|------|------|-------|--------|
+| ~~P0~~ | ~~Crear manualReviewApi.ts~~ | ~~Código~~ | ~~2h~~ | ✅ HECHO |
+| ~~P1~~ | ~~Implementar US-PM-006 (Bloquear Alumnos)~~ | ~~Full-stack~~ | ~~10h~~ | ✅ **YA IMPLEMENTADO** |
+| ~~P1~~ | ~~Implementar US-PM-007 (Config Alertas)~~ | ~~Full-stack~~ | ~~15h~~ | ✅ **YA IMPLEMENTADO** |
+| P1 | Agregar navegación a TeacherAlertConfigPage | Frontend | 1.5h | PENDIENTE |
+| P2 | Resolver US-PM-009 (Recursos) | Frontend | 4h | PENDIENTE |
+| P3 | Integrar endpoints no usados | Frontend | 4h | PENDIENTE |
 
-### Por Capa
+### Por Capa (Trabajo Real Pendiente)
 
 | Capa | Horas Estimadas |
 |------|-----------------|
-| Base de Datos | 5h |
-| Backend | 10h |
-| Frontend | 20h |
-| **TOTAL** | **35h** |
+| Base de Datos | 0h |
+| Backend | 0h |
+| Frontend | 9.5h |
+| **TOTAL** | **9.5h** |
+
+> **NOTA:** Las 25.5 horas originalmente estimadas para US-PM-006 y US-PM-007 no son necesarias
+> porque ambas funcionalidades ya están implementadas en el código.
 
 ---
 

@@ -3,6 +3,12 @@
 **Tarea:** TASK-2026-01-25-ANALISIS-PORTAL-TEACHER
 **Fase:** FASE-1 - Auditoría de Coherencia
 **Fecha:** 2026-01-25
+**Actualizado:** 2026-01-25 (Corrección crítica - ver nota al final)
+
+> **CORRECCIÓN IMPORTANTE (2026-01-25):** Este documento fue corregido porque contenía
+> información incorrecta sobre US-PM-006 y US-PM-007. Ambas funcionalidades están
+> **100% implementadas**, no al 0% como se indicaba originalmente.
+> Ver: TASK-2026-01-25-DIAGNOSTICO-ANALISIS-GAMILIT
 
 ---
 
@@ -56,8 +62,8 @@
 | US-PM-005a | Classroom Analytics | Backlog | ✅ 100% | TeacherAnalytics.tsx | **US incorrecta** |
 | US-PM-005b | Report Generation | Backlog | ✅ 100% | TeacherReports.tsx | **US incorrecta** |
 | US-PM-005c | Engagement Metrics | Backlog | ✅ 100% | TeacherAnalytics.tsx | **US incorrecta** |
-| **US-PM-006** | Bloquear Alumnos | Backlog | ❌ 0% | - | **CRÍTICO** |
-| **US-PM-007** | Config Alertas | Backlog | ❌ 0% | - | **CRÍTICO** |
+| **US-PM-006** | Bloquear Alumnos | Done | ✅ 100% | StudentMonitoringPanel, SuspendStudentModal, StudentActionsMenu | Ninguno |
+| **US-PM-007** | Config Alertas | Done | ✅ 100% | TeacherAlertConfigPage, useAlertConfig | Falta navegación UI |
 | US-PM-008 | Gamification Mgmt | Done | ✅ 100% | TeacherGamification.tsx | Ninguno |
 | US-PM-009 | Resources Mgmt | Done | ⚠️ 60% | ResourceSharingPanel | Falta página |
 | US-PM-010 | Communication Center | Done | ✅ 100% | TeacherCommunication.tsx | Ninguno |
@@ -69,10 +75,12 @@
 
 | Estado Documentado | Cantidad | Implementada | No Implementada |
 |-------------------|----------|--------------|-----------------|
-| Done | 7 | 6 | 1 (US-PM-009 parcial) |
+| Done | 9 | 8 | 1 (US-PM-009 parcial) |
 | In Progress | 1 | 1 | 0 |
-| Backlog | 13 | 11 | **2 (US-PM-006, 007)** |
-| **TOTAL** | **21** | **18** | **3** |
+| Backlog | 11 | 11 | 0 |
+| **TOTAL** | **21** | **20** | **1** |
+
+> **NOTA:** US-PM-006 y US-PM-007 fueron movidas a "Done" tras verificación de código real.
 
 ---
 
@@ -179,10 +187,11 @@
 
 ### 7.1 Brechas Críticas
 
-1. **US-PM-006 y US-PM-007** - Funcionalidades documentadas pero NO implementadas
+1. ~~**US-PM-006 y US-PM-007** - Funcionalidades documentadas pero NO implementadas~~ ✅ **CORREGIDO: Ambas están 100% implementadas**
 2. ~~**manualReviewApi.ts** - 11 endpoints backend sin servicio frontend~~ ✅ RESUELTO
 3. **9 páginas** implementadas sin User Story correspondiente
 4. **34 componentes** sin documentación formal
+5. **TeacherAlertConfigPage** - Implementada pero sin navegación desde UI (requiere agregar links)
 
 ### 7.2 Documentación Desactualizada
 

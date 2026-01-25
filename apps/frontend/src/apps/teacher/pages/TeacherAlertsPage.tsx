@@ -10,7 +10,8 @@ import {
 } from '@/services/api/teacher/interventionAlertsApi';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { AlertTriangle, Bell, Filter, X, TrendingUp, Activity, AlertCircle } from 'lucide-react';
+import { AlertTriangle, Bell, Filter, X, TrendingUp, Activity, AlertCircle, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { ALERT_TYPES, ALERT_PRIORITIES } from '../constants/alertTypes';
 import type { AlertPriority, AlertType } from '../types';
 
@@ -89,14 +90,21 @@ export default function TeacherAlertsPage() {
             </div>
           </div>
 
-          <DetectiveButton
-            variant="secondary"
-            onClick={() => setShowFilters(!showFilters)}
-            className="self-start md:self-center"
-          >
-            <Filter className="h-4 w-4" />
-            {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
-          </DetectiveButton>
+          <div className="flex flex-wrap gap-2 self-start md:self-center">
+            <DetectiveButton
+              variant="secondary"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter className="h-4 w-4" />
+              {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+            </DetectiveButton>
+            <Link to="/teacher/settings/alerts">
+              <DetectiveButton variant="secondary">
+                <Settings className="h-4 w-4" />
+                Configurar Alertas
+              </DetectiveButton>
+            </Link>
+          </div>
         </div>
 
         {/* Información contextual sobre tipos de alertas */}

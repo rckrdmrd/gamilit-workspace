@@ -13,7 +13,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import {
   User,
@@ -1269,6 +1269,23 @@ export default function TeacherSettingsPage() {
                       >
                         Ir a Preferencias de Notificaciones
                       </button>
+                    </div>
+
+                    {/* Intervention Alerts Configuration Link */}
+                    <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
+                      <h4 className="mb-2 text-sm font-bold text-orange-800">
+                        Configuración de Alertas de Intervención
+                      </h4>
+                      <p className="mb-3 text-xs text-orange-700">
+                        Personaliza los umbrales y criterios para las alertas automáticas de
+                        estudiantes en riesgo
+                      </p>
+                      <Link
+                        to="/teacher/settings/alerts"
+                        className="inline-block rounded-lg bg-detective-orange px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-detective-orange-dark"
+                      >
+                        Configurar Alertas de Intervención
+                      </Link>
                     </div>
 
                     <motion.button
