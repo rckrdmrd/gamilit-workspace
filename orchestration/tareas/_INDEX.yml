@@ -55,7 +55,7 @@ historial:
     fecha_fin: "2026-01-25"
     agente: "CLAUDE-CODE"
     carpeta: "TASK-007-deploy-production-scripts/"
-    commit: "0f5cad9c"
+    commit: "537b604f"
     story_points: 8
     capas_afectadas:
       - "devops"
