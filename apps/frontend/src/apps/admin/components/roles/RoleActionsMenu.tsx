@@ -21,13 +21,13 @@ import type { Role } from '@/services/api/adminTypes';
 export interface RoleActionsMenuProps {
   selectedRole: Role | null;
   onEditPermissions: () => void;
-  onRefresh: () => void;
+  onRefresh?: () => void;
 }
 
 export const RoleActionsMenu: React.FC<RoleActionsMenuProps> = ({
   selectedRole,
   onEditPermissions,
-  onRefresh,
+  onRefresh: _onRefresh,
 }) => {
   const [showInfo, setShowInfo] = useState(false);
 
