@@ -5,6 +5,7 @@ import { BadRequestException } from '@nestjs/common';
 import { PasswordRecoveryService } from '../password-recovery.service';
 import { User, PasswordResetToken } from '../../entities';
 import { MailService } from '@/modules/mail/mail.service';
+import { SessionManagementService } from '../session-management.service';
 
 /**
  * Tests para PasswordRecoveryService
@@ -18,9 +19,9 @@ import { MailService } from '@/modules/mail/mail.service';
  */
 describe('PasswordRecoveryService', () => {
   let service: PasswordRecoveryService;
-  let _userRepository: Repository<User>;
-  let _tokenRepository: Repository<PasswordResetToken>;
-  let _mailService: MailService;
+  let userRepository: Repository<User>;
+  let tokenRepository: Repository<PasswordResetToken>;
+  let mailService: MailService;
 
   // Mock repositories
   const mockUserRepository = {
@@ -41,6 +42,11 @@ describe('PasswordRecoveryService', () => {
     sendPasswordResetEmail: jest.fn(),
   };
 
+  const mockSessionManagementService = {
+    revokeAllUserSessions: jest.fn().mockResolvedValue(undefined),
+    revokeSessionById: jest.fn().mockResolvedValue(undefined),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -56,6 +62,10 @@ describe('PasswordRecoveryService', () => {
         {
           provide: MailService,
           useValue: mockMailService,
+        },
+        {
+          provide: SessionManagementService,
+          useValue: mockSessionManagementService,
         },
       ],
     }).compile();
