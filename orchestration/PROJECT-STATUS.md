@@ -2,7 +2,7 @@
 
 **Sistema:** SIMCO v4.3.0
 **Proyecto:** Gamilit
-**Nivel:** CONSUMER (Hereda de template-saas)
+**Nivel:** STANDALONE - Referencia Interna
 **Fecha:** 2026-01-24
 
 ---

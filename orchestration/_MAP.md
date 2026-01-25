@@ -1,7 +1,7 @@
 # MAPA DE ORQUESTACION: GAMILIT
 
 **Proyecto:** GAMILIT - Plataforma de Gamificacion Educativa
-**Nivel:** CONSUMER (L2) - Hereda de workspace-v2
+**Nivel:** STANDALONE - Referencia Interna del Workspace
 **Sistema:** NEXUS v4.0 + SIMCO v4.3.0
 **Estandar:** SIMCO-ESTANDAR-ORCHESTRATION v1.0.0
 **Ultima actualizacion:** 2026-01-24
@@ -13,7 +13,7 @@
 ```
 orchestration/
 ├── _MAP.md                     # [ESTE ARCHIVO] Mapa de navegacion
-├── _inheritance.yml            # Herencia: workspace-v2 -> gamilit
+├── _inheritance.yml            # Tipo: STANDALONE + REFERENCIA_INTERNA
 ├── BOOTLOADER.md               # Protocolo de arranque NEXUS
 ├── CONTEXT-MAP.yml             # Configuracion contexto automatico
 ├── PROJECT-PROFILE.yml         # Perfil y metadata del proyecto
@@ -59,7 +59,7 @@ orchestration/
 
 ---
 
-## Archivos Principales (10 - Estandar CONSUMER)
+## Archivos Principales (10 - Estandar STANDALONE)
 
 | Archivo | Proposito |
 |---------|-----------|
