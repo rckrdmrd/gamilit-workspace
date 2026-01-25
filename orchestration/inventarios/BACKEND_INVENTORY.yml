@@ -4,19 +4,19 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.9.1"
+  version: "3.10.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-18"
-  last_update_task: "TASK-2026-01-18-007"
-  generated_by: "RECONCILIACION-INTEGRAL Plan Maestro GAMILIT - Conteo real filesystem"
+  last_updated: "2026-01-24"
+  last_update_task: "AUDIT-GAMILIT-2026-01-24"
+  generated_by: "Auditoría documentación completa - Conteo real filesystem"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
   total_modules: 17  # RECONCILIADO 2026-01-16 - 17 módulos con código
   total_entities: 124  # ETC-001: +1 UserFollow entity
   total_dtos: 331  # ETC-001: -6 re-exports eliminados
-  total_services: 104  # CONSOLIDADO 2026-01-16 - eliminado notifications.service.ts deprecated
-  total_controllers: 75  # RECONCILIADO 2026-01-16 ✓
+  total_services: 104  # AUDITADO 2026-01-24 - 104 services confirmados
+  total_controllers: 87  # AUDITADO 2026-01-24 - +12 controllers agregados desde última reconciliación
   total_endpoints: 612  # Verificado 2026-01-13 (conteo real de @Get/@Post/@Put/@Delete/@Patch)
   typescript_errors: 0  # ⚠️ 2025-11-28: Backend tiene errores PREEXISTENTES en tests auth (no en admin)
   build_status: "✅ BUILD PASSING"  # ETC-001: Validado 2026-01-16
@@ -1128,20 +1128,25 @@ dtos:
 # SERVICES (Business Logic)
 # ============================================================================
 services:
-  count: 55
+  count: 104  # AUDITADO 2026-01-24 - Conteo real del filesystem (alineado con metadata)
   by_module:
-    auth: 5
-    admin: 4
-    educational: 4
-    assignments: 1
-    gamification: 8
-    progress: 7
-    social: 9
-    content: 5
-    notifications: 1
-    teacher: 5
-    audit: 1
-    tasks: 2
+    admin: 22  # alerts, analytics, assignments, content, dashboard, interventions, monitoring, organizations, progress, reports, roles, system, users, bulk-operations, classroom-assignments, feature-flags, gamification-config + stats (3 subcarpetas)
+    auth: 5  # email-verification, password-recovery, security, session-management + auth base
+    assignments: 1  # assignments
+    audit: 1  # audit
+    content: 10  # authors, categories, templates, versions, flagged, marie-curie, media-files, media-metadata, moderation-rules, tags
+    educational: 4  # exercises, media-storage, media, modules
+    gamification: 14  # achievements, classroom-missions, comodines, leaderboard, mission-templates, missions, ml-coins, ranks, shop, user-stats + missions/ (claim, generator, progress)
+    health: 1  # health
+    lti: 3  # consumers, grade-passbacks, sessions
+    mail: 1  # mail
+    notifications: 6  # preference, queue, template, notification, push, user-device
+    profile: 1  # profile
+    progress: 14  # certificate, engagement-metrics, exercise-attempt, exercise-submission, learning-session, module-progress, pending-activities, recent-activity, scheduled-mission, session-cleanup + grading/ (2) + validators/ (1)
+    social: 11  # challenge-participants, classroom-members, classrooms, friendships, peer-challenges, schools, team-challenges, team-members, teams, user-activities, user-follows
+    tasks: 3  # achievement-reconciliation-cron, missions-cron, notifications-cron
+    teacher: 8  # analytics, bonus-coins, exercise-responses, grading, intervention-alerts, manual-review, ml-predictor + teacher base
+    websocket: 1  # websocket
 
   auth_services:
     - name: "AuthService"
@@ -1279,18 +1284,21 @@ services:
 # CONTROLLERS (API Endpoints)
 # ============================================================================
 controllers:
-  count: 41
+  count: 87  # AUDITADO 2026-01-24 - Conteo real del filesystem
   by_module:
-    admin: 4
-    assignments: 1
-    auth: 2
-    content: 5
-    educational: 4
-    gamification: 9
-    notifications: 1
-    progress: 5
-    social: 9
-    teacher: 2
+    admin: 22  # bulk, analytics, monitoring, system, logs, alerts, assignments, content, dashboard, gamification-config, interventions, organizations, progress, reports, roles, user-stats, users, classroom-assignments, classroom-teachers, feature-flags
+    assignments: 2  # assignments, student-assignments
+    auth: 3  # auth, password, users
+    content: 10  # authors, categories, templates, versions, flagged, marie-curie, media-files, media-metadata, moderation-rules, tags
+    educational: 5  # exercises, media-upload, media, modules, exercise-validation
+    gamification: 10  # achievements, classroom-missions, comodines, leaderboard, mission-templates, missions, ml-coins, ranks, shop, user-stats
+    health: 1  # health
+    lti: 3  # consumers, grade-passbacks, sessions
+    notifications: 5  # devices, multichannel, preferences, templates, notifications
+    profile: 1  # profile
+    progress: 6  # certificate, exercise-attempt, exercise-submission, learning-session, module-progress, scheduled-mission
+    social: 11  # user-follows, peer-challenges, challenge-participants, schools, classrooms, classroom-members, teams, team-members, team-challenges, friendships, user-activities
+    teacher: 9  # exercise-responses, intervention-alerts, manual-review, classrooms, communication, content, grades, teacher
 
   base_path: "/api"
   swagger_path: "/api/docs"

@@ -2,11 +2,11 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "4.5.0"
+version: "4.6.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
 fecha_actualizacion: "2026-01-24"
-actualizado_por: "TASK-2026-01-24-ANALISIS-STUDENT-PORTAL - Student Portal Analysis Complete"
-last_update_task: "TASK-2026-01-24-ANALISIS-STUDENT-PORTAL"
+actualizado_por: "AUDIT-GAMILIT-2026-01-24 - Auditoria Documentacion Completa"
+last_update_task: "AUDIT-GAMILIT-2026-01-24"
 
 # =============================================================================
 # RESUMEN EJECUTIVO
@@ -40,14 +40,14 @@ resumen:
 
   backend:
     modules: 17
-    entities: 125  # ACTUALIZADO ETC-001 - agregada UserFollow entity
+    entities: 124  # AUDITADO 2026-01-24 - corregido a valor real
     dtos: 331  # ACTUALIZADO ETC-001 - eliminados 6 re-exports de notification DTOs
-    services: 105  # RECONCILIADO 2026-01-16 ✓
-    controllers: 75  # RECONCILIADO 2026-01-16 ✓
+    services: 104  # AUDITADO 2026-01-24 - conteo real filesystem
+    controllers: 87  # AUDITADO 2026-01-24 - +12 desde ultima reconciliacion
     endpoints: 612
     build_status: "Builds successfully"
     coherencia_bd: "99%"  # RECONCILIADO 2026-01-16 (124 entities / 137 tables)
-    last_verified: "2026-01-16"
+    last_verified: "2026-01-24"
     source: "BACKEND_INVENTORY.yml"
     api_docs:
       - "docs/90-transversal/api/API-TEACHER-MODULE.md"
