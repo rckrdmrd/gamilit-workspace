@@ -2,8 +2,8 @@
 
 **Proyecto:** GAMILIT
 **Modulo:** Student Portal
-**Ultima actualizacion:** 2026-01-20
-**Version:** 1.0.0
+**Ultima actualizacion:** 2026-01-24
+**Version:** 2.0.0
 
 ---
 
@@ -14,7 +14,20 @@ docs/95-guias-desarrollo/student-portal/
 |
 +-- README.md                    <- Documento principal (este directorio)
 +-- _MAP.md                      <- Mapa de navegacion (este archivo)
-+-- AUTH-PAGES-SPEC.md           <- Especificacion paginas autenticacion (NEW)
++-- AUTH-PAGES-SPEC.md           <- Especificacion paginas autenticacion
+|
++-- SPEC-*.md                    <- Especificaciones por dominio (FASE 2)
+|   +-- SPEC-DASHBOARD.md        <- Dashboard: componentes, hooks, APIs
+|   +-- SPEC-EXERCISES.md        <- Ejercicios: auto-save, power-ups, submit
+|   +-- SPEC-GAMIFICATION.md     <- Ranks, ML Coins, Missions, Shop
+|   +-- SPEC-ACHIEVEMENTS.md     <- Logros: 9 categorias, 4 raridades
+|   +-- SPEC-PROFILE.md          <- Perfil: settings, 2FA, dispositivos
+|   +-- SPEC-SOCIAL.md           <- Social: amigos, guilds, notificaciones
+|   +-- SPEC-PROGRESS.md         <- Progreso: modulos, streaks, actividad
+|   +-- SPEC-MODULES.md          <- Modulos educativos, prerequisitos
+|   +-- SPEC-API-CONTRACTS.md    <- Contratos API: 80+ endpoints
+|   +-- SPEC-MULTIMEDIA.md       <- Multimedia: avatars, iconos, animaciones
+|   +-- SPEC-PDF-EXCEL.md        <- Generacion archivos (limitado)
 |
 +-- analysis/                    <- Analisis de implementacion
 |   +-- (documentos de analisis)
@@ -37,6 +50,26 @@ docs/95-guias-desarrollo/student-portal/
     +-- TRACE-GAP-002.md
     +-- TRACE-GAP-008.md
 ```
+
+---
+
+## ESPECIFICACIONES POR DOMINIO (SPEC-*.md)
+
+Las especificaciones SPEC-*.md documentan completamente cada dominio funcional del Student Portal, incluyendo: paginas, componentes, hooks, APIs consumidas, tipos de datos, y gaps conocidos.
+
+| Documento | Dominio | Contenido Principal |
+|-----------|---------|---------------------|
+| `SPEC-DASHBOARD.md` | Dashboard | DashboardComplete, StatsGrid, ModulesSection, 4 APIs |
+| `SPEC-EXERCISES.md` | Ejercicios | ExercisePage, Auto-save, Power-ups, 8+ mecánicas |
+| `SPEC-GAMIFICATION.md` | Gamificación | Ranks Maya, ML Coins, Missions, Shop, Leaderboard |
+| `SPEC-ACHIEVEMENTS.md` | Logros | 9 categorías, 4 raridades, AchievementToast |
+| `SPEC-PROFILE.md` | Perfil | ProfilePage, Settings, 2FA (MOCK), Dispositivos |
+| `SPEC-SOCIAL.md` | Social | Friends, Guilds, Notifications WebSocket |
+| `SPEC-PROGRESS.md` | Progreso | Streaks, estadísticas, actividad reciente |
+| `SPEC-MODULES.md` | Módulos | Prerequisitos, estados, recompensas |
+| `SPEC-API-CONTRACTS.md` | APIs | 80+ endpoints, tipos, códigos de error |
+| `SPEC-MULTIMEDIA.md` | Multimedia | Avatars, iconos, animaciones, accesibilidad |
+| `SPEC-PDF-EXCEL.md` | Exportación | Capacidades limitadas, planificación futura |
 
 ---
 
@@ -95,16 +128,18 @@ docs/95-guias-desarrollo/student-portal/
 
 ### Desarrollador Frontend
 
-1. Comenzar por: `gaps/STUDENT-GAP-006-profile-stats.md`
-2. Revisar: `gaps/STUDENT-GAP-007-settings-persistence.md`
-3. Revisar: `AUTH-PAGES-SPEC.md` (paginas de autenticacion)
-4. Consultar: `dependencies/DEPENDENCY-MATRIX.md`
+1. Comenzar por: `SPEC-DASHBOARD.md` (componentes principales)
+2. Revisar: `SPEC-EXERCISES.md` (flujo de ejercicios)
+3. Revisar: `SPEC-GAMIFICATION.md` (sistema de recompensas)
+4. Consultar: `SPEC-API-CONTRACTS.md` (endpoints consumidos)
+5. Referencias legacy: `gaps/STUDENT-GAP-006-profile-stats.md`
 
 ### Desarrollador Backend
 
-1. Comenzar por: `gaps/STUDENT-GAP-001-missions-rewards.md`
-2. Revisar: `gaps/STUDENT-GAP-008-backend-statistics.md`
-3. Consultar: `docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md`
+1. Comenzar por: `SPEC-API-CONTRACTS.md` (contratos de API)
+2. Revisar: `SPEC-GAMIFICATION.md` (lógica de gamificación)
+3. Revisar: `SPEC-SOCIAL.md` (endpoints sociales)
+4. Consultar: `docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md`
 
 ### QA / Tester
 
@@ -155,8 +190,12 @@ docs/95-guias-desarrollo/student-portal/
 | 2026-01-20 | - | Integracion de resultados FASE 1-2-3 |
 | 2026-01-20 | - | Referencias a 6 documentos nuevos |
 | 2026-01-20 | 1.1.0 | Agregado AUTH-PAGES-SPEC.md (4 paginas autenticacion) |
+| 2026-01-24 | 2.0.0 | **FASE 2 COMPLETADA:** 11 archivos SPEC-*.md agregados |
+| 2026-01-24 | - | Especificaciones completas por dominio funcional |
+| 2026-01-24 | - | Contratos API documentados (80+ endpoints) |
+| 2026-01-24 | - | Gaps identificados y documentados (85+) |
 
 ---
 
-_Mapa generado: 2026-01-20_
-_Autor: Documentation-Agent_
+_Mapa generado: 2026-01-24_
+_Sistema SIMCO v4.3.0_
