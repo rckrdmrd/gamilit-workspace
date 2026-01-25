@@ -12,17 +12,16 @@ describe('FeatureFlagsService', () => {
 
   const mockFeatureFlag: Partial<FeatureFlag> = {
     id: '1',
-    feature_key: 'test_feature',
-    feature_name: 'Test Feature',
+    flag_key: 'test_feature',
+    flag_name: 'Test Feature',
     description: 'Test feature description',
     is_enabled: true,
     rollout_percentage: 50,
-    target_users: ['user1', 'user2'],
-    target_roles: ['admin', 'teacher'],
-    target_conditions: {},
-    metadata: { category: 'testing' },
+    target_users: ['user1', 'user2'] as any,
+    target_roles: ['admin', 'teacher'] as any,
+    category: 'gamification' as any,
+    config_options: { targetConditions: {} },
     created_by: 'admin',
-    updated_by: null,
     created_at: new Date(),
     updated_at: new Date(),
   };
@@ -79,7 +78,7 @@ describe('FeatureFlagsService', () => {
       const result = await service.findAll();
 
       expect(mockRepository.createQueryBuilder).toHaveBeenCalledWith('ff');
-      expect(queryBuilder.orderBy).toHaveBeenCalledWith('ff.feature_name', 'ASC');
+      expect(queryBuilder.orderBy).toHaveBeenCalledWith('ff.flag_name', 'ASC');
       expect(result).toEqual([mockFeatureFlag]);
     });
 
@@ -107,11 +106,11 @@ describe('FeatureFlagsService', () => {
 
       mockRepository.createQueryBuilder.mockReturnValue(queryBuilder);
 
-      const query: FeatureFlagQueryDto = { category: 'testing' };
+      const query: FeatureFlagQueryDto = { category: 'gamification' };
       await service.findAll(query);
 
-      expect(queryBuilder.andWhere).toHaveBeenCalledWith('ff.metadata @> :category', {
-        category: JSON.stringify({ category: 'testing' }),
+      expect(queryBuilder.andWhere).toHaveBeenCalledWith('ff.category = :category', {
+        category: 'gamification',
       });
     });
   });
@@ -127,8 +126,8 @@ describe('FeatureFlagsService', () => {
       const result = await service.findOne('test_feature');
 
       expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { feature_key: 'test_feature' },
-        relations: ['creator', 'updater'],
+        where: { flag_key: 'test_feature' },
+        relations: ['creator'],
       });
       expect(result).toEqual(mockFeatureFlag);
     });
@@ -166,23 +165,20 @@ describe('FeatureFlagsService', () => {
       const result = await service.create(createDto, 'admin');
 
       expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { feature_key: 'new_feature' },
+        where: { flag_key: 'new_feature' },
       });
-      expect(mockRepository.create).toHaveBeenCalledWith({
-        feature_key: 'new_feature',
-        feature_name: 'New Feature',
-        description: 'New feature description',
-        is_enabled: true,
-        rollout_percentage: 25,
-        target_users: ['user1'],
-        target_roles: ['admin'],
-        target_conditions: {},
-        metadata: {
-          priority: 'high',
-          category: 'testing',
-        },
-        created_by: 'admin',
-      });
+      expect(mockRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          flag_key: 'new_feature',
+          flag_name: 'New Feature',
+          description: 'New feature description',
+          is_enabled: true,
+          rollout_percentage: 25,
+          target_users: ['user1'],
+          target_roles: ['admin'],
+          created_by: 'admin',
+        }),
+      );
       expect(mockRepository.save).toHaveBeenCalled();
       expect(result).toEqual(mockFeatureFlag);
     });
@@ -211,7 +207,6 @@ describe('FeatureFlagsService', () => {
         expect.objectContaining({
           is_enabled: false,
           rollout_percentage: 0,
-          target_conditions: {},
         })
       );
     });
@@ -231,12 +226,12 @@ describe('FeatureFlagsService', () => {
     it('should update a feature flag successfully', async () => {
       const existingFlag = { ...mockFeatureFlag };
       mockRepository.findOne.mockResolvedValue(existingFlag);
-      mockRepository.save.mockResolvedValue({ ...existingFlag, ...updateDto });
+      mockRepository.save.mockImplementation((entity) => Promise.resolve(entity));
 
       const result = await service.update('test_feature', updateDto, 'admin');
 
       expect(mockRepository.save).toHaveBeenCalled();
-      expect(result.feature_name).toBe('Updated Name');
+      expect(result.flag_name).toBe('Updated Name');
     });
 
     it('should throw NotFoundException when feature flag not found', async () => {
@@ -246,22 +241,22 @@ describe('FeatureFlagsService', () => {
     });
 
     it('should update metadata and category correctly', async () => {
-      const existingFlag = { ...mockFeatureFlag };
+      const existingFlag = { ...mockFeatureFlag, config_options: {} };
       mockRepository.findOne.mockResolvedValue(existingFlag);
       mockRepository.save.mockImplementation((entity) => Promise.resolve(entity));
 
       const updateWithMetadata: UpdateFeatureFlagDto = {
         metadata: { newField: 'value' },
-        category: 'new_category',
+        category: 'gamification',
       };
 
       await service.update('test_feature', updateWithMetadata, 'admin');
 
       expect(mockRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          metadata: expect.objectContaining({
+          category: 'gamification',
+          config_options: expect.objectContaining({
             newField: 'value',
-            category: 'new_category',
           }),
         })
       );

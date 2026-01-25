@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { AdminRolesService } from '../services/admin-roles.service';
 import { Role } from '@modules/auth/entities/role.entity';
@@ -16,7 +16,7 @@ describe('AdminRolesService', () => {
     id: 'role-1',
     name: 'admin',
     description: 'Administrator role',
-    permissions: ['can_create_content', 'can_edit_content', 'can_delete_content'],
+    permissions: { can_create_content: true, can_edit_content: true, can_delete_content: true },
     is_active: true,
     created_at: new Date('2024-01-01'),
     updated_at: new Date('2024-01-01'),
@@ -26,7 +26,7 @@ describe('AdminRolesService', () => {
     id: 'role-2',
     name: 'student',
     description: 'Student role',
-    permissions: ['can_view_content'],
+    permissions: { can_view_content: true },
     is_active: true,
     created_at: new Date('2024-01-01'),
     updated_at: new Date('2024-01-01'),
@@ -45,6 +45,24 @@ describe('AdminRolesService', () => {
     find: jest.fn(),
   };
 
+  const mockDataSource = {
+    createQueryRunner: jest.fn().mockReturnValue({
+      connect: jest.fn(),
+      startTransaction: jest.fn(),
+      commitTransaction: jest.fn(),
+      rollbackTransaction: jest.fn(),
+      release: jest.fn(),
+      manager: {
+        save: jest.fn(),
+        findOne: jest.fn(),
+      },
+    }),
+    manager: {
+      transaction: jest.fn(),
+    },
+    query: jest.fn().mockResolvedValue([]),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -57,12 +75,16 @@ describe('AdminRolesService', () => {
           provide: getRepositoryToken(UserRole, 'auth'),
           useValue: mockUserRoleRepository,
         },
+        {
+          provide: getDataSourceToken('auth'),
+          useValue: mockDataSource,
+        },
       ],
     }).compile();
 
     service = module.get<AdminRolesService>(AdminRolesService);
-    roleRepository = module.get<Repository<Role>>(getRepositoryToken(Role, 'auth'));
-    userRoleRepository = module.get<Repository<UserRole>>(getRepositoryToken(UserRole, 'auth'));
+    _roleRepository = module.get<Repository<Role>>(getRepositoryToken(Role, 'auth'));
+    _userRoleRepository = module.get<Repository<UserRole>>(getRepositoryToken(UserRole, 'auth'));
 
     // Reset mocks
     jest.clearAllMocks();
@@ -94,7 +116,7 @@ describe('AdminRolesService', () => {
         id: 'role-1',
         name: 'admin',
         description: 'Administrator role',
-        permissions: ['can_create_content', 'can_edit_content', 'can_delete_content'],
+        permissions: { can_create_content: true, can_edit_content: true, can_delete_content: true },
         is_active: true,
         users_count: 5,
       });
@@ -167,7 +189,7 @@ describe('AdminRolesService', () => {
       expect(result).toEqual({
         role_id: 'role-1',
         role_name: 'admin',
-        permissions: ['can_create_content', 'can_edit_content', 'can_delete_content'],
+        permissions: { can_create_content: true, can_edit_content: true, can_delete_content: true },
         updated_at: '2024-01-01T00:00:00.000Z',
       });
     });
@@ -179,13 +201,13 @@ describe('AdminRolesService', () => {
       await expect(service.getRolePermissions('non-existent')).rejects.toThrow('Role with ID non-existent not found');
     });
 
-    it('should return empty permissions array if role has no permissions', async () => {
-      const roleWithoutPerms = { ...mockRole, permissions: [] };
+    it('should return empty permissions object if role has no permissions', async () => {
+      const roleWithoutPerms = { ...mockRole, permissions: {} };
       mockRoleRepository.findOne.mockResolvedValue(roleWithoutPerms);
 
       const result = await service.getRolePermissions('role-1');
 
-      expect(result.permissions).toEqual([]);
+      expect(result.permissions).toEqual({});
     });
   });
 

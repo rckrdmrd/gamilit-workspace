@@ -1,3 +1,43 @@
+// Mock exceljs BEFORE any imports
+jest.mock('exceljs', () => ({
+  Workbook: jest.fn().mockImplementation(() => ({
+    addWorksheet: jest.fn().mockReturnValue({
+      columns: [],
+      addRow: jest.fn(),
+      getRow: jest.fn().mockReturnValue({
+        font: {},
+        fill: {},
+        alignment: {},
+      }),
+    }),
+    xlsx: {
+      writeBuffer: jest.fn().mockResolvedValue(Buffer.from('test')),
+    },
+  })),
+}));
+
+// Mock pdfkit BEFORE any imports
+jest.mock('pdfkit', () => {
+  return jest.fn().mockImplementation(() => ({
+    pipe: jest.fn().mockReturnThis(),
+    fontSize: jest.fn().mockReturnThis(),
+    font: jest.fn().mockReturnThis(),
+    text: jest.fn().mockReturnThis(),
+    moveDown: jest.fn().mockReturnThis(),
+    fillColor: jest.fn().mockReturnThis(),
+    end: jest.fn(),
+    on: jest.fn((event, cb) => {
+      if (event === 'finish') cb();
+      return { on: jest.fn() };
+    }),
+  }));
+});
+
+// Mock csv-stringify
+jest.mock('csv-stringify/sync', () => ({
+  stringify: jest.fn().mockReturnValue('col1,col2\nval1,val2'),
+}));
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
@@ -84,7 +124,7 @@ describe('AdminReportsService', () => {
       providers: [
         AdminReportsService,
         {
-          provide: getRepositoryToken(AdminReport, 'auth'),
+          provide: getRepositoryToken(AdminReport, 'admin_dashboard'),
           useValue: mockReportRepository,
         },
         {
@@ -99,9 +139,9 @@ describe('AdminReportsService', () => {
     }).compile();
 
     service = module.get<AdminReportsService>(AdminReportsService);
-    reportRepository = module.get<Repository<AdminReport>>(getRepositoryToken(AdminReport, 'auth'));
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User, 'auth'));
-    tenantRepository = module.get<Repository<Tenant>>(getRepositoryToken(Tenant, 'auth'));
+    _reportRepository = module.get<Repository<AdminReport>>(getRepositoryToken(AdminReport, 'admin_dashboard'));
+    _userRepository = module.get<Repository<User>>(getRepositoryToken(User, 'auth'));
+    _tenantRepository = module.get<Repository<Tenant>>(getRepositoryToken(Tenant, 'auth'));
 
     // Reset mocks
     jest.clearAllMocks();
@@ -513,7 +553,7 @@ describe('AdminReportsService', () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [
           AdminReportsService,
-          { provide: getRepositoryToken(AdminReport, 'auth'), useValue: mockReportRepository },
+          { provide: getRepositoryToken(AdminReport, 'admin_dashboard'), useValue: mockReportRepository },
           { provide: getRepositoryToken(User, 'auth'), useValue: mockUserRepository },
           { provide: getRepositoryToken(Tenant, 'auth'), useValue: mockTenantRepository },
         ],

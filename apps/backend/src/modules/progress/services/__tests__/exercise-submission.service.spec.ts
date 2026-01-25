@@ -8,6 +8,11 @@ import { Exercise } from '@/modules/educational/entities';
 import { Profile } from '@/modules/auth/entities';
 import { UserStatsService } from '@/modules/gamification/services/user-stats.service';
 import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service';
+import { MissionsService } from '@/modules/gamification/services/missions.service';
+import { AchievementsService } from '@/modules/gamification/services/achievements.service';
+import { NotificationService } from '@/modules/notifications/notification.service';
+import { MailService } from '@/modules/notifications/mail.service';
+import { WebSocketService } from '@/modules/websocket/websocket.service';
 
 /**
  * Test suite for ExerciseSubmissionService
@@ -144,6 +149,37 @@ describe('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
             addCoins: jest.fn(),
           },
         },
+        {
+          provide: MissionsService,
+          useValue: {
+            findByTypeAndUser: jest.fn().mockResolvedValue([]),
+            updateProgress: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: AchievementsService,
+          useValue: {
+            checkAndGrantAchievements: jest.fn().mockResolvedValue([]),
+          },
+        },
+        {
+          provide: NotificationService,
+          useValue: {
+            sendNotification: jest.fn().mockResolvedValue(true),
+          },
+        },
+        {
+          provide: MailService,
+          useValue: {
+            sendNotificationEmail: jest.fn().mockResolvedValue(true),
+          },
+        },
+        {
+          provide: WebSocketService,
+          useValue: {
+            emitToUser: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -151,9 +187,9 @@ describe('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
     submissionRepo = module.get(getRepositoryToken(ExerciseSubmission, 'progress'));
     exerciseRepo = module.get(getRepositoryToken(Exercise, 'educational'));
     profileRepo = module.get(getRepositoryToken(Profile, 'auth'));
-    entityManager = module.get(getEntityManagerToken('progress'));
-    userStatsService = module.get(UserStatsService);
-    mlCoinsService = module.get(MLCoinsService);
+    _entityManager = module.get(getEntityManagerToken('progress'));
+    _userStatsService = module.get(UserStatsService);
+    _mlCoinsService = module.get(MLCoinsService);
   });
 
   describe('validateRuedaInferencias - Category Literal', () => {
@@ -608,6 +644,37 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
             addCoins: jest.fn(),
           },
         },
+        {
+          provide: MissionsService,
+          useValue: {
+            findByTypeAndUser: jest.fn().mockResolvedValue([]),
+            updateProgress: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: AchievementsService,
+          useValue: {
+            checkAndGrantAchievements: jest.fn().mockResolvedValue([]),
+          },
+        },
+        {
+          provide: NotificationService,
+          useValue: {
+            sendNotification: jest.fn().mockResolvedValue(true),
+          },
+        },
+        {
+          provide: MailService,
+          useValue: {
+            sendNotificationEmail: jest.fn().mockResolvedValue(true),
+          },
+        },
+        {
+          provide: WebSocketService,
+          useValue: {
+            emitToUser: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -616,8 +683,8 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
     exerciseRepo = module.get(getRepositoryToken(Exercise, 'educational'));
     profileRepo = module.get(getRepositoryToken(Profile, 'auth'));
     entityManager = module.get(getEntityManagerToken('progress'));
-    userStatsService = module.get(UserStatsService);
-    mlCoinsService = module.get(MLCoinsService);
+    _userStatsService = module.get(UserStatsService);
+    _mlCoinsService = module.get(MLCoinsService);
   });
 
   describe('Redundancy Detection - Should Reject', () => {
