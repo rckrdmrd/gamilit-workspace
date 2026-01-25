@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Logger,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Role } from '@modules/auth/entities/role.entity';
@@ -10,9 +16,18 @@ import {
   PermissionDto,
   UpdatePermissionsDto,
   RolePermissionsDto,
+  CreateRoleDto,
+  CreateRoleResponseDto,
+  DeleteRoleResponseDto,
 } from '../dto/roles';
 import { RequestUser } from '@shared/decorators/current-user.decorator';
 import { PermissionKeyEnum } from '@shared/constants';
+
+/**
+ * System roles that cannot be deleted or modified
+ * These are core roles required for the platform to function
+ */
+const SYSTEM_ROLES = ['student', 'admin_teacher', 'super_admin'];
 
 /**
  * FIX-2025-01-07 P0: Permission Metadata Registry
@@ -415,5 +430,172 @@ export class AdminRolesService {
     );
 
     return permissions;
+  }
+
+  /**
+   * Create a new custom role
+   * GAP-BE-006: CRUD Roles - Create operation
+   *
+   * @param createDto - Role creation data
+   * @param admin - Admin user creating the role (for audit trail)
+   * @returns Created role data
+   * @throws ConflictException if role name already exists
+   */
+  async createRole(
+    createDto: CreateRoleDto,
+    admin?: RequestUser,
+  ): Promise<CreateRoleResponseDto> {
+    // Check if role name already exists
+    const existingRole = await this.roleRepo.findOne({
+      where: { name: createDto.name },
+    });
+
+    if (existingRole) {
+      throw new ConflictException(
+        `Role with name "${createDto.name}" already exists`,
+      );
+    }
+
+    // Create new role
+    const newRole = this.roleRepo.create({
+      name: createDto.name,
+      description: createDto.description,
+      permissions: createDto.permissions || {},
+      is_active: true,
+    });
+
+    const savedRole = await this.roleRepo.save(newRole) as Role;
+
+    // Log role creation
+    await this.logRoleAction(
+      admin,
+      savedRole.id,
+      savedRole.name,
+      'role_created',
+      `Created new role "${savedRole.name}"`,
+    );
+
+    this.logger.log(
+      `Role created: name=${savedRole.name}, id=${savedRole.id}, by=${admin?.email || 'system'}`,
+    );
+
+    return {
+      id: savedRole.id,
+      name: savedRole.name,
+      description: savedRole.description || undefined,
+      permissions: savedRole.permissions,
+      is_active: savedRole.is_active,
+      created_at: savedRole.created_at.toISOString(),
+    };
+  }
+
+  /**
+   * Delete (deactivate) a role
+   * GAP-BE-006: CRUD Roles - Delete operation
+   *
+   * Note: System roles (student, admin_teacher, super_admin) cannot be deleted.
+   * Deletion is a soft-delete (sets is_active = false) to preserve audit trail.
+   *
+   * @param roleId - ID of the role to delete
+   * @param admin - Admin user deleting the role (for audit trail)
+   * @returns Deletion result
+   * @throws NotFoundException if role doesn't exist
+   * @throws BadRequestException if trying to delete a system role
+   */
+  async deleteRole(
+    roleId: string,
+    admin?: RequestUser,
+  ): Promise<DeleteRoleResponseDto> {
+    const role = await this.roleRepo.findOne({ where: { id: roleId } });
+
+    if (!role) {
+      throw new NotFoundException(`Role with ID "${roleId}" not found`);
+    }
+
+    // Prevent deletion of system roles
+    if (SYSTEM_ROLES.includes(role.name)) {
+      throw new BadRequestException(
+        `Cannot delete system role "${role.name}". System roles are required for platform operation.`,
+      );
+    }
+
+    // Check if role is already deactivated
+    if (!role.is_active) {
+      return {
+        success: true,
+        message: `Role "${role.name}" is already deactivated`,
+        role_id: roleId,
+      };
+    }
+
+    // Soft delete: deactivate the role
+    role.is_active = false;
+    await this.roleRepo.save(role);
+
+    // Log role deletion
+    await this.logRoleAction(
+      admin,
+      roleId,
+      role.name,
+      'role_deleted',
+      `Deactivated role "${role.name}"`,
+    );
+
+    this.logger.log(
+      `Role deactivated: name=${role.name}, id=${roleId}, by=${admin?.email || 'system'}`,
+    );
+
+    return {
+      success: true,
+      message: `Role "${role.name}" has been deactivated`,
+      role_id: roleId,
+    };
+  }
+
+  /**
+   * Log role actions to audit_logging.activity_log
+   * Used for create, delete, and other role operations
+   *
+   * @param admin - Admin user performing the action
+   * @param roleId - Role ID
+   * @param roleName - Role name
+   * @param actionType - Type of action (role_created, role_deleted, etc.)
+   * @param description - Human-readable description
+   */
+  private async logRoleAction(
+    admin: RequestUser | undefined,
+    roleId: string,
+    roleName: string,
+    actionType: string,
+    description: string,
+  ): Promise<void> {
+    try {
+      const adminId = admin?.sub || 'system';
+      const adminEmail = admin?.email || 'system@gamilit.com';
+
+      await this.authDataSource.query(
+        `INSERT INTO audit_logging.activity_log
+          (user_id, action_type, entity_type, entity_id, description, metadata)
+         VALUES
+          ($1, $2, $3, $4, $5, $6)`,
+        [
+          adminId,
+          actionType,
+          'role',
+          roleId,
+          `${description} by ${adminEmail}`,
+          JSON.stringify({
+            role_id: roleId,
+            role_name: roleName,
+            admin_id: adminId,
+            admin_email: adminEmail,
+            timestamp: new Date().toISOString(),
+          }),
+        ],
+      );
+    } catch (error) {
+      // Don't fail the main operation if audit logging fails
+      this.logger.error(`Failed to log role action: ${actionType}`, error);
+    }
   }
 }

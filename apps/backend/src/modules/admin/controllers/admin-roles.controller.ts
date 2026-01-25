@@ -1,5 +1,14 @@
-import { Controller, Get, Put, Param, Body, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
 import { AdminRolesService } from '../services/admin-roles.service';
@@ -8,6 +17,9 @@ import {
   PermissionDto,
   UpdatePermissionsDto,
   RolePermissionsDto,
+  CreateRoleDto,
+  CreateRoleResponseDto,
+  DeleteRoleResponseDto,
 } from '../dto/roles';
 import { CurrentUser, RequestUser } from '@shared/decorators/current-user.decorator';
 
@@ -65,5 +77,63 @@ export class AdminRolesController {
     @CurrentUser() admin: RequestUser,
   ): Promise<RolePermissionsDto> {
     return this.adminRolesService.updateRolePermissions(id, updateDto, admin);
+  }
+
+  /**
+   * GAP-BE-006: Create a new custom role
+   * Allows administrators to create custom roles with specific permissions.
+   * System roles (student, admin_teacher, super_admin) are predefined and cannot be recreated.
+   */
+  @Post()
+  @ApiOperation({
+    summary: 'Create a new role',
+    description:
+      'Create a new custom role with specified permissions. Role names must be unique and follow naming conventions.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Role created successfully',
+    type: CreateRoleResponseDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Role with this name already exists',
+  })
+  async createRole(
+    @Body() createDto: CreateRoleDto,
+    @CurrentUser() admin: RequestUser,
+  ): Promise<CreateRoleResponseDto> {
+    return this.adminRolesService.createRole(createDto, admin);
+  }
+
+  /**
+   * GAP-BE-006: Delete (deactivate) a role
+   * Soft-deletes a role by setting is_active to false.
+   * System roles cannot be deleted.
+   */
+  @Delete(':id')
+  @ApiOperation({
+    summary: 'Delete a role',
+    description:
+      'Deactivate a custom role. System roles (student, admin_teacher, super_admin) cannot be deleted.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Role deactivated successfully',
+    type: DeleteRoleResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Cannot delete system role',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Role not found',
+  })
+  async deleteRole(
+    @Param('id') id: string,
+    @CurrentUser() admin: RequestUser,
+  ): Promise<DeleteRoleResponseDto> {
+    return this.adminRolesService.deleteRole(id, admin);
   }
 }
