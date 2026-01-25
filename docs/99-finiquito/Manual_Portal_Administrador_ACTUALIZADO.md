@@ -1,16 +1,16 @@
 # Manual del Portal de Administrador - GAMILIT
-## VERSIÓN ACTUALIZADA v1.2
+## VERSION ACTUALIZADA v1.3
 
-**Fecha:** 25 de noviembre de 2025
+**Fecha:** 25 de enero de 2026
 **Audiencia:** Administradores del sistema GAMILIT
-**Estado:** ✅ Actualizado con funcionalidades implementadas
-**Tipo de documento:** Manual de usuario con validación técnica
+**Estado:** Actualizado con funcionalidades implementadas
+**Tipo de documento:** Manual de usuario con validacion tecnica
 
 ---
 
-## 🎯 PROPÓSITO DE ESTA ACTUALIZACIÓN
+## PROPOSITO DE ESTA ACTUALIZACION
 
-Este manual ha sido **actualizado con las funcionalidades realmente implementadas** en el sistema GAMILIT al 23 de noviembre de 2025. Se incluyen:
+Este manual ha sido **actualizado con las funcionalidades realmente implementadas** en el sistema GAMILIT al 25 de enero de 2026. Se incluyen:
 
 - ✅ **Funcionalidades implementadas** (validadas técnicamente)
 - ⏳ **Funcionalidades pendientes** (en el backlog)
@@ -42,18 +42,40 @@ Este manual ha sido **actualizado con las funcionalidades realmente implementada
 
 ---
 
-## 🎯 Alcance MVP - Portal de Administrador
+## Alcance Actual - Portal de Administrador (v1.3)
 
-| Componente | MVP ✅ | Pendiente ⏳ |
-|-----------|--------|-------------|
-| **Páginas Funcionales** | 9 páginas (incluyendo US-AE-005 y US-AE-007) | RBAC dinámico, Reportes globales |
-| **Gamificación (US-AE-005)** | Vista y configuración de parámetros, rangos, insignias | Edición en tiempo real desde UI |
-| **Classroom-Teacher (US-AE-007)** | CRUD completo de asignaciones | - |
-| **Instituciones** | Vista y gestión básica | Importación masiva |
-| **Usuarios** | Vista básica | CRUD masivo, importación CSV |
-| **Módulos Educativos** | Módulos 1-3 (15 ejercicios) | Módulos 4-5 (8 ejercicios) |
+| Metrica | Valor | Estado |
+|---------|-------|--------|
+| **Paginas Funcionales** | 18 paginas | 100% implementado |
+| **Componentes UI** | 92 componentes | Documentados |
+| **Hooks Personalizados** | 24 hooks | Implementados |
+| **Endpoints API** | 193+ endpoints | Mapeados |
+| **Especificaciones Tecnicas** | 10 (ET-ADM-001 a ET-ADM-010) | Documentadas |
 
-> **Nota:** Las funcionalidades US-AE-005 (Gamificación) y US-AE-007 (Classroom-Teacher) están **100% implementadas** en esta versión del portal.
+### Paginas Implementadas (18/18)
+
+| Pagina | Estado | Funcionalidad |
+|--------|--------|---------------|
+| AdminDashboardPage | Implementada | Dashboard principal con metricas |
+| AdminUsersPage | Implementada | CRUD de usuarios con bulk ops |
+| AdminInstitutionsPage | Implementada | Gestion de organizaciones |
+| AdminGamificationPage | Implementada | Configuracion de gamificacion |
+| AdminContentPage | Implementada | Gestion de contenido educativo |
+| AdminAssignmentsPage | Implementada | Visualizacion de asignaciones |
+| AdminAlertsPage | Implementada | Gestion de alertas del sistema |
+| AdminAnalyticsPage | Implementada | Dashboard de analytics |
+| AdminMonitoringPage | Implementada | Monitoreo del sistema |
+| AdminReportsPage | Implementada | Generacion de reportes |
+| AdminRolesPage | Implementada | Gestion de roles y permisos |
+| AdminSettingsPage | Implementada | Configuracion del sistema |
+| AdminClassroomTeacherPage | Implementada | Asignaciones aula-maestro |
+| AdminAuditLogsPage | Implementada | Visor de logs de auditoria |
+| AdminNotificationsPage | Implementada | Centro de notificaciones |
+| AdminNotificationPreferencesPage | Implementada | Preferencias de notificacion |
+| AdminAdvancedPage | Implementada | Feature flags y A/B testing |
+| AdminProgressPage | Implementada | Dashboard de progreso academico |
+
+> **Nota:** Todas las 18 paginas del portal admin estan **100% implementadas**. Ver documentacion tecnica en `docs/03-fase-extensiones/EXT-002-admin-extendido/especificaciones/`
 
 ---
 
@@ -2442,7 +2464,202 @@ Algunas funcionalidades están implementadas **pero no accesibles** desde el men
 
 ---
 
-**FIN DEL CAPÍTULO 16**
+**FIN DEL CAPÍTULO 17**
+
+---
+
+# Capítulo 18: Actualizaciones v1.3 (2026-01-25)
+
+## 18.1 Resumen de Cambios
+
+La versión 1.3 del manual incorpora una auditoría completa del portal admin realizada como parte de TASK-2026-01-25-001.
+
+### Métricas Actualizadas
+
+| Métrica | v1.2 | v1.3 | Cambio |
+|---------|------|------|--------|
+| Páginas Admin | 15 | 18 | +3 |
+| Componentes | ~75 | 92 | +17 |
+| Hooks | ~18 | 24 | +6 |
+| Endpoints API | ~150 | 193 | +43 |
+
+### Nuevas Páginas Documentadas
+
+1. **AdminAuditLogsPage** (`/admin/audit-logs`) - Logs de auditoría del sistema
+2. **AdminNotificationsPage** (`/admin/notifications`) - Centro de notificaciones
+3. **AdminNotificationPreferencesPage** (`/admin/settings/notifications`) - Preferencias de notificaciones
+
+---
+
+## 18.2 Especificaciones Técnicas Creadas
+
+Se crearon 6 especificaciones técnicas detalladas en `docs/03-fase-extensiones/EXT-002-admin-extendido/especificaciones/`:
+
+| ID | Archivo | Descripción |
+|----|---------|-------------|
+| ET-ADM-005 | `ET-ADM-005-audit-logs.md` | Página de logs de auditoría |
+| ET-ADM-006 | `ET-ADM-006-notifications.md` | Centro de notificaciones |
+| ET-ADM-007 | `ET-ADM-007-notification-preferences.md` | Preferencias de notificaciones |
+| ET-ADM-008 | `ET-ADM-008-advanced.md` | Configuración avanzada |
+| ET-ADM-009 | `ET-ADM-009-progress.md` | Dashboard de progreso |
+| ET-ADM-010 | `ET-ADM-010-analytics.md` | Dashboard de analytics |
+
+Cada especificación incluye:
+- Metadata completa
+- Arquitectura por capas
+- Implementación Backend (Controller, Service, DTOs)
+- Implementación Frontend (Componentes, Hooks, State)
+- API REST Endpoints
+- Tipos TypeScript
+
+---
+
+## 18.3 Documentación de Referencia Creada
+
+### ADMIN-API-MAP.yml
+
+Ubicación: `orchestration/inventarios/ADMIN-API-MAP.yml`
+
+Mapa completo de 193+ endpoints del portal admin organizados por página:
+- 20 controllers mapeados
+- Query params documentados
+- DTOs referenciados
+- Operaciones bulk y mantenimiento incluidas
+
+### ADMIN-COMPONENTS-CATALOG.md
+
+Ubicación: `docs/95-guias-desarrollo/frontend/admin/ADMIN-COMPONENTS-CATALOG.md`
+
+Catálogo de 92 componentes organizados en 18 categorías:
+1. Dashboard (9 componentes)
+2. Users (4 componentes)
+3. Gamification (6 componentes)
+4. Content (4 componentes)
+5. Monitoring (9 componentes)
+6. Alerts (7 componentes)
+7. Assignments (4 componentes)
+8. Reports (3 componentes)
+9. Roles (3 componentes)
+10. Settings (2 componentes)
+11. Advanced (8 componentes)
+12. Institutions (4 componentes)
+13. Classroom-Teacher (2 componentes)
+14. Progress (5 componentes)
+15. Analytics (4 componentes)
+16. Interventions (4 componentes)
+17. Layouts (2 componentes)
+18. Common (2 componentes)
+
+---
+
+## 18.4 Archivos Archivados
+
+Se movieron 9 archivos obsoletos a `docs/00-vision-general/_archive/2026-01-25-purge/`:
+
+| Archivo | Razón |
+|---------|-------|
+| ANALISIS-REGRESIONES-STUDENT-PORTAL-2026-01-13.md | Completado |
+| PLAN-CORRECCIONES-STUDENT-PORTAL-2026-01-13.md | Completado |
+| PLAN-REFINADO-STUDENT-PORTAL-2026-01-13.md | Completado |
+| VALIDACION-PLAN-STUDENT-PORTAL-2026-01-13.md | Completado |
+| EJECUCION-VALIDACION-STUDENT-PORTAL-2026-01-13.md | Completado |
+| VALIDACION-ACHIEVEMENTS-USUARIOS-2026-01-13.md | Completado |
+| ANALISIS-HOMOLOGACION-DOC-DISENO-v6.1.md | Obsoleto |
+| REPORTE-INVESTIGACION-MULTIPLICADOR-ML-COINS.md | Integrado |
+| GUIA-PRUEBAS-MODULO3-Respuestas.md | Integrado |
+
+Manifiesto: `docs/00-vision-general/_archive/2026-01-25-purge/PURGE-MANIFEST.md`
+
+---
+
+## 18.5 Estado Actual del Portal Admin
+
+### Páginas Completamente Funcionales (18/18)
+
+| # | Página | Ruta | Estado |
+|---|--------|------|--------|
+| 1 | Dashboard | `/admin/dashboard` | ✅ Completo |
+| 2 | Users | `/admin/users` | ✅ Completo |
+| 3 | Institutions | `/admin/institutions` | ✅ Completo |
+| 4 | Gamification | `/admin/gamification` | ✅ Completo |
+| 5 | Content | `/admin/content` | ✅ Completo |
+| 6 | Assignments | `/admin/assignments` | ✅ Completo |
+| 7 | Alerts | `/admin/alerts` | ✅ Completo |
+| 8 | Analytics | `/admin/analytics` | ✅ Completo |
+| 9 | Monitoring | `/admin/monitoring` | ✅ Completo |
+| 10 | Reports | `/admin/reports` | ✅ Completo |
+| 11 | Roles | `/admin/roles` | ✅ Completo |
+| 12 | Settings | `/admin/settings` | ✅ Completo |
+| 13 | Classroom-Teacher | `/admin/classroom-teacher` | ✅ Completo |
+| 14 | Audit Logs | `/admin/audit-logs` | ✅ Completo |
+| 15 | Notifications | `/admin/notifications` | ✅ Completo |
+| 16 | Notification Prefs | `/admin/settings/notifications` | ✅ Completo |
+| 17 | Advanced | `/admin/advanced` | ✅ Completo |
+| 18 | Progress | `/admin/progress` | ✅ Completo |
+
+### Hooks Disponibles (24)
+
+| Hook | Descripción |
+|------|-------------|
+| useUserManagement | CRUD de usuarios |
+| useSystemMetrics | Métricas del sistema |
+| useHealthStatus | Health checks |
+| useSystemConfig | Configuración del sistema |
+| useExercises | CRUD de ejercicios |
+| useAdminAssignments | Asignaciones admin |
+| useAuditLogs | Logs de auditoría |
+| useAnalytics | Analytics dashboard |
+| useProgress | Dashboard de progreso |
+| useFeatureFlags | Feature flags |
+| useAlerts | Sistema de alertas |
+| useInstitutions | Gestión de instituciones |
+| useRoles | Gestión de roles |
+| useNotifications | Notificaciones |
+| useNotificationPreferences | Preferencias de notificaciones |
+| useGamificationSettings | Configuración gamificación |
+| useMonitoring | Monitoreo del sistema |
+| useReports | Generación de reportes |
+| useClassroomTeacher | Asignación aulas-profesores |
+| useContent | Gestión de contenido |
+| useBulkOperations | Operaciones bulk |
+| useInterventions | Intervenciones educativas |
+| useMediaLibrary | Biblioteca de media |
+| useExport | Exportación de datos |
+
+---
+
+## 18.6 Tareas Pendientes
+
+### TAREA-004: Vista Previa de Ejercicios
+
+**Estado:** PENDIENTE (requiere implementación de código)
+
+**Descripción:** Implementar componente `ExercisePreviewModal` para previsualizar ejercicios desde el panel admin.
+
+**Consideraciones:**
+- Requiere validación contra el portal de estudiantes
+- Análisis de impacto completado en `ANALISIS-IMPACTO-STUDENT-PORTAL.md`
+- Prioridad: P1
+
+### TAREA-005: Gaps P2
+
+**Subtareas:**
+- 005.1 Filtros avanzados usuarios (BAJO riesgo)
+- 005.2 PreviewImpactDialog funcional (MEDIO riesgo)
+- 005.3 CRUD completo de roles (MEDIO-ALTO riesgo)
+
+---
+
+## 18.7 Referencias
+
+- **Task:** TASK-2026-01-25-001-GAMILIT-ADMIN-PORTAL-ANALYSIS
+- **Inventario Frontend:** `orchestration/inventarios/FRONTEND_INVENTORY.yml` (v4.9.0)
+- **Análisis de Impacto:** `docs/00-vision-general/ANALISIS-IMPACTO-STUDENT-PORTAL.md`
+- **Ejecución:** `orchestration/tareas/TASK-2026-01-25-001-GAMILIT-ADMIN-PORTAL-ANALYSIS/05-EJECUCION.md`
+
+---
+
+**FIN DEL CAPÍTULO 18**
 
 ---
 
