@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, ConflictException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull, Not, MoreThan } from 'typeorm';
-import { plainToInstance } from 'class-transformer';
+import { plainToInstance, instanceToPlain } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { User } from '@modules/auth/entities/user.entity';
@@ -113,6 +113,7 @@ export class AdminUsersService {
       const total = parseInt(countResult[0]?.count || '0', 10);
 
       // Transform raw results to UserDetailsDto
+      // FIX: Use instanceToPlain to trigger @Transform decorators for date serialization
       const transformedUsers = rawResults.map((row: any) => {
         // Derive status: use deleted_at if set, otherwise use entity status field
         const computedStatus = row.deleted_at ? 'suspended' : (row.status || 'active');
@@ -123,7 +124,7 @@ export class AdminUsersService {
             ? `${row.profile_first_name} ${row.profile_last_name}`.trim()
             : undefined);
 
-        const transformed = plainToInstance(
+        const dtoInstance = plainToInstance(
           UserDetailsDto,
           {
             id: row.id,
@@ -144,7 +145,8 @@ export class AdminUsersService {
           { excludeExtraneousValues: true },
         );
 
-        return transformed;
+        // Convert to plain object to trigger @Transform decorators (toPlainOnly)
+        return instanceToPlain(dtoInstance, { excludeExtraneousValues: true });
       });
 
       return {
