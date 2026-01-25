@@ -1,8 +1,8 @@
 # MAPA DE DOCUMENTACION: GAMILIT
 
 **Proyecto:** GAMILIT - Plataforma de Gamificacion Educativa
-**Ultima actualizacion:** 2026-01-20
-**Version:** 2.3.0 (SSOT Consolidado + Student Portal Analysis)
+**Ultima actualizacion:** 2026-01-24
+**Version:** 2.4.0 (Reestructurado segun SIMCO-DOCUMENTACION-PROYECTO v1.0.0)
 
 ---
 
@@ -16,16 +16,14 @@ docs/
 +-- 02-fase-robustecimiento/ # Fase 2: EAI-007 (Modulos M4-M5)
 +-- 03-fase-extensiones/     # Fase 3: EXT-001 a EXT-011 (11 EPICs)
 +-- 04-fase-backlog/         # Backlog de features pendientes
++-- 05-modelado/             # Modelado de datos y diagramas
 +-- 40-estandares/           # Estandares de desarrollo (API, nomenclatura)
-+-- 90-transversal/          # Documentacion transversal (mecanicas, arquitectura)
-+-- 95-guias-desarrollo/     # Guias para desarrolladores
++-- 90-transversal/          # Documentacion transversal (arquitectura, API, planning)
++-- 95-guias-desarrollo/     # Guias para desarrolladores (incluye troubleshooting)
 +-- 96-quick-reference/      # Cheatsheets (API, DB, Git, Testing, Docker, Deploy)
 +-- 97-adr/                  # 21 Architecture Decision Records
-+-- 99-finiquito/            # Documentacion de cierre y entrega
-+-- 99-troubleshooting/      # Guias de resolucion de problemas
-+-- archivados/              # Documentacion deprecada/historica
-+-- audits/                  # Reportes de auditoria
-+-- planning/                # Planificacion y tracking
++-- 98-audits/               # Reportes de auditoria y validacion
++-- 99-finiquito/            # Documentacion de cierre (incluye archivados/)
 ```
 
 ---
@@ -94,6 +92,8 @@ Consolidado central de trazabilidad del proyecto.
 | REQUIREMENTS-INDEX.yml | Mapeo RF -> ET -> US | @REQ-INDEX |
 | CODE-MAPPINGS.yml | Mapeo docs <-> codigo | @CODE-MAP |
 | COMPLETENESS-TRACKER.yml | Rutas para epicas parciales | @COMPLETENESS |
+| API-CONTRACTS.yml | Contratos de API | - |
+| ENTITIES-CATALOG.md | Catalogo de entidades | - |
 
 ### 00-vision-general/
 Vision del producto, glosario, datos de gamificacion, guias de pruebas.
@@ -110,11 +110,19 @@ Extensiones futuras del sistema (portales, notificaciones, reportes).
 ### 04-fase-backlog/
 Features pendientes con Definition of Ready.
 
+### 05-modelado/
+Modelado de datos y diagramas del sistema.
+
+### 40-estandares/
+Estandares de desarrollo: nomenclatura API, convenciones de codigo.
+
 ### 90-transversal/
 Documentacion transversal: arquitectura, API, roadmap, sprints, inventarios.
+- **planning/** - Planificacion y tracking de tareas (PLAN-ESTANDARIZACION-SCRUM, etc.)
 
 ### 95-guias-desarrollo/
 Guias para backend, frontend, testing.
+- **troubleshooting/** - Guias de resolucion de problemas comunes
 
 ### 96-quick-reference/
 Cheatsheets: API, DB, Git, Testing, Docker, Deployment.
@@ -122,20 +130,12 @@ Cheatsheets: API, DB, Git, Testing, Docker, Deployment.
 ### 97-adr/
 21 Architecture Decision Records documentados.
 
-### 99-troubleshooting/
-Guías de resolución de problemas comunes.
-
-### audits/
-Reportes de auditoría y validación.
-
-### planning/
-Planificación y tracking de tareas.
+### 98-audits/
+Reportes de auditoria y validacion del proyecto.
 
 ### 99-finiquito/
-Documentacion de entrega, manuales, credenciales.
-
-### archivados/
-Documentacion deprecada: 98-standards, frontend-original, database-original.
+Documentacion de cierre y entrega.
+- **archivados/** - Documentacion deprecada: 98-standards, frontend-original, database-original
 
 ---
 
@@ -149,7 +149,7 @@ Documentacion deprecada: 98-standards, frontend-original, database-original.
 | ADRs | 21 |
 | Cheatsheets | 8 |
 | Guias de desarrollo | 10+ |
-| SSOT archivos | 5 |
+| SSOT archivos | 7 |
 | Mecanicas documentadas | 33 |
 
 ---
@@ -175,6 +175,6 @@ Documentacion deprecada: 98-standards, frontend-original, database-original.
 
 ---
 
-**Actualizado:** 2026-01-20
-**Sistema:** SIMCO v4.0 + SSOT
-**Cambios:** Agregada seccion Actualizaciones Recientes con referencias a estandares, mecanicas, guias y extensiones
+**Actualizado:** 2026-01-24
+**Sistema:** SIMCO v4.3.0 + SSOT
+**Cambios:** Reestructurado segun SIMCO-DOCUMENTACION-PROYECTO v1.0.0 - Eliminados prefijos duplicados, consolidadas carpetas sin prefijo numerico
