@@ -1,0 +1,81 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ÍNDICE DE TAREAS - GAMILIT
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Propósito: Registro de tareas específicas del proyecto Gamilit
+# Creado: 2026-01-24 (TASK-2026-01-24-006)
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+created: "2026-01-24"
+updated: "2026-01-24"
+proyecto: "gamilit"
+maintained_by: "@WS_ORCHESTRATOR"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADÍSTICAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estadisticas:
+  total_tareas: 0
+  completadas: 0
+  en_progreso: 0
+  pendientes: 0
+  canceladas: 0
+  bloqueadas: 0
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FORMATO DE ID DE TAREA
+# ─────────────────────────────────────────────────────────────────────────────────
+
+formato_id:
+  patron: "TASK-{NNN}"
+  ejemplo: "TASK-001"
+  descripcion: |
+    - NNN: Secuencial del proyecto (001, 002, etc.)
+    - Para tareas complejas puede usarse TASK-{YYYY-MM-DD}-{NNN}
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TAREAS ACTIVAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+tareas_activas: []
+  # - task_id: "TASK-001"
+  #   titulo: "Título descriptivo"
+  #   agente: "PERFIL-AGENTE"
+  #   estado: "en_progreso"
+  #   fase: "C"
+  #   proyecto: "gamilit"
+  #   ubicacion: "proyecto"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# HISTORIAL DE TAREAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+historial: []
+  # - task_id: "TASK-001"
+  #   titulo: "Título"
+  #   tipo: "feature"
+  #   estado: "completada"
+  #   fecha_inicio: "2026-01-24"
+  #   fecha_fin: "2026-01-24"
+  #   agente: "PERFIL-BACKEND"
+  #   carpeta: "TASK-001-descripcion/"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  Este índice fue creado como parte de la corrección TASK-2026-01-24-006
+  para habilitar documentación de tareas a nivel de proyecto.
+
+  Las tareas que afecten SOLO a gamilit deben documentarse aquí.
+  Las tareas transversales van a orchestration/tareas/ del workspace.
+
+  Ver @UBICACION-DOC para la matriz de decisión.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DEL ÍNDICE
+# ═══════════════════════════════════════════════════════════════════════════════

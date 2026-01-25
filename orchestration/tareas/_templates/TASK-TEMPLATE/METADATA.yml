@@ -1,0 +1,213 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Template para documentar metadata de cada tarea ejecutada.
+# Copiar este archivo al crear nueva tarea y completar campos.
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.1.0"  # Updated: Added context_tracking section
+task_id: "{TASK-YYYY-MM-DD-NNN}"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "{Título descriptivo de la tarea}"
+  descripcion: |
+    {Descripción detallada de qué se debe hacer y por qué}
+  tipo: "feature|bugfix|refactor|documentation|analysis|migration|security"
+  prioridad: "P0|P1|P2|P3"
+  tags:
+    - "{tag1}"
+    - "{tag2}"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "{PERFIL-AGENTE}"
+  agente_modelo: "{modelo LLM si aplica}"
+  delegado_de: "{Agente que delegó, null si es tarea directa}"
+  delegado_a: []  # Lista de subtareas delegadas
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "workspace|proyecto|modulo"
+  proyecto: "{nombre-proyecto o null}"
+  modulo: "{nombre-modulo o null}"
+  capas_afectadas:
+    - "database|backend|frontend|devops|docs"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: "{YYYY-MM-DD HH:MM}"
+  fecha_fin: "{YYYY-MM-DD HH:MM o null si no completada}"
+  duracion_estimada: "{N}h"
+  duracion_real: "{N}h"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "pendiente|en_progreso|completada|bloqueada|cancelada"
+  fase_actual: "C|A|P|V|E|D"
+  porcentaje: 0
+  motivo_bloqueo: null  # Si está bloqueada
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "pendiente|en_progreso|completada|omitida"
+    archivo: "01-CONTEXTO.md"
+    completado_en: null
+
+  analisis:
+    estado: "pendiente|en_progreso|completada|omitida"
+    archivo: "02-ANALISIS.md"
+    completado_en: null
+
+  plan:
+    estado: "pendiente|en_progreso|completada|omitida"
+    archivo: "03-PLAN.md"
+    completado_en: null
+
+  validacion:
+    estado: "pendiente|en_progreso|completada|omitida"
+    archivo: "04-VALIDACION.md"
+    completado_en: null
+
+  ejecucion:
+    estado: "pendiente|en_progreso|completada|omitida"
+    archivo: "05-EJECUCION.md"
+    completado_en: null
+
+  documentacion:
+    estado: "pendiente|en_progreso|completada|omitida"
+    archivo: "06-DOCUMENTACION.md"
+    completado_en: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARTEFACTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+artefactos:
+  archivos_creados: []
+  # - ruta: "path/to/file.ts"
+  #   tipo: "entity|service|component|etc"
+  #   lineas: N
+
+  archivos_modificados: []
+  # - ruta: "path/to/file.ts"
+  #   cambio: "descripción breve del cambio"
+
+  archivos_eliminados: []
+  # - ruta: "path/to/file.ts"
+  #   razon: "por qué se eliminó"
+
+  commits: []
+  # - hash: "abc1234"
+  #   mensaje: "mensaje del commit"
+  #   fecha: "YYYY-MM-DD"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null  # TASK-ID si es subtarea
+  subtareas: []      # Lista de TASK-IDs de subtareas
+  tareas_relacionadas: []  # Tareas relacionadas pero independientes
+  bloquea: []        # Tareas que esta tarea bloquea
+  bloqueada_por: []  # Tareas que bloquean esta
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "pendiente|pasa|falla|na"
+    output: null
+  lint:
+    estado: "pendiente|pasa|falla|na"
+    errores: 0
+    warnings: 0
+  tests:
+    estado: "pendiente|pasa|falla|na"
+    passed: 0
+    failed: 0
+  typecheck:
+    estado: "pendiente|pasa|falla|na"
+    errores: 0
+  documentacion_completa: false
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  documentos_consultados: []
+  # - "@SIMCO-TAREA"
+  # - "docs/specs/feature.md"
+
+  directivas_aplicadas: []
+  # - "@CREAR"
+  # - "@VALIDAR"
+
+  epica: null  # ID de épica si aplica
+  user_story: null  # ID de US si aplica
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRACKING DE CONTEXTO/TOKENS
+# ─────────────────────────────────────────────────────────────────────────────────
+# Documentar para validar mejoras en manejo de contexto
+
+context_tracking:
+  estimated_tokens:
+    initial_context: 0       # Tokens al cargar contexto inicial
+    files_loaded: 0          # Tokens de archivos cargados durante tarea
+    total_conversation: 0    # Tokens totales de la conversacion
+
+  context_cleanups: 0        # Veces que se limpio contexto
+  checkpoints_created: 0     # Checkpoints guardados
+
+  subagents: []
+  # - id: "subagent-001"
+  #   profile: "PERFIL-BACKEND"
+  #   estimated_tokens: 0
+  #   files_loaded: 0
+  #   task_description: "descripcion de lo que hizo"
+
+  efficiency_metrics:
+    tokens_per_file_modified: 0      # Menor es mejor
+    tasks_completed_per_cleanup: 0   # Mayor es mejor
+    context_utilization_peak: "0%"   # Objetivo: < 50%
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS Y LECCIONES APRENDIDAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  {Notas adicionales, observaciones}
+
+lecciones_aprendidas:
+  - "{Leccion 1: que se aprendio}"
+  - "{Leccion 2: que se haria diferente}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
