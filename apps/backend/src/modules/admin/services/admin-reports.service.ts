@@ -4,6 +4,9 @@ import { Repository, LessThan } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { promises as fs } from 'fs';
 import { join } from 'path';
+import PDFDocument from 'pdfkit';
+import { Workbook } from 'exceljs';
+import { stringify } from 'csv-stringify/sync';
 import { User } from '@modules/auth/entities/user.entity';
 import { Tenant } from '@modules/auth/entities/tenant.entity';
 import { AdminReport } from '../entities/admin-report.entity';
@@ -357,18 +360,14 @@ export class AdminReportsService {
    * @param reportId - ID del reporte a generar
    *
    * IMPORTANTE:
-   * - Simula generación con setTimeout (2 segundos)
+   * - Genera archivos binarios reales (PDF/Excel) o texto (CSV)
    * - Almacena archivo físico en uploads/reports/
-   * - En producción: integrar con BullMQ para procesamiento real
    * - Actualiza estado a 'generating' → 'completed' o 'failed'
    */
   private async processReportGeneration(reportId: string): Promise<void> {
     try {
       // Actualizar estado a 'generating'
       await this.reportRepo.update(reportId, { status: 'generating' });
-
-      // Simular generación de reporte (en producción: lógica real aquí)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Obtener reporte actualizado
       const report = await this.reportRepo.findOne({ where: { id: reportId } });
@@ -377,16 +376,33 @@ export class AdminReportsService {
         return;
       }
 
+      // Obtener datos para el reporte según el tipo
+      const reportData = await this.fetchReportData(report);
+
       // Generar nombre de archivo único con timestamp
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const fileName = `${report.report_type}-${timestamp}.${report.report_format}`;
+      const extension = report.report_format === 'excel' ? 'xlsx' : report.report_format;
+      const fileName = `${report.report_type}-${timestamp}.${extension}`;
       const filePath = join(this.REPORTS_DIR, fileName);
 
-      // Generar contenido simulado del reporte
-      const reportContent = this.generateMockReportContent(report);
+      // Generar contenido según el formato
+      let content: Buffer;
+      switch (report.report_format) {
+        case 'pdf':
+          content = await this.generatePdfContent(report, reportData);
+          break;
+        case 'excel':
+          content = await this.generateExcelContent(report, reportData);
+          break;
+        case 'csv':
+          content = await this.generateCsvContent(report, reportData);
+          break;
+        default:
+          throw new Error(`Unsupported format: ${report.report_format}`);
+      }
 
       // Guardar archivo físicamente en storage
-      await fs.writeFile(filePath, reportContent, 'utf-8');
+      await fs.writeFile(filePath, content);
       const stats = await fs.stat(filePath);
 
       // URL relativa del archivo (para servir vía endpoint)
@@ -419,47 +435,182 @@ export class AdminReportsService {
   }
 
   /**
-   * Genera contenido simulado para el reporte
-   *
-   * @param report - Entity del reporte
-   * @returns Contenido del reporte en formato texto
-   *
-   * IMPORTANTE:
-   * - En producción: reemplazar con generación real de PDF/Excel/CSV
-   * - Por ahora genera contenido mock para testing
+   * Obtiene los datos para el reporte según su tipo
    */
-  private generateMockReportContent(report: AdminReport): string {
-    const header = `
-========================================
-GAMILIT - REPORTE ADMINISTRATIVO
-========================================
-Tipo: ${report.report_type}
-Formato: ${report.report_format}
-Generado: ${new Date().toISOString()}
-Solicitado por: ${report.requested_by}
-========================================
+  private async fetchReportData(report: AdminReport): Promise<any[]> {
+    switch (report.report_type) {
+      case 'users': {
+        const users = await this.userRepo.find({
+          select: ['id', 'email', 'role', 'status', 'created_at', 'last_sign_in_at'],
+          take: 1000,
+        });
+        return users.map(u => ({
+          ID: u.id,
+          Email: u.email,
+          Rol: u.role,
+          Estado: u.status,
+          'Fecha Registro': u.created_at?.toISOString().split('T')[0] || 'N/A',
+          'Último Login': u.last_sign_in_at?.toISOString().split('T')[0] || 'Nunca',
+        }));
+      }
 
-`;
+      case 'system': {
+        // Datos de resumen del sistema
+        const userCount = await this.userRepo.count();
+        const tenantInfo = await this.tenantRepo.findOne({ where: { id: report.tenant_id } });
+        return [{
+          Métrica: 'Total Usuarios',
+          Valor: userCount,
+        }, {
+          Métrica: 'Tenant',
+          Valor: tenantInfo?.name || report.tenant_id,
+        }, {
+          Métrica: 'Fecha Generación',
+          Valor: new Date().toISOString(),
+        }];
+      }
 
-    const body = `
-METADATA:
-${JSON.stringify(report.metadata, null, 2)}
+      default:
+        // Para otros tipos, retornar datos de ejemplo
+        return [{
+          Tipo: report.report_type,
+          Mensaje: 'Datos de ejemplo para el reporte',
+          Generado: new Date().toISOString(),
+          Metadata: JSON.stringify(report.metadata),
+        }];
+    }
+  }
 
-CONTENIDO DEL REPORTE:
-Este es un reporte simulado de tipo "${report.report_type}".
-En producción, aquí se generaría el contenido real del reporte
-basado en los filtros y parámetros especificados en metadata.
+  /**
+   * Genera contenido PDF para el reporte
+   */
+  private async generatePdfContent(report: AdminReport, data: any[]): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const chunks: Buffer[] = [];
+      const doc = new PDFDocument({ margin: 50 });
 
-Para formato PDF: usar librería como pdfkit o puppeteer
-Para formato Excel: usar librería como exceljs
-Para formato CSV: usar librería nativa de Node.js
+      doc.on('data', (chunk: Buffer) => chunks.push(chunk));
+      doc.on('end', () => resolve(Buffer.concat(chunks)));
+      doc.on('error', reject);
 
-========================================
-Fin del Reporte
-========================================
-`;
+      // Header
+      doc.fontSize(20).text('GAMILIT - Reporte Administrativo', { align: 'center' });
+      doc.moveDown();
 
-    return header + body;
+      // Información del reporte
+      doc.fontSize(12);
+      doc.text(`Tipo: ${report.report_type}`);
+      doc.text(`Generado: ${new Date().toLocaleString('es-MX')}`);
+      doc.text(`Solicitado por: ${report.requested_by}`);
+      doc.moveDown();
+
+      // Línea separadora
+      doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+      doc.moveDown();
+
+      // Contenido de datos
+      if (data.length === 0) {
+        doc.text('No se encontraron datos para este reporte.');
+      } else {
+        // Obtener columnas del primer registro
+        const columns = Object.keys(data[0]);
+
+        // Mostrar datos como tabla simple
+        doc.fontSize(10);
+        data.forEach((row, index) => {
+          if (doc.y > 700) {
+            doc.addPage();
+          }
+
+          doc.fontSize(11).text(`Registro ${index + 1}:`, { underline: true });
+          columns.forEach(col => {
+            doc.fontSize(10).text(`  ${col}: ${row[col]}`);
+          });
+          doc.moveDown(0.5);
+        });
+      }
+
+      // Footer
+      doc.moveDown();
+      doc.fontSize(8)
+        .text(`Total de registros: ${data.length}`, { align: 'right' })
+        .text(`Generado por GAMILIT Platform`, { align: 'right' });
+
+      doc.end();
+    });
+  }
+
+  /**
+   * Genera contenido Excel para el reporte
+   */
+  private async generateExcelContent(report: AdminReport, data: any[]): Promise<Buffer> {
+    const workbook = new Workbook();
+    workbook.creator = 'GAMILIT Platform';
+    workbook.created = new Date();
+
+    const worksheet = workbook.addWorksheet('Reporte');
+
+    if (data.length > 0) {
+      // Configurar columnas basadas en las keys del primer registro
+      const columns = Object.keys(data[0]);
+      worksheet.columns = columns.map(col => ({
+        header: col,
+        key: col,
+        width: 20,
+      }));
+
+      // Estilo del header
+      const headerRow = worksheet.getRow(1);
+      headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      headerRow.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF4472C4' },
+      };
+      headerRow.alignment = { horizontal: 'center' };
+
+      // Agregar datos
+      data.forEach(row => {
+        worksheet.addRow(row);
+      });
+
+      // Auto-filtro
+      worksheet.autoFilter = {
+        from: { row: 1, column: 1 },
+        to: { row: 1, column: columns.length },
+      };
+    } else {
+      worksheet.addRow(['No se encontraron datos para este reporte']);
+    }
+
+    // Agregar hoja de metadatos
+    const metaSheet = workbook.addWorksheet('Información');
+    metaSheet.addRow(['Tipo de Reporte', report.report_type]);
+    metaSheet.addRow(['Formato', report.report_format]);
+    metaSheet.addRow(['Fecha de Generación', new Date().toLocaleString('es-MX')]);
+    metaSheet.addRow(['Solicitado por', report.requested_by]);
+    metaSheet.addRow(['Total de Registros', data.length]);
+    metaSheet.getColumn(1).width = 25;
+    metaSheet.getColumn(2).width = 40;
+
+    return Buffer.from(await workbook.xlsx.writeBuffer());
+  }
+
+  /**
+   * Genera contenido CSV para el reporte
+   */
+  private async generateCsvContent(report: AdminReport, data: any[]): Promise<Buffer> {
+    if (data.length === 0) {
+      return Buffer.from('No se encontraron datos para este reporte\n', 'utf-8');
+    }
+
+    const csvContent = stringify(data, {
+      header: true,
+      columns: Object.keys(data[0]),
+      bom: true, // Agregar BOM para compatibilidad con Excel
+    });
+
+    return Buffer.from(csvContent, 'utf-8');
   }
 
   // =====================================================

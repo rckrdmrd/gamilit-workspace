@@ -10,8 +10,13 @@ import {
   Request,
   HttpCode,
   HttpStatus,
+  Res,
+  StreamableFile,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiProduces } from '@nestjs/swagger';
+import { Response } from 'express';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
 import { AdminReportsService } from '../services/admin-reports.service';
@@ -62,13 +67,59 @@ export class AdminReportsController {
     return this.adminReportsService.getReports(query, tenantId);
   }
 
+  private static readonly REPORTS_DIR = join(process.cwd(), 'apps', 'backend', 'uploads', 'reports');
+
+  /**
+   * Obtiene el MIME type según el formato del reporte
+   */
+  private getMimeType(format: string): string {
+    const mimeTypes: Record<string, string> = {
+      pdf: 'application/pdf',
+      excel: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      csv: 'text/csv; charset=utf-8',
+    };
+    return mimeTypes[format] || 'application/octet-stream';
+  }
+
   @Get(':id/download')
   @ApiOperation({
     summary: 'Download a report',
     description:
-      'Download a completed report. Returns error if report is not ready.',
+      'Download a completed report file. Returns the actual file with proper Content-Type.',
   })
+  @ApiProduces('application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv')
   async downloadReport(
+    @Param('id') id: string,
+    @Request() req: AuthRequest,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
+    const tenantId = req.user!.tenant_id!;
+    const report = await this.adminReportsService.downloadReport(id, tenantId);
+
+    // Extraer nombre del archivo de la URL
+    const fileName = report.file_url!.split('/').pop()!;
+    const filePath = join(AdminReportsController.REPORTS_DIR, fileName);
+
+    // Configurar headers de respuesta
+    const mimeType = this.getMimeType(report.format);
+    res.set({
+      'Content-Type': mimeType,
+      'Content-Disposition': `attachment; filename="${fileName}"`,
+    });
+
+    // Crear stream del archivo
+    const fileStream = createReadStream(filePath);
+    return new StreamableFile(fileStream);
+  }
+
+  @Get(':id/info')
+  @ApiOperation({
+    summary: 'Get report info',
+    description:
+      'Get report metadata without downloading the file.',
+  })
+  async getReportInfo(
     @Param('id') id: string,
     @Request() req: AuthRequest,
   ): Promise<ReportDto> {
