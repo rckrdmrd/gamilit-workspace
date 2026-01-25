@@ -8,9 +8,9 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.1.0"
+version: "1.2.0"
 created: "2026-01-16"
-updated: "2026-01-20"
+updated: "2026-01-25"
 maintained_by: "META-ORQUESTADOR"
 
 # ─────────────────────────────────────────────────────────────────────────────────
@@ -24,9 +24,9 @@ estadisticas:
     especializadas: 7
     agentes: 4
   total_agentes_activos: 1
-  total_tareas_ejecutadas: 3
-  ultimo_registro: "2026-01-20"
-  ultima_actualizacion: "2026-01-20"
+  total_tareas_ejecutadas: 5
+  ultimo_registro: "2026-01-25"
+  ultima_actualizacion: "2026-01-25"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # TRAZAS POR DOMINIO TÉCNICO

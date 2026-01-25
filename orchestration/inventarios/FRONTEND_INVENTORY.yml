@@ -1,9 +1,9 @@
 # FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 4.7.0
+version: 4.8.0
 generated: 2025-11-08
-updated: 2026-01-24
+updated: 2026-01-25
 source: RECONCILIACION-INTEGRAL Plan Maestro GAMILIT - Conteo real filesystem
 status: Reconciliado con conteo real de archivos filesystem
 last_analysis: 2026-01-16 - ETC-001 Consolidación Técnica
@@ -25,7 +25,7 @@ summary:
   total_files: 900+  # ✅ Actualizado 2025-12-26 - auditoria real
   total_components: 463  # CONSOLIDADO 2026-01-16 - eliminado UnderConstruction duplicado
   total_hooks: 108  # AUDITADO 2026-01-24 - conteo real use*.ts/tsx
-  total_features: 10
+  total_features: 11  # +1 notifications (TASK-008)
   total_pages: 74  # RECONCILIADO 2026-01-16 ✓
   total_stores: 12  # RECONCILIADO 2026-01-16 ✓
   total_api_services: 24  # TASK-001: +1 twoFactorAPI.ts
@@ -33,6 +33,22 @@ summary:
   total_routes: 18  # ✅ ACTUALIZADO 2026-01-13 - verificado con rutas implementadas
   lines_of_code: ~100000  # ✅ ACTUALIZADO 2025-12-26
   total_tests: 175  # ✅ AGREGADO 2026-01-13 - tests nuevos creados (105 FE + 70 BE)
+
+  changes_from_v4_7:  # TASK-008, TASK-009 - 2026-01-25
+    tasks:
+      - task_id: "TASK-008"
+        description: "Fix notifDate.getTime is not a function en NotificationDropdown"
+        files_modified:
+          - "features/notifications/components/NotificationDropdown.tsx (fix instanceof Date)"
+        commit: "0034eca1"
+      - task_id: "TASK-009"
+        description: "Fix cache invalidation en Teacher Reviews"
+        files_modified:
+          - "apps/teacher/pages/ReviewDetail.tsx (+queryClient.invalidateQueries)"
+        commit: "f63bafc5"
+    features_inventoried:
+      - "notifications (2 components, 1 store, 1 api)"
+    note: "Bugfixes en notificaciones y teacher reviews. Inventariado feature notifications."
 
   changes_from_v4_6:  # TASK-001 - 2026-01-24
     task_id: "TASK-001"
@@ -255,6 +271,21 @@ features:
     api_files: 2
     status: completed
     total_mechanics: 33
+
+  - name: notifications
+    path: src/features/notifications/
+    phase: 1
+    epic: EAI-004
+    components: 2
+    hooks: 0
+    stores: 1
+    api_files: 1
+    status: completed
+    note: "Sistema de notificaciones in-app con WebSocket"
+    files:
+      - "components/NotificationBell.tsx"
+      - "components/NotificationDropdown.tsx"
+      - "store/notificationsStore.ts"
 
 # ============================================================================
 # TESTING

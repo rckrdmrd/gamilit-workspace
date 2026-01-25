@@ -140,7 +140,10 @@ artefactos:
 
   archivos_eliminados: []
 
-  commits: []
+  commits:
+    - hash: "0034eca1"
+      mensaje: "[TASK-008] fix(notifications): Corregir notifDate.getTime is not a function"
+      fecha: "2026-01-25"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # RELACIONES

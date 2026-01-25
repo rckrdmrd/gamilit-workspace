@@ -47,6 +47,22 @@ host    all    all    0.0.0.0/0    scram-sha-256
 
 ---
 
+### TASK-008 COMPLETADA (2026-01-25)
+
+**Fix notifDate.getTime is not a function en NotificationDropdown.**
+
+| Campo | Valor |
+|-------|-------|
+| Bug | Pantalla blanca al abrir dropdown de notificaciones |
+| Causa | `typeof date === 'string'` fallaba con objetos deserializados |
+| Fix | Cambiar a `date instanceof Date ? date : new Date(date)` |
+| Archivo | `NotificationDropdown.tsx` (1 línea) |
+| Commits | 0034eca1 (gamilit), d0baa36e (workspace) |
+
+**Ver detalles:** `orchestration/tareas/TASK-008-fix-notification-dropdown/`
+
+---
+
 ### TASK-2026-01-25-VALIDACION-PORTAL-TEACHER (2026-01-25)
 
 **Validacion Integral del Portal Teacher.**
