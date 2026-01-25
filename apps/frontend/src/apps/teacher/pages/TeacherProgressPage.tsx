@@ -50,34 +50,30 @@ export default function TeacherProgressPage() {
     classroomIdFromUrl || 'all'
   );
 
-  // Sincronizar con URL cuando cambia el query param o cuando se cargan los classrooms
+  // FIX FASE3-TASK-003: Consolidated classroom selection logic
+  // Previously had two overlapping useEffects that could compete and cause unnecessary re-renders
   useEffect(() => {
-    if (classroomIdFromUrl && classrooms.length > 0) {
-      // Validar que el classroomId existe en la lista de classrooms
+    // Don't process while loading
+    if (loading) return;
+
+    // Case 1: URL param takes precedence if valid
+    if (classroomIdFromUrl) {
       const exists = classrooms.some((c) => c.id === classroomIdFromUrl);
-      if (exists && classroomIdFromUrl !== selectedClassroomId) {
+      if (exists) {
         setSelectedClassroomId(classroomIdFromUrl);
-      } else if (!exists && classroomIdFromUrl !== 'all') {
-        // Si el classroom no existe, mostrar warning y resetear a 'all'
+      } else if (classroomIdFromUrl !== 'all') {
         console.warn(
           `[TeacherProgressPage] Classroom ${classroomIdFromUrl} not found in list`
         );
       }
+      return;
     }
-  }, [classroomIdFromUrl, classrooms, selectedClassroomId]);
 
-  // FIX-2026-01-19: Auto-seleccionar la clase cuando solo hay 1 disponible
-  // Esto mejora la UX cuando el sistema tiene solo el classroom DEFAULT
-  useEffect(() => {
-    if (
-      !loading &&
-      !classroomIdFromUrl &&
-      classrooms.length === 1 &&
-      selectedClassroomId === 'all'
-    ) {
+    // Case 2: Auto-select if only 1 classroom available (improves UX for DEFAULT classroom)
+    if (classrooms.length === 1) {
       setSelectedClassroomId(classrooms[0].id);
     }
-  }, [loading, classroomIdFromUrl, classrooms, selectedClassroomId]);
+  }, [loading, classroomIdFromUrl, classrooms]);
 
   const [showClassroomDropdown, setShowClassroomDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState<'progress' | 'engagement'>('progress');
