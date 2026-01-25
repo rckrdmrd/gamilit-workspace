@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 5
-  completadas: 5
+  total_tareas: 6
+  completadas: 6
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -47,6 +47,22 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  - task_id: "TASK-006"
+    titulo: "Implementar generacion real de reportes PDF/Excel/CSV"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-006-admin-reports-fix/"
+    commit: "646f767e"
+    story_points: 5
+    capas_afectadas:
+      - "backend"
+    descripcion: |
+      Correccion del sistema de reportes que generaba archivos mock.
+      Implementacion de pdfkit, exceljs, csv-stringify para archivos reales.
+
   - task_id: "TASK-005"
     titulo: "Sincronizacion orchestration/ desde workspace-v2"
     tipo: "migration"

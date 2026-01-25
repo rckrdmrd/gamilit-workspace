@@ -1,6 +1,74 @@
 # Trazas de Tareas - Backend
 
-**Última actualización:** 2026-01-24 (TASK-001: Resolver 5 Gaps P0 Críticos en Student Portal)
+**Última actualización:** 2026-01-25 (TASK-006: Implementar generación real de reportes PDF/Excel/CSV)
+
+---
+
+## TASK-006: Implementar generación real de reportes PDF/Excel/CSV ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P0 CRÍTICO
+**Asignado:** CLAUDE-CODE
+**Fecha:** 2026-01-25
+**Story Points:** 5 SP
+
+### Resumen
+
+Corrección del sistema de reportes administrativos que generaba archivos mock (texto plano) en lugar de archivos binarios reales. Los reportes PDF/Excel se descargaban corruptos.
+
+### Problema Identificado
+
+El método `generateMockReportContent()` en `admin-reports.service.ts` generaba texto plano que se guardaba con extensión PDF/XLSX pero contenía solo texto, causando que los visores lo marcaran como "archivo corrupto".
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `apps/backend/package.json` | +pdfkit, csv-stringify, @types/pdfkit |
+| `modules/admin/services/admin-reports.service.ts` | +4 métodos: fetchReportData, generatePdfContent, generateExcelContent, generateCsvContent |
+| `modules/admin/controllers/admin-reports.controller.ts` | StreamableFile + nuevo endpoint /info |
+
+### Nuevos Métodos Implementados
+
+| Método | Descripción |
+|--------|-------------|
+| `fetchReportData()` | Obtiene datos según tipo de reporte (users, system, etc.) |
+| `generatePdfContent()` | Genera PDF con pdfkit (header, tabla, footer) |
+| `generateExcelContent()` | Genera XLSX con exceljs (styled headers, auto-filter) |
+| `generateCsvContent()` | Genera CSV con BOM para compatibilidad Excel |
+
+### Endpoints Modificados
+
+| Método | Ruta | Cambio |
+|--------|------|--------|
+| GET | /admin/reports/:id/download | Ahora devuelve StreamableFile con Content-Type correcto |
+| GET | /admin/reports/:id/info | **NUEVO** - Metadata sin descargar archivo |
+
+### Validación
+
+| Check | Resultado |
+|-------|-----------|
+| TypeScript Build | ✅ Sin errores |
+| ESLint | ✅ 0 errores |
+| Commit + Push | ✅ Completado |
+
+### Impacto
+
+**Antes:**
+- Reportes PDF/Excel: Corruptos (texto plano con extensión incorrecta)
+- Descarga: Archivos no abrían en visores
+
+**Después:**
+- Reportes PDF: Generación real con pdfkit
+- Reportes Excel: Generación real con exceljs (styled)
+- Reportes CSV: Con BOM para Excel
+- Streaming: Content-Type correcto
+
+### Referencias
+
+- Documentación: `orchestration/tareas/TASK-006-admin-reports-fix/`
+- Commit: `646f767e`
+- Epic: EXT-002 (Admin Extendido - Reports)
 
 ---
 
