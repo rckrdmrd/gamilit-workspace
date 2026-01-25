@@ -5,8 +5,8 @@
 -- Dependencies: 01-demo-users.sql
 -- Order: 02
 -- Created: 2025-11-19
--- Updated: 2025-12-18
--- Version: 2.0 (Actualizado con backup producción 2025-12-18)
+-- Updated: 2026-01-25
+-- Version: 2.1 (Backup y verificación 2026-01-25)
 -- =====================================================
 --
 -- USUARIOS REALES REGISTRADOS:
@@ -14,7 +14,7 @@
 -- - Lote 2 (2025-11-24/25): 29 usuarios (algunos sin nombres)
 -- - Lote 3 (2025-12-08 y 2025-12-17): 2 usuarios
 --
--- TOTAL: 44 usuarios estudiantes
+-- TOTAL: 45 usuarios estudiantes
 --
 -- POLÍTICA DE CARGA LIMPIA:
 -- ✅ UUIDs originales del servidor preservados
@@ -30,7 +30,7 @@
 SET search_path TO auth, public;
 
 -- =====================================================
--- INSERT: Production Registered Users (44 usuarios)
+-- INSERT: Production Registered Users (45 usuarios)
 -- =====================================================
 
 INSERT INTO auth.users (
@@ -825,10 +825,10 @@ BEGIN
     RAISE NOTICE '  - Lote 4 (2025-12+): %', lote4_count;
     RAISE NOTICE '========================================';
 
-    IF production_user_count >= 44 THEN
+    IF production_user_count >= 45 THEN
         RAISE NOTICE '✓ Los usuarios de producción fueron creados correctamente';
     ELSE
-        RAISE WARNING '⚠ Se esperaban 44+ usuarios de producción, se crearon %', production_user_count;
+        RAISE WARNING '⚠ Se esperaban 45+ usuarios de producción, se crearon %', production_user_count;
     END IF;
 
     RAISE NOTICE '========================================';
@@ -850,8 +850,13 @@ END $$;
 -- =====================================================
 -- CHANGELOG
 -- =====================================================
+-- v2.1 (2026-01-25): Backup y verificación de usuarios
+--   - 45 usuarios totales (sin cambios)
+--   - Backup de BD realizado para preservar datos
+--   - Usuarios de prueba 2026-01 excluidos del seed
+--
 -- v2.0 (2025-12-18): Actualización completa desde backup producción
---   - 44 usuarios totales
+--   - 45 usuarios totales
 --   - Lote 1: 13 usuarios (2025-11-18)
 --   - Lote 2: 23 usuarios (2025-11-24)
 --   - Lote 3: 6 usuarios (2025-11-25)
