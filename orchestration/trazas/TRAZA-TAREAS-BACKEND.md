@@ -1,6 +1,142 @@
 # Trazas de Tareas - Backend
 
-**Última actualización:** 2026-01-25 (TASK-012: Test Coverage Fixes)
+**Última actualización:** 2026-01-25 (GAP-BE-006: CRUD Roles Admin)
+
+---
+
+## GAP-BE-006: CRUD Completo de Roles Admin ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P2
+**Asignado:** CLAUDE-CODE (claude-opus-4-5-20251101)
+**Fecha:** 2026-01-25
+**Tarea Padre:** TASK-2026-01-25-VALIDACION-INTEGRAL-GAMILIT
+
+### Resumen
+
+Implementación de endpoints faltantes para gestión completa de roles administrativos. Los endpoints GET existían, se agregaron POST (crear) y DELETE (eliminar) con protección de roles del sistema y audit logging.
+
+### Archivos Creados
+
+| Archivo | Tipo | Líneas | Descripción |
+|---------|------|--------|-------------|
+| `modules/admin/dto/roles/create-role.dto.ts` | DTOs | 124 | CreateRoleDto, CreateRoleResponseDto, DeleteRoleResponseDto |
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `modules/admin/dto/roles/index.ts` | +export create-role.dto |
+| `modules/admin/services/admin-roles.service.ts` | +createRole(), +deleteRole(), +SYSTEM_ROLES |
+| `modules/admin/controllers/admin-roles.controller.ts` | +POST /admin/roles, +DELETE /admin/roles/:id |
+
+### Endpoints Implementados
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST | /admin/roles | Crear rol personalizado |
+| DELETE | /admin/roles/:id | Eliminar (soft-delete) rol |
+
+### Validaciones CreateRoleDto
+
+| Campo | Validación |
+|-------|------------|
+| name | Required, 3-50 chars, /^[a-z][a-z0-9_]*$/ |
+| description | Optional, max 500 chars |
+| permissions | Optional, Record<string, boolean> |
+
+### Roles del Sistema (Protegidos)
+
+```typescript
+const SYSTEM_ROLES = ['student', 'admin_teacher', 'super_admin'];
+// Estos roles NO pueden ser eliminados
+```
+
+### Características
+
+- **Soft-delete:** Roles se desactivan (is_active=false) en lugar de eliminarse
+- **Audit logging:** Todas las operaciones se registran en audit log
+- **Validación única:** Nombre de rol debe ser único
+- **Protección:** Roles del sistema no pueden ser eliminados
+
+### Impacto
+
+- DTOs: +3 (337 → 340)
+- Endpoints: +2 (627 → 629)
+- Métodos servicio: +2 (createRole, deleteRole)
+
+---
+
+## TASK-019: US-PM-007 - Alert Configuration Service ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1
+**Asignado:** CLAUDE-CODE
+**Fecha:** 2026-01-25
+**Story Points:** 8 SP
+**User Story:** US-PM-007
+
+### Resumen
+
+Implementación del backend para configuración de alertas de intervención personalizadas por maestro. Permite a los docentes ajustar umbrales y preferencias de notificación para 6 tipos de alertas.
+
+### Archivos Creados
+
+| Archivo | Tipo | Líneas | Descripción |
+|---------|------|--------|-------------|
+| `modules/progress/entities/teacher-alert-configuration.entity.ts` | Entity | 120 | TypeORM entity con 14 columnas |
+| `modules/teacher/dto/alert-config.dto.ts` | DTOs | 150 | 6 DTOs: Create, Update, Query, Response, Defaults, List |
+| `modules/teacher/services/alert-config.service.ts` | Service | 280 | CRUD + initializeDefaults + getDefaults |
+| `modules/teacher/controllers/alert-config.controller.ts` | Controller | 200 | 7 endpoints REST |
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `shared/constants/database.constants.ts` | +1 constante TEACHER_ALERT_CONFIGURATIONS |
+| `modules/progress/entities/index.ts` | Export TeacherAlertConfiguration |
+| `modules/progress/progress.module.ts` | Registro entity en TypeOrmModule |
+| `modules/teacher/teacher.module.ts` | Registro controller y service |
+| `modules/teacher/services/index.ts` | Export AlertConfigService |
+| `modules/teacher/dto/index.ts` | Export DTOs |
+
+### Endpoints Implementados
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | /teacher/alert-config | Listar configs del maestro |
+| GET | /teacher/alert-config/defaults | Obtener defaults por tipo |
+| GET | /teacher/alert-config/:id | Obtener config específica |
+| POST | /teacher/alert-config | Crear nueva config |
+| POST | /teacher/alert-config/initialize | Inicializar defaults |
+| PUT | /teacher/alert-config/:id | Actualizar config |
+| DELETE | /teacher/alert-config/:id | Eliminar config |
+
+### Constantes de Defaults (ALERT_DEFAULTS)
+
+```typescript
+{
+  NO_ACTIVITY: { threshold: 3, unit: 'days' },
+  LOW_SCORE: { threshold: 60, unit: 'percentage' },
+  DECLINING_TREND: { threshold: 10, unit: 'percentage' },
+  REPEATED_FAILURES: { threshold: 3, unit: 'count' },
+  EXCESSIVE_TIME: { threshold: 30, unit: 'minutes' },
+  LOW_ENGAGEMENT: { threshold: 50, unit: 'percentage' }
+}
+```
+
+### Guards Aplicados
+
+- `JwtAuthGuard` - Autenticación requerida
+- `RolesGuard` + `@Roles('teacher', 'admin_teacher')` - Solo maestros
+
+### Impacto
+
+- Entities: +1 (125 → 126)
+- Services: +1 (105 → 106)
+- Controllers: +1 (87 → 88)
+- Endpoints: +7 (620 → 627)
+- DTOs: +6 (331 → 337)
 
 ---
 

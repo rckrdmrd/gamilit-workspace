@@ -4,27 +4,161 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.11.0"
+  version: "3.13.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-24"
-  last_update_task: "TASK-001"
+  last_updated: "2026-01-25"
+  last_update_task: "TASK-2026-01-25-VALIDACION-INTEGRAL-GAMILIT"
   generated_by: "Auditoría documentación completa - Conteo real filesystem"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
   total_modules: 17  # RECONCILIADO 2026-01-16 - 17 módulos con código
-  total_entities: 125  # TASK-001: +1 TwoFactorToken entity
-  total_dtos: 331  # ETC-001: -6 re-exports eliminados
-  total_services: 105  # TASK-001: +1 TwoFactorAuthService
-  total_controllers: 87  # AUDITADO 2026-01-24 - +12 controllers agregados desde última reconciliación
-  total_endpoints: 620  # TASK-001: +8 endpoints 2FA
+  total_entities: 126  # TASK-019: +1 TeacherAlertConfiguration entity
+  total_dtos: 340  # GAP-BE-006: +3 DTOs (CreateRoleDto, CreateRoleResponseDto, DeleteRoleResponseDto)
+  total_services: 106  # TASK-019: +1 AlertConfigService
+  total_controllers: 88  # TASK-019: +1 AlertConfigController
+  total_endpoints: 629  # GAP-BE-006: +2 endpoints (POST /admin/roles, DELETE /admin/roles/:id)
   typescript_errors: 0  # ⚠️ 2025-11-28: Backend tiene errores PREEXISTENTES en tests auth (no en admin)
-  build_status: "✅ BUILD PASSING"  # ETC-001: Validado 2026-01-16
+  build_status: "✅ BUILD PASSING"  # GAP-BE-006: Validado 2026-01-25
   coherencia_bd: "99%"  # ✅ Actualizado 2026-01-14 (129/134 tablas con entity - 16 nuevas)
   discrepancies_found: "8 tablas auxiliares sin entity (intencional - verificado ETC-001)"
   api_docs:
     - "docs/90-transversal/api/API-TEACHER-MODULE.md"
     - "docs/90-transversal/api/API-ADMIN-MODULE.md"
+
+# ============================================================================
+# CHANGELOG 2026-01-25 (v3.13.0 - GAP-BE-006 Roles CRUD)
+# ============================================================================
+gap_be_006_roles_crud:
+  descripcion: "Implementación GAP-BE-006: CRUD completo de roles administrativos"
+  task: "TASK-2026-01-25-VALIDACION-INTEGRAL-GAMILIT"
+  fecha: "2026-01-25"
+
+  archivos_creados:
+    dtos:
+      - path: "modules/admin/dto/roles/create-role.dto.ts"
+        descripcion: "DTOs para operaciones CRUD de roles"
+        lineas: 124
+        exports:
+          - "CreateRoleDto"
+          - "CreateRoleResponseDto"
+          - "DeleteRoleResponseDto"
+        validaciones:
+          - "name: 3-50 chars, lowercase alphanumeric with underscores"
+          - "description: optional, max 500 chars"
+          - "permissions: optional object Record<string, boolean>"
+
+  archivos_modificados:
+    - path: "modules/admin/dto/roles/index.ts"
+      cambio: "Export create-role.dto.ts"
+    - path: "modules/admin/services/admin-roles.service.ts"
+      cambio: "+2 métodos: createRole(), deleteRole()"
+      metodos_agregados:
+        - "createRole(createDto, admin): Crear rol con permisos iniciales"
+        - "deleteRole(roleId, admin): Soft-delete de rol (is_active=false)"
+      caracteristicas:
+        - "Protección de roles del sistema (student, admin_teacher, super_admin)"
+        - "Audit logging para todas las operaciones"
+        - "Validación de nombre único"
+    - path: "modules/admin/controllers/admin-roles.controller.ts"
+      cambio: "+2 endpoints: POST /admin/roles, DELETE /admin/roles/:id"
+
+  endpoints_agregados:
+    - "POST /admin/roles - Crear nuevo rol personalizado"
+    - "DELETE /admin/roles/:id - Eliminar (soft-delete) rol"
+
+  impacto:
+    dtos: "+3 (337 → 340)"
+    endpoints: "+2 (627 → 629)"
+    metodos_servicio: "+2"
+
+  notas: |
+    Los roles del sistema (student, admin_teacher, super_admin) están protegidos
+    y no pueden ser eliminados. La eliminación es soft-delete (is_active=false).
+    Todos los cambios se registran en audit log.
+
+# ============================================================================
+# CHANGELOG 2026-01-25 (v3.12.0 - US-PM-006 & US-PM-007)
+# ============================================================================
+us_pm_006_007:
+  descripcion: "Implementación US-PM-006 (Bloqueo Alumnos - Frontend) y US-PM-007 (Config Alertas - Full Stack)"
+  tasks:
+    - "TASK-018 (US-PM-006)"
+    - "TASK-019 (US-PM-007)"
+
+  # US-PM-006: Solo frontend, backend ya existía
+  us_pm_006_note: |
+    Backend ya implementado en:
+    - services/student-blocking.service.ts
+    - controllers/teacher-classrooms.controller.ts
+    Endpoints existentes: block, unblock, getPermissions
+
+  # US-PM-007: Full stack implementation
+  archivos_creados:
+    entities:
+      - path: "modules/progress/entities/teacher-alert-configuration.entity.ts"
+        tabla: "progress_tracking.teacher_alert_configurations"
+        descripcion: "Entity para configuraciones de alertas del maestro"
+        lineas: 120
+    dtos:
+      - path: "modules/teacher/dto/alert-config.dto.ts"
+        descripcion: "DTOs: AlertConfigType, ThresholdUnit, Create, Update, Response, Query, Defaults, List"
+        lineas: 150
+    services:
+      - path: "modules/teacher/services/alert-config.service.ts"
+        descripcion: "Servicio CRUD para configuraciones de alertas"
+        lineas: 280
+        metodos:
+          - "getConfigurations(teacherId, classroomId?)"
+          - "getConfiguration(teacherId, configId)"
+          - "createConfiguration(teacherId, dto)"
+          - "updateConfiguration(teacherId, configId, dto)"
+          - "deleteConfiguration(teacherId, configId)"
+          - "getDefaultConfigurations()"
+          - "initializeDefaults(teacherId, classroomId?)"
+    controllers:
+      - path: "modules/teacher/controllers/alert-config.controller.ts"
+        descripcion: "Controller con 7 endpoints para gestión de alertas"
+        lineas: 200
+
+  archivos_modificados:
+    - path: "shared/constants/database.constants.ts"
+      cambio: "+1 constante TEACHER_ALERT_CONFIGURATIONS"
+    - path: "modules/progress/entities/index.ts"
+      cambio: "Export TeacherAlertConfiguration"
+    - path: "modules/progress/progress.module.ts"
+      cambio: "Registrada entity en TypeOrmModule"
+    - path: "modules/teacher/teacher.module.ts"
+      cambio: "Registrados AlertConfigController y AlertConfigService"
+    - path: "modules/teacher/services/index.ts"
+      cambio: "Export AlertConfigService"
+    - path: "modules/teacher/dto/index.ts"
+      cambio: "Export DTOs de alert-config"
+
+  endpoints_agregados:
+    - "GET /teacher/alert-config"
+    - "GET /teacher/alert-config/defaults"
+    - "GET /teacher/alert-config/:id"
+    - "POST /teacher/alert-config"
+    - "POST /teacher/alert-config/initialize"
+    - "PUT /teacher/alert-config/:id"
+    - "DELETE /teacher/alert-config/:id"
+
+  impacto:
+    entities: "+1 (125 → 126)"
+    dtos: "+6 (331 → 337)"
+    services: "+1 (105 → 106)"
+    controllers: "+1 (87 → 88)"
+    endpoints: "+7 (620 → 627)"
+
+  validacion:
+    build: "pendiente"
+    coherencia_bd: "Entity alineada con DDL"
+    impacto_student: "CERO - análisis confirmado"
+
+  traza:
+    - "orchestration/tareas/TASK-018-us-pm-006-bloquear-alumnos/"
+    - "orchestration/tareas/TASK-019-us-pm-007-config-alertas/"
 
 # ============================================================================
 # CHANGELOG 2026-01-24 (v3.11.0 - TASK-001 Implementación 2FA)

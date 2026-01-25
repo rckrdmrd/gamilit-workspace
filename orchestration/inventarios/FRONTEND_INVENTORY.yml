@@ -1,7 +1,7 @@
 # FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 4.9.0
+version: 4.10.0
 generated: 2025-11-08
 updated: 2026-01-25
 source: RECONCILIACION-INTEGRAL Plan Maestro GAMILIT - Conteo real filesystem
@@ -22,13 +22,13 @@ structure_audit_2026_01_10: |
 # ============================================================================
 
 summary:
-  total_files: 900+  # ✅ Actualizado 2025-12-26 - auditoria real
-  total_components: 463  # CONSOLIDADO 2026-01-16 - eliminado UnderConstruction duplicado
-  total_hooks: 108  # AUDITADO 2026-01-24 - conteo real use*.ts/tsx
+  total_files: 912+  # ✅ Actualizado 2026-01-25 - +2 archivos P1 gaps (hooks)
+  total_components: 465  # TASK-018: +2 (SuspendStudentModal, StudentActionsMenu)
+  total_hooks: 112  # P1 gaps: +2 (useSystemLogs, useConfigCategories)
   total_features: 11  # +1 notifications (TASK-008)
-  total_pages: 74  # RECONCILIADO 2026-01-16 ✓
+  total_pages: 75  # TASK-019: +1 TeacherAlertConfigPage
   total_stores: 12  # RECONCILIADO 2026-01-16 ✓
-  total_api_services: 24  # TASK-001: +1 twoFactorAPI.ts
+  total_api_services: 25  # TASK-019: +1 alertConfigApi.ts
   total_mechanics: 33  # ✅ ACTUALIZADO 2026-01-13 - 23 oficiales + 5 M4 + 3 M5 + 2 auxiliares
   total_routes: 18  # ✅ ACTUALIZADO 2026-01-13 - verificado con rutas implementadas
   lines_of_code: ~100000  # ✅ ACTUALIZADO 2025-12-26
@@ -45,6 +45,74 @@ summary:
     pages_with_realtime: 2  # Notifications, Monitoring
     documented_specs: 10  # ET-ADM-001 to ET-ADM-010
     api_map_location: "orchestration/inventarios/ADMIN-API-MAP.yml"
+
+  changes_from_v4_10:  # P1 Gaps - Admin Portal Hooks - 2026-01-25
+    task_id: "TASK-2026-01-25-VALIDACION-INTEGRAL-GAMILIT"
+    description: "Hooks para integración P1 gaps (System Logs, Config Categories)"
+    files_created:
+      - path: "apps/admin/hooks/useSystemLogs.ts"
+        descripcion: "Hook para consultar logs del sistema con filtrado y paginación"
+        lineas: 194
+        exports:
+          - "useSystemLogs"
+          - "UseSystemLogsResult"
+          - "SystemLogFilters"
+        funcionalidades:
+          - "fetchLogs(filters) - Obtener logs con filtros"
+          - "Paginación automática"
+          - "Filtrado por nivel, fecha, búsqueda"
+          - "Manejo de errores"
+      - path: "apps/admin/hooks/useConfigCategories.ts"
+        descripcion: "Hook para categorías de configuración y validación"
+        lineas: 168
+        exports:
+          - "useConfigCategories"
+          - "UseConfigCategoriesResult"
+        funcionalidades:
+          - "fetchCategories() - Obtener categorías disponibles"
+          - "validateConfig(category, config) - Validar configuración"
+          - "Manejo de estado de carga y errores"
+    files_modified:
+      - path: "apps/admin/hooks/index.ts"
+        cambio: "+2 exports (useSystemLogs, useConfigCategories)"
+      - path: "services/api/adminTypes.ts"
+        cambio: "+ConfigValidationResult type"
+    summary:
+      hooks_added: 2
+      total_lines_new: 362
+    impact_analysis: "Integración con endpoints backend existentes - 0 cambios requeridos en backend"
+
+  changes_from_v4_9:  # US-PM-006 & US-PM-007 - 2026-01-25
+    tasks:
+      - task_id: "TASK-018"
+        user_story: "US-PM-006"
+        description: "Bloqueo/Desbloqueo de Alumnos (Frontend)"
+        files_created:
+          - "apps/teacher/hooks/useStudentBlocking.ts (160 líneas)"
+          - "apps/teacher/components/monitoring/SuspendStudentModal.tsx (180 líneas)"
+          - "apps/teacher/components/monitoring/StudentActionsMenu.tsx (150 líneas)"
+        files_modified:
+          - "services/api/teacher/classroomsApi.ts (+BlockType, +BlockStudentDto, +3 métodos)"
+          - "apps/teacher/hooks/index.ts (+exports)"
+          - "apps/teacher/components/monitoring/StudentMonitoringPanel.tsx (+integración)"
+      - task_id: "TASK-019"
+        user_story: "US-PM-007"
+        description: "Configuración de Alertas (Full Stack)"
+        files_created:
+          - "services/api/teacher/alertConfigApi.ts (180 líneas)"
+          - "apps/teacher/hooks/useAlertConfig.ts (220 líneas)"
+          - "apps/teacher/pages/TeacherAlertConfigPage.tsx (420 líneas)"
+        files_modified:
+          - "App.tsx (+ruta /teacher/settings/alerts)"
+          - "apps/teacher/hooks/index.ts (+exports)"
+          - "services/api/teacher/index.ts (+exports)"
+    summary:
+      components_added: 2
+      hooks_added: 2
+      pages_added: 1
+      api_services_added: 1
+      total_lines_new: 1310
+    impact_analysis: "CERO afectación a Student Portal - confirmado"
 
   changes_from_v4_8:  # TASK-2026-01-25-001 - Admin Portal Analysis
     task_id: "TASK-2026-01-25-001"

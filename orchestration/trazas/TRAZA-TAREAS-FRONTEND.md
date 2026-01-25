@@ -1,9 +1,215 @@
 # Traza de Tareas: NEXUS-FRONTEND
 
-**Última actualización:** 2026-01-25 (TASK-011: Correcciones Portal Teacher Fases 1-4)
+**Última actualización:** 2026-01-25 (P1 Gaps: Admin Portal Hooks)
 **Revisado en auditoría:** 2026-01-10 (Sin cambios - contenido vigente)
-**Estado:** ✅ Portal Teacher COMPLETO - 14 páginas funcionales, navegación 100%
+**Estado:** ✅ Portal Teacher COMPLETO - 15 páginas funcionales, navegación 100%
 **Estado:** ✅ Portal Student - Módulos 4 y 5 ACTIVOS - 8 ejercicios creativos funcionales
+**Estado:** ✅ Portal Admin - 18 páginas, hooks P1 integrados
+
+---
+
+## P1 Gaps: Admin Portal Hooks (System Logs + Config Categories) ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1
+**Asignado:** CLAUDE-CODE (claude-opus-4-5-20251101)
+**Fecha:** 2026-01-25
+**Tarea Padre:** TASK-2026-01-25-VALIDACION-INTEGRAL-GAMILIT
+
+### Resumen
+
+Creación de hooks React para integración con endpoints backend existentes de System Logs y Config Categories. Los endpoints ya estaban implementados en backend pero faltaban hooks frontend para consumirlos.
+
+### Archivos Creados
+
+| Archivo | Tipo | Líneas | Descripción |
+|---------|------|--------|-------------|
+| `apps/admin/hooks/useSystemLogs.ts` | Hook | 194 | Consulta de logs del sistema con filtrado |
+| `apps/admin/hooks/useConfigCategories.ts` | Hook | 168 | Categorías de config y validación |
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `apps/admin/hooks/index.ts` | +export useSystemLogs, useConfigCategories |
+| `services/api/adminTypes.ts` | +ConfigValidationResult type |
+
+### useSystemLogs.ts - Funcionalidades
+
+| Función | Descripción |
+|---------|-------------|
+| `fetchLogs(filters)` | Obtener logs con filtros opcionales |
+| Paginación | Soporte para page, limit, total |
+| Filtrado | level, date, search |
+| Error handling | Estados loading, error, refetch |
+
+### useConfigCategories.ts - Funcionalidades
+
+| Función | Descripción |
+|---------|-------------|
+| `fetchCategories()` | Obtener lista de categorías disponibles |
+| `validateConfig(category, config)` | Validar configuración contra schema |
+| Loading states | Separados para fetch y validate |
+
+### Endpoints Consumidos (Backend Existente)
+
+| Endpoint | Hook |
+|----------|------|
+| GET /admin/system/logs | useSystemLogs |
+| GET /admin/system/config/categories | useConfigCategories |
+| POST /admin/system/config/validate | useConfigCategories.validateConfig |
+
+### Impacto
+
+- Hooks: +2 (110 → 112)
+- Líneas nuevas: ~362
+- Archivos: +2 (910 → 912)
+
+### Nota
+
+Los endpoints backend ya existían y fueron verificados durante TASK-2026-01-25-VALIDACION-INTEGRAL-GAMILIT. Solo faltaban hooks para consumirlos desde el frontend.
+
+---
+
+## TASK-019: US-PM-007 - Configuración de Alertas (Frontend) ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1
+**Asignado:** CLAUDE-CODE (claude-opus-4-5-20251101)
+**Fecha:** 2026-01-25
+**Story Points:** 4 SP (parte de 8 SP full-stack)
+**User Story:** US-PM-007
+
+### Resumen
+
+Implementación del frontend para configuración de alertas de intervención personalizadas. Página con cards por tipo de alerta, toggles enable/disable, edición de umbrales y preferencias de notificación.
+
+### Archivos Creados
+
+| Archivo | Tipo | Líneas | Descripción |
+|---------|------|--------|-------------|
+| `services/api/teacher/alertConfigApi.ts` | API Client | 180 | CRUD + getDefaults + initializeDefaults |
+| `apps/teacher/hooks/useAlertConfig.ts` | Hook | 220 | Estado + métodos + toast notifications |
+| `apps/teacher/pages/TeacherAlertConfigPage.tsx` | Page | 420 | UI con 6 cards de alerta |
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `App.tsx` | +ruta /teacher/settings/alerts |
+| `apps/teacher/hooks/index.ts` | +export useAlertConfig, AlertConfigType |
+| `services/api/teacher/index.ts` | +export alertConfigApi y tipos |
+
+### Características UI
+
+- **Cards por tipo de alerta:** 6 tipos con iconos y colores distintos
+- **Toggle enable/disable:** Switch visual por alerta
+- **Edición de umbrales:** Input numérico con unidad (%, días, veces, min)
+- **Notificaciones:** Botones Email / In-App seleccionables
+- **Inicializar defaults:** Botón para crear configuraciones predeterminadas
+- **Estados:** Loading skeleton, error con retry, empty state
+
+### Ruta Agregada
+
+```tsx
+<Route path="/teacher/settings/alerts" element={<TeacherAlertConfigPage />} />
+```
+
+### Impacto
+
+- Pages: +1 (74 → 75)
+- Hooks: +1 (109 → 110)
+- API Services: +1 (24 → 25)
+- Líneas nuevas: ~820
+
+---
+
+## TASK-018: US-PM-006 - Bloqueo/Desbloqueo de Alumnos (Frontend) ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1
+**Asignado:** CLAUDE-CODE (claude-opus-4-5-20251101)
+**Fecha:** 2026-01-25
+**Story Points:** 4 SP
+**User Story:** US-PM-006
+
+### Resumen
+
+Implementación del frontend para bloqueo/desbloqueo de estudiantes en el Portal del Maestro. El backend ya existía implementado en `student-blocking.service.ts`. Se crearon componentes visuales y hook de integración.
+
+### Archivos Creados
+
+| Archivo | Tipo | Líneas | Descripción |
+|---------|------|--------|-------------|
+| `apps/teacher/hooks/useStudentBlocking.ts` | Hook | 160 | Estado + blockStudent + unblockStudent |
+| `apps/teacher/components/monitoring/SuspendStudentModal.tsx` | Component | 180 | Modal con tipo de bloqueo y razón |
+| `apps/teacher/components/monitoring/StudentActionsMenu.tsx` | Component | 150 | Dropdown con acciones contextuales |
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `services/api/teacher/classroomsApi.ts` | +BlockType, +BlockStudentDto, +3 métodos API |
+| `apps/teacher/hooks/index.ts` | +export useStudentBlocking, BlockType |
+| `apps/teacher/components/monitoring/StudentMonitoringPanel.tsx` | +integración completa |
+
+### Características UI
+
+- **Modal de suspensión:**
+  - Info del estudiante (avatar, nombre)
+  - Selector de tipo: Completo / Parcial
+  - Campo de razón (obligatorio)
+  - Botones Cancelar / Suspender
+
+- **Menú de acciones:**
+  - Ver Detalles
+  - Enviar Mensaje
+  - Suspender / Desbloquear (condicional)
+  - Ver Alertas
+  - Ver Historial
+
+- **Badge de bloqueado:** Indicador visual "Bloqueado" en listados
+
+### Tipos Agregados a classroomsApi.ts
+
+```typescript
+export enum BlockType {
+  FULL = 'full',
+  PARTIAL = 'partial',
+}
+
+export interface BlockStudentDto {
+  reason: string;
+  block_type: BlockType;
+  blocked_modules?: string[];
+  blocked_exercises?: string[];
+}
+
+export interface StudentPermissionsResponse {
+  student_id: string;
+  is_blocked: boolean;
+  block_reason?: string;
+  block_type?: BlockType;
+  blocked_modules: string[];
+  blocked_exercises: string[];
+  blocked_at?: string;
+  blocked_by_name?: string;
+}
+```
+
+### Impacto
+
+- Components: +2 (463 → 465)
+- Hooks: +1 (108 → 109)
+- Líneas nuevas: ~490
+
+### Análisis de Impacto
+
+✅ **CERO afectación a Student Portal** - Confirmado mediante análisis exhaustivo:
+- Componentes teacher-only (no compartidos)
+- Hook exclusivo del módulo teacher
+- API endpoints protegidos con TeacherGuard
+- Sin modificaciones a rutas/stores del student
 
 ---
 
