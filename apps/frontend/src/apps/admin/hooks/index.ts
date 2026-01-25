@@ -17,3 +17,7 @@ export { useProgress } from './useProgress';
 export { useMonitoring } from './useMonitoring';
 export { useFeatureFlags } from './useFeatureFlags';
 export { useClassroomsList } from './useClassroomsList';
+export { useSystemLogs } from './useSystemLogs';
+export { useConfigCategories } from './useConfigCategories';
+export { useAuditLogs } from './useAuditLogs';
+export { useSystemConfig } from './useSystemConfig';

@@ -451,6 +451,25 @@ export type SettingsCategory =
   | 'analytics'
   | 'integrations';
 
+/**
+ * Configuration validation error
+ */
+export interface ConfigValidationError {
+  field: string;
+  message: string;
+  value?: unknown;
+}
+
+/**
+ * Result of configuration validation
+ * Backend: POST /admin/system/config/validate
+ */
+export interface ConfigValidationResult {
+  valid: boolean;
+  errors: ConfigValidationError[];
+  warnings: string[];
+}
+
 export interface GeneralSettings {
   platformName: string;
   platformUrl: string;
