@@ -36,25 +36,31 @@ export class SharedReport {
   @Column({ name: 'report_id', type: 'uuid' })
     reportId!: string;
 
-  @Column({ name: 'shared_by_id', type: 'uuid' })
+  @Column({ name: 'shared_by', type: 'uuid' })
     sharedById!: string;
 
-  @Column({ name: 'shared_with_id', type: 'uuid' })
+  @Column({ name: 'shared_with', type: 'uuid' })
     sharedWithId!: string;
 
+  @Column({ name: 'tenant_id', type: 'uuid' })
+    tenantId!: string;
+
   @Column({
-    name: 'permission',
+    name: 'permission_level',
     type: 'enum',
     enum: SharePermission,
     default: SharePermission.VIEW,
   })
     permission!: SharePermission;
 
-  @Column({ name: 'message', type: 'text', nullable: true })
+  @Column({ name: 'share_message', type: 'text', nullable: true })
     message!: string | null;
 
-  @Column({ name: 'viewed_at', type: 'timestamptz', nullable: true })
-    viewedAt!: Date | null;
+  @Column({ name: 'accessed_at', type: 'timestamptz', nullable: true })
+    accessedAt!: Date | null;
+
+  @Column({ name: 'access_count', type: 'int', default: 0 })
+    accessCount!: number;
 
   @Column({ name: 'expires_at', type: 'timestamptz', nullable: true })
     expiresAt!: Date | null;

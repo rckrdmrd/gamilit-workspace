@@ -34,9 +34,11 @@ export interface SharedReportResponseDto {
   shared_by_id: string;
   shared_by_name?: string;
   shared_with_id: string;
+  tenant_id: string;
   permission: string;
   message: string | null;
-  viewed_at: string | null;
+  accessed_at: string | null;
+  access_count: number;
   expires_at: string | null;
   is_revoked: boolean;
   created_at: string;
@@ -176,11 +178,13 @@ export class SharedReportsService {
       throw new ForbiddenException('You do not have access to this shared report');
     }
 
-    if (!share.viewedAt) {
-      share.viewedAt = new Date();
-      await this.sharedReportRepo.save(share);
-      this.logger.log(`Shared report ${shareId} marked as viewed by ${teacherId}`);
-    }
+    // Update access tracking
+    share.accessedAt = new Date();
+    share.accessCount = (share.accessCount || 0) + 1;
+    await this.sharedReportRepo.save(share);
+    this.logger.log(
+      `Shared report ${shareId} accessed by ${teacherId} (total accesses: ${share.accessCount})`,
+    );
   }
 
   /**
@@ -330,9 +334,11 @@ export class SharedReportsService {
       report_format: report?.reportFormat || 'unknown',
       shared_by_id: share.sharedById,
       shared_with_id: share.sharedWithId,
+      tenant_id: share.tenantId,
       permission: share.permission,
       message: share.message,
-      viewed_at: share.viewedAt?.toISOString() || null,
+      accessed_at: share.accessedAt?.toISOString() || null,
+      access_count: share.accessCount || 0,
       expires_at: share.expiresAt?.toISOString() || null,
       is_revoked: share.isRevoked,
       created_at: share.createdAt.toISOString(),
