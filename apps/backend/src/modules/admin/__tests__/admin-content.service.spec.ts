@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Brackets } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { AdminContentService } from '../services/admin-content.service';
 import { Module } from '@modules/educational/entities/module.entity';
@@ -15,6 +15,18 @@ import {
   ListMediaDto,
 } from '../dto/content';
 import { ContentStatusEnum, MediaTypeEnum } from '@shared/constants';
+
+// Mock TypeORM Brackets class
+jest.mock('typeorm', () => {
+  const actual = jest.requireActual('typeorm');
+  return {
+    ...actual,
+    Brackets: jest.fn().mockImplementation((callback) => {
+      // Return an object that can be passed to andWhere
+      return { callback };
+    }),
+  };
+});
 
 describe('AdminContentService', () => {
   let service: AdminContentService;
