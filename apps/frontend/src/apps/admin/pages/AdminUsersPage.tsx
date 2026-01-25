@@ -9,6 +9,7 @@ import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { UserDetailModal } from '../components/users/UserDetailModal';
 import { CreateUserModal } from '../components/users/CreateUserModal';
 import { BulkActionsPanel } from '../components/users/BulkActionsPanel';
+import { UserAdvancedFilters } from '../components/users/UserAdvancedFilters';
 import type { CreateUserFormData, CreatedUserResult } from '../components/users/CreateUserModal';
 import { ToastContainer, useToast } from '@shared/components/base/Toast';
 import { getOrganizations } from '@/services/api/adminAPI';
@@ -163,10 +164,11 @@ export default function AdminUsersPage() {
     [createUser, showToast],
   );
 
-  // Fetch users on component mount
+  // Fetch users and organizations on component mount
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
+    fetchOrganizations();
+  }, [fetchUsers, fetchOrganizations]);
 
   // Debounce search term
   useEffect(() => {
@@ -586,12 +588,7 @@ export default function AdminUsersPage() {
         <DetectiveCard>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-detective-text">Búsqueda y Filtros</h3>
-              <FeatureBadge
-                variant="coming-soon"
-                tooltip="Filtros avanzados por institución, fecha de registro y más"
-                size="sm"
-              />
+              <h3 className="text-lg font-semibold text-detective-text">Busqueda y Filtros</h3>
             </div>
             <div className="flex flex-col gap-4 md:flex-row">
               {/* Search */}
@@ -656,6 +653,14 @@ export default function AdminUsersPage() {
                 Nuevo Usuario
               </DetectiveButton>
             </div>
+
+            {/* Advanced Filters - GAP-C07 */}
+            <UserAdvancedFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              organizations={organizations}
+              isLoadingOrganizations={isLoadingOrganizations}
+            />
           </div>
         </DetectiveCard>
 
