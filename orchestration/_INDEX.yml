@@ -1,0 +1,352 @@
+# ===============================================================================
+# _INDEX.yml - INDICE ESTRUCTURAL MAESTRO DE ORCHESTRATION GAMILIT
+# ===============================================================================
+#
+# PROPOSITO: Indice estructural para navegacion y carga de contexto IoC (NEXUS)
+# PROYECTO: GAMILIT - Plataforma EdTech con Gamificacion
+# TIPO: STANDALONE (workspace independiente)
+#
+# USO: El sistema NEXUS usa este archivo para resolver rutas automaticamente
+#
+# ===============================================================================
+
+version: "1.0.0"
+fecha_creacion: "2026-01-25"
+descripcion: "Indice estructural maestro de orchestration/ de GAMILIT"
+sistema: "SIMCO v4.3.0 + NEXUS v4.0"
+proyecto: "gamilit"
+tipo_proyecto: "STANDALONE"
+
+# ===============================================================================
+# METRICAS DE ESTRUCTURA
+# ===============================================================================
+
+metricas:
+  carpetas_nivel_1: 12
+  carpetas_total: 45
+  archivos_raiz: 12
+  indices_existentes:
+    - _MAP.md                        # Navegacion visual
+    - MAPA-DOCUMENTACION.yml         # Documentacion
+    - CONTEXT-MAP.yml                # Contexto NEXUS
+
+# ===============================================================================
+# ARCHIVOS RAIZ (12 archivos)
+# ===============================================================================
+
+archivos_raiz:
+  # --- Indices y Mapas ---
+  indices:
+    - archivo: "_INDEX.yml"
+      alias: "@INDEX"
+      proposito: "Este archivo - Indice estructural maestro"
+
+    - archivo: "_MAP.md"
+      alias: "@MAP"
+      proposito: "Mapa visual de navegacion"
+
+    - archivo: "MAPA-DOCUMENTACION.yml"
+      alias: "@MAPA-DOC"
+      proposito: "Mapa de toda la documentacion"
+
+  # --- Contexto y Estado ---
+  contexto:
+    - archivo: "CONTEXT-MAP.yml"
+      alias: "@CONTEXT-MAP"
+      proposito: "Mapa de contexto para NEXUS - Keywords a archivos"
+      nivel_nexus: "L0"
+
+    - archivo: "PROJECT-PROFILE.yml"
+      alias: "@PROJECT-PROFILE"
+      proposito: "Perfil del proyecto GAMILIT"
+
+    - archivo: "PROJECT-STATUS.md"
+      alias: "@PROJECT-STATUS"
+      proposito: "Estado actual del proyecto"
+
+    - archivo: "PROXIMA-ACCION.md"
+      alias: "@PROXIMA-ACCION"
+      proposito: "Checkpoint de sesion - Continuidad entre sesiones"
+
+    - archivo: "BOOTLOADER.md"
+      alias: "@BOOTLOADER"
+      proposito: "Carga de contexto inicial de sesion"
+
+    - archivo: "QUICK-REFERENCE.md"
+      alias: "@QUICK-REF"
+      proposito: "Referencia rapida para agentes"
+
+  # --- Trazabilidad y Dependencias ---
+  trazabilidad:
+    - archivo: "TRACEABILITY.yml"
+      alias: "@TRACEABILITY"
+      proposito: "Trazabilidad maestra de cambios"
+
+    - archivo: "DEPENDENCY-GRAPH.yml"
+      alias: "@DEPENDENCY-GRAPH"
+      proposito: "Grafo de dependencias internas"
+
+  # --- Herencia ---
+  herencia:
+    - archivo: "_inheritance.yml"
+      alias: "@INHERITANCE"
+      proposito: "Declaracion de herencia del proyecto"
+
+# ===============================================================================
+# CARPETAS PRINCIPALES (12 carpetas nivel 1)
+# ===============================================================================
+
+carpetas:
+
+  # ---------------------------------------------------------------------------
+  # GRUPO 1: SISTEMA CORE (Definiciones, Directivas, Templates)
+  # ---------------------------------------------------------------------------
+
+  _definitions:
+    alias: "@DEFINITIONS"
+    proposito: "Definiciones SSOT - Checklists, Protocolos, Schemas, Triggers"
+    prioridad: "ALTA"
+    nivel_nexus: "L0"
+    subcarpetas:
+      - checklists/    # Checklists reutilizables (5)
+      - protocols/     # Protocolos (6)
+      - schemas/       # Schemas de validacion (4)
+      - sections/      # Secciones de documentos (4)
+      - triggers/      # Triggers automaticos (3)
+      - validations/   # Validaciones por capa (4)
+    archivos_clave:
+      - "_INDEX.yml"
+      - "SSOT.yml"
+
+  directivas:
+    alias: "@DIRECTIVAS"
+    proposito: "Sistema SIMCO completo - Directivas por operacion"
+    prioridad: "CRITICA"
+    nivel_nexus: "L0-L2"
+    subcarpetas:
+      - principios/       # 6 principios fundamentales
+      - simco/            # 30+ directivas SIMCO
+      - modos/            # 4 modos de ejecucion
+      - triggers/         # Triggers automaticos
+      - politicas/        # Politicas de excepcion
+      - procedimientos/   # Procedimientos
+    archivos_clave:
+      - "simco/SIMCO-TAREA.md"
+      - "simco/SIMCO-GIT.md"
+      - "simco/SIMCO-EDICION-SEGURA.md"
+      - "principios/PRINCIPIO-CAPVED.md"
+
+  templates:
+    alias: "@TEMPLATES"
+    proposito: "Templates de documentacion y trabajo"
+    prioridad: "MEDIA"
+    subcarpetas:
+      - 01-por-contexto/   # Por tipo de proyecto
+      - 02-por-ciclo/      # Templates CAPVED
+      - 03-por-proceso/    # Delegacion, scrum
+      - 04-globales/       # Globales
+      - _legacy/           # Templates antiguos
+    archivos_clave:
+      - "_INDEX.yml"
+
+  # ---------------------------------------------------------------------------
+  # GRUPO 2: AGENTES Y PERFILES
+  # ---------------------------------------------------------------------------
+
+  agents:
+    alias: "@AGENTS"
+    proposito: "Perfiles, configuraciones y trazas de agentes"
+    prioridad: "ALTA"
+    nivel_nexus: "L0"
+    subcarpetas:
+      - configs/     # Configuraciones compartidas (4)
+      - perfiles/    # Perfiles de agentes (45+)
+      - prompts/     # Prompts de arranque
+      - trazas/      # Trazas de actividad
+    archivos_clave:
+      - "AGENT-ROLES.md"
+      - "AGENT-EXECUTION-STANDARDS.md"
+      - "AGENT-CAPABILITIES-MATRIX.yml"
+      - "perfiles/_MAP.md"
+      - "configs/SHARED-PLATFORM-CONFIG.yml"
+
+  # ---------------------------------------------------------------------------
+  # GRUPO 3: INVENTARIOS Y REFERENCIAS
+  # ---------------------------------------------------------------------------
+
+  inventarios:
+    alias: "@INVENTARIOS"
+    proposito: "Inventarios del proyecto - SSOT de recursos"
+    prioridad: "ALTA"
+    nivel_nexus: "L1"
+    archivos_clave:
+      - "MASTER_INVENTORY.yml"
+      - "DATABASE_INVENTORY.yml"
+      - "BACKEND_INVENTORY.yml"
+      - "FRONTEND_INVENTORY.yml"
+      - "DEVENV-MASTER-INVENTORY.yml"
+
+  referencias:
+    alias: "@REFERENCIAS"
+    proposito: "Aliases, prompts activos, templates de prompts"
+    prioridad: "MEDIA"
+    subcarpetas:
+      - prompts/     # Prompts de referencia
+      - templates/   # Templates de prompts
+    archivos_clave:
+      - "ALIASES.yml"
+      - "AGENT-STARTUP-PROMPTS.md"
+      - "PROMPTS-ACTIVOS.yml"
+      - "PROMPTS-HISTORICO.yml"
+
+  # ---------------------------------------------------------------------------
+  # GRUPO 4: TAREAS Y TRAZABILIDAD
+  # ---------------------------------------------------------------------------
+
+  tareas:
+    alias: "@TAREAS"
+    proposito: "Documentacion de tareas con gobernanza CAPVED"
+    prioridad: "CRITICA"
+    nivel_nexus: "L3"
+    subcarpetas:
+      - _templates/   # Templates de tareas
+      - "TASK-*/"     # Tareas individuales
+    archivos_clave:
+      - "_INDEX.yml"
+    estructura_tarea:
+      - "METADATA.yml"
+      - "01-contexto.md"
+      - "05-ejecucion.md"
+      - "06-documentacion.md"
+
+  trazas:
+    alias: "@TRAZAS"
+    proposito: "Trazas operacionales y de sesiones"
+    prioridad: "MEDIA"
+    archivos_clave:
+      - "TRAZA-TAREAS-DATABASE.md"
+      - "TRAZA-TAREAS-BACKEND.md"
+      - "TRAZA-TAREAS-FRONTEND.md"
+
+  # ---------------------------------------------------------------------------
+  # GRUPO 5: GUIDELINES Y QUICK
+  # ---------------------------------------------------------------------------
+
+  00-guidelines:
+    alias: "@GUIDELINES"
+    proposito: "Directrices especificas del proyecto GAMILIT"
+    prioridad: "ALTA"
+    archivos_clave:
+      - "CONTEXTO-PROYECTO.md"
+      - "HERENCIA-DIRECTIVAS.md"
+      - "HERENCIA-SIMCO.md"
+      - "PATHS-DOCUMENTACION.md"
+      - "PATHS-TRABAJO.md"
+
+  _quick:
+    alias: "@QUICK"
+    proposito: "Quick references compactos para carga rapida"
+    prioridad: "ALTA"
+    nivel_nexus: "L0"
+
+  # ---------------------------------------------------------------------------
+  # GRUPO 6: ARCHIVO
+  # ---------------------------------------------------------------------------
+
+  _archive:
+    proposito: "Contenido archivado (85% reduccion de orchestration)"
+    prioridad: "BAJA"
+    nota: "Consultar solo si se necesita historico"
+
+# ===============================================================================
+# MAPEO NEXUS - Niveles de Contexto
+# ===============================================================================
+
+nexus_mapping:
+  descripcion: "Mapeo de carpetas a niveles NEXUS para IoC"
+
+  L0_sistema:
+    descripcion: "Siempre cargado - Contexto base del proyecto"
+    presupuesto_tokens: 4500
+    carpetas:
+      - "_definitions/"
+      - "_quick/"
+      - "agents/configs/"
+    archivos:
+      - "CONTEXT-MAP.yml"
+      - "_INDEX.yml"
+      - "_MAP.md"
+      - "BOOTLOADER.md"
+
+  L1_proyecto:
+    descripcion: "Cargado al inicio de sesion"
+    presupuesto_tokens: 3000
+    carpetas:
+      - "inventarios/"
+      - "00-guidelines/"
+    archivos:
+      - "_inheritance.yml"
+      - "PROJECT-PROFILE.yml"
+      - "PROXIMA-ACCION.md"
+
+  L2_operacion:
+    descripcion: "Cargado segun dominio (DDL, Backend, Frontend)"
+    presupuesto_tokens: 2500
+    carpetas:
+      - "directivas/simco/"
+      - "directivas/principios/"
+
+  L3_tarea:
+    descripcion: "Cargado bajo demanda, purgado al completar"
+    presupuesto_tokens: 8000
+    carpetas:
+      - "tareas/"
+
+# ===============================================================================
+# NAVEGACION RAPIDA
+# ===============================================================================
+
+navegacion_rapida:
+  nueva_tarea: "tareas/_templates/"
+  directiva_operacion: "directivas/simco/"
+  perfil_agente: "agents/perfiles/"
+  inventario_proyecto: "inventarios/"
+  checkpoint_sesion: "PROXIMA-ACCION.md"
+  estado_proyecto: "PROJECT-STATUS.md"
+  contexto: "00-guidelines/CONTEXTO-PROYECTO.md"
+
+# ===============================================================================
+# RELACION CON WORKSPACE PADRE
+# ===============================================================================
+
+workspace_padre:
+  ubicacion: "C:/Empresas/ISEM/workspace-v2"
+  herencia:
+    tipo: "REPLICA_COMPLETA"
+    fecha_sincronizacion: "2026-01-25"
+    politica: "Gamilit es autonomo con todas las definiciones replicadas localmente"
+
+  archivos_sincronizados:
+    - agents/: 66
+    - directivas/: 124
+    - _definitions/: 29
+    - referencias/: 29
+    - templates/: 60
+    - _quick/: 4
+
+# ===============================================================================
+# MANTENIMIENTO
+# ===============================================================================
+
+mantenimiento:
+  actualizar_cuando:
+    - "Se crea nueva carpeta nivel 1"
+    - "Se agrega archivo clave en raiz"
+    - "Cambia mapeo NEXUS"
+
+  no_actualizar_cuando:
+    - "Se crean tareas individuales"
+    - "Se modifican archivos existentes"
+
+  ultima_actualizacion: "2026-01-25"
+  actualizado_por: "Claude Opus 4.5 - Sincronizacion orchestration"
