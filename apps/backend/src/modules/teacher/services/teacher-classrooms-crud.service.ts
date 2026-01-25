@@ -456,8 +456,8 @@ export class TeacherClassroomsCrudService {
     if (activeStudentIds.length > 0) {
       const submissionsResult = await this.exerciseSubmissionRepo
         .createQueryBuilder('sub')
-        .select('COUNT(DISTINCT sub.student_id)', 'count')
-        .where('sub.student_id IN (:...studentIds)', { studentIds: activeStudentIds })
+        .select('COUNT(DISTINCT sub.user_id)', 'count')
+        .where('sub.user_id IN (:...studentIds)', { studentIds: activeStudentIds })
         .andWhere('sub.submitted_at >= :weekAgo', { weekAgo })
         .getRawOne();
 
