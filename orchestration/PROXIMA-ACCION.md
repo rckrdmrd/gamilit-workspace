@@ -3,12 +3,52 @@
 **Ultima Actualizacion:** 2026-01-25
 **Estado del Proyecto:** MVP 80% completado | **orchestration REPLICA_COMPLETA** | **Production Ready**
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Tarea Completada:** TASK-007 (Scripts de deploy produccion con backup)
+**Tarea Completada:** TASK-2026-01-25-VALIDACION-PORTAL-TEACHER
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
 
 ## Estado Actual
+
+### CONFIGURACION WSL (2026-01-25)
+
+**Problema resuelto:** WSL2 port forwarding inestable para conexiones concurrentes.
+
+**Solucion aplicada:**
+```powershell
+# Port forward manual con netsh (requiere admin)
+netsh interface portproxy add v4tov4 listenport=5432 listenaddress=127.0.0.1 connectport=5432 connectaddress=172.21.220.31
+```
+
+**Configuracion pg_hba.conf:**
+```
+host    all    all    0.0.0.0/0    scram-sha-256
+```
+
+**Documentacion:** `workspace-v2/orchestration/inventarios/LOCAL-WSL-ENVIRONMENT.yml` v1.1.0
+
+**Nota:** El IP de WSL (172.21.220.31) puede cambiar al reiniciar. Actualizar port forward si es necesario.
+
+---
+
+### TASK-2026-01-25-VALIDACION-PORTAL-TEACHER (2026-01-25)
+
+**Validacion Integral del Portal Teacher.**
+
+| Metrica | Valor |
+|---------|-------|
+| Paginas analizadas | 19 |
+| Rutas activas | 17 |
+| Endpoints backend | 87 |
+| Entities validadas | 10 |
+| Coherencia BD | 96.7% |
+| Calificacion | 9.5/10 |
+
+**Hallazgos:** 0 criticos, 2 altos, 5 medios, 2 bajos
+
+**Ver detalles:** `orchestration/tareas/TASK-2026-01-25-VALIDACION-PORTAL-TEACHER/`
+
+---
 
 ### TASK-007 COMPLETADA (2026-01-25)
 
