@@ -56,7 +56,7 @@ resumen:
   frontend:
     files: 900+
     components: 464  # RECONCILIADO 2026-01-16 - conteo real *.tsx
-    hooks: 101  # RECONCILIADO 2026-01-16 - conteo real use*.ts
+    hooks: 108  # AUDITADO 2026-01-24 - conteo real use*.ts/tsx
     pages: 74  # RECONCILIADO 2026-01-16 ✓
     stores: 12  # RECONCILIADO 2026-01-16 ✓
     api_services: 27  # TASK-001: +1 twoFactorAPI.ts
@@ -64,7 +64,7 @@ resumen:
     routes: 18
     lines_of_code: ~100000
     status: "Builds successfully"
-    last_verified: "2026-01-16"
+    last_verified: "2026-01-24"
     source: "FRONTEND_INVENTORY.yml"
     portal_docs:
       - "docs/frontend/student/README.md"
