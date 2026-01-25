@@ -68,7 +68,7 @@ historial: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 notas: |
-  Este índice fue creado como parte de la corrección TASK-2026-01-24-006
+  Este índice fue creado como parte de la corrección TASK-2026-01-24-007
   para habilitar documentación de tareas a nivel de proyecto.
 
   Las tareas que afecten SOLO a gamilit deben documentarse aquí.
