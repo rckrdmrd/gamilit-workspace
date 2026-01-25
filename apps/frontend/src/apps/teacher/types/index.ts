@@ -68,18 +68,59 @@ export interface ModuleProgress {
  * Alert type values for intervention alerts
  * @synchronized-with backend/src/shared/types/intervention-alerts.types.ts (InterventionAlertType enum)
  * @synchronized-with database/ddl/schemas/progress_tracking/tables/19-student_intervention_alerts.sql (CHECK constraint)
- * @last-sync 2026-01-19
+ * @last-sync 2026-01-25
  */
 export type AlertType = 'no_activity' | 'low_score' | 'declining_trend' | 'repeated_failures' | 'excessive_time' | 'low_engagement';
 
 /**
  * Alert priority/severity values
  * @synchronized-with backend/src/shared/types/intervention-alerts.types.ts (InterventionAlertSeverity enum)
- * @last-sync 2026-01-19
+ * @last-sync 2026-01-25
+ * @note Use 'severity' field name to match backend (not 'priority')
  */
 export type AlertPriority = 'low' | 'medium' | 'high' | 'critical';
 
+/**
+ * Alert status values
+ * @synchronized-with backend/src/shared/types/intervention-alerts.types.ts (InterventionAlertStatus enum)
+ * @last-sync 2026-01-25
+ */
+export type AlertStatus = 'active' | 'acknowledged' | 'resolved' | 'dismissed';
+
+/**
+ * InterventionAlert interface - synchronized with backend StudentInterventionAlert
+ * @synchronized-with services/api/teacher/interventionAlertsApi.ts (StudentInterventionAlert)
+ * @last-sync 2026-01-25
+ *
+ * IMPORTANT: This interface matches the backend response structure.
+ * Use 'severity' (not 'priority'), 'title' (not 'message'), 'status' (not 'resolved')
+ */
 export interface InterventionAlert {
+  id: string;
+  student_id: string;
+  student_name: string;
+  classroom_id: string | null;
+  classroom_name: string | null;
+  alert_type: AlertType;
+  severity: AlertPriority;
+  title: string;
+  description: string | null;
+  metrics: Record<string, unknown> | null;
+  status: AlertStatus;
+  generated_at: string;
+  acknowledged_at: string | null;
+  acknowledged_by_name: string | null;
+  resolved_at: string | null;
+  resolved_by_name: string | null;
+  resolution_notes: string | null;
+}
+
+/**
+ * @deprecated Use InterventionAlert with correct field names instead.
+ * Legacy interface kept for backwards compatibility during migration.
+ * Fields mapped: priority->severity, message->title, resolved->status, type->alert_type
+ */
+export interface InterventionAlertLegacy {
   id: string;
   student_id: string;
   student_name: string;

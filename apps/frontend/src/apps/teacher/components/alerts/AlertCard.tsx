@@ -19,6 +19,22 @@ interface AlertCardProps {
   onResolve?: (alertId: string) => void;
 }
 
+/**
+ * AlertCard Component
+ *
+ * Displays an intervention alert card with severity indicator, student info,
+ * metrics, and action buttons.
+ *
+ * @synchronized-with backend StudentInterventionAlert type
+ * @last-sync 2026-01-25
+ *
+ * Field mappings (frontend uses backend field names):
+ * - severity (not priority)
+ * - title (not message)
+ * - status (not resolved boolean)
+ * - alert_type (not type)
+ * - metrics (not details)
+ */
 export function AlertCard({
   alert,
   onSendMessage,
@@ -26,8 +42,8 @@ export function AlertCard({
   onMarkForFollowUp,
   onResolve,
 }: AlertCardProps) {
-  const getPriorityConfig = (priority: string) => {
-    switch (priority) {
+  const getSeverityConfig = (severity: string) => {
+    switch (severity) {
       case 'critical':
         return {
           icon: XCircle,
@@ -67,8 +83,8 @@ export function AlertCard({
     }
   };
 
-  const getAlertIcon = (type: string) => {
-    switch (type) {
+  const getAlertIcon = (alertType: string) => {
+    switch (alertType) {
       case 'no_activity':
         return '🚨';
       case 'low_score':
@@ -86,8 +102,13 @@ export function AlertCard({
     }
   };
 
-  const config = getPriorityConfig(alert.priority);
+  // Use 'severity' field (backend field name)
+  const config = getSeverityConfig(alert.severity);
   const Icon = config.icon;
+
+  // Check if alert is resolved using 'status' field (not boolean 'resolved')
+  const isResolved = alert.status === 'resolved';
+  const isActive = alert.status === 'active';
 
   const getTimeSince = (date: string) => {
     const now = new Date();
@@ -104,6 +125,9 @@ export function AlertCard({
     }
   };
 
+  // Extract metrics for display (backend uses 'metrics' JSONB field)
+  const metrics = alert.metrics as Record<string, unknown> | null;
+
   return (
     <DetectiveCard hoverable={false} className={`border-l-4 ${config.borderColor}`}>
       <div className="space-y-4">
@@ -115,72 +139,79 @@ export function AlertCard({
             </div>
             <div className="flex-1">
               <div className="mb-1 flex items-center gap-2">
-                <span className="text-lg">{getAlertIcon(alert.type)}</span>
+                <span className="text-lg">{getAlertIcon(alert.alert_type)}</span>
                 <h3 className="font-bold text-detective-text">{alert.student_name}</h3>
               </div>
-              <p className="text-sm text-detective-text">{alert.message}</p>
+              {/* Use 'title' field (backend field name, not 'message') */}
+              <p className="text-sm text-detective-text">{alert.title}</p>
+              {alert.description && (
+                <p className="text-xs text-detective-text-secondary mt-1">{alert.description}</p>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-2">
             <span className={`rounded px-2 py-1 text-xs font-bold text-white ${config.badge}`}>
               {config.text}
             </span>
-            {alert.resolved && (
+            {isResolved && (
               <span className="rounded bg-green-500 px-2 py-1 text-xs font-bold text-white">
                 RESUELTO
+              </span>
+            )}
+            {alert.status === 'acknowledged' && (
+              <span className="rounded bg-blue-500 px-2 py-1 text-xs font-bold text-white">
+                RECONOCIDO
               </span>
             )}
           </div>
         </div>
 
-        {/* Details */}
-        <div className={`rounded-lg p-3 ${config.bgColor}`}>
-          <div className="space-y-2 text-sm text-detective-text">
-            {alert.details.days_inactive !== undefined && (
-              <p>
-                <strong>Días sin actividad:</strong> {alert.details.days_inactive}
-              </p>
-            )}
-            {alert.details.average_score !== undefined && (
-              <p>
-                <strong>Promedio actual:</strong> {alert.details.average_score.toFixed(0)}%
-              </p>
-            )}
-            {alert.details.module_name && (
-              <p>
-                <strong>Módulo:</strong> {alert.details.module_name}
-              </p>
-            )}
-            {alert.details.exercise_name && (
-              <p>
-                <strong>Ejercicio:</strong> {alert.details.exercise_name}
-              </p>
-            )}
-            {alert.details.failure_count !== undefined && (
-              <p>
-                <strong>Intentos fallidos:</strong> {alert.details.failure_count}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Actions Taken */}
-        {alert.actions_taken && alert.actions_taken.length > 0 && (
-          <div className="rounded-lg bg-detective-bg-secondary p-3">
-            <p className="mb-2 text-xs text-detective-text-secondary">Acciones tomadas:</p>
-            <ul className="space-y-1">
-              {alert.actions_taken.map((action, index) => (
-                <li key={index} className="flex items-center gap-2 text-sm text-detective-text">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  {action}
-                </li>
-              ))}
-            </ul>
+        {/* Metrics/Details from backend JSONB field */}
+        {metrics && Object.keys(metrics).length > 0 && (
+          <div className={`rounded-lg p-3 ${config.bgColor}`}>
+            <div className="space-y-2 text-sm text-detective-text">
+              {metrics.days_inactive !== undefined && (
+                <p>
+                  <strong>Días sin actividad:</strong> {String(metrics.days_inactive)}
+                </p>
+              )}
+              {metrics.average_score !== undefined && (
+                <p>
+                  <strong>Promedio actual:</strong> {Number(metrics.average_score).toFixed(0)}%
+                </p>
+              )}
+              {metrics.module_name && (
+                <p>
+                  <strong>Módulo:</strong> {String(metrics.module_name)}
+                </p>
+              )}
+              {metrics.exercise_name && (
+                <p>
+                  <strong>Ejercicio:</strong> {String(metrics.exercise_name)}
+                </p>
+              )}
+              {metrics.failure_count !== undefined && (
+                <p>
+                  <strong>Intentos fallidos:</strong> {String(metrics.failure_count)}
+                </p>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Quick Actions */}
-        {!alert.resolved && (
+        {/* Resolution Notes (shown when resolved) */}
+        {isResolved && alert.resolution_notes && (
+          <div className="rounded-lg bg-green-50 p-3">
+            <p className="mb-2 text-xs text-green-700 font-medium">Resolución:</p>
+            <p className="text-sm text-green-800">{alert.resolution_notes}</p>
+            {alert.resolved_by_name && (
+              <p className="text-xs text-green-600 mt-1">Por: {alert.resolved_by_name}</p>
+            )}
+          </div>
+        )}
+
+        {/* Quick Actions - only show for active alerts */}
+        {isActive && (
           <div className="border-detective-border flex flex-wrap gap-2 border-t pt-2">
             <DetectiveButton variant="secondary" onClick={() => onSendMessage?.(alert.id)}>
               <MessageSquare className="h-4 w-4" />
@@ -200,9 +231,9 @@ export function AlertCard({
           </div>
         )}
 
-        {/* Timestamp */}
+        {/* Timestamp - use generated_at (backend field name) */}
         <div className="flex items-center justify-between text-xs text-detective-text-secondary">
-          <span>{getTimeSince(alert.created_at)}</span>
+          <span>{getTimeSince(alert.generated_at)}</span>
           <span>ID: {alert.id.substring(0, 8)}</span>
         </div>
       </div>

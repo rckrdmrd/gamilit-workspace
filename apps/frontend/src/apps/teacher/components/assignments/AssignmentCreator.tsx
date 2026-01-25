@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, List } from 'lucide-react';
+import { Plus, List, AlertCircle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { AssignmentWizard } from './AssignmentWizard';
@@ -7,98 +7,78 @@ import { AssignmentList } from './AssignmentList';
 import type { Assignment } from '../../types';
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
+import toast from 'react-hot-toast';
 
 interface AssignmentCreatorProps {
   classroomId: string;
 }
 
+interface ModuleWithExercises {
+  id: string;
+  title: string;
+  exercises: Array<{ id: string; title: string }>;
+}
+
+interface StudentBasic {
+  id: string;
+  full_name: string;
+}
+
 export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
   const [showWizard, setShowWizard] = useState(false);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [modules, setModules] = useState<ModuleWithExercises[]>([]);
+  const [students, setStudents] = useState<StudentBasic[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Mock data - integrar con API
-  const mockModules = [
-    {
-      id: '1',
-      title: 'Los Primeros Pasos de Marie Curie',
-      exercises: [
-        { id: 'e1', title: 'Crucigrama: Vida temprana' },
-        { id: 'e2', title: 'Línea de tiempo: Estudios' },
-        { id: 'e3', title: 'Mapa conceptual: Influencias' },
-      ],
-    },
-    {
-      id: '2',
-      title: 'Descubrimientos Científicos',
-      exercises: [
-        { id: 'e4', title: 'Experimento: Radiactividad' },
-        { id: 'e5', title: 'Crucigrama: Elementos químicos' },
-        { id: 'e6', title: 'Emparejamiento: Descubrimientos' },
-      ],
-    },
-  ];
-
-  const mockStudents = [
-    { id: 's1', full_name: 'Ana García' },
-    { id: 's2', full_name: 'Carlos Ruiz' },
-    { id: 's3', full_name: 'María López' },
-    { id: 's4', full_name: 'Juan Martínez' },
-  ];
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchAssignments = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.get(API_ENDPOINTS.teacher.assignments, {
+        setError(null);
+
+        // Fetch assignments
+        const assignmentsResponse = await apiClient.get(API_ENDPOINTS.teacher.assignments, {
           params: { classroom_id: classroomId },
         });
-        const data = response.data;
-        setAssignments(data.assignments || []);
-      } catch (error) {
-        console.error('Error fetching assignments:', error);
-        // Mock data para desarrollo
-        setAssignments([
-          {
-            id: 'a1',
-            title: 'Práctica Semanal: Marie Curie',
-            module_id: '1',
-            module_name: 'Los Primeros Pasos de Marie Curie',
-            exercise_ids: ['e1', 'e2'],
-            start_date: '2025-10-16',
-            end_date: '2025-10-23',
-            max_attempts: 3,
-            allow_powerups: true,
-            custom_points: null,
-            assigned_to: ['s1', 's2', 's3', 's4'],
-            created_at: '2025-10-15T10:00:00Z',
-            status: 'active',
-          },
-          {
-            id: 'a2',
-            title: 'Evaluación: Descubrimientos',
-            module_id: '2',
-            module_name: 'Descubrimientos Científicos',
-            exercise_ids: ['e4', 'e5', 'e6'],
-            start_date: '2025-10-20',
-            end_date: '2025-10-27',
-            max_attempts: 2,
-            allow_powerups: false,
-            custom_points: 200,
-            assigned_to: ['s1', 's2'],
-            created_at: '2025-10-14T15:30:00Z',
-            status: 'draft',
-          },
-        ]);
+        setAssignments(assignmentsResponse.data.assignments || []);
+
+        // Fetch modules for wizard (if endpoint exists)
+        try {
+          const modulesResponse = await apiClient.get(API_ENDPOINTS.teacher.modules || '/teacher/modules');
+          setModules(modulesResponse.data.modules || []);
+        } catch {
+          // Modules endpoint may not exist yet - wizard will handle empty state
+          setModules([]);
+        }
+
+        // Fetch students for wizard
+        try {
+          const studentsResponse = await apiClient.get(
+            API_ENDPOINTS.teacher.classroomStudents?.(classroomId) ||
+              `/teacher/classrooms/${classroomId}/students`
+          );
+          setStudents(studentsResponse.data.students || studentsResponse.data || []);
+        } catch {
+          // Students endpoint may fail - wizard will handle empty state
+          setStudents([]);
+        }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Error al cargar asignaciones';
+        setError(errorMessage);
+        toast.error('No se pudieron cargar las asignaciones. Por favor, intenta nuevamente.', {
+          duration: 4000,
+        });
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAssignments();
+    fetchData();
   }, [classroomId]);
 
-  const handleCreateAssignment = async (data: any) => {
+  const handleCreateAssignment = async (data: Record<string, unknown>) => {
     try {
       const response = await apiClient.post(API_ENDPOINTS.teacher.createAssignment, {
         ...data,
@@ -108,18 +88,11 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
       const newAssignment = response.data;
       setAssignments([newAssignment, ...assignments]);
       setShowWizard(false);
-    } catch (error) {
-      console.error('Error:', error);
-      // Para desarrollo, agregar mock
-      const newAssignment: Assignment = {
-        id: `a${Date.now()}`,
-        ...data,
-        module_name: mockModules.find((m) => m.id === data.module_id)?.title || '',
-        created_at: new Date().toISOString(),
-        status: 'active',
-      };
-      setAssignments([newAssignment, ...assignments]);
-      setShowWizard(false);
+      toast.success('Asignación creada exitosamente', { duration: 3000 });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al crear asignación';
+      toast.error(`Error al crear la asignación: ${errorMessage}`, { duration: 4000 });
+      // Do NOT use mock data fallback - show real error to user
     }
   };
 
@@ -135,24 +108,45 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
           </div>
         </div>
         {!showWizard && (
-          <DetectiveButton onClick={() => setShowWizard(true)}>
+          <DetectiveButton onClick={() => setShowWizard(true)} disabled={loading}>
             <Plus className="h-5 w-5" />
             Nueva Asignación
           </DetectiveButton>
         )}
       </div>
 
+      {/* Error State */}
+      {error && (
+        <DetectiveCard variant="warning">
+          <div className="flex items-center gap-3 p-4">
+            <AlertCircle className="h-6 w-6 text-red-500" />
+            <div className="flex-1">
+              <p className="font-medium text-red-700">Error al cargar datos</p>
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+            <DetectiveButton
+              variant="secondary"
+              size="sm"
+              onClick={() => window.location.reload()}
+            >
+              Reintentar
+            </DetectiveButton>
+          </div>
+        </DetectiveCard>
+      )}
+
       {/* Content */}
       {showWizard ? (
         <AssignmentWizard
-          modules={mockModules}
-          students={mockStudents}
+          modules={modules}
+          students={students}
           onComplete={handleCreateAssignment}
           onCancel={() => setShowWizard(false)}
         />
       ) : loading ? (
         <DetectiveCard>
           <div className="py-12 text-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-detective-orange mx-auto mb-3"></div>
             <p className="text-detective-text-secondary">Cargando asignaciones...</p>
           </div>
         </DetectiveCard>

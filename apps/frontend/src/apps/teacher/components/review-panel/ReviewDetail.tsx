@@ -188,12 +188,21 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
         return;
       }
 
+      // FIX TASK-FASE1-003: Validar totalScore antes de enviar - no usar fallback silencioso a 0
       if (currentTotalScore === undefined || currentTotalScore === null) {
-        console.warn('[ReviewDetail] Warning: totalScore es undefined o null, usando 0');
+        setError('Error: La puntuación total no se calculó correctamente. Por favor, evalúa todos los criterios de la rúbrica.');
+        setCompleting(false);
+        return;
       }
 
-      // Usar el totalScore calculado, o 0 si no hay
-      const scoreToSend = currentTotalScore ?? 0;
+      // Validar que el score sea un número válido entre 0 y 100
+      if (typeof currentTotalScore !== 'number' || isNaN(currentTotalScore) || currentTotalScore < 0 || currentTotalScore > 100) {
+        setError(`Error: La puntuación total (${currentTotalScore}) no es válida. Debe ser un número entre 0 y 100.`);
+        setCompleting(false);
+        return;
+      }
+
+      const scoreToSend = currentTotalScore;
 
       try {
         console.log('[ReviewDetail] Calling updateReview with:', {

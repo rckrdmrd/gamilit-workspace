@@ -292,9 +292,6 @@ export class ManualReviewController {
     @Param('id') id: string,
     @Body() dto: UpdateReviewDto,
   ): Promise<ManualReview> {
-    // DEBUG: Log para verificar datos recibidos en controlador
-    console.log('[ManualReviewController] updateReview - id:', id);
-    console.log('[ManualReviewController] updateReview - dto:', JSON.stringify(dto));
     return this.reviewService.updateReview(id, dto);
   }
 
