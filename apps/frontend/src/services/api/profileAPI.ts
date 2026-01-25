@@ -296,6 +296,60 @@ export const profileAPI = {
       throw handleAPIError(error);
     }
   },
+
+  // ============================================================================
+  // EMAIL VERIFICATION METHODS
+  // ============================================================================
+
+  /**
+   * Verify email with token
+   *
+   * @param token - Email verification token
+   * @returns Verification result
+   */
+  verifyEmail: async (token: string): Promise<{ message: string; verified: boolean }> => {
+    try {
+      const response = await apiClient.post<{ message: string; verified: boolean }>(
+        '/auth/verify-email',
+        { token },
+      );
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
+  },
+
+  /**
+   * Resend email verification
+   *
+   * @returns Success message
+   */
+  resendEmailVerification: async (): Promise<{ message: string }> => {
+    try {
+      const response = await apiClient.post<{ message: string }>(
+        '/auth/verify-email/resend',
+      );
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
+  },
+
+  /**
+   * Check email verification status
+   *
+   * @returns Verification status
+   */
+  getEmailVerificationStatus: async (): Promise<{ verified: boolean }> => {
+    try {
+      const response = await apiClient.get<{ verified: boolean }>(
+        '/auth/verify-email/status',
+      );
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error);
+    }
+  },
 };
 
 // ============================================================================

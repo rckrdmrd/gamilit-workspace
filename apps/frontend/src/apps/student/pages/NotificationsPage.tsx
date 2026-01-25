@@ -40,6 +40,7 @@ import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 
 // Store & Hooks
 import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
+import { useWebSocket } from '@/features/notifications/hooks/useWebSocket';
 import { useAuth } from '@/app/providers/AuthContext';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 
@@ -82,6 +83,9 @@ type StatusFilter = 'all' | 'unread' | 'read';
 export default function NotificationsPage() {
   const { user, logout } = useAuth();
   const { gamificationData } = useUserGamification(user?.id);
+
+  // WebSocket connection for real-time notifications
+  const { isConnected } = useWebSocket();
 
   // Store - Using Zustand selectors to prevent unnecessary re-renders
   const notifications = useNotificationsStore((state) => state.notifications);

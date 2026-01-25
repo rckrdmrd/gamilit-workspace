@@ -1,17 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FormErrorDisplay } from '@features/auth/components/FormErrorDisplay';
 import { twoFactorSchema, TwoFactorFormData } from '@features/auth/schemas/authSchemas';
-import { mockTwoFactorVerification, mockResendVerificationCode } from '@features/auth/mocks/authMocks';
+import { twoFactorAPI } from '@/services/api/twoFactorAPI';
 import { Target, Shield, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function TwoFactorAuthPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get('userId') || '';
+
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string>('');
   const [code, setCode] = useState(['', '', '', '', '', '']);
@@ -79,19 +82,22 @@ export default function TwoFactorAuthPage() {
     setServerError('');
 
     try {
-      const response = await mockTwoFactorVerification(data.code);
+      const response = await twoFactorAPI.verify(userId, data.code);
 
-      if (response.success) {
+      if (response.valid) {
         // 2FA exitoso, redirigir al dashboard
         navigate('/dashboard');
       } else {
-        setServerError(response.error || 'Código inválido');
+        setServerError('Código inválido');
         // Limpiar código en error
         setCode(['', '', '', '', '', '']);
         inputRefs.current[0]?.focus();
       }
-    } catch (error) {
-      setServerError('Error de conexión. Intenta nuevamente.');
+    } catch (error: unknown) {
+      const errorMessage = error.response?.data?.message || 'Error de conexión. Intenta nuevamente.';
+      setServerError(errorMessage);
+      setCode(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
     } finally {
       setLoading(false);
     }
@@ -100,15 +106,15 @@ export default function TwoFactorAuthPage() {
   const handleResendCode = async () => {
     setResendLoading(true);
     setResendSuccess(false);
+    setServerError('');
 
     try {
-      const response = await mockResendVerificationCode();
-      if (response.success) {
-        setResendSuccess(true);
-        setTimeout(() => setResendSuccess(false), 5000);
-      }
-    } catch (err) {
-      console.error('Error al reenviar código');
+      await twoFactorAPI.resend(userId);
+      setResendSuccess(true);
+      setTimeout(() => setResendSuccess(false), 5000);
+    } catch (error: unknown) {
+      const errorMessage = error.response?.data?.message || 'Error al reenviar código';
+      setServerError(errorMessage);
     } finally {
       setResendLoading(false);
     }
@@ -145,10 +151,7 @@ export default function TwoFactorAuthPage() {
         {/* Info Notice */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
           <p className="text-detective-sm text-blue-700 text-center">
-            Esta es una implementación mock. En producción, el código será enviado a tu dispositivo autenticador.
-          </p>
-          <p className="text-detective-sm text-blue-800 font-semibold text-center mt-2">
-            Código de prueba: 123456
+            Ingresa el código de 6 dígitos que fue enviado a tu correo electrónico.
           </p>
         </div>
 

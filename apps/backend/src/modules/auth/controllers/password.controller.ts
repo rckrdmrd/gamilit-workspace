@@ -4,10 +4,12 @@ import {
   Get,
   Put,
   Body,
+  Query,
   UseGuards,
   Request,
   HttpCode,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,6 +17,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { PasswordRecoveryService, EmailVerificationService } from '../services';
 import {
@@ -99,6 +102,36 @@ export class PasswordController {
     @Body() dto: ResetPasswordDto,
   ): Promise<{ message: string }> {
     return this.passwordRecoveryService.resetPassword(dto);
+  }
+
+  /**
+   * Validar token de reset de contraseña
+   */
+  @Get('reset-password/validate')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Validar token de reset de contraseña',
+    description: 'Verifica si un token de reset es válido y no ha expirado',
+  })
+  @ApiQuery({ name: 'token', required: true, description: 'Token de reset a validar' })
+  @ApiResponse({
+    status: 200,
+    description: 'Resultado de validación del token',
+    schema: {
+      properties: {
+        valid: { type: 'boolean' },
+        userId: { type: 'string', nullable: true },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Token requerido' })
+  async validateResetToken(
+    @Query('token') token: string,
+  ): Promise<{ valid: boolean; userId?: string }> {
+    if (!token) {
+      throw new BadRequestException('Token requerido');
+    }
+    return this.passwordRecoveryService.validateToken(token);
   }
 
   /**

@@ -69,6 +69,12 @@ export default function SettingsPage() {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
+  // Email verification state
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [verificationToken, setVerificationToken] = useState('');
+  const [verificationStatus, setVerificationStatus] = useState<'idle' | 'sending' | 'verifying' | 'success' | 'error'>('idle');
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+
   // Profile Settings
   const [profile, setProfile] = useState({
     displayName: user?.displayName || user?.email?.split('@')[0] || '',
@@ -306,6 +312,60 @@ export default function SettingsPage() {
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
   };
+
+  // Handle Email Verification Request
+  const handleRequestEmailVerification = async () => {
+    setVerificationStatus('sending');
+    try {
+      await profileAPI.resendEmailVerification();
+      setShowVerificationModal(true);
+      setVerificationStatus('idle');
+      toast.success('Código de verificación enviado a tu email');
+    } catch (error: unknown) {
+      console.error('Error requesting verification:', error);
+      setVerificationStatus('error');
+      toast.error(error.response?.data?.message || 'Error al enviar código de verificación');
+    }
+  };
+
+  // Handle Email Verification Submit
+  const handleVerifyEmail = async () => {
+    if (!verificationToken.trim()) {
+      toast.error('Por favor ingresa el código de verificación');
+      return;
+    }
+
+    setVerificationStatus('verifying');
+    try {
+      const result = await profileAPI.verifyEmail(verificationToken);
+      if (result.verified) {
+        setIsEmailVerified(true);
+        setShowVerificationModal(false);
+        setVerificationToken('');
+        toast.success('¡Email verificado correctamente!');
+      }
+      setVerificationStatus('success');
+    } catch (error: unknown) {
+      console.error('Error verifying email:', error);
+      setVerificationStatus('error');
+      toast.error(error.response?.data?.message || 'Código de verificación inválido');
+    }
+  };
+
+  // Check email verification status on mount
+  useEffect(() => {
+    const checkVerificationStatus = async () => {
+      try {
+        const status = await profileAPI.getEmailVerificationStatus();
+        setIsEmailVerified(status.verified);
+      } catch (error) {
+        console.error('Error checking verification status:', error);
+      }
+    };
+    if (user?.id) {
+      checkVerificationStatus();
+    }
+  }, [user?.id]);
 
   const sections = [
     { id: 'profile' as SettingsSection, label: 'Profile', icon: User },
@@ -560,9 +620,27 @@ export default function SettingsPage() {
                             transition-all duration-200 placeholder:text-gray-400 focus:border-detective-orange
                             focus:outline-none focus:ring-2 focus:ring-detective-orange/20"
                         />
-                        <button className="hover:bg-detective-blue-dark rounded-lg bg-detective-blue px-4 py-2 font-medium text-white transition-colors">
-                          Verify
-                        </button>
+                        {isEmailVerified ? (
+                          <div className="flex items-center gap-2 rounded-lg bg-green-100 px-4 py-2 font-medium text-green-700">
+                            <Check className="h-4 w-4" />
+                            Verified
+                          </div>
+                        ) : (
+                          <button
+                            onClick={handleRequestEmailVerification}
+                            disabled={verificationStatus === 'sending'}
+                            className="hover:bg-detective-blue-dark flex items-center gap-2 rounded-lg bg-detective-blue px-4 py-2 font-medium text-white transition-colors disabled:cursor-not-allowed disabled:bg-gray-400"
+                          >
+                            {verificationStatus === 'sending' ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Sending...
+                              </>
+                            ) : (
+                              'Verify'
+                            )}
+                          </button>
+                        )}
                       </div>
                     </div>
 
@@ -1018,6 +1096,64 @@ export default function SettingsPage() {
         {/* Bottom Spacing */}
         <div className="h-16" />
       </div>
+
+      {/* Email Verification Modal */}
+      {showVerificationModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+          >
+            <h3 className="mb-4 text-xl font-bold text-detective-text">Verify Your Email</h3>
+            <p className="mb-4 text-sm text-detective-text-secondary">
+              We sent a verification code to <strong>{account.email}</strong>. Please enter it below.
+            </p>
+            <input
+              type="text"
+              value={verificationToken}
+              onChange={(e) => setVerificationToken(e.target.value)}
+              placeholder="Enter verification code"
+              className="mb-4 w-full rounded-lg border-2 border-detective-orange/40 bg-white px-4 py-3
+                transition-all duration-200 placeholder:text-gray-400 focus:border-detective-orange
+                focus:outline-none focus:ring-2 focus:ring-detective-orange/20"
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowVerificationModal(false);
+                  setVerificationToken('');
+                  setVerificationStatus('idle');
+                }}
+                className="flex-1 rounded-lg border-2 border-detective-orange/40 px-4 py-2 font-medium text-detective-text transition-colors hover:bg-detective-bg"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleVerifyEmail}
+                disabled={verificationStatus === 'verifying'}
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-detective-orange px-4 py-2 font-medium text-white transition-colors hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:bg-gray-400"
+              >
+                {verificationStatus === 'verifying' ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  'Verify'
+                )}
+              </button>
+            </div>
+            <button
+              onClick={handleRequestEmailVerification}
+              disabled={verificationStatus === 'sending'}
+              className="mt-4 w-full text-center text-sm text-detective-text-secondary hover:text-detective-orange"
+            >
+              {verificationStatus === 'sending' ? 'Sending...' : "Didn't receive the code? Resend"}
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

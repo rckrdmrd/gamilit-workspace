@@ -4,6 +4,7 @@ import {
   Put,
   Post,
   Body,
+  Query,
   UseGuards,
   Request,
   HttpCode,
@@ -19,6 +20,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthService } from '../services';
@@ -70,6 +72,40 @@ export class UsersController {
 
     // FIX BUG-005: Usar toUserResponse para incluir campos derivados (emailVerified, isActive)
     return this.authService.toUserResponse(user);
+  }
+
+  /**
+   * Search for users by name or username
+   */
+  @Get('search')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Search users by name or username' })
+  @ApiQuery({ name: 'query', required: true, description: 'Search query (min 2 characters)' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Max results (default 20)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Search results',
+    schema: {
+      type: 'array',
+      items: {
+        properties: {
+          id: { type: 'string' },
+          displayName: { type: 'string' },
+          avatarUrl: { type: 'string', nullable: true },
+          username: { type: 'string' },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  async searchUsers(
+    @Request() req: AuthRequest,
+    @Query('query') query: string,
+    @Query('limit') limit?: number,
+  ): Promise<Array<{ id: string; displayName: string; avatarUrl: string | null; username: string }>> {
+    const userId = req.user!.id;
+    return this.authService.searchUsers(query, userId, limit || 20);
   }
 
   /**

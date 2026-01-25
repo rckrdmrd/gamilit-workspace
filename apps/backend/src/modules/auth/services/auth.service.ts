@@ -664,6 +664,37 @@ export class AuthService {
   }
 
   /**
+   * Search users by display name or username
+   *
+   * @param query - Search query string
+   * @param currentUserId - Current user ID to exclude from results
+   * @param limit - Maximum results to return (default 20)
+   * @returns Array of matching user profiles
+   */
+  async searchUsers(
+    query: string,
+    currentUserId: string,
+    limit: number = 20,
+  ): Promise<Array<{ id: string; displayName: string; avatarUrl: string | null; username: string }>> {
+    const profiles = await this.profileRepository
+      .createQueryBuilder('profile')
+      .where('profile.id != :currentUserId', { currentUserId })
+      .andWhere(
+        '(LOWER(profile.display_name) LIKE :query OR LOWER(profile.first_name) LIKE :query OR LOWER(profile.last_name) LIKE :query OR LOWER(profile.email) LIKE :query)',
+        { query: `%${query.toLowerCase()}%` }
+      )
+      .take(limit)
+      .getMany();
+
+    return profiles.map(p => ({
+      id: p.id,
+      displayName: p.display_name || `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Unknown',
+      avatarUrl: p.avatar_url,
+      username: p.email?.split('@')[0] || 'unknown',
+    }));
+  }
+
+  /**
    * Helper: Registrar intento de autenticación
    */
   private async logAuthAttempt(

@@ -58,6 +58,7 @@ export const DB_TABLES = {
     SECURITY_EVENTS: 'security_events',
     USER_PREFERENCES: 'user_preferences',
     USER_SUSPENSIONS: 'user_suspensions', // ✨ NUEVO - P0
+    TWO_FACTOR_TOKENS: 'two_factor_tokens', // ✨ NUEVO - GAP-P0-001 (2FA)
     // ⚠️ PARENT PORTAL TABLES - FUTURE (Extension EXT-010, v1.3, P2)
     // ⚠️ NOT IN CURRENT SCOPE - Alcance actual: teacher, student, admin portals ONLY
     PARENT_ACCOUNTS: 'parent_accounts', // 🔮 FUTURE - Extension EXT-010

@@ -19,7 +19,7 @@ import {
   ApiBearerAuth,
   ApiBody,
 } from '@nestjs/swagger';
-import { AuthService, SessionManagementService, SecurityService, EmailVerificationService, PasswordRecoveryService } from '../services';
+import { AuthService, SessionManagementService, SecurityService, EmailVerificationService, PasswordRecoveryService, TwoFactorAuthService } from '../services';
 import {
   RegisterUserDto,
   UserResponseDto,
@@ -55,6 +55,7 @@ export class AuthController {
     private readonly securityService: SecurityService,
     private readonly emailVerificationService: EmailVerificationService,
     private readonly passwordRecoveryService: PasswordRecoveryService,
+    private readonly twoFactorAuthService: TwoFactorAuthService,
   ) {}
 
   /**
@@ -405,5 +406,189 @@ export class AuthController {
     const userId = req.user!.id;
     const currentSessionId = req.user!.sessionId || 'unknown';
     return this.sessionService.revokeAllSessions(userId, currentSessionId);
+  }
+
+  // ============================================================================
+  // TWO-FACTOR AUTHENTICATION ENDPOINTS (GAP-P0-001)
+  // ============================================================================
+
+  /**
+   * Get 2FA status
+   */
+  @Get('2fa/status')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener estado de 2FA' })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado de 2FA del usuario',
+    schema: {
+      properties: {
+        enabled: { type: 'boolean' },
+        method: { type: 'string', nullable: true },
+      },
+    },
+  })
+  async get2FAStatus(@Request() req: AuthRequest): Promise<{ enabled: boolean; method: string | null }> {
+    const userId = req.user!.id;
+    return this.twoFactorAuthService.getStatus(userId);
+  }
+
+  /**
+   * Setup 2FA (initiate)
+   */
+  @Post('2fa/setup')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Iniciar configuración de 2FA' })
+  @ApiResponse({
+    status: 200,
+    description: 'Código de verificación enviado',
+    schema: {
+      properties: {
+        message: { type: 'string' },
+        expiresAt: { type: 'string', format: 'date-time' },
+      },
+    },
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        method: { type: 'string', enum: ['email', 'sms', 'authenticator'] },
+      },
+    },
+  })
+  async setup2FA(
+    @Request() req: AuthRequest,
+    @Body('method') method: 'email' | 'sms' | 'authenticator',
+  ): Promise<{ message: string; expiresAt: Date }> {
+    const userId = req.user!.id;
+    return this.twoFactorAuthService.setup2FA(userId, method || 'email');
+  }
+
+  /**
+   * Verify 2FA setup (complete setup)
+   */
+  @Post('2fa/setup/verify')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verificar y completar configuración de 2FA' })
+  @ApiResponse({
+    status: 200,
+    description: '2FA habilitado, retorna códigos de respaldo',
+    schema: {
+      properties: {
+        message: { type: 'string' },
+        backupCodes: { type: 'array', items: { type: 'string' } },
+      },
+    },
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        code: { type: 'string', example: '123456' },
+      },
+    },
+  })
+  async verifySetup2FA(
+    @Request() req: AuthRequest,
+    @Body('code') code: string,
+  ): Promise<{ message: string; backupCodes?: string[] }> {
+    const userId = req.user!.id;
+    return this.twoFactorAuthService.verifySetup(userId, code);
+  }
+
+  /**
+   * Verify 2FA code (for login)
+   */
+  @Post('2fa/verify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verificar código 2FA durante login' })
+  @ApiResponse({
+    status: 200,
+    description: 'Código válido',
+    schema: {
+      properties: {
+        valid: { type: 'boolean' },
+      },
+    },
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: { type: 'string' },
+        code: { type: 'string' },
+      },
+    },
+  })
+  async verify2FA(
+    @Body('userId') userId: string,
+    @Body('code') code: string,
+  ): Promise<{ valid: boolean }> {
+    return this.twoFactorAuthService.verifyLoginOTP(userId, code);
+  }
+
+  /**
+   * Disable 2FA
+   */
+  @Post('2fa/disable')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Deshabilitar 2FA' })
+  @ApiResponse({
+    status: 200,
+    description: '2FA deshabilitado',
+    schema: {
+      properties: {
+        message: { type: 'string' },
+      },
+    },
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        password: { type: 'string', description: 'Contraseña actual para confirmar' },
+      },
+    },
+  })
+  async disable2FA(
+    @Request() req: AuthRequest,
+    @Body('password') password: string,
+  ): Promise<{ message: string }> {
+    const userId = req.user!.id;
+    // TODO: Validate password using AuthService before disabling
+    return this.twoFactorAuthService.disable2FA(userId, password);
+  }
+
+  /**
+   * Resend 2FA code
+   */
+  @Post('2fa/resend')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Reenviar código 2FA' })
+  @ApiResponse({
+    status: 200,
+    description: 'Código reenviado',
+    schema: {
+      properties: {
+        message: { type: 'string' },
+        expiresAt: { type: 'string', format: 'date-time' },
+      },
+    },
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: { type: 'string' },
+      },
+    },
+  })
+  async resend2FACode(
+    @Body('userId') userId: string,
+  ): Promise<{ message: string; expiresAt: Date }> {
+    return this.twoFactorAuthService.resendOTP(userId);
   }
 }

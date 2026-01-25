@@ -110,14 +110,6 @@ export const passwordAPI = {
    * Validate reset token
    * Checks if a password reset token is valid and not expired
    *
-   * Note: This endpoint is not exposed by the backend controller yet.
-   * The backend has a validateToken method in PasswordRecoveryService,
-   * but it's not exposed as a public endpoint. Token validation happens
-   * internally when resetPassword is called.
-   *
-   * For now, we'll validate by attempting to use the token, or implement
-   * basic client-side validation (token length, format, etc.)
-   *
    * @param token - Password reset token to validate
    * @returns Validation result with valid flag and optional userId
    *
@@ -130,15 +122,15 @@ export const passwordAPI = {
    * ```
    */
   validateResetToken: async (token: string): Promise<ValidateTokenResponse> => {
-    // Basic client-side validation
-    // Real validation will happen when user submits the reset form
-    if (!token || token.length < 10) {
+    try {
+      const response = await apiClient.get<ValidateTokenResponse>(
+        `/auth/reset-password/validate?token=${encodeURIComponent(token)}`
+      );
+      return response.data;
+    } catch (error) {
+      // If request fails, token is invalid
       return { valid: false };
     }
-
-    // Token format looks valid
-    // The actual validation will happen server-side when resetPassword is called
-    return { valid: true };
   },
 };
 

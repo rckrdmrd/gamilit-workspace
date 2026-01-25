@@ -21,6 +21,7 @@ import {
   ParentAccount, // ✨ NUEVO - 2026-01-14 (Portal de padres EXT-010)
   ParentStudentLink, // ✨ NUEVO - 2026-01-14 (Vinculación padre-estudiante)
   ParentNotification, // ✨ NUEVO - 2026-01-14 (Notificaciones a padres)
+  TwoFactorToken, // ✨ NUEVO - GAP-P0-001 (2FA)
 } from './entities';
 
 // Services
@@ -30,6 +31,7 @@ import {
   SecurityService,
   PasswordRecoveryService,
   EmailVerificationService,
+  TwoFactorAuthService,
 } from './services';
 
 // Controllers
@@ -111,6 +113,7 @@ import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submiss
         ParentAccount, // ✨ NUEVO - 2026-01-14 (Portal de padres EXT-010)
         ParentStudentLink, // ✨ NUEVO - 2026-01-14 (Vinculación padre-estudiante)
         ParentNotification, // ✨ NUEVO - 2026-01-14 (Notificaciones a padres)
+        TwoFactorToken, // ✨ NUEVO - GAP-P0-001 (2FA)
       ],
       'auth',
     ),
@@ -143,6 +146,7 @@ import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submiss
     SecurityService,
     PasswordRecoveryService,
     EmailVerificationService,
+    TwoFactorAuthService,
 
     // Strategies
     JwtStrategy,

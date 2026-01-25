@@ -22,3 +22,4 @@ export * from './user-suspension.entity'; // ✨ NUEVO - P0 (DB-100 Ciclo B.2 - 
 export * from './parent-account.entity'; // ✨ NUEVO - 2026-01-14 (Portal de padres EXT-010)
 export * from './parent-student-link.entity'; // ✨ NUEVO - 2026-01-14 (Vinculación padre-estudiante)
 export * from './parent-notification.entity'; // ✨ NUEVO - 2026-01-14 (Notificaciones a padres)
+export * from './two-factor-token.entity'; // ✨ NUEVO - GAP-P0-001 (2FA)
