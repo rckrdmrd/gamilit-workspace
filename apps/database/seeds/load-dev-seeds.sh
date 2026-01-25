@@ -417,7 +417,9 @@ log "===========================================================================
 execute_sql "$SEEDS_DIR/_testing/01-test-exercises-validation.sql" "Seeds: test exercises validation"
 execute_sql "$SEEDS_DIR/_testing/02-test-nuevos-validadores-DB-117.sql" "Seeds: test validadores DB-117"
 execute_sql "$SEEDS_DIR/_testing/10-test-nuevos-validadores-FE-059.sql" "Seeds: test validadores FE-059"
-# NOTA: CREAR-USUARIOS-TESTING.sql se ejecuta manualmente si es necesario
+
+# Seed consolidado para testing con student@gamilit.com
+execute_sql "$SEEDS_DIR/00-dev-testing-student.sql" "Seeds: dev testing student setup"
 
 log_success "FASE 18 completada"
 log ""
