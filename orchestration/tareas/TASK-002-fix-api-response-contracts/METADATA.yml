@@ -146,7 +146,7 @@ artefactos:
       lineas: "40-53"
   archivos_eliminados: 0
   commits:
-    - hash: "pendiente"
+    - hash: "5adb9dd8"
       mensaje: "[TASK-002] fix: Corregir contratos API backend-frontend"
       fecha: "2026-01-25"
 
