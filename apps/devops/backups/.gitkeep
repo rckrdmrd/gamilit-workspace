@@ -1,0 +1,2 @@
+# Directorio para backups de produccion
+# Los archivos .tar.gz son ignorados por .gitignore

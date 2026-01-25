@@ -1,0 +1,9 @@
+# Ignorar archivos de backup (contienen datos sensibles)
+*.tar.gz
+*.sql
+*.sql.gz
+*.log
+
+# Mantener el directorio
+!.gitkeep
+!.gitignore

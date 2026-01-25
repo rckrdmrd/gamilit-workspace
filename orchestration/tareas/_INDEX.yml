@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 6
-  completadas: 6
+  total_tareas: 7
+  completadas: 7
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -47,6 +47,26 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  - task_id: "TASK-007"
+    titulo: "Scripts de deploy produccion con backup de usuarios y progreso"
+    tipo: "feature"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-007-deploy-production-scripts/"
+    commit: "pending"
+    story_points: 8
+    capas_afectadas:
+      - "devops"
+      - "orchestration"
+    descripcion: |
+      Implementacion de scripts de deploy a produccion con:
+      - backup-production-data.sh: Respalda usuarios, progreso, gamificacion
+      - deploy-production.sh: Deploy seguro con rollback automatico
+      - SIMCO-DEPLOY-PRODUCTION.md: Directiva de procedimiento
+      - Configuracion CORS y HTTPS documentada
+
   - task_id: "TASK-006"
     titulo: "Implementar generacion real de reportes PDF/Excel/CSV"
     tipo: "bugfix"

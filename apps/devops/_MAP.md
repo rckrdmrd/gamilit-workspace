@@ -1,16 +1,17 @@
 # _MAP: apps/devops/
 
-**Última actualización:** 2025-11-07
-**Estado:** 🟡 Funcional pero incompleto
-**Versión:** 2.0
+**Última actualización:** 2026-01-25
+**Estado:** 🟢 Funcional y completo
+**Versión:** 3.0
 
 ---
 
 ## 📋 Propósito
 
-Scripts de DevOps, validación y automatización para GAMILIT. Sistema Constants SSOT (Single Source of Truth).
+Scripts de DevOps, deployment, backup y automatización para GAMILIT.
+Sistema Constants SSOT (Single Source of Truth) + Production Deployment.
 
-**Audiencia:** DevOps Engineers, Backend Developers, Tech Leads
+**Audiencia:** DevOps Engineers, Backend Developers, Tech Leads, Production Managers
 
 ---
 
@@ -18,15 +19,74 @@ Scripts de DevOps, validación y automatización para GAMILIT. Sistema Constants
 
 ```
 devops/
-└── scripts/                # Scripts de automatización
-    ├── sync-enums.ts               # Sincronizar ENUMs Backend → Frontend
-    ├── validate-constants-usage.ts # Detectar hardcoding (33 patrones)
-    └── validate-api-contract.ts    # Validar Backend ↔ Frontend sync
+├── backups/                    # Backups de produccion (git-ignored)
+├── deployment/                 # Configs de deployment
+│   └── deploy-k8s.sh          # Deployment Kubernetes
+└── scripts/                    # Scripts de automatización
+    ├── deploy.sh                       # Deploy desarrollo/staging
+    ├── deploy-production.sh            # Deploy produccion con backup
+    ├── backup-production-data.sh       # Backup datos criticos
+    ├── sync-enums.ts                   # Sincronizar ENUMs Backend → Frontend
+    ├── validate-constants-usage.ts     # Detectar hardcoding (33 patrones)
+    └── validate-api-contract.ts        # Validar Backend ↔ Frontend sync
 ```
 
 ---
 
 ## 🚀 Scripts Disponibles
+
+### deploy-production.sh (NUEVO)
+Deploy seguro a produccion con backup automatico y rollback.
+
+**Uso:**
+```bash
+./deploy-production.sh --env prod           # Deploy completo
+./deploy-production.sh --env prod --dry-run # Simular
+./deploy-production.sh --rollback backup.tar.gz  # Rollback
+```
+
+**Proceso:**
+1. Validar prerequisitos (Node, PM2, PostgreSQL)
+2. Ejecutar tests
+3. Crear backup de datos criticos
+4. Ejecutar migraciones de BD
+5. Build de aplicaciones
+6. Deploy con PM2
+7. Health checks
+8. Rollback automatico si falla
+
+---
+
+### backup-production-data.sh (NUEVO)
+Backup de datos criticos antes de deploy.
+
+**Uso:**
+```bash
+./backup-production-data.sh --env prod       # Crear backup
+./backup-production-data.sh --list           # Listar backups
+./backup-production-data.sh --restore FILE   # Restaurar
+```
+
+**Datos respaldados:**
+- `auth.users` + `auth_management.profiles`
+- `progress_tracking.*` (progreso estudiantes)
+- `gamification_system.*` (estadisticas, logros)
+- `educational_content.teacher_content`
+- `social_features.*` (relaciones)
+
+---
+
+### deploy.sh
+Deploy para desarrollo y staging.
+
+**Uso:**
+```bash
+./deploy.sh --env dev              # Desarrollo
+./deploy.sh --env prod --skip-db   # Sin BD
+./deploy.sh --env dev --dry-run    # Simular
+```
+
+---
 
 ### sync-enums.ts
 Sincroniza ENUMs de Backend → Frontend automáticamente.
@@ -103,21 +163,22 @@ npm run validate:api-contract
 
 ### P0 (Crítico)
 
-- **P0-001:** Sin Docker configs
+- **P0-001:** ~~Sin Docker configs~~ **PENDIENTE**
   - Faltan Dockerfiles para backend, frontend, database
   - **Esfuerzo:** 4-6 horas
 
-- **P0-002:** Sin CI/CD workflows
-  - Faltan GitHub Actions para build, test, deploy
-  - **Esfuerzo:** 6-8 horas
+- **P0-002:** ~~Sin CI/CD workflows~~ **COMPLETADO**
+  - ✅ GitHub Actions configurado en `.github/workflows/deploy-production.yml`
 
 ### P1 (Alto)
 
-- **P1-001:** Sin Kubernetes manifests
-  - **Esfuerzo:** 8-10 horas
+- **P1-001:** ~~Sin Kubernetes manifests~~ **COMPLETADO**
+  - ✅ Manifests en `k8s/backend/` y `k8s/frontend/`
 
-- **P1-002:** Sin scripts de deployment
-  - **Esfuerzo:** 4-6 horas
+- **P1-002:** ~~Sin scripts de deployment~~ **COMPLETADO**
+  - ✅ `deploy.sh` - Desarrollo/staging
+  - ✅ `deploy-production.sh` - Produccion con backup
+  - ✅ `backup-production-data.sh` - Backup de datos
 
 ---
 
