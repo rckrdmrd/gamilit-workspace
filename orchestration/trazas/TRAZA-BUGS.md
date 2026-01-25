@@ -1,9 +1,9 @@
 # TRAZA DE BUGS - GAMILIT
 
-**Versión:** 2.0.0
+**Versión:** 2.1.0
 **Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Fecha creación:** 2025-11-23
-**Última actualización:** 2025-11-24 (Fase 1 y Fase 2 de correcciones Portales Admin/Teacher completadas)
+**Última actualización:** 2026-01-25 (TASK-020: Fix SET LOCAL RLS Error)
 **Revisado en auditoría:** 2026-01-10 (18/22 bugs resueltos, 4 pendientes)
 **Fuente:** Migrado desde orchestration_old/ + Nuevos bugs detectados en auditoría 2025-11-23
 
@@ -15,6 +15,7 @@
 
 | ID | Fecha | Módulo | Severidad | Estado | Descripción |
 |----|-------|--------|-----------|--------|-------------|
+| **BUG-RLS-001** | 2026-01-25 | Backend | 🔴 Crítico | ✅ Resuelto | SET LOCAL con $1 placeholder - PostgreSQL syntax error |
 | **BUG-001** | 2025-11-19 | Database | 🔴 Crítico | ✅ Resuelto | Ejercicio Crucigrama no funcional - formato solution incorrecto |
 | **BUG-002** | 2025-11-11 | Frontend | 🟡 Medio | ✅ Resuelto | Error 500 en Leaderboard - tipo de dato incorrecto |
 | **BUG-003** | 2025-11-11 | Backend | 🟡 Medio | ⏳ Pendiente | Endpoint POST /exercises/:id/submit no implementado |
@@ -42,6 +43,42 @@
 ---
 
 ## 🔴 BUGS CRÍTICOS (Resueltos)
+
+### BUG-RLS-001: SET LOCAL con placeholder $1 causa syntax error
+
+**Fecha detección:** 2026-01-25
+**Fecha resolución:** 2026-01-25
+**Módulo afectado:** Backend (TeacherReportsService)
+**Severidad:** 🔴 Crítico
+**Estado:** ✅ Resuelto
+**Task:** TASK-020
+
+**Síntoma:**
+```
+QueryFailedError: syntax error at or near "$1"
+query: 'SET LOCAL app.current_user_id = $1'
+```
+
+**Causa raíz:**
+PostgreSQL `SET LOCAL` command no soporta queries parametrizadas ($1, $2, etc.).
+El código usaba `manager.query('SET LOCAL app.current_user_id = $1', [teacherId])`.
+
+**Solución:**
+1. Agregar validación UUID antes de usar el valor
+2. Usar interpolación de string literal: `` `SET LOCAL app.current_user_id = '${teacherId}'` ``
+
+**Archivos modificados:**
+- `apps/backend/src/modules/teacher/services/teacher-reports.service.ts`
+  - Línea 49: `getRecentReports()`
+  - Línea 74: `getReportStats()`
+  - Línea 144: `getReportById()`
+  - Línea 207: `deleteReport()`
+
+**Origen del bug:**
+Introducido en TASK-015-fix-teacher-reports-rls donde se agregó soporte RLS
+con sintaxis incorrecta de query parametrizada.
+
+---
 
 ### BUG-001: Ejercicio Crucigrama No Funcional
 
@@ -889,10 +926,10 @@ Alto número de errores de TypeScript (321 errores) que dificultaban desarrollo.
 
 ## 📊 MÉTRICAS DE BUGS
 
-### Resumen Actual (Actualizado 2025-11-24)
+### Resumen Actual (Actualizado 2026-01-25)
 
 ```yaml
-total_bugs_registrados: 23
+total_bugs_registrados: 25  # +2 (BUG-MONITORING-001, BUG-MONITORING-002)
 bugs_criticos_resueltos: 8  # BUG-001, FRONTEND-001/002/003, ADMIN-001/002/003/004, TEACHER-001
 bugs_altos_resueltos: 10      # ADMIN-005/006/007/008/009, TEACHER-002/003/004/006/007
 bugs_medios_resueltos: 3      # BUG-002, BUG-003, BUG-005
@@ -1026,6 +1063,65 @@ otros:
 
 ---
 
-**Última actualización:** 2025-11-23
+**Última actualización:** 2026-01-25
 **Mantenido por:** Bug-Fixer Agent / QA Team
 **Revisión:** Al detectar o resolver cada bug
+
+---
+
+## ACTUALIZACIONES 2026
+
+### BUG-MONITORING-001: "Última Actividad" Mal Mostrada en Student Cards
+
+**Fecha detección:** 2026-01-25
+**Fecha resolución:** 2026-01-25
+**Módulo afectado:** Frontend (Teacher Portal - Student Monitoring)
+**Severidad:** 🟠 Alta
+**Estado:** ✅ RESUELTO
+
+#### Descripción del Problema
+
+Los cards de estudiantes en la página de monitoreo mostraban "Hace 55 años" o valores incorrectos en el campo "Última actividad" cuando el backend devolvía `last_activity: null`.
+
+#### Root Cause
+
+Discrepancia de tipos: Backend definía `last_activity?: Date` (nullable), pero Frontend definía `last_activity: string` (no nullable). `new Date(null)` retorna epoch (1970-01-01).
+
+#### Solución Implementada
+
+**Tarea:** TASK-014
+**Archivos modificados (5):**
+- `types/index.ts`: Cambio tipo a `string | null`
+- `useStudentMonitoring.ts`: Añadido fallback para campos
+- `StudentStatusCard.tsx`: Validación null en getTimeSinceLastActivity()
+- `StudentDetailModal.tsx`: Validación antes de Date operations
+- `StudentMonitoringPanel.tsx`: Validación en getStudentStatus()
+
+**Estado final:** ✅ RESUELTO - Build y Lint pasan
+
+---
+
+### BUG-MONITORING-002: Pantalla Negra al Clic en Card de Estudiante
+
+**Fecha detección:** 2026-01-25
+**Fecha resolución:** 2026-01-25
+**Módulo afectado:** Frontend (Teacher Portal - Student Detail Modal)
+**Severidad:** 🔴 Crítico
+**Estado:** ✅ RESUELTO
+
+#### Descripción del Problema
+
+Al hacer clic en un card de estudiante, la pantalla se ponía completamente negra (solo visible el overlay del modal sin contenido).
+
+#### Root Cause
+
+Si `student.id` era undefined (mapeo fallido de user_id → id), las llamadas API fallaban silenciosamente y el contenido del modal no se renderizaba.
+
+#### Solución Implementada
+
+**Tarea:** TASK-014
+**Archivos modificados:**
+- `useStudentMonitoring.ts`: Fallback para IDs undefined
+- `StudentDetailModal.tsx`: Validación de student.id antes de APIs
+
+**Estado final:** ✅ RESUELTO - Build y Lint pasan

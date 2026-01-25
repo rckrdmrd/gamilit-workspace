@@ -25,11 +25,51 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
    * - En ejercicio (azul): Tiene ejercicio en progreso
    * - Inactivo (gris): Sin actividad > 5 min
    * - Desconectado (rojo): Sin actividad > 30 min
+   * - Sin datos (gris): Sin información de actividad
+   *
+   * FIX-2026-01-25: Añadida validación para last_activity null/undefined/inválido
    */
   const getStatusInfo = (student: StudentMonitoring): StatusInfo => {
+    // Validar que last_activity exista y sea válido
+    if (!student.last_activity) {
+      return {
+        color: 'border-gray-400',
+        bgColor: 'bg-gray-400',
+        textColor: 'text-gray-400',
+        label: 'Sin datos',
+        icon: <div className="h-2 w-2 rounded-full bg-gray-400" />,
+        description: 'Sin información de actividad',
+      };
+    }
+
     const now = new Date();
     const last = new Date(student.last_activity);
+
+    // Validar que la fecha sea válida
+    if (isNaN(last.getTime())) {
+      return {
+        color: 'border-gray-400',
+        bgColor: 'bg-gray-400',
+        textColor: 'text-gray-400',
+        label: 'Sin datos',
+        icon: <div className="h-2 w-2 rounded-full bg-gray-400" />,
+        description: 'Fecha de actividad inválida',
+      };
+    }
+
     const diffMins = Math.floor((now.getTime() - last.getTime()) / 60000);
+
+    // Manejar fechas futuras (posible problema de timezone)
+    if (diffMins < 0) {
+      return {
+        color: 'border-green-500',
+        bgColor: 'bg-green-500',
+        textColor: 'text-green-500',
+        label: 'Activo',
+        icon: <Activity className="h-4 w-4" />,
+        description: 'Activo ahora',
+      };
+    }
 
     // Activo: menos de 5 minutos
     if (diffMins < 5) {
@@ -78,20 +118,42 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
     };
   };
 
-  const getTimeSinceLastActivity = (lastActivity: string) => {
-    const now = new Date();
+  /**
+   * Calcula el tiempo transcurrido desde la última actividad
+   * FIX-2026-01-25: Añadida validación para valores null/undefined/inválidos
+   */
+  const getTimeSinceLastActivity = (lastActivity: string | null | undefined): string => {
+    // Validar que lastActivity exista
+    if (!lastActivity) {
+      return 'Sin actividad';
+    }
+
     const last = new Date(lastActivity);
+
+    // Validar que la fecha sea válida
+    if (isNaN(last.getTime())) {
+      return 'Fecha inválida';
+    }
+
+    const now = new Date();
     const diffMs = now.getTime() - last.getTime();
     const diffMins = Math.floor(diffMs / 60000);
+
+    // Manejar fechas futuras (posible problema de timezone)
+    if (diffMins < 0) {
+      return 'Hace un momento';
+    }
 
     if (diffMins < 1) {
       return 'Hace un momento';
     } else if (diffMins < 60) {
       return `Hace ${diffMins} min`;
     } else if (diffMins < 1440) {
-      return `Hace ${Math.floor(diffMins / 60)} hrs`;
+      const hours = Math.floor(diffMins / 60);
+      return `Hace ${hours} ${hours === 1 ? 'hr' : 'hrs'}`;
     } else {
-      return `Hace ${Math.floor(diffMins / 1440)} días`;
+      const days = Math.floor(diffMins / 1440);
+      return `Hace ${days} ${days === 1 ? 'día' : 'días'}`;
     }
   };
 

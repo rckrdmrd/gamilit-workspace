@@ -12,7 +12,8 @@ export interface StudentMonitoring {
   status: StudentStatus;
   current_module: string | null;
   current_exercise: string | null;
-  last_activity: string;
+  /** Last activity timestamp - can be null if student has no activity yet */
+  last_activity: string | null;
   progress_percentage: number;
   score_average: number;
   time_spent_minutes: number;

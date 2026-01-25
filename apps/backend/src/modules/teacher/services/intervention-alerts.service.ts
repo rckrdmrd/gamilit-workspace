@@ -117,7 +117,7 @@ export class InterventionAlertsService {
 
     // Ordenar por severidad y fecha
     qb.orderBy(
-      "CASE alert.severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END",
+      "CASE severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END",
       'ASC',
     ).addOrderBy('alert.generated_at', 'DESC');
 

@@ -1,11 +1,76 @@
 # Traza de Tareas: ATLAS-DATABASE
 
-**Última actualización:** 2026-01-25 (TASK-010: Fix RLS Policies teacher_content)
+**Última actualización:** 2026-01-25 (TASK-019: US-PM-007 - teacher_alert_configurations)
 **Estado:** ✅ PRODUCTION READY - Validación integral completada
 
 ---
 
 ## 📋 Tareas Actuales (2026)
+
+### ✅ TASK-019: Tabla teacher_alert_configurations para US-PM-007 - COMPLETADO
+
+**Fecha:** 2026-01-25
+**Agente:** CLAUDE-CODE
+**Prioridad:** P1
+**Story Points:** 8 SP (incluye Backend + Frontend)
+**User Story:** US-PM-007
+
+**Objetivo:**
+Crear tabla para almacenar configuraciones de alertas personalizadas por maestro, permitiendo ajustar umbrales y preferencias de notificación para 6 tipos de alertas de intervención.
+
+**Archivo DDL Creado:**
+`apps/database/ddl/schemas/progress_tracking/tables/20-teacher_alert_configurations.sql`
+
+**Estructura de la Tabla:**
+
+```sql
+CREATE TABLE progress_tracking.teacher_alert_configurations (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    teacher_id uuid NOT NULL REFERENCES auth_management.profiles(id),
+    classroom_id uuid REFERENCES social_features.classrooms(id),
+    alert_type text NOT NULL,  -- CHECK constraint con 6 tipos
+    is_enabled boolean DEFAULT true,
+    threshold_value numeric(5,2),
+    threshold_unit text,  -- 'percentage', 'days', 'count', 'minutes'
+    notify_email boolean DEFAULT false,
+    notify_in_app boolean DEFAULT true,
+    cooldown_hours integer DEFAULT 24,
+    custom_settings jsonb DEFAULT '{}',
+    tenant_id uuid NOT NULL,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now(),
+    UNIQUE(teacher_id, classroom_id, alert_type)
+);
+```
+
+**Tipos de Alerta Soportados:**
+- `no_activity` - Sin actividad por X días
+- `low_score` - Puntaje bajo (< X%)
+- `declining_trend` - Tendencia de declive (> X%)
+- `repeated_failures` - Fallos repetidos (> X veces)
+- `excessive_time` - Tiempo excesivo (> X minutos)
+- `low_engagement` - Bajo engagement (< X%)
+
+**Políticas RLS (2):**
+1. `teacher_manage_own_config` - Maestros gestionan sus propias configs
+2. `admin_manage_tenant_config` - Admins gestionan configs del tenant
+
+**Índices Creados:**
+- `idx_teacher_alert_config_teacher` (teacher_id)
+- `idx_teacher_alert_config_classroom` (classroom_id)
+- `idx_teacher_alert_config_type` (alert_type)
+
+**Backend Entity:** `teacher-alert-configuration.entity.ts`
+**Backend Service:** `alert-config.service.ts`
+**Frontend API:** `alertConfigApi.ts`
+**Frontend Page:** `TeacherAlertConfigPage.tsx`
+
+**Para Aplicar:**
+```bash
+wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/workspace-v2/scripts/database/unified-recreate-db.sh' gamilit --drop
+```
+
+---
 
 ### ✅ TASK-010: Fix RLS Policies para teacher_content - COMPLETADO
 

@@ -15,9 +15,12 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { InputDetective } from '@shared/components/base/InputDetective';
 import { StudentStatusCard } from './StudentStatusCard';
 import { StudentDetailModal } from './StudentDetailModal';
+import { SuspendStudentModal } from './SuspendStudentModal';
+import { StudentActionsMenu } from './StudentActionsMenu';
 import { RefreshControl } from './RefreshControl';
 import { StudentPagination } from './StudentPagination';
 import { useStudentMonitoring } from '../../hooks/useStudentMonitoring';
+import { useStudentBlocking } from '../../hooks/useStudentBlocking';
 import { useToast } from '@shared/components/base/Toast';
 import type { StudentFilter, StudentMonitoring } from '../../types';
 
@@ -28,12 +31,15 @@ interface StudentMonitoringPanelProps {
 export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelProps) {
   const [filters, setFilters] = useState<StudentFilter>({});
   const [selectedStudent, setSelectedStudent] = useState<StudentMonitoring | null>(null);
+  const [studentToSuspend, setStudentToSuspend] = useState<StudentMonitoring | null>(null);
+  const [blockedStudents, setBlockedStudents] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [sortField, setSortField] = useState<'name' | 'score' | 'completion' | 'activity'>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const previousStudentsRef = useRef<StudentMonitoring[]>([]);
   const { showToast } = useToast();
+  const { unblockStudent } = useStudentBlocking();
 
   // CORR-2025-12-18: Agregado soporte de paginacion server-side
   const {
@@ -67,12 +73,23 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
       if (!prevStudent) return;
 
       // Student just became active
+      // FIX-2026-01-25: Validación para last_activity null/undefined
+      if (!student.last_activity || !prevStudent.last_activity) {
+        return; // Skip event detection if no activity data
+      }
+
       const now = new Date();
       const lastActivity = new Date(student.last_activity);
+      const prevLastActivity = new Date(prevStudent.last_activity);
+
+      // Validar que las fechas sean válidas
+      if (isNaN(lastActivity.getTime()) || isNaN(prevLastActivity.getTime())) {
+        return;
+      }
+
       const diffMins = Math.floor((now.getTime() - lastActivity.getTime()) / 60000);
 
       if (diffMins < 1 && student.status === 'active') {
-        const prevLastActivity = new Date(prevStudent.last_activity);
         const prevDiffMins = Math.floor((now.getTime() - prevLastActivity.getTime()) / 60000);
 
         if (prevDiffMins > 5) {
@@ -196,11 +213,28 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
     });
   }, [students, filters, sortField, sortDirection]);
 
-  // Calculate counts based on improved status logic
+  /**
+   * Calculate student status based on last activity time
+   * FIX-2026-01-25: Añadida validación para last_activity null/undefined/inválido
+   */
   const getStudentStatus = (student: StudentMonitoring) => {
+    // Validar que last_activity exista
+    if (!student.last_activity) {
+      return 'offline'; // Sin actividad = considerado offline
+    }
+
     const now = new Date();
     const last = new Date(student.last_activity);
+
+    // Validar que la fecha sea válida
+    if (isNaN(last.getTime())) {
+      return 'offline';
+    }
+
     const diffMins = Math.floor((now.getTime() - last.getTime()) / 60000);
+
+    // Manejar fechas futuras
+    if (diffMins < 0) return 'active';
 
     if (diffMins < 5) return 'active';
     if (student.current_exercise && diffMins < 30) return 'in_exercise';
@@ -217,6 +251,30 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
   const highPerformanceCount = students.filter((s) => calculatePerformanceLevel(s) === 'high').length;
   const mediumPerformanceCount = students.filter((s) => calculatePerformanceLevel(s) === 'medium').length;
   const lowPerformanceCount = students.filter((s) => calculatePerformanceLevel(s) === 'low').length;
+
+  // US-PM-006: Handlers for student blocking
+  const handleSuspendSuccess = () => {
+    if (studentToSuspend) {
+      setBlockedStudents((prev) => new Set([...prev, studentToSuspend.id]));
+    }
+    refresh();
+  };
+
+  const handleUnblock = async (student: StudentMonitoring) => {
+    try {
+      await unblockStudent(classroomId, student.id);
+      setBlockedStudents((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(student.id);
+        return newSet;
+      });
+      refresh();
+    } catch {
+      // Error handled by hook with toast
+    }
+  };
+
+  const isStudentBlocked = (studentId: string) => blockedStudents.has(studentId);
 
   if (error) {
     return (
@@ -493,6 +551,9 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
                   >
                     Ultima Actividad {sortField === 'activity' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
+                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-400">
+                    Acciones
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -503,9 +564,16 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
                     onClick={() => setSelectedStudent(student)}
                   >
                     <td className="px-4 py-3">
-                      <div>
-                        <p className="font-medium text-detective-text">{student.full_name}</p>
-                        <p className="text-xs text-gray-400">{student.email}</p>
+                      <div className="flex items-center gap-2">
+                        <div>
+                          <p className="font-medium text-detective-text">{student.full_name}</p>
+                          <p className="text-xs text-gray-400">{student.email}</p>
+                        </div>
+                        {isStudentBlocked(student.id) && (
+                          <span className="rounded bg-red-500/90 px-2 py-0.5 text-xs font-medium text-white">
+                            Bloqueado
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td className="px-4 py-3">
@@ -576,6 +644,16 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
                         ? new Date(student.last_activity).toLocaleDateString('es-ES')
                         : 'Sin actividad'}
                     </td>
+                    <td className="px-4 py-3 text-right">
+                      <StudentActionsMenu
+                        student={student}
+                        isBlocked={isStudentBlocked(student.id)}
+                        onViewDetails={() => setSelectedStudent(student)}
+                        onSuspend={() => setStudentToSuspend(student)}
+                        onUnblock={() => handleUnblock(student)}
+                        onViewAlerts={() => window.open(`/teacher/alerts?student_id=${student.id}`, '_blank')}
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -586,11 +664,29 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
         /* Cards View */
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredAndSortedStudents.map((student) => (
-            <StudentStatusCard
-              key={student.id}
-              student={student}
-              onClick={() => setSelectedStudent(student)}
-            />
+            <div key={student.id} className="relative">
+              <StudentStatusCard
+                student={student}
+                onClick={() => setSelectedStudent(student)}
+              />
+              {/* Blocked badge */}
+              {isStudentBlocked(student.id) && (
+                <div className="absolute left-3 top-3 rounded bg-red-500/90 px-2 py-1 text-xs font-medium text-white">
+                  Bloqueado
+                </div>
+              )}
+              {/* Actions menu */}
+              <div className="absolute right-3 top-3">
+                <StudentActionsMenu
+                  student={student}
+                  isBlocked={isStudentBlocked(student.id)}
+                  onViewDetails={() => setSelectedStudent(student)}
+                  onSuspend={() => setStudentToSuspend(student)}
+                  onUnblock={() => handleUnblock(student)}
+                  onViewAlerts={() => window.open(`/teacher/alerts?student_id=${student.id}`, '_blank')}
+                />
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -618,6 +714,16 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
           student={selectedStudent}
           classroomId={classroomId}
           onClose={() => setSelectedStudent(null)}
+        />
+      )}
+
+      {/* US-PM-006: Suspend Student Modal */}
+      {studentToSuspend && (
+        <SuspendStudentModal
+          student={studentToSuspend}
+          classroomId={classroomId}
+          onClose={() => setStudentToSuspend(null)}
+          onSuccess={handleSuspendSuccess}
         />
       )}
     </div>

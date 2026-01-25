@@ -24,6 +24,7 @@ export { bonusCoinsApi, BonusCoinsAPI } from './bonusCoinsApi';
 export { exerciseResponsesApi } from './exerciseResponsesApi';
 export type { ExerciseResponsesAPI } from './exerciseResponsesApi';
 export { reportsApi } from './reportsApi'; // P1-003: Teacher Reports services
+export { alertConfigApi, AlertConfigAPI } from './alertConfigApi'; // US-PM-007: Alert configuration
 
 // Re-export shared profile API for consistency (ISS-FE-002)
 export { profileAPI } from '../profileAPI';
@@ -165,3 +166,15 @@ export type {
   ReturnForRevisionDto,
   ManualReviewAPI,
 } from './manualReviewApi';
+
+// Alert Configuration types (US-PM-007)
+export type {
+  AlertConfigType,
+  ThresholdUnit,
+  CreateAlertConfigDto,
+  UpdateAlertConfigDto,
+  GetAlertConfigQueryDto,
+  AlertConfigResponse,
+  AlertConfigDefaults,
+  AlertConfigListResponse,
+} from './alertConfigApi';

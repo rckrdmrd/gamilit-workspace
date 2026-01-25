@@ -83,6 +83,7 @@ import { WebSocketModule } from '../websocket/websocket.module';
         entities.ProgressSnapshot, // ✨ NUEVO - P2 (Snapshots históricos)
         entities.SkillAssessment, // ✨ NUEVO - P2 (Evaluaciones de habilidades)
         entities.Certificate, // ✨ NUEVO - EPIC 10.2 (Certificados digitales)
+        entities.TeacherAlertConfiguration, // ✨ NUEVO - US-PM-007 (Config alertas profesor)
       ],
       'progress',
     ),

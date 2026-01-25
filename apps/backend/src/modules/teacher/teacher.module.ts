@@ -20,6 +20,8 @@ import { ManualReview } from '@modules/progress/entities/manual-review.entity';
 // TASK-2026-01-18-015 Sprint 2: Added for mastery and skill assessments integration
 import { MasteryTracking } from '@modules/progress/entities/mastery-tracking.entity';
 import { SkillAssessment } from '@modules/progress/entities/skill-assessment.entity';
+// US-PM-007: Alert configuration entity
+import { TeacherAlertConfiguration } from '@modules/progress/entities/teacher-alert-configuration.entity';
 
 // Educational entities
 import { Module as EducationalModule } from '@modules/educational/entities/module.entity';
@@ -54,6 +56,7 @@ import { TeacherCommunicationController } from './controllers/teacher-communicat
 import { TeacherContentController } from './controllers/teacher-content.controller';
 import { ExerciseResponsesController } from './controllers/exercise-responses.controller';
 import { ManualReviewController } from './controllers/manual-review.controller';
+import { AlertConfigController } from './controllers/alert-config.controller'; // US-PM-007
 
 // Services
 import {
@@ -75,6 +78,7 @@ import {
   ScheduledReportsService,
   SharedReportsService,
   // TASK-2026-01-18-009: Removed RubricScoringService (orphan code)
+  AlertConfigService, // US-PM-007
 } from './services';
 import { TeacherMessagesService } from './services/teacher-messages.service';
 import { ManualReviewService } from './services/manual-review.service';
@@ -163,8 +167,9 @@ import { MailModule } from '@modules/mail/mail.module';
 
     // Entities from 'progress' datasource
     // TASK-2026-01-18-015 Sprint 2: Added MasteryTracking and SkillAssessment
+    // US-PM-007: Added TeacherAlertConfiguration
     TypeOrmModule.forFeature(
-      [ExerciseSubmission, ExerciseAttempt, ModuleProgress, ManualReview, MasteryTracking, SkillAssessment],
+      [ExerciseSubmission, ExerciseAttempt, ModuleProgress, ManualReview, MasteryTracking, SkillAssessment, TeacherAlertConfiguration],
       'progress',
     ),
 
@@ -195,6 +200,7 @@ import { MailModule } from '@modules/mail/mail.module';
     TeacherContentController,
     ExerciseResponsesController,
     ManualReviewController,
+    AlertConfigController, // US-PM-007
   ],
   providers: [
     // Core services
@@ -217,6 +223,8 @@ import { MailModule } from '@modules/mail/mail.module';
     // TASK-2026-01-18-015 Sprint 5: Scheduled and shared reports
     ScheduledReportsService,
     SharedReportsService,
+    // US-PM-007: Alert configuration service
+    AlertConfigService,
     // TASK-2026-01-18-009: Removed RubricScoringService (orphan code - never injected)
 
     // Guards

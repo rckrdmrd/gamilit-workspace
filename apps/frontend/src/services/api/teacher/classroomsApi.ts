@@ -16,6 +16,43 @@ import type { Classroom, StudentMonitoring } from '@apps/teacher/types';
 import type { PaginatedResponse } from '@shared/types/api-responses';
 
 // ============================================================================
+// TYPES - STUDENT BLOCKING (US-PM-006)
+// ============================================================================
+
+/**
+ * Block type for student blocking
+ */
+export enum BlockType {
+  FULL = 'full',
+  PARTIAL = 'partial',
+}
+
+/**
+ * DTO for blocking a student
+ */
+export interface BlockStudentDto {
+  reason: string;
+  block_type: BlockType;
+  blocked_modules?: string[];
+  blocked_exercises?: string[];
+}
+
+/**
+ * Response for student permissions/blocking operations
+ */
+export interface StudentPermissionsResponse {
+  student_id: string;
+  classroom_id: string;
+  status: string;
+  is_blocked: boolean;
+  block_type?: BlockType;
+  permissions: Record<string, unknown>;
+  blocked_at?: string;
+  blocked_by?: string;
+  block_reason?: string;
+}
+
+// ============================================================================
 // TYPES
 // ============================================================================
 
@@ -471,6 +508,113 @@ class ClassroomsAPI {
    * @todo Implement in Phase 2 - Core Functionality
    */
   // async bulkEnrollStudents(classroomId: string, studentIds: string[]): Promise<void> { ... }
+
+  // ============================================================================
+  // STUDENT BLOCKING METHODS (US-PM-006)
+  // ============================================================================
+
+  /**
+   * Block a student in a classroom
+   *
+   * Blocks a student with either full or partial restrictions.
+   * Full block: Student loses access to the classroom.
+   * Partial block: Student has restricted access to specific modules/exercises.
+   *
+   * @param classroomId - ID of the classroom
+   * @param studentId - ID of the student to block
+   * @param data - Block details (reason, type, optional module restrictions)
+   * @returns Promise<StudentPermissionsResponse> Updated student permissions
+   * @throws Error if request fails
+   *
+   * @example
+   * ```typescript
+   * const result = await classroomsApi.blockStudent('classroom-123', 'student-456', {
+   *   reason: 'Comportamiento inapropiado',
+   *   block_type: BlockType.FULL
+   * });
+   * ```
+   */
+  async blockStudent(
+    classroomId: string,
+    studentId: string,
+    data: BlockStudentDto,
+  ): Promise<StudentPermissionsResponse> {
+    try {
+      const { data: responseData } = await apiClient.post<StudentPermissionsResponse>(
+        `${API_ENDPOINTS.teacher.classroom(classroomId)}/students/${studentId}/block`,
+        data,
+      );
+      return responseData;
+    } catch (error) {
+      console.error('[ClassroomsAPI] Error blocking student:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Unblock a student in a classroom
+   *
+   * Restores full access to a previously blocked student.
+   *
+   * @param classroomId - ID of the classroom
+   * @param studentId - ID of the student to unblock
+   * @returns Promise<StudentPermissionsResponse> Updated student permissions
+   * @throws Error if request fails
+   *
+   * @example
+   * ```typescript
+   * const result = await classroomsApi.unblockStudent('classroom-123', 'student-456');
+   * console.log(`Student unblocked: ${!result.is_blocked}`);
+   * ```
+   */
+  async unblockStudent(
+    classroomId: string,
+    studentId: string,
+  ): Promise<StudentPermissionsResponse> {
+    try {
+      const { data: responseData } = await apiClient.post<StudentPermissionsResponse>(
+        `${API_ENDPOINTS.teacher.classroom(classroomId)}/students/${studentId}/unblock`,
+      );
+      return responseData;
+    } catch (error) {
+      console.error('[ClassroomsAPI] Error unblocking student:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get student permissions in a classroom
+   *
+   * Returns the current permissions and block status of a student.
+   *
+   * @param classroomId - ID of the classroom
+   * @param studentId - ID of the student
+   * @returns Promise<StudentPermissionsResponse> Current student permissions
+   * @throws Error if request fails
+   *
+   * @example
+   * ```typescript
+   * const permissions = await classroomsApi.getStudentPermissions('classroom-123', 'student-456');
+   * if (permissions.is_blocked) {
+   *   console.log(`Blocked since: ${permissions.blocked_at}`);
+   *   console.log(`Reason: ${permissions.block_reason}`);
+   * }
+   * ```
+   */
+  async getStudentPermissions(
+    classroomId: string,
+    studentId: string,
+  ): Promise<StudentPermissionsResponse> {
+    try {
+      const { data } = await apiClient.get<StudentPermissionsResponse>(
+        `${API_ENDPOINTS.teacher.classroom(classroomId)}/students/${studentId}/permissions`,
+      );
+      return data;
+    } catch (error) {
+      console.error('[ClassroomsAPI] Error fetching student permissions:', error);
+      throw error;
+    }
+  }
 }
 
 // ============================================================================

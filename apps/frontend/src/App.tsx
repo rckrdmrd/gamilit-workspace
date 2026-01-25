@@ -97,6 +97,7 @@ const TeacherExerciseResponsesPage = lazy(() => import('@/apps/teacher/pages/Tea
 const TeacherSettingsPage = lazy(() => import('@/apps/teacher/pages/TeacherSettingsPage'));
 const TeacherNotificationsPage = lazy(() => import('@/apps/teacher/pages/TeacherNotificationsPage'));
 const TeacherNotificationPreferencesPage = lazy(() => import('@/apps/teacher/pages/TeacherNotificationPreferencesPage'));
+const TeacherAlertConfigPage = lazy(() => import('@/apps/teacher/pages/TeacherAlertConfigPage').then(m => ({ default: m.TeacherAlertConfigPage }))); // US-PM-007
 const ReviewPanelPage = lazy(() => import('@/apps/teacher/pages/TeacherReviewPanelPage').then(m => ({ default: m.ReviewPanelPage })));
 
 // =====================================================
@@ -325,6 +326,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
                 <TeacherNotificationPreferencesPage />
+              </ProtectedRoute>
+            }
+          />
+          {/* US-PM-007: Alert Configuration Page */}
+          <Route
+            path="/teacher/settings/alerts"
+            element={
+              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                <TeacherAlertConfigPage />
               </ProtectedRoute>
             }
           />

@@ -48,15 +48,36 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [student.id]);
 
+  /**
+   * Fetch student data from API
+   * FIX-2026-01-25: Añadida validación de student.id antes de llamar APIs
+   */
   const fetchStudentData = async () => {
+    // Validar que student.id exista antes de hacer llamadas API
+    if (!student?.id || student.id.startsWith('unknown-')) {
+      console.warn('[StudentDetailModal] Invalid student ID:', student?.id);
+      setError('ID de estudiante no disponible');
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
 
       const [progress, stats, studentNotes] = await Promise.all([
-        studentProgressApi.getStudentProgress(student.id).catch(() => null),
-        studentProgressApi.getStudentStats(student.id).catch(() => null),
-        studentProgressApi.getStudentNotes(student.id).catch(() => []),
+        studentProgressApi.getStudentProgress(student.id).catch((err) => {
+          console.warn('[StudentDetailModal] Error fetching progress:', err);
+          return null;
+        }),
+        studentProgressApi.getStudentStats(student.id).catch((err) => {
+          console.warn('[StudentDetailModal] Error fetching stats:', err);
+          return null;
+        }),
+        studentProgressApi.getStudentNotes(student.id).catch((err) => {
+          console.warn('[StudentDetailModal] Error fetching notes:', err);
+          return [];
+        }),
       ]);
 
       setProgressData(progress);
@@ -176,7 +197,7 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
                   <span className="text-sm text-detective-text-secondary">Tiempo Total</span>
                 </div>
                 <p className="text-2xl font-bold text-detective-text">
-                  {Math.floor(student.time_spent_minutes / 60)}h {student.time_spent_minutes % 60}m
+                  {Math.floor((student.time_spent_minutes ?? 0) / 60)}h {(student.time_spent_minutes ?? 0) % 60}m
                 </p>
               </div>
             </div>
@@ -309,7 +330,10 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
                   <div className="mt-4 flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-detective-text-secondary" />
                     <span className="text-sm text-detective-text-secondary">
-                      Última actividad: {new Date(student.last_activity).toLocaleString('es-ES')}
+                      Última actividad:{' '}
+                      {student.last_activity
+                        ? new Date(student.last_activity).toLocaleString('es-ES')
+                        : 'Sin actividad registrada'}
                     </span>
                   </div>
                 </div>

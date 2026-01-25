@@ -5,13 +5,17 @@
  * This service handles the retrieval of report metadata stored in the database.
  *
  * Note: This is different from ReportsService which generates new reports.
+ *
+ * FIX TASK-2026-01-25: Added SET LOCAL for RLS context in all read queries.
+ * RLS policies require app.current_user_id to be set via SET LOCAL.
  */
 
-import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, Logger, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { TeacherReport } from '../entities/teacher-report.entity';
 import { ReportMetadataDto, ReportStatsDto, CreateTeacherReportDto } from '../dto/teacher-reports.dto';
+import { isUUID } from '@shared/utils/validation.util';
 
 /**
  * Service for teacher reports metadata management
@@ -23,10 +27,16 @@ export class TeacherReportsService {
   constructor(
     @InjectRepository(TeacherReport, 'social')
     private readonly teacherReportRepo: Repository<TeacherReport>,
+    // FIX TASK-2026-01-25: DataSource for SET LOCAL in transactions (RLS support)
+    @InjectDataSource('social')
+    private readonly dataSource: DataSource,
   ) {}
 
   /**
    * Get recent reports for a teacher
+   *
+   * FIX TASK-2026-01-25: Uses transaction with SET LOCAL for RLS support.
+   * Without SET LOCAL, RLS policies cannot match current_user_id and return 0 rows.
    *
    * @param teacherId - ID of the teacher
    * @param limit - Maximum number of reports to return (default: 10)
@@ -35,17 +45,29 @@ export class TeacherReportsService {
   async getRecentReports(teacherId: string, limit: number = 10): Promise<ReportMetadataDto[]> {
     this.logger.log(`Getting recent reports for teacher ${teacherId} with limit ${limit}`);
 
-    const reports = await this.teacherReportRepo.find({
-      where: { teacherId },
-      order: { generatedAt: 'DESC' },
-      take: limit,
-    });
+    // TASK-020: Validate UUID before using in SET LOCAL (prevents SQL injection)
+    if (!isUUID(teacherId)) {
+      throw new BadRequestException(`Invalid teacher ID format: ${teacherId}`);
+    }
 
-    return reports.map(report => this.mapToReportMetadataDto(report));
+    return this.dataSource.transaction(async (manager) => {
+      // TASK-020 FIX: SET LOCAL requires literal value, not $1 placeholder
+      await manager.query(`SET LOCAL app.current_user_id = '${teacherId}'`);
+
+      const reports = await manager.find(TeacherReport, {
+        where: { teacherId },
+        order: { generatedAt: 'DESC' },
+        take: limit,
+      });
+
+      return reports.map(report => this.mapToReportMetadataDto(report));
+    });
   }
 
   /**
    * Get report statistics for a teacher
+   *
+   * FIX TASK-2026-01-25: Uses transaction with SET LOCAL for RLS support.
    *
    * @param teacherId - ID of the teacher
    * @returns Report statistics
@@ -53,59 +75,71 @@ export class TeacherReportsService {
   async getReportStats(teacherId: string): Promise<ReportStatsDto> {
     this.logger.log(`Getting report stats for teacher ${teacherId}`);
 
-    // Get all reports for the teacher
-    const reports = await this.teacherReportRepo.find({
-      where: { teacherId },
-    });
-
-    const totalReports = reports.length;
-
-    // If no reports, return empty stats
-    if (totalReports === 0) {
-      return {
-        total_reports_generated: 0,
-        last_generated_date: null,
-        most_used_format: null,
-        avg_students_per_report: 0,
-      };
+    // TASK-020: Validate UUID before using in SET LOCAL
+    if (!isUUID(teacherId)) {
+      throw new BadRequestException(`Invalid teacher ID format: ${teacherId}`);
     }
 
-    // Calculate statistics
-    const lastReport = await this.teacherReportRepo.findOne({
-      where: { teacherId },
-      order: { generatedAt: 'DESC' },
+    return this.dataSource.transaction(async (manager) => {
+      // TASK-020 FIX: SET LOCAL requires literal value, not $1 placeholder
+      await manager.query(`SET LOCAL app.current_user_id = '${teacherId}'`);
+
+      // Get all reports for the teacher
+      const reports = await manager.find(TeacherReport, {
+        where: { teacherId },
+      });
+
+      const totalReports = reports.length;
+
+      // If no reports, return empty stats
+      if (totalReports === 0) {
+        return {
+          total_reports_generated: 0,
+          last_generated_date: null,
+          most_used_format: null,
+          avg_students_per_report: 0,
+        };
+      }
+
+      // Calculate statistics
+      const lastReport = await manager.findOne(TeacherReport, {
+        where: { teacherId },
+        order: { generatedAt: 'DESC' },
+      });
+
+      const lastGeneratedDate = lastReport?.generatedAt.toISOString() || null;
+
+      // Find most used format
+      const formatCounts = reports.reduce(
+        (acc, report) => {
+          acc[report.reportFormat] = (acc[report.reportFormat] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+
+      const mostUsedFormat =
+        Object.keys(formatCounts).length > 0
+          ? Object.entries(formatCounts).reduce((a, b) => (a[1] > b[1] ? a : b))[0]
+          : null;
+
+      // Calculate average students per report
+      const totalStudents = reports.reduce((sum, report) => sum + (report.studentCount || 0), 0);
+      const avgStudentsPerReport = Math.round(totalStudents / totalReports);
+
+      return {
+        total_reports_generated: totalReports,
+        last_generated_date: lastGeneratedDate,
+        most_used_format: mostUsedFormat,
+        avg_students_per_report: avgStudentsPerReport,
+      };
     });
-
-    const lastGeneratedDate = lastReport?.generatedAt.toISOString() || null;
-
-    // Find most used format
-    const formatCounts = reports.reduce(
-      (acc, report) => {
-        acc[report.reportFormat] = (acc[report.reportFormat] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
-
-    const mostUsedFormat =
-      Object.keys(formatCounts).length > 0
-        ? Object.entries(formatCounts).reduce((a, b) => (a[1] > b[1] ? a : b))[0]
-        : null;
-
-    // Calculate average students per report
-    const totalStudents = reports.reduce((sum, report) => sum + (report.studentCount || 0), 0);
-    const avgStudentsPerReport = Math.round(totalStudents / totalReports);
-
-    return {
-      total_reports_generated: totalReports,
-      last_generated_date: lastGeneratedDate,
-      most_used_format: mostUsedFormat,
-      avg_students_per_report: avgStudentsPerReport,
-    };
   }
 
   /**
    * Get a specific report by ID with ownership validation
+   *
+   * FIX TASK-2026-01-25: Uses transaction with SET LOCAL for RLS support.
    *
    * @param reportId - UUID of the report
    * @param teacherId - ID of the teacher (for ownership validation)
@@ -116,23 +150,33 @@ export class TeacherReportsService {
   async getReportById(reportId: string, teacherId: string): Promise<TeacherReport> {
     this.logger.log(`Getting report ${reportId} for teacher ${teacherId}`);
 
-    const report = await this.teacherReportRepo.findOne({
-      where: { id: reportId },
+    // TASK-020: Validate UUID before using in SET LOCAL
+    if (!isUUID(teacherId)) {
+      throw new BadRequestException(`Invalid teacher ID format: ${teacherId}`);
+    }
+
+    return this.dataSource.transaction(async (manager) => {
+      // TASK-020 FIX: SET LOCAL requires literal value, not $1 placeholder
+      await manager.query(`SET LOCAL app.current_user_id = '${teacherId}'`);
+
+      const report = await manager.findOne(TeacherReport, {
+        where: { id: reportId },
+      });
+
+      if (!report) {
+        throw new NotFoundException(`Report with ID ${reportId} not found`);
+      }
+
+      // Validate ownership (double-check even though RLS should filter)
+      if (report.teacherId !== teacherId) {
+        this.logger.warn(
+          `Teacher ${teacherId} attempted to access report ${reportId} owned by ${report.teacherId}`,
+        );
+        throw new ForbiddenException('You do not have access to this report');
+      }
+
+      return report;
     });
-
-    if (!report) {
-      throw new NotFoundException(`Report with ID ${reportId} not found`);
-    }
-
-    // Validate ownership
-    if (report.teacherId !== teacherId) {
-      this.logger.warn(
-        `Teacher ${teacherId} attempted to access report ${reportId} owned by ${report.teacherId}`,
-      );
-      throw new ForbiddenException('You do not have access to this report');
-    }
-
-    return report;
   }
 
   /**
@@ -168,13 +212,39 @@ export class TeacherReportsService {
   /**
    * Delete a report by ID (with ownership validation)
    *
+   * FIX TASK-2026-01-25: Uses transaction with SET LOCAL for RLS support.
+   *
    * @param reportId - UUID of the report to delete
    * @param teacherId - ID of the teacher (for ownership validation)
    */
   async deleteReport(reportId: string, teacherId: string): Promise<void> {
-    const report = await this.getReportById(reportId, teacherId);
-    await this.teacherReportRepo.remove(report);
-    this.logger.log(`Report ${reportId} deleted by teacher ${teacherId}`);
+    // TASK-020: Validate UUID before using in SET LOCAL
+    if (!isUUID(teacherId)) {
+      throw new BadRequestException(`Invalid teacher ID format: ${teacherId}`);
+    }
+
+    await this.dataSource.transaction(async (manager) => {
+      // TASK-020 FIX: SET LOCAL requires literal value, not $1 placeholder
+      await manager.query(`SET LOCAL app.current_user_id = '${teacherId}'`);
+
+      const report = await manager.findOne(TeacherReport, {
+        where: { id: reportId },
+      });
+
+      if (!report) {
+        throw new NotFoundException(`Report with ID ${reportId} not found`);
+      }
+
+      if (report.teacherId !== teacherId) {
+        this.logger.warn(
+          `Teacher ${teacherId} attempted to delete report ${reportId} owned by ${report.teacherId}`,
+        );
+        throw new ForbiddenException('You do not have access to this report');
+      }
+
+      await manager.remove(report);
+      this.logger.log(`Report ${reportId} deleted by teacher ${teacherId}`);
+    });
   }
 
   /**

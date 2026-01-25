@@ -77,7 +77,7 @@ export class AdminAlertsService {
 
     // Ordenar por severidad (usando CASE) y luego por triggered_at DESC
     queryBuilder.orderBy(
-      `CASE alert.severity
+      `CASE severity
         WHEN 'critical' THEN 1
         WHEN 'high' THEN 2
         WHEN 'medium' THEN 3

@@ -11,6 +11,8 @@ export { useClassrooms } from './useClassrooms';
 export { useClassroomsStats } from './useClassroomsStats'; // TEACHER-003
 export { useAssignments } from './useAssignments';
 export { useInterventionAlerts } from './useInterventionAlerts';
+export { useStudentBlocking, BlockType } from './useStudentBlocking'; // US-PM-006
+export { useAlertConfig, AlertConfigType } from './useAlertConfig'; // US-PM-007
 export { useTeacherMessages } from './useTeacherMessages';
 export { useGrantBonus } from './useGrantBonus';
 export { useEconomyAnalytics } from './useEconomyAnalytics'; // GAP-ST-005
@@ -34,6 +36,18 @@ export type {
 } from './useClassroomsStats'; // TEACHER-003
 export type { UseAssignmentsReturn } from './useAssignments';
 export type { UseInterventionAlertsReturn, AlertFilters } from './useInterventionAlerts';
+export type {
+  UseStudentBlockingReturn,
+  BlockStudentDto,
+  StudentPermissionsResponse,
+} from './useStudentBlocking'; // US-PM-006
+export type {
+  UseAlertConfigReturn,
+  AlertConfigResponse,
+  AlertConfigDefaults,
+  CreateAlertConfigDto,
+  UpdateAlertConfigDto,
+} from './useAlertConfig'; // US-PM-007
 export type { UseTeacherMessagesReturn, MessageFilters } from './useTeacherMessages';
 export type { UseGrantBonusReturn } from './useGrantBonus';
 

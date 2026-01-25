@@ -151,12 +151,30 @@ export function useStudentMonitoring(
 
         // CORR-2025-12-18: Mapear user_id a id
         // El backend devuelve user_id pero el frontend espera id para React keys
-        const mappedStudents: StudentMonitoring[] = (response.data || []).map((student) => ({
-          ...student,
-          // Mapear user_id a id (el backend devuelve user_id, frontend espera id)
-          id: (student as any).user_id || student.id,
-          user_id: (student as any).user_id,
-        }));
+        // FIX-2026-01-25: Añadir valores por defecto para campos que pueden ser null/undefined
+        const mappedStudents: StudentMonitoring[] = (response.data || []).map((student, index) => {
+          const userId = (student as any).user_id || student.id;
+
+          if (!userId) {
+            console.warn('[useStudentMonitoring] Student without ID detected at index:', index, student);
+          }
+
+          return {
+            ...student,
+            // Mapear user_id a id (el backend devuelve user_id, frontend espera id)
+            // Fallback único si no hay ID para evitar errores de React keys
+            id: userId || `unknown-${Date.now()}-${index}`,
+            user_id: (student as any).user_id,
+            // Asegurar valores por defecto para campos que pueden venir null/undefined
+            progress_percentage: student.progress_percentage ?? 0,
+            score_average: student.score_average ?? 0,
+            time_spent_minutes: student.time_spent_minutes ?? 0,
+            exercises_completed: student.exercises_completed ?? 0,
+            exercises_total: student.exercises_total ?? 0,
+            // last_activity puede ser null - lo dejamos tal cual para que el componente lo maneje
+            last_activity: student.last_activity ?? null,
+          };
+        });
 
         // Actualizar estados
         setStudents(mappedStudents);

@@ -22,3 +22,5 @@ export {
   StudentStatsResponseDto,
   ModuleProgressDto,
 } from './student-progress.dto';
+// US-PM-007: Alert configuration DTOs
+export * from './alert-config.dto';

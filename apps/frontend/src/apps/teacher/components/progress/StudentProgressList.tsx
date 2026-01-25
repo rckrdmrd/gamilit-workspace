@@ -44,8 +44,9 @@ export function StudentProgressList({ students, onStudentClick }: StudentProgres
           bValue = b.score_average;
           break;
         case 'lastActivity':
-          aValue = new Date(a.last_activity).getTime();
-          bValue = new Date(b.last_activity).getTime();
+          // FIX-2026-01-25: Validación para last_activity null/undefined
+          aValue = a.last_activity ? new Date(a.last_activity).getTime() : 0;
+          bValue = b.last_activity ? new Date(b.last_activity).getTime() : 0;
           break;
         case 'exercises':
           aValue = a.exercises_completed;
@@ -113,18 +114,42 @@ export function StudentProgressList({ students, onStudentClick }: StudentProgres
     return 'text-red-500';
   };
 
-  const getTimeSinceLastActivity = (lastActivity: string) => {
-    const now = new Date();
+  /**
+   * Calcula el tiempo transcurrido desde la última actividad
+   * FIX-2026-01-25: Añadida validación para valores null/undefined/inválidos
+   */
+  const getTimeSinceLastActivity = (lastActivity: string | null | undefined): string => {
+    // Validar que lastActivity exista
+    if (!lastActivity) {
+      return 'Sin actividad';
+    }
+
     const last = new Date(lastActivity);
+
+    // Validar que la fecha sea válida
+    if (isNaN(last.getTime())) {
+      return 'Fecha inválida';
+    }
+
+    const now = new Date();
     const diffMs = now.getTime() - last.getTime();
     const diffMins = Math.floor(diffMs / 60000);
 
-    if (diffMins < 60) {
+    // Manejar fechas futuras
+    if (diffMins < 0) {
+      return 'Hace un momento';
+    }
+
+    if (diffMins < 1) {
+      return 'Hace un momento';
+    } else if (diffMins < 60) {
       return `Hace ${diffMins} min`;
     } else if (diffMins < 1440) {
-      return `Hace ${Math.floor(diffMins / 60)} hrs`;
+      const hours = Math.floor(diffMins / 60);
+      return `Hace ${hours} ${hours === 1 ? 'hr' : 'hrs'}`;
     } else {
-      return `Hace ${Math.floor(diffMins / 1440)} días`;
+      const days = Math.floor(diffMins / 1440);
+      return `Hace ${days} ${days === 1 ? 'día' : 'días'}`;
     }
   };
 

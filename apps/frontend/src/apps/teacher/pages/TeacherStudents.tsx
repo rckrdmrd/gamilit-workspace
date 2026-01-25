@@ -25,7 +25,8 @@ interface StudentExtended {
   performance_level: 'high' | 'medium' | 'low';
   classroom_name: string;
   classroom_id: string;
-  last_active: string;
+  /** FIX-2026-01-25: last_active puede ser null si el estudiante no tiene actividad */
+  last_active: string | null;
   score_average: number;
 }
 

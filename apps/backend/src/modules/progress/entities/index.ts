@@ -30,3 +30,4 @@ export { ProgressSnapshot } from './progress-snapshot.entity'; // ✨ NUEVO - P2
 export { SkillAssessment } from './skill-assessment.entity'; // ✨ NUEVO - P2 (Evaluaciones de habilidades)
 export { TeacherIntervention, InterventionType, InterventionStatus, InterventionPriority } from './teacher-intervention.entity'; // ✨ NUEVO - P1-002 (Intervenciones docentes)
 export { Certificate, CertificateStatus, CertificateType } from './certificate.entity'; // ✨ NUEVO - EPIC 10.2 (Certificados digitales)
+export { TeacherAlertConfiguration, AlertType, ThresholdUnit } from './teacher-alert-configuration.entity'; // ✨ NUEVO - US-PM-007 (Config alertas profesor)

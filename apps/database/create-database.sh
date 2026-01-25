@@ -139,7 +139,7 @@ execute_sql_files() {
         return 0
     fi
 
-    local file_count=$(find "$dir" -name "$pattern" -type f 2>/dev/null | wc -l)
+    local file_count=$(find "$dir" -name "$pattern" -type f ! -path "*/_deprecated/*" ! -path "*/tests/*" ! -path "*/_cross_schema/*" 2>/dev/null | wc -l)
 
     if [ "$file_count" -eq 0 ]; then
         log_warning "No se encontraron archivos en: $dir"
@@ -148,7 +148,7 @@ execute_sql_files() {
 
     log "$description ($file_count archivos)"
 
-    find "$dir" -name "$pattern" -type f ! -path "*/_deprecated/*" ! -path "*/tests/*" | sort | while read -r file; do
+    find "$dir" -name "$pattern" -type f ! -path "*/_deprecated/*" ! -path "*/tests/*" ! -path "*/_cross_schema/*" | sort | while read -r file; do
         local filename=$(basename "$file")
         if ! execute_sql "$file" "  → $filename"; then
             log_error "Fallo al ejecutar: $filename"
@@ -412,6 +412,23 @@ execute_sql_files "$DDL_DIR/schemas/progress_tracking/views" "02-teacher_pending
 log_success "FASE 9.6 completada - Vistas cross-schema creadas"
 log ""
 
+# ============================================================================
+# FASE 9.7: TABLAS CROSS-SCHEMA (Dependen de social_features)
+# ============================================================================
+# classroom_modules depende de:
+# - social_features.classrooms (creado en FASE 9)
+# - educational_content.modules (creado en FASE 6)
+# Por lo tanto debe ejecutarse DESPUÉS de FASE 9
+
+log "============================================================================"
+log "FASE 9.7: TABLAS CROSS-SCHEMA (classroom_modules)"
+log "============================================================================"
+
+execute_sql "$DDL_DIR/schemas/educational_content/tables/_cross_schema/23-classroom_modules.sql" "Tabla classroom_modules (cross-schema: educational_content + social_features)"
+
+log_success "FASE 9.7 completada - Tablas cross-schema creadas"
+log ""
+
 # NOTA: FASE 9.7 (notifications) movida a FASE 6.5 por dependencia con gamification triggers
 
 # ============================================================================
@@ -662,6 +679,11 @@ execute_sql "$SEEDS_DIR/educational_content/09-exercise_mechanic_mapping.sql" "S
 execute_sql "$SEEDS_DIR/educational_content/10-exercise_validation_config.sql" "Seeds: exercise_validation_config (15 configs)"
 execute_sql "$SEEDS_DIR/educational_content/11-exercise_validation_config_m4_m5.sql" "Seeds: exercise_validation_config M4-M5 (8 configs - 2026-01-14)"
 execute_sql "$SEEDS_DIR/educational_content/13-exercise_type_rubrics.sql" "Seeds: exercise_type_rubrics (12 rubricas M3-M5 - CORR-009)"
+
+# 16.6.1: classroom_modules (assignment of modules to classrooms) - 2026-01-25
+# MUST BE AFTER classrooms (social_features) AND modules (educational_content)
+# Required for student portal to show modules in their classrooms
+execute_sql "$SEEDS_DIR/educational_content/14-classroom_modules.sql" "Seeds: classroom_modules (assign modules to DEFAULT classroom)"
 
 # NOTA: Modelo JSONB puro - Seeds legacy movidos a _deprecated/
 # Total: 23 ejercicios production-ready (módulos 1-5)

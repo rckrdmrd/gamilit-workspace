@@ -144,6 +144,7 @@ export const DB_TABLES = {
     TEACHER_INTERVENTIONS: 'teacher_interventions', // ✨ NUEVO - P1-002 (Intervenciones docentes)
     STUDENT_INTERVENTION_ALERTS: 'student_intervention_alerts', // ✨ NUEVO - P1-002 (Alertas de intervención)
     CERTIFICATES: 'certificates', // ✨ NUEVO - EPIC 10.2 (Certificados digitales)
+    TEACHER_ALERT_CONFIGURATIONS: 'teacher_alert_configurations', // ✨ NUEVO - US-PM-007 (Config alertas profesor)
   },
 
   /**
