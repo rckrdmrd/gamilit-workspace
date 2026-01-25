@@ -7,7 +7,7 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.1.0"
+version: "1.2.0"
 created: "2026-01-24"
 updated: "2026-01-25"
 proyecto: "gamilit"
@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 8
-  completadas: 8
+  total_tareas: 9
+  completadas: 9
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -47,6 +47,23 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  - task_id: "TASK-008"
+    titulo: "Fix notifDate.getTime is not a function en NotificationDropdown"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-25"
+    fecha_fin: "2026-01-25"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-008-fix-notification-dropdown/"
+    story_points: 1
+    capas_afectadas:
+      - "frontend"
+    descripcion: |
+      Corrección de error crítico en NotificationDropdown.tsx:47.
+      El componente crasheaba al renderizar porque notifDate.getTime()
+      se llamaba sobre un objeto que no era instancia de Date.
+      Fix: Cambiar typeof por instanceof para manejo correcto de fechas.
+
   - task_id: "TASK-2026-01-25-VALIDACION-PORTAL-TEACHER"
     titulo: "Validación Integral del Portal Teacher"
     tipo: "validacion"

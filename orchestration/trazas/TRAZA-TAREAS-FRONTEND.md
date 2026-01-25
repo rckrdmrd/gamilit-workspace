@@ -1,9 +1,63 @@
 # Traza de Tareas: NEXUS-FRONTEND
 
-**Última actualización:** 2026-01-24 (TASK-001: Resolver 5 Gaps P0 Críticos en Student Portal)
+**Última actualización:** 2026-01-25 (TASK-008: Fix notifDate.getTime en NotificationDropdown)
 **Revisado en auditoría:** 2026-01-10 (Sin cambios - contenido vigente)
 **Estado:** ✅ Portal Teacher COMPLETO - 14 páginas funcionales, navegación 100%
 **Estado:** ✅ Portal Student - Módulos 4 y 5 ACTIVOS - 8 ejercicios creativos funcionales
+
+---
+
+## TASK-008: Fix notifDate.getTime is not a function en NotificationDropdown ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1 CRÍTICO
+**Asignado:** CLAUDE-CODE
+**Fecha:** 2026-01-25
+**Story Points:** 1 SP
+
+### Resumen
+
+Corrección de bug crítico que causaba pantalla blanca al hacer clic en el icono de notificaciones en el Student Portal.
+
+### Problema
+
+```
+NotificationDropdown.tsx:47 Uncaught TypeError: notifDate.getTime is not a function
+    at formatTimestamp (NotificationDropdown.tsx:47:25)
+```
+
+### Causa Raíz
+
+La función `formatTimestamp` verificaba el tipo con `typeof date === 'string'`, pero cuando el dato venía del backend como objeto deserializado (no instancia de Date), la condición fallaba y se asignaba el objeto plano directamente, causando el crash al llamar `.getTime()`.
+
+### Solución
+
+| Archivo | Línea | Cambio |
+|---------|-------|--------|
+| `features/notifications/components/NotificationDropdown.tsx` | 44 | `typeof date === 'string'` → `date instanceof Date` |
+
+### Código
+
+**Antes:**
+```typescript
+const notifDate = typeof date === 'string' ? new Date(date) : date;
+```
+
+**Después:**
+```typescript
+const notifDate = date instanceof Date ? date : new Date(date);
+```
+
+### Validación
+
+| Check | Resultado |
+|-------|-----------|
+| TypeScript | ✅ Sin errores nuevos |
+| Edición mínima | ✅ 1 línea modificada |
+
+### Referencias
+
+- Documentación: `orchestration/tareas/TASK-008-fix-notification-dropdown/`
 
 ---
 

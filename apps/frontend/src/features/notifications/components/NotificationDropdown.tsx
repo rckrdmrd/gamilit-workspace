@@ -41,7 +41,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
     if (!date) return '';
 
     const now = new Date();
-    const notifDate = typeof date === 'string' ? new Date(date) : date;
+    const notifDate = date instanceof Date ? date : new Date(date);
 
     // Validate date is valid
     if (isNaN(notifDate.getTime())) return '';
