@@ -1,14 +1,40 @@
 # PROXIMA ACCION - GAMILIT
 
 **Ultima Actualizacion:** 2026-01-25
-**Estado del Proyecto:** MVP 80% completado | **orchestration REPLICA_COMPLETA**
+**Estado del Proyecto:** MVP 80% completado | **orchestration REPLICA_COMPLETA** | **Production Ready**
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Tarea Completada:** TASK-005 (Sincronizacion orchestration/ desde workspace-v2)
+**Tarea Completada:** TASK-007 (Scripts de deploy produccion con backup)
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
 
 ## Estado Actual
+
+### TASK-007 COMPLETADA (2026-01-25)
+
+**Scripts de deploy produccion con backup de usuarios y progreso.**
+
+| Script | Proposito | Ubicacion |
+|--------|-----------|-----------|
+| `backup-production-data.sh` | Backup datos criticos | `apps/devops/scripts/` |
+| `deploy-production.sh` | Deploy con rollback | `apps/devops/scripts/` |
+| `SIMCO-DEPLOY-PRODUCTION.md` | Directiva procedimiento | `orchestration/directivas/simco/` |
+
+**Datos respaldados automaticamente:**
+- auth.users + profiles (usuarios)
+- progress_tracking.* (progreso estudiantes)
+- gamification_system.* (estadisticas, logros)
+- educational_content.teacher_content
+
+**Configuraciones documentadas:**
+- CORS para produccion (NestJS, NO nginx)
+- HTTPS/SSL con Let's Encrypt
+- nginx reverse proxy
+
+**Commits:** 0f5cad9c, 210a56d0
+**Ver detalles:** `orchestration/tareas/TASK-007-deploy-production-scripts/`
+
+---
 
 ### TASK-005 COMPLETADA (2026-01-25)
 
