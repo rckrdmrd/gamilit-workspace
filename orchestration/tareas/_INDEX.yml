@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 0
-  completadas: 0
+  total_tareas: 1
+  completadas: 1
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -41,27 +41,22 @@ formato_id:
 # ─────────────────────────────────────────────────────────────────────────────────
 
 tareas_activas: []
-  # - task_id: "TASK-001"
-  #   titulo: "Título descriptivo"
-  #   agente: "PERFIL-AGENTE"
-  #   estado: "en_progreso"
-  #   fase: "C"
-  #   proyecto: "gamilit"
-  #   ubicacion: "proyecto"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # HISTORIAL DE TAREAS
 # ─────────────────────────────────────────────────────────────────────────────────
 
-historial: []
-  # - task_id: "TASK-001"
-  #   titulo: "Título"
-  #   tipo: "feature"
-  #   estado: "completada"
-  #   fecha_inicio: "2026-01-24"
-  #   fecha_fin: "2026-01-24"
-  #   agente: "PERFIL-BACKEND"
-  #   carpeta: "TASK-001-descripcion/"
+historial:
+  - task_id: "TASK-001"
+    titulo: "Resolver 5 Gaps P0 Críticos en Student Portal"
+    tipo: "feature"
+    estado: "completada"
+    fecha_inicio: "2026-01-24"
+    fecha_fin: "2026-01-24"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-001-fix-p0-gaps/"
+    commit: "430e2792"
+    story_points: 21
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # NOTAS

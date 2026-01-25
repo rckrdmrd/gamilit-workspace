@@ -1,11 +1,93 @@
 # Traza de Tareas: NEXUS-FRONTEND
 
-**Última actualización:** 2025-11-29 (FE-137: Implementación M4-M5 - Componentes Multimedia y Revisión)
+**Última actualización:** 2026-01-24 (TASK-001: Resolver 5 Gaps P0 Críticos en Student Portal)
 **Revisado en auditoría:** 2026-01-10 (Sin cambios - contenido vigente)
 **Estado:** ✅ Portal Teacher COMPLETO - 14 páginas funcionales, navegación 100%
 **Estado:** ✅ Portal Student - Módulos 4 y 5 ACTIVOS - 8 ejercicios creativos funcionales
 
-> **Nota Auditoría (2026-01-10):** Esta traza fue revisada durante la auditoría de documentación. El contenido es válido y completo. La última tarea (FE-137) fue completada el 2025-11-29.
+---
+
+## TASK-001: Resolver 5 Gaps P0 Críticos en Student Portal ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P0 CRÍTICO
+**Asignado:** CLAUDE-CODE
+**Fecha:** 2026-01-24
+**Story Points:** 21 SP (total, incluye backend)
+
+### Resumen
+
+Implementación de componentes frontend para 5 gaps P0 del Student Portal: 2FA, password reset, user search, WebSocket notifications y email verification.
+
+### Archivos Creados
+
+| Archivo | Tipo | Descripción |
+|---------|------|-------------|
+| `services/api/twoFactorAPI.ts` | API Client | Cliente para endpoints 2FA |
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `services/api/passwordAPI.ts` | validateResetToken() → llamada a backend |
+| `services/api/profileAPI.ts` | +verifyEmail, +resendEmailVerification, +getEmailVerificationStatus |
+| `apps/student/pages/SettingsPage.tsx` | Modal de verificación de email con estados y handlers |
+| `apps/student/pages/NotificationsPage.tsx` | Integración de useWebSocket hook |
+| `apps/student/pages/TwoFactorAuthPage.tsx` | Reemplazo de mocks por twoFactorAPI |
+| `features/gamification/social/hooks/useFriends.ts` | searchUsers() → llamada a backend /users/search |
+
+### APIs Frontend Implementadas
+
+#### twoFactorAPI.ts
+```typescript
+twoFactorAPI.getStatus()           // GET /auth/2fa/status
+twoFactorAPI.setup(method)         // POST /auth/2fa/setup
+twoFactorAPI.verifySetup(code)     // POST /auth/2fa/setup/verify
+twoFactorAPI.verify(userId, code)  // POST /auth/2fa/verify
+twoFactorAPI.disable(password)     // POST /auth/2fa/disable
+twoFactorAPI.resend(userId)        // POST /auth/2fa/resend
+```
+
+#### profileAPI.ts (nuevos métodos)
+```typescript
+profileAPI.verifyEmail(token)              // POST /auth/verify-email
+profileAPI.resendEmailVerification()       // POST /auth/verify-email/resend
+profileAPI.getEmailVerificationStatus()    // GET /auth/verify-email/status
+```
+
+### Flujos Habilitados
+
+1. **2FA Login:** Usuario con 2FA habilitado → página /2fa → ingresa código → Dashboard
+2. **Email Verification:** Settings → Click Verify → Modal con input → Verificado
+3. **User Search:** Friends → Buscar → Resultados del backend
+4. **WebSocket:** Notificaciones en tiempo real sin refresh
+
+### Validación
+
+| Check | Resultado |
+|-------|-----------|
+| TypeScript | ✅ Sin errores nuevos |
+| Coherencia con Backend | ✅ Endpoints alineados |
+
+### Impacto
+
+**Antes:**
+- 2FA: Mock con código 123456
+- Email verification: Botón sin handler
+- User search: Solo filtra recomendaciones locales
+- WebSocket: Hook existía pero no integrado
+
+**Después:**
+- 2FA: Flujo completo con backend
+- Email verification: Flujo completo con modal
+- User search: Búsqueda real en backend
+- WebSocket: Integrado en NotificationsPage
+
+### Referencias
+
+- Documentación: `orchestration/tareas/TASK-001-fix-p0-gaps/`
+- Backend: Ver TRAZA-TAREAS-BACKEND.md (TASK-001)
+- Commit: `430e2792`
 
 ---
 

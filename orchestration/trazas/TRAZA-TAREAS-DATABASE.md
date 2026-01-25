@@ -1,11 +1,63 @@
 # Traza de Tareas: ATLAS-DATABASE
 
-**Última actualización:** 2026-01-16 (TASK-2026-01-16-005: Validación Integral BD)
+**Última actualización:** 2026-01-24 (TASK-001: Tabla two_factor_tokens para 2FA)
 **Estado:** ✅ PRODUCTION READY - Validación integral completada
 
 ---
 
 ## 📋 Tareas Actuales
+
+### ✅ TASK-001: Tabla two_factor_tokens para 2FA - COMPLETADO
+
+**Fecha:** 2026-01-24
+**Agente:** CLAUDE-CODE
+**Prioridad:** P0 CRÍTICO
+**Duración:** ~1.5 horas (parte de implementación 5 gaps P0)
+**Estimación:** 8 SP (como parte del gap P0-001)
+
+**Objetivo:**
+Crear tabla para almacenar tokens de autenticación de dos factores (2FA) como parte de la implementación del gap P0-001.
+
+**Archivo DDL Creado:**
+`apps/database/ddl/schemas/auth_management/tables/13-two_factor_tokens.sql`
+
+**Estructura de la Tabla:**
+
+```sql
+CREATE TABLE auth_management.two_factor_tokens (
+    id uuid PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES auth.users(id),
+    method varchar(20) NOT NULL,  -- 'email', 'sms', 'authenticator'
+    secret_key varchar(255),
+    token_hash varchar(255),
+    is_enabled boolean DEFAULT false,
+    is_verified boolean DEFAULT false,
+    verified_at timestamptz,
+    expires_at timestamptz,
+    attempts_count int DEFAULT 0,
+    last_attempt_at timestamptz,
+    locked_until timestamptz,
+    backup_codes_encrypted text,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now()
+);
+```
+
+**Índices:**
+- `idx_2fa_user_id` ON (user_id)
+- `idx_2fa_token_hash` ON (token_hash)
+- `idx_2fa_enabled` ON (user_id, is_enabled)
+
+**Coherencia:**
+- ✅ Entity correspondiente: `two-factor-token.entity.ts`
+- ✅ Constante: `DB_TABLES.AUTH.TWO_FACTOR_TOKENS`
+
+**Referencias:**
+- Documentación: `orchestration/tareas/TASK-001-fix-p0-gaps/`
+- Backend: Ver TRAZA-TAREAS-BACKEND.md (TASK-001)
+- Commit: `430e2792`
+
+---
 
 ### ✅ TASK-2026-01-16-005: Validación Integral BD, Seeds y Scripts - COMPLETADO
 
