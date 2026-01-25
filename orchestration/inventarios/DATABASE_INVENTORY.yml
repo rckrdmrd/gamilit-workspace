@@ -4,9 +4,9 @@
 # Fuente: Validación DB-092 (Ciclo 1-4)
 
 metadata:
-  version: "4.7.0"
+  version: "4.8.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-17"
+  last_updated: "2026-01-24"
   database_script: "create-database.sh"
   total_ddl_files: 396  # 2026-01-17 Fase2: +1 creado, -1 eliminado = neto 0
   total_seed_files: 169  # 82 DEV + 81 PROD + 6 STAGING
@@ -18,8 +18,8 @@ metadata:
     staging_files: 6
   database_counts:
     schemas: 16
-    tables: 139  # VALIDADO 2026-01-20 - conteo real archivos DDL/tables/
-    tables_active: 131  # Excluyendo deprecated embebidos (+2 nuevas)
+    tables: 140  # VALIDADO 2026-01-24 - +1 two_factor_tokens (TASK-001)
+    tables_active: 132  # Excluyendo deprecated embebidos (+1 nueva 2FA)
     views: 13  # VALIDADO 2026-01-17 Fase2
     materialized_views: 4  # gamification_system
     enums: 36  # VALIDADO 2026-01-20 - sin cambios
@@ -58,6 +58,21 @@ metadata:
       - "system_configuration.app_settings - Config de sistema"
     validation_date: "2026-01-17"
     analysis_document: "ANALISIS-INTEGRACION-COMPLETO.md"
+  audit_2026_01_24:
+    description: "TASK-001: Tabla two_factor_tokens para implementación 2FA"
+    task_id: "TASK-001"
+    changes_summary:
+      - "AGREGADO: auth_management.two_factor_tokens (13-two_factor_tokens.sql)"
+      - "AGREGADO: 3 índices para 2FA (user_id, token_hash, enabled)"
+    totales_actualizados:
+      tables: 140  # +1 desde 2026-01-20 (139 -> 140)
+      ddl_files: 22  # auth_management +1
+      indexes: 11  # auth_management +3
+    entity_backend: "two-factor-token.entity.ts"
+    service_backend: "two-factor-auth.service.ts"
+    api_frontend: "twoFactorAPI.ts"
+    validation_date: "2026-01-24"
+
   audit_2026_01_20:
     description: "RECONCILIACION: Objetos faltantes identificados en análisis integral"
     task_id: "TASK-2026-01-20-001"
@@ -318,11 +333,11 @@ schemas:
   - name: "auth_management"
     description: "Gestión de usuarios y autenticación"
     phase: 5
-    ddl_files: 21  # 2026-01-07: +1 (03b-roles.sql - tabla catalogo RBAC)
-    tables: 4  # 2026-01-07: +1 (roles - catalogo maestro RBAC)
+    ddl_files: 22  # 2026-01-24: +1 (13-two_factor_tokens.sql - TASK-001)
+    tables: 5  # 2026-01-24: +1 (two_factor_tokens - 2FA)
     functions: 5
     triggers: 5  # 2026-01-07: +1 (trg_roles_updated_at)
-    indexes: 8  # 2026-01-07: +2 (idx_roles_name, idx_roles_is_active)
+    indexes: 11  # 2026-01-24: +3 (idx_2fa_user_id, idx_2fa_token_hash, idx_2fa_enabled)
     views: 0
     enums: 2
     rls_policies: 3
@@ -341,6 +356,11 @@ schemas:
       - name: "tenants"
         file: "01-tenants.sql"
         description: "Multi-tenancy organizations"
+      - name: "two_factor_tokens"
+        file: "13-two_factor_tokens.sql"
+        description: "Tokens de autenticación de dos factores (2FA)"
+        created: "2026-01-24"
+        task: "TASK-001"
     key_triggers:
       - name: "trg_ensure_profile_name"
         file: "03b-trg_ensure_profile_name.sql"

@@ -1,9 +1,9 @@
 # FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 4.6.0
+version: 4.7.0
 generated: 2025-11-08
-updated: 2026-01-20
+updated: 2026-01-24
 source: RECONCILIACION-INTEGRAL Plan Maestro GAMILIT - Conteo real filesystem
 status: Reconciliado con conteo real de archivos filesystem
 last_analysis: 2026-01-16 - ETC-001 Consolidación Técnica
@@ -28,11 +28,26 @@ summary:
   total_features: 10
   total_pages: 74  # RECONCILIADO 2026-01-16 ✓
   total_stores: 12  # RECONCILIADO 2026-01-16 ✓
-  total_api_services: 23  # ACTUALIZADO 2026-01-16 - ETC-001 consolidación gamificationAPI
+  total_api_services: 24  # TASK-001: +1 twoFactorAPI.ts
   total_mechanics: 33  # ✅ ACTUALIZADO 2026-01-13 - 23 oficiales + 5 M4 + 3 M5 + 2 auxiliares
   total_routes: 18  # ✅ ACTUALIZADO 2026-01-13 - verificado con rutas implementadas
   lines_of_code: ~100000  # ✅ ACTUALIZADO 2025-12-26
   total_tests: 175  # ✅ AGREGADO 2026-01-13 - tests nuevos creados (105 FE + 70 BE)
+
+  changes_from_v4_6:  # TASK-001 - 2026-01-24
+    task_id: "TASK-001"
+    description: "Implementación 5 gaps P0 - Student Portal"
+    files_created:
+      - "services/api/twoFactorAPI.ts (cliente 2FA)"
+    files_modified:
+      - "services/api/passwordAPI.ts (validateResetToken → backend)"
+      - "services/api/profileAPI.ts (+3 métodos email verification)"
+      - "apps/student/pages/SettingsPage.tsx (modal verificación email)"
+      - "apps/student/pages/NotificationsPage.tsx (integración useWebSocket)"
+      - "apps/student/pages/TwoFactorAuthPage.tsx (2FA real, no mock)"
+      - "features/gamification/social/hooks/useFriends.ts (user search → backend)"
+    api_services_added: 1
+    note: "twoFactorAPI.ts: 6 métodos (getStatus, setup, verifySetup, verify, disable, resend)"
 
   changes_from_v4_4:  # ETC-001 Consolidación Técnica - 2026-01-16
     task_id: "ETC-001"

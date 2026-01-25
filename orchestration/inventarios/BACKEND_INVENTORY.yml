@@ -4,20 +4,20 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.10.0"
+  version: "3.11.0"
   generated_date: "2025-11-11"
   last_updated: "2026-01-24"
-  last_update_task: "AUDIT-GAMILIT-2026-01-24"
+  last_update_task: "TASK-001"
   generated_by: "Auditoría documentación completa - Conteo real filesystem"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
   total_modules: 17  # RECONCILIADO 2026-01-16 - 17 módulos con código
-  total_entities: 124  # ETC-001: +1 UserFollow entity
+  total_entities: 125  # TASK-001: +1 TwoFactorToken entity
   total_dtos: 331  # ETC-001: -6 re-exports eliminados
-  total_services: 104  # AUDITADO 2026-01-24 - 104 services confirmados
+  total_services: 105  # TASK-001: +1 TwoFactorAuthService
   total_controllers: 87  # AUDITADO 2026-01-24 - +12 controllers agregados desde última reconciliación
-  total_endpoints: 612  # Verificado 2026-01-13 (conteo real de @Get/@Post/@Put/@Delete/@Patch)
+  total_endpoints: 620  # TASK-001: +8 endpoints 2FA
   typescript_errors: 0  # ⚠️ 2025-11-28: Backend tiene errores PREEXISTENTES en tests auth (no en admin)
   build_status: "✅ BUILD PASSING"  # ETC-001: Validado 2026-01-16
   coherencia_bd: "99%"  # ✅ Actualizado 2026-01-14 (129/134 tablas con entity - 16 nuevas)
@@ -25,6 +25,68 @@ metadata:
   api_docs:
     - "docs/90-transversal/api/API-TEACHER-MODULE.md"
     - "docs/90-transversal/api/API-ADMIN-MODULE.md"
+
+# ============================================================================
+# CHANGELOG 2026-01-24 (v3.11.0 - TASK-001 Implementación 2FA)
+# ============================================================================
+task_001_2fa:
+  descripcion: "Implementación completa de Two-Factor Authentication (2FA)"
+  task_id: "TASK-001"
+  story_points: 8  # Parte de 21 SP totales (5 gaps P0)
+
+  archivos_creados:
+    entities:
+      - path: "modules/auth/entities/two-factor-token.entity.ts"
+        tabla: "auth_management.two_factor_tokens"
+        descripcion: "Entity para tokens 2FA con helpers isExpired(), isLocked(), canVerify()"
+        lineas: 98
+    services:
+      - path: "modules/auth/services/two-factor-auth.service.ts"
+        descripcion: "Servicio completo 2FA: setup, verify, disable, resend"
+        lineas: 285
+        metodos:
+          - "getStatus(userId)"
+          - "setup2FA(userId, method)"
+          - "verifySetup(userId, code)"
+          - "sendLoginOTP(userId)"
+          - "verifyLoginOTP(userId, code)"
+          - "disable2FA(userId, password)"
+          - "resendOTP(userId)"
+
+  archivos_modificados:
+    - path: "modules/auth/controllers/auth.controller.ts"
+      cambio: "+6 endpoints 2FA"
+    - path: "modules/auth/controllers/password.controller.ts"
+      cambio: "+1 endpoint validate reset token"
+    - path: "modules/auth/controllers/users.controller.ts"
+      cambio: "+1 endpoint user search"
+    - path: "modules/auth/services/auth.service.ts"
+      cambio: "+1 método searchUsers()"
+    - path: "modules/auth/auth.module.ts"
+      cambio: "Registro TwoFactorToken entity y TwoFactorAuthService"
+    - path: "shared/constants/database.constants.ts"
+      cambio: "+1 constante TWO_FACTOR_TOKENS"
+
+  endpoints_agregados:
+    - "GET /auth/2fa/status"
+    - "POST /auth/2fa/setup"
+    - "POST /auth/2fa/setup/verify"
+    - "POST /auth/2fa/verify"
+    - "POST /auth/2fa/disable"
+    - "POST /auth/2fa/resend"
+    - "GET /auth/reset-password/validate"
+    - "GET /users/search"
+
+  impacto:
+    entities: "+1 (124 → 125)"
+    services: "+1 (104 → 105)"
+    endpoints: "+8 (612 → 620)"
+
+  validacion:
+    build: "✅ PASSED"
+    coherencia_bd: "Entity alineada con DDL"
+
+  traza: "orchestration/tareas/TASK-001-fix-p0-gaps/"
 
 # ============================================================================
 # CHANGELOG 2026-01-16 (v3.9.0 - ETC-001 Consolidación Técnica)
@@ -178,8 +240,8 @@ modules:
     description: "Autenticación y autorización"
     path: "apps/backend/src/modules/auth"
     schema_db: "auth_management"
-    entities: 12
-    services: 5
+    entities: 13  # TASK-001: +1 TwoFactorToken
+    services: 6  # TASK-001: +1 TwoFactorAuthService
     controllers: 2
     dtos: 37
     main_features:
@@ -190,7 +252,13 @@ modules:
       - "Gestión de sesiones"
       - "Roles y permisos"
       - "Multi-tenant support"
+      - "Two-Factor Authentication (2FA)"  # TASK-001
     status: "✅ Active"
+    task_001_additions:
+      entity: "two-factor-token.entity.ts"
+      service: "two-factor-auth.service.ts"
+      endpoints_added: 8
+      date: "2026-01-24"
 
   - name: "admin"
     description: "Administración del sistema"

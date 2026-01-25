@@ -2,11 +2,11 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "4.6.0"
+version: "4.7.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
 fecha_actualizacion: "2026-01-24"
-actualizado_por: "AUDIT-GAMILIT-2026-01-24 - Auditoria Documentacion Completa"
-last_update_task: "AUDIT-GAMILIT-2026-01-24"
+actualizado_por: "TASK-001 - Implementación 5 gaps P0 Student Portal"
+last_update_task: "TASK-001"
 
 # =============================================================================
 # RESUMEN EJECUTIVO
@@ -17,7 +17,7 @@ resumen:
 
   database:
     schemas: 16
-    tables: 137  # RECONCILIADO 2026-01-16
+    tables: 140  # TASK-001: +1 two_factor_tokens (140 total)
     views: 17
     materialized_views: 11
     enums: 38  # RECONCILIADO 2026-01-16 (42 - 4 deprecated)
@@ -40,11 +40,11 @@ resumen:
 
   backend:
     modules: 17
-    entities: 124  # AUDITADO 2026-01-24 - corregido a valor real
+    entities: 125  # TASK-001: +1 TwoFactorToken entity
     dtos: 331  # ACTUALIZADO ETC-001 - eliminados 6 re-exports de notification DTOs
-    services: 104  # AUDITADO 2026-01-24 - conteo real filesystem
+    services: 105  # TASK-001: +1 TwoFactorAuthService
     controllers: 87  # AUDITADO 2026-01-24 - +12 desde ultima reconciliacion
-    endpoints: 612
+    endpoints: 620  # TASK-001: +8 endpoints 2FA
     build_status: "Builds successfully"
     coherencia_bd: "99%"  # RECONCILIADO 2026-01-16 (124 entities / 137 tables)
     last_verified: "2026-01-24"
@@ -59,7 +59,7 @@ resumen:
     hooks: 101  # RECONCILIADO 2026-01-16 - conteo real use*.ts
     pages: 74  # RECONCILIADO 2026-01-16 ✓
     stores: 12  # RECONCILIADO 2026-01-16 ✓
-    api_services: 26  # RECONCILIADO 2026-01-16 - solo services/api/
+    api_services: 27  # TASK-001: +1 twoFactorAPI.ts
     mechanics: 33
     routes: 18
     lines_of_code: ~100000
