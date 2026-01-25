@@ -66,6 +66,7 @@ export const createMockUserStatsService = () => ({
   createStats: jest.fn(),
   incrementExercises: jest.fn(),
   addXP: jest.fn(),
+  addXp: jest.fn(), // Both casing variants
   updateStreak: jest.fn(),
   getLeaderboard: jest.fn(),
 });
@@ -86,6 +87,8 @@ export const createMockRanksService = () => ({
  */
 export const createMockMissionTemplatesService = () => ({
   getActiveByTypeAndLevel: jest.fn(),
+  getActiveByType: jest.fn(),
+  selectRandom: jest.fn(),
   findById: jest.fn(),
   findAll: jest.fn(),
   create: jest.fn(),

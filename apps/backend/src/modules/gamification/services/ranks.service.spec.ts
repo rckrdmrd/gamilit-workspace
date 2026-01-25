@@ -10,9 +10,9 @@ import { MayaRank, TransactionTypeEnum } from '@shared/constants/enums.constants
 
 describe('RanksService', () => {
   let service: RanksService;
-  let _userRankRepo: Repository<UserRank>;
-  let _userStatsService: UserStatsService;
-  let _mlCoinsService: MLCoinsService;
+  let userRankRepo: Repository<UserRank>;
+  let userStatsService: UserStatsService;
+  let mlCoinsService: MLCoinsService;
 
   const mockUserRankRepository = {
     findOne: jest.fn(),
@@ -110,15 +110,19 @@ describe('RanksService', () => {
       });
     });
 
-    it('should throw NotFoundException if user has no current rank', async () => {
+    it('should create default rank (Ajaw) if user has no current rank', async () => {
+      // Arrange: No current rank, and no existing rank either
       mockUserRankRepository.findOne.mockResolvedValue(null);
+      const createdRank = { ...mockCurrentRank, current_rank: MayaRank.AJAW };
+      mockUserRankRepository.create.mockReturnValue(createdRank);
+      mockUserRankRepository.save.mockResolvedValue(createdRank);
 
-      await expect(service.getCurrentRank(mockUserId)).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.getCurrentRank(mockUserId)).rejects.toThrow(
-        `No current rank found for user ${mockUserId}`,
-      );
+      // Act
+      const result = await service.getCurrentRank(mockUserId);
+
+      // Assert: Should create default Ajaw rank
+      expect(result.current_rank).toBe(MayaRank.AJAW);
+      expect(mockUserRankRepository.save).toHaveBeenCalled();
     });
   });
 
@@ -178,8 +182,9 @@ describe('RanksService', () => {
     it('should return config for maximum rank (K\'uk\'ulkan)', () => {
       const config = service.getRankConfig(MayaRank.KUKULKAN);
 
+      // Updated to v2.1 values (2025-11-29 fix)
       expect(config).toMatchObject({
-        xp_min: 2250,
+        xp_min: 1900,
         xp_max: Infinity,
         ml_coins_bonus: 1000,
         next_rank: null,

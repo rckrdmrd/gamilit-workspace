@@ -32,6 +32,7 @@ describe('GamificationConfigService - US-AE-005', () => {
     findOne: jest.fn(),
     save: jest.fn(),
     count: jest.fn(),
+    query: jest.fn(),
   };
 
   // Mock parameter data

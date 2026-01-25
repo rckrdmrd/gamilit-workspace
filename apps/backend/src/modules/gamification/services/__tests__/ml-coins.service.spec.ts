@@ -13,7 +13,7 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { MLCoinsService } from '../ml-coins.service';
 import { UserStats, MLCoinsTransaction, MayaRankEntity } from '../../entities';
@@ -26,6 +26,11 @@ describe('MLCoinsService', () => {
   let userStatsRepo: ReturnType<typeof createMockRepository>;
   let transactionRepo: ReturnType<typeof createMockRepository>;
   let mayaRanksRepo: ReturnType<typeof createMockRepository>;
+  let mockDataSource: { transaction: jest.Mock; createQueryRunner: jest.Mock };
+  // Manager spies for transaction callback verification
+  let managerFindOne: jest.Mock;
+  let managerSave: jest.Mock;
+  let managerCreate: jest.Mock;
 
   // Test data
   const mockUserId = TestDataFactory.createUuid('user');
@@ -43,12 +48,42 @@ describe('MLCoinsService', () => {
     transactionRepo = createMockRepository<MLCoinsTransaction>();
     mayaRanksRepo = createMockRepository<MayaRankEntity>();
 
+    // Manager spies for transaction callback - use mockImplementation for fresh copies
+    managerFindOne = jest.fn().mockImplementation(() => Promise.resolve({ ...mockUserStats }));
+    managerSave = jest.fn().mockImplementation((entity) => Promise.resolve(entity));
+    managerCreate = jest.fn().mockImplementation((_, data) => data);
+
+    // Mock DataSource for transactional operations
+    mockDataSource = {
+      transaction: jest.fn().mockImplementation(async (callback) => {
+        const mockManager = {
+          findOne: managerFindOne,
+          save: managerSave,
+          create: managerCreate,
+        };
+        return callback(mockManager);
+      }),
+      createQueryRunner: jest.fn().mockReturnValue({
+        connect: jest.fn(),
+        startTransaction: jest.fn(),
+        commitTransaction: jest.fn(),
+        rollbackTransaction: jest.fn(),
+        release: jest.fn(),
+        manager: {
+          findOne: jest.fn(),
+          save: jest.fn(),
+          create: jest.fn(),
+        },
+      }),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MLCoinsService,
         { provide: getRepositoryToken(UserStats, 'gamification'), useValue: userStatsRepo },
         { provide: getRepositoryToken(MLCoinsTransaction, 'gamification'), useValue: transactionRepo },
         { provide: getRepositoryToken(MayaRankEntity, 'gamification'), useValue: mayaRanksRepo },
+        { provide: getDataSourceToken('gamification'), useValue: mockDataSource },
       ],
     }).compile();
 
@@ -146,8 +181,7 @@ describe('MLCoinsService', () => {
       // Assert
       expect(result.balance).toBe(150); // 100 + 50
       expect(result.transaction).toBeDefined();
-      expect(userStatsRepo.save).toHaveBeenCalled();
-      expect(transactionRepo.save).toHaveBeenCalled();
+      expect(managerSave).toHaveBeenCalled(); // Uses transaction manager
     });
 
     it('should throw BadRequestException if amount is zero or negative', async () => {
@@ -183,8 +217,8 @@ describe('MLCoinsService', () => {
       // Act
       await service.addCoins(mockUserId, amount, transactionType);
 
-      // Assert
-      expect(userStatsRepo.save).toHaveBeenCalledWith(
+      // Assert - uses transaction manager
+      expect(managerSave).toHaveBeenCalledWith(
         expect.objectContaining({
           ml_coins_earned_total: 550, // 500 + 50
           ml_coins_earned_today: 100, // 50 + 50
@@ -207,8 +241,9 @@ describe('MLCoinsService', () => {
         'mission',
       );
 
-      // Assert
-      expect(transactionRepo.create).toHaveBeenCalledWith(
+      // Assert - uses transaction manager.create
+      expect(managerCreate).toHaveBeenCalledWith(
+        MLCoinsTransaction,
         expect.objectContaining({
           user_id: mockUserId,
           amount: amount,
@@ -229,13 +264,14 @@ describe('MLCoinsService', () => {
         last_ml_coins_reset: oldDate,
         ml_coins_earned_today: 200,
       };
-      userStatsRepo.findOne.mockResolvedValue(statsWithOldReset as any);
+      // Override managerFindOne for this test
+      managerFindOne.mockImplementation(() => Promise.resolve({ ...statsWithOldReset }));
 
       // Act
       await service.addCoins(mockUserId, amount, transactionType);
 
-      // Assert
-      expect(userStatsRepo.save).toHaveBeenCalledWith(
+      // Assert - uses transaction manager
+      expect(managerSave).toHaveBeenCalledWith(
         expect.objectContaining({
           ml_coins_earned_today: amount, // Reset to new amount only
           last_ml_coins_reset: expect.any(Date),
@@ -265,8 +301,7 @@ describe('MLCoinsService', () => {
 
       // Assert
       expect(result.balance).toBe(70); // 100 - 30
-      expect(userStatsRepo.save).toHaveBeenCalled();
-      expect(transactionRepo.save).toHaveBeenCalled();
+      expect(managerSave).toHaveBeenCalled(); // Uses transaction manager
     });
 
     it('should throw BadRequestException if amount is zero or negative', async () => {
@@ -293,8 +328,8 @@ describe('MLCoinsService', () => {
       // Act
       await service.spendCoins(mockUserId, amount, transactionType);
 
-      // Assert
-      expect(userStatsRepo.save).toHaveBeenCalledWith(
+      // Assert - uses transaction manager
+      expect(managerSave).toHaveBeenCalledWith(
         expect.objectContaining({
           ml_coins_spent_total: 430, // 400 + 30
         }),
@@ -305,8 +340,9 @@ describe('MLCoinsService', () => {
       // Act
       await service.spendCoins(mockUserId, amount, transactionType);
 
-      // Assert
-      expect(transactionRepo.create).toHaveBeenCalledWith(
+      // Assert - uses transaction manager.create
+      expect(managerCreate).toHaveBeenCalledWith(
+        MLCoinsTransaction,
         expect.objectContaining({
           amount: -amount, // Negative for spending
         }),
