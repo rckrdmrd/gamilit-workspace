@@ -27,6 +27,7 @@ BEGIN
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
+        objective, how_to_solve, recommended_strategy, pedagogical_notes,
         exercise_type, order_index,
         config, content, solution,
         difficulty_level, max_points, passing_score,
@@ -41,6 +42,19 @@ BEGIN
         'Imagina su Vida Cotidiana en 1898',
         'Crea un diario multimedia desde la perspectiva de Marie Curie durante el descubrimiento del radio. Incluye entradas de texto, reflexiones, y elementos multimedia que capturen sus emociones, desafíos y triunfos.',
         'Escribe al menos 3 entradas de diario desde la perspectiva de Marie Curie. Cada entrada debe incluir: fecha histórica, contexto del día, estado emocional, reflexión personal, y opcionalmente elementos multimedia (imagen, audio, o boceto). Usa tu creatividad pero mantén precisión histórica.',
+
+        -- objective (DB-125: Pedagogical Content)
+        E'Desarrollar competencia de producción creativa escrita mediante la creación de un diario multimedia desde la perspectiva histórica de Marie Curie en 1898. Este ejercicio integra investigación histórica, escritura creativa, empatía histórica y producción multimedia en una tarea auténtica de síntesis.\n\nLos estudiantes aprenderán a:\n- Adoptar voz y perspectiva de personaje histórico (empatía histórica)\n- Investigar y aplicar detalles biográficos e históricos precisos\n- Crear narrativa personal que equilibre creatividad con exactitud\n- Expresar emociones y reflexiones desde perspectiva de otra persona\n- Integrar elementos multimedia (imágenes, audio, bocetos) para enriquecer narrativa\n- Demostrar comprensión profunda de Marie Curie más allá de datos superficiales',
+
+        -- how_to_solve (DB-125)
+        E'Proceso creativo para escribir el diario:\n\n1. INVESTIGACIÓN PREVIA (10-15 min):\n   - Revisar biografía de Marie Curie: contexto de 1898, laboratorio, Pierre, descubrimientos\n   - Anotar detalles sensoriales: frío del hangar, brillo del radio, olor de químicos\n   - Identificar eventos clave: aislamiento del radio (diciembre 1898)\n\n2. PLANIFICACIÓN DE ENTRADAS (5 min):\n   - Elegir 3-5 fechas significativas de 1898-1899\n   - Definir el "arco emocional" del diario (ej: frustración → esperanza → triunfo)\n   - Decidir qué eventos cubrirá cada entrada\n\n3. ESCRITURA DE CADA ENTRADA (10-15 min c/u):\n   - Comenzar con fecha y contexto\n   - Escribir en primera persona como Marie\n   - Incluir detalles sensoriales y emocionales\n   - Mantener voz consistente y auténtica\n   - Mínimo 150 palabras, máximo 400 por entrada\n\n4. ELEMENTOS MULTIMEDIA (opcional):\n   - Agregar boceto de laboratorio o experimento\n   - Incluir "fotografía de época" (imagen vintage)\n   - Crear nota de audio como si Marie hablara\n\n5. REVISIÓN FINAL:\n   - Verificar precisión histórica de fechas y eventos\n   - Confirmar que la voz es consistente\n   - Revisar gramática y ortografía',
+
+        -- recommended_strategy (DB-125)
+        E'Estrategias para crear un diario auténtico:\n\n- LEER CARTAS REALES: Las cartas de Marie a Pierre y a su familia muestran su voz real\n- DETALLES SENSORIALES: El frío del laboratorio, las manos agrietadas, el brillo azul-verde del radio crean inmersión\n- EMOCIONES COMPLEJAS: Marie no solo sentía triunfo - también frustración, cansancio, duda. Muestra la complejidad\n- VOZ EN PRIMERA PERSONA: "Hoy yo..." no "Marie hizo..."\n- CONTEXTO HISTÓRICO: 1898, Polonia bajo Rusia, mujeres excluidas de universidades, pobreza extrema\n- MULTIMEDIA SIGNIFICATIVO: No agregues imágenes genéricas - cada elemento debe complementar el texto\n- BALANCE HISTORIA/CREATIVIDAD: Datos verificables + imaginación de lo no documentado',
+
+        -- pedagogical_notes (DB-125)
+        E'Este ejercicio desarrolla producción creativa con rigor histórico, nivel más alto del modelo de Cassany (Nivel 5: Producción Creativa). Requiere síntesis de toda la comprensión previa (literal, inferencial, crítica, digital) en una producción original.\n\nCompetencias de producción creativa desarrolladas:\n- Escritura creativa con restricciones históricas\n- Empatía histórica (ponerse en perspectiva de otro tiempo/persona)\n- Integración de investigación y creatividad\n- Producción multimedia (texto + imágenes + audio)\n- Voz narrativa consistente y auténtica\n\nDificultad: Intermedia-Avanzada (CEFR: B2). Requiere evaluación manual en 4 dimensiones: creatividad (30%), precisión histórica (30%), multimedia (20%), expresión (20%).\n\nPedagogía de empatía histórica: Al escribir desde la perspectiva de Marie, los estudiantes desarrollan comprensión profunda que trasciende memorización de datos. Experimentan emocionalmente los desafíos de una científica pionera.',
+
         'diario_multimedia', 1,
         '{
             "allowMultimedia": true,
@@ -264,6 +278,7 @@ BEGIN
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
+        objective, how_to_solve, recommended_strategy, pedagogical_notes,
         exercise_type, order_index,
         config, content, solution,
         difficulty_level, max_points, passing_score,
@@ -278,6 +293,19 @@ BEGIN
         'Narrativa Visual Científica',
         'Crea un cómic digital de 4-6 viñetas narrando el descubrimiento del radio por Marie Curie. Usa narrativa visual para contar esta historia científica de manera atractiva y educativa.',
         'Diseña un cómic de 4-6 viñetas (panels) que cuente la historia del descubrimiento del radio. Cada viñeta debe incluir: ilustración/boceto, diálogo de personajes, narración contextual, y elementos visuales que refuercen la historia. Usa la herramienta de creación de cómics o dibuja manualmente y sube imágenes.',
+
+        -- objective (DB-125: Pedagogical Content)
+        E'Desarrollar competencia de narrativa visual mediante la creación de un cómic digital que cuente la historia del descubrimiento del radio. Este ejercicio integra comprensión histórica, diseño visual, escritura de diálogos y estructura narrativa en una producción multimedia cohesiva.\n\nLos estudiantes aprenderán a:\n- Traducir información textual a narrativa visual secuencial\n- Diseñar composición de viñetas efectiva para contar historias\n- Crear diálogos que caractericen personajes y avancen la trama\n- Usar elementos visuales (expresiones, escenarios, símbolos) para comunicar\n- Estructurar narrativa con principio, desarrollo, clímax y resolución\n- Balancear precisión histórica con licencia artística',
+
+        -- how_to_solve (DB-125)
+        E'Proceso de creación del cómic digital:\n\n1. PLANIFICACIÓN NARRATIVA (10 min):\n   - Dividir la historia en 4-6 momentos clave (beats)\n   - Establecer arco: Setup → Rising Action → Climax → Resolution\n   - Decidir qué escenas visualizar en cada viñeta\n   - El clímax debe ser el radio brillando en la oscuridad\n\n2. STORYBOARD RÁPIDO (10 min):\n   - Bocetar thumbnails de cada viñeta (no detallados)\n   - Definir composición: ¿close-up? ¿wide shot?\n   - Determinar flujo de lectura entre viñetas\n\n3. DISEÑO DE VIÑETAS (25-30 min):\n   - Dibujar/diseñar cada viñeta con mayor detalle\n   - Agregar personajes con expresiones claras\n   - Incluir elementos de escenario (laboratorio, herramientas)\n   - Considerar iluminación (especialmente para el clímax)\n\n4. DIÁLOGOS Y NARRACIÓN (10 min):\n   - Escribir diálogos breves y naturales\n   - Agregar cajas de narración para contexto\n   - Balancear texto vs visual (menos texto = mejor cómic)\n\n5. REVISIÓN FINAL:\n   - ¿La historia se entiende sin leer texto?\n   - ¿Los detalles históricos son correctos?\n   - ¿El flujo visual guía al lector correctamente?',
+
+        -- recommended_strategy (DB-125)
+        E'Estrategias para crear un cómic efectivo:\n\n- PANEL DEL RADIO BRILLANDO = TU MEJOR VIÑETA: Este es el clímax visual - dale todo tu esfuerzo artístico\n- SHOW, DONT TELL: Usa imágenes para comunicar, no texto. Si puedes mostrarlo, no lo escribas\n- EXPRESIONES FACIALES CLARAS: Los lectores deben entender emociones solo viendo caras\n- CONTRASTE DRAMÁTICO: Usa luz/oscuridad para dramatismo (laboratorio oscuro → radio brillante)\n- DIÁLOGOS CORTOS: Máximo 20 palabras por globo de diálogo\n- FLUJO DE LECTURA: Panel 1 arriba-izquierda → Panel final abajo-derecha\n- CONSISTENCIA VISUAL: Personajes deben verse igual en todos los paneles\n- INVESTIGAR CÓMICS CIENTÍFICOS: Mira ejemplos como "Radioactive" de Lauren Redniss',
+
+        -- pedagogical_notes (DB-125)
+        E'Este ejercicio desarrolla competencia de narrativa visual y producción multimedia, nivel más alto del modelo de Cassany (Nivel 5: Producción Creativa). Los cómics son un medio único que requiere integración de habilidades verbales y visuales.\n\nCompetencias de producción visual desarrolladas:\n- Narrativa secuencial (contar historias en secuencia de imágenes)\n- Composición visual y diseño de página\n- Caracterización a través de diálogo y expresión visual\n- Síntesis de información compleja en formato accesible\n- Creatividad artística con restricciones históricas\n\nDificultad: Intermedia (CEFR: B1-B2). Requiere evaluación manual en 4 dimensiones: narrativa (25%), visual (25%), precisión histórica (25%), creatividad (25%).\n\nPedagogía de cómics: Los cómics son efectivos para comunicar ciencia porque combinan texto e imagen para explicar conceptos abstractos. Al crear uno, los estudiantes demuestran comprensión profunda al traducir información a nuevo formato.',
+
         'comic_digital', 2,
         '{
             "minPanels": 4,
@@ -558,6 +586,7 @@ BEGIN
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
+        objective, how_to_solve, recommended_strategy, pedagogical_notes,
         exercise_type, order_index,
         config, content, solution,
         difficulty_level, max_points, passing_score,
@@ -572,6 +601,19 @@ BEGIN
         'Comunicación a Través del Tiempo',
         'Graba un video (o escribe guión detallado) como Marie Curie en 1925 enviando un mensaje inspirador y reflexivo a las generaciones del siglo XXI. Captura su sabiduría, esperanzas y advertencias.',
         'Imagina que eres Marie Curie en 1925, a los 58 años, con dos premios Nobel y décadas de experiencia. Graba un video de 2-5 minutos (o escribe guión de 400-600 palabras) dirigido a los jóvenes del siglo XXI. Habla desde tu perspectiva sobre educación, ciencia, igualdad, responsabilidad, y tu legado. Sé auténtica, inspiradora y reflexiva.',
+
+        -- objective (DB-125: Pedagogical Content)
+        E'Desarrollar competencia de producción oral/escrita persuasiva mediante la creación de una video-carta como Marie Curie en 1925 dirigida al siglo XXI. Este ejercicio representa el nivel más alto de síntesis: el estudiante debe encarnar completamente a un personaje histórico y comunicar un mensaje relevante para audiencia contemporánea.\n\nLos estudiantes aprenderán a:\n- Adoptar completamente voz, perspectiva y sabiduría de Marie Curie a los 58 años\n- Investigar y aplicar contexto histórico profundo (1925: post-WWI, dos Nobel, Instituto Curie)\n- Comunicar mensajes inspiradores y reflexivos con autenticidad emocional\n- Balancear vulnerabilidad (muerte de Pierre, salud deteriorada) con fortaleza\n- Conectar temas históricos con relevancia contemporánea\n- Producir contenido audiovisual o guión de calidad profesional',
+
+        -- how_to_solve (DB-125)
+        E'Proceso de creación de video-carta:\n\n1. INVESTIGACIÓN PROFUNDA (15-20 min):\n   - Estudiar vida de Marie en 1925: 58 años, dos Nobel, viuda desde 1906, Instituto Curie\n   - Leer citas reales de Marie sobre ciencia, educación, igualdad\n   - Identificar temas que le importaban: educación de mujeres, ética científica, perseverancia\n   - Comprender su contexto: post-WWI, movimiento sufragista, radiación afectando su salud\n\n2. PLANIFICACIÓN DEL MENSAJE (10 min):\n   - Elegir 2-3 temas principales (ej: educación + ética científica + legado)\n   - Estructurar: Introducción → Tema 1 con anécdota → Tema 2 con reflexión → Conclusión\n   - Definir tono: sabio, humilde, inspirador, con toques de vulnerabilidad\n\n3. ESCRITURA DE GUIÓN (20-30 min):\n   - Escribir en primera persona como Marie de 58 años\n   - Incluir anécdotas personales específicas (Pierre, laboratorio helado, Nobel)\n   - Conectar pasado (su experiencia) con futuro (mensaje para siglo XXI)\n   - 400-600 palabras para guión escrito, o preparar puntos para video\n\n4. PRODUCCIÓN (si video):\n   - Practicar entrega antes de grabar\n   - Grabar en ambiente tranquilo con buena iluminación\n   - Hablar con ritmo moderado, pausas para énfasis\n   - Opcionalmente, vestir de época o usar fondo neutro\n\n5. REVISIÓN FINAL:\n   - ¿El mensaje suena auténticamente como Marie?\n   - ¿Hay conexión emocional y no solo datos?\n   - ¿Los temas son relevantes para audiencia del siglo XXI?',
+
+        -- recommended_strategy (DB-125)
+        E'Estrategias para crear video-carta auténtica:\n\n- LEER CARTAS Y DISCURSOS REALES: Las palabras de Marie revelan su voz, tono y preocupaciones\n- EQUILIBRAR LOGROS CON DIFICULTADES: No solo Nobel - también la pobreza, la discriminación, la pérdida de Pierre\n- VULNERABILIDAD AUTÉNTICA: Marie era humana - admitir dudas y dolores la hace más relatable\n- TEMAS ATEMPORALES: Educación, igualdad, ética - siguen siendo relevantes en el siglo XXI\n- DETALLES ESPECÍFICOS: "laboratorio helado", "manos agrietadas", "0.1 gramos de radio" - no generalidades\n- MENSAJE PARA JÓVENES: ¿Qué le diría Marie a estudiantes de hoy? Piensa en consejos concretos\n- PRACTICAR ENTREGA: Si grabas video, practica varias veces. El ritmo y las pausas importan tanto como las palabras',
+
+        -- pedagogical_notes (DB-125)
+        E'Este ejercicio representa el nivel más alto de producción creativa en el modelo de Cassany (Nivel 5). Requiere integración total de comprensión (literal, inferencial, crítica), investigación, escritura persuasiva, y producción multimedia.\n\nCompetencias de producción avanzada desarrolladas:\n- Adopción completa de perspectiva histórica (empatía histórica profunda)\n- Comunicación persuasiva e inspiradora\n- Producción audiovisual (si elige video) o escritura de guión profesional\n- Conexión de temas históricos con relevancia contemporánea\n- Expresión emocional auténtica y controlada\n\nDificultad: Avanzada (CEFR: B2-C1). Requiere evaluación manual en 4 dimensiones: autenticidad (25%), mensaje (25%), presentación (25%), emoción (25%).\n\nPedagogía de empatía histórica avanzada: Al ENCARNAR a Marie completamente (no solo escribir sobre ella), los estudiantes desarrollan comprensión profunda que trasciende conocimiento factual. Experimentan emocionalmente ser una mujer científica pionera enfrentando adversidad.',
+
         'video_carta', 3,
         '{
             "videoRequired": false,
