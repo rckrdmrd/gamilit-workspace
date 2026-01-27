@@ -4,8 +4,8 @@ import {
   BadRequestException,
   ConflictException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { Tenant } from '@modules/auth/entities/tenant.entity';
 import { Membership } from '@modules/auth/entities/membership.entity';
@@ -82,6 +82,8 @@ import { Profile } from '@modules/auth/entities/profile.entity';
 @Injectable()
 export class AdminOrganizationsService {
   constructor(
+    @InjectDataSource('educational')
+    private readonly educationalConnection: DataSource,
     @InjectRepository(Tenant, 'auth')
     private readonly tenantRepo: Repository<Tenant>,
     @InjectRepository(Membership, 'auth')
@@ -321,8 +323,8 @@ export class AdminOrganizationsService {
       trialDaysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     }
 
-    // TODO: Implement actual storage calculation from file uploads
-    const storageUsedGb = 0; // Placeholder
+    // TASK-029: Calculate actual storage usage from media_files
+    const storageUsedGb = await this.calculateStorageUsage(id);
 
     return {
       organization_id: tenant.id,
@@ -478,5 +480,31 @@ export class AdminOrganizationsService {
 
     const updated = await this.tenantRepo.save(tenant);
     return this.transformTenantToDto(updated);
+  }
+
+  /**
+   * Calculate storage usage for an organization from media_files table
+   * TASK-029: Real storage calculation implementation
+   */
+  private async calculateStorageUsage(tenantId: string): Promise<number> {
+    try {
+      // Query content_management.media_files for total file size by tenant
+      const result = await this.educationalConnection.query(
+        `SELECT COALESCE(SUM(file_size_bytes), 0) as total_bytes
+         FROM content_management.media_files
+         WHERE tenant_id = $1 AND is_active = true`,
+        [tenantId],
+      );
+
+      const totalBytes = parseInt(result[0]?.total_bytes || '0', 10);
+      // Convert bytes to GB (1 GB = 1024^3 bytes)
+      const gbValue = totalBytes / (1024 * 1024 * 1024);
+      // Round to 2 decimal places
+      return Math.round(gbValue * 100) / 100;
+    } catch (error) {
+      // Log error but don't fail - return 0 if table doesn't exist or query fails
+      console.error('[AdminOrganizationsService] Error calculating storage:', error);
+      return 0;
+    }
   }
 }

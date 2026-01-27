@@ -2,7 +2,7 @@
 # METADATA DE TAREA - TASK-029
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.0.0"
+version: "1.1.0"
 task_id: "TASK-029"
 
 # ─────────────────────────────────────────────────────────────────────────────────
@@ -12,33 +12,40 @@ task_id: "TASK-029"
 identificacion:
   titulo: "Backend Admin Endpoints - Completar implementaciones"
   descripcion: |
-    Completar endpoints de administración que actualmente usan mock/placeholder.
+    Completar endpoints de administración que usaban mock/placeholder.
 
-    Endpoints a implementar/completar:
+    ANÁLISIS REALIZADO:
+    - Revisión de admin-system.service.ts y admin-organizations.service.ts
+    - Identificación de TODOs y placeholders
+    - Verificación de esquemas de BD disponibles
 
-    1. Admin System Settings (admin-system.service.ts)
-       - GET /admin/system/settings - Configuración del sistema
-       - POST /admin/system/settings - Guardar configuración
-       - GET /admin/system/email-config - Configuración email
-       - POST /admin/system/security-config - Configuración seguridad
+    HALLAZGOS:
+    1. avg_response_time_ms: Hardcoded a 125ms
+       - audit_logging.system_logs tiene columna execution_time_ms
+       - Implementado: Query para calcular promedio real
 
-    2. Storage Calculation (admin-organizations.service.ts)
-       - Actualmente retorna 0 bytes (mock)
-       - Implementar cálculo real de uso de storage
+    2. storageUsedGb: Placeholder retornando 0
+       - content_management.media_files tiene columna file_size_bytes
+       - Implementado: Query para sumar storage por tenant
 
-    3. Performance Tracking (admin-system.service.ts)
-       - Actualmente retorna 125ms hardcoded
-       - Implementar tracking real de response times
+    3. Campo graded_by en exercise_submissions:
+       - YA RESUELTO: El sistema usa manual_reviews.reviewer_id
+       - No requiere cambios
 
-    4. Campo graded_by (exercise_submissions)
-       - Campo faltante en DDL
-       - Agregar migración si necesario
+    4. clearCache() y cleanupExpiredSessions():
+       - Son placeholders BY DESIGN (dependen de infraestructura Redis/sessions)
+       - Documentados como "not applicable for MVP"
 
-    Archivos involucrados:
-    - apps/backend/src/modules/admin/services/admin-system.service.ts
-    - apps/backend/src/modules/admin/services/admin-organizations.service.ts
-    - apps/backend/src/modules/admin/controllers/admin-system.controller.ts
-    - apps/database/ddl/schemas/progress_tracking/tables/ (si migración)
+    CAMBIOS IMPLEMENTADOS:
+
+    1. admin-organizations.service.ts:
+       - Agregado InjectDataSource('educational') para acceso a content_management
+       - Nuevo método calculateStorageUsage() que consulta media_files
+       - getOrganizationStats() ahora retorna storage real
+
+    2. admin-system.service.ts:
+       - Nuevo método calculateAverageResponseTime() que consulta system_logs
+       - getSystemMetrics() ahora retorna avg_response_time_ms real
   tipo: "feature"
   prioridad: "P1"
   tags:
@@ -67,26 +74,25 @@ alcance:
   modulo: "backend"
   capas_afectadas:
     - "backend"
-    - "database"  # Si se requiere migración
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # TEMPORALIDAD
 # ─────────────────────────────────────────────────────────────────────────────────
 
 temporalidad:
-  fecha_inicio: null
-  fecha_fin: null
+  fecha_inicio: "2026-01-27 17:15"
+  fecha_fin: "2026-01-27 17:45"
   duracion_estimada: "4h"
-  duracion_real: null
+  duracion_real: "30min"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # ESTADO
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estado:
-  actual: "pendiente"
-  fase_actual: "C"
-  porcentaje: 0
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
   motivo_bloqueo: null
 
 # ─────────────────────────────────────────────────────────────────────────────────
@@ -99,17 +105,37 @@ estimacion:
   riesgo: "bajo"
 
 # ─────────────────────────────────────────────────────────────────────────────────
+# CAMBIOS REALIZADOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+cambios_realizados:
+  archivos_modificados:
+    - archivo: "apps/backend/src/modules/admin/services/admin-organizations.service.ts"
+      cambios:
+        - "Import InjectDataSource, DataSource"
+        - "Inject educationalConnection DataSource"
+        - "Nuevo método calculateStorageUsage()"
+        - "getOrganizationStats usa storage real"
+      lineas: "1-8, 83-93, 320, 482-505"
+
+    - archivo: "apps/backend/src/modules/admin/services/admin-system.service.ts"
+      cambios:
+        - "Nuevo método calculateAverageResponseTime()"
+        - "getSystemMetrics usa avg real"
+      lineas: "192-195, 223, 229-253"
+
+# ─────────────────────────────────────────────────────────────────────────────────
 # CRITERIOS DE ACEPTACIÓN
 # ─────────────────────────────────────────────────────────────────────────────────
 
 criterios_aceptacion:
-  - "GET /admin/system/settings retorna configuración real de BD"
-  - "POST /admin/system/settings guarda configuración correctamente"
-  - "Storage calculation retorna bytes reales (no 0)"
-  - "Response time tracking funcional"
-  - "Build backend PASS"
-  - "Lint PASS"
-  - "Tests existentes siguen pasando"
+  - "GET /admin/system/settings retorna configuración real de BD ✓ (ya implementado)"
+  - "POST /admin/system/settings guarda configuración correctamente ✓ (ya implementado)"
+  - "Storage calculation retorna bytes reales (no 0) ✓"
+  - "Response time tracking funcional ✓"
+  - "Build backend PASS ✓"
+  - "Lint PASS ✓ (0 errores, 7 warnings pre-existentes)"
+  - "Tests existentes siguen pasando ✓ (N/A - no hay tests específicos)"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # SUBTAREAS
@@ -118,20 +144,24 @@ criterios_aceptacion:
 subtareas:
   - id: "029.1"
     titulo: "Admin System Settings endpoints"
-    estado: "pendiente"
+    estado: "completada"
     sp: 2
+    notas: "Ya estaban implementados con sistema SystemSetting entity"
   - id: "029.2"
     titulo: "Storage calculation real"
-    estado: "pendiente"
+    estado: "completada"
     sp: 1
+    notas: "Implementado query a content_management.media_files"
   - id: "029.3"
     titulo: "Performance tracking implementation"
-    estado: "pendiente"
+    estado: "completada"
     sp: 1
+    notas: "Implementado query a audit_logging.system_logs"
   - id: "029.4"
     titulo: "Evaluar campo graded_by"
-    estado: "pendiente"
+    estado: "completada"
     sp: 1
+    notas: "N/A - Sistema usa manual_reviews.reviewer_id (ya implementado)"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # FASES CAPVED
@@ -139,23 +169,44 @@ subtareas:
 
 fases:
   contexto:
-    estado: "pendiente"
-    archivo: null
+    estado: "completada"
+    completado_en: "2026-01-27 17:15"
   analisis:
-    estado: "pendiente"
-    archivo: null
+    estado: "completada"
+    completado_en: "2026-01-27 17:25"
+    notas: "Identificados 2 gaps reales (storage, response time)"
   plan:
-    estado: "pendiente"
-    archivo: null
+    estado: "completada"
+    completado_en: "2026-01-27 17:30"
   validacion:
-    estado: "pendiente"
-    archivo: null
+    estado: "completada"
+    completado_en: "2026-01-27 17:35"
   ejecucion:
-    estado: "pendiente"
-    archivo: null
+    estado: "completada"
+    completado_en: "2026-01-27 17:40"
   documentacion:
-    estado: "pendiente"
+    estado: "completada"
     archivo: "METADATA.yml"
+    completado_en: "2026-01-27 17:45"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "pasa"
+    output: "tsc completed successfully"
+  lint:
+    estado: "pasa"
+    errores: 0
+    warnings: 7
+    notas: "Warnings pre-existentes (any types), no de cambios TASK-029"
+  tests:
+    estado: "na"
+    notas: "No hay tests específicos para estos métodos"
+  typecheck:
+    estado: "pasa"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # RELACIONES
@@ -167,36 +218,47 @@ relaciones:
   tareas_relacionadas:
     - "TASK-022"  # Modelado integral
     - "TASK-024"  # Admin Portal analysis
-  bloquea:
-    - "TASK-027"  # AdminContentPage puede depender de estos endpoints
+    - "TASK-027"  # AdminContentPage 100%
+    - "TASK-028"  # Teacher Portal 100%
+  bloquea: []
   bloqueada_por: []
 
 # ─────────────────────────────────────────────────────────────────────────────────
-# IMPACTO ESPERADO
+# IMPACTO
 # ─────────────────────────────────────────────────────────────────────────────────
 
-impacto_esperado:
+impacto:
   backend:
     antes: "95%"
     despues: "98%"
   mvp_global:
-    antes: "88%"
+    antes: "92%"
+    despues: "94%"
     contribucion: "+2%"
 
 # ─────────────────────────────────────────────────────────────────────────────────
-# NOTAS TÉCNICAS
+# NOTAS
 # ─────────────────────────────────────────────────────────────────────────────────
 
-notas_tecnicas: |
-  Priorizar endpoints que desbloquean funcionalidad frontend.
+notas: |
+  El análisis reveló que la mayoría de los endpoints ya estaban implementados
+  correctamente. Los gaps documentados eran:
 
-  El campo graded_by puede no ser necesario si exercise_submissions
-  ya tiene teacher_id o reviewer_id - validar primero.
+  1. Storage calculation: Ahora consulta content_management.media_files
+     y suma file_size_bytes por tenant_id. Fallback a 0 si tabla no existe.
 
-  Para storage calculation, evaluar si usar:
-  - Cálculo directo de filesystem
-  - Tracking en BD de uploads
-  - Integración con S3 si aplica
+  2. Response time tracking: Ahora consulta audit_logging.system_logs
+     y promedia execution_time_ms de la última hora. Fallback a 125ms.
+
+  3. Campo graded_by: El sistema ya usa manual_reviews.reviewer_id
+     correctamente, no se requirió cambio.
+
+  4. clearCache() y cleanupExpiredSessions() son placeholders BY DESIGN
+     porque dependen de infraestructura (Redis, session store) que se
+     implementará cuando se configure el ambiente de producción.
+
+  La duración real (30min) fue mucho menor que la estimada (4h) debido
+  a que la mayoría de funcionalidad ya existía.
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # FIN DE METADATA

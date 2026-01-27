@@ -7,7 +7,7 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.14.0"
+version: "1.15.0"
 created: "2026-01-24"
 updated: "2026-01-27"
 proyecto: "gamilit"
@@ -19,9 +19,9 @@ maintained_by: "@WS_ORCHESTRATOR"
 
 estadisticas:
   total_tareas: 39
-  completadas: 38
+  completadas: 39
   en_progreso: 0
-  pendientes: 1
+  pendientes: 0
   canceladas: 0
   bloqueadas: 0
 
@@ -60,15 +60,8 @@ formato_id:
 # TAREAS ACTIVAS
 # ─────────────────────────────────────────────────────────────────────────────────
 
-tareas_activas:
-  - task_id: "TASK-029"
-    titulo: "Backend Admin Endpoints - Completar implementaciones"
-    tipo: "feature"
-    estado: "pendiente"
-    prioridad: "P1"
-    story_points: 5
-    carpeta: "TASK-029-backend-admin-endpoints/"
-    impacto: "Backend 95%→98%"
+tareas_activas: []
+  # No hay tareas pendientes - MVP 95% completado
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # HISTORIAL DE TAREAS
@@ -76,8 +69,35 @@ tareas_activas:
 
 historial:
   # ═══════════════════════════════════════════════════════════════════════════════
-  # TAREAS 2026-01-27 - AUDITORÍA INTEGRAL + ANÁLISIS + P1/P2 FIXES + MVP COMPLETION
+  # TAREAS 2026-01-27 - AUDITORÍA INTEGRAL + ANÁLISIS + P1/P2 FIXES + MVP 95% COMPLETION
   # ═══════════════════════════════════════════════════════════════════════════════
+
+  - task_id: "TASK-029"
+    titulo: "Backend Admin Endpoints - Completar implementaciones"
+    tipo: "feature"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-029-backend-admin-endpoints/"
+    story_points: 5
+    capas_afectadas:
+      - "backend"
+    cambios:
+      - "calculateStorageUsage() - query content_management.media_files"
+      - "calculateAverageResponseTime() - query audit_logging.system_logs"
+      - "getOrganizationStats() usa storage real"
+      - "getSystemMetrics() usa avg_response_time_ms real"
+    impacto:
+      backend: "95% → 98%"
+      mvp_global: "92% → 94%"
+    descripcion: |
+      Completar endpoints admin que usaban mocks/placeholders.
+      Análisis reveló mayoría ya implementado. Gaps reales:
+      - Storage calculation: Ahora consulta media_files.file_size_bytes
+      - Response time: Ahora promedia system_logs.execution_time_ms
+      - Campo graded_by: N/A (sistema usa manual_reviews.reviewer_id)
 
   - task_id: "TASK-028"
     titulo: "Teacher Portal - Completar al 100%"
