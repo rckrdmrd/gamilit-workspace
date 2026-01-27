@@ -1,0 +1,166 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA - TASK-027
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+task_id: "TASK-027"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "AdminContentPage - Completar al 100%"
+  descripcion: |
+    Completar AdminContentPage del 90% actual al 100%.
+
+    TASK-025 integró ExerciseContentRenderer pero quedaron items pendientes:
+    - Mejorar manejo de ejercicios sin answerData
+    - Agregar loading states más elaborados
+    - Pulir UX de la vista previa
+    - Validar integración con todos los tipos de ejercicio
+
+    Archivos involucrados:
+    - apps/frontend/src/apps/admin/pages/AdminContentPage.tsx
+    - apps/frontend/src/apps/admin/types/index.ts (si necesario)
+  tipo: "feature"
+  prioridad: "P1"
+  tags:
+    - "admin-portal"
+    - "mvp-completion"
+    - "content-management"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "opus-4.5"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "frontend"
+  capas_afectadas:
+    - "frontend"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: null
+  fecha_fin: null
+  duracion_estimada: "3h"
+  duracion_real: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "pendiente"
+  fase_actual: "C"
+  porcentaje: 0
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTIMACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estimacion:
+  story_points: 3
+  complejidad: "baja"
+  riesgo: "bajo"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CRITERIOS DE ACEPTACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+criterios_aceptacion:
+  - "ExerciseContentRenderer muestra correctamente todos los tipos de ejercicio"
+  - "Ejercicios sin answerData muestran mensaje informativo claro"
+  - "Loading states mientras se carga el preview"
+  - "Error handling para ejercicios malformados"
+  - "Build frontend PASS"
+  - "Lint PASS"
+  - "Página funcional en navegador"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SUBTAREAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+subtareas:
+  - id: "027.1"
+    titulo: "Validar tipos de ejercicio soportados"
+    estado: "pendiente"
+  - id: "027.2"
+    titulo: "Mejorar fallback cuando no hay answerData"
+    estado: "pendiente"
+  - id: "027.3"
+    titulo: "Agregar loading skeleton para preview"
+    estado: "pendiente"
+  - id: "027.4"
+    titulo: "Testing manual de todos los tipos"
+    estado: "pendiente"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "pendiente"
+    archivo: null
+  analisis:
+    estado: "pendiente"
+    archivo: null
+  plan:
+    estado: "pendiente"
+    archivo: null
+  validacion:
+    estado: "pendiente"
+    archivo: null
+  ejecucion:
+    estado: "pendiente"
+    archivo: null
+  documentacion:
+    estado: "pendiente"
+    archivo: "METADATA.yml"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas:
+    - "TASK-025"  # P1 gaps fix que inició la integración
+    - "TASK-024"  # Admin Portal analysis
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IMPACTO ESPERADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+impacto_esperado:
+  admin_portal:
+    pagina: "AdminContentPage"
+    antes: "90%"
+    despues: "100%"
+  mvp_global:
+    antes: "88%"
+    contribucion: "+1%"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════

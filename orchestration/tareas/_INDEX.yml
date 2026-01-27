@@ -7,7 +7,7 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.12.0"
+version: "1.13.0"
 created: "2026-01-24"
 updated: "2026-01-27"
 proyecto: "gamilit"
@@ -18,10 +18,10 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 36
+  total_tareas: 39
   completadas: 36
   en_progreso: 0
-  pendientes: 0
+  pendientes: 3
   canceladas: 0
   bloqueadas: 0
 
@@ -60,7 +60,33 @@ formato_id:
 # TAREAS ACTIVAS
 # ─────────────────────────────────────────────────────────────────────────────────
 
-tareas_activas: []
+tareas_activas:
+  - task_id: "TASK-027"
+    titulo: "AdminContentPage - Completar al 100%"
+    tipo: "feature"
+    estado: "pendiente"
+    prioridad: "P1"
+    story_points: 3
+    carpeta: "TASK-027-admin-content-100/"
+    impacto: "Admin 90%→100%"
+
+  - task_id: "TASK-028"
+    titulo: "Teacher Portal - Completar al 100%"
+    tipo: "feature"
+    estado: "pendiente"
+    prioridad: "P1"
+    story_points: 5
+    carpeta: "TASK-028-teacher-portal-100/"
+    impacto: "Teacher 95%→100%"
+
+  - task_id: "TASK-029"
+    titulo: "Backend Admin Endpoints - Completar implementaciones"
+    tipo: "feature"
+    estado: "pendiente"
+    prioridad: "P1"
+    story_points: 5
+    carpeta: "TASK-029-backend-admin-endpoints/"
+    impacto: "Backend 95%→98%"
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # HISTORIAL DE TAREAS

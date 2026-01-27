@@ -4,11 +4,30 @@
 **Estado del Proyecto:** MVP 88% completado | **orchestration REPLICA_COMPLETA** | **Production Ready (parcial)**
 **Sprint Actual:** Sprint 2 - Validación Integral
 **Ultima Tarea Completada:** TASK-026-p2-gaps-analysis (COMPLETADA)
+**Tareas Pendientes:** 3 (TASK-027, TASK-028, TASK-029) = 13 SP
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
 
 ## Estado Actual
+
+### TAREAS PENDIENTES PARA MVP 95% (13 SP)
+
+| Task | Título | SP | Impacto | Estado |
+|------|--------|-----|---------|--------|
+| **TASK-027** | AdminContentPage - Completar al 100% | 3 | Admin 90%→100% | Pendiente |
+| **TASK-028** | Teacher Portal - Completar al 100% | 5 | Teacher 95%→100% | Pendiente |
+| **TASK-029** | Backend Admin Endpoints | 5 | Backend 95%→98% | Pendiente |
+
+**Tiempo estimado:** ~1 semana
+**Resultado esperado:** MVP 88% → 95%
+
+**Ver detalles:**
+- `orchestration/tareas/TASK-027-admin-content-100/`
+- `orchestration/tareas/TASK-028-teacher-portal-100/`
+- `orchestration/tareas/TASK-029-backend-admin-endpoints/`
+
+---
 
 ### TASK-026-p2-gaps-analysis - COMPLETADA (2026-01-27)
 

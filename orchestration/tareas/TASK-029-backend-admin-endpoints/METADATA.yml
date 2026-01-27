@@ -1,0 +1,203 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA - TASK-029
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+task_id: "TASK-029"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "Backend Admin Endpoints - Completar implementaciones"
+  descripcion: |
+    Completar endpoints de administración que actualmente usan mock/placeholder.
+
+    Endpoints a implementar/completar:
+
+    1. Admin System Settings (admin-system.service.ts)
+       - GET /admin/system/settings - Configuración del sistema
+       - POST /admin/system/settings - Guardar configuración
+       - GET /admin/system/email-config - Configuración email
+       - POST /admin/system/security-config - Configuración seguridad
+
+    2. Storage Calculation (admin-organizations.service.ts)
+       - Actualmente retorna 0 bytes (mock)
+       - Implementar cálculo real de uso de storage
+
+    3. Performance Tracking (admin-system.service.ts)
+       - Actualmente retorna 125ms hardcoded
+       - Implementar tracking real de response times
+
+    4. Campo graded_by (exercise_submissions)
+       - Campo faltante en DDL
+       - Agregar migración si necesario
+
+    Archivos involucrados:
+    - apps/backend/src/modules/admin/services/admin-system.service.ts
+    - apps/backend/src/modules/admin/services/admin-organizations.service.ts
+    - apps/backend/src/modules/admin/controllers/admin-system.controller.ts
+    - apps/database/ddl/schemas/progress_tracking/tables/ (si migración)
+  tipo: "feature"
+  prioridad: "P1"
+  tags:
+    - "backend"
+    - "admin"
+    - "mvp-completion"
+    - "api"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "opus-4.5"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "backend"
+  capas_afectadas:
+    - "backend"
+    - "database"  # Si se requiere migración
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: null
+  fecha_fin: null
+  duracion_estimada: "4h"
+  duracion_real: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "pendiente"
+  fase_actual: "C"
+  porcentaje: 0
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTIMACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estimacion:
+  story_points: 5
+  complejidad: "media"
+  riesgo: "bajo"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CRITERIOS DE ACEPTACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+criterios_aceptacion:
+  - "GET /admin/system/settings retorna configuración real de BD"
+  - "POST /admin/system/settings guarda configuración correctamente"
+  - "Storage calculation retorna bytes reales (no 0)"
+  - "Response time tracking funcional"
+  - "Build backend PASS"
+  - "Lint PASS"
+  - "Tests existentes siguen pasando"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SUBTAREAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+subtareas:
+  - id: "029.1"
+    titulo: "Admin System Settings endpoints"
+    estado: "pendiente"
+    sp: 2
+  - id: "029.2"
+    titulo: "Storage calculation real"
+    estado: "pendiente"
+    sp: 1
+  - id: "029.3"
+    titulo: "Performance tracking implementation"
+    estado: "pendiente"
+    sp: 1
+  - id: "029.4"
+    titulo: "Evaluar campo graded_by"
+    estado: "pendiente"
+    sp: 1
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "pendiente"
+    archivo: null
+  analisis:
+    estado: "pendiente"
+    archivo: null
+  plan:
+    estado: "pendiente"
+    archivo: null
+  validacion:
+    estado: "pendiente"
+    archivo: null
+  ejecucion:
+    estado: "pendiente"
+    archivo: null
+  documentacion:
+    estado: "pendiente"
+    archivo: "METADATA.yml"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas:
+    - "TASK-022"  # Modelado integral
+    - "TASK-024"  # Admin Portal analysis
+  bloquea:
+    - "TASK-027"  # AdminContentPage puede depender de estos endpoints
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IMPACTO ESPERADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+impacto_esperado:
+  backend:
+    antes: "95%"
+    despues: "98%"
+  mvp_global:
+    antes: "88%"
+    contribucion: "+2%"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS TÉCNICAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas_tecnicas: |
+  Priorizar endpoints que desbloquean funcionalidad frontend.
+
+  El campo graded_by puede no ser necesario si exercise_submissions
+  ya tiene teacher_id o reviewer_id - validar primero.
+
+  Para storage calculation, evaluar si usar:
+  - Cálculo directo de filesystem
+  - Tracking en BD de uploads
+  - Integración con S3 si aplica
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════

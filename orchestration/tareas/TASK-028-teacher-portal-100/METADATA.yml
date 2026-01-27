@@ -1,0 +1,187 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA - TASK-028
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+task_id: "TASK-028"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "Teacher Portal - Completar al 100%"
+  descripcion: |
+    Completar Teacher Portal del 95% actual al 100%.
+
+    Páginas que requieren polish:
+    1. TeacherProgressPage (90-95% → 100%)
+       - Ajustes en gráficos Recharts
+       - Skeleton loaders más elaborados
+       - Animaciones de transición
+
+    2. TeacherSettingsPage (95% → 100%)
+       - Validación de formularios
+       - Feedback visual en guardado
+
+    3. TeacherNotificationPreferencesPage (95% → 100%)
+       - Edge cases en registro de dispositivos
+       - Mensajes de error más descriptivos
+
+    4. TeacherCommunicationPage (95% → 100%)
+       - Edge cases WebSocket disconnect
+       - Null handling en mensajes
+
+    Archivos involucrados:
+    - apps/frontend/src/apps/teacher/pages/TeacherProgressPage.tsx
+    - apps/frontend/src/apps/teacher/pages/TeacherSettingsPage.tsx
+    - apps/frontend/src/apps/teacher/pages/TeacherNotificationPreferencesPage.tsx
+    - apps/frontend/src/apps/teacher/pages/TeacherCommunicationPage.tsx
+  tipo: "feature"
+  prioridad: "P1"
+  tags:
+    - "teacher-portal"
+    - "mvp-completion"
+    - "polish"
+    - "ux"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "opus-4.5"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "frontend"
+  capas_afectadas:
+    - "frontend"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: null
+  fecha_fin: null
+  duracion_estimada: "4h"
+  duracion_real: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "pendiente"
+  fase_actual: "C"
+  porcentaje: 0
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTIMACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estimacion:
+  story_points: 5
+  complejidad: "baja"
+  riesgo: "bajo"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CRITERIOS DE ACEPTACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+criterios_aceptacion:
+  - "TeacherProgressPage: Gráficos Recharts sin warnings en consola"
+  - "TeacherProgressPage: Skeleton loaders durante carga"
+  - "TeacherSettingsPage: Validación de campos antes de submit"
+  - "TeacherSettingsPage: Toast de confirmación al guardar"
+  - "TeacherNotificationPreferencesPage: Manejo de errores de registro"
+  - "TeacherCommunicationPage: Reconexión automática WebSocket"
+  - "Todas las páginas: Sin errores en consola"
+  - "Build frontend PASS"
+  - "Lint PASS"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SUBTAREAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+subtareas:
+  - id: "028.1"
+    titulo: "TeacherProgressPage - Charts polish"
+    estado: "pendiente"
+    sp: 2
+  - id: "028.2"
+    titulo: "TeacherSettingsPage - Validación y feedback"
+    estado: "pendiente"
+    sp: 1
+  - id: "028.3"
+    titulo: "TeacherNotificationPreferencesPage - Error handling"
+    estado: "pendiente"
+    sp: 1
+  - id: "028.4"
+    titulo: "TeacherCommunicationPage - WebSocket edge cases"
+    estado: "pendiente"
+    sp: 1
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "pendiente"
+    archivo: null
+  analisis:
+    estado: "pendiente"
+    archivo: null
+  plan:
+    estado: "pendiente"
+    archivo: null
+  validacion:
+    estado: "pendiente"
+    archivo: null
+  ejecucion:
+    estado: "pendiente"
+    archivo: null
+  documentacion:
+    estado: "pendiente"
+    archivo: "METADATA.yml"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas:
+    - "TASK-023"  # Teacher Portal quick wins
+    - "TASK-025"  # P1 gaps fix
+    - "TASK-026"  # P2 gaps analysis
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IMPACTO ESPERADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+impacto_esperado:
+  teacher_portal:
+    antes: "95%"
+    despues: "100%"
+  mvp_global:
+    antes: "88%"
+    contribucion: "+3%"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
