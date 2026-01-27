@@ -6,20 +6,23 @@
  *
  * @updated 2025-12-29 - Removed mock data from initial state
  *
- * @deprecated 2026-01-27 - Use newLeaderboardsStore.ts instead
- * This store uses type/period model while newLeaderboardsStore uses tab-based model
- * with materialized views (XP, Coins, Streaks, Global leaderboards).
+ * @note 2026-01-27 - NOT DEPRECATED - Different purpose than newLeaderboardsStore
  *
- * Migration guide:
- * - Replace useLeaderboardsStore with useNewLeaderboardsStore
- * - Replace selectedType with activeTab ('xp' | 'coins' | 'streaks' | 'global')
- * - Replace currentLeaderboard.entries with xpLeaderboard/coinsLeaderboard/etc
- * - Replace userRank with myXpRank/myCoinsRank/myStreaksRank/myGlobalRank
+ * This store uses TYPE/PERIOD model (filter by scope + time):
+ * - Types: global, school, friends, classroom, grade
+ * - Periods: daily, weekly, monthly, all-time
  *
- * Consumers to update:
- * - LeaderboardPage.tsx
- * - LeaderboardPreview.tsx
- * - useLeaderboards.ts hook
+ * newLeaderboardsStore uses TAB-BASED model (filter by metric):
+ * - Tabs: xp, coins, streaks, global (materialized views)
+ *
+ * Both stores serve DIFFERENT use cases:
+ * - THIS STORE: "Show me XP rankings filtered by who (school, friends) and when (weekly)"
+ * - NEW STORE: "Show me different ranking metrics (XP vs Coins vs Streaks)"
+ *
+ * Current consumers (valid usage):
+ * - LeaderboardPage.tsx - Uses type/period filtering
+ * - LeaderboardPreview.tsx - Uses type/period filtering
+ * - useLeaderboards.ts hook - Abstracts this store
  */
  
 
