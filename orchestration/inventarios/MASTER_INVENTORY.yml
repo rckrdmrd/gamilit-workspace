@@ -2,11 +2,11 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "4.7.0"
+version: "4.8.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
-fecha_actualizacion: "2026-01-24"
-actualizado_por: "TASK-001 - Implementación 5 gaps P0 Student Portal"
-last_update_task: "TASK-001"
+fecha_actualizacion: "2026-01-27"
+actualizado_por: "TASK-2026-01-27-AUDITORIA-DOC-GAMILIT - Reconciliación integral"
+last_update_task: "TASK-2026-01-27-AUDITORIA"
 
 # =============================================================================
 # RESUMEN EJECUTIVO
@@ -39,12 +39,12 @@ resumen:
     triggers_inventory: "docs/database/TRIGGERS-INVENTORY.md"
 
   backend:
-    modules: 17
-    entities: 125  # TASK-001: +1 TwoFactorToken entity
-    dtos: 331  # ACTUALIZADO ETC-001 - eliminados 6 re-exports de notification DTOs
-    services: 105  # TASK-001: +1 TwoFactorAuthService
-    controllers: 87  # AUDITADO 2026-01-24 - +12 desde ultima reconciliacion
-    endpoints: 620  # TASK-001: +8 endpoints 2FA
+    modules: 18  # AUDITORIA 2026-01-27: conteo real src/modules/
+    entities: 128  # AUDITORIA 2026-01-27: conteo real *.entity.ts
+    dtos: 366  # AUDITORIA 2026-01-27: conteo real *.dto.ts
+    services: 121  # AUDITORIA 2026-01-27: conteo real *.service.ts
+    controllers: 86  # AUDITORIA 2026-01-27: conteo real *.controller.ts
+    endpoints: 750  # AUDITORIA 2026-01-27: conteo decoradores HTTP
     build_status: "Builds successfully"
     coherencia_bd: "99%"  # RECONCILIADO 2026-01-16 (124 entities / 137 tables)
     last_verified: "2026-01-24"
@@ -55,11 +55,11 @@ resumen:
 
   frontend:
     files: 900+
-    components: 464  # RECONCILIADO 2026-01-16 - conteo real *.tsx
-    hooks: 108  # AUDITADO 2026-01-24 - conteo real use*.ts/tsx
-    pages: 74  # RECONCILIADO 2026-01-16 ✓
+    components: 398  # AUDITORIA 2026-01-27: conteo real *.tsx (sin pages/tests)
+    hooks: 104  # AUDITORIA 2026-01-27: conteo real use*.ts/tsx
+    pages: 67  # AUDITORIA 2026-01-27: conteo real */pages/*.tsx
     stores: 12  # RECONCILIADO 2026-01-16 ✓
-    api_services: 27  # TASK-001: +1 twoFactorAPI.ts
+    api_services: 37  # AUDITORIA 2026-01-27: conteo real services/api/
     mechanics: 33
     routes: 18
     lines_of_code: ~100000

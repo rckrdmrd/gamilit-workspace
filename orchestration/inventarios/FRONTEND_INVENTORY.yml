@@ -22,13 +22,13 @@ structure_audit_2026_01_10: |
 # ============================================================================
 
 summary:
-  total_files: 912+  # ✅ Actualizado 2026-01-25 - +2 archivos P1 gaps (hooks)
-  total_components: 465  # TASK-018: +2 (SuspendStudentModal, StudentActionsMenu)
-  total_hooks: 112  # P1 gaps: +2 (useSystemLogs, useConfigCategories)
+  total_files: 912+  # ✅ Actualizado 2026-01-27
+  total_components: 398  # AUDITORIA 2026-01-27: conteo real filesystem (sin pages/tests)
+  total_hooks: 104  # AUDITORIA 2026-01-27: conteo real use*.ts/tsx (sin tests)
   total_features: 11  # +1 notifications (TASK-008)
-  total_pages: 75  # TASK-019: +1 TeacherAlertConfigPage
+  total_pages: 67  # AUDITORIA 2026-01-27: conteo real */pages/*.tsx (sin tests)
   total_stores: 12  # RECONCILIADO 2026-01-16 ✓
-  total_api_services: 25  # TASK-019: +1 alertConfigApi.ts
+  total_api_services: 37  # AUDITORIA 2026-01-27: conteo real services/api/ (incluye subdirs)
   total_mechanics: 33  # ✅ ACTUALIZADO 2026-01-13 - 23 oficiales + 5 M4 + 3 M5 + 2 auxiliares
   total_routes: 18  # ✅ ACTUALIZADO 2026-01-13 - verificado con rutas implementadas
   lines_of_code: ~100000  # ✅ ACTUALIZADO 2025-12-26

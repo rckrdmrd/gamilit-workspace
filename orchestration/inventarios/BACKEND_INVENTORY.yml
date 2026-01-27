@@ -12,12 +12,12 @@ metadata:
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
-  total_modules: 17  # RECONCILIADO 2026-01-16 - 17 módulos con código
-  total_entities: 126  # TASK-019: +1 TeacherAlertConfiguration entity
-  total_dtos: 340  # GAP-BE-006: +3 DTOs (CreateRoleDto, CreateRoleResponseDto, DeleteRoleResponseDto)
-  total_services: 106  # TASK-019: +1 AlertConfigService
-  total_controllers: 88  # TASK-019: +1 AlertConfigController
-  total_endpoints: 629  # GAP-BE-006: +2 endpoints (POST /admin/roles, DELETE /admin/roles/:id)
+  total_modules: 18  # AUDITORIA 2026-01-27: conteo real src/modules/
+  total_entities: 128  # AUDITORIA 2026-01-27: conteo real *.entity.ts
+  total_dtos: 366  # AUDITORIA 2026-01-27: conteo real *.dto.ts (incluye subcarpetas)
+  total_services: 121  # AUDITORIA 2026-01-27: conteo real *.service.ts (incluye subcarpetas)
+  total_controllers: 86  # AUDITORIA 2026-01-27: conteo real *.controller.ts
+  total_endpoints: 750  # AUDITORIA 2026-01-27: conteo decoradores @Get/@Post/@Put/@Patch/@Delete
   typescript_errors: 0  # ⚠️ 2025-11-28: Backend tiene errores PREEXISTENTES en tests auth (no en admin)
   build_status: "✅ BUILD PASSING"  # GAP-BE-006: Validado 2026-01-25
   coherencia_bd: "99%"  # ✅ Actualizado 2026-01-14 (129/134 tablas con entity - 16 nuevas)

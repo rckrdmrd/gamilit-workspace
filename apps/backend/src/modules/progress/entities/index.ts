@@ -31,3 +31,6 @@ export { SkillAssessment } from './skill-assessment.entity'; // ✨ NUEVO - P2 (
 export { TeacherIntervention, InterventionType, InterventionStatus, InterventionPriority } from './teacher-intervention.entity'; // ✨ NUEVO - P1-002 (Intervenciones docentes)
 export { Certificate, CertificateStatus, CertificateType } from './certificate.entity'; // ✨ NUEVO - EPIC 10.2 (Certificados digitales)
 export { TeacherAlertConfiguration, AlertType, ThresholdUnit } from './teacher-alert-configuration.entity'; // ✨ NUEVO - US-PM-007 (Config alertas profesor)
+export { UserCurrentLevel } from './user-current-level.entity'; // ✨ NUEVO - TASK-2026-01-27 (Coherencia DDL)
+export { UserDifficultyProgress } from './user-difficulty-progress.entity'; // ✨ NUEVO - TASK-2026-01-27 (Coherencia DDL)
+export { ModuleCompletionTracking } from './module-completion-tracking.entity'; // ✨ NUEVO - TASK-2026-01-27 (Coherencia DDL)

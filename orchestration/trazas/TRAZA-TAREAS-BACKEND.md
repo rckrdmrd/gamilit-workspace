@@ -1,6 +1,67 @@
 # Trazas de Tareas - Backend
 
-**Última actualización:** 2026-01-25 (GAP-BE-006: CRUD Roles Admin)
+**Última actualización:** 2026-01-27 (TASK-021: Auditoría DDL-Entity)
+
+---
+
+## TASK-021: Auditoría de Coherencia DDL-Entity - 7 Entities Nuevas ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P0
+**Asignado:** CLAUDE-CODE (claude-opus-4-5-20251101)
+**Fecha:** 2026-01-27
+**Story Points:** 13 SP
+
+### Resumen
+
+Validación y corrección de coherencia DDL-Entity para alcanzar 100% de cobertura ORM. Se identificaron 7 tablas DDL sin entities TypeORM correspondientes y se crearon las entities con estructura exacta según DDL.
+
+### Archivos Creados
+
+| Archivo | Tipo | Schema DDL | Descripción |
+|---------|------|------------|-------------|
+| `modules/progress/entities/user-current-level.entity.ts` | Entity | progress_tracking | Nivel actual del usuario (PK: user_id) |
+| `modules/progress/entities/user-difficulty-progress.entity.ts` | Entity | progress_tracking | Progreso por dificultad CEFR (PK compuesto) |
+| `modules/progress/entities/module-completion-tracking.entity.ts` | Entity | progress_tracking | Seguimiento completitud módulos |
+| `modules/educational/entities/content-metadata.entity.ts` | Entity | educational_content | Metadatos JSONB para contenido |
+| `modules/educational/entities/module-dependencies.entity.ts` | Entity | educational_content | Prerrequisitos entre módulos |
+| `modules/educational/entities/taxonomy.entity.ts` | Entity | educational_content | Taxonomías educativas (Bloom, etc.) |
+| `modules/gamification/entities/comodin-usage-tracking.entity.ts` | Entity | gamification_system | Tracking uso comodines por intento |
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `modules/progress/entities/index.ts` | +3 exports (UserCurrentLevel, UserDifficultyProgress, ModuleCompletionTracking) |
+| `modules/educational/entities/index.ts` | +3 exports (ContentMetadata, ModuleDependencies, Taxonomy) |
+| `modules/gamification/entities/index.ts` | +1 export (ComodinUsageTracking) |
+
+### Validaciones DDL Aplicadas
+
+| Entity | Validación | Coherencia |
+|--------|------------|------------|
+| user-current-level | PrimaryColumn(user_id), varchar(50) types, indexes | 100% |
+| user-difficulty-progress | Composite PK (user_id, difficulty_level) | 100% |
+| module-completion-tracking | UNIQUE constraint, status enum | 100% |
+| content-metadata | UNIQUE(content_type, content_id, metadata_key), JSONB | 100% |
+| module-dependencies | dependency_type enum, minimum_completion_percentage | 100% |
+| taxonomy | levels JSONB array, name UNIQUE | 100% |
+| comodin-usage-tracking | UNIQUE(user_id, exercise_id, attempt_id), límites | 100% |
+
+### Métricas
+
+- **Entities antes:** 121
+- **Entities después:** 128
+- **Coherencia DDL-Entity:** 94.3% → 100%
+- **Tablas cubiertas:** 141/141
+
+### Impacto
+
+- Entities: +7 (121 → 128)
+- Index.ts exports: +7
+- Build: PASS
+- Lint: PASS (0 errores en entities nuevas)
+- Tests: PASS
 
 ---
 

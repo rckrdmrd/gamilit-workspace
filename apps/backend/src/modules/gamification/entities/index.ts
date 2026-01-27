@@ -24,3 +24,4 @@ export * from './shop-category.entity';
 export * from './shop-item.entity';
 export * from './user-purchase.entity';
 export * from './mission-template.entity';
+export * from './comodin-usage-tracking.entity'; // ✨ NUEVO - TASK-2026-01-27 (Coherencia DDL)
