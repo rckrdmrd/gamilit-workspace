@@ -1,0 +1,154 @@
+# METADATA - Tarea P2: Consolidacion Sistema de Roles
+# Sistema: SIMCO v4.0.0 | NEXUS v4.0
+# Origen: TASK-BD-ANALYSIS-2026-01-27
+
+version: "1.0.0"
+task_id: "TASK-P2-ROLES-CONSOLIDATION-2026-01-27"
+fecha_creacion: "2026-01-27"
+estado: "PENDING"
+modo: "@ANALYSIS"
+
+# Identificacion
+nombre: "Analizar y Planificar Consolidacion Sistema de Roles (ENUM vs RBAC)"
+tipo: "ANALYSIS"
+prioridad: "P2"
+story_points: 5
+origen: "TASK-BD-ANALYSIS-2026-01-27"
+
+# Descripcion
+descripcion: |
+  Analizar la coexistencia de dos sistemas de roles y planificar consolidacion:
+
+  Sistema 1 - ENUM (actual, en uso):
+  - gamilit_role ENUM en auth_management.profiles
+  - Valores: 'student', 'teacher', 'admin'
+  - Usado en RLS y logica de negocio
+
+  Sistema 2 - RBAC Tables (existente, subutilizado):
+  - auth_management.roles (tabla)
+  - auth_management.user_roles (tabla intermedia)
+  - auth_management.permissions (tabla)
+  - auth_management.role_permissions (tabla intermedia)
+
+  Esta tarea es ANALISIS solamente. La implementacion sera en tarea separada.
+
+  Gap identificado: ARCH-P2-001
+
+# Subtareas
+subtareas:
+  - id: "2.1"
+    nombre: "Documentar sistema ENUM actual"
+    descripcion: |
+      Documentar uso actual del ENUM gamilit_role:
+      - Donde se usa en codigo backend
+      - Donde se usa en RLS policies
+      - Guards y decoradores que lo referencian
+    estado: "PENDING"
+    sp: 1
+
+  - id: "2.2"
+    nombre: "Documentar sistema RBAC tables"
+    descripcion: |
+      Documentar estado del sistema RBAC:
+      - Estructura de tablas roles/permissions
+      - Seeds existentes (si hay)
+      - Codigo que lo referencia (si hay)
+    estado: "PENDING"
+    sp: 1
+
+  - id: "2.3"
+    nombre: "Analizar opciones de consolidacion"
+    descripcion: |
+      Evaluar opciones:
+
+      Opcion A - Mantener ENUM (simple):
+      - Pros: Funciona, rapido, simple
+      - Cons: No extensible, hardcoded
+
+      Opcion B - Migrar a RBAC (completo):
+      - Pros: Flexible, permisos granulares
+      - Cons: Migracion compleja, breaking changes
+
+      Opcion C - Hibrido:
+      - ENUM para roles basicos (backward compatible)
+      - RBAC para permisos avanzados (futuro)
+    estado: "PENDING"
+    sp: 2
+
+  - id: "2.4"
+    nombre: "Crear ADR con recomendacion"
+    descripcion: |
+      Crear Architecture Decision Record con:
+      - Contexto del problema
+      - Opciones evaluadas
+      - Decision recomendada
+      - Consecuencias
+    archivo_destino: "docs/97-adr/ADR-XXX-roles-system-consolidation.md"
+    estado: "PENDING"
+    sp: 1
+
+# Archivos a analizar
+archivos:
+  ddl:
+    - "apps/database/ddl/00-prerequisites.sql (gamilit_role ENUM)"
+    - "apps/database/ddl/schemas/auth_management/tables/03-roles.sql"
+    - "apps/database/ddl/schemas/auth_management/tables/04-user_roles.sql"
+    - "apps/database/ddl/schemas/auth_management/tables/05-permissions.sql"
+  backend:
+    - "apps/backend/src/modules/auth/guards/*.ts"
+    - "apps/backend/src/modules/auth/decorators/*.ts"
+    - "apps/backend/src/shared/constants/enums.constants.ts"
+  seeds:
+    - "apps/database/seeds/*/auth_management/03-roles.sql"
+
+# Entregables
+entregables:
+  - nombre: "ROLES-SYSTEM-ANALYSIS.md"
+    ubicacion: "orchestration/tareas/TASK-P2-ROLES-CONSOLIDATION-2026-01-27/"
+    contenido: "Documentacion completa del analisis"
+  - nombre: "ADR-XXX-roles-system-consolidation.md"
+    ubicacion: "docs/97-adr/"
+    contenido: "Decision arquitectonica documentada"
+
+# Criterios de aceptacion
+criterios_aceptacion:
+  - "Sistema ENUM documentado completamente"
+  - "Sistema RBAC documentado completamente"
+  - "Opciones de consolidacion evaluadas"
+  - "ADR creado con recomendacion clara"
+  - "NO se implementan cambios de codigo"
+
+# Consideraciones
+consideraciones:
+  migracion_datos: |
+    Si se decide migrar a RBAC, considerar:
+    - Mapeo de ENUM valores a roles RBAC
+    - Migracion de datos existentes
+    - Backward compatibility durante transicion
+
+  breaking_changes: |
+    Cambiar de ENUM a RBAC afectaria:
+    - RLS policies (07-enable-rls.sql)
+    - Auth guards (backend)
+    - DTOs y tipos (frontend)
+
+  recomendacion_preliminar: |
+    OPCION C (Hibrido) parece la mas pragmatica:
+    - Mantener ENUM para roles basicos (funciona)
+    - Agregar RBAC para permisos granulares (futuro)
+    - No hay breaking changes inmediatos
+
+# Impacto
+impacto:
+  arquitectura:
+    - "Define estrategia de autorizacion a largo plazo"
+    - "Afecta escalabilidad del sistema de permisos"
+  riesgo: "BAJO (solo analisis)"
+  rollback: "N/A - no hay cambios de codigo"
+
+# Trazabilidad
+trazabilidad:
+  analisis_origen: "TASK-BD-ANALYSIS-2026-01-27"
+  gap_ids:
+    - "ARCH-P2-001"
+  documento_referencia: "ROLES-SYSTEM-ANALYSIS.md"

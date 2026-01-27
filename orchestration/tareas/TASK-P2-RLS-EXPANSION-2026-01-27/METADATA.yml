@@ -1,0 +1,157 @@
+# METADATA - Tarea P2: Expansion de RLS Fase 2
+# Sistema: SIMCO v4.0.0 | NEXUS v4.0
+# Origen: TASK-BD-ANALYSIS-2026-01-27
+
+version: "1.0.0"
+task_id: "TASK-P2-RLS-EXPANSION-2026-01-27"
+fecha_creacion: "2026-01-27"
+estado: "PENDING"
+modo: "@FULL"
+
+# Identificacion
+nombre: "Expandir RLS de 18% a 50%+ cobertura"
+tipo: "IMPLEMENTATION"
+prioridad: "P2"
+story_points: 13
+origen: "TASK-BD-ANALYSIS-2026-01-27"
+
+# Descripcion
+descripcion: |
+  Expandir cobertura de Row Level Security (RLS) de 18% (25 tablas)
+  a 50%+ (70+ tablas). Actualmente solo se implemento Fase 1 con
+  tablas criticas. Fase 2 debe cubrir:
+
+  - gamification_system.* (user_stats, achievements, missions)
+  - content_management.*
+  - notifications.*
+  - communication.*
+  - admin_dashboard.*
+
+  Gap identificado: RLS-P1-001
+
+# Subtareas
+subtareas:
+  - id: "2.1"
+    nombre: "Inventariar tablas sin RLS"
+    descripcion: |
+      Listar todas las tablas que actualmente no tienen RLS.
+      Clasificar por criticidad de datos.
+    archivo_destino: "apps/database/ddl/07-enable-rls.sql"
+    estado: "PENDING"
+    sp: 2
+
+  - id: "2.2"
+    nombre: "Implementar RLS gamification_system"
+    descripcion: |
+      Agregar politicas RLS para:
+      - user_stats (filtrar por user_id)
+      - user_achievements (filtrar por user_id)
+      - user_missions (filtrar por user_id)
+      - comodines_inventory (filtrar por user_id)
+      - ml_transactions (filtrar por user_id)
+    tablas:
+      - "gamification_system.user_stats"
+      - "gamification_system.user_achievements"
+      - "gamification_system.user_missions"
+      - "gamification_system.comodines_inventory"
+      - "gamification_system.ml_transactions"
+    estado: "PENDING"
+    sp: 3
+
+  - id: "2.3"
+    nombre: "Implementar RLS notifications"
+    descripcion: |
+      Agregar politicas RLS para:
+      - notifications (filtrar por recipient_id)
+      - notification_preferences (filtrar por user_id)
+    tablas:
+      - "notifications.notifications"
+      - "notifications.notification_preferences"
+    estado: "PENDING"
+    sp: 2
+
+  - id: "2.4"
+    nombre: "Implementar RLS communication"
+    descripcion: |
+      Agregar politicas RLS para:
+      - messages (filtrar por sender_id o recipient_id)
+      - conversations (filtrar por participantes)
+    tablas:
+      - "communication.messages"
+      - "communication.conversations"
+    estado: "PENDING"
+    sp: 2
+
+  - id: "2.5"
+    nombre: "Implementar RLS content_management"
+    descripcion: |
+      Agregar politicas RLS para:
+      - media_items (public read, owner write)
+      - user_content (filtrar por user_id)
+    tablas:
+      - "content_management.media_items"
+      - "content_management.user_content"
+    estado: "PENDING"
+    sp: 2
+
+  - id: "2.6"
+    nombre: "Validar y documentar"
+    descripcion: |
+      1. Recrear BD con nuevas politicas
+      2. Probar queries con diferentes roles
+      3. Documentar politicas implementadas
+    estado: "PENDING"
+    sp: 2
+
+# Archivos a modificar
+archivos:
+  modificar:
+    - path: "apps/database/ddl/07-enable-rls.sql"
+      cambio: "Agregar politicas RLS Fase 2"
+  crear:
+    - path: "apps/database/ddl/07b-rls-phase2.sql"
+      descripcion: "Archivo separado para RLS Fase 2 (opcional)"
+
+# Dependencias
+dependencias:
+  archivos_base:
+    - "apps/database/ddl/07-enable-rls.sql"
+  roles_requeridos:
+    - "anon"
+    - "authenticated"
+    - "service_role"
+
+# Validaciones
+validaciones:
+  pre_implementacion:
+    - "Verificar roles existentes en BD"
+    - "Listar tablas con RLS actual"
+  post_implementacion:
+    - "Recrear BD"
+    - "Probar SELECT como anon (debe fallar)"
+    - "Probar SELECT como authenticated (solo sus datos)"
+    - "Probar SELECT como service_role (todos los datos)"
+
+# Criterios de aceptacion
+criterios_aceptacion:
+  - "70+ tablas con RLS habilitado"
+  - "Cobertura RLS >= 50%"
+  - "Queries de usuario solo retornan sus datos"
+  - "Admin/service_role tienen acceso completo"
+  - "No hay regresiones en funcionalidad existente"
+
+# Impacto
+impacto:
+  seguridad:
+    - "Datos de usuario protegidos a nivel BD"
+    - "Prevencion de data leaks entre usuarios"
+    - "Cumplimiento con mejores practicas"
+  riesgo: "MEDIO"
+  rollback: "Eliminar politicas RLS agregadas"
+
+# Trazabilidad
+trazabilidad:
+  analisis_origen: "TASK-BD-ANALYSIS-2026-01-27"
+  gap_ids:
+    - "RLS-P1-001"
+  documento_referencia: "RLS-POLICIES-INVENTORY.yml"

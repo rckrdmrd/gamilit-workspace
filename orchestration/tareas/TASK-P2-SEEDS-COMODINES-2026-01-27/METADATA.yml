@@ -1,0 +1,137 @@
+# METADATA - Tarea P2: Seeds Comodines Inventory
+# Sistema: SIMCO v4.0.0 | NEXUS v4.0
+# Origen: TASK-BD-ANALYSIS-2026-01-27
+
+version: "1.0.0"
+task_id: "TASK-P2-SEEDS-COMODINES-2026-01-27"
+fecha_creacion: "2026-01-27"
+estado: "PENDING"
+modo: "@FULL"
+
+# Identificacion
+nombre: "Implementar Seeds Comodines Inventory y Power-ups"
+tipo: "IMPLEMENTATION"
+prioridad: "P2"
+story_points: 5
+origen: "TASK-BD-ANALYSIS-2026-01-27"
+
+# Descripcion
+descripcion: |
+  Implementar seeds para el sistema de comodines (power-ups):
+  - comodines_inventory: Inventario de comodines por usuario
+  - comodin_usage_tracking: Historial de uso de comodines
+
+  El sistema de comodines es parte core de la gamificacion:
+  - pistas: Pistas Contextuales (15 ML Coins)
+  - vision_lectora: Vision Lectora (25 ML Coins)
+  - segunda_oportunidad: Segunda Oportunidad (40 ML Coins)
+
+  Gap identificado: SEED-P2-001
+
+# Subtareas
+subtareas:
+  - id: "2.1"
+    nombre: "Verificar estructura tablas comodines"
+    descripcion: |
+      Leer DDL para verificar campos de:
+      - gamification_system.comodines_inventory
+      - gamification_system.comodin_usage_tracking
+    archivos:
+      - "apps/database/ddl/schemas/gamification_system/tables/07-comodines_inventory.sql"
+      - "apps/database/ddl/schemas/gamification_system/tables/08-comodin_usage_tracking.sql"
+    estado: "PENDING"
+    sp: 1
+
+  - id: "2.2"
+    nombre: "Crear seed comodines_inventory dev"
+    descripcion: |
+      Crear seed con inventario inicial para usuarios de prueba:
+      - Cada estudiante inicia con 3 de cada comodin
+      - Profesores tienen comodines ilimitados (99)
+      - Variar cantidades segun nivel del usuario
+    archivo_destino: "apps/database/seeds/dev/gamification_system/08-comodines_inventory.sql"
+    datos_ejemplo:
+      - user: "estudiante_1"
+        pistas: 5
+        vision_lectora: 3
+        segunda_oportunidad: 2
+      - user: "estudiante_2"
+        pistas: 3
+        vision_lectora: 3
+        segunda_oportunidad: 3
+    estado: "PENDING"
+    sp: 2
+
+  - id: "2.3"
+    nombre: "Crear seed comodin_usage_tracking dev"
+    descripcion: |
+      Crear seed con historial de uso de comodines:
+      - 10+ registros de uso variados
+      - Diferentes comodines, ejercicios, fechas
+      - Incluir casos exitosos y fallidos
+    archivo_destino: "apps/database/seeds/dev/gamification_system/09-comodin_usage_tracking.sql"
+    estado: "PENDING"
+    sp: 1
+
+  - id: "2.4"
+    nombre: "Crear seed comodines_inventory prod"
+    descripcion: |
+      Version minima para produccion:
+      - Solo configuracion base
+      - Usuarios reales reciben comodines al registrarse
+    archivo_destino: "apps/database/seeds/prod/gamification_system/08-comodines_inventory.sql"
+    estado: "PENDING"
+    sp: 1
+
+# Archivos a crear
+archivos:
+  crear:
+    - "apps/database/seeds/dev/gamification_system/08-comodines_inventory.sql"
+    - "apps/database/seeds/dev/gamification_system/09-comodin_usage_tracking.sql"
+    - "apps/database/seeds/prod/gamification_system/08-comodines_inventory.sql"
+
+# Dependencias
+dependencias:
+  tablas_requeridas:
+    - "gamification_system.comodines_inventory"
+    - "gamification_system.comodin_usage_tracking"
+    - "auth_management.profiles"
+    - "educational_content.exercises"
+  seeds_previos:
+    - "auth_management/02-profiles.sql"
+    - "educational_content/02-exercises.sql"
+  enums:
+    - "comodin_type: pistas, vision_lectora, segunda_oportunidad"
+
+# Validaciones
+validaciones:
+  pre_implementacion:
+    - "Verificar estructura tabla comodines_inventory"
+    - "Identificar campos obligatorios y FKs"
+  post_implementacion:
+    - "Recrear BD con seeds"
+    - "SELECT COUNT(*) FROM gamification_system.comodines_inventory"
+    - "Verificar FK constraints"
+
+# Criterios de aceptacion
+criterios_aceptacion:
+  - "comodines_inventory tiene 10+ registros variados"
+  - "comodin_usage_tracking tiene 10+ registros"
+  - "Seeds ejecutan sin errores FK"
+  - "Comodines distribuidos segun nivel usuario"
+
+# Impacto
+impacto:
+  funcionalidades_habilitadas:
+    - "Sistema de comodines en frontend"
+    - "Compra de comodines con ML Coins"
+    - "Uso de power-ups en ejercicios"
+  riesgo: "BAJO"
+  rollback: "Eliminar archivos de seeds"
+
+# Trazabilidad
+trazabilidad:
+  analisis_origen: "TASK-BD-ANALYSIS-2026-01-27"
+  gap_ids:
+    - "SEED-P2-001"
+  documento_referencia: "SEEDS-CRITICAL-GAPS.yml"

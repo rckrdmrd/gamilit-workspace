@@ -1,0 +1,174 @@
+# METADATA - Tarea P2: Seeds Campos Pedagogicos
+# Sistema: SIMCO v4.0.0 | NEXUS v4.0
+# Origen: TASK-BD-ANALYSIS-2026-01-27
+
+version: "1.0.0"
+task_id: "TASK-P2-SEEDS-PEDAGOGY-2026-01-27"
+fecha_creacion: "2026-01-27"
+estado: "PENDING"
+modo: "@FULL"
+
+# Identificacion
+nombre: "Poblar Campos Pedagogicos en Seeds de Exercises"
+tipo: "IMPLEMENTATION"
+prioridad: "P2"
+story_points: 8
+origen: "TASK-BD-ANALYSIS-2026-01-27"
+
+# Descripcion
+descripcion: |
+  Poblar los 4 campos pedagogicos agregados en DB-125 (2025-11-19)
+  que actualmente estan vacios en los seeds de ejercicios:
+
+  - objective: Objetivo pedagogico (200-500 palabras)
+  - how_to_solve: Guia de resolucion (300-800 palabras)
+  - recommended_strategy: Estrategias recomendadas (100-300 palabras)
+  - pedagogical_notes: Notas para educadores (100-400 palabras)
+
+  Estos campos son parte del modelo de comprension lectora de
+  Daniel Cassany y mejoran la experiencia educativa.
+
+  Gap identificado: SEED-P2-003
+
+# Subtareas
+subtareas:
+  - id: "2.1"
+    nombre: "Identificar ejercicios sin contenido pedagogico"
+    descripcion: |
+      Revisar seed de ejercicios actual y listar cuales tienen
+      campos pedagogicos vacios o NULL.
+    archivo: "apps/database/seeds/dev/educational_content/02-exercises.sql"
+    estado: "PENDING"
+    sp: 1
+
+  - id: "2.2"
+    nombre: "Crear contenido pedagogico M1 (Literal)"
+    descripcion: |
+      Agregar contenido pedagogico para ejercicios del Modulo 1:
+      - Comprension Literal
+      - Identificacion de ideas principales
+      - Reconocimiento de detalles
+
+      Contenido debe seguir modelo Cassany:
+      - Leer las lineas (nivel literal)
+    ejercicios_target:
+      - "crucigrama_literal"
+      - "linea_tiempo_historia"
+      - "verdadero_falso_literal"
+    estado: "PENDING"
+    sp: 2
+
+  - id: "2.3"
+    nombre: "Crear contenido pedagogico M2 (Inferencial)"
+    descripcion: |
+      Agregar contenido pedagogico para ejercicios del Modulo 2:
+      - Comprension Inferencial
+      - Inferencias logicas
+      - Predicciones
+
+      Contenido debe seguir modelo Cassany:
+      - Leer entre lineas (nivel inferencial)
+    ejercicios_target:
+      - "detective_textual"
+      - "construccion_hipotesis"
+      - "prediccion_narrativa"
+    estado: "PENDING"
+    sp: 2
+
+  - id: "2.4"
+    nombre: "Crear contenido pedagogico M3-M5"
+    descripcion: |
+      Agregar contenido pedagogico para ejercicios de Modulos 3-5:
+      - M3: Comprension Critica (leer detras de las lineas)
+      - M4: Comprension Apreciativa
+      - M5: Comprension Creativa
+    estado: "PENDING"
+    sp: 2
+
+  - id: "2.5"
+    nombre: "Actualizar seed prod"
+    descripcion: |
+      Actualizar seed de produccion con contenido pedagogico
+      para los ejercicios base.
+    archivo_destino: "apps/database/seeds/prod/educational_content/02-exercises.sql"
+    estado: "PENDING"
+    sp: 1
+
+# Archivos a modificar
+archivos:
+  modificar:
+    - path: "apps/database/seeds/dev/educational_content/02-exercises.sql"
+      cambio: "Agregar objective, how_to_solve, recommended_strategy, pedagogical_notes"
+    - path: "apps/database/seeds/prod/educational_content/02-exercises.sql"
+      cambio: "Agregar campos pedagogicos a ejercicios base"
+
+# Dependencias
+dependencias:
+  campos_target:
+    - "objective (TEXT, 200-500 palabras)"
+    - "how_to_solve (TEXT, 300-800 palabras)"
+    - "recommended_strategy (TEXT, 100-300 palabras)"
+    - "pedagogical_notes (TEXT, 100-400 palabras)"
+  modelo_pedagogico: "Daniel Cassany - Comprension Lectora"
+
+# Validaciones
+validaciones:
+  pre_implementacion:
+    - "Verificar seed actual de ejercicios"
+    - "Contar ejercicios sin campos pedagogicos"
+  post_implementacion:
+    - "Recrear BD con seeds"
+    - "SELECT COUNT(*) FROM exercises WHERE objective IS NOT NULL"
+    - "Verificar longitud de contenido cumple minimos"
+
+# Criterios de aceptacion
+criterios_aceptacion:
+  - "80%+ ejercicios con objective poblado"
+  - "50%+ ejercicios con how_to_solve poblado"
+  - "Contenido alineado con modelo Cassany"
+  - "Longitudes cumplen rangos especificados"
+
+# Contenido ejemplo
+contenido_ejemplo:
+  objective: |
+    Este ejercicio desarrolla la capacidad de identificar informacion
+    explicita en el texto, una habilidad fundamental de comprension
+    literal segun el modelo de Daniel Cassany. El estudiante aprendera
+    a reconocer datos, hechos y detalles que el autor comunica
+    directamente, sin necesidad de inferencia...
+
+  how_to_solve: |
+    1. Lee el texto completo una primera vez para tener una vision general
+    2. Identifica las palabras clave de cada pregunta
+    3. Busca en el texto las oraciones que contienen esas palabras
+    4. Compara la informacion del texto con las opciones de respuesta
+    5. Selecciona la opcion que coincide exactamente con lo que dice el texto
+    ...
+
+  recommended_strategy: |
+    - Subraya las palabras clave mientras lees
+    - No asumas informacion que no esta en el texto
+    - Si dudas entre dos opciones, vuelve al texto
+    ...
+
+  pedagogical_notes: |
+    Este ejercicio se alinea con el nivel "leer las lineas" del modelo
+    Cassany. Es importante que el docente verifique que el estudiante
+    distingue entre informacion explicita e implicita...
+
+# Impacto
+impacto:
+  mejoras_educativas:
+    - "Estudiantes tienen guias claras de resolucion"
+    - "Profesores tienen notas metodologicas"
+    - "Contenido alineado con pedagogia moderna"
+  riesgo: "BAJO"
+  rollback: "Revertir cambios en seed"
+
+# Trazabilidad
+trazabilidad:
+  analisis_origen: "TASK-BD-ANALYSIS-2026-01-27"
+  gap_ids:
+    - "SEED-P2-003"
+  feature_origen: "DB-125 (2025-11-19)"
+  documento_referencia: "SEEDS-FIELD-GAPS.yml"

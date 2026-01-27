@@ -1,0 +1,142 @@
+# METADATA - Tarea P2: Seeds Communication Schema
+# Sistema: SIMCO v4.0.0 | NEXUS v4.0
+# Origen: TASK-BD-ANALYSIS-2026-01-27
+
+version: "1.0.0"
+task_id: "TASK-P2-SEEDS-COMMUNICATION-2026-01-27"
+fecha_creacion: "2026-01-27"
+estado: "PENDING"
+modo: "@FULL"
+
+# Identificacion
+nombre: "Implementar Seeds Communication Schema (messages, conversations)"
+tipo: "IMPLEMENTATION"
+prioridad: "P2"
+story_points: 5
+origen: "TASK-BD-ANALYSIS-2026-01-27"
+
+# Descripcion
+descripcion: |
+  Implementar seeds para el schema de comunicacion:
+  - conversations: Conversaciones entre usuarios
+  - messages: Mensajes individuales
+  - conversation_participants: Participantes de conversaciones
+
+  El sistema de mensajeria permite:
+  - Mensajes directos entre estudiantes
+  - Comunicacion estudiante-profesor
+  - Notificaciones de sistema
+
+  Gap identificado: SEED-P2-002
+
+# Subtareas
+subtareas:
+  - id: "2.1"
+    nombre: "Verificar estructura tablas communication"
+    descripcion: |
+      Leer DDL para verificar campos de:
+      - communication.conversations
+      - communication.messages
+      - communication.conversation_participants
+    archivos:
+      - "apps/database/ddl/schemas/communication/tables/*.sql"
+    estado: "PENDING"
+    sp: 1
+
+  - id: "2.2"
+    nombre: "Crear seed conversations dev"
+    descripcion: |
+      Crear seed con conversaciones de prueba:
+      - Conversaciones 1:1 entre estudiantes
+      - Conversaciones estudiante-profesor
+      - Conversaciones de grupo (equipo)
+    archivo_destino: "apps/database/seeds/dev/communication/01-conversations.sql"
+    datos_ejemplo:
+      - type: "direct"
+        participants: ["estudiante_1", "estudiante_2"]
+      - type: "direct"
+        participants: ["estudiante_1", "profesor_1"]
+      - type: "group"
+        participants: ["team_cientificos"]
+    estado: "PENDING"
+    sp: 2
+
+  - id: "2.3"
+    nombre: "Crear seed messages dev"
+    descripcion: |
+      Crear seed con mensajes de prueba:
+      - 20+ mensajes variados
+      - Diferentes tipos (texto, sistema, notificacion)
+      - Estados: leido, no leido, archivado
+    archivo_destino: "apps/database/seeds/dev/communication/02-messages.sql"
+    datos_ejemplo:
+      - content: "Hola, quieres practicar juntos?"
+        type: "text"
+        read: false
+      - content: "Tu equipo subio al top 5!"
+        type: "system"
+        read: true
+    estado: "PENDING"
+    sp: 1
+
+  - id: "2.4"
+    nombre: "Crear seeds prod (minimal)"
+    descripcion: |
+      Version minima para produccion:
+      - Solo templates de mensajes del sistema
+      - Mensajes de bienvenida automaticos
+    archivo_destino: "apps/database/seeds/prod/communication/01-system-messages.sql"
+    estado: "PENDING"
+    sp: 1
+
+# Archivos a crear
+archivos:
+  crear:
+    - "apps/database/seeds/dev/communication/01-conversations.sql"
+    - "apps/database/seeds/dev/communication/02-messages.sql"
+    - "apps/database/seeds/dev/communication/03-conversation_participants.sql"
+    - "apps/database/seeds/prod/communication/01-system-messages.sql"
+
+# Dependencias
+dependencias:
+  tablas_requeridas:
+    - "communication.conversations"
+    - "communication.messages"
+    - "communication.conversation_participants"
+    - "auth_management.profiles"
+  seeds_previos:
+    - "auth_management/02-profiles.sql"
+    - "social_features/04-teams.sql"
+
+# Validaciones
+validaciones:
+  pre_implementacion:
+    - "Verificar estructura tablas communication"
+    - "Identificar tipos de mensaje soportados"
+  post_implementacion:
+    - "Recrear BD con seeds"
+    - "SELECT COUNT(*) FROM communication.conversations"
+    - "SELECT COUNT(*) FROM communication.messages"
+
+# Criterios de aceptacion
+criterios_aceptacion:
+  - "5+ conversaciones de prueba"
+  - "20+ mensajes variados"
+  - "Diferentes tipos de conversacion (direct, group)"
+  - "Seeds ejecutan sin errores FK"
+
+# Impacto
+impacto:
+  funcionalidades_habilitadas:
+    - "Sistema de mensajeria en frontend"
+    - "Notificaciones de sistema"
+    - "Chat de equipo"
+  riesgo: "BAJO"
+  rollback: "Eliminar archivos de seeds"
+
+# Trazabilidad
+trazabilidad:
+  analisis_origen: "TASK-BD-ANALYSIS-2026-01-27"
+  gap_ids:
+    - "SEED-P2-002"
+  documento_referencia: "SEEDS-CRITICAL-GAPS.yml"
