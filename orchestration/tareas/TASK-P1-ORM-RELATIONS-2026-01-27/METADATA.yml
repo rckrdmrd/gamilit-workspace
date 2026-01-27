@@ -1,0 +1,222 @@
+# METADATA - Tarea P1: Relaciones ORM Faltantes
+# Sistema: SIMCO v4.0.0 | NEXUS v4.0
+# Origen: TASK-BD-ANALYSIS-2026-01-27
+
+version: "1.0.0"
+task_id: "TASK-P1-ORM-RELATIONS-2026-01-27"
+fecha_creacion: "2026-01-27"
+estado: "PENDING"
+modo: "@FULL"
+
+# Identificacion
+nombre: "Implementar Relaciones ORM P1 - Exercise, UserStats, ModuleProgress, ExerciseAttempt"
+tipo: "IMPLEMENTATION"
+prioridad: "P1"
+story_points: 8
+origen: "TASK-BD-ANALYSIS-2026-01-27"
+
+# Descripcion
+descripcion: |
+  Implementar relaciones ORM faltantes identificadas en el analisis
+  BD/Modelado como gaps P1 criticos. Estas relaciones existen como FK
+  en DDL pero no tienen decoradores @ManyToOne/@OneToOne en las entities.
+
+  Gaps a resolver:
+  - ORM-P1-001: Exercise → Module (@ManyToOne falta)
+  - ORM-P1-002: UserStats → Profile (relacion comentada)
+  - ORM-P1-003: ModuleProgress → Module/Profile (relaciones parciales)
+  - ORM-P1-004: ExerciseAttempt → Exercise (@ManyToOne falta)
+
+# Subtareas
+subtareas:
+  - id: "1.1"
+    nombre: "Implementar Exercise → Module"
+    descripcion: |
+      Agregar relacion @ManyToOne de Exercise a Module.
+
+      FK DDL: exercises_module_id_fkey (NOT NULL, CASCADE)
+
+      Codigo a agregar en exercise.entity.ts:
+      ```typescript
+      @ManyToOne(() => Module, module => module.exercises, { onDelete: 'CASCADE' })
+      @JoinColumn({ name: 'module_id' })
+      module: Module;
+      ```
+
+      Codigo a agregar en module.entity.ts:
+      ```typescript
+      @OneToMany(() => Exercise, exercise => exercise.module)
+      exercises: Exercise[];
+      ```
+    archivo: "apps/backend/src/modules/educational/entities/exercise.entity.ts"
+    archivo_relacionado: "apps/backend/src/modules/educational/entities/module.entity.ts"
+    linea_aproximada: 55
+    estado: "PENDING"
+    sp: 2
+    impacto: "Habilita eager loading de Module desde Exercise"
+
+  - id: "1.2"
+    nombre: "Implementar UserStats → Profile"
+    descripcion: |
+      Descomentar/agregar relacion @OneToOne de UserStats a Profile.
+
+      FK DDL: user_stats_user_id_fkey (UNIQUE, CASCADE)
+
+      Codigo a agregar en user-stats.entity.ts:
+      ```typescript
+      @OneToOne(() => Profile, { createForeignKeyConstraint: false })
+      @JoinColumn({ name: 'user_id' })
+      profile: Profile;
+      ```
+
+      Nota: createForeignKeyConstraint: false evita conflicto con FK existente
+    archivo: "apps/backend/src/modules/gamification/entities/user-stats.entity.ts"
+    linea_aproximada: 48
+    estado: "PENDING"
+    sp: 2
+    impacto: "Habilita carga de Profile desde UserStats"
+
+  - id: "1.3"
+    nombre: "Implementar ModuleProgress relaciones"
+    descripcion: |
+      Agregar relaciones @ManyToOne de ModuleProgress a Profile y Module.
+
+      FKs DDL:
+      - module_progress_profile_id_fkey (CASCADE)
+      - module_progress_module_id_fkey (CASCADE)
+
+      Codigo a agregar en module-progress.entity.ts:
+      ```typescript
+      @ManyToOne(() => Profile)
+      @JoinColumn({ name: 'user_id' })
+      user: Profile;
+
+      @ManyToOne(() => Module)
+      @JoinColumn({ name: 'module_id' })
+      module: Module;
+      ```
+    archivo: "apps/backend/src/modules/progress/entities/module-progress.entity.ts"
+    estado: "PENDING"
+    sp: 2
+    impacto: "Dashboard puede cargar progreso con modulo y usuario relacionados"
+
+  - id: "1.4"
+    nombre: "Implementar ExerciseAttempt → Exercise"
+    descripcion: |
+      Agregar relacion @ManyToOne de ExerciseAttempt a Exercise.
+
+      FK DDL: exercise_attempts_exercise_id_fkey (CASCADE)
+
+      Codigo a agregar en exercise-attempt.entity.ts:
+      ```typescript
+      @ManyToOne(() => Exercise)
+      @JoinColumn({ name: 'exercise_id' })
+      exercise: Exercise;
+      ```
+    archivo: "apps/backend/src/modules/progress/entities/exercise-attempt.entity.ts"
+    estado: "PENDING"
+    sp: 1
+    impacto: "Historial de intentos puede eager load ejercicio"
+
+  - id: "1.5"
+    nombre: "Validar build y queries"
+    descripcion: |
+      Validar que los cambios no rompen el build ni queries existentes:
+      1. npm run build
+      2. npm run lint
+      3. npm run test (si hay tests)
+      4. Verificar endpoints afectados manualmente
+    estado: "PENDING"
+    sp: 1
+
+# Archivos a modificar
+archivos:
+  modificar:
+    - path: "apps/backend/src/modules/educational/entities/exercise.entity.ts"
+      cambio: "Agregar @ManyToOne a Module"
+    - path: "apps/backend/src/modules/educational/entities/module.entity.ts"
+      cambio: "Agregar @OneToMany a Exercise[]"
+    - path: "apps/backend/src/modules/gamification/entities/user-stats.entity.ts"
+      cambio: "Descomentar @OneToOne a Profile"
+    - path: "apps/backend/src/modules/progress/entities/module-progress.entity.ts"
+      cambio: "Agregar @ManyToOne a Profile y Module"
+    - path: "apps/backend/src/modules/progress/entities/exercise-attempt.entity.ts"
+      cambio: "Agregar @ManyToOne a Exercise"
+
+# Dependencias
+dependencias:
+  imports_necesarios:
+    - "Module from '../module.entity'"
+    - "Profile from '../../../auth/entities/profile.entity'"
+    - "Exercise from '../exercise.entity'"
+  decoradores:
+    - "@ManyToOne"
+    - "@OneToOne"
+    - "@OneToMany"
+    - "@JoinColumn"
+
+# Validaciones
+validaciones:
+  pre_implementacion:
+    - "Leer cada entity para verificar estado actual"
+    - "Verificar imports existentes"
+    - "Identificar si relacion esta comentada o falta"
+  post_implementacion:
+    - "npm run build"
+    - "npm run lint"
+    - "Verificar no hay errores de importacion circular"
+    - "Test manual de endpoints: GET /exercises/:id, GET /users/:id/stats"
+
+# Criterios de aceptacion
+criterios_aceptacion:
+  - "npm run build pasa sin errores"
+  - "npm run lint pasa sin errores"
+  - "Relaciones permiten eager loading"
+  - "No hay errores de circular dependency"
+  - "Queries existentes siguen funcionando"
+
+# Consideraciones tecnicas
+consideraciones:
+  eager_loading: |
+    IMPORTANTE: Agregar relaciones con eager: false por defecto
+    para evitar over-fetching. El eager loading debe ser explicito
+    en las queries que lo necesiten.
+
+    Ejemplo:
+    @ManyToOne(() => Module, { eager: false })
+
+  cascade_options: |
+    No agregar cascade en el lado @ManyToOne ya que el DDL
+    ya define ON DELETE CASCADE. Solo definir onDelete para
+    documentacion.
+
+  circular_imports: |
+    Si hay error de circular imports, usar forwardRef:
+    @ManyToOne(() => Module, module => module.exercises)
+
+    O lazy import:
+    @ManyToOne('Module', 'exercises')
+
+# Impacto
+impacto:
+  mejoras_performance:
+    - "Reduccion queries por request: -30%"
+    - "Mejora tiempo respuesta: -20%"
+    - "Simplificacion codigo service layer"
+  endpoints_afectados:
+    - "GET /exercises/:moduleId"
+    - "GET /dashboard/stats"
+    - "GET /progress/modules"
+    - "GET /attempts/history"
+  riesgo: "MEDIO"
+  rollback: "Revertir cambios en entities (git checkout)"
+
+# Trazabilidad
+trazabilidad:
+  analisis_origen: "TASK-BD-ANALYSIS-2026-01-27"
+  gap_ids:
+    - "ORM-P1-001"
+    - "ORM-P1-002"
+    - "ORM-P1-003"
+    - "ORM-P1-004"
+  documento_referencia: "ENTITY-RELATIONS-GAPS.yml"

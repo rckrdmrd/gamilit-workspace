@@ -140,6 +140,20 @@ agentes_paralelos:
       tipo: "Explore"
       tarea: "Backend Entities Analysis"
 
+# Tareas de implementacion generadas
+tareas_implementacion:
+  p1_criticas:
+    - task_id: "TASK-P1-SEEDS-SOCIAL-2026-01-27"
+      nombre: "Seeds P1 - Social Features"
+      gaps: ["SEED-P1-001", "SEED-P1-002"]
+      sp: 5
+      estado: "PENDING"
+    - task_id: "TASK-P1-ORM-RELATIONS-2026-01-27"
+      nombre: "Relaciones ORM P1"
+      gaps: ["ORM-P1-001", "ORM-P1-002", "ORM-P1-003", "ORM-P1-004"]
+      sp: 8
+      estado: "PENDING"
+
 # Trazabilidad
 trazabilidad:
   plan_origen: "PLAN-BD-ANALYSIS-GAMILIT-2026-01-27"
