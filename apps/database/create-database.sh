@@ -661,8 +661,17 @@ execute_sql "$SEEDS_DIR/educational_content/01-modules.sql" "Seeds: modules (5)"
 execute_sql "$SEEDS_DIR/educational_content/11-module_dependencies.sql" "Seeds: module_dependencies (6 dependencias - P0 AUDIT-DB-001)"
 execute_sql "$SEEDS_DIR/educational_content/12-taxonomies.sql" "Seeds: taxonomies (4 taxonomías - P0 AUDIT-DB-001)"
 
+# 16.4.2: Social Features BASE (schools y classrooms) - FIX-2026-01-27
+# MUST BE LOADED BEFORE PROFILES
+# REASON: trg_assign_default_classroom trigger needs classrooms to exist when creating profiles
+# FIX: Movido desde 16.5.2 para corregir orden de ejecución (TASK-GAMILIT-ANALISIS-EXHAUSTIVO P0-002)
+execute_sql "$SEEDS_DIR/social_features/00-schools-default.sql" "Seeds: schools (sistema - default)"
+execute_sql "$SEEDS_DIR/social_features/01-schools.sql" "Seeds: schools (demo)"
+execute_sql "$SEEDS_DIR/social_features/02-classrooms.sql" "Seeds: classrooms (demo)"
+
 # 16.5: Auth Management (profiles para usuarios)
 # NOTE: Trigger initialize_user_stats() fires here and creates module_progress automatically
+# NOTE: Trigger trg_assign_default_classroom fires here and assigns students to DEFAULT classroom
 execute_sql "$SEEDS_DIR/auth_management/04-profiles-complete.sql" "Seeds: profiles (testing + demo - 22)"
 # DEPRECATED: 05-profiles-demo.sql movido a _deprecated/ - requiere auth.users que no existen
 execute_sql "$SEEDS_DIR/auth_management/06-profiles-production.sql" "Seeds: profiles (production - 13 usuarios)"
@@ -686,10 +695,9 @@ execute_sql "$SEEDS_DIR/content_management/02-marie_curie_content.sql" "Seeds: m
 execute_sql "$SEEDS_DIR/content_management/03-tags.sql" "Seeds: tags (catálogo Marie Curie - 45 tags)"
 execute_sql "$SEEDS_DIR/content_management/04-moderation_rules.sql" "Seeds: moderation_rules"
 
-# 16.5.2: Social Features (escuelas, aulas y miembros)
-execute_sql "$SEEDS_DIR/social_features/00-schools-default.sql" "Seeds: schools (sistema - default)"
-execute_sql "$SEEDS_DIR/social_features/01-schools.sql" "Seeds: schools (demo)"
-execute_sql "$SEEDS_DIR/social_features/02-classrooms.sql" "Seeds: classrooms (demo)"
+# 16.5.2: Social Features DEPENDIENTES (requieren profiles)
+# NOTE: schools y classrooms ya cargados en 16.4.2 (antes de profiles)
+# FIX-2026-01-27: Reorganizado para corregir orden de ejecución de triggers
 execute_sql "$SEEDS_DIR/social_features/03-classroom-members.sql" "Seeds: classroom_members (demo)"
 execute_sql "$SEEDS_DIR/social_features/04-friendships.sql" "Seeds: friendships (10 amistades + 3 pending)"
 execute_sql "$SEEDS_DIR/social_features/04-teams.sql" "Seeds: teams (equipos colaborativos - 2026-01-14)"
