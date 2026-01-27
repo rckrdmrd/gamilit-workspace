@@ -23,3 +23,4 @@ export { UserActivity } from './user-activity.entity'; // ✨ NUEVO - P2 (Activi
 export { ChallengeResult } from './challenge-result.entity'; // ✨ NUEVO - P1-002 (Resultados de desafíos)
 export { FriendRequest } from './friend-request.entity'; // ✨ NUEVO - DB-157 (Solicitudes de amistad)
 export { UserFollow } from './user-follow.entity'; // ✨ NUEVO - ETC-001 (Consolidacion Tecnica)
+export { SocialInteraction } from './social-interaction.entity'; // ✨ NUEVO - TASK-022 P1-3 (Coherencia DDL)

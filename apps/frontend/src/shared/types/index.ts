@@ -56,6 +56,9 @@ export * from './module-dependencies.types';
 // Taxonomies (Bloom, SOLO, Webb DOK)
 export * from './taxonomy.types';
 
+// Content tags
+export * from './content-tag.types';
+
 // Progress tracking
 export * from './progress.types';
 
@@ -80,6 +83,9 @@ export * from './classroom.types';
 
 // Social features
 export * from './social.types';
+
+// Social interactions
+export * from './social-interaction.types';
 
 // =====================================================
 // MEDIA & CONTENT TYPES

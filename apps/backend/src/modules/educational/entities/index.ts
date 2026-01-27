@@ -20,3 +20,4 @@ export * from './exercise-validation-audit.entity'; // ✨ NUEVO - 2026-01-14 (A
 export * from './content-metadata.entity'; // ✨ NUEVO - TASK-2026-01-27 (Coherencia DDL)
 export * from './module-dependencies.entity'; // ✨ NUEVO - TASK-2026-01-27 (Coherencia DDL)
 export * from './taxonomy.entity'; // ✨ NUEVO - TASK-2026-01-27 (Coherencia DDL)
+export * from './content-tag.entity'; // ✨ NUEVO - TASK-022 P1-3 (Coherencia DDL)
