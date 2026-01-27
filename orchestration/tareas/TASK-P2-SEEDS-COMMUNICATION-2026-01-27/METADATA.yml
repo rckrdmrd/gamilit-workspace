@@ -5,7 +5,8 @@
 version: "1.0.0"
 task_id: "TASK-P2-SEEDS-COMMUNICATION-2026-01-27"
 fecha_creacion: "2026-01-27"
-estado: "PENDING"
+fecha_completado: "2026-01-27"
+estado: "COMPLETED"
 modo: "@FULL"
 
 # Identificacion
@@ -35,104 +36,108 @@ subtareas:
     nombre: "Verificar estructura tablas communication"
     descripcion: |
       Leer DDL para verificar campos de:
-      - communication.conversations
-      - communication.messages
-      - communication.conversation_participants
+      - communication.messages (NOT conversations - schema differs from task assumption)
+      - communication.message_participants
     archivos:
-      - "apps/database/ddl/schemas/communication/tables/*.sql"
-    estado: "PENDING"
+      - "apps/database/ddl/schemas/communication/tables/01-messages.sql"
+      - "apps/database/ddl/schemas/communication/tables/02-message_participants.sql"
+    estado: "COMPLETED"
+    nota: "Schema uses messages+message_participants, NOT conversations"
     sp: 1
 
   - id: "2.2"
-    nombre: "Crear seed conversations dev"
+    nombre: "Expandir seed messages dev"
     descripcion: |
-      Crear seed con conversaciones de prueba:
-      - Conversaciones 1:1 entre estudiantes
-      - Conversaciones estudiante-profesor
-      - Conversaciones de grupo (equipo)
-    archivo_destino: "apps/database/seeds/dev/communication/01-conversations.sql"
-    datos_ejemplo:
-      - type: "direct"
-        participants: ["estudiante_1", "estudiante_2"]
-      - type: "direct"
-        participants: ["estudiante_1", "profesor_1"]
-      - type: "group"
-        participants: ["team_cientificos"]
-    estado: "PENDING"
+      Expandido seed de mensajes con 22+ mensajes variados:
+      - 4 classroom_announcements
+      - 7 direct messages (student-student, student-teacher threads)
+      - 2 private_feedback messages
+      - 3 classroom_chat messages
+      - 3 system messages
+      - 3 assignment_comment messages
+    archivo: "apps/database/seeds/dev/communication/01-system-messages.sql"
+    estado: "COMPLETED"
+    nota: "Expanded from 1 to 22 messages with threading support"
     sp: 2
 
   - id: "2.3"
-    nombre: "Crear seed messages dev"
+    nombre: "Expandir seed message_participants dev"
     descripcion: |
-      Crear seed con mensajes de prueba:
-      - 20+ mensajes variados
-      - Diferentes tipos (texto, sistema, notificacion)
-      - Estados: leido, no leido, archivado
-    archivo_destino: "apps/database/seeds/dev/communication/02-messages.sql"
-    datos_ejemplo:
-      - content: "Hola, quieres practicar juntos?"
-        type: "text"
-        read: false
-      - content: "Tu equipo subio al top 5!"
-        type: "system"
-        read: true
-    estado: "PENDING"
+      Expandido seed con participantes dinámicos:
+      - Sender siempre marcado como read
+      - Recipients con estado aleatorio (read/unread)
+      - Classroom members agregados automáticamente para anuncios
+    archivo: "apps/database/seeds/dev/communication/02-message_participants.sql"
+    estado: "COMPLETED"
+    nota: "Dynamic participant creation for all messages"
     sp: 1
 
   - id: "2.4"
-    nombre: "Crear seeds prod (minimal)"
+    nombre: "Verificar seeds prod"
     descripcion: |
-      Version minima para produccion:
-      - Solo templates de mensajes del sistema
-      - Mensajes de bienvenida automaticos
-    archivo_destino: "apps/database/seeds/prod/communication/01-system-messages.sql"
-    estado: "PENDING"
+      Seeds prod ya existían con estructura correcta:
+      - 01-system-messages.sql: Welcome message para classroom DEFAULT
+      - 02-message_participants.sql: Participantes del mensaje de bienvenida
+    archivos:
+      - "apps/database/seeds/prod/communication/01-system-messages.sql"
+      - "apps/database/seeds/prod/communication/02-message_participants.sql"
+    estado: "COMPLETED"
+    nota: "Prod seeds already existed and are appropriate"
     sp: 1
 
-# Archivos a crear
+# Archivos modificados
 archivos:
-  crear:
-    - "apps/database/seeds/dev/communication/01-conversations.sql"
-    - "apps/database/seeds/dev/communication/02-messages.sql"
-    - "apps/database/seeds/dev/communication/03-conversation_participants.sql"
+  modificados:
+    - "apps/database/seeds/dev/communication/01-system-messages.sql"
+    - "apps/database/seeds/dev/communication/02-message_participants.sql"
+  existentes_verificados:
     - "apps/database/seeds/prod/communication/01-system-messages.sql"
+    - "apps/database/seeds/prod/communication/02-message_participants.sql"
+  nota: "Schema uses messages+participants, not conversations. Task adapted."
 
 # Dependencias
 dependencias:
   tablas_requeridas:
-    - "communication.conversations"
     - "communication.messages"
-    - "communication.conversation_participants"
+    - "communication.message_participants"
     - "auth_management.profiles"
+    - "social_features.classrooms"
+    - "social_features.classroom_members"
   seeds_previos:
     - "auth_management/02-profiles.sql"
-    - "social_features/04-teams.sql"
+    - "social_features/02-classrooms.sql"
+    - "social_features/03-classroom_members.sql"
 
 # Validaciones
 validaciones:
   pre_implementacion:
-    - "Verificar estructura tablas communication"
-    - "Identificar tipos de mensaje soportados"
+    - "Verificar estructura tablas communication ✓"
+    - "Identificar tipos de mensaje soportados ✓"
   post_implementacion:
     - "Recrear BD con seeds"
-    - "SELECT COUNT(*) FROM communication.conversations"
-    - "SELECT COUNT(*) FROM communication.messages"
+    - "SELECT COUNT(*) FROM communication.messages (esperado: 22+)"
+    - "SELECT COUNT(*) FROM communication.message_participants"
 
 # Criterios de aceptacion
 criterios_aceptacion:
-  - "5+ conversaciones de prueba"
-  - "20+ mensajes variados"
-  - "Diferentes tipos de conversacion (direct, group)"
-  - "Seeds ejecutan sin errores FK"
+  - "22+ mensajes variados ✓"
+  - "6 tipos de mensaje: direct, classroom_announcement, classroom_chat, private_feedback, system, assignment_comment ✓"
+  - "Mensajes con threading (thread_id, parent_message_id) ✓"
+  - "Participantes dinámicos para todos los mensajes ✓"
+  - "Seeds ejecutan sin errores FK ✓"
 
 # Impacto
 impacto:
   funcionalidades_habilitadas:
     - "Sistema de mensajeria en frontend"
+    - "Mensajes directos entre usuarios"
+    - "Anuncios de classroom"
+    - "Chat de classroom"
+    - "Feedback privado estudiante-profesor"
+    - "Comentarios de tareas"
     - "Notificaciones de sistema"
-    - "Chat de equipo"
   riesgo: "BAJO"
-  rollback: "Eliminar archivos de seeds"
+  rollback: "Revertir seeds expandidos"
 
 # Trazabilidad
 trazabilidad:
