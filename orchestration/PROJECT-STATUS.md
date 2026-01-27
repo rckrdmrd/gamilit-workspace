@@ -82,7 +82,7 @@
 | DDL | RLS Policies (files) | 33 |
 | DDL | Enums | 36 |
 | DDL | Indexes (files) | 23 |
-| Backend | Entities | 135 |
+| Backend | Entities | 137 (+2 TASK-022 P1-3) |
 | Backend | Services | 121 |
 | Backend | Controllers | 65 |
 | Backend | Endpoints | 750+ |
@@ -104,11 +104,11 @@
 
 | Relacion | Porcentaje | Detalle |
 |----------|-----------|---------|
-| DDL → Backend (entities) | 100% | 135/135 con DB_TABLES (P1-1 resuelto) |
+| DDL → Backend (entities) | 100% | 137/137 entities mapped (P1-1 + P1-3) |
 | Backend → Frontend (modules) | 87.5% | 14/16 core modules cubiertos |
-| Frontend → Backend (types) | 100% | 7/7 entities TASK-021 con types (P2-1 resuelto) |
+| Frontend → Backend (types) | 100% | 9/9 new entities con types (P2-1 + P1-3) |
 | Seeds → DDL config tables | 73.8% | 62/84 config/lookup tables |
-| API Config → Backend | 100% | 250+ endpoints centralizados |
+| API Config → Backend | 100% | 274+ endpoints centralizados (P1-5: +24) |
 
 ### Gaps Identificados por Area
 
@@ -117,9 +117,9 @@
 | ~~Scripts~~ | ~~RLS Phase 2+3 no cargadas en create-database.sh~~ | ~~P0~~ | RESUELTO (afe238f0) |
 | ~~Scripts~~ | ~~unified-recreate-db.sh incompatible con GAMILIT~~ | ~~P0~~ | RESUELTO (59e6b9f9) |
 | ~~Backend~~ | ~~10 entities con nombres hardcoded (sin DB_TABLES)~~ | ~~P1~~ | RESUELTO (afe238f0) |
-| Backend | 7 tablas DDL sin entity | P1 | COHERENCIA |
+| ~~Backend~~ | ~~2 tablas DDL sin entity (real gap was 2, not 7)~~ | ~~P1~~ | RESUELTO (dfd1ef5b) |
 | ~~Frontend~~ | ~~7 entities TASK-021 sin types frontend~~ | ~~P2~~ | RESUELTO (ef956e4b) |
-| Frontend | 7+ endpoints nuevos no en apiConfig.ts | P1 | COHERENCIA |
+| ~~Frontend~~ | ~~24 endpoints no en apiConfig.ts~~ | ~~P1~~ | RESUELTO (04b17062) |
 | ~~Seeds~~ | ~~18+ archivos orphaned (no en load-dev-seeds.sh)~~ | ~~P1~~ | RESUELTO (afe238f0) |
 | Seeds | classroom_modules sin seed en DEV | P2 | TESTING |
 | Frontend | Hooks muy bajo (2 hooks para 35+ features) | P3 | CALIDAD |
@@ -162,12 +162,13 @@
 1. ~~Incluir 07b/07c RLS en create-database.sh~~ RESUELTO (afe238f0)
 2. ~~Fix unified-recreate-db.sh para delegacion a master scripts GAMILIT~~ RESUELTO (59e6b9f9)
 
-### P1 - Coherencia/Testing (PARCIAL)
+### P1 - Coherencia/Testing (RESUELTO)
 3. ~~Agregar constantes DB_TABLES faltantes y actualizar 10 entities~~ RESUELTO (afe238f0)
-4. Crear 7 entities faltantes (content_tags, content_approvals, discussion_threads, social_interactions, teacher_classrooms, user_follows, message_participants)
-5. ~~Crear 7 type definitions frontend para entities TASK-021~~ RESUELTO (ef956e4b)
+4. ~~Crear 2 entities faltantes (content_tags, social_interactions)~~ RESUELTO (dfd1ef5b) - Audit revealed only 2 truly missing
+5. ~~Crear 9 type definitions frontend (7 TASK-021 + 2 P1-3)~~ RESUELTO (ef956e4b + dfd1ef5b)
 6. ~~Agregar 18 seed files orphaned a load-dev-seeds.sh~~ RESUELTO (afe238f0)
-7. Fix RLS security issue GAP-C06 (students ven todos los ejercicios)
+7. ~~Fix RLS security issue GAP-C06 (students ven todos los ejercicios)~~ RESUELTO (0185e17a)
+8. ~~Agregar 24 endpoints faltantes a apiConfig.ts~~ RESUELTO (04b17062)
 
 ### P2 - MVP Completion
 8. Agregar ML Coins multiplier por rango (US-GAM-011)
