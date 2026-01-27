@@ -60,6 +60,10 @@ export interface PendingExercise {
   authorName: string;
   createdAt: string;
   status: 'pending';
+  /** Exercise content data for preview (TASK-025) */
+  answerData?: Record<string, unknown>;
+  /** Correct answer for comparison (TASK-025) */
+  correctAnswer?: Record<string, unknown>;
 }
 
 export interface MediaItem {

@@ -2,13 +2,9 @@ import { useState } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { GeneralSettings, SecuritySettings } from '../components/settings';
-import { UnderConstruction } from '@/shared/components/UnderConstruction';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { AlertTriangle, Settings, Shield } from 'lucide-react';
-
-// Feature flag - set to true when ready to show actual content
-const SHOW_CONTENT = true;
 
 type TabType = 'general' | 'security';
 
@@ -95,8 +91,7 @@ export default function AdminSettingsPage() {
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}
     >
-      {SHOW_CONTENT ? (
-        <div className="space-y-6">
+      <div className="space-y-6">
           {/* Header */}
           <div>
             <h1 className="text-3xl font-bold text-detective-text">Configuración del Sistema</h1>
@@ -155,14 +150,6 @@ export default function AdminSettingsPage() {
             </div>
           </DetectiveCard>
         </div>
-      ) : (
-        <UnderConstruction
-          variant="page"
-          feature="Configuración del Sistema"
-          description="Esta sección incluirá configuraciones generales del sistema y políticas de seguridad. Permite configurar ajustes globales, autenticación, sesiones y políticas de seguridad."
-          estimatedDate="Fase 2 - Q2 2026"
-        />
-      )}
     </AdminLayout>
   );
 }

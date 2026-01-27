@@ -5,7 +5,8 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DataTable, Column } from '@shared/components/common';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
-import { CheckCircle, XCircle, Image, FileText, History } from 'lucide-react';
+import { ExerciseContentRenderer } from '@shared/components/mechanics/ExerciseContentRenderer';
+import { CheckCircle, XCircle, Image, FileText, History, AlertCircle } from 'lucide-react';
 import { usePendingExercises } from '../hooks/useContentManagement';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { adminAPI } from '@/services/api/adminAPI';
@@ -437,9 +438,19 @@ export default function AdminContentPage() {
             </div>
             <div className="rounded-lg bg-detective-bg-secondary p-4">
               <p className="mb-2 text-sm text-gray-400">Contenido del Ejercicio</p>
-              <p className="text-detective-text">
-                [Vista previa del ejercicio - integrar con componente específico]
-              </p>
+              {selectedExercise.answerData ? (
+                <ExerciseContentRenderer
+                  exerciseType={selectedExercise.type}
+                  answerData={selectedExercise.answerData}
+                  correctAnswer={selectedExercise.correctAnswer}
+                  showComparison={false}
+                />
+              ) : (
+                <div className="flex items-center gap-2 text-detective-text-secondary">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>Vista previa no disponible - datos de ejercicio no cargados</span>
+                </div>
+              )}
             </div>
             <div className="flex gap-3 pt-4">
               <DetectiveButton

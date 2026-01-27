@@ -150,6 +150,28 @@ export default function TeacherSettingsPage() {
     showActivity: true,
   });
 
+  // TASK-025: Sync form state with backend preferences on load
+  useEffect(() => {
+    if (backendPreferences?.preferences) {
+      const prefs = backendPreferences.preferences as Record<string, any>;
+
+      // Sync teaching preferences
+      if (prefs.teaching) {
+        setTeachingPreferences((prev) => ({ ...prev, ...prefs.teaching }));
+      }
+
+      // Sync notification preferences
+      if (prefs.notifications) {
+        setNotifications((prev) => ({ ...prev, ...prefs.notifications }));
+      }
+
+      // Sync privacy settings
+      if (prefs.privacy) {
+        setPrivacy((prev) => ({ ...prev, ...prefs.privacy }));
+      }
+    }
+  }, [backendPreferences]);
+
   // Handle Save
   const handleSave = async () => {
     if (!user?.id) {

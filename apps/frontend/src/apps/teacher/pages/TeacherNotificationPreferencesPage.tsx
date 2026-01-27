@@ -58,6 +58,7 @@ export default function TeacherNotificationPreferencesPage() {
     devices,
     preferencesLoading,
     devicesLoading,
+    error: storeError,
     fetchPreferences,
     fetchDevices,
     updatePreference,
@@ -68,6 +69,7 @@ export default function TeacherNotificationPreferencesPage() {
   const {
     isSupported: pushSupported,
     isSubscribedToPush: pushEnabled,
+    isRegistering: pushRegistering,
     enablePushNotifications: enablePush,
     disablePushNotifications: disablePush,
   } = usePushNotifications();
@@ -302,54 +304,87 @@ export default function TeacherNotificationPreferencesPage() {
           </div>
         </motion.div>
 
-        {/* Registered Devices */}
-        {devices.length > 0 && (
+        {/* Error Display - TASK-025 */}
+        {storeError && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="rounded-xl bg-white/5 border border-white/10 p-4 space-y-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="rounded-xl bg-red-500/10 border border-red-500/30 p-4"
           >
+            <p className="text-red-400 text-sm">{storeError}</p>
+          </motion.div>
+        )}
+
+        {/* Registered Devices - TASK-025: Show section always with register button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-xl bg-white/5 border border-white/10 p-4 space-y-4"
+        >
+          <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium text-white flex items-center gap-2">
               <Smartphone className="w-5 h-5" />
               Dispositivos Registrados
             </h3>
+            {pushSupported && !pushEnabled && (
+              <button
+                onClick={enablePush}
+                disabled={pushRegistering}
+                className={cn(
+                  'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
+                  'bg-orange-500 hover:bg-orange-600 text-white',
+                  pushRegistering && 'opacity-50 cursor-not-allowed',
+                )}
+              >
+                {pushRegistering ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Plus className="w-4 h-4" />
+                )}
+                Registrar este dispositivo
+              </button>
+            )}
+          </div>
 
-            <div className="space-y-2">
-              {devicesLoading ? (
-                <div className="flex justify-center py-4">
-                  <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
-                </div>
-              ) : (
-                devices.map((device) => (
-                  <div
-                    key={device.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Smartphone className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <div className="font-medium text-white">
-                          {device.deviceName || device.deviceType}
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          {device.deviceType} - Ultimo uso: {device.lastUsedAt ? new Date(device.lastUsedAt).toLocaleDateString('es-MX') : 'N/A'}
-                        </div>
+          <div className="space-y-2">
+            {devicesLoading ? (
+              <div className="flex justify-center py-4">
+                <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
+              </div>
+            ) : devices.length === 0 ? (
+              <p className="text-gray-400 text-sm text-center py-4">
+                No hay dispositivos registrados. Activa las notificaciones push para registrar este dispositivo.
+              </p>
+            ) : (
+              devices.map((device) => (
+                <div
+                  key={device.id}
+                  className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10"
+                >
+                  <div className="flex items-center gap-3">
+                    <Smartphone className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <div className="font-medium text-white">
+                        {device.deviceName || device.deviceType}
+                      </div>
+                      <div className="text-sm text-gray-400">
+                        {device.deviceType} - Ultimo uso: {device.lastUsedAt ? new Date(device.lastUsedAt).toLocaleDateString('es-MX') : 'N/A'}
                       </div>
                     </div>
-                    <button
-                      onClick={() => deleteDevice(device.id)}
-                      className="p-2 rounded-lg hover:bg-red-500/20 transition-colors group"
-                      title="Eliminar dispositivo"
-                    >
-                      <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-400" />
-                    </button>
                   </div>
-                ))
-              )}
-            </div>
-          </motion.div>
-        )}
+                  <button
+                    onClick={() => deleteDevice(device.id)}
+                    className="p-2 rounded-lg hover:bg-red-500/20 transition-colors group"
+                    title="Eliminar dispositivo"
+                  >
+                    <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-400" />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </motion.div>
       </div>
     </TeacherLayout>
   );
