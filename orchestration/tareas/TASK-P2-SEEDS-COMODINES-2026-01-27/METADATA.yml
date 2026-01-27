@@ -5,7 +5,8 @@
 version: "1.0.0"
 task_id: "TASK-P2-SEEDS-COMODINES-2026-01-27"
 fecha_creacion: "2026-01-27"
-estado: "PENDING"
+fecha_completado: "2026-01-27"
+estado: "COMPLETED"
 modo: "@FULL"
 
 # Identificacion
@@ -39,7 +40,7 @@ subtareas:
     archivos:
       - "apps/database/ddl/schemas/gamification_system/tables/07-comodines_inventory.sql"
       - "apps/database/ddl/schemas/gamification_system/tables/08-comodin_usage_tracking.sql"
-    estado: "PENDING"
+    estado: "COMPLETED"
     sp: 1
 
   - id: "2.2"
@@ -59,7 +60,8 @@ subtareas:
         pistas: 3
         vision_lectora: 3
         segunda_oportunidad: 3
-    estado: "PENDING"
+    estado: "COMPLETED"
+    nota: "Seed ya existia (09-comodines_inventory.sql)"
     sp: 2
 
   - id: "2.3"
@@ -69,8 +71,8 @@ subtareas:
       - 10+ registros de uso variados
       - Diferentes comodines, ejercicios, fechas
       - Incluir casos exitosos y fallidos
-    archivo_destino: "apps/database/seeds/dev/gamification_system/09-comodin_usage_tracking.sql"
-    estado: "PENDING"
+    archivo_destino: "apps/database/seeds/dev/gamification_system/15-comodin_usage_tracking.sql"
+    estado: "COMPLETED"
     sp: 1
 
   - id: "2.4"
@@ -80,7 +82,8 @@ subtareas:
       - Solo configuracion base
       - Usuarios reales reciben comodines al registrarse
     archivo_destino: "apps/database/seeds/prod/gamification_system/08-comodines_inventory.sql"
-    estado: "PENDING"
+    estado: "COMPLETED"
+    nota: "Seed ya existia (09-comodines_inventory.sql) + creado 15-comodin_usage_tracking.sql"
     sp: 1
 
 # Archivos a crear
