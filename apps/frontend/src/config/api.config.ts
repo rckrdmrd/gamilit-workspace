@@ -130,6 +130,35 @@ export const API_ENDPOINTS = {
     exercises: '/educational/exercises',
     exercise: (id: string) => `/educational/exercises/${id}`,
 
+    // Exercise Validation & Rubrics (TASK-022: P1-5)
+    rubrics: {
+      list: '/educational/rubrics',
+      get: (id: string) => `/educational/rubrics/${id}`,
+      byExerciseType: (exerciseType: string) => `/educational/rubrics/exercise-type/${exerciseType}`,
+      byModule: (moduleCode: string) => `/educational/rubrics/module/${moduleCode}`,
+      create: '/educational/rubrics',
+      update: (id: string) => `/educational/rubrics/${id}`,
+      delete: (id: string) => `/educational/rubrics/${id}`,
+      setDefault: (id: string) => `/educational/rubrics/${id}/set-default`,
+    },
+    validation: {
+      configs: '/educational/validation/configs',
+      config: (id: string) => `/educational/validation/configs/${id}`,
+      configsByExerciseType: (exerciseType: string) =>
+        `/educational/validation/configs/exercise-type/${exerciseType}`,
+      createConfig: '/educational/validation/configs',
+      deleteConfig: (id: string) => `/educational/validation/configs/${id}`,
+      availableFunctions: '/educational/validation/configs/functions/available',
+      audit: '/educational/validation/audit',
+      auditById: (id: string) => `/educational/validation/audit/${id}`,
+      auditByExercise: (exerciseId: string) => `/educational/validation/audit/exercise/${exerciseId}`,
+      auditByUser: (userId: string) => `/educational/validation/audit/user/${userId}`,
+      auditDiscrepancies: '/educational/validation/audit/discrepancies',
+      auditExerciseStats: (exerciseId: string) =>
+        `/educational/validation/audit/exercise/${exerciseId}/stats`,
+      recordDiscrepancy: (id: string) => `/educational/validation/audit/${id}/discrepancy`,
+    },
+
     // Lessons
     lessons: '/educational/lessons',
     lesson: (id: string) => `/educational/lessons/${id}`,
@@ -189,6 +218,15 @@ export const API_ENDPOINTS = {
     // Schools endpoints (P1-003: Centralized 2025-12-28)
     schools: '/social/schools',
     school: (schoolId: string) => `/social/schools/${schoolId}`,
+
+    // User Activities (TASK-022: P1-5)
+    activities: {
+      feed: '/social/activities/feed',
+      create: '/social/activities',
+      get: (activityId: string) => `/social/activities/${activityId}`,
+      publicAll: '/social/activities/public/all',
+      userActivities: (userId: string) => `/social/users/${userId}/activities/me`,
+    },
   },
 
   /**
