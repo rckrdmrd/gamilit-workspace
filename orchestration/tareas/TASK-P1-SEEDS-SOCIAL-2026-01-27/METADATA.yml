@@ -5,7 +5,8 @@
 version: "1.0.0"
 task_id: "TASK-P1-SEEDS-SOCIAL-2026-01-27"
 fecha_creacion: "2026-01-27"
-estado: "PENDING"
+fecha_completado: "2026-01-27"
+estado: "COMPLETED"
 modo: "@FULL"
 
 # Identificacion
@@ -38,7 +39,7 @@ subtareas:
       - Precision en verdadero/falso
     archivo_destino: "apps/database/seeds/dev/social_features/04-peer_challenges.sql"
     archivo_prod: "apps/database/seeds/prod/social_features/04-peer_challenges.sql"
-    estado: "PENDING"
+    estado: "COMPLETED"
     sp: 2
 
   - id: "1.2"
@@ -53,7 +54,7 @@ subtareas:
       - Meta de lectura semanal
     archivo_destino: "apps/database/seeds/dev/social_features/05-team_challenges.sql"
     archivo_prod: "apps/database/seeds/prod/social_features/05-team_challenges.sql"
-    estado: "PENDING"
+    estado: "COMPLETED"
     sp: 2
 
   - id: "1.3"
@@ -63,7 +64,7 @@ subtareas:
       1. Ejecutar script unified-recreate-db.sh gamilit --drop
       2. Verificar registros insertados
       3. Validar FK constraints
-    estado: "PENDING"
+    estado: "COMPLETED"
     sp: 1
 
 # Archivos a crear/modificar

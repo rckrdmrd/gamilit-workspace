@@ -294,6 +294,223 @@ BEGIN
             'teacher_created', false,
             'leaderboard_update_interval', 'hourly'
         )
+    ),
+
+    -- =====================================================
+    -- NUEVOS DESAFIOS (P1 Expansion - 2026-01-27)
+    -- =====================================================
+
+    -- Challenge 6: Tournament for vocabulary mastery
+    (
+        '61111111-1111-1111-1111-111111111006'::uuid,
+        'tournament',
+        v_student1_id,
+        v_module1_id,
+        NULL,
+        'Torneo de Vocabulario Contextual',
+        'Demuestra tu dominio del vocabulario en contexto. Competencia eliminatoria con 8 participantes.',
+        'intermediate',
+        8,
+        4,
+        6,
+        NOW() + INTERVAL '2 hours',
+        NOW() + INTERVAL '6 hours',
+        45,
+        'open',
+        jsonb_build_object(
+            'xp', 250,
+            'ml_coins', 125,
+            'badge_id', 'vocab_champion'
+        ),
+        2.0,
+        true,
+        true,
+        false,
+        jsonb_build_object(
+            'elimination_rounds', 3,
+            'words_per_round', 15,
+            'time_per_word', 30
+        ),
+        NOW() - INTERVAL '2 hours',
+        NOW() - INTERVAL '2 hours',
+        NULL,
+        NULL,
+        jsonb_build_object(
+            'category', 'vocabulary',
+            'skill_focus', 'context_clues'
+        )
+    ),
+
+    -- Challenge 7: Completed multiplayer reading comprehension
+    (
+        '61111111-1111-1111-1111-111111111007'::uuid,
+        'multiplayer',
+        v_student3_id,
+        v_module2_id,
+        v_exercise1_id,
+        'Batalla de Comprension: Ciencia',
+        'Quien comprende mejor los textos cientificos? Competencia grupal completada.',
+        'advanced',
+        6,
+        3,
+        5,
+        NOW() - INTERVAL '5 hours',
+        NOW() - INTERVAL '3 hours',
+        40,
+        'completed',
+        jsonb_build_object(
+            'xp', 180,
+            'ml_coins', 90,
+            'special_reward', 'science_reader_badge'
+        ),
+        1.75,
+        true,
+        true,
+        false,
+        jsonb_build_object(
+            'theme', 'science',
+            'text_count', 5,
+            'questions_per_text', 4
+        ),
+        NOW() - INTERVAL '8 hours',
+        NOW() - INTERVAL '3 hours',
+        NOW() - INTERVAL '5 hours',
+        NOW() - INTERVAL '3 hours' - INTERVAL '45 minutes',
+        jsonb_build_object(
+            'winner_id', v_student2_id,
+            'participation_rate', 0.83,
+            'average_score', 78.5
+        )
+    ),
+
+    -- Challenge 8: Open head-to-head speed reading
+    (
+        '61111111-1111-1111-1111-111111111008'::uuid,
+        'head_to_head',
+        v_student2_id,
+        NULL,
+        v_exercise2_id,
+        'Duelo de Lectura Rapida',
+        'Quien puede leer y comprender mas rapido? Un ejercicio, dos competidores, un ganador.',
+        'hard',
+        2,
+        2,
+        1,
+        NOW() + INTERVAL '30 minutes',
+        NOW() + INTERVAL '1 hour',
+        8,
+        'open',
+        jsonb_build_object(
+            'xp', 120,
+            'ml_coins', 60,
+            'streak_bonus', true
+        ),
+        1.5,
+        false,
+        true,
+        false,
+        jsonb_build_object(
+            'speed_matters', true,
+            'accuracy_weight', 0.7,
+            'speed_weight', 0.3
+        ),
+        NOW() - INTERVAL '10 minutes',
+        NOW() - INTERVAL '10 minutes',
+        NULL,
+        NULL,
+        jsonb_build_object(
+            'challenge_type', 'speed_reading',
+            'min_accuracy', 70
+        )
+    ),
+
+    -- Challenge 9: Expired challenge (never started)
+    (
+        '61111111-1111-1111-1111-111111111009'::uuid,
+        'multiplayer',
+        v_student1_id,
+        v_module1_id,
+        NULL,
+        'Maraton de Lectura Nocturna',
+        'Sesion especial de lectura nocturna que no alcanzo el minimo de participantes.',
+        'intermediate',
+        10,
+        5,
+        2,
+        NOW() - INTERVAL '2 days',
+        NOW() - INTERVAL '2 days' + INTERVAL '3 hours',
+        120,
+        'expired',
+        jsonb_build_object(
+            'xp', 400,
+            'ml_coins', 200,
+            'exclusive_avatar', 'night_owl'
+        ),
+        2.5,
+        true,
+        true,
+        false,
+        jsonb_build_object(
+            'special_event', true,
+            'time_slot', 'night'
+        ),
+        NOW() - INTERVAL '5 days',
+        NOW() - INTERVAL '2 days',
+        NULL,
+        NULL,
+        jsonb_build_object(
+            'expiration_reason', 'minimum_participants_not_reached',
+            'registered_count', 2,
+            'minimum_required', 5
+        )
+    ),
+
+    -- Challenge 10: Open leaderboard for classroom competition
+    (
+        '61111111-1111-1111-1111-111111111010'::uuid,
+        'leaderboard',
+        v_student3_id,
+        NULL,
+        NULL,
+        'Competencia Mensual: Mejor Lector',
+        'Quien sera el mejor lector del mes? Acumula puntos con cada ejercicio completado.',
+        'beginner',
+        50,
+        10,
+        18,
+        NOW() - INTERVAL '10 days',
+        NOW() + INTERVAL '20 days',
+        NULL,
+        'in_progress',
+        jsonb_build_object(
+            'xp_first', 500,
+            'xp_second', 300,
+            'xp_third', 150,
+            'ml_coins_first', 250,
+            'ml_coins_second', 150,
+            'ml_coins_third', 75,
+            'monthly_badge', 'reader_of_the_month'
+        ),
+        1.0,
+        true,
+        true,
+        false,
+        jsonb_build_object(
+            'scoring_rules', 'cumulative',
+            'bonus_for_streak', 10,
+            'points_per_exercise', 5,
+            'perfect_score_multiplier', 1.5
+        ),
+        NOW() - INTERVAL '12 days',
+        NOW() - INTERVAL '1 hour',
+        NOW() - INTERVAL '10 days',
+        NULL,
+        jsonb_build_object(
+            'school_wide', true,
+            'current_leader_score', 285,
+            'active_participants', 18,
+            'update_frequency', 'daily'
+        )
     )
 
     ON CONFLICT (id) DO UPDATE SET
