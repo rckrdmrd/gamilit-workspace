@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 
 export enum ContentApprovalStatus {
   PENDING = 'pending',
@@ -20,7 +21,7 @@ export enum ContentApprovalType {
   RESOURCE = 'resource',
 }
 
-@Entity({ schema: 'educational_content', name: 'content_approvals' })
+@Entity({ schema: DB_SCHEMAS.EDUCATIONAL, name: DB_TABLES.EDUCATIONAL.CONTENT_APPROVALS })
 export class ContentApproval {
   @PrimaryGeneratedColumn('uuid')
     id!: string;

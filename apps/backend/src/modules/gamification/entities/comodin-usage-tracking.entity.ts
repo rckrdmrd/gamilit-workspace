@@ -5,7 +5,7 @@ import {
   Index,
   Unique,
 } from 'typeorm';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 
 /**
  * ComodinUsageTracking Entity (gamification_system.comodin_usage_tracking)
@@ -22,7 +22,7 @@ import { DB_SCHEMAS } from '@shared/constants/database.constants';
  * @created TASK-2026-01-27-AUDITORIA-DOC-GAMILIT - Coherencia DDL-Entity
  * @see DDL: apps/database/ddl/schemas/gamification_system/tables/15-comodin_usage_tracking.sql
  */
-@Entity({ schema: DB_SCHEMAS.GAMIFICATION, name: 'comodin_usage_tracking' })
+@Entity({ schema: DB_SCHEMAS.GAMIFICATION, name: DB_TABLES.GAMIFICATION.COMODIN_USAGE_TRACKING })
 @Unique(['user_id', 'exercise_id', 'attempt_id'])
 @Index('idx_comodin_tracking_user_id', ['user_id'])
 @Index('idx_comodin_tracking_exercise', ['exercise_id'])

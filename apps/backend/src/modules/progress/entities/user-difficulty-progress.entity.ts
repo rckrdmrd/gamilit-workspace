@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 
 /**
  * UserDifficultyProgress Entity (progress_tracking.user_difficulty_progress)
@@ -23,7 +23,7 @@ import { DB_SCHEMAS } from '@shared/constants/database.constants';
  * @created TASK-2026-01-27-AUDITORIA-DOC-GAMILIT - Coherencia DDL-Entity
  * @see DDL: apps/database/ddl/schemas/progress_tracking/tables/15-user_difficulty_progress.sql
  */
-@Entity({ schema: DB_SCHEMAS.PROGRESS, name: 'user_difficulty_progress' })
+@Entity({ schema: DB_SCHEMAS.PROGRESS, name: DB_TABLES.PROGRESS.USER_DIFFICULTY_PROGRESS })
 @Index('idx_user_difficulty_progress_user', ['user_id'])
 @Index('idx_user_difficulty_progress_level', ['difficulty_level'])
 export class UserDifficultyProgress {

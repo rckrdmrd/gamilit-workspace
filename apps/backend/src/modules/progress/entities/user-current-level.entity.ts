@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 
 /**
  * UserCurrentLevel Entity (progress_tracking.user_current_level)
@@ -23,7 +23,7 @@ import { DB_SCHEMAS } from '@shared/constants/database.constants';
  * @created TASK-2026-01-27-AUDITORIA-DOC-GAMILIT - Coherencia DDL-Entity
  * @see DDL: apps/database/ddl/schemas/progress_tracking/tables/16-user_current_level.sql
  */
-@Entity({ schema: DB_SCHEMAS.PROGRESS, name: 'user_current_level' })
+@Entity({ schema: DB_SCHEMAS.PROGRESS, name: DB_TABLES.PROGRESS.USER_CURRENT_LEVEL })
 @Index('idx_user_current_level_level', ['current_level'])
 @Index('idx_user_current_level_max_allowed', ['max_allowed_level'])
 export class UserCurrentLevel {

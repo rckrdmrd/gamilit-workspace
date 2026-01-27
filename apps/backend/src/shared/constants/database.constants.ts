@@ -145,6 +145,8 @@ export const DB_TABLES = {
     STUDENT_INTERVENTION_ALERTS: 'student_intervention_alerts', // ✨ NUEVO - P1-002 (Alertas de intervención)
     CERTIFICATES: 'certificates', // ✨ NUEVO - EPIC 10.2 (Certificados digitales)
     TEACHER_ALERT_CONFIGURATIONS: 'teacher_alert_configurations', // ✨ NUEVO - US-PM-007 (Config alertas profesor)
+    USER_DIFFICULTY_PROGRESS: 'user_difficulty_progress', // ✨ NUEVO - TASK-022 (Progreso por dificultad)
+    USER_CURRENT_LEVEL: 'user_current_level', // ✨ NUEVO - TASK-022 (Nivel actual del usuario)
   },
 
   /**

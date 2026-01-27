@@ -7,7 +7,7 @@ import {
   Index,
   Unique,
 } from 'typeorm';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 
 /**
  * ModuleCompletionTracking Entity (progress_tracking.module_completion_tracking)
@@ -24,7 +24,7 @@ import { DB_SCHEMAS } from '@shared/constants/database.constants';
  * @created TASK-2026-01-27-AUDITORIA-DOC-GAMILIT - Coherencia DDL-Entity
  * @see DDL: apps/database/ddl/schemas/progress_tracking/tables/module_completion_tracking.sql
  */
-@Entity({ schema: DB_SCHEMAS.PROGRESS, name: 'module_completion_tracking' })
+@Entity({ schema: DB_SCHEMAS.PROGRESS, name: DB_TABLES.PROGRESS.MODULE_COMPLETION_TRACKING })
 @Unique(['user_id', 'module_id'])
 @Index('idx_module_completion_user_id', ['user_id'])
 @Index('idx_module_completion_module_id', ['module_id'])

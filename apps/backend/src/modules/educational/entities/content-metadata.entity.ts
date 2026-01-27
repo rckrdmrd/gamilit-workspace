@@ -7,7 +7,7 @@ import {
   Index,
   Unique,
 } from 'typeorm';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 
 /**
  * ContentMetadata Entity (educational_content.content_metadata)
@@ -24,7 +24,7 @@ import { DB_SCHEMAS } from '@shared/constants/database.constants';
  * @created TASK-2026-01-27-AUDITORIA-DOC-GAMILIT - Coherencia DDL-Entity
  * @see DDL: apps/database/ddl/schemas/educational_content/tables/content_metadata.sql
  */
-@Entity({ schema: DB_SCHEMAS.EDUCATIONAL, name: 'content_metadata' })
+@Entity({ schema: DB_SCHEMAS.EDUCATIONAL, name: DB_TABLES.EDUCATIONAL.CONTENT_METADATA })
 @Unique(['content_type', 'content_id', 'metadata_key'])
 @Index('idx_content_metadata_content', ['content_type', 'content_id'])
 @Index('idx_content_metadata_key', ['metadata_key'])

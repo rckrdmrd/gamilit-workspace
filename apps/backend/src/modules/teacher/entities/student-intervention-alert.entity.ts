@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Profile } from '../../auth/entities/profile.entity';
 import { Classroom } from '../../social/entities/classroom.entity';
-import { DB_SCHEMAS } from '@/shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 import {
   InterventionAlertType,
   InterventionAlertSeverity,
@@ -42,7 +42,7 @@ import {
  * - Métricas JSON con datos específicos del problema
  * - Multi-tenant support
  */
-@Entity({ schema: DB_SCHEMAS.PROGRESS, name: 'student_intervention_alerts' })
+@Entity({ schema: DB_SCHEMAS.PROGRESS, name: DB_TABLES.PROGRESS.STUDENT_INTERVENTION_ALERTS })
 @Index('idx_intervention_alerts_student', ['student_id'])
 @Index('idx_intervention_alerts_classroom', ['classroom_id'])
 @Index('idx_intervention_alerts_status', ['status'])

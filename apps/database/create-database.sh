@@ -581,6 +581,44 @@ fi
 log ""
 
 # ============================================================================
+# FASE 15.7: ENABLE RLS PHASE 2 (TASK-022 - Auditoria Integral)
+# ============================================================================
+# Habilita RLS en 26+ tablas adicionales no cubiertas en Fase 1.
+# ============================================================================
+
+log "============================================================================"
+log "FASE 15.7: ENABLE RLS PHASE 2"
+log "============================================================================"
+
+if [ -f "$DDL_DIR/07b-enable-rls-phase2.sql" ]; then
+    execute_sql "$DDL_DIR/07b-enable-rls-phase2.sql" "Habilitar RLS en tablas adicionales (Fase 2)"
+    log_success "FASE 15.7 completada - RLS Phase 2 habilitado"
+else
+    log_warning "Archivo 07b-enable-rls-phase2.sql no encontrado - saltando"
+fi
+
+log ""
+
+# ============================================================================
+# FASE 15.8: ENABLE RLS PHASE 3 (TASK-022 - Auditoria Integral)
+# ============================================================================
+# Habilita RLS en tablas restantes.
+# ============================================================================
+
+log "============================================================================"
+log "FASE 15.8: ENABLE RLS PHASE 3"
+log "============================================================================"
+
+if [ -f "$DDL_DIR/07c-enable-rls-phase3.sql" ]; then
+    execute_sql "$DDL_DIR/07c-enable-rls-phase3.sql" "Habilitar RLS en tablas restantes (Fase 3)"
+    log_success "FASE 15.8 completada - RLS Phase 3 habilitado"
+else
+    log_warning "Archivo 07c-enable-rls-phase3.sql no encontrado - saltando"
+fi
+
+log ""
+
+# ============================================================================
 # FASE 16: SEED DATA - Carga de Datos Iniciales (PROD)
 # ============================================================================
 

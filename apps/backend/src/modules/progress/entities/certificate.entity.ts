@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 
 /**
  * Certificate Status Enum
@@ -39,7 +39,7 @@ export enum CertificateType {
  *
  * @see EPIC 10.2 - Digital Certificates System
  */
-@Entity({ schema: DB_SCHEMAS.PROGRESS, name: 'certificates' })
+@Entity({ schema: DB_SCHEMAS.PROGRESS, name: DB_TABLES.PROGRESS.CERTIFICATES })
 @Index('idx_certificates_user_id', ['user_id'])
 @Index('idx_certificates_module_id', ['module_id'])
 @Index('idx_certificates_verification_code', ['verification_code'], { unique: true })
