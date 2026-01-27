@@ -179,16 +179,28 @@ export default function TeacherSettingsPage() {
       return;
     }
 
+    // TASK-028: Validate profile fields before save
+    if (activeSection === 'profile') {
+      if (profile.bio.length > 200) {
+        toast.error('La biografía no puede exceder 200 caracteres');
+        return;
+      }
+      if (!profile.displayName.trim()) {
+        toast.error('El nombre a mostrar es requerido');
+        return;
+      }
+    }
+
     setSaveStatus('saving');
 
     try {
       // Save profile based on active section
       if (activeSection === 'profile') {
         await profileAPI.updateProfile(user.id, {
-          display_name: profile.displayName,
-          first_name: profile.firstName,
-          last_name: profile.lastName,
-          bio: profile.bio,
+          display_name: profile.displayName.trim(),
+          first_name: profile.firstName.trim(),
+          last_name: profile.lastName.trim(),
+          bio: profile.bio.trim(),
         });
       }
 
@@ -596,8 +608,14 @@ export default function TeacherSettingsPage() {
                         rows={4}
                         placeholder="Ej: Profesor de historia con 10 años de experiencia. Me apasiona hacer que el aprendizaje sea divertido..."
                       />
-                      <p className="mt-1 text-xs text-detective-text-secondary">
+                      <p className={cn(
+                        "mt-1 text-xs",
+                        profile.bio.length > 200
+                          ? "text-red-500 font-medium"
+                          : "text-detective-text-secondary"
+                      )}>
                         {profile.bio.length} / 200 caracteres
+                        {profile.bio.length > 200 && " (excede el límite)"}
                       </p>
                     </div>
 

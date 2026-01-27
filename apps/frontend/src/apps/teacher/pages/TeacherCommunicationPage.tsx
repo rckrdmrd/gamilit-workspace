@@ -212,21 +212,23 @@ export default function TeacherCommunicationPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold">Comunicación</h1>
-            {/* Indicador de conexión real-time (TASK-023: Fase 1.2) */}
+            {/* Indicador de conexión real-time (TASK-023: Fase 1.2, TASK-028: Improved feedback) */}
             <span
               className={`flex items-center gap-1 rounded-full px-2 py-1 text-xs ${
                 isConnected
                   ? 'bg-green-100 text-green-700'
-                  : 'bg-gray-100 text-gray-500'
+                  : 'bg-amber-100 text-amber-700'
               }`}
-              title={isConnected ? 'Conectado en tiempo real' : 'Sin conexión en tiempo real'}
+              title={isConnected
+                ? 'Conectado en tiempo real - Los mensajes se actualizan automáticamente'
+                : 'Reconectando... Los mensajes se sincronizarán al restablecer conexión'}
             >
               <span
                 className={`h-2 w-2 rounded-full ${
-                  isConnected ? 'bg-green-500' : 'bg-gray-400'
+                  isConnected ? 'bg-green-500' : 'bg-amber-500 animate-pulse'
                 }`}
               />
-              {isConnected ? 'En vivo' : 'Offline'}
+              {isConnected ? 'En vivo' : 'Reconectando...'}
             </span>
           </div>
           <div className="flex items-center gap-2">

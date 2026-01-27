@@ -70,6 +70,7 @@ export default function TeacherNotificationPreferencesPage() {
     isSupported: pushSupported,
     isSubscribedToPush: pushEnabled,
     isRegistering: pushRegistering,
+    error: pushError,
     enablePushNotifications: enablePush,
     disablePushNotifications: disablePush,
   } = usePushNotifications();
@@ -304,14 +305,15 @@ export default function TeacherNotificationPreferencesPage() {
           </div>
         </motion.div>
 
-        {/* Error Display - TASK-025 */}
-        {storeError && (
+        {/* Error Display - TASK-025, TASK-028: Include push notification errors */}
+        {(storeError || pushError) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="rounded-xl bg-red-500/10 border border-red-500/30 p-4"
           >
-            <p className="text-red-400 text-sm">{storeError}</p>
+            {storeError && <p className="text-red-400 text-sm">{storeError}</p>}
+            {pushError && <p className="text-red-400 text-sm">{pushError}</p>}
           </motion.div>
         )}
 
