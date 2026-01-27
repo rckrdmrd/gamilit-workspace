@@ -7,7 +7,7 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.15.0"
+version: "1.16.0"
 created: "2026-01-24"
 updated: "2026-01-27"
 proyecto: "gamilit"
@@ -18,10 +18,10 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 39
+  total_tareas: 40
   completadas: 39
   en_progreso: 0
-  pendientes: 0
+  pendientes: 1
   canceladas: 0
   bloqueadas: 0
 
@@ -60,8 +60,27 @@ formato_id:
 # TAREAS ACTIVAS
 # ─────────────────────────────────────────────────────────────────────────────────
 
-tareas_activas: []
-  # No hay tareas pendientes - MVP 95% completado
+tareas_activas:
+  - task_id: "TASK-030"
+    titulo: "Admin Pages Polish - Completar al 100%"
+    tipo: "enhancement"
+    estado: "pendiente"
+    prioridad: "P2"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-030-admin-pages-polish/"
+    story_points: 8
+    subtareas:
+      - "030.1: AdminDashboardPage - Widgets y quick actions (2 SP)"
+      - "030.2: AdminRolesPage - UI polish (1 SP)"
+      - "030.3: AdminAnalyticsPage - Gráficos y export (2 SP)"
+      - "030.4: AdminMonitoringPage - Métricas extendidas (2 SP)"
+      - "030.5: AdminReportsPage - Templates y preview (1 SP)"
+    impacto_esperado:
+      admin_portal: "90% → 97%"
+      mvp_global: "94% → 97%"
+    descripcion: |
+      Completar 5 páginas Admin del 80-85% al 100%:
+      Dashboard, Roles, Analytics, Monitoring, Reports.
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # HISTORIAL DE TAREAS

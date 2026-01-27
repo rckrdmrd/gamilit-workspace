@@ -1,0 +1,226 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA - TASK-030
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+task_id: "TASK-030"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "Admin Pages Polish - Completar al 100%"
+  descripcion: |
+    Completar las páginas del Admin Portal que están al 80-85% para llevarlas al 100%.
+
+    PÁGINAS A COMPLETAR:
+
+    1. AdminDashboardPage (85% → 100%) - 2 SP
+       - Widgets de sistema adicionales (uptime, memory, CPU)
+       - Gráficos de actividad reciente más detallados
+       - Quick actions panel mejorado
+
+    2. AdminRolesPage (85% → 100%) - 1 SP
+       - UI polish en tabla de roles
+       - Confirmación visual al asignar permisos
+       - Tooltips descriptivos
+
+    3. AdminAnalyticsPage (85% → 100%) - 2 SP
+       - Gráficos Recharts adicionales (trends, comparativas)
+       - Filtros de fecha mejorados
+       - Export de datos analytics
+
+    4. AdminMonitoringPage (85% → 100%) - 2 SP
+       - Métricas extendidas (DB connections, cache hits)
+       - Alertas visuales de thresholds
+       - Auto-refresh configurable
+
+    5. AdminReportsPage (80% → 100%) - 1 SP
+       - Templates de reportes predefinidos
+       - Preview antes de generar
+       - Historial de reportes generados
+
+    Archivos involucrados:
+    - apps/frontend/src/apps/admin/pages/AdminDashboardPage.tsx
+    - apps/frontend/src/apps/admin/pages/AdminRolesPage.tsx
+    - apps/frontend/src/apps/admin/pages/AdminAnalyticsPage.tsx
+    - apps/frontend/src/apps/admin/pages/AdminMonitoringPage.tsx
+    - apps/frontend/src/apps/admin/pages/AdminReportsPage.tsx
+  tipo: "enhancement"
+  prioridad: "P2"
+  tags:
+    - "admin-portal"
+    - "polish"
+    - "ux"
+    - "mvp-100"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "opus-4.5"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "frontend"
+  capas_afectadas:
+    - "frontend"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: null
+  fecha_fin: null
+  duracion_estimada: "4h"
+  duracion_real: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "pendiente"
+  fase_actual: "C"
+  porcentaje: 0
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTIMACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estimacion:
+  story_points: 8
+  complejidad: "baja"
+  riesgo: "bajo"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CRITERIOS DE ACEPTACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+criterios_aceptacion:
+  - "AdminDashboardPage: Widgets de sistema completos"
+  - "AdminDashboardPage: Quick actions funcionales"
+  - "AdminRolesPage: UI pulida con tooltips"
+  - "AdminAnalyticsPage: Gráficos trends y comparativas"
+  - "AdminAnalyticsPage: Export de datos funcional"
+  - "AdminMonitoringPage: Métricas extendidas visibles"
+  - "AdminMonitoringPage: Auto-refresh configurable"
+  - "AdminReportsPage: Templates predefinidos disponibles"
+  - "AdminReportsPage: Preview funcional"
+  - "Build frontend PASS"
+  - "Lint PASS"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SUBTAREAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+subtareas:
+  - id: "030.1"
+    titulo: "AdminDashboardPage - Widgets y quick actions"
+    estado: "pendiente"
+    sp: 2
+  - id: "030.2"
+    titulo: "AdminRolesPage - UI polish"
+    estado: "pendiente"
+    sp: 1
+  - id: "030.3"
+    titulo: "AdminAnalyticsPage - Gráficos y export"
+    estado: "pendiente"
+    sp: 2
+  - id: "030.4"
+    titulo: "AdminMonitoringPage - Métricas extendidas"
+    estado: "pendiente"
+    sp: 2
+  - id: "030.5"
+    titulo: "AdminReportsPage - Templates y preview"
+    estado: "pendiente"
+    sp: 1
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "pendiente"
+    archivo: null
+  analisis:
+    estado: "pendiente"
+    archivo: null
+  plan:
+    estado: "pendiente"
+    archivo: null
+  validacion:
+    estado: "pendiente"
+    archivo: null
+  ejecucion:
+    estado: "pendiente"
+    archivo: null
+  documentacion:
+    estado: "pendiente"
+    archivo: "METADATA.yml"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas:
+    - "TASK-024"  # Admin Portal analysis
+    - "TASK-027"  # AdminContentPage 100%
+    - "TASK-029"  # Backend Admin Endpoints
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IMPACTO ESPERADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+impacto_esperado:
+  admin_portal:
+    antes: "90%"
+    despues: "97%"
+  mvp_global:
+    antes: "94%"
+    contribucion: "+3%"
+    despues: "97%"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS TÉCNICAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas_tecnicas: |
+  ENFOQUE RECOMENDADO:
+
+  1. Analizar cada página para identificar gaps específicos
+  2. Priorizar cambios que mejoren UX sin agregar complejidad
+  3. Reutilizar componentes existentes donde sea posible
+  4. Validar que no se rompe funcionalidad existente
+
+  COMPONENTES REUTILIZABLES:
+  - shared/components/charts/ (Recharts wrappers)
+  - shared/components/ui/ (Shadcn components)
+  - features/admin/components/ (Admin-specific)
+
+  CONSIDERACIONES:
+  - Mantener consistencia visual con el resto del portal
+  - No agregar endpoints backend nuevos (usar los existentes)
+  - Documentar cualquier limitación encontrada
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
