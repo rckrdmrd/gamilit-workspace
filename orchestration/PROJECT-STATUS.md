@@ -88,7 +88,7 @@
 | Backend | Endpoints | 750+ |
 | Backend | Build | PASS (0 errors) |
 | Backend | Lint | 0 errors, 904 warnings |
-| Frontend | Type files | 17 |
+| Frontend | Type files | 24 (+7 TASK-022) |
 | Frontend | API services | 36 |
 | Frontend | Hooks | 104 |
 | Frontend | Pages | 67 |
@@ -98,15 +98,15 @@
 | Seeds | Dev files | 106 |
 | Seeds | Prod files | 71 |
 | Seeds | Config coverage | 73.8% |
-| Seeds | Orphaned files | 18+ |
+| Seeds | Orphaned files | 0 (18 integrados P1-2) |
 
 ### Coherencia
 
 | Relacion | Porcentaje | Detalle |
 |----------|-----------|---------|
-| DDL → Backend (entities) | 82% | 126/135 con DB_TABLES, 9 hardcoded |
+| DDL → Backend (entities) | 100% | 135/135 con DB_TABLES (P1-1 resuelto) |
 | Backend → Frontend (modules) | 87.5% | 14/16 core modules cubiertos |
-| Frontend → Backend (types) | 87.5% | 5 entities TASK-021 sin types frontend |
+| Frontend → Backend (types) | 100% | 7/7 entities TASK-021 con types (P2-1 resuelto) |
 | Seeds → DDL config tables | 73.8% | 62/84 config/lookup tables |
 | API Config → Backend | 100% | 250+ endpoints centralizados |
 
@@ -114,13 +114,13 @@
 
 | Area | Gap | Prioridad | Severidad |
 |------|-----|-----------|-----------|
-| **Scripts** | RLS Phase 2+3 no cargadas en create-database.sh | P0 | SEGURIDAD |
-| **Scripts** | unified-recreate-db.sh incompatible con GAMILIT | P0 | AUTOMATIZACION |
-| Backend | 9 entities con nombres hardcoded (sin DB_TABLES) | P1 | MANTENIBILIDAD |
+| ~~Scripts~~ | ~~RLS Phase 2+3 no cargadas en create-database.sh~~ | ~~P0~~ | RESUELTO (afe238f0) |
+| ~~Scripts~~ | ~~unified-recreate-db.sh incompatible con GAMILIT~~ | ~~P0~~ | RESUELTO (59e6b9f9) |
+| ~~Backend~~ | ~~10 entities con nombres hardcoded (sin DB_TABLES)~~ | ~~P1~~ | RESUELTO (afe238f0) |
 | Backend | 7 tablas DDL sin entity | P1 | COHERENCIA |
-| Frontend | 5 entities TASK-021 sin types frontend | P1 | COHERENCIA |
+| ~~Frontend~~ | ~~7 entities TASK-021 sin types frontend~~ | ~~P2~~ | RESUELTO (ef956e4b) |
 | Frontend | 7+ endpoints nuevos no en apiConfig.ts | P1 | COHERENCIA |
-| Seeds | 18+ archivos orphaned (no en load-dev-seeds.sh) | P1 | TESTING |
+| ~~Seeds~~ | ~~18+ archivos orphaned (no en load-dev-seeds.sh)~~ | ~~P1~~ | RESUELTO (afe238f0) |
 | Seeds | classroom_modules sin seed en DEV | P2 | TESTING |
 | Frontend | Hooks muy bajo (2 hooks para 35+ features) | P3 | CALIDAD |
 
@@ -129,9 +129,9 @@
 | Script | Estado | Hallazgo |
 |--------|--------|----------|
 | create-database.sh | BUENO | 17 fases, dependencias cross-schema correctas |
-| create-database.sh | GAP | 07b/07c RLS no incluidas (82% tablas sin RLS) |
-| load-dev-seeds.sh | PARCIAL | 18 fases, 18+ archivos orphaned no cargados |
-| unified-recreate-db.sh | ROTO | No soporta estructura compleja GAMILIT |
+| create-database.sh | RESUELTO | 07b/07c RLS incluidas en Fases 15.7/15.8 |
+| load-dev-seeds.sh | RESUELTO | 18 archivos orphaned integrados en fases existentes |
+| unified-recreate-db.sh | RESUELTO | Delega a master scripts (create-database.sh / load-dev-seeds.sh) |
 
 ### MVP - Estado por Epic
 
@@ -158,15 +158,15 @@
 
 ## Proximos Pasos (Priorizado)
 
-### P0 - Seguridad/Automatizacion
-1. Incluir 07b/07c RLS en create-database.sh (10 min)
-2. Fix unified-recreate-db.sh para delegacion a master scripts GAMILIT (30 min)
+### P0 - Seguridad/Automatizacion (RESUELTO)
+1. ~~Incluir 07b/07c RLS en create-database.sh~~ RESUELTO (afe238f0)
+2. ~~Fix unified-recreate-db.sh para delegacion a master scripts GAMILIT~~ RESUELTO (59e6b9f9)
 
-### P1 - Coherencia/Testing
-3. Agregar 9 constantes DB_TABLES faltantes y actualizar entities
+### P1 - Coherencia/Testing (PARCIAL)
+3. ~~Agregar constantes DB_TABLES faltantes y actualizar 10 entities~~ RESUELTO (afe238f0)
 4. Crear 7 entities faltantes (content_tags, content_approvals, discussion_threads, social_interactions, teacher_classrooms, user_follows, message_participants)
-5. Crear 5 type definitions frontend para entities TASK-021
-6. Agregar 18+ seed files orphaned a load-dev-seeds.sh
+5. ~~Crear 7 type definitions frontend para entities TASK-021~~ RESUELTO (ef956e4b)
+6. ~~Agregar 18 seed files orphaned a load-dev-seeds.sh~~ RESUELTO (afe238f0)
 7. Fix RLS security issue GAP-C06 (students ven todos los ejercicios)
 
 ### P2 - MVP Completion

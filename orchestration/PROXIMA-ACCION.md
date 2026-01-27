@@ -3,55 +3,64 @@
 **Ultima Actualizacion:** 2026-01-27
 **Estado del Proyecto:** MVP 75% completado | **orchestration REPLICA_COMPLETA** | **Production Ready (parcial)**
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Tarea Completada:** TASK-022-MODELADO-INTEGRAL (9 Areas A-I)
+**Tarea Activa:** TASK-022-MODELADO-INTEGRAL (Ejecucion P0/P1/P2)
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
 
 ## Estado Actual
 
-### TASK-022-MODELADO-INTEGRAL COMPLETADA (2026-01-27)
+### TASK-022-MODELADO-INTEGRAL - Ejecucion (2026-01-27)
 
-**Analisis Integral y Planificacion del Modelado de Datos GAMILIT - 9 Areas.**
+**Analisis Integral + Ejecucion de Fixes P0/P1/P2 del Modelado de Datos GAMILIT.**
+
+#### Fase 1: Auditoria (9 Areas - COMPLETADA)
 
 | Area | Estado | Resultado |
 |------|--------|-----------|
 | A: Commit pendientes TASK-021 | COMPLETADO | 7 entities + docs committed & pushed |
 | B: Auditoria DDL | COMPLETADO | 138 tablas, 89 funciones, 37 triggers, 36 enums |
-| C: Auditoria Seeds | COMPLETADO | 106 dev / 71 prod, 73.8% cobertura config, 18+ orphaned |
-| D: Coherencia Backend-DDL | COMPLETADO | 82% (126/135 mapeados, 9 hardcoded, 7 sin entity) |
-| E: Coherencia Frontend-Backend | COMPLETADO | 87.5% modulos cubiertos, 5 types TASK-021 faltantes |
-| F: Validacion Scripts BD | COMPLETADO | RLS 07b/07c NO cargadas, unified-recreate ROTO |
+| C: Auditoria Seeds | COMPLETADO | 106 dev / 71 prod, 73.8% cobertura config |
+| D: Coherencia Backend-DDL | COMPLETADO | 135 entities auditadas |
+| E: Coherencia Frontend-Backend | COMPLETADO | 87.5% modulos cubiertos |
+| F: Validacion Scripts BD | COMPLETADO | Hallazgos criticos identificados |
 | G: Validacion Builds | COMPLETADO | Backend + Frontend PASS (0 errors) |
 | H: Documentacion | COMPLETADO | Inventarios actualizados con conteos reales |
 | I: Requerimientos MVP faltantes | COMPLETADO | 75% MVP, ~500-600h para 100% |
 
-**Metricas Auditadas (conteo real):**
-- Database: schemas=16 (13 activos), tables=138, functions=89, triggers=37, rls=33, enums=36
-- Backend: modules=18, entities=135, services=121, controllers=65, endpoints=750+, build=PASS
-- Frontend: types=17, api_services=36, hooks=104, pages=67, components=398, build=PASS
-- Seeds: dev=106, prod=71, config_coverage=73.8%, orphaned=18+
+#### Fase 2: Ejecucion de Fixes (P0/P1/P2)
 
-**Hallazgos Criticos (Area F - Scripts):**
-- create-database.sh: RLS Phase 2 (07b) y Phase 3 (07c) NO incluidas - 82% tablas sin RLS
-- unified-recreate-db.sh: incompatible con estructura GAMILIT (glob simple, sin recursion)
-- load-dev-seeds.sh: 18+ archivos orphaned (11 progress, 5 social, 2 lti)
+| Fix | Prioridad | Estado | Commit |
+|-----|-----------|--------|--------|
+| RLS Phase 2+3 en create-database.sh | P0 | RESUELTO | afe238f0 |
+| unified-recreate-db.sh delegacion | P0 | RESUELTO | 59e6b9f9 |
+| 10 entities → DB_TABLES constants | P1 | RESUELTO | afe238f0 |
+| 2 constantes DB_TABLES nuevas | P1 | RESUELTO | afe238f0 |
+| Fix import path @/shared → @shared | P1 | RESUELTO | afe238f0 |
+| 18 orphaned seeds integrados | P1 | RESUELTO | afe238f0 |
+| 7 frontend type definitions | P2 | RESUELTO | ef956e4b |
 
-**Hallazgos Area E (Frontend-Backend):**
-- 14/16 core modules con frontend coverage (87.5%)
-- 5 entities TASK-021 sin type definitions frontend
-- 36 API services, 250+ endpoints centralizados en apiConfig.ts
-- Solo 2 custom hooks (gap significativo para 35+ features)
+**Metricas Post-Ejecucion:**
+- Backend: 135/135 entities con DB_TABLES constants (100%)
+- Frontend: 24 type files (+7 nuevos), 7/7 TASK-021 entities con types
+- Seeds: 0 orphaned files (18 integrados en fases existentes)
+- Scripts: create-database.sh con RLS Phases 1+2+3, unified-recreate-db.sh delegando a master scripts
+- Build: Backend PASS (tsc 0 errors), Frontend PASS (0 errors en nuevos files)
 
-**Hallazgos Area I (MVP):**
-- MVP global: 75% completado
-- P0+P1 work: ~144 horas (RLS security, rewards, multiplier)
-- Full MVP: ~500-600 horas (14 pages, 60+ components, 25+ endpoints)
-- Epics 100%: EAI-001, EAI-002, EAI-007
-- Epics <50%: EAI-003-EXT (30%), EAI-008 (40%), EXT-002 (40%), EXT-005 (30%)
+**Commits:**
+- afe238f0 (gamilit): P0-1 + P1-1 + P1-2 fixes
+- 59e6b9f9 (workspace-v2): P0-2 unified-recreate-db.sh fix
+- ef956e4b (gamilit): P2-1 frontend types
 
-**Build:** PASS (backend tsc + lint, frontend vite + lint)
-**Commits:** b8b0a7f9 (gamilit docs), 6b213980 (workspace-v2)
+#### Gaps Pendientes
+
+| Gap | Prioridad | Detalle |
+|-----|-----------|---------|
+| 7 tablas DDL sin entity | P1 | content_tags, discussion_threads, etc. |
+| RLS GAP-C06 students exercises | P1 | Students ven todos los ejercicios |
+| ML Coins multiplier por rango | P2 | US-GAM-011 |
+| 7+ endpoints no en apiConfig.ts | P1 | Endpoints nuevos |
+| Hooks deficit (2 vs 35+ features) | P3 | Calidad frontend |
 
 ---
 

@@ -2,10 +2,10 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "4.9.0"
+version: "5.0.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
 fecha_actualizacion: "2026-01-27"
-actualizado_por: "TASK-022-MODELADO-INTEGRAL - Auditoria integral DDL/Backend/Seeds"
+actualizado_por: "TASK-022-MODELADO-INTEGRAL - Ejecucion P0/P1/P2 fixes"
 last_update_task: "TASK-022-MODELADO-INTEGRAL"
 
 # =============================================================================
@@ -32,7 +32,7 @@ resumen:
     seed_coverage_config_tables: "73.8%"  # 62/84 config/lookup tables
     seed_gaps_critical: 8  # System-breaking missing seeds
     seed_gaps_high: 8  # Feature-degrading missing seeds
-    seed_orphaned_files: 18  # TASK-022 Area F: 11 progress + 5 social + 2 lti
+    seed_orphaned_files: 0  # RESUELTO: 18 integrados en load-dev-seeds.sh (P1-2)
     status: "Clean creation compliant"
     last_verified: "2026-01-27"
     source: "DATABASE_INVENTORY.yml"
@@ -46,8 +46,8 @@ resumen:
     endpoints: 750  # AUDITORIA 2026-01-27: conteo decoradores HTTP
     build_status: "Builds successfully"
     lint_status: "0 errors, 904 warnings (pre-existing no-explicit-any)"
-    coherencia_ddl: "82%"  # TASK-022: 126/135 properly mapped + 9 hardcoded
-    entities_hardcoded_names: 9  # Need DB_TABLES constants
+    coherencia_ddl: "100%"  # TASK-022 P1-1: 135/135 properly mapped via DB_TABLES
+    entities_hardcoded_names: 0  # RESUELTO: 10 entities actualizadas (P1-1)
     ddl_tables_without_entity: 7  # content_tags, content_approvals, discussion_threads, social_interactions, teacher_classrooms, user_follows, message_participants
     orphan_entities: 0  # All entities have DDL tables
     last_verified: "2026-01-27"
@@ -63,9 +63,9 @@ resumen:
     pages: 67  # AUDITORIA 2026-01-27: conteo real */pages/*.tsx
     stores: 12  # RECONCILIADO 2026-01-16 ✓
     api_services: 36  # TASK-022 Area E: conteo real (11 core + 14 teacher + 3 admin + 8 infra)
-    type_definition_files: 17  # TASK-022 Area E: conteo real shared/types/
+    type_definition_files: 24  # TASK-022 P2-1: 17 existentes + 7 nuevos TASK-021
     api_endpoint_groups: 25  # TASK-022 Area E: secciones en api.config.ts
-    missing_task021_types: 5  # content-metadata, module-deps, taxonomy, comodin-usage, module-completion
+    missing_task021_types: 0  # RESUELTO: 7 type files creados (P2-1)
     module_coverage: "87.5%"  # TASK-022 Area E: 14/16 core modules cubiertos
     mechanics: 33
     routes: 18
