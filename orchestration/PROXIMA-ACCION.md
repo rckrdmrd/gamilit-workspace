@@ -1,9 +1,9 @@
 # PROXIMA ACCION - GAMILIT
 
 **Ultima Actualizacion:** 2026-01-27
-**Estado del Proyecto:** MVP 85% completado | **orchestration REPLICA_COMPLETA** | **Production Ready**
+**Estado del Proyecto:** MVP 75% completado | **orchestration REPLICA_COMPLETA** | **Production Ready (parcial)**
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Tarea Completada:** TASK-022-MODELADO-INTEGRAL
+**Tarea Completada:** TASK-022-MODELADO-INTEGRAL (9 Areas A-I)
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
@@ -12,31 +12,46 @@
 
 ### TASK-022-MODELADO-INTEGRAL COMPLETADA (2026-01-27)
 
-**Analisis Integral y Planificacion del Modelado de Datos GAMILIT.**
+**Analisis Integral y Planificacion del Modelado de Datos GAMILIT - 9 Areas.**
 
 | Area | Estado | Resultado |
 |------|--------|-----------|
 | A: Commit pendientes TASK-021 | COMPLETADO | 7 entities + docs committed & pushed |
 | B: Auditoria DDL | COMPLETADO | 138 tablas, 89 funciones, 37 triggers, 36 enums |
-| C: Auditoria Seeds | COMPLETADO | 106 dev / 71 prod, 73.8% cobertura config |
+| C: Auditoria Seeds | COMPLETADO | 106 dev / 71 prod, 73.8% cobertura config, 18+ orphaned |
 | D: Coherencia Backend-DDL | COMPLETADO | 82% (126/135 mapeados, 9 hardcoded, 7 sin entity) |
+| E: Coherencia Frontend-Backend | COMPLETADO | 87.5% modulos cubiertos, 5 types TASK-021 faltantes |
+| F: Validacion Scripts BD | COMPLETADO | RLS 07b/07c NO cargadas, unified-recreate ROTO |
 | G: Validacion Builds | COMPLETADO | Backend + Frontend PASS (0 errors) |
 | H: Documentacion | COMPLETADO | Inventarios actualizados con conteos reales |
+| I: Requerimientos MVP faltantes | COMPLETADO | 75% MVP, ~500-600h para 100% |
 
 **Metricas Auditadas (conteo real):**
 - Database: schemas=16 (13 activos), tables=138, functions=89, triggers=37, rls=33, enums=36
-- Backend: modules=18, entities=135, services=121, controllers=86, build=PASS
-- Frontend: build=PASS (4205 modules), lint=0 errors
-- Seeds: dev=106, prod=71, config_coverage=73.8%
+- Backend: modules=18, entities=135, services=121, controllers=65, endpoints=750+, build=PASS
+- Frontend: types=17, api_services=36, hooks=104, pages=67, components=398, build=PASS
+- Seeds: dev=106, prod=71, config_coverage=73.8%, orphaned=18+
 
-**Gaps Criticos Identificados:**
-- 9 entities con nombres hardcoded (necesitan DB_TABLES constants)
-- 7 tablas DDL sin entity backend
-- 8 tablas config sin seed (system-breaking)
-- 13 archivos seed orphaned (existen pero no se cargan)
+**Hallazgos Criticos (Area F - Scripts):**
+- create-database.sh: RLS Phase 2 (07b) y Phase 3 (07c) NO incluidas - 82% tablas sin RLS
+- unified-recreate-db.sh: incompatible con estructura GAMILIT (glob simple, sin recursion)
+- load-dev-seeds.sh: 18+ archivos orphaned (11 progress, 5 social, 2 lti)
+
+**Hallazgos Area E (Frontend-Backend):**
+- 14/16 core modules con frontend coverage (87.5%)
+- 5 entities TASK-021 sin type definitions frontend
+- 36 API services, 250+ endpoints centralizados en apiConfig.ts
+- Solo 2 custom hooks (gap significativo para 35+ features)
+
+**Hallazgos Area I (MVP):**
+- MVP global: 75% completado
+- P0+P1 work: ~144 horas (RLS security, rewards, multiplier)
+- Full MVP: ~500-600 horas (14 pages, 60+ components, 25+ endpoints)
+- Epics 100%: EAI-001, EAI-002, EAI-007
+- Epics <50%: EAI-003-EXT (30%), EAI-008 (40%), EXT-002 (40%), EXT-005 (30%)
 
 **Build:** PASS (backend tsc + lint, frontend vite + lint)
-**Commits:** 545fe74a (gamilit), 0074868f (workspace-v2)
+**Commits:** b8b0a7f9 (gamilit docs), 6b213980 (workspace-v2)
 
 ---
 

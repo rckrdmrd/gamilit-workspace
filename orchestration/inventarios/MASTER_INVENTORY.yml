@@ -32,7 +32,7 @@ resumen:
     seed_coverage_config_tables: "73.8%"  # 62/84 config/lookup tables
     seed_gaps_critical: 8  # System-breaking missing seeds
     seed_gaps_high: 8  # Feature-degrading missing seeds
-    seed_orphaned_files: 13  # Files exist but not in load script
+    seed_orphaned_files: 18  # TASK-022 Area F: 11 progress + 5 social + 2 lti
     status: "Clean creation compliant"
     last_verified: "2026-01-27"
     source: "DATABASE_INVENTORY.yml"
@@ -62,12 +62,16 @@ resumen:
     hooks: 104  # AUDITORIA 2026-01-27: conteo real use*.ts/tsx
     pages: 67  # AUDITORIA 2026-01-27: conteo real */pages/*.tsx
     stores: 12  # RECONCILIADO 2026-01-16 ✓
-    api_services: 37  # AUDITORIA 2026-01-27: conteo real services/api/
+    api_services: 36  # TASK-022 Area E: conteo real (11 core + 14 teacher + 3 admin + 8 infra)
+    type_definition_files: 17  # TASK-022 Area E: conteo real shared/types/
+    api_endpoint_groups: 25  # TASK-022 Area E: secciones en api.config.ts
+    missing_task021_types: 5  # content-metadata, module-deps, taxonomy, comodin-usage, module-completion
+    module_coverage: "87.5%"  # TASK-022 Area E: 14/16 core modules cubiertos
     mechanics: 33
     routes: 18
     lines_of_code: ~100000
     status: "Builds successfully"
-    last_verified: "2026-01-24"
+    last_verified: "2026-01-27"
     source: "FRONTEND_INVENTORY.yml"
     portal_docs:
       - "docs/frontend/student/README.md"
@@ -196,14 +200,32 @@ integraciones:
     coverage: "85%"
 
   db_backend:
-    status: "97% coherencia"
-    entities_mapped: 93
-    tables_total: 132
+    status: "82% coherencia"  # TASK-022 Area D: 126/135 entities mapped
+    entities_mapped: 126
+    entities_hardcoded: 9
+    tables_total: 138
+    tables_without_entity: 7
 
   backend_frontend:
-    status: "OPERATIVO"
-    endpoints: 300+
-    api_services: 15
+    status: "87.5% coherencia"  # TASK-022 Area E: 14/16 core modules
+    endpoints_centralized: 250+
+    api_services: 36
+    type_files: 17
+    missing_types_task021: 5
+
+  scripts_bd:
+    status: "GAPS CRITICOS"  # TASK-022 Area F
+    create_database_sh: "OK (17 fases)"
+    create_database_rls_gap: "07b/07c no incluidas"
+    load_dev_seeds_sh: "PARCIAL (18+ orphaned)"
+    unified_recreate_db: "INCOMPATIBLE con GAMILIT"
+
+  mvp_status:
+    completitud_global: "75%"  # TASK-022 Area I
+    horas_restantes: "500-600"
+    epics_100_pct: ["EAI-001", "EAI-002", "EAI-007"]
+    epics_lt_50_pct: ["EAI-003-EXT", "EAI-008", "EXT-002", "EXT-005"]
+    p0_p1_horas: 144
 
 # =============================================================================
 # REFERENCIAS
