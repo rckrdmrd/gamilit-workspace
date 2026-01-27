@@ -1,11 +1,120 @@
 # Traza de Tareas: ATLAS-DATABASE
 
-**Última actualización:** 2026-01-25 (TASK-019: US-PM-007 - teacher_alert_configurations)
+**Última actualización:** 2026-01-27 (5 Tareas P2 completadas - BD Analysis)
 **Estado:** ✅ PRODUCTION READY - Validación integral completada
 
 ---
 
 ## 📋 Tareas Actuales (2026)
+
+### ✅ TASK-P2-RLS-EXPANSION-2026-01-27: RLS Fase 2 - COMPLETADO
+
+**Fecha:** 2026-01-27
+**Agente:** CLAUDE-CODE (Opus 4.5)
+**Prioridad:** P2
+**Story Points:** 13 SP
+**Gap:** RLS-P1-001
+
+**Objetivo:**
+Expandir cobertura de Row Level Security de 25 tablas (Fase 1) a 59 tablas (Fase 2).
+
+**Archivo DDL Creado:**
+`apps/database/ddl/07b-enable-rls-phase2.sql`
+
+**Tablas con RLS Habilitado (34 nuevas):**
+- gamification_system: 8 tablas (user_stats, user_achievements, ml_coins_transactions, comodines_inventory, user_ranks, comodin_usage_log, comodin_usage_tracking, classroom_missions)
+- notifications: 4 tablas (notifications, notification_preferences, notification_logs, user_devices)
+- communication: 1 tabla (messages)
+- progress_tracking: 8 tablas (learning_sessions, exercise_attempts, exercise_submissions, scheduled_missions, user_difficulty_progress, module_progress, teacher_notes, certificates)
+- social_features: 6 tablas (classroom_members, team_members, friendships, team_challenges, social_interactions, classrooms)
+- audit_logging: 2 tablas (audit_logs, user_activity_logs)
+- auth_management: 4 tablas (user_preferences, user_sessions, security_events, email_verification_tokens)
+- admin_dashboard: 1 tabla (bulk_operations)
+
+**Métricas:**
+- Tablas Fase 1: 25
+- Tablas Fase 2: 34
+- Total RLS: 59 (~41% cobertura)
+
+---
+
+### ✅ TASK-P2-SEEDS-COMODINES-2026-01-27: Seeds Comodines - COMPLETADO
+
+**Fecha:** 2026-01-27
+**Agente:** CLAUDE-CODE (Opus 4.5)
+**Prioridad:** P2
+**Story Points:** 3 SP
+**Gap:** SEED-P2-001
+
+**Objetivo:**
+Crear seeds para tabla gamification_system.comodines_inventory con datos de prueba.
+
+**Archivos Seeds Creados:**
+- `apps/database/seeds/dev/gamification_system/09-comodines_inventory.sql`
+- `apps/database/seeds/prod/gamification_system/09-comodines_inventory.sql`
+
+---
+
+### ✅ TASK-P2-SEEDS-COMMUNICATION-2026-01-27: Seeds Communication - COMPLETADO
+
+**Fecha:** 2026-01-27
+**Agente:** CLAUDE-CODE (Opus 4.5)
+**Prioridad:** P2
+**Story Points:** 3 SP
+**Gap:** SEED-P2-002
+
+**Objetivo:**
+Crear seeds para sistema de mensajería (messages + message_participants).
+
+**Archivos Seeds Creados/Modificados:**
+- `apps/database/seeds/dev/communication/01-messages.sql`
+- `apps/database/seeds/dev/communication/02-message_participants.sql`
+
+**Nota:** Schema usa messages+message_participants (NO tabla conversations).
+
+---
+
+### ✅ TASK-P2-SEEDS-PEDAGOGY-2026-01-27: Seeds Pedagógicos - COMPLETADO
+
+**Fecha:** 2026-01-27
+**Agente:** CLAUDE-CODE (Opus 4.5)
+**Prioridad:** P2
+**Story Points:** 8 SP
+**Gap:** SEED-P2-003
+
+**Objetivo:**
+Poblar campos pedagógicos (objective, how_to_solve, recommended_strategy, pedagogical_notes) en seeds de ejercicios M4 y M5.
+
+**Archivos Seeds Modificados:**
+- `apps/database/seeds/dev/educational_content/05-exercises-module4.sql` (5 ejercicios)
+- `apps/database/seeds/dev/educational_content/06-exercises-module5.sql` (3 ejercicios)
+
+**Hallazgo:** M1-M3 ya tenían campos pedagógicos completos.
+
+---
+
+### ✅ TASK-P2-ROLES-CONSOLIDATION-2026-01-27: Análisis Roles - COMPLETADO
+
+**Fecha:** 2026-01-27
+**Agente:** CLAUDE-CODE (Opus 4.5)
+**Prioridad:** P2
+**Story Points:** 5 SP
+**Gap:** ARCH-P2-001
+**Tipo:** ANALYSIS (sin cambios de código)
+
+**Objetivo:**
+Analizar coexistencia de sistema ENUM (gamilit_role) vs RBAC tables y recomendar consolidación.
+
+**Hallazgo Principal:**
+El sistema YA es híbrido funcional - user_roles usa el ENUM para la columna role.
+
+**Documentos Creados:**
+- `orchestration/tareas/TASK-P2-ROLES-CONSOLIDATION-2026-01-27/ROLES-SYSTEM-ANALYSIS.md`
+- `docs/97-adr/ADR-028-roles-system-hybrid-design.md`
+
+**Recomendación:** Mantener sistema híbrido actual (by design).
+
+---
 
 ### ✅ TASK-019: Tabla teacher_alert_configurations para US-PM-007 - COMPLETADO
 

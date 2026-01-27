@@ -7,9 +7,9 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.7.0"
+version: "1.8.0"
 created: "2026-01-24"
-updated: "2026-01-25"
+updated: "2026-01-27"
 proyecto: "gamilit"
 maintained_by: "@WS_ORCHESTRATOR"
 
@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 21
-  completadas: 21
+  total_tareas: 31
+  completadas: 31
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -67,6 +67,187 @@ tareas_activas: []
 # ─────────────────────────────────────────────────────────────────────────────────
 
 historial:
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # TAREAS 2026-01-27 - AUDITORÍA INTEGRAL
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - task_id: "TASK-021"
+    titulo: "Auditoría de Coherencia DDL-Entity - 7 Entities Nuevas"
+    tipo: "audit"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-021-ddl-entity-coherence-audit/"
+    story_points: 13
+    capas_afectadas:
+      - "backend"
+    metricas:
+      entities_creadas: 7
+      archivos_modificados: 3
+      coherencia_antes: "94.3%"
+      coherencia_despues: "100%"
+    descripcion: |
+      Validación y corrección de coherencia DDL-Entity.
+      Creadas 7 entities para tablas sin cobertura ORM:
+      - progress_tracking: user_current_level, user_difficulty_progress, module_completion_tracking
+      - educational_content: content_metadata, module_dependencies, taxonomies
+      - gamification_system: comodin_usage_tracking
+      Build y lint validados sin errores.
+
+  - task_id: "TASK-BD-ANALYSIS-2026-01-27"
+    titulo: "Análisis de Coherencia BD-Backend-Frontend"
+    tipo: "analysis"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-BD-ANALYSIS-2026-01-27/"
+    story_points: 60
+    capas_afectadas:
+      - "database"
+      - "backend"
+      - "frontend"
+    descripcion: |
+      Análisis exhaustivo de coherencia entre capas:
+      - COHERENCE-MATRIX.yml: 82% coherencia global
+      - ENTITY-RELATIONS-GAPS.yml: 241 FKs, 46 gaps
+      - RLS-ANALYSIS-REPORT.yml: 282 policies, 69.5% coverage
+      - SEEDS-CRITICAL-GAPS.yml: P1/P2/P3 gaps identificados
+
+  - task_id: "TASK-P1-ORM-RELATIONS-2026-01-27"
+    titulo: "Implementar Relaciones ORM Faltantes (P1)"
+    tipo: "implementation"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-P1-ORM-RELATIONS-2026-01-27/"
+    story_points: 8
+    capas_afectadas:
+      - "backend"
+    descripcion: |
+      Implementación de 4 relaciones ORM críticas identificadas en análisis.
+
+  - task_id: "TASK-P1-SEEDS-SOCIAL-2026-01-27"
+    titulo: "Seeds para peer_challenges y team_challenges (P1)"
+    tipo: "implementation"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    carpeta: "TASK-P1-SEEDS-SOCIAL-2026-01-27/"
+    story_points: 5
+    capas_afectadas:
+      - "database"
+    descripcion: |
+      Seeds para tablas sociales críticas (peer_challenges, team_challenges).
+
+  - task_id: "TASK-P2-RLS-EXPANSION-2026-01-27"
+    titulo: "Expandir Cobertura RLS (P2)"
+    tipo: "implementation"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-P2-RLS-EXPANSION-2026-01-27/"
+    story_points: 13
+    capas_afectadas:
+      - "database"
+    metricas:
+      tablas_fase1: 25
+      tablas_fase2: 34
+      total_rls: 59
+      cobertura: "41%"
+    descripcion: |
+      Implementar RLS Fase 2 con 34 tablas adicionales.
+      Total: 59 tablas con RLS (~41% cobertura).
+      Archivo creado: 07b-enable-rls-phase2.sql
+      Gap cerrado: RLS-P1-001
+
+  - task_id: "TASK-P2-SEEDS-COMODINES-2026-01-27"
+    titulo: "Seeds para Inventario de Comodines (P2)"
+    tipo: "implementation"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-P2-SEEDS-COMODINES-2026-01-27/"
+    story_points: 3
+    capas_afectadas:
+      - "database"
+    descripcion: |
+      Seeds para comodines_inventory con datos de prueba.
+      Gap cerrado: SEED-P2-001
+
+  - task_id: "TASK-P2-SEEDS-PEDAGOGY-2026-01-27"
+    titulo: "Poblar Campos Pedagógicos en Seeds de Exercises (P2)"
+    tipo: "implementation"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-P2-SEEDS-PEDAGOGY-2026-01-27/"
+    story_points: 8
+    capas_afectadas:
+      - "database"
+    metricas:
+      ejercicios_m4: 5
+      ejercicios_m5: 3
+      campos_agregados: 4
+    descripcion: |
+      Poblar campos pedagógicos (objective, how_to_solve,
+      recommended_strategy, pedagogical_notes) en M4 y M5.
+      M1-M3 ya tenían campos completos.
+      Gap cerrado: SEED-P2-003
+
+  - task_id: "TASK-P2-SEEDS-COMMUNICATION-2026-01-27"
+    titulo: "Seeds para Comunicación (P2)"
+    tipo: "implementation"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-P2-SEEDS-COMMUNICATION-2026-01-27/"
+    story_points: 3
+    capas_afectadas:
+      - "database"
+    descripcion: |
+      Seeds para messages y message_participants.
+      Nota: Schema usa messages+participants (NO conversations).
+      Gap cerrado: SEED-P2-002
+
+  - task_id: "TASK-P2-ROLES-CONSOLIDATION-2026-01-27"
+    titulo: "Análisis y Planificación Consolidación Sistema de Roles (P2)"
+    tipo: "analysis"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-P2-ROLES-CONSOLIDATION-2026-01-27/"
+    story_points: 5
+    capas_afectadas:
+      - "database"
+      - "backend"
+    entregables:
+      - "ROLES-SYSTEM-ANALYSIS.md"
+      - "ADR-028-roles-system-hybrid-design.md"
+    descripcion: |
+      Análisis de coexistencia ENUM gamilit_role vs RBAC tables.
+      Recomendación: Mantener sistema híbrido actual (by design).
+      Gap cerrado: ARCH-P2-001
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # TAREAS 2026-01-25
+  # ═══════════════════════════════════════════════════════════════════════════════
+
   - task_id: "TASK-020"
     titulo: "Fix SET LOCAL RLS Error - syntax error at or near $1"
     tipo: "bugfix"
