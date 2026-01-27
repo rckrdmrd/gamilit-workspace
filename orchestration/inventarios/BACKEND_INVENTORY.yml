@@ -4,27 +4,66 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.13.0"
+  version: "3.14.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-25"
-  last_update_task: "TASK-2026-01-25-VALIDACION-INTEGRAL-GAMILIT"
+  last_updated: "2026-01-27"
+  last_update_task: "TASK-022-MODELADO-INTEGRAL"
   generated_by: "Auditoría documentación completa - Conteo real filesystem"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
   total_modules: 18  # AUDITORIA 2026-01-27: conteo real src/modules/
-  total_entities: 128  # AUDITORIA 2026-01-27: conteo real *.entity.ts
+  total_entities: 137  # TASK-022: 128 + 7 (TASK-021) + 2 (P1-3: content_tags, social_interactions)
   total_dtos: 366  # AUDITORIA 2026-01-27: conteo real *.dto.ts (incluye subcarpetas)
   total_services: 121  # AUDITORIA 2026-01-27: conteo real *.service.ts (incluye subcarpetas)
   total_controllers: 86  # AUDITORIA 2026-01-27: conteo real *.controller.ts
   total_endpoints: 750  # AUDITORIA 2026-01-27: conteo decoradores @Get/@Post/@Put/@Patch/@Delete
-  typescript_errors: 0  # ⚠️ 2025-11-28: Backend tiene errores PREEXISTENTES en tests auth (no en admin)
-  build_status: "✅ BUILD PASSING"  # GAP-BE-006: Validado 2026-01-25
-  coherencia_bd: "99%"  # ✅ Actualizado 2026-01-14 (129/134 tablas con entity - 16 nuevas)
-  discrepancies_found: "8 tablas auxiliares sin entity (intencional - verificado ETC-001)"
+  typescript_errors: 0
+  build_status: "✅ BUILD PASSING"  # TASK-022: Validado 2026-01-27
+  coherencia_bd: "100%"  # TASK-022: 137/137 entities mapped (P1-1 + P1-3)
+  discrepancies_found: "0 gaps activos - todas las tablas data-access tienen entity"
   api_docs:
     - "docs/90-transversal/api/API-TEACHER-MODULE.md"
     - "docs/90-transversal/api/API-ADMIN-MODULE.md"
+
+# ============================================================================
+# CHANGELOG 2026-01-27 (v3.14.0 - TASK-022-MODELADO-INTEGRAL)
+# ============================================================================
+task_022_modelado_integral:
+  descripcion: "TASK-022: Auditoria integral + fixes P0/P1/P2"
+  task: "TASK-022-MODELADO-INTEGRAL"
+  fecha: "2026-01-27"
+
+  entities_agregadas:
+    task_021:
+      - "progress/entities/user-current-level.entity.ts"
+      - "progress/entities/user-difficulty-progress.entity.ts"
+      - "progress/entities/module-completion-tracking.entity.ts"
+      - "educational/entities/content-metadata.entity.ts"
+      - "educational/entities/module-dependencies.entity.ts"
+      - "educational/entities/taxonomy.entity.ts"
+      - "gamification/entities/comodin-usage-tracking.entity.ts"
+    p1_3:
+      - "educational/entities/content-tag.entity.ts"
+      - "gamification/entities/social-interaction.entity.ts"
+
+  archivos_modificados:
+    - path: "modules/gamification/services/ranks.service.ts"
+      cambio: "P2-3: Replace hardcoded multiplier with DB read (SSOT)"
+      detalle: |
+        - Import MayaRankEntity + inject mayaRanksRepo
+        - Replace calculateMultiplierForRank() with async getMultiplierForRank()
+        - getFullUserProgress() and getMultiplierBreakdown() now use DB values
+
+  fixes_aplicados:
+    - "P1-1: 10 entities actualizadas con DB_TABLES constants"
+    - "P1-3: 2 entities creadas (content_tags, social_interactions)"
+    - "P2-3: ranks.service.ts multiplier reconciled with DB"
+
+  impacto:
+    entities: "+9 (128 → 137)"
+    coherencia: "99% → 100%"
+    build: "PASS (0 errors)"
 
 # ============================================================================
 # CHANGELOG 2026-01-25 (v3.13.0 - GAP-BE-006 Roles CRUD)

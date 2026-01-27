@@ -4,44 +4,46 @@
 # Fuente: Validación DB-092 (Ciclo 1-4)
 
 metadata:
-  version: "4.9.0"
+  version: "5.0.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-25"
+  last_updated: "2026-01-27"
+  last_update_task: "TASK-022-MODELADO-INTEGRAL"
   database_script: "create-database.sh"
-  total_ddl_files: 397  # 2026-01-25: +1 teacher_alert_configurations (TASK-019)
-  total_seed_files: 169  # 82 DEV + 81 PROD + 6 STAGING
+  total_ddl_files: 397
+  total_seed_files: 177  # 106 DEV + 71 PROD (TASK-022 auditado)
   total_schemas: 16
   script_phases: 18
   seed_breakdown:
-    dev_files: 82
-    prod_files: 81
+    dev_files: 106  # TASK-022 auditado
+    prod_files: 71   # TASK-022 auditado
     staging_files: 6
   database_counts:
-    schemas: 16
-    tables: 141  # VALIDADO 2026-01-25 - +1 teacher_alert_configurations (TASK-019)
-    tables_active: 133  # Excluyendo deprecated embebidos (+1 nueva alert config)
-    views: 13  # VALIDADO 2026-01-17 Fase2
-    materialized_views: 4  # gamification_system
-    enums: 36  # VALIDADO 2026-01-20 - sin cambios
-    functions_active: 112  # VALIDADO 2026-01-17 Fase2: +1 retry_helper_functions.sql (2 funciones)
-    functions_deprecated: 14  # Reducido tras consolidación
-    functions_total: 126
-    triggers_active: 37  # VALIDADO 2026-01-20 (+2 nuevos triggers)
-    triggers_deprecated: 0  # Eliminados completamente
-    triggers_total: 37
-    indexes_files: 23  # VALIDADO 2026-01-17 Fase2
+    schemas: 16  # VALIDADO 2026-01-27 - DB recreation (13 con tablas + 3 vacios)
+    tables: 141  # DDL files count
+    tables_db_validated: 147  # create-database.sh resumen final 2026-01-27
+    tables_active: 134  # Validacion psql por schema (post-recreacion)
+    views: 13
+    materialized_views: 4
+    enums: 39  # VALIDADO 2026-01-27 - DB recreation resumen
+    functions_active: 232  # VALIDADO 2026-01-27 - DB recreation resumen (incluye shared)
+    functions_deprecated: 0
+    functions_total: 232
+    triggers_active: 109  # VALIDADO 2026-01-27 - DB recreation resumen
+    triggers_deprecated: 0
+    triggers_total: 109
+    indexes_files: 23
     indexes_statements: 405
-    policies_rls: 282  # VALIDADO 2026-01-17 Fase2 - conteo CREATE POLICY statements
-    foreign_keys: 241  # VALIDADO 2026-01-17 Fase2 - FKs activas (252 total, 4 comentadas, 7 deprecated)
+    policies_rls: 282  # CREATE POLICY statements (archivos DDL)
+    foreign_keys: 241
   coherence:
-    ddl_backend: "90.5%"  # 124 entities / 137 tablas DDL
-    backend_frontend: "75%"  # 150 endpoints consumidos / 200 definidos
-    global: "88.5%"  # Ponderado
-    entities_total: 124
-    controllers_total: 84
-    endpoints_total: 691
-    tables_with_entity: 124
-    tables_without_entity: 13  # Intencionales (tracking, M:N, audit)
+    ddl_backend: "100%"  # TASK-022: 137/137 entities mapped
+    backend_frontend: "87.5%"  # 14/16 core modules cubiertos
+    global: "93%"  # Ponderado (mejorado desde 88.5%)
+    entities_total: 137  # TASK-022: 128 + 7 TASK-021 + 2 P1-3
+    controllers_total: 86
+    endpoints_total: 750
+    tables_with_entity: 137
+    tables_without_entity: 4  # Reducido: solo M:N y tracking puro
     tablas_sin_entity_justificadas:
       - "audit_logging.pending_user_initialization - Tracking automático"
       - "audit_logging.activity_log - Auditoría automática"
@@ -58,6 +60,26 @@ metadata:
       - "system_configuration.app_settings - Config de sistema"
     validation_date: "2026-01-17"
     analysis_document: "ANALISIS-INTEGRACION-COMPLETO.md"
+  audit_2026_01_27:
+    description: "TASK-022-MODELADO-INTEGRAL: Auditoria integral + DB recreation validada"
+    task_id: "TASK-022"
+    changes_summary:
+      - "P0-3: CRLF→LF en create-database.sh + .gitattributes"
+      - "P0-1: RLS Phase 2+3 incluidas en Fases 15.7/15.8"
+      - "P1-4: Fix RLS GAP-C06 (exercises_read_active con classroom check)"
+      - "DB recreation: 16 schemas, 147 tablas, 39 ENUMs, 232 funciones, 109 triggers"
+      - "Seeds PROD cargados sin errores (Fase 16 + validacion Fase 17)"
+    db_recreation_result:
+      status: "PASS"
+      schemas: 16
+      tables: 147
+      enums: 39
+      functions: 232
+      triggers: 109
+      seeds: "All PROD loaded"
+      errors: 0
+    validation_date: "2026-01-27"
+
   audit_2026_01_25:
     description: "TASK-019: Tabla teacher_alert_configurations para US-PM-007"
     task_id: "TASK-019"

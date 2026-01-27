@@ -7,8 +7,8 @@
 metadata:
   proyecto: "gamilit"
   nivel: "STANDALONE"
-  version: "1.0.0"
-  ultima_actualizacion: "2026-01-04"
+  version: "1.1.0"
+  ultima_actualizacion: "2026-01-27"
   workspace_root: "/home/isem/workspace-v2"
   project_root: "/home/isem/workspace-v2/projects/gamilit"
 
@@ -236,13 +236,17 @@ info_proyecto:
   stack:
     backend: "NestJS 11.x + TypeORM 0.3.x"
     frontend: "React 19.x + Zustand 5.x + Tailwind CSS 4.x"
-    database: "PostgreSQL 15"
+    database: "PostgreSQL 16"
 
   metricas:
     schemas: 16
-    tablas: 123
-    endpoints: 417
-    rls_policies: 185
+    tablas: 147
+    endpoints: 750
+    rls_policies: 282
+    entities: 137
+    funciones: 232
+    triggers: 109
+    enums: 39
 
   schemas_principales:
     - auth_management

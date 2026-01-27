@@ -1,6 +1,45 @@
 # Trazas de Tareas - Backend
 
-**Última actualización:** 2026-01-27 (TASK-021: Auditoría DDL-Entity)
+**Última actualización:** 2026-01-27 (TASK-022: Modelado Integral - Fixes Backend P1/P2)
+
+---
+
+## TASK-022: Modelado Integral - Fixes Backend P1/P2 ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P0
+**Asignado:** CLAUDE-CODE (claude-opus-4-5-20251101)
+**Fecha:** 2026-01-27
+**Story Points:** 60 SP (tarea maestra)
+**Tarea Padre:** TASK-022-MODELADO-INTEGRAL
+
+### Resumen
+
+Fixes de backend identificados durante auditoria integral del modelado de datos GAMILIT (9 areas). Incluye constantes DB_TABLES, entities faltantes, endpoints, types frontend, y reconciliacion de multiplicador con DB.
+
+### Fixes Ejecutados
+
+| ID | Fix | Commit | Descripcion |
+|----|-----|--------|-------------|
+| P1-1 | 10 entities → DB_TABLES constants | afe238f0 | Actualizar 10 entities con constantes centralizadas |
+| P1-3 | 2 entities faltantes | dfd1ef5b | Crear content_tags y social_interactions entities |
+| P1-5 | 24 endpoints en apiConfig.ts | 04b17062 | Agregar 24 endpoints faltantes a centralized apiConfig |
+| P2-1 | 7 frontend type definitions | ef956e4b | Types para 7 TASK-021 entities + 2 P1-3 entities |
+| P2-3 | Reconciliar multiplier con DB | 4c990dbb | ranks.service.ts lee xp_multiplier de DB (SSOT) |
+
+### Archivos Modificados (P2-3 - ranks.service.ts)
+
+| Archivo | Cambios |
+|---------|---------|
+| `modules/gamification/services/ranks.service.ts` | +MayaRankEntity import, +InjectRepository, +getMultiplierForRank() async |
+
+### Metricas Post-TASK-022
+
+- **Entities:** 137 (135 pre-existentes + 2 P1-3)
+- **Endpoints:** 750+ (726 pre-existentes + 24 P1-5)
+- **Build:** PASS (0 errors)
+- **Lint:** 0 errors, 904 warnings
+- **Coherencia DDL-Backend:** 100%
 
 ---
 

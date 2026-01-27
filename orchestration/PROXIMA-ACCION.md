@@ -3,64 +3,78 @@
 **Ultima Actualizacion:** 2026-01-27
 **Estado del Proyecto:** MVP 75% completado | **orchestration REPLICA_COMPLETA** | **Production Ready (parcial)**
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Tarea Activa:** TASK-022-MODELADO-INTEGRAL (Ejecucion P0/P1/P2)
+**Ultima Tarea Completada:** TASK-022-MODELADO-INTEGRAL (COMPLETADA)
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
 
 ## Estado Actual
 
-### TASK-022-MODELADO-INTEGRAL - Ejecucion (2026-01-27)
+### TASK-022-MODELADO-INTEGRAL - COMPLETADA (2026-01-27)
 
-**Analisis Integral + Ejecucion de Fixes P0/P1/P2 del Modelado de Datos GAMILIT.**
+**Auditoria integral de 9 areas + ejecucion de 10 fixes (3 P0 + 5 P1 + 2 P2).**
+**Ver detalles:** `orchestration/tareas/TASK-022-MODELADO-INTEGRAL/`
 
 #### Fase 1: Auditoria (9 Areas - COMPLETADA)
 
-| Area | Estado | Resultado |
-|------|--------|-----------|
-| A: Commit pendientes TASK-021 | COMPLETADO | 7 entities + docs committed & pushed |
-| B: Auditoria DDL | COMPLETADO | 138 tablas, 89 funciones, 37 triggers, 36 enums |
-| C: Auditoria Seeds | COMPLETADO | 106 dev / 71 prod, 73.8% cobertura config |
-| D: Coherencia Backend-DDL | COMPLETADO | 135 entities auditadas |
-| E: Coherencia Frontend-Backend | COMPLETADO | 87.5% modulos cubiertos |
-| F: Validacion Scripts BD | COMPLETADO | Hallazgos criticos identificados |
-| G: Validacion Builds | COMPLETADO | Backend + Frontend PASS (0 errors) |
-| H: Documentacion | COMPLETADO | Inventarios actualizados con conteos reales |
-| I: Requerimientos MVP faltantes | COMPLETADO | 75% MVP, ~500-600h para 100% |
+| Area | Resultado |
+|------|-----------|
+| A: Commit pendientes TASK-021 | 7 entities + docs committed & pushed |
+| B: Auditoria DDL | 16 schemas, 138 tablas, 89 funciones, 37 triggers, 36 enums |
+| C: Auditoria Seeds | 106 dev / 71 prod, 73.8% cobertura config |
+| D: Coherencia Backend-DDL | 137 entities, 100% coherencia post-fix |
+| E: Coherencia Frontend-Backend | 87.5% modulos cubiertos, 24 type files |
+| F: Validacion Scripts BD | CRLF fix + .gitattributes, RLS phases included |
+| G: Validacion Builds | Backend + Frontend PASS (0 errors) |
+| H: Documentacion | Inventarios actualizados con conteos reales |
+| I: Requerimientos MVP | 75% MVP, 14 epicas catalogadas |
 
-#### Fase 2: Ejecucion de Fixes (P0/P1/P2)
+#### Fase 2: Ejecucion de Fixes (10 total - COMPLETADA)
 
-| Fix | Prioridad | Estado | Commit |
-|-----|-----------|--------|--------|
-| RLS Phase 2+3 en create-database.sh | P0 | RESUELTO | afe238f0 |
-| unified-recreate-db.sh delegacion | P0 | RESUELTO | 59e6b9f9 |
-| 10 entities → DB_TABLES constants | P1 | RESUELTO | afe238f0 |
-| 2 constantes DB_TABLES nuevas | P1 | RESUELTO | afe238f0 |
-| Fix import path @/shared → @shared | P1 | RESUELTO | afe238f0 |
-| 18 orphaned seeds integrados | P1 | RESUELTO | afe238f0 |
-| 7 frontend type definitions | P2 | RESUELTO | ef956e4b |
+| Fix | Prioridad | Commit |
+|-----|-----------|--------|
+| RLS Phase 2+3 en create-database.sh | P0 | afe238f0 |
+| unified-recreate-db.sh delegacion | P0 | 59e6b9f9 |
+| CRLF→LF create-database.sh + .gitattributes | P0 | 94196876 |
+| 10 entities → DB_TABLES constants | P1 | afe238f0 |
+| 18 orphaned seeds integrados | P1 | afe238f0 |
+| 2 entities faltantes (content_tags, social_interactions) | P1 | dfd1ef5b |
+| Fix RLS GAP-C06 (exercise visibility) | P1 | 0185e17a |
+| 24 endpoints en apiConfig.ts | P1 | 04b17062 |
+| 7 frontend type definitions | P2 | ef956e4b |
+| Reconciliar multiplier con DB (ranks.service.ts) | P2 | 4c990dbb |
 
-**Metricas Post-Ejecucion:**
-- Backend: 135/135 entities con DB_TABLES constants (100%)
-- Frontend: 24 type files (+7 nuevos), 7/7 TASK-021 entities con types
-- Seeds: 0 orphaned files (18 integrados en fases existentes)
-- Scripts: create-database.sh con RLS Phases 1+2+3, unified-recreate-db.sh delegando a master scripts
-- Build: Backend PASS (tsc 0 errors), Frontend PASS (0 errors en nuevos files)
+#### Validacion DB Recreation (PASS)
 
-**Commits:**
-- afe238f0 (gamilit): P0-1 + P1-1 + P1-2 fixes
-- 59e6b9f9 (workspace-v2): P0-2 unified-recreate-db.sh fix
-- ef956e4b (gamilit): P2-1 frontend types
+| Metrica | Valor |
+|---------|-------|
+| Schemas | 16 |
+| Tablas | 147 |
+| ENUMs | 39 |
+| Funciones | 232 |
+| Triggers | 109 |
+| Seeds PROD | Cargados (0 errors) |
+| Fases | 0-17 (todas completadas) |
 
-#### Gaps Pendientes
+#### Gaps Pendientes Post-TASK-022
 
 | Gap | Prioridad | Detalle |
 |-----|-----------|---------|
-| 7 tablas DDL sin entity | P1 | content_tags, discussion_threads, etc. |
-| RLS GAP-C06 students exercises | P1 | Students ven todos los ejercicios |
-| ML Coins multiplier por rango | P2 | US-GAM-011 |
-| 7+ endpoints no en apiConfig.ts | P1 | Endpoints nuevos |
+| classroom_modules sin seed DEV | P2 | TESTING |
 | Hooks deficit (2 vs 35+ features) | P3 | Calidad frontend |
+
+---
+
+## PROXIMA ACCION SUGERIDA
+
+### P2 - MVP Completion (Post-TASK-022)
+
+| # | Tarea | Story Points |
+|---|-------|-------------|
+| 1 | Completar 7 paginas Teacher Portal | 21 |
+| 2 | Completar 11 paginas Admin Portal | 33 |
+| 3 | Sistema notificaciones (email, push, real-time) | 21 |
+| 4 | Exercise rewards display (22/26 ejercicios) | 8 |
 
 ---
 

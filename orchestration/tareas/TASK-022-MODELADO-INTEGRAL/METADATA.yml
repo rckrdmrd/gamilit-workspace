@@ -1,0 +1,286 @@
+# METADATA - TASK-022: Modelado Integral - Auditoria y Ejecucion P0/P1/P2
+# Sistema: SIMCO v4.3.0 | NEXUS v4.0
+# Origen: Plan de Modelado Integral GAMILIT
+
+version: "1.0.0"
+task_id: "TASK-022"
+fecha_creacion: "2026-01-27"
+fecha_completado: "2026-01-27"
+estado: "COMPLETED"
+modo: "@FULL"
+
+# Identificacion
+nombre: "Modelado Integral - Auditoria 9 Areas + Ejecucion Fixes P0/P1/P2"
+tipo: "AUDIT_AND_IMPLEMENTATION"
+prioridad: "P0"
+story_points: 60
+origen: "Plan CAPVED - Analisis Integral GAMILIT"
+
+# Descripcion
+descripcion: |
+  Auditoria integral del modelado de datos GAMILIT en 9 areas (A-I),
+  seguida de ejecucion de fixes P0, P1 y P2 identificados.
+
+  Areas Auditadas:
+  A) Commit pendientes TASK-021 (7 entities)
+  B) Auditoria DDL (16 schemas, 138 tablas, 89 funciones, 37 triggers)
+  C) Auditoria Seeds (106 dev, 71 prod, 73.8% cobertura)
+  D) Coherencia Backend-DDL (135 entities, 100% post-fix)
+  E) Coherencia Frontend-Backend (87.5% modulos cubiertos)
+  F) Validacion Scripts BD (create-database.sh, load-dev-seeds.sh)
+  G) Validacion Builds (Backend + Frontend PASS)
+  H) Documentacion (Inventarios actualizados)
+  I) Requerimientos MVP faltantes (75% completado)
+
+  Fixes Ejecutados:
+  - P0-1: RLS Phase 2+3 en create-database.sh
+  - P0-2: unified-recreate-db.sh delegacion a master scripts GAMILIT
+  - P0-3: CRLF→LF en create-database.sh + .gitattributes
+  - P1-1: 10 entities → DB_TABLES constants
+  - P1-2: 18 orphaned seeds integrados en load-dev-seeds.sh
+  - P1-3: 2 entities faltantes (content_tags, social_interactions)
+  - P1-4: Fix RLS GAP-C06 (students veian todos los ejercicios)
+  - P1-5: 24 endpoints faltantes en apiConfig.ts
+  - P2-1: 7 frontend type definitions para TASK-021 entities
+  - P2-3: Reconciliar multiplier hardcoded con DB (ranks.service.ts)
+
+# Subtareas - Fase 1: Auditoria
+subtareas_auditoria:
+  - id: "A"
+    nombre: "Commit pendientes TASK-021"
+    estado: "COMPLETED"
+    resultado: "7 entities + docs committed & pushed"
+
+  - id: "B"
+    nombre: "Auditoria DDL"
+    estado: "COMPLETED"
+    resultado: "138 tablas, 89 funciones, 37 triggers, 36 enums, 23 index files"
+
+  - id: "C"
+    nombre: "Auditoria Seeds"
+    estado: "COMPLETED"
+    resultado: "106 dev, 71 prod, 73.8% cobertura config"
+
+  - id: "D"
+    nombre: "Coherencia Backend-DDL"
+    estado: "COMPLETED"
+    resultado: "135 entities auditadas, 100% post-fix"
+
+  - id: "E"
+    nombre: "Coherencia Frontend-Backend"
+    estado: "COMPLETED"
+    resultado: "87.5% modulos cubiertos, 24 type files"
+
+  - id: "F"
+    nombre: "Validacion Scripts BD"
+    estado: "COMPLETED"
+    resultado: "Hallazgos criticos identificados y resueltos"
+
+  - id: "G"
+    nombre: "Validacion Builds"
+    estado: "COMPLETED"
+    resultado: "Backend PASS (0 errors), Frontend PASS (4205 modules)"
+
+  - id: "H"
+    nombre: "Documentacion y Inventarios"
+    estado: "COMPLETED"
+    resultado: "MASTER/DATABASE/BACKEND/FRONTEND inventarios actualizados"
+
+  - id: "I"
+    nombre: "Requerimientos MVP faltantes"
+    estado: "COMPLETED"
+    resultado: "75% MVP, 14 epicas catalogadas"
+
+# Subtareas - Fase 2: Ejecucion de Fixes
+subtareas_fixes:
+  - id: "P0-1"
+    nombre: "RLS Phase 2+3 en create-database.sh"
+    prioridad: "P0"
+    estado: "COMPLETED"
+    commit: "afe238f0"
+    descripcion: "Incluir 07b/07c RLS en Fases 15.7/15.8 de create-database.sh"
+
+  - id: "P0-2"
+    nombre: "unified-recreate-db.sh delegacion"
+    prioridad: "P0"
+    estado: "COMPLETED"
+    commit: "59e6b9f9"
+    descripcion: "Fix para delegar a master scripts GAMILIT"
+
+  - id: "P0-3"
+    nombre: "CRLF→LF en create-database.sh + .gitattributes"
+    prioridad: "P0"
+    estado: "COMPLETED"
+    commit: "94196876"
+    descripcion: "Fix line endings que impedian ejecucion en WSL"
+
+  - id: "P1-1"
+    nombre: "10 entities → DB_TABLES constants"
+    prioridad: "P1"
+    estado: "COMPLETED"
+    commit: "afe238f0"
+    descripcion: "Actualizar 10 entities con constantes centralizadas"
+
+  - id: "P1-2"
+    nombre: "18 orphaned seeds integrados"
+    prioridad: "P1"
+    estado: "COMPLETED"
+    commit: "afe238f0"
+    descripcion: "Integrar 18 seed files en fases de load-dev-seeds.sh"
+
+  - id: "P1-3"
+    nombre: "2 entities faltantes"
+    prioridad: "P1"
+    estado: "COMPLETED"
+    commit: "dfd1ef5b"
+    descripcion: "Crear content_tags y social_interactions entities + frontend types"
+
+  - id: "P1-4"
+    nombre: "Fix RLS GAP-C06"
+    prioridad: "P1"
+    estado: "COMPLETED"
+    commit: "0185e17a"
+    descripcion: "Students solo ven ejercicios de sus classrooms (no todos)"
+
+  - id: "P1-5"
+    nombre: "24 endpoints en apiConfig.ts"
+    prioridad: "P1"
+    estado: "COMPLETED"
+    commit: "04b17062"
+    descripcion: "Agregar 24 endpoints faltantes a centralized apiConfig"
+
+  - id: "P2-1"
+    nombre: "7 frontend type definitions"
+    prioridad: "P2"
+    estado: "COMPLETED"
+    commit: "ef956e4b"
+    descripcion: "Types para 7 TASK-021 entities + 2 P1-3 entities"
+
+  - id: "P2-3"
+    nombre: "Reconciliar multiplier con DB"
+    prioridad: "P2"
+    estado: "COMPLETED"
+    commit: "4c990dbb"
+    descripcion: "ranks.service.ts ahora lee xp_multiplier de DB (SSOT) en lugar de hardcoded"
+
+# Commits
+commits:
+  gamilit:
+    - hash: "afe238f0"
+      descripcion: "P0-1 + P1-1 + P1-2 fixes"
+    - hash: "ef956e4b"
+      descripcion: "P2-1 frontend types"
+    - hash: "e1dff2ca"
+      descripcion: "Docs update with P0/P1/P2 execution results"
+    - hash: "dfd1ef5b"
+      descripcion: "P1-3 - 2 missing entities + frontend types"
+    - hash: "0185e17a"
+      descripcion: "P1-4 - Fix RLS GAP-C06 exercise visibility"
+    - hash: "04b17062"
+      descripcion: "P1-5 - 24 missing endpoints in apiConfig.ts"
+    - hash: "ad5786d0"
+      descripcion: "Docs - Mark all P0/P1 gaps as RESUELTO"
+    - hash: "94196876"
+      descripcion: "P0-3 - CRLF→LF fix + .gitattributes"
+    - hash: "4c990dbb"
+      descripcion: "P2-3 - Reconcile rank multiplier with DB"
+  workspace_v2:
+    - hash: "59e6b9f9"
+      descripcion: "P0-2 unified-recreate-db.sh fix"
+    - hash: "7a4915b7"
+      descripcion: "Update gamilit submodule (TASK-022 P0/P1/P2 fixes)"
+    - hash: "809d68da"
+      descripcion: "Update gamilit submodule (P1-3, P1-4, P1-5, docs)"
+    - hash: "ba82d168"
+      descripcion: "Update gamilit submodule (CRLF fix + .gitattributes)"
+    - hash: "71100be2"
+      descripcion: "Update gamilit submodule (P2-3 multiplier fix)"
+
+# Metricas Post-Ejecucion
+metricas:
+  ddl:
+    schemas: 16
+    tablas_ddl_files: 138
+    tablas_db_validadas: 147  # Conteo create-database.sh
+    funciones: 232  # Conteo post-recreacion
+    triggers: 109  # Conteo post-recreacion
+    enums: 39  # Conteo post-recreacion
+    rls_policies_files: 33
+  backend:
+    entities: 137
+    services: 121
+    controllers: 65
+    endpoints: "750+"
+    build: "PASS (0 errors)"
+    lint: "0 errors, 904 warnings"
+  frontend:
+    type_files: "24 (+7 TASK-022)"
+    api_services: 36
+    hooks: 104
+    pages: 67
+    components: 398
+    build: "PASS (4205 modules)"
+    lint: "0 errors, 240 warnings"
+  seeds:
+    dev_files: 106
+    prod_files: 71
+    config_coverage: "73.8%"
+    orphaned_files: "0 (18 integrados)"
+  coherencia:
+    ddl_backend: "100%"
+    backend_frontend_modules: "87.5%"
+    frontend_backend_types: "100%"
+    seeds_ddl_config: "73.8%"
+
+# Validacion DB Recreacion
+validacion_db:
+  fecha: "2026-01-27"
+  comando: "unified-recreate-db.sh gamilit --drop"
+  resultado: "PASS - 0 errors"
+  objetos_creados:
+    schemas: 16
+    tablas: 147
+    enums: 39
+    funciones: 232
+    triggers: 109
+  fases_completadas: "0-17 (todas)"
+  seeds_cargados: "PROD + validacion post-seeds"
+
+# Gaps Pendientes Post-TASK-022
+gaps_pendientes:
+  - id: "SEED-DEV-001"
+    descripcion: "classroom_modules sin seed en DEV"
+    prioridad: "P2"
+    estado: "TESTING"
+  - id: "HOOKS-P3-001"
+    descripcion: "Frontend hooks muy bajo (2 hooks para 35+ features)"
+    prioridad: "P3"
+    tipo: "CALIDAD"
+
+# Tareas hijas
+tareas_hijas:
+  - "TASK-021"
+  - "TASK-BD-ANALYSIS-2026-01-27"
+  - "TASK-P1-ORM-RELATIONS-2026-01-27"
+  - "TASK-P1-SEEDS-SOCIAL-2026-01-27"
+  - "TASK-P2-RLS-EXPANSION-2026-01-27"
+  - "TASK-P2-SEEDS-COMODINES-2026-01-27"
+  - "TASK-P2-SEEDS-PEDAGOGY-2026-01-27"
+  - "TASK-P2-SEEDS-COMMUNICATION-2026-01-27"
+  - "TASK-P2-ROLES-CONSOLIDATION-2026-01-27"
+  - "TASK-P3-RLS-PHASE3-2026-01-27"
+
+# Capas afectadas
+capas_afectadas:
+  - "database"
+  - "backend"
+  - "frontend"
+  - "devops"
+  - "orchestration"
+
+# Trazabilidad
+trazabilidad:
+  plan_archivo: "C:\\Users\\cx_ad\\.claude\\plans\\whimsical-crunching-scroll.md"
+  agente: "CLAUDE-CODE"
+  session: "opus-4.5"
+  principio: "CAPVED en cada tarea y subtarea"
