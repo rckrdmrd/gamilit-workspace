@@ -61,15 +61,6 @@ formato_id:
 # ─────────────────────────────────────────────────────────────────────────────────
 
 tareas_activas:
-  - task_id: "TASK-027"
-    titulo: "AdminContentPage - Completar al 100%"
-    tipo: "feature"
-    estado: "pendiente"
-    prioridad: "P1"
-    story_points: 3
-    carpeta: "TASK-027-admin-content-100/"
-    impacto: "Admin 90%→100%"
-
   - task_id: "TASK-028"
     titulo: "Teacher Portal - Completar al 100%"
     tipo: "feature"

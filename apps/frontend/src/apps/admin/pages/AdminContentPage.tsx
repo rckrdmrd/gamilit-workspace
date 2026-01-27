@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -6,12 +6,14 @@ import { DataTable, Column } from '@shared/components/common';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
 import { ExerciseContentRenderer } from '@shared/components/mechanics/ExerciseContentRenderer';
-import { CheckCircle, XCircle, Image, FileText, History, AlertCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Image, FileText, History, AlertCircle, Loader2 } from 'lucide-react';
 import { usePendingExercises } from '../hooks/useContentManagement';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { adminAPI } from '@/services/api/adminAPI';
+import { getExercise } from '@/services/api/educationalAPI';
 import type { PendingExercise } from '../types';
 import type { MediaFile, ApprovalHistory } from '@/services/api/adminTypes';
+import type { Exercise } from '@shared/types/educational.types';
 
 /**
  * AdminContentPage - Gestión y moderación de contenido
@@ -25,6 +27,11 @@ export default function AdminContentPage() {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<PendingExercise | null>(null);
   const [rejectReason, setRejectReason] = useState('');
+
+  // Exercise details for preview (TASK-027)
+  const [exerciseDetails, setExerciseDetails] = useState<Exercise | null>(null);
+  const [loadingExerciseDetails, setLoadingExerciseDetails] = useState(false);
+  const [exerciseDetailsError, setExerciseDetailsError] = useState<string | null>(null);
 
   // Media tab state
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
@@ -102,6 +109,31 @@ export default function AdminContentPage() {
     }
   }, [activeTab]);
 
+  // Fetch exercise details when preview modal opens (TASK-027)
+  const fetchExerciseDetails = useCallback(async (exerciseId: string) => {
+    setLoadingExerciseDetails(true);
+    setExerciseDetailsError(null);
+    setExerciseDetails(null);
+    try {
+      const details = await getExercise(exerciseId);
+      setExerciseDetails(details);
+    } catch (err) {
+      console.error('Failed to fetch exercise details:', err);
+      setExerciseDetailsError(
+        err instanceof Error ? err.message : 'Error al cargar detalles del ejercicio'
+      );
+    } finally {
+      setLoadingExerciseDetails(false);
+    }
+  }, []);
+
+  // Open preview modal and fetch exercise details (TASK-027)
+  const handleOpenPreview = useCallback((exercise: PendingExercise) => {
+    setSelectedExercise(exercise);
+    setIsPreviewModalOpen(true);
+    fetchExerciseDetails(exercise.id);
+  }, [fetchExerciseDetails]);
+
   const handleLogout = () => {
     logout();
     window.location.href = '/login';
@@ -169,8 +201,7 @@ export default function AdminContentPage() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedExercise(row);
-              setIsPreviewModalOpen(true);
+              handleOpenPreview(row);
             }}
             className="rounded-lg bg-blue-500/20 px-3 py-1 text-sm text-blue-500 transition-colors hover:bg-blue-500/30"
           >
@@ -423,6 +454,8 @@ export default function AdminContentPage() {
         onClose={() => {
           setIsPreviewModalOpen(false);
           setSelectedExercise(null);
+          setExerciseDetails(null);
+          setExerciseDetailsError(null);
         }}
         title={`Vista Previa - ${selectedExercise?.title}`}
       >
@@ -436,29 +469,55 @@ export default function AdminContentPage() {
               <p className="mb-2 text-sm text-gray-400">Autor</p>
               <p className="text-detective-text">{selectedExercise.authorName}</p>
             </div>
+            {/* Exercise Description (TASK-027) */}
+            {exerciseDetails?.description && (
+              <div className="rounded-lg bg-detective-bg-secondary p-4">
+                <p className="mb-2 text-sm text-gray-400">Descripción</p>
+                <p className="text-detective-text">{exerciseDetails.description}</p>
+              </div>
+            )}
             <div className="rounded-lg bg-detective-bg-secondary p-4">
               <p className="mb-2 text-sm text-gray-400">Contenido del Ejercicio</p>
-              {selectedExercise.answerData ? (
+              {loadingExerciseDetails ? (
+                <div className="flex items-center justify-center gap-2 py-4">
+                  <Loader2 className="h-5 w-5 animate-spin text-detective-orange" />
+                  <span className="text-detective-text-secondary">Cargando vista previa...</span>
+                </div>
+              ) : exerciseDetailsError ? (
+                <div className="flex items-center gap-2 text-red-400">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>{exerciseDetailsError}</span>
+                </div>
+              ) : exerciseDetails?.content ? (
                 <ExerciseContentRenderer
-                  exerciseType={selectedExercise.type}
-                  answerData={selectedExercise.answerData}
-                  correctAnswer={selectedExercise.correctAnswer}
+                  exerciseType={exerciseDetails.type}
+                  answerData={exerciseDetails.content as Record<string, unknown>}
+                  correctAnswer={exerciseDetails.rubric}
                   showComparison={false}
                 />
               ) : (
                 <div className="flex items-center gap-2 text-detective-text-secondary">
                   <AlertCircle className="h-4 w-4" />
-                  <span>Vista previa no disponible - datos de ejercicio no cargados</span>
+                  <span>Vista previa no disponible - contenido no encontrado</span>
                 </div>
               )}
             </div>
+            {/* Instructions (TASK-027) */}
+            {exerciseDetails?.instructions && (
+              <div className="rounded-lg bg-detective-bg-secondary p-4">
+                <p className="mb-2 text-sm text-gray-400">Instrucciones</p>
+                <p className="text-detective-text text-sm">{exerciseDetails.instructions}</p>
+              </div>
+            )}
             <div className="flex gap-3 pt-4">
               <DetectiveButton
                 variant="primary"
                 onClick={() => {
                   handleApproveExercise(selectedExercise.id);
                   setIsPreviewModalOpen(false);
+                  setExerciseDetails(null);
                 }}
+                disabled={loadingExerciseDetails}
               >
                 <CheckCircle className="h-5 w-5" />
                 Aprobar
@@ -469,6 +528,7 @@ export default function AdminContentPage() {
                   setIsPreviewModalOpen(false);
                   setIsRejectModalOpen(true);
                 }}
+                disabled={loadingExerciseDetails}
               >
                 <XCircle className="h-5 w-5" />
                 Rechazar
