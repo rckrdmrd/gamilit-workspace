@@ -148,6 +148,61 @@ export type {
 } from './studentAssignmentsAPI';
 
 // ============================================================================
+// PROGRESS API (P1-001 - 2026-01-27)
+// ============================================================================
+
+export {
+  progressAPI,
+  certificatesAPI,
+  attemptsAPI,
+  submissionsAPI,
+  default as progressAPIDefault,
+} from './progressAPI';
+export type {
+  Certificate,
+  CertificateStats,
+  ExerciseAttempt,
+  AttemptStats,
+  ExerciseSubmission,
+} from './progressAPI';
+
+// ============================================================================
+// CONTENT API (P1-001 - 2026-01-27)
+// ============================================================================
+
+export {
+  contentAPI,
+  templatesAPI,
+  categoriesAPI,
+  authorsAPI,
+  default as contentAPIDefault,
+} from './contentAPI';
+export type {
+  ContentTemplate,
+  ContentCategory,
+  ContentAuthor,
+  TemplateFilters,
+} from './contentAPI';
+
+// ============================================================================
+// LTI API (P1-001 - 2026-01-27)
+// ============================================================================
+
+export {
+  ltiAPI,
+  consumersAPI,
+  gradePassbacksAPI,
+  sessionsAPI,
+  default as ltiAPIDefault,
+} from './ltiAPI';
+export type {
+  LTIConsumer,
+  LTIConsumerStats,
+  LTIGradePassback,
+  LTISession,
+} from './ltiAPI';
+
+// ============================================================================
 // DEFAULT EXPORT
 // ============================================================================
 

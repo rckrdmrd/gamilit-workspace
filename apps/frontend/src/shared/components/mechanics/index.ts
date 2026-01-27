@@ -23,7 +23,7 @@ export type { ExerciseContainerProps } from './ExerciseContainer';
 
 export { default as ExerciseContentRenderer } from './ExerciseContentRenderer';
 
-export { SubmitExerciseButton } from './SubmitExerciseButton';
-export type { SubmitExerciseButtonProps } from './SubmitExerciseButton';
+// NOTE: SubmitExerciseButton removed (2026-01-27) - ghost export, file never existed
+// Functionality covered by DetectiveButton component
 
 export * from './mechanicsTypes';

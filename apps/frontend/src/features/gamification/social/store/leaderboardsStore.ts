@@ -5,6 +5,21 @@
  * Data is fetched from real backend APIs.
  *
  * @updated 2025-12-29 - Removed mock data from initial state
+ *
+ * @deprecated 2026-01-27 - Use newLeaderboardsStore.ts instead
+ * This store uses type/period model while newLeaderboardsStore uses tab-based model
+ * with materialized views (XP, Coins, Streaks, Global leaderboards).
+ *
+ * Migration guide:
+ * - Replace useLeaderboardsStore with useNewLeaderboardsStore
+ * - Replace selectedType with activeTab ('xp' | 'coins' | 'streaks' | 'global')
+ * - Replace currentLeaderboard.entries with xpLeaderboard/coinsLeaderboard/etc
+ * - Replace userRank with myXpRank/myCoinsRank/myStreaksRank/myGlobalRank
+ *
+ * Consumers to update:
+ * - LeaderboardPage.tsx
+ * - LeaderboardPreview.tsx
+ * - useLeaderboards.ts hook
  */
  
 
