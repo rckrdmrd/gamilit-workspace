@@ -7,7 +7,7 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.10.0"
+version: "1.11.0"
 created: "2026-01-24"
 updated: "2026-01-27"
 proyecto: "gamilit"
@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 34
-  completadas: 34
+  total_tareas: 35
+  completadas: 35
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -68,8 +68,48 @@ tareas_activas: []
 
 historial:
   # ═══════════════════════════════════════════════════════════════════════════════
-  # TAREAS 2026-01-27 - AUDITORÍA INTEGRAL + ANÁLISIS PORTALES
+  # TAREAS 2026-01-27 - AUDITORÍA INTEGRAL + ANÁLISIS + P1 FIXES
   # ═══════════════════════════════════════════════════════════════════════════════
+
+  - task_id: "TASK-025"
+    titulo: "P1 Gaps Fix - Admin and Teacher Portals"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-025-p1-gaps-fix/"
+    story_points: 5
+    capas_afectadas:
+      - "frontend"
+    metricas:
+      archivos_modificados: 5
+      lineas_netas: "+59"
+      builds_validados: "frontend + backend PASS"
+    gaps_resueltos:
+      - gap: "AdminSettingsPage"
+        antes: "40%"
+        despues: "100%"
+      - gap: "AdminContentPage"
+        antes: "75%"
+        despues: "90%"
+      - gap: "TeacherSettingsPage"
+        antes: "60%"
+        despues: "95%"
+      - gap: "TeacherNotificationPreferencesPage"
+        antes: "65%"
+        despues: "95%"
+    impacto:
+      admin_portal: "72% → 78%"
+      teacher_portal: "85% → 92%"
+      mvp_global: "80% → 85%"
+    descripcion: |
+      Resolución de los 4 gaps P1 identificados en TASK-023/024:
+      - AdminSettingsPage: Limpieza código muerto (toggle ya era true)
+      - AdminContentPage: Integración ExerciseContentRenderer
+      - TeacherSettingsPage: Sync form con backend preferences
+      - TeacherNotificationPreferencesPage: Error display + device registration
 
   - task_id: "TASK-024"
     titulo: "Admin Portal Analysis - Estado Real vs Documentado"

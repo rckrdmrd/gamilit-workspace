@@ -1,0 +1,291 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA - TASK-025
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.1.0"
+task_id: "TASK-025"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "P1 Gaps Fix - Admin and Teacher Portals"
+  descripcion: |
+    Resolución de los 4 gaps P1 identificados en TASK-023 y TASK-024:
+
+    1. AdminSettingsPage (40% → 100%): Remover toggle SHOW_CONTENT muerto
+    2. AdminContentPage (75% → 90%): Integrar ExerciseContentRenderer
+    3. TeacherSettingsPage (60% → 95%): Sincronizar form con backend preferences
+    4. TeacherNotificationPreferencesPage (65% → 95%): Error display + device registration
+
+    El análisis previo reveló que estos gaps eran menores de lo esperado.
+    La mayoría del código ya existía, solo faltaban integraciones.
+  tipo: "bugfix"
+  prioridad: "P1"
+  tags:
+    - "admin-portal"
+    - "teacher-portal"
+    - "p1-gaps"
+    - "quick-wins"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "opus-4.5"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "frontend"
+  capas_afectadas:
+    - "frontend"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: "2026-01-27 13:00"
+  fecha_fin: "2026-01-27 14:00"
+  duracion_estimada: "2h"
+  duracion_real: "1h"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-27 13:00"
+
+  analisis:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-27 13:10"
+    notas: |
+      Subagente Explore analizó los 4 gaps en detalle.
+      Hallazgo: Los gaps eran menores de lo esperado (~90% código existía).
+
+  plan:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-27 13:15"
+
+  validacion:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-27 13:20"
+
+  ejecucion:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-27 13:50"
+
+  documentacion:
+    estado: "completada"
+    archivo: "METADATA.yml"
+    completado_en: "2026-01-27 14:00"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CAMBIOS REALIZADOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+cambios_por_gap:
+  gap_1_admin_settings:
+    archivo: "apps/frontend/src/apps/admin/pages/AdminSettingsPage.tsx"
+    antes: "40%"
+    despues: "100%"
+    cambios:
+      - "Removido import de UnderConstruction"
+      - "Removido const SHOW_CONTENT = true"
+      - "Removido conditional wrapper {SHOW_CONTENT ? ... : UnderConstruction}"
+      - "Código ya estaba completo, solo limpieza"
+
+  gap_2_admin_content:
+    archivo: "apps/frontend/src/apps/admin/pages/AdminContentPage.tsx"
+    antes: "75%"
+    despues: "90%"
+    cambios:
+      - "Importado ExerciseContentRenderer"
+      - "Importado AlertCircle icon"
+      - "Reemplazado placeholder hardcoded con componente real"
+      - "Agregado fallback cuando answerData no está disponible"
+    tipo_extra: "apps/frontend/src/apps/admin/types/index.ts"
+    cambios_tipo:
+      - "Agregado answerData?: Record<string, unknown>"
+      - "Agregado correctAnswer?: Record<string, unknown>"
+
+  gap_3_teacher_settings:
+    archivo: "apps/frontend/src/apps/teacher/pages/TeacherSettingsPage.tsx"
+    antes: "60%"
+    despues: "95%"
+    cambios:
+      - "Agregado useEffect para sincronizar form con backendPreferences"
+      - "Sync teaching, notifications, privacy desde backend"
+
+  gap_4_teacher_notifications:
+    archivo: "apps/frontend/src/apps/teacher/pages/TeacherNotificationPreferencesPage.tsx"
+    antes: "65%"
+    despues: "95%"
+    cambios:
+      - "Agregado error: storeError al destructuring del store"
+      - "Agregado isRegistering: pushRegistering al hook"
+      - "Agregado sección de error display"
+      - "Cambiado devices section para mostrar siempre"
+      - "Agregado botón 'Registrar este dispositivo'"
+      - "Agregado mensaje cuando no hay dispositivos"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARTEFACTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+artefactos:
+  archivos_creados: []
+
+  archivos_modificados:
+    - ruta: "apps/frontend/src/apps/admin/pages/AdminSettingsPage.tsx"
+      cambio: "Limpieza de código muerto (SHOW_CONTENT toggle)"
+      lineas_eliminadas: 12
+
+    - ruta: "apps/frontend/src/apps/admin/pages/AdminContentPage.tsx"
+      cambio: "Integración ExerciseContentRenderer para preview"
+      lineas_agregadas: 15
+
+    - ruta: "apps/frontend/src/apps/admin/types/index.ts"
+      cambio: "Agregados campos answerData y correctAnswer a PendingExercise"
+      lineas_agregadas: 4
+
+    - ruta: "apps/frontend/src/apps/teacher/pages/TeacherSettingsPage.tsx"
+      cambio: "useEffect para sincronizar form con backend preferences"
+      lineas_agregadas: 18
+
+    - ruta: "apps/frontend/src/apps/teacher/pages/TeacherNotificationPreferencesPage.tsx"
+      cambio: "Error display, botón registro dispositivo, mejoras UX"
+      lineas_agregadas: 35
+
+  archivos_eliminados: []
+
+  commits:
+    - hash: "86e2dcd9"
+      mensaje: "fix(frontend): TASK-025 resolve P1 gaps in Admin and Teacher portals"
+      fecha: "2026-01-27"
+      repo: "gamilit"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas:
+    - "TASK-023"  # Teacher Portal quick wins
+    - "TASK-024"  # Admin Portal analysis
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "pasa"
+    output: "Frontend: 20.98s | Backend: tsc OK"
+  lint:
+    estado: "pasa"
+    errores: 0
+    warnings: 0
+  tests:
+    estado: "na"
+    passed: 0
+    failed: 0
+  typecheck:
+    estado: "pasa"
+    errores: 0
+  documentacion_completa: true
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  documentos_consultados:
+    - "TASK-023 findings"
+    - "TASK-024 findings"
+    - "ExerciseContentRenderer component"
+    - "usePushNotifications hook"
+
+  directivas_aplicadas:
+    - "@QUICK"
+    - "@VALIDAR"
+
+  epica: null
+  user_story: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IMPACTO EN COMPLETITUD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+impacto_completitud:
+  admin_portal:
+    antes: "72%"
+    despues: "~78%"
+    mejora: "+6%"
+
+  teacher_portal:
+    antes: "~85%"
+    despues: "~92%"
+    mejora: "+7%"
+
+  mvp_global:
+    antes: "~80%"
+    despues: "~85%"
+    mejora: "+5%"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS Y LECCIONES APRENDIDAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  El análisis detallado antes de implementar reveló que los gaps eran
+  significativamente menores de lo estimado inicialmente:
+  - AdminSettingsPage: El código ya estaba completo, solo faltaba limpieza
+  - AdminContentPage: ExerciseContentRenderer ya existía, solo faltaba integrarlo
+  - TeacherSettingsPage: useUserPreferences ya estaba importado, faltaba el useEffect
+  - TeacherNotificationPreferencesPage: Casi todo existía, faltaba UX polish
+
+  Esto confirma el patrón de TASK-023/024: el proyecto está más avanzado
+  de lo que la documentación sugería.
+
+lecciones_aprendidas:
+  - "Siempre analizar código existente antes de estimar trabajo"
+  - "Los 'gaps' pueden ser solo integraciones faltantes, no código nuevo"
+  - "La limpieza de código muerto (feature flags hardcoded) es válida"
+  - "ExerciseContentRenderer es un componente reutilizable clave"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════

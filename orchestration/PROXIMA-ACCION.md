@@ -1,14 +1,41 @@
 # PROXIMA ACCION - GAMILIT
 
 **Ultima Actualizacion:** 2026-01-27
-**Estado del Proyecto:** MVP 80% completado | **orchestration REPLICA_COMPLETA** | **Production Ready (parcial)**
+**Estado del Proyecto:** MVP 85% completado | **orchestration REPLICA_COMPLETA** | **Production Ready (parcial)**
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Ultima Tarea Completada:** TASK-024-admin-portal-analysis (COMPLETADA)
+**Ultima Tarea Completada:** TASK-025-p1-gaps-fix (COMPLETADA)
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
 
 ## Estado Actual
+
+### TASK-025-p1-gaps-fix - COMPLETADA (2026-01-27)
+
+**Resolución de 4 gaps P1 en Admin y Teacher Portals.**
+**Ver detalles:** `orchestration/tareas/TASK-025-p1-gaps-fix/`
+
+#### Gaps Resueltos
+
+| Página | Antes | Después | Cambio Principal |
+|--------|-------|---------|------------------|
+| AdminSettingsPage | 40% | 100% | Limpieza código muerto |
+| AdminContentPage | 75% | 90% | ExerciseContentRenderer |
+| TeacherSettingsPage | 60% | 95% | Sync con backend prefs |
+| TeacherNotificationPreferencesPage | 65% | 95% | Error display + register |
+
+#### Impacto en Completitud
+
+| Portal | Antes | Después |
+|--------|-------|---------|
+| Admin | 72% | **~78%** |
+| Teacher | ~85% | **~92%** |
+| **MVP Global** | ~80% | **~85%** |
+
+**Commit:** 86e2dcd9 (gamilit)
+**Builds:** Frontend 20.98s ✓ | Backend tsc ✓
+
+---
 
 ### TASK-024-admin-portal-analysis - COMPLETADA (2026-01-27)
 
@@ -143,30 +170,34 @@
 
 ## PROXIMA ACCION SUGERIDA
 
-### P2 - MVP Completion (Post-TASK-024)
+### P2 - MVP Completion (Post-TASK-025)
 
-**NOTA:** Los análisis TASK-023 y TASK-024 revelaron que ambos portales están
-significativamente más avanzados de lo documentado previamente.
+**NOTA:** TASK-025 completó los 4 gaps P1. Quedan 3 gaps P2 pendientes.
 
-#### Resumen Estado Real Portales
+#### Resumen Estado Real Portales (Actualizado)
 
-| Portal | Documentado | Real | Páginas Funcionales |
-|--------|-------------|------|---------------------|
-| Teacher | ~60% | **~85-90%** | 17/19 |
-| Admin | ~60% | **~72%** | 14/18 |
+| Portal | Post-Análisis | Post-TASK-025 | Páginas Funcionales |
+|--------|---------------|---------------|---------------------|
+| Teacher | ~85-90% | **~92%** | 18/19 |
+| Admin | ~72% | **~78%** | 16/18 |
 
-#### Gaps Prioritarios Identificados
+#### Gaps P1 Completados (TASK-025)
+
+| # | Tarea | Estado |
+|---|-------|--------|
+| ~~1~~ | ~~Implementar preview ejercicios AdminContentPage~~ | ✅ COMPLETADO |
+| ~~2~~ | ~~Completar AdminSettingsPage~~ | ✅ COMPLETADO |
+| ~~3~~ | ~~Completar TeacherSettingsPage~~ | ✅ COMPLETADO |
+| ~~4~~ | ~~Completar TeacherNotificationPreferencesPage~~ | ✅ COMPLETADO |
+
+#### Gaps P2 Pendientes (13 SP)
 
 | # | Tarea | Portal | SP | Prioridad |
 |---|-------|--------|-----|-----------|
-| 1 | Implementar preview ejercicios AdminContentPage | Admin | 5 | P1 |
-| 2 | Completar AdminSettingsPage | Admin | 3 | P1 |
-| 3 | Completar TeacherSettingsPage | Teacher | 3 | P1 |
-| 4 | Completar TeacherNotificationPreferencesPage | Teacher | 3 | P1 |
-| 5 | Verificar AdminClassroomTeacherPage | Admin | 2 | P2 |
-| 6 | Completar AdminAdvancedPage | Admin | 8 | P2 |
-| 7 | Completar TeacherProgressPage | Teacher | 3 | P2 |
-| **Total** | | | **27** | |
+| 1 | Verificar AdminClassroomTeacherPage | Admin | 2 | P2 |
+| 2 | Completar AdminAdvancedPage (TenantMgmt, EconomicTools) | Admin | 8 | P2 |
+| 3 | Completar TeacherProgressPage | Teacher | 3 | P2 |
+| **Total** | | | **13** | |
 
 #### Estado Real Teacher Portal (TASK-023)
 
