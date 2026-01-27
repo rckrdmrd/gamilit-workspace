@@ -3,7 +3,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Index,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Profile } from '../../auth/entities/profile.entity';
+import { Exercise } from '../../educational/entities/exercise.entity';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 
 /**
@@ -45,10 +49,26 @@ export class ExerciseAttempt {
     user_id!: string;
 
   /**
+   * Relación ManyToOne con Profile
+   * El intento pertenece a un usuario
+   */
+  @ManyToOne(() => Profile)
+  @JoinColumn({ name: 'user_id' })
+    user!: Profile;
+
+  /**
    * ID del ejercicio (FK → educational_content.exercises)
    */
   @Column({ type: 'uuid' })
     exercise_id!: string;
+
+  /**
+   * Relación ManyToOne con Exercise
+   * El intento es sobre un ejercicio específico
+   */
+  @ManyToOne(() => Exercise)
+  @JoinColumn({ name: 'exercise_id' })
+    exercise!: Exercise;
 
   /**
    * Número de intento (1, 2, 3, ...)

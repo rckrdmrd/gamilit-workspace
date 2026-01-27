@@ -5,7 +5,8 @@
 version: "1.0.0"
 task_id: "TASK-P1-ORM-RELATIONS-2026-01-27"
 fecha_creacion: "2026-01-27"
-estado: "PENDING"
+fecha_completado: "2026-01-27"
+estado: "COMPLETED"
 modo: "@FULL"
 
 # Identificacion
@@ -51,7 +52,7 @@ subtareas:
     archivo: "apps/backend/src/modules/educational/entities/exercise.entity.ts"
     archivo_relacionado: "apps/backend/src/modules/educational/entities/module.entity.ts"
     linea_aproximada: 55
-    estado: "PENDING"
+    estado: "COMPLETED"
     sp: 2
     impacto: "Habilita eager loading de Module desde Exercise"
 
@@ -72,7 +73,7 @@ subtareas:
       Nota: createForeignKeyConstraint: false evita conflicto con FK existente
     archivo: "apps/backend/src/modules/gamification/entities/user-stats.entity.ts"
     linea_aproximada: 48
-    estado: "PENDING"
+    estado: "COMPLETED"
     sp: 2
     impacto: "Habilita carga de Profile desde UserStats"
 
@@ -96,7 +97,7 @@ subtareas:
       module: Module;
       ```
     archivo: "apps/backend/src/modules/progress/entities/module-progress.entity.ts"
-    estado: "PENDING"
+    estado: "COMPLETED"
     sp: 2
     impacto: "Dashboard puede cargar progreso con modulo y usuario relacionados"
 
@@ -114,7 +115,7 @@ subtareas:
       exercise: Exercise;
       ```
     archivo: "apps/backend/src/modules/progress/entities/exercise-attempt.entity.ts"
-    estado: "PENDING"
+    estado: "COMPLETED"
     sp: 1
     impacto: "Historial de intentos puede eager load ejercicio"
 
@@ -126,7 +127,7 @@ subtareas:
       2. npm run lint
       3. npm run test (si hay tests)
       4. Verificar endpoints afectados manualmente
-    estado: "PENDING"
+    estado: "COMPLETED"
     sp: 1
 
 # Archivos a modificar

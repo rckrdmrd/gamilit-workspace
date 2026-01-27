@@ -5,7 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Module } from './module.entity';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 import {
   DifficultyLevelEnum,
@@ -54,6 +57,14 @@ export class Exercise {
    */
   @Column({ type: 'uuid' })
     module_id!: string;
+
+  /**
+   * Relación ManyToOne con Module
+   * Un ejercicio pertenece a un módulo
+   */
+  @ManyToOne(() => Module, (module) => module.exercises, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'module_id' })
+    module!: Module;
 
   // =====================================================
   // BASIC INFORMATION

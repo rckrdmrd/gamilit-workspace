@@ -5,7 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Profile } from '../../auth/entities/profile.entity';
+import { Module } from '../../educational/entities/module.entity';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 import { ProgressStatusEnum } from '@shared/constants/enums.constants';
 
@@ -49,10 +53,26 @@ export class ModuleProgress {
     user_id!: string;
 
   /**
+   * Relación ManyToOne con Profile
+   * El progreso pertenece a un usuario/profile
+   */
+  @ManyToOne(() => Profile)
+  @JoinColumn({ name: 'user_id' })
+    user!: Profile;
+
+  /**
    * ID del módulo educativo (FK → educational_content.modules)
    */
   @Column({ type: 'uuid' })
     module_id!: string;
+
+  /**
+   * Relación ManyToOne con Module
+   * El progreso es sobre un módulo específico
+   */
+  @ManyToOne(() => Module)
+  @JoinColumn({ name: 'module_id' })
+    module!: Module;
 
   // =====================================================
   // PROGRESS TRACKING

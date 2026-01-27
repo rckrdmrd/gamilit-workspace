@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
+import { Exercise } from './exercise.entity';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 import {
   DifficultyLevelEnum,
@@ -379,4 +381,15 @@ export class Module {
    */
   @Column({ type: 'integer', default: 0 })
     total_exercises!: number;
+
+  // =====================================================
+  // RELATIONS
+  // =====================================================
+
+  /**
+   * Relación OneToMany con Exercise
+   * Un módulo tiene múltiples ejercicios
+   */
+  @OneToMany(() => Exercise, (exercise) => exercise.module)
+    exercises!: Exercise[];
 }

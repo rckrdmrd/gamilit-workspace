@@ -5,7 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Profile } from '../../auth/entities/profile.entity';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 // CORR-P1-006: Import MayaRank para alinear tipo con DDL
 import { MayaRank } from '@shared/constants/enums.constants';
@@ -47,6 +50,14 @@ export class UserStats {
    */
   @Column({ type: 'uuid', unique: true })
     user_id!: string;
+
+  /**
+   * Relación OneToOne con Profile
+   * Cada UserStats pertenece a un único Profile
+   */
+  @OneToOne(() => Profile)
+  @JoinColumn({ name: 'user_id' })
+    profile!: Profile;
 
   /**
    * ID del tenant (FK → auth_management.tenants)
