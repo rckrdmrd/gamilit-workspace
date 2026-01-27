@@ -7,7 +7,7 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.8.0"
+version: "1.9.0"
 created: "2026-01-24"
 updated: "2026-01-27"
 proyecto: "gamilit"
@@ -18,8 +18,8 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 32
-  completadas: 32
+  total_tareas: 33
+  completadas: 33
   en_progreso: 0
   pendientes: 0
   canceladas: 0
@@ -68,8 +68,37 @@ tareas_activas: []
 
 historial:
   # ═══════════════════════════════════════════════════════════════════════════════
-  # TAREAS 2026-01-27 - AUDITORÍA INTEGRAL
+  # TAREAS 2026-01-27 - AUDITORÍA INTEGRAL + QUICK WINS
   # ═══════════════════════════════════════════════════════════════════════════════
+
+  - task_id: "TASK-023"
+    titulo: "Teacher Portal Quick Wins - WebSocket + Password Endpoint Fix"
+    tipo: "bugfix"
+    estado: "completada"
+    fecha_inicio: "2026-01-27"
+    fecha_fin: "2026-01-27"
+    agente: "CLAUDE-CODE"
+    session: "opus-4.5"
+    carpeta: "TASK-023-teacher-portal-quick-wins/"
+    story_points: 3
+    capas_afectadas:
+      - "frontend"
+    metricas:
+      archivos_modificados: 2
+      lineas_agregadas: 42
+      commits_gamilit: 1
+      commits_workspace: 1
+      builds_validados: "frontend + backend PASS"
+    hallazgos:
+      - "Teacher Portal real: ~85-90% (no ~60% documentado)"
+      - "RubricEvaluator y ExerciseContentRenderer ya existen"
+      - "profileAPI usaba endpoint password incorrecto"
+    descripcion: |
+      Quick wins identificados durante análisis profundo del Teacher Portal:
+      - Fase 1.2: Integración WebSocket en TeacherCommunicationPage (indicador visual + auto-refresh)
+      - Fase 2.3: Fix profileAPI.updatePassword → /auth/change-password (endpoint existente)
+      Hallazgo: Estado real del portal significativamente mejor que documentado.
+      Componentes reportados como faltantes ya existen en shared/components/.
 
   - task_id: "TASK-022"
     titulo: "Modelado Integral - Auditoria 9 Areas + Ejecucion Fixes P0/P1/P2"

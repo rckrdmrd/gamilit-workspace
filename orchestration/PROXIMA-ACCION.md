@@ -1,14 +1,40 @@
 # PROXIMA ACCION - GAMILIT
 
 **Ultima Actualizacion:** 2026-01-27
-**Estado del Proyecto:** MVP 75% completado | **orchestration REPLICA_COMPLETA** | **Production Ready (parcial)**
+**Estado del Proyecto:** MVP 80% completado | **orchestration REPLICA_COMPLETA** | **Production Ready (parcial)**
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Ultima Tarea Completada:** TASK-022-MODELADO-INTEGRAL (COMPLETADA)
+**Ultima Tarea Completada:** TASK-023-teacher-portal-quick-wins (COMPLETADA)
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
 
 ## Estado Actual
+
+### TASK-023-teacher-portal-quick-wins - COMPLETADA (2026-01-27)
+
+**Quick wins para Teacher Portal + corrección de estado documentado.**
+**Ver detalles:** `orchestration/tareas/TASK-023-teacher-portal-quick-wins/`
+
+#### Cambios Realizados
+
+| Archivo | Cambio |
+|---------|--------|
+| TeacherCommunicationPage.tsx | WebSocket integration (indicador visual + auto-refresh) |
+| profileAPI.ts | Fix updatePassword → /auth/change-password |
+
+#### Hallazgo Importante: Estado Real vs Documentado
+
+| Componente | Estado Documentado | Estado Real |
+|------------|-------------------|-------------|
+| Teacher Portal | ~60% | ~85-90% |
+| RubricEvaluator | "Faltante" | EXISTE (354 líneas) |
+| ExerciseContentRenderer | "Faltante" | EXISTE (1761 líneas) |
+| TeacherContentPage | "30%" | ~90% (flag ya correcto) |
+| TeacherCommunicationPage | "60%" | ~95% (solo faltaba WebSocket) |
+
+**Commits:** eaf20c5d (gamilit), 05d176a0 (workspace-v2)
+
+---
 
 ### TASK-022-MODELADO-INTEGRAL - COMPLETADA (2026-01-27)
 
@@ -67,14 +93,28 @@
 
 ## PROXIMA ACCION SUGERIDA
 
-### P2 - MVP Completion (Post-TASK-022)
+### P2 - MVP Completion (Post-TASK-023)
 
-| # | Tarea | Story Points |
-|---|-------|-------------|
-| 1 | Completar 7 paginas Teacher Portal | 21 |
-| 2 | Completar 11 paginas Admin Portal | 33 |
-| 3 | Sistema notificaciones (email, push, real-time) | 21 |
-| 4 | Exercise rewards display (22/26 ejercicios) | 8 |
+**NOTA:** El análisis profundo de TASK-023 reveló que el Teacher Portal está
+significativamente más avanzado de lo documentado (~85-90% vs ~60%).
+
+| # | Tarea | Story Points | Notas |
+|---|-------|-------------|-------|
+| 1 | Completar páginas Teacher restantes | 8 | Solo ajustes menores (Settings, NotificationPreferences) |
+| 2 | Admin Portal validation | 13 | Estado real desconocido - requiere análisis similar |
+| 3 | Sistema notificaciones (email, push, real-time) | 21 | WebSocket ya integrado en Communication |
+| 4 | Exercise rewards display (22/26 ejercicios) | 8 | |
+
+**Estado Real Teacher Portal (validado TASK-023):**
+- TeacherDashboardPage: 100%
+- TeacherStudentsPage: 100%
+- TeacherContentPage: ~90%
+- TeacherCommunicationPage: ~95% (WebSocket agregado)
+- TeacherReportsPage: 100%
+- TeacherAlertsPage: 100%
+- TeacherProgressPage: ~75%
+- TeacherSettingsPage: ~60% (password fix aplicado)
+- TeacherNotificationPreferencesPage: ~65%
 
 ---
 
