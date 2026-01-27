@@ -121,6 +121,8 @@
 | ~~Frontend~~ | ~~7 entities TASK-021 sin types frontend~~ | ~~P2~~ | RESUELTO (ef956e4b) |
 | ~~Frontend~~ | ~~24 endpoints no en apiConfig.ts~~ | ~~P1~~ | RESUELTO (04b17062) |
 | ~~Seeds~~ | ~~18+ archivos orphaned (no en load-dev-seeds.sh)~~ | ~~P1~~ | RESUELTO (afe238f0) |
+| ~~Backend~~ | ~~ranks.service.ts multiplier hardcoded diverge de DB (1.0-2.0 vs 1.00-1.25)~~ | ~~P2~~ | RESUELTO (TASK-022 P2-3) |
+| ~~Scripts~~ | ~~create-database.sh CRLF line endings (fallo en WSL)~~ | ~~P0~~ | RESUELTO (94196876) |
 | Seeds | classroom_modules sin seed en DEV | P2 | TESTING |
 | Frontend | Hooks muy bajo (2 hooks para 35+ features) | P3 | CALIDAD |
 
@@ -130,6 +132,8 @@
 |--------|--------|----------|
 | create-database.sh | BUENO | 17 fases, dependencias cross-schema correctas |
 | create-database.sh | RESUELTO | 07b/07c RLS incluidas en Fases 15.7/15.8 |
+| create-database.sh | RESUELTO | CRLF→LF fix + .gitattributes (94196876) |
+| unified-recreate-db.sh | VALIDADO | DB recreation 0 errors (16 schemas, 147 tablas, 39 ENUMs, 232 funciones, 109 triggers) |
 | load-dev-seeds.sh | RESUELTO | 18 archivos orphaned integrados en fases existentes |
 | unified-recreate-db.sh | RESUELTO | Delega a master scripts (create-database.sh / load-dev-seeds.sh) |
 
@@ -171,7 +175,7 @@
 8. ~~Agregar 24 endpoints faltantes a apiConfig.ts~~ RESUELTO (04b17062)
 
 ### P2 - MVP Completion
-8. Agregar ML Coins multiplier por rango (US-GAM-011)
+8. ~~Agregar ML Coins multiplier por rango (US-GAM-011)~~ RESUELTO - ranks.service.ts now reads from DB (SSOT)
 9. Completar 7 paginas pendientes Teacher Portal
 10. Completar 11 paginas pendientes Admin Portal
 11. Completar sistema de notificaciones (email, push, real-time)

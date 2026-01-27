@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserRank } from '../entities';
+import { UserRank, MayaRankEntity } from '../entities';
 import { UserStatsService } from './user-stats.service';
 import { MLCoinsService } from './ml-coins.service';
 import { CreateUserRankDto, UpdateUserRankDto } from '../dto/user-ranks';
@@ -119,6 +119,8 @@ export class RanksService {
   constructor(
     @InjectRepository(UserRank, 'gamification')
     private readonly userRankRepo: Repository<UserRank>,
+    @InjectRepository(MayaRankEntity, 'gamification')
+    private readonly mayaRanksRepo: Repository<MayaRankEntity>,
     private readonly userStatsService: UserStatsService,
     private readonly mlCoinsService: MLCoinsService,
   ) {}
@@ -525,8 +527,8 @@ export class RanksService {
     // Get rank config for multiplier
     const rankConfig = this.getRankConfig(userStats.current_rank as MayaRank);
 
-    // Calculate multiplier (base from rank + potential streak bonus)
-    const baseMultiplier = this.calculateMultiplierForRank(userStats.current_rank as MayaRank);
+    // Calculate multiplier (base from DB rank config + potential streak bonus)
+    const baseMultiplier = await this.getMultiplierForRank(userStats.current_rank as MayaRank);
     const streakBonus = this.calculateStreakBonus(userStats.current_streak);
     const totalMultiplier = Number((baseMultiplier + streakBonus).toFixed(2));
 
@@ -552,17 +554,17 @@ export class RanksService {
   }
 
   /**
-   * Calculate base multiplier for a rank
+   * Get base multiplier for a rank from the database (SSOT)
+   *
+   * FIX TASK-022 P2-3: Previously hardcoded with values divergent from DB.
+   * Now reads xp_multiplier from gamification_system.maya_ranks table.
+   * DB values (v2.1): Ajaw=1.00, Nacom=1.10, Ah K'in=1.15, Halach Uinic=1.20, K'uk'ulkan=1.25
    */
-  private calculateMultiplierForRank(rank: MayaRank): number {
-    const multipliers: Record<MayaRank, number> = {
-      [MayaRank.AJAW]: 1.0,
-      [MayaRank.NACOM]: 1.1,
-      [MayaRank.AH_KIN]: 1.25,
-      [MayaRank.HALACH_UINIC]: 1.5,
-      [MayaRank.KUKULKAN]: 2.0,
-    };
-    return multipliers[rank] ?? 1.0;
+  private async getMultiplierForRank(rank: MayaRank): Promise<number> {
+    const mayaRank = await this.mayaRanksRepo.findOne({
+      where: { rank_name: rank },
+    });
+    return mayaRank?.xp_multiplier || 1.0;
   }
 
   /**
@@ -593,7 +595,7 @@ export class RanksService {
     const rank = userStats.current_rank as MayaRank;
     const rankConfig = this.getRankConfig(rank);
 
-    const rankMultiplier = this.calculateMultiplierForRank(rank);
+    const rankMultiplier = await this.getMultiplierForRank(rank);
     const streakBonus = this.calculateStreakBonus(userStats.current_streak);
 
     return {
