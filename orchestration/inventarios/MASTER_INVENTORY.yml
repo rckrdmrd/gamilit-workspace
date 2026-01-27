@@ -2,11 +2,11 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "4.8.0"
+version: "4.9.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
 fecha_actualizacion: "2026-01-27"
-actualizado_por: "TASK-2026-01-27-AUDITORIA-DOC-GAMILIT - Reconciliación integral"
-last_update_task: "TASK-2026-01-27-AUDITORIA"
+actualizado_por: "TASK-022-MODELADO-INTEGRAL - Auditoria integral DDL/Backend/Seeds"
+last_update_task: "TASK-022-MODELADO-INTEGRAL"
 
 # =============================================================================
 # RESUMEN EJECUTIVO
@@ -16,38 +16,41 @@ resumen:
   estado_general: "OPERATIVO"
 
   database:
-    schemas: 16
-    tables: 140  # TASK-001: +1 two_factor_tokens (140 total)
+    schemas: 16  # 13 active + 3 empty (gamilit, public, storage)
+    schemas_active: 13
+    tables: 138  # TASK-022 AUDITORIA 2026-01-27 - conteo real DDL /tables/
     views: 17
     materialized_views: 11
-    enums: 38  # RECONCILIADO 2026-01-16 (42 - 4 deprecated)
-    functions_active: 109  # RECONCILIADO 2026-01-16 - conteo real /functions/
-    functions_deprecated: 41
-    functions_total: 150
-    triggers_active: 35  # RECONCILIADO 2026-01-16 - conteo real /triggers/
-    triggers_deprecated: 77
-    triggers_total: 112
-    policies_rls: 157  # RECONCILIADO 2026-01-16 - CREATE POLICY statements reales
-    foreign_keys: 208
-    seed_files: 251  # 94 DEV + 101 PROD + 56 STAGING (ACTUALIZADO TASK-2026-01-16-005)
-    ddl_files: 397
-    indexes_statements: 405  # RECONCILIADO 2026-01-16
+    enums: 36  # TASK-022 AUDITORIA 2026-01-27 - conteo real /enums/
+    functions_active: 89  # TASK-022 AUDITORIA 2026-01-27 - conteo real /functions/
+    triggers_active: 37  # TASK-022 AUDITORIA 2026-01-27 - conteo real /triggers/
+    policies_rls: 33  # TASK-022 AUDITORIA 2026-01-27 - conteo real /rls-policies/ files
+    indexes_files: 23  # TASK-022 AUDITORIA 2026-01-27 - conteo real /indexes/ files
+    ddl_objects_total: 356  # tables + functions + triggers + rls + enums + indexes
+    seed_files_dev: 106  # TASK-022 AUDITORIA 2026-01-27
+    seed_files_prod: 71  # TASK-022 AUDITORIA 2026-01-27
+    seed_coverage_config_tables: "73.8%"  # 62/84 config/lookup tables
+    seed_gaps_critical: 8  # System-breaking missing seeds
+    seed_gaps_high: 8  # Feature-degrading missing seeds
+    seed_orphaned_files: 13  # Files exist but not in load script
     status: "Clean creation compliant"
-    last_verified: "2026-01-16"
+    last_verified: "2026-01-27"
     source: "DATABASE_INVENTORY.yml"
-    nuevas_tablas: "docs/database/TABLAS-NUEVAS-2025-12.md"
-    triggers_inventory: "docs/database/TRIGGERS-INVENTORY.md"
 
   backend:
     modules: 18  # AUDITORIA 2026-01-27: conteo real src/modules/
-    entities: 128  # AUDITORIA 2026-01-27: conteo real *.entity.ts
+    entities: 135  # TASK-022 AUDITORIA 2026-01-27: 128 + 7 nuevas TASK-021
     dtos: 366  # AUDITORIA 2026-01-27: conteo real *.dto.ts
     services: 121  # AUDITORIA 2026-01-27: conteo real *.service.ts
     controllers: 86  # AUDITORIA 2026-01-27: conteo real *.controller.ts
     endpoints: 750  # AUDITORIA 2026-01-27: conteo decoradores HTTP
     build_status: "Builds successfully"
-    coherencia_bd: "99%"  # RECONCILIADO 2026-01-16 (124 entities / 137 tables)
-    last_verified: "2026-01-24"
+    lint_status: "0 errors, 904 warnings (pre-existing no-explicit-any)"
+    coherencia_ddl: "82%"  # TASK-022: 126/135 properly mapped + 9 hardcoded
+    entities_hardcoded_names: 9  # Need DB_TABLES constants
+    ddl_tables_without_entity: 7  # content_tags, content_approvals, discussion_threads, social_interactions, teacher_classrooms, user_follows, message_participants
+    orphan_entities: 0  # All entities have DDL tables
+    last_verified: "2026-01-27"
     source: "BACKEND_INVENTORY.yml"
     api_docs:
       - "docs/90-transversal/api/API-TEACHER-MODULE.md"
