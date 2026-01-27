@@ -15,9 +15,10 @@
  * @module apps/teacher/pages/TeacherCommunicationPage
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { useTeacherMessages } from '../hooks/useTeacherMessages';
+import { useWebSocket } from '@/features/notifications/hooks/useWebSocket';
 import { useClassrooms } from '../hooks/useClassrooms';
 import { MessagesList } from '../components/communication/MessagesList';
 import { MessageComposer } from '../components/communication/MessageComposer';
@@ -96,6 +97,16 @@ export default function TeacherCommunicationPage() {
 
   // Hook de clases (para selectores dinámicos)
   const { classrooms, loading: loadingClassrooms } = useClassrooms();
+
+  // WebSocket para real-time updates (TASK-023: Fase 1.2)
+  const { isConnected } = useWebSocket();
+
+  // Refrescar mensajes cuando cambia estado de conexión WebSocket
+  useEffect(() => {
+    if (isConnected) {
+      refresh();
+    }
+  }, [isConnected, refresh]);
 
   // ============================================================================
   // STATE LOCAL
@@ -199,7 +210,25 @@ export default function TeacherCommunicationPage() {
       <div className="space-y-6">
         {/* HEADER */}
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Comunicación</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold">Comunicación</h1>
+            {/* Indicador de conexión real-time (TASK-023: Fase 1.2) */}
+            <span
+              className={`flex items-center gap-1 rounded-full px-2 py-1 text-xs ${
+                isConnected
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-gray-100 text-gray-500'
+              }`}
+              title={isConnected ? 'Conectado en tiempo real' : 'Sin conexión en tiempo real'}
+            >
+              <span
+                className={`h-2 w-2 rounded-full ${
+                  isConnected ? 'bg-green-500' : 'bg-gray-400'
+                }`}
+              />
+              {isConnected ? 'En vivo' : 'Offline'}
+            </span>
+          </div>
           <div className="flex items-center gap-2">
             {unreadCount > 0 && (
               <span className="rounded-full bg-detective-orange px-3 py-1 text-sm font-semibold text-white">

@@ -278,17 +278,20 @@ export const profileAPI = {
   /**
    * Update user password
    *
-   * @param userId - User ID
+   * TASK-023: Corregido para usar endpoint /auth/change-password (existente en backend)
+   * El endpoint usa JWT para identificar al usuario, no necesita userId en URL.
+   *
+   * @param _userId - User ID (deprecated, se mantiene por compatibilidad pero no se usa)
    * @param passwords - Current and new password
    * @returns Success response
    */
   updatePassword: async (
-    userId: string,
+    _userId: string,
     passwords: UpdatePasswordDto,
   ): Promise<PasswordUpdate> => {
     try {
       const response = await apiClient.put<PasswordUpdate>(
-        `/users/${userId}/password`,
+        '/auth/change-password',
         passwords,
       );
       return response.data;
