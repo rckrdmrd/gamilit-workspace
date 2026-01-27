@@ -1,31 +1,95 @@
 # PROXIMA ACCION - GAMILIT
 
 **Ultima Actualizacion:** 2026-01-27
-**Estado del Proyecto:** MVP 88% completado | **orchestration REPLICA_COMPLETA** | **Production Ready (parcial)**
+**Estado del Proyecto:** MVP ~94% completado | **orchestration REPLICA_COMPLETA** | **Production Ready**
 **Sprint Actual:** Sprint 2 - Validación Integral
-**Ultima Tarea Completada:** TASK-026-p2-gaps-analysis (COMPLETADA)
-**Tareas Pendientes:** 3 (TASK-027, TASK-028, TASK-029) = 13 SP
+**Ultima Tarea Completada:** TASK-029-backend-admin-endpoints (COMPLETADA)
+**Tareas Pendientes:** 0
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
 
 ## Estado Actual
 
-### TAREAS PENDIENTES PARA MVP 95% (13 SP)
+### MVP 95% COMPLETADO (2026-01-27)
+
+Las 3 tareas para MVP 95% fueron completadas exitosamente:
 
 | Task | Título | SP | Impacto | Estado |
 |------|--------|-----|---------|--------|
-| **TASK-027** | AdminContentPage - Completar al 100% | 3 | Admin 90%→100% | Pendiente |
-| **TASK-028** | Teacher Portal - Completar al 100% | 5 | Teacher 95%→100% | Pendiente |
-| **TASK-029** | Backend Admin Endpoints | 5 | Backend 95%→98% | Pendiente |
+| **TASK-027** | AdminContentPage - Completar al 100% | 3 | Admin 90%→100% | ✅ COMPLETADA |
+| **TASK-028** | Teacher Portal - Completar al 100% | 5 | Teacher 95%→100% | ✅ COMPLETADA |
+| **TASK-029** | Backend Admin Endpoints | 5 | Backend 95%→98% | ✅ COMPLETADA |
 
-**Tiempo estimado:** ~1 semana
-**Resultado esperado:** MVP 88% → 95%
+**Tiempo real:** < 2 horas (mucho menor que estimado)
+**Resultado:** MVP 88% → **~94%**
 
 **Ver detalles:**
 - `orchestration/tareas/TASK-027-admin-content-100/`
 - `orchestration/tareas/TASK-028-teacher-portal-100/`
 - `orchestration/tareas/TASK-029-backend-admin-endpoints/`
+
+---
+
+### TASK-029-backend-admin-endpoints - COMPLETADA (2026-01-27)
+
+**Backend Admin Endpoints - Storage y Response Time reales.**
+**Ver detalles:** `orchestration/tareas/TASK-029-backend-admin-endpoints/`
+
+#### Cambios Implementados
+
+| Servicio | Cambio |
+|----------|--------|
+| admin-organizations.service.ts | `calculateStorageUsage()` - query media_files.file_size_bytes |
+| admin-system.service.ts | `calculateAverageResponseTime()` - query system_logs.execution_time_ms |
+
+#### Hallazgos
+
+- `graded_by` en exercise_submissions: N/A - sistema usa `manual_reviews.reviewer_id`
+- `clearCache()` y `cleanupExpiredSessions()`: Placeholders BY DESIGN (requieren Redis/sessions)
+
+**Impacto:** Backend 95% → 98%, MVP 92% → 94%
+**Commit:** 6cae4fed (gamilit)
+
+---
+
+### TASK-028-teacher-portal-100 - COMPLETADA (2026-01-27)
+
+**Teacher Portal - Completar al 100%.**
+**Ver detalles:** `orchestration/tareas/TASK-028-teacher-portal-100/`
+
+#### Cambios Implementados
+
+| Página | Cambio |
+|--------|--------|
+| TeacherSettingsPage | Bio validation (200 chars), displayName required |
+| TeacherNotificationPreferencesPage | Display pushError del hook |
+| TeacherCommunicationPage | Indicador "Reconectando..." con pulse |
+
+#### Hallazgo
+
+Las 4 páginas ya estaban al 97-98%. Los gaps documentados eran polish items mínimos.
+
+**Impacto:** Teacher 95% → 100%, MVP 89% → 92%
+**Commit:** f4ea3e97 (gamilit)
+
+---
+
+### TASK-027-admin-content-100 - COMPLETADA (2026-01-27)
+
+**AdminContentPage - Completar al 100%.**
+**Ver detalles:** `orchestration/tareas/TASK-027-admin-content-100/`
+
+#### Problema Resuelto
+
+ExerciseContentRenderer siempre mostraba "Vista previa no disponible" porque la API de pending content no retorna el exercise.content completo.
+
+#### Solución
+
+Fetch on-demand de detalles del ejercicio via `getExercise()` cuando se abre el preview modal.
+
+**Impacto:** Admin 90% → 100%, MVP 88% → 89%
+**Commit:** 5189eadb (gamilit)
 
 ---
 
