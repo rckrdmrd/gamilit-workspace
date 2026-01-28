@@ -1,43 +1,70 @@
 # EXT-007: LTI Integration
 
-> **⚠️ BACKLOG - FUERA DEL MVP**
+> **BACKLOG - FUERA DEL MVP**
 >
-> Esta épica está **parcialmente implementada (40%)** y **NO forma parte del MVP actual**.
-> Razón: Depende de contratos enterprise.
+> Esta epica esta **parcialmente implementada (40%)** y **NO forma parte del MVP actual**.
+> Razon: Depende de contratos enterprise.
 > Ver: [Fase 4: Backlog](../../04-fase-backlog/README.md)
 
-**Versión:** 1.0
-**Fecha de creación:** 2025-11-07
+**Version:** 2.0
+**Fecha de creacion:** 2025-11-07
+**Ultima actualizacion:** 2026-01-27
 **Prioridad:** P2 (Promovida desde P3)
 **Story Points:** 40 SP
 **Presupuesto:** $6,000 USD
 **Timeline:** v1.3 (Sprints 17-24)
-**Estado:** ⏳ BACKLOG (40% implementado)
+**Estado:** BACKLOG (40% implementado)
 
 ---
 
-## 📋 Descripción
+## Estado de Implementacion
 
-Integración completa con Learning Management Systems (LMS) mediante el estándar **LTI 1.3** (Learning Tools Interoperability) de IMS Global, permitiendo que GAMILIT Platform funcione como una herramienta educativa embebida dentro de Canvas, Moodle, Blackboard y Google Classroom.
+### Progreso por Componente
 
-## 🎯 Objetivos de Negocio
+| Componente | Estado | Completitud | Ubicacion |
+|------------|--------|-------------|-----------|
+| **Entities** | COMPLETO | 100% | `apps/backend/src/modules/lti/entities/` |
+| **Services** | COMPLETO | 100% | `apps/backend/src/modules/lti/services/` |
+| **Controllers** | COMPLETO | 100% | `apps/backend/src/modules/lti/controllers/` |
+| **DTOs** | COMPLETO | 100% | `apps/backend/src/modules/lti/dto/` |
+| **Frontend API** | COMPLETO | 100% | `apps/frontend/src/services/api/ltiAPI.ts` |
+| **Entity Tests** | COMPLETO | 100% | `apps/backend/src/modules/lti/__tests__/` |
+| **OIDC Login** | PENDIENTE | 0% | -- |
+| **AGS Integration** | PENDIENTE | 30% | -- |
+| **Deep Linking** | PENDIENTE | 25% | -- |
+| **Admin UI** | PENDIENTE | 0% | -- |
+
+### Resumen
+
+- **Backend Structure:** 65% completo (entities, services, controllers, DTOs)
+- **Frontend Structure:** 15% completo (solo API client)
+- **LTI Core Features:** 0% completo (OIDC, AGS real, Deep Linking)
+- **Testing:** 20% completo (solo entity tests)
+
+---
+
+## Descripcion
+
+Integracion completa con Learning Management Systems (LMS) mediante el estandar **LTI 1.3** (Learning Tools Interoperability) de IMS Global, permitiendo que GAMILIT Platform funcione como una herramienta educativa embebida dentro de Canvas, Moodle, Blackboard y Google Classroom.
+
+## Objetivos de Negocio
 
 ### Problema a Resolver
-Las instituciones educativas ya utilizan LMS (Canvas, Moodle, etc.) como plataforma central. Requieren integración nativa para:
-- Single Sign-On (SSO) automático de estudiantes y profesores
-- Sincronización automática de calificaciones (grade passback)
-- Deep linking para seleccionar contenido específico
-- Gestión centralizada desde el LMS institucional
+Las instituciones educativas ya utilizan LMS (Canvas, Moodle, etc.) como plataforma central. Requieren integracion nativa para:
+- Single Sign-On (SSO) automatico de estudiantes y profesores
+- Sincronizacion automatica de calificaciones (grade passback)
+- Deep linking para seleccionar contenido especifico
+- Gestion centralizada desde el LMS institucional
 
 ### Valor Esperado
-- **B2B Adoption:** +60% (instituciones con LMS requieren integración)
+- **B2B Adoption:** +60% (instituciones con LMS requieren integracion)
 - **Ahorro tiempo profesores:** 3h/semana (no gestionar usuarios/calificaciones manualmente)
-- **ARR incremental:** +$30,000/año
-- **ROI:** 850% en año 1
-- **Churn reduction:** -20% (menos fricción = mayor retención)
+- **ARR incremental:** +$30,000/ano
+- **ROI:** 850% en ano 1
+- **Churn reduction:** -20% (menos friccion = mayor retencion)
 
-### Métricas de Éxito
-- **Adopción:** >40% instituciones usando LTI en 6 meses
+### Metricas de Exito
+- **Adopcion:** >40% instituciones usando LTI en 6 meses
 - **Grade passback success rate:** >98%
 - **SSO login time:** <3 segundos
 - **NPS profesores:** +15 puntos
@@ -45,24 +72,24 @@ Las instituciones educativas ya utilizan LMS (Canvas, Moodle, etc.) como platafo
 
 ---
 
-## 🏗️ Arquitectura Técnica
+## Arquitectura Tecnica
 
-### Estándar LTI 1.3
+### Estandar LTI 1.3
 
 **Componentes principales:**
 1. **OIDC Login Flow** (OpenID Connect)
-   - Autenticación segura vía LMS
+   - Autenticacion segura via LMS
    - JWT token validation (RSA-256)
    - State y nonce para CSRF/replay protection
 
 2. **Grade Passback** (AGS - Assignment & Grades Services)
-   - Envío automático de calificaciones al LMS
-   - Sincronización bidireccional
-   - Mapeo de scoring (0-100 GAMILIT→ escala LMS)
+   - Envio automatico de calificaciones al LMS
+   - Sincronizacion bidireccional
+   - Mapeo de scoring (0-100 GAMILIT -> escala LMS)
 
 3. **Deep Linking** (Content Selection)
-   - Profesores seleccionan ejercicios/módulos específicos
-   - Configuración de actividades desde LMS
+   - Profesores seleccionan ejercicios/modulos especificos
+   - Configuracion de actividades desde LMS
    - Preview de contenido
 
 4. **Platform Configuration**
@@ -70,185 +97,147 @@ Las instituciones educativas ya utilizan LMS (Canvas, Moodle, etc.) como platafo
    - Key management (public/private keys)
    - Multi-tenant isolation
 
-### Stack Tecnológico
+### Archivos Implementados
 
-**Backend:**
-- **Framework:** NestJS + TypeScript
-- **Biblioteca:** `@nest-edu/lti` (wrapper de `ltijs`)
-- **Database:** PostgreSQL (schema `lti_integration`, 5 tablas)
-- **Seguridad:** RSA-256, JWT validation, HTTPS only
+```
+apps/backend/src/modules/lti/
+├── __tests__/
+│   └── lti-entities.spec.ts          # Unit tests (24 tests)
+├── controllers/
+│   ├── index.ts
+│   ├── lti-consumers.controller.ts   # 9 endpoints
+│   ├── lti-grade-passbacks.controller.ts  # 11 endpoints
+│   └── lti-sessions.controller.ts    # 10 endpoints
+├── dto/
+│   ├── index.ts
+│   ├── create-lti-consumer.dto.ts
+│   ├── update-lti-consumer.dto.ts
+│   ├── lti-consumer-response.dto.ts
+│   ├── create-lti-session.dto.ts
+│   ├── lti-session-response.dto.ts
+│   ├── create-lti-grade-passback.dto.ts
+│   ├── update-lti-grade-passback.dto.ts
+│   └── lti-grade-passback-response.dto.ts
+├── entities/
+│   ├── index.ts
+│   ├── lti-consumer.entity.ts        # LMS platform config
+│   ├── lti-session.entity.ts         # Launch sessions
+│   └── lti-grade-passback.entity.ts  # Grade sync tracking
+├── services/
+│   ├── index.ts
+│   ├── lti-consumers.service.ts
+│   ├── lti-sessions.service.ts
+│   └── lti-grade-passbacks.service.ts
+└── lti.module.ts
 
-**Frontend:**
-- **UI:** Página de configuración LTI en Admin Portal
-- **Testing:** Herramienta de validación de integración
-
-**Plataformas soportadas:**
-- Canvas (12h) - Prioridad 1
-- Moodle (10h) - Prioridad 2
-- Blackboard (10h) - Prioridad 3
-- Google Classroom (8h) - Prioridad 4
+apps/frontend/src/services/api/
+└── ltiAPI.ts                         # consumersAPI, gradePassbacksAPI, sessionsAPI
+```
 
 ---
 
-## 👥 User Stories
+## User Stories
 
 ### Core Stories (4 historias - 40h total)
 
-| ID | Historia | Esfuerzo | Prioridad |
-|----|----------|----------|-----------|
-| [US-LTI-001](./historias/US-LTI-001-oidc-login.md) | OIDC Login Flow | 12h | P0 |
-| [US-LTI-002](./historias/US-LTI-002-grade-passback.md) | Grade Passback (AGS) | 10h | P1 |
-| [US-LTI-003](./historias/US-LTI-003-deep-linking.md) | Deep Linking | 10h | P2 |
-| [US-LTI-004](./historias/US-LTI-004-platform-config.md) | Platform Configuration UI | 8h | P1 |
+| ID | Historia | Esfuerzo | Prioridad | Estado |
+|----|----------|----------|-----------|--------|
+| [US-LTI-001](./historias-usuario/US-LTI-001-oidc-login.md) | OIDC Login Flow | 12h | P0 | Pendiente |
+| [US-LTI-002](./historias-usuario/US-LTI-002-grade-passback.md) | Grade Passback (AGS) | 10h | P1 | Parcial |
+| [US-LTI-003](./historias-usuario/US-LTI-003-deep-linking.md) | Deep Linking | 10h | P2 | Parcial |
+| [US-LTI-004](./historias-usuario/US-LTI-004-platform-config.md) | Platform Configuration UI | 8h | P1 | Parcial |
 
 **Total:** 40 horas ($6,000 USD)
 
 ---
 
-## 🗄️ Modelo de Datos
+## Especificaciones Tecnicas (ET)
 
-### Schema: `lti_integration`
-
-```sql
-CREATE SCHEMA IF NOT EXISTS lti_integration;
-
--- Tabla 1: Plataformas LMS registradas
-CREATE TABLE lti_integration.lti_platforms (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id UUID NOT NULL REFERENCES auth_management.tenants(id),
-  platform_name VARCHAR(100) NOT NULL, -- "Canvas Universidad X"
-  issuer VARCHAR(255) NOT NULL, -- URL del LMS
-  client_id VARCHAR(255) NOT NULL,
-  auth_login_url TEXT NOT NULL,
-  auth_token_url TEXT NOT NULL,
-  key_set_url TEXT NOT NULL, -- JWKS endpoint
-  deployment_id VARCHAR(255) NOT NULL,
-  public_key TEXT, -- Clave pública para validar JWTs
-  is_active BOOLEAN DEFAULT true,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Tabla 2: Contextos LTI (cursos/clases)
-CREATE TABLE lti_integration.lti_contexts (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  platform_id UUID NOT NULL REFERENCES lti_integration.lti_platforms(id),
-  lms_context_id VARCHAR(255) NOT NULL, -- ID del curso en LMS
-  context_title VARCHAR(255), -- "Comprensión Lectora 101"
-  context_label VARCHAR(100), -- "CL101"
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Tabla 3: Lanzamientos LTI (cada vez que usuario accede)
-CREATE TABLE lti_integration.lti_launches (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  platform_id UUID NOT NULL REFERENCES lti_integration.lti_platforms(id),
-  context_id UUID REFERENCES lti_integration.lti_contexts(id),
-  user_id UUID REFERENCES auth_management.users(id),
-  lms_user_id VARCHAR(255), -- ID del usuario en LMS
-  launch_type VARCHAR(50), -- 'login', 'deep_linking', 'grade_passback'
-  id_token TEXT, -- JWT token del LMS
-  launched_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Tabla 4: Recursos LTI (ejercicios/módulos enlazados)
-CREATE TABLE lti_integration.lti_resources (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  platform_id UUID NOT NULL REFERENCES lti_integration.lti_platforms(id),
-  context_id UUID NOT NULL REFERENCES lti_integration.lti_contexts(id),
-  exercise_id UUID REFERENCES educational_content.exercises(id),
-  module_id UUID REFERENCES educational_content.modules(id),
-  line_item_url TEXT, -- URL para grade passback
-  resource_title VARCHAR(255),
-  max_score DECIMAL(5,2) DEFAULT 100,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Tabla 5: Grade Passback Log
-CREATE TABLE lti_integration.lti_grade_passback_log (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  resource_id UUID NOT NULL REFERENCES lti_integration.lti_resources(id),
-  user_id UUID NOT NULL REFERENCES auth_management.users(id),
-  score_given DECIMAL(5,2),
-  score_maximum DECIMAL(5,2),
-  activity_progress VARCHAR(50), -- 'Initialized', 'Started', 'InProgress', 'Completed'
-  grading_progress VARCHAR(50), -- 'FullyGraded', 'Pending', 'NotReady'
-  passback_status VARCHAR(20), -- 'success', 'failed'
-  error_message TEXT,
-  attempted_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Índices
-CREATE INDEX idx_lti_platforms_tenant ON lti_integration.lti_platforms(tenant_id);
-CREATE INDEX idx_lti_contexts_platform ON lti_integration.lti_contexts(platform_id);
-CREATE INDEX idx_lti_launches_user ON lti_integration.lti_launches(user_id);
-CREATE INDEX idx_lti_resources_exercise ON lti_integration.lti_resources(exercise_id);
-CREATE INDEX idx_lti_grade_log_user ON lti_integration.lti_grade_passback_log(user_id);
-```
+| ID | Titulo | Completitud | Archivo |
+|----|--------|-------------|---------|
+| ET-LTI-001 | Grade Passback (AGS) | 60% | [Ver](./especificaciones/ET-LTI-001-grade-passback.md) |
+| ET-LTI-002 | Deep Linking | 25% | [Ver](./especificaciones/ET-LTI-002-deep-linking.md) |
+| ET-LTI-003 | Consumer Management | 70% | [Ver](./especificaciones/ET-LTI-003-consumer-management.md) |
+| ET-LTI-004 | Testing & Validation | 20% | [Ver](./especificaciones/ET-LTI-004-testing-validation.md) |
 
 ---
 
-## 🔗 Dependencias
+## LMS Compatibility Matrix
+
+| LMS | OIDC | AGS | Deep Linking | NRPS | Prioridad |
+|-----|------|-----|--------------|------|-----------|
+| Canvas | Pendiente | Pendiente | Pendiente | Pendiente | P1 |
+| Moodle | Pendiente | Pendiente | Pendiente | Pendiente | P2 |
+| Blackboard | Pendiente | Pendiente | Pendiente | Parcial | P3 |
+| Google Classroom | N/A | Parcial | N/A | N/A | P4 |
+
+---
+
+## Implementacion Checklist
+
+Para detalle completo de implementacion, ver:
+- [IMPLEMENTATION-CHECKLIST.md](./IMPLEMENTATION-CHECKLIST.md)
+
+### Resumen de Esfuerzo Restante
+
+| Fase | Horas | Prioridad |
+|------|-------|-----------|
+| OIDC Login Flow | 20h | P0 |
+| Grade Passback (AGS real) | 16h | P1 |
+| Deep Linking | 20h | P1 |
+| Consumer Management UI | 16h | P1 |
+| Testing & Validation | 20h | P2 |
+| **TOTAL** | **92h** | |
+
+---
+
+## Dependencias
 
 ### Bloqueado por
-- **EAI-001:** Sistema de autenticación base debe estar completo
-- **EAI-002:** Mecánicas educativas y ejercicios funcionando
-- **P0/P1 fixes:** Seguridad y funcionalidad crítica resueltos
+- **EAI-001:** Sistema de autenticacion base debe estar completo
+- **EAI-002:** Mecanicas educativas y ejercicios funcionando
+- **P0/P1 fixes:** Seguridad y funcionalidad critica resueltos
 
 ### Bloquea
-- **EXT-002:** Admin Extendido (gestión de tenants con LTI)
-- **EXT-005:** Reportes Avanzados (métricas de integración LTI)
+- **EXT-002:** Admin Extendido (gestion de tenants con LTI)
+- **EXT-005:** Reportes Avanzados (metricas de integracion LTI)
 
 ---
 
-## 🚀 Plan de Implementación
+## Testing
 
-### Sprint 17 (Semanas 17-18) - 20h
-- **US-LTI-001:** OIDC Login Flow completo (12h)
-- **US-LTI-004:** Platform Configuration UI básica (8h)
-
-### Sprint 18 (Semanas 19-20) - 20h
-- **US-LTI-002:** Grade Passback (AGS) (10h)
-- **US-LTI-003:** Deep Linking (10h)
-
-**Testing y Validación:** 8h adicionales (distribuidas en ambos sprints)
-
----
-
-## 🧪 Testing
-
-### Test Cases Críticos
+### Test Cases Criticos
 1. **OIDC Login:**
-   - Usuario LMS puede acceder a GAMILITsin credenciales adicionales
-   - Sesión LMS expirada redirige a login LMS
-   - JWT inválido/expirado es rechazado
+   - Usuario LMS puede acceder a GAMILIT sin credenciales adicionales
+   - Sesion LMS expirada redirige a login LMS
+   - JWT invalido/expirado es rechazado
 
 2. **Grade Passback:**
-   - Score 100% en GAMILIT→ 100% en LMS
-   - Múltiples intentos envían el score más alto
-   - Errores de red reintentam automáticamente
+   - Score 100% en GAMILIT -> 100% en LMS
+   - Multiples intentos envian el score mas alto
+   - Errores de red reintentan automaticamente
 
 3. **Deep Linking:**
-   - Profesor selecciona ejercicio → aparece en LMS
-   - Estudiante hace clic → abre ejercicio correcto
-   - Cambios en GAMILITactualizan título en LMS
+   - Profesor selecciona ejercicio -> aparece en LMS
+   - Estudiante hace clic -> abre ejercicio correcto
+   - Cambios en GAMILIT actualizan titulo en LMS
 
 4. **Multi-tenant Isolation:**
-   - Tenant A no puede acceder a configuración LTI de Tenant B
+   - Tenant A no puede acceder a configuracion LTI de Tenant B
    - LMS de Tenant A solo ve contextos de Tenant A
 
 ### Herramientas de Testing
 - **LTI Advantage Validator:** Herramienta oficial IMS Global
 - **Canvas Free for Teachers:** Ambiente de pruebas Canvas
-- **Moodle Sandbox:** Instalación de prueba Moodle
+- **Moodle Sandbox:** Instalacion de prueba Moodle
 
 ---
 
-## 📊 KPIs de la Épica
+## KPIs de la Epica
 
 ### Durante Desarrollo
 - **Code coverage:** >80%
-- **Security scan:** 0 vulnerabilidades críticas/altas
+- **Security scan:** 0 vulnerabilidades criticas/altas
 - **Performance:** Login LTI <3 segundos
 
 ### Post-Lanzamiento (3 meses)
@@ -259,17 +248,17 @@ CREATE INDEX idx_lti_grade_log_user ON lti_integration.lti_grade_passback_log(us
 
 ---
 
-## 🔐 Consideraciones de Seguridad
+## Consideraciones de Seguridad
 
-### Implementadas
-- ✅ RSA-256 para firma de JWT
-- ✅ State y nonce para CSRF/replay protection
-- ✅ HTTPS only (no HTTP)
-- ✅ Token expiration validation
-- ✅ Multi-tenant isolation estricta
-- ✅ Audit logging de todas las operaciones LTI
+### A Implementar
+- RSA-256 para firma de JWT
+- State y nonce para CSRF/replay protection
+- HTTPS only (no HTTP)
+- Token expiration validation
+- Multi-tenant isolation estricta
+- Audit logging de todas las operaciones LTI
 
-### Riesgos Mitigados
+### Riesgos a Mitigar
 - **Token theft:** httpOnly cookies, short expiration
 - **MITM attacks:** HTTPS only, certificate pinning
 - **Unauthorized grade changes:** Ownership validation, audit trail
@@ -277,22 +266,22 @@ CREATE INDEX idx_lti_grade_log_user ON lti_integration.lti_grade_passback_log(us
 
 ---
 
-## 📚 Referencias
+## Referencias
 
-### Documentación Técnica
+### Documentacion Tecnica
 - [IMS Global LTI 1.3 Specification](https://www.imsglobal.org/spec/lti/v1p3/)
 - [LTI Advantage Overview](https://www.imsglobal.org/lti-advantage-overview)
 - [Canvas LTI Documentation](https://canvas.instructure.com/doc/api/file.lti_dev_key_config.html)
 - [Moodle LTI Integration](https://docs.moodle.org/en/LTI_and_Moodle)
 
-### Documentación Interna
-- [ANALISIS-FEATURES-P3-ESTRATEGICAS.md](../../features/ANALISIS-FEATURES-P3-ESTRATEGICAS.md) - Especificación completa
+### Documentacion Interna
+- [ANALISIS-FEATURES-P3-ESTRATEGICAS.md](../../features/ANALISIS-FEATURES-P3-ESTRATEGICAS.md) - Especificacion completa
 - [FEATURES-PENDIENTES.md](../../features/FEATURES-PENDIENTES.md) - F-P2-019: LTI Integration
 - [RESUMEN-EJECUTIVO-DECISIONES-P3.md](../../features/RESUMEN-EJECUTIVO-DECISIONES-P3.md) - Business case
 
 ---
 
 **Creado:** 2025-11-07
-**Última actualización:** 2025-11-07
+**Ultima actualizacion:** 2026-01-27
 **Responsable:** Tech Lead + Backend Team
 **Revisor:** Product Owner + Security Team

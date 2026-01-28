@@ -1,10 +1,10 @@
-# ET-ANA-001: Implementacion del Dashboard de Progreso y Metricas de Clase
+# ET-ANA-006: Implementacion del Dashboard de Progreso y Metricas de Clase
 
 ## Metadata
 
 | Campo | Valor |
 |-------|-------|
-| **ID** | ET-ANA-001 |
+| **ID** | ET-ANA-006 |
 | **Modulo** | Analytics |
 | **Titulo** | Dashboard de Progreso y Metricas de Clase |
 | **Prioridad** | Alta |

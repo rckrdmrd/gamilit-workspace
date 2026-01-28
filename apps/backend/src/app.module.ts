@@ -27,6 +27,7 @@ import { TasksModule } from './modules/tasks/tasks.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { AssignmentsModule } from './modules/assignments/assignments.module';
 import { HealthModule } from './modules/health/health.module';
+import { ParentsModule } from './modules/parents/parents.module';
 
 // Shared
 import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
@@ -312,6 +313,7 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
     AuditModule, // Audit logging for compliance
     AssignmentsModule, // Teacher assignment management
     HealthModule, // Health check endpoint for monitoring
+    ParentsModule, // EXT-010: Parent notifications and weekly reports
   ],
   controllers: [],
   providers: [

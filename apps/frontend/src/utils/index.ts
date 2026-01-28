@@ -12,3 +12,9 @@ export { snakeToCamel, camelToSnake } from './transformKeys';
 
 // Time Conversion Utilities
 export { intervalToMinutes } from './intervalToMinutes';
+
+// Color Utilities (EXT-008 White Label)
+export * from './color.utils';
+
+// CSS Variables Utilities (EXT-008 White Label)
+export * from './cssVariables';

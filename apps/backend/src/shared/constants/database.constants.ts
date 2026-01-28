@@ -174,6 +174,7 @@ export const DB_TABLES = {
     TEACHER_REPORTS: 'teacher_reports', // ✨ NUEVO - Audit 2026-01-04 (Reportes docentes)
     SCHEDULED_REPORTS: 'scheduled_reports', // ✨ NUEVO - TASK-2026-01-18-015 Sprint 5 (Reportes programados)
     SHARED_REPORTS: 'shared_reports', // ✨ NUEVO - TASK-2026-01-18-015 Sprint 5 (Reportes compartidos)
+    USER_SKILL_RATINGS: 'user_skill_ratings', // ✨ NUEVO - EXT-009 (Skill ratings para peer challenges)
   },
 
   /**

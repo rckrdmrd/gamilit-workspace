@@ -21,3 +21,4 @@ export { useSystemLogs } from './useSystemLogs';
 export { useConfigCategories } from './useConfigCategories';
 export { useAuditLogs } from './useAuditLogs';
 export { useSystemConfig } from './useSystemConfig';
+export { useLtiConsumers } from './useLtiConsumers';

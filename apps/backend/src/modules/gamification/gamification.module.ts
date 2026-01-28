@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+// Peer Challenges Module (EXT-009)
+import { PeerChallengesModule } from './peer-challenges/peer-challenges.module';
+
 // Entities
 import {
   UserStats,
@@ -105,6 +108,8 @@ import {
     TypeOrmModule.forFeature([Profile], 'auth'),
     // Connection 'progress' for ExerciseSubmission entity (needed by MissionsService for streak calculation)
     TypeOrmModule.forFeature([ExerciseSubmission], 'progress'),
+    // Peer Challenges Module (EXT-009: Matchmaking and Real-time Battles)
+    PeerChallengesModule,
   ],
   providers: [
     UserStatsService,

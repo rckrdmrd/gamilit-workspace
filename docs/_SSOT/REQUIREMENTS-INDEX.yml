@@ -7,12 +7,12 @@ metadata:
   version: "2.0.0"
   last_updated: "2026-01-27"
   sync_task: "TASK-006-SYNC-REQUIREMENTS-INDEX-GAMILIT"
-  total_requirements: 58
+  total_requirements: 112
   total_user_stories: 138
   coverage: "100%"
   notes: |
     v2.0.0 - Sincronizacion completa con todas las US existentes
-    - Se agregaron 34 nuevos RFs para cubrir todas las US
+    - 112 RFs mapeados a 138 User Stories
     - Se corrigieron referencias de nomenclatura (US-PM vs US-TCH)
     - Se actualizaron estadisticas por dominio
 

@@ -18,3 +18,16 @@ export {
 } from './rate-limiter.service';
 
 export { UserIdConversionService } from './user-id-conversion.service';
+
+export {
+  ImageProcessingService,
+  LOGO_SIZES,
+  FAVICON_SIZES,
+  ALLOWED_IMAGE_TYPES,
+  MAX_LOGO_SIZE,
+  MAX_FAVICON_SIZE,
+  type ImageSize,
+  type ProcessedImage,
+  type ImageVersions,
+  type ImageValidationResult,
+} from './image-processing.service';

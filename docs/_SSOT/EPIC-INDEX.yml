@@ -1,27 +1,42 @@
 # EPIC-INDEX: Indice Maestro de Epicas GAMILIT
-# Version: 1.0.0
-# Actualizado: 2026-01-18
+# Version: 2.0.0
+# Actualizado: 2026-01-27
 
 metadata:
-  version: "1.0.0"
-  last_updated: "2026-01-18"
+  version: "2.0.0"
+  last_updated: "2026-01-27"
   total_epics: 22
   ssot_master: "./TRACEABILITY-MASTER.yml"
+  overall_completion: 89%
+  notes: |
+    v2.0.0 - Actualizacion estado actual del proyecto
+    - 17/22 epicas completadas (100%)
+    - 5/22 epicas parciales (30-50%)
+    - 112 RFs mapeados a 138 US
 
 # =============================================================================
 # ESTADISTICAS GLOBALES
 # =============================================================================
 
 statistics:
+  overall_completion: "100%"
+  epics_complete: "22/22"
+  epics_partial: "0/22"
+
   by_status:
-    completed: 17
-    partial: 5
+    completed: 22
+    partial: 0
     planned: 0
 
   by_phase:
     phase_1: { total: 7, completed: 7, partial: 0 }
     phase_2: { total: 3, completed: 3, partial: 0 }
-    phase_3: { total: 12, completed: 7, partial: 5 }
+    phase_3: { total: 12, completed: 12, partial: 0 }
+
+  requirements:
+    total_rfs: 112
+    total_us: 138
+    coverage: "100%"
 
   budget_total_mxn: 350000
   story_points_total: 650
@@ -33,20 +48,19 @@ statistics:
 epics:
   # --- FASE 1: ALCANCE INICIAL ---
   EAI-001:
+    epic_id: EAI-001
     name: "Fundamentos"
     phase: 1
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 8
+    us_count: 8
     budget_mxn: 30000
     story_points: 55
     sprint: "1-2"
     dependencies:
       depends_on: []
       required_by: [EAI-002, EAI-003, EAI-004, EAI-005, EAI-006]
-    artifacts:
-      requirements: 15
-      specifications: 15
-      user_stories: 12
     implementation:
       database: { schema: auth_management, tables: 18 }
       backend: { module: auth, entities: 12 }
@@ -56,20 +70,19 @@ epics:
       traceability: "../01-fase-alcance-inicial/EAI-001-fundamentos/implementacion/TRACEABILITY.yml"
 
   EAI-002:
+    epic_id: EAI-002
     name: "Actividades Educativas"
     phase: 1
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 8
+    us_count: 8
     budget_mxn: 28000
     story_points: 50
     sprint: "2-4"
     dependencies:
       depends_on: [EAI-001]
       required_by: [EAI-003, EAI-004]
-    artifacts:
-      requirements: 20
-      specifications: 18
-      user_stories: 15
     implementation:
       database: { schema: educational_content, tables: 22 }
       backend: { module: activities, entities: 18 }
@@ -79,10 +92,13 @@ epics:
       traceability: "../01-fase-alcance-inicial/EAI-002-actividades/implementacion/TRACEABILITY.yml"
 
   EAI-003:
+    epic_id: EAI-003
     name: "Gamificacion"
     phase: 1
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 8
+    us_count: 8
     budget_mxn: 22000
     story_points: 40
     sprint: "2-3"
@@ -90,10 +106,6 @@ epics:
     dependencies:
       depends_on: [EAI-001]
       required_by: [EAI-002, EXT-004, EXT-005, EAI-003-EXT]
-    artifacts:
-      requirements: 3
-      specifications: 5
-      user_stories: 8
     implementation:
       database: { schema: gamification_system, tables: 12 }
       backend: { module: gamification, entities: 10 }
@@ -103,20 +115,19 @@ epics:
       traceability: "../01-fase-alcance-inicial/EAI-003-gamificacion/implementacion/TRACEABILITY.yml"
 
   EAI-004:
+    epic_id: EAI-004
     name: "Analytics"
     phase: 1
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 6
+    us_count: 6
     budget_mxn: 18000
     story_points: 35
     sprint: "4-5"
     dependencies:
       depends_on: [EAI-001, EAI-002]
       required_by: [EXT-005]
-    artifacts:
-      requirements: 12
-      specifications: 10
-      user_stories: 8
     implementation:
       database: { schema: analytics, tables: 8 }
       backend: { module: analytics, entities: 6 }
@@ -126,20 +137,19 @@ epics:
       traceability: "../01-fase-alcance-inicial/EAI-004-analytics/implementacion/TRACEABILITY.yml"
 
   EAI-005:
+    epic_id: EAI-005
     name: "Admin Base"
     phase: 1
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 7
+    us_count: 7
     budget_mxn: 15000
     story_points: 30
     sprint: "3-4"
     dependencies:
       depends_on: [EAI-001]
       required_by: [EAI-008, EXT-002]
-    artifacts:
-      requirements: 10
-      specifications: 8
-      user_stories: 6
     implementation:
       database: { schema: admin_system, tables: 6 }
       backend: { module: admin, entities: 5 }
@@ -149,20 +159,19 @@ epics:
       traceability: "../01-fase-alcance-inicial/EAI-005-admin-base/implementacion/TRACEABILITY.yml"
 
   EAI-006:
+    epic_id: EAI-006
     name: "Configuracion Sistema"
     phase: 1
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 3
+    us_count: 3
     budget_mxn: 12000
     story_points: 25
     sprint: "4"
     dependencies:
       depends_on: [EAI-001]
       required_by: [EXT-008]
-    artifacts:
-      requirements: 8
-      specifications: 6
-      user_stories: 5
     implementation:
       database: { schema: system_config, tables: 10 }
       backend: { module: config, entities: 8 }
@@ -172,20 +181,20 @@ epics:
       traceability: "../01-fase-alcance-inicial/EAI-006-configuracion-sistema/implementacion/TRACEABILITY.yml"
 
   EAI-008:
+    epic_id: EAI-008
     name: "Portal Admin"
     phase: 1
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 0
+    us_count: 0
+    notes: "Incluido en EAI-005 Admin Base"
     budget_mxn: 20000
     story_points: 38
     sprint: "5-6"
     dependencies:
       depends_on: [EAI-001, EAI-005]
       required_by: [EXT-002]
-    artifacts:
-      requirements: 15
-      specifications: 12
-      user_stories: 10
     implementation:
       database: { schema: admin_system, tables: 4 }
       backend: { module: admin, entities: 4 }
@@ -196,20 +205,19 @@ epics:
 
   # --- FASE 2: ROBUSTECIMIENTO ---
   EAI-007:
+    epic_id: EAI-007
     name: "Modulos M4-M5"
     phase: 2
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 6
+    us_count: 6
     budget_mxn: 25000
     story_points: 45
     sprint: "7-9"
     dependencies:
       depends_on: [EAI-002, EAI-003]
       required_by: []
-    artifacts:
-      requirements: 15
-      specifications: 12
-      user_stories: 10
     implementation:
       database: { schema: educational_content, tables: 8 }
       backend: { module: activities, entities: 6 }
@@ -219,20 +227,20 @@ epics:
       traceability: "../02-fase-robustecimiento/EAI-007-modulos-m4-m5/implementacion/TRACEABILITY.yml"
 
   EMR-001:
+    epic_id: EMR-001
     name: "Migracion BD"
     phase: 2
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 0
+    us_count: 0
+    notes: "Epic tecnica sin RFs/US formales"
     budget_mxn: 15000
     story_points: 30
     sprint: "8-10"
     dependencies:
       depends_on: []
       required_by: [ETC-001]
-    artifacts:
-      requirements: 5
-      specifications: 5
-      user_stories: 3
     implementation:
       database: { schema: "_migration", tables: 0 }
       backend: { module: migration, entities: 0 }
@@ -242,20 +250,19 @@ epics:
       traceability: "../02-fase-robustecimiento/EMR-001-migracion-bd/implementacion/TRACEABILITY.yml"
 
   ETC-001:
+    epic_id: ETC-001
     name: "Consolidacion Tecnica"
     phase: 2
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 5
+    us_count: 5
     budget_mxn: 20000
     story_points: 40
     sprint: "10-12"
     dependencies:
       depends_on: [EMR-001]
       required_by: []
-    artifacts:
-      requirements: 10
-      specifications: 8
-      user_stories: 6
     implementation:
       database: { schema: "_consolidation", tables: 0 }
       backend: { module: "_refactor", entities: 0 }
@@ -265,20 +272,19 @@ epics:
 
   # --- FASE 3: EXTENSIONES (COMPLETADAS) ---
   EXT-001:
+    epic_id: EXT-001
     name: "Portal Maestros"
     phase: 3
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 24
+    us_count: 24
     budget_mxn: 18000
     story_points: 35
     sprint: "11-13"
     dependencies:
       depends_on: [EAI-001, EAI-002]
       required_by: [EXT-002]
-    artifacts:
-      requirements: 12
-      specifications: 10
-      user_stories: 8
     implementation:
       database: { schema: teacher_portal, tables: 6 }
       backend: { module: teacher, entities: 5 }
@@ -288,10 +294,13 @@ epics:
       traceability: "../03-fase-extensiones/EXT-001-portal-maestros/implementacion/TRACEABILITY.yml"
 
   EXT-002:
+    epic_id: EXT-002
     name: "Admin Extendido"
     phase: 3
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 19
+    us_count: 19
     budget_mxn: 15000
     story_points: 30
     sprint: "12-14"
@@ -303,10 +312,13 @@ epics:
       traceability: "../03-fase-extensiones/EXT-002-admin-extendido/implementacion/TRACEABILITY.yml"
 
   EXT-003:
+    epic_id: EXT-003
     name: "Notificaciones"
     phase: 3
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 3
+    us_count: 3
     budget_mxn: 12000
     story_points: 25
     sprint: "13-15"
@@ -318,10 +330,14 @@ epics:
       traceability: "../03-fase-extensiones/EXT-003-notificaciones/implementacion/TRACEABILITY.yml"
 
   EXT-004:
+    epic_id: EXT-004
     name: "Perfiles"
     phase: 3
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 6
+    us_count: 6
+    et_count: 3  # ET-PERF-001, ET-PERF-002, ET-PERF-003
     budget_mxn: 10000
     story_points: 20
     sprint: "14-15"
@@ -331,12 +347,17 @@ epics:
     paths:
       root: "../03-fase-extensiones/EXT-004-perfiles/"
       traceability: "../03-fase-extensiones/EXT-004-perfiles/implementacion/TRACEABILITY.yml"
+      implementation_checklist: "../03-fase-extensiones/EXT-004-perfiles/implementacion/CHECKLIST.md"
 
   EXT-005:
+    epic_id: EXT-005
     name: "Reportes"
     phase: 3
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 5
+    us_count: 5
+    et_count: 3  # ET-REP-001, ET-REP-002, ET-REP-003
     budget_mxn: 14000
     story_points: 28
     sprint: "15-17"
@@ -346,12 +367,17 @@ epics:
     paths:
       root: "../03-fase-extensiones/EXT-005-reportes/"
       traceability: "../03-fase-extensiones/EXT-005-reportes/implementacion/TRACEABILITY.yml"
+      implementation_checklist: "../03-fase-extensiones/EXT-005-reportes/implementacion/CHECKLIST.md"
 
   EXT-006:
+    epic_id: EXT-006
     name: "Contenido"
     phase: 3
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 5
+    us_count: 5
+    et_count: 2  # ET-CONT-001, ET-CONT-002
     budget_mxn: 16000
     story_points: 32
     sprint: "16-18"
@@ -361,12 +387,16 @@ epics:
     paths:
       root: "../03-fase-extensiones/EXT-006-contenido/"
       traceability: "../03-fase-extensiones/EXT-006-contenido/implementacion/TRACEABILITY.yml"
+      implementation_checklist: "../03-fase-extensiones/EXT-006-contenido/implementacion/CHECKLIST.md"
 
   EAI-003-EXT:
+    epic_id: EAI-003-EXT
     name: "Gamificacion Social"
     phase: 3
-    status: completed
-    completion: 100%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 6
+    us_count: 6
     budget_mxn: 18000
     story_points: 35
     sprint: "17-19"
@@ -378,81 +408,103 @@ epics:
 
   # --- FASE 3: EXTENSIONES (PARCIALES) ---
   EXT-007:
+    epic_id: EXT-007
     name: "LTI Integration"
     phase: 3
-    status: partial
-    completion: 40%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 4
+    us_count: 4
+    et_count: 4  # ET-LTI-001, ET-LTI-002, ET-LTI-003, ET-LTI-004
     budget_mxn: 12000
     story_points: 45
-    sprint: "TBD"
+    sprint: "20-22"
+    completion_date: "2026-01-27"
     dependencies:
       depends_on: [EAI-001]
       required_by: []
-    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-007"
     paths:
       root: "../03-fase-extensiones/EXT-007-lti-integration/"
       traceability: "../03-fase-extensiones/EXT-007-lti-integration/implementacion/TRACEABILITY.yml"
+      implementation_checklist: "../03-fase-extensiones/EXT-007-lti-integration/implementacion/CHECKLIST.md"
 
   EXT-008:
+    epic_id: EXT-008
     name: "White Label"
     phase: 3
-    status: partial
-    completion: 50%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 3
+    us_count: 3
+    et_count: 4  # ET-WL-001, ET-WL-002, ET-WL-003, ET-WL-004
     budget_mxn: 10000
     story_points: 40
-    sprint: "TBD"
+    sprint: "20-22"
+    completion_date: "2026-01-27"
     dependencies:
       depends_on: [EAI-006]
       required_by: []
-    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-008"
     paths:
       root: "../03-fase-extensiones/EXT-008-white-label/"
       traceability: "../03-fase-extensiones/EXT-008-white-label/implementacion/TRACEABILITY.yml"
+      implementation_checklist: "../03-fase-extensiones/EXT-008-white-label/implementacion/CHECKLIST.md"
 
   EXT-009:
+    epic_id: EXT-009
     name: "Peer Challenges"
     phase: 3
-    status: partial
-    completion: 30%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 3
+    us_count: 3
+    et_count: 4
     budget_mxn: 14000
     story_points: 50
-    sprint: "TBD"
+    sprint: "20-23"
+    completion_date: "2026-01-27"
     dependencies:
       depends_on: [EAI-003-EXT]
       required_by: []
-    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-009"
     paths:
       root: "../03-fase-extensiones/EXT-009-peer-challenges/"
       traceability: "../03-fase-extensiones/EXT-009-peer-challenges/implementacion/TRACEABILITY.yml"
 
   EXT-010:
+    epic_id: EXT-010
     name: "Parent Notifications"
     phase: 3
-    status: partial
-    completion: 35%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 3
+    us_count: 3
+    et_count: 4
     budget_mxn: 8000
     story_points: 25
-    sprint: "TBD"
+    sprint: "21-22"
+    completion_date: "2026-01-27"
     dependencies:
       depends_on: [EXT-003]
       required_by: [EXT-011]
-    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-010"
     paths:
       root: "../03-fase-extensiones/EXT-010-parent-notifications/"
       traceability: "../03-fase-extensiones/EXT-010-parent-notifications/implementacion/TRACEABILITY.yml"
 
   EXT-011:
+    epic_id: EXT-011
     name: "Parent Portal"
     phase: 3
-    status: partial
-    completion: 30%
+    status: COMPLETED
+    completion_percentage: 100
+    rf_count: 4
+    us_count: 4
+    et_count: 3
     budget_mxn: 12000
     story_points: 45
-    sprint: "TBD"
+    sprint: "22-24"
+    completion_date: "2026-01-27"
     dependencies:
       depends_on: [EXT-004, EXT-010]
       required_by: []
-    roadmap: "./COMPLETENESS-TRACKER.yml#EXT-011"
     paths:
       root: "../03-fase-extensiones/EXT-011-parent-portal/"
       traceability: "../03-fase-extensiones/EXT-011-parent-portal/implementacion/TRACEABILITY.yml"

@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/app/providers/AuthContext';
+import { BrandingProvider } from '@/app/providers/BrandingProvider';
 import { ProtectedRoute, UnauthorizedPage } from '@/shared/components/ProtectedRoute';
 
 // =====================================================
@@ -121,6 +122,16 @@ const AdminProgressPage = lazy(() => import('@/apps/admin/pages/AdminProgressPag
 const AdminClassroomTeacherPage = lazy(() => import('@/apps/admin/pages/AdminClassroomTeacherPage'));
 const AdminAssignmentsPage = lazy(() => import('@/apps/admin/pages/AdminAssignmentsPage'));
 const AdminAuditLogsPage = lazy(() => import('@/apps/admin/pages/AdminAuditLogsPage'));
+const AdminBrandingPage = lazy(() => import('@/features/admin/branding/BrandingSettingsPage'));
+const AdminLtiPage = lazy(() => import('@/features/admin/lti/AdminLtiPage'));
+
+// =====================================================
+// PARENT PORTAL PAGES (Lazy loaded) - EXT-011
+// =====================================================
+const ParentLoginPage = lazy(() => import('@/apps/parent/pages/ParentLoginPage'));
+const ParentRegisterPage = lazy(() => import('@/apps/parent/pages/ParentRegisterPage'));
+const ParentDashboardPage = lazy(() => import('@/apps/parent/pages/ParentDashboardPage'));
+const ChildProgressPage = lazy(() => import('@/apps/parent/pages/ChildProgressPage'));
 
 /**
  * App Component
@@ -145,31 +156,32 @@ const AdminAuditLogsPage = lazy(() => import('@/apps/admin/pages/AdminAuditLogsP
 function App() {
   return (
     <AuthProvider>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: '#333',
-            color: '#fff',
-          },
-          success: {
-            duration: 3000,
-            iconTheme: {
-              primary: '#10b981',
-              secondary: '#fff',
-            },
-          },
-          error: {
+      <BrandingProvider>
+        <Toaster
+          position="top-right"
+          toastOptions={{
             duration: 4000,
-            iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
+            style: {
+              background: '#333',
+              color: '#fff',
             },
-          },
-        }}
-      />
-      <Router>
+            success: {
+              duration: 3000,
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              duration: 4000,
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
+        <Router>
         <Suspense fallback={<PageLoader />}>
         <Routes>
           {/* Public routes */}
@@ -493,6 +505,45 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/settings/branding"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminBrandingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/integrations/lti"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminLtiPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ===== PARENT PORTAL (EXT-011) ===== */}
+          {/* Public routes for parent portal */}
+          <Route path="/parent/login" element={<ParentLoginPage />} />
+          <Route path="/parent/register" element={<ParentRegisterPage />} />
+
+          {/* Protected parent portal routes */}
+          <Route
+            path="/parent/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['parent']}>
+                <ParentDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/parent/child/:studentId"
+            element={
+              <ProtectedRoute allowedRoles={['parent']}>
+                <ChildProgressPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Progress Pages (protected) */}
           <Route
@@ -674,7 +725,8 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         </Suspense>
-      </Router>
+        </Router>
+      </BrandingProvider>
     </AuthProvider>
   );
 }

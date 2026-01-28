@@ -1,18 +1,46 @@
 # EXT-008: White-label System (Tier 1)
 
-> **⚠️ BACKLOG - FUERA DEL MVP**
+> **STATUS: BACKLOG - FUERA DEL MVP**
 >
-> Esta épica está **parcialmente implementada (30%)** y **NO forma parte del MVP actual**.
-> Razón: Depende de contratos enterprise.
+> Esta epica esta **parcialmente implementada (50%)** y **NO forma parte del MVP actual**.
+> Razon: Depende de contratos enterprise.
 > Ver: [Fase 4: Backlog](../../04-fase-backlog/README.md)
 
-**Versión:** 1.0
-**Fecha de creación:** 2025-11-07
+**Version:** 2.0
+**Fecha de creacion:** 2025-11-07
+**Ultima actualizacion:** 2026-01-27
 **Prioridad:** P2 (Promovida desde P3)
-**Story Points:** 20 SP
-**Presupuesto:** $3,000 USD
+**Story Points:** 35 SP
+**Presupuesto:** $5,000 USD
 **Timeline:** v1.5 (Semanas 25-32)
-**Estado:** ⏳ BACKLOG (30% implementado)
+**Estado:** EN PROGRESO (50% implementado)
+
+---
+
+## Progreso de Implementacion
+
+| Especificacion | Titulo | Completitud |
+|----------------|--------|-------------|
+| [ET-WL-001](./especificaciones/ET-WL-001-theming.md) | Theming System | 55% |
+| [ET-WL-002](./especificaciones/ET-WL-002-tenant-customization.md) | Tenant Customization | 45% |
+| [ET-WL-003](./especificaciones/ET-WL-003-asset-management.md) | Asset Management | 35% |
+| [ET-WL-004](./especificaciones/ET-WL-004-css-runtime-variables.md) | CSS Runtime Variables | 50% |
+
+**Checklist completo:** [IMPLEMENTATION-CHECKLIST.md](./IMPLEMENTATION-CHECKLIST.md)
+
+### Componentes Completos
+- Tenant Entity con logo_url y settings JSONB
+- TenantConfiguration Entity
+- CSS Variables base (:root)
+- detective-theme.css
+- theme-light.ts / theme-dark.ts
+- DDL tables (tenants, tenant_configurations)
+
+### Componentes Faltantes
+- BrandingModule (Controller, Service)
+- BrandingAssetService (logo/favicon upload)
+- BrandingProvider (Frontend)
+- Admin UI (ColorPicker, LogoUploader, etc.)
 
 ---
 

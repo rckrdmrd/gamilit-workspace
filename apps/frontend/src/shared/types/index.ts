@@ -96,3 +96,17 @@ export * from './media.types';
 
 // Content types
 export * from './content.types';
+
+// =====================================================
+// WHITE LABEL / BRANDING TYPES (EXT-008)
+// =====================================================
+
+// Branding types for tenant customization
+export * from './branding.types';
+
+// =====================================================
+// LTI INTEGRATION TYPES (EXT-007)
+// =====================================================
+
+// LTI consumer types for LMS integration
+export * from './lti.types';
