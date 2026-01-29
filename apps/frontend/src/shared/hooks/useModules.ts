@@ -18,7 +18,7 @@ interface Module {
   completed_exercises?: number;
   progress?: number;
   completed?: boolean;
-  [key: string]: any;
+  [key: string]: string | number | boolean | undefined;
 }
 
 interface Exercise {
@@ -33,7 +33,7 @@ interface Exercise {
   ml_coins_reward: number;
   order_index: number;
   completed?: boolean;
-  [key: string]: any;
+  [key: string]: string | number | boolean | undefined;
 }
 
 interface ModuleProgress {
@@ -119,7 +119,7 @@ export function useModuleDetail(moduleId: string, userId?: string): UseModuleDet
             );
             setProgress(progressResponse.data);
             console.log('[useModuleDetail] Progress fetched:', progressResponse.data);
-          } catch (progressErr) {
+          } catch (_progressErr) {
             // Progress not found is ok - user hasn't started module yet
             console.log('[useModuleDetail] No progress found for module:', moduleId);
             setProgress(null);

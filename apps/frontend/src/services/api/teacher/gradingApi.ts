@@ -87,7 +87,7 @@ export interface SubmissionDetail extends Submission {
     exercise_id: string;
     exercise_title: string;
     exercise_type: string;
-    answer: any;
+    answer: unknown;
     is_correct?: boolean;
     points_earned?: number;
     max_points: number;

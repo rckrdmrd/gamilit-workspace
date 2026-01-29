@@ -56,7 +56,7 @@ const FriendshipStatusEnum = {
 
 describe('FriendshipsService', () => {
   let service: FriendshipsService;
-  let friendshipRepo: jest.Mocked<Repository<Friendship>>;
+  let _friendshipRepo: jest.Mocked<Repository<Friendship>>;
 
   const mockFriendshipRepo = {
     find: jest.fn(),
@@ -87,7 +87,7 @@ describe('FriendshipsService', () => {
     }).compile();
 
     service = module.get<FriendshipsService>(FriendshipsService);
-    friendshipRepo = module.get(getRepositoryToken(Friendship, 'social'));
+    _friendshipRepo = module.get(getRepositoryToken(Friendship, 'social'));
 
     jest.clearAllMocks();
   });

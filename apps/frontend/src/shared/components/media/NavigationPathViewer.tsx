@@ -82,7 +82,7 @@ export const NavigationPathViewer: React.FC<NavigationPathViewerProps> = ({
   totalTime,
   optimalPath,
   onStepSelect,
-  readOnly = true,
+  readOnly: _readOnly = true,
   className = '',
 }) => {
   const [selectedStep, setSelectedStep] = useState<NavigationStep | null>(null);

@@ -25,12 +25,7 @@ import { useAchievementsStore } from '../social/store/achievementsStore';
 import { useEconomyStore } from '../economy/store/economyStore';
 import { useRanksStore } from '../ranks/store/ranksStore';
 import type { Achievement } from '../social/types/achievementsTypes';
-import {
-  createMockUserProgress,
-  createMockUserStats,
-  createMockAuthStore,
-  TEST_USER_ID,
-} from './helpers/gamificationMockHelpers';
+import './helpers/gamificationMockHelpers';
 
 // Mock APIs
 vi.mock('../social/api/achievementsAPI');

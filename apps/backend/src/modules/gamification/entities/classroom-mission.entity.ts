@@ -19,7 +19,7 @@ export interface ClassroomMissionMetadata {
   difficulty_override?: string;
   unlock_date?: string;
   auto_assign_to_new_students?: boolean;
-  [key: string]: any;
+  [key: string]: string | boolean | undefined;
 }
 
 /**

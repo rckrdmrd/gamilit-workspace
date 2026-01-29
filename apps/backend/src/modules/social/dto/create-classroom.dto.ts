@@ -121,7 +121,7 @@ export class CreateClassroomDto {
    */
   @IsOptional()
   @IsArray()
-    schedule?: any[];
+    schedule?: Array<{ day: string; start_time: string; end_time: string }>;
 
   /**
    * URL de reunión virtual

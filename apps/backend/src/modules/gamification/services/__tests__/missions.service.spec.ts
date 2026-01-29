@@ -153,7 +153,7 @@ describe('MissionsService', () => {
       missionsRepo.save.mockResolvedValue(mockMission as any);
 
       // Act
-      const result = await service.findByTypeAndUser(userId, missionType);
+      const _result = await service.findByTypeAndUser(userId, missionType);
 
       // Assert
       expect(templatesService.getActiveByType).toHaveBeenCalled();
@@ -177,7 +177,7 @@ describe('MissionsService', () => {
   // =========================================================================
 
   describe.skip('findById (method does not exist)', () => {
-    const missionId = 'mission-123';
+    const _missionId = 'mission-123';
 
     it('should return mission if found', async () => {
       // SKIPPED: MissionsService doesn't have findById method

@@ -177,7 +177,7 @@ async function fetchDashboardData(userId: string): Promise<DashboardData> {
   // FIX: CORR-005 - Handle new response structure { data: { achievements, total } }
   // and transform backend fields (snake_case) to frontend fields (camelCase)
   const achievementsRaw = achievementsRes?.data?.data || achievementsRes?.data || {};
-  let achievementsRawArray: any[] = [];
+  let achievementsRawArray: Record<string, unknown>[] = [];
   if (Array.isArray(achievementsRaw)) {
     achievementsRawArray = achievementsRaw;
   } else if (achievementsRaw?.achievements && Array.isArray(achievementsRaw.achievements)) {
@@ -190,39 +190,40 @@ async function fetchDashboardData(userId: string): Promise<DashboardData> {
   // Backend: is_completed, completed_at, achievement_id, etc.
   // Frontend: unlocked, unlockedAt, id, etc.
   // FIX: CORR-ACH-001 - Priorizar datos del achievement embebido (relacion)
-  const achievementsData: AchievementData[] = achievementsRawArray.map((raw: any) => {
+  const achievementsData: AchievementData[] = achievementsRawArray.map((raw: Record<string, unknown>) => {
     // Extraer achievement embebido (si existe) - el backend envia la relacion
-    const ach = raw.achievement || {};
+    const ach = (raw.achievement || {}) as Record<string, unknown>;
+    const achRewards = (ach.rewards || {}) as Record<string, unknown>;
 
     return {
       // ID: Priorizar achievement_id para user_achievements
-      id: raw.achievement_id || raw.achievementId || raw.id || ach.id,
+      id: (raw.achievement_id || raw.achievementId || raw.id || ach.id) as string,
 
       // Nombre y descripcion del achievement embebido
-      name: ach.name || raw.name || 'Achievement',
-      title: ach.name || raw.name || 'Achievement',
-      description: ach.description || raw.description || '',
+      name: ((ach.name || raw.name || 'Achievement') as string),
+      title: ((ach.name || raw.name || 'Achievement') as string),
+      description: ((ach.description || raw.description || '') as string),
 
       // Rarity y category del achievement
-      rarity: ach.rarity || raw.rarity || 'common',
-      category: ach.category || raw.category || 'progress',
+      rarity: ((ach.rarity || raw.rarity || 'common') as AchievementData['rarity']),
+      category: ((ach.category || raw.category || 'progress') as string),
 
       // Icon del achievement
-      icon: ach.icon || raw.icon || 'trophy',
+      icon: ((ach.icon || raw.icon || 'trophy') as string),
 
       // Estado de completado (de user_achievement)
-      unlocked: raw.is_completed ?? raw.isCompleted ?? raw.unlocked ?? false,
-      isUnlocked: raw.is_completed ?? raw.isCompleted ?? raw.unlocked ?? false,
-      unlockedAt: raw.completed_at || raw.completedAt || raw.unlockedAt,
+      unlocked: ((raw.is_completed ?? raw.isCompleted ?? raw.unlocked ?? false) as boolean),
+      isUnlocked: ((raw.is_completed ?? raw.isCompleted ?? raw.unlocked ?? false) as boolean),
+      unlockedAt: (raw.completed_at || raw.completedAt || raw.unlockedAt) as string | undefined,
 
       // Progreso (de user_achievement)
-      progress: raw.progress ?? 0,
-      required: raw.max_progress || raw.maxProgress || ach.max_progress || 100,
+      progress: (raw.progress ?? 0) as number,
+      required: ((raw.max_progress || raw.maxProgress || ach.max_progress || 100) as number),
 
       // Rewards: Priorizar achievement embebido, usar ?? para respetar 0
-      mlCoinsReward: ach.ml_coins_reward ?? ach.rewards?.ml_coins ?? raw.ml_coins_reward ?? 0,
-      xpReward: ach.points_value ?? ach.rewards?.xp ?? raw.xp_reward ?? 0,
-      rewards: ach.rewards || raw.rewards,
+      mlCoinsReward: ((ach.ml_coins_reward ?? achRewards.ml_coins ?? raw.ml_coins_reward ?? 0) as number),
+      xpReward: ((ach.points_value ?? achRewards.xp ?? raw.xp_reward ?? 0) as number),
+      rewards: (ach.rewards || raw.rewards) as AchievementData['rewards'],
     };
   });
 

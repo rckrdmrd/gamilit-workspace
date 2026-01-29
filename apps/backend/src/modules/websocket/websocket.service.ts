@@ -7,7 +7,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { NotificationsGateway } from './notifications.gateway';
-import { SocketEvent } from './types/websocket.types';
+import { SocketEvent, WebSocketNotification } from './types/websocket.types';
 
 @Injectable()
 export class WebSocketService {
@@ -18,7 +18,7 @@ export class WebSocketService {
   /**
    * Emit notification to specific user
    */
-  emitNotificationToUser(userId: string, notification: any) {
+  emitNotificationToUser(userId: string, notification: WebSocketNotification) {
     this.gateway.emitToUser(userId, SocketEvent.NEW_NOTIFICATION, {
       notification,
     });
@@ -28,7 +28,7 @@ export class WebSocketService {
   /**
    * Emit notification to multiple users
    */
-  emitNotificationToUsers(userIds: string[], notification: any) {
+  emitNotificationToUsers(userIds: string[], notification: WebSocketNotification) {
     this.gateway.emitToUsers(userIds, SocketEvent.NEW_NOTIFICATION, {
       notification,
     });

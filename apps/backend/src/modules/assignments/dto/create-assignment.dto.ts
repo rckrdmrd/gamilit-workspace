@@ -42,5 +42,5 @@ export class CreateAssignmentDto {
 
   @IsOptional()
   @IsObject()
-    attachments?: any;
+    attachments?: Record<string, unknown>;
 }

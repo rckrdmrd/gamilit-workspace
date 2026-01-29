@@ -19,7 +19,6 @@ import {
   Smartphone,
   Mail,
   MonitorSmartphone,
-  Save,
   Loader2,
   Trash2,
   Plus,
@@ -113,7 +112,7 @@ export default function TeacherNotificationPreferencesPage() {
     setSavingType(type);
     try {
       await updatePreference(type, { [channel]: newValue });
-    } catch (error) {
+    } catch (_error) {
       // Revert on error
       setLocalPreferences((prev) => ({
         ...prev,

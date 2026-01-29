@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsUUID, IsNumber, IsOptional, IsBoolean, Min, Max } from 'class-validator';
+import { IsString, IsUUID, IsNumber, IsOptional, Min } from 'class-validator';
 
 /**
  * BattleJoinDto

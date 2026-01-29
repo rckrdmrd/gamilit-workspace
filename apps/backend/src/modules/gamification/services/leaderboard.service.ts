@@ -6,6 +6,53 @@ import { Cache } from 'cache-manager';
 import { UserStats } from '../entities';
 import { Profile } from '@/modules/auth/entities';
 
+/** Profile data from raw query */
+interface RawProfileData {
+  profile_user_id: string;
+  profile_display_name?: string;
+  profile_first_name?: string;
+  profile_last_name?: string;
+  profile_avatar_url?: string;
+}
+
+/** Leaderboard entry */
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  username: string;
+  firstName: string | null;
+  lastName: string | null;
+  avatar: string | null;
+  totalXP: number;
+  level: number;
+  currentRank: string;
+  streak: number;
+  achievementCount: number;
+  tasksCompleted: number;
+}
+
+/** Leaderboard response */
+export interface LeaderboardResponse {
+  type: string;
+  entries: LeaderboardEntry[];
+  totalEntries: number;
+  lastUpdated: string;
+  timePeriod: string;
+  schoolId?: string;
+  classroomId?: string;
+  userId?: string;
+}
+
+/** User position in leaderboard */
+export interface UserPositionResponse {
+  rank: number;
+  totalXP: number;
+  level: number;
+  currentRank: string;
+  username?: string;
+  avatar?: string | null;
+}
+
 /**
  * LeaderboardService
  *
@@ -42,13 +89,13 @@ export class LeaderboardService {
     limit: number = 100,
     offset: number = 0,
     timePeriod?: string,
-  ): Promise<any> {
+  ): Promise<LeaderboardResponse> {
     // Cache key based on parameters
     const cacheKey = `leaderboard:global:${limit}:${offset}:${timePeriod || 'all_time'}`;
 
     // Try to get from cache first
     try {
-      const cachedData = await this.cacheManager.get(cacheKey);
+      const cachedData = await this.cacheManager.get<LeaderboardResponse>(cacheKey);
       if (cachedData) {
         return cachedData;
       }
@@ -112,7 +159,7 @@ export class LeaderboardService {
       .getRawMany();
 
     // Crear map de perfiles para acceso rápido
-    const profileMap = new Map<string, any>();
+    const profileMap = new Map<string, RawProfileData>();
     profiles.forEach((p) => {
       profileMap.set(p.profile_user_id, p);
     });
@@ -177,12 +224,12 @@ export class LeaderboardService {
     limit: number = 100,
     offset: number = 0,
     timePeriod?: string,
-  ): Promise<any> {
+  ): Promise<LeaderboardResponse> {
     // Cache key based on school and parameters
     const cacheKey = `leaderboard:school:${schoolId}:${limit}:${offset}:${timePeriod || 'all_time'}`;
 
     // Try to get from cache first
-    const cachedData = await this.cacheManager.get(cacheKey);
+    const cachedData = await this.cacheManager.get<LeaderboardResponse>(cacheKey);
     if (cachedData) {
       return cachedData;
     }
@@ -241,7 +288,7 @@ export class LeaderboardService {
       .where('profile.user_id IN (:...topUserIds)', { topUserIds })
       .getRawMany();
 
-    const profileMap = new Map<string, any>();
+    const profileMap = new Map<string, RawProfileData>();
     profiles.forEach((p) => {
       profileMap.set(p.profile_user_id, p);
     });
@@ -299,7 +346,7 @@ export class LeaderboardService {
     limit: number = 100,
     offset: number = 0,
     timePeriod?: string,
-  ): Promise<any> {
+  ): Promise<LeaderboardResponse> {
     // TODO: Implementar query para obtener miembros del classroom
     // Por ahora, asumimos que hay una relación classroom_members con student_id
     // Esto requiere crear la entity ClassroomMember o hacer query directo
@@ -316,7 +363,7 @@ export class LeaderboardService {
       [classroomId],
     );
 
-    const userIds = classroomMembers.map((m: any) => m.user_id);
+    const userIds = classroomMembers.map((m: { user_id: string }) => m.user_id);
 
     if (userIds.length === 0) {
       return {
@@ -363,7 +410,7 @@ export class LeaderboardService {
       .where('profile.user_id IN (:...topUserIds)', { topUserIds })
       .getRawMany();
 
-    const profileMap = new Map<string, any>();
+    const profileMap = new Map<string, RawProfileData>();
     profiles.forEach((p) => {
       profileMap.set(p.profile_user_id, p);
     });
@@ -416,12 +463,12 @@ export class LeaderboardService {
     limit: number = 100,
     offset: number = 0,
     timePeriod?: string,
-  ): Promise<any> {
+  ): Promise<LeaderboardResponse> {
     // Cache key based on user and parameters
     const cacheKey = `leaderboard:friends:${userId}:${limit}:${offset}:${timePeriod || 'all_time'}`;
 
     // Try to get from cache first
-    const cachedData = await this.cacheManager.get(cacheKey);
+    const cachedData = await this.cacheManager.get<LeaderboardResponse>(cacheKey);
     if (cachedData) {
       return cachedData;
     }
@@ -442,7 +489,7 @@ export class LeaderboardService {
       userId,
     ]);
 
-    const friendIds = friendships.map((f: any) => f.user_id);
+    const friendIds = friendships.map((f: { user_id: string }) => f.user_id);
 
     if (friendIds.length === 0) {
       return {
@@ -489,7 +536,7 @@ export class LeaderboardService {
       .where('profile.user_id IN (:...topUserIds)', { topUserIds })
       .getRawMany();
 
-    const profileMap = new Map<string, any>();
+    const profileMap = new Map<string, RawProfileData>();
     profiles.forEach((p) => {
       profileMap.set(p.profile_user_id, p);
     });
@@ -539,12 +586,12 @@ export class LeaderboardService {
    * @param userId - ID del usuario
    * @returns Posición y datos del usuario
    */
-  async getUserPosition(userId: string): Promise<any> {
+  async getUserPosition(userId: string): Promise<UserPositionResponse | null> {
     // Cache key for user position
     const cacheKey = `leaderboard:user:position:${userId}`;
 
     // Try to get from cache first
-    const cachedData = await this.cacheManager.get(cacheKey);
+    const cachedData = await this.cacheManager.get<UserPositionResponse>(cacheKey);
     if (cachedData) {
       return cachedData;
     }

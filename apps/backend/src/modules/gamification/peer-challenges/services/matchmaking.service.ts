@@ -33,8 +33,9 @@ interface UserMatchProfile {
 
 /**
  * Match criteria for finding opponents
+ * @internal Reserved for future use in advanced matchmaking
  */
-interface MatchCriteria {
+interface _MatchCriteria {
   challengeType: 'head_to_head' | 'multiplayer';
   difficultyLevel?: DifficultyLevelEnum;
   moduleId?: string;

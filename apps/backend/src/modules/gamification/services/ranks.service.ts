@@ -524,8 +524,8 @@ export class RanksService {
     const rankProgress = await this.calculateRankProgress(userId);
     const currentRankEntity = await this.getCurrentRank(userId);
 
-    // Get rank config for multiplier
-    const rankConfig = this.getRankConfig(userStats.current_rank as MayaRank);
+    // Get rank config for multiplier (reserved for future use)
+    const _rankConfig = this.getRankConfig(userStats.current_rank as MayaRank);
 
     // Calculate multiplier (base from DB rank config + potential streak bonus)
     const baseMultiplier = await this.getMultiplierForRank(userStats.current_rank as MayaRank);

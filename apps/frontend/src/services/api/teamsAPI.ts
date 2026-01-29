@@ -34,7 +34,7 @@ interface BackendTeamDTO {
   color_secondary: string;
   avatar_url: string | null;
   banner_url: string | null;
-  badges: any[];
+  badges: Record<string, unknown>[];
   creator_id: string;
   leader_id: string | null;
   team_code: string | null;
@@ -88,7 +88,7 @@ export interface Team {
   colorSecondary: string;
   avatarUrl: string | null;
   bannerUrl: string | null;
-  badges: any[];
+  badges: Record<string, unknown>[];
   creatorId: string;
   leaderId: string | null;
   teamCode: string | null;

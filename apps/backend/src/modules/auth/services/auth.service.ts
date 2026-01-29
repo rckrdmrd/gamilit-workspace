@@ -22,6 +22,18 @@ import { MLCoinsTransaction } from '@/modules/gamification/entities/ml-coins-tra
 // Progress tracking entities
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
 
+/** User statistics returned by getUserStatistics */
+interface UserStatistics {
+  total_xp: number;
+  total_ml_coins: number;
+  total_exercises: number;
+  total_achievements: number;
+  current_rank: string;
+  modules_completed: number;
+  login_streak: number;
+  achievements_earned: number;
+}
+
 /**
  * AuthService
  *
@@ -534,7 +546,7 @@ export class AuthService {
   /**
    * Obtener preferencias del usuario
    */
-  async getUserPreferences(userId: string): Promise<any> {
+  async getUserPreferences(userId: string): Promise<Record<string, unknown>> {
     const profile = await this.profileRepository.findOne({
       where: { user_id: userId },
     });
@@ -549,7 +561,7 @@ export class AuthService {
   /**
    * Actualizar preferencias del usuario
    */
-  async updateUserPreferences(userId: string, preferences: any): Promise<any> {
+  async updateUserPreferences(userId: string, preferences: Record<string, unknown>): Promise<Record<string, unknown>> {
     const profile = await this.profileRepository.findOne({
       where: { user_id: userId },
     });
@@ -567,7 +579,7 @@ export class AuthService {
   /**
    * Subir avatar del usuario
    */
-  async uploadUserAvatar(userId: string, file: any): Promise<string> {
+  async uploadUserAvatar(userId: string, file: { originalname: string }): Promise<string> {
     // TODO: Implementar lógica de almacenamiento de archivos (S3, local storage, etc.)
     // Por ahora, retornamos una URL de ejemplo
     const avatarUrl = `/avatars/${userId}_${Date.now()}_${file.originalname}`;
@@ -613,7 +625,7 @@ export class AuthService {
    * - exercise_submissions → Ejercicios con calificación manual (requires_manual_grading = true)
    * El trigger trg_update_user_stats_on_exercise actualiza exercises_completed automáticamente.
    */
-  async getUserStatistics(userId: string): Promise<any> {
+  async getUserStatistics(userId: string): Promise<UserStatistics> {
     // Query 1: User Stats (XP, ML Coins, exercises, modules, streak)
     // Single query to get ALL core stats from user_stats table
     // These values are maintained by database triggers for accuracy
@@ -730,7 +742,7 @@ export class AuthService {
    * @param tenant - (Opcional) Tenant entity para incluir organization info
    * @returns UserResponseDto con campos derivados calculados
    */
-  public toUserResponse(user: User, profile?: Profile, tenant?: Tenant): UserResponseDto {
+  public toUserResponse(user: User, profile?: Profile, _tenant?: Tenant): UserResponseDto {
     const { encrypted_password: _encrypted_password, ...userWithoutPassword } = user;
 
     // Calcular campos derivados para coherencia Frontend-Backend

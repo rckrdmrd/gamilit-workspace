@@ -80,9 +80,9 @@ describe('LeaderboardService', () => {
     }).compile();
 
     service = module.get<LeaderboardService>(LeaderboardService);
-    userStatsRepo = module.get(getRepositoryToken(UserStats, 'gamification'));
-    profileRepo = module.get(getRepositoryToken(Profile, 'auth'));
-    cacheManager = module.get(CACHE_MANAGER);
+    _userStatsRepo = module.get(getRepositoryToken(UserStats, 'gamification'));
+    _profileRepo = module.get(getRepositoryToken(Profile, 'auth'));
+    _cacheManager = module.get(CACHE_MANAGER);
 
     jest.clearAllMocks();
   });

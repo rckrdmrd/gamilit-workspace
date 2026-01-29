@@ -209,7 +209,7 @@ export const getRanksConfig = async (): Promise<RankMetadata[]> => {
     );
 
     // Handle both direct array response and wrapped response
-    return Array.isArray(data) ? data : (data as any).data || [];
+    return Array.isArray(data) ? data : ((data as { data?: RankMetadata[] }).data || []);
   } catch (error) {
     throw handleAPIError(error);
   }

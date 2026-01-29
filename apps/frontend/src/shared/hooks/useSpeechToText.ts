@@ -295,7 +295,7 @@ export function useSpeechToText(options: UseSpeechToTextOptions = {}): UseSpeech
       if (isListeningRef.current && continuous) {
         try {
           recognition.start();
-        } catch (e) {
+        } catch (_e) {
           // Already started or other error - ignore
           setState('finished');
           isListeningRef.current = false;
@@ -331,7 +331,7 @@ export function useSpeechToText(options: UseSpeechToTextOptions = {}): UseSpeech
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
-      } catch (e) {
+      } catch (_e) {
         // Ignore
       }
     }
@@ -345,7 +345,7 @@ export function useSpeechToText(options: UseSpeechToTextOptions = {}): UseSpeech
 
     try {
       recognition.start();
-    } catch (e) {
+    } catch (_e) {
       setError({
         type: 'unknown',
         message: 'Error al iniciar el reconocimiento de voz',
@@ -365,7 +365,7 @@ export function useSpeechToText(options: UseSpeechToTextOptions = {}): UseSpeech
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
-      } catch (e) {
+      } catch (_e) {
         // Ignore - recognition may already be stopped
       }
     }
@@ -394,7 +394,7 @@ export function useSpeechToText(options: UseSpeechToTextOptions = {}): UseSpeech
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop();
-        } catch (e) {
+        } catch (_e) {
           // Ignore
         }
       }

@@ -223,7 +223,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
       // Fallback: permission state unknown, assume prompt
       setPermissionState('prompt');
       return 'prompt';
-    } catch (err) {
+    } catch (_err) {
       // Permissions API not supported or failed
       setPermissionState('prompt');
       return 'prompt';

@@ -74,21 +74,22 @@ export function useRoles(): UseRolesResult {
    * Backend returns: id, name, users_count, created_at, updated_at
    * Frontend expects: roleId, roleName, userCount, createdAt, updatedAt
    */
-  const transformRole = useCallback((backendRole: any): Role => {
+  const transformRole = useCallback((backendRole: Record<string, unknown>): Role => {
     // System roles that cannot be deleted
     const systemRoles = ['super_admin', 'admin_teacher', 'student'];
+    const roleName = (backendRole.name as string) || (backendRole.roleName as string) || '';
 
     return {
-      roleId: backendRole.id || backendRole.roleId,
-      roleName: backendRole.name || backendRole.roleName,
-      description: backendRole.description || '',
-      userCount: backendRole.users_count ?? backendRole.userCount ?? 0,
+      roleId: (backendRole.id as string) || (backendRole.roleId as string) || '',
+      roleName,
+      description: (backendRole.description as string) || '',
+      userCount: (backendRole.users_count as number) ?? (backendRole.userCount as number) ?? 0,
       isSystem:
-        backendRole.is_system ??
-        backendRole.isSystem ??
-        systemRoles.includes(backendRole.name || backendRole.roleName),
-      createdAt: backendRole.created_at || backendRole.createdAt,
-      updatedAt: backendRole.updated_at || backendRole.updatedAt,
+        (backendRole.is_system as boolean) ??
+        (backendRole.isSystem as boolean) ??
+        systemRoles.includes(roleName),
+      createdAt: (backendRole.created_at as string) || (backendRole.createdAt as string),
+      updatedAt: (backendRole.updated_at as string) || (backendRole.updatedAt as string),
     };
   }, []);
 

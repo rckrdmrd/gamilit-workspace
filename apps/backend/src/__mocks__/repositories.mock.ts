@@ -31,9 +31,9 @@ export function createMockRepository<T extends ObjectLiteral>(): jest.Mocked<Rep
     increment: jest.fn(),
     decrement: jest.fn(),
     createQueryBuilder: jest.fn(() => createMockQueryBuilder<T>()),
-    manager: {} as any,
-    metadata: {} as any,
-    target: {} as any,
+    manager: {} as unknown,
+    metadata: {} as unknown,
+    target: {} as unknown,
     query: jest.fn(),
     clear: jest.fn(),
     getId: jest.fn(),
@@ -49,7 +49,7 @@ export function createMockRepository<T extends ObjectLiteral>(): jest.Mocked<Rep
     findOneByOrFail: jest.fn(),
     exist: jest.fn(),
     existsBy: jest.fn(),
-  } as any;
+  } as unknown as jest.Mocked<Repository<T>>;
 }
 
 /**
@@ -93,7 +93,7 @@ export function createMockQueryBuilder<T extends ObjectLiteral>(): jest.Mocked<S
     insert: jest.fn().mockReturnThis(),
     into: jest.fn().mockReturnThis(),
     values: jest.fn().mockReturnThis(),
-  } as any;
+  } as unknown as jest.Mocked<SelectQueryBuilder<T>>;
 
   return queryBuilder;
 }
@@ -101,10 +101,11 @@ export function createMockQueryBuilder<T extends ObjectLiteral>(): jest.Mocked<S
 /**
  * Helper: Reset all mocks in a repository
  */
-export function resetRepositoryMocks(repository: any): void {
+export function resetRepositoryMocks(repository: Record<string, jest.Mock | unknown>): void {
   Object.keys(repository).forEach((key) => {
-    if (typeof repository[key]?.mockReset === 'function') {
-      repository[key].mockReset();
+    const value = repository[key];
+    if (value && typeof value === 'function' && 'mockReset' in value) {
+      (value as jest.Mock).mockReset();
     }
   });
 }

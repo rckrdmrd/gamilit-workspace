@@ -11,8 +11,8 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource, Between, MoreThanOrEqual } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 /**
  * Aggregated Progress Data Interface

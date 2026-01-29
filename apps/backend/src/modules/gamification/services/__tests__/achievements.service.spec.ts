@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { AchievementsService } from '../achievements.service';
 import { Achievement, UserAchievement, UserStats } from '../../entities';
@@ -173,9 +173,9 @@ describe('AchievementsService', () => {
     }).compile();
 
     service = module.get<AchievementsService>(AchievementsService);
-    achievementRepo = module.get(getRepositoryToken(Achievement, 'gamification'));
-    userAchievementRepo = module.get(getRepositoryToken(UserAchievement, 'gamification'));
-    userStatsRepo = module.get(getRepositoryToken(UserStats, 'gamification'));
+    _achievementRepo = module.get(getRepositoryToken(Achievement, 'gamification'));
+    _userAchievementRepo = module.get(getRepositoryToken(UserAchievement, 'gamification'));
+    _userStatsRepo = module.get(getRepositoryToken(UserStats, 'gamification'));
 
     jest.clearAllMocks();
   });

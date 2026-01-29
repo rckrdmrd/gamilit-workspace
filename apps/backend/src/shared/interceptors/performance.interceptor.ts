@@ -8,9 +8,21 @@ import {
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
+/** Performance metric entry */
+interface PerformanceMetric {
+  method: string;
+  url: string;
+  statusCode: number;
+  duration: number;
+  ip: string;
+  userAgent: string;
+  timestamp: string;
+}
+
 // Declaración global para performanceMetrics
 declare global {
-  var performanceMetrics: any[] | undefined;
+  // eslint-disable-next-line no-var
+  var performanceMetrics: PerformanceMetric[] | undefined;
 }
 
 /**
@@ -27,7 +39,7 @@ export class PerformanceInterceptor implements NestInterceptor {
 
   private readonly SLOW_REQUEST_THRESHOLD = 3000; // 3 segundos
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
     const { method, url, ip } = request;

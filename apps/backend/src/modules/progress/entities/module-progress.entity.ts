@@ -328,7 +328,7 @@ export class ModuleProgress {
    * Ruta de aprendizaje personalizada (JSONB array)
    */
   @Column({ type: 'jsonb', default: [] })
-    learning_path!: any[];
+    learning_path!: Array<Record<string, unknown>>;
 
   /**
    * Analíticas de rendimiento (JSONB)

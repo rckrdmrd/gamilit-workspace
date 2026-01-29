@@ -58,15 +58,15 @@ export class CreateAuditLogDto {
 
   @IsOptional()
   @IsObject()
-    oldValues?: any;
+    oldValues?: Record<string, unknown>;
 
   @IsOptional()
   @IsObject()
-    newValues?: any;
+    newValues?: Record<string, unknown>;
 
   @IsOptional()
   @IsObject()
-    changes?: any;
+    changes?: Record<string, unknown>;
 
   @IsOptional()
   @IsEnum(Severity)
@@ -98,7 +98,7 @@ export class CreateAuditLogDto {
 
   @IsOptional()
   @IsObject()
-    additionalData?: any;
+    additionalData?: Record<string, unknown>;
 
   @IsOptional()
   @IsArray()

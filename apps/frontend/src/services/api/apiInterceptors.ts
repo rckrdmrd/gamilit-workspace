@@ -144,30 +144,30 @@ export const transformResponseInterceptor = (response: AxiosResponse): AxiosResp
 /**
  * Recursively transform ISO date strings to Date objects
  */
-const transformDates = (obj: any): any => {
+const transformDates = <T>(obj: T): T => {
   if (obj === null || obj === undefined) return obj;
 
   if (typeof obj === 'string') {
     // Check if string is ISO date format
     const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/;
     if (isoDateRegex.test(obj)) {
-      return new Date(obj);
+      return new Date(obj) as T;
     }
     return obj;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(transformDates);
+    return obj.map(transformDates) as T;
   }
 
   if (typeof obj === 'object') {
-    const transformed: any = {};
-    for (const key in obj) {
+    const transformed: Record<string, unknown> = {};
+    for (const key in obj as Record<string, unknown>) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        transformed[key] = transformDates(obj[key]);
+        transformed[key] = transformDates((obj as Record<string, unknown>)[key]);
       }
     }
-    return transformed;
+    return transformed as T;
   }
 
   return obj;
@@ -207,13 +207,14 @@ export const loggerInterceptor = {
     return response;
   },
 
-  error: (error: any): Promise<any> => {
+  error: (error: unknown): Promise<never> => {
     if (import.meta.env.VITE_DEBUG_API === 'true') {
+      const axiosError = error as { config?: { url?: string }; response?: { status?: number; data?: unknown }; message?: string };
       console.group('[API Error]');
-      console.error('URL:', error.config?.url);
-      console.error('Status:', error.response?.status);
-      console.error('Message:', error.message);
-      console.error('Data:', error.response?.data);
+      console.error('URL:', axiosError.config?.url);
+      console.error('Status:', axiosError.response?.status);
+      console.error('Message:', axiosError.message);
+      console.error('Data:', axiosError.response?.data);
       console.groupEnd();
     }
     return Promise.reject(error);
@@ -240,7 +241,7 @@ export const analyticsInterceptor = {
   response: (response: AxiosResponse): AxiosResponse => {
     // Track successful API response
     if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-      // const config = response.config as any;
+      // const config = response.config as Record<string, unknown>;
       // const duration = config.metadata?.startTime ? Date.now() - config.metadata.startTime : 0;
       // Example: trackEvent('api_response_success', {
       //   url: config.url,
@@ -251,7 +252,7 @@ export const analyticsInterceptor = {
     return response;
   },
 
-  error: (error: any): Promise<any> => {
+  error: (error: unknown): Promise<never> => {
     // Track API errors
     if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
       // Example: trackEvent('api_response_error', {

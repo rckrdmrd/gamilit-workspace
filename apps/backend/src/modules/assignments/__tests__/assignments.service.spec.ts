@@ -21,11 +21,11 @@ import { AssignmentSubmission } from '../entities/assignment-submission.entity';
 
 describe('AssignmentsService', () => {
   let service: AssignmentsService;
-  let assignmentRepo: jest.Mocked<Repository<Assignment>>;
-  let assignmentClassroomRepo: jest.Mocked<Repository<AssignmentClassroom>>;
-  let assignmentExerciseRepo: jest.Mocked<Repository<AssignmentExercise>>;
-  let assignmentStudentRepo: jest.Mocked<Repository<AssignmentStudent>>;
-  let submissionRepo: jest.Mocked<Repository<AssignmentSubmission>>;
+  let _assignmentRepo: jest.Mocked<Repository<Assignment>>;
+  let _assignmentClassroomRepo: jest.Mocked<Repository<AssignmentClassroom>>;
+  let _assignmentExerciseRepo: jest.Mocked<Repository<AssignmentExercise>>;
+  let _assignmentStudentRepo: jest.Mocked<Repository<AssignmentStudent>>;
+  let _submissionRepo: jest.Mocked<Repository<AssignmentSubmission>>;
 
   const mockAssignmentRepo = {
     create: jest.fn(),
@@ -114,11 +114,11 @@ describe('AssignmentsService', () => {
     }).compile();
 
     service = module.get<AssignmentsService>(AssignmentsService);
-    assignmentRepo = module.get(getRepositoryToken(Assignment, 'educational'));
-    assignmentClassroomRepo = module.get(getRepositoryToken(AssignmentClassroom, 'social'));
-    assignmentExerciseRepo = module.get(getRepositoryToken(AssignmentExercise, 'educational'));
-    assignmentStudentRepo = module.get(getRepositoryToken(AssignmentStudent, 'educational'));
-    submissionRepo = module.get(getRepositoryToken(AssignmentSubmission, 'educational'));
+    _assignmentRepo = module.get(getRepositoryToken(Assignment, 'educational'));
+    _assignmentClassroomRepo = module.get(getRepositoryToken(AssignmentClassroom, 'social'));
+    _assignmentExerciseRepo = module.get(getRepositoryToken(AssignmentExercise, 'educational'));
+    _assignmentStudentRepo = module.get(getRepositoryToken(AssignmentStudent, 'educational'));
+    _submissionRepo = module.get(getRepositoryToken(AssignmentSubmission, 'educational'));
 
     jest.clearAllMocks();
   });

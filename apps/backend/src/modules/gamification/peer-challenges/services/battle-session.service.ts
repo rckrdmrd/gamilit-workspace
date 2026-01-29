@@ -422,7 +422,7 @@ export class BattleSessionService {
 
     // Determine winner
     const playerResults: BattleResultDto['players'] = [];
-    let highestScore = 0;
+    let _highestScore = 0;
     let winnerId: string | null = null;
     let isDraw = false;
 
@@ -436,11 +436,11 @@ export class BattleSessionService {
       isDraw = true;
     } else if (players.length > 0) {
       winnerId = players[0].id;
-      highestScore = players[0].score;
+      _highestScore = players[0].score;
     }
 
     // Calculate rating changes
-    let ratingChanges: Record<string, number> = {};
+    const ratingChanges: Record<string, number> = {};
     if (players.length === 2) {
       const result = isDraw ? 'draw' : (winnerId === players[0].id ? 'player1' : 'player2');
       const ratingResult = await this.skillRatingService.updateRatings(

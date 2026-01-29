@@ -1063,7 +1063,6 @@ export class AdminSystemService {
         pool_size: poolSize,
         active_connections: activeConnections,
       };
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
       return {
         status: 'down',

@@ -90,13 +90,13 @@ export class AuditLog {
     description!: string | null;
 
   @Column('jsonb', { name: 'old_values', nullable: true })
-    oldValues!: any;
+    oldValues!: Record<string, unknown> | null;
 
   @Column('jsonb', { name: 'new_values', nullable: true })
-    newValues!: any;
+    newValues!: Record<string, unknown> | null;
 
   @Column('jsonb', { nullable: true })
-    changes!: any;
+    changes!: Record<string, unknown> | null;
 
   @Column({
     type: 'text',
@@ -126,7 +126,7 @@ export class AuditLog {
     correlationId!: string | null;
 
   @Column('jsonb', { name: 'additional_data', nullable: true })
-    additionalData!: any;
+    additionalData!: Record<string, unknown> | null;
 
   @Column('text', { array: true, nullable: true })
     tags!: string[] | null;

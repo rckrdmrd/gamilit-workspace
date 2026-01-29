@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useRef, useCallback } from 'react';
-import { Upload, X, Image, AlertCircle, Loader2 } from 'lucide-react';
+import { Upload, X, AlertCircle, Loader2 } from 'lucide-react';
 
 interface LogoUploaderProps {
   /** Label for the uploader */

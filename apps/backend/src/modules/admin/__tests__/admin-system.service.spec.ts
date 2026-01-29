@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, getConnectionToken } from '@nestjs/typeorm';
-import { Repository, Connection } from 'typeorm';
+import { Connection } from 'typeorm';
 import { AdminSystemService } from '../services/admin-system.service';
 import { AuthAttempt } from '@modules/auth/entities/auth-attempt.entity';
 import { User } from '@modules/auth/entities/user.entity';
@@ -16,12 +16,12 @@ import {
 
 describe('AdminSystemService', () => {
   let service: AdminSystemService;
-  let _authAttemptRepo: Repository<AuthAttempt>;
-  let _userRepo: Repository<User>;
-  let _tenantRepo: Repository<Tenant>;
-  let _moduleRepo: Repository<Module>;
-  let _exerciseRepo: Repository<Exercise>;
-  let _systemSettingRepo: Repository<SystemSetting>;
+  let _authAttemptRepo: any;
+  let _userRepo: any;
+  let _tenantRepo: any;
+  let _moduleRepo: any;
+  let _exerciseRepo: any;
+  let _systemSettingRepo: any;
   let _authConnection: Connection;
   let _educationalConnection: Connection;
   let settingsStore: any[];
@@ -123,14 +123,14 @@ describe('AdminSystemService', () => {
     }).compile();
 
     service = module.get<AdminSystemService>(AdminSystemService);
-    authAttemptRepo = module.get(getRepositoryToken(AuthAttempt, 'auth'));
-    userRepo = module.get(getRepositoryToken(User, 'auth'));
-    tenantRepo = module.get(getRepositoryToken(Tenant, 'auth'));
-    moduleRepo = module.get(getRepositoryToken(Module, 'educational'));
-    exerciseRepo = module.get(getRepositoryToken(Exercise, 'educational'));
-    systemSettingRepo = module.get(getRepositoryToken(SystemSetting, 'auth'));
-    authConnection = module.get(getConnectionToken('auth'));
-    educationalConnection = module.get(getConnectionToken('educational'));
+    _authAttemptRepo = module.get(getRepositoryToken(AuthAttempt, 'auth'));
+    _userRepo = module.get(getRepositoryToken(User, 'auth'));
+    _tenantRepo = module.get(getRepositoryToken(Tenant, 'auth'));
+    _moduleRepo = module.get(getRepositoryToken(Module, 'educational'));
+    _exerciseRepo = module.get(getRepositoryToken(Exercise, 'educational'));
+    _systemSettingRepo = module.get(getRepositoryToken(SystemSetting, 'auth'));
+    _authConnection = module.get(getConnectionToken('auth'));
+    _educationalConnection = module.get(getConnectionToken('educational'));
 
     jest.clearAllMocks();
 

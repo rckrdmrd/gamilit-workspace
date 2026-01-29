@@ -55,7 +55,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
       if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
-        const responseObj = exceptionResponse as any;
+        const responseObj = exceptionResponse as { message?: string; error?: string };
         message = responseObj.message || exception.message;
         code = responseObj.error || this.mapHttpStatusToCode(status);
       } else if (typeof exceptionResponse === 'string') {
@@ -125,7 +125,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = exception.message;
     } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
       // Handle NestJS validation errors and other structured responses
-      const responseObj = exceptionResponse as any;
+      const responseObj = exceptionResponse as { message?: string | string[]; error?: string };
 
       if (responseObj.message) {
         message = Array.isArray(responseObj.message)

@@ -19,12 +19,8 @@ import {
   Award,
   Flame,
   Target,
-  Calendar,
-  Clock,
   BookOpen,
   Star,
-  ChevronRight,
-  Download,
   RefreshCw,
 } from 'lucide-react';
 import { parentAPI } from '@/features/parent/api/parentAPI';
@@ -33,7 +29,7 @@ import type { RecentActivity, UpcomingAssignment, WeeklyReport } from '@/feature
 export const ChildProgressPage: React.FC = () => {
   const { studentId } = useParams<{ studentId: string }>();
   const navigate = useNavigate();
-  const { students, progressSummaries, loadStudentProgress, isLoading } = useParentStore();
+  const { students, progressSummaries, loadStudentProgress, isLoading: _isLoading } = useParentStore();
 
   const [activities, setActivities] = useState<RecentActivity[]>([]);
   const [assignments, setAssignments] = useState<UpcomingAssignment[]>([]);

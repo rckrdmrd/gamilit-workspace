@@ -59,7 +59,7 @@ export default function SettingsPage() {
   const {
     preferences: backendPreferences,
     loading: preferencesLoading,
-    error: preferencesError,
+    error: _preferencesError,
   } = useUserPreferences();
 
   // State

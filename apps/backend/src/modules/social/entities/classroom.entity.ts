@@ -13,6 +13,13 @@ import { Profile } from '../../auth/entities/profile.entity';
 import { Tenant } from '../../auth/entities/tenant.entity';
 import { School } from './school.entity';
 
+/** Schedule item for classroom schedule */
+export interface ClassroomScheduleItem {
+  day: string;
+  start_time: string;
+  end_time: string;
+}
+
 /**
  * Classroom Entity (social_features.classrooms)
  *
@@ -209,7 +216,7 @@ export class Classroom {
    * Estructura: [{ day: "lunes", start_time: "08:00", end_time: "10:00" }, ...]
    */
   @Column({ type: 'jsonb', default: [] })
-    schedule: any[] = [];
+    schedule: ClassroomScheduleItem[] = [];
 
   /**
    * URL de reunión virtual (Zoom, Meet, Teams, etc.)

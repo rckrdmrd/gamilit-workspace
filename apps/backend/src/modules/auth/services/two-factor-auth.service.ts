@@ -260,7 +260,7 @@ export class TwoFactorAuthService {
   /**
    * Disable 2FA
    */
-  async disable2FA(userId: string, password: string): Promise<{ message: string }> {
+  async disable2FA(userId: string, _password: string): Promise<{ message: string }> {
     // Note: Password validation should be done in controller using AuthService
     const config = await this.twoFactorRepository.findOne({
       where: { user_id: userId, is_enabled: true },

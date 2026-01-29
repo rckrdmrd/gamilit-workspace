@@ -27,7 +27,7 @@ export interface ApiError {
   error: {
     code: string;
     message: string;
-    details?: any;
+    details?: Record<string, unknown>;
   };
   timestamp: string;
 }
@@ -148,7 +148,7 @@ export interface SearchParams {
 export interface FilterOption {
   field: string;
   operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'like';
-  value: any;
+  value: string | number | boolean | string[] | number[];
 }
 
 // ============================================================================

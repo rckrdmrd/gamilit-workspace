@@ -19,7 +19,7 @@ import {
   NotificationPriority,
   ParentNotificationStatus,
 } from '@/modules/auth/entities/parent-notification.entity';
-import { ParentAccount, NotificationFrequency } from '@/modules/auth/entities/parent-account.entity';
+import { ParentAccount } from '@/modules/auth/entities/parent-account.entity';
 import { ParentStudentLink, LinkStatus } from '@/modules/auth/entities/parent-student-link.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { MailService } from '@/modules/mail/mail.service';
@@ -278,7 +278,7 @@ export class ParentAlertService {
               alerts++;
             }
           }
-        } catch (error) {
+        } catch {
           this.logger.warn(`Failed to check inactivity for student ${studentId}`);
         }
       }

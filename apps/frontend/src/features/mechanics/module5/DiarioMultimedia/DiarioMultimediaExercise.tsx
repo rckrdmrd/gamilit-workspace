@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Send, Save, Plus, Trash2, Calendar, Image as ImageIcon, Video, Mic, Type } from 'lucide-react';
+import { Send, Save, Image as ImageIcon } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';

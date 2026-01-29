@@ -64,7 +64,7 @@ const DEFAULT_RANK: RankDefinition = {
 /**
  * Convierte RankMetadata del API a RankDefinition del frontend
  */
-function metadataToDefinition(metadata: RankMetadata, index: number): RankDefinition {
+function metadataToDefinition(metadata: RankMetadata, _index: number): RankDefinition {
   // Mapeo de colores por rango
   const colorMap: Record<string, string> = {
     'Ajaw': 'from-amber-400 to-yellow-500',

@@ -11,7 +11,7 @@ interface DraggableCardProps {
   isDragging?: boolean;
 }
 
-export const DraggableCard: React.FC<DraggableCardProps> = ({ id, title, content, isDragging }) => {
+export const DraggableCard: React.FC<DraggableCardProps> = ({ id, title, content, isDragging: _isDragging }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging: isCurrentlyDragging } = useDraggable({
     id,
   });

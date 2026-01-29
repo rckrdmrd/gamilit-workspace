@@ -65,7 +65,7 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
       setSubject('');
       setBody('');
       setSelectedStudents([]);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al enviar mensajes. Por favor, intenta de nuevo.', {
         duration: 4000,
       });

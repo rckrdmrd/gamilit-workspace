@@ -42,7 +42,7 @@ describe('JwtAuthGuard', () => {
         .spyOn(Object.getPrototypeOf(Object.getPrototypeOf(guard)), 'canActivate')
         .mockReturnValue(true);
 
-      const result = guard.canActivate(mockExecutionContext as ExecutionContext);
+      guard.canActivate(mockExecutionContext as ExecutionContext);
 
       // The guard should delegate to the parent AuthGuard
       expect(superCanActivateSpy).toHaveBeenCalledWith(mockExecutionContext);
@@ -68,7 +68,7 @@ describe('JwtAuthGuard', () => {
       };
 
       // Mock parent to return true
-      jest
+      const mockCanActivate = jest
         .spyOn(Object.getPrototypeOf(Object.getPrototypeOf(guard)), 'canActivate')
         .mockReturnValue(true);
 
@@ -81,6 +81,8 @@ describe('JwtAuthGuard', () => {
         (result && typeof (result as any).subscribe === 'function');
 
       expect(isValidType).toBe(true);
+
+      mockCanActivate.mockRestore();
     });
 
     it('should handle missing authorization header gracefully', async () => {

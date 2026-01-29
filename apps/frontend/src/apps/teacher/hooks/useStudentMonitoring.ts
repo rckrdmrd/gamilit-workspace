@@ -153,7 +153,8 @@ export function useStudentMonitoring(
         // El backend devuelve user_id pero el frontend espera id para React keys
         // FIX-2026-01-25: Añadir valores por defecto para campos que pueden ser null/undefined
         const mappedStudents: StudentMonitoring[] = (response.data || []).map((student, index) => {
-          const userId = (student as any).user_id || student.id;
+          const studentRecord = student as Record<string, unknown>;
+          const userId = (studentRecord.user_id as string) || student.id;
 
           if (!userId) {
             console.warn('[useStudentMonitoring] Student without ID detected at index:', index, student);
@@ -164,7 +165,7 @@ export function useStudentMonitoring(
             // Mapear user_id a id (el backend devuelve user_id, frontend espera id)
             // Fallback único si no hay ID para evitar errores de React keys
             id: userId || `unknown-${Date.now()}-${index}`,
-            user_id: (student as any).user_id,
+            user_id: studentRecord.user_id as string,
             // Asegurar valores por defecto para campos que pueden venir null/undefined
             progress_percentage: student.progress_percentage ?? 0,
             score_average: student.score_average ?? 0,

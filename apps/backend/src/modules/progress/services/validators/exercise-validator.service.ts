@@ -20,7 +20,6 @@
  */
 import {
   Injectable,
-  BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';

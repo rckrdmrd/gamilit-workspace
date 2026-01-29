@@ -73,7 +73,7 @@ export class TeamResponseDto {
    * Badges o insignias ganadas
    */
   @Expose()
-    badges!: any[];
+    badges!: Array<Record<string, unknown>>;
 
   /**
    * ID del creador del equipo

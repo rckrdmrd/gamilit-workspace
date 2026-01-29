@@ -6,7 +6,7 @@
 
 import { useCallback } from 'react';
 import { useEconomyStore } from '../store/economyStore';
-import { type EarningSource, TransactionTypeEnum } from '../types/economyTypes';
+import { TransactionTypeEnum } from '../types/economyTypes';
 
 export const useCoins = () => {
   const balance = useEconomyStore((state) => state.balance);

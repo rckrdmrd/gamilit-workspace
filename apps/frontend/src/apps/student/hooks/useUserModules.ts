@@ -70,23 +70,23 @@ function mapDifficulty(backendDifficulty: string): 'easy' | 'medium' | 'hard' {
   return difficultyMap[backendDifficulty] || 'medium';
 }
 
-function transformModuleData(module: any): UserModuleData {
+function transformModuleData(module: Record<string, unknown>): UserModuleData {
   return {
-    id: module.id,
-    title: module.title,
-    description: module.description,
-    difficulty: mapDifficulty(module.difficulty || 'medium'),
-    status: module.status || 'available',
-    progress: module.progress || 0,
-    totalExercises: module.totalExercises || 0,
-    completedExercises: module.completedExercises || 0,
-    estimatedTime: module.estimatedTime || 60,
-    xpReward: module.xpReward || 100,
-    icon: module.icon || '📚',
+    id: module.id as string,
+    title: module.title as string,
+    description: module.description as string,
+    difficulty: mapDifficulty((module.difficulty as string) || 'medium'),
+    status: (module.status as UserModuleData['status']) || 'available',
+    progress: (module.progress as number) || 0,
+    totalExercises: (module.totalExercises as number) || 0,
+    completedExercises: (module.completedExercises as number) || 0,
+    estimatedTime: (module.estimatedTime as number) || 60,
+    xpReward: (module.xpReward as number) || 100,
+    icon: (module.icon as string) || '📚',
     category: Array.isArray(module.category)
-      ? module.category.join(', ')
-      : module.category || 'science',
-    mlCoinsReward: module.mlCoinsReward || 50,
+      ? (module.category as string[]).join(', ')
+      : (module.category as string) || 'science',
+    mlCoinsReward: (module.mlCoinsReward as number) || 50,
   };
 }
 

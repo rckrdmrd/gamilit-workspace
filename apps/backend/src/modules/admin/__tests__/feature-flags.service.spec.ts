@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import 'typeorm';
 import { NotFoundException, ConflictException } from '@nestjs/common';
 import { FeatureFlagsService } from '../services/feature-flags.service';
 import { FeatureFlag } from '../entities/feature-flag.entity';
@@ -8,7 +8,7 @@ import { CreateFeatureFlagDto, UpdateFeatureFlagDto, FeatureFlagQueryDto } from 
 
 describe('FeatureFlagsService', () => {
   let service: FeatureFlagsService;
-  let _repository: Repository<FeatureFlag>;
+  let _repository: any;
 
   const mockFeatureFlag: Partial<FeatureFlag> = {
     id: '1',
@@ -51,7 +51,7 @@ describe('FeatureFlagsService', () => {
     }).compile();
 
     service = module.get<FeatureFlagsService>(FeatureFlagsService);
-    repository = module.get<Repository<FeatureFlag>>(getRepositoryToken(FeatureFlag, 'auth'));
+    _repository = module.get(getRepositoryToken(FeatureFlag, 'auth'));
 
     // Reset mocks
     jest.clearAllMocks();

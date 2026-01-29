@@ -53,7 +53,7 @@ export function TeacherClassroomsTab() {
       setCopiedId(id);
       toast.success(`${label} ID copiado`);
       setTimeout(() => setCopiedId(null), 2000);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al copiar ID');
     }
   };

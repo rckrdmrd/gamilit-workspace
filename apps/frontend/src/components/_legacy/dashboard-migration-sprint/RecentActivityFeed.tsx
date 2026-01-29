@@ -97,7 +97,7 @@ export const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
     try {
       const dateObj = typeof date === 'string' ? new Date(date) : date;
       return formatDistanceToNow(dateObj, { addSuffix: true, locale: es });
-    } catch (error) {
+    } catch (_error) {
       return 'Fecha desconocida';
     }
   }, []);

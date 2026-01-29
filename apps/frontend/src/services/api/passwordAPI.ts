@@ -127,7 +127,7 @@ export const passwordAPI = {
         `/auth/reset-password/validate?token=${encodeURIComponent(token)}`
       );
       return response.data;
-    } catch (error) {
+    } catch (_error) {
       // If request fails, token is invalid
       return { valid: false };
     }

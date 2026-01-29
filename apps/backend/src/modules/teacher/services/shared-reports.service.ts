@@ -7,7 +7,7 @@
 
 import { Injectable, Logger, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan, IsNull, Not } from 'typeorm';
+import { Repository } from 'typeorm';
 import { SharedReport, SharePermission } from '../entities/shared-report.entity';
 import { TeacherReport } from '../entities/teacher-report.entity';
 

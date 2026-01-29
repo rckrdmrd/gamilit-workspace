@@ -101,7 +101,7 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
       try {
         const response = await apiClient.get<ModuleListItem[]>(API_ENDPOINTS.educational.modules);
         setModules(response.data || []);
-      } catch (error) {
+      } catch (_error) {
         // Show user feedback when modules fail to load
         toast.error('No se pudieron cargar los módulos. Intenta recargar la página.', {
           duration: 4000,

@@ -10,7 +10,6 @@ import { ScoreDisplay } from '@shared/components/mechanics/ScoreDisplay';
 import { TikTokCard } from './TikTokCard';
 import { QuizTikTokData } from './quizTikTokTypes';
 import {
-  calculateScore,
   saveProgress,
   FeedbackData,
 } from '@shared/components/mechanics/mechanicsTypes';
@@ -220,7 +219,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   // Update progress
 
   useEffect(() => {
-    const progress = calculateProgress();
+    const _progress = calculateProgress();
     const score = calculateCurrentScore();
     setCurrentScore(score);
 

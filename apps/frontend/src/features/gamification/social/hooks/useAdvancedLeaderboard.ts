@@ -74,7 +74,7 @@ const generateMockData = (
     xp: 10000 - i * 100 + Math.random() * 50,
     mlCoins: Math.floor(Math.random() * 1000) + 100,
     change: Math.floor(Math.random() * 10) - 5,
-    changeType: (Math.random() > 0.5 ? 'up' : Math.random() > 0.5 ? 'down' : 'same') as any,
+    changeType: (Math.random() > 0.5 ? 'up' : Math.random() > 0.5 ? 'down' : 'same') as 'up' | 'down' | 'same',
     isCurrentUser: i === 50,
   }));
 

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository, Brackets } from 'typeorm';
+import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { AdminContentService } from '../services/admin-content.service';
 import { Module } from '@modules/educational/entities/module.entity';

@@ -709,7 +709,7 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
     setApiError(null);
 
     try {
-      let apiData: any[] = [];
+      let apiData: Record<string, unknown>[] = [];
 
       // Call appropriate API based on selectedType
       switch (selectedType) {
@@ -729,20 +729,20 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
 
       // Transform API response to LeaderboardEntry format
       if (apiData && apiData.length > 0) {
-        const transformedData: LeaderboardEntry[] = apiData.map((entry: any, index: number) => {
-          const entryUserId = entry.userId || entry.user_id || `user-${index}`;
+        const transformedData: LeaderboardEntry[] = apiData.map((entry: Record<string, unknown>, index: number) => {
+          const entryUserId = (entry.userId as string) || (entry.user_id as string) || `user-${index}`;
           return {
-            rank: entry.rank || index + 1,
+            rank: (entry.rank as number) || index + 1,
             userId: entryUserId,
-            username: entry.username || entry.display_name || entry.full_name || 'Usuario',
-            avatar: entry.avatar || entry.avatar_url ||
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username || 'U')}&background=f97316&color=fff`,
-            rankBadge: entry.currentRank || entry.current_rank || entry.maya_rank || 'Ajaw',
-            score: entry.totalXP || entry.total_xp || entry.score || 0,
-            xp: entry.totalXP || entry.total_xp || 0,
-            completionPercentage: entry.completion_percentage || 0,
-            streak: entry.current_streak || entry.streak || 0,
-            mlCoins: entry.ml_coins || 0,
+            username: (entry.username as string) || (entry.display_name as string) || (entry.full_name as string) || 'Usuario',
+            avatar: (entry.avatar as string) || (entry.avatar_url as string) ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent((entry.username as string) || 'U')}&background=f97316&color=fff`,
+            rankBadge: (entry.currentRank as string) || (entry.current_rank as string) || (entry.maya_rank as string) || 'Ajaw',
+            score: (entry.totalXP as number) || (entry.total_xp as number) || (entry.score as number) || 0,
+            xp: (entry.totalXP as number) || (entry.total_xp as number) || 0,
+            completionPercentage: (entry.completion_percentage as number) || 0,
+            streak: (entry.current_streak as number) || (entry.streak as number) || 0,
+            mlCoins: (entry.ml_coins as number) || 0,
             change: 0,
             changeType: 'same' as const,
             isCurrentUser: currentUserId ? entryUserId === currentUserId : entryUserId === userId,

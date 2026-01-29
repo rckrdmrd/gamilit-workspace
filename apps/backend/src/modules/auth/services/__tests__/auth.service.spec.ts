@@ -15,7 +15,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { ConflictException, UnauthorizedException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { ConflictException, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from '../auth.service';
 import { User, Profile, Tenant, UserSession, AuthAttempt } from '../../entities';
@@ -43,8 +43,8 @@ describe('AuthService', () => {
   let userRanksRepository: ReturnType<typeof createMockRepository>;
   let userAchievementsRepository: ReturnType<typeof createMockRepository>;
   let achievementsRepository: ReturnType<typeof createMockRepository>;
-  let mlCoinsTransactionsRepository: ReturnType<typeof createMockRepository>;
-  let exerciseSubmissionsRepository: ReturnType<typeof createMockRepository>;
+  let _mlCoinsTransactionsRepository: ReturnType<typeof createMockRepository>;
+  let _exerciseSubmissionsRepository: ReturnType<typeof createMockRepository>;
   let jwtService: ReturnType<typeof createMockJwtService>;
 
   // Test data
@@ -63,8 +63,8 @@ describe('AuthService', () => {
     userRanksRepository = createMockRepository<UserRank>();
     userAchievementsRepository = createMockRepository<UserAchievement>();
     achievementsRepository = createMockRepository<Achievement>();
-    mlCoinsTransactionsRepository = createMockRepository<MLCoinsTransaction>();
-    exerciseSubmissionsRepository = createMockRepository<ExerciseSubmission>();
+    _mlCoinsTransactionsRepository = createMockRepository<MLCoinsTransaction>();
+    _exerciseSubmissionsRepository = createMockRepository<ExerciseSubmission>();
     jwtService = createMockJwtService();
 
     const module: TestingModule = await Test.createTestingModule({
@@ -79,8 +79,8 @@ describe('AuthService', () => {
         { provide: getRepositoryToken(UserRank, 'gamification'), useValue: userRanksRepository },
         { provide: getRepositoryToken(UserAchievement, 'gamification'), useValue: userAchievementsRepository },
         { provide: getRepositoryToken(Achievement, 'gamification'), useValue: achievementsRepository },
-        { provide: getRepositoryToken(MLCoinsTransaction, 'gamification'), useValue: mlCoinsTransactionsRepository },
-        { provide: getRepositoryToken(ExerciseSubmission, 'progress'), useValue: exerciseSubmissionsRepository },
+        { provide: getRepositoryToken(MLCoinsTransaction, 'gamification'), useValue: _mlCoinsTransactionsRepository },
+        { provide: getRepositoryToken(ExerciseSubmission, 'progress'), useValue: _exerciseSubmissionsRepository },
         { provide: JwtService, useValue: jwtService },
       ],
     }).compile();
@@ -281,7 +281,7 @@ describe('AuthService', () => {
       // Act
       try {
         await service.login(loginEmail, loginPassword);
-      } catch (error) {
+      } catch (_error) {
         // Expected to throw
       }
 

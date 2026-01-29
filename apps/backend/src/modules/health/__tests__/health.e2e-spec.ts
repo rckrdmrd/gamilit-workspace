@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, HttpStatus } from '@nestjs/common';
-// @ts-ignore - supertest types not available
+// @ts-expect-error - supertest types not available
 import * as request from 'supertest';
 import { HealthModule } from '../health.module';
 import { ConfigModule } from '@nestjs/config';

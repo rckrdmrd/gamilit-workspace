@@ -239,7 +239,7 @@ export default function AdminUsersPage() {
             message: `El usuario ${name} ha sido suspendido correctamente`,
           });
           await fetchUsers(); // Refresh list
-        } catch (err) {
+        } catch (_err) {
           showToast({
             type: 'error',
             title: 'Error al suspender',
@@ -267,7 +267,7 @@ export default function AdminUsersPage() {
             message: `El usuario ${name} ha sido reactivado correctamente`,
           });
           await fetchUsers(); // Refresh list
-        } catch (err) {
+        } catch (_err) {
           showToast({
             type: 'error',
             title: 'Error al reactivar',
@@ -295,7 +295,7 @@ export default function AdminUsersPage() {
             message: `El usuario ${name} ha sido eliminado correctamente`,
           });
           await fetchUsers(); // Refresh list
-        } catch (err) {
+        } catch (_err) {
           showToast({
             type: 'error',
             title: 'Error al eliminar',

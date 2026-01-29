@@ -5,7 +5,6 @@ import {
   IsNumber,
   IsEnum,
   Min,
-  Max,
   IsObject,
   IsInt,
 } from 'class-validator';

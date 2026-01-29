@@ -18,8 +18,8 @@ export interface IBulkOperation {
   startedBy: string;
   startedAt: Date;
   completedAt?: Date;
-  errorDetails?: any[];
-  result?: any;
+  errorDetails?: Array<{ userId?: string; error?: string; success?: boolean }>;
+  result?: Record<string, unknown>;
 }
 
 /**
@@ -29,7 +29,7 @@ export interface IBulkOperationJob {
   operationId: string;
   operationType: 'suspend_users' | 'activate_users' | 'update_role' | 'delete_users';
   targetIds: string[];
-  payload: any;
+  payload: Record<string, unknown>;
   adminId: string;
 }
 

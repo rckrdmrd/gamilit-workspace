@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useRef, useCallback } from 'react';
-import { Upload, X, Globe, AlertCircle, Loader2 } from 'lucide-react';
+import { X, Globe, AlertCircle, Loader2 } from 'lucide-react';
 
 interface FaviconUploaderProps {
   /** Label for the uploader */

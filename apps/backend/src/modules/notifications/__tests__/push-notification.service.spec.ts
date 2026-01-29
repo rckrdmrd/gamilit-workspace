@@ -24,8 +24,8 @@ jest.mock('web-push', () => ({
 
 describe('PushNotificationService', () => {
   let service: PushNotificationService;
-  let configService: jest.Mocked<ConfigService>;
-  let userDeviceService: jest.Mocked<UserDeviceService>;
+  let _configService: jest.Mocked<ConfigService>;
+  let _userDeviceService: jest.Mocked<UserDeviceService>;
 
   const mockConfigService = {
     get: jest.fn(),
@@ -53,8 +53,8 @@ describe('PushNotificationService', () => {
     }).compile();
 
     service = module.get<PushNotificationService>(PushNotificationService);
-    configService = module.get(ConfigService);
-    userDeviceService = module.get(UserDeviceService);
+    _configService = module.get(ConfigService);
+    _userDeviceService = module.get(UserDeviceService);
 
     jest.clearAllMocks();
   });

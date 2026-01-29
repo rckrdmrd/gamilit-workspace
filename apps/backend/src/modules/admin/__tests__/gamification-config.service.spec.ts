@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import 'typeorm';
 import {
   NotFoundException,
   BadRequestException,
@@ -14,7 +14,7 @@ import {
 
 describe('GamificationConfigService', () => {
   let service: GamificationConfigService;
-  let _systemSettingRepository: Repository<SystemSetting>;
+  let _systemSettingRepository: any;
 
   const mockSystemSettingRepository = {
     find: jest.fn(),
@@ -37,7 +37,7 @@ describe('GamificationConfigService', () => {
     service = module.get<GamificationConfigService>(
       GamificationConfigService,
     );
-    systemSettingRepository = module.get(
+    _systemSettingRepository = module.get(
       getRepositoryToken(SystemSetting, 'auth'),
     );
 

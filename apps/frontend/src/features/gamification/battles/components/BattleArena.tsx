@@ -6,7 +6,6 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useBattle } from '../hooks/useBattle';
-import type { BattleQuestion } from '../types/battleTypes';
 
 /**
  * Emoji reactions for quick communication

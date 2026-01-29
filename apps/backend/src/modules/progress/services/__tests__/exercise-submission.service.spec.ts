@@ -749,9 +749,9 @@ describe.skip('ExerciseSubmissionService - Completar Espacios Anti-redundancy', 
       expect(result.is_correct).toBe(false);
       expect(result.feedback).toContain('no pueden tener la misma palabra');
       expect(result.feedback).toContain('ciencias');
-      // @ts-ignore - testing details property
+      // @ts-expect-error - testing details property
       expect(result.details?.error?.type).toBe('redundancia');
-      // @ts-ignore - testing details property
+      // @ts-expect-error - testing details property
       expect(result.details?.error?.espacios).toEqual(['5', '6']);
     });
 

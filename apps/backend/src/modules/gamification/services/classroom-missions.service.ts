@@ -1,7 +1,8 @@
 import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ClassroomMission } from '../entities/classroom-mission.entity';
+import { ClassroomMission, ClassroomMissionMetadata } from '../entities/classroom-mission.entity';
+import { MissionObjective, MissionRewards } from '../entities/mission.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { AssignClassroomMissionDto } from '../dto/missions/assign-classroom-mission.dto';
 import { ClassroomMissionResponseDto } from '../dto/missions/classroom-mission-response.dto';
@@ -120,13 +121,13 @@ export class ClassroomMissionsService {
       title: dto.title,
       description: dto.description || null,
       mission_type: dto.mission_type,
-      objectives: dto.objectives as any,
-      base_rewards: dto.base_rewards as any,
+      objectives: dto.objectives as MissionObjective[],
+      base_rewards: dto.base_rewards as MissionRewards,
       bonus_xp: dto.bonus_xp || 0,
       bonus_coins: dto.bonus_coins || 0,
       due_date: dto.due_date ? new Date(dto.due_date) : null,
       is_mandatory: dto.is_mandatory || false,
-      metadata: dto.metadata || {},
+      metadata: (dto.metadata || {}) as ClassroomMissionMetadata,
       is_active: true,
     });
 

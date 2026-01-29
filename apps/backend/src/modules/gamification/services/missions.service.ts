@@ -7,7 +7,7 @@ import { MLCoinsService } from './ml-coins.service';
 import { UserStatsService } from './user-stats.service';
 import { RanksService } from './ranks.service';
 import { MissionTemplatesService } from './mission-templates.service';
-import { MissionTemplate } from '../entities/mission-template.entity';
+import { MissionTemplate, MissionTemplateTypeEnum } from '../entities/mission-template.entity';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
@@ -96,7 +96,6 @@ export class MissionsService {
     try {
       const stats = await this.userStatsService.findByUserId(userId);
       return stats.level || 1;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
       this.logger.warn(`Could not fetch user level for ${userId}, defaulting to 1`);
       return 1;
@@ -220,7 +219,7 @@ export class MissionsService {
 
     // Obtener templates activos de tipo 'daily' filtrados por nivel
     const templates = await this.templatesService.getActiveByType(
-      MissionTypeEnum.DAILY as any,
+      MissionTemplateTypeEnum.DAILY,
       userLevel,
     );
 
@@ -230,7 +229,7 @@ export class MissionsService {
       );
       // Fallback: intentar obtener templates sin filtro de nivel
       const fallbackTemplates = await this.templatesService.getActiveByType(
-        MissionTypeEnum.DAILY as any,
+        MissionTemplateTypeEnum.DAILY,
       );
       if (fallbackTemplates.length === 0) {
         throw new BadRequestException(
@@ -292,7 +291,7 @@ export class MissionsService {
 
     // Obtener templates activos de tipo 'weekly' filtrados por nivel
     const templates = await this.templatesService.getActiveByType(
-      MissionTypeEnum.WEEKLY as any,
+      MissionTemplateTypeEnum.WEEKLY,
       userLevel,
     );
 
@@ -302,7 +301,7 @@ export class MissionsService {
       );
       // Fallback: intentar obtener templates sin filtro de nivel
       const fallbackTemplates = await this.templatesService.getActiveByType(
-        MissionTypeEnum.WEEKLY as any,
+        MissionTemplateTypeEnum.WEEKLY,
       );
       if (fallbackTemplates.length === 0) {
         throw new BadRequestException(

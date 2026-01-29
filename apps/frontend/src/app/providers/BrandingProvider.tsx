@@ -65,7 +65,6 @@ export const BrandingProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [savedConfig, setSavedConfig] = useState<BrandingConfig | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
 
   /**

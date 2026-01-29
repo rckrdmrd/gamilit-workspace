@@ -16,16 +16,8 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { parentAPI } from '../api/parentAPI';
 import type {
   ParentState,
-  ParentAccount,
-  ParentAuthTokens,
   ParentLoginCredentials,
   ParentRegisterData,
-  LinkedStudent,
-  StudentProgressSummary,
-  RecentActivity,
-  UpcomingAssignment,
-  ParentNotification,
-  WeeklyReport,
   LinkStudentData,
   VerifyLinkData,
 } from '../types/parent.types';

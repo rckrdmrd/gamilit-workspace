@@ -85,7 +85,7 @@ export class CreateTeamDto {
    */
   @IsOptional()
   @IsArray()
-    badges?: any[];
+    badges?: Array<Record<string, unknown>>;
 
   /**
    * ID del creador del equipo

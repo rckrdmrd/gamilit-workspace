@@ -17,7 +17,6 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { RolePermissions, Permission } from '@/services/api/adminTypes';
 import { Button } from '@shared/components/Button';
-import { Card } from '@shared/components/Card';
 import { LoadingSpinner } from '@shared/components/LoadingSpinner';
 import { PermissionMatrix } from './PermissionMatrix';
 

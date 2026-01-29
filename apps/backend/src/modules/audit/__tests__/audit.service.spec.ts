@@ -7,14 +7,14 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AuditService } from '../services/audit.service';
 import { AuditLog, ActorType, Severity, Status } from '../entities/audit-log.entity';
 import { CreateAuditLogDto } from '../dto/create-audit-log.dto';
 
 describe('AuditService', () => {
   let service: AuditService;
-  let auditLogRepository: jest.Mocked<Repository<AuditLog>>;
+  let _auditLogRepository: jest.Mocked<Repository<AuditLog>>;
 
   // Mock repository
   const mockAuditLogRepository = {
@@ -45,7 +45,7 @@ describe('AuditService', () => {
     }).compile();
 
     service = module.get<AuditService>(AuditService);
-    auditLogRepository = module.get(getRepositoryToken(AuditLog, 'audit'));
+    _auditLogRepository = module.get(getRepositoryToken(AuditLog, 'audit'));
 
     // Reset mocks before each test
     jest.clearAllMocks();

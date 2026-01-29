@@ -129,9 +129,6 @@ describe('MissionGeneratorService', () => {
     });
 
     it('should set end_date to end of day', async () => {
-      // Arrange
-      const startTime = new Date();
-
       // Act
       const result = await service.generateDailyMissions(mockProfileId, userLevel);
 
@@ -303,7 +300,7 @@ describe('MissionGeneratorService', () => {
 
     it('should create mission with template data', async () => {
       // Act
-      const result = await service.createMissionFromTemplate(mockProfileId, template as any, endDate);
+      const _result = await service.createMissionFromTemplate(mockProfileId, template as any, endDate);
 
       // Assert
       expect(missionsRepo.create).toHaveBeenCalledWith(

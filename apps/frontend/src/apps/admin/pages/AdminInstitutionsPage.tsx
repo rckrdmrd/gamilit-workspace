@@ -7,9 +7,9 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
 import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
-import { Plus, Settings, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useOrganizations } from '../hooks/useOrganizations';
-import { getOrganizationStats, type OrganizationStats } from '@/services/api/adminAPI';
+import { getOrganizationStats } from '@/services/api/adminAPI';
 import type { Organization } from '../types';
 import {
   InstitutionFilters,

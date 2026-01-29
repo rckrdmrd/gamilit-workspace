@@ -15,7 +15,6 @@ import {
   AlertConfigDefaults,
   CreateAlertConfigDto,
   UpdateAlertConfigDto,
-  AlertConfigType,
 } from '../../../services/api/teacher/alertConfigApi';
 import { useToast } from '@shared/components/base/Toast';
 

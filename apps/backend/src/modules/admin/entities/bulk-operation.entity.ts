@@ -95,7 +95,7 @@ export class BulkOperation {
    * Formato: [{ userId: 'abc', error: 'User not found' }, ...]
    */
   @Column({ type: 'jsonb', default: [] })
-    error_details!: any[];
+    error_details!: Array<{ userId?: string; error?: string; success?: boolean }>;
 
   /**
    * UUID del administrador que inició la operación
@@ -127,5 +127,5 @@ export class BulkOperation {
    * Puede contener un resumen, estadísticas adicionales, etc.
    */
   @Column({ type: 'jsonb', nullable: true })
-    result?: any;
+    result?: Record<string, unknown>;
 }

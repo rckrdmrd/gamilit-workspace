@@ -8,7 +8,7 @@ import { CreateUserRankDto, UpdateUserRankDto } from '../dto/user-ranks';
 
 describe('RanksController', () => {
   let controller: RanksController;
-  let ranksService: RanksService;
+  let _ranksService: RanksService;
 
   const mockRanksService = {
     getCurrentRank: jest.fn(),
@@ -81,7 +81,7 @@ describe('RanksController', () => {
     }).compile();
 
     controller = module.get<RanksController>(RanksController);
-    ranksService = module.get<RanksService>(RanksService);
+    _ranksService = module.get<RanksService>(RanksService);
 
     jest.clearAllMocks();
   });

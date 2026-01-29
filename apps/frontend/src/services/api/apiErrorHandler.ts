@@ -18,10 +18,10 @@ import type { ApiError } from './apiTypes';
 export class APIError extends Error {
   public readonly statusCode: number;
   public readonly code: string;
-  public readonly data?: any;
+  public readonly data?: unknown;
   public readonly timestamp: string;
 
-  constructor(statusCode: number, message: string, code: string = 'API_ERROR', data?: any) {
+  constructor(statusCode: number, message: string, code: string = 'API_ERROR', data?: unknown) {
     super(message);
     this.name = 'APIError';
     this.statusCode = statusCode;
@@ -55,7 +55,7 @@ export class APIError extends Error {
  * Network Error
  */
 export class NetworkError extends APIError {
-  constructor(message: string = 'Network error occurred', data?: any) {
+  constructor(message: string = 'Network error occurred', data?: unknown) {
     super(0, message, 'NETWORK_ERROR', data);
     this.name = 'NetworkError';
   }
@@ -65,7 +65,7 @@ export class NetworkError extends APIError {
  * Authentication Error
  */
 export class AuthenticationError extends APIError {
-  constructor(message: string = 'Authentication failed', data?: any) {
+  constructor(message: string = 'Authentication failed', data?: unknown) {
     super(401, message, 'AUTHENTICATION_ERROR', data);
     this.name = 'AuthenticationError';
   }
@@ -75,7 +75,7 @@ export class AuthenticationError extends APIError {
  * Account Inactive Error
  */
 export class AccountInactiveError extends APIError {
-  constructor(message: string = 'Account has been deactivated', data?: any) {
+  constructor(message: string = 'Account has been deactivated', data?: unknown) {
     super(401, message, 'ACCOUNT_INACTIVE', data);
     this.name = 'AccountInactiveError';
   }
@@ -94,7 +94,7 @@ export class AccountSuspendedError extends APIError {
   constructor(
     message: string = 'Account has been suspended',
     suspensionDetails?: { isPermanent: boolean; suspendedUntil?: string; reason?: string },
-    data?: any,
+    data?: unknown,
   ) {
     super(403, message, 'ACCOUNT_SUSPENDED', data);
     this.name = 'AccountSuspendedError';
@@ -106,7 +106,7 @@ export class AccountSuspendedError extends APIError {
  * Authorization Error
  */
 export class AuthorizationError extends APIError {
-  constructor(message: string = 'Access forbidden', data?: any) {
+  constructor(message: string = 'Access forbidden', data?: unknown) {
     super(403, message, 'AUTHORIZATION_ERROR', data);
     this.name = 'AuthorizationError';
   }
@@ -116,7 +116,7 @@ export class AuthorizationError extends APIError {
  * Not Found Error
  */
 export class NotFoundError extends APIError {
-  constructor(message: string = 'Resource not found', data?: any) {
+  constructor(message: string = 'Resource not found', data?: unknown) {
     super(404, message, 'NOT_FOUND_ERROR', data);
     this.name = 'NotFoundError';
   }
@@ -126,7 +126,7 @@ export class NotFoundError extends APIError {
  * Validation Error
  */
 export class ValidationError extends APIError {
-  constructor(message: string = 'Validation failed', data?: any) {
+  constructor(message: string = 'Validation failed', data?: unknown) {
     super(422, message, 'VALIDATION_ERROR', data);
     this.name = 'ValidationError';
   }
@@ -138,7 +138,7 @@ export class ValidationError extends APIError {
 export class RateLimitError extends APIError {
   public readonly retryAfter?: number;
 
-  constructor(message: string = 'Rate limit exceeded', retryAfter?: number, data?: any) {
+  constructor(message: string = 'Rate limit exceeded', retryAfter?: number, data?: unknown) {
     super(429, message, 'RATE_LIMIT_ERROR', data);
     this.name = 'RateLimitError';
     this.retryAfter = retryAfter;
@@ -149,7 +149,7 @@ export class RateLimitError extends APIError {
  * Server Error
  */
 export class ServerError extends APIError {
-  constructor(message: string = 'Internal server error', data?: any) {
+  constructor(message: string = 'Internal server error', data?: unknown) {
     super(500, message, 'SERVER_ERROR', data);
     this.name = 'ServerError';
   }
@@ -159,7 +159,7 @@ export class ServerError extends APIError {
  * Timeout Error
  */
 export class TimeoutError extends APIError {
-  constructor(message: string = 'Request timeout', data?: any) {
+  constructor(message: string = 'Request timeout', data?: unknown) {
     super(408, message, 'TIMEOUT_ERROR', data);
     this.name = 'TimeoutError';
   }

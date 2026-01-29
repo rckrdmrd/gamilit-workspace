@@ -222,7 +222,6 @@ export class MissionsCronService {
     try {
       const job = this.schedulerRegistry.getCronJob(jobName);
       return (job as any).running ?? false;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
       this.logger.warn(`Could not find job ${jobName} in registry`);
       return false;

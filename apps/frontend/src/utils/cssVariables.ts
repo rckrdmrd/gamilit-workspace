@@ -8,7 +8,7 @@
  * @see ET-WL-004-css-runtime-variables.md
  */
 
-import type { BrandingConfig, CSS_VARIABLE_MAP } from '@/shared/types/branding.types';
+import type { BrandingConfig } from '@/shared/types/branding.types';
 import { getContrastTextColor } from './color.utils';
 
 /**

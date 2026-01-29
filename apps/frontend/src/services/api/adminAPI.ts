@@ -195,29 +195,32 @@ export async function getMayaRanks(): Promise<MayaRankConfig[]> {
     const ranks = response.data;
 
     // Transform snake_case keys to camelCase if needed
-    return ranks.map((rank) => ({
-      id: rank.id,
-      name: rank.name,
-      level: (rank as any).level || 0,
-      minXP: (rank as any).min_xp || (rank as any).minXp || rank.minXP,
-      maxXP: (rank as any).max_xp || (rank as any).maxXp || rank.maxXP,
-      multiplierXp: (rank as any).multiplier_xp || (rank as any).multiplierXp || 1.0,
-      multiplierMlCoins:
-        (rank as any).multiplier_ml_coins || (rank as any).multiplierMlCoins || 1.0,
-      bonusMlCoins: (rank as any).bonus_ml_coins || (rank as any).bonusMlCoins || 0,
-      color: rank.color || '#6B7280',
-      icon: rank.icon,
-      description: (rank as any).description || '',
-      perks: (rank as any).perks || [],
-      isActive:
-        (rank as any).is_active !== undefined
-          ? (rank as any).is_active
-          : (rank as any).isActive !== undefined
-            ? (rank as any).isActive
-            : true,
-      order:
-        (rank as any).order !== undefined ? (rank as any).order : (rank as any).display_order || 0,
-    }));
+    return ranks.map((rank) => {
+      const r = rank as Record<string, unknown>;
+      return {
+        id: rank.id,
+        name: rank.name,
+        level: (r.level as number) || 0,
+        minXP: (r.min_xp as number) || (r.minXp as number) || rank.minXP,
+        maxXP: (r.max_xp as number) || (r.maxXp as number) || rank.maxXP,
+        multiplierXp: (r.multiplier_xp as number) || (r.multiplierXp as number) || 1.0,
+        multiplierMlCoins:
+          (r.multiplier_ml_coins as number) || (r.multiplierMlCoins as number) || 1.0,
+        bonusMlCoins: (r.bonus_ml_coins as number) || (r.bonusMlCoins as number) || 0,
+        color: rank.color || '#6B7280',
+        icon: rank.icon,
+        description: (r.description as string) || '',
+        perks: (r.perks as string[]) || [],
+        isActive:
+          r.is_active !== undefined
+            ? (r.is_active as boolean)
+            : r.isActive !== undefined
+              ? (r.isActive as boolean)
+              : true,
+        order:
+          r.order !== undefined ? (r.order as number) : (r.display_order as number) || 0,
+      };
+    });
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch Maya ranks');
   }
@@ -337,7 +340,7 @@ export async function getOrganizationUsers(
  */
 export async function updateOrganizationSubscription(
   id: string,
-  subscription: any,
+  subscription: Record<string, unknown>,
 ): Promise<Organization> {
   try {
     const response = await apiClient.patch<Organization>(
@@ -419,7 +422,7 @@ export async function getPendingContent(
 ): Promise<PaginatedResponse<PendingContent>> {
   try {
     // Backend response structure
-    const response = await apiClient.get<any>(
+    const response = await apiClient.get<Record<string, unknown>>(
       API_ENDPOINTS.admin.content.pending,
       { params: filters },
     );
@@ -491,7 +494,7 @@ export async function rejectContent(id: string, reason?: string): Promise<void> 
  *
  * Status: Backend IMPLEMENTED ✅
  */
-export async function getMediaLibrary(filters?: any): Promise<PaginatedResponse<MediaFile>> {
+export async function getMediaLibrary(filters?: Record<string, unknown>): Promise<PaginatedResponse<MediaFile>> {
   try {
     const response = await apiClient.get<PaginatedResponse<MediaFile>>(
       API_ENDPOINTS.admin.content.mediaLibrary,
@@ -541,7 +544,7 @@ export async function getApprovalHistory(page = 1): Promise<PaginatedResponse<Ap
  * Safely converts a date value to ISO string
  * Handles Date objects, strings, null, and undefined
  */
-function safeToISOString(value: any): string | undefined {
+function safeToISOString(value: unknown): string | undefined {
   if (!value) return undefined;
 
   // If already a string, validate it's a proper date
@@ -562,26 +565,26 @@ function safeToISOString(value: any): string | undefined {
  * Transforms backend user (snake_case) to frontend User type (camelCase)
  * CORR-003: Map last_sign_in_at → lastLogin and other snake_case fields
  */
-function transformUser(backendUser: any): User {
+function transformUser(backendUser: Record<string, unknown>): User {
   // Get last login from either last_sign_in_at (snake_case) or lastLogin (camelCase)
   const rawLastLogin = backendUser.last_sign_in_at ?? backendUser.lastLogin;
 
   const user: User = {
-    id: backendUser.id,
+    id: backendUser.id as string,
     name:
-      backendUser.full_name || backendUser.display_name || backendUser.name || backendUser.email,
-    email: backendUser.email,
-    role: backendUser.role,
-    status: backendUser.status,
-    organization: backendUser.organization_name || backendUser.organization,
-    organizationId: backendUser.organization_id || backendUser.organizationId,
-    joinDate: backendUser.created_at || backendUser.join_date || backendUser.joinDate,
-    // ✅ CORR-003: Map last_sign_in_at → lastLogin with safe conversion
+      (backendUser.full_name as string) || (backendUser.display_name as string) || (backendUser.name as string) || (backendUser.email as string),
+    email: backendUser.email as string,
+    role: backendUser.role as string,
+    status: backendUser.status as string,
+    organization: (backendUser.organization_name as string) || (backendUser.organization as string),
+    organizationId: (backendUser.organization_id as string) || (backendUser.organizationId as string),
+    joinDate: (backendUser.created_at as string) || (backendUser.join_date as string) || (backendUser.joinDate as string),
+    // CORR-003: Map last_sign_in_at -> lastLogin with safe conversion
     lastLogin: safeToISOString(rawLastLogin),
   };
 
   if (backendUser.metadata) {
-    user.metadata = backendUser.metadata;
+    user.metadata = backendUser.metadata as User['metadata'];
   }
 
   return user;
@@ -597,9 +600,9 @@ export async function getUsers(filters?: UserFilters): Promise<PaginatedResponse
   try {
     // FE-062: Transform pagination params to match backend ListUsersDto
     // Backend expects 'limit' not 'pageSize', and doesn't support sortBy/sortOrder yet
-    let transformedFilters: any = undefined;
+    let transformedFilters: Record<string, unknown> | undefined = undefined;
     if (filters) {
-      const { pageSize, sortBy: _sortBy, sortOrder: _sortOrder, ...rest } = filters as any;
+      const { pageSize, sortBy: _sortBy, sortOrder: _sortOrder, ...rest } = filters as UserFilters & { pageSize?: number; sortBy?: string; sortOrder?: string };
       transformedFilters = {
         ...rest,
         ...(pageSize && { limit: pageSize }), // Map pageSize → limit
@@ -608,7 +611,7 @@ export async function getUsers(filters?: UserFilters): Promise<PaginatedResponse
 
     // Backend returns different structure than expected
     // Need to check what actually comes back
-    const response = await apiClient.get<any>(API_ENDPOINTS.admin.users.list, {
+    const response = await apiClient.get<Record<string, unknown>>(API_ENDPOINTS.admin.users.list, {
       params: transformedFilters,
     });
 
@@ -869,7 +872,7 @@ export async function getGamificationSettings(): Promise<GamificationSettings> {
  */
 export async function updateGamificationSettings(
   _category: 'ranks' | 'achievements' | 'economy',
-  _data: any,
+  _data: Record<string, unknown>,
 ): Promise<GamificationSettings> {
   try {
     const response = await apiClient.put<GamificationSettings>(
@@ -887,9 +890,9 @@ export async function updateGamificationSettings(
  *
  * Status: Backend NOT implemented (P1)
  */
-export async function previewGamificationChanges(_changes: any): Promise<any> {
+export async function previewGamificationChanges(_changes: Record<string, unknown>): Promise<Record<string, unknown>> {
   try {
-    const response = await apiClient.post<any>(API_ENDPOINTS.admin.gamification.previewChanges, {
+    const response = await apiClient.post<Record<string, unknown>>(API_ENDPOINTS.admin.gamification.previewChanges, {
       changes: _changes,
     });
     return response.data;
@@ -987,7 +990,7 @@ export async function getAuditLogs(
 ): Promise<PaginatedResponse<AuditLogEntry>> {
   try {
     // Transform frontend filters to backend params
-    const params: any = {};
+    const params: Record<string, unknown> = {};
     if (filters?.page) params.page = filters.page;
     if (filters?.limit) params.limit = filters.limit;
     if (filters?.userId) params.user_id = filters.userId;
@@ -997,7 +1000,7 @@ export async function getAuditLogs(
     if (filters?.startDate) params.start_date = filters.startDate;
     if (filters?.endDate) params.end_date = filters.endDate;
 
-    const response = await apiClient.get<any>(
+    const response = await apiClient.get<Record<string, unknown>>(
       `${API_ENDPOINTS.admin.system.logs.replace('/logs', '/audit-log')}`,
       { params },
     );
@@ -1005,7 +1008,7 @@ export async function getAuditLogs(
     const backendData = response.data;
 
     // Transform backend response (snake_case) to frontend format (camelCase)
-    const logs = (backendData.data || []).map((log: any) => ({
+    const logs = ((backendData.data || []) as Record<string, unknown>[]).map((log: Record<string, unknown>) => ({
       id: log.id,
       userId: log.user_id,
       email: log.email,
@@ -1103,9 +1106,9 @@ export async function getConfigCategories(): Promise<SettingsCategory[]> {
  *
  * Status: Backend NOT implemented (P1)
  */
-export async function getCategoryConfig(category: SettingsCategory): Promise<any> {
+export async function getCategoryConfig(category: SettingsCategory): Promise<Record<string, unknown>> {
   try {
-    const response = await apiClient.get<any>(API_ENDPOINTS.admin.system.categoryConfig(category));
+    const response = await apiClient.get<Record<string, unknown>>(API_ENDPOINTS.admin.system.categoryConfig(category));
     return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to fetch config for category ${category}`);
@@ -1119,10 +1122,10 @@ export async function getCategoryConfig(category: SettingsCategory): Promise<any
  */
 export async function updateCategoryConfig(
   category: SettingsCategory,
-  _settings: any,
-): Promise<any> {
+  _settings: Record<string, unknown>,
+): Promise<Record<string, unknown>> {
   try {
-    const response = await apiClient.put<any>(
+    const response = await apiClient.put<Record<string, unknown>>(
       API_ENDPOINTS.admin.system.categoryConfig(category),
       _settings,
     );
@@ -1139,10 +1142,10 @@ export async function updateCategoryConfig(
  */
 export async function validateConfig(
   category: SettingsCategory,
-  _settings: any,
-): Promise<{ valid: boolean; errors?: any[] }> {
+  _settings: Record<string, unknown>,
+): Promise<{ valid: boolean; errors?: string[] }> {
   try {
-    const response = await apiClient.post<{ valid: boolean; errors?: any[] }>(
+    const response = await apiClient.post<{ valid: boolean; errors?: string[] }>(
       API_ENDPOINTS.admin.system.validateConfig,
       { category, settings: _settings },
     );
@@ -1177,7 +1180,7 @@ export async function generateReport(params: GenerateReportParams): Promise<Repo
  */
 export async function getReports(filters?: ReportListFilters): Promise<PaginatedResponse<Report>> {
   try {
-    const response = await apiClient.get<any>(API_ENDPOINTS.admin.reports.list, {
+    const response = await apiClient.get<Record<string, unknown>>(API_ENDPOINTS.admin.reports.list, {
       params: filters,
     });
 
@@ -1231,7 +1234,7 @@ export async function deleteReport(reportId: string): Promise<void> {
  *
  * Status: Backend NOT implemented (P2)
  */
-export async function scheduleReport(reportId: string, schedule: any): Promise<Report> {
+export async function scheduleReport(reportId: string, schedule: Record<string, unknown>): Promise<Report> {
   try {
     const response = await apiClient.post<Report>(
       API_ENDPOINTS.admin.reports.schedule(reportId),
@@ -1254,7 +1257,7 @@ export async function scheduleReport(reportId: string, schedule: any): Promise<R
  */
 export async function listAlerts(filters?: AlertFilters): Promise<PaginatedResponse<Alert>> {
   try {
-    const response = await apiClient.get<any>(API_ENDPOINTS.admin.alerts, { params: filters });
+    const response = await apiClient.get<Record<string, unknown>>(API_ENDPOINTS.admin.alerts, { params: filters });
 
     const backendData = response.data;
 

@@ -112,8 +112,8 @@ const SANITIZE_CONFIGS = {
   },
   [UserRole.SUPER_ADMIN]: {
     // Super admin tiene acceso completo, pero aún con protección básica
-    allowedTags: false as any, // Permitir todos los tags
-    allowedAttributes: false as any, // Permitir todos los atributos
+    allowedTags: false as const, // Permitir todos los tags
+    allowedAttributes: false as const, // Permitir todos los atributos
     allowProtocolRelative: false,
   },
 };
@@ -127,7 +127,7 @@ export function sanitizeHtmlByRole(
 ): string {
   const config = SANITIZE_CONFIGS[role] || SANITIZE_CONFIGS[UserRole.STUDENT];
 
-  return sanitizeHtml(html, config as any);
+  return sanitizeHtml(html, config as sanitizeHtml.IOptions);
 }
 
 /**

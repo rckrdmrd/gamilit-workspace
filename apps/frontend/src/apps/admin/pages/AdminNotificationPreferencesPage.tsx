@@ -104,7 +104,7 @@ export default function AdminNotificationPreferencesPage() {
     setSavingType(type);
     try {
       await updatePreference(type, { [channel]: newValue });
-    } catch (error) {
+    } catch (_error) {
       setLocalPreferences((prev) => ({
         ...prev,
         [type]: current,

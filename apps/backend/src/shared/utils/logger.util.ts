@@ -83,16 +83,16 @@ if (nodeEnv !== 'production') {
  * Helper logging functions
  */
 export const log = {
-  info: (message: string, ...meta: any[]) => logger.info(message, ...meta),
-  warn: (message: string, ...meta: any[]) => logger.warn(message, ...meta),
-  error: (message: string, error?: any) => {
+  info: (message: string, ...meta: unknown[]) => logger.info(message, ...meta),
+  warn: (message: string, ...meta: unknown[]) => logger.warn(message, ...meta),
+  error: (message: string, error?: unknown) => {
     if (error instanceof Error) {
       logger.error(message, { error: error.message, stack: error.stack });
     } else {
       logger.error(message, error);
     }
   },
-  debug: (message: string, ...meta: any[]) => logger.debug(message, ...meta),
+  debug: (message: string, ...meta: unknown[]) => logger.debug(message, ...meta),
 };
 
 export default logger;

@@ -21,7 +21,7 @@ export interface NotificationMetadata {
   quest?: string;
   progress?: number;
   total?: number;
-  [key: string]: any;
+  [key: string]: string | number | boolean | undefined;
 }
 
 /**
@@ -259,7 +259,7 @@ class NotificationService {
       });
 
       console.log('✅ Notification marked as read');
-    } catch (error) {
+    } catch (_error) {
       console.log('Could not mark notification as read via API, storing locally');
       // Store in localStorage as fallback
       const readNotifications = JSON.parse(localStorage.getItem('glit_read_notifications') || '[]');

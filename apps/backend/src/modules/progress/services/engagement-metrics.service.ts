@@ -10,8 +10,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, LessThan } from 'typeorm';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Repository, Between } from 'typeorm';
+import { Cron } from '@nestjs/schedule';
 import { EngagementMetrics } from '../entities/engagement-metrics.entity';
 import { LearningSession } from '../entities/learning-session.entity';
 import { ExerciseSubmission } from '../entities/exercise-submission.entity';
@@ -98,8 +98,8 @@ export class EngagementMetricsService {
 
     const sessionsCount = sessions.length;
     let totalTimeSeconds = 0;
-    let exercisesAttempted = 0;
-    let exercisesCompleted = 0;
+    let _exercisesAttempted = 0;
+    let _exercisesCompleted = 0;
 
     sessions.forEach((session) => {
       // Calculate time from session
@@ -108,8 +108,8 @@ export class EngagementMetricsService {
         const seconds = this.parseIntervalToSeconds(session.active_time);
         totalTimeSeconds += seconds;
       }
-      exercisesAttempted += session.exercises_attempted || 0;
-      exercisesCompleted += session.exercises_completed || 0;
+      _exercisesAttempted += session.exercises_attempted || 0;
+      _exercisesCompleted += session.exercises_completed || 0;
     });
 
     // Get submission stats for the day

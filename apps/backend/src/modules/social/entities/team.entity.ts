@@ -117,7 +117,7 @@ export class Team {
    * Badges o insignias ganadas (JSONB array)
    */
   @Column({ type: 'jsonb', default: [] })
-    badges!: any[];
+    badges!: Array<Record<string, unknown>>;
 
   // =====================================================
   // LEADERSHIP

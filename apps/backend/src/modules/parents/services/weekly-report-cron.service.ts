@@ -11,14 +11,14 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   ParentNotification,
   ParentNotificationStatus,
 } from '@/modules/auth/entities/parent-notification.entity';
-import { ParentAccount, NotificationFrequency, ReportFormat } from '@/modules/auth/entities/parent-account.entity';
+import { ParentAccount, ReportFormat } from '@/modules/auth/entities/parent-account.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { WeeklyReportService } from './weekly-report.service';
 import { ParentAlertService } from './parent-alert.service';

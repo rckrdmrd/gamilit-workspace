@@ -10,8 +10,7 @@ import { ProgressStatusEnum } from '@shared/constants/enums.constants';
 
 describe('ModuleProgressService', () => {
   let service: ModuleProgressService;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let repository: Repository<ModuleProgress>;
+  let _repository: Repository<ModuleProgress>;
 
   const mockRepository = {
     find: jest.fn(),
@@ -60,7 +59,7 @@ describe('ModuleProgressService', () => {
     }).compile();
 
     service = module.get<ModuleProgressService>(ModuleProgressService);
-    repository = module.get(getRepositoryToken(ModuleProgress, 'progress'));
+    _repository = module.get(getRepositoryToken(ModuleProgress, 'progress'));
 
     jest.clearAllMocks();
   });

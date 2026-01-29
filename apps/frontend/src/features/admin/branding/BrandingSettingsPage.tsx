@@ -37,7 +37,6 @@ import {
   AlertTriangle,
   Loader2,
 } from 'lucide-react';
-import type { BrandingConfig } from '@/shared/types/branding.types';
 
 /**
  * Form data type for branding settings

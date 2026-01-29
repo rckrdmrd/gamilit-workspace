@@ -406,7 +406,7 @@ export default function TeacherDashboard() {
                                   hour: '2-digit',
                                   minute: '2-digit',
                                 });
-                              } catch (e) {
+                              } catch (_e) {
                                 return timestamp; // Fallback to raw value if parsing fails
                               }
                             };

@@ -15,7 +15,6 @@
 
 import React from 'react';
 import type { Role } from '@/services/api/adminTypes';
-import { Button } from '@shared/components/Button';
 
 interface RolesTableProps {
   roles: Role[];

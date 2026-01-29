@@ -98,10 +98,19 @@ const getMasteryLevel = (percentage: number): SkillMastery['mastery_level'] => {
   return 'novice';
 };
 
+/** Module progress structure from backend */
+interface ModuleProgress {
+  module_order?: number;
+  average_score?: number;
+  completed_activities?: number;
+  total_activities?: number;
+  last_activity_date?: string | null;
+}
+
 /**
  * Map module progress to skill mastery
  */
-const mapModuleToSkills = (moduleProgress: any): SkillMastery[] => {
+const mapModuleToSkills = (moduleProgress: ModuleProgress): SkillMastery[] => {
   // Define skills per module based on GAMILIT's 5 reading comprehension levels
   const skillMappings: Record<number, { name: string; category: SkillMastery['category'] }[]> = {
     1: [
@@ -291,8 +300,8 @@ export function useClassroomMastery(classroomId: string): UseClassroomMasteryRet
       let totalProgress = 0;
       let studentsWithProgress = 0;
 
-      studentsData.forEach((student: any) => {
-        const progressPct = student.progress_percentage ?? student.overall_progress ?? 0;
+      studentsData.forEach((student: Record<string, unknown>) => {
+        const progressPct = (student.progress_percentage as number) ?? (student.overall_progress as number) ?? 0;
         const level = getMasteryLevel(progressPct);
         studentLevels[level]++;
 

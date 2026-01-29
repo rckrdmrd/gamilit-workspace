@@ -28,7 +28,7 @@ describe('SecurityService', () => {
     }).compile();
 
     service = module.get<SecurityService>(SecurityService);
-    attemptRepository = module.get(getRepositoryToken(AuthAttempt, 'auth'));
+    _attemptRepository = module.get(getRepositoryToken(AuthAttempt, 'auth'));
 
     jest.clearAllMocks();
   });

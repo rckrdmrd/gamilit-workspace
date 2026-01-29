@@ -34,7 +34,7 @@ export interface ExerciseResult {
   isCorrect: boolean;
   hintsUsed: number;
   comodinesUsed: string[];
-  submittedAnswers: any;
+  submittedAnswers: Record<string, unknown>;
   xpEarned: number;
   mlCoinsEarned: number;
   metadata?: Record<string, unknown>;
@@ -43,7 +43,7 @@ export interface ExerciseResult {
 export interface AttemptData {
   exerciseId: string;
   attemptNumber: number;
-  submittedAnswers: any;
+  submittedAnswers: Record<string, unknown>;
   timeSpent: number;
 }
 

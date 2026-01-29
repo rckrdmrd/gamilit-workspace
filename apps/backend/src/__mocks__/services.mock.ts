@@ -19,7 +19,7 @@ export const createMockJwtService = (): jest.Mocked<JwtService> => ({
   verify: jest.fn(),
   verifyAsync: jest.fn(),
   decode: jest.fn(),
-} as any);
+} as unknown as jest.Mocked<JwtService>);
 
 /**
  * Mock EntityManager
@@ -36,7 +36,7 @@ export const createMockEntityManager = (): jest.Mocked<EntityManager> => ({
   transaction: jest.fn(),
   getRepository: jest.fn(),
   createQueryBuilder: jest.fn(),
-} as any);
+} as unknown as jest.Mocked<EntityManager>);
 
 /**
  * Mock MLCoinsService
@@ -127,10 +127,11 @@ export const createMockExerciseRewardsService = () => ({
 /**
  * Helper: Reset all service mocks
  */
-export function resetServiceMocks(service: any): void {
+export function resetServiceMocks(service: Record<string, unknown>): void {
   Object.keys(service).forEach((key) => {
-    if (typeof service[key]?.mockReset === 'function') {
-      service[key].mockReset();
+    const value = service[key];
+    if (typeof value === 'object' && value !== null && 'mockReset' in value && typeof (value as { mockReset?: unknown }).mockReset === 'function') {
+      (value as jest.Mock).mockReset();
     }
   });
 }
@@ -166,7 +167,7 @@ export const TestDataFactory = {
   /**
    * Creates a mock user object
    */
-  createUser: (overrides: any = {}) => ({
+  createUser: (overrides: Record<string, unknown> = {}) => ({
     id: TestDataFactory.createUuid('user'),
     email: TestDataFactory.createEmail('testuser'),
     encrypted_password: '$2b$10$hashedpassword',
@@ -183,7 +184,7 @@ export const TestDataFactory = {
   /**
    * Creates a mock profile object
    */
-  createProfile: (overrides: any = {}) => ({
+  createProfile: (overrides: Record<string, unknown> = {}) => ({
     id: TestDataFactory.createUuid('profile'),
     user_id: TestDataFactory.createUuid('user'),
     tenant_id: TestDataFactory.createUuid('tenant'),
@@ -201,7 +202,7 @@ export const TestDataFactory = {
   /**
    * Creates a mock tenant object
    */
-  createTenant: (overrides: any = {}) => ({
+  createTenant: (overrides: Record<string, unknown> = {}) => ({
     id: TestDataFactory.createUuid('tenant'),
     slug: 'gamilit-prod',
     name: 'GAMILIT Platform',
@@ -214,7 +215,7 @@ export const TestDataFactory = {
   /**
    * Creates a mock mission object
    */
-  createMission: (overrides: any = {}) => ({
+  createMission: (overrides: Record<string, unknown> = {}) => ({
     id: TestDataFactory.createUuid('mission'),
     user_id: TestDataFactory.createUuid('user'),
     template_id: TestDataFactory.createUuid('template'),
@@ -245,7 +246,7 @@ export const TestDataFactory = {
   /**
    * Creates a mock exercise object
    */
-  createExercise: (overrides: any = {}) => ({
+  createExercise: (overrides: Record<string, unknown> = {}) => ({
     id: TestDataFactory.createUuid('exercise'),
     module_id: TestDataFactory.createUuid('module'),
     title: 'Test Exercise',

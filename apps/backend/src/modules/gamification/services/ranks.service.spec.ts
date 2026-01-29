@@ -10,9 +10,9 @@ import { MayaRank, TransactionTypeEnum } from '@shared/constants/enums.constants
 
 describe('RanksService', () => {
   let service: RanksService;
-  let userRankRepo: Repository<UserRank>;
-  let userStatsService: UserStatsService;
-  let mlCoinsService: MLCoinsService;
+  let _userRankRepo: Repository<UserRank>;
+  let _userStatsService: UserStatsService;
+  let _mlCoinsService: MLCoinsService;
 
   const mockUserRankRepository = {
     findOne: jest.fn(),
@@ -77,9 +77,9 @@ describe('RanksService', () => {
     }).compile();
 
     service = module.get<RanksService>(RanksService);
-    userRankRepo = module.get(getRepositoryToken(UserRank, 'gamification'));
-    userStatsService = module.get<UserStatsService>(UserStatsService);
-    mlCoinsService = module.get<MLCoinsService>(MLCoinsService);
+    _userRankRepo = module.get(getRepositoryToken(UserRank, 'gamification'));
+    _userStatsService = module.get<UserStatsService>(UserStatsService);
+    _mlCoinsService = module.get<MLCoinsService>(MLCoinsService);
 
     // Clear all mocks before each test
     jest.clearAllMocks();

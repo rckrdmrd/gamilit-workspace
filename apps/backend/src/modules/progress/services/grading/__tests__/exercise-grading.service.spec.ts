@@ -13,7 +13,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
+// EntityManager imported but not currently used in tests
 import { NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { ExerciseGradingService } from '../exercise-grading.service';
 import { Exercise } from '@/modules/educational/entities';

@@ -109,7 +109,7 @@ export class ClassroomResponseDto {
    * Horario de clases
    */
   @Expose()
-    schedule!: any[];
+    schedule!: Array<{ day: string; start_time: string; end_time: string }>;
 
   /**
    * URL de reunión virtual

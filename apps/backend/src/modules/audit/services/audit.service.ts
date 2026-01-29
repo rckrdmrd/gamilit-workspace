@@ -70,7 +70,7 @@ export class AuditService {
    */
   async logOrganizationCreated(
     organizationId: string,
-    organizationData: any,
+    organizationData: Record<string, unknown>,
     actorId: string,
     actorIp?: string,
   ): Promise<void> {
@@ -95,8 +95,8 @@ export class AuditService {
    */
   async logOrganizationUpdated(
     organizationId: string,
-    oldValues: any,
-    newValues: any,
+    oldValues: Record<string, unknown>,
+    newValues: Record<string, unknown>,
     actorId: string,
     actorIp?: string,
   ): Promise<void> {
@@ -125,7 +125,7 @@ export class AuditService {
    */
   async logOrganizationDeleted(
     organizationId: string,
-    organizationData: any,
+    organizationData: Record<string, unknown>,
     actorId: string,
     actorIp?: string,
   ): Promise<void> {
@@ -285,8 +285,8 @@ export class AuditService {
    */
   async logSystemConfigChanged(
     configKey: string,
-    oldValue: any,
-    newValue: any,
+    oldValue: unknown,
+    newValue: unknown,
     actorId: string,
     actorIp?: string,
   ): Promise<void> {
@@ -336,8 +336,8 @@ export class AuditService {
   /**
    * Calculate changes between old and new values
    */
-  private calculateChanges(oldValues: any, newValues: any): any {
-    const changes: any = {};
+  private calculateChanges(oldValues: Record<string, unknown>, newValues: Record<string, unknown>): Record<string, { from: unknown; to: unknown }> {
+    const changes: Record<string, { from: unknown; to: unknown }> = {};
 
     Object.keys(newValues).forEach((key) => {
       if (oldValues[key] !== newValues[key]) {

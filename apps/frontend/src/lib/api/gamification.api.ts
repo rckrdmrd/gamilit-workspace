@@ -135,7 +135,7 @@ export const gamificationApi = {
    *                   (el apiClient interceptor hace unwrap del TransformResponseInterceptor)
    */
   getUserAchievements: async (userId: string): Promise<UserAchievement[]> => {
-    const { data } = await apiClient.get<{ achievements: any[]; total: number }>(
+    const { data } = await apiClient.get<{ achievements: Record<string, unknown>[]; total: number }>(
       `/gamification/users/${userId}/achievements`,
     );
 

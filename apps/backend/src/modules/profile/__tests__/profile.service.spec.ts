@@ -14,7 +14,7 @@ import { Profile } from '../../auth/entities/profile.entity';
 
 describe('ProfileService', () => {
   let service: ProfileService;
-  let profileRepo: jest.Mocked<Repository<Profile>>;
+  let _profileRepo: jest.Mocked<Repository<Profile>>;
 
   const mockProfileRepo = {
     findOne: jest.fn(),

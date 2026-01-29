@@ -8,7 +8,7 @@
  * @see ET-WL-001-theming.md
  */
 
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * useFavicon Hook

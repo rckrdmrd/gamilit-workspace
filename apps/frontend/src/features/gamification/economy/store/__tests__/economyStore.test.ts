@@ -21,12 +21,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useEconomyStore } from '../economyStore';
 import type { ShopItem, MLCoinsBalance, ShopCategory } from '../../types/economyTypes';
 import * as economyAPI from '../../api/economyAPI';
-import {
-  createMockUserStats,
-  createMockShopItem,
-  createMockAuthStore,
-  TEST_USER_ID,
-} from '../../../__tests__/helpers/gamificationMockHelpers';
+import '../../../__tests__/helpers/gamificationMockHelpers';
 
 // Mock the API module
 vi.mock('../../api/economyAPI', () => ({

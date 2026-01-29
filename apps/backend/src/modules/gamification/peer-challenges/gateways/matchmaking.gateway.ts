@@ -8,7 +8,7 @@ import {
   ConnectedSocket,
   MessageBody,
 } from '@nestjs/websockets';
-import { Logger, UseGuards } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { MatchmakingService } from '../services/matchmaking.service';
@@ -134,7 +134,7 @@ export class MatchmakingGateway
       if (queueStatus.inQueue) {
         client.emit(MatchmakingEvent.QUEUE_UPDATE, queueStatus.position);
       }
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn(`Connection rejected: auth failed (socket: ${client.id})`);
       client.emit(MatchmakingEvent.ERROR, { message: 'Authentication failed' });
       client.disconnect();

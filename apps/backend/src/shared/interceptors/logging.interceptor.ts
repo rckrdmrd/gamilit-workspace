@@ -18,7 +18,7 @@ import { tap, catchError } from 'rxjs/operators';
 export class LoggingInterceptor implements NestInterceptor {
   private readonly logger = new Logger('HTTP');
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
     const { method, url, ip, body, query, params } = request;
@@ -90,7 +90,7 @@ export class LoggingInterceptor implements NestInterceptor {
   /**
    * Sanitiza el body removiendo campos sensibles
    */
-  private sanitizeBody(body: any): any {
+  private sanitizeBody(body: Record<string, unknown>): Record<string, unknown> {
     const sensitiveFields = [
       'password',
       'passwordConfirm',
@@ -110,7 +110,7 @@ export class LoggingInterceptor implements NestInterceptor {
       return body;
     }
 
-    const sanitized = { ...body };
+    const sanitized: Record<string, unknown> = { ...body };
 
     for (const field of sensitiveFields) {
       if (sanitized[field]) {
@@ -121,7 +121,7 @@ export class LoggingInterceptor implements NestInterceptor {
     // Sanitizar anidados
     for (const key in sanitized) {
       if (typeof sanitized[key] === 'object' && sanitized[key] !== null) {
-        sanitized[key] = this.sanitizeBody(sanitized[key]);
+        sanitized[key] = this.sanitizeBody(sanitized[key] as Record<string, unknown>);
       }
     }
 

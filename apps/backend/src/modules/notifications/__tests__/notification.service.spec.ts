@@ -7,7 +7,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
-import { Repository, DataSource, SelectQueryBuilder } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
 import { NotificationService } from '../services/notification.service';
 import { NotificationTemplateService } from '../services/notification-template.service';
@@ -16,10 +16,10 @@ import { WebSocketService } from '../../websocket/websocket.service';
 
 describe('NotificationService', () => {
   let service: NotificationService;
-  let notificationRepository: jest.Mocked<Repository<Notification>>;
-  let templateService: jest.Mocked<NotificationTemplateService>;
-  let dataSource: jest.Mocked<DataSource>;
-  let webSocketService: jest.Mocked<WebSocketService>;
+  let _notificationRepository: jest.Mocked<Repository<Notification>>;
+  let _templateService: jest.Mocked<NotificationTemplateService>;
+  let _dataSource: jest.Mocked<DataSource>;
+  let _webSocketService: jest.Mocked<WebSocketService>;
 
   // Mock repository
   const mockNotificationRepository = {
@@ -635,7 +635,7 @@ describe('NotificationService', () => {
       mockQueryBuilder.execute.mockResolvedValue({ affected: 0 });
       mockNotificationRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder as any);
 
-      const beforeCall = new Date();
+      const _beforeCall = new Date();
 
       // Act
       await service.cleanupOldNotifications();

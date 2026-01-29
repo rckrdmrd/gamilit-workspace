@@ -485,7 +485,7 @@ export const useEconomyStore = create<EconomyState>()(
           currentBalance: state.balance.current,
           netWorth: state.balance.current + state.getInventoryValue(),
           transactionCount: state.transactions.length,
-          favoriteCategory: favoriteCategory as any,
+          favoriteCategory: favoriteCategory as string,
           biggestPurchase: biggestTransaction
             ? {
               item: biggestTransaction.description,

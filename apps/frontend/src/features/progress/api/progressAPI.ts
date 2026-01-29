@@ -729,7 +729,7 @@ export const autoSaveProgress = async (
         success: true,
         savedAt: new Date(),
       };
-    } catch (localError) {
+    } catch (_localError) {
       throw handleAPIError(error);
     }
   }
@@ -768,7 +768,7 @@ export const getAutoSavedProgress = async (
     );
 
     return data.data?.data || null;
-  } catch (error) {
+  } catch (_error) {
     // Fallback to localStorage on error
     try {
       const saved = localStorage.getItem(`autosave_exercise_${exerciseId}`);
@@ -776,8 +776,8 @@ export const getAutoSavedProgress = async (
         const parsed = JSON.parse(saved);
         return parsed.data;
       }
-    } catch (localError) {
-      console.warn('Failed to load auto-saved progress:', localError);
+    } catch (_localError) {
+      console.warn('Failed to load auto-saved progress:', _localError);
     }
 
     return null;

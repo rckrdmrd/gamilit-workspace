@@ -12,7 +12,6 @@
 import { apiClient } from '@/services/api/apiClient';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
 import type {
-  ParentAccount,
   ParentAuthResponse,
   ParentAuthTokens,
   LinkedStudent,

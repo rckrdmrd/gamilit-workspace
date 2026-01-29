@@ -8,8 +8,8 @@ import { Profile } from '@/modules/auth/entities/profile.entity';
 
 describe('UserStatsService', () => {
   let service: UserStatsService;
-  let userStatsRepo: jest.Mocked<Partial<Repository<UserStats>>>;
-  let profileRepo: jest.Mocked<Partial<Repository<Profile>>>;
+  let _userStatsRepo: jest.Mocked<Partial<Repository<UserStats>>>;
+  let _profileRepo: jest.Mocked<Partial<Repository<Profile>>>;
 
   const mockUserStatsRepo = {
     findOne: jest.fn(),
@@ -92,8 +92,8 @@ describe('UserStatsService', () => {
     }).compile();
 
     service = module.get<UserStatsService>(UserStatsService);
-    userStatsRepo = module.get(getRepositoryToken(UserStats, 'gamification'));
-    profileRepo = module.get(getRepositoryToken(Profile, 'auth'));
+    _userStatsRepo = module.get(getRepositoryToken(UserStats, 'gamification'));
+    _profileRepo = module.get(getRepositoryToken(Profile, 'auth'));
 
     jest.clearAllMocks();
 

@@ -46,7 +46,7 @@ export const GeneralSettings: React.FC = () => {
     try {
       await updateConfig(data);
       toast.success('Configuración general actualizada exitosamente');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al actualizar la configuración general');
     }
   };

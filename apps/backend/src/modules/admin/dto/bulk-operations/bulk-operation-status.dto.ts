@@ -68,14 +68,14 @@ export class BulkOperationStatusDto {
     example: [{ userId: 'abc', error: 'User not found' }],
     required: false,
   })
-    errorDetails?: any[];
+    errorDetails?: Array<{ userId?: string; error?: string; success?: boolean }>;
 
   @ApiProperty({
     description: 'Resultado consolidado de la operación',
     example: { summary: 'Operation completed successfully' },
     required: false,
   })
-    result?: any;
+    result?: Record<string, unknown>;
 
   @ApiProperty({
     description: 'UUID del administrador que inició la operación',

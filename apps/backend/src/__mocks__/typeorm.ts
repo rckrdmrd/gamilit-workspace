@@ -46,7 +46,7 @@ export const IsNull = jest.fn(() => ({ _type: 'isNull' }));
 export const Raw = jest.fn((value) => ({ _type: 'raw', _value: value }));
 
 // Mock Repository class - must be a proper class for instanceof checks
-export class Repository<T = any> {
+export class Repository<_T = any> {
   target: any;
   manager: any;
   metadata: any;
@@ -80,12 +80,12 @@ export class Repository<T = any> {
 }
 
 // Mock AbstractRepository class (for custom repository pattern)
-export class AbstractRepository<T = any> {
-  repository: Repository<T> = new Repository<T>();
+export class AbstractRepository<_T = any> {
+  repository: Repository<_T> = new Repository<_T>();
 }
 
 // Mock EntitySchema class
-export class EntitySchema<T = any> {
+export class EntitySchema<_T = any> {
   options: any;
   constructor(options: any) {
     this.options = options;
@@ -130,7 +130,7 @@ export class EntityManager {
 }
 
 // Mock SelectQueryBuilder
-export class SelectQueryBuilder<T = any> {
+export class SelectQueryBuilder<_T = any> {
   select = jest.fn().mockReturnThis();
   addSelect = jest.fn().mockReturnThis();
   where = jest.fn().mockReturnThis();
@@ -162,16 +162,16 @@ export type ObjectLiteral = Record<string, any>;
 
 // Mock DeepPartial type
 export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends Array<infer U>
-    ? Array<DeepPartial<U>>
-    : T[P] extends ReadonlyArray<infer U>
-    ? ReadonlyArray<DeepPartial<U>>
+  [P in keyof T]?: T[P] extends Array<infer _U>
+    ? Array<DeepPartial<T[P] extends Array<infer U> ? U : never>>
+    : T[P] extends ReadonlyArray<infer _U2>
+    ? ReadonlyArray<DeepPartial<T[P] extends ReadonlyArray<infer U2> ? U2 : never>>
     : DeepPartial<T[P]>;
 };
 
 // Mock FindOptionsWhere
-export type FindOptionsWhere<T> = {
-  [P in keyof T]?: T[P] | any;
+export type FindOptionsWhere<_T> = {
+  [key: string]: any;
 };
 
 // Mock getMetadataArgsStorage (needed by some decorators)

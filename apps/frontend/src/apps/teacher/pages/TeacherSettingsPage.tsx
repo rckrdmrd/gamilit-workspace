@@ -69,8 +69,8 @@ export default function TeacherSettingsPage() {
   // Load user preferences from backend
   const {
     preferences: backendPreferences,
-    loading: preferencesLoading,
-    error: preferencesError,
+    loading: _preferencesLoading,
+    error: _preferencesError,
   } = useUserPreferences();
 
   // State

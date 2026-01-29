@@ -167,7 +167,6 @@ export class AchievementReconciliationCronService {
     try {
       const job = this.schedulerRegistry.getCronJob('reconcile-pending-achievement-claims');
       return (job as any).running ?? false;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
       this.logger.warn('Could not find reconciliation job in registry');
       return false;

@@ -15,7 +15,6 @@ import {
   Get,
   Post,
   Patch,
-  Delete,
   Body,
   Param,
   Query,
@@ -40,7 +39,6 @@ import { WeeklyReportService, WeeklyReport, ReportHistoryItem } from '../service
 import {
   LinkStudentDto,
   VerifyLinkDto,
-  UpdateLinkPermissionsDto,
 } from '../dto/link-student.dto';
 import {
   ParentDashboardDto,

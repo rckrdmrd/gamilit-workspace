@@ -296,7 +296,7 @@ export default function ExercisePage() {
               exerciseHints.map((h) => (typeof h === 'string' ? h : (h as any).text || String(h))),
             );
           }
-        } catch (hintError) {
+        } catch (_hintError) {
           // Continue without hints - not critical (silent fail for optional feature)
         }
 

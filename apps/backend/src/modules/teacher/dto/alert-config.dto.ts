@@ -8,7 +8,6 @@
 
 import {
   IsUUID,
-  IsString,
   IsEnum,
   IsOptional,
   IsInt,

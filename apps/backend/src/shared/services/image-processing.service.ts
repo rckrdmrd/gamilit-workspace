@@ -288,7 +288,7 @@ export class ImageProcessingService {
     // Also include optimized original
     try {
       versions['original'] = await this.optimize(buffer);
-    } catch (error) {
+    } catch {
       this.logger.warn('Failed to optimize original, using as-is');
       const metadata = await sharp(buffer).metadata();
       versions['original'] = {

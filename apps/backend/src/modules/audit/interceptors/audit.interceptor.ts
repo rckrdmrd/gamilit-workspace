@@ -23,7 +23,7 @@ export class AuditInterceptor implements NestInterceptor {
 
   constructor(private readonly auditService: AuditService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<Request>();
     const { method, url, body: _body, user: _user} = request;
 
@@ -83,14 +83,14 @@ export class AuditInterceptor implements NestInterceptor {
    */
   private async logAuditEvent(
     request: Request,
-    response: any,
+    response: unknown,
     status: Status,
     duration: number,
-    error?: any,
+    error?: Error & { status?: number },
   ): Promise<void> {
     try {
       const { method, url, body, user } = request;
-      const actorId = (user as any)?.userId || (user as any)?.sub || undefined;
+      const actorId = (user as { userId?: string; sub?: string })?.userId || (user as { userId?: string; sub?: string })?.sub || undefined;
       const actorIp = this.getClientIp(request);
       const actorUserAgent = request.headers['user-agent'] || undefined;
 
@@ -191,7 +191,7 @@ export class AuditInterceptor implements NestInterceptor {
   /**
    * Sanitize request body to remove sensitive data
    */
-  private sanitizeBody(body: any): any {
+  private sanitizeBody(body: Record<string, unknown> | null | undefined): Record<string, unknown> | null | undefined {
     if (!body || typeof body !== 'object') {
       return body;
     }

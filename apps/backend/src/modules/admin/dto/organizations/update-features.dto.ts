@@ -49,5 +49,5 @@ export class FeatureFlagsDto {
 
   // Index signature for additional custom features
   // Note: Decorators not allowed on index signatures
-  [key: string]: any;
+  [key: string]: boolean | undefined;
 }

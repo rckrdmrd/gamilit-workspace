@@ -105,7 +105,7 @@ export default function AdminAssignmentsPage() {
         title: 'Exportación exitosa',
         message: 'Los datos se han descargado correctamente',
       });
-    } catch (error) {
+    } catch (_error) {
       showToast({
         type: 'error',
         title: 'Error al exportar',

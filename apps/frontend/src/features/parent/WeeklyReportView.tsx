@@ -47,7 +47,7 @@ export const WeeklyReportView: React.FC<WeeklyReportViewProps> = ({
     try {
       const newReport = await parentAPI.generateWeeklyReport(studentId);
       setSelectedReport(newReport);
-    } catch (err) {
+    } catch (_err) {
       setError('Error al generar el reporte. Intenta de nuevo.');
     } finally {
       setIsGenerating(false);

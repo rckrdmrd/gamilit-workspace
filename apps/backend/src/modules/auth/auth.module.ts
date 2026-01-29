@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -81,15 +81,12 @@ import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submiss
     // JWT configuration (async con env vars)
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
-        const expiresIn = configService.get<string>('JWT_EXPIRES_IN') || '15m';
-        return {
-          secret: configService.get<string>('JWT_SECRET') || 'dev-secret-change-in-production',
-          signOptions: {
-            expiresIn: expiresIn as any,
-          },
-        };
-      },
+      useFactory: (configService: ConfigService): JwtModuleOptions => ({
+        secret: configService.get<string>('JWT_SECRET') || 'dev-secret-change-in-production',
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '15m',
+        } as JwtModuleOptions['signOptions'],
+      }),
       inject: [ConfigService],
     }),
 

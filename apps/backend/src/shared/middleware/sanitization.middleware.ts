@@ -1,5 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
+import type { ParsedQs } from 'qs';
+import type { ParamsDictionary } from 'express-serve-static-core';
 
 @Injectable()
 export class SanitizationMiddleware implements NestMiddleware {
@@ -11,18 +13,18 @@ export class SanitizationMiddleware implements NestMiddleware {
 
     // Sanitize query params
     if (req.query) {
-      req.query = this.sanitizeObject(req.query);
+      req.query = this.sanitizeObject(req.query) as ParsedQs;
     }
 
     // Sanitize params
     if (req.params) {
-      req.params = this.sanitizeObject(req.params);
+      req.params = this.sanitizeObject(req.params) as ParamsDictionary;
     }
 
     next();
   }
 
-  private sanitizeObject(obj: any): any {
+  private sanitizeObject(obj: unknown): unknown {
     if (typeof obj !== 'object' || obj === null) {
       return this.sanitizeString(obj);
     }
@@ -31,16 +33,16 @@ export class SanitizationMiddleware implements NestMiddleware {
       return obj.map((item) => this.sanitizeObject(item));
     }
 
-    const sanitized: any = {};
-    for (const key in obj) {
+    const sanitized: Record<string, unknown> = {};
+    for (const key in obj as Record<string, unknown>) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        sanitized[key] = this.sanitizeObject(obj[key]);
+        sanitized[key] = this.sanitizeObject((obj as Record<string, unknown>)[key]);
       }
     }
     return sanitized;
   }
 
-  private sanitizeString(value: any): any {
+  private sanitizeString(value: unknown): unknown {
     if (typeof value !== 'string') {
       return value;
     }

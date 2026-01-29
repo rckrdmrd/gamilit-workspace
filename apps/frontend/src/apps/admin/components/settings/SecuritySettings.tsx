@@ -88,7 +88,7 @@ export const SecuritySettings: React.FC = () => {
     try {
       await updateConfig(data);
       toast.success('Configuración de seguridad actualizada exitosamente');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al actualizar la configuración de seguridad');
     }
   };

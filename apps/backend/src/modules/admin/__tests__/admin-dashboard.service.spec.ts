@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import 'typeorm';
 import { AdminDashboardService } from '../services/admin-dashboard.service';
 import { DashboardStatsService } from '../services/statistics/dashboard-stats.service';
 import { UserStatsService } from '../services/statistics/user-stats.service';
@@ -80,7 +80,7 @@ describe('AdminDashboardService', () => {
     },
   ];
 
-  const mockAlerts: AlertDto[] = [
+  const _mockAlerts: AlertDto[] = [
     {
       id: 'alert-1',
       type: 'warning',

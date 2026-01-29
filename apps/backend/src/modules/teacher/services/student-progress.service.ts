@@ -634,7 +634,7 @@ export class StudentProgressService {
         where: { id: In(classroomIds) },
       })
       : [];
-    const classroomMap = new Map(classrooms.map((c) => [c.id, c]));
+    const _classroomMap = new Map(classrooms.map((c) => [c.id, c]));
 
     // Map to response DTOs - FIX TASK-2026-01-18-005: Aligned with frontend StudentNote interface
     return memberships
@@ -766,7 +766,7 @@ export class StudentProgressService {
    */
   async getStudentProgressResponse(
     studentId: string,
-    query: GetStudentProgressQueryDto,
+    _query: GetStudentProgressQueryDto,
   ): Promise<StudentProgressResponseDto> {
     // FIX TASK-2026-01-19-002: studentId is profiles.id (PK), NOT auth.users.id (FK)
     // ClassroomMember.student_id -> profiles.id, StudentInClassroomDto.user_id = profiles.id

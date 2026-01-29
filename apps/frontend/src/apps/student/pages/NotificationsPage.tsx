@@ -85,7 +85,7 @@ export default function NotificationsPage() {
   const { gamificationData } = useUserGamification(user?.id);
 
   // WebSocket connection for real-time notifications
-  const { isConnected } = useWebSocket();
+  const { isConnected: _isConnected } = useWebSocket();
 
   // Store - Using Zustand selectors to prevent unnecessary re-renders
   const notifications = useNotificationsStore((state) => state.notifications);

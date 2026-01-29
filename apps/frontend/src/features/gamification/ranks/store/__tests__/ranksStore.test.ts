@@ -24,12 +24,7 @@ import type {
   MultiplierSourceType,
 } from '../../types/ranksTypes';
 import * as ranksAPI from '../../api/ranksAPI';
-import {
-  createMockUserProgress,
-  createMockUserStats,
-  createMockAuthStore,
-  TEST_USER_ID,
-} from '../../../__tests__/helpers/gamificationMockHelpers';
+import '../../../__tests__/helpers/gamificationMockHelpers';
 
 // Mock the API module
 vi.mock('../../api/ranksAPI', () => ({

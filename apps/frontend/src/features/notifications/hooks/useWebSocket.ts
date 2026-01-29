@@ -60,7 +60,7 @@ export interface WebSocketNotification {
 
 export interface UseWebSocketReturn {
   isConnected: boolean;
-  sendMessage: (event: string, data: any) => void;
+  sendMessage: (event: string, data: unknown) => void;
   disconnect: () => void;
 }
 
@@ -145,7 +145,7 @@ export function useWebSocket(): UseWebSocketReturn {
       isConnectedRef.current = true;
     });
 
-    socket.on('authenticated', (_data: any) => {
+    socket.on('authenticated', (_data: unknown) => {
       console.log('✅ WebSocket authenticated');
     });
 
@@ -166,7 +166,7 @@ export function useWebSocket(): UseWebSocketReturn {
       isConnectedRef.current = false;
     });
 
-    socket.on('error', (error: any) => {
+    socket.on('error', (error: unknown) => {
       console.error('❌ WebSocket error:', error);
     });
 
@@ -253,7 +253,7 @@ export function useWebSocket(): UseWebSocketReturn {
   /**
    * Send message to WebSocket server
    */
-  const sendMessage = useCallback((event: string, data: any) => {
+  const sendMessage = useCallback((event: string, data: unknown) => {
     if (socketRef.current?.connected) {
       socketRef.current.emit(event, data);
     } else {

@@ -24,12 +24,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useRanksStore } from '../store/ranksStore';
 import type { UserRankProgress, MultiplierSourceType } from '../types/ranksTypes';
-import {
-  createMockUserProgress,
-  createMockUserStats,
-  createMockAuthStore,
-  TEST_USER_ID,
-} from '../../__tests__/helpers/gamificationMockHelpers';
+import '../../__tests__/helpers/gamificationMockHelpers';
 
 // Mock API
 vi.mock('../api/ranksAPI', () => ({

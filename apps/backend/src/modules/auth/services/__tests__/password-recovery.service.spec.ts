@@ -19,9 +19,9 @@ import { SessionManagementService } from '../session-management.service';
  */
 describe('PasswordRecoveryService', () => {
   let service: PasswordRecoveryService;
-  let userRepository: Repository<User>;
-  let tokenRepository: Repository<PasswordResetToken>;
-  let mailService: MailService;
+  let _userRepository: Repository<User>;
+  let _tokenRepository: Repository<PasswordResetToken>;
+  let _mailService: MailService;
 
   // Mock repositories
   const mockUserRepository = {

@@ -21,7 +21,7 @@ import * as nodemailer from 'nodemailer';
 
 describe('MailService', () => {
   let service: MailService;
-  let configService: jest.Mocked<ConfigService>;
+  let _configService: jest.Mocked<ConfigService>;
   let mockTransporter: any;
 
   const mockConfigService = {

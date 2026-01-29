@@ -141,7 +141,7 @@ export class BattleGateway
       this.socketUsers.set(client.id, userId);
 
       this.logger.log(`Client connected to battle: ${userId} (${client.id})`);
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn(`Connection rejected: auth failed (socket: ${client.id})`);
       client.emit(BattleEvent.ERROR, { message: 'Authentication failed' });
       client.disconnect();

@@ -26,12 +26,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEconomyStore } from '../store/economyStore';
 import type { ShopItem, ShopCategory } from '../types/economyTypes';
-import {
-  createMockUserStats,
-  createMockShopItem,
-  createMockAuthStore,
-  TEST_USER_ID,
-} from '../../__tests__/helpers/gamificationMockHelpers';
+import '../../__tests__/helpers/gamificationMockHelpers';
 
 // Mock API
 vi.mock('../api/economyAPI', () => ({

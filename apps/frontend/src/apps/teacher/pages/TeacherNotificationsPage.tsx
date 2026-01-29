@@ -24,7 +24,6 @@ import {
   Filter,
   Trophy,
   TrendingUp,
-  Target,
   Users,
   Calendar,
   AlertCircle,

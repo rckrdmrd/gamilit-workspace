@@ -4,7 +4,7 @@
  * Centralized configuration and constants for the leaderboard system
  */
 
-import { Zap, BarChart3, Flame, Target, Crown, Medal, Trophy } from 'lucide-react';
+import { Zap, BarChart3, Flame, Target, Crown, Medal, Trophy, type LucideIcon } from 'lucide-react';
 import type { LeaderboardTypeVariant } from './LiveLeaderboard';
 
 // ============================================================================
@@ -22,7 +22,7 @@ export interface LeaderboardTypeConfig {
   type: LeaderboardTypeVariant;
   label: string;
   shortLabel: string;
-  icon: any;
+  icon: LucideIcon;
   description: string;
   longDescription: string;
   color: string;
@@ -108,7 +108,7 @@ export interface RankTierConfig {
   color: string;
   gradientFrom: string;
   gradientTo: string;
-  icon: any;
+  icon: LucideIcon;
   badge: string;
   description: string;
 }

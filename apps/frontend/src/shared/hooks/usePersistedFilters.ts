@@ -96,7 +96,7 @@ export function usePersistedFilters<T extends Record<string, unknown>>({
   const [isLoaded, setIsLoaded] = useState(false);
 
   const log = useCallback(
-    (message: string, data?: any) => {
+    (message: string, data?: unknown) => {
       if (debug) {
         console.log(`[usePersistedFilters:${storageKey}] ${message}`, data || '');
       }

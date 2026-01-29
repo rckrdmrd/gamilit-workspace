@@ -22,7 +22,7 @@ import { map } from 'rxjs/operators';
  */
 @Injectable()
 export class TransformResponseInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest();
     const { url } = request;
 
@@ -50,7 +50,7 @@ export class TransformResponseInterceptor implements NestInterceptor {
   /**
    * Transforma recursivamente strings ISO a objetos Date
    */
-  private transformDates(obj: any): any {
+  private transformDates(obj: unknown): unknown {
     if (obj === null || obj === undefined) {
       return obj;
     }
@@ -68,9 +68,10 @@ export class TransformResponseInterceptor implements NestInterceptor {
     // Si es un objeto, transformar cada propiedad
     if (typeof obj === 'object') {
       const transformed: Record<string, unknown> = {};
-      for (const key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          transformed[key] = this.transformDates(obj[key]);
+      const objRecord = obj as Record<string, unknown>;
+      for (const key in objRecord) {
+        if (Object.prototype.hasOwnProperty.call(objRecord, key)) {
+          transformed[key] = this.transformDates(objRecord[key]);
         }
       }
       return transformed;
@@ -100,7 +101,7 @@ export class TransformResponseInterceptor implements NestInterceptor {
 /**
  * Tipo de respuesta estándar
  */
-export interface StandardResponse<T = any> {
+export interface StandardResponse<T = unknown> {
   success: boolean;
   data: T;
   timestamp: string;

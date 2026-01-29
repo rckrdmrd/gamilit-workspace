@@ -2,7 +2,6 @@
  * Admin API DTOs and Types
  * Generated for FE-051
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 // ============================================================================
 // COMMON TYPES
@@ -147,7 +146,7 @@ export interface DashboardActivity {
   action: string;
   description: string;
   timestamp: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 export interface MonthlyGrowth {
@@ -183,7 +182,7 @@ export interface User {
    * @see transformUser() in adminAPI.ts (CORR-003)
    */
   lastLogin?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 export interface UserFilters extends PaginationParams {
@@ -392,7 +391,7 @@ export interface LogEntry {
   timestamp: string;
   level: 'error' | 'warn' | 'info' | 'debug';
   message: string;
-  context?: any;
+  context?: Record<string, unknown>;
   stackTrace?: string;
 }
 
@@ -517,7 +516,7 @@ export interface SystemConfig {
   notifications?: NotificationSettings;
   security?: SecuritySettings;
   maintenance?: MaintenanceSettings;
-  [key: string]: any;
+  [key: string]: GeneralSettings | EmailSettings | NotificationSettings | SecuritySettings | MaintenanceSettings | undefined;
 }
 
 // ============================================================================
@@ -552,7 +551,7 @@ export interface ReportFilters {
   organizationId?: string;
   classroomId?: string;
   studentIds?: string[];
-  [key: string]: any;
+  [key: string]: string | string[] | undefined;
 }
 
 export interface ReportSchedule {
@@ -984,7 +983,7 @@ export interface StudentProgressSummary {
 
   // FE-002: Additional analytics fields
   performance_analytics?: Record<string, unknown>;
-  learning_path?: any[];
+  learning_path?: Record<string, unknown>[];
 }
 
 /**

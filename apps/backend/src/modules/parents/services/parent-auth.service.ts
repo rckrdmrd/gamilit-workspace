@@ -21,18 +21,15 @@ import { Repository, DataSource } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
 
 import {
   ParentAccount,
   NotificationFrequency,
   ReportFormat,
-  RelationshipType,
 } from '@/modules/auth/entities/parent-account.entity';
 import {
   ParentStudentLink,
   LinkStatus,
-  ParentRelationshipType,
 } from '@/modules/auth/entities/parent-student-link.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { User } from '@/modules/auth/entities/user.entity';
@@ -428,7 +425,7 @@ export class ParentAuthService {
       }
 
       return this.generateTokens(payload.sub, payload.email, payload.parentAccountId);
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('Token de refresco invalido o expirado');
     }
   }

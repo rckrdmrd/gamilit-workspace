@@ -94,7 +94,8 @@ export class NotificationService {
       title: saved.title,
       message: saved.message,
       data: saved.data,
-      createdAt: saved.createdAt,
+      read: !!saved.readAt,
+      createdAt: saved.createdAt.toISOString(),
     });
 
     return saved;
@@ -158,7 +159,8 @@ export class NotificationService {
       title: saved.title,
       message: saved.message,
       data: saved.data,
-      createdAt: saved.createdAt,
+      read: !!saved.readAt,
+      createdAt: saved.createdAt.toISOString(),
     });
 
     return saved;

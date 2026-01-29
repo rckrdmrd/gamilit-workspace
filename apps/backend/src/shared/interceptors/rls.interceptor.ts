@@ -53,7 +53,6 @@ export class RlsInterceptor implements NestInterceptor {
       // Por ahora, simplemente retornamos null y logueamos
       this.logger.debug(`Attempting to get DataSource for connection: ${connectionName}`);
       return null;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
       this.logger.warn(`DataSource '${connectionName}' not found, skipping RLS setup`);
       return null;

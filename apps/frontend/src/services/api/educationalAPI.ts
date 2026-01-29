@@ -74,8 +74,8 @@ export interface ExerciseSubmissionResult {
     answerReview: Array<{
       questionId: string;
       isCorrect: boolean;
-      userAnswer: any;
-      correctAnswer?: any;
+      userAnswer: unknown;
+      correctAnswer?: unknown;
       explanation?: string;
     }>;
   };
@@ -245,7 +245,7 @@ const mockExercises: Partial<Exercise>[] = [
  * Transform backend exercise response to frontend Exercise format
  * Handles field name mismatches between snake_case (backend) and camelCase/different names (frontend)
  */
-function transformExercise(backendExercise: any): Exercise {
+function transformExercise(backendExercise: Record<string, unknown>): Exercise {
   return {
     ...backendExercise,
     // Map backend field names to frontend field names
@@ -261,7 +261,7 @@ function transformExercise(backendExercise: any): Exercise {
 /**
  * Transform array of backend exercises to frontend format
  */
-function transformExercises(backendExercises: any[]): Exercise[] {
+function transformExercises(backendExercises: Record<string, unknown>[]): Exercise[] {
   return backendExercises.map(transformExercise);
 }
 
@@ -853,20 +853,20 @@ export const getUserActivities = async (
       return [];
     }
 
-    const { data } = await apiClient.get<any[]>(API_ENDPOINTS.progress.recentActivities(userId), {
+    const { data } = await apiClient.get<Record<string, unknown>[]>(API_ENDPOINTS.progress.recentActivities(userId), {
       params: { limit },
     });
 
     // Backend returns array directly, not wrapped in { data: {...} }
     // Transform backend format to frontend format
-    return data.map((activity: any) => ({
-      id: activity.id,
-      type: mapActivityAction(activity.action),
-      title: activity.entity_name || activity.description,
-      description: activity.description,
-      timestamp: new Date(activity.created_at),
-      metadata: activity.metadata || {},
-      category: activity.entity_type || 'general',
+    return data.map((activity: Record<string, unknown>) => ({
+      id: activity.id as string,
+      type: mapActivityAction(activity.action as string),
+      title: (activity.entity_name as string) || (activity.description as string),
+      description: activity.description as string,
+      timestamp: new Date(activity.created_at as string),
+      metadata: (activity.metadata as Record<string, unknown>) || {},
+      category: (activity.entity_type as string) || 'general',
     }));
   } catch (error) {
     throw handleAPIError(error);
