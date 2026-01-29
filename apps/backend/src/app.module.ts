@@ -116,6 +116,10 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
         entities: [
           __dirname + '/modules/gamification/entities/**/*.entity{.ts,.js}',
           __dirname + '/modules/notifications/entities/notification.entity{.ts,.js}',
+          // FIX-BE-014-2026-01-28: Required for UserStats @OneToOne -> Profile relation
+          __dirname + '/modules/auth/entities/profile.entity{.ts,.js}',
+          // FIX-BE-014b-2026-01-28: Required for Profile @ManyToOne -> Tenant cascade
+          __dirname + '/modules/auth/entities/tenant.entity{.ts,.js}',
         ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
@@ -150,6 +154,10 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
           __dirname + '/modules/auth/entities/tenant.entity{.ts,.js}',
           // FIX-BE-013: Required for Classroom @ManyToOne -> School cascade
           __dirname + '/modules/social/entities/school.entity{.ts,.js}',
+          // FIX-BE-015-2026-01-28: Required for ModuleProgress @ManyToOne -> Module relation
+          __dirname + '/modules/educational/entities/module.entity{.ts,.js}',
+          // FIX-BE-015b-2026-01-28: Required for Module @OneToMany -> Exercise cascade
+          __dirname + '/modules/educational/entities/exercise.entity{.ts,.js}',
         ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
