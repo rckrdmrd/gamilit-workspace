@@ -8,6 +8,7 @@ import { AppModule } from './app.module';
 import { API_PREFIX, API_VERSION } from './shared/constants/routes.constants';
 import { TransformResponseInterceptor } from './shared/interceptors/transform-response.interceptor';
 import { AllExceptionsFilter } from './shared/filters/http-exception.filter';
+import { SocketIOAdapter } from './adapters/socket-io.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -44,6 +45,10 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-tenant-id'],
   });
+
+  // FIX-BE-016-2026-01-29: Use unified Socket.IO adapter to prevent
+  // "handleUpgrade() was called more than once" error with multiple gateways
+  app.useWebSocketAdapter(new SocketIOAdapter(app, allowedOrigins));
 
   // Security
   app.use(helmet());

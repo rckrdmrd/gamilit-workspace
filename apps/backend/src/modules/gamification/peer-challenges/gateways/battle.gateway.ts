@@ -69,15 +69,8 @@ export enum BattleEvent {
  * @see Epic: EXT-009 - Peer Challenges
  * @see ET-PEER-002-realtime-battles.md
  */
-@WebSocketGateway({
-  namespace: '/battle',
-  cors: {
-    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3005', 'http://localhost:5173'],
-    credentials: true,
-    methods: ['GET', 'POST'],
-  },
-  transports: ['websocket', 'polling'],
-})
+// FIX-BE-016-2026-01-29: CORS and transports configured in SocketIOAdapter
+@WebSocketGateway({ namespace: '/battle' })
 export class BattleGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {

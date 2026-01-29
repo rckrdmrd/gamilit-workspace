@@ -30,15 +30,9 @@ import {
   StudentOnlineStatusPayload,
 } from './types/websocket.types';
 
-@WebSocketGateway({
-  cors: {
-    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3005', 'http://localhost:5173'],
-    credentials: true,
-    methods: ['GET', 'POST'],
-  },
-  path: '/socket.io/',
-  transports: ['websocket', 'polling'],
-})
+// FIX-BE-016-2026-01-29: CORS, path, and transports are now configured
+// centrally in SocketIOAdapter (main.ts) to prevent handleUpgrade conflicts
+@WebSocketGateway()
 export class NotificationsGateway
 implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
