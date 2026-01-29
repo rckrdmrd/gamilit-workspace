@@ -17,8 +17,16 @@ import type {
 
 /**
  * Branding API endpoints
+ *
+ * FIX-FE-001-2026-01-29: Changed base URL from '/branding' to '/tenants'
+ * to match backend route: @Controller('tenants/:tenantId/branding')
  */
-const BRANDING_BASE_URL = '/branding';
+const TENANTS_BASE_URL = '/tenants';
+
+/**
+ * Build branding endpoint URL for a tenant
+ */
+const getBrandingUrl = (tenantId: string) => `${TENANTS_BASE_URL}/${tenantId}/branding`;
 
 /**
  * Fetch branding configuration for a tenant
@@ -27,7 +35,7 @@ const BRANDING_BASE_URL = '/branding';
  * @returns Branding configuration
  */
 export async function getBranding(tenantId: string): Promise<BrandingConfig> {
-  const response = await apiClient.get<BrandingConfig>(`${BRANDING_BASE_URL}/${tenantId}`);
+  const response = await apiClient.get<BrandingConfig>(getBrandingUrl(tenantId));
   return response.data;
 }
 
@@ -38,8 +46,9 @@ export async function getBranding(tenantId: string): Promise<BrandingConfig> {
  * @returns Branding configuration
  */
 export async function getBrandingByDomain(domain: string): Promise<BrandingConfig> {
+  // Domain-based lookup still uses /branding/domain route
   const response = await apiClient.get<BrandingConfig>(
-    `${BRANDING_BASE_URL}/domain/${encodeURIComponent(domain)}`
+    `/branding/domain/${encodeURIComponent(domain)}`
   );
   return response.data;
 }
@@ -57,7 +66,7 @@ export async function updateBranding(
   data: UpdateBrandingDto
 ): Promise<BrandingConfig> {
   const response = await apiClient.patch<BrandingConfig>(
-    `${BRANDING_BASE_URL}/${tenantId}`,
+    getBrandingUrl(tenantId),
     data
   );
   return response.data;
@@ -79,7 +88,7 @@ export async function uploadLogo(
   formData.append('logo', file);
 
   const response = await apiClient.post<UploadAssetResponse>(
-    `${BRANDING_BASE_URL}/${tenantId}/logo`,
+    `${getBrandingUrl(tenantId)}/logo`,
     formData,
     {
       headers: {
@@ -106,7 +115,7 @@ export async function uploadFavicon(
   formData.append('favicon', file);
 
   const response = await apiClient.post<UploadAssetResponse>(
-    `${BRANDING_BASE_URL}/${tenantId}/favicon`,
+    `${getBrandingUrl(tenantId)}/favicon`,
     formData,
     {
       headers: {
@@ -124,7 +133,7 @@ export async function uploadFavicon(
  * @param tenantId - UUID of the tenant
  */
 export async function deleteLogo(tenantId: string): Promise<void> {
-  await apiClient.delete(`${BRANDING_BASE_URL}/${tenantId}/logo`);
+  await apiClient.delete(`${getBrandingUrl(tenantId)}/logo`);
 }
 
 /**
@@ -134,7 +143,7 @@ export async function deleteLogo(tenantId: string): Promise<void> {
  * @param tenantId - UUID of the tenant
  */
 export async function deleteFavicon(tenantId: string): Promise<void> {
-  await apiClient.delete(`${BRANDING_BASE_URL}/${tenantId}/favicon`);
+  await apiClient.delete(`${getBrandingUrl(tenantId)}/favicon`);
 }
 
 /**
