@@ -1,0 +1,172 @@
+# METADATA - TASK-2026-01-30-CORRECCION-INTEGRAL
+# Sistema SIMCO v4.3.0 + CAPVED
+
+metadata:
+  id: TASK-2026-01-30-CORRECCION-INTEGRAL
+  titulo: "Corrección Integral Gamilit - WSL (Backup) vs Windows (Actual)"
+  tipo: ANALYSIS + IMPLEMENTATION
+  prioridad: P0
+  estado: FASE_1_ANALISIS
+  fecha_inicio: 2026-01-30
+  agente: Claude Code Opus 4.5
+  principio: CAPVED
+  modo: "@ANALYSIS -> @FULL"
+
+contexto:
+  descripcion: |
+    Análisis y corrección integral del proyecto Gamilit comparando:
+    - WSL Ubuntu (/home/isem/workspace-v2/projects/gamilit): BACKUP de lo que funcionaba
+    - Windows (C:\Empresas\ISEM\workspace-v2\projects\gamilit): Versión ACTUAL
+
+    Objetivo: Identificar qué parece "perderse" o no avanzar, integrar lo bueno de
+    ambas versiones, corregir definiciones, purgar documentación obsoleta, y crear
+    una versión final consolidada.
+
+  problema_reportado: |
+    "Parece que cuando se trabaja en terminarlo, se regresan a errores que ya se
+    tenían, dando una sensación que realmente no se avanza"
+
+  alcance:
+    - Comparación exhaustiva WSL vs Windows
+    - Análisis de orchestration y docs en ambos
+    - Identificación de definiciones faltantes
+    - Análisis de historias de usuario pendientes
+    - Purga de documentación obsoleta
+    - Plan de correcciones con subtareas CAPVED
+    - Integración ordenada y progresiva
+
+  fuentes_exploracion:
+    wsl_orchestration:
+      agente: a4f76e1
+      path: "/home/isem/workspace-v2/projects/gamilit/orchestration/"
+      archivos: 1,152 MD + 27 YML
+      tareas: 37 completadas
+      inventario_master: v4.4.1 (2026-01-18)
+      mvp: 75-80%
+
+    wsl_docs:
+      agente: a6c9391
+      path: "/home/isem/workspace-v2/projects/gamilit/docs/"
+      archivos: 776 MD
+      epicas: 22 (17 completadas, 5 parciales)
+      user_stories: 225+
+      rf: 150
+
+    windows_orchestration:
+      agente: a063c6a
+      path: "C:\\Empresas\\ISEM\\workspace-v2\\projects\\gamilit\\orchestration\\"
+      archivos: 1,473 archivos
+      tareas: 41 completadas
+      inventario_master: v5.1.0 (2026-01-27)
+      mvp: 95%
+
+    windows_docs:
+      agente: a9e4c56
+      path: "C:\\Empresas\\ISEM\\workspace-v2\\projects\\gamilit\\docs\\"
+      archivos: 860 MD
+      epicas: 22 (17 completadas, 5 parciales)
+      user_stories: 138
+      rf: 112
+
+comparacion_metricas:
+  inventarios:
+    tablas:
+      wsl: 137
+      windows: 147
+      diferencia: "+10 en Windows"
+    funciones:
+      wsl: 150
+      windows: 232
+      diferencia: "+82 en Windows (+55%)"
+    triggers:
+      wsl: 112
+      windows: 109
+      diferencia: "-3 en Windows"
+    rls_policies:
+      wsl: 157
+      windows: 282
+      diferencia: "+125 en Windows (+80%)"
+    componentes_frontend:
+      wsl: 464
+      windows: 458
+      diferencia: "-6 en Windows (refactoring)"
+    endpoints:
+      wsl: 612
+      windows: 850
+      diferencia: "+238 en Windows (+39%)"
+    stores_zustand:
+      wsl: 12
+      windows: 32
+      diferencia: "+20 en Windows (+167%)"
+
+  mvp:
+    wsl: "75-80%"
+    windows: "95%"
+    diferencia: "+15-20% avance en Windows"
+
+  documentacion:
+    md_orchestration:
+      wsl: 1152
+      windows: ~1400
+    md_docs:
+      wsl: 776
+      windows: 860
+      diferencia: "+84 en Windows"
+
+hallazgos_preliminares:
+  windows_ventajas:
+    - MVP más avanzado (95% vs 75-80%)
+    - Más endpoints implementados (+238)
+    - Más RLS policies (+125)
+    - Más stores Zustand (+20)
+    - Inventarios más recientes (v5.1.0 vs v4.4.1)
+    - 4 tareas adicionales completadas
+
+  wsl_ventajas:
+    - Documentación base más completa (225+ US vs 138)
+    - Más componentes frontend (464 vs 458)
+    - 150 RF documentados vs 112 en Windows
+    - Estructura de docs más amplia
+
+  causa_raiz_percepcion_regresion:
+    - Desincronización de inventarios (11 días de diferencia)
+    - Agentes leen métricas desactualizadas
+    - No hay SSOT claro definido
+    - Refactoring intencional (páginas renombradas) parece "pérdida"
+    - Directivas de contexto duplicadas (5 versiones)
+
+fases:
+  fase_1_analisis:
+    estado: EN_PROGRESO
+    subtareas:
+      - Explorar WSL orchestration
+      - Explorar WSL docs
+      - Explorar Windows orchestration
+      - Explorar Windows docs
+      - Comparar métricas
+      - Identificar gaps y diferencias
+      - Documentar hallazgos
+
+  fase_2_plan_correcciones:
+    estado: PENDIENTE
+    subtareas:
+      - Priorizar gaps (P0/P1/P2)
+      - Crear subtareas CAPVED
+      - Establecer dependencias
+      - Definir orden de ejecución
+
+  fase_3_ejecucion:
+    estado: PENDIENTE
+    subtareas:
+      - Integrar definiciones faltantes
+      - Purgar documentación obsoleta
+      - Sincronizar inventarios
+      - Establecer SSOT
+      - Validar coherencia
+
+documentacion:
+  - METADATA.yml (este archivo)
+  - 01-ANALISIS-COMPARATIVO.md
+  - 02-GAPS-IDENTIFICADOS.md
+  - 03-PLAN-CORRECCIONES.md
+  - 04-SUBTAREAS-CAPVED.md
