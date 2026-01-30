@@ -1,0 +1,297 @@
+# AGENT-CAPABILITIES.yml - Gemini Agent for GAMILIT
+# Version: 1.0.0
+# Updated: 2026-01-29
+# Purpose: Define capabilities, limitations, and adaptations for Gemini agent in GAMILIT
+# Role: QA/Testing Frontend (Browser-based testing)
+
+version: "1.0.0"
+agent: "gemini-gamilit"
+updated: "2026-01-29"
+project: "gamilit"
+project_type: "STANDALONE"
+role: "qa-testing-frontend"
+nexus_version: "4.1"
+
+# =============================================================================
+# IDENTITY
+# =============================================================================
+identity:
+  name: "Gemini Agent - GAMILIT"
+  type: "single-agent"
+  parent_ide: "Antigravity (fork of Windsurf)"
+  governance_system: "SIMCO v4.3.0 + CAPVED"
+  workspace_type: "STANDALONE + REFERENCE_SOURCE"
+
+# =============================================================================
+# YOUR ROLE: QA and Frontend Testing
+# =============================================================================
+role_definition:
+  primary_role: "QA and Frontend Testing with Browser"
+
+  responsibilities:
+    - "Testing E2E: Execute end-to-end tests in real browser"
+    - "Visual Testing: Verify UI, layouts, responsiveness"
+    - "Portal Testing: Test Student, Teacher, Admin, Parent portals"
+    - "Gamification Testing: Verify points, achievements, leaderboards"
+    - "Integration Testing: Test complete user flows"
+    - "Frontend Debugging: Investigate visual or interaction bugs"
+
+  when_to_use:
+    - "Test that a feature works in the browser"
+    - "Verify UI changes don't break anything"
+    - "Debug visual problems in portals"
+    - "Test complete user flows (student journey, teacher workflow)"
+    - "Validate responsive design"
+    - "Test gamification mechanics (points, ranks, achievements)"
+
+  not_responsible_for:
+    - "Architecture definition (Claude Code does that)"
+    - "Task execution without clear specs (Trae/Windsurf do that)"
+    - "Design decisions without specification"
+
+  unique_capabilities:
+    - "Browser integration (Playwright, Puppeteer)"
+    - "Screenshot capture and visual comparison"
+    - "Real DOM element interaction"
+    - "Script execution in page context"
+    - "Network inspection and monitoring"
+
+# =============================================================================
+# GAMILIT-SPECIFIC CONTEXT
+# =============================================================================
+gamilit_context:
+  description: "Plataforma de Gamificacion Educativa"
+
+  portals:
+    - name: "Student Portal"
+      url: "http://localhost:3000/student"
+      description: "Student-facing portal with gamification"
+      key_features:
+        - "Dashboard with points and achievements"
+        - "Course navigation"
+        - "Assignments and exercises"
+        - "Leaderboards"
+
+    - name: "Teacher Portal"
+      url: "http://localhost:3000/teacher"
+      description: "Teacher management portal"
+      key_features:
+        - "Class management"
+        - "Student monitoring"
+        - "Assignment creation"
+        - "Progress reports"
+
+    - name: "Admin Portal"
+      url: "http://localhost:3000/admin"
+      description: "Administrative portal"
+      key_features:
+        - "User management"
+        - "School configuration"
+        - "System reports"
+        - "Content management"
+
+    - name: "Parent Portal"
+      url: "http://localhost:3000/parent"
+      description: "Parent monitoring portal"
+      key_features:
+        - "Child progress view"
+        - "Notifications"
+        - "Communication"
+
+  test_credentials:
+    student:
+      email: "student@test.com"
+      password: "test123"
+    teacher:
+      email: "teacher@test.com"
+      password: "test123"
+    admin:
+      email: "admin@test.com"
+      password: "admin123"
+    parent:
+      email: "parent@test.com"
+      password: "test123"
+
+  metrics:
+    backend_modules: 17
+    endpoints: 612
+    frontend_components: 327
+    pages: 74
+    database_schemas: 16
+    tables: 137
+    mvp_completion: "94%"
+
+# =============================================================================
+# CAPABILITIES
+# =============================================================================
+capabilities:
+
+  execution:
+    subagents: false           # NO subagent spawning
+    parallel_tasks: false      # Sequential execution only
+    background_tasks: false    # No background processing
+
+  context:
+    file_reading: true
+    file_writing: true
+    file_editing: true
+    directory_navigation: true
+
+  terminal:
+    shell_access: true
+    supported_shells:
+      - name: "cmd"
+        platform: "windows"
+        recommended: true
+      - name: "powershell"
+        platform: "windows"
+        recommended: false
+      - name: "bash"
+        platform: "linux/wsl"
+        recommended: true
+
+  tools:
+    web_search: false
+    web_fetch: false
+    code_execution: true
+    git_operations: true
+    browser_automation: true
+
+# =============================================================================
+# LIMITATIONS (CRITICAL)
+# =============================================================================
+limitations:
+
+  critical:
+    - id: "LIM-001"
+      description: "No subagentes - todas las tareas son secuenciales"
+      workaround: |
+        Use Self-Persona Switch pattern:
+        1. Read the target profile (e.g., PERFIL-DATABASE.md)
+        2. Apply its rules to current task
+        3. Execute task
+        4. Return to original persona
+
+    - id: "LIM-002"
+      description: "Variables de entorno en Windows requieren sintaxis especifica"
+      workaround: |
+        Use npm scripts (cross-env configured in package.json)
+        CORRECT: npm test
+        INCORRECT: NODE_OPTIONS='...' npm test
+
+    - id: "LIM-003"
+      description: "Scripts .sh no funcionan en Windows nativo"
+      workaround: |
+        Run via WSL: wsl bash ./script.sh
+        Or use equivalent npm scripts
+
+# =============================================================================
+# SIMCO ADAPTATIONS
+# =============================================================================
+simco_adaptations:
+
+  profile_usage:
+    strategy: "self_persona_switch"
+
+    common_profiles:
+      - trigger_keywords: ["DDL", "tabla", "schema", "migración"]
+        profile: "PERFIL-DATABASE.md"
+
+      - trigger_keywords: ["endpoint", "API", "NestJS", "service"]
+        profile: "PERFIL-BACKEND.md"
+
+      - trigger_keywords: ["componente", "React", "UI", "portal"]
+        profile: "PERFIL-FRONTEND.md"
+
+      - trigger_keywords: ["test", "jest", "coverage"]
+        profile: "PERFIL-TESTING.md"
+
+      - trigger_keywords: ["gamificacion", "puntos", "logros", "ranking"]
+        profile: "PERFIL-GAMIFICATION-SPECIALIST.md"
+
+      - trigger_keywords: ["QA", "validación", "browser"]
+        profile: "PERFIL-QA.md"
+
+    profiles_location: "orchestration/agents/perfiles/"
+
+# =============================================================================
+# EXECUTION GUIDELINES
+# =============================================================================
+execution_guidelines:
+
+  before_any_task:
+    - "Read BOOTLOADER_PROTOCOL.md and follow boot sequence"
+    - "Detect platform (Windows expected)"
+    - "Load orchestration/CONTEXT-MAP.yml"
+    - "Check orchestration/PROXIMA-ACCION.md for current state"
+
+  during_task:
+    - "Use todo list to track multi-step tasks"
+    - "Use CMD for npm commands on Windows"
+    - "Verify file exists before editing"
+    - "Run validations after code changes"
+
+  after_task:
+    - "Update inventories if structure changed"
+    - "Commit changes following SIMCO-GIT guidelines"
+    - "Execute Task Closure Protocol"
+
+# =============================================================================
+# VALIDATION COMMANDS
+# =============================================================================
+validation_commands:
+
+  backend:
+    location: "apps/backend/"
+    commands:
+      - "npm run build"
+      - "npm run lint"
+      - "npm run test"
+
+  frontend:
+    location: "apps/frontend/"
+    commands:
+      - "npm run build"
+      - "npm run lint"
+      - "npm run test"
+
+  gamilit_specific:
+    commands:
+      - "npm run sync:enums"
+      - "npm run validate:constants"
+      - "npm run validate:api-contract"
+      - "npm run validate:all"
+
+# =============================================================================
+# CONTEXT MANAGEMENT
+# =============================================================================
+context_management:
+  strategy: "load_on_demand"
+
+  session_start:
+    load:
+      - ".gemini/antigravity/AGENT-CAPABILITIES.yml"
+      - ".claude/CLAUDE.md"
+      - "orchestration/CONTEXT-MAP.yml"
+    do_not_load: "All inventories (load when needed)"
+
+  context_threshold:
+    warning: "50%"
+    action: |
+      1. STOP current work
+      2. Summarize: what's done, what's pending
+      3. Create checkpoint in todo list
+      4. Ask to clean context
+
+# =============================================================================
+# REFERENCES
+# =============================================================================
+references:
+  bootloader: ".gemini/antigravity/BOOTLOADER_PROTOCOL.md"
+  readme: ".gemini/antigravity/README.md"
+  local_claude: ".claude/CLAUDE.md"
+  context_map: "orchestration/CONTEXT-MAP.yml"
+  proxima_accion: "orchestration/PROXIMA-ACCION.md"
+  inventarios: "orchestration/inventarios/"
+  directivas: "orchestration/directivas/simco/"
+  perfiles: "orchestration/agents/perfiles/"
