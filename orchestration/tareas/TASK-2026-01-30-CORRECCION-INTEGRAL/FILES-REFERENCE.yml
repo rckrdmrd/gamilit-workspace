@@ -1,0 +1,434 @@
+# FILES-REFERENCE.yml
+# Mapa de Archivos - TASK-2026-01-30-CORRECCION-INTEGRAL
+# Sistema SIMCO v4.3.0
+
+metadata:
+  tarea_id: TASK-2026-01-30-CORRECCION-INTEGRAL
+  fecha: 2026-01-30
+  agente: Claude Code (Opus 4.5)
+  proposito: "Mapa completo de archivos relacionados con la tarea"
+
+# ============================================================================
+# ARCHIVOS CREADOS POR ESTA TAREA
+# ============================================================================
+archivos_creados:
+
+  documentacion_tarea:
+    - archivo: METADATA.yml
+      ruta: projects/gamilit/orchestration/tareas/TASK-2026-01-30-CORRECCION-INTEGRAL/
+      lineas: 150
+      proposito: "Metadatos, contexto, metricas comparativas"
+      estado: CREADO
+
+    - archivo: 01-ANALISIS-COMPARATIVO.md
+      ruta: projects/gamilit/orchestration/tareas/TASK-2026-01-30-CORRECCION-INTEGRAL/
+      lineas: 400
+      proposito: "Comparacion exhaustiva WSL vs Windows"
+      estado: CREADO
+
+    - archivo: 02-PLAN-CORRECCIONES.md
+      ruta: projects/gamilit/orchestration/tareas/TASK-2026-01-30-CORRECCION-INTEGRAL/
+      lineas: 500
+      proposito: "Plan CAPVED con 18 subtareas en 4 fases"
+      estado: CREADO
+
+    - archivo: TASK-REPORT.md
+      ruta: projects/gamilit/orchestration/tareas/TASK-2026-01-30-CORRECCION-INTEGRAL/
+      lineas: 800
+      proposito: "Informe completo de la tarea"
+      estado: CREADO
+
+    - archivo: SUBAGENTS-LOG.yml
+      ruta: projects/gamilit/orchestration/tareas/TASK-2026-01-30-CORRECCION-INTEGRAL/
+      lineas: 400
+      proposito: "Log de 4 subagentes con prompts completos"
+      estado: CREADO
+
+    - archivo: FILES-REFERENCE.yml
+      ruta: projects/gamilit/orchestration/tareas/TASK-2026-01-30-CORRECCION-INTEGRAL/
+      lineas: 300
+      proposito: "Este archivo - mapa de archivos"
+      estado: CREADO
+
+    - archivo: LESSONS-LEARNED.md
+      ruta: projects/gamilit/orchestration/tareas/TASK-2026-01-30-CORRECCION-INTEGRAL/
+      lineas: 200
+      proposito: "Lecciones aprendidas y mejora continua"
+      estado: PENDIENTE
+
+# ============================================================================
+# ARCHIVOS CONSULTADOS (LECTURA)
+# ============================================================================
+archivos_consultados:
+
+  tarea_previa_task011:
+    - archivo: TASK-REPORT.md
+      ruta: workspace-v2/orchestration/tareas/2026-01-30/TASK-011-ANALISIS-ALINEACION-ORCHESTRATION-DOCS-GAMILIT/
+      proposito: "Contexto de tarea previa, hallazgos de desincronizacion"
+      lineas_leidas: 615
+
+    - archivo: 02-ANALISIS.md
+      ruta: workspace-v2/orchestration/tareas/2026-01-30/TASK-011-ANALISIS-ALINEACION-ORCHESTRATION-DOCS-GAMILIT/
+      proposito: "Hallazgos de desincronizacion de inventarios"
+      lineas_leidas: 285
+
+    - archivo: 03-PLAN.md
+      ruta: workspace-v2/orchestration/tareas/2026-01-30/TASK-011-ANALISIS-ALINEACION-ORCHESTRATION-DOCS-GAMILIT/
+      proposito: "Plan de sincronizacion previo"
+      lineas_leidas: 481
+
+  tarea_previa_comparativo:
+    - archivo: METADATA.yml
+      ruta: projects/gamilit/orchestration/tareas/TASK-2026-01-30-ANALISIS-COMPARATIVO/
+      proposito: "Tarea de analisis inicial"
+      lineas_leidas: 97
+
+    - archivo: 01-INFORME-ANALISIS-PRELIMINAR.md
+      ruta: projects/gamilit/orchestration/tareas/TASK-2026-01-30-ANALISIS-COMPARATIVO/
+      proposito: "Informe preliminar de comparacion"
+      lineas_leidas: 262
+
+    - archivo: 02-INFORME-COMPARATIVO-DETALLADO.md
+      ruta: projects/gamilit/orchestration/tareas/TASK-2026-01-30-ANALISIS-COMPARATIVO/
+      proposito: "Informe detallado de comparacion"
+      lineas_leidas: 213
+
+    - archivo: 03-PLAN-CORRECCIONES.md
+      ruta: projects/gamilit/orchestration/tareas/TASK-2026-01-30-ANALISIS-COMPARATIVO/
+      proposito: "Plan de correcciones inicial"
+      lineas_leidas: 321
+
+  directivas_simco:
+    - archivo: CLAUDE.md
+      ruta: workspace-v2/
+      alias: "@CLAUDE"
+      proposito: "Reglas criticas RC1-RC4"
+      lineas_relevantes: "1-200"
+
+    - archivo: CLAUDE.md
+      ruta: projects/gamilit/.claude/
+      proposito: "Contexto local del proyecto"
+      lineas_leidas: 203
+
+# ============================================================================
+# INVENTARIOS ANALIZADOS
+# ============================================================================
+inventarios_analizados:
+
+  wsl_ubuntu:
+    base_path: "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/"
+
+    - archivo: MASTER_INVENTORY.yml
+      version: "v4.4.1"
+      fecha: "2026-01-18"
+      metricas_clave:
+        schemas: 16
+        tablas: 137
+        funciones_activas: 109
+        funciones_total: 150
+        triggers_activos: 35
+        rls_policies: 157
+        endpoints: 612
+        componentes: 464
+        mvp: "75-80%"
+
+    - archivo: DATABASE_INVENTORY.yml
+      version: "~v4.x"
+      fecha: "2026-01-20"
+
+    - archivo: BACKEND_INVENTORY.yml
+      version: "~v3.x"
+      fecha: "2026-01-18"
+
+    - archivo: FRONTEND_INVENTORY.yml
+      version: "~v4.x"
+      fecha: "2026-01-20"
+
+  windows:
+    base_path: "C:\\Empresas\\ISEM\\workspace-v2\\projects\\gamilit\\orchestration\\inventarios\\"
+
+    - archivo: MASTER_INVENTORY.yml
+      version: "v5.1.0"
+      fecha: "2026-01-27"
+      metricas_clave:
+        schemas: 16
+        tablas: 147
+        funciones: 232
+        triggers: 109
+        rls_policies: 282
+        endpoints: 850
+        componentes: 458
+        stores_zustand: 32
+        mvp: "95%"
+
+    - archivo: DATABASE_INVENTORY.yml
+      version: "v5.0.0"
+      fecha: "2026-01-27"
+
+    - archivo: BACKEND_INVENTORY.yml
+      version: "v3.14.0"
+      fecha: "2026-01-27"
+
+    - archivo: FRONTEND_INVENTORY.yml
+      version: "v4.10.0"
+      fecha: "2026-01-25"
+
+# ============================================================================
+# DIRECTIVAS Y DEFINICIONES REFERENCIADAS
+# ============================================================================
+directivas_referenciadas:
+
+  principios:
+    - archivo: PRINCIPIO-CAPVED.md
+      ruta: workspace-v2/orchestration/directivas/principios/
+      alias: "@DEF_CAPVED"
+      proposito: "Metodologia de 6 fases"
+
+  modos:
+    - archivo: MODE-ANALYSIS.md
+      ruta: workspace-v2/orchestration/directivas/modos/
+      alias: "@ANALYSIS"
+      proposito: "Modo de ejecucion para analisis"
+
+  simco:
+    - archivo: SIMCO-CONTEXT-MANAGEMENT-V2.md
+      ruta: workspace-v2/orchestration/directivas/simco/
+      alias: "@NEXUS"
+      proposito: "Gestion de contexto (version recomendada)"
+
+    - archivo: SIMCO-CONTEXT-MANAGEMENT.md
+      ruta: workspace-v2/orchestration/directivas/simco/
+      proposito: "Version obsoleta (a deprecar)"
+      estado: "DEPRECATED (pendiente marcar)"
+
+  checklists:
+    - archivo: CHECKLIST-POST-TASK.md
+      ruta: workspace-v2/orchestration/_definitions/checklists/
+      alias: "@DEF_CHK_POST"
+      proposito: "Validacion post-tarea"
+
+# ============================================================================
+# ARCHIVOS PROPUESTOS PARA CREAR (PLAN)
+# ============================================================================
+archivos_propuestos_crear:
+
+  fase_1_ssot:
+    - archivo: POLITICA-SSOT-GAMILIT.md
+      ruta_propuesta: projects/gamilit/orchestration/directivas/politicas/
+      subtarea: "1.1"
+      prioridad: P0
+      proposito: "Definir Windows como SSOT de codigo"
+
+  fase_3_adrs:
+    - archivo: ADR-030-CONSOLIDACION-TEACHER-RESOURCES.md
+      ruta_propuesta: projects/gamilit/docs/97-adr/
+      subtarea: "3.1"
+      prioridad: P1
+      proposito: "Documentar eliminacion de TeacherResourcesPage"
+
+    - archivo: ADR-031-CONVENCION-NOMBRES-PAGINAS.md
+      ruta_propuesta: projects/gamilit/docs/97-adr/
+      subtarea: "3.2"
+      prioridad: P1
+      proposito: "Documentar convencion sin sufijo 'Page'"
+
+    - archivo: ADR-032-PORTAL-PARENT.md
+      ruta_propuesta: projects/gamilit/docs/97-adr/
+      subtarea: "3.3"
+      prioridad: P1
+      proposito: "Documentar nuevo Portal Parent"
+
+  fase_4_prevencion:
+    - archivo: TRIGGER-SYNC-INVENTARIOS.md
+      ruta_propuesta: workspace-v2/orchestration/directivas/triggers/
+      subtarea: "4.2"
+      prioridad: P2
+      proposito: "Automatizar sincronizacion de inventarios"
+
+# ============================================================================
+# ARCHIVOS PROPUESTOS PARA MODIFICAR (PLAN)
+# ============================================================================
+archivos_propuestos_modificar:
+
+  fase_1_ssot:
+    - archivo: CLAUDE.md
+      ruta: workspace-v2/
+      subtarea: "1.3"
+      prioridad: P0
+      cambio: "Agregar RC5: SSOT DE INVENTARIOS"
+
+    - archivo: CLAUDE.md
+      ruta: projects/gamilit/.claude/
+      subtarea: "1.4"
+      prioridad: P0
+      cambio: "Actualizar metricas del proyecto"
+
+    - archivo: SIMCO-CONTEXT-MANAGEMENT.md
+      ruta: workspace-v2/orchestration/directivas/simco/
+      subtarea: "1.5"
+      prioridad: P0
+      cambio: "Agregar bloque DEPRECATED"
+
+    - archivo: SIMCO-CONTEXT-MANAGEMENT.md
+      ruta: projects/gamilit/orchestration/directivas/simco/
+      subtarea: "1.5"
+      prioridad: P0
+      cambio: "Agregar bloque DEPRECATED (replica)"
+
+  fase_1_inventarios:
+    - archivo: DATABASE_INVENTORY.yml
+      ruta: workspace-v2/orchestration/inventarios/
+      subtarea: "1.2"
+      prioridad: P0
+      cambio: "Sincronizar con gamilit local"
+
+    - archivo: BACKEND_INVENTORY.yml
+      ruta: workspace-v2/orchestration/inventarios/
+      subtarea: "1.2"
+      prioridad: P0
+      cambio: "Sincronizar con gamilit local"
+
+    - archivo: FRONTEND_INVENTORY.yml
+      ruta: workspace-v2/orchestration/inventarios/
+      subtarea: "1.2"
+      prioridad: P0
+      cambio: "Sincronizar con gamilit local"
+
+    - archivo: MASTER_INVENTORY.yml
+      ruta: workspace-v2/orchestration/inventarios/
+      subtarea: "1.2"
+      prioridad: P0
+      cambio: "Sincronizar con gamilit local"
+
+  fase_2_ssot:
+    - archivo: TRACEABILITY-MASTER.yml
+      ruta: projects/gamilit/docs/_SSOT/
+      subtarea: "2.5"
+      prioridad: P1
+      cambio: "Actualizar mapeos RF->ET->US"
+
+  fase_3_changelog:
+    - archivo: CHANGELOG.md
+      ruta: projects/gamilit/orchestration/
+      subtarea: "3.4"
+      prioridad: P1
+      cambio: "Agregar v1.3.0 con refactoring"
+
+# ============================================================================
+# ARCHIVOS COMPARADOS (DIFERENCIAS WSL vs WINDOWS)
+# ============================================================================
+archivos_comparados:
+
+  teacher_portal:
+    en_wsl_no_windows:
+      - archivo: TeacherAnalyticsPage.tsx
+        ruta: apps/frontend/src/apps/teacher/pages/
+        estado: RENOMBRADO
+        nuevo_nombre: TeacherAnalytics.tsx
+
+      - archivo: TeacherAssignmentsPage.tsx
+        ruta: apps/frontend/src/apps/teacher/pages/
+        estado: RENOMBRADO
+        nuevo_nombre: TeacherAssignments.tsx
+
+      - archivo: TeacherClassesPage.tsx
+        ruta: apps/frontend/src/apps/teacher/pages/
+        estado: RENOMBRADO
+        nuevo_nombre: TeacherClasses.tsx
+
+      - archivo: TeacherDashboardPage.tsx
+        ruta: apps/frontend/src/apps/teacher/pages/
+        estado: RENOMBRADO
+        nuevo_nombre: TeacherDashboard.tsx
+
+      - archivo: TeacherGamificationPage.tsx
+        ruta: apps/frontend/src/apps/teacher/pages/
+        estado: RENOMBRADO
+        nuevo_nombre: TeacherGamification.tsx
+
+      - archivo: TeacherResourcesPage.tsx
+        ruta: apps/frontend/src/apps/teacher/pages/
+        estado: ELIMINADO
+        razon: "Integrado en TeacherContentPage"
+        commit: "f55d872b"
+
+      - archivo: TeacherStudentsPage.tsx
+        ruta: apps/frontend/src/apps/teacher/pages/
+        estado: RENOMBRADO
+        nuevo_nombre: TeacherStudents.tsx
+
+    en_windows_no_wsl:
+      - archivo: StudentActionsMenu.tsx
+        ruta: apps/frontend/src/apps/teacher/components/monitoring/
+        estado: NUEVO
+
+      - archivo: SuspendStudentModal.tsx
+        ruta: apps/frontend/src/apps/teacher/components/monitoring/
+        estado: NUEVO
+
+      - archivo: withTeacherLayout.tsx
+        ruta: apps/frontend/src/apps/teacher/components/
+        estado: NUEVO
+        tipo: HOC
+
+      - archivo: TeacherAlertConfigPage.tsx
+        ruta: apps/frontend/src/apps/teacher/pages/
+        estado: NUEVO
+
+  parent_portal:
+    en_windows_no_wsl:
+      - cantidad: 4 archivos
+        ruta: apps/frontend/src/apps/parent/
+        estado: PORTAL_NUEVO
+        epica: "EXT-011"
+
+# ============================================================================
+# ESTADISTICAS DE ARCHIVOS
+# ============================================================================
+estadisticas:
+
+  archivos_creados_tarea: 7
+  archivos_consultados: 12
+  archivos_propuestos_crear: 5
+  archivos_propuestos_modificar: 10
+  archivos_comparados: 11
+
+  por_tipo:
+    md: 4
+    yml: 3
+    tsx_analizados: 11
+
+  lineas_generadas: 2650
+  lineas_leidas: 3000
+
+# ============================================================================
+# REFERENCIAS CRUZADAS
+# ============================================================================
+referencias_cruzadas:
+
+  tarea_a_inventarios:
+    METADATA.yml:
+      - MASTER_INVENTORY.yml (WSL v4.4.1)
+      - MASTER_INVENTORY.yml (Windows v5.1.0)
+
+  tarea_a_directivas:
+    TASK-REPORT.md:
+      - PRINCIPIO-CAPVED.md
+      - MODE-ANALYSIS.md
+      - SIMCO-CONTEXT-MANAGEMENT-V2.md
+
+  plan_a_archivos:
+    02-PLAN-CORRECCIONES.md:
+      crear:
+        - POLITICA-SSOT-GAMILIT.md
+        - ADR-030-*.md
+        - ADR-031-*.md
+        - ADR-032-*.md
+        - TRIGGER-SYNC-INVENTARIOS.md
+      modificar:
+        - CLAUDE.md (workspace)
+        - CLAUDE.md (gamilit)
+        - SIMCO-CONTEXT-MANAGEMENT.md
+        - *_INVENTORY.yml (4 archivos)
+        - CHANGELOG.md
+        - TRACEABILITY-MASTER.yml

@@ -1,5 +1,76 @@
 # CHANGELOG - Plataforma GAMILIT
 
+## [2.6.0] - 2026-01-30
+
+### REFACTOR - Arquitectura Teacher Portal y Nuevo Parent Portal
+
+Esta version documenta cambios arquitectonicos significativos realizados entre 2026-01-25 y 2026-01-30.
+
+**Tech-Leader:** Claude Opus 4.5
+**Task:** TASK-2026-01-30-CORRECCION-INTEGRAL
+
+---
+
+### Cambios Arquitectonicos
+
+#### 1. Consolidacion TeacherResourcesPage (ADR-029)
+
+**Cambio:** Eliminada pagina separada `TeacherResourcesPage.tsx`
+**Razon:** Funcionalidad integrada en `TeacherContentPage`
+**Impacto:** -1 pagina, -200 LOC, rutas simplificadas
+**Commit:** f55d872b
+
+#### 2. Convencion de Nombres sin "Page" (ADR-030)
+
+**Cambio:** Renombrados componentes de pagina removiendo sufijo "Page"
+**Archivos afectados:**
+- `TeacherDashboardPage.tsx` → `TeacherDashboard.tsx`
+- `TeacherAnalyticsPage.tsx` → `TeacherAnalytics.tsx`
+- `TeacherAssignmentsPage.tsx` → `TeacherAssignments.tsx`
+- `TeacherClassesPage.tsx` → `TeacherClasses.tsx`
+- `TeacherGamificationPage.tsx` → `TeacherGamification.tsx`
+- `TeacherStudentsPage.tsx` → `TeacherStudents.tsx`
+
+#### 3. Nuevo Portal de Padres (ADR-031)
+
+**Cambio:** Creado nuevo portal para padres/tutores
+**Alcance inicial:** 35% (estructura base)
+**Componentes:**
+- `ParentDashboard.tsx` - Vista general
+- `ParentProgress.tsx` - Progreso del estudiante
+- `ParentNotifications.tsx` - Sistema de alertas
+**Epica:** EXT-011
+
+---
+
+### Metricas Actualizadas
+
+| Metrica | v2.5.1 | v2.6.0 | Delta |
+|---------|--------|--------|-------|
+| Componentes | 398 | 458 | +60 |
+| Endpoints | 750 | 850 | +100 |
+| Stores Zustand | 25 | 32 | +7 |
+| Paginas | 67 | 85 | +18 |
+| MVP | 90% | 95% | +5% |
+
+---
+
+### ADRs Documentados
+
+- [ADR-029](docs/97-adr/ADR-029-consolidacion-teacher-resources.md) - Consolidacion Teacher Resources
+- [ADR-030](docs/97-adr/ADR-030-convencion-nombres-paginas.md) - Convencion nombres sin "Page"
+- [ADR-031](docs/97-adr/ADR-031-portal-parent.md) - Portal de Padres
+
+---
+
+### Referencias
+
+- TASK-2026-01-30-CORRECCION-INTEGRAL
+- MASTER_INVENTORY v5.1.0
+- POLITICA-SSOT-GAMILIT.md
+
+---
+
 ## [2.5.1] - 2026-01-18
 
 ### CORR-ACH-UI - Correcciones UI Módulo Achievements

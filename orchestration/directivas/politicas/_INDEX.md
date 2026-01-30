@@ -10,6 +10,7 @@
 | Documento | Estado | Fecha | Descripcion |
 |-----------|--------|-------|-------------|
 | [POLITICA-ENV-COMPARTIDO.md](POLITICA-ENV-COMPARTIDO.md) | VIGENTE | 2026-01-20 | Archivos .env en Git por ambiente multi-entorno |
+| [POLITICA-SSOT-GAMILIT.md](POLITICA-SSOT-GAMILIT.md) | VIGENTE | 2026-01-30 | Windows como SSOT de codigo e inventarios |
 
 ---
 
@@ -51,7 +52,8 @@ Crear una politica de excepcion cuando:
 ## Alias de Acceso
 
 - `@POLITICA-ENV` - Politica de .env compartidos
+- `@POLITICA-SSOT` - Politica SSOT para Gamilit
 
 ---
 
-**Ultima actualizacion:** 2026-01-20
+**Ultima actualizacion:** 2026-01-30
