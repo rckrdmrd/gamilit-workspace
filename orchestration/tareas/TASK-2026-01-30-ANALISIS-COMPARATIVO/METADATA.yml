@@ -1,0 +1,102 @@
+# METADATA - Tarea de Analisis Comparativo
+# Sistema SIMCO v4.0
+
+metadata:
+  id: TASK-2026-01-30-ANALISIS-COMPARATIVO
+  titulo: "Analisis Comparativo Completo Gamilit (master vs main)"
+  tipo: ANALYSIS
+  prioridad: P0
+  estado: COMPLETADA
+  fecha_inicio: 2026-01-30
+  fecha_fin: 2026-01-30
+  agente: Claude Code Opus 4.5
+
+contexto:
+  descripcion: |
+    Analisis comparando ramas del proyecto Gamilit:
+    - Rama master: version antigua (divergio hace ~10 dias)
+    - Rama main: version actual y completa (SSOT)
+
+    NOTA IMPORTANTE: El analisis inicial asumio que existia un repositorio
+    separado en WSL (/home/isem/), pero se verifico que:
+    - Solo existe /home/developer/ en WSL
+    - No hay clon separado del repositorio en WSL
+    - La comparacion real fue entre ramas locales master vs main
+
+    Objetivo: Identificar divergencias y establecer SSOT.
+
+  alcance:
+    - Comparacion entre ramas master y main
+    - Analisis de cambios intencionales
+    - Verificacion de integridad
+    - Establecimiento de SSOT
+
+  correccion_diagnostico:
+    error_original: "Asumir repositorio WSL en /home/isem/"
+    realidad: "Comparacion entre ramas master vs main en mismo repo"
+    accion: "Sincronizadas ambas ramas a commit 8eab218b"
+
+fases:
+  fase_1_exploracion:
+    estado: COMPLETADA
+    subtareas:
+      - Explorar estructura Gamilit actual
+      - Verificar existencia de rutas WSL
+      - Analizar documentacion existente
+    hallazgos_clave:
+      - Rama master tenia 20+ commits atras de main
+      - main es la rama activa con desarrollo reciente
+      - TeacherResourcesPage eliminado intencionalmente
+      - Portal Parent es nuevo en main
+
+  fase_2_comparacion:
+    estado: COMPLETADA
+    subtareas:
+      - Comparacion detallada por rama
+      - Identificacion de archivos nuevos/modificados
+      - Verificacion de cambios intencionales
+
+  fase_3_informe:
+    estado: COMPLETADA
+    subtareas:
+      - Consolidar hallazgos
+      - Documentar diagnostico corregido
+      - Priorizar acciones
+
+  fase_4_correcciones:
+    estado: COMPLETADA
+    subtareas:
+      - Sincronizar rama master con main
+      - Verificar estado del repositorio
+      - Establecer main como SSOT
+
+resultado_final:
+  estado: SINCRONIZADO
+  commit_unificado: 8eab218b
+  ramas_sincronizadas:
+    - main (SSOT)
+    - master (sincronizado con main)
+  acciones_ejecutadas:
+    - git fetch origin
+    - git checkout master
+    - git merge main --no-edit
+    - git push origin master
+    - git checkout main
+
+metricas_actuales:
+  nota: "Metricas de rama main (version actual)"
+  archivos:
+    frontend_tsx: 1014
+    backend_ts: 1021
+  portales_tsx:
+    admin: 95
+    teacher: 68
+    student: 68
+    parent: 4
+
+documentacion:
+  - METADATA.yml (este archivo)
+  - 01-INFORME-ANALISIS-PRELIMINAR.md
+  - 02-INFORME-COMPARATIVO-DETALLADO.md
+  - 03-PLAN-CORRECCIONES.md
+  - 04-RESUMEN-EJECUCION.md
