@@ -7,9 +7,9 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "2.0.0"
+version: "2.1.0"
 created: "2026-01-24"
-updated: "2026-01-29"
+updated: "2026-01-30"
 proyecto: "gamilit"
 maintained_by: "@WS_ORCHESTRATOR"
 
@@ -18,13 +18,13 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 41
-  completadas: 41
+  total_tareas: 44
+  completadas: 44
   en_progreso: 0
   pendientes: 0
   canceladas: 0
   bloqueadas: 0
-  por_fecha: 42
+  por_fecha: 44
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # CARPETAS DE TAREAS POR FECHA
@@ -36,7 +36,8 @@ estadisticas:
 #   tareas/
 #   ├── 2026-01-24/  (21 tareas)
 #   ├── 2026-01-25/  (12 tareas)
-#   └── 2026-01-27/  (9 tareas)
+#   ├── 2026-01-27/  (9 tareas)
+#   └── 2026-01-30/  (2 tareas - carpetas directas por complejidad)
 #
 # Cada carpeta de fecha contiene _INDEX.yml con detalle de sus tareas.
 # Para consultar detalles de una tarea, navegar a:
@@ -96,6 +97,25 @@ carpetas_por_fecha:
         - "TASK-P2-RLS-EXPANSION-2026-01-27"
         - "TASK-P2-ROLES-CONSOLIDATION-2026-01-27"
         - "TASK-P3-RLS-PHASE3-2026-01-27"
+    2026-01-30:
+      total: 2
+      nota: "Tareas complejas con estructura extendida, en carpetas directas"
+      tareas:
+        - id: "TASK-2026-01-30-ANALISIS-COMPARATIVO"
+          titulo: "Análisis Comparativo WSL vs Windows (Preliminar)"
+          estado: "completada"
+          archivos: 5
+        - id: "TASK-2026-01-30-CORRECCION-INTEGRAL"
+          titulo: "Corrección Integral Gamilit - WSL vs Windows"
+          estado: "completada"
+          archivos: 7
+          descripcion: |
+            Tarea compleja de análisis y corrección:
+            - Fase 1: SSOT y sincronización (6 subtareas)
+            - Fase 2: Documentación WSL (5 subtareas)
+            - Fase 3: ADRs arquitectónicos (4 subtareas)
+            - Fase 4: Prevención (3 subtareas)
+            Total: 18 subtareas CAPVED completadas
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # TAREAS RELACIONADAS DEL WORKSPACE
