@@ -6,6 +6,33 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.2.0] - 2026-01-30
+
+### Added
+- GAMILIT-CONTEXT-BOOTSTRAP.md para nuevos agentes
+- Politica SSOT de inventarios integrada
+
+### Changed
+- MVP completitud: 88% -> 95%
+- Coherencia DDL-Backend: 98.6% -> 100%
+- Coherencia Backend-Frontend: 87.5% -> 95.3%
+
+### Fixed
+- TASK-025: Gaps P1 Admin Portal resueltos
+- TASK-026: Gaps P2 verificados (estado real mejor que documentado)
+- TASK-027: Admin Content al 100%
+- TASK-028: Teacher Portal al 100%
+- TASK-029: Backend Admin Endpoints (+24 endpoints)
+
+### Metrics Update (2026-01-27)
+- Tablas: 141 -> 147
+- Funciones: 126 -> 232
+- Triggers: 37 -> 109
+- Componentes: 309 -> 398
+- Stores: 12 -> 32
+
+---
+
 ## [1.1.0] - 2026-01-25
 
 ### Agregado
