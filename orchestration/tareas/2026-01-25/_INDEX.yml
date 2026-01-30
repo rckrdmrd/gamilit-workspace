@@ -1,0 +1,93 @@
+# _INDEX.yml - Indice de Tareas 2026-01-25
+# Proyecto: GAMILIT
+# Generado: 2026-01-29
+
+fecha: "2026-01-25"
+version: "1.0.0"
+actualizado: "2026-01-29"
+
+resumen:
+  total_tareas: 12
+  completadas: 12
+  en_progreso: 0
+  pendientes: 0
+
+tareas:
+  TASK-021-ddl-entity-coherence-audit:
+    titulo: "DDL Entity Coherence Audit"
+    tipo: AUDIT
+    estado: COMPLETED
+    prioridad: P0
+
+  TASK-022-MODELADO-INTEGRAL:
+    titulo: "Modelado Integral BD"
+    tipo: ANALYSIS
+    estado: COMPLETED
+    prioridad: P0
+
+  TASK-023-teacher-portal-quick-wins:
+    titulo: "Teacher Portal Quick Wins"
+    tipo: FIX
+    estado: COMPLETED
+    prioridad: P1
+
+  TASK-024-admin-portal-analysis:
+    titulo: "Admin Portal Analysis"
+    tipo: ANALYSIS
+    estado: COMPLETED
+    prioridad: P1
+
+  TASK-025-p1-gaps-fix:
+    titulo: "P1 Gaps Fix"
+    tipo: FIX
+    estado: COMPLETED
+    prioridad: P1
+
+  TASK-026-p2-gaps-analysis:
+    titulo: "P2 Gaps Analysis"
+    tipo: ANALYSIS
+    estado: COMPLETED
+    prioridad: P2
+
+  TASK-027-admin-content-100:
+    titulo: "Admin Content 100%"
+    tipo: IMPLEMENTATION
+    estado: COMPLETED
+    prioridad: P1
+
+  TASK-028-teacher-portal-100:
+    titulo: "Teacher Portal 100%"
+    tipo: IMPLEMENTATION
+    estado: COMPLETED
+    prioridad: P1
+
+  TASK-029-backend-admin-endpoints:
+    titulo: "Backend Admin Endpoints"
+    tipo: IMPLEMENTATION
+    estado: COMPLETED
+    prioridad: P1
+
+  TASK-030-admin-pages-polish:
+    titulo: "Admin Pages Polish"
+    tipo: FIX
+    estado: COMPLETED
+    prioridad: P2
+
+  TASK-2026-01-25-ANALISIS-PORTAL-TEACHER:
+    titulo: "Analisis Portal Teacher"
+    tipo: ANALYSIS
+    estado: COMPLETED
+    prioridad: P0
+
+  TASK-2026-01-25-VALIDACION-PORTAL-TEACHER:
+    titulo: "Validacion Portal Teacher"
+    tipo: VALIDATION
+    estado: COMPLETED
+    prioridad: P0
+
+por_tipo:
+  ANALYSIS: 4
+  FIX: 3
+  IMPLEMENTATION: 3
+  AUDIT: 1
+  VALIDATION: 1

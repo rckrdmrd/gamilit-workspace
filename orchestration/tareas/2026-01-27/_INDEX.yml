@@ -1,0 +1,84 @@
+# _INDEX.yml - Indice de Tareas 2026-01-27
+# Proyecto: GAMILIT
+# Generado: 2026-01-29
+
+fecha: "2026-01-27"
+version: "1.0.0"
+actualizado: "2026-01-29"
+
+resumen:
+  total_tareas: 9
+  completadas: 9
+  en_progreso: 0
+  pendientes: 0
+
+tareas:
+  TASK-BD-ANALYSIS-2026-01-27:
+    titulo: "BD Analysis - Coherence Matrix"
+    tipo: ANALYSIS
+    estado: COMPLETED
+    prioridad: P0
+    resultados:
+      rfs_mapeados: 112
+      cobertura: "95.5%"
+
+  TASK-P1-ORM-RELATIONS-2026-01-27:
+    titulo: "P1 ORM Relations Fix"
+    tipo: FIX
+    estado: COMPLETED
+    prioridad: P1
+
+  TASK-P1-SEEDS-SOCIAL-2026-01-27:
+    titulo: "P1 Seeds Social Module"
+    tipo: SEEDS
+    estado: COMPLETED
+    prioridad: P1
+
+  TASK-P2-RLS-EXPANSION-2026-01-27:
+    titulo: "P2 RLS Expansion"
+    tipo: DATABASE
+    estado: COMPLETED
+    prioridad: P2
+
+  TASK-P2-ROLES-CONSOLIDATION-2026-01-27:
+    titulo: "P2 Roles Consolidation"
+    tipo: REFACTOR
+    estado: COMPLETED
+    prioridad: P2
+
+  TASK-P2-SEEDS-COMMUNICATION-2026-01-27:
+    titulo: "P2 Seeds Communication Module"
+    tipo: SEEDS
+    estado: COMPLETED
+    prioridad: P2
+
+  TASK-P2-SEEDS-COMODINES-2026-01-27:
+    titulo: "P2 Seeds Comodines"
+    tipo: SEEDS
+    estado: COMPLETED
+    prioridad: P2
+
+  TASK-P2-SEEDS-PEDAGOGY-2026-01-27:
+    titulo: "P2 Seeds Pedagogy Module"
+    tipo: SEEDS
+    estado: COMPLETED
+    prioridad: P2
+
+  TASK-P3-RLS-PHASE3-2026-01-27:
+    titulo: "P3 RLS Phase 3 Implementation"
+    tipo: DATABASE
+    estado: COMPLETED
+    prioridad: P3
+
+por_tipo:
+  SEEDS: 4
+  DATABASE: 2
+  ANALYSIS: 1
+  FIX: 1
+  REFACTOR: 1
+
+por_prioridad:
+  P0: 1
+  P1: 2
+  P2: 5
+  P3: 1

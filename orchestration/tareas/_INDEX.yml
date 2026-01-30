@@ -7,9 +7,9 @@
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
-version: "1.18.0"
+version: "2.0.0"
 created: "2026-01-24"
-updated: "2026-01-27"
+updated: "2026-01-29"
 proyecto: "gamilit"
 maintained_by: "@WS_ORCHESTRATOR"
 
@@ -24,26 +24,26 @@ estadisticas:
   pendientes: 0
   canceladas: 0
   bloqueadas: 0
-  archivadas: 41
+  por_fecha: 42
 
 # ─────────────────────────────────────────────────────────────────────────────────
-# ARCHIVO DE TAREAS COMPLETADAS
+# CARPETAS DE TAREAS POR FECHA
 # ─────────────────────────────────────────────────────────────────────────────────
 #
-# Las tareas completadas han sido movidas al directorio _archive/ organizado por fecha.
+# Las tareas están organizadas por fecha de ejecución (alineado con workspace-v2).
 #
 # Estructura:
-#   _archive/
+#   tareas/
 #   ├── 2026-01-24/  (21 tareas)
 #   ├── 2026-01-25/  (12 tareas)
 #   └── 2026-01-27/  (9 tareas)
 #
-# Para consultar detalles de una tarea archivada, navegar a:
-#   _archive/{fecha}/TASK-{id}/
+# Cada carpeta de fecha contiene _INDEX.yml con detalle de sus tareas.
+# Para consultar detalles de una tarea, navegar a:
+#   {fecha}/TASK-{id}/
 #
 
-archivo:
-  ubicacion: "_archive/"
+carpetas_por_fecha:
   por_fecha:
     2026-01-24:
       total: 21
@@ -189,10 +189,10 @@ notas: |
   Las tareas que afecten SOLO a gamilit deben documentarse aquí.
   Las tareas transversales van a orchestration/tareas/ del workspace.
 
-  ARCHIVADO 2026-01-27:
-  - 41 tareas completadas movidas a _archive/
-  - Organizadas por fecha de ejecución
-  - Historial detallado disponible en cada carpeta de tarea
+  REESTRUCTURADO 2026-01-29:
+  - Estructura alineada con workspace-v2 (sin _archive/)
+  - 42 tareas organizadas directamente por fecha
+  - Cada carpeta tiene su propio _INDEX.yml
 
   Ver @UBICACION-DOC para la matriz de decisión.
 
