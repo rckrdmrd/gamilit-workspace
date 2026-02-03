@@ -15,13 +15,15 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
  *
  * @description Plantillas reutilizables para notificaciones multi-canal
  * @source orchestration/database/DB-115/HANDOFF-TO-BACKEND.md
- * @version 1.0 (2025-11-13) - Sistema Multi-Canal EXT-003
+ * @version 2.0 (2026-02-03) - Advanced Templates Enhancement
  *
  * IMPORTANTE:
- * - Plantillas con interpolación de variables (Mustache-style)
+ * - Plantillas con Handlebars (lógica condicional, loops, helpers)
  * - Soporte para subject, body y HTML
  * - Variables definidas en JSONB array
  * - Canales por defecto configurables
+ * - Internacionalización (es/en) via JSONB translations
+ * - Versionado de templates para historial y rollback
  * - 8 templates de producción + 3 de testing cargados en seeds
  *
  * Características:
@@ -32,23 +34,39 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
  * - variables: Array de variables requeridas (ej: ['user_name', 'achievement_name'])
  * - default_channels: Canales por defecto (['in_app', 'email', 'push'])
  * - is_active: Habilitar/deshabilitar template
+ * - version: Número de versión del template
+ * - previous_version_id: Referencia a versión anterior
+ * - subject_translations: Traducciones del asunto (JSONB)
+ * - body_translations: Traducciones del cuerpo (JSONB)
+ * - html_translations: Traducciones del HTML (JSONB)
+ *
+ * Handlebars Syntax Supported:
+ * - {{variable}} - Variable interpolation
+ * - {{#if condition}}...{{/if}} - Conditionals
+ * - {{#unless condition}}...{{/unless}} - Negative conditionals
+ * - {{#each items}}{{this}}{{/each}} - Loops
+ * - {{formatDate date "DD/MM/YYYY"}} - Date formatting
+ * - {{pluralize count "item" "items"}} - Pluralization
+ * - {{uppercase str}} / {{lowercase str}} - Case transformation
+ * - {{currency amount "MXN"}} - Currency formatting
  *
  * Templates cargados en producción:
- * 1. welcome_message - Mensaje de bienvenida
- * 2. achievement_unlocked - Logro desbloqueado
- * 3. rank_up - Subida de rango
- * 4. assignment_due_reminder - Recordatorio de tarea
- * 5. friend_request - Solicitud de amistad
- * 6. mission_completed - Misión completada
- * 7. system_announcement - Anuncio del sistema
- * 8. password_reset - Reseteo de contraseña
+ * 1. welcome_email - Email de bienvenida
+ * 2. new_assignment - Nueva asignación
+ * 3. assignment_reminder - Recordatorio de tarea
+ * 4. achievement_unlocked - Logro desbloqueado
+ * 5. teacher_message - Mensaje del profesor
+ * 6. team_invitation - Invitación a equipo
+ * 7. exercise_feedback - Retroalimentación de ejercicio
+ * 8. streak_milestone - Racha alcanzada
  */
 @Entity({
   schema: DB_SCHEMAS.NOTIFICATIONS,
   name: DB_TABLES.NOTIFICATIONS.NOTIFICATION_TEMPLATES,
 })
-@Index(['templateKey'], { unique: true })
+@Index(['templateKey', 'version'], { unique: true })
 @Index(['isActive'])
+@Index(['version'])
 export class NotificationTemplate {
   @PrimaryGeneratedColumn('uuid')
     id!: string;
@@ -140,6 +158,60 @@ export class NotificationTemplate {
    */
   @Column({ name: 'is_active', type: 'boolean', default: true })
     isActive!: boolean;
+
+  // ========== VERSIONING (v2.0 - 2026-02-03) ==========
+
+  /**
+   * Número de versión del template
+   *
+   * Permite mantener historial de cambios y rollback
+   * Cada modificación crea una nueva versión
+   *
+   * @default 1
+   */
+  @Column({ type: 'integer', default: 1 })
+    version!: number;
+
+  /**
+   * UUID de la versión anterior
+   *
+   * Permite reconstruir el historial de cambios
+   * NULL para la primera versión
+   */
+  @Column({ name: 'previous_version_id', type: 'uuid', nullable: true })
+    previousVersionId?: string;
+
+  // ========== I18N TRANSLATIONS (v2.0 - 2026-02-03) ==========
+
+  /**
+   * Traducciones del asunto por idioma
+   *
+   * JSONB con claves de locale y valores de template
+   *
+   * @example { "es": "¡Hola {{user_name}}!", "en": "Hello {{user_name}}!" }
+   */
+  @Column({ name: 'subject_translations', type: 'jsonb', nullable: true })
+    subjectTranslations?: Record<string, string>;
+
+  /**
+   * Traducciones del cuerpo por idioma
+   *
+   * JSONB con claves de locale y valores de template
+   *
+   * @example { "es": "Bienvenido...", "en": "Welcome..." }
+   */
+  @Column({ name: 'body_translations', type: 'jsonb', nullable: true })
+    bodyTranslations?: Record<string, string>;
+
+  /**
+   * Traducciones del HTML por idioma
+   *
+   * JSONB con claves de locale y valores de template HTML
+   *
+   * @example { "es": "<h1>Hola</h1>", "en": "<h1>Hello</h1>" }
+   */
+  @Column({ name: 'html_translations', type: 'jsonb', nullable: true })
+    htmlTranslations?: Record<string, string>;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
     createdAt!: Date;

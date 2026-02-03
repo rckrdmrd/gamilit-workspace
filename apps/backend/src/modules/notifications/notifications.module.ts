@@ -14,11 +14,14 @@ import {
 
 // Services
 import { NotificationTemplateService } from './services/notification-template.service';
+import { TemplateI18nService } from './services/template-i18n.service';
 import { NotificationPreferenceService } from './services/notification-preference.service';
 import { NotificationService } from './services/notification.service';
 import { NotificationQueueService } from './services/notification-queue.service';
 import { UserDeviceService } from './services/user-device.service';
 import { PushNotificationService } from './services/push-notification.service';
+import { TwilioService } from './services/twilio.service';
+import { NotificationRateLimitService } from './services/rate-limit.service';
 
 // Controllers
 import {
@@ -26,7 +29,12 @@ import {
   NotificationPreferencesController,
   NotificationDevicesController,
   NotificationTemplatesController,
+  NotificationRateLimitController,
 } from './controllers';
+import { SmsController } from './controllers/sms.controller';
+
+// Guards
+import { NotificationRateLimitGuard } from './guards';
 
 // ========== SISTEMA BÁSICO (MIGRADO 2026-01-07) ==========
 // NOTA: El sistema básico (gamification_system.notifications) fue migrado
@@ -44,18 +52,20 @@ import { MailModule } from '../mail/mail.module';
  * NotificationsModule
  *
  * @description Módulo de notificaciones multi-canal consolidado
- * @version 3.2 (2025-11-29) - Migrado de Firebase a Web Push nativo
+ * @version 3.5 (2026-02-03) - Advanced Templates (Handlebars, i18n, versioning)
  *
  * SISTEMA CONSOLIDADO (notifications schema):
- * - Notificaciones multi-canal (in_app, email, push)
+ * - Notificaciones multi-canal (in_app, email, push, sms)
  * - Templates con interpolación de variables
  * - Preferencias por usuario y tipo
  * - Cola asíncrona para procesamiento
  * - Dispositivos para push notifications
  * - Push notifications via Web Push API nativo (VAPID)
+ * - SMS via Twilio API
+ * - Rate limiting por usuario/canal/tenant
  * - 6 Entities (notifications datasource)
- * - 6 Services (PushNotificationService con web-push)
- * - 4 Controllers
+ * - 8 Services (PushNotificationService, TwilioService, NotificationRateLimitService)
+ * - 7 Controllers
  *
  * NOTA: El sistema básico (gamification_system.notifications) ha sido
  * deprecated y consolidado en este módulo. Todos los triggers de
@@ -69,6 +79,13 @@ import { MailModule } from '../mail/mail.module';
  * - Integrado con NotificationQueueService para procesamiento asíncrono
  * - Manejo automático de subscriptions expiradas/inválidas
  * - Requiere configuración de variables de entorno (VAPID_*)
+ *
+ * RATE LIMITING:
+ * - NotificationRateLimitService para controlar envíos por usuario/canal
+ * - NotificationRateLimitGuard para proteger endpoints
+ * - Límites configurables por canal: in_app (50/min), email (10/h), push (30/min), sms (5/h)
+ * - Límite global por usuario: 100/hora
+ * - Límite por tenant: 1000/hora
  */
 @Module({
   imports: [
@@ -97,6 +114,8 @@ import { MailModule } from '../mail/mail.module';
     NotificationPreferencesController,
     NotificationDevicesController,
     NotificationTemplatesController,
+    NotificationRateLimitController, // Rate limit metrics (2026-02-03)
+    SmsController, // SMS via Twilio (2026-02-03)
 
     // Controller principal (usa NotificationService consolidado)
     NotificationsController,
@@ -104,11 +123,15 @@ import { MailModule } from '../mail/mail.module';
   providers: [
     // Sistema consolidado
     NotificationTemplateService,
+    TemplateI18nService, // Advanced templates with Handlebars, i18n, versioning (2026-02-03)
     NotificationPreferenceService,
     NotificationService,
     NotificationQueueService,
     UserDeviceService,
     PushNotificationService,
+    TwilioService, // SMS via Twilio (2026-02-03)
+    NotificationRateLimitService, // Rate limiting (2026-02-03)
+    NotificationRateLimitGuard, // Rate limit guard (2026-02-03)
 
     // NOTA: NotificationsService (deprecated) REMOVIDO 2026-01-07
   ],
@@ -116,6 +139,9 @@ import { MailModule } from '../mail/mail.module';
     // Exportar para uso en otros módulos
     NotificationService, // Sistema consolidado
     NotificationQueueService, // Para workers/cron jobs
+    NotificationRateLimitService, // Para uso en otros módulos
+    NotificationRateLimitGuard, // Para usar en otros controllers
+    TemplateI18nService, // Para uso con i18n en otros módulos
   ],
 })
 export class NotificationsModule {}

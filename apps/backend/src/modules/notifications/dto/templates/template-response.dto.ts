@@ -3,12 +3,18 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 /**
  * TemplateResponseDto
  *
- * @description DTO de respuesta para templates de notificaciones
- * @version 1.0 (2025-11-13) - EXT-003
+ * @description DTO de respuesta para templates de notificaciones con i18n y versionado
+ * @version 2.0 (2026-02-03) - Advanced Templates Enhancement
  *
  * Usado en responses de:
  * - GET /notifications/templates
  * - GET /notifications/templates/:templateKey
+ * - GET /notifications/templates/:templateKey/version/:version
+ *
+ * Características v2.0:
+ * - Versionado de templates (version, previousVersionId)
+ * - Internacionalización (subjectTranslations, bodyTranslations, htmlTranslations)
+ * - Sintaxis Handlebars completa
  *
  * @example
  * {
@@ -22,6 +28,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
  *   "variables": ["user_name", "achievement_name", "achievement_icon", "points"],
  *   "defaultChannels": ["in_app", "email"],
  *   "isActive": true,
+ *   "version": 1,
+ *   "subjectTranslations": {"es": "...", "en": "..."},
+ *   "bodyTranslations": {"es": "...", "en": "..."},
  *   "createdAt": "2025-11-01T00:00:00.000Z",
  *   "updatedAt": "2025-11-01T00:00:00.000Z"
  * }
@@ -136,6 +145,66 @@ export class TemplateResponseDto {
     example: true,
   })
     isActive!: boolean;
+
+  // ========== VERSIONING (v2.0) ==========
+
+  /**
+   * Número de versión del template
+   *
+   * Incrementa con cada modificación
+   */
+  @ApiProperty({
+    description: 'Número de versión del template',
+    example: 1,
+    default: 1,
+  })
+    version!: number;
+
+  /**
+   * UUID de la versión anterior
+   *
+   * Permite reconstruir el historial de cambios
+   */
+  @ApiPropertyOptional({
+    description: 'UUID de la versión anterior',
+    example: null,
+    nullable: true,
+  })
+    previousVersionId?: string | null;
+
+  // ========== I18N (v2.0) ==========
+
+  /**
+   * Traducciones del asunto por idioma
+   *
+   * JSONB con claves de locale (es, en) y valores de template
+   */
+  @ApiPropertyOptional({
+    description: 'Traducciones del asunto por idioma',
+    example: { es: '¡Hola {{user_name}}!', en: 'Hello {{user_name}}!' },
+    nullable: true,
+  })
+    subjectTranslations?: Record<string, string> | null;
+
+  /**
+   * Traducciones del cuerpo por idioma
+   */
+  @ApiPropertyOptional({
+    description: 'Traducciones del cuerpo por idioma',
+    example: { es: 'Bienvenido...', en: 'Welcome...' },
+    nullable: true,
+  })
+    bodyTranslations?: Record<string, string> | null;
+
+  /**
+   * Traducciones del HTML por idioma
+   */
+  @ApiPropertyOptional({
+    description: 'Traducciones del HTML por idioma',
+    example: { es: '<h1>Hola</h1>', en: '<h1>Hello</h1>' },
+    nullable: true,
+  })
+    htmlTranslations?: Record<string, string> | null;
 
   /**
    * Fecha de creación

@@ -1,42 +1,112 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as Handlebars from 'handlebars';
+import * as dayjs from 'dayjs';
 import { NotificationTemplate } from '../entities/multichannel/notification-template.entity';
 
 /**
  * NotificationTemplateService
  *
  * @description Gestión de plantillas de notificaciones multi-canal (EXT-003)
- * @version 1.0 (2025-11-13)
+ * @version 2.0 (2026-02-03) - Advanced Templates Enhancement
  *
  * Responsabilidades:
  * - CRUD de templates
- * - Interpolación de variables en templates (Mustache-style)
+ * - Compilación de templates con Handlebars (lógica condicional, loops, helpers)
  * - Validación de variables requeridas
  * - Renderizado completo de templates (subject, body, HTML)
  *
- * Características:
- * - Soporte para interpolación {{variable_name}}
- * - Validación automática de variables requeridas
- * - Renderizado de subject, body y HTML
+ * Características v2.0:
+ * - Handlebars como motor de templates
+ * - Soporte para {{#if}}, {{#unless}}, {{#each}}
+ * - Helpers personalizados: formatDate, pluralize, currency, etc.
+ * - Retrocompatibilidad con interpolación básica {{variable}}
  * - Filtrado por is_active
  *
+ * Sintaxis Handlebars soportada:
+ * - {{variable}} - Interpolación de variables
+ * - {{#if condition}}...{{/if}} - Condicionales
+ * - {{#unless condition}}...{{/unless}} - Condicionales negativos
+ * - {{#each items}}{{this}}{{/each}} - Loops
+ * - {{formatDate date "DD/MM/YYYY"}} - Formateo de fechas
+ * - {{pluralize count "item" "items"}} - Pluralización
+ * - {{uppercase str}} - Transformación a mayúsculas
+ *
  * Templates de producción (8 cargados en seeds):
- * 1. welcome_message
- * 2. achievement_unlocked
- * 3. rank_up
- * 4. assignment_due_reminder
- * 5. friend_request
- * 6. mission_completed
- * 7. system_announcement
- * 8. password_reset
+ * 1. welcome_email - Email de bienvenida
+ * 2. new_assignment - Nueva asignación
+ * 3. assignment_reminder - Recordatorio de tarea
+ * 4. achievement_unlocked - Logro desbloqueado
+ * 5. teacher_message - Mensaje del profesor
+ * 6. team_invitation - Invitación a equipo
+ * 7. exercise_feedback - Retroalimentación de ejercicio
+ * 8. streak_milestone - Racha alcanzada
  */
 @Injectable()
 export class NotificationTemplateService {
   constructor(
     @InjectRepository(NotificationTemplate, 'notifications')
     private readonly templateRepository: Repository<NotificationTemplate>,
-  ) {}
+  ) {
+    this.registerHandlebarsHelpers();
+  }
+
+  /**
+   * Register custom Handlebars helpers for template compilation
+   *
+   * These helpers are available in all templates:
+   * - formatDate: Format dates
+   * - pluralize: Choose singular/plural
+   * - uppercase/lowercase: Case transformation
+   * - currency: Format as currency
+   * - eq, gt, lt: Comparisons
+   */
+  private registerHandlebarsHelpers(): void {
+    // Date formatting
+    Handlebars.registerHelper('formatDate', (date: string | Date, format?: string) => {
+      if (!date) return '';
+      const dateFormat = typeof format === 'string' ? format : 'DD/MM/YYYY';
+      return dayjs(date).format(dateFormat);
+    });
+
+    // Pluralize
+    Handlebars.registerHelper(
+      'pluralize',
+      (count: number, singular: string, plural: string) => {
+        if (typeof count !== 'number') return singular;
+        return count === 1 ? singular : plural;
+      },
+    );
+
+    // String manipulation
+    Handlebars.registerHelper('uppercase', (str: string) =>
+      typeof str === 'string' ? str.toUpperCase() : '',
+    );
+    Handlebars.registerHelper('lowercase', (str: string) =>
+      typeof str === 'string' ? str.toLowerCase() : '',
+    );
+
+    // Currency formatting
+    Handlebars.registerHelper('currency', (amount: number, currencyCode?: string) => {
+      if (typeof amount !== 'number') return '';
+      const code = typeof currencyCode === 'string' ? currencyCode : 'MXN';
+      return new Intl.NumberFormat('es-MX', {
+        style: 'currency',
+        currency: code,
+      }).format(amount);
+    });
+
+    // Comparisons
+    Handlebars.registerHelper('eq', (a: unknown, b: unknown) => a === b);
+    Handlebars.registerHelper('gt', (a: number, b: number) => a > b);
+    Handlebars.registerHelper('lt', (a: number, b: number) => a < b);
+
+    // Default value
+    Handlebars.registerHelper('default', (value: unknown, defaultValue: unknown) =>
+      value !== undefined && value !== null && value !== '' ? value : defaultValue,
+    );
+  }
 
   /**
    * Obtener template por key
@@ -151,30 +221,41 @@ export class NotificationTemplateService {
   }
 
   /**
-   * Interpolar variables en un template string
+   * Compile template string with Handlebars
    *
-   * Soporta formato Mustache-style: {{variable_name}}
+   * Supports full Handlebars syntax:
+   * - {{variable}} - Variable interpolation
+   * - {{#if condition}}...{{/if}} - Conditionals
+   * - {{#unless condition}}...{{/unless}} - Negative conditionals
+   * - {{#each items}}{{this}}{{/each}} - Loops
+   * - {{formatDate date "DD/MM/YYYY"}} - Date formatting
+   * - {{pluralize count "item" "items"}} - Pluralization
    *
-   * @param template - String del template con placeholders
-   * @param variables - Objeto con variables a reemplazar
-   * @returns String con variables interpoladas
+   * @param template - String del template con sintaxis Handlebars
+   * @param variables - Objeto con variables a interpolar
+   * @returns String compilado con Handlebars
    *
    * @example
    * const result = this.interpolate(
-   *   'Hola {{user_name}}, has desbloqueado {{achievement_name}}',
-   *   { user_name: 'Juan', achievement_name: 'Maestro del Pensamiento' }
+   *   'Hola {{user_name}}, tienes {{count}} {{pluralize count "mensaje" "mensajes"}}',
+   *   { user_name: 'Juan', count: 5 }
    * );
-   * // Result: "Hola Juan, has desbloqueado Maestro del Pensamiento"
+   * // Result: "Hola Juan, tienes 5 mensajes"
    */
   interpolate(template: string, variables: Record<string, string>): string {
-    return template.replace(/\{\{(\w+)\}\}/g, (match, variableName) => {
-      const value = variables[variableName];
-      if (value === undefined) {
-        // Si la variable no está en el objeto, dejar el placeholder
-        return match;
-      }
-      return String(value);
-    });
+    try {
+      const compiled = Handlebars.compile(template);
+      return compiled(variables);
+    } catch (error) {
+      // Fallback to basic interpolation if Handlebars fails
+      return template.replace(/\{\{(\w+)\}\}/g, (match, variableName) => {
+        const value = variables[variableName];
+        if (value === undefined) {
+          return match;
+        }
+        return String(value);
+      });
+    }
   }
 
   /**
