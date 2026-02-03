@@ -2,11 +2,11 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "5.1.0"
+version: "5.2.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
-fecha_actualizacion: "2026-01-27"
-actualizado_por: "Phase Analysis - Updated with verified metrics"
-last_update_task: "PHASE-ANALYSIS-2026-01-27"
+fecha_actualizacion: "2026-02-02"
+actualizado_por: "TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS - Reconciliacion inventarios"
+last_update_task: "TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS"
 
 # =============================================================================
 # RESUMEN EJECUTIVO
@@ -18,15 +18,15 @@ resumen:
   database:
     schemas: 16  # 13 active + 3 empty (gamilit, public, storage)
     schemas_active: 13
-    tables: 138  # Verified 2026-01-27
-    views: 20  # Updated: verified count from DDL
-    materialized_views: 11
-    enums: 36  # TASK-022 AUDITORIA 2026-01-27 - conteo real /enums/
-    functions: 15  # Updated: verified count from DDL
-    triggers: 10  # Updated: verified count from DDL
-    policies_rls: 33  # TASK-022 AUDITORIA 2026-01-27 - conteo real /rls-policies/ files
-    indexes_files: 23  # TASK-022 AUDITORIA 2026-01-27 - conteo real /indexes/ files
-    ddl_objects_total: 356  # tables + functions + triggers + rls + enums + indexes
+    tables: 140  # RECONCILIADO 2026-02-02 - Auditoria directa DDL
+    views: 13  # CORREGIDO 2026-02-02 - Era 20 (error)
+    materialized_views: 4  # CORREGIDO 2026-02-02 - Era 11 (error)
+    enums: 36  # Verificado 2026-02-02
+    functions: 119  # CORREGIDO 2026-02-02 - Era 15 (error critico), +14 deprecated
+    triggers: 58  # CORREGIDO 2026-02-02 - Era 10 (error critico), 37 archivos
+    policies_rls: 34  # RECONCILIADO 2026-02-02 - archivos de policies
+    indexes_files: 23  # Verificado 2026-02-02
+    ddl_objects_total: 390  # tables(140) + functions(119) + triggers(58) + rls(34) + enums(36) + indexes(23) - Recalculado
     seed_files_dev: 106  # TASK-022 AUDITORIA 2026-01-27
     seed_files_prod: 71  # TASK-022 AUDITORIA 2026-01-27
     seed_coverage_config_tables: "73.8%"  # 62/84 config/lookup tables
@@ -34,8 +34,12 @@ resumen:
     seed_gaps_high: 8  # Feature-degrading missing seeds
     seed_orphaned_files: 0  # RESUELTO: 18 integrados en load-dev-seeds.sh (P1-2)
     status: "Clean creation compliant"
-    last_verified: "2026-01-27"
+    last_verified: "2026-02-02"
     source: "DATABASE_INVENTORY.yml"
+    reconciliation_note: |
+      TASK-2026-02-02: Reconciliacion mediante auditoria directa de archivos DDL.
+      Discrepancias anteriores: functions(15), triggers(10), views(20), mat_views(11)
+      Valores correctos auditados: functions(119), triggers(58), views(13), mat_views(4)
 
   backend:
     modules: 22  # Updated 2026-01-27: +4 new modules (lti, white-label, peer-challenges, parent-notifications) + parent-portal from completions

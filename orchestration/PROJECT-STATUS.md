@@ -3,7 +3,7 @@
 **Sistema:** SIMCO v4.3.0
 **Proyecto:** Gamilit
 **Nivel:** STANDALONE - Referencia Interna
-**Fecha:** 2026-01-27
+**Fecha:** 2026-02-02
 
 ---
 
@@ -76,10 +76,10 @@
 | Capa | Metrica | Valor Auditado |
 |------|---------|----------------|
 | DDL | Schemas activos | 13 (+ 3 vacios) |
-| DDL | Tablas | 138 |
-| DDL | Funciones | 89 |
-| DDL | Triggers | 37 |
-| DDL | RLS Policies (files) | 33 |
+| DDL | Tablas | 140 |
+| DDL | Funciones | 119 (+14 deprecated) |
+| DDL | Triggers | 58 (37 archivos) |
+| DDL | RLS Policies (files) | 34 |
 | DDL | Enums | 36 |
 | DDL | Indexes (files) | 23 |
 | Backend | Entities | 137 (+2 TASK-022 P1-3) |
@@ -191,6 +191,7 @@
 
 ---
 
-*Actualizado: 2026-01-27*
+*Actualizado: 2026-02-02*
 *Estandar: SIMCO-ESTANDAR-ORCHESTRATION v1.0.0*
-*Última auditoría: TASK-022-MODELADO-INTEGRAL*
+*Última auditoría: TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS*
+*Nota: Metricas DDL reconciliadas (funciones: 119, triggers: 58, tablas: 140)*

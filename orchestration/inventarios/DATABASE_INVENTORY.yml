@@ -4,10 +4,10 @@
 # Fuente: Validación DB-092 (Ciclo 1-4)
 
 metadata:
-  version: "5.0.0"
+  version: "5.1.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-27"
-  last_update_task: "TASK-022-MODELADO-INTEGRAL"
+  last_updated: "2026-02-02"
+  last_update_task: "TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS"
   database_script: "create-database.sh"
   total_ddl_files: 397
   total_seed_files: 177  # 106 DEV + 71 PROD (TASK-022 auditado)
@@ -19,22 +19,28 @@ metadata:
     staging_files: 6
   database_counts:
     schemas: 16  # VALIDADO 2026-01-27 - DB recreation (13 con tablas + 3 vacios)
-    tables: 141  # DDL files count
-    tables_db_validated: 147  # create-database.sh resumen final 2026-01-27
-    tables_active: 134  # Validacion psql por schema (post-recreacion)
+    tables: 140  # RECONCILIADO 2026-02-02 - Auditoria directa DDL files
+    tables_db_validated: 147  # create-database.sh resumen final 2026-01-27 (incluye system tables)
+    tables_active: 140  # RECONCILIADO 2026-02-02 - Conteo real archivos DDL
     views: 13
     materialized_views: 4
-    enums: 39  # VALIDADO 2026-01-27 - DB recreation resumen
-    functions_active: 232  # VALIDADO 2026-01-27 - DB recreation resumen (incluye shared)
-    functions_deprecated: 0
-    functions_total: 232
-    triggers_active: 109  # VALIDADO 2026-01-27 - DB recreation resumen
+    enums: 36  # RECONCILIADO 2026-02-02 - Conteo real archivos /enums/ (era 39)
+    functions_active: 119  # RECONCILIADO 2026-02-02 - Auditoria directa DDL (era 232)
+    functions_deprecated: 14  # NUEVO 2026-02-02 - 14 funciones en carpetas _deprecated
+    functions_total: 133  # 119 activas + 14 deprecated
+    functions_files: 111  # Archivos .sql de funciones
+    triggers_active: 58  # RECONCILIADO 2026-02-02 - Conteo CREATE TRIGGER statements (era 109)
     triggers_deprecated: 0
-    triggers_total: 109
+    triggers_total: 58
+    triggers_files: 37  # Archivos .sql de triggers
     indexes_files: 23
     indexes_statements: 405
     policies_rls: 282  # CREATE POLICY statements (archivos DDL)
+    policies_rls_files: 34  # Archivos de RLS policies
     foreign_keys: 241
+    # NOTA 2026-02-02: Los valores anteriores (232 funciones, 109 triggers) incluian
+    # funciones built-in de PostgreSQL reportadas por DB recreation. Los valores
+    # actuales reflejan el conteo real de archivos DDL del proyecto.
   coherence:
     ddl_backend: "100%"  # TASK-022: 137/137 entities mapped
     backend_frontend: "87.5%"  # 14/16 core modules cubiertos
@@ -79,6 +85,24 @@ metadata:
       seeds: "All PROD loaded"
       errors: 0
     validation_date: "2026-01-27"
+
+  audit_2026_02_02:
+    description: "TASK-2026-02-02: Reconciliacion de inventarios mediante auditoria directa DDL"
+    task_id: "TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS"
+    methodology: "Conteo directo de archivos .sql excluyendo _deprecated"
+    changes_summary:
+      - "CORREGIDO: functions_active 232 -> 119 (conteo real DDL files)"
+      - "CORREGIDO: triggers_active 109 -> 58 (conteo real CREATE TRIGGER)"
+      - "CORREGIDO: enums 39 -> 36 (excluyendo deprecated)"
+      - "CORREGIDO: tables 141 -> 140 (conteo real DDL files)"
+      - "AGREGADO: functions_deprecated = 14"
+      - "AGREGADO: functions_files = 111, triggers_files = 37"
+    discrepancy_analysis: |
+      El valor anterior (232 funciones, 109 triggers) reportado por DB recreation
+      incluia funciones y triggers built-in de PostgreSQL. El conteo real de
+      objetos DDL del proyecto es: 119 funciones activas, 58 triggers activos.
+    ssot_reference: "orchestration/tareas/TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS/INVENTARIO-RECONCILIADO.yml"
+    validation_date: "2026-02-02"
 
   audit_2026_01_25:
     description: "TASK-019: Tabla teacher_alert_configurations para US-PM-007"
