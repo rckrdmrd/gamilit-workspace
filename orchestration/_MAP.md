@@ -123,13 +123,20 @@ orchestration/
 ### Estado Actual
 Estructura consolidada a estandar STANDALONE:
 - 3 carpetas activas: 00-guidelines/, inventarios/, trazas/
-- Contenido historico purgado: 2026-02-03 (BLOQUE-3 Plan Maestro)
+- Contenido historico purgado: 2026-02-03 (BLOQUE-5 Purga Doc Obsoleta)
 
 ### Historico de Consolidacion
-- 2026-01-24: Consolidacion inicial (41 → 6 carpetas, 85% reduccion)
-- 2026-02-03: Purga completa de orchestration/_archive/ (36 subcarpetas eliminadas)
+- 2026-01-24: Consolidacion inicial (41 -> 6 carpetas, 85% reduccion)
+- 2026-02-03 AM: Purga completa de orchestration/_archive/ (36 subcarpetas eliminadas)
+- 2026-02-03 PM: Purga adicional (BLOQUE-5):
+  - Carpetas vacias eliminadas: propuestas/, cambios/, escalamientos/, retrospectivas/, procesos/
+  - docs/30-directivas/ eliminada (solo _INDEX.md placeholder)
+  - Archivos obsoletos: ALIASES-RESOLVED.yml, TRAZA-DATABASE-2025.md
+  - Carpeta legacy: templates/_legacy/ (3 archivos de migracion V2)
+  - docs/00-vision-general/_archive/2026-01-25-purge/ (9 archivos, ~100KB)
+  - Consolidado creado: tareas/_archive/TAREAS-HISTORICO-CONSOLIDADO.md
 
-**Estructura Final:** 3 carpetas activas
+**Estructura Final:** 3 carpetas activas (00-guidelines/, inventarios/, trazas/)
 
 ---
 

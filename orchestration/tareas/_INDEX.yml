@@ -26,7 +26,10 @@ estadisticas:
   bloqueadas: 0
   por_fecha: 48
   archivadas:
-    2026-01-24: 20  # Archivado 2026-02-03
+    2026-01-24: 21  # Archivado 2026-02-03
+    2026-01-25: 12  # Archivado 2026-02-03
+    2026-01-27: 9   # Archivado 2026-02-03
+  consolidado: "TAREAS-HISTORICO-CONSOLIDADO.md"  # Indice maestro creado 2026-02-03
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # CARPETAS DE TAREAS POR FECHA
