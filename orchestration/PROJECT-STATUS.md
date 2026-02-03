@@ -77,7 +77,7 @@
 |------|---------|----------------|
 | DDL | Schemas activos | 13 (+ 3 vacios) |
 | DDL | Tablas | 140 |
-| DDL | Funciones | 119 (+14 deprecated) |
+| DDL | Funciones | 112 (deprecated eliminados) |
 | DDL | Triggers | 58 (37 archivos) |
 | DDL | RLS Policies (files) | 34 |
 | DDL | Enums | 36 |

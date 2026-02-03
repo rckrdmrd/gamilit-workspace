@@ -1,0 +1,93 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA - TASK-2026-02-02-REMEDIACION-DDL
+# ═══════════════════════════════════════════════════════════════════════════════
+
+task_id: "TASK-2026-02-02-REMEDIACION-DDL"
+titulo: "Remediacion de Anomalias DDL - Post Auditoria"
+tipo: "REFACTOR"
+prioridad: "P1"
+estado: "en_progreso"
+fecha_inicio: "2026-02-02"
+fecha_fin_estimada: "2026-02-03"
+version: "1.0.0"
+origen: "TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# OBJETIVOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+objetivos:
+  principal: |
+    Ejecutar las acciones de remediacion identificadas en la auditoria de BD,
+    eliminando funciones deprecated, consolidando tablas redundantes y
+    optimizando cascadas de triggers.
+
+  especificos:
+    - P1: Eliminar 4 funciones deprecated de gamification_system
+    - P2: Planificar consolidacion de tablas activity/audit
+    - P2: Documentar optimizacion de cascade triggers
+    - P3: Crear diagrama de dependencias
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  fase_p1:
+    id: "P1"
+    nombre: "Eliminar Funciones Deprecated"
+    prioridad: "P1"
+    duracion: "1h"
+    estado: "en_progreso"
+    acciones:
+      - "Eliminar update_missions_updated_at.sql"
+      - "Eliminar update_notifications_updated_at.sql"
+      - "Eliminar update_leaderboard_global.sql"
+      - "Eliminar update_leaderboard_coins.sql"
+      - "Actualizar inventarios"
+
+  fase_p2a:
+    id: "P2-A"
+    nombre: "Plan Consolidacion Audit Tables"
+    prioridad: "P2"
+    duracion: "2h"
+    estado: "pendiente"
+    dependencias: ["P1"]
+    acciones:
+      - "Crear documento de plan de migracion"
+      - "Diseñar unified_audit_log schema"
+      - "Documentar estrategia de ETL"
+
+  fase_p2b:
+    id: "P2-B"
+    nombre: "Plan Optimizacion Triggers"
+    prioridad: "P2"
+    duracion: "2h"
+    estado: "pendiente"
+    dependencias: ["P1"]
+    acciones:
+      - "Documentar cascade actual"
+      - "Diseñar funciones consolidadas"
+      - "Crear plan de testing"
+
+  fase_p3:
+    id: "P3"
+    nombre: "Documentacion Adicional"
+    prioridad: "P3"
+    duracion: "1h"
+    estado: "pendiente"
+    dependencias: ["P2-A", "P2-B"]
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ENTREGABLES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+entregables:
+  - archivo: "METADATA.yml"
+    estado: "completado"
+  - archivo: "PLAN-CONSOLIDACION-AUDIT.md"
+    estado: "pendiente"
+  - archivo: "PLAN-OPTIMIZACION-TRIGGERS.md"
+    estado: "pendiente"
+
+# ═══════════════════════════════════════════════════════════════════════════════
