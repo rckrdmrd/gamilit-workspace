@@ -627,6 +627,41 @@ export const API_ROUTES = {
     READINESS: '/health/readiness',
     METRICS: '/health/metrics',
   },
+
+  // ML Module (Sprint 3.3)
+  ML: {
+    BASE: '/ml',
+
+    // Predictions
+    PREDICT: {
+      BASE: '/ml/predict',
+      DROPOUT_RISK: (studentId: string) => `/ml/predict/dropout-risk/${studentId}`,
+      PERFORMANCE: (studentId: string, exerciseId: string) =>
+        `/ml/predict/performance/${studentId}/${exerciseId}`,
+      DIFFICULTY: (studentId: string, moduleId: string) =>
+        `/ml/predict/difficulty/${studentId}/${moduleId}`,
+      ENGAGEMENT: (studentId: string) => `/ml/predict/engagement/${studentId}`,
+      INSIGHTS: (studentId: string) => `/ml/predict/insights/${studentId}`,
+      BATCH_DROPOUT_RISK: '/ml/predict/batch/dropout-risk',
+      BATCH_CLASSROOM: (classroomId: string) =>
+        `/ml/predict/batch/classroom/${classroomId}`,
+      DASHBOARD_AT_RISK: '/ml/predict/dashboard/at-risk',
+      DASHBOARD_METRICS: '/ml/predict/dashboard/metrics',
+    },
+
+    // Admin
+    ADMIN: {
+      BASE: '/ml/admin',
+      MODELS: '/ml/admin/models',
+      MODEL_METRICS: (modelType: string) => `/ml/admin/models/${modelType}/metrics`,
+      MODEL_TRAIN: (modelType: string) => `/ml/admin/models/${modelType}/train`,
+      MODEL_ACTIVATE: (modelType: string, version: string) =>
+        `/ml/admin/models/${modelType}/activate/${version}`,
+      PREDICTION_LOGS: '/ml/admin/predictions/logs',
+      CACHE_CLEAR: '/ml/admin/cache/predictions',
+      CACHE_STATS: '/ml/admin/cache/stats',
+    },
+  },
 } as const;
 
 /**
