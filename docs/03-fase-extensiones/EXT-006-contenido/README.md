@@ -14,7 +14,7 @@
 | **Código** | EXT-006 |
 | **Fase** | Extensiones |
 | **Presupuesto** | $20,000 MXN |
-| **Story Points** | 45 SP |
+| **Story Points** | 40 SP |
 | **User Stories** | 10-12 historias |
 | **Sprint** | Sprint 4 |
 | **Estado** | ✅ Completada |

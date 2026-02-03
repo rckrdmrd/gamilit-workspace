@@ -1,0 +1,224 @@
+# =============================================================================
+# METADATA.yml - TASK-002: Correcciones Contratos API Backend-Frontend
+# =============================================================================
+# Version: 1.1.0
+# Sistema: SIMCO v4.3.0 + CAPVED
+# Proyecto: GAMILIT
+# Fecha: 2026-01-25
+# =============================================================================
+
+version: "1.1.0"
+task_id: "TASK-002"
+
+# -----------------------------------------------------------------------------
+# IDENTIFICACION
+# -----------------------------------------------------------------------------
+identificacion:
+  titulo: "Correcciones Contratos API Backend-Frontend"
+  descripcion: |
+    Corrección de 4 inconsistencias entre contratos API del backend y
+    expectativas del frontend que causaban fallos silenciosos:
+
+    1. claimReward: Doble envoltorio de respuesta
+    2. GET /notifications: Estructura respuesta incorrecta
+    3. NotificationResponseDto: Campo read vs status
+    4. NotificationDropdown: formatTimestamp con fecha undefined
+  tipo: "bugfix"
+  prioridad: "P1"
+  tags:
+    - "api-contract"
+    - "backend"
+    - "frontend"
+    - "notifications"
+    - "missions"
+    - "gamification"
+
+# -----------------------------------------------------------------------------
+# RESPONSABILIDAD
+# -----------------------------------------------------------------------------
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "claude-opus-4-5-20251101"
+  delegacion:
+    permitida: false
+
+# -----------------------------------------------------------------------------
+# ALCANCE
+# -----------------------------------------------------------------------------
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo:
+    - "gamification"
+    - "notifications"
+  capas_afectadas:
+    - "backend"
+    - "frontend"
+  entidades_afectadas:
+    - "Mission"
+    - "Notification"
+  endpoints_afectados:
+    - "POST /gamification/missions/:id/claim"
+    - "GET /notifications"
+    - "PATCH /notifications/:id/read"
+
+# -----------------------------------------------------------------------------
+# TEMPORALIDAD
+# -----------------------------------------------------------------------------
+temporalidad:
+  fecha_inicio: "2026-01-25T10:00:00"
+  fecha_fin: "2026-01-25T12:00:00"
+  duracion_estimada: "2h"
+  duracion_real: "2h"
+
+# -----------------------------------------------------------------------------
+# ESTADO
+# -----------------------------------------------------------------------------
+estado:
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
+  bloqueadores: []
+
+# -----------------------------------------------------------------------------
+# FASES CAPVED
+# -----------------------------------------------------------------------------
+fases:
+  contexto:
+    estado: "completada"
+    archivo: "01-CONTEXTO.md"
+    fecha_completado: "2026-01-25"
+    notas: "Identificado via errores en consola del navegador"
+
+  analisis:
+    estado: "completada"
+    archivo: null
+    fecha_completado: "2026-01-25"
+    notas: "Analisis realizado con Task agent Explore"
+
+  plan:
+    estado: "completada"
+    archivo: null
+    fecha_completado: "2026-01-25"
+    notas: "Usuario aprobo Opcion A: modificar backend"
+
+  validacion:
+    estado: "omitida"
+    archivo: null
+    fecha_completado: null
+    notas: "Validacion via build exitoso"
+
+  ejecucion:
+    estado: "completada"
+    archivo: "05-EJECUCION.md"
+    fecha_completado: "2026-01-25"
+    notas: "4 correcciones implementadas"
+
+  documentacion:
+    estado: "completada"
+    archivo: "06-DOCUMENTACION.md"
+    fecha_completado: "2026-01-25"
+    notas: "Documentacion SIMCO completa"
+
+# -----------------------------------------------------------------------------
+# ARTEFACTOS
+# -----------------------------------------------------------------------------
+artefactos:
+  archivos_creados: 0
+  archivos_modificados:
+    - path: "apps/backend/src/modules/gamification/controllers/missions.controller.ts"
+      cambio: "Removido doble envoltorio en claimRewards()"
+      lineas: "592-595"
+    - path: "apps/backend/src/modules/notifications/controllers/notifications.controller.ts"
+      cambio: "Estructura respuesta { notifications, total, page, limit, hasMore }"
+      lineas: "62-91, 97-108"
+    - path: "apps/backend/src/modules/notifications/controllers/notification-multichannel.controller.ts"
+      cambio: "Campo status en lugar de read en mapToResponseDto"
+      lineas: "223-235"
+    - path: "apps/backend/src/modules/notifications/dto/paginated-notifications.dto.ts"
+      cambio: "Nueva estructura alineada con frontend"
+      lineas: "1-40"
+    - path: "apps/backend/src/shared/dto/notifications/notification-response.dto.ts"
+      cambio: "Campo status: 'unread' | 'read' en lugar de read: boolean"
+      lineas: "89-96"
+    - path: "apps/frontend/src/features/notifications/components/NotificationDropdown.tsx"
+      cambio: "Validacion null/undefined en formatTimestamp"
+      lineas: "40-53"
+  archivos_eliminados: 0
+  commits:
+    - hash: "5adb9dd8"
+      mensaje: "[TASK-002] fix: Corregir contratos API backend-frontend"
+      fecha: "2026-01-25"
+
+# -----------------------------------------------------------------------------
+# RELACIONES
+# -----------------------------------------------------------------------------
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  bloqueado_por: []
+  bloquea: []
+  relacionado_con:
+    - "TASK-001-fix-p0-gaps"
+
+# -----------------------------------------------------------------------------
+# VALIDACIONES
+# -----------------------------------------------------------------------------
+validaciones:
+  build_backend: "passed"
+  build_frontend: "passed"
+  lint: "pendiente"
+  tests: "na"
+  typecheck: "pendiente"
+  documentacion_completa: true
+
+# -----------------------------------------------------------------------------
+# REFERENCIAS
+# -----------------------------------------------------------------------------
+referencias:
+  documentos:
+    - "orchestration/directivas/simco/SIMCO-TAREA.md"
+    - "orchestration/directivas/simco/SIMCO-GIT.md"
+  directivas:
+    - "@CAPVED"
+    - "@TRIGGER-COHERENCIA-CAPAS"
+  urls: []
+
+# -----------------------------------------------------------------------------
+# CONTEXT TRACKING
+# -----------------------------------------------------------------------------
+context_tracking:
+  tokens_entrada: "~50000"
+  tokens_salida: "~15000"
+  archivos_leidos: 12
+  archivos_modificados: 6
+  herramientas_usadas:
+    - "Read"
+    - "Edit"
+    - "Write"
+    - "Grep"
+    - "Bash"
+    - "Task"
+
+# -----------------------------------------------------------------------------
+# NOTAS Y LECCIONES
+# -----------------------------------------------------------------------------
+notas: |
+  Patron identificado: Inconsistencia en contratos API entre backend y frontend
+  causan errores silenciosos que son dificiles de debuggear.
+
+  Sintomas tipicos:
+  - Funcionalidad "no funciona" pero no hay errores en consola
+  - Frontend recibe undefined donde espera datos
+  - Campos con nombres diferentes (read vs status)
+
+lecciones_aprendidas:
+  - leccion: "Verificar que backend no envuelva manualmente respuestas que ya envuelve TransformResponseInterceptor"
+    categoria: "backend"
+    impacto: "alto"
+  - leccion: "Alinear nombres de campos entre DTOs de backend y interfaces de frontend"
+    categoria: "api-contract"
+    impacto: "alto"
+  - leccion: "Validar siempre fechas antes de llamar metodos de Date"
+    categoria: "frontend"
+    impacto: "medio"

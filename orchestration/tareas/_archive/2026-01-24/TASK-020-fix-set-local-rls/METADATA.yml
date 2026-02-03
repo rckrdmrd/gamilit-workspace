@@ -1,0 +1,196 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.1.0"
+task_id: "TASK-020"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "Fix SET LOCAL RLS Error - syntax error at or near $1"
+  descripcion: |
+    Corrección de error crítico en TeacherReportsService donde SET LOCAL
+    se usaba con queries parametrizadas ($1) que PostgreSQL no soporta.
+
+    Error: QueryFailedError: syntax error at or near "$1"
+    Query: SET LOCAL app.current_user_id = $1
+
+    Causa: PostgreSQL SET commands no soportan placeholders.
+    Solución: Usar interpolación de string con validación UUID previa.
+  tipo: "bugfix"
+  prioridad: "P0"
+  tags:
+    - "teacher-portal"
+    - "rls"
+    - "postgresql"
+    - "critical-bug"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "claude-opus-4-5-20251101"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "teacher"
+  capas_afectadas:
+    - "backend"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: "2026-01-25 11:30"
+  fecha_fin: "2026-01-25 11:45"
+  duracion_estimada: "15min"
+  duracion_real: "15min"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+    nota: "Error reportado por usuario en runtime"
+
+  analisis:
+    estado: "completada"
+    archivo: "PLAN-CORRECCION.md"
+    completado_en: "2026-01-25"
+    nota: "Causa raíz identificada: SET LOCAL no soporta $1"
+
+  plan:
+    estado: "completada"
+    archivo: "PLAN-CORRECCION.md"
+    completado_en: "2026-01-25"
+    nota: "Plan detallado con validación de impacto"
+
+  validacion:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+    nota: "Aprobado por usuario, build y lint verificados"
+
+  ejecucion:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+
+  documentacion:
+    estado: "completada"
+    archivo: "METADATA.yml"
+    completado_en: "2026-01-25"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARTEFACTOS (PLANIFICADOS)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+artefactos:
+  archivos_creados: []
+
+  archivos_modificados:
+    - ruta: "apps/backend/src/modules/teacher/services/teacher-reports.service.ts"
+      cambio: "Fix SET LOCAL: usar literal con validación UUID en lugar de $1"
+
+  archivos_eliminados: []
+
+  commits: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas:
+    - "TASK-015-fix-teacher-reports-rls (introdujo el bug)"
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES (PLANIFICADAS)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "pasa"
+    output: "tsc completed successfully"
+  lint:
+    estado: "pasa"
+    errores: 0
+    warnings: 0
+  tests:
+    estado: "na"
+    passed: 0
+    failed: 0
+  typecheck:
+    estado: "pasa"
+    errores: 0
+  documentacion_completa: true
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  documentos_consultados:
+    - "teacher-reports.service.ts"
+    - "rls.interceptor.ts"
+    - "validation.util.ts"
+    - "PostgreSQL SET documentation"
+
+  directivas_aplicadas:
+    - "@SIMCO-BACKEND"
+    - "@EDICION-SEGURA"
+
+  epica: null
+  user_story: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  Bug introducido en TASK-015 donde se intentó usar SET LOCAL con
+  queries parametrizadas. PostgreSQL no soporta esto para comandos SET.
+
+  La solución es segura porque:
+  1. teacherId viene del JWT ya validado
+  2. Se valida formato UUID antes de interpolar
+  3. UUID regex solo permite caracteres hexadecimales y guiones
+
+lecciones_aprendidas:
+  - "SET LOCAL en PostgreSQL NO soporta queries parametrizadas ($1, $2)"
+  - "Siempre verificar la sintaxis SQL del comando antes de usar placeholders"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════

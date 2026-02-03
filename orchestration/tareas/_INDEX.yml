@@ -25,6 +25,8 @@ estadisticas:
   canceladas: 0
   bloqueadas: 0
   por_fecha: 48
+  archivadas:
+    2026-01-24: 20  # Archivado 2026-02-03
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # CARPETAS DE TAREAS POR FECHA
@@ -46,30 +48,8 @@ estadisticas:
 
 carpetas_por_fecha:
   por_fecha:
-    2026-01-24:
-      total: 21
-      tareas:
-        - "TASK-001-fix-p0-gaps"
-        - "TASK-002-fix-api-response-contracts"
-        - "TASK-003-fix-school-id"
-        - "TASK-004-fix-last-sign-in-at"
-        - "TASK-005-sync-orchestration-from-workspace"
-        - "TASK-006-admin-reports-fix"
-        - "TASK-007-deploy-production-scripts"
-        - "TASK-008-fix-notification-dropdown"
-        - "TASK-009-fix-teacher-reviews-cache"
-        - "TASK-010-fix-rls-teacher-content"
-        - "TASK-011-teacher-portal-validation-fixes"
-        - "TASK-012-test-coverage-fixes"
-        - "TASK-013-admin-test-coverage-fixes"
-        - "TASK-014-fix-student-monitoring-bugs"
-        - "TASK-015-fix-database-classroom-modules"
-        - "TASK-015-fix-teacher-reports-rls"
-        - "TASK-016-fix-database-cross-schema-dependencies"
-        - "TASK-017-fix-alerts-case-alias"
-        - "TASK-018-us-pm-006-bloquear-alumnos"
-        - "TASK-019-us-pm-007-config-alertas"
-        - "TASK-020-fix-set-local-rls"
+    # 2026-01-24: ARCHIVADO el 2026-02-03 (BLOQUE-3 Plan Maestro)
+    # Ver: tareas/_archive/2026-01-24/ y RESUMEN-TAREAS-2026-01-24.md
     2026-01-25:
       total: 12
       tareas:

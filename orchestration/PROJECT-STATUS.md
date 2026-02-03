@@ -187,7 +187,7 @@
 
 **Fecha:** 2026-01-24
 **Reduccion:** 41 carpetas → 6 carpetas (85%)
-**Contenido archivado en:** `_archive/`
+**Nota:** Contenido historico purgado en 2026-02-03 (BLOQUE-3 Plan Maestro)
 
 ---
 

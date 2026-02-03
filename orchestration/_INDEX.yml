@@ -250,13 +250,11 @@ carpetas:
     nivel_nexus: "L0"
 
   # ---------------------------------------------------------------------------
-  # GRUPO 6: ARCHIVO
+  # GRUPO 6: HISTORICO (PURGADO 2026-02-03)
   # ---------------------------------------------------------------------------
-
-  _archive:
-    proposito: "Contenido archivado (85% reduccion de orchestration)"
-    prioridad: "BAJA"
-    nota: "Consultar solo si se necesita historico"
+  # Nota: La carpeta _archive/ fue purgada el 2026-02-03 como parte del
+  # BLOQUE-3 del Plan Maestro GAMILIT. El contenido historico fue eliminado
+  # tras verificar 0 referencias activas.
 
 # ===============================================================================
 # MAPEO NEXUS - Niveles de Contexto

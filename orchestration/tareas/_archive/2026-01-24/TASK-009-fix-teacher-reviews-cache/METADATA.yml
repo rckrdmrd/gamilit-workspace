@@ -1,0 +1,218 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.1.0"
+task_id: "TASK-009"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "Fix cache invalidation en Teacher Reviews - Completadas no aparecen"
+  descripcion: |
+    Bug reportado: Después de calificar un ejercicio, no aparece en la pestaña "Completadas".
+
+    Causa raíz: En ReviewDetail.tsx:231, se llama directamente a manualReviewApi.completeReview()
+    en lugar de usar el hook useCompleteReview(). El hook tiene la lógica de invalidar la cache
+    de React Query en onSuccess, pero al llamar directamente a la API, la cache no se invalida.
+
+    Solución: Agregar invalidación manual de cache usando queryClient.invalidateQueries()
+    después de completar exitosamente el review.
+  tipo: "bugfix"
+  prioridad: "P1"
+  tags:
+    - "teacher-portal"
+    - "react-query"
+    - "cache"
+    - "reviews"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "claude-opus-4-5-20250514"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "teacher/review-panel"
+  capas_afectadas:
+    - "frontend"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: "2026-01-25 23:30"
+  fecha_fin: "2026-01-25 23:45"
+  duracion_estimada: "30min"
+  duracion_real: "15min"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "completada"
+    archivo: "01-CONTEXTO.md"
+    completado_en: "2026-01-25 23:32"
+
+  analisis:
+    estado: "omitida"
+    archivo: null
+    completado_en: null
+    nota: "Bug con causa raíz ya identificada en plan previo"
+
+  plan:
+    estado: "omitida"
+    archivo: null
+    completado_en: null
+    nota: "Plan ya existía en sesión anterior"
+
+  validacion:
+    estado: "omitida"
+    archivo: null
+    completado_en: null
+    nota: "Incluida en ejecución (build/lint)"
+
+  ejecucion:
+    estado: "completada"
+    archivo: "05-EJECUCION.md"
+    completado_en: "2026-01-25 23:40"
+
+  documentacion:
+    estado: "completada"
+    archivo: "06-DOCUMENTACION.md"
+    completado_en: "2026-01-25 23:45"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARTEFACTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+artefactos:
+  archivos_creados: []
+
+  archivos_modificados:
+    - ruta: "apps/frontend/src/apps/teacher/components/review-panel/ReviewDetail.tsx"
+      cambio: "Agregar invalidación de cache con useQueryClient y manualReviewKeys"
+      lineas_agregadas: 8
+
+  archivos_eliminados: []
+
+  commits:
+    - hash: "f63bafc5"
+      mensaje: "fix(teacher-reviews): Invalidar cache después de completar review"
+      fecha: "2026-01-25"
+      repositorio: "gamilit"
+    - hash: "71094d55"
+      mensaje: "chore: Update gamilit submodule (fix teacher reviews cache)"
+      fecha: "2026-01-25"
+      repositorio: "workspace-v2"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas:
+    - "TASK-2026-01-25-VALIDACION-PORTAL-TEACHER"
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "pasa"
+    output: "built in 27.54s"
+  lint:
+    estado: "pasa"
+    errores: 0
+    warnings: 239  # Pre-existentes, no introducidos
+  tests:
+    estado: "na"
+    passed: 0
+    failed: 0
+  typecheck:
+    estado: "pasa"
+    errores: 0
+  documentacion_completa: true
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  documentos_consultados:
+    - "apps/frontend/src/apps/teacher/components/review-panel/ReviewDetail.tsx"
+    - "apps/frontend/src/apps/teacher/hooks/useManualReviews.ts"
+
+  directivas_aplicadas:
+    - "@QUICK"
+    - "@SIMCO-GIT"
+
+  epica: null
+  user_story: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRACKING DE CONTEXTO/TOKENS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+context_tracking:
+  estimated_tokens:
+    initial_context: 5000
+    files_loaded: 3000
+    total_conversation: 12000
+
+  context_cleanups: 0
+  checkpoints_created: 0
+
+  subagents: []
+
+  efficiency_metrics:
+    tokens_per_file_modified: 12000
+    tasks_completed_per_cleanup: 1
+    context_utilization_peak: "15%"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS Y LECCIONES APRENDIDAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  Bug identificado durante validación del portal teacher.
+  La causa raíz ya estaba analizada en plan previo, solo faltaba implementar.
+  Fix mínimo de 8 líneas con impacto alto en UX.
+
+lecciones_aprendidas:
+  - "Siempre usar hooks de React Query en lugar de llamar API directamente cuando hay cache involucrada"
+  - "Verificar que mutations invaliden las queries relacionadas para mantener UI sincronizada"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════

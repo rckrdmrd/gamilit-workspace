@@ -111,7 +111,6 @@ orchestration/
 |
 |-- _definitions/               # Checklists, Protocolos, Schemas (29 archivos)
 |-- _quick/                     # Quick references
-|-- _archive/                   # Contenido archivado
 |
 |-- 00-guidelines/              # Directrices del proyecto
 |   |-- CONTEXTO-PROYECTO.md    # Variables y configuracion

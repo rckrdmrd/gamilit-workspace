@@ -8,7 +8,7 @@
 
 ---
 
-## Estructura (Estandar STANDALONE - 3 carpetas + _archive)
+## Estructura (Estandar STANDALONE - 3 carpetas activas)
 
 ```
 orchestration/
@@ -39,24 +39,15 @@ orchestration/
 │   ├── FRONTEND_INVENTORY.yml
 │   └── ...                     # Otros inventarios
 │
-├── trazas/                     # Trazas de ejecucion (7 archivos)
-│   ├── _MAP.md                 # Mapa de navegacion
-│   ├── _INDEX.yml              # Indice maestro
-│   ├── LESSONS-LEARNED.yml     # Lecciones aprendidas
-│   ├── TRAZA-TAREAS-BACKEND.md
-│   ├── TRAZA-TAREAS-DATABASE.md
-│   ├── TRAZA-TAREAS-FRONTEND.md
-│   ├── TRAZA-BUGS.md           # Registro de bugs
-│   └── TRAZA-REQUERIMIENTOS.md # Trazabilidad requerimientos
-│
-└── _archive/                   # Contenido historico consolidado
-    ├── _definitions/           # Definiciones (checklists, etc.)
-    ├── agentes/                # Reportes y logs de agentes
-    ├── analisis-*/             # 10 carpetas de analisis historicos
-    ├── directivas-gamilit/     # Directivas locales historicas
-    ├── trazas/                 # 12 trazas historicas archivadas
-    ├── root-files/             # Archivos root movidos
-    └── ...                     # Otras carpetas (36 total)
+└── trazas/                     # Trazas de ejecucion (7 archivos)
+    ├── _MAP.md                 # Mapa de navegacion
+    ├── _INDEX.yml              # Indice maestro
+    ├── LESSONS-LEARNED.yml     # Lecciones aprendidas
+    ├── TRAZA-TAREAS-BACKEND.md
+    ├── TRAZA-TAREAS-DATABASE.md
+    ├── TRAZA-TAREAS-FRONTEND.md
+    ├── TRAZA-BUGS.md           # Registro de bugs
+    └── TRAZA-REQUERIMIENTOS.md # Trazabilidad requerimientos
 ```
 
 ---
@@ -78,14 +69,13 @@ orchestration/
 
 ---
 
-## Carpetas Estandar (3 + _archive)
+## Carpetas Estandar (3 activas)
 
 | Carpeta | Proposito | Contenido |
 |---------|-----------|-----------|
 | `00-guidelines/` | Guias del proyecto | Contexto, herencia, paths |
 | `inventarios/` | SSOT de objetos | 12 inventarios por capa |
 | `trazas/` | Trazas de tareas | Por dominio (DB, Backend, Frontend) |
-| `_archive/` | Historico | 35 carpetas consolidadas (analisis, agentes, etc.) |
 
 ---
 
@@ -124,36 +114,22 @@ orchestration/
 | Directivas SIMCO | [../../orchestration/directivas/simco/](../../orchestration/directivas/simco/) |
 | Estandar Orchestration | [../../orchestration/directivas/simco/SIMCO-ESTANDAR-ORCHESTRATION.md](../../orchestration/directivas/simco/SIMCO-ESTANDAR-ORCHESTRATION.md) |
 | Inventarios | [inventarios/](inventarios/) |
-| Directivas locales (archive) | [_archive/directivas-gamilit/](_archive/directivas-gamilit/) |
+| Directivas SIMCO | [directivas/simco/](directivas/simco/) |
 
 ---
 
-## Consolidacion 2026-01-24
+## Consolidacion 2026-01-24 / Purga 2026-02-03
 
 ### Estado Actual
 Estructura consolidada a estandar STANDALONE:
 - 3 carpetas activas: 00-guidelines/, inventarios/, trazas/
-- 1 carpeta archivo: _archive/ (36 subcarpetas)
+- Contenido historico purgado: 2026-02-03 (BLOQUE-3 Plan Maestro)
 
-### Fase 3: Limpieza de trazas/
-- 12 archivos historicos movidos a _archive/trazas/
-- Eliminado: LESSONS-LEARNED.md (duplicado de .yml)
-- Eliminado: subcarpeta tareas/ (vacia)
-- Creado: _MAP.md en trazas/
-- Resultado: 7 archivos activos en trazas/
+### Historico de Consolidacion
+- 2026-01-24: Consolidacion inicial (41 → 6 carpetas, 85% reduccion)
+- 2026-02-03: Purga completa de orchestration/_archive/ (36 subcarpetas eliminadas)
 
-### Contenido de _archive/
-36 subcarpetas consolidadas incluyendo:
-- trazas/ (12 archivos historicos)
-- 10 carpetas analisis-* (historicos de auditorias)
-- agentes/, agents-gamilit/ (reportes de agentes)
-- 4 carpetas *-redundancia (analisis de redundancias)
-- directivas-gamilit/ (directivas locales historicas)
-- _definitions/ (checklists y definiciones)
-- environment, errores, estados, prompts, reportes
-- roadmap, scrum, scripts, templates, testing, validaciones
-
-**Estructura Final:** 3 carpetas activas + _archive (36 subcarpetas)
+**Estructura Final:** 3 carpetas activas
 
 ---
 

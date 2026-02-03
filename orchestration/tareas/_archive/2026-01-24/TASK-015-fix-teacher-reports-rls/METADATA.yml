@@ -1,0 +1,131 @@
+# TASK-015: Fix Teacher Reports RLS
+# ====================================
+# Correccion de pagina Reports en Teacher Portal
+
+id: TASK-015
+id_alternativo: TASK-2026-01-25-GAMILIT-REPORTS-FIX
+titulo: "Fix: Teacher Reports Page muestra vacio por RLS no implementado"
+tipo: BUG-FIX
+prioridad: ALTA
+estado: VALIDADO
+
+# Metadata
+fecha_creacion: 2026-01-25
+fecha_actualizacion: 2026-01-25
+proyecto: gamilit
+modulo: teacher-portal/reports
+
+# Alcance y Ubicacion (segun @UBICACION-DOC)
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  ubicacion_determinada:
+    resultado: "proyecto"
+    razon: "Afecta SOLO el proyecto gamilit (backend teacher module)"
+    criterio_aplicado: "Bug fix localizado en codigo especifico del proyecto"
+  carpeta: "projects/gamilit/orchestration/tareas/TASK-015-fix-teacher-reports-rls/"
+
+# Problema
+problema:
+  descripcion: |
+    La pagina de Reports en el portal de Teacher no muestra datos.
+    Los endpoints /teacher/reports/recent y /teacher/reports/stats
+    devuelven arrays vacios o stats en cero.
+
+  causa_raiz: |
+    RLS (Row Level Security) esta habilitado en la tabla social_features.teacher_reports
+    pero el RlsInterceptor NO ejecuta SET LOCAL para establecer las variables de sesion
+    necesarias (app.current_user_id, app.current_tenant_id).
+
+    Las policies RLS requieren:
+    - teacher_id = current_setting('app.current_user_id', true)::uuid
+    - tenant_id = current_setting('app.current_tenant_id', true)::uuid
+
+    Sin SET LOCAL, current_setting devuelve NULL y ningun registro coincide.
+
+# Archivos afectados
+archivos_afectados:
+  backend:
+    - path: apps/backend/src/shared/interceptors/rls.interceptor.ts
+      tipo: ROOT_CAUSE
+      descripcion: "No ejecuta SET LOCAL para variables de sesion RLS"
+
+    - path: apps/backend/src/modules/teacher/services/teacher-reports.service.ts
+      tipo: AFECTADO
+      descripcion: "Consultas devuelven 0 filas por RLS"
+
+  database:
+    - path: apps/database/ddl/schemas/social_features/tables/08-teacher_reports.sql
+      tipo: REFERENCE
+      descripcion: "Tabla con RLS ENABLE"
+
+    - path: apps/database/ddl/schemas/social_features/rls-policies/08-teacher-reports-policies.sql
+      tipo: REFERENCE
+      descripcion: "Policies que requieren current_setting"
+
+  frontend:
+    - path: apps/frontend/src/apps/teacher/pages/TeacherReportsPage.tsx
+      tipo: AFECTADO
+      descripcion: "Muestra fallback mock data por error API"
+
+# Solucion propuesta
+solucion:
+  opcion_recomendada: "OPCION_2"
+  opciones:
+    - id: OPCION_1
+      nombre: "Implementar SET LOCAL en RlsInterceptor"
+      pros:
+        - Solucion arquitectonicamente correcta
+        - RLS funciona como fue disenado
+        - Seguridad en capa de BD
+      contras:
+        - Complejo por 10 datasources diferentes
+        - Cada request requiere SET LOCAL por conexion
+        - Performance overhead
+      complejidad: ALTA
+
+    - id: OPCION_2
+      nombre: "Ejecutar SET LOCAL en el servicio antes de queries"
+      pros:
+        - Solucion focalizada
+        - Menor impacto
+        - Facil de implementar
+      contras:
+        - No es solucion global
+        - Debe replicarse en otros servicios con RLS
+      complejidad: MEDIA
+
+    - id: OPCION_3
+      nombre: "Desactivar RLS temporalmente para esta tabla"
+      pros:
+        - Solucion inmediata
+        - Sin cambios de codigo
+      contras:
+        - Compromete seguridad
+        - Solo workaround temporal
+      complejidad: BAJA
+
+# Plan de ejecucion
+plan_ejecucion:
+  fase_1_diagnostico:
+    - "Verificar que RLS es la causa (query directa a BD)"
+    - "Confirmar que SET LOCAL no se ejecuta"
+
+  fase_2_implementacion:
+    - "Crear metodo setRlsContext en TeacherReportsService"
+    - "Ejecutar SET LOCAL antes de queries"
+    - "Verificar funcionamiento"
+
+  fase_3_validacion:
+    - "Probar endpoint /teacher/reports/recent"
+    - "Probar endpoint /teacher/reports/stats"
+    - "Verificar UI muestra datos"
+
+# Trazabilidad
+trazabilidad:
+  relacionado_con:
+    - ADR-003 (RLS vs App-Layer Authorization)
+    - TASK-2026-01-18-015 (Sprint 4 Reports)
+
+  agente: claude-opus-4-5-20251101
+  sesion: 2026-01-25

@@ -76,7 +76,6 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `00-guidelines/` - Directrices del proyecto
 - `_definitions/` - Definiciones SSOT
 - `_quick/` - Referencias rapidas
-- `_archive/` - Contenido archivado
 - `agents/` - Perfiles de agentes
 - `directivas/` - Sistema SIMCO
 - `inventarios/` - Inventarios por capa

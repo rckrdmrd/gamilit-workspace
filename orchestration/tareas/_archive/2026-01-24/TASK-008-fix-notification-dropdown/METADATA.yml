@@ -1,0 +1,238 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.1.0"
+task_id: "TASK-008"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "Fix notifDate.getTime is not a function en NotificationDropdown"
+  descripcion: |
+    Corrección de error crítico en el componente NotificationDropdown del Student Portal.
+
+    PROBLEMA:
+    - Al hacer clic en el icono de notificaciones, la pantalla se ponía en blanco
+    - Error en consola: "notifDate.getTime is not a function"
+    - Ubicación: NotificationDropdown.tsx:47
+
+    CAUSA RAÍZ:
+    - La función formatTimestamp usaba `typeof date === 'string'` para verificar
+    - Cuando el dato venía del backend como objeto deserializado (no instancia Date),
+      la condición fallaba y se asignaba el objeto plano directamente
+    - Al llamar .getTime() sobre un objeto sin ese método, crasheaba
+
+    SOLUCIÓN:
+    - Cambiar `typeof date === 'string' ? new Date(date) : date`
+    - Por: `date instanceof Date ? date : new Date(date)`
+    - Esto garantiza que siempre se crea un Date válido
+
+  tipo: "bugfix"
+  prioridad: "P1"
+  tags:
+    - "bugfix"
+    - "frontend"
+    - "notifications"
+    - "student-portal"
+    - "date-handling"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "claude-opus-4-5-20251101"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "notifications"
+  capas_afectadas:
+    - "frontend"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: "2026-01-25"
+  fecha_fin: "2026-01-25"
+  duracion_estimada: "15m"
+  duracion_real: "10m"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+    nota: "Error reportado por usuario con stack trace completo"
+
+  analisis:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+    nota: |
+      Análisis del flujo de datos:
+      1. Interface Notification define createdAt: string
+      2. formatTimestamp recibe Date | string | undefined | null
+      3. typeof date === 'string' fallaba cuando date era objeto deserializado
+      4. El objeto no tenía método .getTime() causando el crash
+
+  plan:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+    nota: "Cambiar verificación de typeof a instanceof para manejo correcto"
+
+  validacion:
+    estado: "omitida"
+    archivo: null
+    completado_en: null
+    nota: "Fix mínimo, validación post-implementación"
+
+  ejecucion:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25"
+
+  documentacion:
+    estado: "completada"
+    archivo: "METADATA.yml"
+    completado_en: "2026-01-25"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARTEFACTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+artefactos:
+  archivos_creados: []
+
+  archivos_modificados:
+    - ruta: "apps/frontend/src/features/notifications/components/NotificationDropdown.tsx"
+      linea: 44
+      cambio: |
+        ANTES: const notifDate = typeof date === 'string' ? new Date(date) : date;
+        DESPUÉS: const notifDate = date instanceof Date ? date : new Date(date);
+
+  archivos_eliminados: []
+
+  commits:
+    - hash: "0034eca1"
+      mensaje: "[TASK-008] fix(notifications): Corregir notifDate.getTime is not a function"
+      fecha: "2026-01-25"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas: []
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "pendiente"
+    output: null
+  lint:
+    estado: "pendiente"
+    errores: 0
+    warnings: 0
+  tests:
+    estado: "na"
+    passed: 0
+    failed: 0
+  typecheck:
+    estado: "pass"
+    errores: 0
+    nota: "Sin errores nuevos introducidos (errores preexistentes en otros archivos)"
+  documentacion_completa: true
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  documentos_consultados:
+    - "NotificationDropdown.tsx"
+    - "NotificationBell.tsx"
+    - "notificationsStore.ts"
+    - "notificationsAPI.ts"
+
+  directivas_aplicadas:
+    - "@SIMCO-TAREA"
+    - "@SIMCO-FRONTEND"
+    - "@EDICION-SEGURA"
+
+  epica: null
+  user_story: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRACKING DE CONTEXTO/TOKENS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+context_tracking:
+  estimated_tokens:
+    initial_context: 5000
+    files_loaded: 8000
+    total_conversation: 15000
+
+  context_cleanups: 0
+  checkpoints_created: 0
+  subagents:
+    - tipo: "Explore"
+      proposito: "Validar documentación existente"
+
+  efficiency_metrics:
+    tokens_per_file_modified: 15000
+    tasks_completed_per_cleanup: 1
+    context_utilization_peak: "15%"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS Y LECCIONES APRENDIDAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  Bug crítico que causaba pantalla blanca en el portal de estudiantes
+  al intentar ver notificaciones. La corrección es mínima (1 línea)
+  pero el impacto era severo (componente completamente inutilizable).
+
+lecciones_aprendidas:
+  - "typeof no distingue entre objetos Date y objetos planos deserializados"
+  - "instanceof Date es la forma correcta de verificar fechas en JavaScript"
+  - "Los datos de APIs JSON siempre llegan como strings, no como objetos Date"
+  - "Siempre usar new Date() para crear instancias Date a partir de cualquier input"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════

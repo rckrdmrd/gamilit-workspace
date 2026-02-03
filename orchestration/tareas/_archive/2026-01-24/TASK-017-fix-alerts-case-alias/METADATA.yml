@@ -1,0 +1,216 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA - TASK-017
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Fix CASE alias error en servicios de alertas del backend
+# Error: "CASE alert" alias was not found. Maybe you forgot to join it?
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+task_id: "TASK-017"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "Fix CASE alias error en servicios de alertas - Error 500"
+  descripcion: |
+    Corrección de error 500 en endpoint GET /api/v1/teacher/alerts causado por
+    expresión CASE con alias incorrecto en TypeORM QueryBuilder.
+
+    Error reportado:
+    "CASE alert" alias was not found. Maybe you forgot to join it?
+
+    Causa raíz:
+    TypeORM no reconoce el alias "alert" dentro de expresiones CASE raw cuando
+    se usa en .orderBy(). La sintaxis "CASE alert.severity WHEN..." es interpretada
+    incorrectamente por el parser de TypeORM.
+
+    Solución:
+    Cambiar de "CASE alert.severity WHEN..." a "CASE severity WHEN..." ya que
+    TypeORM puede resolver la columna directamente sin el alias cuando hay un
+    único alias principal en el QueryBuilder.
+
+  tipo: "bugfix"
+  prioridad: "P1"
+  tags:
+    - "teacher-portal"
+    - "admin-portal"
+    - "alerts"
+    - "typeorm"
+    - "query-builder"
+    - "error-500"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "CLAUDE-CODE"
+  agente_modelo: "claude-opus-4-5-20251101"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "teacher/alerts, admin/alerts"
+  capas_afectadas:
+    - "backend"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: "2026-01-25 14:30"
+  fecha_fin: "2026-01-25 14:45"
+  duracion_estimada: "30m"
+  duracion_real: "15m"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25 14:32"
+    notas: "Error reportado directamente por usuario con stack trace"
+
+  analisis:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25 14:35"
+    notas: |
+      Subagente Explore identificó:
+      - intervention-alerts.service.ts:120 - CASE con alias
+      - admin-alerts.service.ts:79-87 - CASE con alias
+      Causa: TypeORM no resuelve alias en expresiones raw CASE
+
+  plan:
+    estado: "omitida"
+    archivo: null
+    completado_en: null
+    notas: "Corrección directa - cambio de 1 palabra por archivo"
+
+  validacion:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25 14:45"
+    notas: "npm run build exitoso, npm run lint sin errores"
+
+  ejecucion:
+    estado: "completada"
+    archivo: null
+    completado_en: "2026-01-25 14:40"
+
+  documentacion:
+    estado: "completada"
+    archivo: "METADATA.yml"
+    completado_en: "2026-01-25"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARTEFACTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+artefactos:
+  archivos_creados: []
+
+  archivos_modificados:
+    - ruta: "apps/backend/src/modules/teacher/services/intervention-alerts.service.ts"
+      linea: 120
+      cambio_antes: '"CASE alert.severity WHEN ''critical'' THEN 1 ..."'
+      cambio_despues: '"CASE severity WHEN ''critical'' THEN 1 ..."'
+    - ruta: "apps/backend/src/modules/admin/services/admin-alerts.service.ts"
+      linea: 80
+      cambio_antes: '"CASE alert.severity WHEN ''critical'' THEN 1 ..."'
+      cambio_despues: '"CASE severity WHEN ''critical'' THEN 1 ..."'
+
+  archivos_eliminados: []
+
+  commits: []
+    # Pendiente de commit por usuario
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas: []
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "pasa"
+    output: "tsc completed"
+  lint:
+    estado: "pasa"
+    errores: 0
+    warnings: 903  # Pre-existentes
+  tests:
+    estado: "na"
+    passed: 0
+    failed: 0
+  typecheck:
+    estado: "pasa"
+    errores: 0
+  documentacion_completa: true
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  documentos_consultados:
+    - "@SIMCO-TAREA"
+    - "@QUICK"
+
+  directivas_aplicadas:
+    - "@QUICK"
+    - "@MODIFY-SAFE"
+
+  error_original: |
+    GET http://localhost:3006/api/v1/teacher/alerts?classroom_id=...&limit=20 500
+    {statusCode: 500, message: '"CASE alert" alias was not found. Maybe you forgot to join it?', code: 'INTERNAL_ERROR'}
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS Y LECCIONES APRENDIDAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  Error detectado durante uso del portal Teacher. El error 500 impedía cargar
+  la página de alertas de intervención completamente.
+
+lecciones_aprendidas:
+  - "TypeORM QueryBuilder no resuelve aliases dentro de expresiones SQL raw"
+  - "Usar nombres de columna sin alias en CASE expressions de .orderBy()"
+  - "Preferir CASE severity WHEN... sobre CASE table.severity WHEN..."
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════

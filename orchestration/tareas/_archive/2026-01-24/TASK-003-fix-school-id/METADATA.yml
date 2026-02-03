@@ -1,0 +1,261 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Tarea: Corregir asignacion de school_id a usuarios
+# Proyecto: GAMILIT
+# Fecha: 2026-01-25
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.1.0"
+task_id: "TASK-003"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACION
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "Corregir asignacion de school_id a usuarios - Institucion Default"
+  descripcion: |
+    Los usuarios registrados en GAMILIT no tenian asignado el school_id, quedando
+    con valor NULL cuando debian pertenecer a la institucion default (GAMILIT-DEFAULT).
+
+    Problema detectado:
+    - 48 usuarios con school_id = NULL
+    - El trigger set_default_tenant solo asignaba tenant_id, no school_id
+
+    Solucion implementada:
+    - Modificar trigger para asignar school_id automaticamente
+    - Migrar datos existentes a la institucion default
+  tipo: "bugfix"
+  prioridad: "P1"
+  tags:
+    - "database"
+    - "trigger"
+    - "school_id"
+    - "institucion"
+    - "integridad-datos"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "ARQUITECTO-DATOS"
+  agente_modelo: "claude-opus-4-5-20251101"
+  delegado_de: null
+  delegado_a: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: "auth_management"
+  capas_afectadas:
+    - "database"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: "2026-01-25 10:00"
+  fecha_fin: "2026-01-25 11:30"
+  duracion_estimada: "2h"
+  duracion_real: "1.5h"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "completada"
+    archivo: "01-CONTEXTO.md"
+    completado_en: "2026-01-25"
+
+  analisis:
+    estado: "omitida"
+    archivo: null
+    completado_en: null
+    nota: "Analisis integrado en contexto debido a naturaleza del bugfix"
+
+  plan:
+    estado: "omitida"
+    archivo: null
+    completado_en: null
+    nota: "Plan simple, integrado en ejecucion"
+
+  validacion:
+    estado: "omitida"
+    archivo: null
+    completado_en: null
+    nota: "Validacion integrada en ejecucion"
+
+  ejecucion:
+    estado: "completada"
+    archivo: "05-EJECUCION.md"
+    completado_en: "2026-01-25"
+
+  documentacion:
+    estado: "completada"
+    archivo: "06-DOCUMENTACION.md"
+    completado_en: "2026-01-25"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARTEFACTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+artefactos:
+  archivos_creados:
+    - ruta: "apps/database/migrations/2026-01-25-fix-profiles-school-id.sql"
+      tipo: "migration"
+      lineas: 85
+
+  archivos_modificados:
+    - ruta: "apps/database/ddl/schemas/gamilit/functions/11-set_default_tenant.sql"
+      cambio: "Agregada logica para asignar school_id automaticamente (Paso 6)"
+
+  archivos_eliminados: []
+
+  commits:
+    - hash: "4e5aa582"
+      mensaje: "[FIX-SCHOOL-ID] fix: Assign school_id to all users in default institution"
+      fecha: "2026-01-25"
+      repositorio: "gamilit"
+    - hash: "1eb19507"
+      mensaje: "[FIX-SCHOOL-ID] chore: Update gamilit submodule with school_id fix"
+      fecha: "2026-01-25"
+      repositorio: "workspace-v2"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas: []
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "na"
+    output: "No aplica - solo cambios DDL"
+  lint:
+    estado: "na"
+    errores: 0
+    warnings: 0
+  tests:
+    estado: "na"
+    passed: 0
+    failed: 0
+  typecheck:
+    estado: "na"
+    errores: 0
+  documentacion_completa: true
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES DE BASE DE DATOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones_database:
+  trigger_ejecuta:
+    estado: "pasa"
+    output: "CREATE FUNCTION / COMMENT"
+  migracion_ejecuta:
+    estado: "pasa"
+    output: "UPDATE 48"
+  integridad_datos:
+    estado: "pasa"
+    verificacion: |
+      - Usuarios sin school_id: 0 (antes: 48)
+      - Usuarios con GAMILIT-DEFAULT: 48
+      - Todas las capas sincronizadas
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  documentos_consultados:
+    - "apps/database/ddl/schemas/gamilit/functions/11-set_default_tenant.sql"
+    - "apps/database/ddl/schemas/social_features/tables/02-schools.sql"
+    - "apps/database/ddl/schemas/auth_management/tables/03-profiles.sql"
+    - "apps/database/seeds/dev/social_features/00-schools-default.sql"
+
+  directivas_aplicadas:
+    - "@SIMCO-DDL-UNIFIED"
+    - "@TRIGGER-DDL-WSL"
+
+  epica: null
+  user_story: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRACKING DE CONTEXTO/TOKENS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+context_tracking:
+  estimated_tokens:
+    initial_context: 15000
+    files_loaded: 8000
+    total_conversation: 35000
+
+  context_cleanups: 0
+  checkpoints_created: 0
+
+  subagents:
+    - id: "explore-institutions"
+      profile: "Explore"
+      estimated_tokens: 5000
+      files_loaded: 12
+      task_description: "Explorar estructura de instituciones en gamilit"
+    - id: "explore-seeds"
+      profile: "Explore"
+      estimated_tokens: 4000
+      files_loaded: 8
+      task_description: "Explorar seeders y datos iniciales"
+
+  efficiency_metrics:
+    tokens_per_file_modified: 17500
+    tasks_completed_per_cleanup: 1
+    context_utilization_peak: "35%"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS Y LECCIONES APRENDIDAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  Tarea solicitada por usuario para corregir problema de integridad referencial
+  donde usuarios no estaban asignados a la institucion default.
+
+  El diagnostico revelo que el trigger set_default_tenant solo asignaba tenant_id
+  pero no school_id, lo cual era un oversight del diseno original.
+
+lecciones_aprendidas:
+  - "Los triggers de asignacion automatica deben cubrir TODAS las foreign keys obligatorias"
+  - "Verificar integridad de datos despues de cada migracion con queries de validacion"
+  - "Documentar la logica de negocio esperada (todos los usuarios -> institucion default)"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
