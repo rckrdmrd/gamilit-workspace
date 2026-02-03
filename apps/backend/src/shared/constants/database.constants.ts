@@ -32,6 +32,7 @@ export const DB_SCHEMAS = {
   STORAGE: 'storage',
   AUTH_BASE: 'auth', // Schema base de autenticación (diferente de auth_management)
   COMMUNICATION: 'communication', // ✨ NUEVO - Audit 2026-01-04 (Mensajería docente)
+  DATA_WAREHOUSE: 'data_warehouse', // ✨ NUEVO - Sprint 2.1 (Data Warehouse for Analytics)
 } as const;
 
 /**
@@ -278,6 +279,31 @@ export const DB_TABLES = {
   },
 
   /**
+   * Data Warehouse Schema
+   * Dimensional model for analytics and reporting
+   * ✨ NUEVO - Sprint 2.1 (Data Warehouse)
+   */
+  DATA_WAREHOUSE: {
+    // ETL metadata tables
+    ETL_EXTRACTION_LOG: 'etl_extraction_log', // ✨ Sprint 2.2 (ETL Pipeline Extraction)
+    ETL_LOAD_LOG: 'etl_load_log', // ✨ Sprint 2.4 (ETL Pipeline Load)
+    // Dimension tables (Sprint 2.1)
+    DIM_DATE: 'dim_date',
+    DIM_TIME: 'dim_time',
+    DIM_STUDENT: 'dim_student',
+    DIM_EXERCISE: 'dim_exercise',
+    DIM_MODULE: 'dim_module',
+    DIM_TEACHER: 'dim_teacher',
+    DIM_ACHIEVEMENT: 'dim_achievement',
+    DIM_EVENT_TYPE: 'dim_event_type',
+    // Fact tables (Sprint 2.1)
+    FACT_EXERCISE_COMPLETIONS: 'fact_exercise_completions',
+    FACT_DAILY_PROGRESS: 'fact_daily_progress',
+    FACT_GAMIFICATION_EVENTS: 'fact_gamification_events',
+    FACT_TEACHER_METRICS: 'fact_teacher_metrics',
+  },
+
+  /**
    * Gamilit Schema (público)
    * Funciones y utilidades compartidas
    */
@@ -319,6 +345,8 @@ export type AuthBaseTable =
   (typeof DB_TABLES.AUTH_BASE)[keyof typeof DB_TABLES.AUTH_BASE]; // ✨ NUEVO
 export type CommunicationTable =
   (typeof DB_TABLES.COMMUNICATION)[keyof typeof DB_TABLES.COMMUNICATION]; // ✨ NUEVO - Audit 2026-01-04
+export type DataWarehouseTable =
+  (typeof DB_TABLES.DATA_WAREHOUSE)[keyof typeof DB_TABLES.DATA_WAREHOUSE]; // ✨ NUEVO - Sprint 2.1
 
 /**
  * Validación: Verificar que tabla existe en schema
