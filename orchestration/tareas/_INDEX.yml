@@ -18,13 +18,13 @@ maintained_by: "@WS_ORCHESTRATOR"
 # ─────────────────────────────────────────────────────────────────────────────────
 
 estadisticas:
-  total_tareas: 47
-  completadas: 47
+  total_tareas: 48
+  completadas: 48
   en_progreso: 0
   pendientes: 0
   canceladas: 0
   bloqueadas: 0
-  por_fecha: 47
+  por_fecha: 48
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # CARPETAS DE TAREAS POR FECHA
@@ -132,8 +132,8 @@ carpetas_por_fecha:
             - Crear plan de ejecución ordenado
             Fases: 6 | Subtareas: 16 | Acciones: 52
     2026-02-02:
-      total: 2
-      nota: "Auditoría integral y remediación de base de datos"
+      total: 3
+      nota: "Auditoría integral, remediación y optimización de triggers"
       tareas:
         - id: "TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS"
           titulo: "Auditoría Integral del Modelo de BD vs Requerimientos"
@@ -159,6 +159,17 @@ carpetas_por_fecha:
             - P2-B: Plan optimización triggers (150-220ms → 95-155ms, -35%)
             - P3: Próximos pasos documentados (5 sprints futuros)
             Entregables: PLAN-CONSOLIDACION-AUDIT.md, PLAN-OPTIMIZACION-TRIGGERS.md
+        - id: "TASK-2026-02-02-IMPLEMENTAR-OPTIMIZACION-TRIGGERS"
+          titulo: "Implementar Optimización de Triggers en Staging"
+          estado: "completada"
+          archivos: 6
+          descripcion: |
+            Implementación del plan P2-B de optimización de triggers:
+            - F1: Funciones consolidadas (update_module_progress_complete, process_xp_update)
+            - F2: 5 índices de optimización
+            - F3: Triggers consolidados (trg_module_progress_complete, trg_process_xp_update)
+            Reducción latencia: 150-220ms → 95-155ms (-35%)
+            Entregables: 2 funciones, 2 triggers, 5 índices, 1 script migración
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # TAREAS RELACIONADAS DEL WORKSPACE

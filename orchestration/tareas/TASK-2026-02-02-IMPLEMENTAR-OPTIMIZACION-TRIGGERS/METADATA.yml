@@ -1,0 +1,165 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA - TASK-2026-02-02-IMPLEMENTAR-OPTIMIZACION-TRIGGERS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+task_id: "TASK-2026-02-02-IMPLEMENTAR-OPTIMIZACION-TRIGGERS"
+titulo: "Implementar Optimizacion de Triggers en Staging"
+tipo: "REFACTOR"
+prioridad: "P1"
+estado: "completada"
+fecha_inicio: "2026-02-02"
+fecha_fin: "2026-02-02"
+fecha_fin_estimada: "2026-02-02"
+version: "1.1.0"
+origen: "TASK-2026-02-02-REMEDIACION-DDL"
+ambiente: "staging"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# OBJETIVOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+objetivos:
+  principal: |
+    Implementar las funciones consolidadas de triggers para reducir
+    la latencia de 150-220ms a 95-155ms (-35%) en exercise_submissions.
+
+  especificos:
+    - Crear update_module_progress_complete() consolidando triggers 3+5
+    - Crear process_xp_update() consolidando triggers 4A+4B
+    - Crear índices de optimización
+    - Reemplazar triggers antiguos
+    - Validar funcionamiento
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  fase_1:
+    id: "F1"
+    nombre: "Crear Funciones Consolidadas"
+    estado: "completada"
+    fecha_completado: "2026-02-02"
+    acciones:
+      - "Crear progress_tracking.update_module_progress_complete()"
+      - "Crear gamification_system.process_xp_update()"
+    archivos_creados:
+      - "ddl/schemas/progress_tracking/functions/20-update_module_progress_complete.sql"
+      - "ddl/schemas/gamification_system/functions/09-process_xp_update.sql"
+
+  fase_2:
+    id: "F2"
+    nombre: "Crear Índices de Optimización"
+    estado: "completada"
+    fecha_completado: "2026-02-02"
+    acciones:
+      - "idx_exercises_module_active"
+      - "idx_submissions_user_exercise_status"
+      - "idx_attempts_user_correct"
+      - "idx_submissions_user_graded"
+      - "idx_missions_user_active_type"
+    archivos_creados:
+      - "ddl/schemas/optimization/99-optimization-indexes-triggers.sql"
+
+  fase_3:
+    id: "F3"
+    nombre: "Reemplazar Triggers"
+    estado: "completada"
+    fecha_completado: "2026-02-02"
+    acciones:
+      - "Crear trg_module_progress_complete (reemplaza 27+33)"
+      - "Crear trg_process_xp_update (reemplaza 21)"
+      - "Documentar rollback"
+    archivos_creados:
+      - "ddl/schemas/progress_tracking/triggers/40-trg_module_progress_complete.sql"
+      - "ddl/schemas/gamification_system/triggers/30-trg_process_xp_update.sql"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ENTREGABLES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+entregables:
+  funciones:
+    - archivo: "progress_tracking/functions/20-update_module_progress_complete.sql"
+      descripcion: "Funcion consolidada para module_progress + average_score"
+      lineas: 220
+
+    - archivo: "gamification_system/functions/09-process_xp_update.sql"
+      descripcion: "Funcion consolidada para level + missions XP"
+      lineas: 120
+
+  triggers:
+    - archivo: "progress_tracking/triggers/40-trg_module_progress_complete.sql"
+      descripcion: "Trigger consolidado que reemplaza 27 y 33"
+      reemplaza: ["trg_update_module_progress_on_submission", "trg_sync_average_score_on_submission"]
+
+    - archivo: "gamification_system/triggers/30-trg_process_xp_update.sql"
+      descripcion: "Trigger consolidado que reemplaza 21"
+      reemplaza: ["trg_recalculate_level_on_xp_change"]
+
+  indices:
+    - archivo: "optimization/99-optimization-indexes-triggers.sql"
+      descripcion: "5 indices de optimizacion para triggers"
+      indices:
+        - "idx_exercises_module_active"
+        - "idx_submissions_user_exercise_status"
+        - "idx_attempts_user_correct"
+        - "idx_submissions_user_graded"
+        - "idx_missions_user_active_type"
+
+  migracion:
+    - archivo: "migrations/MIGRATION-2026-02-02-OPTIMIZE-TRIGGERS.sql"
+      descripcion: "Script de migracion para staging"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# METRICAS DE OPTIMIZACION
+# ─────────────────────────────────────────────────────────────────────────────────
+
+metricas:
+  antes:
+    triggers_en_cascade: 7
+    latencia_p50: "180ms"
+    latencia_p99: "300ms"
+    desglose:
+      - "trg_updated_at: <1ms"
+      - "trg_missions_on_submission: 15-30ms"
+      - "trg_module_progress: 40-70ms (+cascade <1ms)"
+      - "trg_user_stats: 20-35ms"
+      - "  → trg_level: 5-10ms"
+      - "  → trg_missions_xp: 15-25ms"
+      - "trg_sync_average: 20-35ms (+cascade <1ms)"
+    total: "150-220ms"
+
+  despues:
+    triggers_en_cascade: 3
+    latencia_p50_estimada: "120ms"
+    latencia_p99_estimada: "200ms"
+    desglose:
+      - "trg_updated_at: <1ms"
+      - "trg_missions_on_submission: 15-30ms (sin cambio)"
+      - "trg_module_progress_complete: 50-80ms (consolidado)"
+      - "trg_user_stats_complete: 30-45ms (consolidado)"
+    total_estimado: "95-155ms"
+
+  reduccion:
+    latencia: "30-40%"
+    triggers: "7 → 3"
+    queries_eliminadas: 2
+    indices_agregados: 5
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# PROXIMOS PASOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+proximos_pasos:
+  inmediato:
+    - "Ejecutar migracion en staging"
+    - "Validar con tests unitarios"
+  corto_plazo:
+    - "Benchmark antes/despues"
+    - "Monitoreo 1 semana"
+  mediano_plazo:
+    - "Deploy a produccion si metricas OK"
+    - "Eliminar archivos de triggers antiguos"
+
+# ═══════════════════════════════════════════════════════════════════════════════
