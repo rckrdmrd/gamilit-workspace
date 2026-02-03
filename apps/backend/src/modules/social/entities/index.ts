@@ -24,3 +24,7 @@ export { ChallengeResult } from './challenge-result.entity'; // ✨ NUEVO - P1-0
 export { FriendRequest } from './friend-request.entity'; // ✨ NUEVO - DB-157 (Solicitudes de amistad)
 export { UserFollow } from './user-follow.entity'; // ✨ NUEVO - ETC-001 (Consolidacion Tecnica)
 export { SocialInteraction } from './social-interaction.entity'; // ✨ NUEVO - TASK-022 P1-3 (Coherencia DDL)
+export { Guild } from './guild.entity'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)
+export { GuildMember, GuildMemberRole } from './guild-member.entity'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)
+export { GuildJoinRequest, GuildJoinRequestStatus } from './guild-join-request.entity'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)
+export { GuildMission, GuildMissionType, GuildMissionDifficulty, GuildMissionStatus } from './guild-mission.entity'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)

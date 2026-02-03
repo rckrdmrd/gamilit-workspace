@@ -18,3 +18,5 @@ export { PeerChallengesService } from './peer-challenges.service'; // ✨ NUEVO 
 export { ChallengeParticipantsService } from './challenge-participants.service'; // ✨ NUEVO - P2 (Epic EXT-009)
 export { UserActivitiesService } from './user-activities.service'; // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
 export { UserFollowsService } from './user-follows.service'; // ✨ NUEVO - P1 (EAI-005 - User Follows)
+export { FriendsService } from './friends.service'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Gamificacion Social)
+export { GuildsService } from './guilds.service'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)

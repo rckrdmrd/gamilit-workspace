@@ -18,3 +18,5 @@ export { PeerChallengesController } from './peer-challenges.controller'; // ✨ 
 export { ChallengeParticipantsController } from './challenge-participants.controller'; // ✨ NUEVO - P2 (Epic EXT-009)
 export { UserActivitiesController } from './user-activities.controller'; // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
 export { UserFollowsController } from './user-follows.controller'; // ✨ NUEVO - P1 (EAI-005 - User Follows)
+export { FriendsController } from './friends.controller'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Gamificacion Social)
+export { GuildsController } from './guilds.controller'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)

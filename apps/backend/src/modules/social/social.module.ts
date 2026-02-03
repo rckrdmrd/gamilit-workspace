@@ -23,6 +23,10 @@ import * as controllers from './controllers';
  * - ChallengeParticipant: Participantes de peer challenges con rankings
  * - UserActivity: Actividades de usuarios para el Activity Feed (TASK 2.5)
  * - UserFollow: Relaciones de seguimiento entre usuarios (EAI-005)
+ * - Guild: Guilds (grupos colaborativos) de usuarios (Sprint 5 - EAI-003-EXT)
+ * - GuildMember: Membresía de usuarios en guilds (Sprint 5 - EAI-003-EXT)
+ * - GuildJoinRequest: Solicitudes de unión a guilds (Sprint 5 - EAI-003-EXT)
+ * - GuildMission: Misiones de guilds (Sprint 5 - EAI-003-EXT)
  *
  * @services
  * - FriendshipsService: Gestión de amistades y bloqueos
@@ -34,6 +38,7 @@ import * as controllers from './controllers';
  * - TeamChallengesService: Gestión de desafíos de equipos
  * - UserActivitiesService: Gestión de actividades de usuarios (TASK 2.5)
  * - UserFollowsService: Gestión de seguimientos entre usuarios (EAI-005)
+ * - GuildsService: Gestión de guilds y membresía (Sprint 5 - EAI-003-EXT)
  *
  * @controllers
  * - FriendshipsController: 10 endpoints para amistades
@@ -47,8 +52,9 @@ import * as controllers from './controllers';
  * - ChallengeParticipantsController: 15 endpoints para participantes (Epic EXT-009)
  * - UserActivitiesController: 5 endpoints para actividades de usuarios (TASK 2.5)
  * - UserFollowsController: 7 endpoints para seguimientos de usuarios (EAI-005)
+ * - GuildsController: 15 endpoints para guilds (Sprint 5 - EAI-003-EXT)
  *
- * @totalEndpoints 113 endpoints RESTful con documentación Swagger completa
+ * @totalEndpoints 128 endpoints RESTful con documentación Swagger completa
  */
 @Module({
   imports: [
@@ -67,6 +73,11 @@ import * as controllers from './controllers';
         entities.ChallengeParticipant, // ✨ NUEVO - P2 (Epic EXT-009)
         entities.UserActivity, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
         entities.UserFollow, // ✨ NUEVO - ETC-001 (Consolidacion Tecnica)
+        entities.FriendRequest, // ✨ NUEVO - Sprint 5 (EAI-003-EXT - Friend Requests)
+        entities.Guild, // ✨ NUEVO - Sprint 5 (EAI-003-EXT - Guilds)
+        entities.GuildMember, // ✨ NUEVO - Sprint 5 (EAI-003-EXT - Guilds)
+        entities.GuildJoinRequest, // ✨ NUEVO - Sprint 5 (EAI-003-EXT - Guilds)
+        entities.GuildMission, // ✨ NUEVO - Sprint 5 (EAI-003-EXT - Guilds)
       ],
       'social',
     ),
@@ -83,6 +94,8 @@ import * as controllers from './controllers';
     services.ChallengeParticipantsService, // ✨ NUEVO - P2 (Epic EXT-009)
     services.UserActivitiesService, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
     services.UserFollowsService, // ✨ NUEVO - P1 (EAI-005 - User Follows)
+    services.FriendsService, // ✨ NUEVO - Sprint 5 (EAI-003-EXT Gamificacion Social)
+    services.GuildsService, // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)
   ],
   controllers: [
     controllers.FriendshipsController,
@@ -96,6 +109,8 @@ import * as controllers from './controllers';
     controllers.ChallengeParticipantsController, // ✨ NUEVO - P2 (Epic EXT-009)
     controllers.UserActivitiesController, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
     controllers.UserFollowsController, // ✨ NUEVO - P1 (EAI-005 - User Follows)
+    controllers.FriendsController, // ✨ NUEVO - Sprint 5 (EAI-003-EXT Gamificacion Social)
+    controllers.GuildsController, // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)
   ],
   exports: [
     services.FriendshipsService,
@@ -109,6 +124,8 @@ import * as controllers from './controllers';
     services.ChallengeParticipantsService, // ✨ NUEVO - P2 (Epic EXT-009)
     services.UserActivitiesService, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
     services.UserFollowsService, // ✨ NUEVO - P1 (EAI-005 - User Follows)
+    services.FriendsService, // ✨ NUEVO - Sprint 5 (EAI-003-EXT Gamificacion Social)
+    services.GuildsService, // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)
   ],
 })
 export class SocialModule {}

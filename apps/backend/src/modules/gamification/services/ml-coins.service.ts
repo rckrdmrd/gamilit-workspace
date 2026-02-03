@@ -1,9 +1,10 @@
-import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, Logger, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { UserStats, MLCoinsTransaction, MayaRankEntity } from '../entities';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { CreateTransactionDto } from '../dto';
+import { RankMultiplierService } from './rank-multiplier.service';
 
 /**
  * MLCoinsService
@@ -30,6 +31,9 @@ export class MLCoinsService {
     // TASK-2026-01-18-015 Sprint 3: Inject DataSource for transactions
     @InjectDataSource('gamification')
     private readonly dataSource: DataSource,
+    // US-GAM-011: Inject RankMultiplierService for enhanced multipliers (1.0x-2.0x)
+    @Inject(forwardRef(() => RankMultiplierService))
+    private readonly rankMultiplierService: RankMultiplierService,
   ) {}
 
   /**
@@ -188,27 +192,18 @@ export class MLCoinsService {
   /**
    * Obtiene el multiplicador de ML Coins basado en el rango actual del usuario
    *
-   * Rangos Maya (v2.1):
-   * - Ajaw: 1.00x
-   * - Nacom: 1.10x
-   * - Ah K'in: 1.15x
-   * - Halach Uinic: 1.20x
-   * - K'uk'ulkan: 1.25x
+   * US-GAM-011: Enhanced multipliers for better progression rewards
+   * Rangos Maya (v2.0 - US-GAM-011):
+   * - Ajaw: 1.00x (base)
+   * - Nacom: 1.25x (+25%)
+   * - Ah K'in: 1.50x (+50%)
+   * - Halach Uinic: 1.75x (+75%)
+   * - K'uk'ulkan: 2.00x (+100%)
+   *
+   * @see RankMultiplierService for multiplier configuration
    */
   async getRankMultiplier(userId: string): Promise<number> {
-    const userStats = await this.userStatsRepo.findOne({
-      where: { user_id: userId },
-    });
-
-    if (!userStats || !userStats.current_rank) {
-      return 1.0; // Default multiplier if no rank
-    }
-
-    const rank = await this.mayaRanksRepo.findOne({
-      where: { rank_name: userStats.current_rank },
-    });
-
-    return rank?.xp_multiplier || 1.0;
+    return this.rankMultiplierService.getMultiplier(userId);
   }
 
   /**
