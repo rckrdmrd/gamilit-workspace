@@ -26,7 +26,9 @@ BEGIN
     DELETE FROM audit_logging.user_activity_logs
     WHERE created_at < v_cutoff_date;
 
-    v_deleted_count := (SELECT COUNT(*) FROM audit_logging.user_activity_logs WHERE created_at < v_cutoff_date);
+    -- FIX: Usar GET DIAGNOSTICS para obtener el conteo de registros eliminados
+    -- BUG anterior: COUNT(*) despues del DELETE siempre retornaba 0
+    GET DIAGNOSTICS v_deleted_count = ROW_COUNT;
 
     -- Optimize table after bulk delete
     VACUUM ANALYZE audit_logging.user_activity_logs;

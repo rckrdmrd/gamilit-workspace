@@ -26,7 +26,9 @@ BEGIN
     DELETE FROM audit_logging.system_logs
     WHERE created_at < v_cutoff_date;
 
-    v_deleted_count := FOUND::INTEGER * (SELECT COUNT(*) FROM audit_logging.system_logs WHERE created_at < v_cutoff_date);
+    -- FIX: Usar GET DIAGNOSTICS para obtener el conteo de registros eliminados
+    -- BUG anterior: FOUND::INTEGER * COUNT(*) despues del DELETE no funcionaba correctamente
+    GET DIAGNOSTICS v_deleted_count = ROW_COUNT;
 
     -- Vacuum analyze to reclaim space
     VACUUM ANALYZE audit_logging.system_logs;
