@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   NotFoundException,
@@ -55,10 +55,28 @@ describe('AdminOrganizationsService', () => {
   const mockUserRepo = {};
   const mockProfileRepo = {};
 
+  const mockEducationalDataSource = {
+    createQueryRunner: jest.fn().mockReturnValue({
+      connect: jest.fn(),
+      startTransaction: jest.fn(),
+      commitTransaction: jest.fn(),
+      rollbackTransaction: jest.fn(),
+      release: jest.fn(),
+      manager: {
+        query: jest.fn(),
+      },
+    }),
+    query: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AdminOrganizationsService,
+        {
+          provide: getDataSourceToken('educational'),
+          useValue: mockEducationalDataSource,
+        },
         {
           provide: getRepositoryToken(Tenant, 'auth'),
           useValue: mockTenantRepo,

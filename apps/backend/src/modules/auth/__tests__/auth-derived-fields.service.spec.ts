@@ -4,6 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { AuthService } from '../services/auth.service';
 import { User, Profile, Tenant, UserSession, AuthAttempt } from '../entities';
+import { UserStats, UserRank, UserAchievement, Achievement, MLCoinsTransaction } from '../../gamification/entities';
+import { ExerciseSubmission } from '../../progress/entities';
 import { GamilityRoleEnum } from '@shared/constants';
 
 describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
@@ -38,6 +40,40 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
     save: jest.fn(),
   };
 
+  // Gamification repositories
+  const mockUserStatsRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+    findOne: jest.fn(),
+  };
+
+  const mockUserRankRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+    findOne: jest.fn(),
+  };
+
+  const mockUserAchievementRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const mockAchievementRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+  };
+
+  const mockMLCoinsTransactionRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  // Progress repository
+  const mockExerciseSubmissionRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
   const mockJwtService = {
     sign: jest.fn(),
     verify: jest.fn(),
@@ -68,6 +104,30 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
           useValue: mockAttemptRepository,
         },
         {
+          provide: getRepositoryToken(UserStats, 'gamification'),
+          useValue: mockUserStatsRepository,
+        },
+        {
+          provide: getRepositoryToken(UserRank, 'gamification'),
+          useValue: mockUserRankRepository,
+        },
+        {
+          provide: getRepositoryToken(UserAchievement, 'gamification'),
+          useValue: mockUserAchievementRepository,
+        },
+        {
+          provide: getRepositoryToken(Achievement, 'gamification'),
+          useValue: mockAchievementRepository,
+        },
+        {
+          provide: getRepositoryToken(MLCoinsTransaction, 'gamification'),
+          useValue: mockMLCoinsTransactionRepository,
+        },
+        {
+          provide: getRepositoryToken(ExerciseSubmission, 'progress'),
+          useValue: mockExerciseSubmissionRepository,
+        },
+        {
           provide: JwtService,
           useValue: mockJwtService,
         },
@@ -75,7 +135,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    userRepository = module.get<Repository<User>>(
+    _userRepository = module.get<Repository<User>>(
       getRepositoryToken(User, 'auth'),
     );
   });

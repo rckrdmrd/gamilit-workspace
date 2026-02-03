@@ -1,7 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { AuthController } from '../controllers/auth.controller';
-import { AuthService, SessionManagementService, SecurityService } from '../services';
+import {
+  AuthService,
+  SessionManagementService,
+  SecurityService,
+  EmailVerificationService,
+  PasswordRecoveryService,
+  TwoFactorAuthService,
+} from '../services';
 import { RegisterUserDto, LoginDto, RefreshTokenDto, UserResponseDto } from '../dto';
 import { GamilityRoleEnum } from '@shared/constants';
 
@@ -30,6 +37,25 @@ describe('AuthController', () => {
     logAttempt: jest.fn(),
   };
 
+  const mockEmailVerificationService = {
+    sendVerificationEmail: jest.fn(),
+    verifyEmail: jest.fn(),
+    resendVerificationEmail: jest.fn(),
+  };
+
+  const mockPasswordRecoveryService = {
+    requestPasswordReset: jest.fn(),
+    resetPassword: jest.fn(),
+    validateResetToken: jest.fn(),
+  };
+
+  const mockTwoFactorAuthService = {
+    generateSecret: jest.fn(),
+    verifyToken: jest.fn(),
+    enableTwoFactor: jest.fn(),
+    disableTwoFactor: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -46,13 +72,25 @@ describe('AuthController', () => {
           provide: SecurityService,
           useValue: mockSecurityService,
         },
+        {
+          provide: EmailVerificationService,
+          useValue: mockEmailVerificationService,
+        },
+        {
+          provide: PasswordRecoveryService,
+          useValue: mockPasswordRecoveryService,
+        },
+        {
+          provide: TwoFactorAuthService,
+          useValue: mockTwoFactorAuthService,
+        },
       ],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
-    authService = module.get<AuthService>(AuthService);
-    sessionService = module.get<SessionManagementService>(SessionManagementService);
-    securityService = module.get<SecurityService>(SecurityService);
+    _authService = module.get<AuthService>(AuthService);
+    _sessionService = module.get<SessionManagementService>(SessionManagementService);
+    _securityService = module.get<SecurityService>(SecurityService);
 
     jest.clearAllMocks();
   });
