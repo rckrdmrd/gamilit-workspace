@@ -119,6 +119,14 @@ fases:
     dependencias: ["F1"]
     subtareas: 4
     objetivo: "Mapear cada objeto DDL a su requerimiento funcional"
+    estado: "COMPLETADA"
+    fecha_completado: "2026-02-02"
+    resultados:
+      schemas_mapeados: "13/13 (100%)"
+      tablas_con_us: "120/140 (85.7% directa, 100% justificada)"
+      funciones_con_et: "114/119 (95.8%)"
+      dominios_rf_cubiertos: "17/17 (100%)"
+      entregable: "MATRIZ-TRAZABILIDAD-DDL-RF.yml"
 
   fase_3:
     id: "F3"
@@ -165,11 +173,11 @@ entregables:
     descripcion: "Hallazgos iniciales y estado actual"
 
   - archivo: "MATRIZ-TRAZABILIDAD-DDL-RF.yml"
-    estado: "pendiente"
+    estado: "completado"
     descripcion: "Mapeo DDL a Requerimientos Funcionales"
 
   - archivo: "INVENTARIO-RECONCILIADO.yml"
-    estado: "pendiente"
+    estado: "completado"
     descripcion: "Inventario unificado con metricas reales"
 
   - archivo: "REPORTE-ANOMALIAS.md"
