@@ -1,0 +1,95 @@
+# METADATA.yml - TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS
+# Sistema: SIMCO v4.3.0 + NEXUS v4.0
+# Tipo: ANALYSIS + PLANNING
+
+task_id: TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS
+version: 1.0.0
+created: 2026-02-03
+updated: 2026-02-03
+
+# Clasificacion
+type: ANALYSIS
+mode: "@ANALYSIS"
+priority: P0
+status: IN_PROGRESS
+
+# Contexto
+project: gamilit
+scope: FULL_PROJECT
+domains:
+  - database
+  - backend
+  - frontend
+  - documentation
+  - requirements
+
+# Descripcion
+title: "Plan Maestro - Analisis BD y Requerimientos GAMILIT"
+description: |
+  Analisis detallado del modelado de base de datos vs requerimientos.
+  Creacion de plan de ejecucion con subtareas en multiples niveles.
+  Cada tarea/subtarea cumple con el principio CAPVED.
+
+objectives:
+  - Analizar coherencia BD vs Requerimientos documentados
+  - Identificar gaps y definiciones faltantes
+  - Crear estructura de subtareas atomicas
+  - Establecer orden logico de ejecucion
+  - Proponer purga de documentacion obsoleta
+  - Integrar tareas faltantes de manera ordenada
+
+# Estructura de Entregables
+deliverables:
+  - METADATA.yml
+  - PLAN-MAESTRO.md
+  - ANALISIS-BD-REQUERIMIENTOS.md
+  - SUBTAREAS-JERARQUICAS.md
+  - ORDEN-EJECUCION.md
+
+# Metricas de Entrada
+input_metrics:
+  schemas_bd: 16
+  tablas_bd: 138
+  entities_backend: 158
+  endpoints_api: 850
+  componentes_frontend: 458
+  user_stories_documentadas: 5
+  epics_documentadas: 14
+  tareas_completadas: 44
+  mvp_completitud: 95%
+
+# Dependencias
+dependencies:
+  prerequisite_tasks:
+    - TASK-2026-01-31-ANALISIS-PLANIFICACION
+    - TASK-022-MODELADO-INTEGRAL
+  extends:
+    - PLAN-EJECUCION.md (6 fases previas)
+
+# CAPVED
+capved:
+  contexto: COMPLETADO
+  analisis: EN_PROGRESO
+  planificacion: EN_PROGRESO
+  ejecucion: PENDIENTE
+  validacion: PENDIENTE
+  documentacion: EN_PROGRESO
+
+# Agentes
+agents:
+  orchestrator: claude-opus-4-5
+  subagents_available:
+    - explore
+    - database-auditor
+    - backend-auditor
+    - frontend-auditor
+    - plan
+
+# Tags
+tags:
+  - analysis
+  - planning
+  - database
+  - requirements
+  - capved
+  - multi-level
