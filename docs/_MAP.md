@@ -1,180 +1,68 @@
-# MAPA DE DOCUMENTACION: GAMILIT
+# MAPA DE DOCUMENTACION: GAMILIT (V2)
 
 **Proyecto:** GAMILIT - Plataforma de Gamificacion Educativa
-**Ultima actualizacion:** 2026-01-24
-**Version:** 2.4.0 (Reestructurado segun SIMCO-DOCUMENTACION-PROYECTO v1.0.0)
+**Ultima actualizacion:** 2026-02-03
+**Estado:** V2 COMPLIANT
 
 ---
 
-## Estructura de Documentacion
+## Estructura de Documentacion (Workspace V2)
 
 ```
 docs/
-+-- _SSOT/                   # Single Source of Truth - Consolidado central
-+-- 00-vision-general/       # Vision, glosario, onboarding
-+-- 01-fase-alcance-inicial/ # Fase 1: EAI-001 a EAI-008 (7 EPICs)
-+-- 02-fase-robustecimiento/ # Fase 2: EAI-007 (Modulos M4-M5)
-+-- 03-fase-extensiones/     # Fase 3: EXT-001 a EXT-011 (11 EPICs)
-+-- 04-fase-backlog/         # Backlog de features pendientes
-+-- 05-modelado/             # Modelado de datos y diagramas
-+-- 40-estandares/           # Estandares de desarrollo (API, nomenclatura)
-+-- 90-transversal/          # Documentacion transversal (arquitectura, API, planning)
-+-- 95-guias-desarrollo/     # Guias para desarrolladores (incluye troubleshooting)
-+-- 96-quick-reference/      # Cheatsheets (API, DB, Git, Testing, Docker, Deploy)
-+-- 97-adr/                  # 21 Architecture Decision Records
-+-- 98-audits/               # Reportes de auditoria y validacion
-+-- 99-finiquito/            # Documentacion de cierre (incluye archivados/)
++-- 00-vision-general/       # Vision integral, glosario, objetivos estrategicos
++-- 10-arquitectura/         # Arquitectura, modelado, stack, jerarquia
++-- 20-perfiles/             # Capacidades de agentes y perfiles de usuario
++-- 30-directivas/           # Principios SIMCO, CAPVED, politicas
++-- 40-estandares/           # Estandares de codigo, API, UI/UX, guias
++-- 50-requerimientos/       # Requerimientos (Alcance, Robustecimiento, Extensiones)
++-- 60-proyectos/            # Modulos internos y componentes
++-- 70-onboarding/           # Guias de inicio rapido y capacitacion
++-- 80-referencias/          # Glosarios, referencias tecnicas, transversal
++-- 90-adr/                  # Architecture Decision Records (21+ registros)
 ```
 
 ---
 
-## Archivos Principales
+## Mapeo de Requerimientos (Fase 50)
 
-| Archivo | Descripcion |
-|---------|-------------|
-| README.md | Indice principal de documentacion |
-| 90-transversal/arquitectura/ARCHITECTURE.md | Arquitectura del sistema |
-| 90-transversal/api/API.md | Documentacion de API |
-| 90-transversal/roadmap/ROADMAP-GENERAL.md | Plan estrategico |
-| 90-transversal/sprints/SPRINTS-DETALLADOS.md | Plan de sprints |
-| 95-guias-desarrollo/DEPLOYMENT.md | Guia de despliegue |
-| 04-fase-backlog/DEFINITION-OF-READY.md | Criterios DoR |
+| Seccion | Contenido | Estado |
+|---------|-----------|--------|
+| [01-alcance-inicial](50-requerimientos/01-alcance-inicial/) | Fundamentos, Gamificacion, Analytics | Migrado |
+| [02-robustecimiento](50-requerimientos/02-robustecimiento/) | Modulos M4-M5, Migracion BD | Migrado |
+| [03-extensiones](50-requerimientos/03-extensiones/) | Portal Maestros, Notificaciones, LTI | Migrado |
+| [04-backlog](50-requerimientos/04-backlog/) | Definicion de Ready, Features pendientes | Migrado |
 
 ---
 
-## EPICs por Fase
+## Arquitectura y Modelado (Fase 10)
 
-### 01-fase-alcance-inicial (7 EPICs)
-
-| EPIC | Nombre | Estado |
-|------|--------|--------|
-| EAI-001 | Fundamentos | Done |
-| EAI-002 | Actividades | Done |
-| EAI-003 | Gamificacion | Done |
-| EAI-004 | Analytics | Done |
-| EAI-005 | Admin Base | Done |
-| EAI-006 | Configuracion Sistema | Done |
-| EAI-008 | Portal Admin | Done |
-
-### 02-fase-robustecimiento (1 EPIC)
-
-| EPIC | Nombre | Estado |
-|------|--------|--------|
-| EAI-007 | Modulos M4-M5 | Done |
-
-### 03-fase-extensiones (11 EPICs)
-
-| EPIC | Nombre | Estado |
-|------|--------|--------|
-| EXT-001 | Portal Maestros | Backlog |
-| EXT-002 | Admin Extendido | Parcial |
-| EXT-003 | Notificaciones | Backlog |
-| EXT-004 | Perfiles | Backlog |
-| EXT-005 | Reportes | Backlog |
-| EXT-006 | Contenido | Backlog |
-| EXT-007 | LTI Integration | Backlog |
-| EXT-008 | White Label | Backlog |
-| EXT-009 | Peer Challenges | Backlog |
-| EXT-010 | Parent Notifications | Backlog |
-| EXT-011 | Parent Portal | Backlog |
+| Documento | Descripcion |
+|-----------|-------------|
+| [modelado/COHERENCE-ENTITIES-DDL.md](10-arquitectura/modelado/COHERENCE-ENTITIES-DDL.md) | Coherencia entre entidades y DDL |
+| [modelado/TRACEABILITY-US-SCHEMAS.md](10-arquitectura/modelado/TRACEABILITY-US-SCHEMAS.md) | Trazabilidad Historias -> Schemas |
 
 ---
 
-## Subdirectorios
+## Referencias y Estandares
 
-### _SSOT/ (Single Source of Truth)
-Consolidado central de trazabilidad del proyecto.
-
-| Archivo | Proposito | Alias |
-|---------|-----------|-------|
-| TRACEABILITY-MASTER.yml | Consolidado de 22 epicas | @TRACE-MASTER |
-| EPIC-INDEX.yml | Indice de epicas con estados | @EPIC-INDEX |
-| REQUIREMENTS-INDEX.yml | Mapeo RF -> ET -> US | @REQ-INDEX |
-| CODE-MAPPINGS.yml | Mapeo docs <-> codigo | @CODE-MAP |
-| COMPLETENESS-TRACKER.yml | Rutas para epicas parciales | @COMPLETENESS |
-| API-CONTRACTS.yml | Contratos de API | - |
-| ENTITIES-CATALOG.md | Catalogo de entidades | - |
-
-### 00-vision-general/
-Vision del producto, glosario, datos de gamificacion, guias de pruebas.
-
-### 01-fase-alcance-inicial/
-Documentacion SCRUM de EPICs del alcance inicial (requerimientos, especificaciones, historias-usuario, tareas).
-
-### 02-fase-robustecimiento/
-Mejoras y modulos adicionales (M4-M5).
-
-### 03-fase-extensiones/
-Extensiones futuras del sistema (portales, notificaciones, reportes).
-
-### 04-fase-backlog/
-Features pendientes con Definition of Ready.
-
-### 05-modelado/
-Modelado de datos y diagramas del sistema.
-
-### 40-estandares/
-Estandares de desarrollo: nomenclatura API, convenciones de codigo.
-
-### 90-transversal/
-Documentacion transversal: arquitectura, API, roadmap, sprints, inventarios.
-- **planning/** - Planificacion y tracking de tareas (PLAN-ESTANDARIZACION-SCRUM, etc.)
-
-### 95-guias-desarrollo/
-Guias para backend, frontend, testing.
-- **troubleshooting/** - Guias de resolucion de problemas comunes
-
-### 96-quick-reference/
-Cheatsheets: API, DB, Git, Testing, Docker, Deployment.
-
-### 97-adr/
-21 Architecture Decision Records documentados.
-
-### 98-audits/
-Reportes de auditoria y validacion del proyecto.
-
-### 99-finiquito/
-Documentacion de cierre y entrega.
-- **archivados/** - Documentacion deprecada: 98-standards, frontend-original, database-original
+- **[40-estandares/guias/](40-estandares/guias/)**: Guias de desarrollo migradas.
+- **[80-referencias/transversal/](80-referencias/transversal/)**: Documentacion transversal del sistema.
+- **[80-referencias/quick-ref/](80-referencias/quick-ref/)**: Cheatsheets y referencias rapidas.
 
 ---
 
-## Metricas de Documentacion
+## Metricas Post-Migracion
 
 | Metrica | Valor |
 |---------|-------|
-| EPICs documentadas | 22 |
-| EPICs completadas | 17 |
-| EPICs parciales | 5 |
-| ADRs | 21 |
-| Cheatsheets | 8 |
-| Guias de desarrollo | 10+ |
-| SSOT archivos | 7 |
-| Mecanicas documentadas | 33 |
+| Categorias V2 | 10 |
+| Carpetas Legacy Purgadas | 12 |
+| Documentos Migrados | 150+ |
+| Estado de Integracion | 100% |
 
 ---
 
-## Actualizaciones Recientes (2026-01-20)
-
-### Estandares
-- **[ESTANDAR-NOMENCLATURA-API.md](40-estandares/ESTANDAR-NOMENCLATURA-API.md)** - Convenciones snake_case/camelCase para APIs
-
-### Especificaciones Transversales
-- **[90-transversal/mecanicas/](90-transversal/mecanicas/_MAP.md)** - 33 mecanicas de ejercicios documentadas
-  - SPEC-MECANICAS-M1-M3.md (23 mecanicas basicas)
-  - SPEC-MECANICAS-M4.md (5 mecanicas creativas)
-  - SPEC-MECANICAS-M5.md (3 mecanicas multimedia)
-  - SPEC-MECANICAS-EJERCICIOS.md (consolidado)
-
-### Guias de Desarrollo
-- **[95-guias-desarrollo/student-portal/](95-guias-desarrollo/student-portal/_MAP.md)** - README y _MAP actualizados con metricas 2026
-
-### Extensiones
-- **[EXT-001-portal-maestros](03-fase-extensiones/EXT-001-portal-maestros/_MAP.md)** - 15 US, 4 especificaciones tecnicas
-- **[EXT-002-admin-extendido](03-fase-extensiones/EXT-002-admin-extendido/_MAP.md)** - 19 US (17 implementadas), 204 SP
-
----
-
-**Actualizado:** 2026-01-24
-**Sistema:** SIMCO v4.3.0 + SSOT
-**Cambios:** Reestructurado segun SIMCO-DOCUMENTACION-PROYECTO v1.0.0 - Eliminados prefijos duplicados, consolidadas carpetas sin prefijo numerico
+**Actualizado:** 2026-02-03
+**Sistema:** Workspace V2 Standard
+**Nota:** Este mapa reemplaza al mapa faseado anterior.

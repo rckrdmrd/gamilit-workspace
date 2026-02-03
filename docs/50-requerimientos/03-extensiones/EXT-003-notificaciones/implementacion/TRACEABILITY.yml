@@ -1,0 +1,72 @@
+# TRACEABILITY.yml - EXT-003: Notificaciones
+
+epic_code: EXT-003
+epic_name: Sistema de Notificaciones Multi-Canal
+phase: 3
+budget_mxn: 10000
+story_points: 40
+status: completed
+
+implementation:
+  database:
+    tables:
+      - name: notifications
+        type: new
+        description: Cola de notificaciones
+
+      - name: notification_preferences
+        type: new
+        description: Preferencias por usuario
+
+      - name: notification_logs
+        type: new
+        description: Logs de envío
+
+  backend:
+    module: notifications
+    services:
+      - notification.service.ts
+      - email.service.ts (SendGrid)
+      - push.service.ts (FCM)
+      - notification-templates.service.ts
+
+    endpoints:
+      - GET /api/v1/notifications
+      - PATCH /api/v1/notifications/:id/read
+      - POST /api/v1/notifications/send
+      - PATCH /api/v1/notifications/preferences
+
+  frontend:
+    components:
+      - NotificationCenter.tsx
+      - NotificationItem.tsx
+      - NotificationBell.tsx
+      - PreferencesPanel.tsx
+
+metrics:
+  delivery_rate: 99.5%
+  avg_latency_seconds: 1.8
+
+# ============================================================================
+# TESTING
+# ============================================================================
+
+testing:
+  coverage:
+    overall: 15%  # REAL (actualizado 2025-11-23)
+    backend: 18%  # REAL (actualizado 2025-11-23)
+    frontend: 10%  # REAL (actualizado 2025-11-23)
+    database: 0%  # REAL (actualizado 2025-11-23)
+    meta_original: 90%  # Estimación inicial del proyecto
+    gap_actual: -75%  # Diferencia entre meta y realidad
+    ultima_medicion: "2025-11-23"
+    nota: |
+      Coverage REAL actualizado por Architecture-Analyst (2025-11-23).
+      Valores previos eran ESTIMACIONES optimistas del inicio del proyecto.
+      Sistema de notificaciones funcional pero con pocos tests automatizados.
+      Gap actual requiere plan de mejora (ver orchestration/roadmap/ROADMAP-TEST-COVERAGE.md).
+      Próxima medición: Mensual (Q1 2026).
+
+status:
+  completion: 100%
+  completion_date: "2024-10-31"

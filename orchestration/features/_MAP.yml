@@ -1,0 +1,127 @@
+# =============================================================================
+# _MAP.yml - Mapa de Features del Workspace
+# =============================================================================
+# Los features agrupan tareas relacionadas por funcionalidad/dominio.
+# Las tareas se identifican con feature_tags en su METADATA.
+# =============================================================================
+
+version: "1.0.0"
+fecha_creacion: "2026-01-24"
+descripcion: "Mapa de features principales del workspace"
+
+# =============================================================================
+# FEATURES PRINCIPALES
+# =============================================================================
+
+features:
+  # Autenticación y Autorización
+  AUTH:
+    codigo: "AUTH"
+    nombre: "Autenticación y Autorización"
+    descripcion: "Login, registro, JWT, RBAC, permisos"
+    estado: "activo"
+    proyectos_relacionados:
+      - template-saas
+      - erp-core
+      - gamilit
+    tareas: []  # Se poblará automáticamente
+
+  # Facturación y Pagos
+  BILLING:
+    codigo: "BILLING"
+    nombre: "Facturación y Pagos"
+    descripcion: "Stripe, suscripciones, invoices, planes"
+    estado: "activo"
+    proyectos_relacionados:
+      - template-saas
+    tareas: []
+
+  # Multi-Tenancy
+  MULTITENANCY:
+    codigo: "MULTITENANCY"
+    nombre: "Multi-Inquilino"
+    descripcion: "RLS, tenant isolation, schema per tenant"
+    estado: "activo"
+    proyectos_relacionados:
+      - template-saas
+      - erp-core
+    tareas: []
+
+  # Infraestructura Core
+  CORE-INFRA:
+    codigo: "CORE-INFRA"
+    nombre: "Infraestructura Core"
+    descripcion: "Base de datos, caching, logging, monitoring"
+    estado: "activo"
+    proyectos_relacionados:
+      - workspace-infra
+      - local-llm-agent
+    tareas: []
+
+  # Documentación y Gobernanza
+  DOCUMENTATION:
+    codigo: "DOCUMENTATION"
+    nombre: "Documentación y Gobernanza"
+    descripcion: "SIMCO, directivas, inventarios, trazabilidad"
+    estado: "activo"
+    proyectos_relacionados:
+      - workspace-v2
+    tareas: []
+
+  # DevOps y CI/CD
+  DEVOPS:
+    codigo: "DEVOPS"
+    nombre: "DevOps y CI/CD"
+    descripcion: "Docker, Kubernetes, pipelines, despliegue"
+    estado: "activo"
+    proyectos_relacionados:
+      - workspace-infra
+    tareas: []
+
+  # Inteligencia Artificial
+  AI-ML:
+    codigo: "AI-ML"
+    nombre: "Inteligencia Artificial y ML"
+    descripcion: "LLM, RAG, embeddings, agentes IA"
+    estado: "activo"
+    proyectos_relacionados:
+      - local-llm-agent
+      - trading-platform
+    tareas: []
+
+  # ERP Core
+  ERP-CORE:
+    codigo: "ERP-CORE"
+    nombre: "ERP Core"
+    descripcion: "Funcionalidades base del ERP"
+    estado: "activo"
+    proyectos_relacionados:
+      - erp-core
+      - erp-construccion
+      - erp-clinicas
+    tareas: []
+
+# =============================================================================
+# REGLAS DE ASIGNACIÓN
+# =============================================================================
+
+reglas:
+  asignacion:
+    - "Cada tarea puede tener múltiples feature_tags"
+    - "El feature principal va primero en la lista"
+    - "Usar códigos exactos: AUTH, BILLING, etc."
+
+  formato:
+    en_metadata: |
+      feature_tags:
+        - "@feature:AUTH"
+        - "@feature:MULTITENANCY"
+
+# =============================================================================
+# METADATA
+# =============================================================================
+
+metadata:
+  creado_por: "Claude Code (Opus 4.5)"
+  creado_en: "2026-01-24"
+  tarea: "TASK-2026-01-24-REESTRUCTURACION-WORKSPACE"

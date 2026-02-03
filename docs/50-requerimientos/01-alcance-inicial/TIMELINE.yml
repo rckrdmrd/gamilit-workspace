@@ -1,0 +1,251 @@
+# TIMELINE.yml - Fase 1: Alcance Inicial
+
+phase: 1
+name: Alcance Inicial
+period: Mes 1 (Agosto 2024)
+start_date: "2024-08-01"
+end_date: "2024-08-31"
+budget_mxn: 110000
+story_points: 230
+status: completed
+last_updated: "2025-11-08"
+note: "Actualizado con métricas reales de implementación"
+
+# ============================================================================
+# ÉPICAS
+# ============================================================================
+
+epics:
+  - code: EAI-001
+    name: Fundamentos
+    sp: 60
+    budget: 22000
+    weeks: "1-2"
+    status: completed
+    team: [backend, frontend, database]
+
+  - code: EAI-002
+    name: Actividades y Contenido Educativo
+    sp: 45
+    budget: 22000
+    weeks: "2-3"
+    status: completed
+    team: [backend, frontend, database]
+
+  - code: EAI-003
+    name: Gamificación Básica
+    sp: 40
+    budget: 22000
+    weeks: "2-3"
+    status: completed
+    team: [backend, frontend, database]
+
+  - code: EAI-004
+    name: Analytics y Métricas
+    sp: 35
+    budget: 22000
+    weeks: "3-4"
+    status: completed
+    team: [backend, frontend]
+
+  - code: EAI-005
+    name: Administración Base
+    sp: 50
+    budget: 22000
+    weeks: "3-4"
+    status: completed
+    team: [backend, frontend, database]
+
+# ============================================================================
+# HITOS
+# ============================================================================
+
+milestones:
+  - date: "2024-08-08"
+    milestone: Infraestructura base completada
+    epic: EAI-001
+    deliverables:
+      - Database schemas creados
+      - Backend API base funcional
+      - Frontend setup completo
+
+  - date: "2024-08-15"
+    milestone: MVP Backend completado
+    epic: [EAI-001, EAI-002]
+    deliverables:
+      - Auth completo (JWT + OAuth)
+      - Módulos funcionales base
+      - APIs RESTful operativas
+      - Tests unitarios >80% (ACTUALIZADO: No cumplido - real 18%)
+
+  - date: "2024-08-22"
+    milestone: MVP Frontend completado
+    epic: [EAI-001, EAI-002, EAI-003]
+    deliverables:
+      - UI/UX base implementada
+      - Autenticación funcional
+      - Ejercicios renderizables
+      - Gamificación visible
+
+  - date: "2024-08-29"
+    milestone: Analytics y Admin funcionales
+    epic: [EAI-004, EAI-005]
+    deliverables:
+      - Dashboard de estudiante
+      - Dashboard de administrador
+      - Métricas básicas funcionando
+
+  - date: "2024-08-31"
+    milestone: Fase 1 completada y desplegada
+    epic: ALL
+    deliverables:
+      - Sistema completamente funcional
+      - Cobertura tests >85% (ACTUALIZADO: No cumplido - real 18%)
+      - Documentación completa
+      - Deploy a producción exitoso
+
+# ============================================================================
+# SPRINTS
+# ============================================================================
+
+sprints:
+  - number: 1
+    start_date: "2024-08-01"
+    end_date: "2024-08-07"
+    goal: Infraestructura y autenticación base
+    epics: [EAI-001]
+    sp_planned: 60
+    sp_completed: 63
+
+  - number: 2
+    start_date: "2024-08-08"
+    end_date: "2024-08-14"
+    goal: Contenido educativo y gamificación básica
+    epics: [EAI-002, EAI-003]
+    sp_planned: 85
+    sp_completed: 89
+
+  - number: 3
+    start_date: "2024-08-15"
+    end_date: "2024-08-21"
+    goal: Frontend completo y pulido
+    epics: [EAI-001, EAI-002, EAI-003]
+    sp_planned: 40
+    sp_completed: 42
+
+  - number: 4
+    start_date: "2024-08-22"
+    end_date: "2024-08-31"
+    goal: Analytics, admin y deployment
+    epics: [EAI-004, EAI-005]
+    sp_planned: 85
+    sp_completed: 92
+
+# ============================================================================
+# EQUIPO
+# ============================================================================
+
+team:
+  backend:
+    developers: 2
+    tech_lead: 1
+    focus: [auth, apis, business_logic]
+
+  frontend:
+    developers: 2
+    ui_designer: 0.5
+    focus: [components, state, ui_ux]
+
+  database:
+    dba: 1
+    focus: [schemas, migrations, optimization]
+
+  qa:
+    testers: 1
+    focus: [testing, automation]
+
+# ============================================================================
+# MÉTRICAS
+# ============================================================================
+
+metrics:
+  planned:
+    budget: 110000
+    sp: 230
+    duration_days: 31
+    team_size: 6
+
+  actual:
+    budget: 115500
+    sp: 242
+    duration_days: 35
+    bugs_found: 67
+    bugs_fixed: 67
+
+  variance:
+    budget_pct: +5
+    sp_pct: +5
+    time_pct: +12.5
+
+  quality:
+    test_coverage: 18
+    test_coverage_planned: 88
+    test_coverage_gap: -70
+    code_review_approval: 100
+    deployment_success: 100
+    note: "ACTUALIZADO 2025-11-08: Coverage real muy inferior a objetivo"
+
+# ============================================================================
+# RIESGOS Y MITIGACIONES
+# ============================================================================
+
+risks:
+  - risk: OAuth implementation complexity
+    probability: medium
+    impact: medium
+    mitigation: Used proven libraries (Passport.js)
+    outcome: Mitigated successfully
+
+  - risk: Frontend state management complexity
+    probability: high
+    impact: low
+    mitigation: Adopted Zustand (simple state library)
+    outcome: No issues
+
+  - risk: Database schema changes
+    probability: medium
+    impact: high
+    mitigation: Comprehensive migration strategy
+    outcome: 2 schema adjustments needed, handled smoothly
+
+# ============================================================================
+# LESSONS LEARNED
+# ============================================================================
+
+lessons_learned:
+  - lesson: Implement RLS from day 1
+    impact: high
+    note: RLS desde inicio evitó refactoring posterior
+
+  - lesson: OAuth increases user registration significantly
+    impact: high
+    note: 65% de usuarios prefieren OAuth vs. email/password
+
+  - lesson: Modular architecture pays off early
+    impact: medium
+    note: Modularización facilitó desarrollo paralelo
+
+  - lesson: Comprehensive testing reduces deployment stress
+    impact: high
+    note: "ACTUALIZADO 2025-11-08: Coverage objetivo era 88%, real fue 18%. Deployment tuvo éxito por pruebas manuales exhaustivas"
+
+# ============================================================================
+# NOTAS
+# ============================================================================
+
+notes:
+  - Fase completada exitosamente con ligero sobrepaso en tiempo (+12.5%) y presupuesto (+5%)
+  - Sistema RBAC flexible permite fácil extensión en fases futuras
+  - Multi-tenancy preparado desde inicio facilita escalabilidad
+  - Gamificación con narrativa maya fue muy bien recibida por stakeholders
+  - "ACTUALIZADO 2025-11-08: Test coverage real fue 18%, no 88%. Gap de -70% requiere atención"

@@ -1,0 +1,114 @@
+# BACKLOG.yml
+# Backlog del producto para el workspace
+# Version: 1.0.0
+# Sistema: SIMCO v4.0.0
+
+version: "1.0.0"
+updated: "2026-01-29"
+
+# ============================================
+# EPICAS ACTIVAS
+# ============================================
+
+epicas:
+  - id: "EPIC-WS-001"
+    titulo: "Estandarizacion y Gobernanza del Workspace"
+    descripcion: "Establecer estructura, directivas y procesos del workspace"
+    estado: "en_progreso"
+    prioridad: "P0"
+    historias:
+      - "HU-WS-001"
+      - "HU-WS-002"
+      - "HU-WS-003"
+
+  - id: "EPIC-WS-002"
+    titulo: "Desarrollo de Features Cross-Project"
+    descripcion: "Features compartidos entre proyectos del ecosistema"
+    estado: "pendiente"
+    prioridad: "P1"
+    historias: []
+
+  - id: "EPIC-WS-003"
+    titulo: "Optimizacion de Infraestructura"
+    descripcion: "Mejoras en CI/CD, testing, y deployment"
+    estado: "pendiente"
+    prioridad: "P2"
+    historias: []
+
+# ============================================
+# HISTORIAS EN BACKLOG
+# ============================================
+
+backlog:
+  # Prioridad P0 - Criticas
+  p0:
+    - id: "HU-WS-002"
+      titulo: "Implementar sistema de propagacion automatica"
+      puntos: 13
+      epica: "EPIC-WS-001"
+      criterios_aceptacion:
+        - "Propagacion de security fixes en <24h"
+        - "Propagacion de bug fixes en <72h"
+        - "Trazabilidad completa de cambios"
+
+    - id: "HU-WS-003"
+      titulo: "Validacion de coherencia entre capas"
+      puntos: 8
+      epica: "EPIC-WS-001"
+      criterios_aceptacion:
+        - "DDL sincronizado con entities"
+        - "Endpoints documentados en Swagger"
+        - "Frontend conectado a backend"
+
+  # Prioridad P1 - Importantes
+  p1:
+    - id: "HU-WS-004"
+      titulo: "Dashboard de metricas del workspace"
+      puntos: 5
+      epica: "EPIC-WS-002"
+      criterios_aceptacion:
+        - "Visualizacion de estado de proyectos"
+        - "Metricas de cobertura"
+        - "Alertas de inconsistencias"
+
+  # Prioridad P2 - Deseables
+  p2: []
+
+  # Prioridad P3 - Nice to have
+  p3: []
+
+# ============================================
+# HISTORIAS COMPLETADAS
+# ============================================
+
+completadas:
+  - id: "HU-WS-001"
+    titulo: "Remediacion de documentacion del workspace"
+    puntos: 8
+    sprint_completado: 0
+    fecha_completado: "2026-01-16"
+
+# ============================================
+# METRICAS DEL BACKLOG
+# ============================================
+
+metricas:
+  total_historias: 4
+  puntos_totales: 34
+  historias_completadas: 1
+  puntos_completados: 8
+  historias_en_backlog: 3
+  puntos_en_backlog: 26
+
+# ============================================
+# REFERENCIAS
+# ============================================
+
+referencias:
+  sprint_actual: "orchestration/scrum/SPRINT-ACTUAL.yml"
+  historico: "orchestration/scrum/SPRINTS-HISTORICO.yml"
+  roadmap: "orchestration/ROADMAP.yml"
+
+metadata:
+  created_by: "Claude Code"
+  created_at: "2026-01-29"

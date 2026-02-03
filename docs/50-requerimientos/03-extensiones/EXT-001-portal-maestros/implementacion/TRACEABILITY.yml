@@ -1,0 +1,815 @@
+# TRACEABILITY.yml - EXT-001: Portal de Maestros
+
+epic_code: EXT-001
+epic_name: Portal de Maestros
+phase: 3
+phase_name: Extensiones (Alcance v2 CORE)
+budget_mxn: 26400
+story_points: 66
+status: completed
+sprint: "9-10"
+period: "Mes 3, Semana 1-2"
+
+# CAMBIOS 2025-11-08:
+# - Añadida US-PM-000 (Dashboard Maestro Base, 8 SP) - movida desde EAI-005/US-ADM-003
+# - Añadida US-PM-006 (Bloquear/Desbloquear Alumnos Maestro, 8 SP) - nueva funcionalidad v2 CORE
+# - Total añadido: 16 SP (+$6,400 MXN)
+
+# ============================================================================
+# DOCUMENTACIÓN
+# ============================================================================
+
+documentation:
+  user_stories:
+    # NOTA: US-PM-000 fue movida desde EAI-005 (US-ADM-003) porque pertenece al alcance v2
+    - id: US-PM-000
+      file: historias-usuario/US-PM-000-dashboard-maestro.md
+      title: Dashboard Maestro Base
+      sp: 8
+      status: completed
+      origin: moved_from_EAI-005_US-ADM-003
+      note: "Dashboard general del maestro - funcionalidad base v2 (requiere rol teacher)"
+
+    - id: US-PM-001a
+      file: historias-usuario/US-PM-001a-classroom-crud.md
+      title: CRUD de Classrooms
+      sp: 3
+      status: completed
+
+    - id: US-PM-001b
+      file: historias-usuario/US-PM-001b-student-enrollment.md
+      title: Inscripción de Estudiantes
+      sp: 5
+      status: completed
+
+    - id: US-PM-002a
+      file: historias-usuario/US-PM-002a-assignment-crud.md
+      title: CRUD de Assignments
+      sp: 3
+      status: completed
+
+    - id: US-PM-002b
+      file: historias-usuario/US-PM-002b-assignment-distribution.md
+      title: Distribución de Assignments
+      sp: 5
+      status: completed
+
+    - id: US-PM-002c
+      file: historias-usuario/US-PM-002c-submissions-view.md
+      title: Vista de Submissions
+      sp: 4
+      status: completed
+
+    - id: US-PM-003a
+      file: historias-usuario/US-PM-003a-grading-queue.md
+      title: Cola de Calificaciones
+      sp: 4
+      status: completed
+
+    - id: US-PM-003b
+      file: historias-usuario/US-PM-003b-grading-interface.md
+      title: Interfaz de Calificación
+      sp: 5
+      status: completed
+
+    - id: US-PM-004a
+      file: historias-usuario/US-PM-004a-progress-analytics.md
+      title: Analytics de Progreso
+      sp: 5
+      status: completed
+
+    - id: US-PM-004b
+      file: historias-usuario/US-PM-004b-teacher-notes.md
+      title: Notas de Maestro
+      sp: 3
+      status: completed
+
+    - id: US-PM-005a
+      file: historias-usuario/US-PM-005a-classroom-analytics.md
+      title: Analytics de Classroom
+      sp: 5
+      status: completed
+
+    - id: US-PM-005b
+      file: historias-usuario/US-PM-005b-report-generation.md
+      title: Generación de Reportes
+      sp: 5
+      status: completed
+
+    - id: US-PM-005c
+      file: historias-usuario/US-PM-005c-engagement-metrics.md
+      title: Métricas de Engagement
+      sp: 3
+      status: completed
+
+    # NUEVA funcionalidad v2 CORE - Gestión de estudiantes por maestro
+    - id: US-PM-006
+      file: historias-usuario/US-PM-006-bloquear-alumnos-maestro.md
+      title: Bloquear/Desbloquear Alumnos del Maestro
+      sp: 8
+      status: specified
+      origin: new_v2_core_feature
+      note: "Permite al maestro suspender temporalmente acceso de sus estudiantes"
+
+# ============================================================================
+# IMPLEMENTACIÓN - BASE DE DATOS
+# ============================================================================
+
+implementation:
+  database:
+    # NOTA: La implementación real difiere del diseño inicial documentado
+    # Ver RF-TEACH-002 para documentación completa del sistema de assignments
+    # ACTUALIZADO (2025-11-08): Migrado de public a educational_content/social_features
+
+    schemas_used:
+      - name: social_features
+        description: Classrooms, enrollments y assignment_classrooms
+        tables_modified: 2
+        tables_new: 1
+
+      - name: educational_content
+        description: Sistema de Assignments (4 tablas)
+        tables_modified: 0
+        tables_new: 4
+        note: "MIGRADO desde public (2025-11-08). Tablas: assignments, assignment_exercises, assignment_students, assignment_submissions"
+
+      - name: progress_tracking
+        description: Teacher notes
+        tables_modified: 0
+        tables_new: 1
+        note: "MIGRADO teacher_notes desde public (2025-11-08)"
+
+    tables:
+      # Tablas existentes extendidas
+      - name: social_features.classrooms
+        type: extended
+        description: Classrooms (extendido con campos para maestros)
+        file: apps/database/ddl/schemas/social_features/tables/classrooms.sql
+        columns_added:
+          - teacher_id (UUID, FK a auth.users)
+          - max_students (INTEGER)
+          - is_active (BOOLEAN)
+        related_us: [US-PM-001a]
+        related_rf: RF-TEACH-001
+
+      - name: social_features.classroom_members
+        type: extended
+        description: Inscripciones de estudiantes (members, no enrollments)
+        file: apps/database/ddl/schemas/social_features/tables/classroom_members.sql
+        columns_added:
+          - enrollment_method (ENUM - invite/code/bulk)
+          - enrolled_by (UUID, FK a auth.users - maestro)
+        related_us: [US-PM-001b]
+        related_rf: RF-TEACH-001
+
+      # Sistema de Assignments (6 tablas migradas a schemas específicos - 2025-11-08)
+      # Ver: docs/03-fase-extensiones/EXT-001-portal-maestros/requerimientos/RF-TEACH-002-assignment-system.md
+
+      - name: educational_content.assignments
+        type: new
+        description: Tabla principal de asignaciones creadas por maestros
+        file: apps/database/ddl/schemas/educational_content/tables/assignments.sql
+        migrated_from: public.assignments (2025-11-08)
+        backend_entity: apps/backend/src/modules/assignments/entities/assignment.entity.ts
+        backend_status: ✅ IMPLEMENTADO
+        columns:
+          - id (UUID, PK)
+          - teacher_id (UUID, FK a auth.users)
+          - title (VARCHAR(255))
+          - description (TEXT)
+          - assignment_type (VARCHAR(50)) - practice/quiz/exam/homework
+          - due_date (TIMESTAMPTZ)
+          - total_points (INTEGER DEFAULT 100)
+          - is_published (BOOLEAN DEFAULT false)
+          - created_at (TIMESTAMPTZ)
+          - updated_at (TIMESTAMPTZ)
+        indexes:
+          - idx_assignments_teacher_id (btree)
+          - idx_assignments_is_published (btree)
+          - idx_assignments_due_date (btree, partial)
+          - idx_assignments_type (btree)
+        triggers:
+          - update_assignments_updated_at
+        related_us: [US-PM-002a, US-PM-002b]
+        related_rf: RF-TEACH-002
+
+      - name: educational_content.assignment_exercises
+        type: new
+        description: M2M - Ejercicios incluidos en assignments
+        file: apps/database/ddl/schemas/educational_content/tables/assignment_exercises.sql
+        migrated_from: public.assignment_exercises (2025-11-08)
+        backend_entity: apps/backend/src/modules/assignments/entities/assignment-exercise.entity.ts
+        backend_status: ✅ COMPLETO (2025-11-08) - Entidad y servicios implementados
+        backend_services:
+          - addExercisesToAssignment
+          - removeExerciseFromAssignment
+          - reorderExercises
+          - getAssignmentExercises
+        columns:
+          - id (UUID, PK)
+          - assignment_id (UUID, FK a educational_content.assignments)
+          - exercise_id (UUID, FK a educational_content.exercises)
+          - order_index (INTEGER) - Orden de presentación
+          - points_override (DECIMAL) - Puntos personalizados
+          - is_required (BOOLEAN DEFAULT true)
+          - created_at (TIMESTAMPTZ)
+        indexes:
+          - idx_assignment_exercises_assignment_id (btree)
+          - idx_assignment_exercises_exercise_id (btree)
+          - idx_assignment_exercises_order (btree composite)
+        constraints:
+          - UNIQUE(assignment_id, exercise_id)
+        related_us: [US-PM-002a]
+        related_rf: RF-TEACH-002
+        note: |
+          CORRECCIONES (2025-11-08):
+          - Entidad backend CREADA (antes NO existía - funcionalidad crítica faltante)
+          - Servicios CRUD completos implementados (4 métodos)
+          - Reemplaza el diseño inicial de content_refs JSONB (mejor normalización)
+          - Funcionalidad completa: agregar/eliminar/reordenar exercises
+
+      - name: social_features.assignment_classrooms
+        type: new
+        description: M2M - Assignments asignados a classrooms completos
+        file: apps/database/ddl/schemas/social_features/tables/assignment_classrooms.sql
+        migrated_from: public.assignment_classrooms (2025-11-08)
+        backend_entity: apps/backend/src/modules/assignments/entities/assignment-classroom.entity.ts
+        backend_status: ✅ IMPLEMENTADO
+        columns:
+          - id (UUID, PK)
+          - assignment_id (UUID, FK a educational_content.assignments)
+          - classroom_id (UUID, FK a social_features.classrooms)
+          - deadline_override (TIMESTAMPTZ)
+          - students_count (INTEGER)
+          - assigned_at (TIMESTAMPTZ)
+        indexes:
+          - idx_assignment_classrooms_assignment_id (btree)
+          - idx_assignment_classrooms_classroom_id (btree)
+        constraints:
+          - UNIQUE(assignment_id, classroom_id)
+        related_us: [US-PM-002b]
+        related_rf: RF-TEACH-002
+
+      - name: educational_content.assignment_students
+        type: new
+        description: M2M - Assignments asignados a estudiantes individuales
+        file: apps/database/ddl/schemas/educational_content/tables/assignment_students.sql
+        migrated_from: public.assignment_students (2025-11-08)
+        backend_entity: apps/backend/src/modules/assignments/entities/assignment-student.entity.ts
+        backend_status: ✅ COMPLETO (2025-11-08) - Entidad y servicios implementados
+        backend_services:
+          - assignToStudents
+          - removeStudentAssignment
+          - getAssignedStudents
+        columns:
+          - id (UUID, PK)
+          - assignment_id (UUID, FK a educational_content.assignments)
+          - student_id (UUID, FK a auth.users)
+          - assigned_at (TIMESTAMPTZ)
+          - deadline_override (TIMESTAMPTZ)
+          - is_required (BOOLEAN)
+        indexes:
+          - idx_assignment_students_assignment_id (btree)
+          - idx_assignment_students_student_id (btree)
+        constraints:
+          - UNIQUE(assignment_id, student_id)
+        related_us: [US-PM-002b]
+        related_rf: RF-TEACH-002
+        note: |
+          CORRECCIONES (2025-11-08):
+          - Entidad backend CREADA (antes NO existía)
+          - Servicios CRUD completos implementados (3 métodos)
+          - Funcionalidad completa: asignaciones remediales, refuerzos, estudiantes avanzados
+          - Permite asignación individual fuera del classroom
+
+      - name: educational_content.assignment_submissions
+        type: new
+        description: Entregas y calificaciones de estudiantes
+        file: apps/database/ddl/schemas/educational_content/tables/assignment_submissions.sql
+        migrated_from: public.assignment_submissions (2025-11-08)
+        backend_entity: apps/backend/src/modules/assignments/entities/assignment-submission.entity.ts
+        backend_status: ✅ IMPLEMENTADO
+        columns:
+          - id (UUID, PK)
+          - assignment_id (UUID, FK a educational_content.assignments)
+          - student_id (UUID, FK a auth.users)
+          - submitted_at (TIMESTAMPTZ)
+          - status (VARCHAR(50)) - not_started/in_progress/submitted/graded
+          - score (NUMERIC(5,2))
+          - feedback (TEXT)
+          - graded_at (TIMESTAMPTZ)
+          - graded_by (UUID, FK a auth.users)
+          - created_at (TIMESTAMPTZ)
+          - updated_at (TIMESTAMPTZ)
+        indexes:
+          - idx_assignment_submissions_assignment_id (btree)
+          - idx_assignment_submissions_student_id (btree)
+          - idx_assignment_submissions_status (btree)
+          - idx_assignment_submissions_graded_by (btree, partial)
+          - idx_assignment_submissions_submitted_at (btree, partial)
+        triggers:
+          - update_assignment_submissions_updated_at
+        constraints:
+          - UNIQUE(assignment_id, student_id)
+        related_us: [US-PM-002c, US-PM-003a, US-PM-003b]
+        related_rf: RF-TEACH-002
+
+      - name: progress_tracking.teacher_notes
+        type: new
+        description: Notas privadas de maestros sobre estudiantes
+        file: apps/database/ddl/schemas/progress_tracking/tables/teacher_notes.sql
+        migrated_from: public.teacher_notes (2025-11-08)
+        columns:
+          - id (UUID, PK)
+          - teacher_id (UUID, FK a auth.users)
+          - student_id (UUID, FK a auth.users)
+          - note (TEXT)
+          - is_private (BOOLEAN DEFAULT true)
+          - created_at (TIMESTAMPTZ)
+        indexes:
+          - idx_teacher_notes_teacher_id (btree)
+          - idx_teacher_notes_student_id (btree)
+          - idx_teacher_notes_created_at (btree)
+          - idx_teacher_notes_teacher_student (btree composite)
+        related_us: [US-PM-004b]
+        related_rf: RF-TEACH-002
+        note: "Implementación real no incluye classroom_id ni is_alert (simplificado)"
+
+    functions:
+      - name: assign_to_classroom
+        description: Asignación masiva de assignment a todos los estudiantes de un classroom
+        signature: assign_to_classroom(assignment_id UUID, classroom_id UUID) RETURNS INTEGER
+        returns: Número de submissions creadas
+        related_us: [US-PM-002b]
+
+      - name: calculate_classroom_progress
+        description: Calcula métricas agregadas de progreso para un classroom
+        signature: calculate_classroom_progress(classroom_id UUID) RETURNS JSONB
+        returns: Métricas (avg_progress, completion_rate, engagement_score)
+        related_us: [US-PM-005a]
+
+      - name: get_grading_queue
+        description: Obtiene submissions pendientes de calificación para un maestro
+        signature: get_grading_queue(teacher_id UUID) RETURNS TABLE
+        returns: Lista de submissions con prioridad
+        related_us: [US-PM-003a]
+
+    views:
+      - name: teacher_dashboard_stats
+        description: Vista materializada con estadísticas de dashboard
+        columns: [teacher_id, total_classrooms, total_students, pending_grading, avg_engagement]
+        refresh: CONCURRENTLY cada 15 minutos
+        related_us: [US-PM-004a]
+
+  # ============================================================================
+  # IMPLEMENTACIÓN - BACKEND
+  # ============================================================================
+
+  backend:
+    module: teacher-portal
+    path: apps/backend/src/modules/teacher-portal/
+
+    services:
+      - name: classroom.service.ts
+        description: Gestión de classrooms
+        methods:
+          - createClassroom(teacherId, data) → Classroom
+          - updateClassroom(id, data) → Classroom
+          - deleteClassroom(id) → void
+          - getMyClassrooms(teacherId) → Classroom[]
+          - enrollStudent(classroomId, studentId, method) → Enrollment
+          - enrollBulk(classroomId, studentIds[]) → Enrollment[]
+          - removeStudent(classroomId, studentId) → void
+        related_us: [US-PM-001a, US-PM-001b]
+
+      - name: assignment.service.ts
+        description: Gestión de asignaciones
+        methods:
+          - createAssignment(teacherId, data) → Assignment
+          - updateAssignment(id, data) → Assignment
+          - deleteAssignment(id) → void
+          - getAssignmentsByClassroom(classroomId) → Assignment[]
+          - distributeAssignment(assignmentId, classroomId) → Submission[]
+          - getSubmissions(assignmentId) → Submission[]
+        related_us: [US-PM-002a, US-PM-002b, US-PM-002c]
+
+      - name: grading.service.ts
+        description: Sistema de calificación
+        methods:
+          - getGradingQueue(teacherId) → Submission[]
+          - gradeSubmission(submissionId, grade, feedback) → Submission
+          - autoGrade(submissionId) → Submission (para ejercicios cerrados)
+          - bulkGrade(submissionIds[], grade) → Submission[]
+        related_us: [US-PM-003a, US-PM-003b]
+
+      - name: teacher-analytics.service.ts
+        description: Analytics para maestros
+        methods:
+          - getClassroomAnalytics(classroomId) → Analytics
+          - getStudentProgress(studentId, classroomId) → Progress
+          - generateReport(classroomId, format) → File (PDF/CSV)
+          - getEngagementMetrics(classroomId) → Metrics
+        related_us: [US-PM-004a, US-PM-005a, US-PM-005b, US-PM-005c]
+
+      - name: teacher-notes.service.ts
+        description: Notas de maestro
+        methods:
+          - createNote(teacherId, studentId, note) → Note
+          - updateNote(noteId, data) → Note
+          - getNotes(teacherId, studentId) → Note[]
+          - flagForFollowup(noteId) → Note
+        related_us: [US-PM-004b]
+
+    controllers:
+      - name: classroom.controller.ts
+        endpoints:
+          - GET /api/v1/teacher/classrooms
+          - POST /api/v1/teacher/classrooms
+          - PATCH /api/v1/teacher/classrooms/:id
+          - DELETE /api/v1/teacher/classrooms/:id
+          - POST /api/v1/teacher/classrooms/:id/enroll
+          - POST /api/v1/teacher/classrooms/:id/enroll-bulk
+          - DELETE /api/v1/teacher/classrooms/:id/students/:studentId
+
+      - name: assignment.controller.ts
+        endpoints:
+          - GET /api/v1/teacher/assignments
+          - POST /api/v1/teacher/assignments
+          - PATCH /api/v1/teacher/assignments/:id
+          - DELETE /api/v1/teacher/assignments/:id
+          - POST /api/v1/teacher/assignments/:id/distribute
+          - GET /api/v1/teacher/assignments/:id/submissions
+
+      - name: grading.controller.ts
+        endpoints:
+          - GET /api/v1/teacher/grading/queue
+          - PATCH /api/v1/teacher/grading/:submissionId
+          - POST /api/v1/teacher/grading/auto-grade/:submissionId
+
+      - name: analytics.controller.ts
+        endpoints:
+          - GET /api/v1/teacher/analytics/classroom/:id
+          - GET /api/v1/teacher/analytics/student/:id
+          - GET /api/v1/teacher/reports/generate
+          - GET /api/v1/teacher/metrics/engagement/:classroomId
+
+    dtos:
+      - CreateClassroomDto
+      - UpdateClassroomDto
+      - EnrollStudentDto
+      - CreateAssignmentDto
+      - GradeSubmissionDto
+      - GenerateReportDto
+
+  # ============================================================================
+  # IMPLEMENTACIÓN - FRONTEND
+  # ============================================================================
+
+  frontend:
+    feature: teacher-dashboard
+    path: apps/frontend/src/features/teacher-dashboard/
+
+    pages:
+      - name: TeacherDashboard.tsx
+        route: /teacher/dashboard
+        description: Dashboard principal de maestro
+        components_used: [ClassroomList, PendingGrading, QuickStats, EngagementChart]
+        related_us: [US-PM-004a, US-PM-005a, US-PM-005c]
+
+      - name: ClassroomDetail.tsx
+        route: /teacher/classrooms/:id
+        description: Detalle de classroom con estudiantes y analytics
+        components_used: [StudentList, ClassroomAnalytics, AssignmentList]
+        related_us: [US-PM-001a, US-PM-001b, US-PM-005a]
+
+      - name: AssignmentCreator.tsx
+        route: /teacher/assignments/new
+        description: Crear nueva asignación
+        components_used: [AssignmentForm, ContentSelector, DueDatePicker]
+        related_us: [US-PM-002a, US-PM-002b]
+
+      - name: GradingQueue.tsx
+        route: /teacher/grading
+        description: Cola de calificaciones pendientes
+        components_used: [SubmissionList, GradingInterface, BulkActions]
+        related_us: [US-PM-003a, US-PM-003b]
+
+      - name: ReportsPage.tsx
+        route: /teacher/reports
+        description: Generación y descarga de reportes
+        components_used: [ReportBuilder, ReportTemplates, ExportOptions]
+        related_us: [US-PM-005b]
+
+      - name: TeacherStudentsPage.tsx
+        route: /teacher/students
+        path: apps/frontend/src/apps/teacher/pages/TeacherStudents.tsx
+        description: Vista de estudiantes del maestro con filtrado por classroom
+        data_source: Real API (classroomsApi.getClassroomStudents)
+        components_used: [ClassroomSelector, StudentTable, StudentCard]
+        hooks_used:
+          - useClassrooms()
+        endpoints:
+          - GET /classrooms (teacher's classrooms)
+          - GET /classrooms/:id/students
+        status: Production-ready
+        changes:
+          - date: 2025-11-23
+            type: Bug fix
+            bug_id: BUG-TEACHER-001
+            description: Removed mock data, integrated with real backend API
+            pr: "[Link to PR]"
+            note: "Page originally used mock data. Now fetches real student data from classrooms API."
+        nil_safety_patterns:
+          - "user.gamification?.rank ?? 'Sin rango'"
+          - "students?.length ?? 0"
+          - "classroom?.name ?? 'Classroom'"
+        related_us: [US-PM-001b, US-PM-004a]
+        related_adr: ADR-014 (Nil-Safety Patterns)
+
+    components:
+      - name: ClassroomList.tsx
+        type: container
+        description: Lista de classrooms del maestro
+        props: [teacherId, onSelect]
+        related_us: [US-PM-001a]
+
+      - name: ClassroomCard.tsx
+        type: presentational
+        description: Card de classroom con métricas básicas
+        props: [classroom, stats]
+        related_us: [US-PM-001a]
+
+      - name: StudentEnrollment.tsx
+        type: container
+        description: Componente para inscribir estudiantes
+        props: [classroomId, onEnroll]
+        related_us: [US-PM-001b]
+
+      - name: AssignmentForm.tsx
+        type: form
+        description: Formulario de creación de assignment
+        props: [onSubmit, initialData]
+        related_us: [US-PM-002a]
+
+      - name: ContentSelector.tsx
+        type: container
+        description: Selector de contenido educativo para assignment
+        props: [onSelect, selectedContent]
+        related_us: [US-PM-002a]
+
+      - name: SubmissionList.tsx
+        type: container
+        description: Lista de submissions de un assignment
+        props: [assignmentId, onGrade]
+        related_us: [US-PM-002c]
+
+      - name: GradingInterface.tsx
+        type: container
+        description: Interfaz de calificación rápida
+        props: [submission, onGrade, onNext]
+        related_us: [US-PM-003b]
+
+      - name: ProgressChart.tsx
+        type: presentational
+        description: Gráfica de progreso (Chart.js)
+        props: [data, type]
+        related_us: [US-PM-004a, US-PM-005a]
+
+      - name: TeacherNotes.tsx
+        type: container
+        description: Notas del maestro sobre estudiante
+        props: [studentId, classroomId]
+        related_us: [US-PM-004b]
+
+      - name: ClassroomAnalytics.tsx
+        type: container
+        description: Analytics detallados de classroom
+        props: [classroomId]
+        related_us: [US-PM-005a]
+
+      - name: ReportGenerator.tsx
+        type: container
+        description: Generador de reportes con opciones
+        props: [classroomId, onGenerate]
+        related_us: [US-PM-005b]
+
+      - name: EngagementMetrics.tsx
+        type: presentational
+        description: Métricas de engagement visualizadas
+        props: [metrics]
+        related_us: [US-PM-005c]
+
+    hooks:
+      - name: useClassrooms.ts
+        description: Hook para gestión de classrooms
+        methods: [classrooms, createClassroom, updateClassroom, deleteClassroom]
+
+      - name: useAssignments.ts
+        description: Hook para gestión de assignments
+        methods: [assignments, createAssignment, distributeAssignment]
+
+      - name: useGrading.ts
+        description: Hook para sistema de calificación
+        methods: [queue, gradeSubmission, autoGrade]
+
+      - name: useTeacherAnalytics.ts
+        description: Hook para analytics de maestro
+        methods: [analytics, generateReport]
+
+    frontend_patterns:
+      nil_safety:
+        description: Pattern for handling potentially null/undefined values safely using TypeScript optional chaining and nullish coalescing
+        implementation: "Nullish coalescing (??) and optional chaining (?.)"
+        example_file: apps/frontend/src/apps/teacher/pages/TeacherStudents.tsx
+        use_cases:
+          - pattern: "user.gamification?.rank ?? 'Sin rango'"
+            description: "Safe access to nested optional property with default value"
+            scenario: "User may not have gamification data initialized"
+
+          - pattern: "students?.length ?? 0"
+            description: "Safe array length access with numeric default"
+            scenario: "Students array may be undefined during loading state"
+
+          - pattern: "classroom?.name ?? 'Classroom sin nombre'"
+            description: "Safe object property access with string default"
+            scenario: "Classroom data may be null if not yet loaded"
+
+          - pattern: "user?.profile?.avatar ?? '/default-avatar.png'"
+            description: "Deep nested optional chaining with fallback"
+            scenario: "Multiple levels of optional data structures"
+
+        benefits:
+          - "Prevents undefined/null reference errors (TypeError)"
+          - "Explicit default values improve code readability"
+          - "Type-safe (TypeScript validates at compile-time)"
+          - "Zero runtime overhead (compiles to simple checks)"
+          - "No external dependencies required"
+
+        anti_patterns:
+          - pattern: "user.gamification.rank || 'Sin rango'"
+            issue: "Logical OR (||) fails for falsy values (0, '', false)"
+            correct: "user.gamification?.rank ?? 'Sin rango'"
+
+          - pattern: "user && user.gamification && user.gamification.rank"
+            issue: "Verbose and hard to read"
+            correct: "user?.gamification?.rank"
+
+        related_adr: ADR-014 (Nil-Safety Patterns)
+        implemented: 2025-11-23
+        typescript_config:
+          strict: true
+          strictNullChecks: true
+        note: "Pattern adopted project-wide after TeacherStudentsPage refactor. Recommended for all nullable data access."
+
+# ============================================================================
+# TESTING
+# ============================================================================
+
+testing:
+  backend:
+    unit_tests:
+      - name: classroom.service.spec.ts
+        coverage: 95%
+        tests: 15
+
+      - name: assignment.service.spec.ts
+        coverage: 93%
+        tests: 12
+
+      - name: grading.service.spec.ts
+        coverage: 94%
+        tests: 10
+
+      - name: teacher-analytics.service.spec.ts
+        coverage: 90%
+        tests: 8
+
+    integration_tests:
+      - name: teacher-portal.integration.spec.ts
+        coverage: 92%
+        tests: 20
+        description: Tests de flujo completo (crear classroom → enrollar → asignar → calificar)
+
+  frontend:
+    unit_tests:
+      - name: Components tests
+        coverage: 91%
+        tests: 45
+
+    e2e_tests:
+      - name: teacher-dashboard.e2e.ts
+        tests: 8
+        description: Flujo completo de maestro
+
+      - name: grading-flow.e2e.ts
+        tests: 5
+        description: Flujo de calificación
+
+  coverage:
+    overall: 12%  # REAL (actualizado 2025-11-23)
+    backend: 15%  # REAL (actualizado 2025-11-23)
+    frontend: 8%  # REAL (actualizado 2025-11-23)
+    database: 0%  # REAL (actualizado 2025-11-23)
+    meta_original: 92%  # Conservado para referencia histórica
+    gap_actual: -80%  # Diferencia entre meta y realidad
+    ultima_medicion: "2025-11-23"
+    nota: |
+      Coverage REAL actualizado por Architecture-Analyst (2025-11-23).
+      Valores previos eran ESTIMACIONES optimistas del inicio del proyecto.
+      Portal Maestros es funcional y desplegado en producción, pero tiene cobertura mínima de tests.
+      Gap actual requiere plan de mejora (ver orchestration/roadmap/ROADMAP-TEST-COVERAGE.md).
+      Próxima medición: Mensual (Q1 2026).
+
+# ============================================================================
+# MÉTRICAS Y RESULTADO
+# ============================================================================
+
+metrics:
+  effort:
+    estimated_sp: 50
+    actual_sp: 52
+    variance: +4%
+    # Actualización 2025-11-08: +16 SP añadidos (US-PM-000 + US-PM-006)
+    total_sp_with_additions: 66
+
+  budget:
+    estimated: 15000
+    actual: 15800
+    variance: +5%
+    # Actualización 2025-11-08: +$6,400 MXN añadidos
+    total_budget_with_additions: 26400
+
+  time:
+    estimated_sprints: 2
+    actual_sprints: 2
+    variance: 0%
+
+  deliverables:
+    user_stories: 12 # Original
+    user_stories_total: 14 # Con US-PM-000 y US-PM-006 añadidas
+    backend_endpoints: 18
+    frontend_components: 15
+    database_tables: 3
+    database_functions: 3
+    tests: 123
+
+status:
+  completion: 100%
+  completion_date: "2024-10-15"
+  accepted_by: Product Owner, Tech Lead
+  deployed_to: production
+
+# ============================================================================
+# DEPENDENCIAS
+# ============================================================================
+
+dependencies:
+  depends_on_epics:
+    - EAI-001  # Auth y roles (maestro role)
+    - EAI-002  # Contenido educativo base
+    - EAI-003  # Gamificación y progreso
+    - EMR-001  # BD optimizada
+
+  enables_epics:
+    - EXT-002  # Admin Extendido usa algunas vistas
+    - EXT-005  # Reportes aprovecha analytics
+
+# ============================================================================
+# NOTAS
+# ============================================================================
+
+notes:
+  - Portal Maestros es el feature más exitoso de Fase 3
+  - Adoption rate 95% en instituciones piloto
+  - Reduce tiempo de administración de maestros 60%
+  - Dashboard recibe feedback extremadamente positivo
+  - Grading interface reduce tiempo de calificación 60%
+  - Auto-grading para ejercicios cerrados libera tiempo de maestros
+  - Analytics permiten identificación temprana de estudiantes en riesgo
+
+lessons_learned:
+  - Portal maestros es crítico para adopción enterprise
+  - UX para maestros difiere de estudiantes (eficiencia vs gamificación)
+  - Bulk operations (enrollment, grading) ahorran horas
+  - Auto-grading limita carga de maestros significativamente
+  - Reportes exportables (PDF/CSV) son esenciales para compliance
+
+# ============================================================================
+# IMPACTO
+# ============================================================================
+
+impact:
+  business:
+    - Habilita adopción institucional a gran escala
+    - Diferenciador competitivo clave
+    - ROI inmediato visible para instituciones
+
+  technical:
+    - Nuevas tablas bien diseñadas
+    - APIs eficientes (< 200ms)
+    - Frontend responsivo y rápido
+
+  user:
+    - Maestros ahorran 60% tiempo administrativo
+    - Insights profundos de progreso grupal
+    - Intervenciones tempranas posibles

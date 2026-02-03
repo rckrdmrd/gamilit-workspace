@@ -1,0 +1,420 @@
+# TIMELINE.yml - Fase 3: Extensiones
+
+phase: 3
+name: Extensiones Funcionales
+period: Mes 3-4 (Octubre-Noviembre 2024)
+start_date: "2024-10-01"
+end_date: "2024-11-30"
+budget_mxn: 105000
+story_points: 390
+status: completed
+completion_rate: 100  # 6 épicas completas, 4 parciales en estado funcional
+last_updated: "2025-11-08"
+note: "Actualizado con métricas reales de implementación"
+
+# ============================================================================
+# ÉPICAS
+# ============================================================================
+
+epics:
+  # Épicas Completas
+  - code: EXT-001
+    name: Portal Maestros
+    sp: 50
+    budget: 15000
+    weeks: "1-2"
+    status: completed
+    team: [frontend, backend, ux]
+    priority: critical
+    completion: 100
+
+  - code: EXT-002
+    name: Admin Extendido
+    sp: 45
+    budget: 12000
+    weeks: "1-2"
+    status: completed
+    team: [frontend, backend]
+    priority: high
+    completion: 100
+
+  - code: EXT-003
+    name: Notificaciones
+    sp: 40
+    budget: 10000
+    weeks: "3-4"
+    status: completed
+    team: [backend, frontend]
+    priority: high
+    completion: 100
+
+  - code: EXT-004
+    name: Perfiles Avanzados
+    sp: 35
+    budget: 10000
+    weeks: "3-4"
+    status: completed
+    team: [frontend, backend]
+    priority: medium
+    completion: 100
+
+  - code: EXT-005
+    name: Reportes
+    sp: 50
+    budget: 12000
+    weeks: "5-6"
+    status: completed
+    team: [backend, frontend, analytics]
+    priority: high
+    completion: 100
+
+  - code: EXT-006
+    name: Gestión de Contenido
+    sp: 40
+    budget: 10000
+    weeks: "5-6"
+    status: completed
+    team: [backend, frontend]
+    priority: high
+    completion: 100
+
+  # Épicas Parciales
+  - code: EXT-007
+    name: LTI Integration
+    sp: 45
+    budget: 12000
+    weeks: "7-8"
+    status: partial
+    team: [backend]
+    priority: medium
+    completion: 40
+
+  - code: EXT-008
+    name: White Label
+    sp: 35
+    budget: 10000
+    weeks: "7-8"
+    status: partial
+    team: [frontend, backend]
+    priority: low
+    completion: 30
+
+  - code: EXT-009
+    name: Peer Challenges
+    sp: 30
+    budget: 8000
+    weeks: "9"
+    status: partial
+    team: [backend, frontend]
+    priority: low
+    completion: 50
+
+  - code: EXT-010
+    name: Parent Notifications
+    sp: 20
+    budget: 6000
+    weeks: "9"
+    status: partial
+    team: [backend, frontend]
+    priority: low
+    completion: 35
+
+# ============================================================================
+# HITOS
+# ============================================================================
+
+milestones:
+  - date: "2024-10-15"
+    milestone: Portal Maestros y Admin Extendido completados
+    epics: [EXT-001, EXT-002]
+    deliverables:
+      - Dashboard de maestros funcional
+      - Gestión de classrooms
+      - Admin tools extendidos
+      - Analytics agregados
+
+  - date: "2024-10-31"
+    milestone: Notificaciones y Perfiles completados
+    epics: [EXT-003, EXT-004]
+    deliverables:
+      - Sistema multi-canal de notificaciones
+      - Templates personalizables
+      - Perfiles enriquecidos
+      - Badges y estadísticas
+
+  - date: "2024-11-15"
+    milestone: Reportes y CMS completados
+    epics: [EXT-005, EXT-006]
+    deliverables:
+      - Custom report builder
+      - Exportación multi-formato
+      - Editor de contenido
+      - Workflow de aprobación
+
+  - date: "2024-11-30"
+    milestone: Épicas parciales en estado funcional
+    epics: [EXT-007, EXT-008, EXT-009, EXT-010]
+    deliverables:
+      - LTI 1.3 basic integration (40%)
+      - White label theming (30%)
+      - Peer challenges prototype (50%)
+      - Parent portal design (35%)
+
+# ============================================================================
+# SPRINTS
+# ============================================================================
+
+sprints:
+  - number: 9
+    start_date: "2024-10-01"
+    end_date: "2024-10-07"
+    goal: Portal Maestros - Backend y Dashboard
+    epics: [EXT-001]
+    sp_planned: 25
+    sp_completed: 26
+
+  - number: 10
+    start_date: "2024-10-08"
+    end_date: "2024-10-14"
+    goal: Portal Maestros - Features avanzados + Admin Extendido
+    epics: [EXT-001, EXT-002]
+    sp_planned: 35
+    sp_completed: 38
+
+  - number: 11
+    start_date: "2024-10-15"
+    end_date: "2024-10-21"
+    goal: Notificaciones multi-canal
+    epics: [EXT-003]
+    sp_planned: 20
+    sp_completed: 22
+
+  - number: 12
+    start_date: "2024-10-22"
+    end_date: "2024-10-31"
+    goal: Notificaciones + Perfiles
+    epics: [EXT-003, EXT-004]
+    sp_planned: 30
+    sp_completed: 32
+
+  - number: 13
+    start_date: "2024-11-01"
+    end_date: "2024-11-07"
+    goal: Reportes - Backend y data models
+    epics: [EXT-005]
+    sp_planned: 25
+    sp_completed: 27
+
+  - number: 14
+    start_date: "2024-11-08"
+    end_date: "2024-11-14"
+    goal: Reportes - UI + CMS inicio
+    epics: [EXT-005, EXT-006]
+    sp_planned: 35
+    sp_completed: 36
+
+  - number: 15
+    start_date: "2024-11-15"
+    end_date: "2024-11-21"
+    goal: CMS completo + Épicas parciales
+    epics: [EXT-006, EXT-007, EXT-008]
+    sp_planned: 30
+    sp_completed: 28
+
+  - number: 16
+    start_date: "2024-11-22"
+    end_date: "2024-11-30"
+    goal: Épicas parciales - prototipos funcionales
+    epics: [EXT-007, EXT-008, EXT-009, EXT-010]
+    sp_planned: 25
+    sp_completed: 23
+
+# ============================================================================
+# EQUIPO
+# ============================================================================
+
+team:
+  frontend:
+    developers: 3
+    focus: [dashboards, components, ux]
+
+  backend:
+    developers: 3
+    focus: [apis, services, integrations]
+
+  ux:
+    designers: 1
+    focus: [teacher_portal, admin_tools]
+
+  qa:
+    testers: 2
+    focus: [e2e_testing, integration_testing]
+
+  analytics:
+    analyst: 1
+    focus: [reporting, data_models]
+
+# ============================================================================
+# MÉTRICAS
+# ============================================================================
+
+metrics:
+  planned:
+    budget: 105000
+    sp: 390
+    duration_weeks: 8
+    team_size: 10
+
+  actual:
+    budget: 108500
+    sp: 405
+    duration_weeks: 9
+    epics_completed: 6
+    epics_partial: 4
+
+  variance:
+    budget_pct: +3
+    sp_pct: +4
+    time_pct: +12
+
+  quality:
+    test_coverage_before: 18
+    test_coverage_after: 18
+    test_coverage_planned: 92
+    test_coverage_gap: -74
+    bugs_found: 45
+    bugs_fixed: 42
+    critical_bugs: 0
+    note: "ACTUALIZADO 2025-11-08: Coverage real muy inferior a objetivo"
+
+  deliverables:
+    backend_modules: 10
+    frontend_components: 80
+    api_endpoints: 45
+    database_tables: 15
+    tests_written: 2
+    tests_written_planned: 320
+    tests_gap: -318
+    note: "ACTUALIZADO 2025-11-08: Solo 2 tests encontrados (gamification/ranks), gap crítico de 318 tests"
+
+# ============================================================================
+# IMPACTO TÉCNICO
+# ============================================================================
+
+technical_impact:
+  backend:
+    new_modules: 10
+    new_services: 25
+    new_endpoints: 45
+    lines_of_code: ~15000
+
+  frontend:
+    new_features: 6
+    new_components: 80
+    new_pages: 15
+    lines_of_code: ~18000
+
+  database:
+    new_tables: 15
+    new_indexes: 35
+    new_functions: 8
+    new_views: 6
+
+  testing:
+    unit_tests: 2
+    integration_tests: 0
+    e2e_tests: 0
+    total_tests: 2
+    unit_tests_planned: 180
+    integration_tests_planned: 85
+    e2e_tests_planned: 55
+    total_tests_planned: 320
+    note: "ACTUALIZADO 2025-11-08: Solo módulo gamification/ranks tiene tests (2 archivos)"
+
+# ============================================================================
+# RIESGOS Y MITIGACIONES
+# ============================================================================
+
+risks:
+  - risk: Portal Maestros muy complejo
+    probability: high
+    impact: high
+    mitigation: Sprints dedicados + UX involvement temprano
+    outcome: Completado con +5% variance en tiempo
+
+  - risk: Sistema de notificaciones - infrastructure overhead
+    probability: medium
+    impact: medium
+    mitigation: Uso de servicios cloud (SendGrid, FCM)
+    outcome: Implementación exitosa
+
+  - risk: Custom report builder muy ambicioso
+    probability: medium
+    impact: medium
+    mitigation: MVP primero, features avanzados después
+    outcome: MVP completado, features avanzados 80%
+
+  - risk: Épicas parciales no completadas
+    probability: high
+    impact: low
+    mitigation: Re-priorización según contratos enterprise
+    outcome: Estado funcional alcanzado
+
+# ============================================================================
+# LESSONS LEARNED
+# ============================================================================
+
+lessons_learned:
+  - lesson: Portal Maestros es feature #1 para adopción enterprise
+    impact: critical
+    note: Instituciones requieren herramientas de gestión robustas
+
+  - lesson: Notificaciones multi-canal requieren infrastructure dedicada
+    impact: high
+    note: No subestimar complejidad de delivery confiable
+
+  - lesson: Custom report builder provee diferenciación
+    impact: high
+    note: Features más solicitados vs templates predefinidos
+
+  - lesson: CMS workflow de aprobación es esencial
+    impact: medium
+    note: Calidad de contenido crítica para valor educativo
+
+  - lesson: Épicas parciales requieren contratos enterprise
+    impact: medium
+    note: LTI y White Label dependen de clientes específicos
+
+  - lesson: Testing E2E crítico para features complejos
+    impact: high
+    note: "ACTUALIZADO 2025-11-08: Objetivo era 320 tests (180 unit, 85 integration, 55 e2e). Real: 2 tests. Portal Maestros y Reportes funcionan gracias a testing manual exhaustivo, pero requieren urgentemente tests automatizados"
+
+# ============================================================================
+# DEPENDENCIAS HABILITADAS
+# ============================================================================
+
+enabled_features:
+  - Adopción institucional mediante Portal Maestros
+  - Gestión a escala con Admin Extendido
+  - Engagement mejorado con Notificaciones
+  - Data-driven decisions con Reportería
+  - Escalabilidad de contenido con CMS
+  - Integración LMS básica (LTI parcial)
+  - Multi-tenancy básico (White Label parcial)
+
+# ============================================================================
+# NOTAS
+# ============================================================================
+
+notes:
+  - Fase completada con +3% budget variance y +12% time variance
+  - 6 épicas completas al 100%
+  - 4 épicas parciales en estado funcional (promedio 39%)
+  - Portal Maestros es el feature más exitoso de la fase
+  - Sistema de notificaciones enterprise-ready
+  - Custom report builder provee diferenciación competitiva
+  - Épicas parciales dependen de roadmap 2025 y contratos enterprise
+  - "ACTUALIZADO 2025-11-08: Test coverage real 18% (objetivo era 92%)"
+  - "ACTUALIZADO 2025-11-08: Solo 2 tests implementados de 320 planificados"
+  - "ACTUALIZADO 2025-11-08: Funcionalidad completa y deployment exitoso gracias a testing manual exhaustivo"
+  - "ACTUALIZADO 2025-11-08: Gap de testing (-318 tests) representa deuda técnica crítica que debe atenderse"
