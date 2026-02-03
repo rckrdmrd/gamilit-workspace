@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import compression from 'compression';
@@ -8,7 +8,7 @@ import { AppModule } from './app.module';
 import { API_PREFIX, API_VERSION } from './shared/constants/routes.constants';
 import { TransformResponseInterceptor } from './shared/interceptors/transform-response.interceptor';
 import { AllExceptionsFilter } from './shared/filters/http-exception.filter';
-import { SocketIOAdapter } from './adapters/socket-io.adapter';
+import { RedisIoAdapter } from './adapters/redis-io.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -48,7 +48,19 @@ async function bootstrap() {
 
   // FIX-BE-016-2026-01-29: Use unified Socket.IO adapter to prevent
   // "handleUpgrade() was called more than once" error with multiple gateways
-  app.useWebSocketAdapter(new SocketIOAdapter(app, allowedOrigins));
+  // 2026-02-03: Upgraded to RedisIoAdapter for horizontal scaling support
+  const redisIoAdapter = new RedisIoAdapter(app, allowedOrigins);
+
+  // Try to connect to Redis for Socket.IO adapter
+  // Falls back to in-memory adapter if Redis is unavailable
+  const redisConnected = await redisIoAdapter.connectToRedis();
+  app.useWebSocketAdapter(redisIoAdapter);
+
+  if (redisConnected) {
+    Logger.log('Socket.IO using Redis adapter for horizontal scaling', 'Bootstrap');
+  } else {
+    Logger.warn('Socket.IO using in-memory adapter (no horizontal scaling)', 'Bootstrap');
+  }
 
   // Security
   app.use(helmet());
@@ -106,17 +118,19 @@ async function bootstrap() {
 
   await app.listen(port);
 
+  const socketStatus = redisConnected ? 'Redis (scalable)' : 'In-memory';
   console.log(`
-╔═══════════════════════════════════════════════════════════════╗
-║                                                               ║
-║   🚀 GAMILIT Backend API Server                              ║
-║                                                               ║
-║   🌍 Server running at: http://localhost:${port}                 ║
-║   📚 API Docs: http://localhost:${port}/${API_PREFIX}/${API_VERSION}/docs    ║
-║   🔧 Environment: ${nodeEnv.padEnd(11)}                            ║
-║   🔒 CORS Origins: ${allowedOrigins.length} configured                   ║
-║                                                               ║
-╚═══════════════════════════════════════════════════════════════╝
+=====================================================================
+
+   GAMILIT Backend API Server
+
+   Server running at: http://localhost:${port}
+   API Docs: http://localhost:${port}/${API_PREFIX}/${API_VERSION}/docs
+   Environment: ${nodeEnv}
+   CORS Origins: ${allowedOrigins.length} configured
+   WebSocket: ${socketStatus}
+
+=====================================================================
   `);
 
   // Log CORS configuration

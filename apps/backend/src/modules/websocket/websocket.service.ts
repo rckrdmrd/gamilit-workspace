@@ -185,4 +185,15 @@ export class WebSocketService {
   getUserSocketCount(userId: string): number {
     return this.gateway.getUserSocketCount(userId);
   }
+
+  /**
+   * Get WebSocket connection statistics
+   */
+  getConnectionStats(): {
+    connectedUsers: number;
+    totalSockets: number;
+    messagePersistenceEnabled: boolean;
+  } {
+    return this.gateway.getConnectionStats();
+  }
 }

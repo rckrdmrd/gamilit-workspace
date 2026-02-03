@@ -1,7 +1,15 @@
 /**
  * Notifications Gateway
  *
- * WebSocket gateway for real-time notifications
+ * WebSocket gateway for real-time notifications with Redis adapter support
+ * for horizontal scaling and message persistence for offline users.
+ *
+ * Features:
+ * - JWT authentication on connection
+ * - Room-based message routing (user rooms, classroom rooms)
+ * - Redis adapter integration for multi-instance support
+ * - Message persistence for offline users
+ * - Automatic delivery of pending messages on reconnection
  *
  * IMPORTANTE (2026-01-04): La autenticación se hace manualmente en handleConnection
  * porque @UseGuards no funciona en lifecycle hooks de Socket.IO.
@@ -17,7 +25,7 @@ import {
   ConnectedSocket,
   MessageBody,
 } from '@nestjs/websockets';
-import { Logger, UseGuards } from '@nestjs/common';
+import { Logger, UseGuards, Optional } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Server } from 'socket.io';
 import { WsJwtGuard, AuthenticatedSocket } from './guards/ws-jwt.guard';
@@ -29,6 +37,7 @@ import {
   AlertTriggeredPayload,
   StudentOnlineStatusPayload,
 } from './types/websocket.types';
+import { MessagePersistenceService } from './services/message-persistence.service';
 
 // FIX-BE-016-2026-01-29: CORS, path, and transports are now configured
 // centrally in SocketIOAdapter (main.ts) to prevent handleUpgrade conflicts
@@ -41,8 +50,12 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(NotificationsGateway.name);
 
   private userSockets = new Map<string, Set<string>>(); // userId -> Set of socketIds
+  private userLastDisconnect = new Map<string, Date>(); // Track disconnect times for reconnection detection
 
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    @Optional() private readonly messagePersistence?: MessagePersistenceService,
+  ) {}
 
   afterInit(_server: Server) {
     this.logger.log('WebSocket Gateway initialized');
@@ -94,13 +107,24 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
       await client.join(`user:${userId}`);
       this.logger.debug(`Socket ${client.id} joined room: user:${userId}`);
 
+      // Check if this is a reconnection
+      const lastDisconnect = this.userLastDisconnect.get(userId);
+      const isReconnection = lastDisconnect !== undefined;
+
       // Emit authenticated event
       client.emit(SocketEvent.AUTHENTICATED, {
         success: true,
         userId,
         email: userEmail,
         socketId: client.id,
+        isReconnection,
       });
+
+      // If reconnecting, deliver any pending messages
+      if (isReconnection && this.messagePersistence?.isOperational()) {
+        this.userLastDisconnect.delete(userId);
+        await this.deliverPendingMessages(client, userId);
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.warn(`Connection rejected: authentication failed - ${errorMessage} (socket: ${client.id})`);
@@ -119,11 +143,66 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
         sockets.delete(client.id);
         if (sockets.size === 0) {
           this.userSockets.delete(userId);
+          // Track disconnect time for reconnection detection
+          this.userLastDisconnect.set(userId, new Date());
+          // Clean up old disconnect records after 24 hours
+          setTimeout(() => {
+            this.userLastDisconnect.delete(userId);
+          }, 24 * 60 * 60 * 1000);
         }
       }
     }
 
     this.logger.log(`Client disconnected: ${userEmail} (${client.id})`);
+  }
+
+  /**
+   * Deliver pending messages to a reconnected user
+   */
+  private async deliverPendingMessages(client: AuthenticatedSocket, userId: string): Promise<void> {
+    if (!this.messagePersistence) {
+      return;
+    }
+
+    try {
+      const pendingMessages = await this.messagePersistence.getPendingMessages(userId);
+
+      if (pendingMessages.length === 0) {
+        return;
+      }
+
+      this.logger.log(`Delivering ${pendingMessages.length} pending messages to user ${userId}`);
+
+      // Notify client about pending messages
+      client.emit(SocketEvent.PENDING_MESSAGES, {
+        count: pendingMessages.length,
+        timestamp: new Date().toISOString(),
+      });
+
+      // Deliver each message
+      for (const message of pendingMessages) {
+        client.emit(message.event, {
+          ...message.data,
+          _pendingMessageId: message.id,
+          _wasOffline: true,
+          _originalTimestamp: message.createdAt,
+        });
+      }
+
+      // Clear delivered messages
+      await this.messagePersistence.clearPendingMessages(userId);
+
+      // Notify client that all pending messages were delivered
+      client.emit(SocketEvent.PENDING_MESSAGES_DELIVERED, {
+        count: pendingMessages.length,
+        timestamp: new Date().toISOString(),
+      });
+
+      this.logger.debug(`Delivered ${pendingMessages.length} pending messages to user ${userId}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to deliver pending messages to user ${userId}: ${errorMessage}`);
+    }
   }
 
   /**
@@ -160,23 +239,38 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   /**
    * Emit notification to specific user
+   * If user is offline and message persistence is enabled, store the message
    */
-  emitToUser(userId: string, event: SocketEvent, data: any) {
+  async emitToUser(userId: string, event: SocketEvent, data: any, persistIfOffline = true): Promise<void> {
     const room = `user:${userId}`;
-    this.server.to(room).emit(event, {
+    const timestamp = new Date().toISOString();
+    const payload = {
       ...data,
-      timestamp: new Date().toISOString(),
-    });
-    this.logger.debug(`Emitted ${event} to user ${userId}`);
+      timestamp,
+    };
+
+    // Check if user is online
+    const isOnline = this.isUserConnected(userId);
+
+    if (isOnline) {
+      this.server.to(room).emit(event, payload);
+      this.logger.debug(`Emitted ${event} to user ${userId}`);
+    } else if (persistIfOffline && this.messagePersistence?.isOperational()) {
+      // Store message for later delivery
+      await this.messagePersistence.storePendingMessage(userId, event, payload);
+      this.logger.debug(`Stored ${event} for offline user ${userId}`);
+    } else {
+      this.logger.debug(`User ${userId} is offline, message ${event} not delivered`);
+    }
   }
 
   /**
    * Emit notification to multiple users
    */
-  emitToUsers(userIds: string[], event: SocketEvent, data: any) {
-    userIds.forEach((userId) => {
-      this.emitToUser(userId, event, data);
-    });
+  async emitToUsers(userIds: string[], event: SocketEvent, data: any, persistIfOffline = true): Promise<void> {
+    await Promise.all(
+      userIds.map((userId) => this.emitToUser(userId, event, data, persistIfOffline)),
+    );
     this.logger.debug(`Emitted ${event} to ${userIds.length} users`);
   }
 
@@ -210,6 +304,53 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
    */
   getUserSocketCount(userId: string): number {
     return this.userSockets.get(userId)?.size || 0;
+  }
+
+  /**
+   * Handle client acknowledgment of pending messages
+   */
+  @UseGuards(WsJwtGuard)
+  @SubscribeMessage('pending_messages:ack')
+  async handlePendingMessagesAck(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    @MessageBody() data: { messageIds: string[] },
+  ) {
+    try {
+      const userId = client.userData!.userId;
+      const { messageIds } = data;
+
+      if (this.messagePersistence?.isOperational() && messageIds?.length > 0) {
+        const removed = await this.messagePersistence.removeMessages(userId, messageIds);
+        this.logger.debug(`User ${userId} acknowledged ${removed} pending messages`);
+        return { success: true, removed };
+      }
+
+      return { success: true, removed: 0 };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error('Error acknowledging pending messages:', error);
+      return { success: false, error: errorMessage };
+    }
+  }
+
+  /**
+   * Get WebSocket connection statistics
+   */
+  getConnectionStats(): {
+    connectedUsers: number;
+    totalSockets: number;
+    messagePersistenceEnabled: boolean;
+  } {
+    let totalSockets = 0;
+    this.userSockets.forEach((sockets) => {
+      totalSockets += sockets.size;
+    });
+
+    return {
+      connectedUsers: this.userSockets.size,
+      totalSockets,
+      messagePersistenceEnabled: this.messagePersistence?.isOperational() || false,
+    };
   }
 
   // ==========================================================================

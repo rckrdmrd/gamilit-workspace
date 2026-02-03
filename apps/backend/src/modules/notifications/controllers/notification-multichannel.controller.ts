@@ -16,6 +16,7 @@ import {
 } from '@nestjs/swagger';
 import { NotificationService } from '../services/notification.service';
 import { JwtAuthGuard } from '@/modules/auth/guards';
+import { NotificationRateLimitGuard } from '../guards';
 import {
   CreateNotificationDto,
   SendFromTemplateDto,
@@ -26,7 +27,7 @@ import {
  * NotificationMultiChannelController
  *
  * @description Controller para creación de notificaciones multi-canal (EXT-003)
- * @version 1.0 (2025-11-13)
+ * @version 2.0 (2026-02-03) - Added rate limiting
  *
  * Rutas: /notifications/multichannel/*
  *
@@ -44,6 +45,7 @@ import {
  * - Las preferencias del usuario se respetan automáticamente
  * - Integración con función SQL send_notification()
  * - Sistema de cola asíncrona para email/push
+ * - Rate limiting aplicado por usuario/canal/tenant
  *
  * Diferencia con sistema básico (/notifications):
  * - Sistema básico: notificaciones in-app simples (gamification_system.notifications)
@@ -51,7 +53,7 @@ import {
  */
 @ApiTags('notifications-multichannel')
 @Controller('notifications/multichannel')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, NotificationRateLimitGuard)
 @ApiBearerAuth()
 export class NotificationMultiChannelController {
   constructor(private readonly notificationService: NotificationService) {}
@@ -106,9 +108,14 @@ export class NotificationMultiChannelController {
     status: 403,
     description: 'No puedes crear notificaciones para otros usuarios',
   })
+  @ApiResponse({
+    status: 429,
+    description: 'Rate limit exceeded - too many notifications',
+  })
   async createMultiChannel(
     @Body() createDto: CreateNotificationDto,
     @CurrentUser('sub') userId: string,
+    @CurrentUser('tenant_id') tenantId?: string,
   ): Promise<NotificationResponseDto> {
     // Validar que el usuario solo crea notificaciones para sí mismo
     // (a menos que sea admin - validación futura)
@@ -117,21 +124,24 @@ export class NotificationMultiChannelController {
       throw new ForbiddenException('Cannot create notifications for other users');
     }
 
-    const notification = await this.notificationService.create({
-      userId: createDto.userId,
-      title: createDto.title,
-      message: createDto.message,
-      type: createDto.type,
-      data: createDto.data,
-      metadata: {
-        ...createDto.metadata,
-        related_entity_type: createDto.relatedEntityType,
-        related_entity_id: createDto.relatedEntityId,
+    const notification = await this.notificationService.create(
+      {
+        userId: createDto.userId,
+        title: createDto.title,
+        message: createDto.message,
+        type: createDto.type,
+        data: createDto.data,
+        metadata: {
+          ...createDto.metadata,
+          related_entity_type: createDto.relatedEntityType,
+          related_entity_id: createDto.relatedEntityId,
+        },
+        priority: createDto.priority,
+        channels: createDto.channels,
+        expiresAt: createDto.expiresAt ? new Date(createDto.expiresAt) : undefined,
       },
-      priority: createDto.priority,
-      channels: createDto.channels,
-      expiresAt: createDto.expiresAt ? new Date(createDto.expiresAt) : undefined,
-    });
+      { tenantId },
+    );
 
     return this.mapToResponseDto(notification);
   }
@@ -191,9 +201,14 @@ export class NotificationMultiChannelController {
     status: 403,
     description: 'No puedes crear notificaciones para otros usuarios',
   })
+  @ApiResponse({
+    status: 429,
+    description: 'Rate limit exceeded - too many notifications',
+  })
   async sendFromTemplate(
     @Body() sendDto: SendFromTemplateDto,
     @CurrentUser('sub') userId: string,
+    @CurrentUser('tenant_id') tenantId?: string,
   ): Promise<NotificationResponseDto> {
     // Validar ownership
     if (sendDto.userId !== userId) {
@@ -201,18 +216,21 @@ export class NotificationMultiChannelController {
       throw new ForbiddenException('Cannot create notifications for other users');
     }
 
-    const notification = await this.notificationService.sendFromTemplate({
-      templateKey: sendDto.templateKey,
-      userId: sendDto.userId,
-      variables: sendDto.variables,
-      type: sendDto.type,
-      channels: sendDto.channels,
-      metadata: {
-        ...sendDto.metadata,
-        related_entity_type: sendDto.relatedEntityType,
-        related_entity_id: sendDto.relatedEntityId,
+    const notification = await this.notificationService.sendFromTemplate(
+      {
+        templateKey: sendDto.templateKey,
+        userId: sendDto.userId,
+        variables: sendDto.variables,
+        type: sendDto.type,
+        channels: sendDto.channels,
+        metadata: {
+          ...sendDto.metadata,
+          related_entity_type: sendDto.relatedEntityType,
+          related_entity_id: sendDto.relatedEntityId,
+        },
       },
-    });
+      { tenantId },
+    );
 
     return this.mapToResponseDto(notification);
   }

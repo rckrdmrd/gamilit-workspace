@@ -22,6 +22,10 @@ import { UserDeviceService } from './services/user-device.service';
 import { PushNotificationService } from './services/push-notification.service';
 import { TwilioService } from './services/twilio.service';
 import { NotificationRateLimitService } from './services/rate-limit.service';
+// Sprint 1.5 Audit Services (2026-02-03)
+import { NotificationDeliveryService } from './services/notification-delivery.service';
+import { NotificationErrorService } from './services/notification-error.service';
+import { NotificationAnalyticsService } from './services/notification-analytics.service';
 
 // Controllers
 import {
@@ -30,6 +34,7 @@ import {
   NotificationDevicesController,
   NotificationTemplatesController,
   NotificationRateLimitController,
+  NotificationAnalyticsController,
 } from './controllers';
 import { SmsController } from './controllers/sms.controller';
 
@@ -52,7 +57,7 @@ import { MailModule } from '../mail/mail.module';
  * NotificationsModule
  *
  * @description Módulo de notificaciones multi-canal consolidado
- * @version 3.5 (2026-02-03) - Advanced Templates (Handlebars, i18n, versioning)
+ * @version 3.6 (2026-02-03) - Sprint 1.5 Audit (Delivery tracking, Error logging, Analytics)
  *
  * SISTEMA CONSOLIDADO (notifications schema):
  * - Notificaciones multi-canal (in_app, email, push, sms)
@@ -63,9 +68,12 @@ import { MailModule } from '../mail/mail.module';
  * - Push notifications via Web Push API nativo (VAPID)
  * - SMS via Twilio API
  * - Rate limiting por usuario/canal/tenant
+ * - Delivery tracking (pending, sent, delivered, failed, bounced)
+ * - Error logging with categorization and retry tracking
+ * - Analytics (open/click tracking, metrics aggregation)
  * - 6 Entities (notifications datasource)
- * - 8 Services (PushNotificationService, TwilioService, NotificationRateLimitService)
- * - 7 Controllers
+ * - 11 Services (including audit services)
+ * - 8 Controllers
  *
  * NOTA: El sistema básico (gamification_system.notifications) ha sido
  * deprecated y consolidado en este módulo. Todos los triggers de
@@ -116,6 +124,7 @@ import { MailModule } from '../mail/mail.module';
     NotificationTemplatesController,
     NotificationRateLimitController, // Rate limit metrics (2026-02-03)
     SmsController, // SMS via Twilio (2026-02-03)
+    NotificationAnalyticsController, // Analytics, delivery tracking, errors (Sprint 1.5)
 
     // Controller principal (usa NotificationService consolidado)
     NotificationsController,
@@ -132,6 +141,10 @@ import { MailModule } from '../mail/mail.module';
     TwilioService, // SMS via Twilio (2026-02-03)
     NotificationRateLimitService, // Rate limiting (2026-02-03)
     NotificationRateLimitGuard, // Rate limit guard (2026-02-03)
+    // Sprint 1.5 Audit Services (2026-02-03)
+    NotificationDeliveryService, // Delivery tracking
+    NotificationErrorService, // Error logging with categorization
+    NotificationAnalyticsService, // Open/click tracking, metrics
 
     // NOTA: NotificationsService (deprecated) REMOVIDO 2026-01-07
   ],
@@ -142,6 +155,10 @@ import { MailModule } from '../mail/mail.module';
     NotificationRateLimitService, // Para uso en otros módulos
     NotificationRateLimitGuard, // Para usar en otros controllers
     TemplateI18nService, // Para uso con i18n en otros módulos
+    // Sprint 1.5 Audit exports
+    NotificationDeliveryService, // For external delivery status updates
+    NotificationErrorService, // For logging errors from other services
+    NotificationAnalyticsService, // For analytics in dashboards
   ],
 })
 export class NotificationsModule {}

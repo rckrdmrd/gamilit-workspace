@@ -1,7 +1,10 @@
 /**
  * WebSocket Module
  *
- * Provides real-time communication via Socket.IO
+ * Provides real-time communication via Socket.IO with:
+ * - Redis adapter support for horizontal scaling
+ * - Message persistence for offline users
+ * - JWT authentication
  *
  * FIX: CORR-005 - Unificado JWT config con Auth Module usando ConfigService
  */
@@ -12,6 +15,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NotificationsGateway } from './notifications.gateway';
 import { WebSocketService } from './websocket.service';
 import { WsJwtGuard } from './guards/ws-jwt.guard';
+import { MessagePersistenceService } from './services/message-persistence.service';
 
 @Module({
   imports: [
@@ -30,7 +34,12 @@ import { WsJwtGuard } from './guards/ws-jwt.guard';
       inject: [ConfigService],
     }),
   ],
-  providers: [NotificationsGateway, WebSocketService, WsJwtGuard],
-  exports: [WebSocketService],
+  providers: [
+    NotificationsGateway,
+    WebSocketService,
+    WsJwtGuard,
+    MessagePersistenceService,
+  ],
+  exports: [WebSocketService, MessagePersistenceService],
 })
 export class WebSocketModule {}

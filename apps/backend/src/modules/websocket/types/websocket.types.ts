@@ -6,6 +6,9 @@ export enum SocketEvent {
   // Connection
   AUTHENTICATED = 'authenticated',
   ERROR = 'error',
+  RECONNECTED = 'reconnected',
+  PENDING_MESSAGES = 'pending_messages',
+  PENDING_MESSAGES_DELIVERED = 'pending_messages_delivered',
 
   // Notifications
   NEW_NOTIFICATION = 'notification:new',

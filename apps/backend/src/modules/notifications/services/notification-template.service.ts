@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as Handlebars from 'handlebars';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { NotificationTemplate } from '../entities/multichannel/notification-template.entity';
 
 /**

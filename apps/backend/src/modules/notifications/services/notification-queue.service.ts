@@ -8,6 +8,7 @@ import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { NotificationQueue } from '../entities/multichannel/notification-queue.entity';
 import { PushNotificationService } from './push-notification.service';
+import { TwilioService } from './twilio.service';
 import { NotificationService } from './notification.service';
 import { MailService } from '../../mail/mail.service';
 
@@ -15,7 +16,7 @@ import { MailService } from '../../mail/mail.service';
  * NotificationQueueService
  *
  * @description Gestión de cola asíncrona para procesamiento de notificaciones (EXT-003)
- * @version 1.0 (2025-11-13)
+ * @version 1.1 (2026-02-03) - Agregado soporte SMS via Twilio
  *
  * Responsabilidades:
  * - Encolar notificaciones para procesamiento asíncrono
@@ -37,13 +38,14 @@ import { MailService } from '../../mail/mail.service';
  *
  * Tipos de canales procesados por la cola:
  * - 'email' - Envío de emails (SMTP/SendGrid)
- * - 'push' - Push notifications (FCM)
+ * - 'push' - Push notifications (Web Push API)
+ * - 'sms' - SMS via Twilio API
  * - 'in_app' se procesa síncronamente (no va a cola)
  *
  * Integración con otros servicios:
  * - NotificationService llama a enqueue() después de crear notificación
  * - Worker (cron job) llama a processQueue() cada N minutos
- * - EmailService/PushService procesan los items encolados
+ * - EmailService/PushService/TwilioService procesan los items encolados
  *
  * IMPORTANTE:
  * - Los items se procesan en orden FIFO (created_at ASC)
@@ -61,6 +63,7 @@ export class NotificationQueueService {
     @InjectDataSource('notifications')
     private readonly dataSource: DataSource,
     private readonly pushNotificationService: PushNotificationService,
+    private readonly twilioService: TwilioService,
     private readonly notificationService: NotificationService,
     private readonly mailService: MailService,
   ) {}
@@ -319,10 +322,10 @@ export class NotificationQueueService {
   /**
    * Enviar a canal específico
    *
-   * Integración con EmailService/PushService
+   * Integración con EmailService/PushService/TwilioService
    *
    * @private
-   * @param channel - Canal (email, push)
+   * @param channel - Canal (email, push, sms)
    * @param notificationId - UUID de la notificación
    * @returns true si éxito, false si fallo
    */
@@ -389,6 +392,39 @@ export class NotificationQueueService {
           return true;
         } catch (error) {
           this.logger.error(`Failed to send email for ${notificationId}:`, error);
+          return false;
+        }
+      }
+
+      if (channel === 'sms') {
+        // Integración con TwilioService (2026-02-03)
+        if (!this.twilioService.isAvailable()) {
+          this.logger.warn('SMS service not available, skipping SMS notification');
+          return false;
+        }
+
+        // Obtener número de teléfono del usuario desde notification.data
+        const userPhone = notification.data?.userPhone as string;
+        if (!userPhone) {
+          this.logger.error(`User phone not found in notification ${notificationId}`);
+          return false;
+        }
+
+        // Construir mensaje SMS (más corto que email/push)
+        const smsBody = notification.data?.smsBody as string ||
+          `${notification.title}: ${notification.message}`.substring(0, 160);
+
+        try {
+          const result = await this.twilioService.sendSms(userPhone, smsBody);
+          if (result.success) {
+            this.logger.log(`SMS sent for notification ${notificationId}: ${result.messageId}`);
+            return true;
+          } else {
+            this.logger.error(`Failed to send SMS for ${notificationId}: ${result.error}`);
+            return false;
+          }
+        } catch (error) {
+          this.logger.error(`Failed to send SMS for ${notificationId}:`, error);
           return false;
         }
       }

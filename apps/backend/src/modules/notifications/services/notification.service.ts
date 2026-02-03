@@ -2,19 +2,24 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Logger,
+  Inject,
+  Optional,
 } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Notification } from '../entities/multichannel/notification.entity';
 import { NotificationTemplateService } from './notification-template.service';
 import { WebSocketService } from '../../websocket/websocket.service';
+import { NotificationRateLimitService } from './rate-limit.service';
 
 /**
  * NotificationService
  *
  * @description Service principal para gestión de notificaciones multi-canal (EXT-003)
- * @version 1.0 (2025-11-13)
+ * @version 2.0 (2026-02-03) - Integrated rate limiting
  *
  * Responsabilidades:
  * - Crear notificaciones (ad-hoc o desde templates)
@@ -25,11 +30,12 @@ import { WebSocketService } from '../../websocket/websocket.service';
  * - Obtener con filtros y paginación
  *
  * Flujo principal:
- * 1. Se crea notificación (create o sendFromTemplate)
- * 2. Se llama función SQL send_notification()
- * 3. Función SQL valida preferencias y encola
- * 4. Worker procesa cola asíncronamente
- * 5. Se actualiza channels_sent cuando se procesa
+ * 1. Se verifica rate limit para el usuario/canales
+ * 2. Se crea notificación (create o sendFromTemplate)
+ * 3. Se llama función SQL send_notification()
+ * 4. Función SQL valida preferencias y encola
+ * 5. Worker procesa cola asíncronamente
+ * 6. Se actualiza channels_sent cuando se procesa
  */
 @Injectable()
 export class NotificationService {
@@ -42,27 +48,42 @@ export class NotificationService {
     @InjectDataSource('notifications')
     private readonly dataSource: DataSource,
     private readonly webSocketService: WebSocketService,
+    @Optional()
+    @Inject(NotificationRateLimitService)
+    private readonly rateLimitService?: NotificationRateLimitService,
   ) {}
 
   /**
    * Crear notificación ad-hoc
    *
    * @param data - Datos de la notificación
+   * @param options - Opciones adicionales
    * @returns Notificación creada
+   * @throws HttpException with 429 if rate limit exceeded
    */
-  async create(data: {
-    userId: string;
-    title: string;
-    message: string;
-    type: string;
-    data?: Record<string, unknown>;
-    metadata?: Record<string, unknown>;
-    priority?: string;
-    channels?: string[];
-    expiresAt?: Date;
-  }): Promise<Notification> {
-    // Crear notificación con campos DDL reales
+  async create(
+    data: {
+      userId: string;
+      title: string;
+      message: string;
+      type: string;
+      data?: Record<string, unknown>;
+      metadata?: Record<string, unknown>;
+      priority?: string;
+      channels?: string[];
+      expiresAt?: Date;
+    },
+    options?: {
+      skipRateLimit?: boolean;
+      tenantId?: string;
+    },
+  ): Promise<Notification> {
     const channels = data.channels || ['in_app'];
+
+    // Check rate limit unless skipped (for system notifications)
+    if (!options?.skipRateLimit && this.rateLimitService) {
+      await this.checkRateLimits(data.userId, channels, options?.tenantId);
+    }
     const notification = this.notificationRepository.create({
       userId: data.userId,
       title: data.title,
@@ -105,16 +126,24 @@ export class NotificationService {
    * Enviar notificación desde template
    *
    * @param data - Datos para renderizar template
+   * @param options - Opciones adicionales
    * @returns Notificación creada y enviada
+   * @throws HttpException with 429 if rate limit exceeded
    */
-  async sendFromTemplate(data: {
-    templateKey: string;
-    userId: string;
-    variables: Record<string, string>;
-    type?: string;
-    channels?: string[];
-    metadata?: Record<string, unknown>;
-  }): Promise<Notification> {
+  async sendFromTemplate(
+    data: {
+      templateKey: string;
+      userId: string;
+      variables: Record<string, string>;
+      type?: string;
+      channels?: string[];
+      metadata?: Record<string, unknown>;
+    },
+    options?: {
+      skipRateLimit?: boolean;
+      tenantId?: string;
+    },
+  ): Promise<Notification> {
     // 1. Renderizar template
     const rendered = await this.templateService.renderTemplate(
       data.templateKey,
@@ -125,7 +154,12 @@ export class NotificationService {
     const template = await this.templateService.findByKey(data.templateKey);
     const channels = data.channels || template.defaultChannels;
 
-    // 3. Crear notificación con campos DDL reales
+    // 3. Check rate limit unless skipped (for system notifications)
+    if (!options?.skipRateLimit && this.rateLimitService) {
+      await this.checkRateLimits(data.userId, channels, options?.tenantId);
+    }
+
+    // 4. Crear notificación con campos DDL reales
     const notification = this.notificationRepository.create({
       userId: data.userId,
       title: rendered.subject,
@@ -143,7 +177,7 @@ export class NotificationService {
 
     const saved = await this.notificationRepository.save(notification);
 
-    // 4. Enviar por función SQL
+    // 5. Enviar por función SQL
     await this.callSendNotificationFunction(
       data.userId,
       rendered.subject,
@@ -152,7 +186,7 @@ export class NotificationService {
       channels,
     );
 
-    // 5. Emitir via WebSocket para notificación en tiempo real
+    // 6. Emitir via WebSocket para notificación en tiempo real
     this.webSocketService.emitNotificationToUser(data.userId, {
       id: saved.id,
       type: saved.type,
@@ -164,6 +198,59 @@ export class NotificationService {
     });
 
     return saved;
+  }
+
+  /**
+   * Check rate limits for sending notifications
+   *
+   * @param userId - User ID
+   * @param channels - Channels to check
+   * @param tenantId - Optional tenant ID
+   * @throws HttpException with 429 if rate limit exceeded
+   */
+  private async checkRateLimits(
+    userId: string,
+    channels: string[],
+    tenantId?: string,
+  ): Promise<void> {
+    if (!this.rateLimitService) {
+      return;
+    }
+
+    const { allAllowed, blockedChannels, results } =
+      await this.rateLimitService.checkMultipleChannels(
+        userId,
+        channels,
+        tenantId,
+      );
+
+    if (!allAllowed) {
+      const firstBlockedResult = results[blockedChannels[0]];
+      const retryAfterSeconds = Math.ceil(
+        (firstBlockedResult.resetAt.getTime() - Date.now()) / 1000,
+      );
+
+      this.logger.warn(
+        `Rate limit exceeded for user ${userId} on channels: ${blockedChannels.join(', ')}`,
+      );
+
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.TOO_MANY_REQUESTS,
+          error: 'Too Many Requests',
+          message: `Rate limit exceeded for notification channels: ${blockedChannels.join(', ')}`,
+          details: {
+            blockedChannels,
+            limit: firstBlockedResult.limit,
+            current: firstBlockedResult.current,
+            remaining: 0,
+            resetAt: firstBlockedResult.resetAt.toISOString(),
+            retryAfterSeconds,
+          },
+        },
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
   }
 
   /**
