@@ -1,8 +1,8 @@
-import { BaseExercise } from '@shared/components/mechanics/mechanicsTypes';
+import { BaseExercise, ExerciseProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 
-export interface Question {
+export interface AudioQuestion {
   id: string;
-  time: number;
+  time: number; // Time in audio when question unlocks (seconds)
   question: string;
   options: string[];
   correctAnswer: number;
@@ -12,45 +12,22 @@ export interface ComprensiónAuditivaData extends BaseExercise {
   audioUrl: string;
   audioTitle: string;
   audioDuration: number;
-  questions: Question[];
+  questions: AudioQuestion[];
+  maxReplays?: number; // Optional: max replays without penalty
+  transcriptAvailable?: boolean; // Optional: if transcript can be shown
 }
 
-export interface ExerciseProgressUpdate {
-  currentStep: number;
-  totalSteps: number;
-  score: number;
-  hintsUsed: number;
-  timeSpent: number;
+export interface ComprensiónAuditivaProgressData {
+  progress: ExerciseProgressUpdate;
+  answers: { responses: Record<string, number> };
 }
 
-// Exercise State for auto-save
-export interface ComprensiónAuditivaState {
-  answers: Record<string, number>;
-  currentTime: number;
-  showResults: boolean;
-  score: number;
-  timeSpent: number;
-  hintsUsed: number;
-}
-
-// Exercise Actions Interface for Parent Control
-export interface ComprensiónAuditivaActions {
-  getState: () => ComprensiónAuditivaState;
-  reset: () => void;
-  validate: () => Promise<void>;
-  submitAnswer?: (questionId: string, answerIndex: number) => void;
-}
-
-// Standardized Exercise Props Interface
 export interface ComprensiónAuditivaExerciseProps {
-  moduleId: number;
-  lessonId: number;
-  exerciseId: string;
-  userId: string;
-  onComplete?: (score: number, timeSpent: number) => void;
-  onExit?: () => void;
-  onProgressUpdate?: (progress: ExerciseProgressUpdate) => void;
-  initialData?: Partial<ComprensiónAuditivaState>;
-  difficulty?: 'easy' | 'medium' | 'hard';
-  actionsRef?: React.MutableRefObject<ComprensiónAuditivaActions | undefined>;
+  exercise: ComprensiónAuditivaData;
+  onComplete?: () => void;
+  onProgressUpdate?: (data: ComprensiónAuditivaProgressData) => void;
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+  }>;
 }

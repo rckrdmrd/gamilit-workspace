@@ -1,4 +1,4 @@
-import { BaseExercise } from '@shared/components/mechanics/mechanicsTypes';
+import { BaseExercise, ExerciseProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 
 export interface AnimatedText {
   id: string;
@@ -19,54 +19,27 @@ export interface AnimationConfig {
 }
 
 export interface TextoEnMovimientoData extends BaseExercise {
-  animations: AnimationConfig[];
+  topic: string; // Topic for animations (e.g., "Marie Curie")
+  minTexts?: number; // Minimum texts required
+  availableAnimations: AnimationConfig[];
   availableColors: string[];
   minDuration: number;
   maxDuration: number;
-  durationStep: number;
   minFontSize: number;
   maxFontSize: number;
-  fontSizeStep: number;
-  defaultText: string;
 }
 
-export interface ExerciseProgressUpdate {
-  currentStep: number;
-  totalSteps: number;
-  score: number;
-  hintsUsed: number;
-  timeSpent: number;
+export interface TextoEnMovimientoProgressData {
+  progress: ExerciseProgressUpdate;
+  answers: { texts: AnimatedText[] };
 }
 
-// Exercise State for auto-save
-export interface TextoEnMovimientoState {
-  texts: AnimatedText[];
-  isPlaying: boolean;
-  score: number;
-  timeSpent: number;
-  hintsUsed: number;
-}
-
-// Exercise Actions Interface for Parent Control
-export interface TextoEnMovimientoActions {
-  getState: () => TextoEnMovimientoState;
-  reset: () => void;
-  validate: () => Promise<void>;
-  addText?: (text: AnimatedText) => void;
-  removeText?: (textId: string) => void;
-  togglePlay?: () => void;
-}
-
-// Standardized Exercise Props Interface
 export interface TextoEnMovimientoExerciseProps {
-  moduleId: number;
-  lessonId: number;
-  exerciseId: string;
-  userId: string;
-  onComplete?: (score: number, timeSpent: number) => void;
-  onExit?: () => void;
-  onProgressUpdate?: (progress: ExerciseProgressUpdate) => void;
-  initialData?: Partial<TextoEnMovimientoState>;
-  difficulty?: 'easy' | 'medium' | 'hard';
-  actionsRef?: React.MutableRefObject<TextoEnMovimientoActions | undefined>;
+  exercise: TextoEnMovimientoData;
+  onComplete?: () => void;
+  onProgressUpdate?: (data: TextoEnMovimientoProgressData) => void;
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+  }>;
 }

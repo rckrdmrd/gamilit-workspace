@@ -1,4 +1,4 @@
-import { BaseExercise } from '@shared/components/mechanics/mechanicsTypes';
+import { BaseExercise, ExerciseProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 
 export interface Campaign {
   id: string;
@@ -11,49 +11,26 @@ export interface Campaign {
 }
 
 export interface CallToActionData extends BaseExercise {
+  topic: string; // Topic for campaigns (e.g., "Marie Curie legacy")
   availableCauses: string[];
   availableTags: string[];
   minGoal: number;
   maxGoal: number;
   goalStep: number;
-  minSignatures: number;
-  maxSignatures: number;
+  minCampaigns?: number; // Minimum campaigns required
 }
 
-export interface ExerciseProgressUpdate {
-  currentStep: number;
-  totalSteps: number;
-  score: number;
-  hintsUsed: number;
-  timeSpent: number;
+export interface CallToActionProgressData {
+  progress: ExerciseProgressUpdate;
+  answers: { campaigns: Campaign[] };
 }
 
-// Exercise State for auto-save
-export interface CallToActionState {
-  campaigns: Campaign[];
-  score: number;
-  timeSpent: number;
-  hintsUsed: number;
-}
-
-// Exercise Actions Interface for Parent Control
-export interface CallToActionActions {
-  getState: () => CallToActionState;
-  reset: () => void;
-  validate: () => Promise<void>;
-  createCampaign?: (campaign: Omit<Campaign, 'id' | 'signatures'>) => void;
-}
-
-// Standardized Exercise Props Interface
 export interface CallToActionExerciseProps {
-  moduleId: number;
-  lessonId: number;
-  exerciseId: string;
-  userId: string;
-  onComplete?: (score: number, timeSpent: number) => void;
-  onExit?: () => void;
-  onProgressUpdate?: (progress: ExerciseProgressUpdate) => void;
-  initialData?: Partial<CallToActionState>;
-  difficulty?: 'easy' | 'medium' | 'hard';
-  actionsRef?: React.MutableRefObject<CallToActionActions | undefined>;
+  exercise: CallToActionData;
+  onComplete?: () => void;
+  onProgressUpdate?: (data: CallToActionProgressData) => void;
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+  }>;
 }
