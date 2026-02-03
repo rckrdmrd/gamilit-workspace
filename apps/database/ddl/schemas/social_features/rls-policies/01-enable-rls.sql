@@ -18,6 +18,11 @@ ALTER TABLE social_features.teams ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_features.team_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_features.team_challenges ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_features.teacher_classrooms ENABLE ROW LEVEL SECURITY;
+-- 2026-02-03: Added new tables
+ALTER TABLE social_features.discussion_threads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE social_features.guild_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE social_features.guild_missions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE social_features.guild_mission_contributions ENABLE ROW LEVEL SECURITY;
 
 -- Comentarios
 COMMENT ON TABLE social_features.schools IS 'RLS enabled: Escuelas con aislamiento por tenant';
@@ -28,3 +33,8 @@ COMMENT ON TABLE social_features.teams IS 'RLS enabled: Equipos de trabajo colab
 COMMENT ON TABLE social_features.team_members IS 'RLS enabled: Miembros de equipos - visibilidad entre miembros';
 COMMENT ON TABLE social_features.team_challenges IS 'RLS enabled: Desafíos de equipo - visibilidad para miembros';
 COMMENT ON TABLE social_features.teacher_classrooms IS 'RLS enabled: Asignaciones profesor-aula con control por rol';
+-- 2026-02-03: New tables
+COMMENT ON TABLE social_features.discussion_threads IS 'RLS enabled: Hilos de discusion en aulas/equipos - acceso por membresia';
+COMMENT ON TABLE social_features.guild_members IS 'RLS enabled: Membresías de gremios - guild_members_only';
+COMMENT ON TABLE social_features.guild_missions IS 'RLS enabled: Misiones de gremio - guild_members_only';
+COMMENT ON TABLE social_features.guild_mission_contributions IS 'RLS enabled: Contribuciones a misiones - guild_members_only';
