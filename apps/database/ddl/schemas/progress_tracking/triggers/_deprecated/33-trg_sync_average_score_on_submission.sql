@@ -1,4 +1,8 @@
 -- =============================================================================
+-- DEPRECATED: 2026-02-03
+-- REASON: Replaced by trigger 40 (trg_module_progress_complete)
+-- TASK: TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS
+-- =============================================================================
 -- Trigger: trg_sync_average_score_on_submission
 -- Descripcion: Sincroniza average_score en module_progress al insertar/actualizar submissions
 -- Tabla: progress_tracking.exercise_submissions

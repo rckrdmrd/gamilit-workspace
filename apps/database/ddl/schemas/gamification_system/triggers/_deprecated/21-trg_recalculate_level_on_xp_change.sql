@@ -1,4 +1,8 @@
 -- =====================================================
+-- DEPRECATED: 2026-02-03
+-- REASON: Replaced by trigger 30 (trg_process_xp_update)
+-- TASK: TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS
+-- =====================================================
 -- Trigger: trg_recalculate_level_on_xp_change
 -- Description: Recalcula automáticamente el nivel cuando cambia total_xp
 -- Table: gamification_system.user_stats

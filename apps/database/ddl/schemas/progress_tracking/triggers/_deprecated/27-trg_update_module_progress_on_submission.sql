@@ -1,4 +1,8 @@
 -- =============================================================================
+-- DEPRECATED: 2026-02-03
+-- REASON: Replaced by trigger 40 (trg_module_progress_complete)
+-- TASK: TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS
+-- =============================================================================
 -- Trigger: trg_update_module_progress_on_submission
 -- Descripcion: Actualiza module_progress cuando se califica un submission
 -- Tabla: progress_tracking.exercise_submissions
