@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { RanksService } from './ranks.service';
-import { UserRank } from '../entities';
+import { UserRank, MayaRankEntity } from '../entities';
 import { UserStatsService } from './user-stats.service';
 import { MLCoinsService } from './ml-coins.service';
 import { MayaRank, TransactionTypeEnum } from '@shared/constants/enums.constants';
@@ -20,6 +20,14 @@ describe('RanksService', () => {
     create: jest.fn(),
     save: jest.fn(),
     delete: jest.fn(),
+    createQueryBuilder: jest.fn(),
+  };
+
+  const mockMayaRanksRepository = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
     createQueryBuilder: jest.fn(),
   };
 
@@ -64,6 +72,10 @@ describe('RanksService', () => {
         {
           provide: getRepositoryToken(UserRank, 'gamification'),
           useValue: mockUserRankRepository,
+        },
+        {
+          provide: getRepositoryToken(MayaRankEntity, 'gamification'),
+          useValue: mockMayaRanksRepository,
         },
         {
           provide: UserStatsService,

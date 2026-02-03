@@ -16,6 +16,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { MLCoinsService } from '../ml-coins.service';
+import { RankMultiplierService } from '../rank-multiplier.service';
 import { UserStats, MLCoinsTransaction, MayaRankEntity } from '../../entities';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { createMockRepository, createMockQueryBuilder } from '@/__mocks__/repositories.mock';
@@ -27,6 +28,7 @@ describe('MLCoinsService', () => {
   let transactionRepo: ReturnType<typeof createMockRepository>;
   let mayaRanksRepo: ReturnType<typeof createMockRepository>;
   let mockDataSource: { transaction: jest.Mock; createQueryRunner: jest.Mock };
+  let mockRankMultiplierService: Partial<RankMultiplierService>;
   // Manager spies for transaction callback verification
   let managerFindOne: jest.Mock;
   let managerSave: jest.Mock;
@@ -47,6 +49,36 @@ describe('MLCoinsService', () => {
     userStatsRepo = createMockRepository<UserStats>();
     transactionRepo = createMockRepository<MLCoinsTransaction>();
     mayaRanksRepo = createMockRepository<MayaRankEntity>();
+
+    // Mock RankMultiplierService - US-GAM-011
+    mockRankMultiplierService = {
+      getMultiplier: jest.fn().mockResolvedValue(1.0),
+      calculateCoinsWithMultiplier: jest.fn().mockImplementation(async (_userId, baseCoins) => ({
+        rankLevel: 1,
+        rankName: 'Ajaw',
+        multiplier: 1.0,
+        baseCoins,
+        finalCoins: baseCoins,
+        bonusCoins: 0,
+        bonusPercentage: 0,
+      })),
+      getRankMultiplierTable: jest.fn().mockReturnValue([
+        { rankLevel: 1, rankName: 'Ajaw', multiplier: 1.0, bonusPercentage: 0 },
+      ]),
+      getUserRankWithMultiplier: jest.fn().mockResolvedValue({
+        userId: mockUserId,
+        rankLevel: 1,
+        rankName: 'Ajaw',
+        multiplier: 1.0,
+        bonusPercentage: 0,
+        xpToNextRank: 1000,
+        nextRankMultiplier: 1.25,
+        nextRankBonusPercentage: 25,
+        isMaxRank: false,
+      }),
+      getMultiplierForRank: jest.fn().mockReturnValue(1.0),
+      getBonusPercentageForRank: jest.fn().mockReturnValue(0),
+    };
 
     // Manager spies for transaction callback - use mockImplementation for fresh copies
     managerFindOne = jest.fn().mockImplementation(() => Promise.resolve({ ...mockUserStats }));
@@ -84,6 +116,7 @@ describe('MLCoinsService', () => {
         { provide: getRepositoryToken(MLCoinsTransaction, 'gamification'), useValue: transactionRepo },
         { provide: getRepositoryToken(MayaRankEntity, 'gamification'), useValue: mayaRanksRepo },
         { provide: getDataSourceToken('gamification'), useValue: mockDataSource },
+        { provide: RankMultiplierService, useValue: mockRankMultiplierService },
       ],
     }).compile();
 
