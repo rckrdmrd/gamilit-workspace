@@ -157,6 +157,15 @@ fases:
     dependencias: ["F2", "F3"]
     subtareas: 3
     objetivo: "Validar orden de creacion y dependencias entre objetos"
+    estado: "COMPLETADA"
+    fecha_completado: "2026-02-02"
+    resultados:
+      schemas_analizados: 16
+      funciones_triggers_analizados: 163
+      dependencias_circulares: 0
+      fases_script_validadas: 17
+      score_dependencias: "9.1/10"
+      entregable: "PLAN-EJECUCION-ORDENADO.md"
 
   fase_5:
     id: "F5"
@@ -197,7 +206,7 @@ entregables:
     descripcion: "Lista de duplicidades, huerfanos y conflictos"
 
   - archivo: "PLAN-EJECUCION-ORDENADO.md"
-    estado: "pendiente"
+    estado: "completado"
     descripcion: "Plan de ejecucion con dependencias"
 
 # ─────────────────────────────────────────────────────────────────────────────────
