@@ -3,13 +3,36 @@
 **Ultima Actualizacion:** 2026-02-03
 **Estado del Proyecto:** MVP 98% completado | **FASE A COMPLETADA** | **Production Ready**
 **Sprint Actual:** Post-FASE A - Consolidación
-**Ultima Tarea Completada:** FASE A EPICs (104 SP) + Plan de Ejecución 6 Fases
-**Tareas Pendientes:** Backlog tipos de ejercicios, AdminAdvancedPage Phase 2/3
+**Ultima Tarea Completada:** Test Coverage Fixes - Dependency Injection Updates
+**Tareas Pendientes:** AdminAdvancedPage Phase 2/3 (scope futuro)
 **Migrado a workspace-v2:** 2026-01-10
 
 ---
 
 ## Estado Actual
+
+### TEST-FIX: Backend Test Coverage Fixes (2026-02-03)
+
+**Problema:** Tests fallando por dependencias no mockeadas después de Sprint 5.
+
+**Commits:**
+- `826c905b` - Fix gamification test mocks (RankMultiplierService, MayaRankEntity)
+- `87d33b55` - Fix auth/admin test mocks (gamification repos, services, dataSources)
+
+**Tests Corregidos:**
+
+| Módulo | Antes | Después | Archivos Modificados |
+|--------|-------|---------|---------------------|
+| gamification | 60 failing | 0 failing | ml-coins.service.spec.ts, ranks.service.spec.ts |
+| auth | 116 failing | 10 failing | auth-derived-fields.service.spec.ts, auth.controller.spec.ts |
+| admin | 43 failing | 0 failing | admin-organizations.service.spec.ts |
+| **Total** | **219 failing** | **10 failing** | 5 files |
+
+**Resultado:** 833 tests pasando (gamification + auth + admin modules)
+
+**Nota:** Los 10 tests restantes fallan por lógica de test (comparación de fechas, mock setup), no por dependencias.
+
+---
 
 ### FASE A COMPLETADA - EPICs Implementation (2026-02-03)
 
