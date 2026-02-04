@@ -182,5 +182,31 @@
 
 ---
 
-**Actualizado:** 2026-02-04 (Tarea Completada)
+## PROMPTS DOCUMENTADOS
+
+| Archivo | Subagentes | Contenido |
+|---------|------------|-----------|
+| `prompts/PROMPT-EX-001-004.md` | EX-001 a EX-004 | Exploración inicial |
+| `prompts/PROMPT-SA-001-006.md` | SA-1 a SA-6 | Sprint 1 - Auditorías |
+| `prompts/PROMPT-SA-007-011.md` | SA-7 a SA-11 | Sprint 2 - Validación |
+| `prompts/PROMPT-SA-012-017.md` | SA-12 a SA-17 | Sprint 3 - Integración |
+
+Ver carpeta `prompts/` para el contexto y estructura de cada prompt utilizado.
+
+---
+
+## ANÁLISIS DE MEJORA CONTINUA
+
+Ver: `../analisis/ANALISIS-MEJORA-CONTINUA.md`
+
+Contiene:
+- Análisis de ejecución
+- Mejoras a directivas
+- Patrones identificados
+- Templates reutilizables
+- Lecciones aprendidas
+
+---
+
+**Actualizado:** 2026-02-04 (Documentación completa)
 **Sistema:** SIMCO v4.3.0
