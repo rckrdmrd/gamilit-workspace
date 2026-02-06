@@ -69,7 +69,7 @@ Despues de la consolidacion tecnica, los inventarios y documentacion deben refle
 
 **Archivo a crear:**
 ```
-docs/97-adr/ADR-022-consolidacion-tecnica-2026-01.md
+docs/90-adr/ADR-022-consolidacion-tecnica-2026-01.md
 ```
 
 ---

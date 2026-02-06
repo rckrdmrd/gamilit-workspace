@@ -622,7 +622,7 @@ END $$;
 ## 📚 Referencias
 
 **Documentación relacionada:**
-- ADR: `docs/97-adr/ADR-012-automatic-user-initialization-trigger.md`
+- ADR: `docs/90-adr/ADR-012-automatic-user-initialization-trigger.md`
 - Flujo: `docs/90-transversal/FLUJO-INICIALIZACION-USUARIO.md`
 - Función: `docs/90-transversal/FUNCIONES-UTILITARIAS-GAMILIT.md`
 

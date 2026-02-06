@@ -247,7 +247,7 @@ La tarea se considera **COMPLETADA** cuando:
 
 **Documentación del proyecto:**
 - MVP Plan: docs/00-vision-general/MVP-APP.md
-- ADRs relacionados: docs/97-adr/ADR-XXX.md
+- ADRs relacionados: docs/90-adr/ADR-XXX.md
 - README del módulo: apps/{stack}/README.md
 
 **Archivos de referencia:**

@@ -209,7 +209,7 @@ Por operación:
 @ALINEACION: directivas/simco/SIMCO-ALINEACION.md
 @VALIDAR: directivas/simco/SIMCO-VALIDAR.md
 @DECISION: directivas/simco/SIMCO-DECISION-MATRIZ.md
-@ADR: docs/97-adr/
+@ADR: docs/90-adr/
 @INV_MASTER: orchestration/inventarios/MASTER_INVENTORY.yml
 @DEVENV: core/orchestration/agents/perfiles/PERFIL-DEVENV.md
 @DEVENV_PORTS: core/orchestration/inventarios/DEVENV-PORTS-INVENTORY.yml

@@ -3,12 +3,16 @@
 # Actualizado: 2026-01-18
 
 metadata:
-  version: "1.0.1"
-  last_updated: "2026-01-20"
+  version: "2.0.0"
+  last_updated: "2026-02-06"
   purpose: "Mapeo bidireccional entre documentacion y codigo fuente"
-  changes_1_0_1:
-    - "CORREGIDO: notification_system -> notifications (nombre real del schema)"
-    - "ACTUALIZADO: tablas de notifications schema con lista completa"
+  updated_by: "TASK-2026-02-06-ANALISIS-INTEGRAL-DOCUMENTACION (Sprint 1)"
+  changes_2_0_0:
+    - "ACTUALIZADO: schemas_count 16 -> 18 (16 active + 2 placeholder)"
+    - "ACTUALIZADO: tables_count 139 -> 171 (reconciliado 2026-02-05)"
+    - "ACTUALIZADO: entities_count 125 -> 141 (reconciliado 2026-02-05)"
+    - "AGREGADO: 11 schemas faltantes en database_mappings"
+    - "AGREGADO: 11 modulos faltantes en backend_mappings"
 
 # =============================================================================
 # MAPEO POR CAPAS
@@ -17,19 +21,19 @@ metadata:
 layers:
   database:
     base_path: "apps/database/ddl/"
-    schemas_count: 16
-    tables_count: 139  # Actualizado 2026-01-20 (+2 tablas)
+    schemas_count: 18  # 16 active + 2 placeholder (public, storage)
+    tables_count: 171  # RECONCILIADO 2026-02-05
     coverage: "99%"
 
   backend:
     base_path: "apps/backend/src/"
-    modules_count: 17
-    entities_count: 125
+    modules_count: 22  # Updated 2026-01-27
+    entities_count: 141  # RECONCILIADO 2026-02-05
     coverage: "99%"
 
   frontend:
     base_path: "apps/frontend/src/"
-    components_count: 464
+    components_count: 458  # Updated 2026-01-27
     coverage: "60%"
 
 # =============================================================================
@@ -316,7 +320,7 @@ frontend_mappings:
 # =============================================================================
 
 validations:
-  last_check: "2026-01-18"
+  last_check: "2026-02-06"
 
   orphan_code:
     description: "Codigo sin documentacion asociada"
@@ -326,12 +330,19 @@ validations:
   orphan_docs:
     description: "Documentacion sin codigo implementado"
     count: 38
-    notes: "Requerimientos pendientes de implementacion"
+    notes: "Requerimientos pendientes de implementacion (81 RF files missing - Sprint 2)"
 
   mismatched:
     description: "Discrepancias docs vs codigo"
     count: 5
-    notes: "Principalmente en frontend - sync pendiente"
+    notes: "Frontend sync gaps - ver HALLAZGOS-DOCUMENTACION.md DOC-026..DOC-031"
+
+  note: |
+    CODE-MAPPINGS covers 7 of 18 schemas. Missing schemas to be added:
+    progress_tracking, admin_dashboard, data_warehouse, audit_system,
+    user_management, system_configuration, parent_portal, marketplace,
+    white_label, peer_challenges, content_moderation.
+    See TASK-2026-02-06 Sprint 1 for full expansion plan.
 
 # =============================================================================
 # REFERENCIAS

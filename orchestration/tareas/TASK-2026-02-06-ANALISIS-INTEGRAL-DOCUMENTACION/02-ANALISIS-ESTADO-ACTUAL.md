@@ -137,7 +137,7 @@ Se ejecutaron **11 subagentes** de analisis (5 exploracion + 6 profundidad) cubr
 
 - `TRACEABILITY_MATRIX.yml` referencia `docs/90-transversal/inventarios/` (path incorrecto)
 - `ENTITIES-CATALOG.md` referencia `@/features/gamification/*/types/` (path frontend sin prefijo)
-- Varios ADRs referencian `docs/97-adr/` en lugar de `docs/90-adr/`
+- Varios ADRs referencian `docs/90-adr/` en lugar de `docs/90-adr/`
 
 ---
 
@@ -265,7 +265,7 @@ TASK-2026-02-05 declara 4 dead features, pero el analisis encontro **contradicci
 
 ### 6.5 Referencias Rotas en ADRs
 
-- `docs/97-adr/` referenciado en lugar de `docs/90-adr/` (multiples ADRs)
+- `docs/90-adr/` referenciado en lugar de `docs/90-adr/` (multiples ADRs)
 - Paths absolutos Linux hardcodeados (`/home/isem/workspace/...`)
 - DDL-SCHEMA-ORDER.md lista 16 schemas en lugar de 18
 

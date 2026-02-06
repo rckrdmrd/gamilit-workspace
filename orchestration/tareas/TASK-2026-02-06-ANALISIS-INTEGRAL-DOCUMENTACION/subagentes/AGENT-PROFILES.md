@@ -43,18 +43,66 @@
 
 ---
 
-## Resumen
+## Sprint 0: Validacion + Quick Wins (4 agentes)
 
-- **Total agentes Fase 1:** 11
-- **Paralelismo maximo:** 6 (wave de analisis profundo)
-- **Duracion total Fase 1:** ~30 min (paralelo)
-- **Hallazgos totales:** 127 (24 P0, 35 P1, 38 P2, 30 P3)
+| ID | Agente | Modelo | Proposito | Tools | Duracion | Status |
+|----|--------|--------|-----------|-------|----------|--------|
+| SA-VAL-01 | General | Sonnet | Validate COMPLETENESS-TRACKER.yml | Read, Glob | ~2 min | COMPLETADO |
+| SA-VAL-02 | General | Sonnet | Validate CODE-MAPPINGS.yml | Read, Glob | ~2 min | COMPLETADO |
+| SA-VAL-03 | General | Sonnet | Validate dead features status | Read, Glob | ~3 min | COMPLETADO |
+| SA-VAL-04 | General | Sonnet | Validate ENTITIES-CATALOG.md | Read, Glob | ~2 min | COMPLETADO |
+
+**Hallazgo clave Sprint 0:**
+- 4 "dead features" reclasificadas como PARTIAL (boosts, forum, social_interactions, team_vs_team)
+- COMPLETENESS-TRACKER y CODE-MAPPINGS validados y corregidos
+- 42 archivos commiteados
 
 ---
 
-## Agentes Planificados para Fase 2 (Ejecucion)
+## Sprint 1: Metricas y SSOT (9 agentes)
+
+### Wave 1: Lectura de Fuentes (6 agentes paralelos)
+
+| ID | Agente | Modelo | Proposito | Tools | Duracion | Status |
+|----|--------|--------|-----------|-------|----------|--------|
+| SA-S1-READ-01 | Explore | Sonnet | PROJECT-PROFILE.yml + PROXIMA-ACCION.md | Read | ~1 min | COMPLETADO |
+| SA-S1-READ-02 | Explore | Sonnet | MASTER_INVENTORY.yml metricas | Read | ~2 min | COMPLETADO |
+| SA-S1-READ-03 | Explore | Sonnet | CODE-MAPPINGS + COMPLETENESS-TRACKER | Read | ~1 min | COMPLETADO |
+| SA-S1-READ-04 | Explore | Sonnet | TRACEABILITY duplicados scan | Read, Glob | ~2 min | COMPLETADO |
+| SA-S1-READ-05 | Explore | Sonnet | mirrors/gamilit + PROYECTO-GAMILIT.md | Read | ~1 min | COMPLETADO |
+| SA-S1-READ-06 | Explore | Sonnet | FRONTEND_INVENTORY + CHANGELOG status | Read | ~1 min | COMPLETADO |
+
+### Wave 2: Background Analysis (3 agentes paralelos)
+
+| ID | Agente | Modelo | Proposito | Tools | Duracion | Status |
+|----|--------|--------|-----------|-------|----------|--------|
+| SA-S1-BG-01 | General | Sonnet | Entity classes scan (found 153) | Glob, Grep | ~4 min | COMPLETADO |
+| SA-S1-BG-02 | General | Sonnet | DDL schemas/tables verification | Glob, Grep | ~3 min | COMPLETADO |
+| SA-S1-BG-03 | General | Sonnet | Broken refs scan (found 164) | Grep | ~5 min | COMPLETADO |
+
+**Hallazgos clave Sprint 1:**
+- 164 broken refs encontradas (70 corregidas, 94 pendientes Sprint 4)
+- Entity count: 153 vs 141 (+12 discrepancia, requiere verificacion)
+- Global replace docs/97-adr/ → docs/90-adr/ en 46 archivos
+- 6 fuentes de metricas sincronizadas a MVP 98%, 171 tablas, 18 schemas
+
+---
+
+## Resumen Acumulado
+
+| Fase | Agentes | Paralelismo Max | Hallazgos |
+|------|---------|-----------------|-----------|
+| Fase 1 Exploracion | 5 | 5 | Estructura + metricas base |
+| Fase 1 Analisis | 6 | 6 | 127 hallazgos (24P0/35P1/38P2/30P3) |
+| Sprint 0 Validacion | 4 | 4 | 4 features reclasificadas |
+| Sprint 1 Metricas | 9 | 6 | 164 broken refs, +12 entities |
+| **TOTAL** | **24** | **6** | **127 hallazgos + 164 broken refs** |
+
+---
+
+## Agentes Planificados para Sprints 2-5
 
 Ver `03-PLAN-MAESTRO.md` seccion "Subagentes Planificados":
-- ~68 subagentes distribuidos en 6 sprints
+- ~44 subagentes restantes distribuidos en 4 sprints
 - Max 6 simultaneos por wave
-- Perfiles: VALIDATOR, SYNC_AGENT, SSOT_AGENT, RF_CREATOR, ADR_WRITER, BL_WRITER, PURGE_AGENT, ARCHIVE_AGENT, DOC_WRITER
+- Perfiles: RF_CREATOR, ADR_WRITER, BL_WRITER, PURGE_AGENT, ARCHIVE_AGENT, DOC_WRITER

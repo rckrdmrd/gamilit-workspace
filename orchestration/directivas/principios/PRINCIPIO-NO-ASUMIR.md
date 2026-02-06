@@ -138,7 +138,7 @@ ANTES_de_escalar:
   buscar_en:
     - docs/01-requerimientos/
     - docs/02-especificaciones-tecnicas/
-    - docs/97-adr/
+    - docs/90-adr/
     - orchestration/inventarios/
     - Codigo existente relacionado
     - Historial de trazas

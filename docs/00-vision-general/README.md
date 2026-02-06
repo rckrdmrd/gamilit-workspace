@@ -305,7 +305,7 @@ Los siguientes documentos están planeados pero aún no creados:
 
 1. ✅ **Visión del producto:** [VISION.md](./VISION.md)
 2. **Arquitectura técnica:** [docs/90-transversal/arquitectura/](../90-transversal/arquitectura/)
-3. **Decisiones arquitectónicas:** [docs/97-adr/](../97-adr/)
+3. **Decisiones arquitectónicas:** [docs/90-adr/](../97-adr/)
 4. **Estándares de código:** [docs/98-standards/](../98-standards/)
 
 ---
@@ -323,7 +323,7 @@ Los siguientes documentos están planeados pero aún no creados:
 **Documentación Técnica:**
 - [docs/95-guias-desarrollo/](../95-guias-desarrollo/) - Guías de desarrollo
 - [docs/96-quick-reference/](../96-quick-reference/) - Referencias rápidas
-- [docs/97-adr/](../97-adr/) - Architecture Decision Records
+- [docs/90-adr/](../97-adr/) - Architecture Decision Records
 - [docs/98-standards/](../98-standards/) - Estándares del proyecto
 
 **Código:**

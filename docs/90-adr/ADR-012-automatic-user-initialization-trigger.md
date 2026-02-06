@@ -266,7 +266,7 @@ Registros creados: 15 (3 usuarios × 5 módulos)
    - Validación de 3 agentes
    - Antes/después comparisons
 
-2. **`docs/97-adr/ADR-012-automatic-user-initialization-trigger.md`** (este archivo)
+2. **`docs/90-adr/ADR-012-automatic-user-initialization-trigger.md`** (este archivo)
    - Architecture Decision Record
    - Rationale y alternativas
    - Impacto y consecuencias

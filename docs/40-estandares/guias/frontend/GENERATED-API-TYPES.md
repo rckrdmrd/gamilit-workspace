@@ -477,7 +477,7 @@ jobs:
 - [openapi-typescript Documentation](https://github.com/drwpow/openapi-typescript)
 - [NestJS Swagger](https://docs.nestjs.com/openapi/introduction)
 - [GAP-008 Analysis](../../docs/90-transversal/INDEX-GAPS-APIS-2025-11-24.md#gap-008)
-- [ADR-015: API Routes Centralization](../../docs/97-adr/ADR-015-centralized-api-routes-configuration.md)
+- [ADR-015: API Routes Centralization](../../docs/90-adr/ADR-015-centralized-api-routes-configuration.md)
 
 ---
 

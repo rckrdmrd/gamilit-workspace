@@ -273,7 +273,7 @@ Si algún usuario tiene `modules < expected`, ejecuta el backfill.
 
 ### Documentación Relacionada
 
-- **ADR-012:** `docs/97-adr/ADR-012-automatic-user-initialization-trigger.md`
+- **ADR-012:** `docs/90-adr/ADR-012-automatic-user-initialization-trigger.md`
 - **CHANGELOG:** `apps/database/docs/database/CHANGELOG.md` (v2.5.2)
 - **Functions README:** `apps/database/ddl/schemas/gamilit/functions/README.md`
 - **Reporte completo:** `orchestration/reportes/REPORTE-VALIDACION-COMPLETA-USER-INITIALIZATION-2025-11-24.md`

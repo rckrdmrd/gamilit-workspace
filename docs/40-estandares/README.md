@@ -39,7 +39,7 @@ Estandares tecnicos del proyecto GAMILIT para mantener consistencia en codigo, A
 | Workspace SIMCO | `orchestration/directivas/simco/` |
 | Guias Desarrollo | `docs/95-guias-desarrollo/` |
 | Quick Reference | `docs/96-quick-reference/` |
-| ADRs | `docs/97-adr/` |
+| ADRs | `docs/90-adr/` |
 
 ---
 

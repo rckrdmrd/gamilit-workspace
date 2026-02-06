@@ -258,7 +258,7 @@ Crea automáticamente registros en **4 tablas** cuando se crea un nuevo usuario:
 - Trigger `trg_initialize_user_stats` en `auth_management.profiles` (AFTER INSERT)
 
 **Documentación adicional:**
-- ADR: `docs/97-adr/ADR-012-automatic-user-initialization-trigger.md`
+- ADR: `docs/90-adr/ADR-012-automatic-user-initialization-trigger.md`
 - Flujo completo: `docs/90-transversal/FLUJO-INICIALIZACION-USUARIO.md`
 - Dependencias: `docs/90-transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md`
 

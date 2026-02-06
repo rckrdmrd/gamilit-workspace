@@ -317,7 +317,7 @@ validacion:
 documentacion_referencia:
   arquitectura:
     - "docs/90-transversal/arquitectura/"
-    - "docs/97-adr/"
+    - "docs/90-adr/"
   inventarios:
     - "orchestration/inventarios/MASTER_INVENTORY.yml"
     - "orchestration/inventarios/BACKEND_INVENTORY.yml"

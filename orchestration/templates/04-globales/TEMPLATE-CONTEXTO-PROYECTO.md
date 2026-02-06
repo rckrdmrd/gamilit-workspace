@@ -187,7 +187,7 @@ Copia de `@ALIASES` con valores concretos:
 # Documentación
 @DOCS:          "docs/"
 @GUIAS:         "docs/95-guias-desarrollo/"
-@ADR:           "docs/97-adr/"
+@ADR:           "docs/90-adr/"
 ```
 
 **Ejemplo resuelto para GAMILIT:**

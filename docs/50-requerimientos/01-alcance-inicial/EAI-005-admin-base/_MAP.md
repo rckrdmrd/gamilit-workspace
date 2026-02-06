@@ -130,7 +130,7 @@ US-ADM-004 ────> RF-ADM-004 ──> ET-ADM-004
 
 - **README:** [README.md](./README.md)
 - **Trazabilidad:** [implementacion/TRACEABILITY.yml](./implementacion/TRACEABILITY.yml)
-- **Portal Admin Avanzado:** `docs/97-adr/ADR-017-admin-portal-avanzado-vs-alcance-inicial.md`
+- **Portal Admin Avanzado:** `docs/90-adr/ADR-017-admin-portal-avanzado-vs-alcance-inicial.md`
 
 ---
 

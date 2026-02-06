@@ -189,7 +189,7 @@ Estos issues estan relacionados con queries que retornan valores correctos pero 
 - `docs/99-archivados/historicos-2025/trazas/TRACE-P0-CORRECTIONS.md`
 
 **ADRs relacionados:**
-- `docs/97-adr/ADR-027-missions-triggers-mapping.md`
+- `docs/90-adr/ADR-027-missions-triggers-mapping.md`
 
 ---
 

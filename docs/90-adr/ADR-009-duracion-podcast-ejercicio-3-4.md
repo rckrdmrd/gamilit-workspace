@@ -5,7 +5,7 @@
 **Autor:** Architecture-Analyst
 **Relacionado con:** DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md, Módulo 3 - Comprensión Crítica y Valorativa
 
-> **Nota:** Este ADR fue renumerado desde ADR-001 a ADR-009 el 2025-11-23 como parte de la consolidación de ADRs en docs/97-adr/. Originalmente ubicado en docs/adr/, se movió para mantener una única ubicación de ADRs en el proyecto.
+> **Nota:** Este ADR fue renumerado desde ADR-001 a ADR-009 el 2025-11-23 como parte de la consolidación de ADRs en docs/90-adr/. Originalmente ubicado en docs/adr/, se movió para mantener una única ubicación de ADRs en el proyecto.
 
 ---
 
@@ -215,7 +215,7 @@ v6.4 (2025-11-23):
 - [x] Confirmación con Product Owner
 - [x] Creación de ADR-009 (originalmente ADR-001)
 - [x] Actualización de reporte de validación
-- [x] Consolidación en docs/97-adr/
+- [x] Consolidación en docs/90-adr/
 
 ### Acciones Pendientes
 - [ ] Actualizar especificación de referencia externa (si aplica)
@@ -249,7 +249,7 @@ Esta decisión debe revisarse si:
 **Estado:** ✅ ACEPTADO
 **Implementado en:** v6.4
 **Fecha Original:** 2025-11-23
-**Movido a docs/97-adr/:** 2025-11-23
+**Movido a docs/90-adr/:** 2025-11-23
 **Próxima revisión:** 2026-01-23 (o antes si se recibe feedback significativo)
 
 ---

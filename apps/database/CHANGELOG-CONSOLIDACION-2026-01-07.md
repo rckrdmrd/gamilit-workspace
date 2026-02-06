@@ -3,7 +3,7 @@
 **Fecha:** 2026-01-07
 **Tipo:** Consolidacion y reorganizacion de objetos DDL
 **Ejecutado por:** Claude Code (Arquitecto de Datos)
-**ADR:** `docs/97-adr/ADR-2026-01-07-CONSOLIDACION-BD.md`
+**ADR:** `docs/90-adr/ADR-2026-01-07-CONSOLIDACION-BD.md`
 
 ---
 
@@ -238,7 +238,7 @@ execute_sql_files "$DDL_DIR/schemas/system_configuration/enums" "*.sql" "ENUMs d
 
 ### ADR
 
-- `docs/97-adr/ADR-2026-01-07-CONSOLIDACION-BD.md`
+- `docs/90-adr/ADR-2026-01-07-CONSOLIDACION-BD.md`
 
 ### Inventarios (_MAP.md)
 
@@ -560,7 +560,7 @@ Triggers:    101
 - **Plan Original:** `orchestration/agentes/database/PLAN-CONSOLIDACION-BD-2026-01-07.md`
 - **Validacion:** `orchestration/agentes/database/VALIDACION-PLAN-CONSOLIDACION-2026-01-07.md`
 - **Analisis de Dependencias:** `orchestration/agentes/database/ANALISIS-DEPENDENCIAS-2026-01-07.md`
-- **ADR:** `docs/97-adr/ADR-2026-01-07-CONSOLIDACION-BD.md`
+- **ADR:** `docs/90-adr/ADR-2026-01-07-CONSOLIDACION-BD.md`
 - **Politica DB-111:** `orchestration/directivas/DIRECTIVA-POLITICA-CARGA-LIMPIA.md`
 
 ---

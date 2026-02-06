@@ -255,7 +255,7 @@ Este proyecto utiliza **Política de Carga Limpia** (Clean Load Policy):
 
 Para más detalles, consultar: `orchestration/directivas/DIRECTIVA-POLITICA-CARGA-LIMPIA.md`
 
-**Referencia:** [ADR-018 - Eliminación de Carpetas Migrations](docs/97-adr/ADR-018-removal-migrations-folders.md)
+**Referencia:** [ADR-018 - Eliminación de Carpetas Migrations](docs/90-adr/ADR-018-removal-migrations-folders.md)
 
 ## Seeds ⭐ VALIDADO Y COMPLETADO DB-111
 

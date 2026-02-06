@@ -4,7 +4,8 @@
 #
 # Sistema: SIMCO v4.3.0 + NEXUS v4.0
 # Propósito: Perfil y metadata del proyecto
-# Fecha: 2026-01-24
+# Fecha: 2026-02-06
+# Actualizado por: TASK-2026-02-06-ANALISIS-INTEGRAL-DOCUMENTACION (Sprint 1)
 #
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -14,20 +15,22 @@
 
 proyecto:
   nombre: "Gamilit"
+  nombre_completo: "Gamificación Maya para la Lectoescritura en Tecnología"
   codigo: "gamilit"
-  tipo: "STANDALONE"
+  tipo: "STANDALONE_HEREDERO"
   nivel: "2A"
-  version: "2.5.0"
+  version: "3.0.0"
   rol_especial: "REFERENCIA_INTERNA"
 
 descripcion: |
-  Plataforma EdTech con gamificación educativa.
-  Sistema académico completo con módulos de:
-  - Autenticación y roles académicos
-  - Gestión de cursos y materias
-  - Sistema de gamificación (puntos, rangos, logros)
-  - Leaderboards competitivos
-  - Reportes de progreso
+  Plataforma EdTech con gamificación educativa basada en cultura maya.
+  Sistema académico completo con:
+  - 3 portales (Estudiante, Maestro, Administrador)
+  - 5 módulos educativos (23 tipos de ejercicios)
+  - Sistema de gamificación maya (5 rangos, ML Coins, logros, misiones)
+  - Leaderboards competitivos y sistema social
+  - Analytics y reportes de progreso
+  - Portal de padres con notificaciones
 
   Es el proyecto más maduro del workspace y sirve como fuente
   de patrones reutilizables.
@@ -39,29 +42,32 @@ descripcion: |
 stack:
   backend:
     framework: "NestJS"
-    version: "^10.0.0"
-    lenguaje: "TypeScript"
-    orm: "TypeORM"
+    version: "^11.0.0"
+    lenguaje: "TypeScript 5.9+"
+    orm: "TypeORM 0.3.x"
     auth: "JWT + Passport + RBAC"
+    realtime: "Socket.IO 4.8+"
 
   frontend:
     framework: "React"
-    version: "^18.2.0"
-    lenguaje: "TypeScript"
-    ui: "Tailwind CSS"
-    estado: "Zustand"
-    build: "Vite"
+    version: "^19.0.0"
+    lenguaje: "TypeScript 5.x"
+    ui: "Tailwind CSS 4.x"
+    estado: "Zustand 5.x"
+    build: "Vite 7.x"
 
   database:
     motor: "PostgreSQL"
-    version: "15+"
-    schemas: 16
+    version: "16"
+    schemas: 18
+    schemas_active: 16
     rls: true
 
   infraestructura:
     contenedores: "Docker"
     orquestacion: "docker-compose"
     cache: "Redis"
+    proceso: "PM2"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # RUTAS DEL PROYECTO
@@ -76,32 +82,51 @@ rutas:
   orchestration: "projects/gamilit/orchestration"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# MÉTRICAS
+# MÉTRICAS (Fuente: MASTER_INVENTORY v6.0.0, verificado 2026-02-05)
 # ─────────────────────────────────────────────────────────────────────────────
 
 metricas:
   database:
-    schemas: 16
-    tablas: 137
-    views: 23
-    functions: 45
-    rls_policies: 32
+    schemas: 18
+    schemas_active: 16
+    tablas: 171
+    views: 13
+    materialized_views: 7
+    enums: 36
+    functions: 128
+    triggers: 49
+    rls_policies: 282
+    foreign_keys: 299
+    indexes_files: 23
 
   backend:
-    modulos: 17
-    entities: 123
-    services: 89
-    controllers: 45
-    endpoints: 612
+    modulos: 22
+    entities: 141
+    dtos: 412
+    services: 145
+    controllers: 103
+    endpoints: 850
+    guards: 14
+    decorators: 18
 
   frontend:
-    componentes: 464
-    hooks: 78
-    stores: 12
+    componentes: 458
+    hooks: 127
+    pages: 85
+    stores: 32
+    api_services: 48
+    mechanics: 40
+    routes: 24
 
-  cobertura:
-    tests_unitarios: "~60%"
-    coherencia_3_capas: "99%"
+  coherencia:
+    ddl_backend: "82.5%"
+    backend_frontend: "87.5%"
+    documentacion: "95%"
+
+  tests:
+    total_passing: 833
+    status: "10 failing (date comparison logic)"
+    build_status: "0 errors, 904 warnings (pre-existing)"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MÓDULOS PRINCIPALES
@@ -111,40 +136,65 @@ modulos:
   core:
     - nombre: "auth"
       estado: "100%"
-      descripcion: "Autenticación con roles académicos"
+      descripcion: "Autenticación con roles académicos (JWT + RBAC)"
 
     - nombre: "users"
       estado: "100%"
-      descripcion: "Usuarios: estudiantes, profesores, admin"
+      descripcion: "Usuarios: estudiantes, profesores, admin, padres"
 
-    - nombre: "courses"
-      estado: "90%"
-      descripcion: "Gestión de cursos y materias"
+    - nombre: "educational"
+      estado: "100%"
+      descripcion: "5 módulos educativos, 23 tipos de ejercicios"
 
-    - nombre: "evaluations"
-      estado: "85%"
-      descripcion: "Sistema de evaluaciones"
+    - nombre: "progress"
+      estado: "95%"
+      descripcion: "Tracking de progreso y analytics"
 
   gamification:
     - nombre: "gamification-core"
-      estado: "95%"
-      descripcion: "Motor de gamificación"
+      estado: "100%"
+      descripcion: "Motor de gamificación maya (5 rangos)"
 
     - nombre: "points"
       estado: "100%"
-      descripcion: "Sistema de puntos con multiplicadores"
+      descripcion: "XP y ML Coins con multiplicadores"
 
     - nombre: "ranks"
       estado: "100%"
-      descripcion: "Rangos jerárquicos (5 niveles)"
+      descripcion: "Rangos maya: Ajaw → Nacom → Ah K'in → Halach Uinic → K'uk'ulkan"
 
     - nombre: "achievements"
-      estado: "90%"
-      descripcion: "Logros e insignias"
+      estado: "95%"
+      descripcion: "6 categorías de logros con rareza"
+
+    - nombre: "missions"
+      estado: "95%"
+      descripcion: "Misiones diarias/semanales con expiración"
 
     - nombre: "leaderboards"
-      estado: "85%"
-      descripcion: "Leaderboards competitivos"
+      estado: "95%"
+      descripcion: "Leaderboards competitivos por clase/escuela/global"
+
+  extensions:
+    - nombre: "teacher-portal"
+      estado: "95%"
+      descripcion: "19 páginas funcionales (EXT-001)"
+
+    - nombre: "admin-extended"
+      estado: "90%"
+      descripcion: "18 páginas, dashboard analytics (EXT-002)"
+
+    - nombre: "social"
+      estado: "90%"
+      descripcion: "Amigos, gremios, follows (EAI-003-EXT)"
+
+    - nombre: "notifications"
+      estado: "95%"
+      descripcion: "Push + email + in-app (EXT-003)"
+
+    - nombre: "parent-portal"
+      estado: "100%"
+      descripcion: "Portal padres con notificaciones (EXT-010/011)"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # ESTADO
@@ -153,9 +203,12 @@ modulos:
 estado:
   general: "activo"
   madurez: "producción"
-  mvp: "75%"
+  mvp: "98%"
+  fase_a: "COMPLETADA"
   en_produccion: true
   usuarios_activos: true
+  epics_completados: "22/22"
+  story_points_total: 650
 
 # ─────────────────────────────────────────────────────────────────────────────
 # EQUIPO
@@ -173,7 +226,8 @@ equipo:
 # ─────────────────────────────────────────────────────────────────────────────
 
 notas:
-  - "Proyecto STANDALONE más maduro del workspace"
+  - "Proyecto STANDALONE_HEREDERO más maduro del workspace"
   - "Sirve como fuente de patrones reutilizables"
-  - "No hereda de otros proyectos"
+  - "Hereda directivas de workspace, no código"
   - "Sus patrones están extraídos en shared/catalog/"
+  - "4 features parciales (DEFERRED): boosts, forum, social_interactions, team_vs_team"

@@ -56,7 +56,7 @@ docs_tecnicos:
   - "docs/95-guias-desarrollo/{relevante}.md"
 
 adrs_relacionados:
-  - "docs/97-adr/ADR-{NNN}.md"
+  - "docs/90-adr/ADR-{NNN}.md"
 ```
 
 ### SIMCO Cargados

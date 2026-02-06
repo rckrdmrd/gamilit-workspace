@@ -99,7 +99,7 @@ Los archivos historicos han sido movidos a `orchestration/reportes/`:
 - [docs/00-vision-general/](../00-vision-general/) - Vision del producto
 - [docs/95-guias-desarrollo/](../95-guias-desarrollo/) - Guias de desarrollo
 - [docs/96-quick-reference/](../96-quick-reference/) - Referencias rapidas
-- [docs/97-adr/](../97-adr/) - Decisiones de arquitectura
+- [docs/90-adr/](../97-adr/) - Decisiones de arquitectura
 - [orchestration/reportes/](../../orchestration/reportes/) - Documentacion historica
 
 ---

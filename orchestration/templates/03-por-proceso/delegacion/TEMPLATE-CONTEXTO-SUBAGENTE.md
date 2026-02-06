@@ -217,7 +217,7 @@ con soporte para geolocalización (PostGIS) y jerarquía de proyectos.
    - Información relevante: {resumen de lo que debe leer}
 
 2. **ADR (si aplica):**
-   - Archivo: `docs/97-adr/ADR-{XXX}-{tema}.md`
+   - Archivo: `docs/90-adr/ADR-{XXX}-{tema}.md`
    - Decisiones relevantes: {lista}
 
 3. **Requerimiento (si aplica):**

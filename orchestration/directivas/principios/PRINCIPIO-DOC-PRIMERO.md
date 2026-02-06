@@ -85,7 +85,7 @@ Solo entonces escribir código:
 Obligatorio:
   - docs/00-vision-general/          # Visión y alcance
   - docs/95-guias-desarrollo/        # Estándares y convenciones
-  - docs/97-adr/                     # Decisiones arquitectónicas
+  - docs/90-adr/                     # Decisiones arquitectónicas
 
 Si aplica:
   - docs/01-fase-*/                  # Especificaciones por fase

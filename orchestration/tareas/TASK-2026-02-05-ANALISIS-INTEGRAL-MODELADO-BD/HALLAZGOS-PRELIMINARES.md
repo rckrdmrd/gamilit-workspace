@@ -300,15 +300,20 @@
 - **Resolucion:** Investigacion revela que el API YA EXISTE como AdminOrganizationsService + AdminOrganizationsController con 9 endpoints CRUD completos (list, get, create, update, delete, stats, users, subscription, features). Entity Tenant 100% alineada con DDL. DTOs completos (Create, Update, Response). El hallazgo era incorrecto - el API existe bajo el namespace `/admin/organizations`.
 - **Fecha resolucion:** 2026-02-05 (Sprint 5 - BATCH-8, verificación)
 
-### H-035: Duplicate Routes Auth vs Password Controllers (MEDIO)
-- **Severidad:** MEDIA
-- **Descripcion:** AuthController y PasswordController definen endpoints duplicados para verify-email y reset-password.
-- **Accion:** Consolidar en PasswordController. BATCH-9.
+### H-035: Duplicate Routes Auth vs Password Controllers → **RESUELTO**
+- **Severidad:** MEDIA → **RESUELTO (Sprint 6 - BATCH-9)**
+- **Descripcion original:** AuthController y PasswordController definen endpoints duplicados para verify-email, reset-password y change-password.
+- **Resolucion:** 4 endpoints duplicados removidos de AuthController (verify-email, forgot-password, reset-password, change-password). PasswordController mantiene la propiedad exclusiva de estos endpoints. Constructor y imports limpiados. Comentario documenta la consolidacion.
+- **Fecha resolucion:** 2026-02-05 (Sprint 6 - BATCH-9)
 
-### H-036: Missing Junction Tables for Learning Paths (MEDIO)
-- **Severidad:** MEDIA
-- **Descripcion:** No existe learning_path_modules junction table ni module_dependencies table formal. Prerequisites como uuid[] sin FK.
-- **Accion:** Crear tablas junction. BATCH-9.
+### H-036: Missing Junction Tables for Learning Paths → **PARCIALMENTE RESUELTO**
+- **Severidad:** MEDIA → **PARCIALMENTE RESUELTO (Sprint 6 - BATCH-9)**
+- **Descripcion original:** No existe learning_path_modules junction table ni module_dependencies table formal. Prerequisites como uuid[] sin FK.
+- **Resolucion parcial:**
+  - module_dependencies: Ya existia en DDL (educational_content.module_dependencies con dependency_type, minimum_completion_percentage, UNIQUE constraint). Hallazgo parcialmente incorrecto.
+  - learning_path_modules: DDL creado (progress_tracking.learning_path_modules) con sequence_order, is_optional, minimum_completion_percentage, 2 UNIQUE constraints. Entity LearningPathModule creada con @ManyToOne a LearningPath. Constante LEARNING_PATH_MODULES agregada.
+- **Pendiente:** modules.prerequisites uuid[] column sin FK sigue existiendo (legacy, baja prioridad).
+- **Fecha resolucion:** 2026-02-05 (Sprint 6 - BATCH-9)
 
 ### H-037: Materialized Views Sin Refresh Mechanism → **RESUELTO**
 - **Severidad:** MEDIA → **RESUELTO (Sprint 5 - BATCH-8)**
@@ -335,10 +340,11 @@
 - **Pendiente:** Crear TeamVsTeamChallengeService + controller.
 - **Fecha resolucion parcial:** 2026-02-05 (Sprint 4 - BATCH-7)
 
-### H-040: Parent Notifications Parallel System (BAJO)
-- **Severidad:** BAJA
-- **Descripcion:** parent_notifications es sistema completamente separado de notifications.notifications. Sin rate limiting ni delivery tracking unificado.
-- **Accion:** Evaluar integracion via ADR. BATCH-9.
+### H-040: Parent Notifications Parallel System → **RESUELTO**
+- **Severidad:** BAJA → **RESUELTO (Sprint 6 - BATCH-9)**
+- **Descripcion original:** parent_notifications es sistema completamente separado de notifications.notifications. Sin rate limiting ni delivery tracking unificado.
+- **Resolucion:** Creado ADR-032-parent-notifications-integration.md. Decision: Integracion Parcial (Opcion B). Separacion de tablas es intencionalmente correcta (padres = stakeholders externos, tipos/frecuencias diferentes). Plan de 4 fases para compartir infraestructura (rate limiting, queue, delivery tracking, preferencias). Prioridad baja, post-MVP.
+- **Fecha resolucion:** 2026-02-05 (Sprint 6 - BATCH-9)
 
 ---
 
@@ -349,10 +355,10 @@
 | Hallazgos Preliminares | 15 | 1 | 2 | 6 | 4 | 2 | 3 (H-010, H-011, H-012) |
 | Hallazgos FASE-1 | 5 | 2 | 1 | 0 | 1 | 1 | 3 (H-016, H-017, H-020) |
 | Hallazgos FASE-2 | 8 | 4 | 3 | 0 | 0 | 1 | 7 (H-021, H-022, H-023, H-024 parcial, H-025, H-026, H-027) |
-| Hallazgos FASE-3 | 12 | 3 | 3 | 5 | 1 | 0 | 6 (H-029 parcial, H-030 parcial, H-031 parcial, H-038, H-039 parcial) |
-| **TOTAL** | **40** | **10** | **9** | **11** | **6** | **4** | **19** (13 full + 6 parcial) |
+| Hallazgos FASE-3 | 12 | 3 | 3 | 5 | 1 | 0 | 12 (todos resueltos: full o parcial) |
+| **TOTAL** | **40** | **10** | **9** | **11** | **6** | **4** | **26** (19 full + 7 parcial) |
 | Reclasificados | 1 (H-002: ALTA->MEDIA) | | | | | | |
-| **ABIERTOS** | **21** | **3** | **5** | **6** | **5** | **2** | |
+| **ABIERTOS** | **14** | **3** | **2** | **3** | **4** | **2** | |
 
 ### Hallazgos Resueltos
 
@@ -376,6 +382,13 @@
 | H-029 | CRITICA | Entity verified aligned; service/controller gap documented (out of entity scope) | Sprint 4 BATCH-7 (parcial) |
 | H-030 | CRITICA | Entity verified aligned; controller + replies DDL gap documented | Sprint 4 BATCH-7 (parcial) |
 | H-039 | MEDIA | Entity team-vs-team-challenge.entity.ts creada (37+ cols); service/controller pendientes | Sprint 4 BATCH-7 (parcial) |
+| H-032 | ALTA | 6 FKs auth.users→auth_management.profiles en 4 DDL files + 4 entity comments | Sprint 5 BATCH-8 |
+| H-033 | ALTA | log_audit_event→audit_logs, log_system_event column mapping corrected | Sprint 5 BATCH-8 |
+| H-034 | ALTA | Already existed as AdminOrganizationsController (9 endpoints) | Sprint 5 BATCH-8 (verificación) |
+| H-037 | MEDIA | MaterializedViewsCronService creado (4 cron jobs, 7 MVs, weekly reset) | Sprint 5 BATCH-8 |
+| H-035 | MEDIA | 4 endpoints duplicados removidos de AuthController → PasswordController owns all | Sprint 6 BATCH-9 |
+| H-036 | MEDIA | learning_path_modules DDL+Entity+Constant creados; module_dependencies ya existía | Sprint 6 BATCH-9 (parcial) |
+| H-040 | BAJA | ADR-032 creado: Integración Parcial parent_notifications (4 fases post-MVP) | Sprint 6 BATCH-9 |
 
 ### Distribucion por Batch de Remediacion (FASE-2 + FASE-3)
 
@@ -388,8 +401,8 @@
 | ~~BATCH-5~~ | ~~H-024, H-027, H-038 (notifications drift + FK targets + templates)~~ | ~~2-3h~~ ✅ RESUELTO |
 | ~~BATCH-6~~ | ~~H-026 (ContentStatusEnum backlog)~~ | ~~1h~~ ✅ RESUELTO |
 | ~~BATCH-7~~ | ~~H-017 remaining, H-029, H-030, H-039 (dead features entities + guild_mission_contributions)~~ | ~~2-3h~~ ✅ RESUELTO (entities only; services/controllers fuera de scope) |
-| BATCH-8 | H-032, H-033, H-034, H-037 (stale FKs, broken funcs, tenant API, MV refresh) | 2-3h |
-| BATCH-9 | H-035, H-036, H-040 (routes, junction tables, parent notif ADR) | 2-3h |
+| ~~BATCH-8~~ | ~~H-032, H-033, H-034, H-037 (stale FKs, broken funcs, tenant API verified, MV refresh)~~ | ~~2-3h~~ ✅ RESUELTO |
+| ~~BATCH-9~~ | ~~H-035, H-036, H-040 (routes, junction tables, parent notif ADR)~~ | ~~2-3h~~ ✅ RESUELTO |
 
 ### Distribucion por Fase de Resolucion (actualizado)
 
@@ -403,4 +416,4 @@
 
 ---
 
-*Hallazgos v6.3.0 - 2026-02-05 (Actualizado Sprint 4: 19 hallazgos resueltos (13 full + 6 parcial), 21 abiertos, BATCH-1+2+3+4+5+6+7 completados)*
+*Hallazgos v6.5.0 - 2026-02-05 (Actualizado Sprint 6: 26 hallazgos resueltos (19 full + 7 parcial), 14 abiertos, BATCH-1 a BATCH-9 TODOS completados)*

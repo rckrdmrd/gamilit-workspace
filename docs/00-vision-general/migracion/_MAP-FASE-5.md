@@ -219,7 +219,7 @@ Este directorio mantiene referencia histórica.
 ### Documentación Original (Backup)
 - `docs_bkp/00-overview/` → `docs/00-vision-general/`
 - `docs_bkp/QUICK-REFERENCE/` → `docs/96-quick-reference/`
-- `docs_bkp/adr/` → `docs/97-adr/`
+- `docs_bkp/adr/` → `docs/90-adr/`
 - `docs_bkp/standards-README.md` → `docs/98-standards/`
 
 ---
@@ -304,7 +304,7 @@ Con la completación de Fase 5, hemos logrado:
 grep -r "achievement" docs/
 
 # Ver todas las decisiones arquitectónicas
-ls docs/97-adr/
+ls docs/90-adr/
 
 # Buscar referencias rápidas
 ls docs/96-quick-reference/
@@ -325,7 +325,7 @@ docs/00-vision-general/
 
 **Tech Lead:**
 ```
-docs/97-adr/
+docs/90-adr/
   → docs/90-transversal/inventarios/
   → docs/01-fase-alcance-inicial/
 ```

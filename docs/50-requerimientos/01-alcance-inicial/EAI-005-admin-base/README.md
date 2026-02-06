@@ -22,7 +22,7 @@ El **Portal de Administración** implementado (`/admin/*`) es un **sistema avanz
 - Monitoreo del sistema
 
 **Para más detalles:**
-- Ver: `docs/97-adr/ADR-017-admin-portal-avanzado-vs-alcance-inicial.md`
+- Ver: `docs/90-adr/ADR-017-admin-portal-avanzado-vs-alcance-inicial.md`
 - Ver: `orchestration/agentes/architecture-analyst/analisis-portal-admin-alcances-2025-11-24/`
 - Ver: `docs/90-transversal/inventarios/INVENTARIO-ADMIN-PORTAL-EXT-002.md`
 

@@ -54,7 +54,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Security-Auditor
   ubicacion:
     - "CONTEXTO-PROYECTO.md"
     - "BACKEND_INVENTORY.yml"
-    - "docs/97-adr/ (decisiones de seguridad)"
+    - "docs/90-adr/ (decisiones de seguridad)"
   operacion:
     - "SIMCO-VALIDAR.md"
     - "OWASP Top 10 checklist"
@@ -228,7 +228,7 @@ LOW:
 
 ```yaml
 @PATRON_SEGURIDAD: "core/orchestration/patrones/PATRON-SEGURIDAD.md"
-@ADR: "docs/97-adr/"
+@ADR: "docs/90-adr/"
 @TRAZA_SECURITY: "orchestration/trazas/TRAZA-SECURITY-AUDIT.md"
 @SECURITY_REPORTS: "orchestration/reportes/security/"
 @CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"

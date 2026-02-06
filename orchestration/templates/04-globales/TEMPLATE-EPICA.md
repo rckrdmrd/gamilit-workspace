@@ -166,7 +166,7 @@
 - Requerimientos: `docs/03-requerimientos/RF-{modulo}/`
 - Especificaciones: `docs/04-modelado/especificaciones-tecnicas/`
 - User Stories: `docs/05-user-stories/US-{modulo}/`
-- ADR: `docs/97-adr/ADR-{NNN}-{nombre}.md`
+- ADR: `docs/90-adr/ADR-{NNN}-{nombre}.md`
 
 ---
 

@@ -57,9 +57,9 @@ Esta version documenta cambios arquitectonicos significativos realizados entre 2
 
 ### ADRs Documentados
 
-- [ADR-029](docs/97-adr/ADR-029-consolidacion-teacher-resources.md) - Consolidacion Teacher Resources
-- [ADR-030](docs/97-adr/ADR-030-convencion-nombres-paginas.md) - Convencion nombres sin "Page"
-- [ADR-031](docs/97-adr/ADR-031-portal-parent.md) - Portal de Padres
+- [ADR-029](docs/90-adr/ADR-029-consolidacion-teacher-resources.md) - Consolidacion Teacher Resources
+- [ADR-030](docs/90-adr/ADR-030-convencion-nombres-paginas.md) - Convencion nombres sin "Page"
+- [ADR-031](docs/90-adr/ADR-031-portal-parent.md) - Portal de Padres
 
 ---
 

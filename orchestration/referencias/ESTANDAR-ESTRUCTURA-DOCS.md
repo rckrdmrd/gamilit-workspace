@@ -333,7 +333,7 @@ docs/
 | `docs/architecture/` | `docs/01-arquitectura/` |
 | `docs/modules/` | `docs/02-definicion-modulos/` |
 | `docs/guides/` | `docs/95-guias-desarrollo/` |
-| `docs/decisions/` | `docs/97-adr/` |
+| `docs/decisions/` | `docs/90-adr/` |
 | `docs/specs/` | `docs/02-definicion-modulos/{mod}/especificaciones/` |
 
 ---

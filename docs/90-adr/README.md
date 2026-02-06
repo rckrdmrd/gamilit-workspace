@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADR)
 
-**Carpeta:** `docs/97-adr/`
+**Carpeta:** `docs/90-adr/`
 **Propósito:** Documentar decisiones arquitectónicas importantes del proyecto
 **Última actualización:** 2025-11-23
 
@@ -358,7 +358,7 @@ Evolucionar SIMCO a v2 con estructura modular y templates estandarizados.
 
 ```bash
 # Ver último ADR
-ls docs/97-adr/ | grep ADR | sort -V | tail -1
+ls docs/90-adr/ | grep ADR | sort -V | tail -1
 # Output: ADR-026-simco-v2-estructura-modular.md
 
 # Siguiente número disponible: ADR-022, ADR-023, ADR-024, ADR-025, ADR-027...
@@ -373,13 +373,13 @@ ls docs/97-adr/ | grep ADR | sort -V | tail -1
 
 ```bash
 # Copiar template (si existe)
-cp docs/97-adr/ADR-TEMPLATE.md docs/97-adr/ADR-010-nombre-decision.md
+cp docs/90-adr/ADR-TEMPLATE.md docs/90-adr/ADR-010-nombre-decision.md
 
 # O crear desde cero
-touch docs/97-adr/ADR-010-nombre-decision.md
+touch docs/90-adr/ADR-010-nombre-decision.md
 
 # Editar con tu editor
-code docs/97-adr/ADR-010-nombre-decision.md
+code docs/90-adr/ADR-010-nombre-decision.md
 ```
 
 ### Paso 3: Llenar Secciones
@@ -464,20 +464,20 @@ Si una decisión cambia:
 
 ```bash
 # Buscar ADRs sobre "database"
-grep -i "database" docs/97-adr/ADR-*.md
+grep -i "database" docs/90-adr/ADR-*.md
 
 # Buscar decisiones sobre "performance"
-grep -i "performance" docs/97-adr/ADR-*.md
+grep -i "performance" docs/90-adr/ADR-*.md
 ```
 
 ### Por Status
 
 ```bash
 # Ver ADRs accepted
-grep "Status.*Accepted" docs/97-adr/ADR-*.md
+grep "Status.*Accepted" docs/90-adr/ADR-*.md
 
 # Ver ADRs deprecated
-grep "Status.*Deprecated" docs/97-adr/ADR-*.md
+grep "Status.*Deprecated" docs/90-adr/ADR-*.md
 ```
 
 ---

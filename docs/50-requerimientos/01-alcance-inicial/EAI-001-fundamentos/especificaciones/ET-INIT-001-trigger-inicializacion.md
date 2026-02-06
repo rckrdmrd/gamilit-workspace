@@ -791,7 +791,7 @@ FROM (
 ### Documentación Relacionada
 
 - **RF-INIT-001:** `docs/01-fase-alcance-inicial/EAI-001-fundamentos/requerimientos/RF-INIT-001-inicializacion-automatica-usuario.md`
-- **ADR-012:** `docs/97-adr/ADR-012-automatic-user-initialization-trigger.md`
+- **ADR-012:** `docs/90-adr/ADR-012-automatic-user-initialization-trigger.md`
 - **FLUJO:** `docs/90-transversal/FLUJO-INICIALIZACION-USUARIO.md`
 - **DIAGRAMA:** `docs/90-transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md`
 - **FUNCIONES:** `docs/90-transversal/FUNCIONES-UTILITARIAS-GAMILIT.md`

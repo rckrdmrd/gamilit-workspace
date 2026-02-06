@@ -274,7 +274,7 @@ D: Actualizar README.md de ADRs
 | S3-02b | Crear stubs ADR-004 a ADR-006 (numeros saltados) | SA-ADR-02 |
 | S3-02c | Crear stubs ADR-024, ADR-025 (numeros saltados) | SA-ADR-02 |
 | S3-02d | Agregar campo Status a ADRs 027-032 | SA-ADR-03 |
-| S3-02e | Corregir refs "docs/97-adr/" → "docs/90-adr/" | SA-ADR-04 |
+| S3-02e | Corregir refs "docs/90-adr/" → "docs/90-adr/" | SA-ADR-04 |
 
 ### TAREA-S3-03: Expandir DocumentoDeDiseño (CAPVED)
 **Prioridad:** P0 | **Hallazgo:** DOC-021 | **Esfuerzo:** 5-7h
@@ -414,7 +414,7 @@ D: Log
 **Prioridad:** P1 | **Hallazgos:** DOC-057, DOC-058 | **Esfuerzo:** 1-2h
 
 ```
-C: refs a "docs/97-adr/", paths absolutos Linux
+C: refs a "docs/90-adr/", paths absolutos Linux
 A: grep global
 P: Search and replace
 V: Verificar no se rompieron links
@@ -448,7 +448,7 @@ D: Informe de validacion
 | S5-01a | Contar RF reales vs REQUIREMENTS-INDEX (objetivo: 100% match) | SA-VAL-05 |
 | S5-01b | Comparar metricas en 10 fuentes (objetivo: 0 discrepancias) | SA-VAL-06 |
 | S5-01c | Verificar 0 TRACEABILITY duplicados | SA-VAL-07 |
-| S5-01d | Verificar 0 refs a "docs/97-adr/" o paths Linux | SA-VAL-08 |
+| S5-01d | Verificar 0 refs a "docs/90-adr/" o paths Linux | SA-VAL-08 |
 | S5-01e | Verificar ARCHITECTURE.md dice 18 schemas | SA-VAL-09 |
 | S5-01f | Verificar Design Doc tiene secciones 6-11 | SA-VAL-10 |
 

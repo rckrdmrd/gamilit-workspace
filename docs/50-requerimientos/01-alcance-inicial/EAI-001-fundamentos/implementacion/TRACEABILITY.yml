@@ -631,7 +631,7 @@ bug_fixes:
       database:
         - apps/database/ddl/schemas/gamilit/functions/04-initialize_user_stats.sql
       documentation:
-        - docs/97-adr/ADR-012-automatic-user-initialization-trigger.md
+        - docs/90-adr/ADR-012-automatic-user-initialization-trigger.md
         - docs/01-fase-alcance-inicial/EAI-001-fundamentos/requerimientos/RF-INIT-001-inicializacion-automatica-usuario.md
         - docs/01-fase-alcance-inicial/EAI-001-fundamentos/especificaciones/ET-INIT-001-trigger-inicializacion.md
         - docs/90-transversal/FUNCIONES-UTILITARIAS-GAMILIT.md
@@ -670,7 +670,7 @@ bug_fixes:
     references:
       requirement: docs/01-fase-alcance-inicial/EAI-001-fundamentos/requerimientos/RF-INIT-001-inicializacion-automatica-usuario.md
       specification: docs/01-fase-alcance-inicial/EAI-001-fundamentos/especificaciones/ET-INIT-001-trigger-inicializacion.md
-      adr: docs/97-adr/ADR-012-automatic-user-initialization-trigger.md
+      adr: docs/90-adr/ADR-012-automatic-user-initialization-trigger.md
       validation_report: orchestration/agentes/architecture-analyst/analisis-estado-proyecto-2025-11-24/VALIDACION-GAP-003-MODULE-PROGRESS.md
       dependencies_report: orchestration/agentes/architecture-analyst/analisis-estado-proyecto-2025-11-24/VALIDACION-DEPENDENCIAS-INITIALIZE-USER-STATS.md
       validation_conflicts: orchestration/agentes/architecture-analyst/analisis-estado-proyecto-2025-11-24/VALIDACION-CONFLICTOS-DUPLICIDADES-REFERENCIAS.md

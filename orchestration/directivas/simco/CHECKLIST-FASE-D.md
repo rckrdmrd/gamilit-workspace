@@ -84,7 +84,7 @@ Antes de iniciar Fase D, verificar:
 ### Paso 5: Crear ADR (si Decision Arquitectonica)
 ```
 [ ] Si hubo decision arquitectonica significativa:
-    - Crear ADR en docs/97-adr/
+    - Crear ADR en docs/90-adr/
     - Formato: ADR-{numero}-{descripcion-corta}.md
     - Usar template: orchestration/templates/TEMPLATE-ADR.md
 ```

@@ -129,7 +129,7 @@
 | DOC-054 | ADRs 027-032 sin status explicito | AGREGAR campo Status |
 | DOC-055 | Formato ADR inconsistente (XXXX vs XXX vs fecha) | ESTANDARIZAR |
 | DOC-056 | ADR-008 sistema dual: verificar implementacion | VALIDAR exercise_mechanic_mapping |
-| DOC-057 | "docs/97-adr/" referenciado en multiples ADRs | BUSCAR Y REEMPLAZAR |
+| DOC-057 | "docs/90-adr/" referenciado en multiples ADRs | BUSCAR Y REEMPLAZAR |
 | DOC-058 | Paths absolutos Linux en ADRs | CONVERTIR a relativos |
 | DOC-059 | No hay mecanismo de supersedencia en ADRs | AGREGAR campo "Superseded by" |
 | DOC-060 | Modules en ARCHITECTURE.md: 15 listados de 30 | COMPLETAR o indicar parcial |

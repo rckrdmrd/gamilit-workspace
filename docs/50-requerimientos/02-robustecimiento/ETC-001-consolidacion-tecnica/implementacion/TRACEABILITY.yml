@@ -24,7 +24,7 @@ documentation:
   map: "_MAP.md"
   user_stories: 5
   tasks: 2
-  adr: "docs/97-adr/ADR-022-consolidacion-tecnica-2026-01.md"
+  adr: "docs/90-adr/ADR-022-consolidacion-tecnica-2026-01.md"
 
 # =============================================================================
 # HISTORIAS DE USUARIO

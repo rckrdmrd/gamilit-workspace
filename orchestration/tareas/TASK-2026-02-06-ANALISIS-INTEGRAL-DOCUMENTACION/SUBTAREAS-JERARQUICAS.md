@@ -72,7 +72,7 @@ TASK-2026-02-06-ANALISIS-INTEGRAL-DOCUMENTACION
 │   │   ├── S3-02b: Stubs ADR-004 a ADR-006 ────────── [CAPVED] SA-ADR-02
 │   │   ├── S3-02c: Stubs ADR-024, ADR-025 ──────────── [CAPVED] SA-ADR-02
 │   │   ├── S3-02d: Status ADRs 027-032 ─────────────── [CAPVED] SA-ADR-03
-│   │   └── S3-02e: Fix refs "docs/97-adr/" ──────────── [CAPVED] SA-ADR-04
+│   │   └── S3-02e: Fix refs "docs/90-adr/" ──────────── [CAPVED] SA-ADR-04
 │   ├── S3-03: Expandir DocumentoDeDiseño [P0] (5-7h)
 │   │   ├── S3-03a: Sec 6: Achievements ──────────────── [CAPVED] SA-BL-01
 │   │   ├── S3-03b: Sec 7: Missions ──────────────────── [CAPVED] SA-BL-02
@@ -108,7 +108,7 @@ TASK-2026-02-06-ANALISIS-INTEGRAL-DOCUMENTACION
 │   │   ├── S4-04b: 60-proyectos → contenido o redirect  [CAPVED]
 │   │   └── S4-04c: 70-onboarding → redirect a 00-vision [CAPVED]
 │   └── S4-05: Fix Paths Globales [P1] (1-2h)
-│       ├── S4-05a: Replace "docs/97-adr/" → "docs/90-adr/" [CAPVED]
+│       ├── S4-05a: Replace "docs/90-adr/" → "docs/90-adr/" [CAPVED]
 │       └── S4-05b: Replace paths absolutos Linux ─────── [CAPVED]
 │
 └── SPRINT-5: Cierre (8-12h) ─── dep: S0-S4

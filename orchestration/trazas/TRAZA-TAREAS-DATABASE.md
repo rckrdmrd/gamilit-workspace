@@ -140,7 +140,7 @@ El sistema YA es híbrido funcional - user_roles usa el ENUM para la columna rol
 
 **Documentos Creados:**
 - `orchestration/tareas/TASK-P2-ROLES-CONSOLIDATION-2026-01-27/ROLES-SYSTEM-ANALYSIS.md`
-- `docs/97-adr/ADR-028-roles-system-hybrid-design.md`
+- `docs/90-adr/ADR-028-roles-system-hybrid-design.md`
 
 **Recomendación:** Mantener sistema híbrido actual (by design).
 

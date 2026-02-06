@@ -1804,7 +1804,7 @@ Validar las siguientes funcionalidades:
 
 - **README.md** - Instrucciones de instalación y configuración
 - **docs/00-vision-general/** - Visión general del proyecto
-- **docs/97-adr/** - Decisiones de arquitectura (ADRs)
+- **docs/90-adr/** - Decisiones de arquitectura (ADRs)
 - **orchestration/prompts/** - Prompts de agentes
 
 ## 15.2 Contacto de Soporte

@@ -156,7 +156,7 @@ Si necesitas información de estos archivos, migra el contenido útil a los TRAC
 - **Guía de trazabilidad:** `docs/95-guias-desarrollo/GUIA-TRAZABILIDAD.md` (por crear)
 - **Ejemplo completo:** `docs/03-fase-extensiones/EXT-006-contenido/implementacion/TRACEABILITY.yml`
 - **Inventarios:** `docs/90-transversal/inventarios-database/`
-- **Sistema SIMCO:** `docs/97-adr/ADR-0002-simco-system.md`
+- **Sistema SIMCO:** `docs/90-adr/ADR-0002-simco-system.md`
 
 ---
 

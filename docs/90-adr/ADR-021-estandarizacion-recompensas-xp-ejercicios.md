@@ -271,7 +271,7 @@ apps/database/seeds/prod/educational_content/
 
 **Documentación:**
 ```
-docs/97-adr/
+docs/90-adr/
 └── ADR-017-estandarizacion-recompensas-xp-ejercicios.md  [ESTE ARCHIVO]
 
 orchestration/agentes/architecture-analyst/
@@ -453,7 +453,7 @@ ORDER BY
 ### Documentación Relacionada
 
 - **ADR-016:** Simplificar Backend XP Acumulación (2025-11-24)
-  - `docs/97-adr/ADR-016-simplificar-backend-xp-acumulacion.md`
+  - `docs/90-adr/ADR-016-simplificar-backend-xp-acumulacion.md`
   - Corrigió bug de resta de XP, estableció arquitectura de triggers
 
 - **ET-GAM-003:** Sistema de Rangos Maya

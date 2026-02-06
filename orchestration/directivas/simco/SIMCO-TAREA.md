@@ -307,7 +307,7 @@ Documentos_a_Vincular:
 
   docs_tecnicos:
     - "docs/95-guias-desarrollo/{relevantes}.md"
-    - "docs/97-adr/{relacionados}.md"
+    - "docs/90-adr/{relacionados}.md"
 
   orchestration:
     - "orchestration/inventarios/{relevantes}.yml"
@@ -687,7 +687,7 @@ ADR_Requerido_Si:
   - "Se cambió patrón establecido"
   - "Se hizo trade-off significativo"
 
-Ubicacion: "docs/97-adr/ADR-{NNN}-{titulo}.md"
+Ubicacion: "docs/90-adr/ADR-{NNN}-{titulo}.md"
 ```
 
 ### D.4 Actualizar Inventarios

@@ -18,12 +18,12 @@ Documentacion de modelado de datos, diagramas de entidades y arquitectura del si
 | Recurso | Ubicacion | Descripcion |
 |---------|-----------|-------------|
 | Catalogo de Entidades | `../_SSOT/ENTITIES-CATALOG.md` | Catalogo completo de entities TypeORM |
-| Trazabilidad | `./trazabilidad/TRACEABILITY-MASTER.yml` | Mapa de trazabilidad de requerimientos |
-| Esquemas de Base de Datos | Ver DATABASE_INVENTORY.yml | 16 schemas PostgreSQL |
+| Trazabilidad | `../../_SSOT/TRACEABILITY-MASTER.yml` | Mapa de trazabilidad de requerimientos (v3.1.0) |
+| Esquemas de Base de Datos | Ver DATABASE_INVENTORY.yml | 18 schemas PostgreSQL |
 
 ### Schemas de Base de Datos
 
-GAMILIT utiliza 16 schemas PostgreSQL:
+GAMILIT utiliza 18 schemas PostgreSQL (16 activos + 2 placeholder):
 
 1. **auth_management** - Gestion de autenticacion y usuarios
 2. **gamification_system** - Sistema de gamificacion (logros, misiones, ML Coins)
@@ -70,8 +70,8 @@ GAMILIT utiliza 16 schemas PostgreSQL:
          │                                    │                                    │
     ┌────┴────────┐                    ┌──────┴──────┐                      ┌──────┴──────┐
     │             │                    │             │                      │             │
- Student      Teacher               Auth        Gamification           16 Schemas    137 Tablas
- Portal       Portal              Module         Module                  RLS          32 Policies
+ Student      Teacher               Auth        Gamification           18 Schemas    171 Tablas
+ Portal       Portal              Module         Module                  RLS          282 Policies
     │             │                    │             │
  Admin       Parent                Progress      Social
  Portal      Portal                Module        Module

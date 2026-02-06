@@ -228,7 +228,7 @@ find apps/ -name "*{objeto}*"
 - [ ] MVP-APP.md (Sección {N})
 - [ ] docs/01-requerimientos/{archivo}.md
 - [ ] docs/02-arquitectura/{archivo}.md
-- [ ] docs/97-adr/ADR-{XXX}.md
+- [ ] docs/90-adr/ADR-{XXX}.md
 
 ### Código Existente
 **Archivos de referencia (templates):**

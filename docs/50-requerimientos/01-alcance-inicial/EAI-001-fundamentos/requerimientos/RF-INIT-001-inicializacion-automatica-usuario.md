@@ -428,7 +428,7 @@ SELECT * FROM user_initialization_check;
 
 ### Documentación Relacionada
 
-- **ADR-012:** `docs/97-adr/ADR-012-automatic-user-initialization-trigger.md` - Decisión arquitectónica
+- **ADR-012:** `docs/90-adr/ADR-012-automatic-user-initialization-trigger.md` - Decisión arquitectónica
 - **ET-INIT-001:** `docs/01-fase-alcance-inicial/EAI-001-fundamentos/especificaciones/ET-INIT-001-trigger-inicializacion.md` - Especificación técnica
 - **FLUJO-INICIALIZACION:** `docs/90-transversal/FLUJO-INICIALIZACION-USUARIO.md` - Flujo end-to-end
 - **DIAGRAMA-DEPENDENCIAS:** `docs/90-transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md` - Mapa de dependencias
