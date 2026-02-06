@@ -1,5 +1,5 @@
 -- ============================================================================
--- TABLA: exercise_mechanic_mapping
+-- TABLA: exercise_mechanic_mappings
 -- Schema: educational_content
 -- Descripción: Mapeo N:M entre categorías pedagógicas universales y
 --              implementaciones específicas GAMILIT
@@ -8,10 +8,10 @@
 -- ============================================================================
 
 -- ============================================================================
--- TABLA: exercise_mechanic_mapping
+-- TABLA: exercise_mechanic_mappings
 -- ============================================================================
 
-CREATE TABLE educational_content.exercise_mechanic_mapping (
+CREATE TABLE educational_content.exercise_mechanic_mappings (
     -- Identificador único
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -39,9 +39,10 @@ CREATE TABLE educational_content.exercise_mechanic_mapping (
     -- CONTEXTO EDUCATIVO
     -- ========================================================================
 
-    -- Nivel en Taxonomía de Bloom
+    -- Nivel en Taxonomia de Bloom (ENUM)
     -- Valores: 'recordar', 'comprender', 'aplicar', 'analizar', 'evaluar', 'crear'
-    bloom_level VARCHAR(50),
+    -- Migrado a ENUM en 2026-02-03 (GAP-001)
+    bloom_level educational_content.bloom_level,
 
     -- Niveles CEFR aplicables (array para soportar múltiples niveles)
     -- Valores: 'basico', 'intermedio', 'avanzado', 'experto'
@@ -98,34 +99,34 @@ CREATE TABLE educational_content.exercise_mechanic_mapping (
 
 -- Índice para búsqueda por categoría pedagógica principal
 CREATE INDEX idx_mechanic_mapping_category
-    ON educational_content.exercise_mechanic_mapping(mechanic_category)
+    ON educational_content.exercise_mechanic_mappings(mechanic_category)
     WHERE is_active = true;
 
 -- Índice para búsqueda por subcategoría pedagógica específica
 CREATE INDEX idx_mechanic_mapping_subcategory
-    ON educational_content.exercise_mechanic_mapping(mechanic_subcategory)
+    ON educational_content.exercise_mechanic_mappings(mechanic_subcategory)
     WHERE is_active = true;
 
 -- Índice para búsqueda por tipo de ejercicio GAMILIT
 CREATE INDEX idx_mechanic_mapping_exercise_type
-    ON educational_content.exercise_mechanic_mapping(exercise_type)
+    ON educational_content.exercise_mechanic_mappings(exercise_type)
     WHERE is_active = true;
 
 -- Índice para búsqueda por nivel de Bloom
 CREATE INDEX idx_mechanic_mapping_bloom
-    ON educational_content.exercise_mechanic_mapping(bloom_level)
+    ON educational_content.exercise_mechanic_mappings(bloom_level)
     WHERE is_active = true;
 
 -- Índice GIN para búsqueda por tags
 CREATE INDEX idx_mechanic_mapping_tags_gin
-    ON educational_content.exercise_mechanic_mapping USING gin(tags);
+    ON educational_content.exercise_mechanic_mappings USING gin(tags);
 
 -- ============================================================================
 -- TRIGGER: updated_at automático
 -- ============================================================================
 
-CREATE TRIGGER trg_exercise_mechanic_mapping_updated_at
-    BEFORE UPDATE ON educational_content.exercise_mechanic_mapping
+CREATE TRIGGER trg_exercise_mechanic_mappings_updated_at
+    BEFORE UPDATE ON educational_content.exercise_mechanic_mappings
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();
 
@@ -133,42 +134,43 @@ CREATE TRIGGER trg_exercise_mechanic_mapping_updated_at
 -- COMENTARIOS DE DOCUMENTACIÓN
 -- ============================================================================
 
-COMMENT ON TABLE educational_content.exercise_mechanic_mapping IS
+COMMENT ON TABLE educational_content.exercise_mechanic_mappings IS
 'Mapeo N:M entre categorías pedagógicas universales (31 subcategorías) e implementaciones específicas GAMILIT (35 exercise_types).
 Sistema Dual que permite clasificación pedagógica sin romper implementación existente.
 Ver ADR-008 para contexto y decisión arquitectónica.';
 
-COMMENT ON COLUMN educational_content.exercise_mechanic_mapping.mechanic_category IS
+COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.mechanic_category IS
 'Categoría pedagógica principal (7 valores): vocabulario, gramatica, lectura, escritura, audio, pronunciacion, cultura';
 
-COMMENT ON COLUMN educational_content.exercise_mechanic_mapping.mechanic_subcategory IS
+COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.mechanic_subcategory IS
 'Subcategoría pedagógica genérica (31 valores posibles). Ejemplos: multiple_choice, word_search, inference, free_writing';
 
-COMMENT ON COLUMN educational_content.exercise_mechanic_mapping.exercise_type IS
+COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.exercise_type IS
 'Tipo de ejercicio específico GAMILIT (35 implementaciones). Referencia ENUM educational_content.exercise_type';
 
-COMMENT ON COLUMN educational_content.exercise_mechanic_mapping.bloom_level IS
-'Nivel en Taxonomía de Bloom: recordar, comprender, aplicar, analizar, evaluar, crear';
+COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.bloom_level IS
+'Nivel en Taxonomia de Bloom (ENUM): recordar, comprender, aplicar, analizar, evaluar, crear.
+Migrado de VARCHAR a ENUM en 2026-02-03 (GAP-001). Referencia: RF-EDU-003.';
 
-COMMENT ON COLUMN educational_content.exercise_mechanic_mapping.cefr_level IS
+COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.cefr_level IS
 'Niveles CEFR aplicables como array. Permite mapear un exercise_type a múltiples niveles de dificultad';
 
-COMMENT ON COLUMN educational_content.exercise_mechanic_mapping.pedagogical_purpose IS
+COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.pedagogical_purpose IS
 'Descripción del propósito pedagógico de este mapeo. Por qué este exercise_type sirve para esta categoría';
 
-COMMENT ON COLUMN educational_content.exercise_mechanic_mapping.learning_objectives IS
+COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.learning_objectives IS
 'Array de objetivos de aprendizaje específicos que cumple este mapeo';
 
-COMMENT ON COLUMN educational_content.exercise_mechanic_mapping.interaction_type IS
+COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.interaction_type IS
 'Tipo de interacción del usuario: drag_drop, text_input, selection, audio_recording, drawing, etc.';
 
-COMMENT ON COLUMN educational_content.exercise_mechanic_mapping.cognitive_load IS
+COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.cognitive_load IS
 'Carga cognitiva aproximada: bajo, medio, alto. Ayuda a equilibrar asignaciones';
 
-COMMENT ON COLUMN educational_content.exercise_mechanic_mapping.tags IS
+COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.tags IS
 'Tags adicionales para búsqueda flexible. Ejemplos: [colaborativo, individual, visual, auditivo]';
 
-COMMENT ON COLUMN educational_content.exercise_mechanic_mapping.is_active IS
+COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.is_active IS
 'Permite deshabilitar mappings obsoletos sin eliminar histórico';
 
 -- ============================================================================
@@ -193,7 +195,7 @@ SELECT
     e.created_at AS exercise_created_at,
     e.updated_at AS exercise_updated_at,
 
-    -- Campos de exercise_mechanic_mapping
+    -- Campos de exercise_mechanic_mappings
     m.id AS mapping_id,
     m.mechanic_category,
     m.mechanic_subcategory,
@@ -207,7 +209,7 @@ SELECT
 FROM
     educational_content.exercises e
 LEFT JOIN
-    educational_content.exercise_mechanic_mapping m
+    educational_content.exercise_mechanic_mappings m
     ON e.exercise_type = m.exercise_type
     AND m.is_active = true
 WHERE

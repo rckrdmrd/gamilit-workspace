@@ -1192,8 +1192,7 @@ grep CORS_ORIGIN apps/backend/.env.production
 Para problemas de despliegue:
 1. Revisar logs: `pm2 logs`
 2. Consultar esta documentacion
-3. Verificar `docs/DEPLOYMENT.md` para mas detalles
-4. Revisar `docs/95-guias-desarrollo/DEPLOYMENT-GUIDE.md` para HTTPS
+3. Verificar `DEPLOYMENT-MASTER.md` para guia consolidada completa
 
 ---
 

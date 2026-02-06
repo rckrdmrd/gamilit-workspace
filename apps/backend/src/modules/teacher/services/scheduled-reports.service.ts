@@ -24,7 +24,7 @@ import { MailService } from '@modules/mail/mail.service';
  * DTO for creating a scheduled report
  */
 export interface CreateScheduledReportDto {
-  scheduleName: string;
+  reportName: string;
   reportType: string;
   reportFormat: string;
   classroomId?: string;
@@ -33,7 +33,7 @@ export interface CreateScheduledReportDto {
   dayOfWeek?: number;
   dayOfMonth?: number;
   preferredHour?: number;
-  sendEmail?: boolean;
+  notifyEmail?: boolean;
   emailRecipients?: string[];
 }
 
@@ -41,13 +41,13 @@ export interface CreateScheduledReportDto {
  * DTO for updating a scheduled report
  */
 export interface UpdateScheduledReportDto {
-  scheduleName?: string;
+  reportName?: string;
   frequency?: ScheduleFrequency;
   dayOfWeek?: number;
   dayOfMonth?: number;
   preferredHour?: number;
   status?: ScheduleStatus;
-  sendEmail?: boolean;
+  notifyEmail?: boolean;
   emailRecipients?: string[];
 }
 
@@ -56,19 +56,19 @@ export interface UpdateScheduledReportDto {
  */
 export interface ScheduledReportResponseDto {
   id: string;
-  schedule_name: string;
+  report_name: string;
   report_type: string;
   report_format: string;
   classroom_id: string | null;
   frequency: string;
   day_of_week: number | null;
   day_of_month: number | null;
-  preferred_hour: number;
+  preferred_hour: number | null;
   status: string;
-  last_generated_at: string | null;
+  last_run_at: string | null;
   next_run_at: string | null;
-  total_runs: number;
-  send_email: boolean;
+  run_count: number;
+  notify_email: boolean;
   email_recipients: string[] | null;
   created_at: string;
 }
@@ -125,7 +125,7 @@ export class ScheduledReportsService {
    * Execute a single scheduled report
    */
   private async executeSchedule(schedule: ScheduledReport): Promise<void> {
-    this.logger.log(`Executing scheduled report: ${schedule.scheduleName} (${schedule.id})`);
+    this.logger.log(`Executing scheduled report: ${schedule.reportName} (${schedule.id})`);
 
     try {
       // Build the report generation DTO
@@ -148,15 +148,15 @@ export class ScheduledReportsService {
       const nextRun = this.calculateNextRunAt(schedule.frequency, schedule.dayOfWeek, schedule.dayOfMonth, schedule.preferredHour);
 
       await this.scheduledReportRepo.update(schedule.id, {
-        lastGeneratedAt: now,
+        lastRunAt: now,
         nextRunAt: nextRun,
-        totalRuns: schedule.totalRuns + 1,
+        runCount: schedule.runCount + 1,
       });
 
       this.logger.log(`Successfully executed scheduled report ${schedule.id}. Next run: ${nextRun?.toISOString()}`);
 
       // TASK-2026-01-19-008: Send email notification if enabled
-      if (schedule.sendEmail && schedule.emailRecipients?.length) {
+      if (schedule.notifyEmail && schedule.emailRecipients?.length) {
         await this.sendReportNotificationEmail(schedule);
       }
     } catch (error: unknown) {
@@ -174,7 +174,7 @@ export class ScheduledReportsService {
     tenantId: string,
     dto: CreateScheduledReportDto,
   ): Promise<ScheduledReportResponseDto> {
-    this.logger.log(`Creating scheduled report "${dto.scheduleName}" for teacher ${teacherId}`);
+    this.logger.log(`Creating scheduled report "${dto.reportName}" for teacher ${teacherId}`);
 
     const nextRun = this.calculateNextRunAt(
       dto.frequency,
@@ -186,7 +186,7 @@ export class ScheduledReportsService {
     const schedule = this.scheduledReportRepo.create({
       teacherId,
       tenantId,
-      scheduleName: dto.scheduleName,
+      reportName: dto.reportName,
       reportType: dto.reportType,
       reportFormat: dto.reportFormat,
       classroomId: dto.classroomId || null,
@@ -195,11 +195,11 @@ export class ScheduledReportsService {
       dayOfWeek: dto.dayOfWeek ?? null,
       dayOfMonth: dto.dayOfMonth ?? null,
       preferredHour: dto.preferredHour || 8,
-      sendEmail: dto.sendEmail ?? true,
+      notifyEmail: dto.notifyEmail ?? true,
       emailRecipients: dto.emailRecipients || null,
       status: ScheduleStatus.ACTIVE,
       nextRunAt: nextRun,
-      totalRuns: 0,
+      runCount: 0,
     });
 
     const saved = await this.scheduledReportRepo.save(schedule);
@@ -261,13 +261,13 @@ export class ScheduledReportsService {
     }
 
     // Update fields
-    if (dto.scheduleName !== undefined) schedule.scheduleName = dto.scheduleName;
+    if (dto.reportName !== undefined) schedule.reportName = dto.reportName;
     if (dto.frequency !== undefined) schedule.frequency = dto.frequency;
     if (dto.dayOfWeek !== undefined) schedule.dayOfWeek = dto.dayOfWeek;
     if (dto.dayOfMonth !== undefined) schedule.dayOfMonth = dto.dayOfMonth;
     if (dto.preferredHour !== undefined) schedule.preferredHour = dto.preferredHour;
     if (dto.status !== undefined) schedule.status = dto.status;
-    if (dto.sendEmail !== undefined) schedule.sendEmail = dto.sendEmail;
+    if (dto.notifyEmail !== undefined) schedule.notifyEmail = dto.notifyEmail;
     if (dto.emailRecipients !== undefined) schedule.emailRecipients = dto.emailRecipients;
 
     // Recalculate next run if schedule parameters changed
@@ -349,12 +349,12 @@ export class ScheduledReportsService {
     frequency: ScheduleFrequency,
     dayOfWeek: number | null,
     dayOfMonth: number | null,
-    preferredHour: number,
+    preferredHour: number | null,
   ): Date | null {
     const now = new Date();
     const next = new Date();
     next.setMinutes(0, 0, 0);
-    next.setHours(preferredHour);
+    next.setHours(preferredHour ?? 8);
 
     switch (frequency) {
       case ScheduleFrequency.DAILY:
@@ -371,20 +371,6 @@ export class ScheduledReportsService {
           let daysUntil = dayOfWeek - currentDay;
           if (daysUntil < 0 || (daysUntil === 0 && now >= next)) {
             daysUntil += 7;
-          }
-          next.setDate(next.getDate() + daysUntil);
-        }
-        break;
-
-      case ScheduleFrequency.BIWEEKLY:
-        // Find next occurrence of the specified day of week, then add a week
-        if (dayOfWeek !== null) {
-          const currentDay = now.getDay();
-          let daysUntil = dayOfWeek - currentDay;
-          if (daysUntil < 0 || (daysUntil === 0 && now >= next)) {
-            daysUntil += 14;
-          } else {
-            daysUntil += 7; // Add extra week for biweekly
           }
           next.setDate(next.getDate() + daysUntil);
         }
@@ -423,13 +409,13 @@ export class ScheduledReportsService {
       const reportTypeLabel = this.getReportTypeLabel(schedule.reportType);
       const frequencyLabel = this.getFrequencyLabel(schedule.frequency);
 
-      const subject = `📊 Reporte Programado: ${schedule.scheduleName}`;
+      const subject = `📊 Reporte Programado: ${schedule.reportName}`;
 
       const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #333;">Reporte Programado Generado</h2>
           <p>Hola,</p>
-          <p>Tu reporte programado <strong>${schedule.scheduleName}</strong> ha sido generado exitosamente.</p>
+          <p>Tu reporte programado <strong>${schedule.reportName}</strong> ha sido generado exitosamente.</p>
 
           <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
             <h3 style="margin-top: 0; color: #555;">Detalles del Reporte</h3>
@@ -438,7 +424,7 @@ export class ScheduledReportsService {
               <li><strong>Formato:</strong> ${schedule.reportFormat.toUpperCase()}</li>
               <li><strong>Frecuencia:</strong> ${frequencyLabel}</li>
               <li><strong>Generado:</strong> ${new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })}</li>
-              <li><strong>Total de ejecuciones:</strong> ${schedule.totalRuns + 1}</li>
+              <li><strong>Total de ejecuciones:</strong> ${schedule.runCount + 1}</li>
             </ul>
           </div>
 
@@ -492,7 +478,6 @@ export class ScheduledReportsService {
     const labels: Record<ScheduleFrequency, string> = {
       [ScheduleFrequency.DAILY]: 'Diario',
       [ScheduleFrequency.WEEKLY]: 'Semanal',
-      [ScheduleFrequency.BIWEEKLY]: 'Quincenal',
       [ScheduleFrequency.MONTHLY]: 'Mensual',
     };
     return labels[frequency] || frequency;
@@ -504,7 +489,7 @@ export class ScheduledReportsService {
   private mapToResponseDto(schedule: ScheduledReport): ScheduledReportResponseDto {
     return {
       id: schedule.id,
-      schedule_name: schedule.scheduleName,
+      report_name: schedule.reportName,
       report_type: schedule.reportType,
       report_format: schedule.reportFormat,
       classroom_id: schedule.classroomId,
@@ -513,10 +498,10 @@ export class ScheduledReportsService {
       day_of_month: schedule.dayOfMonth,
       preferred_hour: schedule.preferredHour,
       status: schedule.status,
-      last_generated_at: schedule.lastGeneratedAt?.toISOString() || null,
+      last_run_at: schedule.lastRunAt?.toISOString() || null,
       next_run_at: schedule.nextRunAt?.toISOString() || null,
-      total_runs: schedule.totalRuns,
-      send_email: schedule.sendEmail,
+      run_count: schedule.runCount,
+      notify_email: schedule.notifyEmail,
       email_recipients: schedule.emailRecipients,
       created_at: schedule.createdAt.toISOString(),
     };

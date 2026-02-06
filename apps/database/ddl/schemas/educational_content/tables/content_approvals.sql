@@ -34,7 +34,7 @@ COMMENT ON COLUMN educational_content.content_approvals.reviewer_notes IS 'Notes
 COMMENT ON COLUMN educational_content.content_approvals.revision_notes IS 'Notes from submitter about revisions made';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_content_approvals_updated_at
+CREATE TRIGGER trg_content_approvals_updated_at
     BEFORE UPDATE ON educational_content.content_approvals
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

@@ -1,9 +1,9 @@
--- Tabla: content_metadata
+-- Tabla: content_metadatas
 -- Schema: educational_content
 -- Descripción: Metadatos adicionales para contenido educativo
 -- CREADO: 2025-11-08
 
-CREATE TABLE educational_content.content_metadata (
+CREATE TABLE educational_content.content_metadatas (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     content_type VARCHAR(50) NOT NULL CHECK (content_type IN ('module', 'exercise', 'assignment', 'resource')),
     content_id UUID NOT NULL,
@@ -15,19 +15,19 @@ CREATE TABLE educational_content.content_metadata (
 );
 
 -- Índices
-CREATE INDEX idx_content_metadata_content ON educational_content.content_metadata(content_type, content_id);
-CREATE INDEX idx_content_metadata_key ON educational_content.content_metadata(metadata_key);
-CREATE INDEX idx_content_metadata_value_gin ON educational_content.content_metadata USING GIN(metadata_value);
+CREATE INDEX idx_content_metadatas_content ON educational_content.content_metadatas(content_type, content_id);
+CREATE INDEX idx_content_metadatas_key ON educational_content.content_metadatas(metadata_key);
+CREATE INDEX idx_content_metadatas_value_gin ON educational_content.content_metadatas USING GIN(metadata_value);
 
 -- Comentarios
-COMMENT ON TABLE educational_content.content_metadata IS 'Additional metadata for educational content items';
-COMMENT ON COLUMN educational_content.content_metadata.content_type IS 'Type of content: module, exercise, assignment, or resource';
-COMMENT ON COLUMN educational_content.content_metadata.content_id IS 'ID of the content item in its respective table';
-COMMENT ON COLUMN educational_content.content_metadata.metadata_key IS 'Metadata key (e.g., "difficulty_level", "estimated_time", "standards")';
-COMMENT ON COLUMN educational_content.content_metadata.metadata_value IS 'JSONB value for flexible metadata storage';
+COMMENT ON TABLE educational_content.content_metadatas IS 'Additional metadata for educational content items';
+COMMENT ON COLUMN educational_content.content_metadatas.content_type IS 'Type of content: module, exercise, assignment, or resource';
+COMMENT ON COLUMN educational_content.content_metadatas.content_id IS 'ID of the content item in its respective table';
+COMMENT ON COLUMN educational_content.content_metadatas.metadata_key IS 'Metadata key (e.g., "difficulty_level", "estimated_time", "standards")';
+COMMENT ON COLUMN educational_content.content_metadatas.metadata_value IS 'JSONB value for flexible metadata storage';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_content_metadata_updated_at
-    BEFORE UPDATE ON educational_content.content_metadata
+CREATE TRIGGER trg_content_metadatas_updated_at
+    BEFORE UPDATE ON educational_content.content_metadatas
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

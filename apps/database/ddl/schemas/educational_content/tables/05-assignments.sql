@@ -31,7 +31,7 @@ COMMENT ON COLUMN educational_content.assignments.total_points IS 'Maximum point
 COMMENT ON COLUMN educational_content.assignments.is_published IS 'Whether assignment is visible to students';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_assignments_updated_at
+CREATE TRIGGER trg_assignments_updated_at
     BEFORE UPDATE ON educational_content.assignments
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

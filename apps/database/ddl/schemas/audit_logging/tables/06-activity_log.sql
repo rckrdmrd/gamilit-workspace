@@ -1,5 +1,5 @@
 -- =====================================================
--- Table: audit_logging.activity_log
+-- Table: audit_logging.activity_logs
 -- Description: Activity log for admin dashboard monitoring
 -- Created: 2025-11-24
 -- Gap: GAP-DB-001 (CRITICAL)
@@ -22,13 +22,13 @@ SET search_path TO audit_logging, public;
 -- =====================================================
 -- DROP TABLE (if migrating)
 -- =====================================================
--- DROP TABLE IF EXISTS audit_logging.activity_log CASCADE;
+-- DROP TABLE IF EXISTS audit_logging.activity_logs CASCADE;
 
 -- =====================================================
 -- CREATE TABLE
 -- =====================================================
 
-CREATE TABLE IF NOT EXISTS audit_logging.activity_log (
+CREATE TABLE IF NOT EXISTS audit_logging.activity_logs (
     -- =====================================================
     -- PRIMARY KEY
     -- =====================================================
@@ -63,10 +63,10 @@ CREATE TABLE IF NOT EXISTS audit_logging.activity_log (
     -- =====================================================
     -- CONSTRAINTS
     -- =====================================================
-    CONSTRAINT activity_log_pkey PRIMARY KEY (id),
+    CONSTRAINT activity_logs_pkey PRIMARY KEY (id),
 
     -- Foreign Keys (FK corregida: auth.users -> auth_management.profiles - 2025-11-26)
-    CONSTRAINT activity_log_user_id_fkey FOREIGN KEY (user_id)
+    CONSTRAINT activity_logs_user_id_fkey FOREIGN KEY (user_id)
         REFERENCES auth_management.profiles(id) ON DELETE CASCADE
 );
 
@@ -75,32 +75,32 @@ CREATE TABLE IF NOT EXISTS audit_logging.activity_log (
 -- =====================================================
 
 -- User lookup (most common query)
-CREATE INDEX IF NOT EXISTS idx_activity_log_user_id
-    ON audit_logging.activity_log USING btree (user_id);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id
+    ON audit_logging.activity_logs USING btree (user_id);
 
 -- Time-based queries (dashboard recent activity)
-CREATE INDEX IF NOT EXISTS idx_activity_log_created_at
-    ON audit_logging.activity_log USING btree (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_created_at
+    ON audit_logging.activity_logs USING btree (created_at DESC);
 
 -- Action type filtering
-CREATE INDEX IF NOT EXISTS idx_activity_log_action_type
-    ON audit_logging.activity_log USING btree (action_type);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_action_type
+    ON audit_logging.activity_logs USING btree (action_type);
 
 -- Composite index for active users queries
-CREATE INDEX IF NOT EXISTS idx_activity_log_user_created
-    ON audit_logging.activity_log USING btree (user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_user_created
+    ON audit_logging.activity_logs USING btree (user_id, created_at DESC);
 
 -- Metadata search (GIN index for JSONB queries)
-CREATE INDEX IF NOT EXISTS idx_activity_log_metadata
-    ON audit_logging.activity_log USING gin (metadata);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_metadata
+    ON audit_logging.activity_logs USING gin (metadata);
 
 -- =====================================================
 -- TRIGGERS
 -- =====================================================
 
 -- Auto-update updated_at timestamp
-CREATE TRIGGER trg_activity_log_updated_at
-    BEFORE UPDATE ON audit_logging.activity_log
+CREATE TRIGGER trg_activity_logs_updated_at
+    BEFORE UPDATE ON audit_logging.activity_logs
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();
 
@@ -109,23 +109,23 @@ CREATE TRIGGER trg_activity_log_updated_at
 -- =====================================================
 
 -- Enable RLS
-ALTER TABLE audit_logging.activity_log ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_logging.activity_logs ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Users can view their own activity
-CREATE POLICY activity_log_select_own
-    ON audit_logging.activity_log
+CREATE POLICY activity_logs_select_own
+    ON audit_logging.activity_logs
     FOR SELECT
     USING (user_id = gamilit.get_current_user_id());
 
 -- Policy: Admins can view all activity
-CREATE POLICY activity_log_select_admin
-    ON audit_logging.activity_log
+CREATE POLICY activity_logs_select_admin
+    ON audit_logging.activity_logs
     FOR SELECT
     USING (gamilit.is_admin());
 
 -- Policy: System can insert activity (for triggers/functions)
-CREATE POLICY activity_log_insert_system
-    ON audit_logging.activity_log
+CREATE POLICY activity_logs_insert_system
+    ON audit_logging.activity_logs
     FOR INSERT
     WITH CHECK (true);
 
@@ -133,37 +133,37 @@ CREATE POLICY activity_log_insert_system
 -- GRANTS
 -- =====================================================
 
-GRANT ALL ON TABLE audit_logging.activity_log TO gamilit_user;
+GRANT ALL ON TABLE audit_logging.activity_logs TO gamilit_user;
 
 -- =====================================================
 -- COMMENTS
 -- =====================================================
 
-COMMENT ON TABLE audit_logging.activity_log IS
+COMMENT ON TABLE audit_logging.activity_logs IS
     'Activity log for admin dashboard monitoring and audit trail. Tracks user actions across the system.';
 
-COMMENT ON COLUMN audit_logging.activity_log.user_id IS
+COMMENT ON COLUMN audit_logging.activity_logs.user_id IS
     'User who performed the action';
 
-COMMENT ON COLUMN audit_logging.activity_log.action_type IS
+COMMENT ON COLUMN audit_logging.activity_logs.action_type IS
     'Type of action performed (e.g., login, exercise_complete, module_start, etc.)';
 
-COMMENT ON COLUMN audit_logging.activity_log.entity_type IS
+COMMENT ON COLUMN audit_logging.activity_logs.entity_type IS
     'Type of entity the action was performed on (e.g., user, exercise, module, etc.)';
 
-COMMENT ON COLUMN audit_logging.activity_log.entity_id IS
+COMMENT ON COLUMN audit_logging.activity_logs.entity_id IS
     'ID of the entity the action was performed on';
 
-COMMENT ON COLUMN audit_logging.activity_log.description IS
+COMMENT ON COLUMN audit_logging.activity_logs.description IS
     'Human-readable description of the action';
 
-COMMENT ON COLUMN audit_logging.activity_log.metadata IS
+COMMENT ON COLUMN audit_logging.activity_logs.metadata IS
     'Additional context about the action (JSONB)';
 
-COMMENT ON COLUMN audit_logging.activity_log.ip_address IS
+COMMENT ON COLUMN audit_logging.activity_logs.ip_address IS
     'IP address from which the action originated';
 
-COMMENT ON COLUMN audit_logging.activity_log.user_agent IS
+COMMENT ON COLUMN audit_logging.activity_logs.user_agent IS
     'User agent string from the request';
 
 -- =====================================================
@@ -183,18 +183,18 @@ COMMENT ON COLUMN audit_logging.activity_log.user_agent IS
 -- Query Examples:
 --
 -- -- Get recent activity (last 100 actions)
--- SELECT * FROM audit_logging.activity_log
+-- SELECT * FROM audit_logging.activity_logs
 -- ORDER BY created_at DESC
 -- LIMIT 100;
 --
 -- -- Count active users in last 24h
 -- SELECT COUNT(DISTINCT user_id) as active_users
--- FROM audit_logging.activity_log
+-- FROM audit_logging.activity_logs
 -- WHERE created_at >= NOW() - INTERVAL '24 hours';
 --
 -- -- Get exercises completed in last 24h
 -- SELECT COUNT(*) as exercises_completed
--- FROM audit_logging.activity_log
+-- FROM audit_logging.activity_logs
 -- WHERE action_type LIKE '%exercise%'
 --   AND created_at >= NOW() - INTERVAL '24 hours';
 --
@@ -204,7 +204,7 @@ COMMENT ON COLUMN audit_logging.activity_log.user_agent IS
 
 -- Gap Resolved: GAP-DB-001 (CRITICAL)
 -- Date: 2025-11-24
--- Issue: Backend used audit_logging.activity_log but table didn't exist
+-- Issue: Backend used audit_logging.activity_logs but table didn't exist
 -- Solution: Created table with structure compatible with backend queries
 --
 -- IMPORTANT:
@@ -214,6 +214,6 @@ COMMENT ON COLUMN audit_logging.activity_log.user_agent IS
 --
 -- Related Migration:
 -- - apps/database/scripts/migrations/DB-XXX-create-activity-log.sql
--- - apps/database/seeds/dev/audit_logging/01-activity_log_sample.sql
+-- - apps/database/seeds/dev/audit_logging/01-activity_logs_sample.sql
 --
 -- =====================================================

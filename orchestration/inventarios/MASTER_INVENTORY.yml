@@ -2,11 +2,11 @@
 # Resumen consolidado de todos los inventarios
 # Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "5.4.0"
+version: "6.0.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
-fecha_actualizacion: "2026-02-03"
-actualizado_por: "TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS"
-last_update_task: "TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS"
+fecha_actualizacion: "2026-02-05"
+actualizado_por: "TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD"
+last_update_task: "TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD"
 
 # =============================================================================
 # RESUMEN EJECUTIVO
@@ -16,17 +16,18 @@ resumen:
   estado_general: "OPERATIVO"
 
   database:
-    schemas: 16  # 13 active + 3 empty (gamilit, public, storage)
-    schemas_active: 13
-    tables: 140  # RECONCILIADO 2026-02-02 - Auditoria directa DDL
-    views: 13  # CORREGIDO 2026-02-02 - Era 20 (error)
-    materialized_views: 4  # CORREGIDO 2026-02-02 - Era 11 (error)
-    enums: 36  # Verificado 2026-02-02
-    functions: 159  # AUDITADO 2026-02-03 - FUNCTIONS-INDEX.md (159 funciones catalogadas)
-    triggers: 58  # CORREGIDO 2026-02-02 - Era 10 (error critico), 37 archivos
-    policies_rls: 299  # AUDITADO 2026-02-03 - RLS-POLICIES-MASTER.md (299 policies catalogadas)
-    indexes_files: 23  # Verificado 2026-02-02
-    ddl_objects_total: 390  # tables(140) + functions(119) + triggers(58) + rls(34) + enums(36) + indexes(23) - Recalculado
+    schemas: 18  # RECONCILIADO 2026-02-05 - 16 activos + 2 placeholder (public, storage)
+    schemas_active: 16  # RECONCILIADO 2026-02-05 - 16 schemas con objetos
+    tables: 171  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo DDL (era 140)
+    views: 13  # Verificado 2026-02-05
+    materialized_views: 7  # CORREGIDO 2026-02-05 - Era 4 (faltaban 3 admin_dashboard MVs)
+    enums: 36  # Verificado 2026-02-05
+    functions: 128  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo (era 159)
+    triggers: 49  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo (era 58)
+    policies_rls: 299  # AUDITADO 2026-02-03 - RLS-POLICIES-MASTER.md
+    indexes_files: 23  # Verificado 2026-02-05
+    foreign_keys: 299  # NUEVO 2026-02-05 - FASE-4 conteo exhaustivo
+    ddl_objects_total: 465  # tables(171) + functions(128) + triggers(49) + rls(37) + enums(36) + indexes(23) + views(13) + mvs(7) + FKs(no counted)
     seed_files_dev: 106  # TASK-022 AUDITORIA 2026-01-27
     seed_files_prod: 71  # TASK-022 AUDITORIA 2026-01-27
     seed_coverage_config_tables: "73.8%"  # 62/84 config/lookup tables
@@ -34,18 +35,17 @@ resumen:
     seed_gaps_high: 8  # Feature-degrading missing seeds
     seed_orphaned_files: 0  # RESUELTO: 18 integrados en load-dev-seeds.sh (P1-2)
     status: "Clean creation compliant"
-    last_verified: "2026-02-02"
-    source: "DATABASE_INVENTORY.yml"
+    last_verified: "2026-02-05"
+    source: "DATABASE_INVENTORY.yml v6.0.0"
     reconciliation_note: |
-      TASK-2026-02-02: Reconciliacion mediante auditoria directa de archivos DDL.
-      Discrepancias anteriores: functions(15), triggers(10), views(20), mat_views(11)
-      Valores correctos auditados: functions(119), triggers(58), views(13), mat_views(4)
-      LIMPIEZA 2026-02-02: 14 funciones deprecated eliminadas, 8 enums deprecated eliminados,
-      3 tablas deprecated eliminadas, 4 views deprecated eliminadas. Total actual: 112 funciones.
+      TASK-2026-02-05: Reconciliacion exhaustiva FASE-1 del Analisis Integral.
+      Cambios principales: tables 140->171 (+31), functions 159->128, triggers 58->49,
+      materialized_views 4->7, foreign_keys 241->299.
+      Tablas nuevas: data_warehouse(16), social_features ext(10), educational_content(4), system_config(3).
 
   backend:
     modules: 22  # Updated 2026-01-27: +4 new modules (lti, white-label, peer-challenges, parent-notifications) + parent-portal from completions
-    entities: 158  # Updated 2026-01-27: +23 new entities from partial epic implementations
+    entities: 141  # RECONCILIADO 2026-02-05: conteo real entities TypeORM (era 158, inflado por DTOs)
     dtos: 412  # Updated 2026-01-27: +46 new DTOs from API extensions
     services: 145  # Updated 2026-01-27: +25 new specialized services for partial epics
     controllers: 103  # Updated 2026-01-27: +23 new controllers for partial epic endpoints
@@ -54,9 +54,9 @@ resumen:
     decorators: 18  # Added: +3 new decorators for branding/LTI
     build_status: "Builds successfully"
     lint_status: "0 errors, 904 warnings (pre-existing no-explicit-any)"
-    coherencia_ddl: "100%"  # TASK-022 P1-1: 135/135 properly mapped via DB_TABLES
+    coherencia_ddl: "82.5%"  # RECONCILIADO 2026-02-05: 141/171 entities mapped
     entities_hardcoded_names: 0  # RESUELTO: 10 entities actualizadas (P1-1)
-    ddl_tables_without_entity: 7  # content_tags, content_approvals, discussion_threads, social_interactions, teacher_classrooms, user_follows, message_participants
+    ddl_tables_without_entity: 30  # RECONCILIADO 2026-02-05: 171-141=30 (16 data_warehouse, 6 operacionales, 8 junction/M:N)
     orphan_entities: 0  # All entities have DDL tables
     last_verified: "2026-01-27"
     source: "BACKEND_INVENTORY.yml"

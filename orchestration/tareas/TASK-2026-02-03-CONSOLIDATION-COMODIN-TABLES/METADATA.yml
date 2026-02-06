@@ -1,0 +1,105 @@
+# METADATA.yml - Task Documentation
+# Sistema: SIMCO v4.3.0
+# Proyecto: GAMILIT
+
+task_id: TASK-2026-02-03-CONSOLIDATION-COMODIN-TABLES
+title: "Analysis and Consolidation Plan for Comodin Usage Tables"
+description: |
+  Research and analysis of duplicate comodin usage tables in gamification_system schema.
+  Determines if tables serve distinct purposes or should be consolidated.
+
+# Gap Reference
+gap_id: DUP-001
+gap_description: "85% Similar Tables - comodin_usage_log vs comodin_usage_tracking"
+
+# Status
+status: completed
+result: analysis_only  # No consolidation needed
+recommendation: keep_as_is
+
+# Dates
+created_at: 2026-02-03
+completed_at: 2026-02-03
+
+# Agent
+agent: "@REFACTOR_AGENT"
+mode: ANALYSIS
+
+# Scope
+scope:
+  project: gamilit
+  schema: gamification_system
+  tables_analyzed:
+    - comodines_inventory
+    - comodin_usage_tracking
+    - comodin_usage_log
+    - comodin_uses
+
+# Analysis Results
+findings:
+  tables_with_distinct_purposes:
+    - table: comodines_inventory
+      purpose: "Balance SSOT - one row per user with available/purchased/used totals"
+      verdict: ESSENTIAL
+
+    - table: comodin_usage_tracking
+      purpose: "Per-attempt limit enforcement with CHECK constraints"
+      verdict: ESSENTIAL
+
+    - table: comodin_usage_log
+      purpose: "Event log with mission trigger dependency"
+      verdict: OVERLAPS_WITH_COMODIN_USES
+
+    - table: comodin_uses
+      purpose: "Immutable audit trail for compliance"
+      verdict: KEEP
+
+  overlap_analysis:
+    similar_tables:
+      - comodin_usage_log
+      - comodin_uses
+    overlap_percentage: 70
+    key_differences:
+      - "comodin_uses has FK constraints"
+      - "comodin_uses has no UNIQUE constraint (allows multiples)"
+      - "comodin_usage_log has mission trigger dependency"
+
+  false_positive_explanation: |
+    The original DUP-001 gap compared comodin_usage_log with comodin_usage_tracking.
+    These tables have ~0% functional overlap:
+    - tracking: counters with limits (1 row per attempt)
+    - log: event records (N rows per attempt)
+    The naming similarity caused the false positive.
+
+# Recommendation
+recommendation_details:
+  option: A
+  name: "Keep System As-Is"
+  rationale: |
+    - Tables serve distinct purposes
+    - Trigger dependencies exist
+    - No immediate benefit to consolidation
+    - Risk of breaking functionality outweighs benefit
+
+  future_consideration: |
+    If consolidation is desired later, merge comodin_usage_log INTO comodin_uses
+    and migrate the mission trigger. Do NOT consolidate tracking table.
+
+# Artifacts
+artifacts:
+  - file: ANALYSIS.md
+    type: analysis_document
+    description: "Detailed analysis with architecture diagram"
+
+# No changes made
+changes_made: []
+migrations_required: []
+breaking_changes: []
+
+# Tags
+tags:
+  - database
+  - gamification
+  - comodines
+  - analysis
+  - no-action-required

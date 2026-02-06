@@ -1,0 +1,95 @@
+# METADATA.yml - Task Metadata
+# TASK-2026-02-03-CONSOLIDACION-AUDIT-TABLES
+
+task_id: TASK-2026-02-03-CONSOLIDACION-AUDIT-TABLES
+title: "Plan de Consolidacion de Tablas de Auditoria"
+type: PLAN
+status: DRAFT
+priority: HIGH
+
+# Gap Reference
+gap_id: OVR-001
+gap_type: CRITICAL_TABLE_OVERLAP
+gap_description: "4 tables in audit_logging schema store overlapping activity data"
+
+# Context
+project: gamilit
+schema: audit_logging
+affected_tables:
+  - audit_logging.audit_logs
+  - audit_logging.system_logs
+  - audit_logging.user_activity_logs
+  - audit_logging.activity_log
+
+# Analysis Summary
+current_state:
+  total_tables: 4
+  total_columns: 88
+  overlapping_columns: 15
+  redundant_writes: "3-4x per event"
+  cleanup_functions: 4
+
+proposed_state:
+  total_tables: 1
+  table_name: unified_activity_log
+  total_columns: 60
+  partitioning: monthly
+  cleanup_functions: 1
+  compatibility_views: 4
+
+# Timeline
+estimated_duration: "4-6 weeks"
+phases:
+  - name: "Create New Table"
+    duration: "1 day"
+    risk: LOW
+  - name: "Dual-Write Implementation"
+    duration: "5 days"
+    risk: MEDIUM
+  - name: "Historical Data Migration"
+    duration: "3-5 days"
+    risk: MEDIUM
+  - name: "Switch to Unified Table"
+    duration: "3 days"
+    risk: HIGH
+  - name: "Deprecate Old Tables"
+    duration: "2-4 weeks"
+    risk: LOW
+
+# Agent Information
+created_by: "@ARCHITECT_AGENT"
+created_at: "2026-02-03"
+updated_at: "2026-02-03"
+
+# Documents
+documents:
+  - path: "PLAN-CONSOLIDACION-AUDIT-TABLES.md"
+    type: plan
+    status: READY_FOR_REVIEW
+
+# Dependencies
+dependencies:
+  - backend_team_availability
+  - dba_review
+  - testing_environment
+
+# Approval Status
+approvals:
+  architecture_review: PENDING
+  dba_review: PENDING
+  backend_team: PENDING
+  stakeholder_signoff: PENDING
+
+# Tags
+tags:
+  - database
+  - consolidation
+  - audit
+  - performance
+  - maintenance
+
+# Notes
+notes: |
+  This is a PLAN document only. No migrations have been executed.
+  Requires architecture review before proceeding to implementation.
+  See PLAN-CONSOLIDACION-AUDIT-TABLES.md for full details.

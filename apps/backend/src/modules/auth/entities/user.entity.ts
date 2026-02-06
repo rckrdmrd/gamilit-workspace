@@ -5,12 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-      ManyToMany,
-  JoinTable,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { DB_TABLES, GamilityRoleEnum } from '@shared/constants';
-import { Role } from './role.entity';
 
 /**
  * User Entity (auth.users)
@@ -171,21 +168,11 @@ export class User {
   // @OneToOne(() => Profile, (profile) => profile.user)
   // profile?: Profile;
 
-  /**
-   * Roles del usuario (RBAC)
-   * Relación ManyToMany: Un usuario puede tener múltiples roles
-   * Tabla intermedia: auth_management.user_roles
-   *
-   * NOTA: Este es el sistema RBAC nuevo. El campo 'role' (enum) se mantiene por backwards compatibility.
-   */
-  @ManyToMany(() => Role, (role) => role.users)
-  @JoinTable({
-    name: 'user_roles',
-    schema: 'auth_management',
-    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
-  })
-    roles?: Role[];
+  // FIX H-022: @ManyToMany removed - DDL user_roles is NOT a standard junction table.
+  // user_roles.user_id → profiles(id) (not users(id))
+  // user_roles has `role` ENUM column (not `role_id` FK to roles table)
+  // user_roles has its own fields (permissions, assigned_by, expires_at, etc.)
+  // Access via UserRole entity instead of ManyToMany relation.
 
   // Relaciones futuras:
   // @OneToMany(() => UserSession, (session) => session.user)

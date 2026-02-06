@@ -37,7 +37,7 @@ COMMENT ON COLUMN educational_content.assignment_submissions.score IS 'Numeric s
 COMMENT ON COLUMN educational_content.assignment_submissions.graded_by IS 'References profiles.id (teacher who graded this submission)';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_assignment_submissions_updated_at
+CREATE TRIGGER trg_assignment_submissions_updated_at
     BEFORE UPDATE ON educational_content.assignment_submissions
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

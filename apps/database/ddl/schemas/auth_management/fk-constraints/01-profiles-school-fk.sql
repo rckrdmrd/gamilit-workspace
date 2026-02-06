@@ -36,7 +36,7 @@ SET search_path TO auth_management, public;
 -- =====================================================
 
 ALTER TABLE auth_management.profiles
-    ADD CONSTRAINT profiles_school_id_fkey
+    ADD CONSTRAINT fk_profiles_school_id
     FOREIGN KEY (school_id)
     REFERENCES social_features.schools(id)
     ON DELETE SET NULL;
@@ -45,7 +45,7 @@ ALTER TABLE auth_management.profiles
 -- COMMENT
 -- =====================================================
 
-COMMENT ON CONSTRAINT profiles_school_id_fkey ON auth_management.profiles IS
+COMMENT ON CONSTRAINT fk_profiles_school_id ON auth_management.profiles IS
 'FK diferido agregado después de crear schools (Fase 9) para resolver dependencia circular.
 Permite a los estudiantes asociarse a una escuela.
 Ver: REPORTE-ANALISIS-DEPENDENCIAS-DDL-2025-11-10.md [DEP-001]';
@@ -63,12 +63,12 @@ BEGIN
     FROM information_schema.table_constraints
     WHERE constraint_schema = 'auth_management'
       AND table_name = 'profiles'
-      AND constraint_name = 'profiles_school_id_fkey'
+      AND constraint_name = 'fk_profiles_school_id'
       AND constraint_type = 'FOREIGN KEY';
 
     IF fk_count = 1 THEN
-        RAISE NOTICE '✓ FK profiles_school_id_fkey creado correctamente';
+        RAISE NOTICE '✓ FK fk_profiles_school_id creado correctamente';
     ELSE
-        RAISE WARNING '⚠ FK profiles_school_id_fkey NO fue creado';
+        RAISE WARNING '⚠ FK fk_profiles_school_id NO fue creado';
     END IF;
 END $$;

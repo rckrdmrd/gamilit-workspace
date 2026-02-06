@@ -103,7 +103,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_update_classroom_modules_timestamp
+CREATE TRIGGER trg_classroom_modules_updated_at
     BEFORE UPDATE ON educational_content.classroom_modules
     FOR EACH ROW
     EXECUTE FUNCTION educational_content.update_classroom_modules_timestamp();

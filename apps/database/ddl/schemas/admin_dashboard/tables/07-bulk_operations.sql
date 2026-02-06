@@ -31,7 +31,11 @@ CREATE TABLE admin_dashboard.bulk_operations (
     error_details JSONB DEFAULT '[]'::jsonb,
 
     -- Auditoría
-    started_by UUID NOT NULL REFERENCES auth.users(id),
+    started_by UUID NOT NULL,
+    CONSTRAINT fk_bulk_operations_started_by FOREIGN KEY (started_by)
+        REFERENCES auth_management.profiles(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
     started_at TIMESTAMP DEFAULT gamilit.now_mexico(),
     completed_at TIMESTAMP,
 

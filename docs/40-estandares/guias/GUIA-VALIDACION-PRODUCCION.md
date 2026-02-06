@@ -658,7 +658,7 @@ ORDER BY m.order_index;
 Para problemas no cubiertos en esta guia:
 1. Revisar logs: `pm2 logs`
 2. Consultar `GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md`
-3. Revisar `docs/DEPLOYMENT.md`
+3. Revisar `DEPLOYMENT-MASTER.md` (guia consolidada)
 
 ---
 

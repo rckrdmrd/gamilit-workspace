@@ -1,5 +1,5 @@
 -- =====================================================
--- Table: data_warehouse.dim_module
+-- Table: data_warehouse.dim_modules
 -- Description: Module dimension for educational content analytics
 -- Type: Dimension
 -- Grain: One row per module
@@ -11,9 +11,9 @@
 
 SET search_path TO data_warehouse, public;
 
-DROP TABLE IF EXISTS data_warehouse.dim_module CASCADE;
+DROP TABLE IF EXISTS data_warehouse.dim_modules CASCADE;
 
-CREATE TABLE data_warehouse.dim_module (
+CREATE TABLE data_warehouse.dim_modules (
     -- =====================================================
     -- SURROGATE KEY
     -- =====================================================
@@ -95,43 +95,43 @@ CREATE TABLE data_warehouse.dim_module (
     -- =====================================================
     -- CONSTRAINTS
     -- =====================================================
-    CONSTRAINT dim_module_pkey PRIMARY KEY (module_key),
-    CONSTRAINT dim_module_module_id_key UNIQUE (module_id),
-    CONSTRAINT dim_module_difficulty_check CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced', 'expert')),
-    CONSTRAINT dim_module_status_check CHECK (status IN ('draft', 'review', 'approved', 'published', 'archived'))
+    CONSTRAINT dim_modules_pkey PRIMARY KEY (module_key),
+    CONSTRAINT dim_modules_module_id_key UNIQUE (module_id),
+    CONSTRAINT dim_modules_difficulty_check CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced', 'expert')),
+    CONSTRAINT dim_modules_status_check CHECK (status IN ('draft', 'review', 'approved', 'published', 'archived'))
 );
 
 -- =====================================================
 -- INDEXES
 -- =====================================================
-CREATE INDEX idx_dim_module_module_id ON data_warehouse.dim_module USING btree (module_id);
-CREATE INDEX idx_dim_module_order ON data_warehouse.dim_module USING btree (order_index);
-CREATE INDEX idx_dim_module_difficulty ON data_warehouse.dim_module USING btree (difficulty_level);
-CREATE INDEX idx_dim_module_published ON data_warehouse.dim_module USING btree (is_published) WHERE is_published = TRUE;
-CREATE INDEX idx_dim_module_status ON data_warehouse.dim_module USING btree (status);
-CREATE INDEX idx_dim_module_rank_required ON data_warehouse.dim_module USING btree (maya_rank_required);
+CREATE INDEX idx_dim_modules_module_id ON data_warehouse.dim_modules USING btree (module_id);
+CREATE INDEX idx_dim_modules_order ON data_warehouse.dim_modules USING btree (order_index);
+CREATE INDEX idx_dim_modules_difficulty ON data_warehouse.dim_modules USING btree (difficulty_level);
+CREATE INDEX idx_dim_modules_published ON data_warehouse.dim_modules USING btree (is_published) WHERE is_published = TRUE;
+CREATE INDEX idx_dim_modules_status ON data_warehouse.dim_modules USING btree (status);
+CREATE INDEX idx_dim_modules_rank_required ON data_warehouse.dim_modules USING btree (maya_rank_required);
 
 -- Grade levels GIN index for array containment queries
-CREATE INDEX idx_dim_module_grade_levels ON data_warehouse.dim_module USING gin (grade_levels);
+CREATE INDEX idx_dim_modules_grade_levels ON data_warehouse.dim_modules USING gin (grade_levels);
 
 -- =====================================================
 -- OWNERSHIP AND PERMISSIONS
 -- =====================================================
-ALTER TABLE data_warehouse.dim_module OWNER TO gamilit_user;
-GRANT SELECT, INSERT, UPDATE ON data_warehouse.dim_module TO gamilit_user;
-GRANT USAGE ON SEQUENCE data_warehouse.dim_module_module_key_seq TO gamilit_user;
+ALTER TABLE data_warehouse.dim_modules OWNER TO gamilit_user;
+GRANT SELECT, INSERT, UPDATE ON data_warehouse.dim_modules TO gamilit_user;
+GRANT USAGE ON SEQUENCE data_warehouse.dim_modules_module_key_seq TO gamilit_user;
 
 -- =====================================================
 -- COMMENTS
 -- =====================================================
-COMMENT ON TABLE data_warehouse.dim_module IS
+COMMENT ON TABLE data_warehouse.dim_modules IS
 'Module dimension - Educational content structure for analytics.
 Grain: One row per module.
 Source: educational_content.modules.
 GAMILIT has 5 core modules based on Marie Curie story for reading comprehension.
 Modules unlock progressively based on Maya ranks.';
 
-COMMENT ON COLUMN data_warehouse.dim_module.module_key IS 'Surrogate key for fact table joins';
-COMMENT ON COLUMN data_warehouse.dim_module.module_id IS 'Natural key from educational_content.modules.id';
-COMMENT ON COLUMN data_warehouse.dim_module.maya_rank_required IS 'Maya rank needed to access this module';
-COMMENT ON COLUMN data_warehouse.dim_module.maya_rank_granted IS 'Maya rank earned upon module completion';
+COMMENT ON COLUMN data_warehouse.dim_modules.module_key IS 'Surrogate key for fact table joins';
+COMMENT ON COLUMN data_warehouse.dim_modules.module_id IS 'Natural key from educational_content.modules.id';
+COMMENT ON COLUMN data_warehouse.dim_modules.maya_rank_required IS 'Maya rank needed to access this module';
+COMMENT ON COLUMN data_warehouse.dim_modules.maya_rank_granted IS 'Maya rank earned upon module completion';

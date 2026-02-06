@@ -1,9 +1,9 @@
--- Tabla: mastery_tracking
+-- Tabla: mastery_trackings
 -- Schema: progress_tracking
 -- Descripción: Seguimiento de dominio de temas/conceptos por usuario
 -- CREADO: 2025-11-08
 
-CREATE TABLE progress_tracking.mastery_tracking (
+CREATE TABLE progress_tracking.mastery_trackings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     module_id UUID NOT NULL REFERENCES educational_content.modules(id) ON DELETE CASCADE,
@@ -20,23 +20,23 @@ CREATE TABLE progress_tracking.mastery_tracking (
 );
 
 -- Índices
-CREATE INDEX idx_mastery_tracking_user_id ON progress_tracking.mastery_tracking(user_id);
-CREATE INDEX idx_mastery_tracking_module_id ON progress_tracking.mastery_tracking(module_id);
-CREATE INDEX idx_mastery_tracking_status ON progress_tracking.mastery_tracking(status);
-CREATE INDEX idx_mastery_tracking_mastery_level ON progress_tracking.mastery_tracking(mastery_level);
-CREATE INDEX idx_mastery_tracking_user_module ON progress_tracking.mastery_tracking(user_id, module_id);
-CREATE INDEX idx_mastery_tracking_needs_review ON progress_tracking.mastery_tracking(user_id) WHERE status = 'needs_review';
+CREATE INDEX idx_mastery_trackings_user_id ON progress_tracking.mastery_trackings(user_id);
+CREATE INDEX idx_mastery_trackings_module_id ON progress_tracking.mastery_trackings(module_id);
+CREATE INDEX idx_mastery_trackings_status ON progress_tracking.mastery_trackings(status);
+CREATE INDEX idx_mastery_trackings_mastery_level ON progress_tracking.mastery_trackings(mastery_level);
+CREATE INDEX idx_mastery_trackings_user_module ON progress_tracking.mastery_trackings(user_id, module_id);
+CREATE INDEX idx_mastery_trackings_needs_review ON progress_tracking.mastery_trackings(user_id) WHERE status = 'needs_review';
 
 -- Comentarios
-COMMENT ON TABLE progress_tracking.mastery_tracking IS 'Tracking of topic/concept mastery by user';
-COMMENT ON COLUMN progress_tracking.mastery_tracking.topic IS 'Specific topic or concept being tracked';
-COMMENT ON COLUMN progress_tracking.mastery_tracking.mastery_level IS 'Mastery percentage (0-100) based on performance';
-COMMENT ON COLUMN progress_tracking.mastery_tracking.attempts_count IS 'Total attempts on exercises for this topic';
-COMMENT ON COLUMN progress_tracking.mastery_tracking.correct_attempts IS 'Number of correct attempts';
-COMMENT ON COLUMN progress_tracking.mastery_tracking.status IS 'Status: not_started, learning, practicing, mastered, needs_review';
+COMMENT ON TABLE progress_tracking.mastery_trackings IS 'Tracking of topic/concept mastery by user';
+COMMENT ON COLUMN progress_tracking.mastery_trackings.topic IS 'Specific topic or concept being tracked';
+COMMENT ON COLUMN progress_tracking.mastery_trackings.mastery_level IS 'Mastery percentage (0-100) based on performance';
+COMMENT ON COLUMN progress_tracking.mastery_trackings.attempts_count IS 'Total attempts on exercises for this topic';
+COMMENT ON COLUMN progress_tracking.mastery_trackings.correct_attempts IS 'Number of correct attempts';
+COMMENT ON COLUMN progress_tracking.mastery_trackings.status IS 'Status: not_started, learning, practicing, mastered, needs_review';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_mastery_tracking_updated_at
-    BEFORE UPDATE ON progress_tracking.mastery_tracking
+CREATE TRIGGER trg_mastery_trackings_updated_at
+    BEFORE UPDATE ON progress_tracking.mastery_trackings
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

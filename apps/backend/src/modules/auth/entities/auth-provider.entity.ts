@@ -4,115 +4,93 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
   Index,
+  Unique,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 import { AuthProviderEnum } from '@shared/constants/enums.constants';
-import { User } from './user.entity';
 
 /**
  * AuthProvider Entity
  *
- * @description Vinculación de usuarios con proveedores OAuth (Google, Facebook, Apple, etc.)
+ * @description Configuración de proveedores de autenticación OAuth/Social.
+ * Tabla de configuración global (NO per-user). Define qué proveedores
+ * OAuth están habilitados y sus credenciales.
  * @table auth_management.auth_providers
- * @fields 10 campos (id, user_id, provider, provider_user_id, access_token, refresh_token, token_expires_at, created_at, updated_at)
  *
- * IMPORTANTE - SEGURIDAD:
- * - access_token y refresh_token tienen @Exclude() para NO serializar en respuestas
- * - NUNCA exponer estos campos en DTOs de respuesta
- * - Solo usar internamente en lógica de autenticación OAuth
+ * FIX H-021: Entity completamente reescrita para alinear con DDL.
+ * Antes: modelo per-user (user_id, access_token, refresh_token)
+ * Ahora: modelo de configuración global (client_id, client_secret, URLs OAuth)
  *
- * Relaciones:
- * - @ManyToOne a User (auth.users)
+ * SEGURIDAD:
+ * - client_secret tiene @Exclude() para NO serializar en respuestas
+ * - NUNCA exponer credenciales OAuth en DTOs de respuesta
  *
- * @see DDL: /apps/database/ddl/schemas/auth_management/tables/06-auth_providers.sql (user auth providers)
- * @see CreateAuthProviderDto
- * @see AuthProviderResponseDto
+ * @see DDL: /apps/database/ddl/schemas/auth_management/tables/05-auth_providers.sql
  */
 @Entity({ schema: DB_SCHEMAS.AUTH, name: DB_TABLES.AUTH.AUTH_PROVIDERS })
-@Index('idx_auth_providers_user_id', ['user_id'])
-@Index('idx_auth_providers_provider', ['provider'])
-@Index('idx_auth_providers_user_provider', ['user_id', 'provider'], { unique: true })
-@Index('idx_auth_providers_provider_user_id', ['provider', 'provider_user_id'])
+@Unique(['providerName'])
+@Index('idx_auth_providers_enabled', ['isEnabled'])
+@Index('idx_auth_providers_priority', ['priority'])
 export class AuthProvider {
-  /**
-   * Identificador único del registro (UUID)
-   */
   @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  id!: string;
 
-  /**
-   * ID del usuario vinculado
-   * FK a auth.users.id
-   */
-  @Column({ type: 'uuid' })
-  @Index()
-    user_id!: string;
-
-  /**
-   * Proveedor de autenticación OAuth
-   * Valores: local, google, facebook, apple, microsoft, github
-   */
   @Column({
+    name: 'provider_name',
     type: 'enum',
     enum: AuthProviderEnum,
   })
-    provider!: AuthProviderEnum;
+  providerName!: AuthProviderEnum;
 
-  /**
-   * ID del usuario en el proveedor OAuth externo
-   * @example Google: "1234567890", Facebook: "fb_user_123"
-   */
-  @Column({ type: 'text' })
-    provider_user_id!: string;
+  @Column({ name: 'display_name', type: 'text' })
+  displayName!: string;
 
-  /**
-   * Access Token OAuth (SENSIBLE)
-   * IMPORTANTE: @Exclude() evita que se serialice en respuestas
-   */
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'is_enabled', type: 'boolean', default: false })
+  isEnabled!: boolean;
+
+  @Column({ name: 'client_id', type: 'text', nullable: true })
   @Exclude()
-    access_token!: string | null;
+  clientId!: string | null;
 
-  /**
-   * Refresh Token OAuth (SENSIBLE)
-   * IMPORTANTE: @Exclude() evita que se serialice en respuestas
-   */
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'client_secret', type: 'text', nullable: true })
   @Exclude()
-    refresh_token!: string | null;
+  clientSecret!: string | null;
 
-  /**
-   * Fecha y hora de expiración del access_token
-   */
-  @Column({ type: 'timestamp with time zone', nullable: true })
-    token_expires_at!: Date | null;
+  @Column({ name: 'authorization_url', type: 'text', nullable: true })
+  authorizationUrl!: string | null;
 
-  /**
-   * Fecha y hora de creación del registro
-   */
-  @CreateDateColumn({ type: 'timestamp with time zone' })
-    created_at!: Date;
+  @Column({ name: 'token_url', type: 'text', nullable: true })
+  tokenUrl!: string | null;
 
-  /**
-   * Fecha y hora de última actualización del registro
-   */
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
-    updated_at!: Date;
+  @Column({ name: 'user_info_url', type: 'text', nullable: true })
+  userInfoUrl!: string | null;
 
-  // =====================================================
-  // Relaciones
-  // =====================================================
+  @Column({ type: 'text', array: true, nullable: true })
+  scope!: string[] | null;
 
-  /**
-   * Usuario vinculado (auth.users)
-   * Relación ManyToOne: Muchos proveedores pueden pertenecer a un usuario
-   * FK: auth_providers.user_id → users.id
-   */
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-    user?: User;
+  @Column({ name: 'redirect_uri', type: 'text', nullable: true })
+  redirectUri!: string | null;
+
+  @Column({ name: 'icon_url', type: 'text', nullable: true })
+  iconUrl!: string | null;
+
+  @Column({ name: 'button_color', type: 'text', nullable: true })
+  buttonColor!: string | null;
+
+  @Column({ type: 'integer', default: 100 })
+  priority!: number;
+
+  @Column({ type: 'jsonb', default: {} })
+  config!: Record<string, unknown>;
+
+  @Column({ type: 'jsonb', default: {} })
+  metadata!: Record<string, unknown>;
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  updatedAt!: Date;
 }

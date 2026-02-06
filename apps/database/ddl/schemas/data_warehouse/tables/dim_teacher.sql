@@ -1,5 +1,5 @@
 -- =====================================================
--- Table: data_warehouse.dim_teacher
+-- Table: data_warehouse.dim_teachers
 -- Description: Teacher dimension for instructor analytics
 -- Type: Dimension
 -- Grain: One row per teacher
@@ -11,9 +11,9 @@
 
 SET search_path TO data_warehouse, public;
 
-DROP TABLE IF EXISTS data_warehouse.dim_teacher CASCADE;
+DROP TABLE IF EXISTS data_warehouse.dim_teachers CASCADE;
 
-CREATE TABLE data_warehouse.dim_teacher (
+CREATE TABLE data_warehouse.dim_teachers (
     -- =====================================================
     -- SURROGATE KEY
     -- =====================================================
@@ -79,41 +79,41 @@ CREATE TABLE data_warehouse.dim_teacher (
     -- =====================================================
     -- CONSTRAINTS
     -- =====================================================
-    CONSTRAINT dim_teacher_pkey PRIMARY KEY (teacher_key),
-    CONSTRAINT dim_teacher_teacher_id_key UNIQUE (teacher_id),
-    CONSTRAINT dim_teacher_status_check CHECK (status IN ('active', 'inactive', 'suspended', 'pending'))
+    CONSTRAINT dim_teachers_pkey PRIMARY KEY (teacher_key),
+    CONSTRAINT dim_teachers_teacher_id_key UNIQUE (teacher_id),
+    CONSTRAINT dim_teachers_status_check CHECK (status IN ('active', 'inactive', 'suspended', 'pending'))
 );
 
 -- =====================================================
 -- INDEXES
 -- =====================================================
-CREATE INDEX idx_dim_teacher_teacher_id ON data_warehouse.dim_teacher USING btree (teacher_id);
-CREATE INDEX idx_dim_teacher_email ON data_warehouse.dim_teacher USING btree (email);
-CREATE INDEX idx_dim_teacher_school ON data_warehouse.dim_teacher USING btree (school_id) WHERE school_id IS NOT NULL;
-CREATE INDEX idx_dim_teacher_status ON data_warehouse.dim_teacher USING btree (status);
-CREATE INDEX idx_dim_teacher_active ON data_warehouse.dim_teacher USING btree (status) WHERE status = 'active';
+CREATE INDEX idx_dim_teachers_teacher_id ON data_warehouse.dim_teachers USING btree (teacher_id);
+CREATE INDEX idx_dim_teachers_email ON data_warehouse.dim_teachers USING btree (email);
+CREATE INDEX idx_dim_teachers_school ON data_warehouse.dim_teachers USING btree (school_id) WHERE school_id IS NOT NULL;
+CREATE INDEX idx_dim_teachers_status ON data_warehouse.dim_teachers USING btree (status);
+CREATE INDEX idx_dim_teachers_active ON data_warehouse.dim_teachers USING btree (status) WHERE status = 'active';
 
 -- GIN indexes for array searches
-CREATE INDEX idx_dim_teacher_subjects ON data_warehouse.dim_teacher USING gin (subjects_taught);
-CREATE INDEX idx_dim_teacher_grades ON data_warehouse.dim_teacher USING gin (grade_levels_taught);
+CREATE INDEX idx_dim_teachers_subjects ON data_warehouse.dim_teachers USING gin (subjects_taught);
+CREATE INDEX idx_dim_teachers_grades ON data_warehouse.dim_teachers USING gin (grade_levels_taught);
 
 -- =====================================================
 -- OWNERSHIP AND PERMISSIONS
 -- =====================================================
-ALTER TABLE data_warehouse.dim_teacher OWNER TO gamilit_user;
-GRANT SELECT, INSERT, UPDATE ON data_warehouse.dim_teacher TO gamilit_user;
-GRANT USAGE ON SEQUENCE data_warehouse.dim_teacher_teacher_key_seq TO gamilit_user;
+ALTER TABLE data_warehouse.dim_teachers OWNER TO gamilit_user;
+GRANT SELECT, INSERT, UPDATE ON data_warehouse.dim_teachers TO gamilit_user;
+GRANT USAGE ON SEQUENCE data_warehouse.dim_teachers_teacher_key_seq TO gamilit_user;
 
 -- =====================================================
 -- COMMENTS
 -- =====================================================
-COMMENT ON TABLE data_warehouse.dim_teacher IS
+COMMENT ON TABLE data_warehouse.dim_teachers IS
 'Teacher dimension - Instructor data for classroom and teacher metrics.
 Grain: One row per teacher.
 Source: auth_management.profiles WHERE role = admin_teacher.
 Includes denormalized school info and classroom counts.';
 
-COMMENT ON COLUMN data_warehouse.dim_teacher.teacher_key IS 'Surrogate key for fact table joins';
-COMMENT ON COLUMN data_warehouse.dim_teacher.teacher_id IS 'Natural key from auth_management.profiles.id';
-COMMENT ON COLUMN data_warehouse.dim_teacher.total_classrooms IS 'Total classrooms created (historical)';
-COMMENT ON COLUMN data_warehouse.dim_teacher.active_classrooms IS 'Currently active classrooms';
+COMMENT ON COLUMN data_warehouse.dim_teachers.teacher_key IS 'Surrogate key for fact table joins';
+COMMENT ON COLUMN data_warehouse.dim_teachers.teacher_id IS 'Natural key from auth_management.profiles.id';
+COMMENT ON COLUMN data_warehouse.dim_teachers.total_classrooms IS 'Total classrooms created (historical)';
+COMMENT ON COLUMN data_warehouse.dim_teachers.active_classrooms IS 'Currently active classrooms';

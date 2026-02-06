@@ -386,12 +386,16 @@ Este documento cataloga todas las funciones PostgreSQL implementadas en la base 
 
 | Funcion | Archivo | Proposito |
 |---------|---------|-----------|
-| `communication.update_messages_timestamp()` | 01-messages.sql | Timestamp mensajes |
+| `communication.update_message_tracking_fields()` | 01-messages.sql | Trigger especializada (ver nota) |
 | `communication.get_unread_count(user_id)` | 01-messages.sql | Contar no leidos |
 | `communication.mark_conversation_read(...)` | 01-messages.sql | Marcar leido |
 | `communication.update_message_participant_read()` | 02-message_participants.sql | Actualizar participante |
 | `communication.get_user_unread_count(user_id)` | 02-message_participants.sql | Contar no leidos usuario |
 | `communication.mark_message_read_for_user(...)` | 02-message_participants.sql | Marcar leido por usuario |
+
+> **Nota OVR-006:** `update_message_tracking_fields()` NO es duplicado de `gamilit.update_updated_at_column()`.
+> Es funcion ESPECIALIZADA que trackea: updated_at, edited_at, edit_count, read_at, deleted_at, flagged_at.
+> Renombrada 2026-02-03 (antes: `update_messages_timestamp`)
 
 ---
 

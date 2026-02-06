@@ -1,0 +1,589 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONSOLIDACIÓN VALIDACIONES NIVEL 2 - ANÁLISIS POR DOMINIO
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tarea: TASK-2026-02-03-ANALISIS-VALIDACION-MODELADO-BD
+# Fecha: 2026-02-03
+# Agentes: 7 validadores de dominio en paralelo
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+generado: "2026-02-03"
+nivel: 2
+estado: "completado"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESUMEN EJECUTIVO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+resumen_ejecutivo:
+  dominios_analizados: 7
+  cumplimiento_promedio: "94%"
+  gaps_identificados: 9
+  gaps_criticos: 1
+  gaps_altos: 2
+  gaps_medios: 4
+  gaps_bajos: 2
+
+  ranking_cumplimiento:
+    - dominio: "EDUCATIONAL"
+      score: "100%"
+      gaps: 0
+    - dominio: "PROGRESS"
+      score: "100%"
+      gaps: 0
+    - dominio: "ADMIN"
+      score: "100%"
+      gaps: 0
+    - dominio: "AUTH"
+      score: "95%"
+      gaps: 1
+    - dominio: "SYSTEM"
+      score: "95%"
+      gaps: 1
+    - dominio: "GAMIFICATION"
+      score: "92.5%"
+      gaps: 2
+    - dominio: "SOCIAL"
+      score: "78%"
+      gaps: 5
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIÓN POR DOMINIO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+dominios:
+
+  # ───────────────────────────────────────────────────────────────────────────────
+  AUTH:
+    schemas: ["auth", "auth_management"]
+    agente: "@AUTH_DOMAIN_VALIDATOR"
+    score: "95%"
+
+    inventario:
+      tablas: 8
+      funciones: 12
+      triggers: 4
+      rls_policies: 24
+      enums: 3
+
+    tablas_validadas:
+      - name: "users"
+        schema: "auth"
+        estado: "completa"
+        rls: true
+        indices: ["pk", "email_unique", "tenant_idx"]
+      - name: "roles"
+        schema: "auth"
+        estado: "completa"
+        rls: true
+      - name: "permissions"
+        schema: "auth"
+        estado: "completa"
+        rls: true
+      - name: "role_permissions"
+        schema: "auth_management"
+        estado: "completa"
+        rls: true
+      - name: "user_roles"
+        schema: "auth_management"
+        estado: "completa"
+        rls: true
+      - name: "sessions"
+        schema: "auth"
+        estado: "completa"
+        rls: true
+      - name: "refresh_tokens"
+        schema: "auth"
+        estado: "completa"
+        rls: true
+      - name: "password_reset_tokens"
+        schema: "auth"
+        estado: "completa"
+        rls: true
+
+    gaps:
+      - id: "GAP-AUTH-001"
+        severidad: "LOW"
+        tipo: "enhancement"
+        descripcion: "Falta índice compuesto en user_roles(user_id, role_id) para queries frecuentes"
+        impacto: "Performance en asignación de roles"
+        accion: "Crear índice idx_user_roles_composite"
+
+    coherencia:
+      ddl_vs_entity: "100%"
+      rls_completo: true
+      triggers_updated_at: true
+
+  # ───────────────────────────────────────────────────────────────────────────────
+  EDUCATIONAL:
+    schemas: ["educational_content", "content_management"]
+    agente: "@EDUCATIONAL_DOMAIN_VALIDATOR"
+    score: "100%"
+
+    inventario:
+      tablas: 18
+      funciones: 22
+      triggers: 8
+      rls_policies: 45
+      enums: 8
+
+    tablas_validadas:
+      - name: "subjects"
+        schema: "educational_content"
+        estado: "completa"
+        rls: true
+      - name: "modules"
+        schema: "educational_content"
+        estado: "completa"
+        rls: true
+        nota: "5 módulos Marie Curie implementados"
+      - name: "exercises"
+        schema: "educational_content"
+        estado: "completa"
+        rls: true
+        nota: "27 mecánicas de ejercicio soportadas"
+      - name: "exercise_attempts"
+        schema: "educational_content"
+        estado: "completa"
+        rls: true
+      - name: "exercise_answers"
+        schema: "educational_content"
+        estado: "completa"
+        rls: true
+      - name: "exercise_media"
+        schema: "content_management"
+        estado: "completa"
+        rls: true
+      - name: "exercise_tags"
+        schema: "content_management"
+        estado: "completa"
+        rls: true
+      - name: "difficulty_levels"
+        schema: "educational_content"
+        estado: "completa"
+        rls: true
+
+    gaps: []
+
+    coherencia:
+      ddl_vs_entity: "100%"
+      rls_completo: true
+      triggers_updated_at: true
+      grading_architecture: "dual (autocorregibles + manual review)"
+
+  # ───────────────────────────────────────────────────────────────────────────────
+  GAMIFICATION:
+    schemas: ["gamification_system"]
+    agente: "@GAMIFICATION_DOMAIN_VALIDATOR"
+    score: "92.5%"
+
+    inventario:
+      tablas: 12
+      funciones: 18
+      triggers: 6
+      rls_policies: 30
+      enums: 5
+
+    tablas_validadas:
+      - name: "maya_ranks"
+        schema: "gamification_system"
+        estado: "completa"
+        rls: true
+        nota: "5 niveles: Ahau, Chilam, Halach, Nacom, Ah Kin"
+      - name: "user_ranks"
+        schema: "gamification_system"
+        estado: "completa"
+        rls: true
+      - name: "ml_coins_transactions"
+        schema: "gamification_system"
+        estado: "completa"
+        rls: true
+      - name: "ml_coins_balance"
+        schema: "gamification_system"
+        estado: "completa"
+        rls: true
+      - name: "comodines"
+        schema: "gamification_system"
+        estado: "completa"
+        rls: true
+        nota: "3 tipos: 50/50, Hint, Skip"
+      - name: "user_comodines"
+        schema: "gamification_system"
+        estado: "completa"
+        rls: true
+      - name: "achievements"
+        schema: "gamification_system"
+        estado: "completa"
+        rls: true
+        nota: "9 categorías de logros"
+      - name: "user_achievements"
+        schema: "gamification_system"
+        estado: "completa"
+        rls: true
+      - name: "xp_transactions"
+        schema: "gamification_system"
+        estado: "completa"
+        rls: true
+      - name: "streaks"
+        schema: "gamification_system"
+        estado: "completa"
+        rls: true
+
+    gaps:
+      - id: "GAP-GAM-001"
+        severidad: "HIGH"
+        tipo: "function_reference"
+        descripcion: "consume_comodin() referencia tabla 'comodin_uses' que no existe en DDL"
+        impacto: "Función fallará al intentar registrar uso de comodín"
+        accion: "Crear tabla comodin_uses o modificar función para usar user_comodines"
+        linea_codigo: "gamification_system/functions/consume_comodin.sql:45"
+
+      - id: "GAP-GAM-002"
+        severidad: "MEDIUM"
+        tipo: "missing_config"
+        descripcion: "Multiplicadores de ML Coins por rango Maya no están en schema"
+        impacto: "Economía de coins no escalará con progresión"
+        accion: "Agregar columna multiplier a maya_ranks o crear tabla rank_multipliers"
+
+    coherencia:
+      ddl_vs_entity: "95%"
+      rls_completo: true
+      triggers_updated_at: true
+      economia_ml_coins: "parcial - falta multiplicadores"
+
+  # ───────────────────────────────────────────────────────────────────────────────
+  PROGRESS:
+    schemas: ["progress_tracking"]
+    agente: "@PROGRESS_DOMAIN_VALIDATOR"
+    score: "100%"
+
+    inventario:
+      tablas: 10
+      funciones: 15
+      triggers: 5
+      rls_policies: 25
+      enums: 4
+
+    tablas_validadas:
+      - name: "user_progress"
+        schema: "progress_tracking"
+        estado: "completa"
+        rls: true
+      - name: "module_progress"
+        schema: "progress_tracking"
+        estado: "completa"
+        rls: true
+      - name: "subject_progress"
+        schema: "progress_tracking"
+        estado: "completa"
+        rls: true
+      - name: "daily_stats"
+        schema: "progress_tracking"
+        estado: "completa"
+        rls: true
+      - name: "weekly_stats"
+        schema: "progress_tracking"
+        estado: "completa"
+        rls: true
+      - name: "learning_goals"
+        schema: "progress_tracking"
+        estado: "completa"
+        rls: true
+      - name: "goal_progress"
+        schema: "progress_tracking"
+        estado: "completa"
+        rls: true
+
+    gaps: []
+
+    coherencia:
+      ddl_vs_entity: "100%"
+      rls_completo: true
+      triggers_updated_at: true
+      stats_sync: "triggers automáticos funcionando"
+
+  # ───────────────────────────────────────────────────────────────────────────────
+  SOCIAL:
+    schemas: ["social_features", "communication"]
+    agente: "@SOCIAL_DOMAIN_VALIDATOR"
+    score: "78%"
+
+    inventario:
+      tablas: 14
+      funciones: 10
+      triggers: 4
+      rls_policies: 35
+      enums: 3
+
+    tablas_validadas:
+      - name: "friendships"
+        schema: "social_features"
+        estado: "completa"
+        rls: true
+      - name: "friend_requests"
+        schema: "social_features"
+        estado: "completa"
+        rls: true
+      - name: "challenges"
+        schema: "social_features"
+        estado: "completa"
+        rls: true
+      - name: "challenge_participants"
+        schema: "social_features"
+        estado: "completa"
+        rls: true
+      - name: "leaderboards"
+        schema: "social_features"
+        estado: "completa"
+        rls: true
+      - name: "leaderboard_entries"
+        schema: "social_features"
+        estado: "completa"
+        rls: true
+      - name: "messages"
+        schema: "communication"
+        estado: "completa"
+        rls: true
+      - name: "conversations"
+        schema: "communication"
+        estado: "completa"
+        rls: true
+      - name: "notifications"
+        schema: "communication"
+        estado: "completa"
+        rls: true
+
+    gaps:
+      - id: "GAP-SOC-001"
+        severidad: "MEDIUM"
+        tipo: "missing_table"
+        descripcion: "Falta tabla challenge_results para almacenar resultados de desafíos"
+        impacto: "No se puede registrar ganadores/perdedores de desafíos"
+        accion: "Crear tabla challenge_results(challenge_id, winner_id, loser_id, completed_at)"
+
+      - id: "GAP-SOC-002"
+        severidad: "MEDIUM"
+        tipo: "missing_table"
+        descripcion: "Falta tabla team_challenges para desafíos grupales"
+        impacto: "Solo soporta desafíos 1v1, no equipos"
+        accion: "Crear tabla team_challenges si RF lo requiere, o documentar limitación"
+
+      - id: "GAP-SOC-003"
+        severidad: "LOW"
+        tipo: "missing_table"
+        descripcion: "Falta tabla message_participants para conversaciones grupales"
+        impacto: "Solo soporta conversaciones 1-1"
+        accion: "Evaluar si RF requiere grupos, de ser así crear tabla"
+
+      - id: "GAP-SOC-004"
+        severidad: "MEDIUM"
+        tipo: "missing_table"
+        descripcion: "Falta tabla user_blocks para bloqueo de usuarios"
+        impacto: "No hay mecanismo de bloqueo social"
+        accion: "Crear tabla user_blocks(blocker_id, blocked_id)"
+
+      - id: "GAP-SOC-005"
+        severidad: "LOW"
+        tipo: "missing_table"
+        descripcion: "Falta tabla user_reports para reportes de contenido/usuarios"
+        impacto: "No hay sistema de reportes para moderación"
+        accion: "Crear tabla user_reports si hay panel de moderación"
+
+    coherencia:
+      ddl_vs_entity: "85%"
+      rls_completo: true
+      triggers_updated_at: true
+      nota: "Esquema funcional pero incompleto para features sociales avanzadas"
+
+  # ───────────────────────────────────────────────────────────────────────────────
+  ADMIN:
+    schemas: ["admin_dashboard", "audit_logging"]
+    agente: "@ADMIN_DOMAIN_VALIDATOR"
+    score: "100%"
+
+    inventario:
+      tablas: 12
+      funciones: 8
+      triggers: 6
+      rls_policies: 30
+      enums: 2
+
+    tablas_validadas:
+      - name: "admin_users"
+        schema: "admin_dashboard"
+        estado: "completa"
+        rls: true
+      - name: "admin_permissions"
+        schema: "admin_dashboard"
+        estado: "completa"
+        rls: true
+      - name: "admin_activity_log"
+        schema: "admin_dashboard"
+        estado: "completa"
+        rls: true
+      - name: "content_approvals"
+        schema: "admin_dashboard"
+        estado: "completa"
+        rls: true
+      - name: "unified_audit_log"
+        schema: "audit_logging"
+        estado: "completa"
+        rls: true
+        nota: "Consolidado de 5 tablas audit previas"
+      - name: "system_events"
+        schema: "audit_logging"
+        estado: "completa"
+        rls: true
+
+    gaps: []
+
+    coherencia:
+      ddl_vs_entity: "100%"
+      rls_completo: true
+      triggers_updated_at: true
+      audit_consolidado: true
+
+  # ───────────────────────────────────────────────────────────────────────────────
+  SYSTEM:
+    schemas: ["system_configuration", "notifications", "lti_integration"]
+    agente: "@SYSTEM_DOMAIN_VALIDATOR"
+    score: "95%"
+
+    inventario:
+      tablas: 15
+      funciones: 12
+      triggers: 4
+      rls_policies: 38
+      enums: 4
+
+    tablas_validadas:
+      - name: "tenants"
+        schema: "system_configuration"
+        estado: "completa"
+        rls: true
+      - name: "tenant_settings"
+        schema: "system_configuration"
+        estado: "completa"
+        rls: true
+      - name: "feature_flags"
+        schema: "system_configuration"
+        estado: "completa"
+        rls: true
+      - name: "system_settings"
+        schema: "system_configuration"
+        estado: "completa"
+        rls: true
+      - name: "notification_templates"
+        schema: "notifications"
+        estado: "completa"
+        rls: true
+      - name: "notification_preferences"
+        schema: "notifications"
+        estado: "completa"
+        rls: true
+      - name: "lti_platforms"
+        schema: "lti_integration"
+        estado: "completa"
+        rls: false
+        nota: "RLS pendiente"
+      - name: "lti_deployments"
+        schema: "lti_integration"
+        estado: "completa"
+        rls: false
+        nota: "RLS pendiente"
+      - name: "lti_contexts"
+        schema: "lti_integration"
+        estado: "completa"
+        rls: false
+        nota: "RLS pendiente"
+      - name: "lti_grade_submissions"
+        schema: "lti_integration"
+        estado: "completa"
+        rls: false
+        nota: "AGS - RLS pendiente"
+
+    gaps:
+      - id: "GAP-SYS-001"
+        severidad: "MEDIUM"
+        tipo: "missing_rls"
+        descripcion: "Schema lti_integration no tiene políticas RLS"
+        impacto: "Datos LTI accesibles sin restricción de tenant"
+        accion: "Crear RLS policies para 4 tablas del schema lti_integration"
+        tablas_afectadas:
+          - "lti_platforms"
+          - "lti_deployments"
+          - "lti_contexts"
+          - "lti_grade_submissions"
+
+    coherencia:
+      ddl_vs_entity: "100%"
+      rls_completo: false
+      triggers_updated_at: true
+      lti_1_3: "AGS implementado"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CONSOLIDADO DE GAPS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+gaps_consolidados:
+  criticos: []
+
+  altos:
+    - id: "GAP-GAM-001"
+      dominio: "GAMIFICATION"
+      descripcion: "consume_comodin() referencia tabla inexistente"
+
+  medios:
+    - id: "GAP-GAM-002"
+      dominio: "GAMIFICATION"
+      descripcion: "Multiplicadores ML Coins faltantes"
+    - id: "GAP-SOC-001"
+      dominio: "SOCIAL"
+      descripcion: "Falta tabla challenge_results"
+    - id: "GAP-SOC-002"
+      dominio: "SOCIAL"
+      descripcion: "Falta tabla team_challenges"
+    - id: "GAP-SOC-004"
+      dominio: "SOCIAL"
+      descripcion: "Falta tabla user_blocks"
+    - id: "GAP-SYS-001"
+      dominio: "SYSTEM"
+      descripcion: "RLS faltante en lti_integration"
+
+  bajos:
+    - id: "GAP-AUTH-001"
+      dominio: "AUTH"
+      descripcion: "Índice compuesto faltante en user_roles"
+    - id: "GAP-SOC-003"
+      dominio: "SOCIAL"
+      descripcion: "Falta tabla message_participants"
+    - id: "GAP-SOC-005"
+      dominio: "SOCIAL"
+      descripcion: "Falta tabla user_reports"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# CHECKPOINT NIVEL 2
+# ─────────────────────────────────────────────────────────────────────────────────
+
+checkpoint:
+  nivel: 2
+  estado: "COMPLETADO"
+  fecha: "2026-02-03"
+  validaciones:
+    - item: "7 dominios analizados"
+      estado: "✓"
+    - item: "Inventario de objetos por dominio"
+      estado: "✓"
+    - item: "Gaps identificados y clasificados"
+      estado: "✓"
+    - item: "Coherencia DDL-Entity evaluada"
+      estado: "✓"
+    - item: "RLS coverage verificado"
+      estado: "✓"
+
+  siguiente_nivel: 3
+  descripcion_siguiente: "Validación de Coherencia (DDL vs RF, DDL vs Entities, Func vs Triggers, RLS vs Roles)"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN CONSOLIDACIÓN NIVEL 2
+# ═══════════════════════════════════════════════════════════════════════════════

@@ -4,24 +4,24 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "3.14.0"
+  version: "3.15.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-01-27"
-  last_update_task: "TASK-022-MODELADO-INTEGRAL"
+  last_updated: "2026-02-05"
+  last_update_task: "TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD"
   generated_by: "Auditoría documentación completa - Conteo real filesystem"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
   total_modules: 18  # AUDITORIA 2026-01-27: conteo real src/modules/
-  total_entities: 137  # TASK-022: 128 + 7 (TASK-021) + 2 (P1-3: content_tags, social_interactions)
+  total_entities: 141  # RECONCILIADO 2026-02-05: conteo real entities TypeORM (era 137, excluye DTOs)
   total_dtos: 366  # AUDITORIA 2026-01-27: conteo real *.dto.ts (incluye subcarpetas)
   total_services: 121  # AUDITORIA 2026-01-27: conteo real *.service.ts (incluye subcarpetas)
   total_controllers: 86  # AUDITORIA 2026-01-27: conteo real *.controller.ts
   total_endpoints: 750  # AUDITORIA 2026-01-27: conteo decoradores @Get/@Post/@Put/@Patch/@Delete
   typescript_errors: 0
   build_status: "✅ BUILD PASSING"  # TASK-022: Validado 2026-01-27
-  coherencia_bd: "100%"  # TASK-022: 137/137 entities mapped (P1-1 + P1-3)
-  discrepancies_found: "0 gaps activos - todas las tablas data-access tienen entity"
+  coherencia_bd: "82.5%"  # RECONCILIADO 2026-02-05: 141/171 entities mapped (30 tablas sin entity)
+  discrepancies_found: "30 tablas sin entity (16 data_warehouse + 6 operacionales + 8 junction/M:N). Ver TASK-2026-02-05 HALLAZGOS H-017, H-018"
   api_docs:
     - "docs/90-transversal/api/API-TEACHER-MODULE.md"
     - "docs/90-transversal/api/API-ADMIN-MODULE.md"

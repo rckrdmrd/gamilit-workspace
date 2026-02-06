@@ -49,9 +49,15 @@ CREATE TABLE content_management.moderation_rules (
     priority INTEGER DEFAULT 0,
 
     -- Auditoría
-    created_by UUID REFERENCES auth.users(id),
+    created_by UUID,
     created_at TIMESTAMP DEFAULT gamilit.now_mexico(),
     updated_at TIMESTAMP DEFAULT gamilit.now_mexico(),
+
+    -- Foreign Keys (with fk_ prefix per standard)
+    CONSTRAINT fk_moderation_rules_created_by FOREIGN KEY (created_by)
+        REFERENCES auth_management.profiles(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
 
     -- Constraints
     CONSTRAINT chk_mod_rule_type CHECK (rule_type IN ('keyword', 'pattern', 'length', 'frequency')),

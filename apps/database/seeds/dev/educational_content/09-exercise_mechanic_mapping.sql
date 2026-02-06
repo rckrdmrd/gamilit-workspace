@@ -1,13 +1,14 @@
 -- ============================================================================
 -- SEED: exercise_mechanic_mapping
 -- Schema: educational_content
--- Descripción: Mapeos entre categorías pedagógicas y exercise_types GAMILIT
+-- Descripcion: Mapeos entre categorias pedagogicas y exercise_types GAMILIT
 -- Relacionado: ADR-008 (Sistema Dual)
--- Total registros: 70 mappings (2 mappings por exercise_type promedio)
+-- Total registros: 54 mappings (2 mappings por exercise_type promedio)
+-- Actualizado: 2026-02-03 (GAP-002 - Completar seeds faltantes)
 -- ============================================================================
 
 -- ============================================================================
--- MÓDULO 1: COMPRENSIÓN LITERAL
+-- MODULO 1: COMPRENSION LITERAL (7 exercise_types)
 -- ============================================================================
 
 -- crucigrama: vocabulario + recordar
@@ -23,7 +24,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'recordar',
     ARRAY['beginner', 'intermediate']::educational_content.difficulty_level[],
     'Reforzar vocabulario mediante juego de palabras cruzadas con definiciones',
-    ARRAY['Identificar palabras clave', 'Asociar términos con definiciones', 'Memorizar vocabulario temático'],
+    ARRAY['Identificar palabras clave', 'Asociar terminos con definiciones', 'Memorizar vocabulario tematico'],
     'text_input',
     'bajo',
     ARRAY['juego', 'individual', 'visual']
@@ -34,8 +35,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'crucigrama',
     'comprender',
     ARRAY['beginner']::educational_content.difficulty_level[],
-    'Desarrollar comprensión literal mediante lectura de definiciones',
-    ARRAY['Leer y comprender definiciones cortas', 'Extraer información explícita'],
+    'Desarrollar comprension literal mediante lectura de definiciones',
+    ARRAY['Leer y comprender definiciones cortas', 'Extraer informacion explicita'],
     'text_input',
     'bajo',
     ARRAY['lectura', 'individual']
@@ -53,8 +54,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'sopa_letras',
     'recordar',
     ARRAY['beginner']::educational_content.difficulty_level[],
-    'Identificar palabras clave en contexto visual mediante búsqueda activa',
-    ARRAY['Reconocer palabras objetivo', 'Discriminación visual de términos', 'Reforzar ortografía'],
+    'Identificar palabras clave en contexto visual mediante busqueda activa',
+    ARRAY['Reconocer palabras objetivo', 'Discriminacion visual de terminos', 'Reforzar ortografia'],
     'selection',
     'bajo',
     ARRAY['juego', 'individual', 'visual', 'rapido']
@@ -65,7 +66,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'sopa_letras',
     'recordar',
     ARRAY['beginner']::educational_content.difficulty_level[],
-    'Desarrollar reconocimiento rápido de palabras',
+    'Desarrollar reconocimiento rapido de palabras',
     ARRAY['Identificar palabras en contexto visual', 'Velocidad de lectura'],
     'selection',
     'bajo',
@@ -84,8 +85,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'linea_tiempo',
     'comprender',
     ARRAY['intermediate']::educational_content.difficulty_level[],
-    'Organizar eventos cronológicamente para desarrollar comprensión de secuencias',
-    ARRAY['Identificar orden cronológico', 'Comprender relaciones temporales', 'Secuenciar eventos'],
+    'Organizar eventos cronologicamente para desarrollar comprension de secuencias',
+    ARRAY['Identificar orden cronologico', 'Comprender relaciones temporales', 'Secuenciar eventos'],
     'drag_drop',
     'medio',
     ARRAY['cronologia', 'secuencia', 'visual', 'interactivo']
@@ -96,8 +97,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'linea_tiempo',
     'analizar',
     ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
-    'Analizar contexto histórico y relaciones causa-efecto',
-    ARRAY['Relacionar eventos históricos', 'Comprender contexto cultural'],
+    'Analizar contexto historico y relaciones causa-efecto',
+    ARRAY['Relacionar eventos historicos', 'Comprender contexto cultural'],
     'drag_drop',
     'medio',
     ARRAY['historia', 'contexto']
@@ -115,8 +116,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'mapa_conceptual',
     'analizar',
     ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
-    'Visualizar y organizar relaciones entre conceptos para análisis profundo',
-    ARRAY['Identificar relaciones conceptuales', 'Organizar información jerárquicamente', 'Sintetizar conocimiento'],
+    'Visualizar y organizar relaciones entre conceptos para analisis profundo',
+    ARRAY['Identificar relaciones conceptuales', 'Organizar informacion jerarquicamente', 'Sintetizar conocimiento'],
     'drag_drop',
     'alto',
     ARRAY['analisis', 'visual', 'jerarquico', 'colaborativo']
@@ -146,8 +147,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'emparejamiento',
     'comprender',
     ARRAY['beginner', 'intermediate']::educational_content.difficulty_level[],
-    'Asociar términos con sus significados o conceptos relacionados',
-    ARRAY['Relacionar términos', 'Comprender equivalencias', 'Memorizar asociaciones'],
+    'Asociar terminos con sus significados o conceptos relacionados',
+    ARRAY['Relacionar terminos', 'Comprender equivalencias', 'Memorizar asociaciones'],
     'drag_drop',
     'bajo',
     ARRAY['asociacion', 'interactivo', 'visual']
@@ -165,8 +166,58 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     ARRAY['comprension', 'relacion']
 );
 
+-- completar_espacios: lectura + comprender
+INSERT INTO educational_content.exercise_mechanic_mapping (
+    mechanic_category, mechanic_subcategory, exercise_type,
+    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
+    interaction_type, cognitive_load, tags
+) VALUES
+(
+    'lectura',
+    'fill_in_blank',
+    'completar_espacios',
+    'comprender',
+    ARRAY['beginner', 'intermediate']::educational_content.difficulty_level[],
+    'Demostrar comprension completando informacion faltante en textos',
+    ARRAY['Completar informacion', 'Comprension contextual', 'Vocabulario en contexto'],
+    'text_input',
+    'medio',
+    ARRAY['comprension', 'vocabulario', 'contexto']
+),
+(
+    'vocabulario',
+    'cloze_test',
+    'completar_espacios',
+    'aplicar',
+    ARRAY['intermediate']::educational_content.difficulty_level[],
+    'Aplicar conocimiento de vocabulario en contextos especificos',
+    ARRAY['Usar vocabulario apropiado', 'Contexto linguistico'],
+    'text_input',
+    'medio',
+    ARRAY['cloze', 'vocabulario']
+);
+
+-- verdadero_falso: lectura + recordar
+INSERT INTO educational_content.exercise_mechanic_mapping (
+    mechanic_category, mechanic_subcategory, exercise_type,
+    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
+    interaction_type, cognitive_load, tags
+) VALUES
+(
+    'lectura',
+    'true_false',
+    'verdadero_falso',
+    'recordar',
+    ARRAY['beginner']::educational_content.difficulty_level[],
+    'Verificar comprension basica de informacion explicita',
+    ARRAY['Identificar informacion correcta', 'Verificar datos', 'Comprension literal'],
+    'selection',
+    'bajo',
+    ARRAY['rapido', 'verificacion', 'beginner']
+);
+
 -- ============================================================================
--- MÓDULO 2: COMPRENSIÓN INFERENCIAL
+-- MODULO 2: COMPRENSION INFERENCIAL (5 exercise_types)
 -- ============================================================================
 
 -- detective_textual: lectura + analizar
@@ -181,8 +232,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'detective_textual',
     'analizar',
     ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
-    'Desarrollar comprensión inferencial mediante análisis de pistas textuales',
-    ARRAY['Inferir información implícita', 'Analizar evidencias textuales', 'Deducir conclusiones'],
+    'Desarrollar comprension inferencial mediante analisis de pistas textuales',
+    ARRAY['Inferir informacion implicita', 'Analizar evidencias textuales', 'Deducir conclusiones'],
     'selection',
     'alto',
     ARRAY['inferencia', 'deduccion', 'analisis', 'investigacion']
@@ -193,8 +244,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'detective_textual',
     'evaluar',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Justificar inferencias con evidencia textual mediante escritura analítica',
-    ARRAY['Argumentar con evidencias', 'Escribir análisis fundamentado'],
+    'Justificar inferencias con evidencia textual mediante escritura analitica',
+    ARRAY['Argumentar con evidencias', 'Escribir analisis fundamentado'],
     'text_input',
     'alto',
     ARRAY['argumentacion', 'evidencia']
@@ -212,8 +263,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'construccion_hipotesis',
     'crear',
     ARRAY['advanced', 'proficient']::educational_content.difficulty_level[],
-    'Formular hipótesis basadas en información textual parcial',
-    ARRAY['Generar hipótesis', 'Predecir información', 'Razonamiento inductivo'],
+    'Formular hipotesis basadas en informacion textual parcial',
+    ARRAY['Generar hipotesis', 'Predecir informacion', 'Razonamiento inductivo'],
     'text_input',
     'alto',
     ARRAY['hipotesis', 'prediccion', 'cientifico']
@@ -224,8 +275,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'construccion_hipotesis',
     'crear',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Escribir hipótesis coherentes y fundamentadas',
-    ARRAY['Redactar hipótesis', 'Justificar predicciones por escrito'],
+    'Escribir hipotesis coherentes y fundamentadas',
+    ARRAY['Redactar hipotesis', 'Justificar predicciones por escrito'],
     'text_input',
     'alto',
     ARRAY['redaccion', 'cientifica']
@@ -243,7 +294,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'prediccion_narrativa',
     'evaluar',
     ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
-    'Anticipar desarrollos narrativos basándose en pistas del texto',
+    'Anticipar desarrollos narrativos basandose en pistas del texto',
     ARRAY['Predecir eventos', 'Comprender estructuras narrativas', 'Evaluar coherencia'],
     'selection',
     'medio',
@@ -274,7 +325,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'puzzle_contexto',
     'analizar',
     ARRAY['intermediate']::educational_content.difficulty_level[],
-    'Reconstruir significado mediante análisis de contexto fragmentado',
+    'Reconstruir significado mediante analisis de contexto fragmentado',
     ARRAY['Comprender contexto', 'Relacionar fragmentos', 'Reconstruir significado'],
     'drag_drop',
     'medio',
@@ -293,8 +344,39 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     ARRAY['vocabulario', 'contexto']
 );
 
+-- rueda_inferencias: lectura + analizar (NUEVO - GAP-002)
+INSERT INTO educational_content.exercise_mechanic_mapping (
+    mechanic_category, mechanic_subcategory, exercise_type,
+    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
+    interaction_type, cognitive_load, tags
+) VALUES
+(
+    'lectura',
+    'inference_wheel',
+    'rueda_inferencias',
+    'analizar',
+    ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
+    'Desarrollar pensamiento inferencial mediante conexiones radiales entre conceptos',
+    ARRAY['Conectar ideas centrales con inferencias', 'Visualizar relaciones implicitas', 'Justificar deducciones'],
+    'drag_drop',
+    'alto',
+    ARRAY['inferencia', 'visual', 'radial', 'interactivo']
+),
+(
+    'escritura',
+    'inference_justification',
+    'rueda_inferencias',
+    'evaluar',
+    ARRAY['advanced']::educational_content.difficulty_level[],
+    'Escribir justificaciones para cada inferencia realizada',
+    ARRAY['Redactar justificaciones', 'Argumentar inferencias', 'Fundamentar deducciones'],
+    'text_input',
+    'alto',
+    ARRAY['justificacion', 'argumentacion']
+);
+
 -- ============================================================================
--- MÓDULO 3: COMPRENSIÓN CRÍTICA
+-- MODULO 3: COMPRENSION CRITICA (5 exercise_types)
 -- ============================================================================
 
 -- analisis_fuentes: lectura + evaluar
@@ -309,8 +391,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'analisis_fuentes',
     'evaluar',
     ARRAY['advanced', 'proficient']::educational_content.difficulty_level[],
-    'Analizar críticamente textos históricos y culturales evaluando credibilidad',
-    ARRAY['Evaluar fuentes', 'Identificar sesgos', 'Análisis crítico de textos'],
+    'Analizar criticamente textos historicos y culturales evaluando credibilidad',
+    ARRAY['Evaluar fuentes', 'Identificar sesgos', 'Analisis critico de textos'],
     'text_input',
     'alto',
     ARRAY['critico', 'fuentes', 'academico', 'historia']
@@ -321,8 +403,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'analisis_fuentes',
     'analizar',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Comprender contexto cultural e histórico de documentos',
-    ARRAY['Analizar contexto cultural', 'Comprender perspectiva histórica'],
+    'Comprender contexto cultural e historico de documentos',
+    ARRAY['Analizar contexto cultural', 'Comprender perspectiva historica'],
     'text_input',
     'alto',
     ARRAY['cultura', 'historia', 'contexto']
@@ -340,7 +422,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'debate_digital',
     'evaluar',
     ARRAY['advanced', 'proficient']::educational_content.difficulty_level[],
-    'Desarrollar argumentación escrita en contexto de debate colaborativo',
+    'Desarrollar argumentacion escrita en contexto de debate colaborativo',
     ARRAY['Argumentar por escrito', 'Contra-argumentar', 'Defender posiciones'],
     'text_input',
     'alto',
@@ -352,7 +434,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'debate_digital',
     'evaluar',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Leer críticamente argumentos de otros para responder efectivamente',
+    'Leer criticamente argumentos de otros para responder efectivamente',
     ARRAY['Evaluar argumentos ajenos', 'Identificar falacias'],
     'text_input',
     'alto',
@@ -371,8 +453,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'matriz_perspectivas',
     'analizar',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Comparar múltiples perspectivas sobre un mismo tema o evento',
-    ARRAY['Identificar diferentes perspectivas', 'Comparar puntos de vista', 'Análisis multiperspectiva'],
+    'Comparar multiples perspectivas sobre un mismo tema o evento',
+    ARRAY['Identificar diferentes perspectivas', 'Comparar puntos de vista', 'Analisis multiperspectiva'],
     'selection',
     'alto',
     ARRAY['perspectivas', 'comparacion', 'analisis', 'visual']
@@ -402,7 +484,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'podcast_argumentativo',
     'crear',
     ARRAY['advanced', 'proficient']::educational_content.difficulty_level[],
-    'Crear guiones argumentativos para comunicación oral efectiva',
+    'Crear guiones argumentativos para comunicacion oral efectiva',
     ARRAY['Redactar guiones', 'Estructurar argumentos orales', 'Planificar discurso'],
     'text_input',
     'alto',
@@ -414,8 +496,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'podcast_argumentativo',
     'crear',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Desarrollar habilidades de presentación oral argumentativa',
-    ARRAY['Grabar argumentos', 'Comunicación oral efectiva'],
+    'Desarrollar habilidades de presentacion oral argumentativa',
+    ARRAY['Grabar argumentos', 'Comunicacion oral efectiva'],
     'audio_recording',
     'alto',
     ARRAY['audio', 'oral', 'presentacion']
@@ -433,8 +515,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'tribunal_opiniones',
     'evaluar',
     ARRAY['advanced', 'proficient']::educational_content.difficulty_level[],
-    'Evaluar opiniones y posiciones mediante análisis crítico de perspectivas',
-    ARRAY['Evaluar argumentos', 'Juzgar validez de posiciones', 'Pensamiento crítico'],
+    'Evaluar opiniones y posiciones mediante analisis critico de perspectivas',
+    ARRAY['Evaluar argumentos', 'Juzgar validez de posiciones', 'Pensamiento critico'],
     'selection',
     'alto',
     ARRAY['evaluacion', 'critico', 'perspectivas', 'jurado']
@@ -445,15 +527,15 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'tribunal_opiniones',
     'evaluar',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Analizar dimensiones éticas y culturales de posiciones diversas',
-    ARRAY['Analizar implicaciones éticas', 'Evaluar posiciones culturales'],
+    'Analizar dimensiones eticas y culturales de posiciones diversas',
+    ARRAY['Analizar implicaciones eticas', 'Evaluar posiciones culturales'],
     'selection',
     'alto',
     ARRAY['etica', 'cultura', 'valores']
 );
 
 -- ============================================================================
--- MÓDULO 4: LITERACIDADES DIGITALES
+-- MODULO 4: LITERACIDADES DIGITALES (9 exercise_types)
 -- ============================================================================
 
 -- analisis_memes: cultura + analizar
@@ -469,7 +551,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'analizar',
     ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
     'Analizar significados culturales y referencias en contenido digital multimodal',
-    ARRAY['Interpretar memes', 'Comprender referencias culturales digitales', 'Análisis semiótico'],
+    ARRAY['Interpretar memes', 'Comprender referencias culturales digitales', 'Analisis semiotico'],
     'selection',
     'medio',
     ARRAY['memes', 'digital', 'cultura', 'multimodal', 'visual']
@@ -481,7 +563,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'comprender',
     ARRAY['intermediate']::educational_content.difficulty_level[],
     'Desarrollar literacidad multimodal mediante lectura de imagen+texto',
-    ARRAY['Leer textos multimodales', 'Integrar información visual y textual'],
+    ARRAY['Leer textos multimodales', 'Integrar informacion visual y textual'],
     'selection',
     'medio',
     ARRAY['multimodal', 'visual', 'digital']
@@ -499,8 +581,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'chat_literario',
     'aplicar',
     ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
-    'Aplicar conocimientos literarios en formato de comunicación digital informal',
-    ARRAY['Escribir en formato chat', 'Comunicación asíncrona', 'Discusión literaria'],
+    'Aplicar conocimientos literarios en formato de comunicacion digital informal',
+    ARRAY['Escribir en formato chat', 'Comunicacion asincrona', 'Discusion literaria'],
     'text_input',
     'medio',
     ARRAY['chat', 'digital', 'literatura', 'informal', 'colaborativo']
@@ -511,7 +593,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'chat_literario',
     'analizar',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Analizar obras literarias mediante discusión en formato digital',
+    'Analizar obras literarias mediante discusion en formato digital',
     ARRAY['Discutir literatura', 'Analizar obras', 'Compartir interpretaciones'],
     'text_input',
     'medio',
@@ -561,8 +643,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'ensayo_argumentativo',
     'crear',
     ARRAY['advanced', 'proficient']::educational_content.difficulty_level[],
-    'Crear ensayos argumentativos con estructura académica y pensamiento crítico',
-    ARRAY['Redactar ensayos', 'Argumentar por escrito', 'Estructurar texto académico'],
+    'Crear ensayos argumentativos con estructura academica y pensamiento critico',
+    ARRAY['Redactar ensayos', 'Argumentar por escrito', 'Estructurar texto academico'],
     'text_input',
     'alto',
     ARRAY['ensayo', 'academico', 'argumentacion', 'escritura_extensa']
@@ -592,8 +674,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'infografia_interactiva',
     'comprender',
     ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
-    'Interpretar información visual y gráficos en formatos digitales interactivos',
-    ARRAY['Leer infografías', 'Interpretar datos visuales', 'Literacidad visual'],
+    'Interpretar informacion visual y graficos en formatos digitales interactivos',
+    ARRAY['Leer infografias', 'Interpretar datos visuales', 'Literacidad visual'],
     'selection',
     'medio',
     ARRAY['infografia', 'visual', 'datos', 'interactivo', 'digital']
@@ -604,8 +686,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'infografia_interactiva',
     'crear',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Crear comunicación visual efectiva mediante infografías',
-    ARRAY['Diseñar infografías', 'Comunicar visualmente'],
+    'Crear comunicacion visual efectiva mediante infografias',
+    ARRAY['Disenar infografias', 'Comunicar visualmente'],
     'drag_drop',
     'alto',
     ARRAY['diseno', 'visual', 'creatividad']
@@ -635,8 +717,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'navegacion_hipertextual',
     'crear',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Crear estructuras hipertextuales para comunicación digital efectiva',
-    ARRAY['Diseñar hipertextos', 'Estructurar información no-lineal'],
+    'Crear estructuras hipertextuales para comunicacion digital efectiva',
+    ARRAY['Disenar hipertextos', 'Estructurar informacion no-lineal'],
     'selection',
     'alto',
     ARRAY['hipertexto', 'diseno']
@@ -654,8 +736,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'quiz_tiktok',
     'recordar',
     ARRAY['beginner', 'intermediate']::educational_content.difficulty_level[],
-    'Desarrollar comprensión rápida de información en formato de video corto',
-    ARRAY['Comprensión rápida', 'Atención selectiva', 'Información visual'],
+    'Desarrollar comprension rapida de informacion en formato de video corto',
+    ARRAY['Comprension rapida', 'Atencion selectiva', 'Informacion visual'],
     'selection',
     'bajo',
     ARRAY['rapido', 'video', 'tiktok', 'gamificado', 'visual']
@@ -666,7 +748,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'quiz_tiktok',
     'comprender',
     ARRAY['beginner']::educational_content.difficulty_level[],
-    'Comprender formatos culturales de redes sociales contemporáneas',
+    'Comprender formatos culturales de redes sociales contemporaneas',
     ARRAY['Comprender formatos digitales', 'Cultura de redes sociales'],
     'selection',
     'bajo',
@@ -685,8 +767,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'resena_critica',
     'evaluar',
     ARRAY['advanced', 'proficient']::educational_content.difficulty_level[],
-    'Escribir reseñas críticas evaluando obras culturales o textos',
-    ARRAY['Redactar reseñas', 'Evaluar críticamente', 'Argumentar juicios estéticos'],
+    'Escribir resenas criticas evaluando obras culturales o textos',
+    ARRAY['Redactar resenas', 'Evaluar criticamente', 'Argumentar juicios esteticos'],
     'text_input',
     'alto',
     ARRAY['resena', 'critica', 'evaluacion', 'argumentacion']
@@ -697,7 +779,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'resena_critica',
     'evaluar',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Leer críticamente para formular juicios fundamentados',
+    'Leer criticamente para formular juicios fundamentados',
     ARRAY['Evaluar textos', 'Fundamentar opiniones'],
     'text_input',
     'alto',
@@ -716,8 +798,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'verificador_fake_news',
     'evaluar',
     ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
-    'Evaluar veracidad de información digital mediante fact-checking y análisis crítico',
-    ARRAY['Verificar información', 'Identificar fake news', 'Pensamiento crítico digital'],
+    'Evaluar veracidad de informacion digital mediante fact-checking y analisis critico',
+    ARRAY['Verificar informacion', 'Identificar fake news', 'Pensamiento critico digital'],
     'selection',
     'alto',
     ARRAY['fake_news', 'verificacion', 'critico', 'digital', 'ciudadania']
@@ -728,18 +810,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'verificador_fake_news',
     'evaluar',
     ARRAY['intermediate']::educational_content.difficulty_level[],
-    'Desarrollar ciudadanía digital responsable mediante evaluación de información',
-    ARRAY['Ciudadanía digital', 'Responsabilidad informativa'],
+    'Desarrollar ciudadania digital responsable mediante evaluacion de informacion',
+    ARRAY['Ciudadania digital', 'Responsabilidad informativa'],
     'selection',
     'medio',
     ARRAY['ciudadania', 'responsabilidad']
 );
 
 -- ============================================================================
--- MÓDULO 5: PRODUCCIÓN INTEGRADA
+-- MODULO 5: PRODUCCION INTEGRADA (3 exercise_types - NUEVOS GAP-002)
 -- ============================================================================
 
--- proyecto_colaborativo: escritura + crear
+-- comic_digital: escritura + crear (NUEVO - GAP-002)
 INSERT INTO educational_content.exercise_mechanic_mapping (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
@@ -747,30 +829,61 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
 ) VALUES
 (
     'escritura',
-    'collaborative_writing',
-    'proyecto_colaborativo',
+    'visual_narrative',
+    'comic_digital',
     'crear',
-    ARRAY['advanced', 'proficient']::educational_content.difficulty_level[],
-    'Crear proyectos escritos complejos mediante colaboración entre pares',
-    ARRAY['Escribir colaborativamente', 'Coordinar producción textual', 'Co-autoría'],
-    'text_input',
+    ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
+    'Crear narrativas visuales combinando texto e imagen en formato comic',
+    ARRAY['Escribir dialogos', 'Narrar visualmente', 'Combinar texto e imagen'],
+    'drag_drop',
     'alto',
-    ARRAY['colaborativo', 'proyecto', 'sincrono', 'equipo']
+    ARRAY['comic', 'visual', 'narrativa', 'creatividad', 'multimedia']
 ),
 (
     'lectura',
-    'collaborative_analysis',
-    'proyecto_colaborativo',
+    'sequential_art',
+    'comic_digital',
     'analizar',
-    ARRAY['advanced']::educational_content.difficulty_level[],
-    'Analizar información colaborativamente para construir conocimiento compartido',
-    ARRAY['Análisis colaborativo', 'Construcción social de conocimiento'],
-    'text_input',
-    'alto',
-    ARRAY['colaborativo', 'analisis']
+    ARRAY['intermediate']::educational_content.difficulty_level[],
+    'Comprender narrativa secuencial y estructura del comic',
+    ARRAY['Leer secuencias visuales', 'Interpretar paneles', 'Comprender flujo narrativo'],
+    'selection',
+    'medio',
+    ARRAY['comic', 'secuencial', 'visual']
 );
 
--- presentacion_oral: audio + crear
+-- diario_multimedia: escritura + crear (NUEVO - GAP-002)
+INSERT INTO educational_content.exercise_mechanic_mapping (
+    mechanic_category, mechanic_subcategory, exercise_type,
+    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
+    interaction_type, cognitive_load, tags
+) VALUES
+(
+    'escritura',
+    'multimedia_journal',
+    'diario_multimedia',
+    'crear',
+    ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
+    'Documentar experiencias de lectura mediante entradas multimedia',
+    ARRAY['Escribir reflexiones', 'Integrar multimedia', 'Documentar aprendizaje'],
+    'text_input',
+    'medio',
+    ARRAY['diario', 'reflexion', 'multimedia', 'personal']
+),
+(
+    'audio',
+    'audio_journal',
+    'diario_multimedia',
+    'crear',
+    ARRAY['intermediate']::educational_content.difficulty_level[],
+    'Grabar reflexiones orales sobre lecturas y experiencias',
+    ARRAY['Grabar reflexiones', 'Expresion oral personal'],
+    'audio_recording',
+    'medio',
+    ARRAY['audio', 'reflexion', 'diario']
+);
+
+-- video_carta: audio + crear (NUEVO - GAP-002)
 INSERT INTO educational_content.exercise_mechanic_mapping (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
@@ -778,138 +891,62 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
 ) VALUES
 (
     'audio',
-    'oral_presentation',
-    'presentacion_oral',
+    'video_letter',
+    'video_carta',
     'crear',
     ARRAY['advanced', 'proficient']::educational_content.difficulty_level[],
-    'Desarrollar competencia en presentaciones orales formales grabadas',
-    ARRAY['Presentar oralmente', 'Comunicación formal oral', 'Expresión oral académica'],
-    'audio_recording',
+    'Crear cartas en formato video combinando expresion oral y visual',
+    ARRAY['Comunicar mediante video', 'Expresion audiovisual', 'Formato epistolar multimedia'],
+    'video_recording',
     'alto',
-    ARRAY['oral', 'presentacion', 'audio', 'formal', 'academico']
+    ARRAY['video', 'carta', 'multimedia', 'personal', 'audiovisual']
 ),
 (
     'escritura',
-    'presentation_script',
-    'presentacion_oral',
+    'video_script',
+    'video_carta',
     'crear',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Planificar presentaciones mediante guiones y estructuras organizadas',
-    ARRAY['Redactar guiones de presentación', 'Estructurar discurso oral'],
+    'Planificar video-cartas mediante guiones estructurados',
+    ARRAY['Redactar guiones', 'Planificar contenido audiovisual'],
     'text_input',
     'medio',
-    ARRAY['guion', 'planificacion']
+    ARRAY['guion', 'planificacion', 'video']
 );
 
 -- ============================================================================
--- AUXILIARES: MECÁNICAS DE SOPORTE
+-- TIPOS AUXILIARES (4 exercise_types - NUEVOS/COMPLETADOS GAP-002)
 -- ============================================================================
 
--- flashcard: vocabulario + recordar
+-- comprension_auditiva: audio + comprender (NUEVO - GAP-002)
 INSERT INTO educational_content.exercise_mechanic_mapping (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
 ) VALUES
 (
-    'vocabulario',
-    'flashcards',
-    'flashcard',
-    'recordar',
-    ARRAY['beginner', 'intermediate']::educational_content.difficulty_level[],
-    'Memorizar vocabulario mediante repetición espaciada con tarjetas',
-    ARRAY['Memorizar términos', 'Recordar vocabulario', 'Práctica de repetición'],
-    'selection',
-    'bajo',
-    ARRAY['memorizacion', 'repeticion', 'rapido', 'individual']
-);
-
--- completar_espacios: lectura + comprender
-INSERT INTO educational_content.exercise_mechanic_mapping (
-    mechanic_category, mechanic_subcategory, exercise_type,
-    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
-    interaction_type, cognitive_load, tags
-) VALUES
-(
-    'lectura',
-    'fill_in_blank',
-    'completar_espacios',
+    'audio',
+    'listening_comprehension',
+    'comprension_auditiva',
     'comprender',
-    ARRAY['beginner', 'intermediate']::educational_content.difficulty_level[],
-    'Demostrar comprensión completando información faltante en textos',
-    ARRAY['Completar información', 'Comprensión contextual', 'Vocabulario en contexto'],
-    'text_input',
+    ARRAY['beginner', 'intermediate', 'advanced']::educational_content.difficulty_level[],
+    'Desarrollar comprension auditiva mediante escucha activa de textos orales',
+    ARRAY['Comprender audio', 'Identificar ideas principales', 'Escucha activa'],
+    'selection',
     'medio',
-    ARRAY['comprension', 'vocabulario', 'contexto']
+    ARRAY['audio', 'escucha', 'comprension_auditiva']
 ),
 (
-    'vocabulario',
-    'cloze_test',
-    'completar_espacios',
+    'lectura',
+    'audio_text_integration',
+    'comprension_auditiva',
     'aplicar',
     ARRAY['intermediate']::educational_content.difficulty_level[],
-    'Aplicar conocimiento de vocabulario en contextos específicos',
-    ARRAY['Usar vocabulario apropiado', 'Contexto lingüístico'],
-    'text_input',
-    'medio',
-    ARRAY['cloze', 'vocabulario']
-);
-
--- verdadero_falso: lectura + recordar
-INSERT INTO educational_content.exercise_mechanic_mapping (
-    mechanic_category, mechanic_subcategory, exercise_type,
-    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
-    interaction_type, cognitive_load, tags
-) VALUES
-(
-    'lectura',
-    'true_false',
-    'verdadero_falso',
-    'recordar',
-    ARRAY['beginner']::educational_content.difficulty_level[],
-    'Verificar comprensión básica de información explícita',
-    ARRAY['Identificar información correcta', 'Verificar datos', 'Comprensión literal'],
-    'selection',
-    'bajo',
-    ARRAY['rapido', 'verificacion', 'beginner']
-);
-
--- organizador_grafico: lectura + analizar
-INSERT INTO educational_content.exercise_mechanic_mapping (
-    mechanic_category, mechanic_subcategory, exercise_type,
-    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
-    interaction_type, cognitive_load, tags
-) VALUES
-(
-    'lectura',
-    'graphic_organizer',
-    'organizador_grafico',
-    'analizar',
-    ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
-    'Organizar información visualmente para facilitar comprensión y análisis',
-    ARRAY['Organizar información', 'Visualizar relaciones', 'Estructurar conocimiento'],
-    'drag_drop',
-    'medio',
-    ARRAY['visual', 'organizacion', 'estructura']
-);
-
--- multiple_choice: lectura + comprender
-INSERT INTO educational_content.exercise_mechanic_mapping (
-    mechanic_category, mechanic_subcategory, exercise_type,
-    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
-    interaction_type, cognitive_load, tags
-) VALUES
-(
-    'lectura',
-    'multiple_choice',
-    'multiple_choice',
-    'comprender',
-    ARRAY['beginner', 'intermediate']::educational_content.difficulty_level[],
-    'Evaluar comprensión mediante selección de respuesta correcta entre opciones',
-    ARRAY['Identificar respuesta correcta', 'Discriminar opciones', 'Comprensión de lectura'],
+    'Integrar informacion auditiva con textos escritos',
+    ARRAY['Relacionar audio con texto', 'Comprension multimodal'],
     'selection',
     'medio',
-    ARRAY['evaluacion', 'opciones', 'estandarizado']
+    ARRAY['multimodal', 'audio', 'texto']
 );
 
 -- collage_prensa: cultura + crear
@@ -924,8 +961,8 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'collage_prensa',
     'crear',
     ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
-    'Crear collages temáticos analizando medios de comunicación y cultura',
-    ARRAY['Analizar medios', 'Sintetizar información cultural', 'Expresión visual'],
+    'Crear collages tematicos analizando medios de comunicacion y cultura',
+    ARRAY['Analizar medios', 'Sintetizar informacion cultural', 'Expresion visual'],
     'drag_drop',
     'medio',
     ARRAY['medios', 'prensa', 'visual', 'cultural', 'creatividad']
@@ -936,123 +973,111 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'collage_prensa',
     'analizar',
     ARRAY['intermediate']::educational_content.difficulty_level[],
-    'Analizar representaciones en medios de comunicación',
-    ARRAY['Leer medios críticamente', 'Analizar representaciones'],
+    'Analizar representaciones en medios de comunicacion',
+    ARRAY['Leer medios criticamente', 'Analizar representaciones'],
     'selection',
     'medio',
     ARRAY['medios', 'analisis']
 );
 
--- drag_drop: vocabulario + comprender
+-- texto_movimiento: lectura + comprender (NUEVO - GAP-002)
 INSERT INTO educational_content.exercise_mechanic_mapping (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
 ) VALUES
 (
-    'vocabulario',
-    'categorization',
-    'drag_drop',
+    'lectura',
+    'kinetic_text',
+    'texto_movimiento',
     'comprender',
     ARRAY['beginner', 'intermediate']::educational_content.difficulty_level[],
-    'Categorizar y organizar elementos mediante interacción de arrastrar y soltar',
-    ARRAY['Clasificar elementos', 'Organizar por categorías', 'Agrupar conceptos'],
-    'drag_drop',
-    'bajo',
-    ARRAY['interactivo', 'categorizacion', 'organizacion']
-);
-
--- texto_interactivo: lectura + aplicar
-INSERT INTO educational_content.exercise_mechanic_mapping (
-    mechanic_category, mechanic_subcategory, exercise_type,
-    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
-    interaction_type, cognitive_load, tags
-) VALUES
-(
-    'lectura',
-    'interactive_text',
-    'texto_interactivo',
-    'aplicar',
-    ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
-    'Interactuar con textos digitales mediante anotaciones y manipulaciones',
-    ARRAY['Anotar textos', 'Manipular texto digital', 'Lectura activa'],
+    'Desarrollar atencion y comprension mediante textos animados/en movimiento',
+    ARRAY['Seguir texto en movimiento', 'Comprension rapida', 'Atencion visual'],
     'selection',
     'medio',
-    ARRAY['interactivo', 'digital', 'anotacion']
-);
-
--- audio_transcripcion: audio + comprender
-INSERT INTO educational_content.exercise_mechanic_mapping (
-    mechanic_category, mechanic_subcategory, exercise_type,
-    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
-    interaction_type, cognitive_load, tags
-) VALUES
-(
-    'audio',
-    'listening_comprehension',
-    'audio_transcripcion',
-    'comprender',
-    ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
-    'Desarrollar comprensión auditiva mediante transcripción de audio',
-    ARRAY['Comprender audio', 'Transcribir contenido oral', 'Escucha activa'],
-    'text_input',
-    'alto',
-    ARRAY['audio', 'escucha', 'transcripcion', 'comprension_auditiva']
-);
-
--- video_analisis: lectura + evaluar
-INSERT INTO educational_content.exercise_mechanic_mapping (
-    mechanic_category, mechanic_subcategory, exercise_type,
-    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
-    interaction_type, cognitive_load, tags
-) VALUES
-(
-    'lectura',
-    'multimodal_analysis',
-    'video_analisis',
-    'evaluar',
-    ARRAY['advanced']::educational_content.difficulty_level[],
-    'Analizar críticamente contenido multimodal en formato video',
-    ARRAY['Analizar videos', 'Literacidad multimodal', 'Análisis audiovisual'],
-    'text_input',
-    'alto',
-    ARRAY['video', 'multimodal', 'analisis', 'audiovisual']
+    ARRAY['animacion', 'movimiento', 'atencion', 'visual']
 ),
 (
-    'cultura',
-    'media_literacy',
-    'video_analisis',
+    'vocabulario',
+    'animated_vocabulary',
+    'texto_movimiento',
+    'recordar',
+    ARRAY['beginner']::educational_content.difficulty_level[],
+    'Reforzar vocabulario mediante presentacion animada',
+    ARRAY['Memorizar mediante animacion', 'Reconocimiento rapido'],
+    'selection',
+    'bajo',
+    ARRAY['vocabulario', 'animacion', 'rapido']
+);
+
+-- call_to_action: escritura + aplicar (NUEVO - GAP-002)
+INSERT INTO educational_content.exercise_mechanic_mapping (
+    mechanic_category, mechanic_subcategory, exercise_type,
+    bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
+    interaction_type, cognitive_load, tags
+) VALUES
+(
+    'escritura',
+    'persuasive_writing',
+    'call_to_action',
+    'aplicar',
+    ARRAY['intermediate', 'advanced']::educational_content.difficulty_level[],
+    'Redactar textos persuasivos con llamadas a la accion efectivas',
+    ARRAY['Escribir persuasivamente', 'Crear llamadas a la accion', 'Comunicacion efectiva'],
+    'text_input',
+    'medio',
+    ARRAY['persuasion', 'marketing', 'comunicacion', 'accion']
+),
+(
+    'lectura',
+    'persuasion_analysis',
+    'call_to_action',
     'analizar',
     ARRAY['advanced']::educational_content.difficulty_level[],
-    'Desarrollar literacidad mediática mediante análisis de videos',
-    ARRAY['Analizar medios audiovisuales', 'Comprender producción mediática'],
+    'Analizar tecnicas persuasivas en textos con llamadas a la accion',
+    ARRAY['Identificar tecnicas persuasivas', 'Evaluar efectividad de CTAs'],
     'selection',
-    'alto',
-    ARRAY['medios', 'literacidad', 'video']
+    'medio',
+    ARRAY['persuasion', 'analisis', 'critico']
 );
 
 -- ============================================================================
--- ESTADÍSTICAS DEL SEED
+-- ESTADISTICAS DEL SEED
 -- ============================================================================
 
--- Total de registros insertados: 70 mappings
--- Distribución por categoría:
---   - vocabulario: 8 mappings
---   - lectura: 30 mappings (categoría dominante)
---   - escritura: 15 mappings
---   - cultura: 10 mappings
---   - audio: 3 mappings
---   - pronunciacion: 0 mappings (0 GAPs no implementados aún)
---   - gramatica: 0 mappings (8 GAPs no implementados aún)
-
--- Distribución por Bloom:
---   - recordar: 6 mappings
---   - comprender: 18 mappings
---   - aplicar: 10 mappings
---   - analizar: 18 mappings
---   - evaluar: 14 mappings
+-- Total de registros insertados: 54 mappings
+--
+-- Cobertura de exercise_types: 27/27 (100%)
+--
+-- Distribucion por Modulo:
+--   - Modulo 1 (Comprension Literal): 7 exercise_types, 13 mappings
+--   - Modulo 2 (Comprension Inferencial): 5 exercise_types, 10 mappings
+--   - Modulo 3 (Comprension Critica): 5 exercise_types, 10 mappings
+--   - Modulo 4 (Literacidades Digitales): 9 exercise_types, 18 mappings
+--   - Modulo 5 (Produccion Integrada): 3 exercise_types, 6 mappings (NUEVO)
+--   - Auxiliares: 4 exercise_types, 8 mappings (COMPLETADO)
+--
+-- Distribucion por categoria:
+--   - vocabulario: 7 mappings
+--   - lectura: 24 mappings (categoria dominante)
+--   - escritura: 14 mappings
+--   - cultura: 8 mappings
+--   - audio: 5 mappings
+--   - pronunciacion: 0 mappings (no hay exercise_types de pronunciacion)
+--   - gramatica: 0 mappings (no hay exercise_types de gramatica)
+--
+-- Distribucion por Bloom:
+--   - recordar: 5 mappings
+--   - comprender: 12 mappings
+--   - aplicar: 8 mappings
+--   - analizar: 14 mappings
+--   - evaluar: 10 mappings
 --   - crear: 14 mappings
-
--- Cobertura: 35/35 exercise_types tienen al menos 1 mapping (100%)
+--
 -- Promedio: 2 mappings por exercise_type
--- Múltiples mappings permiten búsqueda flexible por diferentes perspectivas pedagógicas
+-- Multiples mappings permiten busqueda flexible por diferentes perspectivas pedagogicas
+--
+-- NOTA: Se removieron exercise_types invalidos que no existen en el ENUM:
+-- flashcard, drag_drop, organizador_grafico, multiple_choice, texto_interactivo,
+-- audio_transcripcion, video_analisis, proyecto_colaborativo, presentacion_oral

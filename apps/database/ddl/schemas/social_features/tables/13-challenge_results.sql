@@ -49,12 +49,35 @@ CREATE TABLE IF NOT EXISTS social_features.challenge_results (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
     -- Metadata
-    metadata JSONB DEFAULT '{}'
+    metadata JSONB DEFAULT '{}',
+
+    -- CHECK Constraints for data integrity
+    CONSTRAINT chk_positive_participants CHECK (total_participants > 0),
+    CONSTRAINT chk_completed_lte_total CHECK (
+        participants_completed IS NULL
+        OR participants_completed <= total_participants
+    ),
+    CONSTRAINT chk_forfeit_lte_total CHECK (
+        participants_forfeit IS NULL
+        OR participants_forfeit <= total_participants
+    ),
+    CONSTRAINT chk_accuracy_percentage CHECK (
+        highest_accuracy IS NULL
+        OR (highest_accuracy >= 0 AND highest_accuracy <= 100)
+    ),
+    CONSTRAINT chk_positive_xp CHECK (total_xp_distributed >= 0),
+    CONSTRAINT chk_positive_coins CHECK (total_ml_coins_distributed >= 0),
+    CONSTRAINT chk_rewards_timestamp CHECK (
+        rewards_distributed = false
+        OR rewards_distributed_at IS NOT NULL
+    )
 );
 
 -- Índices
 CREATE INDEX idx_challenge_results_challenge ON social_features.challenge_results(challenge_id);
 CREATE INDEX idx_challenge_results_winner ON social_features.challenge_results(winner_id);
+CREATE INDEX idx_challenge_results_second_place ON social_features.challenge_results(second_place_id);
+CREATE INDEX idx_challenge_results_third_place ON social_features.challenge_results(third_place_id);
 CREATE INDEX idx_challenge_results_calculated_at ON social_features.challenge_results(calculated_at DESC);
 CREATE INDEX idx_challenge_results_rewards_pending ON social_features.challenge_results(rewards_distributed)
     WHERE rewards_distributed = false;
@@ -69,3 +92,8 @@ COMMENT ON COLUMN social_features.challenge_results.winner_id IS 'Usuario ganado
 COMMENT ON COLUMN social_features.challenge_results.final_leaderboard IS 'Leaderboard final en formato JSONB: [{user_id, rank, score, time}, ...]';
 COMMENT ON COLUMN social_features.challenge_results.total_xp_distributed IS 'Total de XP distribuido a todos los participantes';
 COMMENT ON COLUMN social_features.challenge_results.rewards_distributed IS 'Indica si las recompensas ya fueron distribuidas';
+COMMENT ON COLUMN social_features.challenge_results.second_place_id IS 'Usuario en segundo lugar (para multiplayer/tournaments)';
+COMMENT ON COLUMN social_features.challenge_results.third_place_id IS 'Usuario en tercer lugar (para multiplayer/tournaments)';
+COMMENT ON COLUMN social_features.challenge_results.participants_completed IS 'Numero de participantes que completaron el desafio';
+COMMENT ON COLUMN social_features.challenge_results.participants_forfeit IS 'Numero de participantes que se rindieron';
+COMMENT ON COLUMN social_features.challenge_results.statistics IS 'Estadisticas adicionales en formato JSONB: {accuracy_avg, attempts_total, etc.}';

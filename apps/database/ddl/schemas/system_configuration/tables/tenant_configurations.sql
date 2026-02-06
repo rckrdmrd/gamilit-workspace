@@ -30,7 +30,7 @@ COMMENT ON COLUMN system_configuration.tenant_configurations.config_type IS 'Typ
 COMMENT ON COLUMN system_configuration.tenant_configurations.is_overridable IS 'Whether tenant can override this configuration';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_tenant_configurations_updated_at
+CREATE TRIGGER trg_tenant_configurations_updated_at
     BEFORE UPDATE ON system_configuration.tenant_configurations
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

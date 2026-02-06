@@ -83,7 +83,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_update_message_participant_read
+CREATE TRIGGER trg_update_message_participant_read
     BEFORE UPDATE ON communication.message_participants
     FOR EACH ROW
     EXECUTE FUNCTION communication.update_message_participant_read();

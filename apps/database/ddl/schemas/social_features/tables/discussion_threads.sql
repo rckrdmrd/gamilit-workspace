@@ -34,7 +34,7 @@ COMMENT ON COLUMN social_features.discussion_threads.is_locked IS 'Whether threa
 COMMENT ON COLUMN social_features.discussion_threads.replies_count IS 'Number of replies in this thread';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_discussion_threads_updated_at
+CREATE TRIGGER trg_discussion_threads_updated_at
     BEFORE UPDATE ON social_features.discussion_threads
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

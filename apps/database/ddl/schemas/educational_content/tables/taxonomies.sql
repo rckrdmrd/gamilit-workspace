@@ -26,7 +26,7 @@ COMMENT ON COLUMN educational_content.taxonomies.levels IS 'JSONB array of taxon
 COMMENT ON COLUMN educational_content.taxonomies.is_active IS 'Whether this taxonomy is currently active for use';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_taxonomies_updated_at
+CREATE TRIGGER trg_taxonomies_updated_at
     BEFORE UPDATE ON educational_content.taxonomies
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

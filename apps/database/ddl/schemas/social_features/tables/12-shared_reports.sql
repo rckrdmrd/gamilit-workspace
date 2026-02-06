@@ -4,6 +4,7 @@
 -- SCHEMA: social_features
 -- FECHA: 2026-01-19
 -- TASK: TASK-2026-01-18-015 Sprint 5.3
+-- ACTUALIZADO: 2026-01-25 (Sync Entity-DDL Discrepancies)
 -- =====================================================
 
 CREATE TABLE IF NOT EXISTS social_features.shared_reports (
@@ -15,6 +16,9 @@ CREATE TABLE IF NOT EXISTS social_features.shared_reports (
 
   -- Permisos
   permission_level VARCHAR(20) DEFAULT 'view' CHECK (permission_level IN ('view', 'download', 'edit')),
+
+  -- Estado de revocación (sincronizado con Entity 2026-01-25)
+  is_revoked BOOLEAN DEFAULT FALSE,
 
   -- Tracking de acceso
   accessed_at TIMESTAMPTZ,
@@ -48,7 +52,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_shared_reports_unique
   ON social_features.shared_reports(report_id, shared_with);
 
 -- Comentario de tabla
-COMMENT ON TABLE social_features.shared_reports IS 'Registro de reportes compartidos entre profesores';
+COMMENT ON TABLE social_features.shared_reports IS 'Registro de reportes compartidos entre profesores. Sincronizado con Entity (2026-01-25)';
 
 -- Comentarios de columnas
 COMMENT ON COLUMN social_features.shared_reports.id IS 'Identificador único del registro de compartir';
@@ -57,6 +61,7 @@ COMMENT ON COLUMN social_features.shared_reports.shared_by IS 'ID del profesor q
 COMMENT ON COLUMN social_features.shared_reports.shared_with IS 'ID del profesor con quien se comparte';
 COMMENT ON COLUMN social_features.shared_reports.tenant_id IS 'ID del tenant para soporte multi-tenant';
 COMMENT ON COLUMN social_features.shared_reports.permission_level IS 'Nivel de permiso: view, download, edit';
+COMMENT ON COLUMN social_features.shared_reports.is_revoked IS 'Si el acceso compartido fue revocado por el propietario';
 COMMENT ON COLUMN social_features.shared_reports.accessed_at IS 'Última vez que se accedió al reporte compartido';
 COMMENT ON COLUMN social_features.shared_reports.access_count IS 'Número de veces que se ha accedido';
 COMMENT ON COLUMN social_features.shared_reports.expires_at IS 'Fecha de expiración del acceso (NULL = sin expiración)';
@@ -79,6 +84,11 @@ CREATE INDEX IF NOT EXISTS idx_shared_reports_tenant_id
 CREATE INDEX IF NOT EXISTS idx_shared_reports_expires
   ON social_features.shared_reports(expires_at)
   WHERE expires_at IS NOT NULL;
+
+-- Índice para reportes activos no revocados (sincronizado con Entity 2026-01-25)
+CREATE INDEX IF NOT EXISTS idx_shared_reports_active
+  ON social_features.shared_reports(shared_with, is_revoked)
+  WHERE is_revoked = FALSE;
 
 -- RLS (Row Level Security)
 ALTER TABLE social_features.shared_reports ENABLE ROW LEVEL SECURITY;

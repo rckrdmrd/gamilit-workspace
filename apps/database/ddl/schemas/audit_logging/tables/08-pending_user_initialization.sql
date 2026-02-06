@@ -1,5 +1,5 @@
 -- =====================================================
--- Tabla: pending_user_initialization
+-- Tabla: pending_user_initializations
 -- Descripción: Registra usuarios cuya inicialización de gamificación falló
 -- Schema: audit_logging
 -- Autor: Requirements-Analyst (P1-010)
@@ -21,10 +21,10 @@
 SET search_path TO audit_logging, public;
 
 -- =====================================================
--- TABLA: pending_user_initialization
+-- TABLA: pending_user_initializations
 -- =====================================================
 
-CREATE TABLE IF NOT EXISTS audit_logging.pending_user_initialization (
+CREATE TABLE IF NOT EXISTS audit_logging.pending_user_initializations (
     -- Primary Key
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -64,16 +64,16 @@ CREATE TABLE IF NOT EXISTS audit_logging.pending_user_initialization (
 -- =====================================================
 
 CREATE INDEX IF NOT EXISTS idx_pending_init_user_id
-    ON audit_logging.pending_user_initialization(user_id);
+    ON audit_logging.pending_user_initializations(user_id);
 
 CREATE INDEX IF NOT EXISTS idx_pending_init_status
-    ON audit_logging.pending_user_initialization(status);
+    ON audit_logging.pending_user_initializations(status);
 
 CREATE INDEX IF NOT EXISTS idx_pending_init_created_at
-    ON audit_logging.pending_user_initialization(created_at DESC);
+    ON audit_logging.pending_user_initializations(created_at DESC);
 
 CREATE INDEX IF NOT EXISTS idx_pending_init_next_retry
-    ON audit_logging.pending_user_initialization(next_retry_at)
+    ON audit_logging.pending_user_initializations(next_retry_at)
     WHERE status IN ('pending', 'retrying');
 
 -- =====================================================
@@ -81,7 +81,7 @@ CREATE INDEX IF NOT EXISTS idx_pending_init_next_retry
 -- =====================================================
 
 CREATE OR REPLACE TRIGGER trg_pending_init_updated_at
-    BEFORE UPDATE ON audit_logging.pending_user_initialization
+    BEFORE UPDATE ON audit_logging.pending_user_initializations
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();
 
@@ -89,21 +89,21 @@ CREATE OR REPLACE TRIGGER trg_pending_init_updated_at
 -- COMENTARIOS
 -- =====================================================
 
-COMMENT ON TABLE audit_logging.pending_user_initialization IS
+COMMENT ON TABLE audit_logging.pending_user_initializations IS
     'Registra usuarios cuya inicialización de gamificación falló para retry posterior';
 
-COMMENT ON COLUMN audit_logging.pending_user_initialization.user_id IS
+COMMENT ON COLUMN audit_logging.pending_user_initializations.user_id IS
     'ID del usuario en auth.users que falló la inicialización';
 
-COMMENT ON COLUMN audit_logging.pending_user_initialization.status IS
+COMMENT ON COLUMN audit_logging.pending_user_initializations.status IS
     'Estado: pending (nuevo), retrying (en proceso), resolved (exitoso), failed (agotó retries), manual (requiere intervención)';
 
 -- =====================================================
 -- GRANTS (RLS se maneja en archivo separado)
 -- =====================================================
 
-GRANT SELECT, INSERT, UPDATE ON audit_logging.pending_user_initialization TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON audit_logging.pending_user_initialization TO service_role;
+GRANT SELECT, INSERT, UPDATE ON audit_logging.pending_user_initializations TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON audit_logging.pending_user_initializations TO service_role;
 
 -- =====================================================
 -- FUNCIÓN HELPER: Marcar como resuelto
@@ -119,7 +119,7 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-    UPDATE audit_logging.pending_user_initialization
+    UPDATE audit_logging.pending_user_initializations
     SET status = 'resolved',
         resolved_at = gamilit.now_mexico(),
         resolved_by = p_resolved_by,

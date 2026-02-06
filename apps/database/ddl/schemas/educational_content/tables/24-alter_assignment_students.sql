@@ -143,10 +143,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS trigger_update_assignment_students_timestamp
+DROP TRIGGER IF EXISTS trg_assignment_students_updated_at
     ON educational_content.assignment_students;
 
-CREATE TRIGGER trigger_update_assignment_students_timestamp
+CREATE TRIGGER trg_assignment_students_updated_at
     BEFORE UPDATE ON educational_content.assignment_students
     FOR EACH ROW
     EXECUTE FUNCTION educational_content.update_assignment_students_timestamp();

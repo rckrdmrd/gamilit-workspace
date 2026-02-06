@@ -99,25 +99,16 @@ export class NotificationQueue {
    * - Normalmente solo email y push se encolan
    * - in_app es instantáneo (crear notificación = enviar)
    */
-  @Column({ type: 'varchar', length: 50 })
+  // FIX H-024: DDL channel is VARCHAR(20)
+  @Column({ type: 'varchar', length: 20 })
     channel!: string;
 
   /**
    * Estado del item en la cola
-   *
-   * Estados del ciclo de vida (según DDL):
-   * - 'queued' - Pendiente de procesamiento (default)
-   * - 'processing' - Siendo procesado por worker (lock)
-   * - 'sent' - Enviado exitosamente
-   * - 'failed' - Falló después de max_retries
-   *
-   * Worker busca items con status='queued'
-   * Worker actualiza a 'processing' antes de enviar (evita duplicados)
-   * Si envío exitoso: 'sent'
-   * Si fallo y retry_count < max_retries: vuelve a 'queued'
-   * Si fallo y retry_count >= max_retries: 'failed'
+   * Valores: 'queued', 'processing', 'sent', 'failed'
    */
-  @Column({ type: 'varchar', length: 50, default: 'queued' })
+  // FIX H-024: DDL status is VARCHAR(20)
+  @Column({ type: 'varchar', length: 20, default: 'queued' })
     status!: 'queued' | 'processing' | 'sent' | 'failed';
 
   /**
@@ -178,8 +169,9 @@ export class NotificationQueue {
    *
    * @optional Si NULL, se procesa inmediatamente
    */
-  @Column({ name: 'scheduled_for', type: 'timestamp with time zone', nullable: true })
-    scheduledFor?: Date;
+  // FIX H-024: DDL scheduled_for is NOT NULL
+  @Column({ name: 'scheduled_for', type: 'timestamp with time zone' })
+    scheduledFor!: Date;
 
   /**
    * Fecha y hora del último intento de procesamiento

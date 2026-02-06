@@ -78,7 +78,9 @@ export class NotificationTemplate {
    *
    * @unique
    */
-  @Column({ name: 'template_key', type: 'varchar', length: 100, unique: true })
+  // FIX H-038: Removed column-level unique:true. DDL has ONLY composite unique (template_key, version).
+  // Column-level unique blocks versioning (can't have same key with different versions).
+  @Column({ name: 'template_key', type: 'varchar', length: 100 })
     templateKey!: string;
 
   /**
@@ -100,8 +102,9 @@ export class NotificationTemplate {
    *
    * Ejemplo: "¡Felicidades {{user_name}}! Has desbloqueado {{achievement_name}}"
    */
-  @Column({ name: 'subject_template', type: 'text' })
-    subjectTemplate!: string;
+  // FIX H-024: DDL subject_template is nullable
+  @Column({ name: 'subject_template', type: 'text', nullable: true })
+    subjectTemplate?: string;
 
   /**
    * Plantilla del cuerpo (texto plano)

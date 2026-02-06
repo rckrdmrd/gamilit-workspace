@@ -14,7 +14,7 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
  *
  * @description Dispositivos registrados para push notifications (EXT-003)
  * @source orchestration/database/DB-115/HANDOFF-TO-BACKEND.md
- * @version 1.0 (2025-11-13) - Sistema Multi-Canal EXT-003
+ * @version 1.1 (2026-02-05) - FIX H-024: Alineado con DDL (types, lengths, browser/os added, deviceName removed)
  *
  * IMPORTANTE:
  * - Almacena device tokens para Firebase Cloud Messaging (FCM)
@@ -106,7 +106,8 @@ export class UserDevice {
    * @unique (combinado con user_id)
    * @maxLength 500 (soporta tokens largos)
    */
-  @Column({ name: 'device_token', type: 'varchar', length: 500 })
+  // FIX H-024: DDL device_token is TEXT (not VARCHAR 500)
+  @Column({ name: 'device_token', type: 'text' })
     deviceToken!: string;
 
   /**
@@ -126,28 +127,31 @@ export class UserDevice {
    * - En producción, usar FCM que maneja todas las plataformas
    * - En desarrollo, puede simular con 'test'
    */
-  @Column({ name: 'device_type', type: 'varchar', length: 50 })
+  // FIX H-024: DDL device_type is VARCHAR(20)
+  @Column({ name: 'device_type', type: 'varchar', length: 20 })
     deviceType!: string;
 
   /**
    * Nombre descriptivo del dispositivo
-   *
-   * Proporcionado por el cliente para ayudar al usuario a identificar el dispositivo
-   *
-   * Ejemplos:
-   * - "iPhone 13 de Juan"
-   * - "Samsung Galaxy S21"
-   * - "Chrome en MacBook"
-   *
-   * Útil para:
-   * - UI de gestión de dispositivos (settings)
-   * - Usuario puede ver qué dispositivos tiene registrados
-   * - Usuario puede desactivar dispositivos específicos
-   *
-   * @optional Si no se proporciona, usar deviceType genérico
+   * NOTE: NOT in current DDL - needs ALTER TABLE to add device_name column
+   * Actively used by user-device.service.ts and controllers
    */
   @Column({ name: 'device_name', type: 'varchar', length: 255, nullable: true })
     deviceName?: string;
+
+  /**
+   * Nombre del navegador (DDL: browser VARCHAR(50))
+   * FIX H-024: Added - present in DDL but missing from entity
+   */
+  @Column({ type: 'varchar', length: 50, nullable: true })
+    browser?: string;
+
+  /**
+   * Sistema operativo (DDL: os VARCHAR(50))
+   * FIX H-024: Added - present in DDL but missing from entity
+   */
+  @Column({ type: 'varchar', length: 50, nullable: true })
+    os?: string;
 
   /**
    * Indica si el dispositivo está activo para recibir push

@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants';
-import { User } from './user.entity';
+import { Profile } from './profile.entity';
 import { Tenant } from './tenant.entity';
 
 /**
@@ -80,9 +80,10 @@ export class UserSession {
     metadata!: Record<string, unknown>;
 
   // Relaciones
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  // FIX H-027: DDL FK user_id → auth_management.profiles(id), not auth.users(id)
+  @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-    user!: User;
+    user!: Profile;
 
   @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tenant_id' })

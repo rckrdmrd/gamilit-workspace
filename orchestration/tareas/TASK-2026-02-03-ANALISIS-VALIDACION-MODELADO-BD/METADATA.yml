@@ -1,0 +1,427 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA DE TAREA
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Tarea: Análisis y Validación Integral del Modelado de Datos - GAMILIT
+# Sistema: SIMCO v4.3.0 + NEXUS v4.0
+# Formato: Template v1.2.0
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "2.0.0"
+task_id: "TASK-2026-02-03-ANALISIS-VALIDACION-MODELADO-BD"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# IDENTIFICACIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+identificacion:
+  titulo: "Análisis y Validación Integral del Modelado de Datos - GAMILIT"
+  descripcion: |
+    Analizar y validar que el modelado de datos de GAMILIT sea correcto,
+    cumpla con los requerimientos documentados, tenga todos los objetos necesarios,
+    y no presente conflictos o duplicidades. Incluye ejecución de remediaciones
+    identificadas para llevar el score de 91.5% a 96.5%.
+  tipo: "analysis"
+  prioridad: "P1"
+  tags:
+    - "database"
+    - "modelado"
+    - "validacion"
+    - "DDL"
+    - "CAPVED"
+    - "remediacion"
+    - "gamilit"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESPONSABILIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+responsabilidad:
+  agente_responsable: "@DB_SPECIALIST_AGENT"
+  agente_modelo: "claude-opus-4-5"
+  delegado_de: null
+  delegado_a:
+    - "SA-001: Análisis Nivel 1 - Schemas"
+    - "SA-002: Análisis Nivel 2 - Tablas"
+    - "SA-003: Análisis Nivel 3 - Relaciones"
+    - "SA-004: Análisis Nivel 4 - RLS Policies"
+    - "SA-005: Análisis Nivel 5 - Funciones/Triggers"
+    - "SA-006: Análisis Nivel 6 - Documentación"
+    - "SA-007 a SA-022: Ejecución paralela Fase 1"
+    - "SA-023 a SA-030: Remediaciones Fase 2"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ALCANCE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+alcance:
+  nivel: "proyecto"
+  proyecto: "gamilit"
+  modulo: null
+  capas_afectadas:
+    - "database"
+    - "docs"
+  incluye:
+    - "16 schemas de base de datos"
+    - "140 tablas DDL"
+    - "159 funciones almacenadas"
+    - "58 triggers"
+    - "299 políticas RLS"
+    - "36 ENUMs"
+    - "241 foreign keys"
+    - "Documentación de requerimientos (92 ET files)"
+    - "Tareas archivadas (49 completadas)"
+  excluye:
+    - "Código backend/frontend (foco en BD)"
+    - "Migraciones (cambios integrados en DDL directos)"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TEMPORALIDAD
+# ─────────────────────────────────────────────────────────────────────────────────
+
+temporalidad:
+  fecha_inicio: "2026-02-03"
+  fecha_fin: "2026-02-03"
+  duracion_estimada: "8h"
+  duracion_real: "6h"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTADO
+# ─────────────────────────────────────────────────────────────────────────────────
+
+estado:
+  actual: "completada"
+  fase_actual: "D"
+  porcentaje: 100
+  motivo_bloqueo: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# FASES CAPVED
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases:
+  contexto:
+    estado: "completada"
+    archivo: "01-CONTEXTO.md"
+    completado_en: "2026-02-03"
+    descripcion: "Recopilar información del estado actual de BD"
+
+  analisis:
+    estado: "completada"
+    archivo: "02-ANALISIS.md"
+    completado_en: "2026-02-03"
+    descripcion: "Evaluar modelado vs requerimientos (6 niveles)"
+
+  plan:
+    estado: "completada"
+    archivo: "03-PLAN.md"
+    completado_en: "2026-02-03"
+    descripcion: "Diseñar subtareas estructuradas (28 subtareas)"
+
+  validacion:
+    estado: "completada"
+    archivo: "04-VALIDACION.md"
+    completado_en: "2026-02-03"
+    descripcion: "Verificar coherencia del plan y dependencias"
+
+  ejecucion:
+    estado: "completada"
+    archivo: "05-EJECUCION.md"
+    completado_en: "2026-02-03"
+    descripcion: "Implementar remediaciones (23 gaps, 6 sprints)"
+
+  documentacion:
+    estado: "completada"
+    archivo: "06-DOCUMENTACION.md"
+    completado_en: "2026-02-03"
+    descripcion: "Registrar hallazgos, informe final y lecciones"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ESTRUCTURA DE FASES DETALLADA
+# ─────────────────────────────────────────────────────────────────────────────────
+
+fases_detalle:
+  FASE-1-ANALISIS:
+    nombre: "Análisis y Planificación"
+    descripcion: "Primera fase - Análisis detallado y creación del plan"
+    estado: "completada"
+    subtareas: 6
+    niveles: 6
+    subtareas_totales: 28
+    agentes_paralelos: 22
+    fecha_completada: "2026-02-03"
+    entregables:
+      - "VALIDACION-CONSOLIDADA-NIVEL2.yml"
+      - "VALIDACION-CONSOLIDADA-NIVEL3.yml"
+      - "VALIDACION-CONSOLIDADA-NIVEL4.yml"
+      - "VALIDACION-CONSOLIDADA-NIVEL5.yml"
+      - "ROADMAP-FASE-2-IMPLEMENTACION.md"
+      - "INFORME-FINAL.md"
+
+  FASE-2-EJECUCION:
+    nombre: "Ejecución de Remediaciones"
+    descripcion: "Segunda fase - Implementar cambios identificados"
+    estado: "completada"
+    subtareas: 23
+    sprints: 6
+    effort_estimado: "58h (paralelo)"
+    prerequisito: "FASE-1-ANALISIS completada y aprobada"
+    roadmap: "_output/ROADMAP-FASE-2-IMPLEMENTACION.md"
+    fecha_completada: "2026-02-03"
+    resultados:
+      gaps_resueltos: 20
+      gaps_pendientes: 3
+      false_positives: 3
+      ddl_creados: 12
+      ddl_actualizados: 40
+      migraciones: 0
+      docs_consolidados: 2
+      score_inicial: "91.5%"
+      score_final: "96.5%"
+      nota: "Sin migraciones - DDL listos para recreación limpia"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESULTADOS CLAVE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+resultados:
+  score_general: "96.5%"
+  score_inicial: "91.5%"
+  mejora: "+5%"
+  niveles_ejecutados: 6
+  subtareas_completadas: 28
+  agentes_utilizados: 30
+  gaps_identificados: 23
+  gaps_resueltos: 20
+  false_positives: 3
+  anomalias_detectadas: 106
+  docs_purgables: 156
+  sprints_roadmap: 6
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARTEFACTOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+artefactos:
+  archivos_creados:
+    - ruta: "_output/VALIDACION-CONSOLIDADA-NIVEL2.yml"
+      tipo: "validacion"
+    - ruta: "_output/VALIDACION-CONSOLIDADA-NIVEL3.yml"
+      tipo: "validacion"
+    - ruta: "_output/VALIDACION-CONSOLIDADA-NIVEL4.yml"
+      tipo: "validacion"
+    - ruta: "_output/VALIDACION-CONSOLIDADA-NIVEL5.yml"
+      tipo: "validacion"
+    - ruta: "_output/ROADMAP-FASE-2-IMPLEMENTACION.md"
+      tipo: "planificacion"
+    - ruta: "_output/INFORME-FINAL.md"
+      tipo: "documentacion"
+    - ruta: "12 archivos DDL nuevos"
+      tipo: "ddl"
+
+  archivos_modificados:
+    - ruta: "40 archivos DDL actualizados"
+      cambio: "Correcciones de modelado, FK, RLS"
+
+  archivos_eliminados: []
+
+  commits: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RELACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+relaciones:
+  tarea_padre: null
+  subtareas: []
+  tareas_relacionadas:
+    - "TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS"
+    - "TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS"
+    - "TASK-022-MODELADO-INTEGRAL"
+  bloquea: []
+  bloqueada_por: []
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# VALIDACIONES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+validaciones:
+  build:
+    estado: "na"
+    output: "Solo análisis y DDL"
+  lint:
+    estado: "na"
+    errores: 0
+    warnings: 0
+  tests:
+    estado: "na"
+    passed: 0
+    failed: 0
+  typecheck:
+    estado: "na"
+    errores: 0
+  documentacion_completa: true
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  documentos_consultados:
+    - "@ESTANDAR-DATABASE"
+    - "@PRINCIPIO-NORMALIZACION"
+    - "@PRINCIPIO-DRY"
+    - "orchestration/inventarios/DATABASE_INVENTORY.yml"
+    - "orchestration/inventarios/MASTER_INVENTORY.yml"
+    - "docs/50-requerimientos/"
+    - "docs/05-modelado/"
+
+  directivas_aplicadas:
+    - "@FULL"
+    - "@ANALYSIS"
+    - "@SIMCO-TAREA"
+    - "@CAPVED"
+    - "@TRIGGER-COHERENCIA-CAPAS"
+    - "@TRIGGER-INVENTARIOS-SINCRONIZADOS"
+
+  epica: null
+  user_story: null
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# TRACKING DE CONTEXTO/TOKENS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+context_tracking:
+  estimated_tokens:
+    initial_context: 50000
+    files_loaded: 200000
+    total_conversation: 500000
+
+  context_cleanups: 4
+  checkpoints_created: 6
+
+  subagents:
+    - id: "SA-001 a SA-006"
+      profile: "DB_ANALYST"
+      estimated_tokens: 30000
+      files_loaded: 100
+      task_description: "Análisis por nivel (1-6)"
+    - id: "SA-007 a SA-022"
+      profile: "DB_VALIDATOR"
+      estimated_tokens: 20000
+      files_loaded: 50
+      task_description: "Validación paralela Fase 1"
+    - id: "SA-023 a SA-030"
+      profile: "DB_REMEDIATION"
+      estimated_tokens: 25000
+      files_loaded: 60
+      task_description: "Remediaciones Fase 2"
+
+  efficiency_metrics:
+    tokens_per_file_modified: 5000
+    tasks_completed_per_cleanup: 7
+    context_utilization_peak: "45%"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# MÉTRICAS DE EJECUCIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+metricas_ejecucion:
+  tiempo_total_minutos: 360
+  tiempo_por_fase:
+    C: 30
+    A: 120
+    P: 60
+    V: 30
+    E: 90
+    D: 30
+
+  subagentes:
+    total_utilizados: 30
+    paralelos_max: 8
+    fallidos: 0
+    carpeta: "subagentes/"
+    lista:
+      - id: "SA-001"
+        perfil: "DB_ANALYST_SCHEMAS"
+        resultado: "exito"
+        tiempo_minutos: 20
+      - id: "SA-002"
+        perfil: "DB_ANALYST_TABLES"
+        resultado: "exito"
+        tiempo_minutos: 30
+      - id: "SA-003"
+        perfil: "DB_ANALYST_RELATIONS"
+        resultado: "exito"
+        tiempo_minutos: 25
+      - id: "SA-004"
+        perfil: "DB_ANALYST_RLS"
+        resultado: "exito"
+        tiempo_minutos: 20
+      - id: "SA-005"
+        perfil: "DB_ANALYST_FUNCTIONS"
+        resultado: "exito"
+        tiempo_minutos: 25
+      - id: "SA-006"
+        perfil: "DB_ANALYST_DOCS"
+        resultado: "exito"
+        tiempo_minutos: 15
+
+  archivos:
+    analizados: 350
+    creados: 40
+    modificados: 40
+    eliminados: 0
+
+  lineas:
+    codigo_generado: 2500
+    codigo_modificado: 1800
+    documentacion: 3000
+
+  calidad:
+    errores_encontrados: 23
+    errores_resueltos: 20
+    rollbacks: 0
+    validaciones_fallidas: 0
+
+  eficiencia:
+    ratio_completitud: 0.87
+    ratio_subagentes: 0.93
+    tokens_por_archivo: 5000
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# PERFIL DE EJECUCIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+perfil:
+  tipo: "Especialista en Base de Datos y Modelado"
+  competencias:
+    - "Diseño de esquemas relacionales"
+    - "Normalización (1NF-5NF)"
+    - "Modelado entidad-relación"
+    - "Optimización de consultas"
+    - "RLS y seguridad"
+    - "Validación de integridad referencial"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NOTAS Y LECCIONES APRENDIDAS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+notas: |
+  Tarea de análisis y validación integral del modelado de datos de GAMILIT.
+  Se ejecutó en dos fases: Fase 1 (Análisis y Planificación) y Fase 2 (Ejecución de Remediaciones).
+  Score mejorado de 91.5% a 96.5% (+5%).
+  3 gaps identificados como false positives, no requirieron acción.
+  Todos los cambios integrados directamente en DDL, sin migraciones.
+
+lecciones_aprendidas:
+  - "False positives identificados (3): Algunos gaps reportados eran diseño intencional, no errores"
+  - "Migraciones → DDL directos: Integrar cambios directamente en DDL es más limpio para BD nueva"
+  - "Paralelismo efectivo: 8 subagentes paralelos máximo fue óptimo para este tamaño de tarea"
+  - "Validación por niveles: La estructura de 6 niveles permitió análisis sistemático y completo"
+  - "Documentación durante ejecución: Crear artefactos de validación en cada nivel facilitó el seguimiento"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DE METADATA
+# ═══════════════════════════════════════════════════════════════════════════════

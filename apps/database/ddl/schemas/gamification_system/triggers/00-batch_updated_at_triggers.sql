@@ -32,13 +32,13 @@ COMMENT ON TRIGGER trg_comodines_inventory_updated_at ON gamification_system.com
     IS 'Actualiza updated_at automaticamente en cada UPDATE';
 
 -- Tabla: gamification_system.missions
-DROP TRIGGER IF EXISTS missions_updated_at ON gamification_system.missions CASCADE;
-CREATE TRIGGER missions_updated_at
+DROP TRIGGER IF EXISTS trg_missions_updated_at ON gamification_system.missions CASCADE;
+CREATE TRIGGER trg_missions_updated_at
     BEFORE UPDATE ON gamification_system.missions
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();
 
-COMMENT ON TRIGGER missions_updated_at ON gamification_system.missions
+COMMENT ON TRIGGER trg_missions_updated_at ON gamification_system.missions
     IS 'Actualiza updated_at automaticamente en cada UPDATE';
 
 -- REMOVIDO (2026-01-07): Trigger para gamification_system.notifications

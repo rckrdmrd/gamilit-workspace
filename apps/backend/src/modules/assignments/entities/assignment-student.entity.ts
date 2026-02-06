@@ -4,17 +4,13 @@
  * Mapea a la tabla: educational_content.assignment_students
  *
  * Tabla M2M para asignación de assignments a estudiantes individuales.
- * Permite:
- * - Asignaciones remediales (estudiantes específicos que necesitan refuerzo)
- * - Asignaciones para estudiantes avanzados
- * - Asignaciones individualizadas fuera del classroom
- * - Tracking de cuándo se asignó a cada estudiante
+ * Incluye campos de submission, grading y tracking agregados via ALTER TABLE.
  *
- * Diferencia con AssignmentClassroom:
- * - AssignmentClassroom: Asignación grupal a todo un classroom
- * - AssignmentStudent: Asignación individual a estudiantes específicos
+ * FIX H-023: Agregadas 20 columnas de grading/submission del ALTER script
+ * (24-alter_assignment_students.sql)
  *
- * CREADO (2025-11-08): Implementación de funcionalidad faltante
+ * @see DDL: /apps/database/ddl/schemas/educational_content/tables/07-assignment_students.sql
+ * @see ALTER: /apps/database/ddl/schemas/educational_content/tables/24-alter_assignment_students.sql
  */
 
 import {
@@ -22,7 +18,8 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-      Index,
+  UpdateDateColumn,
+  Index,
   Unique,
 } from 'typeorm';
 import {
@@ -34,29 +31,95 @@ import {
   schema: DB_SCHEMAS.EDUCATIONAL,
   name: DB_TABLES.EDUCATIONAL.ASSIGNMENT_STUDENTS,
 })
-// CORRECTED (2025-12-18): Usar nombres de propiedades en lugar de nombres de columnas
 @Index(['assignmentId'])
 @Index(['studentId'])
 @Unique(['assignmentId', 'studentId'])
 export class AssignmentStudent {
   @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  id!: string;
 
   @Column('uuid', { name: 'assignment_id' })
-    assignmentId!: string;
+  assignmentId!: string;
 
   @Column('uuid', { name: 'student_id' })
-    studentId!: string;
+  studentId!: string;
 
-  @CreateDateColumn({ name: 'assigned_at', type: 'timestamp with time zone' })
-    assignedAt!: Date;
+  @CreateDateColumn({ name: 'assigned_at', type: 'timestamptz' })
+  assignedAt!: Date;
 
-  // Relations (commented out - uncomment when Assignment entity is fully configured)
-  // @ManyToOne(() => Assignment, assignment => assignment.assignmentStudents)
-  // @JoinColumn({ name: 'assignment_id' })
-  // assignment!: Assignment;
+  // === Submission tracking (from ALTER script) ===
 
-  // @ManyToOne(() => Profile)
-  // @JoinColumn({ name: 'student_id' })
-  // student!: Profile;
+  @Column({ name: 'submitted_at', type: 'timestamptz', nullable: true })
+  submittedAt!: Date | null;
+
+  @Column({ name: 'submission_data', type: 'jsonb', default: {} })
+  submissionData!: Record<string, unknown>;
+
+  @Column({ name: 'submission_url', type: 'text', nullable: true })
+  submissionUrl!: string | null;
+
+  @Column({ name: 'submission_files', type: 'jsonb', default: [] })
+  submissionFiles!: unknown[];
+
+  // === Grading fields ===
+
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  score!: number | null;
+
+  @Column({ name: 'max_score', type: 'decimal', precision: 5, scale: 2, nullable: true })
+  maxScore!: number | null;
+
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  percentage!: number | null;
+
+  @Column({ type: 'text', nullable: true })
+  feedback!: string | null;
+
+  @Column({ name: 'graded_by', type: 'uuid', nullable: true })
+  gradedBy!: string | null;
+
+  @Column({ name: 'graded_at', type: 'timestamptz', nullable: true })
+  gradedAt!: Date | null;
+
+  // === Status tracking ===
+
+  @Column({ type: 'varchar', length: 50, default: 'assigned' })
+  status!: string;
+
+  // === Attempt tracking ===
+
+  @Column({ name: 'attempt_number', type: 'integer', default: 1 })
+  attemptNumber!: number;
+
+  @Column({ name: 'max_attempts', type: 'integer', default: 1 })
+  maxAttempts!: number;
+
+  // === Late submission ===
+
+  @Column({ name: 'is_late', type: 'boolean', default: false })
+  isLate!: boolean;
+
+  @Column({ name: 'late_penalty_applied', type: 'decimal', precision: 5, scale: 2, default: 0 })
+  latePenaltyApplied!: number;
+
+  // === Grading rubric results ===
+
+  @Column({ name: 'rubric_scores', type: 'jsonb', default: {} })
+  rubricScores!: Record<string, unknown>;
+
+  // === Teacher notes and flags ===
+
+  @Column({ name: 'teacher_notes', type: 'text', nullable: true })
+  teacherNotes!: string | null;
+
+  @Column({ name: 'flagged_for_review', type: 'boolean', default: false })
+  flaggedForReview!: boolean;
+
+  @Column({ name: 'flag_reason', type: 'text', nullable: true })
+  flagReason!: string | null;
+
+  // === Audit ===
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  updatedAt!: Date;
 }

@@ -31,7 +31,11 @@ CREATE TABLE admin_dashboard.admin_reports (
     error_message TEXT,
 
     -- Auditoría
-    requested_by UUID NOT NULL REFERENCES auth.users(id),
+    requested_by UUID NOT NULL,
+    CONSTRAINT fk_admin_reports_requested_by FOREIGN KEY (requested_by)
+        REFERENCES auth_management.profiles(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
     created_at TIMESTAMP DEFAULT gamilit.now_mexico(),
     completed_at TIMESTAMP,
 

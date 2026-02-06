@@ -1,5 +1,5 @@
 -- =====================================================
--- Table: data_warehouse.dim_event_type
+-- Table: data_warehouse.dim_event_types
 -- Description: Event type dimension for gamification event classification
 -- Type: Dimension (Reference/Lookup)
 -- Grain: One row per event type
@@ -11,9 +11,9 @@
 
 SET search_path TO data_warehouse, public;
 
-DROP TABLE IF EXISTS data_warehouse.dim_event_type CASCADE;
+DROP TABLE IF EXISTS data_warehouse.dim_event_types CASCADE;
 
-CREATE TABLE data_warehouse.dim_event_type (
+CREATE TABLE data_warehouse.dim_event_types (
     -- =====================================================
     -- SURROGATE KEY
     -- =====================================================
@@ -68,23 +68,23 @@ CREATE TABLE data_warehouse.dim_event_type (
     -- =====================================================
     -- CONSTRAINTS
     -- =====================================================
-    CONSTRAINT dim_event_type_pkey PRIMARY KEY (event_type_key),
-    CONSTRAINT dim_event_type_code_key UNIQUE (event_type_code),
-    CONSTRAINT dim_event_type_xp_direction_check CHECK (xp_direction IS NULL OR xp_direction IN ('increase', 'decrease', 'none')),
-    CONSTRAINT dim_event_type_coins_direction_check CHECK (coins_direction IS NULL OR coins_direction IN ('increase', 'decrease', 'none'))
+    CONSTRAINT dim_event_types_pkey PRIMARY KEY (event_type_key),
+    CONSTRAINT dim_event_types_code_key UNIQUE (event_type_code),
+    CONSTRAINT dim_event_types_xp_direction_check CHECK (xp_direction IS NULL OR xp_direction IN ('increase', 'decrease', 'none')),
+    CONSTRAINT dim_event_types_coins_direction_check CHECK (coins_direction IS NULL OR coins_direction IN ('increase', 'decrease', 'none'))
 );
 
 -- =====================================================
 -- INDEXES
 -- =====================================================
-CREATE INDEX idx_dim_event_type_code ON data_warehouse.dim_event_type USING btree (event_type_code);
-CREATE INDEX idx_dim_event_type_category ON data_warehouse.dim_event_type USING btree (category);
-CREATE INDEX idx_dim_event_type_active ON data_warehouse.dim_event_type USING btree (is_active) WHERE is_active = TRUE;
+CREATE INDEX idx_dim_event_types_code ON data_warehouse.dim_event_types USING btree (event_type_code);
+CREATE INDEX idx_dim_event_types_category ON data_warehouse.dim_event_types USING btree (category);
+CREATE INDEX idx_dim_event_types_active ON data_warehouse.dim_event_types USING btree (is_active) WHERE is_active = TRUE;
 
 -- =====================================================
 -- SEED DATA: Standard Event Types
 -- =====================================================
-INSERT INTO data_warehouse.dim_event_type (
+INSERT INTO data_warehouse.dim_event_types (
     event_type_code, event_type_name, event_type_name_es, description, category, subcategory,
     affects_xp, affects_coins, affects_rank, affects_level, affects_streak,
     xp_direction, coins_direction, requires_notification
@@ -133,20 +133,20 @@ INSERT INTO data_warehouse.dim_event_type (
 -- =====================================================
 -- OWNERSHIP AND PERMISSIONS
 -- =====================================================
-ALTER TABLE data_warehouse.dim_event_type OWNER TO gamilit_user;
-GRANT SELECT, INSERT, UPDATE ON data_warehouse.dim_event_type TO gamilit_user;
-GRANT USAGE ON SEQUENCE data_warehouse.dim_event_type_event_type_key_seq TO gamilit_user;
+ALTER TABLE data_warehouse.dim_event_types OWNER TO gamilit_user;
+GRANT SELECT, INSERT, UPDATE ON data_warehouse.dim_event_types TO gamilit_user;
+GRANT USAGE ON SEQUENCE data_warehouse.dim_event_types_event_type_key_seq TO gamilit_user;
 
 -- =====================================================
 -- COMMENTS
 -- =====================================================
-COMMENT ON TABLE data_warehouse.dim_event_type IS
+COMMENT ON TABLE data_warehouse.dim_event_types IS
 'Event type dimension - Lookup table for gamification event classification.
 Grain: One row per event type.
 Pre-seeded with standard GAMILIT gamification events.
 Categories: achievement, exercise, module, rank, level, streak, coins, comodin, social, login.';
 
-COMMENT ON COLUMN data_warehouse.dim_event_type.event_type_key IS 'Surrogate key for fact table joins';
-COMMENT ON COLUMN data_warehouse.dim_event_type.event_type_code IS 'Unique event type identifier';
-COMMENT ON COLUMN data_warehouse.dim_event_type.affects_xp IS 'TRUE if this event type changes XP';
-COMMENT ON COLUMN data_warehouse.dim_event_type.affects_coins IS 'TRUE if this event type changes ML Coins';
+COMMENT ON COLUMN data_warehouse.dim_event_types.event_type_key IS 'Surrogate key for fact table joins';
+COMMENT ON COLUMN data_warehouse.dim_event_types.event_type_code IS 'Unique event type identifier';
+COMMENT ON COLUMN data_warehouse.dim_event_types.affects_xp IS 'TRUE if this event type changes XP';
+COMMENT ON COLUMN data_warehouse.dim_event_types.affects_coins IS 'TRUE if this event type changes ML Coins';

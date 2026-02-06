@@ -1,482 +1,278 @@
-# ESTÁNDARES DE RUTAS Y CONFIGURACIÓN DE API
+# Estandares de API REST - GAMILIT
 
-**Versión:** 1.0.0
-**Fecha:** 2025-11-29
-**Fuente:** Consolidado desde orchestration/directivas/ESTANDARES-API-ROUTES.md
-**Audiencia:** Backend y Frontend developers
-
----
-
-## PROBLEMA QUE RESUELVE
-
-Prevenir bugs de rutas duplicadas que generan URLs incorrectas del tipo `/api/api/endpoint` en lugar de `/api/endpoint`. Este problema surge por:
-
-1. Configuración incorrecta de baseURL en cliente API
-2. Duplicación de prefijo `/api` entre baseURL y endpoints
-3. Falta de estándares claros sobre separación de responsabilidades
-4. Inconsistencia entre configuración backend y frontend
+**Version:** 2.0.0
+**Ultima Actualizacion:** 2026-02-03
+**Estado:** Activo
+**Aplica a:** apps/backend/src/modules/*/controllers/, apps/frontend/web/src/
 
 ---
 
-## SEPARACIÓN DE RESPONSABILIDADES
+## Resumen
 
-### Regla Fundamental
+Este documento consolida todos los estandares de API REST para GAMILIT, incluyendo:
+- Convenciones de nomenclatura
+- Estructura de URLs
+- Formatos de request/response
+- Manejo de errores
+- Versionado
+- Autenticacion
+- Rate limiting
+- Documentacion
 
-```yaml
-baseURL: Define el protocolo, dominio, puerto y prefijo global (/api)
-endpoint: Define solo la ruta específica del recurso (sin prefijos globales)
-```
+**Documentos consolidados:**
+- API-CONVENTIONS.md (archivado)
+- NAMING-CONVENTIONS-API.md (archivado)
 
-### Responsabilidades Claras
+---
+
+## 1. Convenciones de Nomenclatura
+
+### 1.1 Regla General de Casing
+
+| Contexto | Convencion | Ejemplo |
+|----------|------------|---------|
+| URLs/Endpoints | kebab-case | `/api/v1/user-profiles` |
+| Query params | snake_case | `?sort_by=created_at` |
+| JSON fields (Backend) | snake_case | `{ "first_name": "John" }` |
+| JSON fields (Frontend interno) | camelCase | `{ firstName: "John" }` |
+| Headers | kebab-case | `Content-Type`, `X-Request-Id` |
+
+### 1.2 Transformacion Frontend-Backend
+
+El frontend usa camelCase internamente pero DEBE transformar a snake_case antes de enviar al backend.
 
 ```typescript
-// ✅ CORRECTO - Separación clara
+// Tipos para Backend API
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  first_name?: string;  // snake_case para backend
+  last_name?: string;
+}
 
-// baseURL contiene:
-// - Protocolo (http:// o https://)
-// - Dominio/host (localhost, api.gamilit.com)
-// - Puerto (si no es default)
-// - Prefijo global de API (/api)
+// Tipos internos del Frontend
+export interface RegisterFormData {
+  email: string;
+  password: string;
+  firstName?: string;   // camelCase interno
+  lastName?: string;
+}
+
+// Funcion de transformacion
+function toBackendPayload(data: RegisterFormData): RegisterPayload {
+  return {
+    email: data.email,
+    password: data.password,
+    first_name: data.firstName,
+    last_name: data.lastName
+  };
+}
+```
+
+### 1.3 Tabla de Referencia Rapida
+
+| Frontend (camelCase) | Backend (snake_case) |
+|---------------------|---------------------|
+| firstName | first_name |
+| lastName | last_name |
+| displayName | display_name |
+| avatarUrl | avatar_url |
+| phoneNumber | phone_number |
+| dateOfBirth | date_of_birth |
+| createdAt | created_at |
+| updatedAt | updated_at |
+
+### 1.4 Errores Comunes de Nomenclatura
+
+```typescript
+// INCORRECTO - causa error 400/500
+await apiClient.post('/auth/register', {
+  firstName: "John",     // Backend no reconoce camelCase
+  lastName: "Doe"
+});
+
+// CORRECTO
+await apiClient.post('/auth/register', {
+  first_name: "John",
+  last_name: "Doe"
+});
+```
+
+---
+
+## 2. Estructura de URLs
+
+### 2.1 Patron Base
+
+```
+{protocol}://{domain}:{port}/{globalPrefix}/{version}/{resource}
+```
+
+Ejemplos:
+```
+/api/v1/{resource}
+/api/v1/{resource}/{id}
+/api/v1/{resource}/{id}/{sub-resource}
+```
+
+### 2.2 Ejemplos de URLs
+
+| Operacion | Metodo | URL |
+|-----------|--------|-----|
+| Listar usuarios | GET | `/api/v1/users` |
+| Obtener usuario | GET | `/api/v1/users/:id` |
+| Crear usuario | POST | `/api/v1/users` |
+| Actualizar usuario | PATCH | `/api/v1/users/:id` |
+| Eliminar usuario | DELETE | `/api/v1/users/:id` |
+| Logros del usuario | GET | `/api/v1/users/:id/achievements` |
+
+### 2.3 Separacion de Responsabilidades
+
+```typescript
+// baseURL contiene: protocolo + dominio + puerto + prefijo global
 const baseURL = 'http://localhost:3000/api';
 
-// endpoint contiene SOLO:
-// - Ruta del recurso
-// - Sin protocolo, sin dominio, sin puerto
-// - Sin prefijo /api
+// endpoint contiene SOLO la ruta del recurso (sin /api)
 const endpoint = '/health';
 const endpoint = '/users';
 const endpoint = '/exercises/123';
 ```
 
----
-
-## CONFIGURACIÓN DE API CLIENT
-
-### Configuración Correcta con Axios
+### 2.4 Prevencion de Duplicacion /api/api
 
 ```typescript
-// ✅ CORRECTO - apps/frontend/web/src/lib/apiClient.ts
+// INCORRECTO - genera /api/api/exercises
+const endpoint = '/api/exercises';
 
-import axios from 'axios';
-
-/**
- * API Client Configuration
- *
- * baseURL incluye:
- * - Protocolo + dominio + puerto (desde env)
- * - Prefijo global /api
- *
- * Los endpoints NO deben repetir /api
- */
-export const apiClient = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/api`,
-  // Ejemplo real: 'http://localhost:3000/api'
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Interceptors para logging (opcional)
-apiClient.interceptors.request.use(
-  (config) => {
-    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
-    // URL final será: baseURL + url
-    // Ejemplo: 'http://localhost:3000/api' + '/health' = 'http://localhost:3000/api/health'
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// CORRECTO - baseURL ya incluye /api
+const endpoint = '/exercises';
 ```
 
-### Variables de Entorno
+### 2.5 Trailing Slashes
 
-```env
-# ✅ CORRECTO - .env (frontend)
+```typescript
+// CORRECTO - sin trailing slash
+const endpoint = '/exercises';
+const endpoint = '/users/123';
 
-# Base URL SIN el prefijo /api
-VITE_API_URL=http://localhost:3000
-
-# El prefijo /api se agrega en la configuración del cliente
-# NO en la variable de entorno
-```
-
-```env
-# ❌ INCORRECTO - NO incluir /api en env
-VITE_API_URL=http://localhost:3000/api  # ❌ NO HACER ESTO
+// EVITAR - trailing slash puede causar problemas
+const endpoint = '/exercises/';
 ```
 
 ---
 
-## DEFINICIÓN DE ENDPOINTS
+## 3. Formatos de Request/Response
 
-### Servicios de API (Frontend)
+### 3.1 Request Headers
 
-```typescript
-// ✅ CORRECTO - apps/frontend/web/src/services/exerciseService.ts
-
-import { apiClient } from '@/lib/apiClient';
-
-export const exerciseService = {
-  /**
-   * Get all exercises
-   * GET /api/exercises
-   */
-  async findAll() {
-    // endpoint sin /api porque baseURL ya lo incluye
-    const response = await apiClient.get('/exercises');
-    return response.data;
-  },
-
-  /**
-   * Get exercise by ID
-   * GET /api/exercises/:id
-   */
-  async findById(id: string) {
-    const response = await apiClient.get(`/exercises/${id}`);
-    return response.data;
-  },
-
-  /**
-   * Submit exercise answer
-   * POST /api/exercises/:id/submit
-   */
-  async submitAnswer(id: string, answer: SubmitAnswerDto) {
-    const response = await apiClient.post(`/exercises/${id}/submit`, answer);
-    return response.data;
-  },
-};
+```http
+Content-Type: application/json
+Authorization: Bearer {token}
+Accept: application/json
+X-Request-Id: {uuid}
 ```
 
-```typescript
-// ❌ INCORRECTO - NO duplicar /api
+### 3.2 Response Exitosa Simple
 
-export const exerciseService = {
-  async findAll() {
-    // ❌ INCORRECTO: genera /api/api/exercises
-    const response = await apiClient.get('/api/exercises');
-    return response.data;
-  },
-};
-```
-
-### Endpoints con Parámetros
-
-```typescript
-// ✅ CORRECTO - Endpoints con parámetros
-
-export const userService = {
-  async findById(userId: string) {
-    // GET /api/users/123
-    const response = await apiClient.get(`/users/${userId}`);
-    return response.data;
-  },
-
-  async searchUsers(query: string, page: number = 1) {
-    // GET /api/users?q=john&page=1
-    const response = await apiClient.get('/users', {
-      params: { q: query, page },
-    });
-    return response.data;
-  },
-};
-```
-
-### Endpoints Anidados
-
-```typescript
-// ✅ CORRECTO - Recursos anidados
-
-export const classroomService = {
-  // GET /api/classrooms/123/students
-  async getStudents(classroomId: string) {
-    const response = await apiClient.get(`/classrooms/${classroomId}/students`);
-    return response.data;
-  },
-
-  // POST /api/classrooms/123/assignments
-  async createAssignment(classroomId: string, data: CreateAssignmentDto) {
-    const response = await apiClient.post(
-      `/classrooms/${classroomId}/assignments`,
-      data
-    );
-    return response.data;
-  },
-
-  // GET /api/classrooms/123/assignments/456/submissions
-  async getSubmissions(classroomId: string, assignmentId: string) {
-    const response = await apiClient.get(
-      `/classrooms/${classroomId}/assignments/${assignmentId}/submissions`
-    );
-    return response.data;
-  },
-};
-```
-
----
-
-## CONFIGURACIÓN BACKEND (NestJS)
-
-### Prefijo Global de API
-
-```typescript
-// ✅ CORRECTO - apps/backend/src/main.ts
-
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  // Prefijo global para todas las rutas
-  app.setGlobalPrefix('api');
-
-  await app.listen(3000);
-  console.log('API running on http://localhost:3000/api');
+```json
+{
+  "id": "uuid",
+  "name": "Ejemplo",
+  "created_at": "2025-11-28T10:00:00Z"
 }
-bootstrap();
 ```
 
-### Controladores
+### 3.3 Response Exitosa Paginada
 
-```typescript
-// ✅ CORRECTO - apps/backend/src/modules/exercises/exercises.controller.ts
-
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
-
-/**
- * Exercises Controller
- *
- * Ruta base: /exercises (sin /api porque se agrega globalmente)
- * Rutas finales:
- * - GET /api/exercises
- * - GET /api/exercises/:id
- * - POST /api/exercises/:id/submit
- */
-@Controller('exercises')  // ✅ Sin prefijo /api
-export class ExercisesController {
-
-  @Get()
-  async findAll() {
-    // Ruta final: GET /api/exercises
-    return this.exercisesService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    // Ruta final: GET /api/exercises/:id
-    return this.exercisesService.findById(id);
-  }
-
-  @Post(':id/submit')
-  async submitAnswer(
-    @Param('id') id: string,
-    @Body() dto: SubmitAnswerDto
-  ) {
-    // Ruta final: POST /api/exercises/:id/submit
-    return this.exercisesService.submitAnswer(id, dto);
+```json
+{
+  "data": [
+    { "id": "uuid1", "name": "Item 1" },
+    { "id": "uuid2", "name": "Item 2" }
+  ],
+  "meta": {
+    "total": 100,
+    "page": 1,
+    "limit": 20,
+    "total_pages": 5
   }
 }
 ```
 
-```typescript
-// ❌ INCORRECTO - NO incluir /api en @Controller
+### 3.4 Response de Error
 
-@Controller('api/exercises')  // ❌ Genera /api/api/exercises
-export class ExercisesController {
-  // ...
-}
-```
-
-### Organización de Rutas
-
-```typescript
-// ✅ CORRECTO - Organización de módulos
-
-@Controller('users')
-export class UsersController {
-  @Get()              // GET /api/users
-  @Get(':id')         // GET /api/users/:id
-  @Post()             // POST /api/users
-  @Put(':id')         // PUT /api/users/:id
-  @Delete(':id')      // DELETE /api/users/:id
-}
-
-@Controller('classrooms')
-export class ClassroomsController {
-  @Get()                          // GET /api/classrooms
-  @Get(':id')                     // GET /api/classrooms/:id
-  @Get(':id/students')            // GET /api/classrooms/:id/students
-  @Post(':id/assignments')        // POST /api/classrooms/:id/assignments
-}
-
-@Controller('gamification')
-export class GamificationController {
-  @Get('leaderboard')             // GET /api/gamification/leaderboard
-  @Get('achievements')            // GET /api/gamification/achievements
-  @Post('comodines/use')          // POST /api/gamification/comodines/use
+```json
+{
+  "status_code": 400,
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "email",
+      "message": "must be a valid email"
+    }
+  ],
+  "timestamp": "2025-11-28T10:00:00Z"
 }
 ```
 
 ---
 
-## PATRONES DE URLs
+## 4. Codigos de Estado HTTP
 
-### Estructura Estándar
-
-```yaml
-Formato completo de URL:
-  {protocol}://{domain}:{port}/{globalPrefix}/{controller}/{endpoint}/{params}
-
-Ejemplo:
-  http://localhost:3000/api/exercises/123/submit
-
-Desglose:
-  - protocol: http
-  - domain: localhost
-  - port: 3000
-  - globalPrefix: api (configurado en main.ts)
-  - controller: exercises (definido en @Controller)
-  - endpoint: 123/submit (definido en @Post)
-```
-
-### Ejemplos Correctos
-
-```typescript
-// URLs finales esperadas para GAMILIT:
-
-// Exercises
-GET    http://localhost:3000/api/exercises
-GET    http://localhost:3000/api/exercises/123
-POST   http://localhost:3000/api/exercises/123/submit
-
-// Modules
-GET    http://localhost:3000/api/modules
-GET    http://localhost:3000/api/modules/123/exercises
-
-// Gamification
-GET    http://localhost:3000/api/gamification/user-stats
-GET    http://localhost:3000/api/gamification/leaderboard
-POST   http://localhost:3000/api/gamification/comodines/use
-GET    http://localhost:3000/api/gamification/achievements
-
-// Progress
-GET    http://localhost:3000/api/progress/modules
-GET    http://localhost:3000/api/progress/exercises/123
-
-// Auth
-POST   http://localhost:3000/api/auth/login
-POST   http://localhost:3000/api/auth/register
-POST   http://localhost:3000/api/auth/refresh
-```
-
-### Ejemplos Incorrectos (Bugs Comunes)
-
-```typescript
-// ❌ INCORRECTO - Duplicación de /api
-
-http://localhost:3000/api/api/exercises         // Duplicado
-http://localhost:3000/api/api/users             // Duplicado
-http://localhost:3000/apiapi/modules            // Sin separador
-
-// ❌ INCORRECTO - Falta de prefijo
-
-http://localhost:3000/exercises                 // Falta /api
-http://localhost:3000/users                     // Falta /api
-
-// ❌ INCORRECTO - Prefijo incorrecto
-
-http://localhost:3000/v1/exercises              // Prefijo diferente
-http://localhost:3000/rest/users                // Prefijo diferente
-```
+| Codigo | Significado | Cuando Usar |
+|--------|-------------|-------------|
+| 200 | OK | GET exitoso, PATCH exitoso |
+| 201 | Created | POST exitoso |
+| 204 | No Content | DELETE exitoso |
+| 400 | Bad Request | Validacion fallida |
+| 401 | Unauthorized | No autenticado |
+| 403 | Forbidden | Sin permisos |
+| 404 | Not Found | Recurso no existe |
+| 409 | Conflict | Duplicado o conflicto de estado |
+| 422 | Unprocessable Entity | Logica de negocio fallida |
+| 429 | Too Many Requests | Rate limit excedido |
+| 500 | Internal Server Error | Error del servidor |
 
 ---
 
-## CONFIGURACIÓN POR AMBIENTE
+## 5. Manejo de Errores
 
-### Variables de Entorno por Ambiente
-
-```env
-# .env.development (frontend)
-VITE_API_URL=http://localhost:3000
-
-# .env.staging (frontend)
-VITE_API_URL=https://staging-api.gamilit.com
-
-# .env.production (frontend)
-VITE_API_URL=https://api.gamilit.com
-```
-
-### Configuración Dinámica
+### 5.1 Estructura de Error Estandar
 
 ```typescript
-// ✅ CORRECTO - Configuración dinámica por ambiente
+interface ApiError {
+  status_code: number;
+  message: string;
+  errors?: FieldError[];
+  error_code?: string;
+  timestamp: string;
+}
 
-// apps/frontend/web/src/config/api.config.ts
-export const apiConfig = {
-  baseURL: `${import.meta.env.VITE_API_URL}/api`,
-  timeout: 10000,
-  enableLogging: import.meta.env.DEV,
-};
-
-// apps/frontend/web/src/lib/apiClient.ts
-import { apiConfig } from '@/config/api.config';
-
-export const apiClient = axios.create(apiConfig);
-
-if (apiConfig.enableLogging) {
-  apiClient.interceptors.request.use((config) => {
-    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
-    return config;
-  });
+interface FieldError {
+  field: string;
+  message: string;
 }
 ```
 
----
+### 5.2 Codigos de Error de Negocio
 
-## CORS Y SEGURIDAD
+| Codigo | Descripcion |
+|--------|-------------|
+| AUTH001 | Credenciales invalidas |
+| AUTH002 | Token expirado |
+| AUTH003 | Token invalido |
+| VAL001 | Validacion de campo fallida |
+| BIZ001 | Regla de negocio violada |
+| RES001 | Recurso no encontrado |
+| RES002 | Recurso duplicado |
 
-### Configuración CORS (Backend)
-
-```typescript
-// ✅ CORRECTO - apps/backend/src/main.ts
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  // Configurar CORS
-  app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  });
-
-  app.setGlobalPrefix('api');
-  await app.listen(3000);
-}
-```
-
-### Headers de Seguridad
+### 5.3 Interceptor de Errores (Frontend)
 
 ```typescript
-// ✅ CORRECTO - Configuración de headers
-
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
-});
-
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Redirect to login
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -486,139 +282,452 @@ apiClient.interceptors.response.use(
 
 ---
 
-## TRAILING SLASHES
+## 6. Versionado de API
 
-### Regla de Trailing Slashes
+### 6.1 Estrategia
+
+- Versionado en URL: `/api/v1/`, `/api/v2/`
+- Incremento mayor para breaking changes
+- Mantener compatibilidad hacia atras minimo 6 meses
+
+### 6.2 Configuracion Backend
 
 ```typescript
-// ✅ CORRECTO - Sin trailing slash al final
+// main.ts
+app.setGlobalPrefix('api');
 
-const endpoint = '/exercises';        // ✅
-const endpoint = '/users/123';        // ✅
-const endpoint = '/modules';          // ✅
+// Controlador con version
+@Controller('v1/users')
+export class UsersV1Controller {}
 
-// ❌ EVITAR - Trailing slash puede causar issues
-
-const endpoint = '/exercises/';       // ❌ Evitar
-const endpoint = '/users/123/';       // ❌ Evitar
+@Controller('v2/users')
+export class UsersV2Controller {}
 ```
 
 ---
 
-## CHECKLIST DE VALIDACIÓN
+## 7. Autenticacion
 
-### Pre-Implementation Checklist
+### 7.1 Esquema
 
-- [ ] Verificar que `baseURL` incluye protocolo + dominio + puerto + `/api`
-- [ ] Verificar que `baseURL` NO incluye rutas de recursos
-- [ ] Verificar que endpoints NO incluyen prefijo `/api`
-- [ ] Verificar que endpoints comienzan con `/`
-- [ ] Verificar que NO hay trailing slashes innecesarios
-- [ ] Verificar que variables de entorno están configuradas
-- [ ] Verificar que CORS está configurado correctamente
-- [ ] Verificar que prefijo global está en `main.ts` del backend
+- Tipo: Bearer Token (JWT)
+- Header: `Authorization: Bearer {token}`
+- Expiracion: 15 minutos (access token)
+- Refresh: 7 dias (refresh token)
 
-### Post-Implementation Checklist
+### 7.2 Endpoints de Auth
 
-- [ ] Probar endpoint en navegador (Network tab)
-- [ ] Verificar URL final no tiene duplicados (/api/api/)
-- [ ] Verificar que respuesta es correcta (200 OK)
-- [ ] Verificar que no hay errores de CORS
-- [ ] Probar en diferentes ambientes (dev, staging, prod)
-- [ ] Verificar logs de requests en consola
-- [ ] Verificar que token de autenticación se envía
-- [ ] Probar casos de error (404, 500)
+| Endpoint | Metodo | Descripcion |
+|----------|--------|-------------|
+| `/api/v1/auth/register` | POST | Registrar usuario |
+| `/api/v1/auth/login` | POST | Iniciar sesion |
+| `/api/v1/auth/logout` | POST | Cerrar sesion |
+| `/api/v1/auth/refresh` | POST | Refrescar token |
+| `/api/v1/auth/forgot-password` | POST | Solicitar reset |
+| `/api/v1/auth/reset-password` | POST | Aplicar reset |
 
-### Code Review Checklist
+### 7.3 Decoradores de Autenticacion
 
-- [ ] Revisar que NO hay `/api` hardcodeado en endpoints
-- [ ] Revisar que `baseURL` está configurado correctamente
-- [ ] Revisar que se usan variables de entorno
-- [ ] Revisar que NO hay URLs absolutas hardcodeadas
-- [ ] Revisar consistencia entre backend y frontend
-- [ ] Revisar que controladores usan rutas relativas
-- [ ] Revisar que hay logging adecuado
-- [ ] Revisar que hay manejo de errores
+```typescript
+@Controller('api/v1/achievements')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags('Achievements')
+@ApiBearerAuth()
+export class AchievementsController {}
+```
 
 ---
 
-## VALIDACIÓN EN RUNTIME
+## 8. Rate Limiting
 
-### Interceptor para Detectar Duplicaciones
+### 8.1 Limites por Defecto
+
+| Tipo | Limite | Ventana |
+|------|--------|---------|
+| Anonimo | 100 req | 15 min |
+| Autenticado | 1000 req | 15 min |
+| Auth endpoints | 10 req | 5 min |
+
+### 8.2 Headers de Rate Limit
+
+```http
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1640000000
+```
+
+---
+
+## 9. Documentacion (Swagger/OpenAPI)
+
+### 9.1 Acceso
+
+- Swagger UI: `http://localhost:3000/api/docs`
+- OpenAPI JSON: `http://localhost:3000/api/docs-json`
+
+### 9.2 Configuracion
 
 ```typescript
-// apps/frontend/web/src/lib/apiClient.ts
+const config = new DocumentBuilder()
+  .setTitle('GAMILIT API')
+  .setDescription('API de gamificacion educativa')
+  .setVersion('2.3.0')
+  .addBearerAuth()
+  .build();
 
+const document = SwaggerModule.createDocument(app, config);
+SwaggerModule.setup('api/docs', app, document);
+```
+
+### 9.3 Decoradores de Documentacion
+
+```typescript
+@Get()
+@Roles('admin', 'teacher', 'student')
+@ApiOperation({ summary: 'List all achievements' })
+@ApiQuery({ name: 'page', required: false, type: Number })
+@ApiQuery({ name: 'limit', required: false, type: Number })
+@ApiResponse({ status: 200, description: 'List of achievements', type: [AchievementResponseDto] })
+async findAll(@Query() query: ListAchievementsDto) {}
+```
+
+---
+
+## 10. DTOs (Data Transfer Objects)
+
+### 10.1 CreateDto
+
+```typescript
+export class CreateAchievementDto {
+  @ApiProperty({ description: 'Achievement name', example: 'First Steps' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  name: string;
+
+  @ApiProperty({ description: 'Achievement description' })
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @ApiProperty({ description: 'XP reward', example: 50 })
+  @IsInt()
+  @Min(0)
+  @Max(1000)
+  xp_reward: number;
+
+  @ApiProperty({ description: 'Category ID', format: 'uuid' })
+  @IsUUID()
+  category_id: string;
+}
+```
+
+### 10.2 UpdateDto
+
+```typescript
+export class UpdateAchievementDto extends PartialType(
+  OmitType(CreateAchievementDto, ['category_id'] as const)
+) {}
+```
+
+### 10.3 ListDto (Query Params)
+
+```typescript
+export class ListAchievementsDto extends PaginationDto {
+  @ApiPropertyOptional({ description: 'Filter by category' })
+  @IsOptional()
+  @IsUUID()
+  category_id?: string;
+
+  @ApiPropertyOptional({ description: 'Filter by active status' })
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  is_active?: boolean;
+
+  @ApiPropertyOptional({ enum: ['name', 'created_at', 'xp_reward'] })
+  @IsOptional()
+  @IsIn(['name', 'created_at', 'xp_reward'])
+  sort_by?: string;
+}
+```
+
+### 10.4 ResponseDto
+
+```typescript
+export class AchievementResponseDto {
+  @ApiProperty({ format: 'uuid' })
+  id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty({ required: false })
+  description?: string;
+
+  @ApiProperty()
+  xp_reward: number;
+
+  @ApiProperty()
+  is_active: boolean;
+
+  @ApiProperty({ type: String, format: 'date-time' })
+  created_at: Date;
+
+  @ApiProperty({ type: String, format: 'date-time' })
+  updated_at: Date;
+}
+```
+
+---
+
+## 11. Validacion
+
+### 11.1 Pipes Globales
+
+```typescript
+// main.ts
+app.useGlobalPipes(
+  new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+    transformOptions: {
+      enableImplicitConversion: true,
+    },
+  }),
+);
+```
+
+### 11.2 Pipes Especificos
+
+```typescript
+@Get(':id')
+async findOne(
+  @Param('id', ParseUUIDPipe) id: string,
+  @Query('limit', ParseIntPipe) limit: number,
+) {}
+```
+
+---
+
+## 12. Configuracion del API Client (Frontend)
+
+### 12.1 Configuracion Axios
+
+```typescript
+import axios from 'axios';
+
+export const apiClient = axios.create({
+  baseURL: `${import.meta.env.VITE_API_URL}/api`,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Interceptor de autenticacion
 apiClient.interceptors.request.use((config) => {
-  const url = config.url || '';
-
-  // Detectar /api/api/
-  if (url.includes('/api/')) {
-    console.error(
-      `[API ERROR] Endpoint contains /api prefix: ${url}\n` +
-      `This will cause duplicate /api/api/ in final URL.\n` +
-      `Remove /api from endpoint definition.`
-    );
-
-    if (import.meta.env.DEV) {
-      throw new Error(`Invalid endpoint: ${url} contains /api prefix`);
-    }
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-
   return config;
 });
 ```
 
-### Test Helper
+### 12.2 Variables de Entorno
+
+```env
+# .env.development
+VITE_API_URL=http://localhost:3000
+
+# .env.staging
+VITE_API_URL=https://staging-api.gamilit.com
+
+# .env.production
+VITE_API_URL=https://api.gamilit.com
+```
+
+### 12.3 Servicios de API
 
 ```typescript
-// apps/frontend/web/src/tests/helpers/apiTestHelpers.ts
+export const exerciseService = {
+  async findAll() {
+    const response = await apiClient.get('/exercises');
+    return response.data;
+  },
 
-export function validateEndpoint(endpoint: string) {
-  if (endpoint.includes('/api/')) {
-    throw new Error(
-      `Endpoint "${endpoint}" should not include /api prefix. ` +
-      `The baseURL already includes /api.`
-    );
-  }
+  async findById(id: string) {
+    const response = await apiClient.get(`/exercises/${id}`);
+    return response.data;
+  },
 
-  if (!endpoint.startsWith('/')) {
-    throw new Error(
-      `Endpoint "${endpoint}" should start with /`
-    );
-  }
-
-  if (endpoint.endsWith('/') && endpoint !== '/') {
-    console.warn(
-      `Endpoint "${endpoint}" has trailing slash. Consider removing it.`
-    );
-  }
-}
-
-// Uso en tests
-describe('exerciseService', () => {
-  it('should use correct endpoint', () => {
-    const endpoint = '/exercises';
-    expect(() => validateEndpoint(endpoint)).not.toThrow();
-  });
-
-  it('should reject endpoint with /api prefix', () => {
-    const endpoint = '/api/exercises';
-    expect(() => validateEndpoint(endpoint)).toThrow();
-  });
-});
+  async submitAnswer(id: string, answer: SubmitAnswerDto) {
+    const response = await apiClient.post(`/exercises/${id}/submit`, answer);
+    return response.data;
+  },
+};
 ```
 
 ---
 
-## REFERENCIAS
+## 13. Configuracion Backend (NestJS)
 
-- [docs/98-standards/NAMING-CONVENTIONS-COMPLETE.md](../../98-standards/NAMING-CONVENTIONS-COMPLETE.md) - Estándares de nomenclatura
-- [Axios Documentation](https://axios-http.com/docs/intro)
-- [NestJS Controllers](https://docs.nestjs.com/controllers)
+### 13.1 Prefijo Global
+
+```typescript
+// main.ts
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api');
+
+  // CORS
+  app.enableCors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+
+  await app.listen(3000);
+}
+```
+
+### 13.2 Controladores
+
+```typescript
+// Sin prefijo /api porque se agrega globalmente
+@Controller('exercises')
+export class ExercisesController {
+  @Get()
+  async findAll() {
+    // Ruta final: GET /api/exercises
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    // Ruta final: GET /api/exercises/:id
+  }
+
+  @Post(':id/submit')
+  async submitAnswer(@Param('id') id: string, @Body() dto: SubmitAnswerDto) {
+    // Ruta final: POST /api/exercises/:id/submit
+  }
+}
+```
 
 ---
 
-**Última actualización:** 2025-11-29
-**Fuente original:** orchestration/directivas/ESTANDARES-API-ROUTES.md
-**Mantenido por:** Architecture-Analyst
+## 14. Endpoints por Modulo
+
+### 14.1 Auth (`/api/v1/auth`)
+
+| Metodo | Endpoint | Descripcion |
+|--------|----------|-------------|
+| POST | `/register` | Registrar usuario |
+| POST | `/login` | Iniciar sesion |
+| POST | `/logout` | Cerrar sesion |
+| POST | `/refresh` | Refrescar token |
+| POST | `/forgot-password` | Solicitar reset |
+| POST | `/reset-password` | Aplicar reset |
+
+### 14.2 Gamification (`/api/v1/gamification`)
+
+| Metodo | Endpoint | Descripcion |
+|--------|----------|-------------|
+| GET | `/stats` | Estadisticas del usuario |
+| GET | `/achievements` | Logros disponibles |
+| GET | `/achievements/user` | Logros del usuario |
+| GET | `/leaderboard` | Tabla de posiciones |
+| GET | `/ranks` | Rangos Maya |
+| POST | `/comodines/purchase` | Comprar comodin |
+| POST | `/comodines/use` | Usar comodin |
+
+### 14.3 Educational (`/api/v1/educational`)
+
+| Metodo | Endpoint | Descripcion |
+|--------|----------|-------------|
+| GET | `/modules` | Modulos educativos |
+| GET | `/exercises` | Ejercicios |
+| POST | `/exercises/:id/submit` | Enviar respuesta |
+
+### 14.4 Progress (`/api/v1/progress`)
+
+| Metodo | Endpoint | Descripcion |
+|--------|----------|-------------|
+| GET | `/sessions` | Sesiones de aprendizaje |
+| GET | `/submissions` | Entregas del usuario |
+| GET | `/module/:id` | Progreso por modulo |
+
+---
+
+## 15. Buenas Practicas
+
+1. **Versionado en URL**: Siempre `/api/v1/`
+2. **Recursos en plural**: `/users`, no `/user`
+3. **Verbos HTTP correctos**: GET lee, POST crea, PATCH actualiza, DELETE elimina
+4. **IDs en URL**: No en query params para recursos especificos
+5. **Filtros en query**: `?status=active&page=1`
+6. **Documentar todo**: Cada endpoint con @ApiOperation
+7. **Validar entrada**: Usar DTOs con class-validator
+8. **Respuestas consistentes**: Mismo formato siempre
+9. **snake_case en JSON**: Para compatibilidad con PostgreSQL
+10. **Sin trailing slashes**: Evitar `/users/` en favor de `/users`
+
+---
+
+## 16. Checklists de Validacion
+
+### 16.1 Pre-Implementacion
+
+- [ ] baseURL incluye protocolo + dominio + puerto + `/api`
+- [ ] baseURL NO incluye rutas de recursos
+- [ ] Endpoints NO incluyen prefijo `/api`
+- [ ] Endpoints comienzan con `/`
+- [ ] NO hay trailing slashes innecesarios
+- [ ] Variables de entorno configuradas
+- [ ] CORS configurado correctamente
+- [ ] Prefijo global en `main.ts`
+
+### 16.2 Post-Implementacion
+
+- [ ] Probar endpoint en navegador (Network tab)
+- [ ] URL final no tiene duplicados (/api/api/)
+- [ ] Respuesta correcta (200 OK)
+- [ ] No hay errores de CORS
+- [ ] Token de autenticacion se envia
+- [ ] Campos usan snake_case
+
+### 16.3 Code Review
+
+- [ ] NO hay `/api` hardcodeado en endpoints
+- [ ] baseURL configurado correctamente
+- [ ] Se usan variables de entorno
+- [ ] NO hay URLs absolutas hardcodeadas
+- [ ] Controladores usan rutas relativas
+- [ ] Hay manejo de errores
+
+---
+
+## Ver Tambien
+
+- [ERROR-HANDLING.md](./ERROR-HANDLING.md) - Manejo de errores detallado
+- [ESTRUCTURA-MODULOS.md](./ESTRUCTURA-MODULOS.md) - Estructura de modulos
+- [DTO-CONVENTIONS.md](./DTO-CONVENTIONS.md) - Convenciones de DTOs
+- Swagger UI: `http://localhost:3000/api/docs`
+
+---
+
+## Historial de Cambios
+
+| Version | Fecha | Cambios |
+|---------|-------|---------|
+| 2.0.0 | 2026-02-03 | Consolidacion de API-CONVENTIONS.md, NAMING-CONVENTIONS-API.md y API-STANDARDS.md |
+| 1.0.0 | 2025-11-29 | Version inicial |
+
+---
+
+**Documento consolidado:** 2026-02-03
+**Documentos archivados:** API-CONVENTIONS.md, NAMING-CONVENTIONS-API.md
+**Responsable:** @DOC_AGENT

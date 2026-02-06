@@ -1,5 +1,5 @@
 -- =====================================================
--- Table: system_configuration.notification_settings_global
+-- Table: system_configuration.notification_settings_globals
 -- Description: Configuración global de notificaciones del sistema
 -- Version: 1.0
 -- Created: 2025-11-11
@@ -35,7 +35,7 @@
 --
 -- REFERENCIAS:
 -- - Docs: docs/02-especificaciones-tecnicas/system-configuration/
--- - Seed: seeds/prod/system_configuration/03-notification_settings_global.sql
+-- - Seed: seeds/prod/system_configuration/03-notification_settings_globals.sql
 -- - User settings: auth_management.notification_settings
 --
 -- =====================================================
@@ -49,7 +49,7 @@ BEGIN
 END $$;
 
 -- Crear tabla
-CREATE TABLE IF NOT EXISTS system_configuration.notification_settings_global (
+CREATE TABLE IF NOT EXISTS system_configuration.notification_settings_globals (
     -- Identificación
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -86,12 +86,12 @@ CREATE TABLE IF NOT EXISTS system_configuration.notification_settings_global (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT gamilit.now_mexico(),
 
     -- Constraints
-    CONSTRAINT notification_settings_global_unique
+    CONSTRAINT notification_settings_globals_unique
         UNIQUE(notification_type, channel)
 );
 
 -- Comentarios de tabla
-COMMENT ON TABLE system_configuration.notification_settings_global IS
+COMMENT ON TABLE system_configuration.notification_settings_globals IS
 'Configuración GLOBAL de notificaciones a nivel de sistema.
 Define comportamiento por defecto para cada tipo de notificación y canal.
 
@@ -103,10 +103,10 @@ Creado: 2025-11-11
 Propósito: Configuración de sistema de notificaciones';
 
 -- Comentarios de columnas
-COMMENT ON COLUMN system_configuration.notification_settings_global.id IS
+COMMENT ON COLUMN system_configuration.notification_settings_globals.id IS
 'Identificador único de la configuración';
 
-COMMENT ON COLUMN system_configuration.notification_settings_global.notification_type IS
+COMMENT ON COLUMN system_configuration.notification_settings_globals.notification_type IS
 'Tipo de notificación. Ejemplos:
 - achievement_unlocked
 - rank_promotion
@@ -118,45 +118,45 @@ COMMENT ON COLUMN system_configuration.notification_settings_global.notification
 - streak_milestone
 Ver gamification_system.notification_type ENUM para valores válidos.';
 
-COMMENT ON COLUMN system_configuration.notification_settings_global.channel IS
+COMMENT ON COLUMN system_configuration.notification_settings_globals.channel IS
 'Canal de entrega de la notificación:
 - email: Correo electrónico
 - sms: Mensaje de texto
 - push: Notificación push (móvil/web)
 - in_app: Notificación dentro de la app';
 
-COMMENT ON COLUMN system_configuration.notification_settings_global.is_enabled IS
+COMMENT ON COLUMN system_configuration.notification_settings_globals.is_enabled IS
 'Si este tipo de notificación está habilitado globalmente.
 false = ningún usuario recibirá esta notificación, sin importar sus preferencias.';
 
-COMMENT ON COLUMN system_configuration.notification_settings_global.priority IS
+COMMENT ON COLUMN system_configuration.notification_settings_globals.priority IS
 'Prioridad de la notificación:
 - urgent: Requiere acción inmediata
 - high: Importante pero no urgente
 - normal: Informativa estándar
 - low: Informativa de baja prioridad';
 
-COMMENT ON COLUMN system_configuration.notification_settings_global.template_id IS
+COMMENT ON COLUMN system_configuration.notification_settings_globals.template_id IS
 'ID del template a usar para renderizar la notificación.
 Referencia a content_management.content_templates (si existe).
 NULL = usar template por defecto del sistema.';
 
-COMMENT ON COLUMN system_configuration.notification_settings_global.throttle_minutes IS
+COMMENT ON COLUMN system_configuration.notification_settings_globals.throttle_minutes IS
 'Minutos mínimos entre notificaciones del mismo tipo al mismo usuario.
 0 = sin throttling (enviar siempre).
 Ejemplo: 60 = máximo 1 notificación por hora de este tipo.';
 
-COMMENT ON COLUMN system_configuration.notification_settings_global.batch_enabled IS
+COMMENT ON COLUMN system_configuration.notification_settings_globals.batch_enabled IS
 'Si se deben agrupar notificaciones similares antes de enviar.
 true = esperar batch_window_minutes y enviar resumen.
 false = enviar cada notificación individualmente.';
 
-COMMENT ON COLUMN system_configuration.notification_settings_global.batch_window_minutes IS
+COMMENT ON COLUMN system_configuration.notification_settings_globals.batch_window_minutes IS
 'Ventana de tiempo para agrupar notificaciones en batch.
 Solo aplicable si batch_enabled = true.
 Ejemplo: 30 = agrupar notificaciones de los últimos 30 minutos.';
 
-COMMENT ON COLUMN system_configuration.notification_settings_global.settings IS
+COMMENT ON COLUMN system_configuration.notification_settings_globals.settings IS
 'Configuración adicional en formato JSON. Puede incluir:
 {
   "sender_name": "GAMILIT Platform",
@@ -180,5 +180,5 @@ BEGIN
         RAISE WARNING 'Función gamilit.now_mexico() no existe. Los timestamps usarán UTC.';
     END IF;
 
-    RAISE NOTICE '✓ Tabla system_configuration.notification_settings_global creada exitosamente';
+    RAISE NOTICE '✓ Tabla system_configuration.notification_settings_globals creada exitosamente';
 END $$;

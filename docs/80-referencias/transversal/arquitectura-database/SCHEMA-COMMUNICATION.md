@@ -118,10 +118,14 @@ Sistema completo de mensajeria y comunicacion entre docentes y estudiantes:
 
 ## 3. TRIGGER
 
-### trigger_update_messages_timestamp
+### trg_update_message_tracking_fields
 
 **Evento:** BEFORE UPDATE
-**Funcion:** communication.update_messages_timestamp()
+**Funcion:** communication.update_message_tracking_fields()
+
+> **Nota OVR-006:** Esta funcion NO es duplicado de `gamilit.update_updated_at_column()`.
+> Es una funcion ESPECIALIZADA con logica unica para la tabla messages.
+> Renombrada 2026-02-03 (antes: `update_messages_timestamp`)
 
 **Comportamiento:**
 - Actualiza `updated_at` en cada modificacion

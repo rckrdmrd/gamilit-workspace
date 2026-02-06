@@ -4,10 +4,10 @@
 # Fuente: Validación DB-092 (Ciclo 1-4)
 
 metadata:
-  version: "5.1.0"
+  version: "6.0.0"
   generated_date: "2025-11-11"
-  last_updated: "2026-02-02"
-  last_update_task: "TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS"
+  last_updated: "2026-02-05"
+  last_update_task: "TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD"
   database_script: "create-database.sh"
   total_ddl_files: 397
   total_seed_files: 177  # 106 DEV + 71 PROD (TASK-022 auditado)
@@ -18,38 +18,39 @@ metadata:
     prod_files: 71   # TASK-022 auditado
     staging_files: 6
   database_counts:
-    schemas: 16  # VALIDADO 2026-01-27 - DB recreation (13 con tablas + 3 vacios)
-    tables: 140  # RECONCILIADO 2026-02-02 - Auditoria directa DDL files
+    schemas: 18  # RECONCILIADO 2026-02-05 - 16 activos + 2 placeholder (public, storage)
+    schemas_active: 16  # RECONCILIADO 2026-02-05 - auth, auth_management, gamification_system, educational_content, progress_tracking, social_features, content_management, notifications, admin_dashboard, audit_logging, system_configuration, lti_integration, data_warehouse, communication, gamilit, public(placeholder)
+    tables: 171  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo DDL (era 140)
     tables_db_validated: 147  # create-database.sh resumen final 2026-01-27 (incluye system tables)
-    tables_active: 140  # RECONCILIADO 2026-02-02 - Conteo real archivos DDL
-    views: 13
-    materialized_views: 4
-    enums: 36  # RECONCILIADO 2026-02-02 - Conteo real archivos /enums/ (era 39)
-    functions_active: 119  # RECONCILIADO 2026-02-02 - Auditoria directa DDL (era 232)
-    functions_deprecated: 14  # NUEVO 2026-02-02 - 14 funciones en carpetas _deprecated
-    functions_total: 133  # 119 activas + 14 deprecated
+    tables_active: 171  # RECONCILIADO 2026-02-05 - Conteo exhaustivo DDL + ALTER scripts
+    views: 13  # Verificado 2026-02-05
+    materialized_views: 7  # CORREGIDO 2026-02-05 - Era 4 (faltaban 3 admin_dashboard MVs)
+    enums: 36  # Verificado 2026-02-05
+    functions_active: 128  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo (era 119)
+    functions_deprecated: 14  # 14 funciones en carpetas _deprecated
+    functions_total: 142  # 128 activas + 14 deprecated
     functions_files: 111  # Archivos .sql de funciones
-    triggers_active: 58  # RECONCILIADO 2026-02-02 - Conteo CREATE TRIGGER statements (era 109)
+    triggers_active: 49  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo (era 58)
     triggers_deprecated: 0
-    triggers_total: 58
+    triggers_total: 49
     triggers_files: 37  # Archivos .sql de triggers
     indexes_files: 23
     indexes_statements: 405
     policies_rls: 282  # CREATE POLICY statements (archivos DDL)
-    policies_rls_files: 34  # Archivos de RLS policies
-    foreign_keys: 241
-    # NOTA 2026-02-02: Los valores anteriores (232 funciones, 109 triggers) incluian
-    # funciones built-in de PostgreSQL reportadas por DB recreation. Los valores
-    # actuales reflejan el conteo real de archivos DDL del proyecto.
+    policies_rls_files: 37  # CORREGIDO 2026-02-05 - Era 34
+    foreign_keys: 299  # RECONCILIADO 2026-02-05 - FASE-4 conteo exhaustivo (era 241)
+    # NOTA 2026-02-05: Reconciliacion FASE-1 del ANALISIS-INTEGRAL encontro +31 tablas
+    # no contabilizadas: data_warehouse(16), social_features extensions(10),
+    # educational_content(4), system_configuration(3). Funciones +9, triggers -9, MVs +3.
   coherence:
-    ddl_backend: "100%"  # TASK-022: 137/137 entities mapped
+    ddl_backend: "82.5%"  # RECONCILIADO 2026-02-05: 141/171 entities mapped (era 100% sobre 137/137)
     backend_frontend: "87.5%"  # 14/16 core modules cubiertos
-    global: "93%"  # Ponderado (mejorado desde 88.5%)
-    entities_total: 137  # TASK-022: 128 + 7 TASK-021 + 2 P1-3
+    global: "87%"  # RECALCULADO 2026-02-05 - Ponderado (era 93%)
+    entities_total: 141  # RECONCILIADO 2026-02-05 - FASE-1 conteo real (era 137, excluye DTOs)
     controllers_total: 86
     endpoints_total: 750
-    tables_with_entity: 137
-    tables_without_entity: 4  # Reducido: solo M:N y tracking puro
+    tables_with_entity: 141  # RECONCILIADO 2026-02-05
+    tables_without_entity: 30  # RECONCILIADO 2026-02-05: 171 - 141 = 30 (16 data_warehouse + 6 operacionales + 8 junction/M:N)
     tablas_sin_entity_justificadas:
       - "audit_logging.pending_user_initialization - Tracking automático"
       - "audit_logging.activity_log - Auditoría automática"
@@ -103,6 +104,39 @@ metadata:
       objetos DDL del proyecto es: 119 funciones activas, 58 triggers activos.
     ssot_reference: "orchestration/tareas/TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS/INVENTARIO-RECONCILIADO.yml"
     validation_date: "2026-02-02"
+
+  audit_2026_02_05:
+    description: "TASK-2026-02-05: Analisis Integral del Modelado - Reconciliacion exhaustiva FASE-1"
+    task_id: "TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD"
+    methodology: "Conteo exhaustivo DDL + ALTER scripts + cross-reference con entities TypeORM"
+    changes_summary:
+      - "CORREGIDO: tables 140 -> 171 (+31 tablas no contabilizadas)"
+      - "CORREGIDO: functions_active 119 -> 128 (+9 funciones)"
+      - "CORREGIDO: triggers_active 58 -> 49 (-9 triggers)"
+      - "CORREGIDO: materialized_views 4 -> 7 (+3 MVs)"
+      - "CORREGIDO: foreign_keys 241 -> 299 (+58 FKs)"
+      - "CORREGIDO: entities_total 137 -> 141 (+4 entities reales, excluye DTOs)"
+      - "CORREGIDO: tables_without_entity 4 -> 30 (conteo real)"
+      - "CORREGIDO: ddl_backend coherence 100% -> 82.5%"
+      - "AGREGADO: schemas_active = 16, schemas total = 18"
+    tables_delta: |
+      +16 data_warehouse (dim_students, dim_teachers, dim_dates, dim_times, dim_exercises,
+        dim_modules, dim_achievements, dim_event_types, fact_exercise_completions,
+        fact_daily_progress, fact_gamification_events, fact_teacher_metrics,
+        ml_prediction_logs, ml_model_weights, etl_extraction_logs, etl_load_logs)
+      +10 social_features extensions (guilds, guild_members, guild_join_requests,
+        guild_missions, guild_mission_participants, guild_emblems, guild_mission_contributions,
+        user_skill_ratings, user_blocks, user_reports)
+      +4 educational_content (exercise_validation_audits, teacher_contents,
+        teacher_content_versions, content_approvals)
+      +3 system_configuration (notification_settings_globals, api_configurations,
+        environment_configs)
+      -2 tablas no encontradas en DDL real
+    hallazgos_totales: 40
+    hallazgos_criticos: 10
+    hallazgos_resueltos: 3
+    ssot_reference: "orchestration/tareas/TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD/"
+    validation_date: "2026-02-05"
 
   audit_2026_01_25:
     description: "TASK-019: Tabla teacher_alert_configurations para US-PM-007"

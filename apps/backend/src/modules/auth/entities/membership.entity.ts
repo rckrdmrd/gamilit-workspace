@@ -13,7 +13,7 @@ import {
   MembershipRoleEnum,
   MembershipStatusEnum,
 } from '@/shared/constants/enums.constants';
-import { User } from './user.entity';
+import { Profile } from './profile.entity';
 import { Tenant } from './tenant.entity';
 
 /**
@@ -101,12 +101,13 @@ export class Membership {
   // ===========================
 
   /**
-   * Usuario asociado a esta membresía
-   * @relation ManyToOne con User
+   * Perfil asociado a esta membresía
+   * FIX H-027: DDL FK user_id → auth_management.profiles(id), not auth.users(id)
+   * @relation ManyToOne con Profile
    */
-  @ManyToOne(() => User, { nullable: false })
+  @ManyToOne(() => Profile, { nullable: false })
   @JoinColumn({ name: 'user_id' })
-    user!: User;
+    user!: Profile;
 
   /**
    * Tenant asociado a esta membresía
@@ -117,10 +118,11 @@ export class Membership {
     tenant!: Tenant;
 
   /**
-   * Usuario que invitó (nullable)
-   * @relation ManyToOne con User
+   * Perfil que invitó (nullable)
+   * FIX H-027: DDL FK invited_by → auth_management.profiles(id)
+   * @relation ManyToOne con Profile
    */
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => Profile, { nullable: true })
   @JoinColumn({ name: 'invited_by' })
-    inviter!: User | null;
+    inviter!: Profile | null;
 }

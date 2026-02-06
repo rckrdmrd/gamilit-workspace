@@ -147,8 +147,20 @@ CREATE INDEX idx_messages_metadata
 -- Triggers
 -- =============================================================================
 
--- Trigger for updated_at timestamp
-CREATE OR REPLACE FUNCTION communication.update_messages_timestamp()
+-- ────────────────────────────────────────────────────────────────────────────
+-- SPECIALIZED FUNCTION: update_message_tracking_fields
+-- ────────────────────────────────────────────────────────────────────────────
+-- NOTE: This is NOT a duplicate of gamilit.update_updated_at_column()
+-- This function has SPECIALIZED LOGIC for the messages table:
+--   1. Updates updated_at (like gamilit version)
+--   2. Tracks content edits (edited_at, edit_count)
+--   3. Auto-sets read_at when is_read changes
+--   4. Auto-sets deleted_at when is_deleted changes
+--   5. Auto-sets flagged_at when is_flagged changes
+--
+-- Ref: OVR-006 analysis - KEPT because of unique functionality
+-- ────────────────────────────────────────────────────────────────────────────
+CREATE OR REPLACE FUNCTION communication.update_message_tracking_fields()
 RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = NOW();
@@ -178,10 +190,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_update_messages_timestamp
+-- Drop legacy function if exists (migration from update_messages_timestamp)
+DROP FUNCTION IF EXISTS communication.update_messages_timestamp() CASCADE;
+
+CREATE TRIGGER trg_update_message_tracking_fields
     BEFORE UPDATE ON communication.messages
     FOR EACH ROW
-    EXECUTE FUNCTION communication.update_messages_timestamp();
+    EXECUTE FUNCTION communication.update_message_tracking_fields();
 
 -- =============================================================================
 -- Helper function to get unread count

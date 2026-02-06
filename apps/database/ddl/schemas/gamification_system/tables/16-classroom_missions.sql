@@ -107,7 +107,7 @@ CREATE INDEX idx_classroom_missions_classroom_type
 -- Trigger for updated_at timestamp
 -- =============================================================================
 
-CREATE TRIGGER trigger_update_classroom_missions_timestamp
+CREATE TRIGGER trg_classroom_missions_updated_at
     BEFORE UPDATE ON gamification_system.classroom_missions
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

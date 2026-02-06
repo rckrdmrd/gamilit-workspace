@@ -39,13 +39,13 @@ COMMENT ON TRIGGER trg_certificates_updated_at ON progress_tracking.certificates
 
 -- Tabla: progress_tracking.exercise_submissions (agregado 2026-01-07 - consolidacion duplicados)
 -- NOTA: Migrado de funcion especifica a funcion centralizada
-DROP TRIGGER IF EXISTS exercise_submissions_updated_at ON progress_tracking.exercise_submissions CASCADE;
-CREATE TRIGGER exercise_submissions_updated_at
+DROP TRIGGER IF EXISTS trg_exercise_submissions_updated_at ON progress_tracking.exercise_submissions CASCADE;
+CREATE TRIGGER trg_exercise_submissions_updated_at
     BEFORE UPDATE ON progress_tracking.exercise_submissions
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();
 
-COMMENT ON TRIGGER exercise_submissions_updated_at ON progress_tracking.exercise_submissions
+COMMENT ON TRIGGER trg_exercise_submissions_updated_at ON progress_tracking.exercise_submissions
     IS 'Actualiza updated_at automaticamente en cada UPDATE';
 
 -- =====================================================

@@ -75,7 +75,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER tr_guild_members_count
+CREATE TRIGGER trg_guild_members_count
     AFTER INSERT OR DELETE ON social_features.guild_members
     FOR EACH ROW
     EXECUTE FUNCTION social_features.update_guild_member_count();

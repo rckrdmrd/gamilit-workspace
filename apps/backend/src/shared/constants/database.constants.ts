@@ -80,18 +80,18 @@ export const DB_TABLES = {
     MISSIONS: 'missions',
     MISSION_TEMPLATES: 'mission_templates', // ✨ NUEVO - MISSION-003/004 (Sistema de Templates)
     COMODINES_INVENTORY: 'comodines_inventory',
-    NOTIFICATIONS: 'notifications',
-    LEADERBOARD_METADATA: 'leaderboard_metadata',
+    LEADERBOARD_METADATA: 'leaderboard_metadatas', // FIX H-016: singular→plural (DDL: leaderboard_metadatas)
     ACHIEVEMENT_CATEGORIES: 'achievement_categories',
     ACTIVE_BOOSTS: 'active_boosts',
     INVENTORY_TRANSACTIONS: 'inventory_transactions',
     MAYA_RANKS: 'maya_ranks', // ✨ NUEVO - P1 (Rankings Maya)
-    COMODIN_USAGE_LOG: 'comodin_usage_log', // ✨ NUEVO - P1 (Tracking comodines)
-    COMODIN_USAGE_TRACKING: 'comodin_usage_tracking', // ✨ NUEVO - P1 (Tracking comodines)
+    COMODIN_USAGE_LOG: 'comodin_usage_logs', // FIX H-016: singular→plural
+    COMODIN_USAGE_TRACKING: 'comodin_usage_trackings', // FIX H-016: singular→plural
     SHOP_CATEGORIES: 'shop_categories', // ✨ NUEVO - P1 (Sistema de Shop)
     SHOP_ITEMS: 'shop_items', // ✨ NUEVO - P1 (Sistema de Shop)
     USER_PURCHASES: 'user_purchases', // ✨ NUEVO - P1 (Sistema de Shop)
     CLASSROOM_MISSIONS: 'classroom_missions', // ✨ NUEVO - Audit 2026-01-04 (Misiones de aula)
+    COMODIN_USES: 'comodin_uses', // FIX H-017: Missing entity (audit trail de consumo de comodines)
   },
 
   /**
@@ -108,18 +108,18 @@ export const DB_TABLES = {
     ASSIGNMENT_EXERCISES: 'assignment_exercises',
     ASSIGNMENT_STUDENTS: 'assignment_students',
     ASSIGNMENT_SUBMISSIONS: 'assignment_submissions',
-    CONTENT_METADATA: 'content_metadata',
+    CONTENT_METADATA: 'content_metadatas', // FIX H-016: singular→plural
     MODULE_DEPENDENCIES: 'module_dependencies',
     TAXONOMIES: 'taxonomies',
     CONTENT_TAGS: 'content_tags',
     CONTENT_APPROVALS: 'content_approvals',
-    EXERCISE_MECHANIC_MAPPING: 'exercise_mechanic_mapping', // ✨ NUEVO - DB-113 (Sistema Dual - ADR-008)
+    EXERCISE_MECHANIC_MAPPING: 'exercise_mechanic_mappings', // FIX H-016: singular→plural
     DIFFICULTY_CRITERIA: 'difficulty_criteria', // ✨ NUEVO - P1-001 (Criterios de dificultad CEFR)
     CLASSROOM_MODULES: 'classroom_modules', // ✨ NUEVO - P1-002 (Módulos asignados a aulas)
-    TEACHER_CONTENT: 'teacher_content', // ✨ NUEVO - Audit 2026-01-04 (Contenido docente)
-    EXERCISE_VALIDATION_CONFIG: 'exercise_validation_config', // ✨ NUEVO - 2026-01-14 (Sistema Dual ADR-008)
+    TEACHER_CONTENT: 'teacher_contents', // FIX H-016: singular→plural
+    EXERCISE_VALIDATION_CONFIG: 'exercise_validation_configs', // FIX H-016: singular→plural
     EXERCISE_TYPE_RUBRICS: 'exercise_type_rubrics', // ✨ NUEVO - 2026-01-14 (Rúbricas por tipo M4-M5)
-    EXERCISE_VALIDATION_AUDIT: 'exercise_validation_audit', // ✨ NUEVO - 2026-01-14 (Auditoría de validaciones)
+    EXERCISE_VALIDATION_AUDIT: 'exercise_validation_audits', // FIX H-016: singular→plural
     // REMOVED: exercise_options, exercise_answers (legacy dual model - moved to JSONB puro)
   },
 
@@ -137,8 +137,8 @@ export const DB_TABLES = {
     MANUAL_REVIEWS: 'manual_reviews', // ✨ NUEVO - MOD-04/05 (Evaluaciones manuales)
     ENGAGEMENT_METRICS: 'engagement_metrics', // ✨ NUEVO - P2
     LEARNING_PATHS: 'learning_paths', // ✨ NUEVO - P2
-    MASTERY_TRACKING: 'mastery_tracking', // ✨ NUEVO - P2
-    MODULE_COMPLETION_TRACKING: 'module_completion_tracking', // ✨ NUEVO - P2
+    MASTERY_TRACKING: 'mastery_trackings', // FIX H-016: singular→plural
+    MODULE_COMPLETION_TRACKING: 'module_completion_trackings', // FIX H-016: singular→plural
     PROGRESS_SNAPSHOTS: 'progress_snapshots', // ✨ NUEVO - P2
     SKILL_ASSESSMENTS: 'skill_assessments', // ✨ NUEVO - P2
     USER_LEARNING_PATHS: 'user_learning_paths', // ✨ NUEVO - P2
@@ -146,8 +146,8 @@ export const DB_TABLES = {
     STUDENT_INTERVENTION_ALERTS: 'student_intervention_alerts', // ✨ NUEVO - P1-002 (Alertas de intervención)
     CERTIFICATES: 'certificates', // ✨ NUEVO - EPIC 10.2 (Certificados digitales)
     TEACHER_ALERT_CONFIGURATIONS: 'teacher_alert_configurations', // ✨ NUEVO - US-PM-007 (Config alertas profesor)
-    USER_DIFFICULTY_PROGRESS: 'user_difficulty_progress', // ✨ NUEVO - TASK-022 (Progreso por dificultad)
-    USER_CURRENT_LEVEL: 'user_current_level', // ✨ NUEVO - TASK-022 (Nivel actual del usuario)
+    USER_DIFFICULTY_PROGRESS: 'user_difficulty_progresses', // FIX H-016: singular→plural
+    USER_CURRENT_LEVEL: 'user_current_levels', // FIX H-016: singular→plural
   },
 
   /**
@@ -176,6 +176,12 @@ export const DB_TABLES = {
     SCHEDULED_REPORTS: 'scheduled_reports', // ✨ NUEVO - TASK-2026-01-18-015 Sprint 5 (Reportes programados)
     SHARED_REPORTS: 'shared_reports', // ✨ NUEVO - TASK-2026-01-18-015 Sprint 5 (Reportes compartidos)
     USER_SKILL_RATINGS: 'user_skill_ratings', // ✨ NUEVO - EXT-009 (Skill ratings para peer challenges)
+    GUILD_EMBLEMS: 'guild_emblems', // FIX H-017: Missing entity (catálogo de emblemas para gremios)
+    GUILD_MISSIONS: 'guild_missions', // FIX H-017: Guild missions table
+    GUILD_MISSION_CONTRIBUTIONS: 'guild_mission_contributions', // FIX H-017: Individual contributions to missions
+    TEAM_VS_TEAM_CHALLENGES: 'team_vs_team_challenges', // FIX H-039: Team vs team challenges
+    USER_BLOCKS: 'user_blocks', // FIX H-031: Missing safety entity (bloqueos entre usuarios)
+    USER_REPORTS: 'user_reports', // FIX H-031: Missing safety entity (reportes de moderación)
   },
 
   /**
@@ -184,13 +190,13 @@ export const DB_TABLES = {
    */
   CONTENT: {
     CONTENT_TEMPLATES: 'content_templates',
-    MARIE_CURIE_CONTENT: 'marie_curie_content',
+    MARIE_CURIE_CONTENT: 'marie_curie_contents', // FIX H-016: singular→plural
     MEDIA_FILES: 'media_files',
     CONTENT_AUTHORS: 'content_authors', // ✨ NUEVO - P2
     CONTENT_CATEGORIES: 'content_categories', // ✨ NUEVO - P2
     CONTENT_VERSIONS: 'content_versions', // ✨ NUEVO - P2
-    FLAGGED_CONTENT: 'flagged_content', // ✨ NUEVO - P2
-    MEDIA_METADATA: 'media_metadata', // ✨ NUEVO - P2
+    FLAGGED_CONTENT: 'flagged_contents', // FIX H-016: singular→plural
+    MEDIA_METADATA: 'media_metadatas', // FIX H-016: singular→plural
     TAGS: 'tags', // ✨ NUEVO - 2026-01-14 (Categorización de contenido)
     MODERATION_RULES: 'moderation_rules', // ✨ NUEVO - 2026-01-14 (Reglas de moderación automática)
   },
@@ -205,8 +211,8 @@ export const DB_TABLES = {
     USER_ACTIVITY_LOGS: 'user_activity_logs', // ✨ NUEVO - P2
     PERFORMANCE_METRICS: 'performance_metrics', // ✨ NUEVO - P2
     SYSTEM_ALERTS: 'system_alerts', // ✨ NUEVO - P2
-    ACTIVITY_LOG: 'activity_log', // ✨ Admin Dashboard activity tracking
-    PENDING_USER_INITIALIZATION: 'pending_user_initialization', // ✨ NUEVO - 2026-01-14 (Control de inicialización fallida)
+    ACTIVITY_LOG: 'activity_logs', // FIX H-016: singular→plural
+    PENDING_USER_INITIALIZATION: 'pending_user_initializations', // FIX H-016: singular→plural
     // USER_ACTIVITY: ELIMINADO 2026-01-07 - Migrado completamente a ACTIVITY_LOG
   },
 
@@ -222,6 +228,7 @@ export const DB_TABLES = {
     NOTIFICATION_TEMPLATES: 'notification_templates', // ✨ NUEVO - EXT-003 (Plantillas reutilizables)
     NOTIFICATION_QUEUE: 'notification_queue', // ✨ NUEVO - EXT-003 (Cola de envíos)
     USER_DEVICES: 'user_devices', // ✨ NUEVO - EXT-003 (Dispositivos para push)
+    RATE_LIMIT_LOGS: 'rate_limit_logs', // FIX H-017: Missing entity (audit de rate limiting)
   },
 
   /**
@@ -243,9 +250,9 @@ export const DB_TABLES = {
     FEATURE_FLAGS: 'feature_flags', // ✨ NUEVO - P1 CRÍTICO
     NOTIFICATION_SETTINGS: 'notification_settings', // ✨ NUEVO - P1
     RATE_LIMITS: 'rate_limits', // ✨ NUEVO - AUDIT-003 (Rate Limiting)
-    NOTIFICATION_SETTINGS_GLOBAL: 'notification_settings_global', // ✨ NUEVO - AUDIT-003 (Config Global Notificaciones)
-    API_CONFIGURATION: 'api_configuration', // ✨ NUEVO - P2
-    ENVIRONMENT_CONFIG: 'environment_config', // ✨ NUEVO - P2
+    NOTIFICATION_SETTINGS_GLOBAL: 'notification_settings_globals', // FIX H-016: singular→plural
+    API_CONFIGURATION: 'api_configurations', // FIX H-016: singular→plural
+    ENVIRONMENT_CONFIG: 'environment_configs', // FIX H-016: singular→plural
     TENANT_CONFIGURATIONS: 'tenant_configurations', // ✨ NUEVO - P2
     GAMIFICATION_PARAMETERS: 'gamification_parameters', // ✨ NUEVO - P1-002 (Parámetros de gamificación)
   },
@@ -257,7 +264,7 @@ export const DB_TABLES = {
   LTI: {
     LTI_CONSUMERS: 'lti_consumers', // ✨ NUEVO - P3
     LTI_SESSIONS: 'lti_sessions', // ✨ NUEVO - P3
-    LTI_GRADE_PASSBACK: 'lti_grade_passback', // ✨ NUEVO - P3
+    LTI_GRADE_PASSBACK: 'lti_grade_passbacks', // FIX H-016: singular→plural
   },
 
   /**
@@ -276,6 +283,8 @@ export const DB_TABLES = {
   COMMUNICATION: {
     MESSAGES: 'messages', // Mensajes de la plataforma
     MESSAGE_PARTICIPANTS: 'message_participants', // Participantes de conversaciones
+    CONVERSATIONS: 'conversations', // FIX H-017: Missing entity (contenedor de conversaciones grupales)
+    CONVERSATION_PARTICIPANTS: 'conversation_participants', // FIX H-017: Missing entity (participantes de conversaciones)
   },
 
   /**
@@ -285,17 +294,17 @@ export const DB_TABLES = {
    */
   DATA_WAREHOUSE: {
     // ETL metadata tables
-    ETL_EXTRACTION_LOG: 'etl_extraction_log', // ✨ Sprint 2.2 (ETL Pipeline Extraction)
-    ETL_LOAD_LOG: 'etl_load_log', // ✨ Sprint 2.4 (ETL Pipeline Load)
-    // Dimension tables (Sprint 2.1)
-    DIM_DATE: 'dim_date',
-    DIM_TIME: 'dim_time',
-    DIM_STUDENT: 'dim_student',
-    DIM_EXERCISE: 'dim_exercise',
-    DIM_MODULE: 'dim_module',
-    DIM_TEACHER: 'dim_teacher',
-    DIM_ACHIEVEMENT: 'dim_achievement',
-    DIM_EVENT_TYPE: 'dim_event_type',
+    ETL_EXTRACTION_LOG: 'etl_extraction_logs', // FIX H-016: singular→plural
+    ETL_LOAD_LOG: 'etl_load_logs', // FIX H-016: singular→plural
+    // Dimension tables (Sprint 2.1) - FIX H-016: all singular→plural
+    DIM_DATE: 'dim_dates',
+    DIM_TIME: 'dim_times',
+    DIM_STUDENT: 'dim_students',
+    DIM_EXERCISE: 'dim_exercises',
+    DIM_MODULE: 'dim_modules',
+    DIM_TEACHER: 'dim_teachers',
+    DIM_ACHIEVEMENT: 'dim_achievements',
+    DIM_EVENT_TYPE: 'dim_event_types',
     // Fact tables (Sprint 2.1)
     FACT_EXERCISE_COMPLETIONS: 'fact_exercise_completions',
     FACT_DAILY_PROGRESS: 'fact_daily_progress',

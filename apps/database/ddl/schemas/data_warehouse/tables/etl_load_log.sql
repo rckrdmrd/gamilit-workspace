@@ -28,7 +28,7 @@ END $$;
 -- ============================================
 -- ETL Load Log Table
 -- ============================================
-CREATE TABLE IF NOT EXISTS data_warehouse.etl_load_log (
+CREATE TABLE IF NOT EXISTS data_warehouse.etl_load_logs (
     -- Primary Key
     load_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -63,48 +63,48 @@ CREATE TABLE IF NOT EXISTS data_warehouse.etl_load_log (
 -- ============================================
 
 -- Index for querying by loader name
-CREATE INDEX IF NOT EXISTS idx_etl_load_log_loader_name
-    ON data_warehouse.etl_load_log(loader_name);
+CREATE INDEX IF NOT EXISTS idx_etl_load_logs_loader_name
+    ON data_warehouse.etl_load_logs(loader_name);
 
 -- Index for querying by status
-CREATE INDEX IF NOT EXISTS idx_etl_load_log_status
-    ON data_warehouse.etl_load_log(status);
+CREATE INDEX IF NOT EXISTS idx_etl_load_logs_status
+    ON data_warehouse.etl_load_logs(status);
 
 -- Index for querying by time range
-CREATE INDEX IF NOT EXISTS idx_etl_load_log_started_at
-    ON data_warehouse.etl_load_log(started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_etl_load_logs_started_at
+    ON data_warehouse.etl_load_logs(started_at DESC);
 
 -- Composite index for common queries
-CREATE INDEX IF NOT EXISTS idx_etl_load_log_loader_status_time
-    ON data_warehouse.etl_load_log(loader_name, status, started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_etl_load_logs_loader_status_time
+    ON data_warehouse.etl_load_logs(loader_name, status, started_at DESC);
 
 -- ============================================
 -- Comments
 -- ============================================
 
-COMMENT ON TABLE data_warehouse.etl_load_log IS
+COMMENT ON TABLE data_warehouse.etl_load_logs IS
     'Tracks ETL load operations including success/failure, row counts, and timing';
 
-COMMENT ON COLUMN data_warehouse.etl_load_log.load_id IS
+COMMENT ON COLUMN data_warehouse.etl_load_logs.load_id IS
     'Unique identifier for the load operation';
-COMMENT ON COLUMN data_warehouse.etl_load_log.loader_name IS
+COMMENT ON COLUMN data_warehouse.etl_load_logs.loader_name IS
     'Name of the loader that executed (e.g., fact-exercise-completion, dim-student)';
-COMMENT ON COLUMN data_warehouse.etl_load_log.target_table IS
+COMMENT ON COLUMN data_warehouse.etl_load_logs.target_table IS
     'Target table including schema (e.g., data_warehouse.fact_exercise_completions)';
-COMMENT ON COLUMN data_warehouse.etl_load_log.rows_inserted IS
+COMMENT ON COLUMN data_warehouse.etl_load_logs.rows_inserted IS
     'Number of rows successfully inserted';
-COMMENT ON COLUMN data_warehouse.etl_load_log.rows_updated IS
+COMMENT ON COLUMN data_warehouse.etl_load_logs.rows_updated IS
     'Number of rows updated (for upsert operations)';
-COMMENT ON COLUMN data_warehouse.etl_load_log.rows_rejected IS
+COMMENT ON COLUMN data_warehouse.etl_load_logs.rows_rejected IS
     'Number of rows rejected due to validation or constraint errors';
-COMMENT ON COLUMN data_warehouse.etl_load_log.status IS
+COMMENT ON COLUMN data_warehouse.etl_load_logs.status IS
     'Current status of the load operation';
-COMMENT ON COLUMN data_warehouse.etl_load_log.error_message IS
+COMMENT ON COLUMN data_warehouse.etl_load_logs.error_message IS
     'Error message if the load failed';
 
 -- ============================================
 -- Permissions
 -- ============================================
 
-GRANT SELECT, INSERT, UPDATE ON data_warehouse.etl_load_log TO gamilit_user;
+GRANT SELECT, INSERT, UPDATE ON data_warehouse.etl_load_logs TO gamilit_user;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA data_warehouse TO gamilit_user;

@@ -64,7 +64,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER tr_guilds_updated_at
+CREATE TRIGGER trg_guilds_updated_at
     BEFORE UPDATE ON social_features.guilds
     FOR EACH ROW
     EXECUTE FUNCTION social_features.update_guilds_updated_at();

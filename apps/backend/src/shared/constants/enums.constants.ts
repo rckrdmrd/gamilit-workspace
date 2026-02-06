@@ -431,6 +431,7 @@ export enum ContentStatusEnum {
   PUBLISHED = 'published',
   ARCHIVED = 'archived',
   UNDER_REVIEW = 'under_review',  // v1.1: RENOMBRADO de 'reviewing'
+  BACKLOG = 'backlog', // FIX H-026: faltaba en TS (DDL: educational_content.module_status tiene 5 valores)
 }
 
 /**

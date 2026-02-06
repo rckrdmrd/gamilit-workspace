@@ -298,7 +298,7 @@ export class NotificationTemplateService {
     }
 
     // 3. Interpolar subject
-    const subject = this.interpolate(template.subjectTemplate, variables);
+    const subject = this.interpolate(template.subjectTemplate ?? '', variables);
 
     // 4. Interpolar body
     const body = this.interpolate(template.bodyTemplate, variables);

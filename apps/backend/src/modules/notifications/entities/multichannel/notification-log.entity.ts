@@ -17,7 +17,7 @@ import { Notification } from './notification.entity';
  *
  * @description Registro de intentos de envío de notificaciones (EXT-003)
  * @source orchestration/database/DB-115/HANDOFF-TO-BACKEND.md
- * @version 1.0 (2025-11-13) - Sistema Multi-Canal EXT-003
+ * @version 1.1 (2026-02-05) - FIX H-024: Alineado con DDL (varchar lengths, removed extra columns)
  *
  * IMPORTANTE:
  * - Un log por cada intento de envío por canal
@@ -90,23 +90,16 @@ export class NotificationLog {
    *
    * IMPORTANTE: Un log por canal
    */
-  @Column({ type: 'varchar', length: 50 })
+  // FIX H-024: DDL channel is VARCHAR(20)
+  @Column({ type: 'varchar', length: 20 })
     channel!: string;
 
   /**
    * Estado del envío
-   *
-   * Valores posibles:
-   * - 'sent' - Enviado exitosamente
-   * - 'failed' - Fallo en el envío
-   * - 'pending' - Pendiente de envío (raro en logs, más común en queue)
-   *
-   * IMPORTANTE:
-   * - 'sent' no garantiza que el usuario lo recibió, solo que el proveedor lo aceptó
-   * - Para email: 'sent' = aceptado por SMTP, pero puede rebotar después
-   * - Para push: 'sent' = aceptado por FCM/APNS, pero puede fallar en dispositivo
+   * Valores: 'sent', 'delivered', 'failed', 'bounced'
    */
-  @Column({ type: 'varchar', length: 50 })
+  // FIX H-024: DDL status is VARCHAR(20)
+  @Column({ type: 'varchar', length: 20 })
     status!: string;
 
   /**
@@ -147,21 +140,9 @@ export class NotificationLog {
     errorMessage?: string;
 
   /**
-   * ID externo del proveedor
-   *
-   * ID único devuelto por el proveedor externo para tracking
-   *
-   * Ejemplos:
-   * - SendGrid: "<20231113120000.1234567@sendgrid.net>"
-   * - AWS SES: "0000018b-abcd-1234-5678-1234567890ab-000000"
-   * - FCM: "projects/gamilit/messages/0:1234567890123456"
-   *
-   * Permite:
-   * - Hacer tracking con webhooks del proveedor
-   * - Consultar estado en dashboard del proveedor
-   * - Debugging avanzado de entregas
-   *
-   * @optional No siempre disponible (ej: in_app no tiene)
+   * ID externo del proveedor (SendGrid, FCM, etc.)
+   * NOTE: NOT in current DDL - needs ALTER TABLE to add external_id column
+   * Actively used by notification-delivery.service.ts for webhook tracking
    */
   @Column({ name: 'external_id', type: 'varchar', length: 255, nullable: true })
     externalId?: string;
@@ -195,9 +176,13 @@ export class NotificationLog {
    *
    * @optional
    */
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'jsonb', nullable: true, default: {} })
     metadata?: Record<string, unknown>;
 
+  /**
+   * NOTE: NOT in current DDL - needs ALTER TABLE to add created_at column
+   * Actively used by services for ordering and filtering
+   */
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
     createdAt!: Date;
 }

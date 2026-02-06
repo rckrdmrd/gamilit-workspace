@@ -1,5 +1,5 @@
 -- =====================================================
--- Table: data_warehouse.dim_achievement
+-- Table: data_warehouse.dim_achievements
 -- Description: Achievement dimension for gamification analytics
 -- Type: Dimension
 -- Grain: One row per achievement
@@ -11,9 +11,9 @@
 
 SET search_path TO data_warehouse, public;
 
-DROP TABLE IF EXISTS data_warehouse.dim_achievement CASCADE;
+DROP TABLE IF EXISTS data_warehouse.dim_achievements CASCADE;
 
-CREATE TABLE data_warehouse.dim_achievement (
+CREATE TABLE data_warehouse.dim_achievements (
     -- =====================================================
     -- SURROGATE KEY
     -- =====================================================
@@ -77,41 +77,41 @@ CREATE TABLE data_warehouse.dim_achievement (
     -- =====================================================
     -- CONSTRAINTS
     -- =====================================================
-    CONSTRAINT dim_achievement_pkey PRIMARY KEY (achievement_key),
-    CONSTRAINT dim_achievement_achievement_id_key UNIQUE (achievement_id),
-    CONSTRAINT dim_achievement_category_check CHECK (category IN ('progress', 'streak', 'completion', 'social', 'special', 'mastery', 'exploration')),
-    CONSTRAINT dim_achievement_rarity_check CHECK (rarity IN ('common', 'rare', 'epic', 'legendary'))
+    CONSTRAINT dim_achievements_pkey PRIMARY KEY (achievement_key),
+    CONSTRAINT dim_achievements_achievement_id_key UNIQUE (achievement_id),
+    CONSTRAINT dim_achievements_category_check CHECK (category IN ('progress', 'streak', 'completion', 'social', 'special', 'mastery', 'exploration')),
+    CONSTRAINT dim_achievements_rarity_check CHECK (rarity IN ('common', 'rare', 'epic', 'legendary'))
 );
 
 -- =====================================================
 -- INDEXES
 -- =====================================================
-CREATE INDEX idx_dim_achievement_achievement_id ON data_warehouse.dim_achievement USING btree (achievement_id);
-CREATE INDEX idx_dim_achievement_category ON data_warehouse.dim_achievement USING btree (category);
-CREATE INDEX idx_dim_achievement_rarity ON data_warehouse.dim_achievement USING btree (rarity);
-CREATE INDEX idx_dim_achievement_active ON data_warehouse.dim_achievement USING btree (is_active) WHERE is_active = TRUE;
-CREATE INDEX idx_dim_achievement_secret ON data_warehouse.dim_achievement USING btree (is_secret) WHERE is_secret = TRUE;
-CREATE INDEX idx_dim_achievement_order ON data_warehouse.dim_achievement USING btree (category, order_index);
+CREATE INDEX idx_dim_achievements_achievement_id ON data_warehouse.dim_achievements USING btree (achievement_id);
+CREATE INDEX idx_dim_achievements_category ON data_warehouse.dim_achievements USING btree (category);
+CREATE INDEX idx_dim_achievements_rarity ON data_warehouse.dim_achievements USING btree (rarity);
+CREATE INDEX idx_dim_achievements_active ON data_warehouse.dim_achievements USING btree (is_active) WHERE is_active = TRUE;
+CREATE INDEX idx_dim_achievements_secret ON data_warehouse.dim_achievements USING btree (is_secret) WHERE is_secret = TRUE;
+CREATE INDEX idx_dim_achievements_order ON data_warehouse.dim_achievements USING btree (category, order_index);
 
 -- =====================================================
 -- OWNERSHIP AND PERMISSIONS
 -- =====================================================
-ALTER TABLE data_warehouse.dim_achievement OWNER TO gamilit_user;
-GRANT SELECT, INSERT, UPDATE ON data_warehouse.dim_achievement TO gamilit_user;
-GRANT USAGE ON SEQUENCE data_warehouse.dim_achievement_achievement_key_seq TO gamilit_user;
+ALTER TABLE data_warehouse.dim_achievements OWNER TO gamilit_user;
+GRANT SELECT, INSERT, UPDATE ON data_warehouse.dim_achievements TO gamilit_user;
+GRANT USAGE ON SEQUENCE data_warehouse.dim_achievements_achievement_key_seq TO gamilit_user;
 
 -- =====================================================
 -- COMMENTS
 -- =====================================================
-COMMENT ON TABLE data_warehouse.dim_achievement IS
+COMMENT ON TABLE data_warehouse.dim_achievements IS
 'Achievement dimension - Gamification achievements catalog.
 Grain: One row per achievement definition.
 Source: gamification_system.achievements.
 Categories: progress, streak, completion, social, special, mastery, exploration.
 Rarity tiers: common, rare, epic, legendary.';
 
-COMMENT ON COLUMN data_warehouse.dim_achievement.achievement_key IS 'Surrogate key for fact table joins';
-COMMENT ON COLUMN data_warehouse.dim_achievement.achievement_id IS 'Natural key from gamification_system.achievements.id';
-COMMENT ON COLUMN data_warehouse.dim_achievement.category IS 'Achievement category for grouping';
-COMMENT ON COLUMN data_warehouse.dim_achievement.rarity IS 'Rarity tier: common (most frequent) to legendary (rarest)';
-COMMENT ON COLUMN data_warehouse.dim_achievement.is_secret IS 'Hidden until unlocked';
+COMMENT ON COLUMN data_warehouse.dim_achievements.achievement_key IS 'Surrogate key for fact table joins';
+COMMENT ON COLUMN data_warehouse.dim_achievements.achievement_id IS 'Natural key from gamification_system.achievements.id';
+COMMENT ON COLUMN data_warehouse.dim_achievements.category IS 'Achievement category for grouping';
+COMMENT ON COLUMN data_warehouse.dim_achievements.rarity IS 'Rarity tier: common (most frequent) to legendary (rarest)';
+COMMENT ON COLUMN data_warehouse.dim_achievements.is_secret IS 'Hidden until unlocked';

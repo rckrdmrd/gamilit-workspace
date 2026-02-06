@@ -170,5 +170,5 @@ curl https://api.gamilit.example.com/health
 
 ## Referencias
 
-- [DEPLOYMENT.md](../95-guias-desarrollo/DEPLOYMENT.md)
+- [DEPLOYMENT-MASTER.md](../../40-estandares/guias/DEPLOYMENT-MASTER.md)
 - [PM2 Docs](https://pm2.keymetrics.io/docs/)

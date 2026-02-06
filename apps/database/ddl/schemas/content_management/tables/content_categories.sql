@@ -30,7 +30,7 @@ COMMENT ON COLUMN content_management.content_categories.parent_category_id IS 'P
 COMMENT ON COLUMN content_management.content_categories.display_order IS 'Order for displaying categories';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_content_categories_updated_at
+CREATE TRIGGER trg_content_categories_updated_at
     BEFORE UPDATE ON content_management.content_categories
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

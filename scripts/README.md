@@ -58,9 +58,8 @@ export DB_PASSWORD="tu_password_aqui"
 | `setup-ssl-certbot.sh` | Configurar SSL/HTTPS | Nuevo servidor o agregar dominio |
 | `validate-deployment.sh` | Validar deployment | Despues de cualquier cambio |
 
-> **Guias detalladas:**
-> - SSL: `docs/95-guias-desarrollo/GUIA-SSL-CERTBOT-DEPLOYMENT.md`
-> - Deployment: `docs/95-guias-desarrollo/GUIA-DEPLOYMENT-RAPIDO.md`
+> **Guia detallada:**
+> - Deployment Consolidado: `docs/40-estandares/guias/DEPLOYMENT-MASTER.md`
 
 ---
 

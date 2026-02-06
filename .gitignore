@@ -281,3 +281,5 @@ apps/database/credentials-backups/
 # Runtime uploads
 apps/backend/uploads/
 **/uploads/reports/
+nul
+apps/database/nul

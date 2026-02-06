@@ -4,85 +4,61 @@ import { AuthProviderEnum } from '@shared/constants/enums.constants';
 /**
  * AuthProviderResponseDto
  *
- * @description DTO para respuestas de vinculación de usuario con proveedor OAuth
+ * @description DTO para respuestas de configuración de proveedor OAuth.
+ * Modelo de configuración global (NO per-user).
  *
- * Expone campos seguros (7 campos):
- * - id (UUID)
- * - user_id (UUID)
- * - provider (ENUM)
- * - provider_user_id (TEXT)
- * - token_expires_at (TIMESTAMP, nullable)
- * - created_at (TIMESTAMP)
- * - updated_at (TIMESTAMP)
+ * FIX H-021: DTO reescrito para alinear con DDL (configuración global OAuth).
  *
- * IMPORTANTE - SEGURIDAD:
+ * SEGURIDAD:
  * NO expone campos sensibles:
- * - access_token (NUNCA exponer)
- * - refresh_token (NUNCA exponer)
+ * - client_id (credencial OAuth)
+ * - client_secret (credencial OAuth)
  *
- * Estos tokens OAuth son sensibles y solo deben usarse internamente
- * en la lógica de autenticación del backend.
- *
- * @see AuthProviderEntity
+ * @see AuthProvider entity
  * @see CreateAuthProviderDto
  */
 export class AuthProviderResponseDto {
-  /**
-   * Identificador único del registro
-   */
   @Expose()
-    id!: string;
+  id!: string;
 
-  /**
-   * ID del usuario vinculado
-   */
   @Expose()
-    user_id!: string;
+  provider_name!: AuthProviderEnum;
 
-  /**
-   * Proveedor de autenticación OAuth
-   * Valores: local, google, facebook, apple, microsoft, github
-   */
   @Expose()
-    provider!: AuthProviderEnum;
+  display_name!: string;
 
-  /**
-   * ID del usuario en el proveedor OAuth externo
-   */
   @Expose()
-    provider_user_id!: string;
+  is_enabled!: boolean;
 
-  /**
-   * Fecha y hora de expiración del access_token
-   * @note NO exponemos el token, solo su fecha de expiración
-   */
   @Expose()
-    token_expires_at!: Date | null;
+  authorization_url!: string | null;
 
-  /**
-   * Fecha y hora de creación del registro
-   */
   @Expose()
-    created_at!: Date;
+  token_url!: string | null;
 
-  /**
-   * Fecha y hora de última actualización del registro
-   */
   @Expose()
-    updated_at!: Date;
+  user_info_url!: string | null;
 
-  // =====================================================
-  // Campos NO expuestos (sensibles):
-  // =====================================================
-  // - access_token: Token OAuth (SENSIBLE, @Exclude en Entity)
-  // - refresh_token: Refresh token OAuth (SENSIBLE, @Exclude en Entity)
-  //
-  // Estos campos están marcados con @Exclude() en AuthProviderEntity
-  // y NO deben incluirse en ningún DTO de respuesta pública.
-  // =====================================================
+  @Expose()
+  scope!: string[] | null;
 
-  // Relación opcional a User (si se incluye en la query)
-  // @Expose()
-  // @Type(() => UserResponseDto)
-  // user?: UserResponseDto;
+  @Expose()
+  redirect_uri!: string | null;
+
+  @Expose()
+  icon_url!: string | null;
+
+  @Expose()
+  button_color!: string | null;
+
+  @Expose()
+  priority!: number;
+
+  @Expose()
+  created_at!: Date;
+
+  @Expose()
+  updated_at!: Date;
+
+  // SECURITY: client_id and client_secret are NOT exposed
 }

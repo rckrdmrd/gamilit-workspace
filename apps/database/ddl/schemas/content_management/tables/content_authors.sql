@@ -5,7 +5,7 @@
 
 CREATE TABLE content_management.content_authors (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL,
     display_name VARCHAR(255) NOT NULL,
     bio TEXT,
     expertise_areas TEXT[],
@@ -16,7 +16,15 @@ CREATE TABLE content_management.content_authors (
     is_verified BOOLEAN NOT NULL DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id)
+
+    -- Unique Constraints
+    CONSTRAINT uq_content_authors_user_id UNIQUE (user_id),
+
+    -- Foreign Keys (with fk_ prefix per standard)
+    CONSTRAINT fk_content_authors_user_id FOREIGN KEY (user_id)
+        REFERENCES auth_management.profiles(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 -- Índices
@@ -34,7 +42,7 @@ COMMENT ON COLUMN content_management.content_authors.is_featured IS 'Whether aut
 COMMENT ON COLUMN content_management.content_authors.is_verified IS 'Whether author is verified by platform';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_content_authors_updated_at
+CREATE TRIGGER trg_content_authors_updated_at
     BEFORE UPDATE ON content_management.content_authors
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

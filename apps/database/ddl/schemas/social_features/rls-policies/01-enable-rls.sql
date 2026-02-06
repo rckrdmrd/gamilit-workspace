@@ -23,6 +23,7 @@ ALTER TABLE social_features.discussion_threads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_features.guild_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_features.guild_missions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_features.guild_mission_contributions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE social_features.user_skill_ratings ENABLE ROW LEVEL SECURITY;
 
 -- Comentarios
 COMMENT ON TABLE social_features.schools IS 'RLS enabled: Escuelas con aislamiento por tenant';
@@ -38,3 +39,18 @@ COMMENT ON TABLE social_features.discussion_threads IS 'RLS enabled: Hilos de di
 COMMENT ON TABLE social_features.guild_members IS 'RLS enabled: Membresías de gremios - guild_members_only';
 COMMENT ON TABLE social_features.guild_missions IS 'RLS enabled: Misiones de gremio - guild_members_only';
 COMMENT ON TABLE social_features.guild_mission_contributions IS 'RLS enabled: Contribuciones a misiones - guild_members_only';
+COMMENT ON TABLE social_features.user_skill_ratings IS 'RLS enabled: Skill ratings ELO para matchmaking peer challenges - public read, system write';
+
+-- 2026-02-03: Peer Challenge tables (GAP-SOC-001)
+ALTER TABLE social_features.peer_challenges ENABLE ROW LEVEL SECURITY;
+ALTER TABLE social_features.challenge_participants ENABLE ROW LEVEL SECURITY;
+ALTER TABLE social_features.challenge_results ENABLE ROW LEVEL SECURITY;
+
+COMMENT ON TABLE social_features.peer_challenges IS 'RLS enabled: Peer challenges - public visibility for open, participant access for others';
+COMMENT ON TABLE social_features.challenge_participants IS 'RLS enabled: Challenge participants - visible to challenge participants and creator';
+COMMENT ON TABLE social_features.challenge_results IS 'RLS enabled: Challenge results - participants can see their results, admin sees all';
+
+-- 2026-02-03: Moderation tables (GAP-SOC-005)
+ALTER TABLE social_features.user_reports ENABLE ROW LEVEL SECURITY;
+
+COMMENT ON TABLE social_features.user_reports IS 'RLS enabled: User/content reports - reporters see own, moderators see assigned, admins see all';

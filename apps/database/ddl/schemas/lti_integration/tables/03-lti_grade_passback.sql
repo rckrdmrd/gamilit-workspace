@@ -1,5 +1,5 @@
 -- =====================================================================================
--- Tabla: lti_grade_passback
+-- Tabla: lti_grade_passbacks
 -- Descripción: Registro de envío de calificaciones a LMS externos vía LTI AGS
 --              (Assignment and Grade Services)
 -- Documentación: docs/03-fase-extensiones/EXT-007-lti-integration/
@@ -7,7 +7,7 @@
 -- Created: 2025-11-08
 -- =====================================================================================
 
-CREATE TABLE IF NOT EXISTS lti_integration.lti_grade_passback (
+CREATE TABLE IF NOT EXISTS lti_integration.lti_grade_passbacks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Relaciones
@@ -78,23 +78,23 @@ CREATE TABLE IF NOT EXISTS lti_integration.lti_grade_passback (
 );
 
 -- Índices
-CREATE INDEX idx_lti_grade_passback_session ON lti_integration.lti_grade_passback(session_id);
-CREATE INDEX idx_lti_grade_passback_user ON lti_integration.lti_grade_passback(user_id);
-CREATE INDEX idx_lti_grade_passback_consumer ON lti_integration.lti_grade_passback(consumer_id);
-CREATE INDEX idx_lti_grade_passback_status ON lti_integration.lti_grade_passback(passback_status);
-CREATE INDEX idx_lti_grade_passback_pending ON lti_integration.lti_grade_passback(passback_status, next_retry_at)
+CREATE INDEX idx_lti_grade_passbacks_session ON lti_integration.lti_grade_passbacks(session_id);
+CREATE INDEX idx_lti_grade_passbacks_user ON lti_integration.lti_grade_passbacks(user_id);
+CREATE INDEX idx_lti_grade_passbacks_consumer ON lti_integration.lti_grade_passbacks(consumer_id);
+CREATE INDEX idx_lti_grade_passbacks_status ON lti_integration.lti_grade_passbacks(passback_status);
+CREATE INDEX idx_lti_grade_passbacks_pending ON lti_integration.lti_grade_passbacks(passback_status, next_retry_at)
     WHERE passback_status IN ('pending', 'retrying');
-CREATE INDEX idx_lti_grade_passback_lineitem ON lti_integration.lti_grade_passback(lineitem_url);
-CREATE INDEX idx_lti_grade_passback_created_at ON lti_integration.lti_grade_passback(created_at DESC);
+CREATE INDEX idx_lti_grade_passbacks_lineitem ON lti_integration.lti_grade_passbacks(lineitem_url);
+CREATE INDEX idx_lti_grade_passbacks_created_at ON lti_integration.lti_grade_passbacks(created_at DESC);
 
 -- Índice GIN para metadata
-CREATE INDEX idx_lti_grade_passback_metadata ON lti_integration.lti_grade_passback USING GIN(metadata);
+CREATE INDEX idx_lti_grade_passbacks_metadata ON lti_integration.lti_grade_passbacks USING GIN(metadata);
 
 -- Comentarios
-COMMENT ON TABLE lti_integration.lti_grade_passback IS 'Registro de envío de calificaciones a LMS externos vía LTI AGS (Assignment and Grade Services). Epic EXT-007.';
-COMMENT ON COLUMN lti_integration.lti_grade_passback.lineitem_url IS 'URL del lineitem (assignment) en el LMS para envío de calificación';
-COMMENT ON COLUMN lti_integration.lti_grade_passback.score_given IS 'Calificación obtenida por el estudiante';
-COMMENT ON COLUMN lti_integration.lti_grade_passback.activity_progress IS 'Estado del progreso de la actividad según spec LTI';
-COMMENT ON COLUMN lti_integration.lti_grade_passback.grading_progress IS 'Estado de la calificación según spec LTI';
-COMMENT ON COLUMN lti_integration.lti_grade_passback.passback_status IS 'Estado del envío de la calificación al LMS';
-COMMENT ON COLUMN lti_integration.lti_grade_passback.attempt_count IS 'Número de intentos de envío (para retry logic)';
+COMMENT ON TABLE lti_integration.lti_grade_passbacks IS 'Registro de envío de calificaciones a LMS externos vía LTI AGS (Assignment and Grade Services). Epic EXT-007.';
+COMMENT ON COLUMN lti_integration.lti_grade_passbacks.lineitem_url IS 'URL del lineitem (assignment) en el LMS para envío de calificación';
+COMMENT ON COLUMN lti_integration.lti_grade_passbacks.score_given IS 'Calificación obtenida por el estudiante';
+COMMENT ON COLUMN lti_integration.lti_grade_passbacks.activity_progress IS 'Estado del progreso de la actividad según spec LTI';
+COMMENT ON COLUMN lti_integration.lti_grade_passbacks.grading_progress IS 'Estado de la calificación según spec LTI';
+COMMENT ON COLUMN lti_integration.lti_grade_passbacks.passback_status IS 'Estado del envío de la calificación al LMS';
+COMMENT ON COLUMN lti_integration.lti_grade_passbacks.attempt_count IS 'Número de intentos de envío (para retry logic)';

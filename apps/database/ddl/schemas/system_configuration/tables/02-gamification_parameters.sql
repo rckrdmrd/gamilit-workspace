@@ -119,7 +119,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_update_gamification_parameters_timestamp
+CREATE TRIGGER trg_gamification_parameters_updated_at
     BEFORE UPDATE ON system_configuration.gamification_parameters
     FOR EACH ROW
     EXECUTE FUNCTION system_configuration.update_gamification_parameters_timestamp();

@@ -4,10 +4,8 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '../../../shared/constants/database.constants';
-import { User } from './user.entity';
 
 /**
  * Role Entity
@@ -71,10 +69,8 @@ export class Role {
   // RELACIONES
   // ============================================================================
 
-  /**
-   * Usuarios que tienen este rol
-   * Relación many-to-many a través de tabla intermedia user_roles
-   */
-  @ManyToMany(() => User, (user) => user.roles)
-    users?: User[];
+  // FIX H-022: @ManyToMany removed - DDL user_roles is NOT a standard junction table.
+  // user_roles has `role` ENUM column (not `role_id` FK to roles table)
+  // user_roles.user_id → profiles(id) (not users(id))
+  // Access user-role mappings via UserRole entity instead.
 }

@@ -4,6 +4,7 @@
 -- SCHEMA: social_features
 -- FECHA: 2026-01-19
 -- TASK: TASK-2026-01-18-015 Sprint 5.1
+-- ACTUALIZADO: 2026-01-25 (Sync Entity-DDL Discrepancies)
 -- =====================================================
 
 CREATE TABLE IF NOT EXISTS social_features.scheduled_reports (
@@ -18,15 +19,20 @@ CREATE TABLE IF NOT EXISTS social_features.scheduled_reports (
   report_format VARCHAR(10) NOT NULL DEFAULT 'pdf' CHECK (report_format IN ('pdf', 'excel', 'csv')),
   template_id VARCHAR(50),
 
+  -- Filtros de estudiantes (sincronizado con Entity 2026-01-25)
+  student_ids UUID[],  -- Array de student IDs para filtrar (NULL = todos)
+
   -- Configuración del schedule
   frequency VARCHAR(20) NOT NULL CHECK (frequency IN ('daily', 'weekly', 'monthly')),
   day_of_week INTEGER CHECK (day_of_week BETWEEN 0 AND 6),  -- 0=Domingo, 6=Sábado (para weekly)
   day_of_month INTEGER CHECK (day_of_month BETWEEN 1 AND 28),  -- Para monthly
-  time_of_day TIME NOT NULL DEFAULT '08:00:00',
+  time_of_day TIME NOT NULL DEFAULT '08:00:00',  -- DEPRECATED: usar preferred_hour
+  preferred_hour INTEGER CHECK (preferred_hour IS NULL OR (preferred_hour >= 0 AND preferred_hour <= 23)),  -- Hora preferida 0-23
   timezone VARCHAR(50) DEFAULT 'America/Mexico_City',
 
-  -- Estado
-  is_active BOOLEAN DEFAULT true,
+  -- Estado (sincronizado con Entity 2026-01-25)
+  is_active BOOLEAN DEFAULT true,  -- DEPRECATED: usar status
+  status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'paused', 'completed')),
   last_run_at TIMESTAMPTZ,
   next_run_at TIMESTAMPTZ,
   last_error TEXT,
@@ -50,7 +56,7 @@ CREATE TABLE IF NOT EXISTS social_features.scheduled_reports (
 );
 
 -- Comentario de tabla
-COMMENT ON TABLE social_features.scheduled_reports IS 'Configuración de reportes programados para generación automática';
+COMMENT ON TABLE social_features.scheduled_reports IS 'Configuración de reportes programados para generación automática. Sincronizado con Entity (2026-01-25)';
 
 -- Comentarios de columnas
 COMMENT ON COLUMN social_features.scheduled_reports.id IS 'Identificador único del schedule';
@@ -61,12 +67,15 @@ COMMENT ON COLUMN social_features.scheduled_reports.report_name IS 'Nombre descr
 COMMENT ON COLUMN social_features.scheduled_reports.report_type IS 'Tipo de reporte a generar';
 COMMENT ON COLUMN social_features.scheduled_reports.report_format IS 'Formato del reporte: pdf, excel, csv';
 COMMENT ON COLUMN social_features.scheduled_reports.template_id IS 'ID de plantilla opcional';
+COMMENT ON COLUMN social_features.scheduled_reports.student_ids IS 'Array de student IDs para filtrar reportes (NULL = todos los estudiantes)';
 COMMENT ON COLUMN social_features.scheduled_reports.frequency IS 'Frecuencia: daily, weekly, monthly';
 COMMENT ON COLUMN social_features.scheduled_reports.day_of_week IS 'Día de la semana para reportes semanales (0=Dom, 6=Sáb)';
 COMMENT ON COLUMN social_features.scheduled_reports.day_of_month IS 'Día del mes para reportes mensuales (1-28)';
-COMMENT ON COLUMN social_features.scheduled_reports.time_of_day IS 'Hora de generación del reporte';
+COMMENT ON COLUMN social_features.scheduled_reports.time_of_day IS 'DEPRECATED (2026-01-25): Use preferred_hour instead';
+COMMENT ON COLUMN social_features.scheduled_reports.preferred_hour IS 'Hora preferida de ejecución (0-23). Reemplaza time_of_day';
 COMMENT ON COLUMN social_features.scheduled_reports.timezone IS 'Zona horaria para el schedule';
-COMMENT ON COLUMN social_features.scheduled_reports.is_active IS 'Si el schedule está activo';
+COMMENT ON COLUMN social_features.scheduled_reports.is_active IS 'DEPRECATED (2026-01-25): Use status instead';
+COMMENT ON COLUMN social_features.scheduled_reports.status IS 'Estado del schedule: active (ejecutando), paused (pausado), completed (finalizado)';
 COMMENT ON COLUMN social_features.scheduled_reports.last_run_at IS 'Última ejecución del schedule';
 COMMENT ON COLUMN social_features.scheduled_reports.next_run_at IS 'Próxima ejecución programada';
 COMMENT ON COLUMN social_features.scheduled_reports.last_error IS 'Último error si falló la generación';
@@ -88,6 +97,14 @@ CREATE INDEX IF NOT EXISTS idx_scheduled_reports_next_run
 CREATE INDEX IF NOT EXISTS idx_scheduled_reports_active
   ON social_features.scheduled_reports(is_active)
   WHERE is_active = true;
+
+-- Índices adicionales (sincronizado con Entity 2026-01-25)
+CREATE INDEX IF NOT EXISTS idx_scheduled_reports_student_ids
+  ON social_features.scheduled_reports USING GIN(student_ids);
+
+CREATE INDEX IF NOT EXISTS idx_scheduled_reports_status
+  ON social_features.scheduled_reports(status)
+  WHERE status = 'active';
 
 -- RLS (Row Level Security)
 ALTER TABLE social_features.scheduled_reports ENABLE ROW LEVEL SECURITY;

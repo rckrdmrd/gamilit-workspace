@@ -1,5 +1,5 @@
 -- =====================================================
--- Table: data_warehouse.dim_exercise
+-- Table: data_warehouse.dim_exercises
 -- Description: Exercise dimension for content analytics
 -- Type: Dimension
 -- Grain: One row per exercise
@@ -11,9 +11,9 @@
 
 SET search_path TO data_warehouse, public;
 
-DROP TABLE IF EXISTS data_warehouse.dim_exercise CASCADE;
+DROP TABLE IF EXISTS data_warehouse.dim_exercises CASCADE;
 
-CREATE TABLE data_warehouse.dim_exercise (
+CREATE TABLE data_warehouse.dim_exercises (
     -- =====================================================
     -- SURROGATE KEY
     -- =====================================================
@@ -104,41 +104,41 @@ CREATE TABLE data_warehouse.dim_exercise (
     -- =====================================================
     -- CONSTRAINTS
     -- =====================================================
-    CONSTRAINT dim_exercise_pkey PRIMARY KEY (exercise_key),
-    CONSTRAINT dim_exercise_exercise_id_key UNIQUE (exercise_id),
-    CONSTRAINT dim_exercise_difficulty_check CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced', 'expert')),
-    CONSTRAINT dim_exercise_max_points_check CHECK (max_points > 0),
-    CONSTRAINT dim_exercise_passing_score_check CHECK (passing_score > 0 AND passing_score <= max_points)
+    CONSTRAINT dim_exercises_pkey PRIMARY KEY (exercise_key),
+    CONSTRAINT dim_exercises_exercise_id_key UNIQUE (exercise_id),
+    CONSTRAINT dim_exercises_difficulty_check CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced', 'expert')),
+    CONSTRAINT dim_exercises_max_points_check CHECK (max_points > 0),
+    CONSTRAINT dim_exercises_passing_score_check CHECK (passing_score > 0 AND passing_score <= max_points)
 );
 
 -- =====================================================
 -- INDEXES
 -- =====================================================
-CREATE INDEX idx_dim_exercise_exercise_id ON data_warehouse.dim_exercise USING btree (exercise_id);
-CREATE INDEX idx_dim_exercise_module_key ON data_warehouse.dim_exercise USING btree (module_key);
-CREATE INDEX idx_dim_exercise_type ON data_warehouse.dim_exercise USING btree (exercise_type);
-CREATE INDEX idx_dim_exercise_difficulty ON data_warehouse.dim_exercise USING btree (difficulty_level);
-CREATE INDEX idx_dim_exercise_active ON data_warehouse.dim_exercise USING btree (is_active) WHERE is_active = TRUE;
-CREATE INDEX idx_dim_exercise_module_order ON data_warehouse.dim_exercise USING btree (module_key, order_index);
+CREATE INDEX idx_dim_exercises_exercise_id ON data_warehouse.dim_exercises USING btree (exercise_id);
+CREATE INDEX idx_dim_exercises_module_key ON data_warehouse.dim_exercises USING btree (module_key);
+CREATE INDEX idx_dim_exercises_type ON data_warehouse.dim_exercises USING btree (exercise_type);
+CREATE INDEX idx_dim_exercises_difficulty ON data_warehouse.dim_exercises USING btree (difficulty_level);
+CREATE INDEX idx_dim_exercises_active ON data_warehouse.dim_exercises USING btree (is_active) WHERE is_active = TRUE;
+CREATE INDEX idx_dim_exercises_module_order ON data_warehouse.dim_exercises USING btree (module_key, order_index);
 
 -- =====================================================
 -- OWNERSHIP AND PERMISSIONS
 -- =====================================================
-ALTER TABLE data_warehouse.dim_exercise OWNER TO gamilit_user;
-GRANT SELECT, INSERT, UPDATE ON data_warehouse.dim_exercise TO gamilit_user;
-GRANT USAGE ON SEQUENCE data_warehouse.dim_exercise_exercise_key_seq TO gamilit_user;
+ALTER TABLE data_warehouse.dim_exercises OWNER TO gamilit_user;
+GRANT SELECT, INSERT, UPDATE ON data_warehouse.dim_exercises TO gamilit_user;
+GRANT USAGE ON SEQUENCE data_warehouse.dim_exercises_exercise_key_seq TO gamilit_user;
 
 -- =====================================================
 -- COMMENTS
 -- =====================================================
-COMMENT ON TABLE data_warehouse.dim_exercise IS
+COMMENT ON TABLE data_warehouse.dim_exercises IS
 'Exercise dimension - Content metadata for analytics.
 Grain: One row per exercise.
 Source: educational_content.exercises.
 SCD Type 1: Overwrites on change.
 Includes denormalized module info for query performance.';
 
-COMMENT ON COLUMN data_warehouse.dim_exercise.exercise_key IS 'Surrogate key for fact table joins';
-COMMENT ON COLUMN data_warehouse.dim_exercise.exercise_id IS 'Natural key from educational_content.exercises.id';
-COMMENT ON COLUMN data_warehouse.dim_exercise.exercise_type IS '27 mechanic types: crucigrama, mapa_conceptual, detective_textual, etc.';
-COMMENT ON COLUMN data_warehouse.dim_exercise.requires_manual_grading IS 'TRUE: teacher review required, FALSE: auto-graded';
+COMMENT ON COLUMN data_warehouse.dim_exercises.exercise_key IS 'Surrogate key for fact table joins';
+COMMENT ON COLUMN data_warehouse.dim_exercises.exercise_id IS 'Natural key from educational_content.exercises.id';
+COMMENT ON COLUMN data_warehouse.dim_exercises.exercise_type IS '27 mechanic types: crucigrama, mapa_conceptual, detective_textual, etc.';
+COMMENT ON COLUMN data_warehouse.dim_exercises.requires_manual_grading IS 'TRUE: teacher review required, FALSE: auto-graded';

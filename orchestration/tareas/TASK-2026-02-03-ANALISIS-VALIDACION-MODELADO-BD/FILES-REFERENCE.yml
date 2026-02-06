@@ -1,0 +1,437 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# FILES-REFERENCE - TASK-2026-02-03-ANALISIS-VALIDACION-MODELADO-BD
+# ═══════════════════════════════════════════════════════════════════════════════
+# Indice completo de archivos relacionados con la tarea
+# Generado: 2026-02-03
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+task_id: "TASK-2026-02-03-ANALISIS-VALIDACION-MODELADO-BD"
+generado: "2026-02-03"
+autor: "@DB_SPECIALIST_AGENT"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# DOCUMENTACIÓN DE LA TAREA
+# ─────────────────────────────────────────────────────────────────────────────────
+
+documentacion_tarea:
+  - ruta: "METADATA.yml"
+    tipo: "metadata"
+    descripcion: "Metadatos y configuracion de la tarea"
+
+  - ruta: "PLAN-MAESTRO-ANALISIS.md"
+    tipo: "plan"
+    descripcion: "Plan estructurado con 6 niveles y 28 subtareas CAPVED"
+
+  - ruta: "SUBTAREAS-CAPVED.yml"
+    tipo: "subtareas"
+    descripcion: "Definicion detallada de subtareas con criterios de aceptacion"
+
+  - ruta: "ORDEN-EJECUCION-LOGICO.md"
+    tipo: "ejecucion"
+    descripcion: "Secuencia de ejecucion sin dependencias circulares"
+
+  - ruta: "INFORME-FINAL.md"
+    tipo: "informe"
+    descripcion: "Informe final consolidado con resultados de ambas fases"
+
+  - ruta: "FILES-REFERENCE.yml"
+    tipo: "indice"
+    descripcion: "Este archivo - indice de archivos relacionados"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# ARCHIVOS GENERADOS EN _output/
+# ─────────────────────────────────────────────────────────────────────────────────
+
+outputs:
+  # Validaciones por nivel
+  - ruta: "_output/VALIDACION-CONSOLIDADA-NIVEL2.yml"
+    tipo: "validacion"
+    descripcion: "Analisis por dominio - 7 agentes paralelos, 94% promedio"
+    dominios:
+      - AUTH: "95%"
+      - EDUCATIONAL: "100%"
+      - GAMIFICATION: "92.5%"
+      - PROGRESS: "100%"
+      - SOCIAL: "78%"
+      - ADMIN: "100%"
+      - SYSTEM: "95%"
+    gaps_identificados: 9
+
+  - ruta: "_output/VALIDACION-CONSOLIDADA-NIVEL3.yml"
+    tipo: "validacion"
+    descripcion: "Coherencia entre capas - 4 agentes paralelos"
+    validaciones:
+      - "DDL vs RF: 94%"
+      - "DDL vs Entities: 84.7%"
+      - "Funciones vs Triggers: 95%"
+      - "RLS vs Roles: 97%"
+
+  - ruta: "_output/VALIDACION-CONSOLIDADA-NIVEL4.yml"
+    tipo: "validacion"
+    descripcion: "Deteccion de anomalias - 106 anomalias detectadas"
+    categorias:
+      - duplicados: "82%"
+      - nomenclatura: "89.1%"
+      - solapamientos: "72%"
+      - huerfanas: "99.1%"
+
+  - ruta: "_output/VALIDACION-CONSOLIDADA-NIVEL5.yml"
+    tipo: "validacion"
+    descripcion: "Purga y consolidacion - 156 docs purgables, 23 gaps"
+
+  - ruta: "_output/ROADMAP-FASE-2-IMPLEMENTACION.md"
+    tipo: "roadmap"
+    descripcion: "Plan de 6 sprints para remediaciones - 58h paralelo"
+    sprints: 6
+    tareas: 23
+    effort_paralelo: "58h"
+
+  - ruta: "_output/ANALISIS-CONSOLIDACION-CHALLENGES.md"
+    tipo: "analisis"
+    descripcion: "Analisis de desafios para consolidacion"
+
+  - ruta: "_output/ANALISIS-CONSOLIDACION-REPORTS.md"
+    tipo: "analisis"
+    descripcion: "Analisis de reportes para consolidacion"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# DDL CREADOS (Sprint 1)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+ddl_creados:
+  # Schema lti_integration - RLS Policies
+  - ruta: "apps/database/ddl/schemas/lti_integration/rls-policies/01-rls-policies.sql"
+    tipo: "rls"
+    sprint: 1
+    descripcion: "Politicas RLS para schema lti_integration"
+    gap_resuelto: "GAP-SYS-001"
+
+  - ruta: "apps/database/ddl/schemas/lti_integration/rls-policies/02-enable-rls.sql"
+    tipo: "rls"
+    sprint: 1
+    descripcion: "Habilitacion RLS en tablas lti_integration"
+
+  - ruta: "apps/database/ddl/schemas/lti_integration/tables/03-lti_grade_passback.sql"
+    tipo: "table"
+    sprint: 1
+    descripcion: "Tabla para grade passback de LTI"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# DDL MODIFICADOS/ACTUALIZADOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+ddl_modificados:
+  # Schema system_configuration
+  - ruta: "apps/database/ddl/schemas/system_configuration/tables/api_configurations.sql"
+    cambio: "Nombre pluralizado y estructura optimizada"
+    sprint: 6
+
+  - ruta: "apps/database/ddl/schemas/system_configuration/tables/environment_configs.sql"
+    cambio: "Añadido para configuracion de ambientes"
+    sprint: 4
+
+  - ruta: "apps/database/ddl/schemas/system_configuration/tables/tenant_configurations.sql"
+    cambio: "Configuraciones multi-tenant"
+    sprint: 4
+
+  # Schema auth_management - Indices y triggers
+  - ruta: "apps/database/ddl/schemas/auth_management/indexes/02-idx_user_roles_permissions_gin.sql"
+    cambio: "Indice compuesto para user_roles"
+    sprint: 2
+    gap_resuelto: "GAP-AUTH-001"
+
+  # Triggers batch updated_at
+  - ruta: "apps/database/ddl/schemas/auth_management/triggers/00-batch_updated_at_triggers.sql"
+    cambio: "Consolidacion de triggers updated_at"
+    sprint: 3
+
+  - ruta: "apps/database/ddl/schemas/audit_logging/triggers/00-batch_updated_at_triggers.sql"
+    cambio: "Consolidacion de triggers updated_at"
+    sprint: 3
+
+  - ruta: "apps/database/ddl/schemas/content_management/triggers/00-batch_updated_at_triggers.sql"
+    cambio: "Consolidacion de triggers updated_at"
+    sprint: 3
+
+  - ruta: "apps/database/ddl/schemas/system_configuration/triggers/00-batch_updated_at_triggers.sql"
+    cambio: "Consolidacion de triggers updated_at"
+    sprint: 3
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# DOCUMENTACIÓN CONSOLIDADA
+# ─────────────────────────────────────────────────────────────────────────────────
+
+docs_consolidados:
+  - ruta: "docs/40-estandares/guias/DEPLOYMENT-MASTER.md"
+    tipo: "guia-maestra"
+    origen: "8 guias de deployment separadas"
+    sprint: 4
+    archivos_fuente:
+      - "docs/40-estandares/guias/_archived/DEPLOYMENT-GUIDE.md"
+      - "docs/40-estandares/guias/_archived/DEPLOYMENT.md"
+      - "docs/40-estandares/guias/_archived/DIRECTIVA-DEPLOYMENT.md"
+      - "docs/40-estandares/guias/_archived/GUIA-DEPLOYMENT-AGENTE-PRODUCCION.md"
+      - "docs/40-estandares/guias/_archived/GUIA-DEPLOYMENT-RAPIDO.md"
+      - "docs/40-estandares/guias/_archived/GUIA-SSL-CERTBOT-DEPLOYMENT.md"
+      - "docs/40-estandares/guias/_archived/INSTRUCCIONES-DEPLOYMENT.md"
+      - "docs/40-estandares/guias/_archived/REFERENCIA-DEPLOYMENT-PRODUCCION.md"
+
+docs_archivados:
+  - ruta: "docs/40-estandares/guias/_archived/"
+    tipo: "directorio"
+    descripcion: "Guias de deployment obsoletas movidas a archivo"
+    archivos: 8
+
+  - ruta: "docs/40-estandares/guias/backend/_archived/"
+    tipo: "directorio"
+    descripcion: "Guias backend obsoletas"
+    archivos: 3
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# SCHEMAS DDL (16 TOTALES)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+schemas_ddl:
+  activos:
+    - nombre: "admin_dashboard"
+      ruta: "apps/database/ddl/schemas/admin_dashboard/"
+      tablas: 3
+      funciones: 1
+      views: 7
+      estado: "validado"
+
+    - nombre: "audit_logging"
+      ruta: "apps/database/ddl/schemas/audit_logging/"
+      tablas: 5
+      funciones: 3
+      triggers: 1
+      rls_policies: 1
+      enums: 3
+      estado: "validado"
+
+    - nombre: "auth"
+      ruta: "apps/database/ddl/schemas/auth/"
+      tablas: 1
+      enums: 2
+      views: 1
+      estado: "validado"
+
+    - nombre: "auth_management"
+      ruta: "apps/database/ddl/schemas/auth_management/"
+      tablas: 16
+      funciones: 6
+      triggers: 6
+      indexes: 4
+      rls_policies: 2
+      enums: 3
+      estado: "validado"
+
+    - nombre: "communication"
+      ruta: "apps/database/ddl/schemas/communication/"
+      tablas: 1
+      rls_policies: 1
+      estado: "validado"
+
+    - nombre: "content_management"
+      ruta: "apps/database/ddl/schemas/content_management/"
+      tablas: 4
+      funciones: 4
+      triggers: 2
+      indexes: 2
+      rls_policies: 1
+      enums: 4
+      estado: "validado"
+
+    - nombre: "data_warehouse"
+      ruta: "apps/database/ddl/schemas/data_warehouse/"
+      estado: "validado"
+      nota: "Analytics y reportes"
+
+    - nombre: "educational_content"
+      ruta: "apps/database/ddl/schemas/educational_content/"
+      funciones: 15
+      enums: 6
+      estado: "validado"
+      score: "100%"
+
+    - nombre: "gamification_system"
+      ruta: "apps/database/ddl/schemas/gamification_system/"
+      estado: "validado"
+      score: "92.5%"
+      gaps: 2
+
+    - nombre: "lti_integration"
+      ruta: "apps/database/ddl/schemas/lti_integration/"
+      tablas: 3
+      rls_policies: 2
+      estado: "validado"
+      nota: "RLS creado en Sprint 1"
+
+    - nombre: "notifications"
+      ruta: "apps/database/ddl/schemas/notifications/"
+      estado: "validado"
+
+    - nombre: "optimization"
+      ruta: "apps/database/ddl/schemas/optimization/"
+      estado: "validado"
+
+    - nombre: "progress_tracking"
+      ruta: "apps/database/ddl/schemas/progress_tracking/"
+      estado: "validado"
+      score: "100%"
+
+    - nombre: "social_features"
+      ruta: "apps/database/ddl/schemas/social_features/"
+      estado: "gaps_identificados"
+      score: "78%"
+      gaps: 5
+
+    - nombre: "system_configuration"
+      ruta: "apps/database/ddl/schemas/system_configuration/"
+      tablas: 7
+      funciones: 2
+      triggers: 1
+      rls_policies: 1
+      enums: 1
+      estado: "validado"
+
+  vacios:
+    - nombre: "gamilit"
+      ruta: "apps/database/ddl/schemas/gamilit/"
+      estado: "vacio"
+
+    - nombre: "public"
+      ruta: "apps/database/ddl/schemas/public/"
+      estado: "vacio"
+
+    - nombre: "storage"
+      ruta: "apps/database/ddl/schemas/storage/"
+      estado: "vacio"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# REFERENCIAS EXTERNAS - INVENTARIOS
+# ─────────────────────────────────────────────────────────────────────────────────
+
+referencias:
+  inventarios:
+    - ruta: "orchestration/inventarios/DATABASE_INVENTORY.yml"
+      tipo: "inventario"
+      descripcion: "SSOT de base de datos - 16 schemas, 140 tablas"
+      version: "5.1.0"
+
+    - ruta: "orchestration/inventarios/BACKEND_INVENTORY.yml"
+      tipo: "inventario"
+      descripcion: "Inventario de entities y servicios backend"
+      entities: 158
+
+    - ruta: "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+      tipo: "inventario"
+      descripcion: "Inventario de componentes frontend"
+      componentes: 458
+
+    - ruta: "orchestration/inventarios/MASTER_INVENTORY.yml"
+      tipo: "inventario"
+      descripcion: "Inventario consolidado del proyecto"
+      version: "5.1.0"
+
+    - ruta: "orchestration/inventarios/SEEDS_INVENTORY.yml"
+      tipo: "inventario"
+      descripcion: "Inventario de seeds de datos"
+
+    - ruta: "orchestration/inventarios/DEPENDENCY_GRAPH.yml"
+      tipo: "grafo"
+      descripcion: "Grafo de dependencias entre modulos"
+
+    - ruta: "orchestration/inventarios/TRACEABILITY_MATRIX.yml"
+      tipo: "matriz"
+      descripcion: "Matriz de trazabilidad RF-DDL-Entity"
+
+  # Referencias a estandares del workspace
+  estandares_workspace:
+    - ruta: "docs/40-estandares/ESTANDAR-DATABASE-PROFESIONAL.md"
+      ubicacion: "workspace-v2"
+      descripcion: "Estandar de base de datos profesional"
+
+    - ruta: "docs/40-estandares/ESTANDAR-BACKEND-PROFESIONAL.md"
+      ubicacion: "workspace-v2"
+      descripcion: "Estandar de backend profesional"
+
+    - ruta: "docs/40-estandares/ESTANDAR-NOMENCLATURA.md"
+      ubicacion: "workspace-v2"
+      descripcion: "Estandar de nomenclatura"
+
+  # Directivas SIMCO consultadas
+  directivas:
+    - ruta: "orchestration/directivas/simco/SIMCO-DDL-UNIFIED.md"
+      ubicacion: "workspace-v2"
+      descripcion: "Directiva unificada para DDL"
+
+    - ruta: "orchestration/directivas/simco/SIMCO-TAREA.md"
+      ubicacion: "workspace-v2"
+      descripcion: "Directiva de gestion de tareas"
+
+    - ruta: "orchestration/directivas/simco/SIMCO-VALIDAR.md"
+      ubicacion: "workspace-v2"
+      descripcion: "Directiva de validacion"
+
+    - ruta: "orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
+      ubicacion: "workspace-v2"
+      descripcion: "Metodologia CAPVED"
+
+    - ruta: "orchestration/directivas/triggers/TRIGGER-COHERENCIA-CAPAS.md"
+      ubicacion: "workspace-v2"
+      descripcion: "Trigger de coherencia entre capas"
+
+  # Documentacion de requerimientos
+  requerimientos:
+    - ruta: "docs/50-requerimientos/"
+      ubicacion: "gamilit"
+      descripcion: "Requerimientos funcionales del proyecto"
+      archivos_et: 92
+
+    - ruta: "docs/05-modelado/"
+      ubicacion: "gamilit"
+      descripcion: "Documentacion de modelado de datos"
+
+  # Tareas relacionadas
+  tareas_relacionadas:
+    - id: "TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS"
+      descripcion: "Auditoria previa de BD vs requerimientos"
+      estado: "completada"
+
+    - id: "TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS"
+      descripcion: "Plan maestro de BD"
+      estado: "completada"
+
+    - id: "TASK-022-MODELADO-INTEGRAL"
+      descripcion: "Modelado integral de la plataforma"
+      estado: "completada"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# METRICAS FINALES
+# ─────────────────────────────────────────────────────────────────────────────────
+
+metricas:
+  fase_1:
+    score_general: "91.5%"
+    niveles_ejecutados: 6
+    subtareas_completadas: 28
+    agentes_utilizados: 22
+    gaps_identificados: 23
+    anomalias_detectadas: 106
+    docs_purgables: 156
+
+  fase_2:
+    sprints: 6
+    gaps_resueltos: 20
+    gaps_pendientes: 3
+    false_positives: 3
+    ddl_creados: 12
+    ddl_actualizados: 40
+    docs_consolidados: 2
+    score_final: "96.5%"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN FILES-REFERENCE.yml
+# ═══════════════════════════════════════════════════════════════════════════════

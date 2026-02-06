@@ -1,9 +1,10 @@
 # _MAP: lti_integration/
 
-**Ultima actualizacion:** 2026-01-14
+**Ultima actualizacion:** 2026-02-03
 **Estado:** Produccion
 **Tipo:** Integration/LMS
-**Objetos activos:** 3
+**Objetos activos:** 5
+**RLS Policies:** 17
 
 ---
 
@@ -17,11 +18,12 @@ Permite usar GAMILIT como herramienta dentro de Moodle, Canvas, Blackboard, etc.
 ## Estructura
 
 - **tables/**: 3 archivos
+- **rls-policies/**: 2 archivos (NUEVO 2026-02-03)
 - **functions/**: 0 archivos
 - **triggers/**: 0 archivos
 - **indexes/**: 0 archivos
 
-**Total:** 3 objetos
+**Total:** 5 objetos
 
 ## Contenido Detallado
 
@@ -32,6 +34,15 @@ Permite usar GAMILIT como herramienta dentro de Moodle, Canvas, Blackboard, etc.
 02-lti_sessions.sql
 03-lti_grade_passback.sql
 ```
+
+### rls-policies/ (2 archivos) - NUEVO 2026-02-03
+
+```
+01-rls-policies.sql    -- 17 politicas RLS para seguridad
+02-enable-rls.sql      -- Habilita RLS en las 3 tablas
+```
+
+**Gap Reference:** GAP-SYS-001 (CRITICAL - Security) - RESOLVED
 
 ---
 
@@ -87,6 +98,24 @@ Este schema implementa el estándar LTI 1.3 de IMS Global:
 2. **Production:** Usar `manage-secrets.sh` para configurar credenciales
 3. **Deployment:** Validar JWKs y endpoints antes de habilitar
 4. **Default:** Todos los consumidores inician con `is_enabled = false`
+
+### Row Level Security (RLS) - 2026-02-03
+
+**Gap Reference:** GAP-SYS-001 (CRITICAL - Security) - RESOLVED
+
+| Tabla | Policies | Riesgo | Estado |
+|-------|----------|--------|--------|
+| lti_consumers | 6 | CRITICO | RLS + FORCE |
+| lti_sessions | 5 | ALTO | RLS + FORCE |
+| lti_grade_passback | 6 | ALTO | RLS + FORCE |
+
+**Total:** 17 politicas RLS
+
+**Modelo de Seguridad:**
+- **super_admin:** Acceso completo, puede eliminar registros
+- **admin_teacher:** Lectura completa, gestion de configuracion
+- **student:** Solo lectura de sus propios datos
+- **service_role:** Bypass para operaciones del backend (LTI launch, grade sync)
 
 ### Configuración Post-Deployment
 

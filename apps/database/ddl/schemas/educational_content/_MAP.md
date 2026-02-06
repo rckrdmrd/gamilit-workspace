@@ -3,7 +3,7 @@
 **Ultima actualizacion:** 2026-01-14
 **Estado:** Produccion
 **Tipo:** Domain/Educational
-**Objetos activos:** 45
+**Objetos activos:** 46
 
 ---
 
@@ -17,14 +17,14 @@ Contenido educativo: modulos, ejercicios, assignments, recursos multimedia.
 ## Estructura
 
 - **tables/**: 14 archivos activos
-- **enums/**: 6 archivos (bloom_taxonomy, cognitive_level, difficulty_level, exercise_mechanic, exercise_type, module_status)
+- **enums/**: 7 archivos (bloom_level, bloom_taxonomy, cognitive_level, difficulty_level, exercise_mechanic, exercise_type, module_status)
 - **functions/**: 3 archivos
 - **triggers/**: 2 archivos activos (incluye 00-batch_updated_at_triggers.sql consolidado)
 - **triggers/_deprecated/**: 4 archivos (triggers updated_at individuales)
 - **indexes/**: 16 archivos
 - **rls-policies/**: 2 archivos
 
-**Total:** 45 objetos DDL
+**Total:** 46 objetos DDL
 
 ## Tablas Principales
 
@@ -79,7 +79,8 @@ ENUMs migrados desde `00-prerequisites.sql` a archivos individuales en `enums/`:
 
 ---
 
-**Ultima actualizacion:** 2026-01-07
+**Ultima actualizacion:** 2026-02-03
 **Cambios recientes:**
+- GAP-001: Agregado ENUM bloom_level (espanol) para exercise_mechanic_mapping (2026-02-03)
 - CONSOLIDACION BD: Triggers updated_at consolidados (2026-01-07)
 - CONSOLIDACION BD: ENUMs migrados a archivos individuales (2026-01-07)

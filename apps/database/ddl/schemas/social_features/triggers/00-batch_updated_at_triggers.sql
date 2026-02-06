@@ -61,7 +61,17 @@ CREATE TRIGGER trg_teacher_reports_updated_at
 COMMENT ON TRIGGER trg_teacher_reports_updated_at ON social_features.teacher_reports
     IS 'Actualiza updated_at automaticamente en cada UPDATE';
 
+-- Tabla: social_features.user_reports (GAP-SOC-005)
+DROP TRIGGER IF EXISTS trg_user_reports_updated_at ON social_features.user_reports CASCADE;
+CREATE TRIGGER trg_user_reports_updated_at
+    BEFORE UPDATE ON social_features.user_reports
+    FOR EACH ROW
+    EXECUTE FUNCTION gamilit.update_updated_at_column();
+
+COMMENT ON TRIGGER trg_user_reports_updated_at ON social_features.user_reports
+    IS 'Actualiza updated_at automaticamente en cada UPDATE';
+
 -- =====================================================
 -- FIN DE TRIGGERS CONSOLIDADOS
--- Total: 5 triggers
+-- Total: 6 triggers
 -- =====================================================

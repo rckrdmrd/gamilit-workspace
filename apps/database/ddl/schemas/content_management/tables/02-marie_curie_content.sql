@@ -1,5 +1,5 @@
 -- =====================================================
--- Table: content_management.marie_curie_content
+-- Table: content_management.marie_curie_contents
 -- Description: Contenido curado sobre Marie Curie - biografía, descubrimientos, legado
 -- Created: 2025-10-27
 -- Migrated: 2025-11-02
@@ -7,9 +7,9 @@
 
 SET search_path TO content_management, public;
 
-DROP TABLE IF EXISTS content_management.marie_curie_content CASCADE;
+DROP TABLE IF EXISTS content_management.marie_curie_contents CASCADE;
 
-CREATE TABLE content_management.marie_curie_content (
+CREATE TABLE content_management.marie_curie_contents (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     tenant_id uuid,
     title text NOT NULL,
@@ -41,49 +41,49 @@ CREATE TABLE content_management.marie_curie_content (
     metadata jsonb DEFAULT '{}'::jsonb,
     created_at timestamp with time zone DEFAULT gamilit.now_mexico(),
     updated_at timestamp with time zone DEFAULT gamilit.now_mexico(),
-    CONSTRAINT marie_curie_content_category_check CHECK ((category = ANY (ARRAY['biography'::text, 'discoveries'::text, 'historical_context'::text, 'scientific_method'::text, 'radioactivity'::text, 'nobel_prizes'::text, 'women_in_science'::text, 'modern_physics'::text, 'legacy'::text])))
+    CONSTRAINT marie_curie_contents_category_check CHECK ((category = ANY (ARRAY['biography'::text, 'discoveries'::text, 'historical_context'::text, 'scientific_method'::text, 'radioactivity'::text, 'nobel_prizes'::text, 'women_in_science'::text, 'modern_physics'::text, 'legacy'::text])))
 );
 
-ALTER TABLE content_management.marie_curie_content OWNER TO gamilit_user;
+ALTER TABLE content_management.marie_curie_contents OWNER TO gamilit_user;
 
 -- Primary Key
-ALTER TABLE ONLY content_management.marie_curie_content
-    ADD CONSTRAINT marie_curie_content_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY content_management.marie_curie_contents
+    ADD CONSTRAINT marie_curie_contents_pkey PRIMARY KEY (id);
 
 -- Indexes
-CREATE INDEX idx_marie_content_category ON content_management.marie_curie_content USING btree (category);
-CREATE INDEX idx_marie_content_featured ON content_management.marie_curie_content USING btree (is_featured) WHERE (is_featured = true);
-CREATE INDEX idx_marie_content_search ON content_management.marie_curie_content USING gin (to_tsvector('spanish'::regconfig, ((COALESCE(title, ''::text) || ' '::text) || COALESCE(description, ''::text))));
-CREATE INDEX idx_marie_content_status ON content_management.marie_curie_content USING btree (status);
-CREATE INDEX idx_marie_content_tags ON content_management.marie_curie_content USING gin (search_tags);
-CREATE INDEX idx_marie_content_tenant ON content_management.marie_curie_content USING btree (tenant_id);
+CREATE INDEX idx_marie_content_category ON content_management.marie_curie_contents USING btree (category);
+CREATE INDEX idx_marie_content_featured ON content_management.marie_curie_contents USING btree (is_featured) WHERE (is_featured = true);
+CREATE INDEX idx_marie_content_search ON content_management.marie_curie_contents USING gin (to_tsvector('spanish'::regconfig, ((COALESCE(title, ''::text) || ' '::text) || COALESCE(description, ''::text))));
+CREATE INDEX idx_marie_content_status ON content_management.marie_curie_contents USING btree (status);
+CREATE INDEX idx_marie_content_tags ON content_management.marie_curie_contents USING gin (search_tags);
+CREATE INDEX idx_marie_content_tenant ON content_management.marie_curie_contents USING btree (tenant_id);
 
 -- Triggers
--- NOTE: Trigger trg_marie_curie_content_updated_at movido a archivo separado
--- Ver: content_management/triggers/09-trg_marie_curie_content_updated_at.sql
+-- NOTE: Trigger trg_marie_curie_contents_updated_at movido a archivo separado
+-- Ver: content_management/triggers/09-trg_marie_curie_contents_updated_at.sql
 
 -- Foreign Keys
-ALTER TABLE ONLY content_management.marie_curie_content
-    ADD CONSTRAINT marie_curie_content_approved_by_fkey FOREIGN KEY (approved_by) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
+ALTER TABLE ONLY content_management.marie_curie_contents
+    ADD CONSTRAINT marie_curie_contents_approved_by_fkey FOREIGN KEY (approved_by) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
 
-ALTER TABLE ONLY content_management.marie_curie_content
-    ADD CONSTRAINT marie_curie_content_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
+ALTER TABLE ONLY content_management.marie_curie_contents
+    ADD CONSTRAINT marie_curie_contents_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
 
-ALTER TABLE ONLY content_management.marie_curie_content
-    ADD CONSTRAINT marie_curie_content_reviewed_by_fkey FOREIGN KEY (reviewed_by) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
+ALTER TABLE ONLY content_management.marie_curie_contents
+    ADD CONSTRAINT marie_curie_contents_reviewed_by_fkey FOREIGN KEY (reviewed_by) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
 
-ALTER TABLE ONLY content_management.marie_curie_content
-    ADD CONSTRAINT marie_curie_content_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES auth_management.tenants(id) ON DELETE CASCADE;
+ALTER TABLE ONLY content_management.marie_curie_contents
+    ADD CONSTRAINT marie_curie_contents_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES auth_management.tenants(id) ON DELETE CASCADE;
 
 -- Row Level Security
-ALTER TABLE content_management.marie_curie_content ENABLE ROW LEVEL SECURITY;
+ALTER TABLE content_management.marie_curie_contents ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY marie_content_all_admin ON content_management.marie_curie_content USING (gamilit.is_admin());
-CREATE POLICY marie_content_select_all ON content_management.marie_curie_content FOR SELECT USING ((status = 'published'::content_management.content_status));
+CREATE POLICY marie_content_all_admin ON content_management.marie_curie_contents USING (gamilit.is_admin());
+CREATE POLICY marie_content_select_all ON content_management.marie_curie_contents FOR SELECT USING ((status = 'published'::content_management.content_status));
 
 -- Permissions
-GRANT ALL ON TABLE content_management.marie_curie_content TO gamilit_user;
+GRANT ALL ON TABLE content_management.marie_curie_contents TO gamilit_user;
 
 -- Comments
-COMMENT ON TABLE content_management.marie_curie_content IS 'Contenido curado sobre Marie Curie - biografía, descubrimientos, legado';
-COMMENT ON COLUMN content_management.marie_curie_content.category IS 'Categoría del contenido: biografía, descubrimientos, premios Nobel, etc.';
+COMMENT ON TABLE content_management.marie_curie_contents IS 'Contenido curado sobre Marie Curie - biografía, descubrimientos, legado';
+COMMENT ON COLUMN content_management.marie_curie_contents.category IS 'Categoría del contenido: biografía, descubrimientos, premios Nobel, etc.';

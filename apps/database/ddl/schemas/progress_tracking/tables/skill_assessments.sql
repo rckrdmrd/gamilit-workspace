@@ -33,7 +33,7 @@ COMMENT ON COLUMN progress_tracking.skill_assessments.proficiency_level IS 'Leve
 COMMENT ON COLUMN progress_tracking.skill_assessments.evidence IS 'JSONB with evidence supporting this assessment';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_skill_assessments_updated_at
+CREATE TRIGGER trg_skill_assessments_updated_at
     BEFORE UPDATE ON progress_tracking.skill_assessments
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

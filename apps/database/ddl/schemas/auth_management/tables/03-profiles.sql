@@ -55,11 +55,11 @@ CREATE TABLE auth_management.profiles (
     CONSTRAINT profiles_email_check CHECK ((email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text)),
     CONSTRAINT profiles_bio_length_check CHECK (bio IS NULL OR LENGTH(bio) <= 500),
 
-    -- Foreign Keys
-    CONSTRAINT profiles_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES auth_management.tenants(id) ON DELETE CASCADE,
-    CONSTRAINT profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+    -- Foreign Keys (with fk_ prefix per standard)
+    CONSTRAINT fk_profiles_tenant_id FOREIGN KEY (tenant_id) REFERENCES auth_management.tenants(id) ON DELETE CASCADE,
+    CONSTRAINT fk_profiles_user_id FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
     -- NOTE: FK school_id DIFERIDO para resolver dependencia circular
-    -- La constraint profiles_school_id_fkey se crea DESPUÉS en:
+    -- La constraint fk_profiles_school_id se crea DESPUÉS en:
     -- ddl/schemas/auth_management/fk-constraints/01-profiles-school-fk.sql
     -- Razón: profiles (Fase 5) → schools (Fase 9) crea dependencia circular
     -- Ver: REPORTE-ANALISIS-DEPENDENCIAS-DDL-2025-11-10.md

@@ -1,5 +1,5 @@
 -- =============================================================================
--- Table: educational_content.teacher_content
+-- Table: educational_content.teacher_contents
 -- Description: Custom educational content created by teachers
 -- Priority: P1 - Important for teacher content creation features
 -- User Story: US-PM-007 (Custom Content Creation), US-AE-008 (Content Management)
@@ -7,10 +7,10 @@
 -- =============================================================================
 
 -- Drop table if exists
-DROP TABLE IF EXISTS educational_content.teacher_content CASCADE;
+DROP TABLE IF EXISTS educational_content.teacher_contents CASCADE;
 
--- Create teacher_content table
-CREATE TABLE educational_content.teacher_content (
+-- Create teacher_contents table
+CREATE TABLE educational_content.teacher_contents (
     -- Primary key
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -113,14 +113,14 @@ CREATE TABLE educational_content.teacher_content (
 
     attribution TEXT,
     based_on_content_id UUID
-        REFERENCES educational_content.teacher_content(id) ON DELETE SET NULL,
+        REFERENCES educational_content.teacher_contents(id) ON DELETE SET NULL,
     -- If this is derived from another teacher's content
 
     -- Versioning
     version_number INTEGER DEFAULT 1,
     is_latest_version BOOLEAN DEFAULT TRUE,
     previous_version_id UUID
-        REFERENCES educational_content.teacher_content(id) ON DELETE SET NULL,
+        REFERENCES educational_content.teacher_contents(id) ON DELETE SET NULL,
 
     -- Metadata
     metadata JSONB DEFAULT '{}'::jsonb,
@@ -137,17 +137,17 @@ CREATE TABLE educational_content.teacher_content (
     last_used_at TIMESTAMPTZ,
 
     -- Constraints
-    CONSTRAINT teacher_content_type_valid
+    CONSTRAINT teacher_contents_type_valid
         CHECK (content_type IN ('custom_exercise', 'worksheet', 'reading_material', 'video_lesson', 'presentation', 'quiz', 'assignment', 'resource_pack', 'other')),
-    CONSTRAINT teacher_content_difficulty_valid
+    CONSTRAINT teacher_contents_difficulty_valid
         CHECK (difficulty_level IS NULL OR difficulty_level IN ('easy', 'medium', 'hard', 'expert')),
-    CONSTRAINT teacher_content_visibility_valid
+    CONSTRAINT teacher_contents_visibility_valid
         CHECK (visibility IN ('private', 'classroom', 'school', 'public')),
-    CONSTRAINT teacher_content_status_valid
+    CONSTRAINT teacher_contents_status_valid
         CHECK (status IN ('draft', 'pending_review', 'approved', 'published', 'archived')),
-    CONSTRAINT teacher_content_duration_positive
+    CONSTRAINT teacher_contents_duration_positive
         CHECK (estimated_duration_minutes IS NULL OR estimated_duration_minutes > 0),
-    CONSTRAINT teacher_content_points_non_negative
+    CONSTRAINT teacher_contents_points_non_negative
         CHECK (points_value >= 0 AND ml_coins_reward >= 0)
 );
 
@@ -156,59 +156,59 @@ CREATE TABLE educational_content.teacher_content (
 -- =============================================================================
 
 -- Index for teacher's content
-CREATE INDEX idx_teacher_content_teacher
-    ON educational_content.teacher_content(teacher_id, created_at DESC)
+CREATE INDEX idx_teacher_contents_teacher
+    ON educational_content.teacher_contents(teacher_id, created_at DESC)
     WHERE is_active = TRUE;
 
 -- Index for published content
-CREATE INDEX idx_teacher_content_published
-    ON educational_content.teacher_content(published_at DESC)
+CREATE INDEX idx_teacher_contents_published
+    ON educational_content.teacher_contents(published_at DESC)
     WHERE status = 'published' AND is_active = TRUE;
 
 -- Index for content by type
-CREATE INDEX idx_teacher_content_type
-    ON educational_content.teacher_content(content_type, created_at DESC)
+CREATE INDEX idx_teacher_contents_type
+    ON educational_content.teacher_contents(content_type, created_at DESC)
     WHERE is_active = TRUE;
 
 -- Index for shared content
-CREATE INDEX idx_teacher_content_shared
-    ON educational_content.teacher_content(visibility, status)
+CREATE INDEX idx_teacher_contents_shared
+    ON educational_content.teacher_contents(visibility, status)
     WHERE is_shared = TRUE AND is_active = TRUE;
 
 -- Index for featured/template content
-CREATE INDEX idx_teacher_content_featured
-    ON educational_content.teacher_content(created_at DESC)
+CREATE INDEX idx_teacher_contents_featured
+    ON educational_content.teacher_contents(created_at DESC)
     WHERE (is_featured = TRUE OR is_template = TRUE) AND is_active = TRUE;
 
 -- Index for pending approval
-CREATE INDEX idx_teacher_content_pending
-    ON educational_content.teacher_content(created_at ASC)
+CREATE INDEX idx_teacher_contents_pending
+    ON educational_content.teacher_contents(created_at ASC)
     WHERE status = 'pending_review' AND is_active = TRUE;
 
 -- Composite index for classroom content search
-CREATE INDEX idx_teacher_content_classroom_search
-    ON educational_content.teacher_content(status, visibility, content_type)
+CREATE INDEX idx_teacher_contents_classroom_search
+    ON educational_content.teacher_contents(status, visibility, content_type)
     WHERE is_active = TRUE;
 
 -- GIN indexes for JSONB searches
-CREATE INDEX idx_teacher_content_tags
-    ON educational_content.teacher_content USING GIN(tags);
+CREATE INDEX idx_teacher_contents_tags
+    ON educational_content.teacher_contents USING GIN(tags);
 
-CREATE INDEX idx_teacher_content_keywords
-    ON educational_content.teacher_content USING GIN(keywords);
+CREATE INDEX idx_teacher_contents_keywords
+    ON educational_content.teacher_contents USING GIN(keywords);
 
-CREATE INDEX idx_teacher_content_target_classrooms
-    ON educational_content.teacher_content USING GIN(target_classrooms);
+CREATE INDEX idx_teacher_contents_target_classrooms
+    ON educational_content.teacher_contents USING GIN(target_classrooms);
 
-CREATE INDEX idx_teacher_content_metadata
-    ON educational_content.teacher_content USING GIN(metadata);
+CREATE INDEX idx_teacher_contents_metadata
+    ON educational_content.teacher_contents USING GIN(metadata);
 
 -- =============================================================================
 -- Triggers
 -- =============================================================================
 
 -- Trigger for updated_at timestamp
-CREATE OR REPLACE FUNCTION educational_content.update_teacher_content_timestamp()
+CREATE OR REPLACE FUNCTION educational_content.update_teacher_contents_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = NOW();
@@ -228,10 +228,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_update_teacher_content_timestamp
-    BEFORE UPDATE ON educational_content.teacher_content
+CREATE TRIGGER trg_teacher_contents_updated_at
+    BEFORE UPDATE ON educational_content.teacher_contents
     FOR EACH ROW
-    EXECUTE FUNCTION educational_content.update_teacher_content_timestamp();
+    EXECUTE FUNCTION educational_content.update_teacher_contents_timestamp();
 
 -- =============================================================================
 -- Helper function to check if teacher can access content
@@ -245,7 +245,7 @@ DECLARE
     v_content RECORD;
 BEGIN
     SELECT * INTO v_content
-    FROM educational_content.teacher_content
+    FROM educational_content.teacher_contents
     WHERE id = p_content_id
       AND is_active = TRUE;
 
@@ -287,7 +287,7 @@ $$ LANGUAGE plpgsql STABLE;
 -- View: Published teacher content library
 -- =============================================================================
 
-CREATE OR REPLACE VIEW educational_content.published_teacher_content AS
+CREATE OR REPLACE VIEW educational_content.published_teacher_contents AS
 SELECT
     tc.id,
     tc.teacher_id,
@@ -314,7 +314,7 @@ SELECT
     tc.license,
     tc.published_at,
     tc.created_at
-FROM educational_content.teacher_content tc
+FROM educational_content.teacher_contents tc
 JOIN auth_management.profiles p ON p.id = tc.teacher_id
 WHERE tc.status = 'published'
   AND tc.is_active = TRUE
@@ -326,19 +326,19 @@ ORDER BY
 -- Comments for documentation
 -- =============================================================================
 
-COMMENT ON TABLE educational_content.teacher_content IS
+COMMENT ON TABLE educational_content.teacher_contents IS
 'Custom educational content created by teachers. Supports various content types including exercises, worksheets, reading materials, videos, quizzes, and resource packs. Includes sharing, versioning, and approval workflows.';
 
-COMMENT ON COLUMN educational_content.teacher_content.content_data IS
+COMMENT ON COLUMN educational_content.teacher_contents.content_data IS
 'JSONB containing the actual content structure, varies by content_type. Examples: exercises (questions, answers), worksheets (sections), videos (url, chapters), presentations (slides)';
 
-COMMENT ON COLUMN educational_content.teacher_content.visibility IS
+COMMENT ON COLUMN educational_content.teacher_contents.visibility IS
 'Content visibility: private (only creator), classroom (assigned classrooms), school (all teachers in tenant), public (all users)';
 
-COMMENT ON COLUMN educational_content.teacher_content.target_classrooms IS
+COMMENT ON COLUMN educational_content.teacher_contents.target_classrooms IS
 'JSON array of classroom UUIDs where this content is assigned or available';
 
-COMMENT ON COLUMN educational_content.teacher_content.is_template IS
+COMMENT ON COLUMN educational_content.teacher_contents.is_template IS
 'If true, other teachers can use this as a template to create their own versions';
 
 COMMENT ON FUNCTION educational_content.can_teacher_access_content IS
@@ -349,6 +349,6 @@ Usage: SELECT educational_content.can_teacher_access_content(content_uuid, teach
 -- Grant permissions
 -- =============================================================================
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON educational_content.teacher_content TO gamilit_user;
-GRANT SELECT ON educational_content.published_teacher_content TO gamilit_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON educational_content.teacher_contents TO gamilit_user;
+GRANT SELECT ON educational_content.published_teacher_contents TO gamilit_user;
 GRANT EXECUTE ON FUNCTION educational_content.can_teacher_access_content TO gamilit_user;

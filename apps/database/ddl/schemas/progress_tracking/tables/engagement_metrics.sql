@@ -38,7 +38,7 @@ COMMENT ON COLUMN progress_tracking.engagement_metrics.total_time_seconds IS 'To
 COMMENT ON COLUMN progress_tracking.engagement_metrics.engagement_score IS 'Calculated engagement score (0-100) based on activity';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_engagement_metrics_updated_at
+CREATE TRIGGER trg_engagement_metrics_updated_at
     BEFORE UPDATE ON progress_tracking.engagement_metrics
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();

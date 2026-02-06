@@ -316,7 +316,7 @@ export class TemplateI18nService {
     // Get localized content (fallback to default if not available)
     const subjectSource = this.getLocalizedContent(
       template.subjectTranslations,
-      template.subjectTemplate,
+      template.subjectTemplate ?? '',
       targetLocale,
     );
 

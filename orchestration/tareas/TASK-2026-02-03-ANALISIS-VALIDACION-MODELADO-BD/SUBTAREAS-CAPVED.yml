@@ -1,0 +1,530 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# SUBTAREAS CAPVED - Análisis y Validación Modelado BD
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+tarea_padre: "TASK-2026-02-03-ANALISIS-VALIDACION-MODELADO-BD"
+fecha: "2026-02-03"
+total_subtareas: 28
+total_niveles: 6
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NIVEL 1: CONTEXTO GLOBAL (3 subtareas)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+nivel_1_contexto:
+  estado: "pendiente"
+  dependencias: []
+  paralelizable: true
+
+  subtareas:
+    - id: "1.1"
+      nombre: "Inventario de Schemas"
+      descripcion: "Catalogar 16 schemas con sus objetos"
+      capved:
+        C: "16 schemas, 13 activos, 3 vacíos"
+        A: "Contar tablas, funciones, triggers, RLS por schema"
+        P: "Script de conteo automatizado"
+        V: "Comparar con DATABASE_INVENTORY.yml"
+        E: "Ejecutar conteo y documentar"
+        D: "Actualizar inventario si hay discrepancias"
+      entregable: "INVENTARIO-SCHEMAS-DETALLADO.yml"
+      estimacion_minutos: 30
+      agente: "@INVENTORY_AGENT"
+
+    - id: "1.2"
+      nombre: "Inventario de Requerimientos"
+      descripcion: "Mapear EPICs, RF, US, ET a schemas"
+      capved:
+        C: "92 ET files, 138 US, 112 RF, 22 EPICs"
+        A: "Identificar qué RF afectan qué schemas"
+        P: "Matriz RF → Schema → Tablas"
+        V: "Cruzar con docs/50-requerimientos/"
+        E: "Crear matriz de trazabilidad"
+        D: "TRAZABILIDAD-RF-SCHEMAS.yml"
+      entregable: "TRAZABILIDAD-RF-SCHEMAS.yml"
+      estimacion_minutos: 60
+      agente: "@REQUIREMENTS_AGENT"
+
+    - id: "1.3"
+      nombre: "Inventario de Tareas Existentes"
+      descripcion: "Consolidar hallazgos de 49 tareas completadas"
+      capved:
+        C: "49 tareas en _archive/"
+        A: "Extraer hallazgos no implementados"
+        P: "Lista de pendientes heredados"
+        V: "Verificar estado actual de cada hallazgo"
+        E: "Consolidar en lista única"
+        D: "PENDIENTES-HEREDADOS.yml"
+      entregable: "PENDIENTES-HEREDADOS.yml"
+      estimacion_minutos: 45
+      agente: "@CONSOLIDATION_AGENT"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NIVEL 2: ANÁLISIS POR DOMINIO (7 subtareas) - PARALELIZABLE
+# ─────────────────────────────────────────────────────────────────────────────────
+
+nivel_2_dominios:
+  estado: "pendiente"
+  dependencias: ["nivel_1_contexto"]
+  paralelizable: true
+  max_agentes_paralelos: 7
+
+  subtareas:
+    - id: "2.1"
+      nombre: "Dominio AUTH"
+      schemas: ["auth", "auth_management"]
+      capved:
+        C: "19 tablas, auth/roles/sessions/2FA"
+        A: |
+          - Validar RBAC (3 roles)
+          - Validar estados cuenta (4 estados)
+          - Validar OAuth (4 providers)
+          - Validar 2FA
+          - Validar sesiones/tokens
+        P: "Checklist de validaciones"
+        V: "Cruzar con RF-AUTH-001/002/003"
+        E: "Ejecutar validaciones"
+        D: "VALIDACION-AUTH-DOMAIN.yml"
+      requerimientos:
+        - "RF-AUTH-001"
+        - "RF-AUTH-002"
+        - "RF-AUTH-003"
+        - "ET-AUTH-001"
+        - "ET-AUTH-002"
+        - "ET-AUTH-003"
+      entregable: "VALIDACION-AUTH-DOMAIN.yml"
+      estimacion_minutos: 45
+      agente: "@AUTH_DOMAIN_VALIDATOR"
+
+    - id: "2.2"
+      nombre: "Dominio EDUCATIONAL"
+      schemas: ["educational_content", "content_management"]
+      capved:
+        C: "41+ tablas, módulos/ejercicios/assignments"
+        A: |
+          - Validar 27 mecánicas ejercicios
+          - Validar 5 módulos Marie Curie
+          - Validar arquitectura dual (auto/manual)
+          - Validar niveles dificultad
+          - Validar taxonomía Bloom
+        P: "Checklist de validaciones"
+        V: "Cruzar con RF-EDU-001/002/003"
+        E: "Ejecutar validaciones"
+        D: "VALIDACION-EDUCATIONAL-DOMAIN.yml"
+      requerimientos:
+        - "RF-EDU-001"
+        - "RF-EDU-002"
+        - "RF-EDU-003"
+        - "ET-EDU-001"
+        - "ET-EDU-002"
+        - "ET-EDU-003"
+        - "ET-EDU-004"
+        - "ET-EDU-005"
+      entregable: "VALIDACION-EDUCATIONAL-DOMAIN.yml"
+      estimacion_minutos: 60
+      agente: "@EDUCATIONAL_DOMAIN_VALIDATOR"
+
+    - id: "2.3"
+      nombre: "Dominio GAMIFICATION"
+      schemas: ["gamification_system"]
+      capved:
+        C: "20 tablas, ML Coins/rangos/achievements"
+        A: |
+          - Validar Maya Ranks (5 niveles)
+          - Validar economía ML Coins
+          - Validar comodines (3 tipos)
+          - Validar achievements (7 categorías)
+          - Validar multiplier por rango
+        P: "Checklist de validaciones"
+        V: "Cruzar con RF-GAM-001/002/003/004"
+        E: "Ejecutar validaciones"
+        D: "VALIDACION-GAMIFICATION-DOMAIN.yml"
+      requerimientos:
+        - "RF-GAM-001"
+        - "RF-GAM-002"
+        - "RF-GAM-003"
+        - "RF-GAM-004"
+        - "ET-GAM-001"
+        - "ET-GAM-002"
+        - "ET-GAM-003"
+      entregable: "VALIDACION-GAMIFICATION-DOMAIN.yml"
+      estimacion_minutos: 45
+      agente: "@GAMIFICATION_DOMAIN_VALIDATOR"
+
+    - id: "2.4"
+      nombre: "Dominio PROGRESS"
+      schemas: ["progress_tracking"]
+      capved:
+        C: "15+ tablas, progreso/intentos/certificados"
+        A: |
+          - Validar estados progreso (5 estados)
+          - Validar tracking attempts/submissions
+          - Validar alertas intervención
+          - Validar certificados
+          - Validar métricas engagement
+        P: "Checklist de validaciones"
+        V: "Cruzar con RF-ANA-001/002/003"
+        E: "Ejecutar validaciones"
+        D: "VALIDACION-PROGRESS-DOMAIN.yml"
+      requerimientos:
+        - "RF-ANA-001"
+        - "RF-ANA-002"
+        - "RF-ANA-003"
+        - "ET-ANA-001"
+        - "ET-ANA-002"
+        - "ET-ANA-003"
+      entregable: "VALIDACION-PROGRESS-DOMAIN.yml"
+      estimacion_minutos: 45
+      agente: "@PROGRESS_DOMAIN_VALIDATOR"
+
+    - id: "2.5"
+      nombre: "Dominio SOCIAL"
+      schemas: ["social_features", "communication"]
+      capved:
+        C: "22+ tablas, escuelas/aulas/amigos/gremios"
+        A: |
+          - Validar jerarquía schools→classrooms→members
+          - Validar sistema amistades
+          - Validar gremios (guilds)
+          - Validar peer challenges
+          - Validar comunicación
+        P: "Checklist de validaciones"
+        V: "Cruzar con EXT-004"
+        E: "Ejecutar validaciones"
+        D: "VALIDACION-SOCIAL-DOMAIN.yml"
+      requerimientos:
+        - "EXT-004"
+        - "ET-SOCIAL-001"
+      entregable: "VALIDACION-SOCIAL-DOMAIN.yml"
+      estimacion_minutos: 45
+      agente: "@SOCIAL_DOMAIN_VALIDATOR"
+
+    - id: "2.6"
+      nombre: "Dominio ADMIN"
+      schemas: ["admin_dashboard", "audit_logging"]
+      capved:
+        C: "11 tablas + 7 views, dashboard/auditoría"
+        A: |
+          - Validar dashboard administrativo
+          - Validar auditoría completa (6 acciones)
+          - Validar operaciones bulk
+          - Validar vistas materializadas
+        P: "Checklist de validaciones"
+        V: "Cruzar con EAI-005, EAI-008, EXT-002"
+        E: "Ejecutar validaciones"
+        D: "VALIDACION-ADMIN-DOMAIN.yml"
+      requerimientos:
+        - "EAI-005"
+        - "EAI-008"
+        - "EXT-002"
+        - "RF-ADM-001"
+        - "RF-ADM-002"
+        - "RF-ADM-003"
+        - "RF-ADM-004"
+      entregable: "VALIDACION-ADMIN-DOMAIN.yml"
+      estimacion_minutos: 45
+      agente: "@ADMIN_DOMAIN_VALIDATOR"
+
+    - id: "2.7"
+      nombre: "Dominio SYSTEM"
+      schemas: ["system_configuration", "notifications", "lti_integration"]
+      capved:
+        C: "19 tablas, config/notificaciones/LTI"
+        A: |
+          - Validar feature flags con targeting
+          - Validar sistema notificaciones
+          - Validar rate limiting
+          - Validar integración LTI
+        P: "Checklist de validaciones"
+        V: "Cruzar con EAI-006, EXT-003"
+        E: "Ejecutar validaciones"
+        D: "VALIDACION-SYSTEM-DOMAIN.yml"
+      requerimientos:
+        - "EAI-006"
+        - "EXT-003"
+        - "ET-SYS-001"
+      entregable: "VALIDACION-SYSTEM-DOMAIN.yml"
+      estimacion_minutos: 45
+      agente: "@SYSTEM_DOMAIN_VALIDATOR"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NIVEL 3: VALIDACIÓN DE COHERENCIA (4 subtareas)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+nivel_3_coherencia:
+  estado: "pendiente"
+  dependencias: ["nivel_2_dominios"]
+  paralelizable: true
+  max_agentes_paralelos: 4
+
+  subtareas:
+    - id: "3.1"
+      nombre: "DDL vs Requerimientos Funcionales"
+      capved:
+        C: "112 RF vs 140 tablas"
+        A: "Mapear cada RF a tablas correspondientes"
+        P: "Matriz RF → Tablas con estado"
+        V: "Identificar RF sin DDL o DDL sin RF"
+        E: "Crear matriz completa"
+        D: "MATRIZ-RF-DDL.yml"
+      entregable: "MATRIZ-RF-DDL.yml"
+      estimacion_minutos: 60
+      agente: "@COHERENCE_RF_DDL_AGENT"
+
+    - id: "3.2"
+      nombre: "DDL vs Backend Entities"
+      capved:
+        C: "140 tablas vs 158 entities"
+        A: "Verificar mapeo 1:1 o justificado"
+        P: "Lista de verificación por tabla"
+        V: "Estado actual 100% - revalidar"
+        E: "Ejecutar verificación"
+        D: "COHERENCIA-DDL-ENTITIES.yml"
+      entregable: "COHERENCIA-DDL-ENTITIES.yml"
+      estimacion_minutos: 45
+      agente: "@COHERENCE_ENTITY_AGENT"
+
+    - id: "3.3"
+      nombre: "Funciones vs Triggers"
+      capved:
+        C: "159 funciones, 58 triggers"
+        A: "Verificar asociaciones función-trigger"
+        P: "Mapa de dependencias"
+        V: "Identificar huérfanos"
+        E: "Crear mapa completo"
+        D: "MAPA-FUNCIONES-TRIGGERS.yml"
+      entregable: "MAPA-FUNCIONES-TRIGGERS.yml"
+      estimacion_minutos: 45
+      agente: "@COHERENCE_FUNC_TRIGGER_AGENT"
+
+    - id: "3.4"
+      nombre: "RLS vs Roles/Permisos"
+      capved:
+        C: "299 policies, 3 roles base"
+        A: "Verificar cobertura por rol"
+        P: "Matriz RLS × Roles"
+        V: "Identificar gaps de seguridad"
+        E: "Crear matriz completa"
+        D: "AUDITORIA-RLS-ROLES.yml"
+      entregable: "AUDITORIA-RLS-ROLES.yml"
+      estimacion_minutos: 60
+      agente: "@COHERENCE_RLS_AGENT"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NIVEL 4: DETECCIÓN DE ANOMALÍAS (4 subtareas)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+nivel_4_anomalias:
+  estado: "pendiente"
+  dependencias: ["nivel_3_coherencia"]
+  paralelizable: true
+  max_agentes_paralelos: 4
+
+  subtareas:
+    - id: "4.1"
+      nombre: "Duplicidades de Objetos"
+      capved:
+        C: "Hallazgos previos: 13 funciones, 9 triggers"
+        A: "Buscar nuevas duplicidades"
+        P: "Script de detección"
+        V: "Validar que previas estén resueltas"
+        E: "Ejecutar detección"
+        D: "REPORTE-DUPLICIDADES.yml"
+      entregable: "REPORTE-DUPLICIDADES.yml"
+      estimacion_minutos: 30
+      agente: "@ANOMALY_DUPLICATE_AGENT"
+
+    - id: "4.2"
+      nombre: "Conflictos de Nomenclatura"
+      capved:
+        C: "Convenciones: snake_case, prefijos, sufijos"
+        A: "Identificar inconsistencias"
+        P: "Lista de validaciones"
+        V: "Comparar con estándares"
+        E: "Ejecutar análisis"
+        D: "REPORTE-NOMENCLATURA.yml"
+      entregable: "REPORTE-NOMENCLATURA.yml"
+      estimacion_minutos: 30
+      agente: "@ANOMALY_NAMING_AGENT"
+
+    - id: "4.3"
+      nombre: "Funcionalidades Solapadas"
+      capved:
+        C: "Áreas de riesgo: audit tables, attempts/submissions"
+        A: "Analizar propósito de cada tabla"
+        P: "Comparación de funcionalidades"
+        V: "Justificar o marcar para consolidar"
+        E: "Crear análisis"
+        D: "REPORTE-SOLAPAMIENTOS.yml"
+      entregable: "REPORTE-SOLAPAMIENTOS.yml"
+      estimacion_minutos: 45
+      agente: "@ANOMALY_OVERLAP_AGENT"
+
+    - id: "4.4"
+      nombre: "Tablas Huérfanas"
+      capved:
+        C: "140 tablas, algunas M:N justificadas"
+        A: "Identificar tablas sin referencias"
+        P: "Lista de verificación"
+        V: "Marcar justificadas vs pendientes eliminar"
+        E: "Ejecutar análisis"
+        D: "REPORTE-HUERFANAS.yml"
+      entregable: "REPORTE-HUERFANAS.yml"
+      estimacion_minutos: 30
+      agente: "@ANOMALY_ORPHAN_AGENT"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NIVEL 5: PURGA Y CONSOLIDACIÓN (3 subtareas)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+nivel_5_purga:
+  estado: "pendiente"
+  dependencias: ["nivel_4_anomalias"]
+  paralelizable: true
+  max_agentes_paralelos: 3
+
+  subtareas:
+    - id: "5.1"
+      nombre: "Documentación Obsoleta"
+      capved:
+        C: "49 tareas archivadas, múltiples reportes históricos"
+        A: "Identificar documentos supersedidos"
+        P: "Criterios de purga (>30 días, supersedido)"
+        V: "Lista de candidatos a purga"
+        E: "Crear lista definitiva"
+        D: "LISTA-PURGA-DOCUMENTACION.yml"
+      entregable: "LISTA-PURGA-DOCUMENTACION.yml"
+      estimacion_minutos: 30
+      agente: "@PURGE_DOC_AGENT"
+
+    - id: "5.2"
+      nombre: "Tareas Completadas a Archivar"
+      capved:
+        C: "Tareas activas en tareas/"
+        A: "Verificar estado de tareas"
+        P: "Mover completadas a _archive/"
+        V: "Actualizar _INDEX.yml"
+        E: "Ejecutar archivado"
+        D: "REGISTRO-ARCHIVADO.md"
+      entregable: "REGISTRO-ARCHIVADO.md"
+      estimacion_minutos: 20
+      agente: "@ARCHIVE_AGENT"
+
+    - id: "5.3"
+      nombre: "Definiciones Faltantes"
+      capved:
+        C: "ET-SYS-001 y ET-SOCIAL-001 ya creados"
+        A: "Identificar otras definiciones faltantes"
+        P: "Lista priorizada"
+        V: "Verificar con estructura docs/50-requerimientos/"
+        E: "Crear lista"
+        D: "DEFINICIONES-FALTANTES.yml"
+      entregable: "DEFINICIONES-FALTANTES.yml"
+      estimacion_minutos: 30
+      agente: "@DEFINITIONS_AGENT"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# NIVEL 6: PLAN DE EJECUCIÓN (3 subtareas)
+# ─────────────────────────────────────────────────────────────────────────────────
+
+nivel_6_ejecucion:
+  estado: "pendiente"
+  dependencias: ["nivel_5_purga"]
+  paralelizable: false
+
+  subtareas:
+    - id: "6.1"
+      nombre: "Orden de Dependencias"
+      capved:
+        C: "Hallazgos de niveles 2-5"
+        A: "Identificar dependencias entre remediaciones"
+        P: "Grafo de dependencias"
+        V: "Verificar no hay ciclos"
+        E: "Crear grafo"
+        D: "GRAFO-DEPENDENCIAS.yml"
+      entregable: "GRAFO-DEPENDENCIAS.yml"
+      estimacion_minutos: 30
+      agente: "@PLANNING_AGENT"
+
+    - id: "6.2"
+      nombre: "Tareas Paralelizables"
+      capved:
+        C: "Lista de remediaciones"
+        A: "Agrupar por independencia"
+        P: "Grupos de ejecución paralela"
+        V: "Verificar recursos compartidos"
+        E: "Crear agrupación"
+        D: "GRUPOS-PARALELOS.yml"
+      entregable: "GRUPOS-PARALELOS.yml"
+      estimacion_minutos: 20
+      agente: "@PLANNING_AGENT"
+
+    - id: "6.3"
+      nombre: "Roadmap de Implementación"
+      capved:
+        C: "Dependencias y grupos paralelos"
+        A: "Diseñar sprints de ejecución"
+        P: "Plan de 3 sprints"
+        V: "Verificar cobertura completa"
+        E: "Crear roadmap"
+        D: "ROADMAP-FASE-2.md"
+      entregable: "ROADMAP-FASE-2.md"
+      estimacion_minutos: 45
+      agente: "@PLANNING_AGENT"
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# RESUMEN DE EJECUCIÓN
+# ─────────────────────────────────────────────────────────────────────────────────
+
+resumen:
+  total_subtareas: 28
+  estimacion_total_minutos: 985  # ~16.4 horas
+  estimacion_paralela_minutos: 380  # ~6.3 horas con máximo paralelismo
+
+  bloques_ejecucion:
+    - bloque: 1
+      nivel: "nivel_1_contexto"
+      subtareas: 3
+      paralelizable: true
+      minutos_secuencial: 135
+      minutos_paralelo: 60
+
+    - bloque: 2
+      nivel: "nivel_2_dominios"
+      subtareas: 7
+      paralelizable: true
+      minutos_secuencial: 330
+      minutos_paralelo: 60
+
+    - bloque: 3
+      nivel: "nivel_3_coherencia"
+      subtareas: 4
+      paralelizable: true
+      minutos_secuencial: 210
+      minutos_paralelo: 60
+
+    - bloque: 4
+      nivel: "nivel_4_anomalias"
+      subtareas: 4
+      paralelizable: true
+      minutos_secuencial: 135
+      minutos_paralelo: 45
+
+    - bloque: 5
+      nivel: "nivel_5_purga"
+      subtareas: 3
+      paralelizable: true
+      minutos_secuencial: 80
+      minutos_paralelo: 30
+
+    - bloque: 6
+      nivel: "nivel_6_ejecucion"
+      subtareas: 3
+      paralelizable: false
+      minutos_secuencial: 95
+      minutos_paralelo: 95
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN SUBTAREAS CAPVED
+# ═══════════════════════════════════════════════════════════════════════════════

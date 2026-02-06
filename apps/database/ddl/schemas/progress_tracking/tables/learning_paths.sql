@@ -30,7 +30,7 @@ COMMENT ON COLUMN progress_tracking.learning_paths.estimated_hours IS 'Estimated
 COMMENT ON COLUMN progress_tracking.learning_paths.is_active IS 'Whether this learning path is currently active/available';
 
 -- Trigger para updated_at
-CREATE TRIGGER update_learning_paths_updated_at
+CREATE TRIGGER trg_learning_paths_updated_at
     BEFORE UPDATE ON progress_tracking.learning_paths
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();
