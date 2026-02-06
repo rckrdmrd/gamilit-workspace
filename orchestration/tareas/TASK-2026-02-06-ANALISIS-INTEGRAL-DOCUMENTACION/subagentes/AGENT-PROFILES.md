@@ -88,21 +88,49 @@
 
 ---
 
+## Sprint 2+3: RF Creation + Architecture (7 agentes)
+
+### Sprint 2: RF Exploration (2 agentes)
+
+| ID | Agente | Modelo | Proposito | Tools | Duracion | Status |
+|----|--------|--------|-----------|-------|----------|--------|
+| SA-S2-EXPL-01 | Explore | Sonnet | RF template + structure analysis | Glob, Read | ~5 min | COMPLETADO |
+| SA-S2-EXPL-02 | Explore | Sonnet | ARCHITECTURE.md + ADRs state | Glob, Read | ~4 min | COMPLETADO |
+
+### Sprint 2+3: Background Execution (5 agentes paralelos)
+
+| ID | Agente | Modelo | Proposito | Tools | Duracion | Status |
+|----|--------|--------|-----------|-------|----------|--------|
+| SA-S23-BG-01 | General | Sonnet | ADR-033 + 5 ADR stubs | Write | ~4 min | COMPLETADO |
+| SA-S23-BG-02 | General | Sonnet | RF batch 1: Phase 1 EPICs (17 files) | Write, Bash | ~8 min | COMPLETADO |
+| SA-S23-BG-03 | General | Sonnet | RF batch 2: EXT-001 Teacher (21 files) | Write, Bash | ~10 min | COMPLETADO |
+| SA-S23-BG-04 | General | Sonnet | RF batch 3: EXT-002+ (55 files) | Write, Bash | ~15 min | COMPLETADO |
+| SA-S23-BG-05 | General | Sonnet | RF batch 4: Phase 2 (11 files) | Write, Bash | ~6 min | COMPLETADO |
+
+**Resultados Sprint 2+3:**
+- 104 RF files creados (31→135 total)
+- 6 ADR files creados (ADR-033 + 5 stubs)
+- ARCHITECTURE.md reescrito (8→18 schemas, rank names corregidos)
+- API.md actualizado (rank names, coverage note)
+- Database _MAP.md actualizado (16→18 schemas, 135→171 tables)
+
+---
+
 ## Resumen Acumulado
 
-| Fase | Agentes | Paralelismo Max | Hallazgos |
-|------|---------|-----------------|-----------|
+| Fase | Agentes | Paralelismo Max | Resultados |
+|------|---------|-----------------|------------|
 | Fase 1 Exploracion | 5 | 5 | Estructura + metricas base |
 | Fase 1 Analisis | 6 | 6 | 127 hallazgos (24P0/35P1/38P2/30P3) |
 | Sprint 0 Validacion | 4 | 4 | 4 features reclasificadas |
 | Sprint 1 Metricas | 9 | 6 | 164 broken refs, +12 entities |
-| **TOTAL** | **24** | **6** | **127 hallazgos + 164 broken refs** |
+| Sprint 2+3 RF+Arch | 7 | 5 | 104 RF + 6 ADR + 4 docs updated |
+| **TOTAL** | **31** | **6** | **127 hallazgos + 116 archivos nuevos** |
 
 ---
 
-## Agentes Planificados para Sprints 2-5
+## Agentes Planificados para Sprints 4-5
 
-Ver `03-PLAN-MAESTRO.md` seccion "Subagentes Planificados":
-- ~44 subagentes restantes distribuidos en 4 sprints
+- Sprint 4: ~8-10 agentes (broken refs fix, reclassify features, archive)
+- Sprint 5: ~4-6 agentes (validation, inventories, CAPVED final)
 - Max 6 simultaneos por wave
-- Perfiles: RF_CREATOR, ADR_WRITER, BL_WRITER, PURGE_AGENT, ARCHIVE_AGENT, DOC_WRITER

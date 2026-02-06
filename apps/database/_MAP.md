@@ -1,8 +1,8 @@
 # _MAP: apps/database/
 
-**Ultima actualizacion:** 2026-01-08
+**Ultima actualizacion:** 2026-02-06
 **Estado:** Produccion
-**Version:** 1.0
+**Version:** 2.0
 **Proposito:** Base de datos PostgreSQL multi-schema para plataforma GAMILIT
 
 ---
@@ -26,7 +26,7 @@ apps/database/
 ├── ddl/                          # Data Definition Language
 │   ├── 00-prerequisites.sql      # Schemas + ENUMs base (ejecutar primero)
 │   ├── 99-post-ddl-permissions.sql
-│   └── schemas/                  # 16 schemas organizados
+│   └── schemas/                  # 18 schemas (16 activos + 2 placeholder)
 ├── seeds/                        # Datos iniciales
 │   ├── dev/                      # Ambiente desarrollo
 │   └── prod/                     # Ambiente produccion (32 archivos validados)
@@ -44,28 +44,31 @@ apps/database/
 
 ---
 
-## Schemas de Base de Datos (16)
+## Schemas de Base de Datos (18: 16 activos + 2 placeholder)
 
 | Schema | Proposito | Tablas | Funciones | Triggers |
 |--------|-----------|--------|-----------|----------|
 | **gamilit** | Funciones compartidas y utilities | - | 16 | - |
-| **auth** | Autenticacion base (Supabase) | 1 | - | - |
-| **auth_management** | Usuarios, roles, sesiones, tenants | 15 | 6 | 9 |
+| **auth_management** | Usuarios, roles, sesiones, providers, tenants | 15 | 6 | 9 |
 | **educational_content** | Modulos, ejercicios, rubricas, assignments | 15 | 22 | 5 |
-| **gamification_system** | Rangos Maya, logros, ML Coins | 15 | 21 | 10 |
-| **progress_tracking** | Progreso de modulos, intentos | 17 | 12 | 13 |
-| **social_features** | Escuelas, aulas, equipos, amistades | 17 | 2 | 6 |
-| **content_management** | Templates, media, Marie Curie | 8 | 1 | 3 |
+| **gamification_system** | Rangos Maya, logros, misiones, ML Coins | 15 | 21 | 10 |
+| **progress_tracking** | Progreso de modulos, intentos, streaks | 17 | 12 | 13 |
+| **social_features** | Escuelas, aulas, equipos, amistades, gremios | 17 | 2 | 6 |
+| **content_management** | Templates, media, recursos | 8 | 1 | 3 |
 | **audit_logging** | Logs y auditoria del sistema | 8 | 6 | 1 |
-| **system_configuration** | Feature flags, settings | 8 | 2 | 2 |
-| **notifications** | Sistema multi-canal | 6 | 3 | - |
-| **lti_integration** | Learning Tools Interoperability | 5 | 2 | 2 |
-| **admin_dashboard** | Vistas analiticas | 3 | 1 | - |
+| **system_configuration** | Feature flags, settings, platform config | 8 | 2 | 2 |
+| **notifications** | Sistema multi-canal (push, email, in-app) | 6 | 3 | - |
+| **lti_integration** | Learning Tools Interoperability 1.3 | 5 | 2 | 2 |
+| **admin_dashboard** | Vistas analiticas y settings | 3 | 1 | - |
 | **communication** | Mensajeria maestro-estudiante | 2 | - | - |
-| **storage** | ENUMs de almacenamiento | - | - | - |
-| **public** | Reservado PostgreSQL (no usar) | - | - | - |
+| **parent_portal** | Portal padres, vinculacion hijos | 3+ | - | - |
+| **teacher_portal** | Datos especificos maestros | 2+ | - | - |
+| **analytics** | Analytics avanzado, data warehouse | MVs | - | - |
+| **storage** | ENUMs de almacenamiento (placeholder) | - | - | - |
+| **public** | Reservado PostgreSQL (placeholder) | - | - | - |
 
-**Totales auditados (2026-01-14):** 135 tablas, 122 funciones activas, 49 triggers activos, 405 indices, 121 RLS policies
+**Totales verificados (2026-02-06):** 171 tablas, 128 funciones activas, 49 triggers activos, 69 index files, 282 RLS policies, 299 foreign keys, 36 enums
+Fuente: DATABASE_INVENTORY v6.0.0, TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD
 
 ---
 

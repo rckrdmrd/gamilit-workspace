@@ -1,5 +1,7 @@
 # API Documentation
 
+> **Note:** This document covers ~200 of 850 total endpoints. For complete auto-generated docs, see Swagger UI at `/api/docs`. Teacher and Admin module details are in their respective API docs linked below. Last updated: 2026-02-06.
+
 ## Base URL
 
 **Production:** `http://74.208.126.102:3006/api`
@@ -136,11 +138,11 @@ Maya ranking system con 5 niveles.
 | DELETE | `/admin/ranks/:id` | Eliminar rango | Yes (Admin) |
 
 **Maya Ranks:**
-1. MERCENARIO (0-1000 pts)
-2. GUERRERO (1000-2500 pts)
-3. HOLCATTE (2500-5000 pts)
-4. BATAB (5000-10000 pts)
-5. NACOM (10000+ pts)
+1. AJAW (0-499 XP)
+2. NACOM (500-999 XP)
+3. AH K'IN (1,000-1,499 XP)
+4. HALACH UINIC (1,500-1,899 XP)
+5. K'UK'ULKAN (1,900+ XP)
 
 #### Get Current Rank
 
@@ -154,18 +156,18 @@ Authorization: Bearer <token>
 {
   "rank": {
     "id": "uuid",
-    "name": "GUERRERO",
+    "name": "NACOM",
     "level": 2,
-    "minPoints": 1000,
-    "maxPoints": 2500,
-    "multiplier": 1.2,
+    "minPoints": 500,
+    "maxPoints": 999,
+    "multiplier": 1.05,
     "icon": "⚔️"
   },
-  "currentPoints": 1500,
-  "progress": 0.2,
+  "currentPoints": 750,
+  "progress": 0.5,
   "nextRank": {
-    "name": "HOLCATTE",
-    "pointsNeeded": 1000
+    "name": "AH K'IN",
+    "pointsNeeded": 250
   }
 }
 ```
@@ -207,7 +209,7 @@ Authorization: Bearer <token>
       "userId": "uuid",
       "name": "Juan Pérez",
       "points": 5000,
-      "rank": "HOLCATTE",
+      "rank": "AH K'IN",
       "avatar": "url"
     },
     ...
@@ -327,7 +329,7 @@ Content-Type: application/json
     "pointsEarned": 850,
     "rankMultiplier": 1.2,
     "streakMultiplier": 1.1,
-    "currentRank": "GUERRERO",
+    "currentRank": "NACOM",
     "newAchievements": ["first_quiz_completed"]
   }
 }
