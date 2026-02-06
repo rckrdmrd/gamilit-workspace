@@ -125,12 +125,45 @@
 | Sprint 0 Validacion | 4 | 4 | 4 features reclasificadas |
 | Sprint 1 Metricas | 9 | 6 | 164 broken refs, +12 entities |
 | Sprint 2+3 RF+Arch | 7 | 5 | 104 RF + 6 ADR + 4 docs updated |
-| **TOTAL** | **31** | **6** | **127 hallazgos + 116 archivos nuevos** |
+| **SUB-TOTAL F1+S0-S3** | **31** | **6** | **127 hallazgos + 116 archivos nuevos** |
 
 ---
 
-## Agentes Planificados para Sprints 4-5
+## Sprint 4: Consolidacion (3 agentes)
 
-- Sprint 4: ~8-10 agentes (broken refs fix, reclassify features, archive)
-- Sprint 5: ~4-6 agentes (validation, inventories, CAPVED final)
-- Max 6 simultaneos por wave
+| ID | Agente | Modelo | Proposito | Tools | Duracion | Status |
+|----|--------|--------|-----------|-------|----------|--------|
+| SA-S4-BG-01 | General | Sonnet | Fix CAT-4 TRACEABILITY paths (16 refs) | Read, Edit | ~4 min | COMPLETADO |
+| SA-S4-BG-02 | General | Sonnet | Fix CAT-5 high-priority counts (~20 edits) | Read, Edit | ~5 min | COMPLETADO |
+| SA-S4-BG-03 | General | Sonnet | Fix bootloader agent configs (9 files) | Read, Edit | ~3 min | COMPLETADO |
+
+**Resultados Sprint 4:**
+- 25 archivos actualizados, ~47 broken refs corregidas
+- ~46 refs residuales (low-pri, historicos aceptables)
+
+---
+
+## Sprint 5: Cierre (1 agente)
+
+| ID | Agente | Modelo | Proposito | Tools | Duracion | Status |
+|----|--------|--------|-----------|-------|----------|--------|
+| SA-S5-VAL-01 | Explore | Sonnet | Final validation (6 checks) | Glob, Grep, Read | ~3 min | COMPLETADO |
+
+**Resultados Sprint 5:**
+- 5/6 validaciones OK, 1 nota (entity discrepancy conocida)
+- INFORME-FINAL.md creado, METADATA.yml actualizado
+
+---
+
+## Resumen Acumulado Final
+
+| Fase | Agentes | Paralelismo Max | Resultados |
+|------|---------|-----------------|------------|
+| Fase 1 Exploracion | 5 | 5 | Estructura + metricas base |
+| Fase 1 Analisis | 6 | 6 | 127 hallazgos (24P0/35P1/38P2/30P3) |
+| Sprint 0 Validacion | 4 | 4 | 4 features reclasificadas |
+| Sprint 1 Metricas | 9 | 6 | 164 broken refs, +12 entities |
+| Sprint 2+3 RF+Arch | 7 | 5 | 104 RF + 6 ADR + 4 docs updated |
+| Sprint 4 Consolidacion | 3 | 3 | 25 files updated, 47 refs fixed |
+| Sprint 5 Cierre | 1 | 1 | Validacion final + INFORME-FINAL |
+| **TOTAL** | **35** | **6** | **127 hallazgos, ~85 resueltos, ~270 archivos** |
