@@ -279,20 +279,26 @@
 - **Resolucion parcial:** Entities creadas: user-block.entity.ts (5 cols + UNIQUE constraint) y user-report.entity.ts (19 cols con workflow moderacion). Services y controllers pendientes (fuera de scope Sprint 2 = solo entities).
 - **Fecha resolucion parcial:** 2026-02-05 (Sprint 2 - BATCH-2)
 
-### H-032: 6 Stale FKs to auth.users (ALTO)
-- **Severidad:** ALTA
-- **Descripcion:** 6 columnas FK en social_features referencian auth.users(id) en vez de auth_management.profiles(id): discussion_threads.created_by, social_interactions.user_id/target_user_id, user_activities.user_id, user_follows.follower_id/following_id.
-- **Accion:** Actualizar DDL files. BATCH-8.
+### H-032: 6 Stale FKs to auth.users → **RESUELTO**
+- **Severidad:** ALTA → **RESUELTO (Sprint 5 - BATCH-8)**
+- **Descripcion original:** 6 columnas FK en social_features referencian auth.users(id) en vez de auth_management.profiles(id).
+- **Resolucion:** 4 DDL files actualizados (discussion_threads.sql, social_interactions.sql, 09-user_activities.sql, user_follows.sql) con 6 FKs corregidas auth.users→auth_management.profiles. 4 entities actualizadas con comments corregidos (social-interaction, user-activity, user-follow, discussion-thread).
+- **Fecha resolucion:** 2026-02-05 (Sprint 5 - BATCH-8)
 
-### H-033: 2 DB Functions Reference Non-Existent Columns (ALTO)
-- **Severidad:** ALTA
-- **Descripcion:** log_audit_event() y log_system_event() insertan en system_logs con columnas que NO existen en el DDL actual (action, table_name, record_id, event_type, event_source, etc).
-- **Accion:** Reescribir funciones con columnas reales de system_logs o eliminar. BATCH-8.
+### H-033: 2 DB Functions Reference Non-Existent Columns → **RESUELTO**
+- **Severidad:** ALTA → **RESUELTO (Sprint 5 - BATCH-8)**
+- **Descripcion original:** log_audit_event() y log_system_event() insertan en system_logs con columnas que NO existen.
+- **Resolucion:**
+  - log_audit_event(): Target cambiado de system_logs→audit_logs (tabla correcta para auditoría). Columnas mapeadas: action→action, table_name→resource_type, record_id→resource_id, old_data→old_values, new_data→new_values, user_id→actor_id, ip_address→actor_ip, user_agent→actor_user_agent.
+  - log_system_event(): Columnas mapeadas a schema real de system_logs: event_type→message, event_source→module_name, event_data→extra_data, severity→log_level (con mapeo WARNING→WARN, CRITICAL→FATAL).
+  - Callers (assign_role_to_user, remove_role_from_user, update_feature_flag) ahora funcionarán correctamente.
+- **Fecha resolucion:** 2026-02-05 (Sprint 5 - BATCH-8)
 
-### H-034: No Tenant Management API (ALTO)
-- **Severidad:** ALTA
-- **Descripcion:** No existe TenantController para CRUD de tenants ni endpoint de tenant switch. Multi-tenancy solo administrable via DDL directo.
-- **Accion:** Crear TenantController + tenant switch endpoint. BATCH-8.
+### H-034: No Tenant Management API → **RESUELTO (ya existía)**
+- **Severidad:** ALTA → **RESUELTO (Sprint 5 - BATCH-8, verificación)**
+- **Descripcion original:** No existe TenantController para CRUD de tenants ni endpoint de tenant switch.
+- **Resolucion:** Investigacion revela que el API YA EXISTE como AdminOrganizationsService + AdminOrganizationsController con 9 endpoints CRUD completos (list, get, create, update, delete, stats, users, subscription, features). Entity Tenant 100% alineada con DDL. DTOs completos (Create, Update, Response). El hallazgo era incorrecto - el API existe bajo el namespace `/admin/organizations`.
+- **Fecha resolucion:** 2026-02-05 (Sprint 5 - BATCH-8, verificación)
 
 ### H-035: Duplicate Routes Auth vs Password Controllers (MEDIO)
 - **Severidad:** MEDIA
@@ -304,10 +310,17 @@
 - **Descripcion:** No existe learning_path_modules junction table ni module_dependencies table formal. Prerequisites como uuid[] sin FK.
 - **Accion:** Crear tablas junction. BATCH-9.
 
-### H-037: Materialized Views Sin Refresh Mechanism (MEDIO)
-- **Severidad:** MEDIA
-- **Descripcion:** 7 MVs (4 leaderboard + 3 admin) existen en DDL pero sin cron job ni endpoint de refresh.
-- **Accion:** Implementar mecanismo de refresh. BATCH-8.
+### H-037: Materialized Views Sin Refresh Mechanism → **RESUELTO**
+- **Severidad:** MEDIA → **RESUELTO (Sprint 5 - BATCH-8)**
+- **Descripcion original:** 7 MVs (4 leaderboard + 3 admin) existen en DDL pero sin cron job ni endpoint de refresh.
+- **Resolucion:** Creado MaterializedViewsCronService en modules/tasks/services/ con 4 cron jobs:
+  - mv_classroom_leaderboard + admin dashboards: cada 30 min
+  - mv_global_leaderboard + mv_weekly_leaderboard: cada hora (min 15)
+  - mv_mechanic_leaderboard: cada 2 horas (min 45)
+  - Weekly stats reset: lunes 00:00 (reset weekly_xp/weekly_exercises + refresh MV)
+  - Admin dashboards usa función existente refresh_all_dashboards()
+  - Registrado en TasksModule. Build pasa limpio.
+- **Fecha resolucion:** 2026-02-05 (Sprint 5 - BATCH-8)
 
 ### H-038: Notification Templates Double Unique → **RESUELTO**
 - **Severidad:** MEDIA → **RESUELTO (Sprint 3 - BATCH-5)**
