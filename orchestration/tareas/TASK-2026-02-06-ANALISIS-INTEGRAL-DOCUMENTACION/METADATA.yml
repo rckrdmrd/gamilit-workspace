@@ -1,0 +1,126 @@
+---
+# METADATA.yml - TASK-2026-02-06-ANALISIS-INTEGRAL-DOCUMENTACION
+# Analisis integral de toda la documentacion del proyecto gamilit
+
+task_id: TASK-2026-02-06-ANALISIS-INTEGRAL-DOCUMENTACION
+version: 1.0.0
+created: 2026-02-06
+updated: 2026-02-06
+status: EN_PROGRESO
+priority: P0
+mode: ANALYSIS  # C+A+P (sin ejecucion en esta fase)
+
+# Identificacion
+title: "Analisis Integral de Documentacion - Proyecto GAMILIT"
+description: >
+  Analisis exhaustivo de toda la documentacion del proyecto gamilit incluyendo:
+  requerimientos, definiciones, estructura, planeacion, trazabilidad, coherencia
+  entre documentacion vieja y nueva, logica de negocio, dependencias entre
+  componentes, y plan de remediacion con purga selectiva.
+
+# Agente
+agent:
+  profile: ARCHITECT_ORCHESTRATOR
+  capabilities:
+    - documentation_analysis
+    - traceability_validation
+    - business_logic_verification
+    - dependency_mapping
+    - purge_assessment
+    - subagent_orchestration
+
+# Alcance
+scope:
+  project: gamilit
+  areas:
+    - docs/  # Documentacion usuario (00-90)
+    - orchestration/  # Sistema SIMCO completo
+    - shared/mirrors/gamilit/  # Mirror sincronizado
+    - shared/catalog/gamification/  # Catalogo compartido
+    - docs/60-proyectos/PROYECTO-GAMILIT.md  # Workspace-level doc
+  layers:
+    - requirements  # 50-requerimientos (EPICs, US, RF, ET)
+    - definitions  # _definitions/, especificaciones
+    - architecture  # 10-arquitectura, 80-referencias/arquitectura
+    - standards  # 40-estandares
+    - traceability  # _SSOT/, trazas/, inventarios/
+    - tasks  # tareas/ (activas + archivo)
+    - governance  # directivas/, agents/, scrum/
+    - onboarding  # 00-vision, 70-onboarding
+    - references  # 80-referencias, 90-adr
+
+# Metodologia
+methodology: CAPVED
+phases:
+  C_CONTEXTO:
+    status: COMPLETADO
+    document: 01-CONTEXTO.md
+  A_ANALISIS:
+    status: COMPLETADO
+    document: 02-ANALISIS-ESTADO-ACTUAL.md
+  P_PLANIFICACION:
+    status: COMPLETADO
+    document: 03-PLAN-MAESTRO.md
+  V_VALIDACION:
+    status: PENDIENTE
+    document: 04-VALIDACION.md
+    note: "Se valida al ejecutar cada subtarea"
+  E_EJECUCION:
+    status: PENDIENTE
+    document: 05-EJECUCION.md
+    note: "Requiere aprobacion del plan antes de ejecutar"
+  D_DOCUMENTACION:
+    status: PENDIENTE
+    document: 06-DOCUMENTACION.md
+
+# Metricas iniciales (snapshot pre-analisis)
+metrics:
+  docs_files: 300+
+  orchestration_files: 600+
+  total_tasks: 56
+  completed_tasks: 50
+  archived_tasks: 48
+  adrs: 30+
+  epics_phase1: 5
+  user_stories_phase1: 37
+  inventories: 13
+  simco_directives: 100+
+
+# Entregables FASE 1
+deliverables_phase1:
+  - 01-CONTEXTO.md
+  - 02-ANALISIS-ESTADO-ACTUAL.md
+  - 03-PLAN-MAESTRO.md
+  - SUBTAREAS-JERARQUICAS.md
+  - HALLAZGOS-DOCUMENTACION.md
+
+# Subagentes planificados
+subagents:
+  phase1_exploration:
+    count: 5
+    status: COMPLETADO
+    agents:
+      - SA-EXPLORE-01: "Orchestration structure"
+      - SA-EXPLORE-02: "Docs directory"
+      - SA-EXPLORE-03: "Root/CLAUDE.md config"
+      - SA-EXPLORE-04: "Shared/knowledge-base"
+      - SA-EXPLORE-05: "Tasks detail"
+  phase1_deep_analysis:
+    count: 6
+    status: PENDIENTE
+    agents:
+      - SA-DEEP-01: "Requirements completeness"
+      - SA-DEEP-02: "Traceability validation"
+      - SA-DEEP-03: "Metric consistency"
+      - SA-DEEP-04: "Business logic coverage"
+      - SA-DEEP-05: "Architecture docs coherence"
+      - SA-DEEP-06: "Stale docs identification"
+
+# Dependencias
+dependencies:
+  blocks: []
+  blocked_by: []
+  related_tasks:
+    - TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD  # DB analysis (completed)
+    - TASK-2026-02-03-ANALISIS-FRONTEND-UXUI  # Frontend analysis (in progress)
+    - TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS  # DB+requirements plan
