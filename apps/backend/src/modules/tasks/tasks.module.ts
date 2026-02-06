@@ -13,6 +13,7 @@ import { UserAchievement } from '../gamification/entities';
 import { MissionsCronService } from './services/missions-cron.service';
 import { NotificationsCronService } from './services/notifications-cron.service';
 import { AchievementReconciliationCronService } from './services/achievement-reconciliation-cron.service';
+import { MaterializedViewsCronService } from './services/materialized-views-cron.service';
 
 @Module({
   imports: [
@@ -26,11 +27,13 @@ import { AchievementReconciliationCronService } from './services/achievement-rec
     MissionsCronService,
     NotificationsCronService,
     AchievementReconciliationCronService,
+    MaterializedViewsCronService,
   ],
   exports: [
     MissionsCronService,
     NotificationsCronService,
     AchievementReconciliationCronService,
+    MaterializedViewsCronService,
   ],
 })
 export class TasksModule {}

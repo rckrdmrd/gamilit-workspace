@@ -1,8 +1,9 @@
 -- =====================================================
 -- Function: audit_logging.log_audit_event
--- Description: Registra eventos de auditoría en system_logs
+-- Description: Registra eventos de auditoría en audit_logs
 -- Priority: CRITICAL - Compliance requirement
 -- Created: 2025-10-27
+-- Updated: 2026-02-05 (FIX H-033: Target table corrected system_logs → audit_logs)
 -- =====================================================
 
 CREATE OR REPLACE FUNCTION audit_logging.log_audit_event(
@@ -28,31 +29,37 @@ BEGIN
     FROM auth_management.profiles
     WHERE id = p_user_id;
 
-    -- Insert audit log
-    INSERT INTO audit_logging.system_logs (
-        id,
+    -- Insert into audit_logs (the correct audit table)
+    INSERT INTO audit_logging.audit_logs (
         tenant_id,
-        user_id,
+        event_type,
         action,
-        table_name,
-        record_id,
-        old_data,
-        new_data,
-        ip_address,
-        user_agent,
+        resource_type,
+        resource_id,
+        actor_id,
+        actor_type,
+        actor_ip,
+        actor_user_agent,
+        old_values,
+        new_values,
+        severity,
+        status,
         created_at
     )
     VALUES (
-        uuid_generate_v4(),
         v_tenant_id,
-        p_user_id,
+        'DATA_CHANGE',
         p_action,
         p_table_name,
         p_record_id,
-        p_old_data,
-        p_new_data,
+        p_user_id,
+        'user',
         p_ip_address,
         p_user_agent,
+        COALESCE(p_old_data, '{}'::jsonb),
+        COALESCE(p_new_data, '{}'::jsonb),
+        'info',
+        'success',
         NOW()
     )
     RETURNING id INTO v_log_id;
@@ -66,7 +73,7 @@ EXCEPTION
 END;
 $$;
 
-COMMENT ON FUNCTION audit_logging.log_audit_event IS 'Registra eventos de auditoría en system_logs con manejo de errores';
+COMMENT ON FUNCTION audit_logging.log_audit_event IS 'Registra eventos de auditoría en audit_logs con manejo de errores';
 
 -- Grant permissions
 GRANT EXECUTE ON FUNCTION audit_logging.log_audit_event TO gamilit_user;
