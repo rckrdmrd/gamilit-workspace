@@ -39,7 +39,7 @@ export class UserActivity {
   // =====================================================
 
   /**
-   * ID del usuario que realizó la actividad (FK → auth.users)
+   * ID del usuario que realizó la actividad (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
     user_id!: string;

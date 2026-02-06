@@ -40,7 +40,7 @@ export class UserFollow {
   // =====================================================
 
   /**
-   * ID del usuario que sigue (FK → auth.users)
+   * ID del usuario que sigue (FK → auth_management.profiles)
    * UNIQUE con following_id: Previene seguimientos duplicados
    * CHECK: follower_id <> following_id (no puede seguirse a si mismo)
    */
@@ -48,7 +48,7 @@ export class UserFollow {
     follower_id!: string;
 
   /**
-   * ID del usuario que es seguido (FK → auth.users)
+   * ID del usuario que es seguido (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
     following_id!: string;

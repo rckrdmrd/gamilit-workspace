@@ -27,13 +27,13 @@ export class SocialInteraction {
   id!: string;
 
   /**
-   * ID del usuario que realiza la interacción (FK → auth.users)
+   * ID del usuario que realiza la interacción (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
   user_id!: string;
 
   /**
-   * ID del usuario objetivo (FK → auth.users), nullable para interacciones sin target
+   * ID del usuario objetivo (FK → auth_management.profiles), nullable para interacciones sin target
    */
   @Column({ type: 'uuid', nullable: true })
   target_user_id?: string | null;

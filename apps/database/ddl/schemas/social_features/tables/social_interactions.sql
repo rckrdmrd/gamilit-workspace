@@ -5,8 +5,8 @@
 
 CREATE TABLE social_features.social_interactions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    target_user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
+    target_user_id UUID REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     interaction_type VARCHAR(50) NOT NULL CHECK (interaction_type IN ('like', 'comment', 'share', 'mention', 'badge_given', 'help_request', 'help_provided')),
     content_type VARCHAR(50),
     content_id UUID,

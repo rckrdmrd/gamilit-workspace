@@ -194,9 +194,10 @@ export class DiscussionThread {
    * @cascade DELETE (si se elimina el usuario, se eliminan sus threads)
    *
    * @note CROSS-DATABASE RELATION DISABLED
-   * @note DiscussionThread (social datasource) -> User (auth datasource)
+   * @note DiscussionThread (social datasource) -> Profile (auth datasource)
    * @note TypeORM no soporta relaciones entre datasources diferentes
    * @note Usar created_by UUID para joins manuales en services
+   * @note FIX H-032: DDL FK updated auth.users → auth_management.profiles
    */
   // @ManyToOne(() => User, {
   //   onDelete: 'CASCADE',

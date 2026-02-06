@@ -7,7 +7,7 @@ CREATE TABLE social_features.discussion_threads (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     classroom_id UUID REFERENCES social_features.classrooms(id) ON DELETE CASCADE,
     team_id UUID REFERENCES social_features.teams(id) ON DELETE CASCADE,
-    created_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    created_by UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     is_pinned BOOLEAN NOT NULL DEFAULT false,

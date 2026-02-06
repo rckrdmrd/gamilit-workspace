@@ -5,8 +5,8 @@
 
 CREATE TABLE social_features.user_follows (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    follower_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    following_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    follower_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
+    following_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     followed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(follower_id, following_id),
     CHECK (follower_id != following_id)
