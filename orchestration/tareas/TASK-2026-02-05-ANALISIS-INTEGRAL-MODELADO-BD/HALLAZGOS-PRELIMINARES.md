@@ -127,16 +127,15 @@
 - **Resolucion:** 31 constantes corregidas en `database.constants.ts` (21 entity schemas + 10 data_warehouse). Build `tsc --noEmit` pasa limpio.
 - **Fecha resolucion:** 2026-02-05 (Sprint 1 - BATCH-1)
 
-### H-017: 9 Tablas Operacionales Sin Entity → **PARCIALMENTE RESUELTO**
-- **Severidad:** ALTA → **PARCIALMENTE RESUELTO (Sprint 2 - BATCH-2)**
+### H-017: 9 Tablas Operacionales Sin Entity → **RESUELTO**
+- **Severidad:** ALTA → **RESUELTO (Sprint 2 BATCH-2 + Sprint 4 BATCH-7)**
 - **Descripcion original:** 9 tablas en schemas operacionales no tienen entity TypeORM.
-- **Resolucion parcial:** 7 de 9 entities creadas:
-  - social_features: guild-emblem.entity.ts, user-block.entity.ts, user-report.entity.ts
+- **Resolucion:** 9 de 9 entities creadas:
+  - social_features: guild-emblem.entity.ts, user-block.entity.ts, user-report.entity.ts, guild-mission-contribution.entity.ts (Sprint 4), team-vs-team-challenge.entity.ts (Sprint 4)
   - communication: conversation.entity.ts, conversation-participant.entity.ts
   - gamification_system: comodin-use.entity.ts
   - notifications: rate-limit-log.entity.ts
-- **Pendientes:** guild_mission_contributions, team_vs_team_challenges (BATCH-7, dead features)
-- **Fecha resolucion:** 2026-02-05 (Sprint 2 - BATCH-2)
+- **Fecha resolucion:** 2026-02-05 (Sprint 2 BATCH-2 + Sprint 4 BATCH-7)
 
 ### H-018: Data Warehouse Sin Entities (INFORMATIVO)
 - **Severidad:** INFORMATIVO
@@ -260,16 +259,19 @@
 
 ## HALLAZGOS FASE-3 (Nuevos - 2026-02-05)
 
-### H-029: Boost System Dead Code (CRITICO)
-- **Severidad:** CRITICA
-- **Descripcion:** active_boosts DDL y entity existen pero NO hay BoostService ni BoostController. ExerciseRewardsService no consulta active_boosts al calcular recompensas. Feature completamente no funcional. Usuarios pueden comprar boosts en tienda pero no pueden activarlos.
-- **Accion:** Crear BoostService + BoostController + integrar en reward pipeline. BATCH-7.
+### H-029: Boost System Dead Code → **PARCIALMENTE RESUELTO**
+- **Severidad:** CRITICA → **PARCIALMENTE RESUELTO (Sprint 4 - BATCH-7)**
+- **Descripcion original:** active_boosts DDL y entity existen pero NO hay BoostService ni BoostController. ExerciseRewardsService no consulta active_boosts al calcular recompensas.
+- **Resolucion parcial:** Entity active-boost.entity.ts verificada y ya alineada con DDL (no requiere cambios). Gap es exclusivamente service/controller (fuera de scope entity remediation).
+- **Pendiente:** Crear BoostService + BoostController + integrar en reward pipeline.
+- **Fecha resolucion parcial:** 2026-02-05 (Sprint 4 - BATCH-7)
 
-### H-030: Discussion Forum Non-Functional (CRITICO)
-- **Severidad:** CRITICA
-- **Descripcion:** discussion_threads tiene DDL y entity pero NO tiene controller ni endpoints. No existe tabla de replies (discussion_replies). FK stale a auth.users.
-- **Impacto:** Feature de foro completamente muerta desde API.
-- **Accion:** Crear controller + tabla discussion_replies + fix FK. BATCH-7.
+### H-030: Discussion Forum Non-Functional → **PARCIALMENTE RESUELTO**
+- **Severidad:** CRITICA → **PARCIALMENTE RESUELTO (Sprint 4 - BATCH-7)**
+- **Descripcion original:** discussion_threads tiene DDL y entity pero NO tiene controller ni endpoints. No existe tabla de replies (discussion_replies). FK stale a auth.users.
+- **Resolucion parcial:** Entity discussion-thread.entity.ts verificada y ya alineada con DDL (no requiere cambios). Gap es exclusivamente controller + replies DDL (fuera de scope entity remediation).
+- **Pendiente:** Crear controller + tabla discussion_replies + fix FK a profiles.
+- **Fecha resolucion parcial:** 2026-02-05 (Sprint 4 - BATCH-7)
 
 ### H-031: Safety Features Missing for EdTech → **PARCIALMENTE RESUELTO**
 - **Severidad:** CRITICA → **PARCIALMENTE RESUELTO (Sprint 2 - BATCH-2)**
@@ -313,10 +315,12 @@
 - **Resolucion:** Removido `unique: true` del @Column decorator de templateKey. DDL solo tiene composite UNIQUE(template_key, version). Adicionalmente, subjectTemplate corregido a nullable (alinea con DDL). Services actualizados con ?? fallback.
 - **Fecha resolucion:** 2026-02-05 (Sprint 3 - BATCH-5)
 
-### H-039: team_vs_team_challenges Zero Backend (MEDIO)
-- **Severidad:** MEDIA
-- **Descripcion:** DDL tiene 30+ columnas con lifecycle completo pero no hay entity, service ni controller.
-- **Accion:** Crear entity + service + controller. BATCH-7.
+### H-039: team_vs_team_challenges Zero Backend → **PARCIALMENTE RESUELTO**
+- **Severidad:** MEDIA → **PARCIALMENTE RESUELTO (Sprint 4 - BATCH-7)**
+- **Descripcion original:** DDL tiene 37+ columnas con lifecycle completo pero no hay entity, service ni controller.
+- **Resolucion parcial:** Entity team-vs-team-challenge.entity.ts creada con 37+ columnas (challenge info, team A/B, config, scoring, results, lifecycle timestamps). Constante TEAM_VS_TEAM_CHALLENGES agregada a database.constants.ts. NOTE: team_challenges es una tabla DIFERENTE (simple 6 cols).
+- **Pendiente:** Crear TeamVsTeamChallengeService + controller.
+- **Fecha resolucion parcial:** 2026-02-05 (Sprint 4 - BATCH-7)
 
 ### H-040: Parent Notifications Parallel System (BAJO)
 - **Severidad:** BAJA
@@ -330,12 +334,12 @@
 | Tipo | Cantidad | Criticos | Altos | Medios | Bajos | Info | Resueltos |
 |------|----------|----------|-------|--------|-------|------|-----------|
 | Hallazgos Preliminares | 15 | 1 | 2 | 6 | 4 | 2 | 3 (H-010, H-011, H-012) |
-| Hallazgos FASE-1 | 5 | 2 | 1 | 0 | 1 | 1 | 2 (H-016, H-020) |
+| Hallazgos FASE-1 | 5 | 2 | 1 | 0 | 1 | 1 | 3 (H-016, H-017, H-020) |
 | Hallazgos FASE-2 | 8 | 4 | 3 | 0 | 0 | 1 | 7 (H-021, H-022, H-023, H-024 parcial, H-025, H-026, H-027) |
-| Hallazgos FASE-3 | 12 | 3 | 3 | 5 | 1 | 0 | 3 (H-017 parcial, H-031 parcial, H-038) |
-| **TOTAL** | **40** | **10** | **9** | **11** | **6** | **4** | **15** (12 full + 3 parcial) |
+| Hallazgos FASE-3 | 12 | 3 | 3 | 5 | 1 | 0 | 6 (H-029 parcial, H-030 parcial, H-031 parcial, H-038, H-039 parcial) |
+| **TOTAL** | **40** | **10** | **9** | **11** | **6** | **4** | **19** (13 full + 6 parcial) |
 | Reclasificados | 1 (H-002: ALTA->MEDIA) | | | | | | |
-| **ABIERTOS** | **25** | **5** | **5** | **7** | **5** | **3** | |
+| **ABIERTOS** | **21** | **3** | **5** | **6** | **5** | **2** | |
 
 ### Hallazgos Resueltos
 
@@ -345,7 +349,7 @@
 | H-011 | MEDIA | Creado DIAGRAMA-ER-COMPLETO.md | FASE-4 |
 | H-012 | MEDIA | Creada TRACEABILITY-COMPLETE.md | FASE-4 |
 | H-016 | CRITICA | 31 constantes corregidas singular→plural en database.constants.ts | Sprint 1 BATCH-1 |
-| H-017 | ALTA | 7/9 entities creadas (guild_emblem, user_block, user_report, comodin_use, rate_limit_log, conversation, conversation_participant) | Sprint 2 BATCH-2 (parcial) |
+| H-017 | ALTA | 9/9 entities creadas (+guild_mission_contribution, team_vs_team_challenge en Sprint 4) | Sprint 2 BATCH-2 + Sprint 4 BATCH-7 |
 | H-020 | BAJA | Constante obsoleta GAMIFICATION.NOTIFICATIONS eliminada | Sprint 1 BATCH-1 |
 | H-021 | CRITICA | auth_provider.entity.ts reescrito (per-user→global OAuth config) + DTOs | Sprint 2 BATCH-3 |
 | H-022 | CRITICA | @ManyToMany eliminado de User y Role entities | Sprint 2 BATCH-3 |
@@ -356,6 +360,9 @@
 | H-027 | ALTA | Membership (3x) + UserSession (1x) @ManyToOne User→Profile | Sprint 3 BATCH-5 |
 | H-031 | CRITICA | Entities user-block + user-report creadas (services/controllers pendientes) | Sprint 2 BATCH-2 (parcial) |
 | H-038 | MEDIA | Removido unique:true de templateKey column, subjectTemplate nullable | Sprint 3 BATCH-5 |
+| H-029 | CRITICA | Entity verified aligned; service/controller gap documented (out of entity scope) | Sprint 4 BATCH-7 (parcial) |
+| H-030 | CRITICA | Entity verified aligned; controller + replies DDL gap documented | Sprint 4 BATCH-7 (parcial) |
+| H-039 | MEDIA | Entity team-vs-team-challenge.entity.ts creada (37+ cols); service/controller pendientes | Sprint 4 BATCH-7 (parcial) |
 
 ### Distribucion por Batch de Remediacion (FASE-2 + FASE-3)
 
@@ -367,7 +374,7 @@
 | ~~BATCH-4~~ | ~~H-023, H-025 (assignment_students +20 cols + scheduled_reports fixes)~~ | ~~1-2h~~ ✅ RESUELTO |
 | ~~BATCH-5~~ | ~~H-024, H-027, H-038 (notifications drift + FK targets + templates)~~ | ~~2-3h~~ ✅ RESUELTO |
 | ~~BATCH-6~~ | ~~H-026 (ContentStatusEnum backlog)~~ | ~~1h~~ ✅ RESUELTO |
-| BATCH-7 | H-029, H-030, H-039 (dead features: boosts, forum, team_vs_team) | 4-6h |
+| ~~BATCH-7~~ | ~~H-017 remaining, H-029, H-030, H-039 (dead features entities + guild_mission_contributions)~~ | ~~2-3h~~ ✅ RESUELTO (entities only; services/controllers fuera de scope) |
 | BATCH-8 | H-032, H-033, H-034, H-037 (stale FKs, broken funcs, tenant API, MV refresh) | 2-3h |
 | BATCH-9 | H-035, H-036, H-040 (routes, junction tables, parent notif ADR) | 2-3h |
 
@@ -383,4 +390,4 @@
 
 ---
 
-*Hallazgos v6.2.0 - 2026-02-05 (Actualizado Sprint 3: 15 hallazgos resueltos (12 full + 3 parcial), 25 abiertos, BATCH-1+2+3+4+5+6 completados)*
+*Hallazgos v6.3.0 - 2026-02-05 (Actualizado Sprint 4: 19 hallazgos resueltos (13 full + 6 parcial), 21 abiertos, BATCH-1+2+3+4+5+6+7 completados)*
