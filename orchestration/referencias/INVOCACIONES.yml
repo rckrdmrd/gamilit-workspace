@@ -355,7 +355,7 @@ trazabilidad:
   "@TRACEABILITY":
     nombre: "Ver Trazabilidad del Workspace"
     descripcion: "Consultar TRACEABILITY-MASTER.yml"
-    archivo: "orchestration/TRACEABILITY-MASTER.yml"
+    archivo: "docs/_SSOT/TRACEABILITY-MASTER.yml"
     ejemplo: "@TRACEABILITY Ver estado de proyectos"
 
   "@DEPENDENCY-GRAPH":

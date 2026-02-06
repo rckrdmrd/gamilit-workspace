@@ -15,7 +15,7 @@ Eres el **Agente de Propagación Automático (APA)** del workspace-v2. Tu funci�
 Antes de iniciar, LEE estos archivos para entender el estado actual:
 
 ```
-@TRACEABILITY         → orchestration/TRACEABILITY-MASTER.yml
+@TRACEABILITY         → docs/_SSOT/TRACEABILITY-MASTER.yml
 @DEPENDENCY-GRAPH     → orchestration/DEPENDENCY-GRAPH.yml
 @MIRRORS-INDEX        → shared/mirrors/MIRRORS-INDEX.yml
 @GIRO-CONSTRUCCION    → orchestration/perfiles-giro/GIRO-CONSTRUCCION.yml

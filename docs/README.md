@@ -21,7 +21,7 @@
 | **Portal Admin** | 7 páginas funcionales (P0+P1: AE-000 a AE-008) | ✅ Funcional |
 | **Épicas MVP** | EXT-001 a EXT-006 (100%) | ✅ Completas |
 | **Sistema Gamificación** | Rangos Maya, ML Coins, Achievements | ✅ v2.3.0 |
-| **Base de Datos** | 16 schemas modulares | ✅ Migrada |
+| **Base de Datos** | 18 schemas modulares | ✅ Migrada |
 
 ### ✅ RECIENTEMENTE IMPLEMENTADO (2025-11-29)
 
@@ -262,8 +262,8 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 | **Épicas Parciales (Backlog)** | - | 5 (30-50%) | 5 |
 | **Módulos Educativos** | 3 | 2 | 5 |
 | **Story Points MVP** | 614 SP | 100 SP | 714 SP |
-| **Schemas BD** | 15 | - | 15 |
-| **Tablas BD** | 132 | - | 132 |
+| **Schemas BD** | 18 | - | 18 |
+| **Tablas BD** | 171 | - | 171 |
 | **Endpoints API MVP** | 300+ | 50+ | 350+ |
 | **Componentes Frontend** | 497 | 50+ | 547+ |
 
@@ -472,8 +472,8 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 
 **Base de Datos:**
 - PostgreSQL
-- 15 schemas modulares
-- 132 tablas
+- 18 schemas modulares
+- 171 tablas
 - 127 indices
 - 31+ politicas RLS
 - 150+ funciones

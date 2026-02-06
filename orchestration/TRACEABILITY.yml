@@ -65,8 +65,8 @@ versiones:
     descripcion: "MVP funcional completo"
     cambios:
       - "Sistema de gamificación completo"
-      - "16 schemas de base de datos"
-      - "137 tablas"
+      - "18 schemas de base de datos"
+      - "171 tablas"
       - "Coherencia 3 capas 99%"
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -236,14 +236,14 @@ metricas_historicas:
     nota: "Mitad de desarrollo"
 
   - fecha: "2025-12"
-    tablas: 137
-    entities: 123
+    tablas: 171
+    entities: 141
     componentes: 464
     nota: "MVP completo"
 
   - fecha: "2026-01"
-    tablas: 137
-    entities: 123
+    tablas: 171
+    entities: 141
     componentes: 464
     nota: "Estabilización y documentación"
 

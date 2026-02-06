@@ -311,7 +311,7 @@ COMMITS=$(cat /tmp/git-operation-{id}.yml | grep commit_sha)
 
 Despues de cada operacion coordinada exitosa:
 
-1. Actualizar `orchestration/TRACEABILITY-MASTER.yml`
+1. Actualizar `docs/_SSOT/TRACEABILITY-MASTER.yml`
 2. Actualizar `orchestration/inventarios/SUBMODULES-INVENTORY.yml`
 3. Actualizar `shared/mirrors/*/PROPAGATION-STATUS.yml` si aplica
 4. Registrar en `orchestration/trazas/TRAZA-GIT-OPERATIONS.md`

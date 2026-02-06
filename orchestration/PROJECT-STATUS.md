@@ -75,14 +75,14 @@
 
 | Capa | Metrica | Valor Auditado |
 |------|---------|----------------|
-| DDL | Schemas activos | 13 (+ 3 vacios) |
-| DDL | Tablas | 140 |
+| DDL | Schemas activos | 16 (+ 2 vacios) |
+| DDL | Tablas | 171 |
 | DDL | Funciones | 112 (deprecated eliminados) |
 | DDL | Triggers | 58 (37 archivos) |
 | DDL | RLS Policies (files) | 34 |
 | DDL | Enums | 36 |
 | DDL | Indexes (files) | 23 |
-| Backend | Entities | 137 (+2 TASK-022 P1-3) |
+| Backend | Entities | 141 |
 | Backend | Services | 121 |
 | Backend | Controllers | 65 |
 | Backend | Endpoints | 750+ |
@@ -104,7 +104,7 @@
 
 | Relacion | Porcentaje | Detalle |
 |----------|-----------|---------|
-| DDL → Backend (entities) | 100% | 137/137 entities mapped (P1-1 + P1-3) |
+| DDL → Backend (entities) | 82.5% | 141 entities mapped |
 | Backend → Frontend (modules) | 87.5% | 14/16 core modules cubiertos |
 | Frontend → Backend (types) | 100% | 9/9 new entities con types (P2-1 + P1-3) |
 | Seeds → DDL config tables | 73.8% | 62/84 config/lookup tables |
@@ -133,7 +133,7 @@
 | create-database.sh | BUENO | 17 fases, dependencias cross-schema correctas |
 | create-database.sh | RESUELTO | 07b/07c RLS incluidas en Fases 15.7/15.8 |
 | create-database.sh | RESUELTO | CRLF→LF fix + .gitattributes (94196876) |
-| unified-recreate-db.sh | VALIDADO | DB recreation 0 errors (16 schemas, 147 tablas, 39 ENUMs, 232 funciones, 109 triggers) |
+| unified-recreate-db.sh | VALIDADO | DB recreation 0 errors (18 schemas, 171 tablas, 39 ENUMs, 232 funciones, 109 triggers) |
 | load-dev-seeds.sh | RESUELTO | 18 archivos orphaned integrados en fases existentes |
 | unified-recreate-db.sh | RESUELTO | Delega a master scripts (create-database.sh / load-dev-seeds.sh) |
 
@@ -194,4 +194,4 @@
 *Actualizado: 2026-02-02*
 *Estandar: SIMCO-ESTANDAR-ORCHESTRATION v1.0.0*
 *Última auditoría: TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS*
-*Nota: Metricas DDL reconciliadas (funciones: 119, triggers: 58, tablas: 140)*
+*Nota: Metricas DDL reconciliadas (funciones: 128, triggers: 49, tablas: 171)*

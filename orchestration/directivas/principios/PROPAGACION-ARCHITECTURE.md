@@ -307,7 +307,7 @@ propagacion:
 - `orchestration/directivas/triggers/TRIGGER-PROPAGACION-AUTOMATICA.md`
 - `orchestration/directivas/simco/SIMCO-PROPAGACION.md`
 - `orchestration/referencias/PROPAGATION-CRITERIA-MATRIX.yml`
-- `orchestration/TRACEABILITY-MASTER.yml`
+- `docs/_SSOT/TRACEABILITY-MASTER.yml`
 - `orchestration/DEPENDENCY-GRAPH.yml`
 - `shared/mirrors/MIRRORS-INDEX.yml`
 

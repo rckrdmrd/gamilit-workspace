@@ -48,7 +48,7 @@ orchestration/
 ├── CONTEXT-MAP.yml                      # [OBLIGATORIO] Mapa de contexto NEXUS
 ├── DEPENDENCY-GRAPH.yml                 # [OBLIGATORIO] Grafo de dependencias
 ├── INHERITANCE-MODEL.yml                # [OBLIGATORIO] Modelo de herencia
-├── TRACEABILITY-MASTER.yml              # [OBLIGATORIO] Trazabilidad maestra
+├── docs/_SSOT/TRACEABILITY-MASTER.yml   # [OBLIGATORIO] Trazabilidad maestra
 ├── ROADMAP.yml                          # [OBLIGATORIO] Prioridades y milestones
 │
 ├── directivas/                          # [OBLIGATORIO] Directivas SIMCO
@@ -88,7 +88,7 @@ orchestration/
 | `CONTEXT-MAP.yml` | Mapa de contexto NEXUS | @CONTEXT-MAP |
 | `DEPENDENCY-GRAPH.yml` | Grafo de dependencias | @DEPENDENCY |
 | `INHERITANCE-MODEL.yml` | Modelo de herencia | @INHERITANCE |
-| `TRACEABILITY-MASTER.yml` | Trazabilidad maestra | @TRACEABILITY |
+| `docs/_SSOT/TRACEABILITY-MASTER.yml` | Trazabilidad maestra | @TRACEABILITY |
 | `ROADMAP.yml` | Prioridades y milestones | @ROADMAP |
 | `SUBMODULES-POLICY.yml` | Política de submodules | @SUBMODULES |
 

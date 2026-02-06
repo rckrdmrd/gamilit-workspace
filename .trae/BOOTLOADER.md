@@ -59,7 +59,7 @@ projects/gamilit/
 │   │   ├── src/components/  # 327 componentes
 │   │   └── ...
 │   └── database/
-│       └── ddl/schemas/  # 16 schemas modulares
+│       └── ddl/schemas/  # 18 schemas (16 active + 2 placeholder)
 ├── orchestration/
 │   ├── CONTEXT-MAP.yml   # Variables resueltas
 │   ├── BOOTLOADER.md     # Arranque de sesión

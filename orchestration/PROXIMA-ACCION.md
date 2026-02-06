@@ -370,9 +370,9 @@ Los únicos gaps reales restantes son scope futuro (Phase 2/3), no bloqueantes.
 | Area | Resultado |
 |------|-----------|
 | A: Commit pendientes TASK-021 | 7 entities + docs committed & pushed |
-| B: Auditoria DDL | 16 schemas, 138 tablas, 89 funciones, 37 triggers, 36 enums |
+| B: Auditoria DDL | 18 schemas, 171 tablas, 89 funciones, 37 triggers, 36 enums |
 | C: Auditoria Seeds | 106 dev / 71 prod, 73.8% cobertura config |
-| D: Coherencia Backend-DDL | 137 entities, 100% coherencia post-fix |
+| D: Coherencia Backend-DDL | 141 entities, 100% coherencia post-fix |
 | E: Coherencia Frontend-Backend | 87.5% modulos cubiertos, 24 type files |
 | F: Validacion Scripts BD | CRLF fix + .gitattributes, RLS phases included |
 | G: Validacion Builds | Backend + Frontend PASS (0 errors) |
@@ -398,8 +398,8 @@ Los únicos gaps reales restantes son scope futuro (Phase 2/3), no bloqueantes.
 
 | Metrica | Valor |
 |---------|-------|
-| Schemas | 16 |
-| Tablas | 147 |
+| Schemas | 18 |
+| Tablas | 171 |
 | ENUMs | 39 |
 | Funciones | 232 |
 | Triggers | 109 |
@@ -737,7 +737,7 @@ host    all    all    0.0.0.0/0    scram-sha-256
 
 **Métricas Actualizadas:**
 - Seeds: 101 prod / 94 dev / 56 staging
-- Tablas DDL: 137 (0 duplicados)
+- Tablas DDL: 171 (0 duplicados)
 - Teacher Portal: 100% páginas funcionales
 
 **Ver detalles:** `orchestration/tareas/TASK-2026-01-16-005/`
@@ -757,8 +757,8 @@ host    all    all    0.0.0.0/0    scram-sha-256
 | Fase 7: Validacion | COMPLETADA | 100% consistencia |
 
 **Metricas Consolidadas:**
-- Database: 16 schemas, 137 tables, 110 functions, 35 triggers, 32 RLS
-- Backend: 17 modules, 108 entities, 612 endpoints, 105 services
+- Database: 18 schemas, 171 tables, 110 functions, 35 triggers, 32 RLS
+- Backend: 17 modules, 141 entities, 612 endpoints, 105 services
 - Frontend: 327 components, 74 pages, 12 stores, 52 api_services
 
 **Ver detalles:** `orchestration/analisis-validacion-documentacion-2026-01-13/`

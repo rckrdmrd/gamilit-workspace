@@ -65,7 +65,7 @@ fuentes:
 
   # Trazabilidad
   trazabilidad:
-    ssot: orchestration/TRACEABILITY-MASTER.yml
+    ssot: docs/_SSOT/TRACEABILITY-MASTER.yml
     alias: "@trazabilidad"
     descripcion: "Trazabilidad maestra del workspace"
 

@@ -152,8 +152,8 @@ npm run validate:api-contract
 
 | Categoría | Estado | Elementos |
 |-----------|--------|-----------|
-| **Database Schemas** | ✅ 100% | 8 schemas |
-| **Database Tables** | ✅ 100% | 40 tablas |
+| **Database Schemas** | ✅ 100% | 18 schemas |
+| **Database Tables** | ✅ 100% | 171 tablas |
 | **API Routes** | ✅ 100% | 75+ rutas |
 | **ENUMs** | ✅ 100% | 25 ENUMs |
 

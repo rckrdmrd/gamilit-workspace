@@ -438,7 +438,7 @@ scripts/
 
 ## INTEGRACIÓN CON OTROS SISTEMAS
 
-### Con TRACEABILITY-MASTER.yml
+### Con docs/_SSOT/TRACEABILITY-MASTER.yml
 
 ```yaml
 # Cada funcionalidad referencia proyectos de TRACEABILITY

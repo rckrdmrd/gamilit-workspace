@@ -49,7 +49,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable
     - "Principios relevantes (CAPVED, ANTI-DUPLICACION, ECONOMIA-TOKENS)"
     - "ALIASES.yml"
   ubicacion:
-    - "TRACEABILITY-MASTER.yml"
+    - "docs/_SSOT/TRACEABILITY-MASTER.yml"
     - "DEPENDENCY-GRAPH.yml"
     - "FUNCTIONALITY-INVENTORY.yml"
   operacion:
@@ -430,7 +430,7 @@ Context Engineering:
 @WS_ORCHESTRATOR: "orchestration/agents/perfiles/PERFIL-WORKSPACE-ORCHESTRATOR.md"
 
 # Inventarios
-@TRACEABILITY: "orchestration/TRACEABILITY-MASTER.yml"
+@TRACEABILITY: "docs/_SSOT/TRACEABILITY-MASTER.yml"
 @DEPENDENCY_GRAPH: "orchestration/DEPENDENCY-GRAPH.yml"
 @FUNC_INVENTORY: "orchestration/inventarios/FUNCTIONALITY-INVENTORY.yml"
 @CATALOG_INDEX: "shared/catalog/CATALOG-INDEX.yml"

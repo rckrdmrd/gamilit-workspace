@@ -105,9 +105,9 @@ Apply that profile's rules during task execution.
 
 ```
 apps/
-├── backend/     → NestJS 11, 17 modules, 612 endpoints
+├── backend/     → NestJS 11, 17 modules, 850 endpoints
 ├── frontend/    → React 18, 4 portals (student, teacher, admin, parent)
-├── database/    → PostgreSQL 16, 16 schemas, 137 tables
+├── database/    → PostgreSQL 16, 18 schemas (16 active + 2 placeholder), 171 tables
 └── devops/      → Scripts and deployment
 ```
 
@@ -198,8 +198,8 @@ Before marking ANY task as completed:
 [ ] Tests pass (if exist)
 
 ### 2. Layer Coherence
-[ ] DDL ↔ Backend coherent (137 tables ↔ entities)
-[ ] Backend ↔ Frontend coherent (612 endpoints ↔ services)
+[ ] DDL ↔ Backend coherent (171 tables ↔ 141 entities, 82.5% coherence)
+[ ] Backend ↔ Frontend coherent (850 endpoints ↔ services)
 
 ### 3. Git Finalized
 [ ] All changes committed

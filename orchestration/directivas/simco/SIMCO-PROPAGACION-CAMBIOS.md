@@ -67,7 +67,7 @@ Protocolo para propagar cambios entre proyectos del workspace manteniendo consis
 cat orchestration/DEPENDENCY-GRAPH.yml | grep -A 20 "proyecto_origen"
 
 # Consultar trazabilidad
-cat orchestration/TRACEABILITY-MASTER.yml | grep -A 10 "cambio_id"
+cat docs/_SSOT/TRACEABILITY-MASTER.yml | grep -A 10 "cambio_id"
 
 # Identificar proyectos consumidores
 cat orchestration/FUNCTIONALITY-TRACEABILITY.yml | grep -A 5 "propagation"
@@ -158,7 +158,7 @@ npm run build && npm run lint && npm run test
 **Actualizar trazabilidad:**
 
 ```yaml
-# En orchestration/TRACEABILITY-MASTER.yml
+# In docs/_SSOT/TRACEABILITY-MASTER.yml
 propagations:
   - id: "PROP-2026-01-16-001"
     origen: "template-saas"
@@ -257,7 +257,7 @@ cat shared/mirrors/*/PROPAGATION-STATUS.yml
 ## Referencias
 
 - `orchestration/DEPENDENCY-GRAPH.yml` - Grafo de dependencias
-- `orchestration/TRACEABILITY-MASTER.yml` - Trazabilidad
+- `docs/_SSOT/TRACEABILITY-MASTER.yml` - Trazabilidad
 - `orchestration/FUNCTIONALITY-TRACEABILITY.yml` - Mapeo funcionalidad→objetos
 - `shared/mirrors/` - Repositorios espejo
 - `@TRIGGER-PROPAGACION-AUTOMATICA` - Trigger de propagación

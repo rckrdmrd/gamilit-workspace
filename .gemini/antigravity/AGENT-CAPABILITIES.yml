@@ -114,12 +114,14 @@ gamilit_context:
 
   metrics:
     backend_modules: 17
-    endpoints: 612
+    endpoints: 850
     frontend_components: 327
     pages: 74
-    database_schemas: 16
-    tables: 137
-    mvp_completion: "94%"
+    database_schemas: 18
+    tables: 171
+    entities: 141
+    mvp_completion: "98%"
+    coherence_ddl_backend: "82.5%"
 
 # =============================================================================
 # CAPABILITIES

@@ -13,7 +13,7 @@ projects/gamilit/
 ├── apps/
 │   ├── backend/        # NestJS 11 - 17 módulos, 612 endpoints
 │   ├── frontend/       # React 18 - 327 componentes, 74 páginas
-│   └── database/ddl/   # PostgreSQL 16 - 16 schemas, 137 tablas
+│   └── database/ddl/   # PostgreSQL 16 - 18 schemas, 171 tablas
 ├── orchestration/      # Documentación operacional
 ├── docs/               # Documentación de usuario
 ├── .claude/            # Config Claude Code
@@ -78,7 +78,7 @@ wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d gamilit_platform
 
 | Archivo | Contenido |
 |---------|-----------|
-| `DATABASE_INVENTORY.yml` | 137 tablas, 16 schemas |
+| `DATABASE_INVENTORY.yml` | 171 tablas, 18 schemas |
 | `BACKEND_INVENTORY.yml` | 17 módulos, 612 endpoints |
 | `FRONTEND_INVENTORY.yml` | 327 componentes, 74 páginas |
 | `MASTER_INVENTORY.yml` | Totales consolidados |

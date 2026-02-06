@@ -11,8 +11,8 @@ Proyecto de base de datos PostgreSQL para la plataforma GAMILIT
 
 | Objeto | Cantidad |
 |--------|----------|
-| Schemas | 16 |
-| Tablas | 129 |
+| Schemas | 18 |
+| Tablas | 171 |
 | Funciones Activas | 110 |
 | Triggers Activos | 35 |
 | Indices | 18 |

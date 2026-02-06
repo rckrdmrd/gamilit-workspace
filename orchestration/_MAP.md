@@ -85,7 +85,7 @@ orchestration/
 |------------|-------------|--------|
 | MASTER_INVENTORY.yml | Inventario maestro consolidado | Activo |
 | BACKEND_INVENTORY.yml | 17 modulos, 612 endpoints | Activo |
-| DATABASE_INVENTORY.yml | 16 schemas, 135 tablas | Activo |
+| DATABASE_INVENTORY.yml | 18 schemas, 171 tablas | Activo |
 | FRONTEND_INVENTORY.yml | 327 componentes, 74 paginas | Activo |
 
 ---
@@ -94,10 +94,10 @@ orchestration/
 
 | Metrica | Valor |
 |---------|-------|
-| Schemas PostgreSQL | 16 |
-| Tablas | 135 |
+| Schemas PostgreSQL | 18 |
+| Tablas | 171 |
 | Endpoints API | 612 |
-| Entities | 108 |
+| Entities | 141 |
 | Componentes | 327 |
 | Paginas | 74 |
 | Estado MVP | 75% |

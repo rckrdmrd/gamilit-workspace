@@ -184,9 +184,9 @@ referencias/prompts/*       → PROMPTS-MASTER-INDEX.md
 
 | Metrica | Valor | Estado |
 |---------|-------|--------|
-| Tablas DDL | 140 | OK |
-| Entities Backend | 142 | OK |
-| Match DDL-Entity | 140/140 | 100% |
+| Tablas DDL | 171 | OK |
+| Entities Backend | 141 | OK |
+| Match DDL-Entity | 141/171 | 82.5% |
 | Gap M:N TypeORM | 2 | Justificado |
 
 ### 6.2 Objetos BD

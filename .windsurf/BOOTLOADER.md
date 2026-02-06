@@ -100,7 +100,7 @@ projects/gamilit/apps/
 │   ├── pages/            # 74 páginas
 │   └── hooks/            # Custom hooks
 └── database/ddl/
-    └── schemas/          # 16 schemas PostgreSQL
+    └── schemas/          # 18 schemas PostgreSQL (16 active + 2 placeholder)
 ```
 
 ---

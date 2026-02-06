@@ -205,7 +205,7 @@ wsl -d Ubuntu-24.04 -u developer -- sudo systemctl start postgresql
 - `@WORKSPACE-REGISTRY` - Registro central de workspaces
 - `@WSL-ENV` - Ambiente WSL local
 - `@WSL-OPS` - Operaciones en WSL (SIMCO-LOCAL-WSL.md)
-- `orchestration/TRACEABILITY-MASTER.yml` - Trazabilidad del workspace
+- `docs/_SSOT/TRACEABILITY-MASTER.yml` - Trazabilidad del workspace
 - `shared/mirrors/workspace-infra/` - Mirror de workspace-infra
 
 ---
