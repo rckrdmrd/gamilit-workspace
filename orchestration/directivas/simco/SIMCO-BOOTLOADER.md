@@ -1,9 +1,9 @@
 # SIMCO-BOOTLOADER.md
 
-**Sistema:** NEXUS v4.0 - Protocolo de Arranque
-**Version:** 1.0.0
-**Fecha:** 2026-01-24
-**Aplica a:** Todos los agentes (Claude Code, Gemini CLI, Trae, Windsurf)
+**Sistema:** NEXUS v4.1 - Protocolo de Arranque (Standalone Gamilit)
+**Version:** 2.0.0
+**Fecha:** 2026-02-11
+**Aplica a:** Todos los agentes operando en gamilit (Claude Code, Gemini CLI, Trae, Windsurf)
 
 ---
 
@@ -71,13 +71,14 @@ El protocolo BOOTLOADER define la secuencia de arranque que **todo agente** debe
 
 **Objetivo:** Establecer contexto base del workspace.
 
-**Archivos a Cargar:**
+**Archivos a Cargar (Standalone Gamilit):**
 ```
 OBLIGATORIO:
 ├── CLAUDE.md                                    [~4000 tokens]
 ├── orchestration/directivas/simco/SIMCO-TAREA.md [~1500 tokens]
-└── orchestration/CONTEXT-MAP.yml                [~800 tokens]
-                                          Total: ~6300 tokens
+├── orchestration/CONTEXT-MAP.yml                [~800 tokens]
+└── Perfil de agente (compact si subagente)      [~500 tokens]
+                                          Total: ~6800 tokens
 ```
 
 **Verificaciones:**
@@ -93,28 +94,13 @@ OBLIGATORIO:
 
 **Objetivo:** Determinar ambito de trabajo.
 
-**Logica de Decision:**
+**Logica de Decision (Standalone):**
 ```
-SI tarea menciona proyecto especifico:
-  → proyecto = nombre_mencionado
-
-SI tarea afecta multiples proyectos:
-  → proyectos = lista_afectados
-  → modo = propagacion
-
-SI tarea es nivel workspace:
-  → proyecto = "workspace"
-  → SALTAR a PASO 5
-
-SI no se puede determinar:
-  → PREGUNTAR antes de continuar
+Gamilit es STANDALONE - proyecto unico:
+  → proyecto = "gamilit" (siempre)
+  → NO hay multi-proyecto ni propagacion
+  → Identificar DOMINIO de la tarea (DDL, Backend, Frontend, Docs, DevOps)
 ```
-
-**Proyectos Validos:**
-- gamilit, template-saas, erp-core, erp-construccion
-- erp-clinicas, erp-mecanicas-diesel, erp-retail
-- erp-vidrio-templado, trading-platform, michangarrito
-- local-llm-agent, etc.
 
 ---
 
@@ -122,16 +108,13 @@ SI no se puede determinar:
 
 **Objetivo:** Cargar contexto especifico del proyecto.
 
-**Archivos a Cargar:**
+**Archivos a Cargar (Gamilit Standalone):**
 ```
 OBLIGATORIO:
-├── projects/{proyecto}/orchestration/00-guidelines/CONTEXTO-PROYECTO.md
-├── projects/{proyecto}/orchestration/PROXIMA-ACCION.md (si existe)
-└── projects/{proyecto}/orchestration/inventarios/MASTER_INVENTORY.yml
-
-OPCIONAL (si existe):
-└── projects/{proyecto}/CLAUDE.md
-                                          Total: ~5000 tokens
+├── orchestration/PROJECT-CONTEXT.md              [~2000 tokens]
+├── orchestration/PROXIMA-ACCION.md (si existe)   [~500 tokens]
+└── orchestration/inventarios/MASTER_INVENTORY.yml [~1500 tokens]
+                                          Total: ~4000 tokens
 ```
 
 **Verificaciones:**
@@ -322,5 +305,5 @@ Si el agente detecta compactacion o reinicio:
 
 ---
 
-*SIMCO-BOOTLOADER.md - Protocolo de Arranque NEXUS v4.0*
-*Obligatorio para todos los agentes del workspace*
+*SIMCO-BOOTLOADER.md - Protocolo de Arranque NEXUS v4.1*
+*Obligatorio para todos los agentes operando en Gamilit (Standalone)*

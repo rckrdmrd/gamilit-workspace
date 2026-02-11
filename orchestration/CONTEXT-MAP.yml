@@ -1,13 +1,13 @@
 # CONTEXT-MAP: GAMILIT
-# Sistema: SIMCO - NEXUS v4.0
-# Propósito: Mapear contexto automático por nivel y tarea
-# Versión: 1.0.0
-# Fecha: 2026-01-04
+# Sistema: SIMCO - NEXUS v4.1
+# Proposito: Mapear contexto automatico por nivel y tarea
+# Version: 3.0.0
+# Fecha: 2026-02-11
 
 metadata:
   proyecto: "gamilit"
   nivel: "STANDALONE"
-  version: "2.0.0"
+  version: "3.0.0"
   ultima_actualizacion: "2026-02-11"
   project_root: "/home/isem/workspace-v2/projects/gamilit"
 
@@ -77,9 +77,10 @@ aliases:
 
 contexto_por_nivel:
   L0_sistema:
-    descripcion: "Principios fundamentales y perfil de agente"
-    tokens_estimados: 4500
+    descripcion: "CLAUDE.md, principios fundamentales y perfil de agente"
+    tokens_estimados: 8000
     obligatorio: true
+    nunca_purgar: true
     archivos:
       - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
         proposito: "Ciclo de vida de tareas"
@@ -104,8 +105,8 @@ contexto_por_nivel:
         tokens: 400
 
   L1_proyecto:
-    descripcion: "Contexto específico de GAMILIT"
-    tokens_estimados: 3000
+    descripcion: "Contexto especifico de GAMILIT"
+    tokens_estimados: 5000
     obligatorio: true
     archivos:
       - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/00-guidelines/CONTEXTO-PROYECTO.md"
@@ -119,8 +120,8 @@ contexto_por_nivel:
         tokens: 1000
 
   L2_operacion:
-    descripcion: "SIMCO específicos según operación y dominio"
-    tokens_estimados: 2500
+    descripcion: "SIMCO especificos segun operacion y dominio"
+    tokens_estimados: 4000
     archivos_por_operacion:
       CREAR:
         - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-CREAR.md"
@@ -260,17 +261,42 @@ info_proyecto:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 validacion_tokens:
-  limite_absoluto: 25000
-  limite_seguro: 18000
-  limite_alerta: 20000
+  limites_por_modelo:
+    claude_opus_4_6:
+      ventana: 200000
+      alerta: 160000
+      seguro: 150000
+    claude_sonnet_4_5:
+      ventana: 200000
+      alerta: 160000
+      seguro: 150000
+    claude_haiku_4_5:
+      ventana: 200000
+      alerta: 160000
+      seguro: 150000
+    gemini_pro_flash:
+      ventana: 1000000
+      alerta: 800000
+      seguro: 750000
+    windsurf_cascade:
+      ventana: 128000
+      alerta: 102000
+      seguro: 96000
 
   presupuesto:
-    L0_sistema: 4500
-    L1_proyecto: 3000
-    L2_operacion: 2500
-    L3_tarea_max: 8000
-    total_base: 10000
-    disponible_tarea: 8000
+    L0_sistema: 8000
+    L1_proyecto: 5000
+    L2_operacion: 4000
+    L3_tarea: 3000
+    total_base: 20000
+    disponible_tarea: 130000  # Claude 150K seguro - 20K base
+
+  triggers_limpieza:
+    post_5_files: "5+ archivos leidos → clasificar ACTIVE/REFERENCE/STALE"
+    post_subtarea: "Subtarea completada → purgar L3"
+    contexto_50_pct: ">50% ventana usada → inventariar + purgar"
+    pre_delegacion: "Antes de delegar → limpiar para subagente"
+    compactacion_inminente: "Sistema avisa → PROXIMA-ACCION + purga agresiva"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # HERENCIA

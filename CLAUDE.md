@@ -1,6 +1,6 @@
 # CLAUDE.md - gamilit
 
-**Sistema:** SIMCO v4.0.0 + SAAD + NEXUS v4.1 | **Version:** 3.0.0 | **Fecha:** 2026-02-11
+**Sistema:** SIMCO v4.0.0 + NEXUS v4.1 | **Version:** 4.0.0 | **Fecha:** 2026-02-11
 
 ---
 
@@ -177,6 +177,83 @@ NO aplica PROPAGATION (es standalone)
 
 ---
 
+## NEXUS v4.1 - GESTION DE CONTEXTO
+
+### Jerarquia de 4 Niveles
+
+| Nivel | Nombre | Tokens | Persistencia | Contenido |
+|-------|--------|--------|--------------|-----------|
+| L0 | Sistema | 8,000 | Siempre | CLAUDE.md, SIMCO-TAREA, principios, perfil agente |
+| L1 | Proyecto | 5,000 | Por proyecto | PROJECT-CONTEXT, PROXIMA-ACCION, MASTER_INVENTORY |
+| L2 | Operacion | 4,000 | Por dominio | SIMCO-DDL/BACKEND/FRONTEND, inventario dominio |
+| L3 | Tarea | 3,000 | Dinamico | Archivos especificos, codigo, dependencias |
+
+**Total base:** 20,000 tokens | **Disponible tarea:** ~130,000 tokens (Claude 200K)
+
+### Limites por Modelo
+
+| Modelo | Ventana | Alerta (80%) | Seguro (75%) |
+|--------|---------|--------------|--------------|
+| Claude Opus 4.6 | 200K | 160K | 150K |
+| Claude Sonnet 4.5 | 200K | 160K | 150K |
+| Claude Haiku 4.5 | 200K | 160K | 150K |
+| Gemini 3 Pro/Flash | 1M | 800K | 750K |
+| Windsurf Cascade | 128K | 102K | 96K |
+
+### Seleccion de Modelo
+
+| Complejidad | Modelo Recomendado | Uso |
+|-------------|-------------------|-----|
+| Alta (arquitectura, multi-archivo, refactor) | Claude Opus 4.6 | Orquestacion, decisiones complejas |
+| Media (features, endpoints, componentes) | Claude Sonnet 4.5 | Desarrollo estandar |
+| Baja (typos, fixes menores, consultas) | Claude Haiku 4.5 | Tareas rapidas |
+| Analisis masivo (>50 archivos) | Gemini Pro | Analisis de codebase completo |
+
+### Cleanup de Contexto Mid-Session
+
+```
+Triggers de limpieza:
+  post_5_files:        5+ archivos leidos → clasificar ACTIVE/REFERENCE/STALE
+  post_subtarea:       Subtarea completada → purgar L3
+  contexto_50_pct:     >50% ventana usada → inventariar + purgar STALE
+  pre_delegacion:      Antes de delegar → limpiar para subagente
+  compactacion:        Sistema avisa → PROXIMA-ACCION + purga agresiva
+
+Clasificacion:
+  ACTIVE    = Necesario AHORA → mantener completo
+  REFERENCE = Ya leido → reemplazar por path + resumen 1 linea
+  STALE     = De tarea anterior → descartar
+```
+
+Ver: `@SIMCO-CONTEXT-CLEANUP` para protocolo detallado.
+
+### Bootloader (5 Pasos)
+
+```
+PASO 1: Cargar L0 → CLAUDE.md + SIMCO-TAREA + CONTEXT-MAP + perfil agente
+PASO 2: Identificar dominio → DDL/Backend/Frontend/DevOps/Docs
+PASO 3: Cargar L1 → PROJECT-CONTEXT + PROXIMA-ACCION + MASTER_INVENTORY
+PASO 4: Cargar L2 → SIMCO del dominio + inventario del dominio
+PASO 5: Iniciar tarea → CAPVED segun modo
+```
+
+---
+
+## AMBIENTES DEV vs PROD
+
+| Aspecto | Dev (WSL Windows) | Prod (74.208.126.102) |
+|---------|-------------------|----------------------|
+| Backend | http://localhost:3006 | https://74.208.126.102 (Nginx:443) |
+| Frontend | http://localhost:3005 | https://74.208.126.102 (Nginx:443) |
+| DB Host | 127.0.0.1 | localhost |
+| SSL | Sin SSL | Nginx + Certbot |
+| Deploy | npm run dev | PM2 fork mode |
+| Swagger | Habilitado | Deshabilitado |
+
+Ver: `docs/20-architecture/AMBIENTES-DEV-PROD.md` para detalles completos.
+
+---
+
 ## ALIASES DE INVOCACION RAPIDA
 
 ### Proyecto Local
@@ -203,11 +280,25 @@ NO aplica PROPAGATION (es standalone)
 | @TRIGGERS | orchestration/directivas/triggers/ |
 | @PERFILES-MAP | orchestration/agents/perfiles/_MAP.md |
 
+### Context Management (NEXUS v4.1)
+| Alias | Ruta |
+|-------|------|
+| @NEXUS | orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md |
+| @CONTEXT-MAP | orchestration/CONTEXT-MAP.yml |
+| @BOOTLOADER | orchestration/directivas/simco/SIMCO-BOOTLOADER.md |
+| @SIMCO-CONTEXT-CLEANUP | orchestration/directivas/simco/SIMCO-CONTEXT-CLEANUP.md |
+| @SIMCO-CONTEXT-ENGINEERING | orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md |
+| @SIMCO-CONTROL-TOKENS | orchestration/directivas/simco/SIMCO-CONTROL-TOKENS.md |
+| @SIMCO-CCA-SUBAGENTE | orchestration/directivas/simco/SIMCO-CCA-SUBAGENTE.md |
+| @PROXIMA-ACCION | orchestration/PROXIMA-ACCION.md |
+| @COMPACT-PROFILES | orchestration/agents/perfiles/compact/ |
+
 ### Deployment
 | Alias | Ruta |
 |-------|------|
 | @PERFIL-DEPLOY | orchestration/agents/perfiles/PERFIL-DEPLOY-SERVER.md |
 | @ECOSYSTEM | ecosystem.config.js |
+| @AMBIENTES | docs/20-architecture/AMBIENTES-DEV-PROD.md |
 
 ---
 

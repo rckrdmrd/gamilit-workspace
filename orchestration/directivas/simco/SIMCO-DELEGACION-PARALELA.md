@@ -1,9 +1,10 @@
 # SIMCO: DELEGACIÓN PARALELA CON TRACKING
 
-**Versión:** 1.0.0
-**Sistema:** SIMCO - NEXUS v4.0
-**Propósito:** Orquestación de hasta 5 subagentes con tracking de sesión
-**Fecha:** 2026-01-04
+**Version:** 1.1.0
+**Sistema:** SIMCO - NEXUS v4.1
+**Proposito:** Orquestacion de hasta 5 subagentes con tracking de sesion
+**Fecha:** 2026-02-11
+**Actualizado:** Limites platform-aware, Gemini CLI parallelism
 
 ---
 

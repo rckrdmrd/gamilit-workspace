@@ -1,20 +1,45 @@
 # SIMCO: CONTROL DE TOKENS
 
-**Versión:** 1.0.0
-**Sistema:** SIMCO - NEXUS v4.0
-**Propósito:** Gestionar límites de tokens para evitar errores de overflow
-**Fecha:** 2026-01-04
+**Version:** 2.0.0
+**Sistema:** SIMCO - NEXUS v4.1
+**Proposito:** Gestionar limites de tokens por modelo para evitar errores de overflow
+**Fecha:** 2026-02-11
 
 ---
 
-## LÍMITES ESTABLECIDOS
+## LIMITES POR MODELO
 
 ```yaml
-LIMITES_TOKENS:
-  absoluto: 25000      # Máximo por solicitud (error si se supera)
-  alerta: 20000        # Warning - considerar desglose
-  seguro: 18000        # Recomendado para operación normal
-  minimo_efectivo: 5000 # Mínimo para tareas simples
+LIMITES_POR_MODELO:
+  claude_opus_4_6:
+    ventana_contexto: 200000
+    alerta: 160000        # 80%
+    seguro: 150000        # 75%
+    minimo_efectivo: 10000
+
+  claude_sonnet_4_5:
+    ventana_contexto: 200000
+    alerta: 160000
+    seguro: 150000
+    minimo_efectivo: 10000
+
+  claude_haiku_4_5:
+    ventana_contexto: 200000
+    alerta: 160000
+    seguro: 150000
+    minimo_efectivo: 10000
+
+  gemini_pro_flash:
+    ventana_contexto: 1000000
+    alerta: 800000
+    seguro: 750000
+    minimo_efectivo: 10000
+
+  windsurf_cascade:
+    ventana_contexto: 128000
+    alerta: 102000        # 80%
+    seguro: 96000         # 75%
+    minimo_efectivo: 8000
 ```
 
 ---
@@ -24,40 +49,46 @@ LIMITES_TOKENS:
 ```yaml
 PRESUPUESTO_CONTEXTO:
   L0_sistema:
-    tokens: 4500
+    tokens: 8000
     incluye:
-      - 6 Principios fundamentales (~600 tokens c/u = 3600)
+      - CLAUDE.md (~4000 tokens)
+      - SIMCO-TAREA.md (~1500 tokens)
+      - Principios fundamentales resumen (~1500 tokens)
       - Perfil de agente (~500 tokens)
-      - ALIASES.yml resueltos (~400 tokens)
+      - CONTEXT-MAP.yml (~500 tokens)
     obligatorio: true
+    nunca_purgar: true
 
   L1_proyecto:
-    tokens: 3000
+    tokens: 5000
     incluye:
-      - CONTEXTO-PROYECTO.md (~1500 tokens)
+      - PROJECT-CONTEXT.md (~2000 tokens)
       - PROXIMA-ACCION.md (~500 tokens)
-      - Inventario relevante (~1000 tokens)
+      - MASTER_INVENTORY.yml (~1500 tokens)
+      - Variables pre-resueltas (~1000 tokens)
     obligatorio: true
 
   L2_operacion:
-    tokens: 2500
+    tokens: 4000
     incluye:
-      - SIMCO de operación (~800 tokens)
-      - SIMCO de dominio (~800 tokens)
-      - Referencias específicas (~900 tokens)
-    obligatorio: true
+      - SIMCO de dominio (~1200 tokens)
+      - Inventario de dominio (~1500 tokens)
+      - Referencias especificas (~1300 tokens)
+    obligatorio: false
+    purgar_al_cambiar_dominio: true
 
   L3_tarea:
-    tokens: variable (max 8000)
+    tokens: 3000 (dinamico, max segun modelo)
     incluye:
-      - Especificación de tarea
-      - Código de referencia (solo líneas relevantes)
-      - DDL relacionado (si aplica)
+      - Especificacion de tarea
+      - Codigo de referencia (solo lineas relevantes)
+      - DDL/Entity/Component relacionado
     dinamico: true
+    purgar_al_completar_subtarea: true
 
-  TOTAL_BASE: 10000   # L0 + L1 + L2
-  DISPONIBLE_TAREA: 8000  # 18000 - 10000
-  MARGEN_SEGURIDAD: 7000  # Para respuesta del agente
+  TOTAL_BASE: 20000      # L0 + L1 + L2 + L3
+  DISPONIBLE_TAREA: 130000  # 150000 seguro - 20000 base (Claude)
+  MARGEN_SEGURIDAD: 50000   # Para respuesta del agente
 ```
 
 ---
@@ -134,23 +165,45 @@ TECNICAS_COMPACTACION:
 
 ## DETECCIÓN Y ALERTAS
 
-### Señales de Riesgo
+### Triggers de Limpieza
+
+```yaml
+TRIGGERS_LIMPIEZA:
+  post_5_files:
+    condicion: "5+ archivos leidos en sesion"
+    accion: "Evaluar ACTIVE vs REFERENCE vs STALE"
+
+  post_subtarea:
+    condicion: "Subtarea completada"
+    accion: "Purgar L3 completado"
+
+  contexto_50_pct:
+    condicion: "Uso > 50% ventana de contexto"
+    accion: "Inventariar + clasificar + purgar STALE"
+
+  pre_delegacion:
+    condicion: "Antes de delegar a subagente"
+    accion: "Limpiar para maximizar espacio"
+
+  compactacion_inminente:
+    condicion: "Sistema indica compactacion proxima"
+    accion: "Guardar PROXIMA-ACCION + purga agresiva"
+```
+
+### Senales de Riesgo (Claude 200K)
 
 ```yaml
 ALERTA_AMARILLA:
-  condicion: "tokens_estimados > 15000"
-  accion: "Considerar desglose"
-  mensaje: "Tarea grande - evaluar si se puede dividir"
+  condicion: "tokens_estimados > 120000"
+  accion: "Considerar limpieza de contexto"
 
 ALERTA_NARANJA:
-  condicion: "tokens_estimados > 20000"
-  accion: "Desglose RECOMENDADO"
-  mensaje: "Riesgo de truncamiento - dividir tarea"
+  condicion: "tokens_estimados > 160000"
+  accion: "Limpieza RECOMENDADA, desglose si necesario"
 
 ALERTA_ROJA:
-  condicion: "tokens_estimados > 23000"
-  accion: "Desglose OBLIGATORIO"
-  mensaje: "Error inminente - NO proceder sin dividir"
+  condicion: "tokens_estimados > 180000"
+  accion: "Limpieza OBLIGATORIA, guardar PROXIMA-ACCION"
 ```
 
 ### Estimación de Tokens
@@ -274,4 +327,4 @@ Para subagentes, usar:
 
 ---
 
-**Version:** 1.1.0 | **Sistema:** SIMCO-NEXUS v4.0 | **Tipo:** Directiva de Control
+**Version:** 2.0.0 | **Sistema:** SIMCO-NEXUS v4.1 | **Tipo:** Directiva de Control

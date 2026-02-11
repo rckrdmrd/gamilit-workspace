@@ -435,5 +435,29 @@ sesiones:
 
 ---
 
-*SIMCO-CONTEXT-MANAGEMENT-V2.md - Sistema NEXUS v4.0*
-*Adoptado de implementacion probada en Gamilit*
+## 11. Limites por Modelo
+
+| Modelo | Ventana | Alerta (80%) | Seguro (75%) |
+|--------|---------|--------------|--------------|
+| Claude Opus 4.6 | 200K | 160K | 150K |
+| Claude Sonnet 4.5 | 200K | 160K | 150K |
+| Claude Haiku 4.5 | 200K | 160K | 150K |
+| Gemini 3 Pro/Flash | 1M | 800K | 750K |
+| Windsurf Cascade | 128K | 102K | 96K |
+
+## 12. Triggers de Limpieza Mid-Session
+
+| Trigger | Condicion | Accion |
+|---------|-----------|--------|
+| `post_5_files` | 5+ archivos leidos | Clasificar ACTIVE/REFERENCE/STALE |
+| `post_subtarea` | Subtarea completada | Purgar L3 |
+| `contexto_50_pct` | >50% ventana usada | Inventariar + purgar |
+| `pre_delegacion` | Antes de delegar | Limpiar para subagente |
+| `compactacion_inminente` | Sistema avisa | PROXIMA-ACCION + purga agresiva |
+
+Ver: `SIMCO-CONTEXT-CLEANUP.md` para protocolo detallado.
+
+---
+
+*SIMCO-CONTEXT-MANAGEMENT-V2.md - Sistema NEXUS v4.1*
+*Standalone Gamilit - Gestion de Contexto Jerarquico*
