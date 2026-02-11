@@ -8,7 +8,7 @@
 | **Estado** | completed |
 | **Prioridad** | P1 |
 
-**ADR:** [ADR-0019](../../../../../../../docs/90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**ADR:** [ADR-0019](../../../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
 
 ---
 
@@ -54,7 +54,7 @@ Integracion end-to-end entre las tres capas del sistema gamilit (DDL, Backend, F
 
 ## Tracking
 
-**YAML:** [EPIC-GAM-INTEGRATION.yml](../../../../orchestration/work-items/epics/EPIC-GAM-INTEGRATION.yml)
+**YAML:** [EPIC-GAM-INTEGRATION.yml](../../../../../orchestration/work-items/epics/EPIC-GAM-INTEGRATION.yml)
 
 ---
 *Generado: 2026-02-07 | SSOT: ADR-0019 | Template: TEMPLATE-EPICA.md v2.0.0*

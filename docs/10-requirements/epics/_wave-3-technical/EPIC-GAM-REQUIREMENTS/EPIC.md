@@ -8,7 +8,7 @@
 | **Estado** | completed |
 | **Prioridad** | P1 |
 
-**ADR:** [ADR-0019](../../../../../../../docs/90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**ADR:** [ADR-0019](../../../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
 
 ---
 
@@ -53,7 +53,7 @@ Definicion completa de requerimientos funcionales y no funcionales para la plata
 
 ## Tracking
 
-**YAML:** [EPIC-GAM-REQUIREMENTS.yml](../../../../orchestration/work-items/epics/EPIC-GAM-REQUIREMENTS.yml)
+**YAML:** [EPIC-GAM-REQUIREMENTS.yml](../../../../../orchestration/work-items/epics/EPIC-GAM-REQUIREMENTS.yml)
 
 ---
 *Generado: 2026-02-07 | SSOT: ADR-0019 | Template: TEMPLATE-EPICA.md v2.0.0*

@@ -3,8 +3,8 @@
 > Indice de epicas del proyecto gamilit (Plataforma Educativa Gamificada)
 
 **SSOT:** Este directorio es la fuente unica de documentacion narrativa de epicas del proyecto.
-**Tracking:** [orchestration/work-items/epics/](../../../../orchestration/work-items/epics/)
-**ADR:** [ADR-0019](../../../../../../../docs/90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**Tracking:** [orchestration/work-items/epics/](../../../orchestration/work-items/epics/)
+**ADR:** [ADR-0019](../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
 
 ---
 

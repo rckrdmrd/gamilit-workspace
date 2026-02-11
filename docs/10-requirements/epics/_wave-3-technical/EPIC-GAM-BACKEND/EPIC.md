@@ -8,7 +8,7 @@
 | **Estado** | completed |
 | **Prioridad** | P1 |
 
-**ADR:** [ADR-0019](../../../../../../../docs/90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**ADR:** [ADR-0019](../../../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
 
 ---
 
@@ -57,7 +57,7 @@ Implementacion completa del backend NestJS 11 para la plataforma educativa gamil
 
 ## Tracking
 
-**YAML:** [EPIC-GAM-BACKEND.yml](../../../../orchestration/work-items/epics/EPIC-GAM-BACKEND.yml)
+**YAML:** [EPIC-GAM-BACKEND.yml](../../../../../orchestration/work-items/epics/EPIC-GAM-BACKEND.yml)
 
 ---
 *Generado: 2026-02-07 | SSOT: ADR-0019 | Template: TEMPLATE-EPICA.md v2.0.0*

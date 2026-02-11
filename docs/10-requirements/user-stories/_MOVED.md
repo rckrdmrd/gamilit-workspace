@@ -2,7 +2,7 @@
 
 > Las User Stories de este proyecto han sido co-localizadas con sus EPICs.
 
-**ADR:** [ADR-0020](../../../../../../docs/90-adr/ADR-0020-jerarquia-anidada-work-items.md)
+**ADR:** [ADR-0020](../../90-adr/ADR-0020-jerarquia-anidada-work-items.md)
 **Fecha de migracion:** 2026-02-07
 
 ## Nueva ubicacion
