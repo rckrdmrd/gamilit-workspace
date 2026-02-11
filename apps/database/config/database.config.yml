@@ -2,9 +2,8 @@
 # DATABASE CONFIGURATION - Gamilit Platform
 # =============================================================================
 # Proyecto: gamilit (STANDALONE)
-# Stack: PostgreSQL 16 + Redis 7
-# Infra integration: workspace-arch/infra/
-# Referencia: unified-recreate-db.sh, WORKSPACE-INTEGRATION.yml
+# Stack: PostgreSQL 15 + Redis 7
+# Referencia: apps/database/scripts/recreate-database.sh
 # =============================================================================
 
 version: "1.0.0"
@@ -25,7 +24,7 @@ project:
 # CONEXION
 # =============================================================================
 # Nota: password NO se almacena aqui. Usar variable de entorno o
-# consultar CREDENTIALS-INVENTORY.yml en workspace-arch/orchestration/inventarios/
+# consultar .env.database o orchestration/inventarios/CREDENTIALS-INVENTORY.yml
 # =============================================================================
 
 database:
@@ -319,18 +318,13 @@ stats:
 # =============================================================================
 
 recreation:
-  # Comando unificado (recomendado)
-  wsl_command: >-
-    wsl -d Ubuntu-24.04 -u developer -- bash
-    '/mnt/c/Empresas/ISEM/workspace-arch/workspace-projects/scripts/database/unified-recreate-db.sh'
-    gamilit --drop
+  # Script local (recomendado)
+  local_script: "apps/database/scripts/recreate-database.sh"
+  local_usage: "bash apps/database/scripts/recreate-database.sh"
 
-  # Script local (alternativo)
-  local_script: "create-database.sh"
-  local_usage: "./create-database.sh 'postgresql://gamilit_user:PASSWORD@localhost:5432/gamilit_platform'"
-
-  # Drop y recrear (alternativo)
-  drop_recreate_script: "drop-and-recreate-database.sh"
+  # Alternativo
+  create_script: "apps/database/scripts/create-database.sh"
+  create_usage: "./create-database.sh 'postgresql://gamilit_user:PASSWORD@localhost:5432/gamilit_platform'"
 
 # =============================================================================
 # AMBIENTES
@@ -374,5 +368,5 @@ environments:
 #    30 achievements, y configuracion completa del sistema.
 #
 # 6. Credenciales de produccion NO van en este archivo. Consultar:
-#    workspace-arch/orchestration/inventarios/CREDENTIALS-INVENTORY.yml
+#    .env.database o orchestration/inventarios/CREDENTIALS-INVENTORY.yml
 # =============================================================================

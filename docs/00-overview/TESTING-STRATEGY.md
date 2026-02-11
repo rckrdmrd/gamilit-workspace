@@ -186,7 +186,7 @@ npm run test -- --testPathPattern=components/gamification
 ### Validacion DDL
 ```bash
 # Recrear BD completa y validar schemas
-wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/workspace-arch/workspace-projects/scripts/database/unified-recreate-db.sh' gamilit --drop
+bash apps/database/scripts/recreate-database.sh
 ```
 
 ### Validaciones Automaticas

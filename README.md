@@ -153,8 +153,8 @@ npm run test         # Vitest
 npm run typecheck    # TypeScript
 npm run dev          # Desarrollo (puerto 3005)
 
-# Database (via WSL)
-wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/workspace-arch/workspace-projects/scripts/database/unified-recreate-db.sh' gamilit --drop
+# Database
+bash apps/database/scripts/recreate-database.sh
 ```
 
 ---

@@ -81,8 +81,8 @@ volumes:
 ### Recrear Base de Datos
 
 ```bash
-# Recrear BD completa desde DDL (via WSL)
-wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/workspace-arch/workspace-projects/scripts/database/unified-recreate-db.sh' gamilit --drop
+# Recrear BD completa desde DDL
+bash apps/database/scripts/recreate-database.sh
 
 # Conectar a BD
 psql -U gamilit_user -d gamilit_platform -h localhost -p 5432
