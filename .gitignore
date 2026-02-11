@@ -65,9 +65,10 @@ config/credentials.json
 *.sqlite3
 *.db
 
-# Database connection strings (excepción: ejemplos con .example)
+# Database connection strings (excepción: ejemplos y src/config)
 database.config.ts
 !database.config.example.ts
+!apps/backend/src/config/database.config.ts
 
 # === LOGS ===
 logs/

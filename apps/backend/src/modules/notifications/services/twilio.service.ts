@@ -1,7 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Twilio } from 'twilio';
-import { MessageInstance } from 'twilio/lib/rest/api/v2010/account/message';
 
 /**
  * Twilio error interface for type-safe error handling
@@ -172,7 +171,7 @@ export class TwilioService implements OnModuleInit {
     }
 
     try {
-      const message: MessageInstance = await this.client.messages.create({
+      const message = await this.client.messages.create({
         body,
         from: this.fromNumber,
         to: formattedTo,
