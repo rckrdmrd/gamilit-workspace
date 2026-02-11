@@ -77,8 +77,8 @@ Branch: main
 ```
 Servidor: 74.208.126.102
 Usuario: isem
-Backend: Puerto 4006 interno (Nginx proxy 3006→4006 HTTPS), fork mode PM2
-Frontend: Puerto 4005 interno (Nginx proxy 3005→4005 HTTPS), fork mode PM2
+Backend: Puerto 3006 (HTTPS en prod), fork mode PM2
+Frontend: Puerto 3005 (HTTPS en prod), fork mode PM2
 
 Deploy agent workflow:
   1. git pull origin main
@@ -219,7 +219,7 @@ gamilit/
 +-- README.md
 +-- _INDEX.yml                   <- Redirect stub -> orchestration/_INDEX.yml
 +-- _inheritance.yml             <- Redirect stub -> orchestration/_inheritance.yml
-+-- ecosystem.config.js          <- PM2 config (backend:4006, frontend:4005, fork mode)
++-- ecosystem.config.js          <- PM2 config (backend:3006, frontend:3005, fork mode)
 +-- apps/                        <- MONOREPO (tracked en mismo repo)
 |   +-- backend/                 <- NestJS 11 (22 modulos, 850 endpoints)
 |   +-- frontend/                <- React 19 + Zustand + TailwindCSS
