@@ -12,7 +12,7 @@
 DROP TABLE IF EXISTS educational_content.media_attachments CASCADE;
 
 -- Crear tabla
-CREATE TABLE IF NOT EXISTS educational_content.media_attachments (
+CREATE TABLE educational_content.media_attachments (
     -- Identificador
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

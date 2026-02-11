@@ -7,7 +7,8 @@ import { CrucigramaClue } from './CrucigramaClue';
 import { CrucigramaData, CrucigramaCell } from './crucigramaTypes';
 import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -39,6 +40,8 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
   const [grid, setGrid] = useState<CrucigramaCell[][]>(
     exercise.grid.map((row) => row.map((cell) => ({ ...cell, userInput: cell.userInput || '' }))),
   );
@@ -214,7 +217,7 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
       });
 
       // Submit to backend API
-      const response = await submitExercise(exercise.id, user.id, { clues: answersObj });
+      const response = await submitAsync({ clues: answersObj });
 
       // Show backend response
       setFeedback({
@@ -272,6 +275,13 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
 
   return (
     <>
+      {/* Instructions */}
+      <div className="mb-4 rounded-lg bg-detective-bg-secondary p-4">
+        <p className="text-sm text-detective-text-secondary">
+          Completa el crucigrama escribiendo las respuestas en las celdas. Haz clic en una celda para seleccionarla y escribe la letra correspondiente.
+        </p>
+      </div>
+
       {/* Main Content */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Grid */}

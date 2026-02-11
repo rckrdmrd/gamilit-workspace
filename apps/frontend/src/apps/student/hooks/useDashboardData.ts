@@ -144,8 +144,6 @@ function parseTimeToSeconds(timeStr: string): number {
 // ============================================================================
 
 async function fetchDashboardData(userId: string): Promise<DashboardData> {
-  console.log('🚀 [useDashboardData] Fetching dashboard data for userId:', userId);
-
   // FIX 2026-01-04: Usar Promise.allSettled para que un endpoint fallido no rompa todo
   // Antes: Promise.all fallaba TODO si un endpoint retornaba 404
   const results = await Promise.allSettled([
@@ -170,8 +168,6 @@ async function fetchDashboardData(userId: string): Promise<DashboardData> {
       console.warn(`⚠️ [useDashboardData] Endpoint ${endpoints[index]} failed:`, result.reason);
     }
   });
-
-  console.log('✅ [useDashboardData] API calls completed (some may have failed gracefully)');
 
   // Process achievements data (con fallback si endpoint fallo)
   // FIX: CORR-005 - Handle new response structure { data: { achievements, total } }
@@ -239,9 +235,6 @@ async function fetchDashboardData(userId: string): Promise<DashboardData> {
   // FIX 2026-01-04: Manejar respuestas null de endpoints fallidos
   const rankCurrent = rankCurrentRes?.data || null;
   const rankProgress = rankProgressRes?.data || null;
-
-  console.log('🔍 [useDashboardData] rankCurrent:', rankCurrent);
-  console.log('🔍 [useDashboardData] rankProgress:', rankProgress);
 
   // Backend returns snake_case: current_rank, xp_current, xp_required, progress_percentage
   // FIX 2026-01-04: Fallback a 'Ajaw' si no hay datos de rango

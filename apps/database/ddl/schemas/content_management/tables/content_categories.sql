@@ -3,6 +3,8 @@
 -- Descripción: Categorías jerárquicas para organización de contenido
 -- CREADO: 2025-11-08
 
+DROP TABLE IF EXISTS content_management.content_categories CASCADE;
+
 CREATE TABLE content_management.content_categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,

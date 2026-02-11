@@ -9,7 +9,8 @@ import { debateTopic } from './debateDigitalMockData';
 import type { DebateMessage, DebateDigitalAnswers } from './debateDigitalTypes';
 import { calculateTimeBonus } from '@/shared/utils/scoring';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -17,9 +18,14 @@ interface ExerciseProps {
   exerciseId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: number) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onProgressUpdate?: (data: any) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+  }>;
 }
 
 interface ExerciseState {
@@ -34,9 +40,12 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
   onExit,
   onProgressUpdate,
   initialData,
+  actionsRef,
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exerciseId);
+
   const [messages, setMessages] = useState<DebateMessage[]>(initialData?.messages || []);
   const [input, setInput] = useState('');
   const [aiTyping, setAiTyping] = useState(false);
@@ -53,7 +62,6 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
   const [isPendingReview, setIsPendingReview] = useState(false);
   const [userPosition, setUserPosition] = useState<'a_favor' | 'en_contra' | 'neutral'>('neutral');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const actionsRef = useRef<any>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -82,17 +90,31 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages, currentScore]);
 
-  // Update progress
+  // Update progress with answers
   useEffect(() => {
-    const userMessages = messages.filter((m) => m.sender === 'user').length;
+    const userMessages = messages.filter((m) => m.sender === 'user');
     const targetMessages = 5; // Minimum messages for completion
-    const progress = Math.min(100, (userMessages / targetMessages) * 100);
-    onProgressUpdate?.(progress);
-
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
+
+    if (onProgressUpdate) {
+      onProgressUpdate({
+        progress: {
+          currentStep: userMessages.length,
+          totalSteps: targetMessages,
+          score: 0,
+          hintsUsed: 0,
+          timeSpent: elapsed,
+        },
+        answers: {
+          position: userPosition,
+          arguments: userMessages.map((m) => m.text),
+          messageCount: userMessages.length,
+        },
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages]);
+  }, [messages, userPosition]);
 
   const saveProgress = () => {
     const state: ExerciseState = {
@@ -172,7 +194,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       };
 
       // Submit to backend
-      const response = await submitExercise(exerciseId, user.id, answers);
+      const response = await submitAsync(answers);
 
       // CORRECCION-001: Verificar si requiere revision manual del maestro
       if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
@@ -257,7 +279,6 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       actionsRef.current = {
         handleReset,
         handleCheck: handleComplete,
-        getState: () => ({ messages, currentScore }),
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -270,7 +291,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center gap-3">
               <MessageCircle className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">Debate Digital</h2>
@@ -286,7 +307,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="rounded-detective-lg bg-gray-50 p-4 border border-detective-border-light"
+            className="rounded-detective-lg bg-detective-bg p-4 border border-detective-border-light"
           >
             <p className="text-detective-sm font-medium text-detective-text mb-3">
               Selecciona tu posicion en el debate:
@@ -315,7 +336,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
               </DetectiveButton>
             </div>
             {userPosition === 'neutral' && (
-              <p className="text-detective-xs text-gray-500 mt-2">
+              <p className="text-detective-xs text-detective-text-secondary mt-2">
                 Selecciona una posicion antes de comenzar el debate.
               </p>
             )}
@@ -339,7 +360,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
                         className={`max-w-[70%] rounded-lg p-4 ${
                           msg.sender === 'user'
                             ? 'bg-detective-orange text-white'
-                            : 'bg-gray-100 text-detective-text'
+                            : 'bg-detective-bg-secondary text-detective-text'
                         }`}
                       >
                         <div className="mb-2 flex items-center gap-2">
@@ -368,7 +389,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
                     animate={{ opacity: 1 }}
                     className="flex justify-start"
                   >
-                    <div className="rounded-lg bg-gray-100 p-4">
+                    <div className="rounded-lg bg-detective-bg-secondary p-4">
                       <div className="flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin" />
                         <span className="text-detective-sm">IA está escribiendo...</span>

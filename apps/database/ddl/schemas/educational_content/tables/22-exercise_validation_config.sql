@@ -6,7 +6,9 @@
 -- Tarea: DB-116 (Handoff FE-059)
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS educational_content.exercise_validation_configs (
+DROP TABLE IF EXISTS educational_content.exercise_validation_configs CASCADE;
+
+CREATE TABLE educational_content.exercise_validation_configs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- TIPO DE EJERCICIO

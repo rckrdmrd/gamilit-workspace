@@ -8,6 +8,8 @@
 -- Las solicitudes pendientes están en social_features.friend_requests
 -- =====================================================
 
+DROP TABLE IF EXISTS social_features.friendships CASCADE;
+
 CREATE TABLE social_features.friendships (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,

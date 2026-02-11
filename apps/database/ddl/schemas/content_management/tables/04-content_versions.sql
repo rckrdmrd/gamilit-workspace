@@ -2,7 +2,9 @@
 -- TABLE: content_management.content_versions
 -- Description: Version control for content (exercises, modules, etc.)
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS content_management.content_versions (
+DROP TABLE IF EXISTS content_management.content_versions CASCADE;
+
+CREATE TABLE content_management.content_versions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID REFERENCES auth_management.tenants(id) ON DELETE CASCADE,
 

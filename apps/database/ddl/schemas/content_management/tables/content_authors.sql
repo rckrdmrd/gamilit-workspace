@@ -3,6 +3,8 @@
 -- Descripción: Autores de contenido educativo
 -- CREADO: 2025-11-08
 
+DROP TABLE IF EXISTS content_management.content_authors CASCADE;
+
 CREATE TABLE content_management.content_authors (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,

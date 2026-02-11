@@ -19,7 +19,7 @@ import {
   ApiBearerAuth,
   ApiBody,
 } from '@nestjs/swagger';
-import { AuthService, SessionManagementService, SecurityService, EmailVerificationService, PasswordRecoveryService, TwoFactorAuthService } from '../services';
+import { AuthService, SessionManagementService, SecurityService, TwoFactorAuthService } from '../services';
 import {
   RegisterUserDto,
   UserResponseDto,
@@ -27,9 +27,6 @@ import {
   RefreshTokenDto,
   UpdateProfileDto,
   UserSessionResponseDto,
-  VerifyEmailDto,
-  RequestPasswordResetDto,
-  ResetPasswordDto,
 } from '../dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AuthRequest } from '@shared/types';
@@ -45,6 +42,12 @@ import { AuthRequest } from '@shared/types';
  * - POST /api/auth/logout - Cerrar sesión
  * - POST /api/auth/refresh - Renovar access token
  * - GET /api/auth/profile - Obtener perfil del usuario autenticado
+ * - PUT /api/auth/profile - Actualizar perfil
+ * - GET/DELETE /api/auth/sessions - Gestión de sesiones
+ * - /api/auth/2fa/* - Two-Factor Authentication
+ *
+ * @note FIX H-035: verify-email, forgot-password, reset-password, change-password
+ *       moved to PasswordController to eliminate duplicate routes.
  */
 @ApiTags('Authentication')
 @Controller('auth')
@@ -53,8 +56,6 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly sessionService: SessionManagementService,
     private readonly securityService: SecurityService,
-    private readonly emailVerificationService: EmailVerificationService,
-    private readonly passwordRecoveryService: PasswordRecoveryService,
     private readonly twoFactorAuthService: TwoFactorAuthService,
   ) {}
 
@@ -229,107 +230,9 @@ export class AuthController {
     return this.authService.toUserResponse(updatedUser);
   }
 
-  /**
-   * Verificar email del usuario
-   */
-  @Post('verify-email')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Verificar email del usuario' })
-  @ApiResponse({
-    status: 200,
-    description: 'Email verificado exitosamente',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-      },
-    },
-  })
-  @ApiResponse({ status: 400, description: 'Token inválido o expirado' })
-  @ApiBody({ type: VerifyEmailDto })
-  async verifyEmail(@Body() dto: VerifyEmailDto): Promise<{ message: string; verified: boolean }> {
-    // P1-002: Conectado al EmailVerificationService
-    return this.emailVerificationService.verifyEmail(dto);
-  }
-
-  /**
-   * Solicitar reseteo de contraseña
-   */
-  @Post('forgot-password')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Solicitar reseteo de contraseña' })
-  @ApiResponse({
-    status: 200,
-    description: 'Email de reseteo enviado',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-      },
-    },
-  })
-  @ApiBody({ type: RequestPasswordResetDto })
-  async forgotPassword(@Body() dto: RequestPasswordResetDto): Promise<{ message: string }> {
-    // P1-003: Conectado al PasswordRecoveryService
-    return this.passwordRecoveryService.requestReset(dto);
-  }
-
-  /**
-   * Resetear contraseña
-   */
-  @Post('reset-password')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Resetear contraseña con token' })
-  @ApiResponse({
-    status: 200,
-    description: 'Contraseña reseteada exitosamente',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-      },
-    },
-  })
-  @ApiResponse({ status: 400, description: 'Token inválido o expirado' })
-  @ApiBody({ type: ResetPasswordDto })
-  async resetPassword(@Body() dto: ResetPasswordDto): Promise<{ message: string }> {
-    // P1-003: Conectado al PasswordRecoveryService
-    return this.passwordRecoveryService.resetPassword(dto);
-  }
-
-  /**
-   * Cambiar contraseña (usuario autenticado)
-   */
-  @Put('password')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Cambiar contraseña del usuario autenticado' })
-  @ApiResponse({
-    status: 200,
-    description: 'Contraseña cambiada exitosamente',
-    schema: {
-      properties: {
-        message: { type: 'string' },
-      },
-    },
-  })
-  @ApiResponse({ status: 401, description: 'No autenticado' })
-  @ApiResponse({ status: 400, description: 'Contraseña actual incorrecta' })
-  @ApiBody({
-    schema: {
-      properties: {
-        currentPassword: { type: 'string' },
-        newPassword: { type: 'string' },
-      },
-    },
-  })
-  async changePassword(
-    @Request() req: AuthRequest,
-      @Body('currentPassword') currentPassword: string,
-      @Body('newPassword') newPassword: string,
-  ): Promise<{ message: string }> {
-    const userId = req.user!.id;
-    // P1-012: Conectado al AuthService.changePassword
-    return this.authService.changePassword(userId, currentPassword, newPassword);
-  }
+  // FIX H-035: verify-email, forgot-password, reset-password, change-password
+  // routes moved to PasswordController to eliminate duplicates.
+  // See: auth/controllers/password.controller.ts
 
   /**
    * Obtener sesiones activas del usuario

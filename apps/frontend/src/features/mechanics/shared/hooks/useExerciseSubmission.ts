@@ -43,15 +43,15 @@ export type SubmitExercisePayload = z.infer<typeof SubmitExerciseSchema>;
  * Submission result from server (includes correct answers)
  */
 export interface SubmissionResult {
-  attemptId: string;
+  attemptId?: string;
   score: number;
   isPerfect: boolean;
-  correctAnswersCount: number;
-  totalQuestions: number;
+  correctAnswersCount?: number;
+  totalQuestions?: number;
   rewards: {
     mlCoins: number;
     xp: number;
-    bonuses: {
+    bonuses: string[] | {
       perfectScore?: number;
       noHints?: number;
       speedBonus?: number;
@@ -60,28 +60,33 @@ export interface SubmissionResult {
   };
   feedback: {
     overall: string;
-    answerReview: Array<{
+    answerReview?: Array<{
       questionId: string;
       isCorrect: boolean;
-      userAnswer: string;
-      correctAnswer: string;
+      userAnswer: unknown;
+      correctAnswer?: unknown;
       explanation?: string;
     }>;
   };
-  achievements: Array<{
+  isFirstCorrectAttempt?: boolean;
+  achievements?: Array<{
     id: string;
     name: string;
     icon: string;
     rarity: string;
   }>;
-  // SECURITY: These are ONLY available after submission
-  correctAnswers: Record<string, unknown>;
-  explanations: Record<string, string>;
-  createdAt: string;
-  // Estado de la submission (para ejercicios con revision manual)
+  correctAnswers?: Record<string, unknown>;
+  explanations?: Record<string, string>;
+  createdAt?: string;
   status?: 'draft' | 'submitted' | 'graded' | 'reviewed' | 'pending_review';
-  // Indica si el ejercicio requiere revision manual del maestro
   requiresManualReview?: boolean;
+  rankUp?: {
+    newRank: string;
+    previousRank: string;
+    newRankIcon?: string;
+  };
+  message?: string;
+  argumentScore?: number;
 }
 
 // ============================================================================
@@ -129,7 +134,7 @@ export function useExerciseSubmission(
    * Submit exercise mutation
    */
   const mutation = useMutation({
-    mutationFn: async (answers: Record<string, unknown>) => {
+    mutationFn: async (answers: Record<string, any>) => {
       // 1. CLIENT-SIDE VALIDATION with Zod
       const payload: SubmitExercisePayload = {
         answers,

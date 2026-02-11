@@ -5,6 +5,8 @@
 -- Created: 2026-02-03
 -- =====================================================
 
+DROP TABLE IF EXISTS social_features.guild_emblems CASCADE;
+
 CREATE TABLE social_features.guild_emblems (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,

@@ -25,7 +25,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import type { LeaderboardPosition } from '../../hooks/useGamificationData';
+import type { LeaderboardPosition } from '../../types/gamificationTypes';
 import { useLeaderboards } from '@/features/gamification/social/hooks/useLeaderboards';
 
 /**

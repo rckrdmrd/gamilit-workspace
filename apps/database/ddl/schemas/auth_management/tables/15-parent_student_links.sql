@@ -6,7 +6,9 @@
 -- Created: 2025-11-08
 -- =====================================================================================
 
-CREATE TABLE IF NOT EXISTS auth_management.parent_student_links (
+DROP TABLE IF EXISTS auth_management.parent_student_links CASCADE;
+
+CREATE TABLE auth_management.parent_student_links (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Relaciones

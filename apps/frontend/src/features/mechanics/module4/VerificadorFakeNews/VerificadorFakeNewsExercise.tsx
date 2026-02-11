@@ -307,7 +307,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Exercise Description */}
-          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center gap-3">
               <Shield className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">Verificador de Noticias Falsas</h2>
@@ -361,19 +361,19 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
                 Has verificado {results.length} afirmación(es).
               </p>
               <div className="grid grid-cols-3 gap-4">
-                <div className="rounded-detective border-2 border-green-200 bg-green-50 p-4 text-center">
+                <div className="rounded-detective border-2 border-detective-success/20 bg-detective-success/10 p-4 text-center">
                   <div className="mb-2 flex items-center justify-center gap-2">
-                    <CheckCircle className="h-6 w-6 text-green-600" />
-                    <p className="text-3xl font-bold text-green-600">
+                    <CheckCircle className="h-6 w-6 text-detective-success" />
+                    <p className="text-3xl font-bold text-detective-success">
                       {results.filter((r) => r.verdict === 'true').length}
                     </p>
                   </div>
                   <p className="text-sm text-detective-text">Verdaderas</p>
                 </div>
-                <div className="rounded-detective border-2 border-red-200 bg-red-50 p-4 text-center">
+                <div className="rounded-detective border-2 border-detective-danger/20 bg-detective-danger/10 p-4 text-center">
                   <div className="mb-2 flex items-center justify-center gap-2">
-                    <XCircle className="h-6 w-6 text-red-600" />
-                    <p className="text-3xl font-bold text-red-600">
+                    <XCircle className="h-6 w-6 text-detective-danger" />
+                    <p className="text-3xl font-bold text-detective-danger">
                       {results.filter((r) => r.verdict === 'false').length}
                     </p>
                   </div>
@@ -405,7 +405,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
                   className={`flex items-center gap-2 rounded-detective px-6 py-3 font-semibold transition-all ${
                     canSubmit
                       ? 'bg-gradient-to-r from-detective-blue to-detective-orange text-white shadow-detective hover:shadow-detective-lg'
-                      : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                      : 'cursor-not-allowed bg-gray-300 text-detective-text-secondary'
                   }`}
                 >
                   {isSubmitting ? (

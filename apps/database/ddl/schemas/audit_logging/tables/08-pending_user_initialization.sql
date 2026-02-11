@@ -24,7 +24,9 @@ SET search_path TO audit_logging, public;
 -- TABLA: pending_user_initializations
 -- =====================================================
 
-CREATE TABLE IF NOT EXISTS audit_logging.pending_user_initializations (
+DROP TABLE IF EXISTS audit_logging.pending_user_initializations CASCADE;
+
+CREATE TABLE audit_logging.pending_user_initializations (
     -- Primary Key
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

@@ -1,0 +1,61 @@
+id: "US-GAM-TCH-01"
+titulo: "Portal Maestro con Dashboard Analytics"
+epic_id: "EPIC-GAM-FRONTEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P0"
+story_points: 13
+sprint: "Completado"
+modulos:
+  - "teachers"
+  - "classrooms"
+  - "analytics"
+  - "reports"
+traceability:
+  requirements:
+    - "RF-GAM-024"
+    - "RF-GAM-025"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/teachers/"
+        - "apps/backend/src/modules/classrooms/"
+        - "apps/backend/src/modules/analytics/"
+        - "apps/backend/src/modules/reports/"
+      endpoints: []
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/teacher/"
+      pages:
+        - "19 teacher portal pages"
+      components:
+        - "TeacherDashboard"
+        - "ClassroomList"
+        - "ClassroomDetail"
+        - "AssignmentCreator"
+        - "ManualReviewPanel"
+        - "RubricEditor"
+        - "ProgressReport"
+        - "StudentDetailView"
+        - "ParentCommunication"
+        - "ExportDialog"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/teachers/"
+        - "apps/database/ddl/schemas/education/"
+        - "apps/database/ddl/schemas/analytics/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-EDU-01"
+    - "US-GAM-ANL-01"
+    - "US-GAM-PAR-01"
+  blocks: []
+tasks: []

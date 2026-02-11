@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F2-TECH-CONSOLIDATION"
+titulo: "Consolidacion Tecnica"
+proyecto: "gamilit"
+fase: "F2-robustecimiento"
+source_id: "ETC-001"
+story_points: 8
+estado: "COMPLETADO"
+prioridad: "P2"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F2-TECH-CONSOLIDATION/EPIC.md"
+user_stories: 5
+requirements: 5
+specifications: 0
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F2-TECH-CONSOLIDATION/user-stories/"
+stories_structure: "nested"
+tasks_total: 15
+fecha_actualizacion: "2026-02-09"

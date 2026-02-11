@@ -44,12 +44,12 @@ BEGIN
     -- Obtener la escuela default del sistema
     SELECT id INTO v_default_school_id
     FROM social_features.schools
-    WHERE code = 'SYSTEM-UNASSIGNED'
+    WHERE code = 'GAMILIT-DEFAULT'
       AND is_active = true
     LIMIT 1;
 
     IF v_default_school_id IS NULL THEN
-        RAISE EXCEPTION 'Escuela default (SYSTEM-UNASSIGNED) no encontrada. Ejecutar primero 00-schools-default.sql';
+        RAISE EXCEPTION 'Escuela default (GAMILIT-DEFAULT) no encontrada. Ejecutar primero 00-schools-default.sql';
     END IF;
 
     RAISE NOTICE 'Usando escuela default: %', v_default_school_id;
@@ -118,7 +118,7 @@ BEGIN
     SELECT COUNT(*) INTO v_total_in_default
     FROM auth_management.profiles p
     JOIN social_features.schools s ON p.school_id = s.id
-    WHERE s.code = 'SYSTEM-UNASSIGNED';
+    WHERE s.code = 'GAMILIT-DEFAULT';
 
     RAISE NOTICE '========================================';
     RAISE NOTICE 'VERIFICACIÓN DE ASIGNACIÓN DE ESCUELAS';
@@ -137,7 +137,7 @@ BEGIN
             SELECT p.role, COUNT(*) as count
             FROM auth_management.profiles p
             JOIN social_features.schools s ON p.school_id = s.id
-            WHERE s.code = 'SYSTEM-UNASSIGNED'
+            WHERE s.code = 'GAMILIT-DEFAULT'
             GROUP BY p.role
             ORDER BY p.role
         LOOP

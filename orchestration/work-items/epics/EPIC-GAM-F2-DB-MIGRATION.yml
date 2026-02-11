@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F2-DB-MIGRATION"
+titulo: "Migracion BD"
+proyecto: "gamilit"
+fase: "F2-robustecimiento"
+source_id: "EMR-001"
+story_points: 13
+estado: "COMPLETADO"
+prioridad: "P1"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F2-DB-MIGRATION/EPIC.md"
+user_stories: 0
+requirements: 0
+specifications: 0
+tasks: 5
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_structure: "empty"
+tasks_total: 0
+fecha_actualizacion: "2026-02-09"

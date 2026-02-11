@@ -1,0 +1,52 @@
+id: "EPIC-GAM-DOCS"
+titulo: "Documentacion Gamilit"
+proyecto: "gamilit"
+version: "3.0.0"
+fecha_creacion: "2025-12-15"
+fecha_actualizacion: "2026-02-07"
+estado: "EN_PROGRESO"
+prioridad: "P2"
+story_points: 8
+wave: "wave_3"
+descripcion: |
+  Documentacion completa del proyecto: vision, arquitectura, API, ADRs,
+  user stories, inventarios, guias de desarrollo.
+entregables:
+  - "CLAUDE.md v2.0.0"
+  - "README.md completo"
+  - "docs/00-overview/ (VISION-ALCANCE, MODULOS, TESTING, DEVOPS)"
+  - "docs/10-requirements/user-stories/ (15 US L3)"
+  - "docs/20-architecture/ (STACK, GAMIFICACION, MODELO-DATOS)"
+  - "docs/40-api/ (API-REFERENCE - 850 endpoints)"
+  - "docs/90-adr/ (4 ADRs)"
+  - "orchestration/ completo (INDEX, inheritance, inventarios, epics)"
+stories:
+  - id: "US-GAM-DOC-01"
+    titulo: "API Reference Documentation"
+    status: "EN_PROGRESO"
+    story_points: 3
+  - id: "US-GAM-DOC-02"
+    titulo: "Architecture and ADR Documentation"
+    status: "EN_PROGRESO"
+    story_points: 2
+  - id: "US-GAM-DOC-03"
+    titulo: "Developer Onboarding and Guides"
+    status: "PENDIENTE"
+    story_points: 2
+  - id: "US-GAM-DOC-04"
+    titulo: "Inventory Synchronization"
+    status: "PENDIENTE"
+    story_points: 1
+traceability:
+  requirements: []
+  components:
+    backend: []
+    frontend: []
+    database: []
+  dependencies:
+    depends_on: []
+    blocks: []
+metricas:
+  total_stories: 4
+  stories_completadas: 0
+  porcentaje_avance: 0

@@ -1,0 +1,39 @@
+# EPIC-GAM-TESTING: Tests Gamilit
+id: "EPIC-GAM-TESTING"
+titulo: "Tests Gamilit"
+proyecto: "gamilit"
+story_points: 13
+estado: "EN_PROGRESO"
+prioridad: "P2"
+fecha_inicio: "2025-11-01"
+fecha_fin: null
+
+descripcion: |
+  Implementacion de testing completo: unit tests, integration tests, E2E tests.
+  Target: 80% cobertura global. Actualmente: 833 tests pasando.
+
+entregables:
+  - "Unit tests backend (Jest): ~550"
+  - "Unit tests frontend (Vitest): ~200"
+  - "Integration tests: ~70"
+  - "E2E tests: planificados"
+  - "Cobertura target: 80%"
+
+metricas:
+  tests_pasando: 833
+  backend_tests: 620
+  frontend_tests: 213
+  cobertura_actual: "~75%"
+  cobertura_target: "80%"
+
+estado_detallado:
+  completado:
+    - "Tests unitarios core modules"
+    - "Tests unitarios gamification"
+    - "Tests unitarios exercises"
+    - "Tests integracion flujos criticos"
+  pendiente:
+    - "E2E tests"
+    - "Cobertura target 80%"
+    - "Tests de carga"
+    - "Tests accesibilidad"

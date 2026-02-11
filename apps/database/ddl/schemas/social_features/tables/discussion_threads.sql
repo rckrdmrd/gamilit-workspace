@@ -3,6 +3,8 @@
 -- Descripción: Hilos de discusión en aulas/grupos
 -- CREADO: 2025-11-08
 
+DROP TABLE IF EXISTS social_features.discussion_threads CASCADE;
+
 CREATE TABLE social_features.discussion_threads (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     classroom_id UUID REFERENCES social_features.classrooms(id) ON DELETE CASCADE,

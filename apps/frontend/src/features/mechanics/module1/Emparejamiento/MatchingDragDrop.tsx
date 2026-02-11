@@ -21,7 +21,7 @@ const DraggableItem = ({
     draggable
     onDragStart={onDragStart}
     onDragEnd={onDragEnd}
-    className="cursor-move rounded-lg border-2 border-gray-200 bg-white p-3 transition-colors hover:border-blue-400"
+    className="cursor-move rounded-lg border-2 border-detective-border bg-white p-3 transition-colors hover:border-blue-400"
   >
     {children}
   </div>
@@ -43,9 +43,9 @@ const DropZone = ({
     onDragOver={(e) => e.preventDefault()}
     className={cn(
       'min-h-[60px] rounded-lg border-2 border-dashed p-4 transition-colors',
-      isCorrect === true && 'border-green-500 bg-green-50',
-      isCorrect === false && 'border-red-500 bg-red-50',
-      isCorrect === null && 'border-gray-300',
+      isCorrect === true && 'border-detective-success bg-detective-success/10',
+      isCorrect === false && 'border-detective-danger bg-detective-danger/10',
+      isCorrect === null && 'border-detective-border',
     )}
   >
     {children}
@@ -55,7 +55,7 @@ const DropZone = ({
 const InlineFeedback = ({ isCorrect }: { isCorrect: boolean | null }) => {
   if (isCorrect === null) return null;
   return (
-    <div className={cn('mt-1 text-xs font-medium', isCorrect ? 'text-green-600' : 'text-red-600')}>
+    <div className={cn('mt-1 text-xs font-medium', isCorrect ? 'text-detective-success' : 'text-detective-danger')}>
       {isCorrect ? 'Correcto' : 'Incorrecto'}
     </div>
   );
@@ -108,7 +108,7 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
       {/* Columna A - Items para arrastrar */}
       <div className="space-y-4">
-        <h4 className="flex items-center gap-2 font-semibold text-gray-800">
+        <h4 className="flex items-center gap-2 font-semibold text-detective-text">
           <CategoryBadge />
           {groupALabel}
         </h4>
@@ -133,7 +133,7 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
                 >
                   <div className="flex items-start gap-2">
                     <CategoryBadge />
-                    <p className="flex-1 text-sm text-gray-800">{pair.itemA}</p>
+                    <p className="flex-1 text-sm text-detective-text">{pair.itemA}</p>
                   </div>
                 </DraggableItem>
               </motion.div>
@@ -144,7 +144,7 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
 
       {/* Columna B - Zonas de drop */}
       <div className="space-y-4">
-        <h4 className="flex items-center gap-2 font-semibold text-gray-800">
+        <h4 className="flex items-center gap-2 font-semibold text-detective-text">
           <CategoryBadge />
           {groupBLabel}
         </h4>
@@ -171,14 +171,14 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
                   className={cn(
                     'rounded-lg border-2 p-3 transition-all',
                     'bg-white',
-                    isCorrect === true && 'border-green-300 bg-green-50',
-                    isCorrect === false && 'border-red-300 bg-red-50',
+                    isCorrect === true && 'border-green-300 bg-detective-success/10',
+                    isCorrect === false && 'border-red-300 bg-detective-danger/10',
                     isCorrect === null && 'border-orange-300',
                   )}
                 >
                   <div className="mb-3 flex items-start gap-2">
                     <CategoryBadge />
-                    <p className="flex-1 text-sm font-medium text-gray-800">{pair.itemB}</p>
+                    <p className="flex-1 text-sm font-medium text-detective-text">{pair.itemB}</p>
                   </div>
 
                   {/* Drop Zone */}
@@ -187,11 +187,11 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex flex-1 items-start gap-2">
                           <CategoryBadge />
-                          <p className="text-sm text-gray-700">{connectedPair.itemA}</p>
+                          <p className="text-sm text-detective-text">{connectedPair.itemA}</p>
                         </div>
                         <button
                           onClick={() => onDisconnect(pair.id)}
-                          className="flex-shrink-0 text-gray-400 transition-colors hover:text-gray-600"
+                          className="flex-shrink-0 text-detective-text-secondary transition-colors hover:text-gray-600"
                           title="Desconectar"
                         >
                           <svg

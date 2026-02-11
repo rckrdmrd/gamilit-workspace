@@ -6,7 +6,8 @@ import { SopaLetrasGrid } from './SopaLetrasGrid';
 import { WordList } from './WordList';
 import { SopaLetrasData, WordPosition } from './sopaLetrasTypes';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -37,6 +38,8 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
   const [_isSubmitting, _setIsSubmitting] = useState(false);
 
   // FE-059: Initialize words from words list only (wordsPositions field is sanitized)
@@ -299,7 +302,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
         const foundWordsList = currentWords.filter((w) => w.found).map((w) => w.word);
 
         // Submit to backend API
-        const response = await submitExercise(exercise.id, user.id, { words: foundWordsList });
+        const response = await submitAsync({ words: foundWordsList });
 
         // Show backend response
         setFeedback({
@@ -430,7 +433,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
 
             {/* Mensaje de ayuda cuando no hay selección */}
             {selectedCells.length === 0 && (
-              <div className="mt-4 text-center text-sm text-gray-500">
+              <div className="mt-4 text-center text-sm text-detective-text-secondary">
                 <p>
                   📱 Toca las letras para formar una palabra, luego presiona{' '}
                   <strong>Validar Palabra</strong>

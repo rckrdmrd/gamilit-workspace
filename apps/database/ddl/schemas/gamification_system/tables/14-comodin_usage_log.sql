@@ -6,6 +6,8 @@
 -- Created: 2025-11-08
 -- =====================================================
 
+DROP TABLE IF EXISTS gamification_system.comodin_usage_logs CASCADE;
+
 CREATE TABLE gamification_system.comodin_usage_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,

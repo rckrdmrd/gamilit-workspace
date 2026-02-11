@@ -4,6 +4,8 @@
 -- CREADO: 2025-11-08
 -- Epic: EXT-008
 
+DROP TABLE IF EXISTS system_configuration.tenant_configurations CASCADE;
+
 CREATE TABLE system_configuration.tenant_configurations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES auth_management.tenants(id) ON DELETE CASCADE,

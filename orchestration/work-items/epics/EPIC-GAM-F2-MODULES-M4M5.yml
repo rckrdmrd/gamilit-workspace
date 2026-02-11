@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F2-MODULES-M4M5"
+titulo: "Modulos M4 y M5"
+proyecto: "gamilit"
+fase: "F2-robustecimiento"
+source_id: "EAI-007"
+story_points: 21
+estado: "COMPLETADO"
+prioridad: "P1"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F2-MODULES-M4M5/EPIC.md"
+user_stories: 7
+requirements: 3
+specifications: 2
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F2-MODULES-M4M5/user-stories/"
+stories_structure: "nested"
+tasks_total: 21
+fecha_actualizacion: "2026-02-09"

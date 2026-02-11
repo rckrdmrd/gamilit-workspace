@@ -24,3 +24,5 @@ export {
 } from './student-progress.dto';
 // US-PM-007: Alert configuration DTOs
 export * from './alert-config.dto';
+// Teacher Assignments DTOs
+export * from './teacher-assignments.dto';

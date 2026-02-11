@@ -1,0 +1,3 @@
+# TASK-FUND-008-F2-FRONTEND-01: Tema Maya Tailwind
+
+**US:** US-FUND-008 | **Tipo:** Frontend | **Estado:** Done | **Est:** 4h | **Sub:** 0

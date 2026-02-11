@@ -1,0 +1,61 @@
+id: "US-GAM-NTF-01"
+titulo: "Notification Center and Preferences"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 3
+sprint: "Backlog"
+modulos:
+  - "notifications"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/notifications/"
+      endpoints:
+        - "GET /notifications"
+        - "PATCH /notifications/:id/read"
+        - "PUT /notifications/preferences"
+        - "POST /notifications/send"
+        - "WebSocket /notifications"
+      files:
+        - "notifications.module.ts"
+        - "notifications.service.ts"
+        - "notifications.controller.ts"
+        - "notifications.gateway.ts"
+        - "email.service.ts"
+        - "push.service.ts"
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/notifications/"
+      pages:
+        - "NotificationsPage"
+      components:
+        - "NotificationCenter"
+        - "NotificationBell"
+        - "NotificationPreferences"
+        - "NotificationItem"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/notifications/"
+      tables:
+        - "notifications.events"
+        - "notifications.preferences"
+        - "notifications.templates"
+        - "notifications.delivery_log"
+  tests:
+    unit:
+      - "notifications.service.spec.ts"
+      - "notifications.controller.spec.ts"
+      - "notifications.gateway.spec.ts"
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-AUTH-01"
+  blocks: []
+tasks: []

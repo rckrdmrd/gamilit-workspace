@@ -1,0 +1,15 @@
+# US-FUND-001 — Autenticacion Basica Jwt
+
+- **Definicion:** [US-FUND-001-autenticacion-basica-jwt.md](./US-FUND-001-autenticacion-basica-jwt.md)
+- **Tareas:** [tasks/](./tasks/) (11 tareas)
+  - [TASK-FUND-001-F1-BACKEND-01](./tasks/TASK-FUND-001-F1-BACKEND-01/) — Config JWT y entidades
+  - [TASK-FUND-001-F1-BACKEND-02](./tasks/TASK-FUND-001-F1-BACKEND-02/) — AuthService
+  - [TASK-FUND-001-F1-BACKEND-03](./tasks/TASK-FUND-001-F1-BACKEND-03/) — Endpoints auth
+  - [TASK-FUND-001-F1-BACKEND-04](./tasks/TASK-FUND-001-F1-BACKEND-04/) — Recuperacion password
+  - [TASK-FUND-001-F0-DATABASE-01](./tasks/TASK-FUND-001-F0-DATABASE-01/) — Config ambiente
+  - [TASK-FUND-001-F0-DATABASE-02](./tasks/TASK-FUND-001-F0-DATABASE-02/) — Deploy y validacion
+  - [TASK-FUND-001-F2-FRONTEND-01](./tasks/TASK-FUND-001-F2-FRONTEND-01/) — Componentes auth
+  - [TASK-FUND-001-F2-FRONTEND-02](./tasks/TASK-FUND-001-F2-FRONTEND-02/) — AuthStore Zustand
+  - [TASK-FUND-001-F4-TEST-01](./tasks/TASK-FUND-001-F4-TEST-01/) — Tests unitarios BE
+  - [TASK-FUND-001-F4-TEST-02](./tasks/TASK-FUND-001-F4-TEST-02/) — Tests E2E
+  - [TASK-FUND-001-F4-TEST-03](./tasks/TASK-FUND-001-F4-TEST-03/) — Tests frontend

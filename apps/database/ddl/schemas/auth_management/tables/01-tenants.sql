@@ -24,6 +24,7 @@ CREATE TABLE auth_management.tenants (
     metadata jsonb DEFAULT '{}'::jsonb,
     created_at timestamp with time zone DEFAULT gamilit.now_mexico(),
     updated_at timestamp with time zone DEFAULT gamilit.now_mexico(),
+    deleted_at timestamp with time zone DEFAULT NULL,
 
     -- Primary Key
     CONSTRAINT tenants_pkey PRIMARY KEY (id),
@@ -41,6 +42,7 @@ CREATE TABLE auth_management.tenants (
 CREATE INDEX IF NOT EXISTS idx_tenants_slug ON auth_management.tenants(slug);
 CREATE INDEX IF NOT EXISTS idx_tenants_active ON auth_management.tenants(is_active) WHERE is_active = true;
 CREATE INDEX IF NOT EXISTS idx_tenants_settings_gin ON auth_management.tenants USING gin (settings);
+CREATE INDEX IF NOT EXISTS idx_tenants_deleted_at ON auth_management.tenants(deleted_at) WHERE deleted_at IS NULL;
 
 -- Triggers
 -- NOTE: Trigger trg_tenants_updated_at movido a archivo separado
@@ -50,6 +52,7 @@ CREATE INDEX IF NOT EXISTS idx_tenants_settings_gin ON auth_management.tenants U
 COMMENT ON TABLE auth_management.tenants IS 'Tenants para soporte multi-tenancy - aislamiento de datos por organización';
 COMMENT ON COLUMN auth_management.tenants.slug IS 'URL-friendly identifier único para el tenant';
 COMMENT ON COLUMN auth_management.tenants.subscription_tier IS 'Nivel de suscripción: free, basic, professional, enterprise';
+COMMENT ON COLUMN auth_management.tenants.deleted_at IS 'Soft-delete timestamp. NULL = active, NOT NULL = deleted. DB-124 H-022: Prevents accidental organization data loss from CASCADE deletes (29 FKs to this table)';
 
 -- Permissions
 ALTER TABLE auth_management.tenants OWNER TO gamilit_user;

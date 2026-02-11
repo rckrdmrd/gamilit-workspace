@@ -1,0 +1,78 @@
+id: "US-GAM-EDU-01"
+titulo: "Modulos de Aprendizaje Progresivo"
+epic_id: "EPIC-GAM-BACKEND"
+epic_secondary:
+  - "EPIC-GAM-FRONTEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P0"
+story_points: 21
+sprint: "Completado"
+modulos:
+  - "modules"
+  - "exercises"
+  - "content"
+  - "students"
+traceability:
+  requirements:
+    - "RF-GAM-005"
+    - "RF-GAM-006"
+    - "RF-GAM-012"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/modules/"
+        - "apps/backend/src/modules/exercises/"
+        - "apps/backend/src/modules/content/"
+        - "apps/backend/src/modules/students/"
+      endpoints:
+        - "GET /api/v1/modules"
+        - "GET /api/v1/modules/:id"
+        - "GET /api/v1/modules/:id/progress"
+        - "POST /api/v1/modules/:id/unlock-check"
+        - "GET /api/v1/modules/:id/exercises"
+        - "PATCH /api/v1/modules/:moduleId/config"
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/modules/"
+        - "apps/frontend/src/pages/student/exercises/"
+      pages: []
+      components:
+        - "ModuleList"
+        - "ModuleCard"
+        - "ModuleProgressBar"
+        - "ExerciseSelector"
+        - "UnlockAnimation"
+        - "ModuleDashboard"
+        - "DifficultyBadge"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/education/"
+        - "apps/database/ddl/schemas/exercises/"
+        - "apps/database/ddl/schemas/content/"
+      tables:
+        - "educational_modules"
+        - "module_progress"
+        - "module_config"
+        - "exercises"
+        - "exercise_types"
+        - "exercise_attempts"
+        - "exercise_results"
+        - "contents"
+        - "content_versions"
+        - "student_profiles"
+        - "student_progress"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-EDU-02"
+    - "US-GAM-GAM-01"
+    - "US-GAM-STD-01"
+  blocks: []
+tasks: []

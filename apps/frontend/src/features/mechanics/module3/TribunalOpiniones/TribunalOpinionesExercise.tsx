@@ -4,7 +4,8 @@ import { Scale, ChevronRight, ChevronLeft } from 'lucide-react';
 import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 import type {
@@ -24,6 +25,8 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [evaluations, setEvaluations] = useState<Map<string, StatementEvaluation>>(new Map());
   const [currentClassification, setCurrentClassification] =
@@ -262,7 +265,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
         console.log('[TribunalOpiniones] Submitting answers:', JSON.stringify(answers, null, 2));
       }
 
-      const response = await submitExercise(exercise.id, user.id, answers);
+      const response = await submitAsync(answers);
 
       // ✅ FIX M3-M5 2026-01-07: Verificar si está pendiente de revisión manual
       if (response.status === 'pending_review' || response.requiresManualReview) {
@@ -350,20 +353,12 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     setShowFeedback(false);
   }, []);
 
-  // Expose actions to parent
+  // Expose actions to parent (standard names: handleReset, handleCheck)
   useEffect(() => {
     if (actionsRef) {
       actionsRef.current = {
-        getState: () => ({
-          evaluations: Array.from(evaluations.values()),
-          currentStatementIndex: currentIndex,
-          score: 0,
-          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
-          hintsUsed,
-          isComplete: evaluations.size === totalStatements,
-        }),
-        reset: handleReset,
-        validate: handleCheck,
+        handleReset,
+        handleCheck,
       };
     }
   }, [
@@ -381,7 +376,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     return (
       <DetectiveCard variant="default" padding="lg">
         <div className="py-8 text-center">
-          <p className="text-gray-500">No hay afirmaciones para evaluar.</p>
+          <p className="text-detective-text-secondary">No hay afirmaciones para evaluar.</p>
         </div>
       </DetectiveCard>
     );
@@ -398,7 +393,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center gap-3">
               <Scale className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">Tribunal de Opiniones</h2>
@@ -421,12 +416,12 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="rounded-xl border-2 border-gray-200 bg-gray-50 p-6"
+              className="rounded-xl border-2 border-detective-border bg-detective-bg p-6"
             >
-              <h3 className="mb-2 text-lg font-semibold text-gray-800">Afirmación:</h3>
-              <p className="text-xl leading-relaxed text-gray-900">"{currentStatement.text}"</p>
+              <h3 className="mb-2 text-lg font-semibold text-detective-text">Afirmación:</h3>
+              <p className="text-xl leading-relaxed text-detective-text">"{currentStatement.text}"</p>
               {currentStatement.source && (
-                <p className="mt-2 text-sm italic text-gray-500">
+                <p className="mt-2 text-sm italic text-detective-text-secondary">
                   Fuente: {currentStatement.source}
                 </p>
               )}
@@ -435,7 +430,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
 
           {/* Step 1: Classification */}
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold text-gray-800">
+            <h3 className="text-lg font-semibold text-detective-text">
               Paso 1: ¿Qué tipo de afirmación es?
             </h3>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -446,7 +441,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
                   className={`rounded-xl border-2 p-4 text-left transition-all ${
                     currentClassification === option.value
                       ? `${option.color} ring-2 ring-current ring-offset-2`
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      : 'border-detective-border bg-white hover:border-gray-300'
                   }`}
                 >
                   <div className="mb-1 flex items-center gap-2">
@@ -461,7 +456,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
 
           {/* Step 2: Verdict */}
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold text-gray-800">
+            <h3 className="text-lg font-semibold text-detective-text">
               Paso 2: ¿Está bien fundamentada?
             </h3>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -472,7 +467,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
                   className={`rounded-xl border-2 p-4 text-left transition-all ${
                     currentVerdict === option.value
                       ? `${option.color} ring-2 ring-current ring-offset-2`
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      : 'border-detective-border bg-white hover:border-gray-300'
                   }`}
                 >
                   <div className="mb-1 flex items-center gap-2">
@@ -487,28 +482,28 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
 
           {/* Step 3: Justification (Optional) */}
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold text-gray-800">
+            <h3 className="text-lg font-semibold text-detective-text">
               Paso 3: Justifica tu decisión (opcional)
             </h3>
             <textarea
               value={currentJustification}
               onChange={(e) => setCurrentJustification(e.target.value)}
               placeholder="Explica en 2-3 líneas por qué clasificaste así esta afirmación..."
-              className="w-full resize-none rounded-xl border-2 border-gray-200 p-4 transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              className="w-full resize-none rounded-xl border-2 border-detective-border p-4 transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
               rows={3}
               maxLength={300}
             />
-            <p className="text-right text-sm text-gray-500">
+            <p className="text-right text-sm text-detective-text-secondary">
               {currentJustification.length}/300 caracteres
             </p>
           </div>
 
           {/* Navigation & Actions */}
-          <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+          <div className="flex items-center justify-between border-t border-detective-border pt-4">
             <button
               onClick={handlePrevious}
               disabled={currentIndex === 0}
-              className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 transition-all hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-detective-bg-secondary px-4 py-2 transition-all hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <ChevronLeft className="h-5 w-5" />
               Anterior

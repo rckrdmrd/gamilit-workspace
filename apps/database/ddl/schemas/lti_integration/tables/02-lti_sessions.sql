@@ -6,7 +6,9 @@
 -- Created: 2025-11-08
 -- =====================================================================================
 
-CREATE TABLE IF NOT EXISTS lti_integration.lti_sessions (
+DROP TABLE IF EXISTS lti_integration.lti_sessions CASCADE;
+
+CREATE TABLE lti_integration.lti_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Relaciones

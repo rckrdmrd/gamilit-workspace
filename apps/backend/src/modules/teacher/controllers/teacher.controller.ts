@@ -182,7 +182,7 @@ export class TeacherController {
     @Param('studentId') studentId: string,
       @Request() req: AuthRequest,
   ): Promise<StudentNoteResponseDto[]> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.studentProgressService.getStudentNotes(studentId, teacherId);
   }
 
@@ -196,7 +196,7 @@ export class TeacherController {
       @Body() noteDto: AddTeacherNoteDto,
       @Request() req: AuthRequest,
   ): Promise<StudentNoteResponseDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.studentProgressService.addStudentNote(
       studentId,
       teacherId,
@@ -296,7 +296,7 @@ export class TeacherController {
   @Request() req: AuthRequest,
     @Query() query: GetEngagementMetricsDto,
   ) {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.analyticsService.getEngagementMetrics(teacherId, query);
   }
 
@@ -310,7 +310,7 @@ export class TeacherController {
   @Request() req: AuthRequest,
     @Query() query: GenerateReportsDto,
   ) {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.analyticsService.generateReports(teacherId, query);
   }
 
@@ -331,7 +331,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
       @Query('classroom_id') classroomId?: string,
   ): Promise<EconomyAnalyticsDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.analyticsService.getEconomyAnalytics(teacherId, classroomId);
   }
 
@@ -352,7 +352,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
       @Query('classroom_id') classroomId?: string,
   ): Promise<StudentsEconomyResponseDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.analyticsService.getStudentsEconomy(teacherId, classroomId);
   }
 
@@ -373,7 +373,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
       @Query('classroom_id') classroomId?: string,
   ): Promise<AchievementsStatsResponseDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.analyticsService.getAchievementsStats(teacherId, classroomId);
   }
 
@@ -395,8 +395,8 @@ export class TeacherController {
     @Body() dto: GenerateReportDto,
     @Res() res: Response,
   ) {
-    const userId = req.user!.profile?.id || req.user!.id;
-    const tenantId = req.user!.tenantId || req.user!.tenant_id || 'default';
+    const userId = req.user!.id;
+    const tenantId = req.user!.tenant_id || 'default';
 
     // Generate report (now persists to storage and database)
     const { buffer, metadata, reportId } = await this.reportsService.generateReport(dto, userId, tenantId);
@@ -470,7 +470,7 @@ export class TeacherController {
       @Body() dto: GrantBonusDto,
       @Request() req: AuthRequest,
   ): Promise<GrantBonusResponseDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.bonusCoinsService.grantBonus(teacherId, studentId, dto);
   }
 
@@ -492,7 +492,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
       @Query() query: GetRecentReportsQueryDto,
   ): Promise<ReportMetadataDto[]> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     const limit = query.limit || 10;
     return this.teacherReportsService.getRecentReports(teacherId, limit);
   }
@@ -508,8 +508,29 @@ export class TeacherController {
     type: ReportStatsDto,
   })
   async getReportStats(@Request() req: AuthRequest): Promise<ReportStatsDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.teacherReportsService.getReportStats(teacherId);
+  }
+
+  @Get('reports/:id/status')
+  @ApiOperation({
+    summary: 'Get report generation status',
+    description: 'Returns the status of a report. Since reports are generated synchronously, this always returns completed if the report exists.',
+  })
+  @ApiResponse({ status: 200, description: 'Report status retrieved' })
+  @ApiResponse({ status: 404, description: 'Report not found' })
+  async getReportStatus(
+    @Param('id') reportId: string,
+    @Request() req: AuthRequest,
+  ) {
+    const teacherId = req.user!.id;
+    const report = await this.teacherReportsService.getReportById(reportId, teacherId);
+    return {
+      id: report.id,
+      status: 'completed',
+      file_url: `/api/v1/teacher/reports/${report.id}/download`,
+      generated_at: report.generatedAt instanceof Date ? report.generatedAt.toISOString() : String(report.generatedAt),
+    };
   }
 
   @Get('reports/:id/download')
@@ -535,7 +556,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
     @Res() res: Response,
   ) {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
 
     // Get report with ownership validation
     const report = await this.teacherReportsService.getReportById(reportId, teacherId);
@@ -593,7 +614,7 @@ export class TeacherController {
     @Param('id') reportId: string,
     @Request() req: AuthRequest,
   ): Promise<{ message: string }> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     await this.teacherReportsService.deleteReport(reportId, teacherId);
     return { message: 'Report deleted successfully' };
   }
@@ -612,7 +633,7 @@ export class TeacherController {
     description: 'Scheduled reports retrieved successfully',
   })
   async getScheduledReports(@Request() req: AuthRequest): Promise<ScheduledReportResponseDto[]> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.scheduledReportsService.getScheduledReports(teacherId);
   }
 
@@ -629,8 +650,8 @@ export class TeacherController {
     @Request() req: AuthRequest,
     @Body() dto: CreateScheduledReportDto,
   ): Promise<ScheduledReportResponseDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
-    const tenantId = req.user!.tenantId || req.user!.tenant_id || 'default';
+    const teacherId = req.user!.id;
+    const tenantId = req.user!.tenant_id || 'default';
     return this.scheduledReportsService.createScheduledReport(teacherId, tenantId, dto);
   }
 
@@ -647,7 +668,7 @@ export class TeacherController {
     @Param('id') scheduleId: string,
     @Request() req: AuthRequest,
   ): Promise<ScheduledReportResponseDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.scheduledReportsService.getScheduledReportById(scheduleId, teacherId);
   }
 
@@ -665,7 +686,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
     @Body() dto: UpdateScheduledReportDto,
   ): Promise<ScheduledReportResponseDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.scheduledReportsService.updateScheduledReport(scheduleId, teacherId, dto);
   }
 
@@ -682,7 +703,7 @@ export class TeacherController {
     @Param('id') scheduleId: string,
     @Request() req: AuthRequest,
   ): Promise<{ message: string }> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     await this.scheduledReportsService.deleteScheduledReport(scheduleId, teacherId);
     return { message: 'Scheduled report deleted successfully' };
   }
@@ -696,7 +717,7 @@ export class TeacherController {
     @Param('id') scheduleId: string,
     @Request() req: AuthRequest,
   ): Promise<ScheduledReportResponseDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.scheduledReportsService.pauseScheduledReport(scheduleId, teacherId);
   }
 
@@ -709,7 +730,7 @@ export class TeacherController {
     @Param('id') scheduleId: string,
     @Request() req: AuthRequest,
   ): Promise<ScheduledReportResponseDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.scheduledReportsService.resumeScheduledReport(scheduleId, teacherId);
   }
 
@@ -730,7 +751,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
     @Body() dto: ShareReportDto,
   ): Promise<SharedReportResponseDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.sharedReportsService.shareReport(teacherId, dto);
   }
 
@@ -744,7 +765,7 @@ export class TeacherController {
     description: 'Shared reports retrieved successfully',
   })
   async getSharedByMe(@Request() req: AuthRequest): Promise<SharedReportResponseDto[]> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.sharedReportsService.getSharedByMe(teacherId);
   }
 
@@ -758,7 +779,7 @@ export class TeacherController {
     description: 'Shared reports retrieved successfully',
   })
   async getSharedWithMe(@Request() req: AuthRequest): Promise<SharedWithMeResponseDto[]> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.sharedReportsService.getSharedWithMe(teacherId);
   }
 
@@ -771,7 +792,7 @@ export class TeacherController {
     @Param('id') shareId: string,
     @Request() req: AuthRequest,
   ): Promise<{ message: string }> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     await this.sharedReportsService.markAsViewed(shareId, teacherId);
     return { message: 'Marked as viewed' };
   }
@@ -785,7 +806,7 @@ export class TeacherController {
     @Param('id') shareId: string,
     @Request() req: AuthRequest,
   ): Promise<{ message: string }> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     await this.sharedReportsService.revokeShare(shareId, teacherId);
     return { message: 'Share revoked successfully' };
   }
@@ -800,7 +821,7 @@ export class TeacherController {
     @Request() req: AuthRequest,
     @Body('permission') permission: SharePermission,
   ): Promise<SharedReportResponseDto> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.sharedReportsService.updateSharePermission(shareId, teacherId, permission);
   }
 }

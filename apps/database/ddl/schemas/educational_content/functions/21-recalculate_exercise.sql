@@ -38,7 +38,7 @@ BEGIN
     -- ========================================================================
     SELECT *
     INTO v_original_audit
-    FROM educational_content.exercise_validation_audit
+    FROM educational_content.exercise_validation_audits
     WHERE id = p_original_audit_id;
 
     IF NOT FOUND THEN
@@ -103,7 +103,7 @@ BEGIN
     -- ========================================================================
     -- 4. CREAR NUEVO REGISTRO DE AUDITORÍA (RECÁLCULO)
     -- ========================================================================
-    INSERT INTO educational_content.exercise_validation_audit (
+    INSERT INTO educational_content.exercise_validation_audits (
         exercise_id,
         user_id,
         attempt_number,
@@ -168,7 +168,7 @@ BEGIN
     -- 5. SI HAY DISCREPANCIA, MARCAR EL REGISTRO ORIGINAL
     -- ========================================================================
     IF has_discrepancy THEN
-        UPDATE educational_content.exercise_validation_audit
+        UPDATE educational_content.exercise_validation_audits
         SET
             has_discrepancy = true,
             discrepancy_type = v_discrepancy_type,
@@ -229,8 +229,8 @@ SELECT
     va_recalc.score AS recalculated_score,
     va_orig.discrepancy_type,
     va_orig.discrepancy_notes
-FROM educational_content.exercise_validation_audit va_orig
-JOIN educational_content.exercise_validation_audit va_recalc
+FROM educational_content.exercise_validation_audits va_orig
+JOIN educational_content.exercise_validation_audits va_recalc
     ON va_recalc.original_audit_id = va_orig.id
 WHERE va_orig.has_discrepancy = true
 ORDER BY va_orig.validation_timestamp DESC;
@@ -239,7 +239,7 @@ ORDER BY va_orig.validation_timestamp DESC;
 -- (usar con cuidado - puede ser costoso)
 WITH original_audits AS (
     SELECT id
-    FROM educational_content.exercise_validation_audit
+    FROM educational_content.exercise_validation_audits
     WHERE exercise_id = 'exercise-uuid-here'
       AND is_recalculated = false
     LIMIT 10

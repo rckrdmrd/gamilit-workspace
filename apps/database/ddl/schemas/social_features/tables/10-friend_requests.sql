@@ -11,6 +11,8 @@
 -- - cancelled: Cancelada por el solicitante
 -- =====================================================
 
+DROP TABLE IF EXISTS social_features.friend_requests CASCADE;
+
 CREATE TABLE social_features.friend_requests (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     requester_id UUID NOT NULL,

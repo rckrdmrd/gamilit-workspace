@@ -11,7 +11,9 @@ SET search_path TO data_warehouse, public;
 -- CREATE TABLE
 -- =====================================================
 
-CREATE TABLE IF NOT EXISTS data_warehouse.etl_extraction_logs (
+DROP TABLE IF EXISTS data_warehouse.etl_extraction_logs CASCADE;
+
+CREATE TABLE data_warehouse.etl_extraction_logs (
     -- Primary Key
     extraction_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

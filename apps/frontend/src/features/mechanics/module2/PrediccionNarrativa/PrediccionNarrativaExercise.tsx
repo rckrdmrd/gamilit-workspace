@@ -12,7 +12,8 @@ import type {
   PredictionOption,
 } from './prediccionNarrativaTypes';
 import { mockExerciseData } from './prediccionNarrativaMockData';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -26,6 +27,8 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
   const [_isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize answers for all scenarios
@@ -160,7 +163,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
       });
 
       // Submit to backend API
-      const response = await submitExercise(exercise.id, user.id, { scenarios: userAnswers });
+      const response = await submitAsync({ scenarios: userAnswers });
 
       if (response.rankUp) {
         setRankUpData(response.rankUp);
@@ -263,7 +266,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
     // No correctness feedback until backend integration
     return isSelected
       ? 'border-detective-orange bg-detective-orange/10'
-      : 'border-gray-300 hover:border-detective-orange hover:bg-detective-orange/5';
+      : 'border-detective-border hover:border-detective-orange hover:bg-detective-orange/5';
   };
 
   // FE-059: Removed validation icons - isCorrect field no longer available
@@ -299,8 +302,8 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
             )}
             {exercise.description && (
               <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
-                <p className="text-detective-sm font-medium text-gray-900">Objetivo:</p>
-                <p className="text-detective-base text-gray-900">{exercise.description}</p>
+                <p className="text-detective-sm font-medium text-detective-text">Objetivo:</p>
+                <p className="text-detective-base text-detective-text">{exercise.description}</p>
               </div>
             )}
           </div>
@@ -373,7 +376,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
-                            className="mt-3 border-t border-gray-300 pt-3"
+                            className="mt-3 border-t border-detective-border pt-3"
                           >
                             <p className="text-detective-sm text-detective-text-secondary">
                               {prediction.explanation}
@@ -405,7 +408,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="mt-3 rounded-detective border-l-4 border-yellow-400 bg-yellow-50 p-4"
+                        className="mt-3 rounded-detective border-l-4 border-detective-gold bg-yellow-50 p-4"
                       >
                         <div className="flex items-start gap-2">
                           <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-600" />
@@ -422,7 +425,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
           </AnimatePresence>
 
           {/* Navigation & Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-gray-200 pt-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-detective-border pt-6">
             <div className="flex gap-2">
               <DetectiveButton
                 variant="secondary"

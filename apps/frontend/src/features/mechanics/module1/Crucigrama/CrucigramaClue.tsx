@@ -50,14 +50,14 @@ export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
                 transition={{ delay: index * 0.05 }}
                 className={cn(
                   'flex items-start gap-3 p-3 rounded-lg transition-colors',
-                  isCompleted ? 'bg-green-50' : 'bg-gray-50'
+                  isCompleted ? 'bg-detective-success/10' : 'bg-detective-bg'
                 )}
               >
                 <div className="flex-shrink-0 pt-0.5">
                   {isCompleted ? (
                     <CheckCircle2 className="w-5 h-5 text-green-500" />
                   ) : (
-                    <Circle className="w-5 h-5 text-gray-400" />
+                    <Circle className="w-5 h-5 text-detective-text-secondary" />
                   )}
                 </div>
                 <div className="flex-1">
@@ -66,7 +66,7 @@ export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
                   </span>
                   <span className={cn(
                     'text-sm',
-                    isCompleted ? 'text-green-700 line-through' : 'text-detective-text'
+                    isCompleted ? 'text-detective-success line-through' : 'text-detective-text'
                   )}>
                     {clue.clue}
                   </span>
@@ -103,14 +103,14 @@ export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
                     transition={{ delay: index * 0.05 }}
                     className={cn(
                       'flex items-start gap-3 p-2 rounded-lg transition-colors',
-                      isCompleted ? 'bg-green-50' : 'bg-gray-50'
+                      isCompleted ? 'bg-detective-success/10' : 'bg-detective-bg'
                     )}
                   >
                     <div className="flex-shrink-0 pt-0.5">
                       {isCompleted ? (
                         <CheckCircle2 className="w-4 h-4 text-green-500" />
                       ) : (
-                        <Circle className="w-4 h-4 text-gray-400" />
+                        <Circle className="w-4 h-4 text-detective-text-secondary" />
                       )}
                     </div>
                     <div className="flex-1">
@@ -119,7 +119,7 @@ export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
                       </span>
                       <span className={cn(
                         'text-sm',
-                        isCompleted ? 'text-green-700 line-through' : 'text-detective-text'
+                        isCompleted ? 'text-detective-success line-through' : 'text-detective-text'
                       )}>
                         {clue.clue}
                       </span>
@@ -148,14 +148,14 @@ export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
                     transition={{ delay: index * 0.05 }}
                     className={cn(
                       'flex items-start gap-3 p-2 rounded-lg transition-colors',
-                      isCompleted ? 'bg-green-50' : 'bg-gray-50'
+                      isCompleted ? 'bg-detective-success/10' : 'bg-detective-bg'
                     )}
                   >
                     <div className="flex-shrink-0 pt-0.5">
                       {isCompleted ? (
                         <CheckCircle2 className="w-4 h-4 text-green-500" />
                       ) : (
-                        <Circle className="w-4 h-4 text-gray-400" />
+                        <Circle className="w-4 h-4 text-detective-text-secondary" />
                       )}
                     </div>
                     <div className="flex-1">
@@ -164,7 +164,7 @@ export const CrucigramaClue: React.FC<CrucigramaClueProps> = ({
                       </span>
                       <span className={cn(
                         'text-sm',
-                        isCompleted ? 'text-green-700 line-through' : 'text-detective-text'
+                        isCompleted ? 'text-detective-success line-through' : 'text-detective-text'
                       )}>
                         {clue.clue}
                       </span>

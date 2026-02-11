@@ -257,7 +257,7 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Exercise Description */}
-          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center gap-3">
               <BookOpen className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">Navegación Hipertextual</h2>

@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F1-EXERCISES"
+titulo: "Ejercicios y Actividades"
+proyecto: "gamilit"
+fase: "F1-alcance-inicial"
+source_id: "EAI-002"
+story_points: 34
+estado: "COMPLETADO"
+prioridad: "P1"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-EXERCISES/EPIC.md"
+user_stories: 8
+requirements: 8
+specifications: 5
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F1-EXERCISES/user-stories/"
+stories_structure: "nested"
+tasks_total: 49
+fecha_actualizacion: "2026-02-09"

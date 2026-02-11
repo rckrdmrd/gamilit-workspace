@@ -1,0 +1,48 @@
+id: "EPIC-GAM-DEVOPS"
+titulo: "DevOps Gamilit"
+proyecto: "gamilit"
+version: "3.0.0"
+fecha_creacion: "2025-12-01"
+fecha_actualizacion: "2026-02-07"
+estado: "EN_PROGRESO"
+prioridad: "P2"
+story_points: 8
+wave: "wave_3"
+descripcion: |
+  Configuracion de DevOps: Docker, CI/CD, monitoring, logging, deployment scripts.
+entregables:
+  - "Docker Compose para desarrollo local"
+  - "Dockerfiles optimizados"
+  - "CI/CD pipeline (GitHub Actions)"
+  - "Health checks configurados"
+  - "Logging estructurado"
+  - "Monitoring basico"
+stories:
+  - id: "US-GAM-DOP-01"
+    titulo: "Docker Compose and Dockerfiles"
+    status: "PENDIENTE"
+    story_points: 3
+  - id: "US-GAM-DOP-02"
+    titulo: "CI/CD Pipeline (GitHub Actions)"
+    status: "PENDIENTE"
+    story_points: 3
+  - id: "US-GAM-DOP-03"
+    titulo: "Monitoring, Logging and Health Checks"
+    status: "PENDIENTE"
+    story_points: 2
+traceability:
+  requirements: []
+  components:
+    backend: []
+    frontend: []
+    database: []
+  dependencies:
+    depends_on:
+      - "EPIC-GAM-BACKEND"
+      - "EPIC-GAM-FRONTEND"
+      - "EPIC-GAM-K8S"
+    blocks: []
+metricas:
+  total_stories: 3
+  stories_completadas: 0
+  porcentaje_avance: 0

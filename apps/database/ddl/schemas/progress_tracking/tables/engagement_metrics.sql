@@ -3,6 +3,8 @@
 -- Descripción: Métricas de engagement y actividad de usuarios
 -- CREADO: 2025-11-08
 
+DROP TABLE IF EXISTS progress_tracking.engagement_metrics CASCADE;
+
 CREATE TABLE progress_tracking.engagement_metrics (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,

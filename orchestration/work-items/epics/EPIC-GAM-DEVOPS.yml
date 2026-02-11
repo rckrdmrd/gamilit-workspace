@@ -1,0 +1,33 @@
+# EPIC-GAM-DEVOPS: DevOps Gamilit
+id: "EPIC-GAM-DEVOPS"
+titulo: "DevOps Gamilit"
+proyecto: "gamilit"
+story_points: 8
+estado: "EN_PROGRESO"
+prioridad: "P2"
+fecha_inicio: "2025-12-01"
+fecha_fin: null
+
+descripcion: |
+  Configuracion de DevOps: Docker, CI/CD, monitoring, logging, deployment scripts.
+
+entregables:
+  - "Docker Compose para desarrollo local"
+  - "Dockerfiles optimizados"
+  - "CI/CD pipeline (GitHub Actions)"
+  - "Health checks configurados"
+  - "Logging estructurado"
+  - "Monitoring basico"
+
+estado_detallado:
+  completado:
+    - "Docker Compose desarrollo"
+    - "Dockerfiles backend/frontend"
+    - "Health checks (/health, /ready, /live)"
+    - "WSL development environment"
+    - "Database recreation scripts"
+  pendiente:
+    - "CI/CD pipeline completo"
+    - "Monitoring (Prometheus/Grafana)"
+    - "Centralized logging"
+    - "Automated backups"

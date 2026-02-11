@@ -42,6 +42,7 @@ CREATE TABLE auth_management.profiles (
     metadata jsonb DEFAULT '{}'::jsonb,
     created_at timestamp with time zone DEFAULT gamilit.now_mexico(),
     updated_at timestamp with time zone DEFAULT gamilit.now_mexico(),
+    deleted_at timestamp with time zone DEFAULT NULL,
     user_id uuid,
 
     -- Primary Key
@@ -76,6 +77,7 @@ CREATE INDEX IF NOT EXISTS idx_profiles_tenant_id ON auth_management.profiles US
 CREATE INDEX IF NOT EXISTS idx_profiles_tenant_role_status ON auth_management.profiles USING btree (tenant_id, role, status);
 CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON auth_management.profiles USING btree (user_id);
 CREATE INDEX IF NOT EXISTS idx_profiles_school_id ON auth_management.profiles USING btree (school_id) WHERE (school_id IS NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_profiles_deleted_at ON auth_management.profiles(deleted_at) WHERE deleted_at IS NULL;
 
 -- NOTE: Triggers movidos a archivos separados en triggers/ para evitar duplicación
 -- Ver: triggers/03-trg_audit_profile_changes.sql
@@ -103,6 +105,7 @@ COMMENT ON COLUMN auth_management.profiles.bio IS 'Biografía o descripción del
 COMMENT ON COLUMN auth_management.profiles.school_id IS 'ID de la escuela del estudiante (pendiente tabla schools)';
 COMMENT ON COLUMN auth_management.profiles.grade_level IS 'Grado escolar del estudiante (ej: "6", "7", "8")';
 COMMENT ON COLUMN auth_management.profiles.role IS 'Rol del usuario: student, admin_teacher, super_admin';
+COMMENT ON COLUMN auth_management.profiles.deleted_at IS 'Soft-delete timestamp. NULL = active, NOT NULL = deleted. DB-124 H-022: Prevents accidental data loss from CASCADE deletes (77 FKs to this table)';
 
 -- Permissions
 ALTER TABLE auth_management.profiles OWNER TO gamilit_user;

@@ -6,6 +6,8 @@
 -- Fecha: 2025-11-11
 -- =====================================================
 
+DROP TABLE IF EXISTS notifications.user_devices CASCADE;
+
 CREATE TABLE notifications.user_devices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

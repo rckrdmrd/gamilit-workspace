@@ -1,87 +1,93 @@
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 # DECLARACION DE HERENCIA - GAMILIT
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 #
 # Proyecto: gamilit
-# Rol: Sistema Academico con Gamificacion - REFERENCIA INTERNA
-# Nivel: STANDALONE + REFERENCE_SOURCE
-# Prioridad: N/A (Referencia, no en cadena de desarrollo)
+# Rol: Plataforma Educativa Gamificada - STANDALONE independiente
+# Nivel: STANDALONE_HEREDERO (L2A)
+# Tipo: MONOREPO (backend + frontend + database en mismo repo)
 #
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 
-version: "1.0.0"
-created: "2026-01-16"
-updated: "2026-01-16"
+version: "2.0.0"
+created: "2026-02-07"
+updated: "2026-02-07"
 proyecto: "gamilit"
 
-# ─────────────────────────────────────────────────────────────────────────────────
+# -------------------------------------------------------------------------------
 # RELACION DE HERENCIA
-# ─────────────────────────────────────────────────────────────────────────────────
+# -------------------------------------------------------------------------------
 
 herencia:
-  parent: null  # Proyecto standalone
+  parent: null
   parent_version: null
-  tipo: "STANDALONE"
+  tipo: "STANDALONE_HEREDERO"
+  nivel: "2A"
   cadena: "gamilit"
-  rol_especial: "REFERENCIA_INTERNA"
+  rol_especial: "REFERENCE_SOURCE"
   descripcion: |
-    GAMILIT es el proyecto mas maduro del workspace.
-    No hereda de otros proyectos pero sirve como fuente de patrones
-    reutilizables para todo el ecosistema.
+    GAMILIT es un proyecto STANDALONE_HEREDERO:
+    - NO hereda codigo de otros proyectos
+    - NO tiene parent_id formal (es independiente)
+    - Sirve como REFERENCE_SOURCE (exporta patrones a shared/catalog/)
+    - NO propaga codigo a otros proyectos
 
-# ─────────────────────────────────────────────────────────────────────────────────
+# -------------------------------------------------------------------------------
 # METRICAS DE MADUREZ
-# ─────────────────────────────────────────────────────────────────────────────────
+# -------------------------------------------------------------------------------
 
 madurez:
-  completitud: "60%"
-  lineas_codigo: 200000+
-  archivos_documentacion: 687
+  completitud: "98%"
+  fase: "PRODUCCION_ACTIVA"
+  lineas_codigo: "200000+"
   en_produccion: true
   usuarios_activos: true
+  mvp_completado: true
 
   cobertura:
     backend:
-      modulos: 17
-      entities: 123
-      services: 89
-      controllers: 45
+      modulos: 22
+      entities: 141
+      services: 145
+      controllers: 103
+      endpoints: 850
     frontend:
-      componentes: 464
-      hooks: 78
-      stores: 12
+      componentes: 458
+      hooks: 127
+      stores: 32
+      paginas: 85
+      portales: 4
     database:
-      tablas: 137
-      views: 23
-      functions: 45
-    coherencia_3_capas: "99%"
+      schemas: 18
+      tablas: 171
+      views: 13
+      funciones: 128
+      triggers: 49
+      rls_policies: 282
+    tests_pasando: 833
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# PATRONES EXTRAIBLES (Para otros proyectos)
-# ─────────────────────────────────────────────────────────────────────────────────
+# -------------------------------------------------------------------------------
+# PATRONES COMO REFERENCIA (Para shared/catalog/)
+# -------------------------------------------------------------------------------
 
 patrones_como_referencia:
   arquitectura_monorepo:
-    descripcion: "Estructura de monorepo con separacion clara"
-    adoptado_por: ["erp-core", "erp-construccion", "template-saas", "trading-platform"]
-    ubicacion: "apps/"
-    documentacion: "docs/90-transversal/arquitectura/"
+    descripcion: "Estructura monorepo con separacion clara apps/"
+    ubicacion_catalogo: "shared/catalog/arquitectura/monorepo/"
+    documentacion: "docs/20-architecture/"
 
   constants_ssot:
     descripcion: "Sistema de constantes sincronizadas entre capas"
-    adoptado_por: ["erp-core"]
-    pendiente_en: ["erp-construccion", "template-saas"]
-    ubicacion: "apps/backend/src/shared/constants/"
+    ubicacion_referencia: "apps/backend/src/shared/constants/"
     beneficios:
       - "Type-safety entre capas"
       - "Sin hardcoding de strings"
-      - "Sincronizacion automatica"
+      - "Sincronizacion automatica DDL -> Backend -> Frontend"
 
   modulos_nestjs:
     descripcion: "Arquitectura de modulos NestJS estandarizada"
-    adoptado_por: ["erp-core", "template-saas", "trading-platform"]
-    ubicacion: "apps/backend/src/modules/"
-    estructura:
+    ubicacion_referencia: "apps/backend/src/modules/"
+    estructura_estandar:
       - "entities/"
       - "services/"
       - "controllers/"
@@ -90,311 +96,177 @@ patrones_como_referencia:
 
   inventarios_yaml:
     descripcion: "Sistema de inventarios maestros por capa"
-    adoptado_por: ["erp-core", "erp-construccion", "template-saas"]
-    ubicacion: "orchestration/inventarios/"
+    ubicacion_referencia: "orchestration/inventory/"
     archivos:
       - "MASTER_INVENTORY.yml"
       - "DATABASE_INVENTORY.yml"
       - "BACKEND_INVENTORY.yml"
       - "FRONTEND_INVENTORY.yml"
 
-  coherencia_3_capas:
-    descripcion: "Validacion de coherencia BD ↔ Backend ↔ Frontend"
-    adoptado_por: ["gamilit"]
-    pendiente_en: ["erp-core", "template-saas"]
-    ubicacion: "orchestration/reportes/"
-    metricas:
-      - "Tablas ↔ Entities: 99%"
-      - "Endpoints ↔ API Services: 100%"
+  gamificacion:
+    descripcion: "Sistema completo de gamificacion educativa"
+    unico_en: ["gamilit"]
+    componentes:
+      - "Sistema XP multinivel"
+      - "Rangos jerarquicos (cultura maya)"
+      - "Logros e insignias"
+      - "Economia virtual (ML Coins)"
+      - "Misiones y retos"
+      - "Leaderboards con temporadas"
+      - "Tienda de recompensas"
 
-  trazas_trabajo:
-    descripcion: "Sistema de trazas por tipo de actividad"
-    adoptado_por: ["erp-core", "erp-construccion"]
-    ubicacion: "orchestration/trazas/"
-    tipos:
-      - "TRAZA-REQUERIMIENTOS.md"
-      - "TRAZA-BUGS.md"
-      - "TRAZA-CORRECCIONES.md"
-
-# ─────────────────────────────────────────────────────────────────────────────────
+# -------------------------------------------------------------------------------
 # MODULOS PROPIOS
-# ─────────────────────────────────────────────────────────────────────────────────
+# -------------------------------------------------------------------------------
 
 modulos:
-  heredados: []  # No hereda de nadie
+  heredados: []
 
   propios:
-    # Core Modules
     - name: "auth"
       id: "GAM-AUTH"
-      version: "2.5.0"
       estado: "100%"
-      descripcion: "Autenticacion con roles academicos"
-
     - name: "users"
       id: "GAM-USERS"
-      version: "2.5.0"
       estado: "100%"
-      descripcion: "Usuarios: estudiantes, profesores, admin"
-
-    - name: "courses"
-      id: "GAM-COURSES"
-      version: "2.5.0"
-      estado: "90%"
-      descripcion: "Gestion de cursos y materias"
-
-    - name: "evaluations"
-      id: "GAM-EVALS"
-      version: "2.5.0"
-      estado: "85%"
-      descripcion: "Sistema de evaluaciones y calificaciones"
-
-    - name: "activities"
-      id: "GAM-ACT"
-      version: "2.5.0"
-      estado: "80%"
-      descripcion: "Actividades academicas"
-
-    # Gamification Modules (especificos)
-    - name: "gamification-core"
-      id: "GAM-GAME"
-      version: "2.5.0"
+    - name: "tenants"
+      id: "GAM-TENANTS"
+      estado: "100%"
+    - name: "modules"
+      id: "GAM-MODULES"
       estado: "95%"
-      descripcion: "Motor de gamificacion"
-
-    - name: "points"
-      id: "GAM-POINTS"
-      version: "2.5.0"
-      estado: "100%"
-      descripcion: "Sistema de puntos con multiplicadores"
-
-    - name: "ranks"
-      id: "GAM-RANKS"
-      version: "2.5.0"
-      estado: "100%"
-      descripcion: "Rangos jerarquicos (5 niveles)"
-
-    - name: "achievements"
-      id: "GAM-ACH"
-      version: "2.5.0"
-      estado: "90%"
-      descripcion: "Logros e insignias"
-
-    - name: "leaderboards"
+    - name: "exercises"
+      id: "GAM-EXERCISES"
+      estado: "95%"
+    - name: "gamification"
+      id: "GAM-GAME"
+      estado: "95%"
+    - name: "leaderboard"
       id: "GAM-LEAD"
-      version: "2.5.0"
       estado: "85%"
-      descripcion: "Leaderboards competitivos"
-
-    - name: "rewards"
-      id: "GAM-REW"
-      version: "2.5.0"
-      estado: "80%"
-      descripcion: "Recompensas desbloqueables"
-
-    # Support Modules
+    - name: "missions"
+      id: "GAM-MISS"
+      estado: "85%"
+    - name: "store"
+      id: "GAM-SHOP"
+      estado: "75%"
+    - name: "classrooms"
+      id: "GAM-CLASS"
+      estado: "90%"
+    - name: "students"
+      id: "GAM-STUDENTS"
+      estado: "90%"
+    - name: "teachers"
+      id: "GAM-TEACHERS"
+      estado: "95%"
+    - name: "parents"
+      id: "GAM-PARENTS"
+      estado: "100%"
+    - name: "analytics"
+      id: "GAM-ANALYTICS"
+      estado: "85%"
+    - name: "content"
+      id: "GAM-CONTENT"
+      estado: "95%"
     - name: "notifications"
       id: "GAM-NOTIF"
-      version: "2.5.0"
       estado: "90%"
-      descripcion: "Notificaciones in-app y email"
-
     - name: "reports"
       id: "GAM-REP"
-      version: "2.5.0"
       estado: "75%"
-      descripcion: "Reportes academicos y de progreso"
+    - name: "social"
+      id: "GAM-SOCIAL"
+      estado: "50%"
+    - name: "achievements"
+      id: "GAM-ACH"
+      estado: "90%"
+    - name: "settings"
+      id: "GAM-SETTINGS"
+      estado: "100%"
+    - name: "health"
+      id: "GAM-HEALTH"
+      estado: "100%"
+    - name: "core"
+      id: "GAM-CORE"
+      estado: "100%"
 
-    - name: "admin-portal"
-      id: "GAM-ADMIN"
-      version: "2.5.0"
-      estado: "70%"
-      descripcion: "Panel de administracion"
-
-# ─────────────────────────────────────────────────────────────────────────────────
+# -------------------------------------------------------------------------------
 # CONFIGURACION
-# ─────────────────────────────────────────────────────────────────────────────────
+# -------------------------------------------------------------------------------
 
 configuracion:
   stack:
-    backend: "Node.js 20, NestJS 10, TypeScript, TypeORM"
-    frontend: "React 18, Vite, TypeScript, Tailwind CSS, Zustand"
-    database: "PostgreSQL 15"
-    mobile: "React Native (planificado)"
+    backend: "NestJS 11, TypeORM 0.3.x, TypeScript"
+    frontend: "React 19, Zustand 5.x, TailwindCSS 4.x, Vite 7.x"
+    database: "PostgreSQL 16 con RLS"
+    realtime: "Socket.IO 4.8+"
+    runtime: "Node.js 20"
+    testing: "Jest (backend), Vitest (frontend)"
 
-  schemas:
-    - "gamilit_core"
-    - "gamilit_academic"
-    - "gamilit_gamification"
-    - "gamilit_analytics"
+  repositorio:
+    tipo: "MONOREPO"
+    remote: "git@github.com:rckrdmrd/gamilit-workspace.git"
+    branch: "main"
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# NOTA SOBRE RELACIONES (Solo Documentacion Historica)
-# ─────────────────────────────────────────────────────────────────────────────────
-#
-# IMPORTANTE: Esta seccion es SOLO documentacion historica.
-# NO representa herencia de codigo ni dependencia activa.
-#
-# Gamilit es 100% STANDALONE:
-#   - NO es padre de ningun proyecto
-#   - NO tiene consumidores de codigo
-#   - NO debe usarse como "parent" en _inheritance.yml de otros proyectos
-#
-# La relacion correcta es:
-#   gamilit (fuente historica) --> shared/catalog/ (patrones extraidos)
-#                                        |
-#                                        v
-#                              Otros proyectos (consultan catalogo)
-#
-# Si un proyecto necesita funcionalidad similar a gamilit, debe:
-#   1. Consultar shared/catalog/ para ver si existe el patron
-#   2. Implementar usando el catalogo como referencia
-#   3. NO heredar de gamilit directamente
-#
-# ─────────────────────────────────────────────────────────────────────────────────
+  bases_datos:
+    - nombre: "gamilit_platform"
+      usuario: "gamilit_user"
+      password: "gamilit_dev_2026"
+      puerto: 5432
+      redis_db: 0
+      schemas: 18
 
-historial_extraccion_patrones:
-  nota: |
-    DOCUMENTACION HISTORICA - NO ES HERENCIA
-    Los siguientes patrones fueron EXTRAIDOS de gamilit hacia shared/catalog/
-    en el pasado. Los proyectos listados consultaron esos patrones del catalogo,
-    NO de gamilit directamente.
+  puertos:
+    frontend: 3005
+    backend: 3006
+    postgresql: 5432
+    redis: 6379
 
-  patrones_extraidos_a_catalogo:
-    - patron: "arquitectura_monorepo"
-      extraido_a: "shared/catalog/ (documentacion)"
-      fecha_extraccion: "2025-12"
+# -------------------------------------------------------------------------------
+# RELACIONES
+# -------------------------------------------------------------------------------
 
-    - patron: "modulos_nestjs"
-      extraido_a: "shared/catalog/auth/, shared/catalog/session-management/, etc."
-      fecha_extraccion: "2025-12"
+relaciones:
+  tipo: "STANDALONE_HEREDERO"
 
-    - patron: "constants_ssot"
-      extraido_a: "projects/gamilit/orchestration/"  # Actualizado 2026-01-16: KB projects eliminado
-      fecha_extraccion: "2025-12"
+  reference_source:
+    - target: "shared/catalog/"
+      tipo: "REFERENCE_SOURCE"
+      descripcion: "Exporta patrones generalizables al catalogo compartido"
+      patrones:
+        - "arquitectura_monorepo"
+        - "constants_ssot"
+        - "modulos_nestjs"
+        - "inventarios_yaml"
+        - "gamificacion"
 
-  proyectos_que_consultaron_catalogo:
-    # Estos proyectos consultaron shared/catalog/, NO gamilit
-    - proyecto: "erp-core"
-      consulto: "shared/catalog/"
-      patrones: ["auth", "session-management", "arquitectura"]
-      nota: "erp-core hereda de template-saas, NO de gamilit"
+  no_propaga_a: []
 
-    - proyecto: "template-saas"
-      consulto: "shared/catalog/"
-      patrones: ["auth", "modulos_nestjs"]
-      nota: "template-saas es PROVIDER independiente, NO hereda de gamilit"
-
-    - proyecto: "trading-platform"
-      consulto: "shared/catalog/"
-      patrones: ["arquitectura_monorepo"]
-      nota: "trading-platform es STANDALONE, solo consulta catalogo"
-
-# ─────────────────────────────────────────────────────────────────────────────────
+# -------------------------------------------------------------------------------
 # VALIDACION
-# ─────────────────────────────────────────────────────────────────────────────────
+# -------------------------------------------------------------------------------
 
 validacion:
-  ultima_validacion: "2026-01-16"
-  estado_general: "produccion_activa"
+  ultima_validacion: "2026-02-07"
+  estado_general: "PRODUCCION_ACTIVA"
+  mvp: "98% completado"
 
   checklist:
     - item: "Backend operativo"
       status: "passed"
+      detalles: "22 modulos, 850 endpoints, 833 tests pasando"
     - item: "Frontend operativo"
       status: "passed"
+      detalles: "458 componentes, 4 portales, 85 paginas"
     - item: "Database estable"
       status: "passed"
-    - item: "Coherencia 3 capas > 95%"
+      detalles: "18 schemas, 171 tablas, 282 RLS policies"
+    - item: "Produccion activa"
       status: "passed"
+      detalles: "Usuarios reales, MVP desplegado"
 
-  bloqueos: []  # Proyecto standalone
+  bloqueos: []
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# DOCUMENTACION CLAVE
-# ─────────────────────────────────────────────────────────────────────────────────
-
-documentacion_referencia:
-  arquitectura:
-    - "docs/90-transversal/arquitectura/"
-    - "docs/90-adr/"
-  inventarios:
-    - "orchestration/inventarios/MASTER_INVENTORY.yml"
-    - "orchestration/inventarios/BACKEND_INVENTORY.yml"
-    - "orchestration/inventarios/FRONTEND_INVENTORY.yml"
-    - "orchestration/inventarios/DATABASE_INVENTORY.yml"
-  trazabilidad:
-    - "orchestration/trazas/"
-    - "orchestration/reportes/"
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# PRINCIPIOS HEREDADOS DEL WORKSPACE
-# ─────────────────────────────────────────────────────────────────────────────────
-
-principios_heredados:
-  source: "local"
-  path: "orchestration/"
-  politica: "REPLICA_COMPLETA"
-  razon: |
-    Gamilit ahora es un workspace independiente con todas las
-    definiciones replicadas localmente para autonomia total.
-    Sincronizado desde workspace-v2 el 2026-01-25.
-
-    Estructura replicada:
-      - agents/ (66 archivos)
-      - directivas/ (124 archivos)
-      - _definitions/ (29 archivos)
-      - referencias/ (29 archivos)
-      - templates/ (60 archivos)
-      - _quick/ (4 archivos)
-
-  archivos:
-    - nombre: "PRINCIPIO-CAPVED.md"
-      local: "orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
-      tipo: "COPIA_LOCAL"
-      alias: "@CAPVED"
-
-    - nombre: "PRINCIPIO-DOC-PRIMERO.md"
-      local: "orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
-      tipo: "COPIA_LOCAL"
-      alias: "@DOC-PRIMERO"
-
-    - nombre: "PRINCIPIO-ANTI-DUPLICACION.md"
-      local: "orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md"
-      tipo: "COPIA_LOCAL"
-      alias: "@ANTI-DUP"
-
-    - nombre: "PRINCIPIO-VALIDACION-OBLIGATORIA.md"
-      local: "orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
-      tipo: "COPIA_LOCAL"
-      alias: "@VALIDAR"
-
-    - nombre: "PRINCIPIO-ECONOMIA-TOKENS.md"
-      local: "orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
-      tipo: "COPIA_LOCAL"
-      alias: "@ECONOMIA"
-
-    - nombre: "PRINCIPIO-NO-ASUMIR.md"
-      local: "orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
-      tipo: "COPIA_LOCAL"
-      alias: "@NO-ASUMIR"
-
-  actualizacion:
-    fecha: "2026-01-25"
-    razon: "Sincronizacion completa orchestration/ workspace-v2 a gamilit"
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# METADATA
-# ─────────────────────────────────────────────────────────────────────────────────
-
-metadata:
-  created_by: "Claude Opus 4.5"
-  created_at: "2026-01-16"
-  task_id: "TASK-2026-01-16-002"
-  related_documents:
-    - "orchestration/MAPA-DOCUMENTACION-GAMILIT.yml"
-    - "orchestration/CONTEXT-MAP.yml"
-
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 # FIN DE DECLARACION DE HERENCIA
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================

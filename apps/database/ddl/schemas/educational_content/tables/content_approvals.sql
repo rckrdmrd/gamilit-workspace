@@ -4,6 +4,8 @@
 -- CREADO: 2025-11-08
 -- Epic: EXT-006
 
+DROP TABLE IF EXISTS educational_content.content_approvals CASCADE;
+
 CREATE TABLE educational_content.content_approvals (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     content_type VARCHAR(50) NOT NULL CHECK (content_type IN ('module', 'exercise', 'assignment', 'resource')),

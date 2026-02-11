@@ -3,6 +3,8 @@
 -- Descripción: Metadatos extendidos para archivos multimedia
 -- CREADO: 2025-11-08
 
+DROP TABLE IF EXISTS content_management.media_metadatas CASCADE;
+
 CREATE TABLE content_management.media_metadatas (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     media_file_id UUID NOT NULL REFERENCES content_management.media_files(id) ON DELETE CASCADE,

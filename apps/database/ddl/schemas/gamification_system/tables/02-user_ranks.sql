@@ -5,6 +5,8 @@
 --              Ajaw → Nacom → Ah K'in → Halach Uinic → K'uk'ulkan
 -- =====================================================================================
 
+DROP TABLE IF EXISTS gamification_system.user_ranks CASCADE;
+
 CREATE TABLE gamification_system.user_ranks (
     -- Identificación
     id uuid DEFAULT gen_random_uuid() NOT NULL,

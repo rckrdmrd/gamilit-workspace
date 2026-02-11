@@ -1,0 +1,22 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# REDIRECT STUB - _inheritance.yml (ROOT)
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Este archivo es un REDIRECT STUB.
+# La declaracion real esta en: orchestration/_inheritance.yml
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "2.0.0"
+tipo: "REDIRECT_STUB"
+redirect_to: "orchestration/_inheritance.yml"
+
+nota: |
+  Este archivo redirige a la declaracion real de herencia.
+
+  Para consultar la herencia completa del proyecto, ver:
+  orchestration/_inheritance.yml
+
+  Tipo: STANDALONE_HEREDERO
+  Parent: null (NO tiene parent formal)
+  Pattern Source: template-saas (referencia de patrones, NO herencia de codigo)

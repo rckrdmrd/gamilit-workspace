@@ -107,7 +107,9 @@ export class TeacherReportsService {
         order: { generatedAt: 'DESC' },
       });
 
-      const lastGeneratedDate = lastReport?.generatedAt.toISOString() || null;
+      const lastGeneratedDate = lastReport?.generatedAt
+        ? (lastReport.generatedAt instanceof Date ? lastReport.generatedAt.toISOString() : String(lastReport.generatedAt))
+        : null;
 
       // Find most used format
       const formatCounts = reports.reduce(
@@ -262,9 +264,9 @@ export class TeacherReportsService {
       report_type: report.reportType,
       report_format: report.reportFormat,
       student_count: report.studentCount,
-      period_start: report.periodStart ? report.periodStart.toISOString() : null,
-      period_end: report.periodEnd ? report.periodEnd.toISOString() : null,
-      generated_at: report.generatedAt.toISOString(),
+      period_start: report.periodStart ? String(report.periodStart) : null,
+      period_end: report.periodEnd ? String(report.periodEnd) : null,
+      generated_at: report.generatedAt instanceof Date ? report.generatedAt.toISOString() : String(report.generatedAt),
       file_size_bytes: report.fileSizeBytes ?? null,
     };
   }

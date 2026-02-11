@@ -1,0 +1,71 @@
+id: "US-GAM-TNT-01"
+titulo: "Multi-Tenant Configuration and Management"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P2"
+story_points: 3
+sprint: "Backlog"
+modulos:
+  - "tenants"
+  - "settings"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/tenants/"
+        - "apps/backend/src/modules/settings/"
+      endpoints:
+        - "POST /tenants"
+        - "GET /tenants"
+        - "GET /tenants/:id"
+        - "PUT /tenants/:id"
+        - "PUT /tenants/:id/settings"
+        - "PUT /tenants/:id/subscription"
+        - "POST /tenants/:id/suspend"
+        - "POST /tenants/:id/reactivate"
+      files:
+        - "tenants.module.ts"
+        - "tenants.service.ts"
+        - "tenants.controller.ts"
+        - "settings.module.ts"
+        - "settings.service.ts"
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/admin/tenants/"
+        - "apps/frontend/src/pages/admin/settings/"
+      pages:
+        - "TenantManagerPage"
+        - "TenantSettingsPage"
+      components:
+        - "TenantManager"
+        - "TenantSettings"
+        - "SubscriptionPlans"
+        - "TenantOnboarding"
+        - "LimitUsageBar"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/tenants/"
+        - "apps/database/ddl/schemas/settings/"
+      tables:
+        - "tenants.organizations"
+        - "tenants.subscriptions"
+        - "tenants.settings"
+        - "tenants.limits"
+        - "tenants.features"
+  tests:
+    unit:
+      - "tenants.service.spec.ts"
+      - "tenants.controller.spec.ts"
+      - "settings.service.spec.ts"
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-AUTH-01"
+    - "US-GAM-DB-01"
+  blocks: []
+tasks: []

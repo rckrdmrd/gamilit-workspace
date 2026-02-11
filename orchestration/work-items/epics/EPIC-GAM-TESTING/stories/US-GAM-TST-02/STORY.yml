@@ -1,0 +1,46 @@
+id: "US-GAM-TST-02"
+titulo: "Frontend Unit Tests (Vitest)"
+epic_id: "EPIC-GAM-TESTING"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "EN_PROGRESO"
+prioridad: "P2"
+story_points: 3
+sprint: "Backlog"
+modulos:
+  - "frontend-components"
+  - "frontend-hooks"
+  - "frontend-stores"
+  - "frontend-services"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths: []
+      endpoints: []
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/"
+        - "apps/frontend/test/"
+      pages:
+        - "85 pages"
+      components:
+        - "458 components"
+        - "127 hooks"
+        - "32 Zustand stores"
+        - "48 API services"
+    database:
+      paths: []
+      tables: []
+  tests:
+    unit:
+      - "~200 Vitest tests targeting 80% coverage"
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks:
+    - "US-GAM-TST-04"
+tasks: []

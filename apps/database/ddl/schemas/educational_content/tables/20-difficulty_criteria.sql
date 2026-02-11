@@ -6,7 +6,9 @@
 -- Version: 1.0
 -- =====================================================
 
-CREATE TABLE IF NOT EXISTS educational_content.difficulty_criteria (
+DROP TABLE IF EXISTS educational_content.difficulty_criteria CASCADE;
+
+CREATE TABLE educational_content.difficulty_criteria (
     level educational_content.difficulty_level PRIMARY KEY,
 
     -- Criterios de complejidad

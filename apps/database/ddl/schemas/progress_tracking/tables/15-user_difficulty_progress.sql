@@ -6,7 +6,9 @@
 -- Version: 1.0
 -- =====================================================
 
-CREATE TABLE IF NOT EXISTS progress_tracking.user_difficulty_progresses (
+DROP TABLE IF EXISTS progress_tracking.user_difficulty_progresses CASCADE;
+
+CREATE TABLE progress_tracking.user_difficulty_progresses (
     user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     difficulty_level educational_content.difficulty_level NOT NULL,
 

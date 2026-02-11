@@ -51,7 +51,7 @@ export class ManualReviewController {
    * Este endpoint reemplaza los datos hardcodeados de manualReviewExercises.ts
    */
   @Get('config/exercises')
-  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
   @ApiOperation({ summary: 'Obtener configuración de ejercicios con revisión manual' })
   @ApiResponse({
     status: 200,
@@ -106,7 +106,7 @@ export class ManualReviewController {
    * FIX GAP-LOW-002: Added pagination support
    */
   @Get('pending')
-  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
   @ApiOperation({ summary: 'Obtener reviews pendientes del docente (paginado)' })
   @ApiQuery({
     name: 'moduleId',
@@ -151,7 +151,7 @@ export class ManualReviewController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ): Promise<PaginatedReviewsResult> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     const parsedPage = page ? parseInt(page, 10) : 1;
     const parsedLimit = limit ? Math.min(parseInt(limit, 10), 100) : 20; // Max 100
 
@@ -168,7 +168,7 @@ export class ManualReviewController {
    * Usa la vista teacher_pending_reviews para mejor rendimiento
    */
   @Get('pending/module/:moduleOrder')
-  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
   @ApiOperation({ summary: 'Obtener reviews pendientes por módulo' })
   @ApiResponse({
     status: 200,
@@ -178,7 +178,7 @@ export class ManualReviewController {
     @Request() req: AuthRequest,
     @Param('moduleOrder') moduleOrder: string,
   ): Promise<any[]> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.reviewService.findPendingByModule(teacherId, parseInt(moduleOrder, 10));
   }
 
@@ -186,7 +186,7 @@ export class ManualReviewController {
    * Obtiene estadísticas de reviews pendientes para el dashboard
    */
   @Get('stats')
-  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
   @ApiOperation({ summary: 'Obtener estadísticas de reviews pendientes' })
   @ApiQuery({
     name: 'classroomId',
@@ -207,15 +207,16 @@ export class ManualReviewController {
     mediumCount: number;
     normalCount: number;
   }> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
+    const teacherId = req.user!.id;
     return this.reviewService.getPendingReviewsStats(teacherId, classroomId);
   }
 
   /**
-   * Obtiene todos los reviews del docente (con filtro opcional por estado)
+   * Obtiene todos los reviews del docente (con filtros opcionales)
+   * FIX H-07: Agregados filtros moduleId, exerciseId, classroomId
    */
   @Get('my-reviews')
-  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
   @ApiOperation({ summary: 'Obtener todos los reviews del docente' })
   @ApiQuery({
     name: 'status',
@@ -223,6 +224,9 @@ export class ManualReviewController {
     enum: ['pending', 'in_progress', 'completed', 'returned'],
     description: 'Filtrar por estado del review',
   })
+  @ApiQuery({ name: 'moduleId', required: false, type: String, description: 'Filtrar por módulo educativo (UUID)' })
+  @ApiQuery({ name: 'exerciseId', required: false, type: String, description: 'Filtrar por ejercicio específico (UUID)' })
+  @ApiQuery({ name: 'classroomId', required: false, type: String, description: 'Filtrar por salón de clases (UUID)' })
   @ApiResponse({
     status: 200,
     description: 'Lista de reviews del docente',
@@ -231,16 +235,19 @@ export class ManualReviewController {
   async getMyReviews(
     @Request() req: AuthRequest,
     @Query('status') status?: 'pending' | 'in_progress' | 'completed' | 'returned',
+    @Query('moduleId') moduleId?: string,
+    @Query('exerciseId') exerciseId?: string,
+    @Query('classroomId') classroomId?: string,
   ): Promise<ManualReview[]> {
-    const teacherId = req.user!.profile?.id || req.user!.id;
-    return this.reviewService.findByTeacher(teacherId, status);
+    const teacherId = req.user!.id;
+    return this.reviewService.findByTeacher(teacherId, { status, moduleId, exerciseId, classroomId });
   }
 
   /**
    * Obtiene un review específico por ID
    */
   @Get(':id')
-  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
   @ApiOperation({ summary: 'Obtener review por ID' })
   @ApiResponse({
     status: 200,
@@ -256,7 +263,7 @@ export class ManualReviewController {
    * Crea un nuevo review
    */
   @Post()
-  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
   @ApiOperation({ summary: 'Crear nueva evaluación manual' })
   @ApiResponse({
     status: 201,
@@ -269,7 +276,7 @@ export class ManualReviewController {
     @Request() req: AuthRequest,
     @Body() dto: CreateReviewDto,
   ): Promise<ManualReview> {
-    const teacherId = req.user?.profile?.id || req.user?.sub || req.user?.id;
+    const teacherId = req.user!.id;
     if (!teacherId) {
       throw new UnauthorizedException('Teacher profile not found. Please ensure you are logged in with a valid teacher account.');
     }
@@ -281,7 +288,7 @@ export class ManualReviewController {
    * TASK-2026-01-18-014: Usar UpdateReviewDto con campos opcionales
    */
   @Put(':id')
-  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
   @ApiOperation({ summary: 'Actualizar evaluación manual' })
   @ApiResponse({
     status: 200,
@@ -300,7 +307,7 @@ export class ManualReviewController {
    * Inicia un review (marca como in_progress)
    */
   @Post(':id/start')
-  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
   @ApiOperation({ summary: 'Iniciar revisión de un submission' })
   @ApiResponse({
     status: 200,
@@ -318,7 +325,7 @@ export class ManualReviewController {
    * FIX GAP-CRIT-001: Ahora retorna información de rewards (XP, ML Coins)
    */
   @Post(':id/complete')
-  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
   @ApiOperation({
     summary: 'Completar evaluación manual',
     description: 'Completa el review, califica el submission y distribuye XP/ML Coins al estudiante',
@@ -360,7 +367,7 @@ export class ManualReviewController {
    * Devuelve un submission para corrección
    */
   @Post(':id/return')
-  @Roles(GamilityRoleEnum.ADMIN_TEACHER)
+  @Roles(GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN)
   @ApiOperation({ summary: 'Devolver submission para corrección del estudiante' })
   @ApiResponse({
     status: 200,

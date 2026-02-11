@@ -26,6 +26,7 @@ import {
   Body,
   Param,
   Query,
+  Request,
   ParseUUIDPipe,
   UseGuards,
   HttpCode,
@@ -40,7 +41,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
-import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { AuthRequest } from '@shared/types';
 import { TeacherGuard } from '../guards/teacher.guard';
 import { AlertConfigService } from '../services/alert-config.service';
 import {
@@ -51,15 +52,6 @@ import {
   AlertConfigDefaultsDto,
   AlertConfigListResponseDto,
 } from '../dto/alert-config.dto';
-
-/**
- * Interface for JWT payload
- */
-interface JwtPayload {
-  sub: string;
-  tenant_id: string;
-  role: string;
-}
 
 @ApiTags('Teacher - Alert Configuration')
 @ApiBearerAuth()
@@ -86,10 +78,11 @@ export class AlertConfigController {
     type: AlertConfigListResponseDto,
   })
   async getConfigurations(
-    @CurrentUser() user: JwtPayload,
+    @Request() req: AuthRequest,
     @Query() query: GetAlertConfigQueryDto,
   ): Promise<AlertConfigListResponseDto> {
-    return this.alertConfigService.getConfigurations(user.sub, query);
+    const teacherId = req.user!.id;
+    return this.alertConfigService.getConfigurations(teacherId, query);
   }
 
   /**
@@ -127,10 +120,11 @@ export class AlertConfigController {
   })
   @ApiResponse({ status: 404, description: 'Configuration not found' })
   async getConfiguration(
-    @CurrentUser() user: JwtPayload,
+    @Request() req: AuthRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<AlertConfigResponseDto> {
-    return this.alertConfigService.getConfiguration(user.sub, id);
+    const teacherId = req.user!.id;
+    return this.alertConfigService.getConfiguration(teacherId, id);
   }
 
   /**
@@ -149,10 +143,12 @@ export class AlertConfigController {
   })
   @ApiResponse({ status: 409, description: 'Configuration already exists' })
   async createConfiguration(
-    @CurrentUser() user: JwtPayload,
+    @Request() req: AuthRequest,
     @Body() dto: CreateAlertConfigDto,
   ): Promise<AlertConfigResponseDto> {
-    return this.alertConfigService.createConfiguration(user.sub, user.tenant_id, dto);
+    const teacherId = req.user!.id;
+    const tenantId = req.user!.tenant_id || 'default';
+    return this.alertConfigService.createConfiguration(teacherId, tenantId, dto);
   }
 
   /**
@@ -171,12 +167,14 @@ export class AlertConfigController {
     type: [AlertConfigResponseDto],
   })
   async initializeDefaults(
-    @CurrentUser() user: JwtPayload,
+    @Request() req: AuthRequest,
     @Query('classroom_id') classroomId?: string,
   ): Promise<AlertConfigResponseDto[]> {
+    const teacherId = req.user!.id;
+    const tenantId = req.user!.tenant_id || 'default';
     return this.alertConfigService.initializeDefaults(
-      user.sub,
-      user.tenant_id,
+      teacherId,
+      tenantId,
       classroomId,
     );
   }
@@ -198,11 +196,12 @@ export class AlertConfigController {
   })
   @ApiResponse({ status: 404, description: 'Configuration not found' })
   async updateConfiguration(
-    @CurrentUser() user: JwtPayload,
+    @Request() req: AuthRequest,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateAlertConfigDto,
   ): Promise<AlertConfigResponseDto> {
-    return this.alertConfigService.updateConfiguration(user.sub, id, dto);
+    const teacherId = req.user!.id;
+    return this.alertConfigService.updateConfiguration(teacherId, id, dto);
   }
 
   /**
@@ -219,9 +218,10 @@ export class AlertConfigController {
   @ApiResponse({ status: 204, description: 'Configuration deleted' })
   @ApiResponse({ status: 404, description: 'Configuration not found' })
   async deleteConfiguration(
-    @CurrentUser() user: JwtPayload,
+    @Request() req: AuthRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    return this.alertConfigService.deleteConfiguration(user.sub, id);
+    const teacherId = req.user!.id;
+    return this.alertConfigService.deleteConfiguration(teacherId, id);
   }
 }

@@ -1,4 +1,28 @@
-// Module 4: Additional Reading Mechanics
+// Module 1: Literal Comprehension Mechanics
+export { CompletarEspaciosExercise } from './module1/CompletarEspacios/CompletarEspaciosExercise';
+export { CrucigramaExercise } from './module1/Crucigrama/CrucigramaExercise';
+export { EmparejamientoExercise } from './module1/Emparejamiento/EmparejamientoExercise';
+export { MapaConceptualExercise } from './module1/MapaConceptual/MapaConceptualExercise';
+export { SopaLetrasExercise } from './module1/SopaLetras/SopaLetrasExercise';
+export { TimelineExercise } from './module1/Timeline/TimelineExercise';
+export { VerdaderoFalsoExercise } from './module1/VerdaderoFalso/VerdaderoFalsoExercise';
+
+// Module 2: Inferential Comprehension Mechanics
+export { CausaEfectoExercise } from './module2/ConstruccionHipotesis/CausaEfectoExercise';
+export { DetectiveTextualExercise } from './module2/DetectiveTextual/DetectiveTextualExercise';
+export { LecturaInferencialExercise } from './module2/LecturaInferencial/LecturaInferencialExercise';
+export { PrediccionNarrativaExercise } from './module2/PrediccionNarrativa/PrediccionNarrativaExercise';
+export { PuzzleContextoExercise } from './module2/PuzzleContexto/PuzzleContextoExercise';
+export { RuedaInferenciasExercise } from './module2/RuedaInferencias/RuedaInferenciasExercise';
+
+// Module 3: Critical Thinking Mechanics
+export { AnalisisFuentesExercise } from './module3/AnalisisFuentes/AnalisisFuentesExercise';
+export { DebateDigitalExercise } from './module3/DebateDigital/DebateDigitalExercise';
+export { MatrizPerspectivasExercise } from './module3/MatrizPerspectivas/MatrizPerspectivasExercise';
+export { PodcastArgumentativoExercise } from './module3/PodcastArgumentativo/PodcastArgumentativoExercise';
+export { TribunalOpinionesExercise } from './module3/TribunalOpiniones/TribunalOpinionesExercise';
+
+// Module 4: Digital Reading Mechanics
 // NOTA: Ejercicios eliminados según DocumentoDeDiseño v6.1:
 //   - EmailFormal, ChatLiterario, EnsayoArgumentativo, ResenaCritica
 // Solo se mantienen los 5 ejercicios oficiales del M4

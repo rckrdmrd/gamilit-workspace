@@ -1,0 +1,52 @@
+id: "US-GAM-ACS-01"
+titulo: "Accesibilidad y Soporte Multi-idioma"
+epic_id: "EPIC-GAM-FRONTEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "EN_PROGRESO"
+prioridad: "P2"
+story_points: 8
+sprint: "En progreso"
+modulos:
+  - "core"
+  - "settings"
+  - "content"
+traceability:
+  requirements:
+    - "RNF-GAM-019"
+    - "RNF-GAM-020"
+    - "RNF-GAM-021"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/core/"
+        - "apps/backend/src/modules/settings/"
+      endpoints: []
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/"
+        - "apps/frontend/src/components/accessibility/"
+      pages: []
+      components:
+        - "AccessibilityPanel"
+        - "TextToSpeechControl"
+        - "FontSizeSlider"
+        - "HighContrastToggle"
+        - "LanguageSelector"
+        - "KeyboardNavigationHelper"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/settings/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-STD-01"
+    - "US-GAM-TCH-01"
+  blocks: []
+tasks: []

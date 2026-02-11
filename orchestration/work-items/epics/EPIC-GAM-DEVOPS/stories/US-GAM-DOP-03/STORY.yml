@@ -1,0 +1,45 @@
+id: "US-GAM-DOP-03"
+titulo: "Monitoring, Logging and Health Checks"
+epic_id: "EPIC-GAM-DEVOPS"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "PENDIENTE"
+prioridad: "P2"
+story_points: 2
+sprint: "Backlog"
+modulos:
+  - "devops"
+  - "health"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/health/"
+        - "apps/devops/"
+      endpoints:
+        - "GET /health"
+        - "GET /health/ready"
+        - "GET /health/live"
+      files:
+        - "health.module.ts"
+        - "health.controller.ts"
+        - "logger.service.ts"
+    frontend:
+      paths: []
+      pages: []
+      components: []
+    database:
+      paths: []
+      tables: []
+  tests:
+    unit:
+      - "health.controller.spec.ts"
+      - "logger.service.spec.ts"
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks: []
+tasks: []

@@ -3,6 +3,7 @@ import { Send, Save, Image as ImageIcon } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 
 interface UploadedFile {
   id: string;
@@ -250,9 +251,9 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-detective-bg p-6">
+    <DetectiveCard className="min-h-screen p-6">
       <div className="mx-auto max-w-6xl space-y-6">
-        <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+        <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
           <div className="mb-2 flex items-center gap-3">
             <BookOpen className="h-8 w-8" />
             <h2 className="text-2xl font-bold">Diario Multimedia</h2>
@@ -274,7 +275,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                   value={currentTitle}
                   onChange={(e) => setCurrentTitle(e.target.value)}
                   placeholder="Mi investigación sobre la radioactividad..."
-                  className="w-full rounded-detective border-2 border-gray-300 px-4 py-2 focus:border-detective-orange focus:outline-none"
+                  className="w-full rounded-detective border-2 border-detective-border px-4 py-2 focus:border-detective-orange focus:outline-none"
                 />
               </div>
 
@@ -283,21 +284,21 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                 <div className="mb-2 flex gap-2">
                   <button
                     onClick={() => formatText('bold')}
-                    className="rounded bg-gray-200 px-3 py-1 font-bold hover:bg-gray-300"
+                    className="rounded bg-detective-bg-secondary px-3 py-1 font-bold hover:bg-gray-300"
                     title="Negrita"
                   >
                     B
                   </button>
                   <button
                     onClick={() => formatText('italic')}
-                    className="rounded bg-gray-200 px-3 py-1 italic hover:bg-gray-300"
+                    className="rounded bg-detective-bg-secondary px-3 py-1 italic hover:bg-gray-300"
                     title="Cursiva"
                   >
                     I
                   </button>
                   <button
                     onClick={() => formatText('heading')}
-                    className="rounded bg-gray-200 px-3 py-1 text-lg font-bold hover:bg-gray-300"
+                    className="rounded bg-detective-bg-secondary px-3 py-1 text-lg font-bold hover:bg-gray-300"
                     title="Título"
                   >
                     H
@@ -309,7 +310,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                   onChange={(e) => setCurrentContent(e.target.value)}
                   rows={12}
                   placeholder="Hoy aprendí sobre el descubrimiento del polonio..."
-                  className="w-full resize-none rounded-detective border-2 border-gray-300 px-4 py-2 font-mono focus:border-detective-orange focus:outline-none"
+                  className="w-full resize-none rounded-detective border-2 border-detective-border px-4 py-2 font-mono focus:border-detective-orange focus:outline-none"
                 />
               </div>
 
@@ -365,7 +366,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                         e.target.value = '';
                       }
                     }}
-                    className="w-full rounded-detective border-2 border-gray-300 px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full rounded-detective border-2 border-detective-border px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   {isUploading && (
                     <div className="flex items-center gap-2 text-sm text-detective-orange">
@@ -382,7 +383,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                     type="checkbox"
                     checked={isPrivate}
                     onChange={(e) => setIsPrivate(e.target.checked)}
-                    className="h-5 w-5 rounded border-gray-300 text-detective-orange focus:ring-detective-orange"
+                    className="h-5 w-5 rounded border-detective-border text-detective-orange focus:ring-detective-orange"
                   />
                   <span className="text-detective-text">Entrada privada</span>
                 </label>
@@ -410,7 +411,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
             {showPreview && (currentTitle || currentContent) && (
               <div className="rounded-detective bg-white p-6 shadow-card">
                 <h3 className="mb-2 text-xl font-bold text-detective-text">Vista Previa</h3>
-                <div className="border-t border-gray-200 pt-4">
+                <div className="border-t border-detective-border pt-4">
                   <h2 className="mb-2 text-2xl font-bold text-detective-text">{currentTitle}</h2>
                   <p className="mb-4 text-sm text-detective-text-secondary">
                     {new Date().toLocaleDateString()}
@@ -453,7 +454,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                 {entries.map((entry) => (
                   <div
                     key={entry.id}
-                    className="rounded-detective border-2 border-gray-200 p-3 transition-colors hover:border-detective-orange"
+                    className="rounded-detective border-2 border-detective-border p-3 transition-colors hover:border-detective-orange"
                   >
                     <h4 className="mb-1 font-medium text-detective-text">{entry.title}</h4>
                     <p className="mb-2 text-xs text-detective-text-secondary">
@@ -551,7 +552,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
           feedback={feedback}
         />
       )}
-    </div>
+    </DetectiveCard>
   );
 };
 

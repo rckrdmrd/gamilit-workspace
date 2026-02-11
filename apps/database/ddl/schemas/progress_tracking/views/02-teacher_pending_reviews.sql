@@ -151,7 +151,6 @@ BEGIN
         SELECT 1 FROM social_features.teacher_classrooms tc
         WHERE tc.teacher_id = p_teacher_id
         AND tc.classroom_id = pr.classroom_id
-        AND tc.is_active = true
     )
     AND (p_classroom_id IS NULL OR pr.classroom_id = p_classroom_id);
 END;

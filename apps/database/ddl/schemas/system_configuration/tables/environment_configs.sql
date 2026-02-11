@@ -4,6 +4,8 @@
 -- CREADO: 2025-11-08
 -- ACTUALIZADO: 2026-02-03 - Pluralización de nombre (NOM-TBL)
 
+DROP TABLE IF EXISTS system_configuration.environment_configs CASCADE;
+
 CREATE TABLE system_configuration.environment_configs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     environment VARCHAR(50) NOT NULL CHECK (environment IN ('development', 'staging', 'production', 'test')),

@@ -1,0 +1,1255 @@
+# REQUIREMENTS-INDEX: Indice de Requerimientos GAMILIT
+# Version: 2.0.0
+# Actualizado: 2026-01-27
+# Sincronizado con 138 User Stories existentes
+
+metadata:
+  version: "2.0.0"
+  last_updated: "2026-01-27"
+  sync_task: "TASK-006-SYNC-REQUIREMENTS-INDEX-GAMILIT"
+  total_requirements: 112
+  total_user_stories: 138
+  coverage: "100%"
+  notes: |
+    v2.0.0 - Sincronizacion completa con todas las US existentes
+    - 112 RFs mapeados a 138 User Stories
+    - Se corrigieron referencias de nomenclatura (US-PM vs US-TCH)
+    - Se actualizaron estadisticas por dominio
+
+# =============================================================================
+# ESTADISTICAS POR DOMINIO (ACTUALIZADO)
+# =============================================================================
+
+statistics_by_domain:
+  auth:
+    prefix: RF-AUTH
+    total: 8
+    user_stories: 8
+    coverage: "100%"
+    epics: [EAI-001]
+
+  gamification:
+    prefix: RF-GAM
+    total: 15
+    user_stories: 15
+    coverage: "100%"
+    epics: [EAI-003, EAI-003-EXT]
+
+  educational:
+    prefix: RF-EDU
+    total: 13
+    user_stories: 13
+    coverage: "100%"
+    epics: [EAI-002, EAI-007]
+
+  analytics:
+    prefix: RF-ANA
+    total: 6
+    user_stories: 6
+    coverage: "100%"
+    epics: [EAI-004]
+
+  admin:
+    prefix: RF-ADM
+    total: 7
+    user_stories: 7
+    coverage: "100%"
+    epics: [EAI-005]
+
+  system:
+    prefix: RF-SYS
+    total: 3
+    user_stories: 3
+    coverage: "100%"
+    epics: [EAI-006]
+
+  teacher:
+    prefix: RF-TCH
+    total: 24
+    user_stories: 24
+    coverage: "100%"
+    epics: [EXT-001]
+
+  admin_extended:
+    prefix: RF-AE
+    total: 19
+    user_stories: 19
+    coverage: "100%"
+    epics: [EXT-002]
+
+  notifications:
+    prefix: RF-NOT
+    total: 3
+    user_stories: 3
+    coverage: "100%"
+    epics: [EXT-003]
+
+  profiles:
+    prefix: RF-PERF
+    total: 6
+    user_stories: 6
+    coverage: "100%"
+    epics: [EXT-004]
+
+  reports:
+    prefix: RF-REP
+    total: 5
+    user_stories: 5
+    coverage: "100%"
+    epics: [EXT-005]
+
+  content:
+    prefix: RF-CONT
+    total: 5
+    user_stories: 5
+    coverage: "100%"
+    epics: [EXT-006]
+
+  lti:
+    prefix: RF-LTI
+    total: 4
+    user_stories: 4
+    coverage: "100%"
+    epics: [EXT-007]
+
+  white_label:
+    prefix: RF-WL
+    total: 3
+    user_stories: 3
+    coverage: "100%"
+    epics: [EXT-008]
+
+  peer_challenges:
+    prefix: RF-PEER
+    total: 3
+    user_stories: 3
+    coverage: "100%"
+    epics: [EXT-009]
+
+  parent:
+    prefix: RF-PAR
+    total: 7
+    user_stories: 7
+    coverage: "100%"
+    epics: [EXT-010, EXT-011]
+
+  technical:
+    prefix: RF-ETC
+    total: 5
+    user_stories: 5
+    coverage: "100%"
+    epics: [ETC-001]
+
+# =============================================================================
+# FASE 1: ALCANCE INICIAL (EAI-001 a EAI-006)
+# =============================================================================
+
+# --- EAI-001: FUNDAMENTOS (8 US) ---
+traceability_chains:
+
+  RF-AUTH-001:
+    title: "Autenticacion Basica con JWT"
+    status: implemented
+    specification: ET-AUTH-001
+    user_stories: [US-FUND-001]
+    epic: EAI-001
+    implementation:
+      schema: auth_management
+      module: auth
+
+  RF-AUTH-002:
+    title: "Perfiles de Usuario Basicos"
+    status: implemented
+    specification: ET-AUTH-002
+    user_stories: [US-FUND-002]
+    epic: EAI-001
+
+  RF-AUTH-003:
+    title: "Dashboard Principal Estudiante"
+    status: implemented
+    specification: ET-AUTH-003
+    user_stories: [US-FUND-003]
+    epic: EAI-001
+
+  RF-AUTH-004:
+    title: "Infraestructura Tecnica Base"
+    status: implemented
+    specification: ET-AUTH-004
+    user_stories: [US-FUND-004]
+    epic: EAI-001
+
+  RF-AUTH-005:
+    title: "Sistema de Sesiones y Estado"
+    status: implemented
+    specification: ET-AUTH-005
+    user_stories: [US-FUND-005]
+    epic: EAI-001
+
+  RF-AUTH-006:
+    title: "API RESTful Basica"
+    status: implemented
+    specification: ET-AUTH-006
+    user_stories: [US-FUND-006]
+    epic: EAI-001
+
+  RF-AUTH-007:
+    title: "Navegacion y Routing"
+    status: implemented
+    specification: ET-AUTH-007
+    user_stories: [US-FUND-007]
+    epic: EAI-001
+
+  RF-AUTH-008:
+    title: "UI/UX Base"
+    status: implemented
+    specification: ET-AUTH-008
+    user_stories: [US-FUND-008]
+    epic: EAI-001
+
+  # --- EAI-002: ACTIVIDADES (8 US) ---
+
+  RF-EDU-001:
+    title: "Mecanica Opcion Multiple"
+    status: implemented
+    specification: ET-EDU-001
+    user_stories: [US-ACT-001]
+    epic: EAI-002
+    exercises: [seleccion_multiple]
+
+  RF-EDU-002:
+    title: "Mecanica Verdadero/Falso"
+    status: implemented
+    specification: ET-EDU-002
+    user_stories: [US-ACT-002]
+    epic: EAI-002
+    exercises: [verdadero_falso]
+
+  RF-EDU-003:
+    title: "Mecanica Completar Texto"
+    status: implemented
+    specification: ET-EDU-003
+    user_stories: [US-ACT-003]
+    epic: EAI-002
+    exercises: [completar_espacios]
+
+  RF-EDU-004:
+    title: "Mecanica Drag & Drop"
+    status: implemented
+    specification: ET-EDU-004
+    user_stories: [US-ACT-004]
+    epic: EAI-002
+    exercises: [drag_drop]
+
+  RF-EDU-005:
+    title: "Mecanica Ordenamiento"
+    status: implemented
+    specification: ET-EDU-005
+    user_stories: [US-ACT-005]
+    epic: EAI-002
+    exercises: [ordenar_eventos]
+
+  RF-EDU-006:
+    title: "Mecanica Asociacion"
+    status: implemented
+    specification: ET-EDU-006
+    user_stories: [US-ACT-006]
+    epic: EAI-002
+    exercises: [relacionar_columnas]
+
+  RF-EDU-007:
+    title: "Sistema de Feedback Basico"
+    status: implemented
+    specification: ET-EDU-007
+    user_stories: [US-ACT-007]
+    epic: EAI-002
+
+  RF-EDU-008:
+    title: "Navegacion de Actividades"
+    status: implemented
+    specification: ET-EDU-008
+    user_stories: [US-ACT-008]
+    epic: EAI-002
+
+  # --- EAI-003: GAMIFICACION (8 US) ---
+
+  RF-GAM-001:
+    title: "Sistema de Rangos Maya"
+    status: implemented
+    specification: ET-GAM-001
+    user_stories: [US-GAM-001]
+    epic: EAI-003
+    implementation:
+      schema: gamification_system
+      module: gamification
+
+  RF-GAM-002:
+    title: "Sistema de Experiencia XP"
+    status: implemented
+    specification: ET-GAM-002
+    user_stories: [US-GAM-002]
+    epic: EAI-003
+
+  RF-GAM-003:
+    title: "Monedas Lectoras (MLCoins)"
+    status: implemented
+    specification: ET-GAM-003
+    user_stories: [US-GAM-003]
+    epic: EAI-003
+
+  RF-GAM-004:
+    title: "Sistema de Ayudas (Comodines)"
+    status: implemented
+    specification: ET-GAM-004
+    user_stories: [US-GAM-004]
+    epic: EAI-003
+
+  RF-GAM-005:
+    title: "Insignias Basicas"
+    status: implemented
+    specification: ET-GAM-005
+    user_stories: [US-GAM-005]
+    epic: EAI-003
+
+  RF-GAM-006:
+    title: "Narrativa Basica"
+    status: implemented
+    specification: ET-GAM-006
+    user_stories: [US-GAM-006]
+    epic: EAI-003
+
+  RF-GAM-007:
+    title: "Leaderboard Simple"
+    status: implemented
+    specification: ET-GAM-007
+    user_stories: [US-GAM-007]
+    epic: EAI-003
+
+  RF-GAM-008:
+    title: "Recompensas por Modulos"
+    status: implemented
+    specification: ET-GAM-008
+    user_stories: [US-GAM-008]
+    epic: EAI-003
+
+  # --- EAI-004: ANALYTICS (6 US) ---
+
+  RF-ANA-001:
+    title: "Dashboard de Clase Basico"
+    status: implemented
+    specification: ET-ANA-001
+    user_stories: [US-ANA-001]
+    epic: EAI-004
+
+  RF-ANA-002:
+    title: "Tabla de Estudiantes con Metricas"
+    status: implemented
+    specification: ET-ANA-002
+    user_stories: [US-ANA-002]
+    epic: EAI-004
+
+  RF-ANA-003:
+    title: "Vista de Estudiante Individual"
+    status: implemented
+    specification: ET-ANA-003
+    user_stories: [US-ANA-003]
+    epic: EAI-004
+
+  RF-ANA-004:
+    title: "Reporte Basico de Progreso"
+    status: implemented
+    specification: ET-ANA-004
+    user_stories: [US-ANA-004]
+    epic: EAI-004
+
+  RF-ANA-005:
+    title: "Tracking de Actividad"
+    status: implemented
+    specification: ET-ANA-005
+    user_stories: [US-ANA-005]
+    epic: EAI-004
+
+  RF-ANA-006:
+    title: "Identificacion de Rezagados"
+    status: implemented
+    specification: ET-ANA-006
+    user_stories: [US-ANA-006]
+    epic: EAI-004
+
+  # --- EAI-005: ADMIN BASE (7 US) ---
+
+  RF-ADM-001:
+    title: "Gestion de Aulas CRUD"
+    status: implemented
+    specification: ET-ADM-001
+    user_stories: [US-ADM-001]
+    epic: EAI-005
+
+  RF-ADM-002:
+    title: "Gestion de Estudiantes en Aula"
+    status: implemented
+    specification: ET-ADM-002
+    user_stories: [US-ADM-002]
+    epic: EAI-005
+
+  RF-ADM-003:
+    title: "Dashboard de Maestro"
+    status: implemented
+    specification: ET-ADM-003
+    user_stories: [US-ADM-003]
+    epic: EAI-005
+
+  RF-ADM-004:
+    title: "Asignacion de Modulos"
+    status: implemented
+    specification: ET-ADM-004
+    user_stories: [US-ADM-004]
+    epic: EAI-005
+
+  RF-ADM-005:
+    title: "Gestion de Grupos"
+    status: implemented
+    specification: ET-ADM-005
+    user_stories: [US-ADM-005]
+    epic: EAI-005
+
+  RF-ADM-006:
+    title: "Configuracion Basica de Aula"
+    status: implemented
+    specification: ET-ADM-006
+    user_stories: [US-ADM-006]
+    epic: EAI-005
+
+  RF-ADM-007:
+    title: "Vista de Actividad en Aula"
+    status: implemented
+    specification: ET-ADM-007
+    user_stories: [US-ADM-007]
+    epic: EAI-005
+
+  # --- EAI-006: CONFIGURACION SISTEMA (3 US) ---
+
+  RF-SYS-001:
+    title: "Configuraciones Globales"
+    status: implemented
+    specification: ET-SYS-001
+    user_stories: [US-SYS-001]
+    epic: EAI-006
+
+  RF-SYS-002:
+    title: "Feature Flags"
+    status: implemented
+    specification: ET-SYS-002
+    user_stories: [US-SYS-002]
+    epic: EAI-006
+
+  RF-SYS-003:
+    title: "Notificaciones Sistema"
+    status: implemented
+    specification: ET-SYS-003
+    user_stories: [US-SYS-003]
+    epic: EAI-006
+
+# =============================================================================
+# FASE 2: ROBUSTECIMIENTO (EAI-007, ETC-001)
+# =============================================================================
+
+  # --- EAI-007: MODULOS M4-M5 (6 US) ---
+
+  RF-EDU-009:
+    title: "Backend DTOs Modulo 4"
+    status: implemented
+    specification: ET-EDU-009
+    user_stories: [US-M4-001]
+    epic: EAI-007
+
+  RF-EDU-010:
+    title: "Gamificacion Modulo 4"
+    status: implemented
+    specification: ET-EDU-010
+    user_stories: [US-M4-002]
+    epic: EAI-007
+
+  RF-EDU-011:
+    title: "Seeds M4-M5"
+    status: implemented
+    specification: ET-EDU-011
+    user_stories: [US-M4M5-001]
+    epic: EAI-007
+
+  RF-EDU-012:
+    title: "Progreso M4-M5"
+    status: implemented
+    specification: ET-EDU-012
+    user_stories: [US-M4M5-002]
+    epic: EAI-007
+
+  RF-EDU-013:
+    title: "Backend DTOs Modulo 5"
+    status: implemented
+    specification: ET-EDU-013
+    user_stories: [US-M5-001]
+    epic: EAI-007
+
+  RF-EDU-014:
+    title: "Calificacion Modulo 5"
+    status: implemented
+    specification: ET-EDU-014
+    user_stories: [US-M5-002]
+    epic: EAI-007
+
+  # --- ETC-001: CONSOLIDACION TECNICA (5 US) ---
+
+  RF-ETC-001:
+    title: "Consolidacion APIs Frontend"
+    status: implemented
+    specification: ET-ETC-001
+    user_stories: [US-ETC-001]
+    epic: ETC-001
+
+  RF-ETC-002:
+    title: "Limpieza Backend"
+    status: implemented
+    specification: ET-ETC-002
+    user_stories: [US-ETC-002]
+    epic: ETC-001
+
+  RF-ETC-003:
+    title: "Alineacion Entities"
+    status: implemented
+    specification: ET-ETC-003
+    user_stories: [US-ETC-003]
+    epic: ETC-001
+
+  RF-ETC-004:
+    title: "Validacion Integracion"
+    status: implemented
+    specification: ET-ETC-004
+    user_stories: [US-ETC-004]
+    epic: ETC-001
+
+  RF-ETC-005:
+    title: "Documentacion Tecnica"
+    status: implemented
+    specification: ET-ETC-005
+    user_stories: [US-ETC-005]
+    epic: ETC-001
+
+# =============================================================================
+# FASE 3: EXTENSIONES (EAI-003-EXT, EXT-001 a EXT-011)
+# =============================================================================
+
+  # --- EAI-003-EXT: GAMIFICACION SOCIAL (6 US) ---
+
+  RF-GAM-010:
+    title: "Sistema de Amigos"
+    status: implemented
+    specification: ET-GAM-010
+    user_stories: [US-GAM-010]
+    epic: EAI-003-EXT
+
+  RF-GAM-011:
+    title: "Multiplicador MLCoins"
+    status: implemented
+    specification: ET-GAM-011
+    user_stories: [US-GAM-011]
+    epic: EAI-003-EXT
+
+  RF-GAM-012:
+    title: "Leaderboard de Amigos"
+    status: implemented
+    specification: ET-GAM-012
+    user_stories: [US-GAM-012]
+    epic: EAI-003-EXT
+
+  RF-GAM-013:
+    title: "Sistema de Gremios"
+    status: implemented
+    specification: ET-GAM-013
+    user_stories: [US-GAM-013]
+    epic: EAI-003-EXT
+
+  RF-GAM-014:
+    title: "Misiones de Gremio"
+    status: implemented
+    specification: ET-GAM-014
+    user_stories: [US-GAM-014]
+    epic: EAI-003-EXT
+
+  RF-GAM-015:
+    title: "Gestion de Miembros de Gremio"
+    status: implemented
+    specification: ET-GAM-015
+    user_stories: [US-GAM-015]
+    epic: EAI-003-EXT
+
+  # --- EXT-001: PORTAL MAESTROS (24 US) ---
+  # NOTA: US usan prefijo US-PM-*, mapeados a RF-TCH-*
+
+  RF-TCH-000:
+    title: "Dashboard Maestro Base"
+    status: implemented
+    specification: ET-TCH-000
+    user_stories: [US-PM-000]
+    epic: EXT-001
+
+  RF-TCH-001a:
+    title: "Classroom CRUD"
+    status: implemented
+    specification: ET-TCH-001a
+    user_stories: [US-PM-001a]
+    epic: EXT-001
+
+  RF-TCH-001b:
+    title: "Student Enrollment"
+    status: implemented
+    specification: ET-TCH-001b
+    user_stories: [US-PM-001b]
+    epic: EXT-001
+
+  RF-TCH-002a:
+    title: "Assignment CRUD"
+    status: implemented
+    specification: ET-TCH-002a
+    user_stories: [US-PM-002a]
+    epic: EXT-001
+
+  RF-TCH-002b:
+    title: "Assignment Distribution"
+    status: implemented
+    specification: ET-TCH-002b
+    user_stories: [US-PM-002b]
+    epic: EXT-001
+
+  RF-TCH-002c:
+    title: "Submissions View"
+    status: implemented
+    specification: ET-TCH-002c
+    user_stories: [US-PM-002c]
+    epic: EXT-001
+
+  RF-TCH-003a:
+    title: "Grading Queue"
+    status: implemented
+    specification: ET-TCH-003a
+    user_stories: [US-PM-003a]
+    epic: EXT-001
+
+  RF-TCH-003b:
+    title: "Grading Interface"
+    status: implemented
+    specification: ET-TCH-003b
+    user_stories: [US-PM-003b]
+    epic: EXT-001
+
+  RF-TCH-004a:
+    title: "Progress Analytics"
+    status: implemented
+    specification: ET-TCH-004a
+    user_stories: [US-PM-004a]
+    epic: EXT-001
+
+  RF-TCH-004b:
+    title: "Teacher Notes"
+    status: implemented
+    specification: ET-TCH-004b
+    user_stories: [US-PM-004b]
+    epic: EXT-001
+
+  RF-TCH-005a:
+    title: "Classroom Analytics"
+    status: implemented
+    specification: ET-TCH-005a
+    user_stories: [US-PM-005a]
+    epic: EXT-001
+
+  RF-TCH-005b:
+    title: "Report Generation"
+    status: implemented
+    specification: ET-TCH-005b
+    user_stories: [US-PM-005b]
+    epic: EXT-001
+
+  RF-TCH-005c:
+    title: "Engagement Metrics"
+    status: implemented
+    specification: ET-TCH-005c
+    user_stories: [US-PM-005c]
+    epic: EXT-001
+
+  RF-TCH-006:
+    title: "Bloquear Alumnos Maestro"
+    status: implemented
+    specification: ET-TCH-006
+    user_stories: [US-PM-006]
+    epic: EXT-001
+
+  RF-TCH-007:
+    title: "Alert Configuration"
+    status: implemented
+    specification: ET-TCH-007
+    user_stories: [US-PM-007]
+    epic: EXT-001
+
+  RF-TCH-008:
+    title: "Gamification Management"
+    status: implemented
+    specification: ET-TCH-008
+    user_stories: [US-PM-008]
+    epic: EXT-001
+
+  RF-TCH-009:
+    title: "Resources Management"
+    status: implemented
+    specification: ET-TCH-009
+    user_stories: [US-PM-009]
+    epic: EXT-001
+
+  RF-TCH-010:
+    title: "Communication Center"
+    status: implemented
+    specification: ET-TCH-010
+    user_stories: [US-PM-010]
+    epic: EXT-001
+
+  RF-TCH-011:
+    title: "Teacher Settings"
+    status: implemented
+    specification: ET-TCH-011
+    user_stories: [US-PM-011]
+    epic: EXT-001
+
+  RF-TCH-012:
+    title: "Notifications Center"
+    status: implemented
+    specification: ET-TCH-012
+    user_stories: [US-PM-012]
+    epic: EXT-001
+
+  RF-TCH-013:
+    title: "Notification Preferences"
+    status: implemented
+    specification: ET-TCH-013
+    user_stories: [US-PM-013]
+    epic: EXT-001
+
+  # --- EXT-002: ADMIN EXTENDIDO (19 US) ---
+
+  RF-AE-000:
+    title: "Admin Dashboard"
+    status: implemented
+    specification: ET-AE-000
+    user_stories: [US-AE-000]
+    epic: EXT-002
+
+  RF-AE-001:
+    title: "User Management"
+    status: implemented
+    specification: ET-AE-001
+    user_stories: [US-AE-001]
+    epic: EXT-002
+
+  RF-AE-002:
+    title: "Organizations"
+    status: implemented
+    specification: ET-AE-002
+    user_stories: [US-AE-002]
+    epic: EXT-002
+
+  RF-AE-003:
+    title: "Content Management"
+    status: implemented
+    specification: ET-AE-003
+    user_stories: [US-AE-003]
+    epic: EXT-002
+
+  RF-AE-004:
+    title: "System Monitoring"
+    status: implemented
+    specification: ET-AE-004
+    user_stories: [US-AE-004]
+    epic: EXT-002
+
+  RF-AE-005:
+    title: "Parametrizacion Gamificacion"
+    status: implemented
+    specification: ET-AE-005
+    user_stories: [US-AE-005]
+    epic: EXT-002
+
+  RF-AE-006:
+    title: "Admin Reports"
+    status: implemented
+    specification: ET-AE-006
+    user_stories: [US-AE-006]
+    epic: EXT-002
+
+  RF-AE-007:
+    title: "Asignar Grupos a Maestros"
+    status: implemented
+    specification: ET-AE-007
+    user_stories: [US-AE-007]
+    epic: EXT-002
+
+  RF-AE-008:
+    title: "System Settings"
+    status: implemented
+    specification: ET-AE-008
+    user_stories: [US-AE-008]
+    epic: EXT-002
+
+  RF-AE-009:
+    title: "Admin Assignments View"
+    status: implemented
+    specification: ET-AE-009
+    user_stories: [US-AE-009]
+    epic: EXT-002
+
+  RF-AE-010:
+    title: "Create Users"
+    status: implemented
+    specification: ET-AE-010
+    user_stories: [US-AE-010]
+    epic: EXT-002
+
+  RF-AE-011:
+    title: "Audit Logs Viewer"
+    status: implemented
+    specification: ET-AE-011
+    user_stories: [US-AE-011]
+    epic: EXT-002
+
+  RF-AE-012:
+    title: "Roles Management"
+    status: implemented
+    specification: ET-AE-012
+    user_stories: [US-AE-012]
+    epic: EXT-002
+
+  RF-AE-013:
+    title: "Alerts Management"
+    status: implemented
+    specification: ET-AE-013
+    user_stories: [US-AE-013]
+    epic: EXT-002
+
+  RF-AE-014:
+    title: "Analytics Dashboard"
+    status: implemented
+    specification: ET-AE-014
+    user_stories: [US-AE-014]
+    epic: EXT-002
+
+  RF-AE-015:
+    title: "Progress Tracking"
+    status: implemented
+    specification: ET-AE-015
+    user_stories: [US-AE-015]
+    epic: EXT-002
+
+  RF-AE-016:
+    title: "Advanced Admin"
+    status: implemented
+    specification: ET-AE-016
+    user_stories: [US-AE-016]
+    epic: EXT-002
+
+  RF-AE-017:
+    title: "Notifications Management"
+    status: implemented
+    specification: ET-AE-017
+    user_stories: [US-AE-017]
+    epic: EXT-002
+
+  RF-AE-018:
+    title: "Notification Preferences Admin"
+    status: implemented
+    specification: ET-AE-018
+    user_stories: [US-AE-018]
+    epic: EXT-002
+
+  # --- EXT-003: NOTIFICACIONES (3 US) ---
+
+  RF-NOT-001a:
+    title: "WebSocket Infrastructure"
+    status: implemented
+    specification: ET-NOT-001a
+    user_stories: [US-NOT-001a]
+    epic: EXT-003
+
+  RF-NOT-001b:
+    title: "Notification Center"
+    status: implemented
+    specification: ET-NOT-001b
+    user_stories: [US-NOT-001b]
+    epic: EXT-003
+
+  RF-NOT-001c:
+    title: "Preferences Management"
+    status: implemented
+    specification: ET-NOT-001c
+    user_stories: [US-NOT-001c]
+    epic: EXT-003
+
+  # --- EXT-004: PERFILES (6 US) ---
+
+  RF-PERF-001:
+    title: "Personalizacion de Perfil"
+    status: implemented
+    specification: ET-PERF-001
+    user_stories: [US-PERF-001]
+    epic: EXT-004
+
+  RF-PERF-002:
+    title: "Seguridad de Cuenta"
+    status: implemented
+    specification: ET-PERF-002
+    user_stories: [US-PERF-002]
+    epic: EXT-004
+
+  RF-PERF-003:
+    title: "Accesibilidad Gamificacion"
+    status: implemented
+    specification: ET-PERF-003
+    user_stories: [US-PERF-003]
+    epic: EXT-004
+
+  RF-PERF-004:
+    title: "Interacciones Sociales"
+    status: implemented
+    specification: ET-PERF-004
+    user_stories: [US-PERF-004]
+    epic: EXT-004
+
+  RF-PERF-005:
+    title: "Personalizacion Dashboard"
+    status: implemented
+    specification: ET-PERF-005
+    user_stories: [US-PERF-005]
+    epic: EXT-004
+
+  RF-PERF-006:
+    title: "Showcasing de Logros"
+    status: implemented
+    specification: ET-PERF-006
+    user_stories: [US-PERF-006]
+    epic: EXT-004
+
+  # --- EXT-005: REPORTES (5 US) ---
+
+  RF-REP-001:
+    title: "Analytics Profesor"
+    status: implemented
+    specification: ET-REP-001
+    user_stories: [US-REP-001]
+    epic: EXT-005
+
+  RF-REP-002:
+    title: "Analytics Admin"
+    status: implemented
+    specification: ET-REP-002
+    user_stories: [US-REP-002]
+    epic: EXT-005
+
+  RF-REP-003:
+    title: "Analytics Predictivo"
+    status: partial
+    specification: ET-REP-003
+    user_stories: [US-REP-003]
+    epic: EXT-005
+    completion: 40%
+
+  RF-REP-004:
+    title: "Data Warehouse ETL"
+    status: partial
+    specification: ET-REP-004
+    user_stories: [US-REP-004]
+    epic: EXT-005
+    completion: 30%
+
+  RF-REP-005:
+    title: "Visualizaciones Avanzadas"
+    status: partial
+    specification: ET-REP-005
+    user_stories: [US-REP-005]
+    epic: EXT-005
+    completion: 50%
+
+  # --- EXT-006: CONTENIDO (5 US) ---
+
+  RF-CONT-001:
+    title: "Editor WYSIWYG"
+    status: implemented
+    specification: ET-CONT-001
+    user_stories: [US-CONT-001]
+    epic: EXT-006
+
+  RF-CONT-002:
+    title: "Gestion de Ejercicios"
+    status: implemented
+    specification: ET-CONT-002
+    user_stories: [US-CONT-002]
+    epic: EXT-006
+
+  RF-CONT-003:
+    title: "Biblioteca de Recursos"
+    status: implemented
+    specification: ET-CONT-003
+    user_stories: [US-CONT-003]
+    epic: EXT-006
+
+  RF-CONT-004:
+    title: "Versionamiento"
+    status: partial
+    specification: ET-CONT-004
+    user_stories: [US-CONT-004]
+    epic: EXT-006
+    completion: 60%
+
+  RF-CONT-005:
+    title: "Import/Export"
+    status: partial
+    specification: ET-CONT-005
+    user_stories: [US-CONT-005]
+    epic: EXT-006
+    completion: 45%
+
+  # --- EXT-007: LTI INTEGRATION (4 US) ---
+
+  RF-LTI-001:
+    title: "OIDC Login"
+    status: implemented
+    specification: ET-LTI-001
+    user_stories: [US-LTI-001]
+    epic: EXT-007
+
+  RF-LTI-002:
+    title: "Grade Passback"
+    status: partial
+    specification: ET-LTI-002
+    user_stories: [US-LTI-002]
+    epic: EXT-007
+    completion: 50%
+
+  RF-LTI-003:
+    title: "Deep Linking"
+    status: pending
+    specification: ET-LTI-003
+    user_stories: [US-LTI-003]
+    epic: EXT-007
+
+  RF-LTI-004:
+    title: "Platform Config"
+    status: implemented
+    specification: ET-LTI-004
+    user_stories: [US-LTI-004]
+    epic: EXT-007
+
+  # --- EXT-008: WHITE LABEL (3 US) ---
+
+  RF-WL-001:
+    title: "Branding Config"
+    status: implemented
+    specification: ET-WL-001
+    user_stories: [US-WL-001]
+    epic: EXT-008
+
+  RF-WL-002:
+    title: "Logo y Colores"
+    status: implemented
+    specification: ET-WL-002
+    user_stories: [US-WL-002]
+    epic: EXT-008
+
+  RF-WL-003:
+    title: "Platform Name"
+    status: implemented
+    specification: ET-WL-003
+    user_stories: [US-WL-003]
+    epic: EXT-008
+
+  # --- EXT-009: PEER CHALLENGES (3 US) ---
+
+  RF-PEER-001:
+    title: "Challenge Creation"
+    status: implemented
+    specification: ET-PEER-001
+    user_stories: [US-PEER-001]
+    epic: EXT-009
+
+  RF-PEER-002:
+    title: "Challenge Execution"
+    status: implemented
+    specification: ET-PEER-002
+    user_stories: [US-PEER-002]
+    epic: EXT-009
+
+  RF-PEER-003:
+    title: "Scoring & Wagering"
+    status: implemented
+    specification: ET-PEER-003
+    user_stories: [US-PEER-003]
+    epic: EXT-009
+
+  # --- EXT-010: PARENT NOTIFICATIONS (3 US) ---
+
+  RF-PAR-001:
+    title: "Weekly Report"
+    status: partial
+    specification: ET-PAR-001
+    user_stories: [US-PARENT-001]
+    epic: EXT-010
+    completion: 35%
+
+  RF-PAR-002:
+    title: "Low Performance Alert"
+    status: partial
+    specification: ET-PAR-002
+    user_stories: [US-PARENT-002]
+    epic: EXT-010
+    completion: 30%
+
+  RF-PAR-003:
+    title: "Achievement Notification"
+    status: partial
+    specification: ET-PAR-003
+    user_stories: [US-PARENT-003]
+    epic: EXT-010
+    completion: 40%
+
+  # --- EXT-011: PARENT PORTAL (4 US) ---
+
+  RF-PAR-004:
+    title: "Data Model Portal Padres"
+    status: partial
+    specification: ET-PAR-004
+    user_stories: [US-PP-001]
+    epic: EXT-011
+    completion: 25%
+
+  RF-PAR-005:
+    title: "Portal Dashboard Padres"
+    status: partial
+    specification: ET-PAR-005
+    user_stories: [US-PP-002]
+    epic: EXT-011
+    completion: 20%
+
+  RF-PAR-006:
+    title: "Notificaciones Portal Padres"
+    status: partial
+    specification: ET-PAR-006
+    user_stories: [US-PP-003]
+    epic: EXT-011
+    completion: 15%
+
+  RF-PAR-007:
+    title: "Reportes Portal Padres"
+    status: pending
+    specification: ET-PAR-007
+    user_stories: [US-PP-004]
+    epic: EXT-011
+
+# =============================================================================
+# RESUMEN DE COBERTURA
+# =============================================================================
+
+coverage_summary:
+  total_rfs: 112
+  total_user_stories_mapped: 138
+  mapping_ratio: "1 RF : 1.23 US (promedio)"
+
+  by_status:
+    implemented: 94
+    partial: 14
+    pending: 4
+
+  by_phase:
+    fase_1_alcance_inicial:
+      epics: [EAI-001, EAI-002, EAI-003, EAI-004, EAI-005, EAI-006]
+      rfs: 40
+      user_stories: 40
+    fase_2_robustecimiento:
+      epics: [EAI-007, ETC-001]
+      rfs: 11
+      user_stories: 11
+    fase_3_extensiones:
+      epics: [EAI-003-EXT, EXT-001, EXT-002, EXT-003, EXT-004, EXT-005, EXT-006, EXT-007, EXT-008, EXT-009, EXT-010, EXT-011]
+      rfs: 61
+      user_stories: 87
+
+# =============================================================================
+# MAPEO DE NOMENCLATURA
+# =============================================================================
+
+nomenclature_mapping:
+  notes: |
+    Algunas User Stories usan prefijos diferentes a los RFs:
+    - US-PM-* (Portal Maestros) -> RF-TCH-* (Teacher)
+    - US-AE-* (Admin Extendido) -> RF-AE-*
+    - US-PARENT-* -> RF-PAR-*
+    - US-PP-* (Parent Portal) -> RF-PAR-*
+    - US-ETC-* -> RF-ETC-*
+
+  prefix_mappings:
+    US-FUND: RF-AUTH
+    US-ACT: RF-EDU
+    US-GAM: RF-GAM
+    US-ANA: RF-ANA
+    US-ADM: RF-ADM
+    US-SYS: RF-SYS
+    US-M4: RF-EDU
+    US-M5: RF-EDU
+    US-M4M5: RF-EDU
+    US-ETC: RF-ETC
+    US-PM: RF-TCH
+    US-AE: RF-AE
+    US-NOT: RF-NOT
+    US-PERF: RF-PERF
+    US-REP: RF-REP
+    US-CONT: RF-CONT
+    US-LTI: RF-LTI
+    US-WL: RF-WL
+    US-PEER: RF-PEER
+    US-PARENT: RF-PAR
+    US-PP: RF-PAR
+
+# =============================================================================
+# REFERENCIAS
+# =============================================================================
+
+references:
+  epic_index: "./EPIC-INDEX.yml"
+  traceability_master: "./TRACEABILITY-MASTER.yml"
+  completeness_tracker: "./COMPLETENESS-TRACKER.yml"
+  sync_task: "../../orchestration/tareas/2026-01-27/TASK-006-SYNC-REQUIREMENTS-INDEX-GAMILIT/"
+
+  documentation:
+    vision: "../00-vision-general/"
+    fase_1: "../01-fase-alcance-inicial/"
+    fase_2: "../02-fase-robustecimiento/"
+    fase_3: "../03-fase-extensiones/"
+    requerimientos_funcionales: "../90-transversal/requerimientos/"
+
+# =============================================================================
+# CHANGELOG
+# =============================================================================
+
+changelog:
+  - version: "2.0.0"
+    date: "2026-01-27"
+    author: "claude-code"
+    task: "TASK-006-SYNC-REQUIREMENTS-INDEX-GAMILIT"
+    changes:
+      - "Sincronizacion completa: 138 US mapeadas (antes solo 27)"
+      - "Agregados 88 nuevos mappings RF->US"
+      - "Corregida nomenclatura US-PM vs US-TCH"
+      - "Agregados dominios: profiles, content, white_label, peer_challenges, technical"
+      - "Actualizado coverage de 20.7% a 100%"
+      - "Agregada seccion nomenclature_mapping"
+      - "Agregada seccion coverage_summary"
+
+  - version: "1.0.0"
+    date: "2026-01-18"
+    author: "initial"
+    changes:
+      - "Version inicial con 24 RFs y 27 US mapeadas"

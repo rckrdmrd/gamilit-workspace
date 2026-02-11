@@ -1,0 +1,38 @@
+id: "US-GAM-CLASSROOM-01"
+titulo: "Gestion de Aula y Estudiantes"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 5
+sprint: "Backlog"
+modulos:
+  - "classrooms"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/classrooms/"
+        - "apps/backend/src/modules/students/"
+      endpoints: []
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/teacher/classrooms/"
+      pages: []
+      components: []
+    database:
+      paths:
+        - "apps/database/ddl/schemas/education/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks: []
+tasks: []

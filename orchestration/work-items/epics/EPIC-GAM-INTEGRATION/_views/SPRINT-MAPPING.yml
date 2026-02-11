@@ -1,0 +1,13 @@
+# SPRINT-MAPPING.yml — Vista de qué stories están en qué sprint
+epic_id: "EPIC-GAM-INTEGRATION"
+fecha_actualizacion: "2026-02-07"
+
+sprints:
+  SPRINT-ARCH-PRE-2026:
+    stories:
+      - id: "US-GAM-INT-01"
+        status: "COMPLETADO"
+        sp: 3
+      - id: "US-GAM-INT-02"
+        status: "COMPLETADO"
+        sp: 2

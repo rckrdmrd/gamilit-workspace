@@ -4,7 +4,8 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { ComprensiónAuditivaExerciseProps, AudioQuestion } from './comprensionAuditivaTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -16,6 +17,8 @@ export const ComprensiónAuditivaExercise: React.FC<ComprensiónAuditivaExercise
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
 
   const [currentTime, setCurrentTime] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -105,7 +108,7 @@ export const ComprensiónAuditivaExercise: React.FC<ComprensiónAuditivaExercise
     setIsSubmitting(true);
 
     try {
-      const response = await submitExercise(exercise.id, user.id, { responses: answers });
+      const response = await submitAsync({ responses: answers });
 
       setShowResults(true);
 
@@ -225,7 +228,7 @@ export const ComprensiónAuditivaExercise: React.FC<ComprensiónAuditivaExercise
                         className={`w-full rounded-detective border-2 px-4 py-3 text-left transition-all ${
                           answers[question.id] === optIndex
                             ? 'border-detective-orange bg-detective-orange text-white'
-                            : 'border-gray-300 bg-white hover:border-detective-orange disabled:cursor-not-allowed disabled:hover:border-gray-300'
+                            : 'border-detective-border bg-white hover:border-detective-orange disabled:cursor-not-allowed disabled:hover:border-gray-300'
                         } disabled:opacity-50`}
                       >
                         {String.fromCharCode(65 + optIndex)}. {option}
@@ -237,22 +240,22 @@ export const ComprensiónAuditivaExercise: React.FC<ComprensiónAuditivaExercise
                     <div
                       className={`mt-3 rounded-detective border-2 p-3 ${
                         answers[question.id] === question.correctAnswer
-                          ? 'border-green-200 bg-green-50'
-                          : 'border-red-200 bg-red-50'
+                          ? 'border-detective-success/20 bg-detective-success/10'
+                          : 'border-detective-danger/20 bg-detective-danger/10'
                       }`}
                     >
                       {answers[question.id] === question.correctAnswer ? (
-                        <div className="flex items-center gap-2 text-green-800">
+                        <div className="flex items-center gap-2 text-detective-success">
                           <CheckCircle className="h-5 w-5" />
                           <span className="font-medium">¡Correcto!</span>
                         </div>
                       ) : (
                         <div>
-                          <div className="mb-1 flex items-center gap-2 text-red-800">
+                          <div className="mb-1 flex items-center gap-2 text-detective-danger">
                             <XCircle className="h-5 w-5" />
                             <span className="font-medium">Incorrecto</span>
                           </div>
-                          <p className="text-sm text-red-700">
+                          <p className="text-sm text-detective-danger">
                             La respuesta correcta es: {question.options[question.correctAnswer]}
                           </p>
                         </div>

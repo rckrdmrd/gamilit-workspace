@@ -1,36 +1,10 @@
---
--- PostgreSQL database dump
---
+-- =====================================================
+-- Table: progress_tracking.module_progress
+-- Description: Progreso del estudiante por módulo - tracking completo de avance
+-- Dependencies: auth_management.profiles, educational_content.modules
+-- =====================================================
 
-\restrict kbum8PVMgj5CLpUrEBeJlXIL8TxLp3qKyGRYM1icgHe84QAeAoEm90c4NVmH2oU
-
--- Dumped from database version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)
--- Dumped by pg_dump version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- Name: module_progress; Type: TABLE; Schema: progress_tracking; Owner: postgres
---
--- 📚 Documentación:
--- Requerimiento: docs/01-requerimientos/04-progreso-seguimiento/RF-PRG-001-estados-progreso.md
--- Requerimiento: docs/01-requerimientos/03-contenido-educativo/RF-EDU-001-mecanicas-ejercicios.md
--- Especificación: docs/02-especificaciones-tecnicas/04-progreso-seguimiento/ET-PRG-001-estados-progreso.md
--- Especificación: docs/02-especificaciones-tecnicas/03-contenido-educativo/ET-EDU-001-mecanicas-ejercicios.md
---
+DROP TABLE IF EXISTS progress_tracking.module_progress CASCADE;
 
 CREATE TABLE progress_tracking.module_progress (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
@@ -58,10 +32,10 @@ CREATE TABLE progress_tracking.module_progress (
     hints_used_total integer DEFAULT 0,
     comodines_used_total integer DEFAULT 0,
     comodines_cost_total integer DEFAULT 0,
-    started_at timestamp with time zone,
-    completed_at timestamp with time zone,
-    last_accessed_at timestamp with time zone,
-    deadline timestamp with time zone,
+    started_at timestamptz,
+    completed_at timestamptz,
+    last_accessed_at timestamptz,
+    deadline timestamptz,
     classroom_id uuid,
     assignment_id uuid,
     allow_retry boolean DEFAULT true,
@@ -73,192 +47,57 @@ CREATE TABLE progress_tracking.module_progress (
     teacher_notes text,
     system_observations jsonb DEFAULT '{}'::jsonb,
     metadata jsonb DEFAULT '{}'::jsonb,
-    created_at timestamp with time zone DEFAULT gamilit.now_mexico(),
-    updated_at timestamp with time zone DEFAULT gamilit.now_mexico(),
+    created_at timestamptz DEFAULT gamilit.now_mexico(),
+    updated_at timestamptz DEFAULT gamilit.now_mexico(),
+
+    -- Primary Key
+    CONSTRAINT module_progress_pkey PRIMARY KEY (id),
+
+    -- Unique Constraints
+    CONSTRAINT module_progress_user_id_module_id_key UNIQUE (user_id, module_id),
+
+    -- Check Constraints
     CONSTRAINT module_progress_progress_percentage_check CHECK (((progress_percentage >= 0) AND (progress_percentage <= 100)))
 );
 
+-- Indexes
+CREATE INDEX idx_module_progress_classroom ON progress_tracking.module_progress(classroom_id);
+CREATE INDEX idx_module_progress_completed ON progress_tracking.module_progress(user_id, status) WHERE status = 'completed'::progress_tracking.progress_status;
+CREATE INDEX idx_module_progress_incomplete ON progress_tracking.module_progress(user_id, updated_at DESC) WHERE status = ANY (ARRAY['not_started'::progress_tracking.progress_status, 'in_progress'::progress_tracking.progress_status]);
+CREATE INDEX idx_module_progress_module ON progress_tracking.module_progress(module_id);
+CREATE INDEX idx_module_progress_status ON progress_tracking.module_progress(status);
+CREATE INDEX idx_module_progress_user ON progress_tracking.module_progress(user_id);
+CREATE INDEX idx_module_progress_user_status_updated ON progress_tracking.module_progress(user_id, status, updated_at DESC);
 
-ALTER TABLE progress_tracking.module_progress OWNER TO gamilit_user;
-
---
--- Name: TABLE module_progress; Type: COMMENT; Schema: progress_tracking; Owner: postgres
---
-
-COMMENT ON TABLE progress_tracking.module_progress IS 'Progreso del estudiante por módulo - tracking completo de avance';
-
-
---
--- Name: COLUMN module_progress.status; Type: COMMENT; Schema: progress_tracking; Owner: postgres
---
-
-COMMENT ON COLUMN progress_tracking.module_progress.status IS 'Estado: not_started, in_progress, completed, reviewed, mastered';
-
-
---
--- Name: COLUMN module_progress.submitted_exercises; Type: COMMENT; Schema: progress_tracking; Owner: postgres
---
-
-COMMENT ON COLUMN progress_tracking.module_progress.submitted_exercises IS 'FEATURE M3-M5 2026-01-08: Ejercicios enviados (pendientes o validados) para ejercicios con revision manual';
-
-
---
--- Name: COLUMN module_progress.graded_exercises; Type: COMMENT; Schema: progress_tracking; Owner: postgres
---
-
-COMMENT ON COLUMN progress_tracking.module_progress.graded_exercises IS 'FEATURE M3-M5 2026-01-08: Ejercicios calificados por el maestro (score >= 60)';
-
-
---
--- Name: COLUMN module_progress.submitted_progress_percentage; Type: COMMENT; Schema: progress_tracking; Owner: postgres
---
-
-COMMENT ON COLUMN progress_tracking.module_progress.submitted_progress_percentage IS 'FEATURE M3-M5 2026-01-08: Progreso basado en envios (actualiza al enviar)';
-
-
---
--- Name: COLUMN module_progress.graded_progress_percentage; Type: COMMENT; Schema: progress_tracking; Owner: postgres
---
-
-COMMENT ON COLUMN progress_tracking.module_progress.graded_progress_percentage IS 'FEATURE M3-M5 2026-01-08: Progreso basado en calificaciones (actualiza al calificar)';
-
-
---
--- Name: module_progress module_progress_pkey; Type: CONSTRAINT; Schema: progress_tracking; Owner: postgres
---
-
-ALTER TABLE ONLY progress_tracking.module_progress
-    ADD CONSTRAINT module_progress_pkey PRIMARY KEY (id);
-
-
---
--- Name: module_progress module_progress_user_id_module_id_key; Type: CONSTRAINT; Schema: progress_tracking; Owner: postgres
---
-
-ALTER TABLE ONLY progress_tracking.module_progress
-    ADD CONSTRAINT module_progress_user_id_module_id_key UNIQUE (user_id, module_id);
-
-
---
--- Name: idx_module_progress_classroom; Type: INDEX; Schema: progress_tracking; Owner: postgres
---
-
-CREATE INDEX idx_module_progress_classroom ON progress_tracking.module_progress USING btree (classroom_id);
-
-
---
--- Name: idx_module_progress_completed; Type: INDEX; Schema: progress_tracking; Owner: postgres
---
-
-CREATE INDEX idx_module_progress_completed ON progress_tracking.module_progress USING btree (user_id, status) WHERE (status = 'completed'::progress_tracking.progress_status);
-
-
---
--- Name: idx_module_progress_incomplete; Type: INDEX; Schema: progress_tracking; Owner: postgres
---
-
-CREATE INDEX idx_module_progress_incomplete ON progress_tracking.module_progress USING btree (user_id, updated_at DESC) WHERE (status = ANY (ARRAY['not_started'::progress_tracking.progress_status, 'in_progress'::progress_tracking.progress_status]));
-
-
---
--- Name: idx_module_progress_module; Type: INDEX; Schema: progress_tracking; Owner: postgres
---
-
-CREATE INDEX idx_module_progress_module ON progress_tracking.module_progress USING btree (module_id);
-
-
---
--- Name: idx_module_progress_status; Type: INDEX; Schema: progress_tracking; Owner: postgres
---
-
-CREATE INDEX idx_module_progress_status ON progress_tracking.module_progress USING btree (status);
-
-
---
--- Name: idx_module_progress_user; Type: INDEX; Schema: progress_tracking; Owner: postgres
---
-
-CREATE INDEX idx_module_progress_user ON progress_tracking.module_progress USING btree (user_id);
-
-
---
--- Name: idx_module_progress_user_status_updated; Type: INDEX; Schema: progress_tracking; Owner: postgres
---
-
-CREATE INDEX idx_module_progress_user_status_updated ON progress_tracking.module_progress USING btree (user_id, status, updated_at DESC);
-
-
---
--- Name: module_progress trg_module_progress_updated_at; Type: TRIGGER; Schema: progress_tracking; Owner: postgres
--- NOTE: Trigger movido a archivo separado para evitar duplicación
--- Ver: progress_tracking/triggers/23-trg_module_progress_updated_at.sql
---
-
-
---
--- Name: module_progress module_progress_module_id_fkey; Type: FK CONSTRAINT; Schema: progress_tracking; Owner: postgres
---
-
+-- Foreign Keys
 ALTER TABLE ONLY progress_tracking.module_progress
     ADD CONSTRAINT module_progress_module_id_fkey FOREIGN KEY (module_id) REFERENCES educational_content.modules(id) ON DELETE CASCADE;
-
-
---
--- Name: module_progress module_progress_user_id_fkey; Type: FK CONSTRAINT; Schema: progress_tracking; Owner: postgres
---
 
 ALTER TABLE ONLY progress_tracking.module_progress
     ADD CONSTRAINT module_progress_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_management.profiles(id) ON DELETE CASCADE;
 
+-- Triggers
+-- NOTE: Trigger trg_module_progress_updated_at movido a archivo separado
+-- Ver: progress_tracking/triggers/23-trg_module_progress_updated_at.sql
 
---
--- Name: module_progress module_progress_insert_own; Type: POLICY; Schema: progress_tracking; Owner: postgres
---
-
+-- RLS Policies
 CREATE POLICY module_progress_insert_own ON progress_tracking.module_progress FOR INSERT WITH CHECK ((user_id = gamilit.get_current_user_id()));
-
-
---
--- Name: module_progress module_progress_select_admin; Type: POLICY; Schema: progress_tracking; Owner: postgres
---
-
 CREATE POLICY module_progress_select_admin ON progress_tracking.module_progress FOR SELECT USING (gamilit.is_admin());
-
-
---
--- Name: module_progress module_progress_select_own; Type: POLICY; Schema: progress_tracking; Owner: postgres
---
-
 CREATE POLICY module_progress_select_own ON progress_tracking.module_progress FOR SELECT USING ((user_id = gamilit.get_current_user_id()));
-
-
---
--- Name: module_progress module_progress_select_teacher; Type: POLICY; Schema: progress_tracking; Owner: postgres
---
-
 CREATE POLICY module_progress_select_teacher ON progress_tracking.module_progress FOR SELECT USING (((gamilit.get_current_user_role() = 'admin_teacher'::auth_management.gamilit_role) AND (EXISTS ( SELECT 1
    FROM (social_features.classroom_members cm
      JOIN social_features.classrooms c ON ((c.id = cm.classroom_id)))
   WHERE ((c.teacher_id = gamilit.get_current_user_id()) AND (cm.student_id = module_progress.user_id) AND (cm.status = 'active'::text))))));
-
-
---
--- Name: module_progress module_progress_update_own; Type: POLICY; Schema: progress_tracking; Owner: postgres
---
-
 CREATE POLICY module_progress_update_own ON progress_tracking.module_progress FOR UPDATE USING ((user_id = gamilit.get_current_user_id()));
 
+-- Comments
+COMMENT ON TABLE progress_tracking.module_progress IS 'Progreso del estudiante por módulo - tracking completo de avance';
+COMMENT ON COLUMN progress_tracking.module_progress.status IS 'Estado: not_started, in_progress, completed, reviewed, mastered';
+COMMENT ON COLUMN progress_tracking.module_progress.submitted_exercises IS 'FEATURE M3-M5 2026-01-08: Ejercicios enviados (pendientes o validados) para ejercicios con revision manual';
+COMMENT ON COLUMN progress_tracking.module_progress.graded_exercises IS 'FEATURE M3-M5 2026-01-08: Ejercicios calificados por el maestro (score >= 60)';
+COMMENT ON COLUMN progress_tracking.module_progress.submitted_progress_percentage IS 'FEATURE M3-M5 2026-01-08: Progreso basado en envios (actualiza al enviar)';
+COMMENT ON COLUMN progress_tracking.module_progress.graded_progress_percentage IS 'FEATURE M3-M5 2026-01-08: Progreso basado en calificaciones (actualiza al calificar)';
 
---
--- Name: TABLE module_progress; Type: ACL; Schema: progress_tracking; Owner: postgres
---
-
+-- Permissions
+ALTER TABLE progress_tracking.module_progress OWNER TO gamilit_user;
 GRANT ALL ON TABLE progress_tracking.module_progress TO gamilit_user;
-
-
---
--- PostgreSQL database dump complete
---
-
-\unrestrict kbum8PVMgj5CLpUrEBeJlXIL8TxLp3qKyGRYM1icgHe84QAeAoEm90c4NVmH2oU
-

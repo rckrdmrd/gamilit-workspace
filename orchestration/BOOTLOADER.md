@@ -21,10 +21,10 @@ Extiende el BOOTLOADER del workspace con contexto local.
 │               BOOTLOADER GAMILIT - 5 PASOS                              │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
-│  PASO 1: Cargar L0 (Sistema - Workspace)                               │
+│  PASO 1: Cargar L0 (Sistema - CLAUDE.md)                               │
 │  ════════════════════════════════════════                               │
-│  ├── Leer workspace-v2/CLAUDE.md                                       │
-│  ├── Verificar aliases del workspace disponibles                       │
+│  ├── Leer CLAUDE.md (root del proyecto)                                │
+│  ├── Verificar aliases disponibles                                     │
 │  └── Tokens: ~4000                                                     │
 │                         │                                              │
 │                         ▼                                              │
@@ -66,8 +66,8 @@ Extiende el BOOTLOADER del workspace con contexto local.
 ### PASO 1: L0 Sistema (~4000 tokens)
 ```yaml
 obligatorio:
-  - path: "../../CLAUDE.md"
-    proposito: "Instrucciones del workspace"
+  - path: "../CLAUDE.md"
+    proposito: "Instrucciones del proyecto (standalone)"
     tokens: 4000
 ```
 
@@ -75,7 +75,7 @@ obligatorio:
 ```yaml
 obligatorio:
   - path: "../.claude/CLAUDE.md"
-    proposito: "Instrucciones locales GAMILIT"
+    proposito: "Instrucciones locales GAMILIT (extensiones)"
     tokens: 1500
 
   - path: "CONTEXT-MAP.yml"
@@ -170,7 +170,7 @@ Si detectas compactacion o reinicio de sesion:
 
 ### Al Iniciar Sesion en GAMILIT
 
-- [ ] PASO 1: workspace-v2/CLAUDE.md leido
+- [ ] PASO 1: CLAUDE.md (project root) leido
 - [ ] PASO 2: .claude/CLAUDE.md leido
 - [ ] PASO 2: CONTEXT-MAP.yml cargado
 - [ ] PASO 2: PROXIMA-ACCION.md verificado

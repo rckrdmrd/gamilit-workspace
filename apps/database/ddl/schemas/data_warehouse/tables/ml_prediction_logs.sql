@@ -14,7 +14,9 @@
 -- =============================================================================
 
 -- Create table if not exists
-CREATE TABLE IF NOT EXISTS data_warehouse.ml_prediction_logs (
+DROP TABLE IF EXISTS data_warehouse.ml_prediction_logs CASCADE;
+
+CREATE TABLE data_warehouse.ml_prediction_logs (
     -- Primary key
     prediction_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

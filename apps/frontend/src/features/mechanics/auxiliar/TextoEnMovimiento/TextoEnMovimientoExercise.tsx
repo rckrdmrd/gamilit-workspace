@@ -5,7 +5,8 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { TextoEnMovimientoExerciseProps, AnimatedText, AnimationConfig } from './textoEnMovimientoTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -47,6 +48,8 @@ export const TextoEnMovimientoExercise: React.FC<TextoEnMovimientoExerciseProps>
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
 
   const [texts, setTexts] = useState<AnimatedText[]>([]);
   const [currentText, setCurrentText] = useState(exercise.topic || 'Marie Curie');
@@ -142,7 +145,7 @@ export const TextoEnMovimientoExercise: React.FC<TextoEnMovimientoExerciseProps>
     setIsSubmitting(true);
 
     try {
-      const response = await submitExercise(exercise.id, user.id, { texts });
+      const response = await submitAsync({ texts });
 
       setValidated(true);
 
@@ -246,7 +249,7 @@ export const TextoEnMovimientoExercise: React.FC<TextoEnMovimientoExerciseProps>
                 onChange={(e) => setCurrentText(e.target.value)}
                 disabled={validated}
                 placeholder="Escribe tu texto..."
-                className="w-full rounded-detective border-2 border-gray-300 px-3 py-2 focus:border-detective-orange focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-detective border-2 border-detective-border px-3 py-2 focus:border-detective-orange focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
 
@@ -256,7 +259,7 @@ export const TextoEnMovimientoExercise: React.FC<TextoEnMovimientoExerciseProps>
                 value={selectedAnimation}
                 onChange={(e) => setSelectedAnimation(e.target.value)}
                 disabled={validated}
-                className="w-full rounded-detective border-2 border-gray-300 px-3 py-2 focus:border-detective-orange focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-detective border-2 border-detective-border px-3 py-2 focus:border-detective-orange focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {animations.map((anim) => (
                   <option key={anim.id} value={anim.id}>
@@ -307,7 +310,7 @@ export const TextoEnMovimientoExercise: React.FC<TextoEnMovimientoExerciseProps>
                     onClick={() => !validated && setColor(c)}
                     disabled={validated}
                     className={`h-10 w-10 rounded-full border-4 transition-all ${
-                      color === c ? 'border-detective-text' : 'border-gray-300'
+                      color === c ? 'border-detective-text' : 'border-detective-border'
                     } disabled:cursor-not-allowed disabled:opacity-50`}
                     style={{ backgroundColor: c }}
                   />
@@ -373,7 +376,7 @@ export const TextoEnMovimientoExercise: React.FC<TextoEnMovimientoExerciseProps>
               {texts.map((text, index) => (
                 <div
                   key={text.id}
-                  className="flex items-center justify-between rounded-detective border-2 border-gray-300 p-3"
+                  className="flex items-center justify-between rounded-detective border-2 border-detective-border p-3"
                 >
                   <div>
                     <div className="mb-2 flex items-center gap-2">

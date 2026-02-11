@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ExerciseContainer } from '@shared/components/mechanics/ExerciseContainer';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { ConceptNode } from './ConceptNode';
 import { ConnectionLine } from './ConnectionLine';
 import { MapaConceptualData } from './mapaConceptualTypes';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -37,6 +37,8 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
 
   const [connections, setConnections] = useState<string[]>([]);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -114,7 +116,7 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
 
     try {
       // Submit to backend API
-      const response = await submitExercise(exercise.id, user.id, { connections });
+      const response = await submitAsync({ connections });
 
       setValidated(true);
 
@@ -179,20 +181,27 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
   // If no nodes, show message
   if (nodes.length === 0) {
     return (
-      <ExerciseContainer exercise={exercise}>
+      <DetectiveCard className="p-6">
         <DetectiveCard variant="default" padding="lg">
           <p className="text-center text-detective-text-secondary">
             Este ejercicio aún no tiene contenido disponible. Por favor, contacta a tu profesor.
           </p>
         </DetectiveCard>
-      </ExerciseContainer>
+      </DetectiveCard>
     );
   }
 
   return (
-    <ExerciseContainer exercise={exercise}>
+    <DetectiveCard className="p-6">
+      {/* Instructions */}
+      <div className="mb-4 rounded-lg bg-detective-bg-secondary p-4">
+        <p className="text-sm text-detective-text-secondary">
+          Conecta los conceptos relacionados haciendo clic en dos nodos consecutivos. Se creará una línea entre ellos mostrando la relación.
+        </p>
+      </div>
+
       <DetectiveCard variant="default" padding="lg">
-        <div className="relative h-[600px] w-full rounded-lg bg-gray-50">
+        <div className="relative h-[600px] w-full rounded-lg bg-detective-bg">
           <svg className="absolute inset-0 h-full w-full">
             {connections.map((conn, i) => {
               const [fromId, toId] = conn.split('-');
@@ -229,7 +238,7 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
           }}
         />
       )}
-    </ExerciseContainer>
+    </DetectiveCard>
   );
 };
 

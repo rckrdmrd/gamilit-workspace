@@ -1,0 +1,40 @@
+id: "US-GAM-K8S-03"
+titulo: "HPA and Production Readiness"
+epic_id: "EPIC-GAM-K8S"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "PENDIENTE"
+prioridad: "P3"
+story_points: 2
+sprint: "Backlog"
+modulos:
+  - "devops/k8s"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/devops/k8s/"
+      endpoints: []
+      files:
+        - "k8s/hpa-backend.yml"
+        - "k8s/hpa-frontend.yml"
+    frontend:
+      paths: []
+      pages: []
+      components: []
+    database:
+      paths: []
+      tables: []
+  tests:
+    unit: []
+    e2e:
+      - "load-test-500-concurrent.k6.js"
+dependencies:
+  depends_on:
+    - "US-GAM-K8S-01"
+    - "US-GAM-K8S-02"
+  blocks: []
+tasks: []

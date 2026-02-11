@@ -28,7 +28,7 @@ export const SopaLetrasGrid: React.FC<SopaLetrasGridProps> = ({
       return 'bg-blue-200 text-blue-900 font-bold hover:bg-blue-300';
     }
     // Prioridad 3: Celdas normales
-    return 'bg-gray-100 hover:bg-gray-200 text-gray-800';
+    return 'bg-detective-bg-secondary hover:bg-gray-200 text-detective-text';
   };
 
   return (
@@ -58,13 +58,13 @@ export const SopaLetrasGrid: React.FC<SopaLetrasGridProps> = ({
         ))}
       </div>
       <div className="mt-3 space-y-1">
-        <div className="text-sm font-medium text-gray-700 text-center">
+        <div className="text-sm font-medium text-detective-text text-center">
           Controles:
         </div>
-        <div className="text-xs text-gray-600 text-center space-y-0.5">
+        <div className="text-xs text-detective-text-secondary text-center space-y-0.5">
           <div>• Haz click en las letras para seleccionar</div>
-          <div>• <kbd className="px-1.5 py-0.5 bg-gray-200 rounded text-xs font-mono">ENTER</kbd> valida la palabra seleccionada</div>
-          <div>• <kbd className="px-1.5 py-0.5 bg-gray-200 rounded text-xs font-mono">ESC</kbd> limpia la selección</div>
+          <div>• <kbd className="px-1.5 py-0.5 bg-detective-bg-secondary rounded text-xs font-mono">ENTER</kbd> valida la palabra seleccionada</div>
+          <div>• <kbd className="px-1.5 py-0.5 bg-detective-bg-secondary rounded text-xs font-mono">ESC</kbd> limpia la selección</div>
           <div className="text-blue-700 font-medium mt-1">💡 Las letras azules pueden reutilizarse</div>
         </div>
       </div>

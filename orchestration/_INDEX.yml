@@ -1,249 +1,276 @@
 # ===============================================================================
-# _INDEX.yml - INDICE ESTRUCTURAL MAESTRO DE ORCHESTRATION GAMILIT
-# ===============================================================================
-#
-# PROPOSITO: Indice estructural para navegacion y carga de contexto IoC (NEXUS)
-# PROYECTO: GAMILIT - Plataforma EdTech con Gamificacion
-# TIPO: STANDALONE (workspace independiente)
-#
-# USO: El sistema NEXUS usa este archivo para resolver rutas automaticamente
-#
+# INDICE DE ORQUESTACION - GAMILIT
 # ===============================================================================
 
-version: "1.1.0"
-fecha_creacion: "2026-01-25"
-fecha_actualizacion: "2026-02-03"
-descripcion: "Indice estructural maestro de orchestration/ de GAMILIT (V2 Compliant)"
-sistema: "SIMCO v4.3.0 + NEXUS v4.0"
+version: "2.0.0"
+created: "2026-02-07"
+updated: "2026-02-07"
 proyecto: "gamilit"
-tipo_proyecto: "STANDALONE"
+tipo: "STANDALONE"
 
-# ===============================================================================
-# METRICAS DE ESTRUCTURA
-# ===============================================================================
+# -------------------------------------------------------------------------------
+# METADATA
+# -------------------------------------------------------------------------------
+
+metadata:
+  nombre_completo: "GAMILIT - Gamificacion Maya para la Lectoescritura en Tecnologia"
+  tipo_proyecto: "STANDALONE"
+  nivel_simco: "2A"
+  wave: 3
+  prefijo_us: "GAM"
+  prefijo_epic: "EPIC-GAM"
+  completitud: "98%"
+  estado: "PRODUCCION_ACTIVA"
+  stack:
+    backend: "NestJS 11"
+    frontend: "React 19"
+    database: "PostgreSQL 15"
+    realtime: "Socket.IO 4.8+"
+    build: "Vite 6.x"
+    orm: "TypeORM 0.3.x"
+  repositorio:
+    tipo: "MONOREPO"
+    remote: "git@github.com:rckrdmrd/gamilit-workspace.git"
+    branch: "main"
+    nota: "GitHub (excepcional) - NO Gitea"
+
+# -------------------------------------------------------------------------------
+# ESTRUCTURA DE ORQUESTACION
+# -------------------------------------------------------------------------------
+
+estructura:
+  raiz: "orchestration/"
+  archivos_principales:
+    - nombre: "_INDEX.yml"
+      descripcion: "Este archivo - Indice maestro de orquestacion"
+
+    - nombre: "_inheritance.yml"
+      descripcion: "Declaracion de herencia STANDALONE"
+      version: "2.0.0"
+
+    - nombre: "PROJECT-CONTEXT.md"
+      descripcion: "Contexto NEXUS L1 del proyecto"
+      tipo: "NEXUS_L1"
+
+  directorios:
+    inventory:
+      descripcion: "Inventarios por capa (DATABASE, BACKEND, FRONTEND, MASTER)"
+      archivos:
+        - "MASTER_INVENTORY.yml"
+        - "DATABASE_INVENTORY.yml"
+        - "BACKEND_INVENTORY.yml"
+        - "FRONTEND_INVENTORY.yml"
+
+    work-items:
+      descripcion: "Gestion de trabajo (epics, sprints, releases)"
+      subdirectorios:
+        - "epics/ (11 EPICs)"
+        - "sprints/"
+        - "releases/"
+
+    references:
+      descripcion: "Referencias tecnicas y documentacion auxiliar"
+
+    analisis:
+      descripcion: "Reportes de analisis y migracion"
+      archivos:
+        - "ANALISIS-MIGRACION-GAMILIT.md"
+        - "MIGRATION-TRACKER.yml"
+        - "MIGRATION-MANIFEST.yml"
+        - "SNAPSHOT-PRE-MIGRATION.md"
+        - "PURGA-DECISION-LOG.md"
+
+    tareas:
+      descripcion: "Tracking de tareas de migracion"
+
+# -------------------------------------------------------------------------------
+# HERENCIA
+# -------------------------------------------------------------------------------
+
+herencia:
+  tipo: "STANDALONE"
+  parent_directo: null
+  workspace: "standalone"
+  gobernanza: "local"
+
+  patrones_propios:
+    - "Gamificacion cultura maya (rangos, iconografia)"
+    - "5 modulos comprension lectora"
+    - "4 portales diferenciados"
+    - "23 tipos ejercicios interactivos"
+    - "Motor de exercise evaluation (Strategy+Factory)"
+    - "Spaced repetition engine"
+    - "Virtual economy (ML Coins)"
+
+# -------------------------------------------------------------------------------
+# GOBERNANZA
+# -------------------------------------------------------------------------------
+
+gobernanza:
+  simco_version: "4.0.0"
+  saad_activo: true
+  nexus_version: "4.1"
+
+  paths_gobernanza:
+    docs_local: "docs/"
+    orchestration_local: "orchestration/"
+    estandares: "docs/40-standards/"
+
+  directivas_aplicables:
+    - "PRINCIPIO-CAPVED.md"
+    - "SIMCO-TAREA.md"
+    - "SIMCO-GIT.md"
+    - "SIMCO-EDICION-SEGURA.md"
+    - "SIMCO-DDL-UNIFIED.md"
+    - "SIMCO-BACKEND.md (NestJS)"
+    - "SIMCO-FRONTEND.md (React)"
+
+  triggers_activos:
+    - "TRIGGER-ANTI-DUPLICACION"
+    - "TRIGGER-COHERENCIA-CAPAS"
+    - "TRIGGER-INVENTARIOS-SINCRONIZADOS"
+    - "TRIGGER-FETCH-OBLIGATORIO"
+    - "TRIGGER-COMMIT-PUSH-OBLIGATORIO"
+    - "TRIGGER-CIERRE-TAREA-OBLIGATORIO"
+    - "TRIGGER-DDL-RECREAR-BD-WSL"
+    - "TRIGGER-DOCUMENTACION-OBLIGATORIA"
+
+# -------------------------------------------------------------------------------
+# MODULOS DEL PROYECTO
+# -------------------------------------------------------------------------------
+
+modulos:
+  total: 22
+  categorias:
+    core_infrastructure:
+      count: 7
+      modulos: ["auth", "users", "tenants", "core", "health", "settings", "notifications"]
+
+    educational_content:
+      count: 5
+      modulos: ["modules", "exercises", "content", "classrooms", "students"]
+
+    gamification_system:
+      count: 6
+      modulos: ["gamification", "leaderboard", "missions", "store", "achievements", "social"]
+
+    support_operations:
+      count: 4
+      modulos: ["teachers", "parents", "analytics", "reports"]
+
+# -------------------------------------------------------------------------------
+# METRICAS ACTUALES
+# -------------------------------------------------------------------------------
 
 metricas:
-  carpetas_nivel_1: 25
-  carpetas_total: 60
-  archivos_raiz: 12
-  indices_existentes:
-    - _MAP.md                        # Navegacion visual
-    - MAPA-DOCUMENTACION.yml         # Documentacion
-    - CONTEXT-MAP.yml                # Contexto NEXUS
+  source: "inventory/MASTER_INVENTORY.yml"
+  fecha: "2026-02-07"
+
+  database:
+    schemas: 18
+    tablas: 171
+    views: 13
+    materialized_views: 7
+    funciones: 128
+    triggers: 49
+    rls_policies: 282
+    foreign_keys: 299
+    enums: 36
+
+  backend:
+    modulos: 22
+    entities: 141
+    dtos: 412
+    services: 145
+    controllers: 103
+    endpoints: 850
+    guards: 14
+    decorators: 18
+    tests: 833
+
+  frontend:
+    componentes: 458
+    hooks: 127
+    paginas: 85
+    stores_zustand: 32
+    api_services: 48
+    portales: 4
+    mecanicas: 40
+    routes: 24
+
+# -------------------------------------------------------------------------------
+# EPICS
+# -------------------------------------------------------------------------------
+
+epics:
+  total: 11
+  total_sp: 162
+  lista:
+    - id: "EPIC-GAM-SCAFFOLD"
+      titulo: "Scaffolding Gamilit"
+      sp: 5
+      estado: "COMPLETADO"
+    - id: "EPIC-GAM-REQUIREMENTS"
+      titulo: "Requerimientos Gamilit"
+      sp: 13
+      estado: "COMPLETADO"
+    - id: "EPIC-GAM-ARCHITECTURE"
+      titulo: "Arquitectura Gamificacion"
+      sp: 13
+      estado: "COMPLETADO"
+    - id: "EPIC-GAM-DATABASE"
+      titulo: "Esquema BD Gamilit"
+      sp: 21
+      estado: "COMPLETADO"
+    - id: "EPIC-GAM-BACKEND"
+      titulo: "Backend Gamilit"
+      sp: 34
+      estado: "COMPLETADO"
+    - id: "EPIC-GAM-FRONTEND"
+      titulo: "Frontend Gamilit"
+      sp: 34
+      estado: "COMPLETADO"
+    - id: "EPIC-GAM-K8S"
+      titulo: "Kubernetes Gamilit"
+      sp: 8
+      estado: "EN_PROGRESO"
+    - id: "EPIC-GAM-TESTING"
+      titulo: "Tests Gamilit"
+      sp: 13
+      estado: "EN_PROGRESO"
+    - id: "EPIC-GAM-DEVOPS"
+      titulo: "DevOps Gamilit"
+      sp: 8
+      estado: "EN_PROGRESO"
+    - id: "EPIC-GAM-DOCS"
+      titulo: "Documentacion Gamilit"
+      sp: 8
+      estado: "EN_PROGRESO"
+    - id: "EPIC-GAM-INTEGRATION"
+      titulo: "Integracion Gamilit"
+      sp: 5
+      estado: "COMPLETADO"
+
+# -------------------------------------------------------------------------------
+# DOCUMENTACION
+# -------------------------------------------------------------------------------
+
+documentacion:
+  total_archivos: 132
+  migracion_v2_completada: true
+  local:
+    - "docs/00-overview/ (8 archivos: VISION-ALCANCE, MODULOS, TESTING, DEVOPS, ONBOARDING, GLOSARIO, VISION, REPORTE-INTEGRAL)"
+    - "docs/10-requirements/user-stories/ (27 US L3)"
+    - "docs/10-requirements/testing-guides/ (6 archivos: 5 guias pruebas + README)"
+    - "docs/20-architecture/ (8 archivos: STACK, GAMIFICACION, MODELO-DATOS, SCHEMA-REFERENCE, MECANICAS-V6, DATOS-GAMIFICACION, COHERENCE, TRACEABILITY)"
+    - "docs/40-api/ (3 archivos: API-REFERENCE, ADMIN-PORTAL-ENDPOINTS, WEB-PUSH-MIGRATION)"
+    - "docs/90-adr/ (34 ADRs: 4 arch + 29 migrados + ADR-005-MIGRACION)"
+  orchestration:
+    - "inventory/ (8 archivos: 4 inventarios YAML principales + 4 especializados)"
+    - "references/ (3 archivos: API-CONTRACTS, COMPLETENESS-TRACKER, REQUIREMENTS-INDEX)"
+    - "analisis/ (7 archivos: ANALISIS-MIGRACION, MIGRATION-TRACKER, MIGRATION-MANIFEST, SNAPSHOT, PURGA-DECISION-LOG, ARCHIVE-MANIFEST, MIGRATION-CLOSURE)"
+    - "work-items/epics/ (11 EPICs)"
 
 # ===============================================================================
-# ARCHIVOS RAIZ (12 archivos)
+# FIN DE INDICE DE ORQUESTACION
 # ===============================================================================
-
-archivos_raiz:
-  # --- Indices y Mapas ---
-  indices:
-    - archivo: "_INDEX.yml"
-      alias: "@INDEX"
-      proposito: "Este archivo - Indice estructural maestro"
-
-    - archivo: "_MAP.md"
-      alias: "@MAP"
-      proposito: "Mapa visual de navegacion"
-
-    - archivo: "MAPA-DOCUMENTACION.yml"
-      alias: "@MAPA-DOC"
-      proposito: "Mapa de toda la documentacion"
-
-  # --- Contexto y Estado ---
-  contexto:
-    - archivo: "CONTEXT-MAP.yml"
-      alias: "@CONTEXT-MAP"
-      proposito: "Mapa de contexto para NEXUS - Keywords a archivos"
-      nivel_nexus: "L0"
-
-    - archivo: "PROJECT-PROFILE.yml"
-      alias: "@PROJECT-PROFILE"
-      proposito: "Perfil del proyecto GAMILIT"
-
-    - archivo: "PROJECT-STATUS.md"
-      alias: "@PROJECT-STATUS"
-      proposito: "Estado actual del proyecto"
-
-    - archivo: "PROXIMA-ACCION.md"
-      alias: "@PROXIMA-ACCION"
-      proposito: "Checkpoint de sesion - Continuidad entre sesiones"
-
-    - archivo: "BOOTLOADER.md"
-      alias: "@BOOTLOADER"
-      proposito: "Carga de contexto inicial de sesion"
-
-    - archivo: "QUICK-REFERENCE.md"
-      alias: "@QUICK-REF"
-      proposito: "Referencia rapida para agentes"
-
-  # --- Trazabilidad y Dependencias ---
-  trazabilidad:
-    - archivo: "TRACEABILITY.yml"
-      alias: "@TRACEABILITY"
-      proposito: "Trazabilidad maestra de cambios"
-
-    - archivo: "DEPENDENCY-GRAPH.yml"
-      alias: "@DEPENDENCY-GRAPH"
-      proposito: "Grafo de dependencias internas"
-
-  # --- Herencia ---
-  herencia:
-    - archivo: "_inheritance.yml"
-      alias: "@INHERITANCE"
-      proposito: "Declaracion de herencia del proyecto"
-
-# ===============================================================================
-# CARPETAS PRINCIPALES (25 carpetas nivel 1)
-# ===============================================================================
-
-carpetas:
-
-  # ---------------------------------------------------------------------------
-  # GRUPO 1: SISTEMA CORE (Definiciones, Directivas, Templates)
-  # ---------------------------------------------------------------------------
-
-  _definitions:
-    alias: "@DEFINITIONS"
-    proposito: "Definiciones SSOT - Checklists, Protocolos, Schemas, Triggers"
-    prioridad: "ALTA"
-    nivel_nexus: "L0"
-
-  directivas:
-    alias: "@DIRECTIVAS"
-    proposito: "Sistema SIMCO completo - Directivas por operacion"
-    prioridad: "CRITICA"
-    nivel_nexus: "L0-L2"
-
-  templates:
-    alias: "@TEMPLATES"
-    proposito: "Templates de documentacion y trabajo"
-    prioridad: "MEDIA"
-
-  # ---------------------------------------------------------------------------
-  # GRUPO 2: OPERACIONALES V2 (Nuevas carpetas de gestion)
-  # ---------------------------------------------------------------------------
-
-  scrum:
-    alias: "@SCRUM"
-    proposito: "Artefactos de gestion agil (Sprints, Backlog)"
-    prioridad: "ALTA"
-
-  planes:
-    alias: "@PLANES"
-    proposito: "Planificacion estrategica y operativa"
-    prioridad: "ALTA"
-
-  features:
-    alias: "@FEATURES"
-    proposito: "Gestion y seguimiento de features V2"
-    prioridad: "ALTA"
-
-  analisis:
-    alias: "@ANALISIS"
-    proposito: "Reportes de analisis tecnico y funcional"
-
-  reports:
-    alias: "@REPORTS"
-    proposito: "Reportes automaticos, manuales y de cierre"
-
-  # ---------------------------------------------------------------------------
-  # GRUPO 3: AGENTES Y TRAZABILIDAD
-  # ---------------------------------------------------------------------------
-
-  agents:
-    alias: "@AGENTS"
-    proposito: "Perfiles, configuraciones y trazas de agentes"
-    prioridad: "ALTA"
-
-  tareas:
-    alias: "@TAREAS"
-    proposito: "Documentacion de tareas con gobernanza CAPVED"
-    prioridad: "CRITICA"
-
-  trazas:
-    alias: "@TRAZAS"
-    proposito: "Trazas operacionales y de sesiones"
-
-  # ---------------------------------------------------------------------------
-  # GRUPO 4: INVENTARIOS Y REFERENCIAS
-  # ---------------------------------------------------------------------------
-
-  inventarios:
-    alias: "@INVENTARIOS"
-    proposito: "Inventarios del proyecto - SSOT de recursos"
-
-  referencias:
-    alias: "@REFERENCIAS"
-    proposito: "Aliases, prompts activos, templates de prompts"
-
-  # ---------------------------------------------------------------------------
-  # GRUPO 5: PROCESOS Y CALIDAD
-  # ---------------------------------------------------------------------------
-
-  checklists:
-    proposito: "Listas de verificacion para procesos estandar"
-  
-  errores:
-    proposito: "Base de conocimiento de errores conocidos"
-  
-  escalamientos:
-    proposito: "Protocolos de escalamiento bloqueantes"
-  
-  patrones:
-    proposito: "Patrones de diseño y arquitectura adoptados"
-  
-  procesos:
-    proposito: "Procedimientos estandar de operacion (SOPs)"
-
-  # ---------------------------------------------------------------------------
-  # GRUPO 6: UTILITARIOS Y OTROS
-  # ---------------------------------------------------------------------------
-
-  _internal:
-    proposito: "Herramientas y contexto interno de orquestacion"
-
-  _quick:
-    proposito: "Quick references compactos para carga rapida"
-
-  cambios:
-    proposito: "Registro de control de cambios significativos"
-
-  perfiles-giro:
-    proposito: "Definiciones especificas del dominio de negocio"
-
-  propagacion:
-    proposito: "Reglas y scripts para la propagacion local"
-
-  propuestas:
-    proposito: "RFCs y propuestas de mejora tecnica"
-
-  retrospectivas:
-    proposito: "Lecciones aprendidas y retrospectivas de sprint"
-
-# ===============================================================================
-# MAPEO NEXUS - Niveles de Contexto
-# ===============================================================================
-
-nexus_mapping:
-  L0_sistema:
-    carpetas: ["_definitions/", "_quick/", "agents/configs/", "_internal/"]
-  L1_proyecto:
-    carpetas: ["inventarios/", "planes/", "scrum/"]
-  L2_operacion:
-    carpetas: ["directivas/simco/", "directivas/principios/", "features/"]
-  L3_tarea:
-    carpetas: ["tareas/"]
-
-# ===============================================================================
-# RELACION CON WORKSPACE PADRE
-# ===============================================================================
-
-workspace_padre:
-  tipo: "REPLICA_COMPLETA"
-  fecha_sincronizacion: "2026-02-03"
-  politica: "V2 COMPLIANT - Redundancia total operativa"
-
-mantenimiento:
-  ultima_actualizacion: "2026-02-03"
-  actualizado_por: "Meta-Orquestador - Integracion Workspace V2"

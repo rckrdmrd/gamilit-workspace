@@ -6,6 +6,8 @@
 -- Fecha: 2025-11-11
 -- =====================================================
 
+DROP TABLE IF EXISTS content_management.moderation_rules CASCADE;
+
 CREATE TABLE content_management.moderation_rules (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

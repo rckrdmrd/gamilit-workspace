@@ -35,6 +35,8 @@ SET default_table_access_method = heap;
 -- Create Table
 -- =====================================================
 
+DROP TABLE IF EXISTS progress_tracking.certificates CASCADE;
+
 CREATE TABLE progress_tracking.certificates (
     -- Primary Key
     id uuid DEFAULT gen_random_uuid() NOT NULL,

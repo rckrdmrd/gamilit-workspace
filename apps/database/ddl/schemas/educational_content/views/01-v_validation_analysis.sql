@@ -43,13 +43,13 @@ SELECT
     -- Si es recálculo, incluir comparación con original
     CASE
         WHEN va.is_recalculated THEN
-            (SELECT score FROM educational_content.exercise_validation_audit WHERE id = va.original_audit_id)
+            (SELECT score FROM educational_content.exercise_validation_audits WHERE id = va.original_audit_id)
         ELSE NULL
     END AS original_score,
 
     CASE
         WHEN va.is_recalculated THEN
-            va.score - (SELECT score FROM educational_content.exercise_validation_audit WHERE id = va.original_audit_id)
+            va.score - (SELECT score FROM educational_content.exercise_validation_audits WHERE id = va.original_audit_id)
         ELSE NULL
     END AS score_difference,
 
@@ -59,7 +59,7 @@ SELECT
     va.created_at,
     va.updated_at
 
-FROM educational_content.exercise_validation_audit va
+FROM educational_content.exercise_validation_audits va
 JOIN educational_content.exercises e ON e.id = va.exercise_id
 LEFT JOIN educational_content.modules m ON m.id = e.module_id;
 

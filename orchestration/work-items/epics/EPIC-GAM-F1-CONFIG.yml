@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F1-CONFIG"
+titulo: "Configuracion del Sistema"
+proyecto: "gamilit"
+fase: "F1-alcance-inicial"
+source_id: "EAI-006"
+story_points: 8
+estado: "COMPLETADO"
+prioridad: "P2"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-CONFIG/EPIC.md"
+user_stories: 3
+requirements: 3
+specifications: 2
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F1-CONFIG/user-stories/"
+stories_structure: "nested"
+tasks_total: 9
+fecha_actualizacion: "2026-02-09"

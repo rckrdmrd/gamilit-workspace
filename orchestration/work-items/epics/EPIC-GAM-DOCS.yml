@@ -1,0 +1,36 @@
+# EPIC-GAM-DOCS: Documentacion Gamilit
+id: "EPIC-GAM-DOCS"
+titulo: "Documentacion Gamilit"
+proyecto: "gamilit"
+story_points: 8
+estado: "EN_PROGRESO"
+prioridad: "P2"
+fecha_inicio: "2025-12-15"
+fecha_fin: null
+
+descripcion: |
+  Documentacion completa del proyecto: vision, arquitectura, API, ADRs,
+  user stories, inventarios, guias de desarrollo.
+
+entregables:
+  - "CLAUDE.md v2.0.0"
+  - "README.md completo"
+  - "docs/00-overview/ (VISION-ALCANCE, MODULOS, TESTING, DEVOPS)"
+  - "docs/10-requirements/user-stories/ (15 US L3)"
+  - "docs/20-architecture/ (STACK, GAMIFICACION, MODELO-DATOS)"
+  - "docs/40-api/ (API-REFERENCE - 850 endpoints)"
+  - "docs/90-adr/ (4 ADRs)"
+  - "orchestration/ completo (INDEX, inheritance, inventarios, epics)"
+
+estado_detallado:
+  completado:
+    - "CLAUDE.md v2.0.0"
+    - "README.md"
+    - "API Reference"
+    - "ADRs 001-004"
+    - "Inventarios YAML"
+    - "User Stories L3"
+  pendiente:
+    - "Guia de deployment"
+    - "Guia de contribucion"
+    - "Diagramas de arquitectura"

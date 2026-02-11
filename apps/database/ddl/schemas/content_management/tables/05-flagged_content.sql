@@ -3,7 +3,9 @@
 -- =====================================================
 
 -- Create table for flagged content moderation
-CREATE TABLE IF NOT EXISTS content_management.flagged_contents (
+DROP TABLE IF EXISTS content_management.flagged_contents CASCADE;
+
+CREATE TABLE content_management.flagged_contents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     content_type VARCHAR(50) NOT NULL, -- 'exercise', 'comment', 'profile', 'post', 'message'
     content_id UUID NOT NULL,

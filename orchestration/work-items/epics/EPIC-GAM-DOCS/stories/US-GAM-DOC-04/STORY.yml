@@ -1,0 +1,38 @@
+id: "US-GAM-DOC-04"
+titulo: "Inventory Synchronization"
+epic_id: "EPIC-GAM-DOCS"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "PENDIENTE"
+prioridad: "P2"
+story_points: 1
+sprint: "Backlog"
+modulos:
+  - "cross-cutting"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths: []
+      endpoints: []
+      files: []
+    frontend:
+      paths: []
+      pages: []
+      components: []
+    database:
+      paths: []
+      tables: []
+    docs:
+      paths:
+        - "orchestration/inventory/"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-INT-01"
+  blocks: []
+tasks: []

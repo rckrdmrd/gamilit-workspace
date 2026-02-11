@@ -24,5 +24,7 @@ export * from './scheduled-reports.service';
 export * from './shared-reports.service';
 // US-PM-007: Alert configuration service
 export * from './alert-config.service';
+// Teacher Assignments service
+export * from './teacher-assignments.service';
 // TASK-2026-01-18-009: Removed rubric-scoring.service.ts (orphan code - never injected/used)
 // Rubrics now come from educational_content.exercise_type_rubrics via ManualReviewService

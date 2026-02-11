@@ -1,19 +1,10 @@
 /**
  * Exercise Components Index
  *
- * Exports all exercise components for easy importing
+ * Activity components (Sprint 1-2) were removed — superseded by
+ * features/mechanics/ Exercise components with standardized submission hooks.
  */
 
-// Sprint 1 - Basic Mechanics
-export { MultipleChoiceActivity } from './MultipleChoiceActivity';
-export { TrueFalseActivity } from './TrueFalseActivity';
-export { FillBlankActivity } from './FillBlankActivity';
-
-// Sprint 2 - Advanced Mechanics
-export { DragDropActivity } from './DragDropActivity';
-export { OrderingActivity } from './OrderingActivity';
-export { MatchingActivity } from './MatchingActivity';
-
-// Shared Components
+// Shared Components (still in use by ExercisePage)
 export { ExerciseHeader } from './ExerciseHeader';
 export { ExerciseFeedback } from './ExerciseFeedback';

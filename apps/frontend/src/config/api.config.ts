@@ -210,9 +210,9 @@ export const API_ENDPOINTS = {
    * Social endpoints
    */
   social: {
-    guilds: '/social/guilds',
-    guild: (id: string) => `/social/guilds/${id}`,
-    userGuilds: (userId: string) => `/social/users/${userId}/guilds`,
+    guilds: '/guilds',
+    guild: (id: string) => `/guilds/${id}`,
+    userGuilds: (userId: string) => `/guilds/users/${userId}`,
     friends: (userId: string) => `/social/users/${userId}/friends`,
     messages: (userId: string) => `/social/users/${userId}/messages`,
     // Schools endpoints (P1-003: Centralized 2025-12-28)
@@ -658,15 +658,15 @@ export const API_ENDPOINTS = {
    * Guilds API endpoints
    */
   guilds: {
-    list: '/gamification/guilds',
-    get: (guildId: string) => `/gamification/guilds/${guildId}`,
-    create: '/gamification/guilds',
-    join: (guildId: string) => `/gamification/guilds/${guildId}/join`,
-    leave: (guildId: string) => `/gamification/guilds/${guildId}/leave`,
-    members: (guildId: string) => `/gamification/guilds/${guildId}/members`,
+    list: '/guilds',
+    get: (guildId: string) => `/guilds/${guildId}`,
+    create: '/guilds',
+    join: (guildId: string) => `/guilds/${guildId}/join`,
+    leave: (guildId: string) => `/guilds/${guildId}/leave`,
+    members: (guildId: string) => `/guilds/${guildId}/members`,
     updateMemberRole: (guildId: string, memberId: string) =>
-      `/gamification/guilds/${guildId}/members/${memberId}/role`,
-    challenges: (guildId: string) => `/gamification/guilds/${guildId}/challenges`,
+      `/guilds/${guildId}/members/${memberId}/role`,
+    challenges: (guildId: string) => `/guilds/${guildId}/challenges`,
   },
 
   /**

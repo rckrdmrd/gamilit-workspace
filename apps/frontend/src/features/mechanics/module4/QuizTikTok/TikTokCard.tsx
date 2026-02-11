@@ -67,7 +67,7 @@ export const TikTokCard: React.FC<TikTokCardProps> = ({
       exit={{ y: -window.innerHeight }}
       transition={{ type: 'spring', damping: 30, stiffness: 300 }}
       className="absolute inset-0 flex flex-col items-center justify-center p-8"
-      style={{ backgroundColor: question.backgroundColor || '#1f2937' }}
+      style={{ backgroundColor: question.backgroundColor || 'var(--detective-bg-secondary, #1f2937)' }}
     >
       {/* Timer Bar - Top */}
       <div className="absolute top-0 left-0 right-0 h-2 bg-black/30">

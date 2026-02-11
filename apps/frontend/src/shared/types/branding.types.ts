@@ -100,34 +100,6 @@ export interface UploadAssetResponse {
 }
 
 /**
- * CSS variable mapping for branding colors
- * Maps BrandingConfig properties to CSS custom properties
- */
-export const CSS_VARIABLE_MAP: Record<string, string[]> = {
-  primaryColor: [
-    '--brand-primary',
-    '--detective-orange',
-  ],
-  secondaryColor: [
-    '--brand-secondary',
-    '--detective-orange-dark',
-  ],
-  accentColor: [
-    '--brand-accent',
-    '--detective-gold',
-  ],
-  backgroundColor: [
-    '--brand-background',
-  ],
-  surfaceColor: [
-    '--brand-surface',
-  ],
-  textColor: [
-    '--brand-text',
-  ],
-};
-
-/**
  * Default branding configuration (GAMILIT defaults)
  */
 export const DEFAULT_BRANDING: Omit<BrandingConfig, 'tenantId'> = {

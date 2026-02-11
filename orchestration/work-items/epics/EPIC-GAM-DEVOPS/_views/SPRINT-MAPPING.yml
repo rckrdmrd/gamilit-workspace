@@ -1,0 +1,16 @@
+# SPRINT-MAPPING.yml — Vista de qué stories están en qué sprint
+epic_id: "EPIC-GAM-DEVOPS"
+fecha_actualizacion: "2026-02-07"
+
+sprints:
+  Backlog:
+    stories:
+      - id: "US-GAM-DOP-01"
+        status: "PENDIENTE"
+        sp: 3
+      - id: "US-GAM-DOP-02"
+        status: "PENDIENTE"
+        sp: 3
+      - id: "US-GAM-DOP-03"
+        status: "PENDIENTE"
+        sp: 2

@@ -6,7 +6,8 @@ import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { RankUpModal } from '@/features/gamification/ranks/components/RankUpModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import type { CausaEfectoExerciseProps, CauseMatches } from './causaEfectoTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -18,6 +19,8 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
   const [matches, setMatches] = useState<CauseMatches>({});
   const [validated, setValidated] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -179,7 +182,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
       });
 
       // Submit to backend API
-      const response = await submitExercise(exercise.id, user.id, { causes: userAnswers });
+      const response = await submitAsync({ causes: userAnswers });
 
       // Check for rank up
       if (response.rankUp) {
@@ -352,7 +355,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                                 {!validated && (
                                   <button
                                     onClick={() => handleRemoveConsequence(cause.id, cId)}
-                                    className="text-red-600 opacity-0 transition-opacity hover:text-red-800 group-hover:opacity-100"
+                                    className="text-detective-danger opacity-0 transition-opacity hover:text-red-800 group-hover:opacity-100"
                                     title="Quitar"
                                   >
                                     ✕
@@ -366,8 +369,8 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                     )}
 
                     {matchedConsequences.length === 0 && !validated && (
-                      <div className="mt-2 flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 py-6">
-                        <p className="text-center text-detective-xs italic text-gray-400">
+                      <div className="mt-2 flex items-center justify-center rounded-lg border-2 border-dashed border-detective-border py-6">
+                        <p className="text-center text-detective-xs italic text-detective-text-secondary">
                           Arrastra consecuencias aquí →
                         </p>
                       </div>
@@ -404,12 +407,12 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                         className={`cursor-move rounded-lg border-2 p-4 transition-all ${
                           isDragging
                             ? 'scale-95 opacity-50'
-                            : 'border-gray-300 bg-white hover:border-orange-400 hover:shadow-md'
+                            : 'border-detective-border bg-white hover:border-orange-400 hover:shadow-md'
                         } ${validated ? 'cursor-not-allowed' : ''}`}
                       >
                         <div className="flex items-center gap-3">
                           {!validated && (
-                            <GripVertical className="h-5 w-5 flex-shrink-0 text-gray-400" />
+                            <GripVertical className="h-5 w-5 flex-shrink-0 text-detective-text-secondary" />
                           )}
                           <span className="flex-1 text-detective-sm text-detective-text">
                             {consequence.text}
@@ -422,7 +425,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
 
                 {/* If all consequences are assigned */}
                 {consequences.filter((c) => !isConsequenceAssigned(c.id)).length === 0 && (
-                  <div className="py-8 text-center text-detective-sm italic text-gray-400">
+                  <div className="py-8 text-center text-detective-sm italic text-detective-text-secondary">
                     Todas las consecuencias han sido asignadas
                   </div>
                 )}

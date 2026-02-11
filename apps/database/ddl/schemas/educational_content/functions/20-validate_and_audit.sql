@@ -62,7 +62,7 @@ BEGIN
     -- Recuperar configuración de validación
     SELECT *
     INTO v_config
-    FROM educational_content.exercise_validation_config
+    FROM educational_content.exercise_validation_configs
     WHERE exercise_type = v_exercise.exercise_type;
 
     IF NOT FOUND THEN
@@ -104,7 +104,7 @@ BEGIN
     -- ========================================================================
     -- 3. CREAR REGISTRO DE AUDITORÍA
     -- ========================================================================
-    INSERT INTO educational_content.exercise_validation_audit (
+    INSERT INTO educational_content.exercise_validation_audits (
         exercise_id,
         user_id,
         attempt_number,
@@ -161,7 +161,7 @@ EXCEPTION
 
         -- Intentar crear registro de auditoría de error
         BEGIN
-            INSERT INTO educational_content.exercise_validation_audit (
+            INSERT INTO educational_content.exercise_validation_audits (
                 exercise_id,
                 user_id,
                 attempt_number,
@@ -276,7 +276,7 @@ SELECT
     score,
     submitted_answer,
     validation_timestamp
-FROM educational_content.exercise_validation_audit
+FROM educational_content.exercise_validation_audits
 WHERE exercise_id = 'exercise-uuid-here'
 ORDER BY validation_timestamp DESC;
 */

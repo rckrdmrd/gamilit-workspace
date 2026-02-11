@@ -1,5 +1,5 @@
 -- ============================================================================
--- SEED: exercise_validation_config - Modulos 4 y 5
+-- SEED: exercise_validation_configs - Modulos 4 y 5
 -- Descripcion: Configuracion de validacion para 8 tipos de ejercicios M4/M5
 -- Autor: Tech Leader Agent
 -- Fecha: 2026-01-04
@@ -8,7 +8,7 @@
 -- Referencia: ANALISIS-CORRECCION-DISCREPANCIA-DTO-2026-01-04.md
 -- ============================================================================
 
-INSERT INTO educational_content.exercise_validation_config (
+INSERT INTO educational_content.exercise_validation_configs (
     exercise_type,
     validation_function,
     case_sensitive,
@@ -280,17 +280,17 @@ DECLARE
 BEGIN
     -- Contar configuraciones M4
     SELECT COUNT(*) INTO v_m4_count
-    FROM educational_content.exercise_validation_config
+    FROM educational_content.exercise_validation_configs
     WHERE exercise_type IN ('verificador_fake_news', 'navegacion_hipertextual', 'analisis_memes', 'infografia_interactiva', 'quiz_tiktok');
 
     -- Contar configuraciones M5
     SELECT COUNT(*) INTO v_m5_count
-    FROM educational_content.exercise_validation_config
+    FROM educational_content.exercise_validation_configs
     WHERE exercise_type IN ('comic_digital', 'video_carta', 'diario_multimedia');
 
     -- Total
     SELECT COUNT(*) INTO v_count
-    FROM educational_content.exercise_validation_config;
+    FROM educational_content.exercise_validation_configs;
 
     RAISE NOTICE 'Configuraciones M4: % de 5', v_m4_count;
     RAISE NOTICE 'Configuraciones M5: % de 3', v_m5_count;
@@ -317,7 +317,7 @@ SELECT
     END as format_support,
     default_max_points as max_pts,
     default_passing_score as pass_pts
-FROM educational_content.exercise_validation_config
+FROM educational_content.exercise_validation_configs
 WHERE exercise_type IN (
     'verificador_fake_news', 'navegacion_hipertextual', 'analisis_memes',
     'infografia_interactiva', 'quiz_tiktok',

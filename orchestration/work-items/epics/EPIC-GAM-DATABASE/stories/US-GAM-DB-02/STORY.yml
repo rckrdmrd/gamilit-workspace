@@ -1,0 +1,43 @@
+id: "US-GAM-DB-02"
+titulo: "DDL Functions, Triggers and Materialized Views"
+epic_id: "EPIC-GAM-DATABASE"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 5
+sprint: "Backlog"
+modulos:
+  - "database"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths: []
+      endpoints: []
+      files: []
+    frontend:
+      paths: []
+      pages: []
+      components: []
+    database:
+      paths:
+        - "apps/database/ddl/schemas/"
+        - "apps/database/ddl/functions/"
+        - "apps/database/ddl/triggers/"
+        - "apps/database/ddl/views/"
+      tables:
+        - "128 functions"
+        - "49 triggers"
+        - "13 views"
+        - "7 materialized views"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-DB-01"
+  blocks: []
+tasks: []

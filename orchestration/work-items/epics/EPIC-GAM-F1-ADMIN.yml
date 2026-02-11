@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F1-ADMIN"
+titulo: "Administracion Base"
+proyecto: "gamilit"
+fase: "F1-alcance-inicial"
+source_id: "EAI-005"
+story_points: 21
+estado: "COMPLETADO"
+prioridad: "P2"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-ADMIN/EPIC.md"
+user_stories: 7
+requirements: 7
+specifications: 4
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F1-ADMIN/user-stories/"
+stories_structure: "nested"
+tasks_total: 21
+fecha_actualizacion: "2026-02-09"

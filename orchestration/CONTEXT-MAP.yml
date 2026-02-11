@@ -7,9 +7,8 @@
 metadata:
   proyecto: "gamilit"
   nivel: "STANDALONE"
-  version: "1.1.0"
-  ultima_actualizacion: "2026-01-27"
-  workspace_root: "/home/isem/workspace-v2"
+  version: "2.0.0"
+  ultima_actualizacion: "2026-02-11"
   project_root: "/home/isem/workspace-v2/projects/gamilit"
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -27,7 +26,7 @@ variables:
   DB_DDL_PATH: "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl"
   DB_SCRIPTS_PATH: "/home/isem/workspace-v2/projects/gamilit/apps/database"
   DB_SEEDS_PATH: "/home/isem/workspace-v2/projects/gamilit/apps/database/seeds"
-  RECREATE_CMD: "drop-and-recreate-database.sh"
+  RECREATE_CMD: "apps/database/scripts/recreate-database.sh"
   AUTH_SCHEMA: "auth_management"
 
   # Backend
@@ -49,11 +48,10 @@ variables:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 aliases:
-  # Directivas globales
-  "@SIMCO": "/home/isem/workspace-v2/orchestration/directivas/simco"
-  "@PRINCIPIOS": "/home/isem/workspace-v2/orchestration/directivas/principios"
-  "@PERFILES": "/home/isem/workspace-v2/orchestration/agents/perfiles"
-  "@CATALOG": "/home/isem/workspace-v2/shared/catalog"
+  # Directivas locales (standalone — governance is project-local)
+  "@SIMCO": "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco"
+  "@PRINCIPIOS": "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios"
+  "@PERFILES": "/home/isem/workspace-v2/projects/gamilit/orchestration/agents/perfiles"
 
   # Proyecto específico
   "@DDL": "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl"
@@ -83,25 +81,25 @@ contexto_por_nivel:
     tokens_estimados: 4500
     obligatorio: true
     archivos:
-      - path: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
         proposito: "Ciclo de vida de tareas"
         tokens: 800
-      - path: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
         proposito: "Documentación antes de código"
         tokens: 500
-      - path: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md"
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md"
         proposito: "Verificar catálogo antes de crear"
         tokens: 600
-      - path: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
         proposito: "Build/lint deben pasar"
         tokens: 600
-      - path: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
         proposito: "Límites de contexto"
         tokens: 500
-      - path: "/home/isem/workspace-v2/orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
         proposito: "Preguntar si falta información"
         tokens: 500
-      - path: "/home/isem/workspace-v2/orchestration/referencias/ALIASES.yml"
+      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/referencias/ALIASES.yml"
         proposito: "Resolución de @ALIAS"
         tokens: 400
 
@@ -125,22 +123,22 @@ contexto_por_nivel:
     tokens_estimados: 2500
     archivos_por_operacion:
       CREAR:
-        - "/home/isem/workspace-v2/orchestration/directivas/simco/SIMCO-CREAR.md"
+        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-CREAR.md"
       MODIFICAR:
-        - "/home/isem/workspace-v2/orchestration/directivas/simco/SIMCO-MODIFICAR.md"
+        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-MODIFICAR.md"
       VALIDAR:
-        - "/home/isem/workspace-v2/orchestration/directivas/simco/SIMCO-VALIDAR.md"
+        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-VALIDAR.md"
       DELEGAR:
-        - "/home/isem/workspace-v2/orchestration/directivas/simco/SIMCO-DELEGACION.md"
+        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-DELEGACION.md"
     archivos_por_dominio:
       DDL:
-        - "/home/isem/workspace-v2/orchestration/directivas/simco/SIMCO-DDL.md"
+        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-DDL.md"
         - "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/DATABASE_INVENTORY.yml"
       BACKEND:
-        - "/home/isem/workspace-v2/orchestration/directivas/simco/SIMCO-BACKEND.md"
+        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-BACKEND.md"
         - "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/BACKEND_INVENTORY.yml"
       FRONTEND:
-        - "/home/isem/workspace-v2/orchestration/directivas/simco/SIMCO-FRONTEND.md"
+        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-FRONTEND.md"
         - "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/FRONTEND_INVENTORY.yml"
 
   L3_tarea:
@@ -230,23 +228,23 @@ mapa_tarea_contexto:
 
 info_proyecto:
   tipo: "Plataforma EdTech - Gamificación Educativa"
-  estado: "MVP 75% completado"
-  version: "2.0"
+  estado: "MVP 98% completado"
+  version: "3.0"
 
   stack:
     backend: "NestJS 11.x + TypeORM 0.3.x"
-    frontend: "React 19.x + Zustand 5.x + Tailwind CSS 4.x"
-    database: "PostgreSQL 16"
+    frontend: "React 19.x + Zustand 5.x + Tailwind CSS 4.x + Vite 6.x"
+    database: "PostgreSQL 15"
 
   metricas:
-    schemas: 16
-    tablas: 147
-    endpoints: 750
-    rls_policies: 282
-    entities: 137
-    funciones: 232
-    triggers: 109
-    enums: 39
+    schemas: 18
+    tablas: 170
+    endpoints: 850
+    rls_policies: 263
+    entities: 152
+    funciones: 255
+    triggers: 132
+    enums: 41
 
   schemas_principales:
     - auth_management
@@ -280,8 +278,7 @@ validacion_tokens:
 
 herencia:
   tipo: "STANDALONE"
-  hereda_de:
-    - "/home/isem/workspace-v2/orchestration/"
+  hereda_de: []  # Standalone — all governance is local
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # BÚSQUEDA DE HISTÓRICO
@@ -291,6 +288,4 @@ busqueda_historico:
   habilitado: true
   ubicaciones:
     - "/home/isem/workspace-v2/projects/gamilit/orchestration/trazas/"
-    - "/home/isem/workspace-v2/orchestration/errores/REGISTRO-ERRORES.yml"
-    - "/home/isem/workspace-v2/shared/knowledge-base/lessons-learned/"
-    # NOTA 2026-01-16: shared/knowledge-base/projects/ eliminado por duplicación
+    - "/home/isem/workspace-v2/projects/gamilit/orchestration/errores/REGISTRO-ERRORES.yml"

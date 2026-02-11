@@ -3,6 +3,8 @@
 -- Descripción: Relación M2M - Asignaciones asignadas a aulas completas
 -- MOVIDO desde public.assignment_classrooms (2025-11-08)
 
+DROP TABLE IF EXISTS social_features.assignment_classrooms CASCADE;
+
 CREATE TABLE social_features.assignment_classrooms (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     assignment_id UUID NOT NULL REFERENCES educational_content.assignments(id) ON DELETE CASCADE,

@@ -137,6 +137,7 @@ export const DB_TABLES = {
     MANUAL_REVIEWS: 'manual_reviews', // ✨ NUEVO - MOD-04/05 (Evaluaciones manuales)
     ENGAGEMENT_METRICS: 'engagement_metrics', // ✨ NUEVO - P2
     LEARNING_PATHS: 'learning_paths', // ✨ NUEVO - P2
+    LEARNING_PATH_MODULES: 'learning_path_modules', // FIX H-036: junction table
     MASTERY_TRACKING: 'mastery_trackings', // FIX H-016: singular→plural
     MODULE_COMPLETION_TRACKING: 'module_completion_trackings', // FIX H-016: singular→plural
     PROGRESS_SNAPSHOTS: 'progress_snapshots', // ✨ NUEVO - P2

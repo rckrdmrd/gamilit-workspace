@@ -44,7 +44,9 @@ BEGIN
 END $$;
 
 -- Crear tabla
-CREATE TABLE IF NOT EXISTS system_configuration.rate_limits (
+DROP TABLE IF EXISTS system_configuration.rate_limits CASCADE;
+
+CREATE TABLE system_configuration.rate_limits (
     -- Identificación
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

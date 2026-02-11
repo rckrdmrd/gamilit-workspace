@@ -574,6 +574,37 @@ export class ManualReviewService {
       );
     }
 
+    // FIX H-08: Validar rubricScores contra la configuración de rúbrica del ejercicio
+    if (review.submission?.exercise_id) {
+      const exercise = await this.exerciseRepo.findOne({
+        where: { id: review.submission.exercise_id },
+        select: ['id', 'exercise_type'],
+      });
+
+      if (exercise) {
+        const rubric = await this.rubricRepo.findOne({
+          where: { exerciseType: exercise.exercise_type, isDefault: true },
+        });
+
+        if (rubric && rubric.criteria && rubric.criteria.length > 0) {
+          const expectedIds = rubric.criteria
+            .map((c: RubricCriteria) => c.id || c.name)
+            .sort();
+          const providedIds = Object.keys(review.rubricScores).sort();
+          const missingCriteria = expectedIds.filter(
+            (id: string) => !providedIds.includes(id),
+          );
+
+          if (missingCriteria.length > 0) {
+            throw new BadRequestException(
+              `Faltan criterios de evaluación: ${missingCriteria.join(', ')}. ` +
+              `Se requieren todos los criterios de la rúbrica: ${expectedIds.join(', ')}.`,
+            );
+          }
+        }
+      }
+    }
+
     // Actualizar estado del review
     review.status = 'completed';
     review.completedAt = new Date();
@@ -784,30 +815,90 @@ export class ManualReviewService {
   }
 
   /**
-   * Obtiene todos los reviews de un docente
+   * Obtiene todos los reviews de un docente con filtros opcionales
    *
    * @param teacherId - UUID del docente
-   * @param status - Filtro opcional por estado
+   * @param filters - Filtros opcionales (status, moduleId, exerciseId, classroomId)
    * @returns Lista de reviews enriquecidos
    *
    * FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Ahora retorna datos enriquecidos
+   * FIX H-07 2026-02-10: Soporte para filtrado por módulo, ejercicio y aula
    */
   async findByTeacher(
     teacherId: string,
-    status?: 'pending' | 'in_progress' | 'completed' | 'returned',
+    filters?: {
+      status?: 'pending' | 'in_progress' | 'completed' | 'returned';
+      moduleId?: string;
+      exerciseId?: string;
+      classroomId?: string;
+    } | string,
   ): Promise<EnrichedManualReview[]> {
-    const whereClause: any = { reviewerId: teacherId };
-    if (status) {
-      whereClause.status = status;
+    // Backward compat: accept string status for callers not yet migrated
+    const normalizedFilters = typeof filters === 'string'
+      ? { status: filters as 'pending' | 'in_progress' | 'completed' | 'returned' }
+      : filters || {};
+
+    const hasAdvancedFilters = normalizedFilters.moduleId || normalizedFilters.exerciseId || normalizedFilters.classroomId;
+
+    if (!hasAdvancedFilters) {
+      // Simple path: TypeORM find (original behavior)
+      const whereClause: any = { reviewerId: teacherId };
+      if (normalizedFilters.status) {
+        whereClause.status = normalizedFilters.status;
+      }
+
+      const reviews = await this.reviewRepo.find({
+        where: whereClause,
+        relations: ['submission'],
+        order: { createdAt: 'DESC' },
+      });
+
+      return this.enrichReviews(reviews);
     }
 
-    const reviews = await this.reviewRepo.find({
-      where: whereClause,
-      relations: ['submission'],
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+    // Advanced path: QueryBuilder for cross-entity filtering
+    const qb = this.reviewRepo
+      .createQueryBuilder('review')
+      .leftJoinAndSelect('review.submission', 'submission')
+      .where('review.reviewerId = :teacherId', { teacherId });
+
+    if (normalizedFilters.status) {
+      qb.andWhere('review.status = :status', { status: normalizedFilters.status });
+    }
+
+    if (normalizedFilters.exerciseId) {
+      qb.andWhere('submission.exercise_id = :exerciseId', { exerciseId: normalizedFilters.exerciseId });
+    }
+
+    if (normalizedFilters.moduleId) {
+      // Get exercise IDs for this module, then filter submissions
+      const moduleExercises = await this.exerciseRepo.find({
+        where: { module_id: normalizedFilters.moduleId },
+        select: ['id'],
+      });
+      const exerciseIds = moduleExercises.map(e => e.id);
+
+      if (exerciseIds.length === 0) {
+        return [];
+      }
+      qb.andWhere('submission.exercise_id IN (:...exerciseIds)', { exerciseIds });
+    }
+
+    if (normalizedFilters.classroomId) {
+      qb.andWhere(
+        `EXISTS (
+          SELECT 1 FROM social_features.classroom_members cm
+          WHERE cm.student_id = submission.user_id
+            AND cm.classroom_id = :classroomId
+            AND cm.status = 'active'
+        )`,
+        { classroomId: normalizedFilters.classroomId },
+      );
+    }
+
+    qb.orderBy('review.createdAt', 'DESC');
+
+    const reviews = await qb.getMany();
 
     // FIX BUG-TEACHER-REVIEWS-002 2026-01-08: Enriquecer reviews con datos de estudiante y ejercicio
     return this.enrichReviews(reviews);

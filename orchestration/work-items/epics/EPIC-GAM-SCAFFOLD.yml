@@ -1,0 +1,21 @@
+# EPIC-GAM-SCAFFOLD: Scaffolding Gamilit
+id: "EPIC-GAM-SCAFFOLD"
+titulo: "Scaffolding Gamilit"
+proyecto: "gamilit"
+story_points: 5
+estado: "COMPLETADO"
+prioridad: "P1"
+fecha_inicio: "2025-08-01"
+fecha_fin: "2025-08-05"
+
+descripcion: |
+  Setup inicial del proyecto: estructura de directorios, configuracion de monorepo,
+  package.json, tsconfig, ESLint, Prettier, Git, CI base.
+
+entregables:
+  - "Estructura monorepo (apps/backend, apps/frontend, apps/database)"
+  - "Configuracion NestJS 11 base"
+  - "Configuracion React 19 + Vite 7 base"
+  - "PostgreSQL schema inicial"
+  - "Git repository en GitHub"
+  - "CLAUDE.md inicial"

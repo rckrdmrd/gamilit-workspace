@@ -12,7 +12,7 @@
 -- NOTA: Este archivo está intencionalmente vacío de INSERTs.
 --
 -- DECISIÓN DE DISEÑO:
--- - Solo existe la escuela default "Sistema - Por Asignar" (SYSTEM-UNASSIGNED)
+-- - Solo existe la escuela default "Sistema - Por Asignar" (GAMILIT-DEFAULT)
 -- - Creada en 00-schools-default.sql
 -- - Todas las escuelas adicionales serán creadas por el admin desde la UI
 --
@@ -39,7 +39,7 @@ BEGIN
 
     SELECT EXISTS(
         SELECT 1 FROM social_features.schools
-        WHERE code = 'SYSTEM-UNASSIGNED' AND is_active = true
+        WHERE code = 'GAMILIT-DEFAULT' AND is_active = true
     ) INTO default_school_exists;
 
     RAISE NOTICE '========================================';
@@ -50,7 +50,7 @@ BEGIN
     RAISE NOTICE '========================================';
 
     IF default_school_exists THEN
-        RAISE NOTICE '✓ Escuela default (SYSTEM-UNASSIGNED) configurada correctamente';
+        RAISE NOTICE '✓ Escuela default (GAMILIT-DEFAULT) configurada correctamente';
         RAISE NOTICE '  Las demás escuelas serán creadas por el admin desde la UI';
     ELSE
         RAISE WARNING '⚠ Escuela default NO encontrada. Ejecutar 00-schools-default.sql primero';

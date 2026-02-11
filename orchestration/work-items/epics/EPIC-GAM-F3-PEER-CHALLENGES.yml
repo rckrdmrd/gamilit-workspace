@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F3-PEER-CHALLENGES"
+titulo: "Retos Entre Pares"
+proyecto: "gamilit"
+fase: "F3-extensiones"
+source_id: "EXT-009"
+story_points: 8
+estado: "PLANIFICADO"
+prioridad: "P3"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-PEER-CHALLENGES/EPIC.md"
+user_stories: 3
+requirements: 4
+specifications: 5
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-PEER-CHALLENGES/user-stories/"
+stories_structure: "nested"
+tasks_total: 9
+fecha_actualizacion: "2026-02-09"

@@ -1,0 +1,45 @@
+id: "US-GAM-DOP-01"
+titulo: "Docker Compose and Dockerfiles"
+epic_id: "EPIC-GAM-DEVOPS"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "PENDIENTE"
+prioridad: "P2"
+story_points: 3
+sprint: "Backlog"
+modulos:
+  - "backend"
+  - "frontend"
+  - "database"
+  - "redis"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/devops/"
+        - "apps/backend/"
+        - "apps/frontend/"
+      endpoints:
+        - "GET /health"
+      files:
+        - "Dockerfile"
+        - "docker-compose.yml"
+    frontend:
+      paths: []
+      pages: []
+      components: []
+    database:
+      paths: []
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks:
+    - "US-GAM-K8S-01"
+    - "US-GAM-DOP-02"
+tasks: []

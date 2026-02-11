@@ -1,0 +1,52 @@
+id: "EPIC-GAM-K8S"
+titulo: "Kubernetes Gamilit"
+proyecto: "gamilit"
+version: "3.0.0"
+fecha_creacion: "2026-01-15"
+fecha_actualizacion: "2026-02-07"
+estado: "EN_PROGRESO"
+prioridad: "P3"
+story_points: 8
+wave: "wave_3"
+descripcion: |
+  Preparacion de manifests de Kubernetes para deployment en produccion.
+  Incluye deployments, services, ingress, HPA, configmaps, secrets.
+entregables:
+  - "Namespace configuration"
+  - "Backend deployment + service"
+  - "Frontend deployment + service"
+  - "PostgreSQL StatefulSet"
+  - "Redis deployment"
+  - "Ingress configuration"
+  - "HPA (Horizontal Pod Autoscaler)"
+  - "ConfigMaps y Secrets"
+  - "Health check probes"
+stories:
+  - id: "US-GAM-K8S-01"
+    titulo: "Kubernetes Namespace and Core Deployments"
+    status: "PENDIENTE"
+    story_points: 3
+  - id: "US-GAM-K8S-02"
+    titulo: "Stateful Services and Ingress"
+    status: "PENDIENTE"
+    story_points: 3
+  - id: "US-GAM-K8S-03"
+    titulo: "HPA and Production Readiness"
+    status: "PENDIENTE"
+    story_points: 2
+traceability:
+  requirements: []
+  components:
+    backend: []
+    frontend: []
+    database: []
+  dependencies:
+    depends_on:
+      - "EPIC-GAM-BACKEND"
+      - "EPIC-GAM-FRONTEND"
+      - "EPIC-GAM-DATABASE"
+    blocks: []
+metricas:
+  total_stories: 3
+  stories_completadas: 0
+  porcentaje_avance: 0

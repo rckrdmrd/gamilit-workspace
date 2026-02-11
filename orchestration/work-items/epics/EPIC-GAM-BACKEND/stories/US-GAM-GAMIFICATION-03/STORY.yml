@@ -1,0 +1,37 @@
+id: "US-GAM-GAMIFICATION-03"
+titulo: "Misiones Diarias y Semanales"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P2"
+story_points: 5
+sprint: "Backlog"
+modulos:
+  - "missions"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/missions/"
+      endpoints: []
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/missions/"
+      pages: []
+      components: []
+    database:
+      paths:
+        - "apps/database/ddl/schemas/missions/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks: []
+tasks: []

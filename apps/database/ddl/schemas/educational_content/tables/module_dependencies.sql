@@ -3,6 +3,8 @@
 -- Descripción: Dependencias entre módulos (prerequisitos)
 -- CREADO: 2025-11-08
 
+DROP TABLE IF EXISTS educational_content.module_dependencies CASCADE;
+
 CREATE TABLE educational_content.module_dependencies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     module_id UUID NOT NULL REFERENCES educational_content.modules(id) ON DELETE CASCADE,

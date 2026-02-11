@@ -7,7 +7,9 @@
 -- ACTUALIZADO: 2026-01-25 (Sync Entity-DDL Discrepancies)
 -- =====================================================
 
-CREATE TABLE IF NOT EXISTS social_features.scheduled_reports (
+DROP TABLE IF EXISTS social_features.scheduled_reports CASCADE;
+
+CREATE TABLE social_features.scheduled_reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   teacher_id UUID NOT NULL,
   classroom_id UUID,

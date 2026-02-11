@@ -10,7 +10,8 @@ import {
 import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { Check, X, Sparkles } from 'lucide-react';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -32,6 +33,8 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
   const [blanks, setBlanks] = useState<BlankSpace[]>(
     exercise.blanks.map((blank) => ({ ...blank, userAnswer: '' })),
   );
@@ -176,7 +179,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       });
 
       // Submit to backend API
-      const response = await submitExercise(exercise.id, user.id, { blanks: answersObj });
+      const response = await submitAsync({ blanks: answersObj });
 
       // Show backend response
       setFeedback({
@@ -241,7 +244,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
 
     parts.forEach((part, index) => {
       segments.push(
-        <span key={`text-${index}`} className="text-gray-800">
+        <span key={`text-${index}`} className="text-detective-text">
           {part}
         </span>,
       );
@@ -270,11 +273,11 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
             className={`mx-1 inline-flex cursor-pointer items-center gap-2 rounded-lg border-2 px-3 py-1 transition-all ${
               showResult
                 ? isCorrect
-                  ? 'border-green-500 bg-green-100 text-green-800'
-                  : 'border-red-500 bg-red-100 text-red-800'
+                  ? 'border-detective-success bg-detective-success/10 text-detective-success'
+                  : 'border-detective-danger bg-detective-danger/10 text-detective-danger'
                 : isAnswered
                   ? 'border-blue-500 bg-blue-100 text-blue-800'
-                  : 'border-dashed border-gray-400 bg-gray-100 text-gray-500'
+                  : 'border-dashed border-gray-400 bg-detective-bg-secondary text-detective-text-secondary'
             } ${!showResults && 'hover:border-blue-400'}`}
             onClick={() => !isAnswered && handleBlankClick(blank.id)}
             whileHover={!showResults ? { scale: 1.05 } : {}}
@@ -296,9 +299,9 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
                 )}
                 {showResult &&
                   (isCorrect ? (
-                    <Check className="h-4 w-4 text-green-600" />
+                    <Check className="h-4 w-4 text-detective-success" />
                   ) : (
-                    <X className="h-4 w-4 text-red-600" />
+                    <X className="h-4 w-4 text-detective-danger" />
                   ))}
               </>
             ) : (
@@ -323,7 +326,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
             <div className="text-2xl">📖</div>
             <div>
               <h3 className="mb-2 text-lg font-bold">Contexto Histórico</h3>
-              <p className="text-gray-700">{exercise.scenarioText}</p>
+              <p className="text-detective-text">{exercise.scenarioText}</p>
             </div>
           </div>
         </DetectiveCard>
@@ -331,8 +334,8 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
 
       {/* Instructions */}
       <div className="mb-6 text-center">
-        <h3 className="mb-2 text-xl font-bold text-gray-800">✏️ {exercise.title}</h3>
-        <p className="text-gray-600">
+        <h3 className="mb-2 text-xl font-bold text-detective-text">✏️ {exercise.title}</h3>
+        <p className="text-detective-text-secondary">
           Selecciona una palabra del banco y haz clic en el espacio que deseas completar
         </p>
       </div>
@@ -346,7 +349,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       <DetectiveCard variant="default" padding="lg" className="mb-6">
         <div className="mb-4 flex items-center gap-3">
           <Sparkles className="h-6 w-6 text-yellow-500" />
-          <h3 className="text-lg font-bold text-gray-800">Banco de Palabras</h3>
+          <h3 className="text-lg font-bold text-detective-text">Banco de Palabras</h3>
         </div>
         <div className="flex flex-wrap justify-center gap-3">
           <AnimatePresence>
@@ -358,7 +361,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
                 className={`rounded-lg px-6 py-3 font-semibold transition-all ${
                   selectedWord === word
                     ? 'scale-105 bg-blue-500 text-white shadow-lg'
-                    : 'border-2 border-gray-300 bg-white text-gray-800 hover:border-blue-400 hover:shadow-md'
+                    : 'border-2 border-detective-border bg-white text-detective-text hover:border-blue-400 hover:shadow-md'
                 } ${showResults ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -372,7 +375,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
           </AnimatePresence>
         </div>
         {availableWords.length === 0 && !showResults && (
-          <div className="mt-4 text-center text-gray-500">
+          <div className="mt-4 text-center text-detective-text-secondary">
             <p className="text-sm italic">Todas las palabras han sido utilizadas</p>
           </div>
         )}
@@ -383,7 +386,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       {showResults && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
           <DetectiveCard variant="info" padding="lg">
-            <h3 className="mb-4 text-lg font-bold text-gray-800">📝 Tus Respuestas</h3>
+            <h3 className="mb-4 text-lg font-bold text-detective-text">📝 Tus Respuestas</h3>
             <div className="space-y-3">
               {blanks.map((blank, index) => (
                 <div
@@ -393,14 +396,14 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 text-2xl">📝</div>
                     <div className="flex-1">
-                      <p className="font-semibold text-gray-800">Espacio {index + 1}</p>
-                      <p className="text-gray-600">
+                      <p className="font-semibold text-detective-text">Espacio {index + 1}</p>
+                      <p className="text-detective-text-secondary">
                         Tu respuesta:{' '}
                         <span className="font-semibold">
                           {blank.userAnswer || '(sin respuesta)'}
                         </span>
                       </p>
-                      <p className="mt-1 text-sm text-gray-500">
+                      <p className="mt-1 text-sm text-detective-text-secondary">
                         La validación se procesará en el servidor
                       </p>
                     </div>

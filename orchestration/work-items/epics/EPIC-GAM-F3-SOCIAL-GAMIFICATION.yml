@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F3-SOCIAL-GAMIFICATION"
+titulo: "Gamificacion Social"
+proyecto: "gamilit"
+fase: "F3-extensiones"
+source_id: "EAI-003-EXT"
+story_points: 13
+estado: "EN_PROGRESO"
+prioridad: "P2"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-SOCIAL-GAMIFICATION/EPIC.md"
+user_stories: 6
+requirements: 9
+specifications: 3
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-SOCIAL-GAMIFICATION/user-stories/"
+stories_structure: "nested"
+tasks_total: 18
+fecha_actualizacion: "2026-02-09"

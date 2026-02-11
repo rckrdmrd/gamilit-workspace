@@ -1,0 +1,71 @@
+id: "US-GAM-MUL-01"
+titulo: "Modo Multijugador y Duelos"
+epic_id: "EPIC-GAM-BACKEND"
+epic_secondary:
+  - "EPIC-GAM-FRONTEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "EN_PROGRESO"
+prioridad: "P1"
+story_points: 13
+sprint: "En progreso"
+modulos:
+  - "social"
+  - "leaderboard"
+  - "gamification"
+traceability:
+  requirements:
+    - "RF-GAM-021"
+    - "RF-GAM-032"
+    - "RF-GAM-033"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/social/"
+        - "apps/backend/src/modules/leaderboard/"
+        - "apps/backend/src/modules/gamification/"
+      endpoints:
+        - "POST /api/v1/social/duels/request"
+        - "POST /api/v1/social/duels/:id/accept"
+        - "GET /api/v1/social/duels/:id/status"
+        - "POST /api/v1/social/teams"
+        - "POST /api/v1/social/teams/:id/invite"
+        - "GET /api/v1/social/feed"
+        - "GET /api/v1/social/presence"
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/social/"
+        - "apps/frontend/src/pages/student/leaderboard/"
+      pages: []
+      components:
+        - "DuelMatchmaker"
+        - "DuelArena"
+        - "DuelResult"
+        - "TeamCreate"
+        - "TeamDashboard"
+        - "SocialFeed"
+        - "PresenceIndicator"
+        - "ChallengeCard"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/social/"
+        - "apps/database/ddl/schemas/leaderboard/"
+      tables:
+        - "teams"
+        - "team_members"
+        - "social_interactions"
+        - "social_feed"
+        - "duels"
+        - "duel_results"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-GAM-01"
+    - "US-GAM-RT-01"
+  blocks: []
+tasks: []

@@ -33,10 +33,10 @@ export const DroppableZone: React.FC<DroppableZoneProps> = ({
           isOver
             ? 'border-detective-orange bg-detective-orange/10 scale-105'
             : isCorrect
-              ? 'border-green-500 bg-green-50'
+              ? 'border-detective-success bg-detective-success/10'
               : isOccupied
-                ? 'border-red-500 bg-red-50'
-                : 'border-gray-300 bg-white'
+                ? 'border-detective-danger bg-detective-danger/10'
+                : 'border-detective-border bg-white'
         }`}
       >
         {/* Status Icon */}
@@ -44,7 +44,7 @@ export const DroppableZone: React.FC<DroppableZoneProps> = ({
           {isCorrect ? (
             <CheckCircle className="w-6 h-6 text-green-500" />
           ) : (
-            <Circle className="w-6 h-6 text-gray-400" />
+            <Circle className="w-6 h-6 text-detective-text-secondary" />
           )}
         </div>
 
@@ -59,7 +59,7 @@ export const DroppableZone: React.FC<DroppableZoneProps> = ({
             </p>
           </div>
         ) : (
-          <div className="text-center text-gray-400 text-detective-xs">
+          <div className="text-center text-detective-text-secondary text-detective-xs">
             <p>Arrastra aquí</p>
           </div>
         )}

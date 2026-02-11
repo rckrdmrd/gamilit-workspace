@@ -2,7 +2,7 @@
  * DTOs for Analytics Queries
  */
 
-import { IsEnum, IsOptional, IsUUID, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsUUID, IsString, IsArray } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ReportFormat } from '@shared/dto/reports/generate-report.dto';
 
@@ -25,6 +25,27 @@ export class GetAnalyticsQueryDto {
   @IsUUID()
   @IsOptional()
     module_id?: string;
+
+  @ApiPropertyOptional({ description: 'Filter by classroom ID' })
+  @IsUUID()
+  @IsOptional()
+    classroom_id?: string;
+
+  @ApiPropertyOptional({ description: 'Start date (ISO format)' })
+  @IsString()
+  @IsOptional()
+    start_date?: string;
+
+  @ApiPropertyOptional({ description: 'End date (ISO format)' })
+  @IsString()
+  @IsOptional()
+    end_date?: string;
+
+  @ApiPropertyOptional({ description: 'Filter by student IDs' })
+  @IsArray()
+  @IsUUID('4', { each: true })
+  @IsOptional()
+    student_ids?: string[];
 }
 
 export class GetStudentProgressQueryDto {
@@ -54,6 +75,21 @@ export class GetEngagementMetricsDto {
   @IsUUID()
   @IsOptional()
     classroom_id?: string;
+
+  @ApiPropertyOptional({ description: 'Aggregation period', enum: ['daily', 'weekly', 'monthly'] })
+  @IsEnum(['daily', 'weekly', 'monthly'])
+  @IsOptional()
+    period?: 'daily' | 'weekly' | 'monthly';
+
+  @ApiPropertyOptional({ description: 'Start date (ISO format)' })
+  @IsString()
+  @IsOptional()
+    start_date?: string;
+
+  @ApiPropertyOptional({ description: 'End date (ISO format)' })
+  @IsString()
+  @IsOptional()
+    end_date?: string;
 }
 
 export class GenerateReportsDto {

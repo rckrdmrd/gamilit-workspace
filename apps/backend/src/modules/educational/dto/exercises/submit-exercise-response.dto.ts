@@ -44,28 +44,57 @@ export class RankUpDto {
 }
 
 /**
+ * Review de respuesta individual (por pregunta)
+ */
+export class AnswerReviewDto {
+  @ApiProperty({ description: 'ID de la pregunta', example: 'q1' })
+    questionId!: string;
+
+  @ApiProperty({ description: '¿Fue correcta?', example: true })
+    isCorrect!: boolean;
+
+  @ApiProperty({ description: 'Respuesta del usuario', example: 'SORBONA' })
+    userAnswer!: unknown;
+
+  @ApiProperty({ description: 'Respuesta correcta', required: false })
+    correctAnswer?: unknown;
+
+  @ApiProperty({ description: 'Explicación', required: false })
+    explanation?: string;
+}
+
+/**
+ * Feedback estructurado del ejercicio
+ */
+export class ExerciseFeedbackDto {
+  @ApiProperty({
+    description: 'Retroalimentación general',
+    example: 'Buen trabajo! 4/5 correctas.',
+  })
+    overall!: string;
+
+  @ApiProperty({
+    description: 'Review por respuesta individual',
+    type: [AnswerReviewDto],
+    required: false,
+  })
+    answerReview?: AnswerReviewDto[];
+}
+
+/**
  * SubmitExerciseResponseDto
  *
  * @description Respuesta del endpoint POST /exercises/:id/submit
  * Contiene el resultado de la validación, score obtenido y recompensas.
- *
- * @example Response exitoso:
- * ```json
- * {
- *   "score": 85,
- *   "isPerfect": false,
- *   "rewards": {
- *     "xp": 100,
- *     "mlCoins": 50,
- *     "bonuses": ["first_try_bonus"]
- *   },
- *   "feedback": "Buen trabajo! Algunas respuestas podrían mejorar.",
- *   "isFirstCorrectAttempt": true,
- *   "rankUp": null
- * }
- * ```
  */
 export class SubmitExerciseResponseDto {
+  @ApiProperty({
+    description: 'ID del intento creado',
+    example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+    required: false,
+  })
+    attemptId?: string;
+
   @ApiProperty({
     description: 'Puntaje obtenido (0-100)',
     example: 85,
@@ -81,17 +110,31 @@ export class SubmitExerciseResponseDto {
     isPerfect!: boolean;
 
   @ApiProperty({
+    description: 'Cantidad de respuestas correctas',
+    example: 4,
+    required: false,
+  })
+    correctAnswersCount?: number;
+
+  @ApiProperty({
+    description: 'Total de preguntas en el ejercicio',
+    example: 5,
+    required: false,
+  })
+    totalQuestions?: number;
+
+  @ApiProperty({
     description: 'Recompensas otorgadas por el ejercicio',
     type: ExerciseRewardsDto,
   })
     rewards!: ExerciseRewardsDto;
 
   @ApiProperty({
-    description: 'Retroalimentación del ejercicio',
-    example: 'Buen trabajo! Algunas respuestas podrían mejorar.',
+    description: 'Feedback estructurado del ejercicio',
+    type: ExerciseFeedbackDto,
     required: false,
   })
-    feedback?: string;
+    feedback?: ExerciseFeedbackDto;
 
   @ApiProperty({
     description: '¿Es el primer intento correcto del usuario?',

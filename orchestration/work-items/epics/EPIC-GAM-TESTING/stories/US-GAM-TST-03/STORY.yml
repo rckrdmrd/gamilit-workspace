@@ -1,0 +1,54 @@
+id: "US-GAM-TST-03"
+titulo: "Integration Tests"
+epic_id: "EPIC-GAM-TESTING"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "PENDIENTE"
+prioridad: "P2"
+story_points: 3
+sprint: "Backlog"
+modulos:
+  - "exercises"
+  - "gamification"
+  - "leaderboard"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/exercises/"
+        - "apps/backend/src/modules/gamification/"
+        - "apps/backend/src/modules/leaderboard/"
+        - "apps/backend/test/integration/"
+      endpoints:
+        - "exercise completion flow"
+        - "XP calculation pipeline"
+        - "rank update pipeline"
+        - "leaderboard update"
+      files:
+        - "test/integration/**/*.spec.ts"
+    frontend:
+      paths: []
+      pages: []
+      components: []
+    database:
+      paths:
+        - "apps/database/ddl/schemas/exercises/"
+        - "apps/database/ddl/schemas/gamification/"
+        - "apps/database/ddl/schemas/leaderboard/"
+      tables:
+        - "exercises.*"
+        - "gamification.*"
+        - "leaderboard.*"
+  tests:
+    unit: []
+    e2e:
+      - "~70 integration tests"
+dependencies:
+  depends_on:
+    - "US-GAM-TST-01"
+    - "US-GAM-DB-01"
+  blocks: []
+tasks: []

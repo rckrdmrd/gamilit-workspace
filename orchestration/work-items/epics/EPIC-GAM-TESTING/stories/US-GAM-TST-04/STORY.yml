@@ -1,0 +1,55 @@
+id: "US-GAM-TST-04"
+titulo: "E2E Tests"
+epic_id: "EPIC-GAM-TESTING"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "PENDIENTE"
+prioridad: "P2"
+story_points: 2
+sprint: "Backlog"
+modulos:
+  - "portal-estudiante"
+  - "portal-maestro"
+  - "portal-admin"
+  - "portal-padres"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/"
+        - "apps/backend/test/e2e/"
+      endpoints:
+        - "all critical path endpoints"
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/"
+        - "apps/frontend/src/pages/teacher/"
+        - "apps/frontend/src/pages/admin/"
+        - "apps/frontend/src/pages/parents/"
+        - "apps/frontend/e2e/"
+      pages:
+        - "85 pages across 4 portals"
+      components:
+        - "458 components"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/"
+      tables:
+        - "all tables (full stack E2E)"
+  tests:
+    unit: []
+    e2e:
+      - "student-portal.e2e.ts"
+      - "teacher-portal.e2e.ts"
+      - "admin-portal.e2e.ts"
+      - "parent-portal.e2e.ts"
+dependencies:
+  depends_on:
+    - "US-GAM-TST-01"
+    - "US-GAM-TST-02"
+  blocks: []
+tasks: []

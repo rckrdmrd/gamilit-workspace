@@ -1,0 +1,326 @@
+# _INDEX.yml — Work Items EPICs Tracking
+# Proyecto: gamilit
+# Actualizado: 2026-02-09 | TASK-2026-02-09-REESTRUCTURA-ANIDADA
+
+version: "4.0.0"
+total_epics: 33
+total_sp: 599
+total_user_stories: 135
+total_tasks: 552
+
+# Wave 3 — EPICs Tecnicas (COMPLETADAS)
+wave3_epics:
+  total: 11
+  sp: 162
+  status: "completed"
+  epics:
+    - id: "EPIC-GAM-SCAFFOLD"
+      title: "Scaffolding Gamilit"
+      sp: 5
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-SCAFFOLD/EPIC.md"
+
+    - id: "EPIC-GAM-REQUIREMENTS"
+      title: "Requerimientos Gamilit"
+      sp: 13
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-REQUIREMENTS/EPIC.md"
+
+    - id: "EPIC-GAM-ARCHITECTURE"
+      title: "Arquitectura Gamificacion"
+      sp: 13
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-ARCHITECTURE/EPIC.md"
+
+    - id: "EPIC-GAM-DATABASE"
+      title: "Esquema BD Gamilit"
+      sp: 21
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-DATABASE/EPIC.md"
+
+    - id: "EPIC-GAM-BACKEND"
+      title: "Backend Gamilit"
+      sp: 34
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-BACKEND/EPIC.md"
+
+    - id: "EPIC-GAM-FRONTEND"
+      title: "Frontend Gamilit"
+      sp: 34
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-FRONTEND/EPIC.md"
+
+    - id: "EPIC-GAM-K8S"
+      title: "Kubernetes Gamilit"
+      sp: 8
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-K8S/EPIC.md"
+
+    - id: "EPIC-GAM-TESTING"
+      title: "Tests Gamilit"
+      sp: 13
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-TESTING/EPIC.md"
+
+    - id: "EPIC-GAM-DEVOPS"
+      title: "DevOps Gamilit"
+      sp: 8
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-DEVOPS/EPIC.md"
+
+    - id: "EPIC-GAM-DOCS"
+      title: "Documentacion Gamilit"
+      sp: 8
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-DOCS/EPIC.md"
+
+    - id: "EPIC-GAM-INTEGRATION"
+      title: "Integracion Gamilit"
+      sp: 5
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/_wave-3-technical/EPIC-GAM-INTEGRATION/EPIC.md"
+
+# F1 — Alcance Inicial (Funcionales)
+f1_epics:
+  total: 7
+  sp: 230
+  status: "completed"
+  user_stories: 40
+  tasks: 267
+  stories_structure: "nested"
+  epics:
+    - id: "EPIC-GAM-F1-AUTH"
+      title: "Autenticacion y Fundamentos"
+      sp: 34
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-AUTH/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F1-AUTH/user-stories/"
+      stories_structure: "nested"
+      user_stories: 8
+      tasks_total: 70
+
+    - id: "EPIC-GAM-F1-EXERCISES"
+      title: "Ejercicios y Actividades"
+      sp: 34
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-EXERCISES/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F1-EXERCISES/user-stories/"
+      stories_structure: "nested"
+      user_stories: 8
+      tasks_total: 49
+
+    - id: "EPIC-GAM-F1-GAMIFICATION"
+      title: "Sistema de Gamificacion"
+      sp: 34
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-GAMIFICATION/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F1-GAMIFICATION/user-stories/"
+      stories_structure: "nested"
+      user_stories: 8
+      tasks_total: 39
+
+    - id: "EPIC-GAM-F1-ANALYTICS"
+      title: "Analytics y Reportes"
+      sp: 21
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-ANALYTICS/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F1-ANALYTICS/user-stories/"
+      stories_structure: "nested"
+      user_stories: 6
+      tasks_total: 79
+
+    - id: "EPIC-GAM-F1-ADMIN"
+      title: "Administracion Base"
+      sp: 21
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-ADMIN/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F1-ADMIN/user-stories/"
+      stories_structure: "nested"
+      user_stories: 7
+      tasks_total: 21
+
+    - id: "EPIC-GAM-F1-CONFIG"
+      title: "Configuracion del Sistema"
+      sp: 8
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-CONFIG/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F1-CONFIG/user-stories/"
+      stories_structure: "nested"
+      user_stories: 3
+      tasks_total: 9
+
+    - id: "EPIC-GAM-F1-PORTAL-ADMIN"
+      title: "Portal Administrador"
+      sp: 78
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-PORTAL-ADMIN/EPIC.md"
+      stories_structure: "empty"
+      user_stories: 0
+      tasks_total: 0
+
+# F2 — Robustecimiento (Funcionales)
+f2_epics:
+  total: 3
+  sp: 42
+  status: "completed"
+  user_stories: 12
+  tasks: 36
+  stories_structure: "nested"
+  epics:
+    - id: "EPIC-GAM-F2-MODULES-M4M5"
+      title: "Modulos M4 y M5"
+      sp: 21
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F2-MODULES-M4M5/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F2-MODULES-M4M5/user-stories/"
+      stories_structure: "nested"
+      user_stories: 7
+      tasks_total: 21
+
+    - id: "EPIC-GAM-F2-DB-MIGRATION"
+      title: "Migracion BD"
+      sp: 13
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F2-DB-MIGRATION/EPIC.md"
+      stories_structure: "empty"
+      user_stories: 0
+      tasks_total: 0
+
+    - id: "EPIC-GAM-F2-TECH-CONSOLIDATION"
+      title: "Consolidacion Tecnica"
+      sp: 8
+      status: "completed"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F2-TECH-CONSOLIDATION/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F2-TECH-CONSOLIDATION/user-stories/"
+      stories_structure: "nested"
+      user_stories: 5
+      tasks_total: 15
+
+# F3 — Extensiones (Funcionales)
+f3_epics:
+  total: 12
+  sp: 165
+  status: "in_progress"
+  user_stories: 83
+  tasks: 249
+  stories_structure: "nested"
+  epics:
+    - id: "EPIC-GAM-F3-SOCIAL-GAMIFICATION"
+      title: "Gamificacion Social"
+      sp: 13
+      status: "in_progress"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-SOCIAL-GAMIFICATION/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-SOCIAL-GAMIFICATION/user-stories/"
+      stories_structure: "nested"
+      user_stories: 6
+      tasks_total: 18
+
+    - id: "EPIC-GAM-F3-TEACHER-PORTAL"
+      title: "Portal Maestros"
+      sp: 34
+      status: "in_progress"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-TEACHER-PORTAL/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-TEACHER-PORTAL/user-stories/"
+      stories_structure: "nested"
+      user_stories: 21
+      tasks_total: 63
+
+    - id: "EPIC-GAM-F3-ADMIN-EXTENDED"
+      title: "Admin Extendido"
+      sp: 34
+      status: "in_progress"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-ADMIN-EXTENDED/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-ADMIN-EXTENDED/user-stories/"
+      stories_structure: "nested"
+      user_stories: 20
+      tasks_total: 60
+
+    - id: "EPIC-GAM-F3-NOTIFICATIONS"
+      title: "Notificaciones"
+      sp: 8
+      status: "in_progress"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-NOTIFICATIONS/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-NOTIFICATIONS/user-stories/"
+      stories_structure: "nested"
+      user_stories: 3
+      tasks_total: 9
+
+    - id: "EPIC-GAM-F3-PROFILES"
+      title: "Perfiles"
+      sp: 8
+      status: "planned"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-PROFILES/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-PROFILES/user-stories/"
+      stories_structure: "nested"
+      user_stories: 6
+      tasks_total: 18
+
+    - id: "EPIC-GAM-F3-REPORTS"
+      title: "Reportes"
+      sp: 8
+      status: "planned"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-REPORTS/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-REPORTS/user-stories/"
+      stories_structure: "nested"
+      user_stories: 5
+      tasks_total: 15
+
+    - id: "EPIC-GAM-F3-CONTENT"
+      title: "Contenido"
+      sp: 8
+      status: "planned"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-CONTENT/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-CONTENT/user-stories/"
+      stories_structure: "nested"
+      user_stories: 5
+      tasks_total: 15
+
+    - id: "EPIC-GAM-F3-LTI"
+      title: "Integracion LTI"
+      sp: 13
+      status: "planned"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-LTI/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-LTI/user-stories/"
+      stories_structure: "nested"
+      user_stories: 4
+      tasks_total: 12
+
+    - id: "EPIC-GAM-F3-WHITE-LABEL"
+      title: "White Label"
+      sp: 13
+      status: "planned"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-WHITE-LABEL/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-WHITE-LABEL/user-stories/"
+      stories_structure: "nested"
+      user_stories: 3
+      tasks_total: 9
+
+    - id: "EPIC-GAM-F3-PEER-CHALLENGES"
+      title: "Retos Entre Pares"
+      sp: 8
+      status: "planned"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-PEER-CHALLENGES/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-PEER-CHALLENGES/user-stories/"
+      stories_structure: "nested"
+      user_stories: 3
+      tasks_total: 9
+
+    - id: "EPIC-GAM-F3-PARENT-NOTIFICATIONS"
+      title: "Notificaciones Padres"
+      sp: 5
+      status: "planned"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-PARENT-NOTIFICATIONS/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-PARENT-NOTIFICATIONS/user-stories/"
+      stories_structure: "nested"
+      user_stories: 3
+      tasks_total: 9
+
+    - id: "EPIC-GAM-F3-PARENT-PORTAL"
+      title: "Portal Padres"
+      sp: 13
+      status: "planned"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-PARENT-PORTAL/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-PARENT-PORTAL/user-stories/"
+      stories_structure: "nested"
+      user_stories: 4
+      tasks_total: 12

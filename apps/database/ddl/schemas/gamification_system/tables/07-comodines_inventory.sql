@@ -1,38 +1,10 @@
 -- =====================================================
 -- Table: gamification_system.comodines_inventory
 -- Description: Inventario de comodines (power-ups) por usuario
---
--- 📚 Documentación:
--- Requerimiento: docs/01-requerimientos/02-gamificacion/RF-GAM-002-comodines.md
--- Especificación: docs/02-especificaciones-tecnicas/02-gamificacion/ET-GAM-002-comodines.md
+-- Dependencies: auth_management.profiles
 -- =====================================================
---
--- PostgreSQL database dump
---
 
-\restrict m4i6K1kzuaLf6QGzMPZ2WZ8F1XeaierVDJJwutgbzn9Ihi9adFfs8mjo0GV2U7V
-
--- Dumped from database version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)
--- Dumped by pg_dump version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- Name: comodines_inventory; Type: TABLE; Schema: gamification_system; Owner: postgres
---
+DROP TABLE IF EXISTS gamification_system.comodines_inventory CASCADE;
 
 CREATE TABLE gamification_system.comodines_inventory (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
@@ -50,8 +22,16 @@ CREATE TABLE gamification_system.comodines_inventory (
     vision_lectora_cost integer DEFAULT 25,
     segunda_oportunidad_cost integer DEFAULT 40,
     metadata jsonb DEFAULT '{}'::jsonb,
-    created_at timestamp with time zone DEFAULT gamilit.now_mexico(),
-    updated_at timestamp with time zone DEFAULT gamilit.now_mexico(),
+    created_at timestamptz DEFAULT gamilit.now_mexico(),
+    updated_at timestamptz DEFAULT gamilit.now_mexico(),
+
+    -- Primary Key
+    CONSTRAINT comodines_inventory_pkey PRIMARY KEY (id),
+
+    -- Unique Constraints
+    CONSTRAINT comodines_inventory_user_id_key UNIQUE (user_id),
+
+    -- Check Constraints
     CONSTRAINT comodines_inventory_pistas_available_check CHECK ((pistas_available >= 0)),
     CONSTRAINT comodines_inventory_segunda_oportunidad_available_check CHECK ((segunda_oportunidad_available >= 0)),
     CONSTRAINT comodines_inventory_vision_lectora_available_check CHECK ((vision_lectora_available >= 0)),
@@ -63,175 +43,34 @@ CREATE TABLE gamification_system.comodines_inventory (
     CONSTRAINT comodines_inventory_segunda_oportunidad_used_total_check CHECK ((segunda_oportunidad_used_total >= 0))
 );
 
-
-ALTER TABLE gamification_system.comodines_inventory OWNER TO gamilit_user;
-
---
--- Name: TABLE comodines_inventory; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON TABLE gamification_system.comodines_inventory IS 'Inventario de comodines (power-ups) por usuario';
-
-
---
--- Name: COLUMN comodines_inventory.id; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.id IS 'Identificador único del inventario';
-
-
---
--- Name: COLUMN comodines_inventory.user_id; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.user_id IS 'ID del usuario propietario del inventario';
-
-
---
--- Name: COLUMN comodines_inventory.pistas_available; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.pistas_available IS 'Pistas Contextuales disponibles (15 ML Coins)';
-
-
---
--- Name: COLUMN comodines_inventory.vision_lectora_available; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.vision_lectora_available IS 'Visión Lectora disponibles (25 ML Coins)';
-
-
---
--- Name: COLUMN comodines_inventory.segunda_oportunidad_available; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.segunda_oportunidad_available IS 'Segunda Oportunidad disponibles (40 ML Coins)';
-
-
---
--- Name: COLUMN comodines_inventory.pistas_purchased_total; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.pistas_purchased_total IS 'Total de Pistas Contextuales compradas';
-
-
---
--- Name: COLUMN comodines_inventory.vision_lectora_purchased_total; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.vision_lectora_purchased_total IS 'Total de Visión Lectora compradas';
-
-
---
--- Name: COLUMN comodines_inventory.segunda_oportunidad_purchased_total; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.segunda_oportunidad_purchased_total IS 'Total de Segunda Oportunidad compradas';
-
-
---
--- Name: COLUMN comodines_inventory.pistas_used_total; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.pistas_used_total IS 'Total de Pistas Contextuales usadas';
-
-
---
--- Name: COLUMN comodines_inventory.vision_lectora_used_total; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.vision_lectora_used_total IS 'Total de Visión Lectora usadas';
-
-
---
--- Name: COLUMN comodines_inventory.segunda_oportunidad_used_total; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.segunda_oportunidad_used_total IS 'Total de Segunda Oportunidad usadas';
-
-
---
--- Name: COLUMN comodines_inventory.pistas_cost; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.pistas_cost IS 'Costo en ML Coins de Pistas Contextuales';
-
-
---
--- Name: COLUMN comodines_inventory.vision_lectora_cost; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.vision_lectora_cost IS 'Costo en ML Coins de Visión Lectora';
-
-
---
--- Name: COLUMN comodines_inventory.segunda_oportunidad_cost; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.segunda_oportunidad_cost IS 'Costo en ML Coins de Segunda Oportunidad';
-
-
---
--- Name: COLUMN comodines_inventory.metadata; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.metadata IS 'Metadatos adicionales en formato JSON';
-
-
---
--- Name: COLUMN comodines_inventory.created_at; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.created_at IS 'Fecha de creación del registro';
-
-
---
--- Name: COLUMN comodines_inventory.updated_at; Type: COMMENT; Schema: gamification_system; Owner: postgres
---
-
-COMMENT ON COLUMN gamification_system.comodines_inventory.updated_at IS 'Fecha de última actualización';
-
-
---
--- Name: comodines_inventory comodines_inventory_pkey; Type: CONSTRAINT; Schema: gamification_system; Owner: postgres
---
-
-ALTER TABLE ONLY gamification_system.comodines_inventory
-    ADD CONSTRAINT comodines_inventory_pkey PRIMARY KEY (id);
-
-
---
--- Name: comodines_inventory comodines_inventory_user_id_key; Type: CONSTRAINT; Schema: gamification_system; Owner: postgres
---
-
-ALTER TABLE ONLY gamification_system.comodines_inventory
-    ADD CONSTRAINT comodines_inventory_user_id_key UNIQUE (user_id);
-
-
---
--- Name: comodines_inventory trg_comodines_inventory_updated_at; Type: TRIGGER; Schema: gamification_system; Owner: postgres
--- NOTE: Trigger movido a archivo separado para evitar duplicación
--- Ver: gamification_system/triggers/16-trg_comodines_inventory_updated_at.sql
---
-
-
---
--- Name: comodines_inventory comodines_inventory_user_id_fkey; Type: FK CONSTRAINT; Schema: gamification_system; Owner: postgres
---
-
+-- Foreign Keys
 ALTER TABLE ONLY gamification_system.comodines_inventory
     ADD CONSTRAINT comodines_inventory_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_management.profiles(id) ON DELETE CASCADE;
 
+-- Triggers
+-- NOTE: Trigger trg_comodines_inventory_updated_at movido a archivo separado
+-- Ver: gamification_system/triggers/16-trg_comodines_inventory_updated_at.sql
 
---
--- Name: TABLE comodines_inventory; Type: ACL; Schema: gamification_system; Owner: postgres
---
+-- Comments
+COMMENT ON TABLE gamification_system.comodines_inventory IS 'Inventario de comodines (power-ups) por usuario';
+COMMENT ON COLUMN gamification_system.comodines_inventory.id IS 'Identificador único del inventario';
+COMMENT ON COLUMN gamification_system.comodines_inventory.user_id IS 'ID del usuario propietario del inventario';
+COMMENT ON COLUMN gamification_system.comodines_inventory.pistas_available IS 'Pistas Contextuales disponibles (15 ML Coins)';
+COMMENT ON COLUMN gamification_system.comodines_inventory.vision_lectora_available IS 'Visión Lectora disponibles (25 ML Coins)';
+COMMENT ON COLUMN gamification_system.comodines_inventory.segunda_oportunidad_available IS 'Segunda Oportunidad disponibles (40 ML Coins)';
+COMMENT ON COLUMN gamification_system.comodines_inventory.pistas_purchased_total IS 'Total de Pistas Contextuales compradas';
+COMMENT ON COLUMN gamification_system.comodines_inventory.vision_lectora_purchased_total IS 'Total de Visión Lectora compradas';
+COMMENT ON COLUMN gamification_system.comodines_inventory.segunda_oportunidad_purchased_total IS 'Total de Segunda Oportunidad compradas';
+COMMENT ON COLUMN gamification_system.comodines_inventory.pistas_used_total IS 'Total de Pistas Contextuales usadas';
+COMMENT ON COLUMN gamification_system.comodines_inventory.vision_lectora_used_total IS 'Total de Visión Lectora usadas';
+COMMENT ON COLUMN gamification_system.comodines_inventory.segunda_oportunidad_used_total IS 'Total de Segunda Oportunidad usadas';
+COMMENT ON COLUMN gamification_system.comodines_inventory.pistas_cost IS 'Costo en ML Coins de Pistas Contextuales';
+COMMENT ON COLUMN gamification_system.comodines_inventory.vision_lectora_cost IS 'Costo en ML Coins de Visión Lectora';
+COMMENT ON COLUMN gamification_system.comodines_inventory.segunda_oportunidad_cost IS 'Costo en ML Coins de Segunda Oportunidad';
+COMMENT ON COLUMN gamification_system.comodines_inventory.metadata IS 'Metadatos adicionales en formato JSON';
+COMMENT ON COLUMN gamification_system.comodines_inventory.created_at IS 'Fecha de creación del registro';
+COMMENT ON COLUMN gamification_system.comodines_inventory.updated_at IS 'Fecha de última actualización';
 
+-- Permissions
+ALTER TABLE gamification_system.comodines_inventory OWNER TO gamilit_user;
 GRANT ALL ON TABLE gamification_system.comodines_inventory TO gamilit_user;
-
-
---
--- PostgreSQL database dump complete
---
-
-\unrestrict m4i6K1kzuaLf6QGzMPZ2WZ8F1XeaierVDJJwutgbzn9Ihi9adFfs8mjo0GV2U7V

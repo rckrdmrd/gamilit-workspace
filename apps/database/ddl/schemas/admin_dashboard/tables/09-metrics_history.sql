@@ -6,7 +6,9 @@
 -- Fecha: 2026-01-07
 -- =====================================================
 
-CREATE TABLE IF NOT EXISTS admin_dashboard.metrics_history (
+DROP TABLE IF EXISTS admin_dashboard.metrics_history CASCADE;
+
+CREATE TABLE admin_dashboard.metrics_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Timestamp de la metrica

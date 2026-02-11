@@ -1,0 +1,59 @@
+id: "US-GAM-RPT-01"
+titulo: "Report Generation and Export"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 3
+sprint: "Backlog"
+modulos:
+  - "reports"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/reports/"
+      endpoints:
+        - "POST /reports/student/:id"
+        - "POST /reports/classroom/:id"
+        - "POST /reports/organization/:id"
+        - "GET /reports/export/csv"
+        - "GET /reports/:id/download"
+      files:
+        - "reports.module.ts"
+        - "reports.service.ts"
+        - "reports.controller.ts"
+        - "pdf-generator.service.ts"
+        - "csv-exporter.service.ts"
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/reports/"
+      pages:
+        - "ReportsPage"
+      components:
+        - "ReportGenerator"
+        - "ReportViewer"
+        - "ExportButton"
+        - "ReportFilters"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/analytics/"
+      tables:
+        - "reports.generated_reports"
+        - "reports.templates"
+        - "analytics.student_progress"
+  tests:
+    unit:
+      - "reports.service.spec.ts"
+      - "reports.controller.spec.ts"
+      - "pdf-generator.service.spec.ts"
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-AUTH-01"
+  blocks: []
+tasks: []

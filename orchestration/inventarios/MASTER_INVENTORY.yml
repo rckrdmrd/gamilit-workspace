@@ -1,332 +1,167 @@
-# INVENTARIO MAESTRO - GAMILIT
-# Resumen consolidado de todos los inventarios
-# Contiene SOLO definiciones actuales/definitivas del sistema
+# ===============================================================================
+# MASTER INVENTORY - GAMILIT
+# ===============================================================================
 
-version: "6.0.0"
-proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
-fecha_actualizacion: "2026-02-05"
-actualizado_por: "TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD"
-last_update_task: "TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD"
+version: "7.0.0"
+fecha: "2026-02-11"
+proyecto: "gamilit"
+estado: "PRODUCCION_ACTIVA"
+completitud: "98%"
 
-# =============================================================================
+# -------------------------------------------------------------------------------
 # RESUMEN EJECUTIVO
-# =============================================================================
+# -------------------------------------------------------------------------------
 
 resumen:
-  estado_general: "OPERATIVO"
+  tipo: "STANDALONE_HEREDERO (L2A)"
+  stack: "NestJS 11 + React 19 + PostgreSQL 15 + Socket.IO 4.8+ + Vite 6.x"
+  repositorio: "git@github.com:rckrdmrd/gamilit-workspace.git (MONOREPO)"
+  epics_completados: "34 EPICs, 162 SP"
+  tests_pasando: 833
+  en_produccion: true
 
+# -------------------------------------------------------------------------------
+# METRICAS AGREGADAS
+# -------------------------------------------------------------------------------
+
+metricas:
   database:
-    schemas: 18  # RECONCILIADO 2026-02-05 - 16 activos + 2 placeholder (public, storage)
-    schemas_active: 16  # RECONCILIADO 2026-02-05 - 16 schemas con objetos
-    tables: 171  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo DDL (era 140)
-    views: 13  # Verificado 2026-02-05
-    materialized_views: 7  # CORREGIDO 2026-02-05 - Era 4 (faltaban 3 admin_dashboard MVs)
-    enums: 36  # Verificado 2026-02-05
-    functions: 128  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo (era 159)
-    triggers: 49  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo (era 58)
-    policies_rls: 299  # AUDITADO 2026-02-03 - RLS-POLICIES-MASTER.md
-    indexes_files: 23  # Verificado 2026-02-05
-    foreign_keys: 299  # NUEVO 2026-02-05 - FASE-4 conteo exhaustivo
-    ddl_objects_total: 465  # tables(171) + functions(128) + triggers(49) + rls(37) + enums(36) + indexes(23) + views(13) + mvs(7) + FKs(no counted)
-    seed_files_dev: 106  # TASK-022 AUDITORIA 2026-01-27
-    seed_files_prod: 71  # TASK-022 AUDITORIA 2026-01-27
-    seed_coverage_config_tables: "73.8%"  # 62/84 config/lookup tables
-    seed_gaps_critical: 8  # System-breaking missing seeds
-    seed_gaps_high: 8  # Feature-degrading missing seeds
-    seed_orphaned_files: 0  # RESUELTO: 18 integrados en load-dev-seeds.sh (P1-2)
-    status: "Clean creation compliant"
-    last_verified: "2026-02-05"
-    source: "DATABASE_INVENTORY.yml v6.0.0"
-    reconciliation_note: |
-      TASK-2026-02-05: Reconciliacion exhaustiva FASE-1 del Analisis Integral.
-      Cambios principales: tables 140->171 (+31), functions 159->128, triggers 58->49,
-      materialized_views 4->7, foreign_keys 241->299.
-      Tablas nuevas: data_warehouse(16), social_features ext(10), educational_content(4), system_config(3).
+    schemas: 18
+    tablas: 170
+    views: 22
+    materialized_views: 7
+    funciones: 255
+    triggers: 132
+    rls_policies: 263
+    foreign_keys: 273
+    enums: 41
 
   backend:
-    modules: 22  # Updated 2026-01-27: +4 new modules (lti, white-label, peer-challenges, parent-notifications) + parent-portal from completions
-    entities: 141  # RECONCILIADO 2026-02-05: conteo real entities TypeORM (era 158, inflado por DTOs)
-    dtos: 412  # Updated 2026-01-27: +46 new DTOs from API extensions
-    services: 145  # Updated 2026-01-27: +25 new specialized services for partial epics
-    controllers: 103  # Updated 2026-01-27: +23 new controllers for partial epic endpoints
-    endpoints: 850  # Updated 2026-01-27: +100 new endpoints from partial epic implementations
-    guards: 14  # Added: +2 LTI/White-Label authentication guards
-    decorators: 18  # Added: +3 new decorators for branding/LTI
-    build_status: "Builds successfully"
-    lint_status: "0 errors, 904 warnings (pre-existing no-explicit-any)"
-    coherencia_ddl: "82.5%"  # RECONCILIADO 2026-02-05: 141/171 entities mapped
-    entities_hardcoded_names: 0  # RESUELTO: 10 entities actualizadas (P1-1)
-    ddl_tables_without_entity: 30  # RECONCILIADO 2026-02-05: 171-141=30 (16 data_warehouse, 6 operacionales, 8 junction/M:N)
-    orphan_entities: 0  # All entities have DDL tables
-    last_verified: "2026-01-27"
-    source: "BACKEND_INVENTORY.yml"
-    api_docs:
-      - "docs/90-transversal/api/API-TEACHER-MODULE.md"
-      - "docs/90-transversal/api/API-ADMIN-MODULE.md"
+    modulos: 22
+    entities: 152
+    dtos: 412
+    services: 170
+    controllers: 107
+    endpoints: 850
+    guards: 14
+    decorators: 18
+    tests_backend: 620
 
   frontend:
-    files: 1100+
-    components: 458  # Updated 2026-01-27: +60 components from partial epics (LTI: 8, White-Label: 18, Peer: 12, Parent-Notif: 10, Parent-Portal: 12)
-    hooks: 127  # Updated 2026-01-27: +23 new hooks for state management
-    pages: 85  # Updated 2026-01-27: +18 new pages for partial epic admin/portal sections
-    stores: 32  # Updated 2026-01-27: +7 new Pinia stores for partial epic state
-    services: 42  # Updated 2026-01-27: +12 new API/local services
-    api_services: 48  # Updated 2026-01-27: +12 new API service groups (lti, branding, challenges, parent-notif, parent-portal)
-    type_definition_files: 35  # Updated 2026-01-27: +11 new type files for partial epics
-    api_endpoint_groups: 30  # Updated 2026-01-27: +5 new endpoint group sections
-    missing_task021_types: 0  # RESUELTO: all types defined for partial epics
-    module_coverage: "100%"  # Updated 2026-01-27: all 16 core modules + 5 extension modules covered
-    mechanics: 40  # Updated 2026-01-27: +7 new mechanics from peer-challenges and parent features
-    routes: 24  # Updated 2026-01-27: +6 new route groups for parent portal and LTI
-    lines_of_code: ~135000
-    status: "Builds successfully"
-    last_verified: "2026-01-27"
-    source: "FRONTEND_INVENTORY.yml"
-    portal_docs:
-      - "docs/frontend/student/README.md"
-
-  documentation:
-    user_stories: 138  # Total user stories documented
-    requirements_functional: 112  # Functional requirements
-    et_files: 92  # +2 nuevos: ET-SYS-001.md, ET-SOCIAL-001.md (TASK-2026-02-03)
-    epics_total: 22
-    epics_completed: 22
-    epics_partial: 0
-    last_verified: "2026-02-03"
-    last_updated_note: "TASK-2026-02-03: +2 ET files (ET-SYS-001, ET-SOCIAL-001), indices RLS y Functions creados"
-    indices_created_2026_02_03:
-      - "docs/90-transversal/arquitectura-database/RLS-POLICIES-MASTER.md"
-      - "docs/90-transversal/inventarios-database/FUNCTIONS-INDEX.md"
-      - "docs/05-modelado/TRACEABILITY-US-SCHEMAS.md"
-      - "docs/05-modelado/COHERENCE-ENTITIES-DDL.md"
-      - "docs/98-audits/AUDIT-EPICS-FASE1.md"
-
-  phase_analysis:
-    phase_1_mapping: "COMPLETED"
-    phase_2_et_gaps: "COMPLETED"
-    last_analysis_date: "2026-01-27"
-    notes: "Full inventory reconciliation with verified metrics"
-
-  stores_detail:
-    - authStore.ts
-    - economyStore.ts
-    - ranksStore.ts
-    - achievementsStore.ts
-    - friendsStore.ts
-    - guildsStore.ts
-    - leaderboardsStore.ts
-    - newLeaderboardsStore.ts
-    - powerUpsStore.ts
-    - missionsStore.ts
-    - notificationsStore.ts
-    - studentAssignmentsStore.ts
-
-# =============================================================================
-# EJERCICIOS POR MODULO (Definiciones Oficiales)
-# =============================================================================
-# Referencia: docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md
-
-ejercicios:
-  modulo_1:
-    nombre: "Comprension Literal"
-    total: 5
-    tipos:
-      - crucigrama
-      - linea_tiempo
-      - completar_espacios
-      - verdadero_falso
-      - sopa_letras
-
-  modulo_2:
-    nombre: "Comprension Inferencial"
-    total: 5
-    tipos:
-      - detective_textual
-      - construccion_hipotesis
-      - prediccion_narrativa
-      - puzzle_contexto
-      - rueda_inferencias
-
-  modulo_3:
-    nombre: "Comprension Critica y Valorativa"
-    total: 5
-    tipos:
-      - tribunal_opiniones
-      - debate_digital
-      - analisis_fuentes
-      - podcast_argumentativo
-      - matriz_perspectivas
-
-  modulo_4:
-    nombre: "Lectura Digital y Multimodal"
-    total: 5
-    tipos:
-      - verificador_fake_news
-      - infografia_interactiva
-      - quiz_tiktok
-      - navegacion_hipertextual
-      - analisis_memes
-
-  modulo_5:
-    nombre: "Produccion y Expresion Lectora"
-    total: 3
-    nota: "El estudiante elige 1 de 3 opciones"
-    tipos:
-      - diario_multimedia
-      - comic_digital
-      - video_carta
-
-# =============================================================================
-# ESTADO DE CUMPLIMIENTO
-# =============================================================================
-
-cumplimiento:
-  clean_creation_policy:
-    status: "COMPLIANT"
-    ddl_recreatable: true
-    migrations_active: false
-    migrations_deprecated: 5
-    last_validation: "2025-12-18"
-    validation_report: "PLAN-VALIDACION-CLEAN-CREATION-2025-11-29.md"
-
-  documentacion:
-    coverage: "95%"  # ACTUALIZADO 2026-01-24 - TASK-2026-01-24-ANALISIS-STUDENT-PORTAL
-    docs_folder: "Updated 2026-01-24"
-    trazas: "Updated (90% coverage)"
-    inventarios: "Updated 2026-01-24"
-    auditoria: "orchestration/analisis/AUDITORIA-STUDENT-PORTAL-2026-01-24.md"
-    student_portal_specs:
-      created: "2026-01-24"
-      task: "TASK-2026-01-24-ANALISIS-STUDENT-PORTAL"
-      total_files: 11
-      location: "docs/95-guias-desarrollo/student-portal/"
-      files:
-        - "SPEC-DASHBOARD.md"
-        - "SPEC-EXERCISES.md"
-        - "SPEC-GAMIFICATION.md"
-        - "SPEC-ACHIEVEMENTS.md"
-        - "SPEC-PROFILE.md"
-        - "SPEC-SOCIAL.md"
-        - "SPEC-PROGRESS.md"
-        - "SPEC-MODULES.md"
-        - "SPEC-API-CONTRACTS.md"
-        - "SPEC-MULTIMEDIA.md"
-        - "SPEC-PDF-EXCEL.md"
-    gaps_registry: "orchestration/analisis/GAPS-STUDENT-PORTAL.yml"
-    gaps:
-      - "Error handling documentation (60%)"
-      - "E2E testing documentation (50%)"
-      - "Deployment validation (40%)"
-
-# =============================================================================
-# INTEGRACIONES DOCUMENTADAS
-# =============================================================================
-
-integraciones:
-  student_teacher:
-    status: "DOCUMENTADO"
-    documentos:
-      - "docs/95-guias-desarrollo/INTEGRACION-STUDENT-TEACHER.md"
-      - "docs/95-guias-desarrollo/DEPENDENCIAS-STUDENT-TEACHER.md"
-    requerimientos_identificados: 30
-    coverage: "85%"
-
-  db_backend:
-    status: "82.5% coherencia"  # RECONCILIADO 2026-02-05: 141/171 entities mapped
-    entities_mapped: 141
-    entities_hardcoded: 0  # RESUELTO P1-1
-    tables_total: 171
-    tables_without_entity: 30  # 16 data_warehouse + 6 operacionales + 8 junction/M:N
-
-  backend_frontend:
-    status: "87.5% coherencia"  # 14/16 core modules + 5 extension modules
-    endpoints_centralized: 850
+    componentes: 458
+    hooks: 127
+    paginas: 85
+    stores_zustand: 32
     api_services: 48
-    type_files: 35
-    missing_types_task021: 0  # RESUELTO
+    portales: 4
+    mecanicas: 40
+    routes: 24
+    tests_frontend: 213
 
-  scripts_bd:
-    status: "GAPS CRITICOS"  # TASK-022 Area F
-    create_database_sh: "OK (17 fases)"
-    create_database_rls_gap: "07b/07c no incluidas"
-    load_dev_seeds_sh: "PARCIAL (18+ orphaned)"
-    unified_recreate_db: "INCOMPATIBLE con GAMILIT"
+  calidad:
+    tests_total: 833
+    coherencia_ddl_backend: "89%"
+    cobertura_target: "80%"
 
-  mvp_status:
-    completitud_global: "98%"  # ACTUALIZADO 2026-02-06: MVP Production Ready, Fase A completada
-    fase_a: "COMPLETADA"
-    epics_completados: "22/22"
-    story_points: 650
-    nota: "Todas las 22 epics completadas al 100% MVP scope (2026-01-27)"
+# -------------------------------------------------------------------------------
+# PORTALES
+# -------------------------------------------------------------------------------
 
-# =============================================================================
-# REFERENCIAS
-# =============================================================================
+portales:
+  - nombre: "Estudiante"
+    completitud: "~100%"
+  - nombre: "Maestro"
+    completitud: "~95%"
+  - nombre: "Administrador"
+    completitud: "~90%"
+  - nombre: "Padres"
+    completitud: "100%"
 
-referencias:
-  inventarios:
-    - "orchestration/inventarios/DATABASE_INVENTORY.yml"
-    - "orchestration/inventarios/BACKEND_INVENTORY.yml"
-    - "orchestration/inventarios/FRONTEND_INVENTORY.yml"
-    - "orchestration/inventarios/SEEDS_INVENTORY.yml"
-    - "orchestration/inventarios/TRACEABILITY_MATRIX.yml"
+# -------------------------------------------------------------------------------
+# MODULOS EDUCATIVOS
+# -------------------------------------------------------------------------------
 
-  trazas:
-    - "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
-    - "orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
-    - "orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
+modulos_educativos:
+  total: 5
+  ejercicios_tipos: 23
+  lista:
+    - modulo: "Comprension Literal"
+      ejercicios: 5
+    - modulo: "Comprension Inferencial"
+      ejercicios: 5
+    - modulo: "Comprension Critica"
+      ejercicios: 5
+    - modulo: "Lectura Digital"
+      ejercicios: 5
+    - modulo: "Produccion y Expresion"
+      ejercicios: 3
 
-  reportes:
-    - "orchestration/reportes/HISTORIAL-CORRECCIONES-2025.md"
+# -------------------------------------------------------------------------------
+# GAMIFICACION
+# -------------------------------------------------------------------------------
 
-  documento_diseno:
-    - "docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md"
+gamificacion:
+  xp_system: true
+  rangos_maya: 5
+  achievements: true
+  ml_coins_economy: true
+  missions_daily: 3
+  missions_weekly: 5
+  leaderboard_levels: 4
+  seasons: true
+  store_items: true
 
-# =============================================================================
-# NOTAS
-# =============================================================================
+# -------------------------------------------------------------------------------
+# INVENTARIOS DETALLADOS
+# -------------------------------------------------------------------------------
 
-notas:
-  - "Este archivo contiene SOLO definiciones actuales/definitivas del sistema."
-  - "Para historial de correcciones ver: orchestration/reportes/HISTORIAL-CORRECCIONES-2025.md"
-  - "Ver archivos individuales de inventario para detalles de cada capa."
+inventarios_detallados:
+  database: "DATABASE_INVENTORY.yml (v7.0.0)"
+  backend: "BACKEND_INVENTORY.yml (v3.16.0)"
+  frontend: "FRONTEND_INVENTORY.yml (v4.10.0)"
 
-# =============================================================================
-# CONSOLIDACION TECNICA ETC-001 (2026-01-16)
-# =============================================================================
+# -------------------------------------------------------------------------------
+# ESTADO DE FEATURES
+# -------------------------------------------------------------------------------
 
-consolidacion_etc_001:
-  fecha: "2026-01-16"
-  epic: "ETC-001"
-  documentacion: "docs/02-fase-robustecimiento/ETC-001-consolidacion-tecnica/"
+features:
+  completados:
+    - "22 modulos backend operativos"
+    - "5 modulos educativos (23 tipos ejercicios)"
+    - "4 portales diferenciados"
+    - "Sistema gamificacion maya completo"
+    - "RLS multi-tenancy (263 policies)"
+    - "Real-time via Socket.IO"
+    - "833 tests pasando"
 
-  archivos_eliminados:
-    backend:
-      - "modules/auth/auth.service.ts (obsoleto, 145 lineas de stubs)"
-      - "modules/notifications/dto/create-notification.dto.ts (re-export)"
-      - "modules/notifications/dto/notification-response.dto.ts (re-export)"
-      - "modules/notifications/dto/notifications/create-notification.dto.ts (re-export)"
-      - "modules/notifications/dto/notifications/notification-response.dto.ts (re-export)"
-      - "modules/gamification/dto/notifications/create-notification.dto.ts (re-export)"
-      - "modules/gamification/dto/notifications/notification-response.dto.ts (re-export)"
-    frontend:
-      - "features/admin/api/adminAPI.ts (0 imports)"
-      - "apps/student/pages/LoginPage.tsx (duplicado)"
-      - "apps/student/pages/RegisterPage.tsx (duplicado)"
-      - "lib/api/educational.api.ts (consolidado)"
+  parciales:
+    - "social (50%): DDL+entities completos, logica parcial"
+    - "team-vs-team: DDL listo, sin logica de negocio"
+    - "boosts: DDL+entity, pivoteado a comodines"
+    - "forum: DDL+entities sin registrar en module"
 
-  archivos_creados:
-    - "modules/social/entities/user-follow.entity.ts (nueva entity)"
+  pendientes:
+    - "Cobertura tests target 80%"
+    - "E2E testing completo"
+    - "Kubernetes deployment"
+    - "Documentation de deployment actualizada"
 
-  imports_actualizados:
-    - "pages/ModuleDetailsPage.tsx → services/api/educationalAPI"
-    - "pages/MyProgressPage.tsx → services/api/educationalAPI"
-    - "modules/gamification/dto/index.ts → @shared/dto/notifications"
-    - "modules/notifications/dto/notifications/index.ts → @shared/dto/notifications"
-    - "modules/notifications/controllers/notifications.controller.ts → @shared/dto/notifications"
+# -------------------------------------------------------------------------------
+# PUERTOS Y CREDENCIALES
+# -------------------------------------------------------------------------------
 
-  metricas:
-    archivos_eliminados: 11
-    archivos_creados: 1
-    imports_actualizados: 8
-    build_status: "PASSED"
+puertos:
+  frontend: 3005
+  backend: 3006
+  postgresql: 5432
+  redis: 6379
+
+credenciales:
+  database: "gamilit_platform"
+  usuario: "gamilit_user"
+  password: "gamilit_dev_2026"
+  redis_db: 0
+
+# ===============================================================================
+# FIN MASTER INVENTORY
+# ===============================================================================

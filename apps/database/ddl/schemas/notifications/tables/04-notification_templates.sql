@@ -24,6 +24,8 @@
 -- - {{currency amount "MXN"}} - Formateo de moneda
 -- =====================================================
 
+DROP TABLE IF EXISTS notifications.notification_templates CASCADE;
+
 CREATE TABLE notifications.notification_templates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

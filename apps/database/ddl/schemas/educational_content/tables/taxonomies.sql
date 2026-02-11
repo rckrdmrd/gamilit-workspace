@@ -3,6 +3,8 @@
 -- Descripción: Taxonomías educativas (Bloom, etc.)
 -- CREADO: 2025-11-08
 
+DROP TABLE IF EXISTS educational_content.taxonomies CASCADE;
+
 CREATE TABLE educational_content.taxonomies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL UNIQUE,

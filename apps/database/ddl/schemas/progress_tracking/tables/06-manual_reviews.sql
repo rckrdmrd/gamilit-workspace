@@ -12,7 +12,7 @@
 DROP TABLE IF EXISTS progress_tracking.manual_reviews CASCADE;
 
 -- Crear tabla
-CREATE TABLE IF NOT EXISTS progress_tracking.manual_reviews (
+CREATE TABLE progress_tracking.manual_reviews (
     -- Identificador
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

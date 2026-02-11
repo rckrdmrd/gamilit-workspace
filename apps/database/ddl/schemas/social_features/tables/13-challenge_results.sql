@@ -7,7 +7,9 @@
 -- Created: 2025-11-08
 -- =====================================================================================
 
-CREATE TABLE IF NOT EXISTS social_features.challenge_results (
+DROP TABLE IF EXISTS social_features.challenge_results CASCADE;
+
+CREATE TABLE social_features.challenge_results (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Relación

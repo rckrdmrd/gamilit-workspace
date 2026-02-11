@@ -1,0 +1,56 @@
+id: "US-GAM-PAR-01"
+titulo: "Portal Padres con Reportes"
+epic_id: "EPIC-GAM-FRONTEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 8
+sprint: "Completado"
+modulos:
+  - "parents"
+  - "notifications"
+  - "reports"
+traceability:
+  requirements:
+    - "RF-GAM-026"
+    - "RF-GAM-027"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/parents/"
+        - "apps/backend/src/modules/notifications/"
+        - "apps/backend/src/modules/reports/"
+      endpoints: []
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/parents/"
+      pages:
+        - "~18 parent portal pages"
+      components:
+        - "ParentDashboard"
+        - "ChildProgressCard"
+        - "LinkChildForm"
+        - "NotificationPreferences"
+        - "ProgressReport"
+        - "MessageComposer"
+        - "ChildSelector"
+        - "DownloadReport"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/parents/"
+        - "apps/database/ddl/schemas/notifications/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-STD-01"
+    - "US-GAM-TCH-01"
+    - "US-GAM-ANL-01"
+  blocks: []
+tasks: []

@@ -28,7 +28,9 @@ END $$;
 -- ============================================
 -- ETL Load Log Table
 -- ============================================
-CREATE TABLE IF NOT EXISTS data_warehouse.etl_load_logs (
+DROP TABLE IF EXISTS data_warehouse.etl_load_logs CASCADE;
+
+CREATE TABLE data_warehouse.etl_load_logs (
     -- Primary Key
     load_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

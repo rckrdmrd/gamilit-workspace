@@ -49,7 +49,9 @@ BEGIN
 END $$;
 
 -- Crear tabla
-CREATE TABLE IF NOT EXISTS system_configuration.notification_settings_globals (
+DROP TABLE IF EXISTS system_configuration.notification_settings_globals CASCADE;
+
+CREATE TABLE system_configuration.notification_settings_globals (
     -- Identificación
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

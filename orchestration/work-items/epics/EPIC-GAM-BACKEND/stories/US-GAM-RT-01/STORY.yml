@@ -1,0 +1,51 @@
+id: "US-GAM-RT-01"
+titulo: "Tiempo Real con WebSockets"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P0"
+story_points: 13
+sprint: "Completado"
+modulos:
+  - "gamification"
+  - "leaderboard"
+  - "notifications"
+  - "social"
+traceability:
+  requirements:
+    - "RF-GAM-031"
+    - "RF-GAM-033"
+    - "RF-GAM-034"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/gamification/"
+        - "apps/backend/src/modules/leaderboard/"
+        - "apps/backend/src/modules/notifications/"
+        - "apps/backend/src/modules/social/"
+      endpoints:
+        - "GET /api/v1/ws/health"
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/hooks/useSocket/"
+        - "apps/frontend/src/services/socket/"
+      pages: []
+      components: []
+    database:
+      paths:
+        - "apps/database/ddl/schemas/gamification/"
+        - "apps/database/ddl/schemas/leaderboard/"
+        - "apps/database/ddl/schemas/notifications/"
+        - "apps/database/ddl/schemas/social/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks: []
+tasks: []

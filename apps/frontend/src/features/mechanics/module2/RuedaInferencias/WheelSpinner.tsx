@@ -78,7 +78,7 @@ export const WheelSpinner: React.FC<WheelSpinnerProps> = ({
 
         {/* Wheel */}
         <motion.div
-          className="w-full h-full rounded-full relative overflow-hidden shadow-2xl border-8 border-yellow-400"
+          className="w-full h-full rounded-full relative overflow-hidden shadow-2xl border-8 border-detective-gold"
           animate={{ rotate: rotation }}
           transition={{
             duration: isSpinning ? 3 : 0,
@@ -126,7 +126,7 @@ export const WheelSpinner: React.FC<WheelSpinnerProps> = ({
           })}
 
           {/* Center Circle */}
-          <div className="absolute inset-0 m-auto w-16 h-16 bg-white rounded-full border-4 border-yellow-400 shadow-lg flex items-center justify-center">
+          <div className="absolute inset-0 m-auto w-16 h-16 bg-white rounded-full border-4 border-detective-gold shadow-lg flex items-center justify-center">
             <div className="text-2xl">🎯</div>
           </div>
         </motion.div>
@@ -144,7 +144,7 @@ export const WheelSpinner: React.FC<WheelSpinnerProps> = ({
             <h3 className="text-xl font-bold text-blue-600 mb-2">
               {categories[selectedIndex].name}
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-detective-text-secondary text-sm">
               {categories[selectedIndex].description}
             </p>
           </div>
@@ -153,7 +153,7 @@ export const WheelSpinner: React.FC<WheelSpinnerProps> = ({
 
       {/* Spin Status */}
       {isSpinning && (
-        <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg px-6 py-3">
+        <div className="bg-detective-gold/10 border-2 border-detective-gold rounded-lg px-6 py-3">
           <p className="text-yellow-800 font-semibold text-center">
             🎪 ¡Girando la ruleta...!
           </p>

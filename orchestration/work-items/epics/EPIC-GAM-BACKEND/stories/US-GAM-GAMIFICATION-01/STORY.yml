@@ -1,0 +1,37 @@
+id: "US-GAM-GAMIFICATION-01"
+titulo: "Ganar XP y Subir de Rango Maya"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 5
+sprint: "Backlog"
+modulos:
+  - "gamification"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/gamification/"
+      endpoints: []
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/gamification/"
+      pages: []
+      components: []
+    database:
+      paths:
+        - "apps/database/ddl/schemas/gamification/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks: []
+tasks: []

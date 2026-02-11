@@ -3,6 +3,8 @@
 -- Descripción: Sistema de etiquetado de contenido educativo
 -- CREADO: 2025-11-08
 
+DROP TABLE IF EXISTS educational_content.content_tags CASCADE;
+
 CREATE TABLE educational_content.content_tags (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     content_type VARCHAR(50) NOT NULL CHECK (content_type IN ('module', 'exercise', 'assignment', 'resource')),

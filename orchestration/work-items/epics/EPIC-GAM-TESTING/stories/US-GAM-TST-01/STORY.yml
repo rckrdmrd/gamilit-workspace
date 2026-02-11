@@ -1,0 +1,51 @@
+id: "US-GAM-TST-01"
+titulo: "Backend Unit Tests (Jest)"
+epic_id: "EPIC-GAM-TESTING"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "EN_PROGRESO"
+prioridad: "P2"
+story_points: 5
+sprint: "Backlog"
+modulos:
+  - "auth"
+  - "users"
+  - "tenants"
+  - "exercises"
+  - "gamification"
+  - "leaderboard"
+  - "notifications"
+  - "analytics"
+  - "reports"
+  - "all backend modules"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/"
+        - "apps/backend/test/"
+      endpoints:
+        - "all 850 endpoints"
+      files:
+        - "**/*.spec.ts"
+        - "**/*.service.spec.ts"
+        - "**/*.controller.spec.ts"
+    frontend:
+      paths: []
+      pages: []
+      components: []
+    database:
+      paths: []
+      tables: []
+  tests:
+    unit:
+      - "~550 Jest tests targeting 80% coverage"
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks:
+    - "US-GAM-TST-03"
+tasks: []

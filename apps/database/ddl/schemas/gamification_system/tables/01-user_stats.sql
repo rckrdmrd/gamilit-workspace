@@ -31,7 +31,9 @@
 -- TABLE DEFINITION
 -- =====================================================
 
-CREATE TABLE IF NOT EXISTS gamification_system.user_stats (
+DROP TABLE IF EXISTS gamification_system.user_stats CASCADE;
+
+CREATE TABLE gamification_system.user_stats (
     -- =====================================================
     -- PRIMARY KEYS & IDENTIFIERS
     -- =====================================================

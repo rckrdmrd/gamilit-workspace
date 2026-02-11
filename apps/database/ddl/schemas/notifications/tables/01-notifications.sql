@@ -6,6 +6,8 @@
 -- Fecha: 2025-11-11
 -- =====================================================
 
+DROP TABLE IF EXISTS notifications.notifications CASCADE;
+
 CREATE TABLE notifications.notifications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -37,10 +39,11 @@ CREATE TABLE notifications.notifications (
     status VARCHAR(20) DEFAULT 'pending',
 
     -- Timestamps
-    read_at TIMESTAMP,
-    sent_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT gamilit.now_mexico(),
-    expires_at TIMESTAMP,
+    read_at TIMESTAMPTZ,
+    sent_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT gamilit.now_mexico(),
+    updated_at TIMESTAMPTZ DEFAULT gamilit.now_mexico(),
+    expires_at TIMESTAMPTZ,
 
     -- Metadata adicional
     metadata JSONB DEFAULT '{}'::jsonb,
@@ -72,4 +75,15 @@ COMMENT ON COLUMN notifications.notifications.type IS 'Tipo de notificación: ac
 COMMENT ON COLUMN notifications.notifications.data IS 'Datos adicionales en formato JSON (IDs relacionados, payload específico)';
 COMMENT ON COLUMN notifications.notifications.channels IS 'Array de canales por los que se envió: in_app, email, push';
 COMMENT ON COLUMN notifications.notifications.status IS 'Estado: pending, sent, read, failed';
+COMMENT ON COLUMN notifications.notifications.updated_at IS 'Timestamp de última actualización, auto-actualizado por trigger';
 COMMENT ON COLUMN notifications.notifications.expires_at IS 'Fecha de expiración (opcional, para notificaciones temporales)';
+
+-- Trigger: auto-update updated_at
+DROP TRIGGER IF EXISTS trg_notifications_updated_at ON notifications.notifications CASCADE;
+CREATE TRIGGER trg_notifications_updated_at
+    BEFORE UPDATE ON notifications.notifications
+    FOR EACH ROW
+    EXECUTE FUNCTION gamilit.update_updated_at_column();
+
+COMMENT ON TRIGGER trg_notifications_updated_at ON notifications.notifications
+    IS 'Actualiza updated_at automaticamente en cada UPDATE';

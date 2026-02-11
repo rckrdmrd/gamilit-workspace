@@ -6,7 +6,8 @@ import { TimelineEvent } from './TimelineEvent';
 import { TimelineEvent as TimelineEventType, TimelineExerciseProps } from './timelineTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { Shuffle } from 'lucide-react';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -21,6 +22,8 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
   const [events, setEvents] = useState<TimelineEventType[]>(
     [...exercise.events].sort(() => Math.random() - 0.5),
   );
@@ -81,7 +84,7 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
 
     try {
       // Submit to backend API with DTO format: { events: ["e1", "e2", "e3"] }
-      const response = await submitExercise(exercise.id, user.id, { events: userOrder });
+      const response = await submitAsync({ events: userOrder });
 
       // Show backend response
       setFeedback({

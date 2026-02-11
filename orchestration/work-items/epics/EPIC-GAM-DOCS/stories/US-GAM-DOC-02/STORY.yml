@@ -1,0 +1,38 @@
+id: "US-GAM-DOC-02"
+titulo: "Architecture and ADR Documentation"
+epic_id: "EPIC-GAM-DOCS"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "EN_PROGRESO"
+prioridad: "P2"
+story_points: 2
+sprint: "Backlog"
+modulos:
+  - "cross-cutting"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths: []
+      endpoints: []
+      files: []
+    frontend:
+      paths: []
+      pages: []
+      components: []
+    database:
+      paths: []
+      tables: []
+    docs:
+      paths:
+        - "docs/20-architecture/"
+        - "docs/90-adr/"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks: []
+tasks: []

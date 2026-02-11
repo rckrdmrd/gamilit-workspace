@@ -590,9 +590,9 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                               ? 'bg-detective-orange text-white'
                               : isAnswered
                                 ? score > 0
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-red-100 text-red-800'
-                                : 'bg-gray-100 text-gray-600'
+                                  ? 'bg-detective-success/10 text-detective-success'
+                                  : 'bg-detective-danger/10 text-detective-danger'
+                                : 'bg-detective-bg-secondary text-detective-text-secondary'
                           }`}
                         >
                           <div className="flex-1">

@@ -1,0 +1,43 @@
+id: "US-GAM-DOP-02"
+titulo: "CI/CD Pipeline (GitHub Actions)"
+epic_id: "EPIC-GAM-DEVOPS"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "PENDIENTE"
+prioridad: "P2"
+story_points: 3
+sprint: "Backlog"
+modulos:
+  - "devops"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/devops/"
+        - ".github/workflows/"
+      endpoints:
+        - "GET /health (smoke tests)"
+      files:
+        - ".github/workflows/ci.yml"
+        - ".github/workflows/deploy-staging.yml"
+        - ".github/workflows/deploy-production.yml"
+    frontend:
+      paths: []
+      pages: []
+      components: []
+    database:
+      paths: []
+      tables: []
+  tests:
+    unit: []
+    e2e:
+      - "smoke tests post-deploy"
+dependencies:
+  depends_on:
+    - "US-GAM-DOP-01"
+    - "US-GAM-TST-01"
+  blocks: []
+tasks: []

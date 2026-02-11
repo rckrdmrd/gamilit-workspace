@@ -1,0 +1,378 @@
+# =============================================================================
+# DATABASE CONFIGURATION - Gamilit Platform
+# =============================================================================
+# Proyecto: gamilit (STANDALONE)
+# Stack: PostgreSQL 16 + Redis 7
+# Infra integration: workspace-arch/infra/
+# Referencia: unified-recreate-db.sh, WORKSPACE-INTEGRATION.yml
+# =============================================================================
+
+version: "1.0.0"
+updated: "2026-02-10"
+
+# =============================================================================
+# PROYECTO
+# =============================================================================
+
+project:
+  name: gamilit
+  type: STANDALONE
+  description: "Plataforma educativa gamificada - comprension lectora con cultura maya"
+  repository: "git@github.com:rckrdmrd/gamilit-workspace.git"
+  monorepo: true
+
+# =============================================================================
+# CONEXION
+# =============================================================================
+# Nota: password NO se almacena aqui. Usar variable de entorno o
+# consultar CREDENTIALS-INVENTORY.yml en workspace-arch/orchestration/inventarios/
+# =============================================================================
+
+database:
+  name: gamilit_platform
+  user: gamilit_user
+  host: localhost
+  port: 5432
+  password_env: GAMILIT_DB_PASSWORD
+  engine: postgresql
+  engine_version: "16"
+  encoding: UTF8
+  timezone: "America/Mexico_City"
+
+redis:
+  host: localhost
+  port: 6379
+  db: 0
+
+# =============================================================================
+# EXTENSIONES
+# =============================================================================
+
+extensions:
+  - name: pg_trgm
+    purpose: "Fuzzy string matching para validadores de ejercicios (similarity function)"
+    required: true
+
+  - name: pgcrypto
+    purpose: "Cryptographic functions for password hashing (crypt, gen_salt)"
+    required: true
+
+  - name: uuid-ossp
+    purpose: "UUID generation functions (uuid_generate_v4)"
+    required: true
+
+# =============================================================================
+# SCHEMAS
+# =============================================================================
+# 18 schemas totales: 16 activos + 2 placeholder (data_warehouse, optimization)
+# Grafo de dependencias completo en: SCHEMA-DEPENDENCIES.md
+# =============================================================================
+
+schemas:
+  active:
+    # -- Core Infrastructure --
+    - name: gamilit
+      type: utility
+      description: "Funciones utilitarias compartidas (now_mexico, update_updated_at, RLS helpers)"
+
+    - name: auth
+      type: core
+      description: "Autenticacion base (compatible Supabase)"
+
+    - name: auth_management
+      type: core
+      description: "Gestion de usuarios, perfiles, roles RBAC, tenants multi-tenant con RLS"
+
+    - name: storage
+      type: core
+      description: "Storage de archivos (compatible Supabase)"
+
+    # -- Domain --
+    - name: educational_content
+      type: domain
+      description: "Modulos educativos, ejercicios (23 tipos), mecanicas de aprendizaje"
+
+    - name: gamification_system
+      type: domain
+      description: "XP, rangos maya, achievements, ML Coins, tienda virtual, misiones"
+
+    - name: progress_tracking
+      type: domain
+      description: "Progreso de estudiantes, intentos de ejercicios, estadisticas"
+
+    - name: social_features
+      type: domain
+      description: "Aulas, escuelas, equipos, amistades, funcionalidad social"
+
+    - name: content_management
+      type: domain
+      description: "Gestion de contenido, templates, media, moderacion, tags"
+
+    - name: communication
+      type: domain
+      description: "Sistema de mensajeria interna entre usuarios"
+
+    # -- Support --
+    - name: notifications
+      type: support
+      description: "Notificaciones email, push, in-app, SMS con templates"
+
+    - name: audit_logging
+      type: support
+      description: "Auditoria de acciones, logs del sistema, alertas"
+
+    - name: system_configuration
+      type: support
+      description: "Settings del sistema, feature flags, parametros de gamificacion"
+
+    - name: admin_dashboard
+      type: support
+      description: "Dashboard administrativo, reportes, operaciones bulk"
+
+    - name: lti_integration
+      type: integration
+      description: "Learning Tools Interoperability para LMS externos"
+
+    - name: public
+      type: legacy
+      description: "Schema publico legacy, no se carga por defecto en BD nueva"
+
+  placeholder:
+    - name: data_warehouse
+      type: analytics
+      description: "Schema para analytics avanzado y reportes historicos (no cargado por defecto)"
+      load_by_default: false
+
+    - name: optimization
+      type: performance
+      description: "Schema para indices y vistas de optimizacion (no cargado por defecto)"
+      load_by_default: false
+
+# =============================================================================
+# ROLES RLS
+# =============================================================================
+
+rls_roles:
+  - name: authenticated
+    description: "Usuarios autenticados (cualquier rol GAMILIT)"
+
+  - name: anon
+    description: "Usuarios anonimos (sin autenticar)"
+
+  - name: service_role
+    description: "Servicio backend con privilegios elevados"
+
+# =============================================================================
+# DDL VERSION Y CARGA
+# =============================================================================
+
+ddl:
+  version: "2026-02-10"
+  prerequisites_file: "ddl/00-prerequisites.sql"
+  post_ddl_file: "ddl/99-post-ddl-permissions.sql"
+  rls_files:
+    - "ddl/07-enable-rls.sql"
+    - "ddl/07b-enable-rls-phase2.sql"
+    - "ddl/07c-enable-rls-phase3.sql"
+
+  # Orden de carga de schemas (respeta dependencias cross-schema)
+  load_order:
+    - phase: 0
+      name: "Extensions"
+      description: "pgcrypto, uuid-ossp"
+      automatic: true
+
+    - phase: 1
+      name: "Prerequisites"
+      description: "Schemas, ENUMs base, funcion now_mexico()"
+      file: "ddl/00-prerequisites.sql"
+
+    - phase: 2
+      name: "gamilit (funciones compartidas)"
+      description: "Funciones utilitarias: update_updated_at, RLS helpers, etc."
+      path: "ddl/schemas/gamilit/"
+
+    - phase: 3
+      name: "auth"
+      description: "Schema de autenticacion base"
+      path: "ddl/schemas/auth/"
+
+    - phase: 4
+      name: "storage"
+      description: "Schema de storage"
+      path: "ddl/schemas/storage/"
+
+    - phase: 5
+      name: "auth_management"
+      description: "Perfiles, tenants, RBAC"
+      path: "ddl/schemas/auth_management/"
+
+    - phase: 6
+      name: "educational_content"
+      description: "Modulos y ejercicios educativos"
+      path: "ddl/schemas/educational_content/"
+
+    - phase: 6.5
+      name: "notifications"
+      description: "Debe cargar ANTES de gamification_system (triggers insertan en notifications)"
+      path: "ddl/schemas/notifications/"
+
+    - phase: 7
+      name: "gamification_system"
+      description: "XP, rangos maya, achievements, tienda"
+      path: "ddl/schemas/gamification_system/"
+
+    - phase: 8
+      name: "progress_tracking"
+      description: "Progreso de estudiantes y intentos"
+      path: "ddl/schemas/progress_tracking/"
+
+    - phase: 9
+      name: "social_features"
+      description: "Aulas, equipos, amistades"
+      path: "ddl/schemas/social_features/"
+
+    - phase: 9.5
+      name: "FK constraints diferidos"
+      description: "Resolucion de dependencias circulares auth_management"
+      path: "ddl/schemas/auth_management/fk-constraints/"
+
+    - phase: 9.6
+      name: "Vistas cross-schema"
+      description: "Vistas que dependen de social_features (teacher_pending_reviews)"
+      path: "ddl/schemas/progress_tracking/views/02-teacher_pending_reviews.sql"
+
+    - phase: 9.7
+      name: "Tablas cross-schema"
+      description: "classroom_modules (educational_content + social_features)"
+      path: "ddl/schemas/educational_content/tables/_cross_schema/"
+
+    - phase: 10
+      name: "content_management"
+      description: "Templates, media, moderacion"
+      path: "ddl/schemas/content_management/"
+
+    - phase: 10.5
+      name: "communication"
+      description: "Sistema de mensajeria"
+      path: "ddl/schemas/communication/"
+
+    - phase: 11
+      name: "audit_logging"
+      description: "Auditoria y logs"
+      path: "ddl/schemas/audit_logging/"
+
+    - phase: 12
+      name: "system_configuration"
+      description: "Settings, feature flags"
+      path: "ddl/schemas/system_configuration/"
+
+    - phase: 13
+      name: "admin_dashboard"
+      description: "Dashboard admin (opcional)"
+      path: "ddl/schemas/admin_dashboard/"
+
+    - phase: 14
+      name: "lti_integration"
+      description: "Learning Tools Interoperability"
+      path: "ddl/schemas/lti_integration/"
+
+    - phase: 15
+      name: "public (legacy)"
+      description: "Saltado - objetos legacy no necesarios"
+      skip: true
+
+    - phase: 15.5
+      name: "Post-DDL permissions"
+      file: "ddl/99-post-ddl-permissions.sql"
+
+    - phase: "15.6-15.8"
+      name: "Enable RLS phases 1-3"
+      description: "Habilitar RLS en todas las tablas"
+
+    - phase: 16
+      name: "Seeds PROD"
+      description: "Datos iniciales de produccion (38+ archivos)"
+      path: "seeds/prod/"
+
+    - phase: 17
+      name: "Validaciones post-seeds"
+      description: "Verificar module_progress y datos criticos"
+
+# =============================================================================
+# ESTADISTICAS (snapshot)
+# =============================================================================
+
+stats:
+  tables: 171
+  views: 13
+  materialized_views: 7
+  functions: 128
+  triggers: 49
+  rls_policies: 282
+  foreign_keys: 299
+  enums: 36
+  seed_files_prod: 38
+
+# =============================================================================
+# COMANDOS DE RECREACION
+# =============================================================================
+
+recreation:
+  # Comando unificado (recomendado)
+  wsl_command: >-
+    wsl -d Ubuntu-24.04 -u developer -- bash
+    '/mnt/c/Empresas/ISEM/workspace-arch/workspace-projects/scripts/database/unified-recreate-db.sh'
+    gamilit --drop
+
+  # Script local (alternativo)
+  local_script: "create-database.sh"
+  local_usage: "./create-database.sh 'postgresql://gamilit_user:PASSWORD@localhost:5432/gamilit_platform'"
+
+  # Drop y recrear (alternativo)
+  drop_recreate_script: "drop-and-recreate-database.sh"
+
+# =============================================================================
+# AMBIENTES
+# =============================================================================
+
+environments:
+  development:
+    host: localhost
+    port: 5432
+    database: gamilit_platform
+    wsl_distro: Ubuntu-24.04
+    wsl_user: developer
+
+  production:
+    host: 74.208.126.102
+    port: 5432
+    database: gamilit_platform
+    server: gamilit-prod
+    user: isem
+    services:
+      - pm2
+      - postgresql
+      - nginx
+
+# =============================================================================
+# NOTAS
+# =============================================================================
+# 1. Los schemas data_warehouse y optimization son placeholder y NO se cargan
+#    por defecto. Estan reservados para fases futuras de analytics avanzado.
+#
+# 2. El schema public se salta durante creacion de BD nuevas (legacy).
+#
+# 3. notifications DEBE cargarse antes de gamification_system porque triggers
+#    de gamificacion insertan directamente en notifications.notifications.
+#
+# 4. Las fases 9.5, 9.6, 9.7 resuelven dependencias circulares y cross-schema
+#    que no pueden cargarse en orden lineal simple.
+#
+# 5. Seeds de produccion incluyen 13 tenants de usuarios reales, 45 usuarios
+#    (22 demo + 13 prod + 10 adicionales), 5 modulos educativos, 23 ejercicios,
+#    30 achievements, y configuracion completa del sistema.
+#
+# 6. Credenciales de produccion NO van en este archivo. Consultar:
+#    workspace-arch/orchestration/inventarios/CREDENTIALS-INVENTORY.yml
+# =============================================================================

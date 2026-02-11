@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F3-ADMIN-EXTENDED"
+titulo: "Admin Extendido"
+proyecto: "gamilit"
+fase: "F3-extensiones"
+source_id: "EXT-002"
+story_points: 34
+estado: "EN_PROGRESO"
+prioridad: "P1"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-ADMIN-EXTENDED/EPIC.md"
+user_stories: 20
+requirements: 20
+specifications: 11
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-ADMIN-EXTENDED/user-stories/"
+stories_structure: "nested"
+tasks_total: 60
+fecha_actualizacion: "2026-02-09"

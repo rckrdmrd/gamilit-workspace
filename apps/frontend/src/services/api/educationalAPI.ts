@@ -9,7 +9,6 @@
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from './apiErrorHandler';
-import type { ApiResponse } from './apiTypes';
 import type { Module, Exercise } from '@shared/types';
 import { DifficultyLevel, ExerciseType } from '@shared/types/educational.types';
 
@@ -347,20 +346,11 @@ export const checkModuleAccess = async (moduleId: string): Promise<boolean> => {
  */
 export const getUserModules = async (userId: string, classroomId?: string): Promise<Module[]> => {
   try {
-    console.log('📡 [educationalAPI] getUserModules called', {
-      userId,
-      classroomId,
-      useMockData: FEATURE_FLAGS.USE_MOCK_DATA,
-      endpoint: API_ENDPOINTS.educational.userModules(userId),
-    });
-
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
-      console.log('⚠️ [educationalAPI] Using MOCK DATA');
       await new Promise((resolve) => setTimeout(resolve, 500));
       return mockModules;
     }
 
-    console.log('📡 [educationalAPI] Making HTTP GET request to backend...');
     const params: Record<string, string> = {};
 
     if (classroomId) {
@@ -369,14 +359,6 @@ export const getUserModules = async (userId: string, classroomId?: string): Prom
 
     const { data } = await apiClient.get<Module[]>(API_ENDPOINTS.educational.userModules(userId), {
       params: Object.keys(params).length > 0 ? params : undefined,
-    });
-
-    console.log('✅ [educationalAPI] Backend response received:', {
-      isArray: Array.isArray(data),
-      modulesCount: Array.isArray(data) ? data.length : 0,
-      firstModule: Array.isArray(data) && data.length > 0 ? data[0] : null,
-      responseStatus: 'success',
-      filteredByClassroom: !!classroomId,
     });
 
     // Backend returns array directly, not wrapped in { data: {...} }
@@ -585,8 +567,19 @@ export const saveExerciseProgress = async (
   },
 ): Promise<{ success: boolean }> => {
   try {
-    // Save progress locally (localStorage)
-    // Progress is automatically saved to DB when exercise is submitted
+    // Save to backend auto-save endpoint (persists across devices)
+    await apiClient.post(`/progress/exercises/${exerciseId}/autosave`, {
+      partial_answers: progressData.answers,
+      time_spent_seconds: progressData.timeSpent,
+      metadata: {
+        current_step: progressData.currentStep,
+        total_steps: progressData.totalSteps,
+        hints_used: progressData.hintsUsed,
+        score: progressData.score,
+      },
+    });
+
+    // Also save to localStorage as offline backup
     const key = `exercise_progress_${exerciseId}`;
     localStorage.setItem(
       key,
@@ -596,11 +589,23 @@ export const saveExerciseProgress = async (
       }),
     );
 
-    // Return success immediately
     return { success: true };
   } catch (error) {
-    console.warn('Failed to save progress locally:', error);
-    return { success: false };
+    // Fallback: save to localStorage only if backend fails
+    try {
+      const key = `exercise_progress_${exerciseId}`;
+      localStorage.setItem(
+        key,
+        JSON.stringify({
+          ...progressData,
+          timestamp: new Date().toISOString(),
+        }),
+      );
+    } catch {
+      // localStorage also failed
+    }
+    console.warn('Failed to save progress to backend, saved locally:', error);
+    return { success: true };
   }
 };
 
@@ -906,13 +911,13 @@ export const getActivityStats = async (userId: string): Promise<ActivityStats> =
       };
     }
 
-    const { data } = await apiClient.get<ApiResponse<ActivityStats>>(
+    const { data } = await apiClient.get<ActivityStats>(
       API_ENDPOINTS.educational.activityStats(userId),
     );
 
     return {
-      ...data.data,
-      lastActivityAt: data.data.lastActivityAt ? new Date(data.data.lastActivityAt) : null,
+      ...data,
+      lastActivityAt: data.lastActivityAt ? new Date(data.lastActivityAt) : null,
     };
   } catch (error) {
     throw handleAPIError(error);

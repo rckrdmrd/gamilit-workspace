@@ -7,7 +7,9 @@
 -- Created: 2025-11-08
 -- =====================================================================================
 
-CREATE TABLE IF NOT EXISTS lti_integration.lti_grade_passbacks (
+DROP TABLE IF EXISTS lti_integration.lti_grade_passbacks CASCADE;
+
+CREATE TABLE lti_integration.lti_grade_passbacks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Relaciones

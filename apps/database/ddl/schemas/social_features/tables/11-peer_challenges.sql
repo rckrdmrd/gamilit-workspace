@@ -6,7 +6,9 @@
 -- Created: 2025-11-08
 -- =====================================================================================
 
-CREATE TABLE IF NOT EXISTS social_features.peer_challenges (
+DROP TABLE IF EXISTS social_features.peer_challenges CASCADE;
+
+CREATE TABLE social_features.peer_challenges (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Tipo de desafío

@@ -4,6 +4,8 @@
 -- CREADO: 2025-11-08
 -- ACTUALIZADO: 2026-02-03 - Pluralización de nombre (NOM-TBL)
 
+DROP TABLE IF EXISTS system_configuration.api_configurations CASCADE;
+
 CREATE TABLE system_configuration.api_configurations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     service_name VARCHAR(100) NOT NULL UNIQUE,

@@ -1260,23 +1260,23 @@ phase_1_rf_traceability:
         - rf_id: RF-ETC-001
           title: "Consolidacion APIs Frontend"
           status: IMPLEMENTED
-          user_stories: [HU-ETC-001]
+          user_stories: [US-ETC-001]
         - rf_id: RF-ETC-002
           title: "Limpieza Backend"
           status: IMPLEMENTED
-          user_stories: [HU-ETC-002]
+          user_stories: [US-ETC-002]
         - rf_id: RF-ETC-003
           title: "Alineacion Entities"
           status: IMPLEMENTED
-          user_stories: [HU-ETC-003]
+          user_stories: [US-ETC-003]
         - rf_id: RF-ETC-004
           title: "Validacion Integracion"
           status: IMPLEMENTED
-          user_stories: [HU-ETC-004]
+          user_stories: [US-ETC-004]
         - rf_id: RF-ETC-005
           title: "Documentacion Tecnica"
           status: IMPLEMENTED
-          user_stories: [HU-ETC-005]
+          user_stories: [US-ETC-005]
 
     # Notifications (3 RF) - EXT-003
     notifications:

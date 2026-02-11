@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mic, Square, FileAudio, AlertCircle } from 'lucide-react';
 import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
@@ -8,7 +8,8 @@ import { fetchPodcastExercise, analyzeRecording } from './podcastArgumentativoAP
 import type { PodcastExercise, Recording } from './podcastArgumentativoTypes';
 import type { ArgumentAnalysis } from '../../shared/aiTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 import { useAudioRecorder } from '@/shared/hooks/useAudioRecorder';
@@ -36,6 +37,10 @@ interface ExerciseProps {
   onProgressUpdate?: (data: ExerciseProgressData) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+  }>;
 }
 
 interface ExerciseState {
@@ -51,6 +56,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
   onExit,
   onProgressUpdate,
   initialData,
+  actionsRef,
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
@@ -84,7 +90,8 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
     isListening,
     error: speechError,
     confidence: speechConfidence,
-  } = useSpeechToText({ language: 'es-MX', continuous: true, interimResults: true });
+  } = useSpeechToText({ language: 'es-MX', continuous: true, interimResults: true });  const { submitAsync } = useExerciseSubmission(exerciseId);
+
 
   const [exercise, setExercise] = useState<PodcastExercise | null>(null);
   const [recording, setRecording] = useState<Recording>({
@@ -104,7 +111,6 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
   const [scriptText, setScriptText] = useState('');
   const [selectedTopic, setSelectedTopic] = useState<{ id: string; text: string } | null>(null);
   const [feedback, setFeedback] = useState<any>(null);
-  const actionsRef = useRef<any>(null);
 
   useEffect(() => {
     loadExercise();
@@ -293,7 +299,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       };
 
       // Enviar al backend
-      const response = await submitExercise(exercise?.id || exerciseId, user.id, answers);
+      const response = await submitAsync(answers);
 
       // CORRECCION-001: Verificar si requiere revision manual del maestro
       if (response.status === 'pending_review' || response.status === 'submitted' || response.requiresManualReview) {
@@ -380,7 +386,6 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       actionsRef.current = {
         handleReset,
         handleCheck: handleComplete,
-        getState: () => ({ recording, currentScore, analysis }),
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -405,7 +410,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center gap-3">
               <FileAudio className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">Podcast Argumentativo</h2>
@@ -445,12 +450,12 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
 
             {/* Unsupported Browser */}
             {isSecureContext && !isSupported && (
-              <div className="mb-6 rounded-lg border-2 border-red-200 bg-red-50 p-4">
+              <div className="mb-6 rounded-lg border-2 border-detective-danger/20 bg-detective-danger/10 p-4">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="h-6 w-6 flex-shrink-0 text-red-600" />
+                  <AlertCircle className="h-6 w-6 flex-shrink-0 text-detective-danger" />
                   <div>
                     <h4 className="mb-1 font-semibold text-red-900">Navegador No Soportado</h4>
-                    <p className="text-sm text-red-700">
+                    <p className="text-sm text-detective-danger">
                       Tu navegador no soporta grabación de audio. Por favor usa Chrome, Firefox o
                       Edge actualizado.
                     </p>
@@ -488,12 +493,12 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
 
             {/* Recorder Error */}
             {recorderError && (
-              <div className="mb-6 rounded-lg border-2 border-red-200 bg-red-50 p-4">
+              <div className="mb-6 rounded-lg border-2 border-detective-danger/20 bg-detective-danger/10 p-4">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="h-6 w-6 flex-shrink-0 text-red-600" />
+                  <AlertCircle className="h-6 w-6 flex-shrink-0 text-detective-danger" />
                   <div>
                     <h4 className="mb-1 font-semibold text-red-900">{recorderError.message}</h4>
-                    <p className="text-sm text-red-700">{recorderError.userAction}</p>
+                    <p className="text-sm text-detective-danger">{recorderError.userAction}</p>
                   </div>
                 </div>
               </div>
@@ -548,10 +553,10 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
                 </h4>
                 <p className="min-h-[3rem] text-detective-sm text-detective-text">
                   {speechTranscript || interimTranscript || (
-                    <span className="italic text-gray-400">Esperando audio...</span>
+                    <span className="italic text-detective-text-secondary">Esperando audio...</span>
                   )}
                   {interimTranscript && speechTranscript && (
-                    <span className="text-gray-400"> {interimTranscript}</span>
+                    <span className="text-detective-text-secondary"> {interimTranscript}</span>
                   )}
                 </p>
                 {speechError && (
@@ -599,7 +604,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
               <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
                 Transcripción
               </h3>
-              <p className="rounded-lg bg-gray-50 p-4 text-detective-sm leading-relaxed text-detective-text">
+              <p className="rounded-lg bg-detective-bg p-4 text-detective-sm leading-relaxed text-detective-text">
                 {recording.transcription}
               </p>
             </div>
@@ -617,7 +622,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
                 <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
                   {[
                     { label: 'Claridad', value: analysis.clarity, color: 'text-blue-600' },
-                    { label: 'Lógica', value: analysis.logic, color: 'text-green-600' },
+                    { label: 'Lógica', value: analysis.logic, color: 'text-detective-success' },
                     { label: 'Evidencia', value: analysis.evidence, color: 'text-orange-600' },
                     { label: 'Persuasión', value: analysis.persuasion, color: 'text-purple-600' },
                   ].map((metric) => (
@@ -638,7 +643,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
                   <ul className="space-y-1">
                     {analysis.feedback.map((f, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-detective-sm">
-                        <span className="text-green-600">✓</span>
+                        <span className="text-detective-success">✓</span>
                         <span>{f}</span>
                       </li>
                     ))}

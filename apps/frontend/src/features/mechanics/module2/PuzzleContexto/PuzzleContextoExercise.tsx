@@ -8,7 +8,8 @@ import { RankUpModal } from '@/features/gamification/ranks/components/RankUpModa
 import type { PuzzleContextoExerciseProps, Fragment } from './puzzleContextoTypes';
 import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mockPuzzleData } from './puzzleContextoMockData';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -22,6 +23,8 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
   const [_isSubmitting, setIsSubmitting] = useState(false);
 
   // Shuffle fragments initially
@@ -130,7 +133,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
       });
 
       // Submit to backend API
-      const response = await submitExercise(exercise.id, user.id, { questions: userAnswers });
+      const response = await submitAsync({ questions: userAnswers });
 
       if (response.rankUp) {
         setRankUpData(response.rankUp);
@@ -248,8 +251,8 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
             )}
             {exercise.description && (
               <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
-                <p className="text-detective-sm font-medium text-gray-900">Objetivo:</p>
-                <p className="text-detective-base text-gray-900">{exercise.description}</p>
+                <p className="text-detective-sm font-medium text-detective-text">Objetivo:</p>
+                <p className="text-detective-base text-detective-text">{exercise.description}</p>
               </div>
             )}
           </div>
@@ -288,7 +291,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
                       index,
                     )} ${!showResults ? 'cursor-move' : 'cursor-default'}`}
                   >
-                    {!showResults && <GripVertical className="h-5 w-5 text-gray-400" />}
+                    {!showResults && <GripVertical className="h-5 w-5 text-detective-text-secondary" />}
                     <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-detective-orange/20 text-detective-sm font-bold text-detective-orange">
                       {fragment.label}
                     </span>
@@ -317,10 +320,10 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
           {/* Correct Inference (after validation) */}
           {showResults && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <h3 className="mb-3 text-detective-lg font-semibold text-green-600">
+              <h3 className="mb-3 text-detective-lg font-semibold text-detective-success">
                 Inferencia Correcta
               </h3>
-              <div className="rounded-detective border-2 border-green-200 bg-green-50 p-6">
+              <div className="rounded-detective border-2 border-detective-success/20 bg-detective-success/10 p-6">
                 <p className="text-detective-base font-medium leading-relaxed text-detective-text">
                   "{exercise.completeInference}"
                 </p>
@@ -329,7 +332,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
           )}
 
           {/* Action Buttons */}
-          <div className="flex justify-center gap-4 border-t border-gray-200 pt-6">
+          <div className="flex justify-center gap-4 border-t border-detective-border pt-6">
             {onExit && (
               <DetectiveButton variant="secondary" size="md" onClick={onExit}>
                 Salir

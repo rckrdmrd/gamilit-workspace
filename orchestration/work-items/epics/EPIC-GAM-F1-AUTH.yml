@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F1-AUTH"
+titulo: "Autenticacion y Fundamentos"
+proyecto: "gamilit"
+fase: "F1-alcance-inicial"
+source_id: "EAI-001"
+story_points: 34
+estado: "COMPLETADO"
+prioridad: "P1"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-AUTH/EPIC.md"
+user_stories: 8
+requirements: 9
+specifications: 8
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F1-AUTH/user-stories/"
+stories_structure: "nested"
+tasks_total: 70
+fecha_actualizacion: "2026-02-09"

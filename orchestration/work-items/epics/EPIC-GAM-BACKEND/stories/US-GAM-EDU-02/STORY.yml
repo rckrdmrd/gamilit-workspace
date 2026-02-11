@@ -1,0 +1,65 @@
+id: "US-GAM-EDU-02"
+titulo: "23 Tipos de Ejercicios Interactivos"
+epic_id: "EPIC-GAM-BACKEND"
+epic_secondary:
+  - "EPIC-GAM-FRONTEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P0"
+story_points: 13
+sprint: "Completado"
+modulos:
+  - "exercises"
+  - "content"
+  - "gamification"
+traceability:
+  requirements:
+    - "RF-GAM-006"
+    - "RF-GAM-007"
+    - "RF-GAM-008"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/exercises/"
+        - "apps/backend/src/modules/content/"
+        - "apps/backend/src/modules/gamification/"
+      endpoints:
+        - "GET /api/v1/exercises"
+        - "GET /api/v1/exercises/:id"
+        - "POST /api/v1/exercises/:id/submit"
+        - "GET /api/v1/exercises/:id/evaluate"
+        - "GET /api/v1/exercises/:id/attempts"
+        - "POST /api/v1/exercises/:id/feedback"
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/exercises/"
+      pages: []
+      components:
+        - "ExerciseEngine"
+        - "23 exercise-type components"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/exercises/"
+        - "apps/database/ddl/schemas/content/"
+        - "apps/database/ddl/schemas/gamification/"
+      tables:
+        - "exercises"
+        - "exercise_types"
+        - "exercise_attempts"
+        - "exercise_results"
+        - "exercise_feedback"
+        - "exercise_config"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-EDU-01"
+    - "US-GAM-GAM-01"
+    - "US-GAM-TCH-01"
+  blocks: []
+tasks: []

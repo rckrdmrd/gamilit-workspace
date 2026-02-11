@@ -1,0 +1,17 @@
+id: "EPIC-GAM-F1-PORTAL-ADMIN"
+titulo: "Portal Administrador"
+proyecto: "gamilit"
+fase: "F1-alcance-inicial"
+source_id: "EAI-008"
+story_points: 78
+estado: "COMPLETADO"
+prioridad: "P1"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-PORTAL-ADMIN/EPIC.md"
+user_stories: 0
+requirements: 0
+specifications: 0
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_structure: "empty"
+tasks_total: 0
+fecha_actualizacion: "2026-02-09"

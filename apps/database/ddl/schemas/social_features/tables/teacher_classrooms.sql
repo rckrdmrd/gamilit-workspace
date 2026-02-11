@@ -4,6 +4,8 @@
 -- CREADO: 2025-11-08
 -- Epic: EXT-001
 
+DROP TABLE IF EXISTS social_features.teacher_classrooms CASCADE;
+
 CREATE TABLE social_features.teacher_classrooms (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     -- FK corregida: auth.users -> auth_management.profiles (ISS-002 P1 - 2025-11-26)

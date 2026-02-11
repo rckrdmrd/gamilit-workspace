@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F3-REPORTS"
+titulo: "Reportes"
+proyecto: "gamilit"
+fase: "F3-extensiones"
+source_id: "EXT-005"
+story_points: 8
+estado: "PLANIFICADO"
+prioridad: "P3"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-REPORTS/EPIC.md"
+user_stories: 5
+requirements: 6
+specifications: 4
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-REPORTS/user-stories/"
+stories_structure: "nested"
+tasks_total: 15
+fecha_actualizacion: "2026-02-09"

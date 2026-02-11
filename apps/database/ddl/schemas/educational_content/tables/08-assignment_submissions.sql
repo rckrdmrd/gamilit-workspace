@@ -4,6 +4,8 @@
 -- MOVIDO desde public.assignment_submissions (2025-11-08)
 -- CORREGIDO (2025-11-29): FKs student_id y graded_by → auth_management.profiles (ARCH-015-FIX)
 
+DROP TABLE IF EXISTS educational_content.assignment_submissions CASCADE;
+
 CREATE TABLE educational_content.assignment_submissions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     assignment_id UUID NOT NULL REFERENCES educational_content.assignments(id) ON DELETE CASCADE,

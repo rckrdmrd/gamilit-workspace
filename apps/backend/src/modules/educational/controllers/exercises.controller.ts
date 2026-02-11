@@ -1041,7 +1041,7 @@ export class ExercisesController {
           bonuses: [],
         },
         rankUp: null,
-        feedback: 'Submission sent for teacher review',
+        feedback: { overall: 'Submission sent for teacher review', answerReview: [] },
         // Campos para revisión manual (requeridos por el frontend)
         status: 'submitted' as const,
         requiresManualReview: true,
@@ -1092,7 +1092,7 @@ export class ExercisesController {
     }
 
     // 6.4. Crear attempt (trigger actualiza user_stats)
-    await this.exerciseAttemptService.create({
+    const savedAttempt = await this.exerciseAttemptService.create({
       user_id: profileId,
       exercise_id: exerciseId,
       submitted_answers: normalized.answers,
@@ -1106,17 +1106,41 @@ export class ExercisesController {
     });
 
     // ========================================
-    // 7. RESPUESTA
+    // 7. RESPUESTA ENRIQUECIDA
     // ========================================
+
+    // Extract per-question details from SQL validation result
+    const details = validationData.details || {};
+    const correctAnswersCount = details.correct_questions ?? details.correct_count ?? 0;
+    const totalQuestions = details.total_questions ?? details.total_count ?? 0;
+
+    // Build answer review array from SQL results_per_question
+    const resultsPerQuestion = details.results_per_question || details.results || [];
+    const answerReview = Array.isArray(resultsPerQuestion)
+      ? resultsPerQuestion.map((r: any) => ({
+          questionId: r.question_id || r.id || '',
+          isCorrect: r.is_correct ?? false,
+          userAnswer: r.user_answer ?? r.submitted ?? '',
+          correctAnswer: r.correct_answer ?? r.expected ?? undefined,
+          explanation: r.explanation ?? undefined,
+        }))
+      : [];
+
     return {
+      attemptId: savedAttempt.id,
       score: score,
       isPerfect: score === 100 && normalized.hintsUsed === 0,
+      correctAnswersCount,
+      totalQuestions,
       rewards: {
         xp: xpEarned,
         mlCoins: mlCoinsEarned,
         bonuses: [],
       },
-      feedback: feedback,
+      feedback: {
+        overall: feedback,
+        answerReview,
+      },
       isFirstCorrectAttempt: isFirstCorrectAttempt,
       rankUp: null, // TODO: Detectar rank up desde user_stats
     };

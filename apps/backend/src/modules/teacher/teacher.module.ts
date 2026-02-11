@@ -37,6 +37,8 @@ import { UserAchievement } from '@modules/gamification/entities/user-achievement
 // Content entities
 import { Assignment } from '@modules/assignments/entities/assignment.entity';
 import { AssignmentSubmission } from '@modules/assignments/entities/assignment-submission.entity';
+import { AssignmentExercise } from '@modules/assignments/entities/assignment-exercise.entity';
+import { AssignmentClassroom } from '@modules/social/entities/assignment-classroom.entity';
 
 // Teacher entities
 import { StudentInterventionAlert } from './entities/student-intervention-alert.entity';
@@ -57,6 +59,7 @@ import { TeacherContentController } from './controllers/teacher-content.controll
 import { ExerciseResponsesController } from './controllers/exercise-responses.controller';
 import { ManualReviewController } from './controllers/manual-review.controller';
 import { AlertConfigController } from './controllers/alert-config.controller'; // US-PM-007
+import { TeacherAssignmentsController } from './controllers/teacher-assignments.controller';
 
 // Services
 import {
@@ -79,6 +82,7 @@ import {
   SharedReportsService,
   // TASK-2026-01-18-009: Removed RubricScoringService (orphan code)
   AlertConfigService, // US-PM-007
+  TeacherAssignmentsService,
 } from './services';
 import { TeacherMessagesService } from './services/teacher-messages.service';
 import { ManualReviewService } from './services/manual-review.service';
@@ -160,8 +164,9 @@ import { MailModule } from '@modules/mail/mail.module';
 
     // Entities from 'social' datasource
     // TASK-2026-01-18-015 Sprint 5: Added ScheduledReport, SharedReport
+    // TeacherAssignmentsController: Added AssignmentClassroom
     TypeOrmModule.forFeature(
-      [ClassroomMember, TeacherClassroom, Classroom, TeacherReport, ScheduledReport, SharedReport],
+      [ClassroomMember, TeacherClassroom, Classroom, TeacherReport, ScheduledReport, SharedReport, AssignmentClassroom],
       'social',
     ),
 
@@ -183,7 +188,8 @@ import { MailModule } from '@modules/mail/mail.module';
     // Entities from 'educational' datasource (schema: educational_content)
     // CORRECTED (2025-12-18): Cambiado de 'content' a 'educational'
     // Assignment, AssignmentSubmission y TeacherContent pertenecen a educational_content schema
-    TypeOrmModule.forFeature([Assignment, AssignmentSubmission, TeacherContent], 'educational'),
+    // TeacherAssignmentsController: Added AssignmentExercise
+    TypeOrmModule.forFeature([Assignment, AssignmentSubmission, AssignmentExercise, TeacherContent], 'educational'),
 
     // Entities from 'progress' datasource (teacher entities)
     TypeOrmModule.forFeature([StudentInterventionAlert], 'progress'),
@@ -201,6 +207,7 @@ import { MailModule } from '@modules/mail/mail.module';
     ExerciseResponsesController,
     ManualReviewController,
     AlertConfigController, // US-PM-007
+    TeacherAssignmentsController,
   ],
   providers: [
     // Core services
@@ -225,6 +232,7 @@ import { MailModule } from '@modules/mail/mail.module';
     SharedReportsService,
     // US-PM-007: Alert configuration service
     AlertConfigService,
+    TeacherAssignmentsService,
     // TASK-2026-01-18-009: Removed RubricScoringService (orphan code - never injected)
 
     // Guards

@@ -1,0 +1,18 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# REDIRECT STUB - _INDEX.yml (ROOT)
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Este archivo es un REDIRECT STUB.
+# El indice real esta en: orchestration/_INDEX.yml
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "2.0.0"
+tipo: "REDIRECT_STUB"
+redirect_to: "orchestration/_INDEX.yml"
+
+nota: |
+  Este archivo redirige al indice real de orquestacion.
+
+  Para consultar el indice completo del proyecto, ver:
+  orchestration/_INDEX.yml

@@ -1,0 +1,57 @@
+id: "US-GAM-INT-02"
+titulo: "Real-Time Pipeline Integration"
+epic_id: "EPIC-GAM-INTEGRATION"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 2
+sprint: "Backlog"
+modulos:
+  - "gamification"
+  - "leaderboard"
+  - "notifications"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/gamification/"
+        - "apps/backend/src/modules/leaderboard/"
+        - "apps/backend/src/modules/notifications/"
+      endpoints:
+        - "WebSocket /exercises"
+        - "WebSocket /gamification"
+        - "WebSocket /notifications"
+      files:
+        - "gamification.gateway.ts"
+        - "leaderboard.gateway.ts"
+        - "notifications.gateway.ts"
+    frontend:
+      paths:
+        - "apps/frontend/src/hooks/useSocket/"
+        - "apps/frontend/src/services/socket/"
+      pages: []
+      components:
+        - "useSocket hook"
+        - "NotificationCenter"
+        - "LeaderboardLive"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/gamification/"
+        - "apps/database/ddl/schemas/leaderboard/"
+        - "apps/database/ddl/schemas/notifications/"
+      tables:
+        - "gamification.xp_transactions"
+        - "leaderboard.rankings"
+        - "notifications.events"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-DB-01"
+  blocks: []
+tasks: []

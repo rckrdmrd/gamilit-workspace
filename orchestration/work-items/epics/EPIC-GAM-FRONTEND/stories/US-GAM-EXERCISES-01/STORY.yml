@@ -1,0 +1,38 @@
+id: "US-GAM-EXERCISES-01"
+titulo: "Completar Ejercicio de Comprension Literal"
+epic_id: "EPIC-GAM-FRONTEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 5
+sprint: "Backlog"
+modulos:
+  - "exercises"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/exercises/"
+      endpoints:
+        - "POST /exercises/:id/submit"
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/exercises/"
+      pages: []
+      components: []
+    database:
+      paths:
+        - "apps/database/ddl/schemas/exercises/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks: []
+tasks: []

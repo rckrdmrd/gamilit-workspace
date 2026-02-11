@@ -1,7 +1,11 @@
 /**
- * AI Service - Mock implementation of AI/ML backend services
- * All functions simulate async API calls with realistic delays
+ * AI Service - AI/ML backend services
+ * Currently uses mock responses. Set USE_REAL_AI = true when backend AI is ready.
+ * Real API endpoints defined in ./api/aiServiceAPI.ts
  */
+
+// TODO: Set to true when AI backend endpoints are ready
+export const USE_REAL_AI = false;
 
 import type {
   AIAnalysisRequest,

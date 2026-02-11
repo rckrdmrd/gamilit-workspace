@@ -3,6 +3,8 @@
 -- Descripción: Tareas/asignaciones creadas por profesores
 -- MOVIDO desde public.assignments (2025-11-08)
 
+DROP TABLE IF EXISTS educational_content.assignments CASCADE;
+
 CREATE TABLE educational_content.assignments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     -- FK corregida: auth.users -> auth_management.profiles (ISS-003 P2 - 2025-11-26)

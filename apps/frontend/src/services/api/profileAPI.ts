@@ -203,10 +203,10 @@ export const profileAPI = {
    * @param data - Profile data to update
    * @returns Updated profile data (camelCase)
    */
-  updateProfile: async (userId: string, data: UpdateProfileDto): Promise<ProfileUpdate> => {
+  updateProfile: async (_userId: string, data: UpdateProfileDto): Promise<ProfileUpdate> => {
     try {
       const response = await apiClient.put<BackendProfileUpdateResponse>(
-        `/users/${userId}/profile`,
+        `/users/profile`,
         data,
       );
       return mapProfileUpdateResponse(response.data);
@@ -237,12 +237,12 @@ export const profileAPI = {
    * @returns Updated preferences data (camelCase)
    */
   updatePreferences: async (
-    userId: string,
+    _userId: string,
     preferences: UpdatePreferencesDto,
   ): Promise<PreferencesUpdate> => {
     try {
       const response = await apiClient.put<BackendPreferencesUpdateResponse>(
-        `/users/${userId}/preferences`,
+        `/users/preferences`,
         { preferences },
       );
       return mapPreferencesUpdateResponse(response.data);
@@ -258,13 +258,13 @@ export const profileAPI = {
    * @param file - Avatar image file
    * @returns Avatar URL (camelCase)
    */
-  uploadAvatar: async (userId: string, file: File): Promise<AvatarUpload> => {
+  uploadAvatar: async (_userId: string, file: File): Promise<AvatarUpload> => {
     try {
       const formData = new FormData();
       formData.append('avatar', file);
 
       const response = await apiClient.post<BackendAvatarUploadResponse>(
-        `/users/${userId}/avatar`,
+        `/users/avatar`,
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } },
       );

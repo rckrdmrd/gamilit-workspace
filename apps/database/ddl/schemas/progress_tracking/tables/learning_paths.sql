@@ -3,6 +3,8 @@
 -- Descripción: Rutas de aprendizaje (secuencias de módulos)
 -- CREADO: 2025-11-08
 
+DROP TABLE IF EXISTS progress_tracking.learning_paths CASCADE;
+
 CREATE TABLE progress_tracking.learning_paths (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,

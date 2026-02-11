@@ -1,0 +1,66 @@
+# SPRINT-MAPPING.yml — Vista de qué stories están en qué sprint
+epic_id: "EPIC-GAM-BACKEND"
+fecha_actualizacion: "2026-02-07"
+
+sprints:
+  SPRINT-ARCH-PRE-2026:
+    stories:
+      - id: "US-GAM-ANALYTICS-01"
+        status: "COMPLETADO"
+        sp: 5
+      - id: "US-GAM-ANL-01"
+        status: "COMPLETADO"
+        sp: 13
+      - id: "US-GAM-CLASSROOM-01"
+        status: "COMPLETADO"
+        sp: 5
+      - id: "US-GAM-CONTENT-01"
+        status: "COMPLETADO"
+        sp: 5
+      - id: "US-GAM-EDU-01"
+        status: "COMPLETADO"
+        sp: 21
+      - id: "US-GAM-EDU-02"
+        status: "COMPLETADO"
+        sp: 13
+      - id: "US-GAM-GAM-01"
+        status: "COMPLETADO"
+        sp: 13
+      - id: "US-GAM-GAM-02"
+        status: "COMPLETADO"
+        sp: 8
+      - id: "US-GAM-GAMIFICATION-01"
+        status: "COMPLETADO"
+        sp: 5
+      - id: "US-GAM-GAMIFICATION-02"
+        status: "COMPLETADO"
+        sp: 5
+      - id: "US-GAM-GAMIFICATION-03"
+        status: "COMPLETADO"
+        sp: 5
+      - id: "US-GAM-RT-01"
+        status: "COMPLETADO"
+        sp: 13
+      - id: "US-GAM-TEACHER-01"
+        status: "COMPLETADO"
+        sp: 5
+      - id: "US-GAM-AUTH-01"
+        status: "COMPLETADO"
+        sp: 5
+      - id: "US-GAM-NTF-01"
+        status: "COMPLETADO"
+        sp: 3
+      - id: "US-GAM-ACH-01"
+        status: "COMPLETADO"
+        sp: 3
+      - id: "US-GAM-RPT-01"
+        status: "COMPLETADO"
+        sp: 3
+      - id: "US-GAM-TNT-01"
+        status: "COMPLETADO"
+        sp: 3
+  SPRINT-ACTUAL:
+    stories:
+      - id: "US-GAM-MUL-01"
+        status: "EN_PROGRESO"
+        sp: 13

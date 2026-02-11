@@ -1,0 +1,54 @@
+id: "EPIC-GAM-DATABASE"
+titulo: "Esquema BD Gamilit"
+proyecto: "gamilit"
+version: "3.0.0"
+fecha_creacion: "2025-09-01"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 21
+wave: "wave_3"
+descripcion: |
+  Implementacion completa del esquema de base de datos: 18 schemas, 171 tablas,
+  282 RLS policies, 128 funciones, 49 triggers, 36 ENUMs, 13 views, 7 MVs.
+entregables:
+  - "18 schemas creados con tablas"
+  - "171 tablas con DDL completo"
+  - "282 RLS policies para multi-tenancy"
+  - "128 funciones SQL"
+  - "49 triggers"
+  - "36 ENUMs sincronizados"
+  - "13 views + 7 materialized views"
+  - "299 foreign keys"
+  - "Seeds de datos de prueba"
+  - "Script de recreacion (unified-recreate-db.sh)"
+stories:
+  - id: "US-GAM-DB-01"
+    titulo: "Schema Design and Multi-Tenancy RLS"
+    status: "COMPLETADO"
+    story_points: 8
+  - id: "US-GAM-DB-02"
+    titulo: "DDL Functions, Triggers and Materialized Views"
+    status: "COMPLETADO"
+    story_points: 5
+  - id: "US-GAM-DB-03"
+    titulo: "Seed Data and Database Recreation"
+    status: "COMPLETADO"
+    story_points: 3
+traceability:
+  requirements: []
+  components:
+    backend: []
+    frontend: []
+    database:
+      - "18 schemas"
+      - "171 tablas"
+      - "282 RLS policies"
+  dependencies:
+    depends_on:
+      - "EPIC-GAM-ARCHITECTURE"
+    blocks: []
+metricas:
+  total_stories: 3
+  stories_completadas: 3
+  porcentaje_avance: 100

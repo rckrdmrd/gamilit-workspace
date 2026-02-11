@@ -98,7 +98,7 @@ export const ArticleParser: React.FC<ArticleParserProps> = ({
 
   return (
     <div className="bg-white rounded-detective shadow-card p-6 space-y-4">
-      <div className="flex items-start gap-3 border-b border-gray-200 pb-4">
+      <div className="flex items-start gap-3 border-b border-detective-border pb-4">
         <FileText className="w-6 h-6 text-detective-orange flex-shrink-0 mt-1" />
         <div className="flex-1">
           <h2 className="text-2xl font-bold text-detective-text mb-2">{article.title}</h2>

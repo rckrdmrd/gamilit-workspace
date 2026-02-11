@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F3-CONTENT"
+titulo: "Contenido"
+proyecto: "gamilit"
+fase: "F3-extensiones"
+source_id: "EXT-006"
+story_points: 8
+estado: "PLANIFICADO"
+prioridad: "P3"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-CONTENT/EPIC.md"
+user_stories: 5
+requirements: 6
+specifications: 3
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-CONTENT/user-stories/"
+stories_structure: "nested"
+tasks_total: 15
+fecha_actualizacion: "2026-02-09"

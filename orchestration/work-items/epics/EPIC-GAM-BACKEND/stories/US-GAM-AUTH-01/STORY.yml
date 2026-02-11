@@ -1,0 +1,71 @@
+id: "US-GAM-AUTH-01"
+titulo: "Authentication System and Multi-Tenant Access"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 5
+sprint: "Backlog"
+modulos:
+  - "auth"
+  - "users"
+  - "tenants"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/auth/"
+        - "apps/backend/src/modules/users/"
+        - "apps/backend/src/modules/tenants/"
+      endpoints:
+        - "POST /auth/login"
+        - "POST /auth/refresh"
+        - "POST /auth/logout"
+        - "GET /auth/me"
+        - "POST /auth/register"
+      files:
+        - "auth.module.ts"
+        - "auth.service.ts"
+        - "auth.controller.ts"
+        - "jwt.strategy.ts"
+        - "roles.guard.ts"
+        - "tenant.guard.ts"
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/auth/"
+      pages:
+        - "LoginPage"
+        - "RegisterPage"
+      components:
+        - "AuthProvider"
+        - "useAuth hook"
+        - "ProtectedRoute"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/auth/"
+        - "apps/database/ddl/schemas/tenants/"
+      tables:
+        - "auth.users"
+        - "auth.sessions"
+        - "auth.refresh_tokens"
+        - "tenants.organizations"
+  tests:
+    unit:
+      - "auth.service.spec.ts"
+      - "auth.controller.spec.ts"
+      - "jwt.strategy.spec.ts"
+      - "roles.guard.spec.ts"
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-DB-01"
+  blocks:
+    - "US-GAM-NTF-01"
+    - "US-GAM-ACH-01"
+    - "US-GAM-RPT-01"
+    - "US-GAM-TNT-01"
+tasks: []

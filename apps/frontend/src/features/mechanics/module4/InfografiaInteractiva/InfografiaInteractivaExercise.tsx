@@ -474,7 +474,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
     <>
       <DetectiveCard variant="default" padding="lg" className="mb-6">
         {/* Header */}
-        <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+        <div className="mb-6 rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
           <div className="mb-4 flex items-center gap-3">
             <BarChart3 className="h-8 w-8" />
             <h2 className="text-detective-2xl font-bold">

@@ -10,7 +10,7 @@ SET search_path TO auth_management, public;
 
 DROP TABLE IF EXISTS auth_management.user_preferences CASCADE;
 
-CREATE TABLE IF NOT EXISTS auth_management.user_preferences (
+CREATE TABLE auth_management.user_preferences (
     user_id UUID PRIMARY KEY REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     theme VARCHAR(20) DEFAULT 'light',
     language VARCHAR(10) DEFAULT 'es',

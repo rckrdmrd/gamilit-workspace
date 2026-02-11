@@ -10,6 +10,8 @@
 -- - Unidirectional: user A blocking user B doesn't affect user B blocking user A
 -- =====================================================
 
+DROP TABLE IF EXISTS social_features.user_blocks CASCADE;
+
 CREATE TABLE social_features.user_blocks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     blocker_id UUID NOT NULL,

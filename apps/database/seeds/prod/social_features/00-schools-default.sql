@@ -161,7 +161,7 @@ DECLARE
 BEGIN
     SELECT id, name, code INTO v_school
     FROM social_features.schools
-    WHERE code = 'GAMILIT-DEFAULT' OR code = 'SYSTEM-UNASSIGNED';
+    WHERE code = 'GAMILIT-DEFAULT';
 
     IF v_school.id IS NOT NULL THEN
         RAISE NOTICE '========================================';

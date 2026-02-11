@@ -6,7 +6,8 @@ import { VerdaderoFalsoStatement, VerdaderoFalsoExerciseProps } from './verdader
 import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { CheckCircle, XCircle } from 'lucide-react';
 // CORRECCION-004: Migrar a progressAPI (API unificada)
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -18,6 +19,8 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
 }) => {
   const { user } = useAuth(); // Get authenticated user
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
   const [statements, setStatements] = useState<VerdaderoFalsoStatement[]>(
     exercise.statements.map((stmt) => ({ ...stmt, userAnswer: null })),
   );
@@ -129,7 +132,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
       });
 
       // CORRECCION-004: Submit to progressAPI (API unificada)
-      const response = await submitExercise(exercise.id, user.id, answersObj);
+      const response = await submitAsync(answersObj);
 
       // CORRECCION-004: Usar correctAnswersCount (progressAPI) y agregar rewards
       const correctCount = response.correctAnswersCount ?? 0;
@@ -197,7 +200,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
             <div className="text-2xl">📖</div>
             <div>
               <h3 className="mb-2 text-lg font-bold">Contexto Histórico</h3>
-              <p className="text-gray-700">{exercise.contextText}</p>
+              <p className="text-detective-text">{exercise.contextText}</p>
             </div>
           </div>
         </DetectiveCard>
@@ -205,7 +208,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
 
       {/* Question Header */}
       <div className="mb-6 text-center">
-        <h3 className="mb-2 text-xl font-bold text-gray-800">❓ {exercise.title}</h3>
+        <h3 className="mb-2 text-xl font-bold text-detective-text">❓ {exercise.title}</h3>
       </div>
 
       {/* Statements */}
@@ -235,7 +238,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                       <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700">
                         {index + 1}
                       </div>
-                      <p className="flex-1 pt-1 text-lg text-gray-800">{statement.statement}</p>
+                      <p className="flex-1 pt-1 text-lg text-detective-text">{statement.statement}</p>
                     </div>
 
                     {/* Answer Buttons */}
@@ -246,7 +249,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                         className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
                           statement.userAnswer === true
                             ? 'scale-105 bg-green-500 text-white shadow-lg'
-                            : 'bg-gray-100 text-gray-700 hover:bg-green-100 hover:text-green-700'
+                            : 'bg-detective-bg-secondary text-detective-text hover:bg-green-100 hover:text-green-700'
                         } ${showResults ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'} flex items-center justify-center gap-2`}
                       >
                         <CheckCircle className="h-5 w-5" />
@@ -258,7 +261,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                         className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
                           statement.userAnswer === false
                             ? 'scale-105 bg-red-500 text-white shadow-lg'
-                            : 'bg-gray-100 text-gray-700 hover:bg-red-100 hover:text-red-700'
+                            : 'bg-detective-bg-secondary text-detective-text hover:bg-red-100 hover:text-red-700'
                         } ${showResults ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'} flex items-center justify-center gap-2`}
                       >
                         <XCircle className="h-5 w-5" />
@@ -275,7 +278,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                       >
                         <div className="flex items-start gap-2">
                           <div className="flex-shrink-0 text-2xl">{isCorrect ? '✅' : '❌'}</div>
-                          <p className="text-gray-700">{statement.explanation}</p>
+                          <p className="text-detective-text">{statement.explanation}</p>
                         </div>
                       </motion.div>
                     )}

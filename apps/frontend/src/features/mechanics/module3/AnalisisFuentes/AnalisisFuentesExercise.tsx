@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileSearch,
@@ -16,7 +16,8 @@ import { fetchSources, analyzeSource, checkClaim } from './analisisFuentesAPI';
 import type { Source, AnalisisFuentesAnswers } from './analisisFuentesTypes';
 import type { SourceCredibility, FactCheckResult } from '../../shared/aiTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 import type { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
@@ -28,9 +29,14 @@ interface ExerciseProps {
   userId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: number) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onProgressUpdate?: (data: any) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+  }>;
 }
 
 interface ExerciseState {
@@ -45,9 +51,12 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
   onExit,
   onProgressUpdate,
   initialData,
+  actionsRef,
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exerciseId);
+
   const [sources, setSources] = useState<Source[]>([]);
   const [selectedSource, setSelectedSource] = useState<Source | null>(null);
   const [analysis, setAnalysis] = useState<SourceCredibility | null>(null);
@@ -66,7 +75,6 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentRanking, setCurrentRanking] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const actionsRef = useRef<any>(null);
 
   useEffect(() => {
     loadSources();
@@ -83,25 +91,30 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
 
   // FE-055 & FE-059: Update progress with user answers
   useEffect(() => {
+    const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+    setTimeSpent(elapsed);
+
     if (onProgressUpdate) {
       const totalTasks = sources.length + 3; // Sources to analyze + 3 claims to check
       const completedTasks = analyzedSources.length + checkedClaims;
 
-      // Prepare user answers in backend DTO format
-      // Backend expects: { ranking: ["src1", "src3", "src2"] }
-      // FE-059: Pass progress percentage as number
-      const progressPercentage = Math.round((completedTasks / totalTasks) * 100);
-      onProgressUpdate(progressPercentage);
+      onProgressUpdate({
+        progress: {
+          currentStep: completedTasks,
+          totalSteps: totalTasks,
+          score: 0,
+          hintsUsed: 0,
+          timeSpent: elapsed,
+        },
+        answers: { ranking: currentRanking },
+      });
 
       console.log('📊 [AnalisisFuentes] Progress update sent:', {
         analyzedSources: analyzedSources.length,
         checkedClaims,
       });
     }
-
-    const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-    setTimeSpent(elapsed);
-  }, [analyzedSources, checkedClaims, sources.length, onProgressUpdate, startTime]);
+  }, [analyzedSources, checkedClaims, sources.length, onProgressUpdate, startTime, currentRanking]);
 
   const loadSources = async () => {
     try {
@@ -240,7 +253,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
         ranking: sanitizedRanking,
       };
 
-      const response = await submitExercise(exerciseId, user.id, answers);
+      const response = await submitAsync(answers);
 
       // CORR-AF-001 2026-01-07: Manejar ejercicios con revisión manual
       // Este ejercicio tiene requires_manual_grading=TRUE en BD
@@ -321,7 +334,6 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
       actionsRef.current = {
         handleReset,
         handleCheck: handleComplete,
-        getState: () => ({ analyzedSources, checkedClaims, currentScore }),
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -340,7 +352,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center gap-3">
               <FileSearch className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">Análisis de Fuentes</h2>
@@ -381,7 +393,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
                       {source.type}
                     </span>
                     {analyzedSources.includes(source.id) && (
-                      <span className="ml-2 mt-2 inline-block rounded bg-green-100 px-2 py-1 text-detective-xs text-green-800">
+                      <span className="ml-2 mt-2 inline-block rounded bg-detective-success/10 px-2 py-1 text-detective-xs text-detective-success">
                         ✓ Analizada
                       </span>
                     )}
@@ -409,13 +421,13 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
                   <div className="space-y-3">
                     <div>
                       <span className="text-detective-sm font-medium">Nivel de Sesgo:</span>
-                      <span className="ml-2 rounded bg-gray-100 px-3 py-1 text-detective-sm">
+                      <span className="ml-2 rounded bg-detective-bg-secondary px-3 py-1 text-detective-sm">
                         {analysis.biasLevel}
                       </span>
                     </div>
                     <div>
                       <span className="text-detective-sm font-medium">Reporte Factual:</span>
-                      <span className="ml-2 rounded bg-gray-100 px-3 py-1 text-detective-sm">
+                      <span className="ml-2 rounded bg-detective-bg-secondary px-3 py-1 text-detective-sm">
                         {analysis.factualReporting}
                       </span>
                     </div>
@@ -439,7 +451,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
                         <h5 className="mb-2 text-detective-sm font-semibold">Fortalezas</h5>
                         <ul className="space-y-1">
                           {analysis.strengths.map((s, idx) => (
-                            <li key={idx} className="text-detective-xs text-green-800">
+                            <li key={idx} className="text-detective-xs text-detective-success">
                               • {s}
                             </li>
                           ))}
@@ -481,8 +493,8 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 className={`rounded-detective-lg p-4 ${
                   factCheck.isAccurate
-                    ? 'border-2 border-green-400 bg-green-50'
-                    : 'border-2 border-red-400 bg-red-50'
+                    ? 'border-2 border-green-400 bg-detective-success/10'
+                    : 'border-2 border-red-400 bg-detective-danger/10'
                 }`}
               >
                 <h4 className="mb-2 font-semibold">
@@ -517,7 +529,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
                     key={sourceId}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4"
+                    className="flex items-center gap-3 rounded-lg border border-detective-border bg-detective-bg p-4"
                   >
                     <div className="flex min-w-[80px] items-center gap-2">
                       <span className="text-2xl font-bold text-detective-orange">#{index + 1}</span>

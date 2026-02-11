@@ -7,7 +7,9 @@
 -- Created: 2025-11-02
 
 -- Create table for user suspensions
-CREATE TABLE IF NOT EXISTS auth_management.user_suspensions (
+DROP TABLE IF EXISTS auth_management.user_suspensions CASCADE;
+
+CREATE TABLE auth_management.user_suspensions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     reason TEXT NOT NULL,

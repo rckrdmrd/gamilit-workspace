@@ -7,6 +7,8 @@
 -- Fecha: 2025-11-11
 -- =====================================================
 
+DROP TABLE IF EXISTS admin_dashboard.bulk_operations CASCADE;
+
 CREATE TABLE admin_dashboard.bulk_operations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

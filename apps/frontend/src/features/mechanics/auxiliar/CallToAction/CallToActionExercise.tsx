@@ -4,7 +4,8 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { CallToActionExerciseProps, Campaign } from './callToActionTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -36,6 +37,8 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
 
   const [title, setTitle] = useState('');
   const [cause, setCause] = useState('');
@@ -143,7 +146,7 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
     setIsSubmitting(true);
 
     try {
-      const response = await submitExercise(exercise.id, user.id, { campaigns });
+      const response = await submitAsync({ campaigns });
 
       setValidated(true);
 
@@ -241,7 +244,7 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
                   onChange={(e) => setTitle(e.target.value)}
                   disabled={validated}
                   placeholder="Más mujeres en la ciencia"
-                  className="w-full rounded-detective border-2 border-gray-300 px-4 py-2 focus:border-detective-orange focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full rounded-detective border-2 border-detective-border px-4 py-2 focus:border-detective-orange focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 />
               </div>
 
@@ -251,7 +254,7 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
                   value={cause}
                   onChange={(e) => setCause(e.target.value)}
                   disabled={validated}
-                  className="w-full rounded-detective border-2 border-gray-300 px-4 py-2 focus:border-detective-orange focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full rounded-detective border-2 border-detective-border px-4 py-2 focus:border-detective-orange focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="">Selecciona una causa...</option>
                   {causes.map((c) => (
@@ -270,7 +273,7 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
                   disabled={validated}
                   rows={4}
                   placeholder="Describe tu campaña, por qué es importante y qué cambio buscas..."
-                  className="w-full resize-none rounded-detective border-2 border-gray-300 px-4 py-2 focus:border-detective-orange focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full resize-none rounded-detective border-2 border-detective-border px-4 py-2 focus:border-detective-orange focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 />
               </div>
 
@@ -301,7 +304,7 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
                       className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
                         selectedTags.includes(tag)
                           ? 'bg-detective-orange text-white'
-                          : 'bg-gray-200 text-detective-text hover:bg-gray-300'
+                          : 'bg-detective-bg-secondary text-detective-text hover:bg-gray-300'
                       } disabled:cursor-not-allowed disabled:opacity-50`}
                     >
                       {tag}
@@ -355,7 +358,7 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
                       </span>
                       <span className="text-detective-text-secondary">Meta: {campaign.goal}</span>
                     </div>
-                    <div className="h-3 w-full rounded-full bg-gray-200">
+                    <div className="h-3 w-full rounded-full bg-detective-bg-secondary">
                       <div
                         className="h-3 rounded-full bg-detective-orange transition-all"
                         style={{

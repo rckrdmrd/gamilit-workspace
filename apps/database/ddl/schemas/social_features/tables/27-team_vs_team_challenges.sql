@@ -11,6 +11,8 @@
 -- - Challenge lifecycle management (pending -> accepted -> in_progress -> completed)
 -- =====================================================
 
+DROP TABLE IF EXISTS social_features.team_vs_team_challenges CASCADE;
+
 CREATE TABLE social_features.team_vs_team_challenges (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

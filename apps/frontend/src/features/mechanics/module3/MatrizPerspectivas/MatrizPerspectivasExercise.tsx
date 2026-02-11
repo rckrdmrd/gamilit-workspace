@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Grid3x3, Sparkles, Eye } from 'lucide-react';
 import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 import { fetchMatrixExercise, getAIPerspectives } from './matrizPerspectivasAPI';
@@ -20,9 +21,14 @@ interface ExerciseProps {
   exerciseId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: number) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onProgressUpdate?: (data: any) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+  }>;
 }
 
 interface ExerciseState {
@@ -42,9 +48,12 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
   onExit,
   onProgressUpdate,
   initialData,
+  actionsRef,
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exerciseId);
+
   const [exercise, setExercise] = useState<MatrixExercise | null>(null);
   const [perspectives, setPerspectives] = useState<PerspectiveGeneration[]>(
     initialData?.perspectives || [],
@@ -58,7 +67,6 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  const actionsRef = useRef<any>(null);
 
   // Analysis questions answers
   const [answers, setAnswers] = useState<Record<string, string>>({
@@ -90,30 +98,32 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perspectives, currentScore, answers]);
 
-  // Update progress - Granular calculation
+  // Update progress - Granular calculation with answers
 
   useEffect(() => {
     if (!exercise) return;
 
-    // Progreso granular basado en múltiples factores
-    let totalProgress = 0;
-
-    // 25% por tener ejercicio cargado
-    totalProgress += 25;
-
-    // 25% por generar perspectivas
-    if (perspectives.length > 0) {
-      totalProgress += 25;
-    }
-
-    // 50% distribuido entre las 3 preguntas (16.67% cada una)
-    const answeredQuestions = Object.values(answers).filter((a) => a.trim().length >= 50).length;
-    totalProgress += Math.round((answeredQuestions / 3) * 50);
-
-    onProgressUpdate?.(Math.min(totalProgress, 100));
-
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
+
+    // Progreso granular basado en múltiples factores
+    const answeredQuestions = Object.values(answers).filter((a) => a.trim().length >= 50).length;
+    // Steps: 1=exercise loaded, 2=perspectives generated, 3-5=questions answered
+    const currentStep = 1 + (perspectives.length > 0 ? 1 : 0) + answeredQuestions;
+    const totalSteps = 5; // loaded + perspectives + 3 questions
+
+    if (onProgressUpdate) {
+      onProgressUpdate({
+        progress: {
+          currentStep,
+          totalSteps,
+          score: 0,
+          hintsUsed: 0,
+          timeSpent: elapsed,
+        },
+        answers: { questions: answers },
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exercise, perspectives, answers, onProgressUpdate]);
 
@@ -184,7 +194,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
     setIsSubmitting(true);
 
     try {
-      const response = await submitExercise(exercise?.id || exerciseId, user.id, {
+      const response = await submitAsync({
         questions: answers,
       } as MatrizPerspectivasAnswers);
 
@@ -265,7 +275,6 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
       actionsRef.current = {
         handleReset,
         handleCheck: handleComplete,
-        getState: () => ({ perspectives, currentScore }),
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -284,7 +293,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Grid3x3 className="h-8 w-8" />
@@ -348,7 +357,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                         <ul className="space-y-1">
                           {persp.arguments.map((arg: string, i: number) => (
                             <li key={i} className="flex items-start gap-1 text-detective-xs">
-                              <span className="text-green-600">+</span>
+                              <span className="text-detective-success">+</span>
                               <span>{arg}</span>
                             </li>
                           ))}
@@ -363,7 +372,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                         <ul className="space-y-1">
                           {persp.counterarguments.map((counter: string, i: number) => (
                             <li key={i} className="flex items-start gap-1 text-detective-xs">
-                              <span className="text-red-600">−</span>
+                              <span className="text-detective-danger">−</span>
                               <span>{counter}</span>
                             </li>
                           ))}
@@ -394,7 +403,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                           </h4>
                           <ul className="space-y-1">
                             {persp.contextualFactors.map((factor: string, i: number) => (
-                              <li key={i} className="text-detective-xs text-gray-600">
+                              <li key={i} className="text-detective-xs text-detective-text-secondary">
                                 • {factor}
                               </li>
                             ))}
@@ -432,19 +441,19 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                       value={answers.q1}
                       onChange={(e) => setAnswers({ ...answers, q1: e.target.value })}
                       placeholder="Analiza y explica cuál perspectiva consideras más injusta y por qué..."
-                      className="w-full resize-none rounded-detective border-2 border-gray-300 p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                      className="w-full resize-none rounded-detective border-2 border-detective-border p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
                       rows={4}
                       maxLength={500}
                     />
                     <div className="mt-1 flex justify-between">
                       <p
-                        className={`text-detective-sm ${answers.q1.trim().length >= 50 ? 'text-green-600' : 'text-red-600'}`}
+                        className={`text-detective-sm ${answers.q1.trim().length >= 50 ? 'text-detective-success' : 'text-detective-danger'}`}
                       >
                         {answers.q1.trim().length < 50
                           ? `Faltan ${50 - answers.q1.trim().length} caracteres`
                           : '✓ Completo'}
                       </p>
-                      <p className="text-detective-sm text-gray-500">{answers.q1.length}/500</p>
+                      <p className="text-detective-sm text-detective-text-secondary">{answers.q1.length}/500</p>
                     </div>
                   </div>
 
@@ -457,19 +466,19 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                       value={answers.q2}
                       onChange={(e) => setAnswers({ ...answers, q2: e.target.value })}
                       placeholder="Describe cómo ha cambiado la forma en que se ve a Marie Curie..."
-                      className="w-full resize-none rounded-detective border-2 border-gray-300 p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                      className="w-full resize-none rounded-detective border-2 border-detective-border p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
                       rows={4}
                       maxLength={500}
                     />
                     <div className="mt-1 flex justify-between">
                       <p
-                        className={`text-detective-sm ${answers.q2.trim().length >= 50 ? 'text-green-600' : 'text-red-600'}`}
+                        className={`text-detective-sm ${answers.q2.trim().length >= 50 ? 'text-detective-success' : 'text-detective-danger'}`}
                       >
                         {answers.q2.trim().length < 50
                           ? `Faltan ${50 - answers.q2.trim().length} caracteres`
                           : '✓ Completo'}
                       </p>
-                      <p className="text-detective-sm text-gray-500">{answers.q2.length}/500</p>
+                      <p className="text-detective-sm text-detective-text-secondary">{answers.q2.length}/500</p>
                     </div>
                   </div>
 
@@ -482,19 +491,19 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
                       value={answers.q3}
                       onChange={(e) => setAnswers({ ...answers, q3: e.target.value })}
                       placeholder="Identifica cuál grupo presentó la visión más balanceada y fundamenta tu respuesta..."
-                      className="w-full resize-none rounded-detective border-2 border-gray-300 p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                      className="w-full resize-none rounded-detective border-2 border-detective-border p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
                       rows={4}
                       maxLength={500}
                     />
                     <div className="mt-1 flex justify-between">
                       <p
-                        className={`text-detective-sm ${answers.q3.trim().length >= 50 ? 'text-green-600' : 'text-red-600'}`}
+                        className={`text-detective-sm ${answers.q3.trim().length >= 50 ? 'text-detective-success' : 'text-detective-danger'}`}
                       >
                         {answers.q3.trim().length < 50
                           ? `Faltan ${50 - answers.q3.trim().length} caracteres`
                           : '✓ Completo'}
                       </p>
-                      <p className="text-detective-sm text-gray-500">{answers.q3.length}/500</p>
+                      <p className="text-detective-sm text-detective-text-secondary">{answers.q3.length}/500</p>
                     </div>
                   </div>
                 </div>

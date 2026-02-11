@@ -13,7 +13,7 @@ export const TimelineEvent: React.FC<TimelineEventProps> = ({ event, index }) =>
   return (
     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="cursor-move">
       <DetectiveCard variant="default" padding="md" className="flex items-center gap-4">
-        <GripVertical className="w-5 h-5 text-gray-400" />
+        <GripVertical className="w-5 h-5 text-detective-text-secondary" />
         <div className="flex items-center gap-3 w-12 h-12 bg-detective-orange text-white rounded-full justify-center font-bold">
           {index + 1}
         </div>

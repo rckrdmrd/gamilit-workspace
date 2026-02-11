@@ -4,6 +4,8 @@
 -- MOVIDO desde public.assignment_exercises (2025-11-08)
 -- ACTUALIZADO (2025-11-29): Agregadas columnas points_override e is_required (ARCH-015)
 
+DROP TABLE IF EXISTS educational_content.assignment_exercises CASCADE;
+
 CREATE TABLE educational_content.assignment_exercises (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     assignment_id UUID NOT NULL REFERENCES educational_content.assignments(id) ON DELETE CASCADE,

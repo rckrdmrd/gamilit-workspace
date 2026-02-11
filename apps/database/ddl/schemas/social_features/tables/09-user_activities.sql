@@ -3,6 +3,8 @@
 -- Descripción: Registro de actividades de usuarios para el Activity Feed
 -- CREADO: 2025-11-26
 
+DROP TABLE IF EXISTS social_features.user_activities CASCADE;
+
 CREATE TABLE social_features.user_activities (
     activity_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,

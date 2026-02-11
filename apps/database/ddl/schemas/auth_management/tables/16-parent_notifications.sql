@@ -6,7 +6,9 @@
 -- Created: 2025-11-08
 -- =====================================================================================
 
-CREATE TABLE IF NOT EXISTS auth_management.parent_notifications (
+DROP TABLE IF EXISTS auth_management.parent_notifications CASCADE;
+
+CREATE TABLE auth_management.parent_notifications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Relaciones

@@ -69,12 +69,12 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
     warning: {
       bg: 'bg-yellow-500',
       text: 'text-yellow-600',
-      border: 'border-yellow-400',
+      border: 'border-detective-gold',
       progress: 'bg-yellow-500',
     },
     danger: {
       bg: 'bg-red-500',
-      text: 'text-red-600',
+      text: 'text-detective-danger',
       border: 'border-red-400',
       progress: 'bg-red-500',
     },
@@ -88,7 +88,7 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Clock className={`w-5 h-5 ${styles.text}`} />
-          <span className="font-semibold text-gray-700">Tiempo Restante</span>
+          <span className="font-semibold text-detective-text">Tiempo Restante</span>
         </div>
         <div
           className={`text-2xl font-bold ${styles.text} ${
@@ -100,7 +100,7 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+      <div className="w-full bg-detective-bg-secondary rounded-full h-3 overflow-hidden">
         <div
           className={`h-full transition-all duration-1000 ease-linear ${styles.progress} ${
             currentVariant === 'danger' ? 'animate-pulse' : ''
@@ -111,14 +111,14 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
 
       {/* Warning Message */}
       {currentVariant === 'danger' && isRunning && (
-        <div className="mt-3 text-center text-red-600 text-sm font-semibold animate-bounce">
+        <div className="mt-3 text-center text-detective-danger text-sm font-semibold animate-bounce">
           ⏰ ¡Tiempo casi agotado!
         </div>
       )}
 
       {/* Completed Message */}
       {remaining === 0 && (
-        <div className="mt-3 text-center text-gray-500 text-sm font-semibold">
+        <div className="mt-3 text-center text-detective-text-secondary text-sm font-semibold">
           ⏱️ Tiempo terminado
         </div>
       )}

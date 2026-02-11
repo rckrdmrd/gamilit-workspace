@@ -10,7 +10,7 @@ SET search_path TO gamification_system, public;
 
 DROP TABLE IF EXISTS gamification_system.achievement_categories CASCADE;
 
-CREATE TABLE IF NOT EXISTS gamification_system.achievement_categories (
+CREATE TABLE gamification_system.achievement_categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL UNIQUE,
     description TEXT,

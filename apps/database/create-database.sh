@@ -10,10 +10,15 @@
 #   los archivos DDL en el orden correcto respetando las dependencias.
 #
 # USO:
-#   ./create-database.sh [DATABASE_URL]
+#   ./create-database.sh [DATABASE_URL] [--with-warehouse]
+#
+# FLAGS:
+#   --with-warehouse  Load data_warehouse and optimization schemas (Phase 18-19)
+#                     These are optional analytical schemas not needed for core operation.
 #
 # EJEMPLO:
 #   ./create-database.sh "postgresql://user:password@localhost:5432/gamilit"
+#   ./create-database.sh "postgresql://user:password@localhost:5432/gamilit" --with-warehouse
 #
 # VARIABLES DE ENTORNO REQUERIDAS (si no se pasa DATABASE_URL):
 #   - DATABASE_URL: URL de conexión a PostgreSQL
@@ -43,8 +48,25 @@ NC='\033[0m' # No Color
 # CONFIGURACIÓN
 # ============================================================================
 
+# Parse arguments
+WITH_WAREHOUSE=false
+_DB_URL_ARG=""
+
+for arg in "$@"; do
+    case "$arg" in
+        --with-warehouse)
+            WITH_WAREHOUSE=true
+            ;;
+        *)
+            if [ -z "$_DB_URL_ARG" ]; then
+                _DB_URL_ARG="$arg"
+            fi
+            ;;
+    esac
+done
+
 # Get database URL from argument or environment
-DATABASE_URL="${1:-${DATABASE_URL:-}}"
+DATABASE_URL="${_DB_URL_ARG:-${DATABASE_URL:-}}"
 
 if [ -z "$DATABASE_URL" ]; then
     echo -e "${RED}ERROR: DATABASE_URL no está configurada${NC}"
@@ -661,21 +683,24 @@ execute_sql "$SEEDS_DIR/educational_content/01-modules.sql" "Seeds: modules (5)"
 execute_sql "$SEEDS_DIR/educational_content/11-module_dependencies.sql" "Seeds: module_dependencies (6 dependencias - P0 AUDIT-DB-001)"
 execute_sql "$SEEDS_DIR/educational_content/12-taxonomies.sql" "Seeds: taxonomies (4 taxonomías - P0 AUDIT-DB-001)"
 
-# 16.4.2: Social Features BASE (schools y classrooms) - FIX-2026-01-27
-# MUST BE LOADED BEFORE PROFILES
-# REASON: trg_assign_default_classroom trigger needs classrooms to exist when creating profiles
-# FIX: Movido desde 16.5.2 para corregir orden de ejecución (TASK-GAMILIT-ANALISIS-EXHAUSTIVO P0-002)
+# 16.4.2: Social Features BASE (schools ONLY) - FIX-H-01 2026-02-10
+# Schools must exist before profiles (08-assign-admin-schools sets school_id)
 execute_sql "$SEEDS_DIR/social_features/00-schools-default.sql" "Seeds: schools (sistema - default)"
 execute_sql "$SEEDS_DIR/social_features/01-schools.sql" "Seeds: schools (demo)"
-execute_sql "$SEEDS_DIR/social_features/02-classrooms.sql" "Seeds: classrooms (demo)"
 
 # 16.5: Auth Management (profiles para usuarios)
 # NOTE: Trigger initialize_user_stats() fires here and creates module_progress automatically
-# NOTE: Trigger trg_assign_default_classroom fires here and assigns students to DEFAULT classroom
+# NOTE: Trigger trg_assign_default_classroom fires WARNING (classroom not yet created) but profiles succeed
+# FIX-H-01 2026-02-10: Profiles MUST run BEFORE classrooms to satisfy teacher_id FK constraint
 execute_sql "$SEEDS_DIR/auth_management/04-profiles-complete.sql" "Seeds: profiles (testing + demo - 22)"
 # DEPRECATED: 05-profiles-demo.sql movido a _deprecated/ - requiere auth.users que no existen
 execute_sql "$SEEDS_DIR/auth_management/06-profiles-production.sql" "Seeds: profiles (production - 13 usuarios)"
 execute_sql "$SEEDS_DIR/auth_management/07-profiles-production-additional.sql" "Seeds: profiles (production adicionales - 32 usuarios)"
+
+# 16.5.2: Classrooms (after profiles so teacher_id FK is satisfied)
+# FIX-H-01 2026-02-10: Moved AFTER profiles to resolve circular dependency
+# 03-classroom-members.sql bulk-assigns students who weren't auto-assigned by trigger
+execute_sql "$SEEDS_DIR/social_features/02-classrooms.sql" "Seeds: classrooms (demo)"
 
 # 16.5.0.1: Auth Management (roles de usuarios) - P0-SEEDS AUDIT-DB-001
 # MUST BE AFTER profiles (FK user_id references profiles)
@@ -787,6 +812,54 @@ execute_sql "$SCRIPT_DIR/scripts/fix-missing-module-progress.sql" "Validation: m
 
 log_success "FASE 17 completada - Validaciones ejecutadas"
 log ""
+
+# ============================================================================
+# FASE 18: DATA_WAREHOUSE SCHEMA (OPTIONAL - --with-warehouse)
+# ============================================================================
+# Analytical data warehouse with star-schema dimensions, facts, ETL logs,
+# and ML model tables. Only loaded when --with-warehouse flag is passed.
+# Depends on all core schemas being loaded first.
+# ============================================================================
+
+if [ "$WITH_WAREHOUSE" = true ]; then
+
+log "============================================================================"
+log "FASE 18: DATA_WAREHOUSE SCHEMA (optional)"
+log "============================================================================"
+
+execute_sql "$DDL_DIR/schemas/data_warehouse/00-schema.sql" "Schema data_warehouse"
+execute_sql_files "$DDL_DIR/schemas/data_warehouse/tables" "*.sql" "Tablas de data warehouse (dims, facts, ETL, ML)"
+execute_sql_files "$DDL_DIR/schemas/data_warehouse/views" "*.sql" "Vistas analíticas de data warehouse"
+execute_sql_files "$DDL_DIR/schemas/data_warehouse/indexes" "*.sql" "Índices de data warehouse"
+
+log_success "FASE 18 completada - Data warehouse schema creado"
+log ""
+
+# ============================================================================
+# FASE 19: OPTIMIZATION (OPTIONAL - --with-warehouse)
+# ============================================================================
+# Performance optimization indexes and triggers across all schemas.
+# Only loaded when --with-warehouse flag is passed.
+# Must be last since it creates indexes on tables from multiple schemas.
+# ============================================================================
+
+log "============================================================================"
+log "FASE 19: OPTIMIZATION (optional)"
+log "============================================================================"
+
+execute_sql_files "$DDL_DIR/schemas/optimization/indexes" "*.sql" "Índices de optimización FK"
+execute_sql "$DDL_DIR/schemas/optimization/99-optimization-indexes-triggers.sql" "Índices y triggers de optimización global"
+
+log_success "FASE 19 completada - Optimization indexes creados"
+log ""
+
+else
+    log "============================================================================"
+    log "FASE 18-19: DATA_WAREHOUSE + OPTIMIZATION (saltados)"
+    log "============================================================================"
+    log_warning "Schemas data_warehouse y optimization no cargados (usar --with-warehouse para incluirlos)"
+    log ""
+fi
 
 # ============================================================================
 # RESUMEN FINAL

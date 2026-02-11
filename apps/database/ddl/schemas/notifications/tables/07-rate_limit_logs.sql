@@ -7,7 +7,9 @@
 
 -- Rate limit logs table for audit and analytics
 -- Records when notifications are allowed or blocked due to rate limits
-CREATE TABLE IF NOT EXISTS notifications.rate_limit_logs (
+DROP TABLE IF EXISTS notifications.rate_limit_logs CASCADE;
+
+CREATE TABLE notifications.rate_limit_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- User reference

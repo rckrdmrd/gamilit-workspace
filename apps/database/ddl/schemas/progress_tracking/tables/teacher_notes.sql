@@ -3,6 +3,8 @@
 -- Descripción: Notas de profesores sobre estudiantes para seguimiento de progreso
 -- MOVIDO desde public.teacher_notes (2025-11-08)
 
+DROP TABLE IF EXISTS progress_tracking.teacher_notes CASCADE;
+
 CREATE TABLE progress_tracking.teacher_notes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     -- FK corregida: auth.users -> auth_management.profiles (2025-11-26)

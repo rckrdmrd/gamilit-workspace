@@ -1,0 +1,62 @@
+id: "US-GAM-ACH-01"
+titulo: "Achievement Catalog and Badge Management"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 3
+sprint: "Backlog"
+modulos:
+  - "achievements"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/achievements/"
+      endpoints:
+        - "GET /achievements"
+        - "GET /achievements/catalog"
+        - "GET /achievements/user/:id"
+        - "POST /admin/achievements"
+        - "PUT /admin/achievements/:id"
+        - "DELETE /admin/achievements/:id"
+      files:
+        - "achievements.module.ts"
+        - "achievements.service.ts"
+        - "achievements.controller.ts"
+        - "achievement-engine.service.ts"
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/gamification/achievements/"
+        - "apps/frontend/src/pages/admin/achievements/"
+      pages:
+        - "AchievementsPage"
+        - "AdminAchievementsPage"
+      components:
+        - "AchievementCatalog"
+        - "BadgeCard"
+        - "AchievementUnlock"
+        - "MilestoneTracker"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/achievements/"
+      tables:
+        - "achievements.badges"
+        - "achievements.user_achievements"
+        - "achievements.milestones"
+        - "achievements.conditions"
+  tests:
+    unit:
+      - "achievements.service.spec.ts"
+      - "achievements.controller.spec.ts"
+      - "achievement-engine.service.spec.ts"
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-AUTH-01"
+  blocks: []
+tasks: []

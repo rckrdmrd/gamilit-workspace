@@ -1,0 +1,60 @@
+id: "US-GAM-STD-01"
+titulo: "Portal Estudiante con Avatar"
+epic_id: "EPIC-GAM-FRONTEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P0"
+story_points: 13
+sprint: "Completado"
+modulos:
+  - "students"
+  - "gamification"
+  - "modules"
+  - "exercises"
+traceability:
+  requirements:
+    - "RF-GAM-023"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/students/"
+        - "apps/backend/src/modules/gamification/"
+        - "apps/backend/src/modules/modules/"
+        - "apps/backend/src/modules/exercises/"
+      endpoints: []
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/"
+      pages:
+        - "~30 student portal pages"
+      components:
+        - "StudentDashboard"
+        - "AvatarEditor"
+        - "AvatarPreview"
+        - "ModuleGrid"
+        - "ProgressRing"
+        - "StreakFlame"
+        - "LeaderboardMini"
+        - "AchievementShowcase"
+        - "ActivityTimeline"
+        - "MissionList"
+        - "NotificationBell"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/education/"
+        - "apps/database/ddl/schemas/gamification/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-GAM-01"
+    - "US-GAM-GAM-02"
+    - "US-GAM-EDU-01"
+  blocks: []
+tasks: []

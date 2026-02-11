@@ -5,6 +5,7 @@ import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExer
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mediaApi } from '@/shared/api/mediaApi';
+import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 
 interface ProgressData {
   progress: {
@@ -284,9 +285,9 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
   const isTimerWarning = sectionTimeRemaining <= 10 && sectionTimeRemaining > 0;
 
   return (
-    <div className="min-h-screen bg-detective-bg p-6">
+    <DetectiveCard className="min-h-screen p-6">
       <div className="mx-auto max-w-5xl space-y-6">
-        <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+        <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
           <div className="mb-2 flex items-center gap-3">
             <Video className="h-8 w-8" />
             <h2 className="text-2xl font-bold">Video Carta a Marie Curie</h2>
@@ -327,7 +328,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                     isCurrent
                       ? 'border-white bg-white text-blue-800'
                       : isCompleted
-                      ? 'border-green-300 bg-green-100 text-green-700'
+                      ? 'border-green-300 bg-detective-success/10 text-detective-success'
                       : 'border-white/30 bg-white/10 text-white hover:bg-white/20'
                   } ${isRecording ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                 >
@@ -345,17 +346,17 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
             {!isSupported && (
-              <div className="rounded-detective bg-red-50 border-2 border-red-300 p-6 shadow-card">
-                <p className="text-red-600 font-medium">
+              <div className="rounded-detective bg-detective-danger/10 border-2 border-red-300 p-6 shadow-card">
+                <p className="text-detective-danger font-medium">
                   Tu navegador no soporta grabación de video. Por favor usa Chrome, Firefox, Edge o Safari actualizado.
                 </p>
               </div>
             )}
 
             {recorderError && (
-              <div className="rounded-detective bg-red-50 border-2 border-red-300 p-6 shadow-card">
-                <h3 className="font-bold text-red-600 mb-2">{recorderError.message}</h3>
-                <p className="text-red-600 text-sm">{recorderError.userAction}</p>
+              <div className="rounded-detective bg-detective-danger/10 border-2 border-red-300 p-6 shadow-card">
+                <h3 className="font-bold text-detective-danger mb-2">{recorderError.message}</h3>
+                <p className="text-detective-danger text-sm">{recorderError.userAction}</p>
               </div>
             )}
 
@@ -372,7 +373,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                         </span>
                       </div>
                       <div className={`flex items-center gap-2 font-mono text-xl font-bold transition-colors ${
-                        isTimerWarning ? 'text-red-600 animate-pulse' : 'text-detective-text'
+                        isTimerWarning ? 'text-detective-danger animate-pulse' : 'text-detective-text'
                       }`}>
                         <Clock className="h-5 w-5" />
                         {formatDuration(sectionTimeRemaining)}
@@ -380,7 +381,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                     </div>
 
                     {/* Section Progress Bar */}
-                    <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden mb-2">
+                    <div className="h-2 w-full rounded-full bg-detective-bg-secondary overflow-hidden mb-2">
                       <div
                         className={`h-full transition-all duration-300 ${
                           isTimerWarning ? 'bg-red-500' : 'bg-detective-orange'
@@ -525,13 +526,13 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                       return (
                         <div
                           key={section.id}
-                          className="flex items-center justify-between p-2 bg-white rounded border border-gray-200"
+                          className="flex items-center justify-between p-2 bg-white rounded border border-detective-border"
                         >
                           <div className="flex items-center gap-2">
                             {recording?.completed ? (
-                              <CheckCircle className="h-4 w-4 text-green-600" />
+                              <CheckCircle className="h-4 w-4 text-detective-success" />
                             ) : (
-                              <div className="h-4 w-4 rounded-full border-2 border-gray-300" />
+                              <div className="h-4 w-4 rounded-full border-2 border-detective-border" />
                             )}
                             <span className="text-sm font-medium text-detective-text">
                               {section.name}
@@ -605,7 +606,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                     className={`w-full rounded-detective border-2 px-4 py-2 text-left transition-colors ${
                       filter === f.class
                         ? 'border-detective-orange bg-detective-orange text-white'
-                        : 'border-gray-300 bg-white hover:border-detective-orange'
+                        : 'border-detective-border bg-white hover:border-detective-orange'
                     }`}
                   >
                     {f.name}
@@ -627,8 +628,8 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                         isCurrent
                           ? 'border-detective-orange bg-detective-orange/10'
                           : recording?.completed
-                          ? 'border-green-500/30 bg-green-50/50'
-                          : 'border-gray-200 bg-white'
+                          ? 'border-detective-success/30 bg-detective-success/10/50'
+                          : 'border-detective-border bg-white'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
@@ -646,7 +647,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                   );
                 })}
               </div>
-              <div className="mt-4 pt-4 border-t border-gray-300">
+              <div className="mt-4 pt-4 border-t border-detective-border">
                 <h4 className="text-sm font-bold text-detective-text mb-2">Consejos Generales:</h4>
                 <ul className="space-y-1 text-xs text-detective-text-secondary">
                   <li>• Habla claramente y con entusiasmo</li>
@@ -673,7 +674,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
           feedback={feedback}
         />
       )}
-    </div>
+    </DetectiveCard>
   );
 };
 

@@ -1,0 +1,72 @@
+id: "US-GAM-GAM-01"
+titulo: "Sistema XP, Rangos Maya y Logros"
+epic_id: "EPIC-GAM-BACKEND"
+epic_secondary:
+  - "EPIC-GAM-FRONTEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P0"
+story_points: 13
+sprint: "Completado"
+modulos:
+  - "gamification"
+  - "achievements"
+traceability:
+  requirements:
+    - "RF-GAM-013"
+    - "RF-GAM-014"
+    - "RF-GAM-015"
+    - "RF-GAM-016"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/gamification/"
+        - "apps/backend/src/modules/achievements/"
+      endpoints:
+        - "GET /api/v1/gamification/xp/:studentId"
+        - "POST /api/v1/gamification/xp/award"
+        - "GET /api/v1/gamification/ranks"
+        - "GET /api/v1/gamification/ranks/:studentId"
+        - "GET /api/v1/achievements"
+        - "GET /api/v1/achievements/:studentId"
+        - "POST /api/v1/achievements/check"
+        - "GET /api/v1/gamification/dashboard/:studentId"
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/gamification/"
+      pages: []
+      components:
+        - "XPBar"
+        - "RankBadge"
+        - "RankPromotionAnimation"
+        - "AchievementCard"
+        - "AchievementShowcase"
+        - "StreakCounter"
+        - "GamificationDashboard"
+        - "XPEarnedToast"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/gamification/"
+        - "apps/database/ddl/schemas/achievements/"
+      tables:
+        - "xp_transactions"
+        - "levels"
+        - "rank_definitions"
+        - "gamification_config"
+        - "achievements"
+        - "student_achievements"
+        - "achievement_categories"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-EDU-01"
+    - "US-GAM-EDU-02"
+    - "US-GAM-STD-01"
+  blocks: []
+tasks: []

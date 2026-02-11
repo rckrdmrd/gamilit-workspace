@@ -1,5 +1,5 @@
 -- ============================================================================
--- SEED: exercise_validation_config
+-- SEED: exercise_validation_configs
 -- Descripción: Configuración de validación para 17 tipos de ejercicios
 -- Autor: Database Agent
 -- Fecha: 2025-11-19
@@ -8,7 +8,7 @@
 -- Alcance: Módulos 1, 2, 3 (17 tipos implementados)
 -- ============================================================================
 
-INSERT INTO educational_content.exercise_validation_config (
+INSERT INTO educational_content.exercise_validation_configs (
     exercise_type,
     validation_function,
     case_sensitive,
@@ -440,7 +440,7 @@ DECLARE
     v_count INTEGER;
 BEGIN
     SELECT COUNT(*) INTO v_count
-    FROM educational_content.exercise_validation_config;
+    FROM educational_content.exercise_validation_configs;
 
     IF v_count < 17 THEN
         RAISE WARNING 'Solo se cargaron % configuraciones. Se esperaban 17.', v_count;
@@ -464,5 +464,5 @@ SELECT
     END as matching,
     default_max_points as max_pts,
     default_passing_score as pass_pts
-FROM educational_content.exercise_validation_config
+FROM educational_content.exercise_validation_configs
 ORDER BY exercise_type;

@@ -5,6 +5,8 @@
 -- Created: 2026-02-03
 -- =====================================================
 
+DROP TABLE IF EXISTS social_features.guilds CASCADE;
+
 CREATE TABLE social_features.guilds (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(30) NOT NULL,

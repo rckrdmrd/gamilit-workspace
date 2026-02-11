@@ -116,10 +116,12 @@ export class InterventionAlertsService {
     }
 
     // Ordenar por severidad y fecha
-    qb.orderBy(
-      "CASE severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END",
-      'ASC',
-    ).addOrderBy('alert.generated_at', 'DESC');
+    qb.addSelect(
+      "CASE alert.severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END",
+      'severity_order',
+    )
+      .orderBy('severity_order', 'ASC')
+      .addOrderBy('alert.generated_at', 'DESC');
 
     // Paginación
     const total = await qb.getCount();
@@ -438,13 +440,13 @@ export class InterventionAlertsService {
       description: alert.description || null,
       metrics: alert.metrics || null,
       status: alert.status,
-      generated_at: alert.generated_at.toISOString(),
-      acknowledged_at: alert.acknowledged_at?.toISOString() || null,
+      generated_at: alert.generated_at instanceof Date ? alert.generated_at.toISOString() : String(alert.generated_at),
+      acknowledged_at: alert.acknowledged_at ? (alert.acknowledged_at instanceof Date ? alert.acknowledged_at.toISOString() : String(alert.acknowledged_at)) : null,
       acknowledged_by_name:
         alert.acknowledged_by_user?.display_name ||
         alert.acknowledged_by_user?.full_name ||
         null,
-      resolved_at: alert.resolved_at?.toISOString() || null,
+      resolved_at: alert.resolved_at ? (alert.resolved_at instanceof Date ? alert.resolved_at.toISOString() : String(alert.resolved_at)) : null,
       resolved_by_name:
         alert.resolved_by_user?.display_name || alert.resolved_by_user?.full_name || null,
       resolution_notes: alert.resolution_notes || null,

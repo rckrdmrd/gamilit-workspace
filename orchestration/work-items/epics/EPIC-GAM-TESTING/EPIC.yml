@@ -1,0 +1,51 @@
+id: "EPIC-GAM-TESTING"
+titulo: "Tests Gamilit"
+proyecto: "gamilit"
+version: "3.0.0"
+fecha_creacion: "2025-11-01"
+fecha_actualizacion: "2026-02-07"
+estado: "EN_PROGRESO"
+prioridad: "P2"
+story_points: 13
+wave: "wave_3"
+descripcion: |
+  Implementacion de testing completo: unit tests, integration tests, E2E tests.
+  Target: 80% cobertura global. Actualmente: 833 tests pasando.
+entregables:
+  - "Unit tests backend (Jest): ~550"
+  - "Unit tests frontend (Vitest): ~200"
+  - "Integration tests: ~70"
+  - "E2E tests: planificados"
+  - "Cobertura target: 80%"
+stories:
+  - id: "US-GAM-TST-01"
+    titulo: "Backend Unit Tests (Jest)"
+    status: "EN_PROGRESO"
+    story_points: 5
+  - id: "US-GAM-TST-02"
+    titulo: "Frontend Unit Tests (Vitest)"
+    status: "EN_PROGRESO"
+    story_points: 3
+  - id: "US-GAM-TST-03"
+    titulo: "Integration Tests"
+    status: "PENDIENTE"
+    story_points: 3
+  - id: "US-GAM-TST-04"
+    titulo: "E2E Tests"
+    status: "PENDIENTE"
+    story_points: 2
+traceability:
+  requirements: []
+  components:
+    backend: []
+    frontend: []
+    database: []
+  dependencies:
+    depends_on:
+      - "EPIC-GAM-BACKEND"
+      - "EPIC-GAM-FRONTEND"
+    blocks: []
+metricas:
+  total_stories: 4
+  stories_completadas: 0
+  porcentaje_avance: 0

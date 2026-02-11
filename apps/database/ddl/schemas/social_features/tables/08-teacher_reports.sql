@@ -5,7 +5,9 @@
 -- FECHA: 2025-11-26
 -- =====================================================
 
-CREATE TABLE IF NOT EXISTS social_features.teacher_reports (
+DROP TABLE IF EXISTS social_features.teacher_reports CASCADE;
+
+CREATE TABLE social_features.teacher_reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   teacher_id UUID NOT NULL,
   classroom_id UUID,

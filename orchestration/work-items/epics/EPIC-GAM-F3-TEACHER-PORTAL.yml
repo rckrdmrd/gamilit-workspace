@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F3-TEACHER-PORTAL"
+titulo: "Portal Maestros"
+proyecto: "gamilit"
+fase: "F3-extensiones"
+source_id: "EXT-001"
+story_points: 34
+estado: "EN_PROGRESO"
+prioridad: "P1"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-TEACHER-PORTAL/EPIC.md"
+user_stories: 21
+requirements: 22
+specifications: 13
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-TEACHER-PORTAL/user-stories/"
+stories_structure: "nested"
+tasks_total: 63
+fecha_actualizacion: "2026-02-09"

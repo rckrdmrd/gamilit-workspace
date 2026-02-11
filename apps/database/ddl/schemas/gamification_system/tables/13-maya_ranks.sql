@@ -9,7 +9,9 @@
 -- TABLA: maya_ranks (Configuración de rangos)
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS gamification_system.maya_ranks (
+DROP TABLE IF EXISTS gamification_system.maya_ranks CASCADE;
+
+CREATE TABLE gamification_system.maya_ranks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Identificación del rango

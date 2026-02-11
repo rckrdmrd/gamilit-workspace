@@ -8,8 +8,8 @@ export const NavigationBreadcrumbs: React.FC<{ visitedNodes: string[]; nodes: Hy
       const node = nodes.find(n => n.id === nodeId);
       return (
         <React.Fragment key={nodeId}>
-          <span className={idx === visitedNodes.length - 1 ? 'font-bold text-detective-orange' : 'text-gray-600'}>{node?.title || 'Unknown'}</span>
-          {idx < visitedNodes.length - 1 && <ChevronRight className="w-4 h-4 text-gray-400" />}
+          <span className={idx === visitedNodes.length - 1 ? 'font-bold text-detective-orange' : 'text-detective-text-secondary'}>{node?.title || 'Unknown'}</span>
+          {idx < visitedNodes.length - 1 && <ChevronRight className="w-4 h-4 text-detective-text-secondary" />}
         </React.Fragment>
       );
     })}

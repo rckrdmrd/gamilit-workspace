@@ -47,7 +47,7 @@ BEGIN
     -- Obtener la escuela/institución principal
     SELECT id INTO v_default_school_id
     FROM social_features.schools
-    WHERE (code = 'GAMILIT-DEFAULT' OR code = 'SYSTEM-UNASSIGNED') AND is_active = true
+    WHERE code = 'GAMILIT-DEFAULT' AND is_active = true
     LIMIT 1;
 
     IF v_default_school_id IS NULL THEN

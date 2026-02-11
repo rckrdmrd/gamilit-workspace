@@ -1,2186 +1,246 @@
+# ===============================================================================
 # BACKEND INVENTORY - GAMILIT
-# Inventario completo de objetos del backend
-# Generado: 2025-01-11
-# Fuente: Validación VAL-001
+# ===============================================================================
 
-metadata:
-  version: "3.15.0"
-  generated_date: "2025-11-11"
-  last_updated: "2026-02-05"
-  last_update_task: "TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD"
-  generated_by: "Auditoría documentación completa - Conteo real filesystem"
-  framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
-  database: "PostgreSQL 16"
-  package_manager: "npm"
-  total_modules: 18  # AUDITORIA 2026-01-27: conteo real src/modules/
-  total_entities: 141  # RECONCILIADO 2026-02-05: conteo real entities TypeORM (era 137, excluye DTOs)
-  total_dtos: 366  # AUDITORIA 2026-01-27: conteo real *.dto.ts (incluye subcarpetas)
-  total_services: 121  # AUDITORIA 2026-01-27: conteo real *.service.ts (incluye subcarpetas)
-  total_controllers: 86  # AUDITORIA 2026-01-27: conteo real *.controller.ts
-  total_endpoints: 750  # AUDITORIA 2026-01-27: conteo decoradores @Get/@Post/@Put/@Patch/@Delete
-  typescript_errors: 0
-  build_status: "✅ BUILD PASSING"  # TASK-022: Validado 2026-01-27
-  coherencia_bd: "82.5%"  # RECONCILIADO 2026-02-05: 141/171 entities mapped (30 tablas sin entity)
-  discrepancies_found: "30 tablas sin entity (16 data_warehouse + 6 operacionales + 8 junction/M:N). Ver TASK-2026-02-05 HALLAZGOS H-017, H-018"
-  api_docs:
-    - "docs/90-transversal/api/API-TEACHER-MODULE.md"
-    - "docs/90-transversal/api/API-ADMIN-MODULE.md"
+version: "3.16.0"
+fecha: "2026-02-11"
+proyecto: "gamilit"
+framework: "NestJS 11"
+orm: "TypeORM 0.3.x"
 
-# ============================================================================
-# CHANGELOG 2026-01-27 (v3.14.0 - TASK-022-MODELADO-INTEGRAL)
-# ============================================================================
-task_022_modelado_integral:
-  descripcion: "TASK-022: Auditoria integral + fixes P0/P1/P2"
-  task: "TASK-022-MODELADO-INTEGRAL"
-  fecha: "2026-01-27"
+# -------------------------------------------------------------------------------
+# RESUMEN
+# -------------------------------------------------------------------------------
 
-  entities_agregadas:
-    task_021:
-      - "progress/entities/user-current-level.entity.ts"
-      - "progress/entities/user-difficulty-progress.entity.ts"
-      - "progress/entities/module-completion-tracking.entity.ts"
-      - "educational/entities/content-metadata.entity.ts"
-      - "educational/entities/module-dependencies.entity.ts"
-      - "educational/entities/taxonomy.entity.ts"
-      - "gamification/entities/comodin-usage-tracking.entity.ts"
-    p1_3:
-      - "educational/entities/content-tag.entity.ts"
-      - "gamification/entities/social-interaction.entity.ts"
+resumen:
+  modulos: 22
+  entities: 152
+  dtos: 412
+  services: 170
+  controllers: 107
+  endpoints: 850
+  guards: 14
+  decorators: 18
+  interceptors: 8
+  pipes: 6
+  filters: 4
+  tests: 833
 
-  archivos_modificados:
-    - path: "modules/gamification/services/ranks.service.ts"
-      cambio: "P2-3: Replace hardcoded multiplier with DB read (SSOT)"
-      detalle: |
-        - Import MayaRankEntity + inject mayaRanksRepo
-        - Replace calculateMultiplierForRank() with async getMultiplierForRank()
-        - getFullUserProgress() and getMultiplierBreakdown() now use DB values
+# -------------------------------------------------------------------------------
+# MODULOS
+# -------------------------------------------------------------------------------
 
-  fixes_aplicados:
-    - "P1-1: 10 entities actualizadas con DB_TABLES constants"
-    - "P1-3: 2 entities creadas (content_tags, social_interactions)"
-    - "P2-3: ranks.service.ts multiplier reconciled with DB"
+modulos:
+  # Core Infrastructure
+  - nombre: "auth"
+    entities: 4
+    services: 5
+    controllers: 3
+    endpoints: 45
+    estado: "100%"
 
-  impacto:
-    entities: "+9 (128 → 137)"
-    coherencia: "99% → 100%"
-    build: "PASS (0 errors)"
-
-# ============================================================================
-# CHANGELOG 2026-01-25 (v3.13.0 - GAP-BE-006 Roles CRUD)
-# ============================================================================
-gap_be_006_roles_crud:
-  descripcion: "Implementación GAP-BE-006: CRUD completo de roles administrativos"
-  task: "TASK-2026-01-25-VALIDACION-INTEGRAL-GAMILIT"
-  fecha: "2026-01-25"
-
-  archivos_creados:
-    dtos:
-      - path: "modules/admin/dto/roles/create-role.dto.ts"
-        descripcion: "DTOs para operaciones CRUD de roles"
-        lineas: 124
-        exports:
-          - "CreateRoleDto"
-          - "CreateRoleResponseDto"
-          - "DeleteRoleResponseDto"
-        validaciones:
-          - "name: 3-50 chars, lowercase alphanumeric with underscores"
-          - "description: optional, max 500 chars"
-          - "permissions: optional object Record<string, boolean>"
-
-  archivos_modificados:
-    - path: "modules/admin/dto/roles/index.ts"
-      cambio: "Export create-role.dto.ts"
-    - path: "modules/admin/services/admin-roles.service.ts"
-      cambio: "+2 métodos: createRole(), deleteRole()"
-      metodos_agregados:
-        - "createRole(createDto, admin): Crear rol con permisos iniciales"
-        - "deleteRole(roleId, admin): Soft-delete de rol (is_active=false)"
-      caracteristicas:
-        - "Protección de roles del sistema (student, admin_teacher, super_admin)"
-        - "Audit logging para todas las operaciones"
-        - "Validación de nombre único"
-    - path: "modules/admin/controllers/admin-roles.controller.ts"
-      cambio: "+2 endpoints: POST /admin/roles, DELETE /admin/roles/:id"
-
-  endpoints_agregados:
-    - "POST /admin/roles - Crear nuevo rol personalizado"
-    - "DELETE /admin/roles/:id - Eliminar (soft-delete) rol"
-
-  impacto:
-    dtos: "+3 (337 → 340)"
-    endpoints: "+2 (627 → 629)"
-    metodos_servicio: "+2"
-
-  notas: |
-    Los roles del sistema (student, admin_teacher, super_admin) están protegidos
-    y no pueden ser eliminados. La eliminación es soft-delete (is_active=false).
-    Todos los cambios se registran en audit log.
-
-# ============================================================================
-# CHANGELOG 2026-01-25 (v3.12.0 - US-PM-006 & US-PM-007)
-# ============================================================================
-us_pm_006_007:
-  descripcion: "Implementación US-PM-006 (Bloqueo Alumnos - Frontend) y US-PM-007 (Config Alertas - Full Stack)"
-  tasks:
-    - "TASK-018 (US-PM-006)"
-    - "TASK-019 (US-PM-007)"
-
-  # US-PM-006: Solo frontend, backend ya existía
-  us_pm_006_note: |
-    Backend ya implementado en:
-    - services/student-blocking.service.ts
-    - controllers/teacher-classrooms.controller.ts
-    Endpoints existentes: block, unblock, getPermissions
-
-  # US-PM-007: Full stack implementation
-  archivos_creados:
-    entities:
-      - path: "modules/progress/entities/teacher-alert-configuration.entity.ts"
-        tabla: "progress_tracking.teacher_alert_configurations"
-        descripcion: "Entity para configuraciones de alertas del maestro"
-        lineas: 120
-    dtos:
-      - path: "modules/teacher/dto/alert-config.dto.ts"
-        descripcion: "DTOs: AlertConfigType, ThresholdUnit, Create, Update, Response, Query, Defaults, List"
-        lineas: 150
-    services:
-      - path: "modules/teacher/services/alert-config.service.ts"
-        descripcion: "Servicio CRUD para configuraciones de alertas"
-        lineas: 280
-        metodos:
-          - "getConfigurations(teacherId, classroomId?)"
-          - "getConfiguration(teacherId, configId)"
-          - "createConfiguration(teacherId, dto)"
-          - "updateConfiguration(teacherId, configId, dto)"
-          - "deleteConfiguration(teacherId, configId)"
-          - "getDefaultConfigurations()"
-          - "initializeDefaults(teacherId, classroomId?)"
-    controllers:
-      - path: "modules/teacher/controllers/alert-config.controller.ts"
-        descripcion: "Controller con 7 endpoints para gestión de alertas"
-        lineas: 200
-
-  archivos_modificados:
-    - path: "shared/constants/database.constants.ts"
-      cambio: "+1 constante TEACHER_ALERT_CONFIGURATIONS"
-    - path: "modules/progress/entities/index.ts"
-      cambio: "Export TeacherAlertConfiguration"
-    - path: "modules/progress/progress.module.ts"
-      cambio: "Registrada entity en TypeOrmModule"
-    - path: "modules/teacher/teacher.module.ts"
-      cambio: "Registrados AlertConfigController y AlertConfigService"
-    - path: "modules/teacher/services/index.ts"
-      cambio: "Export AlertConfigService"
-    - path: "modules/teacher/dto/index.ts"
-      cambio: "Export DTOs de alert-config"
-
-  endpoints_agregados:
-    - "GET /teacher/alert-config"
-    - "GET /teacher/alert-config/defaults"
-    - "GET /teacher/alert-config/:id"
-    - "POST /teacher/alert-config"
-    - "POST /teacher/alert-config/initialize"
-    - "PUT /teacher/alert-config/:id"
-    - "DELETE /teacher/alert-config/:id"
-
-  impacto:
-    entities: "+1 (125 → 126)"
-    dtos: "+6 (331 → 337)"
-    services: "+1 (105 → 106)"
-    controllers: "+1 (87 → 88)"
-    endpoints: "+7 (620 → 627)"
-
-  validacion:
-    build: "pendiente"
-    coherencia_bd: "Entity alineada con DDL"
-    impacto_student: "CERO - análisis confirmado"
-
-  traza:
-    - "orchestration/tareas/TASK-018-us-pm-006-bloquear-alumnos/"
-    - "orchestration/tareas/TASK-019-us-pm-007-config-alertas/"
-
-# ============================================================================
-# CHANGELOG 2026-01-24 (v3.11.0 - TASK-001 Implementación 2FA)
-# ============================================================================
-task_001_2fa:
-  descripcion: "Implementación completa de Two-Factor Authentication (2FA)"
-  task_id: "TASK-001"
-  story_points: 8  # Parte de 21 SP totales (5 gaps P0)
-
-  archivos_creados:
-    entities:
-      - path: "modules/auth/entities/two-factor-token.entity.ts"
-        tabla: "auth_management.two_factor_tokens"
-        descripcion: "Entity para tokens 2FA con helpers isExpired(), isLocked(), canVerify()"
-        lineas: 98
-    services:
-      - path: "modules/auth/services/two-factor-auth.service.ts"
-        descripcion: "Servicio completo 2FA: setup, verify, disable, resend"
-        lineas: 285
-        metodos:
-          - "getStatus(userId)"
-          - "setup2FA(userId, method)"
-          - "verifySetup(userId, code)"
-          - "sendLoginOTP(userId)"
-          - "verifyLoginOTP(userId, code)"
-          - "disable2FA(userId, password)"
-          - "resendOTP(userId)"
-
-  archivos_modificados:
-    - path: "modules/auth/controllers/auth.controller.ts"
-      cambio: "+6 endpoints 2FA"
-    - path: "modules/auth/controllers/password.controller.ts"
-      cambio: "+1 endpoint validate reset token"
-    - path: "modules/auth/controllers/users.controller.ts"
-      cambio: "+1 endpoint user search"
-    - path: "modules/auth/services/auth.service.ts"
-      cambio: "+1 método searchUsers()"
-    - path: "modules/auth/auth.module.ts"
-      cambio: "Registro TwoFactorToken entity y TwoFactorAuthService"
-    - path: "shared/constants/database.constants.ts"
-      cambio: "+1 constante TWO_FACTOR_TOKENS"
-
-  endpoints_agregados:
-    - "GET /auth/2fa/status"
-    - "POST /auth/2fa/setup"
-    - "POST /auth/2fa/setup/verify"
-    - "POST /auth/2fa/verify"
-    - "POST /auth/2fa/disable"
-    - "POST /auth/2fa/resend"
-    - "GET /auth/reset-password/validate"
-    - "GET /users/search"
-
-  impacto:
-    entities: "+1 (124 → 125)"
-    services: "+1 (104 → 105)"
-    endpoints: "+8 (612 → 620)"
-
-  validacion:
-    build: "✅ PASSED"
-    coherencia_bd: "Entity alineada con DDL"
-
-  traza: "orchestration/tareas/TASK-001-fix-p0-gaps/"
-
-# ============================================================================
-# CHANGELOG 2026-01-16 (v3.9.0 - ETC-001 Consolidación Técnica)
-# ============================================================================
-consolidacion_etc_001:
-  descripcion: "Consolidación técnica: eliminación de código obsoleto y creación de entities faltantes"
-  task_id: "ETC-001"
-  epic: "docs/02-fase-robustecimiento/ETC-001-consolidacion-tecnica/"
-
-  entities_creadas:
-    social:
-      - path: "modules/social/entities/user-follow.entity.ts"
-        tabla: "social_features.user_follows"
-        descripcion: "Sistema de seguimiento entre usuarios"
-
-  archivos_eliminados:
-    auth:
-      - "modules/auth/auth.service.ts (145 líneas de stubs obsoletos)"
-    notifications_dtos:
-      - "modules/notifications/dto/create-notification.dto.ts (re-export)"
-      - "modules/notifications/dto/notification-response.dto.ts (re-export)"
-      - "modules/notifications/dto/notifications/create-notification.dto.ts (re-export)"
-      - "modules/notifications/dto/notifications/notification-response.dto.ts (re-export)"
-    gamification_dtos:
-      - "modules/gamification/dto/notifications/create-notification.dto.ts (re-export)"
-      - "modules/gamification/dto/notifications/notification-response.dto.ts (re-export)"
-
-  imports_actualizados:
-    - "modules/gamification/dto/index.ts → @shared/dto/notifications"
-    - "modules/notifications/dto/notifications/index.ts → @shared/dto/notifications"
-    - "modules/notifications/dto/paginated-notifications.dto.ts → @shared/dto/notifications"
-    - "modules/notifications/controllers/notifications.controller.ts → @shared/dto/notifications"
-    - "modules/notifications/index.ts → @shared/dto/notifications"
-
-  impacto:
-    entities: "+1 (123 → 124)"
-    dtos: "-6 (337 → 331)"
-
-  validacion:
-    build: "✅ PASSED"
-    lint: "✅ PASSED (sin errores nuevos)"
-
-  traza: "docs/02-fase-robustecimiento/ETC-001-consolidacion-tecnica/tareas/"
-
-# ============================================================================
-# CHANGELOG 2026-01-16 (v3.8.0 - Tests Auth Guards + Validación BD)
-# ============================================================================
-tests_guards_2026_01_16:
-  descripcion: "Tests unitarios para guards de autenticación y autorización"
-  task_id: "TASK-2026-01-16-005"
-  version: "3.8.0"
-  tests_agregados: 25
-  archivos_creados:
-    - path: "src/modules/auth/guards/__tests__/jwt-auth.guard.spec.ts"
-      tests: 6
-      coverage: "JwtAuthGuard canActivate behavior"
-    - path: "src/modules/auth/guards/__tests__/roles.guard.spec.ts"
-      tests: 19
-      coverage: "RolesGuard con GamilityRoleEnum (STUDENT, ADMIN_TEACHER, SUPER_ADMIN)"
-  validacion:
-    build: "✅ PASSED"
-    tests: "25/25 PASSED"
-  traza: "orchestration/tareas/TASK-2026-01-16-005/METADATA.yml"
-
-# ============================================================================
-# CHANGELOG 2026-01-16 (v3.7.0 - Consolidación Duplicados P1)
-# ============================================================================
-consolidacion_2026_01_16:
-  descripcion: "Eliminación de archivos deprecated en módulo notifications"
-  task_id: "P1-001-CONSOLIDATION"
-  archivos_eliminados:
-    notifications:
-      - "entities/notification.entity.ts (deprecated - usar multichannel/notification.entity.ts)"
-      - "services/notifications.service.ts (deprecated - usar notification.service.ts)"
-  impacto:
-    entities: "-1 (124 → 123)"
-    services: "-1 (105 → 104)"
-  archivos_actualizados:
-    - "modules/gamification/gamification.module.ts (removido import deprecated)"
-  validacion:
-    build: "✅ PASSED"
-  traza: "orchestration/reportes/INFORME-CONTINUIDAD-AGENTE-2026-01-16.md"
-
-# ============================================================================
-# CHANGELOG 2026-01-14 (v3.5.0 - Alineación BD-Backend)
-# ============================================================================
-alineacion_2026_01_14:
-  descripcion: "Implementación de 16 entities faltantes para alineación completa BD-Backend"
-  task_id: "BE-ALIGN-2026-01-14"
-  cobertura_antes: "87.3% (113/134 tablas)"
-  cobertura_despues: "99% (129/134 tablas)"
-  entities_creadas:
-    audit_logging:
-      - "user-activity-log.entity.ts (analytics de actividad)"
-      - "pending-user-initialization.entity.ts (control de inicialización)"
-    auth_management:
-      - "parent-account.entity.ts (Portal de padres EXT-010)"
-      - "parent-student-link.entity.ts (vinculación padre-estudiante)"
-      - "parent-notification.entity.ts (notificaciones a padres)"
-    content_management:
-      - "content-version.entity.ts (versionado de contenido)"
-      - "flagged-content.entity.ts (moderación de contenido)"
-      - "media-metadata.entity.ts (metadatos multimedia)"
-      - "tag.entity.ts (etiquetas de contenido)"
-      - "moderation-rule.entity.ts (reglas de moderación automática)"
-    educational_content:
-      - "exercise-validation-config.entity.ts (Sistema Dual ADR-008)"
-      - "exercise-type-rubric.entity.ts (rúbricas por tipo M4-M5)"
-      - "exercise-validation-audit.entity.ts (auditoría de validaciones)"
-    lti_integration:
-      - "lti-consumer.entity.ts (consumidores LTI)"
-      - "lti-session.entity.ts (sesiones LTI)"
-      - "lti-grade-passback.entity.ts (passback de calificaciones)"
-  modulos_actualizados:
-    - "audit.module.ts (+2 entities)"
-    - "auth.module.ts (+3 entities)"
-    - "content.module.ts (+5 entities)"
-    - "educational.module.ts (+3 entities)"
-  modulos_creados:
-    - "lti/lti.module.ts (nuevo módulo LTI)"
-  archivos_actualizados:
-    - "shared/constants/database.constants.ts (constantes de BD)"
-    - "*/entities/index.ts (barrel exports)"
-  validacion:
-    build: "✅ PASSED"
-    lint: "⚠️ 9 errores preexistentes (no en código nuevo)"
-  traza: "orchestration/trazas/TRAZA-TAREAS-BACKEND.md#BE-ALIGN-2026-01-14"
-
-# ============================================================================
-# CHANGELOG 2026-01-13 (v3.4.0 - Bugfix)
-# ============================================================================
-bugfixes_2026_01_13:
-  descripcion: "Corrección de errores críticos de circular references y headers sent"
-  archivos_modificados:
-    - path: "src/shared/interceptors/transform-response.interceptor.ts"
-      version: "1.0.0 -> 1.1.0"
-      fix: "Detección de referencias circulares con WeakSet + límite de profundidad"
-    - path: "src/shared/filters/http-exception.filter.ts"
-      version: "1.0.0 -> 1.1.0"
-      fix: "Verificación de headersSent antes de enviar respuesta de error"
-  errores_corregidos:
-    - "RangeError: Maximum call stack size exceeded (recursión infinita)"
-    - "Error: Cannot set headers after they are sent to the client"
-  traza: "orchestration/trazas/TRAZA-BUGFIX-CIRCULAR-REF-2026-01-13.md"
-
-# ============================================================================
-# MÓDULOS (Modules)
-# ============================================================================
-modules:
-  - name: "auth"
-    description: "Autenticación y autorización"
-    path: "apps/backend/src/modules/auth"
-    schema_db: "auth_management"
-    entities: 13  # TASK-001: +1 TwoFactorToken
-    services: 6  # TASK-001: +1 TwoFactorAuthService
-    controllers: 2
-    dtos: 37
-    main_features:
-      - "Registro y login"
-      - "JWT tokens"
-      - "Recuperación de contraseña"
-      - "Verificación de email"
-      - "Gestión de sesiones"
-      - "Roles y permisos"
-      - "Multi-tenant support"
-      - "Two-Factor Authentication (2FA)"  # TASK-001
-    status: "✅ Active"
-    task_001_additions:
-      entity: "two-factor-token.entity.ts"
-      service: "two-factor-auth.service.ts"
-      endpoints_added: 8
-      date: "2026-01-24"
-
-  - name: "admin"
-    description: "Administración del sistema"
-    path: "apps/backend/src/modules/admin"
-    schema_db: "system_configuration, admin_dashboard"
-    entities: 6
-    services: 22  # ✅ Auditoria 2025-12-23
-    controllers: 22  # ✅ Auditoria 2025-12-23
-    api_doc: "docs/90-transversal/api/API-ADMIN-MODULE.md"
-    dtos: 118
-    dtos_by_subfolder:
-      alerts: 7
-      analytics: 10
-      bulk_operations: 5
-      classroom_assignments: 17
-      content: 10
-      dashboard: 11
-      gamification_config: 8
-      interventions: 5
-      monitoring: 5
-      organizations: 9
-      progress: 12
-      reports: 1
-      roles: 2
-      system: 9
-      users: 7
-    main_features:
-      - "Gestión de usuarios"
-      - "Gestión de organizaciones"
-      - "Gestión de contenido"
-      - "Configuración del sistema"
-      - "Feature flags"
-      - "System settings"
-      - "Alertas e intervenciones"
-      - "Analytics y reportes"
-      - "Monitoreo de sistema"
-      - "Progreso de estudiantes"
-    status: "✅ Active"
-
-  - name: "educational"
-    description: "Contenido educativo"
-    path: "apps/backend/src/modules/educational"
-    schema_db: "educational_content"
-    entities: 5
+  - nombre: "users"
+    entities: 3
     services: 4
-    controllers: 4
-    dtos: 1
-    main_features:
-      - "Módulos educativos"
-      - "Ejercicios interactivos"
-      - "Recursos multimedia"
-      - "Rúbricas de evaluación"
-      - "Media uploads (M4-M5)"
-    status: "✅ Active"
+    controllers: 2
+    endpoints: 35
+    estado: "100%"
 
-  - name: "assignments"
-    description: "Asignaciones y tareas"
-    path: "apps/backend/src/modules/assignments"
-    schema_db: "educational_content"
-    entities: 5
-    services: 1
-    controllers: 1
-    dtos: 4
-    main_features:
-      - "Crear asignaciones"
-      - "Asignar a aulas"
-      - "Envío de tareas"
-      - "Calificación automática"
-    status: "✅ Active"
+  - nombre: "tenants"
+    entities: 3
+    services: 3
+    controllers: 2
+    endpoints: 20
+    estado: "100%"
 
-  - name: "gamification"
-    description: "Sistema de gamificación"
-    path: "apps/backend/src/modules/gamification"
-    schema_db: "gamification_system"
-    entities: 16
+  - nombre: "core"
+    entities: 0
     services: 8
-    controllers: 9
-    dtos: 5
-    main_features:
-      - "Estadísticas de usuario"
-      - "Rangos Maya"
-      - "ML Coins (economía)"
-      - "Logros y badges"
-      - "Leaderboards"
-      - "Misiones diarias/semanales"
-      - "Comodines/Power-ups"
-      - "Shop system (M4-M5)"
-    status: "✅ Active"
+    controllers: 0
+    endpoints: 0
+    estado: "100%"
+    nota: "Shared utilities module"
 
-  - name: "progress"
-    description: "Seguimiento de progreso"
-    path: "apps/backend/src/modules/progress"
-    schema_db: "progress_tracking"
-    entities: 14  # ✅ 2026-01-04: +1 (Certificate entity - EPIC 10.2)
-    services: 8   # ✅ 2026-01-04: +1 (CertificateService - EPIC 10.2)
-    controllers: 6  # ✅ 2026-01-04: +1 (CertificateController - EPIC 10.2)
-    dtos: 18  # ✅ 2026-01-04: +6 (certificate.dto.ts - EPIC 10.2)
-    main_features:
-      - "Progreso de módulos"
-      - "Intentos de ejercicios"
-      - "Envío de ejercicios"
-      - "Sesiones de aprendizaje"
-      - "Misiones programadas"
-      - "Actividad reciente"
-      - "Actividades pendientes"
-      - "Certificados digitales (EPIC 10.2)"  # ✅ NUEVO
-    status: "✅ Active"
-
-  - name: "social"
-    description: "Características sociales"
-    path: "apps/backend/src/modules/social"
-    schema_db: "social_features"
-    entities: 10
-    services: 9
-    controllers: 9
-    dtos: 20
-    main_features:
-      - "Amistades"
-      - "Escuelas"
-      - "Aulas (classrooms)"
-      - "Equipos (teams)"
-      - "Desafíos entre pares"
-      - "Desafíos de equipo"
-      - "Miembros de aula"
-    status: "✅ Active"
-
-  - name: "content"
-    description: "Gestión de contenido"
-    path: "apps/backend/src/modules/content"
-    schema_db: "content_management"
-    entities: 5
-    services: 5
-    controllers: 5
-    dtos: 11
-    main_features:
-      - "Plantillas de contenido"
-      - "Contenido Marie Curie"
-      - "Archivos multimedia"
-      - "Autores de contenido"
-      - "Categorías de contenido"
-    status: "✅ Active"
-
-  - name: "notifications"
-    description: "Sistema de notificaciones"
-    path: "apps/backend/src/modules/notifications"
-    schema_db: "gamification_system"
-    entities: 1
+  - nombre: "health"
+    entities: 0
     services: 1
     controllers: 1
-    dtos: 4
-    main_features:
-      - "Envío de notificaciones"
-      - "Notificaciones en tiempo real"
-      - "Historial de notificaciones"
-      - "Paginación de notificaciones"
-    status: "✅ Active"
+    endpoints: 3
+    estado: "100%"
 
-  - name: "teacher"
-    description: "Funcionalidades para profesores"
-    path: "apps/backend/src/modules/teacher"
-    schema_db: "multiple"
-    entities: 1
+  - nombre: "settings"
+    entities: 2
+    services: 2
+    controllers: 1
+    endpoints: 15
+    estado: "100%"
+
+  - nombre: "notifications"
+    entities: 4
     services: 5
     controllers: 2
-    dtos: 5
-    main_features:
-      - "Dashboard del profesor"
-      - "Calificación de tareas"
-      - "Análisis de estudiantes"
-      - "Seguimiento de progreso"
-      - "Notas de profesor"
-      - "Manual review (M4-M5)"
-    status: "✅ Active"
-
-  - name: "audit"
-    description: "Auditoría del sistema"
-    path: "apps/backend/src/modules/audit"
-    schema_db: "audit_logging"
-    entities: 1
-    services: 1
-    controllers: 0
-    dtos: 1
-    main_features:
-      - "Logs de auditoría"
-      - "Tracking de eventos"
-      - "Seguridad del sistema"
-    status: "✅ Active"
-
-  - name: "tasks"
-    description: "Tareas programadas (Cron)"
-    path: "apps/backend/src/modules/tasks"
-    schema_db: "multiple"
-    entities: 0
-    services: 2
-    controllers: 0
-    dtos: 0
-    main_features:
-      - "Notificaciones periódicas"
-      - "Misiones diarias/semanales"
-      - "Limpieza de datos"
-    status: "✅ Active"
-
-  - name: "health"
-    description: "Health checks y monitoreo del sistema"
-    path: "apps/backend/src/modules/health"
-    schema_db: null
-    entities: 0
-    services: 1
-    controllers: 1
-    dtos: 0
-    main_features:
-      - "Health check endpoint"
-      - "Readiness probe"
-      - "Liveness probe"
-    status: "✅ Active"
-
-  - name: "mail"
-    description: "Servicio de correo electrónico"
-    path: "apps/backend/src/modules/mail"
-    schema_db: "communication"
-    entities: 0
-    services: 1
-    controllers: 0
-    dtos: 2
-    main_features:
-      - "Envío de emails transaccionales"
-      - "Templates de correo"
-      - "Queue de emails"
-    status: "✅ Active"
-
-  - name: "profile"
-    description: "Gestión de perfiles de usuario"
-    path: "apps/backend/src/modules/profile"
-    schema_db: "auth_management"
-    entities: 1
-    services: 1
-    controllers: 1
-    dtos: 5
-    main_features:
-      - "Ver perfil de usuario"
-      - "Editar perfil"
-      - "Subir avatar"
-      - "Preferencias de usuario"
-    status: "✅ Active"
-
-  - name: "websocket"
-    description: "Comunicación en tiempo real"
-    path: "apps/backend/src/modules/websocket"
-    schema_db: null
-    entities: 0
-    services: 1
-    controllers: 0
-    dtos: 0
-    main_features:
-      - "Notificaciones en tiempo real"
-      - "Actualizaciones de progreso"
-      - "Eventos del sistema"
-    status: "✅ Active"
-
-# ============================================================================
-# ENTITIES (TypeORM Entities)
-# ============================================================================
-entities:
-  count: 69
-  by_module:
-    auth: 12
-    gamification: 16
-    educational: 5
-    progress: 14
-    social: 10
-    content: 5
-    assignments: 5
-    notifications: 1
-    admin: 3
-    audit: 1
-    teacher: 1
-
-  auth_management:
-    - name: "User"
-      file: "user.entity.ts"
-      table: "auth_management.users"
-      description: "Usuario del sistema (autenticación estándar)"
-      relations:
-        - "Profile (1:1)"
-        - "UserRole (1:N)"
-        - "UserSession (1:N)"
-      status: "✅ Active"
-
-    - name: "Profile"
-      file: "profile.entity.ts"
-      table: "auth_management.profiles"
-      description: "Perfil extendido de usuario"
-      relations:
-        - "User (N:1)"
-        - "School (N:1)"
-      status: "✅ Active"
-
-    - name: "Role"
-      file: "role.entity.ts"
-      table: "auth_management.roles"
-      description: "Roles del sistema"
-      relations:
-        - "UserRole (1:N)"
-      status: "✅ Active"
-
-    - name: "UserRole"
-      file: "user-role.entity.ts"
-      table: "auth_management.user_roles"
-      description: "Tabla pivot usuario-rol"
-      relations:
-        - "User (N:1)"
-        - "Role (N:1)"
-      status: "✅ Active"
-
-    - name: "Tenant"
-      file: "tenant.entity.ts"
-      table: "auth_management.tenants"
-      description: "Organizaciones multi-tenant"
-      relations:
-        - "Membership (1:N)"
-      status: "✅ Active"
-
-    - name: "Membership"
-      file: "membership.entity.ts"
-      table: "auth_management.memberships"
-      description: "Membresía de usuario en tenant"
-      relations:
-        - "User (N:1)"
-        - "Tenant (N:1)"
-      status: "✅ Active"
-
-    - name: "AuthProvider"
-      file: "auth-provider.entity.ts"
-      table: "auth_management.auth_providers"
-      description: "Proveedores de autenticación"
-      relations: []
-      status: "✅ Active"
-
-    - name: "AuthAttempt"
-      file: "auth-attempt.entity.ts"
-      table: "auth_management.auth_attempts"
-      description: "Intentos de autenticación"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "UserSession"
-      file: "user-session.entity.ts"
-      table: "auth_management.user_sessions"
-      description: "Sesiones de usuario"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "EmailVerificationToken"
-      file: "email-verification-token.entity.ts"
-      table: "auth_management.email_verification_tokens"
-      description: "Tokens de verificación de email"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "PasswordResetToken"
-      file: "password-reset-token.entity.ts"
-      table: "auth_management.password_reset_tokens"
-      description: "Tokens de reseteo de contraseña"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "SecurityEvent"
-      file: "security-event.entity.ts"
-      table: "auth_management.security_events"
-      description: "Eventos de seguridad"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-  gamification_system:
-    - name: "UserStats"
-      file: "user-stats.entity.ts"
-      table: "gamification_system.user_stats"
-      description: "Estadísticas de usuario"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "UserRank"
-      file: "user-rank.entity.ts"
-      table: "gamification_system.user_ranks"
-      description: "Rango Maya del usuario"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "Achievement"
-      file: "achievement.entity.ts"
-      table: "gamification_system.achievements"
-      description: "Logros del sistema"
-      relations:
-        - "AchievementCategory (N:1)"
-        - "UserAchievement (1:N)"
-      status: "✅ Active"
-
-    - name: "AchievementCategory"
-      file: "achievement-category.entity.ts"
-      table: "gamification_system.achievement_categories"
-      description: "Categorías de logros"
-      relations:
-        - "Achievement (1:N)"
-      status: "✅ Active"
-
-    - name: "UserAchievement"
-      file: "user-achievement.entity.ts"
-      table: "gamification_system.user_achievements"
-      description: "Logros desbloqueados por usuario"
-      relations:
-        - "User (N:1)"
-        - "Achievement (N:1)"
-      status: "✅ Active"
-
-    - name: "MLCoinsTransaction"
-      file: "ml-coins-transaction.entity.ts"
-      table: "gamification_system.ml_coins_transactions"
-      description: "Transacciones de ML Coins"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "Mission"
-      file: "mission.entity.ts"
-      table: "gamification_system.missions"
-      description: "Misiones del sistema"
-      relations: []
-      status: "✅ Active"
-
-    - name: "ComodinesInventory"
-      file: "comodines-inventory.entity.ts"
-      table: "gamification_system.comodines_inventory"
-      description: "Inventario de comodines del usuario"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "ActiveBoost"
-      file: "active-boost.entity.ts"
-      table: "gamification_system.active_boosts"
-      description: "Power-ups activos"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "InventoryTransaction"
-      file: "inventory-transaction.entity.ts"
-      table: "gamification_system.inventory_transactions"
-      description: "Transacciones de inventario"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "LeaderboardMetadata"
-      file: "leaderboard-metadata.entity.ts"
-      table: "gamification_system.leaderboard_metadata"
-      description: "Metadata de leaderboards"
-      relations: []
-      status: "✅ Active"
-
-    - name: "ShopCategory"
-      file: "shop-category.entity.ts"
-      table: "gamification_system.shop_categories"
-      description: "Categorías de la tienda (M4-M5)"
-      relations:
-        - "ShopItem (1:N)"
-      status: "✅ Active"
-      notes: "Implementado en M4-M5 para sistema de tienda"
-
-    - name: "ShopItem"
-      file: "shop-item.entity.ts"
-      table: "gamification_system.shop_items"
-      description: "Items de la tienda (M4-M5)"
-      relations:
-        - "ShopCategory (N:1)"
-        - "UserPurchase (1:N)"
-      status: "✅ Active"
-      notes: "Implementado en M4-M5 para sistema de tienda"
-
-    - name: "UserPurchase"
-      file: "user-purchase.entity.ts"
-      table: "gamification_system.user_purchases"
-      description: "Compras de usuarios en la tienda (M4-M5)"
-      relations:
-        - "User (N:1)"
-        - "ShopItem (N:1)"
-      status: "✅ Active"
-      notes: "Implementado en M4-M5 para sistema de tienda"
-
-    - name: "Notification"
-      file: "notification.entity.ts"
-      path: "modules/notifications/entities"
-      table: "gamification_system.notifications"
-      description: "Notificaciones del sistema"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-  educational_content:
-    - name: "Module"
-      file: "module.entity.ts"
-      table: "educational_content.modules"
-      description: "Módulos educativos"
-      relations:
-        - "Exercise (1:N)"
-        - "ModuleProgress (1:N)"
-      status: "✅ Active"
-
-    - name: "Exercise"
-      file: "exercise.entity.ts"
-      table: "educational_content.exercises"
-      description: "Ejercicios interactivos"
-      relations:
-        - "Module (N:1)"
-        - "ExerciseAttempt (1:N)"
-      status: "✅ Active"
-
-    - name: "AssessmentRubric"
-      file: "assessment-rubric.entity.ts"
-      table: "educational_content.assessment_rubrics"
-      description: "Rúbricas de evaluación"
-      relations:
-        - "Exercise (N:1)"
-      status: "✅ Active"
-
-    - name: "MediaResource"
-      file: "media-resource.entity.ts"
-      table: "educational_content.media_resources"
-      description: "Recursos multimedia"
-      relations:
-        - "Exercise (N:1)"
-        - "Module (N:1)"
-      status: "✅ Active"
-
-    - name: "MediaAttachment"
-      file: "media-attachment.entity.ts"
-      table: "educational_content.media_attachments"
-      description: "Adjuntos multimedia para ejercicios (M4-M5)"
-      relations:
-        - "ExerciseSubmission (N:1)"
-        - "User (N:1)"
-      status: "✅ Active"
-      notes: "Implementado en M4-M5 para soportar audio/video uploads"
-
-    - name: "Assignment"
-      file: "assignment.entity.ts"
-      path: "modules/assignments/entities"
-      table: "educational_content.assignments"
-      description: "Asignaciones de profesor"
-      relations:
-        - "AssignmentExercise (1:N)"
-        - "AssignmentStudent (1:N)"
-      status: "✅ Active"
-
-    - name: "AssignmentExercise"
-      file: "assignment-exercise.entity.ts"
-      path: "modules/assignments/entities"
-      table: "educational_content.assignment_exercises"
-      description: "Ejercicios de una asignación"
-      relations:
-        - "Assignment (N:1)"
-        - "Exercise (N:1)"
-      status: "✅ Active"
-
-    - name: "AssignmentStudent"
-      file: "assignment-student.entity.ts"
-      path: "modules/assignments/entities"
-      table: "educational_content.assignment_students"
-      description: "Estudiantes asignados"
-      relations:
-        - "Assignment (N:1)"
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "AssignmentSubmission"
-      file: "assignment-submission.entity.ts"
-      path: "modules/assignments/entities"
-      table: "educational_content.assignment_submissions"
-      description: "Envíos de asignaciones"
-      relations:
-        - "Assignment (N:1)"
-        - "User (N:1)"
-      status: "✅ Active"
-
-    # REMOVED (2025-11-28): Duplicado eliminado - usar versión de modules/social/entities
-    # AssignmentClassroom ahora está solo en modules/social/entities (tabla: social_features.assignment_classrooms)
-
-  progress_tracking:
-    - name: "ModuleProgress"
-      file: "module-progress.entity.ts"
-      table: "progress_tracking.module_progress"
-      description: "Progreso de módulos"
-      relations:
-        - "User (N:1)"
-        - "Module (N:1)"
-      status: "✅ Active"
-
-    - name: "ExerciseAttempt"
-      file: "exercise-attempt.entity.ts"
-      table: "progress_tracking.exercise_attempts"
-      description: "Intentos de ejercicios"
-      relations:
-        - "User (N:1)"
-        - "Exercise (N:1)"
-      status: "✅ Active"
-
-    - name: "ExerciseSubmission"
-      file: "exercise-submission.entity.ts"
-      table: "progress_tracking.exercise_submissions"
-      description: "Envíos de ejercicios"
-      relations:
-        - "User (N:1)"
-        - "Exercise (N:1)"
-      status: "✅ Active"
-
-    - name: "LearningSession"
-      file: "learning-session.entity.ts"
-      table: "progress_tracking.learning_sessions"
-      description: "Sesiones de aprendizaje"
-      relations:
-        - "User (N:1)"
-        - "Module (N:1)"
-      status: "✅ Active"
-
-    - name: "ScheduledMission"
-      file: "scheduled-mission.entity.ts"
-      table: "progress_tracking.scheduled_missions"
-      description: "Misiones programadas"
-      relations:
-        - "User (N:1)"
-        - "Mission (N:1)"
-      status: "✅ Active"
-
-    - name: "TeacherNote"
-      file: "teacher-note.entity.ts"
-      table: "progress_tracking.teacher_notes"
-      description: "Notas del profesor"
-      relations:
-        - "Teacher (N:1)"
-        - "Student (N:1)"
-      status: "✅ Active"
-
-    - name: "EngagementMetrics"
-      file: "engagement-metrics.entity.ts"
-      table: "progress_tracking.engagement_metrics"
-      description: "Métricas de engagement"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "LearningPath"
-      file: "learning-path.entity.ts"
-      table: "progress_tracking.learning_paths"
-      description: "Rutas de aprendizaje"
-      relations: []
-      status: "✅ Active"
-
-    - name: "UserLearningPath"
-      file: "user-learning-path.entity.ts"
-      table: "progress_tracking.user_learning_paths"
-      description: "Rutas de aprendizaje de usuario"
-      relations:
-        - "User (N:1)"
-        - "LearningPath (N:1)"
-      status: "✅ Active"
-
-    - name: "MasteryTracking"
-      file: "mastery-tracking.entity.ts"
-      table: "progress_tracking.mastery_tracking"
-      description: "Seguimiento de maestría"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "ProgressSnapshot"
-      file: "progress-snapshot.entity.ts"
-      table: "progress_tracking.progress_snapshots"
-      description: "Snapshots de progreso"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "SkillAssessment"
-      file: "skill-assessment.entity.ts"
-      table: "progress_tracking.skill_assessments"
-      description: "Evaluaciones de habilidades"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "ManualReview"
-      file: "manual-review.entity.ts"
-      table: "progress_tracking.manual_reviews"
-      description: "Revisiones manuales de ejercicios por profesores (M4-M5)"
-      relations:
-        - "ExerciseSubmission (N:1)"
-        - "Teacher (N:1)"
-        - "Student (N:1)"
-      status: "✅ Active"
-      notes: "Implementado en M4-M5 para evaluación manual de contenido creativo"
-
-    - name: "Certificate"
-      file: "certificate.entity.ts"
-      table: "progress_tracking.certificates"
-      description: "Certificados digitales de completación (EPIC 10.2)"
-      relations:
-        - "Profile (N:1) - auth_management.profiles"
-        - "Module (N:1) - educational_content.modules"
-        - "Tenant (N:1) - auth_management.tenants"
-        - "Classroom (N:1) - social_features.classrooms"
-      status: "✅ Active"
-      notes: "EPIC 10.2 - Sistema de certificados digitales con QR, PDF generation y verificación pública"
-
-  social_features:
-    - name: "Friendship"
-      file: "friendship.entity.ts"
-      table: "social_features.friendships"
-      description: "Amistades entre usuarios"
-      relations:
-        - "User (N:1)"
-        - "Friend (N:1)"
-      status: "✅ Active"
-
-    - name: "School"
-      file: "school.entity.ts"
-      table: "social_features.schools"
-      description: "Escuelas"
-      relations:
-        - "Classroom (1:N)"
-        - "Profile (1:N)"
-      status: "✅ Active"
-
-    - name: "Classroom"
-      file: "classroom.entity.ts"
-      table: "social_features.classrooms"
-      description: "Aulas/Clases"
-      relations:
-        - "School (N:1)"
-        - "ClassroomMember (1:N)"
-      status: "✅ Active"
-
-    - name: "ClassroomMember"
-      file: "classroom-member.entity.ts"
-      table: "social_features.classroom_members"
-      description: "Miembros de aula"
-      relations:
-        - "Classroom (N:1)"
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "Team"
-      file: "team.entity.ts"
-      table: "social_features.teams"
-      description: "Equipos/Gremios"
-      relations:
-        - "TeamMember (1:N)"
-        - "TeamChallenge (1:N)"
-      status: "✅ Active"
-
-    - name: "TeamMember"
-      file: "team-member.entity.ts"
-      table: "social_features.team_members"
-      description: "Miembros de equipo"
-      relations:
-        - "Team (N:1)"
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "TeamChallenge"
-      file: "team-challenge.entity.ts"
-      table: "social_features.team_challenges"
-      description: "Desafíos de equipo"
-      relations:
-        - "Team (N:1)"
-        - "OpponentTeam (N:1)"
-      status: "✅ Active"
-
-    - name: "PeerChallenge"
-      file: "peer-challenge.entity.ts"
-      table: "social_features.peer_challenges"
-      description: "Desafíos entre pares"
-      relations:
-        - "Challenger (N:1)"
-        - "Challenged (N:1)"
-      status: "✅ Active"
-
-    - name: "ChallengeParticipant"
-      file: "challenge-participant.entity.ts"
-      table: "social_features.challenge_participants"
-      description: "Participantes de desafío"
-      relations:
-        - "Challenge (N:1)"
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "AssignmentClassroom"
-      file: "assignment-classroom.entity.ts"
-      path: "modules/social/entities"
-      table: "social_features.assignment_classrooms"
-      description: "Asignaciones a aulas (M2M entre assignments y classrooms)"
-      relations:
-        - "Assignment (N:1)"
-        - "Classroom (N:1)"
-      status: "✅ Active"
-      notes: "ÚNICO - Duplicado en modules/assignments eliminado (2025-11-28)"
-
-  content_management:
-    - name: "ContentTemplate"
-      file: "content-template.entity.ts"
-      table: "content_management.content_templates"
-      description: "Plantillas de contenido"
-      relations: []
-      status: "✅ Active"
-
-    - name: "MarieCurieContent"
-      file: "marie-curie-content.entity.ts"
-      table: "content_management.marie_curie_content"
-      description: "Contenido Marie Curie"
-      relations: []
-      status: "✅ Active"
-
-    - name: "MediaFile"
-      file: "media-file.entity.ts"
-      table: "content_management.media_files"
-      description: "Archivos multimedia"
-      relations: []
-      status: "✅ Active"
-
-    - name: "ContentAuthor"
-      file: "content-author.entity.ts"
-      table: "content_management.content_authors"
-      description: "Autores de contenido"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-    - name: "ContentCategory"
-      file: "content-category.entity.ts"
-      table: "content_management.content_categories"
-      description: "Categorías de contenido"
-      relations: []
-      status: "✅ Active"
-
-  system_configuration:
-    - name: "SystemSetting"
-      file: "system-setting.entity.ts"
-      path: "modules/admin/entities"
-      table: "system_configuration.system_settings"
-      description: "Configuración del sistema"
-      relations: []
-      status: "✅ Active"
-
-    - name: "FeatureFlag"
-      file: "feature-flag.entity.ts"
-      path: "modules/admin/entities"
-      table: "system_configuration.feature_flags"
-      description: "Feature flags"
-      relations: []
-      status: "✅ Active"
-
-    - name: "NotificationSettings"
-      file: "notification-settings.entity.ts"
-      path: "modules/admin/entities"
-      table: "system_configuration.notification_settings"
-      description: "Configuración de notificaciones"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-  audit_logging:
-    - name: "AuditLog"
-      file: "audit-log.entity.ts"
-      table: "audit_logging.audit_logs"
-      description: "Logs de auditoría"
-      relations:
-        - "User (N:1)"
-      status: "✅ Active"
-
-# ============================================================================
-# DTOS (Data Transfer Objects)
-# ============================================================================
-dtos:
-  count: 274
-  by_module:
-    admin: 118
-    auth: 37
-    assignments: 4
-    audit: 1
-    content: 11
-    educational: 1
-    gamification: 5
-    notifications: 4
-    progress: 12
-    social: 20
-    teacher: 5
-
-  categories:
-    create:
-      count: 30
-      description: "DTOs para crear entidades"
-      example: "CreateUserDto, CreateModuleDto"
-
-    update:
-      count: 15
-      description: "DTOs para actualizar entidades"
-      example: "UpdateUserDto, UpdateProfileDto"
-
-    response:
-      count: 35
-      description: "DTOs de respuesta de API"
-      example: "UserResponseDto, ModuleResponseDto"
-
-    query:
-      count: 10
-      description: "DTOs de consultas y filtros"
-      example: "GetNotificationsQueryDto, PaginatedDto"
-
-    action:
-      count: 20
-      description: "DTOs de acciones específicas"
-      example: "LoginDto, RegisterDto, GradeSubmissionDto"
-
-    other:
-      count: 40
-      description: "Otros DTOs especializados"
-
-# ============================================================================
-# SERVICES (Business Logic)
-# ============================================================================
-services:
-  count: 104  # AUDITADO 2026-01-24 - Conteo real del filesystem (alineado con metadata)
-  by_module:
-    admin: 22  # alerts, analytics, assignments, content, dashboard, interventions, monitoring, organizations, progress, reports, roles, system, users, bulk-operations, classroom-assignments, feature-flags, gamification-config + stats (3 subcarpetas)
-    auth: 5  # email-verification, password-recovery, security, session-management + auth base
-    assignments: 1  # assignments
-    audit: 1  # audit
-    content: 10  # authors, categories, templates, versions, flagged, marie-curie, media-files, media-metadata, moderation-rules, tags
-    educational: 4  # exercises, media-storage, media, modules
-    gamification: 14  # achievements, classroom-missions, comodines, leaderboard, mission-templates, missions, ml-coins, ranks, shop, user-stats + missions/ (claim, generator, progress)
-    health: 1  # health
-    lti: 3  # consumers, grade-passbacks, sessions
-    mail: 1  # mail
-    notifications: 6  # preference, queue, template, notification, push, user-device
-    profile: 1  # profile
-    progress: 14  # certificate, engagement-metrics, exercise-attempt, exercise-submission, learning-session, module-progress, pending-activities, recent-activity, scheduled-mission, session-cleanup + grading/ (2) + validators/ (1)
-    social: 11  # challenge-participants, classroom-members, classrooms, friendships, peer-challenges, schools, team-challenges, team-members, teams, user-activities, user-follows
-    tasks: 3  # achievement-reconciliation-cron, missions-cron, notifications-cron
-    teacher: 8  # analytics, bonus-coins, exercise-responses, grading, intervention-alerts, manual-review, ml-predictor + teacher base
-    websocket: 1  # websocket
-
-  auth_services:
-    - name: "AuthService"
-      description: "Autenticación principal"
-      main_methods:
-        - "register()"
-        - "login()"
-        - "logout()"
-        - "refreshToken()"
-
-    - name: "PasswordRecoveryService"
-      description: "Recuperación de contraseña"
-      main_methods:
-        - "requestReset()"
-        - "resetPassword()"
-
-    - name: "EmailVerificationService"
-      description: "Verificación de email"
-      main_methods:
-        - "sendVerificationEmail()"
-        - "verifyEmail()"
-
-    - name: "SessionManagementService"
-      description: "Gestión de sesiones"
-      main_methods:
-        - "createSession()"
-        - "invalidateSession()"
-
-    - name: "SecurityService"
-      description: "Seguridad del sistema"
-      main_methods:
-        - "logSecurityEvent()"
-        - "detectSuspiciousActivity()"
-
-  gamification_services:
-    - name: "UserStatsService"
-      description: "Estadísticas de usuario"
-      main_methods:
-        - "getUserStats()"
-        - "updateXP()"
-
-    - name: "RanksService"
-      description: "Sistema de rangos Maya"
-      main_methods:
-        - "getUserRank()"
-        - "checkPromotion()"
-        - "promoteToNextRank()"
-
-    - name: "MLCoinsService"
-      description: "Economía de ML Coins"
-      main_methods:
-        - "getBalance()"
-        - "addCoins()"
-        - "spendCoins()"
-        - "getTransactions()"
-
-    - name: "AchievementsService"
-      description: "Sistema de logros"
-      main_methods:
-        - "getAchievements()"
-        - "unlockAchievement()"
-        - "checkConditions()"
-
-    - name: "LeaderboardService"
-      description: "Tablas de clasificación"
-      main_methods:
-        - "getGlobalLeaderboard()"
-        - "getClassroomLeaderboard()"
-        - "getUserRank()"
-
-    - name: "MissionsService"
-      description: "Sistema de misiones"
-      main_methods:
-        - "getActiveMissions()"
-        - "claimReward()"
-        - "updateProgress()"
-
-    - name: "ComodinesService"
-      description: "Power-ups y comodines"
-      main_methods:
-        - "getInventory()"
-        - "useComodin()"
-        - "purchaseComodin()"
-
-    - name: "ShopService"
-      description: "Sistema de tienda ML Coins (M4-M5)"
-      main_methods:
-        - "getCategories()"
-        - "getItems()"
-        - "purchaseItem()"
-        - "getUserPurchases()"
-      notes: "Implementado en M4-M5 para tienda de recompensas"
-
-  educational_services:
-    - name: "ModulesService"
-      description: "Gestión de módulos educativos"
-
-    - name: "ExercisesService"
-      description: "Gestión de ejercicios"
-
-    - name: "MediaResourcesService"
-      description: "Gestión de recursos multimedia"
-
-    - name: "MediaStorageService"
-      description: "Almacenamiento de archivos multimedia (M4-M5)"
-      main_methods:
-        - "uploadMedia()"
-        - "deleteMedia()"
-        - "getMediaUrl()"
-      notes: "Implementado en M4-M5 para uploads de audio/video"
-
-  teacher_services:
-    - name: "TeacherDashboardService"
-      description: "Dashboard del profesor"
-
-    - name: "GradingService"
-      description: "Calificación de tareas"
-
-    - name: "StudentAnalysisService"
-      description: "Análisis de estudiantes"
-
-    - name: "ProgressTrackingService"
-      description: "Seguimiento de progreso"
-
-    - name: "ManualReviewService"
-      description: "Revisión manual de ejercicios (M4-M5)"
-      main_methods:
-        - "createReview()"
-        - "updateReview()"
-        - "getPendingReviews()"
-        - "getReviewById()"
-      notes: "Implementado en M4-M5 para evaluación de contenido creativo"
-
-# ============================================================================
-# CONTROLLERS (API Endpoints)
-# ============================================================================
-controllers:
-  count: 87  # AUDITADO 2026-01-24 - Conteo real del filesystem
-  by_module:
-    admin: 22  # bulk, analytics, monitoring, system, logs, alerts, assignments, content, dashboard, gamification-config, interventions, organizations, progress, reports, roles, user-stats, users, classroom-assignments, classroom-teachers, feature-flags
-    assignments: 2  # assignments, student-assignments
-    auth: 3  # auth, password, users
-    content: 10  # authors, categories, templates, versions, flagged, marie-curie, media-files, media-metadata, moderation-rules, tags
-    educational: 5  # exercises, media-upload, media, modules, exercise-validation
-    gamification: 10  # achievements, classroom-missions, comodines, leaderboard, mission-templates, missions, ml-coins, ranks, shop, user-stats
-    health: 1  # health
-    lti: 3  # consumers, grade-passbacks, sessions
-    notifications: 5  # devices, multichannel, preferences, templates, notifications
-    profile: 1  # profile
-    progress: 6  # certificate, exercise-attempt, exercise-submission, learning-session, module-progress, scheduled-mission
-    social: 11  # user-follows, peer-challenges, challenge-participants, schools, classrooms, classroom-members, teams, team-members, team-challenges, friendships, user-activities
-    teacher: 9  # exercise-responses, intervention-alerts, manual-review, classrooms, communication, content, grades, teacher
-
-  base_path: "/api"
-  swagger_path: "/api/docs"
-
-  main_routes:
-    auth:
-      - "POST /api/auth/register"
-      - "POST /api/auth/login"
-      - "POST /api/auth/logout"
-      - "POST /api/auth/refresh"
-      - "POST /api/auth/password/reset"
-      - "POST /api/auth/email/verify"
-
-    educational:
-      - "GET /api/educational/modules"
-      - "GET /api/educational/modules/:id"
-      - "GET /api/educational/exercises"
-      - "GET /api/educational/exercises/:id"
-      - "POST /api/educational/exercises/:id/submit"
-      - "POST /api/educational/media/upload (M4-M5)"
-      - "DELETE /api/educational/media/:id (M4-M5)"
-
-    gamification:
-      - "GET /api/gamification/stats"
-      - "GET /api/gamification/ranks"
-      - "GET /api/gamification/achievements"
-      - "GET /api/gamification/leaderboard"
-      - "GET /api/gamification/ml-coins/balance"
-      - "GET /api/gamification/missions"
-      - "POST /api/gamification/missions/:id/claim"
-      - "GET /api/gamification/shop/categories (M4-M5)"
-      - "GET /api/gamification/shop/items (M4-M5)"
-      - "POST /api/gamification/shop/purchase (M4-M5)"
-      - "GET /api/gamification/shop/purchases (M4-M5)"
-
-    progress:
-      - "GET /api/progress/modules/:id"
-      - "GET /api/progress/recent"
-      - "GET /api/progress/pending"
-      - "POST /api/progress/attempts"
-      - "POST /api/progress/submissions"
-
-    social:
-      - "GET /api/social/friends"
-      - "POST /api/social/friends/:id/request"
-      - "GET /api/social/classrooms"
-      - "GET /api/social/teams"
-      - "POST /api/social/challenges"
-
-    teacher:
-      - "GET /api/teacher/dashboard"
-      - "GET /api/teacher/students/:id/analysis"
-      - "POST /api/teacher/grading"
-      - "POST /api/teacher/notes"
-      - "GET /api/teacher/reviews/pending (M4-M5)"
-      - "POST /api/teacher/reviews (M4-M5)"
-      - "PUT /api/teacher/reviews/:id (M4-M5)"
-      - "GET /api/teacher/reviews/:id (M4-M5)"
-
-    # Teacher Assignments Controller
-    # IMPORTANTE: El orden de rutas es crítico en NestJS - rutas estáticas ANTES de rutas con parámetros
-    teacher_assignments:
-      prefix: "/api/v1/teacher/assignments"
-      controller: "AssignmentsController"
-      routes_order:  # Orden de declaración en el controlador (determina prioridad de matching)
-        - "POST /                                    # create()"
-        - "GET /                                     # findAll()"
-        - "GET /upcoming                             # getUpcoming() - DEBE ir antes de /:id"
-        - "GET /:id                                  # findOne()"
-        - "PUT /:id                                  # update()"
-        - "DELETE /:id                               # remove()"
-        - "POST /:id/assign                          # assignToClassrooms()"
-        - "GET /:id/submissions                      # getSubmissions()"
-        - "POST /:assignmentId/submissions/:submissionId/grade  # gradeSubmission()"
-        - "PATCH /:id                                # patch()"
-        - "POST /:id/distribute                      # distribute()"
-        - "POST /:id/duplicate                       # duplicate()"
-        - "POST /:id/publish                         # publish()"
-        - "POST /:id/close                           # close()"
-        - "POST /:id/send-reminder                   # sendReminder()"
-      routing_notes: |
-        En NestJS, las rutas se evalúan en orden de declaración.
-        Las rutas estáticas (como /upcoming) DEBEN declararse ANTES de rutas
-        parametrizadas (como /:id) para evitar que el parámetro capture valores literales.
-        Ejemplo: GET /upcoming debe ir antes de GET /:id, o "upcoming" será interpretado como un UUID.
-
-# ============================================================================
-# CONSTANTS (Shared Constants)
-# ============================================================================
-constants:
-  - name: "database.constants.ts"
-    path: "shared/constants"
-    description: "Nombres de schemas y tablas (SSOT)"
-    exports:
-      - "DB_SCHEMAS"
-      - "DB_TABLES"
-      - "getFullTableName()"
-    total_schemas: 14
-    total_tables: 90
-
-  - name: "enums.constants.ts"
-    path: "shared/constants"
-    description: "ENUMs sincronizados con Database/Frontend"
-    total_enums: 25
-    main_enums:
-      - "DifficultyLevelEnum"
-      - "MayaRank"
-      - "TransactionTypeEnum"
-      - "NotificationTypeEnum"
-      - "ProgressStatusEnum"
-
-  - name: "routes.constants.ts"
-    path: "shared/constants"
-    description: "Rutas API centralizadas"
-    exports:
-      - "API_ROUTES"
-      - "API_VERSIONS"
-
-# ============================================================================
-# DATABASE DATASOURCES (TypeORM)
-# UPDATED (2025-12-18): Corregido conteo de 6 a 9 datasources reales
-# ============================================================================
-datasources:
-  count: 9
-  path: "app.module.ts (TypeOrmModule.forRootAsync)"
-  files:
-    - name: "auth"
-      schema: "auth_management"
-      entities_path: "/modules/auth/entities/**/*.entity"
-      entities: 12
-
-    - name: "educational"
-      schema: "educational_content"
-      entities_path: "/modules/educational/entities/**/*.entity + /modules/assignments/entities/**/*.entity + /modules/teacher/entities/teacher-content.entity"
-      entities: 14
-      note: "CORRECTED 2025-12-18: Agregados paths de assignments y teacher-content"
-
-    - name: "gamification"
-      schema: "gamification_system"
-      entities_path: "/modules/gamification/entities/**/*.entity + /modules/notifications/notification.entity"
-      entities: 14
-
-    - name: "progress"
-      schema: "progress_tracking"
-      entities_path: "/modules/progress/entities/**/*.entity"
-      entities: 13
-
-    - name: "social"
-      schema: "social_features"
-      entities_path: "/modules/social/entities/**/*.entity"
-      entities: 10
-
-    - name: "content"
-      schema: "content_management"
-      entities_path: "/modules/content/entities/**/*.entity"
-      entities: 5
-
-    - name: "audit"
-      schema: "audit_logging"
-      entities_path: "/modules/audit/entities/**/*.entity"
-      entities: 3
-      note: "ADDED 2025-12-18"
-
-    - name: "notifications"
-      schema: "notifications"
-      entities_path: "/modules/notifications/entities/multichannel/**/*.entity"
-      entities: 4
-      note: "ADDED 2025-12-18"
-
-    - name: "communication"
-      schema: "communication"
-      entities_path: "/modules/teacher/entities/message*.entity"
-      entities: 2
-      note: "ADDED 2025-12-18"
-
-# ============================================================================
-# ESTADÍSTICAS
-# ============================================================================
-statistics:
-  total_files: 532
-  breakdown:
-    entities: 69
-    dtos: 274
-    services: 55
-    controllers: 41
-    modules: 14
-    datasources: 9
-    guards: 8
-    interceptors: 5
-    decorators: 10
-    pipes: 4
-    filters: 3
-    other: 43
-
-  code_quality:
-    typescript_coverage: "100%"
-    unit_tests: "20%"
-    integration_tests: "10%"
-    eslint_compliance: "98%"
-
-  largest_modules:
-    - name: "gamification"
-      files: 100
-      percentage: "25%"
-
-    - name: "progress"
-      files: 80
-      percentage: "20%"
-
-    - name: "auth"
-      files: 70
-      percentage: "17.5%"
-
-# ============================================================================
-# ESTADO DEL PROYECTO
-# ============================================================================
-project_status:
-  build_status: "✅ Passing"
-  typescript_errors: 0
-  eslint_warnings: 5
-  swagger_documentation: "✅ Complete"
-  api_versioning: "v1"
-
-  areas_improvement:
-    - "Aumentar cobertura de tests (20% → 70%)"
-    - "Agregar validación exhaustiva de DTOs"
-    - "Implementar más tests de integración"
-    - "Documentar servicios con JSDoc"
-    - "Agregar rate limiting"
-
-# ============================================================================
-# PRÓXIMAS ACCIONES
-# ============================================================================
-next_actions:
-  immediate:
-    - action: "Completar tests unitarios de services"
-      priority: "P1"
-      time_estimate: "2 semanas"
-
-    - action: "Agregar rate limiting a endpoints"
-      priority: "P1"
-      time_estimate: "1 semana"
-
-  short_term:
-    - action: "Documentar todos los services con JSDoc"
-      priority: "P2"
-      time_estimate: "1 semana"
-
-    - action: "Agregar tests de integración E2E"
-      priority: "P2"
-      time_estimate: "2 semanas"
-
-  long_term:
-    - action: "Implementar GraphQL API"
-      priority: "P3"
-      time_estimate: "2 meses"
-
-# ============================================================================
-# REFERENCIAS
-# ============================================================================
-references:
-  validation_report: "orchestration/integracion/VAL-001/02-REPORTE-VALIDACION-COHERENCIA.md"
-  analysis_document: "orchestration/integracion/VAL-001/01-ANALISIS.md"
-  package_json: "apps/backend/package.json"
-  readme: "apps/backend/README.md"
-
-# ============================================================================
-# NOTAS
-# ============================================================================
-notes:
-  - "Inventario generado mediante análisis estático de estructura de archivos"
-  - "Conteos basados en glob patterns y análisis de código"
-  - "Estado de entities validado mediante compilación TypeScript"
-  - "Sincronización de ENUMs validada al 100% con Database/Frontend"
-  - "Total de ~400 archivos TypeScript en el proyecto"
-  - "Arquitectura NestJS modular bien organizada"
-  - "Score general del backend: 92/100 (Excelente)"
-
-# ============================================================================
-# CHANGELOG / MODIFICACIONES RECIENTES
-# ============================================================================
-changelog:
-  - date: "2026-01-07"
-    tarea_id: "SECURITY-ADMIN-P0-001"
-    type: "Security Fixes - P0 Critical"
-    status: "✅ COMPLETADO"
-    modules_affected:
-      - "admin"
-      - "shared"
-    description: "Correcciones P0 de seguridad en Admin Portal: SQL injection, DTO validation, authorization"
-    changes:
-      admin_services:
-        - "admin-monitoring.service.ts: 3 SQL injection fixes (getErrorStats, getRecentErrors, getErrorTrends)"
-        - "admin-reports.service.ts: Cross-tenant vulnerability documented"
-        - "admin-system.service.ts: Cross-tenant vulnerability documented"
-        - "content-stats.service.ts: SQL injection fix (make_interval)"
-        - "admin-roles.service.ts: Audit logging + PERMISSION_METADATA"
-      admin_dtos:
-        - "report.dto.ts: @IsInt, @Min, @Max for pagination"
-        - "toggle-maintenance.dto.ts: @MaxLength(500)"
-        - "update-system-config.dto.ts: @IsString, @MaxLength(500)"
-        - "audit-log-query.dto.ts: @MaxLength(255), @Max(100)"
-        - "list-parameters-query.dto.ts: GamificationCategoryEnum, @IsEnum"
-        - "update-parameter.dto.ts: @MaxLength(1000)"
-        - "list-content.dto.ts: @MaxLength, @IsUUID"
-        - "list-media.dto.ts: @MaxLength, @IsUUID"
-        - "approval-history.dto.ts: @MaxLength, @IsUUID"
-        - "approve-content.dto.ts: @IsBoolean"
-      shared_constants:
-        - "enums.constants.ts: PermissionKeyEnum (16 permissions)"
-      shared_validators:
-        - "update-role-permissions.dto.ts: ValidPermissionsConstraint"
-    security_fixes:
-      sql_injection: 6
-      dto_validation: 15
-      authorization: 2
-      cross_tenant_documented: 5
-    impact:
-      - "SQL Injection vulnerabilities: 6 → 0"
-      - "DTOs sin validación crítica: 15 → 0"
-      - "PermissionKeyEnum como single source of truth"
-      - "Audit trail para cambios de permisos"
-    files_modified:
-      - "apps/backend/src/modules/admin/services/admin-monitoring.service.ts"
-      - "apps/backend/src/modules/admin/services/admin-reports.service.ts"
-      - "apps/backend/src/modules/admin/services/admin-system.service.ts"
-      - "apps/backend/src/modules/admin/services/admin-roles.service.ts"
-      - "apps/backend/src/modules/admin/dto/reports/report.dto.ts"
-      - "apps/backend/src/modules/admin/dto/system/toggle-maintenance.dto.ts"
-      - "apps/backend/src/modules/admin/dto/system/update-system-config.dto.ts"
-      - "apps/backend/src/modules/admin/dto/system/audit-log-query.dto.ts"
-      - "apps/backend/src/modules/admin/dto/gamification-config/list-parameters-query.dto.ts"
-      - "apps/backend/src/modules/admin/dto/gamification-config/update-parameter.dto.ts"
-      - "apps/backend/src/shared/constants/enums.constants.ts"
-      - "apps/backend/src/shared/dto/permissions/update-role-permissions.dto.ts"
-    documentation:
-      - "orchestration/reportes/REPORTE-VALIDACION-SEGURIDAD-ADMIN-P0-2026-01-07.md"
-    clean_load_policy:
-      violated: false
-      reason: "Cambios solo en código TypeScript, sin modificaciones DDL"
-    build_status: "✅ Passing"
-    pending_p1:
-      - "Implementar tenant isolation en 5 servicios"
-      - "Agregar guards de autorización en controllers"
-
-  - date: "2026-01-04"
-    tarea_id: "EPIC-10.2-CERTIFICATES"
-    type: "Epic Implementation - Digital Certificates System"
-    status: "✅ COMPLETADO"
-    modules_affected:
-      - "progress"
-    description: "Sistema completo de certificados digitales para completación de módulos"
-    changes:
-      progress:
-        - "Entity: certificate.entity.ts - 25+ campos con ENUMs CertificateStatus/CertificateType"
-        - "Service: certificate.service.ts - Generación PDF con Puppeteer, QR codes, verificación pública"
-        - "Controller: certificate.controller.ts - CRUD completo con guards de seguridad"
-        - "DTOs: certificate.dto.ts - 6 DTOs (Generate, Revoke, Verification, Response, Query)"
-    ddl_created:
-      - "progress_tracking/enums/certificate_enums.sql (certificate_status, certificate_type)"
-      - "progress_tracking/tables/18-certificates.sql (tabla con 9 índices, constraints)"
-      - "progress_tracking/rls-policies/04-certificates-policies.sql (4 políticas RLS)"
-      - "progress_tracking/triggers/32-trg_certificates_updated_at.sql"
-    security_fixes:
-      - "@UseGuards(JwtAuthGuard, RolesGuard) en controller"
-      - "@Public() decorator para verificación QR"
-      - "escapeHtml() en template PDF para prevenir XSS"
-      - "@Transform decorators en DTOs para query params"
-    integration:
-      - "ModuleProgressService.completeModule() → auto-genera certificado"
-      - "forwardRef() para evitar dependencia circular"
-    endpoints_added:
-      - "POST /certificates/generate"
-      - "GET /certificates/user/:userId"
-      - "GET /certificates/verify/:code (PUBLIC)"
-      - "POST /certificates/:id/revoke"
-      - "GET /certificates/:id/download"
-      - "GET /certificates/tenant/:tenantId/stats"
-    clean_load_policy:
-      violated: false
-      reason: "DDL nuevo sin impacto en tablas existentes"
-    documentation:
-      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
-      - "orchestration/inventarios/DATABASE_INVENTORY.yml"
-      - "orchestration/trazas/TRAZA-TAREAS-BACKEND.md (BE-138)"
-      - "CHANGELOG.md (v2.5.0)"
-
-  - date: "2025-12-18"
-    tarea_id: "IMPL-M4M5-CORRECCIONES-001"
-    type: "Feature Implementation - M4-M5 DTOs"
-    status: "⚠️ REVERTIDO"
-    reversion_reason: "DTOs eliminados por LIMPIEZA-M4-EJERCICIOS-001 - ejercicios no oficiales según DocumentoDeDiseño v6.4"
-    reversion_date: "2025-12-18"
-    modules_affected:
-      - "educational"
-      - "progress"
-    description: "[REVERTIDO] Implementación de 4 DTOs para validación de ejercicios M4 que NO están en DocumentoDeDiseño"
-    original_changes:
-      educational:
-        - "DTO: resena-critica-answer.dto.ts - ELIMINADO"
-        - "DTO: chat-literario-answer.dto.ts - ELIMINADO"
-        - "DTO: email-formal-answer.dto.ts - ELIMINADO"
-        - "DTO: ensayo-argumentativo-answer.dto.ts - ELIMINADO"
-      progress:
-        - "Validator: exercise-answer.validator.ts - cases M4 no oficiales removidos"
-    dtos_added: 0
-    dtos_removed: 4
-    reference: "orchestration/reportes/HISTORIAL-CORRECCIONES-2025.md#limpieza-m4-ejercicios-001"
-    documentation:
-      - "orchestration/analisis/PLAN-IMPLEMENTACION-M4-M5-2025-12-18.md"
-    clean_load_policy:
-      violated: false
-      reason: "DTOs fueron revertidos para alinear con DocumentoDeDiseño oficial"
-
-  - date: "2025-12-15"
-    tarea_id: "IMPL-ACHIEVEMENTS-001"
-    type: "Feature Fix - Achievements System"
-    modules_affected:
-      - "gamification"
-      - "progress"
-    description: "Corrección completa del sistema de achievements para portal Students"
-    changes:
-      gamification:
-        - "Service: achievements.service.ts - Reescrito meetsConditions() para soportar 9 tipos de condición"
-        - "Nuevos tipos: exercise_completion, streak, module_completion, all_modules_completion, perfect_score, social, special"
-        - "Agregado DataSource injection para queries complejas"
-        - "Agregado Logger para debugging"
-      progress:
-        - "Service: exercise-attempt.service.ts - Agregado increment modules_completed"
-        - "Service: exercise-attempt.service.ts - Agregada llamada a update_leaderboard_streaks()"
-        - "Service: exercise-submission.service.ts - Integrado AchievementsService"
-        - "Service: exercise-submission.service.ts - Detección achievements post-grading (manual y auto)"
-    impact:
-      - "Sistema de achievements ahora 100% funcional"
-      - "modules_completed se incrementa al completar módulos"
-      - "current_streak se calcula automáticamente"
-      - "Achievements se detectan en ejercicios auto-calificables Y con revisión manual"
-    new_dependencies:
-      exercise_submission_service:
-        depends_on:
-          - "AchievementsService (gamification module)"
-    database_functions_used:
-      - "gamification_system.update_leaderboard_streaks(uuid)"
-    database_tables_affected:
-      - "gamification_system.user_stats (UPDATE)"
-      - "gamification_system.user_achievements (INSERT via service)"
-      - "progress_tracking.module_progress (SELECT)"
-      - "social_features.classroom_members (SELECT)"
-    files_modified:
-      - "apps/backend/src/modules/gamification/services/achievements.service.ts"
-      - "apps/backend/src/modules/progress/services/exercise-attempt.service.ts"
-      - "apps/backend/src/modules/progress/services/exercise-submission.service.ts"
-    documentation:
-      - "orchestration/reportes/IMPL-ACHIEVEMENTS-2025-12-15.md"
-      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
-    clean_load_policy:
-      violated: false
-      reason: "Sin cambios DDL, solo código backend usando funciones existentes"
-    seeds_homologated:
-      - "gamification_system/04-achievements.sql (dev = prod)"
-      - "gamification_system/05-user_stats.sql (copiado a dev)"
-      - "gamification_system/06-user_ranks.sql (copiado a dev)"
-      - "gamification_system/07-ml_coins_transactions.sql (copiado a dev)"
-      - "gamification_system/08-user_achievements.sql (copiado a dev)"
-      - "gamification_system/09-comodines_inventory.sql (copiado a dev)"
-      - "gamification_system/11-missions-production-users.sql (copiado a dev)"
-
-  - date: "2025-11-29"
-    tarea_id: "M4-M5-IMPLEMENTATION"
-    type: "Epic Implementation - Modules 4 & 5"
-    modules_affected:
-      - "educational"
-      - "gamification"
-      - "teacher"
-      - "progress"
-    description: "Implementación completa de módulos 4 y 5 con revisión manual y sistema de tienda"
-    changes:
-      educational:
-        - "Entity: MediaAttachment (media-attachment.entity.ts)"
-        - "Service: MediaStorageService (media-storage.service.ts)"
-        - "Controller: MediaUploadController (media-upload.controller.ts)"
-        - "DTO: UploadMediaDto (upload-media.dto.ts)"
-      gamification:
-        - "Entity: ShopCategory (shop-category.entity.ts)"
-        - "Entity: ShopItem (shop-item.entity.ts)"
-        - "Entity: UserPurchase (user-purchase.entity.ts)"
-        - "Service: ShopService (shop.service.ts)"
-        - "Controller: ShopController (shop.controller.ts)"
-        - "DTOs: shop/ (5 archivos: CreateCategoryDto, CreateItemDto, PurchaseItemDto, CategoryResponseDto, ItemResponseDto)"
-      teacher:
-        - "Entity: ManualReview (manual-review.entity.ts en progress/entities)"
-        - "Service: ManualReviewService (manual-review.service.ts)"
-        - "Controller: ManualReviewController (manual-review.controller.ts)"
-        - "DTO: CreateReviewDto (create-review.dto.ts)"
-      progress:
-        - "Entity: ManualReview integrada con progress_tracking schema"
-    objects_added: 14
-    impact:
-      - "M4: Ejercicios digitales con soporte multimedia completo"
-      - "M5: Ejercicios creativos con revisión manual del profesor"
-      - "Sistema de tienda ML Coins completamente funcional"
-      - "Upload de audio/video para ejercicios creativos"
-      - "Workflow de evaluación manual teacher → student"
-    database_changes:
-      - "Schema educational_content: tabla media_attachments"
-      - "Schema gamification_system: tablas shop_categories, shop_items, user_purchases"
-      - "Schema progress_tracking: tabla manual_reviews"
-    files_modified:
-      - "apps/backend/src/modules/educational/educational.module.ts"
-      - "apps/backend/src/modules/gamification/gamification.module.ts"
-      - "apps/backend/src/modules/teacher/teacher.module.ts"
-      - "apps/backend/src/modules/educational/entities/index.ts"
-      - "apps/backend/src/modules/gamification/entities/index.ts"
-      - "apps/backend/src/modules/gamification/controllers/index.ts"
-      - "apps/backend/src/modules/gamification/services/index.ts"
-    documentation:
-      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
-    clean_load_policy:
-      violated: false
-      reason: "Cambios en BD planificados y ejecutados mediante migrations DDL"
-
-  - date: "2025-11-29"
-    tarea_id: "BE-136"
-    type: "Feature Integration - Gamification"
-    module: "progress"
-    component: "ExerciseAttemptService"
-    description: "Integración de detección automática de logros post-ejercicio"
-    changes:
-      - "Inyectado AchievementsService en ExerciseAttemptService"
-      - "Agregada llamada a detectAndGrantEarned() después de awardRewards()"
-      - "Implementado error handling para no bloquear flujo principal"
-      - "Agregado logging de logros otorgados"
-    impact:
-      - "Sistema de logros ahora funcional en portal Student"
-      - "Logros se otorgan automáticamente al cumplir condiciones"
-      - "Gamificación completamente integrada"
-    new_dependencies:
-      service: "ExerciseAttemptService"
-      depends_on:
-        - "AchievementsService (gamification module)"
-        - "UserStatsService (gamification module)"
-        - "RanksService (gamification module)"
-    files_modified:
-      - "apps/backend/src/modules/progress/services/exercise-attempt.service.ts"
-    documentation:
-      - "orchestration/trazas/TRAZA-TAREAS-BACKEND.md (BE-136)"
-    clean_load_policy:
-      violated: false
-      reason: "Sin cambios en base de datos, solo código backend"
-
-  - date: "2025-11-26"
-    tarea_id: "INVENTORY-UPDATE-001"
-    type: "Documentation Update"
-    module: "admin"
-    component: "BACKEND_INVENTORY.yml"
-    description: "Actualización de conteo de DTOs del módulo admin"
-    changes:
-      - "Corregido conteo de DTOs del módulo admin: 0 → 118"
-      - "Agregado desglose detallado por subcarpeta (15 subcarpetas)"
-      - "Actualizado metadata con nueva versión 2.3.2"
-      - "Actualizado total_dtos global: 195 → 313"
-      - "Actualizado total_files: 400 → 518"
-      - "Agregadas nuevas main_features del módulo admin"
-    impact:
-      - "Mejora de trazabilidad del inventario backend"
-      - "Documentación ahora refleja la realidad del código"
-      - "Facilita auditorías futuras del módulo admin"
-    dtos_by_subfolder:
-      alerts: 7
-      analytics: 10
-      bulk_operations: 5
-      classroom_assignments: 17
-      content: 10
-      dashboard: 11
-      gamification_config: 8
-      interventions: 5
-      monitoring: 5
-      organizations: 9
-      progress: 12
-      reports: 1
-      roles: 2
-      system: 9
-      users: 7
-    files_modified:
-      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
-    documentation:
-      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
-
-  - date: "2025-12-14"
-    tarea_id: "AUDIT-DB-001-P0"
-    type: "Database Audit Corrections - P0 Critical"
-    module: "shared"
-    component: "database.constants.ts"
-    description: "Correcciones P0 de auditoría AUDIT-DB-001: eliminación de referencias Supabase"
-    changes:
-      - "Renombrado AUTH_SUPABASE → AUTH_BASE (claridad arquitectónica)"
-      - "Eliminadas ~75 referencias a Supabase en documentación y código"
-      - "Corregidas 2 funciones de timestamp: NOW() → gamilit.now_mexico()"
-      - "Creados 5 seeds P0 críticos (user_roles, mission_templates, module_dependencies, taxonomies, marie_curie_content)"
-    impact:
-      - "Documentación técnica sin referencias erróneas a Supabase"
-      - "Consistencia de timezone en todas las funciones de updated_at"
-      - "Seeds coverage P0: 100% (35 registros iniciales)"
-      - "Claridad arquitectónica: auth.users es patrón estándar, no Supabase"
-    files_modified:
-      - "apps/backend/src/shared/constants/database.constants.ts"
-      - "apps/backend/README.md"
-      - "apps/database/ddl/00-prerequisites.sql"
-      - "apps/database/ddl/schemas/gamification_system/functions/06-update_missions_updated_at.sql"
-      - "apps/database/ddl/schemas/gamification_system/functions/07-update_notifications_updated_at.sql"
-    seeds_created:
-      - "auth_management/07-user_roles.sql (8 registros)"
-      - "gamification_system/10-mission_templates.sql (11 registros)"
-      - "educational_content/11-module_dependencies.sql (6 registros)"
-      - "educational_content/12-taxonomies.sql (4 registros)"
-      - "content_management/02-marie_curie_content.sql (6 registros)"
-    documentation:
-      - "orchestration/agentes/database-auditor/audit-2025-12-14/07-REPORTE-CORRECCIONES-P0.md"
-      - "orchestration/inventarios/SEEDS_INVENTORY.yml"
-    clean_load_policy:
-      violated: false
-      reason: "Correcciones de arquitectura y datos iniciales - sin cambios estructurales en tablas"
-
-  - date: "2025-11-17"
-    tarea_id: "BE-091"
-    type: "Bug Fix - Critical"
-    module: "educational"
-    component: "ModulesService.getUserModules()"
-    description: "Corrección de cálculo de progreso de módulos"
-    changes:
-      - "Modificado query SQL para calcular ejercicios completados dinámicamente"
-      - "Agregados LATERAL joins para contar desde exercise_attempts"
-      - "Cambio de valores estáticos (module_progress) a dinámicos (exercise_attempts)"
-      - "Usa COUNT(DISTINCT e.id) para evitar duplicados por múltiples intentos"
-    impact:
-      - "Performance: < 100ms por request"
-      - "Progreso de módulos ahora se actualiza automáticamente"
-      - "Fix de subtítulo mostrando 0/5 cuando debería ser 2/5"
-    files_modified:
-      - "apps/backend/src/modules/educational/services/modules.service.ts (líneas 124-173)"
-    documentation:
-      - "orchestration/backend/BE-091/01-ANALISIS.md"
-      - "orchestration/backend/BE-091/02-PLAN.md"
-      - "orchestration/backend/BE-091/03-REPORTE-FINAL.md"
+    endpoints: 25
+    estado: "90%"
+
+  # Educational Content
+  - nombre: "modules"
+    entities: 3
+    services: 3
+    controllers: 2
+    endpoints: 20
+    estado: "95%"
+
+  - nombre: "exercises"
+    entities: 5
+    services: 8
+    controllers: 5
+    endpoints: 50
+    estado: "95%"
+    nota: "23 exercise types with evaluators"
+
+  - nombre: "content"
+    entities: 4
+    services: 4
+    controllers: 3
+    endpoints: 30
+    estado: "95%"
+
+  - nombre: "classrooms"
+    entities: 4
+    services: 4
+    controllers: 2
+    endpoints: 25
+    estado: "90%"
+
+  - nombre: "students"
+    entities: 3
+    services: 5
+    controllers: 3
+    endpoints: 30
+    estado: "90%"
+
+  # Gamification System
+  - nombre: "gamification"
+    entities: 4
+    services: 6
+    controllers: 3
+    endpoints: 35
+    estado: "95%"
+    nota: "Core engine: XP, levels, ranks"
+
+  - nombre: "leaderboard"
+    entities: 3
+    services: 3
+    controllers: 2
+    endpoints: 20
+    estado: "85%"
+
+  - nombre: "missions"
+    entities: 4
+    services: 4
+    controllers: 3
+    endpoints: 25
+    estado: "85%"
+
+  - nombre: "store"
+    entities: 4
+    services: 4
+    controllers: 2
+    endpoints: 20
+    estado: "75%"
+
+  - nombre: "achievements"
+    entities: 3
+    services: 3
+    controllers: 2
+    endpoints: 20
+    estado: "90%"
+
+  - nombre: "social"
+    entities: 4
+    services: 4
+    controllers: 2
+    endpoints: 20
+    estado: "50%"
+    nota: "DDL+entities complete, business logic 50%"
+
+  # Support & Operations
+  - nombre: "teachers"
+    entities: 3
+    services: 5
+    controllers: 3
+    endpoints: 30
+    estado: "95%"
+
+  - nombre: "parents"
+    entities: 3
+    services: 3
+    controllers: 2
+    endpoints: 20
+    estado: "100%"
+
+  - nombre: "analytics"
+    entities: 2
+    services: 5
+    controllers: 3
+    endpoints: 25
+    estado: "85%"
+
+  - nombre: "reports"
+    entities: 3
+    services: 3
+    controllers: 2
+    endpoints: 20
+    estado: "75%"
+
+# -------------------------------------------------------------------------------
+# GUARDS
+# -------------------------------------------------------------------------------
+
+guards:
+  total: 14
+  lista:
+    - "JwtAuthGuard"
+    - "RolesGuard"
+    - "TenantGuard"
+    - "AdminGuard"
+    - "TeacherGuard"
+    - "StudentGuard"
+    - "ParentGuard"
+    - "OwnerGuard"
+    - "ClassroomMemberGuard"
+    - "AssignmentAccessGuard"
+    - "ThrottlerGuard"
+    - "FeatureFlagGuard"
+    - "ActiveSubscriptionGuard"
+    - "WebSocketAuthGuard"
+
+# -------------------------------------------------------------------------------
+# DECORATORS
+# -------------------------------------------------------------------------------
+
+decorators:
+  total: 18
+  lista:
+    - "@Roles()"
+    - "@CurrentUser()"
+    - "@CurrentTenant()"
+    - "@Public()"
+    - "@ApiPaginated()"
+    - "@ApiAuth()"
+    - "@RequireFeature()"
+    - "@Throttle()"
+    - "@CacheResult()"
+    - "@AuditLog()"
+    - "@ValidateExerciseType()"
+    - "@RequireModule()"
+    - "@RequireClassroom()"
+    - "@XPAward()"
+    - "@NotifyOnComplete()"
+    - "@SpacedRepetition()"
+    - "@TransactionScope()"
+    - "@WebSocketAuth()"
+
+# ===============================================================================
+# FIN BACKEND INVENTORY
+# ===============================================================================

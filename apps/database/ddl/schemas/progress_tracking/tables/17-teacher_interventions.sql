@@ -20,7 +20,9 @@
 -- - Follow-up tracking
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS progress_tracking.teacher_interventions (
+DROP TABLE IF EXISTS progress_tracking.teacher_interventions CASCADE;
+
+CREATE TABLE progress_tracking.teacher_interventions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
 
     -- Alert reference (optional - can also be standalone intervention)

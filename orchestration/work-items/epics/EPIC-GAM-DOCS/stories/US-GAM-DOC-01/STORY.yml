@@ -1,0 +1,41 @@
+id: "US-GAM-DOC-01"
+titulo: "API Reference Documentation"
+epic_id: "EPIC-GAM-DOCS"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "EN_PROGRESO"
+prioridad: "P2"
+story_points: 3
+sprint: "Backlog"
+modulos:
+  - "all backend modules"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/"
+        - "apps/backend/src/main.ts"
+      endpoints:
+        - "all 850 endpoints"
+        - "GET /api/docs"
+        - "GET /api/docs-json"
+      files:
+        - "main.ts (swagger setup)"
+        - "**/*.dto.ts (412 DTOs)"
+    frontend:
+      paths: []
+      pages: []
+      components: []
+    database:
+      paths: []
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks: []
+tasks: []

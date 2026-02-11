@@ -9,8 +9,8 @@ export const WordList: React.FC<{ words: WordPosition[] }> = ({ words }) => (
     <div className="space-y-2">
       {words.map(w => (
         <div key={w.word} className="flex items-center gap-2">
-          {w.found ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Circle className="w-5 h-5 text-gray-400" />}
-          <span className={w.found ? 'line-through text-gray-400' : 'font-medium'}>{w.word}</span>
+          {w.found ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Circle className="w-5 h-5 text-detective-text-secondary" />}
+          <span className={w.found ? 'line-through text-detective-text-secondary' : 'font-medium'}>{w.word}</span>
         </div>
       ))}
     </div>

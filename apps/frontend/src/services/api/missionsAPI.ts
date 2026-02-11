@@ -121,7 +121,7 @@ export const missionsAPI = {
    */
   getMissionProgress: async (missionId: string) => {
     try {
-      const response = await apiClient.get(API_ENDPOINTS.gamification.missions.progress(missionId));
+      const response = await apiClient.patch(API_ENDPOINTS.gamification.missions.progress(missionId));
       // Después del unwrap, response.data es directamente el objeto de progreso
       return response.data;
     } catch (error) {

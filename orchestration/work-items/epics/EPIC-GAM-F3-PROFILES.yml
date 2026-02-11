@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F3-PROFILES"
+titulo: "Perfiles"
+proyecto: "gamilit"
+fase: "F3-extensiones"
+source_id: "EXT-004"
+story_points: 8
+estado: "PLANIFICADO"
+prioridad: "P3"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-PROFILES/EPIC.md"
+user_stories: 6
+requirements: 7
+specifications: 4
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-PROFILES/user-stories/"
+stories_structure: "nested"
+tasks_total: 18
+fecha_actualizacion: "2026-02-09"

@@ -5,7 +5,8 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { calculateScore, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import type { LecturaInferencialExerciseProps, QuestionAnswer } from './lecturaInferencialTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -14,7 +15,8 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}) => {  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
   const [validated, setValidated] = useState(false);
   const [answers, setAnswers] = useState<QuestionAnswer[]>([]);
@@ -125,7 +127,7 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
       });
 
       // Submit to backend API
-      const response = await submitExercise(exercise.id, user.id, { questions: userAnswers });
+      const response = await submitAsync({ questions: userAnswers });
 
       // Validate all answers using backend response
       const validatedAnswers: QuestionAnswer[] = questions.map((q) => {
@@ -311,11 +313,11 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
 
                       if (showCorrectness) {
                         if (isCorrect) {
-                          optionClasses += ' bg-green-50 border-green-500 text-green-900';
+                          optionClasses += ' bg-detective-success/10 border-detective-success text-green-900';
                         } else if (isSelected && !isCorrect) {
-                          optionClasses += ' bg-red-50 border-red-500 text-red-900';
+                          optionClasses += ' bg-detective-danger/10 border-detective-danger text-red-900';
                         } else {
-                          optionClasses += ' bg-gray-50 border-gray-300 text-gray-600';
+                          optionClasses += ' bg-detective-bg border-detective-border text-detective-text-secondary';
                         }
                       } else {
                         if (isSelected) {
@@ -323,7 +325,7 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
                             ' bg-detective-orange border-detective-orange text-white';
                         } else {
                           optionClasses +=
-                            ' bg-white border-gray-300 text-detective-text hover:border-detective-orange';
+                            ' bg-white border-detective-border text-detective-text hover:border-detective-orange';
                         }
                       }
 
@@ -340,9 +342,9 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
                             <div
                               className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 ${
                                 showCorrectness && isCorrect
-                                  ? 'border-green-500 bg-green-500'
+                                  ? 'border-detective-success bg-green-500'
                                   : showCorrectness && isSelected && !isCorrect
-                                    ? 'border-red-500 bg-red-500'
+                                    ? 'border-detective-danger bg-red-500'
                                     : isSelected
                                       ? 'border-white bg-white'
                                       : 'border-current'
@@ -372,7 +374,7 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
                       animate={{ opacity: 1, y: 0 }}
                       className={`rounded-lg border-2 p-4 ${
                         answer?.isCorrect
-                          ? 'border-green-300 bg-green-50'
+                          ? 'border-green-300 bg-detective-success/10'
                           : 'border-blue-300 bg-blue-50'
                       }`}
                     >

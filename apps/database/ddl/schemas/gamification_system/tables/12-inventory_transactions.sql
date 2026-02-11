@@ -10,7 +10,7 @@ SET search_path TO gamification_system, public;
 
 DROP TABLE IF EXISTS gamification_system.inventory_transactions CASCADE;
 
-CREATE TABLE IF NOT EXISTS gamification_system.inventory_transactions (
+CREATE TABLE gamification_system.inventory_transactions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     item_id UUID NOT NULL,

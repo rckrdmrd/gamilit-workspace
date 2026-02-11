@@ -1,0 +1,39 @@
+id: "US-GAM-GAMIFICATION-02"
+titulo: "Economia Virtual con ML Coins y Tienda"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P2"
+story_points: 5
+sprint: "Backlog"
+modulos:
+  - "store"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/store/"
+        - "apps/backend/src/modules/gamification/"
+      endpoints: []
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/store/"
+      pages: []
+      components: []
+    database:
+      paths:
+        - "apps/database/ddl/schemas/store/"
+        - "apps/database/ddl/schemas/gamification/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks: []
+tasks: []

@@ -16,25 +16,12 @@ import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { useUserClassroom } from '../hooks/useUserClassroom';
 
 export default function DashboardComplete() {
-  console.log('🚀 [DashboardComplete] Component rendering...');
-
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-
-  console.log('👤 [DashboardComplete] User from useAuth:', {
-    isAuthenticated: !!user,
-    userId: user?.id,
-    userEmail: user?.email,
-  });
 
   // Get user's primary classroom (type-safe approach)
   // Note: Users can be in multiple classrooms. This returns the primary/active one.
   const { classroomId: userClassroomId } = useUserClassroom(user?.id);
-
-  console.log('🏫 [DashboardComplete] Classroom info:', {
-    classroomId: userClassroomId,
-    hasClassroom: !!userClassroomId,
-  });
 
   // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
   const { gamificationData } = useUserGamification(user?.id);
@@ -90,12 +77,6 @@ export default function DashboardComplete() {
         xpRequired: rank.nextRankXP,
       }
     : null;
-
-  console.log('📊 [DashboardComplete] Rank data prepared for widget:', {
-    originalRank: rank,
-    rankData,
-    loading,
-  });
 
   // Missions data from missions API - transform to match MissionsPanel interface
   const transformedMissions = (

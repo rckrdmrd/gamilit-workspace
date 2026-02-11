@@ -5,6 +5,8 @@
 -- Created: 2026-02-03
 -- =====================================================
 
+DROP TABLE IF EXISTS social_features.guild_join_requests CASCADE;
+
 CREATE TABLE social_features.guild_join_requests (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     guild_id UUID NOT NULL,

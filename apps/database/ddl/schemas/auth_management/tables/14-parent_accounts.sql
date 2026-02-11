@@ -6,7 +6,9 @@
 -- Created: 2025-11-08
 -- =====================================================================================
 
-CREATE TABLE IF NOT EXISTS auth_management.parent_accounts (
+DROP TABLE IF EXISTS auth_management.parent_accounts CASCADE;
+
+CREATE TABLE auth_management.parent_accounts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Relación con profile (cada padre tiene un profile)

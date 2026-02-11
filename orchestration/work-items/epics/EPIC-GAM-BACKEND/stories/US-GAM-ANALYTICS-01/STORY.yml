@@ -1,0 +1,38 @@
+id: "US-GAM-ANALYTICS-01"
+titulo: "Dashboard de Analytics para Maestros"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P2"
+story_points: 5
+sprint: "Backlog"
+modulos:
+  - "analytics"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/analytics/"
+      endpoints: []
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/teacher/analytics/"
+        - "apps/frontend/src/pages/admin/analytics/"
+      pages: []
+      components: []
+    database:
+      paths:
+        - "apps/database/ddl/schemas/analytics/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks: []
+tasks: []

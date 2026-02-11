@@ -6,7 +6,9 @@
 -- Tarea: DB-116
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS educational_content.exercise_validation_audits (
+DROP TABLE IF EXISTS educational_content.exercise_validation_audits CASCADE;
+
+CREATE TABLE educational_content.exercise_validation_audits (
     -- Identificadores
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     -- ON DELETE RESTRICT: No permitir eliminar ejercicio si tiene auditorías

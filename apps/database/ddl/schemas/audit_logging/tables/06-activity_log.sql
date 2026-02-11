@@ -19,16 +19,9 @@
 
 SET search_path TO audit_logging, public;
 
--- =====================================================
--- DROP TABLE (if migrating)
--- =====================================================
--- DROP TABLE IF EXISTS audit_logging.activity_logs CASCADE;
+DROP TABLE IF EXISTS audit_logging.activity_logs CASCADE;
 
--- =====================================================
--- CREATE TABLE
--- =====================================================
-
-CREATE TABLE IF NOT EXISTS audit_logging.activity_logs (
+CREATE TABLE audit_logging.activity_logs (
     -- =====================================================
     -- PRIMARY KEY
     -- =====================================================

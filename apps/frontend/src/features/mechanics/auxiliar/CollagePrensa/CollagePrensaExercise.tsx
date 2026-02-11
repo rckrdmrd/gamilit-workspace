@@ -4,7 +4,8 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { CollagePrensaExerciseProps, CollageElement } from './collagePrensaTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -16,6 +17,8 @@ export const CollagePrensaExercise: React.FC<CollagePrensaExerciseProps> = ({
 }) => {
   const { user } = useAuth();
   const { syncAndInvalidate } = useInvalidateDashboard();
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
 
   const [elements, setElements] = useState<CollageElement[]>([]);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
@@ -131,7 +134,7 @@ export const CollagePrensaExercise: React.FC<CollagePrensaExerciseProps> = ({
     setIsSubmitting(true);
 
     try {
-      const response = await submitExercise(exercise.id, user.id, { elements });
+      const response = await submitAsync({ elements });
 
       setValidated(true);
 
@@ -242,7 +245,7 @@ export const CollagePrensaExercise: React.FC<CollagePrensaExerciseProps> = ({
                   const file = e.target.files?.[0];
                   if (file) addImage(file);
                 }}
-                className="w-full rounded-detective border-2 border-gray-300 px-4 py-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-detective border-2 border-detective-border px-4 py-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
 

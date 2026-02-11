@@ -5,7 +5,8 @@ import { MatchingCard } from './MatchingCard';
 import { EmparejamientoExerciseProps } from './emparejamientoTypes';
 import { calculateScore, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 // P0-02: Added 2025-12-18 - Backend submission for progress persistence
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -14,7 +15,8 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {
+}) => {  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+
   const [cards, setCards] = useState(exercise.cards.sort(() => Math.random() - 0.5));
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -118,7 +120,7 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
           return { leftId: left?.id, rightId: right?.id, matchId: left?.matchId };
         });
 
-        const response = await submitExercise(exercise.id, user.id, { matches });
+        const response = await submitAsync({ matches });
 
         // Invalidate dashboard to reflect new progress
         invalidateDashboard();
@@ -188,6 +190,13 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
 
   return (
     <>
+      {/* Instructions */}
+      <div className="mb-4 rounded-lg bg-detective-bg-secondary p-4">
+        <p className="text-sm text-detective-text-secondary">
+          Encuentra las parejas haciendo clic en dos tarjetas que coincidan. Las tarjetas emparejadas correctamente permanecerán visibles.
+        </p>
+      </div>
+
       <DetectiveCard variant="default" padding="lg">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {cards.map((card) => (

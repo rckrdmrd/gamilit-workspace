@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Param, Query, Body, UseGuards, Req, Request } from '@nestjs/common';
+import { Controller, Get, Post, Param, Query, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@modules/auth/guards/roles.guard';
 import { Roles } from '@modules/auth/decorators/roles.decorator';
 import { GamilityRoleEnum } from '@/shared/constants/enums.constants';
+import { AuthRequest } from '@shared/types';
 import { TeacherMessagesService } from '../services/teacher-messages.service';
 import {
   SendMessageDto,
@@ -68,9 +69,9 @@ export class TeacherCommunicationController {
   @ApiResponse({ status: 200, description: 'Lista de mensajes obtenida', type: MessagesListResponseDto })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Acceso denegado' })
-  async getMessages(@Query() query: GetMessagesQueryDto, @Req() req: Request & { user: any }): Promise<MessagesListResponseDto> {
-    const teacherId = req.user.sub;
-    const tenantId = req.user.tenant_id;
+  async getMessages(@Query() query: GetMessagesQueryDto, @Request() req: AuthRequest): Promise<MessagesListResponseDto> {
+    const teacherId = req.user!.id;
+    const tenantId = req.user!.tenant_id || 'default';
     return this.messagesService.getMessages(teacherId, tenantId, query);
   }
 
@@ -90,9 +91,9 @@ export class TeacherCommunicationController {
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Acceso denegado' })
-  async sendMessage(@Body() dto: SendMessageDto, @Req() req: Request & { user: any }): Promise<MessageResponseDto> {
-    const teacherId = req.user.sub;
-    const tenantId = req.user.tenant_id;
+  async sendMessage(@Body() dto: SendMessageDto, @Request() req: AuthRequest): Promise<MessageResponseDto> {
+    const teacherId = req.user!.id;
+    const tenantId = req.user!.tenant_id || 'default';
     return this.messagesService.sendMessage(teacherId, tenantId, dto);
   }
 
@@ -110,9 +111,9 @@ export class TeacherCommunicationController {
   @ApiResponse({ status: 200, description: 'Lista de conversaciones obtenida', type: [ConversationDto] })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Acceso denegado' })
-  async getConversations(@Req() req: Request & { user: any }): Promise<ConversationDto[]> {
-    const teacherId = req.user.sub;
-    const tenantId = req.user.tenant_id;
+  async getConversations(@Request() req: AuthRequest): Promise<ConversationDto[]> {
+    const teacherId = req.user!.id;
+    const tenantId = req.user!.tenant_id || 'default';
     return this.messagesService.getConversations(teacherId, tenantId);
   }
 
@@ -130,8 +131,8 @@ export class TeacherCommunicationController {
   @ApiResponse({ status: 200, description: 'Contador obtenido', type: UnreadCountDto })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Acceso denegado' })
-  async getUnreadCount(@Req() req: Request & { user: any }): Promise<UnreadCountDto> {
-    const teacherId = req.user.sub;
+  async getUnreadCount(@Request() req: AuthRequest): Promise<UnreadCountDto> {
+    const teacherId = req.user!.id;
     return this.messagesService.getUnreadCount(teacherId);
   }
 
@@ -149,9 +150,9 @@ export class TeacherCommunicationController {
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Acceso denegado' })
   @ApiResponse({ status: 404, description: 'Mensaje no encontrado' })
-  async getMessage(@Param('id') id: string, @Req() req: Request & { user: any }): Promise<MessageResponseDto> {
-    const teacherId = req.user.sub;
-    const tenantId = req.user.tenant_id;
+  async getMessage(@Param('id') id: string, @Request() req: AuthRequest): Promise<MessageResponseDto> {
+    const teacherId = req.user!.id;
+    const tenantId = req.user!.tenant_id || 'default';
     return this.messagesService.getMessageById(id, teacherId, tenantId);
   }
 
@@ -172,9 +173,9 @@ export class TeacherCommunicationController {
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Acceso denegado' })
   @ApiResponse({ status: 404, description: 'Mensaje no encontrado' })
-  async markAsRead(@Param('id') id: string, @Req() req: Request & { user: any }): Promise<{ message: string }> {
-    const teacherId = req.user.sub;
-    const tenantId = req.user.tenant_id;
+  async markAsRead(@Param('id') id: string, @Request() req: AuthRequest): Promise<{ message: string }> {
+    const teacherId = req.user!.id;
+    const tenantId = req.user!.tenant_id || 'default';
     await this.messagesService.markAsRead(id, teacherId, tenantId);
     return { message: 'Mensaje marcado como leído' };
   }
@@ -200,10 +201,10 @@ export class TeacherCommunicationController {
   async sendClassroomAnnouncement(
     @Param('classroomId') classroomId: string,
       @Body() dto: SendClassroomAnnouncementDto,
-      @Req() req: Request & { user: any },
+      @Request() req: AuthRequest,
   ): Promise<MessageResponseDto> {
-    const teacherId = req.user.sub;
-    const tenantId = req.user.tenant_id;
+    const teacherId = req.user!.id;
+    const tenantId = req.user!.tenant_id || 'default';
     return this.messagesService.sendClassroomAnnouncement(classroomId, teacherId, tenantId, dto);
   }
 
@@ -227,10 +228,10 @@ export class TeacherCommunicationController {
   async sendPrivateFeedback(
     @Param('studentId') studentId: string,
       @Body() dto: SendPrivateFeedbackDto,
-      @Req() req: Request & { user: any },
+      @Request() req: AuthRequest,
   ): Promise<MessageResponseDto> {
-    const teacherId = req.user.sub;
-    const tenantId = req.user.tenant_id;
+    const teacherId = req.user!.id;
+    const tenantId = req.user!.tenant_id || 'default';
     return this.messagesService.sendPrivateFeedback(studentId, teacherId, tenantId, dto);
   }
 }

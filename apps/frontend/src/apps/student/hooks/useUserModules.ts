@@ -95,25 +95,8 @@ function transformModuleData(module: Record<string, unknown>): UserModuleData {
 // ============================================================================
 
 async function fetchUserModules(userId: string, classroomId?: string): Promise<UserModuleData[]> {
-  console.log(
-    '🔍 [useUserModules] Fetching modules for userId:',
-    userId,
-    'classroomId:',
-    classroomId,
-  );
-
   const data = await getUserModules(userId, classroomId);
-
-  console.log('✅ [useUserModules] API response received:', {
-    modulesCount: data.length,
-    firstModule: data[0],
-  });
-
-  const transformedData = data.map(transformModuleData);
-
-  console.log('✅ [useUserModules] Data transformed:', transformedData.length, 'modules');
-
-  return transformedData;
+  return data.map(transformModuleData);
 }
 
 // ============================================================================

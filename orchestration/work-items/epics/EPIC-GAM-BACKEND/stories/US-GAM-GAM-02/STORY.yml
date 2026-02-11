@@ -1,0 +1,66 @@
+id: "US-GAM-GAM-02"
+titulo: "Economia Virtual ML Coins"
+epic_id: "EPIC-GAM-BACKEND"
+epic_secondary:
+  - "EPIC-GAM-FRONTEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 8
+sprint: "Completado"
+modulos:
+  - "store"
+  - "gamification"
+  - "missions"
+traceability:
+  requirements:
+    - "RF-GAM-019"
+    - "RF-GAM-020"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/store/"
+        - "apps/backend/src/modules/gamification/"
+        - "apps/backend/src/modules/missions/"
+      endpoints:
+        - "GET /api/v1/store/items"
+        - "POST /api/v1/store/purchase"
+        - "GET /api/v1/store/inventory/:studentId"
+        - "GET /api/v1/store/balance/:studentId"
+        - "GET /api/v1/store/transactions/:studentId"
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/student/store/"
+      pages: []
+      components:
+        - "StoreGrid"
+        - "ItemCard"
+        - "InventoryGrid"
+        - "BalanceDisplay"
+        - "TransactionHistory"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/store/"
+        - "apps/database/ddl/schemas/gamification/"
+        - "apps/database/ddl/schemas/missions/"
+      tables:
+        - "store_items"
+        - "store_purchases"
+        - "student_inventory"
+        - "store_categories"
+        - "ml_coin_transactions"
+        - "ml_coin_balances"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-GAM-01"
+    - "US-GAM-MUL-01"
+    - "US-GAM-STD-01"
+  blocks: []
+tasks: []

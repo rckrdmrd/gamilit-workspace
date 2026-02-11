@@ -1,0 +1,22 @@
+# EPIC-GAM-REQUIREMENTS: Requerimientos Gamilit
+id: "EPIC-GAM-REQUIREMENTS"
+titulo: "Requerimientos Gamilit"
+proyecto: "gamilit"
+story_points: 13
+estado: "COMPLETADO"
+prioridad: "P1"
+fecha_inicio: "2025-08-05"
+fecha_fin: "2025-08-18"
+
+descripcion: |
+  Definicion completa de requerimientos funcionales y no funcionales.
+  User stories L3 para todos los modulos. Priorizacion y estimacion.
+
+entregables:
+  - "15+ User Stories L3 (Given/When/Then)"
+  - "Requerimientos funcionales (RF-01 a RF-08)"
+  - "Requerimientos no funcionales (RNF-01 a RNF-06)"
+  - "Definicion de 5 modulos educativos"
+  - "Definicion de 23 tipos de ejercicios"
+  - "Especificacion de 4 portales"
+  - "Especificacion de sistema de gamificacion maya"

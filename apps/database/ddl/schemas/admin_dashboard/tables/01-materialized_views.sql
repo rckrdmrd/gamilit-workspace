@@ -36,10 +36,10 @@ SELECT
     ) avg_calc) as avg_classroom_size,
 
     -- Content statistics
-    (SELECT COUNT(*) FROM educational_content.modules WHERE is_active = TRUE) as total_modules,
+    (SELECT COUNT(*) FROM educational_content.modules WHERE status = 'published') as total_modules,
     (SELECT COUNT(*) FROM educational_content.exercises WHERE is_active = TRUE) as total_exercises,
     (SELECT COUNT(*) FROM educational_content.assignments WHERE is_published = TRUE) as total_assignments,
-    (SELECT COUNT(*) FROM educational_content.teacher_content WHERE status = 'published') as total_teacher_content,
+    (SELECT COUNT(*) FROM educational_content.teacher_contents WHERE status = 'published') as total_teacher_content,
 
     -- Activity statistics (last 24 hours)
     (SELECT COUNT(*) FROM auth_management.user_sessions WHERE last_activity_at >= NOW() - INTERVAL '24 hours') as active_sessions_24h,
@@ -109,7 +109,7 @@ SELECT
 
     -- Teaching (for teachers)
     (SELECT COUNT(*) FROM social_features.teacher_classrooms tc
-     WHERE tc.teacher_id = p.id AND tc.is_active = TRUE) as teaching_classrooms_count,
+     WHERE tc.teacher_id = p.id) as teaching_classrooms_count,
 
     -- Session info
     (SELECT last_activity_at FROM auth_management.user_sessions
@@ -161,7 +161,7 @@ SELECT
     -- Teacher info
     (SELECT p.display_name FROM auth_management.profiles p
      JOIN social_features.teacher_classrooms tc ON tc.teacher_id = p.id
-     WHERE tc.classroom_id = c.id AND tc.is_active = TRUE
+     WHERE tc.classroom_id = c.id
      LIMIT 1) as primary_teacher_name,
 
     -- Student counts

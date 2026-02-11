@@ -3,6 +3,8 @@
 -- Descripción: Seguimiento detallado de completitud de módulos por usuario
 -- CREADO: 2025-11-08
 
+DROP TABLE IF EXISTS progress_tracking.module_completion_trackings CASCADE;
+
 CREATE TABLE progress_tracking.module_completion_trackings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,

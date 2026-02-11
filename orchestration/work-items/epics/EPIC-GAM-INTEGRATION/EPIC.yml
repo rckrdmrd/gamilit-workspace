@@ -1,0 +1,46 @@
+id: "EPIC-GAM-INTEGRATION"
+titulo: "Integracion Gamilit"
+proyecto: "gamilit"
+version: "3.0.0"
+fecha_creacion: "2025-12-01"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P2"
+story_points: 5
+wave: "wave_3"
+descripcion: |
+  Integracion entre capas (DDL-Backend-Frontend), coherencia de datos,
+  integracion Socket.IO, integracion gamification con exercise engine.
+entregables:
+  - "Coherencia DDL-Backend: 82.5%"
+  - "Coherencia Backend-Frontend: 100%"
+  - "Socket.IO integration (3 namespaces)"
+  - "Exercise -> Gamification pipeline"
+  - "Gamification -> Leaderboard pipeline"
+  - "Notification dispatching"
+  - "Constants SSOT entre capas"
+stories:
+  - id: "US-GAM-INT-01"
+    titulo: "DDL-Backend-Frontend Layer Coherence"
+    status: "COMPLETADO"
+    story_points: 3
+  - id: "US-GAM-INT-02"
+    titulo: "Real-Time Pipeline Integration"
+    status: "COMPLETADO"
+    story_points: 2
+traceability:
+  requirements: []
+  components:
+    backend: []
+    frontend: []
+    database: []
+  dependencies:
+    depends_on:
+      - "EPIC-GAM-BACKEND"
+      - "EPIC-GAM-FRONTEND"
+      - "EPIC-GAM-DATABASE"
+    blocks: []
+metricas:
+  total_stories: 2
+  stories_completadas: 2
+  porcentaje_avance: 100

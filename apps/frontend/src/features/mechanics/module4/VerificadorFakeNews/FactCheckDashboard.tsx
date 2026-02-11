@@ -16,15 +16,15 @@ export const FactCheckDashboard: React.FC<FactCheckDashboardProps> = ({
   const getVerdictIcon = (verdict: FactCheckResult['verdict']) => {
     switch (verdict) {
       case 'true':
-        return <CheckCircle className="w-6 h-6 text-green-600" />;
+        return <CheckCircle className="w-6 h-6 text-detective-success" />;
       case 'false':
-        return <XCircle className="w-6 h-6 text-red-600" />;
+        return <XCircle className="w-6 h-6 text-detective-danger" />;
       case 'partially-true':
         return <AlertCircle className="w-6 h-6 text-yellow-600" />;
       case 'misleading':
         return <AlertCircle className="w-6 h-6 text-orange-600" />;
       case 'unverified':
-        return <HelpCircle className="w-6 h-6 text-gray-600" />;
+        return <HelpCircle className="w-6 h-6 text-detective-text-secondary" />;
     }
   };
 
@@ -41,18 +41,18 @@ export const FactCheckDashboard: React.FC<FactCheckDashboardProps> = ({
 
   const getVerdictColor = (verdict: FactCheckResult['verdict']) => {
     const colors = {
-      'true': 'bg-green-50 border-green-200',
-      'false': 'bg-red-50 border-red-200',
+      'true': 'bg-detective-success/10 border-detective-success/20',
+      'false': 'bg-detective-danger/10 border-detective-danger/20',
       'partially-true': 'bg-yellow-50 border-yellow-200',
       'misleading': 'bg-orange-50 border-orange-200',
-      'unverified': 'bg-gray-50 border-gray-200',
+      'unverified': 'bg-detective-bg border-detective-border',
     };
     return colors[verdict];
   };
 
   return (
     <div className="bg-white rounded-detective shadow-card p-6 space-y-4">
-      <div className="flex items-center gap-3 border-b border-gray-200 pb-4">
+      <div className="flex items-center gap-3 border-b border-detective-border pb-4">
         <Shield className="w-6 h-6 text-detective-orange" />
         <h3 className="text-xl font-bold text-detective-text">Panel de Verificación</h3>
       </div>
@@ -65,7 +65,7 @@ export const FactCheckDashboard: React.FC<FactCheckDashboardProps> = ({
             <div
               key={claim.id}
               className={`border-2 rounded-detective p-4 transition-all ${
-                result ? getVerdictColor(result.verdict) : 'bg-white border-gray-200'
+                result ? getVerdictColor(result.verdict) : 'bg-white border-detective-border'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -133,16 +133,16 @@ export const FactCheckDashboard: React.FC<FactCheckDashboardProps> = ({
       </div>
 
       {results.length > 0 && (
-        <div className="border-t border-gray-200 pt-4 mt-4">
+        <div className="border-t border-detective-border pt-4 mt-4">
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">
+              <p className="text-2xl font-bold text-detective-success">
                 {results.filter((r) => r.verdict === 'true').length}
               </p>
               <p className="text-detective-text-secondary text-sm">Verdaderas</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-red-600">
+              <p className="text-2xl font-bold text-detective-danger">
                 {results.filter((r) => r.verdict === 'false').length}
               </p>
               <p className="text-detective-text-secondary text-sm">Falsas</p>

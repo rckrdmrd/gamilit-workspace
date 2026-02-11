@@ -1,0 +1,56 @@
+id: "US-GAM-ANL-01"
+titulo: "Analytics y Metricas Educativas"
+epic_id: "EPIC-GAM-BACKEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 13
+sprint: "Completado"
+modulos:
+  - "analytics"
+  - "reports"
+traceability:
+  requirements:
+    - "RF-GAM-028"
+    - "RF-GAM-029"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/analytics/"
+        - "apps/backend/src/modules/reports/"
+      endpoints:
+        - "GET /api/v1/analytics/student/:id"
+        - "GET /api/v1/analytics/classroom/:id"
+        - "GET /api/v1/analytics/global"
+        - "GET /api/v1/analytics/engagement"
+        - "POST /api/v1/reports/generate"
+        - "GET /api/v1/reports/scheduled"
+        - "GET /api/v1/reports/:id/download"
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/teacher/analytics/"
+        - "apps/frontend/src/pages/admin/analytics/"
+      pages: []
+      components: []
+    database:
+      paths:
+        - "apps/database/ddl/schemas/analytics/"
+      tables:
+        - "analytics_events"
+        - "analytics_snapshots"
+        - "report_templates"
+        - "report_instances"
+        - "report_schedules"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-TCH-01"
+    - "US-GAM-ADM-01"
+  blocks: []
+tasks: []

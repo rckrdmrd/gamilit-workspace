@@ -1,30 +1,10 @@
---
--- PostgreSQL database dump
---
+-- =====================================================
+-- Table: social_features.teams
+-- Description: Equipos colaborativos de estudiantes
+-- Dependencies: social_features.classrooms, auth_management.profiles, auth_management.tenants
+-- =====================================================
 
-\restrict AVkh11wxJU1xQZUEkt14ZM1e1ddrRBjX1z3ynl1VDfHzdppS7VfgyOAgbp1BFzT
-
--- Dumped from database version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)
--- Dumped by pg_dump version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- Name: teams; Type: TABLE; Schema: social_features; Owner: postgres
---
+DROP TABLE IF EXISTS social_features.teams CASCADE;
 
 CREATE TABLE social_features.teams (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
@@ -52,129 +32,49 @@ CREATE TABLE social_features.teams (
     achievements_earned integer DEFAULT 0,
     is_active boolean DEFAULT true,
     is_verified boolean DEFAULT false,
-    founded_at timestamp with time zone DEFAULT gamilit.now_mexico(),
-    last_activity_at timestamp with time zone,
+    founded_at timestamptz DEFAULT gamilit.now_mexico(),
+    last_activity_at timestamptz,
     metadata jsonb DEFAULT '{}'::jsonb,
-    created_at timestamp with time zone DEFAULT gamilit.now_mexico(),
-    updated_at timestamp with time zone DEFAULT gamilit.now_mexico()
+    created_at timestamptz DEFAULT gamilit.now_mexico(),
+    updated_at timestamptz DEFAULT gamilit.now_mexico(),
+
+    -- Primary Key
+    CONSTRAINT teams_pkey PRIMARY KEY (id),
+
+    -- Unique Constraints
+    CONSTRAINT teams_team_code_key UNIQUE (team_code)
 );
 
+-- Indexes
+CREATE INDEX idx_teams_active ON social_features.teams(is_active) WHERE is_active = true;
+CREATE INDEX idx_teams_classroom ON social_features.teams(classroom_id);
+CREATE INDEX idx_teams_classroom_active_xp ON social_features.teams(classroom_id, is_active, total_xp DESC) WHERE is_active = true;
+CREATE INDEX idx_teams_leader ON social_features.teams(leader_id);
+CREATE INDEX idx_teams_xp ON social_features.teams(total_xp DESC);
 
-ALTER TABLE social_features.teams OWNER TO gamilit_user;
-
---
--- Name: TABLE teams; Type: COMMENT; Schema: social_features; Owner: postgres
---
-
-COMMENT ON TABLE social_features.teams IS 'Equipos colaborativos de estudiantes';
-
-
---
--- Name: teams teams_pkey; Type: CONSTRAINT; Schema: social_features; Owner: postgres
---
-
-ALTER TABLE ONLY social_features.teams
-    ADD CONSTRAINT teams_pkey PRIMARY KEY (id);
-
-
---
--- Name: teams teams_team_code_key; Type: CONSTRAINT; Schema: social_features; Owner: postgres
---
-
-ALTER TABLE ONLY social_features.teams
-    ADD CONSTRAINT teams_team_code_key UNIQUE (team_code);
-
-
---
--- Name: idx_teams_active; Type: INDEX; Schema: social_features; Owner: postgres
---
-
-CREATE INDEX idx_teams_active ON social_features.teams USING btree (is_active) WHERE (is_active = true);
-
-
---
--- Name: idx_teams_classroom; Type: INDEX; Schema: social_features; Owner: postgres
---
-
-CREATE INDEX idx_teams_classroom ON social_features.teams USING btree (classroom_id);
-
-
---
--- Name: idx_teams_classroom_active_xp; Type: INDEX; Schema: social_features; Owner: postgres
---
-
-CREATE INDEX idx_teams_classroom_active_xp ON social_features.teams USING btree (classroom_id, is_active, total_xp DESC) WHERE (is_active = true);
-
-
---
--- Name: idx_teams_leader; Type: INDEX; Schema: social_features; Owner: postgres
---
-
-CREATE INDEX idx_teams_leader ON social_features.teams USING btree (leader_id);
-
-
---
--- Name: idx_teams_xp; Type: INDEX; Schema: social_features; Owner: postgres
---
-
-CREATE INDEX idx_teams_xp ON social_features.teams USING btree (total_xp DESC);
-
-
---
--- Name: teams trg_teams_updated_at; Type: TRIGGER; Schema: social_features; Owner: postgres
--- NOTE: Trigger movido a archivo separado para evitar duplicación
--- Ver: social_features/triggers/28-trg_teams_updated_at.sql
---
-
-
---
--- Name: teams teams_classroom_id_fkey; Type: FK CONSTRAINT; Schema: social_features; Owner: postgres
---
-
+-- Foreign Keys
 ALTER TABLE ONLY social_features.teams
     ADD CONSTRAINT teams_classroom_id_fkey FOREIGN KEY (classroom_id) REFERENCES social_features.classrooms(id) ON DELETE CASCADE;
-
-
---
--- Name: teams teams_creator_id_fkey; Type: FK CONSTRAINT; Schema: social_features; Owner: postgres
---
 
 ALTER TABLE ONLY social_features.teams
     ADD CONSTRAINT teams_creator_id_fkey FOREIGN KEY (creator_id) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
 
-
---
--- Name: teams teams_leader_id_fkey; Type: FK CONSTRAINT; Schema: social_features; Owner: postgres
---
-
 ALTER TABLE ONLY social_features.teams
     ADD CONSTRAINT teams_leader_id_fkey FOREIGN KEY (leader_id) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
-
-
---
--- Name: teams teams_tenant_id_fkey; Type: FK CONSTRAINT; Schema: social_features; Owner: postgres
---
 
 ALTER TABLE ONLY social_features.teams
     ADD CONSTRAINT teams_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES auth_management.tenants(id) ON DELETE CASCADE;
 
+-- Triggers
+-- NOTE: Trigger trg_teams_updated_at movido a archivo separado
+-- Ver: social_features/triggers/28-trg_teams_updated_at.sql
 
---
--- Name: teams; Type: ROW SECURITY; Schema: social_features; Owner: postgres
---
-
+-- Row Level Security
 ALTER TABLE social_features.teams ENABLE ROW LEVEL SECURITY;
 
---
--- Name: TABLE teams; Type: ACL; Schema: social_features; Owner: postgres
---
+-- Comments
+COMMENT ON TABLE social_features.teams IS 'Equipos colaborativos de estudiantes';
 
+-- Permissions
+ALTER TABLE social_features.teams OWNER TO gamilit_user;
 GRANT ALL ON TABLE social_features.teams TO gamilit_user;
-
-
---
--- PostgreSQL database dump complete
---
-
-\unrestrict AVkh11wxJU1xQZUEkt14ZM1e1ddrRBjX1z3ynl1VDfHzdppS7VfgyOAgbp1BFzT
-

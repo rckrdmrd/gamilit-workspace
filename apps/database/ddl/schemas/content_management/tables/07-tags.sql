@@ -22,7 +22,9 @@
 --
 -- =====================================================
 
-CREATE TABLE IF NOT EXISTS content_management.tags (
+DROP TABLE IF EXISTS content_management.tags CASCADE;
+
+CREATE TABLE content_management.tags (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tag_name VARCHAR(100) NOT NULL,
     tag_slug VARCHAR(120) NOT NULL UNIQUE,

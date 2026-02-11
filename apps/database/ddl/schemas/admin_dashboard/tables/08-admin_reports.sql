@@ -6,6 +6,8 @@
 -- Fecha: 2025-11-28
 -- =====================================================
 
+DROP TABLE IF EXISTS admin_dashboard.admin_reports CASCADE;
+
 CREATE TABLE admin_dashboard.admin_reports (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

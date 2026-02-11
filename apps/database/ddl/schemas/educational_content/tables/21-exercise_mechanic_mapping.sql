@@ -11,6 +11,8 @@
 -- TABLA: exercise_mechanic_mappings
 -- ============================================================================
 
+DROP TABLE IF EXISTS educational_content.exercise_mechanic_mappings CASCADE;
+
 CREATE TABLE educational_content.exercise_mechanic_mappings (
     -- Identificador único
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

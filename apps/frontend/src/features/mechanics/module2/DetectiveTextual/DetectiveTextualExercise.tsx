@@ -17,7 +17,8 @@ import type {
 } from './detectiveTextualTypes';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mockExercise } from './detectiveTextualMockData';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
 
@@ -49,7 +50,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           {questionNumber}
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900">{question.question}</h3>
+          <h3 className="text-lg font-semibold text-detective-text">{question.question}</h3>
           {question.inference_type && (
             <span className="mt-1 inline-block rounded-full bg-detective-orange/10 px-3 py-1 text-xs text-detective-orange">
               {question.inference_type.replace('_', ' ')}
@@ -72,12 +73,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
               disabled={showFeedback}
               className={`w-full rounded-lg border-2 p-4 text-left transition-all ${
                 isCorrectAnswer
-                  ? 'border-green-500 bg-green-50'
+                  ? 'border-detective-success bg-detective-success/10'
                   : isWrongSelection
-                    ? 'border-red-500 bg-red-50'
+                    ? 'border-detective-danger bg-detective-danger/10'
                     : isSelected
                       ? 'border-detective-blue bg-detective-blue/5'
-                      : 'border-gray-200 bg-white hover:border-detective-blue/50 hover:bg-gray-50'
+                      : 'border-detective-border bg-white hover:border-detective-blue/50 hover:bg-gray-50'
               } ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <div className="flex items-center gap-3">
@@ -86,18 +87,18 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                     <CheckCircle2
                       className={`h-5 w-5 ${
                         isCorrectAnswer
-                          ? 'text-green-600'
+                          ? 'text-detective-success'
                           : isWrongSelection
-                            ? 'text-red-600'
+                            ? 'text-detective-danger'
                             : 'text-detective-blue'
                       }`}
                     />
                   ) : (
-                    <Circle className="h-5 w-5 text-gray-400" />
+                    <Circle className="h-5 w-5 text-detective-text-secondary" />
                   )}
                 </div>
                 <span
-                  className={`flex-1 ${isCorrectAnswer ? 'font-semibold text-green-900' : 'text-gray-700'}`}
+                  className={`flex-1 ${isCorrectAnswer ? 'font-semibold text-green-900' : 'text-detective-text'}`}
                 >
                   {option}
                 </span>
@@ -112,12 +113,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         <div
           className={`mt-4 rounded-lg p-4 ${
             isCorrect
-              ? 'border-l-4 border-green-500 bg-green-50'
+              ? 'border-l-4 border-detective-success bg-detective-success/10'
               : 'border-l-4 border-blue-500 bg-blue-50'
           }`}
         >
-          <p className="mb-1 text-sm font-semibold text-gray-900">Explicación:</p>
-          <p className="text-sm text-gray-700">{question.explanation}</p>
+          <p className="mb-1 text-sm font-semibold text-detective-text">Explicación:</p>
+          <p className="text-sm text-detective-text">{question.explanation}</p>
         </div>
       )}
     </div>
@@ -185,7 +186,8 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
   }, [exerciseFromPage, propExerciseId]);
 
   // Get actual exerciseId from props or exercise data
-  const exerciseId = propExerciseId || exerciseFromPage?.id || exerciseData.id;
+  const exerciseId = propExerciseId || exerciseFromPage?.id || exerciseData.id;  const { submitAsync } = useExerciseSubmission(exerciseId);
+
 
   const [answers, setAnswers] = useState<Record<string, number>>(initialData?.answers || {});
   const [hintsUsed] = useState(initialData?.hintsUsed || 0);
@@ -277,7 +279,7 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
       );
 
       // Submit to backend API
-      const response = await submitExercise(exerciseId, user.id, { questions: formattedAnswers });
+      const response = await submitAsync({ questions: formattedAnswers });
 
       // Calculate which answers were correct (if backend provides this info)
       const correctAnswers: Record<string, boolean> = {};
@@ -404,12 +406,12 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
               <Book className="h-5 w-5" />
               <h3 className="text-lg font-semibold">Pasaje de Lectura</h3>
             </div>
-            <p className="text-base leading-relaxed text-gray-800">{exerciseData.passage}</p>
+            <p className="text-base leading-relaxed text-detective-text">{exerciseData.passage}</p>
           </div>
 
           {/* Questions */}
           <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-xl font-semibold text-gray-900">
+            <h3 className="flex items-center gap-2 text-xl font-semibold text-detective-text">
               <Search className="h-5 w-5 text-detective-blue" />
               Preguntas de Inferencia
             </h3>

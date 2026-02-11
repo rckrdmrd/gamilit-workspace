@@ -1,0 +1,61 @@
+id: "US-GAM-ADM-01"
+titulo: "Portal Admin con Gestion de Contenido"
+epic_id: "EPIC-GAM-FRONTEND"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 8
+sprint: "Completado"
+modulos:
+  - "content"
+  - "settings"
+  - "analytics"
+  - "users"
+traceability:
+  requirements:
+    - "RF-GAM-009"
+    - "RF-GAM-010"
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/content/"
+        - "apps/backend/src/modules/settings/"
+        - "apps/backend/src/modules/analytics/"
+        - "apps/backend/src/modules/users/"
+      endpoints: []
+      files: []
+    frontend:
+      paths:
+        - "apps/frontend/src/pages/admin/"
+      pages:
+        - "18 admin pages"
+      components:
+        - "AdminDashboard"
+        - "ContentEditor"
+        - "ContentVersioning"
+        - "UserManagement"
+        - "BulkImport"
+        - "SystemConfig"
+        - "GamificationConfig"
+        - "TenantManager"
+        - "GlobalAnalytics"
+        - "FeatureFlagPanel"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/content/"
+        - "apps/database/ddl/schemas/settings/"
+        - "apps/database/ddl/schemas/analytics/"
+        - "apps/database/ddl/schemas/users/"
+      tables: []
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-EDU-01"
+    - "US-GAM-ANL-01"
+  blocks: []
+tasks: []

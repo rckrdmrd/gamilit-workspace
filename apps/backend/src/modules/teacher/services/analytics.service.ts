@@ -79,12 +79,24 @@ export class AnalyticsService {
   /**
    * Get comprehensive classroom analytics
    */
-  async getClassroomAnalytics(_query: GetAnalyticsQueryDto) {
+  async getClassroomAnalytics(query: GetAnalyticsQueryDto) {
     const students = await this.profileRepository.find({
       where: { role: GamilityRoleEnum.STUDENT },
     });
 
-    const submissions = await this.submissionRepository.find();
+    // Build submission query with date filtering
+    const { startDate, endDate } = this.getDateRange(query);
+    const submissionQb = this.submissionRepository.createQueryBuilder('sub');
+
+    if (startDate) {
+      submissionQb.where('sub.submitted_at >= :startDate', { startDate });
+    }
+
+    if (endDate) {
+      submissionQb.andWhere('sub.submitted_at <= :endDate', { endDate });
+    }
+
+    const submissions = await submissionQb.getMany();
 
     // Calculate main metrics
     const totalStudents = students.length;
@@ -179,22 +191,8 @@ export class AnalyticsService {
 
     const studentIds = members.map((m) => m.student_id);
 
-    // Calculate time filter
-    let dateFilter: Date | undefined;
-    if (query.time_range) {
-      const now = new Date();
-      switch (query.time_range) {
-        case '7d':
-          dateFilter = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          break;
-        case '30d':
-          dateFilter = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-          break;
-        case '90d':
-          dateFilter = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-          break;
-      }
-    }
+    // Calculate time filter using helper
+    const { startDate, endDate } = this.getDateRange(query);
 
     // Get submissions for classroom students
     const queryBuilder = this.submissionRepository.createQueryBuilder('sub');
@@ -203,8 +201,12 @@ export class AnalyticsService {
       queryBuilder.where('sub.user_id IN (:...studentIds)', { studentIds });
     }
 
-    if (dateFilter) {
-      queryBuilder.andWhere('sub.submitted_at >= :dateFilter', { dateFilter });
+    if (startDate) {
+      queryBuilder.andWhere('sub.submitted_at >= :startDate', { startDate });
+    }
+
+    if (endDate) {
+      queryBuilder.andWhere('sub.submitted_at <= :endDate', { endDate });
     }
 
     const submissions = await queryBuilder.getMany();
@@ -337,22 +339,8 @@ export class AnalyticsService {
 
     const classroomIds = classrooms.map((c) => c.id);
 
-    // Calculate time filter
-    let dateFilter: Date | undefined;
-    if (query.time_range) {
-      const now = new Date();
-      switch (query.time_range) {
-        case '7d':
-          dateFilter = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          break;
-        case '30d':
-          dateFilter = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-          break;
-        case '90d':
-          dateFilter = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-          break;
-      }
-    }
+    // Calculate time filter using helper
+    const { startDate, endDate } = this.getDateRange(query);
 
     // Get all members in teacher's classrooms
     const queryBuilder =
@@ -378,9 +366,15 @@ export class AnalyticsService {
     const submissionQueryBuilder =
       this.submissionRepository.createQueryBuilder('sub');
 
-    if (dateFilter) {
-      submissionQueryBuilder.where('sub.submitted_at >= :dateFilter', {
-        dateFilter,
+    if (startDate) {
+      submissionQueryBuilder.where('sub.submitted_at >= :startDate', {
+        startDate,
+      });
+    }
+
+    if (endDate) {
+      submissionQueryBuilder.andWhere('sub.submitted_at <= :endDate', {
+        endDate,
       });
     }
 
@@ -1403,6 +1397,52 @@ export class AnalyticsService {
       overallProficiency,
       totalAssessments: assessments.length,
     };
+  }
+
+  /**
+   * Calculate date range from query parameters.
+   *
+   * Priority:
+   *   1. If start_date/end_date are provided, use them directly
+   *   2. Otherwise, derive from time_range (7d, 30d, 90d, all)
+   *
+   * @returns startDate (null for 'all') and endDate (null when no explicit end)
+   */
+  private getDateRange(query: { start_date?: string; end_date?: string; time_range?: string }): {
+    startDate: Date | null;
+    endDate: Date | null;
+  } {
+    // Explicit start_date/end_date take priority
+    if (query.start_date && query.end_date) {
+      return {
+        startDate: new Date(query.start_date),
+        endDate: new Date(query.end_date),
+      };
+    }
+
+    if (query.start_date) {
+      return {
+        startDate: new Date(query.start_date),
+        endDate: null,
+      };
+    }
+
+    // Fallback to time_range
+    const timeRange = query.time_range || '30d';
+    const now = new Date();
+
+    switch (timeRange) {
+      case '7d':
+        return { startDate: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000), endDate: null };
+      case '30d':
+        return { startDate: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000), endDate: null };
+      case '90d':
+        return { startDate: new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000), endDate: null };
+      case 'all':
+        return { startDate: null, endDate: null };
+      default:
+        return { startDate: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000), endDate: null };
+    }
   }
 
   /**

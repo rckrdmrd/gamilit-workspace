@@ -20,7 +20,9 @@
 -- TABLE DEFINITION
 -- =====================================================================================
 
-CREATE TABLE IF NOT EXISTS social_features.user_skill_ratings (
+DROP TABLE IF EXISTS social_features.user_skill_ratings CASCADE;
+
+CREATE TABLE social_features.user_skill_ratings (
     -- =====================================================
     -- PRIMARY KEYS & IDENTIFIERS
     -- =====================================================

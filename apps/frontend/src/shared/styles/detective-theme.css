@@ -52,7 +52,7 @@
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease-out;
-  background: #ea580c;
+  background: #3b82f6;
   color: white;
   box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
 }
@@ -60,7 +60,7 @@
 .btn-blue:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.15);
-  background: #f97316;
+  background: #2563eb;
 }
 
 .btn-green {
@@ -70,7 +70,7 @@
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease-out;
-  background: #ea580c;
+  background: #10b981;
   color: white;
   box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
 }
@@ -78,7 +78,7 @@
 .btn-green:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.15);
-  background: #f97316;
+  background: #059669;
 }
 
 .btn-purple {
@@ -88,7 +88,7 @@
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease-out;
-  background: #ea580c;
+  background: #a855f7;
   color: white;
   box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
 }
@@ -96,7 +96,7 @@
 .btn-purple:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.15);
-  background: #f97316;
+  background: #9333ea;
 }
 
 .btn-danger {
@@ -289,8 +289,6 @@
   outline: none;
   border-color: var(--detective-orange);
   box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-  ring: 2px;
-  ring-color: var(--detective-orange);
 }
 
 .input-detective.input-detective-sm {
@@ -510,8 +508,6 @@
   outline: none;
   border-color: var(--detective-orange);
   box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-  ring: 2px;
-  ring-color: var(--detective-orange);
 }
 
 
@@ -536,8 +532,6 @@ button:focus-visible,
 a:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3);
-  ring: 2px;
-  ring-color: var(--detective-orange);
 }
 
 /* ===== ANIMATIONS ===== */
@@ -616,4 +610,43 @@ a:focus-visible {
   padding: 0.75rem;
   box-shadow: 0 10px 15px -3px rgba(234, 179, 8, 0.3);
   z-index: 20;
+}
+
+/* ============================================================
+   STATE UTILITY CLASSES (P2-C9 Standardization 2026-02-11)
+   ============================================================ */
+.detective-state-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 0.5rem;
+}
+.detective-state-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 0.5rem;
+}
+.detective-state-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #1f2937;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 0.5rem;
+}
+.detective-state-info {
+  background-color: rgba(30, 58, 138, 0.1);
+  color: #1e3a8a;
+  border: 1px solid rgba(30, 58, 138, 0.2);
+  border-radius: 0.5rem;
+}
+
+/* ============================================================
+   HEADER GRADIENT (P2-C10 Standardization 2026-02-11)
+   ============================================================ */
+.detective-header-gradient {
+  background: linear-gradient(to right, #1e3a8a, #f97316);
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 1rem;
 }

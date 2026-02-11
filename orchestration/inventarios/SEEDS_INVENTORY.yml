@@ -279,7 +279,7 @@ seeds_inventory:
               - Cualquier usuario nuevo sin school_id
             logica: |
               UPDATE auth_management.profiles
-              SET school_id = (escuela SYSTEM-UNASSIGNED)
+              SET school_id = (escuela GAMILIT-DEFAULT)
               WHERE school_id IS NULL
             dependencias:
               - auth_management.profiles
@@ -849,7 +849,7 @@ seeds_inventory:
         nota_arquitectura: |
           DECISIÓN DE DISEÑO (2025-12-15):
           Solo entidades DEFAULT del sistema. El admin crea otras desde UI.
-          - 1 escuela (SYSTEM-UNASSIGNED)
+          - 1 escuela (GAMILIT-DEFAULT)
           - 1 classroom (DEFAULT)
           - Trigger automático asigna estudiantes nuevos al DEFAULT
         seeds:
@@ -861,7 +861,7 @@ seeds_inventory:
             version: 1.0.0
             escuelas:
               - name: Sistema - Por Asignar
-                code: SYSTEM-UNASSIGNED
+                code: GAMILIT-DEFAULT
                 uuid: '99999999-9999-9999-9999-999999999999'
                 is_default: true
             dependencias:
@@ -898,7 +898,7 @@ seeds_inventory:
               - name: Sin Asignar - Aula Default
                 code: DEFAULT
                 uuid: '00000000-0000-0000-0000-000000000001'
-                school_code: SYSTEM-UNASSIGNED
+                school_code: GAMILIT-DEFAULT
                 is_default: true
                 metadata:
                   is_default: true
@@ -911,7 +911,7 @@ seeds_inventory:
               - Aula de Pruebas - Todos los Niveles (IEI)
               - Demo Parent Portal - 4to A (IEI)
             dependencias:
-              - social_features.schools (SYSTEM-UNASSIGNED)
+              - social_features.schools (GAMILIT-DEFAULT)
               - auth_management.profiles (teacher default)
             estado: activo
             notas: |
@@ -1165,7 +1165,7 @@ seeds_inventory:
         Solo entidades DEFAULT del sistema. El admin crea otras desde UI.
         Trigger trg_assign_default_classroom asigna automáticamente.
       impacto: |
-        - 1 escuela (SYSTEM-UNASSIGNED) en lugar de 3
+        - 1 escuela (GAMILIT-DEFAULT) en lugar de 3
         - 1 classroom (DEFAULT) en lugar de 6
         - Todos los usuarios con school_id garantizado
         - Integridad referencial mejorada

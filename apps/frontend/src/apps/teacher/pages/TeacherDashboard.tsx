@@ -211,6 +211,22 @@ export default function TeacherDashboard() {
           </div>
         </div>
 
+        {/* Empty Classrooms State — H-02 FIX */}
+        {!classroomsLoading && (!classrooms || classrooms.length === 0) && (
+          <DetectiveCard>
+            <div className="py-12 text-center">
+              <AlertCircle className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary opacity-50" />
+              <h3 className="mb-2 text-lg font-bold text-detective-text">
+                No hay aulas asignadas
+              </h3>
+              <p className="mb-4 text-detective-text-secondary">
+                No tienes aulas asignadas actualmente. Contacta al administrador para que te asigne
+                un aula, o crea una nueva desde el panel de administración.
+              </p>
+            </div>
+          </DetectiveCard>
+        )}
+
         {/* Loading State */}
         {loading && (
           <div className="space-y-6">

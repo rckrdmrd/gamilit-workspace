@@ -53,7 +53,7 @@ BEGIN
     -- ========================================================================
     SELECT *
     INTO v_config
-    FROM educational_content.exercise_validation_config
+    FROM educational_content.exercise_validation_configs
     WHERE exercise_type = v_exercise.exercise_type;
 
     IF NOT FOUND THEN

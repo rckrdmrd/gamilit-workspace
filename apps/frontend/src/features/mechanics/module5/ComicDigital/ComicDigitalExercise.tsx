@@ -3,6 +3,7 @@ import { Plus, Image, Type, MessageSquare, Download, Send, Loader2, CheckCircle 
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 
 interface ComicPanel {
   id: string;
@@ -158,7 +159,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
   ];
 
   const backgrounds = [
-    { id: 'lab', name: 'Laboratorio', color: 'bg-gray-100' },
+    { id: 'lab', name: 'Laboratorio', color: 'bg-detective-bg-secondary' },
     { id: 'university', name: 'Universidad', color: 'bg-blue-50' },
     { id: 'award', name: 'Ceremonia', color: 'bg-yellow-50' },
     { id: 'research', name: 'Investigación', color: 'bg-purple-50' },
@@ -253,9 +254,9 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-detective-bg p-6">
+    <DetectiveCard className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+        <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
           <div className="mb-2 flex items-center gap-3">
             <h2 className="text-2xl font-bold">Creador de Cómics Digitales</h2>
           </div>
@@ -313,7 +314,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
                   <button
                     key={layout.id}
                     onClick={() => addPanel(layout.id)}
-                    className="w-full py-2 px-4 bg-detective-bg border-2 border-gray-300 rounded-detective hover:border-detective-orange transition-colors text-left"
+                    className="w-full py-2 px-4 bg-detective-bg border-2 border-detective-border rounded-detective hover:border-detective-orange transition-colors text-left"
                   >
                     <Plus className="w-4 h-4 inline mr-2" />
                     {layout.name}
@@ -356,7 +357,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
                     {backgrounds.map(bg => (
                       <button
                         key={bg.id}
-                        className={`py-2 px-3 ${bg.color} border-2 border-gray-300 rounded hover:border-detective-orange transition-colors text-xs`}
+                        className={`py-2 px-3 ${bg.color} border-2 border-detective-border rounded hover:border-detective-orange transition-colors text-xs`}
                       >
                         {bg.name}
                       </button>
@@ -377,7 +378,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
                 <div
                   key={panel.id}
                   onClick={() => setSelectedPanel(panel.id)}
-                  className={`border-4 border-detective-text p-4 cursor-pointer relative bg-gray-50 ${
+                  className={`border-4 border-detective-text p-4 cursor-pointer relative bg-detective-bg ${
                     selectedPanel === panel.id ? 'ring-4 ring-detective-orange' : ''
                   }`}
                   style={{ minHeight: '200px' }}
@@ -392,7 +393,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
                       className={`absolute ${
                         bubble.type === 'speech' ? 'bg-white border-2 border-detective-text rounded-xl' :
                         bubble.type === 'thought' ? 'bg-white border-2 border-detective-text rounded-full' :
-                        'bg-yellow-100 border-2 border-yellow-400'
+                        'bg-detective-gold/10 border-2 border-detective-gold'
                       } px-4 py-2 max-w-xs`}
                       style={{
                         left: `${bubble.x}%`,
@@ -409,7 +410,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
                         value={panel.text}
                         onChange={(e) => updatePanelText(panel.id, e.target.value)}
                         placeholder="Descripción de la escena o narración..."
-                        className="w-full px-3 py-2 border-2 border-gray-300 rounded focus:border-detective-orange focus:outline-none resize-none"
+                        className="w-full px-3 py-2 border-2 border-detective-border rounded focus:border-detective-orange focus:outline-none resize-none"
                         rows={3}
                       />
                     </div>
@@ -442,7 +443,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
           feedback={feedback}
         />
       )}
-    </div>
+    </DetectiveCard>
   );
 };
 

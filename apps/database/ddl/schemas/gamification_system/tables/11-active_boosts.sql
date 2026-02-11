@@ -10,7 +10,7 @@ SET search_path TO gamification_system, public;
 
 DROP TABLE IF EXISTS gamification_system.active_boosts CASCADE;
 
-CREATE TABLE IF NOT EXISTS gamification_system.active_boosts (
+CREATE TABLE gamification_system.active_boosts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     boost_type VARCHAR(50) NOT NULL,

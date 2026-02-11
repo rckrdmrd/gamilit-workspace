@@ -90,14 +90,14 @@ export const CrucigramaGrid: React.FC<CrucigramaGridProps> = ({
                   {/* Display multiple numbers if they exist */}
                   {cell.numbers && cell.numbers.length > 0 ? (
                     <span
-                      className="absolute top-0 left-0.5 text-[10px] font-bold text-gray-600 leading-tight"
+                      className="absolute top-0 left-0.5 text-[10px] font-bold text-detective-text-secondary leading-tight"
                       aria-hidden="true"
                     >
                       {cell.numbers.join(',')}
                     </span>
                   ) : cell.number ? (
                     <span
-                      className="absolute top-0 left-0.5 text-xs font-bold text-gray-600"
+                      className="absolute top-0 left-0.5 text-xs font-bold text-detective-text-secondary"
                       aria-hidden="true"
                     >
                       {cell.number}

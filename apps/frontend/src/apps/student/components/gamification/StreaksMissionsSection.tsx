@@ -6,7 +6,7 @@
 
 import { motion } from 'framer-motion';
 import { Flame, Trophy, Target, Check, Clock, Coins, Zap, Gift, Calendar } from 'lucide-react';
-import type { StreakData, Mission } from '../../hooks/useGamificationData';
+import type { StreakData, Mission } from '../../types/gamificationTypes';
 
 // Local helper functions for this component's specific Mission type
 const getMissionProgressLocal = (mission: Mission) => {

@@ -5,20 +5,15 @@
  * Exports all components, hooks, and types
  */
 
-// Components - explicit exports to avoid duplicates
+// Components - Activity components removed (superseded by features/mechanics/)
 export {
-  MultipleChoiceActivity,
-  TrueFalseActivity,
-  FillBlankActivity,
-  DragDropActivity,
-  OrderingActivity,
-  MatchingActivity,
   ExerciseHeader,
   ExerciseFeedback,
 } from './components';
 
 // Hooks - explicit exports to avoid duplicates
-export { useExerciseSubmission, useExerciseTimer, useExerciseRewards } from './hooks';
+// NOTE: useExerciseSubmission moved to @/features/mechanics/shared/hooks/useExerciseSubmission
+export { useExerciseTimer, useExerciseRewards } from './hooks';
 
 // Types - explicit exports to avoid duplicates
 export type {

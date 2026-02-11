@@ -3,7 +3,9 @@
 -- GAP-P0-001: Two-Factor Authentication tokens
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS auth_management.two_factor_tokens (
+DROP TABLE IF EXISTS auth_management.two_factor_tokens CASCADE;
+
+CREATE TABLE auth_management.two_factor_tokens (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
 
@@ -33,8 +35,8 @@ CREATE TABLE IF NOT EXISTS auth_management.two_factor_tokens (
     backup_codes_encrypted text,
 
     -- Audit
-    created_at timestamptz DEFAULT now(),
-    updated_at timestamptz DEFAULT now()
+    created_at timestamptz DEFAULT gamilit.now_mexico(),
+    updated_at timestamptz DEFAULT gamilit.now_mexico()
 );
 
 -- Indexes

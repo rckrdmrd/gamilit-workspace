@@ -81,11 +81,10 @@ export interface TribunalOpinionesAnswers {
   evaluations: StatementEvaluation[];
 }
 
-// Exercise actions interface for parent control
+// Exercise actions interface for parent control (standard names for ExercisePage)
 export interface TribunalOpinionesActions {
-  getState: () => TribunalOpinionesState;
-  reset: () => void;
-  validate: () => Promise<void>;
+  handleReset?: () => void;
+  handleCheck?: () => Promise<void>;
 }
 
 // Standardized exercise props interface

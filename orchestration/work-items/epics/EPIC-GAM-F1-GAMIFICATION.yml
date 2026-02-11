@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F1-GAMIFICATION"
+titulo: "Sistema de Gamificacion"
+proyecto: "gamilit"
+fase: "F1-alcance-inicial"
+source_id: "EAI-003"
+story_points: 34
+estado: "COMPLETADO"
+prioridad: "P1"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F1-GAMIFICATION/EPIC.md"
+user_stories: 8
+requirements: 8
+specifications: 12
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F1-GAMIFICATION/user-stories/"
+stories_structure: "nested"
+tasks_total: 39
+fecha_actualizacion: "2026-02-09"

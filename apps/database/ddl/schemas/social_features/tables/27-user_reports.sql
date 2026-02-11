@@ -11,6 +11,8 @@
 -- - Enables moderation panel functionality
 -- =====================================================
 
+DROP TABLE IF EXISTS social_features.user_reports CASCADE;
+
 CREATE TABLE social_features.user_reports (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

@@ -15,6 +15,8 @@ CREATE TYPE social_features.guild_mission_type AS ENUM (
     'time_spent'
 );
 
+DROP TABLE IF EXISTS social_features.guild_missions CASCADE;
+
 CREATE TABLE social_features.guild_missions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     guild_id UUID NOT NULL,
@@ -82,6 +84,8 @@ GRANT ALL ON TABLE social_features.guild_missions TO gamilit_user;
 -- Table: social_features.guild_mission_contributions
 -- Description: Tracking de contribuciones individuales a misiones
 -- =====================================================
+
+DROP TABLE IF EXISTS social_features.guild_mission_contributions CASCADE;
 
 CREATE TABLE social_features.guild_mission_contributions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

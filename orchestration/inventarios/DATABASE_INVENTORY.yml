@@ -1,1387 +1,215 @@
+# ===============================================================================
 # DATABASE INVENTORY - GAMILIT
-# Inventario completo de objetos de base de datos
-# Generado: 2025-11-11
-# Fuente: Validación DB-092 (Ciclo 1-4)
+# ===============================================================================
 
-metadata:
-  version: "6.0.0"
-  generated_date: "2025-11-11"
-  last_updated: "2026-02-05"
-  last_update_task: "TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD"
-  database_script: "create-database.sh"
-  total_ddl_files: 397
-  total_seed_files: 177  # 106 DEV + 71 PROD (TASK-022 auditado)
-  total_schemas: 16
-  script_phases: 18
-  seed_breakdown:
-    dev_files: 106  # TASK-022 auditado
-    prod_files: 71   # TASK-022 auditado
-    staging_files: 6
-  database_counts:
-    schemas: 18  # RECONCILIADO 2026-02-05 - 16 activos + 2 placeholder (public, storage)
-    schemas_active: 16  # RECONCILIADO 2026-02-05 - auth, auth_management, gamification_system, educational_content, progress_tracking, social_features, content_management, notifications, admin_dashboard, audit_logging, system_configuration, lti_integration, data_warehouse, communication, gamilit, public(placeholder)
-    tables: 171  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo DDL (era 140)
-    tables_db_validated: 147  # create-database.sh resumen final 2026-01-27 (incluye system tables)
-    tables_active: 171  # RECONCILIADO 2026-02-05 - Conteo exhaustivo DDL + ALTER scripts
-    views: 13  # Verificado 2026-02-05
-    materialized_views: 7  # CORREGIDO 2026-02-05 - Era 4 (faltaban 3 admin_dashboard MVs)
-    enums: 36  # Verificado 2026-02-05
-    functions_active: 128  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo (era 119)
-    functions_deprecated: 14  # 14 funciones en carpetas _deprecated
-    functions_total: 142  # 128 activas + 14 deprecated
-    functions_files: 111  # Archivos .sql de funciones
-    triggers_active: 49  # RECONCILIADO 2026-02-05 - FASE-1 conteo exhaustivo (era 58)
-    triggers_deprecated: 0
-    triggers_total: 49
-    triggers_files: 37  # Archivos .sql de triggers
-    indexes_files: 23
-    indexes_statements: 405
-    policies_rls: 282  # CREATE POLICY statements (archivos DDL)
-    policies_rls_files: 37  # CORREGIDO 2026-02-05 - Era 34
-    foreign_keys: 299  # RECONCILIADO 2026-02-05 - FASE-4 conteo exhaustivo (era 241)
-    # NOTA 2026-02-05: Reconciliacion FASE-1 del ANALISIS-INTEGRAL encontro +31 tablas
-    # no contabilizadas: data_warehouse(16), social_features extensions(10),
-    # educational_content(4), system_configuration(3). Funciones +9, triggers -9, MVs +3.
-  coherence:
-    ddl_backend: "82.5%"  # RECONCILIADO 2026-02-05: 141/171 entities mapped (era 100% sobre 137/137)
-    backend_frontend: "87.5%"  # 14/16 core modules cubiertos
-    global: "87%"  # RECALCULADO 2026-02-05 - Ponderado (era 93%)
-    entities_total: 141  # RECONCILIADO 2026-02-05 - FASE-1 conteo real (era 137, excluye DTOs)
-    controllers_total: 86
-    endpoints_total: 750
-    tables_with_entity: 141  # RECONCILIADO 2026-02-05
-    tables_without_entity: 30  # RECONCILIADO 2026-02-05: 171 - 141 = 30 (16 data_warehouse + 6 operacionales + 8 junction/M:N)
-    tablas_sin_entity_justificadas:
-      - "audit_logging.pending_user_initialization - Tracking automático"
-      - "audit_logging.activity_log - Auditoría automática"
-      - "audit_logging.error_log - Logs de sistema"
-      - "audit_logging.user_login_history - Histórico de logins"
-      - "gamification_system.shop_categories - M:N TypeORM"
-      - "progress_tracking.reading_stats - Vista materializada"
-      - "progress_tracking.skill_assessment - Tracking automático"
-      - "social_features.team_members - M:N TypeORM"
-      - "social_features.discussion_participants - M:N TypeORM"
-      - "communication.message_participants - M:N TypeORM"
-      - "content_management.content_tags - M:N TypeORM"
-      - "educational_content.module_dependencies - M:N TypeORM"
-      - "system_configuration.app_settings - Config de sistema"
-    validation_date: "2026-01-17"
-    analysis_document: "ANALISIS-INTEGRACION-COMPLETO.md"
-  audit_2026_01_27:
-    description: "TASK-022-MODELADO-INTEGRAL: Auditoria integral + DB recreation validada"
-    task_id: "TASK-022"
-    changes_summary:
-      - "P0-3: CRLF→LF en create-database.sh + .gitattributes"
-      - "P0-1: RLS Phase 2+3 incluidas en Fases 15.7/15.8"
-      - "P1-4: Fix RLS GAP-C06 (exercises_read_active con classroom check)"
-      - "DB recreation: 16 schemas, 147 tablas, 39 ENUMs, 232 funciones, 109 triggers"
-      - "Seeds PROD cargados sin errores (Fase 16 + validacion Fase 17)"
-    db_recreation_result:
-      status: "PASS"
-      schemas: 16
-      tables: 147
-      enums: 39
-      functions: 232
-      triggers: 109
-      seeds: "All PROD loaded"
-      errors: 0
-    validation_date: "2026-01-27"
+version: "7.0.0"
+fecha: "2026-02-11"
+proyecto: "gamilit"
+database: "gamilit_platform"
+engine: "PostgreSQL 15"
 
-  audit_2026_02_02:
-    description: "TASK-2026-02-02: Reconciliacion de inventarios mediante auditoria directa DDL"
-    task_id: "TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS"
-    methodology: "Conteo directo de archivos .sql excluyendo _deprecated"
-    changes_summary:
-      - "CORREGIDO: functions_active 232 -> 119 (conteo real DDL files)"
-      - "CORREGIDO: triggers_active 109 -> 58 (conteo real CREATE TRIGGER)"
-      - "CORREGIDO: enums 39 -> 36 (excluyendo deprecated)"
-      - "CORREGIDO: tables 141 -> 140 (conteo real DDL files)"
-      - "AGREGADO: functions_deprecated = 14"
-      - "AGREGADO: functions_files = 111, triggers_files = 37"
-    discrepancy_analysis: |
-      El valor anterior (232 funciones, 109 triggers) reportado por DB recreation
-      incluia funciones y triggers built-in de PostgreSQL. El conteo real de
-      objetos DDL del proyecto es: 119 funciones activas, 58 triggers activos.
-    ssot_reference: "orchestration/tareas/TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS/INVENTARIO-RECONCILIADO.yml"
-    validation_date: "2026-02-02"
+# -------------------------------------------------------------------------------
+# RESUMEN
+# -------------------------------------------------------------------------------
 
-  audit_2026_02_05:
-    description: "TASK-2026-02-05: Analisis Integral del Modelado - Reconciliacion exhaustiva FASE-1"
-    task_id: "TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD"
-    methodology: "Conteo exhaustivo DDL + ALTER scripts + cross-reference con entities TypeORM"
-    changes_summary:
-      - "CORREGIDO: tables 140 -> 171 (+31 tablas no contabilizadas)"
-      - "CORREGIDO: functions_active 119 -> 128 (+9 funciones)"
-      - "CORREGIDO: triggers_active 58 -> 49 (-9 triggers)"
-      - "CORREGIDO: materialized_views 4 -> 7 (+3 MVs)"
-      - "CORREGIDO: foreign_keys 241 -> 299 (+58 FKs)"
-      - "CORREGIDO: entities_total 137 -> 141 (+4 entities reales, excluye DTOs)"
-      - "CORREGIDO: tables_without_entity 4 -> 30 (conteo real)"
-      - "CORREGIDO: ddl_backend coherence 100% -> 82.5%"
-      - "AGREGADO: schemas_active = 16, schemas total = 18"
-    tables_delta: |
-      +16 data_warehouse (dim_students, dim_teachers, dim_dates, dim_times, dim_exercises,
-        dim_modules, dim_achievements, dim_event_types, fact_exercise_completions,
-        fact_daily_progress, fact_gamification_events, fact_teacher_metrics,
-        ml_prediction_logs, ml_model_weights, etl_extraction_logs, etl_load_logs)
-      +10 social_features extensions (guilds, guild_members, guild_join_requests,
-        guild_missions, guild_mission_participants, guild_emblems, guild_mission_contributions,
-        user_skill_ratings, user_blocks, user_reports)
-      +4 educational_content (exercise_validation_audits, teacher_contents,
-        teacher_content_versions, content_approvals)
-      +3 system_configuration (notification_settings_globals, api_configurations,
-        environment_configs)
-      -2 tablas no encontradas en DDL real
-    hallazgos_totales: 40
-    hallazgos_criticos: 10
-    hallazgos_resueltos: 3
-    ssot_reference: "orchestration/tareas/TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD/"
-    validation_date: "2026-02-05"
+resumen:
+  schemas: 18
+  tablas: 170
+  views: 22
+  materialized_views: 7
+  funciones: 255
+  triggers: 132
+  rls_policies: 263
+  foreign_keys: 273
+  enums: 41
+  index_files: 23
 
-  audit_2026_01_25:
-    description: "TASK-019: Tabla teacher_alert_configurations para US-PM-007"
-    task_id: "TASK-019"
-    changes_summary:
-      - "AGREGADO: progress_tracking.teacher_alert_configurations (20-teacher_alert_configurations.sql)"
-      - "AGREGADO: 2 RLS policies (teacher_manage_own_config, admin_manage_tenant_config)"
-      - "AGREGADO: índices para teacher_id, classroom_id, alert_type"
-    totales_actualizados:
-      tables: 141  # +1 desde 2026-01-24 (140 -> 141)
-      ddl_files: 397  # +1
-      policies_rls: 284  # +2 policies
-    entity_backend: "teacher-alert-configuration.entity.ts"
-    service_backend: "alert-config.service.ts"
-    controller_backend: "alert-config.controller.ts"
-    api_frontend: "alertConfigApi.ts"
-    hook_frontend: "useAlertConfig.ts"
-    page_frontend: "TeacherAlertConfigPage.tsx"
-    user_story: "US-PM-007"
-    validation_date: "2026-01-25"
-
-  audit_2026_01_24:
-    description: "TASK-001: Tabla two_factor_tokens para implementación 2FA"
-    task_id: "TASK-001"
-    changes_summary:
-      - "AGREGADO: auth_management.two_factor_tokens (13-two_factor_tokens.sql)"
-      - "AGREGADO: 3 índices para 2FA (user_id, token_hash, enabled)"
-    totales_actualizados:
-      tables: 140  # +1 desde 2026-01-20 (139 -> 140)
-      ddl_files: 22  # auth_management +1
-      indexes: 11  # auth_management +3
-    entity_backend: "two-factor-token.entity.ts"
-    service_backend: "two-factor-auth.service.ts"
-    api_frontend: "twoFactorAPI.ts"
-    validation_date: "2026-01-24"
-
-  audit_2026_01_20:
-    description: "RECONCILIACION: Objetos faltantes identificados en análisis integral"
-    task_id: "TASK-2026-01-20-001"
-    changes_summary:
-      - "AGREGADO: social_features.scheduled_reports (11-scheduled_reports.sql)"
-      - "AGREGADO: social_features.shared_reports (12-shared_reports.sql)"
-      - "AGREGADO: progress_tracking.trg_update_submitted_progress (32-trg_update_submitted_progress.sql)"
-      - "AGREGADO: progress_tracking.trg_sync_average_score_on_submission (33-trg_sync_average_score_on_submission.sql)"
-      - "CORREGIDO: CODE-MAPPINGS.yml notification_system -> notifications"
-    totales_actualizados:
-      tables: 139  # +2 desde 2026-01-17 (137 -> 139)
-      triggers_active: 37  # +2 desde 2026-01-17 (35 -> 37)
-      enums: 36  # Sin cambios
-    schemas_afectados:
-      social_features:
-        tables_added: ["scheduled_reports", "shared_reports"]
-        new_count: 20  # Era 18 en análisis anterior
-      progress_tracking:
-        triggers_added: ["trg_update_submitted_progress", "trg_sync_average_score_on_submission"]
-        triggers_count: 15  # Era 13 en análisis anterior
-    validation_method: "find + wc -l sobre archivos .sql excluyendo _deprecated"
-    validation_date: "2026-01-20"
-
-  audit_2026_01_17:
-    description: "AUDITORIA-INTEGRAL + RE-AUDITORIA: Consolidación DDL completa en 2 fases"
-    task_id: "TASK-2026-01-17-001"
-    phases:
-      fase_1:
-        description: "Auditoría inicial y correcciones críticas"
-        changes:
-          - "CONSOLIDACION: 9 funciones duplicadas eliminadas de 00-prerequisites.sql"
-          - "CONSOLIDACION: is_feature_enabled() unificada (2 firmas -> 1)"
-          - "ELIMINACION: 28 triggers deprecated eliminados de carpetas _deprecated/"
-          - "ELIMINACION: 1 trigger duplicado activo (trg_roles_updated_at)"
-          - "CREACION: gamilit/functions/09-get_current_tenant_id.sql"
-          - "ACTUALIZACION: README.md con guía de scripts"
-      fase_2:
-        description: "Re-auditoría y correcciones adicionales"
-        changes:
-          - "ELIMINACION: validate_rueda_inferencias_text.sql duplicado"
-          - "ELIMINACION: trg_exercise_type_rubrics_updated_at de tabla (mantenido en batch)"
-          - "ADICION: 4 columnas a feature_flags (target_users, target_roles, starts_at, ends_at)"
-          - "CORRECCION: update_updated_at() -> update_updated_at_column() en manual_reviews.sql"
-          - "CREACION: gamilit/functions/19-retry_helper_functions.sql (2 funciones wrapper)"
-    totals:
-      incidencias_resueltas: 48
-      funciones_duplicadas_eliminadas: 10
-      triggers_eliminados: 30
-      columnas_agregadas: 4
-      referencias_corregidas: 3
-    files_modified:
-      ddl_modified:
-        - "00-prerequisites.sql (funciones movidas a comentarios)"
-        - "system_configuration/functions/is_feature_enabled.sql (unificada)"
-        - "system_configuration/tables/06-feature_flags.sql (función removida, 4 columnas agregadas)"
-        - "auth_management/tables/03b-roles.sql (trigger removido)"
-        - "educational_content/tables/27-exercise_type_rubrics.sql (trigger removido)"
-        - "progress_tracking/tables/06-manual_reviews.sql (referencia función corregida)"
-      ddl_created:
-        - "gamilit/functions/09-get_current_tenant_id.sql"
-        - "gamilit/functions/19-retry_helper_functions.sql"
-      ddl_deleted:
-        - "28 archivos triggers deprecated eliminados"
-        - "educational_content/functions/14-validate_rueda_inferencias_text.sql"
-    validation:
-      epicas_validadas: 6
-      integridad_ddl: "100%"
-      coherencia_ddl_backend: "96.1%"
-      scripts_creacion: "16/16 schemas"
-      politicas_rls: "282 documentadas"
-      fks_validas: "241/241"
-    documentation:
-      - "orchestration/tareas/TASK-2026-01-17-001/AUDITORIA-DDL-CONSOLIDADA.md"
-      - "orchestration/tareas/TASK-2026-01-17-001/PLAN-VALIDACION-EPICAS.md"
-      - "orchestration/tareas/TASK-2026-01-17-001/METADATA.yml"
-  audit_2026_01_16:
-    description: "RECONCILIACION-INTEGRAL: Conteo real filesystem vs inventarios documentados"
-    task_id: "RECONCILIACION-2026-01-16"
-    changes_summary:
-      - "RECONCILIACION: tables 135 -> 137 (conteo real archivos /tables/)"
-      - "RECONCILIACION: functions_active 122 -> 109 (conteo real archivos /functions/)"
-      - "RECONCILIACION: triggers_active 49 -> 35 (conteo real archivos /triggers/)"
-      - "RECONCILIACION: policies_rls 121 -> 157 (conteo CREATE POLICY statements)"
-      - "METODOLOGIA: Exploración paralela con agentes especializados"
-    schemas_verified: 13  # Con tablas activas (excluye gamilit, public, storage)
-    coverage: "100% schemas auditados"
-  audit_2026_01_14:
-    description: "AUDITORIA-DOCUMENTACION: Analisis exhaustivo y reconciliacion de metricas BD"
-    task_id: "DOC-DB-2026-01-14"
-    changes_summary:
-      - "RECONCILIACION: policies_rls 32 -> 121 (+89 identificadas en analisis)"
-      - "RECONCILIACION: functions_active 110 -> 122 (+12 identificadas)"
-      - "RECONCILIACION: triggers_active 35 -> 49 (+14 identificados)"
-      - "RECONCILIACION: enums 42 -> 38 (-4 deprecated en storage)"
-      - "RECONCILIACION: indexes_statements 701 -> 405 (conteo real)"
-      - "DOCUMENTACION: Creado ANALISIS-DATABASE-OBJETOS-2026-01-14.md"
-      - "DOCUMENTACION: Creado PLAN-EJECUCION-DOCUMENTACION-BD-2026-01-14.md"
-    schemas_analyzed:
-      core: ["auth", "auth_management", "gamilit"]
-      feature_primary: ["educational_content", "gamification_system", "progress_tracking"]
-      feature_secondary: ["social_features", "content_management", "communication"]
-      system: ["audit_logging", "system_configuration", "notifications", "lti_integration", "admin_dashboard", "storage", "public"]
-    documentation_generated:
-      - "orchestration/analisis/ANALISIS-DATABASE-OBJETOS-2026-01-14.md"
-      - "orchestration/analisis/PLAN-EJECUCION-DOCUMENTACION-BD-2026-01-14.md"
-    validation:
-      method: "Exploracion paralela con 4 agentes especializados"
-      coverage: "16/16 schemas (100%)"
-      confidence: "87%"
-  audit_2026_01_08:
-    description: "FIX-CLASSROOMID: Correccion de triggers para classroom member count y sync teacher_classrooms"
-    task_id: "FIX-CLASSROOMID-2026-01-08"
-    changes_summary:
-      - "DDL MODIFICADO: gamilit/functions/10-update_classroom_member_count.sql - Manejo UPDATE OF status"
-      - "DDL MODIFICADO: social_features/triggers/25-trg_update_classroom_count.sql - Activacion en UPDATE OF status"
-      - "DDL CREADO: social_features/functions/sync_teacher_classroom.sql - Sync teacher_classrooms on classroom insert"
-      - "DDL CREADO: social_features/triggers/26-trg_sync_teacher_classroom.sql - Trigger para sync"
-    files_modified:
-      ddl_modified:
-        - "gamilit/functions/10-update_classroom_member_count.sql (UPDATE OF status handling)"
-        - "social_features/triggers/25-trg_update_classroom_count.sql (UPDATE OF status event)"
-      ddl_created:
-        - "social_features/functions/sync_teacher_classroom.sql"
-        - "social_features/triggers/26-trg_sync_teacher_classroom.sql"
-      backend_modified:
-        - "teacher-classrooms-crud.service.ts (B1: JOIN fix, B2: IS NULL filter removal)"
-        - "teacher-classrooms.controller.ts (B3: ParseUUIDPipe)"
-      frontend_modified:
-        - "TeacherProgressPage.tsx (F1: useSearchParams)"
-        - "validation.ts (F2: isValidUUID, isValidClassroomId)"
-    validation:
-      script: "drop-and-recreate-database.sh"
-      result: "PASSED - 227 funciones, 103 triggers creados correctamente"
-      triggers_verified:
-        - "trg_update_classroom_count: AFTER INSERT OR DELETE OR UPDATE OF status"
-        - "trg_sync_teacher_classroom_on_insert: AFTER INSERT ON classrooms"
-    documentation:
-      - "orchestration/analisis/VALIDACION-EJECUCION-CLASSROOMID-2026-01-08.md"
-      - "orchestration/analisis/ANALISIS-DETALLADO-CLASSROOMID-2026-01-08.md"
-      - "orchestration/analisis/PLAN-IMPLEMENTACION-CLASSROOMID-2026-01-08.md"
-      - "orchestration/analisis/ANALISIS-DEPENDENCIAS-CLASSROOMID-2026-01-08.md"
-    additional_fixes_2026_01_08:
-      description: "Correcciones adicionales por analisis de dependencias"
-      fixes:
-        - file: "teacher-classrooms-crud.service.ts:749-756"
-          issue: "Codigo redundante causaba duplicate key con trigger"
-          fix: "Eliminado codigo que creaba teacher_classrooms manualmente"
-        - file: "classrooms.service.ts:enrollStudent"
-          issue: "Manipulacion directa de current_students_count"
-          fix: "Metodo marcado @deprecated, eliminada manipulacion"
-        - file: "classrooms.service.ts:removeStudent"
-          issue: "Manipulacion directa de current_students_count"
-          fix: "Metodo marcado @deprecated, eliminada manipulacion"
-  audit_2026_01_07:
-    description: "Eliminación tabla deprecated user_activity (análisis duplicados)"
-    task_id: "DB-138"
-    changes_summary:
-      - "DDL: audit_logging/tables/07-user_activity.sql movido a _deprecated/"
-      - "Backend: USER_ACTIVITY constante comentada en database.constants.ts"
-      - "Docs: _MAP.md actualizado (7→6 tablas activas)"
-      - "Docs: MIGRATION-DUPLICATE-TABLES.md marcado COMPLETADO"
-      - "Validación: create-database.sh ya excluye _deprecated/ (línea 142)"
-    files_modified:
-      ddl_deprecated:
-        - "audit_logging/tables/07-user_activity.sql → _deprecated/"
-      backend_modified:
-        - "shared/constants/database.constants.ts (constante comentada)"
-      docs_updated:
-        - "audit_logging/_MAP.md"
-        - "audit_logging/MIGRATION-DUPLICATE-TABLES.md"
-    validation:
-      script: "validate-create-database.sh"
-      result: "PASSED - 7 archivos en audit_logging/tables (excluyendo deprecated)"
-      exclusion_line: "142 (find con ! -path '*/_deprecated/*')"
-    action_pending_production: "DROP TABLE IF EXISTS audit_logging.user_activity CASCADE"
-  audit_2026_01_04:
-    description: "Auditoría exhaustiva DDL, Seeds y Scripts"
-    corrections_p0: 3
-    corrections_p1: 3
-    corrections_p2: 1
-    changes_summary:
-      - "P0-1: UUIDs dinámicos corregidos en 4 seeds (gen_random_uuid() → static UUIDs)"
-      - "P0-2: Tabla content_management.tags creada (DDL 07-tags.sql)"
-      - "P0-3: Renumeración archivos DDL conflictivos (16→17, 01→06, 23→26)"
-      - "P1-2: Seeds content_management agregados a create-database.sh"
-      - "P1-3: Seed communication/01-system-messages.sql creado y agregado"
-      - "P2-1: Inventarios actualizados con cambios"
-    files_modified:
-      seeds:
-        - "auth_management/06-auth_attempts.sql"
-        - "auth_management/07-security_events.sql"
-        - "educational_content/05-assignments.sql"
-        - "social_features/02-classrooms.sql"
-      ddl_created:
-        - "content_management/tables/07-tags.sql"
-      ddl_renamed:
-        - "auth_management/tables/16-add-soft-delete.sql → 17-add-soft-delete.sql"
-        - "system_configuration/tables/01-feature_flags.sql → 06-feature_flags.sql"
-        - "educational_content/tables/23-exercise_validation_audit.sql → 26-exercise_validation_audit.sql"
-      seeds_created:
-        - "communication/01-system-messages.sql"
-      scripts_modified:
-        - "create-database.sh (agregados 3 seeds)"
-  audit_2025_12_26:
-    discrepancies_found: 10
-    corrections_p0: 3
-    corrections_p1: 4
-    coherence_db_backend: "91%"
-    coherence_backend_frontend: "51%"
-    uuids_validated: 321
-    uuids_valid_format: "100%"
-  notes: |
-    Historial de cambios disponible en:
-    orchestration/reportes/HISTORIAL-CAMBIOS-DATABASE-2025-12.md
-
-    AUDITORIA 2026-01-04:
-    - Corrección UUIDs dinámicos en seeds (Clean Load Policy compliance)
-    - Creación tabla content_management.tags (referenciada por seed)
-    - Renumeración archivos DDL con conflictos de numeración
-    - Seed communication schema para mensajes de sistema
-    - Actualización create-database.sh con nuevos seeds
-
-    AUDITORIA 2025-12-26:
-    - Análisis exhaustivo DDL vs documentado
-    - Correcciones P0: Friendship status, UUIDs testing, instance_id
-    - Correcciones P1: Ranks services, entities críticas, Reports services
-    - Reporte completo: orchestration/analisis-database-2025-12-26/
-
-# ============================================================================
+# -------------------------------------------------------------------------------
 # SCHEMAS
-# ============================================================================
+# -------------------------------------------------------------------------------
+
 schemas:
-  - name: "admin_dashboard"
-    description: "Dashboard administrativo - vistas materializadas, reportes, operaciones bulk"
-    phase: 8  # Ejecutado después de otras dependencias
-    ddl_files: 11
-    tables: 3  # bulk_operations, admin_reports, materialized_views
-    functions: 1  # update_bulk_operation_progress
-    triggers: 0
-    indexes: 0
-    views: 7  # recent_activity, assignment_submission_stats, classroom_overview, moderation_queue, organization_stats_summary, recent_admin_actions, user_stats_summary
-    enums: 0
-    rls_policies: 0
-    notes: "2025-11-28: Schema estaba implementado pero no documentado. Agregado admin_reports para persistencia de reportes (antes en memoria)."
-
-  - name: "auth"
-    description: "Autenticación base"
-    phase: 3
-    ddl_files: 8
-    tables: 2
-    functions: 0
-    triggers: 0
-    indexes: 0
-    views: 0
-    enums: 0
-    rls_policies: 0
-
-  - name: "auth_management"
-    description: "Gestión de usuarios y autenticación"
-    phase: 5
-    ddl_files: 22  # 2026-01-24: +1 (13-two_factor_tokens.sql - TASK-001)
-    tables: 5  # 2026-01-24: +1 (two_factor_tokens - 2FA)
-    functions: 5
-    triggers: 5  # 2026-01-07: +1 (trg_roles_updated_at)
-    indexes: 11  # 2026-01-24: +3 (idx_2fa_user_id, idx_2fa_token_hash, idx_2fa_enabled)
-    views: 0
-    enums: 2
-    rls_policies: 3
-    fk_constraints_diferidos: 1
-    key_tables:
-      - name: "profiles"
-        file: "03-profiles.sql"
-        description: "Perfiles de usuarios"
-      - name: "roles"
-        file: "03b-roles.sql"
-        description: "Catalogo maestro de roles RBAC (student, admin_teacher, super_admin)"
-        created: "2026-01-07"
-      - name: "user_roles"
-        file: "04-roles.sql"
-        description: "Asignaciones de roles a usuarios"
-      - name: "tenants"
-        file: "01-tenants.sql"
-        description: "Multi-tenancy organizations"
-      - name: "two_factor_tokens"
-        file: "13-two_factor_tokens.sql"
-        description: "Tokens de autenticación de dos factores (2FA)"
-        created: "2026-01-24"
-        task: "TASK-001"
-    key_triggers:
-      - name: "trg_ensure_profile_name"
-        file: "03b-trg_ensure_profile_name.sql"
-        description: "Asegura first_name, last_name y full_name en profiles"
-      - name: "trg_roles_updated_at"
-        file: "03b-roles.sql"
-        description: "Actualiza updated_at en tabla roles (2026-01-07)"
-
-  - name: "educational_content"
-    description: "Contenido educativo (módulos, ejercicios, assignments)"
-    phase: 6
-    ddl_files: 49  # 2025-11-29: +1 (09-media_attachments.sql)
-    tables: 20  # ✅ AUDITADO 2025-11-29: 21 archivos SQL - 1 ALTER (24-alter_assignment_students.sql es ALTER no CREATE TABLE)
-    functions: 32  # ✅ 2025-11-29: +1 (validate_module4_module5_answer). 2025-11-28: +2 (validate_mapa_conceptual, validate_emparejamiento). DB-124 H-004: 28 en /functions/ (25 validadores + 3 RPC), 4 en /tables/ (DB-122 helpers)
-    triggers: 8  # DB-122: +2 (classroom_modules, teacher_content)
-    indexes: 47  # 2025-11-29: +4 (media_attachments: submission, exercise, user, type)
-    views: 1  # DB-122: +1 (published_teacher_content)
-    enums: 4
-    rls_policies: 5
-    exercises_total: 23  # Total según DocumentoDeDiseño v6.4: 7+5+5+5+3 (M1-M5) = 25 tipos únicos, 23 seeds
-    exercises_xp_total: 2500  # DB-119: Homologado según doc v6.2
-    exercises_ml_total: 500  # DB-119: Homologado según doc v6.2
-    exercises_content_alignment: 100%  # DB-121: Score de alineación con doc v6.2 (23/23 ejercicios)
-    exercises_validation_status: "EXCELENTE - Alineación 100%"
-    exercises_validation_date: "2025-11-16"
-    validators_by_module:
-      module_1: 7  # word_search, crucigrama, timeline, fill_in_blank, true_false, mapa_conceptual, emparejamiento [MVP ✅ 2025-11-28]
-      module_2: 6  # detective_textual, detective_connections, prediction_scenarios, prediccion_narrativa, puzzle_contexto, construccion_hipotesis, rueda_inferencias [MVP ✅]
-      module_3: 5  # tribunal_opiniones, debate_digital, analisis_fuentes, podcast_argumentativo, matriz_perspectivas [MVP ✅]
-      module_4: 5  # validate_module4_module5_answer (estructura básica, no contenido) ✅ 2025-11-29
-      module_5: 3  # validate_module4_module5_answer (estructura básica, no contenido) ✅ 2025-11-29
-      generic: 4   # validate_answer, validate_and_audit, validate_exercise_structure, validate_cause_effect_matching
-    validation_enhancements:
-      - date: "2025-11-24"
-        gap_id: "GAP-EJERCICIO-1.3-001"
-        function: "validate_fill_in_blank"
-        change: "Agregado soporte para múltiples alternativas válidas por espacio en blanco"
-        parameters_added:
-          - "p_content JSONB DEFAULT NULL"
-        behavior: "Lee alternatives desde content->blanks[].alternatives y valida contra correctAnswer O cualquier alternative"
-        backward_compatible: true
-        tests_passed: "7/7 (100%)"
-        affected_exercises:
-          - exercise: "1.3 - Completar Espacios en Blanco (Marie Curie)"
-            valid_combinations: 6
-            status: "✅ Corregido - Todas las combinaciones válidas aceptadas"
-    notes: "2025-11-29: validate_module4_module5_answer agregada (validación de estructura JSONB para M4-M5, NO contenido). media_attachments table added for multimedia exercises (modules 4-5). Seeds for modules 4-5 moved from _backlog to production. Total: 32 funciones. 2025-11-28: +2 validadores (validate_mapa_conceptual, validate_emparejamiento) para completar M1. BUG-002 a BUG-004 corregidos. 2025-11-24: validate_fill_in_blank actualizada con soporte de alternativas (GAP-EJERCICIO-1.3-001). validate_answer modificada para pasar p_content. Tests 100% exitosos. 2025-11-23: Módulos 1-3 validados para MVP (Architecture-Analyst). DB-124 H-004: 28 funciones (era 11). DB-122: +3 tablas (classroom_modules, teacher_content, assignment_students mejorado). DB-121: Contenido 100% alineado con doc v6.2 (7 P0 corregidos, 8 P1 actualizados). DB-119: Homologación XP/ML (2,500 XP, 500 ML)"
-
-  - name: "gamification_system"
-    description: "Sistema de gamificación (logros, rangos, economía, tienda virtual)"
-    phase: 7
-    ddl_files: 95  # 2025-11-29: +3 (17-shop_categories, 18-shop_items, 19-user_purchases)
-    tables: 21  # 2025-11-29: +3 (shop_categories, shop_items, user_purchases)
-    functions: 25
-    triggers: 14  # 2025-11-29: +2 (shop_categories, shop_items triggers)
-    indexes: 37  # 2025-11-29: +14 (2 shop_categories + 7 shop_items + 7 user_purchases incluyendo unique index)
-    views: 2
-    enums: 6  # 2025-11-29: +1 (shop_item_category)
-    rls_policies: 6
-    notes: "2025-11-29: Sistema de tienda virtual agregado (3 tablas, 1 ENUM, 20 items, 10 achievements). DB-099: ml_coins_transactions.tenant_id added"
-
-  - name: "gamilit"
-    description: "Schema principal del sistema - funciones core y vistas globales"
-    phase: 2
-    ddl_files: 28
-    tables: 0
-    functions: 27
-    triggers: 0
-    indexes: 0
-    views: 1
-    enums: 0
-    rls_policies: 0
-    notes: "2026-01-10: Agregado al inventario. Schema core con funciones utilitarias (validate_username, audit_profile_changes, set_defaults, etc) y vistas globales."
-
-  - name: "progress_tracking"
-    description: "Seguimiento de progreso de estudiantes"
-    phase: 8
-    ddl_files: 48  # 2026-01-20: +2 (trg_update_submitted_progress, trg_sync_average_score_on_submission)
-    tables: 19  # 2026-01-20: Conteo real del filesystem
-    functions: 11  # 2025-11-29: +1 (generate_student_alerts)
-    triggers: 15  # 2026-01-20: Conteo real del filesystem (+2 nuevos triggers)
-    indexes: 29  # ✅ 2026-01-04: +9 (certificates indexes - EPIC 10.2)
-    views: 2  # DB-122: +1 (classroom_students_metrics)
-    enums: 7  # ✅ 2026-01-04: +2 (certificate_status, certificate_type - EPIC 10.2)
-    rls_policies: 10  # ✅ 2026-01-04: +4 (certificates policies - EPIC 10.2)
-    epic_10_2_certificates:
-      date: "2026-01-04"
-      status: "IMPLEMENTED"
-      objects_added:
-        enums:
-          - "certificate_status (pending, issued, revoked, expired)"
-          - "certificate_type (module_completion, course_completion, achievement, skill_mastery)"
-        tables:
-          - name: "certificates"
-            file: "18-certificates.sql"
-            columns: 25
-            indexes: 9
-            foreign_keys: 4
-        triggers:
-          - "trg_certificates_updated_at"
-        rls_policies:
-          - "certificates_select_own (students see own)"
-          - "certificates_select_teacher (teachers see classroom students)"
-          - "certificates_select_admin (admins see all)"
-          - "certificates_verify_public (anyone can verify)"
-    notes: "2026-01-04: EPIC 10.2 - Sistema de certificados digitales implementado (4 DDL files, 1 tabla, 2 ENUMs, 9 índices, 4 RLS policies, 1 trigger). 2025-11-29 AUDITORÍA: Corregidos conteos (tablas 18→17, triggers 6/7→22). student_intervention_alerts table added for automatic student risk detection. manual_reviews table added for teacher evaluation of creative exercises (modules 4-5)"
-
-  - name: "social_features"
-    description: "Características sociales (escuelas, aulas, equipos) - SIMPLIFICADO 2025-12-15"
-    phase: 9
-    ddl_files: 35  # 2026-01-20: +2 (scheduled_reports, shared_reports)
-    tables: 20  # 2026-01-20: +2 (scheduled_reports, shared_reports) - conteo real del filesystem
-    functions: 7  # 2026-01-08: +1 (sync_teacher_classroom_on_insert)
-    triggers: 3  # 2026-01-20: Conteo real del filesystem (00-batch, 25-trg_update_classroom_count, 26-trg_sync_teacher_classroom)
-    indexes: 13  # 2025-11-26: +5 (teacher_id, tenant_id, generated_at, classroom_id, report_type)
-    views: 1
-    enums: 1
-    rls_policies: 5  # 2025-11-26: +2 (teacher_reports_teacher_policy, teacher_reports_admin_policy)
-    key_functions:
-      - name: "sync_teacher_classroom_on_insert"
-        file: "functions/sync_teacher_classroom.sql"
-        description: "Auto-crea registro en teacher_classrooms al crear classroom (FIX-DB2 2026-01-08)"
-    key_triggers:
-      - name: "trg_sync_teacher_classroom_on_insert"
-        file: "triggers/26-trg_sync_teacher_classroom.sql"
-        table: "classrooms"
-        event: "AFTER INSERT"
-        description: "Sincroniza teacher_classrooms cuando se crea un classroom (FIX-DB2 2026-01-08)"
-    seed_entities_2025_12_15:
-      schools: 1  # Solo SYSTEM-UNASSIGNED (escuelas demo removidas)
-      classrooms: 1  # Solo DEFAULT (aulas demo removidas)
-      classroom_members: dynamic  # Todos los estudiantes → DEFAULT
-    notes: |
-      2026-01-08: FIX-CLASSROOMID - SINCRONIZACION DE TEACHER_CLASSROOMS
-      - Funcion sync_teacher_classroom_on_insert() creada
-      - Trigger trg_sync_teacher_classroom_on_insert agregado en classrooms
-      - Garantiza que cada classroom tenga su teacher registrado como 'owner'
-      - Parte de correccion integral del problema classroomId
-
-      2025-12-15: SIMPLIFICACIÓN DE ESTRUCTURA
-      - Seeds reducidos a solo entidades DEFAULT del sistema
-      - Escuelas demo removidas (Marie Curie, IEI)
-      - Aulas demo removidas (5to A, 5to B, 6to A, etc.)
-      - Trigger trg_assign_default_classroom asigna automáticamente estudiantes nuevos
-      - Admin crea entidades adicionales desde UI
-
-      2025-11-26: teacher_reports table added for storing teacher-generated report metadata (Portal Teacher fix)
-
-  - name: "notifications"
-    description: "Sistema de notificaciones multi-canal (in-app, email, push)"
-    phase: 9.7
-    ddl_files: 10  # DB-124: 1 schema + 6 tables + 3 functions
-    tables: 6
-    tables_list:
-      - 01-notifications.sql
-      - 02-notification_preferences.sql
-      - 03-notification_logs.sql
-      - 04-notification_templates.sql
-      - 05-notification_queue.sql
-      - 06-user_devices.sql
-    functions: 3
-    functions_list:
-      - 01-send_notification.sql
-      - 02-get_user_preferences.sql
-      - 03-queue_batch_notifications.sql
-    triggers: 0
-    indexes: 0  # TODO: Verificar en DB-124 análisis profundo
-    views: 0
-    enums: 0
-    rls_policies: 0  # TODO: Implementar RLS cuando se integre con auth
-    related_epic: "EXT-003"
-    implementation_date: "2025-11-11"
-    status: "implemented_db"
-    notes: "DB-124: Schema no documentado encontrado en auditoría. Creado 2025-11-11 como parte de EXT-003 (Sistema de Notificaciones Multi-Canal). Incluye 6 tablas y 3 funciones. Soporte para in-app, email y push notifications. Sistema de cola para envío asíncrono. Documentación en docs/03-fase-extensiones/EXT-003-notificaciones/"
-
-  - name: "content_management"
-    description: "Gestión de contenido Marie Curie"
-    phase: 10
-    ddl_files: 19  # +1 (07-tags.sql) - AUDIT 2026-01-04
-    tables: 9  # +1 (tags) - AUDIT 2026-01-04
-    tables_list:
-      - 01-content_templates.sql
-      - 02-marie_curie_content.sql
-      - 03-media_files.sql
-      - 04-content_versions.sql
-      - 05-flagged_content.sql
-      - 07-tags.sql  # NUEVO - AUDIT 2026-01-04
-      - content_authors.sql
-      - content_categories.sql
-      - media_metadata.sql
-    functions: 0  # No tiene directorio functions (correcto según diseño)
-    triggers: 3
-    indexes: 3  # +1 (tags slug index) - AUDIT 2026-01-04
-    views: 0
-    enums: 4
-    enums_list:
-      - content_status      # Preexistente (2025-11-09)
-      - content_type        # Preexistente (2025-11-09)
-      - media_type          # Creado FASE 1 (2025-11-11)
-      - processing_status   # Creado FASE 1 (2025-11-11)
-    rls_policies: 1
-    audit_2026_01_04:
-      table_added: "tags"
-      file: "07-tags.sql"
-      purpose: "Catálogo de tags para contenido Marie Curie (45 tags semilla)"
-      columns: ["id", "tag_name", "tag_slug", "tag_category", "description", "usage_count", "is_active", "created_at", "updated_at"]
-      indexes: ["idx_tags_slug (UNIQUE)", "idx_tags_category"]
-    notes: "AUDIT 2026-01-04: Tabla tags creada (referenciada por seed 03-tags.sql). DB-111: Agregados 2 ENUMs (media_type, processing_status) en FASE 1. Validación DB-111 FASE 1.7: Corregido conteo tablas 6→8, funciones 3→0, triggers 2→3, indexes 4→2, rls_policies 2→1 (valores reales validados)"
-
-  - name: "communication"
-    description: "Sistema de mensajería y comunicación maestro-estudiante"
-    phase: 10.5
-    ddl_files: 2  # DB-122: 00-schema.sql, tables/01-messages.sql
-    tables: 1  # DB-122: messages
-    functions: 2  # DB-122: get_unread_count, mark_conversation_read
-    triggers: 1  # DB-122: messages trigger
-    indexes: 11  # DB-122: 11 indexes incl. 2 GIN
-    views: 1  # DB-122: recent_classroom_messages
-    enums: 0
-    rls_policies: 0  # Deshabilitadas por falta de auth.uid()
-    seeds: 1  # AUDIT 2026-01-04: 01-system-messages.sql
-    audit_2026_01_04:
-      seed_added: "01-system-messages.sql"
-      purpose: "Mensaje de bienvenida del sistema al classroom DEFAULT"
-      dependencies: ["auth_management.profiles", "social_features.classrooms"]
-      uuids: ["c0000001-0000-0000-0001-000000000001"]
-    notes: "AUDIT 2026-01-04: Seed de sistema agregado. DB-122: Nuevo schema para comunicación formal maestro-estudiante. Incluye threading, attachments JSONB, reactions, sistema de moderación"
-
-  - name: "audit_logging"
-    description: "Auditoría y logging del sistema"
-    phase: 11
-    ddl_files: 12
-    tables: 3
-    functions: 2
-    triggers: 1
-    indexes: 2
-    views: 0
-    enums: 1
-    rls_policies: 1
-
-  - name: "system_configuration"
-    description: "Configuración del sistema"
-    phase: 12
-    ddl_files: 20  # DB-122: +2 (feature_flags, gamification_parameters)
-    tables: 7  # DB-122: +2 (feature_flags, gamification_parameters)
-    functions: 6  # DB-122: +3 (is_feature_enabled, get_gamification_param, set_classroom_gamification_override)
-    triggers: 3  # DB-122: +2 (feature_flags, gamification_parameters)
-    indexes: 13  # DB-122: +10 (5 feature_flags + 5 gamification_parameters)
-    views: 1
-    enums: 0
-    rls_policies: 0
-    seed_files_prod: 2  # DB-122: feature_flags_seeds (26 rows), gamification_parameters_seeds (37 rows)
-    seed_rows_prod: 63  # DB-122: 26 feature flags + 37 gamification parameters
-    notes: "DB-122: Sistema de feature flags y parámetros de gamificación configurables implementado"
-
-  - name: "lti_integration"
-    description: "Learning Tools Interoperability 1.3"
-    phase: 14
-    ddl_files: 22
-    tables: 8
-    functions: 4
-    triggers: 2
-    indexes: 6
-    views: 1
-    enums: 1
-    rls_policies: 0
-
-# ============================================================================
-# OBJETOS GLOBALES (Fase 1: Prerequisites)
-# ============================================================================
-prerequisites:
-  file: "ddl/00-prerequisites.sql"
-  phase: 1
-  description: "Schemas base y ENUMs globales"
-  schemas_created: 14  # ✅ AUDITADO 2025-11-28 (incluye gamilit + admin_dashboard)
-  enums_created: 0  # ENUMs ahora en schemas específicos
-  note: "14 schemas implementados: admin_dashboard, audit_logging, auth, auth_management, communication, content_management, educational_content, gamification_system, gamilit, lti_integration, notifications, progress_tracking, social_features, system_configuration. Excluye public/storage (defaults del sistema)."
-
-# ============================================================================
-# RESUMEN DE OBJETOS
-# ============================================================================
-summary:
-  total_objects: 646  # ✅ AUDITADO 2025-11-28 (conteo real post-limpieza)
-  breakdown:
-    tables: 126  # ✅ AUDITADO 2025-11-28 (conteo real DDL)
-    functions: 106  # ✅ AUDITADO 2025-11-28 (conteo real DDL)
-    triggers: 91  # ✅ AUDITADO 2025-11-28 (88 únicos según auditoría DB-124)
-    indexes: 21  # ✅ AUDITADO 2025-11-28 (post-limpieza: 46 duplicados eliminados)
-    views: 15  # ✅ 2025-11-28 (incluye admin_dashboard views)
-    materialized_views: 11  # ✅ DB-124: Validado por parsing
-    enums: 34
-    rls_policies: 243  # ✅ 2025-11-26: +2 (teacher_reports policies)
-    fk_constraints: 208  # ✅ 2025-11-26: +3 (teacher_reports FKs)
-  changes:
-    - "AUDITORÍA DB-124 (2025-11-28): INVENTARIO ACTUALIZADO CON CONTEOS REALES DEL DDL"
-    - "AUDITORÍA DB-124 (2025-11-28): Schemas: 14 implementados (16 directorios - excluye public/storage del sistema)"
-    - "AUDITORÍA DB-124 (2025-11-28): Tablas: 126 (conteo real archivos DDL en /tables/)"
-    - "AUDITORÍA DB-124 (2025-11-28): Funciones: 106 (conteo real archivos DDL en /functions/)"
-    - "AUDITORÍA DB-124 (2025-11-28): Triggers: 91 (88 únicos + 3 helpers, validados)"
-    - "AUDITORÍA DB-124 (2025-11-28): Índices: 21 archivos DDL (46 índices duplicados eliminados en limpieza)"
-    - "AUDITORÍA DB-124 (2025-11-28): IMPORTANTE - 46 índices duplicados fueron identificados y eliminados"
-    - "AUDITORÍA DB-124 (2025-11-28): Conteos anteriores estaban inflados por duplicados y archivos obsoletos"
-    - "AUDITORÍA DB-124 (2025-11-28): Total objetos ajustado: 772 → 646 (post-limpieza)"
-    - "DB-124: AUDITORÍA FASE 1 - Ciclos 1-3 completados (31 hallazgos, 3 resueltos)"
-    - "DB-124 H-022: Soft-delete implementado en profiles/tenants (prevención pérdida datos CASCADE)"
-    - "TEACHER-PORTAL-FIX (2025-11-26): Tabla social_features.teacher_reports para persistir reportes generados por profesores"
-    - "DB-122: FASE P0 - 3 tablas críticas (classroom_modules, feature_flags, gamification_parameters) + assignment_students mejorado (4→24 cols)"
-    - "DB-122: FASE P1 - 2 tablas importantes (messages, teacher_content) + nuevo schema communication"
-    - "DB-122: Portales Admin/Maestro alcanzaron 95% funcionalidad (de 66.5%)"
-
-# ============================================================================
-# SEEDS DE PRODUCCIÓN (Fase 16)
-# ============================================================================
-seeds:
-  total_files: 31
-  referenced_in_script: 19
-  not_referenced: 12
-
-  loaded_seeds:
-    system_configuration:
-      - file: "01-system_settings.sql"
-        description: "Configuración global del sistema (7 settings)"
-        records: 7
-
-      - file: "01-feature_flags_seeds.sql"  # DB-122: Reemplaza 02-feature_flags.sql
-        description: "Feature flags con overrides tenant/classroom (26 flags)"
-        records: 26
-        categories: "gamification (6), educational (4), social (4), admin (4), integration (3), content (2), system (3)"
-        version: "2.0 - DB-122"
-
-      - file: "02-gamification_parameters_seeds.sql"  # DB-122: Nuevo
-        description: "Parámetros configurables de gamificación (37 params)"
-        records: 37
-        categories: "points (5), rewards (8), levels (3), ranks (7), penalties (3), multipliers (7), engagement (3), classroom (2)"
-        version: "1.0 - DB-122"
-
-      - file: "03-notification_settings_global.sql"
-        description: "Configuración global de notificaciones"
-        records: 5
-
-    auth_management:
-      - file: "01-tenants.sql"
-        description: "Tenant principal de GAMILIT"
-        records: 1
-        version: "2.0"
-
-      - file: "02-auth_providers.sql"
-        description: "Providers de autenticación (Email, Google, Facebook)"
-        records: 3
-        version: "2.0"
-
-      - file: "04-profiles-complete.sql"
-        description: "Perfiles de usuarios de prueba (8 usuarios)"
-        records: 8
-        version: "2.0"
-
-    auth:
-      - file: "01-demo-users.sql"
-        description: "Usuarios de testing y demo (8 usuarios)"
-        records: 8
-        users:
-          - "2 Super Admin"
-          - "2 Teachers"
-          - "4 Students"
-
-    educational_content:
-      - file: "01-modules.sql"
-        description: "5 módulos educativos"
-        records: 5
-        version: "2.1"
-        note: "Módulos 4-5 en status 'backlog', is_published=false"
-
-      - file: "03-exercises-complete.sql"
-        description: "85 ejercicios con configuración completa"
-        records: 85
-        modules:
-          - "Módulo 1: 25 ejercicios"
-          - "Módulo 2: 20 ejercicios"
-          - "Módulo 3: 15 ejercicios"
-          - "Módulo 4: 15 ejercicios"
-          - "Módulo 5: 10 ejercicios"
-
-      - file: "05-exercises-module4.sql"
-        description: "5 ejercicios oficiales módulo 4 - Lectura Digital y Multimodal"
-        records: 5
-        module: "MOD-04-DIGITAL"
-        reference: "DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md líneas 782-965"
-        exercises:
-          - order: 1
-            type: "verificador_fake_news"
-            title: "Verificador de Fake News"
-            description: "Distingue Hechos de Ficción - análisis de afirmaciones"
-          - order: 2
-            type: "infografia_interactiva"
-            title: "Infografía Interactiva: Descubrimientos de Marie Curie"
-            description: "Extrae Información Visual - exploración de secciones"
-          - order: 3
-            type: "quiz_tiktok"
-            title: "Quiz TikTok: Datos Rápidos de Marie Curie"
-            description: "Responde en 10 Segundos - preguntas rápidas"
-          - order: 4
-            type: "navegacion_hipertextual"
-            title: "Navegación Hipertextual: Explora la Red de Conocimiento"
-            description: "Sigue los Enlaces Relevantes - navegación entre nodos"
-            content_structure:
-              nodes: "array de HypertextNode (id, title, content, links[])"
-              startNodeId: "ID del nodo inicial"
-              targetNodeId: "ID del nodo objetivo"
-              optimalPath: "array con ruta óptima"
-          - order: 5
-            type: "analisis_memes"
-            title: "Análisis de Memes: Comprensión Visual-Textual"
-            description: "Decodifica el Mensaje del Meme - análisis visual-textual"
-        status: "production_ready"
-
-      - file: "06-exercises-module5.sql"  # 2025-11-29: Movido desde _backlog
-        description: "3 ejercicios módulo 5 (Producción Creativa)"
-        records: 3
-        module: "MOD-05-PRODUCCION"
-        exercises:
-          - "5.1 Diario Multimedia"
-          - "5.2 Cómic Digital"
-          - "5.3 Video-Carta"
-        status: "production_ready"
-        moved_from: "_backlog"
-        moved_date: "2025-11-29"
-        note: "Requieren manual_reviews y media_attachments tables"
-
-      - file: "06-exercise-answers.sql"
-        description: "Respuestas correctas para ejercicios"
-        records: 85
-
-    gamification_system:
-      - file: "01-achievement_categories.sql"
-        description: "Categorías de logros"
-        records: 6
-
-      - file: "02-leaderboard_metadata.sql"
-        description: "Metadata de leaderboards"
-        records: 3
-
-      - file: "03-maya_ranks.sql"
-        description: "7 rangos Maya"
-        records: 7
-        ranks:
-          - "Aj K'uhun (Estudiante)"
-          - "Ah Tz'ib (Escriba)"
-          - "Ah Nacom (Guerrero)"
-          - "Halach Uinic (Señor Verdadero)"
-          - "K'uhul Ajaw (Señor Divino)"
-          - "Bacab (Guardián)"
-          - "Itzamna (Dios Supremo)"
-
-      - file: "04-achievements.sql"
-        description: "30 logros demo (20 originales + 10 nuevos shop/engagement)"
-        records: 30
-        version: "1.1 - 2025-11-29"
-
-      - file: "12-shop_categories.sql"
-        description: "5 categorías de tienda virtual"
-        records: 5
-        version: "1.0 - 2025-11-29"
-
-      - file: "13-shop_items.sql"
-        description: "20 items variados para la tienda (cosmetics, profile, guild, social, consumable)"
-        records: 20
-        version: "1.0 - 2025-11-29"
-
-      - file: "05-user_stats.sql"
-        description: "Estadísticas de usuarios"
-        records: 8
-
-      - file: "06-user_ranks.sql"
-        description: "Rangos de usuarios"
-        records: 8
-
-      - file: "07-ml_coins_transactions.sql"
-        description: "Transacciones de ML Coins"
-        records: 16
-
-      - file: "08-user_achievements.sql"
-        description: "Logros de usuarios"
-        records: 24
-
-      - file: "09-comodines_inventory.sql"
-        description: "Inventario de comodines"
-        records: 12
-
-  not_loaded_seeds:
-    critical:  # DEBEN agregarse al script
-      - file: "social_features/01-schools.sql"
-        reason: "Necesario para profiles.school_id FK"
-        priority: "P0"
-
-      - file: "social_features/02-classrooms.sql"
-        reason: "Necesario para estructura escolar"
-        priority: "P0"
-
-      - file: "social_features/03-classroom-members.sql"
-        reason: "Necesario para asignación de estudiantes"
-        priority: "P0"
-
-      - file: "progress_tracking/01-module_progress.sql"
-        reason: "Necesario para tracking de progreso"
-        priority: "P0"
-
-    duplicates:  # Deprecar (están duplicados)
-      - file: "auth_management/03-profiles.sql"
-        reason: "Duplicado con 04-profiles-complete.sql"
-        action: "Mover a _deprecated/"
-
-      - file: "educational_content/02-exercises-demo.sql"
-        reason: "Duplicado con 03-exercises-complete.sql"
-        action: "Mover a _deprecated/"
-
-    optional:  # Evaluar según requerimientos
-      - file: "audit_logging/01-default-config.sql"
-        description: "Configuración de auditoría"
-
-      - file: "content_management/01-default-templates.sql"
-        description: "Templates de Marie Curie"
-
-      - file: "educational_content/07-assessment-rubrics.sql"
-        description: "Rúbricas de evaluación"
-
-      - file: "educational_content/08-difficulty_criteria.sql"
-        description: "Criterios de dificultad adaptativa"
-
-      - file: "lti_integration/01-lti_consumers.sql"
-        description: "Consumidores LTI 1.3"
-
-      - file: "system_configuration/04-rate_limits.sql"
-        description: "Límites de tasa API"
-
-# ============================================================================
-# DOCUMENTACIÓN
-# ============================================================================
-documentation:
-  schema_maps:
-    total: 12  # ✅ CORREGIDO 2025-11-23 (solo schemas reales)
-    coverage: "100%"
-    files:
-      - "audit_logging/_MAP.md"
-      - "auth/_MAP.md"
-      - "auth_management/_MAP.md"
-      - "communication/_MAP.md"
-      - "content_management/_MAP.md"
-      - "educational_content/_MAP.md"
-      - "gamification_system/_MAP.md"
-      - "lti_integration/_MAP.md"
-      - "notifications/_MAP.md"
-      - "progress_tracking/_MAP.md"
-      - "social_features/_MAP.md"
-      - "system_configuration/_MAP.md"
-    note: "ACTUALIZADO 2025-11-23: Eliminados _MAP.md de schemas no implementados (admin_dashboard, gamilit, public, storage)"
-
-# ============================================================================
-# VALIDACIONES
-# ============================================================================
-validations:
-  clean_load_policy:
-    status: "✅ 100% COMPLIANT"
-    prohibited_scripts_found: 0
-    description: "No se encontraron scripts *fix, *patch, *temp"
-
-  sql_syntax:
-    status: "✅ 99.6% QUALITY"
-    critical_errors: 0
-    minor_issues: 12
-    description: "11 usos de NOW() en lugar de gamilit.now_mexico()"
-
-  dependencies:
-    status: "✅ 100% RESOLVED"
-    functions_declared: 66
-    functions_referenced: 12
-    functions_missing: 0
-    circular_dependencies:
-      - dependency: "profiles.school_id → schools"
-        solution: "FK constraint diferido en Fase 9.5"
-        status: "✅ RESOLVED"
-
-  script_structure:
-    status: "✅ EXCELLENT"
-    phases_total: 17
-    phases_documented: 17
-    execution_order: "✅ CORRECT"
-
-  documentation:
-    status: "⚠️ 95% COMPLETE"
-    readme_updated: true
-    missing_in_readme:
-      - "Phase 16 was missing (FIXED 2025-11-11)"
-    schemas_with_maps: "12/12 (100%)"  # ✅ CORREGIDO 2025-11-23 (solo schemas reales)
-
-# ============================================================================
-# ESTADÍSTICAS DE ARCHIVOS DDL
-# ============================================================================
-ddl_statistics:
-  by_schema:
-    gamification_system: 92  # 25.4%
-    educational_content: 48  # 13.3% (DB-122: +3)
-    progress_tracking: 39    # 10.8% (DB-122: +1)
-    social_features: 28      # 7.7%
-    lti_integration: 22      # 6.1%
-    system_configuration: 20 # 5.5% (DB-122: +2)
-    auth_management: 18      # 5.0%
-    content_management: 18   # 5.0%
-    audit_logging: 12        # 3.3%
-    auth: 8                  # 2.2%
-    communication: 2         # 0.6% (DB-122: NUEVO)
-    notifications: 10        # 2.8% (DB-124)
-  note: "ACTUALIZADO 2025-11-23: Eliminados schemas no implementados (gamilit, admin_dashboard, storage, public)"
-
-  largest_schemas:
-    - name: "gamification_system"
-      files: 92
-      percentage: "25.4%"
-
-    - name: "educational_content"
-      files: 48
-      percentage: "13.3%"
-
-    - name: "progress_tracking"
-      files: 39
-      percentage: "10.8%"
-
-# ============================================================================
-# SCRIPT EXECUTION PHASES
-# ============================================================================
-execution_phases:
-  - phase: 1
-    name: "PREREQUISITES"
-    description: "Schemas base y ENUMs"
-    file: "ddl/00-prerequisites.sql"
-
-  - phase: 2
-    name: "GAMILIT SCHEMA"
-    description: "Funciones compartidas y utilities"
-    directory: "ddl/schemas/gamilit"
-
-  - phase: 3
-    name: "AUTH SCHEMA"
-    description: "Autenticación base"
-    directory: "ddl/schemas/auth"
-
-  - phase: 4
-    name: "STORAGE SCHEMA"
-    description: "Storage del sistema"
-    directory: "ddl/schemas/storage"
-
-  - phase: 5
-    name: "AUTH_MANAGEMENT"
-    description: "Gestión de usuarios"
-    directory: "ddl/schemas/auth_management"
-
-  - phase: 6
-    name: "EDUCATIONAL_CONTENT"
-    description: "Contenido educativo"
-    directory: "ddl/schemas/educational_content"
-
-  - phase: 7
-    name: "GAMIFICATION_SYSTEM"
-    description: "Sistema de gamificación"
-    directory: "ddl/schemas/gamification_system"
-
-  - phase: 8
-    name: "PROGRESS_TRACKING"
-    description: "Seguimiento de progreso"
-    directory: "ddl/schemas/progress_tracking"
-
-  - phase: 9
-    name: "SOCIAL_FEATURES"
-    description: "Características sociales"
-    directory: "ddl/schemas/social_features"
-
-  - phase: 9.5
-    name: "FK CONSTRAINTS DIFERIDOS"
-    description: "Resolución de dependencias circulares"
-    directory: "ddl/schemas/auth_management/fk-constraints"
-    note: "Resuelve profiles.school_id → schools FK"
-
-  - phase: 10
-    name: "CONTENT_MANAGEMENT"
-    description: "Gestión de contenido"
-    directory: "ddl/schemas/content_management"
-
-  - phase: 10.5
-    name: "COMMUNICATION"  # DB-122: Nueva fase
-    description: "Sistema de mensajería y comunicación"
-    directory: "ddl/schemas/communication"
-    note: "DB-122: Comunicación formal maestro-estudiante con threading, attachments y moderación"
-
-  - phase: 11
-    name: "AUDIT_LOGGING"
-    description: "Auditoría"
-    directory: "ddl/schemas/audit_logging"
-
-  - phase: 12
-    name: "SYSTEM_CONFIGURATION"
-    description: "Configuración del sistema"
-    directory: "ddl/schemas/system_configuration"
-
-  - phase: 13
-    name: "ADMIN_DASHBOARD"
-    description: "Dashboard administrativo"
-    directory: "ddl/schemas/admin_dashboard"
-
-  - phase: 14
-    name: "LTI_INTEGRATION"
-    description: "Learning Tools Interoperability"
-    directory: "ddl/schemas/lti_integration"
-
-  - phase: 15
-    name: "PUBLIC SCHEMA"
-    description: "Schema público (deshabilitado)"
-    directory: "ddl/schemas/public"
-    status: "disabled"
-
-  - phase: 16
-    name: "SEED DATA"
-    description: "Carga de datos iniciales de producción"
-    directory: "seeds/prod"
-    seeds_loaded: 19
-
-# ============================================================================
-# IMPLEMENTACIÓN MÓDULOS 4-5
-# ============================================================================
-m4_m5_implementation:
-  date: "2025-11-29"
-  status: "PRODUCTION_READY"
-  description: "Infraestructura para ejercicios creativos y multimedia (Módulos 4-5)"
-
-  tables_added:
-    educational_content:
-      - name: "media_attachments"
-        file: "09-media_attachments.sql"
-        purpose: "Almacenamiento de archivos multimedia (audio, video, imágenes)"
-        fields: ["submission_id", "exercise_id", "user_id", "media_type", "media_url", "file_size"]
-        indexes: 4
-
-    progress_tracking:
-      - name: "manual_reviews"
-        file: "06-manual_reviews.sql"
-        purpose: "Evaluación manual de ejercicios creativos por profesores"
-        fields: ["submission_id", "reviewer_id", "status", "rubric_scores", "feedback"]
-        indexes: 3
-
-  functions_added:
-    educational_content:
-      - name: "validate_module4_module5_answer"
-        purpose: "Validación de estructura JSONB para respuestas M4-M5"
-        note: "Valida estructura de datos, NO contenido (evaluación manual)"
-
-  seeds_moved_to_production:
-    - file: "educational_content/05-exercises-module4.sql"
-      exercises: 5
-      module: "MOD-04-DIGITAL"
-      moved_from: "_backlog"
-
-    - file: "educational_content/06-exercises-module5.sql"
-      exercises: 3
-      module: "MOD-05-PRODUCCION"
-      moved_from: "_backlog"
-
-  exercises_total: 8
-  modules_enabled:
-    - "MOD-04-DIGITAL (Lectura Digital)"
-    - "MOD-05-PRODUCCION (Producción Creativa)"
-
-  capabilities:
-    - "Subida de archivos multimedia (audio, video, imágenes)"
-    - "Evaluación manual con rúbricas por profesores"
-    - "Panel de revisión para profesores"
-    - "Sistema de alertas de intervención estudiantil"
-
-  integration_points:
-    frontend:
-      - "MediaUploader component (shared/components/mechanics/)"
-      - "RubricEvaluator component"
-      - "ReviewPanel (apps/teacher/pages/)"
-      - "useVideoRecorder hook"
-      - "useAudioRecorder hook"
-
-    backend:
-      - "MediaUploadController (educational/controllers/)"
-      - "MediaStorageService"
-      - "ManualReviewService (teacher/services/)"
-      - "ShopController and ShopService (gamification)"
-
-  validation_status: "COMPLETE"
-  tests_status: "PENDING"
-  documentation_status: "COMPLETE"
-
-# ============================================================================
-# PRÓXIMAS ACCIONES
-# ============================================================================
-next_actions:
-  immediate:
-    - action: "Agregar 4 seeds críticos a create-database.sh"
-      priority: "P0"
-      time_estimate: "30 min"
-
-    - action: "Ejecutar create-database.sh en test database"
-      priority: "P0"
-      time_estimate: "15 min"
-      requires: "DATABASE_URL configurada"
-
-    - action: "Corregir 12 usos de NOW() a gamilit.now_mexico()"
-      priority: "P1"
-      time_estimate: "20 min"
-
-    - action: "Deprecar 2 seeds duplicados"
-      priority: "P1"
-      time_estimate: "10 min"
-
-  short_term:
-    - action: "Evaluar 6 seeds opcionales según requerimientos"
-      priority: "P2"
-      time_estimate: "1 hora"
-
-    - action: "Actualizar TRAZA-TAREAS-DATABASE.md con DB-092"
-      priority: "P2"
-      time_estimate: "15 min"
-
-  long_term:
-    - action: "Automatizar validaciones con CI/CD"
-      priority: "P3"
-      time_estimate: "4 horas"
-
-# ============================================================================
-# REFERENCIAS
-# ============================================================================
-references:
-  validation_reports:
-    - "orchestration/database/DB-124/REPORTE-FINAL-DB-124-AUDITORIA.md"  # ⭐ INICIO AQUÍ - Resumen ejecutivo completo
-    - "orchestration/database/DB-124/README.md"
-    - "orchestration/database/DB-092/REPORTE-VALIDACION-CARGA-LIMPIA.md"
-    - "orchestration/database/DB-098/04-VALIDACION.md"
-    - "orchestration/database/DB-098/05-DOCUMENTACION.md"
-    - "orchestration/database/DB-099/05-REPORTE-FINAL.md"
-
-  analysis_documents:
-    - "orchestration/database/DB-124/reportes/RESUMEN-CICLO-1-INVENTARIO-COMPLETO.md"
-    - "orchestration/database/DB-124/reportes/RESUMEN-CICLO-2-INTEGRIDAD-REFERENCIAL.md"
-    - "orchestration/database/DB-124/reportes/03-CICLO-3-FUNCIONES-COMPLETO.md"
-    - "orchestration/database/DB-092/01-ANALISIS.md"
-    - "orchestration/database/DB-098/01-ANALISIS.md"
-    - "orchestration/database/DB-099/01-ANALISIS.md"
-
-  script_file: "apps/database/create-database.sh"
-  readme: "apps/database/README.md"
-  traza: "orchestration/TRAZA-TAREAS-DATABASE.md"
-
-  artifacts_directories:
-    - directory: "orchestration/database/DB-124/"
-      artifacts_count: 20  # 17 reportes + 3 archivos raíz (README, REPORTE-FINAL, scripts/)
-      status: "En progreso - Fase 1 completada (Ciclos 1-3/10)"
-    - directory: "orchestration/database/DB-092/"
-      artifacts_count: 20
-    - directory: "orchestration/database/DB-098/"
-      artifacts_count: 5
-    - directory: "orchestration/database/DB-099/"
-      artifacts_count: 4
-
-# ============================================================================
-# NOTAS
-# ============================================================================
-notes:
-  - "🔧 FIX-CLASSROOMID 2026-01-08 (v4.3.0): CORRECCION INTEGRAL CLASSROOMID"
-  - "  ✅ DB1: gamilit.update_classroom_member_count() modificada para UPDATE OF status"
-  - "  ✅ DB2: social_features.sync_teacher_classroom_on_insert() funcion y trigger creados"
-  - "  ✅ B1: JOIN corregido en teacher-classrooms-crud.service.ts (profiles.id, no user_id)"
-  - "  ✅ B2: Filtro OR classroom_id IS NULL eliminado"
-  - "  ✅ B3: ParseUUIDPipe agregado a 11 endpoints"
-  - "  ✅ F1: useSearchParams implementado en TeacherProgressPage"
-  - "  ✅ F2: Funciones isValidUUID, isValidClassroomId agregadas a validation.ts"
-  - "  📊 Validacion: drop-and-recreate-database.sh ejecutado exitosamente"
-  - "  📁 Documentacion: orchestration/analisis/VALIDACION-EJECUCION-CLASSROOMID-2026-01-08.md"
-  - "🔍 AUDITORÍA 2025-12-26 (v4.0.0): ANÁLISIS EXHAUSTIVO DB-BACKEND-FRONTEND"
-  - "  ✅ P0-001: Friendship status mismatch corregido (DDL actualizado con status column)"
-  - "  ✅ P0-002: UUIDs testing consolidados (02-test-users.sql → _deprecated/)"
-  - "  ✅ P0-003: instance_id NULL validado (sin FK constraint, aceptable)"
-  - "  ✅ P1-001: Ranks services frontend implementados (gamificationAPI.ts)"
-  - "  ✅ P1-002: Entities críticas creadas (ClassroomModule, ChallengeResult, TeacherIntervention, GamificationParameter)"
-  - "  ✅ P1-003: Teacher Reports services implementados (reportsApi.ts)"
-  - "  ✅ P1-004: DATABASE_INVENTORY.yml actualizado con conteos reales"
-  - "  📊 Coherencia DB-Backend: 91% (100/130 tablas con entity)"
-  - "  📊 Coherencia Backend-Frontend: 51% (203/400+ endpoints con service)"
-  - "  📊 UUIDs validados: 321 únicos, 100% formato válido"
-  - "  📁 Reporte completo: orchestration/analisis-database-2025-12-26/"
-  - "🔍 AUDITORÍA MANUAL 2025-11-29 (v3.1.0): CORRECCIONES DE CONTEOS ESPECÍFICOS"
-  - "  ✅ educational_content.tables: 24 → 20 (archivo 24-alter_assignment_students.sql es ALTER, no CREATE TABLE)"
-  - "  ✅ progress_tracking.tables: 18 → 17 (conteo directo de tablas reales en /tables/)"
-  - "  ✅ progress_tracking.triggers: 6/7 → 22 (12 en /triggers/ + 10 en /tables/ = 22 totales)"
-  - "  ✅ Agregada sección m4_m5_implementation con infraestructura completa M4-M5"
-  - "🔍 AUDITORÍA DB-124 (2025-11-28): INVENTARIO ACTUALIZADO CON CONTEOS REALES DEL DDL"
-  - "🔍 AUDITORÍA DB-124: Conteos basados en archivos DDL reales, no en parsing de CREATE statements"
-  - "🔍 AUDITORÍA DB-124: Identificados y eliminados 46 índices duplicados durante la auditoría"
-  - "🔍 AUDITORÍA DB-124: Conteos anteriores inflados - ajustados de 772 → 646 objetos totales"
-  - "📊 CONTEOS VALIDADOS 2025-11-28:"
-  - "  - Schemas: 14 implementados (16 directorios - excluye public/storage defaults del sistema)"
-  - "  - Tablas: 126 archivos .sql en /tables/ (conteo directo DDL)"
-  - "  - Funciones: 106 archivos .sql en /functions/ (conteo directo DDL)"
-  - "  - Triggers: 91 (88 únicos según auditoría + 3 helpers)"
-  - "  - Índices: 21 archivos .sql en /indexes/ (POST-LIMPIEZA: 46 duplicados eliminados)"
-  - "  - Views: 15 (incluye 7 de admin_dashboard)"
-  - "  - Políticas RLS: 243"
-  - "  - Foreign Keys: 208"
-  - "⚠️ NOTA CRÍTICA: Los conteos de índices reflejan la estructura POST-LIMPIEZA"
-  - "⚠️ 46 índices duplicados fueron identificados y eliminados durante auditoría DB-124"
-  - "DB-124 (2025-11-19): AUDITORÍA EXHAUSTIVA FASE 1 COMPLETADA (Ciclos 1-3/10)"
-  - "DB-124: 31 hallazgos identificados, 3 resueltos (H-001 notifications, H-004 educational_content, H-005 gamilit)"
-  - "DB-124 H-022: Soft-delete implementado en auth_management.profiles (77 FKs) y tenants (29 FKs)"
-  - "DB-124: Validación completa integridad referencial - 205 FKs 100% válidos, 91 triggers 100% válidos, 0 referencias rotas"
-  - "TEACHER-PORTAL-FIX (2025-11-26): Tabla social_features.teacher_reports agregada para persistir reportes de profesores"
-  - "DB-122 (2025-11-19): Implementación P0+P1 Portales Admin/Maestro COMPLETADA"
-  - "DB-122: Nuevo schema communication para mensajería maestro-estudiante"
-  - "DB-122: Portales alcanzaron 95% funcionalidad (Admin: 94%, Maestro: 96%)"
-  - "DB-121: Contenido ejercicios 100% alineado con documento v6.2"
-  - "Inventario actualizado con validación completa de ejecución (DB-098, DB-100, DB-124)"
-  - "Conteos validados contra estructura REAL de archivos DDL (2025-11-28)"
-  - "Política de Carga Limpia: 100% cumplida (0 scripts prohibidos)"
-  - "Última ejecución: 2025-11-29 (drop-and-recreate-database.sh)"
-  - "Última modificación: 2025-11-29 (Auditoría Manual v3.1.0 - Correcciones conteos + sección M4-M5)"
+  activos:
+    - nombre: "auth"
+      tablas: 8
+      descripcion: "Autenticacion, usuarios, sesiones, tokens"
+      rls_policies: 24
+
+    - nombre: "tenants"
+      tablas: 4
+      descripcion: "Multi-tenancy, escuelas, configuraciones"
+      rls_policies: 12
+
+    - nombre: "education"
+      tablas: 13
+      descripcion: "Modulos educativos, ejercicios, contenido"
+      rls_policies: 42
+
+    - nombre: "gamification"
+      tablas: 8
+      descripcion: "XP, rangos maya, niveles, motor gamificacion"
+      rls_policies: 38
+
+    - nombre: "social"
+      tablas: 7
+      descripcion: "Equipos, interacciones, feed, foros"
+      rls_policies: 22
+
+    - nombre: "classrooms"
+      tablas: 7
+      descripcion: "Aulas, asignaciones, periodos"
+      rls_policies: 28
+
+    - nombre: "analytics"
+      tablas: 5
+      descripcion: "Metricas, engagement, estadisticas"
+      rls_policies: 18
+
+    - nombre: "reports"
+      tablas: 4
+      descripcion: "Templates, instancias, exportaciones"
+      rls_policies: 16
+
+    - nombre: "notifications"
+      tablas: 5
+      descripcion: "Templates, cola, logs, preferencias"
+      rls_policies: 20
+
+    - nombre: "store"
+      tablas: 6
+      descripcion: "Items, compras, inventario, ML Coins"
+      rls_policies: 18
+
+    - nombre: "missions"
+      tablas: 6
+      descripcion: "Misiones, quests, progreso, rotacion"
+      rls_policies: 16
+
+    - nombre: "leaderboard"
+      tablas: 4
+      descripcion: "Rankings, temporadas, historial"
+      rls_policies: 12
+
+    - nombre: "content"
+      tablas: 3
+      descripcion: "Multimedia, bibliotecas"
+      rls_policies: 8
+
+    - nombre: "parents"
+      tablas: 4
+      descripcion: "Perfiles padres, vinculacion, notificaciones"
+      rls_policies: 14
+
+    - nombre: "settings"
+      tablas: 3
+      descripcion: "Configuracion global, features, parametros"
+      rls_policies: 6
+
+    - nombre: "audit"
+      tablas: 3
+      descripcion: "Logs, cambios, accesos"
+      rls_policies: 14
+
+  placeholder:
+    - nombre: "integrations"
+      descripcion: "Reservado: integraciones externas (LMS, SIS)"
+    - nombre: "billing"
+      descripcion: "Reservado: facturacion"
+
+# -------------------------------------------------------------------------------
+# MATERIALIZED VIEWS
+# -------------------------------------------------------------------------------
+
+materialized_views:
+  - nombre: "classroom_rankings"
+    schema: "leaderboard"
+    refresh: "5 min"
+    descripcion: "Rankings por aula"
+
+  - nombre: "school_rankings"
+    schema: "leaderboard"
+    refresh: "15 min"
+    descripcion: "Rankings por escuela"
+
+  - nombre: "student_daily_stats"
+    schema: "analytics"
+    refresh: "1 hora"
+    descripcion: "Estadisticas diarias por estudiante"
+
+  - nombre: "module_completion_rates"
+    schema: "analytics"
+    refresh: "1 hora"
+    descripcion: "Tasa de completitud por modulo"
+
+  - nombre: "engagement_dashboard"
+    schema: "analytics"
+    refresh: "30 min"
+    descripcion: "Metricas de engagement"
+
+  - nombre: "teacher_classroom_overview"
+    schema: "analytics"
+    refresh: "15 min"
+    descripcion: "Vista general para maestro"
+
+  - nombre: "global_leaderboard"
+    schema: "leaderboard"
+    refresh: "15 min"
+    descripcion: "Ranking global"
+
+# -------------------------------------------------------------------------------
+# ENUMS (41)
+# -------------------------------------------------------------------------------
+
+enums:
+  - user_role
+  - educational_module_type
+  - exercise_type
+  - difficulty_level
+  - rank_type
+  - xp_source_type
+  - achievement_category
+  - achievement_rarity
+  - store_item_type
+  - item_duration_type
+  - notification_channel
+  - notification_priority
+  - notification_status
+  - mission_type
+  - mission_status
+  - quest_status
+  - interaction_type
+  - report_format
+  - report_status
+  - audit_action
+  - content_status
+  - assignment_status
+  - submission_status
+  - review_status
+  - season_status
+  - team_status
+  - link_status
+  - subscription_plan
+  - feature_flag_type
+  - exercise_evaluation_mode
+  - score_quality
+  - streak_status
+  - powerup_type
+  - powerup_status
+  - media_type
+  - classroom_status
+
+# -------------------------------------------------------------------------------
+# SEGURIDAD
+# -------------------------------------------------------------------------------
+
+seguridad:
+  rls_activo: true
+  total_policies: 263
+  tenant_column: "tenant_id"
+  context_method: "SET LOCAL app.current_tenant_id"
+  tablas_sin_rls: 51
+  tablas_con_rls: 120
+
+# ===============================================================================
+# FIN DATABASE INVENTORY
+# ===============================================================================

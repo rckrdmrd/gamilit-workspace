@@ -1,0 +1,18 @@
+id: "EPIC-GAM-F3-LTI"
+titulo: "Integracion LTI"
+proyecto: "gamilit"
+fase: "F3-extensiones"
+source_id: "EXT-007"
+story_points: 13
+estado: "PLANIFICADO"
+prioridad: "P3"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F3-LTI/EPIC.md"
+user_stories: 4
+requirements: 5
+specifications: 4
+
+# --- Reestructura Anidada (2026-02-09) ---
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F3-LTI/user-stories/"
+stories_structure: "nested"
+tasks_total: 12
+fecha_actualizacion: "2026-02-09"

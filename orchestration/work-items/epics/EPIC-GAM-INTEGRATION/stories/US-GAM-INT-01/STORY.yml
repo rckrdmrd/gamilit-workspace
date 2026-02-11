@@ -1,0 +1,45 @@
+id: "US-GAM-INT-01"
+titulo: "DDL-Backend-Frontend Layer Coherence"
+epic_id: "EPIC-GAM-INTEGRATION"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 3
+sprint: "Backlog"
+modulos:
+  - "cross-cutting"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths:
+        - "apps/backend/src/modules/"
+      endpoints:
+        - "all 850 endpoints"
+      files:
+        - "141 entities"
+        - "145 services"
+        - "103 controllers"
+    frontend:
+      paths:
+        - "apps/frontend/src/services/"
+        - "apps/frontend/src/pages/"
+      pages: []
+      components:
+        - "48 API services"
+    database:
+      paths:
+        - "apps/database/ddl/schemas/"
+      tables:
+        - "171 tables across 18 schemas"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on:
+    - "US-GAM-DB-01"
+  blocks: []
+tasks: []

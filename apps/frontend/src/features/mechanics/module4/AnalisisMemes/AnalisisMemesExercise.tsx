@@ -332,7 +332,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   return (
     <>
       <DetectiveCard variant="default" padding="lg" className="mb-6">
-        <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+        <div className="mb-6 rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
           <div className="mb-4 flex items-center gap-3">
             <Image className="h-8 w-8" />
             <h2 className="text-detective-2xl font-bold">{exercise.title}</h2>
@@ -374,7 +374,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.1 }}
-                  className="rounded-detective border-2 border-gray-200 p-4 transition-colors hover:border-detective-orange"
+                  className="rounded-detective border-2 border-detective-border p-4 transition-colors hover:border-detective-orange"
                 >
                   {editingAnnotation?.id === annotation.id ? (
                     <div className="space-y-3">
@@ -389,7 +389,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
                               category: e.target.value as MemeAnnotation['category'],
                             })
                           }
-                          className="w-full rounded-detective border-2 border-gray-300 px-3 py-2 focus:border-detective-orange focus:outline-none"
+                          className="w-full rounded-detective border-2 border-detective-border px-3 py-2 focus:border-detective-orange focus:outline-none"
                         >
                           {categories.map((cat) => (
                             <option key={cat} value={cat}>
@@ -408,7 +408,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
                             handleUpdateAnnotation(annotation.id, { text: e.target.value })
                           }
                           rows={3}
-                          className="w-full resize-none rounded-detective border-2 border-gray-300 px-3 py-2 focus:border-detective-orange focus:outline-none"
+                          className="w-full resize-none rounded-detective border-2 border-detective-border px-3 py-2 focus:border-detective-orange focus:outline-none"
                         />
                       </div>
                       <div className="flex gap-2">

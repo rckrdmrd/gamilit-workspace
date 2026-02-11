@@ -228,10 +228,12 @@ export interface UserDashboard {
 
 // ============================================================================
 // MOCK DATA (for development)
+// @deprecated All mock functions below should be removed. USE_MOCK_DATA flag should be false in production.
+// Exercises should use useExerciseSubmission hook from mechanics/shared instead.
 // ============================================================================
 
 /**
- * Mock submit exercise
+ * @deprecated Mock - should use real API via useExerciseSubmission hook. Feature flag USE_MOCK_DATA should be false in production.
  */
 const mockSubmitExercise = async (
   submission: SubmitExerciseRequest,

@@ -1,0 +1,56 @@
+id: "US-GAM-DB-01"
+titulo: "Schema Design and Multi-Tenancy RLS"
+epic_id: "EPIC-GAM-DATABASE"
+proyecto: "gamilit"
+version: "1.0.0"
+fecha_creacion: "2026-02-07"
+fecha_actualizacion: "2026-02-07"
+estado: "COMPLETADO"
+prioridad: "P1"
+story_points: 8
+sprint: "Backlog"
+modulos:
+  - "database"
+  - "tenants"
+traceability:
+  requirements: []
+  components:
+    backend:
+      paths: []
+      endpoints: []
+      files: []
+    frontend:
+      paths: []
+      pages: []
+      components: []
+    database:
+      paths:
+        - "apps/database/ddl/schemas/public/"
+        - "apps/database/ddl/schemas/auth/"
+        - "apps/database/ddl/schemas/content/"
+        - "apps/database/ddl/schemas/education/"
+        - "apps/database/ddl/schemas/gamification/"
+        - "apps/database/ddl/schemas/exercises/"
+        - "apps/database/ddl/schemas/leaderboard/"
+        - "apps/database/ddl/schemas/missions/"
+        - "apps/database/ddl/schemas/store/"
+        - "apps/database/ddl/schemas/achievements/"
+        - "apps/database/ddl/schemas/social/"
+        - "apps/database/ddl/schemas/teachers/"
+        - "apps/database/ddl/schemas/parents/"
+        - "apps/database/ddl/schemas/analytics/"
+        - "apps/database/ddl/schemas/notifications/"
+        - "apps/database/ddl/schemas/users/"
+        - "apps/database/ddl/schemas/tenants/"
+        - "apps/database/ddl/schemas/settings/"
+      tables:
+        - "all 171 tables across 18 schemas"
+  tests:
+    unit: []
+    e2e: []
+dependencies:
+  depends_on: []
+  blocks:
+    - "US-GAM-DB-02"
+    - "US-GAM-DB-03"
+tasks: []
