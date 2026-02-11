@@ -3,7 +3,7 @@
 # =============================================================================
 # Proyecto: gamilit (STANDALONE)
 # Stack: PostgreSQL 15 + Redis 7
-# Referencia: apps/database/scripts/recreate-database.sh
+# Referencia: apps/database/scripts/create-database.sh
 # =============================================================================
 
 version: "1.0.0"
@@ -34,7 +34,7 @@ database:
   port: 5432
   password_env: GAMILIT_DB_PASSWORD
   engine: postgresql
-  engine_version: "16"
+  engine_version: "15"
   encoding: UTF8
   timezone: "America/Mexico_City"
 
@@ -319,8 +319,8 @@ stats:
 
 recreation:
   # Script local (recomendado)
-  local_script: "apps/database/scripts/recreate-database.sh"
-  local_usage: "bash apps/database/scripts/recreate-database.sh"
+  local_script: "apps/database/scripts/create-database.sh"
+  local_usage: "bash apps/database/scripts/create-database.sh"
 
   # Alternativo
   create_script: "apps/database/scripts/create-database.sh"
