@@ -39,12 +39,12 @@ module.exports = {
       script: 'dist/main.js',
 
       // Configuración de Node.js
-      node_args: '-r tsconfig-paths/register',
+      node_args: '-r ./tsconfig-paths-bootstrap.js',
       interpreter: 'node',
 
-      // Cluster mode para aprovechar múltiples cores
-      instances: 2,
-      exec_mode: 'cluster',
+      // Fork mode para producción con tsconfig-paths
+      instances: 1,
+      exec_mode: 'fork',
 
       // Auto-restart y monitoreo
       autorestart: true,
@@ -54,11 +54,11 @@ module.exports = {
       // Variables de entorno - Se sobrescriben con .env.production
       env_production: {
         NODE_ENV: 'production',
-        PORT: 3006,
+        PORT: 4006,
       },
       env_development: {
         NODE_ENV: 'development',
-        PORT: 3006,
+        PORT: 4006,
       },
 
       // Archivo .env a cargar
@@ -89,7 +89,7 @@ module.exports = {
       name: 'gamilit-frontend',
       cwd: './apps/frontend',
       script: 'npx',
-      args: 'vite preview --port 3005 --host 0.0.0.0',
+      args: 'vite preview --port 4005 --host 0.0.0.0',
 
       // Configuración
       instances: 1,

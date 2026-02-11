@@ -32,6 +32,34 @@ DO $$ BEGIN
     END IF;
 END $$;
 
+-- Roles de aplicación (mapeados desde auth_management.gamilit_role ENUM)
+-- Necesarios para GRANT statements en funciones y RLS policies
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'admin_teacher') THEN
+        CREATE ROLE admin_teacher;
+        COMMENT ON ROLE admin_teacher IS 'Rol RLS: profesores/administradores (mapeado desde gamilit_role enum)';
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'student') THEN
+        CREATE ROLE student;
+        COMMENT ON ROLE student IS 'Rol RLS: estudiantes (mapeado desde gamilit_role enum)';
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'super_admin') THEN
+        CREATE ROLE super_admin;
+        COMMENT ON ROLE super_admin IS 'Rol RLS: super administradores (mapeado desde gamilit_role enum)';
+    END IF;
+END $$;
+
+-- Otorgar membresía base a roles de aplicación
+GRANT authenticated TO admin_teacher;
+GRANT authenticated TO student;
+GRANT authenticated TO super_admin;
+
 -- ============================================================================
 -- EXTENSIONES REQUERIDAS
 -- ============================================================================

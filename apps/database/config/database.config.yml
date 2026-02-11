@@ -339,7 +339,8 @@ environments:
     wsl_user: developer
 
   production:
-    host: 74.208.126.102
+    host: localhost          # localhost porque scripts se ejecutan EN el servidor
+    external_ip: 74.208.126.102  # IP pública para acceso externo/nginx
     port: 5432
     database: gamilit_platform
     server: gamilit-prod

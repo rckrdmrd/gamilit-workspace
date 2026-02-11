@@ -40,6 +40,7 @@ POSTGRES_USER="postgres"
 
 ENVIRONMENT=""
 FORCE_MODE=false
+DB_PASSWORD_ARG=""
 
 # ============================================================================
 # FUNCIONES AUXILIARES
@@ -82,13 +83,14 @@ GAMILIT Platform - Recreación Completa de Base de Datos
 Uso: $0 [OPCIONES]
 
 Opciones:
-  --env dev|prod    Ambiente
-  --force           No pedir confirmación
-  --help            Mostrar ayuda
+  --env dev|prod        Ambiente
+  --password PASSWORD   Password para el usuario de BD (requerido en prod)
+  --force               No pedir confirmación
+  --help                Mostrar ayuda
 
 Ejemplos:
   $0 --env dev
-  $0 --env prod --force
+  $0 --env prod --password 'mi_password_seguro' --force
 
 Este script:
   1. Elimina la base de datos gamilit_platform
@@ -212,7 +214,14 @@ reinitialize() {
     print_info "Ejecutando init-database.sh..."
     echo ""
 
-    local init_args="--env $ENVIRONMENT --password gamilit_dev_2026"
+    # Password: usar argumento explícito, o variable de entorno, o pedir interactivamente
+    local password_arg=""
+    if [ -n "$DB_PASSWORD_ARG" ]; then
+        password_arg="--password $DB_PASSWORD_ARG"
+    elif [ -n "$GAMILIT_DB_PASSWORD" ]; then
+        password_arg="--password $GAMILIT_DB_PASSWORD"
+    fi
+    local init_args="--env $ENVIRONMENT $password_arg"
     if [ "$FORCE_MODE" = true ]; then
         init_args="$init_args --force"
     fi
@@ -274,6 +283,10 @@ main() {
         case $1 in
             --env)
                 ENVIRONMENT="$2"
+                shift 2
+                ;;
+            --password)
+                DB_PASSWORD_ARG="$2"
                 shift 2
                 ;;
             --force)
