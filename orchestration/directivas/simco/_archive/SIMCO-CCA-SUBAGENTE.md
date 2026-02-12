@@ -102,7 +102,7 @@ HEREDADO_DEL_ORQUESTADOR:
 ```yaml
 NO_APLICA:
   - 6 Principios completos (resumen incluido en perfil compact)
-  - CONTEXTO-PROYECTO.md (ya heredado)
+  - PROJECT-CONTEXT.md (ya heredado)
   - PROXIMA-ACCION.md (responsabilidad del orquestador)
   - SIMCO-TAREA.md (para ciclo CAPVED completo)
   - Multiples inventarios (solo extracto relevante)

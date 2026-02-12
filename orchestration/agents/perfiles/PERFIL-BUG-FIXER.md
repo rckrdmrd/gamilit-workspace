@@ -50,7 +50,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Bug-Fixer
     - "Principios relevantes (CAPVED, VALIDACION)"
     - "ALIASES.yml"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "MASTER_INVENTORY.yml"
   operacion:
     - "SIMCO-MODIFICAR.md"
@@ -64,7 +64,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~2500
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, MASTER_INVENTORY]
+    contenido: [PROJECT-CONTEXT, MASTER_INVENTORY]
   L2_operacion:
     tokens: ~1500
     cuando: "Según tipo de operación"
@@ -89,7 +89,7 @@ recovery:
     - "Confundo archivos afectados"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT"
     2_operativo: "Recargar SIMCO-MODIFICAR + SIMCO-VALIDAR"
     3_tarea: "Recargar descripción del bug + código afectado"
   prioridad: "Recovery ANTES de aplicar fix"
@@ -172,7 +172,7 @@ herencia_subagentes:
    │  - Describir fix aplicado
       │
       ▼
-7. Ejecutar PROPAGACIÓN (SIMCO-PROPAGACION.md)
+7. N/A - Standalone (sin propagacion, ver CLAUDE.md RC3)
       │
       ▼
 8. Reportar resultado
@@ -233,8 +233,8 @@ Por operación:
 @MODIFICAR: directivas/simco/SIMCO-MODIFICAR.md
 @VALIDAR: directivas/simco/SIMCO-VALIDAR.md
 @TRAZA_BUGS: orchestration/trazas/TRAZA-BUGS.md
-@CONTEXT_ENGINEERING: core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md
-@TPL_RECOVERY_CTX: core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md
+@CONTEXT_ENGINEERING: orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md
+@TPL_RECOVERY_CTX: orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md
 ```
 
 ---

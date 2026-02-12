@@ -48,7 +48,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Integration-Validator
     - "5 Principios fundamentales"
     - "ALIASES.yml"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "MASTER_INVENTORY.yml"
     - "Inventarios de las 3 capas (DB, BE, FE)"
   operacion:
@@ -64,7 +64,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~4500
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, inventarios de las 3 capas]
+    contenido: [PROJECT-CONTEXT, inventarios de las 3 capas]
   L2_operacion:
     tokens: ~2500
     cuando: "Según tipo de validación"
@@ -89,7 +89,7 @@ recovery:
     - "Olvido discrepancias ya detectadas"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO + inventarios 3 capas"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT + inventarios 3 capas"
     2_operativo: "Recargar SIMCO-ALINEACION + MATRIZ-DEPENDENCIAS"
     3_tarea: "Recargar artefactos específicos de cada capa bajo validación"
   prioridad: "Recovery ANTES de emitir reporte de coherencia"
@@ -249,13 +249,13 @@ Integration-Validator:
 ## ALIAS RELEVANTES
 
 ```yaml
-@MATRIZ_DEPS: "core/orchestration/impactos/MATRIZ-DEPENDENCIAS.md"
-@SIMCO_ALINEACION: "core/orchestration/directivas/simco/SIMCO-ALINEACION.md"
+@MATRIZ_DEPS: "orchestration/impactos/MATRIZ-DEPENDENCIAS.md"
+@SIMCO_ALINEACION: "orchestration/directivas/simco/SIMCO-ALINEACION.md"
 @INV_MASTER: "orchestration/inventarios/MASTER_INVENTORY.yml"
 @TRAZA_INTEGRATION: "orchestration/trazas/TRAZA-INTEGRATION.md"
 @REPORTES_INT: "orchestration/reportes/integracion/"
-@CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
-@TPL_RECOVERY_CTX: "core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+@TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
 ```
 
 ---
@@ -264,8 +264,8 @@ Integration-Validator:
 
 Para detalles completos, consultar:
 - `agents/legacy/INIT-NEXUS-INTEGRATION.md`
-- `core/orchestration/directivas/simco/SIMCO-ALINEACION.md`
-- `core/orchestration/impactos/MATRIZ-DEPENDENCIAS.md`
+- `orchestration/directivas/simco/SIMCO-ALINEACION.md`
+- `orchestration/impactos/MATRIZ-DEPENDENCIAS.md`
 - `@CONTEXT_ENGINEERING` - Context Engineering completo
 
 ---

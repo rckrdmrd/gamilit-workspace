@@ -17,23 +17,29 @@
 
 ```
 ╔══════════════════════════════════════════════════════════════════════════╗
-║                      ECOSISTEMA DE 3 WORKSPACES                           ║
+║                      GAMILIT STANDALONE MONOREPO                          ║
 ╠══════════════════════════════════════════════════════════════════════════╣
 ║                                                                           ║
-║  workspace-bootstrap          workspace-infra           workspace-v2      ║
-║  (Crea WSL nuevo)      -->    (Gestiona WSL)     <--   (Codigo DDL)      ║
+║  gamilit-workspace (MONOREPO)                                             ║
+║  C:\Empresas\ISEM\gamilit-workspace                                       ║
 ║                                                                           ║
-║  C:\Empresas\ISEM\            /home/developer/          C:\Empresas\ISEM\ ║
-║  workspace-bootstrap          workspaces/               workspace-v2      ║
-║                               workspace-infra                             ║
+║  apps/                                                                    ║
+║    backend/          - NestJS 11 (22 modulos, 850 endpoints)              ║
+║    frontend/         - React 19 + Zustand + Vite 6.x                      ║
+║    database/         - PostgreSQL 15 DDL + seeds                          ║
+║    devops/           - Scripts de deploy                                  ║
+║                                                                           ║
+║  docs/               - Documentacion del proyecto                         ║
+║  orchestration/      - SIMCO local completo                               ║
 ║                                                                           ║
 ╠══════════════════════════════════════════════════════════════════════════╣
 ║                                                                           ║
-║  Las bases de datos corren en WSL Ubuntu-24.04 (PostgreSQL :5432)        ║
-║  Los archivos DDL estan en workspace-v2/projects/{proyecto}/database/    ║
-║  Para cambios DDL: modificar archivo → recrear BD en WSL                 ║
+║  PostgreSQL 15 corre en WSL Ubuntu-24.04 (localhost:5432)                 ║
+║  Archivos DDL en: apps/database/ddl/                                      ║
+║  Seeds en: apps/database/seeds/                                           ║
+║  Para cambios DDL: modificar archivo → recrear BD con script              ║
 ║                                                                           ║
-║  Ver: @TRIGGER-DDL-WSL para procedimiento de recreacion                  ║
+║  Script de recreacion: apps/database/scripts/recreate-database.sh         ║
 ║                                                                           ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 ```
@@ -43,9 +49,6 @@
 | Proyecto | Base de Datos | Usuario | Password |
 |----------|---------------|---------|----------|
 | gamilit | gamilit_platform | gamilit_user | gamilit_dev_2026 |
-| erp-core | erp_generic | erp_admin | erp_dev_2026 |
-| template-saas | template_saas_dev | template_saas_user | saas_dev_2026 |
-| michangarrito | michangarrito_dev | michangarrito_dev | mch_dev_2026 |
 
 ---
 
@@ -60,6 +63,13 @@
 ║  3. SIEMPRE validar con recreación completa                          ║
 ║  4. La BD debe poder recrearse 100% desde DDL                        ║
 ╚══════════════════════════════════════════════════════════════════════╝
+
+VARIABLES DE GAMILIT:
+  DB_DDL_PATH      = apps/database/ddl/
+  DB_SEEDS_PATH    = apps/database/seeds/
+  DB_NAME          = gamilit_platform
+  RECREATE_CMD     = recreate-database.sh
+  DB_SCRIPTS       = apps/database/scripts/
 ```
 
 ---
@@ -85,6 +95,42 @@
          ▼
 5. COMMIT ARCHIVO DDL
 ```
+
+---
+
+## RECREAR BASE DE DATOS
+
+> **Para procedimiento completo:** Ver `@SIMCO-RECREAR-BD`
+
+### Comandos Rapidos DEV (Windows + WSL)
+
+```powershell
+# Recrear completo (recomendado para cambios DDL)
+wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/gamilit-workspace/apps/database/scripts/recreate-database.sh' --env dev --force
+
+# Reset rapido (mantiene usuario)
+wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/gamilit-workspace/apps/database/scripts/reset-database.sh' --env dev --password 'gamilit_dev_2026' --force
+```
+
+### Comandos Rapidos PROD (Servidor 74.208.126.102)
+
+```bash
+# BACKUP OBLIGATORIO primero
+sudo -u postgres pg_dump gamilit_platform > /home/isem/backups/gamilit_platform_$(date +%Y%m%d_%H%M%S).sql
+
+# Detener backend, recrear, reiniciar
+pm2 stop ecosystem.config.js
+bash /home/isem/gamilit-workspace/apps/database/scripts/recreate-database.sh --env prod --force
+pm2 restart ecosystem.config.js
+```
+
+### Cual Script Usar
+
+| Situacion | Script |
+|-----------|--------|
+| Primera vez | `init-database.sh` |
+| Cambio DDL | `reset-database.sh` o `recreate-database.sh` |
+| Problemas RLS | `force-recreate-all.sh` |
 
 ---
 
@@ -469,15 +515,13 @@ DOCUMENTACIÓN
 
 ## REFERENCIAS
 
+- **Recrear BD (SSOT):** @SIMCO-RECREAR-BD (SIMCO-RECREAR-BD.md) - **PROCEDIMIENTO COMPLETO DEV/PROD**
 - **Crear archivos:** @CREAR (SIMCO-CREAR.md)
 - **Validar:** @VALIDAR (SIMCO-VALIDAR.md)
 - **Documentar:** @DOCUMENTAR (SIMCO-DOCUMENTAR.md)
-- **Política carga limpia:** @DIRECTIVAS/DIRECTIVA-POLITICA-CARGA-LIMPIA.md
-- **Diseño de BD:** @DIRECTIVAS/DIRECTIVA-DISENO-BASE-DATOS.md
-- **Nomenclatura:** @DIRECTIVAS/ESTANDARES-NOMENCLATURA-BASE.md
 - **Trigger DDL-WSL:** @TRIGGER-DDL-WSL (TRIGGER-DDL-RECREAR-BD-WSL.md) - **OBLIGATORIO**
 - **Operaciones WSL:** @WSL-OPS (SIMCO-LOCAL-WSL.md)
-- **Integracion Workspaces:** @WORKSPACE-INTEGRATION
+- **Configuracion PM2:** @ECOSYSTEM (ecosystem.config.js)
 
 ---
 
@@ -489,17 +533,14 @@ DOCUMENTACIÓN
 # 1. Verificar servicio PostgreSQL
 wsl -d Ubuntu-24.04 -u developer -- sudo systemctl status postgresql
 
-# 2. Conectar y recrear BD
-wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -c "DROP DATABASE IF EXISTS {database}; CREATE DATABASE {database} OWNER {usuario};"
+# 2. Recrear BD usando script (recomendado)
+wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/gamilit-workspace/apps/database/scripts/recreate-database.sh' --env dev --force
 
-# 3. Cargar DDL
-wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d {database} -f '/mnt/c/Empresas/ISEM/workspace-v2/projects/{proyecto}/database/ddl/{archivo}.sql'
-
-# 4. Verificar
-wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d {database} -c "\dt *.*"
+# 3. Verificar
+wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d gamilit_platform -c "\dt *.*"
 ```
 
-**Ver @TRIGGER-DDL-WSL para procedimiento completo.**
+**Ver `@SIMCO-RECREAR-BD` para procedimiento completo DEV y PROD.**
 
 ---
 

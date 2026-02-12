@@ -104,7 +104,7 @@ Agente: Orquestador recibe la tarea
 
 Flujo correcto:
   1. SIMCO-TAREA.md → Ejecutar CAPVED completo
-     - C: Cargar CONTEXTO-PROYECTO.md
+     - C: Cargar PROJECT-CONTEXT.md
      - A: Analizar dependencias (¿existe en @CATALOG?)
      - P: Planificar subtareas (DDL, Backend, Frontend)
      - V: Validar plan (YO, no delego)

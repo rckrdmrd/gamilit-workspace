@@ -685,7 +685,7 @@ SUBAGENTE_PROTOCOLO:
   no_cargar:
     - CCA completo
     - Perfiles completos
-    - CONTEXTO-PROYECTO.md (heredado)
+    - PROJECT-CONTEXT.md (heredado)
 ```
 
 ---

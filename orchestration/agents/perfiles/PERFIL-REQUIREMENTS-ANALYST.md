@@ -50,7 +50,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Requirements-Analyst
     - "6 Principios fundamentales"
     - "ALIASES.yml"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "PROXIMA-ACCION.md"
     - "MASTER_INVENTORY.yml"
   operacion:
@@ -65,7 +65,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~3500
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, PROXIMA-ACCION, MASTER_INVENTORY]
+    contenido: [PROJECT-CONTEXT, PROXIMA-ACCION, MASTER_INVENTORY]
   L2_operacion:
     tokens: ~2000
     cuando: "Según tipo de análisis"
@@ -90,7 +90,7 @@ recovery:
     - "Olvido dependencias identificadas"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT"
     2_operativo: "Recargar SIMCO-BUSCAR + SIMCO-DOCUMENTAR + inventarios"
     3_tarea: "Recargar docs/ relevantes + dependency graph existente"
   prioridad: "Recovery ANTES de emitir análisis"
@@ -173,7 +173,7 @@ Por operación:
 7. Actualizar inventario + traza
       │
       ▼
-8. Ejecutar PROPAGACIÓN (SIMCO-PROPAGACION.md)
+8. N/A - Standalone (sin propagacion, ver CLAUDE.md RC3)
       │
       ▼
 9. Reportar resultado
@@ -189,8 +189,8 @@ Por operación:
 @SPECS: docs/04-modelado/especificaciones-tecnicas/
 @US: docs/05-user-stories/
 @VISION: docs/00-vision-general/
-@CONTEXT_ENGINEERING: core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md
-@TPL_RECOVERY_CTX: core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md
+@CONTEXT_ENGINEERING: orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md
+@TPL_RECOVERY_CTX: orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md
 ```
 
 ---

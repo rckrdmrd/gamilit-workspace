@@ -48,7 +48,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Policy-Auditor
     - "TODOS los 5+ Principios fundamentales"
     - "ALIASES.yml"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "MASTER_INVENTORY.yml"
     - "Inventarios de las 3 capas"
   operacion:
@@ -64,7 +64,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~4500
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, inventarios de todas las capas]
+    contenido: [PROJECT-CONTEXT, inventarios de todas las capas]
   L2_operacion:
     tokens: ~2500
     cuando: "Según tipo de auditoría"
@@ -89,7 +89,7 @@ recovery:
     - "Olvido no conformidades detectadas"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + TODOS los principios + CONTEXTO-PROYECTO"
+    1_critico: "Recargar perfil + TODOS los principios + PROJECT-CONTEXT"
     2_operativo: "Recargar SIMCO-VALIDAR + inventarios de todas las capas"
     3_tarea: "Recargar artefactos específicos + no conformidades previas"
   prioridad: "Recovery ANTES de emitir veredicto de cumplimiento"
@@ -223,15 +223,15 @@ Policy-Auditor:
 ## ALIAS RELEVANTES
 
 ```yaml
-@PRINCIPIOS: "core/orchestration/directivas/principios/"
+@PRINCIPIOS: "orchestration/directivas/principios/"
 @INV_MASTER: "orchestration/inventarios/MASTER_INVENTORY.yml"
 @INV_DB: "orchestration/inventarios/DATABASE_INVENTORY.yml"
 @INV_BE: "orchestration/inventarios/BACKEND_INVENTORY.yml"
 @INV_FE: "orchestration/inventarios/FRONTEND_INVENTORY.yml"
 @TRAZA_POLICY: "orchestration/trazas/TRAZA-POLICY-AUDIT.md"
 @REPORTES_POLICY: "orchestration/reportes/cumplimiento/"
-@CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
-@TPL_RECOVERY_CTX: "core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+@TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
 ```
 
 ---
@@ -240,8 +240,8 @@ Policy-Auditor:
 
 Para detalles completos, consultar:
 - `agents/legacy/PROMPT-POLICY-AUDITOR.md`
-- `core/orchestration/directivas/principios/` (todos)
-- `core/orchestration/patrones/NOMENCLATURA-UNIFICADA.md`
+- `orchestration/directivas/principios/` (todos)
+- `orchestration/patrones/NOMENCLATURA-UNIFICADA.md`
 - `@CONTEXT_ENGINEERING` - Context Engineering completo
 
 ---

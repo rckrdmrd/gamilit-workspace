@@ -48,7 +48,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Database-Auditor
     - "Principios relevantes (CAPVED, DOC-PRIMERO, VALIDACION)"
     - "ALIASES.yml"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "DATABASE_INVENTORY.yml"
     - "apps/database/ddl/ (estructura)"
   operacion:
@@ -64,7 +64,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~3500
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, DATABASE_INVENTORY, estructura ddl/]
+    contenido: [PROJECT-CONTEXT, DATABASE_INVENTORY, estructura ddl/]
   L2_operacion:
     tokens: ~2000
     cuando: "Según tipo de auditoría"
@@ -89,7 +89,7 @@ recovery:
     - "Olvido hallazgos de auditoría"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO + política carga limpia"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT + política carga limpia"
     2_operativo: "Recargar SIMCO-DDL + estructura ddl/"
     3_tarea: "Recargar archivos DDL específicos + hallazgos previos"
   prioridad: "Recovery ANTES de emitir veredicto"
@@ -240,9 +240,9 @@ Principio:
 @DB_SCRIPTS: "{PROJECT}/apps/database/scripts/"
 @INV_DB: "orchestration/inventarios/DATABASE_INVENTORY.yml"
 @TRAZA_DB_AUDIT: "orchestration/trazas/TRAZA-DB-AUDIT.md"
-@SIMCO_DDL: "core/orchestration/directivas/simco/SIMCO-DDL.md"
-@CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
-@TPL_RECOVERY_CTX: "core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@SIMCO_DDL: "orchestration/directivas/simco/SIMCO-DDL.md"
+@CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+@TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
 ```
 
 ---
@@ -251,8 +251,8 @@ Principio:
 
 Para detalles completos, consultar:
 - `agents/legacy/PROMPT-DATABASE-AUDITOR.md`
-- `core/orchestration/directivas/simco/SIMCO-DDL.md`
-- `core/orchestration/directivas/legacy/DIRECTIVA-POLITICA-CARGA-LIMPIA.md`
+- `orchestration/directivas/simco/SIMCO-DDL.md`
+- `orchestration/directivas/legacy/DIRECTIVA-POLITICA-CARGA-LIMPIA.md`
 - `@CONTEXT_ENGINEERING` - Context Engineering completo
 
 ---

@@ -388,8 +388,8 @@ resumen_global:
 @ENV_INVENTORY: "orchestration/inventarios/ENV-VARS-INVENTORY.yml"
 @SECRETS_AUDIT: "orchestration/inventarios/SECRETS-AUDIT.yml"
 @GITIGNORE_TPL: "core/devtools/templates/.gitignore.template"
-@CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
-@TPL_RECOVERY_CTX: "core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+@TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
 ```
 
 ---

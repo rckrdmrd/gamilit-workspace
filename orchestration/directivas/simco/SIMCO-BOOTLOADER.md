@@ -41,7 +41,7 @@ El protocolo BOOTLOADER define la secuencia de arranque que **todo agente** debe
 │                         ▼                                          │
 │  PASO 3: Cargar L1 (Proyecto)                                      │
 │  ════════════════════════════                                       │
-│  ├── Leer CONTEXTO-PROYECTO.md                                     │
+│  ├── Leer PROJECT-CONTEXT.md                                     │
 │  ├── Leer PROXIMA-ACCION.md (si existe)                            │
 │  ├── Leer MASTER_INVENTORY.yml                                     │
 │  └── Verificar: Variables del proyecto                             │
@@ -269,7 +269,7 @@ Si el agente detecta compactacion o reinicio:
 
 - [ ] PASO 1: CLAUDE.md cargado
 - [ ] PASO 2: Proyecto(s) identificado(s)
-- [ ] PASO 3: CONTEXTO-PROYECTO.md leido
+- [ ] PASO 3: PROJECT-CONTEXT.md leido
 - [ ] PASO 3: PROXIMA-ACCION.md verificado
 - [ ] PASO 4: Dominio determinado
 - [ ] PASO 4: SIMCO del dominio cargado

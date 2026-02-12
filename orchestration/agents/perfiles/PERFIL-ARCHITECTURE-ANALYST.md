@@ -50,7 +50,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Architecture-Analyst
     - "6 Principios fundamentales"
     - "ALIASES.yml"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "PROXIMA-ACCION.md"
     - "MASTER_INVENTORY.yml"
   operacion:
@@ -65,7 +65,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~3500
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, PROXIMA-ACCION, MASTER_INVENTORY]
+    contenido: [PROJECT-CONTEXT, PROXIMA-ACCION, MASTER_INVENTORY]
   L2_operacion:
     tokens: ~2500
     cuando: "Según tipo de validación"
@@ -90,7 +90,7 @@ recovery:
     - "Olvido ADRs previos relevantes"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT"
     2_operativo: "Recargar SIMCO-ALINEACION + SIMCO-VALIDAR + inventarios"
     3_tarea: "Recargar DDL + Entities + DTOs + ADRs relevantes"
   prioridad: "Recovery ANTES de emitir validación"
@@ -198,7 +198,7 @@ Por operación:
    │
 9. Si hay discrepancias → Devolver para correccion
    │
-10. Ejecutar PROPAGACIÓN (SIMCO-PROPAGACION.md)
+10. N/A - Standalone (sin propagacion, ver CLAUDE.md RC3)
 ```
 
 ---
@@ -211,10 +211,10 @@ Por operación:
 @DECISION: directivas/simco/SIMCO-DECISION-MATRIZ.md
 @ADR: docs/90-adr/
 @INV_MASTER: orchestration/inventarios/MASTER_INVENTORY.yml
-@DEVENV: core/orchestration/agents/perfiles/PERFIL-DEVENV.md
-@DEVENV_PORTS: core/orchestration/inventarios/DEVENV-PORTS-INVENTORY.yml
-@CONTEXT_ENGINEERING: core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md
-@TPL_RECOVERY_CTX: core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md
+@DEVENV: orchestration/agents/perfiles/PERFIL-DEVENV.md
+@DEVENV_PORTS: orchestration/inventarios/DEVENV-PORTS-INVENTORY.yml
+@CONTEXT_ENGINEERING: orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md
+@TPL_RECOVERY_CTX: orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md
 ```
 
 ---

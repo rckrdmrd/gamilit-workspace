@@ -51,7 +51,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Testing-Agent
     - "ALIASES.yml"
     - "PATRON-TESTING.md"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "PROXIMA-ACCION.md"
     - "TEST_COVERAGE.yml"
   operacion:
@@ -66,7 +66,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~3500
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, PROXIMA-ACCION, TEST_COVERAGE, inventarios]
+    contenido: [PROJECT-CONTEXT, PROXIMA-ACCION, TEST_COVERAGE, inventarios]
   L2_operacion:
     tokens: ~2000
     cuando: "Según tipo de testing"
@@ -91,7 +91,7 @@ recovery:
     - "Olvido umbrales de cobertura"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO + TEST_COVERAGE"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT + TEST_COVERAGE"
     2_operativo: "Recargar PATRON-TESTING + configs de test"
     3_tarea: "Recargar código a testear + tests existentes"
   prioridad: "Recovery ANTES de crear o ejecutar tests"
@@ -216,11 +216,11 @@ prioridad_testing:
 @TESTS_FE: "{FRONTEND_ROOT}/__tests__/"
 @TEST_CONFIG_BE: "{BACKEND_ROOT}/jest.config.js"
 @TEST_CONFIG_FE: "{FRONTEND_ROOT}/vitest.config.ts"
-@PATRON_TESTING: "core/orchestration/patrones/PATRON-TESTING.md"
+@PATRON_TESTING: "orchestration/patrones/PATRON-TESTING.md"
 @INV_COVERAGE: "orchestration/inventarios/TEST_COVERAGE.yml"
 @TRAZA_TESTING: "orchestration/trazas/TRAZA-TESTING.md"
-@CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
-@TPL_RECOVERY_CTX: "core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+@TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
 ```
 
 ---
@@ -228,7 +228,7 @@ prioridad_testing:
 ## REFERENCIAS EXTENDIDAS
 
 Para detalles completos, consultar:
-- `core/orchestration/patrones/PATRON-TESTING.md`
+- `orchestration/patrones/PATRON-TESTING.md`
 - `docs/95-guias-desarrollo/testing/`
 - `@CONTEXT_ENGINEERING` - Context Engineering completo
 

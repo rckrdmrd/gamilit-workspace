@@ -52,7 +52,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Security-Auditor
     - "ALIASES.yml"
     - "PATRON-SEGURIDAD.md"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "BACKEND_INVENTORY.yml"
     - "docs/90-adr/ (decisiones de seguridad)"
   operacion:
@@ -67,7 +67,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~3500
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, inventarios, ADRs de seguridad]
+    contenido: [PROJECT-CONTEXT, inventarios, ADRs de seguridad]
   L2_operacion:
     tokens: ~2500
     cuando: "Según tipo de auditoría"
@@ -92,7 +92,7 @@ recovery:
     - "Olvido vulnerabilidades ya detectadas"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO + PATRON-SEGURIDAD"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT + PATRON-SEGURIDAD"
     2_operativo: "Recargar checklists OWASP + herramientas"
     3_tarea: "Recargar código bajo auditoría + hallazgos previos"
   prioridad: "Recovery ANTES de continuar auditoría"
@@ -227,12 +227,12 @@ LOW:
 ## ALIAS RELEVANTES
 
 ```yaml
-@PATRON_SEGURIDAD: "core/orchestration/patrones/PATRON-SEGURIDAD.md"
+@PATRON_SEGURIDAD: "orchestration/patrones/PATRON-SEGURIDAD.md"
 @ADR: "docs/90-adr/"
 @TRAZA_SECURITY: "orchestration/trazas/TRAZA-SECURITY-AUDIT.md"
 @SECURITY_REPORTS: "orchestration/reportes/security/"
-@CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
-@TPL_RECOVERY_CTX: "core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+@TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
 ```
 
 ---
@@ -240,7 +240,7 @@ LOW:
 ## REFERENCIAS EXTENDIDAS
 
 Para detalles completos, consultar:
-- `core/orchestration/patrones/PATRON-SEGURIDAD.md`
+- `orchestration/patrones/PATRON-SEGURIDAD.md`
 - OWASP Top 10: https://owasp.org/Top10/
 - CWE: https://cwe.mitre.org/
 - `@CONTEXT_ENGINEERING` - Context Engineering completo

@@ -1,8 +1,8 @@
 # INDICE Y GUIA DE ASIGNACION DE PERFILES DE AGENTES
 
-**Version:** 2.0.0
-**Fecha:** 2026-01-04
-**Sistema:** NEXUS v3.4 + SIMCO
+**Version:** 2.1.0
+**Fecha:** 2026-02-11
+**Sistema:** NEXUS v4.1 + SIMCO
 **Proposito:** Guia para asignacion correcta de tareas a perfiles especializados
 
 ---
@@ -25,10 +25,9 @@
 
 | Si la tarea menciona... | Asignar a | Alias |
 |-------------------------|-----------|-------|
-| "crear tabla", "DDL", "migracion", "schema", "indice", "constraint" | Database | @PERFIL_DATABASE |
-| "endpoint", "API", "controller", "service", "NestJS", "DTO" | Backend | @PERFIL_BACKEND |
-| "Express", "middleware", "router" | Backend-Express | @PERFIL_BACKEND_EXPRESS |
-| "componente", "React", "Vue", "CSS", "UI", "formulario", "pagina" | Frontend | @PERFIL_FRONTEND |
+| "crear tabla", "DDL", "migracion", "schema", "indice", "constraint" | Database | @PERFIL_DATABASE_POSTGRESQL |
+| "endpoint", "API", "controller", "service", "NestJS", "DTO" | Backend | @PERFIL_BACKEND_NESTJS |
+| "componente", "React", "CSS", "UI", "formulario", "pagina" | Frontend | @PERFIL_FRONTEND_REACT |
 | "mobile", "app", "iOS", "Android", "React Native", "Flutter" | Mobile | @PERFIL_MOBILE |
 | "modelo ML", "prediccion", "entrenamiento", "features", "dataset" | ML-Specialist | @PERFIL_ML_SPEC |
 | "LLM", "ChatGPT", "Claude", "prompt", "embeddings", "RAG" | LLM-Agent | @PERFIL_LLM |
@@ -45,8 +44,7 @@
 | "seguridad", "vulnerabilidad", "OWASP", "auditoria seguridad" | Security-Auditor | @PERFIL_SEC_AUDITOR |
 | "RLS", "policies", "auditoria BD" | Database-Auditor | @PERFIL_DB_AUDITOR |
 | "documentar", "README", "JSDoc", "comentarios" | Documentation | @PERFIL_DOCS |
-| "propagar", "sincronizar", "KB", "knowledge base", "catalogo" | KB-Manager | @PERFIL_KB_MANAGER |
-| "tracking propagacion", "estado propagacion", "SLA" | Propagation-Tracker | @PERFIL_PROPAGATION_TRACKER |
+| "catalogar", "documentar catalogo", "knowledge base" | Documentation-Validator | @PERFIL_DOCS |
 | "arquitectura", "patron", "decision tecnica", "trade-off" | Architecture-Analyst | @PERFIL_ARCHITECT |
 | "coordinar", "delegar", "multiples agentes" | Orquestador | @PERFIL_ORQUESTADOR |
 | "requerimientos", "historia usuario", "criterios aceptacion" | Requirements-Analyst | @PERFIL_REQUIREMENTS |
@@ -174,6 +172,40 @@ no_asignar_si:
   - "Es configuracion de ORM sin DDL"
 ```
 
+#### PERFIL-DATABASE-POSTGRESQL (Especializado)
+```yaml
+alias: "@PERFIL_DATABASE_POSTGRESQL"
+archivo: "PERFIL-DATABASE-POSTGRESQL.md"
+dominio: "PostgreSQL 15 especializado con RLS y funciones avanzadas"
+
+descripcion_breve: |
+  Especialista avanzado en PostgreSQL 15. RLS policies, materialized views,
+  funciones PL/pgSQL, triggers complejos, optimizacion de queries.
+  DDL-First workflow con politica de carga limpia.
+
+tipos_tarea:
+  - "Diseñar schema complejo con RLS"
+  - "Crear materialized views y funciones PL/pgSQL"
+  - "Optimizar queries con EXPLAIN ANALYZE"
+  - "Implementar triggers complejos de auditoria"
+  - "Diseñar politicas RLS multi-tenant"
+  - "Crear funciones de agregacion personalizadas"
+
+directivas:
+  - "@OP_DDL"
+  - "@SIMCO/SIMCO-DDL.md"
+  - "@TRIGGER-DDL-WSL"
+
+usar_cuando:
+  - "Tarea compleja de PostgreSQL (RLS, funciones, triggers)"
+  - "Diseño de schemas con relaciones complejas"
+  - "Optimizacion de rendimiento de BD"
+
+no_asignar_si:
+  - "Tarea simple de BD (usar @PERFIL_DATABASE generico)"
+  - "Es solo configuracion de ORM"
+```
+
 #### PERFIL-BACKEND
 ```yaml
 alias: "@PERFIL_BACKEND"
@@ -205,6 +237,36 @@ estandares:
 no_asignar_si:
   - "Proyecto usa Express (usar @PERFIL_BACKEND_EXPRESS)"
   - "Tarea es de frontend o base de datos pura"
+```
+
+#### PERFIL-BACKEND-NESTJS (Especializado)
+```yaml
+alias: "@PERFIL_BACKEND_NESTJS"
+archivo: "PERFIL-BACKEND-NESTJS.md"
+dominio: "Desarrollo backend NestJS 11 especializado"
+
+descripcion_breve: |
+  Especialista en NestJS 11 con TypeORM 0.3.x, class-validator,
+  Passport JWT, Swagger. Perfil detallado para tareas complejas de backend.
+
+tipos_tarea:
+  - "Crear modulo NestJS completo (entity+service+controller+DTOs)"
+  - "Implementar guards y decorators personalizados"
+  - "Configurar TypeORM entities con relaciones complejas"
+  - "Integrar Socket.IO con NestJS"
+  - "Implementar patrones avanzados (interceptors, pipes, middleware)"
+
+directivas:
+  - "@OP_BACKEND"
+  - "@SIMCO/SIMCO-BACKEND.md"
+
+usar_cuando:
+  - "Tarea compleja de backend NestJS"
+  - "Requiere conocimiento profundo de NestJS 11"
+
+no_asignar_si:
+  - "Tarea simple de backend (usar @PERFIL_BACKEND generico)"
+  - "Proyecto usa Express"
 ```
 
 #### PERFIL-BACKEND-EXPRESS
@@ -260,6 +322,38 @@ estandares:
 no_asignar_si:
   - "Tarea es de backend o base de datos"
   - "Es configuracion de servidor"
+```
+
+#### PERFIL-FRONTEND-REACT (Especializado)
+```yaml
+alias: "@PERFIL_FRONTEND_REACT"
+archivo: "PERFIL-FRONTEND-REACT.md"
+dominio: "Desarrollo frontend React 19 especializado"
+
+descripcion_breve: |
+  Especialista en React 19 con Zustand, TailwindCSS, Vite 6.x,
+  React Router. Perfil detallado para componentes y paginas complejas.
+
+tipos_tarea:
+  - "Crear pagina completa con multiples componentes"
+  - "Implementar formularios complejos con validacion"
+  - "Crear hooks personalizados complejos"
+  - "Optimizar rendimiento de componentes React"
+  - "Integrar Socket.IO con componentes React"
+  - "Implementar mecanicas de gamificacion en UI"
+
+directivas:
+  - "@OP_FRONTEND"
+  - "@SIMCO/SIMCO-FRONTEND.md"
+
+usar_cuando:
+  - "Tarea compleja de frontend React"
+  - "Requiere multiples componentes coordinados"
+  - "Implementacion de gamificacion en UI"
+
+no_asignar_si:
+  - "Tarea simple de frontend (usar @PERFIL_FRONTEND generico)"
+  - "Proyecto no usa React"
 ```
 
 #### PERFIL-ML-SPECIALIST
@@ -610,54 +704,11 @@ no_asignar_si:
 
 ### 6. DOCUMENTACION Y KNOWLEDGE BASE
 
-#### PERFIL-KB-MANAGER
+#### NOTA: PERFILES DE PROPAGACION NO APLICAN EN GAMILIT
 ```yaml
-alias: "@PERFIL_KB_MANAGER"
-archivo: "core/orchestration/agents/perfiles/PERFIL-KB-MANAGER.md"
-dominio: "Gestion de Knowledge Base"
-
-descripcion_breve: |
-  Gestiona base de conocimiento compartida. Coordina propagacion
-  de mejoras entre proyectos, mantiene catalogo actualizado.
-
-tipos_tarea:
-  - "Propagar mejora a KB"
-  - "Actualizar catalogo"
-  - "Coordinar propagacion cross-proyecto"
-  - "Generar tareas SCRUM de propagacion"
-
-directivas:
-  - "@PROPAGACION"
-  - "NIVELES-PROPAGACION.yml"
-  - "PROTOCOLO-COORDINACION.yml"
-
-no_asignar_si:
-  - "Es cambio especifico de un proyecto"
-  - "No requiere propagacion"
-```
-
-#### PERFIL-PROPAGATION-TRACKER
-```yaml
-alias: "@PERFIL_PROPAGATION_TRACKER"
-archivo: "PERFIL-PROPAGATION-TRACKER.md"
-dominio: "Tracking de propagaciones"
-
-descripcion_breve: |
-  Rastrea estado de propagaciones entre proyectos. Mantiene
-  registros, verifica SLAs, genera reportes de estado.
-
-tipos_tarea:
-  - "Registrar nueva propagacion"
-  - "Actualizar estado de propagacion"
-  - "Generar reporte de propagaciones"
-  - "Alertar SLA en riesgo"
-
-directivas:
-  - "TRAZABILIDAD-PROPAGACION.yml"
-
-no_asignar_si:
-  - "Es ejecucion de propagacion (usar KB-Manager)"
-  - "No hay tracking involucrado"
+# KB-Manager y Propagation-Tracker no aplican en gamilit
+# Gamilit es STANDALONE - sin propagacion (ver CLAUDE.md RC3)
+# Para documentacion y catalogacion: usar Documentation-Validator
 ```
 
 ---
@@ -712,10 +763,10 @@ contexto_requerido:
 
 | Capa | Perfil Principal | Alternativa |
 |------|------------------|-------------|
-| Base de Datos | @PERFIL_DATABASE | @PERFIL_DB_AUDITOR (auditoria) |
-| Backend NestJS | @PERFIL_BACKEND | - |
+| Base de Datos | @PERFIL_DATABASE | @PERFIL_DATABASE_POSTGRESQL (avanzado), @PERFIL_DB_AUDITOR (auditoria) |
+| Backend NestJS | @PERFIL_BACKEND | @PERFIL_BACKEND_NESTJS (avanzado) |
 | Backend Express | @PERFIL_BACKEND_EXPRESS | - |
-| Frontend | @PERFIL_FRONTEND | - |
+| Frontend | @PERFIL_FRONTEND | @PERFIL_FRONTEND_REACT (avanzado) |
 | Mobile | @PERFIL_MOBILE | - |
 | ML/Data | @PERFIL_ML_SPEC | Especializado por proyecto |
 | Infra Dev | @PERFIL_DEVENV | @PERFIL_DEVOPS |
@@ -732,11 +783,10 @@ contexto_requerido:
 | MODIFICAR existente | Perfil de la capa correspondiente |
 | VALIDAR/REVISAR | @PERFIL_REVIEWER o auditor especializado |
 | DOCUMENTAR | @PERFIL_DOCS |
-| PROPAGAR | @PERFIL_KB_MANAGER |
-| TRACKEAR | @PERFIL_PROPAGATION_TRACKER |
 | COORDINAR | @PERFIL_ORQUESTADOR |
 | DECIDIR | @PERFIL_TECH_LEADER o @PERFIL_ARCHITECT |
 | DEPLOY | @PERFIL_PRODUCTION_MANAGER o @PERFIL_DEVOPS |
+| CATALOGAR | @PERFIL_DOCS |
 
 ---
 
@@ -808,6 +858,15 @@ Ubicacion: `compact/`
 | PERFIL-DATABASE-COMPACT.md | Subagente Database | ~250 |
 | PERFIL-DEVOPS-COMPACT.md | Subagente DevOps | ~250 |
 | PERFIL-ML-COMPACT.md | Subagente ML | ~250 |
+| PERFIL-DOCUMENTATION-COMPACT.md | Subagente Documentacion | ~250 |
+| PERFIL-TESTING-COMPACT.md | Subagente Testing | ~250 |
+| PERFIL-SECURITY-COMPACT.md | Subagente Seguridad | ~250 |
+| PERFIL-QA-COMPACT.md | Subagente QA | ~250 |
+| PERFIL-ARCHITECTURE-ANALYST-COMPACT.md | Subagente Arquitectura | ~250 |
+| PERFIL-INTEGRATION-VALIDATOR-COMPACT.md | Subagente Integracion | ~250 |
+| PERFIL-DATABASE-AUDITOR-COMPACT.md | Subagente Auditoria BD | ~250 |
+| PERFIL-CODE-REVIEWER-COMPACT.md | Subagente Code Review | ~250 |
+| PERFIL-REQUIREMENTS-ANALYST-COMPACT.md | Subagente Requerimientos | ~250 |
 | PERFIL-GENERIC-SUBAGENT.md | Subagente generico | ~200 |
 
 **Cuando usar perfiles compactos:**
@@ -831,4 +890,4 @@ Ubicacion: `compact/`
 
 ---
 
-**Version:** 2.1.0 | **Sistema:** NEXUS v4.0 + SIMCO | **Mantenido por:** Architecture-Analyst
+**Version:** 2.2.0 | **Sistema:** NEXUS v4.1 + SIMCO v4.0.0 | **Mantenido por:** Architecture-Analyst

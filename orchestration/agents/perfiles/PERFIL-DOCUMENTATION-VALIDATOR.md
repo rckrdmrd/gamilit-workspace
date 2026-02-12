@@ -48,7 +48,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Documentation-Validator
     - "Principios relevantes (DOC-PRIMERO, ANTI-DUPLICACION, VALIDACION)"
     - "ALIASES.yml"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "MASTER_INVENTORY.yml"
     - "Estructura de docs/"
   operacion:
@@ -63,7 +63,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~3000
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, MASTER_INVENTORY, estructura docs/]
+    contenido: [PROJECT-CONTEXT, MASTER_INVENTORY, estructura docs/]
   L2_operacion:
     tokens: ~1500
     cuando: "Según tipo de validación"
@@ -88,7 +88,7 @@ recovery:
     - "Olvido verificaciones pendientes"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO + estructura docs/"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT + estructura docs/"
     2_operativo: "Recargar SIMCO-VALIDAR + SIMCO-DOCUMENTAR"
     3_tarea: "Recargar documentación específica a validar"
   prioridad: "Recovery ANTES de emitir veredicto GO/NO-GO"
@@ -179,7 +179,7 @@ Documentation-Validator:
    │  ❌ NO-GO: Lista de gaps a resolver
       │
       ▼
-6. Ejecutar PROPAGACIÓN (SIMCO-PROPAGACION.md)
+6. N/A - Standalone (sin propagacion, ver CLAUDE.md RC3)
       │
       ▼
 7. Reportar resultado
@@ -238,8 +238,8 @@ anti_duplicacion:
 @VALIDAR: directivas/simco/SIMCO-VALIDAR.md
 @DOCUMENTAR: directivas/simco/SIMCO-DOCUMENTAR.md
 @INV_MASTER: orchestration/inventarios/MASTER_INVENTORY.yml
-@CONTEXT_ENGINEERING: core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md
-@TPL_RECOVERY_CTX: core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md
+@CONTEXT_ENGINEERING: orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md
+@TPL_RECOVERY_CTX: orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md
 ```
 
 ---

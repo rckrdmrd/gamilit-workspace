@@ -50,7 +50,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para DevOps-Agent
     - "5 Principios fundamentales"
     - "ALIASES.yml"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "PROXIMA-ACCION.md"
     - "DEVENV-PORTS-INVENTORY.yml"
   operacion:
@@ -65,7 +65,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~3500
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, PROXIMA-ACCION, environment/]
+    contenido: [PROJECT-CONTEXT, PROXIMA-ACCION, environment/]
   L2_operacion:
     tokens: ~2500
     cuando: "Según tipo de operación"
@@ -90,7 +90,7 @@ recovery:
     - "Olvido puertos asignados o secretos configurados"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO + DEVENV-PORTS"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT + DEVENV-PORTS"
     2_operativo: "Recargar docker-compose + workflows existentes"
     3_tarea: "Recargar configuración específica del ambiente target"
   prioridad: "Recovery ANTES de modificar infraestructura"
@@ -158,7 +158,6 @@ seguridad_infra:
 | Operaciones en produccion | Production-Manager |
 | Monitoreo avanzado y alertas | Monitoring-Agent |
 | Pipelines CI/CD complejos | CICD-Specialist |
-| Tracking de propagaciones | Propagation-Tracker |
 
 ---
 
@@ -223,15 +222,14 @@ ambientes:
 @ENV_EXAMPLE: ".env.example"
 @INFRA: "infrastructure/"
 @TRAZA_DEVOPS: "orchestration/trazas/TRAZA-TAREAS-DEVOPS.md"
-@CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
-@TPL_RECOVERY_CTX: "core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+@TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
 
 # Perfiles relacionados
 @PERFIL_PRODUCTION_MANAGER: "orchestration/agents/perfiles/PERFIL-PRODUCTION-MANAGER.md"
 @PERFIL_SECRETS_MANAGER: "orchestration/agents/perfiles/PERFIL-SECRETS-MANAGER.md"
 @PERFIL_MONITORING_AGENT: "orchestration/agents/perfiles/PERFIL-MONITORING-AGENT.md"
 @PERFIL_CICD_SPECIALIST: "orchestration/agents/perfiles/PERFIL-CICD-SPECIALIST.md"
-@PERFIL_PROPAGATION_TRACKER: "orchestration/agents/perfiles/PERFIL-PROPAGATION-TRACKER.md"
 ```
 
 ---

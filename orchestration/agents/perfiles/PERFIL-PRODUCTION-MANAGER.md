@@ -376,8 +376,8 @@ rollback:
 @PM2_LOGS: "~/.pm2/logs/"
 @DOMAINS_REG: "control-plane/registries/domains.registry.yml"
 @SERVICES_REG: "control-plane/registries/services.registry.yml"
-@CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
-@TPL_RECOVERY_CTX: "core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+@TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
 ```
 
 ---

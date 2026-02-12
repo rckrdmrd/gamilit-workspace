@@ -62,7 +62,7 @@ Las validaciones se ejecutan automaticamente en puntos clave del ciclo CAPVED.
 
 **Checklist:**
 ```
-□ CONTEXTO-PROYECTO.md existe y es reciente (<30 dias)
+□ PROJECT-CONTEXT.md existe y es reciente (<30 dias)
 □ Inventarios del dominio existen
 □ PROXIMA-ACCION.md refleja estado actual
 □ No hay tareas bloqueadas sin resolver
@@ -71,7 +71,7 @@ Las validaciones se ejecutan automaticamente en puntos clave del ciclo CAPVED.
 **Comando:**
 ```bash
 # Verificar existencia de archivos criticos
-ls -la projects/{proyecto}/orchestration/00-guidelines/CONTEXTO-PROYECTO.md
+ls -la projects/{proyecto}/orchestration/00-guidelines/PROJECT-CONTEXT.md
 ls -la projects/{proyecto}/orchestration/inventarios/MASTER_INVENTORY.yml
 ```
 

@@ -67,7 +67,7 @@ CMV_obligatorio:  # Contexto Minimo Viable
     - "Principios fundamentales (CAPVED, DOC-PRIMERO, NO-ASUMIR)"
     - "ALIASES.yml"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md o PROXIMA-ACCION.md"
+    - "PROJECT-CONTEXT.md o PROXIMA-ACCION.md"
     - "MASTER_INVENTORY.yml"
     - "Inventario del dominio (BACKEND o FRONTEND)"
   operacion:

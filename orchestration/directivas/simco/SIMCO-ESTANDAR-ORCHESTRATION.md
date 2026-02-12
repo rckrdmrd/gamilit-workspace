@@ -120,7 +120,7 @@ orchestration/
 ├── MAPA-DOCUMENTACION.yml               # [OBLIGATORIO] Mapa de docs
 │
 ├── 00-guidelines/                       # [OBLIGATORIO]
-│   └── CONTEXTO-PROYECTO.md             # [OBLIGATORIO]
+│   └── PROJECT-CONTEXT.md             # [OBLIGATORIO]
 │
 ├── inventarios/                         # [OBLIGATORIO]
 │   ├── MASTER_INVENTORY.yml             # [OBLIGATORIO]
@@ -200,7 +200,7 @@ orchestration/
 ├── README.md                            # [OBLIGATORIO] Para INTERMEDIATE+
 │
 ├── 00-guidelines/                       # [OBLIGATORIO]
-│   ├── CONTEXTO-PROYECTO.md             # [OBLIGATORIO]
+│   ├── PROJECT-CONTEXT.md             # [OBLIGATORIO]
 │   └── HERENCIA-DIRECTIVAS.md           # [OBLIGATORIO] Para INTERMEDIATE
 │
 ├── inventarios/                         # [OBLIGATORIO]
@@ -300,7 +300,7 @@ orchestration/
 ├── MAPA-DOCUMENTACION.yml               # [OBLIGATORIO]
 │
 ├── 00-guidelines/                       # [OBLIGATORIO]
-│   └── CONTEXTO-PROYECTO.md             # [OBLIGATORIO]
+│   └── PROJECT-CONTEXT.md             # [OBLIGATORIO]
 │
 ├── inventarios/                         # [OBLIGATORIO]
 │   └── MASTER_INVENTORY.yml             # [OBLIGATORIO]
@@ -411,7 +411,7 @@ regla_sincronizacion: |
 
 ### Carpetas (3)
 - [ ] 00-guidelines/
-  - [ ] CONTEXTO-PROYECTO.md
+  - [ ] PROJECT-CONTEXT.md
 - [ ] inventarios/
   - [ ] MASTER_INVENTORY.yml
 - [ ] trazas/

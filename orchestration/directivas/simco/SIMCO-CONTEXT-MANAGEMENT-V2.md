@@ -1,8 +1,8 @@
 # SIMCO-CONTEXT-MANAGEMENT-V2.md
 
 **Sistema:** NEXUS v4.1 - Gestion de Contexto Jerarquico con Checkpoints
-**Version:** 2.1.0
-**Fecha:** 2026-01-24
+**Version:** 2.2.0
+**Fecha:** 2026-02-11
 **Basado en:** Implementacion probada en Gamilit
 **Actualizado:** Sistema de checkpoints automáticos integrado
 
@@ -36,7 +36,7 @@ NEXUS (Next-generation EXecution Understanding System) resuelve:
 ┌─────────────────────────────────────────────────────────────────────┐
 │ NIVEL 1 - PROYECTO                                                   │
 │ ═══════════════════════════════════════════════════════════════════ │
-│ • CONTEXTO-PROYECTO.md, PROXIMA-ACCION.md, MASTER_INVENTORY.yml    │
+│ • PROJECT-CONTEXT.md, PROXIMA-ACCION.md, MASTER_INVENTORY.yml    │
 │ • Variables del proyecto, stack, convenciones                       │
 │ • Presupuesto: 5,000 tokens                                         │
 │ • Carga: Al iniciar trabajo en proyecto                             │
@@ -76,6 +76,11 @@ NEXUS (Next-generation EXecution Understanding System) resuelve:
 | L2 | Operacion | 4,000 | 20% | Por dominio |
 | L3 | Tarea | 3,000 | 15% | Dinamico |
 | **Total** | | **20,000** | **100%** | |
+
+> **NOTA (v2.2.0):** Los 20,000 tokens del presupuesto L0-L3 representan el ~10% de overhead
+> de contexto sobre la ventana real de 200K tokens de Claude. Los 180K restantes son espacio
+> de TRABAJO disponible para el agente. Ver `SIMCO-CONTROL-TOKENS.md` v2.0.0 para limites
+> actualizados por modelo.
 
 ### 3.2 Reglas de Presupuesto
 
@@ -131,7 +136,7 @@ niveles:
     por_proyecto:
       gamilit:
         archivos:
-          - path: projects/gamilit/orchestration/CONTEXTO-PROYECTO.md
+          - path: orchestration/PROJECT-CONTEXT.md
             keywords: [gamilit, plataforma, gamificacion]
 
 resoluciones:
@@ -187,7 +192,7 @@ PASO 2: Identificar Proyecto
 └── Cargar L1 del proyecto
 
 PASO 3: Cargar L1 (Proyecto)
-├── CONTEXTO-PROYECTO.md
+├── PROJECT-CONTEXT.md
 ├── PROXIMA-ACCION.md
 ├── MASTER_INVENTORY.yml
 └── Verificar: Variables del proyecto
@@ -233,6 +238,7 @@ DESPUES (Contexto dirigido por sistema):
 | CAMBIO_DOMINIO | Purgar L2 anterior, cargar nuevo | L2 |
 | CAMBIO_PROYECTO | Purgar L1+L2+L3, cargar nuevo L1 | L1, L2, L3 |
 | UMBRAL_TOKENS | Purgar L3, evaluar L2 | L3, L2 |
+| MID_SESSION_CLEANUP | Ejecutar SIMCO-CONTEXT-CLEANUP.md | L2, L3 |
 | FIN_SESION | Guardar PROXIMA-ACCION | Ninguno |
 
 ### 5.3 Ciclo de Vida del Contexto
@@ -349,6 +355,12 @@ Al recibir delegacion:
 Al completar:
 1. Reportar archivos generados
 2. NO actualizar PROXIMA-ACCION (solo orquestador)
+
+Restricciones reales (ver SIMCO-PLATFORM-CONSTRAINTS.md):
+- Max 2 sesiones paralelas (429 rate limit si > 2)
+- Foreground only en Windows (background produce output vacio)
+- Paths: _products NO se convierte en products — usar rutas completas
+- Conteos NO confiables — siempre verificar con filesystem
 ```
 
 ### 8.3 Trae

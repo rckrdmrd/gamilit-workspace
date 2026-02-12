@@ -22,117 +22,108 @@
 ### 0.1 Determinar Nivel Jerárquico
 
 ```yaml
-Paso_1: Identificar en qué nivel del workspace estás trabajando
+# Gamilit es STANDALONE (CLAUDE.md RC3 y RC4)
+# No forma parte de jerarquía multi-workspace
+# Todo el código (backend, frontend, database) está en el mismo repositorio
 
-NIVEL_0_WORKSPACE:
-  ruta: "/workspace/orchestration/"
-  identificador: "Es directiva global o índice de workspace"
-
-NIVEL_1_CORE:
-  ruta: "/workspace/core/"
-  identificador: "Es funcionalidad de catálogo o directiva"
-
-NIVEL_2A_STANDALONE:
-  ruta: "/workspace/projects/{proyecto}/"
-  identificador: "NO tiene subcarpeta verticales/"
-  ejemplos: "gamilit, trading-platform, betting-analytics"
-
-NIVEL_2B_SUITE:
-  ruta: "/workspace/projects/{suite}/"
-  identificador: "TIENE subcarpeta apps/verticales/"
-  ejemplo: "erp-suite"
-
-NIVEL_2B1_SUITE_CORE:
-  ruta: "/workspace/projects/{suite}/apps/erp-core/"
-  identificador: "Es el núcleo de la suite"
-
-NIVEL_2B2_VERTICAL:
-  ruta: "/workspace/projects/{suite}/apps/verticales/{vertical}/"
-  identificador: "Es vertical especializada"
-  ejemplos: "construccion, vidrio-templado, clinicas, retail"
-
-NIVEL_3_CATALOGO:
-  ruta: "/workspace/shared/catalog/{funcionalidad}/"
-  identificador: "Es funcionalidad reutilizable"
+NIVEL_GAMILIT_STANDALONE:
+  ruta: "C:\Empresas\ISEM\gamilit-workspace\"
+  tipo: "STANDALONE"
+  identificador: "Proyecto monorepo completo con gobernanza local"
+  workspace: "git@github.com:rckrdmrd/gamilit-workspace.git"
+  estructura:
+    - "apps/backend/"     # NestJS 11, 22 módulos
+    - "apps/frontend/"    # React 19
+    - "apps/database/"    # PostgreSQL 15 DDL
+    - "orchestration/"    # SIMCO local completo
+    - "docs/"            # Documentación del producto
 ```
 
 ### 0.2 Cargar Contexto del Nivel
 
 ```yaml
-Archivos_a_leer_según_nivel:
+# Archivos a leer para gamilit standalone
+Archivos_Gamilit:
+  contexto_base:
+    - CLAUDE.md                                    # Identidad y reglas críticas
+    - orchestration/PROJECT-CONTEXT.md             # Contexto del proyecto
+    - orchestration/CONTEXT-MAP.yml                # Variables y aliases
+    - orchestration/PROXIMA-ACCION.md              # Estado actual y próxima acción
 
-  STANDALONE:
-    - orchestration/templates/TEMPLATE-CONTEXTO-PROYECTO.md
-    - orchestration/templates/HERENCIA-SIMCO.md
-    - orchestration/inventarios/MASTER_INVENTORY.yml
+  inventarios:
+    - orchestration/inventarios/MASTER_INVENTORY.yml    # SSOT completo (DB/BE/FE)
+    - orchestration/inventarios/DATABASE_INVENTORY.yml  # Si tarea afecta BD
+    - orchestration/inventarios/BACKEND_INVENTORY.yml   # Si tarea afecta backend
+    - orchestration/inventarios/FRONTEND_INVENTORY.yml  # Si tarea afecta frontend
 
-  VERTICAL:
-    - orchestration/templates/TEMPLATE-CONTEXTO-PROYECTO.md
-    - orchestration/templates/HERENCIA-SIMCO.md
-    - orchestration/templates/HERENCIA-ERP-CORE-TEMPLATE.md
-    - orchestration/inventarios/MASTER_INVENTORY.yml
-
-  SUITE_CORE:
-    - orchestration/templates/TEMPLATE-CONTEXTO-PROYECTO.md
-    - orchestration/inventarios/MASTER_INVENTORY.yml
-    - orchestration/inventarios/DEVENV-MASTER-INVENTORY.yml
+  dominio_especifico:
+    - orchestration/directivas/simco/SIMCO-DDL.md       # Si creas/modificas tablas
+    - orchestration/directivas/simco/SIMCO-BACKEND.md   # Si trabajas en NestJS
+    - orchestration/directivas/simco/SIMCO-FRONTEND.md  # Si trabajas en React
 ```
 
 ### 0.3 Identificar Ruta de Propagación
 
 ```yaml
-Según_tu_nivel_actual:
+# N/A - Gamilit es STANDALONE sin propagación (CLAUDE.md RC3)
+# No propaga a otros proyectos
+# No hereda código de otros proyectos
+# Toda la gobernanza es local en orchestration/
 
-  STANDALONE → propagar a:
-    - WORKSPACE (orchestration/WORKSPACE-STATUS.md)
-
-  VERTICAL → propagar a:
-    - SUITE (../../../orchestration/inventarios/)
-    - WORKSPACE (orchestration/WORKSPACE-STATUS.md)
-
-  SUITE_CORE → propagar a:
-    - SUITE (../../orchestration/inventarios/)
-    - WORKSPACE (orchestration/WORKSPACE-STATUS.md)
-    - VERTICALES (si afecta herencia)
-
-  CATALOGO → propagar a:
-    - CORE (inventarios/CORE_INVENTORY.yml)
-    - CONSUMIDORES (CATALOG-USAGE-TRACKING.yml)
+Propagacion_Gamilit:
+  tipo: "NINGUNA"
+  razon: "Proyecto standalone completo"
+  accion: "Actualizar solo inventarios locales en orchestration/inventarios/"
+  nota: "Gamilit es heredero de PATRONES (no código). No propaga a otros proyectos."
 ```
 
 ### 0.4 Registrar Identificación
 
 ```yaml
-# Resultado de Fase 0 (incluir en reporte)
+# Resultado de Fase 0 para gamilit (incluir en reporte)
 fase_0_identificacion:
-  nivel: "{NIVEL_IDENTIFICADO}"
-  proyecto: "{NOMBRE}"
-  path: "{RUTA_COMPLETA}"
-  propagacion_a:
-    - "{nivel_superior_1}"
-    - "{nivel_superior_2}"
+  proyecto: "gamilit"
+  tipo: "STANDALONE"
+  nivel: "NIVEL_2A_STANDALONE"
+  workspace: "git@github.com:rckrdmrd/gamilit-workspace.git"
+  path: "C:\Empresas\ISEM\gamilit-workspace\"
+  propagacion: "NINGUNA (standalone sin propagación)"
   contexto_cargado:
-    - TEMPLATE-CONTEXTO-PROYECTO.md ✓
-    - HERENCIA-SIMCO.md ✓
-    - MASTER_INVENTORY.yml ✓
-  herencia_especifica: "{Si aplica: HERENCIA-ERP-CORE-TEMPLATE.md}"
+    - CLAUDE.md ✓
+    - orchestration/PROJECT-CONTEXT.md ✓
+    - orchestration/CONTEXT-MAP.yml ✓
+    - orchestration/inventarios/MASTER_INVENTORY.yml ✓
+  herencia: "Usa PATRONES de referencia, no código heredado"
+  gobernanza: "Local completa en orchestration/"
 ```
 
 ### 0.5 Verificar Catálogo
 
 ```yaml
+# Verificar inventarios locales antes de crear objetos nuevos
 ANTES_de_proceder_a_CAPVED:
-  verificar: "¿Lo que voy a crear existe en @CATALOG?"
-  comando: "Buscar en shared/catalog/CATALOG-INDEX.yml"
+  verificar: "¿Lo que voy a crear ya existe en gamilit?"
+  fuente: "orchestration/inventarios/MASTER_INVENTORY.yml"
+
+  inventarios_por_dominio:
+    database: "orchestration/inventarios/DATABASE_INVENTORY.yml (170 tablas)"
+    backend: "orchestration/inventarios/BACKEND_INVENTORY.yml (152 entities, 850 endpoints)"
+    frontend: "orchestration/inventarios/FRONTEND_INVENTORY.yml (458 componentes)"
 
   SI_EXISTE:
-    - Leer SIMCO-REUTILIZAR.md
-    - Adaptar en lugar de crear
-    - Documentar adaptación
+    - Revisar objeto existente
+    - Modificar en lugar de crear duplicado
+    - Documentar modificación
+
+  SI_SIMILAR_70_PCT:
+    - Copiar objeto similar
+    - Adaptar a necesidad específica
+    - Documentar origen y cambios
 
   SI_NO_EXISTE:
     - Proceder con CAPVED normal
-    - Considerar contribuir al catálogo al finalizar
+    - Agregar a inventarios al finalizar
+    - Actualizar MASTER_INVENTORY.yml
 ```
 
 ---
@@ -291,7 +282,7 @@ Origenes_de_Tarea:
 Seguir protocolo de SIMCO-INICIALIZACION.md:
 1. Leer principios fundamentales (4 ahora con CAPVED)
 2. Leer perfil del agente
-3. Leer CONTEXTO-PROYECTO.md
+3. Leer PROJECT-CONTEXT.md
 4. Leer inventarios relevantes
 5. Cargar SIMCO de operación según tipo de tarea
 ```

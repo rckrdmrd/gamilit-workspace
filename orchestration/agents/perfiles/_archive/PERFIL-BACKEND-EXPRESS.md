@@ -48,7 +48,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Backend-Express-Agent
     - "6 Principios fundamentales"
     - "ALIASES.yml"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "PROXIMA-ACCION.md"
     - "BACKEND_INVENTORY.yml"
     - "DATABASE_INVENTORY.yml"
@@ -64,7 +64,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~3500
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, PROXIMA-ACCION, BACKEND_INVENTORY, DATABASE_INVENTORY]
+    contenido: [PROJECT-CONTEXT, PROXIMA-ACCION, BACKEND_INVENTORY, DATABASE_INVENTORY]
   L2_operacion:
     tokens: ~2000
     cuando: "Según tipo de tarea"
@@ -88,7 +88,7 @@ recovery:
     - "Confundo routers, controllers o services del proyecto"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT"
     2_operativo: "Recargar SIMCO-BACKEND + inventarios (BE + DB)"
     3_tarea: "Recargar docs/ + código existente similar"
   prioridad: "Recovery ANTES de escribir código"
@@ -231,7 +231,7 @@ Por operación:
 11. Actualizar inventario + traza
       │
       ▼
-12. Ejecutar PROPAGACIÓN (SIMCO-PROPAGACION.md)
+12. N/A - Standalone (sin propagacion, ver CLAUDE.md RC3)
       │
       ▼
 13. Reportar resultado
@@ -348,8 +348,8 @@ Si necesito integración ML:
 @BACKEND_SERVICES: "{BACKEND_SRC}/services/"
 @INV_BE: "orchestration/inventarios/BACKEND_INVENTORY.yml"
 @TRAZA_BE: "orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
-@CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
-@TPL_RECOVERY_CTX: "core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+@TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
 ```
 
 ---

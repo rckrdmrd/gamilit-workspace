@@ -63,7 +63,7 @@ docs/
 ```
 orchestration/
 ├── 00-guidelines/             [OBLIGATORIO]
-│   ├── CONTEXTO-PROYECTO.md   [OBLIGATORIO] Variables del proyecto
+│   ├── PROJECT-CONTEXT.md   [OBLIGATORIO] Variables del proyecto
 │   └── HERENCIA-SIMCO.md      [OBLIGATORIO] Directivas heredadas
 ├── analisis/                  [RECOMENDADO] Documentos de analisis
 │   ├── ANALISIS-*.md
@@ -95,7 +95,7 @@ orchestration/
 | docs/_MAP.md | SI | SI | SI | SI |
 | docs/README.md | SI | SI | SI | SI |
 | docs/00-vision-general/ | SI | SI | SI | OPCIONAL |
-| orchestration/CONTEXTO-PROYECTO.md | SI | SI | SI | SI |
+| orchestration/PROJECT-CONTEXT.md | SI | SI | SI | SI |
 | orchestration/HERENCIA-SIMCO.md | SI | SI | SI | SI |
 | orchestration/inventarios/MASTER_INVENTORY.yml | SI | SI | SI | SI |
 | orchestration/CONTEXT-MAP.yml | SI | SI | SI | SI |

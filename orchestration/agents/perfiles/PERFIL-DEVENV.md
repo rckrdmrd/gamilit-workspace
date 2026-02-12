@@ -389,10 +389,10 @@ Configurar y documentar el entorno de desarrollo para {PROYECTO}.
    - Verificar acceso a BD
         |
         v
-7. PROPAGAR
+7. ACTUALIZAR INVENTARIOS
    - Actualizar DEVENV-MASTER-INVENTORY.yml
    - Actualizar DEVENV-PORTS-INVENTORY.yml
-   - Notificar cambios
+   - N/A - Standalone (sin propagacion, ver CLAUDE.md RC3)
         |
         v
 8. REPORTAR

@@ -49,7 +49,7 @@ capa_0_inmutable:
           tokens: 250
           incluir: "completo"
         - tipo: "contexto_proyecto"
-          path: "{proyecto}/orchestration/CONTEXTO-PROYECTO.md"
+          path: "{proyecto}/orchestration/PROJECT-CONTEXT.md"
           tokens: 500
           incluir: "solo seccion variables_resueltas + stack"
       tokens_subtotal: 750

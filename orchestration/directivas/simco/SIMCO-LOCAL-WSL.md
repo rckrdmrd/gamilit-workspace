@@ -6,11 +6,11 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Version** | 1.0.0 |
+| **Version** | 2.0.0 |
 | **Tipo** | Operacional |
 | **Alcance** | Ambiente Local WSL |
 | **Prioridad** | Alta |
-| **Actualizado** | 2026-01-20 |
+| **Actualizado** | 2026-02-11 |
 
 ---
 
@@ -45,7 +45,7 @@ Esta directiva define como los agentes deben operar con el ambiente de desarroll
 echo "developer_wsl_2026" | sudo -S <comando>
 
 # O usando sudo interactivo (pedira password)
-│  │  │   Docker    │  │     PM2     │  │ Claude Code │           │  │
+sudo <comando>
 ```
 
 ---
@@ -56,8 +56,10 @@ echo "developer_wsl_2026" | sudo -S <comando>
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         WINDOWS HOST                                 │
 │  ┌───────────────────────────────────────────────────────────────┐  │
-│  │ C:\Empresas\ISEM\workspace-v2    (Codigo fuente)              │  │
-│  │ C:\Empresas\ISEM\workspace-bootstrap (Bootstrap)              │  │
+│  │ C:\Empresas\ISEM\gamilit-workspace  (Monorepo standalone)    │  │
+│  │   apps/backend     NestJS 11                                  │  │
+│  │   apps/frontend    React 19                                   │  │
+│  │   apps/database    DDL + seeds + scripts                      │  │
 │  └───────────────────────────────────────────────────────────────┘  │
 │                              │                                       │
 │                              │ /mnt/c/...                           │
@@ -68,12 +70,6 @@ echo "developer_wsl_2026" | sudo -S <comando>
 │  │  │ PostgreSQL  │  │    Redis    │  │    Nginx    │           │  │
 │  │  │   :5432     │  │    :6379    │  │     :80     │           │  │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘           │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐           │  │
-│  │  │   Docker    │  │     PM2     │  │ Auto Mode   │           │  │
-│  │  │   :2375     │  │   global    │  │    CLI      │           │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘           │  │
-│  │                                                               │  │
-│  │  /home/developer/workspaces/workspace-infra (Infraestructura)│  │
 │  └───────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -87,7 +83,7 @@ echo "developer_wsl_2026" | sudo -S <comando>
 ║                                                                           ║
 ║   DESDE WINDOWS (PowerShell/CMD):                                         ║
 ║                                                                           ║
-║   powershell.exe -Command "wsl -d Ubuntu-24.04 -u developer -- <cmd>"    ║
+║   wsl -d Ubuntu-24.04 -u developer -- <cmd>                             ║
 ║                                                                           ║
 ║   IMPORTANTE:                                                             ║
 ║   - Usar -d Ubuntu-24.04 para especificar la distribucion                ║
@@ -117,24 +113,30 @@ wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d gamilit_platform -c
 
 ### Credenciales de Desarrollo
 
-| Base de Datos | Usuario | Password | Redis DB |
-|---------------|---------|----------|----------|
-| gamilit_platform | gamilit_user | gamilit_dev_2026 | 0 |
-| erp_generic | erp_admin | erp_dev_2026 | 2 |
-| template_saas_dev | template_saas_user | saas_dev_2026 | 9 |
-| michangarrito_dev | michangarrito_dev | mch_dev_2026 | 8 |
+| Base de Datos | Usuario | Password | Puerto | Redis DB |
+|---------------|---------|----------|--------|----------|
+| gamilit_platform | gamilit_user | gamilit_dev_2026 | 5432 | 0 |
 
-### Cargar Archivos DDL
+### Recrear Base de Datos
 
 ```powershell
-# Patron general
-powershell.exe -Command "wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d <database> -f '<path_wsl>'"
+# Usar scripts del monorepo — ver @SIMCO-RECREAR-BD para procedimiento completo
 
-# Ejemplo: Cargar DDL de gamilit
-powershell.exe -Command "wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d gamilit_platform -f '/mnt/c/Empresas/ISEM/workspace-v2/projects/gamilit/apps/database/ddl/00-prerequisites.sql'"
+# Recrear completo (DROP user + BD + init)
+wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/gamilit-workspace/apps/database/scripts/recreate-database.sh' --env dev --force
 
-# Ejemplo: Cargar DDL de erp-core
-powershell.exe -Command "wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d erp_generic -f '/mnt/c/Empresas/ISEM/workspace-v2/projects/erp-core/docs/04-modelado/database-design/schemas/02-auth-schema.sql'"
+# Reset rapido (mantiene usuario)
+wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/gamilit-workspace/apps/database/scripts/reset-database.sh' --env dev --password 'gamilit_dev_2026' --force
+
+# Init (primera vez)
+wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/gamilit-workspace/apps/database/scripts/init-database.sh' --env dev --force
+```
+
+### Cargar Archivo DDL Individual
+
+```powershell
+# Cargar un archivo DDL especifico de gamilit
+wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres psql -d gamilit_platform -f '/mnt/c/Empresas/ISEM/gamilit-workspace/apps/database/ddl/00-prerequisites.sql'
 ```
 
 ### Crear Nueva Base de Datos
@@ -178,9 +180,6 @@ wsl -d Ubuntu-24.04 -u developer -- redis-cli ping
 
 # Nginx
 wsl -d Ubuntu-24.04 -u developer -- sudo systemctl status nginx --no-pager
-
-# Docker
-wsl -d Ubuntu-24.04 -u developer -- docker --version
 ```
 
 ### Iniciar/Detener Servicios
@@ -212,47 +211,14 @@ wsl -d Ubuntu-24.04 -u developer -- sudo tail -50 /var/log/nginx/error.log
 
 | Windows | WSL |
 |---------|-----|
-| `C:\Empresas\ISEM\workspace-v2` | `/mnt/c/Empresas/ISEM/workspace-v2` |
-| `C:\Empresas\ISEM\workspace-bootstrap` | `/mnt/c/Empresas/ISEM/workspace-bootstrap` |
-| N/A (nativo WSL) | `/home/developer/workspaces/workspace-infra` |
+| `C:\Empresas\ISEM\gamilit-workspace` | `/mnt/c/Empresas/ISEM/gamilit-workspace` |
 
 ### Conversion de Rutas
 
 ```powershell
 # Windows a WSL: Reemplazar C:\ por /mnt/c/ y \ por /
-# Ejemplo: C:\Empresas\ISEM\workspace-v2\projects\gamilit
-#       -> /mnt/c/Empresas/ISEM/workspace-v2/projects/gamilit
-```
-
----
-
-## workspace-infra
-
-El repositorio de infraestructura esta clonado en WSL:
-
-```
-/home/developer/workspaces/workspace-infra/
-├── databases/
-│   ├── schemas/     # Schemas de BD
-│   └── scripts/     # Scripts de BD
-├── deploy/
-│   ├── docker/      # Configs Docker
-│   └── pipelines/   # CI/CD pipelines
-└── services/
-    ├── postgresql/  # Config PostgreSQL
-    ├── redis/       # Config Redis
-    ├── nginx/       # Config Nginx
-    └── ...
-```
-
-### Usar Scripts de Infraestructura
-
-```powershell
-# Acceder al directorio
-wsl -d Ubuntu-24.04 -u developer -- ls -la /home/developer/workspaces/workspace-infra/
-
-# Ejecutar script de infraestructura
-wsl -d Ubuntu-24.04 -u developer -- bash /home/developer/workspaces/workspace-infra/scripts/example.sh
+# Ejemplo: C:\Empresas\ISEM\gamilit-workspace\apps\database\ddl
+#       -> /mnt/c/Empresas/ISEM/gamilit-workspace/apps/database/ddl
 ```
 
 ---
@@ -272,27 +238,14 @@ wsl -d Ubuntu-24.04 -u developer -- bash -c 'systemctl is-active postgresql && r
 ### Patron 2: Ejecutar DDL de Proyecto
 
 ```powershell
-# 1. Identificar archivos DDL
-# Los DDL estan en: workspace-v2/projects/<proyecto>/database/ddl/ o apps/database/ddl/
+# Los DDL estan en: gamilit-workspace/apps/database/ddl/
+# Usar scripts de recreacion en vez de psql manual — ver @SIMCO-RECREAR-BD
 
-# 2. Ejecutar en orden
-# Primero schemas/prerequisitos, luego tablas, luego indexes, finalmente seeds
+# Recrear completo
+wsl -d Ubuntu-24.04 -u developer -- bash '/mnt/c/Empresas/ISEM/gamilit-workspace/apps/database/scripts/recreate-database.sh' --env dev --force
 ```
 
-### Patron 3: Recrear Base de Datos
-
-```powershell
-# 1. Eliminar base existente
-wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres dropdb --if-exists nombre_db
-
-# 2. Crear nueva base
-wsl -d Ubuntu-24.04 -u developer -- sudo -u postgres createdb -O usuario nombre_db
-
-# 3. Ejecutar DDL
-# ... (ver patron 2)
-```
-
-### Patron 4: Backup y Restore
+### Patron 3: Backup y Restore
 
 ```powershell
 # Backup
@@ -343,10 +296,10 @@ wsl -d Ubuntu-24.04 -u developer -- sudo systemctl restart redis-server
 
 | Referencia | Ubicacion |
 |------------|-----------|
-| Inventario WSL | `orchestration/inventarios/LOCAL-WSL-ENVIRONMENT.yml` |
+| Recrear BD (SSOT) | `@SIMCO-RECREAR-BD` (orchestration/directivas/simco/SIMCO-RECREAR-BD.md) |
 | Inventario BD | `orchestration/inventarios/DATABASE_INVENTORY.yml` |
-| DevEnv Master | `orchestration/inventarios/DEVENV-MASTER-INVENTORY.yml` |
-| Bootstrap Docs | `../../../workspace-bootstrap/orchestration/` |
+| Flujo DDL | `@SIMCO-DDL` (orchestration/directivas/simco/SIMCO-DDL.md) |
+| Ambientes | `@AMBIENTES` (docs/20-architecture/AMBIENTES-DEV-PROD.md) |
 
 ---
 
@@ -365,4 +318,4 @@ operacion_wsl:
 
 ---
 
-*SIMCO-LOCAL-WSL v1.0.0 - Sistema SIMCO v4.0.0*
+*SIMCO-LOCAL-WSL v2.0.0 - Sistema SIMCO v4.0.0*

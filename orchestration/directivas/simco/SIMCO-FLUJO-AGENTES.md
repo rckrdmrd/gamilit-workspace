@@ -1,8 +1,8 @@
 # SIMCO-FLUJO-AGENTES.md
 
-**Version:** 1.3.0
+**Version:** 2.0.0
 **Creado:** 2026-01-20
-**Actualizado:** 2026-01-20
+**Actualizado:** 2026-02-11
 **Sistema:** SIMCO v4.0
 **Tipo:** Directiva Obligatoria
 
@@ -37,7 +37,7 @@ mediante planes ultra-detallados para modelos no-razonadores.
 
 | Fase | Principal | Secundario | Alternativo | Modelo |
 |------|-----------|------------|-------------|--------|
-| **Fase 1** | Claude Code | Gemini CLI | - | Claude Opus 4.5 / Gemini 3 |
+| **Fase 1** | Claude Code | Gemini CLI | - | Claude Opus 4.6 / Gemini 3 |
 | **Fase 2** | Claude Code | Gemini CLI | Trae | Claude / Gemini 3 / Gemini 3 Pro |
 | **Fase 3** | Windsurf | - | - | Cascade AI (no-razonador) |
 | **Fase 4** | Claude Code | Gemini CLI | Trae | Claude / Gemini 3 |
@@ -638,6 +638,64 @@ Por proyecto: projects/{proyecto}/.env.development
 | Tasa de \u00e9xito Windsurf | > 90% | Reportes de ejecuci\u00f3n |
 | Errores por ambig\u00fcedad | < 5% | Bloqueos reportados |
 | Tiempo de validaci\u00f3n | < 15% del total | Timestamps |
+
+---
+
+## Flujo Alternativo: Claude + Gemini CLI (v2.0.0)
+
+Patron real observado en auditorias y remediaciones (2026-02-11):
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│           FLUJO HÍBRIDO CLAUDE + GEMINI CLI                      │
+│           (Claude orquesta, Gemini analiza)                      │
+└─────────────────────────────────────────────────────────────────┘
+
+FASE 1: Claude Code → Planificacion + Descomposicion
+├── Define dimensiones de auditoria o bloques de migracion
+├── Crea prompts para agentes Gemini CLI
+└── Configura waves de ejecucion
+
+FASE 2: Gemini CLI (paralelo) → Analisis Profundo
+├── Max 2 agentes paralelos (platform constraint)
+├── Cada agente analiza 1 dimension/modulo
+├── Produce reporte con hallazgos + score
+└── NO escribe archivos (sandbox read-only)
+
+FASE 3: Claude Code → Consolidacion + Correccion
+├── Consolida reportes de Gemini → plan de correccion
+├── Ejecuta correcciones via subagentes Claude (paralelo)
+└── Valida cada wave con SIMCO-ORCHESTRATOR-VALIDATION-LOOP
+
+FASE 4: Claude Code → Validacion Final
+├── Re-calcula scores post-correccion
+├── Verifica filesystem matches reports
+└── Genera reporte final
+```
+
+**Ventaja:** Ahorra ~60% tokens Claude usando Gemini para analisis pesado.
+**Limitacion:** Gemini quota (max 2 paralelos, 4 por 30 min).
+
+---
+
+## Flujo de Auditorias (v2.0.0)
+
+Para auditorias integrales, usar patrones formalizados:
+
+```yaml
+FLUJO_AUDITORIA:
+  patron_principal: "SIMCO-ORCHESTRATION-PATTERNS.md → P1 (N-Dimension Audit)"
+  patron_correccion: "SIMCO-ORCHESTRATION-PATTERNS.md → P2 (Wave Execution)"
+  patron_validacion: "SIMCO-ORCHESTRATION-PATTERNS.md → P3 (Round-Based Validation)"
+
+  scores_observados:
+    trading: "77 → 97 (7D audit + 6 waves)"
+    erp_core: "55 → 90 (9D audit + 6 sprints)"
+    gamilit: "78 → 96 (5D audit + 4 phases)"
+    erp_construccion: "0 → 95 (block migration)"
+```
+
+**Referencia completa:** `orchestration/directivas/simco/SIMCO-ORCHESTRATION-PATTERNS.md`
 
 ---
 

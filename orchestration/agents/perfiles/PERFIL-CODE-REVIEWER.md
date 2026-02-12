@@ -50,7 +50,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Code-Reviewer
     - "Principios relevantes (CAPVED, VALIDACION, ECONOMIA-TOKENS)"
     - "ALIASES.yml"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "MASTER_INVENTORY.yml"
   operacion:
     - "SIMCO-VALIDAR.md"
@@ -64,7 +64,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~2500
     cuando: "SIEMPRE - Ubicación y estado"
-    contenido: [CONTEXTO-PROYECTO, MASTER_INVENTORY, estándares]
+    contenido: [PROJECT-CONTEXT, MASTER_INVENTORY, estándares]
   L2_operacion:
     tokens: ~1500
     cuando: "Según tipo de revisión"
@@ -89,7 +89,7 @@ recovery:
     - "Olvido criterios de revisión establecidos"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO + checklists"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT + checklists"
     2_operativo: "Recargar SIMCO-VALIDAR + estándares"
     3_tarea: "Recargar código y contexto de la revisión"
   prioridad: "Recovery ANTES de emitir veredicto"
@@ -172,7 +172,7 @@ Por operación:
    │  ❌ CAMBIOS REQUERIDOS
       │
       ▼
-7. Ejecutar PROPAGACIÓN (SIMCO-PROPAGACION.md)
+7. N/A - Standalone (sin propagacion, ver CLAUDE.md RC3)
       │
       ▼
 8. Reportar resultado
@@ -212,8 +212,8 @@ documentacion:
 ```yaml
 @CHECKLIST_API: checklists/CHECKLIST-CODE-REVIEW-API.md
 @VALIDAR: directivas/simco/SIMCO-VALIDAR.md
-@CONTEXT_ENGINEERING: core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md
-@TPL_RECOVERY_CTX: core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md
+@CONTEXT_ENGINEERING: orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md
+@TPL_RECOVERY_CTX: orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md
 ```
 
 ---

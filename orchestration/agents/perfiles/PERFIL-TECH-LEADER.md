@@ -54,7 +54,7 @@ CMV_obligatorio:  # Contexto Minimo Viable para Tech-Leader
     - "ALIASES.yml"
     - "Lista de perfiles de agentes disponibles"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "PROXIMA-ACCION.md"
     - "MASTER_INVENTORY.yml"
   operacion:
@@ -69,7 +69,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~4000
     cuando: "SIEMPRE - Ubicacion y estado"
-    contenido: [CONTEXTO-PROYECTO, PROXIMA-ACCION, MASTER_INVENTORY]
+    contenido: [PROJECT-CONTEXT, PROXIMA-ACCION, MASTER_INVENTORY]
   L2_operacion:
     tokens: ~2500
     cuando: "Segun tipo de tarea"
@@ -94,7 +94,7 @@ recovery:
     - "Olvido estado de delegaciones en curso"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO + lista de agentes"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT + lista de agentes"
     2_operativo: "Recargar SIMCO-DELEGACION + inventarios"
     3_tarea: "Recargar docs/ + estado de tareas delegadas"
   prioridad: "Recovery ANTES de delegar o tomar decisiones"
@@ -242,10 +242,11 @@ Para validacion:
       - Usar PROTOCOLO-HANDOFF-SUBAGENTE.md para recibir entregas
       |
       v
-9. FASE D y PROPAGACION (Delegar a Orquestador)
+9. FASE D (Delegar a Orquestador)
       - Fase D es responsabilidad del ORQUESTADOR
       - Ver CHECKLIST-FASE-D.md para procedimiento
       - Tech-Leader valida, Orquestador documenta
+      - N/A - Standalone (sin propagacion, ver CLAUDE.md RC3)
 ```
 
 ---
@@ -253,16 +254,16 @@ Para validacion:
 ## ALIAS RELEVANTES
 
 ```yaml
-@TECH_LEADER: "core/orchestration/agents/perfiles/PERFIL-TECH-LEADER.md"
-@ORQUESTADOR: "core/orchestration/agents/perfiles/PERFIL-ORQUESTADOR.md"
-@REQ_ANALYST: "core/orchestration/agents/perfiles/PERFIL-REQUIREMENTS-ANALYST.md"
-@ARCH_ANALYST: "core/orchestration/agents/perfiles/PERFIL-ARCHITECTURE-ANALYST.md"
-@DEVENV: "core/orchestration/agents/perfiles/PERFIL-DEVENV.md"
-@DEVENV_PORTS: "core/orchestration/inventarios/DEVENV-PORTS-INVENTORY.yml"
-@DELEGAR: "core/orchestration/directivas/simco/SIMCO-DELEGACION.md"
-@CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
-@TPL_HERENCIA_CTX: "core/orchestration/templates/TEMPLATE-HERENCIA-CONTEXTO.md"
-@TPL_RECOVERY_CTX: "core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@TECH_LEADER: "orchestration/agents/perfiles/PERFIL-TECH-LEADER.md"
+@ORQUESTADOR: "orchestration/agents/perfiles/PERFIL-ORQUESTADOR.md"
+@REQ_ANALYST: "orchestration/agents/perfiles/PERFIL-REQUIREMENTS-ANALYST.md"
+@ARCH_ANALYST: "orchestration/agents/perfiles/PERFIL-ARCHITECTURE-ANALYST.md"
+@DEVENV: "orchestration/agents/perfiles/PERFIL-DEVENV.md"
+@DEVENV_PORTS: "orchestration/inventarios/DEVENV-PORTS-INVENTORY.yml"
+@DELEGAR: "orchestration/directivas/simco/SIMCO-DELEGACION.md"
+@CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+@TPL_HERENCIA_CTX: "orchestration/templates/TEMPLATE-HERENCIA-CONTEXTO.md"
+@TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
 ```
 
 ---
@@ -270,13 +271,13 @@ Para validacion:
 ## REFERENCIAS EXTENDIDAS
 
 Para detalles completos, consultar:
-- `core/orchestration/agents/perfiles/PERFIL-ORQUESTADOR.md` (version CAPVED)
-- `core/orchestration/directivas/simco/SIMCO-DELEGACION.md`
-- `core/orchestration/directivas/simco/SIMCO-TAREA.md`
+- `orchestration/agents/perfiles/PERFIL-ORQUESTADOR.md` (version CAPVED)
+- `orchestration/directivas/simco/SIMCO-DELEGACION.md`
+- `orchestration/directivas/simco/SIMCO-TAREA.md`
 - `@CONTEXT_ENGINEERING` - Context Engineering completo
 
 Para recepcion de entregas:
-- `core/orchestration/directivas/simco/PROTOCOLO-HANDOFF-SUBAGENTE.md`
+- `orchestration/directivas/simco/PROTOCOLO-HANDOFF-SUBAGENTE.md`
 
 ---
 

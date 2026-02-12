@@ -146,7 +146,7 @@ projects/{proyecto}/
     01-especificaciones/
   orchestration/
     00-guidelines/
-      CONTEXTO-PROYECTO.md    # OBLIGATORIO
+      PROJECT-CONTEXT.md    # OBLIGATORIO
       HERENCIA-SIMCO.md       # OBLIGATORIO
     inventarios/
     trazas/
@@ -316,7 +316,7 @@ PASO_2_CLASIFICAR:
 
 PASO_3_CONFIRMAR:
   - Verificar estructura de orchestration/
-  - Verificar existencia de CONTEXTO-PROYECTO.md
+  - Verificar existencia de PROJECT-CONTEXT.md
   - Verificar HERENCIA-SIMCO.md
 ```
 
@@ -369,7 +369,7 @@ flujo:
 - [ ] Identificar tipo: STANDALONE o SUITE
 - [ ] Crear estructura base segun nivel
 - [ ] Crear orchestration/ con:
-  - [ ] 00-guidelines/CONTEXTO-PROYECTO.md
+  - [ ] 00-guidelines/PROJECT-CONTEXT.md
   - [ ] 00-guidelines/HERENCIA-SIMCO.md
   - [ ] inventarios/
   - [ ] trazas/
@@ -429,7 +429,7 @@ projects/gamilit/
 |   +-- 00-vision-general/
 +-- orchestration/
     +-- 00-guidelines/
-    |   +-- CONTEXTO-PROYECTO.md
+    |   +-- PROJECT-CONTEXT.md
     |   +-- HERENCIA-SIMCO.md
     +-- inventarios/
     +-- trazas/

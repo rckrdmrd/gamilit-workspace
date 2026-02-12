@@ -22,6 +22,15 @@ Usar perfiles compactos cuando:
 | PERFIL-DATABASE-COMPACT.md | PostgreSQL DDL | ~250 | Tablas, Indices, Seeds |
 | PERFIL-DEVOPS-COMPACT.md | Docker/CI/CD | ~250 | Dockerfiles, Pipelines |
 | PERFIL-ML-COMPACT.md | Python/ML | ~250 | Modelos, Features |
+| PERFIL-DOCUMENTATION-COMPACT.md | Documentacion | ~250 | Specs, ADRs, Inventarios |
+| PERFIL-TESTING-COMPACT.md | Testing | ~250 | Unit, Integration, E2E tests |
+| PERFIL-SECURITY-COMPACT.md | Seguridad | ~250 | Auditoria, OWASP, RLS |
+| PERFIL-QA-COMPACT.md | QA/Validacion | ~250 | Checklists, Validacion calidad |
+| PERFIL-ARCHITECTURE-ANALYST-COMPACT.md | Arquitectura | ~250 | Analisis, ADRs, Trade-offs |
+| PERFIL-INTEGRATION-VALIDATOR-COMPACT.md | Integracion | ~250 | Coherencia entre capas |
+| PERFIL-DATABASE-AUDITOR-COMPACT.md | Auditoria BD | ~250 | RLS, Policies, Constraints |
+| PERFIL-CODE-REVIEWER-COMPACT.md | Code Review | ~250 | PRs, Estandares, Calidad |
+| PERFIL-REQUIREMENTS-ANALYST-COMPACT.md | Requerimientos | ~250 | HUs, Epics, Criterios |
 | PERFIL-GENERIC-SUBAGENT.md | Cualquier | ~200 | Tareas sin perfil especifico |
 
 ## COMPARATIVA CON PERFILES COMPLETOS
@@ -45,6 +54,15 @@ SEGUN_TAREA:
   crear_hook: "PERFIL-FRONTEND-COMPACT.md"
   crear_dockerfile: "PERFIL-DEVOPS-COMPACT.md"
   crear_modelo_ml: "PERFIL-ML-COMPACT.md"
+  escribir_test: "PERFIL-TESTING-COMPACT.md"
+  documentar: "PERFIL-DOCUMENTATION-COMPACT.md"
+  revisar_codigo: "PERFIL-CODE-REVIEWER-COMPACT.md"
+  auditar_seguridad: "PERFIL-SECURITY-COMPACT.md"
+  auditar_bd: "PERFIL-DATABASE-AUDITOR-COMPACT.md"
+  analizar_arquitectura: "PERFIL-ARCHITECTURE-ANALYST-COMPACT.md"
+  validar_integracion: "PERFIL-INTEGRATION-VALIDATOR-COMPACT.md"
+  analizar_requerimientos: "PERFIL-REQUIREMENTS-ANALYST-COMPACT.md"
+  validar_calidad: "PERFIL-QA-COMPACT.md"
   otro: "PERFIL-GENERIC-SUBAGENT.md"
 ```
 

@@ -54,7 +54,7 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Orquestador
     - "ALIASES.yml"
     - "_INDEX.md de SIMCO"
   ubicacion:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "PROXIMA-ACCION.md"
     - "MASTER_INVENTORY.yml"
   operacion:
@@ -70,7 +70,7 @@ niveles_contexto:
   L1_proyecto:
     tokens: ~4000
     cuando: "SIEMPRE - Ubicación y estado completo"
-    contenido: [CONTEXTO-PROYECTO, PROXIMA-ACCION, MASTER_INVENTORY, inventarios de capas]
+    contenido: [PROJECT-CONTEXT, PROXIMA-ACCION, MASTER_INVENTORY, inventarios de capas]
   L2_operacion:
     tokens: ~2500
     cuando: "Según tipo de tarea"
@@ -95,7 +95,7 @@ recovery:
     - "Olvido en qué fase CAPVED estoy"
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
-    1_critico: "Recargar perfil + CONTEXTO-PROYECTO + PROXIMA-ACCION"
+    1_critico: "Recargar perfil + PROJECT-CONTEXT + PROXIMA-ACCION"
     2_operativo: "Recargar SIMCO-TAREA + SIMCO-DELEGACION + inventarios"
     3_tarea: "Recargar docs/ + estado de subtareas delegadas"
   prioridad: "Recovery ANTES de continuar orquestación"
@@ -279,12 +279,12 @@ Mapa de Perfiles:
    [ ] Paso 10: Registrar lecciones (LECCIONES-APRENDIDAS)
       │
       ▼
-8. Ejecutar PROPAGACIÓN (SIMCO-PROPAGACION.md)
-   - Propagar a niveles superiores
-   - Actualizar WORKSPACE-STATUS si corresponde
+8. N/A - Standalone (sin propagacion, ver CLAUDE.md RC3)
+   - Gamilit no propaga a niveles superiores
+   - Standalone con gobernanza local completa
       │
       ▼
-9. HU COMPLETADA (solo si D y PROPAGACIÓN están completas)
+9. HU COMPLETADA (solo si D está completa)
 ```
 
 ---
@@ -337,14 +337,14 @@ Si falla algo:
 ## ALIAS RELEVANTES
 
 ```yaml
-@SIMCO: "core/orchestration/directivas/simco/"
-@PRINCIPIOS: "core/orchestration/directivas/principios/"
-@PERFILES: "core/orchestration/agents/perfiles/"
-@DELEGAR: "core/orchestration/directivas/simco/SIMCO-DELEGACION.md"
+@SIMCO: "orchestration/directivas/simco/"
+@PRINCIPIOS: "orchestration/directivas/principios/"
+@PERFILES: "orchestration/agents/perfiles/"
+@DELEGAR: "orchestration/directivas/simco/SIMCO-DELEGACION.md"
 @INVENTORY: "orchestration/inventarios/MASTER_INVENTORY.yml"
-@CONTEXT_ENGINEERING: "core/orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
-@TPL_HERENCIA_CTX: "core/orchestration/templates/TEMPLATE-HERENCIA-CONTEXTO.md"
-@TPL_RECOVERY_CTX: "core/orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
+@TPL_HERENCIA_CTX: "orchestration/templates/TEMPLATE-HERENCIA-CONTEXTO.md"
+@TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
 ```
 
 ---

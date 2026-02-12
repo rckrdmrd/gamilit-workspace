@@ -88,7 +88,7 @@ Resultado: "Agente puede tomar decisiones arquitectonicas"
 | Nivel | Contenido | Tokens Aprox | Cuando Usar |
 |-------|-----------|--------------|-------------|
 | **L0: Sistema** | Principios (6) + Perfil | ~4000 | SIEMPRE - Base obligatoria |
-| **L1: Proyecto** | CONTEXTO-PROYECTO + Inventarios | ~3000 | SIEMPRE - Ubicacion y estado |
+| **L1: Proyecto** | PROJECT-CONTEXT + Inventarios | ~3000 | SIEMPRE - Ubicacion y estado |
 | **L2: Operacion** | SIMCO operacion + dominio | ~2000 | Segun tipo de tarea |
 | **L3: Tarea** | docs/ + codigo relacionado | Variable (~3000-8000) | Segun complejidad |
 
@@ -138,7 +138,7 @@ FASE_1_IDENTIDAD: # ~4000 tokens, ~3 min
 
 FASE_2_UBICACION: # ~3000 tokens, ~3 min
   orden_estricto:
-    5. "CONTEXTO-PROYECTO.md (variables resueltas)"
+    5. "PROJECT-CONTEXT.md (variables resueltas)"
     6. "PROXIMA-ACCION.md (estado actual)"
     7. "Inventario principal de mi dominio"
 
@@ -236,7 +236,7 @@ RECOVERY_OPERATIVO: # Prioridad 2 - ~2000 tokens, ~2 min
 RECOVERY_TAREA: # Prioridad 3 - ~2000 tokens, ~2 min
   objetivo: "Restaurar contexto especifico"
   cargar:
-    - "CONTEXTO-PROYECTO.md"
+    - "PROJECT-CONTEXT.md"
     - "docs/ especificos de tarea actual"
     - "Estado de archivos modificados"
   validar:
@@ -385,7 +385,7 @@ Solucion: "Ejecutar checklist de validacion post-carga"
 - [ ] Cargue _INDEX.md de SIMCO
 
 ### Nivel L1: Proyecto
-- [ ] Lei CONTEXTO-PROYECTO.md
+- [ ] Lei PROJECT-CONTEXT.md
 - [ ] Lei PROXIMA-ACCION.md
 - [ ] Cargue inventario de mi dominio
 

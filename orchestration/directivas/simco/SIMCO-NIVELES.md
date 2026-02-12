@@ -119,7 +119,7 @@ core/orchestration/
 ```
 projects/{proyecto}/orchestration/
 ├── 00-guidelines/
-│   └── CONTEXTO-PROYECTO.md
+│   └── PROJECT-CONTEXT.md
 ├── PROXIMA-ACCION.md
 ├── inventarios/
 │   ├── MASTER_INVENTORY.yml

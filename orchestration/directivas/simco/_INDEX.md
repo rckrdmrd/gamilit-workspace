@@ -2,9 +2,12 @@
 
 **Single Instruction Matrix by Context and Operation**
 
-**Version:** 4.0.0
-**Fecha:** 2026-01-20
-**Extension:** CCA + CAPVED + Niveles Jerarquicos + Economia de Tokens + Git + Escalamiento + Context Engineering + Subagentes + Git Remotes + Estandares Documentacion + Mantenimiento Docs + Post-Tarea Consolidacion + **Multi-Agent Support**
+**Version:** 4.1.0
+**Fecha:** 2026-02-11
+**Extension:** CCA + CAPVED + Niveles + Economia de Tokens + Git + Context Engineering + Subagentes + Git Remotes + Estandares Documentacion
+
+> **NOTA (2026-02-11):** 14 archivos solapados fueron consolidados y archivados en `_archive/`.
+> Los archivos principales absorben la funcionalidad de los archivados.
 
 ---
 
@@ -41,8 +44,6 @@ core/
     │   │   │   # === CONTEXT ENGINEERING ===
     │   │   ├── SIMCO-CONTEXT-ENGINEERING.md  # Ingenieria de contexto para agentes
     │   │   │
-    │   │   │   # === SOPORTE MULTI-AGENTE (v4.0) ===
-    │   │   ├── SIMCO-MULTI-AGENT.md          # Adaptacion para Claude/Gemini/Windsurf
     │   │   │
     │   │   │   # === OPERACIONES UNIVERSALES ===
     │   │   ├── SIMCO-CREAR.md          # Crear cualquier archivo
@@ -76,10 +77,8 @@ core/
     │   │   ├── SIMCO-GIT-REMOTES.md      # Operaciones con repositorios remotos (push/pull/clone)
     │   │   ├── SIMCO-ESCALAMIENTO.md     # Escalamiento a Product Owner
     │   │   │
-    │   │   │   # === SUBAGENTES Y ECONOMIA DE TOKENS (NUEVO) ===
-    │   │   ├── SIMCO-SUBAGENTE.md        # Protocolo para agentes en modo subagente
-    │   │   ├── SIMCO-CCA-SUBAGENTE.md    # CCA ligero para subagentes (~1,500 tokens)
-    │   │   ├── SIMCO-CONTROL-TOKENS.md   # Gestion de limites de tokens
+    │   │   │   # === SUBAGENTES ===
+    │   │   ├── SIMCO-SUBAGENTE.md        # Protocolo para agentes en modo subagente (absorbe CCA-SUBAGENTE)
     │   │   │
     │   │   │   # === REFERENCIA ===
     │   │   ├── SIMCO-QUICK-REFERENCE.md # Referencia rapida (optimizado para tokens)
@@ -93,16 +92,16 @@ core/
     │   │   ├── SIMCO-MIGRACIONES-BD.md          # Migraciones y DDL
     │   │   ├── SIMCO-INTEGRACIONES-EXTERNAS.md  # Documentacion de integraciones
     │   │   │
-    │   │   │   # === MANTENIMIENTO DE DOCUMENTACION (v3.8) ===
-    │   │   ├── SIMCO-MANTENIMIENTO-DOCUMENTACION.md # Ciclo de mantenimiento y purga
+    │   │   │   # === MANTENIMIENTO Y SINCRONIZACION ===
     │   │   ├── SIMCO-SINCRONIZACION-BD.md       # Sincronizacion BD ↔ Codigo ↔ Docs
     │   │   │
-    │   │   │   # === DOCUMENTACION POST-TAREA Y CONSOLIDACION (v3.9) ===
+    │   │   │   # === POST-TAREA Y CONSOLIDACION ===
     │   │   ├── CHECKLIST-FASE-D.md             # Checklist rapido 10 pasos para Fase D
-    │   │   ├── PROTOCOLO-HANDOFF-SUBAGENTE.md  # Transferencia subagente → orquestador
     │   │   ├── SIMCO-RELACIONES-OBJETOS.md     # Documentar dependencias entre objetos
     │   │   ├── SIMCO-DOCUMENTAR-SUITE.md       # Documentacion en arquitectura Suite/Vertical
-    │   │   └── LECCIONES-APRENDIDAS-CONSOLIDACION.md # Sistema de lecciones aprendidas
+    │   │   ├── LECCIONES-APRENDIDAS-CONSOLIDACION.md # Sistema de lecciones aprendidas
+    │   │   │
+    │   │   └── _archive/                       # Archivos consolidados (14 files)
     │   │
     │   └── principios/                  # PRINCIPIOS FUNDAMENTALES (6)
     │       ├── PRINCIPIO-CAPVED.md      # Ciclo de vida de tareas
@@ -167,7 +166,7 @@ core/
     │   │   # === TEMPLATES DE AGENTES ===
     │   ├── TEMPLATE-DELEGACION-SUBAGENTE.md  # Delegacion a subagentes
     │   ├── TEMPLATE-CONTEXTO-SUBAGENTE.md    # Contexto para subagentes
-    │   ├── TEMPLATE-CONTEXTO-PROYECTO.md     # Contexto de proyecto
+    │   ├── TEMPLATE-PROJECT-CONTEXT.md     # Contexto de proyecto
     │   ├── TEMPLATES-SUBAGENTES.md           # Guia de subagentes
     │   │
     │   │   # === TEMPLATES DE TAREAS ===
@@ -266,9 +265,7 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 | **Documentar** | `SIMCO-DOCUMENTAR.md` | Al finalizar cualquier tarea |
 | **Buscar** | `SIMCO-BUSCAR.md` | Para encontrar archivos/info |
 | **Delegar** | `SIMCO-DELEGACION.md` | Al asignar trabajo a subagentes |
-| **Subagente** | `SIMCO-SUBAGENTE.md` | Protocolo cuando RECIBES delegacion |
-| **CCA-Subagente** | `SIMCO-CCA-SUBAGENTE.md` | CCA ligero para subagentes |
-| **Control Tokens** | `SIMCO-CONTROL-TOKENS.md` | Gestionar limites de tokens |
+| **Subagente** | `SIMCO-SUBAGENTE.md` | Protocolo cuando RECIBES delegacion (incluye CCA ligero) |
 | **Git Remotes** | `SIMCO-GIT-REMOTES.md` | Operaciones push/pull/clone con servidores remotos |
 | **Alineacion** | `SIMCO-ALINEACION.md` | Validar alineacion entre capas (DDL↔Entity↔DTO) |
 | **Decision** | `SIMCO-DECISION-MATRIZ.md` | Clarificar que directiva ejecutar |
@@ -335,10 +332,8 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 @ALINEACION:      core/orchestration/directivas/simco/SIMCO-ALINEACION.md
 @DECISION_MATRIZ: core/orchestration/directivas/simco/SIMCO-DECISION-MATRIZ.md
 
-# SUBAGENTES Y ECONOMIA DE TOKENS (NUEVO)
+# SUBAGENTES
 @SUBAGENTE:       orchestration/directivas/simco/SIMCO-SUBAGENTE.md
-@CCA_SUBAGENTE:   orchestration/directivas/simco/SIMCO-CCA-SUBAGENTE.md
-@CONTROL_TOKENS:  orchestration/directivas/simco/SIMCO-CONTROL-TOKENS.md
 @CHK_DELEGACION:  orchestration/checklists/CHECKLIST-PRE-DELEGACION.md
 @PERFILES_COMPACT: orchestration/agents/perfiles/compact/
 
@@ -355,8 +350,7 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 @MIGRACIONES:      orchestration/directivas/simco/SIMCO-MIGRACIONES-BD.md
 @INTEGRACIONES:    orchestration/directivas/simco/SIMCO-INTEGRACIONES-EXTERNAS.md
 
-# MANTENIMIENTO DE DOCUMENTACION (v3.8)
-@MANTENIMIENTO_DOCS: orchestration/directivas/simco/SIMCO-MANTENIMIENTO-DOCUMENTACION.md
+# SINCRONIZACION
 @SYNC_BD:            orchestration/directivas/simco/SIMCO-SINCRONIZACION-BD.md
 
 # TEMPLATES DE CONTEXTO
@@ -407,4 +401,4 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 
 ---
 
-**Version:** 3.8.0 | **Sistema:** SIMCO + CAPVED + Context Engineering + Economia Tokens + Git Remotes + Estandares Docs + Mantenimiento Docs | **Mantenido por:** Tech Lead
+**Version:** 4.1.0 | **Sistema:** SIMCO + CAPVED + NEXUS + Context Engineering | **Mantenido por:** Tech Lead

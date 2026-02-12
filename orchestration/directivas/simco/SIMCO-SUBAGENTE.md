@@ -26,7 +26,7 @@ aplica_a: "Agentes que reciben delegacion de un orquestador"
 | Carga contexto | CCA completo (4 fases) | CCA-SUBAGENTE (2 fases) |
 | Perfil | PERFIL-*.md (~800 tokens) | PERFIL-*-COMPACT.md (~250 tokens) |
 | SIMCO cargados | 2-3 | 1 especifico |
-| Contexto proyecto | Lee CONTEXTO-PROYECTO.md | Heredado del orquestador |
+| Contexto proyecto | Lee PROJECT-CONTEXT.md | Heredado del orquestador |
 | Recovery | Ejecuta @TPL_RECOVERY_CTX | Escala a orquestador |
 | Delega tareas | Si (si es orquestador) | NO |
 | Tokens totales | ~10,000 | ~1,500 |
@@ -72,7 +72,7 @@ Ver detalles: `SIMCO-CCA-SUBAGENTE.md`
 ```yaml
 prohibido:
   - NO cargar CCA completo (4 fases)
-  - NO leer CONTEXTO-PROYECTO.md (ya heredado)
+  - NO leer PROJECT-CONTEXT.md (ya heredado)
   - NO leer 6 principios completos (resumen en perfil compact)
   - NO delegar a otros subagentes
   - NO ejecutar recovery completo

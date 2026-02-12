@@ -52,7 +52,7 @@ directivas:
 ```yaml
 proyecto:
   - HERENCIA-SIMCO.md     # Configuración específica
-  - CONTEXTO-PROYECTO.md  # Contexto del proyecto
+  - PROJECT-CONTEXT.md  # Contexto del proyecto
   - MASTER_INVENTORY.yml  # Estado actual
 ```
 
