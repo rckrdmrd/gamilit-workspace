@@ -1,7 +1,7 @@
 # CHANGELOG - Correcciones de Base de Datos GAMILIT
 
 **Fecha:** 2026-01-04
-**Tipo:** Correcciones de referencias y rutas
+**Tipo:** Correcciones de referencias y rutas (reporte historico — rutas legacy de workspace-v1)
 **Ejecutado por:** Database-Agent (Orquestador)
 
 ---

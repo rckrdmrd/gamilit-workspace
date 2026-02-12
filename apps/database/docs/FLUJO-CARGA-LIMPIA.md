@@ -21,7 +21,7 @@ Este documento describe los 3 escenarios de inicializacion de base de datos y qu
 **Ubicacion:** `apps/database/scripts/`
 
 ```bash
-cd /home/isem/workspace/projects/gamilit/apps/database/scripts
+cd apps/database/scripts  # desde raiz del proyecto
 
 # Opcion A: Con password manual
 ./init-database.sh --env dev --password "tu_password_seguro"
@@ -49,7 +49,7 @@ cd /home/isem/workspace/projects/gamilit/apps/database/scripts
 **Ubicacion:** `apps/database/`
 
 ```bash
-cd /home/isem/workspace/projects/gamilit/apps/database
+cd apps/database  # desde raiz del proyecto
 
 # Con DATABASE_URL
 export DATABASE_URL="postgresql://gamilit_user:password@localhost:5432/gamilit_platform"
@@ -74,7 +74,7 @@ export DATABASE_URL="postgresql://gamilit_user:password@localhost:5432/gamilit_p
 **Ubicacion:** `apps/database/`
 
 ```bash
-cd /home/isem/workspace/projects/gamilit/apps/database
+cd apps/database  # desde raiz del proyecto
 
 export DATABASE_URL="postgresql://gamilit_user:password@localhost:5432/gamilit_platform"
 ./create-database.sh

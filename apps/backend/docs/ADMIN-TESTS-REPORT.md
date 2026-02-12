@@ -2,7 +2,7 @@
 
 **Fecha:** 2024-12-05
 **Objetivo:** Aumentar test coverage del módulo Admin a 50%+
-**Status:** ✅ COMPLETADO
+**Status:** COMPLETADO (reporte historico — rutas legacy)
 
 ---
 

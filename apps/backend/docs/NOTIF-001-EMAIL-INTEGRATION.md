@@ -1,7 +1,7 @@
 # NOTIF-001: Integración de Servicio de Email
 
 **Fecha:** 2025-12-05
-**Estado:** ✅ COMPLETADO
+**Estado:** COMPLETADO (reporte historico — rutas legacy)
 **Prioridad:** P1
 
 ## Resumen

@@ -3,7 +3,7 @@
 **Fecha:** 2026-01-14 06:15
 **Ejecutado por:** Claude
 **Modo:** @FULL CAPVED
-**Proyecto:** /home/isem/workspace-v2/projects/gamilit/apps/database
+**Proyecto:** apps/database (rutas legacy de workspace-v2 en este reporte)
 
 ---
 
