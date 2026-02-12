@@ -121,7 +121,7 @@ gobernanza:
     - "SIMCO-TAREA.md"
     - "SIMCO-GIT.md"
     - "SIMCO-EDICION-SEGURA.md"
-    - "SIMCO-DDL-UNIFIED.md"
+    - "SIMCO-DDL.md"
     - "SIMCO-BACKEND.md (NestJS)"
     - "SIMCO-FRONTEND.md (React)"
 
@@ -163,26 +163,26 @@ modulos:
 # -------------------------------------------------------------------------------
 
 metricas:
-  source: "inventory/MASTER_INVENTORY.yml"
-  fecha: "2026-02-07"
+  source: "inventarios/MASTER_INVENTORY.yml (v7.0.0)"
+  fecha: "2026-02-11"
 
   database:
     schemas: 18
-    tablas: 171
-    views: 13
+    tablas: 170
+    views: 22
     materialized_views: 7
-    funciones: 128
-    triggers: 49
-    rls_policies: 282
-    foreign_keys: 299
-    enums: 36
+    funciones: 255
+    triggers: 132
+    rls_policies: 263
+    foreign_keys: 273
+    enums: 41
 
   backend:
     modulos: 22
-    entities: 141
+    entities: 152
     dtos: 412
-    services: 145
-    controllers: 103
+    services: 170
+    controllers: 107
     endpoints: 850
     guards: 14
     decorators: 18
@@ -259,12 +259,15 @@ documentacion:
   total_archivos: 132
   migracion_v2_completada: true
   local:
-    - "docs/00-overview/ (8 archivos: VISION-ALCANCE, MODULOS, TESTING, DEVOPS, ONBOARDING, GLOSARIO, VISION, REPORTE-INTEGRAL)"
+    - "docs/00-overview/ (6 archivos: VISION-ALCANCE, MODULOS, TESTING, DEVOPS, GLOSARIO, REPORTE-INTEGRAL)"
     - "docs/10-requirements/user-stories/ (27 US L3)"
     - "docs/10-requirements/testing-guides/ (6 archivos: 5 guias pruebas + README)"
-    - "docs/20-architecture/ (8 archivos: STACK, GAMIFICACION, MODELO-DATOS, SCHEMA-REFERENCE, MECANICAS-V6, DATOS-GAMIFICACION, COHERENCE, TRACEABILITY)"
+    - "docs/20-architecture/ (8+ archivos: STACK, GAMIFICACION, MODELO-DATOS, schema-reference/, MECANICAS-V6, DATOS-GAMIFICACION, COHERENCE, TRACEABILITY)"
     - "docs/40-api/ (3 archivos: API-REFERENCE, ADMIN-PORTAL-ENDPOINTS, WEB-PUSH-MIGRATION)"
-    - "docs/90-adr/ (34 ADRs: 4 arch + 29 migrados + ADR-005-MIGRACION)"
+    - "docs/40-standards/ (17 estandares + backend-profesional/)"
+    - "docs/50-guides/ (guias de implementacion por dominio)"
+    - "docs/60-portals/ (manuales de portales student/teacher/admin)"
+    - "docs/90-adr/ (40 ADRs normalizados: ADR-NNN-lowercase-hyphen.md)"
   orchestration:
     - "inventory/ (8 archivos: 4 inventarios YAML principales + 4 especializados)"
     - "references/ (3 archivos: API-CONTRACTS, COMPLETENESS-TRACKER, REQUIREMENTS-INDEX)"

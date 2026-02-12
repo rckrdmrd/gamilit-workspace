@@ -72,7 +72,7 @@ SEGUN_TAREA:
 |-----------|-----------|
 | `../` | Perfiles completos |
 | `SIMCO-SUBAGENTE.md` | Protocolo de subagente |
-| `SIMCO-CCA-SUBAGENTE.md` | CCA ligero |
+| `SIMCO-SUBAGENTE.md` | Protocolo de subagente (CCA incluido) |
 
 ---
 

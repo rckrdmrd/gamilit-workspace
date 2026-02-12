@@ -112,11 +112,7 @@ orchestration/
 |-- _definitions/               # Checklists, Protocolos, Schemas (29 archivos)
 |-- _quick/                     # Quick references
 |
-|-- 00-guidelines/              # Directrices del proyecto
-|   |-- CONTEXTO-PROYECTO.md    # Variables y configuracion
-|   |-- HERENCIA-DIRECTIVAS.md
-|   |-- HERENCIA-SIMCO.md
-|   +-- PATHS-*.md              # Rutas de trabajo
+|-- PROJECT-CONTEXT.md           # Variables y configuracion (L1)
 |
 |-- agents/                     # Perfiles y configuracion de agentes
 |   |-- AGENT-ROLES.md          # Definicion de roles
@@ -229,7 +225,7 @@ SI falta informacion o hay ambiguedad:
 1. Leer `BOOTLOADER.md`
 2. Leer `PROXIMA-ACCION.md` (estado anterior)
 3. Leer tu perfil en `agents/perfiles/PERFIL-{TU-TIPO}.md`
-4. Leer `00-guidelines/CONTEXTO-PROYECTO.md` (variables resueltas)
+4. Leer `PROJECT-CONTEXT.md` (variables resueltas)
 
 ### Para realizar una tarea
 

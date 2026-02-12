@@ -31,7 +31,7 @@ Este directorio contiene versiones compactas (~250 tokens) de los perfiles de ag
 
 - `_MAP-COMPACT.md` - Indice detallado
 - `SIMCO-SUBAGENTE.md` - Protocolo de subagente
-- `SIMCO-CCA-SUBAGENTE.md` - CCA ligero
+- `SIMCO-SUBAGENTE.md` - CCA incluido en protocolo de subagente
 
 ## Perfiles Completos
 

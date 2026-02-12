@@ -173,7 +173,7 @@ arquitectura:
 
 gobernanza:
   "@GIT": "directivas/simco/SIMCO-GIT.md"
-  "@GIT_WORKFLOW": "directivas/simco/SIMCO-GIT-WORKFLOW.md"
+  "@GIT_WORKFLOW": "directivas/simco/_archive/SIMCO-GIT-WORKFLOW.md"  # Archived: merged into SIMCO-GIT.md
   "@GIT_REMOTES": "directivas/simco/SIMCO-GIT-REMOTES.md"
   "@GIT_CREDENTIALS": "referencias/GIT-CREDENTIALS-CONFIG.md"
   "@ESCALAMIENTO": "directivas/simco/SIMCO-ESCALAMIENTO.md"
@@ -242,7 +242,7 @@ templates:
   "@TPL_VALIDACION": "templates/TEMPLATE-VALIDACION.md"
 
   # Templates de contexto
-  "@TPL_CONTEXTO": "templates/TEMPLATE-CONTEXTO-PROYECTO.md"
+  "@TPL_CONTEXTO": "templates/TEMPLATE-PROJECT-CONTEXT.md"
   "@TPL_STANDALONE": "templates/CONTEXTO-NIVEL-STANDALONE.md"
   "@TPL_SUITE": "templates/CONTEXTO-NIVEL-SUITE.md"
   "@TPL_SUITE_CORE": "templates/CONTEXTO-NIVEL-SUITE-CORE.md"
@@ -310,10 +310,10 @@ perfiles:
   "@PERFILES": "agents/perfiles/"
 
   # Tecnicos
-  "@PERFIL_DATABASE": "agents/perfiles/PERFIL-DATABASE.md"
-  "@PERFIL_BACKEND": "agents/perfiles/PERFIL-BACKEND.md"
-  "@PERFIL_BACKEND_EXPRESS": "agents/perfiles/PERFIL-BACKEND-EXPRESS.md"
-  "@PERFIL_FRONTEND": "agents/perfiles/PERFIL-FRONTEND.md"
+  "@PERFIL_DATABASE": "agents/perfiles/PERFIL-DATABASE-POSTGRESQL.md"
+  "@PERFIL_BACKEND": "agents/perfiles/PERFIL-BACKEND-NESTJS.md"
+  "@PERFIL_BACKEND_EXPRESS": "agents/perfiles/_archive/PERFIL-BACKEND-EXPRESS.md"  # Archived
+  "@PERFIL_FRONTEND": "agents/perfiles/PERFIL-FRONTEND-REACT.md"
   "@PERFIL_MOBILE": "agents/perfiles/PERFIL-MOBILE-AGENT.md"
   "@PERFIL_ML": "agents/perfiles/PERFIL-ML.md"
   "@PERFIL_ML_SPEC": "agents/perfiles/PERFIL-ML-SPECIALIST.md"
@@ -370,10 +370,10 @@ perfiles:
 # ─────────────────────────────────────────────────────────────────────────────────
 
 proyectos:
-  # Rutas base
-  "@WORKSPACE": "/home/isem/workspace-v2/"
-  "@CORE": "/home/isem/workspace-v2/core/"
-  "@PROJECTS": "/home/isem/workspace-v2/projects/"
+  # Rutas base (standalone — no aplica workspace externo)
+  "@WORKSPACE": "./"
+  "@CORE": "./"
+  "@PROJECTS": "./"
 
   # Proyectos especificos
   "@GAMILIT": "projects/gamilit/"

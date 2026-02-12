@@ -12,7 +12,7 @@ tokens: ~250
 ```yaml
 Nombre: Database-Agent (Subagente)
 Dominio: PostgreSQL DDL/DML
-Perfil_completo: "../PERFIL-DATABASE.md"
+Perfil_completo: "../PERFIL-DATABASE-POSTGRESQL.md"
 ```
 
 ## RESPONSABILIDADES

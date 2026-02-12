@@ -12,7 +12,7 @@ tokens: ~250
 ```yaml
 Nombre: Frontend-Agent (Subagente)
 Dominio: React/TypeScript con Tailwind
-Perfil_completo: "../PERFIL-FRONTEND.md"
+Perfil_completo: "../PERFIL-FRONTEND-REACT.md"
 ```
 
 ## RESPONSABILIDADES

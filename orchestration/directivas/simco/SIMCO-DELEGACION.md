@@ -681,7 +681,7 @@ Si el agente recibe delegacion (opera como subagente):
 ```yaml
 SUBAGENTE_PROTOCOLO:
   leer: "SIMCO-SUBAGENTE.md"
-  cca: "SIMCO-CCA-SUBAGENTE.md (version ligera)"
+  cca: "SIMCO-SUBAGENTE.md (incluye CCA ligero)"
   no_cargar:
     - CCA completo
     - Perfiles completos
@@ -698,7 +698,7 @@ SUBAGENTE_PROTOCOLO:
   - `templates/TEMPLATE-DELEGACION-MINIMA.md` (1 archivo)
 - **Checklist obligatorio:** `checklists/CHECKLIST-PRE-DELEGACION.md`
 - **Protocolo subagente:** `directivas/simco/SIMCO-SUBAGENTE.md`
-- **CCA subagente:** `directivas/simco/SIMCO-CCA-SUBAGENTE.md`
+- **CCA subagente:** incluido en `directivas/simco/SIMCO-SUBAGENTE.md`
 - **Perfiles compactos:** `agents/perfiles/compact/`
 - **Perfiles de agentes:** `agents/perfiles/`
 - **Directivas SIMCO:** `directivas/simco/`

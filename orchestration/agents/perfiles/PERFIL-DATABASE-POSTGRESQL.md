@@ -47,7 +47,7 @@ PASO_2_CARGAR_CORE:
 PASO_3_CARGAR_ESTANDARES:
   leer_obligatorio:
     - docs/40-estandares/ESTANDAR-DATABASE-PROFESIONAL.md
-    - orchestration/directivas/simco/SIMCO-DDL-UNIFIED.md
+    - orchestration/directivas/simco/SIMCO-DDL.md
 
 PASO_4_CARGAR_PROYECTO:
   leer_obligatorio:
@@ -62,7 +62,7 @@ PASO_5_CARGAR_OPERACION:
     - si_existe: [SIMCO-REUTILIZAR.md]
   segun_tarea:
     reutilizar: [SIMCO-REUTILIZAR.md]
-    crear: [SIMCO-CREAR.md, SIMCO-DDL.md, SIMCO-DDL-UNIFIED.md]
+    crear: [SIMCO-CREAR.md, SIMCO-DDL.md, SIMCO-DDL.md]
     modificar: [SIMCO-MODIFICAR.md, SIMCO-DDL.md]
     validar: [SIMCO-VALIDAR.md]
     optimizar: [ESTANDAR-DATABASE-PROFESIONAL.md - Seccion Indexacion]
@@ -111,7 +111,7 @@ cargar_siempre:
 
 cargar_segun_operacion:
   ddl_nuevo:
-    - "orchestration/directivas/simco/SIMCO-DDL-UNIFIED.md"
+    - "orchestration/directivas/simco/SIMCO-DDL.md"
     - "orchestration/directivas/triggers/TRIGGER-DDL-RECREAR-BD-WSL.md"
   optimizacion:
     - "ESTANDAR-DATABASE-PROFESIONAL.md#estrategias-de-indexacion"
@@ -622,7 +622,7 @@ reporte_database_postgresql:
 # Estandares
 @ESTANDAR_DB: "docs/40-estandares/ESTANDAR-DATABASE-PROFESIONAL.md"
 @PRINCIPIO_NORM: "orchestration/directivas/principios/PRINCIPIO-NORMALIZACION-BD.md"
-@SIMCO_DDL: "orchestration/directivas/simco/SIMCO-DDL-UNIFIED.md"
+@SIMCO_DDL: "orchestration/directivas/simco/SIMCO-DDL.md"
 
 # Context Engineering
 @CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md"
@@ -645,7 +645,7 @@ CMV_obligatorio:
     - "PROXIMA-ACCION.md"
     - "DATABASE_INVENTORY.yml"
   operacion:
-    - "SIMCO-DDL-UNIFIED.md"
+    - "SIMCO-DDL.md"
     - "SIMCO de operacion (CREAR/MODIFICAR/VALIDAR)"
 
 niveles_contexto:
@@ -660,7 +660,7 @@ niveles_contexto:
   L2_operacion:
     tokens: ~2500
     cuando: "Segun tipo de tarea"
-    contenido: [SIMCO-DDL-UNIFIED, SIMCO-{operacion}]
+    contenido: [SIMCO-DDL, SIMCO-{operacion}]
   L3_tarea:
     tokens: ~4000
     cuando: "Segun complejidad"
@@ -682,7 +682,7 @@ recovery:
   protocolo: "@TPL_RECOVERY_CTX"
   acciones:
     1_critico: "Recargar perfil + ESTANDAR-DATABASE-PROFESIONAL"
-    2_operativo: "Recargar SIMCO-DDL-UNIFIED + DATABASE_INVENTORY"
+    2_operativo: "Recargar SIMCO-DDL + DATABASE_INVENTORY"
     3_tarea: "Recargar DDL existente + PRINCIPIO-NORMALIZACION-BD"
   prioridad: "Recovery ANTES de ejecutar cualquier DDL"
 ```

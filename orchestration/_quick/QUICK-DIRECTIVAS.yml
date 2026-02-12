@@ -50,7 +50,7 @@ simco:
     ml: "SIMCO-ML.md"
 
   git:
-    workflow: "SIMCO-GIT-WORKFLOW.md"
+    workflow: "SIMCO-GIT.md"  # GIT-WORKFLOW archived, merged into SIMCO-GIT
 
 # ─────────────────────────────────────────────────────────────────────────────────
 # MODOS DE EJECUCIÓN

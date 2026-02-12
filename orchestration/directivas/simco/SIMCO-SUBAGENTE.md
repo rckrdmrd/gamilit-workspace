@@ -61,7 +61,7 @@ PASO_4_CONFIRMAR:
   tokens_totales: ~1,050
 ```
 
-Ver detalles: `SIMCO-CCA-SUBAGENTE.md`
+Ver detalles: `_archive/SIMCO-CCA-SUBAGENTE.md` (archivado, contenido integrado aqui)
 
 ---
 
@@ -231,7 +231,7 @@ Ubicacion: `orchestration/agents/perfiles/compact/`
 
 | Documento | Proposito |
 |-----------|-----------|
-| `SIMCO-CCA-SUBAGENTE.md` | Protocolo CCA ligero |
+| `_archive/SIMCO-CCA-SUBAGENTE.md` | Protocolo CCA ligero (archivado) |
 | `agents/perfiles/compact/` | Perfiles compactos |
 | `SIMCO-DELEGACION.md` | Como recibir delegacion |
 | `CHECKLIST-PRE-DELEGACION.md` | Validacion del orquestador |

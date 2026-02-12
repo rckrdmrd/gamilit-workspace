@@ -115,10 +115,9 @@ core/
     │   └── perfiles/                    # PERFILES DE AGENTES (28 archivos)
     │       │
     │       │   # === PERFILES TECNICOS ===
-    │       ├── PERFIL-DATABASE.md          # PostgreSQL DDL
-    │       ├── PERFIL-BACKEND.md           # NestJS/TypeORM
-    │       ├── PERFIL-BACKEND-EXPRESS.md   # Express.js/Prisma
-    │       ├── PERFIL-FRONTEND.md          # React Web
+    │       ├── PERFIL-DATABASE-POSTGRESQL.md  # PostgreSQL DDL (canonical)
+    │       ├── PERFIL-BACKEND-NESTJS.md       # NestJS/TypeORM (canonical)
+    │       ├── PERFIL-FRONTEND-REACT.md       # React Web (canonical)
     │       ├── PERFIL-MOBILE-AGENT.md      # React Native
     │       ├── PERFIL-ML.md                # Python/ML basic
     │       ├── PERFIL-ML-SPECIALIST.md     # Python/ML/AI avanzado

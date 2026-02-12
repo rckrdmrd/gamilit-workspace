@@ -15,7 +15,7 @@ updated: "2025-12-18"
 agents:
 
   NEXUS-BACKEND:
-    profile: "perfiles/PERFIL-BACKEND.md"
+    profile: "perfiles/PERFIL-BACKEND-NESTJS.md"
     role: "Desarrollo de APIs y logica de negocio"
     aliases:
       - "backend-agent"
@@ -30,7 +30,7 @@ agents:
       - "SIMCO-SERVICE-DESCRIPTOR.md"
 
   NEXUS-FRONTEND:
-    profile: "perfiles/PERFIL-FRONTEND.md"
+    profile: "perfiles/PERFIL-FRONTEND-REACT.md"
     role: "Desarrollo de interfaces de usuario"
     aliases:
       - "frontend-agent"
@@ -45,7 +45,7 @@ agents:
       - "SIMCO-SERVICE-DESCRIPTOR.md"
 
   NEXUS-DATABASE:
-    profile: "perfiles/PERFIL-DATABASE.md"
+    profile: "perfiles/PERFIL-DATABASE-POSTGRESQL.md"
     role: "Diseño y gestion de bases de datos"
     aliases:
       - "database-agent"

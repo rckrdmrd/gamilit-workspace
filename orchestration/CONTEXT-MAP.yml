@@ -1,15 +1,15 @@
 # CONTEXT-MAP: GAMILIT
 # Sistema: SIMCO - NEXUS v4.1
 # Proposito: Mapear contexto automatico por nivel y tarea
-# Version: 3.0.0
+# Version: 4.0.0
 # Fecha: 2026-02-11
 
 metadata:
   proyecto: "gamilit"
   nivel: "STANDALONE"
-  version: "3.0.0"
+  version: "4.0.0"
   ultima_actualizacion: "2026-02-11"
-  project_root: "/home/isem/workspace-v2/projects/gamilit"
+  project_root: "."  # Rutas relativas al root del proyecto gamilit-workspace
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # VARIABLES DEL PROYECTO (PRE-RESUELTAS)
@@ -23,25 +23,25 @@ variables:
 
   # Base de datos
   DB_NAME: "gamilit_platform"
-  DB_DDL_PATH: "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl"
-  DB_SCRIPTS_PATH: "/home/isem/workspace-v2/projects/gamilit/apps/database"
-  DB_SEEDS_PATH: "/home/isem/workspace-v2/projects/gamilit/apps/database/seeds"
+  DB_DDL_PATH: "./apps/database/ddl"
+  DB_SCRIPTS_PATH: "./apps/database"
+  DB_SEEDS_PATH: "./apps/database/seeds"
   RECREATE_CMD: "apps/database/scripts/recreate-database.sh"
   AUTH_SCHEMA: "auth_management"
 
   # Backend
-  BACKEND_ROOT: "/home/isem/workspace-v2/projects/gamilit/apps/backend"
-  BACKEND_SRC: "/home/isem/workspace-v2/projects/gamilit/apps/backend/src"
-  BACKEND_TESTS: "/home/isem/workspace-v2/projects/gamilit/apps/backend/tests"
+  BACKEND_ROOT: "./apps/backend"
+  BACKEND_SRC: "./apps/backend/src"
+  BACKEND_TESTS: "./apps/backend/tests"
 
   # Frontend
-  FRONTEND_ROOT: "/home/isem/workspace-v2/projects/gamilit/apps/frontend"
-  FRONTEND_SRC: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src"
-  FRONTEND_TESTS: "/home/isem/workspace-v2/projects/gamilit/apps/frontend/tests"
+  FRONTEND_ROOT: "./apps/frontend"
+  FRONTEND_SRC: "./apps/frontend/src"
+  FRONTEND_TESTS: "./apps/frontend/tests"
 
   # Documentación
-  DOCS_PATH: "/home/isem/workspace-v2/projects/gamilit/docs"
-  ORCHESTRATION_PATH: "/home/isem/workspace-v2/projects/gamilit/orchestration"
+  DOCS_PATH: "./docs"
+  ORCHESTRATION_PATH: "./orchestration"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # ALIASES RESUELTOS
@@ -49,27 +49,27 @@ variables:
 
 aliases:
   # Directivas locales (standalone — governance is project-local)
-  "@SIMCO": "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco"
-  "@PRINCIPIOS": "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios"
-  "@PERFILES": "/home/isem/workspace-v2/projects/gamilit/orchestration/agents/perfiles"
+  "@SIMCO": "./orchestration/directivas/simco"
+  "@PRINCIPIOS": "./orchestration/directivas/principios"
+  "@PERFILES": "./orchestration/agents/perfiles"
 
   # Proyecto específico
-  "@DDL": "/home/isem/workspace-v2/projects/gamilit/apps/database/ddl"
-  "@SEEDS": "/home/isem/workspace-v2/projects/gamilit/apps/database/seeds"
-  "@BACKEND": "/home/isem/workspace-v2/projects/gamilit/apps/backend/src"
-  "@FRONTEND": "/home/isem/workspace-v2/projects/gamilit/apps/frontend/src"
-  "@DOCS": "/home/isem/workspace-v2/projects/gamilit/docs"
+  "@DDL": "./apps/database/ddl"
+  "@SEEDS": "./apps/database/seeds"
+  "@BACKEND": "./apps/backend/src"
+  "@FRONTEND": "./apps/frontend/src"
+  "@DOCS": "./docs"
 
   # Inventarios
-  "@INVENTORY": "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios"
-  "@INV_DB": "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/DATABASE_INVENTORY.yml"
-  "@INV_BE": "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/BACKEND_INVENTORY.yml"
-  "@INV_FE": "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/FRONTEND_INVENTORY.yml"
+  "@INVENTORY": "./orchestration/inventarios"
+  "@INV_DB": "./orchestration/inventarios/DATABASE_INVENTORY.yml"
+  "@INV_BE": "./orchestration/inventarios/BACKEND_INVENTORY.yml"
+  "@INV_FE": "./orchestration/inventarios/FRONTEND_INVENTORY.yml"
 
   # Trazas
-  "@TRAZA_DB": "/home/isem/workspace-v2/projects/gamilit/orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
-  "@TRAZA_BE": "/home/isem/workspace-v2/projects/gamilit/orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
-  "@TRAZA_FE": "/home/isem/workspace-v2/projects/gamilit/orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
+  "@TRAZA_DB": "./orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
+  "@TRAZA_BE": "./orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
+  "@TRAZA_FE": "./orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONTEXTO POR NIVEL
@@ -82,25 +82,25 @@ contexto_por_nivel:
     obligatorio: true
     nunca_purgar: true
     archivos:
-      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
+      - path: "./orchestration/directivas/principios/PRINCIPIO-CAPVED.md"
         proposito: "Ciclo de vida de tareas"
         tokens: 800
-      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
+      - path: "./orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
         proposito: "Documentación antes de código"
         tokens: 500
-      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md"
+      - path: "./orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md"
         proposito: "Verificar catálogo antes de crear"
         tokens: 600
-      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
+      - path: "./orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
         proposito: "Build/lint deben pasar"
         tokens: 600
-      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
+      - path: "./orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
         proposito: "Límites de contexto"
         tokens: 500
-      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
+      - path: "./orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
         proposito: "Preguntar si falta información"
         tokens: 500
-      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/referencias/ALIASES.yml"
+      - path: "./orchestration/referencias/ALIASES.yml"
         proposito: "Resolución de @ALIAS"
         tokens: 400
 
@@ -109,13 +109,13 @@ contexto_por_nivel:
     tokens_estimados: 5000
     obligatorio: true
     archivos:
-      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/00-guidelines/CONTEXTO-PROYECTO.md"
+      - path: "./orchestration/PROJECT-CONTEXT.md"
         proposito: "Variables y configuración del proyecto"
         tokens: 1500
-      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/PROXIMA-ACCION.md"
+      - path: "./orchestration/PROXIMA-ACCION.md"
         proposito: "Estado actual y siguiente paso"
         tokens: 500
-      - path: "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/MASTER_INVENTORY.yml"
+      - path: "./orchestration/inventarios/MASTER_INVENTORY.yml"
         proposito: "Estado de artefactos"
         tokens: 1000
 
@@ -124,23 +124,23 @@ contexto_por_nivel:
     tokens_estimados: 4000
     archivos_por_operacion:
       CREAR:
-        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-CREAR.md"
+        - "./orchestration/directivas/simco/SIMCO-CREAR.md"
       MODIFICAR:
-        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-MODIFICAR.md"
+        - "./orchestration/directivas/simco/SIMCO-MODIFICAR.md"
       VALIDAR:
-        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-VALIDAR.md"
+        - "./orchestration/directivas/simco/SIMCO-VALIDAR.md"
       DELEGAR:
-        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-DELEGACION.md"
+        - "./orchestration/directivas/simco/SIMCO-DELEGACION.md"
     archivos_por_dominio:
       DDL:
-        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-DDL.md"
-        - "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/DATABASE_INVENTORY.yml"
+        - "./orchestration/directivas/simco/SIMCO-DDL.md"
+        - "./orchestration/inventarios/DATABASE_INVENTORY.yml"
       BACKEND:
-        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-BACKEND.md"
-        - "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/BACKEND_INVENTORY.yml"
+        - "./orchestration/directivas/simco/SIMCO-BACKEND.md"
+        - "./orchestration/inventarios/BACKEND_INVENTORY.yml"
       FRONTEND:
-        - "/home/isem/workspace-v2/projects/gamilit/orchestration/directivas/simco/SIMCO-FRONTEND.md"
-        - "/home/isem/workspace-v2/projects/gamilit/orchestration/inventarios/FRONTEND_INVENTORY.yml"
+        - "./orchestration/directivas/simco/SIMCO-FRONTEND.md"
+        - "./orchestration/inventarios/FRONTEND_INVENTORY.yml"
 
   L3_tarea:
     descripcion: "Contexto específico de la tarea"
@@ -155,29 +155,31 @@ integracion_docs:
   mapa_docs: "@DOCS/_MAP.md"
 
   estructura:
-    vision: "@DOCS/00-vision-general/"
-    fase1_alcance: "@DOCS/01-fase-alcance-inicial/"
-    fase2_robustecimiento: "@DOCS/02-fase-robustecimiento/"
-    fase3_extensiones: "@DOCS/03-fase-extensiones/"
-    backlog: "@DOCS/04-fase-backlog/"
-    transversal: "@DOCS/90-transversal/"
-    guias: "@DOCS/95-guias-desarrollo/"
-    quick_ref: "@DOCS/96-quick-reference/"
-    adr: "@DOCS/97-adr/"
-    finiquito: "@DOCS/99-finiquito/"
+    overview: "@DOCS/00-overview/"
+    requirements: "@DOCS/10-requirements/"
+    architecture: "@DOCS/20-architecture/"
+    ux_ui: "@DOCS/30-ux-ui/"
+    api: "@DOCS/40-api/"
+    standards: "@DOCS/40-standards/"
+    guides: "@DOCS/50-guides/"
+    portals: "@DOCS/60-portals/"
+    onboarding: "@DOCS/70-onboarding/"
+    references: "@DOCS/80-references/"
+    adr: "@DOCS/90-adr/"
+    delivery: "@DOCS/99-delivery/"
 
   archivos_clave:
-    arquitectura: "@DOCS/90-transversal/arquitectura/ARCHITECTURE.md"
-    api: "@DOCS/90-transversal/api/API.md"
-    roadmap: "@DOCS/90-transversal/roadmap/ROADMAP-GENERAL.md"
-    sprints: "@DOCS/90-transversal/sprints/SPRINTS-DETALLADOS.md"
-    deployment: "@DOCS/95-guias-desarrollo/DEPLOYMENT.md"
-    dor: "@DOCS/04-fase-backlog/DEFINITION-OF-READY.md"
+    arquitectura: "@DOCS/20-architecture/README.md"
+    stack: "@DOCS/20-architecture/STACK-TECNOLOGICO.md"
+    gamificacion: "@DOCS/20-architecture/ARQUITECTURA-GAMIFICACION.md"
+    mecanicas: "@DOCS/20-architecture/MECANICAS-GAMIFICACION-V6.md"
+    vision: "@DOCS/00-overview/VISION-ALCANCE.md"
+    ambientes: "@DOCS/20-architecture/AMBIENTES-DEV-PROD.md"
+    standards: "@DOCS/40-standards/README.md"
 
   epics_por_fase:
-    fase1: ["EAI-001", "EAI-002", "EAI-003", "EAI-004", "EAI-005", "EAI-006", "EAI-008"]
-    fase2: ["EAI-007"]
-    fase3: ["EXT-001", "EXT-002", "EXT-003", "EXT-004", "EXT-005", "EXT-006", "EXT-007", "EXT-008", "EXT-009", "EXT-010", "EXT-011"]
+    mvp: ["EPIC-GAM-SCAFFOLD", "EPIC-GAM-REQUIREMENTS", "EPIC-GAM-ARCHITECTURE", "EPIC-GAM-DATABASE", "EPIC-GAM-BACKEND", "EPIC-GAM-FRONTEND", "EPIC-GAM-INTEGRATION"]
+    post_mvp: ["EPIC-GAM-K8S", "EPIC-GAM-TESTING", "EPIC-GAM-DEVOPS", "EPIC-GAM-DOCS"]
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAPA TAREA → ARCHIVOS (Específico GAMILIT)
@@ -189,7 +191,7 @@ mapa_tarea_contexto:
       simco: ["SIMCO-CREAR.md", "SIMCO-DDL.md"]
       inventario: "@INV_DB"
       referencia: "@DDL/schemas/*/tables/*.sql"
-      docs: "@DOCS/02-especificaciones-tecnicas/"
+      docs: "@DOCS/20-architecture/"
 
     crear_indice:
       simco: ["SIMCO-CREAR.md", "SIMCO-DDL.md"]
@@ -313,5 +315,5 @@ herencia:
 busqueda_historico:
   habilitado: true
   ubicaciones:
-    - "/home/isem/workspace-v2/projects/gamilit/orchestration/trazas/"
-    - "/home/isem/workspace-v2/projects/gamilit/orchestration/errores/REGISTRO-ERRORES.yml"
+    - "./orchestration/trazas/"
+    - "./orchestration/errores/REGISTRO-ERRORES.yml"

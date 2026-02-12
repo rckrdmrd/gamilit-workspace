@@ -17,17 +17,17 @@ base_path: "agents/perfiles/"
 dominios:
 
   backend:
-    principal: "PERFIL-BACKEND.md"
+    principal: "PERFIL-BACKEND-NESTJS.md"
     alias: "@PERFIL_BACKEND"
     compact: "compact/PERFIL-BACKEND-COMPACT.md"
 
   frontend:
-    principal: "PERFIL-FRONTEND.md"
+    principal: "PERFIL-FRONTEND-REACT.md"
     alias: "@PERFIL_FRONTEND"
     compact: "compact/PERFIL-FRONTEND-COMPACT.md"
 
   database:
-    principal: "PERFIL-DATABASE.md"
+    principal: "PERFIL-DATABASE-POSTGRESQL.md"
     alias: "@PERFIL_DATABASE"
     compact: "compact/PERFIL-DATABASE-COMPACT.md"
 

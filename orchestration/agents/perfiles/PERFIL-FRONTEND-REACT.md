@@ -617,7 +617,7 @@ Testing:
 ## ENTREGA AL ORQUESTADOR (Post-Fase E)
 
 Al finalizar Fase E, reportar al orquestador usando formato de:
-**`orchestration/directivas/simco/PROTOCOLO-HANDOFF-SUBAGENTE.md`**
+**`orchestration/directivas/simco/SIMCO-SUBAGENTE.md`**
 
 ### Campos Obligatorios en Reporte
 
@@ -769,7 +769,7 @@ Para detalles completos, consultar:
 - `docs/40-estandares/ESTANDAR-FRONTEND-PROFESIONAL.md` - Estandar completo con ejemplos
 - `orchestration/directivas/principios/PRINCIPIO-SEPARATION-OF-CONCERNS.md` - Principio SOC
 - `orchestration/agents/perfiles/PERFIL-FRONTEND.md` - Perfil base
-- `orchestration/directivas/simco/PROTOCOLO-HANDOFF-SUBAGENTE.md` - Formato de entrega
+- `orchestration/directivas/simco/SIMCO-SUBAGENTE.md` - Formato de entrega
 - [React Documentation](https://react.dev/)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [Testing Library](https://testing-library.com/docs/)

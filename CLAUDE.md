@@ -15,7 +15,7 @@ Este es el proyecto **gamilit** — repositorio standalone con gobernanza local 
 
 Contiene:
 - `apps/` — Codigo fuente MONOREPO (backend, frontend, database — mismo repo GitHub)
-- `docs/` — Documentacion del producto (6 secciones + estandares bundled)
+- `docs/` — Documentacion del producto (10 secciones: overview, requirements, architecture, ux-ui, api, standards, guides, portals, onboarding, adr, delivery)
 - `orchestration/` — SIMCO local completo (directivas, agentes, inventarios, trazas)
 
 **Proposito:** Plataforma educativa gamificada que utiliza mecanicas de videojuegos basadas en cultura maya para mejorar comprension lectora. Sistema completo con 5 modulos educativos, 23 tipos de ejercicios, 4 portales (estudiante, maestro, admin, padres), gamificacion completa (XP, rangos maya, logros, economia virtual con ML Coins).
@@ -29,7 +29,7 @@ Contiene:
 ### RC1: FETCH ANTES DE OPERAR
 ```
 ANTES DE CUALQUIER VERIFICACION GIT:
-  git fetch origin && git log HEAD..origin/main --oneline
+  git fetch origin && git log HEAD..origin/master --oneline
   Si hay output = git pull
   Luego: git status
 SIN FETCH = ESTADO INCOMPLETO
@@ -62,7 +62,7 @@ gamilit usa estructura MONOREPO:
   - apps/backend + apps/frontend + apps/database = tracked en mismo repo
 
 Remote: git@github.com:rckrdmrd/gamilit-workspace.git
-Branch: main
+Branch: master
 ```
 
 ### RC5: BASES DE DATOS Y CREDENCIALES
@@ -81,7 +81,7 @@ Backend: Puerto 3006 (HTTPS en prod), fork mode PM2
 Frontend: Puerto 3005 (HTTPS en prod), fork mode PM2
 
 Deploy agent workflow:
-  1. git pull origin main
+  1. git pull origin master
   2. Backup DB → recrear si DDL cambio
   3. npm install + npm run build (backend + frontend)
   4. pm2 restart ecosystem.config.js
@@ -109,7 +109,7 @@ ANTES de crear objeto nuevo: Verificar catalogos existentes -> Si existe: USAR -
 ### Regla 4: Monorepo Workflow
 COMMITS en monorepo (todo en mismo repo):
 1. Modificar archivos en apps/backend o apps/frontend o apps/database
-2. git add . && git commit -m "[GAM-XXX] desc" && git push origin main
+2. git add . && git commit -m "[GAM-XXX] desc" && git push origin master
 3. Verificar: git status = "working tree clean"
 
 NO usar workflow de submodules (no aplica a monorepo)
@@ -280,6 +280,14 @@ Ver: `docs/20-architecture/AMBIENTES-DEV-PROD.md` para detalles completos.
 | @TRIGGERS | orchestration/directivas/triggers/ |
 | @PERFILES-MAP | orchestration/agents/perfiles/_MAP.md |
 
+### Documentacion
+| Alias | Ruta |
+|-------|------|
+| @GUIDES | docs/50-guides/ |
+| @PORTALS | docs/60-portals/ |
+| @SCHEMA-REF | docs/20-architecture/schema-reference/ |
+| @BACKEND-STD | docs/40-standards/backend-profesional/ |
+
 ### Context Management (NEXUS v4.1)
 | Alias | Ruta |
 |-------|------|
@@ -288,10 +296,13 @@ Ver: `docs/20-architecture/AMBIENTES-DEV-PROD.md` para detalles completos.
 | @BOOTLOADER | orchestration/directivas/simco/SIMCO-BOOTLOADER.md |
 | @SIMCO-CONTEXT-CLEANUP | orchestration/directivas/simco/SIMCO-CONTEXT-CLEANUP.md |
 | @SIMCO-CONTEXT-ENGINEERING | orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md |
-| @SIMCO-CONTROL-TOKENS | orchestration/directivas/simco/SIMCO-CONTROL-TOKENS.md |
-| @SIMCO-CCA-SUBAGENTE | orchestration/directivas/simco/SIMCO-CCA-SUBAGENTE.md |
 | @PROXIMA-ACCION | orchestration/PROXIMA-ACCION.md |
 | @COMPACT-PROFILES | orchestration/agents/perfiles/compact/ |
+
+### Base de Datos
+| Alias | Ruta |
+|-------|------|
+| @RECREAR-BD | orchestration/directivas/simco/SIMCO-RECREAR-BD.md |
 
 ### Deployment
 | Alias | Ruta |
@@ -329,19 +340,24 @@ gamilit/
 |   |                   +-- US-{ID}-{nombre}.md
 |   |                   +-- tasks/
 |   |                       +-- TASK-{ID}-{CODE}/
-|   +-- 20-architecture/         <- Arquitectura, stack, modelo datos
+|   +-- 20-architecture/         <- Arquitectura, stack, modelo datos, schema-reference/
 |   +-- 30-ux-ui/                <- Wireframes, mockups, flujos
 |   +-- 40-api/                  <- Endpoints, contratos
-|   +-- 40-standards/            <- Estandares bundled (9 archivos)
-|   +-- 90-adr/                  <- ADRs del proyecto (34 ADRs)
+|   +-- 40-standards/            <- Estandares (17 archivos + backend-profesional/)
+|   +-- 50-guides/               <- Guias de implementacion (backend, frontend, deploy, testing)
+|   +-- 60-portals/              <- Manuales de portales (student, teacher, admin)
+|   +-- 70-onboarding/           <- Guias de onboarding por rol
+|   +-- 80-references/           <- Referencias tecnicas
+|   +-- 90-adr/                  <- ADRs del proyecto (40 ADRs normalizados)
+|   +-- 99-delivery/             <- Documentos de entrega
 +-- orchestration/
     +-- _INDEX.yml
     +-- _inheritance.yml
     +-- PROJECT-CONTEXT.md
     +-- CONTEXT-MAP.yml          <- Variables y aliases resueltos
     +-- BOOTLOADER.md            <- Secuencia de arranque
-    +-- agents/                  <- 42 perfiles de agente
-    +-- directivas/              <- ~110 archivos SIMCO
+    +-- agents/                  <- Perfiles de agente (full + compact)
+    +-- directivas/              <- ~63 archivos SIMCO activos (+13 en _archive)
     +-- inventarios/             <- 8 YAMLs SSOT
     +-- work-items/              <- Epics/sprints tracking
     +-- trazas/                  <- Logs de ejecucion

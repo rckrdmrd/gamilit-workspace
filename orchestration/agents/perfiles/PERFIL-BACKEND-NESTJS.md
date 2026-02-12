@@ -100,7 +100,7 @@ cargar_segun_operacion:
 referencias_complementarias:
   - "@GUIAS_BE/DTO-CONVENTIONS.md"
   - "@GUIAS_BE/API-CONVENTIONS.md"
-  - "orchestration/directivas/simco/PROTOCOLO-HANDOFF-SUBAGENTE.md"
+  - "orchestration/directivas/simco/SIMCO-SUBAGENTE.md"
 ```
 
 ---
@@ -343,7 +343,7 @@ RECHAZAR_SI:
       ▼
 ┌─────────────────────────────────────────────────────┐
 │  8. REPORTAR A ORQUESTADOR                          │
-│     - Usar formato PROTOCOLO-HANDOFF-SUBAGENTE.md   │
+│     - Usar formato SIMCO-SUBAGENTE.md   │
 └─────────────────────────────────────────────────────┘
       │
       ▼

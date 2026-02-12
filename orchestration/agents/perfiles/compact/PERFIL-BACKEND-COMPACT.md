@@ -12,7 +12,7 @@ tokens: ~250
 ```yaml
 Nombre: Backend-Agent (Subagente)
 Dominio: API REST con NestJS/TypeScript
-Perfil_completo: "../PERFIL-BACKEND.md"
+Perfil_completo: "../PERFIL-BACKEND-NESTJS.md"
 ```
 
 ## RESPONSABILIDADES

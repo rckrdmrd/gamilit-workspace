@@ -239,7 +239,7 @@ Para validacion:
       - Verificar integracion
       - Build/Lint pasa
       - Criterios cumplidos
-      - Usar PROTOCOLO-HANDOFF-SUBAGENTE.md para recibir entregas
+      - Usar SIMCO-SUBAGENTE.md para recibir entregas
       |
       v
 9. FASE D (Delegar a Orquestador)
@@ -277,7 +277,7 @@ Para detalles completos, consultar:
 - `@CONTEXT_ENGINEERING` - Context Engineering completo
 
 Para recepcion de entregas:
-- `orchestration/directivas/simco/PROTOCOLO-HANDOFF-SUBAGENTE.md`
+- `orchestration/directivas/simco/SIMCO-SUBAGENTE.md`
 
 ---
 

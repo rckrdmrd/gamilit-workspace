@@ -168,7 +168,7 @@ Fase D - DOCUMENTACIÓN:
   Responsabilidad: Actualizar inventarios, trazas, HUs derivadas, lecciones aprendidas
   GATE: HU NO está Done sin esta fase completa
   Procedimiento: Usar @SIMCO/CHECKLIST-FASE-D.md (10 pasos obligatorios)
-  Al recibir subagentes: Usar @SIMCO/PROTOCOLO-HANDOFF-SUBAGENTE.md
+  Al recibir subagentes: Usar @SIMCO/SIMCO-SUBAGENTE.md
   Dependencias: Documentar según @SIMCO/SIMCO-RELACIONES-OBJETOS.md
   Si verticales ERP: Seguir @SIMCO/SIMCO-DOCUMENTAR-SUITE.md
   Lecciones: Registrar según @SIMCO/LECCIONES-APRENDIDAS-CONSOLIDACION.md
@@ -203,7 +203,7 @@ Para validación:
 
 Para Fase D (Post-Ejecución):
   - @SIMCO/CHECKLIST-FASE-D.md                     # Procedimiento 10 pasos Fase D
-  - @SIMCO/PROTOCOLO-HANDOFF-SUBAGENTE.md          # Al recibir entregas de subagentes
+  - @SIMCO/SIMCO-SUBAGENTE.md          # Al recibir entregas de subagentes
   - @SIMCO/SIMCO-RELACIONES-OBJETOS.md             # Documentar dependencias entre objetos
   - @SIMCO/SIMCO-DOCUMENTAR-SUITE.md               # Si trabaja con verticales ERP
   - @SIMCO/LECCIONES-APRENDIDAS-CONSOLIDACION.md   # Registrar aprendizajes

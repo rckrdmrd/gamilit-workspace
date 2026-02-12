@@ -22,9 +22,9 @@ Perfiles, configuraciones y trazas de agentes IA.
 
 ## Perfiles Principales (perfiles/)
 
-- `PERFIL-DATABASE.md` - Agente de base de datos
-- `PERFIL-BACKEND.md` - Agente backend NestJS
-- `PERFIL-FRONTEND.md` - Agente frontend React
+- `PERFIL-DATABASE-POSTGRESQL.md` - Agente de base de datos PostgreSQL
+- `PERFIL-BACKEND-NESTJS.md` - Agente backend NestJS
+- `PERFIL-FRONTEND-REACT.md` - Agente frontend React
 - `PERFIL-ORQUESTADOR.md` - Tech Leader / Orquestador
 - `PERFIL-INFRASTRUCTURE-MANAGER.md` - Gestión de infraestructura
 
