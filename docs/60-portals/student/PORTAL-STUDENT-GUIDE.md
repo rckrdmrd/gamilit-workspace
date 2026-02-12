@@ -479,13 +479,13 @@ POST /api/v1/gamification/comodines/use
 
 **Jerarquía de Rangos:**
 
-| Rango | Icono | XP Requerido | Multiplicador |
-|-------|-------|--------------|---------------|
-| Ajaw | 🏹 | 0 | 1.0x |
-| Nacom | 🔍 | 1,000 | 1.2x |
-| Ah K'in | 🗡️ | 5,000 | 1.5x |
-| Halach Uinic | ⚔️ | 15,000 | 2.0x |
-| K'uk'ulkan | 👑 | 50,000 | 3.0x |
+| Rango | Icono | XP Min | Multiplicador |
+|-------|-------|--------|---------------|
+| Ajaw (Senor) | 🏹 | 0 | 1.00x |
+| Nacom (Capitan de Guerra) | 🔍 | 500 | 1.10x |
+| Ah K'in (Sacerdote del Sol) | 🗡️ | 1,000 | 1.15x |
+| Halach Uinic (Hombre Verdadero) | ⚔️ | 1,500 | 1.20x |
+| K'uk'ulkan (Serpiente Emplumada) | 👑 | 1,900 | 1.25x |
 
 **Componentes:**
 
