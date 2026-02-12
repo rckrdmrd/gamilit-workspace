@@ -21,7 +21,7 @@ GAMILIT necesita un sistema de gamificacion que motive a los estudiantes K-12 a 
 
 Implementar un sistema de gamificacion completo inspirado en la jerarquia social y cultural de la civilizacion maya clasica, que incluye:
 
-1. **Rangos jerarquicos maya** (5 niveles): Ah K'in -> Nacom -> Batab -> Halach Uinik -> Ajaw
+1. **Rangos jerarquicos maya** (5 niveles): Ajaw -> Nacom -> Ah K'in -> Halach Uinic -> K'uk'ulkan
 2. **Economia virtual con ML Coins** (Maya Literacy Coins) en lugar de moneda generica
 3. **Iconografia maya** para avatares, insignias y elementos visuales
 4. **Sistema de XP con multiplicadores** inspirado en el sistema numeral maya
