@@ -1,7 +1,7 @@
 # INDICE Y GUIA DE ASIGNACION DE PERFILES DE AGENTES
 
-**Version:** 2.1.0
-**Fecha:** 2026-02-11
+**Version:** 2.3.0
+**Fecha:** 2026-02-12
 **Sistema:** NEXUS v4.1 + SIMCO
 **Proposito:** Guia para asignacion correcta de tareas a perfiles especializados
 
@@ -356,35 +356,20 @@ no_asignar_si:
   - "Proyecto no usa React"
 ```
 
-#### PERFIL-ML-SPECIALIST
+#### PERFIL-ML-SPECIALIST [ARCHIVED]
 ```yaml
 alias: "@PERFIL_ML_SPEC"
-archivo: "PERFIL-ML-SPECIALIST.md"
+archivo: "_archive/PERFIL-ML.md"
 dominio: "Machine Learning y Data Science"
+estado: "ARCHIVED - No aplica a gamilit (plataforma educativa sin ML real)"
 
-descripcion_breve: |
-  Desarrolla modelos de ML. Implementa feature engineering,
-  entrena modelos, evalua metricas, despliega para inferencia.
-
-tipos_tarea:
-  - "Crear modelo predictivo"
-  - "Feature engineering"
-  - "Entrenar/evaluar modelo"
-  - "Optimizar hiperparametros"
-  - "Pipeline de inferencia"
-
-directivas:
-  - "@OP_ML"
-
-estandares:
-  - "MLflow para tracking"
-  - "DVC para datos"
-  - "Tests de modelos"
-  - "Documentar metricas"
+nota: |
+  gamilit solo tiene heuristicas placeholder (v0.0.1-heuristic) en
+  ml-predictor.service.ts. "ML Coins" = "Maya Learning Coins" (moneda virtual).
+  Perfil archivado 2026-02-12.
 
 no_asignar_si:
-  - "No hay componente de ML/datos"
-  - "Es desarrollo web tradicional"
+  - "Proyecto gamilit (sin componentes ML reales)"
 ```
 
 ---
@@ -890,4 +875,17 @@ Ubicacion: `compact/`
 
 ---
 
-**Version:** 2.2.0 | **Sistema:** NEXUS v4.1 + SIMCO v4.0.0 | **Mantenido por:** Architecture-Analyst
+## PERFILES REDUCIDOS A STUBS (Consolidacion 2026-02-12)
+
+Los siguientes perfiles han sido reducidos a stubs de 7 lineas que redirigen a perfiles canonicos:
+
+| Perfil Deprecated | Lineas Previas | Canonical | Estado |
+|---|---|---|---|
+| PERFIL-SECURITY.md | 367 | PERFIL-SECURITY-AUDITOR.md | Stub (redirige) |
+| PERFIL-QA.md | 402 | PERFIL-TESTING.md | Stub (redirige) |
+| PERFIL-DOCUMENTATION.md | 372 | PERFIL-DOCUMENTATION-VALIDATOR.md | Stub (redirige) |
+| PERFIL-ML.md | 282 | N/A (no aplica a gamilit) | Archivado en `_archive/` |
+
+---
+
+**Version:** 2.3.0 | **Sistema:** NEXUS v4.1 + SIMCO v4.0.0 | **Mantenido por:** Architecture-Analyst
