@@ -23,7 +23,7 @@ CREATE POLICY content_templates_admin_all ON content_management.content_template
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -32,38 +32,25 @@ CREATE POLICY content_templates_public_read ON content_management.content_templa
     USING (true);
 
 -- 1.2 marie_curie_content - Contenido de Marie Curie
-ALTER TABLE content_management.marie_curie_content ENABLE ROW LEVEL SECURITY;
+ALTER TABLE content_management.marie_curie_contents ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY marie_curie_content_admin_all ON content_management.marie_curie_content
+CREATE POLICY marie_curie_content_admin_all ON content_management.marie_curie_contents
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
-CREATE POLICY marie_curie_content_public_read ON content_management.marie_curie_content
+CREATE POLICY marie_curie_content_public_read ON content_management.marie_curie_contents
     FOR SELECT TO authenticated
     USING (true);
 
 -- 1.3 media_files - Archivos multimedia
-ALTER TABLE content_management.media_files ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY media_files_admin_all ON content_management.media_files
-    FOR ALL TO authenticated
-    USING (
-        EXISTS (
-            SELECT 1 FROM auth_management.profiles p
-            JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
-        )
-    );
-
-CREATE POLICY media_files_public_read ON content_management.media_files
-    FOR SELECT TO authenticated
-    USING (true);
+-- TABLE_EXISTS: RLS y policies gestionados en DDL de tabla (03-media_files.sql)
+-- 5 policies: media_files_select_public, media_files_select_tenant, media_files_insert_own, media_files_update_own, media_files_delete_own
 
 -- 1.4 content_versions - Versiones de contenido
 ALTER TABLE content_management.content_versions ENABLE ROW LEVEL SECURITY;
@@ -74,7 +61,7 @@ CREATE POLICY content_versions_admin_all ON content_management.content_versions
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -83,24 +70,24 @@ CREATE POLICY content_versions_public_read ON content_management.content_version
     USING (true);
 
 -- 1.5 flagged_content - Contenido reportado
-ALTER TABLE content_management.flagged_content ENABLE ROW LEVEL SECURITY;
+ALTER TABLE content_management.flagged_contents ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY flagged_content_admin_only ON content_management.flagged_content
+CREATE POLICY flagged_content_admin_only ON content_management.flagged_contents
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
 -- Usuarios pueden reportar (INSERT) pero no ver otros reportes
-CREATE POLICY flagged_content_user_insert ON content_management.flagged_content
+CREATE POLICY flagged_content_user_insert ON content_management.flagged_contents
     FOR INSERT TO authenticated
     WITH CHECK (reported_by = auth.uid());
 
-CREATE POLICY flagged_content_user_read_own ON content_management.flagged_content
+CREATE POLICY flagged_content_user_read_own ON content_management.flagged_contents
     FOR SELECT TO authenticated
     USING (reported_by = auth.uid());
 
@@ -113,7 +100,7 @@ CREATE POLICY moderation_rules_admin_only ON content_management.moderation_rules
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -126,7 +113,7 @@ CREATE POLICY tags_admin_all ON content_management.tags
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -143,7 +130,7 @@ CREATE POLICY content_authors_admin_all ON content_management.content_authors
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -160,7 +147,7 @@ CREATE POLICY content_categories_admin_all ON content_management.content_categor
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -168,22 +155,28 @@ CREATE POLICY content_categories_public_read ON content_management.content_categ
     FOR SELECT TO authenticated
     USING (true);
 
--- 1.10 media_metadata - Metadata de archivos multimedia
-ALTER TABLE content_management.media_metadata ENABLE ROW LEVEL SECURITY;
+-- 1.10 media_metadatas - Metadata de archivos multimedia
+-- NOTE: Tabla es 'media_metadatas' (plural, TypeORM convention)
+ALTER TABLE content_management.media_metadatas ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY media_metadata_admin_all ON content_management.media_metadata
+CREATE POLICY media_metadatas_admin_all ON content_management.media_metadatas
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
-CREATE POLICY media_metadata_public_read ON content_management.media_metadata
+CREATE POLICY media_metadatas_read_via_media_file ON content_management.media_metadatas
     FOR SELECT TO authenticated
-    USING (true);
+    USING (
+        EXISTS (
+            SELECT 1 FROM content_management.media_files mf
+            WHERE mf.id = media_file_id AND (mf.is_public = true OR mf.uploaded_by = auth.uid())
+        )
+    );
 
 -- ============================================
 -- SECCION 2: SYSTEM_CONFIGURATION (9 tablas)
@@ -199,7 +192,7 @@ CREATE POLICY system_settings_admin_only ON system_configuration.system_settings
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -212,7 +205,7 @@ CREATE POLICY gamification_parameters_admin_only ON system_configuration.gamific
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -230,7 +223,7 @@ CREATE POLICY notification_settings_admin_only ON system_configuration.notificat
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -243,20 +236,20 @@ CREATE POLICY rate_limits_admin_only ON system_configuration.rate_limits
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
 -- 2.5 notification_settings_global - Configuracion global de notificaciones
-ALTER TABLE system_configuration.notification_settings_global ENABLE ROW LEVEL SECURITY;
+ALTER TABLE system_configuration.notification_settings_globals ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY notification_settings_global_admin_only ON system_configuration.notification_settings_global
+CREATE POLICY notification_settings_global_admin_only ON system_configuration.notification_settings_globals
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -269,7 +262,7 @@ CREATE POLICY feature_flags_admin_only ON system_configuration.feature_flags
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -279,28 +272,28 @@ CREATE POLICY feature_flags_public_read ON system_configuration.feature_flags
     USING (true);
 
 -- 2.7 api_configuration - Configuracion de API
-ALTER TABLE system_configuration.api_configuration ENABLE ROW LEVEL SECURITY;
+ALTER TABLE system_configuration.api_configurations ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY api_configuration_admin_only ON system_configuration.api_configuration
+CREATE POLICY api_configuration_admin_only ON system_configuration.api_configurations
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
 -- 2.8 environment_config - Configuracion de entorno
-ALTER TABLE system_configuration.environment_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE system_configuration.environment_configs ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY environment_config_admin_only ON system_configuration.environment_config
+CREATE POLICY environment_config_admin_only ON system_configuration.environment_configs
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -313,7 +306,7 @@ CREATE POLICY tenant_configurations_admin_only ON system_configuration.tenant_co
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 

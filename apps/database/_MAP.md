@@ -67,7 +67,7 @@ apps/database/
 | **storage** | ENUMs de almacenamiento (placeholder) | - | - | - |
 | **public** | Reservado PostgreSQL (placeholder) | - | - | - |
 
-**Totales verificados (2026-02-06):** 171 tablas, 128 funciones activas, 49 triggers activos, 69 index files, 282 RLS policies, 299 foreign keys, 36 enums
+**Totales verificados (2026-02-14):** 169 tablas, 183 funciones (DDL), 67 triggers, 69 index files, 207 RLS policies, 298 foreign keys, 40 ENUMs
 Fuente: DATABASE_INVENTORY v6.0.0, TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD
 
 ---

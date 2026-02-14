@@ -35,7 +35,7 @@ CREATE POLICY comodines_inventory_admin_all ON gamification_system.comodines_inv
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -53,7 +53,7 @@ CREATE POLICY user_ranks_admin_all ON gamification_system.user_ranks
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -66,61 +66,43 @@ CREATE POLICY user_ranks_public_leaderboard ON gamification_system.user_ranks
     USING (true);  -- Leaderboards son publicos
 
 -- 1.6 comodin_usage_log - Log de uso de comodines
-ALTER TABLE gamification_system.comodin_usage_log ENABLE ROW LEVEL SECURITY;
+ALTER TABLE gamification_system.comodin_usage_logs ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY comodin_usage_log_admin_all ON gamification_system.comodin_usage_log
+CREATE POLICY comodin_usage_log_admin_all ON gamification_system.comodin_usage_logs
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
-CREATE POLICY comodin_usage_log_user_read_own ON gamification_system.comodin_usage_log
+CREATE POLICY comodin_usage_log_user_read_own ON gamification_system.comodin_usage_logs
     FOR SELECT TO authenticated
     USING (user_id = auth.uid());
 
 -- 1.7 comodin_usage_tracking - Tracking de comodines
-ALTER TABLE gamification_system.comodin_usage_tracking ENABLE ROW LEVEL SECURITY;
+ALTER TABLE gamification_system.comodin_usage_trackings ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY comodin_usage_tracking_admin_all ON gamification_system.comodin_usage_tracking
+CREATE POLICY comodin_usage_tracking_admin_all ON gamification_system.comodin_usage_trackings
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
-CREATE POLICY comodin_usage_tracking_user_own ON gamification_system.comodin_usage_tracking
+CREATE POLICY comodin_usage_tracking_user_own ON gamification_system.comodin_usage_trackings
     FOR ALL TO authenticated
     USING (user_id = auth.uid())
     WITH CHECK (user_id = auth.uid());
 
 -- 1.8 classroom_missions - Misiones de aula
-ALTER TABLE gamification_system.classroom_missions ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY classroom_missions_admin_teacher ON gamification_system.classroom_missions
-    FOR ALL TO authenticated
-    USING (
-        EXISTS (
-            SELECT 1 FROM auth_management.profiles p
-            JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
-        )
-    );
-
-CREATE POLICY classroom_missions_student_read ON gamification_system.classroom_missions
-    FOR SELECT TO authenticated
-    USING (
-        classroom_id IN (
-            SELECT classroom_id FROM social_features.classroom_members
-            WHERE user_id = auth.uid()
-        )
-    );
+-- TABLE_EXISTS: RLS y policies gestionados en DDL de tabla (16-classroom_missions.sql)
+-- 3 policies: classroom_missions_teacher_access, classroom_missions_student_view, classroom_missions_admin_access
 
 -- ============================================
 -- SECCION 2: NOTIFICATIONS (4 tablas)
@@ -136,7 +118,7 @@ CREATE POLICY notifications_admin_all ON notifications.notifications
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -158,7 +140,7 @@ CREATE POLICY notification_preferences_admin_all ON notifications.notification_p
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -176,7 +158,7 @@ CREATE POLICY notification_logs_admin_only ON notifications.notification_logs
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -189,7 +171,7 @@ CREATE POLICY user_devices_admin_all ON notifications.user_devices
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -212,7 +194,7 @@ CREATE POLICY messages_admin_all ON communication.messages
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -224,7 +206,7 @@ CREATE POLICY messages_user_read_own ON communication.messages
         OR recipient_id = auth.uid()
         OR classroom_id IN (
             SELECT classroom_id FROM social_features.classroom_members
-            WHERE user_id = auth.uid()
+            WHERE student_id = auth.uid()
         )
     );
 
@@ -253,7 +235,7 @@ CREATE POLICY learning_sessions_admin_teacher ON progress_tracking.learning_sess
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -271,7 +253,7 @@ CREATE POLICY exercise_attempts_admin_teacher ON progress_tracking.exercise_atte
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -289,7 +271,7 @@ CREATE POLICY exercise_submissions_admin_teacher ON progress_tracking.exercise_s
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -307,29 +289,29 @@ CREATE POLICY scheduled_missions_admin_teacher ON progress_tracking.scheduled_mi
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
 CREATE POLICY scheduled_missions_user_own ON progress_tracking.scheduled_missions
     FOR ALL TO authenticated
-    USING (user_id = auth.uid())
-    WITH CHECK (user_id = auth.uid());
+    USING (scheduled_by = auth.uid())
+    WITH CHECK (scheduled_by = auth.uid());
 
 -- 4.5 user_difficulty_progress - Progreso por dificultad
-ALTER TABLE progress_tracking.user_difficulty_progress ENABLE ROW LEVEL SECURITY;
+ALTER TABLE progress_tracking.user_difficulty_progresses ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY user_difficulty_progress_admin_teacher ON progress_tracking.user_difficulty_progress
+CREATE POLICY user_difficulty_progress_admin_teacher ON progress_tracking.user_difficulty_progresses
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
-CREATE POLICY user_difficulty_progress_user_own ON progress_tracking.user_difficulty_progress
+CREATE POLICY user_difficulty_progress_user_own ON progress_tracking.user_difficulty_progresses
     FOR ALL TO authenticated
     USING (user_id = auth.uid())
     WITH CHECK (user_id = auth.uid());
@@ -343,7 +325,7 @@ CREATE POLICY module_progress_admin_teacher ON progress_tracking.module_progress
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -361,7 +343,7 @@ CREATE POLICY teacher_notes_admin_teacher ON progress_tracking.teacher_notes
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -378,13 +360,30 @@ CREATE POLICY certificates_admin_teacher ON progress_tracking.certificates
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
 CREATE POLICY certificates_user_read_own ON progress_tracking.certificates
     FOR SELECT TO authenticated
     USING (user_id = auth.uid());
+
+-- 4.9 learning_path_modules - Modulos en rutas de aprendizaje (junction table)
+ALTER TABLE progress_tracking.learning_path_modules ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY learning_path_modules_admin_all ON progress_tracking.learning_path_modules
+    FOR ALL TO authenticated
+    USING (
+        EXISTS (
+            SELECT 1 FROM auth_management.profiles p
+            JOIN auth_management.user_roles ur ON p.id = ur.user_id
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
+        )
+    );
+
+CREATE POLICY learning_path_modules_read_all ON progress_tracking.learning_path_modules
+    FOR SELECT TO authenticated
+    USING (true);
 
 -- ============================================
 -- SECCION 5: SOCIAL_FEATURES (6 tablas adicionales)
@@ -400,20 +399,20 @@ CREATE POLICY classroom_members_admin_teacher ON social_features.classroom_membe
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
 CREATE POLICY classroom_members_user_read_own ON social_features.classroom_members
     FOR SELECT TO authenticated
-    USING (user_id = auth.uid());
+    USING (student_id = auth.uid());
 
 CREATE POLICY classroom_members_same_classroom ON social_features.classroom_members
     FOR SELECT TO authenticated
     USING (
         classroom_id IN (
             SELECT classroom_id FROM social_features.classroom_members
-            WHERE user_id = auth.uid()
+            WHERE student_id = auth.uid()
         )
     );
 
@@ -426,7 +425,7 @@ CREATE POLICY team_members_admin ON social_features.team_members
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -453,7 +452,7 @@ CREATE POLICY friendships_admin ON social_features.friendships
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -471,17 +470,14 @@ CREATE POLICY team_challenges_admin ON social_features.team_challenges
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
 CREATE POLICY team_challenges_participants ON social_features.team_challenges
     FOR SELECT TO authenticated
     USING (
-        challenger_team_id IN (
-            SELECT team_id FROM social_features.team_members WHERE user_id = auth.uid()
-        )
-        OR challenged_team_id IN (
+        team_id IN (
             SELECT team_id FROM social_features.team_members WHERE user_id = auth.uid()
         )
     );
@@ -495,7 +491,7 @@ CREATE POLICY social_interactions_admin ON social_features.social_interactions
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -513,7 +509,7 @@ CREATE POLICY classrooms_admin_teacher ON social_features.classrooms
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -527,7 +523,7 @@ CREATE POLICY classrooms_student_member ON social_features.classrooms
     USING (
         id IN (
             SELECT classroom_id FROM social_features.classroom_members
-            WHERE user_id = auth.uid()
+            WHERE student_id = auth.uid()
         )
     );
 
@@ -545,7 +541,7 @@ CREATE POLICY audit_logs_admin_only ON audit_logging.audit_logs
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -558,7 +554,7 @@ CREATE POLICY user_activity_logs_admin ON audit_logging.user_activity_logs
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -580,7 +576,7 @@ CREATE POLICY user_preferences_admin_all ON auth_management.user_preferences
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -598,7 +594,7 @@ CREATE POLICY user_sessions_admin_all ON auth_management.user_sessions
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -616,7 +612,7 @@ CREATE POLICY security_events_admin_only ON auth_management.security_events
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -633,7 +629,7 @@ CREATE POLICY email_verification_tokens_admin_only ON auth_management.email_veri
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -651,7 +647,7 @@ CREATE POLICY bulk_operations_admin_only ON admin_dashboard.bulk_operations
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -664,9 +660,9 @@ COMMENT ON TABLE gamification_system.user_achievements IS 'RLS enabled (Phase 2)
 COMMENT ON TABLE gamification_system.ml_coins_transactions IS 'RLS enabled (Phase 2): Transacciones ML - lectura propia + admin';
 COMMENT ON TABLE gamification_system.comodines_inventory IS 'RLS enabled (Phase 2): Inventario comodines - gestion propia + admin';
 COMMENT ON TABLE gamification_system.user_ranks IS 'RLS enabled (Phase 2): Rangos usuario - leaderboard publico + admin';
-COMMENT ON TABLE gamification_system.comodin_usage_log IS 'RLS enabled (Phase 2): Log comodines - lectura propia + teacher/admin';
-COMMENT ON TABLE gamification_system.comodin_usage_tracking IS 'RLS enabled (Phase 2): Tracking comodines - gestion propia + teacher/admin';
-COMMENT ON TABLE gamification_system.classroom_missions IS 'RLS enabled (Phase 2): Misiones aula - teacher manage + student read';
+COMMENT ON TABLE gamification_system.comodin_usage_logs IS 'RLS enabled (Phase 2): Log comodines - lectura propia + teacher/admin';
+COMMENT ON TABLE gamification_system.comodin_usage_trackings IS 'RLS enabled (Phase 2): Tracking comodines - gestion propia + teacher/admin';
+-- classroom_missions: RLS gestionado en DDL de tabla (16-classroom_missions.sql) - 3 policies
 
 COMMENT ON TABLE notifications.notifications IS 'RLS enabled (Phase 2): Notificaciones - lectura/update propia + admin';
 COMMENT ON TABLE notifications.notification_preferences IS 'RLS enabled (Phase 2): Preferencias notif - gestion propia + admin';
@@ -679,7 +675,7 @@ COMMENT ON TABLE progress_tracking.learning_sessions IS 'RLS enabled (Phase 2): 
 COMMENT ON TABLE progress_tracking.exercise_attempts IS 'RLS enabled (Phase 2): Intentos ejercicios - gestion propia + teacher/admin';
 COMMENT ON TABLE progress_tracking.exercise_submissions IS 'RLS enabled (Phase 2): Entregas ejercicios - gestion propia + teacher/admin';
 COMMENT ON TABLE progress_tracking.scheduled_missions IS 'RLS enabled (Phase 2): Misiones programadas - gestion propia + teacher/admin';
-COMMENT ON TABLE progress_tracking.user_difficulty_progress IS 'RLS enabled (Phase 2): Progreso dificultad - gestion propia + teacher/admin';
+COMMENT ON TABLE progress_tracking.user_difficulty_progresses IS 'RLS enabled (Phase 2): Progreso dificultad - gestion propia + teacher/admin';
 COMMENT ON TABLE progress_tracking.module_progress IS 'RLS enabled (Phase 2): Progreso modulos - gestion propia + teacher/admin';
 COMMENT ON TABLE progress_tracking.teacher_notes IS 'RLS enabled (Phase 2): Notas docente - teacher manage + student read';
 COMMENT ON TABLE progress_tracking.certificates IS 'RLS enabled (Phase 2): Certificados - lectura propia + teacher/admin';

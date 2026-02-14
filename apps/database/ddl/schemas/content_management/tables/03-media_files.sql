@@ -41,7 +41,7 @@ CREATE TABLE content_management.media_files (
     copyright_info text,
     license text,
     attribution text,
-    processing_status content_management.processing_status DEFAULT 'completed'::content_management.processing_status,
+    processing_status content_management.processing_status DEFAULT 'ready'::content_management.processing_status,
     processing_info jsonb DEFAULT '{}'::jsonb,
     tags text[],
     keywords text[],

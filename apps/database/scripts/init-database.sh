@@ -334,7 +334,9 @@ check_prerequisites() {
             SUDO_PASS="2320"
             print_success "Conectado a PostgreSQL (sudo)"
             # Validar sudo una sola vez para evitar prompts en loops
-            sudo -v 2>/dev/null || true
+            if [ -n "$SUDO_PASS" ]; then
+                printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
+            fi
         elif sudo -n -u postgres psql -c "SELECT 1" &> /dev/null 2>&1; then
             USE_SUDO=true
             SUDO_PASS=""
@@ -386,6 +388,16 @@ query_as_postgres() {
 execute_sql_file() {
     local file="$1"
     PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -f "$file" 2>&1
+}
+
+# Ejecutar archivo SQL como superuser (postgres) - para funciones, views, triggers, RLS
+execute_sql_file_as_superuser() {
+    local file="$1"
+    if [ "$USE_SUDO" = true ]; then
+        cat "$file" | sudo -u postgres psql -d "$DB_NAME" -v ON_ERROR_STOP=1 2>&1
+    else
+        PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -v ON_ERROR_STOP=1 -f "$file" 2>&1
+    fi
 }
 
 # ============================================================================
@@ -490,6 +502,8 @@ execute_ddl_tables() {
         "communication"
         "lti_integration"
         "notifications"
+        "data_warehouse"
+        "optimization"
         "public"
     )
 
@@ -528,7 +542,7 @@ execute_ddl_tables() {
     if [ $enum_count -gt 0 ]; then
         if [ "$USE_SUDO" = true ]; then
             if [ -n "$SUDO_PASS" ]; then
-                printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1
+                printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
             fi
             if cat "$temp_enums" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1; then
                 print_success "$enum_count ENUMs cargados"
@@ -575,7 +589,7 @@ execute_ddl_tables() {
     if [ "$USE_SUDO" = true ]; then
         # Refrescar credenciales sudo si tenemos password
         if [ -n "$SUDO_PASS" ]; then
-            printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1
+            printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
         fi
         # Ejecutar con cat | psql para evitar problemas de permisos de archivo
         if cat "$temp_batch" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1; then
@@ -594,6 +608,63 @@ execute_ddl_tables() {
     # Limpiar archivo temporal
     rm -f "$temp_batch"
 
+    # Cargar tablas cross-schema (dependen de tablas de otros schemas)
+    print_info "Cargando tablas cross-schema..."
+    local cross_count=0
+    local temp_cross="/tmp/gamilit-ddl-cross-$$.sql"
+    : > "$temp_cross"
+
+    for schema in "${schemas[@]}"; do
+        local cross_dir="$DDL_DIR/schemas/$schema/tables/_cross_schema"
+        if [ -d "$cross_dir" ]; then
+            for cross_file in "$cross_dir"/*.sql; do
+                if [ -f "$cross_file" ]; then
+                    cat "$cross_file" >> "$temp_cross"
+                    echo "" >> "$temp_cross"
+                    cross_count=$((cross_count + 1))
+                fi
+            done
+        fi
+    done
+
+    if [ $cross_count -gt 0 ]; then
+        if [ "$USE_SUDO" = true ]; then
+            if [ -n "$SUDO_PASS" ]; then
+                printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
+            fi
+            cat "$temp_cross" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1
+        else
+            cat "$temp_cross" | PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" > /dev/null 2>&1
+        fi
+        print_success "$cross_count tablas cross-schema cargadas"
+    fi
+    rm -f "$temp_cross"
+
+    # Cargar FK constraints diferidos (dependen de tablas de otros schemas)
+    print_info "Cargando FK constraints diferidos..."
+    local fk_count=0
+    for schema in "${schemas[@]}"; do
+        local fk_dir="$DDL_DIR/schemas/$schema/fk-constraints"
+        if [ -d "$fk_dir" ]; then
+            for fk_file in "$fk_dir"/*.sql; do
+                if [ -f "$fk_file" ]; then
+                    if [ "$USE_SUDO" = true ]; then
+                        if cat "$fk_file" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1; then
+                            fk_count=$((fk_count + 1))
+                        fi
+                    else
+                        if PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -f "$fk_file" > /dev/null 2>&1; then
+                            fk_count=$((fk_count + 1))
+                        fi
+                    fi
+                fi
+            done
+        fi
+    done
+    if [ $fk_count -gt 0 ]; then
+        print_success "$fk_count FK constraints cargados"
+    fi
+
     # Otorgar permisos a gamilit_user
     print_info "Otorgando permisos a gamilit_user..."
     local perms_file="$DDL_DIR/99-post-ddl-permissions.sql"
@@ -602,7 +673,7 @@ execute_ddl_tables() {
         if [ "$USE_SUDO" = true ]; then
             # Refrescar credenciales sudo si tenemos password
             if [ -n "$SUDO_PASS" ]; then
-                printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1
+                printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
             fi
             cat "$perms_file" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1
         else
@@ -618,8 +689,6 @@ execute_ddl_tables() {
 
 execute_functions() {
     print_step "PASO 3/9: Ejecutando funciones..."
-
-    export PGPASSWORD="$DB_PASSWORD"
 
     local function_count=0
     local error_count=0
@@ -637,20 +706,26 @@ execute_functions() {
         "notifications"
         "admin_dashboard"
         "system_configuration"
+        "data_warehouse"
     )
 
+    # Ejecutar TODAS las funciones como superuser (postgres)
+    # Razon: Muchas funciones usan SECURITY DEFINER y referencian tablas de otros schemas
+    # NOTA: Excluir archivos .TEST.sql (son test harnesses, no definiciones de funciones)
     for schema in "${schemas[@]}"; do
         local functions_dir="$DDL_DIR/schemas/$schema/functions"
         if [ -d "$functions_dir" ]; then
             for function_file in "$functions_dir"/*.sql; do
                 if [ -f "$function_file" ]; then
-                    if execute_sql_file "$function_file" > /dev/null 2>&1; then
+                    # Excluir archivos de test
+                    if [[ "$(basename $function_file)" == *.TEST.sql ]]; then
+                        continue
+                    fi
+                    if execute_sql_file_as_superuser "$function_file" > /dev/null 2>&1; then
                         function_count=$((function_count + 1))
                     else
                         error_count=$((error_count + 1))
-                        if [ "$ENV_VERBOSE" = "true" ]; then
-                            print_warning "  Error en $(basename $function_file)"
-                        fi
+                        print_warning "  Error en $(basename $function_file)"
                     fi
                 fi
             done
@@ -662,8 +737,6 @@ execute_functions() {
     else
         print_success "$function_count funciones creadas exitosamente"
     fi
-
-    unset PGPASSWORD
 }
 
 # ============================================================================
@@ -672,8 +745,6 @@ execute_functions() {
 
 execute_views() {
     print_step "PASO 4/9: Ejecutando vistas..."
-
-    export PGPASSWORD="$DB_PASSWORD"
 
     local view_count=0
     local error_count=0
@@ -685,20 +756,23 @@ execute_views() {
         "progress_tracking"
         "educational_content"
         "social_features"
+        "data_warehouse"
+        "communication"
+        "content_management"
+        "audit_logging"
     )
 
+    # Ejecutar vistas como superuser (referencian tablas de multiples schemas)
     for schema in "${schemas[@]}"; do
         local views_dir="$DDL_DIR/schemas/$schema/views"
         if [ -d "$views_dir" ]; then
             for view_file in "$views_dir"/*.sql; do
                 if [ -f "$view_file" ]; then
-                    if execute_sql_file "$view_file" > /dev/null 2>&1; then
+                    if execute_sql_file_as_superuser "$view_file" > /dev/null 2>&1; then
                         view_count=$((view_count + 1))
                     else
                         error_count=$((error_count + 1))
-                        if [ "$ENV_VERBOSE" = "true" ]; then
-                            print_warning "  Error en $(basename $view_file)"
-                        fi
+                        print_warning "  Error en $(basename $view_file)"
                     fi
                 fi
             done
@@ -710,8 +784,6 @@ execute_views() {
     else
         print_success "$view_count vistas creadas exitosamente"
     fi
-
-    unset PGPASSWORD
 }
 
 # ============================================================================
@@ -721,26 +793,24 @@ execute_views() {
 execute_mviews() {
     print_step "PASO 5/9: Ejecutando vistas materializadas..."
 
-    export PGPASSWORD="$DB_PASSWORD"
-
     local mview_count=0
     local error_count=0
     local schemas=(
         "gamification_system"
+        "data_warehouse"
     )
 
+    # Ejecutar MVIEWs como superuser
     for schema in "${schemas[@]}"; do
         local mviews_dir="$DDL_DIR/schemas/$schema/materialized-views"
         if [ -d "$mviews_dir" ]; then
             for mview_file in "$mviews_dir"/*.sql; do
                 if [ -f "$mview_file" ]; then
-                    if execute_sql_file "$mview_file" > /dev/null 2>&1; then
+                    if execute_sql_file_as_superuser "$mview_file" > /dev/null 2>&1; then
                         mview_count=$((mview_count + 1))
                     else
                         error_count=$((error_count + 1))
-                        if [ "$ENV_VERBOSE" = "true" ]; then
-                            print_warning "  Error en $(basename $mview_file)"
-                        fi
+                        print_warning "  Error en $(basename $mview_file)"
                     fi
                 fi
             done
@@ -754,8 +824,6 @@ execute_mviews() {
     else
         print_success "$mview_count MVIEWs creadas exitosamente"
     fi
-
-    unset PGPASSWORD
 }
 
 # ============================================================================
@@ -764,8 +832,6 @@ execute_mviews() {
 
 execute_indexes() {
     print_step "PASO 6/9: Ejecutando índices..."
-
-    export PGPASSWORD="$DB_PASSWORD"
 
     local index_count=0
     local error_count=0
@@ -778,16 +844,19 @@ execute_indexes() {
         "progress_tracking"
         "social_features"
         "system_configuration"
+        "data_warehouse"
+        "optimization"
     )
 
     print_info "Creando índices (esto puede tardar varios minutos)..."
 
+    # Ejecutar indices como superuser
     for schema in "${schemas[@]}"; do
         local indexes_dir="$DDL_DIR/schemas/$schema/indexes"
         if [ -d "$indexes_dir" ]; then
             for index_file in "$indexes_dir"/*.sql; do
                 if [ -f "$index_file" ]; then
-                    if execute_sql_file "$index_file" > /dev/null 2>&1; then
+                    if execute_sql_file_as_superuser "$index_file" > /dev/null 2>&1; then
                         index_count=$((index_count + 1))
                     else
                         error_count=$((error_count + 1))
@@ -802,8 +871,6 @@ execute_indexes() {
     else
         print_success "$index_count índices creados exitosamente"
     fi
-
-    unset PGPASSWORD
 }
 
 # ============================================================================
@@ -812,8 +879,6 @@ execute_indexes() {
 
 execute_triggers() {
     print_step "PASO 7/9: Ejecutando triggers..."
-
-    export PGPASSWORD="$DB_PASSWORD"
 
     local trigger_count=0
     local error_count=0
@@ -827,20 +892,23 @@ execute_triggers() {
         "audit_logging"
         "system_configuration"
         "lti_integration"
+        "communication"
+        "notifications"
+        "data_warehouse"
     )
 
+    # Ejecutar TODOS los triggers como superuser (postgres)
+    # Razon: Triggers usan SECURITY DEFINER functions y referencian tablas cross-schema
     for schema in "${schemas[@]}"; do
         local triggers_dir="$DDL_DIR/schemas/$schema/triggers"
         if [ -d "$triggers_dir" ]; then
             for trigger_file in "$triggers_dir"/*.sql; do
                 if [ -f "$trigger_file" ]; then
-                    if execute_sql_file "$trigger_file" > /dev/null 2>&1; then
+                    if execute_sql_file_as_superuser "$trigger_file" > /dev/null 2>&1; then
                         trigger_count=$((trigger_count + 1))
                     else
                         error_count=$((error_count + 1))
-                        if [ "$ENV_VERBOSE" = "true" ]; then
-                            print_warning "  Error en $(basename $trigger_file)"
-                        fi
+                        print_warning "  Error en $(basename $trigger_file)"
                     fi
                 fi
             done
@@ -852,8 +920,6 @@ execute_triggers() {
     else
         print_success "$trigger_count triggers creados exitosamente"
     fi
-
-    unset PGPASSWORD
 }
 
 # ============================================================================
@@ -862,8 +928,6 @@ execute_triggers() {
 
 execute_rls_policies() {
     print_step "PASO 8/9: Ejecutando RLS policies..."
-
-    export PGPASSWORD="$DB_PASSWORD"
 
     local policy_count=0
     local error_count=0
@@ -878,20 +942,22 @@ execute_rls_policies() {
         "system_configuration"
         "communication"
         "notifications"
+        "lti_integration"
+        "data_warehouse"
+        "admin_dashboard"
     )
 
+    # Ejecutar TODOS los RLS como superuser (requiere ALTER TABLE y CREATE POLICY)
     for schema in "${schemas[@]}"; do
         local policies_dir="$DDL_DIR/schemas/$schema/rls-policies"
         if [ -d "$policies_dir" ]; then
             for policy_file in "$policies_dir"/*.sql; do
                 if [ -f "$policy_file" ]; then
-                    if execute_sql_file "$policy_file" > /dev/null 2>&1; then
+                    if execute_sql_file_as_superuser "$policy_file" > /dev/null 2>&1; then
                         policy_count=$((policy_count + 1))
                     else
                         error_count=$((error_count + 1))
-                        if [ "$ENV_VERBOSE" = "true" ]; then
-                            print_warning "  Error en $(basename $policy_file)"
-                        fi
+                        print_warning "  Error en $(basename $policy_file)"
                     fi
                 fi
             done
@@ -899,12 +965,33 @@ execute_rls_policies() {
     done
 
     if [ $error_count -gt 0 ]; then
-        print_warning "$policy_count archivos RLS ejecutados, $error_count con errores"
+        print_warning "$policy_count archivos RLS de schema ejecutados, $error_count con errores"
     else
-        print_success "$policy_count archivos RLS ejecutados exitosamente"
+        print_success "$policy_count archivos RLS de schema ejecutados exitosamente"
     fi
 
-    unset PGPASSWORD
+    # Cargar RLS enable files globales (CRITICO: contienen la mayoria de politicas)
+    print_info "Cargando RLS enable files globales..."
+    local rls_enable_files=(
+        "$DDL_DIR/07-enable-rls.sql"
+        "$DDL_DIR/07b-enable-rls-phase2.sql"
+        "$DDL_DIR/07c-enable-rls-phase3.sql"
+    )
+    local rls_global_count=0
+    for rls_file in "${rls_enable_files[@]}"; do
+        if [ -f "$rls_file" ]; then
+            if execute_sql_file_as_superuser "$rls_file" > /dev/null 2>&1; then
+                rls_global_count=$((rls_global_count + 1))
+                print_success "  $(basename $rls_file) ejecutado"
+            else
+                print_warning "  Error en $(basename $rls_file)"
+            fi
+        fi
+    done
+
+    if [ $rls_global_count -gt 0 ]; then
+        print_success "$rls_global_count archivos RLS globales ejecutados"
+    fi
 }
 
 # ============================================================================
@@ -1197,7 +1284,7 @@ COMMIT;
     # Ejecutar como superuser (postgres) para poder deshabilitar triggers del sistema
     if [ "$USE_SUDO" = true ]; then
         if [ -n "$SUDO_PASS" ]; then
-            printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1
+            printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
         fi
 
         if echo "$fix_sql" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1; then
@@ -1229,61 +1316,95 @@ COMMIT;
 validate_installation() {
     print_step "Validando instalación..."
 
-    export PGPASSWORD="$DB_PASSWORD"
+    # Usar superuser para validacion precisa (gamilit_user puede no ver objetos de postgres)
+    local psql_cmd="sudo -u postgres psql -d $DB_NAME -tAc"
+    if [ "$USE_SUDO" != true ]; then
+        export PGPASSWORD="$DB_PASSWORD"
+        psql_cmd="psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -tAc"
+    fi
 
-    local schema_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
-        "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name IN ('auth', 'auth_management', 'gamilit', 'storage', 'admin_dashboard', 'gamification_system', 'educational_content', 'content_management', 'social_features', 'progress_tracking', 'audit_logging', 'system_configuration');")
-    print_info "Schemas: $schema_count/12"
+    local schema_count=$($psql_cmd \
+        "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name NOT IN ('pg_catalog', 'information_schema', 'pg_toast');" 2>/dev/null)
+    print_info "Schemas: $schema_count (esperados: 16+)"
 
-    local table_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
-        "SELECT COUNT(*) FROM pg_tables WHERE schemaname NOT IN ('pg_catalog', 'information_schema');")
-    print_info "Tablas: $table_count"
+    local table_count=$($psql_cmd \
+        "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog', 'information_schema') AND table_type='BASE TABLE';" 2>/dev/null)
+    print_info "Tablas: $table_count (esperadas: 168+)"
 
-    local function_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
-        "SELECT COUNT(*) FROM information_schema.routines WHERE routine_schema NOT IN ('pg_catalog', 'information_schema');")
+    local function_count=$($psql_cmd \
+        "SELECT COUNT(*) FROM pg_proc p JOIN pg_namespace n ON p.pronamespace = n.oid WHERE n.nspname NOT IN ('pg_catalog', 'information_schema');" 2>/dev/null)
     print_info "Funciones: $function_count"
 
-    local trigger_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
-        "SELECT COUNT(*) FROM information_schema.triggers WHERE trigger_schema NOT IN ('pg_catalog', 'information_schema');")
+    local trigger_count=$($psql_cmd \
+        "SELECT COUNT(*) FROM pg_trigger t JOIN pg_class c ON t.tgrelid = c.oid JOIN pg_namespace n ON c.relnamespace = n.oid WHERE NOT t.tgisinternal AND n.nspname NOT IN ('pg_catalog', 'information_schema');" 2>/dev/null)
     print_info "Triggers: $trigger_count"
 
-    local policy_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
-        "SELECT COUNT(*) FROM pg_policies;")
+    local policy_count=$($psql_cmd \
+        "SELECT COUNT(*) FROM pg_policies WHERE schemaname NOT IN ('pg_catalog', 'information_schema');" 2>/dev/null)
     print_info "RLS Policies: $policy_count"
 
-    local index_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
-        "SELECT COUNT(*) FROM pg_indexes WHERE schemaname NOT IN ('pg_catalog', 'information_schema');")
-    print_info "Índices: $index_count"
+    local enum_count=$($psql_cmd \
+        "SELECT COUNT(*) FROM pg_type t JOIN pg_namespace n ON t.typnamespace = n.oid WHERE t.typtype='e' AND n.nspname NOT IN ('pg_catalog','information_schema');" 2>/dev/null)
+    print_info "ENUMs: $enum_count"
 
-    local user_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
+    local view_count=$($psql_cmd \
+        "SELECT COUNT(*) FROM pg_views WHERE schemaname NOT IN ('pg_catalog', 'information_schema');" 2>/dev/null)
+    print_info "Views: $view_count"
+
+    local mview_count=$($psql_cmd \
+        "SELECT COUNT(*) FROM pg_matviews WHERE schemaname NOT IN ('pg_catalog', 'information_schema');" 2>/dev/null)
+    print_info "Materialized Views: $mview_count"
+
+    local fk_count=$($psql_cmd \
+        "SELECT COUNT(*) FROM information_schema.table_constraints WHERE constraint_type='FOREIGN KEY' AND table_schema NOT IN ('pg_catalog', 'information_schema');" 2>/dev/null)
+    print_info "Foreign Keys: $fk_count"
+
+    local user_count=$($psql_cmd \
         "SELECT COUNT(*) FROM auth.users WHERE deleted_at IS NULL;" 2>/dev/null || echo "0")
     print_info "Usuarios: $user_count"
 
-    local module_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
+    local module_count=$($psql_cmd \
         "SELECT COUNT(*) FROM educational_content.modules;" 2>/dev/null || echo "0")
-    print_info "Módulos: $module_count"
+    print_info "Módulos educativos: $module_count"
 
-    unset PGPASSWORD
+    local profile_count=$($psql_cmd \
+        "SELECT COUNT(*) FROM auth_management.profiles;" 2>/dev/null || echo "0")
+    print_info "Perfiles: $profile_count"
+
+    if [ "$USE_SUDO" != true ]; then
+        unset PGPASSWORD
+    fi
 
     # Validación de completitud
-    if [ "$schema_count" -lt 12 ]; then
-        print_error "Faltan schemas (esperados: 12, encontrados: $schema_count)"
-        return 1
+    local validation_ok=true
+
+    if [ "${schema_count:-0}" -lt 16 ]; then
+        print_error "Schemas insuficientes (esperados: 16+, encontrados: $schema_count)"
+        validation_ok=false
     fi
 
-    if [ "$function_count" -lt "${ENV_MIN_FUNCTIONS:-50}" ]; then
-        print_warning "Funciones faltantes (esperadas: ${ENV_MIN_FUNCTIONS:-60}+, encontradas: $function_count)"
+    if [ "${table_count:-0}" -lt "${ENV_MIN_TABLES:-60}" ]; then
+        print_error "Tablas insuficientes (esperadas: ${ENV_MIN_TABLES:-60}+, encontradas: $table_count)"
+        validation_ok=false
     fi
 
-    if [ "$trigger_count" -lt "${ENV_MIN_TRIGGERS:-40}" ]; then
-        print_warning "Triggers faltantes (esperados: ${ENV_MIN_TRIGGERS:-50}+, encontrados: $trigger_count)"
+    if [ "${function_count:-0}" -lt "${ENV_MIN_FUNCTIONS:-50}" ]; then
+        print_warning "Funciones por debajo del minimo (esperadas: ${ENV_MIN_FUNCTIONS:-50}+, encontradas: $function_count)"
     fi
 
-    if [ "$policy_count" -lt "${ENV_MIN_RLS_POLICIES:-100}" ]; then
-        print_warning "RLS policies faltantes (esperadas: ${ENV_MIN_RLS_POLICIES:-200}+, encontradas: $policy_count)"
+    if [ "${trigger_count:-0}" -lt "${ENV_MIN_TRIGGERS:-40}" ]; then
+        print_warning "Triggers por debajo del minimo (esperados: ${ENV_MIN_TRIGGERS:-40}+, encontrados: $trigger_count)"
     fi
 
-    print_success "Validación completada"
+    if [ "${policy_count:-0}" -lt "${ENV_MIN_RLS_POLICIES:-100}" ]; then
+        print_warning "RLS policies por debajo del minimo (esperadas: ${ENV_MIN_RLS_POLICIES:-100}+, encontradas: $policy_count)"
+    fi
+
+    if [ "$validation_ok" = true ]; then
+        print_success "Validación completada exitosamente"
+    else
+        print_error "Validación completada con errores"
+    fi
 }
 
 # ============================================================================
@@ -1411,6 +1532,48 @@ EOF
 }
 
 # ============================================================================
+# POST-DDL: GRANT PERMISOS A GAMILIT_USER
+# ============================================================================
+# Necesario porque funciones, vistas, triggers y RLS se ejecutan como postgres (superuser)
+# pero gamilit_user necesita acceso completo para la aplicacion y seeds
+
+grant_all_permissions() {
+    print_step "Otorgando permisos completos a $DB_USER..."
+
+    local grant_sql="
+    -- Grant usage on all schemas
+    DO \$\$
+    DECLARE
+        schema_name TEXT;
+    BEGIN
+        FOR schema_name IN
+            SELECT nspname FROM pg_namespace
+            WHERE nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')
+        LOOP
+            EXECUTE format('GRANT USAGE ON SCHEMA %I TO $DB_USER', schema_name);
+            EXECUTE format('GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA %I TO $DB_USER', schema_name);
+            EXECUTE format('GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA %I TO $DB_USER', schema_name);
+            EXECUTE format('GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA %I TO $DB_USER', schema_name);
+            EXECUTE format('ALTER DEFAULT PRIVILEGES IN SCHEMA %I GRANT ALL ON TABLES TO $DB_USER', schema_name);
+            EXECUTE format('ALTER DEFAULT PRIVILEGES IN SCHEMA %I GRANT ALL ON SEQUENCES TO $DB_USER', schema_name);
+        END LOOP;
+    END
+    \$\$;
+
+    -- Grant specific permissions
+    GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
+    "
+
+    if [ "$USE_SUDO" = true ]; then
+        echo "$grant_sql" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1
+    else
+        echo "$grant_sql" | PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$POSTGRES_USER" -d "$DB_NAME" > /dev/null 2>&1
+    fi
+
+    print_success "Permisos otorgados a $DB_USER en todos los schemas"
+}
+
+# ============================================================================
 # MAIN
 # ============================================================================
 
@@ -1484,6 +1647,7 @@ main() {
     execute_indexes
     execute_triggers
     execute_rls_policies
+    grant_all_permissions
     load_seeds
     fix_profiles_and_gamification
     validate_installation

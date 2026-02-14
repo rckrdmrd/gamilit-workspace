@@ -6,6 +6,12 @@
 -- ============================================================================
 
 -- ============================================================================
+-- EXTENSIONS (pg_stat_statements for query monitoring)
+-- @ref GUIA-RUNBOOK-POSTGRESQL §3.1
+-- ============================================================================
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+
+-- ============================================================================
 -- ROLES ESTÁNDAR PARA RLS (Row Level Security)
 -- ============================================================================
 -- Nota: Estos roles son patrón estándar de la industria para RLS en PostgreSQL.

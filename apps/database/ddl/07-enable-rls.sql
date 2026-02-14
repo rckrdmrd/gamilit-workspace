@@ -22,13 +22,12 @@ CREATE POLICY "auth_attempts_admin_all" ON auth_management.auth_attempts
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
-CREATE POLICY "auth_attempts_user_read_own" ON auth_management.auth_attempts
-    FOR SELECT TO authenticated
-    USING (user_id = auth.uid());
+-- auth_attempts no tiene user_id; acceso propio via email
+-- (cubierto por 07d-rls-policies-pending-tables.sql)
 
 -- 1.2 parent_accounts - Cuentas de padres
 ALTER TABLE auth_management.parent_accounts ENABLE ROW LEVEL SECURITY;
@@ -39,18 +38,18 @@ CREATE POLICY "parent_accounts_admin_all" ON auth_management.parent_accounts
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
 CREATE POLICY "parent_accounts_read_own" ON auth_management.parent_accounts
     FOR SELECT TO authenticated
-    USING (user_id = auth.uid());
+    USING (profile_id = auth.uid());
 
 CREATE POLICY "parent_accounts_update_own" ON auth_management.parent_accounts
     FOR UPDATE TO authenticated
-    USING (user_id = auth.uid())
-    WITH CHECK (user_id = auth.uid());
+    USING (profile_id = auth.uid())
+    WITH CHECK (profile_id = auth.uid());
 
 -- 1.3 parent_notifications - Notificaciones para padres
 ALTER TABLE auth_management.parent_notifications ENABLE ROW LEVEL SECURITY;
@@ -61,14 +60,14 @@ CREATE POLICY "parent_notifications_admin_all" ON auth_management.parent_notific
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
 CREATE POLICY "parent_notifications_read_own" ON auth_management.parent_notifications
     FOR SELECT TO authenticated
     USING (parent_account_id IN (
-        SELECT id FROM auth_management.parent_accounts WHERE user_id = auth.uid()
+        SELECT id FROM auth_management.parent_accounts WHERE profile_id = auth.uid()
     ));
 
 -- 1.4 parent_student_links - Vinculos padre-estudiante
@@ -80,7 +79,7 @@ CREATE POLICY "parent_student_links_admin_all" ON auth_management.parent_student
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -88,7 +87,7 @@ CREATE POLICY "parent_student_links_read_own" ON auth_management.parent_student_
     FOR SELECT TO authenticated
     USING (
         parent_account_id IN (
-            SELECT id FROM auth_management.parent_accounts WHERE user_id = auth.uid()
+            SELECT id FROM auth_management.parent_accounts WHERE profile_id = auth.uid()
         )
         OR student_id = auth.uid()
     );
@@ -106,7 +105,7 @@ CREATE POLICY "message_participants_admin_all" ON communication.message_particip
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -131,7 +130,7 @@ CREATE POLICY "assignments_admin_all" ON educational_content.assignments
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -142,7 +141,7 @@ CREATE POLICY "assignments_teacher_manage" ON educational_content.assignments
         OR EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'teacher'
+            WHERE p.id = auth.uid() AND ur.role = 'admin_teacher'
         )
     );
 
@@ -165,7 +164,7 @@ CREATE POLICY "assignment_exercises_admin_all" ON educational_content.assignment
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -188,7 +187,7 @@ CREATE POLICY "assignment_students_admin_teacher" ON educational_content.assignm
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -205,7 +204,7 @@ CREATE POLICY "assignment_submissions_admin_teacher" ON educational_content.assi
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -215,26 +214,44 @@ CREATE POLICY "assignment_submissions_student_own" ON educational_content.assign
     WITH CHECK (student_id = auth.uid());
 
 -- 3.5 teacher_content - Contenido de docentes
-ALTER TABLE educational_content.teacher_content ENABLE ROW LEVEL SECURITY;
+ALTER TABLE educational_content.teacher_contents ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "teacher_content_admin_all" ON educational_content.teacher_content
+CREATE POLICY "teacher_content_admin_all" ON educational_content.teacher_contents
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
-CREATE POLICY "teacher_content_teacher_own" ON educational_content.teacher_content
+CREATE POLICY "teacher_content_teacher_own" ON educational_content.teacher_contents
     FOR ALL TO authenticated
     USING (teacher_id = auth.uid())
     WITH CHECK (teacher_id = auth.uid());
 
-CREATE POLICY "teacher_content_student_read_public" ON educational_content.teacher_content
+CREATE POLICY "teacher_content_student_read_public" ON educational_content.teacher_contents
     FOR SELECT TO authenticated
-    USING (is_public = true);
+    USING (visibility = 'public');
+
+-- 3.6 media_attachments - Archivos multimedia adjuntos a ejercicios
+ALTER TABLE educational_content.media_attachments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY media_attachments_admin_all ON educational_content.media_attachments
+    FOR ALL TO authenticated
+    USING (
+        EXISTS (
+            SELECT 1 FROM auth_management.profiles p
+            JOIN auth_management.user_roles ur ON p.id = ur.user_id
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
+        )
+    );
+
+CREATE POLICY media_attachments_user_own ON educational_content.media_attachments
+    FOR ALL TO authenticated
+    USING (user_id = auth.uid())
+    WITH CHECK (user_id = auth.uid());
 
 -- ============================================
 -- SECCION 4: GAMIFICATION_SYSTEM (3 tablas)
@@ -249,7 +266,7 @@ CREATE POLICY "active_boosts_admin_all" ON gamification_system.active_boosts
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -267,7 +284,7 @@ CREATE POLICY "inventory_transactions_admin_all" ON gamification_system.inventor
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -288,7 +305,7 @@ CREATE POLICY "user_purchases_admin_all" ON gamification_system.user_purchases
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -302,19 +319,19 @@ CREATE POLICY "user_purchases_user_own" ON gamification_system.user_purchases
 -- ============================================
 
 -- 5.1 lti_grade_passback - Calificaciones LTI
-ALTER TABLE lti_integration.lti_grade_passback ENABLE ROW LEVEL SECURITY;
+ALTER TABLE lti_integration.lti_grade_passbacks ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "lti_grade_passback_admin_all" ON lti_integration.lti_grade_passback
+CREATE POLICY "lti_grade_passback_admin_all" ON lti_integration.lti_grade_passbacks
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
-CREATE POLICY "lti_grade_passback_user_read_own" ON lti_integration.lti_grade_passback
+CREATE POLICY "lti_grade_passback_user_read_own" ON lti_integration.lti_grade_passbacks
     FOR SELECT TO authenticated
     USING (user_id = auth.uid());
 
@@ -327,7 +344,7 @@ CREATE POLICY "lti_sessions_admin_all" ON lti_integration.lti_sessions
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -348,7 +365,7 @@ CREATE POLICY "manual_reviews_admin_teacher" ON progress_tracking.manual_reviews
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -363,36 +380,36 @@ CREATE POLICY "manual_reviews_student_read" ON progress_tracking.manual_reviews
     );
 
 -- 6.2 mastery_tracking - Seguimiento de maestria
-ALTER TABLE progress_tracking.mastery_tracking ENABLE ROW LEVEL SECURITY;
+ALTER TABLE progress_tracking.mastery_trackings ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "mastery_tracking_admin_teacher" ON progress_tracking.mastery_tracking
+CREATE POLICY "mastery_tracking_admin_teacher" ON progress_tracking.mastery_trackings
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
-CREATE POLICY "mastery_tracking_user_own" ON progress_tracking.mastery_tracking
+CREATE POLICY "mastery_tracking_user_own" ON progress_tracking.mastery_trackings
     FOR SELECT TO authenticated
     USING (user_id = auth.uid());
 
 -- 6.3 module_completion_tracking - Completacion de modulos
-ALTER TABLE progress_tracking.module_completion_tracking ENABLE ROW LEVEL SECURITY;
+ALTER TABLE progress_tracking.module_completion_trackings ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "module_completion_admin_teacher" ON progress_tracking.module_completion_tracking
+CREATE POLICY "module_completion_admin_teacher" ON progress_tracking.module_completion_trackings
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
-CREATE POLICY "module_completion_user_own" ON progress_tracking.module_completion_tracking
+CREATE POLICY "module_completion_user_own" ON progress_tracking.module_completion_trackings
     FOR SELECT TO authenticated
     USING (user_id = auth.uid());
 
@@ -405,7 +422,7 @@ CREATE POLICY "skill_assessments_admin_teacher" ON progress_tracking.skill_asses
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -422,7 +439,7 @@ CREATE POLICY "intervention_alerts_admin_teacher" ON progress_tracking.student_i
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -435,7 +452,7 @@ CREATE POLICY "teacher_interventions_admin_teacher" ON progress_tracking.teacher
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -444,19 +461,19 @@ CREATE POLICY "teacher_interventions_student_read" ON progress_tracking.teacher_
     USING (student_id = auth.uid());
 
 -- 6.7 user_current_level - Nivel actual del usuario
-ALTER TABLE progress_tracking.user_current_level ENABLE ROW LEVEL SECURITY;
+ALTER TABLE progress_tracking.user_current_levels ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "user_current_level_admin_teacher" ON progress_tracking.user_current_level
+CREATE POLICY "user_current_level_admin_teacher" ON progress_tracking.user_current_levels
     FOR ALL TO authenticated
     USING (
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
-CREATE POLICY "user_current_level_user_own" ON progress_tracking.user_current_level
+CREATE POLICY "user_current_level_user_own" ON progress_tracking.user_current_levels
     FOR ALL TO authenticated
     USING (user_id = auth.uid())
     WITH CHECK (user_id = auth.uid());
@@ -474,7 +491,7 @@ CREATE POLICY "challenge_participants_admin" ON social_features.challenge_partic
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -496,7 +513,7 @@ CREATE POLICY "challenge_results_admin" ON social_features.challenge_results
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -513,7 +530,7 @@ CREATE POLICY "discussion_threads_admin" ON social_features.discussion_threads
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -522,13 +539,13 @@ CREATE POLICY "discussion_threads_classroom_members" ON social_features.discussi
     USING (
         classroom_id IN (
             SELECT classroom_id FROM social_features.classroom_members
-            WHERE user_id = auth.uid()
+            WHERE student_id = auth.uid()
         )
     );
 
 CREATE POLICY "discussion_threads_create" ON social_features.discussion_threads
     FOR INSERT TO authenticated
-    WITH CHECK (author_id = auth.uid());
+    WITH CHECK (created_by = auth.uid());
 
 -- 7.4 peer_challenges - Retos entre pares
 ALTER TABLE social_features.peer_challenges ENABLE ROW LEVEL SECURITY;
@@ -539,14 +556,14 @@ CREATE POLICY "peer_challenges_admin" ON social_features.peer_challenges
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
 CREATE POLICY "peer_challenges_participants" ON social_features.peer_challenges
     FOR ALL TO authenticated
-    USING (challenger_id = auth.uid() OR challenged_id = auth.uid())
-    WITH CHECK (challenger_id = auth.uid());
+    USING (created_by = auth.uid())
+    WITH CHECK (created_by = auth.uid());
 
 -- 7.5 user_follows - Seguidores
 ALTER TABLE social_features.user_follows ENABLE ROW LEVEL SECURITY;
@@ -557,13 +574,13 @@ CREATE POLICY "user_follows_admin" ON social_features.user_follows
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role = 'admin'
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
 CREATE POLICY "user_follows_own" ON social_features.user_follows
     FOR ALL TO authenticated
-    USING (follower_id = auth.uid() OR followed_id = auth.uid())
+    USING (follower_id = auth.uid() OR following_id = auth.uid())
     WITH CHECK (follower_id = auth.uid());
 
 -- ============================================
@@ -579,7 +596,7 @@ CREATE POLICY "teacher_reports_admin_teacher" ON social_features.teacher_reports
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             JOIN auth_management.user_roles ur ON p.id = ur.user_id
-            WHERE p.id = auth.uid() AND ur.role IN ('admin', 'teacher')
+            WHERE p.id = auth.uid() AND ur.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -603,22 +620,22 @@ COMMENT ON TABLE educational_content.assignments IS 'RLS enabled: Tareas - teach
 COMMENT ON TABLE educational_content.assignment_exercises IS 'RLS enabled: Ejercicios de tareas - teacher manage + student read';
 COMMENT ON TABLE educational_content.assignment_students IS 'RLS enabled: Estudiantes asignados - teacher manage + student read own';
 COMMENT ON TABLE educational_content.assignment_submissions IS 'RLS enabled: Entregas - teacher review + student own';
-COMMENT ON TABLE educational_content.teacher_content IS 'RLS enabled: Contenido docente - teacher own + student read public';
+COMMENT ON TABLE educational_content.teacher_contents IS 'RLS enabled: Contenido docente - teacher own + student read public';
 
 COMMENT ON TABLE gamification_system.active_boosts IS 'RLS enabled: Boosts activos - gestion propia + admin';
 COMMENT ON TABLE gamification_system.inventory_transactions IS 'RLS enabled: Transacciones inventario - lectura propia + admin';
 COMMENT ON TABLE gamification_system.user_purchases IS 'RLS enabled: Compras usuario - gestion propia + admin';
 
-COMMENT ON TABLE lti_integration.lti_grade_passback IS 'RLS enabled: Calificaciones LTI - lectura propia + admin';
+COMMENT ON TABLE lti_integration.lti_grade_passbacks IS 'RLS enabled: Calificaciones LTI - lectura propia + admin';
 COMMENT ON TABLE lti_integration.lti_sessions IS 'RLS enabled: Sesiones LTI - lectura propia + admin';
 
 COMMENT ON TABLE progress_tracking.manual_reviews IS 'RLS enabled: Revisiones manuales - teacher manage + student read';
-COMMENT ON TABLE progress_tracking.mastery_tracking IS 'RLS enabled: Seguimiento maestria - teacher view + student own';
-COMMENT ON TABLE progress_tracking.module_completion_tracking IS 'RLS enabled: Completacion modulos - teacher view + student own';
+COMMENT ON TABLE progress_tracking.mastery_trackings IS 'RLS enabled: Seguimiento maestria - teacher view + student own';
+COMMENT ON TABLE progress_tracking.module_completion_trackings IS 'RLS enabled: Completacion modulos - teacher view + student own';
 COMMENT ON TABLE progress_tracking.skill_assessments IS 'RLS enabled: Evaluaciones habilidades - teacher view + student own';
 COMMENT ON TABLE progress_tracking.student_intervention_alerts IS 'RLS enabled: Alertas intervencion - solo teacher + admin';
 COMMENT ON TABLE progress_tracking.teacher_interventions IS 'RLS enabled: Intervenciones - teacher manage + student read';
-COMMENT ON TABLE progress_tracking.user_current_level IS 'RLS enabled: Nivel actual - gestion propia + teacher view';
+COMMENT ON TABLE progress_tracking.user_current_levels IS 'RLS enabled: Nivel actual - gestion propia + teacher view';
 
 COMMENT ON TABLE social_features.challenge_participants IS 'RLS enabled: Participantes retos - gestion propia + lectura publica';
 COMMENT ON TABLE social_features.challenge_results IS 'RLS enabled: Resultados retos - lectura publica + admin manage';
