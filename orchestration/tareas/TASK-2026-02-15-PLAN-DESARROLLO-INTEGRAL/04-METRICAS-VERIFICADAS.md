@@ -17,7 +17,7 @@
 | Funciones (DDL) | 183 | 183 | 183 | 183 | OK |
 | Funciones (runtime) | - | - | - | 249 | OK (label only) |
 | Triggers | 67 | 67 | 67 | 67 | OK |
-| RLS Policies | 207 | 207 | 207 | **227** (+20 Phase 2) | **NEEDS UPDATE** |
+| RLS Policies | 227 | 227 | 227 | **227** (+20 Phase 2) | **FIXED 2026-02-15** |
 | Foreign Keys | 298 | 298 | 298 | 298 | OK |
 | ENUMs | ~~40~~ **42** | ~~40~~ **42** | ~~40~~ **42** | **42** | **FIXED 2026-02-15** |
 
@@ -70,12 +70,12 @@ team_challenge_status, team_role, transaction_type, user_status
 
 | Metrica | CLAUDE.md | MASTER_INV | FE_INV | Codigo Real | Estado |
 |---------|-----------|-----------|--------|-------------|--------|
-| Componentes .tsx | 474 | 474 | 474 | **480** (broad) / 466 (strict) | **NEEDS UPDATE** |
+| Componentes .tsx | 480 | 480 | 480 | **480** (broad) / 466 (strict) | **FIXED 2026-02-15** |
 | Hooks | ~~101~~ **102** | ~~101~~ **102** | ~~101~~ **102** | **102** | **FIXED 2026-02-15** |
 | Paginas | 68 | 68 | 68 | 68 | OK |
 | Stores Zustand | 14 | 14 | 14 | 14 | OK |
-| API Service Files | 51 | 51 | 51 | **52** | **NEEDS UPDATE** (+1) |
-| API Calls Total | 655 | 655 | 655 | **570** | **NEEDS UPDATE** (-85 post-deletions) |
+| API Service Files | 52 | 52 | 52 | **52** | **FIXED 2026-02-15** |
+| API Calls Total | 570 | 570 | 570 | **570** | **FIXED 2026-02-15** |
 | Routes | 72 | 72 | 72 | 72 | OK |
 | Mecanicas | 30 | 30 | 30 | 30 | OK |
 | Type Files | 47 | 47 | 47 | 47 | OK |

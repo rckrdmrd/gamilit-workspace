@@ -19,7 +19,7 @@ resumen:
   materialized_views: 7
   funciones: 183               # DDL source count (249 runtime)
   triggers: 67                 # CREATE TRIGGER statements (not trigger functions)
-  rls_policies: 207            # CREATE POLICY statements across 4 RLS files
+  rls_policies: 227            # 207 original + 20 Phase 2 FORCE RLS (5 high-risk tables)
   foreign_keys: 298
   enums: 42                     # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
   index_statements: 978
@@ -230,7 +230,7 @@ enums:
 
 seguridad:
   rls_activo: true
-  total_policies: 207           # CREATE POLICY statements across 4 RLS files
+  total_policies: 227           # 207 original + 20 Phase 2 FORCE RLS (5 high-risk tables)
   tenant_column: "tenant_id"
   context_method: "SET LOCAL app.current_tenant_id"
 

@@ -135,7 +135,7 @@ features:
     - "5 modulos educativos (23 tipos ejercicios)"
     - "4 portales diferenciados"
     - "Sistema gamificacion maya completo"
-    - "RLS multi-tenancy (207 policies)"
+    - "RLS multi-tenancy (227 policies)"
     - "Real-time via Socket.IO"
     - "833 tests pasando"
 

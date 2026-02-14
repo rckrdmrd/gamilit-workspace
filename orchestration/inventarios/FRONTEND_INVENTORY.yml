@@ -182,12 +182,12 @@ hooks:
   # dentro de archivos de componentes fuera de directorios hooks/.
 
 # -------------------------------------------------------------------------------
-# API SERVICES (51 archivos, 655 llamadas apiClient)
+# API SERVICES (52 archivos, 570 llamadas apiClient)
 # -------------------------------------------------------------------------------
 
 api_services:
-  total_files: 51                               # 52 - 1 (contentAPI.ts deleted CORR-FE-001)
-  total_api_calls: 655                          # 662 - 7 (contentAPI.ts had ~7 apiClient calls)
+  total_files: 52                               # Verified 2026-02-15 post-consolidation
+  total_api_calls: 570                          # Verified 2026-02-15 post-deletion recount
   por_directorio:
     services_api_root: 14                       # adminAPI, educationalAPI, progressAPI, contentAPI, etc.
     services_api_teacher: 14                    # classroomsApi, assignmentsApi, analyticsApi, gradingApi, etc.
