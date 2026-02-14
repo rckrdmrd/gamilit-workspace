@@ -597,7 +597,7 @@ async function main() {
   console.log(`🤖 Subagente: SA-SCRIPTS-02`);
   console.log(`📦 Proyecto: GAMILIT\n`);
 
-  const basePath = '/home/isem/workspace/workspace-gamilit';
+  const basePath = path.resolve(__dirname, '../../..');
   let allViolations: ViolationType[] = [];
   let totalFilesScanned = 0;
 

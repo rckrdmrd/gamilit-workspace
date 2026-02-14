@@ -85,7 +85,7 @@ BACKEND_DIR="$APPS_ROOT/backend"
 DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
 DB_HOST="localhost"
-DB_PORT="${DB_PORT:-5432}"  # FUENTE VERDAD: workspace-v2/orchestration/inventarios/WORKSPACE-INTEGRATION.yml
+DB_PORT="${DB_PORT:-5432}"  # FUENTE VERDAD: apps/database/scripts/config/dev.conf | prod.conf
 POSTGRES_USER="postgres"
 
 # Variables de configuración

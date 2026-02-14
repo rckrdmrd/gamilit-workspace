@@ -1,10 +1,10 @@
 ---
-tipo: estandar-workspace
-scope: workspace
+tipo: estandar-proyecto
+scope: proyecto
 herencia: |
-  Este estandar aplica a nivel WORKSPACE.
-  Los proyectos pueden EXTENDER (no contradecir) con estandares locales.
-  Ejemplo: workspace-projects/projects/{proyecto}/docs/API-STANDARDS.md para APIs especificas.
+  Este estandar aplica al proyecto gamilit (standalone).
+  No hay herencia a otros proyectos (ver CLAUDE.md RC3).
+  Ejemplo: Reglas especificas del proyecto en orchestration/directivas/
 actualizado: 2026-01-16
 ---
 
@@ -41,12 +41,13 @@ module.exports = {
 };
 ```
 
-### Frontend (Next.js)
+### Frontend (React 19 + Vite 6.x)
 ```javascript
 // .eslintrc.js
 module.exports = {
   extends: [
-    'next/core-web-vitals',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
   ],

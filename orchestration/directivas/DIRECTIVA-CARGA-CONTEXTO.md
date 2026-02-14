@@ -120,7 +120,7 @@ Perfil:
 
 ```yaml
 Contexto:
-  - projects/{proyecto}/orchestration/00-guidelines/CONTEXTO-PROYECTO.md
+  - projects/{proyecto}/orchestration/00-guidelines/PROJECT-CONTEXT.md
   - projects/{proyecto}/orchestration/00-guidelines/HERENCIA-SIMCO.md
 ```
 
@@ -159,7 +159,7 @@ Si_operacion_es_DELEGAR:
 
 ## PASO 4: RESOLVER CONTEXTO DEL PROYECTO
 
-Leer `CONTEXTO-PROYECTO.md` del nivel mas especifico y obtener:
+Leer `PROJECT-CONTEXT.md` del nivel mas especifico y obtener:
 
 ```yaml
 Variables_a_Resolver:
@@ -240,7 +240,7 @@ D - Documentacion: Actualizar docs/ como estado FINAL
 4. Cargar SIMCO-TAREA.md
 5. Cargar PERFIL-BACKEND.md
 6. Cargar SIMCO-BACKEND.md (segun operacion)
-7. Cargar projects/gamilit/orchestration/00-guidelines/CONTEXTO-PROYECTO.md
+7. Cargar projects/gamilit/orchestration/00-guidelines/PROJECT-CONTEXT.md
 
 ### Confirmacion
 - Nivel: STANDALONE
@@ -364,7 +364,7 @@ Nota: Las directivas ahora estan en control-plane/orchestration/
 
 ### Error: Contexto no resuelto
 ```
-Solucion: Verificar que CONTEXTO-PROYECTO.md existe en el nivel especificado
+Solucion: Verificar que PROJECT-CONTEXT.md existe en el nivel especificado
 ```
 
 ### Error: Perfil no encontrado

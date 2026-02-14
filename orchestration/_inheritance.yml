@@ -47,9 +47,9 @@ madurez:
   cobertura:
     backend:
       modulos: 22
-      entities: 141
-      services: 145
-      controllers: 103
+      entities: 152
+      services: 170
+      controllers: 107
       endpoints: 850
     frontend:
       componentes: 458
@@ -59,11 +59,11 @@ madurez:
       portales: 4
     database:
       schemas: 18
-      tablas: 171
-      views: 13
-      funciones: 128
-      triggers: 49
-      rls_policies: 282
+      tablas: 170
+      views: 22
+      funciones: 255
+      triggers: 132
+      rls_policies: 263
     tests_pasando: 833
 
 # -------------------------------------------------------------------------------
@@ -197,8 +197,8 @@ modulos:
 configuracion:
   stack:
     backend: "NestJS 11, TypeORM 0.3.x, TypeScript"
-    frontend: "React 19, Zustand 5.x, TailwindCSS 4.x, Vite 7.x"
-    database: "PostgreSQL 16 con RLS"
+    frontend: "React 19, Zustand 5.x, TailwindCSS 4.x, Vite 6.x"
+    database: "PostgreSQL 15 con RLS"
     realtime: "Socket.IO 4.8+"
     runtime: "Node.js 20"
     testing: "Jest (backend), Vitest (frontend)"
@@ -260,7 +260,7 @@ validacion:
       detalles: "458 componentes, 4 portales, 85 paginas"
     - item: "Database estable"
       status: "passed"
-      detalles: "18 schemas, 171 tablas, 282 RLS policies"
+      detalles: "18 schemas, 170 tablas, 263 RLS policies"
     - item: "Produccion activa"
       status: "passed"
       detalles: "Usuarios reales, MVP desplegado"

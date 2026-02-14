@@ -25,7 +25,7 @@ orchestration/
 │
 ├── 00-guidelines/              # Contexto y guias del proyecto
 │   ├── _MAP.md
-│   ├── CONTEXTO-PROYECTO.md
+│   ├── PROJECT-CONTEXT.md
 │   ├── CONTEXTO-REFERENCIAS.md
 │   ├── HERENCIA-DIRECTIVAS.md
 │   ├── HERENCIA-SIMCO.md

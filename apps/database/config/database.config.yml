@@ -304,13 +304,13 @@ ddl:
 
 stats:
   tables: 171
-  views: 13
+  views: 22
   materialized_views: 7
-  functions: 128
-  triggers: 49
-  rls_policies: 282
-  foreign_keys: 299
-  enums: 36
+  functions: 183
+  triggers: 126
+  rls_policies: 263
+  foreign_keys: 298
+  enums: 42
   seed_files_prod: 38
 
 # =============================================================================

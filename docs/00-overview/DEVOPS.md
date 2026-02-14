@@ -16,13 +16,9 @@
 | PostgreSQL | 5432 | Base de datos principal |
 | Redis | 6379 | Cache y sesiones (DB 0) |
 
-### WSL (Windows Subsystem for Linux)
+### WSL — Servicios de Base de Datos
 
-**Distribucion:** Ubuntu-24.04
-**Usuario:** developer
-**Password:** developer_wsl_2026
-
-Los servicios de base de datos (PostgreSQL, Redis) corren dentro de WSL. El codigo fuente reside en Windows y se accede via `/mnt/c/`.
+En desarrollo local (Windows), PostgreSQL y Redis corren dentro de WSL (Ubuntu-24.04). El codigo fuente reside en Windows.
 
 ### Docker Compose (Desarrollo Local)
 

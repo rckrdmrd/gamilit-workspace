@@ -14,7 +14,7 @@ fecha_actualizacion: "2026-01-16"
 # ═══════════════════════════════════════════════════════════════════════════════
 
 estructura_shared:
-  ruta_base: "/home/isem/workspace-v2/shared/"
+  ruta_base: "./"  # Standalone — no external shared
 
   componentes:
     catalog:
@@ -79,8 +79,8 @@ estructura_shared:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 estructura_core:
-  ruta_base: "/home/isem/workspace-v2/orchestration/"
-  nota: "Core fue migrado a orchestration/ en workspace-v2"
+  ruta_base: "./orchestration/"
+  nota: "Core fue migrado a orchestration/ (standalone)"
 
   componentes:
     orchestration:

@@ -1,0 +1,89 @@
+# ============================================================================
+# USER STORY Template - SIMCO v4.0.0
+# Plantilla YAML para Historias de Usuario (Scrum + CAPVED Integration)
+# ============================================================================
+
+# --- Identificación ---
+id: "US-{PROJECT}-{NNN}"  # Formato: US-GAMILIT-001, US-SICAI-042
+epic_id: "EPIC-{PROJECT}-{NNN}"  # Épica padre
+title: "{Título breve de la historia}"
+
+# --- Narrativa (User Story Format) ---
+persona: "{rol-usuario}"  # Como... (e.g., "Administrador de sistema", "Ciudadano")
+action: "{acción-deseada}"  # Quiero... (e.g., "registrar una solicitud de trámite")
+value: "{beneficio-esperado}"  # Para... (e.g., "agilizar el proceso de atención")
+
+# --- Priorización ---
+priority: "{P0|P1|P2|P3}"  # P0=crítico, P1=alto, P2=medio, P3=bajo
+story_points: {1|2|3|5|8|13|21}  # Fibonacci estimation
+sprint: "{Sprint-N}"  # e.g., Sprint-1, Sprint-2
+
+# --- Estado y Asignación ---
+status: "{backlog|ready|in_progress|review|qa|done}"
+assignee: "{agent-profile}"  # Perfil del agente asignado (e.g., nestjs-backend-dev)
+
+# --- Criterios de Aceptación ---
+acceptance_criteria:
+  - id: "AC-1"
+    given: "{Condición inicial}"
+    when: "{Acción del usuario}"
+    then: "{Resultado esperado}"
+
+  - id: "AC-2"
+    given: "{Condición inicial}"
+    when: "{Acción del usuario}"
+    then: "{Resultado esperado}"
+
+  # - id: "AC-3"
+  #   given: "{...}"
+  #   when: "{...}"
+  #   then: "{...}"
+
+# --- Notas Técnicas ---
+technical_notes:
+  endpoints:  # APIs requeridas
+    - method: "{GET|POST|PUT|PATCH|DELETE}"
+      path: "/api/{resource}/{action}"
+      description: "{Descripción del endpoint}"
+    # - method: "{...}"
+    #   path: "/api/{...}"
+    #   description: "{...}"
+
+  entities:  # Entidades de base de datos afectadas
+    # - "{Entity1}"
+    # - "{Entity2}"
+
+  components_ui:  # Componentes de interfaz
+    # - "{ComponentName}"
+    # - "{ViewName}"
+
+# --- Trazabilidad ---
+traceability:
+  requirements:  # Requerimientos que satisface
+    - "REQ-{PROJECT}-{NNN}"
+    # - "REQ-{PROJECT}-{NNN+1}"
+
+# --- Dependencias ---
+depends_on:  # Historias que deben completarse antes
+  # - "US-{PROJECT}-{NNN}"
+  []
+
+blocks:  # Historias que están bloqueadas por esta
+  # - "US-{PROJECT}-{NNN}"
+  []
+
+# --- Tareas CAPVED ---
+tasks:  # Tareas técnicas que implementan esta historia
+  - "TASK-{PROJECT}-{NNN}"
+  # - "TASK-{PROJECT}-{NNN+1}"
+  # - "TASK-{PROJECT}-{NNN+2}"
+
+# --- Metadatos ---
+created: "{YYYY-MM-DD}"
+updated: "{YYYY-MM-DD}"
+
+# --- Notas ---
+# - Formato de historia: "Como {persona}, quiero {action}, para {value}"
+# - Cada AC debe ser verificable y testeable
+# - Story points: usar Fibonacci (1,2,3,5,8,13,21) - 13+ considerar dividir
+# - Status flow: backlog → ready → in_progress → review → qa → done

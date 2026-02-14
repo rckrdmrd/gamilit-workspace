@@ -156,7 +156,7 @@ El modelo de aislamiento por escuela implementa:
 | ID | Modulo | Requerimiento |
 |----|--------|---------------|
 | RF-GAM-013 | gamification | El sistema debe calcular XP por ejercicio completado con multiplicadores por dificultad (1x, 1.5x, 2x, 3x) |
-| RF-GAM-014 | gamification | El sistema debe implementar 5 rangos jerarquicos maya (Ah K'in, Nacom, Batab, Halach Uinik, Ajaw) con umbrales de XP |
+| RF-GAM-014 | gamification | El sistema debe implementar 5 rangos jerarquicos maya (Ajaw, Nacom, Ah K'in, Halach Uinic, K'uk'ulkan) con umbrales de XP |
 | RF-GAM-015 | gamification | El sistema debe otorgar bonificaciones por racha de dias consecutivos y completitud de modulo |
 | RF-GAM-016 | achievements | El sistema debe gestionar logros desbloqueables por hitos academicos, consistencia, progreso y logros secretos |
 | RF-GAM-017 | leaderboard | El sistema debe mantener leaderboards en tiempo real por aula, escuela, global y modulo con temporadas |

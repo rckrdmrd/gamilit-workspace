@@ -38,7 +38,7 @@ CONTEXTO_OBLIGATORIO:
     DB_NAME: "{valor}"
     BACKEND_ROOT: "{path}"
     FRONTEND_ROOT: "{path}"
-    # Incluir TODAS las variables del CONTEXTO-PROYECTO.md
+    # Incluir TODAS las variables del PROJECT-CONTEXT.md
 
   aliases_resueltos:
     "@DDL": "{ruta completa}"

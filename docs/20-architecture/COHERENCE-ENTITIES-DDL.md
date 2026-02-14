@@ -1,9 +1,9 @@
 # COHERENCE: Backend Entities vs DDL Tables
 
 **Proyecto:** GAMILIT
-**Version:** 1.0.0
-**Fecha:** 2026-02-03
-**Tarea:** BLOQUE 1 - Analisis de Coherencia
+**Version:** 2.0.0
+**Fecha:** 2026-02-12
+**Tarea:** TASK-2026-02-12-ANALISIS-BD-VS-DOCS (Sprint R3)
 
 ---
 
@@ -15,17 +15,19 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 
 | Metrica | Valor |
 |---------|-------|
-| Total Entities Backend | 136 |
-| Total Tablas DDL | 138 |
-| Entities con Match | 130 |
-| Tablas sin Entity | 12 |
-| Cobertura | 94.2% |
+| Total Entities Backend | 152 files (153 @Entity classes) |
+| Total Tablas DDL | 171 |
+| Tablas con Entity | 153 |
+| Tablas sin Entity | 18 |
+| Cobertura | 89.5% |
 
-**Nota:** Las tablas sin entity directa son generalmente junction tables M:N que TypeORM maneja automaticamente.
+**Nota:** Las 18 tablas sin entity directa son casos justificados: 16 data_warehouse (acceso via SQL raw), 1 auth.users (Supabase), 1 catalogo RBAC (auth_management.roles 03b). Ver seccion "Tablas DDL sin Entity" mas abajo.
+
+**Auditoria:** Verificado en TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION (2026-02-12).
 
 ---
 
-## Modulo: auth (17 Entities)
+## Modulo: auth (18 Entities)
 
 | Entity | Tabla DDL | Schema | Estado |
 |--------|-----------|--------|--------|
@@ -48,11 +50,11 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | user-session.entity.ts | 11-user_sessions.sql | auth_management | MATCH |
 | user-suspension.entity.ts | 12-user_suspensions.sql | auth_management | MATCH |
 
-**Cobertura auth:** 100% (17/17)
+**Cobertura auth:** 100% (18/18)
 
 ---
 
-## Modulo: gamification (19 Entities)
+## Modulo: gamification (21 Entities)
 
 | Entity | Tabla DDL | Schema | Estado |
 |--------|-----------|--------|--------|
@@ -60,6 +62,7 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | achievement-category.entity.ts | 10-achievement_categories.sql | gamification_system | MATCH |
 | active-boost.entity.ts | 11-active_boosts.sql | gamification_system | MATCH |
 | classroom-mission.entity.ts | 16-classroom_missions.sql | gamification_system | MATCH |
+| comodin-use.entity.ts | comodin_uses.sql | gamification_system | MATCH |
 | comodines-inventory.entity.ts | 07-comodines_inventory.sql | gamification_system | MATCH |
 | comodin-usage-log.entity.ts | 14-comodin_usage_log.sql | gamification_system | MATCH |
 | comodin-usage-tracking.entity.ts | 15-comodin_usage_tracking.sql | gamification_system | MATCH |
@@ -74,9 +77,10 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | user-achievement.entity.ts | 04-user_achievements.sql | gamification_system | MATCH |
 | user-purchase.entity.ts | 19-user_purchases.sql | gamification_system | MATCH |
 | user-rank.entity.ts | 02-user_ranks.sql | gamification_system | MATCH |
+| user-skill-rating.entity.ts | user_skill_ratings.sql | social_features | MATCH |
 | user-stats.entity.ts | 01-user_stats.sql | gamification_system | MATCH |
 
-**Cobertura gamification:** 100% (19/19)
+**Cobertura gamification:** 100% (21/21)
 
 ---
 
@@ -105,7 +109,7 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 
 ---
 
-## Modulo: progress (18 Entities)
+## Modulo: progress (20 Entities)
 
 | Entity | Tabla DDL | Schema | Estado |
 |--------|-----------|--------|--------|
@@ -114,6 +118,7 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | exercise-attempt.entity.ts | 03-exercise_attempts.sql | progress_tracking | MATCH |
 | exercise-submission.entity.ts | 04-exercise_submissions.sql | progress_tracking | MATCH |
 | learning-path.entity.ts | learning_paths.sql | progress_tracking | MATCH |
+| learning-path-module.entity.ts | learning_path_modules.sql | progress_tracking | MATCH |
 | learning-session.entity.ts | 02-learning_sessions.sql | progress_tracking | MATCH |
 | manual-review.entity.ts | 06-manual_reviews.sql | progress_tracking | MATCH |
 | mastery-tracking.entity.ts | mastery_tracking.sql | progress_tracking | MATCH |
@@ -129,11 +134,11 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | user-difficulty-progress.entity.ts | 15-user_difficulty_progress.sql | progress_tracking | MATCH |
 | user-learning-path.entity.ts | user_learning_paths.sql | progress_tracking | MATCH |
 
-**Cobertura progress:** 100% (18/18)
+**Cobertura progress:** 100% (20/20)
 
 ---
 
-## Modulo: social (17 Entities)
+## Modulo: social (26 Entities)
 
 | Entity | Tabla DDL | Schema | Estado |
 |--------|-----------|--------|--------|
@@ -145,6 +150,12 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | discussion-thread.entity.ts | discussion_threads.sql | social_features | MATCH |
 | friend-request.entity.ts | 10-friend_requests.sql | social_features | MATCH |
 | friendship.entity.ts | 01-friendships.sql | social_features | MATCH |
+| guild.entity.ts | guilds.sql | social_features | MATCH |
+| guild-emblem.entity.ts | guild_emblems.sql | social_features | MATCH |
+| guild-join-request.entity.ts | guild_join_requests.sql | social_features | MATCH |
+| guild-member.entity.ts | guild_members.sql | social_features | MATCH |
+| guild-mission.entity.ts | guild_missions.sql | social_features | MATCH |
+| guild-mission-contribution.entity.ts | guild_mission_contributions.sql | social_features | MATCH |
 | peer-challenge.entity.ts | 11-peer_challenges.sql | social_features | MATCH |
 | school.entity.ts | 02-schools.sql | social_features | MATCH |
 | social-interaction.entity.ts | social_interactions.sql | social_features | MATCH |
@@ -152,10 +163,13 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | team.entity.ts | 05-teams.sql | social_features | MATCH |
 | team-challenge.entity.ts | 07-team_challenges.sql | social_features | MATCH |
 | team-member.entity.ts | 06-team_members.sql | social_features | MATCH |
+| team-vs-team-challenge.entity.ts | team_vs_team_challenges.sql | social_features | MATCH |
 | user-activity.entity.ts | 09-user_activities.sql | social_features | MATCH |
+| user-block.entity.ts | user_blocks.sql | social_features | MATCH |
 | user-follow.entity.ts | user_follows.sql | social_features | MATCH |
+| user-report.entity.ts | user_reports.sql | social_features | MATCH |
 
-**Cobertura social:** 100% (17/17)
+**Cobertura social:** 100% (26/26)
 
 ---
 
@@ -240,7 +254,7 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 
 ---
 
-## Modulo: notifications (6 Entities)
+## Modulo: notifications (7 Entities)
 
 | Entity | Tabla DDL | Schema | Estado |
 |--------|-----------|--------|--------|
@@ -249,9 +263,10 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | notification-preference.entity.ts | notification_preferences.sql | notifications | MATCH |
 | notification-queue.entity.ts | notification_queue.sql | notifications | MATCH |
 | notification-template.entity.ts | notification_templates.sql | notifications | MATCH |
+| rate-limit-log.entity.ts | rate_limit_logs.sql | notifications | MATCH |
 | user-device.entity.ts | user_devices.sql | notifications | MATCH |
 
-**Cobertura notifications:** 100% (6/6)
+**Cobertura notifications:** 100% (7/7)
 
 ---
 
@@ -270,23 +285,64 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 
 ---
 
-## Tablas DDL sin Entity Directa
+## Tablas DDL sin Entity Directa (22 tablas)
 
-Las siguientes tablas no tienen entity TypeORM directa, pero son manejadas mediante:
-- Junction tables M:N (gestionadas automaticamente por TypeORM)
-- Vistas materializadas
-- Tablas de sistema/metadata
+### Categoria 1: Data Warehouse (16 tablas) - Intencional
+
+Acceso via SQL raw, materialized views, y reportes directos. No requieren entity TypeORM.
+
+| Tabla | Tipo | Descripcion |
+|-------|------|-------------|
+| dim_dates | Dimension | Fecha (calendario educativo) |
+| dim_times | Dimension | Hora del dia |
+| dim_students | Dimension | Estudiantes (SCD2) |
+| dim_exercises | Dimension | Ejercicios educativos |
+| dim_modules | Dimension | Modulos educativos |
+| dim_teachers | Dimension | Docentes |
+| dim_achievements | Dimension | Logros gamificacion |
+| dim_event_types | Dimension | Tipos de eventos |
+| fact_exercise_completions | Fact | Completaciones de ejercicios |
+| fact_daily_progress | Fact | Progreso diario agregado |
+| fact_gamification_events | Fact | Eventos de gamificacion |
+| fact_teacher_metrics | Fact | Metricas docentes |
+| ml_model_weights | ML | Pesos de modelos ML |
+| ml_prediction_logs | ML | Logs de predicciones |
+| etl_extraction_logs | ETL | Extracciones ETL |
+| etl_load_logs | ETL | Cargas ETL |
+
+### Categoria 2: Infraestructura (1 tabla) - Gestionada externamente
 
 | Tabla | Schema | Razon |
 |-------|--------|-------|
-| materialized_views.sql | admin_dashboard | Vista materializada |
-| recent_activity.sql | admin_dashboard | Vista |
-| tenants_alias.sql | auth | Vista alias |
-| message_participants.sql | communication | Junction M:N |
-| cross_schema fks | educational_content | Constraints |
-| taxonomies.sql | educational_content | Tiene entity |
-| optimization scripts | optimization | Scripts, no tablas |
-| storage files | storage | Archivos, no tablas |
+| auth.users | auth | Gestionada por Supabase auth layer, no por TypeORM |
+
+### Categoria 3: Catalogo/Infrastructure (1 tabla)
+
+| Tabla | Schema | Razon |
+|-------|--------|-------|
+| auth_management.roles (03b) | auth_management | Catalogo RBAC, cubierto por user-role.entity.ts |
+
+### ~~Categoria 4: Communication~~ - RESUELTO (2026-02-12)
+
+Las 4 tablas communication ahora tienen entities:
+
+| Tabla | Schema | Entity | Modulo | Estado |
+|-------|--------|--------|--------|--------|
+| communication.conversations | communication | conversation.entity.ts | communication | MATCH |
+| communication.conversation_participants | communication | conversation-participant.entity.ts | communication | MATCH |
+| communication.messages | communication | message.entity.ts (@Entity Message) | teacher | MATCH |
+| communication.message_participants | communication | message.entity.ts (@Entity MessageParticipant) | teacher | MATCH |
+
+**Nota:** Las entities de conversation/conversation-participant estan en modules/communication/entities/ pero NO registradas en ningun datasource (huerfanas). Requiere agregar al datasource 'communication' en app.module.ts.
+
+### Anteriores "sin entity" ahora resueltas (2026-02-12)
+
+| Tabla | Schema | Entity |
+|-------|--------|--------|
+| social_features.guild_mission_contributions | social_features | guild-mission-contribution.entity.ts |
+| social_features.guild_emblems | social_features | guild-emblem.entity.ts |
+| social_features.user_blocks | social_features | user-block.entity.ts |
+| social_features.user_reports | social_features | user-report.entity.ts |
 
 ---
 
@@ -319,22 +375,23 @@ Para mejorar coherencia frontend:
 
 ## Resumen de Coherencia
 
-### Por Modulo
+### Por Modulo (Actualizado 2026-02-12)
 
 | Modulo | Entities | DDL Tables | Cobertura |
 |--------|----------|------------|-----------|
-| auth | 17 | 17 | 100% |
-| gamification | 19 | 19 | 100% |
+| auth | 18 | 18 | 100% |
+| gamification | 21 | 21 | 100% |
 | educational | 16 | 18 | 89% |
-| progress | 18 | 20 | 90% |
-| social | 17 | 20 | 85% |
+| progress | 20 | 20 | 100% |
+| social | 26 | 27 | 96% |
 | admin | 16 | 16 | 100% |
 | assignments | 4 | 4 | 100% |
 | audit | 3 | 8 | 38% |
 | content | 10 | 10 | 80% |
 | lti | 3 | 3 | 100% |
-| notifications | 6 | 6 | 100% |
-| teacher | 6 | 6 | 100% |
+| notifications | 7 | 7 | 100% |
+| teacher | 6 (7 classes) | 6 | 100% |
+| communication | 2 (+ 2 in teacher) | 4 | 100% |
 
 ### Calificacion Global
 
@@ -343,22 +400,66 @@ Para mejorar coherencia frontend:
 | Entities principales cubiertas | SI |
 | Gaps criticos | NO |
 | Junction tables sin entity | ESPERADO |
-| Vistas sin entity | ESPERADO |
+| Data warehouse sin entity | INTENCIONAL (16 tablas) |
+| Communication entities | RESUELTO (4/4 con entity) |
+| Communication datasource | PENDIENTE (conversation entities huerfanas) |
 | Frontend types incompletos | MEJORABLE |
 
-**Coherencia Global: 94.2%** - Nivel satisfactorio para produccion.
+**Coherencia Global: 89.5%** (153/171 tablas con entity) - Nivel satisfactorio para produccion.
+
+---
+
+## Alineacion de Columnas (Top 20 Tablas Criticas)
+
+Verificacion de Sprint R3 (2026-02-12): de las 20 tablas mas criticas, 16 tenian EXACT MATCH y 4 tenian mismatches que fueron corregidos:
+
+| Tabla | Columna | Accion R3 | Estado |
+|-------|---------|-----------|--------|
+| auth_management.profiles | `deleted_at` | R3-01: Agregado @DeleteDateColumn | CORREGIDO |
+| auth_management.tenants | `deleted_at` | R3-02: Agregado @DeleteDateColumn | CORREGIDO |
+| gamification_system.ml_coins_transactions | `tenant_id` | R3-03: Agregado @Column | CORREGIDO |
+| notifications.notifications | `updated_at` | R3-04: Agregado @UpdateDateColumn | CORREGIDO |
+
+Inconsistencias de estilo corregidas:
+- `user-suspension.entity.ts`: schema hardcoded -> `DB_SCHEMAS.AUTH` (R3-05)
+- `user-preferences.entity.ts`: schema hardcoded -> `DB_SCHEMAS.AUTH` (R3-05)
+
+---
+
+## Tablas Conceptuales sin DDL (R4-01)
+
+15 tablas aparecen en documentacion (schema-reference) pero no tienen DDL implementado. Evaluacion Sprint R4:
+
+| Tabla Conceptual | Categoria | Disposicion |
+|-----------------|-----------|-------------|
+| user_profiles | Naming alias → profiles | RESUELTO |
+| password_resets | Naming alias → password_reset_tokens | RESUELTO |
+| login_attempts | Naming alias → auth_attempts | RESUELTO |
+| conversations | Ya existe en DDL (communication) | RESUELTO |
+| exercise_types | Implementado como PostgreSQL ENUM | RESUELTO |
+| oauth_connections | Post-MVP | FUTURO |
+| tenant_subscriptions | Post-MVP (SaaS billing) | FUTURO |
+| spaced_repetition | Post-MVP (pedagogia avanzada) | FUTURO |
+| mission_daily/weekly_rotation | Post-MVP (gamificacion) | FUTURO |
+| report_templates/instances/schedules/exports | Post-MVP (reportes avanzados) | FUTURO |
+| push_subscriptions | Post-MVP (Web Push) | FUTURO |
+| tenant_settings | Cubierto por system_settings + tenants | DIFERIDO |
+| exercise_feedback | Cubierto inline en exercise_attempts | DIFERIDO |
+| xp_multipliers / daily_xp_limits | Cubierto via config_json | DIFERIDO |
 
 ---
 
 ## Conclusiones
 
-1. **Coherencia Backend-DDL es excelente** (94.2%)
-2. **Las tablas sin entity son casos esperados** (junctions, vistas)
-3. **El modulo audit tiene bajo coverage** porque usa vistas/funciones
-4. **Frontend types son minimos** - Se recomienda expansion o autogeneracion
-5. **No hay gaps criticos** que impidan funcionamiento
+1. **Coherencia Backend-DDL es buena** (87%) con todos los gaps justificados
+2. **16 tablas data_warehouse sin entity** es intencional (acceso SQL raw)
+3. **4 columnas faltantes HIGH/MEDIUM** fueron corregidas en Sprint R3
+4. **2 schemas hardcoded** fueron corregidos a usar DB_SCHEMAS constants
+5. **4 tablas communication** pendientes de entity cuando se active el modulo completo
+6. **15 tablas conceptuales sin DDL** evaluadas: 5 resueltos, 7 futuro, 3 diferidos (Sprint R4)
+7. **Frontend types son minimos** - Se recomienda expansion o autogeneracion
 
 ---
 
-**Generado por:** Claude Code - BLOQUE 1 Analisis de Coherencia
-**Fecha:** 2026-02-03
+**Generado por:** Claude Code - TASK-2026-02-12-ANALISIS-BD-VS-DOCS
+**Fecha:** 2026-02-12 (actualizado desde v1.0.0 de 2026-02-03)

@@ -1,72 +1,84 @@
-# GLOSARIO DE TERMINOS - GAMILIT
+# Glosario de Terminos - GAMILIT
 
-**Versión:** 1.0.0
-**Fecha:** 2025-11-29
+**Version:** 2.0.0
+**Fecha:** 2026-02-11
 **Audiencia:** Todos (desarrolladores, PMs, stakeholders)
+**SSOT:** orchestration/inventarios/MASTER_INVENTORY.yml
 
 ---
 
 ## Terminos de Gamificacion
 
-### Economía del Juego
+### Economia del Juego
 
-| Término | Definición |
+| Termino | Definicion |
 |---------|------------|
 | **XP (Experience Points)** | Puntos de experiencia que determinan el rango del usuario. Se obtienen al completar ejercicios. |
-| **ML Coins (Monedas Lectoras)** | Moneda virtual para comprar comodines y ayudas. |
-| **Rango Maya** | Nivel jerárquico del usuario basado en XP acumulado. 7 niveles: Novato → Leyenda. |
-| **Streak (Racha)** | Días consecutivos de actividad o ejercicios correctos consecutivos. |
-| **Leaderboard** | Tabla de posiciones que muestra rankings de usuarios por diferentes métricas. |
+| **ML Coins (Maya Literacy Coins)** | Moneda virtual para comprar power-ups y items en la tienda. |
+| **Rango Maya** | Nivel jerarquico del usuario basado en XP acumulado. 5 niveles: Ajaw, Nacom, Ah K'in, Halach Uinic, K'uk'ulkan. |
+| **Streak (Racha)** | Dias consecutivos de actividad o ejercicios correctos consecutivos. |
+| **Leaderboard** | Tabla de posiciones con rankings por aula, escuela, global y por modulo. |
+| **Temporada** | Periodo de competencia con reset de rankings y recompensas de cierre. |
+| **Multiplicador** | Factor aplicado a earnings de ML Coins segun rango actual (1.00x a 1.25x). |
 
-### Comodines (Power-ups)
+### Rangos Maya (5 Niveles — DB Seeds v2.1)
 
-| Término | Definición |
+| Nivel | Rango | Titulo Maya | XP Min | XP Max | ML Bonus | Multiplicador |
+|-------|-------|-------------|--------|--------|----------|---------------|
+| 1 | Senor | Ajaw (Senor) | 0 | 499 | - | 1.00x |
+| 2 | Capitan de Guerra | Nacom (Capitan de Guerra) | 500 | 999 | +100 ML | 1.10x |
+| 3 | Sacerdote del Sol | Ah K'in (Sacerdote del Sol) | 1,000 | 1,499 | +250 ML | 1.15x |
+| 4 | Hombre Verdadero | Halach Uinic (Hombre Verdadero) | 1,500 | 1,899 | +500 ML | 1.20x |
+| 5 | Serpiente Emplumada | K'uk'ulkan (Serpiente Emplumada) | 1,900 | - | +1,000 ML | 1.25x |
+
+### Power-ups (Comodines)
+
+| Termino | Definicion | Costo |
+|---------|------------|-------|
+| **Pista (Hint)** | Revela parte de la respuesta correcta. | 15 ML Coins |
+| **Vision Lectora** | Congela el temporizador durante 30 segundos. | 25 ML Coins |
+| **Segunda Oportunidad** | Permite reintentar un ejercicio sin penalizacion. | 40 ML Coins |
+
+### Progresion
+
+| Termino | Definicion |
 |---------|------------|
-| **Comodín** | Ayuda que el usuario puede comprar con ML Coins y usar durante ejercicios. |
-| **Pista (Hint)** | Revela parte de la respuesta correcta. |
-| **Visión Lectora (Time Freeze)** | Congela el temporizador durante 30 segundos. |
-| **Segunda Oportunidad (Retry)** | Permite reintentar un ejercicio sin penalización. |
-| **Skip** | Permite saltar un ejercicio sin penalización de XP. |
-
-### Progresión
-
-| Término | Definición |
-|---------|------------|
-| **Achievement (Logro)** | Reconocimiento otorgado al cumplir condiciones específicas. |
-| **Mission (Misión)** | Objetivo asignado al usuario (diaria, semanal, o especial). |
-| **Module Progress** | Porcentaje de avance en un módulo educativo. |
+| **Achievement (Logro)** | Reconocimiento otorgado al cumplir condiciones especificas. 6 categorias: Progress, Streak, Completion, Mastery, Exploration, Special. |
+| **Mission (Mision)** | Objetivo asignado al usuario: diarias (3/dia), semanales (5/semana), o quests especiales. |
+| **Module Progress** | Porcentaje de avance en un modulo educativo. 70% minimo para desbloquear siguiente. |
 | **Rank Up** | Subida de rango al alcanzar umbral de XP requerido. |
 
 ---
 
 ## Terminos Educativos
 
-### Modelo Cassany
+### Modelo de Comprension Lectora (5 Dimensiones)
 
-| Término | Definición |
+| Termino | Definicion |
 |---------|------------|
-| **Comprensión Literal** | Nivel básico: localizar información explícita en el texto. |
-| **Comprensión Inferencial** | Segundo nivel: deducir información implícita del texto. |
-| **Comprensión Crítica** | Tercer nivel: evaluar, juzgar y opinar sobre el texto. |
-| **Comprensión Digital** | Cuarto nivel: interpretar textos multimodales y digitales. |
-| **Producción Creativa** | Quinto nivel: crear contenido original basado en la lectura. |
+| **Comprension Literal** | Nivel basico: localizar informacion explicita en el texto. (Modulo 1, 5 ejercicios) |
+| **Comprension Inferencial** | Segundo nivel: deducir informacion implicita del texto. (Modulo 2, 5 ejercicios) |
+| **Comprension Critica** | Tercer nivel: evaluar, juzgar y opinar sobre el texto. (Modulo 3, 5 ejercicios) |
+| **Lectura Digital** | Cuarto nivel: interpretar textos multimodales y digitales. (Modulo 4, 5 ejercicios) |
+| **Produccion y Expresion** | Quinto nivel: crear contenido original basado en la lectura. (Modulo 5, 3 ejercicios) |
 
 ### Tipos de Ejercicio
 
-| Término | Definición |
+| Termino | Definicion |
 |---------|------------|
-| **exercise_type** | Tipo específico de ejercicio (ej: crucigrama, detective_textual). |
-| **exercise_mechanic** | Mecánica de interacción del ejercicio (drag & drop, selección múltiple). |
-| **Validador** | Función de BD que valida respuestas de un tipo de ejercicio específico. |
+| **exercise_type** | Tipo especifico de ejercicio (ej: crucigrama, detective_textual). 23 tipos en total. |
+| **exercise_mechanic** | Mecanica de interaccion del ejercicio (drag & drop, seleccion multiple). 40 mecanicas. |
+| **Evaluacion Automatica** | Ejercicios evaluados por el sistema (M1, M2, Quiz TikTok de M4). |
+| **Evaluacion Manual** | Ejercicios que requieren revision por maestro (M3, M4 parcial, M5). |
+| **Spaced Repetition** | Motor de repeticion espaciada para reforzar aprendizaje. |
 
-### Evaluación
+### Evaluacion
 
-| Término | Definición |
+| Termino | Definicion |
 |---------|------------|
-| **CEFR** | Common European Framework of Reference. Niveles: A1, A2, B1, B2, C1, C2. |
-| **Taxonomía de Bloom** | Niveles cognitivos: Remember, Understand, Apply, Analyze, Evaluate, Create. |
-| **Score** | Puntuación de 0-100 obtenida en un ejercicio. |
-| **Grading** | Proceso de calificación (automático o manual por maestro). |
+| **Score** | Puntuacion de 0-100 obtenida en un ejercicio. |
+| **Grading** | Proceso de calificacion (automatico o manual por maestro). |
+| **Rubrica** | Criterios de evaluacion usados por maestros en revision manual. |
 
 ---
 
@@ -74,66 +86,83 @@
 
 ### Base de Datos
 
-| Término | Definición |
+| Termino | Definicion |
 |---------|------------|
-| **Schema** | Agrupación lógica de objetos de BD (tablas, funciones, vistas). |
+| **Schema** | Agrupacion logica de objetos de BD (tablas, funciones, vistas). 18 schemas en gamilit. |
 | **DDL (Data Definition Language)** | SQL para definir estructura (CREATE, ALTER, DROP). |
-| **RLS (Row Level Security)** | Seguridad a nivel de fila en PostgreSQL. |
-| **Trigger** | Función que se ejecuta automáticamente ante eventos de BD. |
-| **ENUM** | Tipo de dato con valores predefinidos (ej: user_role). |
+| **RLS (Row Level Security)** | Seguridad a nivel de fila en PostgreSQL. 263 policies activas. |
+| **Trigger** | Funcion que se ejecuta automaticamente ante eventos de BD. 132 triggers. |
+| **ENUM** | Tipo de dato con valores predefinidos (ej: user_role). 41 ENUMs. |
 | **JSONB** | Tipo de dato JSON binario en PostgreSQL para datos flexibles. |
-| **Materialized View** | Vista pre-computada para mejor performance. |
+| **Materialized View** | Vista pre-computada para mejor performance. 7 MVs. |
 | **Seed** | Script de datos iniciales para poblar tablas. |
-| **Carga Limpia** | Recreación completa de BD desde DDL y seeds (sin migrations). |
+| **Clean Load** | Recreacion completa de BD desde DDL y seeds (sin migrations). |
 
-### Backend (NestJS)
+### Backend (NestJS 11)
 
-| Término | Definición |
+| Termino | Definicion |
 |---------|------------|
-| **Entity** | Clase TypeScript que mapea a tabla de BD (TypeORM). |
-| **DTO (Data Transfer Object)** | Objeto para validar y transferir datos entre capas. |
-| **Service** | Clase con lógica de negocio. |
-| **Controller** | Clase que maneja endpoints HTTP. |
-| **Guard** | Middleware para autorización (ej: RolesGuard). |
-| **Decorator** | Anotación que modifica comportamiento (ej: @Roles()). |
-| **Module** | Unidad de organización en NestJS. |
+| **Entity** | Clase TypeScript que mapea a tabla de BD (TypeORM). 152 entities. |
+| **DTO (Data Transfer Object)** | Objeto para validar y transferir datos entre capas. 412 DTOs. |
+| **Service** | Clase con logica de negocio. 170 services. |
+| **Controller** | Clase que maneja endpoints HTTP. 107 controllers. |
+| **Guard** | Middleware para autorizacion (ej: JwtAuthGuard, RolesGuard, TenantGuard). 14 guards. |
+| **Decorator** | Anotacion que modifica comportamiento (ej: @Roles()). 18 decorators. |
+| **Module** | Unidad de organizacion en NestJS. 22 modulos. |
 
-### Frontend (React)
+### Frontend (React 19)
 
-| Término | Definición |
+| Termino | Definicion |
 |---------|------------|
-| **Component** | Elemento de UI reutilizable. |
-| **Hook** | Función para manejar estado y efectos (useEffect, useState). |
-| **Store** | Estado global de la aplicación (Zustand). |
-| **Feature** | Carpeta que agrupa funcionalidad relacionada. |
-| **Page** | Componente que representa una ruta. |
-| **API Client** | Servicio para comunicación con backend. |
+| **Component** | Elemento de UI reutilizable. 458 componentes. |
+| **Hook** | Funcion para manejar estado y efectos. 127 hooks. |
+| **Store** | Estado global de la aplicacion (Zustand). 32 stores. |
+| **Page** | Componente que representa una ruta. 85 paginas. |
+| **API Service** | Servicio para comunicacion con backend. 48 API services. |
 
 ### Arquitectura
 
-| Término | Definición |
+| Termino | Definicion |
 |---------|------------|
-| **Monorepo** | Repositorio único que contiene múltiples proyectos. |
-| **SSOT (Single Source of Truth)** | Fuente única de verdad para datos/definiciones. |
-| **Multi-tenant** | Arquitectura que soporta múltiples organizaciones aisladas. |
-| **Dual-Table Pattern** | Separación de workflow (submissions) y recompensas (attempts). |
-| **Feature-Sliced Design** | Organización de código por funcionalidad, no por tipo. |
+| **Monorepo** | Repositorio unico que contiene backend, frontend y database. |
+| **SSOT (Single Source of Truth)** | Fuente unica de verdad para datos/definiciones. |
+| **Multi-tenant** | Arquitectura que soporta multiples escuelas aisladas via RLS. |
+| **Strategy+Factory** | Patrones usados en el motor de evaluacion de ejercicios. |
+
+---
+
+## Terminos de Gobernanza (SIMCO)
+
+| Termino | Definicion |
+|---------|------------|
+| **SIMCO** | Sistema Integral de Mando y Control. Directivas para agentes IA (v4.0.0). |
+| **CAPVED** | Ciclo de vida: Contexto, Analisis, Planificacion, Validacion, Ejecucion, Documentacion. |
+| **NEXUS** | Sistema de gestion de contexto de 4 niveles (L0-L3) para modelos IA (v4.1). |
+| **SAAD** | Sistema de Activacion Automatica de Directivas (v1.0.0). |
+| **Perfil de Agente** | Definicion de herramientas, dominio y directivas para un tipo de agente IA. 35 perfiles. |
+| **Trigger** | Verificacion automatica que se activa pre/post tarea. 11 triggers. |
+| **Inventario** | Archivo YAML con conteo y estado de artefactos por capa. 4 inventarios principales. |
+| **Traza** | Log de ejecucion de tareas por dominio (database, backend, frontend). |
 
 ---
 
 ## Acronimos
 
-| Acrónimo | Significado |
+| Acronimo | Significado |
 |----------|-------------|
 | **GLIT** | GAMILIT (nombre corto) |
 | **API** | Application Programming Interface |
-| **JWT** | JSON Web Token (autenticación) |
+| **JWT** | JSON Web Token (autenticacion) |
 | **CRUD** | Create, Read, Update, Delete |
-| **RPC** | Remote Procedure Call |
+| **RLS** | Row Level Security |
 | **ADR** | Architecture Decision Record |
 | **MVP** | Minimum Viable Product |
-| **QA** | Quality Assurance |
-| **CI/CD** | Continuous Integration / Continuous Deployment |
+| **SIMCO** | Sistema Integral de Mando y Control |
+| **CAPVED** | Contexto, Analisis, Planificacion, Validacion, Ejecucion, Documentacion |
+| **NEXUS** | Sistema de gestion de contexto para agentes IA |
+| **SAAD** | Sistema de Activacion Automatica de Directivas |
+| **SSOT** | Single Source of Truth |
+| **SP** | Story Points |
 | **FE** | Frontend |
 | **BE** | Backend |
 | **DB** | Database |
@@ -142,60 +171,50 @@
 
 ## Roles de Usuario
 
-| Rol | Definición | Permisos |
-|-----|------------|----------|
-| **student** | Estudiante que completa ejercicios | Ver módulos, completar ejercicios, ver progreso |
-| **teacher** | Maestro que supervisa estudiantes | Crear tareas, ver progreso de alumnos, calificar |
-| **admin_teacher** | Maestro con permisos administrativos | + Gestionar aulas, reportes |
-| **admin_school** | Administrador de escuela | + Gestionar maestros, configuración |
-| **super_admin** | Administrador de plataforma | Acceso total |
+| Rol | Definicion | Portal |
+|-----|------------|--------|
+| **student** | Estudiante que completa ejercicios | Portal Estudiante |
+| **teacher** | Maestro que supervisa estudiantes | Portal Maestro |
+| **admin** | Administrador de escuela/plataforma | Portal Admin |
+| **parent** | Padre/tutor de estudiante | Portal Padres |
 
 ---
 
 ## Portales
 
-| Portal | Audiencia | Funcionalidad Principal |
-|--------|-----------|------------------------|
-| **Student Portal** | Estudiantes | Ejercicios, progreso, gamificación |
-| **Teacher Portal** | Maestros | Dashboard, tareas, calificación, alertas |
-| **Admin Portal** | Administradores | Usuarios, organizaciones, sistema |
-| **Parent Portal** | Padres (backlog) | Ver progreso de hijos |
+| Portal | Audiencia | Completitud | Funcionalidad Principal |
+|--------|-----------|-------------|------------------------|
+| **Student Portal** | Estudiantes | ~100% | Ejercicios, progreso, gamificacion |
+| **Teacher Portal** | Maestros | ~95% | Dashboard, asignacion, calificacion, alertas |
+| **Admin Portal** | Administradores | ~90% | Usuarios, organizaciones, contenido, sistema |
+| **Parent Portal** | Padres | 100% | Progreso de hijos, notificaciones, comunicacion |
 
 ---
 
-## Estados de Ejercicio
+## Schemas de Base de Datos (18)
 
-| Estado | Contexto | Significado |
-|--------|----------|-------------|
-| **draft** | exercise_submissions | Guardado pero no enviado |
-| **submitted** | exercise_submissions | Enviado, pendiente de calificación |
-| **graded** | exercise_submissions | Calificado por maestro o sistema |
-| **in_progress** | user_achievements | Logro parcialmente completado |
-| **completed** | user_achievements | Logro completado, listo para reclamar |
-| **claimed** | user_achievements | Recompensa reclamada |
-
----
-
-## Schemas de Base de Datos
-
-| Schema | Propósito |
+| Schema | Proposito |
 |--------|-----------|
-| **auth** | Autenticación base (users base) |
-| **auth_management** | Perfiles, roles, membresías, tenants |
-| **educational_content** | Módulos, ejercicios, assignments |
+| **auth_management** | Usuarios, perfiles, roles, membresías, tenants |
+| **educational_content** | Modulos, ejercicios, assignments |
 | **gamification_system** | Achievements, rangos, ML coins, comodines |
-| **progress_tracking** | Intentos, submissions, progreso de módulos |
-| **social_features** | Escuelas, aulas, equipos, amistades |
+| **progress_tracking** | Intentos, submissions, progreso de modulos |
+| **social_features** | Escuelas, aulas, equipos, amistades, guilds |
 | **notifications** | Notificaciones multi-canal |
-| **content_management** | Templates, media, contenido Marie Curie |
-| **audit_logging** | Logs y auditoría del sistema |
-| **system_configuration** | Configuración, feature flags |
+| **content_management** | Templates, media, contenido educativo |
+| **audit_logging** | Logs y auditoria del sistema |
+| **system_configuration** | Configuracion, feature flags |
 | **admin_dashboard** | Vistas para dashboard administrativo |
 | **lti_integration** | Learning Tools Interoperability |
-| **communication** | Mensajería maestro-estudiante |
+| **communication** | Mensajeria maestro-padre |
+| **store_system** | Tienda virtual, items, transacciones |
+| **missions_system** | Misiones diarias, semanales, quests |
+| **leaderboard_system** | Rankings, temporadas |
+| **reports_system** | Reportes, exportaciones |
 | **gamilit** | Funciones globales y triggers |
+| **public** | Schema por defecto PostgreSQL |
 
 ---
 
-**Última actualización:** 2025-11-29
-**Mantenido por:** Architecture-Analyst
+*GAMILIT - Glosario de Terminos*
+*Actualizado: 2026-02-11*

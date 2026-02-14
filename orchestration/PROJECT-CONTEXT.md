@@ -121,19 +121,19 @@ teachers, parents, analytics, reports
 
 ## METRICAS ACTUALES
 
-**Fuente:** orchestration/inventory/MASTER_INVENTORY.yml
+**Fuente:** orchestration/inventarios/MASTER_INVENTORY.yml (v7.0.0)
 
 ### Base de Datos
-18 schemas | 171 tablas | 13 views | 7 MVs | 128 funciones | 49 triggers | 282 RLS policies | 36 ENUMs
+18 schemas | 170 tablas | 22 views | 7 MVs | 255 funciones | 132 triggers | 263 RLS policies | 41 ENUMs
 
 ### Backend
-22 modulos | 141 entities | 412 DTOs | 145 services | 103 controllers | 850 endpoints | 14 guards | 18 decorators
+22 modulos | 152 entities | 412 DTOs | 170 services | 107 controllers | 850 endpoints | 14 guards | 18 decorators
 
 ### Frontend
 458 componentes | 127 hooks | 85 paginas | 32 stores | 48 API services | 4 portales | 40 mecanicas
 
 ### Testing
-833 tests pasando | Target 80% cobertura
+833 tests pasando (620 backend + 213 frontend) | Target 80% cobertura | Coherencia DDL-Backend: 89%
 
 ---
 

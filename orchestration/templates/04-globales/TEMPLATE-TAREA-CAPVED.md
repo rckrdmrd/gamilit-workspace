@@ -72,7 +72,7 @@ simco_aplicados:
 
 - [ ] Principios leídos (DOC-PRIMERO, ANTI-DUP, VALIDACION, CAPVED)
 - [ ] Perfil de agente cargado
-- [ ] CONTEXTO-PROYECTO.md leído
+- [ ] PROJECT-CONTEXT.md leído
 - [ ] Inventarios consultados
 - [ ] SIMCO correspondientes cargados
 

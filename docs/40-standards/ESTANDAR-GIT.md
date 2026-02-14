@@ -10,7 +10,7 @@
 
 ### Formato
 ```
-[TIPO] Descripción corta (max 50 chars)
+[GAM-TIPO] Descripción corta (max 50 chars)
 
 Descripción opcional más larga que explica el "por qué"
 del cambio, no el "qué" (el diff muestra el qué).
@@ -19,6 +19,8 @@ Líneas de máximo 72 caracteres.
 
 Co-Authored-By: Nombre <email>
 ```
+
+**NOTA:** Este documento usa formato genérico `[TIPO]` como referencia. El proyecto gamilit usa el prefijo `[GAM-TIPO]` (ej: `[GAM-FEAT]`, `[GAM-FIX]`). Ver CLAUDE.md y commits recientes para ejemplos.
 
 ### Tipos de Commit
 
@@ -160,16 +162,18 @@ git diff --cached --name-only | grep -E '\.env|secret|password'
 
 ## Submodules
 
-El workspace usa submodules para proyectos:
+**NOTA: Sección NO aplica a gamilit - es monorepo sin submodules (ver CLAUDE.md RC4)**
+
+El siguiente contenido es de referencia para proyectos con submodules. Gamilit usa estructura MONOREPO donde backend, frontend y database están en el mismo repositorio Git sin submodules.
 
 ```bash
-# Clonar con submodules
+# Clonar con submodules (NO aplica a gamilit)
 git clone --recurse-submodules <repo>
 
-# Actualizar submodules
+# Actualizar submodules (NO aplica a gamilit)
 git submodule update --init --recursive
 
-# Cambios en submodule
+# Cambios en submodule (NO aplica a gamilit)
 cd projects/{proyecto}
 git checkout main
 git pull

@@ -25,7 +25,7 @@ actividades:
   - Identificar proyecto(s) afectado(s)
   - Clasificar tipo de tarea (feature/fix/refactor/docs)
   - Vincular a epic/HU si existe
-  - Cargar CONTEXTO-PROYECTO.md del proyecto
+  - Cargar PROJECT-CONTEXT.md del proyecto
   - Resolver aliases y variables del proyecto
   - Identificar SIMCO especificos a aplicar
 

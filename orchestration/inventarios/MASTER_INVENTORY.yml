@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "7.0.0"
-fecha: "2026-02-11"
+version: "8.0.0"
+fecha: "2026-02-12"
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -27,40 +27,45 @@ resumen:
 metricas:
   database:
     schemas: 18
-    tablas: 170
+    tablas: 171
     views: 22
     materialized_views: 7
-    funciones: 255
-    triggers: 132
+    funciones: 183
+    triggers: 126
     rls_policies: 263
-    foreign_keys: 273
-    enums: 41
+    foreign_keys: 298
+    enums: 42
 
   backend:
     modulos: 22
-    entities: 152
-    dtos: 412
+    entities: 152              # 152 archivos, 153 @Entity classes
+    dtos: 399                  # 399 en modules/ (+ ~5 en shared/)
     services: 170
     controllers: 107
-    endpoints: 850
-    guards: 14
-    decorators: 18
-    tests_backend: 620
+    endpoints: 899             # Verificado 2026-02-12
+    guards: 15
+    decorators: 18             # 18 symbols en 9 archivos
+    interceptors: 5
+    pipes: 6
+    filters: 2
+    tests_backend: 620         # est. 620 backend-specific test cases
 
   frontend:
-    componentes: 458
-    hooks: 127
-    paginas: 85
-    stores_zustand: 32
-    api_services: 48
+    componentes_tsx: 475            # 517 .tsx total - tests/stories/examples. Verificado 2026-02-12
+    hooks: 102                      # 102 archivos hook unicos
+    paginas: 68                     # 68 activas + 1 legacy
+    stores_zustand: 14              # 14 archivos Zustand con create()
+    api_service_files: 52           # 52 archivos API (excl. infra)
+    api_calls_total: 662            # 662 llamadas apiClient.*
     portales: 4
-    mecanicas: 40
-    routes: 24
+    mecanicas_ejercicio: 30         # 30 mecanicas unicas de ejercicio
+    routes: 70                      # 70 <Route> definitions en App.tsx
+    type_files: 47                  # 47 archivos, 415 tipos exportados
     tests_frontend: 213
 
   calidad:
     tests_total: 833
-    coherencia_ddl_backend: "89%"
+    coherencia_ddl_backend: "89.5%"
     cobertura_target: "80%"
 
 # -------------------------------------------------------------------------------
@@ -117,8 +122,8 @@ gamificacion:
 
 inventarios_detallados:
   database: "DATABASE_INVENTORY.yml (v7.0.0)"
-  backend: "BACKEND_INVENTORY.yml (v3.16.0)"
-  frontend: "FRONTEND_INVENTORY.yml (v4.10.0)"
+  backend: "BACKEND_INVENTORY.yml (v4.0.0)"
+  frontend: "FRONTEND_INVENTORY.yml (v5.0.0)"
 
 # -------------------------------------------------------------------------------
 # ESTADO DE FEATURES

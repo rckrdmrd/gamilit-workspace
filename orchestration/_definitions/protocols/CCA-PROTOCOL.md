@@ -85,7 +85,7 @@ PASO_2_CARGAR_CORE:
 # ═══════════════════════════════════════════════════════════════
 PASO_3_CARGAR_PROYECTO:
   leer_obligatorio:
-    - projects/{PROYECTO}/orchestration/00-guidelines/CONTEXTO-PROYECTO.md
+    - projects/{PROYECTO}/orchestration/00-guidelines/PROJECT-CONTEXT.md
     - projects/{PROYECTO}/orchestration/PROXIMA-ACCION.md
 
   leer_segun_dominio:

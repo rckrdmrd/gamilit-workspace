@@ -1,0 +1,78 @@
+# ============================================================================
+# TASK METADATA Template - SIMCO v4.0.0
+# Plantilla YAML para Tareas CAPVED (Scrum + CAPVED Integration)
+# ============================================================================
+
+# --- Identificación ---
+id: "TASK-{PROJECT}-{NNN}"  # Formato: TASK-GAMILIT-001, TASK-SICAI-042
+type: "{task|defect|spike|chore}"  # task=desarrollo, defect=bug, spike=investigación, chore=mantenimiento
+story_id: "US-{PROJECT}-{NNN}"  # Historia de usuario padre (null para chores)
+project: "{project-name}"  # e.g., gamilit, sicai, vialidades
+
+# --- Alcance Técnico ---
+scope:  # Áreas afectadas (multi-select)
+  - "{backend|frontend|database|devops|docs}"
+  # - "{...}"
+
+# --- Modo SIMCO ---
+mode: "{FULL|QUICK|ANALYSIS|PROPAGATION}"
+# FULL = C-A-P-V-E-D completo
+# QUICK = E-D solo (ejecución rápida)
+# ANALYSIS = C-A-P (análisis sin implementar)
+# PROPAGATION = FULL + propagación a otros proyectos
+
+# --- Estado y Asignación ---
+status: "{todo|in_progress|review|qa|done|blocked}"
+assignees:  # Perfiles de agentes responsables
+  - "{agent-profile-1}"  # e.g., nestjs-backend-dev, react-frontend-dev
+  # - "{agent-profile-2}"
+
+# --- Dependencias ---
+depends_on:  # Tareas que deben completarse antes
+  # - "TASK-{PROJECT}-{NNN}"
+  []
+
+# --- Ciclo CAPVED ---
+capved_phases:
+  c:  # Contexto
+    status: "{pending|done}"
+    output_file: "orchestration/trazas/{PROJECT}/TASK-{NNN}/01-context.md"
+
+  a:  # Análisis
+    status: "{pending|done}"
+    output_file: "orchestration/trazas/{PROJECT}/TASK-{NNN}/02-analysis.md"
+
+  p:  # Planeación
+    status: "{pending|done}"
+    output_file: "orchestration/trazas/{PROJECT}/TASK-{NNN}/03-plan.md"
+
+  v:  # Validación
+    status: "{pending|done}"
+    output_file: "orchestration/trazas/{PROJECT}/TASK-{NNN}/04-validation.md"
+
+  e:  # Ejecución
+    status: "{pending|done}"
+    output_file: "orchestration/trazas/{PROJECT}/TASK-{NNN}/05-execution.md"
+
+  d:  # Documentación
+    status: "{pending|done}"
+    output_file: "orchestration/trazas/{PROJECT}/TASK-{NNN}/06-documentation.md"
+
+# --- Propagación (si aplica) ---
+propagation_candidate: {true|false}  # ¿Es candidato para propagación a otros proyectos?
+upstream_candidate: {true|false}     # ¿Puede subirse a shared/?
+downstream_targets:  # Proyectos destino para propagación
+  # - "{project-name-1}"
+  # - "{project-name-2}"
+  []
+
+# --- Metadatos ---
+created: "{YYYY-MM-DD}"
+updated: "{YYYY-MM-DD}"
+
+# --- Notas ---
+# - Fase V (Validación) NUNCA se delega, siempre ejecución directa
+# - Fase D (Documentación) es GATE obligatorio para marcar tarea como done
+# - propagation_candidate = true implica ejecutar análisis de impacto multi-proyecto
+# - upstream_candidate = true implica candidato para extracción a shared/ o packages/
+# - Estado blocked requiere comentario en depends_on explicando el bloqueo

@@ -72,7 +72,7 @@ ANTES de actuar, ejecuta el protocolo CCA:
 
 ### Variables Resueltas del Proyecto
 ```yaml
-# Copiar de CONTEXTO-PROYECTO.md del proyecto
+# Copiar de PROJECT-CONTEXT.md del proyecto
 DB_NAME: "{valor}"
 DB_DDL_PATH: "{valor}"
 DB_SCRIPTS_PATH: "{valor}"

@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
   Index,
   ManyToOne,
   JoinColumn,
@@ -135,6 +136,9 @@ export class Profile {
 
   @UpdateDateColumn({ type: 'timestamp with time zone' })
     updated_at!: Date;
+
+  @DeleteDateColumn({ type: 'timestamp with time zone', nullable: true })
+    deleted_at!: Date | null;
 
   @Column({ type: 'uuid', nullable: true, unique: true })
     user_id!: string | null;

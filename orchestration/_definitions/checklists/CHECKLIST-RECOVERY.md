@@ -39,7 +39,7 @@ Checklist para verificar recuperación exitosa de sesión después de compactaci
 - [ ] Aliases del workspace conocidos
 
 ### Nivel L1 (Proyecto) - SI APLICA
-- [ ] CONTEXTO-PROYECTO.md cargado (si existe)
+- [ ] PROJECT-CONTEXT.md cargado (si existe)
 - [ ] PROXIMA-ACCION.md leído
 - [ ] Variables de proyecto conocidas:
   - [ ] Nombre del proyecto

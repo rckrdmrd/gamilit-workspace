@@ -27,7 +27,7 @@
 ### S0-02a: Legacy Guidelines Archivadas
 - **Origen:** `orchestration/_internal/legacy_guidelines/` (7 archivos)
 - **Destino:** `orchestration/_internal/_archive/pre-simco-v4.3/`
-- **Archivos:** _MAP.md, CONTEXTO-PROYECTO.md, CONTEXTO-REFERENCIAS.md, HERENCIA-DIRECTIVAS.md, HERENCIA-SIMCO.md, PATHS-DOCUMENTACION.md, PATHS-TRABAJO.md
+- **Archivos:** _MAP.md, PROJECT-CONTEXT.md, CONTEXTO-REFERENCIAS.md, HERENCIA-DIRECTIVAS.md, HERENCIA-SIMCO.md, PATHS-DOCUMENTACION.md, PATHS-TRABAJO.md
 - **Razon:** Superseded por BOOTLOADER.md + CONTEXT-MAP.yml + CLAUDE.md (SIMCO v4.3)
 
 ### S0-02b: Frontend Inventory Update Archivado

@@ -70,7 +70,7 @@ projects/{suite}/apps/verticales/{vertical}/
 |
 +-- orchestration/
     +-- 00-guidelines/
-    |   +-- CONTEXTO-PROYECTO.md          # Contexto del vertical
+    |   +-- PROJECT-CONTEXT.md          # Contexto del vertical
     |   +-- HERENCIA-SIMCO.md             # Herencia de directivas
     |   +-- HERENCIA-ERP-CORE.md          # Herencia del suite-core
     +-- inventarios/
@@ -92,7 +92,7 @@ projects/{suite}/apps/verticales/{vertical}/
 
 ## Archivos Obligatorios
 
-### 1. CONTEXTO-PROYECTO.md
+### 1. PROJECT-CONTEXT.md
 
 ```markdown
 # Contexto del Vertical: {VERTICAL_NAME}
@@ -314,7 +314,7 @@ BASE_PATH="projects/$SUITE/apps/verticales/$VERTICAL"
 mkdir -p $BASE_PATH/{database/ddl/{schemas,seeds,migrations},backend/src/modules,frontend/src/{pages,components},docs,orchestration/{00-guidelines,inventarios,trazas,referencias}}
 
 # Crear archivos base
-touch $BASE_PATH/orchestration/00-guidelines/{CONTEXTO-PROYECTO.md,HERENCIA-SIMCO.md,HERENCIA-ERP-CORE.md}
+touch $BASE_PATH/orchestration/00-guidelines/{PROJECT-CONTEXT.md,HERENCIA-SIMCO.md,HERENCIA-ERP-CORE.md}
 touch $BASE_PATH/orchestration/inventarios/{MASTER_INVENTORY.yml,DATABASE_INVENTORY.yml,BACKEND_INVENTORY.yml,FRONTEND_INVENTORY.yml}
 touch $BASE_PATH/orchestration/trazas/{TRAZA-TAREAS-DATABASE.md,TRAZA-TAREAS-BACKEND.md,TRAZA-TAREAS-FRONTEND.md}
 touch $BASE_PATH/orchestration/referencias/{DEPENDENCIAS-CORE.yml,DEPENDENCIAS-EXTERNAS.yml}
@@ -333,7 +333,7 @@ touch $BASE_PATH/orchestration/PROXIMA-ACCION.md
 - [ ] Subdirectorios: database/, backend/, frontend/, docs/, orchestration/
 
 ### Orchestration
-- [ ] 00-guidelines/CONTEXTO-PROYECTO.md
+- [ ] 00-guidelines/PROJECT-CONTEXT.md
 - [ ] 00-guidelines/HERENCIA-SIMCO.md
 - [ ] 00-guidelines/HERENCIA-ERP-CORE.md
 - [ ] inventarios/*.yml (4 archivos)
@@ -390,7 +390,7 @@ projects/erp-suite/apps/verticales/clinicas/
 |       +-- citas/
 +-- orchestration/
     +-- 00-guidelines/
-        +-- CONTEXTO-PROYECTO.md
+        +-- PROJECT-CONTEXT.md
         +-- HERENCIA-SIMCO.md
         +-- HERENCIA-ERP-CORE.md
 ```

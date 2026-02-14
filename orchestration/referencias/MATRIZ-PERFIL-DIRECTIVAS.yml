@@ -392,7 +392,7 @@ reglas:
     proceso:
       - Identificar tu perfil
       - Leer directivas en seccion 'obligatorias'
-      - Cargar CONTEXTO-PROYECTO del proyecto asignado
+      - Cargar PROJECT-CONTEXT del proyecto asignado
 
   2_al_recibir_tarea:
     descripcion: "Cargar directivas segun operacion"
@@ -414,7 +414,7 @@ reglas:
       - "[ ] Lei los 6 principios fundamentales"
       - "[ ] Lei mi perfil en agents/perfiles/"
       - "[ ] Lei las directivas obligatorias de mi perfil"
-      - "[ ] Lei el CONTEXTO-PROYECTO del proyecto"
+      - "[ ] Lei el PROJECT-CONTEXT del proyecto"
       - "[ ] Lei la PROXIMA-ACCION si existe"
 
 # ============================================================================

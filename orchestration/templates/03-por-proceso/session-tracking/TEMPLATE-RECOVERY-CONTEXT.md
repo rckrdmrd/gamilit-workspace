@@ -106,7 +106,7 @@ CARGA_CRITICA:
       extraer: "Ciclo de vida, fase actual"
 
     3_proyecto:
-      archivo: "projects/{PROYECTO}/orchestration/00-guidelines/CONTEXTO-PROYECTO.md"
+      archivo: "projects/{PROYECTO}/orchestration/00-guidelines/PROJECT-CONTEXT.md"
       extraer: "Variables resueltas, aliases, stack"
 
   tokens_estimados: ~3000
@@ -446,7 +446,7 @@ solucion: "Primero identificar estado previo, luego cargar"
 |---------|--------------|
 | PERFIL-{TIPO}.md | ~800 |
 | PRINCIPIO-CAPVED.md | ~600 |
-| CONTEXTO-PROYECTO.md | ~1,200 |
+| PROJECT-CONTEXT.md | ~1,200 |
 | SIMCO-{op}.md | ~1,000 |
 | {INVENTORY}.yml | ~800 |
 | PROXIMA-ACCION.md | ~400 |

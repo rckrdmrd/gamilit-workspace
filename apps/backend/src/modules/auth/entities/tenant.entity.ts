@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
     Index,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
@@ -133,6 +134,13 @@ export class Tenant {
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
     updated_at!: Date;
+
+  /**
+   * Soft delete timestamp (NULL = activo)
+   * @see DDL: deleted_at TIMESTAMPTZ NULL DEFAULT NULL
+   */
+  @DeleteDateColumn({ type: 'timestamp with time zone', nullable: true })
+    deleted_at!: Date | null;
 
   // ===========================
   // Relaciones

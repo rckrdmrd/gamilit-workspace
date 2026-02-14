@@ -1,0 +1,159 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# SUBAGENTS-LOG.yml - Template de Registro de Subagentes
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# PROPOSITO:
+#   Documentar todos los subagentes invocados durante la ejecucion de una tarea.
+#   Permite analizar patrones de uso, eficiencia de paralelizacion y costos.
+#
+# USO:
+#   1. Copiar este template a la carpeta de la tarea: TASK-YYYY-MM-DD-XXX/
+#   2. Renombrar a SUBAGENTS-LOG.yml
+#   3. Actualizar task_id y fechas
+#   4. Registrar cada subagente invocado en la seccion 'subagentes'
+#   5. Al finalizar, completar metricas y patrones identificados
+#
+# TIPOS DE SUBAGENTES:
+#   - Explore: Agentes de exploracion/busqueda en codebase
+#   - general-purpose: Agentes de proposito general (Task tool)
+#   - Bash: Agentes que ejecutan comandos shell
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+task_id: "{TASK_ID}"           # Ej: TASK-2026-02-02-SUBAGENTS-LOG
+created: "{FECHA}"             # Ej: 2026-02-02T10:30:00-06:00
+updated: "{FECHA}"             # Actualizar en cada modificacion
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RESUMEN EJECUTIVO
+# ─────────────────────────────────────────────────────────────────────────────
+# Metricas agregadas de todos los subagentes utilizados en esta tarea.
+# Actualizar estos valores al agregar/completar subagentes.
+
+resumen:
+  total_subagentes: 0          # Cantidad total de subagentes invocados
+  por_tipo:
+    Explore: 0                 # Subagentes de exploracion de codigo
+    general-purpose: 0         # Subagentes de proposito general
+    Bash: 0                    # Subagentes de ejecucion de comandos
+  tokens_estimados: 0          # Suma de tokens de todos los subagentes
+  paralelizacion_max: 0        # Maximo de subagentes ejecutados en paralelo
+
+# ─────────────────────────────────────────────────────────────────────────────
+# REGISTRO DE SUBAGENTES
+# ─────────────────────────────────────────────────────────────────────────────
+# Lista cronologica de todos los subagentes invocados.
+# Cada entrada documenta: que se pidio, que se obtuvo, y relaciones.
+
+subagentes:
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ TEMPLATE DE ENTRADA - Copiar y completar para cada subagente           │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  #
+  # - id: "SA-001"                        # Identificador unico secuencial
+  #   tipo: "Explore|general-purpose|Bash"  # Tipo de subagente
+  #   fase: "FASE-1"                      # Fase CAPVED donde se uso
+  #   timestamp: "2026-02-02T10:35:00"    # Hora de invocacion
+  #   descripcion: "Descripcion corta de la tarea asignada"
+  #   prompt: |
+  #     Prompt exacto usado para invocar el subagente.
+  #     Incluir contexto relevante proporcionado.
+  #   resultado: |
+  #     Resumen del resultado obtenido.
+  #     Incluir hallazgos clave y archivos relevantes.
+  #   estado: "completado|fallido|parcial"  # Estado final
+  #   tokens_estimados: 0                 # Tokens consumidos (estimado)
+  #   duracion_seg: 0                     # Duracion en segundos (opcional)
+  #   paralelo_con: []                    # IDs de subagentes en paralelo
+  #   dependencias: []                    # IDs que debian completar antes
+  #   archivos_tocados: []                # Lista de archivos leidos/modificados
+  #   notas: ""                           # Observaciones adicionales
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ EJEMPLO DE ENTRADA COMPLETADA                                          │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  #
+  # - id: "SA-001"
+  #   tipo: "Explore"
+  #   fase: "FASE-1"
+  #   timestamp: "2026-02-02T10:35:00"
+  #   descripcion: "Buscar implementaciones existentes de logging"
+  #   prompt: |
+  #     Busca en el codebase todas las implementaciones de logging.
+  #     Identifica patrones usados y librerias involucradas.
+  #   resultado: |
+  #     Encontrados 3 patrones de logging:
+  #     - Winston en projects/gamilit/src/common/logger/
+  #     - Pino en projects/erp-core/src/infrastructure/
+  #     - Console wrapper en shared/modules/logging/
+  #   estado: "completado"
+  #   tokens_estimados: 2500
+  #   duracion_seg: 45
+  #   paralelo_con: ["SA-002"]
+  #   dependencias: []
+  #   archivos_tocados:
+  #     - projects/gamilit/src/common/logger/winston.config.ts
+  #     - projects/erp-core/src/infrastructure/logger.service.ts
+  #   notas: "Recomendar unificar en un solo patron"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PATRONES IDENTIFICADOS
+# ─────────────────────────────────────────────────────────────────────────────
+# Analisis post-tarea de patrones de uso de subagentes.
+# Ayuda a mejorar futuras delegaciones.
+
+patrones:
+  # Patrones que funcionaron bien - replicar en futuras tareas
+  exitosos:
+    # - patron: "Paralelizar exploracion de multiples directorios"
+    #   ejemplo: "SA-001 y SA-002 buscaron en paralelo"
+    #   beneficio: "Redujo tiempo de exploracion 40%"
+
+  # Patrones que podrian mejorarse
+  mejorables:
+    # - patron: "Subagentes con scope muy amplio"
+    #   ejemplo: "SA-003 busco en todo el codebase sin filtros"
+    #   mejora: "Especificar directorios o patrones de archivo"
+
+  # Anti-patrones detectados - evitar en futuras tareas
+  anti_patrones:
+    # - patron: "Subagentes secuenciales que podian paralelizarse"
+    #   impacto: "Tiempo adicional innecesario"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# METRICAS DE EFICIENCIA
+# ─────────────────────────────────────────────────────────────────────────────
+# Metricas para evaluar eficiencia del uso de subagentes.
+# Completar al finalizar la tarea.
+
+metricas:
+  # Tiempo si todos los subagentes se ejecutaran secuencialmente
+  tiempo_secuencial_estimado: null    # Ej: "5m 30s"
+
+  # Tiempo real de ejecucion (considerando paralelismo)
+  tiempo_real: null                   # Ej: "3m 15s"
+
+  # Porcentaje de mejora por paralelizacion
+  # Formula: ((secuencial - real) / secuencial) * 100
+  eficiencia_paralelo: null           # Ej: "40.9%"
+
+  # Costo estimado en tokens
+  costo_tokens_total: null            # Suma de todos los subagentes
+
+  # Ratio de exito
+  ratio_exito: null                   # Ej: "95%" (completados/total)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LECCIONES APRENDIDAS
+# ─────────────────────────────────────────────────────────────────────────────
+# Reflexiones para mejorar uso de subagentes en futuras tareas.
+
+lecciones:
+  # - "Para busquedas en codebase grande, siempre usar Explore con filtros"
+  # - "Paralelizar subagentes independientes desde el inicio"
+  # - "Evitar prompts vagos - ser especifico en lo que se busca"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIN DEL TEMPLATE
+# ═══════════════════════════════════════════════════════════════════════════════

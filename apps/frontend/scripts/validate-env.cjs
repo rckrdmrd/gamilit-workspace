@@ -54,7 +54,7 @@ function loadEnvFile(mode) {
   const content = fs.readFileSync(envFile, 'utf-8');
   const env = {};
 
-  content.split('\n').forEach((line) => {
+  content.split(/\r?\n/).forEach((line) => {
     // Skip comments and empty lines
     if (line.startsWith('#') || line.trim() === '') {
       return;

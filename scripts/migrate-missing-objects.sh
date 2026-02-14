@@ -20,8 +20,11 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Directorios
-ORIGEN_BASE="/home/isem/workspace/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform"
-DESTINO_BASE="/home/isem/workspace/gamilit/projects/gamilit/apps/database/ddl"
+# NOTA: Rutas legacy — ajustar segun entorno de ejecucion actual
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+ORIGEN_BASE="${MIGRATION_ORIGIN:-$PROJECT_ROOT/backup-ddl/gamilit_platform}"
+DESTINO_BASE="$PROJECT_ROOT/apps/database/ddl"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 

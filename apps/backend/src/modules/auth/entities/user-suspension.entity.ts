@@ -8,7 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { DB_TABLES } from '@/shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 import { User } from './user.entity';
 
 /**
@@ -26,7 +26,7 @@ import { User } from './user.entity';
  * @created 2025-11-11 (DB-100 Ciclo B.2)
  * @version 1.0
  */
-@Entity({ name: DB_TABLES.AUTH.USER_SUSPENSIONS, schema: 'auth_management' })
+@Entity({ name: DB_TABLES.AUTH.USER_SUSPENSIONS, schema: DB_SCHEMAS.AUTH })
 export class UserSuspension {
   /**
    * ID único de la suspensión

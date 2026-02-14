@@ -23,7 +23,7 @@ Este checklist debe ejecutarse:
 projects/{proyecto}/
 ├── orchestration/
 │   ├── 00-guidelines/
-│   │   └── CONTEXTO-PROYECTO.md        # [OBLIGATORIO]
+│   │   └── PROJECT-CONTEXT.md        # [OBLIGATORIO]
 │   ├── PROXIMA-ACCION.md               # [OBLIGATORIO]
 │   ├── inventarios/
 │   │   ├── MASTER_INVENTORY.yml        # [OBLIGATORIO]
@@ -51,8 +51,8 @@ projects/{proyecto}/
 
 ### 2. GUIDELINES
 - [ ] Carpeta `00-guidelines/` existe
-- [ ] Archivo `CONTEXTO-PROYECTO.md` existe
-- [ ] CONTEXTO-PROYECTO.md contiene:
+- [ ] Archivo `PROJECT-CONTEXT.md` existe
+- [ ] PROJECT-CONTEXT.md contiene:
   - [ ] Nombre del proyecto
   - [ ] Código/identificador
   - [ ] Nivel (2A, 2B, 2B.1, 2B.2)
@@ -110,7 +110,7 @@ Además de todo lo de Nivel 2A:
 ```
 erp-suite/apps/erp-core/orchestration/
 ├── 00-guidelines/
-│   ├── CONTEXTO-PROYECTO.md
+│   ├── PROJECT-CONTEXT.md
 │   └── HERENCIA-DIRECTIVAS.md        # [OBLIGATORIO para suite]
 └── ...
 ```
@@ -133,7 +133,7 @@ erp-suite/apps/erp-core/orchestration/
 ```
 erp-suite/apps/verticales/{vertical}/orchestration/
 ├── 00-guidelines/
-│   ├── CONTEXTO-PROYECTO.md
+│   ├── PROJECT-CONTEXT.md
 │   └── HERENCIA-DIRECTIVAS.md        # [OBLIGATORIO]
 ├── directivas/
 │   └── {directivas específicas}      # [SI HAY]
@@ -159,7 +159,7 @@ PASO 1: ¿Existe orchestration/?
   NO → Crear estructura completa
   SÍ → Continuar
 
-PASO 2: ¿Existe CONTEXTO-PROYECTO.md?
+PASO 2: ¿Existe PROJECT-CONTEXT.md?
   NO → BLOQUEANTE - Crear antes de continuar
   SÍ → Verificar contenido mínimo
 
@@ -190,12 +190,12 @@ ls -la projects/{proyecto}/orchestration/inventarios/
 # Verificar trazas
 ls -la projects/{proyecto}/orchestration/trazas/
 
-# Verificar contenido de CONTEXTO-PROYECTO
-head -50 projects/{proyecto}/orchestration/00-guidelines/CONTEXTO-PROYECTO.md
+# Verificar contenido de PROJECT-CONTEXT
+head -50 projects/{proyecto}/orchestration/00-guidelines/PROJECT-CONTEXT.md
 
 # Buscar proyectos sin estructura completa
 for p in projects/*/; do
-  if [ ! -f "$p/orchestration/00-guidelines/CONTEXTO-PROYECTO.md" ]; then
+  if [ ! -f "$p/orchestration/00-guidelines/PROJECT-CONTEXT.md" ]; then
     echo "FALTA CONTEXTO: $p"
   fi
 done
@@ -205,7 +205,7 @@ done
 
 ## ACCIONES DE REMEDIACIÓN
 
-### Si falta CONTEXTO-PROYECTO.md
+### Si falta PROJECT-CONTEXT.md
 
 1. Copiar template de `core/orchestration/templates/CONTEXTO-NIVEL-STANDALONE.md`
 2. Adaptar variables del proyecto

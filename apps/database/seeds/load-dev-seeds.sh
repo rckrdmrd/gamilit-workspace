@@ -155,7 +155,7 @@ log "FASE 3: AUTH MANAGEMENT - Base"
 log "============================================================================"
 
 execute_sql "$SEEDS_DIR/auth_management/01-tenants.sql" "Seeds: tenants"
-execute_sql "$SEEDS_DIR/auth_management/02-tenants-production.sql" "Seeds: tenants (production)"
+execute_sql "$SEEDS_DIR/auth_management/02-tenants-production.sql" "Seeds: cleanup tenants personales huerfanos"
 execute_sql "$SEEDS_DIR/auth_management/02-auth_providers.sql" "Seeds: auth_providers"
 
 log_success "FASE 3 completada"

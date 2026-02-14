@@ -305,7 +305,7 @@ Si este proyecto usaba el sistema anterior:
 - [ ] Directivas heredadas del padre documentadas (si aplica)
 - [ ] Directivas específicas locales listadas
 - [ ] Variables de contexto CCA definidas
-- [ ] `CONTEXTO-PROYECTO.md` actualizado con referencia a este archivo
+- [ ] `PROJECT-CONTEXT.md` actualizado con referencia a este archivo
 
 ---
 

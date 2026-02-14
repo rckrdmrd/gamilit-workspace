@@ -1,7 +1,14 @@
 # Modelo de Datos - GAMILIT
 
-**Version:** 1.0.0
-**Fecha:** 2026-02-07
+**Version:** 1.1.0
+**Fecha:** 2026-02-12
+
+---
+
+> **NOTA IMPORTANTE (2026-02-12):** Este documento describe el modelo de datos a nivel **conceptual**.
+> Los nombres de schemas, tablas y funciones son **descripciones de dominio**, no nombres DDL exactos.
+> Para el mapeo preciso conceptual-a-fisico, ver la seccion "Mapeo Conceptual a Fisico" al final
+> de este documento, y consultar `COHERENCE-ENTITIES-DDL.md` para el mapeo entity-por-entity verificado.
 
 ---
 
@@ -11,13 +18,13 @@
 |---------|-------|
 | Schemas | 18 (16 activos + 2 placeholder) |
 | Tablas | 171 |
-| Views | 13 |
+| Views | 22 |
 | Materialized Views | 7 |
-| Functions | 128 |
-| Triggers | 49 |
-| RLS Policies | 282 |
-| Foreign Keys | 299 |
-| ENUMs | 36 |
+| Functions | 183 |
+| Triggers | 126 |
+| RLS Policies | 263 |
+| Foreign Keys | 298 |
+| ENUMs | 42 |
 
 ---
 
@@ -298,7 +305,7 @@ Reservados para futuras expansiones:
 
 ---
 
-## RLS Policies (282)
+## RLS Policies (263)
 
 ### Distribucion por Schema
 | Schema | Policies | Estrategia |
@@ -354,7 +361,7 @@ CREATE POLICY "tenant_isolation_delete" ON schema.table_name
 
 ---
 
-## ENUMs (36)
+## ENUMs (42)
 
 | Grupo | ENUMs | Valores ejemplo |
 |-------|-------|-----------------|
@@ -377,7 +384,7 @@ CREATE POLICY "tenant_isolation_delete" ON schema.table_name
 
 ---
 
-## Funciones Clave (128 total)
+## Funciones Clave (183 total)
 
 ### Gamificacion (25)
 - `calculate_xp(student_id, exercise_id, score)` -> INTEGER
@@ -418,7 +425,7 @@ CREATE POLICY "tenant_isolation_delete" ON schema.table_name
 
 ---
 
-## Triggers Clave (49 total)
+## Triggers Clave (126 total)
 
 | Trigger | Tabla | Evento | Accion |
 |---------|-------|--------|--------|
@@ -434,6 +441,68 @@ CREATE POLICY "tenant_isolation_delete" ON schema.table_name
 
 ---
 
+## Mapeo Conceptual a Fisico
+
+> Agregado 2026-02-12 por TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION.
+> Este modelo usa nombres conceptuales. Aqui se documenta la correspondencia con la implementacion real.
+
+### Schemas: Conceptual -> Fisico
+
+| # | Schema Conceptual | Schema(s) Fisico(s) DDL | Backend Datasource | Nota |
+|---|-------------------|------------------------|-------------------|------|
+| 1 | auth | auth + auth_management | auth | users en schema auth, resto en auth_management |
+| 2 | tenants | auth_management | auth | Tabla tenants dentro de auth_management |
+| 3 | education | educational_content + progress_tracking | educational + progress | Split: estructura en educational, progreso en progress |
+| 4 | gamification | gamification_system | gamification | Incluye store, missions, leaderboard, achievements, comodines |
+| 5 | social | social_features | social | Incluye classrooms, teams, guilds, friendships |
+| 6 | classrooms | social_features | social | Absorbido en social_features |
+| 7 | analytics | data_warehouse + materialized views | etl (no registrado) | No existe como schema separado |
+| 8 | reports | social_features + admin_dashboard | social + admin_dashboard | No existe como schema separado |
+| 9 | notifications | notifications | notifications | Match directo |
+| 10 | store | gamification_system | gamification | Absorbido en gamification_system |
+| 11 | missions | gamification_system | gamification | Absorbido en gamification_system |
+| 12 | leaderboard | gamification_system | gamification | Absorbido en gamification_system |
+| 13 | content | content_management | content | Match directo |
+| 14 | parents | auth_management | auth | parent_accounts/links/notifications en auth_management |
+| 15 | settings | system_configuration | (via admin) | Match directo |
+| 16 | audit | audit_logging | audit | Match directo |
+| 17 | integrations | lti_integration | lti (no registrado) | Parcial |
+| 18 | billing | N/A (placeholder) | N/A | No implementado |
+
+### Schemas Fisicos DDL No Representados en Modelo Conceptual
+
+| Schema Fisico | Tipo | Nota |
+|--------------|------|------|
+| communication | Activo | Mensajeria teacher-student, tiene entities |
+| admin_dashboard | Activo | Reports admin, bulk_operations, metrics |
+| system_configuration | Activo | Settings, feature flags, rate limits |
+| storage | Placeholder | Reservado |
+| data_warehouse | Activo | ETL dimensions + facts |
+| gamilit | Utility | Funciones compartidas |
+
+### Tablas: Clasificacion de Correspondencia
+
+De las ~90 tablas listadas en este documento conceptual:
+- **33%** tienen match exacto con DDL (mismo nombre)
+- **33%** son naming aliases (mismo concepto, nombre diferente en DDL)
+- **9%** tienen implementacion diferente (ej: como ENUM, config JSON, inline)
+- **15%** estan diferidas (cubiertas inline o por config)
+- **14%** son futuras (post-MVP, no implementadas)
+
+Para el mapeo tabla-por-tabla completo, ver:
+- `docs/20-architecture/COHERENCE-ENTITIES-DDL.md` — Entity ↔ DDL verified
+- `orchestration/tareas/TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION/02-DISCREPANCIAS.md` — Tabla conceptual ↔ DDL real
+
+### Funciones: Nota de Correspondencia
+
+Las funciones listadas en este documento (ej: `calculate_xp()`, `validate_user_credentials()`) son **descripciones conceptuales** de la logica, no nombres DDL exactos. Los nombres reales en DDL siguen el patron:
+- `gamilit.fn_nombre_funcion()` o `schema.nombre_funcion()`
+- Ejemplo: `calculate_xp()` conceptual → `gamilit.calculate_xp_reward()` en DDL
+
+Para la lista completa de funciones DDL reales, consultar `apps/database/ddl/` por schema.
+
+---
+
 *GAMILIT - Modelo de Datos*
-*18 schemas, 171 tablas, 282 RLS policies*
-*PostgreSQL 16 con Row-Level Security*
+*18 schemas, 171 tablas, 263 RLS policies*
+*PostgreSQL 15 con Row-Level Security*

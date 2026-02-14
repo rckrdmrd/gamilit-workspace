@@ -34,7 +34,7 @@ export class TransformResponseInterceptor implements NestInterceptor {
         }
 
         // Transformar fechas en el objeto
-        const transformedData = this.transformDates(data);
+        const transformedData = this.transformDates(data, new WeakSet());
 
         // Estructura de respuesta estándar
         return {
@@ -48,9 +48,10 @@ export class TransformResponseInterceptor implements NestInterceptor {
   }
 
   /**
-   * Transforma recursivamente strings ISO a objetos Date
+   * Transforma recursivamente strings ISO a objetos Date.
+   * Usa WeakSet para detectar referencias circulares y evitar recursion infinita.
    */
-  private transformDates(obj: unknown): unknown {
+  private transformDates(obj: unknown, visited: WeakSet<object>): unknown {
     if (obj === null || obj === undefined) {
       return obj;
     }
@@ -62,16 +63,20 @@ export class TransformResponseInterceptor implements NestInterceptor {
 
     // Si es un array, transformar cada elemento
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.transformDates(item));
+      if (visited.has(obj)) return obj;
+      visited.add(obj);
+      return obj.map((item) => this.transformDates(item, visited));
     }
 
     // Si es un objeto, transformar cada propiedad
     if (typeof obj === 'object') {
+      if (visited.has(obj)) return obj;
+      visited.add(obj);
       const transformed: Record<string, unknown> = {};
       const objRecord = obj as Record<string, unknown>;
       for (const key in objRecord) {
         if (Object.prototype.hasOwnProperty.call(objRecord, key)) {
-          transformed[key] = this.transformDates(objRecord[key]);
+          transformed[key] = this.transformDates(objRecord[key], visited);
         }
       }
       return transformed;

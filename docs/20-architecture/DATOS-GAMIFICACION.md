@@ -1,16 +1,16 @@
 # DATOS DE GAMIFICACION - GAMILIT
 
-**Versión:** 1.0.0
-**Fecha:** 2025-11-29
-**Fuente:** Consolidado desde orchestration/inventarios/SEEDS_INVENTORY.yml
+**Version:** 2.0.0
+**Fecha:** 2026-02-11
+**Fuente:** DB Seeds v2.1 (apps/database/seeds/prod/gamification_system/)
 **Estado:** PRODUCTION-READY
 
 ---
 
 ## Resumen Ejecutivo
 
-GAMILIT implementa un sistema completo de gamificación educativa con:
-- **7 Rangos Maya** (sistema de progresión jerárquica)
+GAMILIT implementa un sistema completo de gamificacion educativa con:
+- **5 Rangos Maya** (sistema de progresion jerarquica — DB Seeds v2.1)
 - **20 Achievements** (logros desbloqueables)
 - **ML Coins** (moneda virtual para comodines)
 - **4 Comodines** (ayudas durante ejercicios)
@@ -21,33 +21,19 @@ GAMILIT implementa un sistema completo de gamificación educativa con:
 
 ## 1. Sistema de Rangos Maya
 
-### 1.1 Jerarquía de Rangos
+### 1.1 Jerarquia de Rangos (DB Seeds v2.1 — SSOT)
 
-Los usuarios progresan a través de **7 niveles** basados en XP acumulado:
+Los usuarios progresan a traves de **5 niveles** basados en XP acumulado:
 
-| Nivel | Rango | XP Mínimo | XP Máximo | Bonus Subida | Multiplicador XP |
-|-------|-------|-----------|-----------|--------------|------------------|
-| 1 | **Novato** | 0 | 99 | - | 1.00x |
-| 2 | **Aprendiz** | 100 | 299 | +50 ML | 1.05x |
-| 3 | **Experto** | 300 | 599 | +100 ML | 1.10x |
-| 4 | **Maestro** | 600 | 999 | +200 ML | 1.15x |
-| 5 | **Sabio** | 1,000 | 1,499 | +350 ML | 1.20x |
-| 6 | **Guardián** | 1,500 | 2,499 | +500 ML | 1.25x |
-| 7 | **Leyenda** | 2,500 | ∞ | +1,000 ML | 1.30x |
+| Nivel | Rango Maya | XP Min | XP Max | ML Bonus | Multiplicador |
+|-------|------------|--------|--------|----------|---------------|
+| 1 | **Ajaw** (Senor) | 0 | 499 | - | 1.00x |
+| 2 | **Nacom** (Capitan de Guerra) | 500 | 999 | +100 ML | 1.10x |
+| 3 | **Ah K'in** (Sacerdote del Sol) | 1,000 | 1,499 | +250 ML | 1.15x |
+| 4 | **Halach Uinic** (Hombre Verdadero) | 1,500 | 1,899 | +500 ML | 1.20x |
+| 5 | **K'uk'ulkan** (Serpiente Emplumada) | 1,900 | - | +1,000 ML | 1.25x |
 
-### 1.2 Rangos Alternativos (DocumentoDeDiseño v6.5)
-
-El documento de diseño también define rangos con nombres mayas alternativos:
-
-| Nivel | Rango Maya | Umbral XP Mínimo | Bonus por Subida |
-|-------|------------|------------------|------------------|
-| 1 | **AJAW** | 0 | - |
-| 2 | **NACOM** | 500 | +100 ML |
-| 3 | **AH K'IN** | 1,000 | +250 ML |
-| 4 | **HALACH UINIC** | 1,500 | +500 ML |
-| 5 | **K'UK'ULKAN** | 1,900 | +1,000 ML |
-
-> **Nota:** Ambas jerarquías están implementadas. Consultar ADR correspondiente para decisión final.
+> **SSOT:** `apps/database/seeds/prod/gamification_system/03-maya_ranks.sql`
 
 ### 1.3 Ubicación en Base de Datos
 
@@ -63,7 +49,7 @@ gamification_system.user_stats       -- XP y estadísticas del usuario
 
 ```yaml
 archivo: apps/database/seeds/prod/gamification_system/03-maya_ranks.sql
-registros: 7
+registros: 5
 ```
 
 ---
@@ -318,14 +304,14 @@ Ver `docs/sistema-recompensas/01-ARQUITECTURA-SISTEMA.md`:
 
 ### Distribución de Contenido
 
-| Módulo | Nombre | Ejercicios | XP Total | ML Total |
-|--------|--------|------------|----------|----------|
-| M1 | Comprensión Literal | 5 | 500 | 100 |
-| M2 | Comprensión Inferencial | 5 | 500 | 100 |
-| M3 | Comprensión Crítica | 5 | 500 | 100 |
-| M4 | Textos Digitales | 5 | 500 | 100 |
-| M5 | Producción Creativa | 3 | 500 | 100 |
-| **Total** | | **23** | **2,500** | **500** |
+| Modulo | Nombre | Ejercicios | XP/Ejercicio | XP Completar Modulo | XP Total |
+|--------|--------|------------|-------------|---------------------|----------|
+| M1 | Comprension Literal | 5 | 100 | 100 | 600 |
+| M2 | Comprension Inferencial | 5 | 150 | 150 | 900 |
+| M3 | Comprension Critica | 5 | 150 | 200 | 950 |
+| M4 | Lectura Digital | 5 | 100 | 175 | 675 |
+| M5 | Produccion Creativa | 1 (de 3) | 500 | 250 | 750 |
+| **Total** | | **21 efectivos** | | | **3,875** |
 
 ### Mecánicas por Módulo
 
@@ -386,5 +372,5 @@ apps/database/seeds/prod/gamification_system/
 
 ---
 
-**Última actualización:** 2025-11-29
+**Ultima actualizacion:** 2026-02-11
 **Mantenido por:** Architecture-Analyst

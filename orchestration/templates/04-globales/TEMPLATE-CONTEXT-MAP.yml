@@ -15,7 +15,7 @@ metadata:
   nivel: "{STANDALONE | SUITE | SUITE_CORE | VERTICAL}"
   version: "1.0.0"
   ultima_actualizacion: "{YYYY-MM-DD}"
-  workspace_root: "/home/isem/workspace-v1"
+  workspace_root: "."  # Relative — resolved at runtime
   project_root: "{PROJECT_ROOT}"
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -123,7 +123,7 @@ contexto_por_nivel:
     tokens_estimados: 3000
     obligatorio: true
     archivos:
-      - path: "{ORCHESTRATION_PATH}/00-guidelines/CONTEXTO-PROYECTO.md"
+      - path: "{ORCHESTRATION_PATH}/00-guidelines/PROJECT-CONTEXT.md"
         proposito: "Variables y configuración del proyecto"
         tokens: 1500
         prioridad: 1

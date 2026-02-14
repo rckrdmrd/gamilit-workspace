@@ -190,11 +190,11 @@ bash apps/database/scripts/recreate-database.sh
 ```
 
 ### Validaciones Automaticas
-- RLS policies activas en todas las tablas multi-tenant (282 policies)
-- Funciones SQL ejecutan sin errores (128 funciones)
-- Triggers disparan correctamente (49 triggers)
-- Foreign keys validas (299 FKs)
-- ENUMs sincronizados con backend (36 ENUMs)
+- RLS policies activas en todas las tablas multi-tenant (263 policies)
+- Funciones SQL ejecutan sin errores (255 funciones)
+- Triggers disparan correctamente (132 triggers)
+- Foreign keys validas (273 FKs)
+- ENUMs sincronizados con backend (41 ENUMs)
 
 ---
 
@@ -206,7 +206,7 @@ bash apps/database/scripts/recreate-database.sh
 | Tests pasando | 833 | 100% |
 | Cobertura backend | ~75% | 80% |
 | Cobertura frontend | ~65% | 70% |
-| Coherencia DDL-Backend | 82.5% | 100% |
+| Coherencia DDL-Backend | 89% | 100% |
 | Tests de integracion | ~70 | 100+ |
 | E2E tests | Planificados | 13+ |
 

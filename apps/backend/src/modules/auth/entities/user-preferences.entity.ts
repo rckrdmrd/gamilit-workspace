@@ -8,7 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { DB_TABLES } from '@/shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 import { ThemeEnum, LanguageEnum } from '@/shared/constants/enums.constants';
 import { Profile } from './profile.entity';
 
@@ -26,7 +26,7 @@ import { Profile } from './profile.entity';
  * @created 2025-11-11 (DB-100 Ciclo B.1)
  * @version 1.0
  */
-@Entity({ name: DB_TABLES.AUTH.USER_PREFERENCES, schema: 'auth_management' })
+@Entity({ name: DB_TABLES.AUTH.USER_PREFERENCES, schema: DB_SCHEMAS.AUTH })
 export class UserPreferences {
   /**
    * ID del usuario (PK y FK a profiles)

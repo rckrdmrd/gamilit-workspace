@@ -1,34 +1,38 @@
-# INDICE DE DIRECTIVAS - GAMILIT
+# Indice de Directivas - GAMILIT
 
 **Proyecto:** GAMILIT
 **Nivel:** STANDALONE
-**Ultima Actualizacion:** 2025-12-18
+**Ultima Actualizacion:** 2026-02-11
 
 ---
 
-## PROPOSITO
+## Proposito
 
-Esta carpeta contiene directivas **especificas** del proyecto GAMILIT que **extienden** (no reemplazan) las directivas de CORE.
+Esta carpeta contiene directivas **especificas** del proyecto GAMILIT. Al ser un workspace standalone, toda la gobernanza es local.
 
 ---
 
-## CADENA DE HERENCIA
+## Sistema de Gobernanza
+
+GAMILIT opera como workspace standalone con gobernanza local completa:
 
 ```
-WORKSPACE → CORE → GAMILIT (este nivel)
+GAMILIT (standalone) — gobernanza 100% local en orchestration/
 ```
 
-### Directivas Heredadas (Obligatorias)
+### Directivas Locales
 
-| Origen | Directiva | Alias |
-|--------|-----------|-------|
-| WORKSPACE | DIRECTIVA-CARGA-CONTEXTO.md | @CARGA-CONTEXTO |
-| CORE | PRINCIPIO-CAPVED.md | @CAPVED |
-| CORE | PRINCIPIO-DOC-PRIMERO.md | @DOC-PRIMERO |
-| CORE | SIMCO-TAREA.md | @TAREA |
-| CORE | DIRECTIVA-DOCUMENTACION-DEFINITIVA.md | @DOC-DEFINITIVA |
+La gobernanza completa reside en `orchestration/directivas/`:
 
-### Directivas Locales (Este Proyecto)
+| Categoria | Cantidad | Ubicacion |
+|-----------|----------|-----------|
+| SIMCO | 78 | `orchestration/directivas/simco/` |
+| Principios | 15 | `orchestration/directivas/principios/` |
+| Triggers | 11 | `orchestration/directivas/triggers/` |
+| Modos | 3 | `orchestration/directivas/modos/` |
+| Politicas | 2 | `orchestration/directivas/politicas/` |
+
+### Directivas Especificas de Proyecto (Esta Carpeta)
 
 | Archivo | Proposito | Estado |
 |---------|-----------|--------|
@@ -38,7 +42,7 @@ WORKSPACE → CORE → GAMILIT (este nivel)
 
 ---
 
-## CONTEXTO DEL PROYECTO
+## Contexto del Proyecto
 
 ### Variables de Contexto
 
@@ -47,92 +51,50 @@ PROJECT: gamilit
 PROJECT_LEVEL: STANDALONE
 DB_NAME: gamilit_platform
 STACK:
-  database: PostgreSQL 15+
-  backend: NestJS + TypeORM
-  frontend: React + TypeScript + Zustand
+  database: PostgreSQL 15
+  backend: NestJS 11 + TypeORM 0.3.x
+  frontend: React 19 + TypeScript + Zustand 5.x + Vite 6.x
 ```
 
-### Metricas Actuales (SSOT: orchestration/inventarios/MASTER_INVENTORY.yml)
+### Metricas Actuales (SSOT: orchestration/inventarios/MASTER_INVENTORY.yml v7.0.0)
 
 ```yaml
 Database:
-  schemas: 16
-  tablas: 123
-  rls_policies: 185
+  schemas: 18
+  tablas: 170
+  rls_policies: 263
+  funciones: 255
+  triggers: 132
+  enums: 41
 
 Backend:
-  modulos: 13
-  endpoints: 417
-  entities: 92
+  modulos: 22
+  endpoints: 850
+  entities: 152
+  services: 170
+  controllers: 107
 
 Frontend:
-  componentes: 483
-  hooks: 89
-  pages: 31
+  componentes: 458
+  hooks: 127
+  paginas: 85
+  stores: 32
+  portales: 4
 ```
 
 ---
 
-## ARCHIVOS DE HERENCIA
+## Navegacion
 
-Para ver la configuracion de herencia completa:
-
-- `orchestration/00-guidelines/CONTEXTO-PROYECTO.md` - Variables de contexto
-- `orchestration/00-guidelines/HERENCIA-SIMCO.md` - Herencia de SIMCO
-- `orchestration/00-guidelines/HERENCIA-DIRECTIVAS.md` - Mapeo de directivas
-
----
-
-## COMO AGREGAR DIRECTIVAS ESPECIFICAS
-
-### Paso 1: Crear archivo
-
-```markdown
-# DIRECTIVA: {NOMBRE}
-
-**Proyecto:** GAMILIT
-**Fecha:** {YYYY-MM-DD}
-**Tipo:** Directiva Especifica
-**Extiende:** {directiva de CORE si aplica}
+| Recurso | Ubicacion |
+|---------|-----------|
+| Directivas SIMCO | `orchestration/directivas/simco/` |
+| Principios | `orchestration/directivas/principios/` |
+| Triggers | `orchestration/directivas/triggers/` |
+| Perfiles de Agente | `orchestration/agents/perfiles/` |
+| Inventarios | `orchestration/inventarios/` |
+| Overview General | `docs/00-overview/README.md` |
 
 ---
 
-## PROPOSITO
-
-{descripcion}
-
----
-
-## CONTENIDO
-
-{contenido de la directiva}
-
----
-
-**Esta directiva EXTIENDE las directivas de CORE, no las reemplaza.**
-```
-
-### Paso 2: Actualizar este indice
-
-Agregar entrada en la tabla "Directivas Locales".
-
-### Paso 3: Actualizar HERENCIA-DIRECTIVAS.md
-
-```yaml
-directivas_locales:
-  - archivo: "docs/00-vision-general/directivas/{NOMBRE}.md"
-    proposito: "{descripcion}"
-```
-
----
-
-## NAVEGACION
-
-- **Indice Maestro:** `/home/isem/workspace/orchestration/INDICE-DIRECTIVAS-WORKSPACE.yml`
-- **Directivas CORE:** `/home/isem/workspace/core/orchestration/directivas/`
-- **Contexto Proyecto:** `orchestration/00-guidelines/CONTEXTO-PROYECTO.md`
-
----
-
-**Actualizado:** 2025-12-18
-**Por:** Requirements-Analyst
+*Actualizado: 2026-02-11*

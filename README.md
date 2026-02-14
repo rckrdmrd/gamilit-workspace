@@ -116,14 +116,14 @@ Diario multimedia, Comic digital, Video carta (estudiante elige 1 de 3)
 - Niveles progresivos con desbloqueo de contenido
 - Bonificaciones por racha y completitud
 
-### Rangos Jerarquicos Maya (5 Niveles)
-| Rango | Titulo Maya | Requisitos |
-|-------|-------------|------------|
-| 1 | Ah K'in (Sacerdote) | 0 - 999 XP |
-| 2 | Nacom (Guerrero) | 1,000 - 4,999 XP |
-| 3 | Batab (Jefe Local) | 5,000 - 14,999 XP |
-| 4 | Halach Uinik (Gobernante) | 15,000 - 49,999 XP |
-| 5 | Ajaw (Senor Supremo) | 50,000+ XP |
+### Rangos Jerarquicos Maya (5 Niveles — DB Seeds v2.1)
+| Nivel | Titulo Maya | XP Min | Multiplicador |
+|-------|-------------|--------|---------------|
+| 1 | Ajaw (Senor) | 0 | 1.00x |
+| 2 | Nacom (Capitan de Guerra) | 500 | 1.10x |
+| 3 | Ah K'in (Sacerdote del Sol) | 1,000 | 1.15x |
+| 4 | Halach Uinic (Hombre Verdadero) | 1,500 | 1.20x |
+| 5 | K'uk'ulkan (Serpiente Emplumada) | 1,900 | 1.25x |
 
 ### Economia Virtual
 - **ML Coins:** Moneda virtual ganada por ejercicios y misiones

@@ -107,13 +107,13 @@ created_at TIMESTAMPTZ DEFAULT NOW()
 
 Los rangos estan inspirados en la estructura social de la civilizacion maya clasica. Cada rango desbloquea beneficios y elementos visuales.
 
-| Nivel | Rango | Titulo Maya | XP Min | XP Max | Beneficios |
-|-------|-------|-------------|--------|--------|------------|
-| 1 | Iniciado | Ah K'in (Sacerdote del Sol) | 0 | 999 | Acceso basico, avatar default |
-| 2 | Guerrero | Nacom (Capitan Guerrero) | 1,000 | 4,999 | +10% ML Coins, avatar guerrero |
-| 3 | Jefe | Batab (Jefe Local) | 5,000 | 14,999 | +20% ML Coins, titulo visible, chat |
-| 4 | Gobernante | Halach Uinik (Gran Senor) | 15,000 | 49,999 | +30% ML Coins, items exclusivos |
-| 5 | Senor Supremo | Ajaw (Senor Supremo) | 50,000 | - | +50% ML Coins, todos los beneficios |
+| Nivel | Rango | Titulo Maya | XP Min | XP Max | ML Bonus | Multiplicador |
+|-------|-------|-------------|--------|--------|----------|---------------|
+| 1 | Senor | Ajaw (Senor) | 0 | 499 | - | 1.00x |
+| 2 | Capitan de Guerra | Nacom (Capitan de Guerra) | 500 | 999 | +100 ML | 1.10x |
+| 3 | Sacerdote del Sol | Ah K'in (Sacerdote del Sol) | 1,000 | 1,499 | +250 ML | 1.15x |
+| 4 | Hombre Verdadero | Halach Uinic (Hombre Verdadero) | 1,500 | 1,899 | +500 ML | 1.20x |
+| 5 | Serpiente Emplumada | K'uk'ulkan (Serpiente Emplumada) | 1,900 | - | +1,000 ML | 1.25x |
 
 ### Promocion de Rango
 

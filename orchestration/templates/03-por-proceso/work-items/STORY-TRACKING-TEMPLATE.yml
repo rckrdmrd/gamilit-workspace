@@ -1,0 +1,39 @@
+# ============================================================================
+# STORY TRACKING Template - SIMCO v4.0.0
+# Plantilla YAML para tracking ligero de User Stories (ADR-0020)
+# Ubicacion destino: orchestration/work-items/stories/US-{PREFIX}-{ID}.yml
+# ============================================================================
+
+# --- Identificacion ---
+id: "US-{PREFIX}-{EPIC_NUM}-{SEQ}"
+epic_id: "EPIC-{PREFIX}-{NAME}"
+project: "{project-name}"
+title: "{Titulo breve de la historia}"
+
+# --- Estado ---
+status: "{backlog|ready|in_progress|review|qa|done}"
+priority: "{P0|P1|P2|P3}"
+story_points: "{1|2|3|5|8|13|21}"
+sprint: "{Sprint-N}"
+assignee: "{agent-profile}"
+
+# --- Ubicacion SSOT ---
+docs_path: "workspace-projects/projects/{p}/docs/10-requirements/epics/EPIC-{ID}/US-{ID}.md"
+
+# --- Tareas ---
+tasks:
+  - "TASK-{PREFIX}-{NNN}"
+  # - "TASK-{PREFIX}-{NNN+1}"
+
+# --- Dependencias ---
+depends_on: []
+blocks: []
+
+# --- Metadatos ---
+created: "{YYYY-MM-DD}"
+updated: "{YYYY-MM-DD}"
+
+# --- Notas ---
+# - docs_path apunta a la US co-localizada con su EPIC (ADR-0020)
+# - tasks[] enlaza a orchestration/work-items/tasks/TASK-*.yml
+# - Status flow: backlog -> ready -> in_progress -> review -> qa -> done

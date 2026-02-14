@@ -25,7 +25,7 @@ PROPAGATE_TO:
 projects/{PROYECTO}/
 ├── orchestration/
 │   ├── 00-guidelines/
-│   │   └── CONTEXTO-PROYECTO.md      # ESTE archivo (adaptado)
+│   │   └── PROJECT-CONTEXT.md      # ESTE archivo (adaptado)
 │   ├── PROXIMA-ACCION.md
 │   ├── inventarios/
 │   │   ├── MASTER_INVENTORY.yml
@@ -104,7 +104,7 @@ FRONTEND_PORT: "{puerto}"
   - shared/catalog/CATALOG-INDEX.yml
 
 2_PROYECTO:
-  - projects/{PROYECTO}/orchestration/00-guidelines/CONTEXTO-PROYECTO.md
+  - projects/{PROYECTO}/orchestration/00-guidelines/PROJECT-CONTEXT.md
   - projects/{PROYECTO}/orchestration/PROXIMA-ACCION.md
   - projects/{PROYECTO}/orchestration/inventarios/MASTER_INVENTORY.yml
 

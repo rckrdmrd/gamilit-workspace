@@ -67,7 +67,7 @@ cat {proyecto}/orchestration/trazas/SESSION-STATE.yml
 2. SIMCO-TAREA.md               # Protocolo de tareas (~1500 tokens)
 
 # Cargar según proyecto (L1)
-3. {proyecto}/CONTEXTO-PROYECTO.md  # Si existe (~1500 tokens)
+3. {proyecto}/PROJECT-CONTEXT.md  # Si existe (~1500 tokens)
 4. {proyecto}/orchestration/PROXIMA-ACCION.md  # Estado (~500 tokens)
 
 # Total L0+L1: ~7500 tokens (37.5% del presupuesto)
@@ -144,7 +144,7 @@ proxima_accion: "[siguiente paso]"
 ### Carga de Contexto
 - [ ] CLAUDE.md cargado
 - [ ] SIMCO-TAREA.md cargado
-- [ ] CONTEXTO-PROYECTO.md cargado (si existe)
+- [ ] PROJECT-CONTEXT.md cargado (si existe)
 - [ ] PROXIMA-ACCION.md leído
 
 ### Restauración de Estado

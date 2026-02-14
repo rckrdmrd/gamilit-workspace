@@ -242,7 +242,7 @@ ejemplo_valido: |
       - "CLAUDE.md"
       - "SIMCO-TAREA.md"
     L1:
-      - "gamilit/CONTEXTO-PROYECTO.md"
+      - "gamilit/PROJECT-CONTEXT.md"
     L2:
       - "SIMCO-DOCUMENTAR.md"
     L3:
@@ -275,7 +275,7 @@ recovery:
       nombre: "Restaurar contexto mínimo"
       archivos:
         - "CLAUDE.md"
-        - "checkpoint.proyecto.path/CONTEXTO-PROYECTO.md"
+        - "checkpoint.proyecto.path/PROJECT-CONTEXT.md"
 
     4:
       nombre: "Posicionarse"

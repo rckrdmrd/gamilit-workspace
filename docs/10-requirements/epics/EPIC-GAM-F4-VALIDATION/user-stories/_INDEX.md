@@ -77,4 +77,22 @@
 
 ---
 
-*Actualizado: 2026-02-10 | EPIC-GAM-F4-VALIDATION*
+## Nota de Auditoria (2026-02-12)
+
+> **IMPORTANTE:** Los criterios de aceptacion de US-VAL-002 (Database Integrity) usan metricas pre-auditoria que deben actualizarse con el baseline real verificado en TASK-2026-02-12-ANALISIS-BD-VS-DOCS:
+>
+> | Metrica | Valor en US | Valor Real Correcto |
+> |---------|-------------|---------------------|
+> | Tablas | 147/170 | **171** |
+> | FKs | 299 | **298** |
+> | RLS Policies | 282 | **263** |
+> | ENUMs | 36 | **42** |
+> | Funciones | 128/255 | **183** |
+> | Triggers | 49/132 | **126** |
+> | PostgreSQL | 16 (en algunos docs) | **15** |
+>
+> **Referencia:** `orchestration/inventarios/DATABASE_INVENTORY.yml` (v8.0.0)
+
+---
+
+*Actualizado: 2026-02-12 | EPIC-GAM-F4-VALIDATION*

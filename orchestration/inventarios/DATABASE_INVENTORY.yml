@@ -2,8 +2,8 @@
 # DATABASE INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "7.0.0"
-fecha: "2026-02-11"
+version: "8.0.0"
+fecha: "2026-02-12"
 proyecto: "gamilit"
 database: "gamilit_platform"
 engine: "PostgreSQL 15"
@@ -14,189 +14,215 @@ engine: "PostgreSQL 15"
 
 resumen:
   schemas: 18
-  tablas: 170
+  tablas: 171
   views: 22
   materialized_views: 7
-  funciones: 255
-  triggers: 132
+  funciones: 183
+  triggers: 126
   rls_policies: 263
-  foreign_keys: 273
-  enums: 41
-  index_files: 23
+  foreign_keys: 298
+  enums: 42
+  index_statements: 978
 
 # -------------------------------------------------------------------------------
-# SCHEMAS
+# SCHEMAS (Nombres fisicos DDL)
+# -------------------------------------------------------------------------------
+# NOTA: Estos nombres corresponden a los directorios en apps/database/ddl/schemas/
+# Los nombres conceptuales usados en documentacion pueden diferir.
+# Ver: docs/20-architecture/schema-reference/_INDEX.md para mapeo completo.
 # -------------------------------------------------------------------------------
 
 schemas:
   activos:
     - nombre: "auth"
-      tablas: 8
-      descripcion: "Autenticacion, usuarios, sesiones, tokens"
-      rls_policies: 24
+      tablas: 1
+      descripcion: "Base auth (compatible Supabase): tabla users"
+      tipo: "core"
 
-    - nombre: "tenants"
-      tablas: 4
-      descripcion: "Multi-tenancy, escuelas, configuraciones"
-      rls_policies: 12
+    - nombre: "auth_management"
+      tablas: 17
+      descripcion: "Perfiles, roles, tenants, sesiones, tokens, parents, RBAC"
+      tipo: "core"
+      conceptual: "auth + tenants + parents (en docs)"
 
-    - nombre: "education"
-      tablas: 13
-      descripcion: "Modulos educativos, ejercicios, contenido"
-      rls_policies: 42
+    - nombre: "educational_content"
+      tablas: 21
+      descripcion: "Modulos educativos, ejercicios (23 tipos), asignaciones, rubricas"
+      tipo: "domain"
+      conceptual: "education (en docs)"
 
-    - nombre: "gamification"
-      tablas: 8
-      descripcion: "XP, rangos maya, niveles, motor gamificacion"
-      rls_policies: 38
+    - nombre: "gamification_system"
+      tablas: 21
+      descripcion: "XP, rangos maya, achievements, ML Coins, tienda, misiones, leaderboards"
+      tipo: "domain"
+      conceptual: "gamification + store + missions + leaderboard (en docs)"
 
-    - nombre: "social"
-      tablas: 7
-      descripcion: "Equipos, interacciones, feed, foros"
-      rls_policies: 22
+    - nombre: "progress_tracking"
+      tablas: 21
+      descripcion: "Progreso de estudiantes, intentos, learning paths, mastery, certificados"
+      tipo: "domain"
+      conceptual: "education (parcial, en docs)"
 
-    - nombre: "classrooms"
-      tablas: 7
-      descripcion: "Aulas, asignaciones, periodos"
-      rls_policies: 28
-
-    - nombre: "analytics"
-      tablas: 5
-      descripcion: "Metricas, engagement, estadisticas"
-      rls_policies: 18
-
-    - nombre: "reports"
-      tablas: 4
-      descripcion: "Templates, instancias, exportaciones"
-      rls_policies: 16
+    - nombre: "social_features"
+      tablas: 30
+      descripcion: "Escuelas, aulas, equipos, guilds, amistades, challenges, foros"
+      tipo: "domain"
+      conceptual: "social + classrooms + reports (parcial, en docs)"
 
     - nombre: "notifications"
-      tablas: 5
-      descripcion: "Templates, cola, logs, preferencias"
-      rls_policies: 20
+      tablas: 7
+      descripcion: "Multi-canal: email, push, in-app, SMS con templates y cola"
+      tipo: "support"
 
-    - nombre: "store"
-      tablas: 6
-      descripcion: "Items, compras, inventario, ML Coins"
-      rls_policies: 18
+    - nombre: "content_management"
+      tablas: 10
+      descripcion: "Templates, media, moderacion, tags, versiones"
+      tipo: "domain"
+      conceptual: "content (en docs)"
 
-    - nombre: "missions"
-      tablas: 6
-      descripcion: "Misiones, quests, progreso, rotacion"
-      rls_policies: 16
+    - nombre: "system_configuration"
+      tablas: 9
+      descripcion: "Settings, feature flags, rate limits, parametros gamificacion"
+      tipo: "support"
+      conceptual: "settings (en docs)"
 
-    - nombre: "leaderboard"
+    - nombre: "audit_logging"
+      tablas: 7
+      descripcion: "Auditoria, logs sistema, alertas, activity tracking"
+      tipo: "support"
+      conceptual: "audit (en docs)"
+
+    - nombre: "admin_dashboard"
       tablas: 4
-      descripcion: "Rankings, temporadas, historial"
-      rls_policies: 12
+      views: 7
+      materialized_views: 3
+      descripcion: "Dashboard admin, bulk ops, reportes, metricas"
+      tipo: "support"
+      conceptual: "analytics + reports (parcial, en docs)"
 
-    - nombre: "content"
-      tablas: 3
-      descripcion: "Multimedia, bibliotecas"
-      rls_policies: 8
+    - nombre: "data_warehouse"
+      tablas: 16
+      views: 3
+      descripcion: "Star schema: 8 dimensiones, 4 facts, 2 ML, 2 ETL"
+      tipo: "analytics"
+      conceptual: "analytics (parcial, en docs)"
 
-    - nombre: "parents"
+    - nombre: "communication"
       tablas: 4
-      descripcion: "Perfiles padres, vinculacion, notificaciones"
-      rls_policies: 14
+      descripcion: "Mensajeria interna: conversations, messages, participants"
+      tipo: "domain"
 
-    - nombre: "settings"
+    - nombre: "lti_integration"
       tablas: 3
-      descripcion: "Configuracion global, features, parametros"
-      rls_policies: 6
+      descripcion: "LTI 1.3: consumers, sessions, grade passback"
+      tipo: "integration"
+      conceptual: "integrations (placeholder en docs, pero activo en DDL)"
 
-    - nombre: "audit"
-      tablas: 3
-      descripcion: "Logs, cambios, accesos"
-      rls_policies: 14
+    - nombre: "gamilit"
+      tablas: 0
+      funciones: 37
+      views: 1
+      descripcion: "Funciones utilitarias compartidas (now_mexico, RLS helpers, triggers)"
+      tipo: "utility"
+
+    - nombre: "optimization"
+      tablas: 0
+      descripcion: "Indexes y triggers de optimizacion"
+      tipo: "performance"
 
   placeholder:
-    - nombre: "integrations"
-      descripcion: "Reservado: integraciones externas (LMS, SIS)"
-    - nombre: "billing"
-      descripcion: "Reservado: facturacion"
+    - nombre: "public"
+      descripcion: "Schema publico legacy, vacio"
+    - nombre: "storage"
+      descripcion: "Storage backend, vacio (placeholder)"
 
 # -------------------------------------------------------------------------------
-# MATERIALIZED VIEWS
+# MATERIALIZED VIEWS (7)
 # -------------------------------------------------------------------------------
 
 materialized_views:
-  - nombre: "classroom_rankings"
-    schema: "leaderboard"
+  - nombre: "mv_global_leaderboard"
+    schema: "gamification_system"
+    refresh: "15 min"
+    descripcion: "Ranking global XP"
+
+  - nombre: "mv_classroom_leaderboard"
+    schema: "gamification_system"
     refresh: "5 min"
     descripcion: "Rankings por aula"
 
-  - nombre: "school_rankings"
-    schema: "leaderboard"
+  - nombre: "mv_weekly_leaderboard"
+    schema: "gamification_system"
     refresh: "15 min"
-    descripcion: "Rankings por escuela"
+    descripcion: "Ranking semanal (reset lunes)"
 
-  - nombre: "student_daily_stats"
-    schema: "analytics"
-    refresh: "1 hora"
-    descripcion: "Estadisticas diarias por estudiante"
-
-  - nombre: "module_completion_rates"
-    schema: "analytics"
-    refresh: "1 hora"
-    descripcion: "Tasa de completitud por modulo"
-
-  - nombre: "engagement_dashboard"
-    schema: "analytics"
-    refresh: "30 min"
-    descripcion: "Metricas de engagement"
-
-  - nombre: "teacher_classroom_overview"
-    schema: "analytics"
+  - nombre: "mv_mechanic_leaderboard"
+    schema: "gamification_system"
     refresh: "15 min"
-    descripcion: "Vista general para maestro"
+    descripcion: "Ranking por tipo de ejercicio"
 
-  - nombre: "global_leaderboard"
-    schema: "leaderboard"
-    refresh: "15 min"
-    descripcion: "Ranking global"
+  - nombre: "(3 MVs en admin_dashboard)"
+    schema: "admin_dashboard"
+    refresh: "Variable"
+    descripcion: "Vistas materializadas administrativas"
 
 # -------------------------------------------------------------------------------
-# ENUMS (41)
+# ENUMS (42)
 # -------------------------------------------------------------------------------
 
 enums:
-  - user_role
-  - educational_module_type
-  - exercise_type
-  - difficulty_level
-  - rank_type
-  - xp_source_type
-  - achievement_category
-  - achievement_rarity
-  - store_item_type
-  - item_duration_type
-  - notification_channel
-  - notification_priority
-  - notification_status
-  - mission_type
-  - mission_status
-  - quest_status
-  - interaction_type
-  - report_format
-  - report_status
+  # audit_logging (5)
   - audit_action
+  - log_level
+  - metric_type
+  - alert_severity
+  - alert_status
+  # auth (2)
+  - aal_level
+  - code_challenge_method
+  # auth_management (3)
+  - auth_provider
+  - gamilit_role
+  - user_status
+  # content_management (4)
   - content_status
-  - assignment_status
-  - submission_status
-  - review_status
-  - season_status
-  - team_status
-  - link_status
-  - subscription_plan
-  - feature_flag_type
-  - exercise_evaluation_mode
-  - score_quality
-  - streak_status
-  - powerup_type
-  - powerup_status
+  - content_type
   - media_type
-  - classroom_status
+  - processing_status
+  # educational_content (7)
+  - bloom_level
+  - bloom_taxonomy
+  - cognitive_level
+  - difficulty_level
+  - exercise_mechanic
+  - exercise_type
+  - module_status
+  # gamification_system (8)
+  - achievement_category
+  - achievement_type
+  - comodin_type
+  - maya_rank
+  - notification_priority
+  - notification_type
+  - shop_item_category
+  - transaction_type
+  # progress_tracking (5)
+  - attempt_result
+  - attempt_status
+  - progress_status
+  - certificate_status
+  - certificate_type
+  # social_features (5+2 inline)
+  - classroom_role
+  - enrollment_method
+  - friendship_status
+  - team_challenge_status
+  - team_role
+  - guild_mission_type
+  # system_configuration (1)
+  - setting_type
+  # data_warehouse (1 inline)
+  - etl_load_status
 
 # -------------------------------------------------------------------------------
 # SEGURIDAD
@@ -207,8 +233,18 @@ seguridad:
   total_policies: 263
   tenant_column: "tenant_id"
   context_method: "SET LOCAL app.current_tenant_id"
-  tablas_sin_rls: 51
-  tablas_con_rls: 120
+
+# -------------------------------------------------------------------------------
+# COHERENCIA ENTITY-DDL
+# -------------------------------------------------------------------------------
+
+coherencia:
+  entities_backend: 152
+  tablas_ddl: 171
+  tablas_con_entity: 149
+  tablas_sin_entity: 22
+  cobertura: "87%"
+  gap_justificado: "16 data_warehouse (intencional) + 6 infrastructure/catalog"
 
 # ===============================================================================
 # FIN DATABASE INVENTORY

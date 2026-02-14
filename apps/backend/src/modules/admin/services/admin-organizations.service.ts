@@ -138,6 +138,11 @@ export class AdminOrganizationsService {
 
     const queryBuilder = this.tenantRepo.createQueryBuilder('tenant');
 
+    // Exclude personal tenants (orphaned student tenants that should not appear as organizations)
+    queryBuilder.andWhere(
+      "(tenant.metadata->>'personal_tenant' IS NULL OR tenant.metadata->>'personal_tenant' != 'true')",
+    );
+
     // Apply search filter
     if (search) {
       queryBuilder.andWhere(

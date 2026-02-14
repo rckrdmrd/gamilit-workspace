@@ -68,7 +68,7 @@ SEEDS_DIR="$DATABASE_ROOT/seeds"
 DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
 DB_HOST="localhost"
-DB_PORT="${DB_PORT:-5433}"
+DB_PORT="${DB_PORT:-5432}"
 POSTGRES_USER="postgres"
 
 # Variables

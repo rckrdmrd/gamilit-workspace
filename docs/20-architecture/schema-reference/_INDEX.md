@@ -1,9 +1,9 @@
 # Schema Reference - GAMILIT
 
-**Version:** 1.0.0
-**Fecha:** 2026-02-07
+**Version:** 2.0.0
+**Fecha:** 2026-02-12
 **Database:** gamilit_platform
-**Engine:** PostgreSQL 16
+**Engine:** PostgreSQL 15
 **ORM:** TypeORM 0.3.x
 
 ---
@@ -14,15 +14,17 @@
 |---------|-------|
 | Schemas | 18 (16 activos + 2 placeholder) |
 | Tablas | 171 |
-| Views | 13 |
+| Views | 22 |
 | Materialized Views | 7 |
-| Functions | 128 |
-| Triggers | 49 |
-| RLS Policies | 282 |
-| Foreign Keys | 299 |
-| ENUMs | 36 |
+| Functions | 183 |
+| Triggers | 126 |
+| RLS Policies | 263 |
+| Foreign Keys | 298 |
+| ENUMs | 42 |
 
-> **Complementario a:** [MODELO-DATOS.md](../MODELO-DATOS.md) (vision conceptual) y `orchestration/inventory/DATABASE_INVENTORY.yml` (inventario operativo).
+> **Complementario a:** [MODELO-DATOS.md](../MODELO-DATOS.md) (vision conceptual) y `orchestration/inventarios/DATABASE_INVENTORY.yml` (inventario operativo).
+>
+> **IMPORTANTE:** Este documento usa **nombres conceptuales** para los schemas (auth, tenants, education, etc.) como abstraccion de dominio. Los schemas fisicos en DDL tienen nombres diferentes. Ver seccion [Mapeo Schema Fisico vs Conceptual](#mapeo-schema-fisico-vs-conceptual) mas abajo.
 
 ---
 
@@ -54,25 +56,29 @@ Columnas marcadas con tipo JSONB almacenan datos flexibles segun el tipo de regi
 
 ## Schemas
 
-| # | Schema | Tablas | RLS Policies | Archivo |
-|---|--------|--------|--------------|---------|
-| 1 | auth | 8 | 24 | [01-auth.md](01-auth.md) |
-| 2 | tenants | 4 | 12 | [02-tenants.md](02-tenants.md) |
-| 3 | education | 13 | 42 | [03-education.md](03-education.md) |
-| 4 | gamification | 8 | 38 | [04-gamification.md](04-gamification.md) |
-| 5 | social | 7 | 22 | [05-social.md](05-social.md) |
-| 6 | classrooms | 7 | 28 | [06-classrooms.md](06-classrooms.md) |
-| 7 | analytics | 5 | 18 | [07-analytics.md](07-analytics.md) |
-| 8 | reports | 4 | 16 | [08-reports.md](08-reports.md) |
-| 9 | notifications | 5 | 20 | [09-notifications.md](09-notifications.md) |
-| 10 | store | 6 | 18 | [10-store.md](10-store.md) |
-| 11 | missions | 6 | 16 | [11-missions.md](11-missions.md) |
-| 12 | leaderboard | 4 | 12 | [12-leaderboard.md](12-leaderboard.md) |
-| 13 | content | 3 | 8 | [13-content.md](13-content.md) |
-| 14 | parents | 4 | 14 | [14-parents.md](14-parents.md) |
-| 15 | settings | 3 | 6 | [15-settings.md](15-settings.md) |
-| 16 | audit | 3 | 14 | [16-audit.md](16-audit.md) |
-| 17-18 | placeholder | - | - | [17-18-placeholder.md](17-18-placeholder.md) |
+| # | Schema Conceptual | Schema Fisico DDL | Tablas | Archivo |
+|---|-------------------|-------------------|--------|---------|
+| 1 | auth | `auth` + `auth_management` | 1+17 | [01-auth.md](01-auth.md) |
+| 2 | tenants | `auth_management` (parcial) | - | [02-tenants.md](02-tenants.md) |
+| 3 | education | `educational_content` + `progress_tracking` | 21+21 | [03-education.md](03-education.md) |
+| 4 | gamification | `gamification_system` (parcial) | 21 | [04-gamification.md](04-gamification.md) |
+| 5 | social | `social_features` (parcial) | 30 | [05-social.md](05-social.md) |
+| 6 | classrooms | `social_features` (parcial) | - | [06-classrooms.md](06-classrooms.md) |
+| 7 | analytics | `data_warehouse` + `admin_dashboard` | 16+4 | [07-analytics.md](07-analytics.md) |
+| 8 | reports | `admin_dashboard` (parcial) | - | [08-reports.md](08-reports.md) |
+| 9 | notifications | `notifications` | 7 | [09-notifications.md](09-notifications.md) |
+| 10 | store | `gamification_system` (parcial) | - | [10-store.md](10-store.md) |
+| 11 | missions | `gamification_system` (parcial) | - | [11-missions.md](11-missions.md) |
+| 12 | leaderboard | `gamification_system` (parcial) | - | [12-leaderboard.md](12-leaderboard.md) |
+| 13 | content | `content_management` | 10 | [13-content.md](13-content.md) |
+| 14 | parents | `auth_management` (parcial) | - | [14-parents.md](14-parents.md) |
+| 15 | settings | `system_configuration` | 9 | [15-settings.md](15-settings.md) |
+| 16 | audit | `audit_logging` | 7 | [16-audit.md](16-audit.md) |
+| 17 | data_warehouse | `data_warehouse` | 16 | [17-data-warehouse.md](17-data-warehouse.md) |
+| 18 | admin_dashboard | `admin_dashboard` | 4+7v | [18-admin-dashboard.md](18-admin-dashboard.md) |
+| 19 | communication | `communication` | 4 | [19-communication.md](19-communication.md) |
+| 20 | gamilit (utility) | `gamilit` | 0+37f | [20-gamilit-utility.md](20-gamilit-utility.md) |
+| - | placeholder/vacios | `public`, `storage`, `optimization` | - | [17-18-placeholder.md](17-18-placeholder.md) |
 
 ## Utilidades
 
@@ -82,5 +88,45 @@ Columnas marcadas con tipo JSONB almacenan datos flexibles segun el tipo de regi
 
 ---
 
-*GAMILIT - Schema Reference Index*
-*171 tablas | 18 schemas | 282 RLS policies | 36 ENUMs | PostgreSQL 16*
+## Mapeo Schema Fisico vs Conceptual
+
+Los archivos de schema-reference usan **nombres conceptuales** (dominio de negocio). La implementacion fisica (DDL en `apps/database/ddl/schemas/`) usa nombres diferentes. Esta tabla documenta la correspondencia:
+
+| Schema Conceptual (Docs) | Schema Fisico (DDL) | Tablas | Tipo Mapeo | Notas |
+|--------------------------|---------------------|--------|------------|-------|
+| auth (01-auth.md) | `auth` + `auth_management` | 1 + 17 | SPLIT | auth = users base; auth_management = perfiles, roles, tenants, RBAC |
+| tenants (02-tenants.md) | `auth_management` (parcial) | - | MERGED | Contenido incluido en auth_management |
+| education (03-education.md) | `educational_content` + `progress_tracking` | 21 + 21 | SPLIT | Contenido educativo + seguimiento de progreso |
+| gamification (04-gamification.md) | `gamification_system` (parcial) | 21 | PARTIAL | XP, rangos, achievements |
+| social (05-social.md) | `social_features` (parcial) | 30 | PARTIAL | Amistades, interacciones |
+| classrooms (06-classrooms.md) | `social_features` (parcial) | - | MERGED | Escuelas, aulas, equipos dentro de social_features |
+| analytics (07-analytics.md) | `data_warehouse` + `admin_dashboard` | 16 + 4 | SPLIT | Star schema + dashboard admin |
+| reports (08-reports.md) | `admin_dashboard` (parcial) + `social_features` (parcial) | - | SCATTERED | Reportes distribuidos en multiples schemas |
+| notifications (09-notifications.md) | `notifications` | 7 | ~1:1 | |
+| store (10-store.md) | `gamification_system` (parcial) | - | MERGED | Tienda virtual dentro de gamification_system |
+| missions (11-missions.md) | `gamification_system` (parcial) | - | MERGED | Misiones dentro de gamification_system |
+| leaderboard (12-leaderboard.md) | `gamification_system` (parcial) | - | MERGED | Leaderboards dentro de gamification_system |
+| content (13-content.md) | `content_management` | 10 | ~1:1 | |
+| parents (14-parents.md) | `auth_management` (parcial) | - | MERGED | Cuentas padres dentro de auth_management |
+| settings (15-settings.md) | `system_configuration` | 9 | ~1:1 | |
+| audit (16-audit.md) | `audit_logging` | 7 | ~1:1 | |
+
+### Schemas Fisicos sin Archivo de Referencia Dedicado
+
+| Schema Fisico (DDL) | Tablas | Funciones | Views | Tipo | Notas |
+|---------------------|--------|-----------|-------|------|-------|
+| `communication` | 4 | - | - | domain | Mensajeria interna (conversations, messages) |
+| `data_warehouse` | 16 | - | 3 | analytics | Star schema: 8 dims + 4 facts + 2 ML + 2 ETL |
+| `admin_dashboard` | 4 | - | 7+3mv | support | Dashboard admin, bulk ops, reportes |
+| `gamilit` | 0 | 37 | 1 | utility | Funciones compartidas: now_mexico(), RLS helpers, triggers |
+| `lti_integration` | 3 | - | - | integration | LTI 1.3: consumers, sessions, grade passback |
+| `optimization` | 0 | - | - | performance | Indexes de rendimiento |
+
+> **Referencia DDL:** `apps/database/ddl/schemas/{nombre_fisico}/`
+> **Constantes Backend:** `apps/backend/src/shared/constants/database.constants.ts` (DB_SCHEMAS, DB_TABLES)
+> **Inventario Completo:** `orchestration/inventarios/DATABASE_INVENTORY.yml` (v8.0.0)
+
+---
+
+*GAMILIT - Schema Reference Index v2.0.0*
+*171 tablas | 18 schemas | 263 RLS policies | 42 ENUMs | PostgreSQL 15*

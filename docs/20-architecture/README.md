@@ -22,12 +22,12 @@ Arquitectura tecnica del proyecto.
 ## Quick Reference
 
 ### Stack
-NestJS 11 + React 19 + PostgreSQL 16 (RLS) + TypeORM 0.3.x + Socket.IO 4.8+ + Vite 7.x + Redis
+NestJS 11 + React 19 + PostgreSQL 15 (RLS) + TypeORM 0.3.x + Socket.IO 4.8+ + Vite 6.x + Redis
 
 ### Arquitectura
 - **MONOREPO:** backend + frontend + database en mismo repo
 - **Modular:** 22 modulos NestJS independientes
-- **Multi-tenant:** RLS con 282 policies
+- **Multi-tenant:** RLS con 263 policies
 - **Real-time:** Socket.IO para leaderboards y notificaciones
 - **Gamificacion:** XP + Rangos Maya + Achievements + ML Coins
 

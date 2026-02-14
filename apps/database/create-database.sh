@@ -668,7 +668,7 @@ execute_sql "$SEEDS_DIR/notifications/01-notification_templates.sql" "Seeds: not
 
 # 16.2: Auth Management (tenants y auth_providers)
 execute_sql "$SEEDS_DIR/auth_management/01-tenants.sql" "Seeds: tenants"
-execute_sql "$SEEDS_DIR/auth_management/02-tenants-production.sql" "Seeds: tenants-production (13 tenants usuarios reales)"
+execute_sql "$SEEDS_DIR/auth_management/02-tenants-production.sql" "Seeds: cleanup tenants personales huerfanos"
 execute_sql "$SEEDS_DIR/auth_management/02-auth_providers.sql" "Seeds: auth_providers"
 
 # 16.3: Auth (usuarios de testing y demo)

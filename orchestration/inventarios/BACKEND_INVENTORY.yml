@@ -2,244 +2,481 @@
 # BACKEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "3.16.0"
-fecha: "2026-02-11"
+version: "4.0.0"
+fecha: "2026-02-12"
 proyecto: "gamilit"
 framework: "NestJS 11"
 orm: "TypeORM 0.3.x"
+auditoria: "TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION"
 
 # -------------------------------------------------------------------------------
-# RESUMEN
+# RESUMEN (Verificado contra codigo 2026-02-12)
 # -------------------------------------------------------------------------------
 
 resumen:
   modulos: 22
-  entities: 152
-  dtos: 412
+  entities: 152          # 152 archivos .entity.ts, 153 @Entity classes
+  dtos: 399              # 399 archivos .dto.ts en modules/ (+ ~5 en shared/dto/)
   services: 170
   controllers: 107
-  endpoints: 850
-  guards: 14
-  decorators: 18
-  interceptors: 8
-  pipes: 6
-  filters: 4
-  tests: 833
+  endpoints: 899          # Verificado por conteo de @Get/@Post/@Put/@Patch/@Delete
+  guards: 15
+  decorators: 18          # 18 exported symbols en 9 archivos .decorator.ts
+  interceptors: 5
+  pipes: 6                # 6 clases en 2 archivos .pipe.ts
+  filters: 2              # 2 clases en 1 archivo .filter.ts
+  tests_files: 57         # Archivos .spec.ts
+  tests_cases: 833        # Test cases (jest --verbose count)
 
 # -------------------------------------------------------------------------------
-# MODULOS
+# MODULOS (22 directorios, mapeados a directorios fisicos reales)
 # -------------------------------------------------------------------------------
+# Nota: Los modulos mapean a directorios bajo apps/backend/src/modules/
+# Algunos modulos conceptuales del dominio (classrooms, students, exercises, etc.)
+# estan implementados dentro de modulos fisicos mas amplios (social, progress,
+# educational, gamification).
 
 modulos:
-  # Core Infrastructure
+
+  # === Core Infrastructure ===
+
   - nombre: "auth"
-    entities: 4
-    services: 5
+    directorio: "modules/auth"
+    entities: 18
+    services: 6
     controllers: 3
-    endpoints: 45
+    endpoints: 29
+    dtos: 38
+    tests: 8
     estado: "100%"
+    datasource: "auth"
+    schema: "auth_management"
+    nota: "JWT + Passport + RBAC, multi-tenant. Incluye users, tenants, profiles, roles, sessions."
+    # Conceptos absorbidos: users, tenants, settings (parcial)
 
-  - nombre: "users"
-    entities: 3
-    services: 4
-    controllers: 2
-    endpoints: 35
-    estado: "100%"
-
-  - nombre: "tenants"
-    entities: 3
-    services: 3
-    controllers: 2
-    endpoints: 20
-    estado: "100%"
-
-  - nombre: "core"
-    entities: 0
-    services: 8
-    controllers: 0
-    endpoints: 0
-    estado: "100%"
-    nota: "Shared utilities module"
+  - nombre: "admin"
+    directorio: "modules/admin"
+    entities: 16
+    services: 22
+    controllers: 21
+    endpoints: 158
+    dtos: 133
+    tests: 16
+    estado: "90%"
+    datasource: "audit + admin_dashboard + system_configuration"
+    schema: "audit_logging + admin_dashboard + system_configuration"
+    nota: "Gestion de sistema, settings, analytics globales, reportes admin."
+    # Conceptos absorbidos: settings, analytics (parcial), reports (parcial)
 
   - nombre: "health"
+    directorio: "modules/health"
+    entities: 0
+    services: 1
+    controllers: 1
+    endpoints: 1
+    dtos: 1
+    tests: 2
+    estado: "100%"
+    nota: "Health checks (Terminus)"
+
+  - nombre: "profile"
+    directorio: "modules/profile"
     entities: 0
     services: 1
     controllers: 1
     endpoints: 3
+    dtos: 0
+    tests: 1
     estado: "100%"
+    nota: "Thin layer sobre auth, perfil de usuario"
 
-  - nombre: "settings"
-    entities: 2
-    services: 2
-    controllers: 1
-    endpoints: 15
-    estado: "100%"
-
-  - nombre: "notifications"
-    entities: 4
-    services: 5
-    controllers: 2
-    endpoints: 25
-    estado: "90%"
-
-  # Educational Content
-  - nombre: "modules"
+  - nombre: "audit"
+    directorio: "modules/audit"
     entities: 3
-    services: 3
-    controllers: 2
-    endpoints: 20
-    estado: "95%"
+    services: 1
+    controllers: 0
+    endpoints: 0
+    dtos: 1
+    tests: 2
+    estado: "100%"
+    datasource: "audit"
+    schema: "audit_logging"
+    nota: "Interceptor-based audit logging"
 
-  - nombre: "exercises"
-    entities: 5
-    services: 8
+  # === Educational Content ===
+
+  - nombre: "educational"
+    directorio: "modules/educational"
+    entities: 16
+    services: 7
     controllers: 5
-    endpoints: 50
+    endpoints: 51
+    dtos: 30
+    tests: 1
     estado: "95%"
-    nota: "23 exercise types with evaluators"
+    datasource: "educational"
+    schema: "educational_content"
+    nota: "5 modulos educativos, 23 tipos de ejercicio, rubrics, validaciones."
+    # Conceptos absorbidos: modules, exercises
+
+  - nombre: "assignments"
+    directorio: "modules/assignments"
+    entities: 4
+    services: 1
+    controllers: 2
+    endpoints: 19
+    dtos: 7
+    tests: 1
+    estado: "95%"
+    datasource: "educational + social"
+    schema: "educational_content"
+    nota: "Asignaciones docente-estudiante"
 
   - nombre: "content"
-    entities: 4
-    services: 4
-    controllers: 3
-    endpoints: 30
+    directorio: "modules/content"
+    entities: 10
+    services: 10
+    controllers: 10
+    endpoints: 102
+    dtos: 10
+    tests: 2
     estado: "95%"
+    datasource: "content"
+    schema: "content_management"
+    nota: "Templates, media, tags, moderacion"
 
-  - nombre: "classrooms"
-    entities: 4
-    services: 4
-    controllers: 2
-    endpoints: 25
-    estado: "90%"
+  # === Gamification System ===
 
-  - nombre: "students"
-    entities: 3
-    services: 5
-    controllers: 3
-    endpoints: 30
-    estado: "90%"
-
-  # Gamification System
   - nombre: "gamification"
-    entities: 4
-    services: 6
-    controllers: 3
-    endpoints: 35
+    directorio: "modules/gamification"
+    entities: 21
+    services: 17
+    controllers: 10
+    endpoints: 69
+    dtos: 38
+    tests: 9
     estado: "95%"
-    nota: "Core engine: XP, levels, ranks"
+    datasource: "gamification"
+    schema: "gamification_system"
+    nota: "XP, rangos maya, achievements, ML coins, missions, leaderboard, store, comodines, peer challenges, skill ratings."
+    # Conceptos absorbidos: achievements, store, missions, leaderboard
 
-  - nombre: "leaderboard"
-    entities: 3
-    services: 3
-    controllers: 2
-    endpoints: 20
-    estado: "85%"
-
-  - nombre: "missions"
-    entities: 4
-    services: 4
-    controllers: 3
-    endpoints: 25
-    estado: "85%"
-
-  - nombre: "store"
-    entities: 4
-    services: 4
-    controllers: 2
-    endpoints: 20
-    estado: "75%"
-
-  - nombre: "achievements"
-    entities: 3
-    services: 3
-    controllers: 2
-    endpoints: 20
-    estado: "90%"
+  # === Social & Classrooms ===
 
   - nombre: "social"
-    entities: 4
-    services: 4
-    controllers: 2
-    endpoints: 20
-    estado: "50%"
-    nota: "DDL+entities complete, business logic 50%"
+    directorio: "modules/social"
+    entities: 26
+    services: 13
+    controllers: 13
+    endpoints: 135
+    dtos: 28
+    tests: 1
+    estado: "60%"
+    datasource: "social"
+    schema: "social_features"
+    nota: "Classrooms, schools, teams, guilds, friendships, challenges, user activities."
+    # Conceptos absorbidos: classrooms, students (parcial)
 
-  # Support & Operations
-  - nombre: "teachers"
-    entities: 3
-    services: 5
-    controllers: 3
-    endpoints: 30
+  # === Progress & Analytics ===
+
+  - nombre: "progress"
+    directorio: "modules/progress"
+    entities: 20
+    services: 13
+    controllers: 6
+    endpoints: 59
+    dtos: 37
+    tests: 6
+    estado: "90%"
+    datasource: "progress"
+    schema: "progress_tracking"
+    nota: "Module progress, exercise attempts/submissions, learning sessions, certificates, engagement."
+    # Conceptos absorbidos: students (parcial), analytics (parcial)
+
+  # === Notifications & Communication ===
+
+  - nombre: "notifications"
+    directorio: "modules/notifications"
+    entities: 7
+    services: 12
+    controllers: 8
+    endpoints: 46
+    dtos: 18
+    tests: 2
+    estado: "90%"
+    datasource: "gamification + notifications"
+    schema: "notifications + gamification_system"
+    nota: "Multi-channel: in-app, email, push, SMS. notification.entity en gamification datasource, multichannel/* en notifications datasource."
+
+  - nombre: "communication"
+    directorio: "modules/communication"
+    entities: 2
+    services: 0
+    controllers: 0
+    endpoints: 0
+    dtos: 0
+    tests: 0
+    estado: "20%"
+    datasource: "NINGUNO (huerfano)"
+    schema: "communication"
+    nota: "Conversation + ConversationParticipant entities existen pero NO registradas en datasource. Message entities en teacher module."
+
+  # === Teacher & Parents ===
+
+  - nombre: "teacher"
+    directorio: "modules/teacher"
+    entities: 6
+    services: 21
+    controllers: 10
+    endpoints: 110
+    dtos: 22
+    tests: 4
     estado: "95%"
+    datasource: "educational + progress + social + communication"
+    schema: "educational_content + progress_tracking + social_features + communication"
+    nota: "Portal docente. 6 entity files con 7 @Entity classes (message.entity.ts tiene Message + MessageParticipant)."
 
   - nombre: "parents"
-    entities: 3
-    services: 3
+    directorio: "modules/parents"
+    entities: 0
+    services: 7
     controllers: 2
-    endpoints: 20
+    endpoints: 17
+    dtos: 4
+    tests: 0
     estado: "100%"
+    nota: "Portal padres. Entities en auth module (parent-account, parent-student-link, parent-notification)."
 
-  - nombre: "analytics"
-    entities: 2
-    services: 5
-    controllers: 3
-    endpoints: 25
-    estado: "85%"
+  # === Infrastructure & Utilities ===
 
-  - nombre: "reports"
+  - nombre: "tasks"
+    directorio: "modules/tasks"
+    entities: 0
+    services: 4
+    controllers: 0
+    endpoints: 0
+    dtos: 0
+    tests: 0
+    estado: "100%"
+    nota: "CRON jobs: achievements reconciliation, materialized views, missions, notifications"
+
+  - nombre: "websocket"
+    directorio: "modules/websocket"
+    entities: 0
+    services: 2
+    controllers: 0
+    endpoints: 0
+    dtos: 0
+    tests: 0
+    estado: "100%"
+    nota: "Socket.IO gateway + message persistence"
+
+  - nombre: "mail"
+    directorio: "modules/mail"
+    entities: 0
+    services: 1
+    controllers: 0
+    endpoints: 0
+    dtos: 0
+    tests: 1
+    estado: "100%"
+    nota: "Email service (Nodemailer). Provider para NotificationsModule."
+
+  - nombre: "lti"
+    directorio: "modules/lti"
     entities: 3
-    services: 3
-    controllers: 2
-    endpoints: 20
+    services: 5
+    controllers: 5
+    endpoints: 42
+    dtos: 12
+    tests: 1
     estado: "75%"
+    datasource: "N/A (no registrado en app.module)"
+    schema: "lti_integration"
+    nota: "LTI 1.3 integration. Module no importado en app.module.ts."
+
+  - nombre: "etl"
+    directorio: "modules/etl"
+    entities: 0
+    services: 9
+    controllers: 3
+    endpoints: 16
+    dtos: 6
+    tests: 0
+    estado: "75%"
+    nota: "ETL pipeline para data warehouse. Module no importado en app.module.ts."
+
+  - nombre: "ml"
+    directorio: "modules/ml"
+    entities: 0
+    services: 13
+    controllers: 3
+    endpoints: 21
+    dtos: 7
+    tests: 0
+    estado: "50%"
+    nota: "ML predictions, feature store. Module no importado en app.module.ts."
+
+  - nombre: "visualization"
+    directorio: "modules/visualization"
+    entities: 0
+    services: 4
+    controllers: 4
+    endpoints: 21
+    dtos: 7
+    tests: 0
+    estado: "50%"
+    nota: "Charts, dashboards, reports visualization. Module no importado en app.module.ts."
 
 # -------------------------------------------------------------------------------
-# GUARDS
+# DATASOURCES (10 en app.module.ts)
+# -------------------------------------------------------------------------------
+
+datasources:
+  - nombre: "auth"
+    schema: "auth_management"
+    entities_path: "modules/auth/entities/**/*.entity"
+  - nombre: "educational"
+    schema: "educational_content"
+    entities_path: "modules/educational + assignments + teacher-content"
+  - nombre: "gamification"
+    schema: "gamification_system"
+    entities_path: "modules/gamification + notification.entity + profile + tenant"
+  - nombre: "progress"
+    schema: "progress_tracking"
+    entities_path: "modules/progress + teacher-alert + profile + classroom + tenant + school + module + exercise"
+  - nombre: "social"
+    schema: "social_features"
+    entities_path: "modules/social + assignments + teacher-report + profile + tenant"
+  - nombre: "content"
+    schema: "content_management"
+    entities_path: "modules/content/entities/**/*.entity"
+  - nombre: "audit"
+    schema: "audit_logging"
+    entities_path: "modules/audit/entities/**/*.entity"
+  - nombre: "notifications"
+    schema: "notifications"
+    entities_path: "modules/notifications/entities/multichannel/**/*.entity"
+  - nombre: "communication"
+    schema: "communication"
+    entities_path: "modules/teacher/entities/message*.entity"
+    nota: "INCOMPLETO: Falta modules/communication/entities/**/*.entity"
+  - nombre: "admin_dashboard"
+    schema: "admin_dashboard"
+    entities_path: "admin-report + user + role"
+
+# -------------------------------------------------------------------------------
+# GUARDS (15 verificados)
 # -------------------------------------------------------------------------------
 
 guards:
-  total: 14
+  total: 15
   lista:
-    - "JwtAuthGuard"
-    - "RolesGuard"
-    - "TenantGuard"
-    - "AdminGuard"
-    - "TeacherGuard"
-    - "StudentGuard"
-    - "ParentGuard"
-    - "OwnerGuard"
-    - "ClassroomMemberGuard"
-    - "AssignmentAccessGuard"
-    - "ThrottlerGuard"
-    - "FeatureFlagGuard"
-    - "ActiveSubscriptionGuard"
-    - "WebSocketAuthGuard"
+    # En modules/
+    - nombre: "AdminGuard"
+      archivo: "modules/admin/guards/admin.guard.ts"
+    - nombre: "JwtAuthGuard"
+      archivo: "modules/auth/guards/jwt-auth.guard.ts"
+    - nombre: "RolesGuard"
+      archivo: "modules/auth/guards/roles.guard.ts"
+    - nombre: "ModelReadyGuard"
+      archivo: "modules/ml/guards/model-ready.guard.ts"
+    - nombre: "NotificationRateLimitGuard"
+      archivo: "modules/notifications/guards/rate-limit.guard.ts"
+    - nombre: "ParentAuthGuard"
+      archivo: "modules/parents/guards/parent-auth.guard.ts"
+    - nombre: "ClassroomOwnershipGuard"
+      archivo: "modules/teacher/guards/classroom-ownership.guard.ts"
+    - nombre: "TeacherGuard"
+      archivo: "modules/teacher/guards/teacher.guard.ts"
+    - nombre: "WsJwtGuard"
+      archivo: "modules/websocket/guards/ws-jwt.guard.ts"
+    # En shared/
+    - nombre: "AccountStatusGuard"
+      archivo: "shared/guards/account-status.guard.ts"
+    - nombre: "AuthGuard"
+      archivo: "shared/guards/auth.guard.ts"
+    - nombre: "EmailVerifiedGuard"
+      archivo: "shared/guards/email-verified.guard.ts"
+    - nombre: "PermissionsGuard"
+      archivo: "shared/guards/permissions.guard.ts"
+    - nombre: "ResourceOwnershipGuard"
+      archivo: "shared/guards/resource-ownership.guard.ts"
+    - nombre: "RolesGuard"
+      archivo: "shared/guards/roles.guard.ts"
 
 # -------------------------------------------------------------------------------
-# DECORATORS
+# DECORATORS (9 archivos, 18 exported symbols)
 # -------------------------------------------------------------------------------
 
 decorators:
   total: 18
+  archivos: 9
   lista:
-    - "@Roles()"
-    - "@CurrentUser()"
-    - "@CurrentTenant()"
-    - "@Public()"
-    - "@ApiPaginated()"
-    - "@ApiAuth()"
-    - "@RequireFeature()"
-    - "@Throttle()"
-    - "@CacheResult()"
-    - "@AuditLog()"
-    - "@ValidateExerciseType()"
-    - "@RequireModule()"
-    - "@RequireClassroom()"
-    - "@XPAward()"
-    - "@NotifyOnComplete()"
-    - "@SpacedRepetition()"
-    - "@TransactionScope()"
-    - "@WebSocketAuth()"
+    # modules/
+    - nombre: "@Roles()"
+      archivo: "modules/auth/decorators/roles.decorator.ts"
+    - nombre: "@CachePrediction()"
+      archivo: "modules/ml/decorators/cache-prediction.decorator.ts"
+    - nombre: "@ParentAccountParam() / @ParentProfileId() / @ParentAccountId()"
+      archivo: "modules/parents/decorators/parent-account.decorator.ts"
+    # shared/
+    - nombre: "@ApiPaginatedResponse()"
+      archivo: "shared/decorators/api-paginated-response.decorator.ts"
+    - nombre: "@CurrentUser() / @GetUser()"
+      archivo: "shared/decorators/current-user.decorator.ts"
+    - nombre: "@Permissions()"
+      archivo: "shared/decorators/permissions.decorator.ts"
+    - nombre: "@Public()"
+      archivo: "shared/decorators/public.decorator.ts"
+    - nombre: "@Roles()"
+      archivo: "shared/decorators/roles.decorator.ts"
+    - nombre: "@Tenant() / @RequireTenant()"
+      archivo: "shared/decorators/tenant.decorator.ts"
+
+# -------------------------------------------------------------------------------
+# INTERCEPTORS (5)
+# -------------------------------------------------------------------------------
+
+interceptors:
+  total: 5
+  lista:
+    - nombre: "AuditInterceptor"
+      archivo: "modules/audit/interceptors/audit.interceptor.ts"
+      global: true
+    - nombre: "LoggingInterceptor"
+      archivo: "shared/interceptors/logging.interceptor.ts"
+    - nombre: "PerformanceInterceptor"
+      archivo: "shared/interceptors/performance.interceptor.ts"
+    - nombre: "RlsInterceptor"
+      archivo: "shared/interceptors/rls.interceptor.ts"
+      global: true
+    - nombre: "TransformResponseInterceptor"
+      archivo: "shared/interceptors/transform-response.interceptor.ts"
+
+# -------------------------------------------------------------------------------
+# PIPES (2 archivos, 6 clases)
+# -------------------------------------------------------------------------------
+
+pipes:
+  total: 6
+  archivos: 2
+  lista:
+    - nombre: "CustomValidationPipe"
+      archivo: "shared/pipes/validation.pipe.ts"
+    - nombre: "ParseIntPipe, ParseBoolPipe, TrimPipe, LowercasePipe, UppercasePipe"
+      archivo: "shared/pipes/transform.pipe.ts"
+
+# -------------------------------------------------------------------------------
+# FILTERS (1 archivo, 2 clases)
+# -------------------------------------------------------------------------------
+
+filters:
+  total: 2
+  archivos: 1
+  lista:
+    - nombre: "AllExceptionsFilter, HttpExceptionFilter"
+      archivo: "shared/filters/http-exception.filter.ts"
 
 # ===============================================================================
 # FIN BACKEND INVENTORY

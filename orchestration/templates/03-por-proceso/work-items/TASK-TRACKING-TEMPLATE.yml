@@ -1,0 +1,52 @@
+# ============================================================================
+# TASK TRACKING Template - SIMCO v4.0.0
+# Plantilla YAML para tracking ligero de Tareas (ADR-0020)
+# Ubicacion destino: orchestration/work-items/tasks/TASK-{PREFIX}-{NNN}.yml
+# ============================================================================
+
+# --- Identificacion ---
+id: "TASK-{PREFIX}-{NNN}"
+type: "{task|defect|spike|chore}"
+story_id: "US-{PREFIX}-{EPIC_NUM}-{SEQ}"
+project: "{project-name}"
+
+# --- Estado ---
+status: "{todo|in_progress|review|qa|done|blocked}"
+priority: "{P0|P1|P2|P3}"
+story_points: "{1|2|3|5|8}"
+sprint: "{Sprint-N}"
+assignees:
+  - "{agent-profile}"
+
+# --- Scope ---
+scope:
+  - "{backend|frontend|database|devops|docs}"
+
+# --- CAPVED ---
+mode: "{FULL|QUICK|ANALYSIS|PROPAGATION}"
+capved_path: "orchestration/tareas/activas/TASK-{PREFIX}-{NNN}/"
+
+# --- Subtareas ---
+subtasks:
+  - id: "ST-001"
+    title: "{titulo subtarea}"
+    status: "{todo|done}"
+    # Solo promover a TASK si requiere CAPVED propio
+  # - id: "ST-002"
+  #   title: "{titulo subtarea}"
+  #   status: "{todo|done}"
+
+# --- Dependencias ---
+depends_on: []
+blocks: []
+
+# --- Metadatos ---
+created: "{YYYY-MM-DD}"
+updated: "{YYYY-MM-DD}"
+
+# --- Notas ---
+# - subtasks son items dentro de este YAML, no archivos separados
+# - Solo promover subtask a TASK independiente si requiere CAPVED propio
+# - capved_path enlaza a la carpeta de ejecucion en orchestration/tareas/
+# - Status flow: todo -> in_progress -> review -> qa -> done
+# - Status blocked requiere comentario explicando el bloqueo

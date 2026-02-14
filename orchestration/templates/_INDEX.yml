@@ -69,7 +69,7 @@ por_contexto:
   standalone:
     - archivo: "CONTEXTO-NIVEL-STANDALONE.md"
       proposito: "Contexto para proyectos standalone"
-      uso: "Crear CONTEXTO-PROYECTO.md en proyectos independientes"
+      uso: "Crear PROJECT-CONTEXT.md en proyectos independientes"
 
     - archivo: "CONTEXTO-VERTICAL-TEMPLATE.md"
       proposito: "Template para verticales que heredan"
@@ -229,7 +229,7 @@ globales:
       proposito: "Validación de entregables"
 
   proyecto:
-    - archivo: "TEMPLATE-CONTEXTO-PROYECTO.md"
+    - archivo: "TEMPLATE-PROJECT-CONTEXT.md"
       proposito: "Contexto de proyecto"
 
     - archivo: "TEMPLATE-CONTEXT-MAP.yml"

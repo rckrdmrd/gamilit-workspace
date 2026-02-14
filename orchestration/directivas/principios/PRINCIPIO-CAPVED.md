@@ -358,7 +358,7 @@ Lecciones_Aprendidas:
 
 | Fase CAPVED | SIMCO Relacionados |
 |-------------|-------------------|
-| C - Contexto | `SIMCO-INICIALIZACION.md`, `CONTEXTO-PROYECTO.md` |
+| C - Contexto | `SIMCO-INICIALIZACION.md`, `PROJECT-CONTEXT.md` |
 | A - Análisis | `SIMCO-BUSCAR.md`, `TEMPLATE-ANALISIS.md` |
 | P - Planeación | `TEMPLATE-PLAN.md`, `SIMCO-DELEGACION.md` |
 | V - Validación | `TEMPLATE-VALIDACION.md` |

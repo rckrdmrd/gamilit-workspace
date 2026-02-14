@@ -61,10 +61,10 @@ echo ""
 echo -e "${YELLOW}=== 1. Verificando Tenants ===${NC}"
 
 tenant_count=$(psql "$DATABASE_URL" -t -c "SELECT COUNT(*) FROM auth_management.tenants WHERE is_active = true;" 2>/dev/null | tr -d ' ')
-main_tenant=$(psql "$DATABASE_URL" -t -c "SELECT COUNT(*) FROM auth_management.tenants WHERE slug = 'gamilit-prod';" 2>/dev/null | tr -d ' ')
+main_tenant=$(psql "$DATABASE_URL" -t -c "SELECT COUNT(*) FROM auth_management.tenants WHERE slug = 'gamilit-platform';" 2>/dev/null | tr -d ' ')
 
 if [ "$main_tenant" -eq 0 ]; then
-    echo -e "${RED}❌ Tenant principal 'gamilit-prod' NO existe${NC}"
+    echo -e "${RED}❌ Tenant principal 'gamilit-platform' NO existe${NC}"
     echo "Cargando seeds de tenants..."
 
     if [ -f "$DB_DIR/seeds/prod/auth_management/01-tenants.sql" ]; then
@@ -74,12 +74,15 @@ if [ "$main_tenant" -eq 0 ]; then
         echo -e "${RED}ERROR: No se encuentra el archivo de seeds${NC}"
         echo "Path esperado: $DB_DIR/seeds/prod/auth_management/01-tenants.sql"
     fi
+fi
 
-    if [ -f "$DB_DIR/seeds/prod/auth_management/02-tenants-production.sql" ]; then
-        psql "$DATABASE_URL" -f "$DB_DIR/seeds/prod/auth_management/02-tenants-production.sql" > /dev/null 2>&1
-        echo -e "${GREEN}✅ Tenants de produccion cargados${NC}"
-    fi
-else
+# Limpiar tenants personales huerfanos (si existen)
+if [ -f "$DB_DIR/seeds/prod/auth_management/02-tenants-production.sql" ]; then
+    psql "$DATABASE_URL" -f "$DB_DIR/seeds/prod/auth_management/02-tenants-production.sql" > /dev/null 2>&1
+    echo -e "${GREEN}✅ Limpieza de tenants personales ejecutada${NC}"
+fi
+
+if [ "$main_tenant" -gt 0 ]; then
     echo -e "${GREEN}✅ Tenant principal existe ($tenant_count tenants activos)${NC}"
 fi
 echo ""

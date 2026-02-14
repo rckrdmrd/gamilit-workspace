@@ -2,13 +2,13 @@
 
 **Versión:** 1.1.0
 **Sistema:** SIMCO + Catálogo
-**Propósito:** Template para crear el archivo CONTEXTO-PROYECTO.md en cada proyecto
+**Propósito:** Template para crear el archivo PROJECT-CONTEXT.md en cada proyecto
 
 ---
 
 ## INSTRUCCIONES DE USO
 
-1. Copiar este template a: `projects/{proyecto}/orchestration/00-guidelines/CONTEXTO-PROYECTO.md`
+1. Copiar este template a: `projects/{proyecto}/orchestration/00-guidelines/PROJECT-CONTEXT.md`
 2. Reemplazar todos los `{PLACEHOLDER}` con valores reales del proyecto
 3. Eliminar secciones que no apliquen
 4. Este archivo es la fuente de verdad para resolver aliases en el proyecto
@@ -272,7 +272,7 @@ start_fe: "cd {FRONTEND_ROOT} && npm run dev"
 │
 ├── orchestration/
 │   ├── 00-guidelines/
-│   │   └── CONTEXTO-PROYECTO.md    ← ESTE ARCHIVO
+│   │   └── PROJECT-CONTEXT.md    ← ESTE ARCHIVO
 │   ├── inventarios/
 │   │   ├── MASTER_INVENTORY.yml
 │   │   ├── DATABASE_INVENTORY.yml
@@ -338,4 +338,4 @@ funcionalidades_del_catalogo:
 
 **Creado:** {YYYY-MM-DD}
 **Autor:** {nombre}
-**Basado en:** TEMPLATE-CONTEXTO-PROYECTO.md v1.0.0
+**Basado en:** TEMPLATE-PROJECT-CONTEXT.md v1.0.0

@@ -1,0 +1,75 @@
+# ============================================================================
+# EPIC Template - SIMCO v4.0.0
+# Plantilla YAML para Épicas (Scrum + CAPVED Integration)
+# ============================================================================
+
+# --- Identificación ---
+id: "EPIC-{PROJECT}-{NNN}"  # Formato: EPIC-GAMILIT-001, EPIC-SICAI-042
+title: "{Título descriptivo de la épica}"
+project: "{project-name}"  # e.g., gamilit, sicai, vialidades
+module: "{primary-module}"  # Módulo principal afectado
+
+# --- Priorización ---
+priority: "{P0|P1|P2|P3}"  # P0=crítico, P1=alto, P2=medio, P3=bajo
+status: "{backlog|ready|in_progress|done}"
+
+# --- Contexto de Integración ---
+phase: "{Fase X}"  # Fase 0-9 del plan de integración (ver docs/10-context/)
+owner: "product-owner"  # Responsable del producto
+
+# --- Estimación ---
+story_points_total: {suma_de_historias}  # Suma de SPs de todas las historias
+sprint_start: "{YYYY-MM-DD}"  # Sprint de inicio planificado
+sprint_end: "{YYYY-MM-DD}"    # Sprint de finalización planificado
+
+# --- Objetivos ---
+goals:
+  - "{Objetivo de negocio 1}"
+  - "{Objetivo de negocio 2}"
+  - "{Objetivo de negocio 3}"
+
+# --- Criterios de Completitud ---
+definition_of_done:
+  - "Documentación técnica actualizada en docs/"
+  - "Inventarios sincronizados (catalog, components, modules)"
+  - "Tests de integración pasando (E2E + unit)"
+  - "Demo funcional presentada al equipo"
+  - "{Criterio específico de la épica}"
+
+# --- Relaciones con Historias ---
+stories:
+  - "US-{PROJECT}-{NNN}"  # Lista de User Stories que componen esta épica
+  # - "US-{PROJECT}-{NNN+1}"
+  # - "US-{PROJECT}-{NNN+2}"
+
+# --- Dependencias ---
+depends_on:  # Épicas que deben completarse antes
+  # - "EPIC-{PROJECT}-{NNN}"
+  []
+
+blocks:  # Épicas que están bloqueadas por esta
+  # - "EPIC-{PROJECT}-{NNN}"
+  []
+
+# --- Trazabilidad ---
+traceability:
+  requirements:  # Requerimientos que satisface esta épica
+    - "REQ-{PROJECT}-{NNN}"
+    # - "REQ-{PROJECT}-{NNN+1}"
+
+  components:  # Componentes afectados (para propagación)
+    backend:
+      # - "{service-name}"
+    frontend:
+      # - "{app-name}"
+    database:
+      # - "{schema-name}"
+
+# --- Metadatos ---
+created: "{YYYY-MM-DD}"
+updated: "{YYYY-MM-DD}"
+
+# --- Notas ---
+# - Mantener sincronizado con markdown en orchestration/templates/03-por-proceso/work-items/
+# - Actualizar story_points_total cuando se agreguen/modifiquen historias
+# - Revisar definition_of_done en cada sprint review

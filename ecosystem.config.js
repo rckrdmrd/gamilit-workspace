@@ -133,9 +133,9 @@ module.exports = {
     production: {
       user: 'isem',
       host: '74.208.126.102',
-      ref: 'origin/main',
+      ref: 'origin/master',
       repo: 'git@github.com:rckrdmrd/gamilit-workspace.git',
-      path: '/home/isem/workspace-v2/projects/gamilit',
+      path: process.env.GAMILIT_DEPLOY_PATH || '/home/isem/gamilit-workspace',
       'pre-setup': 'echo "Setting up production environment"',
       'post-deploy': 'npm install && npm run build:all && pm2 reload ecosystem.config.js --env production && pm2 save',
       env: {

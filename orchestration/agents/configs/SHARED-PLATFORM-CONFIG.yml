@@ -80,7 +80,7 @@ platforms:
       separator: "\\"
       temp_dir: "%TEMP%"
       home_dir: "%USERPROFILE%"
-      example: "C:\\Empresas\\ISEM\\workspace-v2"
+      example: "C:\\Empresas\\ISEM\\gamilit-workspace"
 
     environment_variables:
       syntax:
@@ -121,7 +121,7 @@ platforms:
       separator: "/"
       temp_dir: "/tmp"
       home_dir: "$HOME"
-      example: "/home/isem/workspace-v2"
+      example: "/home/isem/gamilit-workspace"
 
     environment_variables:
       syntax:
@@ -206,7 +206,7 @@ platforms:
       temp_dir: "/tmp"
       home_dir: "$HOME"
       windows_mount: "/mnt/c/"
-      example: "/mnt/c/Empresas/ISEM/workspace-v2"
+      example: "/mnt/c/Empresas/ISEM/gamilit-workspace"
 
     path_conversion:
       windows_to_wsl: "C:\\path\\to\\file → /mnt/c/path/to/file"

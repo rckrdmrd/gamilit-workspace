@@ -2,179 +2,329 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "4.10.0"
-fecha: "2026-02-07"
+version: "5.0.0"
+fecha: "2026-02-12"
 proyecto: "gamilit"
-framework: "React 19"
-state: "Zustand 5.x"
+framework: "React 19.2"
+state: "Zustand 5.x + TanStack Query 5.x"
 styling: "TailwindCSS 4.x"
-build: "Vite 7.x"
+build: "Vite 6.x"                              # Verificado: package.json ^6.2.0
 
 # -------------------------------------------------------------------------------
-# RESUMEN
+# RESUMEN (Verificado contra codigo 2026-02-12)
 # -------------------------------------------------------------------------------
 
 resumen:
-  componentes: 458
-  hooks: 127
-  paginas: 85
-  stores_zustand: 32
-  api_services: 48
-  type_definition_files: 35
+  componentes_tsx: 475                          # 517 .tsx total - 25 tests - 3 stories - 14 examples
+  hooks: 102                                    # 102 archivos hook unicos (excl. barrels, tests, examples)
+  paginas: 68                                   # 68 activas + 1 legacy
+  stores_zustand: 14                            # 14 archivos con create() de Zustand
+  api_service_files: 52                         # 52 archivos API (excl. infra: apiClient, interceptors, schemas)
+  api_calls_total: 662                          # 662 llamadas apiClient.* en 91 archivos
+  type_definition_files: 47                     # 47 archivos, 415 tipos/interfaces/enums exportados
   portales: 4
-  mecanicas_juego: 40
-  routes: 24
+  mecanicas_ejercicio: 30                       # 30 mecanicas unicas en 59 archivos .tsx
+  routes: 70                                    # 70 <Route> definitions en App.tsx
+  contexts_providers: 4                         # AuthContext, BrandingProvider, AuthProvider (feature), barrel
+  config_files: 14                              # Archivos de configuracion (root level)
+  utility_files: 34                             # Archivos de utilidad/helpers
+  constant_files: 7                             # Archivos de constantes
+  dependencies_prod: 27
+  dependencies_dev: 36
+  path_aliases: 11
 
 # -------------------------------------------------------------------------------
-# PORTALES
+# PORTALES (Verificado contra apps/ directories)
 # -------------------------------------------------------------------------------
 
 portales:
   - nombre: "Portal Estudiante"
+    directorio: "apps/student/"
     completitud: "~100%"
-    paginas: 35
-    componentes: 180
-    descripcion: "Dashboard, ejercicios, gamificacion, leaderboards, tienda"
+    paginas: 19                                 # Verificado: 19 paginas activas + 1 hook example
+    componentes_tsx: 63
+    descripcion: "Dashboard, ejercicios, gamificacion, leaderboards, tienda, misiones, amigos"
 
   - nombre: "Portal Maestro"
+    directorio: "apps/teacher/"
     completitud: "~95%"
-    paginas: 19
-    componentes: 120
-    descripcion: "Gestion aulas, asignaciones, reportes, revision manual"
+    paginas: 19                                 # Verificado: 19 paginas
+    componentes_tsx: 68
+    descripcion: "Gestion aulas, asignaciones, reportes, revision manual, monitoreo, comunicacion"
 
   - nombre: "Portal Administrador"
+    directorio: "apps/admin/"
     completitud: "~90%"
-    paginas: 18
-    componentes: 100
-    descripcion: "Gestion contenido, configuracion, analytics, usuarios"
+    paginas: 18                                 # Verificado: 18 paginas
+    componentes_tsx: 93
+    descripcion: "Dashboard, usuarios, contenido, analytics, monitoreo, reportes, gamificacion config"
 
   - nombre: "Portal Padres"
+    directorio: "apps/parent/"
     completitud: "100%"
-    paginas: 13
-    componentes: 58
-    descripcion: "Vinculacion, progreso, notificaciones, comunicacion"
+    paginas: 4                                  # Verificado: 4 paginas (Dashboard, ChildProgress, Login, Register)
+    componentes_tsx: 4
+    descripcion: "Dashboard, progreso hijo, login, registro"
+
+# Nota: Paginas compartidas (auth pages, feature-level pages) = 8 adicionales fuera de portales
+# Total paginas: 19+19+18+4+8 = 68
 
 # -------------------------------------------------------------------------------
-# STORES (ZUSTAND)
+# FEATURES (Verificado contra features/ directory)
+# -------------------------------------------------------------------------------
+
+features:
+  - nombre: "gamification"
+    componentes_tsx: 109                        # Mas grande: battles, economy, missions, ranks, social
+    subdominios:
+      - "battles (3 .tsx, 1 hook, 1 store)"
+      - "economy/Shop (5) + Wallet (4) + Inventory (2) + Analytics (2) = 13 components"
+      - "leaderboard (4 .tsx)"
+      - "missions (6 .tsx, 1 hook, 1 store)"
+      - "ranks (8 .tsx, 5 hooks, 1 store)"
+      - "social/Achievements (7) + Friends (7) + Guilds (9) + Leaderboards (14) + PowerUps (6) = 43 components"
+
+  - nombre: "auth"
+    componentes_tsx: 18                         # LoginForm, RegisterForm, PasswordInput, PermissionMatrix, etc.
+
+  - nombre: "admin (features)"
+    componentes_tsx: 13                         # branding (5) + components (3) + lti (5)
+
+  - nombre: "exercises"
+    componentes_tsx: 4                          # ExerciseFeedback, ExerciseGuide, ExerciseHeader, UnderConstruction
+
+  - nombre: "notifications"
+    componentes_tsx: 3                          # NotificationBell, NotificationDropdown, test
+
+# -------------------------------------------------------------------------------
+# SHARED COMPONENTS (72 .tsx)
+# -------------------------------------------------------------------------------
+
+shared:
+  componentes_tsx: 72
+  desglose:
+    root_components: 26                         # Avatar, Button, Card, ErrorBoundary, Header, Input, Modal, etc.
+    tests: 13
+    base_components: 12                         # ColorfulCard, DetectiveButton, ProgressBar, RankBadge, etc.
+    celebrations: 1                             # ConfettiCelebration
+    common: 7                                   # ConfirmDialog, DataTable, FormField, etc.
+    layout: 2                                   # GamifiedHeader, GamilitSidebar
+    loading: 1                                  # SkeletonCard
+    mechanics: 8                                # ExerciseContentRenderer, HintSystem, TimerWidget, etc.
+    media: 3                                    # AudioPlayer, VideoPlayer, NavigationPathViewer
+    timeline: 1                                 # ActivityTimeline
+
+# -------------------------------------------------------------------------------
+# STORES (ZUSTAND) — 14 archivos verificados con create()
 # -------------------------------------------------------------------------------
 
 stores:
-  total: 32
-  por_dominio:
-    auth:
-      - "useAuthStore"
-      - "useSessionStore"
-    user:
-      - "useUserStore"
-      - "useProfileStore"
-    education:
-      - "useModuleStore"
-      - "useExerciseStore"
-      - "useContentStore"
-      - "useClassroomStore"
-      - "useAssignmentStore"
-    gamification:
-      - "useGamificationStore"
-      - "useXPStore"
-      - "useRankStore"
-      - "useAchievementStore"
-      - "useLeaderboardStore"
-      - "useMissionStore"
-      - "useStoreItemStore"
-      - "useInventoryStore"
-      - "useStreakStore"
-    social:
-      - "useTeamStore"
-      - "useSocialFeedStore"
-    portal:
-      - "useStudentDashboardStore"
-      - "useTeacherDashboardStore"
-      - "useAdminDashboardStore"
-      - "useParentDashboardStore"
-    support:
-      - "useNotificationStore"
-      - "useAnalyticsStore"
-      - "useReportStore"
-      - "useSettingsStore"
-    ui:
-      - "useThemeStore"
-      - "useNavigationStore"
-      - "useModalStore"
-      - "useToastStore"
+  total: 14
+  lista:
+    - nombre: "authStore"
+      archivo: "features/auth/store/authStore.ts"
+    - nombre: "studentAssignmentsStore"
+      archivo: "features/assignments/store/studentAssignmentsStore.ts"
+    - nombre: "battleStore"
+      archivo: "features/gamification/battles/store/battleStore.ts"
+    - nombre: "economyStore"
+      archivo: "features/gamification/economy/store/economyStore.ts"
+    - nombre: "ranksStore"
+      archivo: "features/gamification/ranks/store/ranksStore.ts"
+    - nombre: "achievementsStore"
+      archivo: "features/gamification/social/store/achievementsStore.ts"
+    - nombre: "friendsStore"
+      archivo: "features/gamification/social/store/friendsStore.ts"
+    - nombre: "guildsStore"
+      archivo: "features/gamification/social/store/guildsStore.ts"
+    - nombre: "leaderboardsStore"
+      archivo: "features/gamification/social/store/leaderboardsStore.ts"
+    - nombre: "newLeaderboardsStore"
+      archivo: "features/gamification/social/store/newLeaderboardsStore.ts"
+    - nombre: "powerUpsStore"
+      archivo: "features/gamification/social/store/powerUpsStore.ts"
+    - nombre: "missionsStore"
+      archivo: "features/missions/store/missionsStore.ts"
+    - nombre: "notificationsStore"
+      archivo: "features/notifications/store/notificationsStore.ts"
+    - nombre: "parentStore"
+      archivo: "features/parent/store/parentStore.ts"
+
+  # Nota: El inventario anterior listaba 32 stores conceptuales (useAuthStore, useSessionStore, etc.)
+  # que NO existen como archivos Zustand con create(). Muchos eran aspiracionales o mapean a
+  # React Query hooks o Context providers, no stores Zustand reales.
 
 # -------------------------------------------------------------------------------
-# HOOKS (127)
+# HOOKS (102 archivos verificados)
 # -------------------------------------------------------------------------------
 
 hooks:
-  total: 127
-  categorias:
-    auth: 8
-    exercises: 15
-    gamification: 20
-    leaderboard: 8
-    missions: 6
-    store: 8
-    classrooms: 10
-    students: 8
-    teachers: 10
-    parents: 6
-    analytics: 8
-    notifications: 6
-    content: 8
-    ui_utility: 16
+  total: 102
+  por_directorio:
+    apps_admin_hooks: 25
+    apps_teacher_hooks: 24
+    apps_student_hooks: 10
+    shared_hooks: 11
+    features_gamification_social_hooks: 6
+    features_auth_hooks: 5
+    features_gamification_economy_hooks: 5
+    features_gamification_ranks_hooks: 5
+    hooks_root: 3                               # useAchievements, useBranding, useFavicon
+    features_exercises_hooks: 2
+    features_notifications_hooks: 2
+    features_gamification_battles_hooks: 1
+    features_gamification_missions_hooks: 1
+    features_mechanics_shared_hooks: 1
+    features_progress_hooks: 1
+
+  # Nota: Conteo excluye 6 index.ts barrels, 5 test files, 2 .example.tsx files.
+  # El inventario anterior de 127 hooks probablemente incluia hooks inline definidos
+  # dentro de archivos de componentes fuera de directorios hooks/.
 
 # -------------------------------------------------------------------------------
-# API SERVICES (48)
+# API SERVICES (52 archivos, 662 llamadas apiClient)
 # -------------------------------------------------------------------------------
 
 api_services:
-  total: 48
-  por_modulo:
-    - "authService.ts"
-    - "userService.ts"
-    - "tenantService.ts"
-    - "moduleService.ts"
-    - "exerciseService.ts"
-    - "contentService.ts"
-    - "classroomService.ts"
-    - "studentService.ts"
-    - "teacherService.ts"
-    - "parentService.ts"
-    - "gamificationService.ts"
-    - "xpService.ts"
-    - "rankService.ts"
-    - "achievementService.ts"
-    - "leaderboardService.ts"
-    - "missionService.ts"
-    - "storeService.ts"
-    - "inventoryService.ts"
-    - "socialService.ts"
-    - "teamService.ts"
-    - "analyticsService.ts"
-    - "reportService.ts"
-    - "notificationService.ts"
-    - "settingsService.ts"
-    - "healthService.ts"
-    # + 23 mas para subservicios
+  total_files: 52
+  total_api_calls: 662
+  por_directorio:
+    services_api_root: 14                       # adminAPI, educationalAPI, progressAPI, contentAPI, etc.
+    services_api_teacher: 14                    # classroomsApi, assignmentsApi, analyticsApi, gradingApi, etc.
+    services_api_admin: 3                       # classroomTeacherApi, achievementsApi, gamificationConfigApi
+    lib_api: 5                                  # auth.api, gamification.api, progress.api, branding.api, lti.api
+    features_gamification_economy_api: 4        # economyAPI, comodinesAPI, shopAPI, inventoryAPI
+    features_gamification_social_api: 2         # socialAPI (34 calls!)
+    features_mechanics_shared_api: 2            # mechanicsAPI, aiServiceAPI
+    shared_api: 2                               # mediaApi, manualReviewApi
+    features_auth_api: 1                        # authAPI
+    features_content_api: 1                     # contentAPI
+    features_gamification_ranks_api: 1          # ranksAPI
+    features_parent_api: 1                      # parentAPI (17 calls)
+    features_progress_api: 1                    # progressAPI
+    services_root: 1                            # NotificationService
+
+  # Infraestructura API (NO contados como service files):
+  # apiClient.ts, apiErrorHandler.ts, apiInterceptors.ts, apiTypes.ts,
+  # axios.instance.ts, adminTypes.ts, adminSchemas.ts, api.config.ts,
+  # api-types.ts, api-responses.ts
+
+  cobertura_backend:
+    endpoints_backend_total: 899
+    endpoints_llamados_frontend: "350-400"      # ~40-45% cobertura global
+    cobertura_por_portal:
+      parent: "~90-100%"                        # 17 endpoints, API file dedicado
+      teacher: "~75-85%"                        # 14 sub-API files, ~95 calls
+      student: "~65-70%"                        # educational + gamification + progress
+      admin: "~55-60%"                          # 78 calls adminAPI + 23 sub-APIs
+
+  duplicados_identificados: 6                   # LTI, achievements, progress, manual reviews, content, auth
 
 # -------------------------------------------------------------------------------
-# GAME MECHANICS (40)
+# ROUTES (70 definiciones en App.tsx)
+# -------------------------------------------------------------------------------
+
+routes:
+  total: 70
+  desglose:
+    public: 10                                  # login, register, forgot-password, reset-password, etc.
+    student: 19                                 # role guard: student
+    teacher: 19                                 # role guard: teacher, admin_teacher
+    admin: 20                                   # role guard: super_admin
+    parent: 2                                   # role guard: parent
+
+  # Nota: El inventario anterior de 24 routes probablemente contaba grupos de ruta
+  # de primer nivel (prefijos), no definiciones individuales <Route>.
+
+# -------------------------------------------------------------------------------
+# MECANICAS DE EJERCICIO (30 unicas, 59 .tsx files)
 # -------------------------------------------------------------------------------
 
 mecanicas:
-  total: 40
-  categorias:
-    xp_display: 5
-    rank_progression: 4
-    achievement_unlock: 5
-    leaderboard_realtime: 4
-    mission_tracker: 4
-    store_ui: 4
-    streak_indicator: 3
-    exercise_interactives: 8
-    social_elements: 3
+  total: 30
+  archivos_tsx: 59
+  por_modulo:
+    modulo_1_comprension_literal: 7             # 16 .tsx files
+    modulo_2_comprension_inferencial: 6         # 9 .tsx files
+    modulo_3_comprension_critica: 5             # 5 .tsx files
+    modulo_4_literacidad_digital: 5             # 14 .tsx files
+    modulo_5_creacion_expresion: 3              # 3 .tsx files
+    auxiliar_cross_module: 4                    # 4 .tsx files
+    shared_mechanic_utilities: 8               # 8 .tsx support files (not unique mechanics)
+
+  # Nota: El inventario anterior de 40 incluia mecanicas de gamificacion UI (xp_display,
+  # rank_progression, etc.) que son componentes de UI, no mecanicas de ejercicio.
+  # Las 30 verificadas son exclusivamente tipos de ejercicio interactivo.
+
+# -------------------------------------------------------------------------------
+# TYPE DEFINITIONS (47 archivos, 415 tipos exportados)
+# -------------------------------------------------------------------------------
+
+types:
+  total_files: 47
+  total_exported: 415                           # types + interfaces + enums
+  por_ubicacion:
+    shared_types: 27                            # 148 tipos exportados
+    types_root: 4                               # 22 tipos exportados
+    features_types: 12                          # 171 tipos exportados
+    apps_types: 3                               # 69 tipos exportados
+    generated: 1                                # 5 tipos (OpenAPI auto-generated)
+
+# -------------------------------------------------------------------------------
+# CONFIGURACION Y SOPORTE
+# -------------------------------------------------------------------------------
+
+configuracion:
+  configs: 14                                   # vite, tsconfig(3), tailwind, postcss, eslint, prettier, env(2), vitest, playwright, storybook(2)
+  utilidades: 34                                # shared/utils(17) + utils/(5) + features utils(5) + lib/api(6) + test helpers(1)
+  constantes: 7                                 # enums.constants(807 lines SSOT), colors, breakpoints, ranks, exerciseFeedback, alertTypes, barrel
+  contextos: 4                                  # AuthContext (392 lines), BrandingProvider (258 lines), AuthProvider (feature), barrel
+  assets: 16                                    # Solo Storybook boilerplate (0 custom app assets)
+
+dependencias:
+  produccion: 27                                # react, zustand, tanstack-query, axios, socket.io-client, framer-motion, etc.
+  desarrollo: 36                                # typescript, vite, tailwindcss, eslint, vitest, playwright, storybook, etc.
+  node_engine: ">= 18.0.0"
+
+scripts_npm: 26                                 # dev, build, test, lint, storybook, e2e, generate:api-types, etc.
+
+path_aliases: 11                                # @/*, @shared/*, @components/*, @hooks/*, @utils/*, @types/*, etc.
+
+# -------------------------------------------------------------------------------
+# HALLAZGOS CRITICOS
+# -------------------------------------------------------------------------------
+
+hallazgos:
+  - id: "HF-01"
+    tipo: "BROKEN_IMPORT"
+    detalle: "lib/api/index.ts referencia ./educational.api pero el archivo NO existe en disco"
+    prioridad: "P1"
+
+  - id: "HF-02"
+    tipo: "DUPLICADO"
+    detalle: "shared/utils/cn.ts y shared/utils/cn.util.ts son identicos. Solo cn.util.ts es exportado via barrel"
+    prioridad: "P3"
+
+  - id: "HF-03"
+    tipo: "DUAL_SYSTEM"
+    detalle: "Dos AuthProviders coexisten: app/providers/AuthContext.tsx (full, 392 lines) y features/auth/providers/AuthProvider.tsx (lightweight, 55 lines). Sincronizados via Zustand"
+    prioridad: "P2"
+
+  - id: "HF-04"
+    tipo: "DUPLICADO_API"
+    detalle: "6 pares de API services duplicados: LTI, achievements, progress, manual reviews, content, auth"
+    prioridad: "P2"
+
+  - id: "HF-05"
+    tipo: "URL_BUG_POTENCIAL"
+    detalle: "ltiAPI.ts y lti.api.ts hardcodean /api/v1/ en paths mientras apiClient.baseURL ya incluye /api/v1 = posible doble prefijo"
+    prioridad: "P1"
+
+  - id: "HF-06"
+    tipo: "NOT_IMPLEMENTED"
+    detalle: "18 endpoints marcados 'not implemented' en adminAPI.ts (user CRUD actions, roles, gamification settings, system logs)"
+    prioridad: "P0"
 
 # ===============================================================================
-# FIN FRONTEND INVENTORY
+# FIN FRONTEND INVENTORY v5.0.0
 # ===============================================================================

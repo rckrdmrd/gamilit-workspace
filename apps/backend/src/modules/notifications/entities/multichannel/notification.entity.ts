@@ -3,6 +3,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  UpdateDateColumn,
   Index,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
@@ -117,6 +118,9 @@ export class Notification {
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt!: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+    updatedAt!: Date;
 
   /**
    * Fecha de expiración (opcional)
