@@ -24,8 +24,8 @@
 | Patron | Uso en Gamilit |
 |--------|----------------|
 | **Component Composition** | Componentes atomicos reutilizables |
-| **Custom Hooks** | 127 hooks para logica compartida |
-| **Zustand Stores** | 32 stores con slices por dominio |
+| **Custom Hooks** | 101 hooks para logica compartida |
+| **Zustand Stores** | 14 stores con slices por dominio |
 | **Feature-based Structure** | Organizacion por feature, no por tipo |
 | **Lazy Loading** | Routes con React.lazy para code splitting |
 | **Error Boundaries** | Componentes resilientes a fallos |
@@ -35,10 +35,10 @@
 | Patron | Uso en Gamilit |
 |--------|----------------|
 | **Schema Separation** | 18 schemas modulares |
-| **Row Level Security** | 263 politicas RLS para multi-tenancy |
+| **Row Level Security** | 207 politicas RLS para multi-tenancy |
 | **Materialized Views** | 7 views para reportes de rendimiento |
-| **Trigger-based Audit** | 132 triggers para audit logging |
-| **Function Encapsulation** | 255 funciones para logica compleja |
+| **Trigger-based Audit** | 67 triggers para audit logging |
+| **Function Encapsulation** | 183 funciones (DDL) para logica compleja |
 
 ## ANTI-PATRONES A EVITAR
 

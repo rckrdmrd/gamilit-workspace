@@ -236,13 +236,13 @@ metricas_historicas:
     nota: "Mitad de desarrollo"
 
   - fecha: "2025-12"
-    tablas: 171
+    tablas: 169
     entities: 141
     componentes: 464
     nota: "MVP completo"
 
   - fecha: "2026-01"
-    tablas: 171
+    tablas: 169
     entities: 141
     componentes: 464
     nota: "Estabilización y documentación"

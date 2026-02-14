@@ -50,20 +50,20 @@ madurez:
       entities: 152
       services: 170
       controllers: 107
-      endpoints: 850
+      endpoints: 899
     frontend:
-      componentes: 458
-      hooks: 127
-      stores: 32
-      paginas: 85
+      componentes: 474
+      hooks: 101
+      stores: 14
+      paginas: 68
       portales: 4
     database:
       schemas: 18
-      tablas: 170
+      tablas: 169
       views: 22
-      funciones: 255
-      triggers: 132
-      rls_policies: 263
+      funciones: 183
+      triggers: 67
+      rls_policies: 207
     tests_pasando: 833
 
 # -------------------------------------------------------------------------------
@@ -254,13 +254,13 @@ validacion:
   checklist:
     - item: "Backend operativo"
       status: "passed"
-      detalles: "22 modulos, 850 endpoints, 833 tests pasando"
+      detalles: "22 modulos, 899 endpoints, 833 tests pasando"
     - item: "Frontend operativo"
       status: "passed"
-      detalles: "458 componentes, 4 portales, 85 paginas"
+      detalles: "474 componentes, 4 portales, 68 paginas"
     - item: "Database estable"
       status: "passed"
-      detalles: "18 schemas, 170 tablas, 263 RLS policies"
+      detalles: "18 schemas, 169 tablas, 207 RLS policies"
     - item: "Produccion activa"
       status: "passed"
       detalles: "Usuarios reales, MVP desplegado"

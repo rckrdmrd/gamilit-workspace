@@ -1,8 +1,8 @@
 # INDICE Y GUIA DE ASIGNACION DE PERFILES DE AGENTES
 
-**Version:** 2.3.0
-**Fecha:** 2026-02-12
-**Sistema:** NEXUS v4.1 + SIMCO
+**Version:** 2.5.0
+**Fecha:** 2026-02-14
+**Sistema:** NEXUS v4.1 + SIMCO v4.5.0
 **Proposito:** Guia para asignacion correcta de tareas a perfiles especializados
 
 ---
@@ -269,11 +269,60 @@ no_asignar_si:
   - "Proyecto usa Express"
 ```
 
-#### PERFIL-BACKEND-EXPRESS
+#### PERFIL-DEPLOY-SERVER
+```yaml
+alias: "@PERFIL_DEPLOY"
+archivo: "PERFIL-DEPLOY-SERVER.md"
+dominio: "Deployment a servidor de produccion"
+
+descripcion_breve: |
+  Gestiona el proceso de deployment a produccion (74.208.126.102).
+  git pull, build, PM2 restart, smoke tests, rollback.
+
+tipos_tarea:
+  - "Deploy a produccion"
+  - "Rollback de deployment"
+  - "Verificar estado de produccion"
+  - "Actualizar configuracion de produccion"
+
+directivas:
+  - "@SIMCO/SIMCO-DEPLOY.md"
+
+no_asignar_si:
+  - "Es desarrollo local"
+  - "No involucra el servidor de produccion"
+```
+
+#### PERFIL-DOCUMENTATION-MAINTAINER
+```yaml
+alias: "@PERFIL_DOCS_MAINTAINER"
+archivo: "PERFIL-DOCUMENTATION-MAINTAINER.md"
+dominio: "Mantenimiento de documentacion y gobernanza"
+
+descripcion_breve: |
+  Mantiene la integridad de la documentacion del proyecto.
+  Indices, mapas, cross-references, inventarios.
+
+tipos_tarea:
+  - "Actualizar indices y mapas"
+  - "Verificar cross-references"
+  - "Mantener coherencia de inventarios"
+  - "Auditar estructura de documentacion"
+
+directivas:
+  - "@SIMCO/SIMCO-DOCUMENTAR.md"
+
+no_asignar_si:
+  - "Es implementacion de codigo"
+  - "No involucra documentacion"
+```
+
+#### PERFIL-BACKEND-EXPRESS [ARCHIVED]
 ```yaml
 alias: "@PERFIL_BACKEND_EXPRESS"
-archivo: "PERFIL-BACKEND-EXPRESS.md"
+archivo: "_archive/PERFIL-BACKEND-EXPRESS.md"
 dominio: "Desarrollo backend Express"
+estado: "ARCHIVED - gamilit usa NestJS"
 
 descripcion_breve: |
   Desarrolla APIs con Express.js. Crea routes, middlewares,
@@ -865,6 +914,49 @@ Ubicacion: `compact/`
 
 ---
 
+## NEXUS v4.1 — INTEGRACION CON PERFILES
+
+### Triggers que Afectan Perfiles
+
+| Trigger | Impacto en Perfil |
+|---------|------------------|
+| @TRIGGER_COHERENCIA | Todo perfil tecnico DEBE verificar coherencia DDL↔BE↔FE al completar |
+| @TRIGGER_SSOT_SYNC | Todo perfil DEBE verificar inventarios SSOT actualizados post-cambio |
+| @TRIGGER_CIERRE | Gate de cierre aplica a TODOS los perfiles (checklist obligatorio) |
+| @TRIGGER_INVENTARIOS | Inventarios deben reflejar cambios de codigo |
+
+### Schema de Carga Automatica (@DEF_*)
+
+Los perfiles especializados cargan validaciones canonicas automaticamente:
+
+| Perfil | Validacion | Alias |
+|--------|-----------|-------|
+| PERFIL-BACKEND-NESTJS | Validacion Backend canonica | @DEF_VAL_BE |
+| PERFIL-DATABASE-POSTGRESQL | Validacion DDL canonica | @DEF_VAL_DDL |
+| PERFIL-FRONTEND-REACT | Validacion Frontend canonica | @DEF_VAL_FE |
+
+### Checkpoint Protocol (Context Recovery)
+
+Cuando un agente detecta compactacion inminente:
+
+```yaml
+recovery_protocol:
+  1: "Escribir PROXIMA-ACCION.md con estado actual"
+  2: "Incluir: perfil activo, fase CAPVED actual, archivos pendientes"
+  3: "Al recuperar: cargar perfil + PROXIMA-ACCION + CONTEXT-MAP"
+  referencia: "@SIMCO-CONTEXT-CLEANUP"
+```
+
+### Modelo de Tokens por Perfil
+
+| Tipo Perfil | Tokens Estimados | Uso |
+|-------------|-----------------|-----|
+| Full (canonical) | 800-1,500 | Tarea principal, sesion completa |
+| Compact | 200-300 | Subagente, tarea delegada |
+| Stub (deprecated) | 7 lineas | Redireccion — ahora en _archive/ |
+
+---
+
 ## REFERENCIAS
 
 - Aliases completos: `orchestration/referencias/ALIASES.yml`
@@ -872,20 +964,23 @@ Ubicacion: `compact/`
 - Templates: `orchestration/templates/`
 - Perfiles compactos: `orchestration/agents/perfiles/compact/`
 - Protocolo subagente: `orchestration/directivas/simco/SIMCO-SUBAGENTE.md`
+- Context Cleanup: `orchestration/directivas/simco/SIMCO-CONTEXT-CLEANUP.md`
+- Limpieza Post-Fase: `orchestration/directivas/simco/SIMCO-LIMPIEZA-POST-FASE.md`
 
 ---
 
-## PERFILES REDUCIDOS A STUBS (Consolidacion 2026-02-12)
+## PERFILES ARCHIVADOS (_archive/)
 
-Los siguientes perfiles han sido reducidos a stubs de 7 lineas que redirigen a perfiles canonicos:
+Los siguientes perfiles deprecated han sido movidos a `_archive/`:
 
-| Perfil Deprecated | Lineas Previas | Canonical | Estado |
-|---|---|---|---|
-| PERFIL-SECURITY.md | 367 | PERFIL-SECURITY-AUDITOR.md | Stub (redirige) |
-| PERFIL-QA.md | 402 | PERFIL-TESTING.md | Stub (redirige) |
-| PERFIL-DOCUMENTATION.md | 372 | PERFIL-DOCUMENTATION-VALIDATOR.md | Stub (redirige) |
-| PERFIL-ML.md | 282 | N/A (no aplica a gamilit) | Archivado en `_archive/` |
+| Perfil Deprecated | Canonical | Fecha Archivo |
+|---|---|---|
+| PERFIL-SECURITY.md | PERFIL-SECURITY-AUDITOR.md | 2026-02-13 |
+| PERFIL-QA.md | PERFIL-TESTING.md | 2026-02-13 |
+| PERFIL-DOCUMENTATION.md | PERFIL-DOCUMENTATION-VALIDATOR.md | 2026-02-13 |
+| PERFIL-ML.md | N/A (no aplica a gamilit) | 2026-02-12 |
+| PERFIL-BACKEND-EXPRESS.md | N/A (gamilit usa NestJS) | 2026-02-12 |
 
 ---
 
-**Version:** 2.3.0 | **Sistema:** NEXUS v4.1 + SIMCO v4.0.0 | **Mantenido por:** Architecture-Analyst
+**Version:** 2.5.0 | **Sistema:** NEXUS v4.1 + SIMCO v5.0.0 | **Mantenido por:** Architecture-Analyst

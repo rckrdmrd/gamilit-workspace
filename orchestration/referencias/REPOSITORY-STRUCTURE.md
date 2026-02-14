@@ -168,7 +168,7 @@ git submodule status --recursive
 
 ```bash
 cd projects/{proyecto}
-git pull origin main
+git pull origin master
 cd ../..
 git add projects/{proyecto}
 git commit -m "Update {proyecto} submodule"
@@ -215,19 +215,19 @@ git checkout main
 # 3. Hacer cambios y commit
 git add .
 git commit -m "feat: Add new feature"
-git push origin main
+git push origin master
 
 # 4. Actualizar referencia en proyecto padre
 cd ..  # projects/erp-core
 git add backend
 git commit -m "Update backend submodule"
-git push origin main
+git push origin master
 
 # 5. Actualizar referencia en workspace
 cd ../..  # workspace-v2
 git add projects/erp-core
 git commit -m "Update erp-core submodule"
-git push origin main
+git push origin master
 ```
 
 ### Agregar nuevo submodulo

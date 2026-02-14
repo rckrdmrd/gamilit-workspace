@@ -109,6 +109,8 @@ cargar_siempre:
   - "docs/40-estandares/ESTANDAR-DATABASE-PROFESIONAL.md"
   - "orchestration/directivas/principios/PRINCIPIO-NORMALIZACION-BD.md"
 
+validacion_canonica: "@DEF_VAL_DDL"  # orchestration/_definitions/validations/VALIDATION-DDL.md
+
 cargar_segun_operacion:
   ddl_nuevo:
     - "orchestration/directivas/simco/SIMCO-DDL.md"

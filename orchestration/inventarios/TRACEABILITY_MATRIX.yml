@@ -136,12 +136,12 @@ reconciled_metrics:
     coherencia_bd: "99%"
 
   frontend:
-    components: 463  # ACTUALIZADO 2026-01-16: -1 (eliminado UnderConstruction duplicado)
-    hooks: 101
-    pages: 74
-    stores: 12
-    api_services: 26
-    mechanics: 33
+    components: 474  # ACTUALIZADO 2026-02-15 (was 463)
+    hooks: 102       # ACTUALIZADO 2026-02-15 (was 101, +useFocusTrap)
+    pages: 68        # ACTUALIZADO 2026-02-15 (was 74)
+    stores: 14       # ACTUALIZADO 2026-02-15 (was 12)
+    api_services: 51 # ACTUALIZADO 2026-02-15 (was 26)
+    mechanics: 30    # ACTUALIZADO 2026-02-15 (was 33)
 
 # ============================================================================
 # MATRIZ POR ÉPICA

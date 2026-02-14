@@ -112,6 +112,8 @@ cargar_siempre:
   - "docs/40-estandares/ESTANDAR-FRONTEND-PROFESIONAL.md"
   - "orchestration/directivas/principios/PRINCIPIO-SEPARATION-OF-CONCERNS.md"
 
+validacion_canonica: "@DEF_VAL_FE"  # orchestration/_definitions/validations/VALIDATION-FRONTEND.md
+
 cargar_segun_tarea:
   performance: "ESTANDAR-FRONTEND-PROFESIONAL.md#3-performance-optimization"
   accessibility: "ESTANDAR-FRONTEND-PROFESIONAL.md#5-accessibility"

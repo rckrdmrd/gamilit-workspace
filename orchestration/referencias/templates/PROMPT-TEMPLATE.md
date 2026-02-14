@@ -110,7 +110,7 @@ GIT (OBLIGATORIO)
 ANTES de trabajar:
 ```bash
 git fetch origin
-git pull origin main
+git pull origin master
 ```
 
 AL TERMINAR (es submodulo):
@@ -119,13 +119,13 @@ AL TERMINAR (es submodulo):
 cd {RUTA_PROYECTO}
 git add .
 git commit -m "[{ID_TAREA}] {TIPO}: {DESCRIPCION_CORTA}"
-git push origin main
+git push origin master
 
 # 2. Commit en workspace
 cd ../..  # volver a workspace-v2
 git add {RUTA_PROYECTO}
 git commit -m "[WS] chore: Update {NOMBRE_PROYECTO} submodule"
-git push origin main
+git push origin master
 ```
 
 ═══════════════════════════════════════════════════════════════════

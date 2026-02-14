@@ -31,7 +31,7 @@ lessons:
       action: |
         Implementar como regla critica en CLAUDE.md:
         git fetch origin
-        git log HEAD..origin/main --oneline
+        git log HEAD..origin/master --oneline
       status: implemented
       propagated: true
 

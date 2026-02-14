@@ -8,9 +8,9 @@
 
 ```bash
 cd /home/isem/workspace-v2
-git fetch origin && git pull origin main
+git fetch origin && git pull origin master
 git submodule update --init --recursive
-for p in projects/*/; do cd "$p" && git fetch origin && git pull origin main 2>/dev/null; [ -f .gitmodules ] && git submodule foreach 'git fetch origin && git pull origin main 2>/dev/null || true'; cd /home/isem/workspace-v2; done
+for p in projects/*/; do cd "$p" && git fetch origin && git pull origin master 2>/dev/null; [ -f .gitmodules ] && git submodule foreach 'git fetch origin && git pull origin master 2>/dev/null || true'; cd /home/isem/workspace-v2; done
 ```
 
 ---
@@ -19,7 +19,7 @@ for p in projects/*/; do cd "$p" && git fetch origin && git pull origin main 2>/
 
 ```bash
 cd /home/isem/workspace-v2
-echo "Workspace: $(git rev-parse --short HEAD) vs $(git rev-parse --short origin/main)"
+echo "Workspace: $(git rev-parse --short HEAD) vs $(git rev-parse --short origin/master)"
 git submodule status | grep "^+" && echo "⚠️ Hay diferencias" || echo "✅ Todo sincronizado"
 ```
 
@@ -30,21 +30,21 @@ git submodule status | grep "^+" && echo "⚠️ Hay diferencias" || echo "✅ T
 ### "upload-pack: not our ref"
 ```bash
 cd projects/PROYECTO
-git fetch origin && git checkout -B main origin/main
+git fetch origin && git checkout -B main origin/master
 cd ../.. && git add projects/PROYECTO && git commit -m "fix: Reset PROYECTO" && git push
 ```
 
 ### Divergent history
 ```bash
 cd projects/PROYECTO
-git fetch origin && git checkout -B main origin/main  # Mantener remoto
-# O: git push --force origin main                      # Mantener local
+git fetch origin && git checkout -B main origin/master  # Mantener remoto
+# O: git push --force origin master                      # Mantener local
 ```
 
 ### Detached HEAD
 ```bash
 cd projects/PROYECTO/SUBMODULO
-git checkout main && git pull origin main
+git checkout main && git pull origin master
 ```
 
 ---

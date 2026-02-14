@@ -285,7 +285,7 @@ gunzip -c backup.sql.gz | psql -U {user} -h localhost {database}
 ```bash
 # Secuencia tipica de deploy
 cd /var/www/{proyecto}
-git pull origin main
+git pull origin master
 npm ci --production
 npm run build
 pm2 reload {app-name} --update-env

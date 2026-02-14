@@ -35,7 +35,7 @@ cd /home/isem/workspace-v2/projects/gamilit
 git fetch origin
 git stash  # Si hay cambios locales
 git checkout main
-git pull origin main
+git pull origin master
 git stash pop  # Si aplica
 ```
 

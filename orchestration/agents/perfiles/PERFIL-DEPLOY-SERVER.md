@@ -1,7 +1,7 @@
 # PERFIL: DEPLOY-SERVER
 
-**Version:** 2.0.0
-**Fecha:** 2026-02-11
+**Version:** 2.1.0
+**Fecha:** 2026-02-14
 **Sistema:** SIMCO + CAPVED
 **Proyecto:** GAMILIT
 
@@ -98,7 +98,7 @@ SOLUCION: Ambos deben existir en .env.production con el mismo valor:
 
 ```bash
 cd /home/isem/workspace-v2/projects/gamilit
-git fetch origin && git pull origin main
+git fetch origin && git pull origin master
 ```
 
 ### Paso 2: Cargar Contexto
@@ -375,4 +375,75 @@ Password de BD almacenado en: apps/backend/.env.production → DB_PASSWORD
 
 ---
 
-*PERFIL-DEPLOY-SERVER v2.0.0 - Sistema SIMCO - Actualizado 2026-02-11*
+## AUTOMATIZACION DE DEPLOY
+
+### GitHub Actions (Futuro)
+
+Cuando se implemente CI/CD con GitHub Actions, el workflow de deploy seguira el mismo flujo
+secuencial documentado arriba pero automatizado:
+
+- Ver: `docs/50-guides/deployment/GUIA-GITHUB-ACTIONS-CICD.md`
+- Trigger: manual (`workflow_dispatch`) inicialmente, automatico despues
+- Quality gates obligatorios antes de deploy:
+  - `npm run build` exitoso en backend y frontend
+  - `npm run lint` sin errores
+  - `npm run test` con cobertura minima 80%
+  - Validacion de tipos (`npm run typecheck` en frontend)
+
+### Pipeline de Migraciones DDL
+
+Para deploys que incluyen cambios en `apps/database/ddl/`:
+
+- Ver: `docs/50-guides/deployment/GUIA-PIPELINE-MIGRACIONES.md`
+- Patron Expand/Contract para zero-downtime en cambios destructivos
+- Deteccion automatica: `git diff HEAD..origin/master --name-only -- apps/database/ddl/`
+- Clasificacion de riesgo: Bajo (additive) / Medio (modify) / Alto (drop) / Critico (schema)
+- Backups obligatorios en `/home/isem/backups/` antes de cualquier cambio DDL
+
+### Rollback Mejorado
+
+En caso de fallo post-deploy, tres niveles de rollback:
+
+1. **Inmediato (< 5 min):** Solo codigo, sin cambios DDL
+   ```bash
+   cd /home/isem/workspace-v2/projects/gamilit
+   git checkout HEAD~1
+   cd apps/backend && npm ci --production=false && npm run build
+   cd ../frontend && npm ci && npm run build
+   cd /home/isem/workspace-v2/projects/gamilit
+   pm2 restart ecosystem.config.js --env production
+   ```
+
+2. **Con DB restore (< 15 min):** Codigo + base de datos
+   ```bash
+   pm2 stop ecosystem.config.js
+   LAST_BACKUP=$(ls -t /home/isem/backups/gamilit-*.dump | head -1)
+   sudo -u postgres psql -c "DROP DATABASE IF EXISTS gamilit_platform;"
+   sudo -u postgres psql -c "CREATE DATABASE gamilit_platform OWNER gamilit_user;"
+   pg_restore -d gamilit_platform "$LAST_BACKUP"
+   git checkout HEAD~1
+   cd apps/backend && npm ci --production=false && npm run build
+   cd ../frontend && npm ci && npm run build
+   cd /home/isem/workspace-v2/projects/gamilit
+   pm2 restart ecosystem.config.js --env production
+   ```
+
+3. **Blue-green (futuro):** Mantener version anterior corriendo en puertos alternativos
+   - Backend anterior en `:4016`, Frontend anterior en `:4015`
+   - Nginx switch entre upstream blocks (puertos activos vs standby)
+   - Requiere: segundo set de puertos PM2 en `ecosystem.config.js`
+   - Rollback instantaneo: solo cambiar la configuracion de Nginx y `nginx -s reload`
+   ```nginx
+   # /etc/nginx/sites-enabled/gamilit — Ejemplo blue-green
+   upstream gamilit_backend_blue {
+     server 127.0.0.1:4006;
+   }
+   upstream gamilit_backend_green {
+     server 127.0.0.1:4016;
+   }
+   # Cambiar el proxy_pass entre blue y green segun version activa
+   ```
+
+---
+
+*PERFIL-DEPLOY-SERVER v2.1.0 - Sistema SIMCO - Actualizado 2026-02-14*

@@ -26,12 +26,12 @@ traceability:
         - "apps/frontend/src/"
         - "apps/frontend/test/"
       pages:
-        - "85 pages"
+        - "68 pages"
       components:
-        - "458 components"
-        - "127 hooks"
-        - "32 Zustand stores"
-        - "48 API services"
+        - "475 components"
+        - "102 hooks"
+        - "14 Zustand stores"
+        - "52 API services"
     database:
       paths: []
       tables: []

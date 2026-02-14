@@ -1,8 +1,8 @@
 # INDICE: Sistema de Triggers
 
 **Sistema:** SAAD (Sistema de Activacion Automatica de Directivas)
-**Version:** 1.1.0
-**Fecha:** 2026-01-16
+**Version:** 1.4.0
+**Fecha:** 2026-02-14
 **Ubicacion:** `orchestration/directivas/triggers/`
 
 ---
@@ -21,11 +21,19 @@ verificaciones especificas y genera reportes o acciones correspondientes.
 |---------|------|-----------|
 | TRIGGER-ANTI-DUPLICACION | A | Prevenir creacion de objetos duplicados |
 | TRIGGER-ANALISIS-DEPENDENCIAS | A | Analizar impacto antes de modificar |
-| TRIGGER-PROPAGACION-AUTOMATICA | D | Evaluar si cambio debe propagarse |
-| TRIGGER-DUPLICADOS | A | Gestionar consolidacion de duplicados |
+| ~~TRIGGER-PROPAGACION-AUTOMATICA~~ | ~~D~~ | ~~PHANTOM — archivo no existe en disco (concepto absorbido por STANDALONE)~~ |
+| ~~TRIGGER-DUPLICADOS~~ | ~~A~~ | ~~PHANTOM — archivo no existe en disco (funcionalidad en TRIGGER-ANTI-DUPLICACION)~~ |
 | **TRIGGER-CIERRE-TAREA-OBLIGATORIO** | **D** | **Verificar checklist antes de marcar tarea completada** |
 | TRIGGER-COHERENCIA-CAPAS | E/D | Validar coherencia DDL↔Backend↔Frontend |
+| **TRIGGER-SSOT-SYNC** | **D** | **Verificar sincronizacion inventarios SSOT con codigo** |
 | TRIGGER-INVENTARIOS-SINCRONIZADOS | D | Verificar inventarios actualizados |
+| TRIGGER-FETCH-OBLIGATORIO | Pre-A | Fetch obligatorio antes de operaciones git |
+| TRIGGER-INICIO-TAREA | Pre-C | Crear carpeta de tarea antes de ejecutar codigo |
+| TRIGGER-FUNCTIONALITY-CHECK | E | Verificar funcionalidades nuevas, duplicados, coherencia |
+| TRIGGER-DDL-RECREAR-BD-WSL | E | Recrear BD cuando se modifican archivos DDL |
+| TRIGGER-DOCUMENTACION-OBLIGATORIA | D | Verificar documentacion antes de completar tarea |
+| TRIGGER-COMMIT-PUSH-OBLIGATORIO | D | Asegurar commit/push antes de reportar tarea completada |
+| **TRIGGER-QUALITY-GATE** | **Pre-E** | **Gate de calidad: lint, tests, build, coverage minima antes de ejecutar** |
 
 ---
 
@@ -127,6 +135,38 @@ acciones:
 referencia: "@TRIGGER_COHERENCIA"
 ```
 
+### TRIGGER-SSOT-SYNC (NUEVO v1.2.0)
+```yaml
+fase_capved: D (Documentacion) - POST-CAMBIO
+condiciones:
+  - Cambio en DDL (tablas, vistas, funciones, triggers)
+  - Cambio en Backend (entities, services, controllers, DTOs)
+  - Cambio en Frontend (componentes, hooks, stores, paginas, rutas)
+  - Cambio en inventarios directamente
+acciones:
+  - Verificar inventario de dominio refleja codigo
+  - Verificar MASTER_INVENTORY sincronizado
+  - Verificar CLAUDE.md metricas coinciden
+  - Validar no hay metricas aspiracionales
+referencia: "@TRIGGER_SSOT_SYNC"
+```
+
+### TRIGGER-QUALITY-GATE (NUEVO v1.4.0)
+```yaml
+fase_capved: Pre-E (antes de Ejecucion)
+condiciones:
+  - Tarea implica modificacion de codigo (backend, frontend, DDL)
+  - Cambio requiere validacion de build antes de merge
+acciones:
+  - Ejecutar lint (eslint) en archivos modificados
+  - Ejecutar tests unitarios del modulo afectado
+  - Verificar build exitoso (npm run build)
+  - Validar coverage minima (80% objetivo)
+  - Si FALLA: DETENER ejecucion, reportar errores
+  - Si PASA: continuar a Fase E
+referencia: "@TRIGGER_QUALITY_GATE"
+```
+
 ### TRIGGER-INVENTARIOS-SINCRONIZADOS
 ```yaml
 fase_capved: D (Documentacion)
@@ -149,11 +189,19 @@ triggers/
 ├── _INDEX.md                              <- Este archivo
 ├── TRIGGER-ANTI-DUPLICACION.md            <- Prevencion de duplicados
 ├── TRIGGER-ANALISIS-DEPENDENCIAS.md       <- Analisis de impacto
-├── TRIGGER-PROPAGACION-AUTOMATICA.md      <- Propagacion entre proyectos
-├── TRIGGER-DUPLICADOS.md                  <- Consolidacion de duplicados
+├── [PHANTOM] TRIGGER-PROPAGACION-AUTOMATICA.md  <- NO EXISTE en disco (concepto STANDALONE)
+├── [PHANTOM] TRIGGER-DUPLICADOS.md              <- NO EXISTE en disco (absorbido por ANTI-DUPLICACION)
 ├── TRIGGER-CIERRE-TAREA-OBLIGATORIO.md    <- Gate de cierre (NUEVO v1.1.0)
 ├── TRIGGER-COHERENCIA-CAPAS.md            <- Coherencia DDL↔BE↔FE
-└── TRIGGER-INVENTARIOS-SINCRONIZADOS.md   <- Inventarios actualizados
+├── TRIGGER-SSOT-SYNC.md                   <- Sincronizacion SSOT (NUEVO v1.2.0)
+├── TRIGGER-INVENTARIOS-SINCRONIZADOS.md   <- Inventarios actualizados
+├── TRIGGER-FETCH-OBLIGATORIO.md           <- Fetch antes de git ops (NUEVO v1.3.0)
+├── TRIGGER-INICIO-TAREA.md               <- Crear carpeta tarea (NUEVO v1.3.0)
+├── TRIGGER-FUNCTIONALITY-CHECK.md         <- Verificar funcionalidades (NUEVO v1.3.0)
+├── TRIGGER-DDL-RECREAR-BD-WSL.md          <- Recrear BD tras DDL (NUEVO v1.3.0)
+├── TRIGGER-DOCUMENTACION-OBLIGATORIA.md   <- Docs obligatorias (NUEVO v1.3.0)
+├── TRIGGER-COMMIT-PUSH-OBLIGATORIO.md     <- Commit/push obligatorio (NUEVO v1.3.0)
+└── TRIGGER-QUALITY-GATE.md                <- Gate de calidad pre-ejecucion (NUEVO v1.4.0)
 ```
 
 ---
@@ -162,23 +210,41 @@ triggers/
 
 ### MODE-FULL
 ```
+Pre-A:
+  └─> TRIGGER-FETCH-OBLIGATORIO (antes de git ops)
+
+Pre-C:
+  └─> TRIGGER-INICIO-TAREA (crear carpeta de tarea)
+
 Fase A:
   └─> TRIGGER-ANTI-DUPLICACION (si crear)
   └─> TRIGGER-ANALISIS-DEPENDENCIAS (si modificar)
   └─> TRIGGER-DUPLICADOS (si consolidar)
 
+Pre-E:
+  └─> TRIGGER-QUALITY-GATE (lint, tests, build, coverage minima)
+
 Fase E:
   └─> TRIGGER-COHERENCIA-CAPAS (al modificar objetos)
+  └─> TRIGGER-FUNCTIONALITY-CHECK (verificar funcionalidades)
+  └─> TRIGGER-DDL-RECREAR-BD-WSL (si DDL modificado)
 
 Fase D:
+  └─> TRIGGER-DOCUMENTACION-OBLIGATORIA (verificar docs)
+  └─> TRIGGER-SSOT-SYNC (post-cambio, verificar inventarios)
   └─> TRIGGER-INVENTARIOS-SINCRONIZADOS (siempre)
   └─> TRIGGER-PROPAGACION-AUTOMATICA (si jerarquia)
+  └─> TRIGGER-COMMIT-PUSH-OBLIGATORIO (antes de reportar completada)
   └─> TRIGGER-CIERRE-TAREA-OBLIGATORIO (AL FINALIZAR - BLOQUEANTE)
 ```
 
 ### MODE-QUICK
 ```
+Pre-A:
+  └─> TRIGGER-FETCH-OBLIGATORIO (antes de git ops)
+
 Fase D:
+  └─> TRIGGER-COMMIT-PUSH-OBLIGATORIO (antes de reportar completada)
   └─> TRIGGER-CIERRE-TAREA-OBLIGATORIO (checklist reducido)
 
 (Escalar a FULL si build falla)
@@ -269,6 +335,22 @@ El `TRIGGER-CIERRE-TAREA-OBLIGATORIO` es diferente a los demas:
 
 ## Changelog
 
+### v1.4.0 (2026-02-14)
+- Agregado TRIGGER-QUALITY-GATE.md (gate de calidad pre-ejecucion: lint, tests, build, coverage)
+- Agregado Pre-E al flujo MODE-FULL para QUALITY-GATE
+- Total triggers: 13 en disco (2 phantoms: PROPAGACION-AUTOMATICA, DUPLICADOS)
+
+### v1.3.0 (2026-02-13)
+- Agregados 6 triggers existentes en disco no documentados: FETCH-OBLIGATORIO, INICIO-TAREA, FUNCTIONALITY-CHECK, DDL-RECREAR-BD-WSL, DOCUMENTACION-OBLIGATORIA, COMMIT-PUSH-OBLIGATORIO
+- Actualizado flujo MODE-FULL con Pre-A, Pre-C, y triggers en fases E y D
+- Actualizado flujo MODE-QUICK con FETCH-OBLIGATORIO y COMMIT-PUSH-OBLIGATORIO
+- Total triggers: 14
+
+### v1.2.0 (2026-02-13)
+- Agregado TRIGGER-SSOT-SYNC.md (sincronizacion inventarios SSOT)
+- Actualizado flujo MODE-FULL para incluir SSOT-SYNC en Fase D
+- Total triggers: 8
+
 ### v1.1.0 (2026-01-16)
 - Agregado TRIGGER-CIERRE-TAREA-OBLIGATORIO.md (gate de cierre)
 - Agregado TRIGGER-COHERENCIA-CAPAS.md
@@ -281,4 +363,4 @@ El `TRIGGER-CIERRE-TAREA-OBLIGATORIO` es diferente a los demas:
 
 ---
 
-*Sistema de Triggers v1.1.0 - Sistema SAAD - Actualizado 2026-01-16*
+*Sistema de Triggers v1.4.0 - Sistema SAAD - Actualizado 2026-02-14*

@@ -11,6 +11,7 @@
 |-----------|--------|-------|-------------|
 | [POLITICA-ENV-COMPARTIDO.md](POLITICA-ENV-COMPARTIDO.md) | VIGENTE | 2026-01-20 | Archivos .env en Git por ambiente multi-entorno |
 | [POLITICA-SSOT-GAMILIT.md](POLITICA-SSOT-GAMILIT.md) | VIGENTE | 2026-01-30 | Windows como SSOT de codigo e inventarios |
+| [POLITICA-SUPPLY-CHAIN.md](POLITICA-SUPPLY-CHAIN.md) | VIGENTE | 2026-02-13 | Seguridad de cadena de suministro (dependencias, CI/CD) |
 
 ---
 
@@ -53,7 +54,8 @@ Crear una politica de excepcion cuando:
 
 - `@POLITICA-ENV` - Politica de .env compartidos
 - `@POLITICA-SSOT` - Politica SSOT para Gamilit
+- `@POLITICA-SUPPLY-CHAIN` - Politica de seguridad supply chain
 
 ---
 
-**Ultima actualizacion:** 2026-01-30
+**Ultima actualizacion:** 2026-02-14

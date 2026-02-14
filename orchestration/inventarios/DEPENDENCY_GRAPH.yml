@@ -1,357 +1,317 @@
 # DEPENDENCY GRAPH - GAMILIT
 # Grafo de dependencias entre modulos, schemas y componentes
-# Version: 2.0.0
-# Fecha: 2025-12-05 (Post-Sprint P1)
-# Fuente: Requirements-Analyst
+# Version: 3.0.0
+# Fecha: 2026-02-14
+# Fuente: Documentation-Maintainer (auditoria gobernanza)
 
-version: "2.0.0"
+version: "3.0.0"
 proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
-fecha_actualizacion: "2025-12-05"
+fecha_actualizacion: "2026-02-14"
 descripcion: "Grafo de dependencias entre capas (Database -> Backend -> Frontend)"
-estado_proyecto: "75% completado"
+estado_proyecto: "98% completado (MVP Produccion Activa)"
 
 # ========================================
-# SCHEMAS DE DATABASE (Base de la pirámide)
+# SCHEMAS DE DATABASE (18 schemas, 169 tablas)
 # ========================================
 
 database_schemas:
-  auth_management:
-    descripcion: "Gestión de autenticación y perfiles de usuario"
+  auth:
+    descripcion: "Schema base auth (compatible Supabase)"
+    tablas: 1
     dependencias: []
     usado_por:
-      - backend: ["auth", "users", "profiles"]
-      - frontend: ["AuthContext", "useAuth"]
+      - backend: ["auth"]
 
-  content_management:
-    descripcion: "Gestión de contenido pedagógico"
+  auth_management:
+    descripcion: "Perfiles, roles, tenants, sesiones, tokens, parents, RBAC"
+    tablas: 17
+    dependencias: ["auth"]
+    usado_por:
+      - backend: ["auth", "profile", "parents"]
+      - frontend: ["AuthContext", "authStore"]
+
+  educational_content:
+    descripcion: "Modulos educativos, ejercicios (23 tipos), asignaciones, rubricas"
+    tablas: 21
     dependencias: ["auth_management"]
     usado_por:
-      - backend: ["content", "exercises", "lessons"]
-      - frontend: ["ContentPages", "ExercisePage"]
+      - backend: ["educational", "assignments", "teacher"]
+      - frontend: ["ExercisePage", "ModulePage"]
 
   gamification_system:
-    descripcion: "Sistema de gamificación (puntos, logros, recompensas)"
-    dependencias: ["auth_management", "content_management"]
-    usado_por:
-      - backend: ["gamification", "rewards", "achievements"]
-      - frontend: ["GamifiedHeader", "RewardsPage", "LeaderboardPage"]
-
-  classroom_system:
-    descripcion: "Gestión de aulas y grupos"
+    descripcion: "XP, rangos maya, achievements, ML Coins, tienda, misiones, leaderboards"
+    tablas: 21
     dependencias: ["auth_management"]
     usado_por:
-      - backend: ["classrooms", "assignments"]
-      - frontend: ["ClassroomPages", "TeacherPortal"]
+      - backend: ["gamification", "notifications"]
+      - frontend: ["GamifiedHeader", "ranksStore", "economyStore", "achievementsStore"]
 
-  analytics_system:
-    descripcion: "Métricas y análisis de uso"
-    dependencias: ["auth_management", "content_management", "gamification_system"]
+  progress_tracking:
+    descripcion: "Progreso, intentos, learning paths, mastery, certificados"
+    tablas: 21
+    dependencias: ["auth_management", "educational_content"]
     usado_por:
-      - backend: ["analytics"]
-      - frontend: ["AnalyticsPage", "DashboardPage"]
+      - backend: ["progress", "teacher"]
+      - frontend: ["ProgressDashboard", "CertificatesPage"]
 
-  notification_system:
-    descripcion: "Sistema de notificaciones"
+  social_features:
+    descripcion: "Escuelas, aulas, equipos, guilds, amistades, challenges, foros"
+    tablas: 30
+    dependencias: ["auth_management"]
+    usado_por:
+      - backend: ["social", "assignments", "teacher"]
+      - frontend: ["ClassroomPages", "GuildsPage", "FriendsPage"]
+
+  notifications:
+    descripcion: "Multi-canal: email, push, in-app, SMS con templates y cola"
+    tablas: 7
     dependencias: ["auth_management"]
     usado_por:
       - backend: ["notifications"]
-      - frontend: ["NotificationsComponent"]
+      - frontend: ["NotificationBell"]
 
-  system_config:
-    descripcion: "Configuración del sistema"
+  content_management:
+    descripcion: "Templates, media, moderacion, tags, versiones"
+    tablas: 10
+    dependencias: ["auth_management"]
+    usado_por:
+      - backend: ["content"]
+      - frontend: ["ContentManagementPage"]
+
+  system_configuration:
+    descripcion: "Settings, feature flags, rate limits, parametros gamificacion"
+    tablas: 9
     dependencias: []
     usado_por:
-      - backend: ["config"]
-      - frontend: ["SettingsPage"]
+      - backend: ["admin"]
+      - frontend: ["AdminSettingsPage"]
+
+  audit_logging:
+    descripcion: "Auditoria, logs sistema, alertas, activity tracking"
+    tablas: 7
+    dependencias: ["auth_management"]
+    usado_por:
+      - backend: ["audit", "admin"]
+
+  admin_dashboard:
+    descripcion: "Dashboard admin, bulk ops, reportes, metricas"
+    tablas: 3
+    views: 7
+    materialized_views: 3
+    dependencias: ["auth_management"]
+    usado_por:
+      - backend: ["admin"]
+      - frontend: ["AdminDashboard"]
+
+  data_warehouse:
+    descripcion: "Star schema: 8 dimensiones, 4 facts, 2 ML, 2 ETL"
+    tablas: 16
+    views: 3
+    dependencias: ["auth_management", "educational_content", "gamification_system", "progress_tracking"]
+    usado_por:
+      - backend: ["etl", "ml", "visualization"]
+    nota: "16 tablas DDL-only (sin entities TypeORM) — intencional"
+
+  communication:
+    descripcion: "Mensajeria interna: messages, participants"
+    tablas: 3
+    dependencias: ["auth_management"]
+    usado_por:
+      - backend: ["communication", "teacher"]
+      - frontend: ["TeacherCommunicationPage"]
+
+  lti_integration:
+    descripcion: "LTI 1.3: consumers, sessions, grade passback"
+    tablas: 3
+    dependencias: ["auth_management"]
+    usado_por:
+      - backend: ["lti"]
+
+  gamilit:
+    descripcion: "Funciones utilitarias compartidas (now_mexico, RLS helpers, triggers)"
+    tablas: 0
+    funciones: 37
+    views: 1
+    dependencias: []
+    usado_por:
+      - backend: ["(all modules via RLS)"]
+
+  optimization:
+    descripcion: "Indexes y triggers de optimizacion"
+    tablas: 0
+    dependencias: ["(all schemas)"]
+
+  public:
+    descripcion: "Schema publico legacy (placeholder, vacio)"
+    tablas: 0
+
+  storage:
+    descripcion: "Storage backend (placeholder, vacio)"
+    tablas: 0
 
 # ========================================
-# MÓDULOS DE BACKEND (Capa intermedia)
+# MODULOS DE BACKEND (22 modulos, 899 endpoints)
 # ========================================
 
 backend_modules:
   auth:
-    descripcion: "Autenticación y autorización"
-    dependencias_db: ["auth_management"]
+    descripcion: "JWT + Passport + RBAC, multi-tenant"
+    dependencias_db: ["auth", "auth_management"]
     dependencias_backend: []
-    expone_endpoints:
-      - "POST /auth/login"
-      - "POST /auth/register"
-      - "POST /auth/logout"
-      - "GET /auth/me"
-    usado_por_frontend:
-      - "AuthContext"
-      - "useAuth hook"
-      - "LoginPage"
-      - "RegisterPage"
+    entities: 18
+    services: 6
+    controllers: 3
+    endpoints: 29
+    estado: "100%"
 
-  users:
-    descripcion: "Gestión de usuarios"
-    dependencias_db: ["auth_management"]
+  admin:
+    descripcion: "Gestion de sistema, settings, analytics globales"
+    dependencias_db: ["audit_logging", "admin_dashboard", "system_configuration"]
     dependencias_backend: ["auth"]
-    expone_endpoints:
-      - "GET /users"
-      - "GET /users/:id"
-      - "PATCH /users/:id"
-      - "DELETE /users/:id"
-    usado_por_frontend:
-      - "UsersPage (admin)"
-      - "ProfilePage"
+    entities: 16
+    services: 22
+    controllers: 21
+    endpoints: 158
+    estado: "90%"
 
-  profiles:
-    descripcion: "Perfiles de usuario"
-    dependencias_db: ["auth_management"]
-    dependencias_backend: ["auth", "users"]
-    expone_endpoints:
-      - "GET /profiles/:userId"
-      - "PATCH /profiles/:userId"
-    usado_por_frontend:
-      - "ProfilePage"
-      - "EnhancedProfilePage"
-
-  content:
-    descripcion: "Gestión de contenido"
-    dependencias_db: ["content_management", "auth_management"]
+  educational:
+    descripcion: "5 modulos educativos, 23 tipos de ejercicio"
+    dependencias_db: ["educational_content"]
     dependencias_backend: ["auth"]
-    expone_endpoints:
-      - "GET /content"
-      - "POST /content"
-      - "PATCH /content/:id"
-      - "DELETE /content/:id"
-    usado_por_frontend:
-      - "ContentManagementPage"
-      - "TeacherPortal"
-
-  exercises:
-    descripcion: "Gestión de ejercicios"
-    dependencias_db: ["content_management"]
-    dependencias_backend: ["auth", "content"]
-    expone_endpoints:
-      - "GET /exercises"
-      - "GET /exercises/:id"
-      - "POST /exercises/:id/submit"  # ⚠️ BLOQUEANTE
-    usado_por_frontend:
-      - "ExercisePage"
-      - "ExercisesList"
+    entities: 16
+    services: 7
+    controllers: 5
+    endpoints: 51
+    estado: "95%"
 
   gamification:
-    descripcion: "Sistema de gamificación"
-    dependencias_db: ["gamification_system", "auth_management"]
-    dependencias_backend: ["auth", "exercises"]
-    expone_endpoints:
-      - "GET /gamification/points"
-      - "GET /gamification/achievements"
-      - "POST /gamification/claim-reward"
-    usado_por_frontend:
-      - "GamifiedHeader"
-      - "RewardsPage"
-      - "AchievementsPage"
+    descripcion: "XP, rangos maya, achievements, ML Coins, missions, leaderboard, store"
+    dependencias_db: ["gamification_system"]
+    dependencias_backend: ["auth"]
+    entities: 21
+    services: 17
+    controllers: 10
+    endpoints: 69
+    estado: "95%"
 
-  classrooms:
-    descripcion: "Gestión de aulas"
-    dependencias_db: ["classroom_system", "auth_management"]
-    dependencias_backend: ["auth", "users"]
-    expone_endpoints:
-      - "GET /classrooms"
-      - "POST /classrooms"
-      - "GET /classrooms/:id/students"
-    usado_por_frontend:
-      - "ClassroomsPage"
-      - "TeacherPortal"
+  social:
+    descripcion: "Classrooms, schools, teams, guilds, friendships, challenges"
+    dependencias_db: ["social_features"]
+    dependencias_backend: ["auth"]
+    entities: 26
+    services: 13
+    controllers: 13
+    endpoints: 135
+    estado: "60%"
 
-  assignments:
-    descripcion: "Gestión de tareas"
-    dependencias_db: ["classroom_system", "content_management"]
-    dependencias_backend: ["auth", "classrooms", "exercises"]
-    expone_endpoints:
-      - "GET /assignments"
-      - "POST /assignments"
-      - "POST /assignments/:id/submit"
-    usado_por_frontend:
-      - "AssignmentsPage"
-      - "StudentDashboard"
+  progress:
+    descripcion: "Module progress, attempts, learning sessions, certificates"
+    dependencias_db: ["progress_tracking"]
+    dependencias_backend: ["auth", "educational"]
+    entities: 20
+    services: 13
+    controllers: 6
+    endpoints: 59
+    estado: "90%"
 
-  analytics:
-    descripcion: "Métricas y análisis"
-    dependencias_db: ["analytics_system"]
-    dependencias_backend: ["auth", "exercises", "gamification"]
-    expone_endpoints:
-      - "GET /analytics/dashboard"
-      - "GET /analytics/user/:userId"
-    usado_por_frontend:
-      - "AnalyticsPage"
-      - "DashboardPage"
+  content:
+    descripcion: "Templates, media, tags, moderacion"
+    dependencias_db: ["content_management"]
+    dependencias_backend: ["auth"]
+    entities: 10
+    services: 10
+    controllers: 10
+    endpoints: 102
+    estado: "95%"
 
   notifications:
-    descripcion: "Sistema de notificaciones"
-    dependencias_db: ["notification_system"]
+    descripcion: "Multi-channel: in-app, email, push, SMS"
+    dependencias_db: ["notifications", "gamification_system"]
     dependencias_backend: ["auth"]
-    expone_endpoints:
-      - "GET /notifications"
-      - "PATCH /notifications/:id/read"
-    usado_por_frontend:
-      - "NotificationsComponent"
-      - "Header"
+    entities: 7
+    services: 12
+    controllers: 8
+    endpoints: 46
+    estado: "90%"
+
+  teacher:
+    descripcion: "Portal docente, asignaciones, reportes, revision manual"
+    dependencias_db: ["educational_content", "progress_tracking", "social_features", "communication"]
+    dependencias_backend: ["auth", "educational", "progress", "social"]
+    entities: 6
+    services: 21
+    controllers: 10
+    endpoints: 110
+    estado: "95%"
+
+  parents:
+    descripcion: "Portal padres, vinculacion, notificaciones"
+    dependencias_db: ["auth_management"]
+    dependencias_backend: ["auth", "notifications"]
+    entities: 0
+    services: 7
+    controllers: 2
+    endpoints: 17
+    estado: "100%"
+
+  # Otros modulos (resumidos)
+  health: { estado: "100%", endpoints: 1 }
+  profile: { estado: "100%", endpoints: 3 }
+  audit: { estado: "100%", endpoints: 0 }
+  assignments: { estado: "95%", endpoints: 19 }
+  communication: { estado: "20%", endpoints: 0 }
+  tasks: { estado: "100%", endpoints: 0 }
+  websocket: { estado: "100%", endpoints: 0 }
+  mail: { estado: "100%", endpoints: 0 }
+  lti: { estado: "75%", endpoints: 42 }
+  etl: { estado: "75%", endpoints: 16 }
+  ml: { estado: "50%", endpoints: 21 }
+  visualization: { estado: "50%", endpoints: 21 }
 
 # ========================================
-# COMPONENTES DE FRONTEND (Capa superior)
+# COMPONENTES DE FRONTEND (4 portales, 474 componentes)
 # ========================================
 
-frontend_components:
-  AuthContext:
-    descripcion: "Contexto de autenticación"
-    dependencias_backend: ["auth"]
-    dependencias_frontend: []
-    usado_por:
-      - "App.tsx"
-      - "Todas las páginas protegidas"
+frontend_portals:
+  student:
+    descripcion: "Dashboard, ejercicios, gamificacion, leaderboards, tienda, misiones"
+    paginas: 19
+    componentes: 63
+    completitud: "~100%"
+    dependencias_backend: ["auth", "educational", "gamification", "progress", "social"]
 
-  GamifiedHeader:
-    descripcion: "Header con información de gamificación"
-    dependencias_backend: ["gamification", "auth"]
-    dependencias_frontend: ["AuthContext"]
-    usado_por:
-      - "StudentLayout"
-      - "TeacherLayout"
+  teacher:
+    descripcion: "Gestion aulas, asignaciones, reportes, revision manual"
+    paginas: 19
+    componentes: 68
+    completitud: "~95%"
+    dependencias_backend: ["auth", "teacher", "educational", "progress", "social"]
 
-  StudentDashboard:
-    descripcion: "Dashboard del estudiante"
-    dependencias_backend: ["auth", "gamification", "assignments", "analytics"]
-    dependencias_frontend: ["AuthContext", "GamifiedHeader"]
-    usado_por:
-      - "StudentApp"
+  admin:
+    descripcion: "Dashboard, usuarios, contenido, analytics, monitoreo"
+    paginas: 18
+    componentes: 93
+    completitud: "~90%"
+    dependencias_backend: ["auth", "admin", "content"]
 
-  TeacherPortal:
-    descripcion: "Portal del maestro"
-    dependencias_backend: ["auth", "classrooms", "assignments", "content"]
-    dependencias_frontend: ["AuthContext"]
-    usado_por:
-      - "TeacherApp"
-
-  AdminPortal:
-    descripcion: "Portal de administración"
-    dependencias_backend: ["auth", "users", "config"]
-    dependencias_frontend: ["AuthContext"]
-    usado_por:
-      - "AdminApp"
+  parent:
+    descripcion: "Dashboard, progreso hijo, login, registro"
+    paginas: 4
+    componentes: 4
+    completitud: "100%"
+    dependencias_backend: ["auth", "parents"]
 
 # ========================================
-# SPRINT P2 - DEPENDENCIAS
+# ESTADO ACTUAL DEL PROYECTO
 # ========================================
 
-sprint_p2_dependencies:
-  # Sprint P2-A
-  p2_a_tareas:
-    - id: "P2-DTO-001"
-      descripcion: "Tipos canonicos frontend"
-      dependencias: []
-      bloquea: ["P2-DTO-002"]
-
-    - id: "P2-DTO-002"
-      descripcion: "Transformacion snake/camel"
-      dependencias: ["P2-DTO-001"]
-      bloquea: []
-
-    - id: "P2-TEACHER-001"
-      descripcion: "Eliminar mock-teacher-id"
-      dependencias: []
-      bloquea: ["P2-TEACHER-002", "P2-TEACHER-003"]
-
-    - id: "P2-ADMIN-001"
-      descripcion: "AdminRolesPage"
-      dependencias: []
-      bloquea: []
-
-    - id: "P2-ADMIN-002"
-      descripcion: "AdminInstitutionsPage"
-      dependencias: []
-      bloquea: []
-
-  # Sprint P2-B
-  p2_b_tareas:
-    - id: "P2-TEACHER-002"
-      descripcion: "TeacherCommunicationPage"
-      dependencias: ["P2-TEACHER-001"]
-      bloquea: []
-
-    - id: "P2-TEACHER-003"
-      descripcion: "TeacherContentPage"
-      dependencias: ["P2-TEACHER-001"]
-      bloquea: []
-
-    - id: "P2-TEACHER-004"
-      descripcion: "TeacherResourcesPage"
-      dependencias: ["P2-TEACHER-001"]
-      bloquea: []
-
-    - id: "P2-ADMIN-003"
-      descripcion: "AdminAdvancedPage (Feature Flags)"
-      dependencias: ["P2-ADMIN-001", "P2-ADMIN-002"]
-      bloquea: ["P2-QUALITY"]
-
-  # Sprint P2-C
-  p2_c_tareas:
-    - id: "P2-TEST-001"
-      descripcion: "Backend test coverage 50%"
-      dependencias: []
-      bloquea: []
-
-    - id: "P2-TEST-002"
-      descripcion: "E2E tests"
-      dependencias: ["P2-TEACHER-004", "P2-ADMIN-003"]
-      bloquea: []
-
-    - id: "P2-GAM-002"
-      descripcion: "Misiones grupales gremios"
-      dependencias: []
-      bloquea: []
-
-# ========================================
-# BLOQUEADORES Y DEPENDENCIAS CRITICAS
-# ========================================
-
-bloqueadores_conocidos:
-  - id: "BLOCK-001"
-    descripcion: "Endpoint POST /exercises/:id/submit"
-    afecta:
-      - backend: ["exercises"]
-      - frontend: ["ExercisePage"]
-    prioridad: "P0"
-    estado: "RESUELTO (Sprint P1)"
-
-  - id: "BLOCK-002"
-    descripcion: "Modulo Admin Portal incompleto"
-    afecta:
-      - backend: ["admin"]
-      - frontend: ["AdminPortal"]
-    prioridad: "P1"
-    estado: "EN PROGRESO (80%)"
-
-  - id: "BLOCK-003"
-    descripcion: "Mock-teacher-id en 10 paginas"
-    afecta:
-      - frontend: ["TeacherPortal"]
-    prioridad: "P0"
-    estado: "PENDIENTE P2-A"
-
-  - id: "BLOCK-004"
-    descripcion: "Test coverage 18% vs 50% objetivo"
-    afecta:
-      - backend: ["*"]
-      - frontend: ["*"]
-    prioridad: "P2"
-    estado: "PENDIENTE P2-C"
-
-# ========================================
-# NOTAS
-# ========================================
-
-notas:
-  - "Actualizado post-Sprint P1 (2025-12-05)"
-  - "Database: 95% completitud"
-  - "Backend: 88% completitud"
-  - "Frontend: 75% completitud"
-  - "Test Coverage: 18% (objetivo 50%)"
-  - "Ver ANALISIS-ALCANCES-P2-POST-SPRINT-P1-2025-12-05.md para detalles"
+estado_actual:
+  mvp: "98%"
+  produccion: "Activa (74.208.126.102)"
+  database: "100% DDL, 90.5% entity coverage"
+  backend: "95% modulos core"
+  frontend: "95% portales core"
+  test_coverage: "833 tests passing (57→59 spec files)"
 
 # ========================================
 # HISTORIAL
@@ -365,3 +325,7 @@ historial:
   - fecha: "2025-12-05"
     version: "2.0.0"
     cambios: "Actualizacion post-Sprint P1, agregado Sprint P2 dependencies"
+
+  - fecha: "2026-02-14"
+    version: "3.0.0"
+    cambios: "Rewrite completo: 18 schemas reales, 22 modulos backend, 4 portales frontend. Eliminado Sprint P2 stale (completado). Estado: 98% MVP."

@@ -171,7 +171,7 @@ git clone git@github.com:rckrdmrd/gamilit-workspace.git
 
 ```bash
 # Gitea (credenciales del store)
-git push origin main
+git push origin master
 
 # Si las credenciales no están configuradas, configurar primero:
 git config --global credential.helper store

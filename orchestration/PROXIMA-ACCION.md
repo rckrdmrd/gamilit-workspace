@@ -1,14 +1,168 @@
 # PROXIMA ACCION - GAMILIT
 
-**Ultima Actualizacion:** 2026-02-12
+**Ultima Actualizacion:** 2026-02-15
 **Estado del Proyecto:** MVP 98% completado | **FASE A COMPLETADA** | **Production Ready**
 **Sprint Actual:** Sin sprint activo
-**Ultima Tarea Completada:** TASK-2026-02-12-ANALISIS-FRONTEND-INTEGRACION
-**Tareas Pendientes:** Fix communication datasource, Fix educational.api.ts broken import, Investigar 18 admin endpoints not implemented, Consolidar 6 API services duplicados, F4-VALIDATION ejecucion, SIMCO archive review (Mayo 2026)
+**Ultima Tarea:** TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL (**EN PROGRESO** — SSOT sync + plan desarrollo paralelo)
+**Tareas Pendientes:** Commitear ~82 archivos untracked, Cleanup referencias/ALIASES.yml, Batch-fix ~25 legacy paths en docs/, Normalizar ownership tablas, Fix 12 EPIC ADR refs rotas
 
 ---
 
 ## Estado Actual
+
+### TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL (2026-02-15) - EN PROGRESO
+
+**Analisis integral y actualizacion SSOT.** Reconciliacion documentacion vs codigo real.
+
+**FASE 0 — SSOT Sync (COMPLETADA 2026-02-15):**
+- ENUMs 40→42 corregido en CLAUDE.md, MASTER_INVENTORY, DATABASE_INVENTORY, MEMORY.md
+- Hooks 101→102 corregido en CLAUDE.md, MASTER_INVENTORY, FRONTEND_INVENTORY, MEMORY.md
+- alert_severity/alert_status confirmados como ENUMs (00-prerequisites.sql lines 361, 365)
+- FRONTEND_INVENTORY hallazgos: HF-01/02/03/04/06 marcados RESOLVED, HF-05 confirmado OPEN
+- API duplicados: 6→0 (todos resueltos), actualizado en FRONTEND_INV y MEMORY.md
+
+**Bug Fix — HF-05 LTI Double Prefix (CORREGIDO 2026-02-15):**
+- `lti.api.ts` linea 52: `/api/v1/lti/consumers` → `/lti/consumers`
+- `lti.api.ts` linea 189: `/api/v1/lti/launch-urls` → `/lti/launch-urls`
+- apiClient.baseURL ya incluye `/api/v1`, el prefijo adicional causaba 404
+
+**CI Fix — Branch Refs (CORREGIDO 2026-02-15):**
+- `backend-ci.yml`: branches `main`/`develop` → `master` (push + pull_request)
+
+**Plan desarrollo:** 5 streams (A-E), 39 tareas, 4 batches de ejecucion
+**Output:** `orchestration/tareas/TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL/`
+
+---
+
+### TASK-2026-02-14-ANALISIS-DOCUMENTACION-GOBERNANZA (2026-02-14) - COMPLETADA
+
+**Auditoria integral de documentacion y gobernanza.** 7 fases, 5 subagentes paralelos, ~500 archivos auditados.
+
+**Correcciones aplicadas (22):**
+- SIMCO _INDEX.md v5.0.0: 70 archivos reales, 8 phantoms eliminados, paths core/ corregidos
+- CONTEXT-MAP.yml: 7 metricas corregidas (tablas, endpoints, RLS, funciones, triggers, enums, version)
+- agents/ALIASES.yml: paths control-plane/ eliminados, standalone paths agregados
+- triggers/_INDEX.md: 2 phantoms marcados (PROPAGACION-AUTOMATICA, DUPLICADOS)
+- _MAP.md: counts corregidos (agents 57, directivas 124, inventarios 9)
+- BOOTLOADER.md: .claude/CLAUDE.md → CLAUDE.md (3 ocurrencias)
+- 20-architecture/_INDEX.md: reescrito con indice real (33 archivos)
+- MASTER_INVENTORY.yml: tablas 169, triggers 67, RLS 207, coherencia 90.5%
+- CLAUDE.md: metricas DB corregidas (RLS 207, triggers 67, funciones 183/249)
+- XXfvCRNj artifact eliminado
+
+**Hallazgos principales no corregidos (19 pendientes):**
+- DATABASE_INVENTORY.yml: 7 metricas stale (RLS, triggers, tablas, tables por schema)
+- referencias/ALIASES.yml: ~25 phantom refs (cleanup completo necesario)
+- 90-adr/_MAP.md: 19 ADRs atras
+- 12 EPIC files: refs rotas a ADR-0019
+- 90+ legacy path refs en docs/
+- 53% de estandares sin cross-references
+
+**Output:** `orchestration/tareas/TASK-2026-02-14-ANALISIS-DOCUMENTACION-GOBERNANZA/` (8 reportes)
+
+---
+
+### Accion 6: Crear DDL Faltantes para Schema Communication (2026-02-14) - COMPLETADA
+
+**Hallazgo:** Las 16 funciones, 4 triggers y 1 vista existian en la BD pero solo estaban definidas inline en los 3 archivos de tabla. No habia archivos DDL dedicados como en los demas schemas.
+
+**6 archivos DDL creados:**
+
+| # | Archivo | Contenido |
+|---|---------|-----------|
+| 1 | `functions/01-trigger-functions.sql` | 4 trigger functions (update_message_tracking_fields, update_message_participant_read, update_conversation_timestamp, update_conv_participant_timestamp) |
+| 2 | `functions/02-message-functions.sql` | 2 utility functions (get_unread_count, mark_conversation_read) |
+| 3 | `functions/03-message-participant-functions.sql` | 2 utility functions (get_user_unread_count, mark_message_read_for_user) |
+| 4 | `functions/04-conversation-functions.sql` | 8 utility functions (create_conversation, get_conversation_participants, get_user_conversations, add/remove_participant, mark_as_read, increment_unread, get_total_unread) |
+| 5 | `triggers/01-triggers.sql` | 4 triggers (idempotent: DROP IF EXISTS + CREATE) |
+| 6 | `views/01-recent_classroom_messages.sql` | 1 vista (recent_classroom_messages) |
+
+**Validacion:** Todos 6 archivos ejecutados con `ON_ERROR_STOP=1` — 0 errores. Schema intacto: 16 funcs, 4 triggers, 1 view.
+
+### Accion 2b: Investigar 6 DDL Table Files Vacios (2026-02-14) - COMPLETADA
+
+**Hallazgo:** Los 6 archivos DDL contienen SQL valido pero fallaron silenciosamente durante `init-database.sh`.
+- **Causa raiz #1:** `gamilit_user` no tiene permisos CREATE en schemas (necesita superuser)
+- **Causa raiz #2:** `media_files` tenia ENUM default invalido (`'completed'` → `'ready'`)
+- **Causa raiz #3:** `init-database.sh` no usa `ON_ERROR_STOP=1` en batch de tablas
+
+**6 tablas creadas exitosamente como superuser:**
+
+| # | Tabla | Schema | Causa Fallo | Fix |
+|---|-------|--------|-------------|-----|
+| 1 | media_files | content_management | ENUM default invalido `'completed'` | Fix: `'ready'` + ejecutar como superuser |
+| 2 | media_metadatas | content_management | FK a media_files (cascada) + permisos | Ejecutar como superuser |
+| 3 | media_attachments | educational_content | Permisos schema | Ejecutar como superuser |
+| 4 | classroom_missions | gamification_system | Permisos schema | Ejecutar como superuser |
+| 5 | comodin_uses | gamification_system | Permisos schema | Ejecutar como superuser |
+| 6 | learning_path_modules | progress_tracking | Permisos schema | Ejecutar como superuser |
+
+**Acciones adicionales:**
+- RLS habilitado en las 6 tablas (3 ya tenian policies en su DDL, 3 nuevas policies creadas)
+- Permisos GRANT ALL otorgados a `gamilit_user`
+- Ownership corregido a `gamilit_user`
+- DDL `03-media_files.sql` corregido: `DEFAULT 'completed'` → `DEFAULT 'ready'`
+- Comentarios TABLE_MISSING actualizados en 07b/07c-enable-rls
+
+**Metricas actualizadas:** 163 → **169 tablas**, 113 → **119 RLS**, 401 → **418 policies**
+
+### Accion 7: Investigar 18 Admin Endpoints "Not Implemented" (2026-02-14) - COMPLETADA
+
+**Hallazgo:** Los 21 comentarios `Status: Backend NOT implemented` en `apps/frontend/src/services/api/adminAPI.ts` eran **obsoletos**. Los 21 endpoints estan implementados en el backend:
+- **21 controllers** en `modules/admin/controllers/` con **158+ endpoints**
+- Dashboard: `admin-dashboard.controller.ts` (8 endpoints)
+- Users: `admin-users.controller.ts` (11 endpoints) — deleteUser, activateUser, deactivateUser, suspendUser, unsuspendUser
+- Roles: `admin-roles.controller.ts` (6 endpoints) — getRoles, getRolePermissions, updateRolePermissions, getAvailablePermissions
+- Gamification: `admin-gamification-config.controller.ts` (11 endpoints) — settings, preview, restore
+- Content: `admin-content.controller.ts` (7 endpoints) — getApprovalHistory
+- System: `admin-system.controller.ts` (13 endpoints) — logs, config categories, validate
+- Reports: `admin-reports.controller.ts` (6 endpoints) — scheduleReport
+
+**Accion:** Eliminados 21 comentarios `Backend NOT implemented (P0/P1/P2)` de adminAPI.ts.
+
+### TASK-2026-02-13-FIX-REDIS-WEBSOCKET-STARTUP (2026-02-13/14) - FASE 1 COMPLETADA
+
+**Error original:** `Redis sub client error: Socket closed unexpectedly` al ejecutar `npm run dev`
+**Causa Raiz:** Redis no estaba corriendo en WSL cuando el backend arranco.
+
+**FASE 1 - RECREACION BD (COMPLETADA 2026-02-14):**
+- Script `init-database.sh` corregido (v4.0): 10 correcciones criticas aplicadas
+  - Bug `sudo -v` colgaba en WSL non-interactive (2 fixes)
+  - Bug `set -e` + `sudo -S -v` exit 1 = salida silenciosa
+  - Bug todos los DDL se ejecutaban como `gamilit_user` sin permisos suficientes
+  - Fix: Ejecucion como superuser para funciones, views, MVIEWs, triggers, indexes, RLS
+  - Fix: `grant_all_permissions()` post-DDL para acceso gamilit_user
+  - Fix: Schemas faltantes agregados (data_warehouse, optimization, communication, notifications)
+  - Fix: Cross-schema tables, FK constraints, RLS enable files globales
+- BD recreada limpiamente: 163 tablas, 251 funciones, 67 triggers, 254 RLS, 16 views, 4 MVs, 42 ENUMs
+- **`auth.uid()` y `gamilit.is_super_admin()` CREADAS** (2026-02-14):
+  - DDL: `schemas/auth/functions/01-uid.sql` + `schemas/gamilit/functions/05b-is_super_admin.sql`
+  - RLS policies: 203 → 304 (+101 total: 51 desbloqueadas + 53 nuevas para 18 tablas)
+  - Tablas con RLS ON/0 policies: 32 → **0** (todas resueltas)
+- **RLS enforcement corregido** (2026-02-14):
+  - `gamilit_user` cambiado de BYPASSRLS → NOBYPASSRLS (critico: antes ignoraba TODAS las policies)
+  - 7 tablas con FORCE ROW LEVEL SECURITY (gamilit_user-owned)
+  - Total tablas con FORCE RLS: 24
+  - `user_roles` poblada con 48 registros desde `profiles.role` (estaba vacia, rompía policies antiguas)
+  - DDL: `07d-rls-policies-pending-tables.sql`
+- **DDL naming fixes COMPLETADOS** (2026-02-14, Accion 2):
+  - 79 enum refs corregidas: `'admin'` → `IN ('admin_teacher', 'super_admin')` en 07/07b/07c
+  - 13 tablas singular→plural corregidas (teacher_contents, lti_grade_passbacks, etc.)
+  - 7 columnas corregidas (profile_id, student_id, created_by, following_id, scheduled_by, team_id, visibility)
+  - 3 secciones TABLE_MISSING comentadas: classroom_missions, media_files, media_metadata
+  - RLS policies: 305 → **401** (+96 nuevas tras re-ejecutar DDLs corregidos)
+  - Tablas con RLS ON: 113, con 0 policies: **0**, FORCE RLS: **24**
+
+- **Redis code fixes COMPLETADOS** (2026-02-14, Accion 3 — Fases 2-4,7):
+  - **Fase 2:** `config/redis.config.ts` creado (centralizado con registerAs), registrado en app.module.ts
+  - **Fase 2:** DB default corregido: 1→0 en redis-io.adapter.ts y message-persistence.service.ts
+  - **Fase 3:** Reconnection strategy mejorada: exponential backoff + jitter (ambos archivos)
+  - **Fase 3:** Max retries: 5→10
+  - **Fase 3:** Log level fix: storePendingMessage `debug`→`warn` cuando Redis no conectado
+  - **Fase 3:** `@Optional()` removido de NotificationsGateway (MessagePersistenceService siempre inyectado)
+  - **Fase 4:** Redis health check agregado a HealthService (PING con 3s timeout)
+  - **Fase 7:** `npm run build` OK, `npm run lint` 0 errores nuevos (7 pre-existentes en otros archivos)
+  - Archivos modificados: 7 (redis.config.ts NEW, config/index.ts, app.module.ts, redis-io.adapter.ts, message-persistence.service.ts, notifications.gateway.ts, health.service.ts)
 
 ### TASK-2026-02-12-ANALISIS-BD-VS-DOCS (2026-02-12) - COMPLETADA
 
@@ -104,17 +258,40 @@
 
 ## Proximas Acciones Recomendadas
 
-| # | Accion | Prioridad | Esfuerzo | Dependencia |
-|---|--------|-----------|----------|-------------|
-| 1 | Fix communication datasource en app.module.ts | P1 | Bajo | Build validation |
-| 2 | Fix lib/api/educational.api.ts broken import | P1 | Bajo | Ninguna |
-| 3 | Verificar LTI doble URL prefix bug | P1 | Bajo | Testing |
-| 4 | Investigar 18 admin endpoints "not implemented" | P0 | Medio | Backend review |
-| 5 | Consolidar 6 pares API services duplicados | P2 | Medio | Ninguna |
-| 6 | Eliminar shared/utils/cn.ts duplicado | P3 | Bajo | Ninguna |
-| 7 | F4-VALIDATION Ejecucion (9 US, 44 tasks) | P2 | Alto (89 SP) | Ambiente dev activo |
-| 8 | SIMCO archive review - integrar gaps criticos | P3 | Medio | Mayo 2026 |
-| 9 | Integrar SIMCO-DDL-UNIFIED + SIMCO-UBICACION-DOCUMENTACION en canonicos | P3 | Bajo | Ninguna |
+### Completadas (Items 0-7)
+
+| # | Accion | Estado |
+|---|--------|--------|
+| 0 | Recrear BD limpia + validacion post-recreacion | **COMPLETADA** |
+| 1 | Crear `auth.uid()` y `gamilit.is_super_admin()` + RLS 18 tablas | **COMPLETADA** |
+| 2 | Fix DDL naming singular→plural + 6 table files vacios | **COMPLETADA** |
+| 3 | Fix Redis code (Fases 2-7) | **COMPLETADA** |
+| 4 | Fix communication datasource | **NO ERA BUG** |
+| 5 | Fix educational.api.ts broken import | **COMPLETADA** |
+| 6 | Crear DDL faltantes communication schema | **COMPLETADA** |
+| 7 | Fix 21 admin endpoints "not implemented" comments | **COMPLETADA** |
+| 8 | Consolidar 6 pares API services duplicados | **COMPLETADA** (3 consolidados, 3 resueltos antes, 0 pendientes) |
+
+### Pendientes Actuales
+
+| # | Accion | Prioridad | Esfuerzo | Dependencia | Estado |
+|---|--------|-----------|----------|-------------|--------|
+| 9 | **Commitear ~82 archivos untracked** (backend code, DDL, Docker, docs, orchestration) | P0 | Bajo | Ninguna | Pendiente |
+| 10 | Fix HF-05 LTI double prefix bug (lti.api.ts) | P1 | Bajo | Ninguna | **CORREGIDO** (2026-02-15, pendiente commit) |
+| 11 | Fix CI workflow branch refs (main/develop → master) | P1 | Bajo | Ninguna | **CORREGIDO** (2026-02-15, pendiente commit) |
+| 12 | Fix ENUMs count en SSOT files (40→42) | P1 | Bajo | Ninguna | **CORREGIDO** (2026-02-15, CLAUDE.md, MASTER/DB/FE INVs, MEMORY.md) |
+| 13 | Batch-fix ~25 legacy path refs en docs/ | P2 | Medio | Ninguna | Pendiente |
+| 14 | Fix 12 EPIC files con refs rotas ADR-0019 → ADR-039 | P2 | Medio | Ninguna | Pendiente |
+| 15 | Actualizar 90-adr/_MAP.md (19 ADRs atras) | P2 | Medio | Ninguna | Pendiente |
+| 16 | Normalizar ownership tablas (postgres) + FORCE RLS adicionales | P2 | Medio | RLS policies | Parcial (24/75 FORCE RLS) |
+| 17 | Evaluar 3 modules no importados (etl/ml/visualization: ~58 endpoints inalcanzables) | P2 | Medio | Ninguna | Pendiente |
+| 18 | Cleanup orchestration/referencias/ALIASES.yml (~25 phantom refs) | P2 | Medio | Ninguna | Pendiente |
+| 19 | Limpiar 4 temp DB scripts (temp-init/phase2/phase3/seeds.sh) | P3 | Bajo | Ninguna | Pendiente |
+| 20 | F4-VALIDATION Ejecucion (9 US, 44 tasks, 89 SP) | P2 | Alto | Ambiente dev activo | Pendiente |
+| 21 | SIMCO archive review - integrar gaps criticos | P3 | Medio | Mayo 2026 | Pendiente |
+
+**Plan desarrollo detallado:** `orchestration/tareas/TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL/`
+**Documento de validación:** `orchestration/tareas/TASK-2026-02-13-FIX-REDIS-WEBSOCKET-STARTUP/02-VALIDACION-POST-RECREACION.md`
 
 ---
 

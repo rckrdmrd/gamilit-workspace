@@ -9,18 +9,18 @@ prioridad: "P1"
 story_points: 34
 wave: "wave_3"
 descripcion: |
-  Implementacion completa del frontend React 19: 4 portales, 458 componentes,
-  85 paginas, 127 hooks, 32 stores Zustand, 48 API services, 40 mecanicas de juego.
+  Implementacion completa del frontend React 19: 4 portales, 475 componentes,
+  68 paginas, 102 hooks, 14 stores Zustand, 52 API services, 30 mecanicas de juego.
 entregables:
   - "Portal Estudiante (~100%): dashboard, ejercicios, gamificacion"
   - "Portal Maestro (~95%): gestion aulas, asignaciones, reportes"
   - "Portal Admin (~90%): gestion contenido, analytics"
   - "Portal Padres (100%): vinculacion, progreso, notificaciones"
-  - "458 componentes React"
-  - "127 custom hooks"
-  - "32 Zustand stores"
-  - "48 API services"
-  - "40 mecanicas de juego (XP display, rank, achievements)"
+  - "475 componentes React"
+  - "102 custom hooks"
+  - "14 Zustand stores"
+  - "52 API services"
+  - "30 mecanicas de juego (exercise type evaluators)"
   - "23 componentes de ejercicio interactivo"
   - "Socket.IO integration (real-time leaderboards)"
   - "Mobile-first responsive design"
@@ -83,10 +83,10 @@ traceability:
   components:
     backend: []
     frontend:
-      - "458 componentes React"
-      - "127 custom hooks"
-      - "32 Zustand stores"
-      - "85 paginas"
+      - "475 componentes React"
+      - "102 custom hooks"
+      - "14 Zustand stores"
+      - "68 paginas"
       - "4 portales"
     database: []
   dependencies:

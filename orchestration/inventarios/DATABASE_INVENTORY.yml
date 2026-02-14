@@ -2,8 +2,8 @@
 # DATABASE INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "8.0.0"
-fecha: "2026-02-12"
+version: "8.1.0"
+fecha: "2026-02-14"
 proyecto: "gamilit"
 database: "gamilit_platform"
 engine: "PostgreSQL 15"
@@ -14,14 +14,14 @@ engine: "PostgreSQL 15"
 
 resumen:
   schemas: 18
-  tablas: 171
+  tablas: 169                 # 168 SQL files - 1 MV file + 2 multi-table files
   views: 22
   materialized_views: 7
-  funciones: 183
-  triggers: 126
-  rls_policies: 263
+  funciones: 183               # DDL source count (249 runtime)
+  triggers: 67                 # CREATE TRIGGER statements (not trigger functions)
+  rls_policies: 207            # CREATE POLICY statements across 4 RLS files
   foreign_keys: 298
-  enums: 42
+  enums: 42                     # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
   index_statements: 978
 
 # -------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ schemas:
       conceptual: "audit (en docs)"
 
     - nombre: "admin_dashboard"
-      tablas: 4
+      tablas: 3                  # bulk_operations, admin_reports, metrics_history (01-materialized_views.sql = MVs, not tables)
       views: 7
       materialized_views: 3
       descripcion: "Dashboard admin, bulk ops, reportes, metricas"
@@ -108,8 +108,8 @@ schemas:
       conceptual: "analytics (parcial, en docs)"
 
     - nombre: "communication"
-      tablas: 4
-      descripcion: "Mensajeria interna: conversations, messages, participants"
+      tablas: 4                  # messages, message_participants, conversations, conversation_participants
+      descripcion: "Mensajeria interna: messages, participants, conversations"
       tipo: "domain"
 
     - nombre: "lti_integration"
@@ -171,12 +171,12 @@ materialized_views:
 # -------------------------------------------------------------------------------
 
 enums:
-  # audit_logging (5)
+  # audit_logging (5) — alert_severity and alert_status ARE ENUMs (00-prerequisites.sql lines 361, 365)
+  - alert_severity
+  - alert_status
   - audit_action
   - log_level
   - metric_type
-  - alert_severity
-  - alert_status
   # auth (2)
   - aal_level
   - code_challenge_method
@@ -230,7 +230,7 @@ enums:
 
 seguridad:
   rls_activo: true
-  total_policies: 263
+  total_policies: 207           # CREATE POLICY statements across 4 RLS files
   tenant_column: "tenant_id"
   context_method: "SET LOCAL app.current_tenant_id"
 
@@ -239,12 +239,12 @@ seguridad:
 # -------------------------------------------------------------------------------
 
 coherencia:
-  entities_backend: 152
-  tablas_ddl: 171
-  tablas_con_entity: 149
-  tablas_sin_entity: 22
-  cobertura: "87%"
-  gap_justificado: "16 data_warehouse (intencional) + 6 infrastructure/catalog"
+  entities_backend: 153          # 152 files, 153 @Entity classes (message.entity.ts has 2)
+  tablas_ddl: 169
+  tablas_con_entity: 153
+  tablas_sin_entity: 16          # All 16 in data_warehouse schema
+  cobertura: "90.5%"             # 153/169
+  gap_justificado: "16 data_warehouse (dim_*, fact_*, etl_*, ml_*) — intencional, sin ORM"
 
 # ===============================================================================
 # FIN DATABASE INVENTORY

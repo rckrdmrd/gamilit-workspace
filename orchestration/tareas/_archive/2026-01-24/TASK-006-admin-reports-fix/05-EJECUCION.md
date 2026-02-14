@@ -122,12 +122,12 @@ npm run lint   # ✅ 0 errores, 887 warnings (pre-existentes)
 ```bash
 # En submodule gamilit
 git add . && git commit -m "fix(admin-reports): Implement real PDF/Excel/CSV report generation"
-git push origin main
+git push origin master
 
 # En workspace principal
 git add projects/gamilit
 git commit -m "chore: Update gamilit submodule with admin reports fix"
-git push origin main
+git push origin master
 ```
 
 ## Archivos Modificados

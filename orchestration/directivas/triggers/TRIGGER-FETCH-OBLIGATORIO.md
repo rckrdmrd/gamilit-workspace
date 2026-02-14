@@ -30,7 +30,7 @@ Este trigger se activa AUTOMATICAMENTE cuando:
 ║   1. Ejecutar: git fetch origin                                          ║
 ║      → Obtiene el estado actual del repositorio remoto                  ║
 ║                                                                           ║
-║   2. Verificar: git log HEAD..origin/main --oneline                      ║
+║   2. Verificar: git log HEAD..origin/master --oneline                      ║
 ║      → Si hay output = HAY COMMITS REMOTOS QUE NO TIENES                ║
 ║      → Si esta vacio = Estas sincronizado                               ║
 ║                                                                           ║
@@ -56,7 +56,7 @@ Este trigger se activa AUTOMATICAMENTE cuando:
 git fetch origin
 
 # PASO 2: Verificar si hay commits remotos no sincronizados
-REMOTE_COMMITS=$(git log HEAD..origin/main --oneline)
+REMOTE_COMMITS=$(git log HEAD..origin/master --oneline)
 
 # PASO 3: Si hay commits remotos, sincronizar
 if [ -n "$REMOTE_COMMITS" ]; then
@@ -79,21 +79,21 @@ En workspace-v2 con multiples niveles de submodulos:
 # NIVEL 0: Workspace principal
 cd /home/isem/workspace-v2
 git fetch origin
-git log HEAD..origin/main --oneline
+git log HEAD..origin/master --oneline
 # Si hay output: git pull --no-recurse-submodules
 git status
 
 # NIVEL 1: Proyectos (si vas a trabajar en uno)
 cd projects/{proyecto}
 git fetch origin
-git log HEAD..origin/main --oneline
+git log HEAD..origin/master --oneline
 # Si hay output: git pull --no-recurse-submodules
 git status
 
 # NIVEL 2: Subrepositorios (si vas a trabajar en uno)
 cd {componente}  # backend, database, frontend
 git fetch origin
-git log HEAD..origin/main --oneline
+git log HEAD..origin/master --oneline
 # Si hay output: git pull --no-recurse-submodules
 git status
 ```
@@ -134,12 +134,12 @@ remoto (c027da53) que no habia sido detectado.
 
 ```bash
 # Comando unico para verificar sincronizacion completa
-git fetch origin && git log HEAD..origin/main --oneline && git status
+git fetch origin && git log HEAD..origin/master --oneline && git status
 
 # Salida esperada si todo sincronizado:
 # (sin output del log)
 # On branch main
-# Your branch is up to date with 'origin/main'.
+# Your branch is up to date with 'origin/master'.
 # nothing to commit, working tree clean
 ```
 
@@ -157,7 +157,7 @@ Este trigger se ejecuta en:
 ```yaml
 pre_tarea:
   primer_paso: "git fetch origin"
-  verificar: "git log HEAD..origin/main"
+  verificar: "git log HEAD..origin/master"
   sincronizar_si_necesario: "git pull --no-recurse-submodules"
   luego: "Continuar con la tarea"
 ```

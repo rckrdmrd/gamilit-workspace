@@ -18,7 +18,7 @@ traceability:
       paths:
         - "apps/backend/src/modules/"
       endpoints:
-        - "all 850 endpoints"
+        - "all 899 endpoints"
       files:
         - "141 entities"
         - "145 services"
@@ -29,12 +29,12 @@ traceability:
         - "apps/frontend/src/pages/"
       pages: []
       components:
-        - "48 API services"
+        - "52 API services"
     database:
       paths:
         - "apps/database/ddl/schemas/"
       tables:
-        - "171 tables across 18 schemas"
+        - "169 tables across 18 schemas"
   tests:
     unit: []
     e2e: []

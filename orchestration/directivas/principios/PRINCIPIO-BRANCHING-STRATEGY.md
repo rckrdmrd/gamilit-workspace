@@ -34,7 +34,7 @@ aliases:
 ```
 +==============================================================================+
 |                                                                              |
-|   gamilit es un MONOREPO STANDALONE con 22 modulos, 850 endpoints           |
+|   gamilit es un MONOREPO STANDALONE con 22 modulos, 899 endpoints           |
 |   y 4 portales activos en produccion.                                       |
 |                                                                              |
 |   Sin una estrategia clara de branching:                                    |
@@ -125,7 +125,7 @@ TAREA PEQUENA (< 50 lineas, < 2h):
 |  3. npm run build && npm run lint (backend o frontend)                 |
 |  4. git add {archivos especificos}                                     |
 |  5. git commit -m "[GAM-XXX] tipo: descripcion"                        |
-|  6. git push origin main                                               |
+|  6. git push origin master                                               |
 +-----------------------------------------------------------------------+
 
 TAREA GRANDE (> 50 lineas, >= 2h):
@@ -309,7 +309,7 @@ BRANCHES:
 
 PROHIBIDO:
   - git push --force (sin autorizacion explicita)
-  - git reset --hard origin/main (destructivo)
+  - git reset --hard origin/master (destructivo)
   - Crear branches de larga duracion
   - Dejar trabajo sin push al finalizar sesion
   - git add -A o git add . (puede incluir secretos/.env)

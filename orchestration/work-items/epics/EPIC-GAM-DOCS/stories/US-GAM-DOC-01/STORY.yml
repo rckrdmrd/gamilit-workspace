@@ -19,7 +19,7 @@ traceability:
         - "apps/backend/src/modules/"
         - "apps/backend/src/main.ts"
       endpoints:
-        - "all 850 endpoints"
+        - "all 899 endpoints"
         - "GET /api/docs"
         - "GET /api/docs-json"
       files:

@@ -33,14 +33,14 @@ Este trigger se activa AUTOMATICAMENTE cuando:
 ║   2. Si hay cambios:                                                      ║
 ║      git add .                                                            ║
 ║      git commit -m "[TAREA-ID] tipo: descripcion"                        ║
-║      git push origin main                                                 ║
+║      git push origin master                                                 ║
 ║                                                                           ║
 ║   3. Si hay SUBMODULES modificados:                                      ║
 ║      - Commitear y push en CADA submodule primero                        ║
 ║      - Luego actualizar workspace principal                              ║
 ║                                                                           ║
 ║   4. Verificar sincronizacion:                                           ║
-║      git log origin/main..HEAD --oneline                                 ║
+║      git log origin/master..HEAD --oneline                                 ║
 ║      - Debe estar VACIO (sin commits pendientes de push)                 ║
 ║                                                                           ║
 ╚══════════════════════════════════════════════════════════════════════════╝
@@ -61,13 +61,13 @@ git status
 cd projects/{submodule}
 git add .
 git commit -m "[{submodule}] tipo: descripcion"
-git push origin main
+git push origin master
 cd ../..
 
 # PASO 3: Actualizar workspace principal
 git add .
 git commit -m "[WORKSPACE] chore: descripcion de cambios"
-git push origin main
+git push origin master
 
 # PASO 4: Verificar TODO sincronizado
 git status  # Debe mostrar "clean"
@@ -111,28 +111,28 @@ fi
 # 5. Ahora sí, proceder con commit normal
 git add .
 git commit -m "[mensaje]"
-git push origin main
+git push origin master
 ```
 
 ### Protocolo de Resolución de Divergencias
 
 ```bash
 # Si git fetch muestra divergencia (commits locales Y remotos):
-LOCAL_AHEAD=$(git log origin/main..HEAD --oneline | wc -l)
-REMOTE_AHEAD=$(git log HEAD..origin/main --oneline | wc -l)
+LOCAL_AHEAD=$(git log origin/master..HEAD --oneline | wc -l)
+REMOTE_AHEAD=$(git log HEAD..origin/master --oneline | wc -l)
 
 if [ "$LOCAL_AHEAD" -gt 0 ] && [ "$REMOTE_AHEAD" -gt 0 ]; then
     echo "DIVERGENCIA DETECTADA: $LOCAL_AHEAD locales, $REMOTE_AHEAD remotos"
 
     # OPCION A: Merge (recomendado)
-    git merge origin/main --no-edit
+    git merge origin/master --no-edit
 
     # OPCION B: Si merge falla, usar rebase
-    # git rebase origin/main
+    # git rebase origin/master
 
     # OPCION C: Reset + cherry-pick (último recurso)
     # LOCAL_COMMIT=$(git log --oneline -1 | cut -d' ' -f1)
-    # git reset --hard origin/main
+    # git reset --hard origin/master
     # git cherry-pick $LOCAL_COMMIT
 fi
 ```
@@ -188,11 +188,11 @@ fi
 
 ```bash
 # Comando unico para verificar todo sincronizado
-git status && git log origin/main..HEAD --oneline
+git status && git log origin/master..HEAD --oneline
 
 # Salida esperada:
 # On branch main
-# Your branch is up to date with 'origin/main'.
+# Your branch is up to date with 'origin/master'.
 # nothing to commit, working tree clean
 # (sin output del log = todo pusheado)
 ```
@@ -227,7 +227,7 @@ fase_D_documentacion:
 ║   2. Todos los cambios estan COMMITEADOS                                 ║
 ║   3. Todos los commits estan PUSHEADOS al remoto                         ║
 ║   4. git status muestra "working tree clean"                             ║
-║   5. git log origin/main..HEAD esta VACIO                                ║
+║   5. git log origin/master..HEAD esta VACIO                                ║
 ║                                                                           ║
 ║   SIN PUSH = TRABAJO PERDIDO POTENCIAL                                   ║
 ║                                                                           ║

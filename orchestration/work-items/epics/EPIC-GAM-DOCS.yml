@@ -18,7 +18,7 @@ entregables:
   - "docs/00-overview/ (VISION-ALCANCE, MODULOS, TESTING, DEVOPS)"
   - "docs/10-requirements/user-stories/ (15 US L3)"
   - "docs/20-architecture/ (STACK, GAMIFICACION, MODELO-DATOS)"
-  - "docs/40-api/ (API-REFERENCE - 850 endpoints)"
+  - "docs/40-api/ (API-REFERENCE - 899 endpoints)"
   - "docs/90-adr/ (4 ADRs)"
   - "orchestration/ completo (INDEX, inheritance, inventarios, epics)"
 

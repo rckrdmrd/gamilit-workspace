@@ -27,7 +27,7 @@
 ║   1. git fetch origin                                                     ║
 ║      → Obtener estado actual del remoto                                  ║
 ║                                                                           ║
-║   2. git log HEAD..origin/main --oneline                                 ║
+║   2. git log HEAD..origin/master --oneline                                 ║
 ║      → Si hay output = hay commits remotos que no tienes                 ║
 ║                                                                           ║
 ║   3. Si hay commits remotos:                                             ║
@@ -50,7 +50,7 @@
 ```bash
 # SIEMPRE ejecutar en este orden:
 git fetch origin
-git log HEAD..origin/main --oneline  # Si hay output, hacer pull
+git log HEAD..origin/master --oneline  # Si hay output, hacer pull
 git pull --no-recurse-submodules     # Solo si paso anterior tiene output
 git status                            # Ahora si verificar estado local
 ```
@@ -87,7 +87,7 @@ ANTES_de_reportar_tarea_completada:
   - [ ] git commit -m "[TAREA-ID] tipo: descripcion"
   - [ ] git push origin {rama}
   - [ ] Verificar: git status muestra "nothing to commit, working tree clean"
-  - [ ] Verificar: git log origin/main..HEAD muestra vacio (todo pusheado)
+  - [ ] Verificar: git log origin/master..HEAD muestra vacio (todo pusheado)
 
 SI_hay_SUBMODULES:
   - [ ] Repetir proceso en CADA submodule modificado
@@ -102,7 +102,7 @@ SI_hay_SUBMODULES:
 cd projects/{submodule}
 git add .
 git commit -m "[TAREA-ID] tipo: descripcion"
-git push origin main
+git push origin master
 
 # 2. Repetir para cada submodule afectado
 # ...
@@ -111,7 +111,7 @@ git push origin main
 cd /home/isem/workspace-v2
 git add projects/{submodule}  # Actualiza referencia del submodule
 git commit -m "[WORKSPACE] chore: Update submodule references"
-git push origin main
+git push origin master
 
 # 4. Verificar todo sincronizado
 git status  # Debe mostrar "clean"
@@ -263,7 +263,7 @@ NO_atomico:
 ```bash
 # 1. Asegurar rama actualizada
 git fetch origin
-git pull origin main
+git pull origin master
 
 # 2. Crear rama de trabajo (si aplica)
 git checkout -b feature/{TAREA-ID}-descripcion-corta

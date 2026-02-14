@@ -1,6 +1,6 @@
 # PROJECT-CONTEXT - GAMILIT
 
-**Sistema:** NEXUS v4.1 (L1 Context) | **Version:** 2.0.0 | **Fecha:** 2026-02-07
+**Sistema:** NEXUS v4.1 (L1 Context) | **Version:** 3.0.0 | **Fecha:** 2026-02-14
 
 ---
 
@@ -69,7 +69,7 @@
 - apps/devops (Deployment)
 
 **Remote:** git@github.com:rckrdmrd/gamilit-workspace.git
-**Branch:** main
+**Branch:** master
 
 ### Puertos
 
@@ -121,19 +121,19 @@ teachers, parents, analytics, reports
 
 ## METRICAS ACTUALES
 
-**Fuente:** orchestration/inventarios/MASTER_INVENTORY.yml (v7.0.0)
+**Fuente:** orchestration/inventarios/MASTER_INVENTORY.yml (v9.0.0)
 
 ### Base de Datos
-18 schemas | 170 tablas | 22 views | 7 MVs | 255 funciones | 132 triggers | 263 RLS policies | 41 ENUMs
+18 schemas | 169 tablas | 22 views | 7 MVs | 183 funciones (DDL) | 67 triggers | 207 RLS policies | 40 ENUMs
 
 ### Backend
-22 modulos | 152 entities | 412 DTOs | 170 services | 107 controllers | 850 endpoints | 14 guards | 18 decorators
+22 modulos | 152 entities | 399 DTOs | 170 services | 107 controllers | 899 endpoints | 15 guards | 18 decorators
 
 ### Frontend
-458 componentes | 127 hooks | 85 paginas | 32 stores | 48 API services | 4 portales | 40 mecanicas
+474 componentes | 101 hooks | 68 paginas | 14 stores | 51 API services | 4 portales | 30 mecanicas
 
 ### Testing
-833 tests pasando (620 backend + 213 frontend) | Target 80% cobertura | Coherencia DDL-Backend: 89%
+833 tests pasando (620 backend + 213 frontend) | Target 80% cobertura | Coherencia DDL-Backend: 90.5%
 
 ---
 
@@ -159,7 +159,7 @@ cd apps/frontend && npm run build && npm run lint && npm run typecheck
 bash apps/database/scripts/recreate-database.sh
 
 # Git (Monorepo)
-git add . && git commit -m "[GAM-XXX] desc" && git push origin main
+git add . && git commit -m "[GAM-XXX] desc" && git push origin master
 ```
 
 ---

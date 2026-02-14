@@ -256,7 +256,7 @@ quick_patterns:
       - "CLAUDE.md"
       - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
       - "orchestration/directivas/simco/SIMCO-BACKEND.md"
-      - "orchestration/agents/perfiles/PERFIL-BACKEND-DEVELOPER.md"
+      - "orchestration/agents/perfiles/PERFIL-BACKEND-NESTJS.md"
       - "{PROJECT_ROOT}/orchestration/BOOTLOADER.md"
 
   database_task:
@@ -274,7 +274,7 @@ quick_patterns:
       - "CLAUDE.md"
       - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
       - "orchestration/directivas/simco/SIMCO-VALIDAR.md"
-      - "orchestration/agents/perfiles/PERFIL-QA-AUTOMATION.md"
+      - "orchestration/agents/perfiles/PERFIL-TESTING.md"
 
   frontend_task:
     description: "Developing frontend code (React)"

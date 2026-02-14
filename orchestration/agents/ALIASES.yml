@@ -60,7 +60,7 @@ agents:
       - "SIMCO-DDL.md"
 
   NEXUS-ML:
-    profile: "perfiles/PERFIL-ML.md"
+    profile: "perfiles/_archive/PERFIL-ML.md"  # Archived
     role: "Machine Learning y modelos"
     aliases:
       - "ml-agent"
@@ -96,7 +96,7 @@ agents:
       - "SIMCO-SERVICE-DESCRIPTOR.md"
 
   NEXUS-QA:
-    profile: "perfiles/PERFIL-QA.md"
+    profile: "perfiles/PERFIL-TESTING.md"
     role: "Quality Assurance y Testing"
     aliases:
       - "qa-agent"
@@ -110,8 +110,8 @@ agents:
       - "SIMCO-QA.md"
 
   NEXUS-SECURITY:
-    profile: "perfiles/PERFIL-SECURITY.md"
-    role: "Seguridad y Compliance"
+    profile: "perfiles/PERFIL-SECURITY-AUDITOR.md"
+    role: "Seguridad y Auditoria"
     aliases:
       - "security-agent"
       - "sec-agent"
@@ -159,8 +159,8 @@ agents:
       - "SIMCO-PROPAGACION.md"
 
   NEXUS-DOCS:
-    profile: "perfiles/PERFIL-DOCUMENTATION.md"
-    role: "Documentacion y estandares"
+    profile: "perfiles/PERFIL-DOCUMENTATION-VALIDATOR.md"
+    role: "Validacion de Documentacion"
     aliases:
       - "docs-agent"
       - "documentation-agent"
@@ -251,48 +251,30 @@ lookup:
 # PATH ALIASES - Referencias a recursos del workspace
 # ------------------------------------------------------------------------------
 paths:
-  # Control Plane
-  "@CONTROL_PLANE": "control-plane/"
-  "@REGISTRIES": "control-plane/registries/"
-  "@MANIFESTS": "control-plane/manifests/"
-  "@ORCHESTRATION": "control-plane/orchestration/"
-  "@DEVTOOLS": "control-plane/devtools/"
-  "@CI": "control-plane/ci/"
-
-  # Registries
-  "@PORTS": "control-plane/registries/ports.registry.yml"
-  "@DOMAINS": "control-plane/registries/domains.registry.yml"
-  "@DATABASES": "control-plane/registries/databases.registry.yml"
-  "@SERVICES": "control-plane/registries/services.registry.yml"
+  # Standalone — all paths relative to project root
+  # (control-plane/ paths removed — not applicable to standalone project)
 
   # Directivas SIMCO
-  "@SIMCO": "control-plane/orchestration/directivas/simco/"
-  "@SIMCO_INDEX": "control-plane/orchestration/directivas/simco/_INDEX.md"
-  "@PRINCIPIOS": "control-plane/orchestration/directivas/principios/"
+  "@SIMCO": "orchestration/directivas/simco/"
+  "@SIMCO_INDEX": "orchestration/directivas/simco/_INDEX.md"
+  "@PRINCIPIOS": "orchestration/directivas/principios/"
 
   # Perfiles
-  "@PERFILES": "control-plane/orchestration/agents/perfiles/"
+  "@PERFILES": "orchestration/agents/perfiles/"
 
-  # Catalogo de funcionalidades
-  "@CATALOG": "shared/catalog/"
-  "@CATALOG_INDEX": "shared/catalog/README.md"
-  "@CATALOG_AUTH": "shared/catalog/auth/"
-  "@CATALOG_SESSION": "shared/catalog/session-management/"
-  "@CATALOG_RATELIMIT": "shared/catalog/rate-limiting/"
-  "@CATALOG_NOTIFY": "shared/catalog/notifications/"
-  "@CATALOG_TENANT": "shared/catalog/multi-tenancy/"
-  "@CATALOG_FLAGS": "shared/catalog/feature-flags/"
-  "@CATALOG_WS": "shared/catalog/websocket/"
-  "@CATALOG_PAYMENTS": "shared/catalog/payments/"
+  # Inventarios
+  "@INVENTORY": "orchestration/inventarios/"
+  "@INV_DB": "orchestration/inventarios/DATABASE_INVENTORY.yml"
+  "@INV_BE": "orchestration/inventarios/BACKEND_INVENTORY.yml"
+  "@INV_FE": "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+  "@INV_MASTER": "orchestration/inventarios/MASTER_INVENTORY.yml"
+
+  # Proyecto
+  "@BACKEND": "apps/backend/src/"
+  "@FRONTEND": "apps/frontend/src/"
+  "@DDL": "apps/database/ddl/"
+  "@SEEDS": "apps/database/seeds/"
+  "@DOCS": "docs/"
 
   # Knowledge Base
-  "@KNOWLEDGE": "shared/knowledge-base/"
-
-  # Proyectos
-  "@GAMILIT": "projects/gamilit/"
-  "@ERP": "projects/erp-suite/"
-  "@TRADING": "projects/trading-platform/"
-  "@BETTING": "projects/betting-analytics/"
-
-  # Scripts de validacion
-  "@VALIDATE": "control-plane/devtools/scripts/validation/"
+  "@KNOWLEDGE": "docs/80-references/knowledge-base/"

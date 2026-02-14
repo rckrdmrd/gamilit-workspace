@@ -65,7 +65,7 @@ sudo certbot renew --dry-run
 ```bash
 # 1. Verificar rama correcta
 git checkout main
-git pull origin main
+git pull origin master
 
 # 2. Verificar estado de produccion actual
 pm2 status

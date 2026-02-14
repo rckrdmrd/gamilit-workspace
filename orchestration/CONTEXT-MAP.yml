@@ -7,8 +7,8 @@
 metadata:
   proyecto: "gamilit"
   nivel: "STANDALONE"
-  version: "4.0.0"
-  ultima_actualizacion: "2026-02-11"
+  version: "4.1.0"
+  ultima_actualizacion: "2026-02-14"
   project_root: "."  # Rutas relativas al root del proyecto gamilit-workspace
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -241,13 +241,13 @@ info_proyecto:
 
   metricas:
     schemas: 18
-    tablas: 170
-    endpoints: 850
-    rls_policies: 263
+    tablas: 169
+    endpoints: 899
+    rls_policies: 207
     entities: 152
-    funciones: 255
-    triggers: 132
-    enums: 41
+    funciones: 249
+    triggers: 67
+    enums: 42
 
   schemas_principales:
     - auth_management

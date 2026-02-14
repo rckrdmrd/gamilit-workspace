@@ -777,7 +777,7 @@ Se detectaron discrepancias severas en conteos:
   git commit -m "[GAMILIT] docs: Complete database audit vs requirements TASK-2026-02-02"
 
 5.5.4 - Push
-  git push origin main
+  git push origin master
 ```
 
 **Criterio de Exito:** Tarea cerrada, documentacion en repo

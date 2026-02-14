@@ -178,7 +178,7 @@ El usuario comparo version antigua (WSL) con version nueva (Windows), interpreta
    cd /home/isem/workspace-v2/projects/gamilit
    git fetch origin
    git checkout main
-   git pull origin main
+   git pull origin master
    ```
 
 2. **Usar Windows como SSOT**

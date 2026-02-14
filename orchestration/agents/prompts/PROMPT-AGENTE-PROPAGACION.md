@@ -137,7 +137,7 @@ git add .
 git commit -m "feat: Propagate {cambio} from {origen} (adapted for {giro})"
 git checkout main
 git merge propagation/{origen}-{fecha}
-git push origin main
+git push origin master
 
 # 5. Actualizar .last_sync_commit
 echo "{commit_id}" > .last_sync_commit

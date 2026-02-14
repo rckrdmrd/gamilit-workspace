@@ -283,7 +283,7 @@ checklist:
         descripcion: "Git finalizado"
         verificacion: |
           1. git status = working tree clean
-          2. git log origin/main..HEAD = vacío (push hecho)
+          2. git log origin/master..HEAD = vacío (push hecho)
           3. Mensaje de commit sigue formato
         criterio_aprobacion: "Cambios committeados y pusheados"
 

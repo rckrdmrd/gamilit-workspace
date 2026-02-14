@@ -13,7 +13,7 @@ descripcion: |
   arquitectura de gamificacion, multi-tenancy RLS, real-time Socket.IO,
   exercise engine modular. ADRs documentadas.
 entregables:
-  - "Stack tecnologico definido (NestJS 11, React 19, PostgreSQL 16)"
+  - "Stack tecnologico definido (NestJS 11, React 19, PostgreSQL 15)"
   - "Arquitectura de gamificacion maya (XP, rangos, ML Coins)"
   - "Modelo de datos (18 schemas)"
   - "Estrategia RLS multi-tenancy"

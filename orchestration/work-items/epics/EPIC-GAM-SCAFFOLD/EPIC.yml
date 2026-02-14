@@ -14,7 +14,7 @@ descripcion: |
 entregables:
   - "Estructura monorepo (apps/backend, apps/frontend, apps/database)"
   - "Configuracion NestJS 11 base"
-  - "Configuracion React 19 + Vite 7 base"
+  - "Configuracion React 19 + Vite 6 base"
   - "PostgreSQL schema inicial"
   - "Git repository en GitHub"
   - "CLAUDE.md inicial"

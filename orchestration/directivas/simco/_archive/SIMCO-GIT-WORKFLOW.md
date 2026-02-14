@@ -54,11 +54,11 @@ TRABAJO_DIRECTO_MAIN:
     - Propagación de documentación
 
   flujo:
-    1: "git pull origin main"
+    1: "git pull origin master"
     2: "Hacer cambios"
     3: "npm run build && npm run lint"
     4: "git add . && git commit -m '[TAREA-ID] tipo: descripción'"
-    5: "git push origin main"
+    5: "git push origin master"
 
   frecuencia_commits: "Cada cambio lógico completo, máximo 45 min"
 
@@ -98,7 +98,7 @@ CREAR_RAMA:
       - "refactor/FE-020-optimizar-componentes"
 
   flujo:
-    1: "git checkout main && git pull origin main"
+    1: "git checkout main && git pull origin master"
     2: "git checkout -b {tipo}/{TAREA-ID}-{descripcion}"
     3: "Hacer cambios con commits frecuentes"
     4: "git push -u origin {rama}"
@@ -227,11 +227,11 @@ SINCRONIZACIÓN:
 
   durante_trabajo:
     frecuencia: "Cada 2 horas"
-    comando: "git fetch origin && git pull origin main --rebase"
+    comando: "git fetch origin && git pull origin master --rebase"
 
   antes_de_push:
     obligatorio: true
-    comando: "git pull origin main --rebase"
+    comando: "git pull origin master --rebase"
 ```
 
 ### Proceso de Sincronización
@@ -243,7 +243,7 @@ PROCESO:
     propósito: "Obtener cambios remotos sin aplicar"
 
   2_pull:
-    comando: "git pull origin main --rebase"
+    comando: "git pull origin master --rebase"
     propósito: "Aplicar cambios remotos"
 
   3_conflictos:

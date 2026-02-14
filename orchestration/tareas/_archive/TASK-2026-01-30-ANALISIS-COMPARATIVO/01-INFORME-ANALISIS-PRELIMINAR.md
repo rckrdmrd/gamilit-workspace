@@ -220,7 +220,7 @@ El usuario reporto "se han perdido muchas cosas que se tenian desarrolladas ante
    cd /home/isem/workspace-v2/projects/gamilit
    git fetch origin
    git checkout main  # o la rama correcta
-   git pull origin main
+   git pull origin master
    ```
 
 2. **Establecer SSOT:** Definir que `C:\Empresas\ISEM\workspace-v2` es la fuente de verdad

@@ -2,8 +2,8 @@
 # BACKEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "4.0.0"
-fecha: "2026-02-12"
+version: "4.1.0"
+fecha: "2026-02-14"
 proyecto: "gamilit"
 framework: "NestJS 11"
 orm: "TypeORM 0.3.x"
@@ -22,10 +22,10 @@ resumen:
   endpoints: 899          # Verificado por conteo de @Get/@Post/@Put/@Patch/@Delete
   guards: 15
   decorators: 18          # 18 exported symbols en 9 archivos .decorator.ts
-  interceptors: 5
+  interceptors: 6              # +1: tracing.interceptor.ts (new)
   pipes: 6                # 6 clases en 2 archivos .pipe.ts
   filters: 2              # 2 clases en 1 archivo .filter.ts
-  tests_files: 57         # Archivos .spec.ts
+  tests_files: 59         # Archivos .spec.ts (+2: module-boundaries.spec.ts, new specs)
   tests_cases: 833        # Test cases (jest --verbose count)
 
 # -------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ modulos:
   - nombre: "health"
     directorio: "modules/health"
     entities: 0
-    services: 1
+    services: 2              # health.service.ts + metrics.service.ts (new)
     controllers: 1
     endpoints: 1
     dtos: 1
@@ -217,9 +217,9 @@ modulos:
     dtos: 0
     tests: 0
     estado: "20%"
-    datasource: "NINGUNO (huerfano)"
+    datasource: "communication"
     schema: "communication"
-    nota: "Conversation + ConversationParticipant entities existen pero NO registradas en datasource. Message entities en teacher module."
+    nota: "Conversation + ConversationParticipant registradas via glob en app.module.ts. Message + MessageParticipant en teacher module tambien usan datasource communication."
 
   # === Teacher & Parents ===
 
@@ -291,9 +291,9 @@ modulos:
     dtos: 12
     tests: 1
     estado: "75%"
-    datasource: "N/A (no registrado en app.module)"
+    datasource: "lti"
     schema: "lti_integration"
-    nota: "LTI 1.3 integration. Module no importado en app.module.ts."
+    nota: "LTI 1.3 integration. Datasource + module importado (FIX-CORR-007)."
 
   - nombre: "etl"
     directorio: "modules/etl"
@@ -329,41 +329,45 @@ modulos:
     nota: "Charts, dashboards, reports visualization. Module no importado en app.module.ts."
 
 # -------------------------------------------------------------------------------
-# DATASOURCES (10 en app.module.ts)
+# DATASOURCES (11 en app.module.ts)
 # -------------------------------------------------------------------------------
 
 datasources:
   - nombre: "auth"
     schema: "auth_management"
-    entities_path: "modules/auth/entities/**/*.entity"
+    entities_path: "modules/auth/entities/**/*.entity + admin system_configuration entities"
   - nombre: "educational"
     schema: "educational_content"
     entities_path: "modules/educational + assignments + teacher-content"
   - nombre: "gamification"
     schema: "gamification_system"
-    entities_path: "modules/gamification + notification.entity + profile + tenant"
+    entities_path: "modules/gamification + profile + tenant (notification.entity path removed FIX-CORR-001)"
   - nombre: "progress"
     schema: "progress_tracking"
     entities_path: "modules/progress + teacher-alert + profile + classroom + tenant + school + module + exercise"
   - nombre: "social"
     schema: "social_features"
-    entities_path: "modules/social + assignments + teacher-report + profile + tenant"
+    entities_path: "modules/social + assignments + teacher-report + scheduled-report + shared-report + profile + tenant"
   - nombre: "content"
     schema: "content_management"
     entities_path: "modules/content/entities/**/*.entity"
   - nombre: "audit"
     schema: "audit_logging"
-    entities_path: "modules/audit/entities/**/*.entity"
+    entities_path: "modules/audit/entities/**/*.entity + admin audit_logging entities"
   - nombre: "notifications"
     schema: "notifications"
-    entities_path: "modules/notifications/entities/multichannel/**/*.entity"
+    entities_path: "modules/notifications/entities/multichannel/**/*.entity + rate-limit-log.entity"
   - nombre: "communication"
     schema: "communication"
-    entities_path: "modules/teacher/entities/message*.entity"
-    nota: "INCOMPLETO: Falta modules/communication/entities/**/*.entity"
+    entities_path: "modules/communication/entities/**/*.entity + modules/teacher/entities/message*.entity"
+    nota: "communication.module.ts importado en app.module.ts. Entities: conversation, conversation-participant (communication module) + message, message-participant (teacher module)"
   - nombre: "admin_dashboard"
     schema: "admin_dashboard"
-    entities_path: "admin-report + user + role"
+    entities_path: "admin-report + metrics-history + user + role"
+  - nombre: "lti"
+    schema: "lti_integration"
+    entities_path: "modules/lti/entities/**/*.entity"
+    nota: "FIX-CORR-007: 11th datasource created for LTI module"
 
 # -------------------------------------------------------------------------------
 # GUARDS (15 verificados)
@@ -439,7 +443,7 @@ decorators:
 # -------------------------------------------------------------------------------
 
 interceptors:
-  total: 5
+  total: 6
   lista:
     - nombre: "AuditInterceptor"
       archivo: "modules/audit/interceptors/audit.interceptor.ts"
@@ -451,6 +455,8 @@ interceptors:
     - nombre: "RlsInterceptor"
       archivo: "shared/interceptors/rls.interceptor.ts"
       global: true
+    - nombre: "TracingInterceptor"
+      archivo: "shared/interceptors/tracing.interceptor.ts"
     - nombre: "TransformResponseInterceptor"
       archivo: "shared/interceptors/transform-response.interceptor.ts"
 

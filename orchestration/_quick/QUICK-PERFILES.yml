@@ -37,18 +37,18 @@ dominios:
     compact: "compact/PERFIL-DEVOPS-COMPACT.md"
 
   qa:
-    principal: "PERFIL-QA.md"
-    alias: "@PERFIL_QA"
+    principal: "PERFIL-TESTING.md"
+    alias: "@PERFIL_TESTING"
     compact: "compact/PERFIL-QA-COMPACT.md"
 
   ml:
-    principal: "PERFIL-ML.md"
+    principal: "_archive/PERFIL-ML.md"  # Archived
     alias: "@PERFIL_ML"
     compact: "compact/PERFIL-ML-COMPACT.md"
 
   security:
-    principal: "PERFIL-SECURITY.md"
-    alias: "@PERFIL_SECURITY"
+    principal: "PERFIL-SECURITY-AUDITOR.md"
+    alias: "@PERFIL_SEC_AUDITOR"
 
   orchestrator:
     principal: "PERFIL-WORKSPACE-ORCHESTRATOR.md"

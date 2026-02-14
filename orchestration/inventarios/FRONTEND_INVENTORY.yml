@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "5.0.0"
-fecha: "2026-02-12"
+version: "5.1.0"
+fecha: "2026-02-14"
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -15,17 +15,17 @@ build: "Vite 6.x"                              # Verificado: package.json ^6.2.0
 # -------------------------------------------------------------------------------
 
 resumen:
-  componentes_tsx: 475                          # 517 .tsx total - 25 tests - 3 stories - 14 examples
-  hooks: 102                                    # 102 archivos hook unicos (excl. barrels, tests, examples)
+  componentes_tsx: 474                          # 475 - 1 (AuthProvider.tsx deleted CORR-FE-002)
+  hooks: 102                                    # 101 + 1 (useFocusTrap.ts added)
   paginas: 68                                   # 68 activas + 1 legacy
   stores_zustand: 14                            # 14 archivos con create() de Zustand
-  api_service_files: 52                         # 52 archivos API (excl. infra: apiClient, interceptors, schemas)
-  api_calls_total: 662                          # 662 llamadas apiClient.* en 91 archivos
+  api_service_files: 51                         # 52 - 1 (contentAPI.ts deleted CORR-FE-001)
+  api_calls_total: 655                          # 662 - 7 (contentAPI.ts had ~7 apiClient calls)
   type_definition_files: 47                     # 47 archivos, 415 tipos/interfaces/enums exportados
   portales: 4
   mecanicas_ejercicio: 30                       # 30 mecanicas unicas en 59 archivos .tsx
-  routes: 70                                    # 70 <Route> definitions en App.tsx
-  contexts_providers: 4                         # AuthContext, BrandingProvider, AuthProvider (feature), barrel
+  routes: 72                                    # 72 <Route> definitions en App.tsx
+  contexts_providers: 3                         # AuthContext, BrandingProvider, barrel (AuthProvider feature removed CORR-FE-002)
   config_files: 14                              # Archivos de configuracion (root level)
   utility_files: 34                             # Archivos de utilidad/helpers
   constant_files: 7                             # Archivos de constantes
@@ -155,11 +155,11 @@ stores:
   # React Query hooks o Context providers, no stores Zustand reales.
 
 # -------------------------------------------------------------------------------
-# HOOKS (102 archivos verificados)
+# HOOKS (101 archivos verificados)
 # -------------------------------------------------------------------------------
 
 hooks:
-  total: 102
+  total: 102                                    # 101 + 1 (useFocusTrap.ts added)
   por_directorio:
     apps_admin_hooks: 25
     apps_teacher_hooks: 24
@@ -169,7 +169,7 @@ hooks:
     features_auth_hooks: 5
     features_gamification_economy_hooks: 5
     features_gamification_ranks_hooks: 5
-    hooks_root: 3                               # useAchievements, useBranding, useFavicon
+    hooks_root: 2                               # useBranding, useFavicon (useAchievements deleted CORR-FE-003)
     features_exercises_hooks: 2
     features_notifications_hooks: 2
     features_gamification_battles_hooks: 1
@@ -182,12 +182,12 @@ hooks:
   # dentro de archivos de componentes fuera de directorios hooks/.
 
 # -------------------------------------------------------------------------------
-# API SERVICES (52 archivos, 662 llamadas apiClient)
+# API SERVICES (51 archivos, 655 llamadas apiClient)
 # -------------------------------------------------------------------------------
 
 api_services:
-  total_files: 52
-  total_api_calls: 662
+  total_files: 51                               # 52 - 1 (contentAPI.ts deleted CORR-FE-001)
+  total_api_calls: 655                          # 662 - 7 (contentAPI.ts had ~7 apiClient calls)
   por_directorio:
     services_api_root: 14                       # adminAPI, educationalAPI, progressAPI, contentAPI, etc.
     services_api_teacher: 14                    # classroomsApi, assignmentsApi, analyticsApi, gradingApi, etc.
@@ -198,7 +198,7 @@ api_services:
     features_mechanics_shared_api: 2            # mechanicsAPI, aiServiceAPI
     shared_api: 2                               # mediaApi, manualReviewApi
     features_auth_api: 1                        # authAPI
-    features_content_api: 1                     # contentAPI
+    features_content_api: 0                     # contentAPI.ts DELETED (CORR-FE-001, 0 importers)
     features_gamification_ranks_api: 1          # ranksAPI
     features_parent_api: 1                      # parentAPI (17 calls)
     features_progress_api: 1                    # progressAPI
@@ -218,14 +218,14 @@ api_services:
       student: "~65-70%"                        # educational + gamification + progress
       admin: "~55-60%"                          # 78 calls adminAPI + 23 sub-APIs
 
-  duplicados_identificados: 6                   # LTI, achievements, progress, manual reviews, content, auth
+  duplicados_identificados: 0                   # All 6 resolved: LTI, auth, manualReviews consolidated; content deleted; progress, achievements domain-split
 
 # -------------------------------------------------------------------------------
 # ROUTES (70 definiciones en App.tsx)
 # -------------------------------------------------------------------------------
 
 routes:
-  total: 70
+  total: 72                                    # Updated 2026-02-14: 72 <Route> in App.tsx
   desglose:
     public: 10                                  # login, register, forgot-password, reset-password, etc.
     student: 19                                 # role guard: student
@@ -278,7 +278,7 @@ configuracion:
   configs: 14                                   # vite, tsconfig(3), tailwind, postcss, eslint, prettier, env(2), vitest, playwright, storybook(2)
   utilidades: 34                                # shared/utils(17) + utils/(5) + features utils(5) + lib/api(6) + test helpers(1)
   constantes: 7                                 # enums.constants(807 lines SSOT), colors, breakpoints, ranks, exerciseFeedback, alertTypes, barrel
-  contextos: 4                                  # AuthContext (392 lines), BrandingProvider (258 lines), AuthProvider (feature), barrel
+  contextos: 3                                  # AuthContext (392 lines), BrandingProvider (258 lines), barrel (AuthProvider feature deleted CORR-FE-002)
   assets: 16                                    # Solo Storybook boilerplate (0 custom app assets)
 
 dependencias:
@@ -299,31 +299,43 @@ hallazgos:
     tipo: "BROKEN_IMPORT"
     detalle: "lib/api/index.ts referencia ./educational.api pero el archivo NO existe en disco"
     prioridad: "P1"
+    estado: "RESOLVED"
+    resolucion: "Import removido de lib/api/index.ts (2026-02-12)"
 
   - id: "HF-02"
     tipo: "DUPLICADO"
     detalle: "shared/utils/cn.ts y shared/utils/cn.util.ts son identicos. Solo cn.util.ts es exportado via barrel"
     prioridad: "P3"
+    estado: "RESOLVED"
+    resolucion: "cn.util.ts eliminado, cn.ts es canonical (2026-02-14)"
 
   - id: "HF-03"
     tipo: "DUAL_SYSTEM"
     detalle: "Dos AuthProviders coexisten: app/providers/AuthContext.tsx (full, 392 lines) y features/auth/providers/AuthProvider.tsx (lightweight, 55 lines). Sincronizados via Zustand"
     prioridad: "P2"
+    estado: "RESOLVED"
+    resolucion: "features/auth/providers/AuthProvider.tsx eliminado (CORR-FE-002, 0 importers)"
 
   - id: "HF-04"
     tipo: "DUPLICADO_API"
     detalle: "6 pares de API services duplicados: LTI, achievements, progress, manual reviews, content, auth"
     prioridad: "P2"
+    estado: "RESOLVED"
+    resolucion: "3 consolidados (LTI, auth, manualReviews), 3 resueltos antes (content deleted, progress domain-split, achievements domain-split). 0 duplicados pendientes."
 
   - id: "HF-05"
-    tipo: "URL_BUG_POTENCIAL"
-    detalle: "ltiAPI.ts y lti.api.ts hardcodean /api/v1/ en paths mientras apiClient.baseURL ya incluye /api/v1 = posible doble prefijo"
+    tipo: "URL_BUG"
+    detalle: "lti.api.ts linea 52 y 189: LTI_BASE_URL y getLaunchUrls() hardcodeaban /api/v1/ en paths mientras apiClient.baseURL ya incluye /api/v1 = doble prefijo"
     prioridad: "P1"
+    estado: "RESOLVED"
+    resolucion: "Removido /api/v1/ prefix de LTI_BASE_URL y getLaunchUrls() en lti.api.ts (2026-02-15)"
 
   - id: "HF-06"
     tipo: "NOT_IMPLEMENTED"
     detalle: "18 endpoints marcados 'not implemented' en adminAPI.ts (user CRUD actions, roles, gamification settings, system logs)"
     prioridad: "P0"
+    estado: "RESOLVED"
+    resolucion: "21 comentarios removidos — todos endpoints implementados en backend (2026-02-14)"
 
 # ===============================================================================
 # FIN FRONTEND INVENTORY v5.0.0

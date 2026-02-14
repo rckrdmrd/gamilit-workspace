@@ -21,7 +21,7 @@ validaciones requerir.
 | MODE-FULL | @FULL | C-A-P-V-E-D | Ciclo completo con todas las validaciones |
 | MODE-QUICK | @QUICK | E-D | Solo ejecucion y documentacion para cambios menores |
 | MODE-ANALYSIS | @ANALYSIS | C-A-P | Solo analisis sin modificar codigo |
-| MODE-PROPAGATION | @PROPAGATE | C-A-P-V-E-D | Especializado en propagacion entre proyectos |
+| ~~MODE-PROPAGATION~~ | ~~@PROPAGATE~~ | ~~C-A-P-V-E-D~~ | ~~NO APLICA: gamilit es STANDALONE, sin propagacion (ver RC3)~~ |
 
 ---
 
@@ -52,8 +52,8 @@ modos/
 ├── _INDEX.md              <- Este archivo
 ├── MODE-FULL.md           <- Ejecucion completa CAPVED
 ├── MODE-QUICK.md          <- Ejecucion rapida E+D
-├── MODE-ANALYSIS.md       <- Solo analisis C+A+P
-└── MODE-PROPAGATION.md    <- Propagacion entre proyectos
+└── MODE-ANALYSIS.md       <- Solo analisis C+A+P
+# MODE-PROPAGATION.md     <- PHANTOM: no existe en disco (gamilit es STANDALONE)
 ```
 
 ---

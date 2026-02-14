@@ -88,6 +88,8 @@ cargar_siempre:
   - "orchestration/directivas/principios/PRINCIPIO-SOLID.md"
   - "orchestration/directivas/principios/PRINCIPIO-CLEAN-ARCHITECTURE.md"
 
+validacion_canonica: "@DEF_VAL_BE"  # orchestration/_definitions/validations/VALIDATION-BACKEND.md
+
 cargar_segun_operacion:
   crear_modulo:
     - "orchestration/directivas/simco/SIMCO-CREAR.md"

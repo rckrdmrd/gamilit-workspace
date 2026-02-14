@@ -1,135 +1,80 @@
-# ═══════════════════════════════════════════════════════════════════════════════
-# SISTEMA DE ALIASES - NEXUS WORKSPACE
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
+# SISTEMA DE ALIASES - GAMILIT STANDALONE
+# ===============================================================================
 #
-# Version: 2.4.0
-# Fecha: 2026-01-03
+# Version: 4.0.0
+# Fecha: 2026-02-14
 # Proposito: Navegacion rapida mediante aliases cortos
+# Nota: Reescrito para standalone gamilit. Workspace-era refs eliminados.
+#       Fuente primaria de aliases para agentes: orchestration/agents/ALIASES.yml
 #
 # USO:
 #   Reemplazar @ALIAS por la ruta correspondiente en cualquier contexto
 #   Ejemplo: "Leer @CAPVED" = "Leer directivas/principios/PRINCIPIO-CAPVED.md"
 #
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 
-version: "3.1.0"
-fecha_actualizacion: "2026-01-20"
+version: "4.0.0"
+fecha_actualizacion: "2026-02-14"
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# DEFINICIONES CANÓNICAS (Fuente Única de Verdad)
-# ─────────────────────────────────────────────────────────────────────────────────
-# PRINCIPIO: Una Definición, Múltiples Referencias
-# Estos archivos son la ÚNICA fuente de verdad para cada concepto.
-# Todos los demás archivos deben REFERENCIAR usando @DEF_*, no copiar.
+# ---------------------------------------------------------------------------
+# DEFINICIONES CANONICAS (Fuente Unica de Verdad)
+# ---------------------------------------------------------------------------
 
 definitions:
-  # Índice
   "@DEF_INDEX": "_definitions/_INDEX.yml"
-
-  # Protocolos
   "@DEF_CCA": "_definitions/protocols/CCA-PROTOCOL.md"
   "@DEF_CCA_LIGHT": "_definitions/protocols/CCA-LIGHT.md"
   "@DEF_CAPVED": "_definitions/protocols/CAPVED-CYCLE.md"
   "@DEF_DELEGATION": "_definitions/protocols/DELEGATION-PROTOCOL.md"
-
-  # Validaciones por dominio
   "@DEF_VAL_BE": "_definitions/validations/VALIDATION-BACKEND.md"
   "@DEF_VAL_FE": "_definitions/validations/VALIDATION-FRONTEND.md"
   "@DEF_VAL_DDL": "_definitions/validations/VALIDATION-DDL.md"
   "@DEF_VAL_DEVOPS": "_definitions/validations/VALIDATION-DEVOPS.md"
-
-  # Secciones reutilizables
   "@DEF_SEC_IDENTITY": "_definitions/sections/SECTION-IDENTITY.md"
   "@DEF_SEC_RESP": "_definitions/sections/SECTION-RESPONSIBILITIES.md"
   "@DEF_SEC_REFS": "_definitions/sections/SECTION-REFERENCES.md"
   "@DEF_SEC_ERRORS": "_definitions/sections/SECTION-ERRORS.yml"
-
-  # Checklists base
   "@DEF_CHK_CREATE": "_definitions/checklists/CHECKLIST-PRE-CREATE.md"
   "@DEF_CHK_MODIFY": "_definitions/checklists/CHECKLIST-PRE-MODIFY.md"
   "@DEF_CHK_POST": "_definitions/checklists/CHECKLIST-POST-TASK.md"
   "@DEF_CHK_GOB": "_definitions/checklists/CHECKLIST-GOBERNANZA-TAREA.md"
+  "@DEF_CHK_SSOT": "_definitions/checklists/CHECKLIST-SSOT-SYNC.md"
+  "@DEF_CHK_SUPPLY": "_definitions/checklists/CHECKLIST-SECURITY-SUPPLY-CHAIN.md"
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# NAVEGACIÓN RÁPIDA (_quick/)
-# ─────────────────────────────────────────────────────────────────────────────────
-# Índices compactos (<100 líneas) para navegación eficiente
+# ---------------------------------------------------------------------------
+# NAVEGACION RAPIDA (_quick/)
+# ---------------------------------------------------------------------------
 
 quick_nav:
   "@QUICK_INDEX": "_quick/QUICK-INDEX.yml"
   "@QUICK_PERFILES": "_quick/QUICK-PERFILES.yml"
   "@QUICK_DIRECTIVAS": "_quick/QUICK-DIRECTIVAS.yml"
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# GOBERNANZA DE DOCUMENTACIÓN
-# ─────────────────────────────────────────────────────────────────────────────────
-# Sistema de tracking de tareas, agentes y documentación obligatoria
+# ---------------------------------------------------------------------------
+# GOBERNANZA DE DOCUMENTACION
+# ---------------------------------------------------------------------------
 
 gobernanza:
-  # Estructura de tareas
   "@TAREAS": "tareas/"
-  "@TAREAS_INDEX": "tareas/_INDEX.yml"
-  "@NUEVA-TAREA": "tareas/_templates/TASK-TEMPLATE/"
-
-  # Tracking de agentes
   "@TRAZA-AGENTE": "agents/trazas/"
-  "@TRAZA-AGENTE-INDEX": "agents/trazas/_INDEX.yml"
-
-  # Mapa de documentación
-  "@MAPA-DOC": "MAPA-DOCUMENTACION.yml"
-
-  # Triggers de gobernanza
   "@TRIGGER-DOC": "directivas/triggers/TRIGGER-DOCUMENTACION-OBLIGATORIA.md"
   "@TRIGGER-INICIO": "directivas/triggers/TRIGGER-INICIO-TAREA.md"
   "@TRIGGER_CIERRE": "directivas/triggers/TRIGGER-CIERRE-TAREA-OBLIGATORIO.md"
 
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # CICLO DE VIDA Y BOOTSTRAP
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 ciclo_vida:
   "@CAPVED": "directivas/principios/PRINCIPIO-CAPVED.md"
   "@TAREA": "directivas/simco/SIMCO-TAREA.md"
   "@INICIALIZACION": "directivas/simco/SIMCO-INICIALIZACION.md"
   "@INIT": "directivas/simco/SIMCO-INICIALIZACION.md"
-  "@TPL_CAPVED": "templates/TEMPLATE-TAREA-CAPVED.md"
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# CATALOGO Y MODULOS COMPARTIDOS
-# ─────────────────────────────────────────────────────────────────────────────────
-
-catalogo_modulos:
-  "@CATALOG": "shared/catalog/"
-  "@CATALOG_INDEX": "shared/catalog/CATALOG-INDEX.yml"
-  "@MODULES": "shared/modules/"
-  "@MODULOS": "directivas/simco/SIMCO-MODULOS-COMPARTIDOS.md"
-  "@REUTILIZAR": "directivas/simco/SIMCO-REUTILIZAR.md"
-  "@CONTRIBUIR": "directivas/simco/SIMCO-CONTRIBUIR-CATALOGO.md"
-
-  # Funcionalidades del catalogo
-  "@CATALOG_AUTH": "shared/catalog/auth/"
-  "@CATALOG_SESSION": "shared/catalog/session-management/"
-  "@CATALOG_RATELIMIT": "shared/catalog/rate-limiting/"
-  "@CATALOG_NOTIFY": "shared/catalog/notifications/"
-  "@CATALOG_WS": "shared/catalog/websocket/"
-  "@CATALOG_TENANT": "shared/catalog/multi-tenancy/"
-  "@CATALOG_FLAGS": "shared/catalog/feature-flags/"
-  "@CATALOG_PAYMENTS": "shared/catalog/payments/"
-  "@CATALOG_SAAS": "shared/catalog/template-saas/"
-  "@CATALOG_PORTALES": "shared/catalog/portales/"
-  "@CATALOG_AUDIT": "shared/catalog/audit-logs/"
-
-  # Modulos de shared/modules/
-  "@MOD_UTILS": "shared/modules/utils/"
-  "@MOD_AUTH": "shared/modules/auth/"
-  "@MOD_NOTIFY": "shared/modules/notifications/"
-  "@MOD_PAYMENTS": "shared/modules/payments/"
-  "@MOD_BILLING": "shared/modules/billing/"
-  "@MOD_TENANT": "shared/modules/multitenant/"
-
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # OPERACIONES UNIVERSALES
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 operaciones:
   "@CREAR": "directivas/simco/SIMCO-CREAR.md"
@@ -141,85 +86,43 @@ operaciones:
   "@ASIGNAR_PERFIL": "directivas/simco/SIMCO-ASIGNACION-PERFILES.md"
   "@MAPA_PERFILES": "agents/perfiles/_MAP.md"
 
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # OPERACIONES POR DOMINIO TECNICO
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 dominios:
   "@OP_DDL": "directivas/simco/SIMCO-DDL.md"
   "@OP_BACKEND": "directivas/simco/SIMCO-BACKEND.md"
   "@OP_FRONTEND": "directivas/simco/SIMCO-FRONTEND.md"
-  "@OP_MOBILE": "directivas/simco/SIMCO-MOBILE.md"
-  "@OP_ML": "directivas/simco/SIMCO-ML.md"
   "@OP_DEVOPS": "directivas/simco/SIMCO-DEVOPS.md"
+  "@OP_DEPLOY": "directivas/simco/SIMCO-DEPLOY.md"
   "@OP_ARQUITECTURA": "directivas/simco/SIMCO-ARQUITECTURA.md"
   "@OP_SERVICE": "directivas/simco/SIMCO-SERVICE-DESCRIPTOR.md"
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# ARQUITECTURA Y NIVELES (NUEVO)
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# ARQUITECTURA Y NIVELES
+# ---------------------------------------------------------------------------
 
 arquitectura:
   "@ESTRUCTURA": "directivas/simco/SIMCO-ESTRUCTURA-REPOS.md"
   "@ESTRUCTURA_REPOS": "directivas/simco/SIMCO-ESTRUCTURA-REPOS.md"
   "@NIVELES": "directivas/simco/SIMCO-NIVELES.md"
-  "@PROPAGACION": "directivas/simco/SIMCO-PROPAGACION.md"
   "@ALINEACION": "directivas/simco/SIMCO-ALINEACION.md"
   "@DECISION_MATRIZ": "directivas/simco/SIMCO-DECISION-MATRIZ.md"
+  # SIMCO-PROPAGACION.md no aplica — gamilit es STANDALONE (RC3)
 
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # GIT Y GOBERNANZA
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
-gobernanza:
+git:
   "@GIT": "directivas/simco/SIMCO-GIT.md"
-  "@GIT_WORKFLOW": "directivas/simco/_archive/SIMCO-GIT-WORKFLOW.md"  # Archived: merged into SIMCO-GIT.md
   "@GIT_REMOTES": "directivas/simco/SIMCO-GIT-REMOTES.md"
-  "@GIT_CREDENTIALS": "referencias/GIT-CREDENTIALS-CONFIG.md"
   "@ESCALAMIENTO": "directivas/simco/SIMCO-ESCALAMIENTO.md"
 
-  # Sincronización Multi-Ambiente (v3.1.0)
-  "@SYNC": "referencias/QUICK-SYNC.md"
-  "@SYNC_WORKSPACE": "directivas/simco/SIMCO-SYNC-WORKSPACE.md"
-  "@SYNC_PROTOCOL": "directivas/simco/SIMCO-SYNC-WORKSPACE.md"
-  "@SUBMODULOS": "directivas/simco/SIMCO-SUBMODULOS.md"
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# WORKSPACE ORCHESTRATION (NUEVO v2.7.0)
-# ─────────────────────────────────────────────────────────────────────────────────
-
-workspace_orchestration:
-  # Perfil principal
-  "@WS_ORCHESTRATOR": "agents/perfiles/PERFIL-WORKSPACE-ORCHESTRATOR.md"
-
-  # Inventarios
-  "@TRACEABILITY": "docs/_SSOT/TRACEABILITY-MASTER.yml"
-  "@DEPENDENCY_GRAPH": "DEPENDENCY-GRAPH.yml"
-  "@FUNC_INVENTORY": "inventarios/FUNCTIONALITY-INVENTORY.yml"
-
-  # Directivas de funcionalidades
-  "@FUNCIONALIDADES": "directivas/simco/SIMCO-FUNCIONALIDADES.md"
-  "@SCHEDULER": "directivas/simco/SIMCO-SCHEDULER-TAREAS.md"
-
-  # Triggers automaticos
-  "@TRIGGER_SYNC": "directivas/triggers/TRIGGER-WORKSPACE-SYNC.md"
-  "@TRIGGER_FUNC": "directivas/triggers/TRIGGER-FUNCTIONALITY-CHECK.md"
-  "@TRIGGER_PROPAGATION": "directivas/triggers/TRIGGER-PROPAGACION-AUTOMATICA.md"
-  "@TRIGGER_COHERENCIA": "directivas/triggers/TRIGGER-COHERENCIA-CAPAS.md"
-  "@TRIGGER_INVENTARIOS": "directivas/triggers/TRIGGER-INVENTARIOS-SINCRONIZADOS.md"
-
-  # Scripts
-  "@SCRIPTS": "scripts/"
-  "@SYNC_REMOTES": "scripts/workspace/sync-all-remotes.sh"
-  "@VALIDATE_WS": "scripts/workspace/validate-workspace.sh"
-  "@CLEANUP_BRANCHES": "scripts/workspace/cleanup-branches.sh"
-  "@CREATE_PROJECT": "scripts/project/create-project.sh"
-  "@PROPAGATE_DOC": "scripts/propagation/propagate-doc.sh"
-  "@SYNC_SUBMODULES": "scripts/git/sync-submodules.sh"
-
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # PRINCIPIOS FUNDAMENTALES
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 principios:
   "@PRINCIPIOS": "directivas/principios/"
@@ -230,230 +133,87 @@ principios:
   "@TOKENS": "directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md"
   "@NO-ASUMIR": "directivas/principios/PRINCIPIO-NO-ASUMIR.md"
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# TEMPLATES
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# TRIGGERS
+# ---------------------------------------------------------------------------
 
-templates:
-  # Templates CAPVED
-  "@TPL_TAREA": "templates/TEMPLATE-TAREA-CAPVED.md"
-  "@TPL_ANALISIS": "templates/TEMPLATE-ANALISIS.md"
-  "@TPL_PLAN": "templates/TEMPLATE-PLAN.md"
-  "@TPL_VALIDACION": "templates/TEMPLATE-VALIDACION.md"
+triggers:
+  "@TRIGGER_FUNC": "directivas/triggers/TRIGGER-FUNCTIONALITY-CHECK.md"
+  "@TRIGGER_COHERENCIA": "directivas/triggers/TRIGGER-COHERENCIA-CAPAS.md"
+  "@TRIGGER_INVENTARIOS": "directivas/triggers/TRIGGER-INVENTARIOS-SINCRONIZADOS.md"
+  "@TRIGGER_SSOT_SYNC": "directivas/triggers/TRIGGER-SSOT-SYNC.md"
+  "@TRIGGER_QUALITY_GATE": "directivas/triggers/TRIGGER-QUALITY-GATE.md"
 
-  # Templates de contexto
-  "@TPL_CONTEXTO": "templates/TEMPLATE-PROJECT-CONTEXT.md"
-  "@TPL_STANDALONE": "templates/CONTEXTO-NIVEL-STANDALONE.md"
-  "@TPL_SUITE": "templates/CONTEXTO-NIVEL-SUITE.md"
-  "@TPL_SUITE_CORE": "templates/CONTEXTO-NIVEL-SUITE-CORE.md"
-  "@TPL_VERTICAL": "templates/CONTEXTO-NIVEL-VERTICAL.md"
-
-  # Templates de delegacion
-  "@TPL_DELEGACION": "templates/TEMPLATE-DELEGACION-SUBAGENTE.md"
-  "@TPL_SUBAGENTE": "templates/TEMPLATE-CONTEXTO-SUBAGENTE.md"
-
-  # Templates de planificacion
-  "@TPL_HU": "templates/TEMPLATE-HISTORIA-USUARIO.md"
-  "@TPL_EPICA": "templates/TEMPLATE-EPICA.md"
-  "@TPL_TECNICA": "templates/TEMPLATE-TAREA-TECNICA.md"
-
-  # Templates NUEVOS (EPIC-003)
-  "@TPL_MODULO": "templates/TEMPLATE-MODULO-COMPARTIDO.md"
-  "@TPL_ESTRUCTURA_VERTICAL": "templates/TEMPLATE-ESTRUCTURA-VERTICAL.md"
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# CHECKLISTS
-# ─────────────────────────────────────────────────────────────────────────────────
-
-checklists:
-  "@CHK_CODE_REVIEW": "checklists/CHECKLIST-CODE-REVIEW-API.md"
-  "@CHK_REFACTOR": "checklists/CHECKLIST-REFACTORIZACION.md"
-  "@CHK_PROPAGACION": "checklists/CHECKLIST-PROPAGACION.md"
-  "@CHK_ESTRUCTURA": "checklists/CHECKLIST-ESTRUCTURA-PROYECTO.md"
-  "@CHK_PROYECTO": "checklists/CHECKLIST-NUEVO-PROYECTO.md"  # NUEVO
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# PATRONES
-# ─────────────────────────────────────────────────────────────────────────────────
-
-patrones:
-  "@PATRONES": "patrones/"
-  "@PAT_MAPEO": "patrones/MAPEO-TIPOS-DDL-TYPESCRIPT.md"
-  "@PAT_VALIDACION": "patrones/PATRON-VALIDACION.md"
-  "@PAT_EXCEPTION": "patrones/PATRON-EXCEPTION-HANDLING.md"
-  "@PAT_TESTING": "patrones/PATRON-TESTING.md"
-  "@PAT_LOGGING": "patrones/PATRON-LOGGING.md"
-  "@PAT_CONFIG": "patrones/PATRON-CONFIGURACION.md"
-  "@PAT_SECURITY": "patrones/PATRON-SEGURIDAD.md"
-  "@PAT_PERF": "patrones/PATRON-PERFORMANCE.md"
-  "@PAT_TX": "patrones/PATRON-TRANSACCIONES.md"
-  "@ANTIPATRONES": "patrones/ANTIPATRONES.md"
-  "@NOMENCLATURA": "patrones/NOMENCLATURA-UNIFICADA.md"
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# IMPACTOS
-# ─────────────────────────────────────────────────────────────────────────────────
-
-impactos:
-  "@IMPACTOS": "impactos/"
-  "@IMP_DDL": "impactos/IMPACTO-CAMBIOS-DDL.md"
-  "@IMP_BACKEND": "impactos/IMPACTO-CAMBIOS-BACKEND.md"
-  "@IMP_ENTITY": "impactos/IMPACTO-CAMBIOS-ENTITY.md"
-  "@IMP_API": "impactos/IMPACTO-CAMBIOS-API.md"
-  "@MATRIZ_DEP": "impactos/MATRIZ-DEPENDENCIAS.md"
-
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # PERFILES DE AGENTES
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 perfiles:
   "@PERFILES": "agents/perfiles/"
-
-  # Tecnicos
   "@PERFIL_DATABASE": "agents/perfiles/PERFIL-DATABASE-POSTGRESQL.md"
   "@PERFIL_BACKEND": "agents/perfiles/PERFIL-BACKEND-NESTJS.md"
-  "@PERFIL_BACKEND_EXPRESS": "agents/perfiles/_archive/PERFIL-BACKEND-EXPRESS.md"  # Archived
   "@PERFIL_FRONTEND": "agents/perfiles/PERFIL-FRONTEND-REACT.md"
-  "@PERFIL_MOBILE": "agents/perfiles/PERFIL-MOBILE-AGENT.md"
-  "@PERFIL_ML": "agents/perfiles/PERFIL-ML.md"
-  "@PERFIL_ML_SPEC": "agents/perfiles/PERFIL-ML-SPECIALIST.md"
   "@PERFIL_LLM": "agents/perfiles/PERFIL-LLM-AGENT.md"
-
-  # Coordinacion
   "@PERFIL_ORQUESTADOR": "agents/perfiles/PERFIL-ORQUESTADOR.md"
   "@PERFIL_TECH_LEADER": "agents/perfiles/PERFIL-TECH-LEADER.md"
   "@PERFIL_ARCHITECT": "agents/perfiles/PERFIL-ARCHITECTURE-ANALYST.md"
   "@PERFIL_REQUIREMENTS": "agents/perfiles/PERFIL-REQUIREMENTS-ANALYST.md"
-
-  # Calidad
   "@PERFIL_REVIEWER": "agents/perfiles/PERFIL-CODE-REVIEWER.md"
   "@PERFIL_BUGFIX": "agents/perfiles/PERFIL-BUG-FIXER.md"
   "@PERFIL_TESTING": "agents/perfiles/PERFIL-TESTING.md"
-  "@PERFIL_QA": "agents/perfiles/PERFIL-QA.md"
-  "@PERFIL_DOCS": "agents/perfiles/PERFIL-DOCUMENTATION.md"
+  "@PERFIL_QA": "agents/perfiles/PERFIL-TESTING.md"
+  "@PERFIL_DOCS": "agents/perfiles/PERFIL-DOCUMENTATION-VALIDATOR.md"
   "@PERFIL_DOCS_VALIDATOR": "agents/perfiles/PERFIL-DOCUMENTATION-VALIDATOR.md"
-
-  # Auditoria
-  "@PERFIL_SECURITY": "agents/perfiles/PERFIL-SECURITY.md"
+  "@PERFIL_DOCS_MAINTAINER": "agents/perfiles/PERFIL-DOCUMENTATION-MAINTAINER.md"
+  "@PERFIL_SECURITY": "agents/perfiles/PERFIL-SECURITY-AUDITOR.md"
   "@PERFIL_SEC_AUDITOR": "agents/perfiles/PERFIL-SECURITY-AUDITOR.md"
   "@PERFIL_DB_AUDITOR": "agents/perfiles/PERFIL-DATABASE-AUDITOR.md"
   "@PERFIL_POLICY": "agents/perfiles/PERFIL-POLICY-AUDITOR.md"
   "@PERFIL_INTEGRATION": "agents/perfiles/PERFIL-INTEGRATION-VALIDATOR.md"
-
-  # Infraestructura
   "@PERFIL_DEVOPS": "agents/perfiles/PERFIL-DEVOPS.md"
   "@PERFIL_DEVENV": "agents/perfiles/PERFIL-DEVENV.md"
-
-  # Produccion y Secretos (NUEVO v2.5.0)
+  "@PERFIL_DEPLOY": "agents/perfiles/PERFIL-DEPLOY-SERVER.md"
   "@PERFIL_PRODUCTION_MANAGER": "agents/perfiles/PERFIL-PRODUCTION-MANAGER.md"
   "@PERFIL_SECRETS_MANAGER": "agents/perfiles/PERFIL-SECRETS-MANAGER.md"
-
-  # Observabilidad (NUEVO v2.5.0)
   "@PERFIL_MONITORING_AGENT": "agents/perfiles/PERFIL-MONITORING-AGENT.md"
-
-  # CI/CD (NUEVO v2.5.0)
   "@PERFIL_CICD_SPECIALIST": "agents/perfiles/PERFIL-CICD-SPECIALIST.md"
+  "@PERFIL_GAMIFICATION": "agents/perfiles/PERFIL-GAMIFICATION-SPECIALIST.md"
 
-  # Propagacion (NUEVO v2.5.0)
-  "@PERFIL_PROPAGATION_TRACKER": "agents/perfiles/PERFIL-PROPAGATION-TRACKER.md"
+# ---------------------------------------------------------------------------
+# INVENTARIOS Y TRAZAS (proyecto local)
+# ---------------------------------------------------------------------------
 
-  # Knowledge Base (core)
-  "@PERFIL_KB_MANAGER": "core/orchestration/agents/perfiles/PERFIL-KB-MANAGER.md"
+proyecto_local:
+  "@INVENTORY": "inventarios/MASTER_INVENTORY.yml"
+  "@DB_INVENTORY": "inventarios/DATABASE_INVENTORY.yml"
+  "@BE_INVENTORY": "inventarios/BACKEND_INVENTORY.yml"
+  "@FE_INVENTORY": "inventarios/FRONTEND_INVENTORY.yml"
+  "@PROXIMA": "PROXIMA-ACCION.md"
+  "@CONTEXT_MAP": "CONTEXT-MAP.yml"
+  "@BOOTLOADER": "BOOTLOADER.md"
 
-  # Especializados
-  "@PERFIL_TRADING": "agents/perfiles/PERFIL-TRADING-STRATEGIST.md"
-  "@PERFIL_WORKSPACE": "agents/perfiles/PERFIL-WORKSPACE-MANAGER.md"
-  "@PERFIL_WS_ORCHESTRATOR": "agents/perfiles/PERFIL-WORKSPACE-ORCHESTRATOR.md"
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# PROYECTOS
-# ─────────────────────────────────────────────────────────────────────────────────
-
-proyectos:
-  # Rutas base (standalone — no aplica workspace externo)
-  "@WORKSPACE": "./"
-  "@CORE": "./"
-  "@PROJECTS": "./"
-
-  # Proyectos especificos
-  "@GAMILIT": "projects/gamilit/"
-  "@ERP": "projects/erp-suite/"
-  "@TRADING": "projects/trading-platform/"
-  "@BETTING": "projects/betting-analytics/"
-  "@ORBIQUANTIA": "projects/orbiquantia/"
-  "@INMOBILIARIA": "projects/inmobiliaria-analytics/"
-
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 # REFERENCIA RAPIDA
-# ─────────────────────────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
 
 referencia:
   "@QUICK_REF": "directivas/simco/SIMCO-QUICK-REFERENCE.md"
   "@INDEX": "directivas/simco/_INDEX.md"
-  "@INDICE_WORKSPACE": "INDICE-DIRECTIVAS-WORKSPACE.yml"
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# INVENTARIOS Y TRAZAS (por proyecto)
-# ─────────────────────────────────────────────────────────────────────────────────
-
-proyecto_local:
-  "@INVENTORY": "orchestration/inventarios/MASTER_INVENTORY.yml"
-  "@DB_INVENTORY": "orchestration/inventarios/DATABASE_INVENTORY.yml"
-  "@BE_INVENTORY": "orchestration/inventarios/BACKEND_INVENTORY.yml"
-  "@FE_INVENTORY": "orchestration/inventarios/FRONTEND_INVENTORY.yml"
-  "@TRAZA_DB": "orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
-  "@TRAZA_BE": "orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
-  "@TRAZA_FE": "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
-  "@PROXIMA": "orchestration/PROXIMA-ACCION.md"
-
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 # FIN DE ALIASES
-# ═══════════════════════════════════════════════════════════════════════════════
+# ===============================================================================
 
 metadata:
-  total_aliases: 210+
-  ultima_actualizacion: "2026-01-16"
-  mantenido_por: "Tech-Leader"
-  novedades_v2_9:
-    - "SECCION definitions: Definiciones canonicas (Fuente Unica de Verdad)"
-    - "@DEF_CCA - Protocolo CCA canonico"
-    - "@DEF_CCA_LIGHT - CCA ligero para subagentes"
-    - "@DEF_VAL_BE/FE/DDL/DEVOPS - Validaciones por dominio"
-    - "@DEF_SEC_* - Secciones reutilizables"
-    - "@DEF_CHK_* - Checklists base"
-    - "_definitions/ - Nueva estructura de definiciones unicas"
-  novedades_v2_8:
-    - "@FUNCIONALIDADES - Directiva de gestion de funcionalidades y relaciones"
-    - "@SCHEDULER - Sistema de tareas programadas y orquestacion"
-    - "@TRIGGER_SYNC - Trigger automatico de sincronizacion"
-    - "@TRIGGER_FUNC - Trigger de verificacion de funcionalidades"
-    - "@SYNC_SUBMODULES - Script de sincronizacion de submodules"
-  novedades_v2_7:
-    - "@WS_ORCHESTRATOR - Perfil de gobernanza integral del workspace"
-    - "@GIT_WORKFLOW - Directiva de estrategia de ramas y PRs"
-    - "@FUNC_INVENTORY - Inventario de funcionalidades y relaciones"
-    - "@SYNC_REMOTES - Script de sincronizacion con remotos"
-    - "@VALIDATE_WS - Script de validacion del workspace"
-    - "@CLEANUP_BRANCHES - Script de limpieza de ramas"
-    - "@CREATE_PROJECT - Script de creacion de proyectos"
-    - "@PROPAGATE_DOC - Script de propagacion de documentacion"
-  novedades_v2_6:
-    - "@GIT_REMOTES - Directiva para operaciones con repositorios remotos"
-    - "@GIT_CREDENTIALS - Configuracion de credenciales Git (Gitea/GitHub)"
-  novedades_v2_5:
-    - "@PERFIL_PRODUCTION_MANAGER - Gestion de ambientes productivos"
-    - "@PERFIL_SECRETS_MANAGER - Gestion de secretos y credenciales"
-    - "@PERFIL_MONITORING_AGENT - Observabilidad y alertas"
-    - "@PERFIL_CICD_SPECIALIST - Pipelines CI/CD avanzados"
-    - "@PERFIL_PROPAGATION_TRACKER - Tracking de propagaciones"
-    - "@PERFIL_KB_MANAGER - Gestion de Knowledge Base"
-    - "@ASIGNAR_PERFIL - Directiva de asignacion de perfiles"
-    - "@MAPA_PERFILES - Indice y guia de asignacion de perfiles"
-  novedades_v2_4:
-    - "@ESTRUCTURA - SIMCO-ESTRUCTURA-REPOS.md"
-    - "@MODULOS - SIMCO-MODULOS-COMPARTIDOS.md"
-    - "@MODULES - shared/modules/"
-    - "@MOD_* - Modulos individuales"
-    - "@TPL_MODULO - Template modulo"
-    - "@TPL_ESTRUCTURA_VERTICAL - Template vertical"
-    - "@CHK_PROYECTO - Checklist nuevo proyecto"
+  total_aliases: 95
+  ultima_actualizacion: "2026-02-14"
+  mantenido_por: "Documentation-Maintainer"
+  notas:
+    - "v4.0.0: Rewrite completo para standalone gamilit"
+    - "Eliminados ~25 phantom refs de workspace-era (shared/, control-plane/, projects/, scripts/)"
+    - "Eliminados: SIMCO-MOBILE, SIMCO-ML, SIMCO-PROPAGACION, SIMCO-REUTILIZAR, SIMCO-CONTRIBUIR-CATALOGO"
+    - "Eliminados: SIMCO-SYNC-WORKSPACE, SIMCO-SUBMODULOS, SIMCO-MODULOS-COMPARTIDOS"
+    - "Eliminados: PERFIL-MOBILE-AGENT, PERFIL-ML-SPECIALIST, PERFIL-PROPAGATION-TRACKER"
+    - "Eliminados: PERFIL-WORKSPACE-MANAGER, PERFIL-WORKSPACE-ORCHESTRATOR, PERFIL-KB-MANAGER, PERFIL-TRADING-STRATEGIST"
+    - "Eliminadas secciones: catalogo_modulos, impactos, templates, checklists, patrones, proyectos, workspace_orchestration"
+    - "Fuente primaria de aliases para agentes: orchestration/agents/ALIASES.yml"

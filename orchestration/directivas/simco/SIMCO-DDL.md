@@ -24,7 +24,7 @@
 ║  C:\Empresas\ISEM\gamilit-workspace                                       ║
 ║                                                                           ║
 ║  apps/                                                                    ║
-║    backend/          - NestJS 11 (22 modulos, 850 endpoints)              ║
+║    backend/          - NestJS 11 (22 modulos, 899 endpoints)              ║
 ║    frontend/         - React 19 + Zustand + Vite 6.x                      ║
 ║    database/         - PostgreSQL 15 DDL + seeds                          ║
 ║    devops/           - Scripts de deploy                                  ║

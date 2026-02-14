@@ -1,0 +1,189 @@
+# LOCAL-WSL-ENVIRONMENT.yml
+# Inventario del ambiente de desarrollo local (Windows + WSL2)
+#
+# Version: 1.0.0
+# Fecha: 2026-02-13
+# Sistema: SIMCO v4.0.0
+# Alias: @LOCAL_ENV
+
+---
+
+metadata:
+  version: "1.0.0"
+  fecha_actualizacion: "2026-02-13"
+  proyecto: "gamilit"
+  proposito: "Documentar ambiente de desarrollo local para onboarding y troubleshooting"
+
+# ============================================================================
+# PLATAFORMA
+# ============================================================================
+plataforma:
+  os: "Windows 11 Pro"
+  os_version: "10.0.26200"
+  shell: "bash (via WSL2 o Git Bash)"
+  wsl:
+    distribucion: "Ubuntu"
+    version: 2
+    nota: "WSL2 IP es dinamica — se actualiza via predev script"
+
+# ============================================================================
+# SERVICIOS
+# ============================================================================
+servicios:
+  postgresql:
+    version: "15"
+    host: "127.0.0.1"
+    port: 5432
+    database: "gamilit_platform"
+    usuario: "gamilit_user"
+    password: "gamilit_dev_2026"
+    schemas_activos: 16
+    schemas_placeholder: 2
+    schemas_total: 18
+    pool_max: 2
+    timeout_ms: 15000
+    synchronize: false
+    logging: true
+    ssl: false
+    nota: "En WSL2, DB_HOST se auto-actualiza con update-wsl-ip.sh"
+
+  redis:
+    version: "7.x"
+    host: "127.0.0.1"
+    port: 6379
+    db: 0
+    password: null
+    prefijo_socket: "gamilit:socket:"
+    prefijo_mensajes: "gamilit:pending:"
+    ttl_mensajes: 86400
+    max_pending: 100
+
+  backend:
+    framework: "NestJS 11"
+    runtime: "Node.js"
+    port: 3006
+    api_prefix: "api"
+    swagger: true
+    swagger_url: "http://localhost:3006/api/docs"
+    cors_origins:
+      - "http://localhost:3005"
+      - "http://localhost:3006"
+    hot_reload: true
+    comando_dev: "npm run dev"
+
+  frontend:
+    framework: "React 19 + Vite 6.x"
+    port: 3005
+    url: "http://localhost:3005"
+    hot_reload: true
+    comando_dev: "npm run dev"
+
+# ============================================================================
+# PUERTOS
+# ============================================================================
+puertos:
+  - puerto: 3005
+    servicio: "Frontend (Vite dev server)"
+    protocolo: "HTTP"
+  - puerto: 3006
+    servicio: "Backend (NestJS)"
+    protocolo: "HTTP"
+  - puerto: 5432
+    servicio: "PostgreSQL"
+    protocolo: "TCP"
+  - puerto: 6379
+    servicio: "Redis"
+    protocolo: "TCP"
+
+# ============================================================================
+# PATHS IMPORTANTES
+# ============================================================================
+paths:
+  workspace: "C:\\Empresas\\ISEM\\gamilit-workspace"
+  backend: "apps/backend/"
+  frontend: "apps/frontend/"
+  database: "apps/database/"
+  ddl: "apps/database/ddl/"
+  seeds: "apps/database/seeds/"
+  env_backend: "apps/backend/.env"
+  env_frontend: "apps/frontend/.env"
+  ecosystem: "ecosystem.config.js"
+  orchestration: "orchestration/"
+  inventarios: "orchestration/inventarios/"
+  directivas: "orchestration/directivas/"
+
+# ============================================================================
+# SCRIPTS DE DESARROLLO
+# ============================================================================
+scripts:
+  backend:
+    dev: "cd apps/backend && npm run dev"
+    build: "cd apps/backend && npm run build"
+    lint: "cd apps/backend && npm run lint"
+    test: "cd apps/backend && npm run test"
+    typecheck: "cd apps/backend && npx tsc --noEmit"
+
+  frontend:
+    dev: "cd apps/frontend && npm run dev"
+    build: "cd apps/frontend && npm run build"
+    lint: "cd apps/frontend && npm run lint"
+    typecheck: "cd apps/frontend && npm run typecheck"
+
+  database:
+    recrear: "bash apps/database/scripts/recreate-database.sh"
+    seeds: "bash apps/database/scripts/run-seeds.sh"
+
+  deploy:
+    local_pm2: "pm2 start ecosystem.config.js"
+    produccion: "bash scripts/deploy-production.sh"
+
+# ============================================================================
+# AUTENTICACION DEV
+# ============================================================================
+auth:
+  jwt_secret: "gamilit-dev-jwt-secret-2026-local-development-only"
+  jwt_expires: "24h"
+  jwt_refresh_expires: "7d"
+  session_secret: "gamilit-dev-session-secret-2026-local-only"
+  session_max_age_ms: 86400000
+  nota: "Estos son secretos de DESARROLLO. Produccion usa secretos rotados."
+
+# ============================================================================
+# DIFERENCIAS CON PRODUCCION
+# ============================================================================
+diferencias_prod:
+  servidor: "74.208.126.102"
+  usuario_ssh: "isem"
+  backend_port: 3006
+  frontend_port: 3005
+  ssl: "Nginx + Certbot (HTTPS)"
+  pm2_mode: "fork"
+  swagger: false
+  db_host: "localhost"
+  node_env: "production"
+  log_level: "warn"
+  referencia: "docs/20-architecture/AMBIENTES-DEV-PROD.md"
+
+# ============================================================================
+# TROUBLESHOOTING
+# ============================================================================
+troubleshooting:
+  wsl_ip_dinamica:
+    problema: "DB_HOST cambia cada reinicio de WSL2"
+    solucion: "npm run predev ejecuta update-wsl-ip.sh automaticamente"
+
+  puerto_ocupado:
+    problema: "Error EADDRINUSE en puerto 3005 o 3006"
+    solucion: "netstat -ano | findstr :3006 && taskkill /PID {pid} /F"
+
+  postgres_conexion:
+    problema: "Connection refused a PostgreSQL"
+    solucion: "Verificar que PostgreSQL esta corriendo en WSL: sudo service postgresql status"
+
+  redis_conexion:
+    problema: "Connection refused a Redis"
+    solucion: "Verificar: redis-cli ping → PONG"
+
+  permisos_scripts:
+    problema: "Permission denied en scripts .sh"
+    solucion: "chmod +x apps/database/scripts/*.sh"

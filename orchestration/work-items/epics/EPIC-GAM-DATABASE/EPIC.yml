@@ -9,15 +9,15 @@ prioridad: "P1"
 story_points: 21
 wave: "wave_3"
 descripcion: |
-  Implementacion completa del esquema de base de datos: 18 schemas, 171 tablas,
-  282 RLS policies, 128 funciones, 49 triggers, 36 ENUMs, 13 views, 7 MVs.
+  Implementacion completa del esquema de base de datos: 18 schemas, 169 tablas,
+  207 RLS policies, 183 funciones (DDL), 67 triggers, 40 ENUMs, 22 views, 7 MVs.
 entregables:
   - "18 schemas creados con tablas"
-  - "171 tablas con DDL completo"
-  - "282 RLS policies para multi-tenancy"
-  - "128 funciones SQL"
-  - "49 triggers"
-  - "36 ENUMs sincronizados"
+  - "169 tablas con DDL completo"
+  - "207 RLS policies para multi-tenancy"
+  - "183 funciones SQL (DDL)"
+  - "67 triggers"
+  - "40 ENUMs sincronizados"
   - "13 views + 7 materialized views"
   - "299 foreign keys"
   - "Seeds de datos de prueba"
@@ -42,8 +42,8 @@ traceability:
     frontend: []
     database:
       - "18 schemas"
-      - "171 tablas"
-      - "282 RLS policies"
+      - "169 tablas"
+      - "207 RLS policies"
   dependencies:
     depends_on:
       - "EPIC-GAM-ARCHITECTURE"

@@ -106,9 +106,9 @@ ANTES_de_proceder_a_CAPVED:
   fuente: "orchestration/inventarios/MASTER_INVENTORY.yml"
 
   inventarios_por_dominio:
-    database: "orchestration/inventarios/DATABASE_INVENTORY.yml (170 tablas)"
-    backend: "orchestration/inventarios/BACKEND_INVENTORY.yml (152 entities, 850 endpoints)"
-    frontend: "orchestration/inventarios/FRONTEND_INVENTORY.yml (458 componentes)"
+    database: "orchestration/inventarios/DATABASE_INVENTORY.yml (169 tablas)"
+    backend: "orchestration/inventarios/BACKEND_INVENTORY.yml (152 entities, 899 endpoints)"
+    frontend: "orchestration/inventarios/FRONTEND_INVENTORY.yml (474 componentes)"
 
   SI_EXISTE:
     - Revisar objeto existente

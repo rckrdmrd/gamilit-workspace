@@ -30,7 +30,7 @@ Extiende el BOOTLOADER del workspace con contexto local.
 │                         ▼                                              │
 │  PASO 2: Cargar L1 (Proyecto - GAMILIT)                                │
 │  ════════════════════════════════════════                               │
-│  ├── Leer .claude/CLAUDE.md (este archivo de instrucciones)            │
+│  ├── Leer CLAUDE.md (este archivo de instrucciones)            │
 │  ├── Leer orchestration/CONTEXT-MAP.yml (variables resueltas)          │
 │  ├── Leer orchestration/PROXIMA-ACCION.md (estado anterior)            │
 │  └── Tokens: ~3000                                                     │
@@ -74,7 +74,7 @@ obligatorio:
 ### PASO 2: L1 Proyecto (~3000 tokens)
 ```yaml
 obligatorio:
-  - path: "../.claude/CLAUDE.md"
+  - path: "../CLAUDE.md"
     proposito: "Instrucciones locales GAMILIT (extensiones)"
     tokens: 1500
 
@@ -171,7 +171,7 @@ Si detectas compactacion o reinicio de sesion:
 ### Al Iniciar Sesion en GAMILIT
 
 - [ ] PASO 1: CLAUDE.md (project root) leido
-- [ ] PASO 2: .claude/CLAUDE.md leido
+- [ ] PASO 2: CLAUDE.md leido
 - [ ] PASO 2: CONTEXT-MAP.yml cargado
 - [ ] PASO 2: PROXIMA-ACCION.md verificado
 - [ ] PASO 3: Dominio identificado

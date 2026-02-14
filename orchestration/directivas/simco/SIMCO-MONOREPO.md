@@ -357,7 +357,7 @@ gamilit/
 |   |
 |   |-- frontend/          # React + Vite
 |   |   |-- src/
-|   |   |   |-- components/  # 458 componentes
+|   |   |   |-- components/  # 474 componentes
 |   |   |   |-- pages/
 |   |   |   |-- hooks/
 |   |   |   `-- services/
@@ -388,17 +388,17 @@ BACKEND_NESTJS:
   lineas_codigo: ~50000
 
 FRONTEND_REACT:
-  componentes: 458
-  paginas: 85
-  hooks_custom: 127
-  servicios_api: 48
+  componentes: 475
+  paginas: 68
+  hooks_custom: 102
+  servicios_api: 52
   lineas_codigo: ~120000
 
 DATABASE_POSTGRESQL:
-  tablas: 170
+  tablas: 169
   indices: 200+
-  funciones: 255
-  triggers: 132
+  funciones: 183
+  triggers: 67
 ```
 
 ### 5.3 Flujo de Desarrollo en Gamilit

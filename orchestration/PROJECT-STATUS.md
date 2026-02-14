@@ -55,7 +55,7 @@
 |------|------------|--------|
 | Backend | NestJS + TypeORM | Activo |
 | Frontend | React + Vite | Activo |
-| Database | PostgreSQL 16 | Activo |
+| Database | PostgreSQL 15 | Activo |
 | Cache | Redis | Activo |
 
 ---

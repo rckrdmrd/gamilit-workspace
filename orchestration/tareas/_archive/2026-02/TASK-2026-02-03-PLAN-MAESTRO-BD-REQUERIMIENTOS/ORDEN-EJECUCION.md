@@ -47,17 +47,17 @@ BLOQUE 4: Integracion (Secuencial)
 # 0.1.1 Fetch y verificar estado
 cd C:/Empresas/ISEM/workspace-v2/projects/gamilit
 git fetch origin
-git log HEAD..origin/main --oneline
+git log HEAD..origin/master --oneline
 
 # 0.1.2 Si hay commits remotos, pull
-git pull origin main
+git pull origin master
 
 # 0.1.3 Normalizar line endings si hay cambios
 git add -A
 git status --short | wc -l
 # Si > 0 y son solo line endings:
 git commit -m "[GAMILIT] chore: Normalize CRLF to LF"
-git push origin main
+git push origin master
 
 # 0.1.4 Verificar estado limpio
 git status
@@ -246,7 +246,7 @@ git commit -m "[GAMILIT] docs: Complete plan maestro BD-Requerimientos TASK-2026
 Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
 
 # 4.3.4 Push
-git push origin main
+git push origin master
 
 # 4.3.5 Verificar
 git status

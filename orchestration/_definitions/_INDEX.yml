@@ -225,6 +225,16 @@ checklists:
     actualizado: "2026-01-16"
     nota: "Actualizado para incluir gobernanza como paso 0"
 
+  CHECKLIST-SSOT-SYNC:
+    alias: "@DEF_CHK_SSOT_SYNC"
+    path: "checklists/CHECKLIST-SSOT-SYNC.md"
+    descripcion: "Verificacion sincronizacion SSOT entre 4 capas (DDL->Backend->Frontend->Inventarios)"
+    estado: "IMPLEMENTADO"
+    lineas: 144
+    fecha_creacion: "2026-02-06"
+    actualizado: "2026-02-13"
+    nota: "v2.0.0 - Actualizado para standalone gamilit (cadena de coherencia DDL-Entity-DTO-API-Frontend)"
+
   CHECKLIST-RECOVERY:
     alias: "@DEF_CHK_RECOVERY"
     path: "checklists/CHECKLIST-RECOVERY.md"
@@ -238,8 +248,8 @@ checklists:
 # ─────────────────────────────────────────────────────────────────────────────────
 
 statistics:
-  total_definitions: 26
-  implemented: 26
+  total_definitions: 27
+  implemented: 27
   pending: 0
 
   by_category:
@@ -256,8 +266,8 @@ statistics:
       implementados: 4  # IDENTITY, RESPONSIBILITIES, REFERENCES, ERRORS
       pendientes: 0
     checklists:
-      total: 5
-      implementados: 5  # GOBERNANZA-TAREA, PRE-CREATE, PRE-MODIFY, POST-TASK, RECOVERY
+      total: 6
+      implementados: 6  # GOBERNANZA-TAREA, PRE-CREATE, PRE-MODIFY, POST-TASK, SSOT-SYNC, RECOVERY
       pendientes: 0
     triggers:
       total: 3

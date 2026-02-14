@@ -155,5 +155,5 @@ Total: 25 suites, 641 passed, 2 skipped, 0 failed
 - [x] `npm run test` pasa para gamification module
 - [x] `npm run test` pasa para admin module
 - [x] TEST_COVERAGE.yml actualizado
-- [x] Commits pushed a origin/main
+- [x] Commits pushed a origin/master
 - [x] Submodule actualizado en workspace-v2
