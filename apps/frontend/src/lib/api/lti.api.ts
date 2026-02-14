@@ -19,10 +19,37 @@ import type {
   LtiLaunchUrl,
 } from '@/shared/types/lti.types';
 
+// ============================================================================
+// TYPES (merged from services/api/ltiAPI.ts)
+// ============================================================================
+
+export interface LTIGradePassback {
+  id: string;
+  consumerId: string;
+  userId: string;
+  resourceLinkId: string;
+  score: number;
+  maxScore: number;
+  status: 'pending' | 'sent' | 'failed';
+  sentAt?: string;
+  errorMessage?: string;
+}
+
+export interface LTISession {
+  id: string;
+  consumerId: string;
+  userId: string;
+  resourceLinkId: string;
+  contextId: string;
+  launchParams: Record<string, string>;
+  expiresAt: string;
+  createdAt: string;
+}
+
 /**
  * LTI API endpoints base URL
  */
-const LTI_BASE_URL = '/api/v1/lti/consumers';
+const LTI_BASE_URL = '/lti/consumers';
 
 /**
  * Fetch all LTI consumers
@@ -159,7 +186,62 @@ export async function regenerateCredentials(id: string): Promise<LtiCredentials>
  * @returns Launch URL configuration
  */
 export async function getLaunchUrls(): Promise<LtiLaunchUrl> {
-  const response = await apiClient.get<LtiLaunchUrl>('/api/v1/lti/launch-urls');
+  const response = await apiClient.get<LtiLaunchUrl>('/lti/launch-urls');
+  return response.data;
+}
+
+// ============================================================================
+// GRADE PASSBACKS (merged from services/api/ltiAPI.ts)
+// ============================================================================
+
+export async function sendGradePassback(data: {
+  consumerId: string;
+  userId: string;
+  resourceLinkId: string;
+  score: number;
+  maxScore: number;
+}): Promise<LTIGradePassback> {
+  const response = await apiClient.post<LTIGradePassback>('/lti/grade-passbacks', data);
+  return response.data;
+}
+
+export async function getGradePassbacks(filters?: {
+  consumerId?: string;
+  status?: string;
+}): Promise<LTIGradePassback[]> {
+  const response = await apiClient.get<LTIGradePassback[]>('/lti/grade-passbacks', { params: filters });
+  return response.data;
+}
+
+export async function getGradePassback(id: string): Promise<LTIGradePassback> {
+  const response = await apiClient.get<LTIGradePassback>(`/lti/grade-passbacks/${id}`);
+  return response.data;
+}
+
+export async function retryGradePassback(id: string): Promise<LTIGradePassback> {
+  const response = await apiClient.post<LTIGradePassback>(`/lti/grade-passbacks/${id}/retry`);
+  return response.data;
+}
+
+// ============================================================================
+// LTI SESSIONS (merged from services/api/ltiAPI.ts)
+// ============================================================================
+
+export async function createSession(data: {
+  consumerId: string;
+  launchParams: Record<string, string>;
+}): Promise<LTISession> {
+  const response = await apiClient.post<LTISession>('/lti/sessions', data);
+  return response.data;
+}
+
+export async function getSession(id: string): Promise<LTISession> {
+  const response = await apiClient.get<LTISession>(`/lti/sessions/${id}`);
+  return response.data;
+}
+
+export async function validateSession(id: string): Promise<{ valid: boolean; session?: LTISession }> {
+  const response = await apiClient.get<{ valid: boolean; session?: LTISession }>(`/lti/sessions/${id}/validate`);
   return response.data;
 }
 
@@ -167,6 +249,7 @@ export async function getLaunchUrls(): Promise<LtiLaunchUrl> {
  * LTI API object for easier imports
  */
 export const ltiApi = {
+  // Consumers
   getConsumers,
   getConsumerStats,
   getConsumer,
@@ -179,6 +262,15 @@ export const ltiApi = {
   testConnection,
   regenerateCredentials,
   getLaunchUrls,
+  // Grade Passbacks
+  sendGradePassback,
+  getGradePassbacks,
+  getGradePassback,
+  retryGradePassback,
+  // Sessions
+  createSession,
+  getSession,
+  validateSession,
 };
 
 export default ltiApi;

@@ -7,7 +7,7 @@ import { UserStatsCard } from '@/shared/components/UserStatsCard';
 import { AchievementsGrid } from '@/shared/components/AchievementsGrid';
 import { SkeletonStats } from '@/shared/components/Skeleton';
 import { gamificationApi } from '@/lib/api/gamification.api';
-import { educationalApi } from '@/lib/api/educational.api';
+import { getModules as educationalGetModules } from '@/services/api/educationalAPI';
 import { progressApi, type RecentActivity } from '@/lib/api/progress.api';
 import type { PendingActivity as DashboardPendingActivity } from '@/components/_legacy/dashboard-migration-sprint/PendingActivitiesList';
 import type { UserAchievement } from '@/shared/types/achievement.types';
@@ -163,7 +163,7 @@ export const DashboardPage: React.FC = () => {
           const { modules: _modules, ...rest } = prev;
           return rest;
         }); // Clear modules error
-        const data = await educationalApi.getModules();
+        const data = await educationalGetModules();
         setModules(data);
       } catch (err) {
         console.error('Failed to load modules:', err);
@@ -341,7 +341,7 @@ export const DashboardPage: React.FC = () => {
         const { modules: _modules, ...rest } = prev;
         return rest;
       });
-      const data = await educationalApi.getModules();
+      const data = await educationalGetModules();
       setModules(data);
     } catch (err) {
       console.error('Failed to load modules:', err);

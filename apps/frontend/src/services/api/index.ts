@@ -147,24 +147,7 @@ export type {
   AssignmentFilters,
 } from './studentAssignmentsAPI';
 
-// ============================================================================
-// PROGRESS API (P1-001 - 2026-01-27)
-// ============================================================================
-
-export {
-  progressAPI,
-  certificatesAPI,
-  attemptsAPI,
-  submissionsAPI,
-  default as progressAPIDefault,
-} from './progressAPI';
-export type {
-  Certificate,
-  CertificateStats,
-  ExerciseAttempt,
-  AttemptStats,
-  ExerciseSubmission,
-} from './progressAPI';
+// progressAPI removed — was dead code with 0 consumers (P1-001 deprecated)
 
 // ============================================================================
 // CONTENT API (P1-001 - 2026-01-27)
@@ -184,23 +167,7 @@ export type {
   TemplateFilters,
 } from './contentAPI';
 
-// ============================================================================
-// LTI API (P1-001 - 2026-01-27)
-// ============================================================================
-
-export {
-  ltiAPI,
-  consumersAPI,
-  gradePassbacksAPI,
-  sessionsAPI,
-  default as ltiAPIDefault,
-} from './ltiAPI';
-export type {
-  LTIConsumer,
-  LTIConsumerStats,
-  LTIGradePassback,
-  LTISession,
-} from './ltiAPI';
+// ltiAPI removed — canonical is @/lib/api/lti.api (P1-001 deprecated)
 
 // ============================================================================
 // DEFAULT EXPORT

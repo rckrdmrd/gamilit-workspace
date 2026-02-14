@@ -1,8 +1,6 @@
 /**
  * Content API Module Exports
  *
- * Centralized exports for educational content API
+ * Note: contentAPI.ts was removed (CORR-FE-001, 0 importers, 623 lines dead code).
+ * Educational content API is served by services/api/contentAPI.ts and educationalAPI.ts.
  */
-
-export * from './contentAPI';
-export { default } from './contentAPI';

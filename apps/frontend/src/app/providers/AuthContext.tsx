@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authApi } from '@/lib/api/auth.api';
+import { authAPI } from '@/features/auth/api/authAPI';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { performLogout } from '@/shared/utils/authCleanup';
 import type {
@@ -84,7 +84,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       try {
-        const userData = await authApi.getProfile();
+        const userData = await authAPI.getCurrentUser();
 
         // CRITICAL: Sync BOTH auth systems on session restore
         // 1. Update AuthContext
@@ -150,14 +150,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       setError(null);
 
-      const response = await authApi.login(credentials);
+      const response = await authAPI.login(credentials);
 
       // Determine user data
       let userData: User;
       if (response.user) {
         userData = response.user;
       } else {
-        userData = await authApi.getProfile();
+        userData = await authAPI.getCurrentUser();
       }
 
       // CRITICAL: Sync BOTH auth systems
@@ -167,7 +167,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // 2. Update authStore (Zustand) - Direct state update to avoid duplicate API call
       useAuthStore.setState({
         user: userData,
-        token: response.accessToken || localStorage.getItem('auth-token') || '',
+        token: response.token || localStorage.getItem('auth-token') || '',
         refreshToken: response.refreshToken || localStorage.getItem('refresh-token') || '',
         isAuthenticated: true,
         sessionExpiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
@@ -220,14 +220,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       setError(null);
 
-      const response = await authApi.register(userData);
+      const response = await authAPI.register(userData);
 
       // Determine user data
       let userProfile: User;
       if (response.user) {
         userProfile = response.user;
       } else {
-        userProfile = await authApi.getProfile();
+        userProfile = await authAPI.getCurrentUser();
       }
 
       // CRITICAL: Sync BOTH auth systems (auto-login after registration)
@@ -237,7 +237,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // 2. Update authStore
       useAuthStore.setState({
         user: userProfile,
-        token: response.accessToken || localStorage.getItem('auth-token') || '',
+        token: response.token || localStorage.getItem('auth-token') || '',
         refreshToken: response.refreshToken || localStorage.getItem('refresh-token') || '',
         isAuthenticated: true,
         sessionExpiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
@@ -276,7 +276,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
    */
   const logout = async (): Promise<void> => {
     await performLogout(async () => {
-      await authApi.logout();
+      await authAPI.logout();
     });
   };
 
@@ -295,7 +295,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const refreshUser = async (): Promise<void> => {
     try {
       setError(null);
-      const userData = await authApi.getProfile();
+      const userData = await authAPI.getCurrentUser();
 
       // CRITICAL: Sync BOTH auth systems
       // 1. Update AuthContext

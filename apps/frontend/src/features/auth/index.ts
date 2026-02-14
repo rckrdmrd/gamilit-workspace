@@ -15,8 +15,8 @@ export {
   useRole
 } from './hooks';
 
-// Providers
-export { AuthProvider, useAuthContext } from './providers/AuthProvider';
+// Providers — canonical AuthProvider is at app/providers/AuthContext.tsx
+// Feature-scoped AuthProvider was removed (CORR-FE-002, 0 external importers)
 
 // API
 export { apiClient, authAPI } from './api';

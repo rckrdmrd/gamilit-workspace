@@ -84,8 +84,6 @@ import type { AdminAction, SystemAlert, UserActivityData } from '@/apps/admin/ty
 /**
  * Get admin dashboard data
  * Includes: stats, recent activity, growth data
- *
- * Status: Backend NOT implemented (P0)
  */
 export async function getAdminDashboard(): Promise<DashboardData> {
   try {
@@ -521,8 +519,6 @@ export async function deleteMediaFile(id: string): Promise<void> {
 
 /**
  * Get approval history
- *
- * Status: Backend NOT implemented (P2)
  */
 export async function getApprovalHistory(page = 1): Promise<PaginatedResponse<ApprovalHistory>> {
   try {
@@ -689,8 +685,6 @@ export async function updateUser(id: string, updates: Partial<User>): Promise<Us
 
 /**
  * Delete user
- *
- * Status: Backend NOT implemented (P0)
  */
 export async function deleteUser(id: string): Promise<void> {
   try {
@@ -702,8 +696,6 @@ export async function deleteUser(id: string): Promise<void> {
 
 /**
  * Activate user
- *
- * Status: Backend NOT implemented (P0)
  */
 export async function activateUser(id: string): Promise<User> {
   try {
@@ -716,8 +708,6 @@ export async function activateUser(id: string): Promise<User> {
 
 /**
  * Deactivate user
- *
- * Status: Backend NOT implemented (P0)
  */
 export async function deactivateUser(id: string): Promise<User> {
   try {
@@ -730,8 +720,6 @@ export async function deactivateUser(id: string): Promise<User> {
 
 /**
  * Suspend user
- *
- * Status: Backend NOT implemented (P0)
  */
 export async function suspendUser(id: string): Promise<User> {
   try {
@@ -744,8 +732,6 @@ export async function suspendUser(id: string): Promise<User> {
 
 /**
  * Unsuspend user
- *
- * Status: Backend NOT implemented (P0)
  */
 export async function unsuspendUser(id: string): Promise<User> {
   try {
@@ -762,8 +748,6 @@ export async function unsuspendUser(id: string): Promise<User> {
 
 /**
  * Get list of roles
- *
- * Status: Backend NOT implemented (P0)
  */
 export async function getRoles(): Promise<Role[]> {
   try {
@@ -776,8 +760,6 @@ export async function getRoles(): Promise<Role[]> {
 
 /**
  * Get role with permissions
- *
- * Status: Backend NOT implemented (P0)
  */
 export async function getRolePermissions(roleId: string): Promise<RolePermissions> {
   try {
@@ -806,8 +788,6 @@ function transformPermissionsToBackend(permissions: Permission[]): Record<string
 /**
  * Update role permissions
  *
- * Status: Backend NOT implemented (P0)
- *
  * NOTE: Backend expects permissions as Record<string, boolean>, not Permission[]
  * This function transforms frontend Permission[] to backend format before sending
  */
@@ -831,8 +811,6 @@ export async function updateRolePermissions(
 
 /**
  * Get all available permissions
- *
- * Status: Backend NOT implemented (P0)
  */
 export async function getAvailablePermissions(): Promise<AvailablePermission[]> {
   try {
@@ -851,8 +829,6 @@ export async function getAvailablePermissions(): Promise<AvailablePermission[]> 
 
 /**
  * Get gamification settings
- *
- * Status: Backend NOT implemented (P1)
  */
 export async function getGamificationSettings(): Promise<GamificationSettings> {
   try {
@@ -867,8 +843,6 @@ export async function getGamificationSettings(): Promise<GamificationSettings> {
 
 /**
  * Update gamification settings
- *
- * Status: Backend NOT implemented (P1)
  */
 export async function updateGamificationSettings(
   _category: 'ranks' | 'achievements' | 'economy',
@@ -887,8 +861,6 @@ export async function updateGamificationSettings(
 
 /**
  * Preview gamification changes impact
- *
- * Status: Backend NOT implemented (P1)
  */
 export async function previewGamificationChanges(_changes: Record<string, unknown>): Promise<Record<string, unknown>> {
   try {
@@ -903,8 +875,6 @@ export async function previewGamificationChanges(_changes: Record<string, unknow
 
 /**
  * Restore gamification defaults
- *
- * Status: Backend NOT implemented (P1)
  */
 export async function restoreGamificationDefaults(): Promise<GamificationSettings> {
   try {
@@ -964,8 +934,6 @@ export async function getSystemMetrics(): Promise<SystemMetrics> {
 
 /**
  * Get system logs
- *
- * Status: Backend NOT implemented (P1)
  */
 export async function getSystemLogs(filters?: LogFilters): Promise<PaginatedResponse<LogEntry>> {
   try {
@@ -1087,8 +1055,6 @@ export async function updateSystemConfig(config: SystemConfig): Promise<SystemCo
 
 /**
  * Get config categories
- *
- * Status: Backend NOT implemented (P1)
  */
 export async function getConfigCategories(): Promise<SettingsCategory[]> {
   try {
@@ -1103,8 +1069,6 @@ export async function getConfigCategories(): Promise<SettingsCategory[]> {
 
 /**
  * Get category configuration
- *
- * Status: Backend NOT implemented (P1)
  */
 export async function getCategoryConfig(category: SettingsCategory): Promise<Record<string, unknown>> {
   try {
@@ -1117,8 +1081,6 @@ export async function getCategoryConfig(category: SettingsCategory): Promise<Rec
 
 /**
  * Update category configuration
- *
- * Status: Backend NOT implemented (P1)
  */
 export async function updateCategoryConfig(
   category: SettingsCategory,
@@ -1137,8 +1099,6 @@ export async function updateCategoryConfig(
 
 /**
  * Validate configuration
- *
- * Status: Backend NOT implemented (P1)
  */
 export async function validateConfig(
   category: SettingsCategory,
@@ -1231,8 +1191,6 @@ export async function deleteReport(reportId: string): Promise<void> {
 
 /**
  * Schedule report
- *
- * Status: Backend NOT implemented (P2)
  */
 export async function scheduleReport(reportId: string, schedule: Record<string, unknown>): Promise<Report> {
   try {

@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
+import { useFocusTrap } from '@shared/hooks/useFocusTrap';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -24,7 +25,8 @@ export const Modal: React.FC<ModalProps> = ({
   closeOnEscape = true,
   className = '',
 }) => {
-  const modalRef = useRef<HTMLDivElement>(null);
+  // Focus trap: traps Tab focus inside modal and restores on close (WCAG 2.4.3)
+  const modalRef = useFocusTrap(isOpen);
 
   // Handle escape key
   useEffect(() => {

@@ -19,7 +19,7 @@ export { assignmentsApi, AssignmentsAPI } from './assignmentsApi';
 export { interventionAlertsApi } from './interventionAlertsApi';
 export { teacherMessagesApi } from './teacherMessagesApi';
 export { teacherContentApi } from './teacherContentApi';
-export { manualReviewApi } from './manualReviewApi'; // TASK-2026-01-25: GAP-API-001 resolved
+// manualReviewApi removed — canonical is @/shared/api/manualReviewApi
 export { bonusCoinsApi, BonusCoinsAPI } from './bonusCoinsApi';
 export { exerciseResponsesApi } from './exerciseResponsesApi';
 export type { ExerciseResponsesAPI } from './exerciseResponsesApi';
@@ -150,22 +150,7 @@ export type {
   ReportStats,
 } from './reportsApi';
 
-// Manual Review types (TASK-2026-01-25: GAP-API-001)
-export type {
-  ManualReview,
-  ManualReviewStatus,
-  PaginatedReviewsResponse,
-  ReviewStats,
-  ReviewModuleConfig,
-  ReviewExerciseConfig,
-  ReviewConfigResponse,
-  CompleteReviewResult,
-  GetPendingReviewsParams,
-  CreateReviewDto,
-  UpdateReviewDto,
-  ReturnForRevisionDto,
-  ManualReviewAPI,
-} from './manualReviewApi';
+// Manual Review types — canonical location is @/shared/api/manualReviewApi
 
 // Alert Configuration types (US-PM-007)
 export type {

@@ -141,28 +141,40 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
 
   return (
     <div className="flex h-screen overflow-hidden bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-100">
+      {/* Skip navigation link (WCAG 2.4.1 Bypass Blocks) */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-detective-orange focus:text-white focus:rounded-md focus:text-sm focus:font-medium"
+      >
+        Saltar al contenido principal
+      </a>
+
       {/* GamilitSidebar - Detective Theme */}
-      <GamilitSidebar
-        isOpen={isSidebarOpen}
-        onClose={handleSidebarClose}
-        currentPath={location.pathname}
-        onNavigate={handleNavigate}
-        userRole={(user?.role as 'student' | 'teacher' | 'admin') || 'student'}
-        moduleProgress={[]} // TODO: Fetch module progress
-      />
+      <nav role="navigation" aria-label="Navegación principal">
+        <GamilitSidebar
+          isOpen={isSidebarOpen}
+          onClose={handleSidebarClose}
+          currentPath={location.pathname}
+          onNavigate={handleNavigate}
+          userRole={(user?.role as 'student' | 'teacher' | 'admin') || 'student'}
+          moduleProgress={[]} // TODO: Fetch module progress
+        />
+      </nav>
 
       {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* GamifiedHeader - Detective Theme */}
-        <GamifiedHeader
-          user={user || undefined}
-          onLogout={handleLogout}
-          gamificationData={gamificationData}
-          organizationName="GAMILIT"
-        />
+        <header role="banner">
+          <GamifiedHeader
+            user={user || undefined}
+            onLogout={handleLogout}
+            gamificationData={gamificationData}
+            organizationName="GAMILIT"
+          />
+        </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-100">
+        <main id="main-content" role="main" className="flex-1 overflow-y-auto bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-100">
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">{children}</div>
         </main>
       </div>

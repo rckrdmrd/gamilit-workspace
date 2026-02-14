@@ -5,7 +5,7 @@
  */
 
 // Tailwind className utility
-export * from './cn.util';
+export * from './cn';
 
 // Storage utility
 export * from './storage.util';

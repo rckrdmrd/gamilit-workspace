@@ -4,6 +4,6 @@
  * Exports custom hooks
  */
 
-export { useAchievements } from './useAchievements';
+// useAchievements removed (CORR-FE-003) — use @/features/gamification/social/hooks/useAchievements
 export { useBranding } from './useBranding';
 export { useFavicon, useDocumentTitle, useBrandingMeta } from './useFavicon';

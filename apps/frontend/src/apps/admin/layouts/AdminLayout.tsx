@@ -56,24 +56,36 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
+      {/* Skip navigation link (WCAG 2.4.1 Bypass Blocks) */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-detective-orange focus:text-white focus:rounded-md focus:text-sm focus:font-medium"
+      >
+        Saltar al contenido principal
+      </a>
+
       {/* Header */}
-      <GamifiedHeader
-        user={user}
-        gamificationData={gamificationData}
-        organizationName={organizationName}
-        onLogout={handleLogout}
-      />
+      <header role="banner">
+        <GamifiedHeader
+          user={user}
+          gamificationData={gamificationData}
+          organizationName={organizationName}
+          onLogout={handleLogout}
+        />
+      </header>
 
       {/* Main Content Area */}
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Sidebar */}
-        <GamilitSidebar
-          isOpen={isSidebarOpen}
-          userRole="admin"
-          currentPath={location.pathname}
-          onNavigate={handleNavigate}
-          onClose={() => setIsSidebarOpen(false)}
-        />
+        <nav role="navigation" aria-label="Navegación principal">
+          <GamilitSidebar
+            isOpen={isSidebarOpen}
+            userRole="admin"
+            currentPath={location.pathname}
+            onNavigate={handleNavigate}
+            onClose={() => setIsSidebarOpen(false)}
+          />
+        </nav>
 
         {/* Mobile Menu Button */}
         <button
@@ -86,6 +98,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
         {/* Content */}
         <main
+          id="main-content"
+          role="main"
           className={`flex-1 overflow-y-auto transition-all duration-300 ${
             isSidebarOpen ? 'lg:ml-80' : ''
           }`}

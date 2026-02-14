@@ -30,63 +30,8 @@ import type {
 // ============================================================================
 // ACHIEVEMENTS API
 // ============================================================================
-
-/**
- * Get all achievements
- *
- * @param category - Optional category filter
- * @returns List of all achievements
- */
-export const getAchievements = async (category?: string): Promise<Achievement[]> => {
-  try {
-    if (FEATURE_FLAGS.USE_MOCK_DATA) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      return [];
-    }
-
-    const { data } = await apiClient.get<ApiResponse<Achievement[]>>(
-      API_ENDPOINTS.achievements.list,
-      { params: { category } },
-    );
-
-    return data.data;
-  } catch (error) {
-    throw handleAPIError(error);
-  }
-};
-
-/**
- * Get single achievement by ID
- *
- * @param achievementId - Achievement ID
- * @returns Achievement data
- */
-export const getAchievement = async (achievementId: string): Promise<Achievement> => {
-  try {
-    if (FEATURE_FLAGS.USE_MOCK_DATA) {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return {
-        id: achievementId,
-        title: 'First Steps',
-        description: 'Complete your first exercise',
-        category: 'progress',
-        rarity: 'common',
-        mlCoinsReward: 25,
-        xpReward: 50,
-        icon: 'Star',
-        isUnlocked: false,
-      };
-    }
-
-    const { data } = await apiClient.get<ApiResponse<Achievement>>(
-      API_ENDPOINTS.achievements.get(achievementId),
-    );
-
-    return data.data;
-  } catch (error) {
-    throw handleAPIError(error);
-  }
-};
+// NOTE: getAchievements and getAchievement removed — canonical is @/lib/api/gamification.api.ts
+// (getAllAchievements, getAchievementById)
 
 /**
  * Unlock achievement
@@ -1118,9 +1063,7 @@ export const getFriendActivities = async (limit?: number): Promise<FriendActivit
 // ============================================================================
 
 export default {
-  // Achievements
-  getAchievements,
-  getAchievement,
+  // Achievements (getAchievements/getAchievement removed — use @/lib/api/gamification.api)
   unlockAchievement,
   updateAchievementProgress,
   getAchievementStats,
