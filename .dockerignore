@@ -1,0 +1,42 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build output
+**/dist
+**/build
+
+# Git
+.git
+.gitignore
+
+# Documentation & Orchestration (not needed in containers)
+docs/
+orchestration/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# Test files
+**/__tests__
+**/*.spec.ts
+**/*.test.ts
+**/coverage
+**/playwright-report
+**/playwright-results
+
+# OS
+.DS_Store
+Thumbs.db

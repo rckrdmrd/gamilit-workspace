@@ -203,7 +203,7 @@ Before marking ANY task as completed:
 
 ### 3. Git Finalized
 [ ] All changes committed
-[ ] Pushed to origin/main
+[ ] Pushed to origin/master
 ```
 
 ---

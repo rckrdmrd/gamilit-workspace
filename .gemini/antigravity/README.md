@@ -151,7 +151,7 @@ Load profile from `../../../../orchestration/agents/perfiles/`:
 1. Create test report in orchestration/testing/reportes/
 2. Update task status in TAREAS-PENDIENTES-GAMILIT.yml
 3. Commit: git add . && git commit -m "[GAM-TEST-XXX] test: description"
-4. Push: git push origin main
+4. Push: git push origin master
 ```
 
 ---

@@ -1,7 +1,7 @@
 # GAMILIT - Plataforma de Gamificacion Educativa
 
-**Version:** 2.0.0
-**Ultima actualizacion:** 2026-02-07
+**Version:** 3.0.0
+**Ultima actualizacion:** 2026-02-14
 **Estado:** Produccion Activa - MVP 98% Completado
 
 ---
@@ -11,7 +11,7 @@
 **GAMILIT** (Gamificacion Maya para la Lectoescritura en Tecnologia) es una plataforma educativa que integra la cultura maya con mecanicas de gamificacion para mejorar la comprension lectora de estudiantes K-12.
 
 **Tipo:** STANDALONE (L2A — STANDALONE_HEREDERO)
-**Stack:** NestJS 11 + React 19 + PostgreSQL 16 + Redis + Socket.IO 4.8+ + Vite 7.x
+**Stack:** NestJS 11 + React 19 + PostgreSQL 15 + Redis + Socket.IO 4.8+ + Vite 6.x
 
 ---
 
@@ -31,9 +31,9 @@
 |------|------------|---------|
 | **Backend** | NestJS + TypeORM | 11.x + 0.3.x |
 | **Frontend** | React + Zustand + TailwindCSS | 19.x + 5.x + 4.x |
-| **Base de Datos** | PostgreSQL (RLS) | 16.x |
+| **Base de Datos** | PostgreSQL (RLS) | 15.x |
 | **Runtime** | Node.js | 20.x |
-| **Build** | Vite (frontend), tsc (backend) | 7.x |
+| **Build** | Vite (frontend), tsc (backend) | 6.x |
 | **Testing** | Jest (backend), Vitest (frontend) | - |
 | **Real-time** | Socket.IO | 4.8+ |
 | **Auth** | JWT + Passport + RBAC | - |
@@ -46,12 +46,12 @@
 ```
 gamilit/
 +-- apps/                      # MONOREPO (mismo repositorio)
-|   +-- backend/               # NestJS 11 (22 modulos, 850 endpoints)
+|   +-- backend/               # NestJS 11 (22 modulos, 899 endpoints)
 |   +-- frontend/              # React 19 + Zustand + TailwindCSS
-|   +-- database/              # PostgreSQL 16 DDL (18 schemas, 171 tablas)
+|   +-- database/              # PostgreSQL 15 DDL (18 schemas, 169 tablas)
 |   +-- devops/                # Deployment scripts
 |   +-- _MAP.md
-+-- docs/                      # Documentacion del producto (6 secciones)
++-- docs/                      # Documentacion del producto (11 secciones)
 |   +-- 00-overview/
 |   +-- 10-requirements/
 |   +-- 20-architecture/
@@ -59,7 +59,7 @@ gamilit/
 |   +-- 40-api/
 |   +-- 90-adr/
 +-- orchestration/             # Sistema SIMCO local
-    +-- inventory/
+    +-- inventarios/
     +-- work-items/
     +-- references/
 ```
@@ -100,12 +100,12 @@ Diario multimedia, Comic digital, Video carta (estudiante elige 1 de 3)
 
 | Categoria | Metricas |
 |-----------|----------|
-| **Base de Datos** | 18 schemas, 171 tablas, 282 politicas RLS, 128 funciones, 49 triggers, 36 ENUMs |
-| **Backend** | 22 modulos, 141 entities, 145 services, 103 controllers, 850 endpoints, 412 DTOs |
-| **Frontend** | 458 componentes, 85 paginas, 4 portales, 32 stores Zustand, 127 hooks |
-| **Calidad** | 833 tests pasando, 82.5% coherencia DDL-Backend |
+| **Base de Datos** | 18 schemas, 169 tablas, 207 politicas RLS, 183 funciones (DDL), 67 triggers, 40 ENUMs |
+| **Backend** | 22 modulos, 152 entities, 170 services, 107 controllers, 899 endpoints, 399 DTOs |
+| **Frontend** | 474 componentes, 68 paginas, 4 portales, 14 stores Zustand, 101 hooks |
+| **Calidad** | 833 tests pasando, 90.5% coherencia DDL-Backend |
 
-> **Fuente:** `orchestration/inventory/MASTER_INVENTORY.yml`
+> **Fuente:** `orchestration/inventarios/MASTER_INVENTORY.yml`
 
 ---
 
@@ -131,7 +131,7 @@ Diario multimedia, Comic digital, Video carta (estudiante elige 1 de 3)
 - **Misiones:** Retos diarios y semanales con recompensas
 
 ### Logros e Insignias
-- 40+ mecanicas de juego integradas
+- 30 mecanicas de ejercicio interactivo
 - Badges por hitos academicos y sociales
 - Milestones de progreso por modulo
 
@@ -173,7 +173,7 @@ bash apps/database/scripts/recreate-database.sh
 ## Git Repository
 
 **Remote:** GitHub - `git@github.com:rckrdmrd/gamilit-workspace.git`
-**Branch:** main
+**Branch:** master
 **Tipo:** MONOREPO (NO submodules)
 
 ---
@@ -204,12 +204,12 @@ Gamilit es fuente de patrones que se extraen a `shared/catalog/`:
 - **ADRs:** `docs/90-adr/`
 
 ### Inventarios
-- `orchestration/inventory/MASTER_INVENTORY.yml`
-- `orchestration/inventory/DATABASE_INVENTORY.yml`
-- `orchestration/inventory/BACKEND_INVENTORY.yml`
-- `orchestration/inventory/FRONTEND_INVENTORY.yml`
+- `orchestration/inventarios/MASTER_INVENTORY.yml`
+- `orchestration/inventarios/DATABASE_INVENTORY.yml`
+- `orchestration/inventarios/BACKEND_INVENTORY.yml`
+- `orchestration/inventarios/FRONTEND_INVENTORY.yml`
 
 ---
 
-*Ultima actualizacion: 2026-02-07*
+*Ultima actualizacion: 2026-02-14*
 *Sistema SIMCO v4.0.0 + NEXUS v4.1*

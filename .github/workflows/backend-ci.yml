@@ -3,16 +3,14 @@ name: Backend CI
 on:
   push:
     branches:
-      - main
-      - develop
+      - master
     paths:
       - 'apps/backend/**'
       - 'apps/database/**'
       - '.github/workflows/backend-ci.yml'
   pull_request:
     branches:
-      - main
-      - develop
+      - master
     paths:
       - 'apps/backend/**'
       - 'apps/database/**'
@@ -45,13 +43,11 @@ jobs:
 
       - name: Run ESLint
         working-directory: apps/backend
-        run: npm run lint || echo "⚠️ Linting errors exist, but continuing"
-        continue-on-error: true
+        run: npm run lint
 
       - name: Check code formatting (Prettier)
         working-directory: apps/backend
-        run: npm run format -- --check || echo "⚠️ Code formatting check"
-        continue-on-error: true
+        run: npm run format -- --check
 
   # Job 2: TypeScript Type Checking
   type-check:
@@ -75,8 +71,7 @@ jobs:
 
       - name: Run TypeScript compilation
         working-directory: apps/backend
-        run: npm run build || echo "⚠️ TypeScript compilation has errors (known issue from Day 3 analysis)"
-        continue-on-error: true
+        run: npm run build
 
   # Job 3: Unit Tests
   unit-tests:
@@ -118,13 +113,14 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/gamilit_test
           NODE_ENV: test
-        run: npm test || echo "⚠️ Tests need database schema setup"
-        continue-on-error: true
+        run: npm test
 
       - name: Generate coverage report
         working-directory: apps/backend
-        run: npm run test:cov || echo "Coverage generation skipped"
-        continue-on-error: true
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/gamilit_test
+          NODE_ENV: test
+        run: npm run test:cov
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -157,8 +153,7 @@ jobs:
 
       - name: Build application
         working-directory: apps/backend
-        run: npm run build || echo "⚠️ Build has errors (known pre-existing issues)"
-        continue-on-error: true
+        run: npm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -166,7 +161,6 @@ jobs:
           name: backend-dist-${{ github.sha }}
           path: apps/backend/dist/
           retention-days: 7
-        continue-on-error: true
 
   # Job 5: Database Schema Validation
   database-validation:
@@ -215,7 +209,6 @@ jobs:
               echo "⚠️ Potential syntax error in $file"
             fi
           done
-        continue-on-error: true
 
   # Job 6: API Documentation Check
   api-docs-check:
@@ -267,7 +260,6 @@ jobs:
       - name: Run npm audit
         working-directory: apps/backend
         run: npm audit --production --audit-level=high
-        continue-on-error: true
 
       - name: Check for environment variables
         working-directory: apps/backend

@@ -265,7 +265,7 @@ quick_patterns:
       - "CLAUDE.md"
       - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
       - "orchestration/directivas/simco/SIMCO-DDL.md"
-      - "orchestration/agents/perfiles/PERFIL-DDL-SPECIALIST.md"
+      - "orchestration/agents/perfiles/PERFIL-DATABASE-POSTGRESQL.md"
       - "{PROJECT_ROOT}/database/ddl/"
 
   testing_task:
@@ -282,7 +282,7 @@ quick_patterns:
       - "CLAUDE.md"
       - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
       - "orchestration/directivas/simco/SIMCO-FRONTEND.md"
-      - "orchestration/agents/perfiles/PERFIL-FRONTEND-DEVELOPER.md"
+      - "orchestration/agents/perfiles/PERFIL-FRONTEND-REACT.md"
 
   git_task:
     description: "Git operations (commit, push, etc.)"
@@ -290,7 +290,7 @@ quick_patterns:
       - "CLAUDE.md"
       - "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
       - "orchestration/directivas/simco/SIMCO-GIT.md"
-      - "orchestration/directivas/simco/SIMCO-SUBMODULOS.md"
+      - "orchestration/directivas/simco/SIMCO-MONOREPO.md"
 
   multi_agent_task:
     description: "Task involving multiple agents"

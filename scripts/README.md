@@ -68,7 +68,7 @@ export DB_PASSWORD="tu_password_aqui"
 ```
 1. Respaldar configuraciones (.env) fuera del repo
 2. Respaldar base de datos (pg_dump)
-3. git fetch && git reset --hard origin/main
+3. git fetch && git reset --hard origin/master
 4. Restaurar configuraciones
 5. Recrear base de datos limpia (create-database.sh)
 6. npm install + npm run build

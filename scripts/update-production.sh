@@ -154,10 +154,10 @@ git branch --show-current
 
 echo "Commits pendientes:"
 git fetch origin
-git log HEAD..origin/main --oneline 2>/dev/null || echo "Ya esta actualizado"
+git log HEAD..origin/master --oneline 2>/dev/null || echo "Ya esta actualizado"
 
 # Reset a remoto (preferencia a remoto)
-git reset --hard origin/main
+git reset --hard origin/master
 
 echo "Ultimo commit:"
 git log --oneline -1

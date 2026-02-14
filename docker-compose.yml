@@ -1,0 +1,91 @@
+# ============================================================================
+# GAMILIT - Docker Compose for Local Development
+# @ref GUIA-DOCKER-MULTISTAGE §6
+#
+# Usage:
+#   docker-compose up -d          # Start all services
+#   docker-compose up -d postgres redis  # Start only infrastructure
+#   docker-compose logs -f backend  # Follow backend logs
+#   docker-compose down            # Stop all
+# ============================================================================
+
+version: '3.8'
+
+services:
+  # PostgreSQL 15 with init scripts
+  postgres:
+    image: postgres:15-alpine
+    container_name: gamilit-postgres
+    environment:
+      POSTGRES_DB: gamilit_platform
+      POSTGRES_USER: gamilit_user
+      POSTGRES_PASSWORD: gamilit_dev_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./apps/database/ddl:/docker-entrypoint-initdb.d/ddl:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gamilit_user -d gamilit_platform"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Redis 7
+  redis:
+    image: redis:7-alpine
+    container_name: gamilit-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend (NestJS)
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: gamilit-backend
+    environment:
+      NODE_ENV: development
+      PORT: 3006
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: gamilit_user
+      DB_PASSWORD: gamilit_dev_2026
+      DB_DATABASE: gamilit_platform
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-dev-only-secret-must-change-in-production-32chars}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-only-refresh-secret-must-change-prod-32chars}
+      CORS_ORIGIN: http://localhost:3005
+    ports:
+      - "3006:3006"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Frontend (Nginx serving built React app)
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    container_name: gamilit-frontend
+    ports:
+      - "3005:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
