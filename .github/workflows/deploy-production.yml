@@ -186,13 +186,13 @@ jobs:
 
     steps:
       - name: Download frontend artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: frontend-production-${{ github.sha }}
           path: ./frontend-dist
 
       - name: Download backend artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: backend-production-${{ github.sha }}
           path: ./backend-dist
@@ -236,13 +236,13 @@ jobs:
 
     steps:
       - name: Download frontend artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: frontend-production-${{ github.sha }}
           path: ./frontend-dist
 
       - name: Download backend artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: backend-production-${{ github.sha }}
           path: ./backend-dist
