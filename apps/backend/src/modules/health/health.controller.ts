@@ -1,13 +1,19 @@
-import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Res, Header } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { HealthService } from './health.service';
+import { MetricsService } from './metrics.service';
 import { HealthCheckSchema, HealthStatus } from './dto/health-check.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('Health')
 @Controller('health')
+@SkipThrottle()
 export class HealthController {
-  constructor(private readonly healthService: HealthService) {}
+  constructor(
+    private readonly healthService: HealthService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   @Get()
   @ApiOperation({
@@ -94,5 +100,63 @@ export class HealthController {
       health.status === HealthStatus.HEALTHY ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
 
     return res.status(statusCode).json(health);
+  }
+
+  /**
+   * Liveness probe — is the process alive?
+   * Used by Kubernetes/Docker HEALTHCHECK. Only checks if the process responds.
+   */
+  @Get('live')
+  @ApiOperation({
+    summary: 'Liveness probe',
+    description: 'Returns 200 if the process is alive. Does not check dependencies.',
+  })
+  @ApiResponse({ status: 200, description: 'Process is alive' })
+  async live(): Promise<{ status: string; timestamp: string }> {
+    return {
+      status: 'alive',
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Readiness probe — is the service ready to accept traffic?
+   * Checks database and Redis connectivity.
+   */
+  @Get('ready')
+  @ApiOperation({
+    summary: 'Readiness probe',
+    description: 'Returns 200 if all dependencies (DB, Redis) are healthy. Returns 503 if not ready.',
+  })
+  @ApiResponse({ status: 200, description: 'Service is ready to accept traffic' })
+  @ApiResponse({ status: 503, description: 'Service is not ready' })
+  async ready(@Res() res: Response): Promise<Response> {
+    const health = await this.healthService.checkHealth();
+
+    const statusCode =
+      health.status === HealthStatus.HEALTHY ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
+
+    return res.status(statusCode).json({
+      status: health.status,
+      timestamp: new Date().toISOString(),
+      checks: {
+        database: health.checks.database?.status || 'unknown',
+        redis: health.checks.redis?.status || 'unknown',
+      },
+    });
+  }
+
+  /**
+   * Prometheus metrics endpoint
+   */
+  @Get('metrics')
+  @Header('Content-Type', 'text/plain; version=0.0.4; charset=utf-8')
+  @ApiOperation({
+    summary: 'Prometheus metrics',
+    description: 'Returns application metrics in Prometheus text format for scraping.',
+  })
+  @ApiResponse({ status: 200, description: 'Prometheus metrics in text format' })
+  async metrics(): Promise<string> {
+    return this.metricsService.getPrometheusMetrics();
   }
 }

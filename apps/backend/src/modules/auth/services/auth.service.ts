@@ -232,16 +232,23 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user) {
-      await this.logAuthAttempt(null, email, false, ip, userAgent, 'Usuario no encontrado');
-      throw new UnauthorizedException('Credenciales inválidas');
-    }
+    // 2. Constant-time password validation (prevents timing attack / user enumeration)
+    // Always run bcrypt.compare regardless of whether user exists
+    const dummyHash = '$2b$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ012';
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user?.encrypted_password || dummyHash,
+    );
 
-    // 2. Validar password
-    const isPasswordValid = await bcrypt.compare(password, user.encrypted_password);
-
-    if (!isPasswordValid) {
-      await this.logAuthAttempt(user.id, email, false, ip, userAgent, 'Password incorrecto');
+    if (!user || !isPasswordValid) {
+      await this.logAuthAttempt(
+        user?.id || null,
+        email,
+        false,
+        ip,
+        userAgent,
+        !user ? 'Usuario no encontrado' : 'Password incorrecto',
+      );
       throw new UnauthorizedException('Credenciales inválidas');
     }
 

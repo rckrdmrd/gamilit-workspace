@@ -19,6 +19,7 @@ import {
   ApiBody,
   ApiQuery,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { PasswordRecoveryService, EmailVerificationService } from '../services';
 import {
   RequestPasswordResetDto,
@@ -57,6 +58,7 @@ export class PasswordController {
    * Solicitar reset de contraseña
    */
   @Post('reset-password/request')
+  @Throttle({ default: { ttl: 60000, limit: 3 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Solicitar reset de contraseña',

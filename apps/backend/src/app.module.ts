@@ -3,13 +3,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ScheduleModule } from '@nestjs/schedule';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 // Configurations
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
 import envConfig from './config/env.config';
+import redisConfig from './config/redis.config';
+import { validateEnv } from './config/env.validation';
 
 // Modules
 import { AuthModule } from './modules/auth/auth.module';
@@ -28,19 +33,23 @@ import { AuditModule } from './modules/audit/audit.module';
 import { AssignmentsModule } from './modules/assignments/assignments.module';
 import { HealthModule } from './modules/health/health.module';
 import { ParentsModule } from './modules/parents/parents.module';
+import { CommunicationModule } from './modules/communication/communication.module';
+import { LtiModule } from './modules/lti/lti.module';
 
 // Shared
 import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
 import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor';
+import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
 
 @Module({
   imports: [
     // Global configuration
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, jwtConfig, envConfig],
+      load: [appConfig, databaseConfig, jwtConfig, envConfig, redisConfig],
       envFilePath: ['.env.local', '.env'],
       cache: true,
+      validate: validateEnv,
     }),
 
     // Global cache configuration
@@ -57,6 +66,19 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
     // Schedule module for cron jobs (cleanup, reports, etc.)
     ScheduleModule.forRoot(),
 
+    // Rate limiting (ESTANDAR-SEGURIDAD §3.4 API4: Unrestricted Resource Consumption)
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,   // 1 minute window
+          limit: 100,   // 100 requests per minute per IP (global default)
+        },
+      ],
+    }),
+
+    // Event emitter for decoupled domain events (exercise -> XP -> achievement -> notification)
+    EventEmitterModule.forRoot(),
+
     // Database connection for 'auth_management' schema
     TypeOrmModule.forRootAsync({
       name: 'auth',  // Connection name for @InjectRepository(Entity, 'auth')
@@ -68,7 +90,20 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [__dirname + '/modules/auth/entities/**/*.entity{.ts,.js}'],
+        entities: [
+          __dirname + '/modules/auth/entities/**/*.entity{.ts,.js}',
+          // FIX-CORR-002: Admin entities registered via forFeature('auth') in admin.module.ts
+          __dirname + '/modules/admin/entities/system-setting.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/feature-flag.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/notification-settings.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/notification-settings-global.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/bulk-operation.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/tenant-configuration.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/api-configuration.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/environment-config.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/gamification-parameter.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/rate-limit.entity{.ts,.js}',
+        ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),
@@ -119,7 +154,8 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
         database: configService.get('database.database'),
         entities: [
           __dirname + '/modules/gamification/entities/**/*.entity{.ts,.js}',
-          __dirname + '/modules/notifications/entities/notification.entity{.ts,.js}',
+          // FIX-CORR-001: Removed broken path '/modules/notifications/entities/notification.entity'
+          // (file is at multichannel/notification.entity.ts, already covered by notifications datasource L285)
           // FIX-BE-014-2026-01-28: Required for UserStats @OneToOne -> Profile relation
           __dirname + '/modules/auth/entities/profile.entity{.ts,.js}',
           // FIX-BE-014b-2026-01-28: Required for Profile @ManyToOne -> Tenant cascade
@@ -192,6 +228,9 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
           __dirname + '/modules/social/entities/**/*.entity{.ts,.js}',
           __dirname + '/modules/assignments/entities/**/*.entity{.ts,.js}', // Needed for AssignmentClassroom relation
           __dirname + '/modules/teacher/entities/teacher-report.entity{.ts,.js}',
+          // FIX-CORR-005: Teacher entities with social_features schema
+          __dirname + '/modules/teacher/entities/scheduled-report.entity{.ts,.js}',
+          __dirname + '/modules/teacher/entities/shared-report.entity{.ts,.js}',
           // FIX-BE-012: Required for Classroom, ClassroomMember, TeacherClassroom @ManyToOne relations
           __dirname + '/modules/auth/entities/profile.entity{.ts,.js}',
           __dirname + '/modules/auth/entities/tenant.entity{.ts,.js}',
@@ -239,7 +278,14 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [__dirname + '/modules/audit/entities/**/*.entity{.ts,.js}'],
+        entities: [
+          __dirname + '/modules/audit/entities/**/*.entity{.ts,.js}',
+          // FIX-CORR-003: Admin entities with audit_logging schema
+          __dirname + '/modules/admin/entities/system-alert.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/activity-log.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/system-log.entity{.ts,.js}',
+          __dirname + '/modules/admin/entities/performance-metric.entity{.ts,.js}',
+        ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),
@@ -261,7 +307,11 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [__dirname + '/modules/notifications/entities/multichannel/**/*.entity{.ts,.js}'],
+        entities: [
+          __dirname + '/modules/notifications/entities/multichannel/**/*.entity{.ts,.js}',
+          // FIX-CORR-004: rate-limit-log.entity is at root level, not in multichannel/
+          __dirname + '/modules/notifications/entities/rate-limit-log.entity{.ts,.js}',
+        ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),
@@ -283,7 +333,10 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [__dirname + '/modules/teacher/entities/message*.entity{.ts,.js}'],
+        entities: [
+          __dirname + '/modules/communication/entities/**/*.entity{.ts,.js}',
+          __dirname + '/modules/teacher/entities/message*.entity{.ts,.js}',
+        ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),
@@ -310,11 +363,36 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
         database: configService.get('database.database'),
         entities: [
           __dirname + '/modules/admin/entities/admin-report.entity{.ts,.js}',
+          // FIX-CORR-006: Admin entities with admin_dashboard schema
+          __dirname + '/modules/admin/entities/metrics-history.entity{.ts,.js}',
           // FIX-BE-010: Required for AdminReport @ManyToOne relation to User
           __dirname + '/modules/auth/entities/user.entity{.ts,.js}',
           // FIX-BE-011: Required for User @ManyToMany -> Role cascade
           __dirname + '/modules/auth/entities/role.entity{.ts,.js}',
         ],
+        synchronize: configService.get('database.synchronize', false),
+        logging: configService.get('database.logging'),
+        ssl: configService.get('database.ssl'),
+        extra: configService.get('database.extra'),
+        retryAttempts: configService.get('database.retryAttempts', 5),
+        retryDelay: configService.get('database.retryDelay', 5000),
+      }),
+      inject: [ConfigService],
+    }),
+
+    // Database connection for 'lti_integration' schema
+    // FIX-CORR-007: LTI module referenced 'lti' datasource but it didn't exist
+    TypeOrmModule.forRootAsync({
+      name: 'lti',  // 11th datasource for LTI integration
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('database.host'),
+        port: configService.get('database.port'),
+        username: configService.get('database.username'),
+        password: configService.get('database.password'),
+        database: configService.get('database.database'),
+        entities: [__dirname + '/modules/lti/entities/**/*.entity{.ts,.js}'],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),
@@ -342,9 +420,21 @@ import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor
     AssignmentsModule, // Teacher assignment management
     HealthModule, // Health check endpoint for monitoring
     ParentsModule, // EXT-010: Parent notifications and weekly reports
+    CommunicationModule, // GAP-SOC-003: Conversation entities for communication schema
+    LtiModule, // FIX-CORR-007: LTI 1.3 integration module (40 endpoints)
   ],
   controllers: [],
   providers: [
+    // Global rate limiting guard (ThrottlerModule)
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    // Global Tracing Interceptor for OpenTelemetry spans + correlation IDs
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TracingInterceptor,
+    },
     // Global RLS Interceptor for Row Level Security
     {
       provide: APP_INTERCEPTOR,

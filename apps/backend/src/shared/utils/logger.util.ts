@@ -1,10 +1,13 @@
 /**
  * Logger Utility
  *
- * Winston-based logging utility for the application.
+ * Winston-based structured logging utility.
+ * 12-Factor App compliant: logs to stdout only as JSON (Factor XI).
+ * File transports removed — log aggregation handled by external systems (PM2, Docker, CloudWatch).
  */
 
 import winston from 'winston';
+import { AsyncLocalStorage } from 'async_hooks';
 
 // Note: This creates a circular dependency during build.
 // Environment variables are accessed directly via process.env as a workaround.
@@ -12,72 +15,62 @@ const logLevel = process.env.LOG_LEVEL || 'info';
 const nodeEnv = process.env.NODE_ENV || 'development';
 
 /**
- * Log format
+ * AsyncLocalStorage for correlation IDs (request tracing)
  */
-const logFormat = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+export const correlationStorage = new AsyncLocalStorage<{ correlationId: string }>();
+
+/**
+ * JSON format for structured logging (production)
+ * Includes: timestamp, level, message, service, version, environment, correlationId
+ */
+const jsonFormat = winston.format.combine(
+  winston.format.timestamp({ format: 'YYYY-MM-DDTHH:mm:ss.SSSZ' }),
   winston.format.errors({ stack: true }),
   winston.format.splat(),
-  winston.format.printf(({ timestamp, level, message, stack }) => {
-    return stack
-      ? `${timestamp} [${level.toUpperCase()}]: ${message}\n${stack}`
-      : `${timestamp} [${level.toUpperCase()}]: ${message}`;
-  }),
+  winston.format((info) => {
+    const store = correlationStorage.getStore();
+    if (store?.correlationId) {
+      info.correlationId = store.correlationId;
+    }
+    return info;
+  })(),
+  winston.format.json(),
 );
 
 /**
- * Console format with colors
+ * Human-readable format for development
  */
-const consoleFormat = winston.format.combine(
+const devFormat = winston.format.combine(
   winston.format.colorize(),
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  winston.format.printf(({ timestamp, level, message, stack }) => {
+  winston.format.errors({ stack: true }),
+  winston.format.printf(({ timestamp, level, message, stack, correlationId }) => {
+    const cid = correlationId ? ` [${correlationId}]` : '';
     return stack
-      ? `${timestamp} ${level}: ${message}\n${stack}`
-      : `${timestamp} ${level}: ${message}`;
+      ? `${timestamp} ${level}${cid}: ${message}\n${stack}`
+      : `${timestamp} ${level}${cid}: ${message}`;
   }),
 );
 
 /**
  * Winston Logger Instance
+ *
+ * Production: JSON to stdout only (12-Factor compliant)
+ * Development: Human-readable colored output to stdout
  */
 export const logger = winston.createLogger({
   level: logLevel,
-  format: logFormat,
-  defaultMeta: { service: 'gamilit-backend' },
+  defaultMeta: {
+    service: 'gamilit-backend',
+    version: process.env.APP_VERSION || '1.0.0',
+    environment: nodeEnv,
+  },
   transports: [
-    // Console transport
     new winston.transports.Console({
-      format: consoleFormat,
-    }),
-
-    // File transport for errors
-    new winston.transports.File({
-      filename: 'logs/error.log',
-      level: 'error',
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
-
-    // File transport for all logs
-    new winston.transports.File({
-      filename: 'logs/combined.log',
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
+      format: nodeEnv === 'production' ? jsonFormat : devFormat,
     }),
   ],
 });
-
-/**
- * Development logging
- */
-if (nodeEnv !== 'production') {
-  logger.add(
-    new winston.transports.Console({
-      format: consoleFormat,
-    }),
-  );
-}
 
 /**
  * Helper logging functions

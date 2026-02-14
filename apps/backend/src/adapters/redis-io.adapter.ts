@@ -47,11 +47,11 @@ export class RedisIoAdapter extends IoAdapter {
     this.corsOrigins = corsOrigins;
     this.config = {
       url: process.env.REDIS_URL || 'redis://localhost:6379',
-      db: parseInt(process.env.REDIS_SOCKET_DB || '1', 10),
+      db: parseInt(process.env.REDIS_SOCKET_DB || '0', 10),
       password: process.env.REDIS_PASSWORD || undefined,
       keyPrefix: process.env.REDIS_SOCKET_PREFIX || 'gamilit:socket:',
       retryDelayMs: parseInt(process.env.REDIS_RETRY_DELAY_MS || '1000', 10),
-      maxRetries: parseInt(process.env.REDIS_MAX_RETRIES || '5', 10),
+      maxRetries: parseInt(process.env.REDIS_MAX_RETRIES || '10', 10),
       ...config,
     };
   }
@@ -70,11 +70,15 @@ export class RedisIoAdapter extends IoAdapter {
         password: this.config.password,
         socket: {
           reconnectStrategy: (retries: number) => {
-            if (retries >= (this.config.maxRetries || 5)) {
+            if (retries >= (this.config.maxRetries || 10)) {
               this.logger.error(`Redis max retries (${this.config.maxRetries}) reached, stopping reconnection attempts`);
               return false;
             }
-            const delay = Math.min(retries * (this.config.retryDelayMs || 1000), 30000);
+            // Exponential backoff with jitter: base * 2^retries + random jitter
+            const baseDelay = this.config.retryDelayMs || 1000;
+            const exponentialDelay = Math.min(baseDelay * Math.pow(2, retries), 30000);
+            const jitter = Math.floor(Math.random() * baseDelay);
+            const delay = exponentialDelay + jitter;
             this.logger.warn(`Redis reconnecting in ${delay}ms (attempt ${retries + 1}/${this.config.maxRetries})`);
             return delay;
           },

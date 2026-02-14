@@ -25,7 +25,7 @@ import {
   ConnectedSocket,
   MessageBody,
 } from '@nestjs/websockets';
-import { Logger, UseGuards, Optional } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Server } from 'socket.io';
 import { WsJwtGuard, AuthenticatedSocket } from './guards/ws-jwt.guard';
@@ -54,7 +54,7 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(
     private readonly jwtService: JwtService,
-    @Optional() private readonly messagePersistence?: MessagePersistenceService,
+    private readonly messagePersistence: MessagePersistenceService,
   ) {}
 
   afterInit(_server: Server) {
@@ -121,7 +121,7 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
       });
 
       // If reconnecting, deliver any pending messages
-      if (isReconnection && this.messagePersistence?.isOperational()) {
+      if (isReconnection && this.messagePersistence.isOperational()) {
         this.userLastDisconnect.delete(userId);
         await this.deliverPendingMessages(client, userId);
       }
@@ -255,7 +255,7 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     if (isOnline) {
       this.server.to(room).emit(event, payload);
       this.logger.debug(`Emitted ${event} to user ${userId}`);
-    } else if (persistIfOffline && this.messagePersistence?.isOperational()) {
+    } else if (persistIfOffline && this.messagePersistence.isOperational()) {
       // Store message for later delivery
       await this.messagePersistence.storePendingMessage(userId, event, payload);
       this.logger.debug(`Stored ${event} for offline user ${userId}`);
@@ -319,7 +319,7 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
       const userId = client.userData!.userId;
       const { messageIds } = data;
 
-      if (this.messagePersistence?.isOperational() && messageIds?.length > 0) {
+      if (this.messagePersistence.isOperational() && messageIds?.length > 0) {
         const removed = await this.messagePersistence.removeMessages(userId, messageIds);
         this.logger.debug(`User ${userId} acknowledged ${removed} pending messages`);
         return { success: true, removed };
@@ -349,7 +349,7 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     return {
       connectedUsers: this.userSockets.size,
       totalSockets,
-      messagePersistenceEnabled: this.messagePersistence?.isOperational() || false,
+      messagePersistenceEnabled: this.messagePersistence.isOperational(),
     };
   }
 

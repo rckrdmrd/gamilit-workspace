@@ -19,6 +19,7 @@ import {
   ApiBearerAuth,
   ApiBody,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService, SessionManagementService, SecurityService, TwoFactorAuthService } from '../services';
 import {
   RegisterUserDto,
@@ -63,6 +64,7 @@ export class AuthController {
    * Registro de nuevo usuario
    */
   @Post('register')
+  @Throttle({ default: { ttl: 60000, limit: 3 } })
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Registrar nuevo usuario con auto-login' })
   @ApiResponse({
@@ -91,10 +93,11 @@ export class AuthController {
    * Login de usuario
    */
   @Post('login')
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Autenticación de usuario',
-    description: 'Rate limiting: 5 intentos fallidos por email en 15 minutos',
+    description: 'Rate limiting: 5 intentos por minuto por IP + 5 intentos fallidos por email en 15 minutos',
   })
   @ApiResponse({
     status: 200,
@@ -150,6 +153,7 @@ export class AuthController {
    * Renovar access token
    */
   @Post('refresh')
+  @Throttle({ default: { ttl: 60000, limit: 10 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Renovar access token con refresh token' })
   @ApiResponse({

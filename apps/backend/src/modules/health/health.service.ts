@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { createClient } from 'redis';
 import { HealthCheckDto, HealthCheckDetailDto, HealthStatus } from './dto/health-check.dto';
 
 @Injectable()
@@ -31,9 +32,10 @@ export class HealthService {
     const checks: HealthCheckDto['checks'] = {};
 
     // Run health checks
-    const [databaseCheck, tablesCheck] = await Promise.allSettled([
+    const [databaseCheck, tablesCheck, redisCheck] = await Promise.allSettled([
       this.checkDatabaseConnection(),
       this.checkCriticalTables(),
+      this.checkRedis(),
     ]);
 
     // Process database check
@@ -55,6 +57,17 @@ export class HealthService {
         status: HealthStatus.UNHEALTHY,
         responseTime: 0,
         message: `Tables check failed: ${tablesCheck.reason?.message || 'Unknown error'}`,
+      };
+    }
+
+    // Process Redis check (degraded, not unhealthy — Redis is optional for basic operation)
+    if (redisCheck.status === 'fulfilled') {
+      checks.redis = redisCheck.value;
+    } else {
+      checks.redis = {
+        status: HealthStatus.DEGRADED,
+        responseTime: 0,
+        message: `Redis check failed: ${redisCheck.reason?.message || 'Unknown error'}`,
       };
     }
 
@@ -185,6 +198,73 @@ export class HealthService {
         message: `Tables check failed: ${errorMessage}`,
         details: {
           error: errorMessage,
+        },
+      };
+    }
+  }
+
+  /**
+   * Check Redis connectivity
+   */
+  async checkRedis(): Promise<HealthCheckDetailDto> {
+    const startTime = Date.now();
+    const redisUrl = this.configService.get<string>('redis.url')
+      || process.env.REDIS_URL
+      || 'redis://localhost:6379';
+    const redisDb = this.configService.get<number>('redis.db')
+      ?? parseInt(process.env.REDIS_SOCKET_DB || '0', 10);
+
+    let client: ReturnType<typeof createClient> | null = null;
+
+    try {
+      client = createClient({
+        url: redisUrl,
+        database: redisDb,
+        socket: {
+          connectTimeout: 3000,
+          reconnectStrategy: false,
+        },
+      });
+
+      await client.connect();
+      const pong = await client.ping();
+      const responseTime = Date.now() - startTime;
+
+      await client.quit();
+
+      if (pong === 'PONG') {
+        return {
+          status: HealthStatus.HEALTHY,
+          responseTime,
+          message: 'Redis connected',
+          details: {
+            url: redisUrl.replace(/\/\/([^:]+):([^@]+)@/, '//$1:***@'),
+            db: redisDb,
+          },
+        };
+      }
+
+      return {
+        status: HealthStatus.DEGRADED,
+        responseTime,
+        message: `Redis unexpected response: ${pong}`,
+      };
+    } catch (error) {
+      const responseTime = Date.now() - startTime;
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.warn(`Redis health check failed: ${errorMessage}`);
+
+      if (client?.isOpen) {
+        try { await client.quit(); } catch { /* ignore cleanup errors */ }
+      }
+
+      return {
+        status: HealthStatus.DEGRADED,
+        responseTime,
+        message: `Redis unavailable: ${errorMessage}`,
+        details: {
+          url: redisUrl.replace(/\/\/([^:]+):([^@]+)@/, '//$1:***@'),
+          impact: 'WebSocket horizontal scaling and message persistence disabled',
         },
       };
     }

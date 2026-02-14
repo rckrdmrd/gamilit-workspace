@@ -43,7 +43,7 @@ export class MessagePersistenceService implements OnModuleInit, OnModuleDestroy 
   constructor() {
     this.config = {
       url: process.env.REDIS_URL || 'redis://localhost:6379',
-      db: parseInt(process.env.REDIS_SOCKET_DB || '1', 10),
+      db: parseInt(process.env.REDIS_SOCKET_DB || '0', 10),
       password: process.env.REDIS_PASSWORD || undefined,
       keyPrefix: process.env.REDIS_MESSAGE_PREFIX || 'gamilit:pending:',
       defaultTtlSeconds: parseInt(process.env.REDIS_MESSAGE_TTL || '86400', 10), // 24 hours default
@@ -66,17 +66,23 @@ export class MessagePersistenceService implements OnModuleInit, OnModuleDestroy 
     try {
       this.logger.log('Connecting to Redis for message persistence...');
 
+      const maxRetries = 10;
+      const baseDelay = 1000;
       this.client = createClient({
         url: this.config.url,
         database: this.config.db,
         password: this.config.password,
         socket: {
           reconnectStrategy: (retries: number) => {
-            if (retries >= 5) {
-              this.logger.error('Redis max retries reached for message persistence');
+            if (retries >= maxRetries) {
+              this.logger.error(`Redis max retries (${maxRetries}) reached for message persistence`);
               return false;
             }
-            return Math.min(retries * 1000, 30000);
+            const exponentialDelay = Math.min(baseDelay * Math.pow(2, retries), 30000);
+            const jitter = Math.floor(Math.random() * baseDelay);
+            const delay = exponentialDelay + jitter;
+            this.logger.warn(`Redis message persistence reconnecting in ${delay}ms (attempt ${retries + 1}/${maxRetries})`);
+            return delay;
           },
         },
       }) as RedisClientType;
@@ -145,7 +151,7 @@ export class MessagePersistenceService implements OnModuleInit, OnModuleDestroy 
     ttlSeconds?: number,
   ): Promise<boolean> {
     if (!this.isConnected || !this.client) {
-      this.logger.debug(`Cannot store message for user ${userId}: Redis not connected`);
+      this.logger.warn(`Cannot store message for user ${userId}: Redis not connected`);
       return false;
     }
 
