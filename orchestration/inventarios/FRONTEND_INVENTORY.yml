@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "5.1.0"
-fecha: "2026-02-14"
+version: "6.0.0"
+fecha: "2026-02-15"
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -15,12 +15,12 @@ build: "Vite 6.x"                              # Verificado: package.json ^6.2.0
 # -------------------------------------------------------------------------------
 
 resumen:
-  componentes_tsx: 474                          # 475 - 1 (AuthProvider.tsx deleted CORR-FE-002)
-  hooks: 102                                    # 101 + 1 (useFocusTrap.ts added)
+  componentes_tsx: 480                          # Verified 2026-02-15 broad count (excl test/spec/stories)
+  hooks: 102                                    # Verified 2026-02-15 (incl. useFocusTrap.ts)
   paginas: 68                                   # 68 activas + 1 legacy
   stores_zustand: 14                            # 14 archivos con create() de Zustand
-  api_service_files: 51                         # 52 - 1 (contentAPI.ts deleted CORR-FE-001)
-  api_calls_total: 655                          # 662 - 7 (contentAPI.ts had ~7 apiClient calls)
+  api_service_files: 52                         # Verified 2026-02-15 post-consolidation
+  api_calls_total: 570                          # Verified 2026-02-15 post-deletion recount
   type_definition_files: 47                     # 47 archivos, 415 tipos/interfaces/enums exportados
   portales: 4
   mecanicas_ejercicio: 30                       # 30 mecanicas unicas en 59 archivos .tsx

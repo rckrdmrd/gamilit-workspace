@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "9.0.0"
-fecha: "2026-02-14"
+version: "10.0.0"
+fecha: "2026-02-15"
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -32,7 +32,7 @@ metricas:
     materialized_views: 7
     funciones: 183               # 183 DDL source / 249 runtime (incl. trigger functions)
     triggers: 67                 # 67 CREATE TRIGGER statements (not 126 trigger functions)
-    rls_policies: 207            # 207 CREATE POLICY statements across 4 RLS files
+    rls_policies: 227            # 207 + 20 FORCE RLS Phase 2 (5 high-risk tables)
     foreign_keys: 298
     enums: 42                    # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
 
@@ -51,12 +51,12 @@ metricas:
     tests_backend: 620         # est. 620 backend-specific test cases
 
   frontend:
-    componentes_tsx: 474            # 475 - 1 (AuthProvider.tsx deleted CORR-FE-002)
-    hooks: 102                      # 101 + 1 (useFocusTrap.ts added)
+    componentes_tsx: 480            # Verified 2026-02-15 (broad count, excl. test/spec/stories)
+    hooks: 102                      # Verified 2026-02-15 (incl. useFocusTrap.ts)
     paginas: 68                     # 68 activas + 1 legacy
     stores_zustand: 14              # 14 archivos Zustand con create()
-    api_service_files: 51           # 52 - 1 (contentAPI.ts deleted CORR-FE-001)
-    api_calls_total: 655            # 662 - 7 (contentAPI.ts calls removed)
+    api_service_files: 52           # Verified 2026-02-15 post-consolidation
+    api_calls_total: 570            # Verified 2026-02-15 post-deletion recount (-85)
     portales: 4
     mecanicas_ejercicio: 30         # 30 mecanicas unicas de ejercicio
     routes: 72                      # 72 <Route> definitions en App.tsx

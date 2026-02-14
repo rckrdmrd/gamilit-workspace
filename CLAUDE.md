@@ -428,7 +428,7 @@ proyecto:
 | Materialized Views | 7 |
 | Funciones | 183 (DDL) / 249 (runtime) |
 | Triggers | 67 |
-| Politicas RLS | 207 |
+| Politicas RLS | 227 |
 | Foreign Keys | 298 |
 | ENUMs | 42 |
 
@@ -443,17 +443,17 @@ proyecto:
 | Endpoints | 899 |
 | Guards | 15 |
 | Decorators | 18 |
-| Tests | 833 passing (59 spec files) |
+| Tests | 833 passing (60 spec files) |
 
 ### Frontend
 | Metrica | Valor |
 |---------|-------|
-| Componentes (.tsx prod) | 474 |
+| Componentes (.tsx prod) | 480 |
 | Hooks | 102 |
 | Paginas | 68 |
 | Stores Zustand | 14 |
-| API Service Files | 51 |
-| API Calls Total | 655 |
+| API Service Files | 52 |
+| API Calls Total | 570 |
 | Portales | 4 |
 | Mecanicas Ejercicio | 30 |
 | Routes | 72 |

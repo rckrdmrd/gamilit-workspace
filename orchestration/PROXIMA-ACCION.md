@@ -1,36 +1,45 @@
 # PROXIMA ACCION - GAMILIT
 
 **Ultima Actualizacion:** 2026-02-15
-**Estado del Proyecto:** MVP 98% completado | **FASE A COMPLETADA** | **Production Ready**
+**Estado del Proyecto:** MVP 98% completado | **FASE 0-2 COMPLETADAS** | **Production Ready**
 **Sprint Actual:** Sin sprint activo
-**Ultima Tarea:** TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL (**EN PROGRESO** — SSOT sync + plan desarrollo paralelo)
-**Tareas Pendientes:** Commitear ~82 archivos untracked, Cleanup referencias/ALIASES.yml, Batch-fix ~25 legacy paths en docs/, Normalizar ownership tablas, Fix 12 EPIC ADR refs rotas
+**Ultima Tarea:** TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL (**FASES 0-2 COMPLETADAS** — commits, correcciones paralelas, cross-refs + RLS)
+**Tareas Pendientes:** F4-VALIDATION, temp scripts cleanup, SIMCO archive review
 
 ---
 
 ## Estado Actual
 
-### TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL (2026-02-15) - EN PROGRESO
+### TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL (2026-02-15) - FASES 0-2 COMPLETADAS
 
-**Analisis integral y actualizacion SSOT.** Reconciliacion documentacion vs codigo real.
+**Mega-commit + correcciones paralelas + cross-refs + RLS.**
 
-**FASE 0 — SSOT Sync (COMPLETADA 2026-02-15):**
-- ENUMs 40→42 corregido en CLAUDE.md, MASTER_INVENTORY, DATABASE_INVENTORY, MEMORY.md
-- Hooks 101→102 corregido en CLAUDE.md, MASTER_INVENTORY, FRONTEND_INVENTORY, MEMORY.md
-- alert_severity/alert_status confirmados como ENUMs (00-prerequisites.sql lines 361, 365)
-- FRONTEND_INVENTORY hallazgos: HF-01/02/03/04/06 marcados RESOLVED, HF-05 confirmado OPEN
-- API duplicados: 6→0 (todos resueltos), actualizado en FRONTEND_INV y MEMORY.md
+**FASE 0 — MEGA-COMMIT (6 commits atomicos, 335 archivos):**
+- C1: `[GAM-DB]` 28 files — DDL, auth.uid, communication schema, RLS phase4, monitoring
+- C2: `[GAM-BACKEND]` 24 files — Redis config, env validation, telemetry, communication module
+- C3: `[GAM-FRONTEND]` 28 files — API consolidation, barrel updates, Docker, deletions
+- C4: `[GAM-DOCS]` 151 files — Guides, troubleshooting, knowledge-base, standards
+- C5: `[GAM-ORCHESTRATION]` 113 files — SIMCO directives, tasks, inventories, profiles
+- C6: `[GAM-DEVOPS]` 12 files — Docker, dependabot, CI, root configs
 
-**Bug Fix — HF-05 LTI Double Prefix (CORREGIDO 2026-02-15):**
-- `lti.api.ts` linea 52: `/api/v1/lti/consumers` → `/lti/consumers`
-- `lti.api.ts` linea 189: `/api/v1/lti/launch-urls` → `/lti/launch-urls`
-- apiClient.baseURL ya incluye `/api/v1`, el prefijo adicional causaba 404
+**FASE 1 — CORRECCIONES PARALELAS (5 subagentes, 43 archivos):**
+- SA1 Frontend: Metricas verificadas (components: 480, hooks: 102, API calls: 570, API files: 52, barrels: clean)
+- SA2 Docs: 15 legacy paths fixed, 2 _INDEX files updated, ALIASES.yml phantom fixed
+- SA3 Backend: jest.config.js roots fixed (+test/), CLAUDE.md modules note added, ETL/ML/Viz evaluated
+- SA4 DevOps: frontend-ci.yml branches→master + Node 20, backend-ci.yml Node 20
+- SA5 Database: 42 ENUMs confirmed unique, RLS coverage analyzed, temp scripts evaluated
 
-**CI Fix — Branch Refs (CORREGIDO 2026-02-15):**
-- `backend-ci.yml`: branches `main`/`develop` → `master` (push + pull_request)
+**FASE 2 — CORRECCIONES DEPENDIENTES (3 subagentes, 22 archivos):**
+- SA-A: 13 cross-reference pairs (26 links) between 9 standards ↔ 11 principios
+- SA-B: FORCE RLS + 20 policies for 5 high-risk tables (207→227 policies)
+- SA-C: Coverage threshold discrepancy documented (50% jest config vs 80% CLAUDE.md target)
 
-**Plan desarrollo:** 5 streams (A-E), 39 tareas, 4 batches de ejecucion
-**Output:** `orchestration/tareas/TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL/`
+**Metricas actualizadas post-ejecucion:**
+- RLS Policies: 207→**227** (Phase 2 FORCE RLS)
+- Components: 474→**480** (broad count)
+- API Calls: 655→**570** (post-deletion recount)
+- API Service Files: 51→**52**
+- Spec Files: 59→**60** (test/ now in jest roots)
 
 ---
 
@@ -276,19 +285,23 @@
 
 | # | Accion | Prioridad | Esfuerzo | Dependencia | Estado |
 |---|--------|-----------|----------|-------------|--------|
-| 9 | **Commitear ~82 archivos untracked** (backend code, DDL, Docker, docs, orchestration) | P0 | Bajo | Ninguna | Pendiente |
-| 10 | Fix HF-05 LTI double prefix bug (lti.api.ts) | P1 | Bajo | Ninguna | **CORREGIDO** (2026-02-15, pendiente commit) |
-| 11 | Fix CI workflow branch refs (main/develop → master) | P1 | Bajo | Ninguna | **CORREGIDO** (2026-02-15, pendiente commit) |
-| 12 | Fix ENUMs count en SSOT files (40→42) | P1 | Bajo | Ninguna | **CORREGIDO** (2026-02-15, CLAUDE.md, MASTER/DB/FE INVs, MEMORY.md) |
-| 13 | Batch-fix ~25 legacy path refs en docs/ | P2 | Medio | Ninguna | Pendiente |
-| 14 | Fix 12 EPIC files con refs rotas ADR-0019 → ADR-039 | P2 | Medio | Ninguna | Pendiente |
-| 15 | Actualizar 90-adr/_MAP.md (19 ADRs atras) | P2 | Medio | Ninguna | Pendiente |
-| 16 | Normalizar ownership tablas (postgres) + FORCE RLS adicionales | P2 | Medio | RLS policies | Parcial (24/75 FORCE RLS) |
-| 17 | Evaluar 3 modules no importados (etl/ml/visualization: ~58 endpoints inalcanzables) | P2 | Medio | Ninguna | Pendiente |
-| 18 | Cleanup orchestration/referencias/ALIASES.yml (~25 phantom refs) | P2 | Medio | Ninguna | Pendiente |
-| 19 | Limpiar 4 temp DB scripts (temp-init/phase2/phase3/seeds.sh) | P3 | Bajo | Ninguna | Pendiente |
+| 9 | ~~Commitear ~82 archivos untracked~~ | P0 | Bajo | Ninguna | **COMPLETADA** (FASE 0, 6 commits) |
+| 10 | ~~Fix HF-05 LTI double prefix bug~~ | P1 | Bajo | Ninguna | **COMPLETADA** (FASE 0 C3) |
+| 11 | ~~Fix CI workflow branch refs~~ | P1 | Bajo | Ninguna | **COMPLETADA** (FASE 1 SA4) |
+| 12 | ~~Fix ENUMs count en SSOT files~~ | P1 | Bajo | Ninguna | **COMPLETADA** (FASE 0 pre-work) |
+| 13 | ~~Batch-fix legacy path refs en docs/~~ | P2 | Medio | Ninguna | **COMPLETADA** (FASE 1 SA2, 15 files fixed) |
+| 14 | ~~Fix EPIC/ADR broken workspace-arch refs~~ | P2 | Medio | Ninguna | **COMPLETADA** (FASE 1 SA2, 6 ADRs fixed) |
+| 15 | ~~Actualizar 90-adr/_MAP.md~~ | P2 | Medio | Ninguna | **YA ESTABA SINCRONIZADO** (40/40) |
+| 16 | ~~FORCE RLS tablas high-risk~~ | P2 | Medio | RLS policies | **COMPLETADA** (FASE 2 SA-B, +5 tablas, +20 policies) |
+| 17 | ~~Evaluar 3 modules no importados~~ | P2 | Medio | Ninguna | **COMPLETADA** (FASE 1 SA3: all need data_warehouse, correctly excluded) |
+| 18 | ~~Cleanup ALIASES.yml phantom refs~~ | P2 | Medio | Ninguna | **COMPLETADA** (FASE 1 SA2, SIMCO-DEPLOY fixed) |
+| 19 | Limpiar 4 temp DB scripts (temp-init/phase2/phase3/seeds.sh) | P3 | Bajo | Ninguna | **EVALUADA** (3 delete, 1 rename — FASE 4) |
 | 20 | F4-VALIDATION Ejecucion (9 US, 44 tasks, 89 SP) | P2 | Alto | Ambiente dev activo | Pendiente |
 | 21 | SIMCO archive review - integrar gaps criticos | P3 | Medio | Mayo 2026 | Pendiente |
+| 22 | Fix jest coverage threshold discrepancy (50% config vs 80% CLAUDE.md) | P3 | Bajo | Ninguna | Pendiente |
+| 23 | Add cross-refs for 8 unmatched standards (API, nomenclatura, etc.) | P3 | Bajo | Ninguna | Pendiente |
+| 24 | Fix frontend-ci.yml cache-dependency-path (points to non-existent file) | P3 | Bajo | Ninguna | Pendiente |
+| 25 | Remove/implement 3 placeholder backend CI jobs (api-docs-check, cache-performance, database-validation) | P3 | Medio | Ninguna | Pendiente |
 
 **Plan desarrollo detallado:** `orchestration/tareas/TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL/`
 **Documento de validación:** `orchestration/tareas/TASK-2026-02-13-FIX-REDIS-WEBSOCKET-STARTUP/02-VALIDACION-POST-RECREACION.md`
