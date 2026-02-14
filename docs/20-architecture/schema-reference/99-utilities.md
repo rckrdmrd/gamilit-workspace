@@ -42,7 +42,7 @@ Ranking global entre todas las escuelas (REFRESH: 15 min).
 
 ---
 
-## ENUMs (36)
+## ENUMs (40)
 
 | # | ENUM | Valores |
 |---|------|---------|
@@ -118,7 +118,7 @@ Ranking global entre todas las escuelas (REFRESH: 15 min).
 | Artefacto | Referencia |
 |-----------|------------|
 | Modelo conceptual | [MODELO-DATOS.md](../MODELO-DATOS.md) |
-| Inventario BD | orchestration/inventory/DATABASE_INVENTORY.yml |
+| Inventario BD | orchestration/inventarios/DATABASE_INVENTORY.yml |
 | ADR Multi-tenancy | [ADR-003-RLS-MULTITENANCY.md](../../90-adr/ADR-003-RLS-MULTITENANCY.md) |
 | ADR Exercise Engine | [ADR-004-MODULAR-EXERCISE-ENGINE.md](../../90-adr/ADR-004-MODULAR-EXERCISE-ENGINE.md) |
 | User Stories | docs/10-requirements/user-stories/ |
@@ -126,4 +126,4 @@ Ranking global entre todas las escuelas (REFRESH: 15 min).
 ---
 
 *GAMILIT - Schema Reference Utilities*
-*171 tablas | 18 schemas | 282 RLS policies | 36 ENUMs | PostgreSQL 16*
+*169 tablas | 18 schemas | 207 RLS policies | 40 ENUMs | PostgreSQL 15*

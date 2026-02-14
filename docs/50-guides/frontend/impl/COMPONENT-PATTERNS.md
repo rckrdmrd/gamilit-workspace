@@ -568,8 +568,8 @@ Antes de crear un nuevo componente:
 
 ## 12. Referencias
 
-- **Hooks:** `docs/95-guias-desarrollo/frontend/HOOK-PATTERNS.md`
-- **Types:** `docs/95-guias-desarrollo/frontend/TYPES-CONVENTIONS.md`
+- **Hooks:** `docs/50-guides/frontend/HOOK-PATTERNS.md`
+- **Types:** `docs/50-guides/frontend/TYPES-CONVENTIONS.md`
 - **React Testing Library:** https://testing-library.com/docs/react-testing-library/intro
 - **React Patterns:** https://reactpatterns.com/
 

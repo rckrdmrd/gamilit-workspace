@@ -67,7 +67,7 @@
 | Termino | Definicion |
 |---------|------------|
 | **exercise_type** | Tipo especifico de ejercicio (ej: crucigrama, detective_textual). 23 tipos en total. |
-| **exercise_mechanic** | Mecanica de interaccion del ejercicio (drag & drop, seleccion multiple). 40 mecanicas. |
+| **exercise_mechanic** | Mecanica de interaccion del ejercicio (drag & drop, seleccion multiple). 30 mecanicas. |
 | **Evaluacion Automatica** | Ejercicios evaluados por el sistema (M1, M2, Quiz TikTok de M4). |
 | **Evaluacion Manual** | Ejercicios que requieren revision por maestro (M3, M4 parcial, M5). |
 | **Spaced Repetition** | Motor de repeticion espaciada para reforzar aprendizaje. |
@@ -90,9 +90,9 @@
 |---------|------------|
 | **Schema** | Agrupacion logica de objetos de BD (tablas, funciones, vistas). 18 schemas en gamilit. |
 | **DDL (Data Definition Language)** | SQL para definir estructura (CREATE, ALTER, DROP). |
-| **RLS (Row Level Security)** | Seguridad a nivel de fila en PostgreSQL. 263 policies activas. |
-| **Trigger** | Funcion que se ejecuta automaticamente ante eventos de BD. 132 triggers. |
-| **ENUM** | Tipo de dato con valores predefinidos (ej: user_role). 41 ENUMs. |
+| **RLS (Row Level Security)** | Seguridad a nivel de fila en PostgreSQL. 207 policies activas. |
+| **Trigger** | Funcion que se ejecuta automaticamente ante eventos de BD. 67 triggers. |
+| **ENUM** | Tipo de dato con valores predefinidos (ej: user_role). 40 ENUMs. |
 | **JSONB** | Tipo de dato JSON binario en PostgreSQL para datos flexibles. |
 | **Materialized View** | Vista pre-computada para mejor performance. 7 MVs. |
 | **Seed** | Script de datos iniciales para poblar tablas. |
@@ -103,10 +103,10 @@
 | Termino | Definicion |
 |---------|------------|
 | **Entity** | Clase TypeScript que mapea a tabla de BD (TypeORM). 152 entities. |
-| **DTO (Data Transfer Object)** | Objeto para validar y transferir datos entre capas. 412 DTOs. |
+| **DTO (Data Transfer Object)** | Objeto para validar y transferir datos entre capas. 399 DTOs. |
 | **Service** | Clase con logica de negocio. 170 services. |
 | **Controller** | Clase que maneja endpoints HTTP. 107 controllers. |
-| **Guard** | Middleware para autorizacion (ej: JwtAuthGuard, RolesGuard, TenantGuard). 14 guards. |
+| **Guard** | Middleware para autorizacion (ej: JwtAuthGuard, RolesGuard, TenantGuard). 15 guards. |
 | **Decorator** | Anotacion que modifica comportamiento (ej: @Roles()). 18 decorators. |
 | **Module** | Unidad de organizacion en NestJS. 22 modulos. |
 
@@ -114,11 +114,11 @@
 
 | Termino | Definicion |
 |---------|------------|
-| **Component** | Elemento de UI reutilizable. 458 componentes. |
-| **Hook** | Funcion para manejar estado y efectos. 127 hooks. |
-| **Store** | Estado global de la aplicacion (Zustand). 32 stores. |
-| **Page** | Componente que representa una ruta. 85 paginas. |
-| **API Service** | Servicio para comunicacion con backend. 48 API services. |
+| **Component** | Elemento de UI reutilizable. 475 componentes. |
+| **Hook** | Funcion para manejar estado y efectos. 102 hooks. |
+| **Store** | Estado global de la aplicacion (Zustand). 14 stores. |
+| **Page** | Componente que representa una ruta. 68 paginas. |
+| **API Service** | Servicio para comunicacion con backend. 52 API services. |
 
 ### Arquitectura
 

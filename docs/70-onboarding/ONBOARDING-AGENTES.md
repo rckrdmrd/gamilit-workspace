@@ -17,7 +17,7 @@ Antes de ejecutar cualquier tarea, lee estos archivos:
 - **Stack:** NestJS 11 + React 19 + PostgreSQL 15 + TypeORM 0.3.x + Redis + Socket.IO 4.8+ + Vite 6.x
 - **Estado:** MVP 98% completado, produccion activa
 - **Repositorio:** git@github.com:rckrdmrd/gamilit-workspace.git
-- **DB:** gamilit_platform (usuario: gamilit_user, 18 schemas, 170 tablas)
+- **DB:** gamilit_platform (usuario: gamilit_user, 18 schemas, 169 tablas)
 - **Puertos:** Backend 3006, Frontend 3005
 
 ### Sistema SIMCO
@@ -76,8 +76,8 @@ ANTES de modificar archivo existente:
 ### 3. Coherencia entre Capas
 ```
 TODA MODIFICACION DEBE MANTENER COHERENCIA:
-  DDL → Backend: Toda tabla DEBE tener entity (170 tablas = 152 entities)
-  Backend → Frontend: Endpoints documentados (850 endpoints)
+  DDL → Backend: Toda tabla DEBE tener entity (169 tablas = 152 entities)
+  Backend → Frontend: Endpoints documentados (899 endpoints)
   Inventarios: DATABASE/BACKEND/FRONTEND/MASTER = sincronizados
 ```
 
@@ -102,7 +102,7 @@ OBLIGATORIO: Edicion minima, verificar coherencia, documentar cambio
 gamilit-workspace/
 ├── CLAUDE.md                 ← Auto-cargado (punto de entrada)
 ├── apps/                     ← MONOREPO (single Git repo, NO submodules)
-│   ├── backend/              ← NestJS 11 (22 modulos, 850 endpoints)
+│   ├── backend/              ← NestJS 11 (22 modulos, 899 endpoints)
 │   │   └── src/modules/      ← @BACKEND
 │   ├── frontend/             ← React 19 + Zustand + TailwindCSS
 │   │   └── src/              ← @FRONTEND

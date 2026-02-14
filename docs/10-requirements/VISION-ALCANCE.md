@@ -18,7 +18,7 @@ GAMILIT (Gamificacion Maya para la Lectoescritura en Tecnologia) es una **plataf
 STANDALONE_HEREDERO (Nivel 2A)
   |
   v
-gamilit (22 modulos, 171 tablas, 850 endpoints)
+gamilit (22 modulos, 169 tablas, 899 endpoints)
   |
   v
 shared/catalog/ (exporta patrones generalizables)
@@ -112,7 +112,7 @@ GAMILIT esta disenado para el segmento educativo K-12 hispanohablante, incorpora
 El modelo de aislamiento por escuela implementa:
 
 - Toda tabla transaccional incluye columna `tenant_id`
-- Row-Level Security (RLS) activado en PostgreSQL para 282 policies
+- Row-Level Security (RLS) activado en PostgreSQL para 207 policies
 - 18 schemas modulares organizados por dominio funcional
 - Datos compartidos (contenido global) vs datos aislados (progreso, gamificacion)
 
@@ -208,7 +208,7 @@ El modelo de aislamiento por escuela implementa:
 |----|---------------|---------|
 | RNF-GAM-006 | Autenticacion | JWT con expiracion corta (15min) + refresh tokens (7d) |
 | RNF-GAM-007 | Autorizacion | RBAC con 4 roles academicos y permisos granulares |
-| RNF-GAM-008 | Aislamiento de datos | RLS en PostgreSQL para todas las tablas con tenant_id (282 policies) |
+| RNF-GAM-008 | Aislamiento de datos | RLS en PostgreSQL para todas las tablas con tenant_id (207 policies) |
 | RNF-GAM-009 | Validacion | DTOs con class-validator en todos los endpoints |
 | RNF-GAM-010 | CORS | Configurado por entorno, rate limiting 100 req/min |
 | RNF-GAM-011 | Contenido usuario | Sanitizacion de contenido generado por estudiantes |
@@ -256,9 +256,9 @@ El modelo de aislamiento por escuela implementa:
 |------|------------|---------|
 | Backend | NestJS + TypeORM | 11.x + 0.3.x |
 | Frontend | React + Zustand + TailwindCSS | 19.x + 5.x + 4.x |
-| Base de Datos | PostgreSQL con RLS | 16.x |
+| Base de Datos | PostgreSQL con RLS | 15.x |
 | Runtime | Node.js | 20.x |
-| Build | Vite | 7.x |
+| Build | Vite | 6.x |
 | Testing | Jest (backend) + Vitest (frontend) | 29.x / 1.x |
 | Real-time | Socket.IO | 4.8+ |
 | Auth | JWT + Passport + RBAC | - |
@@ -273,9 +273,9 @@ El modelo de aislamiento por escuela implementa:
 | EPIC-GAM-SCAFFOLD | Scaffolding del Proyecto | 5 | Estructura base | Completado |
 | EPIC-GAM-REQUIREMENTS | Requerimientos y US | 13 | Documentacion | Completado |
 | EPIC-GAM-ARCHITECTURE | Diseno de Arquitectura | 13 | Documentacion | Completado |
-| EPIC-GAM-DATABASE | Base de Datos (DDL) | 21 | 18 schemas, 171 tablas | Completado |
-| EPIC-GAM-BACKEND | Backend NestJS | 34 | 22 modulos, 850 endpoints | Completado |
-| EPIC-GAM-FRONTEND | Frontend React | 34 | 4 portales, 458 componentes | Completado |
+| EPIC-GAM-DATABASE | Base de Datos (DDL) | 21 | 18 schemas, 169 tablas | Completado |
+| EPIC-GAM-BACKEND | Backend NestJS | 34 | 22 modulos, 899 endpoints | Completado |
+| EPIC-GAM-FRONTEND | Frontend React | 34 | 4 portales, 475 componentes | Completado |
 | EPIC-GAM-K8S | Kubernetes Setup | 8 | Deployment configs | En progreso |
 | EPIC-GAM-TESTING | Testing Completo | 13 | 833 tests | En progreso |
 | EPIC-GAM-DEVOPS | DevOps y CI/CD | 8 | Pipelines | En progreso |
@@ -321,7 +321,7 @@ El modelo de aislamiento por escuela implementa:
 | Arquitectura | docs/20-architecture/ |
 | API Reference | docs/40-api/API-REFERENCE.md |
 | ADRs | docs/90-adr/ |
-| Inventarios | orchestration/inventory/ |
+| Inventarios | orchestration/inventarios/ |
 
 ---
 

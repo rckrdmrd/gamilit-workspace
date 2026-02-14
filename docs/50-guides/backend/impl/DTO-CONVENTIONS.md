@@ -422,8 +422,8 @@ Antes de crear un nuevo DTO:
 
 ## 12. Referencias
 
-- **Tipos Frontend:** `docs/95-guias-desarrollo/frontend/TYPES-CONVENTIONS.md`
-- **Naming API:** `docs/95-guias-desarrollo/backend/NAMING-CONVENTIONS-API.md`
+- **Tipos Frontend:** `docs/50-guides/frontend/TYPES-CONVENTIONS.md`
+- **Naming API:** `docs/50-guides/backend/NAMING-CONVENTIONS-API.md`
 - **class-validator:** https://github.com/typestack/class-validator
 - **class-transformer:** https://github.com/typestack/class-transformer
 - **@nestjs/mapped-types:** https://docs.nestjs.com/openapi/mapped-types

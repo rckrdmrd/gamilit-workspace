@@ -1,6 +1,6 @@
 # _MAP: Contenido Transversal
 
-**Carpeta:** docs/90-transversal/
+**Carpeta:** docs/80-references/transversal/
 **Proposito:** Documentacion transversal que aplica a todas las fases del proyecto
 **Estado:** Actualizado
 **Ultima actualizacion:** 2026-01-07

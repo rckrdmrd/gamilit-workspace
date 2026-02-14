@@ -204,9 +204,9 @@ Si algo falla, reporta:
 
 | Archivo | Proposito |
 |---------|-----------|
-| docs/95-guias-desarrollo/DIRECTIVA-DEPLOYMENT.md | Checklist |
-| docs/95-guias-desarrollo/GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md | Guia detallada |
-| docs/95-guias-desarrollo/GUIA-VALIDACION-PRODUCCION.md | Troubleshooting |
+| docs/50-guides/DIRECTIVA-DEPLOYMENT.md | Checklist |
+| docs/50-guides/GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md | Guia detallada |
+| docs/50-guides/GUIA-VALIDACION-PRODUCCION.md | Troubleshooting |
 | apps/database/FLUJO-CARGA-LIMPIA.md | Recreacion de BD |
 
 ---

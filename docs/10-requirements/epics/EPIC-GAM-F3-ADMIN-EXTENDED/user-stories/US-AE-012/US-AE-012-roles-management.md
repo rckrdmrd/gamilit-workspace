@@ -115,7 +115,7 @@ completed_date: "2025-11-24"
 | Controller | `apps/backend/src/modules/admin/controllers/admin-roles.controller.ts` |
 | Pagina Frontend | `apps/frontend/src/apps/admin/pages/AdminRolesPage.tsx` |
 | Historia de Usuario | `docs/03-fase-extensiones/EXT-002-admin-extendido/historias-usuario/US-AE-012-roles-management.md` |
-| API Reference | `/docs/02-especificaciones-tecnicas/apis/API-REFERENCE.md` |
+| API Reference | `/docs/20-architecture/apis/API-REFERENCE.md` |
 
 ---
 

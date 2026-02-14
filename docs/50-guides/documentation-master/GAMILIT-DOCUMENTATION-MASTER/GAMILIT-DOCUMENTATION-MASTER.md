@@ -35,7 +35,7 @@ Este documento consolida el análisis completo de documentación del proyecto GA
 ## ESTRUCTURA DE DOCUMENTACIÓN
 
 ```
-docs/95-guias-desarrollo/GAMILIT-DOCUMENTATION-MASTER/
+docs/50-guides/GAMILIT-DOCUMENTATION-MASTER/
 ├── GAMILIT-DOCUMENTATION-MASTER.md  ← ESTE ARCHIVO
 │
 ├── fase-0-inventarios/
@@ -279,8 +279,8 @@ docs/95-guias-desarrollo/GAMILIT-DOCUMENTATION-MASTER/
 - `orchestration/inventarios/DEPENDENCY_GRAPH.yml`
 
 ### Documentación de Usuario
-- `docs/95-guias-desarrollo/student-portal/`
-- `docs/95-guias-desarrollo/teacher-portal/`
+- `docs/50-guides/student-portal/`
+- `docs/50-guides/teacher-portal/`
 
 ---
 

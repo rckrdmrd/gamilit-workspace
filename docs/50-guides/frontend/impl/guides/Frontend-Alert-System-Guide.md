@@ -333,7 +333,7 @@ setFilters({
 
 ```typescript
 // Verificar que CORS_ORIGIN en backend incluye el dominio correcto
-// Ver: docs/95-guias-desarrollo/GUIA-CORS-PRODUCCION.md
+// Ver: docs/50-guides/GUIA-CORS-PRODUCCION.md
 ```
 
 ---

@@ -32,7 +32,7 @@ Este documento es la **guia maestra** que el agente en produccion debe seguir cu
 │     └─> pg_dump completo a /backup/database/                │
 │                                                             │
 │  4. PULL DEL REPOSITORIO                                    │
-│     └─> git fetch && git reset --hard origin/main           │
+│     └─> git fetch && git reset --hard origin/master           │
 │                                                             │
 │  5. RESTAURAR CONFIGURACIONES                               │
 │     └─> Copiar .env files de vuelta                         │
@@ -174,7 +174,7 @@ git branch
 
 # Ver diferencias con remoto
 git fetch origin
-git log HEAD..origin/main --oneline
+git log HEAD..origin/master --oneline
 ```
 
 ### 4.2 Hacer pull dando preferencia a remoto
@@ -183,10 +183,10 @@ git log HEAD..origin/main --oneline
 # OPCION A: Reset completo a remoto (RECOMENDADO)
 # Descarta TODOS los cambios locales y usa exactamente lo que hay en remoto
 git fetch origin
-git reset --hard origin/main
+git reset --hard origin/master
 
 # OPCION B: Pull con estrategia de merge (si hay cambios locales importantes)
-# git pull origin main --strategy-option theirs
+# git pull origin master --strategy-option theirs
 ```
 
 ### 4.3 Verificar el pull
@@ -492,7 +492,7 @@ echo -e "${GREEN}Base de datos respaldada: ${BACKUP_FILE}.gz${NC}"
 # 4. Pull del repositorio
 echo -e "${YELLOW}[4/10] Actualizando desde repositorio remoto...${NC}"
 git fetch origin
-git reset --hard origin/main
+git reset --hard origin/master
 echo -e "${GREEN}Repositorio actualizado${NC}"
 
 # 5. Restaurar configuraciones
@@ -607,7 +607,7 @@ Despues del pull, el agente debe leer estas guias si necesita mas detalle:
 [ ] 1. pm2 stop all
 [ ] 2. Backup configuraciones a /home/gamilit/backups/
 [ ] 3. Backup base de datos (pg_dump)
-[ ] 4. git fetch && git reset --hard origin/main
+[ ] 4. git fetch && git reset --hard origin/master
 [ ] 5. Restaurar .env files
 [ ] 6. cd apps/database && ./create-database.sh
 [ ] 7. npm install (backend y frontend)

@@ -154,7 +154,7 @@ main (producción)
 npm run build && npm run lint && npm run test
 
 # Verificar qué se va a push
-git log origin/main..HEAD --oneline
+git log origin/master..HEAD --oneline
 
 # Verificar archivos sensibles
 git diff --cached --name-only | grep -E '\.env|secret|password'

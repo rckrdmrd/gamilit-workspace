@@ -15,9 +15,9 @@ Gamilit adopta desde su inicio la estructura canonica `apps/` que workspace-arch
 ```
 gamilit/
 ├── apps/
-│   ├── backend/           # NestJS 11 (22 modulos, 850 endpoints)
+│   ├── backend/           # NestJS 11 (22 modulos, 899 endpoints)
 │   ├── frontend/          # React 19 + Zustand + TailwindCSS
-│   ├── database/          # PostgreSQL 15 DDL (18 schemas, 170 tablas)
+│   ├── database/          # PostgreSQL 15 DDL (18 schemas, 169 tablas)
 │   ├── devops/            # Deployment scripts
 │   └── _MAP.md            # Indice de aplicaciones
 ├── docs/                  # Documentacion del producto (6 secciones)
@@ -54,14 +54,14 @@ gamilit/
 │   │   └── tsconfig.json
 │   ├── frontend/          # React 19 aplicacion web
 │   │   ├── src/
-│   │   │   ├── components/  # 458 componentes
-│   │   │   ├── pages/       # 85 paginas (4 portales)
-│   │   │   ├── stores/      # 32 stores Zustand
+│   │   │   ├── components/  # 475 componentes
+│   │   │   ├── pages/       # 68 paginas (4 portales)
+│   │   │   ├── stores/      # 14 stores Zustand
 │   │   │   └── App.tsx
 │   │   ├── package.json
 │   │   └── vite.config.ts
 │   ├── database/          # PostgreSQL 15 DDL
-│   │   ├── ddl/           # 18 schemas, 170 tablas
+│   │   ├── ddl/           # 18 schemas, 169 tablas
 │   │   ├── seeds/         # Datos iniciales
 │   │   └── scripts/       # recreate-database.sh
 │   ├── devops/            # Deployment
@@ -96,7 +96,7 @@ gamilit/
 | Comparticion | Sin `packages/` (codigo compartido dentro de backend/src/common) |
 | Submodulos | NO usa .gitmodules |
 | Remote | git@github.com:rckrdmrd/gamilit-workspace.git |
-| Branch | main |
+| Branch | master |
 
 ## Consecuencias
 

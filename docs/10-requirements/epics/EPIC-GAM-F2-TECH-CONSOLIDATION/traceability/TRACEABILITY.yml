@@ -328,7 +328,7 @@ referencias:
   master_inventory: "orchestration/inventarios/MASTER_INVENTORY.yml"
   backend_inventory: "orchestration/inventarios/BACKEND_INVENTORY.yml"
   frontend_inventory: "orchestration/inventarios/FRONTEND_INVENTORY.yml"
-  roadmap: "docs/90-transversal/roadmap/ROADMAP-GENERAL.md"
+  roadmap: "docs/80-references/transversal/roadmap/ROADMAP-GENERAL.md"
 
 # =============================================================================
 # NOTAS

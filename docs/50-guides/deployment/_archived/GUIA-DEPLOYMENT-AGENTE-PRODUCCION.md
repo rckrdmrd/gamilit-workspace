@@ -182,10 +182,10 @@ git branch --show-current
 
 # Fetch y mostrar commits pendientes
 git fetch origin
-git log HEAD..origin/main --oneline 2>/dev/null || echo "Ya actualizado"
+git log HEAD..origin/master --oneline 2>/dev/null || echo "Ya actualizado"
 
 # Pull forzado (preferencia a remoto)
-git reset --hard origin/main
+git reset --hard origin/master
 
 # Mostrar ultimo commit
 git log --oneline -1

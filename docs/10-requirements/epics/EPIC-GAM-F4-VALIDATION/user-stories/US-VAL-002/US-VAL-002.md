@@ -27,13 +27,13 @@ updated_date: "2026-02-10"
 ## Criterios de Aceptacion
 
 ### CA-01: Schemas y Tablas
-Exactamente 18 schemas y 171 tablas
+Exactamente 18 schemas y 169 tablas
 
 ### CA-02: Foreign Keys
 299 FKs validadas, 0 referencias huerfanas
 
 ### CA-03: RLS Policies
-282 RLS policies activas y funcionando
+207 RLS policies activas y funcionando
 
 ### CA-04: Triggers
 4 triggers disparan correctamente en cascada (INSERT profile → 15 inserts automaticos)
@@ -42,7 +42,7 @@ Exactamente 18 schemas y 171 tablas
 0 orphan records, conteos correctos
 
 ### CA-06: Enums
-36 ENUMs DDL coinciden con entities TypeScript, 0 mismatches
+40 ENUMs DDL coinciden con entities TypeScript, 0 mismatches
 
 ## Tasks
 

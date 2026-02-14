@@ -2437,6 +2437,6 @@ Ver reporte historico: `orchestration/reportes/correcciones/CORRECCION-GAMIFICAC
 
 ---
 
-**Documento:** `docs/02-especificaciones-tecnicas/02-gamificacion/ET-GAM-003-rangos-maya.md`
+**Documento:** `docs/20-architecture/02-gamificacion/ET-GAM-003-rangos-maya.md`
 **Propósito:** Especificación técnica completa del Sistema de Rangos Maya
 **Audiencia:** Desarrolladores Backend, Frontend, Database

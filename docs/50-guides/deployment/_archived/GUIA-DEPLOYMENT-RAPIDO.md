@@ -19,7 +19,7 @@ cp apps/frontend/.env.production "$BACKUP_DIR/config/"
 pg_dump "$DATABASE_URL" | gzip > "$BACKUP_DIR/gamilit.sql.gz"
 
 # 3. PULL CAMBIOS
-git fetch origin && git reset --hard origin/main
+git fetch origin && git reset --hard origin/master
 
 # 4. RESTAURAR CONFIG
 cp "$BACKUP_DIR/config/.env.production" apps/backend/
@@ -51,7 +51,7 @@ pm2 startup && pm2 save
 ### A. Solo actualizar codigo (sin cambios BD)
 
 ```bash
-git pull origin main
+git pull origin master
 cd apps/backend && npm install && npm run build && cd ..
 cd apps/frontend && npm install && npm run build && cd ..
 pm2 restart all
@@ -60,7 +60,7 @@ pm2 restart all
 ### B. Cambios en frontend unicamente
 
 ```bash
-git pull origin main
+git pull origin master
 cd apps/frontend && npm install && npm run build && cd ..
 pm2 restart gamilit-frontend
 ```
@@ -68,7 +68,7 @@ pm2 restart gamilit-frontend
 ### C. Cambios en backend unicamente
 
 ```bash
-git pull origin main
+git pull origin master
 cd apps/backend && npm install && npm run build && cd ..
 pm2 restart gamilit-backend
 ```
@@ -224,4 +224,4 @@ pm2 list
 
 - Logs: `/home/isem/workspace/projects/gamilit/logs/`
 - Config PM2: `ecosystem.config.js`
-- Guia completa: `docs/95-guias-desarrollo/GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md`
+- Guia completa: `docs/50-guides/GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md`

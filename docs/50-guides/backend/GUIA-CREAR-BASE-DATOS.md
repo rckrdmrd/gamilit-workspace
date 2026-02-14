@@ -388,7 +388,7 @@ Después de crear la base de datos:
 - `REPORTE-COMPLETITUD-DDL-2025-11-08.md` - Inventario completo de archivos DDL
 - `PLAN-MIGRACION-ENUMS-PUBLIC-SCHEMA.md` - Plan de migración de ENUMs
 - `REPORTE-MIGRACION-ENUMS-2025-11-08.md` - Reporte de migración de ENUMs
-- `docs/02-especificaciones-tecnicas/arquitectura-base-datos/` - Documentación técnica
+- `docs/20-architecture/arquitectura-base-datos/` - Documentación técnica
 
 ---
 

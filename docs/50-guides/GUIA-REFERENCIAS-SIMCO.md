@@ -33,7 +33,7 @@ Agregar un bloque de documentación **después del header existente** y **antes 
 --
 -- 📚 Documentación:
 -- Requerimiento: docs/01-requerimientos/.../RF-XXX-xxx.md
--- Especificación: docs/02-especificaciones-tecnicas/.../ET-XXX-xxx.md
+-- Especificación: docs/20-architecture/.../ET-XXX-xxx.md
 -- Ver también: docs/... (opcional, para referencias adicionales)
 -- =====================================================
 ```
@@ -50,8 +50,8 @@ Agregar un bloque de documentación **después del header existente** y **antes 
 -- 📚 Documentación:
 -- Requerimiento: docs/01-requerimientos/01-autenticacion-autorizacion/RF-AUTH-001-roles.md
 -- Requerimiento: docs/01-requerimientos/01-autenticacion-autorizacion/RF-AUTH-002-estados-cuenta.md
--- Especificación: docs/02-especificaciones-tecnicas/01-autenticacion-autorizacion/ET-AUTH-001-rbac.md
--- Especificación: docs/02-especificaciones-tecnicas/01-autenticacion-autorizacion/ET-AUTH-002-estados-cuenta.md
+-- Especificación: docs/20-architecture/01-autenticacion-autorizacion/ET-AUTH-001-rbac.md
+-- Especificación: docs/20-architecture/01-autenticacion-autorizacion/ET-AUTH-002-estados-cuenta.md
 -- =====================================================
 
 SET search_path TO auth_management, public;
@@ -70,7 +70,7 @@ CREATE TABLE auth_management.profiles (
 --
 -- 📚 Documentación:
 -- Requerimiento: docs/01-requerimientos/03-contenido-educativo/RF-EDU-001-mecanicas-ejercicios.md
--- Especificación: docs/02-especificaciones-tecnicas/03-contenido-educativo/ET-EDU-001-mecanicas-ejercicios.md
+-- Especificación: docs/20-architecture/03-contenido-educativo/ET-EDU-001-mecanicas-ejercicios.md
 -- Ver también: docs/01-requerimientos/modulos/MODULOS-EDUCATIVOS.md
 -- =====================================================
 ```
@@ -215,15 +215,15 @@ vim apps/database/ddl/schemas/gamification_system/tables/01-user_stats.sql
 -- 📚 Documentación:
 -- Requerimiento: docs/01-requerimientos/02-gamificacion/RF-GAM-001-achievements.md
 -- Requerimiento: docs/01-requerimientos/02-gamificacion/RF-GAM-003-rangos-maya.md
--- Especificación: docs/02-especificaciones-tecnicas/02-gamificacion/ET-GAM-001-achievements.md
--- Especificación: docs/02-especificaciones-tecnicas/02-gamificacion/ET-GAM-003-rangos-maya.md
+-- Especificación: docs/20-architecture/02-gamificacion/ET-GAM-001-achievements.md
+-- Especificación: docs/20-architecture/02-gamificacion/ET-GAM-003-rangos-maya.md
 -- =====================================================
 ```
 
 ### 4. Verificar que las rutas existan
 ```bash
 ls -la ../../docs/01-requerimientos/02-gamificacion/RF-GAM-001-achievements.md
-ls -la ../../docs/02-especificaciones-tecnicas/02-gamificacion/ET-GAM-001-achievements.md
+ls -la ../../docs/20-architecture/02-gamificacion/ET-GAM-001-achievements.md
 ```
 
 ### 5. Commit con mensaje descriptivo
@@ -256,7 +256,7 @@ Agregar JSDoc con referencias:
  * Service para gestionar achievements de gamificación
  *
  * @see {@link RF-GAM-001} docs/01-requerimientos/02-gamificacion/RF-GAM-001-achievements.md
- * @see {@link ET-GAM-001} docs/02-especificaciones-tecnicas/02-gamificacion/ET-GAM-001-achievements.md
+ * @see {@link ET-GAM-001} docs/20-architecture/02-gamificacion/ET-GAM-001-achievements.md
  */
 export class AchievementService {
   // ...
@@ -271,7 +271,7 @@ Agregar JSDoc con referencias:
  * Componente para mostrar galería de achievements desbloqueados
  *
  * @see {@link RF-GAM-001} docs/01-requerimientos/02-gamificacion/RF-GAM-001-achievements.md
- * @see {@link TEACHER-PORTAL-API} docs/02-especificaciones-tecnicas/apis/TEACHER-PORTAL-API.md#achievements
+ * @see {@link TEACHER-PORTAL-API} docs/20-architecture/apis/TEACHER-PORTAL-API.md#achievements
  */
 export const AchievementGallery: React.FC<Props> = () => {
   // ...

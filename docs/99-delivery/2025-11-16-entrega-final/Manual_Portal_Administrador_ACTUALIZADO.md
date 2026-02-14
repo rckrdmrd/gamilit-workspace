@@ -2528,7 +2528,7 @@ Mapa completo de 193+ endpoints del portal admin organizados por página:
 
 ### ADMIN-COMPONENTS-CATALOG.md
 
-Ubicación: `docs/95-guias-desarrollo/frontend/admin/ADMIN-COMPONENTS-CATALOG.md`
+Ubicación: `docs/50-guides/frontend/admin/ADMIN-COMPONENTS-CATALOG.md`
 
 Catálogo de 92 componentes organizados en 18 categorías:
 1. Dashboard (9 componentes)

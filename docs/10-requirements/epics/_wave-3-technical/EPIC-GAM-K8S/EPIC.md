@@ -8,7 +8,7 @@
 | **Estado** | completed |
 | **Prioridad** | P1 |
 
-**ADR:** [ADR-0019](../../../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**ADR:** [ADR-039](../../../../90-adr/ADR-039-ssot-docs-en-proyecto.md)
 
 ---
 
@@ -59,4 +59,4 @@ Preparacion de la infraestructura Kubernetes para el deployment en produccion de
 **YAML:** [EPIC-GAM-K8S.yml](../../../../../orchestration/work-items/epics/EPIC-GAM-K8S.yml)
 
 ---
-*Generado: 2026-02-07 | SSOT: ADR-0019 | Template: TEMPLATE-EPICA.md v2.0.0*
+*Generado: 2026-02-07 | SSOT: ADR-039 | Template: TEMPLATE-EPICA.md v2.0.0*

@@ -62,7 +62,7 @@ Gestion de usuarios multi-rol con perfiles diferenciados.
 Multi-tenancy completa con aislamiento por Row-Level Security.
 
 - Cada escuela es un tenant independiente
-- RLS policies en todas las tablas multi-tenant (282 policies)
+- RLS policies en todas las tablas multi-tenant (207 policies)
 - Gestion de suscripciones y planes por tenant
 - Configuracion por tenant (logo, colores, features habilitados)
 - Migracion de datos entre tenants (admin global)
@@ -430,7 +430,7 @@ Generacion de reportes y exportaciones.
 | 20 | parents | 3 | ~20 | 3 | 2 | 100% |
 | 21 | analytics | 2 | ~25 | 5 | 3 | 85% |
 | 22 | reports | 3 | ~20 | 3 | 2 | 75% |
-| **TOTAL** | | **~141** | **~850** | **~145** | **~103** | **~92%** |
+| **TOTAL** | | **~152** | **~899** | **~170** | **~107** | **~92%** |
 
 ---
 

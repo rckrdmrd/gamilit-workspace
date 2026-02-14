@@ -792,9 +792,9 @@ FROM (
 
 - **RF-INIT-001:** `docs/01-fase-alcance-inicial/EAI-001-fundamentos/requerimientos/RF-INIT-001-inicializacion-automatica-usuario.md`
 - **ADR-012:** `docs/90-adr/ADR-012-automatic-user-initialization-trigger.md`
-- **FLUJO:** `docs/90-transversal/FLUJO-INICIALIZACION-USUARIO.md`
-- **DIAGRAMA:** `docs/90-transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md`
-- **FUNCIONES:** `docs/90-transversal/FUNCIONES-UTILITARIAS-GAMILIT.md`
+- **FLUJO:** `docs/80-references/transversal/FLUJO-INICIALIZACION-USUARIO.md`
+- **DIAGRAMA:** `docs/80-references/transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md`
+- **FUNCIONES:** `docs/80-references/transversal/FUNCIONES-UTILITARIAS-GAMILIT.md`
 - **TRACEABILITY:** `docs/01-fase-alcance-inicial/EAI-001-fundamentos/implementacion/TRACEABILITY.yml`
 
 ### Código Fuente

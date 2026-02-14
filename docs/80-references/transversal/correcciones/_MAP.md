@@ -1,6 +1,6 @@
 # _MAP: Correcciones e Issues
 
-**Carpeta:** docs/90-transversal/correcciones/
+**Carpeta:** docs/80-references/transversal/correcciones/
 **Ultima Actualizacion:** 2026-01-07
 **Proposito:** Backlog de issues pendientes y reportes de correcciones
 **Estado:** Vigente
@@ -216,8 +216,8 @@ FROM educational_content.exercises WHERE exercise_type = 'tribunal_opiniones';
 
 ### CORR-M3-001-002: requires_manual_grading en Modulo 3
 
-**Documentacion:** `docs/90-transversal/correcciones/CORR-M3-001-002-requires-manual-grading.md`
-**Validacion:** `docs/90-transversal/analisis/VALIDACION-CORR-M3-001-002-2026-01-07.md`
+**Documentacion:** `docs/80-references/transversal/correcciones/CORR-M3-001-002-requires-manual-grading.md`
+**Validacion:** `docs/80-references/transversal/analisis/VALIDACION-CORR-M3-001-002-2026-01-07.md`
 
 | Aspecto | Detalle |
 |---------|---------|

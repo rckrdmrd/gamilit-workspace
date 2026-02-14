@@ -9,8 +9,8 @@ Ejecutar unified-recreate-db.sh para recrear la base de datos gamilit desde DDL 
 1. `cd workspace-projects/scripts/database`
 2. `./unified-recreate-db.sh gamilit --drop`
 3. Verificar 18 schemas creados
-4. Verificar 171 tablas creadas
+4. Verificar 169 tablas creadas
 5. Verificar 0 errores en output
 
 ## Criterio Pass
-- 18 schemas, 171 tablas, 0 errores
+- 18 schemas, 169 tablas, 0 errores

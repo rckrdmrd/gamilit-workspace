@@ -8,22 +8,22 @@
 | **Estado** | completed |
 | **Prioridad** | P1 |
 
-**ADR:** [ADR-0019](../../../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**ADR:** [ADR-039](../../../../90-adr/ADR-039-ssot-docs-en-proyecto.md)
 
 ---
 
 ## Descripcion
 
-Implementacion completa del backend NestJS 11 para la plataforma educativa gamilit. Abarca 22 modulos que cubren la infraestructura core (auth JWT+Passport+RBAC, users, tenants con RLS), el contenido educativo (modules con 5 niveles de comprension, exercises con 23 evaluadores, content, classrooms, students), el sistema de gamificacion maya (gamification con XP/rangos/ML Coins, leaderboard, missions, store, achievements, social), y el soporte para los 4 portales (teachers, parents, analytics, reports). Incluye el exercise engine con patron Strategy+Factory, el gamification engine con eventos en tiempo real via Socket.IO, y documentacion Swagger/OpenAPI para los 850 endpoints.
+Implementacion completa del backend NestJS 11 para la plataforma educativa gamilit. Abarca 22 modulos que cubren la infraestructura core (auth JWT+Passport+RBAC, users, tenants con RLS), el contenido educativo (modules con 5 niveles de comprension, exercises con 23 evaluadores, content, classrooms, students), el sistema de gamificacion maya (gamification con XP/rangos/ML Coins, leaderboard, missions, store, achievements, social), y el soporte para los 4 portales (teachers, parents, analytics, reports). Incluye el exercise engine con patron Strategy+Factory, el gamification engine con eventos en tiempo real via Socket.IO, y documentacion Swagger/OpenAPI para los 899 endpoints.
 
 ## Alcance
 
 - 22 modulos NestJS implementados: auth, users, tenants, core, health, settings, notifications, modules, exercises, content, classrooms, students, gamification, leaderboard, missions, store, achievements, social, teachers, parents, analytics, reports
-- 141 entities TypeORM sincronizadas con DDL (82.5% coherencia)
-- 412 DTOs con validacion class-validator y class-transformer
-- 145 services con logica de negocio completa
-- 103 controllers con 850 endpoints REST documentados en Swagger
-- 14 guards (auth, roles, tenant isolation, rate limiting)
+- 152 entities TypeORM sincronizadas con DDL (82.5% coherencia)
+- 399 DTOs con validacion class-validator y class-transformer
+- 170 services con logica de negocio completa
+- 107 controllers con 899 endpoints REST documentados en Swagger
+- 15 guards (auth, roles, tenant isolation, rate limiting)
 - 18 decorators custom (current-user, roles, tenant, public)
 - Exercise engine con 23 evaluadores (Strategy+Factory pattern)
 - Gamification engine (XP calculation, rank progression, achievement unlock, ML Coins economy)
@@ -33,9 +33,9 @@ Implementacion completa del backend NestJS 11 para la plataforma educativa gamil
 
 | Capa | Componentes |
 |------|-------------|
-| Database | 141 entities TypeORM mapeadas a 171 tablas DDL |
-| Backend | 22 modulos, 145 services, 103 controllers, 850 endpoints, 14 guards, 18 decorators, 3 Socket.IO namespaces |
-| Frontend | Contratos API definidos para 4 portales (48 API services) |
+| Database | 152 entities TypeORM mapeadas a 169 tablas DDL |
+| Backend | 22 modulos, 170 services, 107 controllers, 899 endpoints, 15 guards, 18 decorators, 3 Socket.IO namespaces |
+| Frontend | Contratos API definidos para 4 portales (52 API services) |
 | DevOps | Health checks (/health, /ready, /live) |
 
 ## Dependencias
@@ -50,7 +50,7 @@ Implementacion completa del backend NestJS 11 para la plataforma educativa gamil
 ## Definition of Done
 
 - [ ] 22 modulos implementados con build exitoso (npm run build && npm run lint)
-- [ ] 850 endpoints documentados en Swagger/OpenAPI
+- [ ] 899 endpoints documentados en Swagger/OpenAPI
 - [ ] Exercise engine funcional con los 23 evaluadores probados
 - [ ] Documentacion actualizada
 - [ ] Inventarios sincronizados
@@ -60,4 +60,4 @@ Implementacion completa del backend NestJS 11 para la plataforma educativa gamil
 **YAML:** [EPIC-GAM-BACKEND.yml](../../../../../orchestration/work-items/epics/EPIC-GAM-BACKEND.yml)
 
 ---
-*Generado: 2026-02-07 | SSOT: ADR-0019 | Template: TEMPLATE-EPICA.md v2.0.0*
+*Generado: 2026-02-07 | SSOT: ADR-039 | Template: TEMPLATE-EPICA.md v2.0.0*

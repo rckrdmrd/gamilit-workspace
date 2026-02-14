@@ -47,7 +47,7 @@ Los siguientes documentos han sido actualizados con información técnica precis
 - ✅ Rutas de documentación actualizadas:
   - Análisis de requerimientos: `docs/01-fase-alcance-inicial/`
   - Planeación: `docs/00-vision-general/` y `orchestration/`
-  - Documentación técnica: `docs/90-transversal/`
+  - Documentación técnica: `docs/80-references/transversal/`
 
 ### 3. Ajuste de Documentación
 

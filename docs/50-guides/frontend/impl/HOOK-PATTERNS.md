@@ -663,8 +663,8 @@ Antes de crear un nuevo custom hook:
 
 ## 11. Referencias
 
-- **Componentes:** `docs/95-guias-desarrollo/frontend/COMPONENT-PATTERNS.md`
-- **Types:** `docs/95-guias-desarrollo/frontend/TYPES-CONVENTIONS.md`
+- **Componentes:** `docs/50-guides/frontend/COMPONENT-PATTERNS.md`
+- **Types:** `docs/50-guides/frontend/TYPES-CONVENTIONS.md`
 - **React Hooks:** https://react.dev/reference/react/hooks
 - **React Query:** https://tanstack.com/query/latest
 

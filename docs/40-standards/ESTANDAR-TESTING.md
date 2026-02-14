@@ -1,8 +1,8 @@
 ---
 titulo: Estandar de Testing
-version: 1.0.0
+version: 2.0.0
 fecha_creacion: 2026-02-02
-ultima_actualizacion: 2026-02-02
+ultima_actualizacion: 2026-02-14
 autor: Equipo de Arquitectura
 categoria: estandares
 tags:
@@ -1402,11 +1402,170 @@ describe('OrderService Integration', () => {
 
 ---
 
+## 10. Architecture Tests
+
+### 10.1 Proposito
+
+Validar automaticamente que las reglas arquitectonicas del proyecto se mantienen conforme el codebase crece. Estos tests actuan como guardianes de la arquitectura, detectando violaciones de las convenciones establecidas antes de que lleguen a produccion.
+
+En gamilit, con 22 modulos, 152 entities, 107 controllers y 170 services, es esencial automatizar la validacion de dependencias entre capas para prevenir acoplamiento indebido.
+
+### 10.2 Herramientas
+
+| Herramienta | Uso | Package |
+|-------------|-----|---------|
+| ts-arch | Enforcement de reglas arquitectonicas | `ts-arch` |
+| madge | Deteccion de dependencias circulares | `madge` |
+| eslint-plugin-boundaries | Enforcement de limites de importacion | `eslint-plugin-boundaries` |
+
+### 10.3 Reglas Obligatorias para Gamilit
+
+Las siguientes reglas arquitectonicas DEBEN validarse automaticamente:
+
+```
+REGLA 1: Controllers NO importan Repositories directamente
+  Controllers → Services → Repositories (siempre via service)
+  Razon: Separacion de responsabilidades
+
+REGLA 2: Entities NO dependen de Controllers
+  Entities son clases puras de datos, sin logica de presentacion
+  Razon: Entities pertenecen a la capa de dominio
+
+REGLA 3: Sin dependencias circulares entre los 22 modulos
+  Modulo A → Modulo B → Modulo A = PROHIBIDO
+  Razon: Acoplamiento inmanejable a escala
+
+REGLA 4: Guards solo en auth/ o shared/
+  Ningun modulo define sus propios guards fuera de estas ubicaciones
+  Razon: Centralizacion de seguridad
+
+REGLA 5: DTOs no contienen logica de negocio
+  DTOs solo tienen decoradores de validacion (@IsString, @IsEmail, etc.)
+  Razon: DTOs son contratos de transporte, no entidades de dominio
+```
+
+### 10.4 Ejemplo de Validacion con ts-arch
+
+```typescript
+// tests/architecture/architecture.spec.ts
+import { filesOfProject } from 'ts-arch';
+
+describe('Architecture Rules', () => {
+  it('controllers should not import repositories directly', async () => {
+    const rule = filesOfProject()
+      .inFolder('controllers')
+      .shouldNot()
+      .dependOnFiles()
+      .inFolder('repositories');
+
+    await expect(rule).toPassAsync();
+  });
+
+  it('entities should not depend on controllers', async () => {
+    const rule = filesOfProject()
+      .inFolder('entities')
+      .shouldNot()
+      .dependOnFiles()
+      .inFolder('controllers');
+
+    await expect(rule).toPassAsync();
+  });
+});
+```
+
+### 10.5 Deteccion de Dependencias Circulares
+
+```bash
+# Verificar dependencias circulares en backend
+cd apps/backend && npx madge --circular --extensions ts src/
+
+# Verificar dependencias circulares en frontend
+cd apps/frontend && npx madge --circular --extensions ts,tsx src/
+
+# Generar grafico visual de dependencias
+npx madge --image graph.svg --extensions ts src/modules/
+```
+
+### 10.6 Frecuencia de Ejecucion
+
+| Validacion | Cuando | Donde |
+|-----------|--------|-------|
+| Dependencias circulares | En cada PR | CI/CD (GitHub Actions) |
+| Reglas ts-arch | En cada PR | CI/CD (GitHub Actions) |
+| Limites de importacion (ESLint) | En cada save | Pre-commit hook + CI |
+
+Ver: [GUIA-ARCHITECTURE-TESTING](../50-guides/testing/GUIA-ARCHITECTURE-TESTING.md) para implementacion detallada.
+
+---
+
+## 11. Visual Regression Testing
+
+### 11.1 Cuando Usar
+
+Visual regression testing debe aplicarse en los siguientes escenarios:
+
+- **Componentes UI criticos:** Dashboards de los 4 portales, paginas de ejercicios, sistema de gamificacion (XP, rangos maya, logros, tienda)
+- **Despues de actualizar TailwindCSS o dependencias de UI:** Cualquier cambio en la configuracion de estilos puede causar regresiones visuales no intencionales
+- **Cross-browser rendering verification:** Verificar que la apariencia es consistente en Chromium, Firefox y WebKit
+- **Despues de refactors de componentes:** Garantizar que la apariencia se mantiene identica tras cambios internos
+
+### 11.2 Herramienta: Playwright Screenshots
+
+Playwright incluye soporte nativo para comparacion de screenshots mediante `toHaveScreenshot()`.
+
+```typescript
+// Ejemplo basico
+test('dashboard estudiante deberia coincidir con baseline', async ({ page }) => {
+  await page.goto('/student/dashboard');
+  await page.waitForLoadState('networkidle');
+
+  await expect(page).toHaveScreenshot('student-dashboard.png', {
+    maxDiffPixelRatio: 0.002, // 0.2% de diferencia permitida
+  });
+});
+```
+
+### 11.3 Configuracion
+
+| Parametro | Valor Recomendado | Descripcion |
+|-----------|-------------------|-------------|
+| `maxDiffPixelRatio` | 0.002 (0.2%) | Porcentaje maximo de pixeles diferentes |
+| `threshold` | 0.2 | Sensibilidad de comparacion por pixel (0-1) |
+| `animations` | `'disabled'` | Deshabilitar animaciones CSS para consistencia |
+| `fullPage` | `false` | Capturar solo viewport visible por defecto |
+
+### 11.4 Gestion de Baselines
+
+- Los screenshots baseline se versionan en git dentro de `e2e/screenshots/`
+- Actualizar baselines: `npx playwright test --update-snapshots`
+- Cada navegador/proyecto genera su propio baseline (sufijo automatico)
+- Revisar diferencias: `npx playwright show-report`
+
+### 11.5 Componentes Prioritarios para Visual Regression en gamilit
+
+| Componente | Portal | Justificacion |
+|-----------|--------|---------------|
+| Dashboard principal | Estudiante | Punto de entrada, XP, rango maya |
+| Pagina de ejercicio | Estudiante | 30 mecanicas, interacciones criticas |
+| Tienda ML Coins | Estudiante | Economia virtual, items visuales |
+| Dashboard de aulas | Maestro | Vista principal del maestro |
+| Reportes de progreso | Maestro | Graficas y tablas de datos |
+| Gestion de contenido | Admin | Formularios complejos |
+| Dashboard de hijo | Padres | Progreso academico visual |
+
+Ver: [GUIA-E2E-PLAYWRIGHT](../50-guides/testing/GUIA-E2E-PLAYWRIGHT.md) seccion Visual Regression para implementacion completa.
+
+---
+
 ## Referencias Cruzadas
 
 ### Estándares Relacionados
 - [ESTANDAR-BACKEND-PROFESIONAL](ESTANDAR-BACKEND-PROFESIONAL.md) - Testing patterns para backend NestJS
 - [ESTANDAR-FRONTEND-PROFESIONAL](ESTANDAR-FRONTEND-PROFESIONAL.md) - Testing patterns para React
+
+### Guias de Implementacion
+- [GUIA-E2E-PLAYWRIGHT](../50-guides/testing/GUIA-E2E-PLAYWRIGHT.md) - Testing E2E con Playwright para los 4 portales
+- [GUIA-COVERAGE-TESTING](../50-guides/testing/GUIA-COVERAGE-TESTING.md) - Estrategia de cobertura y metricas actuales
 
 ### Principios Aplicados
 - [PRINCIPIO-SOLID](../../orchestration/directivas/principios/PRINCIPIO-SOLID.md) - Diseño testeable (SRP, DIP)

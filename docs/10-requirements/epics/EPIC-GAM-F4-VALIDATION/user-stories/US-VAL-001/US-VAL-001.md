@@ -34,7 +34,7 @@ updated_date: "2026-02-10"
 ### CA-02: Base de Datos
 **Dado** que los DDL estan actualizados (post-auditoria F5)
 **Cuando** ejecuto unified-recreate-db.sh gamilit --drop
-**Entonces** se crean 18 schemas y 171 tablas sin errores
+**Entonces** se crean 18 schemas y 169 tablas sin errores
 
 ### CA-03: Seeds
 **Dado** que la BD esta recreada

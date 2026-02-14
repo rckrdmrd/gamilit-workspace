@@ -5,14 +5,17 @@ Documentacion de errores comunes encontrados en la base de datos de Gamilit y su
 
 ## Contenido
 
-| Archivo | Descripcion | Estado |
-|---------|-------------|--------|
-| [ERR-DB-001-uuid-format.md](./ERR-DB-001-uuid-format.md) | Error de formato UUID | Completo |
-| [ERR-DB-002-timezone-now.md](./ERR-DB-002-timezone-now.md) | Error de timezone con NOW() | Completo |
-| [ERR-DB-003-seeds-conflictos-uuid.md](./ERR-DB-003-seeds-conflictos-uuid.md) | Error de conflictos UUID en seeds | Completo |
+| Archivo | Descripcion | Severidad | Estado |
+|---------|-------------|-----------|--------|
+| [ERR-DB-001-uuid-format.md](./ERR-DB-001-uuid-format.md) | Formato UUID incorrecto en seeds | Alta | Completo |
+| [ERR-DB-002-timezone-now.md](./ERR-DB-002-timezone-now.md) | Uso de NOW() en lugar de gamilit.now_mexico() | Media | Completo |
+| [ERR-DB-003-seeds-conflictos-uuid.md](./ERR-DB-003-seeds-conflictos-uuid.md) | Conflictos de UUID duplicados en seeds | Critica | Completo |
+| [ERR-DB-004-rls-policy-conflicto.md](./ERR-DB-004-rls-policy-conflicto.md) | Conflictos RLS entre schemas por nombres no calificados | Alta | Completo |
+| [ERR-DB-005-trigger-recursion.md](./ERR-DB-005-trigger-recursion.md) | Recursion infinita en triggers que modifican su propia tabla | Critica | Completo |
+| [ERR-DB-006-fk-cross-schema.md](./ERR-DB-006-fk-cross-schema.md) | Foreign key cross-schema sin nombre completamente calificado | Alta | Completo |
 
 ## Referencias
 - [Directorio padre](../_MAP.md)
 
 ---
-*Ultima actualizacion: 2026-01-04*
+*Ultima actualizacion: 2026-02-13*

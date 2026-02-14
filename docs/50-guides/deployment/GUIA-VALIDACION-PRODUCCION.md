@@ -47,7 +47,7 @@ curl -s http://localhost:3006/api/health | head -20
 
 | Validacion | Resultado Esperado | Accion si Falla |
 |------------|-------------------|-----------------|
-| Conexion BD | Version PostgreSQL 16+ | Verificar credenciales |
+| Conexion BD | Version PostgreSQL 15+ | Verificar credenciales |
 | Schemas | 17 o mas | Ejecutar `create-database.sh` |
 | Tenant Principal | 1 fila con `is_active=true` | Ver seccion 3.1 |
 | Usuarios | 48 o mas | Ejecutar seeds de auth |

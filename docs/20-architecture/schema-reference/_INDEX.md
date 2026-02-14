@@ -13,14 +13,14 @@
 | Metrica | Valor |
 |---------|-------|
 | Schemas | 18 (16 activos + 2 placeholder) |
-| Tablas | 171 |
+| Tablas | 169 |
 | Views | 22 |
 | Materialized Views | 7 |
 | Functions | 183 |
-| Triggers | 126 |
-| RLS Policies | 263 |
+| Triggers | 67 |
+| RLS Policies | 207 |
 | Foreign Keys | 298 |
-| ENUMs | 42 |
+| ENUMs | 40 |
 
 > **Complementario a:** [MODELO-DATOS.md](../MODELO-DATOS.md) (vision conceptual) y `orchestration/inventarios/DATABASE_INVENTORY.yml` (inventario operativo).
 >
@@ -129,4 +129,4 @@ Los archivos de schema-reference usan **nombres conceptuales** (dominio de negoc
 ---
 
 *GAMILIT - Schema Reference Index v2.0.0*
-*171 tablas | 18 schemas | 263 RLS policies | 42 ENUMs | PostgreSQL 15*
+*169 tablas | 18 schemas | 207 RLS policies | 40 ENUMs | PostgreSQL 15*

@@ -9,7 +9,7 @@
 
 ## Contexto y Problema
 
-La documentación actual del proyecto GAMILIT está organizada en carpetas por tipo de documento (01-requerimientos/, 02-especificaciones-tecnicas/, 03-desarrollo/, etc.), lo que genera:
+La documentación actual del proyecto GAMILIT está organizada en carpetas por tipo de documento (01-requerimientos/, 20-architecture/, 03-desarrollo/, etc.), lo que genera:
 
 1. **Fragmentación:** Información relacionada está dispersa en múltiples carpetas
 2. **Difícil trazabilidad:** Mapear REQ → ET → OBJ → TEST requiere navegar múltiples directorios
@@ -140,7 +140,7 @@ req:
 
 ## Alternativas Consideradas
 
-### 1. Mantener estructura actual (docs/01-requerimientos/, docs/02-especificaciones-tecnicas/)
+### 1. Mantener estructura actual (docs/01-requerimientos/, docs/20-architecture/)
 - ❌ No resuelve fragmentación
 - ❌ Dificulta trazabilidad
 - ❌ No escala bien
@@ -165,7 +165,7 @@ req:
 - **Fecha de decisión:** 2025-11-07
 - **Fecha de implementación:** 2025-11-07
 - **Implementado por:** @architect (agente AI)
-- **Rollback:** Mantener docs/01-requerimientos/ y docs/02-especificaciones-tecnicas/ como read-only durante 1 sprint
+- **Rollback:** Mantener docs/01-requerimientos/ y docs/20-architecture/ como read-only durante 1 sprint
 
 ## Seguimiento
 

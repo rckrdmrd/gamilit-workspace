@@ -18,7 +18,7 @@ Documentacion de APIs del proyecto.
 
 **Base URL:** http://localhost:3006 (dev)
 **Auth:** JWT Bearer Token
-**Total Endpoints:** 850
+**Total Endpoints:** 899
 **WebSocket:** Socket.IO (3 namespaces)
 **Swagger:** http://localhost:3006/api-docs
 

@@ -8,9 +8,9 @@ Arquitectura tecnica del proyecto.
 
 | Documento | Descripcion |
 |-----------|-------------|
-| [STACK-TECNOLOGICO.md](STACK-TECNOLOGICO.md) | NestJS 11, React 19, PostgreSQL 16, stack completo |
+| [STACK-TECNOLOGICO.md](STACK-TECNOLOGICO.md) | NestJS 11, React 19, PostgreSQL 15, stack completo |
 | [ARQUITECTURA-GAMIFICACION.md](ARQUITECTURA-GAMIFICACION.md) | XP, rangos maya, achievements, economia, scoring |
-| [MODELO-DATOS.md](MODELO-DATOS.md) | 18 schemas, 171 tablas, RLS policies, funciones |
+| [MODELO-DATOS.md](MODELO-DATOS.md) | 18 schemas, 169 tablas, RLS policies, funciones |
 | [SCHEMA-REFERENCE.md](SCHEMA-REFERENCE.md) | Referencia detallada de schemas y tablas |
 | [MECANICAS-GAMIFICACION-V6.md](MECANICAS-GAMIFICACION-V6.md) | Documento de diseno: 23 ejercicios, rangos maya, ML Coins, reglas de validacion |
 | [DATOS-GAMIFICACION.md](DATOS-GAMIFICACION.md) | Estructuras de datos del sistema de gamificacion |
@@ -27,7 +27,7 @@ NestJS 11 + React 19 + PostgreSQL 15 (RLS) + TypeORM 0.3.x + Socket.IO 4.8+ + Vi
 ### Arquitectura
 - **MONOREPO:** backend + frontend + database en mismo repo
 - **Modular:** 22 modulos NestJS independientes
-- **Multi-tenant:** RLS con 263 policies
+- **Multi-tenant:** RLS con 207 policies
 - **Real-time:** Socket.IO para leaderboards y notificaciones
 - **Gamificacion:** XP + Rangos Maya + Achievements + ML Coins
 

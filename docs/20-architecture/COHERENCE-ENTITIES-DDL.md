@@ -16,10 +16,10 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | Metrica | Valor |
 |---------|-------|
 | Total Entities Backend | 152 files (153 @Entity classes) |
-| Total Tablas DDL | 171 |
-| Tablas con Entity | 153 |
+| Total Tablas DDL | 169 |
+| Tablas con Entity | 151 |
 | Tablas sin Entity | 18 |
-| Cobertura | 89.5% |
+| Cobertura | 89.3% |
 
 **Nota:** Las 18 tablas sin entity directa son casos justificados: 16 data_warehouse (acceso via SQL raw), 1 auth.users (Supabase), 1 catalogo RBAC (auth_management.roles 03b). Ver seccion "Tablas DDL sin Entity" mas abajo.
 
@@ -285,7 +285,7 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 
 ---
 
-## Tablas DDL sin Entity Directa (22 tablas)
+## Tablas DDL sin Entity Directa (18 tablas)
 
 ### Categoria 1: Data Warehouse (16 tablas) - Intencional
 
@@ -405,7 +405,7 @@ Para mejorar coherencia frontend:
 | Communication datasource | PENDIENTE (conversation entities huerfanas) |
 | Frontend types incompletos | MEJORABLE |
 
-**Coherencia Global: 89.5%** (153/171 tablas con entity) - Nivel satisfactorio para produccion.
+**Coherencia Global: 89.3%** (151/169 tablas con entity) - Nivel satisfactorio para produccion.
 
 ---
 

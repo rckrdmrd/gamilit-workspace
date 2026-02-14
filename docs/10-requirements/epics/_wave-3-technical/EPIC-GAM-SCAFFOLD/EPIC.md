@@ -8,7 +8,7 @@
 | **Estado** | completed |
 | **Prioridad** | P1 |
 
-**ADR:** [ADR-0019](../../../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**ADR:** [ADR-039](../../../../90-adr/ADR-039-ssot-docs-en-proyecto.md)
 
 ---
 
@@ -56,4 +56,4 @@ Setup inicial del proyecto gamilit como plataforma educativa gamificada basada e
 **YAML:** [EPIC-GAM-SCAFFOLD.yml](../../../../../orchestration/work-items/epics/EPIC-GAM-SCAFFOLD.yml)
 
 ---
-*Generado: 2026-02-07 | SSOT: ADR-0019 | Template: TEMPLATE-EPICA.md v2.0.0*
+*Generado: 2026-02-07 | SSOT: ADR-039 | Template: TEMPLATE-EPICA.md v2.0.0*

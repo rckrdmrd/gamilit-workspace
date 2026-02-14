@@ -353,7 +353,7 @@ Time: 1 minute ✅
 **Target:** 150 _MAP.md files (26% coverage)
 
 - [ ] /docs/01-requerimientos/ submaps
-- [ ] /docs/02-especificaciones-tecnicas/ submaps
+- [ ] /docs/20-architecture/ submaps
 - [ ] /docs/03-desarrollo/ submaps
 - [ ] /docs/04-planificacion/ submaps
 

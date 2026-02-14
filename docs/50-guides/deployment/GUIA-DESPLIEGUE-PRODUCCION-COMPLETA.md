@@ -29,7 +29,7 @@
 |------------|--------|------------|------------|
 | **Backend API** | 3006 | 2 (cluster) | NestJS + TypeORM |
 | **Frontend** | 3005 | 1 (fork) | React + Vite |
-| **PostgreSQL** | 5432 | 1 | PostgreSQL 16+ |
+| **PostgreSQL** | 5432 | 1 | PostgreSQL 15+ |
 
 ### URLs de Acceso
 
@@ -59,7 +59,7 @@ API Docs:    http://74.208.126.102:3006/api/docs (deshabilitado en produccion)
                     │                                        │                     │
                     │                                        ▼                     │
                     │                         ┌──────────────────────────────┐    │
-                    │                         │      PostgreSQL 16+          │    │
+                    │                         │      PostgreSQL 15+          │    │
                     │                         │         :5432                │    │
                     │                         │   DB: gamilit_platform       │    │
                     │                         └──────────────────────────────┘    │
@@ -396,7 +396,7 @@ module.exports = {
 │                                                                              │
 │  PASO 1: Preparacion                                                         │
 │  ┌────────────────────────────────────────────────────────────────────────┐ │
-│  │ 1.1 git pull origin main                                               │ │
+│  │ 1.1 git pull origin master                                               │ │
 │  │ 1.2 Verificar pre-requisitos                                           │ │
 │  │ 1.3 Configurar variables de entorno (.env.production)                  │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
@@ -444,7 +444,7 @@ module.exports = {
 cd /path/to/gamilit
 
 # Obtener ultimos cambios
-git pull origin main
+git pull origin master
 ```
 
 #### Paso 2: Base de Datos (Solo si es necesario)
@@ -1155,7 +1155,7 @@ grep CORS_ORIGIN apps/backend/.env.production
 - [ ] Verificar version de npm >= 9
 - [ ] Verificar PostgreSQL corriendo
 - [ ] Verificar PM2 instalado
-- [ ] Actualizar codigo: `git pull origin main`
+- [ ] Actualizar codigo: `git pull origin master`
 
 ### Base de Datos
 - [ ] Configurar DATABASE_URL

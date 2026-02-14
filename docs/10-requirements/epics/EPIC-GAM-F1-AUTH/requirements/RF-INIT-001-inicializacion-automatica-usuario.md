@@ -430,8 +430,8 @@ SELECT * FROM user_initialization_check;
 
 - **ADR-012:** `docs/90-adr/ADR-012-automatic-user-initialization-trigger.md` - Decisión arquitectónica
 - **ET-INIT-001:** `docs/01-fase-alcance-inicial/EAI-001-fundamentos/especificaciones/ET-INIT-001-trigger-inicializacion.md` - Especificación técnica
-- **FLUJO-INICIALIZACION:** `docs/90-transversal/FLUJO-INICIALIZACION-USUARIO.md` - Flujo end-to-end
-- **DIAGRAMA-DEPENDENCIAS:** `docs/90-transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md` - Mapa de dependencias
+- **FLUJO-INICIALIZACION:** `docs/80-references/transversal/FLUJO-INICIALIZACION-USUARIO.md` - Flujo end-to-end
+- **DIAGRAMA-DEPENDENCIAS:** `docs/80-references/transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md` - Mapa de dependencias
 - **TRACEABILITY:** `docs/01-fase-alcance-inicial/EAI-001-fundamentos/implementacion/TRACEABILITY.yml` - Trazabilidad completa
 
 ### Código Fuente

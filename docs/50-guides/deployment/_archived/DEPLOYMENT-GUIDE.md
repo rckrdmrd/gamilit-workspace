@@ -303,7 +303,7 @@ Para actualizar la aplicación después de cambios en el código:
 pm2 stop all
 
 # 2. Obtener últimos cambios (si usas Git)
-git pull origin main
+git pull origin master
 
 # 3. Rebuild
 ./scripts/build-production.sh
@@ -316,7 +316,7 @@ git pull origin main
 
 ```bash
 # 1. Obtener cambios
-git pull origin main
+git pull origin master
 
 # 2. Rebuild backend
 cd apps/backend

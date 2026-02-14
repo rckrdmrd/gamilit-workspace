@@ -8,18 +8,18 @@
 | **Estado** | completed |
 | **Prioridad** | P1 |
 
-**ADR:** [ADR-0019](../../../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**ADR:** [ADR-039](../../../../90-adr/ADR-039-ssot-docs-en-proyecto.md)
 
 ---
 
 ## Descripcion
 
-Integracion end-to-end entre las tres capas del sistema gamilit (DDL, Backend, Frontend) y validacion de coherencia de datos. Incluye la verificacion de coherencia DDL-Backend (82.5% actual, 141 entities vs 171 tablas), la integracion completa Backend-Frontend (100% via 48 API services), la integracion de Socket.IO en tiempo real con 3 namespaces (leaderboard, notifications, classroom), el pipeline completo de ejercicio completado a gamificacion (Exercise -> XP -> Rank -> Achievement -> Leaderboard), y la sincronizacion de constantes SSOT entre las tres capas. Esta es la epica final que valida que la plataforma educativa funciona como sistema integrado.
+Integracion end-to-end entre las tres capas del sistema gamilit (DDL, Backend, Frontend) y validacion de coherencia de datos. Incluye la verificacion de coherencia DDL-Backend (89.9% actual, 152 entities vs 169 tablas), la integracion completa Backend-Frontend (100% via 52 API services), la integracion de Socket.IO en tiempo real con 3 namespaces (leaderboard, notifications, classroom), el pipeline completo de ejercicio completado a gamificacion (Exercise -> XP -> Rank -> Achievement -> Leaderboard), y la sincronizacion de constantes SSOT entre las tres capas. Esta es la epica final que valida que la plataforma educativa funciona como sistema integrado.
 
 ## Alcance
 
-- Coherencia DDL-Backend verificada: 82.5% (141 entities / 171 tablas)
-- Coherencia Backend-Frontend verificada: 100% (48 API services / 850 endpoints)
+- Coherencia DDL-Backend verificada: 89.9% (152 entities / 169 tablas)
+- Coherencia Backend-Frontend verificada: 100% (52 API services / 899 endpoints)
 - Socket.IO integration validada (3 namespaces: leaderboard, notifications, classroom)
 - Pipeline Exercise -> Gamification: ejercicio completado -> XP otorgado -> rango actualizado -> logro desbloqueado -> leaderboard recalculado
 - Pipeline Gamification -> Leaderboard: rankings actualizados en tiempo real
@@ -30,9 +30,9 @@ Integracion end-to-end entre las tres capas del sistema gamilit (DDL, Backend, F
 
 | Capa | Componentes |
 |------|-------------|
-| Database | 36 ENUMs sincronizados, 171 tablas validadas contra entities |
+| Database | 40 ENUMs sincronizados, 169 tablas validadas contra entities |
 | Backend | 22 modulos integrados, 3 Socket.IO namespaces, notification dispatcher |
-| Frontend | 48 API services conectados, Socket.IO client, constants sync |
+| Frontend | 52 API services conectados, Socket.IO client, constants sync |
 | DevOps | Scripts de validacion de coherencia entre capas |
 
 ## Dependencias
@@ -46,7 +46,7 @@ Integracion end-to-end entre las tres capas del sistema gamilit (DDL, Backend, F
 
 ## Definition of Done
 
-- [ ] Coherencia DDL-Backend >= 82.5% verificada y documentada
+- [ ] Coherencia DDL-Backend >= 89.9% verificada y documentada
 - [ ] Pipeline completo Exercise -> Gamification -> Leaderboard funcional end-to-end
 - [ ] Socket.IO en tiempo real operativo en los 3 namespaces
 - [ ] Documentacion actualizada
@@ -57,4 +57,4 @@ Integracion end-to-end entre las tres capas del sistema gamilit (DDL, Backend, F
 **YAML:** [EPIC-GAM-INTEGRATION.yml](../../../../../orchestration/work-items/epics/EPIC-GAM-INTEGRATION.yml)
 
 ---
-*Generado: 2026-02-07 | SSOT: ADR-0019 | Template: TEMPLATE-EPICA.md v2.0.0*
+*Generado: 2026-02-07 | SSOT: ADR-039 | Template: TEMPLATE-EPICA.md v2.0.0*

@@ -1,6 +1,6 @@
 # _MAP: Guias de Desarrollo Backend
 
-**Carpeta:** docs/95-guias-desarrollo/backend/
+**Carpeta:** docs/50-guides/backend/
 **Proposito:** Guias de desarrollo para el backend NestJS
 **Estado:** Completo
 **Ultima actualizacion:** 2025-01-04

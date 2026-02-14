@@ -72,9 +72,9 @@ gamilit-workspace/
 +-- CLAUDE.md                    <- Instrucciones para agentes IA
 +-- ecosystem.config.js          <- PM2 config (backend:3006, frontend:3005)
 +-- apps/
-|   +-- backend/                 <- NestJS 11 (22 modulos, 850 endpoints)
+|   +-- backend/                 <- NestJS 11 (22 modulos, 899 endpoints)
 |   +-- frontend/                <- React 19 + Zustand + TailwindCSS
-|   +-- database/                <- PostgreSQL 15 DDL (18 schemas, 170 tablas)
+|   +-- database/                <- PostgreSQL 15 DDL (18 schemas, 169 tablas)
 |   +-- devops/                  <- Scripts de deployment
 +-- docs/                        <- Documentacion del producto (11 secciones)
 +-- orchestration/               <- Gobernanza SIMCO (directivas, agentes, inventarios)
@@ -109,7 +109,7 @@ gamilit-workspace/
 |--------|----|--------|-------------|
 | auth | GAM-AUTH | 100% | JWT + Passport + RBAC, multi-tenant, OAuth 2.0, 2FA |
 | users | GAM-USERS | 100% | User management, perfiles diferenciados por rol |
-| tenants | GAM-TENANTS | 100% | Multi-tenancy con RLS (263 policies) |
+| tenants | GAM-TENANTS | 100% | Multi-tenancy con RLS (207 policies) |
 | core | GAM-CORE | 100% | Utilidades compartidas, base entities, interceptors |
 | health | GAM-HEALTH | 100% | Health checks (DB, Redis, memoria, disco) |
 | settings | GAM-SETTINGS | 100% | Configuracion global y por tenant, feature flags |
@@ -277,14 +277,14 @@ Nivel productivo: crear, expresar, comunicar (estudiante elige 1 de 3).
 | Metrica | Valor |
 |---------|-------|
 | Schemas | 18 (16 activos + 2 placeholder) |
-| Tablas | 170 |
+| Tablas | 169 |
 | Views | 22 |
 | Materialized Views | 7 |
-| Funciones | 255 |
-| Triggers | 132 |
-| Politicas RLS | 263 |
-| Foreign Keys | 273 |
-| ENUMs | 41 |
+| Funciones | 183 (DDL) |
+| Triggers | 67 |
+| Politicas RLS | 207 |
+| Foreign Keys | 298 |
+| ENUMs | 40 |
 
 ### Backend
 
@@ -292,11 +292,11 @@ Nivel productivo: crear, expresar, comunicar (estudiante elige 1 de 3).
 |---------|-------|
 | Modulos | 22 |
 | Entities | 152 |
-| DTOs | 412 |
+| DTOs | 399 |
 | Services | 170 |
 | Controllers | 107 |
-| Endpoints | 850 |
-| Guards | 14 |
+| Endpoints | 899 |
+| Guards | 15 |
 | Decorators | 18 |
 | Tests Backend | 620 |
 
@@ -304,14 +304,14 @@ Nivel productivo: crear, expresar, comunicar (estudiante elige 1 de 3).
 
 | Metrica | Valor |
 |---------|-------|
-| Componentes | 458 |
-| Hooks | 127 |
-| Paginas | 85 |
-| Stores Zustand | 32 |
-| API Services | 48 |
+| Componentes | 475 |
+| Hooks | 102 |
+| Paginas | 68 |
+| Stores Zustand | 14 |
+| API Services | 52 |
 | Portales | 4 |
-| Mecanicas | 40 |
-| Routes | 24 |
+| Mecanicas | 30 |
+| Routes | 72 |
 | Tests Frontend | 213 |
 
 ### Calidad
@@ -512,13 +512,13 @@ Decisiones documentadas en `docs/90-adr/`:
 ## 12. Estado Actual y Features
 
 ### Completado (98%)
-- 22 modulos backend operativos (850 endpoints)
+- 22 modulos backend operativos (899 endpoints)
 - 5 modulos educativos con 23 tipos de ejercicios
 - 4 portales diferenciados y funcionales
 - Sistema completo de gamificacion maya
 - 833 tests pasando
 - Produccion activa con usuarios reales
-- 18 schemas con 263 politicas RLS
+- 18 schemas con 207 politicas RLS
 - Sistema de gobernanza SIMCO completo con 110+ directivas
 
 ### Features Parciales
@@ -548,7 +548,7 @@ cd apps/frontend && npm run build && npm run lint && npm run typecheck
 bash apps/database/scripts/recreate-database.sh
 
 # Git (Monorepo)
-git add . && git commit -m "[GAM-XXX] desc" && git push origin main
+git add . && git commit -m "[GAM-XXX] desc" && git push origin master
 ```
 
 ---

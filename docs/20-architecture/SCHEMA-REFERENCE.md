@@ -33,4 +33,4 @@ schema-reference/
   99-utilities.md           <- Materialized Views, ENUMs, Indices, Trazabilidad
 ```
 
-*171 tablas | 18 schemas | 282 RLS policies | 36 ENUMs | PostgreSQL 16*
+*169 tablas | 18 schemas | 207 RLS policies | 40 ENUMs | PostgreSQL 15*

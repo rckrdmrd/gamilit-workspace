@@ -613,8 +613,8 @@ interface StudentAssignmentsState {
 
 - **Gap Fixes Relacionados:** P1-002 (AssignmentsPage), P0-008 (AssignmentDetailPage)
 - **Formato de documentacion:** `STUDENT-GAP-006-profile-stats.md`
-- **README del Student Portal:** `docs/95-guias-desarrollo/student-portal/README.md`
-- **Mapa del Student Portal:** `docs/95-guias-desarrollo/student-portal/_MAP.md`
+- **README del Student Portal:** `docs/50-guides/student-portal/README.md`
+- **Mapa del Student Portal:** `docs/50-guides/student-portal/_MAP.md`
 
 ---
 

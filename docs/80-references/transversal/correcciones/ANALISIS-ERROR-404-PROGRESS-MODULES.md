@@ -333,7 +333,7 @@ Llama a `gamilit.initialize_module_progress_for_users(NULL)` para asegurar que t
 | `ddl/schemas/educational_content/triggers/15-trg_initialize_module_progress.sql` | **NUEVO** | Trigger en modules para usuarios existentes |
 | `apps/database/create-database.sh` | Modificado | Agregada FASE 17: VALIDACIONES POST-SEEDS |
 | `apps/database/scripts/fix-missing-module-progress.sql` | Actualizado | Script de validación usando la nueva función |
-| `docs/90-transversal/correcciones/ANALISIS-ERROR-404-PROGRESS-MODULES.md` | Actualizado | Este documento |
+| `docs/80-references/transversal/correcciones/ANALISIS-ERROR-404-PROGRESS-MODULES.md` | Actualizado | Este documento |
 
 ---
 

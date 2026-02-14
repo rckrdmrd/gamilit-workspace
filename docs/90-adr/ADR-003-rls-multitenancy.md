@@ -20,11 +20,11 @@ GAMILIT es una plataforma multi-tenant donde cada escuela opera como un tenant i
 
 ## Decision
 
-Implementar multi-tenancy mediante **Row-Level Security (RLS)** de PostgreSQL 16, con policies aplicadas a todas las tablas que contienen datos de tenant.
+Implementar multi-tenancy mediante **Row-Level Security (RLS)** de PostgreSQL 15, con policies aplicadas a todas las tablas que contienen datos de tenant.
 
 ### Arquitectura:
 1. **Todas las tablas multi-tenant** tienen columna `tenant_id UUID NOT NULL`
-2. **282 RLS policies** aplicadas (SELECT, INSERT, UPDATE, DELETE por tabla)
+2. **207 RLS policies** aplicadas (SELECT, INSERT, UPDATE, DELETE por tabla)
 3. **Tenant context** se establece via `SET app.current_tenant_id` al inicio de cada request
 4. **NestJS middleware** establece el tenant context basado en el JWT del usuario
 5. **Tablas globales** (definiciones, catalogos) NO tienen RLS
@@ -55,7 +55,7 @@ CREATE POLICY "tenant_isolation" ON schema.table
 - **Transparente para el ORM:** TypeORM queries funcionan normal, RLS filtra
 - **Performance:** PostgreSQL optimiza RLS policies (no degradacion significativa)
 - **Compliance:** Cumple requisitos de privacidad de datos de menores
-- **282 policies:** Cobertura completa de todas las tablas multi-tenant
+- **207 policies:** Cobertura completa de todas las tablas multi-tenant
 
 ### Negativas
 - **Complejidad DDL:** Cada tabla nueva requiere policies
@@ -91,7 +91,7 @@ CREATE POLICY "tenant_isolation" ON schema.table
 
 | Metrica | Valor |
 |---------|-------|
-| Total RLS policies | 282 |
+| Total RLS policies | 207 |
 | Tablas con RLS | ~120 |
 | Tablas sin RLS (global) | ~51 |
 | Performance overhead | < 2% (medido) |

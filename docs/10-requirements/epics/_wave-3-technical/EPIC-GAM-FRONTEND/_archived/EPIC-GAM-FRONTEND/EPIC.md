@@ -8,7 +8,7 @@
 | **Estado** | completed |
 | **Prioridad** | P1 |
 
-**ADR:** [ADR-0019](../../../../../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**ADR:** [ADR-039](../../../../../../90-adr/ADR-039-ssot-docs-en-proyecto.md)
 
 ---
 
@@ -22,8 +22,8 @@ Implementacion completa del frontend React 19 para la plataforma educativa gamil
 - Portal Maestro (~95%): gestion de aulas y estudiantes (19 paginas), asignacion de ejercicios, reportes de progreso, revision manual de ejercicios
 - Portal Administrador (~90%): gestion de contenido educativo (18 paginas), configuracion del sistema, analytics globales, gestion de usuarios y roles
 - Portal Padres (100%): vinculacion padre-estudiante, dashboard de progreso academico, notificaciones (email, push, SMS), comunicacion maestro-padre
-- 458 componentes React, 127 custom hooks, 32 Zustand stores, 48 API services
-- 40 mecanicas de juego visuales (XP bars, rank badges, achievement popups, coin animations)
+- 475 componentes React, 127 custom hooks, 32 Zustand stores, 52 API services
+- 30 mecanicas de juego visuales (XP bars, rank badges, achievement popups, coin animations)
 - Mobile-first responsive design con TailwindCSS
 - Socket.IO integration para leaderboards y notificaciones en tiempo real
 
@@ -32,9 +32,9 @@ Implementacion completa del frontend React 19 para la plataforma educativa gamil
 | Capa | Componentes |
 |------|-------------|
 | Database | N/A (indirectamente via API) |
-| Backend | 48 API services consumen 850 endpoints |
-| Frontend | 4 portales, 458 componentes, 85 paginas, 127 hooks, 32 stores, 24 routes, 40 mecanicas |
-| DevOps | Vite 7 build config, optimizacion bundle |
+| Backend | 52 API services consumen 899 endpoints |
+| Frontend | 4 portales, 475 componentes, 68 paginas, 102 hooks, 14 stores, 72 routes, 30 mecanicas |
+| DevOps | Vite 6 build config, optimizacion bundle |
 
 ## Dependencias
 
@@ -58,4 +58,4 @@ Implementacion completa del frontend React 19 para la plataforma educativa gamil
 **YAML:** [EPIC-GAM-FRONTEND.yml](../../../../../../../orchestration/work-items/epics/EPIC-GAM-FRONTEND.yml)
 
 ---
-*Generado: 2026-02-07 | SSOT: ADR-0019 | Template: TEMPLATE-EPICA.md v2.0.0*
+*Generado: 2026-02-07 | SSOT: ADR-039 | Template: TEMPLATE-EPICA.md v2.0.0*

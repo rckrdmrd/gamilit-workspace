@@ -728,5 +728,5 @@ test('Admin can suspend active user with reason', async () => {
 
 ---
 
-**Documento:** `docs/02-especificaciones-tecnicas/01-autenticacion-autorizacion/ET-AUTH-002-estados-cuenta.md`
+**Documento:** `docs/20-architecture/01-autenticacion-autorizacion/ET-AUTH-002-estados-cuenta.md`
 **Ruta relativa desde docs/:** `02-especificaciones-tecnicas/01-autenticacion-autorizacion/ET-AUTH-002-estados-cuenta.md`

@@ -24,7 +24,7 @@ completed_date: "2025-11-19"
 > **Codigo:**
 > - Backend: Ver endpoints en `apps/backend/src/modules/admin/controllers/`
 > - Frontend: `apps/frontend/src/apps/admin/pages/AdminClassroomTeacherPage.tsx`
-> - Documentacion implementacion: `docs/90-transversal/restructuracion-v2/IMPLEMENTACION-REST-ENDPOINTS-US-AE-007.md`
+> - Documentacion implementacion: `docs/80-references/transversal/restructuracion-v2/IMPLEMENTACION-REST-ENDPOINTS-US-AE-007.md`
 
 **Épica:** EXT-002 - Gestión Avanzada Admin
 **Fase:** Fase 3 - Extensiones

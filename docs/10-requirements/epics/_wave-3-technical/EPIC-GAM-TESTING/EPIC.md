@@ -8,7 +8,7 @@
 | **Estado** | completed |
 | **Prioridad** | P1 |
 
-**ADR:** [ADR-0019](../../../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**ADR:** [ADR-039](../../../../90-adr/ADR-039-ssot-docs-en-proyecto.md)
 
 ---
 
@@ -31,8 +31,8 @@ Implementacion de la estrategia de testing completa para la plataforma educativa
 | Capa | Componentes |
 |------|-------------|
 | Database | Seeds de datos de prueba, fixtures para testing |
-| Backend | Jest tests para 22 modulos, 145 services, 103 controllers |
-| Frontend | Vitest tests para 458 componentes, 127 hooks, 32 stores |
+| Backend | Jest tests para 22 modulos, 170 services, 107 controllers |
+| Frontend | Vitest tests para 475 componentes, 102 hooks, 14 stores |
 | DevOps | Jest/Vitest configuration, coverage reporting |
 
 ## Dependencias
@@ -57,4 +57,4 @@ Implementacion de la estrategia de testing completa para la plataforma educativa
 **YAML:** [EPIC-GAM-TESTING.yml](../../../../../orchestration/work-items/epics/EPIC-GAM-TESTING.yml)
 
 ---
-*Generado: 2026-02-07 | SSOT: ADR-0019 | Template: TEMPLATE-EPICA.md v2.0.0*
+*Generado: 2026-02-07 | SSOT: ADR-039 | Template: TEMPLATE-EPICA.md v2.0.0*

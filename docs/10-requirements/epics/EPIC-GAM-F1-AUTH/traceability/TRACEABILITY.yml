@@ -634,10 +634,10 @@ bug_fixes:
         - docs/90-adr/ADR-012-automatic-user-initialization-trigger.md
         - docs/01-fase-alcance-inicial/EAI-001-fundamentos/requerimientos/RF-INIT-001-inicializacion-automatica-usuario.md
         - docs/01-fase-alcance-inicial/EAI-001-fundamentos/especificaciones/ET-INIT-001-trigger-inicializacion.md
-        - docs/90-transversal/FUNCIONES-UTILITARIAS-GAMILIT.md
-        - docs/90-transversal/FLUJO-INICIALIZACION-USUARIO.md
-        - docs/90-transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md
-        - docs/90-transversal/inventarios/DATABASE_INVENTORY.yml
+        - docs/80-references/transversal/FUNCIONES-UTILITARIAS-GAMILIT.md
+        - docs/80-references/transversal/FLUJO-INICIALIZACION-USUARIO.md
+        - docs/80-references/transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md
+        - docs/80-references/transversal/inventarios/DATABASE_INVENTORY.yml
 
     validation:
       - description: "Todos los usuarios tienen module_progress"

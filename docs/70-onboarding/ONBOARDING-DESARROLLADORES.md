@@ -63,7 +63,7 @@ cp .env.example .env
 # Crear base de datos
 createdb gamilit_platform
 
-# Ejecutar DDL completo (18 schemas, 170 tablas)
+# Ejecutar DDL completo (18 schemas, 169 tablas)
 bash apps/database/scripts/recreate-database.sh
 
 # Cargar seeds (datos iniciales)
@@ -95,7 +95,7 @@ gamilit-workspace/
 ├── CLAUDE.md                 # Instrucciones para agentes IA (leer primero)
 ├── ecosystem.config.js       # PM2 config (backend:3006, frontend:3005)
 ├── apps/                     # MONOREPO (todo en mismo repo Git)
-│   ├── backend/              # NestJS 11 (22 modulos, 850 endpoints)
+│   ├── backend/              # NestJS 11 (22 modulos, 899 endpoints)
 │   │   └── src/modules/      # Modulos del backend (@BACKEND)
 │   ├── frontend/             # React 19 + Zustand + TailwindCSS
 │   │   └── src/              # Codigo frontend (@FRONTEND)

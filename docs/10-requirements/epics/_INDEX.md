@@ -4,7 +4,7 @@
 
 **SSOT:** Este directorio es la fuente unica de documentacion narrativa de epicas del proyecto.
 **Tracking:** [orchestration/work-items/epics/](../../../orchestration/work-items/epics/)
-**ADR:** [ADR-0019](../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**ADR:** [ADR-039](../../90-adr/ADR-039-ssot-docs-en-proyecto.md)
 
 ---
 
@@ -69,9 +69,9 @@
 | Epic ID | Titulo | SP | Estado | EPIC.md |
 |---------|--------|-----|--------|---------|
 | EPIC-GAM-F3-SOCIAL-GAMIFICATION | Gamificacion Social | 13 | in_progress | [EPIC.md](EPIC-GAM-F3-SOCIAL-GAMIFICATION/EPIC.md) |
-| EPIC-GAM-F3-TEACHER-PORTAL | Portal Maestros | 34 | in_progress | [EPIC.md](EPIC-GAM-F3-TEACHER-PORTAL/EPIC.md) |
-| EPIC-GAM-F3-ADMIN-EXTENDED | Admin Extendido | 34 | in_progress | [EPIC.md](EPIC-GAM-F3-ADMIN-EXTENDED/EPIC.md) |
-| EPIC-GAM-F3-NOTIFICATIONS | Notificaciones | 8 | in_progress | [EPIC.md](EPIC-GAM-F3-NOTIFICATIONS/EPIC.md) |
+| EPIC-GAM-F3-TEACHER-PORTAL | Portal Maestros | 34 | completed | [EPIC.md](EPIC-GAM-F3-TEACHER-PORTAL/EPIC.md) |
+| EPIC-GAM-F3-ADMIN-EXTENDED | Admin Extendido | 34 | completed | [EPIC.md](EPIC-GAM-F3-ADMIN-EXTENDED/EPIC.md) |
+| EPIC-GAM-F3-NOTIFICATIONS | Notificaciones | 8 | completed | [EPIC.md](EPIC-GAM-F3-NOTIFICATIONS/EPIC.md) |
 | EPIC-GAM-F3-PROFILES | Perfiles | 8 | planned | [EPIC.md](EPIC-GAM-F3-PROFILES/EPIC.md) |
 | EPIC-GAM-F3-REPORTS | Reportes | 8 | planned | [EPIC.md](EPIC-GAM-F3-REPORTS/EPIC.md) |
 | EPIC-GAM-F3-CONTENT | Contenido | 8 | planned | [EPIC.md](EPIC-GAM-F3-CONTENT/EPIC.md) |
@@ -81,7 +81,7 @@
 | EPIC-GAM-F3-PARENT-NOTIFICATIONS | Notificaciones Padres | 5 | planned | [EPIC.md](EPIC-GAM-F3-PARENT-NOTIFICATIONS/EPIC.md) |
 | EPIC-GAM-F3-PARENT-PORTAL | Portal Padres | 13 | planned | [EPIC.md](EPIC-GAM-F3-PARENT-PORTAL/EPIC.md) |
 
-**Subtotal F3:** 12 EPICs | 165 SP | ~33% en progreso
+**Subtotal F3:** 12 EPICs | 165 SP | ~58% completado (4/12 completados, 1 en progreso)
 
 ---
 
@@ -110,4 +110,4 @@
 
 ---
 
-*Actualizado: 2026-02-10 | EPIC-GAM-F4-VALIDATION*
+*Actualizado: 2026-02-14 | Sync F3 epic statuses (Teacher, Admin, Notifications → completed)*

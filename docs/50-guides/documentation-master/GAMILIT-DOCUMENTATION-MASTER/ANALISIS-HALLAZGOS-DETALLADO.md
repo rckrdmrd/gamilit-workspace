@@ -529,7 +529,7 @@ projects/gamilit/
 │   └── (25 archivos - 7 pares duplicados)
 ├── apps/backend/src/modules/admin/controllers/
 │   └── (20 controllers - ~150 endpoints)
-└── docs/95-guias-desarrollo/GAMILIT-DOCUMENTATION-MASTER/
+└── docs/50-guides/GAMILIT-DOCUMENTATION-MASTER/
     └── fase-6-coherencia/COHERENCE-MATRIX-GAMILIT.yml
 ```
 

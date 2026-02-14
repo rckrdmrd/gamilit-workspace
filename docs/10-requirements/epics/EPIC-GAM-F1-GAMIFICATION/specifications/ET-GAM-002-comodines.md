@@ -1148,6 +1148,6 @@ CREATE INDEX idx_comodin_usage_log_user ON gamification_system.comodin_usage_log
 
 ---
 
-**Documento:** `docs/02-especificaciones-tecnicas/02-gamificacion/ET-GAM-002-comodines.md`
+**Documento:** `docs/20-architecture/02-gamificacion/ET-GAM-002-comodines.md`
 **Propósito:** Especificación técnica completa del sistema de comodines
 **Audiencia:** Backend Developers, Frontend Developers, QA Team

@@ -10,7 +10,7 @@
 ## ESTRUCTURA DE DOCUMENTACION
 
 ```
-docs/95-guias-desarrollo/student-portal/
+docs/50-guides/student-portal/
 |
 +-- README.md                    <- Documento principal (este directorio)
 +-- _MAP.md                      <- Mapa de navegacion (este archivo)
@@ -88,7 +88,7 @@ Las especificaciones SPEC-*.md documentan completamente cada dominio funcional d
 |-----------|-----------|
 | `ESTANDAR-NOMENCLATURA-API.md` | Estandar snake_case/camelCase - 100+ campos |
 
-### Especificaciones de Mecanicas (docs/90-transversal/mecanicas/)
+### Especificaciones de Mecanicas (docs/80-references/transversal/mecanicas/)
 
 | Documento | Proposito |
 |-----------|-----------|
@@ -107,8 +107,8 @@ Las especificaciones SPEC-*.md documentan completamente cada dominio funcional d
 
 | Documento | Proposito |
 |-----------|-----------|
-| `FRONTEND_INVENTORY.yml` | 463+ componentes, 101 hooks, 23 APIs |
-| `BACKEND_INVENTORY.yml` | 612 endpoints documentados |
+| `FRONTEND_INVENTORY.yml` | 475 componentes, 102 hooks, 52 APIs |
+| `BACKEND_INVENTORY.yml` | 899 endpoints documentados |
 
 ### Tareas (orchestration/tareas/)
 

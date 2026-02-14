@@ -1630,6 +1630,6 @@ async getGallery(userId: string): Promise<AchievementGallery> {
 
 ---
 
-**Documento:** `docs/02-especificaciones-tecnicas/02-gamificacion/ET-GAM-001-achievements.md`
+**Documento:** `docs/20-architecture/02-gamificacion/ET-GAM-001-achievements.md`
 **Propósito:** Especificación técnica completa del sistema de achievements
 **Audiencia:** Backend Developers, Frontend Developers, QA Team

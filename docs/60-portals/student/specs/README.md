@@ -19,9 +19,9 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 | Metrica | Valor |
 |---------|-------|
 | **Paginas analizadas** | 27 (15 principales + 12 complementarias) |
-| **Componentes identificados** | 463+ |
-| **Hooks personalizados** | 12+ |
-| **APIs consumidas** | 25+ categorias |
+| **Componentes identificados** | 475 |
+| **Hooks personalizados** | 102 |
+| **APIs consumidas** | 52 API services |
 | **Mecanicas de ejercicios** | 30 (23 M1-M3 + 5 M4 + 2 M5 auxiliares) |
 | **Test coverage actual** | ~13% (meta: 40%) |
 | **Gaps de coherencia identificados** | 8 (2 resueltos, 4 documentados, 2 en backlog) |
@@ -59,9 +59,9 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 |-----------|-----------|-------------|
 | **Analisis Integral** | `orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md` | Analisis completo de 27 paginas, 8 gaps identificados |
 | **Estandar Nomenclatura API** | `docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md` | Estandar snake_case/camelCase con 100+ campos documentados |
-| **Especificaciones Mecanicas M1-M3** | `docs/90-transversal/mecanicas/SPEC-MECANICAS-M1-M3.md` | 23 mecanicas basicas documentadas |
-| **Especificaciones Mecanicas M4** | `docs/90-transversal/mecanicas/SPEC-MECANICAS-M4.md` | 5 mecanicas avanzadas documentadas |
-| **Especificaciones Mecanicas M5** | `docs/90-transversal/mecanicas/SPEC-MECANICAS-M5.md` | 2 mecanicas creativas documentadas |
+| **Especificaciones Mecanicas M1-M3** | `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M1-M3.md` | 23 mecanicas basicas documentadas |
+| **Especificaciones Mecanicas M4** | `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M4.md` | 5 mecanicas avanzadas documentadas |
+| **Especificaciones Mecanicas M5** | `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M5.md` | 2 mecanicas creativas documentadas |
 | **Evaluacion Endpoints Consolidados** | `orchestration/analisis/EVALUACION-ENDPOINTS-CONSOLIDADOS.md` | Evaluacion GAP-SP-005: decision PARCIAL GO |
 
 ### Testing y Calidad
@@ -74,8 +74,8 @@ Este directorio contiene la documentacion tecnica completa del **Student Portal 
 
 | Documento | Ubicacion | Descripcion |
 |-----------|-----------|-------------|
-| **Frontend Inventory** | `orchestration/inventarios/FRONTEND_INVENTORY.yml` | 463+ componentes, 101 hooks, 23 API services |
-| **Backend Inventory** | `orchestration/inventarios/BACKEND_INVENTORY.yml` | 612 endpoints documentados |
+| **Frontend Inventory** | `orchestration/inventarios/FRONTEND_INVENTORY.yml` | 475 componentes, 102 hooks, 52 API services |
+| **Backend Inventory** | `orchestration/inventarios/BACKEND_INVENTORY.yml` | 899 endpoints documentados |
 
 ### Tarea Activa
 
@@ -819,9 +819,9 @@ docs/student-portal/
 
 ### Documentacion Nueva (2026-01-20)
 - **Estandar de Nomenclatura:** `docs/40-estandares/ESTANDAR-NOMENCLATURA-API.md`
-- **Especificaciones Mecanicas M1-M3:** `docs/90-transversal/mecanicas/SPEC-MECANICAS-M1-M3.md`
-- **Especificaciones Mecanicas M4:** `docs/90-transversal/mecanicas/SPEC-MECANICAS-M4.md`
-- **Especificaciones Mecanicas M5:** `docs/90-transversal/mecanicas/SPEC-MECANICAS-M5.md`
+- **Especificaciones Mecanicas M1-M3:** `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M1-M3.md`
+- **Especificaciones Mecanicas M4:** `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M4.md`
+- **Especificaciones Mecanicas M5:** `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-M5.md`
 - **Plan de Testing:** `orchestration/testing/TESTING-PLAN-STUDENT-PORTAL.md`
 - **Evaluacion Endpoints Consolidados:** `orchestration/analisis/EVALUACION-ENDPOINTS-CONSOLIDADOS.md`
 
@@ -830,7 +830,7 @@ docs/student-portal/
 
 ### Inventarios
 - `orchestration/inventarios/FRONTEND_INVENTORY.yml` - 463+ componentes
-- `orchestration/inventarios/BACKEND_INVENTORY.yml` - 612 endpoints
+- `orchestration/inventarios/BACKEND_INVENTORY.yml` - 899 endpoints
 - `orchestration/inventarios/DATABASE_INVENTORY.yml` - 16 schemas, 135+ tablas
 
 ### Codebase

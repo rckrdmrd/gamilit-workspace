@@ -3,7 +3,7 @@
 **US:** US-VAL-002 | **Tipo:** Database | **Estado:** Pendiente | **SP:** 1
 
 ## Descripcion
-Comparar los 36 tipos ENUM definidos en DDL con las enums en entidades TypeScript.
+Comparar los 40 tipos ENUM definidos en DDL con las enums en entidades TypeScript.
 
 ## Acciones
 1. `SELECT typname FROM pg_type WHERE typtype='e'` — listar ENUMs en DB
@@ -11,5 +11,5 @@ Comparar los 36 tipos ENUM definidos en DDL con las enums en entidades TypeScrip
 3. Comparar nombres y valores
 
 ## Criterio Pass
-- 36 ENUMs coinciden
+- 40 ENUMs coinciden
 - 0 mismatches en valores

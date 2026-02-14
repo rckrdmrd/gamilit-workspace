@@ -497,7 +497,7 @@ lessons_learned:
 # ============================================================================
 
 complete_inventory:
-  reference: DATABASE_INVENTORY.yml (docs/90-transversal/inventarios/)
+  reference: DATABASE_INVENTORY.yml (docs/80-references/transversal/inventarios/)
   total_objects: 289
   breakdown:
     tables: 62

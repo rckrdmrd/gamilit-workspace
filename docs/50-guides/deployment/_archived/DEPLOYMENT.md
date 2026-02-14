@@ -7,7 +7,7 @@
 - **IP:** 74.208.126.102
 - **OS:** Linux
 - **Process Manager:** PM2
-- **Database:** PostgreSQL 16
+- **Database:** PostgreSQL 15
 - **Node.js:** v18+
 
 ### Deployed Services
@@ -30,14 +30,14 @@
 
 - Ubuntu 20.04+ or similar Linux distribution
 - Node.js 18+ and npm 9+
-- PostgreSQL 16+
+- PostgreSQL 15+
 - PM2 installed globally
 - Git
 
 ### Development Requirements
 
 - Node.js 18+
-- PostgreSQL 16+
+- PostgreSQL 15+
 - npm 9+
 
 ## Initial Setup

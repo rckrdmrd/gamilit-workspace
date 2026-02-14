@@ -114,10 +114,10 @@ Cambiar el backend a "Guild" crearía mayor inconsistencia.
 
 ### Corto Plazo (P1)
 
-- [ ] Actualizar `/docs/02-especificaciones-tecnicas/TYPES-SOCIAL.md`
+- [ ] Actualizar `/docs/20-architecture/TYPES-SOCIAL.md`
   - Reemplazar "Guild" → "Team"
   - Reemplazar "GuildMember" → "TeamMember"
-- [ ] Actualizar `/docs/02-especificaciones-tecnicas/SOCIAL-SCHEMAS.md`
+- [ ] Actualizar `/docs/20-architecture/SOCIAL-SCHEMAS.md`
   - Actualizar esquemas de base de datos
   - Actualizar ejemplos de API
 - [ ] Actualizar `/docs/01-requerimientos/casos-uso/`
@@ -196,8 +196,8 @@ export class TeamsController {
   - `/src/modules/social/services/teams.service.ts`
   - `/src/modules/social/controllers/teams.controller.ts`
 - **Docs a Actualizar**:
-  - `/docs/02-especificaciones-tecnicas/TYPES-SOCIAL.md`
-  - `/docs/02-especificaciones-tecnicas/SOCIAL-SCHEMAS.md`
+  - `/docs/20-architecture/TYPES-SOCIAL.md`
+  - `/docs/20-architecture/SOCIAL-SCHEMAS.md`
   - `/docs/01-requerimientos/casos-uso/student/`
 
 ---

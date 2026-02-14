@@ -51,7 +51,7 @@ services:
       - VITE_API_URL=http://localhost:3006
 
   postgres:
-    image: postgres:16-alpine
+    image: postgres:15-alpine
     ports:
       - "5432:5432"
     environment:
@@ -118,7 +118,7 @@ npm run test            # Jest (833 tests)
 npm run test:cov        # Cobertura de tests
 ```
 
-### Frontend (React 19 + Vite 7)
+### Frontend (React 19 + Vite 6)
 ```bash
 cd apps/frontend
 
@@ -146,7 +146,7 @@ Production
 +-- Load Balancer (Nginx)
     +-- Frontend (Static files served by Nginx)
     +-- Backend (NestJS, multiple instances)
-    +-- PostgreSQL 16 (Primary + Replica)
+    +-- PostgreSQL 15 (Primary + Replica)
     +-- Redis (Cache + Sessions)
 ```
 
@@ -250,7 +250,7 @@ Ejemplo: [GAM-042] feat: add exercise spaced repetition engine
 # Todo en un solo commit+push
 git add .
 git commit -m "[GAM-XXX] tipo: descripcion"
-git push origin main
+git push origin master
 ```
 
 ---

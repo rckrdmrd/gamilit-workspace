@@ -32,7 +32,7 @@
 - [ ] Proceso para agregar nuevos types
 - [ ] Lista de barrel exports autorizados
 
-**Ubicación:** `docs/95-guias-desarrollo/frontend/TYPES-CONVENTIONS.md`
+**Ubicación:** `docs/50-guides/frontend/TYPES-CONVENTIONS.md`
 
 ---
 
@@ -48,7 +48,7 @@
 - [ ] Agregar documentación de `assignments/`
 - [ ] Actualizar diagrama de estructura
 
-**Ubicación:** `docs/95-guias-desarrollo/frontend/ESTRUCTURA-FEATURES.md`
+**Ubicación:** `docs/50-guides/frontend/ESTRUCTURA-FEATURES.md`
 
 ---
 
@@ -294,8 +294,8 @@ FASE 2.5 (Futuro): Exercise (P2)
 
 ## Referencias
 
-- **Análisis base:** `docs/95-guias-desarrollo/frontend/TYPES-CONSOLIDATION-ANALYSIS.md`
-- **Estructura actual:** `docs/95-guias-desarrollo/frontend/ESTRUCTURA-FEATURES.md`
+- **Análisis base:** `docs/50-guides/frontend/TYPES-CONSOLIDATION-ANALYSIS.md`
+- **Estructura actual:** `docs/50-guides/frontend/ESTRUCTURA-FEATURES.md`
 - **Types compartidos:** `apps/frontend/src/shared/types/`
 - **Constants:** `apps/frontend/src/shared/constants/`
 

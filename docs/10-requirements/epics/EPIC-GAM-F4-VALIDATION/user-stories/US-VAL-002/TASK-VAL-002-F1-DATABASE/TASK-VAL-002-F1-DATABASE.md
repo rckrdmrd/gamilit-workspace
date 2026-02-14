@@ -3,7 +3,7 @@
 **US:** US-VAL-002 | **Tipo:** Database | **Estado:** Pendiente | **SP:** 2
 
 ## Descripcion
-Verificar que la BD tiene exactamente 18 schemas y 171 tablas.
+Verificar que la BD tiene exactamente 18 schemas y 169 tablas.
 
 ## Acciones
 1. `SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT IN ('pg_catalog','information_schema','pg_toast')`
@@ -12,4 +12,4 @@ Verificar que la BD tiene exactamente 18 schemas y 171 tablas.
 
 ## Criterio Pass
 - 18 schemas exactos
-- 171 tablas exactas
+- 169 tablas exactas

@@ -146,7 +146,7 @@ Se decide **mantener los 3 schemas sin tablas** por las siguientes razones estra
 ## Referencias
 
 - **DDL:** `/apps/database/ddl/schemas/*/`
-- **Inventario:** `/docs/90-transversal/inventarios/DATABASE_INVENTORY.yml`
+- **Inventario:** `/docs/80-references/transversal/inventarios/DATABASE_INVENTORY.yml`
 - **ADR Relacionado:** ADR-002 (Arquitectura de Base de Datos)
 - **Epic:** EMR-001 (Migración a Schemas Modulares)
 

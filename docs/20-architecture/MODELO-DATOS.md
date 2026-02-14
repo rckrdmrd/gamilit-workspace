@@ -17,12 +17,12 @@
 | Metrica | Valor |
 |---------|-------|
 | Schemas | 18 (16 activos + 2 placeholder) |
-| Tablas | 171 |
+| Tablas | 169 |
 | Views | 22 |
 | Materialized Views | 7 |
 | Functions | 183 |
-| Triggers | 126 |
-| RLS Policies | 263 |
+| Triggers | 67 (CREATE TRIGGER) / 126 (trigger functions) |
+| RLS Policies | 207 |
 | Foreign Keys | 298 |
 | ENUMs | 42 |
 
@@ -305,7 +305,7 @@ Reservados para futuras expansiones:
 
 ---
 
-## RLS Policies (263)
+## RLS Policies (207)
 
 ### Distribucion por Schema
 | Schema | Policies | Estrategia |
@@ -425,7 +425,7 @@ CREATE POLICY "tenant_isolation_delete" ON schema.table_name
 
 ---
 
-## Triggers Clave (126 total)
+## Triggers Clave (67 CREATE TRIGGER / 126 trigger functions)
 
 | Trigger | Tabla | Evento | Accion |
 |---------|-------|--------|--------|
@@ -504,5 +504,5 @@ Para la lista completa de funciones DDL reales, consultar `apps/database/ddl/` p
 ---
 
 *GAMILIT - Modelo de Datos*
-*18 schemas, 171 tablas, 263 RLS policies*
+*18 schemas, 169 tablas, 207 RLS policies*
 *PostgreSQL 15 con Row-Level Security*

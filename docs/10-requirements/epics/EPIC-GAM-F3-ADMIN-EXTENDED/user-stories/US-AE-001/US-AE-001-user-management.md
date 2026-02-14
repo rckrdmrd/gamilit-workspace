@@ -111,6 +111,6 @@ completed_date: "2025-11-13"
 
 ---
 
-**Referencia API:** `/docs/02-especificaciones-tecnicas/apis/API-REFERENCE.md` (líneas 2139-2149)
+**Referencia API:** `/docs/20-architecture/apis/API-REFERENCE.md` (líneas 2139-2149)
 **Última actualización:** 2025-11-19 (Estado actualizado a COMPLETED)
 **Creación original:** 2025-10-28

@@ -310,7 +310,7 @@ ls docs/90-adr/
 ls docs/96-quick-reference/
 
 # Ver inventarios consolidados
-ls docs/90-transversal/inventarios/
+ls docs/80-references/transversal/inventarios/
 ```
 
 ### Navegación por Rol
@@ -318,7 +318,7 @@ ls docs/90-transversal/inventarios/
 **Developer nuevo:**
 ```
 docs/00-vision-general/
-  → docs/95-guias-desarrollo/
+  → docs/50-guides/
   → docs/96-quick-reference/
   → docs/98-standards/
 ```
@@ -326,14 +326,14 @@ docs/00-vision-general/
 **Tech Lead:**
 ```
 docs/90-adr/
-  → docs/90-transversal/inventarios/
+  → docs/80-references/transversal/inventarios/
   → docs/01-fase-alcance-inicial/
 ```
 
 **Product Owner:**
 ```
 docs/00-vision-general/
-  → docs/90-transversal/inventarios/TRACEABILITY_MATRIX.yml
+  → docs/80-references/transversal/inventarios/TRACEABILITY_MATRIX.yml
   → docs/README-FASE-*.md (overview de cada fase)
 ```
 

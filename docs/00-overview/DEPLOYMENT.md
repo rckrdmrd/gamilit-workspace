@@ -40,7 +40,7 @@
                     +----------------+----------------+
                     |                                 |
            +--------+--------+             +---------+---------+
-           | PostgreSQL 16    |             | Redis 7           |
+           | PostgreSQL 15    |             | Redis 7           |
            | :5432            |             | :6379 (DB 0)      |
            | gamilit_platform |             | Cache + Sessions  |
            +-----------------+             +-------------------+
@@ -62,7 +62,7 @@
 | Log path | /var/log/pm2 |
 | OS | Ubuntu (systemd) |
 | Repository | git@github.com:rckrdmrd/gamilit-workspace.git |
-| Branch | main |
+| Branch | master |
 
 ### Domains
 
@@ -296,7 +296,7 @@ ssh deploy@74.208.126.102
 cd /var/www/gamilit
 
 # Pull latest code
-git fetch origin && git pull origin main
+git fetch origin && git pull origin master
 
 # Install dependencies
 cd apps/backend && npm ci --production=false

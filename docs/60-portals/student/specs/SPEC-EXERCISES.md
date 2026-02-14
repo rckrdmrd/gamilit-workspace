@@ -314,7 +314,7 @@ const comodinTypeMap: Record<string, string> = {
 ## 13. Referencias
 
 - **Hook Spec:** `STUDENT-HOOKS-SPEC.md`
-- **Mecánicas:** `docs/90-transversal/mecanicas/SPEC-MECANICAS-*.md`
+- **Mecánicas:** `docs/80-references/transversal/mecanicas/SPEC-MECANICAS-*.md`
 - **Gaps:** `orchestration/analisis/GAPS-STUDENT-PORTAL.yml`
 
 ---

@@ -226,8 +226,8 @@ Para mitigar las consecuencias negativas:
 
 - **Análisis Completo:** `orchestration/agentes/architecture-analyst/analisis-portal-admin-alcances-2025-11-24/REPORTE-ANALISIS-PORTAL-ADMIN-ALCANCES.md`
 - **Alcance Original:** `docs/01-fase-alcance-inicial/EAI-005-admin-base/README.md`
-- **Estado Actual:** `docs/90-transversal/ADMIN-PORTAL-UNDER-CONSTRUCTION-2025-11-24.md`
-- **Inventario Admin:** `docs/90-transversal/inventarios/INVENTARIO-ADMIN-PORTAL-EXT-002.md`
+- **Estado Actual:** `docs/80-references/transversal/ADMIN-PORTAL-UNDER-CONSTRUCTION-2025-11-24.md`
+- **Inventario Admin:** `docs/80-references/transversal/inventarios/INVENTARIO-ADMIN-PORTAL-EXT-002.md`
 - **User Stories:**
   - `US-ADM-001-gestion-aulas-crud.md`
   - `US-ADM-002-gestion-estudiantes-aula.md`

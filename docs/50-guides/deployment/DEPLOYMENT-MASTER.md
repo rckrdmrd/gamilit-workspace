@@ -35,7 +35,7 @@ cp apps/frontend/.env.production "$BACKUP_DIR/config/"
 pg_dump "$DATABASE_URL" | gzip > "$BACKUP_DIR/gamilit.sql.gz"
 
 # 3. PULL CAMBIOS
-git fetch origin && git reset --hard origin/main
+git fetch origin && git reset --hard origin/master
 
 # 4. RESTAURAR CONFIG
 cp "$BACKUP_DIR/config/backend.env.production" apps/backend/.env.production
@@ -218,10 +218,10 @@ pm2 list
 ```bash
 # Fetch y mostrar commits pendientes
 git fetch origin
-git log HEAD..origin/main --oneline 2>/dev/null || echo "Ya actualizado"
+git log HEAD..origin/master --oneline 2>/dev/null || echo "Ya actualizado"
 
 # Pull forzado
-git reset --hard origin/main
+git reset --hard origin/master
 
 # Mostrar ultimo commit
 git log --oneline -1
@@ -605,7 +605,7 @@ Ejecuta el deployment de GAMILIT siguiendo el procedimiento:
 
 1. Backup BD y configs a /home/gamilit/backups/TIMESTAMP/
 2. pm2 stop all
-3. git reset --hard origin/main
+3. git reset --hard origin/master
 4. Restaurar configs desde backup
 5. Recrear BD (si hay cambios DDL)
 6. Build backend y frontend

@@ -941,7 +941,7 @@ SELECT * FROM educational_content.validate_module4_module5_answer(
 - `apps/frontend/src/features/mechanics/module5/VideoCarta/`
 
 ### Documentacion Relacionada
-- `docs/90-transversal/EJERCICIOS-PREGUNTAS-RESPUESTAS.md` (seccion Modulo 5)
+- `docs/80-references/transversal/EJERCICIOS-PREGUNTAS-RESPUESTAS.md` (seccion Modulo 5)
 
 ---
 

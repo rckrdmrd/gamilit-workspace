@@ -94,5 +94,5 @@ export interface UserResponse {
 
 ## Referencias
 
-- `docs/90-transversal/api/API-ADMIN-MODULE.md`
-- `docs/90-transversal/api/API-TEACHER-MODULE.md`
+- `docs/80-references/transversal/api/API-ADMIN-MODULE.md`
+- `docs/80-references/transversal/api/API-TEACHER-MODULE.md`

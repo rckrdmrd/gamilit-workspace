@@ -8,7 +8,7 @@
 | **Estado** | completed |
 | **Prioridad** | P1 |
 
-**ADR:** [ADR-0019](../../../../90-adr/ADR-0019-ssot-documentacion-producto-en-proyecto.md)
+**ADR:** [ADR-039](../../../../90-adr/ADR-039-ssot-docs-en-proyecto.md)
 
 ---
 
@@ -30,8 +30,8 @@ Definicion completa de requerimientos funcionales y no funcionales para la plata
 | Capa | Componentes |
 |------|-------------|
 | Database | Modelo conceptual de 18 schemas |
-| Backend | Especificacion de 22 modulos y 850 endpoints |
-| Frontend | Wireframes de 4 portales, 85 paginas, 23 tipos de ejercicio |
+| Backend | Especificacion de 22 modulos y 899 endpoints |
+| Frontend | Wireframes de 4 portales, 68 paginas, 23 tipos de ejercicio |
 | DevOps | N/A |
 
 ## Dependencias
@@ -56,4 +56,4 @@ Definicion completa de requerimientos funcionales y no funcionales para la plata
 **YAML:** [EPIC-GAM-REQUIREMENTS.yml](../../../../../orchestration/work-items/epics/EPIC-GAM-REQUIREMENTS.yml)
 
 ---
-*Generado: 2026-02-07 | SSOT: ADR-0019 | Template: TEMPLATE-EPICA.md v2.0.0*
+*Generado: 2026-02-07 | SSOT: ADR-039 | Template: TEMPLATE-EPICA.md v2.0.0*

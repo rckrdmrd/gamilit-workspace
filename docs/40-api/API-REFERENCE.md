@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0
 **Fecha:** 2026-02-07
-**Total Endpoints:** 850
+**Total Endpoints:** 899
 **Base URL:** http://localhost:3006 (dev) | https://api.gamilit.com (prod)
 **Auth:** JWT Bearer Token
 **Format:** JSON
@@ -465,4 +465,4 @@ Documentacion interactiva generada automaticamente desde decorators NestJS (@Api
 ---
 
 *GAMILIT - API Reference*
-*850 endpoints | 22 modulos | JWT Auth | Socket.IO Real-time*
+*899 endpoints | 22 modulos | JWT Auth | Socket.IO Real-time*
