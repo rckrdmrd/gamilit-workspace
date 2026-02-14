@@ -239,7 +239,7 @@ fase_D_documentacion:
 ## REFERENCIAS
 
 - SIMCO-GIT.md - Directiva principal de control de versiones
-- SIMCO-SUBMODULOS.md - Manejo de submodulos y nested repos
+- SIMCO-MONOREPO.md - Manejo de monorepo (gamilit es standalone, no usa submodulos)
 - PRINCIPIO-CAPVED.md - Ciclo de vida de tareas
 - SIMCO-TAREA.md - Punto de entrada de tareas
 - scripts/validation/validate-sync.sh - Script de validación de sincronización

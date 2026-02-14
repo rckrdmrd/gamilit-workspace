@@ -71,7 +71,7 @@ updated_date: "2026-01-04"
 ### Especificación Técnica
 
 📘 **Documento ET Relacionado:**
-- [ET-EDU-001: Implementación de Mecánicas de Ejercicios](../../02-especificaciones-tecnicas/03-contenido-educativo/ET-EDU-001-mecanicas-ejercicios.md)
+- [ET-EDU-001: Implementación de Mecánicas de Ejercicios](../specifications/ET-EDU-001-mecanicas-ejercicios.md)
 
 ### Documentos Relacionados
 
@@ -1141,7 +1141,7 @@ test('Fill in blank accepts valid variations', async () => {
 
 ### Documentación Relacionada
 
-- [ET-EDU-001: Implementación de Mecánicas](../../02-especificaciones-tecnicas/03-contenido-educativo/ET-EDU-001-mecanicas-ejercicios.md)
+- [ET-EDU-001: Implementación de Mecánicas](../specifications/ET-EDU-001-mecanicas-ejercicios.md)
 - [RF-EDU-002: Niveles de Dificultad](./RF-EDU-002-niveles-dificultad.md)
 - [RF-PRG-001: Tracking de Progreso](../04-progreso-seguimiento/RF-PRG-001-tracking-progreso.md)
 

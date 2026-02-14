@@ -29,7 +29,7 @@ updated_date: "2026-01-04"
 ## 🔗 Referencias
 
 ### Especificación Técnica
-📐 [ET-AUTH-003: OAuth 2.0 Providers](../../02-especificaciones-tecnicas/01-autenticacion-autorizacion/ET-AUTH-003-oauth.md)
+📐 [ET-AUTH-003: OAuth 2.0 Providers](../specifications/ET-AUTH-003-oauth.md)
 
 ### Implementación DDL
 🗄️ **ENUM Canónico:**

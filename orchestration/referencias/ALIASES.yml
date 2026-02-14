@@ -95,7 +95,7 @@ dominios:
   "@OP_BACKEND": "directivas/simco/SIMCO-BACKEND.md"
   "@OP_FRONTEND": "directivas/simco/SIMCO-FRONTEND.md"
   "@OP_DEVOPS": "directivas/simco/SIMCO-DEVOPS.md"
-  "@OP_DEPLOY": "directivas/simco/SIMCO-DEPLOY.md"
+  "@OP_DEPLOY": "directivas/simco/SIMCO-DEPLOY-PRODUCTION.md"
   "@OP_ARQUITECTURA": "directivas/simco/SIMCO-ARQUITECTURA.md"
   "@OP_SERVICE": "directivas/simco/SIMCO-SERVICE-DESCRIPTOR.md"
 

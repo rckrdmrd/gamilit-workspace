@@ -252,7 +252,7 @@ Response:
 
 ## Notas de Implementacion
 
-- Pagina implementada: `/home/isem/v2-source/projects/gamilit/apps/frontend/src/apps/teacher/pages/TeacherResourcesPage.tsx`
+- Pagina implementada: `apps/frontend/src/apps/teacher/pages/TeacherResourcesPage.tsx`
 - Utiliza mock data mientras se integra completamente con backend
 - Feature flag `FEATURE_FLAGS.SHOW_UNDER_CONSTRUCTION` para modo construccion
 - Diseado con tema "Detective" consistente con la plataforma

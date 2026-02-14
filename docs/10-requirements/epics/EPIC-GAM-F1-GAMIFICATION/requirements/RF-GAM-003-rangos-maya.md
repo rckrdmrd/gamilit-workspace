@@ -91,7 +91,7 @@ updated_date: "2026-01-04"
 ### Especificación Técnica
 
 📘 **Documento ET Relacionado:**
-- [ET-GAM-003: Implementación del Sistema de Rangos Maya](../../02-especificaciones-tecnicas/02-gamificacion/ET-GAM-003-rangos-maya.md)
+- [ET-GAM-003: Implementación del Sistema de Rangos Maya](../specifications/ET-GAM-003-rangos-maya.md)
 
 ### Documentos Relacionados
 
@@ -102,7 +102,7 @@ updated_date: "2026-01-04"
 
 ### ADRs
 
-- [ADR-007: Elección de Rangos Maya vs Niveles Numéricos](../../02-especificaciones-tecnicas/adr/ADR-007-rangos-maya.md)
+- [ADR-007: Elección de Rangos Maya vs Niveles Numéricos](../../../../90-adr/ADR-007-schemas-sin-tablas.md)
   - **Decisión:** Usar jerarquía maya auténtica en lugar de "Nivel 1, 2, 3..."
   - **Razón:** Conexión cultural, identidad, prestigio
 
@@ -1089,8 +1089,8 @@ ORDER BY
 
 ### ADRs
 
-- [ADR-007: Elección de Rangos Maya vs Niveles Numéricos](../../02-especificaciones-tecnicas/adr/ADR-007-rangos-maya.md)
-- [ADR-010: Umbrales de XP por Rango](../../02-especificaciones-tecnicas/adr/ADR-010-umbrales-xp-rangos.md)
+- [ADR-007: Elección de Rangos Maya vs Niveles Numéricos](../../../../90-adr/ADR-007-schemas-sin-tablas.md)
+- [ADR-010: Umbrales de XP por Rango](../../../../90-adr/ADR-010-documento-diseno-fuente-verdad.md)
 
 ### Consultoría Cultural
 

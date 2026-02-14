@@ -260,7 +260,7 @@ interface Notification {
 
 ## Notas de Implementacion
 
-- Pagina implementada: `/home/isem/v2-source/projects/gamilit/apps/frontend/src/apps/teacher/pages/TeacherNotificationsPage.tsx`
+- Pagina implementada: `apps/frontend/src/apps/teacher/pages/TeacherNotificationsPage.tsx`
 - Utiliza Zustand store compartido de notificaciones
 - Animaciones con Framer Motion (AnimatePresence)
 - Link a preferencias: `/teacher/settings/notifications`

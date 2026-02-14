@@ -29,7 +29,7 @@ updated_date: "2026-01-04"
 ## 🔗 Referencias
 
 ### Especificación Técnica
-📐 [ET-GAM-001: Sistema de Achievements](../../02-especificaciones-tecnicas/02-gamificacion/ET-GAM-001-achievements.md)
+📐 [ET-GAM-001: Sistema de Achievements](../specifications/ET-GAM-001-achievements.md)
 
 ### Implementación DDL
 🗄️ **ENUMs Canónicos:**

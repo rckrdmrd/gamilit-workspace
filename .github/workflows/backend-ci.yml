@@ -17,7 +17,7 @@ on:
       - '.github/workflows/backend-ci.yml'
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
   POSTGRES_VERSION: '15'
 
 jobs:

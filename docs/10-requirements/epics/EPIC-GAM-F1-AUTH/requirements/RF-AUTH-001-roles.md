@@ -29,7 +29,7 @@ updated_date: "2026-01-04"
 ## 🔗 Referencias
 
 ### Especificación Técnica
-📐 [ET-AUTH-001: RBAC (Role-Based Access Control)](../../02-especificaciones-tecnicas/01-autenticacion-autorizacion/ET-AUTH-001-rbac.md)
+📐 [ET-AUTH-001: RBAC (Role-Based Access Control)](../specifications/ET-AUTH-001-rbac.md)
 
 ### Implementación DDL
 🗄️ **ENUM Canónico:**
@@ -384,7 +384,7 @@ test('Super admin can access all data', async () => {
 ### Documentos Relacionados
 - 📄 [RF-AUTH-002: Estados de Cuenta de Usuario](./RF-AUTH-002-estados-cuenta.md)
 - 📄 [RF-SOC-001: Sistema de Aulas](../05-caracteristicas-sociales/RF-SOC-001-aulas-virtuales.md)
-- 📐 [ADR-003: Decisión de usar RLS en lugar de app-level auth](../../02-especificaciones-tecnicas/adr/ADR-003-row-level-security.md)
+- 📐 [ADR-003: Decisión de usar RLS en lugar de app-level auth](../../../../90-adr/ADR-003-rls-multitenancy.md)
 
 ### Estándares de Industria
 - [NIST RBAC Model](https://csrc.nist.gov/projects/role-based-access-control)

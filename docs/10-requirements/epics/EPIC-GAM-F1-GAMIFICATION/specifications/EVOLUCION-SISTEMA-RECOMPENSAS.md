@@ -669,7 +669,7 @@ CREATE TRIGGER trg_update_stats_on_complete
 
 📁 **Ubicación principal:**
 ```
-/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/docs/sistema-recompensas/
+docs/10-requirements/epics/EPIC-GAM-F1-GAMIFICATION/specifications/
 ```
 
 ### Índice de Documentos

@@ -29,7 +29,7 @@ updated_date: "2026-01-04"
 ## 🔗 Referencias
 
 ### Especificación Técnica
-📐 [ET-AUTH-002: Gestión de Estados de Cuenta](../../02-especificaciones-tecnicas/01-autenticacion-autorizacion/ET-AUTH-002-estados-cuenta.md)
+📐 [ET-AUTH-002: Gestión de Estados de Cuenta](../specifications/ET-AUTH-002-estados-cuenta.md)
 
 ### Implementación DDL
 🗄️ **ENUM Canónico:**

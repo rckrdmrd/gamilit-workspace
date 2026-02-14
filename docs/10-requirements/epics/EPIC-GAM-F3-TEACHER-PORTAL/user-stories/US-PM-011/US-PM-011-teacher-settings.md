@@ -298,7 +298,7 @@ PUT /teacher/profile/:id/preferences
 
 ## Notas de Implementacion
 
-- Pagina implementada: `/home/isem/v2-source/projects/gamilit/apps/frontend/src/apps/teacher/pages/TeacherSettingsPage.tsx`
+- Pagina implementada: `apps/frontend/src/apps/teacher/pages/TeacherSettingsPage.tsx`
 - Utiliza componentes Framer Motion para animaciones
 - Link a configuracion avanzada de notificaciones: `/teacher/settings/notifications`
 - API service en `@/services/api/teacher/profileAPI`

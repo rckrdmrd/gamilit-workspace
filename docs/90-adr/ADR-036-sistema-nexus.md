@@ -187,7 +187,7 @@ gamilit/
 
 ## Referencias
 
-- [ADR-0005 (workspace-arch)](C:\Empresas\ISEM\workspace-arch\docs\90-adr\ADR-0005-sistema-nexus.md) - ADR original
+- ADR-0005 (workspace-arch) - ADR original (referencia historica, no accesible desde standalone)
 - [orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md](../../orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md) - Directiva maestra
 - [orchestration/CONTEXT-MAP.yml](../../orchestration/CONTEXT-MAP.yml) - Mapeo de contexto
 - [CLAUDE.md](../../CLAUDE.md) - Seccion NEXUS v4.1

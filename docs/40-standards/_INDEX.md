@@ -4,7 +4,7 @@
 
 ---
 
-## Tabla de Contenidos (18 Estandares Activos)
+## Tabla de Contenidos (17 Estandares Activos)
 
 | # | Estandar | Proposito |
 |---|----------|-----------|

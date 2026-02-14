@@ -280,7 +280,7 @@ interface Message {
 
 ## Notas de Implementacion
 
-- Pagina implementada: `/home/isem/v2-source/projects/gamilit/apps/frontend/src/apps/teacher/pages/TeacherCommunicationPage.tsx`
+- Pagina implementada: `apps/frontend/src/apps/teacher/pages/TeacherCommunicationPage.tsx`
 - Feature flag `FEATURE_FLAGS.SHOW_UNDER_CONSTRUCTION` para modo construccion
 - Componentes de comunicacion en `../components/communication/`
 - API service en `@/services/api/teacher/teacherMessagesApi`

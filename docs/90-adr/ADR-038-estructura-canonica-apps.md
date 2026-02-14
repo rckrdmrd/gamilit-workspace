@@ -166,7 +166,7 @@ gamilit/
 
 ## Referencias
 
-- [ADR-0011 (workspace-arch)](C:\Empresas\ISEM\workspace-arch\docs\90-adr\ADR-0011-estructura-canonica-apps.md) - ADR original
+- ADR-0011 (workspace-arch) - ADR original (referencia historica, no accesible desde standalone)
 - [apps/_MAP.md](../../apps/_MAP.md) - Indice de aplicaciones
 - [CLAUDE.md](../../CLAUDE.md) - Seccion RC4: MONOREPO
 

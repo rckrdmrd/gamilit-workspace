@@ -34,8 +34,9 @@ Guias tecnicas por dominio para desarrolladores, DevOps y QA.
 - GUIA-OPENTELEMETRY-NESTJS.md — Instrumentacion OpenTelemetry en NestJS
 - GUIA-EXPAND-CONTRACT-MIGRATIONS.md — Patron expand/contract para migraciones
 
-**Testing** (2 nuevas):
+**Testing** (3 nuevas):
 - GUIA-ARCHITECTURE-TESTING.md — Tests de arquitectura (ArchUnit-style)
+- GUIA-COVERAGE-TESTING.md — Estrategia de cobertura de tests y metricas
 - GUIA-E2E-PLAYWRIGHT.md — Tests end-to-end con Playwright
 
 **Deployment** (3 nuevas):

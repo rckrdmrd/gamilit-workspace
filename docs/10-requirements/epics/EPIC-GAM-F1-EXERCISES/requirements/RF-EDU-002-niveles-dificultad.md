@@ -58,7 +58,7 @@ updated_date: "2026-01-04"
 ### Especificación Técnica
 
 📘 **Documento ET Relacionado:**
-- [ET-EDU-002: Implementación de Niveles de Dificultad](../../02-especificaciones-tecnicas/03-contenido-educativo/ET-EDU-002-niveles-dificultad.md)
+- [ET-EDU-002: Implementación de Niveles de Dificultad](../specifications/ET-EDU-002-niveles-dificultad.md)
 
 ### Documentos Relacionados
 

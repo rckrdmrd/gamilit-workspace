@@ -519,7 +519,7 @@ GAMILIT mantiene coherencia **BUENA (88.5%)** con **0 gaps críticos**. Los hall
 ### A. Archivos Críticos de Referencia
 
 ```
-projects/gamilit/
+gamilit-workspace/
 ├── orchestration/inventarios/
 │   ├── FRONTEND_INVENTORY.yml
 │   ├── BACKEND_INVENTORY.yml

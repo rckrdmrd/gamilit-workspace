@@ -163,6 +163,9 @@ NO usar workflow de submodules (no aplica a monorepo)
 
 **Total:** 22 modulos, 152 entities, 170 services, 107 controllers, 899 endpoints
 
+> **Nota:** Los nombres arriba son conceptuales; los directorios fisicos en `apps/backend/src/modules/` difieren (e.g., `educational`, `progress`, `admin`, `websocket`, `profile`).
+> Adicionalmente, 4 directorios de modulo existen pero NO estan importados en `app.module.ts`: `etl`, `ml`, `visualization` (evaluacion pendiente — requieren datasource `data_warehouse` no configurado), y `mail` (cargado transitivamente por `auth`, `notifications`, `teacher`, `parents`, `progress`).
+
 ---
 
 ## MODOS DE EJECUCION

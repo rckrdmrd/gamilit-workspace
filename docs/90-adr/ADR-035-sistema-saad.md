@@ -156,7 +156,7 @@ SAAD activa las directivas SIMCO correctas en el momento correcto, segun el modo
 
 ## Referencias
 
-- [ADR-0004 (workspace-arch)](C:\Empresas\ISEM\workspace-arch\docs\90-adr\ADR-0004-sistema-saad.md) - ADR original
+- ADR-0004 (workspace-arch) - ADR original (referencia historica, no accesible desde standalone)
 - [orchestration/directivas/modos/](../../orchestration/directivas/modos/) - Definicion de modos
 - [orchestration/directivas/triggers/](../../orchestration/directivas/triggers/) - Definicion de triggers
 - [CLAUDE.md](../../CLAUDE.md) - Instrucciones base del proyecto

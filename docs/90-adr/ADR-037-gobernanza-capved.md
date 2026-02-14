@@ -225,7 +225,7 @@ gamilit/
 
 ## Referencias
 
-- [ADR-0006 (workspace-arch)](C:\Empresas\ISEM\workspace-arch\docs\90-adr\ADR-0006-gobernanza-tareas.md) - ADR original
+- ADR-0006 (workspace-arch) - ADR original (referencia historica, no accesible desde standalone)
 - [orchestration/directivas/principios/PRINCIPIO-CAPVED.md](../../orchestration/directivas/principios/PRINCIPIO-CAPVED.md) - Ciclo de vida
 - [orchestration/directivas/simco/SIMCO-TAREA.md](../../orchestration/directivas/simco/SIMCO-TAREA.md) - Proceso detallado
 - [CLAUDE.md](../../CLAUDE.md) - Seccion CAPVED

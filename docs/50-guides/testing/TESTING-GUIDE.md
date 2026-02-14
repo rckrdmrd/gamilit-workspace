@@ -727,14 +727,14 @@ npm run test -- --reporter=verbose
 - [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 - [Supertest](https://github.com/ladjs/supertest)
 
-### Documentación Interna GAMILIT
-- `/docs/projects/gamilit/03-desarrollo/backend/ESTRUCTURA-Y-MODULOS.md`
-- `/docs/projects/gamilit/03-desarrollo/frontend/ESTRUCTURA-Y-FEATURES.md`
-- `/docs/projects/gamilit/03-desarrollo/backend/SERVICIOS-PRINCIPALES.md`
+### Documentacion Interna GAMILIT
+- `docs/20-architecture/README.md`
+- `docs/20-architecture/STACK-TECNOLOGICO.md`
+- `docs/40-standards/backend-profesional/`
 
-### Código de Ejemplo
-- Backend Tests: `/projects/glit/backend/src/__tests__/`
-- Frontend Tests: `/gamilit-platform-web/src/**/__tests__/`
+### Codigo de Ejemplo
+- Backend Tests: `apps/backend/src/**/*.spec.ts`
+- Frontend Tests: `apps/frontend/src/**/*.test.tsx`
 
 ---
 

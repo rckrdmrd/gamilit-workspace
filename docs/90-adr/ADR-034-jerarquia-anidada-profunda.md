@@ -81,6 +81,6 @@ EPIC-GAM-F{N}-{ID}/
 
 ## Referencias
 
-- ADR-0019 (workspace-arch): SSOT documentacion producto en proyecto
-- ADR-0020 (workspace-arch): US co-localizadas con EPICs
+- [ADR-039](./ADR-039-ssot-docs-en-proyecto.md): SSOT documentacion producto en proyecto (heredado de workspace-arch ADR-0019)
+- ADR-0020 (workspace-arch): US co-localizadas con EPICs (referencia historica)
 - TASK-2026-02-09-REESTRUCTURA-ANIDADA: Tarea de implementacion

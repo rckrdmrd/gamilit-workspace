@@ -130,7 +130,7 @@ depends_on: []
 - **Separacion de concerns:** Producto vs Implementacion vs Ejecucion
 - **Navegabilidad:** Epic→US→Task navegable dentro de docs/
 - **Sin duplicacion:** YAML en orchestration/ solo referencia docs/
-- **Coherencia con workspace-arch:** Sigue patron de ADR-0019
+- **Coherencia con workspace-arch:** Sigue patron de ADR-039 (este ADR, heredado de workspace-arch ADR-0019)
 
 ### Negativas
 
@@ -191,7 +191,7 @@ gamilit/
 
 ## Referencias
 
-- [ADR-0019 (workspace-arch)](C:\Empresas\ISEM\workspace-arch\docs\90-adr\ADR-0019-ssot-documentacion-producto-en-proyecto.md) - ADR original
+- ADR-0019 (workspace-arch) - ADR original (referencia historica, no accesible desde standalone)
 - [ADR-034](./ADR-034-jerarquia-anidada-profunda.md) - Jerarquia anidada profunda
 - [docs/10-requirements/epics/](../../docs/10-requirements/epics/) - Epics narrativos
 - [orchestration/inventarios/MASTER_INVENTORY.yml](../../orchestration/inventarios/MASTER_INVENTORY.yml) - SSOT de implementacion

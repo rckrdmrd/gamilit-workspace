@@ -125,7 +125,7 @@ remoto (c027da53) que no habia sido detectado.
 **Resolucion:**
 - Creado este trigger obligatorio
 - Actualizado SIMCO-GIT.md v1.2.0 con regla critica
-- Actualizado SIMCO-SUBMODULOS.md v1.1.0 con secuencia obligatoria
+- Actualizado SIMCO-MONOREPO.md con secuencia obligatoria (antes: SIMCO-SUBMODULOS.md, eliminado)
 - Documentado en TRAZA-GIT-OPERATIONS.md
 
 ---
@@ -167,8 +167,8 @@ pre_tarea:
 ## REFERENCIAS
 
 - `orchestration/directivas/simco/SIMCO-GIT.md` - Directiva principal git (v1.2.0)
-- `orchestration/directivas/simco/SIMCO-SUBMODULOS.md` - Protocolo submodulos (v1.1.0)
-- `orchestration/SUBMODULES-POLICY.yml` - Politicas de sincronizacion (v1.1.0)
+- `orchestration/directivas/simco/SIMCO-MONOREPO.md` - Protocolo monorepo (gamilit standalone, no usa submodulos)
+- `orchestration/directivas/simco/SIMCO-GIT-REMOTES.md` - Configuracion de remotes
 - `orchestration/trazas/TRAZA-GIT-OPERATIONS.md` - Registro de operaciones
 - `orchestration/directivas/triggers/TRIGGER-COMMIT-PUSH-OBLIGATORIO.md` - Trigger complementario
 

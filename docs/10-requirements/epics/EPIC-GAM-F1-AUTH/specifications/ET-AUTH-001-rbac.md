@@ -583,4 +583,4 @@ describe('RBAC E2E', () => {
 ---
 
 **Documento:** `docs/20-architecture/01-autenticacion-autorizacion/ET-AUTH-001-rbac.md`
-**Ruta relativa desde docs/:** `02-especificaciones-tecnicas/01-autenticacion-autorizacion/ET-AUTH-001-rbac.md`
+**Ruta relativa desde docs/:** `10-requirements/epics/EPIC-GAM-F1-AUTH/specifications/ET-AUTH-001-rbac.md`

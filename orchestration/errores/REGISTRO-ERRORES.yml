@@ -1,0 +1,44 @@
+# ===============================================================================
+# REGISTRO DE ERRORES - GAMILIT
+# ===============================================================================
+# Catalogo de errores conocidos y soluciones.
+# Referenciado por: SIMCO-ERROR-RECURRENTE, SIMCO-CAPVED-PLUS,
+#                   SIMCO-DELEGACION-PARALELA, SIMCO-SCRUM-INTEGRATION,
+#                   CONTEXT-MAP.yml, _definitions/_INDEX.yml
+# ===============================================================================
+
+version: "1.0.0"
+fecha: "2026-02-15"
+proyecto: "gamilit"
+
+# -------------------------------------------------------------------------------
+# ERRORES REGISTRADOS
+# -------------------------------------------------------------------------------
+
+errores: []
+  # Formato esperado por SIMCO-ERROR-RECURRENTE:
+  #
+  # - id: "ERR-001"
+  #   fecha: "2026-XX-XX"
+  #   categoria: "database|backend|frontend|devops|config"
+  #   descripcion: "Descripcion del error"
+  #   causa_raiz: "Causa identificada"
+  #   solucion: "Solucion aplicada"
+  #   estado: "resuelto|pendiente|recurrente"
+  #   archivos_afectados:
+  #     - "path/to/file"
+  #   prevencion: "Medida preventiva"
+
+# -------------------------------------------------------------------------------
+# ESTADISTICAS
+# -------------------------------------------------------------------------------
+
+estadisticas:
+  total: 0
+  resueltos: 0
+  pendientes: 0
+  recurrentes: 0
+
+# ===============================================================================
+# FIN REGISTRO DE ERRORES
+# ===============================================================================

@@ -52,7 +52,7 @@ curl -s http://localhost:3006/api/v1/health | python3 -m json.tool
 **Si no responde:**
 ```bash
 # Iniciar backend
-cd /home/isem/workspace-v2/projects/gamilit/apps/backend
+cd apps/backend
 npm run dev
 
 # Esperar 10-15 segundos para que inicie
@@ -253,7 +253,7 @@ lsof -i :3006
 tail -f /tmp/gamilit-backend.log
 
 # Reiniciar backend
-cd /home/isem/workspace-v2/projects/gamilit/apps/backend
+cd apps/backend
 npm run dev
 ```
 

@@ -48,7 +48,7 @@ apps/frontend/src/apps/student/pages/
 
 ### 1.1 Descripcion y Proposito
 
-**Archivo:** `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/apps/student/pages/EmailVerificationPage.tsx`
+**Archivo:** `apps/frontend/src/apps/student/pages/EmailVerificationPage.tsx`
 
 **Estado:** `DEPRECATED` desde 2025-10
 
@@ -137,7 +137,7 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 
 ### 2.1 Descripcion y Proposito
 
-**Archivo:** `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/apps/student/pages/PasswordRecoveryPage.tsx`
+**Archivo:** `apps/frontend/src/apps/student/pages/PasswordRecoveryPage.tsx`
 
 **Estado:** Activa - Integracion con API Real
 
@@ -169,9 +169,9 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 |----------|--------|-------------|----------|
 | `POST /auth/reset-password/request` | `passwordAPI.requestPasswordReset(email)` | Solicita envio de email con link de reset | `{ message: string }` |
 
-**Archivo API:** `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/services/api/passwordAPI.ts`
+**Archivo API:** `apps/frontend/src/services/api/passwordAPI.ts`
 
-**Backend Handler:** `/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/auth/controllers/password.controller.ts` - `requestPasswordReset()`
+**Backend Handler:** `apps/backend/src/modules/auth/controllers/password.controller.ts` - `requestPasswordReset()`
 
 ### 2.5 Flujo de Usuario
 
@@ -274,7 +274,7 @@ import { motion } from 'framer-motion';
 
 ### 3.1 Descripcion y Proposito
 
-**Archivo:** `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/apps/student/pages/PasswordResetPage.tsx`
+**Archivo:** `apps/frontend/src/apps/student/pages/PasswordResetPage.tsx`
 
 **Estado:** Activa - Integracion con API Real
 
@@ -312,7 +312,7 @@ import { motion } from 'framer-motion';
 **Nota sobre validacion de token:**
 El frontend hace validacion basica client-side (longitud minima 10 caracteres). La validacion real ocurre server-side cuando se llama `resetPassword()`.
 
-**Backend Handler:** `/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/auth/services/password-recovery.service.ts`
+**Backend Handler:** `apps/backend/src/modules/auth/services/password-recovery.service.ts`
 - `validateToken()` - Valida token hasheado en DB
 - `resetPassword()` - Actualiza password y revoca sesiones
 
@@ -445,7 +445,7 @@ import { motion } from 'framer-motion';
 
 ### 4.1 Descripcion y Proposito
 
-**Archivo:** `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/apps/student/pages/TwoFactorAuthPage.tsx`
+**Archivo:** `apps/frontend/src/apps/student/pages/TwoFactorAuthPage.tsx`
 
 **Estado:** Mock - Usa funciones mock, backend 2FA no implementado
 
@@ -483,7 +483,7 @@ import { motion } from 'framer-motion';
 
 **Codigo Mock Valido:** `123456`
 
-**Archivo Mocks:** `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/features/auth/mocks/authMocks.ts`
+**Archivo Mocks:** `apps/frontend/src/features/auth/mocks/authMocks.ts`
 
 ### 4.5 Flujo de Usuario
 
@@ -627,7 +627,7 @@ const handlePaste = (e: React.ClipboardEvent) => {
 
 ### 5.1 passwordAPI Service
 
-**Archivo:** `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/services/api/passwordAPI.ts`
+**Archivo:** `apps/frontend/src/services/api/passwordAPI.ts`
 
 ```typescript
 export const passwordAPI = {
@@ -659,7 +659,7 @@ export const passwordAPI = {
 
 ### 5.2 Backend Endpoints
 
-**Controller:** `/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/auth/controllers/password.controller.ts`
+**Controller:** `apps/backend/src/modules/auth/controllers/password.controller.ts`
 
 | Endpoint | Metodo | Descripcion | Auth |
 |----------|--------|-------------|------|
@@ -672,7 +672,7 @@ export const passwordAPI = {
 
 ### 5.3 Backend Service
 
-**Service:** `/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/auth/services/password-recovery.service.ts`
+**Service:** `apps/backend/src/modules/auth/services/password-recovery.service.ts`
 
 **Caracteristicas de Seguridad:**
 - Token hasheado con SHA256 en DB
@@ -700,7 +700,7 @@ class PasswordRecoveryService {
 
 ### 6.1 Archivo de Schemas
 
-**Archivo:** `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/features/auth/schemas/authSchemas.ts`
+**Archivo:** `apps/frontend/src/features/auth/schemas/authSchemas.ts`
 
 ### 6.2 Schemas Relevantes
 
@@ -805,5 +805,5 @@ Todas las paginas usan clases del tema Detective:
 ---
 
 **Documento generado por:** Documentation-Agent + Frontend-Agent
-**Basado en codigo existente en:** `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/apps/student/pages/`
+**Basado en codigo existente en:** `apps/frontend/src/apps/student/pages/`
 **Fecha de generacion:** 2026-01-20

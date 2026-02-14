@@ -259,7 +259,7 @@ interface RegisteredDevice {
 
 ## Notas de Implementacion
 
-- Pagina implementada: `/home/isem/v2-source/projects/gamilit/apps/frontend/src/apps/teacher/pages/TeacherNotificationPreferencesPage.tsx`
+- Pagina implementada: `apps/frontend/src/apps/teacher/pages/TeacherNotificationPreferencesPage.tsx`
 - Utiliza Zustand store compartido de notificaciones
 - Hook de push notifications para integracion con Service Worker
 - Optimistic updates para mejor UX

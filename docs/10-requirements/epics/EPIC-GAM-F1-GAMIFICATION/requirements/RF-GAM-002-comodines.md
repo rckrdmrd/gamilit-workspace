@@ -87,7 +87,7 @@ updated_date: "2026-01-04"
 ### Especificación Técnica
 
 📘 **Documento ET Relacionado:**
-- [ET-GAM-002: Implementación del Sistema de Comodines](../../02-especificaciones-tecnicas/02-gamificacion/ET-GAM-002-comodines.md)
+- [ET-GAM-002: Implementación del Sistema de Comodines](../specifications/ET-GAM-002-comodines.md)
 
 ### Documentos Relacionados
 
@@ -950,8 +950,8 @@ LIMIT 20;
 
 ### ADRs
 
-- [ADR-008: Economía de ML Coins](../../02-especificaciones-tecnicas/adr/ADR-008-economia-ml-coins.md) - Decisiones de precios
-- [ADR-009: Límites de Comodines por Ejercicio](../../02-especificaciones-tecnicas/adr/ADR-009-limites-comodines.md) - Por qué 3 pistas, 1 visión, 1 segunda
+- [ADR-008: Economía de ML Coins](../../../../90-adr/ADR-008-sistema-dual-exercise-mechanics.md) - Decisiones de precios
+- [ADR-009: Límites de Comodines por Ejercicio](../../../../90-adr/ADR-009-duracion-podcast-ejercicio-3-4.md) - Por qué 3 pistas, 1 visión, 1 segunda
 
 ### Documentos de Diseño UX
 

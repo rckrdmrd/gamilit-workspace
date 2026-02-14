@@ -591,21 +591,21 @@ interface StudentAssignmentsState {
 
 | Archivo | Ruta Absoluta |
 |---------|---------------|
-| AssignmentsPage | `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/apps/student/pages/AssignmentsPage.tsx` |
-| AssignmentDetailPage | `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/apps/student/pages/AssignmentDetailPage.tsx` |
-| Student Assignments API | `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/services/api/studentAssignmentsAPI.ts` |
-| Student Assignments Store | `/home/isem/workspace-v2/projects/gamilit/apps/frontend/src/features/assignments/store/studentAssignmentsStore.ts` |
+| AssignmentsPage | `apps/frontend/src/apps/student/pages/AssignmentsPage.tsx` |
+| AssignmentDetailPage | `apps/frontend/src/apps/student/pages/AssignmentDetailPage.tsx` |
+| Student Assignments API | `apps/frontend/src/services/api/studentAssignmentsAPI.ts` |
+| Student Assignments Store | `apps/frontend/src/features/assignments/store/studentAssignmentsStore.ts` |
 
 ### Backend
 
 | Archivo | Ruta Absoluta |
 |---------|---------------|
-| Student Assignments Controller | `/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/assignments/controllers/student-assignments.controller.ts` |
-| Assignments Service | `/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/assignments/services/assignments.service.ts` |
-| Assignment Entity | `/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/assignments/entities/assignment.entity.ts` |
-| AssignmentStudent Entity | `/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/assignments/entities/assignment-student.entity.ts` |
-| AssignmentSubmission Entity | `/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/assignments/entities/assignment-submission.entity.ts` |
-| AssignmentExercise Entity | `/home/isem/workspace-v2/projects/gamilit/apps/backend/src/modules/assignments/entities/assignment-exercise.entity.ts` |
+| Student Assignments Controller | `apps/backend/src/modules/assignments/controllers/student-assignments.controller.ts` |
+| Assignments Service | `apps/backend/src/modules/assignments/services/assignments.service.ts` |
+| Assignment Entity | `apps/backend/src/modules/assignments/entities/assignment.entity.ts` |
+| AssignmentStudent Entity | `apps/backend/src/modules/assignments/entities/assignment-student.entity.ts` |
+| AssignmentSubmission Entity | `apps/backend/src/modules/assignments/entities/assignment-submission.entity.ts` |
+| AssignmentExercise Entity | `apps/backend/src/modules/assignments/entities/assignment-exercise.entity.ts` |
 
 ---
 

@@ -666,7 +666,7 @@ Si algo falla, reportar:
 ### 6.1 Estructura del Proyecto
 
 ```
-/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/
+/home/isem/gamilit-workspace/
 +-- apps/
 |   +-- backend/          # NestJS API (puerto 3006, 2 instancias PM2)
 |   +-- frontend/         # React App (puerto 3005, 1 instancia PM2)

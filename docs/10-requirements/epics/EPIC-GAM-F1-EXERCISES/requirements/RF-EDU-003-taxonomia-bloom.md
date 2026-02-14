@@ -42,7 +42,7 @@ updated_date: "2026-01-04"
 ### Especificación Técnica
 
 📘 **Documento ET Relacionado:**
-- [ET-EDU-001: Mecánicas de Ejercicios](../../02-especificaciones-tecnicas/03-contenido-educativo/ET-EDU-001-mecanicas-ejercicios.md)
+- [ET-EDU-001: Mecánicas de Ejercicios](../specifications/ET-EDU-001-mecanicas-ejercicios.md)
 
 ### Documentos Relacionados
 
@@ -896,7 +896,7 @@ Cada estudiante puede obtener badges al dominar un nivel cognitivo:
 ### Documentación Relacionada
 - [RF-EDU-001: Estructura de Ejercicios](./RF-EDU-001-estructura-ejercicios.md) - Tipos de ejercicio base
 - [RF-EDU-002: Niveles de Dificultad](./RF-EDU-002-niveles-dificultad.md) - Sistema de dificultad complementario
-- [ET-EDU-003: Taxonomía de Bloom (Implementación)](../../02-especificaciones-tecnicas/03-contenido-educativo/ET-EDU-003-taxonomia-bloom.md) - Especificaciones técnicas completas
+- [ET-EDU-003: Taxonomía de Bloom (Implementación)](../specifications/ET-EDU-003-taxonomia-bloom.md) - Especificaciones técnicas completas
 
 ---
 

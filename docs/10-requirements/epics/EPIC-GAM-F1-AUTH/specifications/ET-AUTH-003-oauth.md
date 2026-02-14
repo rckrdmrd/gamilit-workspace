@@ -536,4 +536,4 @@ test('User can login with Google OAuth', async () => {
 ---
 
 **Documento:** `docs/20-architecture/01-autenticacion-autorizacion/ET-AUTH-003-oauth.md`
-**Ruta relativa desde docs/:** `02-especificaciones-tecnicas/01-autenticacion-autorizacion/ET-AUTH-003-oauth.md`
+**Ruta relativa desde docs/:** `10-requirements/epics/EPIC-GAM-F1-AUTH/specifications/ET-AUTH-003-oauth.md`

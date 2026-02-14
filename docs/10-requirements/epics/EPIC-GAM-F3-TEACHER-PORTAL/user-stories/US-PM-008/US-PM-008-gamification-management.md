@@ -229,8 +229,8 @@ Response:
 
 ## Notas de Implementacion
 
-- Pagina implementada: `/home/isem/v2-source/projects/gamilit/apps/frontend/src/apps/teacher/pages/TeacherGamification.tsx`
-- Wrapper: `/home/isem/v2-source/projects/gamilit/apps/frontend/src/apps/teacher/pages/TeacherGamificationPage.tsx`
+- Pagina implementada: `apps/frontend/src/apps/teacher/pages/TeacherGamification.tsx`
+- Wrapper: `apps/frontend/src/apps/teacher/pages/TeacherGamificationPage.tsx`
 - Los rewards vienen predefinidos de la base de datos
 - Se incluye seccion "Proximamente" para features futuras
 - Diseado con tema "Detective" consistente con la plataforma
