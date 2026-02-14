@@ -210,3 +210,9 @@ npm run test        # Tests pasan
 - [ESTANDAR-NOMENCLATURA.md](./ESTANDAR-NOMENCLATURA.md) - Nombres
 - [ESTANDAR-GIT.md](./ESTANDAR-GIT.md) - Commits y branches
 - [ESLint Docs](https://eslint.org/) - Documentación ESLint
+
+## Ver tambien
+
+- [PRINCIPIO-DRY](../../orchestration/directivas/principios/PRINCIPIO-DRY.md) - Principio Don't Repeat Yourself
+- [PRINCIPIO-KISS](../../orchestration/directivas/principios/PRINCIPIO-KISS.md) - Principio Keep It Simple, Stupid
+- [PRINCIPIO-SOLID](../../orchestration/directivas/principios/PRINCIPIO-SOLID.md) - Principios SOLID de diseno orientado a objetos

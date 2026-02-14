@@ -1569,6 +1569,7 @@ Ver: [GUIA-E2E-PLAYWRIGHT](../50-guides/testing/GUIA-E2E-PLAYWRIGHT.md) seccion 
 
 ### Principios Aplicados
 - [PRINCIPIO-SOLID](../../orchestration/directivas/principios/PRINCIPIO-SOLID.md) - Diseño testeable (SRP, DIP)
+- [PRINCIPIO-VALIDACION-OBLIGATORIA](../../orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md) - Principio de validacion obligatoria (build + lint + tests)
 
 ---
 

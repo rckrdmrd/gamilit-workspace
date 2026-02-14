@@ -418,6 +418,191 @@ CREATE POLICY tenant_configs_read_authenticated
     USING (gamilit.get_current_user_id() IS NOT NULL);
 
 -- =====================================================
+-- 19. progress_tracking.user_learning_paths
+-- Contexto: Rutas de aprendizaje asignadas a usuarios con progreso
+-- Columnas clave: user_id (uuid -> profiles.id)
+-- Riesgo: HIGH - datos de progreso personal del estudiante
+-- =====================================================
+
+ALTER TABLE progress_tracking.user_learning_paths ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY user_learning_paths_admin_all
+    ON progress_tracking.user_learning_paths
+    FOR ALL
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+-- Usuarios pueden ver y gestionar sus propias rutas de aprendizaje
+CREATE POLICY user_learning_paths_user_own
+    ON progress_tracking.user_learning_paths
+    FOR ALL
+    USING (user_id = gamilit.get_current_user_id());
+
+-- Maestros pueden ver rutas de sus estudiantes (lectura)
+CREATE POLICY user_learning_paths_teacher_read
+    ON progress_tracking.user_learning_paths
+    FOR SELECT
+    USING (
+        user_id IN (
+            SELECT cm.student_id FROM social_features.classroom_members cm
+            JOIN social_features.classrooms c ON cm.classroom_id = c.id
+            WHERE c.teacher_id = gamilit.get_current_user_id()
+        )
+    );
+
+-- =====================================================
+-- 20. progress_tracking.engagement_metrics
+-- Contexto: Metricas diarias de engagement por usuario
+-- Columnas clave: user_id (uuid -> profiles.id)
+-- Riesgo: HIGH - datos de actividad y comportamiento del estudiante
+-- =====================================================
+
+ALTER TABLE progress_tracking.engagement_metrics ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY engagement_metrics_admin_all
+    ON progress_tracking.engagement_metrics
+    FOR ALL
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+-- Usuarios pueden ver sus propias metricas de engagement
+CREATE POLICY engagement_metrics_user_own
+    ON progress_tracking.engagement_metrics
+    FOR SELECT
+    USING (user_id = gamilit.get_current_user_id());
+
+-- Maestros pueden ver metricas de sus estudiantes (lectura)
+CREATE POLICY engagement_metrics_teacher_read
+    ON progress_tracking.engagement_metrics
+    FOR SELECT
+    USING (
+        user_id IN (
+            SELECT cm.student_id FROM social_features.classroom_members cm
+            JOIN social_features.classrooms c ON cm.classroom_id = c.id
+            WHERE c.teacher_id = gamilit.get_current_user_id()
+        )
+    );
+
+-- Sistema puede insertar/actualizar metricas (via triggers/funciones)
+CREATE POLICY engagement_metrics_system_insert
+    ON progress_tracking.engagement_metrics
+    FOR INSERT
+    WITH CHECK (true);
+
+CREATE POLICY engagement_metrics_system_update
+    ON progress_tracking.engagement_metrics
+    FOR UPDATE
+    USING (user_id = gamilit.get_current_user_id())
+    WITH CHECK (user_id = gamilit.get_current_user_id());
+
+-- =====================================================
+-- 21. progress_tracking.progress_snapshots
+-- Contexto: Snapshots historicos de progreso de usuarios
+-- Columnas clave: user_id (uuid -> profiles.id)
+-- Riesgo: HIGH - historial completo de progreso academico
+-- =====================================================
+
+ALTER TABLE progress_tracking.progress_snapshots ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY progress_snapshots_admin_all
+    ON progress_tracking.progress_snapshots
+    FOR ALL
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+-- Usuarios pueden ver sus propios snapshots de progreso
+CREATE POLICY progress_snapshots_user_own
+    ON progress_tracking.progress_snapshots
+    FOR SELECT
+    USING (user_id = gamilit.get_current_user_id());
+
+-- Maestros pueden ver snapshots de sus estudiantes (lectura)
+CREATE POLICY progress_snapshots_teacher_read
+    ON progress_tracking.progress_snapshots
+    FOR SELECT
+    USING (
+        user_id IN (
+            SELECT cm.student_id FROM social_features.classroom_members cm
+            JOIN social_features.classrooms c ON cm.classroom_id = c.id
+            WHERE c.teacher_id = gamilit.get_current_user_id()
+        )
+    );
+
+-- Sistema puede insertar snapshots (via jobs automaticos)
+CREATE POLICY progress_snapshots_system_insert
+    ON progress_tracking.progress_snapshots
+    FOR INSERT
+    WITH CHECK (true);
+
+-- =====================================================
+-- 22. auth_management.two_factor_tokens
+-- Contexto: Tokens y configuracion de autenticacion de dos factores
+-- Columnas clave: user_id (uuid -> auth.users.id)
+-- Riesgo: HIGH - contiene secret_key, token_hash, backup_codes_encrypted
+-- CRITICO: Acceso indebido permite bypass de 2FA
+-- =====================================================
+
+ALTER TABLE auth_management.two_factor_tokens ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY two_factor_tokens_admin_read
+    ON auth_management.two_factor_tokens
+    FOR SELECT
+    USING (gamilit.is_super_admin());
+
+-- Usuarios solo pueden ver/gestionar sus propios tokens 2FA
+CREATE POLICY two_factor_tokens_user_own
+    ON auth_management.two_factor_tokens
+    FOR ALL
+    USING (user_id = gamilit.get_current_user_id());
+
+-- Sistema puede insertar tokens (durante flujo de habilitacion 2FA)
+CREATE POLICY two_factor_tokens_system_insert
+    ON auth_management.two_factor_tokens
+    FOR INSERT
+    WITH CHECK (true);
+
+-- =====================================================
+-- 23. social_features.guild_join_requests
+-- Contexto: Solicitudes de union a gremios
+-- Columnas clave: requester_id (uuid -> profiles.id),
+--                 guild_id (uuid -> guilds.id),
+--                 responded_by (uuid -> profiles.id)
+-- Riesgo: HIGH - datos de interaccion social del usuario
+-- =====================================================
+
+ALTER TABLE social_features.guild_join_requests ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY guild_join_requests_admin_all
+    ON social_features.guild_join_requests
+    FOR ALL
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+-- Usuarios pueden ver y crear sus propias solicitudes
+CREATE POLICY guild_join_requests_requester_own
+    ON social_features.guild_join_requests
+    FOR ALL
+    USING (requester_id = gamilit.get_current_user_id());
+
+-- Lideres/officers del gremio pueden ver solicitudes pendientes para su gremio
+CREATE POLICY guild_join_requests_guild_leader_read
+    ON social_features.guild_join_requests
+    FOR SELECT
+    USING (
+        guild_id IN (
+            SELECT id FROM social_features.guilds
+            WHERE leader_id = gamilit.get_current_user_id()
+        )
+    );
+
+-- Lideres del gremio pueden actualizar solicitudes (aceptar/rechazar)
+CREATE POLICY guild_join_requests_guild_leader_update
+    ON social_features.guild_join_requests
+    FOR UPDATE
+    USING (
+        guild_id IN (
+            SELECT id FROM social_features.guilds
+            WHERE leader_id = gamilit.get_current_user_id()
+        )
+    );
+
+-- =====================================================
 -- NOBYPASSRLS: gamilit_user debe respetar RLS
 -- Sin esto, TODAS las policies son ignoradas para gamilit_user.
 -- =====================================================
@@ -439,6 +624,13 @@ ALTER TABLE progress_tracking.student_intervention_alerts FORCE ROW LEVEL SECURI
 ALTER TABLE progress_tracking.teacher_alert_configurations FORCE ROW LEVEL SECURITY;
 ALTER TABLE system_configuration.notification_settings FORCE ROW LEVEL SECURITY;
 
+-- FORCE RLS para 5 tablas HIGH-RISK agregadas (A-003-exec)
+ALTER TABLE progress_tracking.user_learning_paths FORCE ROW LEVEL SECURITY;
+ALTER TABLE progress_tracking.engagement_metrics FORCE ROW LEVEL SECURITY;
+ALTER TABLE progress_tracking.progress_snapshots FORCE ROW LEVEL SECURITY;
+ALTER TABLE auth_management.two_factor_tokens FORCE ROW LEVEL SECURITY;
+ALTER TABLE social_features.guild_join_requests FORCE ROW LEVEL SECURITY;
+
 -- =====================================================
--- FIN - 18 tablas cubiertas con 53 policies + 7 FORCE RLS
+-- FIN - 23 tablas cubiertas con 73 policies + 12 FORCE RLS
 -- =====================================================

@@ -287,6 +287,10 @@ DELEGACION_OPTIMA:
 - **Delegación:** `SIMCO-DELEGACION.md`
 - **Desglose de tareas:** `SIMCO-TAREA.md`
 
+## Ver tambien
+
+- [ESTANDAR-MEMORIA-TOKENS](../../../docs/40-standards/ESTANDAR-MEMORIA-TOKENS.md) - Estandar de gestion de memoria y tokens para sesiones de agentes IA
+
 ---
 
 **Versión:** 1.0.0 | **Sistema:** SIMCO | **Tipo:** Principio Fundamental

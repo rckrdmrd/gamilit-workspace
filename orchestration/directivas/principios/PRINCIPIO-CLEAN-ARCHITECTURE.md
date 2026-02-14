@@ -817,4 +817,10 @@ SIMCO_Relacionados:
 
 ---
 
+## Ver tambien
+
+- [ESTANDAR-BACKEND-PROFESIONAL](../../../docs/40-standards/ESTANDAR-BACKEND-PROFESIONAL.md) - Estandar backend profesional (incluye Clean Architecture en NestJS)
+
+---
+
 **Version:** 1.0.0 | **Sistema:** SIMCO | **Tipo:** Principio Arquitectonico

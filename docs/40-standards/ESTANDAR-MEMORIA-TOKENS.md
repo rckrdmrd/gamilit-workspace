@@ -188,6 +188,10 @@ Antes de alcanzar el limite:
 - **Control Tokens:** `orchestration/directivas/simco/SIMCO-CONTROL-TOKENS.md`
 - **CLAUDE.md:** Seccion NEXUS v4.1
 
+## Ver tambien
+
+- [PRINCIPIO-ECONOMIA-TOKENS](../../orchestration/directivas/principios/PRINCIPIO-ECONOMIA-TOKENS.md) - Principio de economia de tokens para agentes IA
+
 ---
 
 *Documentacion de usuario - Sistema SIMCO v4.0.0 + NEXUS v4.1*

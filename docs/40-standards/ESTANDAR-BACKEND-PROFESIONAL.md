@@ -24,3 +24,9 @@ Ver: [backend-profesional/_INDEX.md](./backend-profesional/_INDEX.md)
 | 6 | Validacion de Datos | [06-validacion-datos.md](./backend-profesional/06-validacion-datos.md) |
 | 7 | Testing Patterns | [07-testing-patterns.md](./backend-profesional/07-testing-patterns.md) |
 | 8 | Referencias | [08-referencias.md](./backend-profesional/08-referencias.md) |
+
+## Ver tambien
+
+- [PRINCIPIO-CLEAN-ARCHITECTURE](../../orchestration/directivas/principios/PRINCIPIO-CLEAN-ARCHITECTURE.md) - Principio de Clean Architecture aplicado a NestJS
+- [PRINCIPIO-SOLID](../../orchestration/directivas/principios/PRINCIPIO-SOLID.md) - Principios SOLID para diseno orientado a objetos
+- [PRINCIPIO-PATRONES-DISENO](../../orchestration/directivas/principios/PRINCIPIO-PATRONES-DISENO.md) - Patrones de diseno aplicados en backend y frontend

@@ -187,4 +187,10 @@ Al terminar:
 
 ---
 
+## Ver tambien
+
+- [ESTANDAR-DOCUMENTACION](../../../docs/40-standards/ESTANDAR-DOCUMENTACION.md) - Estandar de formato y estructura para documentos del proyecto
+
+---
+
 **Versión:** 1.0.0 | **Sistema:** SIMCO | **Tipo:** Principio Fundamental

@@ -582,3 +582,7 @@ Antes de crear o modificar cualquier tabla, verificar:
 - [ESTANDAR-NOMENCLATURA.md](./ESTANDAR-NOMENCLATURA.md) - Convenciones de nombres
 - [@SIMCO-DDL-UNIFIED](../../orchestration/directivas/simco/SIMCO-DDL-UNIFIED.md) - Flujo DDL
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/current/) - Referencia oficial
+
+## Ver tambien
+
+- [PRINCIPIO-NORMALIZACION-BD](../../orchestration/directivas/principios/PRINCIPIO-NORMALIZACION-BD.md) - Principio de normalizacion de bases de datos (1NF a 5NF)

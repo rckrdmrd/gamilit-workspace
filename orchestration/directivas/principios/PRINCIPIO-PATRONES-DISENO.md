@@ -56,6 +56,10 @@
 - `@PRINCIPIO-KISS` - Keep It Simple
 - `@ESTANDAR-BACKEND` - Estandar backend profesional
 
+## Ver tambien
+
+- [ESTANDAR-BACKEND-PROFESIONAL](../../../docs/40-standards/ESTANDAR-BACKEND-PROFESIONAL.md) - Estandar backend profesional (Repository, DDD, Testing patterns)
+
 ---
 
 **Version:** 1.0.0 | **Tipo:** Principio

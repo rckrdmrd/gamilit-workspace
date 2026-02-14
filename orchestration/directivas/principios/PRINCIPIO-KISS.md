@@ -735,4 +735,10 @@ SIMCO_Relacionados:
 
 ---
 
+## Ver tambien
+
+- [ESTANDAR-CODIGO](../../../docs/40-standards/ESTANDAR-CODIGO.md) - Estandar de codigo (lint, formato y estilo)
+
+---
+
 **Version:** 1.0.0 | **Sistema:** SIMCO v4.0.0 | **Tipo:** Principio de Diseno

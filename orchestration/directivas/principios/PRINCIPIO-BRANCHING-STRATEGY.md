@@ -704,4 +704,10 @@ GAMILIT_BRANCHING_STRATEGY:
 
 ---
 
+## Ver tambien
+
+- [ESTANDAR-GIT](../../../docs/40-standards/ESTANDAR-GIT.md) - Estandar de convenciones Git (commits, branches, pull requests)
+
+---
+
 **Version:** 1.0.0 | **Sistema:** SIMCO v4.0.0 + NEXUS v4.1 | **Tipo:** Principio Fundamental

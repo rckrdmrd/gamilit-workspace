@@ -797,4 +797,12 @@ code_review_solid:
 
 ---
 
+## Ver tambien
+
+- [ESTANDAR-BACKEND-PROFESIONAL](../../../docs/40-standards/ESTANDAR-BACKEND-PROFESIONAL.md) - Estandar backend profesional (incluye SOLID aplicado a NestJS)
+- [ESTANDAR-CODIGO](../../../docs/40-standards/ESTANDAR-CODIGO.md) - Estandar de codigo (lint, formato y estilo)
+- [ESTANDAR-TESTING](../../../docs/40-standards/ESTANDAR-TESTING.md) - Estandar de testing (diseno testeable con SRP y DIP)
+
+---
+
 **Version:** 1.0.0 | **Sistema:** SIMCO v4.0.0 | **Tipo:** Principio Fundamental

@@ -245,4 +245,10 @@ Antes de marcar CUALQUIER tarea como completada:
 
 ---
 
+## Ver tambien
+
+- [ESTANDAR-TESTING](../../../docs/40-standards/ESTANDAR-TESTING.md) - Estandar de testing (unit, integration, e2e con Jest y Playwright)
+
+---
+
 **Versión:** 1.0.0 | **Sistema:** SIMCO | **Tipo:** Principio Fundamental

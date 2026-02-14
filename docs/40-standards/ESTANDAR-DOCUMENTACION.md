@@ -244,3 +244,7 @@ graph LR
 - [ESTANDAR-NOMENCLATURA.md](./ESTANDAR-NOMENCLATURA.md) - Nombres de archivos
 - [ESTANDAR-NOMENCLATURA-API.md](./ESTANDAR-NOMENCLATURA-API.md) - Nomenclatura API
 - [CommonMark Spec](https://commonmark.org/) - Estandar Markdown
+
+## Ver tambien
+
+- [PRINCIPIO-DOC-PRIMERO](../../orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md) - Principio de documentacion primero, implementacion despues

@@ -673,3 +673,8 @@ ORDER BY c1.column_name;
 - PostgreSQL Documentation: Table Design
 - `@SIMCO-DDL-UNIFIED` - Estándares DDL del proyecto
 - `@ADRS` - Directorio de Architecture Decision Records
+
+## Ver tambien
+
+- [ESTANDAR-DATABASE-PROFESIONAL](../../../docs/40-standards/ESTANDAR-DATABASE-PROFESIONAL.md) - Estandar de diseno, modelado e indexacion para PostgreSQL
+- [ESTANDAR-DIAGRAMAS-ER](../../../docs/40-standards/ESTANDAR-DIAGRAMAS-ER.md) - Estandar de diagramas entidad-relacion en ASCII

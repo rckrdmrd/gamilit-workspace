@@ -188,3 +188,7 @@ git commit -m "[CHORE] Update {proyecto} submodule"
 
 - [ESTANDAR-CODIGO.md](./ESTANDAR-CODIGO.md) - Código
 - [Conventional Commits](https://www.conventionalcommits.org/) - Especificación
+
+## Ver tambien
+
+- [PRINCIPIO-BRANCHING-STRATEGY](../../orchestration/directivas/principios/PRINCIPIO-BRANCHING-STRATEGY.md) - Principio de estrategia de branching y flujo trunk-based

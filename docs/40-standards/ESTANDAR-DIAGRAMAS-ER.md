@@ -312,6 +312,10 @@ OPCIONAL:
 - **DDL:** `apps/database/ddl/`
 - **Nomenclatura:** `docs/40-standards/ESTANDAR-NOMENCLATURA.md`
 
+## Ver tambien
+
+- [PRINCIPIO-NORMALIZACION-BD](../../orchestration/directivas/principios/PRINCIPIO-NORMALIZACION-BD.md) - Principio de normalizacion de bases de datos y modelado relacional
+
 ---
 
 **Version:** 1.0.0 | **Sistema:** SIMCO v4.0.0 | **Proyecto:** gamilit

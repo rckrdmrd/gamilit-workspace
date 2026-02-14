@@ -1130,3 +1130,7 @@ import { UserList, useUsers, User } from '@/features/users';
 - [Zustand Documentation](https://docs.pmnd.rs/zustand/)
 - [React Window](https://react-window.vercel.app/)
 - [MSW Documentation](https://mswjs.io/docs/)
+
+## Ver tambien
+
+- [PRINCIPIO-SEPARATION-OF-CONCERNS](../../orchestration/directivas/principios/PRINCIPIO-SEPARATION-OF-CONCERNS.md) - Principio de separacion de responsabilidades aplicado a frontend

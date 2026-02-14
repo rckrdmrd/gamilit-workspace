@@ -907,4 +907,10 @@ SIMCO_Relacionados:
 
 ---
 
+## Ver tambien
+
+- [ESTANDAR-FRONTEND-PROFESIONAL](../../../docs/40-standards/ESTANDAR-FRONTEND-PROFESIONAL.md) - Estandar frontend profesional (React, TypeScript, patterns)
+
+---
+
 **Version:** 1.0.0 | **Sistema:** SIMCO v4.0.0 | **Tipo:** Principio Arquitectonico
