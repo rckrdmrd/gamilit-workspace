@@ -1,7 +1,5 @@
 import {
   Injectable,
-  BadRequestException,
-  NotFoundException,
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +13,18 @@ import { UserAchievement } from '../entities/user-achievement.entity';
 import { PurchaseResponseDto } from '../dto/shop/purchase-response.dto';
 import { ShopItemResponseDto } from '../dto/shop/shop-item-response.dto';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
+import {
+  ShopItemNotFoundError,
+  UserStatsNotFoundError,
+  ItemNotAvailableError,
+  InsufficientStockError,
+  MaxPurchasesReachedError,
+  InsufficientCoinsError,
+  InsufficientRankError,
+  InsufficientLevelError,
+  RequiredAchievementMissingError,
+  InvalidQuantityError,
+} from '../errors/gamification.errors';
 
 /**
  * ShopService
@@ -104,7 +114,7 @@ export class ShopService {
    *
    * @param itemId - ID del item
    * @returns Item encontrado
-   * @throws NotFoundException si el item no existe
+   * @throws ShopItemNotFoundError si el item no existe
    *
    * @example
    * const item = await service.getItemById(itemId);
@@ -115,7 +125,7 @@ export class ShopService {
     });
 
     if (!item) {
-      throw new NotFoundException(`Item with ID ${itemId} not found`);
+      throw new ShopItemNotFoundError(itemId);
     }
 
     return item;
@@ -141,8 +151,8 @@ export class ShopService {
    * @param itemId - ID del item a comprar
    * @param quantity - Cantidad a comprar (default: 1)
    * @returns Respuesta con detalles de la compra
-   * @throws BadRequestException si no se cumplen las validaciones
-   * @throws NotFoundException si el usuario o item no existen
+   * @throws InvalidQuantityError|ItemNotAvailableError|InsufficientStockError|MaxPurchasesReachedError|InsufficientCoinsError si no se cumplen las validaciones
+   * @throws ShopItemNotFoundError|UserStatsNotFoundError si el usuario o item no existen
    *
    * @example
    * const purchase = await service.purchaseItem(userId, itemId, 1);
@@ -154,7 +164,7 @@ export class ShopService {
     quantity: number = 1,
   ): Promise<PurchaseResponseDto> {
     if (quantity <= 0) {
-      throw new BadRequestException('Quantity must be greater than 0');
+      throw new InvalidQuantityError();
     }
 
     return this.shopItemRepository.manager.transaction(async (manager) => {
@@ -169,11 +179,11 @@ export class ShopService {
       });
 
       if (!item) {
-        throw new NotFoundException(`Item with ID ${itemId} not found`);
+        throw new ShopItemNotFoundError(itemId);
       }
 
       if (!item.is_available) {
-        throw new BadRequestException(`Item ${item.name} is not available for purchase`);
+        throw new ItemNotAvailableError(item.name);
       }
 
       // 2. Validar stock si aplica
@@ -182,9 +192,7 @@ export class ShopService {
         item.stock !== undefined &&
         item.stock < quantity
       ) {
-        throw new BadRequestException(
-          `Insufficient stock. Available: ${item.stock}, Requested: ${quantity}`,
-        );
+        throw new InsufficientStockError(item.stock, quantity);
       }
 
       // 3. Validar max_per_user (contar compras previas)
@@ -201,9 +209,7 @@ export class ShopService {
         });
 
         if (previousPurchases >= item.max_per_user) {
-          throw new BadRequestException(
-            `Maximum purchases per user reached (${item.max_per_user})`,
-          );
+          throw new MaxPurchasesReachedError(item.max_per_user);
         }
       }
 
@@ -212,7 +218,7 @@ export class ShopService {
       });
 
       if (!userStats) {
-        throw new NotFoundException(`User stats not found for ${userId}`);
+        throw new UserStatsNotFoundError(userId);
       }
 
       // 4. Validar requisitos (rank, level, achievement)
@@ -224,9 +230,7 @@ export class ShopService {
       const balanceBefore = userStats.ml_coins;
 
       if (balanceBefore < totalCost) {
-        throw new BadRequestException(
-          `Insufficient ML Coins. Required: ${totalCost}, Available: ${balanceBefore}`,
-        );
+        throw new InsufficientCoinsError(totalCost, balanceBefore);
       }
 
       const balanceAfter = balanceBefore - totalCost;
@@ -310,7 +314,7 @@ export class ShopService {
    *
    * @param userId - ID del usuario
    * @param item - Item a validar
-   * @throws BadRequestException si no se cumplen los requisitos
+   * @throws InsufficientRankError|InsufficientLevelError|RequiredAchievementMissingError si no se cumplen los requisitos
    */
   private async validateRequirements(
     userId: string,
@@ -350,12 +354,10 @@ export class ShopService {
           );
         } else if (userRank.rank_order < requiredRank.rank_order) {
           // Usuario necesita rank igual o superior (mayor rank_order = rank superior)
-          throw new BadRequestException(
-            `Required rank: ${item.required_rank} (or higher). Current rank: ${userStats.current_rank}`,
-          );
+          throw new InsufficientRankError(item.required_rank, userStats.current_rank);
         }
       } catch (error) {
-        if (error instanceof BadRequestException) {
+        if (error instanceof InsufficientRankError) {
           throw error;
         }
         this.logger.error(`Failed to validate rank requirement: ${error}`);
@@ -365,9 +367,7 @@ export class ShopService {
     // Validar level requerido
     if (item.required_level !== null && item.required_level !== undefined) {
       if (userStats.level < item.required_level) {
-        throw new BadRequestException(
-          `Required level: ${item.required_level}. Current level: ${userStats.level}`,
-        );
+        throw new InsufficientLevelError(item.required_level, userStats.level);
       }
     }
 
@@ -386,9 +386,7 @@ export class ShopService {
       });
 
       if (!hasRequiredAchievement) {
-        throw new BadRequestException(
-          `Required achievement not unlocked: ${item.required_achievement_id}`,
-        );
+        throw new RequiredAchievementMissingError(item.required_achievement_id);
       }
     }
   }
