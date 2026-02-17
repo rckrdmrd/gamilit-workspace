@@ -108,15 +108,15 @@ CREATE TABLE data_warehouse.fact_daily_progress (
 -- =====================================================
 ALTER TABLE data_warehouse.fact_daily_progress
     ADD CONSTRAINT fk_fact_progress_date FOREIGN KEY (date_key)
-    REFERENCES data_warehouse.dim_date(date_key);
+    REFERENCES data_warehouse.dim_dates(date_key);
 
 ALTER TABLE data_warehouse.fact_daily_progress
     ADD CONSTRAINT fk_fact_progress_student FOREIGN KEY (student_key)
-    REFERENCES data_warehouse.dim_student(student_key);
+    REFERENCES data_warehouse.dim_students(student_key);
 
 ALTER TABLE data_warehouse.fact_daily_progress
     ADD CONSTRAINT fk_fact_progress_module FOREIGN KEY (module_key)
-    REFERENCES data_warehouse.dim_module(module_key);
+    REFERENCES data_warehouse.dim_modules(module_key);
 
 -- =====================================================
 -- INDEXES

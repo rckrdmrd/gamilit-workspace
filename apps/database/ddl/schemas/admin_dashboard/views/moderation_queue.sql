@@ -15,11 +15,10 @@ SELECT
     fc.priority,
     fc.status,
     fc.created_at,
-    u.email as reporter_email,
-    p.full_name as reporter_name
-FROM content_management.flagged_content fc
-LEFT JOIN auth.users u ON fc.reported_by = u.id
-LEFT JOIN auth_management.profiles p ON fc.reported_by = p.user_id
+    p.email as reporter_email,
+    COALESCE(p.full_name, p.display_name, p.email) as reporter_name
+FROM content_management.flagged_contents fc
+LEFT JOIN auth_management.profiles p ON fc.reported_by = p.id
 WHERE fc.status = 'pending'
 ORDER BY
     CASE fc.priority

@@ -106,7 +106,7 @@ DECLARE
 BEGIN
     SELECT COUNT(*) INTO profile_count FROM auth_management.profiles;
     SELECT COUNT(*) INTO student_count FROM auth_management.profiles WHERE role = 'student';
-    SELECT COUNT(*) INTO teacher_count FROM auth_management.profiles WHERE role IN ('admin_teacher', 'teacher');
+    SELECT COUNT(*) INTO teacher_count FROM auth_management.profiles WHERE role = 'admin_teacher';
     SELECT COUNT(*) INTO admin_count FROM auth_management.profiles WHERE role = 'super_admin';
 
     RAISE NOTICE '==============================================';

@@ -13,18 +13,18 @@
 -- - Para testing del flujo de push sin envío real
 --
 -- USUARIOS DE TESTING:
--- - Admin: aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa
--- - Teacher: bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb
--- - Student: cccccccc-cccc-cccc-cccc-cccccccccccc
+-- - Admin:   admin@gamilit.com   (auth_management.profiles lookup via user_id)
+-- - Teacher: teacher@gamilit.com (auth_management.profiles lookup via user_id)
+-- - Student: student@gamilit.com (auth_management.profiles lookup via user_id)
 --
 -- =====================================================
 
 -- Limpiar dispositivos de testing existentes (solo en dev)
 DELETE FROM notifications.user_devices
 WHERE user_id IN (
-    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
-    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
-    'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com'),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'student@gamilit.com')
 );
 
 -- =====================================================
@@ -47,7 +47,7 @@ INSERT INTO notifications.user_devices (
 -- =====================================================
 (
     '11111111-1111-1111-1111-111111111111'::uuid,
-    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'),
     'web',
     'dev_token_admin_web_chrome_' || encode(gen_random_bytes(32), 'hex'),
     'Chrome',
@@ -58,7 +58,7 @@ INSERT INTO notifications.user_devices (
 ),
 (
     '11111111-1111-1111-1111-222222222222'::uuid,
-    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'),
     'mobile',
     'dev_token_admin_mobile_android_' || encode(gen_random_bytes(32), 'hex'),
     NULL,
@@ -73,7 +73,7 @@ INSERT INTO notifications.user_devices (
 -- =====================================================
 (
     '22222222-2222-2222-2222-111111111111'::uuid,
-    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com'),
     'web',
     'dev_token_teacher_web_firefox_' || encode(gen_random_bytes(32), 'hex'),
     'Firefox',
@@ -84,7 +84,7 @@ INSERT INTO notifications.user_devices (
 ),
 (
     '22222222-2222-2222-2222-222222222222'::uuid,
-    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com'),
     'mobile',
     'dev_token_teacher_mobile_ios_' || encode(gen_random_bytes(32), 'hex'),
     NULL,
@@ -95,7 +95,7 @@ INSERT INTO notifications.user_devices (
 ),
 (
     '22222222-2222-2222-2222-333333333333'::uuid,
-    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com'),
     'desktop',
     'dev_token_teacher_desktop_macos_' || encode(gen_random_bytes(32), 'hex'),
     NULL,
@@ -110,7 +110,7 @@ INSERT INTO notifications.user_devices (
 -- =====================================================
 (
     '33333333-3333-3333-3333-111111111111'::uuid,
-    'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'student@gamilit.com'),
     'web',
     'dev_token_student_web_chrome_' || encode(gen_random_bytes(32), 'hex'),
     'Chrome',
@@ -121,7 +121,7 @@ INSERT INTO notifications.user_devices (
 ),
 (
     '33333333-3333-3333-3333-222222222222'::uuid,
-    'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'student@gamilit.com'),
     'mobile',
     'dev_token_student_mobile_android_' || encode(gen_random_bytes(32), 'hex'),
     NULL,
@@ -142,35 +142,43 @@ DECLARE
     admin_devices INTEGER;
     teacher_devices INTEGER;
     student_devices INTEGER;
+    admin_profile_id UUID;
+    teacher_profile_id UUID;
+    student_profile_id UUID;
 BEGIN
+    -- Resolver profile IDs para verificación
+    SELECT p.id INTO admin_profile_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'admin@gamilit.com';
+
+    SELECT p.id INTO teacher_profile_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'teacher@gamilit.com';
+
+    SELECT p.id INTO student_profile_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'student@gamilit.com';
+
     SELECT COUNT(*) INTO total_devices
     FROM notifications.user_devices
-    WHERE user_id IN (
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
-        'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid
-    );
+    WHERE user_id IN (admin_profile_id, teacher_profile_id, student_profile_id);
 
     SELECT COUNT(*) INTO active_devices
     FROM notifications.user_devices
     WHERE is_active = true
-    AND user_id IN (
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
-        'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid
-    );
+    AND user_id IN (admin_profile_id, teacher_profile_id, student_profile_id);
 
     SELECT COUNT(*) INTO admin_devices
     FROM notifications.user_devices
-    WHERE user_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid;
+    WHERE user_id = admin_profile_id;
 
     SELECT COUNT(*) INTO teacher_devices
     FROM notifications.user_devices
-    WHERE user_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid;
+    WHERE user_id = teacher_profile_id;
 
     SELECT COUNT(*) INTO student_devices
     FROM notifications.user_devices
-    WHERE user_id = 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid;
+    WHERE user_id = student_profile_id;
 
     RAISE NOTICE '========================================';
     RAISE NOTICE 'DISPOSITIVOS DE TESTING CREADOS';
@@ -195,4 +203,5 @@ END $$;
 -- =====================================================
 -- COMENTARIO
 -- =====================================================
-COMMENT ON TABLE notifications.user_devices IS 'Dispositivos registrados de usuarios para push notifications - EXT-003 (Seed DEV 2026-01-04)';
+-- Comentario omitido: COMMENT ON TABLE requiere ownership (seeds corren como gamilit_user, no postgres)
+-- El comentario ya esta definido en el DDL: apps/database/ddl/schemas/notifications/tables/06-user_devices.sql

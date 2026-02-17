@@ -34,7 +34,7 @@ INSERT INTO admin_dashboard.bulk_operations (
     0,
     'completed',
     '[]'::jsonb,
-    (SELECT id FROM auth.users WHERE email LIKE '%admin%' LIMIT 1),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email LIKE '%admin%' LIMIT 1),
     gamilit.now_mexico() - INTERVAL '7 days',
     gamilit.now_mexico() - INTERVAL '7 days' + INTERVAL '5 seconds',
     '{"message": "3 usuarios suspendidos exitosamente", "affected_roles": ["student"]}'::jsonb
@@ -66,7 +66,7 @@ INSERT INTO admin_dashboard.bulk_operations (
     1,
     'completed',
     '[{"user_id": "c0000000-0000-0000-0000-000000000002", "error": "Usuario no encontrado"}]'::jsonb,
-    (SELECT id FROM auth.users WHERE email LIKE '%admin%' LIMIT 1),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email LIKE '%admin%' LIMIT 1),
     gamilit.now_mexico() - INTERVAL '3 days',
     gamilit.now_mexico() - INTERVAL '3 days' + INTERVAL '3 seconds',
     '{"message": "1 de 2 usuarios actualizados", "new_role": "teacher"}'::jsonb
@@ -98,7 +98,7 @@ INSERT INTO admin_dashboard.bulk_operations (
     0,
     'pending',
     '[]'::jsonb,
-    (SELECT id FROM auth.users WHERE email LIKE '%admin%' LIMIT 1),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email LIKE '%admin%' LIMIT 1),
     gamilit.now_mexico(),
     NULL,
     NULL

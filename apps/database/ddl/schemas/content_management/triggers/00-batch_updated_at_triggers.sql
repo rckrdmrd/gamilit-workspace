@@ -21,14 +21,14 @@ CREATE TRIGGER trg_content_templates_updated_at
 COMMENT ON TRIGGER trg_content_templates_updated_at ON content_management.content_templates
     IS 'Actualiza updated_at automaticamente en cada UPDATE';
 
--- Tabla: content_management.marie_curie_content
-DROP TRIGGER IF EXISTS trg_marie_curie_content_updated_at ON content_management.marie_curie_content CASCADE;
+-- Tabla: content_management.marie_curie_contents
+DROP TRIGGER IF EXISTS trg_marie_curie_content_updated_at ON content_management.marie_curie_contents CASCADE;
 CREATE TRIGGER trg_marie_curie_content_updated_at
-    BEFORE UPDATE ON content_management.marie_curie_content
+    BEFORE UPDATE ON content_management.marie_curie_contents
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.update_updated_at_column();
 
-COMMENT ON TRIGGER trg_marie_curie_content_updated_at ON content_management.marie_curie_content
+COMMENT ON TRIGGER trg_marie_curie_content_updated_at ON content_management.marie_curie_contents
     IS 'Actualiza updated_at automaticamente en cada UPDATE';
 
 -- Tabla: content_management.media_files

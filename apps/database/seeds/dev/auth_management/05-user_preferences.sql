@@ -28,7 +28,7 @@ INSERT INTO auth_management.user_preferences (
 ) VALUES
 -- Student 1 Preferences
 (
-    (SELECT id FROM auth.users WHERE email = 'estudiante1@demo.glit.edu.mx'),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'light',
     'es',
     true,
@@ -58,7 +58,7 @@ INSERT INTO auth_management.user_preferences (
 ),
 -- Student 2 Preferences
 (
-    (SELECT id FROM auth.users WHERE email = 'estudiante2@demo.glit.edu.mx'),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante2@demo.glit.edu.mx'),
     'dark',
     'es',
     true,
@@ -88,7 +88,7 @@ INSERT INTO auth_management.user_preferences (
 ),
 -- Student 3 Preferences
 (
-    (SELECT id FROM auth.users WHERE email = 'estudiante3@demo.glit.edu.mx'),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'),
     'auto',
     'es',
     true,
@@ -118,7 +118,7 @@ INSERT INTO auth_management.user_preferences (
 ),
 -- Teacher Preferences
 (
-    (SELECT id FROM auth.users WHERE email = 'instructor@demo.glit.edu.mx'),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'instructor@demo.glit.edu.mx'),
     'light',
     'es',
     true,
@@ -148,7 +148,7 @@ INSERT INTO auth_management.user_preferences (
 ),
 -- Admin Preferences
 (
-    (SELECT id FROM auth.users WHERE email = 'admin@glit.edu.mx'),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'),
     'dark',
     'es',
     true,
@@ -196,7 +196,7 @@ DECLARE
     dark_theme INTEGER;
 BEGIN
     SELECT COUNT(*) INTO pref_count FROM auth_management.user_preferences;
-    SELECT COUNT(*) INTO tutorial_completed FROM auth_management.user_preferences WHERE tutorial_completed = true;
+    SELECT COUNT(*) INTO tutorial_completed FROM auth_management.user_preferences up WHERE up.tutorial_completed = true;
     SELECT COUNT(*) INTO dark_theme FROM auth_management.user_preferences WHERE theme = 'dark';
 
     RAISE NOTICE '==============================================';

@@ -35,10 +35,11 @@ BEGIN
         RAISE NOTICE 'Usando tenant_id: %', v_tenant_id;
     END IF;
 
-    -- Obtener admin user para assigned_by
-    SELECT id INTO v_admin_user_id
-    FROM auth.users
-    WHERE email = 'admin@glit.edu.mx'
+    -- Obtener admin profile para assigned_by (FK references auth_management.profiles(id))
+    SELECT p.id INTO v_admin_user_id
+    FROM auth.users u
+    JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'admin@gamilit.com'
     LIMIT 1;
 
     -- Student 1 Role
@@ -49,9 +50,9 @@ BEGIN
     )
     SELECT
         gen_random_uuid(),
-        u.id,
+        p.id,
         v_tenant_id,
-        'student'::public.gamilit_role,
+        'student'::auth_management.gamilit_role,
         '{"read": true, "write": false, "admin": false, "analytics": false, "can_view_own_progress": true, "can_submit_assignments": true, "can_participate_challenges": true}'::jsonb,
         v_admin_user_id,
         gamilit.now_mexico(),
@@ -60,6 +61,7 @@ BEGIN
         gamilit.now_mexico(),
         gamilit.now_mexico()
     FROM auth.users u
+    JOIN auth_management.profiles p ON p.user_id = u.id
     WHERE u.email = 'estudiante1@demo.glit.edu.mx'
     ON CONFLICT (user_id, tenant_id, role) DO UPDATE SET
         permissions = EXCLUDED.permissions,
@@ -76,9 +78,9 @@ BEGIN
     )
     SELECT
         gen_random_uuid(),
-        u.id,
+        p.id,
         v_tenant_id,
-        'student'::public.gamilit_role,
+        'student'::auth_management.gamilit_role,
         '{"read": true, "write": false, "admin": false, "analytics": false, "can_view_own_progress": true, "can_submit_assignments": true, "can_participate_challenges": true}'::jsonb,
         v_admin_user_id,
         gamilit.now_mexico(),
@@ -87,6 +89,7 @@ BEGIN
         gamilit.now_mexico(),
         gamilit.now_mexico()
     FROM auth.users u
+    JOIN auth_management.profiles p ON p.user_id = u.id
     WHERE u.email = 'estudiante2@demo.glit.edu.mx'
     ON CONFLICT (user_id, tenant_id, role) DO UPDATE SET
         permissions = EXCLUDED.permissions,
@@ -103,9 +106,9 @@ BEGIN
     )
     SELECT
         gen_random_uuid(),
-        u.id,
+        p.id,
         v_tenant_id,
-        'student'::public.gamilit_role,
+        'student'::auth_management.gamilit_role,
         '{"read": true, "write": false, "admin": false, "analytics": false, "can_view_own_progress": true, "can_submit_assignments": true, "can_participate_challenges": true}'::jsonb,
         v_admin_user_id,
         gamilit.now_mexico(),
@@ -114,6 +117,7 @@ BEGIN
         gamilit.now_mexico(),
         gamilit.now_mexico()
     FROM auth.users u
+    JOIN auth_management.profiles p ON p.user_id = u.id
     WHERE u.email = 'estudiante3@demo.glit.edu.mx'
     ON CONFLICT (user_id, tenant_id, role) DO UPDATE SET
         permissions = EXCLUDED.permissions,
@@ -130,9 +134,9 @@ BEGIN
     )
     SELECT
         gen_random_uuid(),
-        u.id,
+        p.id,
         v_tenant_id,
-        'admin_teacher'::public.gamilit_role,
+        'admin_teacher'::auth_management.gamilit_role,
         '{"read": true, "write": true, "admin": false, "analytics": true, "can_manage_students": true, "can_create_assignments": true, "can_grade_submissions": true, "can_view_class_analytics": true, "can_manage_content": true}'::jsonb,
         v_admin_user_id,
         gamilit.now_mexico(),
@@ -141,6 +145,7 @@ BEGIN
         gamilit.now_mexico(),
         gamilit.now_mexico()
     FROM auth.users u
+    JOIN auth_management.profiles p ON p.user_id = u.id
     WHERE u.email = 'instructor@demo.glit.edu.mx'
     ON CONFLICT (user_id, tenant_id, role) DO UPDATE SET
         permissions = EXCLUDED.permissions,
@@ -157,9 +162,9 @@ BEGIN
     )
     SELECT
         gen_random_uuid(),
-        u.id,
+        p.id,
         v_tenant_id,
-        'super_admin'::public.gamilit_role,
+        'super_admin'::auth_management.gamilit_role,
         '{"read": true, "write": true, "admin": true, "analytics": true, "can_manage_all": true, "can_manage_users": true, "can_manage_tenants": true, "can_manage_system_settings": true, "can_view_all_analytics": true, "can_manage_roles": true}'::jsonb,
         NULL,
         gamilit.now_mexico(),
@@ -168,7 +173,8 @@ BEGIN
         gamilit.now_mexico(),
         gamilit.now_mexico()
     FROM auth.users u
-    WHERE u.email = 'admin@glit.edu.mx'
+    JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'admin@gamilit.com'
     ON CONFLICT (user_id, tenant_id, role) DO UPDATE SET
         permissions = EXCLUDED.permissions,
         assigned_by = EXCLUDED.assigned_by,

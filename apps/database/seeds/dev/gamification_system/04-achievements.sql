@@ -959,31 +959,31 @@ BEGIN
 
     SELECT COUNT(*) INTO progress_count
     FROM gamification_system.achievements
-    WHERE category = 'progress' AND metadata->>'demo_achievement' = 'true';
+    WHERE category = 'progress'::gamification_system.achievement_category AND metadata->>'demo_achievement' = 'true';
 
     SELECT COUNT(*) INTO streak_count
     FROM gamification_system.achievements
-    WHERE category = 'streak' AND metadata->>'demo_achievement' = 'true';
+    WHERE category = 'streak'::gamification_system.achievement_category AND metadata->>'demo_achievement' = 'true';
 
     SELECT COUNT(*) INTO completion_count
     FROM gamification_system.achievements
-    WHERE category = 'completion' AND metadata->>'demo_achievement' = 'true';
+    WHERE category = 'completion'::gamification_system.achievement_category AND metadata->>'demo_achievement' = 'true';
 
     SELECT COUNT(*) INTO mastery_count
     FROM gamification_system.achievements
-    WHERE category = 'mastery' AND metadata->>'demo_achievement' = 'true';
+    WHERE category = 'mastery'::gamification_system.achievement_category AND metadata->>'demo_achievement' = 'true';
 
     SELECT COUNT(*) INTO exploration_count
     FROM gamification_system.achievements
-    WHERE category = 'exploration' AND metadata->>'demo_achievement' = 'true';
+    WHERE category = 'exploration'::gamification_system.achievement_category AND metadata->>'demo_achievement' = 'true';
 
     SELECT COUNT(*) INTO social_count
     FROM gamification_system.achievements
-    WHERE category = 'social' AND metadata->>'demo_achievement' = 'true';
+    WHERE category = 'social'::gamification_system.achievement_category AND metadata->>'demo_achievement' = 'true';
 
     SELECT COUNT(*) INTO special_count
     FROM gamification_system.achievements
-    WHERE category = 'special' AND metadata->>'demo_achievement' = 'true';
+    WHERE category = 'special'::gamification_system.achievement_category AND metadata->>'demo_achievement' = 'true';
 
     RAISE NOTICE '========================================';
     RAISE NOTICE 'ACHIEVEMENTS DEMO CREADOS EXITOSAMENTE';
@@ -1030,8 +1030,8 @@ BEGIN
         WHERE metadata->>'demo_achievement' = 'true'
         ORDER BY category, order_index
     LOOP
-        IF current_category != achievement_record.category THEN
-            current_category := achievement_record.category;
+        IF current_category != achievement_record.category::text THEN
+            current_category := achievement_record.category::text;
             RAISE NOTICE '';
             RAISE NOTICE '=== % ===', UPPER(current_category);
         END IF;

@@ -35,8 +35,8 @@ SELECT
     ds.registration_date,
     ds.first_activity_date,
     ds.last_activity_date,
-    EXTRACT(DAY FROM (CURRENT_DATE - ds.registration_date)) AS days_since_registration,
-    EXTRACT(DAY FROM (CURRENT_DATE - COALESCE(ds.first_activity_date, ds.registration_date))) AS days_since_first_activity,
+    (CURRENT_DATE - ds.registration_date) AS days_since_registration,
+    (CURRENT_DATE - COALESCE(ds.first_activity_date, ds.registration_date)) AS days_since_first_activity,
 
     -- Maya rank numeric mapping
     CASE ds.current_rank
@@ -155,7 +155,7 @@ SELECT
     CURRENT_TIMESTAMP AS generated_at,
     '1.0.0' AS feature_version
 
-FROM data_warehouse.dim_student ds
+FROM data_warehouse.dim_students ds
 LEFT JOIN data_warehouse.v_student_engagement_metrics em ON ds.student_key = em.student_key
 LEFT JOIN data_warehouse.v_student_performance_metrics pm ON ds.student_key = pm.student_key
 WHERE ds.is_current = true

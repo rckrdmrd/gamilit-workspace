@@ -120,11 +120,11 @@ CREATE TABLE data_warehouse.fact_teacher_metrics (
 -- =====================================================
 ALTER TABLE data_warehouse.fact_teacher_metrics
     ADD CONSTRAINT fk_fact_teacher_date FOREIGN KEY (date_key)
-    REFERENCES data_warehouse.dim_date(date_key);
+    REFERENCES data_warehouse.dim_dates(date_key);
 
 ALTER TABLE data_warehouse.fact_teacher_metrics
     ADD CONSTRAINT fk_fact_teacher_teacher FOREIGN KEY (teacher_key)
-    REFERENCES data_warehouse.dim_teacher(teacher_key);
+    REFERENCES data_warehouse.dim_teachers(teacher_key);
 
 -- =====================================================
 -- INDEXES

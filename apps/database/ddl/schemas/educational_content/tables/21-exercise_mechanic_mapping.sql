@@ -176,55 +176,8 @@ COMMENT ON COLUMN educational_content.exercise_mechanic_mappings.is_active IS
 'Permite deshabilitar mappings obsoletos sin eliminar histórico';
 
 -- ============================================================================
--- VISTA HELPER: exercises_with_mechanics
--- ============================================================================
-
-CREATE VIEW educational_content.exercises_with_mechanics AS
-SELECT
-    -- Campos de exercises
-    e.id,
-    e.module_id,
-    e.exercise_type,
-    e.title,
-    e.description,
-    e.difficulty_level,
-    e.estimated_duration_minutes,
-    e.content_data,
-    e.ml_coins_reward,
-    e.xp_reward,
-    e.order_index,
-    e.is_active AS exercise_is_active,
-    e.created_at AS exercise_created_at,
-    e.updated_at AS exercise_updated_at,
-
-    -- Campos de exercise_mechanic_mappings
-    m.id AS mapping_id,
-    m.mechanic_category,
-    m.mechanic_subcategory,
-    m.bloom_level,
-    m.cefr_level AS mechanic_cefr_levels,
-    m.pedagogical_purpose,
-    m.learning_objectives,
-    m.interaction_type,
-    m.cognitive_load,
-    m.tags AS mechanic_tags
-FROM
-    educational_content.exercises e
-LEFT JOIN
-    educational_content.exercise_mechanic_mappings m
-    ON e.exercise_type = m.exercise_type
-    AND m.is_active = true
-WHERE
-    e.is_active = true;
-
-COMMENT ON VIEW educational_content.exercises_with_mechanics IS
-'Vista helper que combina exercises con sus categorías pedagógicas del Sistema Dual.
-Facilita queries de profesores para buscar ejercicios por competencia pedagógica.
-Solo incluye exercises activos y mappings activos.';
-
--- ============================================================================
--- GRANTS (RLS se maneja en nivel de schema)
+-- NOTA: Vista exercises_with_mechanics fue extraída a views/02-exercises_with_mechanics.sql
+-- para que se cree en la fase de vistas (PASO 4) del init-database.sh
 -- ============================================================================
 
 -- Los permisos se manejan mediante RLS policies en educational_content schema
--- Este comentario documenta que la tabla hereda las policies del schema

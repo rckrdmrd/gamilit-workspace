@@ -94,31 +94,31 @@ CREATE TABLE data_warehouse.fact_gamification_events (
 -- =====================================================
 ALTER TABLE data_warehouse.fact_gamification_events
     ADD CONSTRAINT fk_fact_gam_event_date FOREIGN KEY (date_key)
-    REFERENCES data_warehouse.dim_date(date_key);
+    REFERENCES data_warehouse.dim_dates(date_key);
 
 ALTER TABLE data_warehouse.fact_gamification_events
     ADD CONSTRAINT fk_fact_gam_event_time FOREIGN KEY (time_key)
-    REFERENCES data_warehouse.dim_time(time_key);
+    REFERENCES data_warehouse.dim_times(time_key);
 
 ALTER TABLE data_warehouse.fact_gamification_events
     ADD CONSTRAINT fk_fact_gam_event_student FOREIGN KEY (student_key)
-    REFERENCES data_warehouse.dim_student(student_key);
+    REFERENCES data_warehouse.dim_students(student_key);
 
 ALTER TABLE data_warehouse.fact_gamification_events
     ADD CONSTRAINT fk_fact_gam_event_type FOREIGN KEY (event_type_key)
-    REFERENCES data_warehouse.dim_event_type(event_type_key);
+    REFERENCES data_warehouse.dim_event_types(event_type_key);
 
 ALTER TABLE data_warehouse.fact_gamification_events
     ADD CONSTRAINT fk_fact_gam_event_achievement FOREIGN KEY (achievement_key)
-    REFERENCES data_warehouse.dim_achievement(achievement_key);
+    REFERENCES data_warehouse.dim_achievements(achievement_key);
 
 ALTER TABLE data_warehouse.fact_gamification_events
     ADD CONSTRAINT fk_fact_gam_event_exercise FOREIGN KEY (exercise_key)
-    REFERENCES data_warehouse.dim_exercise(exercise_key);
+    REFERENCES data_warehouse.dim_exercises(exercise_key);
 
 ALTER TABLE data_warehouse.fact_gamification_events
     ADD CONSTRAINT fk_fact_gam_event_module FOREIGN KEY (module_key)
-    REFERENCES data_warehouse.dim_module(module_key);
+    REFERENCES data_warehouse.dim_modules(module_key);
 
 -- =====================================================
 -- INDEXES

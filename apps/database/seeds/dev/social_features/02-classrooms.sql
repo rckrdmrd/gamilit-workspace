@@ -220,9 +220,8 @@ SELECT
 FROM social_features.classrooms c
 WHERE c.teacher_id IS NOT NULL
   AND c.code = 'DEFAULT'
-ON CONFLICT (id) DO UPDATE SET
-    role = EXCLUDED.role,
-    teacher_id = EXCLUDED.teacher_id;
+ON CONFLICT (teacher_id, classroom_id) DO UPDATE SET
+    role = EXCLUDED.role;
 
 -- 2. FIX-2026-01-18: Agregar a TODOS los teachers existentes al classroom DEFAULT
 -- Esto asegura que cualquier teacher pueda acceder al aula general

@@ -6,15 +6,15 @@
 -- Created: 2025-11-28
 -- =====================================================
 
-DROP TRIGGER IF EXISTS trg_update_missions_on_use_comodines ON gamification_system.comodin_usage_log;
+DROP TRIGGER IF EXISTS trg_update_missions_on_use_comodines ON gamification_system.comodin_usage_logs;
 
 CREATE TRIGGER trg_update_missions_on_use_comodines
-    AFTER INSERT ON gamification_system.comodin_usage_log
+    AFTER INSERT ON gamification_system.comodin_usage_logs
     FOR EACH ROW
     EXECUTE FUNCTION gamilit.trigger_missions_on_use_comodines();
 
 -- Comentario descriptivo
-COMMENT ON TRIGGER trg_update_missions_on_use_comodines ON gamification_system.comodin_usage_log IS
+COMMENT ON TRIGGER trg_update_missions_on_use_comodines ON gamification_system.comodin_usage_logs IS
     'Dispara la actualización de misiones con objetivo "use_comodines" cada vez que un usuario usa un comodín';
 
 -- =====================================================

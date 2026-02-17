@@ -61,7 +61,8 @@ Equipo Gamilit',
     '["user_name", "user_email"]'::jsonb,
     ARRAY['email'],
     true
-);
+)
+ON CONFLICT (template_key, version) DO NOTHING;
 
 -- Template 2: Nueva asignación
 INSERT INTO notifications.notification_templates (
@@ -111,7 +112,8 @@ Accede a la plataforma para ver más detalles.',
     '["student_name", "teacher_name", "assignment_title", "assignment_description", "due_date", "module_name", "assignment_url"]'::jsonb,
     ARRAY['email', 'push', 'in_app'],
     true
-);
+)
+ON CONFLICT (template_key, version) DO NOTHING;
 
 -- Template 3: Recordatorio de tarea próxima a vencer
 INSERT INTO notifications.notification_templates (
@@ -159,7 +161,8 @@ INSERT INTO notifications.notification_templates (
     '["student_name", "assignment_title", "hours_remaining", "due_date", "completion_status", "assignment_url"]'::jsonb,
     ARRAY['email', 'push'],
     true
-);
+)
+ON CONFLICT (template_key, version) DO NOTHING;
 
 -- Template 4: Logro desbloqueado
 INSERT INTO notifications.notification_templates (
@@ -207,7 +210,8 @@ INSERT INTO notifications.notification_templates (
     '["student_name", "achievement_name", "achievement_description", "achievement_icon", "ml_coins_earned"]'::jsonb,
     ARRAY['in_app', 'push'],
     true
-);
+)
+ON CONFLICT (template_key, version) DO NOTHING;
 
 -- Template 5: Mensaje del profesor
 INSERT INTO notifications.notification_templates (
@@ -249,9 +253,10 @@ Responde a través de la plataforma.',
     '["student_name", "teacher_name", "message_content", "classroom_name", "message_url"]'::jsonb,
     ARRAY['email', 'in_app'],
     true
-);
+)
+ON CONFLICT (template_key, version) DO NOTHING;
 
--- Template 6: Invitación a grupo/equipo
+-- Template 6: Invitacion a grupo/equipo
 INSERT INTO notifications.notification_templates (
     template_key,
     name,
@@ -296,9 +301,10 @@ Miembros actuales: {{member_count}}
     '["student_name", "inviter_name", "team_name", "team_description", "member_count", "accept_url", "decline_url"]'::jsonb,
     ARRAY['in_app', 'push'],
     true
-);
+)
+ON CONFLICT (template_key, version) DO NOTHING;
 
--- Template 7: Retroalimentación de ejercicio
+-- Template 7: Retroalimentacion de ejercicio
 INSERT INTO notifications.notification_templates (
     template_key,
     name,
@@ -359,9 +365,10 @@ ML Coins: {{ml_coins_earned}}',
     '["student_name", "teacher_name", "exercise_title", "score", "grade_emoji", "feedback_text", "xp_earned", "ml_coins_earned", "exercise_url"]'::jsonb,
     ARRAY['email', 'in_app'],
     true
-);
+)
+ON CONFLICT (template_key, version) DO NOTHING;
 
--- Template 8: Racha de días consecutivos
+-- Template 8: Racha de dias consecutivos
 INSERT INTO notifications.notification_templates (
     template_key,
     name,
@@ -408,7 +415,7 @@ Sigue así para mantener tu racha y ganar más recompensas.
     '["student_name", "streak_days", "bonus_coins"]'::jsonb,
     ARRAY['in_app', 'push'],
     true
-);
+)
+ON CONFLICT (template_key, version) DO NOTHING;
 
--- Comentario final
-COMMENT ON TABLE notifications.notification_templates IS 'Contiene 8 plantillas predefinidas para notificaciones del sistema (DB-115 - 2025-11-13)';
+-- Note: 8 plantillas predefinidas para notificaciones del sistema (DB-115 - 2025-11-13)

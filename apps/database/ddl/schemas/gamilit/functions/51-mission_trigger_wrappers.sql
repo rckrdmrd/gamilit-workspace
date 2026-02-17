@@ -135,8 +135,11 @@ Evento: AFTER UPDATE (when daily_streak changes)';
 
 -- -----------------------------------------------------------------------------
 -- 5. Wrapper para uso de comodines
--- Trigger: AFTER UPDATE ON gamification_system.comodines_inventory
--- Condicion: Cuando times_used aumenta
+-- Trigger: AFTER INSERT ON gamification_system.comodin_usage_logs
+-- Condicion: Cada INSERT representa un uso de comodin
+-- FIX CORR-03: Alineado con trigger 28 que apunta a comodin_usage_logs (INSERT),
+-- no a comodines_inventory (UPDATE). La tabla comodin_usage_logs no tiene
+-- columna times_used ni OLD row en INSERT.
 -- -----------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION gamilit.trigger_missions_on_use_comodines()
 RETURNS TRIGGER
@@ -144,10 +147,8 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-    -- Solo procesar si se uso un comodin
-    IF NEW.times_used > COALESCE(OLD.times_used, 0) THEN
-        PERFORM gamilit.update_mission_progress(NEW.user_id, 'use_comodines', 1);
-    END IF;
+    -- Cada INSERT en comodin_usage_logs representa un uso de comodin
+    PERFORM gamilit.update_mission_progress(NEW.user_id, 'use_comodines', 1);
     RETURN NEW;
 EXCEPTION
     WHEN OTHERS THEN
@@ -159,8 +160,8 @@ $$;
 COMMENT ON FUNCTION gamilit.trigger_missions_on_use_comodines() IS
 'Trigger wrapper que actualiza misiones al usar un comodin.
 Llama a update_mission_progress con type=use_comodines, increment=1.
-Tabla: gamification_system.comodines_inventory
-Evento: AFTER UPDATE (when times_used changes)';
+Tabla: gamification_system.comodin_usage_logs
+Evento: AFTER INSERT (cada registro = un uso de comodin)';
 
 -- -----------------------------------------------------------------------------
 -- 6. Wrapper para puntajes perfectos

@@ -14,8 +14,8 @@ SET search_path TO system_configuration, public;
 -- =====================================================
 
 INSERT INTO system_configuration.feature_flags (
-    feature_name,
-    feature_key,
+    flag_name,
+    flag_key,
     description,
     is_enabled,
     rollout_percentage,
@@ -94,13 +94,13 @@ INSERT INTO system_configuration.feature_flags (
     'Desafíos 1v1 entre estudiantes con sistema de matchmaking y recompensas especiales',
     false,
     10,
-    ARRAY['student'::public.gamilit_role],
+    ARRAY['student'::auth_management.gamilit_role],
     NOW(),
     NOW()
 )
 
-ON CONFLICT (feature_key) DO UPDATE SET
-    feature_name = EXCLUDED.feature_name,
+ON CONFLICT (flag_key) DO UPDATE SET
+    flag_name = EXCLUDED.flag_name,
     description = EXCLUDED.description,
     is_enabled = EXCLUDED.is_enabled,
     rollout_percentage = EXCLUDED.rollout_percentage,

@@ -29,7 +29,7 @@ WITH recent_progress AS (
         fdp.xp_earned,
         fdp.ml_coins_earned
     FROM data_warehouse.fact_daily_progress fdp
-    JOIN data_warehouse.dim_date dd ON fdp.date_key = dd.date_key
+    JOIN data_warehouse.dim_dates dd ON fdp.date_key = dd.date_key
     WHERE dd.full_date >= CURRENT_DATE - INTERVAL '90 days'
 ),
 daily_aggregates AS (
@@ -80,7 +80,7 @@ last_activity AS (
     SELECT
         student_key,
         MAX(full_date) AS last_activity_date,
-        EXTRACT(DAY FROM (CURRENT_DATE - MAX(full_date))) AS days_since_last_login
+        (CURRENT_DATE - MAX(full_date)) AS days_since_last_login
     FROM recent_progress
     WHERE is_active_day = true
     GROUP BY student_key
@@ -159,7 +159,7 @@ SELECT
     -- Metadata
     CURRENT_TIMESTAMP AS generated_at
 
-FROM data_warehouse.dim_student ds
+FROM data_warehouse.dim_students ds
 LEFT JOIN daily_aggregates da ON ds.student_key = da.student_key
 LEFT JOIN last_activity la ON ds.student_key = la.student_key
 LEFT JOIN current_streak cs ON ds.student_key = cs.student_key

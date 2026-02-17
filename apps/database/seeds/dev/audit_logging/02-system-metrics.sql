@@ -4,17 +4,33 @@
 -- Schema: audit_logging
 -- Description: Performance metrics, system alerts, user activity logs
 -- Dependencies: auth schema (users)
+-- Version: 1.1 (fixed column names to match DDL)
+-- =====================================================
+-- DDL performance_metrics columns: id, tenant_id, metric_name, metric_type,
+--   category, metric_value, unit, endpoint, operation, module_name,
+--   function_name, request_id, session_id, user_id, dimensions, tags,
+--   measured_at, created_at
+-- DDL system_alerts columns: id, tenant_id, alert_type, severity, title,
+--   description, source_system, source_module, error_code, affected_users,
+--   status, acknowledgment_note, resolution_note, acknowledged_by,
+--   acknowledged_at, resolved_by, resolved_at, notification_sent,
+--   escalation_level, auto_resolve, suppress_similar, context_data,
+--   metrics, related_alerts, triggered_at, created_at, updated_at
+-- DDL alert_type CHECK: performance_degradation, high_error_rate,
+--   security_breach, resource_limit, service_outage, data_anomaly
+-- DDL severity CHECK: low, medium, high, critical
+-- DDL status CHECK: open, acknowledged, resolved, suppressed
 -- =====================================================
 
 SET search_path TO audit_logging, auth, public;
 
 -- =====================================================
--- PERFORMANCE METRICS: Métricas históricas
+-- PERFORMANCE METRICS: Metricas historicas
 -- =====================================================
 INSERT INTO audit_logging.performance_metrics (
-    metric_name, metric_type, metric_metric_value,
-    unit, component, environment,
-    dimensions, recorded_at, created_at
+    metric_name, metric_type, metric_value,
+    unit, module_name, category,
+    dimensions, measured_at, created_at
 ) VALUES
 
 -- ============ DATABASE METRICS ============
@@ -25,7 +41,7 @@ INSERT INTO audit_logging.performance_metrics (
     15.0,
     'connections',
     'postgresql',
-    'development',
+    'database',
     '{
         "pool_size": 20,
         "utilization_percentage": 75,
@@ -41,7 +57,7 @@ INSERT INTO audit_logging.performance_metrics (
     45.5,
     'milliseconds',
     'postgresql',
-    'development',
+    'database',
     '{
         "queries_sampled": 1250,
         "p50": 25.0,
@@ -59,7 +75,7 @@ INSERT INTO audit_logging.performance_metrics (
     98.5,
     'percentage',
     'postgresql',
-    'development',
+    'database',
     '{
         "cache_hits": 9850,
         "cache_misses": 150,
@@ -75,7 +91,7 @@ INSERT INTO audit_logging.performance_metrics (
     45.8,
     'transactions',
     'postgresql',
-    'development',
+    'database',
     '{
         "commits": 2748,
         "rollbacks": 12,
@@ -93,7 +109,7 @@ INSERT INTO audit_logging.performance_metrics (
     5432.0,
     'requests',
     'api_server',
-    'development',
+    'performance',
     '{
         "endpoint": "/api/exercises",
         "method": "GET",
@@ -111,7 +127,7 @@ INSERT INTO audit_logging.performance_metrics (
     125.5,
     'milliseconds',
     'api_server',
-    'development',
+    'performance',
     '{
         "endpoint": "/api/modules",
         "method": "GET",
@@ -130,7 +146,7 @@ INSERT INTO audit_logging.performance_metrics (
     0.8,
     'percentage',
     'api_server',
-    'development',
+    'performance',
     '{
         "total_requests": 5000,
         "errors": 40,
@@ -147,7 +163,7 @@ INSERT INTO audit_logging.performance_metrics (
     12.0,
     'connections',
     'websocket_server',
-    'development',
+    'performance',
     '{
         "max_connections": 1000,
         "utilization_percentage": 1.2,
@@ -165,7 +181,7 @@ INSERT INTO audit_logging.performance_metrics (
     5.0,
     'users',
     'application',
-    'development',
+    'business',
     '{
         "date": "2025-11-02",
         "students": 3,
@@ -183,7 +199,7 @@ INSERT INTO audit_logging.performance_metrics (
     12.0,
     'exercises',
     'application',
-    'development',
+    'business',
     '{
         "period": "24h",
         "module_breakdown": {
@@ -202,7 +218,7 @@ INSERT INTO audit_logging.performance_metrics (
     45.0,
     'transactions',
     'gamification',
-    'development',
+    'business',
     '{
         "period": "24h",
         "total_earned": 1250,
@@ -219,7 +235,7 @@ INSERT INTO audit_logging.performance_metrics (
     65.5,
     'percentage',
     'application',
-    'development',
+    'business',
     '{
         "missions_assigned": 20,
         "missions_completed": 13,
@@ -238,7 +254,7 @@ INSERT INTO audit_logging.performance_metrics (
     512.5,
     'megabytes',
     'system',
-    'development',
+    'system',
     '{
         "total_mb": 2048,
         "utilization_percentage": 25,
@@ -255,7 +271,7 @@ INSERT INTO audit_logging.performance_metrics (
     35.2,
     'percentage',
     'system',
-    'development',
+    'system',
     '{
         "cores": 4,
         "load_average": [1.2, 1.5, 1.3],
@@ -271,7 +287,7 @@ INSERT INTO audit_logging.performance_metrics (
     1024.0,
     'megabytes',
     'system',
-    'development',
+    'system',
     '{
         "total_gb": 50,
         "used_gb": 1.0,
@@ -287,7 +303,7 @@ INSERT INTO audit_logging.performance_metrics (
     2.5,
     'megabytes_per_second',
     'system',
-    'development',
+    'system',
     '{
         "inbound_mbps": 1.8,
         "outbound_mbps": 0.7,
@@ -306,7 +322,7 @@ INSERT INTO audit_logging.performance_metrics (
     85.5,
     'percentage',
     'redis',
-    'development',
+    'performance',
     '{
         "total_requests": 5000,
         "hits": 4275,
@@ -322,7 +338,7 @@ INSERT INTO audit_logging.performance_metrics (
     128.5,
     'megabytes',
     'redis',
-    'development',
+    'performance',
     '{
         "max_memory_mb": 256,
         "utilization_percentage": 50.2,
@@ -338,27 +354,28 @@ ON CONFLICT DO NOTHING;
 -- SYSTEM ALERTS: Alertas generadas
 -- =====================================================
 INSERT INTO audit_logging.system_alerts (
-    alert_type, severity, title, message,
-    component, threshold_metric_value, current_metric_value,
+    alert_type, severity, title, description,
+    source_system, source_module,
     status, triggered_at, resolved_at,
-    dimensions, created_at, updated_at
+    context_data, created_at, updated_at
 ) VALUES
 
 -- ============ RESOLVED ALERTS ============
 
 -- High memory usage (resolved)
 (
-    'resource',
-    'warning',
+    'resource_limit',
+    'medium',
     'High Memory Usage Detected',
     'Memory usage exceeded 80% threshold',
     'system',
-    80.0,
-    85.5,
+    'system',
     'resolved',
     NOW() - INTERVAL '2 hours',
     NOW() - INTERVAL '1 hour',
     '{
+        "threshold_value": 80.0,
+        "current_value": 85.5,
         "actions_taken": [
             "Memory cache cleared",
             "Garbage collection forced",
@@ -374,25 +391,25 @@ INSERT INTO audit_logging.system_alerts (
 
 -- Failed login attempts (resolved)
 (
-    'security',
-    'info',
+    'security_breach',
+    'low',
     'Multiple Failed Login Attempts',
     'User exceeded login attempt threshold',
     'authentication',
-    5.0,
-    6.0,
+    'auth',
     'resolved',
     NOW() - INTERVAL '3 hours',
     NOW() - INTERVAL '2 hours 55 minutes',
     '{
+        "threshold_value": 5.0,
+        "current_value": 6.0,
         "user_email": "test@example.com",
         "ip_address": "203.0.113.42",
         "actions_taken": [
             "Account locked for 15 minutes",
             "Security notification sent"
         ],
-        "resolution": "User successfully logged in after password reset",
-        "lockout_duration_minutes": 15
+        "resolution": "User successfully logged in after password reset"
     }'::jsonb,
     NOW() - INTERVAL '3 hours',
     NOW() - INTERVAL '2 hours 55 minutes'
@@ -400,13 +417,12 @@ INSERT INTO audit_logging.system_alerts (
 
 -- Database backup success (acknowledged)
 (
-    'maintenance',
-    'info',
+    'data_anomaly',
+    'low',
     'Automated Backup Completed',
     'Daily database backup completed successfully',
     'database',
-    NULL,
-    NULL,
+    'postgresql',
     'acknowledged',
     NOW() - INTERVAL '6 hours',
     NOW() - INTERVAL '6 hours',
@@ -421,21 +437,22 @@ INSERT INTO audit_logging.system_alerts (
     NOW() - INTERVAL '6 hours'
 ),
 
--- ============ ACTIVE ALERTS ============
+-- ============ OPEN ALERTS ============
 
--- Slow API endpoint (active)
+-- Slow API endpoint (open)
 (
-    'performance',
-    'warning',
+    'performance_degradation',
+    'medium',
     'Slow API Response Time',
     'Endpoint /api/leaderboards exceeding SLA',
     'api_server',
-    200.0,
-    450.0,
-    'active',
+    'api_server',
+    'open',
     NOW() - INTERVAL '15 minutes',
     NULL,
     '{
+        "threshold_value": 200.0,
+        "current_value": 450.0,
         "endpoint": "/api/leaderboards",
         "method": "GET",
         "sla_ms": 200,
@@ -451,19 +468,20 @@ INSERT INTO audit_logging.system_alerts (
     NOW()
 ),
 
--- High error rate (active)
+-- High error rate (open)
 (
-    'performance',
-    'error',
+    'high_error_rate',
+    'high',
     'High API Error Rate',
     'Error rate exceeded 2% threshold',
     'api_server',
-    2.0,
-    3.5,
-    'active',
+    'api_server',
+    'open',
     NOW() - INTERVAL '25 minutes',
     NULL,
     '{
+        "threshold_value": 2.0,
+        "current_value": 3.5,
         "total_requests": 1000,
         "errors": 35,
         "error_breakdown": {
@@ -485,13 +503,12 @@ INSERT INTO audit_logging.system_alerts (
 
 -- SSL certificate expiry warning (acknowledged)
 (
-    'security',
-    'warning',
+    'security_breach',
+    'medium',
     'SSL Certificate Expiring Soon',
     'SSL certificate will expire in 30 days',
     'security',
-    30.0,
-    30.0,
+    'security',
     'acknowledged',
     NOW() - INTERVAL '1 day',
     NOW() - INTERVAL '1 day',
@@ -508,17 +525,18 @@ INSERT INTO audit_logging.system_alerts (
 
 -- Disk space warning (acknowledged)
 (
-    'resource',
-    'info',
+    'resource_limit',
+    'low',
     'Disk Space Usage',
     'Disk usage reached 70% threshold',
     'system',
-    70.0,
-    72.5,
+    'system',
     'acknowledged',
     NOW() - INTERVAL '8 hours',
     NOW() - INTERVAL '8 hours',
     '{
+        "threshold_value": 70.0,
+        "current_value": 72.5,
         "mount_point": "/var/lib/postgresql",
         "total_gb": 100,
         "used_gb": 72.5,
@@ -538,19 +556,27 @@ ON CONFLICT DO NOTHING;
 DO $$
 DECLARE
     student_record RECORD;
-    activity_types TEXT[] := ARRAY['page_view', 'exercise_start', 'exercise_complete', 'mission_view', 'leaderboard_view', 'store_visit', 'achievement_view'];
+    -- Only allowed activity_type values per DDL CHECK constraint:
+    -- page_view, button_click, form_submit, exercise_start, exercise_complete,
+    -- module_access, video_play, resource_download, search_query
+    activity_types TEXT[] := ARRAY['page_view', 'exercise_start', 'exercise_complete', 'module_access', 'button_click', 'search_query', 'page_view'];
     pages TEXT[] := ARRAY['/modules', '/missions', '/leaderboard', '/ml-store', '/profile', '/achievements'];
 BEGIN
     -- Generar activity logs para cada estudiante
+    -- user_id FK references auth_management.profiles(id), not auth.users(id)
     FOR student_record IN
-        SELECT user_id, email FROM auth.users WHERE role = 'student' LIMIT 3
+        SELECT p.id AS user_id, u.email
+        FROM auth.users u
+        JOIN auth_management.profiles p ON p.user_id = u.id
+        WHERE u.role = 'student'
+        LIMIT 3
     LOOP
         -- 5 actividades por estudiante
         FOR i IN 1..5 LOOP
             INSERT INTO audit_logging.user_activity_logs (
-                user_id, activity_type, activity_description,
+                user_id, activity_type, action_detail,
                 ip_address, user_agent, session_id,
-                dimensions, created_at
+                metadata, created_at
             ) VALUES (
                 student_record.user_id,
                 activity_types[1 + floor(random() * array_length(activity_types, 1))::int],
@@ -571,16 +597,17 @@ BEGIN
         END LOOP;
     END LOOP;
 
-    -- Logs específicos adicionales
+    -- Logs especificos adicionales
+    -- 'logout' is not allowed by the CHECK constraint; use 'page_view' instead
     INSERT INTO audit_logging.user_activity_logs (
-        user_id, activity_type, activity_description,
+        user_id, activity_type, action_detail,
         ip_address, user_agent, session_id,
-        dimensions, created_at
+        metadata, created_at
     )
     SELECT
-        u.user_id,
-        'logout',
-        'User logged out',
+        p.id,
+        'page_view',
+        'User session ended',
         '192.168.1.45',
         'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120.0.0.0',
         gen_random_uuid(),
@@ -591,6 +618,7 @@ BEGIN
         }'::jsonb,
         NOW() - INTERVAL '30 minutes'
     FROM auth.users u
+    JOIN auth_management.profiles p ON p.user_id = u.id
     WHERE u.email = 'estudiante1@demo.glit.edu.mx'
     ON CONFLICT DO NOTHING;
 

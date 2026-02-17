@@ -44,7 +44,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, audit_logging;
 
 -- Documentation comment
-COMMENT ON FUNCTION public.cleanup_old_user_activity(INTEGER) IS
+COMMENT ON FUNCTION audit_logging.cleanup_old_user_activity(INTEGER) IS
 'Maintenance function to cleanup old user activity logs for performance and storage optimization.
 Parameters:
   - p_retention_days: Number of days to retain activity records (default: 180)

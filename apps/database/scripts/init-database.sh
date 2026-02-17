@@ -694,6 +694,7 @@ execute_functions() {
     local error_count=0
     local schemas=(
         "gamilit"
+        "auth"
         "auth_management"
         "gamification_system"
         "educational_content"
@@ -748,6 +749,7 @@ execute_views() {
 
     local view_count=0
     local error_count=0
+    local deferred_feature_view=""
     local schemas=(
         "admin_dashboard"
         "auth"
@@ -768,6 +770,12 @@ execute_views() {
         if [ -d "$views_dir" ]; then
             for view_file in "$views_dir"/*.sql; do
                 if [ -f "$view_file" ]; then
+                    # v_student_feature_base depende de dos vistas previas en data_warehouse.
+                    # Se ejecuta al final para evitar errores por orden alfabético.
+                    if [ "$(basename "$view_file")" = "v_student_feature_base.sql" ]; then
+                        deferred_feature_view="$view_file"
+                        continue
+                    fi
                     if execute_sql_file_as_superuser "$view_file" > /dev/null 2>&1; then
                         view_count=$((view_count + 1))
                     else
@@ -778,6 +786,15 @@ execute_views() {
             done
         fi
     done
+
+    if [ -n "$deferred_feature_view" ] && [ -f "$deferred_feature_view" ]; then
+        if execute_sql_file_as_superuser "$deferred_feature_view" > /dev/null 2>&1; then
+            view_count=$((view_count + 1))
+        else
+            error_count=$((error_count + 1))
+            print_warning "  Error en $(basename "$deferred_feature_view")"
+        fi
+    fi
 
     if [ $error_count -gt 0 ]; then
         print_warning "$view_count vistas creadas, $error_count con errores"
@@ -798,6 +815,7 @@ execute_mviews() {
     local schemas=(
         "gamification_system"
         "data_warehouse"
+        "admin_dashboard"
     )
 
     # Ejecutar MVIEWs como superuser
@@ -1023,6 +1041,7 @@ load_seeds() {
         "$SEEDS_DIR/auth_management/01-tenants.sql"
         "$SEEDS_DIR/auth_management/02-auth_providers.sql"
         "$SEEDS_DIR/auth/01-demo-users.sql"
+        "$SEEDS_DIR/auth/01b-demo-students.sql"             # DEV: 4 demo users (@demo.glit.edu.mx)
         "$SEEDS_DIR/auth/02-production-users.sql"           # PROD: Usuarios reales (13)
         # ELIMINADO: auth/02-test-users.sql - Conflicto UUIDs con 01-demo-users.sql
 
@@ -1146,11 +1165,9 @@ load_seeds() {
                 print_info "  $basename_file"
             fi
 
-            if execute_sql_file "$seed_file" 2>&1 | grep -i "error" > /dev/null; then
+            if execute_sql_file "$seed_file" 2>&1 | grep -E "^psql:.*ERROR:|^ERROR:" > /dev/null; then
                 failed=$((failed + 1))
-                if [ "$ENV_VERBOSE" = "true" ]; then
-                    print_warning "  ⚠️  Errores en $basename_file (continuando...)"
-                fi
+                print_warning "  ⚠️  Errores en $basename_file (continuando...)"
             else
                 loaded=$((loaded + 1))
             fi

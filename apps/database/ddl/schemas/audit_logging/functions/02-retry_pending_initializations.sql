@@ -43,7 +43,7 @@ BEGIN
     -- =========================================================================
     FOR rec IN
         SELECT *
-        FROM audit_logging.pending_user_initialization pui
+        FROM audit_logging.pending_user_initializations pui
         WHERE pui.status IN ('pending', 'retrying')
           AND pui.retry_count < pui.max_retries
           AND (pui.next_retry_at IS NULL OR pui.next_retry_at <= NOW())
@@ -52,7 +52,7 @@ BEGIN
     LOOP
         BEGIN
             -- Marcar como en proceso
-            UPDATE audit_logging.pending_user_initialization
+            UPDATE audit_logging.pending_user_initializations
             SET status = 'retrying',
                 last_retry_at = gamilit.now_mexico(),
                 updated_at = gamilit.now_mexico()
@@ -100,7 +100,7 @@ BEGIN
             -- =========================================================
             -- Marcar como resuelto
             -- =========================================================
-            UPDATE audit_logging.pending_user_initialization
+            UPDATE audit_logging.pending_user_initializations
             SET status = 'resolved',
                 resolved_at = gamilit.now_mexico(),
                 resolution_notes = 'Reintento automatico exitoso',
@@ -118,7 +118,7 @@ BEGIN
             -- =========================================================
             v_error := SQLERRM;
 
-            UPDATE audit_logging.pending_user_initialization
+            UPDATE audit_logging.pending_user_initializations
             SET retry_count = retry_count + 1,
                 last_retry_at = gamilit.now_mexico(),
                 next_retry_at = gamilit.now_mexico() + INTERVAL '5 minutes' * (retry_count + 1),
@@ -180,7 +180,7 @@ AS $$
         COUNT(*) AS count,
         MIN(pui.created_at) AS oldest_created_at,
         MAX(pui.created_at) AS newest_created_at
-    FROM audit_logging.pending_user_initialization pui
+    FROM audit_logging.pending_user_initializations pui
     GROUP BY pui.status
     ORDER BY pui.status;
 $$;

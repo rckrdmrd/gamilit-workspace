@@ -17,19 +17,19 @@ DECLARE
     student3_id UUID;
 BEGIN
     -- =====================================================
-    -- OBTENER USER IDs
+    -- OBTENER USER IDs — lookup profile IDs (FK actor_id targets auth_management.profiles(id))
     -- =====================================================
-    SELECT id INTO admin_id FROM auth.users WHERE email = 'admin@glit.edu.mx';
-    SELECT id INTO instructor_id FROM auth.users WHERE email = 'instructor@demo.glit.edu.mx';
-    SELECT id INTO student1_id FROM auth.users WHERE email = 'estudiante1@demo.glit.edu.mx';
-    SELECT id INTO student2_id FROM auth.users WHERE email = 'estudiante2@demo.glit.edu.mx';
-    SELECT id INTO student3_id FROM auth.users WHERE email = 'estudiante3@demo.glit.edu.mx';
+    SELECT p.id INTO admin_id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com';
+    SELECT p.id INTO instructor_id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'instructor@demo.glit.edu.mx';
+    SELECT p.id INTO student1_id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx';
+    SELECT p.id INTO student2_id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante2@demo.glit.edu.mx';
+    SELECT p.id INTO student3_id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx';
 
     -- =====================================================
     -- AUDIT LOGS: Logs de acciones importantes
     -- =====================================================
     INSERT INTO audit_logging.audit_logs (
-        actor_id, action, resource_type, resource_id,
+        actor_id, event_type, action, resource_type, resource_id,
         changes, actor_ip, actor_user_agent,
         severity, status,
         additional_data, created_at
@@ -37,9 +37,10 @@ BEGIN
 
     -- ============ ADMIN ACTIONS ============
 
-    -- Admin: Creación de system settings
+    -- Admin: Creacion de system settings
     (
         admin_id,
+        'system_configuration',
         'create',
         'system_settings',
         gen_random_uuid(),
@@ -63,9 +64,10 @@ BEGIN
         NOW() - INTERVAL '15 days'
     ),
 
-    -- Admin: Actualización de feature flag
+    -- Admin: Actualizacion de feature flag
     (
         admin_id,
+        'feature_flag_update',
         'update',
         'feature_flags',
         gen_random_uuid(),
@@ -81,14 +83,15 @@ BEGIN
             "flag_name": "missions_system",
             "impact": "high",
             "reason": "Production rollout",
-            "approved_by": "admin@glit.edu.mx"
+            "approved_by": "admin@gamilit.com"
         }'::jsonb,
         NOW() - INTERVAL '14 days'
     ),
 
-    -- Admin: Creación de achievement
+    -- Admin: Creacion de achievement
     (
         admin_id,
+        'achievement_created',
         'create',
         'achievements',
         gen_random_uuid(),
@@ -113,9 +116,10 @@ BEGIN
         NOW() - INTERVAL '13 days'
     ),
 
-    -- Admin: Intento fallido de eliminar módulo (protegido)
+    -- Admin: Intento fallido de eliminar modulo (protegido)
     (
         admin_id,
+        'module_delete_attempt',
         'delete',
         'modules',
         gen_random_uuid(),
@@ -140,6 +144,7 @@ BEGIN
     -- Admin: Bulk user role update
     (
         admin_id,
+        'bulk_role_update',
         'bulk_update',
         'users',
         NULL,
@@ -164,9 +169,10 @@ BEGIN
 
     -- ============ INSTRUCTOR ACTIONS ============
 
-    -- Instructor: Creación de aula
+    -- Instructor: Creacion de aula
     (
         instructor_id,
+        'classroom_created',
         'create',
         'classrooms',
         gen_random_uuid(),
@@ -191,9 +197,10 @@ BEGIN
         NOW() - INTERVAL '12 days'
     ),
 
-    -- Instructor: Asignación de estudiante a aula
+    -- Instructor: Asignacion de estudiante a aula
     (
         instructor_id,
+        'student_enrolled',
         'create',
         'classroom_members',
         gen_random_uuid(),
@@ -218,9 +225,10 @@ BEGIN
         NOW() - INTERVAL '11 days'
     ),
 
-    -- Instructor: Actualización de mission assignment
+    -- Instructor: Actualizacion de mission assignment
     (
         instructor_id,
+        'mission_updated',
         'update',
         'mission_assignments',
         gen_random_uuid(),
@@ -245,6 +253,7 @@ BEGIN
     -- Student1: Login exitoso
     (
         student1_id,
+        'user_login',
         'login',
         'auth_session',
         gen_random_uuid(),
@@ -266,9 +275,10 @@ BEGIN
         NOW() - INTERVAL '1 hour'
     ),
 
-    -- Student1: Completó ejercicio (achievement unlock)
+    -- Student1: Completo ejercicio (achievement unlock)
     (
         student1_id,
+        'achievement_earned',
         'achievement_unlocked',
         'user_achievements',
         gen_random_uuid(),
@@ -295,6 +305,7 @@ BEGIN
     -- Student2: Password reset request
     (
         student2_id,
+        'password_reset',
         'password_reset_request',
         'auth_session',
         gen_random_uuid(),
@@ -317,6 +328,7 @@ BEGIN
     -- Student3: Failed login attempt
     (
         student3_id,
+        'login_failed',
         'login',
         'auth_session',
         gen_random_uuid(),
@@ -342,6 +354,7 @@ BEGIN
     -- System: Scheduled backup
     (
         NULL,
+        'database_backup',
         'backup',
         'database',
         NULL,
@@ -367,6 +380,7 @@ BEGIN
     -- System: Data cleanup job
     (
         NULL,
+        'data_cleanup',
         'cleanup',
         'database',
         NULL,
@@ -392,16 +406,16 @@ BEGIN
     -- SYSTEM LOGS: Logs del sistema
     -- =====================================================
     INSERT INTO audit_logging.system_logs (
-        log_level, component, message,
-        error_code, stack_trace,
-        additional_data, created_at
+        log_level, module_name, message,
+        exception_type, stack_trace,
+        extra_data, created_at
     ) VALUES
 
     -- ============ INFO LOGS ============
 
     -- Info: Aplicación iniciada
     (
-        'info',
+        'INFO',
         'application',
         'GLIT application started successfully',
         NULL,
@@ -418,7 +432,7 @@ BEGIN
 
     -- Debug: Database connection pool
     (
-        'debug',
+        'DEBUG',
         'database',
         'Connection pool initialized',
         NULL,
@@ -434,7 +448,7 @@ BEGIN
 
     -- Info: Cache initialized
     (
-        'info',
+        'INFO',
         'cache',
         'Redis cache connected successfully',
         NULL,
@@ -449,7 +463,7 @@ BEGIN
 
     -- Info: Scheduled job completed
     (
-        'info',
+        'INFO',
         'scheduler',
         'Daily achievement recalculation completed',
         NULL,
@@ -467,7 +481,7 @@ BEGIN
 
     -- Warning: Slow query detected
     (
-        'warning',
+        'WARN',
         'database',
         'Slow query detected',
         'SLOW_QUERY_001',
@@ -484,7 +498,7 @@ BEGIN
 
     -- Warning: Cache miss rate high
     (
-        'warning',
+        'WARN',
         'cache',
         'High cache miss rate detected',
         'CACHE_MISS_HIGH',
@@ -503,7 +517,7 @@ BEGIN
 
     -- Error: Failed to send email
     (
-        'error',
+        'ERROR',
         'email_service',
         'Failed to send welcome email',
         'EMAIL_SEND_FAILURE',
@@ -520,7 +534,7 @@ BEGIN
 
     -- Error: API rate limit exceeded
     (
-        'error',
+        'ERROR',
         'api_server',
         'Rate limit exceeded for endpoint',
         'RATE_LIMIT_EXCEEDED',
@@ -538,7 +552,7 @@ BEGIN
 
     -- Error: Database connection failed
     (
-        'error',
+        'ERROR',
         'database',
         'Database connection attempt failed',
         'DB_CONNECTION_FAILED',
@@ -557,19 +571,19 @@ BEGIN
 
     -- Debug: API request details
     (
-        'debug',
+        'DEBUG',
         'api_server',
         'API request received',
         NULL,
         NULL,
-        '{
-            "method": "GET",
-            "path": "/api/modules",
-            "query_params": {"grade_level": "2nd_grade"},
-            "actor_id": "' || student1_id || '",
-            "response_time_ms": 45,
-            "status_code": 200
-        }'::jsonb,
+        jsonb_build_object(
+            'method', 'GET',
+            'path', '/api/modules',
+            'query_params', '{"grade_level": "2nd_grade"}'::jsonb,
+            'actor_id', student1_id::text,
+            'response_time_ms', 45,
+            'status_code', 200
+        ),
         NOW() - INTERVAL '15 minutes'
     )
     ON CONFLICT DO NOTHING;

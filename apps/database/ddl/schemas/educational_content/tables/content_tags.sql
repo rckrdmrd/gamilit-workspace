@@ -11,7 +11,7 @@ CREATE TABLE educational_content.content_tags (
     content_id UUID NOT NULL,
     tag VARCHAR(100) NOT NULL,
     tag_category VARCHAR(50),
-    created_by UUID REFERENCES auth.users(id),
+    created_by UUID REFERENCES auth_management.profiles(id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(content_type, content_id, tag)
 );

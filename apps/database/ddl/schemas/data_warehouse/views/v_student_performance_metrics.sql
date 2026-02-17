@@ -28,11 +28,12 @@ WITH recent_completions AS (
         fec.hints_used,
         fec.attempt_number,
         de.difficulty_level,
-        dm.module_id
+        dm.module_id,
+        dm.module_code
     FROM data_warehouse.fact_exercise_completions fec
-    JOIN data_warehouse.dim_date dd ON fec.date_key = dd.date_key
-    JOIN data_warehouse.dim_exercise de ON fec.exercise_key = de.exercise_key
-    JOIN data_warehouse.dim_module dm ON fec.module_key = dm.module_key
+    JOIN data_warehouse.dim_dates dd ON fec.date_key = dd.date_key
+    JOIN data_warehouse.dim_exercises de ON fec.exercise_key = de.exercise_key
+    JOIN data_warehouse.dim_modules dm ON fec.module_key = dm.module_key
     WHERE dd.full_date >= CURRENT_DATE - INTERVAL '90 days'
 ),
 score_aggregates AS (
@@ -115,11 +116,11 @@ module_progress AS (
     -- Progress by module (assuming modules M1-M5)
     SELECT
         rc.student_key,
-        MAX(CASE WHEN module_id LIKE '%1%' OR module_id = 'M1' THEN score_percentage END) AS module_1_best_score,
-        MAX(CASE WHEN module_id LIKE '%2%' OR module_id = 'M2' THEN score_percentage END) AS module_2_best_score,
-        MAX(CASE WHEN module_id LIKE '%3%' OR module_id = 'M3' THEN score_percentage END) AS module_3_best_score,
-        MAX(CASE WHEN module_id LIKE '%4%' OR module_id = 'M4' THEN score_percentage END) AS module_4_best_score,
-        MAX(CASE WHEN module_id LIKE '%5%' OR module_id = 'M5' THEN score_percentage END) AS module_5_best_score,
+        MAX(CASE WHEN module_code = 'M1' THEN score_percentage END) AS module_1_best_score,
+        MAX(CASE WHEN module_code = 'M2' THEN score_percentage END) AS module_2_best_score,
+        MAX(CASE WHEN module_code = 'M3' THEN score_percentage END) AS module_3_best_score,
+        MAX(CASE WHEN module_code = 'M4' THEN score_percentage END) AS module_4_best_score,
+        MAX(CASE WHEN module_code = 'M5' THEN score_percentage END) AS module_5_best_score,
 
         COUNT(DISTINCT module_key) AS modules_attempted
 
@@ -212,7 +213,7 @@ SELECT
     -- Metadata
     CURRENT_TIMESTAMP AS generated_at
 
-FROM data_warehouse.dim_student ds
+FROM data_warehouse.dim_students ds
 LEFT JOIN score_aggregates sa ON ds.student_key = sa.student_key
 LEFT JOIN completion_rates cr ON ds.student_key = cr.student_key
 LEFT JOIN difficulty_distribution dd ON ds.student_key = dd.student_key

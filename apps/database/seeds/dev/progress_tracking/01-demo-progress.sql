@@ -22,20 +22,20 @@ DECLARE
     module3_id UUID;
 BEGIN
     -- ==================================================================================
-    -- GET USER IDS (Demo Students)
+    -- GET USER IDS (Demo Students) — lookup profile IDs (FK targets profiles(id))
     -- ==================================================================================
 
-    SELECT id INTO student1_id
-    FROM auth.users
-    WHERE email = 'estudiante1@demo.glit.edu.mx';
+    SELECT p.id INTO student1_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'estudiante1@demo.glit.edu.mx';
 
-    SELECT id INTO student2_id
-    FROM auth.users
-    WHERE email = 'estudiante2@demo.glit.edu.mx';
+    SELECT p.id INTO student2_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'estudiante2@demo.glit.edu.mx';
 
-    SELECT id INTO student3_id
-    FROM auth.users
-    WHERE email = 'estudiante3@demo.glit.edu.mx';
+    SELECT p.id INTO student3_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'estudiante3@demo.glit.edu.mx';
 
     -- ==================================================================================
     -- GET MODULE IDS (Marie Curie Modules)
@@ -78,7 +78,7 @@ BEGIN
         'completed', 100,
         5, 5,
         480, 500,
-        45, 8,
+        '45 minutes'::interval, 8,
         NOW() - INTERVAL '10 days',
         NOW() - INTERVAL '3 days',
         NOW() - INTERVAL '3 days',
@@ -100,7 +100,7 @@ BEGIN
         'in_progress', 60,
         3, 5,
         285, 500,
-        30, 5,
+        '30 minutes'::interval, 5,
         NOW() - INTERVAL '2 days',
         NOW() - INTERVAL '1 hour',
         NULL,
@@ -125,7 +125,7 @@ BEGIN
         'completed', 100,
         5, 5,
         425, 500,
-        60, 12,
+        '60 minutes'::interval, 12,
         NOW() - INTERVAL '15 days',
         NOW() - INTERVAL '5 days',
         NOW() - INTERVAL '5 days',
@@ -147,7 +147,7 @@ BEGIN
         'in_progress', 40,
         2, 5,
         160, 500,
-        25, 4,
+        '25 minutes'::interval, 4,
         NOW() - INTERVAL '1 day',
         NOW() - INTERVAL '2 hours',
         NULL,
@@ -172,7 +172,7 @@ BEGIN
         'in_progress', 40,
         2, 5,
         150, 500,
-        35, 6,
+        '35 minutes'::interval, 6,
         NOW() - INTERVAL '5 days',
         NOW() - INTERVAL '3 hours',
         NULL,
@@ -209,8 +209,10 @@ BEGIN
 
     INSERT INTO progress_tracking.learning_sessions (
         user_id, module_id,
+        session_type,
         started_at, ended_at, duration,
         exercises_attempted, exercises_completed,
+        total_score,
         metadata, created_at
     ) VALUES
     -- ================================================================================
@@ -220,20 +222,20 @@ BEGIN
     -- Session 1: Recent Module 2 Study (Focused & Productive)
     (
         student1_id, module2_id,
+        'learning',
         NOW() - INTERVAL '1 hour',
         NOW() - INTERVAL '30 minutes',
-        30,
+        '30 minutes'::interval,
         1, 1,
-        95, ARRAY[]::text[],
-        ARRAY['pistas']::text[],
-        'study',
+        95,
         '{
             "device": "laptop",
             "location": "home",
             "focus_score": 85,
             "interruptions": 0,
             "browser": "chrome",
-            "screen_time_active_percentage": 95
+            "screen_time_active_percentage": 95,
+            "comodines_used": ["pistas"]
         }'::jsonb,
         NOW() - INTERVAL '30 minutes'
     ),
@@ -241,19 +243,19 @@ BEGIN
     -- Session 2: Yesterday Module 2 Study
     (
         student1_id, module2_id,
+        'learning',
         NOW() - INTERVAL '25 hours',
         NOW() - INTERVAL '24 hours',
-        45,
+        '45 minutes'::interval,
         2, 2,
-        190, ARRAY['quick_learner']::text[],
-        ARRAY['vision_lectora']::text[],
-        'study',
+        190,
         '{
             "device": "laptop",
             "location": "library",
             "focus_score": 92,
             "interruptions": 0,
-            "achievement_earned": "quick_learner"
+            "achievement_earned": "quick_learner",
+            "comodines_used": ["vision_lectora"]
         }'::jsonb,
         NOW() - INTERVAL '24 hours'
     ),
@@ -265,20 +267,20 @@ BEGIN
     -- Session 1: Module 3 Study (Moderate Focus)
     (
         student2_id, module3_id,
+        'learning',
         NOW() - INTERVAL '3 hours',
         NOW() - INTERVAL '2 hours',
-        60,
+        '60 minutes'::interval,
         2, 1,
-        80, ARRAY[]::text[],
-        ARRAY['segunda_oportunidad']::text[],
-        'study',
+        80,
         '{
             "device": "tablet",
             "location": "school",
             "focus_score": 75,
             "interruptions": 2,
             "retry_used": true,
-            "difficulty_feedback": "challenging but manageable"
+            "difficulty_feedback": "challenging but manageable",
+            "comodines_used": ["segunda_oportunidad"]
         }'::jsonb,
         NOW() - INTERVAL '2 hours'
     ),
@@ -286,20 +288,20 @@ BEGIN
     -- Session 2: Module 3 Review Session
     (
         student2_id, module3_id,
+        'review',
         NOW() - INTERVAL '27 hours',
         NOW() - INTERVAL '26 hours',
-        40,
+        '40 minutes'::interval,
         1, 0,
-        0, ARRAY[]::text[],
-        ARRAY['pistas', 'pistas']::text[],
-        'review',
+        0,
         '{
             "device": "tablet",
             "location": "home",
             "focus_score": 70,
             "interruptions": 1,
             "review_mode": true,
-            "notes": "struggling with critical analysis concepts"
+            "notes": "struggling with critical analysis concepts",
+            "comodines_used": ["pistas", "pistas"]
         }'::jsonb,
         NOW() - INTERVAL '26 hours'
     ),
@@ -311,20 +313,20 @@ BEGIN
     -- Session 1: Recent Study with Interruptions
     (
         student3_id, module1_id,
+        'learning',
         NOW() - INTERVAL '4 hours',
         NOW() - INTERVAL '3 hours',
-        45,
+        '45 minutes'::interval,
         2, 1,
-        70, ARRAY[]::text[],
-        ARRAY['pistas', 'vision_lectora']::text[],
-        'study',
+        70,
         '{
             "device": "mobile",
             "location": "home",
             "focus_score": 60,
             "interruptions": 3,
             "hints_requested": 2,
-            "vocabulary_support_needed": true
+            "vocabulary_support_needed": true,
+            "comodines_used": ["pistas", "vision_lectora"]
         }'::jsonb,
         NOW() - INTERVAL '3 hours'
     ),
@@ -332,20 +334,20 @@ BEGIN
     -- Session 2: Previous Study Session (Low Completion)
     (
         student3_id, module1_id,
+        'learning',
         NOW() - INTERVAL '2 days',
         NOW() - INTERVAL '2 days' + INTERVAL '25 minutes',
-        25,
+        '25 minutes'::interval,
         1, 0,
-        0, ARRAY[]::text[],
-        ARRAY['pistas', 'pistas']::text[],
-        'study',
+        0,
         '{
             "device": "mobile",
             "location": "bus",
             "focus_score": 45,
             "interruptions": 5,
             "session_abandoned": true,
-            "reason": "connectivity issues"
+            "reason": "connectivity issues",
+            "comodines_used": ["pistas", "pistas"]
         }'::jsonb,
         NOW() - INTERVAL '2 days' + INTERVAL '25 minutes'
     )

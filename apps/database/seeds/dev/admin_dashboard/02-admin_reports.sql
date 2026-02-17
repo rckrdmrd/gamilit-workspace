@@ -12,6 +12,7 @@
 -- Reporte completado (usuarios)
 INSERT INTO admin_dashboard.admin_reports (
     id,
+    tenant_id,
     report_type,
     report_format,
     status,
@@ -25,6 +26,7 @@ INSERT INTO admin_dashboard.admin_reports (
     expires_at
 ) VALUES (
     'e0000000-0000-0000-0000-000000000001',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'users',
     'excel',
     'completed',
@@ -32,7 +34,7 @@ INSERT INTO admin_dashboard.admin_reports (
     256000,
     '{"filters": {"role": "student", "status": "active"}, "columns": ["name", "email", "role", "created_at"], "total_records": 150}'::jsonb,
     NULL,
-    (SELECT id FROM auth.users WHERE email LIKE '%admin%' LIMIT 1),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email LIKE '%admin%' LIMIT 1),
     gamilit.now_mexico() - INTERVAL '5 days',
     gamilit.now_mexico() - INTERVAL '5 days' + INTERVAL '30 seconds',
     gamilit.now_mexico() + INTERVAL '25 days'
@@ -42,6 +44,7 @@ ON CONFLICT (id) DO NOTHING;
 -- Reporte completado (progreso)
 INSERT INTO admin_dashboard.admin_reports (
     id,
+    tenant_id,
     report_type,
     report_format,
     status,
@@ -55,6 +58,7 @@ INSERT INTO admin_dashboard.admin_reports (
     expires_at
 ) VALUES (
     'e0000000-0000-0000-0000-000000000002',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'progress',
     'pdf',
     'completed',
@@ -62,7 +66,7 @@ INSERT INTO admin_dashboard.admin_reports (
     512000,
     '{"filters": {"classroom_id": "abc123", "date_range": {"from": "2025-12-01", "to": "2025-12-31"}}, "include_charts": true, "total_students": 45}'::jsonb,
     NULL,
-    (SELECT id FROM auth.users WHERE email LIKE '%admin%' LIMIT 1),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email LIKE '%admin%' LIMIT 1),
     gamilit.now_mexico() - INTERVAL '3 days',
     gamilit.now_mexico() - INTERVAL '3 days' + INTERVAL '45 seconds',
     gamilit.now_mexico() + INTERVAL '27 days'
@@ -72,6 +76,7 @@ ON CONFLICT (id) DO NOTHING;
 -- Reporte en generacion
 INSERT INTO admin_dashboard.admin_reports (
     id,
+    tenant_id,
     report_type,
     report_format,
     status,
@@ -85,6 +90,7 @@ INSERT INTO admin_dashboard.admin_reports (
     expires_at
 ) VALUES (
     'e0000000-0000-0000-0000-000000000003',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'engagement',
     'csv',
     'generating',
@@ -92,7 +98,7 @@ INSERT INTO admin_dashboard.admin_reports (
     NULL,
     '{"filters": {"date_range": {"from": "2025-01-01", "to": "2025-12-31"}}, "metrics": ["daily_active_users", "session_duration", "exercises_completed"]}'::jsonb,
     NULL,
-    (SELECT id FROM auth.users WHERE email LIKE '%admin%' LIMIT 1),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email LIKE '%admin%' LIMIT 1),
     gamilit.now_mexico() - INTERVAL '5 minutes',
     NULL,
     NULL
@@ -102,6 +108,7 @@ ON CONFLICT (id) DO NOTHING;
 -- Reporte fallido
 INSERT INTO admin_dashboard.admin_reports (
     id,
+    tenant_id,
     report_type,
     report_format,
     status,
@@ -115,6 +122,7 @@ INSERT INTO admin_dashboard.admin_reports (
     expires_at
 ) VALUES (
     'e0000000-0000-0000-0000-000000000004',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'gamification',
     'excel',
     'failed',
@@ -122,7 +130,7 @@ INSERT INTO admin_dashboard.admin_reports (
     NULL,
     '{"filters": {"rank": "all"}, "include_leaderboard": true}'::jsonb,
     'Error al generar reporte: Timeout de conexion a base de datos',
-    (SELECT id FROM auth.users WHERE email LIKE '%admin%' LIMIT 1),
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email LIKE '%admin%' LIMIT 1),
     gamilit.now_mexico() - INTERVAL '2 days',
     gamilit.now_mexico() - INTERVAL '2 days' + INTERVAL '120 seconds',
     NULL

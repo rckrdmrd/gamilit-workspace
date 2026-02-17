@@ -17,18 +17,18 @@ SELECT
     t.id AS teacher_id,
     t.display_name AS teacher_name,
     COUNT(DISTINCT u.id) AS total_students,
-    COUNT(DISTINCT CASE WHEN u.status = 'ACTIVE' THEN u.id END) AS active_students,
-    COUNT(DISTINCT CASE WHEN u.status = 'INACTIVE' THEN u.id END) AS inactive_students,
+    COUNT(DISTINCT CASE WHEN u.status = 'active' THEN u.id END) AS active_students,
+    COUNT(DISTINCT CASE WHEN u.status = 'inactive' THEN u.id END) AS inactive_students,
     COUNT(DISTINCT a.id) AS total_assignments,
     COUNT(DISTINCT CASE WHEN a.due_date > NOW() THEN a.id END) AS pending_assignments,
     COUNT(DISTINCT CASE WHEN a.due_date <= NOW() AND a.due_date > NOW() - INTERVAL '7 days' THEN a.id END) AS upcoming_deadline_assignments,
     COUNT(DISTINCT ex.id) AS total_exercises,
-    ROUND(AVG(CASE WHEN up.progress_percent IS NOT NULL THEN up.progress_percent ELSE 0 END), 2) AS avg_class_progress_percent,
+    ROUND(AVG(CASE WHEN up.progress_percentage IS NOT NULL THEN up.progress_percentage ELSE 0 END), 2) AS avg_class_progress_percent,
     MAX(c.updated_at) AS last_updated,
     c.created_at AS classroom_created_at,
     CASE
         WHEN COUNT(DISTINCT u.id) = 0 THEN 'EMPTY'
-        WHEN COUNT(DISTINCT CASE WHEN u.status = 'ACTIVE' THEN u.id END) > 0 THEN 'ACTIVE'
+        WHEN COUNT(DISTINCT CASE WHEN u.status = 'active' THEN u.id END) > 0 THEN 'ACTIVE'
         ELSE 'INACTIVE'
     END AS classroom_status
 FROM
@@ -41,7 +41,7 @@ FROM
     LEFT JOIN educational_content.exercises ex ON ex.module_id IN (
         SELECT id FROM educational_content.modules
     )
-    LEFT JOIN progress_tracking.user_progress up ON u.id = up.user_id
+    LEFT JOIN progress_tracking.module_progress up ON u.id = up.user_id
 WHERE
     c.is_deleted = FALSE
 GROUP BY

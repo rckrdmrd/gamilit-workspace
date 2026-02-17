@@ -107,27 +107,27 @@ CREATE TABLE data_warehouse.fact_exercise_completions (
 -- =====================================================
 ALTER TABLE data_warehouse.fact_exercise_completions
     ADD CONSTRAINT fk_fact_completion_date FOREIGN KEY (date_key)
-    REFERENCES data_warehouse.dim_date(date_key);
+    REFERENCES data_warehouse.dim_dates(date_key);
 
 ALTER TABLE data_warehouse.fact_exercise_completions
     ADD CONSTRAINT fk_fact_completion_time FOREIGN KEY (time_key)
-    REFERENCES data_warehouse.dim_time(time_key);
+    REFERENCES data_warehouse.dim_times(time_key);
 
 ALTER TABLE data_warehouse.fact_exercise_completions
     ADD CONSTRAINT fk_fact_completion_student FOREIGN KEY (student_key)
-    REFERENCES data_warehouse.dim_student(student_key);
+    REFERENCES data_warehouse.dim_students(student_key);
 
 ALTER TABLE data_warehouse.fact_exercise_completions
     ADD CONSTRAINT fk_fact_completion_exercise FOREIGN KEY (exercise_key)
-    REFERENCES data_warehouse.dim_exercise(exercise_key);
+    REFERENCES data_warehouse.dim_exercises(exercise_key);
 
 ALTER TABLE data_warehouse.fact_exercise_completions
     ADD CONSTRAINT fk_fact_completion_module FOREIGN KEY (module_key)
-    REFERENCES data_warehouse.dim_module(module_key);
+    REFERENCES data_warehouse.dim_modules(module_key);
 
 ALTER TABLE data_warehouse.fact_exercise_completions
     ADD CONSTRAINT fk_fact_completion_teacher FOREIGN KEY (teacher_key)
-    REFERENCES data_warehouse.dim_teacher(teacher_key);
+    REFERENCES data_warehouse.dim_teachers(teacher_key);
 
 -- =====================================================
 -- INDEXES

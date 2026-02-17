@@ -40,6 +40,4 @@ CREATE TRIGGER trg_set_default_tenant
     EXECUTE FUNCTION gamilit.set_default_tenant();
 
 COMMENT ON TRIGGER trg_set_default_tenant ON auth_management.profiles IS
-    'Asigna automáticamente el tenant principal de GAMILIT a nuevos perfiles. ' ||
-    'Ejecuta ANTES de INSERT para garantizar tenant correcto desde el inicio. ' ||
-    'Creado: 2025-11-19 para resolver problema de registro con tenants personales.';
+    'Asigna automáticamente el tenant principal de GAMILIT a nuevos perfiles. Ejecuta ANTES de INSERT para garantizar tenant correcto desde el inicio. Creado: 2025-11-19 para resolver problema de registro con tenants personales.';

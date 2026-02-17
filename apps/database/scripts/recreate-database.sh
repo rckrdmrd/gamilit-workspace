@@ -74,6 +74,28 @@ print_info() {
     echo "  $1"
 }
 
+validate_environment_safety() {
+    if [ "$ENVIRONMENT" = "prod" ]; then
+        print_step "Aplicando controles de seguridad para PROD..."
+
+        # En producción el password debe ser explícito para evitar desalineación con .env
+        if [ -z "$DB_PASSWORD_ARG" ] && [ -z "$GAMILIT_DB_PASSWORD" ]; then
+            print_error "En PROD debes pasar --password o exportar GAMILIT_DB_PASSWORD"
+            exit 1
+        fi
+
+        # Evitar recreación con backend online para reducir conexiones activas inesperadas
+        if command -v pm2 &> /dev/null; then
+            if pm2 list 2>/dev/null | grep -E "gamilit-backend|gamilit-frontend" | grep -q "online"; then
+                print_error "PM2 está online. Ejecuta: pm2 stop ecosystem.config.js antes de recrear en PROD"
+                exit 1
+            fi
+        fi
+
+        print_warning "Asegura backup previo antes de continuar en PROD"
+    fi
+}
+
 show_help() {
     cat << EOF
 GAMILIT Platform - Recreación Completa de Base de Datos
@@ -327,6 +349,7 @@ main() {
         exit 1
     fi
 
+    validate_environment_safety
     confirm_deletion
     check_prerequisites
     drop_database

@@ -4,33 +4,42 @@
 -- Description: Transacciones de ML Coins para demostración del sistema de economía
 -- Environment: production
 -- Dependencies:
---   - auth.users (01-demo-users.sql)
---   - auth_management.profiles (03-profiles.sql)
+--   - auth.users (01-demo-users.sql, 01b-demo-students.sql)
+--   - auth_management.profiles (03-profiles.sql, 04-profiles-complete.sql)
 --   - gamification_system.user_stats (05-user_stats.sql)
 -- Execution Order: 7
 -- Created: 2025-01-11
--- Version: 1.0.0
+-- Updated: 2026-02-17 (Replaced hardcoded user_id UUIDs with profile lookup subqueries)
+-- Version: 2.0.0
+-- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+--
+-- PATRON DE LOOKUP:
+--   (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = '...')
+-- Esto resuelve el profile ID dinamicamente, sin depender de UUIDs hardcodeados.
+-- Si el usuario no existe, la subquery retorna NULL y el INSERT se omite silenciosamente
+-- (la FK fallara, pero con ON CONFLICT DO UPDATE el registro no rompe el seed).
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 SET search_path TO gamification_system, public;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- ESTUDIANTE 1: Ana García (275 ML Coins actuales, 450 ganados, 175 gastados)
+-- ESTUDIANTE 1: Ana García → estudiante1@demo.glit.edu.mx
+-- (275 ML Coins actuales, 450 ganados, 175 gastados)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 -- Welcome bonus (100 ML Coins)
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0001-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'welcome_bonus'::gamification_system.transaction_type, 100,
     0, 100, 'Bono de bienvenida al registrarte en GAMILIT',
-    'profile', '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    'admin', NULL,
     jsonb_build_object('demo_transaction', true, 'category', 'welcome'),
     gamilit.now_mexico() - INTERVAL '12 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -41,15 +50,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0002-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_exercise'::gamification_system.transaction_type, 15,
     100, 115, 'ML Coins ganados por completar ejercicio de comprensión literal',
-    'exercise', 'ex-001'::uuid,
+    'exercise', NULL,
     jsonb_build_object('demo_transaction', true, 'exercise_score', 85, 'module', 'MÓDULO 1'),
     gamilit.now_mexico() - INTERVAL '11 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -60,11 +69,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0003-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_achievement'::gamification_system.transaction_type, 50,
     115, 165, 'ML Coins ganados por logro: Primeros Pasos',
@@ -79,11 +88,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0004-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_exercise'::gamification_system.transaction_type, 185,
     165, 350, 'ML Coins acumulados por completar 14 ejercicios adicionales',
@@ -98,15 +107,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0005-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_powerup'::gamification_system.transaction_type, -30,
     350, 320, 'Compra de comodín: Lupa',
-    'powerup', 'comodin-lupa'::uuid,
+    'powerup', NULL,
     jsonb_build_object('demo_transaction', true, 'powerup_name', 'Lupa'),
     gamilit.now_mexico() - INTERVAL '7 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -117,11 +126,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0006-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_achievement'::gamification_system.transaction_type, 50,
     320, 370, 'ML Coins ganados por logro: Racha de 3 Días',
@@ -136,15 +145,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0007-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_hint'::gamification_system.transaction_type, -10,
     370, 360, 'Compra de pista para ejercicio',
-    'exercise', 'ex-015'::uuid,
+    'exercise', NULL,
     jsonb_build_object('demo_transaction', true, 'hint_level', 1),
     gamilit.now_mexico() - INTERVAL '4 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -155,11 +164,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0008-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_streak'::gamification_system.transaction_type, 25,
     360, 385, 'Bono por mantener racha diaria activa',
@@ -174,15 +183,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0009-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_powerup'::gamification_system.transaction_type, -25,
     385, 360, 'Compra de comodín: Brújula',
-    'powerup', 'comodin-brujula'::uuid,
+    'powerup', NULL,
     jsonb_build_object('demo_transaction', true, 'powerup_name', 'Brújula'),
     gamilit.now_mexico() - INTERVAL '2 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -193,11 +202,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0010-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_achievement'::gamification_system.transaction_type, 50,
     360, 410, 'ML Coins ganados por logro: Lector Principiante',
@@ -212,15 +221,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0011-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_retry'::gamification_system.transaction_type, -15,
     410, 395, 'Compra de reintento para ejercicio',
-    'exercise', 'ex-020'::uuid,
+    'exercise', NULL,
     jsonb_build_object('demo_transaction', true, 'retry_number', 1),
     gamilit.now_mexico() - INTERVAL '12 hours'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -231,11 +240,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0012-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_daily'::gamification_system.transaction_type, 20,
     395, 415, 'Bono diario por iniciar sesión',
@@ -250,15 +259,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0013-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_retry'::gamification_system.transaction_type, -15,
     415, 400, 'Compra de segundo reintento para ejercicio',
-    'exercise', 'ex-022'::uuid,
+    'exercise', NULL,
     jsonb_build_object('demo_transaction', true, 'retry_number', 1),
     gamilit.now_mexico() - INTERVAL '4 hours'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -269,15 +278,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0014-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_powerup'::gamification_system.transaction_type, -25,
     400, 375, 'Compra de comodín: Diccionario Contextual',
-    'powerup', 'comodin-diccionario'::uuid,
+    'powerup', NULL,
     jsonb_build_object('demo_transaction', true, 'powerup_name', 'Diccionario Contextual'),
     gamilit.now_mexico() - INTERVAL '2 hours'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -288,15 +297,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0015-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_hint'::gamification_system.transaction_type, -10,
     375, 365, 'Compra de pista adicional para ejercicio',
-    'exercise', 'ex-023'::uuid,
+    'exercise', NULL,
     jsonb_build_object('demo_transaction', true, 'hint_level', 2),
     gamilit.now_mexico() - INTERVAL '1 hour'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -307,11 +316,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0016-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_bonus'::gamification_system.transaction_type, 90,
     365, 455, 'Bonos acumulados por racha y ejercicios perfectos',
@@ -326,15 +335,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0017-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_hint'::gamification_system.transaction_type, -10,
     455, 445, 'Compra de pista para ejercicio complejo',
-    'exercise', 'ex-024'::uuid,
+    'exercise', NULL,
     jsonb_build_object('demo_transaction', true, 'hint_level', 1),
     gamilit.now_mexico() - INTERVAL '15 minutes'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -345,15 +354,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0018-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_powerup'::gamification_system.transaction_type, -20,
     445, 425, 'Compra de comodín: Resaltador',
-    'powerup', 'comodin-resaltador'::uuid,
+    'powerup', NULL,
     jsonb_build_object('demo_transaction', true, 'powerup_name', 'Resaltador'),
     gamilit.now_mexico() - INTERVAL '10 minutes'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -364,11 +373,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0019-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_streak'::gamification_system.transaction_type, 50,
     425, 475, 'Bono especial por racha consecutiva de 3 días',
@@ -383,15 +392,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0020-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_powerup'::gamification_system.transaction_type, -50,
     475, 425, 'Compra de comodín: Organizador de Ideas',
-    'powerup', 'comodin-organizador'::uuid,
+    'powerup', NULL,
     jsonb_build_object('demo_transaction', true, 'powerup_name', 'Organizador de Ideas'),
     gamilit.now_mexico() - INTERVAL '2 minutes'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -402,15 +411,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0021-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_powerup'::gamification_system.transaction_type, -50,
     425, 375, 'Compra de comodín: Mapa Mental',
-    'powerup', 'comodin-mapa-mental'::uuid,
+    'powerup', NULL,
     jsonb_build_object('demo_transaction', true, 'powerup_name', 'Mapa Mental'),
     gamilit.now_mexico() - INTERVAL '1 minute'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -421,11 +430,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000001-0022-0000-0000-000000000001'::uuid,
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'admin_adjustment'::gamification_system.transaction_type, -100,
     375, 275, 'Ajuste administrativo de balance (corrección de sistema)',
@@ -437,22 +446,23 @@ INSERT INTO gamification_system.ml_coins_transactions (
     balance_after = EXCLUDED.balance_after;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- ESTUDIANTE 2: Carlos Ramírez (150 ML Coins actuales, 200 ganados, 50 gastados)
+-- ESTUDIANTE 2: Carlos Ramírez → estudiante2@demo.glit.edu.mx
+-- (150 ML Coins actuales, 200 ganados, 50 gastados)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 -- Welcome bonus (100 ML Coins)
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000002-0001-0000-0000-000000000002'::uuid,
-    '02bc5f00-192e-5397-c909-3f279d49c26f'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante2@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'welcome_bonus'::gamification_system.transaction_type, 100,
     0, 100, 'Bono de bienvenida al registrarte en GAMILIT',
-    'profile', '02bc5f00-192e-5397-c909-3f279d49c26f'::uuid,
+    'admin', NULL,
     jsonb_build_object('demo_transaction', true, 'category', 'welcome'),
     gamilit.now_mexico() - INTERVAL '8 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -463,11 +473,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000002-0002-0000-0000-000000000002'::uuid,
-    '02bc5f00-192e-5397-c909-3f279d49c26f'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante2@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_achievement'::gamification_system.transaction_type, 50,
     100, 150, 'ML Coins ganados por logro: Primera Visita',
@@ -482,11 +492,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000002-0003-0000-0000-000000000002'::uuid,
-    '02bc5f00-192e-5397-c909-3f279d49c26f'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante2@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_exercise'::gamification_system.transaction_type, 50,
     150, 200, 'ML Coins ganados por completar 5 ejercicios',
@@ -501,15 +511,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000002-0004-0000-0000-000000000002'::uuid,
-    '02bc5f00-192e-5397-c909-3f279d49c26f'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante2@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_hint'::gamification_system.transaction_type, -10,
     200, 190, 'Compra de pista para ejercicio',
-    'exercise', 'ex-005'::uuid,
+    'exercise', NULL,
     jsonb_build_object('demo_transaction', true, 'hint_level', 1),
     gamilit.now_mexico() - INTERVAL '4 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -520,15 +530,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000002-0005-0000-0000-000000000002'::uuid,
-    '02bc5f00-192e-5397-c909-3f279d49c26f'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante2@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_powerup'::gamification_system.transaction_type, -30,
     190, 160, 'Compra de comodín: Lupa',
-    'powerup', 'comodin-lupa'::uuid,
+    'powerup', NULL,
     jsonb_build_object('demo_transaction', true, 'powerup_name', 'Lupa'),
     gamilit.now_mexico() - INTERVAL '3 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -539,15 +549,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000002-0006-0000-0000-000000000002'::uuid,
-    '02bc5f00-192e-5397-c909-3f279d49c26f'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante2@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_hint'::gamification_system.transaction_type, -10,
     160, 150, 'Compra de pista adicional para ejercicio',
-    'exercise', 'ex-006'::uuid,
+    'exercise', NULL,
     jsonb_build_object('demo_transaction', true, 'hint_level', 2),
     gamilit.now_mexico() - INTERVAL '1 day'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -555,22 +565,23 @@ INSERT INTO gamification_system.ml_coins_transactions (
     balance_after = EXCLUDED.balance_after;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- ESTUDIANTE 3: María Fernanda (425 ML Coins, 500 ganados, 75 gastados)
+-- ESTUDIANTE 3: María Fernanda → estudiante3@demo.glit.edu.mx
+-- (425 ML Coins, 500 ganados, 75 gastados)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 -- Welcome bonus (100 ML Coins)
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000003-0001-0000-0000-000000000003'::uuid,
-    '03cd6000-282e-6487-d899-40369e49d070'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'welcome_bonus'::gamification_system.transaction_type, 100,
     0, 100, 'Bono de bienvenida al registrarte en GAMILIT',
-    'profile', '03cd6000-282e-6487-d899-40369e49d070'::uuid,
+    'admin', NULL,
     jsonb_build_object('demo_transaction', true, 'category', 'welcome'),
     gamilit.now_mexico() - INTERVAL '15 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -581,11 +592,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000003-0002-0000-0000-000000000003'::uuid,
-    '03cd6000-282e-6487-d899-40369e49d070'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_exercise'::gamification_system.transaction_type, 250,
     100, 350, 'ML Coins ganados por completar 25 ejercicios del Módulo 1',
@@ -600,15 +611,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000003-0003-0000-0000-000000000003'::uuid,
-    '03cd6000-282e-6487-d899-40369e49d070'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_powerup'::gamification_system.transaction_type, -30,
     350, 320, 'Compra de comodín: Lupa',
-    'powerup', 'comodin-lupa'::uuid,
+    'powerup', NULL,
     jsonb_build_object('demo_transaction', true, 'powerup_name', 'Lupa'),
     gamilit.now_mexico() - INTERVAL '11 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -619,15 +630,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000003-0004-0000-0000-000000000003'::uuid,
-    '03cd6000-282e-6487-d899-40369e49d070'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_module'::gamification_system.transaction_type, 100,
     320, 420, 'ML Coins ganados por completar Módulo 1',
-    'module', 'modulo-01-comprension-literal'::uuid,
+    'module', NULL,
     jsonb_build_object('demo_transaction', true, 'module_name', 'MÓDULO 1'),
     gamilit.now_mexico() - INTERVAL '10 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -638,11 +649,11 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000003-0005-0000-0000-000000000003'::uuid,
-    '03cd6000-282e-6487-d899-40369e49d070'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'earned_achievement'::gamification_system.transaction_type, 50,
     420, 470, 'ML Coins ganados por logro: Racha de 7 Días',
@@ -657,15 +668,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000003-0006-0000-0000-000000000003'::uuid,
-    '03cd6000-282e-6487-d899-40369e49d070'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_powerup'::gamification_system.transaction_type, -25,
     470, 445, 'Compra de comodín: Diccionario Contextual',
-    'powerup', 'comodin-diccionario'::uuid,
+    'powerup', NULL,
     jsonb_build_object('demo_transaction', true, 'powerup_name', 'Diccionario Contextual'),
     gamilit.now_mexico() - INTERVAL '6 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -676,15 +687,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000003-0007-0000-0000-000000000003'::uuid,
-    '03cd6000-282e-6487-d899-40369e49d070'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_hint'::gamification_system.transaction_type, -10,
     445, 435, 'Compra de pista para ejercicio del Módulo 2',
-    'exercise', 'ex-026'::uuid,
+    'exercise', NULL,
     jsonb_build_object('demo_transaction', true, 'hint_level', 1),
     gamilit.now_mexico() - INTERVAL '5 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -695,15 +706,15 @@ INSERT INTO gamification_system.ml_coins_transactions (
 INSERT INTO gamification_system.ml_coins_transactions (
     id, user_id, tenant_id, transaction_type, amount,
     balance_before, balance_after, description,
-    related_entity_type, related_entity_id,
+    reference_type, reference_id,
     metadata, created_at
 ) VALUES (
     'd0000003-0008-0000-0000-000000000003'::uuid,
-    '03cd6000-282e-6487-d899-40369e49d070'::uuid,
+    (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'),
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     'spent_hint'::gamification_system.transaction_type, -10,
     435, 425, 'Compra de pista adicional para ejercicio del Módulo 2',
-    'exercise', 'ex-027'::uuid,
+    'exercise', NULL,
     jsonb_build_object('demo_transaction', true, 'hint_level', 2),
     gamilit.now_mexico() - INTERVAL '2 days'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -711,94 +722,100 @@ INSERT INTO gamification_system.ml_coins_transactions (
     balance_after = EXCLUDED.balance_after;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- Continuación con transacciones más compactas para el resto de usuarios...
--- ESTUDIANTE 4: Luis Miguel (300 ML Coins, 450 ganados, 150 gastados)
+-- ESTUDIANTE 4: Luis Miguel → estudiante1@demo.glit.edu.mx (alias)
+-- (300 ML Coins, 450 ganados, 150 gastados)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 INSERT INTO gamification_system.ml_coins_transactions
-(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, related_entity_type, related_entity_id, metadata, created_at)
+(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, reference_type, reference_id, metadata, created_at)
 VALUES
-('d0000004-0001-0000-0000-000000000004'::uuid, '04de7f00-382e-7497-e919-5h479f49e38h'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida al registrarte en GAMILIT', 'profile', '04de7f00-382e-7497-e919-5h479f49e38h'::uuid, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '14 days'),
-('d0000004-0002-0000-0000-000000000004'::uuid, '04de7f00-382e-7497-e919-5h479f49e38h'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_exercise'::gamification_system.transaction_type, 200, 100, 300, 'ML Coins por completar 20 ejercicios', 'exercise', NULL, jsonb_build_object('demo_transaction', true, 'exercises_count', 20), gamilit.now_mexico() - INTERVAL '10 days'),
-('d0000004-0003-0000-0000-000000000004'::uuid, '04de7f00-382e-7497-e919-5h479f49e38h'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_achievement'::gamification_system.transaction_type, 100, 300, 400, 'ML Coins por achievements (Primeros Pasos, Lector Principiante)', 'achievement', NULL, jsonb_build_object('demo_transaction', true, 'achievements_count', 2), gamilit.now_mexico() - INTERVAL '8 days'),
-('d0000004-0004-0000-0000-000000000004'::uuid, '04de7f00-382e-7497-e919-5h479f49e38h'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_streak'::gamification_system.transaction_type, 50, 400, 450, 'Bonos por racha de 4 días', NULL, NULL, jsonb_build_object('demo_transaction', true, 'streak_days', 4), gamilit.now_mexico() - INTERVAL '4 days'),
-('d0000004-0005-0000-0000-000000000004'::uuid, '04de7f00-382e-7497-e919-5h479f49e38h'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -80, 450, 370, 'Compra de comodines (Lupa, Brújula, Diccionario)', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'powerups_count', 3), gamilit.now_mexico() - INTERVAL '3 days'),
-('d0000004-0006-0000-0000-000000000004'::uuid, '04de7f00-382e-7497-e919-5h479f49e38h'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_hint'::gamification_system.transaction_type, -40, 370, 330, 'Compra de 4 hints', 'exercise', NULL, jsonb_build_object('demo_transaction', true, 'hints_count', 4), gamilit.now_mexico() - INTERVAL '2 days'),
-('d0000004-0007-0000-0000-000000000004'::uuid, '04de7f00-382e-7497-e919-5h479f49e38h'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_retry'::gamification_system.transaction_type, -30, 330, 300, 'Compra de 2 reintentos', 'exercise', NULL, jsonb_build_object('demo_transaction', true, 'retries_count', 2), gamilit.now_mexico() - INTERVAL '1 day')
+('d0000004-0001-0000-0000-000000000004'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida al registrarte en GAMILIT', 'admin', NULL, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '14 days'),
+('d0000004-0002-0000-0000-000000000004'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_exercise'::gamification_system.transaction_type, 200, 100, 300, 'ML Coins por completar 20 ejercicios', 'exercise', NULL, jsonb_build_object('demo_transaction', true, 'exercises_count', 20), gamilit.now_mexico() - INTERVAL '10 days'),
+('d0000004-0003-0000-0000-000000000004'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_achievement'::gamification_system.transaction_type, 100, 300, 400, 'ML Coins por achievements (Primeros Pasos, Lector Principiante)', 'achievement', NULL, jsonb_build_object('demo_transaction', true, 'achievements_count', 2), gamilit.now_mexico() - INTERVAL '8 days'),
+('d0000004-0004-0000-0000-000000000004'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_streak'::gamification_system.transaction_type, 50, 400, 450, 'Bonos por racha de 4 días', NULL, NULL, jsonb_build_object('demo_transaction', true, 'streak_days', 4), gamilit.now_mexico() - INTERVAL '4 days'),
+('d0000004-0005-0000-0000-000000000004'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -80, 450, 370, 'Compra de comodines (Lupa, Brújula, Diccionario)', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'powerups_count', 3), gamilit.now_mexico() - INTERVAL '3 days'),
+('d0000004-0006-0000-0000-000000000004'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_hint'::gamification_system.transaction_type, -40, 370, 330, 'Compra de 4 hints', 'exercise', NULL, jsonb_build_object('demo_transaction', true, 'hints_count', 4), gamilit.now_mexico() - INTERVAL '2 days'),
+('d0000004-0007-0000-0000-000000000004'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_retry'::gamification_system.transaction_type, -30, 330, 300, 'Compra de 2 reintentos', 'exercise', NULL, jsonb_build_object('demo_transaction', true, 'retries_count', 2), gamilit.now_mexico() - INTERVAL '1 day')
 ON CONFLICT (id) DO UPDATE SET amount = EXCLUDED.amount, balance_after = EXCLUDED.balance_after;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- ESTUDIANTE 5: Sofía Martínez (650 ML Coins, 800 ganados, 150 gastados)
+-- ESTUDIANTE 5: Sofía Martínez → estudiante3@demo.glit.edu.mx (alias)
+-- (650 ML Coins, 800 ganados, 150 gastados)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 INSERT INTO gamification_system.ml_coins_transactions
-(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, related_entity_type, related_entity_id, metadata, created_at)
+(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, reference_type, reference_id, metadata, created_at)
 VALUES
-('d0000005-0001-0000-0000-000000000005'::uuid, '05ef8f00-482e-8587-f929-6i589g49f49i'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida al registrarte en GAMILIT', 'profile', '05ef8f00-482e-8587-f929-6i589g49f49i'::uuid, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '20 days'),
-('d0000005-0002-0000-0000-000000000005'::uuid, '05ef8f00-482e-8587-f929-6i589g49f49i'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_exercise'::gamification_system.transaction_type, 500, 100, 600, 'ML Coins por completar 50 ejercicios (Módulos 1 y 2)', 'exercise', NULL, jsonb_build_object('demo_transaction', true, 'exercises_count', 50), gamilit.now_mexico() - INTERVAL '15 days'),
-('d0000005-0003-0000-0000-000000000005'::uuid, '05ef8f00-482e-8587-f929-6i589g49f49i'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_module'::gamification_system.transaction_type, 200, 600, 800, 'ML Coins por completar 2 módulos (Módulo 1 y 2)', 'module', NULL, jsonb_build_object('demo_transaction', true, 'modules_count', 2), gamilit.now_mexico() - INTERVAL '12 days'),
-('d0000005-0004-0000-0000-000000000005'::uuid, '05ef8f00-482e-8587-f929-6i589g49f49i'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -120, 800, 680, 'Compra de comodines avanzados', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'powerups_count', 4), gamilit.now_mexico() - INTERVAL '8 days'),
-('d0000005-0005-0000-0000-000000000005'::uuid, '05ef8f00-482e-8587-f929-6i589g49f49i'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_hint'::gamification_system.transaction_type, -30, 680, 650, 'Compra de 3 hints para Módulo 3', 'exercise', NULL, jsonb_build_object('demo_transaction', true, 'hints_count', 3), gamilit.now_mexico() - INTERVAL '3 days')
+('d0000005-0001-0000-0000-000000000005'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida al registrarte en GAMILIT', 'admin', NULL, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '20 days'),
+('d0000005-0002-0000-0000-000000000005'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_exercise'::gamification_system.transaction_type, 500, 100, 600, 'ML Coins por completar 50 ejercicios (Módulos 1 y 2)', 'exercise', NULL, jsonb_build_object('demo_transaction', true, 'exercises_count', 50), gamilit.now_mexico() - INTERVAL '15 days'),
+('d0000005-0003-0000-0000-000000000005'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_module'::gamification_system.transaction_type, 200, 600, 800, 'ML Coins por completar 2 módulos (Módulo 1 y 2)', 'module', NULL, jsonb_build_object('demo_transaction', true, 'modules_count', 2), gamilit.now_mexico() - INTERVAL '12 days'),
+('d0000005-0004-0000-0000-000000000005'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -120, 800, 680, 'Compra de comodines avanzados', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'powerups_count', 4), gamilit.now_mexico() - INTERVAL '8 days'),
+('d0000005-0005-0000-0000-000000000005'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_hint'::gamification_system.transaction_type, -30, 680, 650, 'Compra de 3 hints para Módulo 3', 'exercise', NULL, jsonb_build_object('demo_transaction', true, 'hints_count', 3), gamilit.now_mexico() - INTERVAL '3 days')
 ON CONFLICT (id) DO UPDATE SET amount = EXCLUDED.amount, balance_after = EXCLUDED.balance_after;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- PROFESOR 1: Juan Pérez (1000 ML Coins, 1200 ganados, 200 gastados)
+-- PROFESOR 1: Juan Pérez → instructor@demo.glit.edu.mx
+-- (1000 ML Coins, 1200 ganados, 200 gastados)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 INSERT INTO gamification_system.ml_coins_transactions
-(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, related_entity_type, related_entity_id, metadata, created_at)
+(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, reference_type, reference_id, metadata, created_at)
 VALUES
-('d0000006-0001-0000-0000-000000000006'::uuid, '10ac4f00-092e-4297-b909-2e179c49b15e'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida - Profesor', 'profile', '10ac4f00-092e-4297-b909-2e179c49b15e'::uuid, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '30 days'),
-('d0000006-0002-0000-0000-000000000006'::uuid, '10ac4f00-092e-4297-b909-2e179c49b15e'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_bonus'::gamification_system.transaction_type, 600, 100, 700, 'Bonos por actividades de profesor (creación de contenido, evaluaciones)', NULL, NULL, jsonb_build_object('demo_transaction', true, 'bonus_type', 'teacher_activities'), gamilit.now_mexico() - INTERVAL '20 days'),
-('d0000006-0003-0000-0000-000000000006'::uuid, '10ac4f00-092e-4297-b909-2e179c49b15e'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_achievement'::gamification_system.transaction_type, 500, 700, 1200, 'ML Coins por achievements de profesor', 'achievement', NULL, jsonb_build_object('demo_transaction', true, 'achievements_count', 5), gamilit.now_mexico() - INTERVAL '15 days'),
-('d0000006-0004-0000-0000-000000000006'::uuid, '10ac4f00-092e-4297-b909-2e179c49b15e'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -200, 1200, 1000, 'Compra de herramientas premium para enseñanza', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'tools_purchased', 4), gamilit.now_mexico() - INTERVAL '5 days')
+('d0000006-0001-0000-0000-000000000006'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'instructor@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida - Profesor', 'admin', NULL, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '30 days'),
+('d0000006-0002-0000-0000-000000000006'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'instructor@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_bonus'::gamification_system.transaction_type, 600, 100, 700, 'Bonos por actividades de profesor (creación de contenido, evaluaciones)', NULL, NULL, jsonb_build_object('demo_transaction', true, 'bonus_type', 'teacher_activities'), gamilit.now_mexico() - INTERVAL '20 days'),
+('d0000006-0003-0000-0000-000000000006'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'instructor@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_achievement'::gamification_system.transaction_type, 500, 700, 1200, 'ML Coins por achievements de profesor', 'achievement', NULL, jsonb_build_object('demo_transaction', true, 'achievements_count', 5), gamilit.now_mexico() - INTERVAL '15 days'),
+('d0000006-0004-0000-0000-000000000006'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'instructor@demo.glit.edu.mx'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -200, 1200, 1000, 'Compra de herramientas premium para enseñanza', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'tools_purchased', 4), gamilit.now_mexico() - INTERVAL '5 days')
 ON CONFLICT (id) DO UPDATE SET amount = EXCLUDED.amount, balance_after = EXCLUDED.balance_after;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- PROFESOR 2: Laura Martínez (950 ML Coins, 1150 ganados, 200 gastados)
+-- PROFESOR 2: Laura Martínez → teacher@gamilit.com
+-- (950 ML Coins, 1150 ganados, 200 gastados)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 INSERT INTO gamification_system.ml_coins_transactions
-(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, related_entity_type, related_entity_id, metadata, created_at)
+(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, reference_type, reference_id, metadata, created_at)
 VALUES
-('d0000007-0001-0000-0000-000000000007'::uuid, '11bc5f00-1a2e-5397-c919-3f289d49c26f'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida - Profesora', 'profile', '11bc5f00-1a2e-5397-c919-3f289d49c26f'::uuid, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '28 days'),
-('d0000007-0002-0000-0000-000000000007'::uuid, '11bc5f00-1a2e-5397-c919-3f289d49c26f'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_bonus'::gamification_system.transaction_type, 550, 100, 650, 'Bonos por actividades de profesora', NULL, NULL, jsonb_build_object('demo_transaction', true, 'bonus_type', 'teacher_activities'), gamilit.now_mexico() - INTERVAL '18 days'),
-('d0000007-0003-0000-0000-000000000007'::uuid, '11bc5f00-1a2e-5397-c919-3f289d49c26f'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_achievement'::gamification_system.transaction_type, 500, 650, 1150, 'ML Coins por achievements de profesora', 'achievement', NULL, jsonb_build_object('demo_transaction', true, 'achievements_count', 5), gamilit.now_mexico() - INTERVAL '12 days'),
-('d0000007-0004-0000-0000-000000000007'::uuid, '11bc5f00-1a2e-5397-c919-3f289d49c26f'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -200, 1150, 950, 'Compra de herramientas premium para enseñanza', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'tools_purchased', 4), gamilit.now_mexico() - INTERVAL '4 days')
+('d0000007-0001-0000-0000-000000000007'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida - Profesora', 'admin', NULL, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '28 days'),
+('d0000007-0002-0000-0000-000000000007'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_bonus'::gamification_system.transaction_type, 550, 100, 650, 'Bonos por actividades de profesora', NULL, NULL, jsonb_build_object('demo_transaction', true, 'bonus_type', 'teacher_activities'), gamilit.now_mexico() - INTERVAL '18 days'),
+('d0000007-0003-0000-0000-000000000007'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_achievement'::gamification_system.transaction_type, 500, 650, 1150, 'ML Coins por achievements de profesora', 'achievement', NULL, jsonb_build_object('demo_transaction', true, 'achievements_count', 5), gamilit.now_mexico() - INTERVAL '12 days'),
+('d0000007-0004-0000-0000-000000000007'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -200, 1150, 950, 'Compra de herramientas premium para enseñanza', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'tools_purchased', 4), gamilit.now_mexico() - INTERVAL '4 days')
 ON CONFLICT (id) DO UPDATE SET amount = EXCLUDED.amount, balance_after = EXCLUDED.balance_after;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- ADMIN: Sistema Admin (5000 ML Coins, 5500 ganados, 500 gastados)
+-- ADMIN: Sistema Admin → admin@gamilit.com
+-- (5000 ML Coins, 5500 ganados, 500 gastados)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 INSERT INTO gamification_system.ml_coins_transactions
-(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, related_entity_type, related_entity_id, metadata, created_at)
+(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, reference_type, reference_id, metadata, created_at)
 VALUES
-('d0000008-0001-0000-0000-000000000008'::uuid, '20ac4f00-0a2e-6397-d929-4g399e49d37g'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida - Admin', 'profile', '20ac4f00-0a2e-6397-d929-4g399e49d37g'::uuid, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '60 days'),
-('d0000008-0002-0000-0000-000000000008'::uuid, '20ac4f00-0a2e-6397-d929-4g399e49d37g'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_bonus'::gamification_system.transaction_type, 5400, 100, 5500, 'Bonos acumulados por administración del sistema', NULL, NULL, jsonb_build_object('demo_transaction', true, 'bonus_type', 'admin_activities'), gamilit.now_mexico() - INTERVAL '30 days'),
-('d0000008-0003-0000-0000-000000000008'::uuid, '20ac4f00-0a2e-6397-d929-4g399e49d37g'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -500, 5500, 5000, 'Compra de herramientas de administración premium', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'admin_tools', true), gamilit.now_mexico() - INTERVAL '10 days')
+('d0000008-0001-0000-0000-000000000008'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida - Admin', 'admin', NULL, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '60 days'),
+('d0000008-0002-0000-0000-000000000008'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_bonus'::gamification_system.transaction_type, 5400, 100, 5500, 'Bonos acumulados por administración del sistema', NULL, NULL, jsonb_build_object('demo_transaction', true, 'bonus_type', 'admin_activities'), gamilit.now_mexico() - INTERVAL '30 days'),
+('d0000008-0003-0000-0000-000000000008'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -500, 5500, 5000, 'Compra de herramientas de administración premium', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'admin_tools', true), gamilit.now_mexico() - INTERVAL '10 days')
 ON CONFLICT (id) DO UPDATE SET amount = EXCLUDED.amount, balance_after = EXCLUDED.balance_after;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- DIRECTOR: Roberto Director (2500 ML Coins, 2800 ganados, 300 gastados)
+-- DIRECTOR: Roberto Director → admin@gamilit.com (alias)
+-- (2500 ML Coins, 2800 ganados, 300 gastados)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 INSERT INTO gamification_system.ml_coins_transactions
-(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, related_entity_type, related_entity_id, metadata, created_at)
+(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, reference_type, reference_id, metadata, created_at)
 VALUES
-('d0000009-0001-0000-0000-000000000009'::uuid, '21bc5f00-1b2e-7497-e939-5h4a9f49e48h'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida - Director', 'profile', '21bc5f00-1b2e-7497-e939-5h4a9f49e48h'::uuid, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '45 days'),
-('d0000009-0002-0000-0000-000000000009'::uuid, '21bc5f00-1b2e-7497-e939-5h4a9f49e48h'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_bonus'::gamification_system.transaction_type, 2700, 100, 2800, 'Bonos acumulados por gestión directiva', NULL, NULL, jsonb_build_object('demo_transaction', true, 'bonus_type', 'management_activities'), gamilit.now_mexico() - INTERVAL '25 days'),
-('d0000009-0003-0000-0000-000000000009'::uuid, '21bc5f00-1b2e-7497-e939-5h4a9f49e48h'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -300, 2800, 2500, 'Compra de herramientas de gestión', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'management_tools', true), gamilit.now_mexico() - INTERVAL '8 days')
+('d0000009-0001-0000-0000-000000000009'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida - Director', 'admin', NULL, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '45 days'),
+('d0000009-0002-0000-0000-000000000009'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'earned_bonus'::gamification_system.transaction_type, 2700, 100, 2800, 'Bonos acumulados por gestión directiva', NULL, NULL, jsonb_build_object('demo_transaction', true, 'bonus_type', 'management_activities'), gamilit.now_mexico() - INTERVAL '25 days'),
+('d0000009-0003-0000-0000-000000000009'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'spent_powerup'::gamification_system.transaction_type, -300, 2800, 2500, 'Compra de herramientas de gestión', 'powerup', NULL, jsonb_build_object('demo_transaction', true, 'management_tools', true), gamilit.now_mexico() - INTERVAL '8 days')
 ON CONFLICT (id) DO UPDATE SET amount = EXCLUDED.amount, balance_after = EXCLUDED.balance_after;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
--- PADRE: Carmen Madre (100 ML Coins, 100 ganados, 0 gastados)
+-- PADRE: Carmen Madre → student@gamilit.com (fallback, no hay usuario padre en demo)
+-- (100 ML Coins, 100 ganados, 0 gastados)
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 INSERT INTO gamification_system.ml_coins_transactions
-(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, related_entity_type, related_entity_id, metadata, created_at)
+(id, user_id, tenant_id, transaction_type, amount, balance_before, balance_after, description, reference_type, reference_id, metadata, created_at)
 VALUES
-('d0000010-0001-0000-0000-000000000010'::uuid, '30cd6f00-2c2e-8587-f949-6i5b9g49f59i'::uuid, 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida - Padre/Madre', 'profile', '30cd6f00-2c2e-8587-f949-6i5b9g49f59i'::uuid, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '5 days')
+('d0000010-0001-0000-0000-000000000010'::uuid, (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'student@gamilit.com'), 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'welcome_bonus'::gamification_system.transaction_type, 100, 0, 100, 'Bono de bienvenida - Padre/Madre', 'admin', NULL, jsonb_build_object('demo_transaction', true), gamilit.now_mexico() - INTERVAL '5 days')
 ON CONFLICT (id) DO UPDATE SET amount = EXCLUDED.amount, balance_after = EXCLUDED.balance_after;
 
 -- PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
@@ -847,7 +864,7 @@ BEGIN
     ELSIF v_transaction_count < 40 THEN
         RAISE WARNING 'Se esperaban al menos 40 transacciones, se insertaron %', v_transaction_count;
     ELSE
-        RAISE NOTICE ' Seeds de transacciones ML Coins insertados correctamente';
+        RAISE NOTICE ' Seeds de transacciones ML Coins insertados correctamente';
     END IF;
 END $$;
 
@@ -873,7 +890,7 @@ BEGIN
             MAX(t.balance_after) as current_balance
         FROM auth.users u
         JOIN auth_management.profiles p ON p.user_id = u.id
-        LEFT JOIN gamification_system.ml_coins_transactions t ON t.user_id = u.id
+        LEFT JOIN gamification_system.ml_coins_transactions t ON t.user_id = p.id
         WHERE t.metadata->>'demo_transaction' = 'true'
         GROUP BY u.email, p.display_name
         ORDER BY u.email

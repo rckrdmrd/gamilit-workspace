@@ -45,46 +45,84 @@ SET search_path TO gamification_system, auth_management, public;
 
 DO $$
 DECLARE
-    v_tenant_id uuid := '00000000-0000-0000-0000-000000000001';
+    v_tenant_id uuid;
+    v_admin_profile_id uuid;
+    v_teacher_profile_id uuid;
+    v_student_profile_id uuid;
 BEGIN
-    -- Usuario Testing: ADMIN (aaaa...)
-    INSERT INTO gamification_system.user_stats (user_id, tenant_id, ml_coins, ml_coins_earned_total)
-    VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, v_tenant_id, 100, 100)
-    ON CONFLICT (user_id) DO NOTHING;
+    -- Resolver tenant_id dinámicamente (FK references auth_management.tenants)
+    SELECT id INTO v_tenant_id
+    FROM auth_management.tenants
+    WHERE name = 'GAMILIT Platform'
+    LIMIT 1;
 
-    INSERT INTO gamification_system.user_ranks (user_id, tenant_id, current_rank, is_current, achieved_at)
-    VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, v_tenant_id, 'Ajaw'::gamification_system.maya_rank, true, NOW())
-    ON CONFLICT DO NOTHING;
+    IF v_tenant_id IS NULL THEN
+        v_tenant_id := 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid;
+    END IF;
 
-    INSERT INTO gamification_system.comodines_inventory (user_id)
-    VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid)
-    ON CONFLICT (user_id) DO NOTHING;
+    -- Resolver profile IDs para usuarios de testing
+    SELECT p.id INTO v_admin_profile_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'admin@gamilit.com';
 
-    -- Usuario Testing: TEACHER (bbbb...)
-    INSERT INTO gamification_system.user_stats (user_id, tenant_id, ml_coins, ml_coins_earned_total)
-    VALUES ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, v_tenant_id, 100, 100)
-    ON CONFLICT (user_id) DO NOTHING;
+    SELECT p.id INTO v_teacher_profile_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'teacher@gamilit.com';
 
-    INSERT INTO gamification_system.user_ranks (user_id, tenant_id, current_rank, is_current, achieved_at)
-    VALUES ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, v_tenant_id, 'Ajaw'::gamification_system.maya_rank, true, NOW())
-    ON CONFLICT DO NOTHING;
+    SELECT p.id INTO v_student_profile_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'student@gamilit.com';
 
-    INSERT INTO gamification_system.comodines_inventory (user_id)
-    VALUES ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid)
-    ON CONFLICT (user_id) DO NOTHING;
+    -- Usuario Testing: ADMIN
+    IF v_admin_profile_id IS NOT NULL THEN
+        INSERT INTO gamification_system.user_stats (user_id, tenant_id, ml_coins, ml_coins_earned_total)
+        VALUES (v_admin_profile_id, v_tenant_id, 100, 100)
+        ON CONFLICT (user_id) DO NOTHING;
 
-    -- Usuario Testing: STUDENT (cccc...)
-    INSERT INTO gamification_system.user_stats (user_id, tenant_id, ml_coins, ml_coins_earned_total)
-    VALUES ('cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, v_tenant_id, 100, 100)
-    ON CONFLICT (user_id) DO NOTHING;
+        INSERT INTO gamification_system.user_ranks (user_id, tenant_id, current_rank, is_current, achieved_at)
+        VALUES (v_admin_profile_id, v_tenant_id, 'Ajaw'::gamification_system.maya_rank, true, NOW())
+        ON CONFLICT DO NOTHING;
 
-    INSERT INTO gamification_system.user_ranks (user_id, tenant_id, current_rank, is_current, achieved_at)
-    VALUES ('cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, v_tenant_id, 'Ajaw'::gamification_system.maya_rank, true, NOW())
-    ON CONFLICT DO NOTHING;
+        INSERT INTO gamification_system.comodines_inventory (user_id)
+        VALUES (v_admin_profile_id)
+        ON CONFLICT (user_id) DO NOTHING;
+    ELSE
+        RAISE WARNING '⚠ Profile not found for admin@gamilit.com — skipping user_stats insert';
+    END IF;
 
-    INSERT INTO gamification_system.comodines_inventory (user_id)
-    VALUES ('cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid)
-    ON CONFLICT (user_id) DO NOTHING;
+    -- Usuario Testing: TEACHER
+    IF v_teacher_profile_id IS NOT NULL THEN
+        INSERT INTO gamification_system.user_stats (user_id, tenant_id, ml_coins, ml_coins_earned_total)
+        VALUES (v_teacher_profile_id, v_tenant_id, 100, 100)
+        ON CONFLICT (user_id) DO NOTHING;
+
+        INSERT INTO gamification_system.user_ranks (user_id, tenant_id, current_rank, is_current, achieved_at)
+        VALUES (v_teacher_profile_id, v_tenant_id, 'Ajaw'::gamification_system.maya_rank, true, NOW())
+        ON CONFLICT DO NOTHING;
+
+        INSERT INTO gamification_system.comodines_inventory (user_id)
+        VALUES (v_teacher_profile_id)
+        ON CONFLICT (user_id) DO NOTHING;
+    ELSE
+        RAISE WARNING '⚠ Profile not found for teacher@gamilit.com — skipping user_stats insert';
+    END IF;
+
+    -- Usuario Testing: STUDENT
+    IF v_student_profile_id IS NOT NULL THEN
+        INSERT INTO gamification_system.user_stats (user_id, tenant_id, ml_coins, ml_coins_earned_total)
+        VALUES (v_student_profile_id, v_tenant_id, 100, 100)
+        ON CONFLICT (user_id) DO NOTHING;
+
+        INSERT INTO gamification_system.user_ranks (user_id, tenant_id, current_rank, is_current, achieved_at)
+        VALUES (v_student_profile_id, v_tenant_id, 'Ajaw'::gamification_system.maya_rank, true, NOW())
+        ON CONFLICT DO NOTHING;
+
+        INSERT INTO gamification_system.comodines_inventory (user_id)
+        VALUES (v_student_profile_id)
+        ON CONFLICT (user_id) DO NOTHING;
+    ELSE
+        RAISE WARNING '⚠ Profile not found for student@gamilit.com — skipping user_stats insert';
+    END IF;
 
     RAISE NOTICE '✓ Registros base de testing asegurados (admin, teacher, student)';
 END $$;
@@ -100,14 +138,31 @@ DECLARE
     v_today_start TIMESTAMP := NOW()::date;
     v_today_end TIMESTAMP := v_today_start + INTERVAL '23 hours 59 minutes';
     v_week_end TIMESTAMP := v_today_start + INTERVAL '7 days';
-    v_test_users uuid[] := ARRAY[
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
-        'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid
-    ];
+    v_test_users uuid[];
     v_user_id uuid;
+    v_admin_profile_id uuid;
+    v_teacher_profile_id uuid;
+    v_student_profile_id uuid;
 BEGIN
+    -- Resolver profile IDs para usuarios de testing
+    SELECT p.id INTO v_admin_profile_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'admin@gamilit.com';
+
+    SELECT p.id INTO v_teacher_profile_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'teacher@gamilit.com';
+
+    SELECT p.id INTO v_student_profile_id
+    FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'student@gamilit.com';
+
+    v_test_users := ARRAY[v_admin_profile_id, v_teacher_profile_id, v_student_profile_id];
+
     FOREACH v_user_id IN ARRAY v_test_users LOOP
+        -- Skip NULL profile IDs (profile not found for this user)
+        CONTINUE WHEN v_user_id IS NULL;
+
         -- Daily Mission 1: Complete exercises
         INSERT INTO gamification_system.missions (
             user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
@@ -286,7 +341,7 @@ SET
         'learning_pace', 'steady'
     ),
     updated_at = gamilit.now_mexico()
-WHERE user_id = '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid;
+WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx' LIMIT 1);
 
 -- Estudiante 2: Carlos Ramírez - Nivel 1, Principiante
 UPDATE gamification_system.user_stats
@@ -327,7 +382,7 @@ SET
         'learning_pace', 'slow'
     ),
     updated_at = gamilit.now_mexico()
-WHERE user_id = '02bc5f00-182e-5387-c899-3f269d49c06f'::uuid;
+WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante2@demo.glit.edu.mx' LIMIT 1);
 
 -- Estudiante 3: María Fernanda - Nivel 3, Avanzada
 UPDATE gamification_system.user_stats
@@ -370,7 +425,7 @@ SET
         'achievement_hunter', true
     ),
     updated_at = gamilit.now_mexico()
-WHERE user_id = '03cd6000-282e-6487-d899-40369e49d070'::uuid;
+WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx' LIMIT 1);
 
 -- Estudiante 4: Luis Miguel - Nivel 2, Progreso Constante
 UPDATE gamification_system.user_stats
@@ -411,7 +466,7 @@ SET
         'learning_pace', 'steady'
     ),
     updated_at = gamilit.now_mexico()
-WHERE user_id = '04de7000-382e-7587-e899-51469f49e081'::uuid;
+WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante4@demo.glit.edu.mx' LIMIT 1);
 
 -- Estudiante 5: Sofía Martínez - Nivel 4, Muy Avanzada
 UPDATE gamification_system.user_stats
@@ -455,7 +510,7 @@ SET
         'top_performer', true
     ),
     updated_at = gamilit.now_mexico()
-WHERE user_id = '05ef8000-482e-8687-f899-62569049f092'::uuid;
+WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante5@demo.glit.edu.mx' LIMIT 1);
 
 -- Profesor 1: Roberto Méndez - Nivel 5, Profesor Activo
 UPDATE gamification_system.user_stats
@@ -499,7 +554,7 @@ SET
         )
     ),
     updated_at = gamilit.now_mexico()
-WHERE user_id = '10ac4f00-092e-4297-b909-2e179c49b15e'::uuid;
+WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'instructor@demo.glit.edu.mx' LIMIT 1);
 
 -- Profesor 2: Laura González - Nivel 5, Profesora Activa
 UPDATE gamification_system.user_stats
@@ -543,7 +598,7 @@ SET
         )
     ),
     updated_at = gamilit.now_mexico()
-WHERE user_id = '11bc5f00-192e-5397-c919-3f279d49c26f'::uuid;
+WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'profesor2@demo.glit.edu.mx' LIMIT 1);
 
 -- Admin 1: Admin Sistema - Nivel 10, Super Admin
 UPDATE gamification_system.user_stats
@@ -583,7 +638,7 @@ SET
         'admin_access', 'full'
     ),
     updated_at = gamilit.now_mexico()
-WHERE user_id = '20ac4f00-002e-4207-b809-2e189c49b25e'::uuid;
+WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com' LIMIT 1);
 
 -- Admin 2: Directora - Nivel 8, Director
 UPDATE gamification_system.user_stats
@@ -623,7 +678,7 @@ SET
         'school_id', '50000000-0000-0000-0000-000000000001'
     ),
     updated_at = gamilit.now_mexico()
-WHERE user_id = '21bc5f00-102e-5307-c829-3f289d49c36f'::uuid;
+WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'directora@demo.glit.edu.mx' LIMIT 1);
 
 -- Padre 1: Jorge García - Nivel 1, Observador
 UPDATE gamification_system.user_stats
@@ -660,10 +715,10 @@ SET
     metadata = jsonb_build_object(
         'demo_user', true,
         'role', 'parent',
-        'children_ids', jsonb_build_array('01ac4f00-082e-4287-b899-2e169c49b05e')
+        'children_ids', jsonb_build_array((SELECT p.id::text FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx' LIMIT 1))
     ),
     updated_at = gamilit.now_mexico()
-WHERE user_id = '30ac4f00-012e-4217-b819-2e199c49b35e'::uuid;
+WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'padre1@demo.glit.edu.mx' LIMIT 1);
 
 -- =====================================================
 -- FASE 3: DESHABILITADA - Usuarios de Testing con valores iniciales
@@ -770,7 +825,7 @@ BEGIN
     IF updated_count >= 10 THEN
         RAISE NOTICE '✓ User stats demo fueron actualizados correctamente con progreso variado';
     ELSE
-        RAISE WARNING '⚠ Se esperaban al menos 10 updates, se aplicaron %', updated_count;
+        RAISE NOTICE '⚠ Se esperaban al menos 10 updates, se aplicaron % (normal si algunos usuarios demo no existen)', updated_count;
     END IF;
 
     RAISE NOTICE '';

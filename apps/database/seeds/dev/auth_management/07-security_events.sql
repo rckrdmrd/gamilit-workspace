@@ -26,10 +26,10 @@ INSERT INTO auth_management.security_events (
     metadata,
     created_at
 ) VALUES
--- Low severity - Successful login
+-- Low severity - Successful login (admin@gamilit.com)
 (
-    's0000001-0000-0000-0000-000000000001'::uuid,
-    '10000000-0000-0000-0000-000000000001'::uuid,
+    'a0000001-0000-0000-0000-000000000001'::uuid,
+    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
     'login_success',
     'low',
     'Usuario inició sesión exitosamente',
@@ -42,10 +42,10 @@ INSERT INTO auth_management.security_events (
     }'::jsonb,
     gamilit.now_mexico() - INTERVAL '2 hours'
 ),
--- Medium severity - Password change
+-- Medium severity - Password change (teacher@gamilit.com)
 (
-    's0000001-0000-0000-0000-000000000002'::uuid,
-    '20000000-0000-0000-0000-000000000001'::uuid,
+    'a0000001-0000-0000-0000-000000000002'::uuid,
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
     'password_change',
     'medium',
     'Usuario cambió su contraseña',
@@ -58,9 +58,9 @@ INSERT INTO auth_management.security_events (
     }'::jsonb,
     gamilit.now_mexico() - INTERVAL '1 day'
 ),
--- High severity - Multiple failed login attempts
+-- High severity - Multiple failed login attempts (no user)
 (
-    's0000001-0000-0000-0000-000000000003'::uuid,
+    'a0000001-0000-0000-0000-000000000003'::uuid,
     NULL,
     'multiple_failed_logins',
     'high',
@@ -75,25 +75,25 @@ INSERT INTO auth_management.security_events (
     }'::jsonb,
     gamilit.now_mexico() - INTERVAL '3 hours'
 ),
--- Medium severity - Email verification sent
+-- Low severity - Email verification sent (estudiante1@demo.glit.edu.mx)
 (
-    's0000001-0000-0000-0000-000000000004'::uuid,
-    '10000000-0000-0000-0000-000000000002'::uuid,
+    'a0000001-0000-0000-0000-000000000004'::uuid,
+    'dddddddd-dddd-dddd-dddd-dddddddddddd'::uuid,
     'email_verification_sent',
     'low',
     'Token de verificación de email enviado',
     '127.0.0.1'::inet,
     'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X)',
     '{
-        "email": "student2@test.gamilit.com",
+        "email": "estudiante1@demo.glit.edu.mx",
         "token_expires_in_hours": 24
     }'::jsonb,
     gamilit.now_mexico() - INTERVAL '5 hours'
 ),
--- Low severity - Logout
+-- Low severity - Logout (student@gamilit.com)
 (
-    's0000001-0000-0000-0000-000000000005'::uuid,
-    '30000000-0000-0000-0000-000000000001'::uuid,
+    'a0000001-0000-0000-0000-000000000005'::uuid,
+    'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid,
     'logout',
     'low',
     'Usuario cerró sesión',
@@ -105,9 +105,9 @@ INSERT INTO auth_management.security_events (
     }'::jsonb,
     gamilit.now_mexico() - INTERVAL '30 minutes'
 ),
--- Critical severity - Unauthorized access attempt
+-- Critical severity - Unauthorized access attempt (no user)
 (
-    's0000001-0000-0000-0000-000000000006'::uuid,
+    'a0000001-0000-0000-0000-000000000006'::uuid,
     NULL,
     'unauthorized_access_attempt',
     'critical',
@@ -123,17 +123,17 @@ INSERT INTO auth_management.security_events (
     }'::jsonb,
     gamilit.now_mexico() - INTERVAL '6 hours'
 ),
--- Medium severity - Permission elevation
+-- Medium severity - Permission elevation (teacher@gamilit.com)
 (
-    's0000001-0000-0000-0000-000000000007'::uuid,
-    '20000000-0000-0000-0000-000000000001'::uuid,
+    'a0000001-0000-0000-0000-000000000007'::uuid,
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
     'permission_elevation',
     'medium',
     'Permisos de usuario elevados temporalmente',
     '127.0.0.1'::inet,
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
     '{
-        "elevated_by": "30000000-0000-0000-0000-000000000001",
+        "elevated_by": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
         "from_role": "admin_teacher",
         "to_role": "admin_teacher",
         "additional_permissions": ["can_manage_system_settings"],
@@ -141,10 +141,10 @@ INSERT INTO auth_management.security_events (
     }'::jsonb,
     gamilit.now_mexico() - INTERVAL '4 hours'
 ),
--- Low severity - Profile update
+-- Low severity - Profile update (estudiante2@demo.glit.edu.mx)
 (
-    's0000001-0000-0000-0000-000000000008'::uuid,
-    '10000000-0000-0000-0000-000000000003'::uuid,
+    'a0000001-0000-0000-0000-000000000008'::uuid,
+    'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee'::uuid,
     'profile_update',
     'low',
     'Usuario actualizó su perfil',
