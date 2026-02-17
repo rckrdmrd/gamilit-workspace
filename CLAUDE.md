@@ -117,7 +117,7 @@ NO usar workflow de submodules (no aplica a monorepo)
 ### Flujo de Desarrollo
 1. DDL primero -> Validar en PostgreSQL -> Entity -> Endpoints -> Frontend -> Tests
 2. Todo modulo nuevo requiere: DDL + Entity + Controller + Service + DTOs + Tests + Docs
-3. Minimo 80% test coverage objetivo
+3. Minimo 50% coverage enforced (objetivo 80% gradual — ver ADR-044)
 
 ---
 

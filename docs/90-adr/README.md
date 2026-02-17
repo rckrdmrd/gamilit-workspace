@@ -46,6 +46,8 @@ Registro de decisiones arquitectonicas del proyecto.
 | [ADR-032](ADR-032-parent-notifications-integration.md) | Parent Notifications Integration | Aceptada |
 | [ADR-033](ADR-033-expansion-schemas-8-to-18.md) | Expansion Schemas 8→18 | Aceptada |
 | [ADR-043](ADR-043-consolidacion-bd.md) | Consolidacion BD 2026-01-07 | Aceptada |
+| [ADR-044](ADR-044-test-coverage-strategy.md) | Estrategia Test Coverage (50% enforced, 80% aspiracional) | Aceptada |
+| [ADR-045](ADR-045-clean-architecture-pragmatica.md) | Clean Architecture Pragmatica (incremental, domain errors first) | Aceptada |
 
 ---
 
