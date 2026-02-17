@@ -21,15 +21,11 @@
 | **Temporada** | Periodo de competencia con reset de rankings y recompensas de cierre. |
 | **Multiplicador** | Factor aplicado a earnings de ML Coins segun rango actual (1.00x a 1.25x). |
 
-### Rangos Maya (5 Niveles — DB Seeds v2.1)
+### Rangos Maya (SSOT)
 
-| Nivel | Rango | Titulo Maya | XP Min | XP Max | ML Bonus | Multiplicador |
-|-------|-------|-------------|--------|--------|----------|---------------|
-| 1 | Senor | Ajaw (Senor) | 0 | 499 | - | 1.00x |
-| 2 | Capitan de Guerra | Nacom (Capitan de Guerra) | 500 | 999 | +100 ML | 1.10x |
-| 3 | Sacerdote del Sol | Ah K'in (Sacerdote del Sol) | 1,000 | 1,499 | +250 ML | 1.15x |
-| 4 | Hombre Verdadero | Halach Uinic (Hombre Verdadero) | 1,500 | 1,899 | +500 ML | 1.20x |
-| 5 | Serpiente Emplumada | K'uk'ulkan (Serpiente Emplumada) | 1,900 | - | +1,000 ML | 1.25x |
+La tabla oficial de rangos, umbrales y bonus se mantiene en:
+
+- [docs/20-architecture/gamificacion/RANGOS-MAYA.md](../20-architecture/gamificacion/RANGOS-MAYA.md)
 
 ### Power-ups (Comodines)
 

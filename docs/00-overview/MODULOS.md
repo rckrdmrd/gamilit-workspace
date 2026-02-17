@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0
 **Fecha:** 2026-02-07
-**Total Modulos:** 22
+**Total Modulos:** 23
 
 ---
 
@@ -62,7 +62,7 @@ Gestion de usuarios multi-rol con perfiles diferenciados.
 Multi-tenancy completa con aislamiento por Row-Level Security.
 
 - Cada escuela es un tenant independiente
-- RLS policies en todas las tablas multi-tenant (207 policies)
+- RLS policies en todas las tablas multi-tenant (227 policies)
 - Gestion de suscripciones y planes por tenant
 - Configuracion por tenant (logo, colores, features habilitados)
 - Migracion de datos entre tenants (admin global)
