@@ -1,6 +1,7 @@
 import { registerAs } from '@nestjs/config';
 
 const redisConfig = registerAs('redis', () => ({
+  enabled: (process.env.REDIS_ENABLED || 'true').toLowerCase() === 'true',
   url: process.env.REDIS_URL || 'redis://localhost:6379',
   db: parseInt(process.env.REDIS_SOCKET_DB || '0', 10),
   password: process.env.REDIS_PASSWORD || undefined,

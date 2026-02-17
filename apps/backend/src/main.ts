@@ -54,16 +54,22 @@ async function bootstrap() {
   // 2026-02-03: Upgraded to RedisIoAdapter for horizontal scaling support
   const redisIoAdapter = new RedisIoAdapter(app, allowedOrigins);
 
-  // Try to connect to Redis for Socket.IO adapter
-  // Falls back to in-memory adapter if Redis is unavailable
-  const redisConnected = await redisIoAdapter.connectToRedis();
-  app.useWebSocketAdapter(redisIoAdapter);
+  // Connect to Redis only if enabled (disabled in dev to avoid WSL2 svchost proxy issues)
+  const redisEnabled = configService.get<boolean>('redis.enabled', true);
+  let redisConnected = false;
 
-  if (redisConnected) {
-    Logger.log('Socket.IO using Redis adapter for horizontal scaling', 'Bootstrap');
+  if (redisEnabled) {
+    redisConnected = await redisIoAdapter.connectToRedis();
+    if (redisConnected) {
+      Logger.log('Socket.IO using Redis adapter for horizontal scaling', 'Bootstrap');
+    } else {
+      Logger.warn('Socket.IO using in-memory adapter (Redis connection failed)', 'Bootstrap');
+    }
   } else {
-    Logger.warn('Socket.IO using in-memory adapter (no horizontal scaling)', 'Bootstrap');
+    Logger.log('Redis disabled by configuration (REDIS_ENABLED=false) — using in-memory adapter', 'Bootstrap');
   }
+
+  app.useWebSocketAdapter(redisIoAdapter);
 
   // Security
   app.use(helmet());
@@ -152,6 +158,8 @@ async function bootstrap() {
   await app.listen(port);
 
   const socketStatus = redisConnected ? 'Redis (scalable)' : 'In-memory';
+  const cronEnabled = (process.env.CRON_ENABLED || 'true').toLowerCase() !== 'false';
+  const cronStatus = cronEnabled ? 'Enabled (19 jobs)' : 'Disabled';
   const swaggerStatus = nodeEnv !== 'production' ? `http://localhost:${port}/${API_PREFIX}/${API_VERSION}/docs` : 'Disabled in production';
   console.log(`
 =====================================================================
@@ -163,6 +171,7 @@ async function bootstrap() {
    Environment: ${nodeEnv}
    CORS Origins: ${allowedOrigins.length} configured
    WebSocket: ${socketStatus}
+   Cron Jobs: ${cronStatus}
 
 =====================================================================
   `);

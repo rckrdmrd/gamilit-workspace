@@ -108,35 +108,36 @@ export class ExerciseSubmissionService {
    * @description exercise_submissions table FK references profiles.id, but JWT contains auth.users.id.
    * This method converts auth.users.id → profiles.id
    *
-   * @param userId - auth.users.id (from JWT token)
-   * @returns profiles.id
+   * DB-125: req.user.id IS already profile.id (set by JwtStrategy).
+   * This helper validates that the profile exists in the database.
+   *
+   * @param profileId - profile.id (from req.user.id / JWT sub)
+   * @returns profiles.id (same value, validated)
    * @throws NotFoundException if profile doesn't exist
    */
-  private async getProfileId(userId: string): Promise<string> {
+  private async getProfileId(profileId: string): Promise<string> {
     const profile = await this.profileRepo.findOne({
-      where: { user_id: userId },
+      where: { id: profileId },
       select: ['id'],
     });
 
     if (!profile) {
-      throw new NotFoundException(`Profile not found for user ${userId}`);
+      throw new NotFoundException(`Profile not found: ${profileId}`);
     }
 
     return profile.id;
   }
 
   /**
-   * Public method to get profile.id from auth.users.id (for controllers)
+   * DB-125: Validates profile.id exists (for controllers).
+   * req.user.id IS already profile.id per JwtStrategy.
    *
-   * @description Exposes getProfileId as public method for use in controllers.
-   * JWT tokens contain auth.users.id, but database FKs reference profiles.id
-   *
-   * @param authUserId - auth.users.id (from JWT req.user.id)
-   * @returns profiles.id
+   * @param profileId - profile.id (from req.user.id / JWT sub)
+   * @returns profiles.id (validated)
    * @throws NotFoundException if profile doesn't exist
    */
-  async getProfileIdFromAuthUser(authUserId: string): Promise<string> {
-    return this.getProfileId(authUserId);
+  async getProfileIdFromAuthUser(profileId: string): Promise<string> {
+    return this.getProfileId(profileId);
   }
 
   /**

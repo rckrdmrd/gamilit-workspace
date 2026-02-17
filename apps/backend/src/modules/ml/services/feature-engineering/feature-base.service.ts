@@ -186,7 +186,7 @@ export abstract class FeatureBaseService {
         }
         break;
 
-      case 'robust':
+      case 'robust': {
         // Robust normalization using quartiles: (x - median) / IQR
         const iqr = stats.q3 - stats.q1;
         if (iqr === 0) {
@@ -198,6 +198,7 @@ export abstract class FeatureBaseService {
           normalized = Math.max(-2, Math.min(2, robustScore)) / 4 + 0.5;
         }
         break;
+      }
 
       default:
         normalized = value;

@@ -11,6 +11,8 @@ import { MissionTemplate, MissionTemplateTypeEnum } from '../entities/mission-te
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
+import { UserStats } from '../entities/user-stats.entity';
+import { MLCoinsTransaction } from '../entities/ml-coins-transaction.entity';
 
 /**
  * MissionsService
@@ -506,7 +508,141 @@ export class MissionsService {
     }> {
     // CRITICAL FIX: Convert auth.users.id → profiles.id
     const profileId = await this.getProfileId(userId);
+    const transactionCapableManager = this.missionsRepo.manager as {
+      transaction?: <T>(runInTransaction: (manager: any) => Promise<T>) => Promise<T>;
+    };
 
+    if (typeof transactionCapableManager.transaction !== 'function') {
+      this.logger.warn(
+        '[claimRewards] Transaction manager unavailable, using non-transactional fallback',
+      );
+      return this.claimRewardsFallback(missionId, userId, profileId);
+    }
+
+    return transactionCapableManager.transaction(async (manager) => {
+      const missionRepo = manager.getRepository(Mission);
+      const userStatsRepo = manager.getRepository(UserStats);
+      const transactionRepo = manager.getRepository(MLCoinsTransaction);
+
+      const mission = await missionRepo.findOne({
+        where: { id: missionId },
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (!mission) {
+        throw new NotFoundException(`Mission with ID ${missionId} not found`);
+      }
+
+      // Validar que la misión pertenece al usuario
+      if (mission.user_id !== profileId) {
+        throw new BadRequestException('Mission does not belong to this user');
+      }
+
+      // Validar que la misión está completada
+      if (mission.status !== MissionStatusEnum.COMPLETED) {
+        throw new BadRequestException(
+          `Mission must be completed before claiming rewards. Current status: ${mission.status}`,
+        );
+      }
+
+      // Validar que no ha sido reclamada previamente
+      if (mission.claimed_at !== null) {
+        throw new BadRequestException('Rewards have already been claimed for this mission');
+      }
+
+      const userStats = await userStatsRepo.findOne({
+        where: { user_id: profileId },
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (!userStats) {
+        throw new NotFoundException(`User stats not found for ${profileId}`);
+      }
+
+      const mlCoinsAwarded = mission.rewards?.ml_coins && mission.rewards.ml_coins > 0
+        ? mission.rewards.ml_coins
+        : 0;
+      const xpAwarded = mission.rewards?.xp && mission.rewards.xp > 0
+        ? mission.rewards.xp
+        : 0;
+
+      const previousRank = userStats.current_rank ?? null;
+      const previousBalance = userStats.ml_coins;
+
+      // Aplicar recompensas sobre user_stats (misma transacción)
+      userStats.total_xp += xpAwarded;
+      userStats.ml_coins += mlCoinsAwarded;
+      userStats.ml_coins_earned_total += mlCoinsAwarded;
+      userStats.ml_coins_earned_today += mlCoinsAwarded;
+      await userStatsRepo.save(userStats);
+
+      // Registrar transacción de ML Coins solo si corresponde
+      if (mlCoinsAwarded > 0) {
+        const coinTx = transactionRepo.create({
+          user_id: profileId,
+          amount: mlCoinsAwarded,
+          balance_before: previousBalance,
+          balance_after: previousBalance + mlCoinsAwarded,
+          transaction_type: TransactionTypeEnum.EARNED_BONUS,
+          description: `Mission reward: ${mission.title}`,
+          reason: 'mission_claim_reward',
+          reference_id: mission.id,
+          reference_type: 'mission' as any,
+          metadata: {
+            mission_id: mission.id,
+            mission_title: mission.title,
+          },
+        });
+        await transactionRepo.save(coinTx);
+      }
+
+      // Marcar misión como reclamada solo después de persistir rewards
+      mission.status = MissionStatusEnum.CLAIMED;
+      mission.claimed_at = new Date();
+      await missionRepo.save(mission);
+
+      // Refrescar rango (triggers DB pueden haber actualizado current_rank)
+      const refreshedStats = await userStatsRepo.findOne({
+        where: { user_id: profileId },
+      });
+      const newRank = refreshedStats?.current_rank ?? previousRank;
+      const rankPromoted = !!previousRank && !!newRank && previousRank !== newRank;
+
+      if (rankPromoted) {
+        this.logger.log(
+          `User ${profileId} promoted from ${previousRank} to ${newRank} after claiming mission ${missionId}`,
+        );
+      }
+
+      return {
+        mission,
+        rewards: mission.rewards,
+        rewards_granted: {
+          xp_awarded: xpAwarded,
+          ml_coins_awarded: mlCoinsAwarded,
+          rank_promotion: rankPromoted,
+          new_rank: rankPromoted ? newRank : null,
+          previous_rank: rankPromoted ? previousRank : null,
+        },
+      };
+    });
+  }
+
+  private async claimRewardsFallback(
+    missionId: string,
+    userId: string,
+    profileId: string,
+  ): Promise<{
+      mission: Mission;
+      rewards: MissionRewards;
+      rewards_granted: {
+        xp_awarded: number;
+        ml_coins_awarded: number;
+        rank_promotion: boolean;
+        new_rank: string | null;
+        previous_rank: string | null;
+      };
+    }> {
     const mission = await this.missionsRepo.findOne({
       where: { id: missionId },
     });
@@ -515,24 +651,27 @@ export class MissionsService {
       throw new NotFoundException(`Mission with ID ${missionId} not found`);
     }
 
-    // Validar que la misión pertenece al usuario
-    if (mission.user_id !== profileId) {  // FIXED: comparar con profileId
+    if (mission.user_id !== profileId) {
       throw new BadRequestException('Mission does not belong to this user');
     }
 
-    // Validar que la misión está completada
     if (mission.status !== MissionStatusEnum.COMPLETED) {
       throw new BadRequestException(
         `Mission must be completed before claiming rewards. Current status: ${mission.status}`,
       );
     }
 
-    // Validar que no ha sido reclamada previamente
     if (mission.claimed_at !== null) {
       throw new BadRequestException('Rewards have already been claimed for this mission');
     }
 
-    // Obtener rango actual antes de otorgar recompensas
+    const mlCoinsAwarded = mission.rewards?.ml_coins && mission.rewards.ml_coins > 0
+      ? mission.rewards.ml_coins
+      : 0;
+    const xpAwarded = mission.rewards?.xp && mission.rewards.xp > 0
+      ? mission.rewards.xp
+      : 0;
+
     let previousRank: string | null = null;
     let newRank: string | null = null;
     let rankPromoted = false;
@@ -546,69 +685,31 @@ export class MissionsService {
       );
     }
 
-    // Marcar como reclamada
+    // No marcar como claimed hasta completar distribución
+    if (mlCoinsAwarded > 0) {
+      await this.mlCoinsService.addCoins(
+        userId,
+        mlCoinsAwarded,
+        TransactionTypeEnum.EARNED_BONUS,
+        `Mission reward: ${mission.title}`,
+        missionId,
+        'mission',
+      );
+    }
+
+    if (xpAwarded > 0) {
+      await this.userStatsService.addXp(userId, xpAwarded);
+    }
+
     mission.status = MissionStatusEnum.CLAIMED;
     mission.claimed_at = new Date();
-
     await this.missionsRepo.save(mission);
 
-    // Variables para tracking de recompensas otorgadas
-    let mlCoinsAwarded = 0;
-    let xpAwarded = 0;
-
-    // Otorgar recompensas - ML Coins
-    if (mission.rewards?.ml_coins && mission.rewards.ml_coins > 0) {
-      try {
-        await this.mlCoinsService.addCoins(
-          userId,
-          mission.rewards.ml_coins,
-          TransactionTypeEnum.EARNED_BONUS,
-          `Mission reward: ${mission.title}`,
-          missionId,
-          'mission',
-        );
-        mlCoinsAwarded = mission.rewards.ml_coins;
-        this.logger.log(
-          `Awarded ${mission.rewards.ml_coins} ML Coins to user ${userId} for mission ${missionId}`,
-        );
-      } catch (error: unknown) {
-        this.logger.error(
-          `Failed to award ML Coins for mission ${missionId}: ${error instanceof Error ? error.message : String(error)}`,
-        );
-        // Continue execution - don't fail the entire operation
-      }
-    }
-
-    // Otorgar recompensas - XP
-    if (mission.rewards?.xp && mission.rewards.xp > 0) {
-      try {
-        await this.userStatsService.addXp(
-          userId,
-          mission.rewards.xp,
-        );
-        xpAwarded = mission.rewards.xp;
-        this.logger.log(
-          `Awarded ${mission.rewards.xp} XP to user ${userId} for mission ${missionId}`,
-        );
-      } catch (error: unknown) {
-        this.logger.error(
-          `Failed to award XP for mission ${missionId}: ${error instanceof Error ? error.message : String(error)}`,
-        );
-        // Continue execution - don't fail the entire operation
-      }
-    }
-
-    // Verificar si hubo promoción de rango después de otorgar XP
     try {
       const currentRankRecord = await this.ranksService.getCurrentRank(userId);
       newRank = currentRankRecord.current_rank;
-
-      // Detectar si hubo promoción comparando rangos
       if (previousRank && newRank && previousRank !== newRank) {
         rankPromoted = true;
-        this.logger.log(
-          `User ${userId} promoted from ${previousRank} to ${newRank} after claiming mission ${missionId}`,
-        );
       }
     } catch (error: unknown) {
       this.logger.warn(

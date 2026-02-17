@@ -51,7 +51,7 @@ export class RedisIoAdapter extends IoAdapter {
       password: process.env.REDIS_PASSWORD || undefined,
       keyPrefix: process.env.REDIS_SOCKET_PREFIX || 'gamilit:socket:',
       retryDelayMs: parseInt(process.env.REDIS_RETRY_DELAY_MS || '1000', 10),
-      maxRetries: parseInt(process.env.REDIS_MAX_RETRIES || '10', 10),
+      maxRetries: parseInt(process.env.REDIS_MAX_RETRIES || '3', 10),
       ...config,
     };
   }
@@ -69,14 +69,14 @@ export class RedisIoAdapter extends IoAdapter {
         database: this.config.db,
         password: this.config.password,
         socket: {
+          connectTimeout: 5000,
           reconnectStrategy: (retries: number) => {
-            if (retries >= (this.config.maxRetries || 10)) {
-              this.logger.error(`Redis max retries (${this.config.maxRetries}) reached, stopping reconnection attempts`);
+            if (retries >= (this.config.maxRetries || 3)) {
+              this.logger.warn(`Redis max retries (${this.config.maxRetries}) reached — Socket.IO will use in-memory adapter`);
               return false;
             }
-            // Exponential backoff with jitter: base * 2^retries + random jitter
             const baseDelay = this.config.retryDelayMs || 1000;
-            const exponentialDelay = Math.min(baseDelay * Math.pow(2, retries), 30000);
+            const exponentialDelay = Math.min(baseDelay * Math.pow(2, retries), 10000);
             const jitter = Math.floor(Math.random() * baseDelay);
             const delay = exponentialDelay + jitter;
             this.logger.warn(`Redis reconnecting in ${delay}ms (attempt ${retries + 1}/${this.config.maxRetries})`);
@@ -138,6 +138,19 @@ export class RedisIoAdapter extends IoAdapter {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to connect Redis adapter: ${errorMessage}`);
       this.logger.warn('Socket.IO will use default in-memory adapter (no horizontal scaling)');
+
+      // Cleanup orphan clients to prevent memory leaks
+      for (const client of [this.pubClient, this.subClient]) {
+        if (client) {
+          try {
+            client.removeAllListeners();
+            if (client.isOpen) await client.quit();
+            else client.destroy();
+          } catch { /* ignore cleanup errors */ }
+        }
+      }
+      this.pubClient = null;
+      this.subClient = null;
       this.isConnected = false;
       return false;
     }

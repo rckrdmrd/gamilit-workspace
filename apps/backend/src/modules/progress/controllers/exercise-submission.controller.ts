@@ -760,7 +760,7 @@ export class ExerciseSubmissionController {
       throw new UnauthorizedException('Usuario no autenticado');
     }
 
-    // Convertir auth.users.id a profiles.id
+    // DB-125: req.user.id IS profile.id — validate it exists
     const profileId = await this.submissionService.getProfileIdFromAuthUser(authUserId);
 
     return this.submissionService.autoSaveProgress(
@@ -851,7 +851,7 @@ export class ExerciseSubmissionController {
       throw new UnauthorizedException('Usuario no autenticado');
     }
 
-    // Convertir auth.users.id a profiles.id
+    // DB-125: req.user.id IS profile.id — validate it exists
     const profileId = await this.submissionService.getProfileIdFromAuthUser(authUserId);
 
     const progress = await this.submissionService.getAutoSavedProgress(profileId, exerciseId);

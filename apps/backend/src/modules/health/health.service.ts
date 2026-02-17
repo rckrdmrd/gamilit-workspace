@@ -207,6 +207,17 @@ export class HealthService {
    * Check Redis connectivity
    */
   async checkRedis(): Promise<HealthCheckDetailDto> {
+    const redisEnabled = this.configService.get<boolean>('redis.enabled', true);
+
+    if (!redisEnabled) {
+      return {
+        status: HealthStatus.HEALTHY,
+        responseTime: 0,
+        message: 'Redis disabled by configuration',
+        details: { enabled: false },
+      };
+    }
+
     const startTime = Date.now();
     const redisUrl = this.configService.get<string>('redis.url')
       || process.env.REDIS_URL
@@ -231,6 +242,7 @@ export class HealthService {
       const responseTime = Date.now() - startTime;
 
       await client.quit();
+      client = null;
 
       if (pong === 'PONG') {
         return {
@@ -254,8 +266,12 @@ export class HealthService {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.warn(`Redis health check failed: ${errorMessage}`);
 
-      if (client?.isOpen) {
-        try { await client.quit(); } catch { /* ignore cleanup errors */ }
+      if (client) {
+        try {
+          client.removeAllListeners();
+          if (client.isOpen) await client.quit();
+        } catch { /* ignore cleanup errors */ }
+        client = null;
       }
 
       return {

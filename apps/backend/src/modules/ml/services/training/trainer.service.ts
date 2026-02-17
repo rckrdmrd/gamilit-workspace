@@ -59,7 +59,7 @@ export class TrainerService {
 
       // Initialize weights
       const featureCount = trainingData.featureNames.length;
-      let weights = this.initializeWeights(featureCount);
+      const weights = this.initializeWeights(featureCount);
       let bias = 0;
 
       // Training history

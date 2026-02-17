@@ -47,7 +47,11 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig, databaseConfig, jwtConfig, envConfig, redisConfig],
-      envFilePath: ['.env.local', '.env'],
+      envFilePath: [
+        '.env.local',
+        process.env.NODE_ENV === 'production' ? '.env.production' : '.env.dev',
+        '.env',
+      ],
       cache: true,
       validate: validateEnv,
     }),
@@ -64,7 +68,10 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
     }),
 
     // Schedule module for cron jobs (cleanup, reports, etc.)
-    ScheduleModule.forRoot(),
+    // Disabled in dev via CRON_ENABLED=false to prevent DB connection saturation
+    ...((process.env.CRON_ENABLED || 'true').toLowerCase() !== 'false'
+      ? [ScheduleModule.forRoot()]
+      : []),
 
     // Rate limiting (ESTANDAR-SEGURIDAD §3.4 API4: Unrestricted Resource Consumption)
     ThrottlerModule.forRoot({
@@ -285,6 +292,10 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
           __dirname + '/modules/admin/entities/activity-log.entity{.ts,.js}',
           __dirname + '/modules/admin/entities/system-log.entity{.ts,.js}',
           __dirname + '/modules/admin/entities/performance-metric.entity{.ts,.js}',
+          // FIX-ECONN-002: Required for SystemAlert/ActivityLog/SystemLog/PerformanceMetric @ManyToOne -> Profile
+          __dirname + '/modules/auth/entities/profile.entity{.ts,.js}',
+          // FIX-ECONN-002b: Required for SystemAlert/SystemLog/PerformanceMetric @ManyToOne -> Tenant
+          __dirname + '/modules/auth/entities/tenant.entity{.ts,.js}',
         ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
@@ -392,7 +403,13 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [__dirname + '/modules/lti/entities/**/*.entity{.ts,.js}'],
+        entities: [
+          __dirname + '/modules/lti/entities/**/*.entity{.ts,.js}',
+          // FIX-ECONN-001: Required for LtiConsumer/LtiSession/LtiGradePassback @ManyToOne -> Profile
+          __dirname + '/modules/auth/entities/profile.entity{.ts,.js}',
+          // FIX-ECONN-001b: Required for LtiConsumer @ManyToOne -> Tenant + Profile -> Tenant cascade
+          __dirname + '/modules/auth/entities/tenant.entity{.ts,.js}',
+        ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),

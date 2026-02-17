@@ -56,20 +56,21 @@ export class ExercisesController {
   ) {}
 
   /**
-   * FE-061: Helper method to convert auth.users.id → profiles.id
+   * DB-125: req.user.id IS already profile.id (set by JwtStrategy).
+   * This helper validates that the profile exists in the database.
    *
-   * @param userId - auth.users.id (from JWT token)
-   * @returns profiles.id
+   * @param profileId - profile.id (from req.user.id / JWT sub)
+   * @returns profiles.id (same value, validated)
    * @throws NotFoundException if profile doesn't exist
    */
-  private async getProfileId(userId: string): Promise<string> {
+  private async getProfileId(profileId: string): Promise<string> {
     const profile = await this.profileRepo.findOne({
-      where: { user_id: userId },
+      where: { id: profileId },
       select: ['id'],
     });
 
     if (!profile) {
-      throw new NotFoundException(`Profile not found for user ${userId}`);
+      throw new NotFoundException(`Profile not found: ${profileId}`);
     }
 
     return profile.id;
@@ -239,8 +240,7 @@ export class ExercisesController {
       exercises = await this.exercisesService.findAll();
     }
 
-    // FIX 2025-11-24: Convert auth.users.id → profiles.id
-    // exercise_submissions.user_id references profiles.id (not auth.users.id)
+    // DB-125: req.user.id IS profile.id (set by JwtStrategy)
     const profileId = await this.getProfileId(userId);
 
     // Obtener todas las submissions del usuario de una sola vez para eficiencia
@@ -679,7 +679,7 @@ export class ExercisesController {
     // Obtener ejercicios del módulo
     const exercises = await this.exercisesService.findByModuleId(moduleId);
 
-    // FIX 2025-11-29: Convert auth.users.id → profiles.id
+    // DB-125: req.user.id IS profile.id (set by JwtStrategy)
     const userId = req.user!.id;
     const profileId = await this.getProfileId(userId);
 

@@ -13,7 +13,6 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  MinLength,
   validateSync,
   Min,
   Max,
@@ -32,20 +31,20 @@ class EnvironmentVariables {
   @IsNumber()
   @Min(1)
   @Max(65535)
-  PORT = 3006;
+  PORT: number = 3006;
 
   // Database
   @IsString()
   @IsOptional()
-  DB_HOST = 'localhost';
+  DB_HOST: string = 'localhost';
 
   @IsNumber()
   @IsOptional()
-  DB_PORT = 5432;
+  DB_PORT: number = 5432;
 
   @IsString()
   @IsOptional()
-  DB_USERNAME = 'gamilit_user';
+  DB_USERNAME: string = 'gamilit_user';
 
   @IsString()
   @IsOptional()
@@ -53,7 +52,7 @@ class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  DB_DATABASE = 'gamilit_platform';
+  DB_DATABASE: string = 'gamilit_platform';
 
   // JWT
   @IsString()
@@ -64,7 +63,16 @@ class EnvironmentVariables {
   @IsOptional()
   JWT_REFRESH_SECRET?: string;
 
+  // Cron jobs
+  @IsString()
+  @IsOptional()
+  CRON_ENABLED?: string;
+
   // Redis
+  @IsString()
+  @IsOptional()
+  REDIS_ENABLED?: string;
+
   @IsString()
   @IsOptional()
   REDIS_URL?: string;

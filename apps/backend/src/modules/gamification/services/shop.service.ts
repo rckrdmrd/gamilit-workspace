@@ -5,13 +5,13 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { ShopCategory } from '../entities/shop-category.entity';
 import { ShopItem } from '../entities/shop-item.entity';
 import { UserPurchase } from '../entities/user-purchase.entity';
 import { UserStats } from '../entities/user-stats.entity';
 import { MLCoinsTransaction } from '../entities/ml-coins-transaction.entity';
-import { MLCoinsService } from './ml-coins.service';
+import { UserAchievement } from '../entities/user-achievement.entity';
 import { PurchaseResponseDto } from '../dto/shop/purchase-response.dto';
 import { ShopItemResponseDto } from '../dto/shop/shop-item-response.dto';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
@@ -46,7 +46,8 @@ export class ShopService {
     private readonly userStatsRepository: Repository<UserStats>,
     @InjectRepository(MLCoinsTransaction, 'gamification')
     private readonly transactionRepository: Repository<MLCoinsTransaction>,
-    private readonly mlCoinsService: MLCoinsService,
+    @InjectRepository(UserAchievement, 'gamification')
+    private readonly userAchievementRepository: Repository<UserAchievement>,
   ) {}
 
   /**
@@ -152,145 +153,156 @@ export class ShopService {
     itemId: string,
     quantity: number = 1,
   ): Promise<PurchaseResponseDto> {
-    // 1. Validar que item existe y está disponible
-    const item = await this.getItemById(itemId);
-
-    if (!item.is_available) {
-      throw new BadRequestException(`Item ${item.name} is not available for purchase`);
+    if (quantity <= 0) {
+      throw new BadRequestException('Quantity must be greater than 0');
     }
 
-    // 2. Validar stock si aplica
-    if (
-      item.stock !== null &&
-      item.stock !== undefined &&
-      item.stock < quantity
-    ) {
-      throw new BadRequestException(
-        `Insufficient stock. Available: ${item.stock}, Requested: ${quantity}`,
-      );
-    }
+    return this.shopItemRepository.manager.transaction(async (manager) => {
+      const itemRepo = manager.getRepository(ShopItem);
+      const purchaseRepo = manager.getRepository(UserPurchase);
+      const userStatsRepo = manager.getRepository(UserStats);
+      const transactionRepo = manager.getRepository(MLCoinsTransaction);
 
-    // 3. Validar max_per_user (contar compras previas)
-    if (
-      item.max_per_user !== null &&
-      item.max_per_user !== undefined
-    ) {
-      const previousPurchases = await this.purchaseRepository.count({
-        where: {
-          user_id: userId,
+      // 1. Validar que item existe y está disponible (dentro de transacción)
+      const item = await itemRepo.findOne({
+        where: { id: itemId },
+      });
+
+      if (!item) {
+        throw new NotFoundException(`Item with ID ${itemId} not found`);
+      }
+
+      if (!item.is_available) {
+        throw new BadRequestException(`Item ${item.name} is not available for purchase`);
+      }
+
+      // 2. Validar stock si aplica
+      if (
+        item.stock !== null &&
+        item.stock !== undefined &&
+        item.stock < quantity
+      ) {
+        throw new BadRequestException(
+          `Insufficient stock. Available: ${item.stock}, Requested: ${quantity}`,
+        );
+      }
+
+      // 3. Validar max_per_user (contar compras previas)
+      if (
+        item.max_per_user !== null &&
+        item.max_per_user !== undefined
+      ) {
+        const previousPurchases = await purchaseRepo.count({
+          where: {
+            user_id: userId,
+            item_id: itemId,
+            status: 'completed',
+          },
+        });
+
+        if (previousPurchases >= item.max_per_user) {
+          throw new BadRequestException(
+            `Maximum purchases per user reached (${item.max_per_user})`,
+          );
+        }
+      }
+
+      const userStats = await userStatsRepo.findOne({
+        where: { user_id: userId },
+      });
+
+      if (!userStats) {
+        throw new NotFoundException(`User stats not found for ${userId}`);
+      }
+
+      // 4. Validar requisitos (rank, level, achievement)
+      await this.validateRequirements(userId, item, userStats, manager);
+
+      // 5. Validar saldo suficiente
+      const currentPrice = item.getCurrentPrice();
+      const totalCost = currentPrice * quantity;
+      const balanceBefore = userStats.ml_coins;
+
+      if (balanceBefore < totalCost) {
+        throw new BadRequestException(
+          `Insufficient ML Coins. Required: ${totalCost}, Available: ${balanceBefore}`,
+        );
+      }
+
+      const balanceAfter = balanceBefore - totalCost;
+
+      // 6. Crear transacción de ML Coins
+      const transaction = transactionRepo.create({
+        user_id: userId,
+        amount: -totalCost,
+        balance_before: balanceBefore,
+        balance_after: balanceAfter,
+        transaction_type: TransactionTypeEnum.SPENT_POWERUP,
+        description: `Purchased ${quantity}x ${item.name}`,
+        reason: 'shop_purchase',
+        reference_id: itemId,
+        reference_type: 'powerup',
+        metadata: {
           item_id: itemId,
-          status: 'completed',
+          item_name: item.name,
+          quantity: quantity,
+          unit_price: currentPrice,
+          discount_applied: item.hasActiveDiscount(),
         },
       });
 
-      if (previousPurchases >= item.max_per_user) {
-        throw new BadRequestException(
-          `Maximum purchases per user reached (${item.max_per_user})`,
-        );
-      }
-    }
+      await transactionRepo.save(transaction);
 
-    // 4. Validar requisitos (rank, level, achievement)
-    await this.validateRequirements(userId, item);
+      // 7. Actualizar balance del usuario en user_stats
+      userStats.ml_coins = balanceAfter;
+      userStats.ml_coins_spent_total += totalCost;
+      await userStatsRepo.save(userStats);
 
-    // 5. Obtener balance actual de ML Coins del usuario
-    const balance = await this.mlCoinsService.getBalance(userId);
+      // 8. Crear registro en user_purchases
+      const discountAmount = item.hasActiveDiscount() && item.discount_price
+        ? (item.price - item.discount_price) * quantity
+        : 0;
 
-    // 6. Validar saldo suficiente
-    const currentPrice = item.getCurrentPrice();
-    const totalCost = currentPrice * quantity;
-
-    if (balance < totalCost) {
-      throw new BadRequestException(
-        `Insufficient ML Coins. Required: ${totalCost}, Available: ${balance}`,
-      );
-    }
-
-    // 7. Crear transacción de ML Coins (tipo: 'spent_powerup')
-    const userStats = await this.userStatsRepository.findOne({
-      where: { user_id: userId },
-    });
-
-    if (!userStats) {
-      throw new NotFoundException(`User stats not found for ${userId}`);
-    }
-
-    const balanceBefore = userStats.ml_coins;
-    const balanceAfter = balanceBefore - totalCost;
-
-    // Crear transacción
-    const transaction = this.transactionRepository.create({
-      user_id: userId,
-      amount: -totalCost,
-      balance_before: balanceBefore,
-      balance_after: balanceAfter,
-      transaction_type: TransactionTypeEnum.SPENT_POWERUP,
-      description: `Purchased ${quantity}x ${item.name}`,
-      reason: 'shop_purchase',
-      reference_id: itemId,
-      reference_type: 'powerup',
-      metadata: {
+      const purchase = purchaseRepo.create({
+        user_id: userId,
         item_id: itemId,
-        item_name: item.name,
         quantity: quantity,
-        unit_price: currentPrice,
-        discount_applied: item.hasActiveDiscount(),
-      },
+        price_paid: currentPrice,
+        discount_applied: discountAmount,
+        transaction_id: transaction.id,
+        status: 'completed',
+        is_active: true,
+        metadata: {
+          item_name: item.name,
+          category: item.category,
+          rarity: item.rarity,
+        },
+      });
+
+      const savedPurchase = await purchaseRepo.save(purchase);
+
+      // 9. Reducir stock si aplica
+      if (
+        item.stock !== null &&
+        item.stock !== undefined
+      ) {
+        item.stock -= quantity;
+        await itemRepo.save(item);
+      }
+
+      this.logger.log(
+        `User ${userId} purchased ${quantity}x ${item.name} for ${totalCost} ML Coins`,
+      );
+
+      return {
+        success: true,
+        purchase_id: savedPurchase.id,
+        item: this.mapToResponseDto(item),
+        price_paid: totalCost,
+        new_balance: balanceAfter,
+        message: `Successfully purchased ${quantity}x ${item.name}`,
+      };
     });
-
-    await this.transactionRepository.save(transaction);
-
-    // 8. Actualizar balance del usuario en user_stats
-    userStats.ml_coins = balanceAfter;
-    userStats.ml_coins_spent_total += totalCost;
-    await this.userStatsRepository.save(userStats);
-
-    // 9. Crear registro en user_purchases
-    // discount_applied is the discount amount in ML Coins (integer)
-    const discountAmount = item.hasActiveDiscount() && item.discount_price
-      ? (item.price - item.discount_price) * quantity
-      : 0;
-
-    const purchase = this.purchaseRepository.create({
-      user_id: userId,
-      item_id: itemId,
-      quantity: quantity,
-      price_paid: currentPrice,
-      discount_applied: discountAmount,
-      transaction_id: transaction.id,
-      status: 'completed',
-      is_active: true,
-      metadata: {
-        item_name: item.name,
-        category: item.category,
-        rarity: item.rarity,
-      },
-    });
-
-    const savedPurchase = await this.purchaseRepository.save(purchase);
-
-    // 10. Reducir stock si aplica
-    if (
-      item.stock !== null &&
-      item.stock !== undefined
-    ) {
-      item.stock -= quantity;
-      await this.shopItemRepository.save(item);
-    }
-
-    this.logger.log(
-      `User ${userId} purchased ${quantity}x ${item.name} for ${totalCost} ML Coins`,
-    );
-
-    // 11. Retornar respuesta con nuevo balance
-    return {
-      success: true,
-      purchase_id: savedPurchase.id,
-      item: this.mapToResponseDto(item),
-      price_paid: totalCost,
-      new_balance: balanceAfter,
-      message: `Successfully purchased ${quantity}x ${item.name}`,
-    };
   }
 
   /**
@@ -300,14 +312,13 @@ export class ShopService {
    * @param item - Item a validar
    * @throws BadRequestException si no se cumplen los requisitos
    */
-  private async validateRequirements(userId: string, item: ShopItem): Promise<void> {
-    const userStats = await this.userStatsRepository.findOne({
-      where: { user_id: userId },
-    });
-
-    if (!userStats) {
-      throw new NotFoundException(`User stats not found for ${userId}`);
-    }
+  private async validateRequirements(
+    userId: string,
+    item: ShopItem,
+    userStats: UserStats,
+    manager?: EntityManager,
+  ): Promise<void> {
+    const dataManager = manager ?? this.userStatsRepository.manager;
 
     // Validar rank requerido (usa rank_order para >= comparacion)
     if (item.required_rank) {
@@ -319,7 +330,7 @@ export class ShopService {
       `;
 
       try {
-        const ranks = await this.userStatsRepository.query(rankQuery, [
+        const ranks = await dataManager.query(rankQuery, [
           item.required_rank,
           userStats.current_rank,
         ]);
@@ -361,11 +372,24 @@ export class ShopService {
     }
 
     // Validar achievement requerido
-    // Nota: Para implementar completamente, inyectar AchievementsService
     if (item.required_achievement_id) {
-      this.logger.warn(
-        `Achievement validation not implemented for item ${item.id}, required achievement: ${item.required_achievement_id}`,
-      );
+      const userAchievementRepo = manager
+        ? manager.getRepository(UserAchievement)
+        : this.userAchievementRepository;
+
+      const hasRequiredAchievement = await userAchievementRepo.exist({
+        where: {
+          user_id: userId,
+          achievement_id: item.required_achievement_id,
+          is_completed: true,
+        },
+      });
+
+      if (!hasRequiredAchievement) {
+        throw new BadRequestException(
+          `Required achievement not unlocked: ${item.required_achievement_id}`,
+        );
+      }
     }
   }
 

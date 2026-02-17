@@ -176,23 +176,26 @@ export class AggregationService {
         return Math.min(...values);
       case AggregationType.MAX:
         return Math.max(...values);
-      case AggregationType.MEDIAN:
+      case AggregationType.MEDIAN: {
         const sorted = [...values].sort((a, b) => a - b);
         const mid = Math.floor(sorted.length / 2);
         return sorted.length % 2 !== 0
           ? sorted[mid]
           : (sorted[mid - 1] + sorted[mid]) / 2;
-      case AggregationType.STDDEV:
+      }
+      case AggregationType.STDDEV: {
         const mean = values.reduce((a, b) => a + b, 0) / values.length;
         const squaredDiffs = values.map((v) => Math.pow(v - mean, 2));
         return Math.sqrt(
           squaredDiffs.reduce((a, b) => a + b, 0) / values.length,
         );
-      case AggregationType.VARIANCE:
+      }
+      case AggregationType.VARIANCE: {
         const avg = values.reduce((a, b) => a + b, 0) / values.length;
         return (
           values.reduce((sum, v) => sum + Math.pow(v - avg, 2), 0) / values.length
         );
+      }
       default:
         return values.reduce((a, b) => a + b, 0);
     }

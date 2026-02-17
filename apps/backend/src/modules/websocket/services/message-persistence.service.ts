@@ -52,6 +52,11 @@ export class MessagePersistenceService implements OnModuleInit, OnModuleDestroy 
   }
 
   async onModuleInit(): Promise<void> {
+    const redisEnabled = (process.env.REDIS_ENABLED || 'true').toLowerCase() === 'true';
+    if (!redisEnabled) {
+      this.logger.log('Redis disabled by configuration — message persistence inactive');
+      return;
+    }
     await this.connect();
   }
 
@@ -66,19 +71,20 @@ export class MessagePersistenceService implements OnModuleInit, OnModuleDestroy 
     try {
       this.logger.log('Connecting to Redis for message persistence...');
 
-      const maxRetries = 10;
-      const baseDelay = 1000;
+      const maxRetries = parseInt(process.env.REDIS_MAX_RETRIES || '3', 10);
+      const baseDelay = parseInt(process.env.REDIS_RETRY_DELAY_MS || '1000', 10);
       this.client = createClient({
         url: this.config.url,
         database: this.config.db,
         password: this.config.password,
         socket: {
+          connectTimeout: 5000,
           reconnectStrategy: (retries: number) => {
             if (retries >= maxRetries) {
-              this.logger.error(`Redis max retries (${maxRetries}) reached for message persistence`);
+              this.logger.warn(`Redis max retries (${maxRetries}) reached for message persistence — falling back to no persistence`);
               return false;
             }
-            const exponentialDelay = Math.min(baseDelay * Math.pow(2, retries), 30000);
+            const exponentialDelay = Math.min(baseDelay * Math.pow(2, retries), 10000);
             const jitter = Math.floor(Math.random() * baseDelay);
             const delay = exponentialDelay + jitter;
             this.logger.warn(`Redis message persistence reconnecting in ${delay}ms (attempt ${retries + 1}/${maxRetries})`);

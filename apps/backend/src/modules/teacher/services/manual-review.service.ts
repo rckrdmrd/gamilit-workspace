@@ -605,16 +605,12 @@ export class ManualReviewService {
       }
     }
 
-    // Actualizar estado del review
-    review.status = 'completed';
-    review.completedAt = new Date();
-
-    const savedReview = await this.reviewRepo.save(review);
-
     // Variable para almacenar información de recompensas
     let rewardsResult: CompleteReviewResult['rewards'] = null;
 
-    // Distribuir recompensas llamando a gradeSubmission y luego claimRewards
+    // Distribuir recompensas llamando a gradeSubmission y luego claimRewards.
+    // IMPORTANTE: solo marcamos el review como completed DESPUÉS de este bloque
+    // para evitar estados parciales (review completado sin rewards aplicadas).
     if (review.submissionId && review.totalScore !== undefined && review.totalScore !== null) {
       // Primero calificar el submission
       await this.submissionService.gradeSubmission(review.submissionId, {
@@ -623,20 +619,20 @@ export class ManualReviewService {
         feedback: review.generalFeedback || `Calificación manual: ${review.totalScore}/100`,
       });
 
-      // FIX GAP-CRIT-001: Distribuir recompensas y capturar el resultado
-      try {
-        const claimResult = await this.submissionService.claimRewards(review.submissionId);
-        rewardsResult = {
-          xp_earned: claimResult.xp_earned,
-          ml_coins_earned: claimResult.ml_coins_earned,
-          rankUp: claimResult.rankUp,
-        };
-      } catch (error) {
-        // Si ya se reclamaron las recompensas previamente, no es un error crítico
-        // El submission ya está calificado correctamente
-        this.logger.warn(`[completeReview] Rewards may have been claimed already: ${error}`);
-      }
+      // FIX GAP-CRIT-001 / ISSUE-P1-REV-001:
+      // No ignorar errores de rewards para no cerrar review en estado inconsistente.
+      const claimResult = await this.submissionService.claimRewards(review.submissionId);
+      rewardsResult = {
+        xp_earned: claimResult.xp_earned,
+        ml_coins_earned: claimResult.ml_coins_earned,
+        rankUp: claimResult.rankUp,
+      };
     }
+
+    // Actualizar estado del review únicamente cuando la distribución finalizó correctamente.
+    review.status = 'completed';
+    review.completedAt = new Date();
+    const savedReview = await this.reviewRepo.save(review);
 
     // FIX GAP-LOW-001: Log audit event for review completion
     await this.auditService.logEvent({
