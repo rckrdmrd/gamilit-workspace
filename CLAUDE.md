@@ -39,7 +39,7 @@ SIN FETCH = ESTADO INCOMPLETO
 ```
 TODA MODIFICACION DEBE MANTENER COHERENCIA:
   DDL -> Backend: Toda tabla DEBE tener entity (169 tablas = 153 entities, 16 DDL-only en data_warehouse)
-  Backend -> Frontend: Endpoints documentados (899 endpoints)
+  Backend -> Frontend: Endpoints documentados (901 endpoints)
   Inventarios: DATABASE/BACKEND/FRONTEND/MASTER = 100% sincronizados
 
 SI HAY GAPS: DOCUMENTAR + BLOQUEAR avance hasta resolver
@@ -121,7 +121,7 @@ NO usar workflow de submodules (no aplica a monorepo)
 
 ---
 
-## MODULOS (22 Core + Educativos)
+## MODULOS (23)
 
 ### Core Infrastructure (7)
 | # | Modulo | Descripcion | Estado |
@@ -161,7 +161,7 @@ NO usar workflow de submodules (no aplica a monorepo)
 | 21 | analytics | Learning analytics, reportes | 85% |
 | 22 | reports | Reportes de progreso, exportaciones | 75% |
 
-**Total:** 22 modulos, 152 entities, 170 services, 107 controllers, 899 endpoints
+**Total:** 23 modulos, 152 entities, 171 services, 107 controllers, 901 endpoints
 
 > **Nota:** Los nombres arriba son conceptuales; los directorios fisicos en `apps/backend/src/modules/` difieren (e.g., `educational`, `progress`, `admin`, `websocket`, `profile`).
 > Adicionalmente, 4 directorios de modulo existen pero NO estan importados en `app.module.ts`: `etl`, `ml`, `visualization` (evaluacion pendiente — requieren datasource `data_warehouse` no configurado), y `mail` (cargado transitivamente por `auth`, `notifications`, `teacher`, `parents`, `progress`).
@@ -291,6 +291,14 @@ Ver: `docs/20-architecture/AMBIENTES-DEV-PROD.md` para detalles completos.
 | @SCHEMA-REF | docs/20-architecture/schema-reference/ |
 | @BACKEND-STD | docs/40-standards/backend-profesional/ |
 
+### Prompts de Agentes
+| Alias | Ruta |
+|-------|------|
+| @PROMPTS-INDEX | orchestration/referencias/prompts/PROMPTS-INDEX.md |
+| @PROMPTS-CLAUDE | orchestration/referencias/prompts/PROMPTS-CLAUDE-CODE.md |
+| @PROMPTS-GEMINI | orchestration/referencias/prompts/PROMPTS-GEMINI-CLI.md |
+| @PROMPTS-TRAE | orchestration/referencias/prompts/PROMPTS-TRAE.md |
+
 ### Context Management (NEXUS v4.1)
 | Alias | Ruta |
 |-------|------|
@@ -326,7 +334,7 @@ gamilit/
 +-- _inheritance.yml             <- Redirect stub -> orchestration/_inheritance.yml
 +-- ecosystem.config.js          <- PM2 config (backend:3006, frontend:3005, fork mode)
 +-- apps/                        <- MONOREPO (tracked en mismo repo)
-|   +-- backend/                 <- NestJS 11 (22 modulos, 899 endpoints)
+|   +-- backend/                 <- NestJS 11 (23 modulos, 901 endpoints)
 |   +-- frontend/                <- React 19 + Zustand + TailwindCSS
 |   +-- database/                <- PostgreSQL 15 DDL (18 schemas, 169 tablas)
 |   +-- devops/                  <- Deployment scripts
@@ -435,12 +443,12 @@ proyecto:
 ### Backend
 | Metrica | Valor |
 |---------|-------|
-| Modulos | 22 |
+| Modulos | 23 |
 | Entities | 152 |
 | DTOs | 399 |
-| Services | 170 |
+| Services | 171 |
 | Controllers | 107 |
-| Endpoints | 899 |
+| Endpoints | 901 |
 | Guards | 15 |
 | Decorators | 18 |
 | Tests | 833 passing (60 spec files) |

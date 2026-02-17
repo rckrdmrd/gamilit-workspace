@@ -7,8 +7,8 @@
  * en el servidor de producción.
  *
  * SERVIDOR PRODUCCIÓN: 74.208.126.102
- * - Backend: Puerto 3006 (2 instancias en cluster)
- * - Frontend: Puerto 3005 (1 instancia)
+ * - Backend: Puerto 3006 (1 instancia fork mode)
+ * - Frontend: Puerto 3005 (1 instancia fork mode)
  *
  * COMANDOS PRINCIPALES:
  *   pm2 start ecosystem.config.js --only gamilit-backend --env production
@@ -54,11 +54,11 @@ module.exports = {
       // Variables de entorno - Se sobrescriben con .env.production
       env_production: {
         NODE_ENV: 'production',
-        PORT: 4006,
+        PORT: 3006,
       },
       env_development: {
         NODE_ENV: 'development',
-        PORT: 4006,
+        PORT: 3006,
       },
 
       // Archivo .env a cargar
@@ -89,7 +89,7 @@ module.exports = {
       name: 'gamilit-frontend',
       cwd: './apps/frontend',
       script: 'npx',
-      args: 'vite preview --port 4005 --host 0.0.0.0',
+      args: 'vite preview --port 3005 --host 0.0.0.0',
 
       // Configuración
       instances: 1,

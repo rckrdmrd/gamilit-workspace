@@ -1,0 +1,52 @@
+name: Validate Traceability
+
+on:
+  push:
+    branches: [master, main, develop]
+    paths:
+      - "orchestration/**"
+      - "docs/10-requirements/epics/**"
+      - ".github/workflows/validate-traceability.yml"
+  pull_request:
+    branches: [master, main, develop]
+    paths:
+      - "orchestration/**"
+      - "docs/10-requirements/epics/**"
+      - ".github/workflows/validate-traceability.yml"
+
+jobs:
+  traceability:
+    name: Traceability Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate sync report
+        run: node orchestration/scripts/sync-work-items-to-docs.js
+
+      - name: Validate sync report (no missing epics)
+        run: |
+          node -e "const fs=require('fs'); const p='orchestration/trazabilidad/SYNC-WORKITEMS-DOCS-REPORT.json'; const r=JSON.parse(fs.readFileSync(p,'utf8')); const missDocs=(r.missing_in_docs||[]).length; const missWork=(r.missing_in_work_items||[]).length; if(missDocs||missWork){ console.error('Traceability sync failed:', JSON.stringify(r,null,2)); process.exit(1);} console.log('Sync OK');"
+
+      - name: Validate traceability references
+        run: node orchestration/scripts/validate-traceability.js
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: traceability-reports
+          path: |
+            orchestration/trazabilidad/SYNC-WORKITEMS-DOCS-REPORT.json
+            orchestration/trazabilidad/VALIDATION-REPORT.md
