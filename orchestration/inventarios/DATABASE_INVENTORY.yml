@@ -2,8 +2,8 @@
 # DATABASE INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "8.1.0"
-fecha: "2026-02-14"
+version: "8.2.0"
+fecha: "2026-02-17"
 proyecto: "gamilit"
 database: "gamilit_platform"
 engine: "PostgreSQL 15"
@@ -245,6 +245,67 @@ coherencia:
   tablas_sin_entity: 16          # All 16 in data_warehouse schema
   cobertura: "90.5%"             # 153/169
   gap_justificado: "16 data_warehouse (dim_*, fact_*, etl_*, ml_*) — intencional, sin ORM"
+
+# -------------------------------------------------------------------------------
+# SCRIPTS
+# -------------------------------------------------------------------------------
+
+scripts:
+  ruta: "apps/database/scripts/"
+  principales:
+    - nombre: "init-database.sh"
+      descripcion: "Inicializacion completa de BD (schemas, DDL, funciones, triggers, RLS, seeds)"
+    - nombre: "recreate-database.sh"
+      descripcion: "Eliminacion completa y recreacion (usuario + BD). Acepta --env dev|prod --force"
+    - nombre: "recreate-database-dev.sh"
+      descripcion: "Wrapper DEV: ejecuta recreate-database.sh --env dev"
+    - nombre: "recreate-database-prod.sh"
+      descripcion: "Wrapper PROD: ejecuta recreate-database.sh --env prod"
+  utilidades:
+    - nombre: "force-recreate-all.sh"
+      descripcion: "Recreacion forzada sin confirmacion"
+    - nombre: "pre-deploy-backup.sh"
+      descripcion: "Backup antes de deploy"
+    - nombre: "update-env-files.sh"
+      descripcion: "Actualizar archivos .env"
+    - nombre: "validar-integridad.sh"
+      descripcion: "Validacion de integridad de BD"
+    - nombre: "validate-ddl-coverage.sh"
+      descripcion: "Validar cobertura DDL vs entities"
+    - nombre: "validate-ddl-organization.sh"
+      descripcion: "Validar organizacion de archivos DDL"
+
+# -------------------------------------------------------------------------------
+# SEEDS
+# -------------------------------------------------------------------------------
+
+seeds:
+  ruta: "apps/database/seeds/dev/"
+  total: 66
+  errores: 0                      # 0 errores post-CORR-05 (2026-02-17)
+  schemas_con_seeds:
+    - "auth (3 archivos: demo-users, production-users, demo-students)"
+    - "auth_management (9 archivos)"
+    - "educational_content (11+ archivos: modules, exercises M1-M5, rubrics, taxonomies)"
+    - "gamification_system (10 archivos: ranks, achievements, shop, missions, comodines)"
+    - "progress_tracking (14 archivos)"
+    - "social_features (10 archivos)"
+    - "notifications (5 archivos)"
+    - "content_management (4 archivos)"
+    - "system_configuration (4 archivos)"
+    - "admin_dashboard (2 archivos)"
+    - "audit_logging (3 archivos)"
+    - "communication (2 archivos)"
+    - "lti_integration (3 archivos)"
+
+# -------------------------------------------------------------------------------
+# PERFIL DE AGENTE
+# -------------------------------------------------------------------------------
+
+perfil_agente:
+  nombre: "PERFIL-DB-DEV-WSL"
+  ruta: "orchestration/agents/perfiles/PERFIL-DB-DEV-WSL.md"
+  descripcion: "Perfil de agente para operaciones de BD en entorno WSL de desarrollo"
 
 # ===============================================================================
 # FIN DATABASE INVENTORY
