@@ -29,10 +29,10 @@ updated_date: "2026-01-20"
 ## Referencias
 
 ### Especificacion Tecnica
-- [ET-ADM-004: Asignacion de Modulos](../especificaciones/ET-ADM-004-asignacion-modulos.md)
+- [ET-ADM-004: Asignacion de Modulos](../specifications/ET-ADM-004-asignacion-modulos.md)
 
 ### User Stories Relacionadas
-- [US-ADM-004: Asignacion Basica de Modulos](../historias-usuario/US-ADM-004-asignacion-modulos.md) - 10 SP
+- [US-ADM-004: Asignacion Basica de Modulos](../user-stories/US-ADM-004/US-ADM-004-asignacion-modulos.md) - 10 SP
 
 ### Dependencias
 - EAI-002: Modulos y actividades deben existir como contenido

@@ -124,7 +124,7 @@ Sistema de feature flags para activar/desactivar funcionalidades de forma dinám
 
 ## 🔗 Referencias
 
-- **Especificación Técnica:** [ET-SYS-001](../especificaciones/ET-SYS-001-database-schema.md)
+- **Especificación Técnica:** [ET-SYS-001](../specifications/ET-SYS-001-database-schema.md)
 - **Implementación:** apps/database/ddl/schemas/system_configuration/tables/02-feature_flags.sql
 
 ---

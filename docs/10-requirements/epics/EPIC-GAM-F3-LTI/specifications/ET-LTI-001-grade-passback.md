@@ -41,7 +41,7 @@
 - RF-LTI-002: Grade Passback Services
 
 ### User Stories
-- [US-LTI-002: Grade Passback (AGS)](../historias-usuario/US-LTI-002-grade-passback.md)
+- [US-LTI-002: Grade Passback (AGS)](../user-stories/US-LTI-002/US-LTI-002-grade-passback.md)
 
 ### Estandar
 - IMS Global LTI Advantage - Assignment and Grade Services (AGS)

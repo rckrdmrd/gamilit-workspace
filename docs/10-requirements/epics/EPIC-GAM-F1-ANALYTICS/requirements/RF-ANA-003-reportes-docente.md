@@ -29,10 +29,10 @@ updated_date: "2026-01-20"
 ## Referencias
 
 ### Especificacion Tecnica
-- [ET-ANA-003: Exportacion de Datos](../especificaciones/ET-ANA-003-exportacion-datos.md)
+- [ET-ANA-003: Exportacion de Datos](../specifications/ET-ANA-003-exportacion-datos.md)
 
 ### Historias de Usuario Relacionadas
-- [US-ANA-004](../historias-usuario/US-ANA-004-reporte-basico-progreso.md) - Reporte Basico de Progreso
+- [US-ANA-004](../user-stories/US-ANA-004/US-ANA-004-reporte-basico-progreso.md) - Reporte Basico de Progreso
 
 ---
 

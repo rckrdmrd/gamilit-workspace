@@ -7,10 +7,10 @@
 
 ### User Stories
 - [_MAP](_MAP.md)
-- [US-PP-001-data-model](US-PP-001/)
-- [US-PP-002-portal-dashboard](US-PP-002/)
-- [US-PP-003-notificaciones](US-PP-003/)
-- [US-PP-004-reportes](US-PP-004/)
+- [US-PP-001-data-model](user-stories/US-PP-001/)
+- [US-PP-002-portal-dashboard](user-stories/US-PP-002/)
+- [US-PP-003-notificaciones](user-stories/US-PP-003/)
+- [US-PP-004-reportes](user-stories/US-PP-004/)
 
 ### Requirements
 - [_MAP](requirements/_MAP.md)

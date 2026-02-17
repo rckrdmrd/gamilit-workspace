@@ -22,10 +22,10 @@
 ### Documentos Relacionados
 
 📘 **Requerimientos:**
-- [RF-GAM-004: Economía de ML Coins](../requerimientos/RF-GAM-004-economia-ml-coins.md)
-- [RF-GAM-003: Rangos Maya](../requerimientos/RF-GAM-003-rangos-maya.md)
-- [RF-GAM-002: Sistema de Comodines](../requerimientos/RF-GAM-002-comodines.md)
-- [RF-GAM-001: Sistema de Achievements](../requerimientos/RF-GAM-001-achievements.md)
+- [RF-GAM-004: Economía de ML Coins](../requirements/RF-GAM-004-economia-ml-coins.md)
+- [RF-GAM-003: Rangos Maya](../requirements/RF-GAM-003-rangos-maya.md)
+- [RF-GAM-002: Sistema de Comodines](../requirements/RF-GAM-002-comodines.md)
+- [RF-GAM-001: Sistema de Achievements](../requirements/RF-GAM-001-achievements.md)
 
 ### Implementación
 
@@ -637,7 +637,7 @@ Al implementar nuevo tipo compartido:
 
 ### Documentación
 
-- [RF-GAM-004: Economía de ML Coins](../requerimientos/RF-GAM-004-economia-ml-coins.md)
+- [RF-GAM-004: Economía de ML Coins](../requirements/RF-GAM-004-economia-ml-coins.md)
 - [ET-GAM-003: Rangos Maya](./ET-GAM-003-rangos-maya.md)
 - [ET-GAM-002: Sistema de Comodines](./ET-GAM-002-comodines.md)
 - [ET-GAM-001: Sistema de Achievements](./ET-GAM-001-achievements.md)

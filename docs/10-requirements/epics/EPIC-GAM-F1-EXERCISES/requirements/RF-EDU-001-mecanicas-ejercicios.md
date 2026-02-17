@@ -77,9 +77,9 @@ updated_date: "2026-01-04"
 
 - [RF-EDU-002: Niveles de Dificultad](./RF-EDU-002-niveles-dificultad.md) - 8 niveles de dificultad
 - [RF-EDU-003: Taxonomía de Bloom](./RF-EDU-003-taxonomia-bloom.md) - Clasificación cognitiva
-- [RF-PRG-001: Tracking de Progreso](../04-progreso-seguimiento/RF-PRG-001-tracking-progreso.md) - Intentos de ejercicios
-- [RF-GAM-002: Sistema de Comodines](../02-gamificacion/RF-GAM-002-comodines.md) - Comodines en ejercicios
-- [MAPEO: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-REQUERIMIENTOS-IMPLEMENTACION.md#módulo-3-contenido-educativo)
+- [RF-PRG-001: Tracking de Progreso](../../EPIC-GAM-F1-ANALYTICS/requirements/RF-ANA-001-dashboard-progreso.md) - Intentos de ejercicios
+- [RF-GAM-002: Sistema de Comodines](../../EPIC-GAM-F1-GAMIFICATION/requirements/RF-GAM-002-comodines.md) - Comodines en ejercicios
+- [MAPEO: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-requirements-IMPLEMENTACION.md#módulo-3-contenido-educativo)
 
 ---
 
@@ -1143,7 +1143,7 @@ test('Fill in blank accepts valid variations', async () => {
 
 - [ET-EDU-001: Implementación de Mecánicas](../specifications/ET-EDU-001-mecanicas-ejercicios.md)
 - [RF-EDU-002: Niveles de Dificultad](./RF-EDU-002-niveles-dificultad.md)
-- [RF-PRG-001: Tracking de Progreso](../04-progreso-seguimiento/RF-PRG-001-tracking-progreso.md)
+- [RF-PRG-001: Tracking de Progreso](../../EPIC-GAM-F1-ANALYTICS/requirements/RF-ANA-001-dashboard-progreso.md)
 
 ### Referencias Pedagógicas
 

@@ -4,12 +4,12 @@
 - [EPIC.md](EPIC.md)
 
 ## User Stories (6)
-- [US-ANA-001](US-ANA-001/)
-- [US-ANA-002](US-ANA-002/)
-- [US-ANA-003](US-ANA-003/)
-- [US-ANA-004](US-ANA-004/)
-- [US-ANA-005](US-ANA-005/)
-- [US-ANA-006](US-ANA-006/)
+- [US-ANA-001](user-stories/US-ANA-001/)
+- [US-ANA-002](user-stories/US-ANA-002/)
+- [US-ANA-003](user-stories/US-ANA-003/)
+- [US-ANA-004](user-stories/US-ANA-004/)
+- [US-ANA-005](user-stories/US-ANA-005/)
+- [US-ANA-006](user-stories/US-ANA-006/)
 
 ## Requirements (6)
 - [RF-ANA-001-dashboard-progreso](requirements/RF-ANA-001-dashboard-progreso.md)

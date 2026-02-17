@@ -22,7 +22,7 @@
 - RF-PAR-003: Parent Notification Preferences
 
 ### User Stories
-- [US-NOT-001c: Preferences Management](../../EXT-003-notificaciones/historias-usuario/US-NOT-001c-preferences-management.md)
+- [US-NOT-001c: Preferences Management](../../EXT-003-notificaciones/user-stories/US-NOT-001c-preferences-management.md)
 
 ---
 

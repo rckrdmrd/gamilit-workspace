@@ -22,8 +22,8 @@
 - RF-PAR-002: Parent Alert Templates
 
 ### User Stories
-- [US-PARENT-002: Low Performance Alert](../historias-usuario/US-PARENT-002-low-performance-alert.md)
-- [US-PARENT-003: Achievement Notification](../historias-usuario/US-PARENT-003-achievement-notification.md)
+- [US-PARENT-002: Low Performance Alert](../user-stories/US-PARENT-002/US-PARENT-002-low-performance-alert.md)
+- [US-PARENT-003: Achievement Notification](../user-stories/US-PARENT-003/US-PARENT-003-achievement-notification.md)
 
 ---
 

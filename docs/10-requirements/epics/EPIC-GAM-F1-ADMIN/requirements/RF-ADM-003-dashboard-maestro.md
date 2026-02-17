@@ -29,11 +29,11 @@ updated_date: "2026-01-20"
 ## Referencias
 
 ### Especificacion Tecnica
-- [ET-ADM-003: Dashboard de Maestro](../especificaciones/ET-ADM-003-dashboard-maestro.md)
+- [ET-ADM-003: Dashboard de Maestro](../specifications/ET-ADM-003-dashboard-maestro.md)
 
 ### User Stories Relacionadas
-- [US-ADM-003: Dashboard de Maestro](../historias-usuario/US-ADM-003-dashboard-maestro.md) - 8 SP
-- [US-ADM-007: Vista de Actividad de Aula](../historias-usuario/US-ADM-007-vista-actividad-aula.md) - 6 SP
+- [US-ADM-003: Dashboard de Maestro](../user-stories/US-ADM-003/US-ADM-003-dashboard-maestro.md) - 8 SP
+- [US-ADM-007: Vista de Actividad de Aula](../user-stories/US-ADM-007/US-ADM-007-vista-actividad-aula.md) - 6 SP
 
 ### Implementacion
 - **Backend:** `teacher` module - TeacherDashboardController, TeacherService

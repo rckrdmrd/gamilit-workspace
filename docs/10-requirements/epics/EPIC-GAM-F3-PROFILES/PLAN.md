@@ -1,6 +1,6 @@
 # Plan de Desarrollo: EPIC-GAM-F3-PROFILES
 
-**Version:** 1.0.0 | **Fecha:** 2026-02-10
+**Version:** 1.2.0 | **Fecha:** 2026-02-17
 **Epica:** [EPIC.md](./EPIC.md)
 **SP Total:** 35
 **Estado:** Completado
@@ -34,6 +34,7 @@
 | Upload de archivos maliciosos | Media | Alto | Validacion MIME, antivirus scan, size limits |
 | Privacidad de perfiles menores | Alta | Alto | Privacidad por defecto, control parental |
 | Customizacion excesiva del dashboard | Baja | Bajo | Widgets predefinidos, layout limitado |
+
 
 ---
 

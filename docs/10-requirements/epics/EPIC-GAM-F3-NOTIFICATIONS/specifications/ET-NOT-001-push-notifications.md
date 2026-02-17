@@ -22,7 +22,7 @@
 - RF-NOT-001: Push Notification System
 
 ### User Stories
-- [US-NOT-001a: WebSocket Infrastructure](../historias-usuario/US-NOT-001a-websocket-infrastructure.md)
+- [US-NOT-001a: WebSocket Infrastructure](../user-stories/US-NOT-001a/US-NOT-001a-websocket-infrastructure.md)
 
 ---
 

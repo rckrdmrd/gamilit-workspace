@@ -22,7 +22,7 @@
 - RF-PP-004: Parent-Teacher Messaging
 
 ### User Stories
-- [US-PP-003: Notificaciones](../historias-usuario/US-PP-003-notificaciones.md)
+- [US-PP-003: Notificaciones](../user-stories/US-PP-003/US-PP-003-notificaciones.md)
 
 ---
 

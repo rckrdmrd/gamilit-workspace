@@ -6,9 +6,9 @@
 - [EPIC.md](EPIC.md)
 
 ### User Stories
-- [US-NOT-001a-websocket-infrastructure](US-NOT-001a/)
-- [US-NOT-001b-notification-center](US-NOT-001b/)
-- [US-NOT-001c-preferences-management](US-NOT-001c/)
+- [US-NOT-001a-websocket-infrastructure](user-stories/US-NOT-001a/)
+- [US-NOT-001b-notification-center](user-stories/US-NOT-001b/)
+- [US-NOT-001c-preferences-management](user-stories/US-NOT-001c/)
 
 ### Requirements
 - [_MAP](requirements/_MAP.md)

@@ -22,7 +22,7 @@
 ### Requerimiento Funcional
 
 📘 **Documento RF:**
-- [RF-EDU-001: Mecánicas de Ejercicios](../../01-requerimientos/03-contenido-educativo/RF-EDU-001-mecanicas-ejercicios.md)
+- [RF-EDU-001: Mecánicas de Ejercicios](../requirements/RF-EDU-001-mecanicas-ejercicios.md)
 
 ### Implementación DDL
 

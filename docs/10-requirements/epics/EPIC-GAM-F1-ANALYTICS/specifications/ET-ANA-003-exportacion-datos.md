@@ -18,7 +18,7 @@
 
 ## Requerimiento Padre
 
-- [RF-ANA-003: Reportes para Docentes y Administradores](../requerimientos/RF-ANA-003-reportes-docente.md)
+- [RF-ANA-003: Reportes para Docentes y Administradores](../requirements/RF-ANA-003-reportes-docente.md)
 
 ---
 

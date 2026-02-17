@@ -42,7 +42,7 @@
 - RF-LTI-004: Platform Configuration Management
 
 ### User Stories
-- [US-LTI-004: Platform Configuration UI](../historias-usuario/US-LTI-004-platform-config.md)
+- [US-LTI-004: Platform Configuration UI](../user-stories/US-LTI-004/US-LTI-004-platform-config.md)
 
 ### Estandar
 - IMS Global LTI 1.3 - Platform Registration

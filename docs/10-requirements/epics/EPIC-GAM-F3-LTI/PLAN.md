@@ -1,6 +1,6 @@
 # Plan de Desarrollo: EPIC-GAM-F3-LTI
 
-**Version:** 1.0.0 | **Fecha:** 2026-02-10
+**Version:** 1.2.0 | **Fecha:** 2026-02-17
 **Epica:** [EPIC.md](./EPIC.md)
 **SP Total:** 40
 **Estado:** Backlog (40% implementado)
@@ -33,6 +33,7 @@
 | OIDC token security | Media | Alto | RSA-256, state+nonce CSRF, httpOnly cookies |
 | Grade passback reliability | Media | Alto | Retry automatico, queue persistente, audit log |
 | Dependencia de contratos enterprise | Alta | Alto | Feature flag, deploy independiente |
+
 
 ---
 

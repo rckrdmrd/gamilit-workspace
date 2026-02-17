@@ -1,49 +1,24 @@
-# User Stories — MOVIDAS (ADR-0020)
+# User Stories - Movidas (Legacy)
 
-> Las User Stories de este proyecto han sido co-localizadas con sus EPICs.
+> Este archivo se conserva como puente historico.  
+> Las user stories ya no se gestionan en esta carpeta.
 
-**ADR:** [ADR-0020](../../90-adr/ADR-0020-jerarquia-anidada-work-items.md)
-**Fecha de migracion:** 2026-02-07
+## Regla vigente
 
-## Nueva ubicacion
+Las US viven co-localizadas con su EPIC y su estructura de `user-stories/`.
 
-Las US ahora viven dentro de su EPIC correspondiente:
+## Referencias canonicas
 
-```
-epics/EPIC-GAM-{NAME}/US-GAM-*.md
-```
+- ADR de migracion jerarquica: [ADR-034](../../90-adr/ADR-034-jerarquia-anidada-profunda.md)
+- Indice general de epicas: [../epics/_INDEX.md](../epics/_INDEX.md)
+- Mapa de requirements: [../README.md](../README.md)
 
-### Mapeo completo
+## Ubicaciones de legacy wave tecnica
 
-| US ID | Nueva ubicacion |
-|-------|-----------------|
-| US-GAM-ANALYTICS-01 | [epics/EPIC-GAM-BACKEND/US-GAM-ANALYTICS-01.md](../epics/EPIC-GAM-BACKEND/US-GAM-ANALYTICS-01.md) |
-| US-GAM-ANL-01 | [epics/EPIC-GAM-BACKEND/US-GAM-ANL-01.md](../epics/EPIC-GAM-BACKEND/US-GAM-ANL-01.md) |
-| US-GAM-CLASSROOM-01 | [epics/EPIC-GAM-BACKEND/US-GAM-CLASSROOM-01.md](../epics/EPIC-GAM-BACKEND/US-GAM-CLASSROOM-01.md) |
-| US-GAM-CONTENT-01 | [epics/EPIC-GAM-BACKEND/US-GAM-CONTENT-01.md](../epics/EPIC-GAM-BACKEND/US-GAM-CONTENT-01.md) |
-| US-GAM-EDU-01 | [epics/EPIC-GAM-BACKEND/US-GAM-EDU-01.md](../epics/EPIC-GAM-BACKEND/US-GAM-EDU-01.md) |
-| US-GAM-EDU-02 | [epics/EPIC-GAM-BACKEND/US-GAM-EDU-02.md](../epics/EPIC-GAM-BACKEND/US-GAM-EDU-02.md) |
-| US-GAM-GAM-01 | [epics/EPIC-GAM-BACKEND/US-GAM-GAM-01.md](../epics/EPIC-GAM-BACKEND/US-GAM-GAM-01.md) |
-| US-GAM-GAM-02 | [epics/EPIC-GAM-BACKEND/US-GAM-GAM-02.md](../epics/EPIC-GAM-BACKEND/US-GAM-GAM-02.md) |
-| US-GAM-GAMIFICATION-01 | [epics/EPIC-GAM-BACKEND/US-GAM-GAMIFICATION-01.md](../epics/EPIC-GAM-BACKEND/US-GAM-GAMIFICATION-01.md) |
-| US-GAM-GAMIFICATION-02 | [epics/EPIC-GAM-BACKEND/US-GAM-GAMIFICATION-02.md](../epics/EPIC-GAM-BACKEND/US-GAM-GAMIFICATION-02.md) |
-| US-GAM-GAMIFICATION-03 | [epics/EPIC-GAM-BACKEND/US-GAM-GAMIFICATION-03.md](../epics/EPIC-GAM-BACKEND/US-GAM-GAMIFICATION-03.md) |
-| US-GAM-MUL-01 | [epics/EPIC-GAM-BACKEND/US-GAM-MUL-01.md](../epics/EPIC-GAM-BACKEND/US-GAM-MUL-01.md) |
-| US-GAM-RT-01 | [epics/EPIC-GAM-BACKEND/US-GAM-RT-01.md](../epics/EPIC-GAM-BACKEND/US-GAM-RT-01.md) |
-| US-GAM-TEACHER-01 | [epics/EPIC-GAM-BACKEND/US-GAM-TEACHER-01.md](../epics/EPIC-GAM-BACKEND/US-GAM-TEACHER-01.md) |
-| US-GAM-ACS-01 | [epics/EPIC-GAM-FRONTEND/US-GAM-ACS-01.md](../epics/EPIC-GAM-FRONTEND/US-GAM-ACS-01.md) |
-| US-GAM-ADM-01 | [epics/EPIC-GAM-FRONTEND/US-GAM-ADM-01.md](../epics/EPIC-GAM-FRONTEND/US-GAM-ADM-01.md) |
-| US-GAM-EXERCISES-01 | [epics/EPIC-GAM-FRONTEND/US-GAM-EXERCISES-01.md](../epics/EPIC-GAM-FRONTEND/US-GAM-EXERCISES-01.md) |
-| US-GAM-EXERCISES-02 | [epics/EPIC-GAM-FRONTEND/US-GAM-EXERCISES-02.md](../epics/EPIC-GAM-FRONTEND/US-GAM-EXERCISES-02.md) |
-| US-GAM-EXERCISES-03 | [epics/EPIC-GAM-FRONTEND/US-GAM-EXERCISES-03.md](../epics/EPIC-GAM-FRONTEND/US-GAM-EXERCISES-03.md) |
-| US-GAM-EXERCISES-04 | [epics/EPIC-GAM-FRONTEND/US-GAM-EXERCISES-04.md](../epics/EPIC-GAM-FRONTEND/US-GAM-EXERCISES-04.md) |
-| US-GAM-EXERCISES-05 | [epics/EPIC-GAM-FRONTEND/US-GAM-EXERCISES-05.md](../epics/EPIC-GAM-FRONTEND/US-GAM-EXERCISES-05.md) |
-| US-GAM-LEADERBOARD-01 | [epics/EPIC-GAM-FRONTEND/US-GAM-LEADERBOARD-01.md](../epics/EPIC-GAM-FRONTEND/US-GAM-LEADERBOARD-01.md) |
-| US-GAM-PAR-01 | [epics/EPIC-GAM-FRONTEND/US-GAM-PAR-01.md](../epics/EPIC-GAM-FRONTEND/US-GAM-PAR-01.md) |
-| US-GAM-PARENT-01 | [epics/EPIC-GAM-FRONTEND/US-GAM-PARENT-01.md](../epics/EPIC-GAM-FRONTEND/US-GAM-PARENT-01.md) |
-| US-GAM-SOCIAL-01 | [epics/EPIC-GAM-FRONTEND/US-GAM-SOCIAL-01.md](../epics/EPIC-GAM-FRONTEND/US-GAM-SOCIAL-01.md) |
-| US-GAM-STD-01 | [epics/EPIC-GAM-FRONTEND/US-GAM-STD-01.md](../epics/EPIC-GAM-FRONTEND/US-GAM-STD-01.md) |
-| US-GAM-TCH-01 | [epics/EPIC-GAM-FRONTEND/US-GAM-TCH-01.md](../epics/EPIC-GAM-FRONTEND/US-GAM-TCH-01.md) |
+- EPIC backend (wave 3 tecnica): [../epics/_wave-3-technical/EPIC-GAM-BACKEND/_INDEX.md](../epics/_wave-3-technical/EPIC-GAM-BACKEND/_INDEX.md)
+- EPIC frontend (wave 3 tecnica): [../epics/_wave-3-technical/EPIC-GAM-FRONTEND/EPIC.md](../epics/_wave-3-technical/EPIC-GAM-FRONTEND/EPIC.md)
+- Catalogo bridge de user stories (wave 3 tecnica): [../epics/_wave-3-technical/user-stories/README.md](../epics/_wave-3-technical/user-stories/README.md)
 
----
-*Migracion ADR-0020 — 2026-02-07*
+## Nota
+
+Si una US legacy no aparece en su ruta historica, buscar primero en el indice de su EPIC.

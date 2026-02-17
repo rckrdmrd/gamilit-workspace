@@ -22,7 +22,7 @@
 - RF-PEER-003: ML Coins Betting System
 
 ### User Stories
-- [US-PEER-003: Scoring and Wagering](../historias-usuario/US-PEER-003-scoring-wagering.md)
+- [US-PEER-003: Scoring and Wagering](../user-stories/US-PEER-003/US-PEER-003-scoring-wagering.md)
 
 ---
 

@@ -19,10 +19,10 @@
 ## Referencias
 
 ### Requerimiento Funcional
-- [RF-ADM-004: Asignacion de Modulos](../requerimientos/RF-ADM-004-asignacion-modulos.md)
+- [RF-ADM-004: Asignacion de Modulos](../requirements/RF-ADM-004-asignacion-modulos.md)
 
 ### User Stories
-- [US-ADM-004: Asignacion Basica de Modulos](../historias-usuario/US-ADM-004-asignacion-modulos.md)
+- [US-ADM-004: Asignacion Basica de Modulos](../user-stories/US-ADM-004/US-ADM-004-asignacion-modulos.md)
 
 ### Dependencias
 - EAI-002: Modulos y actividades deben existir como contenido

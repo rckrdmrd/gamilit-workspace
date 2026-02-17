@@ -6,11 +6,11 @@
 - [EPIC.md](EPIC.md)
 
 ### User Stories
-- [US-REP-001-analytics-profesor](US-REP-001/)
-- [US-REP-002-analytics-admin](US-REP-002/)
-- [US-REP-003-analytics-predictivo](US-REP-003/)
-- [US-REP-004-data-warehouse-etl](US-REP-004/)
-- [US-REP-005-visualizaciones-avanzadas](US-REP-005/)
+- [US-REP-001-analytics-profesor](user-stories/US-REP-001/)
+- [US-REP-002-analytics-admin](user-stories/US-REP-002/)
+- [US-REP-003-analytics-predictivo](user-stories/US-REP-003/)
+- [US-REP-004-data-warehouse-etl](user-stories/US-REP-004/)
+- [US-REP-005-visualizaciones-avanzadas](user-stories/US-REP-005/)
 
 ### Requirements
 - [_MAP](requirements/_MAP.md)

@@ -92,9 +92,9 @@ updated_date: "2026-01-04"
 ### Documentos Relacionados
 
 - [RF-GAM-001: Sistema de Achievements](./RF-GAM-001-achievements.md) - Recompensas que otorgan ML Coins
-- [RF-PRG-001: Tracking de Progreso](../04-progreso-seguimiento/RF-PRG-001-tracking-progreso.md) - Estados de intentos
-- [RF-EDU-001: Mecánicas de Ejercicios](../03-contenido-educativo/RF-EDU-001-mecanicas-ejercicios.md) - Ejercicios donde se usan
-- [MAPEO: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-REQUERIMIENTOS-IMPLEMENTACION.md#módulo-2-gamificación)
+- [RF-PRG-001: Tracking de Progreso](../../EPIC-GAM-F1-ANALYTICS/requirements/RF-ANA-001-dashboard-progreso.md) - Estados de intentos
+- [RF-EDU-001: Mecánicas de Ejercicios](../../EPIC-GAM-F1-EXERCISES/requirements/RF-EDU-001-mecanicas-ejercicios.md) - Ejercicios donde se usan
+- [MAPEO: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-requirements-IMPLEMENTACION.md#módulo-2-gamificación)
 
 ---
 
@@ -945,8 +945,8 @@ LIMIT 20;
 
 - [RF-GAM-001: Sistema de Achievements](./RF-GAM-001-achievements.md) - Fuente de ML Coins
 - [RF-GAM-003: Sistema de Rangos Maya](./RF-GAM-003-rangos-maya.md) - Desbloqueables con XP
-- [RF-PRG-001: Tracking de Progreso](../04-progreso-seguimiento/RF-PRG-001-tracking-progreso.md) - Estados de intentos
-- [RF-EDU-001: Mecánicas de Ejercicios](../03-contenido-educativo/RF-EDU-001-mecanicas-ejercicios.md) - Ejercicios donde se aplican
+- [RF-PRG-001: Tracking de Progreso](../../EPIC-GAM-F1-ANALYTICS/requirements/RF-ANA-001-dashboard-progreso.md) - Estados de intentos
+- [RF-EDU-001: Mecánicas de Ejercicios](../../EPIC-GAM-F1-EXERCISES/requirements/RF-EDU-001-mecanicas-ejercicios.md) - Ejercicios donde se aplican
 
 ### ADRs
 

@@ -23,7 +23,7 @@
 ### Requerimiento Funcional
 
 📘 **Implementa:**
-- [RF-GAM-003: Sistema de Rangos Maya](../../01-requerimientos/02-gamificacion/RF-GAM-003-rangos-maya.md)
+- [RF-GAM-003: Sistema de Rangos Maya](../requirements/RF-GAM-003-rangos-maya.md)
 
 ### Implementación DDL
 
@@ -75,8 +75,8 @@
 ### Documentos Relacionados
 
 - [ET-GAM-001: Sistema de Achievements](./ET-GAM-001-achievements.md) - Achievement `rank_promotion`
-- [ET-NOT-001: Tipos de Notificaciones](../06-notificaciones/ET-NOT-001-tipos-notificaciones.md) - Notificación `rank_up`
-- [RF-PRG-001: Tracking de Progreso](../../01-requerimientos/04-progreso-seguimiento/RF-PRG-001-estados-progreso.md) - Acumulación de XP
+- [ET-NOT-001: Tipos de Notificaciones](../../EPIC-GAM-F3-NOTIFICATIONS/specifications/ET-NOT-001-push-notifications.md) - Notificación `rank_up`
+- [RF-PRG-001: Tracking de Progreso](../../EPIC-GAM-F1-ANALYTICS/requirements/RF-ANA-001-dashboard-progreso.md) - Acumulación de XP
 
 ---
 
@@ -92,9 +92,9 @@ El **Sistema de Rangos Maya** implementa una progresión jerárquica basada en X
 4. **Halach Uinic** (1,500-1,899 XP) - Hombre verdadero
 5. **K'uk'ulkan** (1,900+ XP) - Serpiente emplumada (máximo)
 
-> **Nota v2.3.0:** Umbral K'uk'ulkan ajustado de 2,250 a 1,900 XP para ser alcanzable completando Módulos 1-3 (1,950 XP disponibles). Ver [DocumentoDeDiseño v6.5](../../../00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md).
+> **Nota v2.3.0:** Umbral K'uk'ulkan ajustado de 2,250 a 1,900 XP para ser alcanzable completando Módulos 1-3 (1,950 XP disponibles). Ver [RANGOS-MAYA](../../../../20-architecture/gamificacion/RANGOS-MAYA.md).
 >
-> **Migracion:** Para detalles tecnicos de la migracion v2.0 → v2.1, ver [MIGRACION-MAYA-RANKS-v2.1.md](../../../../90-transversal/migraciones/MIGRACION-MAYA-RANKS-v2.1.md).
+> **Migracion:** Para detalles técnicos de normalización y trazabilidad documental, ver [BACKLOG-NORMALIZACION-FASE2](../../../../../orchestration/referencias/BACKLOG-NORMALIZACION-FASE2.md).
 
 ### Características Técnicas
 

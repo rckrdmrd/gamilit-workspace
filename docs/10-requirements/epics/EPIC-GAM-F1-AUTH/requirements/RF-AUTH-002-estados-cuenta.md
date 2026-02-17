@@ -66,7 +66,7 @@ updated_date: "2026-01-04"
   - `apps/frontend/src/components/admin/SuspendUserModal.tsx`
 
 ### Mapeo Completo
-📊 [Ver mapeo completo: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-REQUERIMIENTOS-IMPLEMENTACION.md#12-estados-de-cuenta-de-usuario)
+📊 [Ver mapeo completo: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-requirements-IMPLEMENTACION.md#12-estados-de-cuenta-de-usuario)
 
 ---
 
@@ -584,8 +584,8 @@ test('Banned user cannot login', async () => {
 
 ### Documentos Relacionados
 - 📄 [RF-AUTH-001: Sistema de Roles](./RF-AUTH-001-roles.md) - Estados interactúan con roles
-- 📄 [RF-NOT-001: Tipos de Notificaciones](../../06-notificaciones/RF-NOT-001-tipos-notificaciones.md) - Notificaciones de cambio de estado
-- 📄 [RF-AUD-001: Registro de Acciones](../../08-auditoria-configuracion/RF-AUD-001-registro-acciones.md) - Auditoría de cambios
+- 📄 [RF-NOT-001: Tipos de Notificaciones](../../EPIC-GAM-F3-NOTIFICATIONS/requirements/RF-NOT-001a-websocket-infrastructure.md) - Notificaciones de cambio de estado
+- 📄 [RF-AUD-001: Registro de Acciones](../../EPIC-GAM-F3-ADMIN-EXTENDED/specifications/ET-ADM-005-audit-logs.md) - Auditoría de cambios
 
 ### Regulaciones
 - [GDPR Article 17: Right to Erasure](https://gdpr-info.eu/art-17-gdpr/) - Derecho al olvido

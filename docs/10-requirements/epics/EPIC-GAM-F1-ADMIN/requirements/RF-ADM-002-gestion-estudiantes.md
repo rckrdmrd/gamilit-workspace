@@ -29,11 +29,11 @@ updated_date: "2026-01-20"
 ## Referencias
 
 ### Especificacion Tecnica
-- [ET-ADM-002: Gestion de Estudiantes](../especificaciones/ET-ADM-002-gestion-estudiantes.md)
+- [ET-ADM-002: Gestion de Estudiantes](../specifications/ET-ADM-002-gestion-estudiantes.md)
 
 ### User Stories Relacionadas
-- [US-ADM-002: Gestion de Estudiantes en Aula](../historias-usuario/US-ADM-002-gestion-estudiantes-aula.md) - 10 SP
-- [US-ADM-005: Gestion de Grupos Basica](../historias-usuario/US-ADM-005-gestion-grupos.md) - 7 SP
+- [US-ADM-002: Gestion de Estudiantes en Aula](../user-stories/US-ADM-002/US-ADM-002-gestion-estudiantes-aula.md) - 10 SP
+- [US-ADM-005: Gestion de Grupos Basica](../user-stories/US-ADM-005/US-ADM-005-gestion-grupos.md) - 7 SP
 
 ### Implementacion
 - **Backend:** `teacher` module - TeacherClassroomController, TeacherStudentController

@@ -26,12 +26,12 @@ Esta especificación técnica define la implementación completa del sistema de 
 ## 🔗 Referencias
 
 **Implementa:**
-- [RF-EDU-003: Taxonomía de Bloom](../../01-requerimientos/03-contenido-educativo/RF-EDU-003-taxonomia-bloom.md)
+- [RF-EDU-003: Taxonomía de Bloom](../requirements/RF-EDU-003-taxonomia-bloom.md)
 
 **Relacionado con:**
 - [ET-EDU-001: Estructura de Ejercicios](./ET-EDU-001-estructura-ejercicios.md) - Ejercicios base
 - [ET-EDU-002: Niveles de Dificultad](./ET-EDU-002-niveles-dificultad.md) - Dimensión de dificultad complementaria
-- [ET-GAM-001: Sistema de Achievements](../02-gamificacion/ET-GAM-001-sistema-achievements.md) - Achievements cognitivos
+- [ET-GAM-001: Sistema de Achievements](../../EPIC-GAM-F1-GAMIFICATION/specifications/ET-GAM-001-achievements.md) - Achievements cognitivos
 
 ---
 
@@ -1273,7 +1273,7 @@ async getClassroomCognitiveDistribution(classroomId: string): Promise<any> {
 - Component: `apps/frontend/src/components/exercises/BloomLevelFilter.tsx`
 
 ### Documentación Relacionada
-- [RF-EDU-003: Taxonomía de Bloom](../../01-requerimientos/03-contenido-educativo/RF-EDU-003-taxonomia-bloom.md)
+- [RF-EDU-003: Taxonomía de Bloom](../requirements/RF-EDU-003-taxonomia-bloom.md)
 - [ET-EDU-001: Estructura de Ejercicios](./ET-EDU-001-estructura-ejercicios.md)
 - [ET-EDU-002: Niveles de Dificultad](./ET-EDU-002-niveles-dificultad.md)
 

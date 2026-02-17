@@ -201,7 +201,7 @@ La plataforma GAMILIT debe contar con un sistema centralizado de configuración 
 
 ## 🔗 Referencias
 
-- **Especificación Técnica:** [ET-SYS-001](../especificaciones/ET-SYS-001-database-schema.md)
+- **Especificación Técnica:** [ET-SYS-001](../specifications/ET-SYS-001-database-schema.md)
 - **Implementación:** apps/database/ddl/schemas/system_configuration/tables/01-system_settings.sql
 - **API:** apps/backend/src/modules/config/
 

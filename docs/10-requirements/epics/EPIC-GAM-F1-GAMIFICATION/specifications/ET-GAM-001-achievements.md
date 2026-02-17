@@ -23,7 +23,7 @@
 ### Requerimiento Funcional
 
 📘 **Documento RF:**
-- [RF-GAM-001: Sistema de Logros (Achievements)](../../01-requerimientos/02-gamificacion/RF-GAM-001-achievements.md)
+- [RF-GAM-001: Sistema de Logros (Achievements)](../requirements/RF-GAM-001-achievements.md)
 
 ### Implementación DDL
 

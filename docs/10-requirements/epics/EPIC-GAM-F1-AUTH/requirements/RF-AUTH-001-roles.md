@@ -57,7 +57,7 @@ updated_date: "2026-01-04"
   - `apps/frontend/src/components/admin/AdminPanel.tsx`
 
 ### Mapeo Completo
-📊 [Ver mapeo completo: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-REQUERIMIENTOS-IMPLEMENTACION.md#11-sistema-de-roles-de-usuario)
+📊 [Ver mapeo completo: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-requirements-IMPLEMENTACION.md#11-sistema-de-roles-de-usuario)
 
 ---
 
@@ -383,7 +383,7 @@ test('Super admin can access all data', async () => {
 
 ### Documentos Relacionados
 - 📄 [RF-AUTH-002: Estados de Cuenta de Usuario](./RF-AUTH-002-estados-cuenta.md)
-- 📄 [RF-SOC-001: Sistema de Aulas](../05-caracteristicas-sociales/RF-SOC-001-aulas-virtuales.md)
+- 📄 [RF-ADM-001: Gestión de Aulas](../../EPIC-GAM-F1-ADMIN/requirements/RF-ADM-001-gestion-aulas.md)
 - 📐 [ADR-003: Decisión de usar RLS en lugar de app-level auth](../../../../90-adr/ADR-003-rls-multitenancy.md)
 
 ### Estándares de Industria

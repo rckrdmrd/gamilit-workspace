@@ -18,7 +18,7 @@
 
 ## Requerimiento Padre
 
-- [RF-ANA-001: Visualizacion de Progreso del Estudiante](../requerimientos/RF-ANA-001-visualizacion-progreso.md)
+- [RF-ANA-001: Visualizacion de Progreso del Estudiante](../requirements/RF-ANA-001-visualizacion-progreso.md)
 
 ---
 

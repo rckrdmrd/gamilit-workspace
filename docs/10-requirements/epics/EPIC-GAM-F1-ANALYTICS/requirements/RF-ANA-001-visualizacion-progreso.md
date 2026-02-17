@@ -29,12 +29,12 @@ updated_date: "2026-01-20"
 ## Referencias
 
 ### Especificacion Tecnica
-- [ET-ANA-001: Dashboard del Estudiante](../especificaciones/ET-ANA-001-dashboard-estudiante.md)
+- [ET-ANA-001: Dashboard del Estudiante](../specifications/ET-ANA-001-dashboard-estudiante.md)
 
 ### Historias de Usuario Relacionadas
-- [US-ANA-001](../historias-usuario/US-ANA-001-dashboard-clase-basico.md) - Dashboard de Clase Basico
-- [US-ANA-002](../historias-usuario/US-ANA-002-tabla-estudiantes-metricas.md) - Tabla de Estudiantes con Metricas
-- [US-ANA-003](../historias-usuario/US-ANA-003-vista-estudiante-individual.md) - Vista de Estudiante Individual
+- [US-ANA-001](../user-stories/US-ANA-001/US-ANA-001-dashboard-clase-basico.md) - Dashboard de Clase Basico
+- [US-ANA-002](../user-stories/US-ANA-002/US-ANA-002-tabla-estudiantes-metricas.md) - Tabla de Estudiantes con Metricas
+- [US-ANA-003](../user-stories/US-ANA-003/US-ANA-003-vista-estudiante-individual.md) - Vista de Estudiante Individual
 
 ---
 

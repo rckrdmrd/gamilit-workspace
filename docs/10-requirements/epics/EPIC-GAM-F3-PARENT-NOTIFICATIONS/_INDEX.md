@@ -6,9 +6,9 @@
 - [EPIC.md](EPIC.md)
 
 ### User Stories
-- [US-PARENT-001-weekly-report](US-PARENT-001/)
-- [US-PARENT-002-low-performance-alert](US-PARENT-002/)
-- [US-PARENT-003-achievement-notification](US-PARENT-003/)
+- [US-PARENT-001-weekly-report](user-stories/US-PARENT-001/)
+- [US-PARENT-002-low-performance-alert](user-stories/US-PARENT-002/)
+- [US-PARENT-003-achievement-notification](user-stories/US-PARENT-003/)
 
 ### Requirements
 - [_MAP](requirements/_MAP.md)

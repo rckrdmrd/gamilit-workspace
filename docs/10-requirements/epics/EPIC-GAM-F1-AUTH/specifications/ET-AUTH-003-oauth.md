@@ -14,7 +14,7 @@
 ## 🔗 Referencias
 
 ### Requerimiento Funcional
-📄 [RF-AUTH-003: Proveedores de Autenticación OAuth](../../01-requerimientos/01-autenticacion-autorizacion/RF-AUTH-003-oauth.md)
+📄 [RF-AUTH-003: Proveedores de Autenticación OAuth](../requirements/RF-AUTH-003-oauth.md)
 
 ### Implementación DDL
 🗄️ **ENUM Principal:**
@@ -526,7 +526,7 @@ test('User can login with Google OAuth', async () => {
 ## 📚 Referencias
 
 ### Documentos Relacionados
-- 📄 [RF-AUTH-003: Proveedores OAuth](../../01-requerimientos/01-autenticacion-autorizacion/RF-AUTH-003-oauth.md)
+- 📄 [RF-AUTH-003: Proveedores OAuth](../requirements/RF-AUTH-003-oauth.md)
 
 ### Documentación Oficial
 - [OAuth 2.0 RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749)

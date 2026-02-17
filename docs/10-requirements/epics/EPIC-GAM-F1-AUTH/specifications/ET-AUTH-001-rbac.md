@@ -14,7 +14,7 @@
 ## 🔗 Referencias
 
 ### Requerimiento Funcional
-📄 [RF-AUTH-001: Sistema de Roles de Usuario](../../01-requerimientos/01-autenticacion-autorizacion/RF-AUTH-001-roles.md)
+📄 [RF-AUTH-001: Sistema de Roles de Usuario](../requirements/RF-AUTH-001-roles.md)
 
 ### Implementación DDL
 🗄️ **Archivos relacionados:**
@@ -48,7 +48,7 @@ CREATE TYPE auth_management.gamilit_role AS ENUM (
 7. `gamification_system.user_stats` → `user_stats_select_teacher`
 
 ### Mapeo Completo
-📊 [Ver en: Mapeo Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-REQUERIMIENTOS-IMPLEMENTACION.md#11-sistema-de-roles-de-usuario)
+📊 [Ver en: Mapeo Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-requirements-IMPLEMENTACION.md#11-sistema-de-roles-de-usuario)
 
 ---
 
@@ -572,8 +572,8 @@ describe('RBAC E2E', () => {
 ## 📚 Referencias
 
 ### Documentos Relacionados
-- 📄 [RF-AUTH-001: Sistema de Roles](../../01-requerimientos/01-autenticacion-autorizacion/RF-AUTH-001-roles.md)
-- 📄 [RF-AUTH-002: Estados de Cuenta](../../01-requerimientos/01-autenticacion-autorizacion/RF-AUTH-002-estados-cuenta.md)
+- 📄 [RF-AUTH-001: Sistema de Roles](../requirements/RF-AUTH-001-roles.md)
+- 📄 [RF-AUTH-002: Estados de Cuenta](../requirements/RF-AUTH-002-estados-cuenta.md)
 - 📐 [ADR-003: Row Level Security](../adr/ADR-003-row-level-security.md)
 
 ### Estándares

@@ -41,7 +41,7 @@
 - RF-PEER-001: Challenge Creation and Matchmaking
 
 ### User Stories
-- [US-PEER-001: Challenge Creation and Matching](../historias-usuario/US-PEER-001-challenge-creation.md)
+- [US-PEER-001: Challenge Creation and Matching](../user-stories/US-PEER-001/US-PEER-001-challenge-creation.md)
 
 ---
 

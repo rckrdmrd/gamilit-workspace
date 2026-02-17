@@ -23,16 +23,16 @@
 ### Documentos Relacionados
 
 - [ET-EDU-001: Mecánicas de Ejercicios](./ET-EDU-001-mecanicas-ejercicios.md) - Documento padre
-- [RF-EDU-001: Requerimientos de Mecánicas](../../requerimientos/RF-EDU-001-mecanicas-ejercicios.md) - Formatos DTO
-- [HANDOFF-FE-059-TO-DB](../../../../orchestration/HANDOFF-FE-059-TO-DB.md) - Contexto de implementación
-- [SQL-SPECS-NUEVOS-VALIDADORES-FE-059](../../../../orchestration/SQL-SPECS-NUEVOS-VALIDADORES-FE-059.md) - Especificaciones SQL detalladas
+- [RF-EDU-001: Requerimientos de Mecánicas](../requirements/RF-EDU-001-mecanicas-ejercicios.md) - Formatos DTO
+- [DATOS-GAMIFICACION](../../../../20-architecture/DATOS-GAMIFICACION.md) - Contexto de implementación
+- [COHERENCE-ENTITIES-DDL](../../../../20-architecture/COHERENCE-ENTITIES-DDL.md) - Trazabilidad técnica relacionada
 
 ### Implementación
 
 - **Funciones SQL:** `apps/database/ddl/schemas/educational_content/functions/`
 - **Configuración:** `apps/database/seeds/prod/educational_content/10-exercise_validation_config.sql`
 - **Testing Seeds:** `apps/database/seeds/dev/educational_content/10-test-nuevos-validadores-FE-059.sql`
-- **Tareas:** DB-117 (creación validadores), DB-123 (configuraciones), FE-059 (especificaciones)
+- **Tareas:** DB-117 (creación validadores), DB-123 (configuraciones), FE-059 (specifications)
 
 ---
 
@@ -660,9 +660,9 @@ CREATE TABLE educational_content.exercise_validation_audit (
 
 ## 🔗 Referencias Adicionales
 
-- [Documento de Diseño v6.1](../../../../00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md) - Diseño pedagógico original
-- [REPORTE-VALIDACION-EXHAUSTIVA-FE-059](../../../../orchestration/database/DB-123/REPORTE-VALIDACION-EXHAUSTIVA-FE-059.md) - Reporte de validación pre-implementación
-- [02-PLAN-COMPLETO-CON-DOCUMENTACION](../../../../orchestration/database/DB-123/02-PLAN-COMPLETO-CON-DOCUMENTACION.md) - Plan de implementación DB-123
+- [MECANICAS-GAMIFICACION-V6](../../../../20-architecture/MECANICAS-GAMIFICACION-V6.md) - Diseño pedagógico y mecánicas
+- [BACKLOG-NORMALIZACION-FASE2](../../../../../orchestration/referencias/BACKLOG-NORMALIZACION-FASE2.md) - Registro de remediación documental
+- [PROXIMA-ACCION](../../../../../orchestration/PROXIMA-ACCION.md) - Estado de ejecución y validación
 
 ---
 

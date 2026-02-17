@@ -603,7 +603,7 @@ completed_date: "2025-11-24"
 ## Referencias
 
 - Epica: [EXT-002 Admin Extendido](../README.md)
-- Arquitectura: [ET-EXT-002-ARQUITECTURA-TECNICA.md](../especificaciones/ET-EXT-002-ARQUITECTURA-TECNICA.md)
+- Arquitectura: [ET-EXT-002-ARQUITECTURA-TECNICA.md](../specifications/ET-EXT-002-ARQUITECTURA-TECNICA.md)
 - Best Practices: [ADMIN-PORTAL-BEST-PRACTICES.md](../guias/ADMIN-PORTAL-BEST-PRACTICES.md)
 - API Reference: Swagger docs en `/api/docs`
 

@@ -43,7 +43,7 @@
 - RF-WL-001: Branding personalizado
 
 ### User Stories
-- [US-WL-002: Logo and Colors Upload](../historias-usuario/US-WL-002-logo-colors.md)
+- [US-WL-002: Logo and Colors Upload](../user-stories/US-WL-002/US-WL-002-logo-colors.md)
 
 ### Especificaciones Relacionadas
 - [ET-WL-001: Theming System](./ET-WL-001-theming.md)

@@ -6,12 +6,12 @@
 - [EPIC.md](EPIC.md)
 
 ### User Stories
-- [US-GAM-010-sistema-amigos](US-GAM-010/)
-- [US-GAM-011-multiplicador-mlcoins](US-GAM-011/)
-- [US-GAM-012-leaderboard-amigos](US-GAM-012/)
-- [US-GAM-013-sistema-gremios](US-GAM-013/)
-- [US-GAM-014-misiones-gremio](US-GAM-014/)
-- [US-GAM-015-gestion-miembros-gremio](US-GAM-015/)
+- [US-GAM-010-sistema-amigos](user-stories/US-GAM-010/)
+- [US-GAM-011-multiplicador-mlcoins](user-stories/US-GAM-011/)
+- [US-GAM-012-leaderboard-amigos](user-stories/US-GAM-012/)
+- [US-GAM-013-sistema-gremios](user-stories/US-GAM-013/)
+- [US-GAM-014-misiones-gremio](user-stories/US-GAM-014/)
+- [US-GAM-015-gestion-miembros-gremio](user-stories/US-GAM-015/)
 
 ### Requirements
 - [_MAP](requirements/_MAP.md)
@@ -31,9 +31,9 @@
 
 ### Tasks
 - [_MAP](tasks/_MAP.md)
-- [TASK-BE-GAM-002-003-friends-api](tasks/TASK-BE-GAM-002-003-friends-api.md)
-- [TASK-DB-GAM-003-005-tablas-amigos](tasks/TASK-DB-GAM-003-005-tablas-amigos.md)
-- [TASK-FE-GAM-002-003-friends-ui](tasks/TASK-FE-GAM-002-003-friends-ui.md)
+- [TASK-BE-GAM-002-003-friends-api](tasks/_archived/TASK-BE-GAM-002-003-friends-api.md)
+- [TASK-DB-GAM-003-005-tablas-amigos](tasks/_archived/TASK-DB-GAM-003-005-tablas-amigos.md)
+- [TASK-FE-GAM-002-003-friends-ui](tasks/_archived/TASK-FE-GAM-002-003-friends-ui.md)
 
 ### Traceability
 - [TRACEABILITY.yml](traceability/TRACEABILITY.yml)

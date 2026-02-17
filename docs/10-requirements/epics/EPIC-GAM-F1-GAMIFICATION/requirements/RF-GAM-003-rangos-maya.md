@@ -96,9 +96,9 @@ updated_date: "2026-01-04"
 ### Documentos Relacionados
 
 - [RF-GAM-001: Sistema de Achievements](./RF-GAM-001-achievements.md) - Achievement `rank_promotion`
-- [RF-PRG-001: Tracking de Progreso](../04-progreso-seguimiento/RF-PRG-001-tracking-progreso.md) - Acumulación de XP
-- [RF-NOT-001: Tipos de Notificaciones](../06-notificaciones/RF-NOT-001-tipos-notificaciones.md) - Notificación `rank_up`
-- [MAPEO: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-REQUERIMIENTOS-IMPLEMENTACION.md#módulo-2-gamificación)
+- [RF-PRG-001: Tracking de Progreso](../../EPIC-GAM-F1-ANALYTICS/requirements/RF-ANA-001-dashboard-progreso.md) - Acumulación de XP
+- [RF-NOT-001: Tipos de Notificaciones](../../EPIC-GAM-F3-NOTIFICATIONS/requirements/RF-NOT-001a-websocket-infrastructure.md) - Notificación `rank_up`
+- [MAPEO: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-requirements-IMPLEMENTACION.md#módulo-2-gamificación)
 
 ### ADRs
 
@@ -1084,8 +1084,8 @@ ORDER BY
 
 - [RF-GAM-001: Sistema de Achievements](./RF-GAM-001-achievements.md) - Achievement `rank_promotion`
 - [RF-GAM-002: Sistema de Comodines](./RF-GAM-002-comodines.md) - Comodines desbloqueados por rango
-- [RF-PRG-001: Tracking de Progreso](../04-progreso-seguimiento/RF-PRG-001-tracking-progreso.md) - Acumulación de XP
-- [RF-NOT-001: Tipos de Notificaciones](../06-notificaciones/RF-NOT-001-tipos-notificaciones.md) - Notificación `rank_up`
+- [RF-PRG-001: Tracking de Progreso](../../EPIC-GAM-F1-ANALYTICS/requirements/RF-ANA-001-dashboard-progreso.md) - Acumulación de XP
+- [RF-NOT-001: Tipos de Notificaciones](../../EPIC-GAM-F3-NOTIFICATIONS/requirements/RF-NOT-001a-websocket-infrastructure.md) - Notificación `rank_up`
 
 ### ADRs
 

@@ -6,9 +6,9 @@
 - [EPIC.md](EPIC.md)
 
 ### User Stories
-- [US-PEER-001-challenge-creation](US-PEER-001/)
-- [US-PEER-002-challenge-execution](US-PEER-002/)
-- [US-PEER-003-scoring-wagering](US-PEER-003/)
+- [US-PEER-001-challenge-creation](user-stories/US-PEER-001/)
+- [US-PEER-002-challenge-execution](user-stories/US-PEER-002/)
+- [US-PEER-003-scoring-wagering](user-stories/US-PEER-003/)
 
 ### Requirements
 - [_MAP](requirements/_MAP.md)

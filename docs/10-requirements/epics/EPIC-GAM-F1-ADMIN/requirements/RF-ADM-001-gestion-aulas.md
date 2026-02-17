@@ -29,11 +29,11 @@ updated_date: "2026-01-20"
 ## Referencias
 
 ### Especificacion Tecnica
-- [ET-ADM-001: Gestion de Aulas](../especificaciones/ET-ADM-001-gestion-aulas.md)
+- [ET-ADM-001: Gestion de Aulas](../specifications/ET-ADM-001-gestion-aulas.md)
 
 ### User Stories Relacionadas
-- [US-ADM-001: Gestion de Aulas (CRUD Basico)](../historias-usuario/US-ADM-001-gestion-aulas-crud.md) - 8 SP
-- [US-ADM-006: Configuracion Basica de Aula](../historias-usuario/US-ADM-006-configuracion-basica-aula.md) - 6 SP
+- [US-ADM-001: Gestion de Aulas (CRUD Basico)](../user-stories/US-ADM-001/US-ADM-001-gestion-aulas-crud.md) - 8 SP
+- [US-ADM-006: Configuracion Basica de Aula](../user-stories/US-ADM-006/US-ADM-006-configuracion-basica-aula.md) - 6 SP
 
 ### Implementacion
 - **Backend:** `teacher` module - TeacherClassroomController, ClassroomService

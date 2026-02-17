@@ -103,7 +103,7 @@ apps/frontend/src/features/social/
 
 ## Referencias
 
-- **US Padre:** [US-GAM-010](../historias-usuario/US-GAM-010-sistema-amigos.md)
+- **US Padre:** [US-GAM-010](../../user-stories/US-GAM-010/US-GAM-010-sistema-amigos.md)
 - **Design System:** Detective Theme
 
 ---

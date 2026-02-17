@@ -29,11 +29,11 @@ updated_date: "2026-01-20"
 ## Referencias
 
 ### Especificacion Tecnica
-- [ET-ANA-002: API de Metricas](../especificaciones/ET-ANA-002-api-metricas.md)
+- [ET-ANA-002: API de Metricas](../specifications/ET-ANA-002-api-metricas.md)
 
 ### Historias de Usuario Relacionadas
-- [US-ANA-005](../historias-usuario/US-ANA-005-tracking-actividad.md) - Tracking de Actividad
-- [US-ANA-006](../historias-usuario/US-ANA-006-identificacion-rezagados.md) - Identificacion de Estudiantes Rezagados
+- [US-ANA-005](../user-stories/US-ANA-005/US-ANA-005-tracking-actividad.md) - Tracking de Actividad
+- [US-ANA-006](../user-stories/US-ANA-006/US-ANA-006-identificacion-rezagados.md) - Identificacion de Estudiantes Rezagados
 
 ### Dependencias
 - EAI-003 (Gamificacion) - Genera los eventos de XP, logros, niveles

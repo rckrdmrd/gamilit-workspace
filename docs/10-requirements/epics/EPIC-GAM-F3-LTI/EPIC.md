@@ -4,7 +4,7 @@
 >
 > Esta epica esta **parcialmente implementada (40%)** y **NO forma parte del MVP actual**.
 > Razon: Depende de contratos enterprise.
-> Ver: [Fase 4: Backlog](../../04-fase-backlog/README.md)
+> Ver: [Fase 4: Backlog](../04-fase-backlog/README.md)
 
 **Version:** 2.0
 **Fecha de creacion:** 2025-11-07
@@ -142,10 +142,10 @@ apps/frontend/src/services/api/
 
 | ID | Historia | Esfuerzo | Prioridad | Estado |
 |----|----------|----------|-----------|--------|
-| [US-LTI-001](./historias-usuario/US-LTI-001-oidc-login.md) | OIDC Login Flow | 12h | P0 | Pendiente |
-| [US-LTI-002](./historias-usuario/US-LTI-002-grade-passback.md) | Grade Passback (AGS) | 10h | P1 | Parcial |
-| [US-LTI-003](./historias-usuario/US-LTI-003-deep-linking.md) | Deep Linking | 10h | P2 | Parcial |
-| [US-LTI-004](./historias-usuario/US-LTI-004-platform-config.md) | Platform Configuration UI | 8h | P1 | Parcial |
+| [US-LTI-001](./user-stories/US-LTI-001/US-LTI-001-oidc-login.md) | OIDC Login Flow | 12h | P0 | Pendiente |
+| [US-LTI-002](./user-stories/US-LTI-002/US-LTI-002-grade-passback.md) | Grade Passback (AGS) | 10h | P1 | Parcial |
+| [US-LTI-003](./user-stories/US-LTI-003/US-LTI-003-deep-linking.md) | Deep Linking | 10h | P2 | Parcial |
+| [US-LTI-004](./user-stories/US-LTI-004/US-LTI-004-platform-config.md) | Platform Configuration UI | 8h | P1 | Parcial |
 
 **Total:** 40 horas ($6,000 USD)
 
@@ -155,10 +155,10 @@ apps/frontend/src/services/api/
 
 | ID | Titulo | Completitud | Archivo |
 |----|--------|-------------|---------|
-| ET-LTI-001 | Grade Passback (AGS) | 60% | [Ver](./especificaciones/ET-LTI-001-grade-passback.md) |
-| ET-LTI-002 | Deep Linking | 25% | [Ver](./especificaciones/ET-LTI-002-deep-linking.md) |
-| ET-LTI-003 | Consumer Management | 70% | [Ver](./especificaciones/ET-LTI-003-consumer-management.md) |
-| ET-LTI-004 | Testing & Validation | 20% | [Ver](./especificaciones/ET-LTI-004-testing-validation.md) |
+| ET-LTI-001 | Grade Passback (AGS) | 60% | [Ver](./specifications/ET-LTI-001-grade-passback.md) |
+| ET-LTI-002 | Deep Linking | 25% | [Ver](./specifications/ET-LTI-002-deep-linking.md) |
+| ET-LTI-003 | Consumer Management | 70% | [Ver](./specifications/ET-LTI-003-consumer-management.md) |
+| ET-LTI-004 | Testing & Validation | 20% | [Ver](./specifications/ET-LTI-004-testing-validation.md) |
 
 ---
 
@@ -275,9 +275,9 @@ Para detalle completo de implementacion, ver:
 - [Moodle LTI Integration](https://docs.moodle.org/en/LTI_and_Moodle)
 
 ### Documentacion Interna
-- [ANALISIS-FEATURES-P3-ESTRATEGICAS.md](../../features/ANALISIS-FEATURES-P3-ESTRATEGICAS.md) - Especificacion completa
-- [FEATURES-PENDIENTES.md](../../features/FEATURES-PENDIENTES.md) - F-P2-019: LTI Integration
-- [RESUMEN-EJECUTIVO-DECISIONES-P3.md](../../features/RESUMEN-EJECUTIVO-DECISIONES-P3.md) - Business case
+- [ANALISIS-FEATURES-P3-ESTRATEGICAS.md](../features/ANALISIS-FEATURES-P3-ESTRATEGICAS.md) - Especificacion completa
+- [FEATURES-PENDIENTES.md](../features/FEATURES-PENDIENTES.md) - F-P2-019: LTI Integration
+- [RESUMEN-EJECUTIVO-DECISIONES-P3.md](../features/RESUMEN-EJECUTIVO-DECISIONES-P3.md) - Business case
 
 ---
 

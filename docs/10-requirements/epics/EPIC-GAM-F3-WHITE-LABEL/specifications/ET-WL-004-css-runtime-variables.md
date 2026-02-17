@@ -42,8 +42,8 @@
 - RF-WL-003: Temas personalizados
 
 ### User Stories
-- [US-WL-001: Branding Configuration](../historias-usuario/US-WL-001-branding-config.md)
-- [US-WL-002: Logo and Colors](../historias-usuario/US-WL-002-logo-colors.md)
+- [US-WL-001: Branding Configuration](../user-stories/US-WL-001/US-WL-001-branding-config.md)
+- [US-WL-002: Logo and Colors](../user-stories/US-WL-002/US-WL-002-logo-colors.md)
 
 ### Especificaciones Relacionadas
 - [ET-WL-001: Theming System](./ET-WL-001-theming.md)

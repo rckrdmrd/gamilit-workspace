@@ -23,7 +23,7 @@
 ### Requerimiento Funcional
 
 📘 **Documento RF:**
-- [RF-GAM-002: Sistema de Comodines (Power-ups)](../../01-requerimientos/02-gamificacion/RF-GAM-002-comodines.md)
+- [RF-GAM-002: Sistema de Comodines (Power-ups)](../requirements/RF-GAM-002-comodines.md)
 
 ### Implementación DDL
 

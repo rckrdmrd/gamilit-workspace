@@ -19,11 +19,11 @@
 ## Referencias
 
 ### Requerimiento Funcional
-- [RF-ADM-003: Dashboard de Maestro](../requerimientos/RF-ADM-003-dashboard-maestro.md)
+- [RF-ADM-003: Dashboard de Maestro](../requirements/RF-ADM-003-dashboard-maestro.md)
 
 ### User Stories
-- [US-ADM-003: Dashboard de Maestro](../historias-usuario/US-ADM-003-dashboard-maestro.md)
-- [US-ADM-007: Vista de Actividad de Aula](../historias-usuario/US-ADM-007-vista-actividad-aula.md)
+- [US-ADM-003: Dashboard de Maestro](../user-stories/US-ADM-003/US-ADM-003-dashboard-maestro.md)
+- [US-ADM-007: Vista de Actividad de Aula](../user-stories/US-ADM-007/US-ADM-007-vista-actividad-aula.md)
 
 ---
 

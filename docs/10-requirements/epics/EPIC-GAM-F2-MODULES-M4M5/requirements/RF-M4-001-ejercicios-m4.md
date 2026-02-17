@@ -55,8 +55,8 @@ El ejercicio `quiz_tiktok` es el unico de M4 con evaluacion automatica porque:
 
 ## Especificaciones Relacionadas
 
-- [ET-M4M5-001](../especificaciones/ET-M4M5-001-schema-bd.md)
-- [ET-M4M5-002](../especificaciones/ET-M4M5-002-backend-apis.md)
+- [ET-M4M5-001](../specifications/ET-M4M5-001-schema-bd.md)
+- [ET-M4M5-002](../specifications/ET-M4M5-002-backend-apis.md)
 
 ---
 

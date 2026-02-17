@@ -127,7 +127,7 @@ class AnalisisMemesAnswerDto extends BaseExerciseAnswerDto {
 
 ## Referencias
 
-- **US Padre:** [US-M4-001](../historias-usuario/US-M4-001-backend-dtos.md)
+- **US Padre:** [US-M4-001](../../user-stories/US-M4-001/US-M4-001-backend-dtos.md)
 - **Validador SQL:** `validate_module4_module5_answer()`
 - **Schema BD:** `educational_content.exercises`
 

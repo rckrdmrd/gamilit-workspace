@@ -19,11 +19,11 @@
 ## Referencias
 
 ### Requerimiento Funcional
-- [RF-ADM-001: Gestion de Aulas](../requerimientos/RF-ADM-001-gestion-aulas.md)
+- [RF-ADM-001: Gestion de Aulas](../requirements/RF-ADM-001-gestion-aulas.md)
 
 ### User Stories
-- [US-ADM-001: Gestion de Aulas (CRUD Basico)](../historias-usuario/US-ADM-001-gestion-aulas-crud.md)
-- [US-ADM-006: Configuracion Basica de Aula](../historias-usuario/US-ADM-006-configuracion-basica-aula.md)
+- [US-ADM-001: Gestion de Aulas (CRUD Basico)](../user-stories/US-ADM-001/US-ADM-001-gestion-aulas-crud.md)
+- [US-ADM-006: Configuracion Basica de Aula](../user-stories/US-ADM-006/US-ADM-006-configuracion-basica-aula.md)
 
 ---
 

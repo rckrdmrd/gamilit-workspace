@@ -42,7 +42,7 @@
 - RF-PAR-001: Weekly Progress Report Email
 
 ### User Stories
-- [US-PARENT-001: Weekly Progress Report](../historias-usuario/US-PARENT-001-weekly-report.md)
+- [US-PARENT-001: Weekly Progress Report](../user-stories/US-PARENT-001/US-PARENT-001-weekly-report.md)
 
 ---
 

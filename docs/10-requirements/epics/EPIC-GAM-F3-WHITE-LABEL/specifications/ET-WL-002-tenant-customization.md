@@ -41,7 +41,7 @@
 - RF-WL-003: Platform Name Customization
 
 ### User Stories
-- [US-WL-003: Platform Name Customization](../historias-usuario/US-WL-003-platform-name.md)
+- [US-WL-003: Platform Name Customization](../user-stories/US-WL-003/US-WL-003-platform-name.md)
 
 ---
 

@@ -29,11 +29,11 @@ updated_date: "2026-01-20"
 ## Referencias
 
 ### Especificacion Tecnica
-- [ET-ANA-001: Dashboard de Progreso](../especificaciones/ET-ANA-001-dashboard-progreso.md)
+- [ET-ANA-001: Dashboard de Progreso](../specifications/ET-ANA-001-dashboard-progreso.md)
 
 ### User Stories Relacionadas
-- [US-ANA-001: Dashboard de Clase Basico](../historias-usuario/US-ANA-001-dashboard-clase-basico.md)
-- [US-ANA-002: Tabla de Estudiantes con Metricas](../historias-usuario/US-ANA-002-tabla-estudiantes-metricas.md)
+- [US-ANA-001: Dashboard de Clase Basico](../user-stories/US-ANA-001/US-ANA-001-dashboard-clase-basico.md)
+- [US-ANA-002: Tabla de Estudiantes con Metricas](../user-stories/US-ANA-002/US-ANA-002-tabla-estudiantes-metricas.md)
 
 ### Implementacion
 - **Backend:** `apps/backend/src/modules/teacher-analytics/`

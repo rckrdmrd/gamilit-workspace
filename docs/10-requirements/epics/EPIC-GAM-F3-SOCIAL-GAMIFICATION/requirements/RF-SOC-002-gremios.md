@@ -51,9 +51,9 @@ Proporcionar a los estudiantes herramientas para:
 
 | ID | Titulo | SP | Prioridad |
 |----|--------|----|-----------|
-| **[US-GAM-013](../historias-usuario/US-GAM-013-sistema-gremios.md)** | Sistema de Gremios | 8 | P2 |
-| **[US-GAM-014](../historias-usuario/US-GAM-014-misiones-gremio.md)** | Misiones de Gremio | 8 | P2 |
-| **[US-GAM-015](../historias-usuario/US-GAM-015-gestion-miembros-gremio.md)** | Gestion de Miembros Gremio | 5 | P2 |
+| **[US-GAM-013](../user-stories/US-GAM-013/US-GAM-013-sistema-gremios.md)** | Sistema de Gremios | 8 | P2 |
+| **[US-GAM-014](../user-stories/US-GAM-014/US-GAM-014-misiones-gremio.md)** | Misiones de Gremio | 8 | P2 |
+| **[US-GAM-015](../user-stories/US-GAM-015/US-GAM-015-gestion-miembros-gremio.md)** | Gestion de Miembros Gremio | 5 | P2 |
 
 **Total:** 21 SP
 
@@ -465,7 +465,7 @@ Lider/Oficial → Seleccionar miembro
 
 ## Especificacion Tecnica Relacionada
 
-- **[ET-SOC-002](../especificaciones/ET-SOC-002-gremios.md)** - Diseno tecnico detallado
+- **[ET-SOC-002](../specifications/ET-SOC-002-gremios.md)** - Diseno tecnico detallado
 
 ---
 

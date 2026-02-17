@@ -29,11 +29,11 @@ updated_date: "2026-01-20"
 ## Referencias
 
 ### Especificacion Tecnica
-- [ET-ANA-003: Tracking y Alertas](../especificaciones/ET-ANA-003-tracking-alertas.md)
+- [ET-ANA-003: Tracking y Alertas](../specifications/ET-ANA-003-tracking-alertas.md)
 
 ### User Stories Relacionadas
-- [US-ANA-005: Tracking de Actividad](../historias-usuario/US-ANA-005-tracking-actividad.md)
-- [US-ANA-006: Identificacion de Estudiantes Rezagados](../historias-usuario/US-ANA-006-identificacion-rezagados.md)
+- [US-ANA-005: Tracking de Actividad](../user-stories/US-ANA-005/US-ANA-005-tracking-actividad.md)
+- [US-ANA-006: Identificacion de Estudiantes Rezagados](../user-stories/US-ANA-006/US-ANA-006-identificacion-rezagados.md)
 
 ### Implementacion
 - **Backend:** `apps/backend/src/modules/teacher-analytics/`

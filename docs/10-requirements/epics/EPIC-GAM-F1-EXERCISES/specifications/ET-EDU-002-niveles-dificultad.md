@@ -28,12 +28,12 @@ Esta especificación técnica define la implementación completa del sistema de 
 ## 🔗 Referencias
 
 **Implementa:**
-- [RF-EDU-002: Niveles de Dificultad](../../01-requerimientos/03-contenido-educativo/RF-EDU-002-niveles-dificultad.md)
+- [RF-EDU-002: Niveles de Dificultad](../requirements/RF-EDU-002-niveles-dificultad.md)
 
 **Relacionado con:**
 - [ET-EDU-001: Estructura de Ejercicios](./ET-EDU-001-estructura-ejercicios.md) - Ejercicios base
 - [ET-EDU-003: Taxonomía de Bloom](./ET-EDU-003-taxonomia-bloom.md) - Dimensión cognitiva complementaria
-- [ET-PRG-001: Sistema de Progreso](../04-progreso-seguimiento/ET-PRG-001-sistema-progreso.md) - Tracking de avance
+- [ET-PRG-001: Sistema de Progreso](../../EPIC-GAM-F1-ANALYTICS/specifications/ET-ANA-006-dashboard-progreso.md) - Tracking de avance
 
 ---
 
@@ -1365,7 +1365,7 @@ SELECT cron.schedule('refresh-difficulty-stats', '0 2 * * *',
 - Component: `apps/frontend/src/components/placement-test/PlacementTestFlow.tsx`
 
 ### Documentación Relacionada
-- [RF-EDU-002: Niveles de Dificultad](../../01-requerimientos/03-contenido-educativo/RF-EDU-002-niveles-dificultad.md)
+- [RF-EDU-002: Niveles de Dificultad](../requirements/RF-EDU-002-niveles-dificultad.md)
 - [ET-EDU-001: Estructura de Ejercicios](./ET-EDU-001-estructura-ejercicios.md)
 - [ET-EDU-003: Taxonomía de Bloom](./ET-EDU-003-taxonomia-bloom.md)
 

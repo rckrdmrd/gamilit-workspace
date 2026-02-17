@@ -306,11 +306,11 @@ system_configuration
 
 ## Referencias
 
-- **RF-SYS-001:** [Sistema de Configuracion Global](../requerimientos/RF-SYS-001-settings.md)
-- **RF-SYS-002:** [Feature Flags](../requerimientos/RF-SYS-002-feature-flags.md)
-- **RF-SYS-003:** [Notificaciones](../requerimientos/RF-SYS-003-notifications.md)
-- **US-SYS-001:** [Configuraciones](../historias-usuario/US-SYS-001-configuraciones.md)
-- **US-SYS-002:** [Feature Flags](../historias-usuario/US-SYS-002-feature-flags.md)
+- **RF-SYS-001:** [Sistema de Configuracion Global](../requirements/RF-SYS-001-settings.md)
+- **RF-SYS-002:** [Feature Flags](../requirements/RF-SYS-002-feature-flags.md)
+- **RF-SYS-003:** [Notificaciones](../requirements/RF-SYS-003-notifications.md)
+- **US-SYS-001:** [Configuraciones](../user-stories/US-SYS-001/US-SYS-001-configuraciones.md)
+- **US-SYS-002:** [Feature Flags](../user-stories/US-SYS-002/US-SYS-002-feature-flags.md)
 
 ---
 

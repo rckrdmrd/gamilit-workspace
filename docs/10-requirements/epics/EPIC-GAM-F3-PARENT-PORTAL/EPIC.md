@@ -4,7 +4,7 @@
 >
 > Esta épica está **parcialmente implementada (35%)** y **NO forma parte del MVP actual**.
 > Razón: Feature nice-to-have.
-> Ver: [Fase 4: Backlog](../../04-fase-backlog/README.md)
+> Ver: [Fase 4: Backlog](../04-fase-backlog/README.md)
 
 **Versión:** 1.0
 **Fecha de creación:** 2025-11-20
@@ -100,8 +100,8 @@ Los padres de familia actualmente no tienen visibilidad del progreso de sus hijo
 ## 🎯 Navegación
 
 **⬅️ Anterior:** [EXT-010: Parent Notifications](../EXT-010-parent-notifications/)
-**⬆️ Índice:** [Fase 3: Extensiones](../README.md)
-**📋 Backlog:** [Fase 4: Backlog](../../04-fase-backlog/README.md)
+**⬆️ Índice:** [Fase 3: Extensiones](../_INDEX.md)
+**📋 Backlog:** [Fase 4: Backlog](../04-fase-backlog/README.md)
 
 ---
 

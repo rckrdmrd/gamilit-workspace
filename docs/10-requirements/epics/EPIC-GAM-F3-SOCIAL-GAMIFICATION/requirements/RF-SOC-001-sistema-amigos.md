@@ -48,9 +48,9 @@ Proporcionar a los estudiantes herramientas para:
 
 | ID | Titulo | SP | Prioridad |
 |----|--------|----|-----------|
-| **[US-GAM-010](../historias-usuario/US-GAM-010-sistema-amigos.md)** | Sistema de Amigos | 8 | P1 |
-| **[US-GAM-011](../historias-usuario/US-GAM-011-multiplicador-mlcoins.md)** | Multiplicador ML Coins por Rango | 5 | P1 |
-| **[US-GAM-012](../historias-usuario/US-GAM-012-leaderboard-amigos.md)** | Leaderboard de Amigos | 5 | P1 |
+| **[US-GAM-010](../user-stories/US-GAM-010/US-GAM-010-sistema-amigos.md)** | Sistema de Amigos | 8 | P1 |
+| **[US-GAM-011](../user-stories/US-GAM-011/US-GAM-011-multiplicador-mlcoins.md)** | Multiplicador ML Coins por Rango | 5 | P1 |
+| **[US-GAM-012](../user-stories/US-GAM-012/US-GAM-012-leaderboard-amigos.md)** | Leaderboard de Amigos | 5 | P1 |
 
 **Total:** 18 SP
 
@@ -320,7 +320,7 @@ Estudiante completa ejercicio → Sistema calcula recompensa base
 
 ## Especificacion Tecnica Relacionada
 
-- **[ET-SOC-001](../especificaciones/ET-SOC-001-sistema-amigos.md)** - Diseno tecnico detallado
+- **[ET-SOC-001](../specifications/ET-SOC-001-sistema-amigos.md)** - Diseno tecnico detallado
 
 ---
 

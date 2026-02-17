@@ -64,9 +64,9 @@ updated_date: "2026-01-04"
 
 - [RF-EDU-001: Mecánicas de Ejercicios](./RF-EDU-001-mecanicas-ejercicios.md) - Ejercicios con dificultad variable
 - [RF-EDU-003: Taxonomía de Bloom](./RF-EDU-003-taxonomia-bloom.md) - Complejidad cognitiva
-- [RF-GAM-001: Sistema de XP](../02-gamificacion/RF-GAM-001-achievements.md) - XP por dificultad
-- [RF-PRG-001: Estados de Progreso](../04-progreso-seguimiento/RF-PRG-001-estados-progreso.md) - Desbloqueo progresivo
-- [MAPEO: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-REQUERIMIENTOS-IMPLEMENTACION.md#módulo-3-contenido-educativo)
+- [RF-GAM-001: Sistema de XP](../../EPIC-GAM-F1-GAMIFICATION/requirements/RF-GAM-001-achievements.md) - XP por dificultad
+- [RF-PRG-001: Estados de Progreso](../../EPIC-GAM-F1-ANALYTICS/requirements/RF-ANA-001-dashboard-progreso.md) - Desbloqueo progresivo
+- [MAPEO: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-requirements-IMPLEMENTACION.md#módulo-3-contenido-educativo)
 
 ---
 

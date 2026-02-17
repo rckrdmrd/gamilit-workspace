@@ -104,7 +104,7 @@ describe('Module 4 DTOs', () => {
 
 ## Referencias
 
-- **US Padre:** [US-M4-001](../historias-usuario/US-M4-001-backend-dtos.md)
+- **US Padre:** [US-M4-001](../../user-stories/US-M4-001/US-M4-001-backend-dtos.md)
 - **Tarea Backend:** [TASK-BE-M4-001](./TASK-BE-M4-001-dtos-m4.md)
 
 ---

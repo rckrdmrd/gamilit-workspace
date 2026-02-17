@@ -19,11 +19,11 @@
 ## Referencias
 
 ### Requerimiento Funcional
-- [RF-ADM-002: Gestion de Estudiantes](../requerimientos/RF-ADM-002-gestion-estudiantes.md)
+- [RF-ADM-002: Gestion de Estudiantes](../requirements/RF-ADM-002-gestion-estudiantes.md)
 
 ### User Stories
-- [US-ADM-002: Gestion de Estudiantes en Aula](../historias-usuario/US-ADM-002-gestion-estudiantes-aula.md)
-- [US-ADM-005: Gestion de Grupos Basica](../historias-usuario/US-ADM-005-gestion-grupos.md)
+- [US-ADM-002: Gestion de Estudiantes en Aula](../user-stories/US-ADM-002/US-ADM-002-gestion-estudiantes-aula.md)
+- [US-ADM-005: Gestion de Grupos Basica](../user-stories/US-ADM-005/US-ADM-005-gestion-grupos.md)
 
 ---
 

@@ -39,7 +39,7 @@
 - RF-LTI-003: Deep Linking Services
 
 ### User Stories
-- [US-LTI-003: Deep Linking](../historias-usuario/US-LTI-003-deep-linking.md)
+- [US-LTI-003: Deep Linking](../user-stories/US-LTI-003/US-LTI-003-deep-linking.md)
 
 ### Estandar
 - IMS Global LTI Advantage - Deep Linking Specification 2.0

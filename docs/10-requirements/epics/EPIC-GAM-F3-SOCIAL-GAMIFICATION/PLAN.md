@@ -1,6 +1,6 @@
 # Plan de Desarrollo: EPIC-GAM-F3-SOCIAL-GAMIFICATION
 
-**Version:** 1.0.0 | **Fecha:** 2026-02-10
+**Version:** 1.2.0 | **Fecha:** 2026-02-17
 **Epica:** [EPIC.md](./EPIC.md)
 **SP Total:** 39
 **Estado:** Backlog
@@ -35,6 +35,7 @@
 | Gremios inactivos acumulados | Alta | Bajo | Cleanup automatico, merge sugerido |
 | Spam de solicitudes de amistad | Media | Bajo | Rate limiting, cooldown period |
 | Multiplicador inflacionario | Media | Alto | Caps por rango, revision periodica de economia |
+
 
 ---
 

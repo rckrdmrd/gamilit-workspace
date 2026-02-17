@@ -6,11 +6,11 @@
 - [EPIC.md](EPIC.md)
 
 ### User Stories
-- [US-CONT-001-editor-wysiwyg](US-CONT-001/)
-- [US-CONT-002-gestion-ejercicios](US-CONT-002/)
-- [US-CONT-003-biblioteca-recursos](US-CONT-003/)
-- [US-CONT-004-versionamiento](US-CONT-004/)
-- [US-CONT-005-import-export](US-CONT-005/)
+- [US-CONT-001-editor-wysiwyg](user-stories/US-CONT-001/)
+- [US-CONT-002-gestion-ejercicios](user-stories/US-CONT-002/)
+- [US-CONT-003-biblioteca-recursos](user-stories/US-CONT-003/)
+- [US-CONT-004-versionamiento](user-stories/US-CONT-004/)
+- [US-CONT-005-import-export](user-stories/US-CONT-005/)
 
 ### Requirements
 - [_MAP](requirements/_MAP.md)

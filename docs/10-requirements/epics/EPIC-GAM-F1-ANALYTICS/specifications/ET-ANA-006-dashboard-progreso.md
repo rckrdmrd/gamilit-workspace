@@ -20,11 +20,11 @@
 ## Referencias
 
 ### Requerimiento Funcional
-- [RF-ANA-001: Dashboard de Progreso y Metricas de Clase](../requerimientos/RF-ANA-001-dashboard-progreso.md)
+- [RF-ANA-001: Dashboard de Progreso y Metricas de Clase](../requirements/RF-ANA-001-dashboard-progreso.md)
 
 ### User Stories
-- [US-ANA-001: Dashboard de Clase Basico](../historias-usuario/US-ANA-001-dashboard-clase-basico.md)
-- [US-ANA-002: Tabla de Estudiantes con Metricas](../historias-usuario/US-ANA-002-tabla-estudiantes-metricas.md)
+- [US-ANA-001: Dashboard de Clase Basico](../user-stories/US-ANA-001/US-ANA-001-dashboard-clase-basico.md)
+- [US-ANA-002: Tabla de Estudiantes con Metricas](../user-stories/US-ANA-002/US-ANA-002-tabla-estudiantes-metricas.md)
 
 ### API REST Endpoints
 | Metodo | Ruta | Descripcion |

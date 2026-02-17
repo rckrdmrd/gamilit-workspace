@@ -75,7 +75,7 @@ Este fix es prerequisito para certificar seguridad multi-tenant en produccion.
 
 ## Referencias
 
-- [ET-GAPS-CRITICOS-STUDENTS-ADMIN-2025-11-29.md](../especificaciones/ET-GAPS-CRITICOS-STUDENTS-ADMIN-2025-11-29.md)
+- [ET-GAPS-CRITICOS-STUDENTS-ADMIN-2025-11-29.md](../specifications/ET-GAPS-CRITICOS-STUDENTS-ADMIN-2025-11-29.md)
 - [TRACEABILITY.yml](../implementacion/TRACEABILITY.yml)
 
 ---

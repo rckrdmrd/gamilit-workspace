@@ -22,7 +22,7 @@
 - RF-PP-003: Detailed Progress View
 
 ### User Stories
-- [US-PP-002: Portal Dashboard](../historias-usuario/US-PP-002-portal-dashboard.md)
+- [US-PP-002: Portal Dashboard](../user-stories/US-PP-002/US-PP-002-portal-dashboard.md)
 
 ---
 

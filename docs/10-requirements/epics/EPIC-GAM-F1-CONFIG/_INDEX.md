@@ -4,9 +4,9 @@
 - [EPIC.md](EPIC.md)
 
 ## User Stories (3)
-- [US-SYS-001](US-SYS-001/)
-- [US-SYS-002](US-SYS-002/)
-- [US-SYS-003](US-SYS-003/)
+- [US-SYS-001](user-stories/US-SYS-001/)
+- [US-SYS-002](user-stories/US-SYS-002/)
+- [US-SYS-003](user-stories/US-SYS-003/)
 
 ## Requirements (3)
 - [RF-SYS-001](requirements/RF-SYS-001-settings.md)

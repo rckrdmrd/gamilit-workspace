@@ -76,8 +76,8 @@ El estudiante graba un video de 2-3 minutos enviando un mensaje a Marie Curie de
 
 ## Especificaciones Relacionadas
 
-- [ET-M4M5-001](../especificaciones/ET-M4M5-001-schema-bd.md)
-- [ET-M4M5-002](../especificaciones/ET-M4M5-002-backend-apis.md)
+- [ET-M4M5-001](../specifications/ET-M4M5-001-schema-bd.md)
+- [ET-M4M5-002](../specifications/ET-M4M5-002-backend-apis.md)
 
 ---
 

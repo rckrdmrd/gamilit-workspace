@@ -204,7 +204,7 @@ Esta funcionalidad es parte del **Alcance v2 (Ampliación) - Portal de Maestros 
 
 > **Dependencia:** Este criterio requiere que EXT-010 (Parent Notifications) esté implementado.
 > Estado actual de EXT-010: 35% implementado (Backlog - fuera del MVP).
-> Ver: [EXT-010 Parent Notifications](../../EXT-010-parent-notifications/README.md)
+> Ver: [EXT-010 Parent Notifications](../../../EXT-010-parent-notifications/README.md)
 
 **Dado** que EXT-010 está implementado y el alumno tiene padre/tutor registrado,
 **Cuando** un maestro suspende a un alumno,
@@ -799,7 +799,7 @@ Si ves el mensaje "Tu cuenta ha sido suspendida temporalmente", tu maestro ha re
 - **RF-AUTH-002:** Estados de cuenta (infraestructura)
 - **ET-AUTH-002:** Implementación de estados
 - **EXT-003 (opcional):** Notificaciones (si está implementado)
-- **EXT-010 (opcional):** [Parent Notifications](../../EXT-010-parent-notifications/README.md) - Para notificaciones a padres (CA-7)
+- **EXT-010 (opcional):** [Parent Notifications](../../../EXT-010-parent-notifications/README.md) - Para notificaciones a padres (CA-7)
 
 ### Bloqueantes
 - ✅ RF-AUTH-002 debe estar implementado

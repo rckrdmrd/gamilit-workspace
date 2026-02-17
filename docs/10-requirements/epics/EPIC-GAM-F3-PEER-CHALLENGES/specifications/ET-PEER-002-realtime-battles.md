@@ -41,7 +41,7 @@
 - RF-PEER-002: 1v1 Challenge Execution
 
 ### User Stories
-- [US-PEER-002: Challenge Execution](../historias-usuario/US-PEER-002-challenge-execution.md)
+- [US-PEER-002: Challenge Execution](../user-stories/US-PEER-002/US-PEER-002-challenge-execution.md)
 
 ### Dependencias
 - ET-PEER-001: Matchmaking System

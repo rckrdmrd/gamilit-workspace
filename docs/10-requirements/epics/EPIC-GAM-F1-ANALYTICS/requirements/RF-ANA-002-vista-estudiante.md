@@ -29,11 +29,11 @@ updated_date: "2026-01-20"
 ## Referencias
 
 ### Especificacion Tecnica
-- [ET-ANA-002: Vista de Estudiante](../especificaciones/ET-ANA-002-vista-estudiante.md)
+- [ET-ANA-002: Vista de Estudiante](../specifications/ET-ANA-002-vista-estudiante.md)
 
 ### User Stories Relacionadas
-- [US-ANA-003: Vista de Estudiante Individual](../historias-usuario/US-ANA-003-vista-estudiante-individual.md)
-- [US-ANA-004: Reporte Basico de Progreso](../historias-usuario/US-ANA-004-reporte-basico-progreso.md)
+- [US-ANA-003: Vista de Estudiante Individual](../user-stories/US-ANA-003/US-ANA-003-vista-estudiante-individual.md)
+- [US-ANA-004: Reporte Basico de Progreso](../user-stories/US-ANA-004/US-ANA-004-reporte-basico-progreso.md)
 
 ### Implementacion
 - **Backend:** `apps/backend/src/modules/teacher-analytics/`

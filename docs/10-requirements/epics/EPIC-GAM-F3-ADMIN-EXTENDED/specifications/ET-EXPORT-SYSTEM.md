@@ -781,8 +781,8 @@ Los endpoints de exportacion estan sujetos al rate limit general del modulo admi
 
 ### 12.2 Historias de Usuario Relacionadas
 
-- [US-AE-014 - Dashboard de Analiticas](../historias-usuario/US-AE-014-analytics-dashboard.md)
-- [US-AE-015 - Sistema de Seguimiento de Progreso](../historias-usuario/US-AE-015-progress-tracking.md)
+- [US-AE-014 - Dashboard de Analiticas](../user-stories/US-AE-014/US-AE-014-analytics-dashboard.md)
+- [US-AE-015 - Sistema de Seguimiento de Progreso](../user-stories/US-AE-015/US-AE-015-progress-tracking.md)
 
 ### 12.3 Swagger Documentation
 

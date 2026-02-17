@@ -73,7 +73,7 @@ updated_date: "2026-01-04"
   - `apps/frontend/src/components/auth/LoginForm.tsx`
 
 ### Mapeo Completo
-📊 [Ver mapeo completo: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-REQUERIMIENTOS-IMPLEMENTACION.md#13-proveedores-de-autenticación-oauth)
+📊 [Ver mapeo completo: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-requirements-IMPLEMENTACION.md#13-proveedores-de-autenticación-oauth)
 
 ---
 

@@ -6,9 +6,9 @@
 - [EPIC.md](EPIC.md)
 
 ### User Stories
-- [US-WL-001-branding-config](US-WL-001/)
-- [US-WL-002-logo-colors](US-WL-002/)
-- [US-WL-003-platform-name](US-WL-003/)
+- [US-WL-001-branding-config](user-stories/US-WL-001/)
+- [US-WL-002-logo-colors](user-stories/US-WL-002/)
+- [US-WL-003-platform-name](user-stories/US-WL-003/)
 
 ### Requirements
 - [_MAP](requirements/_MAP.md)

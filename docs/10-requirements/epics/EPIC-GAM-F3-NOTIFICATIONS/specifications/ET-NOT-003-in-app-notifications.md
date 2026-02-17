@@ -22,7 +22,7 @@
 - RF-NOT-003: In-App Notification System
 
 ### User Stories
-- [US-NOT-001b: Notification Center](../historias-usuario/US-NOT-001b-notification-center.md)
+- [US-NOT-001b: Notification Center](../user-stories/US-NOT-001b/US-NOT-001b-notification-center.md)
 
 ---
 

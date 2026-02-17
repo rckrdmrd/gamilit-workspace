@@ -4,7 +4,7 @@
 >
 > Esta epica esta **parcialmente implementada (50%)** y **NO forma parte del MVP actual**.
 > Razon: Depende de contratos enterprise.
-> Ver: [Fase 4: Backlog](../../04-fase-backlog/README.md)
+> Ver: [Fase 4: Backlog](../04-fase-backlog/README.md)
 
 **Version:** 2.0
 **Fecha de creacion:** 2025-11-07
@@ -21,10 +21,10 @@
 
 | Especificacion | Titulo | Completitud |
 |----------------|--------|-------------|
-| [ET-WL-001](./especificaciones/ET-WL-001-theming.md) | Theming System | 55% |
-| [ET-WL-002](./especificaciones/ET-WL-002-tenant-customization.md) | Tenant Customization | 45% |
-| [ET-WL-003](./especificaciones/ET-WL-003-asset-management.md) | Asset Management | 35% |
-| [ET-WL-004](./especificaciones/ET-WL-004-css-runtime-variables.md) | CSS Runtime Variables | 50% |
+| [ET-WL-001](./specifications/ET-WL-001-theming.md) | Theming System | 55% |
+| [ET-WL-002](./specifications/ET-WL-002-tenant-customization.md) | Tenant Customization | 45% |
+| [ET-WL-003](./specifications/ET-WL-003-asset-management.md) | Asset Management | 35% |
+| [ET-WL-004](./specifications/ET-WL-004-css-runtime-variables.md) | CSS Runtime Variables | 50% |
 
 **Checklist completo:** [IMPLEMENTATION-CHECKLIST.md](./IMPLEMENTATION-CHECKLIST.md)
 
@@ -218,8 +218,8 @@ CREATE INDEX idx_tenant_branding_domain ON system_configuration.tenant_branding(
 ## 📚 Referencias
 
 ### Documentación Interna
-- [ANALISIS-FEATURES-P3-ESTRATEGICAS.md](../../features/ANALISIS-FEATURES-P3-ESTRATEGICAS.md) - Sección White-label
-- [FEATURES-PENDIENTES.md](../../features/FEATURES-PENDIENTES.md) - F-P2-020
+- [ANALISIS-FEATURES-P3-ESTRATEGICAS.md](../features/ANALISIS-FEATURES-P3-ESTRATEGICAS.md) - Sección White-label
+- [FEATURES-PENDIENTES.md](../features/FEATURES-PENDIENTES.md) - F-P2-020
 
 ---
 

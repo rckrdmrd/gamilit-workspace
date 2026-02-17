@@ -22,7 +22,7 @@
 - RF-AE-011: Sistema de Auditoria y Logs
 
 ### User Stories
-- [US-AE-011: Visor de Audit Logs](../historias-usuario/US-AE-011-visor-audit-logs.md)
+- [US-AE-011: Visor de Audit Logs](../user-stories/US-AE-011/US-AE-011-visor-audit-logs.md)
 
 ---
 

@@ -18,7 +18,7 @@ GAMILIT (Gamificacion Maya para la Lectoescritura en Tecnologia) es una **plataf
 STANDALONE_HEREDERO (Nivel 2A)
   |
   v
-gamilit (22 modulos, 169 tablas, 899 endpoints)
+gamilit (23 modulos, 169 tablas, 901 endpoints)
   |
   v
 shared/catalog/ (exporta patrones generalizables)

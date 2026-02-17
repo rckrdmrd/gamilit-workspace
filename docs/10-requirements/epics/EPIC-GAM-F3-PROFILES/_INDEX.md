@@ -6,12 +6,12 @@
 - [EPIC.md](EPIC.md)
 
 ### User Stories
-- [US-PERF-001-personalizacion-perfil](US-PERF-001/)
-- [US-PERF-002-seguridad-cuenta](US-PERF-002/)
-- [US-PERF-003-accesibilidad-gamificacion](US-PERF-003/)
-- [US-PERF-004-interacciones-sociales](US-PERF-004/)
-- [US-PERF-005-personalizacion-dashboard](US-PERF-005/)
-- [US-PERF-006-showcasing-logros](US-PERF-006/)
+- [US-PERF-001-personalizacion-perfil](user-stories/US-PERF-001/)
+- [US-PERF-002-seguridad-cuenta](user-stories/US-PERF-002/)
+- [US-PERF-003-accesibilidad-gamificacion](user-stories/US-PERF-003/)
+- [US-PERF-004-interacciones-sociales](user-stories/US-PERF-004/)
+- [US-PERF-005-personalizacion-dashboard](user-stories/US-PERF-005/)
+- [US-PERF-006-showcasing-logros](user-stories/US-PERF-006/)
 
 ### Requirements
 - [_MAP](requirements/_MAP.md)

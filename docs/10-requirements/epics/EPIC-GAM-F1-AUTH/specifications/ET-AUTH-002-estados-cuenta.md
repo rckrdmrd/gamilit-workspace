@@ -14,7 +14,7 @@
 ## 🔗 Referencias
 
 ### Requerimiento Funcional
-📄 [RF-AUTH-002: Estados de Cuenta de Usuario](../../01-requerimientos/01-autenticacion-autorizacion/RF-AUTH-002-estados-cuenta.md)
+📄 [RF-AUTH-002: Estados de Cuenta de Usuario](../requirements/RF-AUTH-002-estados-cuenta.md)
 
 ### Implementación DDL
 🗄️ **Archivos relacionados:**
@@ -71,7 +71,7 @@ CREATE TABLE auth_management.profiles (
 - `trg_verify_email_set_active:195` - Cambia pending → active al verificar
 
 ### Mapeo Completo
-📊 [Ver en: Mapeo Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-REQUERIMIENTOS-IMPLEMENTACION.md#12-estados-de-cuenta-de-usuario)
+📊 [Ver en: Mapeo Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-requirements-IMPLEMENTACION.md#12-estados-de-cuenta-de-usuario)
 
 ---
 
@@ -723,8 +723,8 @@ test('Admin can suspend active user with reason', async () => {
 ## 📚 Referencias
 
 ### Documentos Relacionados
-- 📄 [RF-AUTH-002: Estados de Cuenta](../../01-requerimientos/01-autenticacion-autorizacion/RF-AUTH-002-estados-cuenta.md)
-- 📄 [RF-AUD-001: Auditoría](../../01-requerimientos/08-auditoria-configuracion/RF-AUD-001-registro-acciones.md)
+- 📄 [RF-AUTH-002: Estados de Cuenta](../requirements/RF-AUTH-002-estados-cuenta.md)
+- 📄 [RF-AUD-001: Auditoría](../../EPIC-GAM-F3-ADMIN-EXTENDED/specifications/ET-ADM-005-audit-logs.md)
 
 ---
 

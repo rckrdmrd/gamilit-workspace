@@ -105,7 +105,7 @@ CREATE POLICY "recipient_can_respond" ON social_features.friend_requests
 
 ## Referencias
 
-- **US Padre:** [US-GAM-010](../historias-usuario/US-GAM-010-sistema-amigos.md)
+- **US Padre:** [US-GAM-010](../../user-stories/US-GAM-010/US-GAM-010-sistema-amigos.md)
 - **Schema:** `social_features`
 
 ---

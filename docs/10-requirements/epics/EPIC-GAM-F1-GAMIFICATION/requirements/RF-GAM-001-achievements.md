@@ -77,7 +77,7 @@ updated_date: "2026-01-04"
   - `apps/frontend/src/components/gamification/AchievementProgress.tsx`
 
 ### Mapeo Completo
-📊 [Ver mapeo completo: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-REQUERIMIENTOS-IMPLEMENTACION.md#21-sistema-de-logros-achievements)
+📊 [Ver mapeo completo: Requerimientos → Implementación](../../03-desarrollo/base-de-datos/MAPEO-requirements-IMPLEMENTACION.md#21-sistema-de-logros-achievements)
 
 ---
 
@@ -597,8 +597,8 @@ test('Gallery shows unlocked and locked achievements', async () => {
 
 ### Documentos Relacionados
 - 📄 [RF-GAM-002: Sistema de Comodines](./RF-GAM-002-comodines.md)
-- 📄 [RF-NOT-001: Tipos de Notificaciones](../../06-notificaciones/RF-NOT-001-tipos-notificaciones.md) - `achievement_unlocked`
-- 📄 [RF-PRG-001: Tracking de Progreso](../../04-progreso-seguimiento/RF-PRG-001-tracking-progreso.md) - Triggers de achievements
+- 📄 [RF-NOT-001: Tipos de Notificaciones](../../EPIC-GAM-F3-NOTIFICATIONS/requirements/RF-NOT-001a-websocket-infrastructure.md) - `achievement_unlocked`
+- 📄 [RF-PRG-001: Tracking de Progreso](../../EPIC-GAM-F1-ANALYTICS/requirements/RF-ANA-001-dashboard-progreso.md) - Triggers de achievements
 
 ### Teoría de Gamificación
 - [Octalysis Framework](https://yukaichou.com/gamification-examples/octalysis-complete-gamification-framework/) - Core drives

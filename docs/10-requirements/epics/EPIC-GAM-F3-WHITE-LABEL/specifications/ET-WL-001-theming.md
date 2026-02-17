@@ -41,8 +41,8 @@
 - RF-WL-001: Sistema de Theming por Tenant
 
 ### User Stories
-- [US-WL-001: Branding Configuration](../historias-usuario/US-WL-001-branding-config.md)
-- [US-WL-002: Logo and Colors Upload](../historias-usuario/US-WL-002-logo-colors.md)
+- [US-WL-001: Branding Configuration](../user-stories/US-WL-001/US-WL-001-branding-config.md)
+- [US-WL-002: Logo and Colors Upload](../user-stories/US-WL-002/US-WL-002-logo-colors.md)
 
 ---
 

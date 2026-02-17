@@ -25,7 +25,7 @@ related_us: ["US-PM-002a", "US-PM-002b", "US-PM-002c"]
 | **US Relacionadas** | US-PM-002a, US-PM-002b, US-PM-002c |
 | **Prioridad** | P0 - Critico |
 | **Estado** | Implementado |
-| **Documentacion Detallada** | [RF-TEACH-002-assignment-system.md](../requerimientos/RF-TEACH-002-assignment-system.md) |
+| **Documentacion Detallada** | [RF-TEACH-002-assignment-system.md](../requirements/RF-TEACH-002-assignment-system.md) |
 
 ---
 

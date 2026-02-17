@@ -1,6 +1,6 @@
 # Plan de Desarrollo: EPIC-GAM-F3-ADMIN-EXTENDED
 
-**Version:** 1.0.0 | **Fecha:** 2026-02-10
+**Version:** 1.2.0 | **Fecha:** 2026-02-17
 **Epica:** [EPIC.md](./EPIC.md)
 **SP Total:** 114
 **Estado:** Completado
@@ -48,6 +48,7 @@
 | Scope creep (114 SP, 20 US) | Alta | Alto | Priorizar P0/P1, diferir P2 |
 | Permisos admin demasiado amplios | Media | Alto | Audit logging, principle of least privilege |
 | Export de datos masivos | Media | Medio | Streaming, background jobs, limites |
+
 
 ---
 

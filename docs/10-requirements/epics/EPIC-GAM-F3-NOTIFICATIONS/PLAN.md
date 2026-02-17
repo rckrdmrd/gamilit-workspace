@@ -1,6 +1,6 @@
 # Plan de Desarrollo: EPIC-GAM-F3-NOTIFICATIONS
 
-**Version:** 1.0.0 | **Fecha:** 2026-02-10
+**Version:** 1.2.0 | **Fecha:** 2026-02-17
 **Epica:** [EPIC.md](./EPIC.md)
 **SP Total:** 40
 **Estado:** Completado
@@ -31,6 +31,7 @@
 | WebSocket scaling multi-instancia | Alta | Alto | Redis adapter para Socket.IO, sticky sessions |
 | Email deliverability | Media | Medio | SPF/DKIM, dominio dedicado, rate limiting |
 | Notification spam | Media | Medio | Throttling por usuario, digests semanales |
+
 
 ---
 

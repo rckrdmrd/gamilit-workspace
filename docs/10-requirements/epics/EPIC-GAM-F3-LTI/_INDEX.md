@@ -6,10 +6,10 @@
 - [EPIC.md](EPIC.md)
 
 ### User Stories
-- [US-LTI-001-oidc-login](US-LTI-001/)
-- [US-LTI-002-grade-passback](US-LTI-002/)
-- [US-LTI-003-deep-linking](US-LTI-003/)
-- [US-LTI-004-platform-config](US-LTI-004/)
+- [US-LTI-001-oidc-login](user-stories/US-LTI-001/)
+- [US-LTI-002-grade-passback](user-stories/US-LTI-002/)
+- [US-LTI-003-deep-linking](user-stories/US-LTI-003/)
+- [US-LTI-004-platform-config](user-stories/US-LTI-004/)
 
 ### Requirements
 - [_MAP](requirements/_MAP.md)

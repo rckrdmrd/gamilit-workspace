@@ -79,9 +79,9 @@ updated_date: "2026-01-04"
 ### Especificación Técnica
 
 📘 **Documento ET Relacionado:**
-- [ET-GAM-004: Tipos Compartidos de Gamificación](../../especificaciones/ET-GAM-004-tipos-compartidos-gamificacion.md)
-- [ET-GAM-003: Rangos Maya](../../especificaciones/ET-GAM-003-rangos-maya.md) - Multiplicadores de rango
-- [ET-GAM-002: Sistema de Comodines](../../especificaciones/ET-GAM-002-comodines.md) - Gastos de ML Coins
+- [ET-GAM-004: Tipos Compartidos de Gamificación](../specifications/ET-GAM-004-tipos-compartidos-gamificacion.md)
+- [ET-GAM-003: Rangos Maya](../specifications/ET-GAM-003-rangos-maya.md) - Multiplicadores de rango
+- [ET-GAM-002: Sistema de Comodines](../specifications/ET-GAM-002-comodines.md) - Gastos de ML Coins
 
 ### Documentos Relacionados
 
@@ -306,8 +306,8 @@ xp_multiplier NUMERIC(3,2)  -- Multiplicador XP
 **Decisión Pendiente:** Product Owner debe decidir si implementar multiplicadores ML Coins o simplificar economía manteniendo solo bonus únicos.
 
 **Ver:**
-- [ET-GAM-003: Rangos Maya](../../especificaciones/ET-GAM-003-rangos-maya.md) para multiplicadores XP implementados
-- [docs/04-fase-backlog/FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md](../../../../04-fase-backlog/FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md) para análisis detallado
+- [ET-GAM-003: Rangos Maya](../specifications/ET-GAM-003-rangos-maya.md) para multiplicadores XP implementados
+- [docs/04-fase-backlog/FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md](../../04-fase-backlog/FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md) para análisis detallado
 
 ### Earning vs Spending Estimado
 

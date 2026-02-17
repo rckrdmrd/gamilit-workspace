@@ -18,7 +18,7 @@
 
 ## Requerimiento Padre
 
-- [RF-ANA-002: Metricas de Elementos de Gamificacion](../requerimientos/RF-ANA-002-metricas-gamificacion.md)
+- [RF-ANA-002: Metricas de Elementos de Gamificacion](../requirements/RF-ANA-002-metricas-gamificacion.md)
 
 ---
 

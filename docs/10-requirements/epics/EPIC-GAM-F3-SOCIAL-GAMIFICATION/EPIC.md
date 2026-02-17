@@ -72,12 +72,12 @@ Implementar las mecanicas sociales de gamificacion que complementan el sistema i
 
 | ID | Historia | Prioridad | SP | Estado |
 |----|----------|-----------|-----|--------|
-| **[US-GAM-010](./historias-usuario/US-GAM-010-sistema-amigos.md)** | Sistema de Amigos | P1 | 8 | Backlog |
-| **[US-GAM-011](./historias-usuario/US-GAM-011-multiplicador-mlcoins.md)** | Multiplicador ML Coins por Rango | P1 | 5 | Backlog |
-| **[US-GAM-012](./historias-usuario/US-GAM-012-leaderboard-amigos.md)** | Leaderboard de Amigos | P1 | 5 | Backlog |
-| **[US-GAM-013](./historias-usuario/US-GAM-013-sistema-gremios.md)** | Sistema de Gremios | P2 | 8 | Backlog |
-| **[US-GAM-014](./historias-usuario/US-GAM-014-misiones-gremio.md)** | Misiones de Gremio | P2 | 8 | Backlog |
-| **[US-GAM-015](./historias-usuario/US-GAM-015-gestion-miembros-gremio.md)** | Gestion de Miembros Gremio | P2 | 5 | Backlog |
+| **[US-GAM-010](./user-stories/US-GAM-010/US-GAM-010-sistema-amigos.md)** | Sistema de Amigos | P1 | 8 | Backlog |
+| **[US-GAM-011](./user-stories/US-GAM-011/US-GAM-011-multiplicador-mlcoins.md)** | Multiplicador ML Coins por Rango | P1 | 5 | Backlog |
+| **[US-GAM-012](./user-stories/US-GAM-012/US-GAM-012-leaderboard-amigos.md)** | Leaderboard de Amigos | P1 | 5 | Backlog |
+| **[US-GAM-013](./user-stories/US-GAM-013/US-GAM-013-sistema-gremios.md)** | Sistema de Gremios | P2 | 8 | Backlog |
+| **[US-GAM-014](./user-stories/US-GAM-014/US-GAM-014-misiones-gremio.md)** | Misiones de Gremio | P2 | 8 | Backlog |
+| **[US-GAM-015](./user-stories/US-GAM-015/US-GAM-015-gestion-miembros-gremio.md)** | Gestion de Miembros Gremio | P2 | 5 | Backlog |
 
 **Total Story Points:** 39 SP
 
@@ -247,7 +247,7 @@ EAI-003-EXT-gamificacion-social/
 |-------|--------|-------|
 | 2025-12-05 | Creacion de epica | Requirements-Analyst |
 | 2026-01-17 | Documentacion completa de 6 USs, renumeracion IDs | Claude-Agent |
-| 2026-01-20 | Refactorizacion patron SCRUM (README, _MAP, requerimientos, especificaciones, implementacion) | Claude-Agent |
+| 2026-01-20 | Refactorizacion patron SCRUM (README, _MAP, requirements, specifications, implementacion) | Claude-Agent |
 
 ---
 

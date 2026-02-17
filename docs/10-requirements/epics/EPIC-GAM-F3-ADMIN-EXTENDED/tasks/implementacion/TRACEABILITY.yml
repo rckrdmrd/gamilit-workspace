@@ -1,0 +1,3 @@
+meta:
+  type: legacy_bridge
+  target: "../../implementacion/TRACEABILITY.yml"
