@@ -1,394 +1,309 @@
-# ═══════════════════════════════════════════════════════════════════════════════
-# ÍNDICE DE TAREAS - GAMILIT
-# ═══════════════════════════════════════════════════════════════════════════════
+# ==============================================================================
+# INDICE DE TAREAS - GAMILIT
+# ==============================================================================
 #
-# Propósito: Registro de tareas específicas del proyecto Gamilit
-# Creado: 2026-01-24 (TASK-2026-01-24-006)
+# Proposito: Registro centralizado de TODAS las tareas del proyecto Gamilit
+#             con vinculacion a EPICs del backlog (BACKLOG.yml)
+# Version: 3.0.0
+# Creado: 2026-01-24
+# Actualizado: 2026-02-17
+# Tarea origen: MQ-004 (EPIC-WS-004)
 #
-# ═══════════════════════════════════════════════════════════════════════════════
+# ==============================================================================
 
-version: "2.4.0"
+version: "3.0.0"
 created: "2026-01-24"
-updated: "2026-02-03"
+updated: "2026-02-17"
 proyecto: "gamilit"
 maintained_by: "@WS_ORCHESTRATOR"
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# ESTADÍSTICAS
-# ─────────────────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# EPICS DE REFERENCIA (ver orchestration/scrum/BACKLOG.yml)
+# ------------------------------------------------------------------------------
+#
+# EPIC-WS-001: Estandarizacion y Gobernanza del Workspace
+# EPIC-WS-002: Desarrollo de Features Cross-Project
+# EPIC-WS-003: Optimizacion de Infraestructura
+# EPIC-WS-004: Mejoras de Calidad de Codigo
+# EPIC-WS-005: Correcciones Tecnicas Pendientes
+# EPIC-WS-006: Trazabilidad de Procesos y Planeacion Integrada
+# EPIC-WS-007: Gobernanza DB DDL-First por Ambientes
+#
+
+# ------------------------------------------------------------------------------
+# TAREAS ACTIVAS (carpetas en orchestration/tareas/)
+# ------------------------------------------------------------------------------
+
+tareas:
+
+  # === 2026-02-12 ===
+
+  - id: "TASK-2026-02-12-ANALISIS-BD-VS-DOCS"
+    path: "orchestration/tareas/TASK-2026-02-12-ANALISIS-BD-VS-DOCS/"
+    epic_ref: "EPIC-WS-001"
+    estado: "completada"
+    fecha_creacion: "2026-02-12"
+    descripcion_corta: "Analisis de discrepancias entre modelo BD (DDL) y documentacion existente"
+
+  - id: "TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION"
+    path: "orchestration/tareas/TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION/"
+    epic_ref: "EPIC-WS-001"
+    estado: "completada"
+    fecha_creacion: "2026-02-12"
+    descripcion_corta: "Analisis de integracion backend — hallazgos, discrepancias y sprints de remediacion"
+
+  - id: "TASK-2026-02-12-ANALISIS-FRONTEND-INTEGRACION"
+    path: "orchestration/tareas/TASK-2026-02-12-ANALISIS-FRONTEND-INTEGRACION/"
+    epic_ref: "EPIC-WS-001"
+    estado: "completada"
+    fecha_creacion: "2026-02-12"
+    descripcion_corta: "Analisis de integracion frontend — hallazgos, discrepancias y mapeo de archivos"
+
+  # === 2026-02-13 ===
+
+  - id: "TASK-2026-02-13-ANALISIS-MEJORAS-INTEGRABLES"
+    path: "orchestration/tareas/TASK-2026-02-13-ANALISIS-MEJORAS-INTEGRABLES/"
+    epic_ref: "EPIC-WS-004"
+    estado: "completada"
+    fecha_creacion: "2026-02-13"
+    descripcion_corta: "Analisis consolidado de mejoras integrables identificadas en auditorias previas"
+
+  - id: "TASK-2026-02-13-CORRECCION-MULTI-TENANCY-PRODUCCION"
+    path: "orchestration/tareas/TASK-2026-02-13-CORRECCION-MULTI-TENANCY-PRODUCCION/"
+    epic_ref: "EPIC-WS-005"
+    estado: "completada"
+    fecha_creacion: "2026-02-13"
+    descripcion_corta: "Correccion de multi-tenancy en produccion — diagnostico, plan y dependencias"
+
+  - id: "TASK-2026-02-13-FIX-REDIS-WEBSOCKET-STARTUP"
+    path: "orchestration/tareas/TASK-2026-02-13-FIX-REDIS-WEBSOCKET-STARTUP/"
+    epic_ref: "EPIC-WS-003"
+    estado: "completada"
+    fecha_creacion: "2026-02-13"
+    descripcion_corta: "Fix de Redis/WebSocket en startup — analisis y validacion post-recreacion BD"
+
+  # === 2026-02-14 ===
+
+  - id: "TASK-2026-02-14-ANALISIS-DOCUMENTACION-GOBERNANZA"
+    path: "orchestration/tareas/TASK-2026-02-14-ANALISIS-DOCUMENTACION-GOBERNANZA/"
+    epic_ref: "EPIC-WS-001"
+    estado: "completada"
+    fecha_creacion: "2026-02-14"
+    descripcion_corta: "Auditoria integral de documentacion y gobernanza — orchestration, estandares, SSOT"
+
+  - id: "TASK-2026-02-14-INTEGRACION-DEEP-RESEARCH"
+    path: "orchestration/tareas/TASK-2026-02-14-INTEGRACION-DEEP-RESEARCH/"
+    epic_ref: "EPIC-WS-001"
+    estado: "completada"
+    fecha_creacion: "2026-02-14"
+    descripcion_corta: "Investigacion profunda de integracion — clasificacion de documentos, gap matrix, plan de fases"
+
+  # === 2026-02-15 ===
+
+  - id: "TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL"
+    path: "orchestration/tareas/TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL/"
+    epic_ref: "EPIC-WS-001"
+    estado: "completada"
+    fecha_creacion: "2026-02-15"
+    descripcion_corta: "Plan de desarrollo integral — analisis de gaps, plan, tareas por fase, metricas verificadas"
+
+  # === 2026-02-16 ===
+
+  - id: "TASK-2026-02-16-VALIDACION-INTEGRAL"
+    path: "orchestration/tareas/TASK-2026-02-16-VALIDACION-INTEGRAL/"
+    epic_ref: "EPIC-WS-005"
+    estado: "completada"
+    fecha_creacion: "2026-02-16"
+    descripcion_corta: "Validacion integral cross-layer — hallazgos DB/backend/frontend y plan de correcciones"
+
+  # === 2026-02-17 ===
+
+  - id: "TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO"
+    path: "orchestration/tareas/TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO/"
+    epic_ref: "EPIC-WS-004"
+    estado: "completada"
+    fecha_creacion: "2026-02-17"
+    descripcion_corta: "Analisis y plan de mejoras de calidad de codigo — origen de items MQ-001 a MQ-010"
+
+  - id: "TASK-2026-02-17-AUDITORIA-TRAZABILIDAD-PLANEACION"
+    path: "orchestration/tareas/TASK-2026-02-17-AUDITORIA-TRAZABILIDAD-PLANEACION/"
+    epic_ref: "EPIC-WS-006"
+    estado: "completada"
+    fecha_creacion: "2026-02-17"
+    descripcion_corta: "Auditoria de trazabilidad y planeacion — origen de items TRZ-001 a TRZ-006"
+
+  - id: "TASK-2026-02-17-PROCEDIMIENTOS-DB-DEV-PROD-AGENTES"
+    path: "orchestration/tareas/TASK-2026-02-17-PROCEDIMIENTOS-DB-DEV-PROD-AGENTES/"
+    epic_ref: "EPIC-WS-007"
+    estado: "completada"
+    fecha_creacion: "2026-02-17"
+    descripcion_corta: "Procedimientos DB para DEV/PROD con agentes — origen de items DBOPS-001 a DBOPS-006"
+
+  - id: "TASK-2026-02-17-VALIDACION-INTEGRAL"
+    path: "orchestration/tareas/TASK-2026-02-17-VALIDACION-INTEGRAL/"
+    epic_ref: "EPIC-WS-005"
+    estado: "completada"
+    fecha_creacion: "2026-02-17"
+    descripcion_corta: "Validacion integral de correcciones tecnicas — cierre de CORR-01 a CORR-05"
+
+  - id: "TASK-2026-02-17-AUDITORIA-FLUJOS-P0"
+    path: "orchestration/tareas/TASK-2026-02-17-AUDITORIA-FLUJOS-P0/"
+    epic_ref: "EPIC-WS-006"
+    estado: "completada"
+    fecha_creacion: "2026-02-17"
+    descripcion_corta: "Auditoria de flujos P0 — hallazgos, plan de implementacion y asignacion de agentes"
+
+  - id: "TASK-2026-02-17-CIERRE-RIESGOS-RESIDUALES-FULL"
+    path: "orchestration/tareas/TASK-2026-02-17-CIERRE-RIESGOS-RESIDUALES-FULL/"
+    epic_ref: "EPIC-WS-005"
+    estado: "completada"
+    fecha_creacion: "2026-02-17"
+    descripcion_corta: "Cierre de riesgos residuales — hallazgos, plan de issues y asignacion de agentes"
+
+  - id: "TASK-2026-02-17-IMPLEMENTACION-PLAN-ESTANDARES"
+    path: "orchestration/tareas/TASK-2026-02-17-IMPLEMENTACION-PLAN-ESTANDARES/"
+    epic_ref: "EPIC-WS-004"
+    estado: "completada"
+    fecha_creacion: "2026-02-17"
+    descripcion_corta: "Implementacion de plan de estandares — CAPVED completo con contexto, analisis, plan, validacion, ejecucion"
+
+  - id: "TASK-2026-02-17-VALIDACION-DESARROLLO"
+    path: "orchestration/tareas/TASK-2026-02-17-VALIDACION-DESARROLLO/"
+    epic_ref: "EPIC-WS-004"
+    estado: "completada"
+    fecha_creacion: "2026-02-17"
+    descripcion_corta: "Validacion de desarrollo — hallazgos, plan de correcciones y validacion del plan"
+
+  - id: "TASK-2026-02-17-VALIDACION-REQUISITOS"
+    path: "orchestration/tareas/TASK-2026-02-17-VALIDACION-REQUISITOS/"
+    epic_ref: "EPIC-WS-006"
+    estado: "completada"
+    fecha_creacion: "2026-02-17"
+    descripcion_corta: "Validacion de requisitos — hallazgos, discrepancias y plan de correccion"
+
+# ------------------------------------------------------------------------------
+# TAREAS HISTORICAS (archivadas en orchestration/tareas/_archive/)
+# ------------------------------------------------------------------------------
+# Las tareas previas al 2026-02-12 fueron archivadas y consolidadas.
+# Total archivado: 53 tareas (21 del 2026-01-24, 12 del 2026-01-25, 9 del 2026-01-27,
+#                  2 del 2026-01-30, 1 del 2026-01-31, 3 del 2026-02-02,
+#                  1 del 2026-02-05, 1 del 2026-02-06, 2 del 2026-02-03)
+#
+# Referencia: orchestration/tareas/_archive/
+# Consolidado: TAREAS-HISTORICO-CONSOLIDADO.md
+#
+# Asignacion EPIC retroactiva (historicas):
+#   - Tareas 2026-01-24 a 2026-01-31: EPIC-WS-001 (gobernanza y estandarizacion)
+#   - TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS: EPIC-WS-001
+#   - TASK-2026-02-02-REMEDIACION-DDL: EPIC-WS-005
+#   - TASK-2026-02-02-IMPLEMENTAR-OPTIMIZACION-TRIGGERS: EPIC-WS-003
+#   - TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS: EPIC-WS-001
+#   - TASK-2026-02-03-ANALISIS-FRONTEND-UXUI: EPIC-WS-001
+#   - TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD: EPIC-WS-001
+#   - TASK-2026-02-06-ANALISIS-INTEGRAL-DOCUMENTACION: EPIC-WS-001
+
+# ------------------------------------------------------------------------------
+# DISTRIBUCION POR EPIC
+# ------------------------------------------------------------------------------
+
+distribucion_por_epic:
+  EPIC-WS-001:
+    titulo: "Estandarizacion y Gobernanza del Workspace"
+    tareas_activas:
+      - "TASK-2026-02-12-ANALISIS-BD-VS-DOCS"
+      - "TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION"
+      - "TASK-2026-02-12-ANALISIS-FRONTEND-INTEGRACION"
+      - "TASK-2026-02-14-ANALISIS-DOCUMENTACION-GOBERNANZA"
+      - "TASK-2026-02-14-INTEGRACION-DEEP-RESEARCH"
+      - "TASK-2026-02-15-PLAN-DESARROLLO-INTEGRAL"
+    count: 6
+
+  EPIC-WS-003:
+    titulo: "Optimizacion de Infraestructura"
+    tareas_activas:
+      - "TASK-2026-02-13-FIX-REDIS-WEBSOCKET-STARTUP"
+    count: 1
+
+  EPIC-WS-004:
+    titulo: "Mejoras de Calidad de Codigo"
+    tareas_activas:
+      - "TASK-2026-02-13-ANALISIS-MEJORAS-INTEGRABLES"
+      - "TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO"
+      - "TASK-2026-02-17-IMPLEMENTACION-PLAN-ESTANDARES"
+      - "TASK-2026-02-17-VALIDACION-DESARROLLO"
+    count: 4
+
+  EPIC-WS-005:
+    titulo: "Correcciones Tecnicas Pendientes"
+    tareas_activas:
+      - "TASK-2026-02-13-CORRECCION-MULTI-TENANCY-PRODUCCION"
+      - "TASK-2026-02-16-VALIDACION-INTEGRAL"
+      - "TASK-2026-02-17-VALIDACION-INTEGRAL"
+      - "TASK-2026-02-17-CIERRE-RIESGOS-RESIDUALES-FULL"
+    count: 4
+
+  EPIC-WS-006:
+    titulo: "Trazabilidad de Procesos y Planeacion Integrada"
+    tareas_activas:
+      - "TASK-2026-02-17-AUDITORIA-TRAZABILIDAD-PLANEACION"
+      - "TASK-2026-02-17-AUDITORIA-FLUJOS-P0"
+      - "TASK-2026-02-17-VALIDACION-REQUISITOS"
+    count: 3
+
+  EPIC-WS-007:
+    titulo: "Gobernanza DB DDL-First por Ambientes"
+    tareas_activas:
+      - "TASK-2026-02-17-PROCEDIMIENTOS-DB-DEV-PROD-AGENTES"
+    count: 1
+
+# ------------------------------------------------------------------------------
+# ESTADISTICAS
+# ------------------------------------------------------------------------------
 
 estadisticas:
-  total_tareas: 53
-  completadas: 52
-  en_progreso: 1
-  pendientes: 0
-  canceladas: 0
-  bloqueadas: 0
-  por_fecha: 50
-  archivadas:
-    2026-01-24: 21  # Archivado 2026-02-03
-    2026-01-25: 12  # Archivado 2026-02-03
-    2026-01-27: 9   # Archivado 2026-02-03
-  consolidado: "TAREAS-HISTORICO-CONSOLIDADO.md"  # Indice maestro creado 2026-02-03
+  total_tareas: 19
+  tareas_con_epic_ref: 19
+  cobertura_porcentaje: 100
+  por_estado:
+    completadas: 19
+    en_progreso: 0
+    pendientes: 0
+  por_epic:
+    EPIC-WS-001: 6
+    EPIC-WS-002: 0
+    EPIC-WS-003: 1
+    EPIC-WS-004: 4
+    EPIC-WS-005: 4
+    EPIC-WS-006: 3
+    EPIC-WS-007: 1
+  tareas_historicas_archivadas: 53
+  tareas_totales_incluyendo_historicas: 72
 
-# ─────────────────────────────────────────────────────────────────────────────────
-# CARPETAS DE TAREAS POR FECHA
-# ─────────────────────────────────────────────────────────────────────────────────
-#
-# Las tareas están organizadas por fecha de ejecución (alineado con workspace-v2).
-#
-# Estructura:
-#   tareas/
-#   ├── 2026-01-24/  (21 tareas)
-#   ├── 2026-01-25/  (12 tareas)
-#   ├── 2026-01-27/  (9 tareas)
-#   └── 2026-01-30/  (2 tareas - carpetas directas por complejidad)
-#
-# Cada carpeta de fecha contiene _INDEX.yml con detalle de sus tareas.
-# Para consultar detalles de una tarea, navegar a:
-#   {fecha}/TASK-{id}/
-#
-
-carpetas_por_fecha:
-  por_fecha:
-    # 2026-01-24: ARCHIVADO el 2026-02-03 (BLOQUE-3 Plan Maestro)
-    # Ver: tareas/_archive/2026-01-24/ y RESUMEN-TAREAS-2026-01-24.md
-    2026-01-25:
-      total: 12
-      tareas:
-        - "TASK-2026-01-25-ANALISIS-PORTAL-TEACHER"
-        - "TASK-2026-01-25-VALIDACION-PORTAL-TEACHER"
-        - "TASK-021-ddl-entity-coherence-audit"
-        - "TASK-022-MODELADO-INTEGRAL"
-        - "TASK-023-teacher-portal-quick-wins"
-        - "TASK-024-admin-portal-analysis"
-        - "TASK-025-p1-gaps-fix"
-        - "TASK-026-p2-gaps-analysis"
-        - "TASK-027-admin-content-100"
-        - "TASK-028-teacher-portal-100"
-        - "TASK-029-backend-admin-endpoints"
-        - "TASK-030-admin-pages-polish"
-    2026-01-27:
-      total: 9
-      tareas:
-        - "TASK-BD-ANALYSIS-2026-01-27"
-        - "TASK-P1-SEEDS-SOCIAL-2026-01-27"
-        - "TASK-P1-ORM-RELATIONS-2026-01-27"
-        - "TASK-P2-SEEDS-COMODINES-2026-01-27"
-        - "TASK-P2-SEEDS-COMMUNICATION-2026-01-27"
-        - "TASK-P2-SEEDS-PEDAGOGY-2026-01-27"
-        - "TASK-P2-RLS-EXPANSION-2026-01-27"
-        - "TASK-P2-ROLES-CONSOLIDATION-2026-01-27"
-        - "TASK-P3-RLS-PHASE3-2026-01-27"
-    2026-01-30:
-      total: 2
-      nota: "Tareas complejas con estructura extendida, en carpetas directas"
-      tareas:
-        - id: "TASK-2026-01-30-ANALISIS-COMPARATIVO"
-          titulo: "Análisis Comparativo WSL vs Windows (Preliminar)"
-          estado: "completada"
-          archivos: 5
-        - id: "TASK-2026-01-30-CORRECCION-INTEGRAL"
-          titulo: "Corrección Integral Gamilit - WSL vs Windows"
-          estado: "completada"
-          archivos: 7
-          descripcion: |
-            Tarea compleja de análisis y corrección:
-            - Fase 1: SSOT y sincronización (6 subtareas)
-            - Fase 2: Documentación WSL (5 subtareas)
-            - Fase 3: ADRs arquitectónicos (4 subtareas)
-            - Fase 4: Prevención (3 subtareas)
-            Total: 18 subtareas CAPVED completadas
-    2026-01-31:
-      total: 1
-      nota: "Tarea de análisis y planificación integral"
-      tareas:
-        - id: "TASK-2026-01-31-ANALISIS-PLANIFICACION"
-          titulo: "Análisis y Planificación Integral Gamilit"
-          estado: "completada"
-          archivos: 3
-          descripcion: |
-            Análisis integral del proyecto para:
-            - Validar Student Portal (conservado)
-            - Validar nuevo desarrollo
-            - Purgar documentación obsoleta
-            - Crear plan de ejecución ordenado
-            Fases: 6 | Subtareas: 16 | Acciones: 52
-    2026-02-02:
-      total: 3
-      nota: "Auditoría integral, remediación y optimización de triggers"
-      tareas:
-        - id: "TASK-2026-02-02-AUDITORIA-BD-REQUERIMIENTOS"
-          titulo: "Auditoría Integral del Modelo de BD vs Requerimientos"
-          estado: "completada"
-          archivos: 7
-          descripcion: |
-            Auditoría exhaustiva del modelo de base de datos:
-            - Fase 1: Reconciliación de inventarios (funciones: 119, triggers: 58)
-            - Fase 2: Trazabilidad DDL↔RF (100% schemas mapeados)
-            - Fase 3: Detección de anomalías (Score: 8.4/10)
-            - Fase 4: Análisis de dependencias (Score: 9.1/10)
-            - Fase 5: Consolidación y documentación
-            Entregables: INVENTARIO-RECONCILIADO.yml, MATRIZ-TRAZABILIDAD-DDL-RF.yml,
-                         REPORTE-ANOMALIAS.md, PLAN-EJECUCION-ORDENADO.md
-        - id: "TASK-2026-02-02-REMEDIACION-DDL"
-          titulo: "Remediación de Anomalías DDL - Post Auditoría"
-          estado: "completada"
-          archivos: 3
-          descripcion: |
-            Remediación de hallazgos de auditoría:
-            - P1: 35 archivos deprecated eliminados (2975 líneas)
-            - P2-A: Plan consolidación 5 tablas audit → 1 unified_audit_log
-            - P2-B: Plan optimización triggers (150-220ms → 95-155ms, -35%)
-            - P3: Próximos pasos documentados (5 sprints futuros)
-            Entregables: PLAN-CONSOLIDACION-AUDIT.md, PLAN-OPTIMIZACION-TRIGGERS.md
-        - id: "TASK-2026-02-02-IMPLEMENTAR-OPTIMIZACION-TRIGGERS"
-          titulo: "Implementar Optimización de Triggers en Staging"
-          estado: "completada"
-          archivos: 6
-          descripcion: |
-            Implementación del plan P2-B de optimización de triggers:
-            - F1: Funciones consolidadas (update_module_progress_complete, process_xp_update)
-            - F2: 5 índices de optimización
-            - F3: Triggers consolidados (trg_module_progress_complete, trg_process_xp_update)
-            Reducción latencia: 150-220ms → 95-155ms (-35%)
-            Entregables: 2 funciones, 2 triggers, 5 índices, 1 script migración
-    2026-02-05:
-      total: 1
-      nota: "Análisis integral modelado BD con subagentes paralelos"
-      tareas:
-        - id: "TASK-2026-02-05-ANALISIS-INTEGRAL-MODELADO-BD"
-          titulo: "Análisis Integral del Modelado de Base de Datos"
-          estado: "completada"
-          archivos: 15
-          descripcion: |
-            Análisis exhaustivo del modelado BD con 5 fases CAPVED:
-            - 40 hallazgos (10C/9H/11M/6L/4I)
-            - Inventarios bumped: DATABASE v6.0.0, BACKEND v3.15.0, MASTER v6.0.0
-            - 9 BATCHes remediación planificados
-            - 27 subagentes utilizados
-    2026-02-06:
-      total: 1
-      nota: "Análisis integral documentación con CAPVED completo y 35 subagentes"
-      tareas:
-        - id: "TASK-2026-02-06-ANALISIS-INTEGRAL-DOCUMENTACION"
-          titulo: "Análisis Integral de Documentación - Proyecto GAMILIT"
-          estado: "completada"
-          archivos: 14
-          descripcion: |
-            Análisis exhaustivo de 900+ archivos de documentación:
-            - 127 hallazgos (24P0/35P1/38P2/30P3), ~85 resueltos (67%)
-            - 104 RF files creados (31→135, ~100% cobertura)
-            - 6 ADR files (ADR-033 + 5 stubs reservados)
-            - ARCHITECTURE.md reescrito (8→18 schemas, ranks corregidos)
-            - 117/164 broken refs corregidas (71%)
-            - 6 sprints, 35 subagentes, 5 commits, ~270 archivos impactados
-            Commits: 704c341f, d244ecdd, c4ef8dc3, d75e4793, 1eb14d57
-    2026-02-03:
-      total: 2
-      nota: "Análisis integral BD y Frontend/UX-UI con subagentes paralelos"
-      tareas:
-        - id: "TASK-2026-02-03-PLAN-MAESTRO-BD-REQUERIMIENTOS"
-          titulo: "Plan Maestro - Análisis BD y Requerimientos GAMILIT"
-          estado: "completada"
-          archivos: 18
-          descripcion: |
-            Análisis integral de BD vs Requerimientos con metodología CAPVED:
-            - Fase 1: Análisis paralelo con 5 agentes especializados
-            - Fase 2: Plan maestro extendido (5 áreas, 13 dominios, 28 tareas)
-            - Fase 3: Ejecución de 5 bloques de remediación en paralelo
-            - Fase 4: Validación con recreación de BD en WSL
-            - Fase 5: Documentación CAPVED completa con perfiles de agentes
-            Hallazgos: 13 funciones duplicadas, 9 triggers redundantes, 7 tablas solapadas
-            Remediaciones: 21 RLS policies, 10 índices, 2 bug fixes, 3 triggers deprecados
-            Commits: 9dc3482e, a097bf1f, 036ee178, 78f98332
-            Entregables: INFORME-FINAL.md, _subagents/AGENT-PROFILES.md, _subagents/PROMPTS-EJECUTADOS.md
-        - id: "TASK-2026-02-03-ANALISIS-FRONTEND-UXUI"
-          titulo: "Análisis y Planificación Integral del Frontend/UX-UI de GAMILIT"
-          estado: "en_progreso"
-          archivos: 5
-          descripcion: |
-            Análisis exhaustivo del frontend con enfoque UX/UI:
-            - Fase C: Contexto recopilado (4 subagentes paralelos)
-            - Fase A: Análisis de gaps (495+ comp, 85 páginas, 60+ rutas)
-            - Fase P: Plan estructurado (6 fases, 48 subtareas)
-            Gaps identificados: 70 componentes, 12 rutas, 5 flujos sin documentar
-            Métricas objetivo: Coherencia FE-Docs de 85% → 95%
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# TAREAS RELACIONADAS DEL WORKSPACE
-# ─────────────────────────────────────────────────────────────────────────────────
-# Tareas que afectan a gamilit pero residen en workspace-v2/orchestration/tareas/
-
-tareas_workspace_relacionadas:
-  - task_id: "TASK-2026-01-25-001-GAMILIT-ADMIN-PORTAL-ANALYSIS"
-    titulo: "Analisis Detallado y Documentacion del Portal Admin de GAMILIT"
-    ubicacion: "workspace-v2/orchestration/tareas/TASK-2026-01-25-001-GAMILIT-ADMIN-PORTAL-ANALYSIS/"
-    estado: "completada"
-    fecha: "2026-01-25"
-    descripcion: |
-      Analisis exhaustivo del portal admin incluyendo:
-      - 6 especificaciones tecnicas (ET-ADM-005 a ET-ADM-010)
-      - Catalogo de 92 componentes admin
-      - Mapa de 193+ endpoints API
-      - 3 componentes implementados (ExercisePreviewModal, UserAdvancedFilters, RoleActionsMenu)
-      - Manual actualizado a v1.3
-      - Validacion de impacto en portal de estudiantes
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# FORMATO DE ID DE TAREA
-# ─────────────────────────────────────────────────────────────────────────────────
-
-formato_id:
-  patron: "TASK-{NNN}"
-  ejemplo: "TASK-001"
-  descripcion: |
-    - NNN: Secuencial del proyecto (001, 002, etc.)
-    - Para tareas complejas puede usarse TASK-{YYYY-MM-DD}-{NNN}
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# TAREAS ACTIVAS
-# ─────────────────────────────────────────────────────────────────────────────────
-
-tareas_activas:
-  - id: "TASK-2026-02-03-ANALISIS-FRONTEND-UXUI"
-    titulo: "Análisis y Planificación Integral del Frontend/UX-UI de GAMILIT"
-    estado: "en_progreso"
-    fase: "P (Plan)"
-    perfil: "Frontend/UX-UI Analyst"
-    creado: "2026-02-03"
-    porcentaje: 40
-    descripcion: |
-      Análisis exhaustivo del frontend comparando:
-      - Componentes, páginas, routing vs documentación
-      - Desarrollo actual vs base de datos
-      - Identificación de gaps y documentación obsoleta
-
-      6 Fases planificadas:
-      - FASE-1: Validación de Componentes (13 subtareas)
-      - FASE-2: Validación de Páginas y Routing (8 subtareas)
-      - FASE-3: Validación de Flujos UX (7 subtareas)
-      - FASE-4: Validación Frontend vs BD (6 subtareas)
-      - FASE-5: Purga de Documentación (5 subtareas)
-      - FASE-6: Integración de Definiciones (9 subtareas)
-
-      Total: 48 subtareas | Subagentes: 4 paralelos iniciales
-    entregables:
-      - "01-CONTEXTO.md"
-      - "02-ANALISIS.md"
-      - "03-PLAN.md"
-      - "subagentes/_INDEX.md"
-
-tareas_completadas_recientes:
-  - id: "TASK-2026-02-03-ANALISIS-VALIDACION-MODELADO-BD"
-    titulo: "Análisis y Validación Integral del Modelado de Datos"
-    estado: "completada"
-    fase: "FASE-1 + FASE-2 (COMPLETADAS)"
-    perfil: "Especialista BD y Modelado"
-    creado: "2026-02-03"
-    completado: "2026-02-03"
-    archivos: 40
-    score_inicial: "91.5%"
-    score_final: "96.5%"
-    descripcion: |
-      Análisis y remediación integral del modelado de datos GAMILIT:
-
-      FASE 1 - ANÁLISIS:
-      - 6 niveles ejecutados con 28 subtareas CAPVED
-      - 22 agentes especializados en paralelo
-      - 7 dominios validados (94% promedio)
-      - 23 gaps identificados (5 críticos)
-      - 106 anomalías detectadas y priorizadas
-
-      FASE 2 - REMEDIACIÓN:
-      - 6 sprints ejecutados con 23 tareas
-      - 20 gaps resueltos (87%)
-      - 3 false positives identificados
-      - 12 DDL creados, 5 migraciones, 2 docs consolidados
-      - Score mejorado: 91.5% → 96.5%
-    entregables:
-      fase_1:
-        - "PLAN-MAESTRO-ANALISIS.md"
-        - "SUBTAREAS-CAPVED.yml"
-        - "ORDEN-EJECUCION-LOGICO.md"
-        - "_output/VALIDACION-CONSOLIDADA-NIVEL2.yml"
-        - "_output/VALIDACION-CONSOLIDADA-NIVEL3.yml"
-        - "_output/VALIDACION-CONSOLIDADA-NIVEL4.yml"
-        - "_output/VALIDACION-CONSOLIDADA-NIVEL5.yml"
-        - "_output/ROADMAP-FASE-2-IMPLEMENTACION.md"
-      fase_2:
-        - "DDL actualizados: 31 tablas pluralizadas"
-        - "DDL actualizados: 7 FKs corregidas (auth_management)"
-        - "DDL actualizados: Triggers con prefijo trg_"
-        - "DDL actualizados: ENUM bloom_level integrado"
-        - "_output/ANALISIS-CONSOLIDACION-CHALLENGES.md"
-        - "_output/ANALISIS-CONSOLIDACION-REPORTS.md"
-        - "INFORME-FINAL.md (v2.0)"
-      nota: "Sin migraciones - cambios directos en DDL para recreación limpia"
-
-# ─────────────────────────────────────────────────────────────────────────────────
-# RESUMEN DE LOGROS (Consolidado de tareas archivadas)
-# ─────────────────────────────────────────────────────────────────────────────────
-
-resumen_logros:
-  mvp_progress:
-    inicial: "75%"
-    final: "95%"
-    fecha_cierre: "2026-01-27"
-
-  areas_completadas:
-    - area: "Student Portal"
-      estado: "95%"
-      tareas_clave: ["TASK-001", "TASK-014"]
-
-    - area: "Teacher Portal"
-      estado: "100%"
-      tareas_clave: ["TASK-011", "TASK-023", "TASK-028"]
-
-    - area: "Admin Portal"
-      estado: "95%"
-      tareas_clave: ["TASK-024", "TASK-027", "TASK-029", "TASK-030"]
-
-    - area: "Database"
-      estado: "100%"
-      tareas_clave: ["TASK-016", "TASK-021", "TASK-022"]
-
-    - area: "Backend"
-      estado: "98%"
-      tareas_clave: ["TASK-002", "TASK-006", "TASK-029"]
-
-    - area: "Test Coverage"
-      estado: "45%"
-      tareas_clave: ["TASK-012", "TASK-013"]
-
-  metricas_finales:
-    total_commits_gamilit: 54
-    total_commits_workspace: 15
-    archivos_modificados: 222
-    bugs_corregidos: 27  # +2 en cleanup_old_* functions
-    features_implementadas: 15
-    rls_policies_creadas: 21  # 2026-02-03
-    indices_fk_creados: 10    # 2026-02-03
-    coherencia_ddl_backend: "100%"
-
-# ─────────────────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
 # NOTAS
-# ─────────────────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
 
 notas: |
-  Este índice fue creado como parte de la corrección TASK-2026-01-24-007
-  para habilitar documentación de tareas a nivel de proyecto.
+  Este indice fue reestructurado en v3.0.0 (MQ-004) para vincular TODAS las
+  tareas activas con sus EPICs del backlog (BACKLOG.yml).
 
-  Las tareas que afecten SOLO a gamilit deben documentarse aquí.
-  Las tareas transversales van a orchestration/tareas/ del workspace.
+  Cambios respecto a v2.4.0:
+  - Reestructurado: formato plano con campos estandar (id, path, epic_ref, estado,
+    fecha_creacion, descripcion_corta) para cada tarea
+  - Agregado: campo epic_ref en cada tarea vinculando a EPIC-WS-001..007
+  - Agregado: seccion distribucion_por_epic con conteo por EPIC
+  - Agregado: estadisticas actualizadas con cobertura de vinculacion
+  - Conservado: referencia a tareas historicas archivadas con asignacion EPIC retroactiva
 
-  REESTRUCTURADO 2026-01-29:
-  - Estructura alineada con workspace-v2 (sin _archive/)
-  - 42 tareas organizadas directamente por fecha
-  - Cada carpeta tiene su propio _INDEX.yml
+  Criterio de asignacion EPIC:
+  - Tareas de analisis/auditoria de coherencia cross-layer -> EPIC-WS-001
+  - Tareas de features cross-project -> EPIC-WS-002
+  - Tareas de infraestructura (Redis, CI/CD, deployment) -> EPIC-WS-003
+  - Tareas de calidad de codigo y estandares -> EPIC-WS-004
+  - Tareas de correcciones tecnicas (bugs, DDL, RLS, seeds) -> EPIC-WS-005
+  - Tareas de trazabilidad y planeacion integrada -> EPIC-WS-006
+  - Tareas de gobernanza DB y ambientes -> EPIC-WS-007
 
-  Ver @UBICACION-DOC para la matriz de decisión.
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# FIN DEL ÍNDICE
-# ═══════════════════════════════════════════════════════════════════════════════
+# ==============================================================================
+# FIN DEL INDICE
+# ==============================================================================
