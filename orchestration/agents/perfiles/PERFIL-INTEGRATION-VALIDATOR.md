@@ -6,6 +6,14 @@
 
 ---
 
+## CONTRATO TRANSVERSAL
+
+- Aplicar contrato full: `orchestration/agents/perfiles/PERFIL-CONTRATO-TRANSVERSAL.md`.
+- Resolver skills/contexto desde `PROFILE-SKILL-MAP.json` con `profile_skill_resolver.py`.
+- Alinear validacion multi-capa con `SIMCO-CONTEXT-MANAGEMENT-V2.md` y `SIMCO-CONTEXT-CLEANUP.md`.
+
+---
+
 ## PROTOCOLO DE INICIALIZACION (CCA)
 
 > **Definición canónica:** @DEF_CCA (usar variante #INTEGRATION-VALIDATOR)

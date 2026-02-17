@@ -4,7 +4,7 @@
 **Fecha:** 2026-02-10
 **Uso:** Definicion de tarea anidada dentro de una User Story
 **Ubicacion destino:** `projects/{p}/docs/10-requirements/epics/EPIC-{ID}/US-{ID}/TASK-{MODULE}-{NNN}-F{N}-{CAPA}/TASK-{MODULE}-{NNN}-F{N}-{CAPA}.md`
-**ADR:** [ADR-0020](../../docs/90-adr/ADR-0020-jerarquia-anidada-work-items.md) (DEC-ANID-010/012)
+**ADR:** [ADR-034](../../../docs/90-adr/ADR-034-jerarquia-anidada-profunda.md) (DEC-ANID-010/012)
 **Convencion:** [CONVENCION-NAMING-TASKS.md v2.0.0](./CONVENCION-NAMING-TASKS.md)
 
 ---
@@ -64,8 +64,8 @@ esta tarea de manera autonoma. 2-3 parrafos.}
 
 | # | Subtask ID | Titulo | Archivo |
 |---|-----------|--------|---------|
-| 1 | SUBTASK-{MODULE}-{NNN}-F{N}-01 | {titulo} | [SUBTASK-{MODULE}-{NNN}-F{N}-01-{slug}.md](./SUBTASK-{MODULE}-{NNN}-F{N}-01-{slug}.md) |
-| 2 | SUBTASK-{MODULE}-{NNN}-F{N}-02 | {titulo} | [SUBTASK-{MODULE}-{NNN}-F{N}-02-{slug}.md](./SUBTASK-{MODULE}-{NNN}-F{N}-02-{slug}.md) |
+| 1 | SUBTASK-{MODULE}-{NNN}-F{N}-01 | {titulo} | `./SUBTASK-{MODULE}-{NNN}-F{N}-01-{slug}.md` |
+| 2 | SUBTASK-{MODULE}-{NNN}-F{N}-02 | {titulo} | `./SUBTASK-{MODULE}-{NNN}-F{N}-02-{slug}.md` |
 
 ---
 

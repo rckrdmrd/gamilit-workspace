@@ -1,0 +1,45 @@
+version: "1.0.0"
+updated: "2026-02-17"
+owner: "orchestration"
+description: "Trazabilidad maestra para iniciativas de mejora de estándares y desarrollo."
+
+trazabilidad:
+  - epic_id: "EPIC-GAM-F4-VALIDATION"
+    epic_name: "Validación y alineación de estándares"
+    user_stories:
+      - user_story_id: "US-GAM-STD-001"
+        user_story_title: "Alinear planeación y ejecución con estándares"
+        tasks:
+          - task_id: "TASK-2026-02-17-IMPLEMENTACION-PLAN-ESTANDARES"
+            task_title: "Implementación del plan maestro por fases"
+            status: "completed"
+            code:
+              orchestration:
+                - file: "orchestration/reports/2026-02-17-BASELINE-GOBERNANZA-ESTANDARES.md"
+                - file: "orchestration/reports/2026-02-17-AUDITORIA-NORMATIVA-DOCUMENTAL.md"
+                - file: "orchestration/reports/2026-02-17-AUDITORIA-TECNICA-CODIGO-EXISTENTE.md"
+                - file: "orchestration/reports/2026-02-17-ROADMAP-REMEDIACION-P0-P2.md"
+                - file: "orchestration/reports/2026-02-17-PLAN-OPERATIVO-EJECUCION-Y-RACI.md"
+                - file: "orchestration/reports/2026-02-17-EJECUCION-GRADUAL-ITERACIONES.md"
+                - file: "orchestration/reports/2026-02-17-VALIDACION-INTEGRAL-EJECUCION.md"
+                - file: "orchestration/reports/2026-02-17-CIERRE-Y-MEJORA-CONTINUA.md"
+              templates:
+                - file: "docs/10-requirements/epics/_TEMPLATE-TASK-TRAZABILIDAD.md"
+              checklists:
+                - file: "orchestration/checklists/CHECKLIST-GATE-PRE-EJECUCION.md"
+                - file: "orchestration/checklists/CHECKLIST-GATE-POST-EJECUCION.md"
+                - file: "orchestration/checklists/CHECKLIST-VALIDACION-INTEGRAL.md"
+              scripts:
+                - file: "orchestration/scripts/sync-work-items-to-docs.js"
+                - file: "orchestration/scripts/validate-traceability.js"
+            documentation:
+              - file: "orchestration/reports/README.md"
+              - file: "orchestration/checklists/README.md"
+              - file: "orchestration/trazabilidad/README.md"
+            validation:
+              checklists:
+                - "orchestration/checklists/CHECKLIST-GATE-PRE-EJECUCION.md"
+                - "orchestration/checklists/CHECKLIST-GATE-POST-EJECUCION.md"
+                - "orchestration/checklists/CHECKLIST-VALIDACION-INTEGRAL.md"
+              scripts:
+                - "node orchestration/scripts/validate-traceability.js"

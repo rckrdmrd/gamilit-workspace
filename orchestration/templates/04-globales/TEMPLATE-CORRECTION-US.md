@@ -1,7 +1,7 @@
 # US-{PREFIX}-COR-{NNN}: {Titulo del Bug/Correccion}
 
 **Sistema:** SIMCO v4.0.0 | **Template:** Correction User Story
-**ADR:** [ADR-0020](../../../docs/90-adr/ADR-0020-jerarquia-anidada-work-items.md)
+**ADR:** [ADR-034](../../../docs/90-adr/ADR-034-jerarquia-anidada-profunda.md)
 
 ---
 

@@ -41,6 +41,24 @@ acceptance_criteria:
 
 # --- Notas Técnicas ---
 technical_notes:
+  standards_applied:  # Referencias de estandares/principios
+    - "PRINCIPIO-CAPVED"
+    - "SIMCO-TAREA"
+    # - "ESTANDAR-BACKEND-PROFESIONAL"
+    # - "ESTANDAR-FRONTEND-PROFESIONAL"
+
+  related_adrs:  # ADRs que condicionan la implementacion
+    # - "ADR-XXXX"
+    []
+
+  skills_applied:  # Skills sugeridas/obligatorias por historia
+    # - "simco-task-execution"
+    []
+
+  design_patterns:  # Patrones esperados por la historia
+    # - "{repository|value_object|domain_error|strategy}"
+    []
+
   endpoints:  # APIs requeridas
     - method: "{GET|POST|PUT|PATCH|DELETE}"
       path: "/api/{resource}/{action}"
@@ -87,3 +105,4 @@ updated: "{YYYY-MM-DD}"
 # - Cada AC debe ser verificable y testeable
 # - Story points: usar Fibonacci (1,2,3,5,8,13,21) - 13+ considerar dividir
 # - Status flow: backlog → ready → in_progress → review → qa → done
+# - Conversión a task CAPVED: ver TEMPLATE-STORY-TO-TASK.md

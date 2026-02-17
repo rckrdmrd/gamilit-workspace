@@ -21,6 +21,8 @@ Esta carpeta centraliza las configuraciones compartidas por TODOS los agentes de
 | `SHARED-PLATFORM-CONFIG.yml` | Detección de plataforma y comandos cross-platform | ~400 líneas |
 | `SHARED-PROJECT-REGISTRY.yml` | Registro de los 18 proyectos con aliases | ~250 líneas |
 | `SHARED-LOAD-SEQUENCE.yml` | Secuencia de carga de contexto (boot sequence) | ~350 líneas |
+| `PROFILE-SKILL-MAP.json` | SSOT ejecutable de `task -> profile -> principles -> skills -> context` | ~300 líneas |
+| `../tools/profile_skill_resolver.py` | Resolvedor determinístico de perfil y skills | ~220 líneas |
 
 ## Uso
 
@@ -35,6 +37,9 @@ boot_sequence:
     file: "orchestration/agents/configs/SHARED-PLATFORM-CONFIG.yml"
   - step: 1
     file: "orchestration/agents/configs/SHARED-PROJECT-REGISTRY.yml"
+  - step: 7
+    resolver: "orchestration/agents/tools/profile_skill_resolver.py"
+    map: "orchestration/agents/configs/PROFILE-SKILL-MAP.json"
   # ...
 ```
 

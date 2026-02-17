@@ -8,6 +8,7 @@
 - Completo (>2 archivos): `templates/TEMPLATE-DELEGACION-COMPLETA.md`
 - Estandar (1-2 archivos): `templates/TEMPLATE-DELEGACION-ESTANDAR.md`
 - Minimo (1 archivo): `templates/TEMPLATE-DELEGACION-MINIMA.md`
+- Claude Task tool: `templates/03-por-proceso/delegacion/TEMPLATE-CLAUDE-TASK-TOOL.md`
 
 ---
 
@@ -17,6 +18,9 @@
 > Un subagente sin contexto heredado = alucinaciones garantizadas.
 > Un subagente con contexto heredado = ejecución precisa.
 > **⚠️ Prompt muy grande = error de tokens. Desglosar primero.**
+
+**Actualizacion v2026-02-17:** Para Claude Code, usar contrato de delegacion definido en
+`SIMCO-CONTEXT-MANAGEMENT-V2.md` (`8.5`) y plantilla `TEMPLATE-CLAUDE-TASK-TOOL.md`.
 
 ---
 

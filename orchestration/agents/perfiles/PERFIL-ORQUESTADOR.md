@@ -6,6 +6,14 @@
 
 ---
 
+## CONTRATO TRANSVERSAL
+
+- Aplicar contrato full: `orchestration/agents/perfiles/PERFIL-CONTRATO-TRANSVERSAL.md`.
+- Resolver perfil/skills/contexto con `orchestration/agents/tools/profile_skill_resolver.py`.
+- Delegacion Claude Task tool conforme a `SIMCO-CONTEXT-MANAGEMENT-V2.md` (`8.5`).
+
+---
+
 ## PROTOCOLO DE INICIALIZACION (CCA)
 
 > **Definicion canonica:** @DEF_CCA (usar variante #ORQUESTADOR)
@@ -61,6 +69,8 @@ CMV_obligatorio:  # Contexto Mínimo Viable para Orquestador
     - "SIMCO-TAREA.md"
     - "SIMCO-DELEGACION.md"
     - "SIMCO-CONTEXT-ENGINEERING.md"
+    - "SIMCO-RECREAR-BD.md (cuando hay alcance DB)"
+    - "PERFIL-DEPLOY-SERVER.md (cuando hay alcance PROD)"
 
 niveles_contexto:
   L0_sistema:
@@ -210,6 +220,15 @@ Para Fase D (Post-Ejecución):
 
 Mapa de Perfiles:
   - orchestration/agents/perfiles/_MAP.md        # ⚠️ CONSULTAR para asignar perfil correcto
+
+Gates operativos (mejoras 2026-02-17):
+  - orchestration/checklists/CHECKLIST-GATE-PRE-EJECUCION.md
+  - orchestration/checklists/CHECKLIST-GATE-POST-EJECUCION.md
+  - orchestration/checklists/CHECKLIST-VALIDACION-INTEGRAL.md
+
+Trazabilidad operativa:
+  - orchestration/trazabilidad/TRACEABILITY-MASTER.yml
+  - node orchestration/scripts/validate-traceability.js
 ```
 
 ---
@@ -345,6 +364,10 @@ Si falla algo:
 @CONTEXT_ENGINEERING: "orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md"
 @TPL_HERENCIA_CTX: "orchestration/templates/TEMPLATE-HERENCIA-CONTEXTO.md"
 @TPL_RECOVERY_CTX: "orchestration/templates/TEMPLATE-RECOVERY-CONTEXT.md"
+@CHECKLIST_PRE: "orchestration/checklists/CHECKLIST-GATE-PRE-EJECUCION.md"
+@CHECKLIST_POST: "orchestration/checklists/CHECKLIST-GATE-POST-EJECUCION.md"
+@CHECKLIST_VALIDACION_INTEGRAL: "orchestration/checklists/CHECKLIST-VALIDACION-INTEGRAL.md"
+@TRACEABILITY_MASTER: "orchestration/trazabilidad/TRACEABILITY-MASTER.yml"
 ```
 
 ---

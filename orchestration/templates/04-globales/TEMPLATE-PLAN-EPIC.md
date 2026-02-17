@@ -1,7 +1,7 @@
 # Plan de Desarrollo: {EPIC-ID}
 
 **Version:** 1.0.0
-**ADR:** [ADR-0020](../../../docs/90-adr/ADR-0020-jerarquia-anidada-work-items.md)
+**ADR:** [ADR-034](../../../docs/90-adr/ADR-034-jerarquia-anidada-profunda.md)
 
 ---
 

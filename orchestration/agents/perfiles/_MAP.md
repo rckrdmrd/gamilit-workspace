@@ -5,6 +5,10 @@
 **Sistema:** NEXUS v4.1 + SIMCO v4.5.0
 **Proposito:** Guia para asignacion correcta de tareas a perfiles especializados
 
+> Nota de normalizacion: `_MAP.md` es entrada operativa.
+> Para detalle extendido de catalogo usar `CATALOG.md`.
+> Contrato transversal full: `PERFIL-CONTRATO-TRANSVERSAL.md`.
+
 ---
 
 ## DIRECTIVA DE USO
@@ -16,6 +20,15 @@
 > 2. Verificar que la tarea coincide con el dominio del perfil
 > 3. Incluir el alias del perfil en la delegacion
 > 4. Proporcionar contexto minimo requerido por el perfil
+
+---
+
+## CONTRATO TRANSVERSAL (OBLIGATORIO)
+
+Antes de usar cualquier perfil full:
+- Aplicar contrato de entrada/salida definido en `PERFIL-CONTRATO-TRANSVERSAL.md`.
+- Resolver skills/contexto desde `PROFILE-SKILL-MAP.json` mediante `profile_skill_resolver.py`.
+- Evitar rutas legacy no existentes en este workspace standalone.
 
 ---
 
@@ -34,6 +47,7 @@
 | "Docker", "CI/CD basico", "deploy simple", "nginx" | DevOps | @PERFIL_DEVOPS |
 | "pipeline avanzado", "Jenkins", "GitHub Actions", "quality gates" | CICD-Specialist | @PERFIL_CICD_SPECIALIST |
 | "produccion", "rollback", "ambiente prod", "deploy produccion" | Production-Manager | @PERFIL_PRODUCTION_MANAGER |
+| "recrear bd dev", "wsl", "reset db local", "database local windows" | DB-Dev-WSL | @PERFIL_DB_DEV_WSL |
 | "secretos", "credenciales", ".env", "API keys", "rotacion" | Secrets-Manager | @PERFIL_SECRETS_MANAGER |
 | "Prometheus", "Grafana", "alertas", "metricas", "monitoreo" | Monitoring-Agent | @PERFIL_MONITORING_AGENT |
 | "puertos", "entorno local", "conflictos de puertos" | DevEnv | @PERFIL_DEVENV |
@@ -49,6 +63,11 @@
 | "coordinar", "delegar", "multiples agentes" | Orquestador | @PERFIL_ORQUESTADOR |
 | "requerimientos", "historia usuario", "criterios aceptacion" | Requirements-Analyst | @PERFIL_REQUIREMENTS |
 | "XP", "logros", "gamificacion", "recompensas", "rangos" | Gamification-Specialist | (proyecto gamilit) |
+| "auditoria de flujos", "flujo end-to-end", "trazabilidad FE BE DB" | Documentation-Maintainer | @PERFIL_DOCS_MAINTAINER |
+| "issue de consistencia", "estado parcial", "atomicidad rewards" | Backend-NestJS + Database-PostgreSQL | @PERFIL_BACKEND_NESTJS + @PERFIL_DATABASE_POSTGRESQL |
+| "cobertura total de procesos", "riesgos residuales", "analisis vs implementacion documental" | Documentation-Maintainer + Orquestador | @PERFIL_DOCS_MAINTAINER + @PERFIL_ORQUESTADOR |
+| "normalizacion documental", "enlaces rotos docs", "SSOT docs/orchestration" | Documentation-Maintainer + Orquestador | @PERFIL_DOCS_MAINTAINER + @PERFIL_ORQUESTADOR |
+| "portal parents", "vinculacion padre-estudiante", "notificaciones padres" | Requirements-Analyst + Documentation-Maintainer | @PERFIL_REQUIREMENTS + @PERFIL_DOCS_MAINTAINER |
 | "trading ML", "backtesting", "estrategia trading" | Trading-ML-Specialist | (proyecto trading) |
 
 ---

@@ -13,6 +13,8 @@ Usar perfiles compactos cuando:
 - Se necesita optimizar tokens
 - Tarea es especifica (1-2 archivos)
 
+**Contrato obligatorio:** `PERFIL-CONTRATO-COMPACT.md`
+
 ## PERFILES DISPONIBLES
 
 | Perfil | Dominio | Tokens | Uso |
@@ -71,6 +73,7 @@ SEGUN_TAREA:
 | Documento | Proposito |
 |-----------|-----------|
 | `../` | Perfiles completos |
+| `PERFIL-CONTRATO-COMPACT.md` | Contrato estandar de entrada/salida para compact |
 | `SIMCO-SUBAGENTE.md` | Protocolo de subagente |
 | `SIMCO-SUBAGENTE.md` | Protocolo de subagente (CCA incluido) |
 

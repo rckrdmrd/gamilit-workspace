@@ -7,6 +7,7 @@
 **Tipo:** Directiva de Orquestacion
 **Alias:** @DELEGACION_PARALELA
 **Depende de:** SIMCO-DELEGACION.md, SIMCO-SUBAGENTE.md
+**Template de tracking:** `templates/03-por-proceso/session-tracking/SESSION-TRACKING-TEMPLATE.yml`
 
 ---
 
@@ -234,6 +235,8 @@ session_tracking:
 ```
 orchestration/tracking/SESSION-TRACKING-{uuid}.yml
 ```
+
+Ver guía operativa: `orchestration/tracking/README.md`.
 
 ---
 

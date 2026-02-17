@@ -40,6 +40,7 @@ definitions:
   "@DEF_CHK_POST": "_definitions/checklists/CHECKLIST-POST-TASK.md"
   "@DEF_CHK_GOB": "_definitions/checklists/CHECKLIST-GOBERNANZA-TAREA.md"
   "@DEF_CHK_SSOT": "_definitions/checklists/CHECKLIST-SSOT-SYNC.md"
+  "@DEF_CHK_DOC_NORMALIZATION": "_definitions/checklists/CHECKLIST-NORMALIZACION-DOCUMENTAL.md"
   "@DEF_CHK_SUPPLY": "_definitions/checklists/CHECKLIST-SECURITY-SUPPLY-CHAIN.md"
 
 # ---------------------------------------------------------------------------
@@ -85,6 +86,8 @@ operaciones:
   "@DELEGAR": "directivas/simco/SIMCO-DELEGACION.md"
   "@ASIGNAR_PERFIL": "directivas/simco/SIMCO-ASIGNACION-PERFILES.md"
   "@MAPA_PERFILES": "agents/perfiles/_MAP.md"
+  "@PROFILE_SKILL_MAP": "agents/configs/PROFILE-SKILL-MAP.json"
+  "@PROFILE_RESOLVER": "agents/tools/profile_skill_resolver.py"
 
 # ---------------------------------------------------------------------------
 # OPERACIONES POR DOMINIO TECNICO
@@ -185,12 +188,15 @@ perfiles:
 
 proyecto_local:
   "@INVENTORY": "inventarios/MASTER_INVENTORY.yml"
+  "@SKILLS_REGISTRY": "inventarios/SKILLS-REGISTRY.yml"
   "@DB_INVENTORY": "inventarios/DATABASE_INVENTORY.yml"
   "@BE_INVENTORY": "inventarios/BACKEND_INVENTORY.yml"
   "@FE_INVENTORY": "inventarios/FRONTEND_INVENTORY.yml"
   "@PROXIMA": "PROXIMA-ACCION.md"
   "@CONTEXT_MAP": "CONTEXT-MAP.yml"
   "@BOOTLOADER": "BOOTLOADER.md"
+  "@DOCS_ROOT": "../docs/README.md"
+  "@DOCS_MAP": "../docs/_MAP.md"
 
 # ---------------------------------------------------------------------------
 # REFERENCIA RAPIDA
@@ -199,6 +205,10 @@ proyecto_local:
 referencia:
   "@QUICK_REF": "directivas/simco/SIMCO-QUICK-REFERENCE.md"
   "@INDEX": "directivas/simco/_INDEX.md"
+  "@PROMPTS_INDEX": "referencias/prompts/PROMPTS-INDEX.md"
+  "@PROMPTS_CLAUDE": "referencias/prompts/PROMPTS-CLAUDE-CODE.md"
+  "@PROMPTS_GEMINI": "referencias/prompts/PROMPTS-GEMINI-CLI.md"
+  "@PROMPTS_TRAE": "referencias/prompts/PROMPTS-TRAE.md"
 
 # ===============================================================================
 # FIN DE ALIASES

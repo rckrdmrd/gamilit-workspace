@@ -330,6 +330,8 @@ El `TRIGGER-CIERRE-TAREA-OBLIGATORIO` es diferente a los demas:
 2. Leer `../modos/MODE-FULL.md` para ver integracion con fases
 3. Leer `../../referencias/ALIASES.yml` para aliases relacionados
 4. Leer `TRIGGER-CIERRE-TAREA-OBLIGATORIO.md` para gate de cierre
+5. Para auditorias de consistencia por flujo: `../simco/SIMCO-AUDITORIA-FLUJOS-E2E.md`
+6. Para ejecucion full de cobertura total: `../../tareas/TASK-2026-02-17-CIERRE-RIESGOS-RESIDUALES-FULL/`
 
 ---
 

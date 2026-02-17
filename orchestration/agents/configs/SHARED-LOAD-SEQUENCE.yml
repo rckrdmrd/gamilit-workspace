@@ -2,15 +2,15 @@
 # SHARED-LOAD-SEQUENCE.yml - Context Loading Sequence for All Agents
 # =============================================================================
 # Sistema: SIMCO v4.0.0 + NEXUS v4.1
-# Version: 1.1.0
-# Fecha: 2026-01-24
+# Version: 1.2.0
+# Fecha: 2026-02-17
 # Scope: all-agents (Claude Code, Gemini CLI, Trae, Windsurf)
 # Consolidado de: .gemini/antigravity/LOAD-MAP.yml, .windsurf/LOAD-MAP.yml
 # Actualizado: Integración de SHARED-CHECKPOINT-CONFIG.yml
 # =============================================================================
 
-version: "1.1.0"
-updated: "2026-01-24"
+version: "1.2.0"
+updated: "2026-02-17"
 scope: "all-agents"
 nexus_version: "4.1"
 
@@ -189,14 +189,22 @@ boot_sequence:
   - step: 7
     name: "load_profile"
     description: "Load relevant agent profile for task domain"
-    action: "conditional_read"
+    action: "resolver_execution"
     logic: |
-      Based on task keywords, load appropriate profile:
-      - Database keywords → PERFIL-DATABASE.md
-      - Backend keywords → PERFIL-BACKEND.md
-      - Frontend keywords → PERFIL-FRONTEND.md
-      - Testing keywords → PERFIL-TESTING.md
-      - DevOps keywords → PERFIL-DEVOPS.md
+      Run deterministic resolver:
+      - python orchestration/agents/tools/profile_skill_resolver.py --task "{TASK_DESCRIPTION}" [--task-type {TASK_TYPE}]
+      Resolver uses:
+      - orchestration/agents/configs/PROFILE-SKILL-MAP.json (SSOT machine-readable)
+      Then load:
+      - primary_profile_id profile_file
+      - directives returned by resolver
+      - principles returned by resolver
+      - context_files returned by resolver
+      Fallback:
+      - if resolver fails, use orchestration/agents/perfiles/_MAP.md manual mapping
+    ssot:
+      resolver: "orchestration/agents/tools/profile_skill_resolver.py"
+      map: "orchestration/agents/configs/PROFILE-SKILL-MAP.json"
     base_path: "orchestration/agents/perfiles/"
 
 # =============================================================================

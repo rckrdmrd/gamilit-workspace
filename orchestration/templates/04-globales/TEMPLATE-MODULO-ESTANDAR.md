@@ -236,8 +236,8 @@ CREATE POLICY {tabla}_tenant_isolation ON {schema}.{tabla}
 
 | ID | Titulo | Estado | SP |
 |----|--------|--------|-----|
-| [US-{XXX}-001](./historias/US-{XXX}-001.md) | {Titulo} | {Estado} | {N} |
-| [US-{XXX}-002](./historias/US-{XXX}-002.md) | {Titulo} | {Estado} | {N} |
+| `US-{XXX}-001` | {Titulo} | {Estado} | {N} |
+| `US-{XXX}-002` | {Titulo} | {Estado} | {N} |
 
 ---
 
@@ -250,9 +250,9 @@ limitaciones conocidas o aspectos a tener en cuenta.}
 
 ## 12. Referencias
 
-- [Especificacion Tecnica](./ET-{TIPO}-{MODULO}.md)
-- [Requerimientos](./RF-{MODULO}-001.md)
-- [ADR Relacionado](../97-adr/ADR-{NNNN}.md)
+- Especificacion Tecnica: `./ET-{TIPO}-{MODULO}.md`
+- Requerimientos: `./RF-{MODULO}-001.md`
+- ADR Relacionado: `../../../docs/90-adr/ADR-{NNNN}.md`
 
 ---
 

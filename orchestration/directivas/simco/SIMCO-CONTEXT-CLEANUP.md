@@ -1,9 +1,9 @@
 # SIMCO: CONTEXT CLEANUP
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Sistema:** SIMCO - NEXUS v4.1
 **Proposito:** Protocolo de limpieza de contexto mid-session para evitar compactacion
-**Fecha:** 2026-02-11
+**Fecha:** 2026-02-17
 **Aplica a:** Todos los agentes operando en gamilit
 
 ---
@@ -13,6 +13,32 @@
 > **Reference-Not-Content:** Cuando un archivo ya fue leido y procesado,
 > reemplazar su contenido completo por una referencia de 1 linea.
 > Esto libera tokens sin perder accesibilidad.
+
+---
+
+## Nota de adaptacion para Claude Code (obligatoria)
+
+En Claude Code no existe control directo para borrar selectivamente contenido de la ventana.
+Por lo tanto, la limpieza se implementa de forma **indirecta y operativa**:
+
+```yaml
+adaptacion_claude_code:
+  estrategia_principal:
+    - "Delegar lectura pesada a subagentes con contexto aislado"
+    - "Mantener en el orquestador solo resumenes y decisiones"
+    - "Evitar relectura de archivos ya procesados"
+  persistencia:
+    - "Guardar estado en PROXIMA-ACCION.md"
+    - "Registrar hallazgos estables en MEMORY.md (si aplica)"
+  resultado:
+    - "La limpieza ocurre al finalizar subagentes (su contexto se destruye)"
+    - "El orquestador conserva solo contexto util y trazable"
+```
+
+Reglas practicas:
+- No intentar "purgar" manualmente la ventana como si fuera memoria editable.
+- Si una exploracion excede alcance, reenfocar con un nuevo subagente mas acotado.
+- Si el resumen recibido no es accionable, reenviar delegacion con contrato de salida estricto.
 
 ---
 
@@ -171,6 +197,15 @@ PROXIMA_ACCION_DEBE_CONTENER:
 | Limpiezas por sesion | 1-3 | > 5 (sesion demasiado larga) |
 | Tokens liberados por limpieza | > 20% | < 10% (limpieza inefectiva) |
 
+### 6.1 Metricas observables en Claude Code
+
+| Metrica observable | Objetivo | Alerta |
+|--------------------|----------|--------|
+| Relecturas evitadas de archivos ya procesados | >= 80% | < 50% |
+| Delegaciones de lectura masiva hechas por subagente | 100% | < 70% |
+| Resumenes recibidos con formato accionable | >= 90% | < 70% |
+| Recoveries exitosos con PROXIMA-ACCION | >= 95% | < 85% |
+
 ---
 
 ## 7. REFERENCIAS
@@ -184,4 +219,4 @@ PROXIMA_ACCION_DEBE_CONTENER:
 
 ---
 
-**Version:** 1.0.0 | **Sistema:** SIMCO-NEXUS v4.1 | **Tipo:** Directiva de Limpieza
+**Version:** 1.1.0 | **Sistema:** SIMCO-NEXUS v4.1 | **Tipo:** Directiva de Limpieza

@@ -1,8 +1,8 @@
 # SIMCO-CONTEXT-MANAGEMENT-V2.md
 
 **Sistema:** NEXUS v4.1 - Gestion de Contexto Jerarquico con Checkpoints
-**Version:** 2.2.0
-**Fecha:** 2026-02-11
+**Version:** 2.3.0
+**Fecha:** 2026-02-17
 **Basado en:** Implementacion probada en Gamilit
 **Actualizado:** Sistema de checkpoints automáticos integrado
 
@@ -17,6 +17,45 @@ NEXUS (Next-generation EXecution Understanding System) resuelve:
 - **Perdida de estado:** Compactaciones destruyen contexto critico
 - **Ambiguedad en delegacion:** Subagentes reciben contexto incompleto
 - **Recuperacion lenta:** Reiniciar sesion requiere reconstruir todo manualmente
+
+---
+
+## 1.1 Glosario operativo y fuente de verdad
+
+| Concepto | Definicion operativa | Fuente de verdad |
+|----------|----------------------|------------------|
+| IoC de contexto | El sistema (mapa + triggers + protocolos) decide que cargar y cuando limpiar | `orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md` |
+| CMV | Minimo de contexto para evitar alucinaciones | `orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md` |
+| L0-L3 | Jerarquia de carga por niveles (sistema, proyecto, operacion, tarea) | `orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md` |
+| ACTIVE/REFERENCE/STALE/OUTPUT | Clasificacion para limpieza mid-session | `orchestration/directivas/simco/SIMCO-CONTEXT-CLEANUP.md` |
+| Delegacion | Transferencia controlada de subtarea a subagente con contrato de entrada/salida | `orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md` + `SIMCO-DELEGACION.md` |
+| Recovery | Recuperacion de continuidad tras compactacion o reinicio | `orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md` + `SIMCO-CONTEXT-MANAGEMENT-V2.md` |
+| Subagente | Agente delegado con ventana de contexto aislada del orquestador | `orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md` |
+
+### Regla de normalizacion documental
+
+- Cada concepto debe tener **una definicion principal** y referencias cruzadas.
+- Si una directiva necesita reutilizar definicion, debe enlazar la fuente de verdad en lugar de duplicarla.
+- Las secciones operativas deben describir comportamiento verificable, no capacidades hipoteticas de la plataforma.
+
+## 1.2 Matriz de coherencia entre directivas
+
+| Tema | Define | Operacionaliza | Valida |
+|------|--------|----------------|--------|
+| Arquitectura L0-L3 | `SIMCO-CONTEXT-MANAGEMENT-V2.md` | `CONTEXT-MAP.yml` | Checklist de implementacion |
+| Carga eficiente y CMV | `SIMCO-CONTEXT-ENGINEERING.md` | BOOTLOADER + carga lazy | Simulaciones de escritorio |
+| Limpieza de contexto | `SIMCO-CONTEXT-CLEANUP.md` | Triggers `post_5_files`, `post_subtarea`, `pre_delegacion` | Metricas de liberacion |
+| Delegacion de subagentes | `SIMCO-CONTEXT-MANAGEMENT-V2.md` | Secciones por plataforma/agente | Contrato de retorno |
+| Recovery de sesion | `SIMCO-CONTEXT-ENGINEERING.md` | `PROXIMA-ACCION.md` + flujo de recuperacion | Tiempo/precision de recuperacion |
+
+### Contradicciones detectadas y resueltas en v2.3.0
+
+| ID | Severidad | Hallazgo | Resolucion aplicada |
+|----|-----------|----------|---------------------|
+| GAP-1 | Critico | No existia seccion explicita para subagentes de Claude Code | Se agrega `8.5 Claude Code Task tool` con contrato completo |
+| GAP-2 | Medio | `Reference-Not-Content` formulado como purga directa de ventana | Se adapta a limpieza indirecta basada en aislamiento de subagentes |
+| GAP-3 | Menor | `DIRECTIVA-CARGA-CONTEXTO.md` en posible desalineacion de arquitectura | Se depreca con redireccion explicita a NEXUS v4.1 |
+| GAP-4 | Menor | `CONTEXT-MAP.yml` no resolvia tareas documentales | Se agrega mapping de `documentacion` y keywords de validacion |
 
 ---
 
@@ -391,6 +430,75 @@ Al reportar:
 3. NO interpretaciones
 ```
 
+### 8.5 Claude Code Task tool
+
+```
+Objetivo:
+Estandarizar la delegacion a subagentes de Claude Code (Task) con IoC realista.
+
+Principio clave:
+- Cada subagente tiene ventana de contexto independiente.
+- El prompt de delegacion es su contexto completo inicial.
+- El orquestador recibe resumen estructurado, no dump de contenido.
+```
+
+#### Entrada minima obligatoria al subagente
+
+```yaml
+entrada_subagente:
+  identidad:
+    - objetivo_de_la_subtarea
+    - criterio_de_exito
+  contexto_minimo:
+    - rutas exactas de archivos a leer
+    - restricciones de alcance ("NO explorar fuera de ...")
+    - decisiones previas que no se deben romper
+  operacion:
+    - tipo_tarea: [analisis, implementacion, validacion]
+    - artefacto_esperado: [resumen, parche, checklist]
+  control:
+    - formato_de_salida requerido
+    - riesgos a vigilar
+```
+
+#### Seleccion de modelo por complejidad
+
+| Complejidad | Tipo de trabajo | Modelo recomendado |
+|-------------|------------------|--------------------|
+| Baja | Busqueda puntual, verificacion corta, checklist | Haiku |
+| Media | Analisis multiarchivo acotado, cambios estandar | Sonnet |
+| Alta | Diseno cross-cutting, resolucion de contradicciones | Opus |
+
+#### Contrato de retorno (obligatorio)
+
+```yaml
+retorno_subagente:
+  resumen_ejecutivo: "1-3 bullets"
+  archivos_consultados:
+    - path
+    - uso (lectura/evidencia)
+  hallazgos:
+    - severidad: [critico|medio|menor]
+    - descripcion
+    - evidencia
+  decisiones:
+    - decision
+    - motivo
+  siguiente_paso_recomendado:
+    - accion concreta
+  no_incluir:
+    - volcado masivo de contenido
+    - texto irrelevante fuera del alcance
+```
+
+#### Anti-patrones de delegacion (Claude Code)
+
+- Prompt ambiguo sin objetivo verificable.
+- Delegar con rutas incompletas o sin restricciones.
+- Pedir "leer todo el repo" sin criterio.
+- Retornar contenido crudo sin sintesis accionable.
+- Repetir lectura de archivos ya validados por el orquestador.
+
 ---
 
 ## 9. Metricas y Monitoreo
@@ -438,7 +546,76 @@ sesiones:
 
 ---
 
-## 11. Referencias
+## 11. Simulaciones de escritorio (validacion)
+
+### Escenario A: Tarea documental amplia
+
+```yaml
+entrada:
+  tipo: "validacion_documental"
+  alcance: "docs/ + orchestration/"
+proceso_esperado:
+  - resolver contexto con CONTEXT-MAP
+  - delegar exploracion masiva a subagentes
+  - consolidar resumen en orquestador
+validacion:
+  - no hay lectura masiva redundante en orquestador
+  - hallazgos trazables por archivo
+  - salida con checklist accionable
+```
+
+### Escenario B: Tarea tecnica puntual (backend/frontend)
+
+```yaml
+entrada:
+  tipo: "bug_fix"
+  alcance: "2-4 archivos"
+proceso_esperado:
+  - cargar L0 + L1 + L2 dominio
+  - cargar L3 puntual
+  - ejecutar validacion minima
+validacion:
+  - tiempo de arranque bajo
+  - cambios limitados al alcance
+  - retorno sin ruido documental
+```
+
+### Escenario C: Recovery tras compactacion con delegacion previa
+
+```yaml
+entrada:
+  tipo: "recovery"
+  evento: "compactacion inminente o reinicio"
+proceso_esperado:
+  - leer PROXIMA-ACCION.md
+  - restaurar contexto minimo viable
+  - continuar desde siguiente paso
+validacion:
+  - continuidad sin re-trabajo
+  - precision de estado > 95%
+  - sin contradiccion con delegacion previa
+```
+
+---
+
+## 12. Criterios de cierre de gaps
+
+| Gap | Criterio de cierre | Evidencia minima |
+|-----|--------------------|------------------|
+| GAP-1 | Existe `8.5 Claude Code Task tool` con entrada, modelo y retorno | Tabla/modelo + YAML de contrato |
+| GAP-2 | Cleanup adaptado a restricciones reales de Claude Code | Nota operativa + metrica observable |
+| GAP-3 | Directiva legacy sin ambiguedad de uso | Banner deprecado + redireccion |
+| GAP-4 | `CONTEXT-MAP.yml` resuelve tareas documentales | Mapping `documentacion` + keywords |
+
+Checklist final:
+- [ ] Glosario y fuente de verdad definidos
+- [ ] Matriz de coherencia actualizada
+- [ ] 4 gaps cerrados con evidencia documental
+- [ ] Simulaciones A/B/C definidas y verificables
+
+---
+
+## 13. Referencias
 
 - `@CONTEXT-MAP` - orchestration/CONTEXT-MAP.yml
 - `@PROXIMA-ACCION` - Template de checkpoint
@@ -447,7 +624,7 @@ sesiones:
 
 ---
 
-## 11. Limites por Modelo
+## 14. Limites por Modelo
 
 | Modelo | Ventana | Alerta (80%) | Seguro (75%) |
 |--------|---------|--------------|--------------|
@@ -457,7 +634,7 @@ sesiones:
 | Gemini 3 Pro/Flash | 1M | 800K | 750K |
 | Windsurf Cascade | 128K | 102K | 96K |
 
-## 12. Triggers de Limpieza Mid-Session
+## 15. Triggers de Limpieza Mid-Session
 
 | Trigger | Condicion | Accion |
 |---------|-----------|--------|

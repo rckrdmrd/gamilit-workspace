@@ -8,6 +8,7 @@
 
 ## 📋 Índice de Templates
 
+0. **T-CLAUDE-TASK-TOOL** - Delegación estructurada para Claude Task tool
 1. **T-README-SUBAGENTE** - README de subagente
 2. **T-TRAZA-SUBAGENTE** - Traza de ejecución
 3. **T-OUTPUT-SUBAGENTE** - Output final
@@ -17,6 +18,14 @@
 7. **T-EJECUCION-FRONTEND** - Ejecución frontend
 8. **T-EJECUCION-DATABASE** - Ejecución database
 9. **T-VALIDACION** - Validación e integración
+
+---
+
+## 🤖 T-CLAUDE-TASK-TOOL
+
+Referencia operativa:
+- `orchestration/templates/03-por-proceso/delegacion/TEMPLATE-CLAUDE-TASK-TOOL.md`
+- `orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md` (sección 8.5)
 
 ---
 

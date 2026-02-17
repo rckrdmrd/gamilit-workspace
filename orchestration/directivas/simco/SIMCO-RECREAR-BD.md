@@ -190,11 +190,27 @@ pm2 stop ecosystem.config.js
 ```bash
 cd /home/isem/gamilit-workspace
 
+# Leer password productivo desde .env.production (sin hardcodear)
+DB_PASSWORD=$(grep '^DB_PASSWORD=' apps/backend/.env.production | cut -d'=' -f2- | tr -d '"' | tr -d "'")
+[ -z "$DB_PASSWORD" ] && echo "DB_PASSWORD no encontrado en apps/backend/.env.production" && exit 1
+
 # Opcion A: Recrear completo
-bash apps/database/scripts/recreate-database.sh --env prod --force
+bash apps/database/scripts/recreate-database.sh --env prod --password "$DB_PASSWORD" --force
 
 # Opcion B: Reset rapido (mantiene usuario)
-bash apps/database/scripts/reset-database.sh --env prod --password '<password_prod>' --force
+bash apps/database/scripts/reset-database.sh --env prod --password "$DB_PASSWORD" --force
+```
+
+### Paso 3.1: Post-recreacion (si hay errores de funciones/permisos)
+
+```bash
+cd /home/isem/gamilit-workspace/apps/database
+for schema in gamilit auth_management gamification_system educational_content content_management social_features progress_tracking audit_logging communication notifications admin_dashboard system_configuration; do
+  dir="ddl/schemas/$schema/functions"
+  [ -d "$dir" ] && for f in "$dir"/*.sql; do
+    [ -f "$f" ] && sudo -u postgres psql -d gamilit_platform -f "$f" 2>/dev/null
+  done
+done
 ```
 
 ### Paso 4: Reiniciar Backend
@@ -214,7 +230,7 @@ pm2 logs --lines 20
 
 ```bash
 # Verificar que el backend responde
-curl -s https://localhost:3006/health | head -20
+curl -s http://localhost:4006/api/v1/health | head -20
 
 # Verificar conexion BD desde backend
 pm2 logs gamilit-backend --lines 5 | grep -i "database"
@@ -247,6 +263,7 @@ sudo -u postgres psql -d gamilit_platform -c "SELECT COUNT(*) FROM pg_policies;"
 | Password default | gamilit_dev_2026 | Rotado (ver .env.prod) |
 | Smoke test | Opcional | OBLIGATORIO |
 | Puerto DB | 5432 | 5432 |
+| Variables backend | `DB_USER` | `DB_USER` y `DB_USERNAME` deben coincidir |
 
 ---
 

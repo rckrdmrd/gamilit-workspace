@@ -130,6 +130,7 @@ simco/                                       # 70 DIRECTIVAS ACTIVAS + _INDEX + 
 │
 │   # === ANALISIS (1) ===
 ├── SIMCO-ANALISIS-PLANIFICACION.md         # Analisis y planificacion
+├── SIMCO-AUDITORIA-FLUJOS-E2E.md           # Procedimiento de auditoria FE↔BE↔DB por flujo
 │
 │   # === ERRORES (1) ===
 ├── SIMCO-ERROR-RECURRENTE.md               # Gestion de errores recurrentes
@@ -217,6 +218,7 @@ Antes de actuar, ejecuta el protocolo CCA (Carga de Contexto Automatica)."
 | **Git Remotes** | `SIMCO-GIT-REMOTES.md` | Operaciones push/pull/clone con servidores remotos |
 | **Alineacion** | `SIMCO-ALINEACION.md` | Validar alineacion entre capas (DDL↔Entity↔DTO) |
 | **Decision** | `SIMCO-DECISION-MATRIZ.md` | Clarificar que directiva ejecutar |
+| **Auditoria de flujos** | `SIMCO-AUDITORIA-FLUJOS-E2E.md` | Ejecutar auditoria FE↔BE↔DB y registrar issues |
 
 ### Por Dominio Tecnico:
 

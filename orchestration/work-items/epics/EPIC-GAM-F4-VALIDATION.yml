@@ -1,0 +1,16 @@
+id: "EPIC-GAM-F4-VALIDATION"
+titulo: "Validacion e Integracion Integral"
+proyecto: "gamilit"
+fase: "F4-validacion"
+source_id: "EAI-004"
+story_points: 89
+estado: "EN_PROGRESO"
+prioridad: "P1"
+docs_path: "docs/10-requirements/epics/EPIC-GAM-F4-VALIDATION/EPIC.md"
+user_stories: 9
+requirements: 0
+specifications: 0
+stories_path: "docs/10-requirements/epics/EPIC-GAM-F4-VALIDATION/user-stories/"
+stories_structure: "nested"
+tasks_total: 44
+fecha_actualizacion: "2026-02-17"

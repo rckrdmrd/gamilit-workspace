@@ -400,6 +400,7 @@ reglas:
       - Identificar tipo de operacion (crear, modificar, validar, etc.)
       - Leer directivas en seccion 'segun_operacion' correspondiente
       - Si no existe, usar 'obligatorias' base
+      - Si tarea es de gobernanza o multi-capa, cargar checklists operativos y trazabilidad master
 
   3_al_delegar:
     descripcion: "Incluir directivas en delegacion"
@@ -426,3 +427,13 @@ notas:
   ubicacion_perfiles: "orchestration/agents/perfiles/"
   ubicacion_directivas: "orchestration/directivas/simco/"
   consulta_rapida: "Usar SIMCO-QUICK-REFERENCE.md para referencia de directivas"
+  integracion_operativa_2026_02_17:
+    checklists:
+      - "orchestration/checklists/CHECKLIST-GATE-PRE-EJECUCION.md"
+      - "orchestration/checklists/CHECKLIST-GATE-POST-EJECUCION.md"
+      - "orchestration/checklists/CHECKLIST-VALIDACION-INTEGRAL.md"
+    trazabilidad:
+      - "orchestration/trazabilidad/TRACEABILITY-MASTER.yml"
+    scripts:
+      - "orchestration/scripts/sync-work-items-to-docs.js"
+      - "orchestration/scripts/validate-traceability.js"

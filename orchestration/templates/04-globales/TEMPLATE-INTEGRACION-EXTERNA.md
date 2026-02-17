@@ -327,14 +327,14 @@ logger.info('Provider call', {
 ## 11. Referencias
 
 ### Documentacion Oficial
-- [API Reference]({url_documentacion})
-- [SDK Documentation]({url_sdk})
-- [Changelog]({url_changelog})
+- API Reference: `{url_documentacion}`
+- SDK Documentation: `{url_sdk}`
+- Changelog: `{url_changelog}`
 
 ### Modulos Relacionados
-- [Modulo Backend](../../apps/backend/src/modules/{modulo}/)
-- [Servicio](../../apps/backend/src/modules/{modulo}/{provider}.service.ts)
-- [DTOs](../../apps/backend/src/modules/{modulo}/dto/)
+- Modulo Backend: `{ruta-workspace}/apps/backend/src/modules/{modulo}/`
+- Servicio: `{ruta-workspace}/apps/backend/src/modules/{modulo}/{provider}.service.ts`
+- DTOs: `{ruta-workspace}/apps/backend/src/modules/{modulo}/dto/`
 
 ### Soporte
 - Email: support@{provider}.com

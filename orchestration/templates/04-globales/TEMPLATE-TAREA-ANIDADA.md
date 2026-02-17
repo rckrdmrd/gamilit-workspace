@@ -1,8 +1,8 @@
 # {T-ID}: {Título de la Tarea}
 
 **Versión:** 1.0.0 | **Fecha:** {YYYY-MM-DD}
-**US Padre:** [{US-ID}](../{US-ID}.md)
-**Épica:** [{EPIC-ID}](../../../EPIC.md)
+**US Padre:** `../{US-ID}.md`
+**Epica:** `../../../EPIC.md`
 **Tipo:** {DB|BE|FE|MCP|TEST|DOC}
 **Estimación:** {N}h
 **Estado:** Pending | In Progress | Done
@@ -13,7 +13,7 @@
 ## Contexto (C)
 - **Objetivo:** {Descripción clara de qué se debe hacer}
 - **Módulo:** {backend/frontend/database/mcp/test}
-- **Specs relacionadas:** [{ET-ID}](link) | [{RF-ID}](link)
+- **Specs relacionadas:** `{ET-ID}` | `{RF-ID}`
 
 ## Análisis (A)
 ### Archivos a Crear/Modificar

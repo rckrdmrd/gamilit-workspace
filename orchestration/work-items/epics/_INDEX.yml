@@ -2,11 +2,11 @@
 # Proyecto: gamilit
 # Actualizado: 2026-02-09 | TASK-2026-02-09-REESTRUCTURA-ANIDADA
 
-version: "4.0.0"
-total_epics: 33
-total_sp: 599
-total_user_stories: 135
-total_tasks: 552
+version: "4.1.0"
+total_epics: 34
+total_sp: 688
+total_user_stories: 144
+total_tasks: 596
 
 # Wave 3 — EPICs Tecnicas (COMPLETADAS)
 wave3_epics:
@@ -324,3 +324,22 @@ f3_epics:
       stories_structure: "nested"
       user_stories: 4
       tasks_total: 12
+
+# F4 — Validacion Integral
+f4_epics:
+  total: 1
+  sp: 89
+  status: "in_progress"
+  user_stories: 9
+  tasks: 44
+  stories_structure: "nested"
+  epics:
+    - id: "EPIC-GAM-F4-VALIDATION"
+      title: "Validacion e Integracion Integral"
+      sp: 89
+      status: "in_progress"
+      docs_path: "docs/10-requirements/epics/EPIC-GAM-F4-VALIDATION/EPIC.md"
+      stories_path: "docs/10-requirements/epics/EPIC-GAM-F4-VALIDATION/user-stories/"
+      stories_structure: "nested"
+      user_stories: 9
+      tasks_total: 44

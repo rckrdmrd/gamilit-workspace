@@ -268,6 +268,9 @@ paths:
   "@INV_BE": "orchestration/inventarios/BACKEND_INVENTORY.yml"
   "@INV_FE": "orchestration/inventarios/FRONTEND_INVENTORY.yml"
   "@INV_MASTER": "orchestration/inventarios/MASTER_INVENTORY.yml"
+  "@SKILLS_REGISTRY": "orchestration/inventarios/SKILLS-REGISTRY.yml"
+  "@PROFILE_SKILL_MAP": "orchestration/agents/configs/PROFILE-SKILL-MAP.json"
+  "@PROFILE_RESOLVER": "orchestration/agents/tools/profile_skill_resolver.py"
 
   # Proyecto
   "@BACKEND": "apps/backend/src/"

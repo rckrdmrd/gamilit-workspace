@@ -30,7 +30,7 @@ Agregar este bloque **AL INICIO** del documento, justo después del título:
 | **Estado** | DEPRECATED |
 | **Fecha de deprecación** | {YYYY-MM-DD} |
 | **Deprecado por** | {Motivo o referencia al cambio que lo hace obsoleto} |
-| **Reemplazo** | [{Nombre del documento de reemplazo}]({ruta relativa}) |
+| **Reemplazo** | `{ruta relativa al documento canonico}` |
 | **Eliminar después de** | {YYYY-MM-DD} |
 | **Responsable** | {Equipo o persona responsable de la eliminación} |
 
@@ -69,7 +69,7 @@ Sistema de autenticación basado en sesiones...
 | **Estado** | DEPRECATED |
 | **Fecha de deprecación** | 2026-01-10 |
 | **Deprecado por** | Migración a autenticación JWT (ver MCH-E05-auth) |
-| **Reemplazo** | [ET-API-AUTH-002](./ET-API-AUTH-002.md) |
+| **Reemplazo** | `./ET-API-AUTH-002.md` |
 | **Eliminar después de** | 2026-02-10 |
 | **Responsable** | backend-team |
 

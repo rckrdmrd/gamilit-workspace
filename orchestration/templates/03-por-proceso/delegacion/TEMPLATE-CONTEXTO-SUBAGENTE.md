@@ -546,9 +546,9 @@ dependen de ella.
 
 ## 📚 REFERENCIAS
 
-- [PROMPT-SUBAGENTES.md](../prompts/PROMPT-SUBAGENTES.md) - Prompt completo para subagentes
-- [DIRECTIVA-VALIDACION-SUBAGENTES.md](../directivas/DIRECTIVA-VALIDACION-SUBAGENTES.md) - Proceso de validación
-- [ESTANDARES-NOMENCLATURA.md](../directivas/ESTANDARES-NOMENCLATURA.md) - Convenciones de nombres
+- [PROMPTS-INDEX.md](../../../referencias/prompts/PROMPTS-INDEX.md) - Entrada canónica de prompts
+- [SIMCO-SUBAGENTE.md](../../../directivas/simco/SIMCO-SUBAGENTE.md) - Proceso de delegación y validación
+- [SIMCO-NOMENCLATURA.md](../../../directivas/simco/SIMCO-NOMENCLATURA.md) - Convenciones de nombres
 
 ---
 

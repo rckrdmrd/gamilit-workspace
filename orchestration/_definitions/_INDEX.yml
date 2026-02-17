@@ -235,6 +235,13 @@ checklists:
     actualizado: "2026-02-13"
     nota: "v2.0.0 - Actualizado para standalone gamilit (cadena de coherencia DDL-Entity-DTO-API-Frontend)"
 
+  CHECKLIST-NORMALIZACION-DOCUMENTAL:
+    alias: "@DEF_CHK_DOC_NORMALIZATION"
+    path: "checklists/CHECKLIST-NORMALIZACION-DOCUMENTAL.md"
+    descripcion: "Checklist de normalizacion documental para docs/ y orchestration/"
+    estado: "IMPLEMENTADO"
+    fecha_creacion: "2026-02-17"
+
   CHECKLIST-RECOVERY:
     alias: "@DEF_CHK_RECOVERY"
     path: "checklists/CHECKLIST-RECOVERY.md"
@@ -248,8 +255,8 @@ checklists:
 # ─────────────────────────────────────────────────────────────────────────────────
 
 statistics:
-  total_definitions: 27
-  implemented: 27
+  total_definitions: 28
+  implemented: 28
   pending: 0
 
   by_category:
@@ -266,8 +273,8 @@ statistics:
       implementados: 4  # IDENTITY, RESPONSIBILITIES, REFERENCES, ERRORS
       pendientes: 0
     checklists:
-      total: 6
-      implementados: 6  # GOBERNANZA-TAREA, PRE-CREATE, PRE-MODIFY, POST-TASK, SSOT-SYNC, RECOVERY
+      total: 7
+      implementados: 7  # GOBERNANZA-TAREA, PRE-CREATE, PRE-MODIFY, POST-TASK, SSOT-SYNC, RECOVERY, NORMALIZACION-DOCUMENTAL
       pendientes: 0
     triggers:
       total: 3

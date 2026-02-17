@@ -8,7 +8,7 @@ metadata:
   proyecto: "gamilit"
   nivel: "STANDALONE"
   version: "4.1.0"
-  ultima_actualizacion: "2026-02-14"
+  ultima_actualizacion: "2026-02-17"
   project_root: "."  # Rutas relativas al root del proyecto gamilit-workspace
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -65,6 +65,7 @@ aliases:
   "@INV_DB": "./orchestration/inventarios/DATABASE_INVENTORY.yml"
   "@INV_BE": "./orchestration/inventarios/BACKEND_INVENTORY.yml"
   "@INV_FE": "./orchestration/inventarios/FRONTEND_INVENTORY.yml"
+  "@SKILLS_REGISTRY": "./orchestration/inventarios/SKILLS-REGISTRY.yml"
 
   # Trazas
   "@TRAZA_DB": "./orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
@@ -131,6 +132,10 @@ contexto_por_nivel:
         - "./orchestration/directivas/simco/SIMCO-VALIDAR.md"
       DELEGAR:
         - "./orchestration/directivas/simco/SIMCO-DELEGACION.md"
+      INICIALIZAR:
+        - "./orchestration/directivas/simco/SIMCO-INICIALIZACION.md"
+        - "./orchestration/agents/tools/profile_skill_resolver.py"
+        - "./orchestration/agents/configs/PROFILE-SKILL-MAP.json"
     archivos_por_dominio:
       DDL:
         - "./orchestration/directivas/simco/SIMCO-DDL.md"
@@ -152,7 +157,8 @@ contexto_por_nivel:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 integracion_docs:
-  mapa_docs: "@DOCS/_MAP.md"
+  mapa_docs: "@DOCS/README.md"  # Main docs index
+  mapa_navegacion: "@DOCS/_MAP.md"
 
   estructura:
     overview: "@DOCS/00-overview/"
@@ -169,11 +175,13 @@ integracion_docs:
     delivery: "@DOCS/99-delivery/"
 
   archivos_clave:
+    docs_root: "@DOCS/README.md"
     arquitectura: "@DOCS/20-architecture/README.md"
     stack: "@DOCS/20-architecture/STACK-TECNOLOGICO.md"
     gamificacion: "@DOCS/20-architecture/ARQUITECTURA-GAMIFICACION.md"
-    mecanicas: "@DOCS/20-architecture/MECANICAS-GAMIFICACION-V6.md"
-    vision: "@DOCS/00-overview/VISION-ALCANCE.md"
+    mecanicas: "@DOCS/20-architecture/gamificacion/README.md"
+    rangos_maya: "@DOCS/20-architecture/gamificacion/RANGOS-MAYA.md"
+    vision: "@DOCS/00-overview/VISION.md"
     ambientes: "@DOCS/20-architecture/AMBIENTES-DEV-PROD.md"
     standards: "@DOCS/40-standards/README.md"
 
@@ -225,6 +233,68 @@ mapa_tarea_contexto:
       inventario: "@INV_FE"
       referencia: "@FRONTEND/pages/**/*.tsx"
 
+  skills:
+    resolver_perfil:
+      simco: ["SIMCO-INICIALIZACION.md", "SIMCO-ASIGNACION-PERFILES.md"]
+      inventario: "@SKILLS_REGISTRY"
+      referencia: "orchestration/agents/configs/PROFILE-SKILL-MAP.json"
+      scripts: "orchestration/agents/tools/profile_skill_resolver.py"
+
+  documentacion:
+    validacion_documental:
+      simco:
+        - "SIMCO-CONTEXT-MANAGEMENT-V2.md"
+        - "SIMCO-CONTEXT-ENGINEERING.md"
+        - "SIMCO-CONTEXT-CLEANUP.md"
+      inventario: "@INVENTORY"
+      referencia:
+        - "@DOCS/00-overview/"
+        - "@DOCS/30-ux-ui/flujos/"
+        - "./orchestration/PROJECT-CONTEXT.md"
+        - "./orchestration/PROXIMA-ACCION.md"
+      trazabilidad:
+        - "TRACEABILITY-MATRIX.md"
+        - "COBERTURA-TOTAL-PROCESOS.md"
+
+    analisis_flujos:
+      simco:
+        - "SIMCO-CONTEXT-MANAGEMENT-V2.md"
+      inventario: "@INVENTORY"
+      referencia:
+        - "@DOCS/30-ux-ui/flujos/"
+        - "@DOCS/20-architecture/"
+      salida_esperada:
+        - "matriz de cobertura"
+        - "gaps por severidad"
+        - "siguientes acciones"
+
+resolucion_keywords_documentales:
+  analisis:
+    tipo_tarea: "documentacion/validacion_documental"
+    cargar:
+      - "./orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md"
+      - "./orchestration/CONTEXT-MAP.yml"
+  validacion:
+    tipo_tarea: "documentacion/validacion_documental"
+    cargar:
+      - "./orchestration/directivas/simco/SIMCO-CONTEXT-CLEANUP.md"
+      - "./orchestration/PROJECT-CONTEXT.md"
+  flujo:
+    tipo_tarea: "documentacion/analisis_flujos"
+    cargar:
+      - "./docs/30-ux-ui/flujos/"
+      - "./docs/00-overview/"
+  cobertura:
+    tipo_tarea: "documentacion/validacion_documental"
+    cargar:
+      - "./docs/00-overview/"
+      - "./orchestration/inventarios/MASTER_INVENTORY.yml"
+  trazabilidad:
+    tipo_tarea: "documentacion/validacion_documental"
+    cargar:
+      - "./docs/"
+      - "./orchestration/"
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # INFORMACIÓN ESPECÍFICA DEL PROYECTO
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -232,7 +302,7 @@ mapa_tarea_contexto:
 info_proyecto:
   tipo: "Plataforma EdTech - Gamificación Educativa"
   estado: "MVP 98% completado"
-  version: "3.0"
+  version: "4.0"
 
   stack:
     backend: "NestJS 11.x + TypeORM 0.3.x"
@@ -242,10 +312,10 @@ info_proyecto:
   metricas:
     schemas: 18
     tablas: 169
-    endpoints: 899
-    rls_policies: 207
+    endpoints: 901
+    rls_policies: 227
     entities: 152
-    funciones: 249
+    funciones: 183  # DDL source (249 runtime)
     triggers: 67
     enums: 42
 

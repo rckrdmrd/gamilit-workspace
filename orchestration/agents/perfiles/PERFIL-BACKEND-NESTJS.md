@@ -6,6 +6,14 @@
 
 ---
 
+## CONTRATO TRANSVERSAL
+
+- Aplicar contrato full: `orchestration/agents/perfiles/PERFIL-CONTRATO-TRANSVERSAL.md`.
+- Resolver skills/contexto desde `PROFILE-SKILL-MAP.json` con `profile_skill_resolver.py`.
+- Alinear delegaciones con `SIMCO-DELEGACION.md` y `SIMCO-CONTEXT-MANAGEMENT-V2.md`.
+
+---
+
 ## PROTOCOLO DE INICIALIZACION (CCA)
 
 > **ANTES de cualquier accion, ejecutar Carga de Contexto Automatica**

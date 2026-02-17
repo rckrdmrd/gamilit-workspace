@@ -1,0 +1,151 @@
+version: "1.0.0"
+updated: "2026-02-17"
+owner: "orchestration"
+source_standard: "docs/40-standards/ESTANDAR-SKILLS.md"
+
+feature_flags:
+  enable_vercel_dev_skills: true
+  enable_vercel_deploy_skill: false
+
+skills:
+  - name: simco-task-execution
+    version: "1.0.0"
+    contract_version: "1.0.0"
+    category: core
+    priority: P0
+    status: active
+    path: orchestration/skills/simco-task-execution/
+    simco_source: orchestration/directivas/simco/SIMCO-TAREA.md
+    estimated_tokens: 900
+    dependencies: []
+    internal: true
+    last_updated: "2026-02-17"
+
+  - name: simco-safe-edit
+    version: "1.0.0"
+    contract_version: "1.0.0"
+    category: core
+    priority: P0
+    status: active
+    path: orchestration/skills/simco-safe-edit/
+    simco_source: orchestration/directivas/simco/SIMCO-EDICION-SEGURA.md
+    estimated_tokens: 800
+    dependencies: []
+    internal: true
+    last_updated: "2026-02-17"
+
+  - name: simco-apply-standard
+    version: "1.0.0"
+    contract_version: "1.0.0"
+    category: core
+    priority: P0
+    status: active
+    path: orchestration/skills/simco-apply-standard/
+    simco_source: orchestration/directivas/simco/SIMCO-ESTANDARES.md
+    estimated_tokens: 700
+    dependencies: []
+    internal: true
+    last_updated: "2026-02-17"
+
+  - name: simco-git-workflow
+    version: "1.0.0"
+    contract_version: "1.0.0"
+    category: operation
+    priority: P1
+    status: active
+    path: orchestration/skills/simco-git-workflow/
+    simco_source: orchestration/directivas/simco/SIMCO-GIT.md
+    estimated_tokens: 800
+    dependencies:
+      - simco-safe-edit
+    internal: true
+    last_updated: "2026-02-17"
+
+  - name: simco-ddl-management
+    version: "1.0.0"
+    contract_version: "1.0.0"
+    category: sync
+    priority: P1
+    status: active
+    path: orchestration/skills/simco-ddl-management/
+    simco_source: orchestration/directivas/simco/SIMCO-DDL.md
+    estimated_tokens: 900
+    dependencies:
+      - simco-safe-edit
+      - simco-apply-standard
+    internal: true
+    last_updated: "2026-02-17"
+
+  - name: simco-validation-coherence
+    version: "1.0.0"
+    contract_version: "1.0.0"
+    category: sync
+    priority: P1
+    status: active
+    path: orchestration/skills/simco-validation-coherence/
+    simco_source: orchestration/directivas/simco/SIMCO-VALIDAR.md
+    estimated_tokens: 700
+    dependencies:
+      - simco-apply-standard
+    internal: true
+    last_updated: "2026-02-17"
+
+  - name: simco-agent-delegation
+    version: "1.0.0"
+    contract_version: "1.0.0"
+    category: operation
+    priority: P1
+    status: active
+    path: orchestration/skills/simco-agent-delegation/
+    simco_source: orchestration/directivas/simco/SIMCO-DELEGACION.md
+    estimated_tokens: 1000
+    dependencies:
+      - simco-task-execution
+      - simco-apply-standard
+    internal: true
+    last_updated: "2026-02-17"
+
+  - name: vercel-v0-dev
+    version: "1.0.0"
+    contract_version: "1.0.0"
+    category: community
+    priority: P1
+    status: active
+    path: orchestration/skills/community/vercel-labs-vercel-v0-dev/
+    simco_source: docs/40-standards/ESTANDAR-SKILLS.md
+    estimated_tokens: 900
+    dependencies:
+      - simco-task-execution
+      - simco-safe-edit
+    internal: false
+    publisher: vercel-labs
+    evaluation:
+      source_repository: github.com/vercel-labs
+      security_checklist_passed: true
+      compatibility_verified: true
+      approved_by: "@PERFIL_TECH_LEADER"
+    last_updated: "2026-02-17"
+
+  - name: vercel-next-deploy
+    version: "1.0.0"
+    contract_version: "1.0.0"
+    category: community
+    priority: P1
+    status: active
+    path: orchestration/skills/community/vercel-labs-vercel-next-deploy/
+    simco_source: docs/40-standards/ESTANDAR-SKILLS.md
+    estimated_tokens: 1200
+    dependencies:
+      - simco-task-execution
+      - simco-safe-edit
+    internal: false
+    publisher: vercel-labs
+    activation:
+      requires_feature_flag: enable_vercel_deploy_skill
+      default_enabled: false
+    evaluation:
+      source_repository: github.com/vercel-labs
+      security_checklist_passed: true
+      compatibility_verified: true
+      approved_by: "@PERFIL_TECH_LEADER"
+    last_updated: "2026-02-17"

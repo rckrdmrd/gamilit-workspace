@@ -16,7 +16,7 @@ Dominio: Deployment y mantenimiento de gamilit en servidor Linux
 Servidor: 74.208.126.102
 Usuario: isem
 Home: /home/isem
-Project Path: /home/isem/workspace-v2/projects/gamilit
+Project Path: /home/isem/gamilit-workspace
 ```
 
 ---
@@ -97,7 +97,7 @@ SOLUCION: Ambos deben existir en .env.production con el mismo valor:
 ### Paso 1: Pull Changes
 
 ```bash
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
 git fetch origin && git pull origin master
 ```
 
@@ -131,14 +131,19 @@ SI NO:
 ### Paso 5: Recrear Base de Datos (condicional)
 
 **IMPORTANTE: Siempre usar `--env prod` y pasar password de producción explícitamente.**
+**Fuente segura del password:** `apps/backend/.env.production` -> `DB_PASSWORD` (no hardcodear).
 
 ```bash
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
+
+# Obtener password de forma segura desde .env.production
+DB_PASSWORD=$(grep '^DB_PASSWORD=' apps/backend/.env.production | cut -d'=' -f2- | tr -d '"' | tr -d "'")
+[ -z "$DB_PASSWORD" ] && echo "DB_PASSWORD no encontrado" && exit 1
 
 # Opción A: Usando recreate-database.sh (recomendado)
 bash apps/database/scripts/recreate-database.sh \
   --env prod \
-  --password '<PASSWORD_PRODUCCION>' \
+  --password "$DB_PASSWORD" \
   --force
 
 # Opción B: Manual (si recreate-database.sh falla)
@@ -148,7 +153,7 @@ sudo -u postgres psql -c "DROP ROLE IF EXISTS gamilit_user;"
 # 2. Recrear con init-database.sh
 bash apps/database/scripts/init-database.sh \
   --env prod \
-  --password '<PASSWORD_PRODUCCION>' \
+  --password "$DB_PASSWORD" \
   --force
 ```
 
@@ -160,7 +165,7 @@ bash apps/database/scripts/init-database.sh \
 
 **POST-RECREACIÓN: Si funciones fallan (GRANT errors), recargar como postgres:**
 ```bash
-cd /home/isem/workspace-v2/projects/gamilit/apps/database
+cd /home/isem/gamilit-workspace/apps/database
 for schema in gamilit auth_management gamification_system educational_content content_management social_features progress_tracking audit_logging communication notifications admin_dashboard system_configuration; do
     dir="ddl/schemas/$schema/functions"
     [ -d "$dir" ] && for f in "$dir"/*.sql; do
@@ -171,10 +176,18 @@ done
 
 **ROLLBACK si falla:**
 ```bash
+LAST_BACKUP=$(ls -t /home/isem/backups/gamilit-*.dump | head -1)
+if [ -z "$LAST_BACKUP" ]; then
+  echo "No hay backup disponible para rollback" && exit 1
+fi
 sudo -u postgres psql -c "DROP DATABASE IF EXISTS gamilit_platform;"
 sudo -u postgres psql -c "CREATE DATABASE gamilit_platform OWNER gamilit_user;"
-pg_restore -d gamilit_platform /home/isem/backups/gamilit-{ultimo}.dump
+pg_restore -d gamilit_platform "$LAST_BACKUP"
 # o: psql -U gamilit_user -d gamilit_platform < /home/isem/backups/gamilit-{ultimo}.sql
+
+# Validación post-restore
+sudo -u postgres psql -d gamilit_platform -c "SELECT COUNT(*) FROM pg_tables WHERE schemaname NOT IN ('pg_catalog','information_schema');"
+curl -f http://localhost:4006/api/v1/health || echo "HEALTH CHECK FAILED"
 ```
 
 ### Paso 6: Verificar .env
@@ -189,7 +202,7 @@ NUNCA hardcodear credenciales en código
 CHECKLIST de variables críticas:
   [ ] DB_USER y DB_USERNAME existen y son iguales
   [ ] DB_PASSWORD es el password de producción
-  [ ] PORT=4006 (NO 3006, Nginx hace el proxy)
+  [ ] PORT=3006
   [ ] CORS_ORIGIN incluye https://74.208.126.102:3005
   [ ] ENABLE_SWAGGER=false
   [ ] NODE_ENV=production
@@ -201,15 +214,15 @@ CHECKLIST de variables críticas:
 VALIDAR que ecosystem.config.js tenga configuración correcta:
   [ ] Backend: node_args: '-r ./tsconfig-paths-bootstrap.js'
   [ ] Backend: instances: 1, exec_mode: 'fork'
-  [ ] Backend: PORT: 4006
-  [ ] Frontend: args contiene '--port 4005'
+  [ ] Backend: PORT: 3006
+  [ ] Frontend: args contiene '--port 3005'
   [ ] Frontend: instances: 1, exec_mode: 'fork'
 ```
 
 ### Paso 8: Build Backend
 
 ```bash
-cd /home/isem/workspace-v2/projects/gamilit/apps/backend
+cd /home/isem/gamilit-workspace/apps/backend
 npm install --production=false
 npm run build
 ```
@@ -218,7 +231,7 @@ npm run build
 ### Paso 9: Build Frontend
 
 ```bash
-cd /home/isem/workspace-v2/projects/gamilit/apps/frontend
+cd /home/isem/gamilit-workspace/apps/frontend
 npm install
 npm run build
 ```
@@ -227,7 +240,7 @@ npm run build
 ### Paso 10: Deploy con PM2
 
 ```bash
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
 pm2 restart ecosystem.config.js --env production
 pm2 save
 ```
@@ -283,7 +296,7 @@ sudo -u postgres psql -c "CREATE DATABASE gamilit_platform OWNER gamilit_user;"
 pg_restore -d gamilit_platform /home/isem/backups/gamilit-{ultimo}.dump
 
 # 2. Revertir código
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
 git checkout HEAD~1
 
 # 3. Rebuild
@@ -291,7 +304,7 @@ cd apps/backend && npm install && npm run build
 cd ../frontend && npm install && npm run build
 
 # 4. Restart
-cd /home/isem/workspace-v2/projects/gamilit
+cd /home/isem/gamilit-workspace
 pm2 restart ecosystem.config.js --env production
 pm2 save
 ```
@@ -406,11 +419,11 @@ En caso de fallo post-deploy, tres niveles de rollback:
 
 1. **Inmediato (< 5 min):** Solo codigo, sin cambios DDL
    ```bash
-   cd /home/isem/workspace-v2/projects/gamilit
+   cd /home/isem/gamilit-workspace
    git checkout HEAD~1
    cd apps/backend && npm ci --production=false && npm run build
    cd ../frontend && npm ci && npm run build
-   cd /home/isem/workspace-v2/projects/gamilit
+   cd /home/isem/gamilit-workspace
    pm2 restart ecosystem.config.js --env production
    ```
 
@@ -424,7 +437,7 @@ En caso de fallo post-deploy, tres niveles de rollback:
    git checkout HEAD~1
    cd apps/backend && npm ci --production=false && npm run build
    cd ../frontend && npm ci && npm run build
-   cd /home/isem/workspace-v2/projects/gamilit
+   cd /home/isem/gamilit-workspace
    pm2 restart ecosystem.config.js --env production
    ```
 

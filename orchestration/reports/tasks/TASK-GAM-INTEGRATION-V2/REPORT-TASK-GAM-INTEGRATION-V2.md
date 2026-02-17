@@ -20,8 +20,9 @@ Se aplicó el principio **CAPVED** (Contexto, Análisis, Planeación, Validació
 - **Acción:** Se utilizó el agente `codebase_investigator` para comparar `gamilit` contra `workspace-v2`.
 - **Hallazgo:** Se detectaron 16 carpetas operativas faltantes en `orchestration/` y una estructura de documentación basada en fases de proyecto antiguas (`01-fase...`) en lugar de dominios de conocimiento (`10-arquitectura`, `50-requerimientos`).
 - **Artefactos Generados:**
-    - [GAP-ANALYSIS-WORKSPACE-V2.md](../../analisis/GAP-ANALYSIS-WORKSPACE-V2.md)
-    - [PLAN-INTEGRACION-WORKSPACE-V2.md](../../planes/PLAN-INTEGRACION-WORKSPACE-V2.md)
+    - GAP-ANALYSIS-WORKSPACE-V2.md (histórico)
+    - PLAN-INTEGRACION-WORKSPACE-V2.md (histórico)
+    - [Índice de reportes vigentes](../../README.md)
 
 ### Fase 2: Alineación de Infraestructura (E)
 - **Acción:** Creación del esqueleto de directorios estándar V2.

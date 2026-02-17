@@ -137,7 +137,7 @@ SI_HAY_DISCREPANCIA_INVENTARIOS:
 
 ## REFERENCIAS
 
-- **Directiva:** [SIMCO-VALIDACION-SSOT](../directivas/simco/SIMCO-VALIDACION-SSOT.md)
+- **Directiva:** [SIMCO-VALIDACION-SSOT](../../directivas/simco/SIMCO-VALIDACION-SSOT.md)
 - **Inventarios:** orchestration/inventarios/ (8 YAMLs)
 - **CLAUDE.md:** Seccion METRICAS ACTUALES
 - **Trigger:** TRIGGER-COHERENCIA-CAPAS

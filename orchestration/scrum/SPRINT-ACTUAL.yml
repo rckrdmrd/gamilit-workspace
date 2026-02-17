@@ -1,20 +1,20 @@
 # SPRINT-ACTUAL.yml
 # Estado del sprint actual del workspace
-# Version: 1.0.0
+# Version: 2.0.0
 # Sistema: SIMCO v4.0.0
 
-version: "1.0.0"
-updated: "2026-01-16"
+version: "2.0.0"
+updated: "2026-02-17"
 
 # ============================================
 # INFORMACION DEL SPRINT
 # ============================================
 
 sprint:
-  numero: 0
-  nombre: "Sprint de Inicializacion"
-  fecha_inicio: "2026-01-16"
-  fecha_fin: "2026-01-30"
+  numero: 1
+  nombre: "Sprint de Calidad y Estabilizacion"
+  fecha_inicio: "2026-02-17"
+  fecha_fin: "2026-03-03"
   duracion_dias: 14
   estado: "en_progreso"
 
@@ -24,43 +24,111 @@ sprint:
 
 objetivos:
   - id: "OBJ-001"
-    descripcion: "Completar estructura de documentacion del workspace"
-    estado: "completado"
-    progreso: 100
+    descripcion: "Resolver contradiccion de test coverage (MQ-001)"
+    estado: "pendiente"
+    progreso: 0
+    items: ["MQ-001"]
 
   - id: "OBJ-002"
-    descripcion: "Validar integridad de referencias entre documentos"
-    estado: "completado"
-    progreso: 100
+    descripcion: "Crear jerarquia de errores de dominio en backend (MQ-002)"
+    estado: "pendiente"
+    progreso: 0
+    items: ["MQ-002"]
 
   - id: "OBJ-003"
-    descripcion: "Establecer sistema de trazabilidad"
+    descripcion: "Crear 4 skills P1 faltantes en orchestration (MQ-003)"
+    estado: "en_progreso"
+    progreso: 80
+    items: ["MQ-003"]
+    nota: "4 skills escritos, pendiente validacion final"
+
+  - id: "OBJ-004"
+    descripcion: "Vincular tareas existentes a EPICs (MQ-004)"
+    estado: "pendiente"
+    progreso: 0
+    items: ["MQ-004"]
+
+  - id: "OBJ-005"
+    descripcion: "Corregir DDL cascade errors y RLS deficit (CORR-03, CORR-04)"
     estado: "completado"
     progreso: 100
+    items: ["CORR-03", "CORR-04"]
+    fecha_completado: "2026-02-17"
 
 # ============================================
-# HISTORIAS DE USUARIO
+# ITEMS DEL SPRINT
 # ============================================
 
-historias:
-  - id: "HU-WS-001"
-    titulo: "Remediacion de documentacion del workspace"
-    puntos: 8
-    estado: "completada"
-    asignado: "META-ORQUESTADOR"
-    subtareas_completadas: 7
-    subtareas_total: 7
+items:
+  # P0 - Inmediato
+  - id: "MQ-001"
+    titulo: "Resolver contradiccion test coverage (jest.config.js=50% vs CLAUDE.md=80%)"
+    epica: "EPIC-WS-004"
+    prioridad: "P0"
+    esfuerzo: "S"
+    estado: "pendiente"
+    asignado: "Cualquier agente"
+    dependencias: []
+
+  # P1 - Semana 1-2
+  - id: "MQ-002"
+    titulo: "Crear jerarquia de errores de dominio"
+    epica: "EPIC-WS-004"
+    prioridad: "P1"
+    esfuerzo: "L"
+    estado: "pendiente"
+    asignado: "@PERFIL-BACKEND-NESTJS"
+    dependencias: []
+
+  - id: "MQ-003"
+    titulo: "Crear 4 skills P1 faltantes"
+    epica: "EPIC-WS-004"
+    prioridad: "P1"
+    esfuerzo: "M"
+    estado: "pendiente"
+    asignado: "@PERFIL-ORQUESTADOR"
+    dependencias: []
+
+  - id: "MQ-004"
+    titulo: "Vincular tareas a EPICs"
+    epica: "EPIC-WS-004"
+    prioridad: "P1"
+    esfuerzo: "M"
+    estado: "pendiente"
+    asignado: "@PERFIL-ORQUESTADOR"
+    dependencias: []
+
+  - id: "CORR-03"
+    titulo: "DDL cascade errors — trigger 28, function order, tenant seed"
+    epica: "EPIC-WS-005"
+    prioridad: "P1"
+    esfuerzo: "L"
+    estado: "completado"
+    asignado: "@PERFIL-DATABASE-POSTGRESQL"
+    dependencias: []
+    fecha_completado: "2026-02-17"
+
+  - id: "CORR-04"
+    titulo: "RLS deficit 195 vs 227"
+    epica: "EPIC-WS-005"
+    prioridad: "P1"
+    esfuerzo: "M"
+    estado: "completado"
+    asignado: "@PERFIL-DATABASE-POSTGRESQL"
+    dependencias: ["CORR-03"]
+    fecha_completado: "2026-02-17"
 
 # ============================================
 # METRICAS
 # ============================================
 
 metricas:
-  velocidad_planificada: 20
-  puntos_completados: 8
-  puntos_en_progreso: 0
-  puntos_pendientes: 12
-  porcentaje_avance: 40
+  velocidad_planificada: 30
+  items_total: 6
+  items_completados: 2
+  items_en_progreso: 1
+  items_pendientes: 3
+  porcentaje_avance: 33
 
 # ============================================
 # IMPEDIMENTOS
@@ -73,8 +141,11 @@ impedimentos: []
 # ============================================
 
 notas:
-  - "Sprint de inicializacion enfocado en estructura"
-  - "Proximos sprints enfocados en desarrollo de features"
+  - "Sprint enfocado en calidad y estabilizacion del codebase"
+  - "MQ-001 (P0) debe resolverse en los primeros 1-2 dias"
+  - "CORR-04 depende de CORR-03 — ejecutar secuencialmente"
+  - "Sprint anterior (Sprint 0) completado — enfocado en inicializacion"
+  - "Origen: TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO"
 
 # ============================================
 # REFERENCIAS
@@ -84,7 +155,10 @@ referencias:
   backlog: "orchestration/scrum/BACKLOG.yml"
   historico: "orchestration/scrum/SPRINTS-HISTORICO.yml"
   simco: "orchestration/directivas/simco/SIMCO-SCRUM-INTEGRATION.md"
+  tarea_origen: "orchestration/tareas/TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO/"
 
 metadata:
   created_by: "META-ORQUESTADOR"
   created_at: "2026-01-16"
+  updated_by: "Claude Code"
+  updated_at: "2026-02-17"

@@ -1,7 +1,7 @@
 ---
 tipo: especificacion-tecnica
 nivel: 2-tecnico
-ssot: /orchestration/directivas/principios/PRINCIPIO-CAPVED.md
+ssot: ../../directivas/principios/PRINCIPIO-CAPVED.md
 audiencia: agentes IA, sistemas automaticos
 proposito: Especificacion tecnica del protocolo CAPVED
 actualizado: 2026-01-16
@@ -13,7 +13,7 @@ actualizado: 2026-01-16
 **Alias:** @DEF_CAPVED
 **Fecha:** 2026-01-16
 **Sistema:** SIMCO v4.0.0
-**SSOT:** [PRINCIPIO-CAPVED.md](/orchestration/directivas/principios/PRINCIPIO-CAPVED.md)
+**SSOT:** [PRINCIPIO-CAPVED.md](../../directivas/principios/PRINCIPIO-CAPVED.md)
 
 ---
 

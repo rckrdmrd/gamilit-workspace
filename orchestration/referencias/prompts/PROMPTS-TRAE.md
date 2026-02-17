@@ -1,4 +1,4 @@
-# Prompts para Trae (Ejecutor de Tareas / SOLO Mode)
+# Prompts para Trae/Cursor (Ejecutor de Tareas / SOLO Mode)
 
 **Version:** 1.0.0
 **Fecha:** 2026-01-24

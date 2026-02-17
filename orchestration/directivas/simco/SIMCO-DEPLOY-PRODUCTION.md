@@ -91,17 +91,27 @@ ls -la ../backups/
 # - educational_content.teacher_content
 ```
 
-### FASE 3: Migraciones de BD (5-15 min)
+### FASE 3: Recreacion Limpia de BD (DDL-First) (5-15 min)
 
 ```bash
-# Ejecutar migraciones pendientes
-# Las migraciones estan en: apps/database/migrations/
-
-# El script de deploy ejecuta automaticamente:
-# 1. Detecta migraciones pendientes
-# 2. Ejecuta en orden
-# 3. Mueve a /executed/
-# 4. Rollback si falla
+# Politica obligatoria:
+# - NO usar migrations incrementales
+# - NO usar fixes manuales fuera del flujo
+# - SIEMPRE recrear desde DDL + seeds por ambiente
+#
+# Flujo recomendado cuando hay cambios en apps/database/ddl o apps/database/seeds:
+# 1) Backup obligatorio
+# 2) Detener PM2
+# 3) Recrear BD con scripts oficiales
+# 4) Reiniciar PM2
+# 5) Smoke test
+#
+# Comando oficial:
+# bash apps/database/scripts/recreate-database.sh --env prod --password '<PASSWORD_PRODUCCION>' --force
+#
+# SSOT:
+# - orchestration/directivas/simco/SIMCO-DDL.md
+# - orchestration/directivas/simco/SIMCO-RECREAR-BD.md
 ```
 
 ### FASE 4: Build y Deploy (15 min)

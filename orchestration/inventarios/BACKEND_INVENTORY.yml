@@ -14,12 +14,12 @@ auditoria: "TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION"
 # -------------------------------------------------------------------------------
 
 resumen:
-  modulos: 22
+  modulos: 23             # 22 directorios + mail (transitivo)
   entities: 152          # 152 archivos .entity.ts, 153 @Entity classes
   dtos: 399              # 399 archivos .dto.ts en modules/ (+ ~5 en shared/dto/)
-  services: 170
+  services: 171
   controllers: 107
-  endpoints: 899          # Verificado por conteo de @Get/@Post/@Put/@Patch/@Delete
+  endpoints: 901          # Verificado 2026-02-16 (+2 health endpoints)
   guards: 15
   decorators: 18          # 18 exported symbols en 9 archivos .decorator.ts
   interceptors: 6              # +1: tracing.interceptor.ts (new)

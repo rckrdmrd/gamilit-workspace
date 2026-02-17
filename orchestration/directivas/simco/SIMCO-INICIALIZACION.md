@@ -7,6 +7,19 @@
 
 ---
 
+## INTEGRACION CON PERFILES Y SKILLS (IoC)
+
+- Resolver perfil/skills/contexto con:
+  - `orchestration/agents/tools/profile_skill_resolver.py`
+  - `orchestration/agents/configs/PROFILE-SKILL-MAP.json`
+- Validar contratos de skills con:
+  - `docs/40-standards/ESTANDAR-SKILLS.md`
+  - `orchestration/inventarios/SKILLS-REGISTRY.yml`
+
+Cuando la tarea sea documental o de validacion transversal, usar `orchestration/CONTEXT-MAP.yml` para carga dirigida.
+
+---
+
 ## PRINCIPIO FUNDAMENTAL
 
 > **Un agente inicializado correctamente NO alucina porque tiene TODO el contexto necesario antes de actuar.**
@@ -45,6 +58,22 @@ Al recibir prompt de inicializacion, extraer:
   OPERACION: {inferir: CREAR | MODIFICAR | VALIDAR | INVESTIGAR}
   DOMINIO: {inferir: DDL | BACKEND | FRONTEND | MIXTO}
 ```
+
+**Implementacion ejecutable (obligatoria):**
+
+```bash
+python orchestration/agents/tools/profile_skill_resolver.py \
+  --task "{DESCRIPCION_TAREA}" \
+  --task-type "{backend|frontend|database|devops|docs|multi}"
+```
+
+El resolvedor utiliza `orchestration/agents/configs/PROFILE-SKILL-MAP.json` como SSOT y retorna:
+- perfil primario y secundarios
+- principios y directivas aplicables
+- skills sugeridas
+- contexto L0-L3 recomendado
+
+Si el resolvedor falla, usar fallback manual con `orchestration/agents/perfiles/_MAP.md`.
 
 ### Fase 1: CARGA NIVEL CORE (Obligatorio - ~5 min)
 

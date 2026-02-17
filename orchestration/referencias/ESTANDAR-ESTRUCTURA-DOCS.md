@@ -119,10 +119,10 @@ El `README.md` es el **punto de entrada principal**. Debe contener:
 
 ## Enlaces Rapidos
 
-- [Vision General](00-vision-general/)
-- [Arquitectura](01-arquitectura/)
-- [Modulos](02-definicion-modulos/)
-- [Guias de Desarrollo](95-guias-desarrollo/)
+- Vision General: `00-overview/`
+- Arquitectura: `20-architecture/`
+- Modulos/Requerimientos: `10-requirements/`
+- Guias de Desarrollo: `50-guides/`
 
 ## Estado del Proyecto
 
@@ -134,7 +134,7 @@ El `README.md` es el **punto de entrada principal**. Debe contener:
 
 ## Navegacion
 
-Ver [_MAP.md](_MAP.md) para indice completo.
+Ver `_MAP.md` para indice completo.
 
 ---
 *Actualizado: YYYY-MM-DD*
@@ -142,7 +142,7 @@ Ver [_MAP.md](_MAP.md) para indice completo.
 
 ### 3.2 _MAP.md (Indice de Navegacion)
 
-Cada directorio con contenido debe tener un `_MAP.md`. Ver [TEMPLATE-MAP.md](../templates/TEMPLATE-MAP.md) para el template estandar.
+Cada directorio con contenido debe tener un `_MAP.md`. Ver [TEMPLATE-MAP.md](../templates/04-globales/TEMPLATE-MAP.md) para el template estandar.
 
 **Contenido minimo:**
 - Tabla con archivos/directorios
@@ -226,7 +226,7 @@ Usar tablas para:
 
 ### 6.3 Enlaces
 
-- **Siempre relativos:** `[texto](../ruta/archivo.md)`
+- **Siempre relativos:** usar formato de ruta relativa (ejemplo: `../ruta/archivo.md`)
 - **Evitar absolutos:** No usar `/home/usuario/...`
 - **Validar periodicamente:** Con script de validacion
 
@@ -240,10 +240,11 @@ Usar tablas para:
 
 ## 7. Validacion
 
-Usar el script `validate-docs-structure.sh` para verificar cumplimiento:
+Usar un script de validacion documental del proyecto para verificar cumplimiento:
 
 ```bash
-./validate-docs-structure.sh /path/to/project
+# Ejemplo
+./scripts/validate-docs.sh /path/to/project
 ```
 
 El script valida:
@@ -323,7 +324,7 @@ docs/
 4. [ ] Mover contenido a directorios correctos
 5. [ ] Crear `_MAP.md` en cada subdirectorio
 6. [ ] Validar enlaces internos
-7. [ ] Ejecutar `validate-docs-structure.sh`
+7. [ ] Ejecutar script de validacion documental
 8. [ ] Resolver warnings y errores
 
 ### 9.2 Mapeo de Directorios Comunes
@@ -340,8 +341,8 @@ docs/
 
 ## 10. Referencias
 
-- [TEMPLATE-MAP.md](../templates/TEMPLATE-MAP.md) - Template para indices
-- [validate-docs-structure.sh](../scripts/validation/validate-docs-structure.sh) - Script de validacion
+- [TEMPLATE-MAP.md](../templates/04-globales/TEMPLATE-MAP.md) - Template para indices
+- Script de validacion documental del proyecto - Validar estructura y enlaces
 - [SIMCO-DOCUMENTAR.md](../directivas/simco/SIMCO-DOCUMENTAR.md) - Directiva de documentacion
 
 ---

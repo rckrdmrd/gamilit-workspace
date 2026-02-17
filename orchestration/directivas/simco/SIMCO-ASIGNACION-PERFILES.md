@@ -17,11 +17,12 @@ Esta directiva establece el procedimiento obligatorio para asignar tareas a perf
 
 > **ANTES de delegar cualquier tarea a un subagente, el agente DEBE:**
 >
-> 1. **CONSULTAR** el mapa de perfiles: `orchestration/agents/perfiles/_MAP.md`
-> 2. **IDENTIFICAR** el perfil adecuado usando el mapeo de palabras clave
+> 1. **EJECUTAR** el resolvedor: `orchestration/agents/tools/profile_skill_resolver.py`
+> 2. **USAR** `PROFILE-SKILL-MAP.json` como fuente ejecutable (SSOT)
 > 3. **VERIFICAR** que la tarea coincide con `tipos_tarea` del perfil
 > 4. **CONFIRMAR** que no aplica ninguna condicion de `no_asignar_si`
-> 5. **INCLUIR** el alias del perfil y las directivas aplicables en la delegacion
+> 5. **INCLUIR** alias, directivas, principios y skills en la delegacion
+> 6. **FALLBACK** manual a `_MAP.md` solo si el resolvedor no esta disponible
 
 ---
 
@@ -80,6 +81,17 @@ Esta directiva establece el procedimiento obligatorio para asignar tareas a perf
 ---
 
 ## MAPEO RAPIDO DE REFERENCIA
+
+### Flujo automatizado recomendado
+
+```bash
+python orchestration/agents/tools/profile_skill_resolver.py \
+  --task "{descripcion_tarea}" \
+  --task-type "{backend|frontend|database|devops|docs|multi}"
+```
+
+Archivo SSOT:
+- `orchestration/agents/configs/PROFILE-SKILL-MAP.json`
 
 ### Palabras Clave → Perfil
 

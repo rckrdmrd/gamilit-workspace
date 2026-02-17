@@ -31,7 +31,7 @@ metadata:
   repositorio:
     tipo: "MONOREPO"
     remote: "git@github.com:rckrdmrd/gamilit-workspace.git"
-    branch: "main"
+    branch: "master"
     nota: "GitHub (excepcional) - NO Gitea"
 
 # -------------------------------------------------------------------------------
@@ -163,40 +163,9 @@ modulos:
 # -------------------------------------------------------------------------------
 
 metricas:
-  source: "inventarios/MASTER_INVENTORY.yml (v7.0.0)"
-  fecha: "2026-02-11"
-
-  database:
-    schemas: 18
-    tablas: 170
-    views: 22
-    materialized_views: 7
-    funciones: 255
-    triggers: 132
-    rls_policies: 263
-    foreign_keys: 273
-    enums: 41
-
-  backend:
-    modulos: 22
-    entities: 152
-    dtos: 412
-    services: 170
-    controllers: 107
-    endpoints: 850
-    guards: 14
-    decorators: 18
-    tests: 833
-
-  frontend:
-    componentes: 458
-    hooks: 127
-    paginas: 85
-    stores_zustand: 32
-    api_services: 48
-    portales: 4
-    mecanicas: 40
-    routes: 24
+  source: "inventarios/MASTER_INVENTORY.yml"
+  estrategia: "SSOT_ONLY"
+  nota: "No duplicar conteos aqui; consumir metricas desde MASTER_INVENTORY.yml"
 
 # -------------------------------------------------------------------------------
 # EPICS
@@ -256,23 +225,20 @@ epics:
 # -------------------------------------------------------------------------------
 
 documentacion:
-  total_archivos: 132
+  total_archivos: "ver docs/ y orchestration (dinamico)"
   migracion_v2_completada: true
   local:
-    - "docs/00-overview/ (6 archivos: VISION-ALCANCE, MODULOS, TESTING, DEVOPS, GLOSARIO, REPORTE-INTEGRAL)"
-    - "docs/10-requirements/user-stories/ (27 US L3)"
-    - "docs/10-requirements/testing-guides/ (6 archivos: 5 guias pruebas + README)"
-    - "docs/20-architecture/ (8+ archivos: STACK, GAMIFICACION, MODELO-DATOS, schema-reference/, MECANICAS-V6, DATOS-GAMIFICACION, COHERENCE, TRACEABILITY)"
-    - "docs/40-api/ (3 archivos: API-REFERENCE, ADMIN-PORTAL-ENDPOINTS, WEB-PUSH-MIGRATION)"
-    - "docs/40-standards/ (17 estandares + backend-profesional/)"
-    - "docs/50-guides/ (guias de implementacion por dominio)"
-    - "docs/60-portals/ (manuales de portales student/teacher/admin)"
-    - "docs/90-adr/ (40 ADRs normalizados: ADR-NNN-lowercase-hyphen.md)"
+    - "docs/README.md (indice maestro docs)"
+    - "docs/_MAP.md (navegacion por rol/tarea)"
+    - "docs/00-overview/ (segmentado por conceptos atomicos)"
+    - "docs/10-requirements/ (epics y user stories)"
+    - "docs/20-architecture/ + docs/20-architecture/gamificacion/"
+    - "docs/40-standards/ (estandares y normalizacion documental)"
+    - "docs/90-adr/ (_MAP como entrada canonica)"
   orchestration:
-    - "inventory/ (8 archivos: 4 inventarios YAML principales + 4 especializados)"
-    - "references/ (3 archivos: API-CONTRACTS, COMPLETENESS-TRACKER, REQUIREMENTS-INDEX)"
-    - "analisis/ (7 archivos: ANALISIS-MIGRACION, MIGRATION-TRACKER, MIGRATION-MANIFEST, SNAPSHOT, PURGA-DECISION-LOG, ARCHIVE-MANIFEST, MIGRATION-CLOSURE)"
-    - "work-items/epics/ (11 EPICs)"
+    - "inventarios/ (SSOT de metricas y artefactos)"
+    - "referencias/prompts/ (Claude, Gemini, Trae/Cursor)"
+    - "work-items/epics/ (tracking de epicas)"
 
 # ===============================================================================
 # FIN DE INDICE DE ORQUESTACION

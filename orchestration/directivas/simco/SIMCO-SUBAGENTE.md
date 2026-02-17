@@ -16,6 +16,9 @@ aplica_a: "Agentes que reciben delegacion de un orquestador"
 > Un subagente NO debe cargar el mismo contexto que ya tiene el orquestador.
 > Un subagente DEBE usar versiones compactas de perfiles y directivas.
 
+Contrato compact obligatorio:
+- `orchestration/agents/perfiles/compact/PERFIL-CONTRATO-COMPACT.md`
+
 ---
 
 ## 1. DIFERENCIA: AGENTE vs SUBAGENTE

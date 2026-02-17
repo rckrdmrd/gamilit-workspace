@@ -1,11 +1,27 @@
-# DIRECTIVA: CARGA DE CONTEXTO SEGUN NIVEL
+# DIRECTIVA: CARGA DE CONTEXTO SEGUN NIVEL (DEPRECADA)
 
-**Version:** 2.0.0
-**Fecha:** 2025-12-26
+**Version:** 2.1.0
+**Fecha:** 2026-02-17
 **Nivel:** WORKSPACE
 **Tipo:** Directiva Fundamental - OBLIGATORIA
 **Aplica a:** TODOS los agentes y subagentes
 **Sistema:** SIMCO v3.3 + CAPVED
+
+---
+
+## ESTADO DE VIGENCIA
+
+> **DEPRECADA para gamilit (STANDALONE con NEXUS v4.1).**
+>
+> Esta directiva se conserva solo como referencia historica. Para operacion real del proyecto
+> usar exclusivamente:
+> - `orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md`
+> - `orchestration/directivas/simco/SIMCO-CONTEXT-ENGINEERING.md`
+> - `orchestration/directivas/simco/SIMCO-CONTEXT-CLEANUP.md`
+> - `orchestration/CONTEXT-MAP.yml`
+>
+> Motivo: el contenido original hace referencia a rutas y arquitectura `workspace-v1/projects/*`
+> que no representan el estado actual del repo standalone.
 
 ---
 
@@ -387,8 +403,8 @@ Solucion: Verificar lista de 28 perfiles en orchestration/agents/perfiles/
 
 ---
 
-**Esta directiva es OBLIGATORIA para todo agente y subagente.**
+**Esta directiva NO es obligatoria en gamilit. Usar NEXUS v4.1.**
 
 ---
 
-**Version:** 2.0.0 | **Nivel:** WORKSPACE | **Sistema:** SIMCO v3.3
+**Version:** 2.1.0 | **Nivel:** WORKSPACE | **Sistema:** SIMCO v3.3 (legacy)

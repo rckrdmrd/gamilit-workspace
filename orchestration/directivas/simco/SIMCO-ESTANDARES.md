@@ -239,5 +239,28 @@ docs/40-standards/
 
 ---
 
+## 9. Integracion con Agentes y Gates Operativos
+
+Para convertir cumplimiento normativo en ejecucion verificable:
+
+1. Cargar perfil y directivas desde `orchestration/referencias/MATRIZ-PERFIL-DIRECTIVAS.yml`.
+2. Aplicar gates con checklists:
+   - `orchestration/checklists/CHECKLIST-GATE-PRE-EJECUCION.md`
+   - `orchestration/checklists/CHECKLIST-GATE-POST-EJECUCION.md`
+   - `orchestration/checklists/CHECKLIST-VALIDACION-INTEGRAL.md`
+3. Registrar trazabilidad en:
+   - `orchestration/trazabilidad/TRACEABILITY-MASTER.yml`
+4. Ejecutar validacion automatizada:
+   - `node orchestration/scripts/validate-traceability.js`
+
+### Regla de cierre estandares
+
+No marcar tarea como completada si falta evidencia de:
+- Estándar aplicado por dominio
+- Gate pre/post ejecutado
+- Trazabilidad y validación documental
+
+---
+
 **Creado por:** TASK-2026-02-13-ANALISIS-MEJORAS-INTEGRABLES
 **Basado en:** workspace-arch/SIMCO-ESTANDARES.md (adaptado para gamilit standalone, 16 estandares)

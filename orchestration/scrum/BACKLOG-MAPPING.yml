@@ -1,0 +1,55 @@
+version: "1.0.0"
+updated: "2026-02-17"
+owner: "orchestration"
+status: "active"
+
+objective: >
+  Mapear backlog operativo del workspace (EPIC-WS-*) con backlog funcional
+  de producto (EPIC-GAM-*) para asegurar trazabilidad bidireccional.
+
+mapping:
+  - epic_ws: "EPIC-WS-004"
+    epic_ws_title: "Mejoras de Calidad de Codigo"
+    epic_gam_targets:
+      - "EPIC-GAM-F1-AUTH"
+      - "EPIC-GAM-F1-EXERCISES"
+      - "EPIC-GAM-F1-GAMIFICATION"
+      - "EPIC-GAM-F3-ADMIN-EXTENDED"
+    rationale: "Mejoras tecnicas y de calidad transversales en backend/frontend/docs."
+
+  - epic_ws: "EPIC-WS-005"
+    epic_ws_title: "Correcciones Tecnicas Pendientes"
+    epic_gam_targets:
+      - "EPIC-GAM-F2-DB-MIGRATION"
+      - "EPIC-GAM-F2-TECH-CONSOLIDATION"
+      - "EPIC-GAM-F4-VALIDATION"
+    rationale: "Correcciones DDL/RLS/seeds y estabilizacion final."
+
+  - epic_ws: "EPIC-WS-006"
+    epic_ws_title: "Trazabilidad de Procesos y Planeacion Integrada"
+    epic_gam_targets:
+      - "EPIC-GAM-F3-SOCIAL-GAMIFICATION"
+      - "EPIC-GAM-F3-TEACHER-PORTAL"
+      - "EPIC-GAM-F3-PROFILES"
+      - "EPIC-GAM-F3-PARENT-PORTAL"
+      - "EPIC-GAM-F4-VALIDATION"
+    rationale: "Cierre de brechas flujo->EPIC->US->TASK y mantenimiento continuo."
+
+  - epic_ws: "EPIC-WS-007"
+    epic_ws_title: "Gobernanza DB DDL-First por Ambientes"
+    epic_gam_targets:
+      - "EPIC-GAM-F2-DB-MIGRATION"
+      - "EPIC-GAM-F2-TECH-CONSOLIDATION"
+      - "EPIC-GAM-F4-VALIDATION"
+    rationale: "Estandarizacion operativa de recreacion DB en dev/prod y consistencia de directivas."
+
+rules:
+  - "Todo item TRZ-* en BACKLOG.yml debe apuntar a al menos 1 EPIC-GAM."
+  - "Todo item DBOPS-* en BACKLOG.yml debe apuntar a epicas con impacto DB."
+  - "Toda brecha P0/P1 debe tener US y TASK asociadas antes de cerrar sprint."
+  - "Cambios de estado en EPIC-WS deben reflejarse en _INDEX de work-items."
+
+references:
+  - "orchestration/scrum/BACKLOG.yml"
+  - "orchestration/work-items/epics/_INDEX.yml"
+  - "docs/30-ux-ui/flujos/MATRIZ-BRECHAS-TRAZABILIDAD-2026-02-17.md"

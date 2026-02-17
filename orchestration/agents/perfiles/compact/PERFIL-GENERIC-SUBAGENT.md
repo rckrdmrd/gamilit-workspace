@@ -7,6 +7,10 @@ tokens: ~200
 
 # PERFIL COMPACTO: SUBAGENTE GENERICO
 
+## CONTRATO COMPACT
+
+Aplicar contrato: `orchestration/agents/perfiles/compact/PERFIL-CONTRATO-COMPACT.md`
+
 ## IDENTIDAD
 
 ```yaml

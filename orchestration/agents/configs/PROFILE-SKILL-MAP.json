@@ -1,0 +1,316 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-02-17",
+  "description": "SSOT ejecutable para resolver perfil, principios, skills y contexto por tarea",
+  "source_of_truth": [
+    "orchestration/agents/perfiles/_MAP.md",
+    "orchestration/referencias/MATRIZ-PERFIL-DIRECTIVAS.yml",
+    "orchestration/CONTEXT-MAP.yml",
+    "docs/40-standards/ESTANDAR-SKILLS.md"
+  ],
+  "feature_flags": {
+    "enable_vercel_dev_skills": true,
+    "enable_vercel_deploy_skill": false
+  },
+  "principles_base": [
+    "orchestration/directivas/principios/PRINCIPIO-CAPVED.md",
+    "orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md",
+    "orchestration/directivas/principios/PRINCIPIO-ANTI-DUPLICACION.md",
+    "orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md",
+    "orchestration/directivas/principios/PRINCIPIO-NO-ASUMIR.md"
+  ],
+  "context_packs": {
+    "L0": [
+      "CLAUDE.md",
+      "orchestration/agents/configs/SHARED-LOAD-SEQUENCE.yml"
+    ],
+    "L1": [
+      "orchestration/PROJECT-CONTEXT.md",
+      "orchestration/PROXIMA-ACCION.md",
+      "orchestration/inventarios/MASTER_INVENTORY.yml"
+    ],
+    "L2_BACKEND": [
+      "orchestration/directivas/simco/SIMCO-BACKEND.md",
+      "orchestration/inventarios/BACKEND_INVENTORY.yml"
+    ],
+    "L2_FRONTEND": [
+      "orchestration/directivas/simco/SIMCO-FRONTEND.md",
+      "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+    ],
+    "L2_DATABASE": [
+      "orchestration/directivas/simco/SIMCO-DDL.md",
+      "orchestration/inventarios/DATABASE_INVENTORY.yml"
+    ],
+    "L2_DEVOPS": [
+      "orchestration/directivas/simco/SIMCO-DEVOPS.md",
+      "orchestration/directivas/simco/SIMCO-GIT.md"
+    ],
+    "L2_DOCS": [
+      "orchestration/directivas/simco/SIMCO-DOCUMENTAR.md",
+      "docs/40-standards/README.md"
+    ]
+  },
+  "profiles": {
+    "backend_nestjs": {
+      "alias": "@PERFIL_BACKEND",
+      "profile_file": "orchestration/agents/perfiles/PERFIL-BACKEND-NESTJS.md",
+      "task_types": [
+        "backend"
+      ],
+      "keywords": [
+        "endpoint",
+        "api",
+        "controller",
+        "service",
+        "nestjs",
+        "dto",
+        "guard"
+      ],
+      "principles_extra": [
+        "orchestration/directivas/principios/PRINCIPIO-SEPARATION-OF-CONCERNS.md"
+      ],
+      "directives": [
+        "orchestration/directivas/simco/SIMCO-BACKEND.md",
+        "orchestration/directivas/simco/SIMCO-MODIFICAR.md"
+      ],
+      "skills": [
+        "simco-task-execution",
+        "simco-safe-edit",
+        "simco-apply-standard"
+      ],
+      "context_pack_ids": [
+        "L0",
+        "L1",
+        "L2_BACKEND"
+      ]
+    },
+    "frontend_react": {
+      "alias": "@PERFIL_FRONTEND",
+      "profile_file": "orchestration/agents/perfiles/PERFIL-FRONTEND-REACT.md",
+      "task_types": [
+        "frontend"
+      ],
+      "keywords": [
+        "react",
+        "componente",
+        "pagina",
+        "ui",
+        "hook",
+        "tsx",
+        "vite"
+      ],
+      "principles_extra": [
+        "orchestration/directivas/principios/PRINCIPIO-KISS.md"
+      ],
+      "directives": [
+        "orchestration/directivas/simco/SIMCO-FRONTEND.md",
+        "orchestration/directivas/simco/SIMCO-MODIFICAR.md"
+      ],
+      "skills": [
+        "simco-task-execution",
+        "simco-safe-edit",
+        "simco-apply-standard",
+        "vercel-v0-dev"
+      ],
+      "context_pack_ids": [
+        "L0",
+        "L1",
+        "L2_FRONTEND"
+      ]
+    },
+    "database_postgresql": {
+      "alias": "@PERFIL_DATABASE",
+      "profile_file": "orchestration/agents/perfiles/PERFIL-DATABASE-POSTGRESQL.md",
+      "task_types": [
+        "database"
+      ],
+      "keywords": [
+        "ddl",
+        "tabla",
+        "schema",
+        "indice",
+        "constraint",
+        "rls",
+        "postgresql"
+      ],
+      "principles_extra": [
+        "orchestration/directivas/principios/PRINCIPIO-CLEAN-ARCHITECTURE.md"
+      ],
+      "directives": [
+        "orchestration/directivas/simco/SIMCO-DDL.md",
+        "orchestration/directivas/simco/SIMCO-MODIFICAR.md"
+      ],
+      "skills": [
+        "simco-task-execution",
+        "simco-safe-edit",
+        "simco-apply-standard"
+      ],
+      "context_pack_ids": [
+        "L0",
+        "L1",
+        "L2_DATABASE"
+      ]
+    },
+    "devops": {
+      "alias": "@PERFIL_DEVOPS",
+      "profile_file": "orchestration/agents/perfiles/PERFIL-DEVOPS.md",
+      "task_types": [
+        "devops"
+      ],
+      "keywords": [
+        "deploy",
+        "ci",
+        "cd",
+        "docker",
+        "nginx",
+        "pm2",
+        "workflow"
+      ],
+      "principles_extra": [
+        "orchestration/directivas/principios/PRINCIPIO-VALIDACION-OBLIGATORIA.md"
+      ],
+      "directives": [
+        "orchestration/directivas/simco/SIMCO-DEVOPS.md",
+        "orchestration/directivas/simco/SIMCO-GIT.md"
+      ],
+      "skills": [
+        "simco-task-execution",
+        "simco-safe-edit",
+        "simco-apply-standard",
+        "vercel-next-deploy"
+      ],
+      "context_pack_ids": [
+        "L0",
+        "L1",
+        "L2_DEVOPS"
+      ]
+    },
+    "documentation": {
+      "alias": "@PERFIL_DOCS_MAINTAINER",
+      "profile_file": "orchestration/agents/perfiles/PERFIL-DOCUMENTATION-MAINTAINER.md",
+      "task_types": [
+        "docs"
+      ],
+      "keywords": [
+        "documentacion",
+        "map",
+        "inventario",
+        "contexto",
+        "alias",
+        "ssot",
+        "readme"
+      ],
+      "principles_extra": [
+        "orchestration/directivas/principios/PRINCIPIO-DOC-PRIMERO.md"
+      ],
+      "directives": [
+        "orchestration/directivas/simco/SIMCO-DOCUMENTAR.md"
+      ],
+      "skills": [
+        "simco-task-execution",
+        "simco-safe-edit",
+        "simco-apply-standard"
+      ],
+      "context_pack_ids": [
+        "L0",
+        "L1",
+        "L2_DOCS"
+      ]
+    },
+    "orquestador": {
+      "alias": "@PERFIL_ORQUESTADOR",
+      "profile_file": "orchestration/agents/perfiles/PERFIL-ORQUESTADOR.md",
+      "task_types": [
+        "multi"
+      ],
+      "keywords": [
+        "integracion",
+        "multi-capa",
+        "coordinar",
+        "delegar",
+        "end-to-end",
+        "trazabilidad"
+      ],
+      "principles_extra": [
+        "orchestration/directivas/principios/PRINCIPIO-SOLID.md"
+      ],
+      "directives": [
+        "orchestration/directivas/simco/SIMCO-DELEGACION.md",
+        "orchestration/directivas/simco/SIMCO-ASIGNACION-PERFILES.md"
+      ],
+      "skills": [
+        "simco-task-execution",
+        "simco-safe-edit",
+        "simco-apply-standard"
+      ],
+      "context_pack_ids": [
+        "L0",
+        "L1"
+      ]
+    }
+  },
+  "skills_catalog": {
+    "simco-task-execution": {
+      "path": "orchestration/skills/simco-task-execution/SKILL.md",
+      "feature_flag": null,
+      "dependencies": [],
+      "contract_version": "1.0.0"
+    },
+    "simco-safe-edit": {
+      "path": "orchestration/skills/simco-safe-edit/SKILL.md",
+      "feature_flag": null,
+      "dependencies": [],
+      "contract_version": "1.0.0"
+    },
+    "simco-apply-standard": {
+      "path": "orchestration/skills/simco-apply-standard/SKILL.md",
+      "feature_flag": null,
+      "dependencies": [],
+      "contract_version": "1.0.0"
+    },
+    "vercel-v0-dev": {
+      "path": "orchestration/skills/community/vercel-labs-vercel-v0-dev/SKILL.md",
+      "feature_flag": "enable_vercel_dev_skills",
+      "dependencies": [
+        "simco-task-execution",
+        "simco-safe-edit"
+      ],
+      "contract_version": "1.0.0"
+    },
+    "vercel-next-deploy": {
+      "path": "orchestration/skills/community/vercel-labs-vercel-next-deploy/SKILL.md",
+      "feature_flag": "enable_vercel_deploy_skill",
+      "dependencies": [
+        "simco-task-execution",
+        "simco-safe-edit"
+      ],
+      "contract_version": "1.0.0"
+    }
+  },
+  "fallback_profile_id": "orquestador",
+  "task_type_to_profile_priority": {
+    "backend": [
+      "backend_nestjs",
+      "orquestador"
+    ],
+    "frontend": [
+      "frontend_react",
+      "orquestador"
+    ],
+    "database": [
+      "database_postgresql",
+      "orquestador"
+    ],
+    "devops": [
+      "devops",
+      "orquestador"
+    ],
+    "docs": [
+      "documentation",
+      "orquestador"
+    ],
+    "multi": [
+      "orquestador"
+    ]
+  }
+}

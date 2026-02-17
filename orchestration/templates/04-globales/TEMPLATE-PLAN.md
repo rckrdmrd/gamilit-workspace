@@ -255,8 +255,8 @@ La tarea se considera **COMPLETADA** cuando:
 - Similar existente: {ruta}
 
 **Prompts y directivas:**
-- [PROMPT-AGENTES-PRINCIPALES.md](../../prompts/PROMPT-AGENTES-PRINCIPALES.md)
-- [POLITICAS-USO-AGENTES.md](../../directivas/POLITICAS-USO-AGENTES.md)
+- [PROMPTS-INDEX.md](../../referencias/prompts/PROMPTS-INDEX.md)
+- [CATALOG.md](../../agents/perfiles/CATALOG.md)
 
 ---
 

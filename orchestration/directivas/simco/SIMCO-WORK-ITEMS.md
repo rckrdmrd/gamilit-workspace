@@ -7,6 +7,15 @@
 
 ---
 
+## INTEGRACION STORY -> TASK CAPVED
+
+Para toda story que pase a ejecucion tecnica:
+- Usar plantilla de conversión `orchestration/templates/03-por-proceso/work-items/TEMPLATE-STORY-TO-TASK.md`.
+- Generar al menos un `TASK-*` con fases CAPVED trazables.
+- Alinear metadatos con `TASK-METADATA-TEMPLATE.yml`.
+
+---
+
 ## RESUMEN EJECUTIVO
 
 Esta directiva define como gestionar work items (EPICs, User Stories, Tasks) en el proyecto gamilit. Establece la estructura de archivos, convenciones de nomenclatura, estados validos, y flujos de actualizacion.
@@ -336,6 +345,25 @@ sincronizacion:
 | @SCRUM | orchestration/scrum/ |
 | @SIMCO-SCRUM | orchestration/directivas/simco/_archive/SIMCO-SCRUM-INTEGRATION.md |
 | @INVENTORY | orchestration/inventarios/MASTER_INVENTORY.yml |
+
+---
+
+## Integracion con Tareas Operativas (orchestration/tareas)
+
+Cuando un analisis detecta gaps o issues que requieren implementacion posterior:
+
+1. Crear carpeta de tarea en `orchestration/tareas/TASK-{YYYY-MM-DD}-{NOMBRE}/`.
+2. Registrar al menos:
+   - `01-HALLAZGOS.md`
+   - `02-PLAN-IMPLEMENTACION-ISSUES.md`
+   - `03-ASIGNACION-AGENTES-Y-ACCESO.md`
+3. Vincular la tarea con documentos funcionales (docs/) y trazabilidad tecnica.
+4. Publicar mapeo de perfil responsable para acceso por agentes.
+
+### Ejemplo activo
+
+- `orchestration/tareas/TASK-2026-02-17-AUDITORIA-FLUJOS-P0/`
+- `orchestration/tareas/TASK-2026-02-17-CIERRE-RIESGOS-RESIDUALES-FULL/`
 
 ---
 

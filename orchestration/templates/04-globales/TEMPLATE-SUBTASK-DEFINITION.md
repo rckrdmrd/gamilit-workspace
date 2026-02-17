@@ -4,7 +4,7 @@
 **Fecha:** 2026-02-09
 **Uso:** Definicion de subtarea dentro de una carpeta de tarea
 **Ubicacion destino:** `projects/{p}/docs/10-requirements/epics/EPIC-{ID}/US-{ID}/TASK-{NNN}-{slug}/SUBTASK-{NNN}-{slug}.md`
-**ADR:** [ADR-0020](../../docs/90-adr/ADR-0020-jerarquia-anidada-work-items.md)
+**ADR:** [ADR-034](../../../docs/90-adr/ADR-034-jerarquia-anidada-profunda.md)
 
 ---
 

@@ -37,12 +37,12 @@ metricas:
     enums: 42                    # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
 
   backend:
-    modulos: 22
+    modulos: 23                  # 22 directorios + mail (transitivo)
     entities: 152              # 152 archivos, 153 @Entity classes
     dtos: 399                  # 399 en modules/ (+ ~5 en shared/)
-    services: 170
+    services: 171
     controllers: 107
-    endpoints: 899             # Verificado 2026-02-12
+    endpoints: 901             # Verificado 2026-02-16 (+2 health endpoints)
     guards: 15
     decorators: 18             # 18 symbols en 9 archivos
     interceptors: 6
@@ -131,7 +131,7 @@ inventarios_detallados:
 
 features:
   completados:
-    - "22 modulos backend operativos"
+    - "23 modulos backend operativos"
     - "5 modulos educativos (23 tipos ejercicios)"
     - "4 portales diferenciados"
     - "Sistema gamificacion maya completo"

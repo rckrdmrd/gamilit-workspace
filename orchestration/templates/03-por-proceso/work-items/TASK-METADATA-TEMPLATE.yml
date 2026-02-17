@@ -14,6 +14,26 @@ scope:  # Áreas afectadas (multi-select)
   - "{backend|frontend|database|devops|docs}"
   # - "{...}"
 
+# --- Calidad y Estandares ---
+standards_applied:  # Estandares obligatorios por dominio
+  - "PRINCIPIO-CAPVED"
+  - "SIMCO-TAREA"
+  # - "ESTANDAR-BACKEND-PROFESIONAL"
+  # - "ESTANDAR-FRONTEND-PROFESIONAL"
+
+related_adrs:  # Decisiones de arquitectura relacionadas
+  # - "ADR-XXXX"
+  []
+
+design_patterns:  # Patrones de diseño aplicados (si aplica)
+  # - "{repository|value_object|domain_error|factory|strategy}"
+  []
+
+skills_applied:  # Skills del registro aplicadas en la tarea
+  # - "simco-task-execution"
+  # - "simco-apply-standard"
+  []
+
 # --- Modo SIMCO ---
 mode: "{FULL|QUICK|ANALYSIS|PROPAGATION}"
 # FULL = C-A-P-V-E-D completo
@@ -70,9 +90,18 @@ downstream_targets:  # Proyectos destino para propagación
 created: "{YYYY-MM-DD}"
 updated: "{YYYY-MM-DD}"
 
+# --- Quality Gates ---
+quality_gates:
+  build: "{pending|pass|fail|n/a}"
+  lint: "{pending|pass|fail|n/a}"
+  tests: "{pending|pass|fail|n/a}"
+  security: "{pending|pass|fail|n/a}"
+  coherence_traceability: "{pending|pass|fail|n/a}"
+
 # --- Notas ---
 # - Fase V (Validación) NUNCA se delega, siempre ejecución directa
 # - Fase D (Documentación) es GATE obligatorio para marcar tarea como done
 # - propagation_candidate = true implica ejecutar análisis de impacto multi-proyecto
 # - upstream_candidate = true implica candidato para extracción a shared/ o packages/
 # - Estado blocked requiere comentario en depends_on explicando el bloqueo
+# - Story -> Task: usar TEMPLATE-STORY-TO-TASK.md para mapear criterios de aceptación

@@ -1,10 +1,10 @@
 # BACKLOG.yml
 # Backlog del producto para el workspace
-# Version: 1.0.0
+# Version: 2.0.0
 # Sistema: SIMCO v4.0.0
 
-version: "1.0.0"
-updated: "2026-01-29"
+version: "2.0.0"
+updated: "2026-02-17"
 
 # ============================================
 # EPICAS ACTIVAS
@@ -35,6 +35,190 @@ epicas:
     prioridad: "P2"
     historias: []
 
+  - id: "EPIC-WS-004"
+    titulo: "Mejoras de Calidad de Codigo"
+    descripcion: "Resolver gaps de calidad identificados en auditoria de codigo y gobernanza"
+    estado: "en_progreso"
+    prioridad: "P0"
+    tarea_origen: "TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO"
+    items:
+      - id: "MQ-001"
+        titulo: "Resolver contradiccion test coverage (jest.config.js=50% vs CLAUDE.md=80%)"
+        prioridad: "P0"
+        esfuerzo: "S"
+        estado: "pendiente"
+      - id: "MQ-002"
+        titulo: "Crear jerarquia de errores de dominio"
+        prioridad: "P1"
+        esfuerzo: "L"
+        estado: "pendiente"
+      - id: "MQ-003"
+        titulo: "Crear 4 skills P1 faltantes (git-workflow, ddl-management, validation-coherence, agent-delegation)"
+        prioridad: "P1"
+        esfuerzo: "M"
+        estado: "pendiente"
+      - id: "MQ-004"
+        titulo: "Vincular tareas existentes a EPICs del backlog"
+        prioridad: "P1"
+        esfuerzo: "M"
+        estado: "pendiente"
+      - id: "MQ-005"
+        titulo: "Evaluar e implementar Repository pattern"
+        prioridad: "P2"
+        esfuerzo: "XL"
+        estado: "pendiente"
+        dependencias: ["MQ-006"]
+      - id: "MQ-006"
+        titulo: "ADR de Clean Architecture pragmatica"
+        prioridad: "P2"
+        esfuerzo: "S"
+        estado: "pendiente"
+      - id: "MQ-007"
+        titulo: "Reducir 911 warnings no-explicit-any en backend"
+        prioridad: "P2"
+        esfuerzo: "XL"
+        estado: "pendiente"
+      - id: "MQ-008"
+        titulo: "Crear skill simco-apply-backend-standard"
+        prioridad: "P2"
+        esfuerzo: "S"
+        estado: "pendiente"
+        dependencias: ["MQ-003"]
+      - id: "MQ-009"
+        titulo: "Sincronizar XP multiplierMap FE con SSOT backend"
+        prioridad: "P2"
+        esfuerzo: "M"
+        estado: "pendiente"
+      - id: "MQ-010"
+        titulo: "Introducir Value Objects en modulos criticos"
+        prioridad: "P3"
+        esfuerzo: "L"
+        estado: "pendiente"
+        dependencias: ["MQ-005", "MQ-006"]
+
+  - id: "EPIC-WS-005"
+    titulo: "Correcciones Tecnicas Pendientes"
+    descripcion: "Correcciones tecnicas de codigo, DDL, RLS y seeds identificadas en auditorias"
+    estado: "en_progreso"
+    prioridad: "P0"
+    tarea_origen: "TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO"
+    items:
+      - id: "CORR-01"
+        titulo: "env.validation.ts types — validacion de tipos en variables de entorno"
+        prioridad: "P0"
+        esfuerzo: "S"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
+      - id: "CORR-02"
+        titulo: "lint no-case-declarations — fix de warnings en switch statements"
+        prioridad: "P0"
+        esfuerzo: "S"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
+      - id: "CORR-03"
+        titulo: "DDL cascade errors — trigger 28 mismatch, function execution order, tenant seed dependency"
+        prioridad: "P1"
+        esfuerzo: "L"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
+      - id: "CORR-04"
+        titulo: "RLS deficit 195 vs 227 — 32 politicas no aplicadas en runtime"
+        prioridad: "P1"
+        esfuerzo: "M"
+        estado: "completado"
+        dependencias: ["CORR-03"]
+        fecha_completado: "2026-02-17"
+      - id: "CORR-05"
+        titulo: "30 seed errors — FK violations, orden incorrecto, columnas renombradas"
+        prioridad: "P2"
+        esfuerzo: "L"
+        estado: "completado"
+        dependencias: ["CORR-03", "CORR-04"]
+        fecha_completado: "2026-02-17"
+
+  - id: "EPIC-WS-006"
+    titulo: "Trazabilidad de Procesos y Planeacion Integrada"
+    descripcion: "Cerrar brechas de trazabilidad FL->EPIC->US->TASK e institucionalizar mejoras de estandares, skills y patrones."
+    estado: "en_progreso"
+    prioridad: "P0"
+    tarea_origen: "TASK-2026-02-17-AUDITORIA-TRAZABILIDAD-PLANEACION"
+    items:
+      - id: "TRZ-001"
+        titulo: "Corregir colision de identificador FL-TCH-04 en cobertura y trazabilidad"
+        prioridad: "P0"
+        esfuerzo: "S"
+        estado: "pendiente"
+      - id: "TRZ-002"
+        titulo: "Normalizar politica de flujos compuestos (FL-STU-05, FL-STU-06, FL-SHR-02)"
+        prioridad: "P1"
+        esfuerzo: "M"
+        estado: "pendiente"
+      - id: "TRZ-003"
+        titulo: "Actualizar templates EPIC/US/TASK con campos obligatorios de estandares, ADR, skills y patrones"
+        prioridad: "P0"
+        esfuerzo: "S"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
+      - id: "TRZ-004"
+        titulo: "Mapeo formal EPIC-WS a EPIC-GAM y sincronizacion de estado"
+        prioridad: "P1"
+        esfuerzo: "S"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
+      - id: "TRZ-005"
+        titulo: "Definir ciclo operativo de mantenimiento de trazabilidad por sprint"
+        prioridad: "P1"
+        esfuerzo: "S"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
+      - id: "TRZ-006"
+        titulo: "Planificar integracion FE para endpoints sociales backend-only"
+        prioridad: "P1"
+        esfuerzo: "L"
+        estado: "pendiente"
+
+  - id: "EPIC-WS-007"
+    titulo: "Gobernanza DB DDL-First por Ambientes"
+    descripcion: "Asegurar recreacion limpia de BD en DEV/PROD con directivas, scripts y perfiles consistentes."
+    estado: "en_progreso"
+    prioridad: "P0"
+    tarea_origen: "TASK-2026-02-17-PROCEDIMIENTOS-DB-DEV-PROD-AGENTES"
+    items:
+      - id: "DBOPS-001"
+        titulo: "Eliminar contradicciones de migraciones en directivas de deploy"
+        prioridad: "P0"
+        esfuerzo: "S"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
+      - id: "DBOPS-002"
+        titulo: "Unificar ruta productiva de workspace en perfiles y procedimientos"
+        prioridad: "P0"
+        esfuerzo: "S"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
+      - id: "DBOPS-003"
+        titulo: "Refuerzo de seguridad PROD en recreate-database.sh (password y PM2 offline)"
+        prioridad: "P0"
+        esfuerzo: "S"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
+      - id: "DBOPS-004"
+        titulo: "Definir perfil operativo DEV WSL para recreacion de BD"
+        prioridad: "P1"
+        esfuerzo: "S"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
+      - id: "DBOPS-005"
+        titulo: "Automatizar deteccion de referencias prohibidas a migrations en CI"
+        prioridad: "P1"
+        esfuerzo: "M"
+        estado: "pendiente"
+      - id: "DBOPS-006"
+        titulo: "Actualizar inventarios SSOT con nuevos scripts wrappers y perfil DEV"
+        prioridad: "P1"
+        esfuerzo: "S"
+        estado: "pendiente"
+
 # ============================================
 # HISTORIAS EN BACKLOG
 # ============================================
@@ -59,6 +243,22 @@ backlog:
         - "DDL sincronizado con entities"
         - "Endpoints documentados en Swagger"
         - "Frontend conectado a backend"
+    - id: "HU-WS-005"
+      titulo: "Normalizar trazabilidad de flujos y eliminar colisiones de IDs"
+      puntos: 8
+      epica: "EPIC-WS-006"
+      criterios_aceptacion:
+        - "No existen IDs FL duplicados en cobertura"
+        - "Todo flujo critico apunta a US y TASK activa o planificada"
+        - "Matriz de brechas de trazabilidad actualizada"
+    - id: "HU-WS-007"
+      titulo: "Estandarizar recreacion de base de datos en DEV/PROD sin migraciones incrementales"
+      puntos: 8
+      epica: "EPIC-WS-007"
+      criterios_aceptacion:
+        - "Directivas de deploy no contienen flujo basado en migrations"
+        - "Procedimiento PROD exige backup, PM2 stop y password seguro"
+        - "Existe evidencia de pipeline DDL-first documentado"
 
   # Prioridad P1 - Importantes
   p1:
@@ -70,6 +270,22 @@ backlog:
         - "Visualizacion de estado de proyectos"
         - "Metricas de cobertura"
         - "Alertas de inconsistencias"
+    - id: "HU-WS-006"
+      titulo: "Integrar mejoras tecnicas en planeacion EPIC/US/TASK"
+      puntos: 5
+      epica: "EPIC-WS-006"
+      criterios_aceptacion:
+        - "Templates exigen estandares, ADRs, skills y patrones aplicados"
+        - "Toda nueva task incluye quality gates verificables"
+        - "Existe mapeo EPIC-WS <-> EPIC-GAM operativo"
+    - id: "HU-WS-008"
+      titulo: "Definir contexto operativo de agentes para DB local (WSL) y deploy prod"
+      puntos: 5
+      epica: "EPIC-WS-007"
+      criterios_aceptacion:
+        - "Existe perfil o task para operación DB en DEV WSL"
+        - "CMV del orquestador referencia directivas DB/deploy aplicables"
+        - "Backlog contiene items DBOPS con prioridades y dependencias claras"
 
   # Prioridad P2 - Deseables
   p2: []
@@ -93,12 +309,23 @@ completadas:
 # ============================================
 
 metricas:
-  total_historias: 4
-  puntos_totales: 34
+  total_historias: 8
+  puntos_totales: 60
   historias_completadas: 1
   puntos_completados: 8
-  historias_en_backlog: 3
-  puntos_en_backlog: 26
+  historias_en_backlog: 7
+  puntos_en_backlog: 52
+  items_calidad_total: 10
+  items_calidad_pendientes: 10
+  correcciones_total: 5
+  correcciones_completadas: 5
+  correcciones_pendientes: 0
+  items_trazabilidad_total: 6
+  items_trazabilidad_completados: 3
+  items_trazabilidad_pendientes: 3
+  items_dbops_total: 6
+  items_dbops_completados: 4
+  items_dbops_pendientes: 2
 
 # ============================================
 # REFERENCIAS
@@ -108,7 +335,13 @@ referencias:
   sprint_actual: "orchestration/scrum/SPRINT-ACTUAL.yml"
   historico: "orchestration/scrum/SPRINTS-HISTORICO.yml"
   roadmap: "orchestration/ROADMAP.yml"
+  tarea_calidad: "orchestration/tareas/TASK-2026-02-17-MEJORAS-CALIDAD-CODIGO/"
+  tarea_trazabilidad: "orchestration/tareas/TASK-2026-02-17-AUDITORIA-TRAZABILIDAD-PLANEACION/"
+  tarea_dbops: "orchestration/tareas/TASK-2026-02-17-PROCEDIMIENTOS-DB-DEV-PROD-AGENTES/"
+  backlog_mapping: "orchestration/scrum/BACKLOG-MAPPING.yml"
 
 metadata:
   created_by: "Claude Code"
   created_at: "2026-01-29"
+  updated_by: "Claude Code"
+  updated_at: "2026-02-17"

@@ -4,7 +4,7 @@
 **Fecha:** 2026-02-09
 **Uso:** Definicion de User Story con contenido enriquecido y seccion de tareas
 **Ubicacion destino:** `projects/{p}/docs/10-requirements/epics/EPIC-{ID}/US-{ID}/US-{ID}.md`
-**ADR:** [ADR-0020](../../docs/90-adr/ADR-0020-jerarquia-anidada-work-items.md)
+**ADR:** [ADR-034](../../../docs/90-adr/ADR-034-jerarquia-anidada-profunda.md)
 
 ---
 
@@ -137,10 +137,10 @@ como se integra con el resto del sistema. 3-5 parrafos.}
 
 | # | Task ID | Titulo | Capa | SP | Carpeta |
 |---|---------|--------|------|----|---------|
-| 1 | TASK-{MODULE}-{NNN}-F0-DATABASE | {titulo} | DATABASE | {SP} | [TASK-{MODULE}-{NNN}-F0-DATABASE/](./TASK-{MODULE}-{NNN}-F0-DATABASE/) |
-| 2 | TASK-{MODULE}-{NNN}-F1-BACKEND | {titulo} | BACKEND | {SP} | [TASK-{MODULE}-{NNN}-F1-BACKEND/](./TASK-{MODULE}-{NNN}-F1-BACKEND/) |
-| 3 | TASK-{MODULE}-{NNN}-F2-FRONTEND | {titulo} | FRONTEND | {SP} | [TASK-{MODULE}-{NNN}-F2-FRONTEND/](./TASK-{MODULE}-{NNN}-F2-FRONTEND/) |
-| 4 | TASK-{MODULE}-{NNN}-F4-TEST | {titulo} | TEST | {SP} | [TASK-{MODULE}-{NNN}-F4-TEST/](./TASK-{MODULE}-{NNN}-F4-TEST/) |
+| 1 | TASK-{MODULE}-{NNN}-F0-DATABASE | {titulo} | DATABASE | {SP} | `./TASK-{MODULE}-{NNN}-F0-DATABASE/` |
+| 2 | TASK-{MODULE}-{NNN}-F1-BACKEND | {titulo} | BACKEND | {SP} | `./TASK-{MODULE}-{NNN}-F1-BACKEND/` |
+| 3 | TASK-{MODULE}-{NNN}-F2-FRONTEND | {titulo} | FRONTEND | {SP} | `./TASK-{MODULE}-{NNN}-F2-FRONTEND/` |
+| 4 | TASK-{MODULE}-{NNN}-F4-TEST | {titulo} | TEST | {SP} | `./TASK-{MODULE}-{NNN}-F4-TEST/` |
 
 ### Orden de Ejecucion
 ```

@@ -1,6 +1,6 @@
 # PROJECT-CONTEXT - GAMILIT
 
-**Sistema:** NEXUS v4.1 (L1 Context) | **Version:** 3.0.0 | **Fecha:** 2026-02-14
+**Sistema:** NEXUS v4.1 (L1 Context) | **Version:** 4.0.0 | **Fecha:** 2026-02-17
 
 ---
 
@@ -93,7 +93,7 @@
 
 ---
 
-## MODULOS DEL SISTEMA (22)
+## MODULOS DEL SISTEMA (23)
 
 ### Core Infrastructure (7)
 auth, users, tenants, core, health, settings, notifications
@@ -101,8 +101,8 @@ auth, users, tenants, core, health, settings, notifications
 ### Educational Content (5)
 modules, exercises, content, classrooms, students
 
-### Gamification System (6)
-gamification, leaderboard, missions, store, achievements, social
+### Gamification System (7)
+gamification, leaderboard, missions, store, achievements, social, mail
 
 ### Support & Operations (4)
 teachers, parents, analytics, reports
@@ -121,16 +121,16 @@ teachers, parents, analytics, reports
 
 ## METRICAS ACTUALES
 
-**Fuente:** orchestration/inventarios/MASTER_INVENTORY.yml (v9.0.0)
+**Fuente:** orchestration/inventarios/MASTER_INVENTORY.yml (v10.0.0)
 
 ### Base de Datos
-18 schemas | 169 tablas | 22 views | 7 MVs | 183 funciones (DDL) | 67 triggers | 207 RLS policies | 40 ENUMs
+18 schemas | 169 tablas | 22 views | 7 MVs | 183 funciones (DDL) | 67 triggers | 227 RLS policies | 42 ENUMs
 
 ### Backend
-22 modulos | 152 entities | 399 DTOs | 170 services | 107 controllers | 899 endpoints | 15 guards | 18 decorators
+23 modulos | 152 entities | 399 DTOs | 171 services | 107 controllers | 901 endpoints | 15 guards | 18 decorators
 
 ### Frontend
-474 componentes | 101 hooks | 68 paginas | 14 stores | 51 API services | 4 portales | 30 mecanicas
+480 componentes | 102 hooks | 68 paginas | 14 stores | 52 API services | 4 portales | 30 mecanicas
 
 ### Testing
 833 tests pasando (620 backend + 213 frontend) | Target 80% cobertura | Coherencia DDL-Backend: 90.5%

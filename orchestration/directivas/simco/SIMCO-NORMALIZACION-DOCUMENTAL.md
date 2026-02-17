@@ -271,5 +271,30 @@ Las User Stories (800+ lineas) contienen especificacion completa inline:
 
 ---
 
+## 9. Estado operativo y acceso para agentes
+
+### Estado actual del plan
+
+- Lotes 1-3 + Olas 1-8: **completados**
+- Auditoria global `docs/**` + `orchestration/**`: **`BROKEN_GLOBAL_TOTAL=0`**
+- Registro canonico de cierre: `orchestration/referencias/BACKLOG-NORMALIZACION-FASE2.md`
+
+### Enrutamiento de agentes (quien ejecuta)
+
+- Perfil principal: `@PERFIL_DOCS_MAINTAINER`
+- Coordinacion multi-capa: `@PERFIL_ORQUESTADOR`
+- Validacion transversal (si toca codigo): perfil tecnico por capa + `@DEF_CHK_SSOT_SYNC`
+
+### Procedimiento minimo de ejecucion
+
+1. Ejecutar checklist `@DEF_CHK_DOC_NORMALIZATION`.
+2. Aplicar esta directiva (`SIMCO-NORMALIZACION-DOCUMENTAL.md`).
+3. Registrar avance/cierre en:
+   - `orchestration/referencias/BACKLOG-NORMALIZACION-FASE2.md`
+   - `orchestration/PROXIMA-ACCION.md` (estado ejecutivo)
+   - `orchestration/NEXT-ACTIONS.md` (solo pendientes operativos)
+
+---
+
 **Creado por:** TASK-2026-02-13-ANALISIS-MEJORAS-INTEGRABLES
 **Basado en:** workspace-arch/SIMCO-NORMALIZACION-DOCUMENTAL.md (adaptado para gamilit standalone)

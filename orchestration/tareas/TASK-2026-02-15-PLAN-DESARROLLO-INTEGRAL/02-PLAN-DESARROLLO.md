@@ -1,6 +1,6 @@
 # 02-PLAN-DESARROLLO.md — Plan Desarrollo Integral GAMILIT
 
-**Fecha:** 2026-02-15
+**Fecha:** 2026-02-17
 **Agente:** Claude Opus 4.6
 **Estado:** FASE 0 completada, Batch 1 parcialmente completado
 
@@ -13,13 +13,13 @@
 | Archivos SSOT corregidos | 5 (CLAUDE.md, MASTER_INV, DB_INV, FE_INV, MEMORY.md) |
 | Bugs codigo corregidos | 2 (HF-05 LTI double prefix, CI branch refs) |
 | Archivos untracked a commitear | ~82 |
-| Streams paralelos | 5 (A: Database, B: Backend, C: Frontend, D: Docs, E: DevOps) |
-| Total tareas | 44 (5 FASE 0 + 39 streams) |
+| Streams paralelos | 7 (A: Database, B: Backend, C: Frontend, D: Docs, E: DevOps, F: Cierre Residual Full, G: Procesos Pendientes) |
+| Total tareas | 54 (5 FASE 0 + 49 streams) |
 | Batches ejecucion | 4 |
 
 ---
 
-## 5 Streams de Desarrollo
+## 7 Streams de Desarrollo
 
 ### Stream A: Database (7 tareas)
 
@@ -85,6 +85,26 @@ Enfoque: Docker, dependabot, CI workflows, orchestration commit.
 - E-005: Mejorar database validation CI job
 - E-006: Commit orchestration untracked (~25 files)
 
+### Stream F: Cierre Residual Full (3 tareas)
+
+Enfoque: cobertura total de procesos E2E por portal/modulo/componente y cierre de riesgos residuales en documentacion/gobernanza.
+
+- F-001: Consolidar matriz `proceso -> requerimiento -> pagina -> componente -> endpoint -> datos -> documento` — **DONE**
+- F-002: Integrar flujos faltantes admin/teacher/parents e indices de descubribilidad — **DONE**
+- F-003: Planificar gaps tecnicos no-codigo con owner/ruta/criterio de aceptacion — **DONE**
+
+### Stream G: Procesos Pendientes (7 tareas)
+
+Enfoque: completar procesos sin diagrama E2E o con cobertura incompleta y actualizar plan de desarrollo asociado.
+
+- G-001: Documentar flujos Student pendientes (shop, inventory, guilds, friends, settings devices, settings notifications) — **DONE**
+- G-002: Documentar flujos Admin pendientes (integrations LTI, audit logs) — **DONE**
+- G-003: Documentar flujos Parent pendientes (login, register, dashboard, child progress) — **DONE**
+- G-004: Consolidar endpoints `parents/*` en `docs/40-api/API-REFERENCE.md` con trazabilidad a FL-PRN-01..03 — **DONE**
+- G-005: Actualizar catalogo maestro de flujos y matriz de trazabilidad con nuevos procesos — **DONE**
+- G-006: Actualizar cobertura total de procesos con nuevos flujos y rutas — **DONE**
+- G-007: Ajustar planes de desarrollo de EPICs afectados con secuencia y dependencias — **DONE**
+
 ---
 
 ## Progreso por Batch
@@ -107,6 +127,14 @@ Enfoque: Docker, dependabot, CI workflows, orchestration commit.
 ### Batch 4: Futuro — DIFERIDO
 
 4 items de baja prioridad + F4-VALIDATION (89 SP).
+
+### Batch Residual Full: COMPLETADO (documental)
+
+- [x] Matriz de cobertura total publicada (`docs/30-ux-ui/flujos/COBERTURA-TOTAL-PROCESOS.md`)
+- [x] Oleada full de auditoria publicada (`docs/30-ux-ui/flujos/AUDITORIA-RESIDUAL-FULL.md`)
+- [x] Gobernanza y accesibilidad por agentes integradas (`orchestration/tareas/TASK-2026-02-17-CIERRE-RIESGOS-RESIDUALES-FULL/`)
+- [x] Gap tecnico pendiente explicitado sin codigo: `ISSUE-FULL-PLAN-001` (API reference parents)
+- [x] Procesos pendientes incorporados en plan integral (Stream G)
 
 ---
 

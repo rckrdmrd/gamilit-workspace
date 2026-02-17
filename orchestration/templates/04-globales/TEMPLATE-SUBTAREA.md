@@ -1,6 +1,6 @@
 # {ST-ID}: {Título de la Subtarea}
 
-**Tarea Padre:** [{T-ID}](../{T-ID}.md)
+**Tarea Padre:** `../{T-ID}.md`
 **Tipo:** {DB|BE|FE|MCP|TEST|DOC}
 **Estimación:** {N}h
 **Estado:** Pending | In Progress | Done

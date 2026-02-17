@@ -7,6 +7,19 @@
 
 ---
 
+## INTEGRACION NEXUS v4.1 (ACTUALIZACION)
+
+Para tareas con delegacion/subagentes, aplicar además:
+- `orchestration/directivas/simco/SIMCO-CONTEXT-MANAGEMENT-V2.md` (incluye `8.5 Claude Code Task tool`)
+- `orchestration/directivas/simco/SIMCO-CONTEXT-CLEANUP.md`
+- `orchestration/CONTEXT-MAP.yml` (resolucion documental y tecnica)
+
+Regla:
+- En Fase P, toda subtarea delegada debe declarar contrato de entrada/salida.
+- En Fase V, validar coherencia de contratos antes de Fase E.
+
+---
+
 ## PRINCIPIO FUNDAMENTAL
 
 > **Toda tarea que genera commit DEBE pasar por el ciclo CAPVED completo.**
@@ -814,6 +827,36 @@ estado_final: "COMPLETADA | EN_PROGRESO | BLOQUEADA"
 | `TEMPLATE-ANALISIS.md` | Template de análisis |
 | `TEMPLATE-PLAN.md` | Template de planeación |
 | `TEMPLATE-VALIDACION.md` | Template de validación |
+
+---
+
+## INTEGRACION OPERATIVA (AGENTES + PROCEDIMIENTO)
+
+Para tareas de mejora de estandares y validacion transversal, usar estos artefactos operativos:
+
+```yaml
+checklists_operativos:
+  pre_ejecucion: "orchestration/checklists/CHECKLIST-GATE-PRE-EJECUCION.md"
+  post_ejecucion: "orchestration/checklists/CHECKLIST-GATE-POST-EJECUCION.md"
+  validacion_integral: "orchestration/checklists/CHECKLIST-VALIDACION-INTEGRAL.md"
+
+trazabilidad:
+  master: "orchestration/trazabilidad/TRACEABILITY-MASTER.yml"
+  reporte_validacion: "orchestration/trazabilidad/VALIDATION-REPORT.md"
+  reporte_sync: "orchestration/trazabilidad/SYNC-WORKITEMS-DOCS-REPORT.json"
+
+plantillas:
+  task_trazable: "docs/10-requirements/epics/_TEMPLATE-TASK-TRAZABILIDAD.md"
+
+scripts:
+  sync_workitems_docs: "orchestration/scripts/sync-work-items-to-docs.js"
+  validate_traceability: "orchestration/scripts/validate-traceability.js"
+```
+
+### Regla operativa adicional
+
+- Si la tarea impacta multiples capas o gobernanza, ejecutar `validate-traceability.js` antes de cerrar la fase D.
+- Si el reporte `SYNC-WORKITEMS-DOCS-REPORT.json` detecta gaps, registrar issue residual y vincularlo a tarea derivada.
 
 ---
 

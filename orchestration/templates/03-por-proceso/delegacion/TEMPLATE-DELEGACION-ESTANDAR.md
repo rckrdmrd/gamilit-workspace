@@ -110,3 +110,4 @@ formato:
 
 **Para tareas complejas (>2 archivos):** Ver `TEMPLATE-DELEGACION-COMPLETA.md`
 **Para tareas simples (1 archivo):** Ver `TEMPLATE-DELEGACION-MINIMA.md`
+**Para Claude Task tool con contrato formal:** Ver `TEMPLATE-CLAUDE-TASK-TOOL.md`

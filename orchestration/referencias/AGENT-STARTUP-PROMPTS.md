@@ -5,6 +5,10 @@
 
 Prompts de arranque para inicializar agentes en el workspace SIMCO.
 
+> Nota de uso actual: este documento se mantiene como referencia historica larga.
+> Para operacion diaria usar `orchestration/referencias/prompts/PROMPTS-INDEX.md`
+> y sus archivos segmentados por agente (Claude, Gemini, Trae/Cursor, Windsurf).
+
 **Estandares:** `orchestration/agents/AGENT-EXECUTION-STANDARDS.md`
 **Flujo Optimizado:** `orchestration/directivas/simco/SIMCO-FLUJO-AGENTES.md`
 **Gobernanza de Prompts:** `orchestration/directivas/simco/SIMCO-PROMPTS-AGENTES.md`

@@ -18,7 +18,7 @@ orchestration/referencias/prompts/
 ├── PROMPTS-CLAUDE-CODE.md        <- Prompts para Claude Code
 ├── PROMPTS-GEMINI-CLI.md         <- Prompts para Gemini CLI
 ├── PROMPTS-WINDSURF.md           <- Prompts para Windsurf
-├── PROMPTS-TRAE.md               <- Prompts para Trae
+├── PROMPTS-TRAE.md               <- Prompts para Trae/Cursor
 └── PROMPTS-GEMINI-QA.md          <- Prompts para Gemini QA
 ```
 
@@ -32,7 +32,7 @@ orchestration/referencias/prompts/
 | PROMPTS-CLAUDE-CODE.md | 77-128 | Arquitecto/Orquestador |
 | PROMPTS-GEMINI-CLI.md | 129-516 | Arquitecto Secundario |
 | PROMPTS-WINDSURF.md | 517-703 | Ejecutor (Plan Atomico + Full-Stack) |
-| PROMPTS-TRAE.md | 704-955 | Ejecutor + SOLO Mode |
+| PROMPTS-TRAE.md | 704-955 | Ejecutor + SOLO Mode (incluye Trae/Cursor) |
 | PROMPTS-GEMINI-QA.md | 956-1284 | QA/Testing Frontend |
 
 ---
@@ -68,7 +68,7 @@ orchestration/referencias/prompts/
 - `@PROMPTS-CLAUDE` - orchestration/referencias/prompts/PROMPTS-CLAUDE-CODE.md
 - `@PROMPTS-GEMINI` - orchestration/referencias/prompts/PROMPTS-GEMINI-CLI.md
 - `@PROMPTS-WINDSURF` - orchestration/referencias/prompts/PROMPTS-WINDSURF.md
-- `@PROMPTS-TRAE` - orchestration/referencias/prompts/PROMPTS-TRAE.md
+- `@PROMPTS-TRAE` - orchestration/referencias/prompts/PROMPTS-TRAE.md (Trae/Cursor)
 - `@PROMPTS-GEMINI-QA` - orchestration/referencias/prompts/PROMPTS-GEMINI-QA.md
 ```
 

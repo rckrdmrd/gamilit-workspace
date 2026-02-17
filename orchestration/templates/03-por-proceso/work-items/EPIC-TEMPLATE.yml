@@ -17,6 +17,25 @@ status: "{backlog|ready|in_progress|done}"
 phase: "{Fase X}"  # Fase 0-9 del plan de integración (ver docs/10-context/)
 owner: "product-owner"  # Responsable del producto
 
+# --- Arquitectura y Estandares ---
+standards_applied:
+  - "PRINCIPIO-CAPVED"
+  - "SIMCO-TAREA"
+  # - "ESTANDAR-BACKEND-PROFESIONAL"
+  # - "ESTANDAR-FRONTEND-PROFESIONAL"
+
+related_adrs:
+  # - "ADR-XXXX"
+  []
+
+design_patterns:
+  # - "{repository|value_object|domain_error|clean_architecture}"
+  []
+
+quality_gates:
+  - "Build/Lint/Test definidos por historia y task"
+  - "Coherencia DDL->BE->FE->Docs validada"
+
 # --- Estimación ---
 story_points_total: {suma_de_historias}  # Suma de SPs de todas las historias
 sprint_start: "{YYYY-MM-DD}"  # Sprint de inicio planificado
