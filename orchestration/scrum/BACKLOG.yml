@@ -46,22 +46,26 @@ epicas:
         titulo: "Resolver contradiccion test coverage (jest.config.js=50% vs CLAUDE.md=80%)"
         prioridad: "P0"
         esfuerzo: "S"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
       - id: "MQ-002"
         titulo: "Crear jerarquia de errores de dominio"
         prioridad: "P1"
         esfuerzo: "L"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
       - id: "MQ-003"
         titulo: "Crear 4 skills P1 faltantes (git-workflow, ddl-management, validation-coherence, agent-delegation)"
         prioridad: "P1"
         esfuerzo: "M"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
       - id: "MQ-004"
         titulo: "Vincular tareas existentes a EPICs del backlog"
         prioridad: "P1"
         esfuerzo: "M"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
       - id: "MQ-005"
         titulo: "Evaluar e implementar Repository pattern"
         prioridad: "P2"
@@ -72,7 +76,8 @@ epicas:
         titulo: "ADR de Clean Architecture pragmatica"
         prioridad: "P2"
         esfuerzo: "S"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
       - id: "MQ-007"
         titulo: "Reducir 911 warnings no-explicit-any en backend"
         prioridad: "P2"
@@ -147,12 +152,14 @@ epicas:
         titulo: "Corregir colision de identificador FL-TCH-04 en cobertura y trazabilidad"
         prioridad: "P0"
         esfuerzo: "S"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
       - id: "TRZ-002"
         titulo: "Normalizar politica de flujos compuestos (FL-STU-05, FL-STU-06, FL-SHR-02)"
         prioridad: "P1"
         esfuerzo: "M"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
       - id: "TRZ-003"
         titulo: "Actualizar templates EPIC/US/TASK con campos obligatorios de estandares, ADR, skills y patrones"
         prioridad: "P0"
@@ -217,7 +224,8 @@ epicas:
         titulo: "Actualizar inventarios SSOT con nuevos scripts wrappers y perfil DEV"
         prioridad: "P1"
         esfuerzo: "S"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-17"
 
 # ============================================
 # HISTORIAS EN BACKLOG
@@ -316,16 +324,17 @@ metricas:
   historias_en_backlog: 7
   puntos_en_backlog: 52
   items_calidad_total: 10
-  items_calidad_pendientes: 10
+  items_calidad_completados: 5
+  items_calidad_pendientes: 5
   correcciones_total: 5
   correcciones_completadas: 5
   correcciones_pendientes: 0
   items_trazabilidad_total: 6
-  items_trazabilidad_completados: 3
-  items_trazabilidad_pendientes: 3
+  items_trazabilidad_completados: 5
+  items_trazabilidad_pendientes: 1
   items_dbops_total: 6
-  items_dbops_completados: 4
-  items_dbops_pendientes: 2
+  items_dbops_completados: 5
+  items_dbops_pendientes: 1
 
 # ============================================
 # REFERENCIAS

@@ -25,28 +25,31 @@ sprint:
 objetivos:
   - id: "OBJ-001"
     descripcion: "Resolver contradiccion de test coverage (MQ-001)"
-    estado: "pendiente"
-    progreso: 0
+    estado: "completado"
+    progreso: 100
     items: ["MQ-001"]
+    fecha_completado: "2026-02-17"
 
   - id: "OBJ-002"
     descripcion: "Crear jerarquia de errores de dominio en backend (MQ-002)"
-    estado: "pendiente"
-    progreso: 0
+    estado: "completado"
+    progreso: 100
     items: ["MQ-002"]
+    fecha_completado: "2026-02-17"
 
   - id: "OBJ-003"
     descripcion: "Crear 4 skills P1 faltantes en orchestration (MQ-003)"
-    estado: "en_progreso"
-    progreso: 80
+    estado: "completado"
+    progreso: 100
     items: ["MQ-003"]
-    nota: "4 skills escritos, pendiente validacion final"
+    fecha_completado: "2026-02-17"
 
   - id: "OBJ-004"
     descripcion: "Vincular tareas existentes a EPICs (MQ-004)"
-    estado: "pendiente"
-    progreso: 0
+    estado: "completado"
+    progreso: 100
     items: ["MQ-004"]
+    fecha_completado: "2026-02-17"
 
   - id: "OBJ-005"
     descripcion: "Corregir DDL cascade errors y RLS deficit (CORR-03, CORR-04)"
@@ -66,9 +69,11 @@ items:
     epica: "EPIC-WS-004"
     prioridad: "P0"
     esfuerzo: "S"
-    estado: "pendiente"
-    asignado: "Cualquier agente"
+    estado: "completado"
+    asignado: "Claude Code"
     dependencias: []
+    fecha_completado: "2026-02-17"
+    entregable: "docs/90-adr/ADR-044-test-coverage-strategy.md"
 
   # P1 - Semana 1-2
   - id: "MQ-002"
@@ -76,27 +81,33 @@ items:
     epica: "EPIC-WS-004"
     prioridad: "P1"
     esfuerzo: "L"
-    estado: "pendiente"
-    asignado: "@PERFIL-BACKEND-NESTJS"
+    estado: "completado"
+    asignado: "Claude Code"
     dependencias: []
+    fecha_completado: "2026-02-17"
+    entregable: "apps/backend/src/shared/exceptions/"
 
   - id: "MQ-003"
     titulo: "Crear 4 skills P1 faltantes"
     epica: "EPIC-WS-004"
     prioridad: "P1"
     esfuerzo: "M"
-    estado: "pendiente"
-    asignado: "@PERFIL-ORQUESTADOR"
+    estado: "completado"
+    asignado: "Claude Code"
     dependencias: []
+    fecha_completado: "2026-02-17"
+    entregable: "orchestration/skills/"
 
   - id: "MQ-004"
     titulo: "Vincular tareas a EPICs"
     epica: "EPIC-WS-004"
     prioridad: "P1"
     esfuerzo: "M"
-    estado: "pendiente"
-    asignado: "@PERFIL-ORQUESTADOR"
+    estado: "completado"
+    asignado: "Claude Code"
     dependencias: []
+    fecha_completado: "2026-02-17"
+    entregable: "orchestration/tareas/_INDEX.yml"
 
   - id: "CORR-03"
     titulo: "DDL cascade errors — trigger 28, function order, tenant seed"
@@ -125,10 +136,10 @@ items:
 metricas:
   velocidad_planificada: 30
   items_total: 6
-  items_completados: 2
-  items_en_progreso: 1
-  items_pendientes: 3
-  porcentaje_avance: 33
+  items_completados: 6
+  items_en_progreso: 0
+  items_pendientes: 0
+  porcentaje_avance: 100
 
 # ============================================
 # IMPEDIMENTOS
