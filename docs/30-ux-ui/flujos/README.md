@@ -1,6 +1,6 @@
 # Flujos End-to-End - GAMILIT
 
-**Version:** 1.4.0
+**Version:** 1.4.2
 **Fecha:** 2026-02-17
 **Estado:** Activo
 
@@ -28,6 +28,8 @@ Centralizar la documentacion de flujos funcionales de toda la plataforma y su tr
 | FL-STU-02 | Student | Ejercicio con revision manual (M3-M5) | Parcial | [FLUJO-EJERCICIO-M3-M5.md](./student/FLUJO-EJERCICIO-M3-M5.md) |
 | FL-STU-03 | Student | Tienda: compra + asignacion | Parcial | [FLUJO-TIENDA-COMPRA.md](./student/FLUJO-TIENDA-COMPRA.md) |
 | FL-STU-04 | Student | Logros/Misiones: claim rewards | Parcial | [FLUJO-LOGROS-MISIONES-CLAIM.md](./student/FLUJO-LOGROS-MISIONES-CLAIM.md) |
+| FL-STU-05 | Student | Perfil y ajustes del estudiante (compuesto) | Documentado | [FLUJO-PERFIL-AJUSTES-ESTUDIANTE.md](./student/FLUJO-PERFIL-AJUSTES-ESTUDIANTE.md) |
+| FL-STU-06 | Student | Dashboard y progreso academico (compuesto) | Documentado | [FLUJO-DASHBOARD-ACADEMICO.md](./student/FLUJO-DASHBOARD-ACADEMICO.md) |
 | FL-STU-07 | Student | Tienda: overview y catalogo | Documentado | [FLUJO-TIENDA-OVERVIEW.md](./student/FLUJO-TIENDA-OVERVIEW.md) |
 | FL-STU-08 | Student | Inventario de items | Documentado | [FLUJO-INVENTARIO-ITEMS.md](./student/FLUJO-INVENTARIO-ITEMS.md) |
 | FL-STU-09 | Student | Sistema de amigos | Documentado | [FLUJO-AMIGOS.md](./student/FLUJO-AMIGOS.md) |
@@ -38,12 +40,14 @@ Centralizar la documentacion de flujos funcionales de toda la plataforma y su tr
 | FL-STU-14 | Student | Leaderboards y rankings | Documentado | [FLUJO-LEADERBOARDS.md](./student/FLUJO-LEADERBOARDS.md) |
 | FL-STU-15 | Student | Pagina de aprendizaje | Documentado (planificado) | [FLUJO-PAGINA-APRENDIZAJE.md](./student/FLUJO-PAGINA-APRENDIZAJE.md) |
 | FL-SHR-01 | Shared | Perfil y configuracion mult-portal | Parcial | [FLUJO-PERFIL-CONFIGURACION.md](./shared/FLUJO-PERFIL-CONFIGURACION.md) |
+| FL-SHR-02 | Shared | Sesion/seguridad y recuperacion de acceso (compuesto) | Documentado | [FLUJO-SESION-SEGURIDAD.md](./shared/FLUJO-SESION-SEGURIDAD.md) |
 | FL-TCH-01 | Teacher | Revision manual y calificacion M3-M5 | Parcial | [FLUJO-REVISION-MANUAL-M3-M5.md](./teacher/FLUJO-REVISION-MANUAL-M3-M5.md) |
 | FL-TCH-02 | Teacher | Gestion de asignaciones | Documentado | [FLUJO-ASIGNACIONES-CLASE.md](./teacher/FLUJO-ASIGNACIONES-CLASE.md) |
 | FL-TCH-03 | Teacher | Monitoreo y alertas docentes | Documentado | [FLUJO-MONITOREO-ALERTAS.md](./teacher/FLUJO-MONITOREO-ALERTAS.md) |
 | FL-TCH-04 | Teacher | Analytics y reportes docentes | Documentado | [FLUJO-ANALYTICS-REPORTES.md](./teacher/FLUJO-ANALYTICS-REPORTES.md) |
 | FL-TCH-05 | Teacher | Gestion de contenido docente | Documentado | [FLUJO-GESTION-CONTENIDO.md](./teacher/FLUJO-GESTION-CONTENIDO.md) |
 | FL-TCH-06 | Teacher | Login con redireccion por rol | Documentado | [FLUJO-LOGIN-DOCENTE.md](./teacher/FLUJO-LOGIN-DOCENTE.md) |
+| FL-TCH-07 | Teacher | Configuracion docente y mensajeria | Documentado | [FLUJO-PERFIL-CONFIGURACION.md](./shared/FLUJO-PERFIL-CONFIGURACION.md) |
 | FL-ADM-01 | Admin | Gestion de usuarios y roles | Documentado | [FLUJO-GESTION-USUARIOS-ROLES.md](./admin/FLUJO-GESTION-USUARIOS-ROLES.md) |
 | FL-ADM-02 | Admin | Configuracion global del sistema | Documentado | [FLUJO-CONFIGURACION-SISTEMA.md](./admin/FLUJO-CONFIGURACION-SISTEMA.md) |
 | FL-ADM-03 | Admin | Aprobacion de contenido educativo | Documentado | [FLUJO-APROBACION-CONTENIDO.md](./admin/FLUJO-APROBACION-CONTENIDO.md) |
@@ -73,6 +77,21 @@ Centralizar la documentacion de flujos funcionales de toda la plataforma y su tr
 - Cobertura total de procesos: [COBERTURA-TOTAL-PROCESOS.md](./COBERTURA-TOTAL-PROCESOS.md)
 - Validacion analisis vs integracion: [VALIDACION-ANALISIS-VS-INTEGRACION.md](./VALIDACION-ANALISIS-VS-INTEGRACION.md)
 - Reporte final de conformidad: [REPORTE-FINAL-CONFORMIDAD-FULL.md](./REPORTE-FINAL-CONFORMIDAD-FULL.md)
+
+---
+
+## Tipos de flujo
+
+| Tipo | Descripcion | Ejemplo |
+|------|-------------|---------|
+| **Simple** | Flujo que cubre un solo proceso end-to-end con secuencia FE->BE->DB propia | FL-STU-03 (Compra en tienda) |
+| **Compuesto** | Flujo que agrupa multiples sub-flujos en un proceso de mayor alcance. Incluye seccion `## Tipo de Flujo` con lista de sub-flujos referenciados. Delega secuencia detallada a cada sub-flujo. | FL-STU-06 (Dashboard y progreso academico) |
+
+Los flujos compuestos se identifican con la etiqueta "(compuesto)" en el catalogo maestro. Cada flujo compuesto debe:
+1. Incluir seccion `## Tipo de Flujo` con tipo "Compuesto" y lista de sub-flujos
+2. Tener diagrama Mermaid que muestre la relacion entre sub-flujos
+3. Delegar secuencia detallada (FE->BE->DB) a los documentos de cada sub-flujo
+4. Agregar trazabilidad cruzada con links a cada sub-flujo
 
 ---
 

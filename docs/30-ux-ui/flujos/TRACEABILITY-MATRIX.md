@@ -1,6 +1,6 @@
 # Matriz de Trazabilidad de Flujos
 
-**Version:** 1.4.0
+**Version:** 1.4.2
 **Fecha:** 2026-02-17
 
 ---
@@ -25,7 +25,10 @@
 | FL-STU-02 | [FLUJO-EJERCICIO-M3-M5.md](./student/FLUJO-EJERCICIO-M3-M5.md) | `apps/student/pages/ExercisePage.tsx` (submit para revision) | `/api/v1/progress/submissions/submit`, `teacher/manual-review` | `progress_tracking.manual_reviews`, `progress_tracking.exercise_submissions` |
 | FL-STU-03 | [FLUJO-TIENDA-COMPRA.md](./student/FLUJO-TIENDA-COMPRA.md) | `apps/student/pages/ShopPage.tsx` (boton comprar) | `/api/v1/gamification/shop/purchase`, `shop.service.ts` | `gamification_system.shop_items`, `user_purchases`, `ml_coins_transactions`, `user_stats` |
 | FL-STU-04 | [FLUJO-LOGROS-MISIONES-CLAIM.md](./student/FLUJO-LOGROS-MISIONES-CLAIM.md) | `pages/AchievementsPage.tsx`, `apps/student/pages/MissionsPage.tsx` | `/api/v1/gamification/achievements/:id/claim`, `/api/v1/gamification/missions/:id/claim` | `gamification_system.user_achievements`, `missions`, `ml_coins_transactions`, `user_stats` |
+| FL-STU-05 | [FLUJO-PERFIL-AJUSTES-ESTUDIANTE.md](./student/FLUJO-PERFIL-AJUSTES-ESTUDIANTE.md) **(Compuesto)** | `apps/student/pages/SettingsPage.tsx` (contenedor) | Sub-flujos: FL-SHR-01, FL-STU-11, FL-STU-12 | `auth_management.profiles`, `auth.users`, `notifications.user_devices`, `notifications.notification_preferences` |
+| FL-STU-06 | [FLUJO-DASHBOARD-ACADEMICO.md](./student/FLUJO-DASHBOARD-ACADEMICO.md) **(Compuesto)** | `apps/student/pages/DashboardComplete.tsx` (orquestador) | Sub-flujos: FL-STU-13, FL-STU-01, FL-STU-04, FL-STU-15 | `progress_tracking.*`, `gamification_system.*`, `educational_content.*` |
 | FL-SHR-01 | [FLUJO-PERFIL-CONFIGURACION.md](./shared/FLUJO-PERFIL-CONFIGURACION.md) | `apps/student/pages/SettingsPage.tsx`, `apps/teacher/pages/TeacherSettingsPage.tsx`, `apps/admin/components/settings/*` | `/api/v1/profile/:userId`, `/api/auth/profile` | `auth_management.profiles`, `auth.users` |
+| FL-SHR-02 | [FLUJO-SESION-SEGURIDAD.md](./shared/FLUJO-SESION-SEGURIDAD.md) **(Compuesto)** | `features/auth/components/RegisterForm.tsx`, `LoginForm.tsx`, `ForgotPasswordPage.tsx`, `PasswordResetPage.tsx` | Sub-flujos: FL-AUTH-01, FL-AUTH-02, FL-AUTH-03 | `auth.users`, `auth_management.profiles`, `auth_management.password_reset_tokens`, `auth_management.email_verification_tokens` |
 | FL-TCH-01 | [FLUJO-REVISION-MANUAL-M3-M5.md](./teacher/FLUJO-REVISION-MANUAL-M3-M5.md) | `apps/teacher/pages/TeacherReviewPanelPage.tsx`, `apps/teacher/components/review-panel/ReviewDetail.tsx` | `/api/v1/teacher/reviews/*`, `manual-review.service.ts` | `progress_tracking.manual_reviews`, `exercise_submissions`, `gamification_system.user_stats` |
 | FL-TCH-02 | [FLUJO-ASIGNACIONES-CLASE.md](./teacher/FLUJO-ASIGNACIONES-CLASE.md) | `apps/teacher/pages/TeacherAssignments.tsx`, `apps/teacher/components/assignments/AssignmentCreator.tsx` | `/api/v1/teacher/assignments/*` | `educational_content.*`, `progress_tracking.*` |
 | FL-TCH-03 | [FLUJO-MONITOREO-ALERTAS.md](./teacher/FLUJO-MONITOREO-ALERTAS.md) | `apps/teacher/pages/TeacherAlertsPage.tsx`, `apps/teacher/components/alerts/AlertCard.tsx` | `/api/v1/teacher/alerts/*` | `notifications.*`, `analytics.*` |
@@ -54,6 +57,7 @@
 | FL-TCH-04 | [FLUJO-ANALYTICS-REPORTES.md](./teacher/FLUJO-ANALYTICS-REPORTES.md) | `apps/teacher/pages/TeacherAnalytics.tsx`, `apps/teacher/pages/TeacherReportsPage.tsx` | `/api/v1/analytics/*`, `/api/v1/reports/*` | `analytics.*`, `data_warehouse.*` |
 | FL-TCH-05 | [FLUJO-GESTION-CONTENIDO.md](./teacher/FLUJO-GESTION-CONTENIDO.md) | `apps/teacher/pages/TeacherContentManagement.tsx` | `/api/v1/content/*`, `/api/v1/teacher/content/*` | `educational_content.content_items`, `educational_content.content_templates` |
 | FL-TCH-06 | [FLUJO-LOGIN-DOCENTE.md](./teacher/FLUJO-LOGIN-DOCENTE.md) | `apps/teacher/layouts/TeacherLayout.tsx` | `/auth/login` (role-based redirect) | `auth.users`, `auth_management.profiles`, `auth_management.user_roles` |
+| FL-TCH-07 | [FLUJO-PERFIL-CONFIGURACION.md](./shared/FLUJO-PERFIL-CONFIGURACION.md) | `apps/teacher/pages/TeacherSettingsPage.tsx` | `/api/v1/teacher/settings/*`, `/api/v1/messages/*` | `auth_management.profiles`, `communication.*` |
 | FL-ADM-07 | [FLUJO-CONSTRUCTOR-EJERCICIOS.md](./admin/FLUJO-CONSTRUCTOR-EJERCICIOS.md) | `apps/admin/pages/AdminExerciseCreatePage.tsx`, `apps/admin/components/exercise-builder/*` | `/api/v1/educational/exercises`, `/api/v1/educational/exercises/:id` | `educational_content.exercises`, `educational_content.exercise_options` |
 | FL-ADM-08 | [FLUJO-GESTION-GAMIFICACION.md](./admin/FLUJO-GESTION-GAMIFICACION.md) | `apps/admin/components/gamification/AchievementsTab.tsx` | `/api/v1/gamification/achievements/*`, `/api/v1/gamification/missions/*` | `gamification_system.achievements`, `gamification_system.mission_templates` |
 | FL-SHR-03 | [FLUJO-WHITE-LABEL-THEMING.md](./shared/FLUJO-WHITE-LABEL-THEMING.md) | `features/admin/branding/BrandingSettingsPage.tsx` | `/api/v1/tenants/:id/branding`, `/api/v1/tenants/:id/theme` | `auth_management.tenants`, `auth_management.tenant_settings` |

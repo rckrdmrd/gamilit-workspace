@@ -1,7 +1,7 @@
 # Matriz de Brechas de Trazabilidad
 
-**Version:** 1.0.0  
-**Fecha:** 2026-02-17  
+**Version:** 1.0.1
+**Fecha:** 2026-02-17
 **Estado:** Activo
 
 ---
@@ -16,7 +16,7 @@ Registrar brechas entre documentacion de procesos/flujos y planeacion ejecutable
 
 | Gap ID | Tipo | Evidencia | Impacto | Nivel recomendado | Prioridad |
 |--------|------|-----------|---------|-------------------|-----------|
-| GAP-TRZ-001 | Colision de identificador de flujo | `FL-TCH-04` duplicado en `COBERTURA-TOTAL-PROCESOS.md` | Ambiguedad en trazabilidad y reportes | Task inmediata + Story de normalizacion | P0 |
+| GAP-TRZ-001 | ~~Colision de identificador de flujo~~ | ~~`FL-TCH-04` duplicado~~ -> **RESUELTO (TRZ-001):** "Configuracion docente y mensajeria" renumerado a `FL-TCH-07`. FL-TCH-04 = "Analytics y reportes docentes" | ~~Ambiguedad en trazabilidad~~ | **CERRADO** | ~~P0~~ |
 | GAP-TRZ-002 | Flujos sin documento dedicado por ID | `FL-STU-05`, `FL-STU-06`, `FL-SHR-02` referencian documentos compartidos | Cobertura no atomica por flujo | Story de modelado documental | P1 |
 | GAP-TRZ-003 | Diferencia cobertura declarada vs artefactos | 43 filas `FL-*` vs 39 `FLUJO-*.md` | Riesgo de sobreestimar completitud | Task de reconciliacion + validacion automatizada | P1 |
 | GAP-TRZ-004 | Estandar de template aplicado parcialmente | 14 flujos cumplen encabezados completos del template | Calidad heterogenea, menor mantenibilidad | Epic de normalizacion por oleadas | P1 |

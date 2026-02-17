@@ -113,7 +113,7 @@ Impacto: colision de trazabilidad y riesgo de planeacion equivocada.
 
 ## 6) Plan de remediacion documental (Fase 1)
 
-1. Corregir colision `FL-TCH-04` en matriz de cobertura y matriz de trazabilidad.
+1. ~~Corregir colision `FL-TCH-04` en matriz de cobertura y matriz de trazabilidad.~~ **RESUELTO (TRZ-001):** "Configuracion docente y mensajeria" renumerado a `FL-TCH-07`.
 2. Definir politica de modelado para IDs compuestos:
    - opcion A: un ID = un documento dedicado,
    - opcion B: permitir alias con regla explicita y metadato de consolidacion.
