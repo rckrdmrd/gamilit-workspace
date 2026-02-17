@@ -81,7 +81,8 @@ export const useFriendsStore = create<FriendsStore>()(
 
           set({ friends, loading: false });
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to fetch friends', loading: false });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to fetch friends';
+          set({ error: errorMessage, loading: false });
         }
       },
 
@@ -107,7 +108,8 @@ export const useFriendsStore = create<FriendsStore>()(
 
           set({ friendRequests, loading: false });
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to fetch pending requests', loading: false });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to fetch pending requests';
+          set({ error: errorMessage, loading: false });
         }
       },
 
@@ -124,12 +126,13 @@ export const useFriendsStore = create<FriendsStore>()(
             level: r.level,
             mutualFriends: r.mutualFriends,
             commonInterests: r.commonInterests,
-            matchScore: r.matchScore,
+            score: r.matchScore ?? 0,
             reason: r.reason,
           }));
           set({ recommendations: mappedRecommendations, loading: false });
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to fetch recommendations', loading: false });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to fetch recommendations';
+          set({ error: errorMessage, loading: false });
         }
       },
 
@@ -142,18 +145,17 @@ export const useFriendsStore = create<FriendsStore>()(
           const activities: FriendActivity[] = activitiesData.map((a) => ({
             id: a.activityId,
             userId: a.userId,
-            userName: '', // TODO: Join with user data
-            userAvatar: '/avatars/default.png',
+            username: '', // TODO: Join with user data
+            avatar: '/avatars/default.png',
             type: a.activityType as any,
             description: a.description,
-            metadata: a.metadata || {},
             timestamp: a.createdAt, // Already a Date object from transformer
             praised: false,
-            praiseCount: 0,
           }));
           set({ activities, loading: false });
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to fetch activities', loading: false });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to fetch activities';
+          set({ error: errorMessage, loading: false });
         }
       },
 
@@ -199,7 +201,8 @@ export const useFriendsStore = create<FriendsStore>()(
             loading: false,
           }));
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to remove friend', loading: false });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to remove friend';
+          set({ error: errorMessage, loading: false });
         }
       },
 
@@ -218,7 +221,8 @@ export const useFriendsStore = create<FriendsStore>()(
 
           set({ loading: false });
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to send friend request', loading: false });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to send friend request';
+          set({ error: errorMessage, loading: false });
         }
       },
 
@@ -255,7 +259,8 @@ export const useFriendsStore = create<FriendsStore>()(
             };
           });
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to accept friend request', loading: false });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to accept friend request';
+          set({ error: errorMessage, loading: false });
         }
       },
 
@@ -269,7 +274,8 @@ export const useFriendsStore = create<FriendsStore>()(
             loading: false,
           }));
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to decline friend request', loading: false });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to decline friend request';
+          set({ error: errorMessage, loading: false });
         }
       },
 

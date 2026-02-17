@@ -85,14 +85,14 @@ export default function AdminInstitutionsPage() {
       const stats = await getOrganizationStats(orgId);
       // Validate and map API response with null coalescing (P0 fix)
       setInstitutionStats({
-        totalStudents: stats?.totalStudents ?? 0,
-        activeStudents: stats?.activeStudents ?? 0,
-        totalTeachers: stats?.totalTeachers ?? 0,
-        totalClassrooms: stats?.totalClassrooms ?? 0,
+        totalUsers: stats?.totalStudents ?? 0,
+        activeUsers: stats?.activeStudents ?? 0,
         averageProgress: stats?.averageProgress ?? 0,
-        storageUsed: stats?.storageUsed ?? 0,
-        lastActivity: stats?.lastActivity ?? null,
-        trialEndsAt: stats?.trialEndsAt ?? null,
+        storageUsed:
+          typeof stats?.storageUsed === 'number'
+            ? stats.storageUsed
+            : Number(stats?.storageUsed) || 0,
+        lastActivity: stats?.lastActivity ?? '',
       });
     } catch (err) {
       console.error('Failed to load organization stats:', err);

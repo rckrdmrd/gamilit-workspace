@@ -66,8 +66,15 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   // Auto-save progress
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
+      const answersMap: Record<string, string> = {};
+      answers.forEach((answer) => {
+        if (answer.selectedPredictionId) {
+          answersMap[answer.scenarioId] = answer.selectedPredictionId;
+        }
+      });
+
       saveProgress(exercise.id, {
-        answers,
+        answers: answersMap,
         score,
         timeSpent,
         hintsUsed,

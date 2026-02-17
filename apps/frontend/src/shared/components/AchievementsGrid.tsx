@@ -14,7 +14,7 @@ interface AchievementsGridProps {
 
 // Icon mapping based on achievement type/name
 const getAchievementIcon = (userAchievement: UserAchievement) => {
-  const iconName = userAchievement.achievement.icon?.toLowerCase() || '';
+  const iconName = userAchievement.achievement?.icon?.toLowerCase() || '';
 
   if (iconName.includes('trophy')) {
     return <Trophy className="w-8 h-8" />;
@@ -39,6 +39,7 @@ const AchievementCard: React.FC<{
 }> = ({ userAchievement, onClick }) => {
   const isLocked = userAchievement.status === AchievementStatusEnum.LOCKED;
   const isCompleted = userAchievement.status === AchievementStatusEnum.EARNED || userAchievement.status === AchievementStatusEnum.CLAIMED;
+  const achievement = userAchievement.achievement;
 
   // Format date
   const formatDate = (dateString?: string) => {
@@ -82,7 +83,7 @@ const AchievementCard: React.FC<{
           isLocked ? 'text-gray-500' : 'text-gray-900'
         )}
       >
-        {userAchievement.achievement.name}
+        {achievement?.name || 'Logro'}
       </h3>
 
       {/* Description */}
@@ -92,7 +93,7 @@ const AchievementCard: React.FC<{
           isLocked ? 'text-gray-400' : 'text-gray-600'
         )}
       >
-        {userAchievement.achievement.description}
+        {achievement?.description || ''}
       </p>
 
       {/* Status */}

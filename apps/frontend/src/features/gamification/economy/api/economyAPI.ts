@@ -56,6 +56,7 @@ import type {
   EconomyStats,
   EarningSource,
 } from '../types/economyTypes';
+import { TransactionTypeEnum, mapEarningSourceToTransactionType } from '../types/economyTypes';
 
 // ============================================================================
 // RESPONSE MAPPERS (snake_case -> camelCase)
@@ -181,7 +182,7 @@ const mockEarnCoins = async (
 
   return {
     id: crypto.randomUUID(),
-    type: 'earn',
+    type: mapEarningSourceToTransactionType(source),
     amount,
     source,
     description: `Earned ${amount} ML from ${source}`,
@@ -305,7 +306,7 @@ export const spendCoins = async (
 
       return {
         id: crypto.randomUUID(),
-        type: 'spend',
+        type: TransactionTypeEnum.SPENT_POWERUP,
         amount: -amount,
         source: 'shop',
         description: `Purchased ${itemName}`,
@@ -404,7 +405,7 @@ export const getTransaction = async (transactionId: string): Promise<Transaction
       await new Promise((resolve) => setTimeout(resolve, 300));
       return {
         id: transactionId,
-        type: 'earn',
+        type: TransactionTypeEnum.EARNED_EXERCISE,
         amount: 20,
         source: 'exercise_completion',
         description: 'Completed Detective Textual',
@@ -666,6 +667,7 @@ export const getEconomyStats = async (): Promise<EconomyStats> => {
         topEarningSource: {
           source: 'exercise_completion',
           amount: 600,
+          date: new Date(),
         },
       };
     }

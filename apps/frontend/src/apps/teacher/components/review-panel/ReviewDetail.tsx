@@ -415,8 +415,8 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
         <h3 className="mb-4 text-lg font-semibold text-gray-900">Evaluación</h3>
 
         <RubricEvaluator
-          rubric={review.rubric}
-          initialEvaluations={review.evaluations}
+          rubric={review.rubric ?? []}
+          initialEvaluations={review.evaluations ?? []}
           generalFeedback={review.generalFeedback}
           onChange={handleEvaluationChange}
           onValidation={handleValidationChange}

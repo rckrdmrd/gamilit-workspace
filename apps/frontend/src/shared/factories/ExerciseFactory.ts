@@ -311,7 +311,7 @@ const FallbackExerciseComponent: ExerciseComponent = ({ exercise, onComplete }) 
             isCorrect: false,
             hintsUsed: 0,
             comodinesUsed: [],
-            submittedAnswers: null,
+            submittedAnswers: {},
             xpEarned: 0,
             mlCoinsEarned: 0,
           }),

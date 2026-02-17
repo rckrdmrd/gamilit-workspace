@@ -118,8 +118,9 @@ class BonusCoinsAPI {
       console.error('[BonusCoinsAPI] Error granting bonus:', error);
 
       // Provide user-friendly error messages
-      if (error.response?.data?.message) {
-        throw new Error(error.response.data.message);
+      const apiError = error as { response?: { data?: { message?: string } } };
+      if (apiError.response?.data?.message) {
+        throw new Error(apiError.response.data.message);
       }
 
       throw error;

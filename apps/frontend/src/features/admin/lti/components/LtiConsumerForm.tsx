@@ -8,8 +8,9 @@
  * @see ET-LTI-001-integration.md
  */
 
-import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import type { ElementType, ReactNode } from 'react';
+import { useForm, type UseFormRegisterReturn } from 'react-hook-form';
 import { X, Save, Loader2, Info, Link2, Settings, Shield } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { LtiConsumer, CreateLtiConsumerDto } from '@/shared/types/lti.types';
@@ -36,8 +37,8 @@ function FormSection({
   children,
 }: {
   title: string;
-  icon: React.ElementType;
-  children: React.ReactNode;
+  icon: ElementType;
+  children: ReactNode;
 }) {
   return (
     <div className="space-y-4">
@@ -65,7 +66,7 @@ function FormInput({
 }: {
   label: string;
   name: string;
-  register: ReturnType<typeof useForm>['register'];
+  register: UseFormRegisterReturn;
   error?: string;
   required?: boolean;
   type?: string;

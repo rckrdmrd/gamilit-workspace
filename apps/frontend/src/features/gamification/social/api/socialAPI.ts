@@ -252,7 +252,7 @@ export const activatePowerUp = async (
       expiresAt: new Date(Date.now() + 30 * 60 * 1000), // Immediate effect, no duration
       remainingTime: 0,
       effect: {
-        type: 'immediate',
+        type: 'boost',
         value: data.remaining_quantity,
         description: `Remaining: ${data.remaining_quantity}`,
       },
@@ -303,10 +303,10 @@ export const getActivePowerUps = async (): Promise<ActivePowerUp[]> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<ActivePowerUp[]>>(
-      API_ENDPOINTS.powerups.active,
+      API_ENDPOINTS.powerups.list,
     );
 
-    return data.data;
+    return data.data || [];
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -378,7 +378,7 @@ export const getLeaderboard = async (
 
     // Transform backend response to LeaderboardEntry format
     // FIX: CORR-006 - After apiClient interceptor unwraps, entries are at data.entries
-    const entries = data?.entries || data.data?.entries || data.data || [];
+    const entries = (data as { entries?: any[] }).entries ?? data.data ?? [];
     return entries.map((entry: any, index: number) => {
       const entryUserId = entry.userId || entry.user_id;
       return {
@@ -498,7 +498,8 @@ export const getXPLeaderboard = async (limit: number = 100, offset: number = 0):
     });
 
     // FIX: CORR-006 - After apiClient interceptor unwraps, data is the actual response
-    return data?.entries || data || [];
+    const entries = Array.isArray(data) ? data : data.data;
+    return entries || [];
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -526,7 +527,8 @@ export const getCoinsLeaderboard = async (
     });
 
     // FIX: CORR-006 - After apiClient interceptor unwraps, data is the actual response
-    return data?.entries || data || [];
+    const entries = Array.isArray(data) ? data : data.data;
+    return entries || [];
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -554,7 +556,8 @@ export const getStreaksLeaderboard = async (
     });
 
     // FIX: CORR-006 - After apiClient interceptor unwraps, data is the actual response
-    return data?.entries || data || [];
+    const entries = Array.isArray(data) ? data : data.data;
+    return entries || [];
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -583,7 +586,8 @@ export const getGlobalLeaderboard = async (
     );
 
     // FIX: CORR-006 - After apiClient interceptor unwraps, data is the actual response
-    return data?.entries || data || [];
+    const entries = Array.isArray(data) ? data : data.data;
+    return entries || [];
   } catch (error) {
     throw handleAPIError(error);
   }

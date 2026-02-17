@@ -20,6 +20,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useEconomyStore } from '../economyStore';
 import type { ShopItem, MLCoinsBalance, ShopCategory } from '../../types/economyTypes';
+import { TransactionTypeEnum } from '../../types/economyTypes';
 import * as economyAPI from '../../api/economyAPI';
 import '../../../__tests__/helpers/gamificationMockHelpers';
 
@@ -95,7 +96,7 @@ vi.mock('@/services/api/apiClient', () => ({
       }
       return Promise.resolve({ data: {} });
     }),
-    patch: vi.fn().mockImplementation((url: string, data: Record<string, unknown>) => {
+    patch: vi.fn().mockImplementation((_url: string, data: Record<string, unknown>) => {
       // Return updated balance based on operation
       const currentBalance = 500;
       const increment = Number(data.ml_coins_increment) || 0;
@@ -138,8 +139,7 @@ const mockShopItem: ShopItem = {
   rarity: 'rare',
   tags: ['boost', 'xp'],
   isPurchasable: true,
-  isAvailable: true,
-  isConsumable: true,
+  available: true,
 };
 
 const mockBalance: MLCoinsBalance = {
@@ -208,7 +208,7 @@ describe('EconomyStore', () => {
     it('should add coins to current balance', () => {
       const { addCoins } = useEconomyStore.getState();
 
-      addCoins(100, 'achievement', 'Completed First Steps');
+      addCoins(100, TransactionTypeEnum.EARNED_ACHIEVEMENT, 'Completed First Steps');
 
       const state = useEconomyStore.getState();
       expect(state.balance.current).toBe(100);
@@ -217,8 +217,8 @@ describe('EconomyStore', () => {
     it('should update lifetime balance', () => {
       const { addCoins } = useEconomyStore.getState();
 
-      addCoins(100, 'achievement');
-      addCoins(50, 'daily-reward');
+      addCoins(100, TransactionTypeEnum.EARNED_ACHIEVEMENT);
+      addCoins(50, TransactionTypeEnum.EARNED_DAILY);
 
       const state = useEconomyStore.getState();
       expect(state.balance.lifetime).toBe(150);
@@ -228,20 +228,20 @@ describe('EconomyStore', () => {
     it('should create transaction for earning coins', () => {
       const { addCoins } = useEconomyStore.getState();
 
-      addCoins(100, 'achievement', 'First Steps completed');
+      addCoins(100, TransactionTypeEnum.EARNED_ACHIEVEMENT, 'First Steps completed');
 
       const state = useEconomyStore.getState();
       expect(state.transactions).toHaveLength(1);
       expect(state.transactions[0].type).toBe('earn');
       expect(state.transactions[0].amount).toBe(100);
-      expect(state.transactions[0].source).toBe('achievement');
+      expect(state.transactions[0].source).toBe(TransactionTypeEnum.EARNED_ACHIEVEMENT);
       expect(state.transactions[0].description).toBe('First Steps completed');
     });
 
     it('should set default description if not provided', () => {
       const { addCoins } = useEconomyStore.getState();
 
-      addCoins(50, 'daily-reward');
+      addCoins(50, TransactionTypeEnum.EARNED_DAILY);
 
       const state = useEconomyStore.getState();
       expect(state.transactions[0].description).toMatch(/Earned 50 ML from daily-reward/);
@@ -253,7 +253,7 @@ describe('EconomyStore', () => {
       setError('Some error');
       expect(useEconomyStore.getState().error).toBe('Some error');
 
-      addCoins(100, 'achievement');
+      addCoins(100, TransactionTypeEnum.EARNED_ACHIEVEMENT);
 
       const state = useEconomyStore.getState();
       expect(state.error).toBeNull();
@@ -268,7 +268,7 @@ describe('EconomyStore', () => {
     it('should spend coins and reduce balance', async () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
-      addCoins(200, 'achievement');
+      addCoins(200, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       const success = await spendCoins(100, 'Power Boost', 'item-1');
 
       expect(success).toBe(true);
@@ -278,7 +278,7 @@ describe('EconomyStore', () => {
     it('should update spent balance', async () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
-      addCoins(300, 'achievement');
+      addCoins(300, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       await spendCoins(100, 'Item 1');
       await spendCoins(50, 'Item 2');
 
@@ -289,11 +289,13 @@ describe('EconomyStore', () => {
     it('should create transaction for spending coins', async () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
-      addCoins(200, 'achievement');
+      addCoins(200, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       await spendCoins(100, 'Power Boost', 'item-1');
 
       const state = useEconomyStore.getState();
-      const spendTransaction = state.transactions.find((t) => t.type === 'spend');
+      const spendTransaction = state.transactions.find(
+        (t) => t.type === TransactionTypeEnum.SPENT_POWERUP,
+      );
 
       expect(spendTransaction).toBeDefined();
       expect(spendTransaction?.amount).toBe(-100);
@@ -303,7 +305,7 @@ describe('EconomyStore', () => {
     it('should return false for insufficient balance', async () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
-      addCoins(50, 'achievement');
+      addCoins(50, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       const success = await spendCoins(100, 'Expensive Item');
 
       expect(success).toBe(false);
@@ -313,7 +315,7 @@ describe('EconomyStore', () => {
     it('should set error for insufficient balance', async () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
-      addCoins(50, 'achievement');
+      addCoins(50, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       await spendCoins(100, 'Expensive Item');
 
       const state = useEconomyStore.getState();
@@ -323,11 +325,13 @@ describe('EconomyStore', () => {
     it('should include item metadata in transaction', async () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
-      addCoins(200, 'achievement');
+      addCoins(200, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       await spendCoins(100, 'Power Boost', 'item-123');
 
       const state = useEconomyStore.getState();
-      const spendTransaction = state.transactions.find((t) => t.type === 'spend');
+      const spendTransaction = state.transactions.find(
+        (t) => t.type === TransactionTypeEnum.SPENT_POWERUP,
+      );
 
       expect(spendTransaction?.metadata?.itemId).toBe('item-123');
     });
@@ -352,7 +356,7 @@ describe('EconomyStore', () => {
     it('should merge with existing balance', () => {
       const { addCoins, updateBalance } = useEconomyStore.getState();
 
-      addCoins(100, 'achievement');
+      addCoins(100, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       updateBalance({ pending: 50 });
 
       const state = useEconomyStore.getState();
@@ -369,8 +373,8 @@ describe('EconomyStore', () => {
     it('should retrieve all transactions', () => {
       const { addCoins, getTransactionHistory } = useEconomyStore.getState();
 
-      addCoins(100, 'achievement');
-      addCoins(50, 'daily-reward');
+      addCoins(100, TransactionTypeEnum.EARNED_ACHIEVEMENT);
+      addCoins(50, TransactionTypeEnum.EARNED_DAILY);
 
       const transactions = getTransactionHistory();
 
@@ -380,9 +384,9 @@ describe('EconomyStore', () => {
     it('should limit transactions when specified', () => {
       const { addCoins, getTransactionHistory } = useEconomyStore.getState();
 
-      addCoins(100, 'source1');
-      addCoins(50, 'source2');
-      addCoins(25, 'source3');
+      addCoins(100, TransactionTypeEnum.EARNED_EXERCISE);
+      addCoins(50, TransactionTypeEnum.EARNED_MODULE);
+      addCoins(25, TransactionTypeEnum.EARNED_BONUS);
 
       const transactions = getTransactionHistory(2);
 
@@ -393,29 +397,35 @@ describe('EconomyStore', () => {
       const { addCoins, spendCoins, getTransactionHistory } =
         useEconomyStore.getState();
 
-      addCoins(200, 'achievement');
-      addCoins(100, 'daily-reward');
+      addCoins(200, TransactionTypeEnum.EARNED_ACHIEVEMENT);
+      addCoins(100, TransactionTypeEnum.EARNED_DAILY);
       spendCoins(50, 'Item');
 
-      const earnTransactions = getTransactionHistory(undefined, { type: 'earn' });
+      const earnTransactions = getTransactionHistory(undefined, {
+        type: TransactionTypeEnum.EARNED_ACHIEVEMENT,
+      });
 
-      expect(earnTransactions).toHaveLength(2);
-      expect(earnTransactions.every((t) => t.type === 'earn')).toBe(true);
+      expect(earnTransactions).toHaveLength(1);
+      expect(earnTransactions.every((t) => t.type === TransactionTypeEnum.EARNED_ACHIEVEMENT)).toBe(
+        true,
+      );
     });
 
     it('should filter transactions by source', () => {
       const { addCoins, getTransactionHistory } = useEconomyStore.getState();
 
-      addCoins(100, 'achievement');
-      addCoins(50, 'achievement');
-      addCoins(25, 'daily-reward');
+      addCoins(100, TransactionTypeEnum.EARNED_ACHIEVEMENT);
+      addCoins(50, TransactionTypeEnum.EARNED_ACHIEVEMENT);
+      addCoins(25, TransactionTypeEnum.EARNED_DAILY);
 
       const achievementTransactions = getTransactionHistory(undefined, {
-        source: 'achievement',
+        source: TransactionTypeEnum.EARNED_ACHIEVEMENT,
       });
 
       expect(achievementTransactions).toHaveLength(2);
-      expect(achievementTransactions.every((t) => t.source === 'achievement')).toBe(
+      expect(
+        achievementTransactions.every((t) => t.source === TransactionTypeEnum.EARNED_ACHIEVEMENT),
+      ).toBe(
         true
       );
     });
@@ -423,8 +433,8 @@ describe('EconomyStore', () => {
     it('should clear transaction history', () => {
       const { addCoins, clearTransactionHistory } = useEconomyStore.getState();
 
-      addCoins(100, 'achievement');
-      addCoins(50, 'daily-reward');
+      addCoins(100, TransactionTypeEnum.EARNED_ACHIEVEMENT);
+      addCoins(50, TransactionTypeEnum.EARNED_DAILY);
 
       clearTransactionHistory();
 
@@ -530,7 +540,7 @@ describe('EconomyStore', () => {
     it('should purchase single item from cart', async () => {
       const { addCoins, addToCart, purchaseItem } = useEconomyStore.getState();
 
-      addCoins(500, 'achievement');
+      addCoins(500, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       addToCart(mockShopItem);
 
       const result = await purchaseItem('item-1');
@@ -542,7 +552,7 @@ describe('EconomyStore', () => {
     it('should add purchased item to inventory', async () => {
       const { addCoins, addToCart, purchaseItem } = useEconomyStore.getState();
 
-      addCoins(500, 'achievement');
+      addCoins(500, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       addToCart(mockShopItem);
 
       await purchaseItem('item-1');
@@ -555,7 +565,7 @@ describe('EconomyStore', () => {
     it('should remove purchased item from cart', async () => {
       const { addCoins, addToCart, purchaseItem } = useEconomyStore.getState();
 
-      addCoins(500, 'achievement');
+      addCoins(500, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       addToCart(mockShopItem);
 
       await purchaseItem('item-1');
@@ -567,7 +577,7 @@ describe('EconomyStore', () => {
     it('should fail purchase with insufficient balance', async () => {
       const { addCoins, addToCart, purchaseItem } = useEconomyStore.getState();
 
-      addCoins(50, 'achievement');
+      addCoins(50, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       addToCart(mockShopItem); // costs 100
 
       const result = await purchaseItem('item-1');
@@ -579,7 +589,7 @@ describe('EconomyStore', () => {
     it('should purchase entire cart', async () => {
       const { addCoins, addToCart, purchaseCart } = useEconomyStore.getState();
 
-      addCoins(500, 'achievement');
+      addCoins(500, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       addToCart(mockShopItem, 2); // 200 total
       addToCart({ ...mockShopItem, id: 'item-2', price: 50 }, 1); // 50
 
@@ -592,7 +602,7 @@ describe('EconomyStore', () => {
     it('should fail cart purchase with empty cart', async () => {
       const { addCoins, purchaseCart } = useEconomyStore.getState();
 
-      addCoins(500, 'achievement');
+      addCoins(500, TransactionTypeEnum.EARNED_ACHIEVEMENT);
 
       const result = await purchaseCart();
 
@@ -603,7 +613,7 @@ describe('EconomyStore', () => {
     it('should check affordability correctly', () => {
       const { addCoins, canAfford } = useEconomyStore.getState();
 
-      addCoins(100, 'achievement');
+      addCoins(100, TransactionTypeEnum.EARNED_ACHIEVEMENT);
 
       expect(canAfford(50)).toBe(true);
       expect(canAfford(100)).toBe(true);
@@ -686,7 +696,7 @@ describe('EconomyStore', () => {
       const { addCoins, spendCoins, getEconomyStats } =
         useEconomyStore.getState();
 
-      addCoins(500, 'achievement');
+      addCoins(500, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       spendCoins(100, 'Item');
 
       const stats = getEconomyStats();
@@ -700,7 +710,7 @@ describe('EconomyStore', () => {
       const { addCoins, addToInventory, getEconomyStats } =
         useEconomyStore.getState();
 
-      addCoins(300, 'achievement');
+      addCoins(300, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       addToInventory(mockShopItem); // value: 100
 
       const stats = getEconomyStats();
@@ -712,8 +722,8 @@ describe('EconomyStore', () => {
       const { addCoins, spendCoins, getEconomyStats } =
         useEconomyStore.getState();
 
-      addCoins(200, 'achievement');
-      addCoins(100, 'daily-reward');
+      addCoins(200, TransactionTypeEnum.EARNED_ACHIEVEMENT);
+      addCoins(100, TransactionTypeEnum.EARNED_DAILY);
       spendCoins(50, 'Item');
 
       const stats = getEconomyStats();
@@ -724,13 +734,13 @@ describe('EconomyStore', () => {
     it('should identify top earning source', () => {
       const { addCoins, getEconomyStats } = useEconomyStore.getState();
 
-      addCoins(100, 'achievement');
-      addCoins(50, 'achievement');
-      addCoins(25, 'daily-reward');
+      addCoins(100, TransactionTypeEnum.EARNED_ACHIEVEMENT);
+      addCoins(50, TransactionTypeEnum.EARNED_ACHIEVEMENT);
+      addCoins(25, TransactionTypeEnum.EARNED_DAILY);
 
       const stats = getEconomyStats();
 
-      expect(stats.topEarningSource.source).toBe('achievement');
+      expect(stats.topEarningSource.source).toBe(TransactionTypeEnum.EARNED_ACHIEVEMENT);
       expect(stats.topEarningSource.amount).toBe(150);
     });
   });
@@ -800,7 +810,7 @@ describe('EconomyStore', () => {
     it('should reset store to initial state', () => {
       const { addCoins, addToCart, reset } = useEconomyStore.getState();
 
-      addCoins(500, 'achievement');
+      addCoins(500, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       addToCart(mockShopItem);
 
       reset();

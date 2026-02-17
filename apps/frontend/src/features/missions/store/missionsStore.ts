@@ -53,7 +53,8 @@ export const useMissionsStore = create<MissionsState>((set, get) => ({
       const missions = await missionsAPI.getDailyMissions();
       set({ dailyMissions: missions, isLoading: false });
     } catch (error: unknown) {
-      set({ error: error.message, isLoading: false });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch daily missions';
+      set({ error: errorMessage, isLoading: false });
     }
   },
 
@@ -63,7 +64,8 @@ export const useMissionsStore = create<MissionsState>((set, get) => ({
       const missions = await missionsAPI.getWeeklyMissions();
       set({ weeklyMissions: missions, isLoading: false });
     } catch (error: unknown) {
-      set({ error: error.message, isLoading: false });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch weekly missions';
+      set({ error: errorMessage, isLoading: false });
     }
   },
 
@@ -72,7 +74,8 @@ export const useMissionsStore = create<MissionsState>((set, get) => ({
       const missions = await missionsAPI.getSpecialMissions();
       set({ specialMissions: missions });
     } catch (error: unknown) {
-      set({ error: error.message });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch special missions';
+      set({ error: errorMessage });
     }
   },
 
@@ -93,7 +96,8 @@ export const useMissionsStore = create<MissionsState>((set, get) => ({
         ),
       }));
     } catch (error: unknown) {
-      set({ error: error.message });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to claim rewards';
+      set({ error: errorMessage });
     }
   },
 

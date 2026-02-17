@@ -125,8 +125,6 @@ export function useMissionStats(classroomId: string): UseMissionStatsReturn {
       // Calculate stats (in a real implementation, this would come from backend)
       // For now, we'll calculate basic metrics from the missions data
       const totalMissionsAssigned = missions.length;
-      const _mandatoryMissions = missions.filter(m => m.is_mandatory);
-
       // These would ideally come from a dedicated stats endpoint
       // For now, we estimate based on available data
       const completionRate = totalMissionsAssigned > 0

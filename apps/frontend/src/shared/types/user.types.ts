@@ -133,7 +133,7 @@ export interface User {
   /**
    * Email verification status
    */
-  isVerified: boolean;
+  isVerified?: boolean;
 
   // =====================================================
   // PERSONAL INFORMATION
@@ -262,7 +262,7 @@ export interface User {
   /**
    * Last update timestamp
    */
-  updatedAt: string; // ISO date string
+  updatedAt?: string; // ISO date string
 }
 
 /**

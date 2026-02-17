@@ -28,7 +28,16 @@ import {
 import { useModuleDetail } from '@shared/hooks/useModules';
 import { getColorSchemeById } from '@shared/utils/colorPalette';
 import { cn } from '@shared/utils/cn';
-import type { Exercise } from '@shared/types';
+interface ExerciseCardExercise {
+  id: string;
+  title: string;
+  description?: string;
+  difficulty_level?: string;
+  difficulty?: string;
+  xp_reward?: number;
+  estimated_time_minutes?: number;
+  is_active?: boolean;
+}
 
 // Difficulty labels - CEFR standard (outside component)
 const DIFFICULTY_LABELS = {
@@ -49,7 +58,7 @@ const DIFFICULTY_LABELS = {
 
 // Exercise Card Content Component (outside to avoid hook issues)
 interface ExerciseCardContentProps {
-  exercise: Exercise;
+  exercise: ExerciseCardExercise;
   completed?: boolean;
 }
 
@@ -106,26 +115,30 @@ function ExerciseCardContent({ exercise, completed = false }: ExerciseCardConten
       {/* Badges and Stats - More compact and colorful */}
       <div className="mb-4 flex flex-wrap items-center gap-2">
         {/* Difficulty Badge */}
-        <motion.span
-          whileHover={{ scale: 1.05 }}
-          className={cn(
-            'rounded-lg border-2 px-2.5 py-1 text-xs font-bold shadow-sm',
-            // CEFR levels: beginner/elementary = easy, intermediate = medium, advanced+ = hard
-            exercise.difficulty_level === 'beginner' || exercise.difficulty_level === 'elementary'
-              ? 'border-green-300 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700'
-              : exercise.difficulty_level === 'pre_intermediate' ||
-                  exercise.difficulty_level === 'intermediate'
-                ? 'border-yellow-300 bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-700'
-                : exercise.difficulty_level === 'upper_intermediate' ||
-                    exercise.difficulty_level === 'advanced'
-                  ? 'border-red-300 bg-gradient-to-r from-red-100 to-rose-100 text-red-700'
-                  : 'border-purple-300 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700',
-          )}
-        >
-          {DIFFICULTY_LABELS[exercise.difficulty_level]?.toUpperCase() ||
-            exercise.difficulty_level?.toUpperCase() ||
-            'DESCONOCIDO'}
-        </motion.span>
+        {(() => {
+          const difficultyLevel = exercise.difficulty_level || exercise.difficulty || 'beginner';
+          const difficultyKey = difficultyLevel as keyof typeof DIFFICULTY_LABELS;
+          return (
+            <motion.span
+              whileHover={{ scale: 1.05 }}
+              className={cn(
+                'rounded-lg border-2 px-2.5 py-1 text-xs font-bold shadow-sm',
+                // CEFR levels: beginner/elementary = easy, intermediate = medium, advanced+ = hard
+                difficultyLevel === 'beginner' || difficultyLevel === 'elementary'
+                  ? 'border-green-300 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700'
+                  : difficultyLevel === 'pre_intermediate' || difficultyLevel === 'intermediate'
+                    ? 'border-yellow-300 bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-700'
+                    : difficultyLevel === 'upper_intermediate' || difficultyLevel === 'advanced'
+                      ? 'border-red-300 bg-gradient-to-r from-red-100 to-rose-100 text-red-700'
+                      : 'border-purple-300 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700',
+              )}
+            >
+              {DIFFICULTY_LABELS[difficultyKey]?.toUpperCase() ||
+                difficultyLevel.toUpperCase() ||
+                'DESCONOCIDO'}
+            </motion.span>
+          );
+        })()}
 
         {/* XP Reward Badge */}
         <motion.div
@@ -298,6 +311,8 @@ export default function ModuleDetailPage() {
   const progressPercentage =
     progress?.progress_percentage ||
     (totalExercises > 0 ? (completedExercises / totalExercises) * 100 : 0);
+  const moduleDifficulty =
+    typeof module.difficulty_level === 'string' ? module.difficulty_level : 'beginner';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
@@ -326,24 +341,26 @@ export default function ModuleDetailPage() {
           <div className="mb-2 flex items-center gap-2">
             {module.difficulty_level && (
               <span
-                className={`rounded-md px-2 py-0.5 text-xs font-bold ${difficultyBgColors[module.difficulty_level] || 'bg-gray-100'} ${difficultyColors[module.difficulty_level] || 'text-gray-600'}`}
+                className={`rounded-md px-2 py-0.5 text-xs font-bold ${difficultyBgColors[moduleDifficulty] || 'bg-gray-100'} ${difficultyColors[moduleDifficulty] || 'text-gray-600'}`}
               >
                 {(
-                  difficultyLabels[module.difficulty_level] ||
-                  module.difficulty_level ||
+                  difficultyLabels[moduleDifficulty] ||
+                  moduleDifficulty ||
                   'DESCONOCIDO'
                 ).toUpperCase()}
               </span>
             )}
-            {module.tags &&
-              module.tags.slice(0, 3).map((tag: string, idx: number) => (
+            {(() => {
+              const tags: string[] = Array.isArray(module.tags) ? module.tags : [];
+              return tags.slice(0, 3).map((tag: string, idx: number) => (
                 <span
                   key={idx}
                   className="rounded-md bg-white/80 px-2 py-0.5 text-xs font-semibold text-gray-700 backdrop-blur-sm"
                 >
                   {tag}
                 </span>
-              ))}
+              ));
+            })()}
           </div>
           <h1 className="mb-1 text-2xl font-bold text-gray-900">{module.title}</h1>
           {module.subtitle && <p className="text-sm text-gray-600">{module.subtitle}</p>}
@@ -398,7 +415,7 @@ export default function ModuleDetailPage() {
             <ColorfulCard index={1} hover={false} padding="sm" className="text-center">
               <TrendingUp className="mx-auto mb-1 h-6 w-6 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 p-1 text-white" />
               <p className="text-lg font-bold text-gray-900">
-                {difficultyLabels[module.difficulty_level] || module.difficulty_level}
+                {difficultyLabels[moduleDifficulty] || moduleDifficulty}
               </p>
               <p className="text-xs text-gray-600">Dificultad</p>
             </ColorfulCard>
@@ -432,80 +449,100 @@ export default function ModuleDetailPage() {
 
         {/* Learning Objectives Section - Compact */}
         {/* NOTE: apiClient does NOT transform, data comes in snake_case */}
-        {module.learning_objectives && module.learning_objectives.length > 0 && (
-          <EnhancedCard variant="info" padding="sm" hover={false} className="mb-6">
-            <h2 className="mb-3 flex items-center gap-2 text-base font-bold text-detective-text">
-              <Target className="h-4 w-4 text-detective-orange" />
-              Objetivos de Aprendizaje
-            </h2>
-            <ul className="space-y-2">
-              {module.learning_objectives.map((objective: string, idx: number) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <Lightbulb className="mt-0.5 h-4 w-4 flex-shrink-0 text-detective-gold" />
-                  <span className="text-sm text-detective-text-secondary">{objective}</span>
-                </li>
-              ))}
-            </ul>
-          </EnhancedCard>
-        )}
+        {(() => {
+          const learningObjectives = Array.isArray(module.learning_objectives)
+            ? module.learning_objectives
+            : [];
+          if (learningObjectives.length === 0) return null;
+          return (
+            <EnhancedCard variant="info" padding="sm" hover={false} className="mb-6">
+              <h2 className="mb-3 flex items-center gap-2 text-base font-bold text-detective-text">
+                <Target className="h-4 w-4 text-detective-orange" />
+                Objetivos de Aprendizaje
+              </h2>
+              <ul className="space-y-2">
+                {learningObjectives.map((objective: string, idx: number) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <Lightbulb className="mt-0.5 h-4 w-4 flex-shrink-0 text-detective-gold" />
+                    <span className="text-sm text-detective-text-secondary">{objective}</span>
+                  </li>
+                ))}
+              </ul>
+            </EnhancedCard>
+          );
+        })()}
 
         {/* Competencies and Skills Section - Compact */}
         {/* NOTE: apiClient does NOT transform, data comes in snake_case */}
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {/* Competencies */}
-          {module.competencies && module.competencies.length > 0 && (
-            <EnhancedCard variant="default" hover={false} padding="sm" className="lg:col-span-2">
-              <h2 className="mb-2 flex items-center gap-2 text-base font-bold text-detective-text">
-                <Award className="h-4 w-4 text-detective-blue" />
-                Competencias
-              </h2>
-              <ul className="space-y-1.5">
-                {module.competencies.map((competency: string, idx: number) => (
-                  <li key={idx} className="flex items-start gap-1.5">
-                    <span className="mt-0.5 text-sm text-detective-blue">•</span>
-                    <span className="text-xs text-detective-text-secondary">{competency}</span>
-                  </li>
-                ))}
-              </ul>
-            </EnhancedCard>
-          )}
+          {(() => {
+            const competencies = Array.isArray(module.competencies) ? module.competencies : [];
+            if (competencies.length === 0) return null;
+            return (
+              <EnhancedCard variant="default" hover={false} padding="sm" className="lg:col-span-2">
+                <h2 className="mb-2 flex items-center gap-2 text-base font-bold text-detective-text">
+                  <Award className="h-4 w-4 text-detective-blue" />
+                  Competencias
+                </h2>
+                <ul className="space-y-1.5">
+                  {competencies.map((competency: string, idx: number) => (
+                    <li key={idx} className="flex items-start gap-1.5">
+                      <span className="mt-0.5 text-sm text-detective-blue">•</span>
+                      <span className="text-xs text-detective-text-secondary">{competency}</span>
+                    </li>
+                  ))}
+                </ul>
+              </EnhancedCard>
+            );
+          })()}
 
           {/* Skills Developed */}
-          {module.skills_developed && module.skills_developed.length > 0 && (
-            <EnhancedCard variant="default" hover={false} padding="sm" className="lg:col-span-2">
-              <h2 className="mb-2 flex items-center gap-2 text-base font-bold text-detective-text">
-                <Brain className="text-detective-purple h-4 w-4" />
-                Habilidades Desarrolladas
-              </h2>
-              <ul className="space-y-1.5">
-                {module.skills_developed.map((skill: string, idx: number) => (
-                  <li key={idx} className="flex items-start gap-1.5">
-                    <span className="text-detective-purple mt-0.5 text-sm">•</span>
-                    <span className="text-xs text-detective-text-secondary">{skill}</span>
-                  </li>
-                ))}
-              </ul>
-            </EnhancedCard>
-          )}
+          {(() => {
+            const skillsDeveloped = Array.isArray(module.skills_developed)
+              ? module.skills_developed
+              : [];
+            if (skillsDeveloped.length === 0) return null;
+            return (
+              <EnhancedCard variant="default" hover={false} padding="sm" className="lg:col-span-2">
+                <h2 className="mb-2 flex items-center gap-2 text-base font-bold text-detective-text">
+                  <Brain className="text-detective-purple h-4 w-4" />
+                  Habilidades Desarrolladas
+                </h2>
+                <ul className="space-y-1.5">
+                  {skillsDeveloped.map((skill: string, idx: number) => (
+                    <li key={idx} className="flex items-start gap-1.5">
+                      <span className="text-detective-purple mt-0.5 text-sm">•</span>
+                      <span className="text-xs text-detective-text-secondary">{skill}</span>
+                    </li>
+                  ))}
+                </ul>
+              </EnhancedCard>
+            );
+          })()}
         </div>
 
         {/* Prerequisites Section - Compact */}
-        {module.prerequisites && module.prerequisites.length > 0 && (
-          <EnhancedCard variant="warning" hover={false} padding="sm" className="mb-6">
-            <h2 className="mb-2 flex items-center gap-2 text-base font-bold text-detective-text">
-              <Shield className="h-4 w-4 text-detective-blue" />
-              Requisitos Previos
-            </h2>
-            <ul className="space-y-1.5">
-              {module.prerequisites.map((prerequisite: string, idx: number) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-detective-blue" />
-                  <span className="text-xs text-detective-text-secondary">{prerequisite}</span>
-                </li>
-              ))}
-            </ul>
-          </EnhancedCard>
-        )}
+        {(() => {
+          const prerequisites = Array.isArray(module.prerequisites) ? module.prerequisites : [];
+          if (prerequisites.length === 0) return null;
+          return (
+            <EnhancedCard variant="warning" hover={false} padding="sm" className="mb-6">
+              <h2 className="mb-2 flex items-center gap-2 text-base font-bold text-detective-text">
+                <Shield className="h-4 w-4 text-detective-blue" />
+                Requisitos Previos
+              </h2>
+              <ul className="space-y-1.5">
+                {prerequisites.map((prerequisite: string, idx: number) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <CheckCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-detective-blue" />
+                    <span className="text-xs text-detective-text-secondary">{prerequisite}</span>
+                  </li>
+                ))}
+              </ul>
+            </EnhancedCard>
+          );
+        })()}
 
         {/* Rango Maya Section */}
         {(module.rangoMayaRequired || module.rangoMayaGranted) && (
@@ -563,8 +600,8 @@ export default function ModuleDetailPage() {
                 animationDelay={index * 0.1}
               >
                 <ExerciseCardContent
-                  exercise={exercise as unknown as Exercise}
-                  completed={exercise.completed || false}
+                  exercise={exercise as ExerciseCardExercise}
+                  completed={Boolean(exercise.completed)}
                 />
               </ColorfulCard>
             ))}

@@ -26,7 +26,7 @@ export interface DraggedEvent extends TimelineEvent {
 
 export interface TimelineProgressData {
   progress: ExerciseProgressUpdate;
-  answers: { order: string[] };
+  answers: { events: string[] };
 }
 
 export interface TimelineExerciseProps {

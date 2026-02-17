@@ -139,7 +139,9 @@ export function useRoles(): UseRolesResult {
       }
 
       // Transform backend roles to frontend format
-      const transformedRoles = rolesData.map(transformRole);
+      const transformedRoles = rolesData.map((role) =>
+        transformRole(role as unknown as Record<string, unknown>),
+      );
 
       console.log('[useRoles] Transformed roles:', transformedRoles);
       setRoles(transformedRoles);

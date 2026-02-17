@@ -4,10 +4,11 @@ import { Menu, X } from 'lucide-react';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import GamilitSidebar from '@shared/components/layout/GamilitSidebar';
 import type { User as UserType, UserGamificationData } from '@shared/types';
+import type { User as AuthUser } from '@features/auth/types/auth.types';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
-  user?: UserType;
+  user?: UserType | AuthUser;
   gamificationData?: UserGamificationData | null;
   organizationName?: string;
   onLogout?: () => void;

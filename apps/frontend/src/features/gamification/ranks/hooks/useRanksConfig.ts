@@ -16,6 +16,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getRanksConfig, type RankMetadata } from '../api/ranksAPI';
 import type { RankDefinition } from '../types/ranksTypes';
+import { MayaRank } from '../types/ranksTypes';
 
 /**
  * Estado del hook
@@ -48,25 +49,41 @@ let globalRanksPromise: Promise<RankMetadata[]> | null = null;
  * Rank definition por defecto (fallback)
  */
 const DEFAULT_RANK: RankDefinition = {
-  id: 'Ajaw',
-  name: 'Ajaw',
+  id: MayaRank.AJAW,
+  name: MayaRank.AJAW,
   nameSpanish: 'Señor',
   description: 'Inicio del camino del conocimiento',
-  xpRequired: 0,
   mlCoinsRequired: 0,
   multiplier: 1.0,
-  order: 1,
+  colorFrom: 'from-amber-400',
+  colorTo: 'to-yellow-500',
+  gradient: 'from-amber-400 to-yellow-500',
   icon: 'ajaw',
-  color: 'from-amber-400 to-yellow-500',
   benefits: [],
+  order: 0,
 };
 
 /**
  * Convierte RankMetadata del API a RankDefinition del frontend
  */
 function metadataToDefinition(metadata: RankMetadata, _index: number): RankDefinition {
-  // Mapeo de colores por rango
-  const colorMap: Record<string, string> = {
+  const colorFromMap: Record<string, string> = {
+    'Ajaw': 'from-amber-400',
+    'Nacom': 'from-green-400',
+    "Ah K'in": 'from-blue-400',
+    'Halach Uinic': 'from-purple-400',
+    "K'uk'ulkan": 'from-red-400',
+  };
+
+  const colorToMap: Record<string, string> = {
+    'Ajaw': 'to-yellow-500',
+    'Nacom': 'to-emerald-500',
+    "Ah K'in": 'to-cyan-500',
+    'Halach Uinic': 'to-violet-500',
+    "K'uk'ulkan": 'to-orange-500',
+  };
+
+  const gradientMap: Record<string, string> = {
     'Ajaw': 'from-amber-400 to-yellow-500',
     'Nacom': 'from-green-400 to-emerald-500',
     "Ah K'in": 'from-blue-400 to-cyan-500',
@@ -111,17 +128,18 @@ function metadataToDefinition(metadata: RankMetadata, _index: number): RankDefin
   };
 
   return {
-    id: metadata.rank,
+    id: metadata.rank as MayaRank,
     name: metadata.name,
     nameSpanish: spanishNameMap[metadata.rank] || metadata.description,
     description: metadata.description,
-    xpRequired: metadata.xp_min,
     mlCoinsRequired: metadata.ml_coins_bonus,
     multiplier: multiplierMap[metadata.rank] || 1.0,
-    order: metadata.order,
+    colorFrom: colorFromMap[metadata.rank] || 'from-gray-400',
+    colorTo: colorToMap[metadata.rank] || 'to-gray-500',
+    gradient: gradientMap[metadata.rank] || 'from-gray-400 to-gray-500',
     icon: iconMap[metadata.rank] || 'default',
-    color: colorMap[metadata.rank] || 'from-gray-400 to-gray-500',
     benefits: benefitsMap[metadata.rank] || [],
+    order: metadata.order,
   };
 }
 

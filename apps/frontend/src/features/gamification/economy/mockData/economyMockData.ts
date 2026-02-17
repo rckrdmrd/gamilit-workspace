@@ -11,6 +11,7 @@ import type {
   SpendingCategoryData,
   InterventionTrigger,
 } from '../types/economyTypes';
+import { TransactionTypeEnum } from '../types/economyTypes';
 
 /**
  * Mock Transaction History (20+ transactions)
@@ -18,7 +19,7 @@ import type {
 export const mockTransactions: Transaction[] = [
   {
     id: '1',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_EXERCISE,
     amount: 20,
     source: 'exercise_completion',
     description: 'Completed "Detective Textual" exercise',
@@ -30,7 +31,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '2',
-    type: 'spend',
+    type: TransactionTypeEnum.SPENT_POWERUP,
     amount: -75,
     source: 'shop',
     description: 'Purchased Detective Hat',
@@ -42,7 +43,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '3',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_STREAK,
     amount: 5,
     source: 'streak_bonus',
     description: 'Maintained 7-day streak',
@@ -51,7 +52,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '4',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_BONUS,
     amount: 12,
     source: 'perfect_score',
     description: 'Perfect score on Crucigrama exercise',
@@ -63,7 +64,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '5',
-    type: 'spend',
+    type: TransactionTypeEnum.SPENT_POWERUP,
     amount: -50,
     source: 'shop',
     description: 'Purchased Laboratory Background',
@@ -75,7 +76,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '6',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_ACHIEVEMENT,
     amount: 100,
     source: 'achievement_unlock',
     description: 'Unlocked "First Steps" achievement',
@@ -87,7 +88,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '7',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_EXERCISE,
     amount: 15,
     source: 'exercise_completion',
     description: 'Completed "Timeline" exercise',
@@ -96,7 +97,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '8',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_DAILY,
     amount: 10,
     source: 'daily_login',
     description: 'Daily login bonus',
@@ -105,7 +106,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '9',
-    type: 'spend',
+    type: TransactionTypeEnum.SPENT_POWERUP,
     amount: -120,
     source: 'shop',
     description: 'Purchased Sherlock Holmes Pipe',
@@ -117,7 +118,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '10',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_BONUS,
     amount: 50,
     source: 'guild_challenge',
     description: 'Completed guild challenge',
@@ -126,7 +127,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '11',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_EXERCISE,
     amount: 18,
     source: 'exercise_completion',
     description: 'Completed "Sopa de Letras" exercise',
@@ -135,7 +136,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '12',
-    type: 'spend',
+    type: TransactionTypeEnum.SPENT_POWERUP,
     amount: -25,
     source: 'shop',
     description: 'Purchased Celebration Emote Pack',
@@ -147,7 +148,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '13',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_BONUS,
     amount: 25,
     source: 'leaderboard_reward',
     description: 'Weekly leaderboard top 10',
@@ -156,7 +157,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '14',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_EXERCISE,
     amount: 20,
     source: 'exercise_completion',
     description: 'Completed "Verificador Fake News" exercise',
@@ -165,7 +166,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '15',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_ACHIEVEMENT,
     amount: 75,
     source: 'achievement_unlock',
     description: 'Unlocked "Speed Reader" achievement',
@@ -177,7 +178,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '16',
-    type: 'spend',
+    type: TransactionTypeEnum.SPENT_POWERUP,
     amount: -100,
     source: 'shop',
     description: 'Purchased Guild Banner Template',
@@ -189,7 +190,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '17',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_EXERCISE,
     amount: 15,
     source: 'exercise_completion',
     description: 'Completed "Mapa Conceptual" exercise',
@@ -198,7 +199,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '18',
-    type: 'earn',
+    type: TransactionTypeEnum.BONUS,
     amount: 30,
     source: 'referral_bonus',
     description: 'Friend joined using your referral',
@@ -207,7 +208,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '19',
-    type: 'spend',
+    type: TransactionTypeEnum.SPENT_POWERUP,
     amount: -200,
     source: 'shop',
     description: 'Purchased Bonus Marie Curie Biography',
@@ -219,7 +220,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '20',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_ACHIEVEMENT,
     amount: 200,
     source: 'achievement_unlock',
     description: 'Unlocked "Master Detective" achievement',
@@ -231,7 +232,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '21',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_EXERCISE,
     amount: 22,
     source: 'exercise_completion',
     description: 'Completed "Construcción Hipótesis" exercise',
@@ -240,7 +241,7 @@ export const mockTransactions: Transaction[] = [
   },
   {
     id: '22',
-    type: 'earn',
+    type: TransactionTypeEnum.EARNED_DAILY,
     amount: 10,
     source: 'daily_login',
     description: 'Daily login bonus',
@@ -418,7 +419,7 @@ export const generateRandomTransaction = (): Transaction => {
 
   return {
     id: crypto.randomUUID(),
-    type: isEarn ? 'earn' : 'spend',
+    type: isEarn ? TransactionTypeEnum.EARNED_EXERCISE : TransactionTypeEnum.SPENT_POWERUP,
     amount: isEarn
       ? amounts[Math.floor(Math.random() * amounts.length)]
       : -amounts[Math.floor(Math.random() * amounts.length)],

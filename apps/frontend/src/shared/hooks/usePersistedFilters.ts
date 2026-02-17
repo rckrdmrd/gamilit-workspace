@@ -85,7 +85,7 @@ interface PersistedData<T> {
 /**
  * Hook for managing persisted filters with versioning
  */
-export function usePersistedFilters<T extends Record<string, unknown>>({
+export function usePersistedFilters<T extends object>({
   storageKey,
   defaultFilters,
   version,

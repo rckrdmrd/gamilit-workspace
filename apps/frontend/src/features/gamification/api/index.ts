@@ -25,5 +25,20 @@ export * from '../ranks/api/ranksAPI';
 export * from '../social/api/achievementsAPI';
 export * from '../economy/api/economyAPI';
 export * from '../economy/api/comodinesAPI';
-export * from '../economy/api/shopAPI';
-export * from '../economy/api/inventoryAPI';
+export {
+  getShopCategories,
+  getShopItems as getShopItemsLegacy,
+  getShopItemById,
+  purchaseShopItem,
+  getUserPurchases,
+  checkItemOwnership,
+  getEffectivePrice,
+  hasActiveDiscount,
+  getDiscountPercentage,
+} from '../economy/api/shopAPI';
+export {
+  getInventory as getPowerUpInventory,
+  purchasePowerUp,
+  applyPowerUp,
+  getAvailablePowerUps,
+} from '../economy/api/inventoryAPI';

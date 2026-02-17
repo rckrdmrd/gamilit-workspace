@@ -23,6 +23,7 @@ import type {
   MultiplierSource,
   MultiplierSourceType,
 } from '../../types/ranksTypes';
+import { MayaRank } from '../../types/ranksTypes';
 import * as ranksAPI from '../../api/ranksAPI';
 import '../../../__tests__/helpers/gamificationMockHelpers';
 
@@ -57,8 +58,8 @@ vi.mock('@/services/api/apiClient', () => ({
         return Promise.resolve({
           data: {
             user_id: 'test-user-id',
-            current_rank: 'Nacom',
-            next_rank: "Ah K'in",
+            current_rank: MayaRank.NACOM,
+            next_rank: MayaRank.AH_KIN,
             level: 1,
             total_xp: 0,
             current_xp: 0,
@@ -87,7 +88,7 @@ vi.mock('@/services/api/apiClient', () => ({
             level: 1,
             total_xp: 0,
             xp_to_next_level: 100,
-            current_rank: 'Nacom',
+            current_rank: MayaRank.NACOM,
             rank_progress: 0,
             ml_coins: 0,
             ml_coins_earned_total: 0,
@@ -110,7 +111,7 @@ vi.mock('@/services/api/apiClient', () => ({
         level: 1,
         current_xp: 100,
         xp_to_next_level: 110,
-        current_rank: 'Nacom',
+        current_rank: MayaRank.NACOM,
         leveled_up: false,
         ranked_up: false,
       }
@@ -134,7 +135,7 @@ afterEach(() => {
 // Mock data for frontend assertions (camelCase - matching frontend types)
 // This represents what the frontend expects AFTER the API mapper transforms the response
 const mockUserProgress: UserRankProgress = {
-  currentRank: 'Nacom',
+  currentRank: MayaRank.NACOM,
   currentLevel: 1,
   currentXP: 0,
   xpToNextLevel: 100,
@@ -146,7 +147,7 @@ const mockUserProgress: UserRankProgress = {
   activityStreak: 0,
   lastActivityDate: new Date(),
   canRankUp: false,
-  nextRank: "Ah K'in", // Corrected: Nacom's next rank is Ah K'in
+  nextRank: MayaRank.AH_KIN, // Corrected: Nacom's next rank is Ah K'in
   canPrestige: false,
 };
 
@@ -169,7 +170,7 @@ describe('RanksStore', () => {
     it('should have initial user progress', () => {
       const state = useRanksStore.getState();
 
-      expect(state.userProgress.currentRank).toBe('Nacom');
+      expect(state.userProgress.currentRank).toBe(MayaRank.NACOM);
       expect(state.userProgress.currentLevel).toBe(1);
       expect(state.userProgress.currentXP).toBe(0);
       expect(state.userProgress.prestigeLevel).toBe(0);
@@ -359,7 +360,7 @@ describe('RanksStore', () => {
       useRanksStore.setState({
         userProgress: {
           ...useRanksStore.getState().userProgress,
-          currentRank: 'Nacom',
+          currentRank: MayaRank.NACOM,
           mlCoinsEarned: 1000,
         },
       });
@@ -368,7 +369,7 @@ describe('RanksStore', () => {
 
       const state = useRanksStore.getState();
       // Rank should have changed (exact rank depends on progression data)
-      expect(state.userProgress.currentRank).not.toBe('Nacom');
+      expect(state.userProgress.currentRank).not.toBe(MayaRank.NACOM);
     });
 
     it('should update multiplier on rank up', () => {
@@ -456,7 +457,7 @@ describe('RanksStore', () => {
       useRanksStore.setState({
         userProgress: {
           ...useRanksStore.getState().userProgress,
-          currentRank: "K'uk'ulkan",
+          currentRank: MayaRank.KUKULKAN,
           currentLevel: 50,
         },
       });
@@ -481,7 +482,7 @@ describe('RanksStore', () => {
       useRanksStore.setState({
         userProgress: {
           ...useRanksStore.getState().userProgress,
-          currentRank: "K'uk'ulkan",
+          currentRank: MayaRank.KUKULKAN,
           currentLevel: 50,
         },
       });
@@ -489,7 +490,7 @@ describe('RanksStore', () => {
       await prestige();
 
       const state = useRanksStore.getState();
-      expect(state.userProgress.currentRank).toBe('Nacom');
+      expect(state.userProgress.currentRank).toBe(MayaRank.NACOM);
       expect(state.userProgress.currentLevel).toBe(1);
     });
 
@@ -499,7 +500,7 @@ describe('RanksStore', () => {
       useRanksStore.setState({
         userProgress: {
           ...useRanksStore.getState().userProgress,
-          currentRank: "K'uk'ulkan",
+          currentRank: MayaRank.KUKULKAN,
           currentLevel: 50,
         },
       });
@@ -517,7 +518,7 @@ describe('RanksStore', () => {
       useRanksStore.setState({
         userProgress: {
           ...useRanksStore.getState().userProgress,
-          currentRank: "K'uk'ulkan",
+          currentRank: MayaRank.KUKULKAN,
           currentLevel: 50,
         },
       });
@@ -538,7 +539,7 @@ describe('RanksStore', () => {
       useRanksStore.setState({
         userProgress: {
           ...useRanksStore.getState().userProgress,
-          currentRank: "K'uk'ulkan",
+          currentRank: MayaRank.KUKULKAN,
           currentLevel: 50,
           totalXP,
           activityStreak: streak,
@@ -558,7 +559,7 @@ describe('RanksStore', () => {
       useRanksStore.setState({
         userProgress: {
           ...useRanksStore.getState().userProgress,
-          currentRank: "K'uk'ulkan",
+          currentRank: MayaRank.KUKULKAN,
           currentLevel: 50,
         },
       });
@@ -720,7 +721,7 @@ describe('RanksStore', () => {
         timestamp: new Date(),
         title: 'Level 2 achieved',
         description: 'Congratulations!',
-        rank: 'Nacom' as const,
+        rank: MayaRank.NACOM,
         xpSnapshot: 100,
         levelSnapshot: 2,
         multiplierSnapshot: 1.0,
@@ -744,7 +745,7 @@ describe('RanksStore', () => {
           timestamp: new Date(Date.now() + i * 1000),
           title: `Entry ${i}`,
           description: '',
-          rank: 'Nacom',
+          rank: MayaRank.NACOM,
           xpSnapshot: 100,
           levelSnapshot: i,
           multiplierSnapshot: 1.0,
@@ -765,7 +766,7 @@ describe('RanksStore', () => {
         timestamp: new Date('2025-01-01'),
         title: 'Old Entry',
         description: '',
-        rank: 'Nacom' as const,
+        rank: MayaRank.NACOM,
         xpSnapshot: 100,
         levelSnapshot: 1,
         multiplierSnapshot: 1.0,
@@ -828,7 +829,7 @@ describe('RanksStore', () => {
             timestamp: new Date(),
             title: 'Test',
             description: '',
-            rank: 'Nacom',
+            rank: MayaRank.NACOM,
             xpSnapshot: 100,
             levelSnapshot: 2,
             multiplierSnapshot: 1.0,

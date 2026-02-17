@@ -5,8 +5,7 @@
  * en diferentes escenarios.
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import { useExerciseAutoSave } from './useExerciseAutoSave';
 import { useExerciseAutoSave } from './useExerciseAutoSave';
 import { Loader2, Check, AlertCircle } from 'lucide-react';
 
@@ -167,6 +166,10 @@ export function FullStatusIndicatorExample() {
           {status === 'error' && `Error: ${error}`}
         </span>
       </div>
+      <input
+        className="mt-3 w-full rounded border p-2"
+        onChange={(e) => setAnswers({ value: e.target.value })}
+      />
     </div>
   );
 }
@@ -176,7 +179,7 @@ export function FullStatusIndicatorExample() {
 // ============================================================================
 
 export function AutoSaveWithCallbacksExample() {
-  const [answers, setAnswers] = useState({});
+  const [, setAnswers] = useState({});
   const [notifications, setNotifications] = useState<string[]>([]);
 
   const { saveProgress } = useExerciseAutoSave({
@@ -260,7 +263,19 @@ export function ForceSaveOnUnmountExample() {
     };
   }, [answers, timeSpent, forceSave]);
 
-  return <div>{/* Ejercicio */}</div>;
+  return (
+    <div className="space-y-2">
+      <input
+        className="w-full rounded border p-2"
+        onChange={(e) => setAnswers({ value: e.target.value })}
+      />
+      <input
+        type="number"
+        className="w-full rounded border p-2"
+        onChange={(e) => setTimeSpent(Number(e.target.value))}
+      />
+    </div>
+  );
 }
 
 // ============================================================================
@@ -291,7 +306,14 @@ export function ConditionalAutoSaveExample() {
     setIsDirty(true);
   };
 
-  return <div>{/* Ejercicio con handleAnswerChange */}</div>;
+  return (
+    <div>
+      <input
+        className="w-full rounded border p-2"
+        onChange={(e) => handleAnswerChange('question', e.target.value)}
+      />
+    </div>
+  );
 }
 
 // ============================================================================
@@ -345,14 +367,20 @@ export function MultiExerciseAutoSaveExample() {
       {activeTab === 'ex1' && (
         <div>
           {autoSaveEx1.status === 'saved' && '✓ Guardado'}
-          {/* Ejercicio 1 */}
+          <input
+            className="mt-2 w-full rounded border p-2"
+            onChange={(e) => setAnswersEx1({ value: e.target.value })}
+          />
         </div>
       )}
 
       {activeTab === 'ex2' && (
         <div>
           {autoSaveEx2.status === 'saved' && '✓ Guardado'}
-          {/* Ejercicio 2 */}
+          <input
+            className="mt-2 w-full rounded border p-2"
+            onChange={(e) => setAnswersEx2({ value: e.target.value })}
+          />
         </div>
       )}
     </div>

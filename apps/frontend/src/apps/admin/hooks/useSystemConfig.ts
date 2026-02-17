@@ -34,7 +34,8 @@ export function useSystemConfig(
       setConfig(data);
       return data;
     } catch (err: unknown) {
-      const errorMessage = err?.message || 'Failed to fetch system configuration';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to fetch system configuration';
       setError(errorMessage);
       throw err;
     } finally {
@@ -61,7 +62,8 @@ export function useSystemConfig(
         setConfig(data);
         return data;
       } catch (err: unknown) {
-        const errorMessage = err?.message || 'Failed to update system configuration';
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to update system configuration';
         setError(errorMessage);
         throw err;
       } finally {

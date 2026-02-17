@@ -7,7 +7,7 @@
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { Guild, GuildMember, GuildChallenge, GuildActivity } from '../types/guildsTypes';
+import type { Guild, GuildMember, GuildChallenge, GuildActivity, GuildRole } from '../types/guildsTypes';
 import { teamsAPI, type Team, type TeamMember } from '@/services/api/teamsAPI';
 import { apiClient } from '@/services/api/apiClient';
 import { useAuthStore } from '@/features/auth/store/authStore';
@@ -76,7 +76,7 @@ function mapTeamMemberToGuildMember(member: TeamMember): GuildMember {
     userId: member.userId,
     username: 'Team Member', // TODO: Fetch user details
     avatar: '/avatars/default.png',
-    role: member.role, // Valores directos: owner, admin, member (sincronizado 2026-01-07)
+    role: member.role as GuildRole, // Valores directos: owner, admin, member (sincronizado 2026-01-07)
     joinedAt: member.joinedAt, // Already a Date object from transformer
     contributionScore: 0, // Not in TeamMember type
     lastActive: new Date(), // Not in TeamMember type
@@ -166,16 +166,24 @@ export const useGuildsStore = create<GuildsStore>()(
             };
           }) => ({
             id: c.id,
-            name: c.challenge?.name || `Challenge ${c.challenge_id}`,
+            guildId,
+            title: c.challenge?.name || `Challenge ${c.challenge_id}`,
             description: c.challenge?.description || '',
-            type: 'team' as const,
-            status: c.status === 'completed' ? 'completed' : c.status === 'in_progress' ? 'in_progress' : 'active',
-            progress: c.score || 0,
-            target: c.max_score || 100,
-            xpReward: c.challenge?.xp_reward || 0,
-            mlCoinsReward: c.challenge?.ml_coins_reward || 0,
+            type: 'collaborative',
+            status: c.status === 'completed' ? 'completed' : c.status === 'in_progress' ? 'active' : 'active',
             startDate: c.started_at ? new Date(c.started_at) : new Date(c.created_at || Date.now()),
-            endDate: c.completed_at ? new Date(c.completed_at) : undefined,
+            endDate: c.completed_at ? new Date(c.completed_at) : new Date(c.created_at || Date.now()),
+            goal: {
+              type: 'score',
+              target: c.max_score || 100,
+              current: c.score || 0,
+            },
+            rewards: {
+              mlCoins: c.challenge?.ml_coins_reward || 0,
+              xp: c.challenge?.xp_reward || 0,
+              guildXp: c.challenge?.xp_reward || 0,
+            },
+            participants: [],
           }));
 
           set({ guildChallenges, loading: false });
@@ -205,7 +213,8 @@ export const useGuildsStore = create<GuildsStore>()(
           // Refresh guild members
           get().fetchGuildMembers(guildId);
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to join guild', loading: false });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to join guild';
+          set({ error: errorMessage, loading: false });
         }
       },
 
@@ -226,7 +235,8 @@ export const useGuildsStore = create<GuildsStore>()(
             loading: false,
           });
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to leave guild', loading: false });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to leave guild';
+          set({ error: errorMessage, loading: false });
         }
       },
 
@@ -256,7 +266,8 @@ export const useGuildsStore = create<GuildsStore>()(
             loading: false,
           });
         } catch (error: unknown) {
-          set({ error: error.message || 'Failed to create guild', loading: false });
+          const errorMessage = error instanceof Error ? error.message : 'Failed to create guild';
+          set({ error: errorMessage, loading: false });
         }
       },
 

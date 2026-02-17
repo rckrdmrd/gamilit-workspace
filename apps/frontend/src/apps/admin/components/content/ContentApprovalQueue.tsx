@@ -245,7 +245,10 @@ export const ContentApprovalQueue: React.FC = () => {
                   {/* Rejection Reason */}
                   {item.status === 'rejected' && (
                     <div className="text-detective-small rounded border border-red-500/30 bg-red-500/10 p-2 text-red-400">
-                      Rejection reason: {item.content?.rejectionReason || 'No reason provided'}
+                      Rejection reason:{' '}
+                      {typeof item.content?.rejectionReason === 'string'
+                        ? item.content.rejectionReason
+                        : 'No reason provided'}
                     </div>
                   )}
                 </div>

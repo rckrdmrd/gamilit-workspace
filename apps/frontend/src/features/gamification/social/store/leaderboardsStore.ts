@@ -33,7 +33,7 @@ import { getLeaderboard, getUserLeaderboardRank, getClassroomLeaderboard } from 
 // Empty leaderboard for initial state
 const emptyLeaderboard: LeaderboardData = {
   type: 'global',
-  period: 'all-time',
+  timePeriod: 'all-time',
   entries: [],
   lastUpdated: new Date(),
   userRank: undefined,
@@ -97,7 +97,7 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
       if (type !== 'classroom') {
         try {
           const userEntry = await getUserLeaderboardRank(type, selectedPeriod);
-          userRank = userEntry.rank;
+          userRank = userEntry?.rank;
         } catch (err) {
           console.warn('Could not fetch user rank:', err);
         }
@@ -135,7 +135,7 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
       let userRank: number | undefined = undefined;
       try {
         const userEntry = await getUserLeaderboardRank(selectedType, period);
-        userRank = userEntry.rank;
+        userRank = userEntry?.rank;
       } catch (err) {
         console.warn('Could not fetch user rank:', err);
       }
@@ -197,7 +197,7 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
       if (selectedType !== 'classroom') {
         try {
           const userEntry = await getUserLeaderboardRank(selectedType, selectedPeriod);
-          userRank = userEntry.rank;
+          userRank = userEntry?.rank;
         } catch (err) {
           console.warn('Could not fetch user rank:', err);
         }

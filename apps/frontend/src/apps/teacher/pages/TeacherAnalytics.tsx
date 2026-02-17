@@ -176,7 +176,11 @@ export default function TeacherAnalytics() {
 
   const exportToCSV = async () => {
     if (!selectedClassroomId) {
-      showToast({ type: 'warning', message: 'Por favor selecciona una clase primero' });
+      showToast({
+        type: 'warning',
+        title: 'Atención',
+        message: 'Por favor selecciona una clase primero',
+      });
       return;
     }
 
@@ -196,11 +200,19 @@ export default function TeacherAnalytics() {
         // Open download link in new tab
         window.open(report.file_url, '_blank');
       } else {
-        showToast({ type: 'info', message: 'El reporte está siendo generado. Por favor intenta nuevamente en unos momentos.' });
+        showToast({
+          type: 'info',
+          title: 'En proceso',
+          message: 'El reporte está siendo generado. Por favor intenta nuevamente en unos momentos.',
+        });
       }
     } catch (err: unknown) {
       console.error('[TeacherAnalytics] Error exporting CSV:', err);
-      showToast({ type: 'error', message: 'Error al generar el reporte. Por favor intenta nuevamente.' });
+      showToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Error al generar el reporte. Por favor intenta nuevamente.',
+      });
     }
   };
 

@@ -129,7 +129,7 @@ const AdminAdvancedPage = () => {
       ) : (
         <UnderConstruction
           variant="page"
-          feature="Administración Avanzada"
+          title="Administración Avanzada"
           description="Esta sección incluirá herramientas avanzadas para administradores expertos: gestión multi-tenant, feature flags, A/B testing y herramientas de intervención económica."
           estimatedDate="Fase 2 - Q2 2026"
         />

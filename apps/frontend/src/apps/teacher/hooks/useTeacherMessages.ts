@@ -136,7 +136,10 @@ export const useTeacherMessages = (
       setMessages(response.data);
       setTotal(response.total);
     } catch (err: unknown) {
-      const errorMessage = err.response?.data?.message || err.message || 'Error al cargar mensajes';
+      const errorMessage =
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Error al cargar mensajes';
       setError(new Error(errorMessage));
       console.error('[useTeacherMessages] Error fetching messages:', err);
     } finally {
@@ -203,7 +206,10 @@ export const useTeacherMessages = (
 
       return message;
     } catch (err: unknown) {
-      const errorMessage = err.response?.data?.message || err.message || 'Error al enviar mensaje';
+      const errorMessage =
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Error al enviar mensaje';
       setError(new Error(errorMessage));
       throw err;
     }
@@ -234,7 +240,10 @@ export const useTeacherMessages = (
 
       return message;
     } catch (err: unknown) {
-      const errorMessage = err.response?.data?.message || err.message || 'Error al enviar anuncio';
+      const errorMessage =
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Error al enviar anuncio';
       setError(new Error(errorMessage));
       throw err;
     }
@@ -257,7 +266,10 @@ export const useTeacherMessages = (
 
       return message;
     } catch (err: unknown) {
-      const errorMessage = err.response?.data?.message || err.message || 'Error al enviar feedback';
+      const errorMessage =
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Error al enviar feedback';
       setError(new Error(errorMessage));
       throw err;
     }

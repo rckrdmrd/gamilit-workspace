@@ -22,6 +22,9 @@ import {
   Smartphone,
   Plus,
 } from 'lucide-react';
+import { useAuth } from '@features/auth/hooks/useAuth';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { TeacherLayout } from '../layouts/TeacherLayout';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useAlertConfig, AlertConfigType } from '../hooks/useAlertConfig';
@@ -92,6 +95,27 @@ export function TeacherAlertConfigPage() {
     initializeDefaults,
     refresh,
   } = useAlertConfig();
+
+  const { user, logout } = useAuth();
+  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
+
+  const displayGamificationData = gamificationData || {
+    userId: user?.id || '',
+    level: gamificationLoading ? 0 : 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: gamificationLoading ? 'Cargando...' : 'Novato',
+    rankColor: '#9E9E9E',
+    progressToNextLevel: 0,
+    xpToNextLevel: 100,
+    achievements: [],
+    totalAchievements: 0,
+  };
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
+  };
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<number>(0);
@@ -305,32 +329,52 @@ export function TeacherAlertConfigPage() {
   // Loading state
   if (loading && configurations.length === 0) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-center">
-          <RefreshCw className="mx-auto h-8 w-8 animate-spin text-detective-orange" />
-          <p className="mt-4 text-detective-text-secondary">Cargando configuraciones...</p>
+      <TeacherLayout
+        user={user ?? undefined}
+        gamificationData={displayGamificationData}
+        organizationName={user?.organization?.name || 'Mi Institucion'}
+        onLogout={handleLogout}
+      >
+        <div className="flex min-h-[400px] items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="mx-auto h-8 w-8 animate-spin text-detective-orange" />
+            <p className="mt-4 text-detective-text-secondary">Cargando configuraciones...</p>
+          </div>
         </div>
-      </div>
+      </TeacherLayout>
     );
   }
 
   // Error state
   if (error && configurations.length === 0) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <DetectiveCard className="max-w-md text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
-          <h3 className="mt-4 text-lg font-semibold text-detective-text">Error</h3>
-          <p className="mt-2 text-detective-text-secondary">{error.message}</p>
-          <DetectiveButton variant="primary" onClick={refresh} className="mt-4">
-            Reintentar
-          </DetectiveButton>
-        </DetectiveCard>
-      </div>
+      <TeacherLayout
+        user={user ?? undefined}
+        gamificationData={displayGamificationData}
+        organizationName={user?.organization?.name || 'Mi Institucion'}
+        onLogout={handleLogout}
+      >
+        <div className="flex min-h-[400px] items-center justify-center">
+          <DetectiveCard className="max-w-md text-center">
+            <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
+            <h3 className="mt-4 text-lg font-semibold text-detective-text">Error</h3>
+            <p className="mt-2 text-detective-text-secondary">{error.message}</p>
+            <DetectiveButton variant="primary" onClick={refresh} className="mt-4">
+              Reintentar
+            </DetectiveButton>
+          </DetectiveCard>
+        </div>
+      </TeacherLayout>
     );
   }
 
   return (
+    <TeacherLayout
+      user={user ?? undefined}
+      gamificationData={displayGamificationData}
+      organizationName={user?.organization?.name || 'Mi Institucion'}
+      onLogout={handleLogout}
+    >
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -417,5 +461,6 @@ export function TeacherAlertConfigPage() {
         </DetectiveCard>
       )}
     </div>
+    </TeacherLayout>
   );
 }

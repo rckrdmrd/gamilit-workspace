@@ -1,4 +1,5 @@
 import { BaseExercise, ExerciseProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
+import type { Variants } from 'framer-motion';
 
 export interface AnimatedText {
   id: string;
@@ -12,10 +13,7 @@ export interface AnimatedText {
 export interface AnimationConfig {
   id: string;
   name: string;
-  variants: {
-    hidden: Record<string, unknown>;
-    visible: Record<string, unknown>;
-  };
+  variants: Variants;
 }
 
 export interface TextoEnMovimientoData extends BaseExercise {

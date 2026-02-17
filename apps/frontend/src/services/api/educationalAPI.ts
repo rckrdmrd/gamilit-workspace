@@ -254,7 +254,7 @@ function transformExercise(backendExercise: Record<string, unknown>): Exercise {
     timeLimit: backendExercise.time_limit_minutes || backendExercise.timeLimit,
     max_score: backendExercise.max_points || backendExercise.max_score,
     points: backendExercise.max_points || backendExercise.points || backendExercise.max_score,
-  } as Exercise;
+  } as unknown as Exercise;
 }
 
 /**

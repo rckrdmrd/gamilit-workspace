@@ -282,7 +282,7 @@ export default function TeacherAlertsPage() {
             alertType={filterType !== 'all' ? (filterType as InterventionAlertType) : undefined}
           />
         ) : (
-          <DetectiveCard variant="warning">
+          <DetectiveCard variant="info">
             <div className="py-16 text-center">
               <AlertCircle className="mx-auto mb-4 h-20 w-20 text-yellow-500 opacity-50" />
               <h3 className="mb-2 text-xl font-bold text-detective-text">

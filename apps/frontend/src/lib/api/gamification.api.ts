@@ -27,6 +27,7 @@ import {
   transformAchievements,
   transformAchievement,
   type ApiAchievementResponse,
+  type ApiUserAchievementResponse,
 } from '@/features/gamification/achievements/utils/achievementTransformer';
 import type {
   LeaderboardResponse,
@@ -135,14 +136,18 @@ export const gamificationApi = {
    *                   (el apiClient interceptor hace unwrap del TransformResponseInterceptor)
    */
   getUserAchievements: async (userId: string): Promise<UserAchievement[]> => {
-    const { data } = await apiClient.get<{ achievements: Record<string, unknown>[]; total: number }>(
+    const { data } = await apiClient.get<{
+      achievements: ApiUserAchievementResponse[];
+      total: number;
+    }>(
       `/gamification/users/${userId}/achievements`,
     );
 
     // FIX: GAP-SP-003 - Estructura simplificada despues de remover wrapper innecesario
     // Backend retorna: { achievements: [...], total: N }
     // Mantener fallback defensivo por compatibilidad con posibles variaciones
-    const achievementsArray = data?.achievements ?? (Array.isArray(data) ? data : []);
+    const achievementsArray = (data?.achievements ??
+      (Array.isArray(data) ? data : [])) as ApiUserAchievementResponse[];
 
     // Transformar respuesta del backend (snake_case) al formato del frontend (camelCase)
     return transformUserAchievements(achievementsArray);

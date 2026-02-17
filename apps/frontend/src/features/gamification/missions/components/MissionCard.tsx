@@ -39,6 +39,13 @@ import { cn } from '@shared/utils/cn';
 import { getColorSchemeById } from '@shared/utils/colorPalette';
 import { getMissionProgress, getMissionRewards } from '../utils/missionHelpers';
 
+type StatusStyles = {
+  border: string;
+  shadow: string;
+  background: string;
+  badge: string;
+};
+
 interface MissionCardProps {
   mission: Mission;
   onStart?: (missionId: string) => void;
@@ -405,7 +412,7 @@ function getCategoryIcon(category: MissionCategory) {
   return icons[category] || BookOpen;
 }
 
-function getStatusStyles(status: Mission['status'], colorScheme: any) {
+function getStatusStyles(status: Mission['status'], colorScheme: any): StatusStyles {
   // Provide default values if colorScheme is undefined or missing properties
   const defaultScheme = {
     border: 'border-blue-400',
@@ -416,7 +423,7 @@ function getStatusStyles(status: Mission['status'], colorScheme: any) {
 
   const scheme = colorScheme || defaultScheme;
 
-  const styles: Record<string, unknown> = {
+  const styles: Record<Mission['status'], StatusStyles> = {
     not_started: {
       border: 'border-gray-300',
       shadow: '',
@@ -441,6 +448,12 @@ function getStatusStyles(status: Mission['status'], colorScheme: any) {
       background: 'bg-yellow-50',
       badge: 'bg-yellow-400 text-white',
     },
+    expired: {
+      border: 'border-red-300',
+      shadow: '',
+      background: 'bg-red-50',
+      badge: 'bg-red-500 text-white',
+    },
   };
 
   // Return the style for the given status, or default to 'not_started' style if status not found
@@ -453,6 +466,7 @@ function getStatusLabel(status: Mission['status']): string {
     in_progress: 'En Progreso',
     completed: 'Completada',
     claimed: 'Reclamada ✓',
+    expired: 'Expirada',
   };
   return labels[status] || 'Nueva';
 }

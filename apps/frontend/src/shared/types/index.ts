@@ -9,27 +9,49 @@
 // AUTHENTICATION & USER TYPES
 // =====================================================
 
-// Export auth types (excluding Profile to avoid conflict)
-export type { User, AuthResponse, LoginCredentials, RegisterData } from './auth.types';
+export type {
+  AuthResponse,
+  LoginCredentials,
+  RegisterData,
+  PasswordResetRequest,
+  PasswordResetConfirm,
+  SessionInfo,
+  UserSessionInfo as AuthUserSessionInfo,
+  SuspensionDetails,
+  AccountErrorCode,
+  PreferencesConfig,
+} from './auth.types';
+export { getUserFullName, getUserDisplayName, toUserExtended } from './auth.types';
 
-// Export profile types (Profile comes from here)
-export * from './profile.types';
+export type { Profile, ProfileWithStats, UserPreferences } from './profile.types';
 
-// Export canonical user types (DTO-001)
-export * from './user.types';
-
-// Legacy users types (for backward compatibility)
-export * from './users.types';
+export type {
+  UserRole,
+  User,
+  UserExtended,
+  UserGamificationData,
+  CreateUserDto,
+  UpdateUserDto,
+  UserQueryFilters,
+  TableRow,
+  PaginatedUsers,
+  UserProfile,
+  GamilityRole,
+} from './user.types';
 
 // =====================================================
 // GAMIFICATION & STATS TYPES (DTO-001)
 // =====================================================
 
-// User statistics - NEW canonical types
-export * from './user-stats.types';
+export type { UserStats, UserStatsSummary, UpdateUserStatsDto } from './user-stats.types';
 
-// Gamification types
-export * from './gamification.types';
+export type {
+  UserRank,
+  MLCoinsBalance,
+  UserStats as UserStatsRaw,
+  UpdateUserStatsDto as UpdateUserStatsDtoRaw,
+} from './gamification.types';
+export { MayaRank } from './gamification.types';
 
 // Achievements
 export * from './achievement.types';
@@ -59,8 +81,15 @@ export * from './taxonomy.types';
 // Content tags
 export * from './content-tag.types';
 
-// Progress tracking
-export * from './progress.types';
+export type {
+  ModuleProgress,
+  ProgressSummary,
+  LearningSession,
+  SessionStats,
+  ExerciseAttempt,
+  SubmissionStats,
+} from './progress.types';
+export { ProgressStatus } from './progress.types';
 
 // Module completion tracking (detailed)
 export * from './module-completion-tracking.types';
@@ -71,7 +100,6 @@ export * from './user-current-level.types';
 // User difficulty progress (per-level stats)
 export * from './user-difficulty-progress.types';
 
-// Exercise submissions - NEW canonical types (DTO-001)
 export * from './exercise-submission.types';
 
 // =====================================================
@@ -81,8 +109,32 @@ export * from './exercise-submission.types';
 // Classrooms - NEW canonical types
 export * from './classroom.types';
 
-// Social features
-export * from './social.types';
+export type {
+  FriendshipStatus,
+  Friendship,
+  FriendshipWithUser,
+  TeamMemberRole,
+  Team,
+  TeamMember,
+  TeamWithMembers,
+  ClassroomMemberRole,
+  ClassroomSchedule,
+  ClassroomMember,
+  ClassroomWithStats,
+  School,
+  TeamChallengeStatus,
+  TeamChallenge,
+  TeamChallengeWithDetails,
+  CreateFriendshipDto,
+  UpdateFriendshipDto,
+  CreateTeamDto,
+  UpdateTeamDto,
+  JoinClassroomDto,
+  CreateTeamChallengeDto,
+  FriendshipsResponse,
+  TeamsResponse,
+  ClassroomsResponse,
+} from './social.types';
 
 // Social interactions
 export * from './social-interaction.types';

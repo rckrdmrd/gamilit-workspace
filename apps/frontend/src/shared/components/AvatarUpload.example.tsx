@@ -15,7 +15,7 @@ import { useAuth } from '@/app/providers/AuthContext';
 
 export const BasicAvatarUploadExample: React.FC = () => {
   const { user } = useAuth();
-  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl);
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url);
 
   if (!user) return null;
 
@@ -55,7 +55,7 @@ export const AvatarSizesExample: React.FC = () => {
         <h4 className="mb-2 text-sm font-medium text-gray-700">Small (sm)</h4>
         <AvatarUpload
           userId={user.id}
-          currentAvatarUrl={user.avatarUrl}
+          currentAvatarUrl={user.avatar_url}
           displayName={user.displayName || 'User'}
           size="sm"
           showInstructions={false}
@@ -66,7 +66,7 @@ export const AvatarSizesExample: React.FC = () => {
         <h4 className="mb-2 text-sm font-medium text-gray-700">Medium (md)</h4>
         <AvatarUpload
           userId={user.id}
-          currentAvatarUrl={user.avatarUrl}
+          currentAvatarUrl={user.avatar_url}
           displayName={user.displayName || 'User'}
           size="md"
         />
@@ -76,7 +76,7 @@ export const AvatarSizesExample: React.FC = () => {
         <h4 className="mb-2 text-sm font-medium text-gray-700">Large (lg) - Default</h4>
         <AvatarUpload
           userId={user.id}
-          currentAvatarUrl={user.avatarUrl}
+          currentAvatarUrl={user.avatar_url}
           displayName={user.displayName || 'User'}
           size="lg"
         />
@@ -86,7 +86,7 @@ export const AvatarSizesExample: React.FC = () => {
         <h4 className="mb-2 text-sm font-medium text-gray-700">Extra Large (xl)</h4>
         <AvatarUpload
           userId={user.id}
-          currentAvatarUrl={user.avatarUrl}
+          currentAvatarUrl={user.avatar_url}
           displayName={user.displayName || 'User'}
           size="xl"
         />
@@ -107,7 +107,7 @@ export const CustomMaxSizeExample: React.FC = () => {
   return (
     <AvatarUpload
       userId={user.id}
-      currentAvatarUrl={user.avatarUrl}
+      currentAvatarUrl={user.avatar_url}
       displayName={user.displayName || 'User'}
       maxSizeMB={2} // Only allow files up to 2MB
       onUploadComplete={(url) => console.log('Uploaded:', url)}
@@ -133,7 +133,7 @@ export const DisabledAvatarExample: React.FC = () => {
 
       <AvatarUpload
         userId={user.id}
-        currentAvatarUrl={user.avatarUrl}
+        currentAvatarUrl={user.avatar_url}
         displayName={user.displayName || 'User'}
         disabled={true}
       />
@@ -156,7 +156,7 @@ export const ProfileFormExample: React.FC = () => {
   const [formData, setFormData] = useState<ProfileFormData>({
     displayName: user?.displayName || '',
     bio: '',
-    avatarUrl: user?.avatarUrl,
+    avatarUrl: user?.avatar_url,
   });
   const [isSaving, setIsSaving] = useState(false);
 

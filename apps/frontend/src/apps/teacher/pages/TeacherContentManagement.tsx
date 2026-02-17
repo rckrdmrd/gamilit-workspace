@@ -141,7 +141,9 @@ export default function TeacherContentManagement() {
       }
       setShowModal(false);
     } catch (err: unknown) {
-      toast.error(err.message || 'Error al guardar contenido');
+      const errorMessage =
+        err instanceof Error ? err.message : 'Error al guardar contenido';
+      toast.error(errorMessage);
     }
   };
 
@@ -153,7 +155,9 @@ export default function TeacherContentManagement() {
       await cloneContent(item.id, `Copia de ${item.title}`);
       toast.success('Contenido clonado exitosamente');
     } catch (err: unknown) {
-      toast.error(err.message || 'Error al clonar contenido');
+      const errorMessage =
+        err instanceof Error ? err.message : 'Error al clonar contenido';
+      toast.error(errorMessage);
     }
   };
 
@@ -177,7 +181,9 @@ export default function TeacherContentManagement() {
       setShowDeleteConfirm(false);
       setContentToDelete(null);
     } catch (err: unknown) {
-      toast.error(err.message || 'Error al eliminar contenido');
+      const errorMessage =
+        err instanceof Error ? err.message : 'Error al eliminar contenido';
+      toast.error(errorMessage);
     }
   };
 
@@ -189,7 +195,9 @@ export default function TeacherContentManagement() {
       await publishContent(item.id);
       toast.success('Contenido publicado exitosamente');
     } catch (err: unknown) {
-      toast.error(err.message || 'Error al publicar contenido');
+      const errorMessage =
+        err instanceof Error ? err.message : 'Error al publicar contenido';
+      toast.error(errorMessage);
     }
   };
 

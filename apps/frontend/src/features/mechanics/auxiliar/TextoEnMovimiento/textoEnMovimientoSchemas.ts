@@ -13,8 +13,8 @@ export const animationConfigSchema = z.object({
   id: z.string(),
   name: z.string(),
   variants: z.object({
-    hidden: z.record(z.unknown()),
-    visible: z.record(z.unknown())
+    hidden: z.record(z.string(), z.unknown()),
+    visible: z.record(z.string(), z.unknown())
   })
 });
 
@@ -26,15 +26,12 @@ export const textoEnMovimientoDataSchema = z.object({
   estimatedTime: z.number(),
   topic: z.string(),
   hints: z.array(z.object({ id: z.string(), text: z.string(), cost: z.number() })),
-  animations: z.array(animationConfigSchema),
+  availableAnimations: z.array(animationConfigSchema),
   availableColors: z.array(z.string()),
   minDuration: z.number(),
   maxDuration: z.number(),
-  durationStep: z.number(),
   minFontSize: z.number(),
-  maxFontSize: z.number(),
-  fontSizeStep: z.number(),
-  defaultText: z.string()
+  maxFontSize: z.number()
 });
 
 export const textoEnMovimientoStateSchema = z.object({

@@ -44,7 +44,10 @@ export class APIError extends Error {
       error: {
         code: this.code,
         message: this.message,
-        details: this.data,
+        details:
+          this.data && typeof this.data === 'object'
+            ? (this.data as Record<string, unknown>)
+            : undefined,
       },
       timestamp: this.timestamp,
     };

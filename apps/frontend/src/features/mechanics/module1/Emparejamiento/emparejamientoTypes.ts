@@ -15,7 +15,7 @@ export interface EmparejamientoData extends BaseExercise {
 
 export interface EmparejamientoProgressData {
   progress: ExerciseProgressUpdate;
-  answers: { matches: Record<string, string> };
+  answers: { matches: Array<{ leftId: string; rightId: string }> };
 }
 
 export interface EmparejamientoExerciseProps {

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Send, Save, Image as ImageIcon } from 'lucide-react';
+import { Send, Save, Image as ImageIcon, BookOpen, Loader2, Eye, CheckCircle } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { mediaApi } from '@/shared/api/mediaApi';
 
 interface UploadedFile {
   id: string;
@@ -59,6 +60,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const {
     submit,
@@ -341,7 +343,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                           const response = await mediaApi.uploadMedia(file, {
                             type: mediaType,
                             exerciseId,
-                            onProgress: (progress) => {
+                            onProgress: (progress: number) => {
                               console.log(`Uploading ${file.name}: ${progress}%`);
                             }
                           });

@@ -128,14 +128,14 @@ export default function EnhancedProfilePage() {
   const stats = [
     {
       label: 'ML Coins',
-      value: balance.toString(),
+      value: String(balance?.current ?? 0),
       icon: Coins,
       color: 'text-yellow-500',
       bgColor: 'bg-yellow-50',
     },
     {
       label: 'XP Total',
-      value: userProgress?.currentXP.toString() || '0',
+      value: String(userProgress?.currentXP ?? 0),
       icon: Zap,
       color: 'text-blue-500',
       bgColor: 'bg-blue-50',
@@ -160,7 +160,7 @@ export default function EnhancedProfilePage() {
     .filter((a) => a.isUnlocked)
     .sort((a, b) => {
       if (!a.unlockedAt || !b.unlockedAt) return 0;
-      return b.unlockedAt.getTime() - a.unlockedAt.getTime();
+      return new Date(b.unlockedAt).getTime() - new Date(a.unlockedAt).getTime();
     })
     .slice(0, 5);
 
@@ -561,10 +561,10 @@ export default function EnhancedProfilePage() {
                             +{achievement.mlCoinsReward} <Coins className="h-4 w-4" />
                           </p>
                           <p className="text-xs text-detective-text-secondary">
-                            {achievement.unlockedAt?.toLocaleDateString('es-MX', {
+                            {achievement.unlockedAt ? new Date(achievement.unlockedAt).toLocaleDateString('es-MX', {
                               month: 'short',
                               day: 'numeric',
-                            })}
+                            }) : undefined}
                           </p>
                         </div>
                       </motion.div>

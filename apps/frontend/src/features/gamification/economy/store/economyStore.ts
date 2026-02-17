@@ -20,6 +20,7 @@ import {
   TransactionTypeEnum,
   type TransactionFilters,
   type EconomyStats,
+  type ShopCategory,
 } from '../types/economyTypes';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { apiClient } from '@/services/api/apiClient';
@@ -460,12 +461,20 @@ export const useEconomyStore = create<EconomyState>()(
         const spendTransactions = state.transactions.filter((t) => t.type.startsWith('spent_'));
 
         // Calculate favorite category
-        const categorySpending: Record<string, number> = {};
+        const categorySpending: Record<ShopCategory, number> = {
+          cosmetics: 0,
+          profile: 0,
+          guild: 0,
+          premium: 0,
+          social: 0,
+          consumable: 0,
+        };
         state.inventory.forEach((item) => {
           categorySpending[item.category] = (categorySpending[item.category] || 0) + item.price;
         });
         const favoriteCategory =
-          Object.entries(categorySpending).sort(([, a], [, b]) => b - a)[0]?.[0] || 'cosmetics';
+          (Object.entries(categorySpending).sort(([, a], [, b]) => b - a)[0]?.[0] as ShopCategory) ||
+          'cosmetics';
 
         // Find biggest purchase
         const biggestTransaction = spendTransactions.sort(
@@ -485,7 +494,7 @@ export const useEconomyStore = create<EconomyState>()(
           currentBalance: state.balance.current,
           netWorth: state.balance.current + state.getInventoryValue(),
           transactionCount: state.transactions.length,
-          favoriteCategory: favoriteCategory as string,
+          favoriteCategory,
           biggestPurchase: biggestTransaction
             ? {
               item: biggestTransaction.description,
@@ -501,10 +510,12 @@ export const useEconomyStore = create<EconomyState>()(
             ? {
               source: topSource[0],
               amount: topSource[1],
+              date: new Date(),
             }
             : {
               source: 'None',
               amount: 0,
+              date: new Date(),
             },
         };
       },

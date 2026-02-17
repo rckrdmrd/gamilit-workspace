@@ -15,10 +15,15 @@ export const mockCollagePrensaExercises: CollagePrensaData[] = [{
   ],
   newspaperTitle: 'LE JOURNAL SCIENTIFIQUE',
   newspaperDate: 'Paris, 1903',
-  canvasAspectRatio: '3/4',
-  minCanvasHeight: 800,
-  defaultHeadlineText: 'MARIE CURIE GANA PREMIO NOBEL',
-  defaultBodyText: 'La científica descubre el radio...',
-  defaultElementWidth: 30,
-  defaultElementHeight: 30
+  minElements: 3,
+  suggestedHeadlines: [
+    'MARIE CURIE GANA PREMIO NOBEL',
+    'DESCUBRIMIENTO DEL RADIO',
+    'NUEVOS AVANCES EN LA CIENCIA',
+  ],
+  suggestedTexts: [
+    'La científica descubre el radio...',
+    'Un hito histórico para la investigación.',
+    'La comunidad celebra el avance.',
+  ],
 }];

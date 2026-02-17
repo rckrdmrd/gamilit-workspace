@@ -15,7 +15,8 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+}) => {
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
 
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
   const [validated, setValidated] = useState(false);
@@ -35,9 +36,9 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
       const answeredCount = Object.keys(selectedAnswers).length;
 
       // Prepare user answers in backend DTO format
-      const userAnswers: Record<string, string> = {};
+      const userAnswers: Record<string, number> = {};
       Object.entries(selectedAnswers).forEach(([questionId, optionIndex]) => {
-        userAnswers[questionId] = String(optionIndex); // Convert index to string
+        userAnswers[questionId] = optionIndex;
       });
 
       onProgressUpdate({
@@ -121,9 +122,9 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
 
     try {
       // Prepare answers in backend DTO format
-      const userAnswers: Record<string, string> = {};
+      const userAnswers: Record<string, number> = {};
       Object.entries(selectedAnswers).forEach(([questionId, optionIndex]) => {
-        userAnswers[questionId] = String(optionIndex);
+        userAnswers[questionId] = optionIndex;
       });
 
       // Submit to backend API

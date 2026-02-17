@@ -10,6 +10,7 @@ import Confetti from 'react-confetti';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useProgression } from '@/features/gamification/ranks/hooks/useProgression';
 import { useCoins } from '@/features/gamification/economy/hooks/useCoins';
+import { TransactionTypeEnum } from '@/features/gamification/economy/types/economyTypes';
 import { useAchievementsStore } from '@/features/gamification/social/store/achievementsStore';
 import type { Achievement as SSOTAchievement } from '@shared/types/achievement.types';
 import {
@@ -130,7 +131,11 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
 
       // Add ML Coins
       if (mlCoinsGained > 0) {
-        earnCoins(mlCoinsGained, 'exercise_completion', exerciseId);
+        earnCoins(
+          mlCoinsGained,
+          TransactionTypeEnum.EARNED_EXERCISE,
+          `Ejercicio completado: ${exerciseId}`,
+        );
         console.log(`✅ ML Coins Added: +${mlCoinsGained} ML`);
       }
 

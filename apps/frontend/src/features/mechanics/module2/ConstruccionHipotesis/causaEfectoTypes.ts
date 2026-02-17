@@ -58,7 +58,7 @@ export interface CausaEfectoData extends BaseExercise {
  * Answers structure for CausaEfecto exercise
  */
 export interface CausaEfectoAnswers {
-  matches: CauseMatches;
+  causes: CauseMatches;
 }
 
 /**

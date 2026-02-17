@@ -26,6 +26,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEconomyStore } from '../store/economyStore';
 import type { ShopItem, ShopCategory } from '../types/economyTypes';
+import { TransactionTypeEnum } from '../types/economyTypes';
 import '../../__tests__/helpers/gamificationMockHelpers';
 
 // Mock API
@@ -84,7 +85,7 @@ vi.mock('@/services/api/apiClient', () => ({
       }
       return Promise.resolve({ data: {} });
     }),
-    patch: vi.fn().mockImplementation((url: string, data: Record<string, unknown>) => {
+    patch: vi.fn().mockImplementation((_url: string, data: Record<string, unknown>) => {
       const currentBalance = 500;
       const increment = Number(data.ml_coins_increment) || 0;
       const decrement = Number(data.ml_coins_decrement) || 0;
@@ -223,13 +224,13 @@ describe('Economy Integration Tests', () => {
       const { addCoins } = useEconomyStore.getState();
 
       // Add coins from exercise completion
-      addCoins(50, 'exercise_completion', 'Completed Exercise 1');
+      addCoins(50, TransactionTypeEnum.EARNED_EXERCISE, 'Completed Exercise 1');
 
       const state = useEconomyStore.getState();
       expect(state.balance.current).toBe(50);
       expect(state.balance.lifetime).toBe(50);
       expect(state.transactions.length).toBe(1);
-      expect(state.transactions[0].type).toBe('earn');
+      expect(state.transactions[0].type).toBe(TransactionTypeEnum.EARNED_EXERCISE);
       expect(state.transactions[0].amount).toBe(50);
     });
 
@@ -237,7 +238,7 @@ describe('Economy Integration Tests', () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
       // First add some coins
-      addCoins(100, 'achievement_unlock');
+      addCoins(100, TransactionTypeEnum.EARNED_ACHIEVEMENT);
 
       // Spend coins
       const success = await spendCoins(30, 'Power-Up', 'power-up-1');
@@ -247,13 +248,13 @@ describe('Economy Integration Tests', () => {
       expect(state.balance.current).toBe(70);
       expect(state.balance.spent).toBe(30);
       expect(state.transactions.length).toBe(2); // earn + spend
-      expect(state.transactions[0].type).toBe('spend'); // Most recent first
+      expect(state.transactions[0].type).toBe(TransactionTypeEnum.SPENT_POWERUP); // Most recent first
     });
 
     it('should prevent spending more than balance', async () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
-      addCoins(50, 'test');
+      addCoins(50, TransactionTypeEnum.EARNED_BONUS);
 
       // Try to spend more than available
       const success = await spendCoins(100, 'Expensive Item');
@@ -289,8 +290,8 @@ describe('Economy Integration Tests', () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
       // Series of transactions
-      addCoins(50, 'source1', 'First earning');
-      addCoins(30, 'source2', 'Second earning');
+      addCoins(50, TransactionTypeEnum.EARNED_EXERCISE, 'First earning');
+      addCoins(30, TransactionTypeEnum.EARNED_MODULE, 'Second earning');
       spendCoins(20, 'Item', 'item-1');
 
       const { getTransactionHistory } = useEconomyStore.getState();
@@ -298,10 +299,10 @@ describe('Economy Integration Tests', () => {
 
       expect(history.length).toBe(3);
       // Most recent first
-      expect(history[0].type).toBe('spend');
-      expect(history[1].type).toBe('earn');
+      expect(history[0].type).toBe(TransactionTypeEnum.SPENT_POWERUP);
+      expect(history[1].type).toBe(TransactionTypeEnum.EARNED_MODULE);
       expect(history[1].amount).toBe(30);
-      expect(history[2].type).toBe('earn');
+      expect(history[2].type).toBe(TransactionTypeEnum.EARNED_EXERCISE);
       expect(history[2].amount).toBe(50);
     });
 
@@ -310,7 +311,7 @@ describe('Economy Integration Tests', () => {
 
       // Add many transactions
       for (let i = 0; i < 15; i++) {
-        addCoins(10, 'test', `Transaction ${i}`);
+        addCoins(10, TransactionTypeEnum.EARNED_BONUS, `Transaction ${i}`);
       }
 
       const { getTransactionHistory } = useEconomyStore.getState();
@@ -324,8 +325,8 @@ describe('Economy Integration Tests', () => {
     it('should clear transaction history', () => {
       const { addCoins, clearTransactionHistory } = useEconomyStore.getState();
 
-      addCoins(50, 'test');
-      addCoins(30, 'test');
+      addCoins(50, TransactionTypeEnum.EARNED_BONUS);
+      addCoins(30, TransactionTypeEnum.EARNED_BONUS);
 
       expect(useEconomyStore.getState().transactions.length).toBe(2);
 
@@ -409,7 +410,7 @@ describe('Economy Integration Tests', () => {
       const { addCoins, addToInventory } = useEconomyStore.getState();
 
       // Setup: add enough coins
-      addCoins(150, 'test');
+      addCoins(150, TransactionTypeEnum.EARNED_BONUS);
 
       // For this test, we simulate what purchaseItem should do:
       // 1. Check balance
@@ -435,7 +436,7 @@ describe('Economy Integration Tests', () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
       // Only add 50 coins
-      addCoins(50, 'test');
+      addCoins(50, TransactionTypeEnum.EARNED_BONUS);
 
       // Try to buy 100 coin item
       const success = await spendCoins(100, mockPowerUp.name);
@@ -451,7 +452,7 @@ describe('Economy Integration Tests', () => {
         useEconomyStore.getState();
 
       // Add sufficient balance
-      addCoins(500, 'test');
+      addCoins(500, TransactionTypeEnum.EARNED_BONUS);
 
       // Add items to cart
       addToCart(mockPowerUp, 2); // 200
@@ -486,7 +487,7 @@ describe('Economy Integration Tests', () => {
     it('should check affordability before purchase', () => {
       const { addCoins, canAfford } = useEconomyStore.getState();
 
-      addCoins(75, 'test');
+      addCoins(75, TransactionTypeEnum.EARNED_BONUS);
 
       expect(canAfford(50)).toBe(true);
       expect(canAfford(75)).toBe(true);
@@ -531,8 +532,8 @@ describe('Economy Integration Tests', () => {
       const { addCoins, spendCoins, getEconomyStats } = useEconomyStore.getState();
 
       // Earn and spend some coins
-      addCoins(200, 'achievement');
-      addCoins(100, 'exercise');
+      addCoins(200, TransactionTypeEnum.EARNED_ACHIEVEMENT);
+      addCoins(100, TransactionTypeEnum.EARNED_EXERCISE);
       spendCoins(150, 'purchase');
 
       const stats = getEconomyStats();
@@ -548,9 +549,9 @@ describe('Economy Integration Tests', () => {
 
       const initialBalance = useEconomyStore.getState().balance.current;
 
-      addCoins(100, 'test');
+      addCoins(100, TransactionTypeEnum.EARNED_BONUS);
       spendCoins(30, 'test');
-      addCoins(50, 'test');
+      addCoins(50, TransactionTypeEnum.EARNED_BONUS);
 
       const finalBalance = useEconomyStore.getState().balance.current;
       const netChange = finalBalance - initialBalance;
@@ -570,7 +571,7 @@ describe('Economy Integration Tests', () => {
       expect(screen.getByTestId('current-balance')).toHaveTextContent('0');
 
       const { addCoins } = useEconomyStore.getState();
-      addCoins(100, 'test');
+      addCoins(100, TransactionTypeEnum.EARNED_BONUS);
 
       rerender(<BalanceDisplay />);
 
@@ -581,7 +582,7 @@ describe('Economy Integration Tests', () => {
     it('should display transactions in UI', () => {
       const { addCoins } = useEconomyStore.getState();
 
-      addCoins(50, 'test', 'Test transaction');
+      addCoins(50, TransactionTypeEnum.EARNED_BONUS, 'Test transaction');
 
       render(<TransactionHistory />);
 
@@ -590,7 +591,9 @@ describe('Economy Integration Tests', () => {
       const state = useEconomyStore.getState();
       const txId = state.transactions[0].id;
 
-      expect(screen.getByTestId(`tx-type-${txId}`)).toHaveTextContent('earn');
+      expect(screen.getByTestId(`tx-type-${txId}`)).toHaveTextContent(
+        TransactionTypeEnum.EARNED_BONUS,
+      );
       expect(screen.getByTestId(`tx-amount-${txId}`)).toHaveTextContent('50');
     });
 

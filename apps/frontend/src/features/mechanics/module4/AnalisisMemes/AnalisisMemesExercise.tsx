@@ -142,8 +142,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   // Auto-save every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      const currentState: ExerciseState = { annotations };
-      saveProgress(exerciseId, currentState);
+      saveProgress(exerciseId, { data: { annotations } });
     }, 30000);
 
     return () => clearInterval(interval);
@@ -264,8 +263,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
 
   // Handle save
   const handleSave = () => {
-    const currentState: ExerciseState = { annotations };
-    saveProgress(exerciseId, currentState);
+    saveProgress(exerciseId, { data: { annotations } });
 
     setFeedback({
       type: 'info',

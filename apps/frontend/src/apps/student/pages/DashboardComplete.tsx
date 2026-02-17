@@ -43,7 +43,7 @@ export default function DashboardComplete() {
     loading: modulesLoading,
     error: modulesError,
   } = useUserModules({
-    classroomId: userClassroomId,
+    classroomId: userClassroomId ?? undefined,
   });
 
   // Activities data from backend

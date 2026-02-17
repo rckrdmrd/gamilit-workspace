@@ -148,9 +148,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       // Navigate to redirect path
       navigate(redirectTo);
     } catch (err: unknown) {
-      // Error is already set in AuthContext
+      const errorMessage =
+        err instanceof Error ? err.message : 'El registro falló. Por favor, intenta nuevamente.';
       setError('root', {
-        message: err.message || 'El registro falló. Por favor, intenta nuevamente.',
+        message: errorMessage,
       });
     }
   };

@@ -257,8 +257,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   // Auto-save every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      const currentState: ExerciseState = { cards, droppedCards };
-      saveProgress(exerciseId, currentState);
+      saveProgress(exerciseId, { data: { cards, droppedCards } });
     }, 30000);
 
     return () => clearInterval(interval);
@@ -363,8 +362,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
 
   // Handle save
   const handleSave = () => {
-    const currentState: ExerciseState = { cards, droppedCards };
-    saveProgress(exerciseId, currentState);
+    saveProgress(exerciseId, { data: { cards, droppedCards } });
 
     setFeedback({
       type: 'info',

@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { UnderConstruction } from './UnderConstruction';
+import { UnderConstruction } from '../UnderConstruction';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -18,11 +18,11 @@ export const FullPageExample: React.FC = () => {
 
   return (
     <UnderConstruction
-      feature="Cosmetics Shop"
+      title="Cosmetics Shop"
       description="The cosmetics shop will allow you to purchase avatars, borders, and effects to personalize your detective profile."
       estimatedDate="Coming in Q1 2025"
       variant="page"
-      onBackClick={() => navigate(-1)}
+      onBack={() => navigate(-1)}
     />
   );
 };
@@ -44,7 +44,7 @@ export const SectionExample: React.FC = () => {
 
       {/* Under construction section */}
       <UnderConstruction
-        feature="Cosmetic Items"
+        title="Cosmetic Items"
         description="This feature is currently in development. You'll soon be able to customize your avatar with exclusive items."
         variant="section"
       />
@@ -72,7 +72,7 @@ export const ButtonExample: React.FC = () => {
           Claim Rewards
         </button>
         <div className="absolute -right-2 -top-2">
-          <UnderConstruction feature="Claim Rewards" variant="button" />
+          <UnderConstruction title="Claim Rewards" variant="banner" />
         </div>
       </div>
     </div>
@@ -113,7 +113,7 @@ export const MultipleFeatureExample: React.FC = () => {
         {features.map((feature) => (
           <UnderConstruction
             key={feature.name}
-            feature={feature.name}
+            title={feature.name}
             description={feature.description}
             estimatedDate={feature.estimatedDate}
             variant="section"
@@ -146,7 +146,7 @@ export const ConditionalExample: React.FC = () => {
         </div>
       ) : (
         <UnderConstruction
-          feature="Cosmetics"
+          title="Cosmetics"
           description="Personalize your profile with unique items"
           variant="section"
         />
@@ -159,7 +159,7 @@ export const ConditionalExample: React.FC = () => {
         </div>
       ) : (
         <UnderConstruction
-          feature="Achievements"
+          title="Achievements"
           description="Track your accomplishments"
           variant="section"
         />
@@ -177,11 +177,11 @@ export const CosmeticsShopPage: React.FC = () => {
 
   return (
     <UnderConstruction
-      feature="Cosmetics Shop"
+      title="Cosmetics Shop"
       description="Browse and purchase exclusive cosmetic items to customize your detective avatar. Stand out from the crowd with unique borders, effects, and accessories!"
       estimatedDate="Coming in Q1 2025"
       variant="page"
-      onBackClick={() => navigate('/student/dashboard')}
+      onBack={() => navigate('/student/dashboard')}
     />
   );
 };

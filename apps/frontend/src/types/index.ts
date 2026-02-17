@@ -13,29 +13,30 @@ export type { UserStats, StreakStats } from './userStats';
 
 // Admin Types
 export type {
-  GamificationConfig,
+  GamificationParameter,
+  GamificationStats,
+  UpdateParameterDto,
+  BulkUpdateParametersDto,
+  UpdateMayaRankDto,
+  PreviewImpactDto,
+  ImpactPreview,
+  ListParametersQuery,
   MayaRankConfig,
-  XPRewardConfig,
-  MLCoinsRewardConfig,
-  StreakConfig,
-  LevelConfig,
-  UpdateGamificationConfigDto,
 } from './admin/gamification.types';
 
 export type {
-  Achievement,
-  AchievementCategory,
-  AchievementType,
-  AchievementTier,
-  AchievementRequirement,
-  CreateAchievementDto,
+  AdminAchievement,
+  ListAchievementsQuery,
+  AchievementCategoryStats,
+  AchievementStats,
   UpdateAchievementDto,
 } from './admin/achievements.types';
 
 export type {
-  ClassroomTeacher,
-  CreateClassroomTeacherDto,
-  UpdateClassroomTeacherDto,
-  ClassroomTeacherFilters,
-  PaginatedClassroomTeachers,
+  ClassroomTeacherAssignment,
+  AssignTeacherToClassroomDto,
+  AssignClassroomsToTeacherDto,
+  BulkAssignDto,
+  ClassroomWithTeachers,
+  TeacherWithClassrooms,
 } from './admin/classroom-teacher.types';

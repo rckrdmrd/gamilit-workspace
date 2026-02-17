@@ -81,8 +81,10 @@ export const useAuthStore = create<AuthState>()(
               error: null,
             });
           } catch (error: unknown) {
+            const errorMessage =
+              error instanceof Error ? error.message : 'Error al iniciar sesión';
             set({
-              error: error.message || 'Error al iniciar sesión',
+              error: errorMessage,
               isLoading: false,
               isAuthenticated: false,
             });
@@ -115,8 +117,10 @@ export const useAuthStore = create<AuthState>()(
               error: null,
             });
           } catch (error: unknown) {
+            const errorMessage =
+              error instanceof Error ? error.message : 'Error al registrar usuario';
             set({
-              error: error.message || 'Error al registrar usuario',
+              error: errorMessage,
               isLoading: false,
             });
             throw error;
@@ -196,8 +200,10 @@ export const useAuthStore = create<AuthState>()(
             await authAPI.requestPasswordReset({ email });
             set({ isLoading: false, error: null });
           } catch (error: unknown) {
+            const errorMessage =
+              error instanceof Error ? error.message : 'Error al solicitar recuperación';
             set({
-              error: error.message || 'Error al solicitar recuperación',
+              error: errorMessage,
               isLoading: false,
             });
             throw error;
@@ -212,8 +218,10 @@ export const useAuthStore = create<AuthState>()(
             await authAPI.resetPassword({ token, newPassword });
             set({ isLoading: false, error: null });
           } catch (error: unknown) {
+            const errorMessage =
+              error instanceof Error ? error.message : 'Error al restablecer contraseña';
             set({
-              error: error.message || 'Error al restablecer contraseña',
+              error: errorMessage,
               isLoading: false,
             });
             throw error;

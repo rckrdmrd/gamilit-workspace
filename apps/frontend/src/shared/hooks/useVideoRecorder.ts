@@ -340,8 +340,8 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
       streamRef.current = stream;
 
       // Create preview URL from stream
-      const streamUrl = URL.createObjectURL(stream);
-      setPreviewUrl(streamUrl);
+      const previewObjectUrl = URL.createObjectURL(new MediaSource());
+      setPreviewUrl(previewObjectUrl);
 
       // Get supported MIME type
       const mimeType = _getSupportedMimeType();

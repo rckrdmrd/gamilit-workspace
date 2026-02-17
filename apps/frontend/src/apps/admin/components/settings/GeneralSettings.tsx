@@ -34,17 +34,24 @@ export const GeneralSettings: React.FC = () => {
   // Reset form when config loads
   useEffect(() => {
     if (config) {
+      const allowRegistrations = Boolean(config.allow_registrations);
+      const maintenanceMode = Boolean(config.maintenance_mode);
+      const maintenanceMessage =
+        typeof config.maintenance_message === 'string'
+          ? config.maintenance_message
+          : 'Sistema en mantenimiento';
+
       reset({
-        allow_registrations: config.allow_registrations ?? true,
-        maintenance_mode: config.maintenance_mode ?? false,
-        maintenance_message: config.maintenance_message || 'Sistema en mantenimiento',
+        allow_registrations: allowRegistrations,
+        maintenance_mode: maintenanceMode,
+        maintenance_message: maintenanceMessage,
       });
     }
   }, [config, reset]);
 
   const onSubmit = async (data: GeneralSettingsForm) => {
     try {
-      await updateConfig(data);
+      await updateConfig(data as unknown as Record<string, unknown>);
       toast.success('Configuración general actualizada exitosamente');
     } catch (_error) {
       toast.error('Error al actualizar la configuración general');

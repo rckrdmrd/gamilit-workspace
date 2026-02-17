@@ -7,9 +7,10 @@
  * @endpoint GET /api/v1/educational/users/:userId/modules
  */
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getUserModules } from '@/services/api/educationalAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import type { Module } from '@shared/types/educational.types';
 
 // ============================================================================
 // Query Keys Factory
@@ -70,23 +71,24 @@ function mapDifficulty(backendDifficulty: string): 'easy' | 'medium' | 'hard' {
   return difficultyMap[backendDifficulty] || 'medium';
 }
 
-function transformModuleData(module: Record<string, unknown>): UserModuleData {
+function transformModuleData(module: Module): UserModuleData {
   return {
-    id: module.id as string,
-    title: module.title as string,
-    description: module.description as string,
+    id: module.id,
+    title: module.title,
+    description: module.description ?? '',
     difficulty: mapDifficulty((module.difficulty as string) || 'medium'),
-    status: (module.status as UserModuleData['status']) || 'available',
-    progress: (module.progress as number) || 0,
-    totalExercises: (module.totalExercises as number) || 0,
-    completedExercises: (module.completedExercises as number) || 0,
-    estimatedTime: (module.estimatedTime as number) || 60,
-    xpReward: (module.xpReward as number) || 100,
-    icon: (module.icon as string) || '📚',
-    category: Array.isArray(module.category)
-      ? (module.category as string[]).join(', ')
-      : (module.category as string) || 'science',
-    mlCoinsReward: (module.mlCoinsReward as number) || 50,
+    status: (module as unknown as { status?: UserModuleData['status'] }).status || 'available',
+    progress: (module as unknown as { progress?: number }).progress ?? 0,
+    totalExercises: (module as unknown as { totalExercises?: number }).totalExercises ?? 0,
+    completedExercises:
+      (module as unknown as { completedExercises?: number }).completedExercises ?? 0,
+    estimatedTime: (module as unknown as { estimatedTime?: number }).estimatedTime ?? 60,
+    xpReward: (module as unknown as { xpReward?: number }).xpReward ?? 100,
+    icon: (module as unknown as { icon?: string }).icon ?? '📚',
+    category: Array.isArray((module as unknown as { category?: string[] }).category)
+      ? ((module as unknown as { category?: string[] }).category ?? []).join(', ')
+      : (module as unknown as { category?: string }).category || 'science',
+    mlCoinsReward: (module as unknown as { mlCoinsReward?: number }).mlCoinsReward ?? 50,
   };
 }
 
@@ -109,7 +111,6 @@ async function fetchUserModules(userId: string, classroomId?: string): Promise<U
  */
 export function useUserModules(params?: UseUserModulesParams): UseUserModulesReturn {
   const { user, isAuthenticated } = useAuth();
-  const _queryClient = useQueryClient();
   const userId = user?.id;
 
   const {

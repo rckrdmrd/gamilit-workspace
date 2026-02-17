@@ -73,7 +73,7 @@ export function useProgress(): UseProgressResult {
       setOverview(data);
     } catch (err: unknown) {
       console.error('Error fetching progress overview:', err);
-      setError(err.message || 'Error al cargar resumen de progreso');
+      setError(err instanceof Error ? err.message : 'Error al cargar resumen de progreso');
     } finally {
       setIsLoading(false);
     }
@@ -90,7 +90,7 @@ export function useProgress(): UseProgressResult {
       setClassroomProgress(data);
     } catch (err: unknown) {
       console.error('Error fetching classroom progress:', err);
-      setError(err.message || 'Error al cargar progreso de aula');
+      setError(err instanceof Error ? err.message : 'Error al cargar progreso de aula');
     } finally {
       setIsLoading(false);
     }
@@ -111,7 +111,7 @@ export function useProgress(): UseProgressResult {
         setStudentProgress(data);
       } catch (err: unknown) {
         console.error('Error fetching student progress:', err);
-        setError(err.message || 'Error al cargar progreso de estudiante');
+        setError(err instanceof Error ? err.message : 'Error al cargar progreso del estudiante');
       } finally {
         setIsLoading(false);
       }
@@ -131,7 +131,7 @@ export function useProgress(): UseProgressResult {
         setModuleProgress(data);
       } catch (err: unknown) {
         console.error('Error fetching module progress:', err);
-        setError(err.message || 'Error al cargar progreso de módulo');
+        setError(err instanceof Error ? err.message : 'Error al cargar progreso de módulo');
       } finally {
         setIsLoading(false);
       }
@@ -150,7 +150,7 @@ export function useProgress(): UseProgressResult {
       setExerciseStats(data);
     } catch (err: unknown) {
       console.error('Error fetching exercise stats:', err);
-      setError(err.message || 'Error al cargar estadísticas de ejercicio');
+      setError(err instanceof Error ? err.message : 'Error al cargar estadísticas de ejercicio');
     } finally {
       setIsLoading(false);
     }
@@ -179,7 +179,7 @@ export function useProgress(): UseProgressResult {
         window.URL.revokeObjectURL(url);
       } catch (err: unknown) {
         console.error('Error exporting CSV:', err);
-        setError(err.message || 'Error al exportar CSV');
+        setError(err instanceof Error ? err.message : 'Error al exportar CSV');
         throw err;
       }
     },

@@ -171,13 +171,6 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recording, analysis, scriptText, currentScore, selectedTopic, hookAudioUrl]);
 
-  const _calculateProgress = () => {
-    let progress = 0;
-    if (recording.audioBlob) progress += 50;
-    if (analysis) progress += 50;
-    return progress;
-  };
-
   const loadExercise = async () => {
     const data = await fetchPodcastExercise('podcast-1');
     setExercise(data);

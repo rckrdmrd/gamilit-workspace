@@ -5,6 +5,21 @@
  */
 
 export * from './economyAPI';
-export * from './inventoryAPI';
 export * from './comodinesAPI';
-export * from './shopAPI';
+export {
+  getInventory as getPowerUpInventory,
+  purchasePowerUp,
+  applyPowerUp,
+  getAvailablePowerUps,
+} from './inventoryAPI';
+export {
+  getShopCategories,
+  getShopItems as getShopItemsLegacy,
+  getShopItemById,
+  purchaseShopItem,
+  getUserPurchases,
+  checkItemOwnership,
+  getEffectivePrice,
+  hasActiveDiscount,
+  getDiscountPercentage,
+} from './shopAPI';

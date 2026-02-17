@@ -15,7 +15,8 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
   onComplete,
   onProgressUpdate,
   actionsRef,
-}) => {  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
+}) => {
+  const { submitAsync } = useExerciseSubmission(exercise?.id || 'unknown');
 
   const [cards, setCards] = useState(exercise.cards.sort(() => Math.random() - 0.5));
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
@@ -26,7 +27,7 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
 
   // P0-02: Added 2025-12-18 - Hooks for backend submission
   const { user } = useAuth();
-  const invalidateDashboard = useInvalidateDashboard();
+  const { syncAndInvalidate } = useInvalidateDashboard();
 
   // FE-055: Notify parent of progress updates WITH user answers
   React.useEffect(() => {
@@ -123,7 +124,7 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
         const response = await submitAsync({ matches });
 
         // Invalidate dashboard to reflect new progress
-        invalidateDashboard();
+        await syncAndInvalidate();
 
         console.log('✅ [Emparejamiento] Submitted to backend:', response);
 

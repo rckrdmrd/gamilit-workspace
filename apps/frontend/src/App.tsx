@@ -49,6 +49,7 @@ const DeviceManagementSection = lazy(() => import('@/apps/student/pages/DeviceMa
 const NotificationsPage = lazy(() => import('@/apps/student/pages/NotificationsPage'));
 const AssignmentsPage = lazy(() => import('@/apps/student/pages/AssignmentsPage'));
 const AssignmentDetailPage = lazy(() => import('@/apps/student/pages/AssignmentDetailPage'));
+const LearningPage = lazy(() => import('@/apps/student/pages/LearningPage'));
 
 // =====================================================
 // TEACHER PORTAL PAGES (Lazy loaded with HOC)
@@ -124,6 +125,7 @@ const AdminAssignmentsPage = lazy(() => import('@/apps/admin/pages/AdminAssignme
 const AdminAuditLogsPage = lazy(() => import('@/apps/admin/pages/AdminAuditLogsPage'));
 const AdminBrandingPage = lazy(() => import('@/features/admin/branding/BrandingSettingsPage'));
 const AdminLtiPage = lazy(() => import('@/features/admin/lti/AdminLtiPage'));
+const AdminExerciseCreatePage = lazy(() => import('@/apps/admin/pages/AdminExerciseCreatePage'));
 
 // =====================================================
 // PARENT PORTAL PAGES (Lazy loaded) - EXT-011
@@ -201,6 +203,16 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['student']}>
                 <DashboardComplete />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Learning Hub */}
+          <Route
+            path="/learning"
+            element={
+              <ProtectedRoute allowedRoles={['student']}>
+                <LearningPage />
               </ProtectedRoute>
             }
           />
@@ -518,6 +530,24 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['super_admin']}>
                 <AdminLtiPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin Exercise Management */}
+          <Route
+            path="/admin/exercises/create"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminExerciseCreatePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/exercises/:id/edit"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminExerciseCreatePage />
               </ProtectedRoute>
             }
           />

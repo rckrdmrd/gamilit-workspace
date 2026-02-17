@@ -25,6 +25,8 @@ import { useAchievementsStore } from '../social/store/achievementsStore';
 import { useEconomyStore } from '../economy/store/economyStore';
 import { useRanksStore } from '../ranks/store/ranksStore';
 import type { Achievement } from '../social/types/achievementsTypes';
+import { TransactionTypeEnum, getTransactionCategory } from '../economy/types/economyTypes';
+import { MayaRank } from '../ranks/types/ranksTypes';
 import './helpers/gamificationMockHelpers';
 
 // Mock APIs
@@ -248,12 +250,12 @@ describe('Dashboard Integration Tests', () => {
 
     useRanksStore.setState({
       userProgress: {
-        currentRank: 'Nacom',
+        currentRank: MayaRank.NACOM,
         currentLevel: 1,
         currentXP: 0,
         totalXP: 0,
         xpToNextLevel: 100,
-        nextRank: 'Ajaw',
+        nextRank: MayaRank.AJAW,
         prestigeLevel: 0,
         multiplier: 1.0,
         mlCoinsEarned: 0,
@@ -315,7 +317,7 @@ describe('Dashboard Integration Tests', () => {
       unlockAchievement('ach-1');
 
       // Simulate reward distribution
-      addCoins(mockAchievement.rewards!.mlCoins, 'achievement');
+      addCoins(mockAchievement.rewards!.mlCoins, TransactionTypeEnum.EARNED_ACHIEVEMENT);
       addXP(mockAchievement.rewards!.xp, 'achievement_unlock');
 
       // Verify all stores updated
@@ -336,7 +338,7 @@ describe('Dashboard Integration Tests', () => {
       await addXP(100, 'exercise_completion');
 
       // Simulate level up bonus
-      addCoins(25, 'level_up_bonus');
+      addCoins(25, TransactionTypeEnum.EARNED_BONUS);
 
       const ranksState = useRanksStore.getState();
       const economyState = useEconomyStore.getState();
@@ -350,7 +352,7 @@ describe('Dashboard Integration Tests', () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
       // Earn and spend coins
-      addCoins(200, 'test');
+      addCoins(200, TransactionTypeEnum.EARNED_BONUS);
       spendCoins(100, 'purchase');
 
       const economyState = useEconomyStore.getState();
@@ -373,7 +375,7 @@ describe('Dashboard Integration Tests', () => {
       unlockAchievement('ach-1');
 
       // Step 2: Grant coin reward
-      addCoins(mockAchievement.rewards!.mlCoins, 'achievement');
+      addCoins(mockAchievement.rewards!.mlCoins, TransactionTypeEnum.EARNED_ACHIEVEMENT);
 
       // Step 3: Grant XP reward
       addXP(mockAchievement.rewards!.xp, 'achievement_unlock');
@@ -399,7 +401,7 @@ describe('Dashboard Integration Tests', () => {
 
       // Simultaneous updates
       unlockAchievement('ach-1');
-      addCoins(100, 'bonus');
+      addCoins(100, TransactionTypeEnum.BONUS);
       await addXP(50, 'exercise_completion');
 
       // All updates should be reflected
@@ -438,12 +440,12 @@ describe('Dashboard Integration Tests', () => {
 
       useRanksStore.setState({
         userProgress: {
-          currentRank: 'Ajaw',
+          currentRank: MayaRank.AJAW,
           currentLevel: 5,
           currentXP: 250,
           totalXP: 750,
           xpToNextLevel: 300,
-          nextRank: 'Halach Uinic',
+          nextRank: MayaRank.HALACH_UINIC,
           prestigeLevel: 0,
           multiplier: 1.0,
           mlCoinsEarned: 0,
@@ -478,7 +480,7 @@ describe('Dashboard Integration Tests', () => {
       expect(screen.getByTestId('balance')).toHaveTextContent('0');
 
       // Update economy store
-      useEconomyStore.getState().addCoins(150, 'test');
+      useEconomyStore.getState().addCoins(150, TransactionTypeEnum.EARNED_BONUS);
 
       rerender(<GamificationDashboard />);
 
@@ -496,7 +498,7 @@ describe('Dashboard Integration Tests', () => {
       const { addXP } = useRanksStore.getState();
 
       unlockAchievement('ach-1');
-      addCoins(100, 'test');
+      addCoins(100, TransactionTypeEnum.EARNED_BONUS);
       addXP(50, 'daily_challenge');
 
       render(<ActivityFeed />);
@@ -612,12 +614,12 @@ describe('Dashboard Integration Tests', () => {
 
       useRanksStore.setState({
         userProgress: {
-          currentRank: 'Nacom',
+          currentRank: MayaRank.NACOM,
           currentLevel: 2,
           currentXP: 0,
           totalXP: 100,
           xpToNextLevel: 150,
-          nextRank: 'Ajaw',
+          nextRank: MayaRank.AJAW,
           prestigeLevel: 0,
           multiplier: 1.0,
           mlCoinsEarned: 0,
@@ -638,8 +640,8 @@ describe('Dashboard Integration Tests', () => {
     it('should maintain transaction count consistency', () => {
       const { addCoins, spendCoins } = useEconomyStore.getState();
 
-      addCoins(100, 'test1');
-      addCoins(50, 'test2');
+      addCoins(100, TransactionTypeEnum.EARNED_EXERCISE);
+      addCoins(50, TransactionTypeEnum.EARNED_MODULE);
       spendCoins(30, 'purchase');
 
       const ecoState = useEconomyStore.getState();
@@ -648,8 +650,12 @@ describe('Dashboard Integration Tests', () => {
       expect(ecoState.transactions.length).toBe(3);
 
       // Verify transaction types
-      const earnTransactions = ecoState.transactions.filter((t) => t.type === 'earn');
-      const spendTransactions = ecoState.transactions.filter((t) => t.type === 'spend');
+      const earnTransactions = ecoState.transactions.filter(
+        (t) => getTransactionCategory(t.type) === 'earn',
+      );
+      const spendTransactions = ecoState.transactions.filter(
+        (t) => getTransactionCategory(t.type) === 'spend',
+      );
       expect(earnTransactions.length).toBe(2);
       expect(spendTransactions.length).toBe(1);
     });
@@ -696,7 +702,7 @@ describe('Dashboard Integration Tests', () => {
       expect(screen.getByTestId('balance')).toHaveTextContent('0');
 
       const { addCoins } = useEconomyStore.getState();
-      addCoins(250, 'reward');
+      addCoins(250, TransactionTypeEnum.EARNED_BONUS);
 
       rerender(<GamificationDashboard />);
 
@@ -722,7 +728,7 @@ describe('Dashboard Integration Tests', () => {
       const initialCount = screen.getByTestId('event-count').textContent;
 
       const { addCoins } = useEconomyStore.getState();
-      addCoins(100, 'new event');
+      addCoins(100, TransactionTypeEnum.EARNED_BONUS);
 
       rerender(<ActivityFeed />);
 

@@ -12,6 +12,8 @@ interface HealthCheckProps {
   uptime?: number;
 }
 
+type HealthStatus = 'healthy' | 'degraded' | 'down';
+
 const HealthCheck: React.FC<HealthCheckProps> = ({
   name,
   status,
@@ -93,39 +95,56 @@ export const SystemHealthIndicators: React.FC = () => {
     );
   }
 
+  const uptimePercent =
+    typeof health?.uptime_seconds === 'number'
+      ? Math.min((health.uptime_seconds / 86400) * 100, 100)
+      : 99.9;
+
+  const incidents = (() => {
+    if (!health || typeof health !== 'object') return [];
+    const raw = (health as unknown as Record<string, unknown>).incidents;
+    return Array.isArray(raw) ? raw : [];
+  })();
+
+  const normalizeStatus = (status: unknown): HealthStatus => {
+    return status === 'healthy' || status === 'degraded' || status === 'down'
+      ? status
+      : 'healthy';
+  };
+
   // Mock data structure - adjust based on actual API response
   const healthChecks: HealthCheckProps[] = [
     {
       name: 'Backend API',
-      status: health?.api?.status || 'healthy',
-      latency: health?.api?.latency || 45,
+      status: normalizeStatus(health?.api?.status),
+      latency: health?.api?.response_time_ms || 45,
       details: 'Node.js Server',
       icon: <Server className="h-6 w-6" />,
-      uptime: health?.api?.uptime || 99.98,
+      uptime: uptimePercent,
     },
     {
       name: 'PostgreSQL Database',
-      status: health?.database?.status || 'healthy',
-      latency: health?.database?.latency || 12,
-      details: `${health?.database?.connections || 15}/100 connections`,
+      status: normalizeStatus(health?.database?.status),
+      latency: health?.database?.latency_ms || 12,
+      details: 'Primary database',
       icon: <Database className="h-6 w-6" />,
-      uptime: health?.database?.uptime || 99.99,
+      uptime: uptimePercent,
     },
     {
       name: 'Redis Cache',
-      status: health?.redis?.status || 'healthy',
-      latency: health?.redis?.latency || 3,
+      status: 'healthy',
+      latency: 3,
       details: 'In-memory cache',
       icon: <Zap className="h-6 w-6" />,
-      uptime: health?.redis?.uptime || 99.95,
+      uptime: 99.95,
     },
     {
       name: 'External APIs',
-      status: health?.external?.status || 'healthy',
-      latency: health?.external?.latency || 250,
+      status: 'healthy',
+      latency: 250,
       details: 'OpenAI, Payment Gateway',
       icon: <Globe className="h-6 w-6" />,
-      uptime: health?.external?.uptime || 99.5,
+      uptime: 99.5,
     },
   ];
 
@@ -219,8 +238,8 @@ export const SystemHealthIndicators: React.FC = () => {
       <DetectiveCard>
         <h3 className="text-detective-subtitle mb-4">Recent Incidents</h3>
         <div className="space-y-3">
-          {health?.incidents && health.incidents.length > 0 ? (
-            health.incidents.map((incident: any, index: number) => (
+          {incidents.length > 0 ? (
+            incidents.map((incident: any, index: number) => (
               <div key={index} className="rounded-lg bg-detective-bg-secondary p-3">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-detective-base font-semibold">{incident.title}</span>

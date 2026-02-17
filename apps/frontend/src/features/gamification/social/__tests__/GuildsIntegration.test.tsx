@@ -280,7 +280,7 @@ describe('Guilds Integration Tests', () => {
           userId: 'member-1',
           username: 'Líder',
           avatar: '/avatars/leader.png',
-          role: 'leader',
+          role: 'owner',
           joinedAt: new Date(),
           contributionScore: 500,
           lastActive: new Date(),
@@ -291,7 +291,7 @@ describe('Guilds Integration Tests', () => {
           userId: 'member-2',
           username: 'Oficial',
           avatar: '/avatars/officer.png',
-          role: 'officer',
+          role: 'admin',
           joinedAt: new Date(),
           contributionScore: 300,
           lastActive: new Date(),
@@ -306,8 +306,8 @@ describe('Guilds Integration Tests', () => {
       const state = useGuildsStore.getState();
 
       expect(state.guildMembers).toHaveLength(2);
-      expect(state.guildMembers[0].role).toBe('leader');
-      expect(state.guildMembers[1].role).toBe('officer');
+      expect(state.guildMembers[0].role).toBe('owner');
+      expect(state.guildMembers[1].role).toBe('admin');
     });
 
     it('should have empty members when not in guild', () => {

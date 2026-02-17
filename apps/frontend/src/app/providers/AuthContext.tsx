@@ -160,6 +160,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         userData = await authAPI.getCurrentUser();
       }
 
+      // CRITICAL: Save tokens to localStorage FIRST — apiClient reads from here
+      if (response.token) {
+        localStorage.setItem('auth-token', response.token);
+      }
+      if (response.refreshToken) {
+        localStorage.setItem('refresh-token', response.refreshToken);
+      }
+
       // CRITICAL: Sync BOTH auth systems
       // 1. Update AuthContext (React Context)
       setUser(userData);
@@ -182,7 +190,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
     } catch (err: unknown) {
       const errorMessage =
-        err.response?.data?.message || 'Login failed. Please check your credentials.';
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Login failed. Please check your credentials.';
       setError(errorMessage);
 
       // Also update authStore error
@@ -230,6 +240,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         userProfile = await authAPI.getCurrentUser();
       }
 
+      // CRITICAL: Save tokens to localStorage FIRST — apiClient reads from here
+      if (response.token) {
+        localStorage.setItem('auth-token', response.token);
+      }
+      if (response.refreshToken) {
+        localStorage.setItem('refresh-token', response.refreshToken);
+      }
+
       // CRITICAL: Sync BOTH auth systems (auto-login after registration)
       // 1. Update AuthContext
       setUser(userProfile);
@@ -247,7 +265,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       console.log('✅ [AuthContext] Registration successful - both systems synchronized');
     } catch (err: unknown) {
-      const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
+      const errorMessage =
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Registration failed. Please try again.';
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'User refresh failed. Please try again.';
       setError(errorMessage);
 
       // Also update authStore error
@@ -311,7 +335,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       console.log('✅ [AuthContext] User profile refreshed - both systems synchronized');
     } catch (err: unknown) {
-      const errorMessage = err.response?.data?.message || 'Failed to refresh user profile.';
+      const errorMessage =
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Failed to refresh user profile.';
       setError(errorMessage);
 
       // Also update authStore error

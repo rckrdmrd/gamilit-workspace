@@ -282,9 +282,9 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
-      // Create MediaRecorder
+      const mimeType = _getSupportedMimeType();
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm',
+        mimeType: mimeType || 'audio/webm',
       });
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
@@ -297,7 +297,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        const blob = new Blob(chunksRef.current, { type: mimeType || 'audio/webm' });
         const url = URL.createObjectURL(blob);
         setAudioBlob(blob);
         setAudioUrl(url);

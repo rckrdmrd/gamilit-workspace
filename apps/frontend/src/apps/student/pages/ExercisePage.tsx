@@ -268,7 +268,7 @@ export default function ExercisePage() {
         const mappedExercise: ExerciseData = {
           id: exerciseData.id,
           // API returns camelCase after apiClient transformation (snake_case → camelCase)
-          module_id: exerciseData.moduleId || exerciseData.module_id,
+          module_id: exerciseData.module_id || (exerciseData as any).moduleId,
           title: exerciseData.title,
           type: exerciseType,
           description: exerciseData.description || '',

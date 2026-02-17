@@ -48,7 +48,7 @@ export const ResolveAlertModal: React.FC<ResolveAlertModalProps> = ({
       setNote('');
       onClose();
     } catch (err: unknown) {
-      setError(err?.message || 'Error al resolver la alerta');
+      setError(err instanceof Error ? err.message : 'Error al resolver la alerta');
     } finally {
       setIsSubmitting(false);
     }

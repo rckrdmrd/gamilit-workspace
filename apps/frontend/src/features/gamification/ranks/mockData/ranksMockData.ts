@@ -6,7 +6,6 @@
 
 import type {
   RankDefinition,
-  MayaRank,
   UserRankProgress,
   PrestigeBonus,
   MultiplierSource,
@@ -14,6 +13,7 @@ import type {
   XPEvent,
   RankUpEvent,
 } from '../types/ranksTypes';
+import { MayaRank } from '../types/ranksTypes';
 
 // ============================================================================
 // RANK DEFINITIONS
@@ -24,9 +24,9 @@ import type {
  * Official names and data according to /docs/01-requerimientos/gamificacion/01-RANGOS-MAYA.md
  */
 export const MAYA_RANKS: Record<MayaRank, RankDefinition> = {
-  Ajaw: {
-    id: 'Ajaw',
-    name: 'Ajaw',
+  [MayaRank.AJAW]: {
+    id: MayaRank.AJAW,
+    name: MayaRank.AJAW,
     nameSpanish: 'Señor / Gobernante',
     description: 'Iniciado en el camino del conocimiento. Completaste el Módulo 1 - Comprensión Literal.',
     mlCoinsRequired: 0,
@@ -42,9 +42,9 @@ export const MAYA_RANKS: Record<MayaRank, RankDefinition> = {
     ],
     order: 0,
   },
-  Nacom: {
-    id: 'Nacom',
-    name: 'Nacom',
+  [MayaRank.NACOM]: {
+    id: MayaRank.NACOM,
+    name: MayaRank.NACOM,
     nameSpanish: 'Capitán de Guerra',
     description: 'Explorador de nuevos horizontes. Completaste el Módulo 2 - Comprensión Inferencial.',
     mlCoinsRequired: 200,
@@ -62,9 +62,9 @@ export const MAYA_RANKS: Record<MayaRank, RankDefinition> = {
     ],
     order: 1,
   },
-  'Ah K\'in': {
-    id: 'Ah K\'in',
-    name: 'Ah K\'in',
+  [MayaRank.AH_KIN]: {
+    id: MayaRank.AH_KIN,
+    name: MayaRank.AH_KIN,
     nameSpanish: 'Sacerdote del Sol',
     description: 'Analista crítico de textos. Completaste el Módulo 3 - Comprensión Crítica.',
     mlCoinsRequired: 500,
@@ -83,9 +83,9 @@ export const MAYA_RANKS: Record<MayaRank, RankDefinition> = {
     ],
     order: 2,
   },
-  'Halach Uinic': {
-    id: 'Halach Uinic',
-    name: 'Halach Uinic',
+  [MayaRank.HALACH_UINIC]: {
+    id: MayaRank.HALACH_UINIC,
+    name: MayaRank.HALACH_UINIC,
     nameSpanish: 'Hombre Verdadero',
     description: 'Crítico experto en lectura digital. Completaste el Módulo 4 - Lectura Digital.',
     mlCoinsRequired: 1000,
@@ -105,9 +105,9 @@ export const MAYA_RANKS: Record<MayaRank, RankDefinition> = {
     ],
     order: 3,
   },
-  'K\'uk\'ulkan': {
-    id: 'K\'uk\'ulkan',
-    name: 'K\'uk\'ulkan',
+  [MayaRank.KUKULKAN]: {
+    id: MayaRank.KUKULKAN,
+    name: MayaRank.KUKULKAN,
     nameSpanish: 'Serpiente Emplumada',
     description: 'Maestro de la producción lectora. Completaste el Módulo 5 - Producción Lectora. Máximo nivel alcanzado.',
     mlCoinsRequired: 2000,
@@ -135,11 +135,11 @@ export const MAYA_RANKS: Record<MayaRank, RankDefinition> = {
  * Array of ranks in progression order - Official sequence
  */
 export const RANKS_IN_ORDER: RankDefinition[] = [
-  MAYA_RANKS.Ajaw,
-  MAYA_RANKS.Nacom,
-  MAYA_RANKS['Ah K\'in'],
-  MAYA_RANKS['Halach Uinic'],
-  MAYA_RANKS['K\'uk\'ulkan'],
+  MAYA_RANKS[MayaRank.AJAW],
+  MAYA_RANKS[MayaRank.NACOM],
+  MAYA_RANKS[MayaRank.AH_KIN],
+  MAYA_RANKS[MayaRank.HALACH_UINIC],
+  MAYA_RANKS[MayaRank.KUKULKAN],
 ];
 
 // ============================================================================
@@ -250,7 +250,7 @@ export const PRESTIGE_BONUSES: PrestigeBonus[] = [
  * Mock user progress - Beginner (NACOM)
  */
 export const MOCK_USER_NACOM: UserRankProgress = {
-  currentRank: 'Nacom',
+  currentRank: MayaRank.NACOM,
   currentLevel: 1,
   currentXP: 0,
   xpToNextLevel: 100,
@@ -262,7 +262,7 @@ export const MOCK_USER_NACOM: UserRankProgress = {
   activityStreak: 0,
   lastActivityDate: new Date('2025-10-16'),
   canRankUp: false,
-  nextRank: 'Ajaw',
+  nextRank: MayaRank.AJAW,
   canPrestige: false,
 };
 
@@ -270,7 +270,7 @@ export const MOCK_USER_NACOM: UserRankProgress = {
  * Mock user progress - Intermediate (Ajaw - Nivel 1)
  */
 export const MOCK_USER_AJAW: UserRankProgress = {
-  currentRank: 'Ajaw',
+  currentRank: MayaRank.AJAW,
   currentLevel: 12,
   currentXP: 450,
   xpToNextLevel: 1300,
@@ -282,7 +282,7 @@ export const MOCK_USER_AJAW: UserRankProgress = {
   activityStreak: 21,
   lastActivityDate: new Date('2025-10-16'),
   canRankUp: false,
-  nextRank: "Ah K'in",
+  nextRank: MayaRank.AH_KIN,
   canPrestige: false,
 };
 
@@ -290,7 +290,7 @@ export const MOCK_USER_AJAW: UserRankProgress = {
  * Mock user progress - Advanced (Ah K'in - Nivel 3)
  */
 export const MOCK_USER_AH_KIN: UserRankProgress = {
-  currentRank: "Ah K'in",
+  currentRank: MayaRank.AH_KIN,
   currentLevel: 20,
   currentXP: 800,
   xpToNextLevel: 2100,
@@ -302,7 +302,7 @@ export const MOCK_USER_AH_KIN: UserRankProgress = {
   activityStreak: 45,
   lastActivityDate: new Date('2025-10-16'),
   canRankUp: false,
-  nextRank: 'Halach Uinic',
+  nextRank: MayaRank.HALACH_UINIC,
   canPrestige: false,
 };
 
@@ -310,7 +310,7 @@ export const MOCK_USER_AH_KIN: UserRankProgress = {
  * Mock user progress - Expert (Halach Uinic - Nivel 4)
  */
 export const MOCK_USER_HALACH_UINIC: UserRankProgress = {
-  currentRank: 'Halach Uinic',
+  currentRank: MayaRank.HALACH_UINIC,
   currentLevel: 35,
   currentXP: 1500,
   xpToNextLevel: 3600,
@@ -322,7 +322,7 @@ export const MOCK_USER_HALACH_UINIC: UserRankProgress = {
   activityStreak: 90,
   lastActivityDate: new Date('2025-10-16'),
   canRankUp: false,
-  nextRank: "K'uk'ulkan",
+  nextRank: MayaRank.KUKULKAN,
   canPrestige: false,
 };
 
@@ -330,7 +330,7 @@ export const MOCK_USER_HALACH_UINIC: UserRankProgress = {
  * Mock user progress - Master (K'uk'ulkan - Nivel 5) - Ready for Prestige
  */
 export const MOCK_USER_KUKULKAN: UserRankProgress = {
-  currentRank: "K'uk'ulkan",
+  currentRank: MayaRank.KUKULKAN,
   currentLevel: 50,
   currentXP: 2800,
   xpToNextLevel: 5100,
@@ -350,7 +350,7 @@ export const MOCK_USER_KUKULKAN: UserRankProgress = {
  * Mock user progress - Prestiged User (Level 1)
  */
 export const MOCK_USER_PRESTIGE_1: UserRankProgress = {
-  currentRank: 'Nacom',
+  currentRank: MayaRank.NACOM,
   currentLevel: 8,
   currentXP: 450,
   xpToNextLevel: 900,
@@ -362,7 +362,7 @@ export const MOCK_USER_PRESTIGE_1: UserRankProgress = {
   activityStreak: 46,
   lastActivityDate: new Date('2025-10-16'),
   canRankUp: false,
-  nextRank: 'Ajaw',
+  nextRank: MayaRank.AJAW,
   canPrestige: false,
 };
 
@@ -472,8 +472,8 @@ export const MOCK_XP_EVENTS: XPEvent[] = [
  */
 export const MOCK_RANK_UP_EVENTS: RankUpEvent[] = [
   {
-    fromRank: 'Nacom',
-    toRank: 'Ajaw',
+    fromRank: MayaRank.NACOM,
+    toRank: MayaRank.AJAW,
     timestamp: new Date('2025-09-20T15:30:00'),
     newBenefits: [
       'Acceso a ejercicios intermedios',
@@ -484,8 +484,8 @@ export const MOCK_RANK_UP_EVENTS: RankUpEvent[] = [
     isPrestige: false,
   },
   {
-    fromRank: 'Ajaw',
-    toRank: "Ah K'in",
+    fromRank: MayaRank.AJAW,
+    toRank: MayaRank.AH_KIN,
     timestamp: new Date('2025-08-15T09:15:00'),
     newBenefits: [
       'Acceso a ejercicios avanzados',
@@ -511,7 +511,7 @@ export const MOCK_PROGRESSION_HISTORY: ProgressionHistoryEntry[] = [
     timestamp: new Date('2025-09-20T15:30:00'),
     title: 'Ascendido a Ajaw',
     description: 'Has alcanzado el rango de Sargento. ¡Felicitaciones!',
-    rank: 'Ajaw',
+    rank: MayaRank.AJAW,
     xpSnapshot: 2000,
     levelSnapshot: 10,
     multiplierSnapshot: 1.25,
@@ -532,7 +532,7 @@ export const MOCK_PROGRESSION_HISTORY: ProgressionHistoryEntry[] = [
     timestamp: new Date('2025-10-10T14:20:00'),
     title: 'Nivel 20 alcanzado',
     description: 'Has subido al nivel 20. Sigue así.',
-    rank: 'Ajaw',
+    rank: MayaRank.AJAW,
     xpSnapshot: 5000,
     levelSnapshot: 20,
     multiplierSnapshot: 1.25,

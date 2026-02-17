@@ -37,8 +37,8 @@ import toast from 'react-hot-toast';
 import { profileAPI } from '@/services/api/teacher';
 
 // Components
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { TeacherLayout } from '../layouts/TeacherLayout';
 import { useUserPreferences } from '@shared/hooks/useUserPreferences';
 import { EnhancedCard } from '@shared/components/base/EnhancedCard';
 import { ColorfulCard } from '@shared/components/base/ColorfulCard';
@@ -409,16 +409,15 @@ export default function TeacherSettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader
-        user={user ?? undefined}
-        gamificationData={gamificationData}
-        onLogout={async () => {
-          await logout();
-        }}
-      />
-
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <TeacherLayout
+      user={user ?? undefined}
+      gamificationData={gamificationData}
+      organizationName={user?.organization?.name || 'Mi Institucion'}
+      onLogout={async () => {
+        await logout();
+      }}
+    >
+      <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
@@ -1552,6 +1551,6 @@ export default function TeacherSettingsPage() {
         {/* Bottom Spacing */}
         <div className="h-16" />
       </div>
-    </div>
+    </TeacherLayout>
   );
 }

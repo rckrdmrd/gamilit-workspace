@@ -139,7 +139,9 @@ export const useTeacherContent = (initialFilters: ContentFilters = {}): UseTeach
       setTotal(response.total);
     } catch (err: unknown) {
       const errorMessage =
-        err.response?.data?.message || err.message || 'Error al cargar contenidos';
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Error al cargar contenidos';
       setError(new Error(errorMessage));
       console.error('[useTeacherContent] Error fetching content:', err);
     } finally {
@@ -178,7 +180,10 @@ export const useTeacherContent = (initialFilters: ContentFilters = {}): UseTeach
 
       return newContent;
     } catch (err: unknown) {
-      const errorMessage = err.response?.data?.message || err.message || 'Error al crear contenido';
+      const errorMessage =
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Error al crear contenido';
       setError(new Error(errorMessage));
       throw err;
     }
@@ -201,7 +206,9 @@ export const useTeacherContent = (initialFilters: ContentFilters = {}): UseTeach
       return updatedContent;
     } catch (err: unknown) {
       const errorMessage =
-        err.response?.data?.message || err.message || 'Error al actualizar contenido';
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Error al actualizar contenido';
       setError(new Error(errorMessage));
       throw err;
     }
@@ -221,7 +228,9 @@ export const useTeacherContent = (initialFilters: ContentFilters = {}): UseTeach
       setTotal((prev) => Math.max(0, prev - 1));
     } catch (err: unknown) {
       const errorMessage =
-        err.response?.data?.message || err.message || 'Error al eliminar contenido';
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Error al eliminar contenido';
       setError(new Error(errorMessage));
       throw err;
     }
@@ -246,7 +255,9 @@ export const useTeacherContent = (initialFilters: ContentFilters = {}): UseTeach
       return clonedContent;
     } catch (err: unknown) {
       const errorMessage =
-        err.response?.data?.message || err.message || 'Error al clonar contenido';
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Error al clonar contenido';
       setError(new Error(errorMessage));
       throw err;
     }
@@ -268,7 +279,9 @@ export const useTeacherContent = (initialFilters: ContentFilters = {}): UseTeach
       return publishedContent;
     } catch (err: unknown) {
       const errorMessage =
-        err.response?.data?.message || err.message || 'Error al publicar contenido';
+        err instanceof Error
+          ? ((err as any).response?.data?.message || err.message)
+          : 'Error al publicar contenido';
       setError(new Error(errorMessage));
       throw err;
     }

@@ -34,6 +34,5 @@ export const mockCallToActionExercises: CallToActionData[] = [{
   minGoal: 50,
   maxGoal: 1000,
   goalStep: 50,
-  minSignatures: 0,
-  maxSignatures: 50
+  minCampaigns: 1
 }];

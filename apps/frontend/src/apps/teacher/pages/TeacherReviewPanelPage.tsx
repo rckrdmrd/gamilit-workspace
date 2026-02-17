@@ -186,8 +186,8 @@ export const TeacherReviewPanelPage: React.FC = () => {
     const query = filters.searchQuery.toLowerCase();
     return reviews.filter(
       (review) =>
-        review.student?.name.toLowerCase().includes(query) ||
-        review.exercise?.title.toLowerCase().includes(query) ||
+        review.student?.name?.toLowerCase()?.includes(query) ||
+        review.exercise?.title?.toLowerCase()?.includes(query) ||
         review.id.toLowerCase().includes(query),
     );
   }, [reviews, filters.searchQuery]);

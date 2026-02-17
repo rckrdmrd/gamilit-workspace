@@ -47,6 +47,8 @@ const CATEGORY_LABELS: Record<AchievementCategoryEnum, string> = {
   [AchievementCategoryEnum.SPECIAL]: 'Especial',
   [AchievementCategoryEnum.MASTERY]: 'Maestría',
   [AchievementCategoryEnum.EXPLORATION]: 'Exploración',
+  [AchievementCategoryEnum.COLLECTION]: 'Colección',
+  [AchievementCategoryEnum.HIDDEN]: 'Oculta',
 };
 
 /**

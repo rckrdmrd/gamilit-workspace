@@ -8,7 +8,6 @@
  * @see ET-LTI-001-integration.md
  */
 
-import React from 'react';
 import {
   CheckCircle,
   XCircle,

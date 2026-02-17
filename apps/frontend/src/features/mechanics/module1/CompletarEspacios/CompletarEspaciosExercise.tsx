@@ -54,8 +54,12 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
 
   // FE-055: Notify parent with progress AND user answers
   useEffect(() => {
-    // Auto-save progress
-    saveProgress(exercise.id, { blanks, hintsUsed, usedWords });
+    const progressBlanks = blanks.map((blank) => ({
+      id: blank.id,
+      userAnswer: blank.userAnswer ?? '',
+    }));
+
+    saveProgress(exercise.id, { blanks: progressBlanks, hintsUsed, usedWords });
 
     // Notify parent component of progress WITH user answers
     if (onProgressUpdate) {

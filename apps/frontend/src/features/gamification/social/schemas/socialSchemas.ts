@@ -100,7 +100,7 @@ export const leaderboardFilterSchema = z.object({
 });
 
 // Guild Schemas
-export const guildRoleSchema = z.enum(['leader', 'officer', 'member']);
+export const guildRoleSchema = z.enum(['owner', 'admin', 'member']);
 export const guildStatusSchema = z.enum(['active', 'recruiting', 'full', 'inactive']);
 export const challengeStatusSchema = z.enum(['active', 'completed', 'failed', 'upcoming']);
 

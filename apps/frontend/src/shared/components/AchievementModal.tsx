@@ -76,6 +76,7 @@ export const AchievementModal: React.FC<AchievementModalProps> = ({
   const isClaimed = status === 'claimed';
   const isInProgress = status === 'in_progress';
   const isHidden = achievement.isHidden && isLocked;
+  const conditionsList = Array.isArray(achievement.conditions) ? achievement.conditions : [];
 
   /**
    * Handle claim rewards
@@ -197,11 +198,11 @@ export const AchievementModal: React.FC<AchievementModalProps> = ({
         </div>
 
         {/* Progress Breakdown (if not hidden) */}
-        {!isHidden && achievement.conditions && achievement.conditions.length > 0 && (
+        {!isHidden && conditionsList.length > 0 && (
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Requisitos</h3>
             <div className="space-y-3">
-              {achievement.conditions.map((condition, index) => (
+              {conditionsList.map((condition, index) => (
                 <div key={index} className="bg-gray-50 rounded-lg p-3">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm text-gray-700">{condition.description}</span>

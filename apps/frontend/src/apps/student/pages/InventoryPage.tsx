@@ -574,7 +574,7 @@ export default function InventoryPage() {
                 </div>
               ) : activeTab === 'cosmetics' ? (
                 <UnderConstruction
-                  feature="Inventario de Cosméticos"
+                  title="Inventario de Cosméticos"
                   description="El sistema de items cosméticos estará disponible próximamente. Aquí podrás ver y gestionar tus avatares, bordes, efectos y otros elementos decorativos."
                   variant="section"
                 />

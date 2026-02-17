@@ -14,6 +14,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
+import type { UserPreferences } from '@shared/types';
 import {
   Settings as SettingsIcon,
   User,
@@ -94,14 +95,22 @@ export default function SettingsPage() {
   });
 
   // Preferences - Initialize from backend preferences
-  const [preferences, setPreferences] = useState({
-    theme: backendPreferences.theme || 'light',
-    language: backendPreferences.language || 'es',
+  const [preferences, setPreferences] = useState<{
+    theme: UserPreferences['theme'];
+    language: UserPreferences['language'];
+    emailNotifications: boolean;
+    pushNotifications: boolean;
+    achievementAlerts: boolean;
+    friendRequests: boolean;
+    guildInvites: boolean;
+  }>({
+    theme: (backendPreferences.theme as UserPreferences['theme']) || 'light',
+    language: (backendPreferences.language as UserPreferences['language']) || 'es',
     emailNotifications: backendPreferences.email_notifications ?? true,
     pushNotifications: backendPreferences.notifications_enabled ?? true,
-    achievementAlerts: backendPreferences.preferences?.achievementAlerts ?? true,
-    friendRequests: backendPreferences.preferences?.friendRequests ?? true,
-    guildInvites: backendPreferences.preferences?.guildInvites ?? true,
+    achievementAlerts: Boolean(backendPreferences.preferences?.achievementAlerts ?? true),
+    friendRequests: Boolean(backendPreferences.preferences?.friendRequests ?? true),
+    guildInvites: Boolean(backendPreferences.preferences?.guildInvites ?? true),
   });
 
   // Privacy Settings
@@ -116,14 +125,13 @@ export default function SettingsPage() {
   useEffect(() => {
     if (!preferencesLoading && backendPreferences) {
       setPreferences({
-        theme: backendPreferences.theme || 'light',
-        language: backendPreferences.language || 'es',
+        theme: (backendPreferences.theme as UserPreferences['theme']) || 'light',
+        language: (backendPreferences.language as UserPreferences['language']) || 'es',
         emailNotifications: backendPreferences.email_notifications ?? true,
         pushNotifications: backendPreferences.notifications_enabled ?? true,
-        achievementAlerts:
-          (backendPreferences.preferences?.achievementAlerts as boolean) ?? true,
-        friendRequests: (backendPreferences.preferences?.friendRequests as boolean) ?? true,
-        guildInvites: (backendPreferences.preferences?.guildInvites as boolean) ?? true,
+        achievementAlerts: Boolean(backendPreferences.preferences?.achievementAlerts ?? true),
+        friendRequests: Boolean(backendPreferences.preferences?.friendRequests ?? true),
+        guildInvites: Boolean(backendPreferences.preferences?.guildInvites ?? true),
       });
     }
   }, [backendPreferences, preferencesLoading]);
@@ -190,7 +198,11 @@ export default function SettingsPage() {
     } catch (error: unknown) {
       console.error('Error saving settings:', error);
       setSaveStatus('error');
-      toast.error(error.response?.data?.message || 'Error al guardar configuracion');
+      const errorMessage =
+        error instanceof Error
+          ? ((error as any).response?.data?.message || error.message)
+          : 'Error al guardar configuracion';
+      toast.error(errorMessage);
 
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
@@ -256,7 +268,11 @@ export default function SettingsPage() {
       }, 1000);
     } catch (error: unknown) {
       console.error('Error uploading avatar:', error);
-      toast.error(error.response?.data?.message || 'Error al subir avatar');
+      const errorMessage =
+        error instanceof Error
+          ? ((error as any).response?.data?.message || error.message)
+          : 'Error al subir avatar';
+      toast.error(errorMessage);
       setUploadProgress(0);
       setIsUploading(false);
     }
@@ -307,7 +323,11 @@ export default function SettingsPage() {
     } catch (error: unknown) {
       console.error('Error changing password:', error);
       setSaveStatus('error');
-      toast.error(error.response?.data?.message || 'Error al cambiar contrasena');
+      const errorMessage =
+        error instanceof Error
+          ? ((error as any).response?.data?.message || error.message)
+          : 'Error al cambiar contrasena';
+      toast.error(errorMessage);
 
       setTimeout(() => setSaveStatus('idle'), 3000);
     }
@@ -324,7 +344,11 @@ export default function SettingsPage() {
     } catch (error: unknown) {
       console.error('Error requesting verification:', error);
       setVerificationStatus('error');
-      toast.error(error.response?.data?.message || 'Error al enviar código de verificación');
+      const errorMessage =
+        error instanceof Error
+          ? ((error as any).response?.data?.message || error.message)
+          : 'Error al enviar código de verificación';
+      toast.error(errorMessage);
     }
   };
 
@@ -348,7 +372,11 @@ export default function SettingsPage() {
     } catch (error: unknown) {
       console.error('Error verifying email:', error);
       setVerificationStatus('error');
-      toast.error(error.response?.data?.message || 'Código de verificación inválido');
+      const errorMessage =
+        error instanceof Error
+          ? ((error as any).response?.data?.message || error.message)
+          : 'Código de verificación inválido';
+      toast.error(errorMessage);
     }
   };
 
@@ -358,7 +386,7 @@ export default function SettingsPage() {
       try {
         const status = await profileAPI.getEmailVerificationStatus();
         setIsEmailVerified(status.verified);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error checking verification status:', error);
       }
     };
@@ -778,7 +806,12 @@ export default function SettingsPage() {
                       </label>
                       <select
                         value={preferences.theme}
-                        onChange={(e) => setPreferences({ ...preferences, theme: e.target.value })}
+                        onChange={(e) =>
+                          setPreferences({
+                            ...preferences,
+                            theme: e.target.value as UserPreferences['theme'],
+                          })
+                        }
                         className="w-full cursor-pointer rounded-lg border-2 border-detective-orange/40 bg-white px-4
                           py-3 transition-all duration-200 focus:border-detective-orange
                           focus:outline-none focus:ring-2 focus:ring-detective-orange/20"
@@ -798,7 +831,10 @@ export default function SettingsPage() {
                       <select
                         value={preferences.language}
                         onChange={(e) =>
-                          setPreferences({ ...preferences, language: e.target.value })
+                          setPreferences({
+                            ...preferences,
+                            language: e.target.value as UserPreferences['language'],
+                          })
                         }
                         className="w-full cursor-pointer rounded-lg border-2 border-detective-orange/40 bg-white px-4
                           py-3 transition-all duration-200 focus:border-detective-orange

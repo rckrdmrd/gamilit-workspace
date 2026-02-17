@@ -64,7 +64,7 @@ export const causeMatchesSchema = z.record(z.string(), z.array(z.string()));
  * Answers structure for CausaEfecto exercise schema
  */
 export const causaEfectoAnswersSchema = z.object({
-  matches: causeMatchesSchema,
+  causes: causeMatchesSchema,
 });
 
 /**

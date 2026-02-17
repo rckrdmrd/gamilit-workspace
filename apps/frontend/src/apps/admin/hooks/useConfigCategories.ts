@@ -113,9 +113,14 @@ export function useConfigCategories(): UseConfigCategoriesResult {
         const result = await validateConfig(category, config);
 
         // Ensure result has expected structure
+        const rawErrors = Array.isArray(result?.errors) ? result.errors : [];
+        const errors = rawErrors.map((error) =>
+          typeof error === 'string' ? { field: '_general', message: error } : error,
+        );
+
         const normalizedResult: ConfigValidationResult = {
           valid: result?.valid ?? false,
-          errors: result?.errors || [],
+          errors,
           warnings: [],
         };
 

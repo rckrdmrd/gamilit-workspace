@@ -41,11 +41,16 @@ export function ExerciseSubmissionExample({
       console.error('Submission error:', err);
 
       // Handle specific error codes
-      if (err.code === 'RATE_LIMIT_EXCEEDED') {
-        setError(`Por favor espera ${err.retryAfter} segundos antes de intentar nuevamente.`);
-      } else if (err.code === 'SUBMISSION_TOO_FAST') {
+      const errorPayload =
+        err && typeof err === 'object' ? (err as { code?: string; retryAfter?: number }) : {};
+
+      if (errorPayload.code === 'RATE_LIMIT_EXCEEDED') {
+        setError(
+          `Por favor espera ${errorPayload.retryAfter ?? 0} segundos antes de intentar nuevamente.`,
+        );
+      } else if (errorPayload.code === 'SUBMISSION_TOO_FAST') {
         setError('Toma un poco más de tiempo para completar el ejercicio.');
-      } else if (err.code === 'SESSION_EXPIRED') {
+      } else if (errorPayload.code === 'SESSION_EXPIRED') {
         setError('Tu sesión ha expirado. Por favor recarga el ejercicio.');
       } else {
         setError('Error al enviar el ejercicio. Por favor intenta nuevamente.');

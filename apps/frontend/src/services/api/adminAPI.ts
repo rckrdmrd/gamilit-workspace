@@ -194,7 +194,7 @@ export async function getMayaRanks(): Promise<MayaRankConfig[]> {
 
     // Transform snake_case keys to camelCase if needed
     return ranks.map((rank) => {
-      const r = rank as Record<string, unknown>;
+      const r = rank as unknown as Record<string, unknown>;
       return {
         id: rank.id,
         name: rank.name,
@@ -431,21 +431,32 @@ export async function getPendingContent(
     // Backend: { data: T[], total, page, limit, total_pages }
     // Frontend: { items: T[], pagination: { page, totalPages, totalItems, limit } }
     if (backendData && typeof backendData === 'object') {
-      // If already has frontend format (items + pagination)
-      if (backendData.items && backendData.pagination) {
-        return backendData;
+      const record = backendData as Record<string, unknown>;
+
+      if (record.items && record.pagination) {
+        return backendData as unknown as PaginatedResponse<PendingContent>;
       }
 
-      // Transform from backend format
-      if (backendData.data !== undefined || Array.isArray(backendData)) {
-        const items = backendData.data || backendData;
+      if (record.data !== undefined || Array.isArray(backendData)) {
+        const itemsSource = record.data ?? (Array.isArray(backendData) ? backendData : []);
+        const items = Array.isArray(itemsSource) ? itemsSource : [];
+        const page = typeof record.page === 'number' ? record.page : 1;
+        const total = typeof record.total === 'number' ? record.total : items.length;
+        const limit = typeof record.limit === 'number' ? record.limit : 20;
+        const totalPages =
+          typeof record.total_pages === 'number'
+            ? record.total_pages
+            : limit > 0
+              ? Math.ceil(total / limit)
+              : 0;
+
         return {
-          items: Array.isArray(items) ? items : [],
+          items,
           pagination: {
-            page: backendData.page || 1,
-            totalPages: backendData.total_pages || Math.ceil((backendData.total || 0) / (backendData.limit || 20)),
-            totalItems: backendData.total || 0,
-            limit: backendData.limit || 20,
+            page,
+            totalPages,
+            totalItems: total,
+            limit,
           },
         };
       }
@@ -561,6 +572,29 @@ function safeToISOString(value: unknown): string | undefined {
  * Transforms backend user (snake_case) to frontend User type (camelCase)
  * CORR-003: Map last_sign_in_at → lastLogin and other snake_case fields
  */
+function normalizeUserRole(role: unknown): User['role'] {
+  if (role === 'student' || role === 'admin_teacher' || role === 'super_admin') {
+    return role;
+  }
+  if (role === 'teacher') {
+    return 'admin_teacher';
+  }
+  return 'student';
+}
+
+function normalizeUserStatus(status: unknown): User['status'] {
+  if (
+    status === 'active' ||
+    status === 'inactive' ||
+    status === 'suspended' ||
+    status === 'banned' ||
+    status === 'pending'
+  ) {
+    return status;
+  }
+  return 'active';
+}
+
 function transformUser(backendUser: Record<string, unknown>): User {
   // Get last login from either last_sign_in_at (snake_case) or lastLogin (camelCase)
   const rawLastLogin = backendUser.last_sign_in_at ?? backendUser.lastLogin;
@@ -570,8 +604,8 @@ function transformUser(backendUser: Record<string, unknown>): User {
     name:
       (backendUser.full_name as string) || (backendUser.display_name as string) || (backendUser.name as string) || (backendUser.email as string),
     email: backendUser.email as string,
-    role: backendUser.role as string,
-    status: backendUser.status as string,
+    role: normalizeUserRole(backendUser.role),
+    status: normalizeUserStatus(backendUser.status),
     organization: (backendUser.organization_name as string) || (backendUser.organization as string),
     organizationId: (backendUser.organization_id as string) || (backendUser.organizationId as string),
     joinDate: (backendUser.created_at as string) || (backendUser.join_date as string) || (backendUser.joinDate as string),
@@ -630,15 +664,18 @@ export async function getUsers(filters?: UserFilters): Promise<PaginatedResponse
         },
       };
     } else if (backendData && typeof backendData === 'object') {
+      const record = backendData as Record<string, unknown>;
       // Backend returns object with data property
       // ✅ CORR-003: Apply transformUser to each user
       transformed = {
-        items: (backendData.data || []).map(transformUser),
+        items: (Array.isArray(record.data) ? record.data : []).map(
+          (user) => transformUser(user as Record<string, unknown>),
+        ),
         pagination: {
-          page: backendData.page || 1,
-          totalPages: backendData.total_pages || 0,
-          totalItems: backendData.total || 0,
-          limit: backendData.limit || 20,
+          page: typeof record.page === 'number' ? record.page : 1,
+          totalPages: typeof record.total_pages === 'number' ? record.total_pages : 0,
+          totalItems: typeof record.total === 'number' ? record.total : 0,
+          limit: typeof record.limit === 'number' ? record.limit : 20,
         },
       };
     } else {
@@ -974,26 +1011,30 @@ export async function getAuditLogs(
     );
 
     const backendData = response.data;
+    const record = backendData as Record<string, unknown>;
+    const rawLogs = Array.isArray(record.data) ? record.data : [];
 
-    // Transform backend response (snake_case) to frontend format (camelCase)
-    const logs = ((backendData.data || []) as Record<string, unknown>[]).map((log: Record<string, unknown>) => ({
-      id: log.id,
-      userId: log.user_id,
-      email: log.email,
-      ipAddress: log.ip_address,
-      userAgent: log.user_agent,
-      success: log.success,
-      failureReason: log.failure_reason,
-      attemptedAt: log.attempted_at,
-    }));
+    const logs = rawLogs.map((log) => {
+      const logRecord = log as Record<string, unknown>;
+      return {
+        id: String(logRecord.id ?? ''),
+        userId: (logRecord.user_id as string) ?? null,
+        email: String(logRecord.email ?? ''),
+        ipAddress: (logRecord.ip_address as string) ?? null,
+        userAgent: (logRecord.user_agent as string) ?? null,
+        success: Boolean(logRecord.success),
+        failureReason: (logRecord.failure_reason as string) ?? null,
+        attemptedAt: String(logRecord.attempted_at ?? ''),
+      };
+    });
 
     return {
       items: logs,
       pagination: {
-        page: backendData.page || 1,
-        totalPages: backendData.total_pages || 0,
-        totalItems: backendData.total || 0,
-        limit: backendData.limit || 50,
+        page: typeof record.page === 'number' ? record.page : 1,
+        totalPages: typeof record.total_pages === 'number' ? record.total_pages : 0,
+        totalItems: typeof record.total === 'number' ? record.total : 0,
+        limit: typeof record.limit === 'number' ? record.limit : 50,
       },
     };
   } catch (error) {
@@ -1146,13 +1187,15 @@ export async function getReports(filters?: ReportListFilters): Promise<Paginated
 
     // Backend returns PaginatedReportsDto, transform to PaginatedResponse
     const backendData = response.data;
+    const record = backendData as Record<string, unknown>;
+    const items = Array.isArray(record.data) ? record.data : [];
     return {
-      items: backendData.data || [],
+      items: items as Report[],
       pagination: {
-        page: backendData.page || 1,
-        totalPages: backendData.total_pages || 0,
-        totalItems: backendData.total || 0,
-        limit: backendData.limit || 20,
+        page: typeof record.page === 'number' ? record.page : 1,
+        totalPages: typeof record.total_pages === 'number' ? record.total_pages : 0,
+        totalItems: typeof record.total === 'number' ? record.total : 0,
+        limit: typeof record.limit === 'number' ? record.limit : 20,
       },
     };
   } catch (error) {
@@ -1218,15 +1261,16 @@ export async function listAlerts(filters?: AlertFilters): Promise<PaginatedRespo
     const response = await apiClient.get<Record<string, unknown>>(API_ENDPOINTS.admin.alerts, { params: filters });
 
     const backendData = response.data;
+    const record = backendData as Record<string, unknown>;
+    const items = Array.isArray(record.data) ? record.data : [];
 
-    // Transform backend response to PaginatedResponse
     return {
-      items: backendData.data || [],
+      items: items as Alert[],
       pagination: {
-        page: backendData.page || 1,
-        totalPages: backendData.total_pages || 0,
-        totalItems: backendData.total || 0,
-        limit: backendData.limit || 20,
+        page: typeof record.page === 'number' ? record.page : 1,
+        totalPages: typeof record.total_pages === 'number' ? record.total_pages : 0,
+        totalItems: typeof record.total === 'number' ? record.total : 0,
+        limit: typeof record.limit === 'number' ? record.limit : 20,
       },
     };
   } catch (error) {

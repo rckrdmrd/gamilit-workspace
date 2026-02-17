@@ -103,9 +103,10 @@ export const subscribeToPush = async (): Promise<string | null> => {
     }
 
     // Subscribe to push
+    const applicationServerKey = Uint8Array.from(urlBase64ToUint8Array(vapidKey));
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(vapidKey),
+      applicationServerKey,
     });
 
     console.log('[WebPush] Subscription obtained');

@@ -52,6 +52,7 @@ import {
   Wrench,
   School,
   ClipboardList,
+  Bell,
 } from 'lucide-react';
 import { cn } from '@shared/utils';
 
@@ -176,6 +177,12 @@ const getNavigationItems = (
       icon: 'ShoppingBag',
     },
     {
+      id: 'learning',
+      label: 'Aprendizaje',
+      path: '/learning',
+      icon: 'BookOpen',
+    },
+    {
       id: 'profile',
       label: 'Perfil',
       path: '/profile',
@@ -256,6 +263,30 @@ const getNavigationItems = (
       path: '/teacher/settings',
       icon: 'Settings',
     },
+    {
+      id: 'communication',
+      label: 'Comunicacion',
+      path: '/teacher/communication',
+      icon: 'MessageSquare',
+    },
+    {
+      id: 'content',
+      label: 'Contenido',
+      path: '/teacher/content',
+      icon: 'BookOpen',
+    },
+    {
+      id: 'notifications',
+      label: 'Notificaciones',
+      path: '/teacher/notifications',
+      icon: 'Bell',
+    },
+    {
+      id: 'students',
+      label: 'Estudiantes',
+      path: '/teacher/students',
+      icon: 'Users',
+    },
   ];
 
   const adminItems = [
@@ -282,6 +313,12 @@ const getNavigationItems = (
       label: 'Contenido *',
       path: '/admin/content',
       icon: 'BookOpen',
+    },
+    {
+      id: 'exercises',
+      label: 'Crear Ejercicio',
+      path: '/admin/exercises/create',
+      icon: 'ClipboardList',
     },
     {
       id: 'gamification',
@@ -369,6 +406,7 @@ const IconMap = {
   Wrench,
   School,
   ClipboardList,
+  Bell,
 };
 
 /**

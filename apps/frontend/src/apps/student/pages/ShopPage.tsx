@@ -186,7 +186,10 @@ export default function ShopPage() {
             isOwned,
             isPurchasable,
             metadata: {
-              effectDescription: item.effect_data?.description,
+              effectDescription:
+                typeof item.effect_data?.description === 'string'
+                  ? item.effect_data.description
+                  : undefined,
               duration: item.duration_days,
               stackable: !item.is_consumable,
               tradeable: false,
@@ -441,12 +444,13 @@ export default function ShopPage() {
             </div>
           </DetectiveCard>
         ) : categories.find((c) => c.value === selectedCategory)?.disabled ? (
-          <UnderConstruction
-            feature={`${categories.find((c) => c.value === selectedCategory)?.label} Shop`}
-            description="Esta categoría de la tienda estará disponible próximamente. Por ahora, puedes explorar otras categorías disponibles."
-            variant="section"
-            className="col-span-full"
-          />
+          <div className="col-span-full">
+            <UnderConstruction
+              title={`${categories.find((c) => c.value === selectedCategory)?.label} Shop`}
+              description="Esta categoría de la tienda estará disponible próximamente. Por ahora, puedes explorar otras categorías disponibles."
+              variant="section"
+            />
+          </div>
         ) : filteredItems.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredItems.map((item, index) => (

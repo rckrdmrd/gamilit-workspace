@@ -37,7 +37,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [_isSubmitting, setIsSubmitting] = useState(false);
   const [startTime] = useState(new Date());
-  const [hintsUsed, setHintsUsed] = useState(0);
+  const [hintsUsed] = useState(0);
 
   const statements = exercise.content?.statements || [];
   const currentStatement = statements[currentIndex];
@@ -165,11 +165,6 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     }
     return false;
   }, [currentStatement, currentClassification, currentVerdict, currentJustification, currentIndex]);
-
-  // Use hint handler (for future hint system)
-  const _useHint = useCallback(() => {
-    setHintsUsed((prev) => prev + 1);
-  }, []);
 
   // Navigation
   const handleNext = useCallback(() => {

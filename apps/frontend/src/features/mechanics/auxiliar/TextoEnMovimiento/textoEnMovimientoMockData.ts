@@ -13,7 +13,7 @@ export const mockTextoEnMovimientoExercises: TextoEnMovimientoData[] = [{
     { id: 'h2', text: 'Ajusta la duración de cada texto para crear un ritmo agradable', cost: 15 },
     { id: 'h3', text: 'Usa colores que resalten sobre el fondo oscuro', cost: 10 }
   ],
-  animations: [
+  availableAnimations: [
     {
       id: 'fadeIn',
       name: 'Aparecer',
@@ -58,9 +58,6 @@ export const mockTextoEnMovimientoExercises: TextoEnMovimientoData[] = [{
   availableColors: ['#f97316', '#1e3a8a', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'],
   minDuration: 0.5,
   maxDuration: 5,
-  durationStep: 0.5,
   minFontSize: 16,
   maxFontSize: 96,
-  fontSizeStep: 4,
-  defaultText: 'Marie Curie'
 }];

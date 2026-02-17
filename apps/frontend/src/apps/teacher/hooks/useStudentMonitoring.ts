@@ -153,7 +153,7 @@ export function useStudentMonitoring(
         // El backend devuelve user_id pero el frontend espera id para React keys
         // FIX-2026-01-25: Añadir valores por defecto para campos que pueden ser null/undefined
         const mappedStudents: StudentMonitoring[] = (response.data || []).map((student, index) => {
-          const studentRecord = student as Record<string, unknown>;
+          const studentRecord = student as unknown as Record<string, unknown>;
           const userId = (studentRecord.user_id as string) || student.id;
 
           if (!userId) {

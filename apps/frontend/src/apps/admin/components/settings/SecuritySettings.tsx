@@ -58,35 +58,46 @@ export const SecuritySettings: React.FC = () => {
   // Reset form when config loads
   useEffect(() => {
     if (config) {
+      const minPasswordLength =
+        typeof config.min_password_length === 'number' ? config.min_password_length : 8;
+      const sessionTimeoutMinutes =
+        typeof config.session_timeout_minutes === 'number' ? config.session_timeout_minutes : 60;
+      const maxConcurrentSessions =
+        typeof config.max_concurrent_sessions === 'number' ? config.max_concurrent_sessions : 3;
+      const maxLoginAttempts =
+        typeof config.max_login_attempts === 'number' ? config.max_login_attempts : 5;
+      const lockoutDurationMinutes =
+        typeof config.lockout_duration_minutes === 'number' ? config.lockout_duration_minutes : 30;
+
       reset({
         // Password Policies
-        min_password_length: config.min_password_length ?? 8,
-        require_uppercase: config.require_uppercase ?? true,
-        require_numbers: config.require_numbers ?? true,
-        require_special_chars: config.require_special_chars ?? false,
+        min_password_length: minPasswordLength,
+        require_uppercase: Boolean(config.require_uppercase ?? true),
+        require_numbers: Boolean(config.require_numbers ?? true),
+        require_special_chars: Boolean(config.require_special_chars ?? false),
 
         // Session Settings
-        session_timeout_minutes: config.session_timeout_minutes ?? 60,
-        max_concurrent_sessions: config.max_concurrent_sessions ?? 3,
-        force_logout_on_password_change: config.force_logout_on_password_change ?? true,
+        session_timeout_minutes: sessionTimeoutMinutes,
+        max_concurrent_sessions: maxConcurrentSessions,
+        force_logout_on_password_change: Boolean(config.force_logout_on_password_change ?? true),
 
         // Two-Factor Authentication
-        require_2fa_admins: config.require_2fa_admins ?? false,
-        require_2fa_teachers: config.require_2fa_teachers ?? false,
-        enable_2fa_email: config.enable_2fa_email ?? true,
-        enable_2fa_authenticator: config.enable_2fa_authenticator ?? true,
+        require_2fa_admins: Boolean(config.require_2fa_admins ?? false),
+        require_2fa_teachers: Boolean(config.require_2fa_teachers ?? false),
+        enable_2fa_email: Boolean(config.enable_2fa_email ?? true),
+        enable_2fa_authenticator: Boolean(config.enable_2fa_authenticator ?? true),
 
         // Login Security
-        max_login_attempts: config.max_login_attempts ?? 5,
-        lockout_duration_minutes: config.lockout_duration_minutes ?? 30,
-        enable_captcha_after_failed: config.enable_captcha_after_failed ?? true,
+        max_login_attempts: maxLoginAttempts,
+        lockout_duration_minutes: lockoutDurationMinutes,
+        enable_captcha_after_failed: Boolean(config.enable_captcha_after_failed ?? true),
       });
     }
   }, [config, reset]);
 
   const onSubmit = async (data: SecuritySettingsForm) => {
     try {
-      await updateConfig(data);
+      await updateConfig(data as unknown as Record<string, unknown>);
       toast.success('Configuración de seguridad actualizada exitosamente');
     } catch (_error) {
       toast.error('Error al actualizar la configuración de seguridad');

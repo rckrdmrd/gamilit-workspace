@@ -8,7 +8,7 @@
  * @see ET-LTI-001-integration.md
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Copy, Check, RefreshCw, AlertTriangle, ExternalLink, Key } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';

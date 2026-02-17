@@ -127,6 +127,10 @@ export function AlertCard({
 
   // Extract metrics for display (backend uses 'metrics' JSONB field)
   const metrics = alert.metrics as Record<string, unknown> | null;
+  const moduleName =
+    metrics && typeof metrics.module_name === 'string' ? metrics.module_name : undefined;
+  const exerciseName =
+    metrics && typeof metrics.exercise_name === 'string' ? metrics.exercise_name : undefined;
 
   return (
     <DetectiveCard hoverable={false} className={`border-l-4 ${config.borderColor}`}>
@@ -180,14 +184,14 @@ export function AlertCard({
                   <strong>Promedio actual:</strong> {Number(metrics.average_score).toFixed(0)}%
                 </p>
               )}
-              {metrics.module_name && (
+              {moduleName && (
                 <p>
-                  <strong>Módulo:</strong> {String(metrics.module_name)}
+                  <strong>Módulo:</strong> {moduleName}
                 </p>
               )}
-              {metrics.exercise_name && (
+              {exerciseName && (
                 <p>
-                  <strong>Ejercicio:</strong> {String(metrics.exercise_name)}
+                  <strong>Ejercicio:</strong> {exerciseName}
                 </p>
               )}
               {metrics.failure_count !== undefined && (

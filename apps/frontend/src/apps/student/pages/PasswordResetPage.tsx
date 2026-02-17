@@ -98,7 +98,7 @@ export default function PasswordResetPage() {
             <p className="text-detective-body mb-6 text-detective-text-secondary">
               El enlace de recuperación es inválido o ha expirado.
             </p>
-            <DetectiveButton variant="primary" onClick={() => navigate('/password-recovery')}>
+            <DetectiveButton variant="primary" onClick={() => navigate('/forgot-password')}>
               Solicitar Nuevo Enlace
             </DetectiveButton>
           </div>

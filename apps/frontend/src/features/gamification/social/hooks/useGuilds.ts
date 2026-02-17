@@ -59,7 +59,7 @@ export const useGuilds = () => {
   };
 
   const getGuildLeaders = () => {
-    return guildMembers.filter((m) => m.role === 'leader' || m.role === 'officer');
+    return guildMembers.filter((m) => m.role === 'owner' || m.role === 'admin');
   };
 
   const canJoinGuild = (guildId: string, userLevel: number = 1, _userRank: string = 'Nacom') => {

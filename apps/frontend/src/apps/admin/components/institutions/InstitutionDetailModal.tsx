@@ -99,7 +99,7 @@ export const InstitutionDetailModal: React.FC<InstitutionDetailModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="" size="large">
+    <Modal isOpen={isOpen} onClose={onClose} title="" size="xl">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-start justify-between border-b border-gray-700 pb-4">
@@ -150,7 +150,7 @@ export const InstitutionDetailModal: React.FC<InstitutionDetailModalProps> = ({
           <h3 className="mb-4 text-lg font-semibold text-detective-text">
             Estadísticas de Uso
           </h3>
-          <InstitutionStats stats={stats} loading={loadingStats || loading} />
+          <InstitutionStats stats={stats ?? null} loading={loadingStats || loading} />
         </div>
 
         {/* Información General */}

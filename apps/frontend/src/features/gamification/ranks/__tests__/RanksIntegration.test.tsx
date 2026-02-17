@@ -24,6 +24,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useRanksStore } from '../store/ranksStore';
 import type { UserRankProgress, MultiplierSourceType } from '../types/ranksTypes';
+import { MayaRank } from '../types/ranksTypes';
 import '../../__tests__/helpers/gamificationMockHelpers';
 
 // Mock API
@@ -56,7 +57,7 @@ vi.mock('@/services/api/apiClient', () => ({
         return Promise.resolve({
           data: {
             user_id: 'test-user-id',
-            current_rank: 'Nacom',
+    current_rank: MayaRank.NACOM,
             next_rank: "Ah K'in",
             level: 1,
             total_xp: 0,
@@ -80,7 +81,7 @@ vi.mock('@/services/api/apiClient', () => ({
             level: 1,
             total_xp: 0,
             xp_to_next_level: 100,
-            current_rank: 'Nacom',
+            current_rank: MayaRank.NACOM,
             rank_progress: 0,
             ml_coins: 0,
             ml_coins_earned_total: 0,
@@ -97,7 +98,7 @@ vi.mock('@/services/api/apiClient', () => ({
         total_xp: 50,
         current_xp: 50,
         xp_to_next_level: 100,
-        current_rank: 'Nacom',
+        current_rank: MayaRank.NACOM,
         level: 1,
         leveled_up: false,
         ranked_up: false,
@@ -126,12 +127,12 @@ const RankDisplay: React.FC = () => {
 
 describe('Ranks Integration Tests', () => {
   const initialProgress: UserRankProgress = {
-    currentRank: 'Nacom',
+    currentRank: MayaRank.NACOM,
     currentLevel: 1,
     currentXP: 0,
     totalXP: 0,
     xpToNextLevel: 100,
-    nextRank: 'Ajaw',
+    nextRank: MayaRank.AJAW,
     prestigeLevel: 0,
     multiplier: 1.0,
     mlCoinsEarned: 0,
@@ -302,7 +303,7 @@ describe('Ranks Integration Tests', () => {
         userProgress: {
           ...initialProgress,
           currentLevel: 10,
-          currentRank: 'Nacom',
+          currentRank: MayaRank.NACOM,
         },
       });
 
@@ -318,7 +319,7 @@ describe('Ranks Integration Tests', () => {
         userProgress: {
           ...initialProgress,
           currentLevel: 10,
-          currentRank: 'Nacom',
+          currentRank: MayaRank.NACOM,
         },
       });
 
@@ -327,7 +328,7 @@ describe('Ranks Integration Tests', () => {
 
       const state = useRanksStore.getState();
       // After rank up, should progress to next rank
-      expect(state.userProgress.currentRank).not.toBe('Nacom');
+      expect(state.userProgress.currentRank).not.toBe(MayaRank.NACOM);
     });
 
     it('should add rank up to progression history', () => {
@@ -372,7 +373,7 @@ describe('Ranks Integration Tests', () => {
       useRanksStore.setState({
         userProgress: {
           ...initialProgress,
-          currentRank: "K'uk'ulkan", // Max rank
+          currentRank: MayaRank.KUKULKAN, // Max rank
           currentLevel: 100,
         },
       });
@@ -387,7 +388,7 @@ describe('Ranks Integration Tests', () => {
       useRanksStore.setState({
         userProgress: {
           ...initialProgress,
-          currentRank: "K'uk'ulkan",
+          currentRank: MayaRank.KUKULKAN,
           currentLevel: 100,
           currentXP: 5000,
           totalXP: 10000,
@@ -411,7 +412,7 @@ describe('Ranks Integration Tests', () => {
       // After prestige, should reset to starting rank
       expect(state.userProgress.prestigeLevel).toBe(1);
       expect(state.userProgress.currentLevel).toBe(1);
-      expect(state.userProgress.currentRank).toBe('Nacom');
+      expect(state.userProgress.currentRank).toBe(MayaRank.NACOM);
       // totalXP should be kept
       expect(state.userProgress.totalXP).toBe(10000);
     });
@@ -420,7 +421,7 @@ describe('Ranks Integration Tests', () => {
       useRanksStore.setState({
         userProgress: {
           ...initialProgress,
-          currentRank: "K'uk'ulkan",
+          currentRank: MayaRank.KUKULKAN,
           currentLevel: 100,
           prestigeLevel: 0,
         },
@@ -531,7 +532,7 @@ describe('Ranks Integration Tests', () => {
         timestamp: new Date(),
         title: 'Rank Up',
         description: 'Ranked up from Nacom to Ajaw',
-        rank: 'Nacom',
+        rank: MayaRank.NACOM,
         xpSnapshot: 100,
         levelSnapshot: 1,
         multiplierSnapshot: 1.0,
@@ -553,7 +554,7 @@ describe('Ranks Integration Tests', () => {
           timestamp: new Date(),
           title: `Level ${i + 1}`,
           description: `Level ${i + 1} achieved`,
-          rank: 'Nacom',
+          rank: MayaRank.NACOM,
           xpSnapshot: 100 * i,
           levelSnapshot: i + 1,
           multiplierSnapshot: 1.0,
@@ -574,7 +575,7 @@ describe('Ranks Integration Tests', () => {
       useRanksStore.setState({
         userProgress: {
           ...initialProgress,
-          currentRank: 'Ajaw',
+          currentRank: MayaRank.AJAW,
           currentLevel: 5,
           currentXP: 250,
         },
@@ -582,7 +583,7 @@ describe('Ranks Integration Tests', () => {
 
       render(<RankDisplay />);
 
-      expect(screen.getByTestId('current-rank')).toHaveTextContent('Ajaw');
+      expect(screen.getByTestId('current-rank')).toHaveTextContent(MayaRank.AJAW);
       expect(screen.getByTestId('current-level')).toHaveTextContent('5');
       expect(screen.getByTestId('current-xp')).toHaveTextContent('250');
     });

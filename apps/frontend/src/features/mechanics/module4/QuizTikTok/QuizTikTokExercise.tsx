@@ -204,8 +204,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   // Auto-save every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      const currentState: ExerciseState = { currentIndex, answers, questionTimes, questionScores };
-      saveProgress(exerciseId, currentState);
+      saveProgress(exerciseId, { data: { currentIndex, answers, questionTimes, questionScores } });
     }, 30000);
 
     return () => clearInterval(interval);
@@ -219,7 +218,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   // Update progress
 
   useEffect(() => {
-    const _progress = calculateProgress();
+    const progress = calculateProgress();
     const score = calculateCurrentScore();
     setCurrentScore(score);
 
@@ -239,6 +238,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
         questionScores,
         questionTimes,
         currentQuestion: currentIndex,
+        progressPercent: Math.round(progress),
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -384,8 +384,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
 
   // Handle save
   const handleSave = () => {
-    const currentState: ExerciseState = { currentIndex, answers, questionTimes, questionScores };
-    saveProgress(exerciseId, currentState);
+    saveProgress(exerciseId, { data: { currentIndex, answers, questionTimes, questionScores } });
 
     setFeedback({
       type: 'info',

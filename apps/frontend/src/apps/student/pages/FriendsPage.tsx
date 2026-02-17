@@ -358,7 +358,7 @@ export default function FriendsPage() {
                     <Users className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary/30" />
                     <h3 className="mb-2 text-xl font-bold text-detective-text">No Friends Found</h3>
                     <p className="mb-4 text-detective-text-secondary">
-                      {searchQuery
+                      {userSearchQuery
                         ? 'Try a different search term'
                         : 'Start connecting with fellow detectives!'}
                     </p>

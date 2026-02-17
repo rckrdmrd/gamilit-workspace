@@ -135,6 +135,18 @@ export const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
     <div className="space-y-3">
       {activities.map((activity) => {
         const { icon: Icon, color, bgColor, borderColor } = getActivityDisplay(activity.action);
+        const metadata = activity.metadata as Record<string, unknown> | undefined;
+        const xpEarned = typeof metadata?.xp_earned === 'number' ? metadata.xp_earned : undefined;
+        const mlCoinsEarned =
+          typeof metadata?.ml_coins_earned === 'number' ? metadata.ml_coins_earned : undefined;
+        const score = typeof metadata?.score === 'number' ? metadata.score : undefined;
+        const maxScore = typeof metadata?.max_score === 'number' ? metadata.max_score : undefined;
+        const difficulty =
+          typeof metadata?.difficulty === 'string' ? metadata.difficulty : undefined;
+        const durationSeconds =
+          typeof metadata?.duration_seconds === 'number'
+            ? metadata.duration_seconds
+            : undefined;
 
         return (
           <div
@@ -158,32 +170,31 @@ export const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
               <p className="font-medium leading-snug text-gray-900">{activity.description}</p>
 
               {/* Metadata */}
-              {activity.metadata && (
+              {metadata && (
                 <div className="mt-2 flex items-center gap-3 text-sm">
-                  {activity.metadata.xp_earned && (
+                  {xpEarned !== undefined && (
                     <span className="font-medium text-purple-600">
-                      +{activity.metadata.xp_earned} XP
+                      +{xpEarned} XP
                     </span>
                   )}
-                  {activity.metadata.ml_coins_earned && (
+                  {mlCoinsEarned !== undefined && (
                     <span className="font-medium text-amber-600">
-                      +{activity.metadata.ml_coins_earned} ML
+                      +{mlCoinsEarned} ML
                     </span>
                   )}
-                  {activity.metadata.score !== undefined &&
-                    activity.metadata.max_score !== undefined && (
+                  {score !== undefined && maxScore !== undefined && (
                       <span className="text-gray-600">
-                        {activity.metadata.score}/{activity.metadata.max_score} pts
+                        {score}/{maxScore} pts
                       </span>
                     )}
-                  {activity.metadata.difficulty && (
+                  {difficulty && (
                     <span className="capitalize text-gray-500">
-                      {activity.metadata.difficulty.replace('_', ' ')}
+                      {difficulty.replace('_', ' ')}
                     </span>
                   )}
-                  {activity.metadata.duration_seconds && (
+                  {durationSeconds !== undefined && (
                     <span className="text-gray-500">
-                      {Math.ceil(activity.metadata.duration_seconds / 60)} min
+                      {Math.ceil(durationSeconds / 60)} min
                     </span>
                   )}
                 </div>

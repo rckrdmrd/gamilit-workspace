@@ -16,6 +16,7 @@ import type {
   PrestigeProgress,
   XPSource,
 } from '../types/ranksTypes';
+import { MayaRank } from '../types/ranksTypes';
 import {
   MAYA_RANKS,
   MOCK_USER_NACOM,
@@ -335,7 +336,7 @@ export const useRanksStore = create<RanksState>()(
 
         // Reset to NACOM with prestige bonuses
         const prestigedProgress: UserRankProgress = {
-          currentRank: 'Nacom',
+          currentRank: MayaRank.NACOM,
           currentLevel: 1,
           currentXP: 0,
           xpToNextLevel: calculateXPForLevel(1),
@@ -347,7 +348,7 @@ export const useRanksStore = create<RanksState>()(
           activityStreak: currentProgress.activityStreak, // Keep streak
           lastActivityDate: new Date(),
           canRankUp: false,
-          nextRank: 'Ajaw',
+          nextRank: MayaRank.AJAW,
           canPrestige: false,
         };
 
@@ -369,7 +370,7 @@ export const useRanksStore = create<RanksState>()(
           timestamp: new Date(),
           title: `Prestige Nivel ${newPrestigeLevel}`,
           description: `¡Has prestigiado! Ahora tienes un multiplicador permanente de +${(prestigeBonus.bonusMultiplier * 100).toFixed(0)}%.`,
-          rank: 'Nacom',
+          rank: MayaRank.NACOM,
           xpSnapshot: currentProgress.totalXP,
           levelSnapshot: 1,
           multiplierSnapshot: 1.0 + prestigeBonus.bonusMultiplier,

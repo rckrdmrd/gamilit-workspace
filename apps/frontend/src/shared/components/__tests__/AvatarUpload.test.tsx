@@ -9,7 +9,6 @@
  * - Callbacks
  */
 
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { AvatarUpload } from '../AvatarUpload';
 import { profileAPI } from '@/services/api/profileAPI';
@@ -151,8 +150,8 @@ describe('AvatarUpload', () => {
   describe('File Validation', () => {
     it('accepts valid image files (JPEG)', async () => {
       const mockUploadAvatar = vi.spyOn(profileAPI, 'uploadAvatar').mockResolvedValue({
-        avatar_url: 'https://example.com/new-avatar.jpg',
-        updated_at: new Date().toISOString(),
+        avatarUrl: 'https://example.com/new-avatar.jpg',
+        updatedAt: new Date(),
       });
 
       render(<AvatarUpload {...defaultProps} />);
@@ -169,8 +168,8 @@ describe('AvatarUpload', () => {
 
     it('accepts valid image files (PNG)', async () => {
       const mockUploadAvatar = vi.spyOn(profileAPI, 'uploadAvatar').mockResolvedValue({
-        avatar_url: 'https://example.com/new-avatar.png',
-        updated_at: new Date().toISOString(),
+        avatarUrl: 'https://example.com/new-avatar.png',
+        updatedAt: new Date(),
       });
 
       render(<AvatarUpload {...defaultProps} />);
@@ -251,8 +250,8 @@ describe('AvatarUpload', () => {
     it('uploads file successfully and calls onUploadComplete', async () => {
       const newAvatarUrl = 'https://example.com/new-avatar.jpg';
       const mockUploadAvatar = vi.spyOn(profileAPI, 'uploadAvatar').mockResolvedValue({
-        avatar_url: newAvatarUrl,
-        updated_at: new Date().toISOString(),
+        avatarUrl: newAvatarUrl,
+        updatedAt: new Date(),
       });
 
       const onComplete = vi.fn();

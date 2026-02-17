@@ -40,7 +40,7 @@ export const AcknowledgeAlertModal: React.FC<AcknowledgeAlertModalProps> = ({
       setNote('');
       onClose();
     } catch (err: unknown) {
-      setError(err?.message || 'Error al reconocer la alerta');
+      setError(err instanceof Error ? err.message : 'Error al reconocer la alerta');
     } finally {
       setIsSubmitting(false);
     }

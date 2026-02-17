@@ -83,7 +83,11 @@ export default function TeacherAssignments() {
       setIsWizardOpen(false);
     } catch (err: unknown) {
       console.error('[TeacherAssignments] Error creating assignment:', err);
-      showToast({ type: 'error', message: 'Error al crear la asignación. Por favor intenta nuevamente.' });
+      showToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Error al crear la asignación. Por favor intenta nuevamente.',
+      });
     }
   };
 
@@ -99,7 +103,11 @@ export default function TeacherAssignments() {
       setIsSubmissionsModalOpen(true);
     } catch (err: unknown) {
       console.error('[TeacherAssignments] Error fetching submissions:', err);
-      showToast({ type: 'error', message: 'Error al cargar las entregas. Por favor intenta nuevamente.' });
+      showToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Error al cargar las entregas. Por favor intenta nuevamente.',
+      });
     } finally {
       setSubmissionsLoading(false);
     }
@@ -111,7 +119,8 @@ export default function TeacherAssignments() {
   const handleGradeSubmission = (submission: Submission) => {
     // Calculate maxScore from assignment exercises
     const maxScore =
-      selectedAssignment?.exercises?.reduce((sum, ex) => sum + (ex.points || 10), 0) || 100;
+      selectedAssignment?.custom_points ??
+      ((selectedAssignment?.exercise_ids?.length ?? 0) * 10 || 100);
 
     // Convert Submission to DashboardSubmission format
     const dashboardSubmission: DashboardSubmission = {
@@ -145,7 +154,6 @@ export default function TeacherAssignments() {
       await gradeSubmissionAPI(data.submissionId, {
         feedback: data.feedback,
         score: data.score,
-        max_score: selectedSubmission.maxScore,
         grade: data.grade,
       });
 
@@ -167,10 +175,14 @@ export default function TeacherAssignments() {
   const handleSendReminder = async (assignmentId: string) => {
     try {
       const result = await sendReminderAPI(assignmentId);
-      showToast({ type: 'success', message: result.message });
+      showToast({ type: 'success', title: 'Listo', message: result.message });
     } catch (err: unknown) {
       console.error('[TeacherAssignments] Error sending reminder:', err);
-      showToast({ type: 'error', message: 'Error al enviar recordatorio. Por favor intenta nuevamente.' });
+      showToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Error al enviar recordatorio. Por favor intenta nuevamente.',
+      });
     }
   };
 
@@ -197,7 +209,7 @@ export default function TeacherAssignments() {
 
         {/* No Classrooms State */}
         {!classroomsLoading && classrooms.length === 0 && (
-          <DetectiveCard variant="warning">
+          <DetectiveCard variant="info">
             <div className="py-16 text-center">
               <AlertCircle className="mx-auto mb-4 h-20 w-20 text-yellow-500 opacity-50" />
               <h3 className="mb-2 text-xl font-bold text-detective-text">

@@ -50,6 +50,7 @@ export const useInventory = () => {
       guild: [],
       premium: [],
       social: [],
+      consumable: [],
     };
 
     inventory.forEach((item) => {

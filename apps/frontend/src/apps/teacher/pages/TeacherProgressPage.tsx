@@ -66,6 +66,7 @@ export default function TeacherProgressPage() {
         setSelectedClassroomId('all');
         showToast({
           type: 'warning',
+          title: 'Atención',
           message: 'La clase solicitada no existe o no tienes acceso. Mostrando todas las clases.',
         });
       }
@@ -161,7 +162,11 @@ export default function TeacherProgressPage() {
    */
   const exportToCSV = async () => {
     if (selectedClassroomId === 'all') {
-      showToast({ type: 'warning', message: 'Por favor selecciona una clase especifica para exportar' });
+      showToast({
+        type: 'warning',
+        title: 'Atención',
+        message: 'Por favor selecciona una clase especifica para exportar',
+      });
       return;
     }
 
@@ -180,11 +185,19 @@ export default function TeacherProgressPage() {
       if (report.status === 'completed' && report.file_url) {
         window.open(report.file_url, '_blank');
       } else {
-        showToast({ type: 'info', message: 'El reporte esta siendo generado. Por favor intenta nuevamente en unos momentos.' });
+        showToast({
+          type: 'info',
+          title: 'En proceso',
+          message: 'El reporte esta siendo generado. Por favor intenta nuevamente en unos momentos.',
+        });
       }
     } catch (err) {
       console.error('[TeacherProgressPage] Error exporting CSV:', err);
-      showToast({ type: 'error', message: 'Error al generar el reporte. Por favor intenta nuevamente.' });
+      showToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Error al generar el reporte. Por favor intenta nuevamente.',
+      });
     }
   };
 

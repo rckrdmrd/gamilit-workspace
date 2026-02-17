@@ -15,6 +15,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useAuthStore } from '@/features/auth/store/authStore';
 import { API_CONFIG } from '@/config/api.config';
 
 // ============================================================================
@@ -154,7 +155,8 @@ export function useClassroomRealtime(
     enabled = true,
   } = options;
 
-  const { user, token } = useAuth();
+  const { user } = useAuth();
+  const token = useAuthStore((state) => state.token);
   const socketRef = useRef<Socket | null>(null);
   const subscribedRoomsRef = useRef<Set<string>>(new Set());
 

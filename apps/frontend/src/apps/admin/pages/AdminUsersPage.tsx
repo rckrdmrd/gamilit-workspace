@@ -323,7 +323,7 @@ export default function AdminUsersPage() {
         showToast({
           type: 'success',
           title: 'Usuarios suspendidos',
-          message: `${result.successCount} usuarios suspendidos correctamente`,
+          message: `${result.successful} usuarios suspendidos correctamente`,
         });
         await fetchUsers();
       } catch (err) {
@@ -374,7 +374,7 @@ export default function AdminUsersPage() {
         showToast({
           type: 'success',
           title: 'Roles actualizados',
-          message: `${result.successCount} usuarios actualizados correctamente`,
+          message: `${result.successful} usuarios actualizados correctamente`,
         });
         await fetchUsers();
       } catch (err) {
@@ -399,7 +399,7 @@ export default function AdminUsersPage() {
         showToast({
           type: 'success',
           title: 'Usuarios eliminados',
-          message: `${result.successCount} usuarios eliminados correctamente`,
+          message: `${result.successful} usuarios eliminados correctamente`,
         });
         await fetchUsers();
       } catch (err) {

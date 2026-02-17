@@ -49,6 +49,7 @@ import type {
   MultiplierSource,
   ProgressionHistoryEntry,
 } from '../types/ranksTypes';
+import { MayaRank } from '../types/ranksTypes';
 import { MOCK_USER_NACOM } from '../mockData/ranksMockData';
 
 // ============================================================================
@@ -363,8 +364,8 @@ export const rankUp = async (userId: string): Promise<RankUpEvent> => {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return {
-        fromRank: 'Nacom',
-        toRank: 'Ajaw',
+        fromRank: MayaRank.NACOM,
+        toRank: MayaRank.AJAW,
         timestamp: new Date(),
         newBenefits: ['Intermediate exercises', 'Level 2 hints', '1.25x multiplier'],
         newMultiplier: 1.25,
@@ -456,7 +457,7 @@ export const getProgressionHistory = async (
           timestamp: new Date(),
           title: 'Nivel 5 alcanzado',
           description: 'Has subido al nivel 5. ¡Sigue así!',
-          rank: 'Nacom',
+          rank: MayaRank.NACOM,
           xpSnapshot: 500,
           levelSnapshot: 5,
           multiplierSnapshot: 1.0,

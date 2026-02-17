@@ -24,6 +24,18 @@ interface StudentBasic {
   full_name: string;
 }
 
+interface AssignmentFormData {
+  title: string;
+  module_id: string;
+  exercise_ids: string[];
+  start_date: string;
+  end_date: string;
+  max_attempts: number;
+  allow_powerups: boolean;
+  custom_points: number | null;
+  assigned_to: string[];
+}
+
 export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
   const [showWizard, setShowWizard] = useState(false);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -46,7 +58,10 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
 
         // Fetch modules for wizard (if endpoint exists)
         try {
-          const modulesResponse = await apiClient.get(API_ENDPOINTS.teacher.modules || '/teacher/modules');
+          const modulesEndpoint =
+            (API_ENDPOINTS as unknown as { teacher?: { modules?: string } }).teacher?.modules ||
+            '/teacher/modules';
+          const modulesResponse = await apiClient.get(modulesEndpoint);
           setModules(modulesResponse.data.modules || []);
         } catch {
           // Modules endpoint may not exist yet - wizard will handle empty state
@@ -78,7 +93,7 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
     fetchData();
   }, [classroomId]);
 
-  const handleCreateAssignment = async (data: Record<string, unknown>) => {
+  const handleCreateAssignment = async (data: AssignmentFormData) => {
     try {
       const response = await apiClient.post(API_ENDPOINTS.teacher.createAssignment, {
         ...data,
@@ -117,7 +132,7 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
 
       {/* Error State */}
       {error && (
-        <DetectiveCard variant="warning">
+        <DetectiveCard variant="info">
           <div className="flex items-center gap-3 p-4">
             <AlertCircle className="h-6 w-6 text-red-500" />
             <div className="flex-1">

@@ -15,7 +15,7 @@ import { getContrastTextColor } from './color.utils';
  * CSS variable mapping for branding colors
  * Maps BrandingConfig properties to CSS custom properties
  */
-const VARIABLE_MAP: Record<keyof Partial<BrandingConfig>, string[]> = {
+const VARIABLE_MAP: Partial<Record<keyof BrandingConfig, string[]>> = {
   primaryColor: [
     '--brand-primary',
     '--detective-orange',

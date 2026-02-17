@@ -58,10 +58,13 @@ export const ForgotPasswordPage: React.FC = () => {
 
       setIsSuccess(true);
     } catch (err: unknown) {
-      // Handle API errors
+      const errorPayload =
+        err && typeof err === 'object'
+          ? (err as { response?: { data?: { message?: string } }; message?: string })
+          : {};
       const errorMessage =
-        err.response?.data?.message ||
-        err.message ||
+        errorPayload.response?.data?.message ||
+        errorPayload.message ||
         'Failed to send reset link. Please try again.';
       setError(errorMessage);
     }

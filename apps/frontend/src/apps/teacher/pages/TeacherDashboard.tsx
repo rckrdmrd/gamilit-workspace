@@ -459,8 +459,8 @@ export default function TeacherDashboard() {
                     </h3>
                     {upcomingLoading ? (
                       <div className="space-y-3">
-                        <SkeletonCard lines={2} />
-                        <SkeletonCard lines={2} />
+                        <SkeletonCard variant="small" />
+                        <SkeletonCard variant="small" />
                       </div>
                     ) : upcomingDeadlines.length > 0 ? (
                       <div className="space-y-3">

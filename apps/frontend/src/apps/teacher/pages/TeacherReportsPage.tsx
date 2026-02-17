@@ -296,7 +296,11 @@ export default function TeacherReportsPage() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading report:', error);
-      showToast({ type: 'error', message: 'Error al descargar el reporte. Por favor, intenta nuevamente.' });
+      showToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Error al descargar el reporte. Por favor, intenta nuevamente.',
+      });
     }
   };
 
@@ -318,10 +322,14 @@ export default function TeacherReportsPage() {
       // Refresh stats
       await loadReportStats();
 
-      showToast({ type: 'success', message: 'Reporte eliminado correctamente.' });
+      showToast({ type: 'success', title: 'Listo', message: 'Reporte eliminado correctamente.' });
     } catch (error) {
       console.error('Error deleting report:', error);
-      showToast({ type: 'error', message: 'Error al eliminar el reporte. Por favor, intenta nuevamente.' });
+      showToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Error al eliminar el reporte. Por favor, intenta nuevamente.',
+      });
     } finally {
       setIsDeleting(false);
       setDeleteConfirm({ show: false, reportId: null, reportName: '' });

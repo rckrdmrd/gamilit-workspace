@@ -12,7 +12,7 @@
  *   - GET /api/v1/progress/users/:userId/summary
  */
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 
@@ -312,7 +312,6 @@ async function fetchDashboardData(userId: string): Promise<DashboardData> {
 
 export function useDashboardData() {
   const { user, isAuthenticated } = useAuth();
-  const _queryClient = useQueryClient();
   const userId = user?.id;
 
   const {

@@ -17,11 +17,12 @@ import {
   Coins,
 } from 'lucide-react';
 import type { User, UserGamificationData } from '@shared/types';
+import type { User as AuthUser } from '@features/auth/types/auth.types';
 import { getUserFullName } from '@features/auth/types/auth.types';
 import { NotificationBell } from '../../../features/notifications/components/NotificationBell';
 
 export interface GamifiedHeaderProps {
-  user?: User;
+  user?: User | AuthUser;
   onLogout?: () => void;
   gamificationData?: UserGamificationData | null;
   organizationName?: string;
