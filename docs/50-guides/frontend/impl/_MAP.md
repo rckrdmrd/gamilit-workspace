@@ -40,7 +40,7 @@ Guias de desarrollo para el frontend de Gamilit, incluyendo arquitectura de API,
 | [teacher/](./teacher/_MAP.md) | Guias del portal de profesor |
 
 ## Referencias
-- [Directorio padre](../_MAP.md)
+- [Directorio padre](../../_INDEX.md)
 
 ---
 *Ultima actualizacion: 2026-01-04*

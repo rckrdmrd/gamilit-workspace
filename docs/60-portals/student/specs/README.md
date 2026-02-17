@@ -102,8 +102,8 @@ docs/student-portal/
 │   └── DEPENDENCY-MATRIX.md
 └── traces/
     ├── TRACE-P0-CORRECTIONS.md
-    ├── TRACE-GAP-002.md
-    └── TRACE-GAP-008.md
+    ├── TRACE-DASHBOARD-ERRORS-FIX-2026-01-04.md
+    └── TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md
 ```
 
 ---
@@ -855,4 +855,4 @@ docs/student-portal/
 
 _Para cualquier pregunta sobre esta documentación, revisar:_
 - _Análisis actual: `orchestration/analisis/ANALISIS-STUDENT-PORTAL-COMPLETO-2026-01-20.md`_
-- _Trazas históricas: [TRACE-P0-CORRECTIONS](./traces/TRACE-P0-CORRECTIONS.md), [TRACE-GAP-002](./traces/TRACE-GAP-002.md), [TRACE-GAP-008](./traces/TRACE-GAP-008.md)_
+- _Trazas históricas: [TRACE-P0-CORRECTIONS](./traces/TRACE-P0-CORRECTIONS.md), [TRACE-DASHBOARD-ERRORS-FIX-2026-01-04](./traces/TRACE-DASHBOARD-ERRORS-FIX-2026-01-04.md), [TRACE-EXERCISE-BUTTONS-FIX-2025-11-29](./traces/TRACE-EXERCISE-BUTTONS-FIX-2025-11-29.md)_

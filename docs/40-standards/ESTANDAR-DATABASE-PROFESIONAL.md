@@ -580,7 +580,7 @@ Antes de crear o modificar cualquier tabla, verificar:
 
 - [ESTANDAR-CODIGO.md](./ESTANDAR-CODIGO.md) - Estandares de codigo
 - [ESTANDAR-NOMENCLATURA.md](./ESTANDAR-NOMENCLATURA.md) - Convenciones de nombres
-- [@SIMCO-DDL-UNIFIED](../../orchestration/directivas/simco/SIMCO-DDL-UNIFIED.md) - Flujo DDL
+- [@SIMCO-DDL](../../orchestration/directivas/simco/SIMCO-DDL.md) - Flujo DDL
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/current/) - Referencia oficial
 
 ## Ver tambien

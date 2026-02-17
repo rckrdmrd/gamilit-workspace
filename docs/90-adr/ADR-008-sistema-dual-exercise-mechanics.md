@@ -294,15 +294,17 @@ LEFT JOIN educational_content.exercise_mechanic_mapping m
 ## Referencias
 
 **Documentación de validación:**
-- [DB-110: Validación Profunda docs/ ↔ DDL](/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/orchestration/database/DB-110/reportes-consolidados/REPORTE-VALIDACION-PROFUNDA.md)
-- [DB-111: Análisis de Impacto](/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/orchestration/database/DB-111/01-ANALISIS-IMPACTO.md)
-- [DB-111: Reporte Consolidado](/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/orchestration/database/DB-111/02-REPORTE-CONSOLIDADO.md)
-- [DB-112: Validación contra Documentación](/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/orchestration/database/DB-112/01-VALIDACION-CONTRA-DOCUMENTACION.md)
-- [DB-112: Reporte Final](/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/orchestration/database/DB-112/02-REPORTE-FINAL-VALIDACION.md)
+- DB-110: `orchestration/database/DB-110/reportes-consolidados/REPORTE-VALIDACION-PROFUNDA.md` (histórico legacy)
+- DB-111: `orchestration/database/DB-111/01-ANALISIS-IMPACTO.md` (histórico legacy)
+- DB-111: `orchestration/database/DB-111/02-REPORTE-CONSOLIDADO.md` (histórico legacy)
+- DB-112: `orchestration/database/DB-112/01-VALIDACION-CONTRA-DOCUMENTACION.md` (histórico legacy)
+- DB-112: `orchestration/database/DB-112/02-REPORTE-FINAL-VALIDACION.md` (histórico legacy)
+- Reportes vigentes: [orchestration/reports/README.md](../../orchestration/reports/README.md)
 
 **Documentación actualizada:**
-- [ET-EDU-001 v2.0: Implementación de Mecánicas de Ejercicios](/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/docs/01-fase-alcance-inicial/EAI-002-actividades/especificaciones/ET-EDU-001-mecanicas-ejercicios.md)
-- [RF-EDU-001 v2.0: Mecánicas de Ejercicios](/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/docs/01-fase-alcance-inicial/EAI-002-actividades/requerimientos/RF-EDU-001-mecanicas-ejercicios.md)
+- ET-EDU-001 v2.0: `docs/01-fase-alcance-inicial/EAI-002-actividades/especificaciones/ET-EDU-001-mecanicas-ejercicios.md` (ruta legacy)
+- RF-EDU-001 v2.0: `docs/01-fase-alcance-inicial/EAI-002-actividades/requerimientos/RF-EDU-001-mecanicas-ejercicios.md` (ruta legacy)
+- Diseño canónico vigente: [docs/20-architecture/MECANICAS-GAMIFICACION-V6.md](../20-architecture/MECANICAS-GAMIFICACION-V6.md)
 
 **Código relacionado:**
 - DDL: `apps/database/ddl/00-prerequisites.sql` (ENUM exercise_type)

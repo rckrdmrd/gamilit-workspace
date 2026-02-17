@@ -458,4 +458,4 @@ export const useWebSocket = () => {
 
 - [STATE-MANAGEMENT.md](./STATE-MANAGEMENT.md) - React Query y Zustand
 - [ESTRUCTURA-FEATURES.md](./ESTRUCTURA-FEATURES.md) - Dónde ubicar servicios
-- [../backend/API-CONVENTIONS.md](../backend/API-CONVENTIONS.md) - Convenciones del backend
+- [../../backend/impl/API-STANDARDS.md](../../backend/impl/API-STANDARDS.md) - Convenciones del backend

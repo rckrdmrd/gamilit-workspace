@@ -161,8 +161,8 @@ Esta decisión fue **confirmada por el Product Owner** el 2025-11-23 durante la 
 ## Referencias
 
 ### Documentación del Proyecto
-- [DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md](../00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md) - Líneas 685-726
-- [REPORTE-VALIDACION-MODULOS-3-4-5-20251123.md](../../orchestration/agentes/architecture-analyst/validation-reports/REPORTE-VALIDACION-MODULOS-3-4-5-20251123.md)
+- [MECANICAS-GAMIFICACION-V6.md](../20-architecture/MECANICAS-GAMIFICACION-V6.md) - Referencia canónica vigente
+- [orchestration/reports/README.md](../../orchestration/reports/README.md) - Reportes de validación vigentes
 
 ### Changelog Relevante
 ```markdown

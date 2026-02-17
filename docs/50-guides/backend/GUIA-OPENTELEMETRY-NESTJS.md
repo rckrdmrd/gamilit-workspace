@@ -21,7 +21,7 @@ estado: vigente
 
 ## 1. Introduccion
 
-Esta guia describe paso a paso como implementar OpenTelemetry en el backend NestJS 11 de gamilit. OpenTelemetry proporciona instrumentacion automatica y manual para generar metricas, logs y traces que cumplen con el [Estandar de Observabilidad](../40-standards/ESTANDAR-OBSERVABILIDAD.md).
+Esta guia describe paso a paso como implementar OpenTelemetry en el backend NestJS 11 de gamilit. OpenTelemetry proporciona instrumentacion automatica y manual para generar metricas, logs y traces que cumplen con el [Estandar de Observabilidad](../../40-standards/ESTANDAR-OBSERVABILIDAD.md).
 
 ### Pre-requisitos
 
@@ -724,7 +724,7 @@ OTEL_LOG_LEVEL=warn
 ## 13. Siguientes Pasos
 
 1. **Configurar Prometheus scraping** en el servidor de produccion para recolectar metricas del puerto 9464.
-2. **Configurar dashboards en Grafana** siguiendo las recomendaciones del [Estandar de Observabilidad](../40-standards/ESTANDAR-OBSERVABILIDAD.md).
+2. **Configurar dashboards en Grafana** siguiendo las recomendaciones del [Estandar de Observabilidad](../../40-standards/ESTANDAR-OBSERVABILIDAD.md).
 3. **Configurar alertas** basadas en las reglas definidas en el estandar.
 4. **Implementar logging estructurado** con correlacion de `traceId` usando el logger de NestJS.
 5. **Instrumentar el frontend** con `@opentelemetry/sdk-trace-web` para traces end-to-end completos.
@@ -739,7 +739,7 @@ OTEL_LOG_LEVEL=warn
 - [Prometheus Node.js Client](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-exporter-prometheus)
 - [Jaeger - Getting Started](https://www.jaegertracing.io/docs/getting-started/)
 - [W3C Trace Context Specification](https://www.w3.org/TR/trace-context/)
-- [Estandar de Observabilidad gamilit](../40-standards/ESTANDAR-OBSERVABILIDAD.md)
+- [Estandar de Observabilidad gamilit](../../40-standards/ESTANDAR-OBSERVABILIDAD.md)
 
 ---
 

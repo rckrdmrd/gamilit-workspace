@@ -1847,12 +1847,12 @@ if (process.env.NODE_ENV === 'development') {
 
 | Documento | Descripción |
 |-----------|-------------|
-| [PORTAL-TEACHER-GUIDE.md](./PORTAL-TEACHER-GUIDE.md) | Guía del portal Teacher (estructura similar) |
-| [COMPONENT-PATTERNS.md](./frontend/COMPONENT-PATTERNS.md) | Patrones de componentes |
-| [HOOK-PATTERNS.md](./frontend/HOOK-PATTERNS.md) | Patrones de hooks |
-| [DTO-CONVENTIONS.md](./backend/DTO-CONVENTIONS.md) | Convenciones de DTOs |
-| [ESTRUCTURA-MODULOS.md](./backend/ESTRUCTURA-MODULOS.md) | Estructura de módulos |
-| [ESTANDARES-API-ROUTES.md](../../orchestration/directivas/ESTANDARES-API-ROUTES.md) | Estándares de rutas API |
+| [PORTAL-TEACHER-GUIDE.md](../teacher/PORTAL-TEACHER-GUIDE.md) | Guía del portal Teacher (estructura similar) |
+| [COMPONENT-PATTERNS.md](../../50-guides/frontend/impl/COMPONENT-PATTERNS.md) | Patrones de componentes |
+| [HOOK-PATTERNS.md](../../50-guides/frontend/impl/HOOK-PATTERNS.md) | Patrones de hooks |
+| [DTO-CONVENTIONS.md](../../50-guides/backend/impl/DTO-CONVENTIONS.md) | Convenciones de DTOs |
+| [ESTRUCTURA-MODULOS.md](../../50-guides/backend/impl/ESTRUCTURA-MODULOS.md) | Estructura de módulos |
+| [40-api/README.md](../../40-api/README.md) | Estándares de rutas API |
 
 ### ADRs Relevantes
 

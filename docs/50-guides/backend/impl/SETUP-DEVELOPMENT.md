@@ -335,5 +335,5 @@ docker-compose up -d
 
 - [ESTRUCTURA-MODULOS.md](./ESTRUCTURA-MODULOS.md) - Estructura de módulos
 - [DATABASE-INTEGRATION.md](./DATABASE-INTEGRATION.md) - Integración con BD
-- [../TESTING-GUIDE.md](../TESTING-GUIDE.md) - Guía de testing
-- [../DEV-SERVERS.md](../DEV-SERVERS.md) - Servidores de desarrollo
+- [../../testing/TESTING-GUIDE.md](../../testing/TESTING-GUIDE.md) - Guía de testing
+- [../../deployment/DEV-SERVERS.md](../../deployment/DEV-SERVERS.md) - Servidores de desarrollo

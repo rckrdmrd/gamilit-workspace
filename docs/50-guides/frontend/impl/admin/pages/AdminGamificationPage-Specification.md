@@ -195,7 +195,7 @@ const safeRanks = useMemo(() => {
 ## REFERENCIAS
 
 - [ADMIN-GAMIFICATION-CONFIG-HOOK.md](../hooks/ADMIN-GAMIFICATION-CONFIG-HOOK.md)
-- [MIGRACION-MAYA-RANKS-v2.1.md](../../../90-transversal/migraciones/MIGRACION-MAYA-RANKS-v2.1.md)
+- [ADR-001-gamificacion-maya.md](../../../../../90-adr/ADR-001-gamificacion-maya.md)
 
 ---
 

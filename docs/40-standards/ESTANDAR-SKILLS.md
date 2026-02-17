@@ -89,9 +89,34 @@ tags:
 ---
 ```
 
-**Campos obligatorios:** `name`, `description`, `version`, `simco_source`, `category`, `priority`, `estimated_tokens`.
+**Campos obligatorios:** `name`, `description`, `version`, `simco_source`, `category`, `priority`, `estimated_tokens`, `input_schema`, `output_schema`, `contract_version`.
 
 **Campos opcionales:** `capved_required`, `agents_compatible`, `dependencies`, `triggers`, `internal`, `tags`.
+
+### 2.1.1 Contrato de Entrada/Salida (IoC)
+
+Todos los skills activos deben declarar contrato explícito:
+
+```yaml
+input_schema:
+  required:
+    - task_description
+    - objective
+  optional:
+    - constraints
+
+output_schema:
+  success:
+    - artifacts
+    - validation_results
+  error:
+    - error_code
+    - error_message
+
+contract_version: 1.0.0
+```
+
+El resolvedor y el registry deben mantener consistencia de contrato por skill.
 
 ### 2.2 SKILL.md - Cuerpo Markdown
 

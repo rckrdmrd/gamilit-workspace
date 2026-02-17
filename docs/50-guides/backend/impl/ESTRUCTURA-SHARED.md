@@ -358,4 +358,4 @@ export class AppModule {}
 
 - [ESTRUCTURA-MODULOS.md](./ESTRUCTURA-MODULOS.md) - Estructura de módulos
 - [ERROR-HANDLING.md](./ERROR-HANDLING.md) - Manejo de errores
-- [API-CONVENTIONS.md](./API-CONVENTIONS.md) - Convenciones de API
+- [API-STANDARDS.md](./API-STANDARDS.md) - Convenciones de API

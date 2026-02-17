@@ -266,5 +266,5 @@ export class AppModule {}
 ## Ver También
 
 - [ESTRUCTURA-SHARED.md](./ESTRUCTURA-SHARED.md) - Código compartido
-- [API-CONVENTIONS.md](./API-CONVENTIONS.md) - Convenciones de API
+- [API-STANDARDS.md](./API-STANDARDS.md) - Convenciones de API
 - [DATABASE-INTEGRATION.md](./DATABASE-INTEGRATION.md) - Integración con BD

@@ -513,7 +513,7 @@ try {
 
 - [Documentación Completa: GENERATED-API-TYPES.md](./GENERATED-API-TYPES.md)
 - [openapi-typescript Documentation](https://github.com/drwpow/openapi-typescript)
-- [GAP-008 Analysis](../90-transversal/INDEX-GAPS-APIS-2025-11-24.md#gap-008)
+- [Transversal References](../../../80-references/transversal/README.md)
 
 ---
 

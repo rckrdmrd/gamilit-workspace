@@ -37,7 +37,7 @@ El sistema WebSocket esta implementado en el backend para:
 | `teacher:*` | Eventos del portal profesor |
 
 ## Referencias
-- [Directorio padre](../_MAP.md)
+- [Directorio padre](../../_INDEX.md)
 - CORR-005: Eliminacion de codigo muerto WebSocket leaderboard
 
 ---

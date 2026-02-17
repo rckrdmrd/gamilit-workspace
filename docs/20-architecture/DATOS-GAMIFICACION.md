@@ -257,7 +257,7 @@ progress_tracking.scheduled_missions      -- Misiones asignadas a usuarios
 
 ### 6.4 Triggers de Actualización
 
-Ver `docs/sistema-recompensas/07-CORRECCION-SISTEMA-MISIONES.md` para los 8 triggers implementados:
+Ver [`ADR-027-missions-triggers-mapping`](../90-adr/ADR-027-missions-triggers-mapping.md) para el mapeo de triggers implementados:
 - `trg_update_missions_on_exercise`
 - `trg_update_missions_on_streak`
 - `trg_update_missions_on_earn_xp`
@@ -293,7 +293,7 @@ Ver `docs/sistema-recompensas/07-CORRECCION-SISTEMA-MISIONES.md` para los 8 trig
 
 ### 7.2 Arquitectura Dual-Table
 
-Ver `docs/sistema-recompensas/01-ARQUITECTURA-SISTEMA.md`:
+Ver [ARQUITECTURA-GAMIFICACION.md](./ARQUITECTURA-GAMIFICACION.md):
 
 - **exercise_submissions**: Workflow (draft → submitted → graded)
 - **exercise_attempts**: Recompensas (XP, ML Coins, tracking)
@@ -346,9 +346,9 @@ Ver `docs/sistema-recompensas/01-ARQUITECTURA-SISTEMA.md`:
 
 ### Documentación Relacionada
 
-- [DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md](./DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md) - Especificación completa
-- [docs/sistema-recompensas/01-ARQUITECTURA-SISTEMA.md](../sistema-recompensas/01-ARQUITECTURA-SISTEMA.md) - Arquitectura
-- [docs/sistema-recompensas/07-CORRECCION-SISTEMA-MISIONES.md](../sistema-recompensas/07-CORRECCION-SISTEMA-MISIONES.md) - Misiones
+- [MECANICAS-GAMIFICACION-V6.md](./MECANICAS-GAMIFICACION-V6.md) - Índice legacy y acceso a la segmentación
+- [gamificacion/README.md](./gamificacion/README.md) - Segmentación canónica de mecánicas
+- [ARQUITECTURA-GAMIFICACION.md](./ARQUITECTURA-GAMIFICACION.md) - Arquitectura funcional de gamificación
 
 ### Seeds de Producción
 

@@ -505,4 +505,4 @@ export default defineConfig({
 
 - [ESTRUCTURA-FEATURES.md](./ESTRUCTURA-FEATURES.md) - Dónde ubicar tests
 - [STATE-MANAGEMENT.md](./STATE-MANAGEMENT.md) - Testing de stores
-- [../TESTING-GUIDE.md](../TESTING-GUIDE.md) - Guía general de testing
+- [../../testing/TESTING-GUIDE.md](../../testing/TESTING-GUIDE.md) - Guía general de testing

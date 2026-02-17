@@ -660,7 +660,7 @@ export class GamificationService { }
 
 ## References
 
-- [RFC-0001: Template de _MAP.md](../standards/RFC-0001-map-template.md)
+- [TEMPLATE-MAP.md](../../orchestration/templates/04-globales/TEMPLATE-MAP.md)
 - [Google's Code Search System](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43835.pdf)
 - [The Documentation System (Divio)](https://documentation.divio.com/)
 - [Living Documentation by Example (Cyrille Martraire)](https://leanpub.com/livingdocumentation)
@@ -669,7 +669,7 @@ export class GamificationService { }
 
 ## Related ADRs
 
-- [ADR-0001: Monorepo Architecture](./ADR-0001-monorepo-architecture.md) - SIMCO ayuda a navegar el monorepo
+- [ADR-040: Monorepo Architecture](./ADR-040-monorepo-architecture.md) - SIMCO ayuda a navegar el monorepo
 
 ---
 

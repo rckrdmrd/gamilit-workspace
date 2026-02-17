@@ -771,8 +771,8 @@ useQuery({ queryKey: ['adminDashboard', 'userActivity'] })
 
 - [TanStack Query v5 Docs](https://tanstack.com/query/latest)
 - [React Query vs SWR Comparison](https://tanstack.com/query/latest/docs/react/comparison)
-- [Implementation PRs](../orchestration/reportes/REPORTE-FASE-1-2-3-HOTFIX-2025-11-23.md)
-- [Hook useUserGamification Source](../apps/frontend/src/shared/hooks/useUserGamification.ts)
+- [Reportes de implementación vigentes](../../orchestration/reports/README.md)
+- [Hook useUserGamification Source](../../apps/frontend/src/shared/hooks/useUserGamification.ts)
 - [ADR-011: Frontend API Client Structure](./ADR-011-frontend-api-client-structure.md)
 
 ---

@@ -311,10 +311,9 @@ Esta decisión se valida mediante:
 
 ## Referencias
 
-- [BUG-FRONTEND-001 Analysis](../orchestration/agentes/architecture-analyst/frontend-api-broken-imports-2025-11-23/01-ANALISIS-PROBLEMA.md)
-- [BUG-FRONTEND-002 Analysis](../orchestration/agentes/architecture-analyst/frontend-api-routes-404-2025-11-23/01-ANALISIS-RUTAS-404.md)
-- [API Client Source](../apps/frontend/src/services/api/apiClient.ts)
-- [Gamification API Module](../apps/frontend/src/lib/api/gamification.api.ts)
+- [Reportes de análisis vigentes](../../orchestration/reports/README.md)
+- [API Client Source](../../apps/frontend/src/services/api/apiClient.ts)
+- [Gamification API Module](../../apps/frontend/src/lib/api/gamification.api.ts)
 
 ---
 

@@ -457,9 +457,8 @@ export const STUDENT_ENDPOINTS = {
 
 ## Referencias
 
-- [GAP-005 Analysis](../../orchestration/agentes/architecture-analyst/analisis-rutas-api-2025-11-24/05-RESUMEN-FINAL-INTERVENCION.md#gap-005-versionamiento-inconsistente)
-- [GAP-006 Analysis](../../orchestration/agentes/architecture-analyst/analisis-rutas-api-2025-11-24/05-RESUMEN-FINAL-INTERVENCION.md#gap-006-centralización-de-configuración-de-rutas)
-- [apiConfig.ts Source](../../apps/frontend/src/services/api/apiConfig.ts)
+- [GAP-005 y GAP-006 Analysis](../../orchestration/reports/README.md)
+- apiConfig.ts Source: `apps/frontend/src/services/api/apiConfig.ts` (histórico)
 - [apiConfig.test.ts](../../apps/frontend/src/services/api/__tests__/apiConfig.test.ts)
 - [ADR-011: Frontend API Client Structure](./ADR-011-frontend-api-client-structure.md) (Superseded parcialmente)
 

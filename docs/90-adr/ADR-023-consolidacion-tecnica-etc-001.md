@@ -164,10 +164,10 @@ Se ejecuto la EPIC ETC-001 con 5 Historias de Usuario para consolidar tecnicamen
 
 ## Referencias
 
-- [ETC-001 README](../../02-fase-robustecimiento/ETC-001-consolidacion-tecnica/README.md)
-- [AUDITORIA-INTEGRAL-2026-01-16.md](../../../orchestration/reportes/AUDITORIA-INTEGRAL-2026-01-16.md)
-- [MASTER_INVENTORY.yml](../../../orchestration/inventarios/MASTER_INVENTORY.yml)
-- [SPRINT-2-BACKLOG.yml](../../../orchestration/SPRINT-2-BACKLOG.yml)
+- [EPIC-GAM-F2-TECH-CONSOLIDATION](../10-requirements/epics/EPIC-GAM-F2-TECH-CONSOLIDATION/_INDEX.md)
+- [Reportes de auditoría vigentes](../../orchestration/reports/README.md)
+- [MASTER_INVENTORY.yml](../../orchestration/inventarios/MASTER_INVENTORY.yml)
+- [BACKLOG.yml](../../orchestration/scrum/BACKLOG.yml)
 
 ---
 

@@ -102,6 +102,14 @@ Diseno de experiencia de usuario e interfaz.
 **Padre:**
 1. Login -> Dashboard hijo -> Ver progreso -> Revisar notificaciones -> Contactar maestro
 
+### Centro de Flujos End-to-End
+
+- Indice central: [flujos/README.md](./flujos/README.md)
+- Matriz de trazabilidad: [flujos/TRACEABILITY-MATRIX.md](./flujos/TRACEABILITY-MATRIX.md)
+- Matriz de cobertura total: [flujos/COBERTURA-TOTAL-PROCESOS.md](./flujos/COBERTURA-TOTAL-PROCESOS.md)
+- Auditoria residual full: [flujos/AUDITORIA-RESIDUAL-FULL.md](./flujos/AUDITORIA-RESIDUAL-FULL.md)
+- Validacion analisis vs integracion: [flujos/VALIDACION-ANALISIS-VS-INTEGRACION.md](./flujos/VALIDACION-ANALISIS-VS-INTEGRACION.md)
+
 ### Gamificacion Visual
 
 **Elementos visuales:**

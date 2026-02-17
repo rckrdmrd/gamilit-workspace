@@ -1157,7 +1157,7 @@ await page.waitForTimeout(3000); // PROHIBIDO
 
 ## Referencias Cruzadas
 
-- [ESTANDAR-TESTING](../../../40-standards/ESTANDAR-TESTING.md) - Estandar general de testing (piramide, unit, integration, E2E)
+- [ESTANDAR-TESTING](../../40-standards/ESTANDAR-TESTING.md) - Estandar general de testing (piramide, unit, integration, E2E)
 - [GUIA-COVERAGE-TESTING](./GUIA-COVERAGE-TESTING.md) - Estrategia de cobertura y metricas
 - [TESTING-GUIDE](./TESTING-GUIDE.md) - Guia general de testing gamilit (Jest + Vitest)
 - [Playwright Documentation](https://playwright.dev/docs/intro) - Documentacion oficial

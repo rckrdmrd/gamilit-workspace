@@ -755,8 +755,8 @@ describe('useUserGamification', () => {
 
 ## 📚 Referencias
 
-- [ADR-011: Frontend API Client Structure](../97-adr/ADR-011-frontend-api-client-structure.md)
-- [Backend API Routes Constants](../../apps/backend/src/shared/constants/routes.constants.ts)
+- [ADR-011: Frontend API Client Structure](../../../90-adr/ADR-011-frontend-api-client-structure.md)
+- [Backend API Routes Constants](../../../../apps/backend/src/shared/constants/routes.constants.ts)
 - [Axios Documentation](https://axios-http.com/docs/intro)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 

@@ -763,17 +763,19 @@ if (process.env.NODE_ENV === 'development') {
 |-----------|-------------|
 | [PORTAL-TEACHER-API-REFERENCE.md](./PORTAL-TEACHER-API-REFERENCE.md) | Referencia completa de 45+ APIs con ejemplos |
 | [PORTAL-TEACHER-FLOWS.md](./PORTAL-TEACHER-FLOWS.md) | Flujos de datos, diagramas e integracion |
-| [API-TEACHER-MODULE.md](../90-transversal/api/API-TEACHER-MODULE.md) | Documentacion de endpoints del modulo teacher |
-| [TEACHER-PAGES-SPECIFICATIONS.md](../frontend/teacher/pages/TEACHER-PAGES-SPECIFICATIONS.md) | Especificaciones de paginas del portal |
-| [TEACHER-CONSTANTS-REFERENCE.md](../frontend/teacher/constants/TEACHER-CONSTANTS-REFERENCE.md) | Referencia de constantes centralizadas |
+| [../../30-ux-ui/flujos/teacher/FLUJO-REVISION-MANUAL-M3-M5.md](../../30-ux-ui/flujos/teacher/FLUJO-REVISION-MANUAL-M3-M5.md) | Flujo formal de revision manual y recompensas M3-M5 |
+| [../../30-ux-ui/flujos/shared/FLUJO-PERFIL-CONFIGURACION.md](../../30-ux-ui/flujos/shared/FLUJO-PERFIL-CONFIGURACION.md) | Flujo de configuracion de perfil multi-portal |
+| [40-api/README.md](../../40-api/README.md) | Documentacion de endpoints del modulo teacher |
+| [TEACHER-PAGES-SPECIFICATIONS.md](../../50-guides/frontend/impl/teacher/pages/TEACHER-PAGES-SPECIFICATIONS.md) | Especificaciones de paginas del portal |
+| [TEACHER-CONSTANTS-REFERENCE.md](../../50-guides/frontend/impl/teacher/constants/TEACHER-CONSTANTS-REFERENCE.md) | Referencia de constantes centralizadas |
 
 ### Guias Generales
 
-- [COMPONENT-PATTERNS.md](./frontend/COMPONENT-PATTERNS.md) - Patrones de componentes
-- [HOOK-PATTERNS.md](./frontend/HOOK-PATTERNS.md) - Patrones de hooks
-- [DTO-CONVENTIONS.md](./backend/DTO-CONVENTIONS.md) - Convenciones de DTOs
-- [ESTRUCTURA-MODULOS.md](./backend/ESTRUCTURA-MODULOS.md) - Estructura de modulos
-- [ESTANDARES-API-ROUTES.md](../../orchestration/directivas/ESTANDARES-API-ROUTES.md) - Rutas API
+- [COMPONENT-PATTERNS.md](../../50-guides/frontend/impl/COMPONENT-PATTERNS.md) - Patrones de componentes
+- [HOOK-PATTERNS.md](../../50-guides/frontend/impl/HOOK-PATTERNS.md) - Patrones de hooks
+- [DTO-CONVENTIONS.md](../../50-guides/backend/impl/DTO-CONVENTIONS.md) - Convenciones de DTOs
+- [ESTRUCTURA-MODULOS.md](../../50-guides/backend/impl/ESTRUCTURA-MODULOS.md) - Estructura de modulos
+- [40-api/README.md](../../40-api/README.md) - Rutas API
 
 ---
 

@@ -8,6 +8,7 @@
 
 | Documento | Descripción |
 |-----------|-------------|
+| `README.md` | Indice de manuales y entregables |
 | `Manual_Portal_*.md` | Manuales de usuario por portal |
 | `RESUMEN_*.md` | Resúmenes de actualizaciones y correcciones |
 

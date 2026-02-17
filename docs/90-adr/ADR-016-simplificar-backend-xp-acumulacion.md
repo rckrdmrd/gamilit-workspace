@@ -327,9 +327,9 @@ it('should award 100 ML Coins on Nacom promotion', async () => {
 ## Referencias
 
 ### Documentación
-- [ET-GAM-003: Sistema de Rangos Maya](../01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-003-rangos-maya.md)
-- [RF-GAM-003: Requerimiento Funcional Rangos](../01-fase-alcance-inicial/EAI-003-gamificacion/requerimientos/RF-GAM-003-rangos-maya.md)
-- [Reporte de Bug](../../orchestration/agentes/architecture-analyst/analisis-sistema-xp-rangos-2025-11-24/REPORTE-BUG-XP-NO-ACUMULA.md)
+- [ET-GAM-003: Sistema de Rangos Maya](../10-requirements/epics/EPIC-GAM-F1-GAMIFICATION/specifications/ET-GAM-003-rangos-maya.md)
+- [RF-GAM-003: Requerimiento Funcional Rangos](../10-requirements/epics/EPIC-GAM-F1-GAMIFICATION/requirements/RF-GAM-003-rangos-maya.md)
+- [Reportes de bug/validación vigentes](../../orchestration/reports/README.md)
 
 ### Código DDL
 - `apps/database/ddl/schemas/gamification_system/triggers/trg_check_rank_promotion_on_xp_gain.sql`

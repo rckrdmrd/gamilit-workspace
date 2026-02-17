@@ -857,7 +857,7 @@ For deployment issues:
 
 ## References
 
-- [Architecture Documentation](./ARCHITECTURE.md)
-- [API Documentation](./API.md)
+- [Deployment Master](../DEPLOYMENT-MASTER.md)
+- [API Documentation](../../../40-api/README.md)
 - [PM2 Documentation](https://pm2.keymetrics.io/)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)

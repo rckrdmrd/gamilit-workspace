@@ -4,7 +4,7 @@
 
 ---
 
-## Archivos Root (10)
+## Archivos Root (11)
 
 | Archivo | Descripcion |
 |---------|-------------|
@@ -13,7 +13,8 @@
 | [MODELO-DATOS.md](MODELO-DATOS.md) | Modelo de datos conceptual (18 schemas) |
 | [AMBIENTES-DEV-PROD.md](AMBIENTES-DEV-PROD.md) | Configuracion de ambientes dev (WSL) y prod (74.208.126.102) |
 | [ARQUITECTURA-GAMIFICACION.md](ARQUITECTURA-GAMIFICACION.md) | Sistema de gamificacion (XP, rangos maya, logros, ML Coins) |
-| [MECANICAS-GAMIFICACION-V6.md](MECANICAS-GAMIFICACION-V6.md) | 30 mecanicas de ejercicio por modulo |
+| [MECANICAS-GAMIFICACION-V6.md](MECANICAS-GAMIFICACION-V6.md) | Indice legacy de mecanicas (segmentado) |
+| [gamificacion/README.md](gamificacion/README.md) | Estructura canonica de gamificacion por subtema |
 | [DATOS-GAMIFICACION.md](DATOS-GAMIFICACION.md) | Datos y flujos de gamificacion |
 | [COHERENCE-ENTITIES-DDL.md](COHERENCE-ENTITIES-DDL.md) | Coherencia DDL ↔ Entities TypeORM |
 | [TRACEABILITY-US-SCHEMAS.md](TRACEABILITY-US-SCHEMAS.md) | Trazabilidad User Stories ↔ Schemas |
@@ -50,6 +51,21 @@ Documentacion detallada por schema de base de datos:
 | [17-18-placeholder.md](schema-reference/17-18-placeholder.md) | Placeholder (legacy) |
 | [99-utilities.md](schema-reference/99-utilities.md) | Utilidades transversales |
 
+### gamificacion/ (10 archivos)
+
+| Archivo | Cobertura |
+|---------|-----------|
+| [README.md](gamificacion/README.md) | Indice de segmentacion |
+| [_INDEX.md](gamificacion/_INDEX.md) | Tabla de contenidos local |
+| [_MAP.md](gamificacion/_MAP.md) | Navegacion rapida por subtema |
+| [RANGOS-MAYA.md](gamificacion/RANGOS-MAYA.md) | Jerarquia y umbrales de XP |
+| [ECONOMIA-VIRTUAL.md](gamificacion/ECONOMIA-VIRTUAL.md) | ML Coins, bonus y usos |
+| [MODULO-1-MECANICAS.md](gamificacion/MODULO-1-MECANICAS.md) | Comprension literal |
+| [MODULO-2-MECANICAS.md](gamificacion/MODULO-2-MECANICAS.md) | Comprension inferencial |
+| [MODULO-3-MECANICAS.md](gamificacion/MODULO-3-MECANICAS.md) | Comprension critica |
+| [MODULO-4-MECANICAS.md](gamificacion/MODULO-4-MECANICAS.md) | Lectura digital |
+| [MODULO-5-MECANICAS.md](gamificacion/MODULO-5-MECANICAS.md) | Produccion y expresion |
+
 ---
 
-**Total:** 10 archivos root + 22 schema-reference + _INDEX.md = 33 archivos
+**Total:** 11 archivos root + 22 schema-reference + 8 gamificacion + _INDEX.md

@@ -320,9 +320,9 @@ describe('API Payload Conventions', () => {
 ## 📚 Referencias
 
 **Documentos relacionados:**
-- [RegisterUserDto](../../apps/backend/src/modules/auth/dto/register-user.dto.ts)
-- [API-CHEATSHEET.md](../96-quick-reference/API-CHEATSHEET.md)
-- [US-FUND-001](../01-fase-alcance-inicial/EAI-001-fundamentos/historias-usuario/US-FUND-001-autenticacion-basica-jwt.md)
+- [RegisterUserDto](../../../../../apps/backend/src/modules/auth/dto/register-user.dto.ts)
+- [Quick Reference transversal](../../../../80-references/transversal/README.md)
+- [Requirements Index](../../../../10-requirements/README.md)
 
 **Correcciones aplicadas:**
 - FE-053: Fix Register 500 Error (2025-11-16)

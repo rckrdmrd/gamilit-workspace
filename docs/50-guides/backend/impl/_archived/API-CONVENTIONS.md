@@ -389,6 +389,6 @@ SwaggerModule.setup('api/docs', app, document);
 
 ## Ver También
 
-- [ERROR-HANDLING.md](./ERROR-HANDLING.md) - Manejo de errores
-- [ESTRUCTURA-MODULOS.md](./ESTRUCTURA-MODULOS.md) - Estructura de módulos
+- [ERROR-HANDLING.md](../ERROR-HANDLING.md) - Manejo de errores
+- [ESTRUCTURA-MODULOS.md](../ESTRUCTURA-MODULOS.md) - Estructura de módulos
 - Swagger UI: `http://localhost:3000/api/docs`

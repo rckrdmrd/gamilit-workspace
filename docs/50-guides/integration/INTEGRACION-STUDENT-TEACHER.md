@@ -719,18 +719,18 @@ Para cada estudiante de su aula:
 
 ### Documentos Relacionados
 
-- [PORTAL-TEACHER-GUIDE.md](./PORTAL-TEACHER-GUIDE.md) - Guia completa del Teacher Portal
-- [PORTAL-TEACHER-API-REFERENCE.md](./PORTAL-TEACHER-API-REFERENCE.md) - Referencia de APIs
-- [PORTAL-TEACHER-FLOWS.md](./PORTAL-TEACHER-FLOWS.md) - Flujos de datos Teacher
-- [PORTAL-STUDENT-GUIDE.md](./PORTAL-STUDENT-GUIDE.md) - Guia del Student Portal
-- [../student-portal/README.md](../student-portal/README.md) - Documentacion de gaps Student
-- [DIAGRAMA-FLUJO-SUBMISSIONS](../../orchestration/reportes/historicos/2025-11/DIAGRAMA-FLUJO-SUBMISSIONS-2025-11-19.md) - Flujo detallado de submissions (Archivo historico)
+- [PORTAL-TEACHER-GUIDE.md](../../60-portals/teacher/PORTAL-TEACHER-GUIDE.md) - Guia completa del Teacher Portal
+- [PORTAL-TEACHER-API-REFERENCE.md](../../60-portals/teacher/PORTAL-TEACHER-API-REFERENCE.md) - Referencia de APIs
+- [PORTAL-TEACHER-FLOWS.md](../../60-portals/teacher/PORTAL-TEACHER-FLOWS.md) - Flujos de datos Teacher
+- [PORTAL-STUDENT-GUIDE.md](../../60-portals/student/PORTAL-STUDENT-GUIDE.md) - Guia del Student Portal
+- [Student Specs README](../../60-portals/student/specs/README.md) - Documentacion de gaps Student
+- [Reportes historicos](../../../orchestration/reports/README.md) - Flujo detallado de submissions (archivo historico consolidado)
 
 ### Inventarios
 
-- [DATABASE_INVENTORY.yml](../../orchestration/inventarios/DATABASE_INVENTORY.yml)
-- [BACKEND_INVENTORY.yml](../../orchestration/inventarios/BACKEND_INVENTORY.yml)
-- [FRONTEND_INVENTORY.yml](../../orchestration/inventarios/FRONTEND_INVENTORY.yml)
+- [DATABASE_INVENTORY.yml](../../../orchestration/inventarios/DATABASE_INVENTORY.yml)
+- [BACKEND_INVENTORY.yml](../../../orchestration/inventarios/BACKEND_INVENTORY.yml)
+- [FRONTEND_INVENTORY.yml](../../../orchestration/inventarios/FRONTEND_INVENTORY.yml)
 
 ---
 

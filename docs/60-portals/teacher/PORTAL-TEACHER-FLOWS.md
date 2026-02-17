@@ -5,6 +5,10 @@
 **Estado:** VIGENTE
 **Complementa:** PORTAL-TEACHER-GUIDE.md, PORTAL-TEACHER-API-REFERENCE.md
 
+**Normalizacion de flujos UX/UI:**  
+- [Flujo revision manual M3-M5](../../30-ux-ui/flujos/teacher/FLUJO-REVISION-MANUAL-M3-M5.md)  
+- [Matriz de trazabilidad global](../../30-ux-ui/flujos/TRACEABILITY-MATRIX.md)
+
 ---
 
 ## 1. Flujos de Datos Principales

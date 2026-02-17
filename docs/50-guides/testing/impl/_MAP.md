@@ -10,7 +10,7 @@ Guias y scripts de testing para el proyecto Gamilit.
 | [MANUAL-TESTING-GUIDE-US-AE-007.sh](./MANUAL-TESTING-GUIDE-US-AE-007.sh) | Script de guia de testing manual para US-AE-007 | Completo |
 
 ## Referencias
-- [Directorio padre](../_MAP.md)
+- [Directorio padre](../../_INDEX.md)
 
 ---
 *Ultima actualizacion: 2026-01-04*

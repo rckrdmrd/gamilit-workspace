@@ -83,7 +83,7 @@ scripts/setup-ssl-certbot.sh
 | Ruta scripts | `/mnt/c/Empresas/ISEM/gamilit-workspace/apps/database/scripts/` | `/home/isem/gamilit-workspace/apps/database/scripts/` |
 | Backup antes | Opcional | OBLIGATORIO |
 | Detener backend | No necesario (`npm run dev`) | `pm2 stop ecosystem.config.js` OBLIGATORIO |
-| Password default | gamilit_dev_2026 | Rotado (ver .env.prod) |
+| Password default | gamilit_dev_2026 | Rotado (ver .env.production) |
 | Smoke test | Opcional | OBLIGATORIO |
 | Puerto PostgreSQL | 5432 | 5432 |
 

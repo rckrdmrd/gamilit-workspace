@@ -11,7 +11,7 @@
 - Node.js v18+ (recomendado v20 LTS)
 - npm v9+ o pnpm
 - Git
-- Backend de GAMILIT corriendo (ver [../backend/SETUP-DEVELOPMENT.md](../backend/SETUP-DEVELOPMENT.md))
+- Backend de GAMILIT corriendo (ver [../../backend/impl/SETUP-DEVELOPMENT.md](../../backend/impl/SETUP-DEVELOPMENT.md))
 
 ---
 
@@ -347,4 +347,4 @@ const routes = [
 - [ESTRUCTURA-FEATURES.md](./ESTRUCTURA-FEATURES.md) - Estructura de features
 - [STATE-MANAGEMENT.md](./STATE-MANAGEMENT.md) - Zustand y React Query
 - [API-INTEGRATION.md](./API-INTEGRATION.md) - Conexión con backend
-- [../DEV-SERVERS.md](../DEV-SERVERS.md) - Servidores de desarrollo
+- [../../deployment/DEV-SERVERS.md](../../deployment/DEV-SERVERS.md) - Servidores de desarrollo

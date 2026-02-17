@@ -1757,26 +1757,30 @@ async submitExercise(...) { ... }
 
 | Documento | Descripción |
 |-----------|-------------|
-| [EXERCISE-MECHANICS-REFERENCE.md](./EXERCISE-MECHANICS-REFERENCE.md) | Referencia completa de 30+ mecánicas implementadas |
-| [GAMIFICATION-SYSTEM-GUIDE.md](./GAMIFICATION-SYSTEM-GUIDE.md) | Sistema de gamificación en profundidad |
-| [STUDENT-API-REFERENCE.md](./STUDENT-API-REFERENCE.md) | Referencia de 60+ APIs con ejemplos |
+| [SPEC-EXERCISES.md](./specs/SPEC-EXERCISES.md) | Referencia de ejercicios y mecánicas implementadas |
+| [SPEC-GAMIFICATION.md](./specs/SPEC-GAMIFICATION.md) | Sistema de gamificación en profundidad |
+| [SPEC-API-CONTRACTS.md](./specs/SPEC-API-CONTRACTS.md) | Referencia de contratos API del portal |
+| [../../30-ux-ui/flujos/student/FLUJO-EJERCICIO-COMPLETO.md](../../30-ux-ui/flujos/student/FLUJO-EJERCICIO-COMPLETO.md) | Flujo end-to-end de ejercicio auto-grade |
+| [../../30-ux-ui/flujos/student/FLUJO-EJERCICIO-M3-M5.md](../../30-ux-ui/flujos/student/FLUJO-EJERCICIO-M3-M5.md) | Flujo de ejercicio con revision manual |
+| [../../30-ux-ui/flujos/student/FLUJO-TIENDA-COMPRA.md](../../30-ux-ui/flujos/student/FLUJO-TIENDA-COMPRA.md) | Flujo de compra y asignacion en tienda |
+| [../../30-ux-ui/flujos/student/FLUJO-LOGROS-MISIONES-CLAIM.md](../../30-ux-ui/flujos/student/FLUJO-LOGROS-MISIONES-CLAIM.md) | Flujo de reclamo de recompensas |
 
 ### Guías Generales
 
-- [COMPONENT-PATTERNS.md](./frontend/COMPONENT-PATTERNS.md) - Patrones de componentes
-- [HOOK-PATTERNS.md](./frontend/HOOK-PATTERNS.md) - Patrones de hooks
-- [REACT-QUERY-GUIDE.md](./frontend/REACT-QUERY-GUIDE.md) - Uso de React Query
-- [ZUSTAND-PATTERNS.md](./frontend/ZUSTAND-PATTERNS.md) - Patrones de Zustand
-- [TYPES-CONVENTIONS.md](./frontend/TYPES-CONVENTIONS.md) - Convenciones de types
-- [DTO-CONVENTIONS.md](./backend/DTO-CONVENTIONS.md) - Convenciones de DTOs
-- [ESTRUCTURA-MODULOS.md](./backend/ESTRUCTURA-MODULOS.md) - Estructura de módulos
-- [ESTANDARES-API-ROUTES.md](../../orchestration/directivas/ESTANDARES-API-ROUTES.md) - Rutas API
+- [COMPONENT-PATTERNS.md](../../50-guides/frontend/impl/COMPONENT-PATTERNS.md) - Patrones de componentes
+- [HOOK-PATTERNS.md](../../50-guides/frontend/impl/HOOK-PATTERNS.md) - Patrones de hooks
+- [ADR-013-react-query-adoption.md](../../90-adr/ADR-013-react-query-adoption.md) - Uso de React Query
+- [README frontend impl](../../50-guides/frontend/impl/README.md) - Convenciones generales frontend
+- [TYPES-CONVENTIONS.md](../../50-guides/frontend/impl/TYPES-CONVENTIONS.md) - Convenciones de types
+- [DTO-CONVENTIONS.md](../../50-guides/backend/impl/DTO-CONVENTIONS.md) - Convenciones de DTOs
+- [ESTRUCTURA-MODULOS.md](../../50-guides/backend/impl/ESTRUCTURA-MODULOS.md) - Estructura de módulos
+- [40-api/README.md](../../40-api/README.md) - Rutas y contratos API
 
 ### Documentación de Arquitectura
 
-- [ADR-001: Sistema de Ranks Maya](../../97-adr/ADR-001-sistema-ranks-maya.md)
-- [ADR-002: ML Coins Economy](../../97-adr/ADR-002-ml-coins-economy.md)
-- [ADR-003: Exercise Mechanics](../../97-adr/ADR-003-exercise-mechanics.md)
+- [ADR-001: Gamificacion Maya](../../90-adr/ADR-001-gamificacion-maya.md)
+- [ADR-021: Estandarizacion Recompensas XP](../../90-adr/ADR-021-estandarizacion-recompensas-xp-ejercicios.md)
+- [ADR-008: Sistema Dual Exercise Mechanics](../../90-adr/ADR-008-sistema-dual-exercise-mechanics.md)
 
 ---
 

@@ -315,7 +315,7 @@ function AlertFilters() {
 ## REFERENCIAS
 
 - [TeacherAlertsPage](../pages/TEACHER-PAGES-SPECIFICATIONS.md#5-teacheralertspage)
-- [ReviewPanelPage Implementation](../../../../apps/frontend/src/apps/teacher/pages/grading/ReviewPanelPage.tsx)
+- [ReviewPanelPage Implementation](../../../../../../apps/frontend/src/apps/teacher/pages/TeacherReviewPanelPage.tsx)
 
 ---
 

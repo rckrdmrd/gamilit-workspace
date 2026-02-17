@@ -459,5 +459,5 @@ describe('UsersService', () => {
 
 ## Ver También
 
-- [API-CONVENTIONS.md](./API-CONVENTIONS.md) - Convenciones de API
+- [API-STANDARDS.md](./API-STANDARDS.md) - Convenciones de API
 - [ESTRUCTURA-SHARED.md](./ESTRUCTURA-SHARED.md) - Filtros y excepciones compartidas

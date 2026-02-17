@@ -544,7 +544,7 @@ module.exports = {
 - [TypeScript 3.7 Release Notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html)
 - [MDN: Optional Chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining)
 - [MDN: Nullish Coalescing](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing)
-- [Implementation in TeacherStudentsPage](../apps/frontend/src/apps/teacher/pages/TeacherStudents.tsx)
+- [Implementation in TeacherStudentsPage](../../apps/frontend/src/apps/teacher/pages/TeacherStudents.tsx)
 
 ---
 

@@ -156,9 +156,9 @@ req:
 
 ## Referencias
 
-- [MODULOS-SIMCO-V2-DEFINICION.md](../../MODULOS-SIMCO-V2-DEFINICION.md)
-- [RFC-0001: Sistema de Mapeo SIMCO](../standards/RFC-0001-sistema-mapeo-simco.md) (si existe)
-- [trace.yml spec](../templates/trace-yml-template.md) (pendiente)
+- [MODULOS.md](../00-overview/MODULOS.md)
+- [ESTANDAR-ESTRUCTURA-DOCS.md](../../orchestration/referencias/ESTANDAR-ESTRUCTURA-DOCS.md)
+- [SESSION-TRACE-TEMPLATE.yml](../../orchestration/templates/03-por-proceso/session-tracking/SESSION-TRACE-TEMPLATE.yml)
 
 ## Implementación
 

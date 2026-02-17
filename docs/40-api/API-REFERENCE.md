@@ -9,6 +9,21 @@
 
 ---
 
+## Trazabilidad de Flujos End-to-End
+
+Para validar los endpoints dentro de procesos funcionales completos (UI -> API -> datos), ver:
+
+- [docs/30-ux-ui/flujos/README.md](../30-ux-ui/flujos/README.md)
+- [docs/30-ux-ui/flujos/TRACEABILITY-MATRIX.md](../30-ux-ui/flujos/TRACEABILITY-MATRIX.md)
+- [docs/30-ux-ui/flujos/COBERTURA-TOTAL-PROCESOS.md](../30-ux-ui/flujos/COBERTURA-TOTAL-PROCESOS.md)
+- [docs/30-ux-ui/flujos/AUDITORIA-RESIDUAL-FULL.md](../30-ux-ui/flujos/AUDITORIA-RESIDUAL-FULL.md)
+
+> Nota de cobertura total (2026-02-17): los endpoints del portal `parents/*` quedaron trazados y planificados en la oleada full.
+> La consolidacion completa del contrato API de parents se gestiona en:
+> `orchestration/tareas/TASK-2026-02-17-CIERRE-RIESGOS-RESIDUALES-FULL/02-PLAN-IMPLEMENTACION-ISSUES.md` (`ISSUE-FULL-PLAN-001`).
+
+---
+
 ## Autenticacion
 
 Todos los endpoints (excepto login/register) requieren un header de autorizacion:
@@ -249,18 +264,28 @@ Authorization: Bearer <jwt_token>
 
 ---
 
-## 13. Parents Module (~20 endpoints)
+## 13. Parents Portal Module (~18 endpoints)
 
 | Method | Endpoint | Description | Auth | Role |
 |--------|----------|-------------|------|------|
-| GET | /parents/dashboard | Dashboard de padres | Si | parent |
-| POST | /parents/link | Vincular con estudiante (codigo) | Si | parent |
-| GET | /parents/children | Hijos vinculados | Si | parent |
-| GET | /parents/children/:id/progress | Progreso del hijo | Si | parent |
-| GET | /parents/children/:id/activity | Actividad reciente | Si | parent |
-| GET | /parents/notifications | Notificaciones | Si | parent |
-| GET | /parents/reports/:childId | Reporte del hijo | Si | parent |
-| POST | /parents/messages | Enviar mensaje a maestro | Si | parent |
+| POST | /parent-portal/auth/register | Registro de padres | No | parent |
+| POST | /parent-portal/auth/login | Login de padres | No | parent |
+| POST | /parent-portal/auth/refresh | Refresh token | Si | parent |
+| POST | /parent-portal/auth/forgot-password | Solicitar reset | No | parent |
+| POST | /parent-portal/auth/reset-password | Reset de password | No | parent |
+| POST | /parent-portal/auth/verify-email | Verificar email | No | parent |
+| POST | /parent-portal/auth/logout | Logout | Si | parent |
+| GET | /parent-portal/dashboard | Dashboard de padres | Si | parent |
+| GET | /parent-portal/students | Hijos vinculados | Si | parent |
+| POST | /parent-portal/students/link | Vincular con estudiante | Si | parent |
+| POST | /parent-portal/students/verify | Verificar vinculacion | Si | parent |
+| GET | /parent-portal/students/:id/progress | Progreso del hijo | Si | parent |
+| GET | /parent-portal/students/:id/activities | Actividad reciente | Si | parent |
+| GET | /parent-portal/notifications | Notificaciones | Si | parent |
+| PATCH | /parent-portal/notifications/:id/read | Marcar leida | Si | parent |
+| GET | /parent-portal/notifications/unread-count | No leidas | Si | parent |
+| GET | /parent-portal/reports/weekly | Reporte semanal | Si | parent |
+| GET | /parent-portal/reports/weekly/:studentId | Reporte semanal por estudiante | Si | parent |
 
 ---
 

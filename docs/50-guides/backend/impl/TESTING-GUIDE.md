@@ -450,6 +450,6 @@ describe('CreateAchievementDto', () => {
 
 ## Ver También
 
-- [../TESTING-GUIDE.md](../TESTING-GUIDE.md) - Guía general de testing
+- [../../testing/TESTING-GUIDE.md](../../testing/TESTING-GUIDE.md) - Guía general de testing
 - [ESTRUCTURA-MODULOS.md](./ESTRUCTURA-MODULOS.md) - Dónde ubicar tests
 - [ERROR-HANDLING.md](./ERROR-HANDLING.md) - Testing de errores

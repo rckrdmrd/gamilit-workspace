@@ -9,17 +9,17 @@ Registro de decisiones arquitectonicas del proyecto.
 ### ADRs Arquitectonicos (workspace-arch)
 | ADR | Titulo | Estado | Fecha |
 |-----|--------|--------|-------|
-| [ADR-001](ADR-001-GAMIFICACION-MAYA.md) | Sistema de gamificacion con tematica de cultura maya | Aceptada | 2025-08-15 |
-| [ADR-002](ADR-002-SOCKET-IO-REALTIME.md) | Socket.IO para interacciones en tiempo real | Aceptada | 2025-08-20 |
-| [ADR-003](ADR-003-RLS-MULTITENANCY.md) | RLS multi-tenancy para aislamiento de escuelas | Aceptada | 2025-08-18 |
-| [ADR-004](ADR-004-MODULAR-EXERCISE-ENGINE.md) | Arquitectura modular del exercise engine (23 tipos) | Aceptada | 2025-09-01 |
+| [ADR-001](ADR-001-gamificacion-maya.md) | Sistema de gamificacion con tematica de cultura maya | Aceptada | 2025-08-15 |
+| [ADR-002](ADR-002-socket-io-realtime.md) | Socket.IO para interacciones en tiempo real | Aceptada | 2025-08-20 |
+| [ADR-003](ADR-003-rls-multitenancy.md) | RLS multi-tenancy para aislamiento de escuelas | Aceptada | 2025-08-18 |
+| [ADR-004](ADR-004-modular-exercise-engine.md) | Arquitectura modular del exercise engine (23 tipos) | Aceptada | 2025-09-01 |
 
 ### ADRs Migrados (workspace-v2, todos vigentes)
 | ADR | Titulo | Estado |
 |-----|--------|--------|
-| [ADR-0001](ADR-0001-monorepo-architecture.md) | Adopcion de Arquitectura Monorepo | Aceptada |
-| [ADR-0002](ADR-0002-simco-system.md) | Implementacion del Sistema SIMCO | Aceptada |
-| [ADR-0003](ADR-0003-team-vs-guild.md) | Team vs Guild Terminology | Aceptada |
+| [ADR-040](ADR-040-monorepo-architecture.md) | Adopcion de Arquitectura Monorepo | Aceptada |
+| [ADR-041](ADR-041-simco-system.md) | Implementacion del Sistema SIMCO | Aceptada |
+| [ADR-042](ADR-042-team-vs-guild.md) | Team vs Guild Terminology | Aceptada |
 | [ADR-007](ADR-007-schemas-sin-tablas.md) | Schemas de BD Sin Tablas | Aceptada |
 | [ADR-008](ADR-008-sistema-dual-exercise-mechanics.md) | Sistema Dual exercise_type + Categorias Pedagogicas | Aceptada |
 | [ADR-009](ADR-009-duracion-podcast-ejercicio-3-4.md) | Duracion Ejercicio 3.4 Podcast | Aceptada |
@@ -45,7 +45,7 @@ Registro de decisiones arquitectonicas del proyecto.
 | [ADR-031](ADR-031-portal-parent.md) | Portal Parent | Aceptada |
 | [ADR-032](ADR-032-parent-notifications-integration.md) | Parent Notifications Integration | Aceptada |
 | [ADR-033](ADR-033-expansion-schemas-8-to-18.md) | Expansion Schemas 8→18 | Aceptada |
-| [ADR-2026-01-07](ADR-2026-01-07-CONSOLIDACION-BD.md) | Consolidacion BD 2026-01-07 | Aceptada |
+| [ADR-043](ADR-043-consolidacion-bd.md) | Consolidacion BD 2026-01-07 | Aceptada |
 
 ---
 

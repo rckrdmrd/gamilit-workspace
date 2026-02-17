@@ -463,7 +463,7 @@ git log --grep="^feat(backend)"
 
 ## References
 
-- [RFC-0001: Estructura de Monorepo](../standards/RFC-0001-monorepo-structure.md)
+- [ADR-038: Estructura Canónica apps/](./ADR-038-estructura-canonica-apps.md)
 - [Monorepos in Git (Martin Fowler)](https://martinfowler.com/bliki/MonorepoPattern.html)
 - [Why Google Stores Billions of Lines in a Single Repository](https://cacm.acm.org/magazines/2016/7/204032-why-google-stores-billions-of-lines-of-code-in-a-single-repository/fulltext)
 - [Monorepo Tools: Lerna, Nx, Turborepo Comparison](https://monorepo.tools/)
