@@ -32,13 +32,13 @@ ALTER TABLE lti_integration.lti_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE lti_integration.lti_sessions FORCE ROW LEVEL SECURITY;
 
 -- =====================================================
--- TABLE: lti_integration.lti_grade_passback
+-- TABLE: lti_integration.lti_grade_passbacks
 -- Description: Registro de calificaciones enviadas a LMS
 -- Risk: ALTO - Calificaciones de estudiantes expuestas
 -- Note: RLS ya habilitado en 07-enable-rls.sql, pero FORCE no aplicado
 -- =====================================================
-ALTER TABLE lti_integration.lti_grade_passback ENABLE ROW LEVEL SECURITY;
-ALTER TABLE lti_integration.lti_grade_passback FORCE ROW LEVEL SECURITY;
+ALTER TABLE lti_integration.lti_grade_passbacks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE lti_integration.lti_grade_passbacks FORCE ROW LEVEL SECURITY;
 
 -- =====================================================
 -- SUMMARY

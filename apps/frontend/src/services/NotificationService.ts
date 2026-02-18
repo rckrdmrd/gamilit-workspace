@@ -1,6 +1,14 @@
 import { apiClient } from '@/services/api/apiClient';
 
 /**
+ * @deprecated This service has 0 importers. Use `notificationsAPI.ts` instead.
+ * Canonical notification path: services/api/notificationsAPI.ts → hooks/useWebSocket.ts
+ * This file can be safely deleted. Kept for reference only.
+ * @see services/api/notificationsAPI.ts
+ * @ticket P6-CLEANUP
+ */
+
+/**
  * Notification types
  */
 export type NotificationType =
@@ -291,7 +299,7 @@ class NotificationService {
     notification: Omit<Notification, 'id' | 'timestamp' | 'read'>,
   ): Promise<void> {
     try {
-      await apiClient.post('/notifications/send', {
+      await apiClient.post('/notifications', {
         userId,
         ...notification,
         timestamp: new Date().toISOString(),

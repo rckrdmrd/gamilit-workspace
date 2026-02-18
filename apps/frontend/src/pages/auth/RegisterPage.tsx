@@ -16,28 +16,35 @@
  * ```
  */
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { UserPlus } from 'lucide-react';
 import RegisterForm from '@/features/auth/components/RegisterForm';
+import { BrandingContext } from '@/app/providers/BrandingProvider';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 /**
  * RegisterPage Component
  */
 export const RegisterPage: React.FC = () => {
+  const branding = useContext(BrandingContext);
+  const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
+  const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo/Brand Section */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-600 rounded-2xl mb-4">
-            <UserPlus className="w-8 h-8 text-white" />
-          </div>
+          {logoUrl ? (
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 bg-white shadow-sm">
+              <img src={logoUrl} alt={platformName} className="h-12 w-12 object-contain" />
+            </div>
+          ) : null}
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Crear Cuenta
           </h1>
           <p className="text-gray-600">
-            Únete a GAMILIT y comienza tu viaje de aprendizaje
+            Únete a {platformName} y comienza tu viaje de aprendizaje
           </p>
         </div>
 

@@ -269,8 +269,8 @@ CREATE TABLE {schema}.{tabla} (
     -- ─────────────────────────────────────────────────────────────────────
     -- Auditoría
     -- ─────────────────────────────────────────────────────────────────────
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     created_by UUID,
 
     -- ─────────────────────────────────────────────────────────────────────
@@ -324,22 +324,56 @@ CREATE TRIGGER trg_{tabla}_updated
 -- ============================================================================
 -- ROW LEVEL SECURITY (si aplica)
 -- ============================================================================
-ALTER TABLE {schema}.{tabla} ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies (idempotent)
+DROP POLICY IF EXISTS {tabla}_select_policy ON {schema}.{tabla};
+DROP POLICY IF EXISTS {tabla}_insert_policy ON {schema}.{tabla};
+DROP POLICY IF EXISTS {tabla}_admin_all ON {schema}.{tabla};
+
+ALTER TABLE {schema}.{tabla} ENABLE ROW LEVEL SECURITY;
+ALTER TABLE {schema}.{tabla} FORCE ROW LEVEL SECURITY;
+
+-- Admin full access
+CREATE POLICY {tabla}_admin_all
+    ON {schema}.{tabla}
+    AS PERMISSIVE FOR ALL TO public
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+COMMENT ON POLICY {tabla}_admin_all ON {schema}.{tabla} IS
+    'Admins tienen acceso completo a {tabla}';
+
+-- User own data access
 CREATE POLICY {tabla}_select_policy
     ON {schema}.{tabla}
-    FOR SELECT
-    USING ({condicion_rls});
+    AS PERMISSIVE FOR SELECT TO public
+    USING (gamilit.get_current_user_id() = user_id);
+
+COMMENT ON POLICY {tabla}_select_policy ON {schema}.{tabla} IS
+    'Usuarios pueden leer sus propios registros';
 
 CREATE POLICY {tabla}_insert_policy
     ON {schema}.{tabla}
-    FOR INSERT
-    WITH CHECK ({condicion_rls});
+    AS PERMISSIVE FOR INSERT TO public
+    WITH CHECK (gamilit.get_current_user_id() = user_id);
+
+COMMENT ON POLICY {tabla}_insert_policy ON {schema}.{tabla} IS
+    'Usuarios pueden insertar sus propios registros';
+
+-- NOTA: NUNCA usar auth.uid() directamente — usar gamilit.get_current_user_id()
+-- NOTA: NUNCA usar TO authenticated — usar TO public
 
 -- ============================================================================
 -- FIN DE ARCHIVO
 -- ============================================================================
 ```
+
+---
+
+## CONVENCION DE CORRECCIONES DDL
+
+Para correcciones de archivos DDL existentes, usar commit message con prefijo `[GAM-CORR-XX]` y confiar en `git blame` para trazabilidad. NO agregar markers inline (como `-- FIX CORR-04`) en los archivos SQL, ya que ensucian el codigo y se vuelven obsoletos.
+
+**Patron de referencia cruzada:** Si una correccion aplica a multiples archivos, documentar en el commit message el hallazgo fuente (ej: `[GAM-CORR-04] fix: UPPERCASE→lowercase enums in RLS policies (HA-002)`).
 
 ---
 

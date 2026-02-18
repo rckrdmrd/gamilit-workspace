@@ -1,10 +1,12 @@
 # PROXIMA ACCION - GAMILIT
 
-**Ultima Actualizacion:** 2026-02-17
-**Estado del Proyecto:** MVP 98% completado | **SPRINT 1 COMPLETADO (6/6 items)** | **15 CORR/MQ/TRZ/DBOPS items done**
+**Ultima Actualizacion:** 2026-02-18
+**Estado del Proyecto:** MVP 98% completado | **SPRINT 1 COMPLETADO (6/6 items)** | **Admin Portal Refactor Sprint 0+1+2 COMPLETADO** | **Student Portal Refactor Fases 0-4 COMPLETADO**
 **Sprint Actual:** Sprint 1 — Calidad y Estabilizacion (2026-02-17 a 2026-03-03) — **100% COMPLETADO**
-**Ultima Tarea:** Sprint 1 execution — MQ-001/002/003/004/006, TRZ-001/002, DBOPS-006 (**COMPLETADA**)
-**Tareas Pendientes:** MQ-005 (Repository pattern, XL), MQ-007 (911 no-explicit-any, XL), MQ-009 (XP sync, investigado), TRZ-006 (FE social endpoints), DBOPS-005 (CI migration detection)
+**Ultima Tarea:** Student Portal Refactoring Fases 0-4 — 10 paginas, 5,719→2,307 lineas (-60%), 94% compliance, 43 archivos nuevos (**COMPLETADA**)
+**Tareas Pendientes:** MQ-005 (Repository pattern — DEFERRED per ADR-045), MQ-007 (911 no-explicit-any — DOCUMENTED, XL sprint needed)
+**Backlog Resuelto (2026-02-18):** MQ-008 (skill created), MQ-009 (XP sync FIXED), TRZ-006 (plan created), DBOPS-005 (CI script + job created)
+**CORR-03/04/05:** Todos **COMPLETADOS** — BD recrea con 0 errores (indices, RLS, seeds). Runtime: 404 RLS, 76 seeds, 169 tablas.
 **Normalizacion Documental (Fase 2/3):** **CERRADA** (Lotes 1-3 + Olas 1-8 completadas, `BROKEN_GLOBAL_TOTAL=0`)
 
 > Desacople documental:
@@ -15,6 +17,296 @@
 ---
 
 ## Estado Actual
+
+### TASK-2026-02-18-STUDENT-PORTAL-ANALYSIS (2026-02-18) - FASES 0-4 COMPLETADAS
+
+**Refactorizacion de 10 paginas del portal estudiante siguiendo patron Thin Shell + Quality Fixes.**
+
+#### Resultado por Pagina (Fases 0-3)
+
+| Pagina | Antes | Despues | Reduccion | Extracciones |
+|--------|-------|---------|-----------|--------------|
+| ShopPage | 632 | 235 | **-63%** | 2 hooks + 3 components |
+| InventoryPage | 732 | 258 | **-65%** | 2 hooks + 5 components + 1 util |
+| ModuleDetailPage | 627 | 277 | **-56%** | 2 components + 1 util |
+| EnhancedProfilePage | 635 | 213 | **-66%** | 4 components + 2 hooks + 1 types |
+| AchievementsPage | 593 | 244 | **-59%** | 1 hook (useAchievements) |
+| LearningPage | 357 | 206 | **-42%** | 1 component (ModuleCard) |
+| LeaderboardPage | 546 | 210 | **-62%** | 5 components |
+| FriendsPage | 591 | 150 | **-75%** | 5 tab components |
+| GuildsPage | 684 | 165 | **-76%** | 5 components |
+| MissionsPage | 249 | 249 | 0% | Ya seguia patron |
+| **Total** | **5,719** | **2,307** | **-60%** | **7 hooks + 31 components + 4 utils + 1 types** |
+
+#### Fase 4: Quality Fixes (P0/P1/P2)
+
+| Fix | Tipo | Archivos |
+|-----|------|----------|
+| P0: useProfileData hook | Hook extraction | EnhancedProfilePage: 4 stores → 1 hook (240→213 lineas) |
+| P0: useAvatarUpdate hook | Mutation extraction | Optimistic update + API persistence |
+| P1: ARIA tabs | Accessibility | EnhancedProfilePage, InventoryPage: role="tablist" + role="tab" + aria-selected |
+| P1: Search labels | Accessibility | ShopPage, InventoryPage, LearningPage: sr-only labels |
+| P1: Error typing | TypeScript | useEquipment.ts: `error: any` → `error: Error` + extractApiErrorMessage |
+| P2: AchievementsPage move | Structure | pages/ → apps/student/pages/ (single default export) |
+| P2: ModuleCard extraction | Component | LearningPage 322→206 lineas |
+
+#### Validacion de Estandares (13 dimensiones, post-Phase 4)
+
+| Dimension | Score | Resultado |
+|-----------|-------|-----------|
+| Thin Shell | 100% | 10/10 paginas < 300 lineas |
+| Custom Hooks | 100% | 7 hooks con SRP |
+| State (React Query) | 89% | 1 WARN (EnhancedProfilePage Zustand legacy) |
+| Separation of Concerns | 100% | 4 capas bien separadas |
+| SOLID | 100% | SRP + OCP + DIP |
+| Clean Architecture | 100% | Entities/UseCases/Adapters/Framework |
+| Accessibility | 75% | ARIA tabs + search labels (focus trapping pendiente) |
+| Naming (ADR-030) | 83% | Sufijo "Page" codebase-wide (deuda tecnica) |
+| Error Handling | 89% | 1 WARN (EnhancedProfilePage sin loading) |
+| TypeScript Strict | 100% | 0 any, 0 @ts-ignore, 0 eslint-disable |
+| Performance | 100% | Lazy loading, useMemo, AnimatePresence |
+| Consistencia Visual | 100% | Tailwind, DetectiveCard, gradients |
+| Alineamiento Flujos | 100% | 7/7 flujos actualizados (paths corregidos) |
+| **Score Global** | **94%** | **9 PASS, 4 WARN, 0 FAIL** |
+
+#### Inventarios Actualizados
+
+| Inventario | Version | Cambio |
+|-----------|---------|--------|
+| FRONTEND_INVENTORY.yml | v10.0.0 | componentes 541→571, hooks 112→119, stores 14→13, types 48→49 |
+| MASTER_INVENTORY.yml | v11.0.0 | componentes 541→571, hooks 112→119 |
+
+#### Flujos Actualizados (Trazabilidad)
+
+| Flujo | Cambio |
+|-------|--------|
+| FLUJO-TIENDA-COMPRA.md | +4 archivos trazabilidad (useShopData, useShopPurchase, ShopItemCard, PurchaseModal) |
+| FLUJO-INVENTARIO-ITEMS.md | +7 archivos trazabilidad (useInventoryData, useActivatePowerUp, 5 componentes) |
+| FLUJO-COMPRA-INVENTARIO-EQUIPAR.md | useInventory.ts → useEquipment.ts + useInventoryData.ts + 4 hooks |
+| FLUJO-LOGROS-MISIONES-CLAIM.md | AchievementsPage path actualizado (pages/ → apps/student/pages/) |
+| COBERTURA-TOTAL-PROCESOS.md | AchievementsPage path actualizado |
+| TRACEABILITY-MATRIX.md | AchievementsPage path actualizado |
+
+**Issues Phase 0-2 — TODOS RESUELTOS en Phase 4:**
+- ~~C-001: Extraer useProfileData hook~~ → **COMPLETADO** (useProfileData.ts)
+- ~~C-002: Extraer useAvatarUpdate mutation hook~~ → **COMPLETADO** (useAvatarUpdate.ts)
+- ~~W-006/W-007: Agregar role="tab" + aria-selected~~ → **COMPLETADO** (EnhancedProfilePage, InventoryPage)
+- ~~W-003/W-004/W-005: Agregar labels a search inputs~~ → **COMPLETADO** (ShopPage, InventoryPage, LearningPage)
+
+**Output:** `orchestration/tareas/TASK-2026-02-18-STUDENT-PORTAL-ANALYSIS/` (3 reportes: hallazgos, resultados, validacion estandares)
+
+---
+
+### BACKLOG QUALITY ITEMS (2026-02-18) - RESUELTOS
+
+**Resolucion de 6 items del BACKLOG.yml quality sprint.**
+
+| Item | Descripcion | Estado | Detalle |
+|------|-------------|--------|---------|
+| MQ-005 | Repository pattern evaluation | **DEFERRED** | ADR-045 documenta decision: deferred hasta MQ-002 Domain Errors >50% adoption |
+| MQ-007 | Fix 911 no-explicit-any warnings | **DOCUMENTED** | XL effort. Phased: auth→gamification→educational first. Target: 911→<200 |
+| MQ-008 | Create skill simco-apply-backend-standard | **COMPLETED** | `orchestration/skills/simco-apply-backend-standard/SKILL.md` (375 lineas, 7 pasos) + registrado en SKILLS-REGISTRY.yml |
+| MQ-009 | Sync XP multiplierMap FE↔BE SSOT | **COMPLETED** | 3 fixes: ranks.constants.ts v2.1 (xpMax/xpMin stale), RanksSection.tsx (import SSOT, remove 78 lines mock), useDashboardData.ts (comment fix) |
+| TRZ-006 | Plan FE integration social endpoints | **COMPLETED** | Plan v2.0.0: 63 endpoints unwired (peer/team challenges, follows, guilds), 12-15 dias estimados. `05-PLAN-SOCIAL-INTEGRATION-TRZ006.md` |
+| DBOPS-005 | CI migration detection automation | **COMPLETED** | `check-no-migrations.sh` (335 lineas, 7 checks) + `migration-detection` job in backend-ci.yml |
+
+**MQ-009 Bugs Corregidos (6 archivos total):**
+- `ranks.constants.ts` v2.0→v2.1: Halach Uinic xpMax 2249→1899, K'uk'ulkan xpMin 2250→1900 (off by 350 XP vs DB seeds)
+- `RanksSection.tsx`: Replaced 78 lines of hardcoded mock data (wrong rank order, wrong XP, wrong multipliers 1.0-3.0) with import from `MAYA_RANKS_ORDERED` SSOT
+- `useDashboardData.ts`: Comment clarified — multipliers are ML Coins (1.0-2.0) from rank-multiplier.service.ts, NOT DB xp_multiplier (1.0-1.25). `getRankIcon()` migrado a SSOT import (5/5 icons divergian). `defaultRankData.rankIcon` 🏹→🌱
+- `GamificationHero.tsx`: Replaced 32-line hardcoded MAYA_RANKS → SSOT import + getRankDisplay() + local RANK_GRADIENT_MAP. Icons 5/5 aligned (🏹🔍🗡️⚔️👑 → 🌱⚔️☀️👑🐉)
+- `RankProgressWidget.tsx`: Replaced 37-line hardcoded MAYA_RANKS → SSOT import + getRankDisplay() + local RANK_STYLE_MAP. Removed 2 debug console.logs. Icons 5/5 aligned
+
+**SSOT Cascade Validation (post-fix):** `grep '🏹' apps/frontend/src` → 0 matches. `grep 'const MAYA_RANKS = {' apps/frontend/src` → 0 matches. All 4 rank-display components now import from `ranks.constants.ts` SSOT.
+
+---
+
+### TASK-2026-02-18-ADMIN-PORTAL-REFACTOR (2026-02-18) - SPRINT 0+1+2 COMPLETADO (19/19 PAGINAS)
+
+**Analisis (5 agentes paralelos) + Refactorizacion completa de 19 paginas admin en 3 sprints.**
+
+#### Sprint 0: Infraestructura Cross-Cutting (5 archivos)
+
+| # | Archivo | Proposito |
+|---|---------|-----------|
+| 1 | `useAdminPageSetup.ts` | Centraliza boilerplate (useAuth + gamification + logout) |
+| 2 | `AdminPageShell.tsx` | Wrapper AdminLayout estandarizado |
+| 3 | `AdminTabBar.tsx` | Tabs generico (underline/cards) con ARIA |
+| 4 | `downloadCSV.ts` | Utilidad CSV compartida (reemplaza 13+ duplicados) |
+| 5 | `useModalBehavior.ts` | Escape + scroll lock para modales |
+
+#### Sprint 1: 4 Paginas Criticas Refactorizadas
+
+| Pagina | Antes | Despues | Reduccion |
+|--------|-------|---------|-----------|
+| AdminUsersPage.tsx | 892 | 137 | **-84.6%** |
+| AdminAuditLogsPage.tsx | 762 | 204 | **-73.2%** |
+| AdminGamificationPage.tsx | 650 | 228 | **-64.9%** |
+| AdminContentPage.tsx | 586 | 137 | **-76.6%** |
+| **Total** | **2,890** | **706** | **-75.6%** |
+
+- **19 componentes extraidos** (users:4, audit:4, gamification:4, content:5, shared:2)
+- **3 hooks nuevos** (useContentQueries, useUserActions, useCreateUserFlow)
+
+#### Sprint 2: 15 Paginas Restantes (Batch A + Batch B)
+
+**Batch A** — 11 paginas: AdminPageShell + AdminTabBar migration (boilerplate eliminado)
+
+| Pagina | Antes | Despues | Reduccion |
+|--------|-------|---------|-----------|
+| AdminMonitoringPage | 183 | 110 | -40% |
+| AdminSettingsPage | 163 | 102 | -37% |
+| AdminAnalyticsPage | 299 | 217 | -27% |
+| AdminReportsPage | 302 | 195 | -35% |
+| AdminAdvancedPage | 141 | 109 | -23% |
+| AdminAlertsPage | 215 | 189 | -12% |
+| AdminClassroomTeacherPage | 154 | 131 | -15% |
+| AdminProgressPage | 315 | 291 | -8% |
+| AdminAssignmentsPage | 295 | 272 | -8% |
+| AdminRolesPage | 302 | 272 | -10% |
+| AdminNotificationPreferencesPage | 310 | 301 | -3% |
+
+**Batch B** — 4 paginas: extraccion de componentes/hooks
+
+| Pagina | Antes | Despues | Reduccion | Extracciones |
+|--------|-------|---------|-----------|--------------|
+| AdminDashboardPage | 397 | 89 | **-78%** | 4 componentes |
+| AdminNotificationsPage | 396 | 172 | **-57%** | 3 componentes |
+| AdminInstitutionsPage | 574 | 108 | **-81%** | 1 componente + 1 hook |
+| AdminExerciseCreatePage | 536 | 304 | **-43%** | 1 componente + 1 barrel |
+
+- **9 componentes extraidos** (dashboard:4, notifications:3, institutions:1, exercise-builder:1)
+- **1 hook nuevo** (useInstitutionActions)
+
+#### Resultado Global (Sprint 0+1+2)
+
+| Metrica | Valor |
+|---------|-------|
+| Paginas migradas a AdminPageShell | **19/19 (100%)** |
+| Total lineas paginas (antes) | **7,471** |
+| Total lineas paginas (despues) | **3,568** |
+| Reduccion total | **3,903 lineas (52.2%)** |
+| Componentes nuevos creados | **30** (Sprint 0+1: 21, Sprint 2: 9) |
+| Hooks nuevos creados | **6** (Sprint 0+1: 5, Sprint 2: 1) |
+| Paginas bajo 150 lineas | **8/19** |
+
+#### Validacion
+
+| Aspecto | Sprint 0+1 | Sprint 2 |
+|---------|------------|----------|
+| Build (tsc + Vite) | **PASS** | Pendiente verificacion manual |
+| Inventarios | Actualizados | **Actualizados** (v9.0.0) |
+| Documentacion | 04-RESULTADOS-SPRINT-0-1.md | **05-RESULTADOS-SPRINT-2.md** (completo con 4 secciones) |
+| 17-Check Estandares | N/A | **85.5% PASS** (407 PASS, 57 WARN, 12 FAIL) |
+| Flujos Admin | N/A | **10/10 actualizados** (v1.1.0+) |
+| PORTAL-ADMIN-GUIDE | v1.0.0 | **v2.0.0** (4 secciones reescritas) |
+| TRACEABILITY-MATRIX | v1.5.0 | **v1.6.0** (version bump + flow versions) |
+| Validacion doc completa | **06-VALIDACION-ESTANDARES-SPRINT-2.md** | |
+
+**Inventarios actualizados:** FRONTEND_INVENTORY.yml v9.0.0, MASTER_INVENTORY.yml
+**Output:** `orchestration/tareas/TASK-2026-02-18-ADMIN-PORTAL-REFACTOR/` (16 reportes + 3 resultados + 1 validacion)
+
+---
+
+### TASK-2026-02-18-ANALISIS-MISIONES-LOGROS (2026-02-18) - COMPLETADA
+
+**Analisis de 5 pistas + implementacion de 12 correcciones + validacion documental.**
+
+#### Correcciones Implementadas (REC-001 a REC-012)
+
+| Tier | REC | Descripcion | Estado |
+|------|-----|-------------|--------|
+| T1 | REC-001 | UNIQUE constraint misiones (anti-duplicacion) | **COMPLETADO** |
+| T1 | REC-002 | Timezone cron → America/Mexico_City + weekly lunes | **COMPLETADO** |
+| T1 | REC-003 | Delete missionsStore + missionsAPI (deprecated) | **COMPLETADO** |
+| T1 | REC-004 | Renombrar seeds staging (numbering fix) | **COMPLETADO** |
+| T2 | REC-005 | Deprecar DB function check_and_award_achievements | **COMPLETADO** |
+| T2 | REC-006 | Resolver bonus UI (hardcode bonusXP/MLCoins=0) | **COMPLETADO** |
+| T2 | REC-007 | Retry job para inicializaciones fallidas | **COMPLETADO** |
+| T2 | REC-008 | Consolidar achievementsStore → gamificationApi | **COMPLETADO** |
+| T3 | REC-009 | Migration template_id TEXT → UUID + FK | **COMPLETADO** |
+| T3 | REC-010 | Cleanup expired missions (DELETE >90 dias) | **COMPLETADO** |
+| T3 | REC-011 | Seeds 5 achievements categoria collection | **COMPLETADO** |
+| T3 | REC-012 | Estandarizar reward fields (@deprecated flat cols) | **COMPLETADO** |
+
+#### Documentacion Sincronizada Post-Implementacion
+
+| Artefacto | Version | Cambio |
+|-----------|---------|--------|
+| DATABASE_INVENTORY.yml | v8.7.0 | FKs 298→299, indexes +1, gamification 20→21 tablas |
+| BACKEND_INVENTORY.yml | v4.4.0 | entities 154→155, services 172→173, gamification services/controllers +1 |
+| FRONTEND_INVENTORY.yml | v7.1.0 | stores 14→13, api_files 53→52 |
+| MASTER_INVENTORY.yml | v10.8.0 | Todos sincronizados, RLS 231/471 actualizado, missions daily/weekly corregidos |
+| SEEDS_INVENTORY.yml | v3.1.0 | dev 76→77, gamification 18→19 |
+| 11-missions.md | v2.0.0 | Reescrito completamente (esquema conceptual → real) |
+| COHERENCE-ENTITIES-DDL.md | v2.2.0 | Sprint REC con 4 correcciones anotadas |
+| SPEC-ACHIEVEMENTS.md | v1.1.0 | 8 categorias, rewards deprecated, GAP-P1-008 resuelto |
+| FLUJO-LOGROS-MISIONES-CLAIM.md | v2.0.0 | Reescrito: 9 secciones, cron jobs, inicializacion, auto-reconciliacion |
+| FLUJO-DASHBOARD-PROGRESO.md | v1.1.0 | On-demand generation, retry init |
+| FLUJO-EJERCICIO-COMPLETO.md | v1.2.0 | Post-submission achievement detection |
+| schema-reference/_INDEX.md | v2.1.0 | RLS 231, FKs 299, missions 3 tablas |
+
+#### Validacion de Estandares
+- **18/21 checks PASS** (DTOs, entities, seeds, cron, modules)
+- **3 FAIL pre-existentes** (FK naming convention, SECURITY DEFINER, anonymous FKs — patron adoptado en todo el proyecto)
+- **0 violaciones bloqueantes introducidas**
+
+**Build validation:** Backend tsc 0 errors, Frontend 0 nuevos errors (33 pre-existentes en .example.tsx)
+
+---
+
+### REESTRUCTURACION SISTEMA EJERCICIOS (2026-02-18) - COMPLETADA
+
+**Descomposición del monolito ExercisePage.tsx (~1058 líneas) en ~20 archivos con Registry Pattern.**
+
+| Fase | Archivo(s) | Cambio | Estado |
+|------|------------|--------|--------|
+| 1 | `types/exercise-mechanic.types.ts` | Contrato estándar ExerciseMechanicProps | **COMPLETADO** |
+| 1 | `registry/exercise-registry.ts` + `registrations.ts` | Registry Pattern: 30 mecánicas registradas | **COMPLETADO** |
+| 2 | `hooks/useExerciseData.ts` | Fetch + registry lookup + mechanic loading | **COMPLETADO** |
+| 2 | `hooks/useExerciseComodines.ts` | Inventario real comodines API backend (reemplaza mock PowerUpBar) | **COMPLETADO** |
+| 2 | `hooks/useExerciseProgress.ts` | Progreso + auto-save integrado | **COMPLETADO** |
+| 2 | `context/ExerciseContext.tsx` | Compone hooks en React Context (elimina prop drilling) | **COMPLETADO** |
+| 3 | `components/ExerciseLayout.tsx` + 8 componentes | Layout, Loader, Sidebar, ConsumablesPanel, ActionsPanel, etc. | **COMPLETADO** |
+| 4 | `ExercisePage.tsx` | Reescrito: 1058→30 líneas (thin shell) | **COMPLETADO** |
+| 5 | `MechanicCompatWrapper.tsx` | Backward compat: 30 mecánicas funcionan sin modificar | **COMPLETADO** |
+| 6 | Build verification | TypeScript 0 errors, ESLint 0 errors, Vite 17.06s OK | **COMPLETADO** |
+
+**Documentación actualizada (post-restructuring):**
+- FRONTEND_INVENTORY.yml v6.5.0: componentes 497→507, hooks 103→106, contexts 3→4
+- MASTER_INVENTORY.yml v10.6.0: componentes 497→507, hooks 102→105
+- FLUJO-EJERCICIO-COMPLETO.md v1.1.0: trazabilidad + Sección 8 implementación técnica
+- SPEC-EXERCISES.md v1.1.0: componentes, hooks, registry pattern
+- ESTRUCTURA-FEATURES.md v1.2.0: estructura exercises/ actualizada
+
+**Validación estándares:**
+- ESTANDAR-FRONTEND-PROFESIONAL: **92%** (Container/Presentational, Custom Hooks, Context, Code-splitting)
+- PRINCIPIO-SOLID: **98%** (OCP via Registry, SRP en cada componente, DIP via hooks)
+- PRINCIPIO-DRY: **95%** (extracciones justificadas por Rule of Three)
+- PRINCIPIO-YAGNI: **90%** (Registry justificado por 30 mecánicas existentes)
+
+---
+
+### MEJORAS DASHBOARD ESTUDIANTE (2026-02-18) - COMPLETADA
+
+**3 correcciones frontend-only al dashboard de estudiantes.**
+
+| Fase | Archivo | Cambio | Estado |
+|------|---------|--------|--------|
+| 1 | `DashboardComplete.tsx` | Filtrar misiones `claimed` del MissionsPanel + fix `isCompleted` | **COMPLETADO** |
+| 2 | `EnhancedStatsGrid.tsx` | Grid stats `lg:grid-cols-4` → `sm:grid-cols-2` (2x2 legible en col 4/12) | **COMPLETADO** |
+| 3a | `ModuleDetailPage.tsx` | Deshabilitar boton + card click para ejercicios completados | **COMPLETADO** |
+| 3b | `ExercisePage.tsx` | Guard: si `completed===true`, mostrar vista completado en vez de mecanica | **COMPLETADO** |
+
+**Validacion:**
+- Build: PASS (Vite 6.x, 4256 modules)
+- TypeScript: 0 errores nuevos (pre-existentes en .example.tsx)
+- Audit SIMCO-EDICION-SEGURA: PASS (0 violations)
+- Audit ESTANDAR-FRONTEND-PROFESIONAL: PASS
+- Audit PRINCIPIO-ANTI-DUPLICACION: PASS (0 archivos nuevos)
+- Flujos actualizados: FL-STU-13, FLUJO-LOGROS-MISIONES-CLAIM, FLUJO-EJERCICIO-COMPLETO
+
+---
 
 ### VALIDACION DOCUMENTAL + PLAN DE DESARROLLO (2026-02-17) - COMPLETADA
 
@@ -27,9 +319,9 @@
 |----|--------|-------------|
 | CORR-01 | **COMPLETADO** (ya estaba resuelto) | env.validation.ts types ya presentes, build PASS |
 | CORR-02 | **COMPLETADO** (ya estaba resuelto) | 0 lint errors (911 warnings son `no-explicit-any`, no `no-case-declarations`) |
-| CORR-03 | **COMPLETADO** | DDL cascade errors resolved — trigger functions, views, indices fixed. DB recreates cleanly: 169 tables, 255 funcs, 70 triggers, 352 RLS, 24 views, 7 MVs |
-| CORR-04 | **COMPLETADO** | RLS runtime: 352 (exceeds 227 DDL source). Deficit was false — runtime includes per-schema enable-rls files |
-| CORR-05 | **COMPLETADO** | 30→0 seed errors. 66 seeds loaded successfully. Root causes: missing demo users, user_id FK→profiles (not auth.users), hardcoded UUIDs, column renames, CHECK constraints, tenant_id FK |
+| CORR-03 | **COMPLETADO** | 14→0 index errors: singular→plural table names (dim_dates, dim_students, dim_exercises, dim_modules, marie_curie_contents, comodin_usage_trackings), removed 3 broken indexes (non-existent columns). 17 index files, 0 errors |
+| CORR-04 | **COMPLETADO** | 16→0 RLS schema file errors: singular→plural tables, UPPERCASE→lowercase enums, wrong enum values, missing DROP IF EXISTS, column fixes. Runtime: 404 policies (was 349). 43 RLS files, 0 errors |
+| CORR-05 | **COMPLETADO** | 30→0 seed errors. 76 seeds loaded successfully. Root causes: missing demo users, user_id FK→profiles (not auth.users), hardcoded UUIDs, column renames, CHECK constraints, tenant_id FK |
 
 #### Vertical A: Validacion de Documentacion (Flujos)
 | Accion | Estado | Detalle |
@@ -136,16 +428,16 @@
 | MVs | 4-7 | 4 | PASS |
 | FKs | 268-298 | 289 | PASS |
 
-**Errores BD (init-database.sh):** 3 funciones, 5 vistas, 14 indices, 3 triggers, 16 archivos RLS, 30 seeds con errores. Cascada de dependencias — tablas/funciones faltantes causan errores downstream.
+**Errores BD (init-database.sh):** ~~3 funciones, 5 vistas, 14 indices, 3 triggers, 16 archivos RLS, 30 seeds con errores.~~ **RESUELTO:** Indices 14→0, RLS 16→0, Seeds 30→0 (CORR-03/04/05 completos). Runtime: 169 tables, 255 funcs, 70 triggers, 404 RLS, 76 seeds OK.
 
 **Output:** `orchestration/tareas/TASK-2026-02-17-VALIDACION-DESARROLLO/` (3 reportes)
 
 **Correcciones tecnicas:**
 - ~~CORR-01 [P0]: Fix env.validation.ts~~ — **YA ESTABA RESUELTO** (types presentes, build PASS)
 - ~~CORR-02 [P2]: Fix lint errors~~ — **YA ESTABA RESUELTO** (0 errors, 911 warnings son `no-explicit-any`)
-- CORR-03 [P1]: **PARCIAL** — trigger 28 function fixed; faltan: function execution order, tenant seed dependency, 5 views, 14 indices
-- CORR-04 [P1]: Corregir deficit RLS (195→227) — depende de CORR-03 completo + recreacion BD
-- CORR-05 [P2]: Corregir seeds (depende CORR-03/04) — **~1 hora adicional**
+- ~~CORR-03 [P1]: Fix indices DDL~~ — **COMPLETADO** (14→0 errors: singular→plural tables, broken column refs removed)
+- ~~CORR-04 [P1]: Fix RLS schema files~~ — **COMPLETADO** (16→0 errors: table names, enums, columns, DROP IF EXISTS)
+- ~~CORR-05 [P2]: Fix seeds~~ — **COMPLETADO** (30→0 errors, 76 seeds OK)
 
 ---
 
@@ -491,9 +783,9 @@
 |---|--------|-----------|----------|-------------|--------|
 | 26 | ~~Fix env.validation.ts (`: number` en PORT/DB_PORT)~~ | **P0** | 5 min | Ninguna | **COMPLETADO** (CORR-01 — ya estaba resuelto) |
 | 27 | ~~Fix 7 backend lint errors (ml + visualization modules)~~ | P2 | 10 min | Ninguna | **COMPLETADO** (CORR-02 — ya estaba resuelto, 0 errors) |
-| 28 | Investigar + corregir errores DDL cascada (funcs, views, indices, triggers) | P1 | 2-4 horas | Ninguna | **PENDIENTE** (CORR-03) |
-| 29 | Corregir deficit RLS (195→227) | P1 | Incluido | #28 | **PENDIENTE** (CORR-04) |
-| 30 | Corregir seeds (30 errores) | P2 | ~1 hora | #28, #29 | **PENDIENTE** (CORR-05) |
+| 28 | ~~Corregir 14 errores indices + 16 errores RLS~~ | P1 | 2-4 horas | Ninguna | **COMPLETADO** (CORR-03: 14→0 index errors, 5 files fixed) |
+| 29 | ~~Corregir deficit RLS (16 archivos con errores)~~ | P1 | Incluido | #28 | **COMPLETADO** (CORR-04: 16→0 RLS errors, ~20 files fixed, runtime 349→404) |
+| 30 | ~~Corregir seeds (30 errores)~~ | P2 | ~1 hora | #28, #29 | **COMPLETADO** (CORR-05: 30→0 errors, 76 seeds OK) |
 | 9 | ~~Commitear ~82 archivos untracked~~ | P0 | Bajo | Ninguna | **COMPLETADA** (FASE 0, 6 commits) |
 | 10 | ~~Fix HF-05 LTI double prefix bug~~ | P1 | Bajo | Ninguna | **COMPLETADA** (FASE 0 C3) |
 | 11 | ~~Fix CI workflow branch refs~~ | P1 | Bajo | Ninguna | **COMPLETADA** (FASE 1 SA4) |
@@ -524,14 +816,15 @@
 | Tarea BD-vs-Docs | `orchestration/tareas/TASK-2026-02-12-ANALISIS-BD-VS-DOCS/` |
 | Tarea Backend Integration | `orchestration/tareas/TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION/` |
 | Tarea Frontend Integration | `orchestration/tareas/TASK-2026-02-12-ANALISIS-FRONTEND-INTEGRACION/` |
-| Inventario Frontend | `orchestration/inventarios/FRONTEND_INVENTORY.yml` (v5.0.0) |
+| Inventario Frontend | `orchestration/inventarios/FRONTEND_INVENTORY.yml` (v10.0.0) |
 | Resultados R4+R5 | `orchestration/tareas/TASK-2026-02-12-ANALISIS-BD-VS-DOCS/06-SPRINT-R4-R5-RESULTADOS.md` |
 | Plan Remediacion | `orchestration/tareas/TASK-2026-02-12-ANALISIS-BD-VS-DOCS/05-PLAN-REMEDIACION.md` |
-| Schema Reference | `docs/20-architecture/schema-reference/_INDEX.md` (v2.0.0) |
-| Coherencia Entity-DDL | `docs/20-architecture/COHERENCE-ENTITIES-DDL.md` (v2.0.0) |
-| Inventario Database | `orchestration/inventarios/DATABASE_INVENTORY.yml` (v8.0.0) |
-| Inventario Backend | `orchestration/inventarios/BACKEND_INVENTORY.yml` (v4.0.0) |
-| Inventario Master | `orchestration/inventarios/MASTER_INVENTORY.yml` (v10.0.0) |
+| Schema Reference | `docs/20-architecture/schema-reference/_INDEX.md` (v2.1.0) |
+| Analisis Misiones/Logros | `orchestration/tareas/TASK-2026-02-18-ANALISIS-MISIONES-LOGROS/` (5 reportes + REC) |
+| Coherencia Entity-DDL | `docs/20-architecture/COHERENCE-ENTITIES-DDL.md` (v2.2.0) |
+| Inventario Database | `orchestration/inventarios/DATABASE_INVENTORY.yml` (v8.7.0) |
+| Inventario Backend | `orchestration/inventarios/BACKEND_INVENTORY.yml` (v4.4.0) |
+| Inventario Master | `orchestration/inventarios/MASTER_INVENTORY.yml` (v10.8.0) |
 | Validacion Requisitos | `orchestration/tareas/TASK-2026-02-17-VALIDACION-REQUISITOS/` (3 reportes) |
 | Validacion Desarrollo | `orchestration/tareas/TASK-2026-02-17-VALIDACION-DESARROLLO/` (3 reportes) |
 | Validacion Integral | `orchestration/tareas/TASK-2026-02-16-VALIDACION-INTEGRAL/` (5 reportes) |

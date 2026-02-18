@@ -81,7 +81,7 @@ export function useHealthStatus() {
   useEffect(() => {
     const fetchHealth = async () => {
       try {
-        const response = await apiClient.get(API_ENDPOINTS.health.detailed);
+        const response = await apiClient.get(API_ENDPOINTS.health.ready);
         const data = response.data.success ? response.data.data : response.data;
         setHealth(data);
       } catch (err) {

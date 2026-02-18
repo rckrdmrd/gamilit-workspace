@@ -1,6 +1,6 @@
 -- =====================================================
 -- GIN Index: idx_marie_content_keywords_gin
--- Table: content_management.marie_curie_content
+-- Table: content_management.marie_curie_contents
 -- Column: keywords (ARRAY)
 -- Description: Índice GIN para búsqueda por keywords (array)
 -- Priority: HIGH - Performance optimization
@@ -8,7 +8,7 @@
 -- =====================================================
 
 CREATE INDEX IF NOT EXISTS idx_marie_content_keywords_gin
-ON content_management.marie_curie_content
+ON content_management.marie_curie_contents
 USING GIN (keywords);
 
 COMMENT ON INDEX content_management.idx_marie_content_keywords_gin IS 'Índice GIN para búsqueda por keywords (array)';
@@ -20,6 +20,6 @@ COMMENT ON INDEX content_management.idx_marie_content_keywords_gin IS 'Índice G
 /*
 -- Search content by keyword (now uses GIN index)
 SELECT *
-FROM content_management.marie_curie_content
+FROM content_management.marie_curie_contents
 WHERE keywords @> ARRAY['science', 'physics'];
 */

@@ -35,15 +35,25 @@ export class ProfileService {
    * const profile = await profileService.getProfile('550e8400-e29b-41d4-a716-446655440000');
    */
   async getProfile(userId: string): Promise<Profile> {
-    const profile = await this.profileRepo.findOne({
+    // DB-125: Try profile.id first (JWT sub = profiles.id)
+    const profileById = await this.profileRepo.findOne({
+      where: { id: userId },
+    });
+
+    if (profileById) {
+      return profileById;
+    }
+
+    // Fallback: userId might be auth.users.id
+    const profileByUserId = await this.profileRepo.findOne({
       where: { user_id: userId },
     });
 
-    if (!profile) {
+    if (!profileByUserId) {
       throw new NotFoundException(`Profile not found for user ${userId}`);
     }
 
-    return profile;
+    return profileByUserId;
   }
 
   /**

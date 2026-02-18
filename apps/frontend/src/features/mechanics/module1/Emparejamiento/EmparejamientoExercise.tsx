@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { Link2 } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { MatchingCard } from './MatchingCard';
 import { EmparejamientoExerciseProps } from './emparejamientoTypes';
 import { calculateScore, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
@@ -189,16 +190,36 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionsRef]);
 
+  const matched = cards.filter((c) => c.isMatched).length;
+  const totalPairs = cards.length / 2;
+  const matchedPairs = matched / 2;
+  const progress = totalPairs > 0 ? (matchedPairs / totalPairs) * 100 : 0;
+
   return (
     <>
-      {/* Instructions */}
-      <div className="mb-4 rounded-lg bg-detective-bg-secondary p-4">
-        <p className="text-sm text-detective-text-secondary">
-          Encuentra las parejas haciendo clic en dos tarjetas que coincidan. Las tarjetas emparejadas correctamente permanecerán visibles.
-        </p>
-      </div>
-
-      <DetectiveCard variant="default" padding="lg">
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Emparejamiento'}
+        description="Encuentra las parejas haciendo clic en dos tarjetas que coincidan. Las tarjetas emparejadas correctamente permaneceran visibles."
+        icon={<Link2 className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+        headerChildren={
+          <div className="mt-4">
+            <div className="mb-2 flex justify-between text-sm">
+              <span>
+                Parejas: {matchedPairs}/{totalPairs}
+              </span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-white/30">
+              <div
+                className="h-full rounded-full bg-white transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        }
+      >
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {cards.map((card) => (
             <MatchingCard
@@ -209,7 +230,7 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({
             />
           ))}
         </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {feedback && (
         <FeedbackModal

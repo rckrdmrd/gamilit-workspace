@@ -26,7 +26,7 @@
 -- Usado por: ComodinService.checkAvailability(), ExerciseAttempt validation
 
 CREATE INDEX IF NOT EXISTS idx_comodin_tracking_user_exercise
-    ON gamification_system.comodin_usage_tracking(user_id, exercise_id);
+    ON gamification_system.comodin_usage_trackings(user_id, exercise_id);
 
 COMMENT ON INDEX gamification_system.idx_comodin_tracking_user_exercise IS
     'Indice compuesto para lookup de comodines por usuario+ejercicio. '

@@ -179,10 +179,10 @@ export class PasswordController {
     @Request() req: AuthRequest,
       @Body() dto: ChangePasswordDto,
   ): Promise<{ message: string }> {
-    // Extraer userId del token JWT
-    const userId = req.user!.id;
+    // E8-FIX: Use user_id (auth.users.id) for changePassword, not id (profile.id)
+    const userAuthId = req.user!.user_id!;
     return this.authService.changePassword(
-      userId,
+      userAuthId,
       dto.current_password,
       dto.new_password,
     );
@@ -238,9 +238,9 @@ export class PasswordController {
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 409, description: 'Email ya verificado' })
   async resendVerification(@Request() req: AuthRequest): Promise<{ message: string }> {
-    // Extraer userId del token JWT
-    const userId = req.user!.id;
-    return this.emailVerificationService.resendVerification(userId);
+    // E11-FIX: Use user_id (auth.users.id) for email verification, not id (profile.id)
+    const userAuthId = req.user!.user_id!;
+    return this.emailVerificationService.resendVerification(userAuthId);
   }
 
   /**
@@ -263,8 +263,8 @@ export class PasswordController {
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   async checkVerificationStatus(@Request() req: AuthRequest): Promise<{ verified: boolean }> {
-    // Extraer userId del token JWT
-    const userId = req.user!.id;
-    return this.emailVerificationService.checkVerificationStatus(userId);
+    // E4-FIX: Use user_id (auth.users.id) for email verification, not id (profile.id)
+    const userAuthId = req.user!.user_id!;
+    return this.emailVerificationService.checkVerificationStatus(userAuthId);
   }
 }

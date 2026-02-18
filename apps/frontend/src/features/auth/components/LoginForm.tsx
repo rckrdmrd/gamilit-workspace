@@ -60,14 +60,13 @@ interface LoginFormProps {
  */
 export const LoginForm: React.FC<LoginFormProps> = ({
   onSuccess,
-  showRememberMe = true,
   showForgotPassword = true,
 }) => {
   const navigate = useNavigate();
   const { login, error: authError, clearError, isAuthenticated, user } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+
 
   // React Hook Form setup with Zod validation
   const {
@@ -121,13 +120,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
       // CRITICAL: Clear logout flag if present (user is now logging in)
       localStorage.removeItem('is_logging_out');
-
-      // Save "remember me" preference
-      if (rememberMe) {
-        localStorage.setItem('rememberMe', 'true');
-      } else {
-        localStorage.removeItem('rememberMe');
-      }
 
       // Attempt login
       await login(data);
@@ -243,26 +235,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         )}
       </div>
 
-      {/* Remember Me & Forgot Password */}
-      <div className="flex items-center justify-between">
-        {showRememberMe && (
-          <div className="flex items-center">
-            <input
-              id="remember-me"
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="h-4 w-4 cursor-pointer rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-              disabled={isSubmitting}
-            />
-            <label
-              htmlFor="remember-me"
-              className="ml-2 block cursor-pointer text-sm text-gray-700"
-            >
-              Recordarme
-            </label>
-          </div>
-        )}
+      {/* Forgot Password */}
+      <div className="flex items-center justify-end">
 
         {showForgotPassword && (
           <a

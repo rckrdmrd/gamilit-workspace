@@ -3,11 +3,11 @@
  */
 
 // New hooks (FE-052 Quick Wins + CICLO 9)
-export { useTeacherDashboard } from './useTeacherDashboard';
+export { useTeacherDashboard, dashboardKeys } from './useTeacherDashboard';
 export { useStudentProgress } from './useStudentProgress';
 export { useAnalytics, useStudentInsights } from './useAnalytics';
 export { useGrading } from './useGrading';
-export { useClassrooms } from './useClassrooms';
+export { useClassrooms, classroomKeys } from './useClassrooms';
 export { useClassroomsStats } from './useClassroomsStats'; // TEACHER-003
 export { useAssignments } from './useAssignments';
 export { useInterventionAlerts } from './useInterventionAlerts';

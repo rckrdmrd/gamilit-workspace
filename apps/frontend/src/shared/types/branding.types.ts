@@ -104,7 +104,7 @@ export interface UploadAssetResponse {
  */
 export const DEFAULT_BRANDING: Omit<BrandingConfig, 'tenantId'> = {
   platformName: 'GAMILIT Platform',
-  logoUrl: null,
+  logoUrl: '/logo-gamilit.jpeg',
   faviconUrl: null,
   primaryColor: '#f97316',
   secondaryColor: '#ea580c',

@@ -11,6 +11,8 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
@@ -62,11 +64,23 @@ export class AdminOrganizationsController {
   @Post()
   @ApiOperation({
     summary: 'Create a new organization',
-    description: 'Create a new tenant/organization in the system',
+    description:
+      'Create a new tenant/organization in the system (requires super_admin and ALLOW_ADMIN_ORGANIZATION_CREATE=true)',
   })
   async createOrganization(
+    @Req() req: { user?: { role?: string } },
     @Body() createDto: CreateOrganizationDto,
   ): Promise<OrganizationDto> {
+    const allowOrganizationCreate =
+      process.env.ALLOW_ADMIN_ORGANIZATION_CREATE === 'true';
+    const isSuperAdmin = req.user?.role === 'super_admin';
+
+    if (!allowOrganizationCreate || !isSuperAdmin) {
+      throw new ForbiddenException(
+        'Organization creation is disabled by policy. Requires super_admin and ALLOW_ADMIN_ORGANIZATION_CREATE=true.',
+      );
+    }
+
     return this.adminOrganizationsService.createOrganization(createDto);
   }
 

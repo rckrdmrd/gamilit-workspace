@@ -1,7 +1,7 @@
 /**
  * Maya Ranks Constants - SSOT (Single Source of Truth)
  *
- * VERSIÓN: 2.0 (2025-11-16)
+ * VERSIÓN: 2.1 (2026-02-18) — Synced Halach Uinic/K'uk'ulkan thresholds with DB v2.1
  *
  * SINCRONIZADO CON:
  * - Backend: /apps/backend/src/modules/gamification/services/ranks.service.ts
@@ -82,7 +82,7 @@ export const MAYA_RANKS: Record<MayaRank, RankConfig> = {
     name: 'Halach Uinic',
     level: 4,
     xpMin: 1500,
-    xpMax: 2249,
+    xpMax: 1899,
     mlCoinsBonus: 500,
     xpMultiplier: 1.2,
     description: 'Hombre Verdadero - Líder de la comunidad',
@@ -93,7 +93,7 @@ export const MAYA_RANKS: Record<MayaRank, RankConfig> = {
     id: MayaRank.KUKULKAN,
     name: "K'uk'ulkan",
     level: 5,
-    xpMin: 2250,
+    xpMin: 1900,
     xpMax: null,
     mlCoinsBonus: 1000,
     xpMultiplier: 1.25,

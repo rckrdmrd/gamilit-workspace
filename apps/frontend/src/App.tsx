@@ -33,7 +33,7 @@ const PageLoader = () => (
 const DashboardComplete = lazy(() => import('@/apps/student/pages/DashboardComplete'));
 const MyProgressPage = lazy(() => import('@/pages/MyProgressPage').then(m => ({ default: m.MyProgressPage })));
 const ModuleDetailsPage = lazy(() => import('@/pages/ModuleDetailsPage').then(m => ({ default: m.ModuleDetailsPage })));
-const AchievementsPage = lazy(() => import('@/pages/AchievementsPage').then(m => ({ default: m.AchievementsPage })));
+const AchievementsPage = lazy(() => import('@/apps/student/pages/AchievementsPage'));
 const LeaderboardPage = lazy(() => import('@/apps/student/pages/LeaderboardPage'));
 const SettingsPage = lazy(() => import('@/apps/student/pages/SettingsPage'));
 const MissionsPage = lazy(() => import('@/apps/student/pages/MissionsPage'));
@@ -88,19 +88,51 @@ const TeacherStudentsPage = lazy(() =>
   }))
 );
 
-// Pages that remain as separate files (have additional logic beyond simple wrapper)
-const TeacherAlertsPage = lazy(() => import('@/apps/teacher/pages/TeacherAlertsPage'));
-const TeacherCommunicationPage = lazy(() => import('@/apps/teacher/pages/TeacherCommunicationPage'));
-const TeacherContentPage = lazy(() => import('@/apps/teacher/pages/TeacherContentPage')); // Has feature flag logic
-const TeacherMonitoringPage = lazy(() => import('@/apps/teacher/pages/TeacherMonitoringPage'));
-const TeacherProgressPage = lazy(() => import('@/apps/teacher/pages/TeacherProgressPage'));
-const TeacherReportsPage = lazy(() => import('@/apps/teacher/pages/TeacherReportsPage'));
-const TeacherExerciseResponsesPage = lazy(() => import('@/apps/teacher/pages/TeacherExerciseResponsesPage'));
-const TeacherSettingsPage = lazy(() => import('@/apps/teacher/pages/TeacherSettingsPage'));
-const TeacherNotificationsPage = lazy(() => import('@/apps/teacher/pages/TeacherNotificationsPage'));
-const TeacherNotificationPreferencesPage = lazy(() => import('@/apps/teacher/pages/TeacherNotificationPreferencesPage'));
-const TeacherAlertConfigPage = lazy(() => import('@/apps/teacher/pages/TeacherAlertConfigPage').then(m => ({ default: m.TeacherAlertConfigPage }))); // US-PM-007
-const ReviewPanelPage = lazy(() => import('@/apps/teacher/pages/TeacherReviewPanelPage').then(m => ({ default: m.ReviewPanelPage })));
+// Pages using withTeacherLayout HOC (migrated from separate wrapper files)
+const TeacherAlertsPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherAlerts').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+// TeacherCommunication — removed from navigation (Obs #18), code preserved
+// TeacherContent — removed from navigation (Obs #5), code preserved
+const TeacherMonitoringPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherMonitoring').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+const TeacherProgressPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherProgress').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+const TeacherReportsPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherReports').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+const TeacherExerciseResponsesPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherExerciseResponses').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+const TeacherSettingsPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherSettings').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
+// TeacherNotifications — removed from navigation (Obs #19), code preserved
+// TeacherNotificationPreferences — removed from navigation (Obs #19), code preserved
+const TeacherAlertConfigPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherAlertConfig').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+); // US-PM-007
+const ReviewPanelPage = lazy(() =>
+  import('@/apps/teacher/pages/TeacherReviewPanel').then(m => ({
+    default: withTeacherLayout(m.default)
+  }))
+);
 
 // =====================================================
 // ADMIN PORTAL PAGES (Lazy loaded)
@@ -184,577 +216,549 @@ function App() {
           }}
         />
         <Router>
-        <Suspense fallback={<PageLoader />}>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<PasswordResetPage />} />
-          <Route path="/verify-email" element={<EmailVerificationPage />} />
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<PasswordResetPage />} />
+              <Route path="/verify-email" element={<EmailVerificationPage />} />
 
-          {/* Root redirect */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              {/* Root redirect */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-          {/* ===== STUDENT PORTAL ===== */}
-          {/* Dashboard (protected) */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <DashboardComplete />
-              </ProtectedRoute>
-            }
-          />
+              {/* ===== STUDENT PORTAL ===== */}
+              {/* Dashboard (protected) */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <DashboardComplete />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Learning Hub */}
-          <Route
-            path="/learning"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <LearningPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Learning Hub */}
+              <Route
+                path="/learning"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <LearningPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* ===== TEACHER PORTAL ===== */}
-          <Route
-            path="/teacher/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherDashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/alerts"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherAlertsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/analytics"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherAnalyticsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/assignments"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherAssignmentsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/communication"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherCommunicationPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/content"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherContentPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/gamification"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherGamificationPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/monitoring"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherMonitoringPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/progress"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherProgressPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/reports"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherReportsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/responses"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherExerciseResponsesPage />
-              </ProtectedRoute>
-            }
-          />
-          {/* DEPRECADO (2026-01-25): /teacher/resources eliminado
+              {/* ===== TEACHER PORTAL ===== */}
+              <Route
+                path="/teacher/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/alerts"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherAlertsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/analytics"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherAnalyticsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/assignments"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherAssignmentsPage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* /teacher/communication — removed from navigation (Obs #18) */}
+
+              <Route
+                path="/teacher/gamification"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherGamificationPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/monitoring"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherMonitoringPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/progress"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherProgressPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/reports"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherReportsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/responses"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherExerciseResponsesPage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* DEPRECADO (2026-01-25): /teacher/resources eliminado
               La funcionalidad de recursos multimedia se integró en TeacherContentPage.
               Redirect mantenido por compatibilidad con URLs existentes. */}
-          <Route
-            path="/teacher/resources"
-            element={<Navigate to="/teacher/dashboard" replace />}
-          />
-          <Route
-            path="/teacher/classes"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherClassesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/students"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherStudentsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/settings"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherSettingsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/notifications"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherNotificationsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/settings/notifications"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherNotificationPreferencesPage />
-              </ProtectedRoute>
-            }
-          />
-          {/* US-PM-007: Alert Configuration Page */}
-          <Route
-            path="/teacher/settings/alerts"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <TeacherAlertConfigPage />
-              </ProtectedRoute>
-            }
-          />
-          {/* Manual Review Panel for Modules 4 & 5 */}
-          <Route
-            path="/teacher/reviews"
-            element={
-              <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
-                <ReviewPanelPage />
-              </ProtectedRoute>
-            }
-          />
+              <Route
+                path="/teacher/resources"
+                element={<Navigate to="/teacher/dashboard" replace />}
+              />
+              <Route
+                path="/teacher/classes"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherClassesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/students"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherStudentsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teacher/settings"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherSettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* /teacher/notifications — removed from navigation (Obs #19) */}
+              {/* /teacher/settings/notifications — removed from navigation (Obs #19) */}
+              {/* US-PM-007: Alert Configuration Page */}
+              <Route
+                path="/teacher/settings/alerts"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <TeacherAlertConfigPage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Manual Review Panel for Modules 4 & 5 */}
+              <Route
+                path="/teacher/reviews"
+                element={
+                  <ProtectedRoute allowedRoles={['teacher', 'admin_teacher']}>
+                    <ReviewPanelPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* ===== ADMIN PORTAL ===== */}
-          <Route
-            path="/admin/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminDashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/institutions"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminInstitutionsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/users"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminUsersPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/roles"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminRolesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/content"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminContentPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/gamification"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminGamificationPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/monitoring"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminMonitoringPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/advanced"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminAdvancedPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/reports"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminReportsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/settings"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminSettingsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/notifications"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminNotificationsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/settings/notifications"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminNotificationPreferencesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/alerts"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminAlertsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/analytics"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminAnalyticsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/progress"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminProgressPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/classroom-teachers"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminClassroomTeacherPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/assignments"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminAssignmentsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/audit-logs"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminAuditLogsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/settings/branding"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminBrandingPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/integrations/lti"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminLtiPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* ===== ADMIN PORTAL ===== */}
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/institutions"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminInstitutionsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminUsersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/roles"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminRolesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/content"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminContentPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/gamification"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminGamificationPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/monitoring"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminMonitoringPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/advanced"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminAdvancedPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/reports"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminReportsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/settings"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminSettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/notifications"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminNotificationsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/settings/notifications"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminNotificationPreferencesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/alerts"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminAlertsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/analytics"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminAnalyticsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/progress"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminProgressPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/classroom-teachers"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminClassroomTeacherPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/assignments"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminAssignmentsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/audit-logs"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminAuditLogsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/settings/branding"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminBrandingPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/integrations/lti"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminLtiPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Admin Exercise Management */}
-          <Route
-            path="/admin/exercises/create"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminExerciseCreatePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/exercises/:id/edit"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminExerciseCreatePage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Admin Exercise Management */}
+              <Route
+                path="/admin/exercises/create"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminExerciseCreatePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/exercises/:id/edit"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminExerciseCreatePage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* ===== PARENT PORTAL (EXT-011) ===== */}
-          {/* Public routes for parent portal */}
-          <Route path="/parent/login" element={<ParentLoginPage />} />
-          <Route path="/parent/register" element={<ParentRegisterPage />} />
+              {/* ===== PARENT PORTAL (EXT-011) ===== */}
+              {/* Public routes for parent portal */}
+              <Route path="/parent/login" element={<ParentLoginPage />} />
+              <Route path="/parent/register" element={<ParentRegisterPage />} />
 
-          {/* Protected parent portal routes */}
-          <Route
-            path="/parent/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={['parent']}>
-                <ParentDashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/parent/child/:studentId"
-            element={
-              <ProtectedRoute allowedRoles={['parent']}>
-                <ChildProgressPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Protected parent portal routes */}
+              <Route
+                path="/parent/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={['parent']}>
+                    <ParentDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/parent/child/:studentId"
+                element={
+                  <ProtectedRoute allowedRoles={['parent']}>
+                    <ChildProgressPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Progress Pages (protected) */}
-          <Route
-            path="/progress"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <MyProgressPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/progress/modules/:moduleId"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <ModuleDetailsPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Progress Pages (protected) */}
+              <Route
+                path="/progress"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <MyProgressPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/progress/modules/:moduleId"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <ModuleDetailsPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Achievements Page (protected) */}
-          <Route
-            path="/achievements"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <AchievementsPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Achievements Page (protected) */}
+              <Route
+                path="/achievements"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <AchievementsPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Leaderboard Page (protected) */}
-          <Route
-            path="/leaderboard"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <LeaderboardPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Leaderboard Page (protected) */}
+              <Route
+                path="/leaderboard"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <LeaderboardPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Exercise Player */}
-          <Route
-            path="/exercises/:exerciseId"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <ExercisePage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Exercise Player */}
+              <Route
+                path="/exercises/:exerciseId"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <ExercisePage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Missions Page */}
-          <Route
-            path="/missions"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <MissionsPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Missions Page */}
+              <Route
+                path="/missions"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <MissionsPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Student Assignments Page (P1-002) */}
-          <Route
-            path="/assignments"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <AssignmentsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/assignments/:id"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <AssignmentDetailPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Student Assignments Page (P1-002) */}
+              <Route
+                path="/assignments"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <AssignmentsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/assignments/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <AssignmentDetailPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Module Detail Page */}
-          <Route
-            path="/modules/:moduleId"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <ModuleDetailPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Module Detail Page */}
+              <Route
+                path="/modules/:moduleId"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <ModuleDetailPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Profile Pages */}
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <EnhancedProfilePage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Profile Pages */}
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <EnhancedProfilePage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Settings Page */}
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <SettingsPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Settings Page */}
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <SettingsPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Notifications Center */}
-          <Route
-            path="/notifications"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <NotificationsPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Notifications Center */}
+              <Route
+                path="/notifications"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <NotificationsPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Notification Settings */}
-          <Route
-            path="/settings/notifications"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <NotificationPreferencesPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Notification Settings */}
+              <Route
+                path="/settings/notifications"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <NotificationPreferencesPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          <Route
-            path="/settings/devices"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <DeviceManagementSection />
-              </ProtectedRoute>
-            }
-          />
+              <Route
+                path="/settings/devices"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <DeviceManagementSection />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Social Features */}
-          <Route
-            path="/friends"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <FriendsPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Social Features */}
+              <Route
+                path="/friends"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <FriendsPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          <Route
-            path="/guilds"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <GuildsPage />
-              </ProtectedRoute>
-            }
-          />
+              <Route
+                path="/guilds"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <GuildsPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Shop & Inventory */}
-          <Route
-            path="/shop"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <ShopPage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Shop & Inventory */}
+              <Route
+                path="/shop"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <ShopPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          <Route
-            path="/inventory"
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <InventoryPage />
-              </ProtectedRoute>
-            }
-          />
+              <Route
+                path="/inventory"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <InventoryPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Unauthorized Page */}
-          <Route path="/unauthorized" element={<UnauthorizedPage />} />
+              {/* Unauthorized Page */}
+              <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-          {/* 404 - Not Found */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-        </Suspense>
+              {/* 404 - Not Found */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
         </Router>
       </BrandingProvider>
     </AuthProvider>

@@ -1,8 +1,8 @@
 # FL-STU-13 - Student Dashboard / Progress Overview
 
 **ID:** FL-STU-13
-**Version:** 1.0.0
-**Fecha:** 2026-02-17
+**Version:** 1.1.0
+**Fecha:** 2026-02-18
 **Estado:** Activo
 **Portal:** Student
 **Prioridad:** P1
@@ -101,8 +101,10 @@ flowchart TD
 
 ### Paso 3: Fetch de misiones (useMissions)
 8. **Frontend:** `useMissions()` llama al endpoint de misiones activas.
-9. **Backend:** `MissionsController` consulta misiones activas filtradas por usuario.
+9. **Backend:** `MissionsController` consulta misiones activas filtradas por usuario. Si no hay misiones activas (expiradas o no generadas), el backend genera automaticamente nuevas desde `mission_templates` (3 daily on-demand o 2 weekly on-demand).
 10. **DB:** `gamification_system.missions`, `classroom_missions`, `mission_templates`.
+
+> **Nota (REC-009):** `missions.template_id` es UUID con FK a `mission_templates(id)`. La generacion inicial (DB trigger) crea 3 daily + 5 weekly; la renovacion on-demand (backend) genera 3 daily o 2 weekly.
 
 ### Paso 4: Fetch de modulos (useUserModules)
 11. **Frontend:** `useUserModules({ classroomId })` solicita modulos filtrados por aula.
@@ -176,11 +178,12 @@ flowchart TD
 - **RLS (Row-Level Security):** Todas las tablas de gamificacion y progreso tienen politicas RLS que filtran por `tenant_id` y `user_id`.
 - **Promise.allSettled:** Si un endpoint falla, los demas widgets siguen funcionando. El dashboard NO se rompe por un servicio caido.
 - **Fallback de rango:** Si no hay datos de rango, se asume `Ajaw` (rango inicial) con 0 XP y multiplicador 1.0.
-- **Multiplicadores maya:** Sincronizados con backend y DB: Ajaw=1.0, Nacom=1.25, Ah K'in=1.5, Halach Uinic=1.75, K'uk'ulkan=2.0.
+- **Multiplicadores maya (XP):** Sincronizados con DB seeds v2.1 y `ranks.constants.ts` v2.1: Ajaw=1.00, Nacom=1.10, Ah K'in=1.15, Halach Uinic=1.20, K'uk'ulkan=1.25. NOTA: Los multiplicadores de ML Coins son diferentes (1.0-2.0, en `rank-multiplier.service.ts`).
 - **React Query cache:** `staleTime: 5min`, `gcTime: 10min`, `refetchOnWindowFocus: true`. Datos frescos sin sobre-cargar el backend.
 - **Filtro por aula:** Si el estudiante pertenece a un aula, los modulos se filtran por `classroomId`.
 - **Limite de actividades:** Se muestran maximo 5 actividades recientes.
-- **Misiones:** Se priorizan misiones activas; si no hay, se muestran las 3 primeras del catalogo completo.
+- **Misiones:** Se priorizan misiones activas; si no hay, se muestran las 3 primeras del catalogo completo. Misiones con `status === 'claimed'` (ya reclamadas) se excluyen del panel — desaparecen tras el refresh del hook `useMissions`.
+- **Ejercicios completados:** En `ModuleDetailPage`, los ejercicios con `completed === true` tienen el boton deshabilitado y la card no es clickeable. En `ExercisePage`, un guard redirige al modulo si el ejercicio ya fue completado.
 
 ## 7. Manejo de errores
 
@@ -196,6 +199,7 @@ flowchart TD
 | Base de datos no disponible | DB | 500 | Todos los widgets muestran fallbacks, error global con boton refresh |
 | Red timeout (>30s) | FE | - | React Query retry (2 intentos, backoff exponencial max 30s) |
 | Datos vacios (nuevo usuario) | BE | 200 | Widgets muestran estados iniciales (0 ejercicios, Ajaw, sin misiones) |
+| Inicializacion de usuario falla | DB | - | Trigger error registrado en `audit_logging.pending_user_initializations`. Cron cada 10 min reintenta (REC-007). Usuario ve estado vacio hasta que retry tenga exito |
 
 ## 8. Trazabilidad cruzada
 

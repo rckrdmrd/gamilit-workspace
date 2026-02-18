@@ -1,7 +1,7 @@
 # Guía de Desarrollo - Portal Admin
 
 **Fecha de creación:** 2025-11-29
-**Versión:** 1.0.0
+**Versión:** 2.0.0
 **Estado:** VIGENTE
 **Aplica a:** apps/frontend/src/apps/admin/ + apps/backend/src/modules/admin/
 
@@ -45,7 +45,7 @@ admin/
 ├── index.ts                    # Barrel export principal
 ├── layouts/
 │   └── AdminLayout.tsx         # Layout principal con navegación
-├── pages/                      # Páginas del portal (14 páginas)
+├── pages/                      # Páginas del portal (19 páginas)
 │   ├── AdminDashboardPage.tsx          # Dashboard principal
 │   ├── AdminUsersPage.tsx              # Gestión de usuarios
 │   ├── AdminInstitutionsPage.tsx       # Gestión de organizaciones
@@ -59,45 +59,70 @@ admin/
 │   ├── AdminReportsPage.tsx            # Generación de reportes
 │   ├── AdminProgressPage.tsx           # Progreso general
 │   ├── AdminClassroomTeacherPage.tsx   # Asignación de aulas
-│   └── AdminAdvancedPage.tsx           # Configuración avanzada
-├── components/                 # Componentes organizados por dominio
-│   ├── dashboard/              # Dashboard components
-│   │   └── AdminDashboardHero.tsx
-│   ├── users/                  # Gestión de usuarios
-│   ├── alerts/                 # Sistema de alertas
-│   ├── analytics/              # Gráficas y métricas
-│   ├── monitoring/             # Monitoreo del sistema
-│   ├── content/                # Moderación de contenido
-│   ├── gamification/           # Configuración gamificación
+│   ├── AdminAdvancedPage.tsx           # Configuración avanzada
+│   ├── AdminNotificationsPage.tsx      # Gestión de notificaciones
+│   ├── AdminNotificationPreferencesPage.tsx # Preferencias de notif.
+│   ├── AdminAuditLogsPage.tsx          # Logs de auditoría
+│   ├── AdminAssignmentsPage.tsx        # Gestión de asignaciones
+│   └── AdminExerciseCreatePage.tsx     # Constructor de ejercicios
+├── components/                 # Componentes organizados por dominio (30+)
+│   ├── shared/                 # Componentes cross-cutting (Sprint 0)
+│   │   ├── AdminPageShell.tsx          # Wrapper estándar de página
+│   │   └── AdminTabBar.tsx             # Tabs genérico (underline/cards)
+│   ├── dashboard/              # Dashboard components (Sprint 2)
+│   │   ├── DashboardStatsGrid.tsx      # Grid de estadísticas
+│   │   ├── SystemHealthCard.tsx        # Tarjeta salud del sistema
+│   │   ├── AlertsNotificationsCard.tsx # Tarjeta alertas recientes
+│   │   └── DashboardQuickActions.tsx   # Acciones rápidas
+│   ├── users/                  # Gestión de usuarios (Sprint 1)
+│   │   ├── UsersSearchFilters.tsx      # Filtros de búsqueda
+│   │   ├── UsersStatsGrid.tsx          # Grid de estadísticas
+│   │   ├── UsersTable.tsx              # Tabla de usuarios
+│   │   └── UserBadges.tsx              # Badges de rol/status
+│   ├── audit/                  # Logs de auditoría (Sprint 1)
+│   ├── notifications/          # Notificaciones (Sprint 2)
+│   │   ├── NotificationHeader.tsx      # Header con acciones
+│   │   ├── NotificationFilters.tsx     # Filtros de notificaciones
+│   │   └── NotificationItem.tsx        # Item de notificación
+│   ├── content/                # Moderación de contenido (Sprint 1+2)
+│   │   ├── ContentPreviewModal.tsx     # Preview de contenido
+│   │   ├── ContentVersionsTab.tsx      # Versiones de contenido
+│   │   ├── MediaLibraryTab.tsx         # Biblioteca de media
+│   │   ├── PendingExercisesTab.tsx     # Ejercicios pendientes
+│   │   └── RejectExerciseModal.tsx     # Modal de rechazo
+│   ├── gamification/           # Configuración gamificación (Sprint 1)
+│   │   ├── AchievementsTab.tsx
+│   │   ├── RanksTab.tsx
+│   │   ├── EconomyTab.tsx
+│   │   └── StatsTab.tsx
+│   ├── institutions/           # Organizaciones (Sprint 2)
+│   │   └── InstitutionFormModals.tsx   # Modales CRUD
+│   ├── exercise-builder/       # Constructor de ejercicios (Sprint 2)
+│   │   ├── StepBasicInfo.tsx           # Paso 1: info básica
+│   │   ├── ExercisePreview.tsx         # Preview de ejercicio
+│   │   └── type-configs/              # Config por tipo (barrel)
 │   ├── reports/                # Generación de reportes
-│   ├── progress/               # Vistas de progreso
 │   ├── classroom-teacher/      # Asignación de aulas
 │   ├── settings/               # Configuración
-│   ├── advanced/               # Configuración avanzada
-│   └── index.ts
-├── hooks/                      # Custom hooks (20+ hooks)
+│   │   └── ProfileSettings.tsx
+│   └── alerts/                 # Sistema de alertas
+├── hooks/                      # Custom hooks (12 hooks)
+│   ├── useAdminPageSetup.ts            # Boilerplate centralizado (Sprint 0)
 │   ├── useAdminDashboard.ts            # Dashboard data
-│   ├── useAdminData.ts                 # General admin data
-│   ├── useUserManagement.ts            # CRUD usuarios
-│   ├── useOrganizations.ts             # CRUD organizaciones
-│   ├── useRoles.ts                     # Gestión de roles
-│   ├── useRolePermissions.ts           # Permisos por rol
+│   ├── useUserManagement.ts            # CRUD usuarios (legacy)
+│   ├── useUserActions.ts               # Acciones de usuario (Sprint 1)
+│   ├── useCreateUserFlow.ts            # Flujo creación (Sprint 1)
 │   ├── useContentManagement.ts         # Moderación contenido
+│   ├── useContentQueries.ts            # Content React Query (Sprint 1)
+│   ├── useInstitutionActions.ts        # CRUD instituciones (Sprint 2)
 │   ├── useGamificationConfig.ts        # Config gamificación
-│   ├── useSystemConfig.ts              # Config sistema
-│   ├── useSettings.ts                  # Settings generales
-│   ├── useMonitoring.ts                # Monitoreo
 │   ├── useSystemMonitoring.ts          # Monitoreo avanzado
 │   ├── useSystemMetrics.ts             # Métricas del sistema
-│   ├── useAlerts.ts                    # Alertas
-│   ├── useAnalytics.ts                 # Analytics
-│   ├── useReports.ts                   # Reportes
-│   ├── useProgress.ts                  # Progreso
-│   ├── useClassroomTeacher.ts          # Asignaciones aulas
-│   ├── useAuditLogs.ts                 # Logs de auditoría
+│   ├── useModalBehavior.ts             # Escape + scroll lock (Sprint 0)
 │   └── index.ts
 └── types/
-    └── index.ts                # 50+ interfaces/types
+    ├── index.ts                # 50+ interfaces/types
+    └── exercise-builder.types.ts # Tipos constructor (Sprint 2)
 ```
 
 #### Backend (apps/backend/src/modules/admin/)
@@ -762,6 +787,60 @@ export function useUserManagement() {
 }
 ```
 
+#### 4.1.1b AdminPageShell Pattern (Sprint 0+1+2)
+
+Todas las páginas admin usan `AdminPageShell` como wrapper estándar, eliminando boilerplate repetitivo:
+
+```typescript
+// Pattern: AdminPageShell (reemplaza AdminLayout + useAuth + gamification boilerplate)
+
+// ANTES (Sprint 0 — cada página repetía ~15-35 líneas):
+export default function AdminSomePage() {
+  const { user } = useAuth();
+  const { data: gamData } = useUserGamification(user?.id);
+  const displayData = gamData ? formatGamification(gamData) : null;
+  const handleLogout = () => { /* logout logic */ };
+
+  return (
+    <AdminLayout
+      user={user}
+      gamificationData={displayData}
+      onLogout={handleLogout}
+    >
+      {/* page content */}
+    </AdminLayout>
+  );
+}
+
+// DESPUÉS (Sprint 2 — todas las páginas usan AdminPageShell):
+export default function AdminSomePage() {
+  return (
+    <AdminPageShell title="Some Page" subtitle="Description">
+      {/* page content only */}
+    </AdminPageShell>
+  );
+}
+```
+
+#### 4.1.1c AdminTabBar Pattern (Sprint 0+1+2)
+
+Tabs con variantes `underline` y `cards`, accesible (ARIA):
+
+```typescript
+// Pattern: AdminTabBar con variantes
+
+<AdminTabBar
+  tabs={[
+    { id: 'overview', label: 'Vista General' },
+    { id: 'details', label: 'Detalles' },
+    { id: 'settings', label: 'Configuración' },
+  ]}
+  activeTab={activeTab}
+  onTabChange={setActiveTab}
+  variant="underline" // o "cards"
+/>
+```
+
 #### 4.1.2 Auto-Refresh Pattern
 
 Para datos que requieren actualización frecuente:
@@ -1283,23 +1362,26 @@ const navigationItems = [
 
 ### 6.2 Frontend API Services
 
+Las API services del admin portal están en `apps/frontend/src/services/api/`:
+
 ```
-services/api/admin/
-├── adminAPI.ts                     # Main admin API (dashboard, general)
-├── adminUsersAPI.ts                # User management
-├── adminOrganizationsAPI.ts        # Organizations management
-├── adminRolesAPI.ts                # Roles and permissions
-├── adminContentAPI.ts              # Content moderation
-├── adminGamificationAPI.ts         # Gamification config
-├── adminSystemAPI.ts               # System configuration
-├── adminMonitoringAPI.ts           # System monitoring
-├── adminAlertsAPI.ts               # Alerts management
-├── adminAnalyticsAPI.ts            # Analytics
-├── adminReportsAPI.ts              # Reports generation
-├── adminProgressAPI.ts             # Progress tracking
-├── adminClassroomAPI.ts            # Classroom assignments
-├── adminLogsAPI.ts                 # Audit logs
-└── index.ts                        # Barrel export
+services/api/
+├── adminAPI.ts                     # Main admin API (dashboard, users, organizations, roles, system, monitoring, alerts, analytics, reports, progress, content, bulk operations)
+├── apiClient.ts                    # Axios client configurado
+└── profileAPI.ts                   # Profile management (shared)
+```
+
+**Nota:** A diferencia del diagrama original que mostraba 14 archivos separados (`adminUsersAPI.ts`, `adminOrganizationsAPI.ts`, etc.), el admin portal usa un **único archivo `adminAPI.ts`** que exporta todas las funciones organizadas por dominio. Esto simplifica imports y mantiene coherencia con el patrón monolítico del frontend.
+
+Los hooks en `apps/admin/hooks/` consumen directamente las funciones de `adminAPI.ts`:
+
+```typescript
+// Ejemplo: useAdminDashboard.ts
+import { adminAPI } from '@/services/api/adminAPI';
+
+export function useAdminDashboard() {
+  // Consume adminAPI.getDashboard(), adminAPI.getSystemHealth(), etc.
+}
 ```
 
 ---
@@ -1865,131 +1947,61 @@ if (process.env.NODE_ENV === 'development') {
 
 ## 15. Ejemplos de Código Completos
 
-### 15.1 Hook Completo - useUserManagement
+### 15.1 Page Pattern — AdminPageShell (canonical)
 
 ```typescript
-// hooks/useUserManagement.ts
-import { useState, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import * as adminAPI from '@/services/api/adminAPI';
-import type {
-  User,
-  ListUsersDto,
-  UpdateUserDto,
-  SuspendUserDto
-} from '../types';
+// Pattern canónico para páginas admin (Sprint 0+1+2)
+// Todas las 19 páginas siguen esta estructura
 
-export interface UseUserManagementResult {
-  // Data
-  users: User[];
-  stats: UserStatsDto | null;
-  loading: boolean;
-  error: string | null;
+import AdminPageShell from '../components/shared/AdminPageShell';
+import { useAdminDashboard } from '../hooks/useAdminDashboard';
+import { DashboardStatsGrid } from '../components/dashboard/DashboardStatsGrid';
+import { SystemHealthCard } from '../components/dashboard/SystemHealthCard';
+import { AlertsNotificationsCard } from '../components/dashboard/AlertsNotificationsCard';
+import { DashboardQuickActions } from '../components/dashboard/DashboardQuickActions';
 
-  // Filters
-  filters: ListUsersDto;
-  setFilters: (filters: ListUsersDto) => void;
-
-  // Actions
-  createUser: (data: CreateUserDto) => Promise<void>;
-  updateUser: (id: string, data: UpdateUserDto) => Promise<void>;
-  deleteUser: (id: string) => Promise<void>;
-  suspendUser: (id: string, data: SuspendUserDto) => Promise<void>;
-  activateUser: (id: string) => Promise<void>;
-  resetPassword: (id: string) => Promise<void>;
-}
-
-export function useUserManagement(): UseUserManagementResult {
-  const queryClient = useQueryClient();
-  const [filters, setFilters] = useState<ListUsersDto>({
-    page: 1,
-    limit: 20,
-  });
-
-  // Queries
+export default function AdminDashboardPage() {
   const {
-    data: usersData,
-    isLoading: usersLoading,
-    error: usersError
-  } = useQuery({
-    queryKey: ['admin', 'users', 'list', filters],
-    queryFn: () => adminAPI.listUsers(filters),
-  });
+    stats,
+    health,
+    alerts,
+    recentActions,
+    loading,
+    handleRefresh,
+  } = useAdminDashboard();
 
-  const { data: stats } = useQuery({
-    queryKey: ['admin', 'users', 'stats'],
-    queryFn: () => adminAPI.getUserStats(),
-  });
+  return (
+    <AdminPageShell
+      title="Dashboard"
+      subtitle="Vista general del sistema"
+      actions={
+        <button onClick={handleRefresh} className="...">
+          Actualizar
+        </button>
+      }
+    >
+      <DashboardStatsGrid stats={stats} loading={loading} />
 
-  // Mutations
-  const { mutateAsync: createUser } = useMutation({
-    mutationFn: adminAPI.createUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] });
-    },
-  });
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SystemHealthCard health={health} loading={loading} />
+        <AlertsNotificationsCard
+          alerts={alerts}
+          recentActions={recentActions}
+          loading={loading}
+        />
+      </div>
 
-  const { mutateAsync: updateUser } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateUserDto }) =>
-      adminAPI.updateUser(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
-    },
-  });
-
-  const { mutateAsync: deleteUser } = useMutation({
-    mutationFn: adminAPI.deleteUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] });
-    },
-  });
-
-  const { mutateAsync: suspendUser } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: SuspendUserDto }) =>
-      adminAPI.suspendUser(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
-    },
-  });
-
-  const { mutateAsync: activateUser } = useMutation({
-    mutationFn: adminAPI.activateUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
-    },
-  });
-
-  const { mutateAsync: resetPassword } = useMutation({
-    mutationFn: adminAPI.resetUserPassword,
-    onSuccess: () => {
-      // No need to invalidate, just show success toast
-    },
-  });
-
-  return {
-    users: usersData?.data || [],
-    stats: stats || null,
-    loading: usersLoading,
-    error: usersError?.message || null,
-    filters,
-    setFilters,
-    createUser,
-    updateUser: useCallback(
-      (id: string, data: UpdateUserDto) => updateUser({ id, data }),
-      [updateUser]
-    ),
-    deleteUser,
-    suspendUser: useCallback(
-      (id: string, data: SuspendUserDto) => suspendUser({ id, data }),
-      [suspendUser]
-    ),
-    activateUser,
-    resetPassword,
-  };
+      <DashboardQuickActions />
+    </AdminPageShell>
+  );
 }
 ```
+
+**Beneficios del patrón AdminPageShell:**
+- Elimina 15-35 líneas de boilerplate por página (useAuth, gamification, logout)
+- Header consistente con título, subtítulo y acciones
+- Integración automática con AdminLayout
+- 19/19 páginas migradas (100% adopción)
 
 ### 15.2 Service Backend Completo - AdminUsersService
 
@@ -2206,6 +2218,7 @@ export class AdminUsersService {
 
 | Versión | Fecha | Cambios |
 |---------|-------|---------|
+| 2.0.0 | 2026-02-18 | Actualización mayor: Sprint 0+1+2 Admin Portal Refactor. Sección 2.1 reestructurada (14→19 pages, +30 componentes, +12 hooks, nueva estructura shared/notifications/). Sección 4.1 +AdminPageShell y AdminTabBar patterns. Sección 6.2 corregida (API monolítica real vs paths fantasma). Sección 15.1 actualizada con patrón canónico AdminPageShell. |
 | 1.0.0 | 2025-11-29 | Creación inicial completa |
 
 ---

@@ -65,7 +65,7 @@ export interface UseVideoRecorderReturn {
   // Datos
   videoBlob: Blob | null;
   videoUrl: string | null;
-  previewUrl: string | null; // For live preview
+  previewStream: MediaStream | null; // Live MediaStream for preview via srcObject
   duration: number; // segundos de grabación
 
   // Acciones
@@ -153,7 +153,7 @@ function createErrorMessage(error: unknown): VideoRecorderError {
  *   error,
  *   videoBlob,
  *   videoUrl,
- *   previewUrl,
+ *   previewStream,
  *   duration,
  *   checkPermission,
  *   requestPermission,
@@ -181,7 +181,7 @@ function createErrorMessage(error: unknown): VideoRecorderError {
  * if (permissionState === 'granted') {
  *   return (
  *     <>
- *       {previewUrl && <video src={previewUrl} autoPlay muted />}
+ *       {previewStream && <video ref={videoRef} autoPlay muted playsInline />}
  *       {!isRecording && <button onClick={() => startRecording()}>Start Recording</button>}
  *       {isRecording && !isPaused && <button onClick={pauseRecording}>Pause</button>}
  *       {isPaused && <button onClick={resumeRecording}>Resume</button>}
@@ -218,7 +218,7 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
   const [error, setError] = useState<VideoRecorderError | null>(null);
   const [videoBlob, setVideoBlob] = useState<Blob | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewStream, setPreviewStream] = useState<MediaStream | null>(null);
   const [duration, setDuration] = useState(0);
 
   // Refs
@@ -285,10 +285,6 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
         audio: true
       });
 
-      // Create preview URL
-      const previewObjectUrl = URL.createObjectURL(new MediaSource());
-      setPreviewUrl(previewObjectUrl);
-
       // Immediately stop the stream - we only wanted to request permission
       stream.getTracks().forEach((track) => track.stop());
       setPermissionState('granted');
@@ -326,11 +322,8 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
         width: constraints?.width || 1280,
         height: constraints?.height || 720,
         frameRate: constraints?.frameRate || 30,
+        facingMode: constraints?.facingMode || 'user',
       };
-
-      if (constraints?.facingMode) {
-        videoConstraints.facingMode = constraints.facingMode;
-      }
 
       // Get media stream
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -339,9 +332,8 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
       });
       streamRef.current = stream;
 
-      // Create preview URL from stream
-      const previewObjectUrl = URL.createObjectURL(new MediaSource());
-      setPreviewUrl(previewObjectUrl);
+      // Expose the live stream for preview (consumers assign it to video.srcObject)
+      setPreviewStream(stream);
 
       // Get supported MIME type
       const mimeType = _getSupportedMimeType();
@@ -373,11 +365,10 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
           timerRef.current = null;
         }
 
-        // Clean up preview
-        if (previewUrl) {
-          URL.revokeObjectURL(previewUrl);
-          setPreviewUrl(null);
-        }
+        // Stop all media tracks and clear preview stream
+        streamRef.current?.getTracks().forEach(t => t.stop());
+        streamRef.current = null;
+        setPreviewStream(null);
       };
 
       mediaRecorder.onpause = () => {
@@ -426,7 +417,7 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
 
       setRecordingState('idle');
     }
-  }, [isSupported, previewUrl]);
+  }, [isSupported]);
 
   /**
    * Stop recording video
@@ -465,20 +456,21 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
       URL.revokeObjectURL(videoUrl);
     }
 
-    // Clean up preview URL
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
+    // Stop any active media tracks
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop());
+      streamRef.current = null;
     }
 
     // Reset state
     setVideoBlob(null);
     setVideoUrl(null);
-    setPreviewUrl(null);
+    setPreviewStream(null);
     setDuration(0);
     setRecordingState('idle');
     setError(null);
     chunksRef.current = [];
-  }, [videoUrl, previewUrl]);
+  }, [videoUrl]);
 
   /**
    * Cleanup on unmount or when recording stops
@@ -501,13 +493,8 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
       if (videoUrl) {
         URL.revokeObjectURL(videoUrl);
       }
-
-      // Revoke preview URL
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
     };
-  }, [videoUrl, previewUrl]);
+  }, [videoUrl]);
 
   return {
     // Estados
@@ -518,7 +505,7 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
     // Datos
     videoBlob,
     videoUrl,
-    previewUrl,
+    previewStream,
     duration,
 
     // Acciones

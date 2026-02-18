@@ -3,8 +3,8 @@
 # Version: 2.0.0
 # Sistema: SIMCO v4.0.0
 
-version: "2.0.0"
-updated: "2026-02-17"
+version: "2.1.0"
+updated: "2026-02-18"
 
 # ============================================
 # EPICAS ACTIVAS
@@ -70,7 +70,8 @@ epicas:
         titulo: "Evaluar e implementar Repository pattern"
         prioridad: "P2"
         esfuerzo: "XL"
-        estado: "pendiente"
+        estado: "diferido"
+        nota: "DEFERRED per ADR-045: Repository pattern blocked until MQ-002 Domain Errors achieves 50% adoption"
         dependencias: ["MQ-006"]
       - id: "MQ-006"
         titulo: "ADR de Clean Architecture pragmatica"
@@ -82,18 +83,22 @@ epicas:
         titulo: "Reducir 911 warnings no-explicit-any en backend"
         prioridad: "P2"
         esfuerzo: "XL"
-        estado: "pendiente"
+        estado: "documentado"
+        nota: "Phased approach: auth→gamification→educational modules first. Target 911→<200. Requires dedicated sprint."
       - id: "MQ-008"
         titulo: "Crear skill simco-apply-backend-standard"
         prioridad: "P2"
         esfuerzo: "S"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-18"
         dependencias: ["MQ-003"]
       - id: "MQ-009"
         titulo: "Sincronizar XP multiplierMap FE con SSOT backend"
         prioridad: "P2"
         esfuerzo: "M"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-18"
+        detalle_fix: "3 fixes: ranks.constants.ts v2.1 (Halach Uinic/K'uk'ulkan xp thresholds), RanksSection.tsx (import SSOT, remove mock), useDashboardData.ts (clarify ML Coins vs XP multiplier comment)"
       - id: "MQ-010"
         titulo: "Introducir Value Objects en modulos criticos"
         prioridad: "P3"
@@ -121,18 +126,20 @@ epicas:
         estado: "completado"
         fecha_completado: "2026-02-17"
       - id: "CORR-03"
-        titulo: "DDL cascade errors — trigger 28 mismatch, function execution order, tenant seed dependency"
+        titulo: "DDL cascade errors — 14 index errors + trigger/function/view fixes"
         prioridad: "P1"
         esfuerzo: "L"
         estado: "completado"
         fecha_completado: "2026-02-17"
+        detalle_fix: "14→0 index errors: singular→plural table names (dim_dates, dim_students, dim_exercises, dim_modules, marie_curie_contents, comodin_usage_trackings), removed 3 broken indexes referencing non-existent columns"
       - id: "CORR-04"
-        titulo: "RLS deficit 195 vs 227 — 32 politicas no aplicadas en runtime"
+        titulo: "RLS schema file errors — 16→0 errors, runtime 349→404 policies"
         prioridad: "P1"
         esfuerzo: "M"
         estado: "completado"
         dependencias: ["CORR-03"]
         fecha_completado: "2026-02-17"
+        detalle_fix: "16→0 RLS errors: singular→plural table names (teacher_contents, lti_grade_passbacks, leaderboard_metadatas, user_activity_logs, marie_curie_contents, flagged_contents), UPPERCASE→lowercase enum values (gamilit_role), wrong enum values ('admin'→'admin_teacher'), missing DROP IF EXISTS, schema-qualified enums, column fixes (is_recruiting→is_public, status→left_at)"
       - id: "CORR-05"
         titulo: "30 seed errors — FK violations, orden incorrecto, columnas renombradas"
         prioridad: "P2"
@@ -182,7 +189,9 @@ epicas:
         titulo: "Planificar integracion FE para endpoints sociales backend-only"
         prioridad: "P1"
         esfuerzo: "L"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-18"
+        detalle: "Plan created: 40 endpoints (peer/team challenges + participants), 6.5 days estimated. See 05-PLAN-SOCIAL-INTEGRATION-TRZ006.md"
 
   - id: "EPIC-WS-007"
     titulo: "Gobernanza DB DDL-First por Ambientes"
@@ -219,7 +228,8 @@ epicas:
         titulo: "Automatizar deteccion de referencias prohibidas a migrations en CI"
         prioridad: "P1"
         esfuerzo: "M"
-        estado: "pendiente"
+        estado: "completado"
+        fecha_completado: "2026-02-18"
       - id: "DBOPS-006"
         titulo: "Actualizar inventarios SSOT con nuevos scripts wrappers y perfil DEV"
         prioridad: "P1"
@@ -324,8 +334,8 @@ metricas:
   historias_en_backlog: 7
   puntos_en_backlog: 52
   items_calidad_total: 10
-  items_calidad_completados: 5
-  items_calidad_pendientes: 5
+  items_calidad_completados: 7          # MQ-001,002,003,004,006,008,009. Remaining: MQ-005 diferido, MQ-007 documentado, MQ-010 pendiente
+  items_calidad_pendientes: 3
   correcciones_total: 5
   correcciones_completadas: 5
   correcciones_pendientes: 0
@@ -353,4 +363,4 @@ metadata:
   created_by: "Claude Code"
   created_at: "2026-01-29"
   updated_by: "Claude Code"
-  updated_at: "2026-02-17"
+  updated_at: "2026-02-17T23:00:00"

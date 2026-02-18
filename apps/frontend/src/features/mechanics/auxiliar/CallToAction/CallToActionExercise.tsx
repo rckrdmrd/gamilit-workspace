@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Megaphone, Users, Share2, CheckCircle, Trash2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { CallToActionExerciseProps, Campaign } from './callToActionTypes';
@@ -211,24 +212,16 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
 
   return (
     <>
-      <div className="space-y-6">
-        <DetectiveCard variant="default" padding="lg">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Megaphone className="h-8 w-8 text-detective-orange" />
-              <h1 className="text-2xl font-bold text-detective-text">
-                {exercise.title || 'Call to Action'}
-              </h1>
-            </div>
-            <span className="rounded-full bg-detective-bg-secondary px-3 py-1 text-sm text-detective-text-secondary">
-              {campaigns.length}/{minCampaigns} campaña(s) mínima(s)
-            </span>
-          </div>
-          <p className="text-detective-text-secondary">
-            {exercise.instructions || `Crea una campaña de acción social inspirada en ${exercise.topic || 'el legado de Marie Curie'}.`}
-          </p>
-        </DetectiveCard>
-
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Call to Action'}
+        description={exercise.instructions || `Crea una campaña de acción social inspirada en ${exercise.topic || 'el legado de Marie Curie'}.`}
+        icon={<Megaphone className="h-8 w-8" />}
+        headerActions={
+          <span className="rounded-full bg-detective-bg-secondary px-3 py-1 text-sm text-detective-text-secondary">
+            {campaigns.length}/{minCampaigns} campaña(s) mínima(s)
+          </span>
+        }
+      >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
             <DetectiveCard variant="default" padding="lg" className="space-y-4">
@@ -432,7 +425,7 @@ export const CallToActionExercise: React.FC<CallToActionExerciseProps> = ({
             </DetectiveCard>
           </div>
         </div>
-      </div>
+      </UnifiedExerciseLayout>
 
       {feedback && (
         <FeedbackModal

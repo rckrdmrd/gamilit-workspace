@@ -2,10 +2,12 @@
 
 **Version:** 1.0.0
 **Fecha:** 2026-02-07
-**Total Endpoints:** 899
+**Total Endpoints:** 901
 **Base URL:** http://localhost:3006 (dev) | https://api.gamilit.com (prod)
 **Auth:** JWT Bearer Token
 **Format:** JSON
+
+> **Nota:** Este documento cubre un subset representativo (~191 de 901 endpoints totales). Para el inventario completo, consultar orchestration/inventarios/BACKEND_INVENTORY.yml
 
 ---
 
@@ -17,6 +19,7 @@ Para validar los endpoints dentro de procesos funcionales completos (UI -> API -
 - [docs/30-ux-ui/flujos/TRACEABILITY-MATRIX.md](../30-ux-ui/flujos/TRACEABILITY-MATRIX.md)
 - [docs/30-ux-ui/flujos/COBERTURA-TOTAL-PROCESOS.md](../30-ux-ui/flujos/COBERTURA-TOTAL-PROCESOS.md)
 - [docs/30-ux-ui/flujos/AUDITORIA-RESIDUAL-FULL.md](../30-ux-ui/flujos/AUDITORIA-RESIDUAL-FULL.md)
+- [ENDPOINTS-INVENTORY-EQUIP.md](./ENDPOINTS-INVENTORY-EQUIP.md)
 
 > Nota de cobertura total (2026-02-17): los endpoints del portal `parents/*` quedaron trazados y planificados en la oleada full.
 > La consolidacion completa del contrato API de parents se gestiona en:
@@ -216,6 +219,15 @@ Authorization: Bearer <jwt_token>
 | POST | /store/inventory/:id/equip | Equipar item | Si |
 | POST | /store/inventory/:id/use | Usar item consumible | Si |
 | GET | /store/transactions | Historial de compras | Si |
+
+### Inventory (Gamification) - Equipamiento Cosmético
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /gamification/inventory/equipped | Listar items equipados del usuario actual | Si |
+| POST | /gamification/inventory/equip | Equipar item cosmético (requiere ownership) | Si |
+| POST | /gamification/inventory/unequip | Quitar item cosmético equipado | Si |
+
+> Ver contrato completo, validaciones y errores en [ENDPOINTS-INVENTORY-EQUIP.md](./ENDPOINTS-INVENTORY-EQUIP.md).
 
 ---
 
@@ -490,4 +502,4 @@ Documentacion interactiva generada automaticamente desde decorators NestJS (@Api
 ---
 
 *GAMILIT - API Reference*
-*899 endpoints | 22 modulos | JWT Auth | Socket.IO Real-time*
+*901 endpoints | 23 modulos | JWT Auth | Socket.IO Real-time*

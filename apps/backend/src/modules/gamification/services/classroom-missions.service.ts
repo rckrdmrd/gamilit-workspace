@@ -49,16 +49,27 @@ export class ClassroomMissionsService {
    * @throws NotFoundException if profile doesn't exist
    */
   private async getProfileId(userId: string): Promise<string> {
-    const profile = await this.profileRepo.findOne({
+    // DB-125: Try profile.id first (JWT sub = profiles.id)
+    const profileById = await this.profileRepo.findOne({
+      where: { id: userId },
+      select: ['id'],
+    });
+
+    if (profileById) {
+      return profileById.id;
+    }
+
+    // Fallback: userId might be auth.users.id
+    const profileByUserId = await this.profileRepo.findOne({
       where: { user_id: userId },
       select: ['id'],
     });
 
-    if (!profile) {
+    if (!profileByUserId) {
       throw new NotFoundException(`Profile not found for user ${userId}`);
     }
 
-    return profile.id;
+    return profileByUserId.id;
   }
 
   /**

@@ -265,7 +265,7 @@ export const EnhancedStatsGrid: React.FC<EnhancedStatsGridProps & { compact?: bo
         className="flex items-center justify-between"
       >
         <div>
-          <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900">
+          <h2 className="flex items-center gap-2 text-lg font-bold text-gray-900">
             <Award className="h-6 w-6 text-orange-600" />
             Estadísticas Detective
           </h2>
@@ -289,7 +289,7 @@ export const EnhancedStatsGrid: React.FC<EnhancedStatsGridProps & { compact?: bo
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {statCards.map((card) => (
           <StatCard
             key={card.label}
@@ -322,7 +322,7 @@ export const EnhancedStatsGrid: React.FC<EnhancedStatsGridProps & { compact?: bo
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-3 gap-3">
           {/* Next Case Milestone */}
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-900">

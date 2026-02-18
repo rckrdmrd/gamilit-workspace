@@ -71,6 +71,10 @@ export default function TeacherGamification() {
   const [bonusAmount, setBonusAmount] = useState<number>(50);
   const [bonusReason, setBonusReason] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'balance' | 'level' | 'name'>('balance');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
   const [studentBalances, setStudentBalances] = useState<Record<string, number>>({});
 
   const { grantBonus, loading: grantingBonus, reset: resetGrant } = useGrantBonus();
@@ -104,24 +108,24 @@ export default function TeacherGamification() {
   // Build classStats from API data or use defaults
   const classStats: ClassEconomyStats = economyData
     ? {
-        total_circulation: economyData.total_circulation,
-        average_balance: economyData.average_balance,
-        total_earned_today: economyData.total_earned_today,
-        total_spent_today: economyData.total_spent_today,
-        inflation_rate: 0, // Not calculated in backend yet
-        wealth_distribution: economyData.wealth_distribution,
-      }
+      total_circulation: economyData.total_circulation,
+      average_balance: economyData.average_balance,
+      total_earned_today: economyData.total_earned_today,
+      total_spent_today: economyData.total_spent_today,
+      inflation_rate: 0, // Not calculated in backend yet
+      wealth_distribution: economyData.wealth_distribution,
+    }
     : {
-        total_circulation: 0,
-        average_balance: 0,
-        total_earned_today: 0,
-        total_spent_today: 0,
-        inflation_rate: 0,
-        wealth_distribution: {
-          top_10_percent: 0,
-          bottom_50_percent: 0,
-        },
-      };
+      total_circulation: 0,
+      average_balance: 0,
+      total_earned_today: 0,
+      total_spent_today: 0,
+      inflation_rate: 0,
+      wealth_distribution: {
+        top_10_percent: 0,
+        bottom_50_percent: 0,
+      },
+    };
 
   // Students data from API (GAP-ST-006) - transformed to match component interface
   const students: StudentEconomyData[] = studentsData.map((s) => ({
@@ -133,6 +137,27 @@ export default function TeacherGamification() {
     rank: s.rank,
     level: s.level,
   }));
+
+  // Filter and sort students
+  const filteredStudents = students
+    .filter((student) =>
+      student.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      let comparison = 0;
+      switch (sortBy) {
+        case 'balance':
+          comparison = a.balance - b.balance;
+          break;
+        case 'level':
+          comparison = a.level - b.level;
+          break;
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+      }
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
 
   // Achievements data from API (GAP-ST-007)
   const achievements = achievementsData.map((a) => ({
@@ -489,13 +514,45 @@ export default function TeacherGamification() {
 
       {/* Top Students */}
       <DetectiveCard>
-        <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-detective-text">
-          <Trophy className="h-6 w-6 text-detective-gold" />
-          Top Estudiantes por ML Coins
-          {studentsLoading && (
-            <Loader2 className="ml-2 h-5 w-5 animate-spin text-detective-orange" />
-          )}
-        </h2>
+        <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-detective-text">
+            <Trophy className="h-6 w-6 text-detective-gold" />
+            Top Estudiantes por ML Coins
+            {studentsLoading && (
+              <Loader2 className="ml-2 h-5 w-5 animate-spin text-detective-orange" />
+            )}
+          </h2>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <input
+              type="text"
+              placeholder="Buscar estudiante..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="rounded-lg border border-gray-700 bg-detective-bg-secondary px-3 py-2 text-sm text-detective-text focus:border-detective-orange focus:outline-none"
+            />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'balance' | 'level' | 'name')}
+              className="rounded-lg border border-gray-700 bg-detective-bg-secondary px-3 py-2 text-sm text-detective-text focus:border-detective-orange focus:outline-none"
+            >
+              <option value="balance">Ordenar por Balance</option>
+              <option value="level">Ordenar por Nivel</option>
+              <option value="name">Ordenar por Nombre</option>
+            </select>
+            <button
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              className="group rounded-lg border border-gray-700 bg-detective-bg-secondary p-2 text-detective-text hover:bg-detective-bg transition-colors"
+              title={sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}
+            >
+              {sortOrder === 'asc' ? (
+                <TrendingUp className="h-5 w-5 text-detective-text-secondary group-hover:text-detective-orange" />
+              ) : (
+                <TrendingDown className="h-5 w-5 text-detective-text-secondary group-hover:text-detective-orange" />
+              )}
+            </button>
+          </div>
+        </div>
 
         <div className="space-y-3">
           {studentsLoading && students.length === 0 && (
@@ -504,13 +561,13 @@ export default function TeacherGamification() {
               <span className="ml-3 text-detective-text-secondary">Cargando estudiantes...</span>
             </div>
           )}
-          {!studentsLoading && students.length === 0 && (
+          {!studentsLoading && filteredStudents.length === 0 && (
             <div className="py-8 text-center text-detective-text-secondary">
               <Users className="mx-auto mb-3 h-12 w-12 opacity-50" />
-              <p>No hay estudiantes para mostrar</p>
+              <p>No se encontraron estudiantes coincidents</p>
             </div>
           )}
-          {students.map((student, index) => (
+          {filteredStudents.map((student, index) => (
             <div
               key={student.id}
               className="flex items-center gap-4 rounded-lg bg-detective-bg-secondary p-4 transition-colors hover:bg-opacity-80"

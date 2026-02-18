@@ -6,7 +6,10 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, LessThan } from 'typeorm';
 import { MissionsService } from '../../gamification/services/missions.service';
+import { Mission, MissionStatusEnum } from '../../gamification/entities/mission.entity';
 
 export interface CronJobStatus {
   name: string;
@@ -23,12 +26,14 @@ export class MissionsCronService {
   constructor(
     private readonly missionsService: MissionsService,
     private readonly schedulerRegistry: SchedulerRegistry,
+    @InjectRepository(Mission, 'gamification')
+    private readonly missionsRepo: Repository<Mission>,
   ) {}
 
   /**
    * Daily Missions Reset
    *
-   * Runs every day at 00:00 UTC
+   * Runs every day at 00:00 America/Mexico_City
    * Cron: 0 0 * * *
    *
    * Tasks:
@@ -36,7 +41,7 @@ export class MissionsCronService {
    */
   @Cron('0 0 * * *', {
     name: 'daily-missions-reset',
-    timeZone: 'UTC',
+    timeZone: 'America/Mexico_City',
   })
   async handleDailyMissionsReset() {
     const jobName = 'daily-missions-reset';
@@ -64,15 +69,15 @@ export class MissionsCronService {
   /**
    * Weekly Missions Reset
    *
-   * Runs every Sunday at 00:00 UTC
-   * Cron: 0 0 * * 0
+   * Runs every Monday at 00:00 America/Mexico_City
+   * Cron: 0 0 * * 1
    *
    * Tasks:
    * 1. Expire old weekly missions
    */
-  @Cron('0 0 * * 0', {
+  @Cron('0 0 * * 1', {
     name: 'weekly-missions-reset',
-    timeZone: 'UTC',
+    timeZone: 'America/Mexico_City',
   })
   async handleWeeklyMissionsReset() {
     const jobName = 'weekly-missions-reset';
@@ -109,7 +114,7 @@ export class MissionsCronService {
    */
   @Cron('*/5 * * * *', {
     name: 'check-missions-progress',
-    timeZone: 'UTC',
+    timeZone: 'America/Mexico_City',
   })
   async handleCheckMissionsProgress() {
     const jobName = 'check-missions-progress';
@@ -135,17 +140,19 @@ export class MissionsCronService {
   }
 
   /**
-   * Cleanup Expired Missions
+   * Cleanup Expired Missions (REC-010)
    *
-   * Runs every day at 03:00 UTC
+   * Runs every day at 03:00 America/Mexico_City
    * Cron: 0 3 * * *
    *
    * Tasks:
-   * 1. Archive expired missions (kept for historical records)
+   * 1. Delete expired missions older than 90 days (retention policy)
+   * 2. Missions with status 'expired' and end_date > 90 days ago are removed
+   * 3. Completed/claimed missions are NOT deleted (they have historical value)
    */
   @Cron('0 3 * * *', {
     name: 'cleanup-expired-missions',
-    timeZone: 'UTC',
+    timeZone: 'America/Mexico_City',
   })
   async handleCleanupExpiredMissions() {
     const jobName = 'cleanup-expired-missions';
@@ -155,13 +162,22 @@ export class MissionsCronService {
       this.logger.log(`[CRON:${jobName}] Starting cleanup of expired missions...`);
       this.logger.log(`[CRON:${jobName}] Execution time: ${new Date().toISOString()}`);
 
-      // Note: We keep expired missions for historical purposes
-      // This job primarily logs and monitors cleanup status
-      this.logger.log(`[CRON:${jobName}] Expired missions retained for historical records`);
+      // REC-010: Delete expired missions older than 90 days
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - 90);
+
+      const result = await this.missionsRepo
+        .createQueryBuilder()
+        .delete()
+        .from(Mission)
+        .where('status = :status', { status: MissionStatusEnum.EXPIRED })
+        .andWhere('end_date < :cutoff', { cutoff: cutoffDate })
+        .execute();
 
       const duration = Date.now() - startTime;
 
-      this.logger.log(`[CRON:${jobName}] Cleanup check completed successfully`);
+      this.logger.log(`[CRON:${jobName}] Deleted ${result.affected ?? 0} expired missions older than 90 days`);
+      this.logger.log(`[CRON:${jobName}] Cutoff date: ${cutoffDate.toISOString()}`);
       this.logger.log(`[CRON:${jobName}] Total duration: ${duration}ms (${(duration / 1000).toFixed(2)}s)`);
     } catch (error: unknown) {
       const duration = Date.now() - startTime;
@@ -181,15 +197,15 @@ export class MissionsCronService {
     const jobs: CronJobStatus[] = [
       {
         name: 'daily-missions-reset',
-        schedule: '0 0 * * * (Every day at 00:00 UTC)',
+        schedule: '0 0 * * * (Every day at 00:00 America/Mexico_City)',
         nextRun: this.getNextRunTime('0 0 * * *'),
         isRunning: this.isJobRunning('daily-missions-reset'),
         description: 'Expires old daily missions',
       },
       {
         name: 'weekly-missions-reset',
-        schedule: '0 0 * * 0 (Every Sunday at 00:00 UTC)',
-        nextRun: this.getNextRunTime('0 0 * * 0'),
+        schedule: '0 0 * * 1 (Every Monday at 00:00 America/Mexico_City)',
+        nextRun: this.getNextRunTime('0 0 * * 1'),
         isRunning: this.isJobRunning('weekly-missions-reset'),
         description: 'Expires old weekly missions',
       },
@@ -202,10 +218,10 @@ export class MissionsCronService {
       },
       {
         name: 'cleanup-expired-missions',
-        schedule: '0 3 * * * (Every day at 03:00 UTC)',
+        schedule: '0 3 * * * (Every day at 03:00 America/Mexico_City)',
         nextRun: this.getNextRunTime('0 3 * * *'),
         isRunning: this.isJobRunning('cleanup-expired-missions'),
-        description: 'Archives expired missions for historical records',
+        description: 'Deletes expired missions older than 90 days (REC-010)',
       },
     ];
 
@@ -260,14 +276,14 @@ export class MissionsCronService {
         next.setUTCHours(0, 0, 0, 0);
         next.setUTCDate(next.getUTCDate() + 1);
 
-        // If it's weekly (Sunday)
-        if (parts[4] === '0') {
-          // Find next Sunday
-          const daysUntilSunday = (7 - next.getUTCDay()) % 7;
-          if (daysUntilSunday === 0 && now.getUTCHours() >= 0) {
+        // If it's weekly (Monday)
+        if (parts[4] === '1') {
+          // Find next Monday
+          const daysUntilMonday = (8 - next.getUTCDay()) % 7;
+          if (daysUntilMonday === 0 && now.getUTCHours() >= 0) {
             next.setUTCDate(next.getUTCDate() + 7);
           } else {
-            next.setUTCDate(next.getUTCDate() + daysUntilSunday);
+            next.setUTCDate(next.getUTCDate() + daysUntilMonday);
           }
         }
 

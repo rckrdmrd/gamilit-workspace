@@ -109,15 +109,15 @@ WHERE school_id IS NOT NULL;
 
 -- School year semester lookup
 CREATE INDEX IF NOT EXISTS idx_dim_date_school_semester
-ON data_warehouse.dim_date (school_year, semester, full_date);
+ON data_warehouse.dim_dates(school_year, semester, full_date);
 
 -- Quarter analysis
 CREATE INDEX IF NOT EXISTS idx_dim_date_quarter
-ON data_warehouse.dim_date (year, quarter, full_date);
+ON data_warehouse.dim_dates(year, quarter, full_date);
 
 -- Week-over-week analysis
 CREATE INDEX IF NOT EXISTS idx_dim_date_weekly
-ON data_warehouse.dim_date (year, week_of_year, day_of_week);
+ON data_warehouse.dim_dates(year, week_of_year, day_of_week);
 
 -- ===========================================
 -- dim_student - Common Lookups
@@ -125,17 +125,17 @@ ON data_warehouse.dim_date (year, week_of_year, day_of_week);
 
 -- Grade level with current filter
 CREATE INDEX IF NOT EXISTS idx_dim_student_grade_current
-ON data_warehouse.dim_student (grade_level)
+ON data_warehouse.dim_students(grade_level)
 WHERE is_current = TRUE;
 
 -- School with current filter
 CREATE INDEX IF NOT EXISTS idx_dim_student_school_current
-ON data_warehouse.dim_student (school_id)
+ON data_warehouse.dim_students(school_id)
 WHERE is_current = TRUE AND school_id IS NOT NULL;
 
 -- Registration date for cohort analysis
 CREATE INDEX IF NOT EXISTS idx_dim_student_registration
-ON data_warehouse.dim_student (registration_date)
+ON data_warehouse.dim_students(registration_date)
 WHERE is_current = TRUE;
 
 -- ===========================================
@@ -144,12 +144,12 @@ WHERE is_current = TRUE;
 
 -- Exercise type difficulty matrix
 CREATE INDEX IF NOT EXISTS idx_dim_exercise_type_diff
-ON data_warehouse.dim_exercise (exercise_type, difficulty_level)
+ON data_warehouse.dim_exercises(exercise_type, difficulty_level)
 WHERE is_active = TRUE;
 
 -- Module content summary
 CREATE INDEX IF NOT EXISTS idx_dim_exercise_module_content
-ON data_warehouse.dim_exercise (module_key, exercise_type, order_index)
+ON data_warehouse.dim_exercises(module_key, exercise_type, order_index)
 WHERE is_active = TRUE;
 
 
@@ -199,17 +199,17 @@ WHERE streak_days >= 7;
 
 -- Weekend/weekday analysis
 CREATE INDEX IF NOT EXISTS idx_dim_date_weekday
-ON data_warehouse.dim_date (is_weekend, date_key)
+ON data_warehouse.dim_dates(is_weekend, date_key)
 WHERE is_weekend = FALSE;
 
 -- School day analysis
 CREATE INDEX IF NOT EXISTS idx_dim_date_school_day
-ON data_warehouse.dim_date (is_school_day, date_key)
+ON data_warehouse.dim_dates(is_school_day, date_key)
 WHERE is_school_day = TRUE;
 
 -- Published modules only
 CREATE INDEX IF NOT EXISTS idx_dim_module_published
-ON data_warehouse.dim_module (order_index)
+ON data_warehouse.dim_modules(order_index)
 WHERE is_published = TRUE;
 
 

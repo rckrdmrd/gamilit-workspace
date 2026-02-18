@@ -8,12 +8,10 @@
  */
 
 import { useState } from 'react';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { AdminLayout } from '../layouts/AdminLayout';
+import { AdminPageShell } from '../components/shared';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { ToastContainer, useToast } from '@shared/components/base/Toast';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 import {
   useAssignments,
   useAssignmentsStats,
@@ -45,7 +43,6 @@ import {
  * - CSV export
  */
 export default function AdminAssignmentsPage() {
-  const { user, logout } = useAuth();
   const { toasts, showToast } = useToast();
 
   // State
@@ -61,22 +58,6 @@ export default function AdminAssignmentsPage() {
     refetch,
   } = useAssignments(filters);
   const { data: stats, isLoading: isLoadingStats } = useAssignmentsStats();
-
-  // Gamification data
-  const { gamificationData } = useUserGamification(user?.id);
-  const displayGamificationData = gamificationData || {
-    userId: user?.id || '',
-    level: 1,
-    totalXP: 0,
-    mlCoins: 0,
-    rank: 'Novato',
-    achievements: [],
-  };
-
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
 
   const handleRowClick = (assignment: AdminAssignment) => {
     setSelectedAssignment(assignment);
@@ -125,12 +106,7 @@ export default function AdminAssignmentsPage() {
   const pagination = assignmentsData?.pagination;
 
   return (
-    <AdminLayout
-      user={user || undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GAMILIT Platform Admin"
-      onLogout={handleLogout}
-    >
+    <AdminPageShell>
       <div className="space-y-6">
         {/* Header */}
         <div>
@@ -290,6 +266,6 @@ export default function AdminAssignmentsPage() {
 
       {/* Toast Notifications */}
       <ToastContainer toasts={toasts} position="top-right" />
-    </AdminLayout>
+    </AdminPageShell>
   );
 }

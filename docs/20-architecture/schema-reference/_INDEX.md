@@ -1,7 +1,7 @@
 # Schema Reference - GAMILIT
 
-**Version:** 2.0.0
-**Fecha:** 2026-02-12
+**Version:** 2.1.0
+**Fecha:** 2026-02-18
 **Database:** gamilit_platform
 **Engine:** PostgreSQL 15
 **ORM:** TypeORM 0.3.x
@@ -18,9 +18,9 @@
 | Materialized Views | 7 |
 | Functions | 183 |
 | Triggers | 67 |
-| RLS Policies | 207 |
-| Foreign Keys | 298 |
-| ENUMs | 40 |
+| RLS Policies | 231 |
+| Foreign Keys | 299 |
+| ENUMs | 42 |
 
 > **Complementario a:** [MODELO-DATOS.md](../MODELO-DATOS.md) (vision conceptual) y `orchestration/inventarios/DATABASE_INVENTORY.yml` (inventario operativo).
 >
@@ -61,14 +61,14 @@ Columnas marcadas con tipo JSONB almacenan datos flexibles segun el tipo de regi
 | 1 | auth | `auth` + `auth_management` | 1+17 | [01-auth.md](01-auth.md) |
 | 2 | tenants | `auth_management` (parcial) | - | [02-tenants.md](02-tenants.md) |
 | 3 | education | `educational_content` + `progress_tracking` | 21+21 | [03-education.md](03-education.md) |
-| 4 | gamification | `gamification_system` (parcial) | 21 | [04-gamification.md](04-gamification.md) |
+| 4 | gamification | `gamification_system` (parcial) | 22 | [04-gamification.md](04-gamification.md) |
 | 5 | social | `social_features` (parcial) | 30 | [05-social.md](05-social.md) |
 | 6 | classrooms | `social_features` (parcial) | - | [06-classrooms.md](06-classrooms.md) |
 | 7 | analytics | `data_warehouse` + `admin_dashboard` | 16+4 | [07-analytics.md](07-analytics.md) |
 | 8 | reports | `admin_dashboard` (parcial) | - | [08-reports.md](08-reports.md) |
 | 9 | notifications | `notifications` | 7 | [09-notifications.md](09-notifications.md) |
 | 10 | store | `gamification_system` (parcial) | - | [10-store.md](10-store.md) |
-| 11 | missions | `gamification_system` (parcial) | - | [11-missions.md](11-missions.md) |
+| 11 | missions | `gamification_system` (parcial) | 3 | [11-missions.md](11-missions.md) |
 | 12 | leaderboard | `gamification_system` (parcial) | - | [12-leaderboard.md](12-leaderboard.md) |
 | 13 | content | `content_management` | 10 | [13-content.md](13-content.md) |
 | 14 | parents | `auth_management` (parcial) | - | [14-parents.md](14-parents.md) |
@@ -97,14 +97,14 @@ Los archivos de schema-reference usan **nombres conceptuales** (dominio de negoc
 | auth (01-auth.md) | `auth` + `auth_management` | 1 + 17 | SPLIT | auth = users base; auth_management = perfiles, roles, tenants, RBAC |
 | tenants (02-tenants.md) | `auth_management` (parcial) | - | MERGED | Contenido incluido en auth_management |
 | education (03-education.md) | `educational_content` + `progress_tracking` | 21 + 21 | SPLIT | Contenido educativo + seguimiento de progreso |
-| gamification (04-gamification.md) | `gamification_system` (parcial) | 21 | PARTIAL | XP, rangos, achievements |
+| gamification (04-gamification.md) | `gamification_system` (parcial) | 22 | PARTIAL | XP, rangos, achievements, equipamiento |
 | social (05-social.md) | `social_features` (parcial) | 30 | PARTIAL | Amistades, interacciones |
 | classrooms (06-classrooms.md) | `social_features` (parcial) | - | MERGED | Escuelas, aulas, equipos dentro de social_features |
 | analytics (07-analytics.md) | `data_warehouse` + `admin_dashboard` | 16 + 4 | SPLIT | Star schema + dashboard admin |
 | reports (08-reports.md) | `admin_dashboard` (parcial) + `social_features` (parcial) | - | SCATTERED | Reportes distribuidos en multiples schemas |
 | notifications (09-notifications.md) | `notifications` | 7 | ~1:1 | |
 | store (10-store.md) | `gamification_system` (parcial) | - | MERGED | Tienda virtual dentro de gamification_system |
-| missions (11-missions.md) | `gamification_system` (parcial) | - | MERGED | Misiones dentro de gamification_system |
+| missions (11-missions.md) | `gamification_system` (parcial) | 3 | MERGED | Misiones (missions, mission_templates, classroom_missions) — v2.0.0 reescrito REC |
 | leaderboard (12-leaderboard.md) | `gamification_system` (parcial) | - | MERGED | Leaderboards dentro de gamification_system |
 | content (13-content.md) | `content_management` | 10 | ~1:1 | |
 | parents (14-parents.md) | `auth_management` (parcial) | - | MERGED | Cuentas padres dentro de auth_management |
@@ -129,4 +129,4 @@ Los archivos de schema-reference usan **nombres conceptuales** (dominio de negoc
 ---
 
 *GAMILIT - Schema Reference Index v2.0.0*
-*169 tablas | 18 schemas | 207 RLS policies | 40 ENUMs | PostgreSQL 15*
+*169 tablas | 18 schemas | 227 RLS policies | 42 ENUMs | PostgreSQL 15*

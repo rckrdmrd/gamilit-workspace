@@ -143,7 +143,28 @@ DECLARE
     v_admin_profile_id uuid;
     v_teacher_profile_id uuid;
     v_student_profile_id uuid;
+    -- REC-009 FIX: template_id is now UUID (FK to mission_templates)
+    v_tpl_daily_exercises uuid;
+    v_tpl_daily_earn_xp uuid;
+    v_tpl_daily_use_comodin uuid;
+    v_tpl_weekly_complete_module uuid;
+    v_tpl_weekly_daily_streak uuid;
+    v_tpl_weekly_perfect_scores uuid;
+    v_tpl_weekly_explorer uuid;
+    v_tpl_weekly_master_learner uuid;
+    v_tpl_special_module_mastery uuid;
 BEGIN
+    -- Resolve template UUIDs dynamically from mission_templates
+    SELECT id INTO v_tpl_daily_exercises FROM gamification_system.mission_templates WHERE type = 'daily' AND target_type = 'complete_exercises' LIMIT 1;
+    SELECT id INTO v_tpl_daily_earn_xp FROM gamification_system.mission_templates WHERE type = 'daily' AND target_type = 'earn_xp' LIMIT 1;
+    SELECT id INTO v_tpl_daily_use_comodin FROM gamification_system.mission_templates WHERE type = 'daily' AND target_type = 'use_comodines' LIMIT 1;
+    SELECT id INTO v_tpl_weekly_complete_module FROM gamification_system.mission_templates WHERE type = 'weekly' AND target_type = 'complete_modules' LIMIT 1;
+    SELECT id INTO v_tpl_weekly_daily_streak FROM gamification_system.mission_templates WHERE type = 'weekly' AND target_type = 'daily_streak' LIMIT 1;
+    SELECT id INTO v_tpl_weekly_perfect_scores FROM gamification_system.mission_templates WHERE type = 'weekly' AND target_type = 'perfect_scores' LIMIT 1;
+    SELECT id INTO v_tpl_weekly_explorer FROM gamification_system.mission_templates WHERE type = 'weekly' AND target_type = 'explore_modules' LIMIT 1;
+    SELECT id INTO v_tpl_weekly_master_learner FROM gamification_system.mission_templates WHERE type = 'weekly' AND target_type = 'complete_exercises' LIMIT 1;
+    SELECT id INTO v_tpl_special_module_mastery FROM gamification_system.mission_templates WHERE type = 'special' AND target_type = 'complete_modules' LIMIT 1;
+
     -- Resolver profile IDs para usuarios de testing
     SELECT p.id INTO v_admin_profile_id
     FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id
@@ -164,94 +185,112 @@ BEGIN
         CONTINUE WHEN v_user_id IS NULL;
 
         -- Daily Mission 1: Complete exercises
+        IF v_tpl_daily_exercises IS NOT NULL THEN
         INSERT INTO gamification_system.missions (
             user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
         ) VALUES (
-            v_user_id, 'daily_complete_exercises', 'Completar 3 ejercicios',
+            v_user_id, v_tpl_daily_exercises, 'Completar 3 ejercicios',
             'Completa 3 ejercicios hoy para ganar recompensas', 'daily',
             jsonb_build_array(jsonb_build_object('type', 'complete_exercises', 'target', 3, 'current', 0)),
             jsonb_build_object('xp', 50, 'ml_coins', 25), 'active', 0, v_today_start, v_today_end
         ) ON CONFLICT DO NOTHING;
+        END IF;
 
         -- Daily Mission 2: Earn XP
+        IF v_tpl_daily_earn_xp IS NOT NULL THEN
         INSERT INTO gamification_system.missions (
             user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
         ) VALUES (
-            v_user_id, 'daily_earn_xp', 'Ganar 100 XP',
+            v_user_id, v_tpl_daily_earn_xp, 'Ganar 100 XP',
             'Acumula 100 puntos de experiencia hoy', 'daily',
             jsonb_build_array(jsonb_build_object('type', 'earn_xp', 'target', 100, 'current', 0)),
             jsonb_build_object('xp', 30, 'ml_coins', 15), 'active', 0, v_today_start, v_today_end
         ) ON CONFLICT DO NOTHING;
+        END IF;
 
         -- Daily Mission 3: Use comodin
+        IF v_tpl_daily_use_comodin IS NOT NULL THEN
         INSERT INTO gamification_system.missions (
             user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
         ) VALUES (
-            v_user_id, 'daily_use_comodin', 'Usar un comodin',
+            v_user_id, v_tpl_daily_use_comodin, 'Usar un comodin',
             'Usa al menos un comodin en un ejercicio', 'daily',
             jsonb_build_array(jsonb_build_object('type', 'use_comodines', 'target', 1, 'current', 0)),
             jsonb_build_object('xp', 20, 'ml_coins', 10), 'active', 0, v_today_start, v_today_end
         ) ON CONFLICT DO NOTHING;
+        END IF;
 
         -- Weekly Mission 1: Complete module
+        IF v_tpl_weekly_complete_module IS NOT NULL THEN
         INSERT INTO gamification_system.missions (
             user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
         ) VALUES (
-            v_user_id, 'weekly_complete_module', 'Completar un modulo',
+            v_user_id, v_tpl_weekly_complete_module, 'Completar un modulo',
             'Completa un modulo completo esta semana', 'weekly',
             jsonb_build_array(jsonb_build_object('type', 'complete_modules', 'target', 1, 'current', 0)),
             jsonb_build_object('xp', 200, 'ml_coins', 100), 'active', 0, v_today_start, v_week_end
         ) ON CONFLICT DO NOTHING;
+        END IF;
 
         -- Weekly Mission 2: Daily streak
+        IF v_tpl_weekly_daily_streak IS NOT NULL THEN
         INSERT INTO gamification_system.missions (
             user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
         ) VALUES (
-            v_user_id, 'weekly_daily_streak', 'Racha de 5 dias',
+            v_user_id, v_tpl_weekly_daily_streak, 'Racha de 5 dias',
             'Completa al menos un ejercicio durante 5 dias seguidos', 'weekly',
             jsonb_build_array(jsonb_build_object('type', 'daily_streak', 'target', 5, 'current', 0)),
             jsonb_build_object('xp', 150, 'ml_coins', 75), 'active', 0, v_today_start, v_week_end
         ) ON CONFLICT DO NOTHING;
+        END IF;
 
         -- Weekly Mission 3: Perfect scores
+        IF v_tpl_weekly_perfect_scores IS NOT NULL THEN
         INSERT INTO gamification_system.missions (
             user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
         ) VALUES (
-            v_user_id, 'weekly_perfect_scores', 'Perfeccion absoluta',
+            v_user_id, v_tpl_weekly_perfect_scores, 'Perfeccion absoluta',
             'Obten 3 puntajes perfectos (100%) en ejercicios', 'weekly',
             jsonb_build_array(jsonb_build_object('type', 'perfect_scores', 'target', 3, 'current', 0)),
             jsonb_build_object('xp', 180, 'ml_coins', 90), 'active', 0, v_today_start, v_week_end
         ) ON CONFLICT DO NOTHING;
+        END IF;
 
         -- Weekly Mission 4: Explorer
+        IF v_tpl_weekly_explorer IS NOT NULL THEN
         INSERT INTO gamification_system.missions (
             user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
         ) VALUES (
-            v_user_id, 'weekly_explorer', 'Explorador curioso',
+            v_user_id, v_tpl_weekly_explorer, 'Explorador curioso',
             'Completa ejercicios de 3 modulos diferentes', 'weekly',
             jsonb_build_array(jsonb_build_object('type', 'explore_modules', 'target', 3, 'current', 0, 'modules_visited', '[]'::jsonb)),
             jsonb_build_object('xp', 120, 'ml_coins', 60), 'active', 0, v_today_start, v_week_end
         ) ON CONFLICT DO NOTHING;
+        END IF;
 
         -- Weekly Mission 5: Master learner
+        IF v_tpl_weekly_master_learner IS NOT NULL THEN
         INSERT INTO gamification_system.missions (
             user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
         ) VALUES (
-            v_user_id, 'weekly_master_learner', 'Maestro del aprendizaje',
+            v_user_id, v_tpl_weekly_master_learner, 'Maestro del aprendizaje',
             'Completa 15 ejercicios esta semana', 'weekly',
             jsonb_build_array(jsonb_build_object('type', 'complete_exercises', 'target', 15, 'current', 0)),
             jsonb_build_object('xp', 250, 'ml_coins', 125), 'active', 0, v_today_start, v_week_end
         ) ON CONFLICT DO NOTHING;
+        END IF;
 
         -- Special Mission: Complete module with mastery
+        IF v_tpl_special_module_mastery IS NOT NULL THEN
         INSERT INTO gamification_system.missions (
             user_id, template_id, title, description, mission_type, objectives, rewards, status, progress, start_date, end_date
         ) VALUES (
-            v_user_id, 'special_module_mastery', 'Dominio del Modulo',
+            v_user_id, v_tpl_special_module_mastery, 'Dominio del Modulo',
             'Completa todos los ejercicios de un modulo con al menos 80% de aciertos', 'special',
             jsonb_build_array(jsonb_build_object('type', 'complete_modules', 'target', 1, 'current', 0, 'min_score', 80)),
             jsonb_build_object('xp', 500, 'ml_coins', 150), 'active', 0, v_today_start, v_week_end + INTERVAL '23 days'
         ) ON CONFLICT DO NOTHING;
+        END IF;
 
     END LOOP;
 

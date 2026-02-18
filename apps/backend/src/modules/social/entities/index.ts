@@ -28,3 +28,8 @@ export { Guild } from './guild.entity'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Gui
 export { GuildMember, GuildMemberRole } from './guild-member.entity'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)
 export { GuildJoinRequest, GuildJoinRequestStatus } from './guild-join-request.entity'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)
 export { GuildMission, GuildMissionType, GuildMissionDifficulty, GuildMissionStatus } from './guild-mission.entity'; // ✨ NUEVO - Sprint 5 (EAI-003-EXT Guilds)
+export { TeamVsTeamChallenge } from './team-vs-team-challenge.entity'; // FIX P2: Missing barrel export (H-039)
+export { GuildEmblem } from './guild-emblem.entity'; // FIX P2: Missing barrel export (H-017)
+export { GuildMissionContribution } from './guild-mission-contribution.entity'; // FIX P2: Missing barrel export (H-017)
+export { UserBlock } from './user-block.entity'; // FIX P2: Missing barrel export (H-031)
+export { UserReport } from './user-report.entity'; // FIX P2: Missing barrel export (H-031)

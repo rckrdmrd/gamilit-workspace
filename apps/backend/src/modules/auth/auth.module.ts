@@ -44,6 +44,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
 // External modules
 import { MailModule } from '@/modules/mail/mail.module';
+import { GamificationModule } from '@/modules/gamification/gamification.module';
 
 // Gamification entities for getUserStatistics (GAP-008)
 import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
@@ -74,6 +75,9 @@ import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submiss
   imports: [
     // Mail module for sending emails
     MailModule,
+
+    // Gamification module (Inventory Service)
+    GamificationModule,
 
     // Passport configuration
     PassportModule.register({ defaultStrategy: 'jwt' }),

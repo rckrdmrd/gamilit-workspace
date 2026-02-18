@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
+import { safeFormatNumber } from '@shared/utils/format.util';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FormField } from '@shared/components/common/FormField';
-import { ToastContainer, useToast } from '@shared/components/base/Toast';
+import toast from 'react-hot-toast';
 import {
   BarChart3,
   TrendingUp,
@@ -31,30 +32,19 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-/**
- * Safely format a number to fixed decimals
- * @param value - Value to format
- * @param decimals - Number of decimal places
- * @param suffix - Optional suffix (e.g., '%')
- * @param fallback - Fallback value if invalid
- */
-const safeFormat = (
-  value: number | undefined | null,
-  decimals: number = 1,
-  suffix: string = '',
-  fallback: string = 'N/A',
-): string => {
-  if (typeof value !== 'number' || isNaN(value)) {
-    return fallback;
-  }
-  return `${value.toFixed(decimals)}${suffix}`;
-};
 
 export default function TeacherAnalytics() {
-  const { toasts, showToast } = useToast();
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'overview' | 'performance' | 'engagement'>('overview');
-  const [dateRange, setDateRange] = useState({ start: '2025-10-01', end: '2025-10-16' });
+  const [dateRange, setDateRange] = useState(() => {
+    const end = new Date();
+    const start = new Date();
+    start.setDate(start.getDate() - 30);
+    return {
+      start: start.toISOString().split('T')[0],
+      end: end.toISOString().split('T')[0],
+    };
+  });
 
   // Use custom hooks
   const { classrooms, loading: classroomsLoading } = useClassrooms();
@@ -176,11 +166,7 @@ export default function TeacherAnalytics() {
 
   const exportToCSV = async () => {
     if (!selectedClassroomId) {
-      showToast({
-        type: 'warning',
-        title: 'Atención',
-        message: 'Por favor selecciona una clase primero',
-      });
+      toast('Por favor selecciona una clase primero', { icon: '\u26A0\uFE0F' });
       return;
     }
 
@@ -200,25 +186,15 @@ export default function TeacherAnalytics() {
         // Open download link in new tab
         window.open(report.file_url, '_blank');
       } else {
-        showToast({
-          type: 'info',
-          title: 'En proceso',
-          message: 'El reporte está siendo generado. Por favor intenta nuevamente en unos momentos.',
-        });
+        toast('El reporte está siendo generado. Por favor intenta nuevamente en unos momentos.', { icon: '\u2139\uFE0F' });
       }
     } catch (err: unknown) {
       console.error('[TeacherAnalytics] Error exporting CSV:', err);
-      showToast({
-        type: 'error',
-        title: 'Error',
-        message: 'Error al generar el reporte. Por favor intenta nuevamente.',
-      });
+      toast.error('Error al generar el reporte. Por favor intenta nuevamente.');
     }
   };
 
   return (
-    <>
-      <ToastContainer toasts={toasts} position="top-right" />
       <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
         <main className="detective-container py-8">
         {/* Header */}
@@ -357,7 +333,7 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Puntuación Promedio</p>
                     <p className="text-3xl font-bold text-detective-text">
-                      {safeFormat(analytics?.average_score, 1, '%')}
+                      {safeFormatNumber(analytics?.average_score, 1, '%')}
                     </p>
                   </div>
                 </div>
@@ -370,7 +346,7 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Tasa de Completitud</p>
                     <p className="text-3xl font-bold text-detective-text">
-                      {safeFormat(analytics?.completion_rate, 1, '%')}
+                      {safeFormatNumber(analytics?.completion_rate, 1, '%')}
                     </p>
                   </div>
                 </div>
@@ -383,7 +359,7 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Tasa de Engagement</p>
                     <p className="text-3xl font-bold text-detective-text">
-                      {safeFormat(analytics?.engagement_rate, 1, '%')}
+                      {safeFormatNumber(analytics?.engagement_rate, 1, '%')}
                     </p>
                   </div>
                 </div>
@@ -465,11 +441,11 @@ export default function TeacherAnalytics() {
                                     : 'text-red-500'
                               }`}
                             >
-                              {safeFormat(student.average_score, 1, '%')}
+                              {safeFormatNumber(student.average_score, 1, '%')}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-detective-text">
-                            {safeFormat(student.completion_rate, 0, '%', '0%')}
+                            {safeFormatNumber(student.completion_rate, 0, '%', '0%')}
                           </td>
                           <td className="px-4 py-3 text-detective-text">
                             {student.last_active
@@ -551,7 +527,7 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Duración Promedio (min)</p>
                     <p className="text-3xl font-bold text-detective-text">
-                      {safeFormat(engagement?.session_duration_avg, 0, '', '0')}
+                      {safeFormatNumber(engagement?.session_duration_avg, 0, '', '0')}
                     </p>
                   </div>
                 </div>
@@ -565,7 +541,7 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Sesiones por Usuario</p>
                     <p className="text-3xl font-bold text-detective-text">
-                      {safeFormat(engagement?.sessions_per_user, 1, '', '0.0')}
+                      {safeFormatNumber(engagement?.sessions_per_user, 1, '', '0.0')}
                     </p>
                   </div>
                 </div>
@@ -594,7 +570,7 @@ export default function TeacherAnalytics() {
                       }`}
                     >
                       {(engagement?.comparison_previous_period?.dau_change ?? 0) >= 0 ? '+' : ''}
-                      {safeFormat(
+                      {safeFormatNumber(
                         engagement?.comparison_previous_period?.dau_change,
                         1,
                         '%',
@@ -620,7 +596,7 @@ export default function TeacherAnalytics() {
                       }`}
                     >
                       {(engagement?.comparison_previous_period?.wau_change ?? 0) >= 0 ? '+' : ''}
-                      {safeFormat(
+                      {safeFormatNumber(
                         engagement?.comparison_previous_period?.wau_change,
                         1,
                         '%',
@@ -648,7 +624,7 @@ export default function TeacherAnalytics() {
                       {(engagement?.comparison_previous_period?.engagement_change ?? 0) >= 0
                         ? '+'
                         : ''}
-                      {safeFormat(
+                      {safeFormatNumber(
                         engagement?.comparison_previous_period?.engagement_change,
                         1,
                         '%',
@@ -738,6 +714,5 @@ export default function TeacherAnalytics() {
           )}
         </main>
       </div>
-    </>
   );
 }

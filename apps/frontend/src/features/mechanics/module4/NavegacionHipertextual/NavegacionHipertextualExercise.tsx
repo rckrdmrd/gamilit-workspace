@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BookOpen, Navigation, CheckCircle, Send, Loader2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { HypertextDocument } from './HypertextDocument';
 import { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
 import type { ExerciseProps, HypertextNode } from './navegacionHipertextualTypes';
@@ -254,19 +255,13 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
+      <UnifiedExerciseLayout
+        title="Navegación Hipertextual"
+        description="Explora el hipertexto navegando entre nodos hasta encontrar el objetivo."
+        icon={<BookOpen className="h-8 w-8" />}
+        cardPadding="lg"
+      >
         <div className="space-y-6">
-          {/* Exercise Description */}
-          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-            <div className="mb-2 flex items-center gap-3">
-              <BookOpen className="h-8 w-8" />
-              <h2 className="text-detective-2xl font-bold">Navegación Hipertextual</h2>
-            </div>
-            <p className="text-detective-base opacity-90">
-              Explora el hipertexto navegando entre nodos hasta encontrar el objetivo.
-            </p>
-          </div>
-
           {/* Breadcrumbs */}
           <DetectiveCard variant="default" padding="md">
             <div className="mb-2 flex items-center gap-2">
@@ -326,7 +321,7 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
             </DetectiveButton>
           </DetectiveCard>
         </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

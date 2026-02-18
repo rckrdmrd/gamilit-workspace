@@ -1,6 +1,17 @@
 /**
  * Achievements API
  *
+ * @deprecated REC-008 (2026-02-18): Use gamificationApi from @/lib/api/gamification.api.ts instead.
+ * This file is deprecated. All achievement operations should go through gamificationApi:
+ *   - gamificationApi.getAllAchievements()
+ *   - gamificationApi.getUserAchievements(userId)
+ *   - gamificationApi.getAchievementById(achievementId)
+ *   - gamificationApi.getAchievementSummary(userId)
+ *   - gamificationApi.claimAchievement(userId, achievementId)
+ *
+ * The achievementsStore.ts has been migrated to use gamificationApi directly.
+ * This file will be removed in the next sprint.
+ *
  * Dedicated API client for achievements system.
  * Provides type-safe methods for interacting with backend achievements endpoints.
  *

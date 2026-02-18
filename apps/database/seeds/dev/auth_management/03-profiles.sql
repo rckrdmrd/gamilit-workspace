@@ -19,6 +19,7 @@ SET search_path TO auth_management, auth, public;
 -- =====================================================
 
 INSERT INTO auth_management.profiles (
+    id,
     user_id,
     tenant_id,
     email,
@@ -29,6 +30,7 @@ INSERT INTO auth_management.profiles (
     role
 )
 SELECT
+    u.id as id,
     u.id as user_id,
     (SELECT id FROM auth_management.tenants
      WHERE name LIKE '%Test%' OR name LIKE '%Gamilit%'
@@ -85,6 +87,7 @@ SELECT
 FROM auth.users u
 WHERE u.deleted_at IS NULL
 ON CONFLICT (user_id) DO UPDATE SET
+    id = EXCLUDED.id,
     email = EXCLUDED.email,
     first_name = EXCLUDED.first_name,
     last_name = EXCLUDED.last_name,

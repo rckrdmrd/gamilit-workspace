@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Home,
@@ -12,6 +12,8 @@ import {
   Settings,
 } from 'lucide-react';
 import { cn } from '@/shared/utils/cn';
+import { BrandingContext } from '@/app/providers/BrandingProvider';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -98,6 +100,9 @@ const secondaryItems: NavItem[] = [
  */
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
+  const branding = useContext(BrandingContext);
+  const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
+  const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -132,10 +137,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             className="flex items-center space-x-2"
             onClick={onClose}
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-primary-700 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">G</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900">GAMILIT</span>
+            {logoUrl ? (
+              <img src={logoUrl} alt={platformName} className="h-8 w-8 object-contain" />
+            ) : (
+              <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-primary-700 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">G</span>
+              </div>
+            )}
+            <span className="text-xl font-bold text-gray-900">{platformName}</span>
           </Link>
 
           {/* Close button (mobile only) */}
@@ -245,7 +254,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Footer - Version or help link */}
         <div className="px-6 py-4 border-t border-gray-200">
           <div className="text-xs text-gray-500 text-center">
-            <p>GAMILIT v1.0.0</p>
+            <p>{platformName} v1.0.0</p>
             <p className="mt-1">Made with ❤️ for learners</p>
           </div>
         </div>

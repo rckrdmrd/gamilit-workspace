@@ -269,9 +269,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         err instanceof Error
           ? ((err as any).response?.data?.message || err.message)
           : 'Registration failed. Please try again.';
-        err instanceof Error
-          ? ((err as any).response?.data?.message || err.message)
-          : 'User refresh failed. Please try again.';
       setError(errorMessage);
 
       // Also update authStore error

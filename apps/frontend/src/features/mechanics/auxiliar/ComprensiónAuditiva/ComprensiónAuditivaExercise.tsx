@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Headphones, CheckCircle, XCircle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { ComprensiónAuditivaExerciseProps, AudioQuestion } from './comprensionAuditivaTypes';
@@ -171,18 +172,11 @@ export const ComprensiónAuditivaExercise: React.FC<ComprensiónAuditivaExercise
 
   return (
     <>
-      <div className="space-y-6">
-        <DetectiveCard variant="default" padding="lg">
-          <div className="mb-4 flex items-center gap-3">
-            <Headphones className="h-8 w-8 text-detective-orange" />
-            <h1 className="text-2xl font-bold text-detective-text">
-              {exercise.title || 'Comprensión Auditiva'}
-            </h1>
-          </div>
-          <p className="mb-4 text-detective-text-secondary">
-            {exercise.instructions || 'Escucha el audio y responde las preguntas.'}
-          </p>
-
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Comprensión Auditiva'}
+        description={exercise.instructions || 'Escucha el audio y responde las preguntas.'}
+        icon={<Headphones className="h-8 w-8" />}
+        headerChildren={
           <div className="rounded-detective bg-detective-bg-secondary p-6">
             <audio
               controls
@@ -194,12 +188,12 @@ export const ComprensiónAuditivaExercise: React.FC<ComprensiónAuditivaExercise
             </audio>
             {!exercise.audioUrl && (
               <p className="text-center text-sm text-detective-text-secondary">
-                🎧 Nota: Este es un audio de demostración.
+                Nota: Este es un audio de demostración.
               </p>
             )}
           </div>
-        </DetectiveCard>
-
+        }
+      >
         <div className="space-y-4">
           {questions.map((question, index) => (
             <DetectiveCard
@@ -267,7 +261,7 @@ export const ComprensiónAuditivaExercise: React.FC<ComprensiónAuditivaExercise
             </DetectiveCard>
           ))}
         </div>
-      </div>
+      </UnifiedExerciseLayout>
 
       {feedback && (
         <FeedbackModal

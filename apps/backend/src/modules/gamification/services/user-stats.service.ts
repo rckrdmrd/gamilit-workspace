@@ -55,20 +55,28 @@ export class UserStatsService {
    * @throws NotFoundException si el perfil no existe
    */
   private async validateProfileExists(authUserId: string): Promise<Profile> {
-    // CORR-GAM-002: Buscar por profiles.user_id (FK a auth.users)
-    // El frontend envía auth.users.id, que corresponde a profiles.user_id
-    const profile = await this.profileRepo.findOne({
+    // DB-125: Try profile.id first (JWT sub = profiles.id for registered users)
+    const profileById = await this.profileRepo.findOne({
+      where: { id: authUserId },
+    });
+
+    if (profileById) {
+      return profileById;
+    }
+
+    // Fallback: authUserId might be auth.users.id (seeded users where profiles.id ≠ auth.users.id)
+    const profileByUserId = await this.profileRepo.findOne({
       where: { user_id: authUserId },
     });
 
-    if (!profile) {
+    if (!profileByUserId) {
       throw new NotFoundException(
         `Profile not found for auth user ${authUserId}. User may not be properly initialized. ` +
         `Please ensure the user registration process completed successfully.`
       );
     }
 
-    return profile;
+    return profileByUserId;
   }
 
   /**

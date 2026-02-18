@@ -131,7 +131,7 @@ BEGIN
     -- =====================================================
     -- INSERT COMODIN USAGE RECORDS
     -- =====================================================
-    INSERT INTO gamification_system.comodin_usage_tracking (
+    INSERT INTO gamification_system.comodin_usage_trackings (
         id,
         user_id,
         exercise_id,
@@ -335,11 +335,11 @@ DECLARE
     v_with_segunda INTEGER;
     v_all_limits INTEGER;
 BEGIN
-    SELECT COUNT(*) INTO v_total_count FROM gamification_system.comodin_usage_tracking;
-    SELECT COUNT(*) INTO v_with_pistas FROM gamification_system.comodin_usage_tracking WHERE pistas_used > 0;
-    SELECT COUNT(*) INTO v_with_vision FROM gamification_system.comodin_usage_tracking WHERE vision_lectora_used > 0;
-    SELECT COUNT(*) INTO v_with_segunda FROM gamification_system.comodin_usage_tracking WHERE segunda_oportunidad_used > 0;
-    SELECT COUNT(*) INTO v_all_limits FROM gamification_system.comodin_usage_tracking
+    SELECT COUNT(*) INTO v_total_count FROM gamification_system.comodin_usage_trackings;
+    SELECT COUNT(*) INTO v_with_pistas FROM gamification_system.comodin_usage_trackings WHERE pistas_used > 0;
+    SELECT COUNT(*) INTO v_with_vision FROM gamification_system.comodin_usage_trackings WHERE vision_lectora_used > 0;
+    SELECT COUNT(*) INTO v_with_segunda FROM gamification_system.comodin_usage_trackings WHERE segunda_oportunidad_used > 0;
+    SELECT COUNT(*) INTO v_all_limits FROM gamification_system.comodin_usage_trackings
         WHERE pistas_limit_reached AND vision_lectora_limit_reached AND segunda_oportunidad_limit_reached;
 
     RAISE NOTICE '';

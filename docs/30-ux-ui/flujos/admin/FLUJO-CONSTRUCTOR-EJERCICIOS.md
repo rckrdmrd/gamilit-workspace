@@ -1,8 +1,8 @@
 # FL-ADM-07 - Exercise Builder (Admin)
 
 **ID:** FL-ADM-07
-**Version:** 1.0.0
-**Fecha:** 2026-02-17
+**Version:** 1.1.0
+**Fecha:** 2026-02-18
 **Estado:** Activo
 **Portal:** Admin
 **Prioridad:** P1
@@ -157,9 +157,13 @@ flowchart TD
 | Tipo | Ruta | Descripcion |
 |------|------|-------------|
 | Pagina | `apps/frontend/src/apps/admin/pages/AdminExerciseCreatePage.tsx` | Asistente de 4 pasos para crear ejercicios |
+| Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` | Wrapper comun de paginas admin |
+| Componente Step 1 | `apps/frontend/src/apps/admin/components/exercise-builder/StepBasicInfo.tsx` | Formulario de informacion basica (Step 1) |
 | Componente | `apps/frontend/src/apps/admin/components/exercise-builder/ExerciseTypeSelector.tsx` | Selector de tipo de ejercicio (17 tipos) |
 | Componente | `apps/frontend/src/apps/admin/components/exercise-builder/ExercisePreview.tsx` | Vista previa del ejercicio configurado |
 | Componente | `apps/frontend/src/apps/admin/components/exercise-builder/ContentEditor.tsx` | Editor de contenido del ejercicio |
+| Barrel | `apps/frontend/src/apps/admin/components/exercise-builder/type-configs/index.ts` | Barrel export de todos los type configs |
+| Types | `apps/frontend/src/apps/admin/types/exercise-builder.types.ts` | Tipos TypeScript del exercise builder |
 | Config M1 | `apps/frontend/src/apps/admin/components/exercise-builder/type-configs/CompletarEspaciosConfig.tsx` | Config: Completar Espacios |
 | Config M1 | `apps/frontend/src/apps/admin/components/exercise-builder/type-configs/CrucigramaConfig.tsx` | Config: Crucigrama |
 | Config M1 | `apps/frontend/src/apps/admin/components/exercise-builder/type-configs/EmparejamientoConfig.tsx` | Config: Emparejamiento |
@@ -256,6 +260,9 @@ flowchart TD
 | Capa | Archivo | Evidencia |
 |------|---------|-----------|
 | Frontend (pagina) | `apps/frontend/src/apps/admin/pages/AdminExerciseCreatePage.tsx` | Ruta `/admin/exercises/create`, wizard 4 pasos, 17 type configs |
+| Frontend (wrapper) | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` | Wrapper comun de paginas admin |
+| Frontend (step 1) | `apps/frontend/src/apps/admin/components/exercise-builder/StepBasicInfo.tsx` | Formulario de informacion basica extraido |
+| Frontend (barrel) | `apps/frontend/src/apps/admin/components/exercise-builder/type-configs/index.ts` | Barrel export de type configs |
 | Frontend (selector) | `apps/frontend/src/apps/admin/components/exercise-builder/ExerciseTypeSelector.tsx` | 17 tipos definidos, filtro por modulo, complexity badges |
 | Frontend (preview) | `apps/frontend/src/apps/admin/components/exercise-builder/ExercisePreview.tsx` | Vista previa del ejercicio completo |
 | Frontend (config M1) | `apps/frontend/src/apps/admin/components/exercise-builder/type-configs/CompletarEspaciosConfig.tsx` | Config para Completar Espacios |

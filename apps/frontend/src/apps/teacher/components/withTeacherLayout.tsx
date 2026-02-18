@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { TeacherLayout } from '../layouts/TeacherLayout';
@@ -27,6 +28,7 @@ export function withTeacherLayout<P extends object>(
 ): React.FC<P> {
   const WithTeacherLayoutComponent: React.FC<P> = (props) => {
     const { user, logout } = useAuth();
+    const navigate = useNavigate();
     const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
 
     // Fallback gamification data while loading or if data not available
@@ -45,7 +47,7 @@ export function withTeacherLayout<P extends object>(
 
     const handleLogout = () => {
       logout();
-      window.location.href = '/login';
+      navigate('/login', { replace: true });
     };
 
     return (

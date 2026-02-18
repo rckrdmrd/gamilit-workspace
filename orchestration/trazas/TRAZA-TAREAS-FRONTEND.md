@@ -1,14 +1,186 @@
 # Traza de Tareas: NEXUS-FRONTEND
 
-**Última actualización:** 2026-01-25 (P1 Gaps: Admin Portal Hooks)
+**Última actualización:** 2026-02-18 (Student Portal Refactoring Fases 0-4)
 **Revisado en auditoría:** 2026-01-10 (Sin cambios - contenido vigente)
-**Estado:** ✅ Portal Teacher COMPLETO - 15 páginas funcionales, navegación 100%
-**Estado:** ✅ Portal Student - Módulos 4 y 5 ACTIVOS - 8 ejercicios creativos funcionales
-**Estado:** ✅ Portal Admin - 18 páginas, hooks P1 integrados
+**Estado:** ✅ Portal Teacher COMPLETO - 19 páginas refactorizadas (Sprint 0+1+2)
+**Estado:** ✅ Portal Student - 10 páginas refactorizadas (Fases 0-4), 94% compliance
+**Estado:** ✅ Portal Admin - 19 páginas refactorizadas (Sprint 0+1+2), 85.5% compliance
 
 > **NOTA ARCHIVO (2026-02-11):** Tareas anteriores a 2026 (FE-050 a FE-137, ~4,700 lineas)
 > fueron archivadas en `_archive/TRAZA-TAREAS-FRONTEND-HISTORICO.md`.
-> Este archivo conserva las 7 tareas mas recientes (2026-01-24 a 2026-01-25).
+> Este archivo conserva las tareas mas recientes (2026-01-24 a 2026-02-18).
+
+---
+
+## TASK-2026-02-18-STUDENT-PORTAL-ANALYSIS — Student Portal Refactoring Fases 0-4 ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1
+**Asignado:** CLAUDE-CODE (claude-opus-4-6)
+**Fecha:** 2026-02-18
+**Tarea Padre:** TASK-2026-02-18-STUDENT-PORTAL-ANALYSIS
+
+### Resumen
+
+Refactorización completa de 10 páginas del portal de estudiantes siguiendo patrón Thin Shell + React Query + Component Extraction. Gold Standard: ExercisePage.tsx (1058→30 líneas).
+
+### Fases Ejecutadas
+
+| Fase | Alcance | Paginas | Reduccion |
+|------|---------|---------|-----------|
+| Fase 0 | Shared Utilities (prerrequisitos) | 0 | 5 archivos base |
+| Fase 1 | Bug Fixes P0 | 2 (AchievementsPage, LearningPage) | -40% |
+| Fase 2 | Core Pages P1 | 4 (ShopPage, InventoryPage, ModuleDetailPage, EnhancedProfilePage) | -62% |
+| Fase 3 | Engagement Pages P2 | 3 (LeaderboardPage, FriendsPage, GuildsPage) | -71% |
+| Fase 4 | Quality Fixes P0/P1/P2 | 1+ (hooks, accessibility, structure) | -36% |
+
+### Archivos Creados (43 total)
+
+| Tipo | Cantidad | Ejemplos |
+|------|----------|----------|
+| Hooks | 7 | useShopData, useShopPurchase, useInventoryData, useActivatePowerUp, useAchievements, useProfileData, useAvatarUpdate |
+| Componentes Phase 2 | 14 | ShopItemCard, PurchaseModal, InventoryItemCard, PowerUpModal, ExerciseCard, ProfileHero, ProfileStatsTab |
+| Componentes Phase 3 | 15 | UserPositionCard, LeaderboardStatsGrid, FriendsListTab, DiscoverGuildsTab, CreateGuildModal |
+| Componentes Phase 4 | 2 | AchievementsPage (moved), ModuleCard |
+| Utilities | 4 | rarityColors.ts, error.util.ts, difficulty.ts, inventory/utils.ts |
+| Types | 1 | profile/types.ts |
+
+### Resultado Global
+
+| Metrica | Valor |
+|---------|-------|
+| Paginas refactorizadas | 10 |
+| Lineas antes | 5,719 |
+| Lineas despues | 2,307 |
+| Reduccion | **-60%** (-3,412 lineas) |
+| Archivos nuevos | 43 |
+| Build verification | PASS (0 new TS errors) |
+| Standards compliance | **94%** (9 PASS, 4 WARN, 0 FAIL) |
+
+### Phase 4 Quality Fixes
+
+| Fix | Detalle |
+|-----|---------|
+| useProfileData hook | Agrega 4 Zustand stores + useEffect (EnhancedProfilePage 240→213) |
+| useAvatarUpdate hook | Optimistic update + API persistence |
+| ARIA tabs | role="tablist" + role="tab" + aria-selected (EnhancedProfilePage, InventoryPage) |
+| Search labels | sr-only labels (ShopPage, InventoryPage, LearningPage) |
+| Error typing | useEquipment.ts: `error: any` → `error: Error` + extractApiErrorMessage |
+| AchievementsPage move | pages/ → apps/student/pages/ (single default export) |
+| ModuleCard extraction | LearningPage 322→206 lines |
+
+### Documentacion Actualizada
+
+| Artefacto | Cambio |
+|-----------|--------|
+| FRONTEND_INVENTORY.yml v10.0.0 | componentes 571, hooks 119 |
+| MASTER_INVENTORY.yml v11.0.0 | componentes 571, hooks 119 |
+| 3 flujos student | Paths AchievementsPage corregidos |
+| COBERTURA-TOTAL-PROCESOS.md | Path actualizado |
+| TRACEABILITY-MATRIX.md | Path actualizado |
+| 02-RESULTADOS-REFACTORIZACION.md | Fases 0-4 completas |
+| 03-VALIDACION-ESTANDARES-FINAL.md | 13 dimensiones, 94% score |
+
+### Impacto
+
+- Componentes: +31 (+2 Phase 4) = 571 total
+- Hooks: +7 = 119 total
+- API Service Files: 53 (sin cambios)
+
+---
+
+## MQ-009 — Sync XP multiplierMap FE con SSOT Backend ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P2
+**Asignado:** CLAUDE-CODE (claude-opus-4-6)
+**Fecha:** 2026-02-18
+**Backlog Item:** EPIC-WS-004 / MQ-009
+
+### Resumen
+
+Sincronizacion de datos de rangos Maya entre frontend y DB seeds. RanksSection.tsx usaba 78 lineas de mock data con valores incorrectos (wrong rank order, wrong XP thresholds, wrong multipliers 1.0-3.0). Reemplazado con import directo del SSOT (ranks.constants.ts).
+
+### Archivos Modificados (6)
+
+| Archivo | Cambio |
+|---------|--------|
+| `shared/constants/ranks.constants.ts` | v2.0→v2.1: Halach Uinic xpMax 2249→1899, K'uk'ulkan xpMin 2250→1900 (sync DB seeds v2.1) |
+| `apps/student/components/gamification/RanksSection.tsx` | Replaced 78 lines hardcoded mock → import MAYA_RANKS_ORDERED + RANK_GRADIENT_MAP |
+| `apps/student/hooks/useDashboardData.ts` | JSDoc clarified: ML Coins multipliers (1.0-2.0) ≠ DB xp_multiplier (1.0-1.25). `getRankIcon()` migrado a SSOT import (5/5 icons divergian). `defaultRankData.rankIcon` 🏹→🌱 |
+| `apps/student/components/gamification/GamificationHero.tsx` | Replaced 32-line hardcoded MAYA_RANKS → SSOT import + `getRankDisplay()` + local RANK_GRADIENT_MAP. Icons 5/5 aligned |
+| `apps/student/components/dashboard/RankProgressWidget.tsx` | Replaced 37-line hardcoded MAYA_RANKS → SSOT import + `getRankDisplay()` + local RANK_STYLE_MAP. Removed 2 debug console.logs |
+
+### Validacion
+
+| Check | Resultado |
+|-------|-----------|
+| XP thresholds FE = DB seeds | ✅ 5/5 ranks aligned |
+| XP multipliers FE = DB seeds | ✅ 5/5 ranks aligned |
+| Colors FE = DB seeds | ✅ 5/5 hex values match |
+| ML Coins bonus FE = DB seeds | ✅ 5/5 values match |
+| No `any` in modified files | ✅ |
+| SSOT import pattern | ✅ (import MAYA_RANKS_ORDERED) |
+| Safe-edit compliance | ✅ (minimal changes, no placeholders) |
+
+---
+
+## TASK-2026-02-18-ADMIN-PORTAL-REFACTOR — Admin Portal Refactoring Sprint 0+1+2 ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1
+**Asignado:** CLAUDE-CODE (claude-opus-4-6)
+**Fecha:** 2026-02-18
+
+### Resumen
+
+Refactorización de 19 páginas del portal admin en 3 sprints. Creación de AdminPageShell + AdminTabBar como infraestructura cross-cutting.
+
+### Resultado
+
+| Metrica | Valor |
+|---------|-------|
+| Paginas migradas | 19/19 (100%) |
+| Lineas antes | 7,471 |
+| Lineas despues | 3,568 |
+| Reduccion | **-52.2%** (-3,903 lineas) |
+| Componentes nuevos | 30 |
+| Hooks nuevos | 6 |
+| Standards compliance | **85.5%** |
+
+---
+
+## TASK-2026-02-18-ANALISIS-MISIONES-LOGROS — Missions/Achievements Analysis + 12 Fixes ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1
+**Asignado:** CLAUDE-CODE (claude-opus-4-6)
+**Fecha:** 2026-02-18
+
+### Resumen
+
+Análisis de 5 pistas + implementación de 12 correcciones (REC-001 a REC-012): UNIQUE constraints, timezone cron, missionsStore deletion, seeds renaming, DB function deprecation, retry jobs, template_id migration.
+
+### Impacto
+
+- Entities: 154→155 (+UserEquippedItem), Services: 172→173, FKs: 298→299
+- Stores: 14→13 (-missionsStore), API files: 53→52 (-missionsAPI)
+
+---
+
+## Reestructuración Sistema Ejercicios ✅
+
+**Estado:** COMPLETADA
+**Asignado:** CLAUDE-CODE (claude-opus-4-6)
+**Fecha:** 2026-02-18
+
+### Resumen
+
+Descomposición del monolito ExercisePage.tsx (~1058 líneas → 30 líneas) con Registry Pattern. 30 mecánicas registradas, React Context para state, backward-compat wrapper.
+
+### Impacto
+
+- Componentes: +10, Hooks: +3, Contexts: +1 (ExerciseContext)
 
 ---
 
@@ -94,7 +266,7 @@ Implementación del frontend para configuración de alertas de intervención per
 |---------|------|--------|-------------|
 | `services/api/teacher/alertConfigApi.ts` | API Client | 180 | CRUD + getDefaults + initializeDefaults |
 | `apps/teacher/hooks/useAlertConfig.ts` | Hook | 220 | Estado + métodos + toast notifications |
-| `apps/teacher/pages/TeacherAlertConfigPage.tsx` | Page | 420 | UI con 6 cards de alerta |
+| `apps/teacher/pages/TeacherAlertConfig.tsx` | Page | 420 | UI con 6 cards de alerta |
 
 ### Archivos Modificados
 
@@ -116,7 +288,7 @@ Implementación del frontend para configuración de alertas de intervención per
 ### Ruta Agregada
 
 ```tsx
-<Route path="/teacher/settings/alerts" element={<TeacherAlertConfigPage />} />
+<Route path="/teacher/settings/alerts" element={<TeacherAlertConfig />} />
 ```
 
 ### Impacto
@@ -252,7 +424,7 @@ Validación exhaustiva del Portal Teacher identificando 31 issues y corrigiendo 
 | Issue | Archivo | Corrección |
 |-------|---------|------------|
 | Archivo deprecado | manualReviewExercises.ts | ELIMINADO (156 líneas) |
-| useEffects superpuestos | TeacherProgressPage.tsx | Consolidar en 1 effect |
+| useEffects superpuestos | TeacherProgress.tsx | Consolidar en 1 effect |
 | Respuestas vacías | - | Verificado patrón REST correcto |
 
 #### Fase 4 - BAJA (4)
@@ -260,7 +432,7 @@ Validación exhaustiva del Portal Teacher identificando 31 issues y corrigiendo 
 |-------|---------|------------|
 | 12 console.log debug | ReviewDetail.tsx | Eliminados todos |
 | Tipos 'any' | StudentProgressList.tsx | Cambiar a string\|number |
-| console.warn sin UI | TeacherProgressPage.tsx | Reemplazar con toast |
+| console.warn sin UI | TeacherProgress.tsx | Reemplazar con toast |
 | eslint-disable innecesario | StudentProgressList.tsx | Eliminado |
 
 ### Métricas

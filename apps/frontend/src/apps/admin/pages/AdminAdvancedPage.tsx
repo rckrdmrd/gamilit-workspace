@@ -1,11 +1,9 @@
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { AdminLayout } from '../layouts/AdminLayout';
 import { FeatureBadge } from '@shared/components/common';
 import { UnderConstruction } from '@/shared/components/UnderConstruction';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { Zap, Beaker, Users, Wrench } from 'lucide-react';
 import { FeatureFlagsPanel, ABTestingDashboard } from '../components/advanced';
+import { AdminPageShell } from '../components/shared';
 
 /**
  * AdminAdvancedPage - Administración avanzada
@@ -29,38 +27,9 @@ import { FeatureFlagsPanel, ABTestingDashboard } from '../components/advanced';
 // IMPORTANTE: Esta página está oculta del menú del admin (ver GamilitSidebar.tsx)
 const SHOW_CONTENT = true; // Changed to true - Feature Flags Panel implemented
 
-const AdminAdvancedPage = () => {
-  const { user, logout } = useAuth();
-
-  // Use useUserGamification hook with real API endpoint
-  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
-
-  // Fallback gamification data while loading or if data not available
-  const displayGamificationData = gamificationData || {
-    userId: user?.id || '',
-    level: gamificationLoading ? 0 : 1,
-    totalXP: 0,
-    mlCoins: 0,
-    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
-    rankColor: '#9E9E9E',
-    progressToNextLevel: 0,
-    xpToNextLevel: 100,
-    achievements: [],
-    totalAchievements: 0,
-  };
-
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
-
+export default function AdminAdvancedPage() {
   return (
-    <AdminLayout
-      user={user || undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GAMILIT Platform Admin"
-      onLogout={handleLogout}
-    >
+    <AdminPageShell>
       {SHOW_CONTENT ? (
         <div className="space-y-6">
           {/* Header */}
@@ -134,8 +103,6 @@ const AdminAdvancedPage = () => {
           estimatedDate="Fase 2 - Q2 2026"
         />
       )}
-    </AdminLayout>
+    </AdminPageShell>
   );
-};
-
-export default AdminAdvancedPage;
+}

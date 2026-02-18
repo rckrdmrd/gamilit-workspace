@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, Reorder } from 'framer-motion';
 import { Puzzle, GripVertical, RotateCcw } from 'lucide-react';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { RankUpModal } from '@/features/gamification/ranks/components/RankUpModal';
 import type { PuzzleContextoExerciseProps, Fragment } from './puzzleContextoTypes';
 import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
@@ -226,129 +226,112 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
-        >
-          {/* Header - Detective Theme with Gradient */}
-          <div
-            className="rounded-detective p-6 shadow-detective-lg"
-            style={{
-              background: 'linear-gradient(to right, #1e3a8a, #f97316)',
-              color: 'white',
-            }}
-          >
-            <div className="mb-2 flex items-center gap-3">
-              <Puzzle className="h-8 w-8 text-white" />
-              <h1 className="text-detective-3xl font-bold text-white">{exercise.title}</h1>
-            </div>
-            {exercise.subtitle && (
-              <p className="mb-4 text-detective-base text-white" style={{ opacity: 0.9 }}>
-                {exercise.subtitle}
-              </p>
-            )}
-            {exercise.description && (
-              <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
-                <p className="text-detective-sm font-medium text-detective-text">Objetivo:</p>
-                <p className="text-detective-base text-detective-text">{exercise.description}</p>
-              </div>
-            )}
+      <UnifiedExerciseLayout
+        title={exercise.title}
+        description={exercise.subtitle || exercise.description}
+        icon={<Puzzle className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+      >
+        {/* Objective */}
+        {exercise.description && (
+          <div className="rounded-lg border border-detective-border bg-white/95 p-4 shadow-sm mb-6">
+            <p className="text-detective-sm font-medium text-detective-text">Objetivo:</p>
+            <p className="text-detective-base text-detective-text">{exercise.description}</p>
           </div>
+        )}
 
-          {/* Instructions */}
-          {exercise.instructions && (
-            <div className="rounded-detective border-l-4 border-detective-blue bg-blue-50 p-4">
-              <p className="text-detective-sm leading-relaxed text-detective-text">
-                <strong>Instrucciones:</strong> {exercise.instructions}
-              </p>
-            </div>
-          )}
-
-          {/* Fragments to Order */}
-          <div>
-            <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
-              Fragmentos Desordenados
-            </h3>
-            <p className="mb-4 text-detective-sm text-detective-text-secondary">
-              Arrastra los fragmentos para ordenarlos correctamente
+        {/* Instructions */}
+        {exercise.instructions && (
+          <div className="rounded-detective border-l-4 border-detective-blue bg-blue-50 p-4 mb-6">
+            <p className="text-detective-sm leading-relaxed text-detective-text">
+              <strong>Instrucciones:</strong> {exercise.instructions}
             </p>
-
-            <Reorder.Group
-              axis="y"
-              values={fragments}
-              onReorder={setFragments}
-              className="space-y-3"
-            >
-              {fragments.map((fragment, index) => (
-                <Reorder.Item key={fragment.id} value={fragment}>
-                  <motion.div
-                    whileHover={!showResults ? { scale: 1.02 } : {}}
-                    whileTap={!showResults ? { scale: 0.98 } : {}}
-                    className={`flex items-center gap-3 rounded-detective border-2 p-4 transition-all ${getFragmentStyle(
-                      fragment,
-                      index,
-                    )} ${!showResults ? 'cursor-move' : 'cursor-default'}`}
-                  >
-                    {!showResults && <GripVertical className="h-5 w-5 text-detective-text-secondary" />}
-                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-detective-orange/20 text-detective-sm font-bold text-detective-orange">
-                      {fragment.label}
-                    </span>
-                    <div className="flex-1">
-                      <p className="text-detective-base text-detective-text">{fragment.text}</p>
-                    </div>
-                    {getFragmentIcon(fragment, index)}
-                  </motion.div>
-                </Reorder.Item>
-              ))}
-            </Reorder.Group>
           </div>
+        )}
 
-          {/* Current Inference Preview */}
-          <div>
-            <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
-              Inferencia Actual
+        {/* Fragments to Order */}
+        <div className="mb-6">
+          <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
+            Fragmentos Desordenados
+          </h3>
+          <p className="mb-4 text-detective-sm text-detective-text-secondary">
+            Arrastra los fragmentos para ordenarlos correctamente
+          </p>
+
+          <Reorder.Group
+            axis="y"
+            values={fragments}
+            onReorder={setFragments}
+            className="space-y-3"
+          >
+            {fragments.map((fragment, index) => (
+              <Reorder.Item key={fragment.id} value={fragment}>
+                <motion.div
+                  whileHover={!showResults ? { scale: 1.02 } : {}}
+                  whileTap={!showResults ? { scale: 0.98 } : {}}
+                  className={`flex items-center gap-3 rounded-detective border-2 p-4 transition-all ${getFragmentStyle(
+                    fragment,
+                    index,
+                  )} ${!showResults ? 'cursor-move' : 'cursor-default'}`}
+                >
+                  {!showResults && <GripVertical className="h-5 w-5 text-detective-text-secondary" />}
+                  <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-detective-orange/20 text-detective-sm font-bold text-detective-orange">
+                    {fragment.label}
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-detective-base text-detective-text">{fragment.text}</p>
+                  </div>
+                  {getFragmentIcon(fragment, index)}
+                </motion.div>
+              </Reorder.Item>
+            ))}
+          </Reorder.Group>
+        </div>
+
+        {/* Current Inference Preview */}
+        <div className="mb-6">
+          <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
+            Inferencia Actual
+          </h3>
+          <div className="rounded-detective border-2 border-purple-200 bg-purple-50 p-6">
+            <p className="text-detective-base italic leading-relaxed text-detective-text">
+              "{currentInference}"
+            </p>
+          </div>
+        </div>
+
+        {/* Correct Inference (after validation) */}
+        {showResults && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+            <h3 className="mb-3 text-detective-lg font-semibold text-detective-success">
+              Inferencia Correcta
             </h3>
-            <div className="rounded-detective border-2 border-purple-200 bg-purple-50 p-6">
-              <p className="text-detective-base italic leading-relaxed text-detective-text">
-                "{currentInference}"
+            <div className="rounded-detective border-2 border-detective-success/20 bg-detective-success/10 p-6">
+              <p className="text-detective-base font-medium leading-relaxed text-detective-text">
+                "{exercise.completeInference}"
               </p>
             </div>
-          </div>
+          </motion.div>
+        )}
 
-          {/* Correct Inference (after validation) */}
-          {showResults && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <h3 className="mb-3 text-detective-lg font-semibold text-detective-success">
-                Inferencia Correcta
-              </h3>
-              <div className="rounded-detective border-2 border-detective-success/20 bg-detective-success/10 p-6">
-                <p className="text-detective-base font-medium leading-relaxed text-detective-text">
-                  "{exercise.completeInference}"
-                </p>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="flex justify-center gap-4 border-t border-detective-border pt-6">
-            {onExit && (
-              <DetectiveButton variant="secondary" size="md" onClick={onExit}>
-                Salir
-              </DetectiveButton>
-            )}
-            <DetectiveButton
-              variant="secondary"
-              size="md"
-              icon={<RotateCcw className="h-5 w-5" />}
-              onClick={handleReset}
-            >
-              {showResults ? 'Intentar de Nuevo' : 'Mezclar de Nuevo'}
+        {/* Action Buttons */}
+        <div className="flex justify-center gap-4 border-t border-detective-border pt-6">
+          {onExit && (
+            <DetectiveButton variant="secondary" size="md" onClick={onExit}>
+              Salir
             </DetectiveButton>
-          </div>
-        </motion.div>
-      </DetectiveCard>
+          )}
+          <DetectiveButton
+            variant="secondary"
+            size="md"
+            icon={<RotateCcw className="h-5 w-5" />}
+            onClick={handleReset}
+          >
+            {showResults ? 'Intentar de Nuevo' : 'Mezclar de Nuevo'}
+          </DetectiveButton>
+        </div>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

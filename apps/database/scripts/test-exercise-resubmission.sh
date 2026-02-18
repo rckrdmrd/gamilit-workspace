@@ -7,7 +7,11 @@
 
 set -e
 
-DB_URL="postgresql://gamilit_user:${DB_PASSWORD:-ULwSaMu5uTNQYTaJTelPY3gGFMTKNOqo}@localhost:5432/gamilit_platform"
+DB_PASSWORD="${DB_PASSWORD:-${GAMILIT_DB_PASSWORD:-}}"
+if [ -z "$DB_PASSWORD" ]; then
+  echo "ERROR: define DB_PASSWORD o GAMILIT_DB_PASSWORD antes de ejecutar."
+  exit 1
+fi
 
 echo "========================================="
 echo "🧪 TEST: Sistema de Reenvío de Ejercicios"
@@ -17,7 +21,7 @@ echo ""
 # Test 1: Verificar columna exists
 echo "📋 Test 1: Verificar columna requires_manual_grading existe"
 echo "---------------------------------------------------------"
-PGPASSWORD="${DB_PASSWORD:-ULwSaMu5uTNQYTaJTelPY3gGFMTKNOqo}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
+PGPASSWORD="${DB_PASSWORD}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
 SELECT column_name, data_type, column_default
 FROM information_schema.columns
 WHERE table_schema = 'educational_content'
@@ -29,7 +33,7 @@ echo ""
 # Test 2: Distribución de ejercicios
 echo "📊 Test 2: Distribución de ejercicios por tipo"
 echo "---------------------------------------------------------"
-PGPASSWORD="${DB_PASSWORD:-ULwSaMu5uTNQYTaJTelPY3gGFMTKNOqo}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
+PGPASSWORD="${DB_PASSWORD}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
 SELECT
   requires_manual_grading,
   COUNT(*) as total,
@@ -43,7 +47,7 @@ echo ""
 # Test 3: Verificar estudiante de prueba
 echo "👤 Test 3: Verificar estudiante de prueba (bbbbbbbb...)"
 echo "---------------------------------------------------------"
-PGPASSWORD="${DB_PASSWORD:-ULwSaMu5uTNQYTaJTelPY3gGFMTKNOqo}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
+PGPASSWORD="${DB_PASSWORD}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
 SELECT
   p.id as profile_id,
   p.email,
@@ -60,7 +64,7 @@ echo ""
 # Test 4: Ejercicios disponibles para testing
 echo "🎯 Test 4: Ejercicios disponibles para testing (Módulo 2 y 3)"
 echo "---------------------------------------------------------"
-PGPASSWORD="${DB_PASSWORD:-ULwSaMu5uTNQYTaJTelPY3gGFMTKNOqo}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
+PGPASSWORD="${DB_PASSWORD}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
 SELECT
   e.id,
   m.order_index as modulo,
@@ -82,7 +86,7 @@ echo ""
 # Test 5: Historial de intentos del estudiante
 echo "📝 Test 5: Historial de intentos previos del estudiante"
 echo "---------------------------------------------------------"
-PGPASSWORD="${DB_PASSWORD:-ULwSaMu5uTNQYTaJTelPY3gGFMTKNOqo}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
+PGPASSWORD="${DB_PASSWORD}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
 SELECT
   e.title as ejercicio,
   ea.is_correct,
@@ -101,7 +105,7 @@ echo ""
 # Test 6: Verificar que no hay registros en exercise_submissions para autocorregibles
 echo "🔍 Test 6: Verificar NO hay ejercicios autocorregibles en submissions"
 echo "---------------------------------------------------------"
-PGPASSWORD="${DB_PASSWORD:-ULwSaMu5uTNQYTaJTelPY3gGFMTKNOqo}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
+PGPASSWORD="${DB_PASSWORD}" psql -h localhost -U gamilit_user -d gamilit_platform -c "
 SELECT
   COUNT(*) as total_incorrectos,
   'Este número debe ser 0' as nota

@@ -25,7 +25,7 @@
  * ```
  */
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home,
@@ -55,6 +55,8 @@ import {
   Bell,
 } from 'lucide-react';
 import { cn } from '@shared/utils';
+import { BrandingContext } from '@/app/providers/BrandingProvider';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 /**
  * Navigation item for the sidebar
@@ -262,24 +264,6 @@ const getNavigationItems = (
       label: 'Configuracion',
       path: '/teacher/settings',
       icon: 'Settings',
-    },
-    {
-      id: 'communication',
-      label: 'Comunicacion',
-      path: '/teacher/communication',
-      icon: 'MessageSquare',
-    },
-    {
-      id: 'content',
-      label: 'Contenido',
-      path: '/teacher/content',
-      icon: 'BookOpen',
-    },
-    {
-      id: 'notifications',
-      label: 'Notificaciones',
-      path: '/teacher/notifications',
-      icon: 'Bell',
     },
     {
       id: 'students',
@@ -490,6 +474,9 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
   className,
   userRole = 'student',
 }) => {
+  const branding = useContext(BrandingContext);
+  const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
+  const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;
   const navigationItems = getNavigationItems(userRole);
 
   /**
@@ -553,13 +540,12 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
           {/* Header Section */}
           <div className="border-b border-gray-100 p-6">
             <div className="flex items-center space-x-3">
-              <img src="/logo_gamilit.png" alt="Gamilit" className="h-8 w-8 object-contain" />
-              <div>
-                <h2 className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-lg font-bold text-transparent">
-                  Gamilit
-                </h2>
-                <p className="text-xs text-gray-500">Detectives de la Lectura</p>
-              </div>
+              {logoUrl ? (
+                <img src={logoUrl} alt={platformName} className="h-8 w-8 object-contain" />
+              ) : null}
+              <h2 className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-lg font-bold text-transparent">
+                {platformName}
+              </h2>
             </div>
           </div>
 

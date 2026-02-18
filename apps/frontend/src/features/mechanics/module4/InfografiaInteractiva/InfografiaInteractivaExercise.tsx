@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart3, Eye, Save, Download, Send, Loader2, CheckCircle, Sparkles } from 'lucide-react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { InteractiveCard } from './InteractiveCard';
 import { DataVisualization } from './DataVisualization';
 import { DraggableCard } from './DraggableCard';
@@ -36,6 +36,16 @@ interface ExerciseProps {
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
   exercise?: InfografiaInteractivaData;
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+    specificActions?: Array<{
+      label: string;
+      icon?: React.ReactNode;
+      onClick: () => void;
+      variant?: 'primary' | 'secondary' | 'blue' | 'gold';
+    }>;
+  }>;
 }
 
 interface ExerciseState {
@@ -105,6 +115,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   initialData,
   difficulty = 'medium',
   exercise,
+  actionsRef,
 }) => {
   const defaultExercise = getDefaultExercise(exerciseId, difficulty);
   const currentExercise = exercise || defaultExercise;
@@ -179,7 +190,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
     },
   });
 
-  const actionsRef = useRef<{
+  const localActionsRef = useRef<{
     handleReset?: () => void;
     handleCheck?: () => void;
     specificActions?: Array<{
@@ -189,6 +200,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
       variant?: 'primary' | 'secondary' | 'blue' | 'gold';
     }>;
   }>({});
+  const resolvedActionsRef = actionsRef || localActionsRef;
 
   // Calculate progress
   const calculateProgress = () => {
@@ -237,7 +249,8 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
         message: 'Has colocado el elemento en el lugar correcto.',
         showConfetti: false,
       });
-      setTimeout(() => setFeedback(null), 2000);
+      setShowFeedback(true);
+      setTimeout(() => { setFeedback(null); setShowFeedback(false); }, 2000);
     } else {
       // Incorrect placement
       setFeedback({
@@ -246,7 +259,8 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
         message: 'Este elemento no corresponde a esa posición.',
         showConfetti: false,
       });
-      setTimeout(() => setFeedback(null), 2000);
+      setShowFeedback(true);
+      setTimeout(() => { setFeedback(null); setShowFeedback(false); }, 2000);
     }
   };
 
@@ -262,6 +276,33 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
 
     return () => clearInterval(interval);
   }, [cards, droppedCards, exerciseId]);
+
+  // Handle check/verification
+  const handleCheck = useCallback(async () => {
+    const revealedCount = cards.filter((c) => c.revealed).length;
+
+    if (revealedCount < cards.length) {
+      setFeedback({
+        type: 'error',
+        title: 'Exploración Incompleta',
+        message: `Has explorado ${revealedCount} de ${cards.length} elementos. Explora todos para completar.`,
+        showConfetti: false,
+      });
+      setShowFeedback(true);
+      return;
+    }
+
+    const score = calculateScore(cards.length, cards.length);
+
+    setFeedback({
+      type: 'success',
+      title: '¡Infografía Completada!',
+      message: `Has explorado todos los ${cards.length} elementos de la infografía. ¡Excelente trabajo!`,
+      score,
+      showConfetti: true,
+    });
+    setShowFeedback(true);
+  }, [cards]);
 
   // Update progress
 
@@ -314,7 +355,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
       setTimeout(() => handleCheck(), 1000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cards, droppedCards, useDragDrop, onProgressUpdate, startTime]);
+  }, [cards, droppedCards, useDragDrop, onProgressUpdate, startTime, showFeedback, handleCheck]);
 
   // Handle card click
   const handleCardClick = (cardId: string) => {
@@ -326,36 +367,10 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
     setCards((prev) => prev.map((c) => ({ ...c, revealed: true })));
   };
 
-  // Handle check/verification
-  const handleCheck = async () => {
-    const revealedCount = cards.filter((c) => c.revealed).length;
-
-    if (revealedCount < cards.length) {
-      setFeedback({
-        type: 'error',
-        title: 'Exploración Incompleta',
-        message: `Has explorado ${revealedCount} de ${cards.length} elementos. Explora todos para completar.`,
-        showConfetti: false,
-      });
-      setShowFeedback(true);
-      return;
-    }
-
-    const score = calculateScore(cards.length, cards.length);
-
-    setFeedback({
-      type: 'success',
-      title: '¡Infografía Completada!',
-      message: `Has explorado todos los ${cards.length} elementos de la infografía. ¡Excelente trabajo!`,
-      score,
-      showConfetti: true,
-    });
-    setShowFeedback(true);
-  };
-
   // Handle reset
   const handleReset = () => {
     setCards(currentExercise.cards);
+    setDroppedCards({});
     setFeedback(null);
     setShowFeedback(false);
   };
@@ -443,7 +458,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   // Attach actions to ref
 
   useEffect(() => {
-    actionsRef.current = {
+    resolvedActionsRef.current = {
       handleReset,
       handleCheck,
       specificActions: [
@@ -462,7 +477,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
       ],
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionsRef]);
+  }, [resolvedActionsRef, cards, droppedCards]);
 
   // Get available cards (not yet dropped)
   const availableCards = cards.filter(card => !Object.values(droppedCards).includes(card.id));
@@ -470,17 +485,12 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg" className="mb-6">
-        {/* Header */}
-        <div className="mb-6 rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-          <div className="mb-4 flex items-center gap-3">
-            <BarChart3 className="h-8 w-8" />
-            <h2 className="text-detective-2xl font-bold">
-              {currentExercise.title}
-            </h2>
-          </div>
-          <p className="mb-4 opacity-90">{currentExercise.description}</p>
-          <div className="flex flex-wrap gap-3">
+      <UnifiedExerciseLayout
+        title={currentExercise.title}
+        description={currentExercise.description}
+        icon={<BarChart3 className="h-8 w-8" />}
+        headerActions={
+          <>
             <DetectiveButton
               variant={useDragDrop ? 'gold' : 'secondary'}
               icon={<Sparkles />}
@@ -493,9 +503,10 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
                 Revelar Todos
               </DetectiveButton>
             )}
-          </div>
-        </div>
-
+          </>
+        }
+        cardPadding="lg"
+      >
         {/* Data Visualization */}
         {!useDragDrop && (
           <div className="mb-6">
@@ -634,7 +645,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
             )}
           </DetectiveButton>
         </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

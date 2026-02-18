@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "10.1.0"
-fecha: "2026-02-17"
+version: "11.0.0"
+fecha: "2026-02-18"
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -32,10 +32,10 @@ metricas:
     materialized_views: 7
     funciones: 183               # 183 DDL source / 249 runtime (incl. trigger functions)
     triggers: 67                 # 67 CREATE TRIGGER statements (not 126 trigger functions)
-    rls_policies: 227            # 207 + 20 FORCE RLS Phase 2 (5 high-risk tables)
-    foreign_keys: 298
+    rls_policies: 231            # 231 DDL source (+4 user_purchases FIX-P0-1). Runtime: 471
+    foreign_keys: 299              # +1 missions_template_id_fkey (REC-009)
     enums: 42                    # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
-    seeds: 66                    # 66 seed files, 0 errors (post-CORR-05)
+    seeds: 77                    # 77 seed files, 0 errors (+1 achievements-collection REC-011)
     scripts:                     # Key database scripts
       - "recreate-database.sh"         # Main recreate (--env dev|prod --force)
       - "recreate-database-dev.sh"     # Wrapper DEV
@@ -44,11 +44,11 @@ metricas:
 
   backend:
     modulos: 23                  # 22 directorios + mail (transitivo)
-    entities: 152              # 152 archivos, 153 @Entity classes
+    entities: 155              # 155 archivos, 156 @Entity classes (+UserEquippedItem, +PendingUserInitialization)
     dtos: 399                  # 399 en modules/ (+ ~5 en shared/)
-    services: 171
-    controllers: 107
-    endpoints: 901             # Verificado 2026-02-16 (+2 health endpoints)
+    services: 173               # +1 PendingInitializationsCronService (REC-007)
+    controllers: 108
+    endpoints: 904             # Verificado 2026-02-17 (+3 inventory endpoints)
     guards: 15
     decorators: 18             # 18 symbols en 9 archivos
     interceptors: 6
@@ -57,22 +57,25 @@ metricas:
     tests_backend: 620         # est. 620 backend-specific test cases
 
   frontend:
-    componentes_tsx: 480            # Verified 2026-02-15 (broad count, excl. test/spec/stories)
-    hooks: 102                      # Verified 2026-02-15 (incl. useFocusTrap.ts)
-    paginas: 68                     # 68 activas + 1 legacy
-    stores_zustand: 14              # 14 archivos Zustand con create()
-    api_service_files: 52           # Verified 2026-02-15 post-consolidation
-    api_calls_total: 570            # Verified 2026-02-15 post-deletion recount (-85)
+    componentes_tsx: 571            # Verified 2026-02-18: +30 Student Portal Refactor Phase 2-4 (14+15+1 ModuleCard)
+    hooks: 119                      # Verified 2026-02-18: +7 Student Portal Refactor (5 Phase 2 + 2 Phase 4: useProfileData, useAvatarUpdate)
+    paginas: 70                     # 70 activas + 1 legacy
+    stores_zustand: 13              # 13 archivos Zustand con create() (-1 missionsStore REC-003)
+    api_service_files: 53           # 53 (+1 inventory.api.ts, -1 missionsAPI.ts REC-003)
+    api_calls_total: 565            # ~565 post-REC-003 (~-5 calls in deleted missionsAPI.ts)
     portales: 4
     mecanicas_ejercicio: 30         # 30 mecanicas unicas de ejercicio
-    routes: 72                      # 72 <Route> definitions en App.tsx
-    type_files: 47                  # 47 archivos, 415 tipos exportados
+    routes: 73                      # 73 <Route path=> definitions en App.tsx (verified 2026-02-17)
+    type_files: 49                  # 49 archivos (+1 profile/types.ts Student Portal Refactor)
     tests_frontend: 213
 
   calidad:
     tests_total: 833
-    coherencia_ddl_backend: "90.5%"  # 153 entity classes / 169 tables
+    coherencia_ddl_backend: "90.5%"  # 153 entity classes / 169 tables (100% bidirectional, 16 DDL-only in data_warehouse)
+    entity_registration: "100%"     # All 153 entities registered in forFeature() (FIX P2, 37 were missing)
     cobertura_target: "80%"
+    mock_only_services: 2           # mechanicsAPI, aiServiceAPI — no backend
+    dead_code_services: 1           # NotificationService.ts — 0 importers (deprecated P6)
 
 # -------------------------------------------------------------------------------
 # PORTALES
@@ -86,7 +89,7 @@ portales:
   - nombre: "Administrador"
     completitud: "~90%"
   - nombre: "Padres"
-    completitud: "100%"
+    completitud: "100% backend, 57% pages (4 of 7 flujos)"
 
 # -------------------------------------------------------------------------------
 # MODULOS EDUCATIVOS
@@ -116,8 +119,8 @@ gamificacion:
   rangos_maya: 5
   achievements: true
   ml_coins_economy: true
-  missions_daily: 3
-  missions_weekly: 5
+  missions_daily: 5             # 5 daily templates (REC-009: +use_comodines, +correct_streak)
+  missions_weekly: 6            # 6 weekly templates (REC-009: +complete_modules)
   leaderboard_levels: 4
   seasons: true
   store_items: true
@@ -127,9 +130,9 @@ gamificacion:
 # -------------------------------------------------------------------------------
 
 inventarios_detallados:
-  database: "DATABASE_INVENTORY.yml (v8.2.0)"
-  backend: "BACKEND_INVENTORY.yml (v4.1.0)"
-  frontend: "FRONTEND_INVENTORY.yml (v5.1.0)"
+  database: "DATABASE_INVENTORY.yml (v8.7.0)"
+  backend: "BACKEND_INVENTORY.yml (v4.4.0)"
+  frontend: "FRONTEND_INVENTORY.yml (v10.0.0)"
 
 # -------------------------------------------------------------------------------
 # ESTADO DE FEATURES
@@ -141,15 +144,15 @@ features:
     - "5 modulos educativos (23 tipos ejercicios)"
     - "4 portales diferenciados"
     - "Sistema gamificacion maya completo"
-    - "RLS multi-tenancy (227 policies)"
+    - "RLS multi-tenancy (231 DDL source, 471 runtime policies)"
     - "Real-time via Socket.IO"
     - "833 tests pasando"
 
   parciales:
-    - "social (50%): DDL+entities completos, logica parcial"
-    - "team-vs-team: DDL listo, sin logica de negocio"
+    - "social (60%): DDL+entities completos, all registered in forFeature() (FIX P2), ~40 endpoints unwired in frontend"
+    - "team-vs-team: DDL+entity+controller ready, frontend socialAPI mock-gated"
     - "boosts: DDL+entity, pivoteado a comodines"
-    - "forum: DDL+entities sin registrar en module"
+    - "parent portal: 4 pages for 7 flujos (57% page coverage), backend 100%"
 
   pendientes:
     - "Cobertura tests target 80%"

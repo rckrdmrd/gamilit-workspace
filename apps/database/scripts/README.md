@@ -52,7 +52,7 @@ Este directorio contiene scripts para gestionar la base de datos PostgreSQL de G
 
 **Resultado:** Base de datos funcional al 100% + archivos .env sincronizados
 
-**Nota para DEV:** El script requiere sudo. En desarrollo local, el password sudo es `2320`.
+**Nota para DEV:** Si sudo requiere password, exportar `GAMILIT_SUDO_PASSWORD` antes de ejecutar scripts.
 **Nota para PROD:** En producción no se requiere password sudo (el agente tiene permisos configurados).
 
 ---
@@ -680,4 +680,4 @@ Mejoras:
 
 - Corregido bug donde postgres no podía leer archivos del home del usuario al usar sudo
 - Actualizada documentación con conteos actuales (12 schemas, 91+ tablas, 162 funciones)
-- Agregadas notas sobre sudo para dev (password: 2320) y prod (sin password)
+- Agregadas notas sobre sudo para dev/prod y uso de variable `GAMILIT_SUDO_PASSWORD`

@@ -202,7 +202,7 @@ CREATE TABLE progress_tracking.teacher_alert_configurations (
 **Backend Entity:** `teacher-alert-configuration.entity.ts`
 **Backend Service:** `alert-config.service.ts`
 **Frontend API:** `alertConfigApi.ts`
-**Frontend Page:** `TeacherAlertConfigPage.tsx`
+**Frontend Page:** `TeacherAlertConfig.tsx`
 
 **Para Aplicar:**
 ```bash

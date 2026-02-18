@@ -1,6 +1,6 @@
 seeds_inventory:
-  version: 2.0.0
-  fecha: '2026-01-16'
+  version: 3.1.0
+  fecha: '2026-02-18'
   metadata:
     proyecto: GAMILIT - Plataforma de Aprendizaje Gamificada
     proposito: Inventario completo de seeds (datos iniciales) DEV, STAGING y PROD
@@ -11,7 +11,7 @@ seeds_inventory:
 
   resumen_ejecutivo:
     total_seeds_prod: 101    # ✅ ACTUALIZADO 2026-01-16 (validación integral)
-    total_seeds_dev: 94      # ✅ ACTUALIZADO 2026-01-16 (93% de prod)
+    total_seeds_dev: 77      # ✅ ACTUALIZADO 2026-02-18 (+1 achievements-collection REC-011)
     total_seeds_staging: 56  # ✅ ACTUALIZADO 2026-01-16 (55% de prod - intencional)
     ejercicios_prod: 23
     ejercicios_dev: 24
@@ -662,7 +662,7 @@ seeds_inventory:
       # GAMIFICATION SYSTEM
       # ===========================================================================
       gamification_system:
-        archivos: 10
+        archivos: 17
         seeds:
           - nombre: 01-achievement_categories.sql
             descripcion: Categorías de logros
@@ -805,6 +805,69 @@ seeds_inventory:
             estado: activo
             audit: AUDIT-DB-001-P0
             fecha_creacion: '2025-12-14'
+
+          - nombre: 12-shop_categories.sql
+            descripcion: Categorías de tienda para estructurar variantes
+            tablas:
+              - shop_categories
+            registros_estimados: 5
+            dependencias: []
+            estado: activo
+
+          - nombre: 13-shop_items.sql
+            descripcion: Catálogo de items de tienda (variantes visuales y consumibles)
+            tablas:
+              - shop_items
+            registros_estimados: 20+
+            dependencias:
+              - gamification_system.shop_categories
+            estado: activo
+
+          - nombre: 14-achievements-m3-m5.sql
+            descripcion: Achievements extendidos para modulos 3-5
+            tablas:
+              - achievements
+            registros_estimados: 12+
+            dependencias:
+              - gamification_system.achievement_categories
+            estado: activo
+
+          - nombre: 15-comodin_usage_tracking.sql
+            descripcion: Seguimiento de uso de comodines
+            tablas:
+              - comodin_usage_trackings
+            registros_estimados: 0-50
+            dependencias:
+              - gamification_system.comodines_inventory
+            estado: activo
+
+          - nombre: 16-shop_items_metadata_normalization.sql
+            descripcion: Normalización de metadata visual canónica (`effect_data` -> `metadata`)
+            tablas:
+              - shop_items (UPDATE)
+            registros_estimados: 20+
+            dependencias:
+              - gamification_system/13-shop_items.sql
+            estado: activo
+
+          - nombre: 17-user_purchases-demo.sql
+            descripcion: Compras demo para validar ownership y flujo E2E
+            tablas:
+              - user_purchases
+            registros_estimados: 2+
+            dependencias:
+              - gamification_system/13-shop_items.sql
+              - auth_management/04-profiles-complete.sql
+            estado: activo
+
+          - nombre: 18-user_equipped_items-demo.sql
+            descripcion: Equipamiento demo aplicado desde compras para pruebas E2E
+            tablas:
+              - user_equipped_items
+            registros_estimados: 2+
+            dependencias:
+              - gamification_system/17-user_purchases-demo.sql
+            estado: activo
 
       # ===========================================================================
       # LTI INTEGRATION
@@ -1048,8 +1111,28 @@ seeds_inventory:
           - 07-assessment-rubrics.sql
 
       gamification_system:
-        archivos: 5
-        reducido_vs_prod: Menos seeds inicializados (solo estructura)
+        archivos: 19
+        nota: Incluye expansión de catálogo, seeds E2E de compra/equipamiento y collection achievements (REC-011)
+        seeds:
+          - 01-achievement_categories.sql
+          - 02-leaderboard_metadata.sql
+          - 03-maya_ranks.sql
+          - 04-achievements.sql
+          - 05-user_stats.sql
+          - 06-user_ranks.sql
+          - 07-ml_coins_transactions.sql
+          - 08-user_achievements.sql
+          - 09-comodines_inventory.sql
+          - 10-mission_templates.sql
+          - 12-shop_categories.sql
+          - 13-shop_items.sql
+          - 14-achievements-m3-m5.sql
+          - 15-comodin_usage_tracking.sql
+          - 16-shop_items_expanded.sql
+          - 17-shop_items_metadata_normalization.sql
+          - 18-user_purchases-demo.sql
+          - 19-user_equipped_items-demo.sql
+          - 20-achievements-collection.sql   # REC-011: 5 collection-category achievements
 
       progress_tracking:
         archivos: 2
@@ -1136,6 +1219,14 @@ seeds_inventory:
         - gamification_system/07-ml_coins_transactions.sql
         - gamification_system/08-user_achievements.sql
         - gamification_system/09-comodines_inventory.sql
+        - gamification_system/10-mission_templates.sql
+        - gamification_system/12-shop_categories.sql
+        - gamification_system/13-shop_items.sql
+        - gamification_system/14-achievements-m3-m5.sql
+        - gamification_system/15-comodin_usage_tracking.sql
+        - gamification_system/16-shop_items_metadata_normalization.sql
+        - gamification_system/17-user_purchases-demo.sql
+        - gamification_system/18-user_equipped_items-demo.sql
       fase_6_social:
         - social_features/01-schools.sql
         - social_features/02-classrooms.sql

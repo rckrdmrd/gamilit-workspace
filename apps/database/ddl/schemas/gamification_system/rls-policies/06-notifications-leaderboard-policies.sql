@@ -1,5 +1,5 @@
 -- =====================================================
--- RLS Policies for: gamification_system.leaderboard_metadata
+-- RLS Policies for: gamification_system.leaderboard_metadatas
 -- Description: Leaderboard configuration policies
 -- Created: 2025-10-28
 -- Updated: 2026-01-07 (notifications movido a _deprecated)
@@ -12,29 +12,29 @@
 -- =====================================================
 
 -- =====================================================
--- TABLE: gamification_system.leaderboard_metadata
+-- TABLE: gamification_system.leaderboard_metadatas
 -- Policies: 2 (SELECT: 1, ALL: 1)
 -- =====================================================
 
-DROP POLICY IF EXISTS leaderboard_metadata_read_all ON gamification_system.leaderboard_metadata;
-DROP POLICY IF EXISTS leaderboard_metadata_manage_admin ON gamification_system.leaderboard_metadata;
+DROP POLICY IF EXISTS leaderboard_metadata_read_all ON gamification_system.leaderboard_metadatas;
+DROP POLICY IF EXISTS leaderboard_metadata_manage_admin ON gamification_system.leaderboard_metadatas;
 
 -- Policy: leaderboard_metadata_read_all
 -- Purpose: All users can read leaderboard metadata (public configuration)
 CREATE POLICY leaderboard_metadata_read_all
-    ON gamification_system.leaderboard_metadata
+    ON gamification_system.leaderboard_metadatas
     AS PERMISSIVE
     FOR SELECT
     TO public
     USING (true);
 
-COMMENT ON POLICY leaderboard_metadata_read_all ON gamification_system.leaderboard_metadata IS
+COMMENT ON POLICY leaderboard_metadata_read_all ON gamification_system.leaderboard_metadatas IS
     'Public metadata: All users can see leaderboard configuration';
 
 -- Policy: leaderboard_metadata_manage_admin
 -- Purpose: Admins can manage leaderboard metadata
 CREATE POLICY leaderboard_metadata_manage_admin
-    ON gamification_system.leaderboard_metadata
+    ON gamification_system.leaderboard_metadatas
     AS PERMISSIVE
     FOR ALL
     TO public
@@ -46,7 +46,7 @@ CREATE POLICY leaderboard_metadata_manage_admin
         )
     );
 
-COMMENT ON POLICY leaderboard_metadata_manage_admin ON gamification_system.leaderboard_metadata IS
+COMMENT ON POLICY leaderboard_metadata_manage_admin ON gamification_system.leaderboard_metadatas IS
     'Admins can configure leaderboard settings and metadata';
 
 -- =====================================================

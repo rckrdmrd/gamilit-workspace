@@ -9,6 +9,17 @@ aplica_a: [database, backend]
 estado: vigente
 ---
 
+## Estado de esta guia
+
+Esta guia se considera **referencia arquitectonica** y no flujo operativo actual del repositorio.
+
+Directiva vigente para `gamilit`:
+- Operacion DDL-first con recreacion limpia mediante scripts shell canónicos.
+- No crear ni ejecutar carpetas/archivos de `migrations/` como mecanismo regular.
+- Ver SSOT: `SIMCO-DDL.md` y `SIMCO-RECREAR-BD.md`.
+
+---
+
 **Proyecto:** GAMILIT
 **Version:** 1.0.0
 **Fecha:** 2026-02-14

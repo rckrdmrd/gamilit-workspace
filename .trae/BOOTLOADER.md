@@ -3,7 +3,7 @@
 > **Proyecto:** GAMILIT
 > **Sistema:** SIMCO v4.0.0 + NEXUS v4.1
 > **Rol:** Planificador Atómico (Fase 2)
-> **Fecha:** 2026-01-24
+> **Fecha:** 2026-02-17
 
 ---
 
@@ -11,9 +11,9 @@
 
 ### PASO 1: Cargar Contexto Base
 ```
-1. Leer workspace-v2/CLAUDE.md (reglas heredadas)
-2. Leer projects/gamilit/.claude/CLAUDE.md (reglas locales)
-3. Leer projects/gamilit/orchestration/CONTEXT-MAP.yml (variables resueltas)
+1. Leer CLAUDE.md (reglas del repo standalone)
+2. Leer .trae/AGENT-CAPABILITIES.md (capacidades y límites)
+3. Leer orchestration/CONTEXT-MAP.yml (variables resueltas)
 ```
 
 ### PASO 2: Identificar Dominio
@@ -50,16 +50,16 @@ Trae en GAMILIT es responsable de:
 ## ESTRUCTURA GAMILIT
 
 ```
-projects/gamilit/
+gamilit-workspace/
 ├── apps/
 │   ├── backend/          # NestJS 11
-│   │   ├── src/modules/  # 17 módulos
+│   │   ├── src/modules/  # 23 módulos
 │   │   └── ...
-│   ├── frontend/         # React 18
-│   │   ├── src/components/  # 327 componentes
+│   ├── frontend/         # React 19
+│   │   ├── src/components/  # 488 componentes
 │   │   └── ...
 │   └── database/
-│       └── ddl/schemas/  # 18 schemas (16 active + 2 placeholder)
+│       └── ddl/schemas/  # 18 schemas (16 active + 2 placeholder), 169 tablas
 ├── orchestration/
 │   ├── CONTEXT-MAP.yml   # Variables resueltas
 │   ├── BOOTLOADER.md     # Arranque de sesión
@@ -75,10 +75,10 @@ projects/gamilit/
 ```yaml
 PROJECT: gamilit
 DB_NAME: gamilit_platform
-DB_DDL_PATH: C:/Empresas/ISEM/workspace-v2/projects/gamilit/apps/database/ddl
-BACKEND_ROOT: C:/Empresas/ISEM/workspace-v2/projects/gamilit/apps/backend
-FRONTEND_ROOT: C:/Empresas/ISEM/workspace-v2/projects/gamilit/apps/frontend
-ORCHESTRATION_PATH: C:/Empresas/ISEM/workspace-v2/projects/gamilit/orchestration
+DB_DDL_PATH: C:/Empresas/ISEM/gamilit-workspace/apps/database/ddl
+BACKEND_ROOT: C:/Empresas/ISEM/gamilit-workspace/apps/backend
+FRONTEND_ROOT: C:/Empresas/ISEM/gamilit-workspace/apps/frontend
+ORCHESTRATION_PATH: C:/Empresas/ISEM/gamilit-workspace/orchestration
 ```
 
 ---

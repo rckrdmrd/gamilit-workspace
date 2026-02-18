@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Type, Play, Settings, Trash2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { TextoEnMovimientoExerciseProps, AnimatedText, AnimationConfig } from './textoEnMovimientoTypes';
@@ -207,33 +208,25 @@ export const TextoEnMovimientoExercise: React.FC<TextoEnMovimientoExerciseProps>
 
   return (
     <>
-      <div className="space-y-6">
-        <DetectiveCard variant="default" padding="lg">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Type className="h-8 w-8 text-detective-orange" />
-              <h1 className="text-2xl font-bold text-detective-text">
-                {exercise.title || 'Texto en Movimiento'}
-              </h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="rounded-full bg-detective-bg-secondary px-3 py-1 text-sm text-detective-text-secondary">
-                {texts.length}/{minTexts} textos mínimos
-              </span>
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="flex items-center gap-2 rounded-detective bg-detective-orange px-4 py-2 font-medium text-white transition-colors hover:bg-detective-orange-dark"
-              >
-                <Play className="h-5 w-5" />
-                {isPlaying ? 'Pausar' : 'Reproducir'}
-              </button>
-            </div>
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Texto en Movimiento'}
+        description={exercise.instructions || `Crea animaciones de texto sobre ${exercise.topic || 'Marie Curie'}.`}
+        icon={<Type className="h-8 w-8" />}
+        headerActions={
+          <div className="flex items-center gap-4">
+            <span className="rounded-full bg-detective-bg-secondary px-3 py-1 text-sm text-detective-text-secondary">
+              {texts.length}/{minTexts} textos mínimos
+            </span>
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="flex items-center gap-2 rounded-detective bg-detective-orange px-4 py-2 font-medium text-white transition-colors hover:bg-detective-orange-dark"
+            >
+              <Play className="h-5 w-5" />
+              {isPlaying ? 'Pausar' : 'Reproducir'}
+            </button>
           </div>
-          <p className="text-detective-text-secondary">
-            {exercise.instructions || `Crea animaciones de texto sobre ${exercise.topic || 'Marie Curie'}.`}
-          </p>
-        </DetectiveCard>
-
+        }
+      >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
           <DetectiveCard variant="default" padding="lg" className="space-y-4">
             <h3 className="flex items-center gap-2 font-bold text-detective-text">
@@ -402,7 +395,7 @@ export const TextoEnMovimientoExercise: React.FC<TextoEnMovimientoExerciseProps>
             </div>
           </DetectiveCard>
         )}
-      </div>
+      </UnifiedExerciseLayout>
 
       {feedback && (
         <FeedbackModal

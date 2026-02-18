@@ -1,0 +1,17 @@
+export { CompletarEspaciosConfig } from './CompletarEspaciosConfig';
+export { CrucigramaConfig } from './CrucigramaConfig';
+export { EmparejamientoConfig } from './EmparejamientoConfig';
+export { LineaTiempoConfig } from './LineaTiempoConfig';
+export { MapaConceptualConfig } from './MapaConceptualConfig';
+export { SopaLetrasConfig } from './SopaLetrasConfig';
+export { VerdaderoFalsoConfig } from './VerdaderoFalsoConfig';
+export { ConstruccionHipotesisConfig } from './ConstruccionHipotesisConfig';
+export { DetectiveTextualConfig } from './DetectiveTextualConfig';
+export { PrediccionNarrativaConfig } from './PrediccionNarrativaConfig';
+export { PuzzleContextoConfig } from './PuzzleContextoConfig';
+export { RuedaInferenciasConfig } from './RuedaInferenciasConfig';
+export { AnalisisFuentesConfig } from './AnalisisFuentesConfig';
+export { DebateDigitalConfig } from './DebateDigitalConfig';
+export { MatrizPerspectivasConfig } from './MatrizPerspectivasConfig';
+export { PodcastArgumentativoConfig } from './PodcastArgumentativoConfig';
+export { TribunalOpinionesConfig } from './TribunalOpinionesConfig';

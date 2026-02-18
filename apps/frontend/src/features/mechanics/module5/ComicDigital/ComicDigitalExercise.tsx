@@ -3,7 +3,7 @@ import { Plus, Image, Type, MessageSquare, Download, Send, Loader2, CheckCircle 
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 
 interface ComicPanel {
   id: string;
@@ -47,10 +47,11 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
   exerciseId = 'comic-digital-default',
   onComplete,
   onProgressUpdate,
-  onExit
+  onExit: _onExit
 }) => {
   const [panels, setPanels] = useState<ComicPanel[]>([]);
   const [selectedPanel, setSelectedPanel] = useState<string | null>(null);
+  const [selectedBackground, setSelectedBackground] = useState('lab');
   const [title, setTitle] = useState('La Historia de Marie Curie');
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
@@ -254,25 +255,39 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
   };
 
   return (
-    <DetectiveCard className="min-h-screen p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-          <div className="mb-2 flex items-center gap-3">
-            <h2 className="text-2xl font-bold">Creador de Cómics Digitales</h2>
-          </div>
-          <p className="opacity-90 mb-4">
-            Crea tu propio cómic digital sobre Marie Curie con paneles, diálogos y elementos visuales.
-          </p>
-          <div className="flex items-center gap-4">
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="flex-1 px-4 py-2 border-2 border-white/30 bg-white/10 rounded-xl text-white placeholder-white/70 focus:border-white focus:outline-none"
-              placeholder="Título del cómic..."
-            />
+    <>
+      <UnifiedExerciseLayout
+        title="Creador de Cómics Digitales"
+        description="Crea tu propio cómic digital sobre Marie Curie con paneles, diálogos y elementos visuales."
+        className="max-w-7xl"
+        headerActions={
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => {/* Export logic */}}
+              onClick={() => {
+                const exportData = {
+                  title,
+                  panels: panels.map((panel, index) => ({
+                    panelNumber: index + 1,
+                    layout: panel.layout,
+                    text: panel.text,
+                    image: panel.image,
+                    speechBubbles: panel.speechBubbles.map((b) => ({
+                      text: b.text,
+                      type: b.type,
+                      x: b.x,
+                      y: b.y,
+                    })),
+                  })),
+                  exportedAt: new Date().toISOString(),
+                };
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `comic-${title.replace(/\s+/g, '-').toLowerCase()}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+              }}
               className="flex items-center gap-2 px-4 py-2 bg-white/20 text-white rounded-xl hover:bg-white/30 transition-colors font-medium"
             >
               <Download className="w-5 h-5" />
@@ -301,8 +316,19 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
               )}
             </button>
           </div>
-        </div>
-
+        }
+        headerChildren={
+          <div className="flex items-center gap-4 mt-2">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="flex-1 px-4 py-2 border-2 border-white/30 bg-white/10 rounded-xl text-white placeholder-white/70 focus:border-white focus:outline-none"
+              placeholder="Título del cómic..."
+            />
+          </div>
+        }
+      >
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="bg-white rounded-detective shadow-card p-6 space-y-4">
             <h3 className="font-bold text-detective-text">Herramientas</h3>
@@ -357,7 +383,8 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
                     {backgrounds.map(bg => (
                       <button
                         key={bg.id}
-                        className={`py-2 px-3 ${bg.color} border-2 border-detective-border rounded hover:border-detective-orange transition-colors text-xs`}
+                        onClick={() => setSelectedBackground(bg.id)}
+                        className={`py-2 px-3 ${bg.color} border-2 ${selectedBackground === bg.id ? 'border-detective-orange ring-2 ring-detective-orange' : 'border-detective-border'} rounded hover:border-detective-orange transition-colors text-xs`}
                       >
                         {bg.name}
                       </button>
@@ -374,11 +401,13 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
             </div>
 
             <div className="space-y-4 border-4 border-detective-text p-4 rounded-detective bg-white min-h-[600px]">
-              {panels.map((panel, index) => (
+              {panels.map((panel, index) => {
+                const bgClass = backgrounds.find(b => b.id === selectedBackground)?.color || 'bg-detective-bg';
+                return (
                 <div
                   key={panel.id}
                   onClick={() => setSelectedPanel(panel.id)}
-                  className={`border-4 border-detective-text p-4 cursor-pointer relative bg-detective-bg ${
+                  className={`border-4 border-detective-text p-4 cursor-pointer relative ${bgClass} ${
                     selectedPanel === panel.id ? 'ring-4 ring-detective-orange' : ''
                   }`}
                   style={{ minHeight: '200px' }}
@@ -416,7 +445,8 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
                     </div>
                   )}
                 </div>
-              ))}
+                );
+              })}
 
               {panels.length === 0 && (
                 <div className="text-center py-20 text-detective-text-secondary">
@@ -428,7 +458,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
             </div>
           </div>
         </div>
-      </div>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (
@@ -436,14 +466,11 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
           isOpen={showFeedback}
           onClose={() => {
             setShowFeedback(false);
-            if (feedback.type === 'success') {
-              onExit?.();
-            }
           }}
           feedback={feedback}
         />
       )}
-    </DetectiveCard>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import {
   CompletarEspaciosData,
@@ -8,7 +9,7 @@ import {
   CompletarEspaciosProgressData,
 } from './completarEspaciosTypes';
 import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
-import { Check, X, Sparkles } from 'lucide-react';
+import { Check, X, Sparkles, PenLine } from 'lucide-react';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 
@@ -321,103 +322,110 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
 
   const availableWords = exercise.wordBank.filter((word) => !usedWords.includes(word));
 
+  const progress = blanks.length > 0 ? (answeredCount / blanks.length) * 100 : 0;
+
   return (
     <>
-      {/* Scenario Text */}
-      {exercise.scenarioText && (
-        <DetectiveCard variant="info" padding="md" className="mb-6">
-          <div className="flex items-start gap-3">
-            <div className="text-2xl">📖</div>
-            <div>
-              <h3 className="mb-2 text-lg font-bold">Contexto Histórico</h3>
-              <p className="text-detective-text">{exercise.scenarioText}</p>
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Completar Espacios'}
+        description={exercise.scenarioText || 'Selecciona una palabra del banco y haz clic en el espacio que deseas completar.'}
+        icon={<PenLine className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+        headerChildren={
+          <div className="mt-4">
+            <div className="mb-2 flex justify-between text-sm">
+              <span>
+                Progreso: {answeredCount}/{blanks.length}
+              </span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-white/30">
+              <div
+                className="h-full rounded-full bg-white transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
             </div>
           </div>
-        </DetectiveCard>
-      )}
-
-      {/* Instructions */}
-      <div className="mb-6 text-center">
-        <h3 className="mb-2 text-xl font-bold text-detective-text">✏️ {exercise.title}</h3>
-        <p className="text-detective-text-secondary">
-          Selecciona una palabra del banco y haz clic en el espacio que deseas completar
-        </p>
-      </div>
-
-      {/* Text with Blanks */}
-      <DetectiveCard variant="default" padding="lg" className="mb-6">
-        <div className="text-lg leading-relaxed">{renderTextWithBlanks()}</div>
-      </DetectiveCard>
-
-      {/* Word Bank */}
-      <DetectiveCard variant="default" padding="lg" className="mb-6">
-        <div className="mb-4 flex items-center gap-3">
-          <Sparkles className="h-6 w-6 text-yellow-500" />
-          <h3 className="text-lg font-bold text-detective-text">Banco de Palabras</h3>
+        }
+      >
+        {/* Text with Blanks */}
+        <div className="mb-6">
+          <div className="text-lg leading-relaxed">{renderTextWithBlanks()}</div>
         </div>
-        <div className="flex flex-wrap justify-center gap-3">
-          <AnimatePresence>
-            {availableWords.map((word) => (
-              <motion.button
-                key={word}
-                onClick={() => handleWordSelect(word)}
-                disabled={showResults}
-                className={`rounded-lg px-6 py-3 font-semibold transition-all ${
-                  selectedWord === word
-                    ? 'scale-105 bg-blue-500 text-white shadow-lg'
-                    : 'border-2 border-detective-border bg-white text-detective-text hover:border-blue-400 hover:shadow-md'
-                } ${showResults ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                whileHover={!showResults ? { scale: 1.05 } : {}}
-                whileTap={!showResults ? { scale: 0.95 } : {}}
-              >
-                {word}
-              </motion.button>
-            ))}
-          </AnimatePresence>
-        </div>
-        {availableWords.length === 0 && !showResults && (
-          <div className="mt-4 text-center text-detective-text-secondary">
-            <p className="text-sm italic">Todas las palabras han sido utilizadas</p>
+
+        {/* Word Bank */}
+        <div className="mb-6 rounded-lg border border-detective-blue/10 bg-white p-6">
+          <div className="mb-4 flex items-center gap-3">
+            <Sparkles className="h-6 w-6 text-yellow-500" />
+            <h3 className="text-lg font-bold text-detective-text">Banco de Palabras</h3>
           </div>
-        )}
-      </DetectiveCard>
-
-      {/* FE-059: Results section removed - correct answers no longer available in frontend */}
-      {/* Validation and feedback now provided by backend API */}
-      {showResults && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
-          <DetectiveCard variant="info" padding="lg">
-            <h3 className="mb-4 text-lg font-bold text-detective-text">📝 Tus Respuestas</h3>
-            <div className="space-y-3">
-              {blanks.map((blank, index) => (
-                <div
-                  key={blank.id}
-                  className="rounded-lg border-l-4 border-blue-500 bg-blue-50 p-3"
+          <div className="flex flex-wrap justify-center gap-3">
+            <AnimatePresence>
+              {availableWords.map((word) => (
+                <motion.button
+                  key={word}
+                  onClick={() => handleWordSelect(word)}
+                  disabled={showResults}
+                  className={`rounded-lg px-6 py-3 font-semibold transition-all ${
+                    selectedWord === word
+                      ? 'scale-105 bg-blue-500 text-white shadow-lg'
+                      : 'border-2 border-detective-border bg-white text-detective-text hover:border-blue-400 hover:shadow-md'
+                  } ${showResults ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  whileHover={!showResults ? { scale: 1.05 } : {}}
+                  whileTap={!showResults ? { scale: 0.95 } : {}}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 text-2xl">📝</div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-detective-text">Espacio {index + 1}</p>
-                      <p className="text-detective-text-secondary">
-                        Tu respuesta:{' '}
-                        <span className="font-semibold">
-                          {blank.userAnswer || '(sin respuesta)'}
-                        </span>
-                      </p>
-                      <p className="mt-1 text-sm text-detective-text-secondary">
-                        La validación se procesará en el servidor
-                      </p>
+                  {word}
+                </motion.button>
+              ))}
+            </AnimatePresence>
+          </div>
+          {availableWords.length === 0 && !showResults && (
+            <div className="mt-4 text-center text-detective-text-secondary">
+              <p className="text-sm italic">Todas las palabras han sido utilizadas</p>
+            </div>
+          )}
+        </div>
+
+        {/* FE-059: Results section removed - correct answers no longer available in frontend */}
+        {/* Validation and feedback now provided by backend API */}
+        {showResults && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
+            <DetectiveCard variant="info" padding="lg">
+              <h3 className="mb-4 text-lg font-bold text-detective-text">Tus Respuestas</h3>
+              <div className="space-y-3">
+                {blanks.map((blank, index) => (
+                  <div
+                    key={blank.id}
+                    className="rounded-lg border-l-4 border-blue-500 bg-blue-50 p-3"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0">
+                        <PenLine className="h-5 w-5 text-blue-500" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-detective-text">Espacio {index + 1}</p>
+                        <p className="text-detective-text-secondary">
+                          Tu respuesta:{' '}
+                          <span className="font-semibold">
+                            {blank.userAnswer || '(sin respuesta)'}
+                          </span>
+                        </p>
+                        <p className="mt-1 text-sm text-detective-text-secondary">
+                          La validacion se procesara en el servidor
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </DetectiveCard>
-        </motion.div>
-      )}
+                ))}
+              </div>
+            </DetectiveCard>
+          </motion.div>
+        )}
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

@@ -1,5 +1,7 @@
 # Schema 13: content (3 tablas, 8 RLS policies)
 
+> **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.
+
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT
 
 ---

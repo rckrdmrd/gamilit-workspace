@@ -696,6 +696,7 @@ SUBAGENTE_PROTOCOLO:
 
 ## REFERENCIAS
 
+- **Alternativa ahorro tokens Claude:** `directivas/simco/SIMCO-DELEGACION-GEMINI-CLI.md`
 - **Templates de delegacion:**
   - `templates/TEMPLATE-DELEGACION-COMPLETA.md` (>2 archivos)
   - `templates/TEMPLATE-DELEGACION-ESTANDAR.md` (1-2 archivos)

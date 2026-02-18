@@ -109,6 +109,39 @@ export const formatMLCoins = (coins: number): string => {
 };
 
 /**
+ * Safely format a number to fixed decimals with optional suffix.
+ * Returns fallback if value is null, undefined, or NaN.
+ *
+ * @param value - Value to format
+ * @param decimals - Number of decimal places (default: 1)
+ * @param suffix - Optional suffix (e.g., '%')
+ * @param fallback - Fallback value if invalid (default: 'N/A')
+ */
+export const safeFormatNumber = (
+  value: number | undefined | null,
+  decimals: number = 1,
+  suffix: string = '',
+  fallback: string = 'N/A',
+): string => {
+  if (typeof value !== 'number' || isNaN(value)) {
+    return fallback;
+  }
+  return `${value.toFixed(decimals)}${suffix}`;
+};
+
+/**
+ * Determine performance level from a score.
+ *
+ * @param score - Score percentage (0-100)
+ * @returns 'high' (>=80), 'medium' (>=60), or 'low' (<60)
+ */
+export const getPerformanceLevelFromScore = (score: number): 'high' | 'medium' | 'low' => {
+  if (score >= 80) return 'high';
+  if (score >= 60) return 'medium';
+  return 'low';
+};
+
+/**
  * Format large numbers with K/M suffixes
  * @param num - Number to format
  * @returns Formatted number (e.g., 1.5K, 2.3M)

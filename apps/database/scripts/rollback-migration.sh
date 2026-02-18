@@ -1,7 +1,7 @@
 #!/bin/bash
 # ============================================================================
 # Rollback Migration - Restore from Backup
-# @ref GUIA-PIPELINE-MIGRACIONES §4, GUIA-EXPAND-CONTRACT-MIGRATIONS
+# @ref GUIA-PIPELINE-MIGRACIONES section 4, GUIA-EXPAND-CONTRACT-MIGRATIONS
 #
 # Restores the database from a backup file created by pre-deploy-backup.sh.
 #
@@ -25,6 +25,16 @@ DB_USER="${DB_USER:-gamilit_user}"
 DB_HOST="${DB_HOST:-localhost}"
 DB_PORT="${DB_PORT:-5432}"
 
+if [ -z "${DB_PASSWORD:-}" ] && [ -z "${GAMILIT_DB_PASSWORD:-}" ]; then
+  echo "ERROR: Define DB_PASSWORD o GAMILIT_DB_PASSWORD antes de ejecutar."
+  exit 1
+fi
+
+ROLLBACK_PASSWORD="${DB_PASSWORD:-}"
+if [ -z "$ROLLBACK_PASSWORD" ]; then
+  ROLLBACK_PASSWORD="${GAMILIT_DB_PASSWORD:-}"
+fi
+
 if [ ! -f "${BACKUP_FILE}" ]; then
   echo "ERROR: Backup file not found: ${BACKUP_FILE}"
   exit 1
@@ -43,30 +53,13 @@ if [ "${CONFIRM}" != "yes" ]; then
 fi
 
 echo "Dropping existing database..."
-PGPASSWORD="${DB_PASSWORD:-gamilit_dev_2026}" dropdb \
-  -h "${DB_HOST}" \
-  -p "${DB_PORT}" \
-  -U "${DB_USER}" \
-  --if-exists \
-  "${DB_NAME}"
+PGPASSWORD="${ROLLBACK_PASSWORD}" dropdb -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" --if-exists "${DB_NAME}"
 
 echo "Creating empty database..."
-PGPASSWORD="${DB_PASSWORD:-gamilit_dev_2026}" createdb \
-  -h "${DB_HOST}" \
-  -p "${DB_PORT}" \
-  -U "${DB_USER}" \
-  "${DB_NAME}"
+PGPASSWORD="${ROLLBACK_PASSWORD}" createdb -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" "${DB_NAME}"
 
 echo "Restoring from backup..."
-gunzip -c "${BACKUP_FILE}" | PGPASSWORD="${DB_PASSWORD:-gamilit_dev_2026}" pg_restore \
-  -h "${DB_HOST}" \
-  -p "${DB_PORT}" \
-  -U "${DB_USER}" \
-  -d "${DB_NAME}" \
-  --no-owner \
-  --no-privileges \
-  --verbose \
-  2>/dev/null
+gunzip -c "${BACKUP_FILE}" | PGPASSWORD="${ROLLBACK_PASSWORD}" pg_restore -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}" --no-owner --no-privileges --verbose 2>/dev/null
 
 echo ""
 echo "=== Rollback complete ==="

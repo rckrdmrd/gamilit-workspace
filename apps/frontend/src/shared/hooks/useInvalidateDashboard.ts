@@ -95,6 +95,15 @@ export function useInvalidateDashboard(): UseInvalidateDashboardReturn {
           queryClient.invalidateQueries({
             queryKey: ['userModules'],
           }),
+
+          // Invalidate header gamification query (level, xp, ml, rank)
+          queryClient.invalidateQueries({
+            queryKey: ['userGamification', user.id],
+          }),
+
+          queryClient.invalidateQueries({
+            queryKey: ['userGamification'],
+          }),
         ]);
 
         console.log('✅ [useInvalidateDashboard] React Query cache invalidated');

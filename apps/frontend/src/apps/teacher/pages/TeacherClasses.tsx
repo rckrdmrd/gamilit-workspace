@@ -5,7 +5,7 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
 import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
-import { ToastContainer, useToast } from '@shared/components/base/Toast';
+import toast from 'react-hot-toast';
 import {
   Users,
   Plus,
@@ -23,7 +23,6 @@ import type { Classroom } from '../types';
 
 export default function TeacherClasses() {
   const navigate = useNavigate();
-  const { toasts, showToast } = useToast();
   const {
     classrooms,
     loading,
@@ -64,7 +63,7 @@ export default function TeacherClasses() {
       setFormData({ name: '', subject: '', grade_level: '' });
     } catch (err: unknown) {
       console.error('[TeacherClasses] Error creating classroom:', err);
-      showToast({ type: 'error', title: 'Error', message: 'Error al crear la clase. Por favor intenta nuevamente.' });
+      toast.error('Error al crear la clase. Por favor intenta nuevamente.');
     }
   };
 
@@ -78,7 +77,7 @@ export default function TeacherClasses() {
       setFormData({ name: '', subject: '', grade_level: '' });
     } catch (err: unknown) {
       console.error('[TeacherClasses] Error updating classroom:', err);
-      showToast({ type: 'error', title: 'Error', message: 'Error al actualizar la clase. Por favor intenta nuevamente.' });
+      toast.error('Error al actualizar la clase. Por favor intenta nuevamente.');
     }
   };
 
@@ -91,7 +90,7 @@ export default function TeacherClasses() {
       setSelectedClassroom(null);
     } catch (err: unknown) {
       console.error('[TeacherClasses] Error deleting classroom:', err);
-      showToast({ type: 'error', title: 'Error', message: 'Error al eliminar la clase. Por favor intenta nuevamente.' });
+      toast.error('Error al eliminar la clase. Por favor intenta nuevamente.');
     }
   };
 
@@ -112,7 +111,6 @@ export default function TeacherClasses() {
 
   return (
     <>
-      <ToastContainer toasts={toasts} position="top-right" />
       <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
         <main className="detective-container py-8">
         {/* Header */}

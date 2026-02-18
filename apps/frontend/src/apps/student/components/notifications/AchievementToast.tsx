@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trophy, Sparkles } from 'lucide-react';
 import type { AchievementData } from '../../hooks/useDashboardData';
+import { resolveLucideIcon } from '@shared/utils/iconResolver';
 
 interface AchievementToastProps {
   achievement: AchievementData;
@@ -42,6 +43,7 @@ export function AchievementToast({
   position = 0,
 }: AchievementToastProps) {
   const colors = rarityColors[achievement.rarity];
+  const AchievementIcon = resolveLucideIcon(achievement.icon, 'trophy');
 
   React.useEffect(() => {
     const timer = setTimeout(onClose, 5000);
@@ -124,7 +126,7 @@ export function AchievementToast({
               ease: 'easeInOut',
             }}
           >
-            {achievement.icon}
+            <AchievementIcon className="h-10 w-10 text-detective-orange" />
           </motion.div>
 
           <div className="flex-1 min-w-0">

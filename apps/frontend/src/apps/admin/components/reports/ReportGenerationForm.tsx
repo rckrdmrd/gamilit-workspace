@@ -1,18 +1,27 @@
 /**
  * ReportGenerationForm Component
  *
- * Form for generating admin reports with type, format, and filter selection
+ * Form for generating admin reports with type, format, and cascade filter selection
+ * Cascade filters: Institución → Aula (clearing downstream on change)
  *
  * @author Frontend-Agent
  * @date 2025-11-24
+ * @updated 2026-02-18 - Added cascade dropdown filters (Obs #11)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ReportType, ReportFormat, GenerateReportParams } from '@/services/api/adminTypes';
+import { getOrganizations } from '@/services/api/adminAPI';
+import { classroomTeacherApi } from '@/services/api/admin/classroomTeacherApi';
 
 interface ReportGenerationFormProps {
   onSubmit: (params: GenerateReportParams) => Promise<void>;
   isGenerating: boolean;
+}
+
+interface DropdownOption {
+  id: string;
+  name: string;
 }
 
 const REPORT_TYPES: Array<{ value: ReportType; label: string; description: string }> = [
@@ -59,12 +68,77 @@ const REPORT_FORMATS: Array<{ value: ReportFormat; label: string }> = [
   { value: 'excel', label: 'Excel (XLSX)' },
 ];
 
+const selectClassName =
+  'focus:ring-detective-teal w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-transparent focus:ring-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white';
+
 export function ReportGenerationForm({ onSubmit, isGenerating }: ReportGenerationFormProps) {
   const [reportType, setReportType] = useState<ReportType>('users');
   const [format, setFormat] = useState<ReportFormat>('excel');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+
+  // Cascade filter state
+  const [organizationId, setOrganizationId] = useState('');
   const [classroomId, setClassroomId] = useState('');
+
+  // Dropdown data
+  const [organizations, setOrganizations] = useState<DropdownOption[]>([]);
+  const [classrooms, setClassrooms] = useState<DropdownOption[]>([]);
+  const [loadingOrgs, setLoadingOrgs] = useState(false);
+  const [loadingClassrooms, setLoadingClassrooms] = useState(false);
+
+  // Load organizations on mount
+  useEffect(() => {
+    let cancelled = false;
+    setLoadingOrgs(true);
+    getOrganizations({ page: 1, limit: 100 })
+      .then((response) => {
+        if (!cancelled) {
+          const orgs = (response?.items || []).map((org: { id: string; name: string }) => ({
+            id: org.id,
+            name: org.name,
+          }));
+          setOrganizations(orgs);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setOrganizations([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingOrgs(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  // Load classrooms when organization changes
+  useEffect(() => {
+    setClassroomId(''); // Clear downstream
+    if (!organizationId) {
+      setClassrooms([]);
+      return;
+    }
+
+    let cancelled = false;
+    setLoadingClassrooms(true);
+    classroomTeacherApi
+      .listClassroomsForDropdown({ schoolId: organizationId, limit: 100 })
+      .then((data) => {
+        if (!cancelled) {
+          const items = (data || []).map((c: { id: string; name: string }) => ({
+            id: c.id,
+            name: c.name,
+          }));
+          setClassrooms(items);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setClassrooms([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingClassrooms(false);
+      });
+    return () => { cancelled = true; };
+  }, [organizationId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,9 +183,7 @@ export function ReportGenerationForm({ onSubmit, isGenerating }: ReportGeneratio
             id="reportType"
             value={reportType}
             onChange={(e) => setReportType(e.target.value as ReportType)}
-            className="focus:ring-detective-teal w-full rounded-md border border-gray-300 bg-white px-3
-                     py-2 text-gray-900 focus:border-transparent focus:ring-2
-                     dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            className={selectClassName}
             disabled={isGenerating}
             required
           >
@@ -140,9 +212,7 @@ export function ReportGenerationForm({ onSubmit, isGenerating }: ReportGeneratio
             id="format"
             value={format}
             onChange={(e) => setFormat(e.target.value as ReportFormat)}
-            className="focus:ring-detective-teal w-full rounded-md border border-gray-300 bg-white px-3
-                     py-2 text-gray-900 focus:border-transparent focus:ring-2
-                     dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            className={selectClassName}
             disabled={isGenerating}
             required
           >
@@ -161,16 +231,14 @@ export function ReportGenerationForm({ onSubmit, isGenerating }: ReportGeneratio
               htmlFor="startDate"
               className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              Fecha Inicio (Opcional)
+              Fecha Inicio
             </label>
             <input
               type="date"
               id="startDate"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="focus:ring-detective-teal w-full rounded-md border border-gray-300 bg-white px-3
-                       py-2 text-gray-900 focus:border-transparent focus:ring-2
-                       dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className={selectClassName}
               disabled={isGenerating}
             />
           </div>
@@ -179,40 +247,80 @@ export function ReportGenerationForm({ onSubmit, isGenerating }: ReportGeneratio
               htmlFor="endDate"
               className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              Fecha Fin (Opcional)
+              Fecha Fin
             </label>
             <input
               type="date"
               id="endDate"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="focus:ring-detective-teal w-full rounded-md border border-gray-300 bg-white px-3
-                       py-2 text-gray-900 focus:border-transparent focus:ring-2
-                       dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className={selectClassName}
               disabled={isGenerating}
             />
           </div>
         </div>
 
-        {/* Classroom ID (optional) */}
-        <div>
-          <label
-            htmlFor="classroomId"
-            className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            ID de Aula (Opcional)
-          </label>
-          <input
-            type="text"
-            id="classroomId"
-            value={classroomId}
-            onChange={(e) => setClassroomId(e.target.value)}
-            placeholder="UUID del aula"
-            className="focus:ring-detective-teal w-full rounded-md border border-gray-300 bg-white px-3
-                     py-2 text-gray-900 focus:border-transparent focus:ring-2
-                     dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-            disabled={isGenerating}
-          />
+        {/* Cascade Filters: Organization → Classroom */}
+        <div className="space-y-3 rounded-md border border-gray-200 p-3 dark:border-gray-600">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            Filtros opcionales
+          </p>
+
+          {/* Organization */}
+          <div>
+            <label
+              htmlFor="organizationId"
+              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Institución
+            </label>
+            <select
+              id="organizationId"
+              value={organizationId}
+              onChange={(e) => setOrganizationId(e.target.value)}
+              className={selectClassName}
+              disabled={isGenerating || loadingOrgs}
+            >
+              <option value="">
+                {loadingOrgs ? 'Cargando instituciones...' : 'Todas las instituciones'}
+              </option>
+              {organizations.map((org) => (
+                <option key={org.id} value={org.id}>
+                  {org.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Classroom (depends on organization) */}
+          <div>
+            <label
+              htmlFor="classroomId"
+              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Aula
+            </label>
+            <select
+              id="classroomId"
+              value={classroomId}
+              onChange={(e) => setClassroomId(e.target.value)}
+              className={selectClassName}
+              disabled={isGenerating || !organizationId || loadingClassrooms}
+            >
+              <option value="">
+                {!organizationId
+                  ? 'Seleccione institución primero'
+                  : loadingClassrooms
+                    ? 'Cargando aulas...'
+                    : 'Todas las aulas'}
+              </option>
+              {classrooms.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Submit Button */}

@@ -8,235 +8,105 @@
  * - Item categories
  * - Rarity/stats display
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
-import toast from 'react-hot-toast';
 import {
   Package,
   Zap,
-  Clock,
-  Check,
   Sparkles,
   TrendingUp,
   Search,
   ShoppingBag,
-  Coins,
   Loader,
 } from 'lucide-react';
 
-// Components
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { Modal } from '@shared/components/common/Modal';
-import { UnderConstruction } from '@/shared/components/UnderConstruction';
 
-// Hooks
-import type { ShopItem, ItemRarity } from '@/features/gamification/economy/types/economyTypes';
-import type { PowerUp, ActivePowerUp } from '@/features/gamification/social/types/powerUpsTypes';
+import { useInventoryData } from '@/features/gamification/social/hooks/useInventoryData';
+import { useActivatePowerUp } from '@/features/gamification/social/hooks/useActivatePowerUp';
+import { useEquipment } from '@/features/gamification/social/hooks/useEquipment';
 
-// API
-import {
-  getPowerUpInventory,
-  getActivePowerUps,
-  activatePowerUp,
-} from '@/features/gamification/social/api/socialAPI';
+import { InventoryStatsGrid } from '@/apps/student/components/inventory/InventoryStatsGrid';
+import { ActivePowerUpsBanner } from '@/apps/student/components/inventory/ActivePowerUpsBanner';
+import { ActivePowerUpsList } from '@/apps/student/components/inventory/ActivePowerUpsList';
+import { InventoryItemCard } from '@/apps/student/components/inventory/InventoryItemCard';
+import { PowerUpModal } from '@/apps/student/components/inventory/PowerUpModal';
+import { isPowerUp } from '@/apps/student/components/inventory/utils';
 
-// Utils
+import type { ShopItem } from '@/features/gamification/economy/types/economyTypes';
+import type { PowerUp } from '@/features/gamification/social/types/powerUpsTypes';
 import { cn } from '@shared/utils/cn';
 
 type TabType = 'all' | 'cosmetics' | 'powerups' | 'active';
 
+const TABS: { id: TabType; label: string; icon: React.ElementType; badge?: string }[] = [
+  { id: 'all', label: 'All Items', icon: Package },
+  { id: 'cosmetics', label: 'Cosmetics', icon: Sparkles, badge: 'Proximamente' },
+  { id: 'powerups', label: 'Power-ups', icon: Zap },
+  { id: 'active', label: 'Active', icon: TrendingUp },
+];
+
 export default function InventoryPage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-
-  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
   const { gamificationData } = useUserGamification(user?.id);
 
-  // State
+  // Data hooks
+  const { allItems, powerUps, activePowerUps, isLoading, isLoadingActive } = useInventoryData();
+  const { isEquipped, equipItem, unequipItem, isActionLoading } = useEquipment();
+  const { activate, isActivating } = useActivatePowerUp();
+
+  // UI state
   const [activeTab, setActiveTab] = useState<TabType>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedItem, setSelectedItem] = useState<ShopItem | PowerUp | null>(null);
-  const [showUsePowerUpModal, setShowUsePowerUpModal] = useState(false);
+  const [selectedPowerUp, setSelectedPowerUp] = useState<PowerUp | null>(null);
 
-  // Data state
-  const [inventoryItems, setInventoryItems] = useState<ShopItem[]>([]);
-  const [powerUps, setPowerUps] = useState<PowerUp[]>([]);
-  const [activePowerUps, setActivePowerUps] = useState<ActivePowerUp[]>([]);
-  const [isLoadingInventory, setIsLoadingInventory] = useState(true);
-  const [isLoadingActive, setIsLoadingActive] = useState(true);
+  // Filter items by tab and search
+  const filteredItems = useMemo(() => {
+    return allItems.filter((item) => {
+      const matchesSearch =
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase());
+      if (!matchesSearch) return false;
 
-  // Fetch inventory and active power-ups on mount
-  useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        setIsLoadingInventory(true);
-        if (!user?.id) {
-          setIsLoadingInventory(false);
-          return;
-        }
-        const inventory = await getPowerUpInventory(user.id);
+      if (activeTab === 'all') return true;
+      if (activeTab === 'cosmetics')
+        return 'category' in item && ['cosmetics', 'profile', 'guild', 'social'].includes(item.category);
+      if (activeTab === 'powerups') return isPowerUp(item);
+      return false; // 'active' tab shows separate component
+    });
+  }, [allItems, activeTab, searchQuery]);
 
-        // Transform owned power-ups to display format
-        const owned = inventory.owned || [];
-        const transformedPowerUps: PowerUp[] = owned.map((item: any) => ({
-          id: item.id || item.powerUpId,
-          name: item.name,
-          description: item.description,
-          type: item.type || 'core',
-          price: item.price || 0,
-          icon: item.icon || '⚡',
-          effect: item.effect,
-          duration: item.duration,
-          status: 'available',
-          owned: true,
-          quantity: item.quantity || 1,
-          usageCount: item.usageCount || 0,
-        }));
+  const totalValue = allItems.reduce((sum, item) => sum + item.price, 0);
 
-        setPowerUps(transformedPowerUps);
-
-        // TODO: Fetch cosmetic items when API is available
-        setInventoryItems([]);
-      } catch (error) {
-        console.error('Failed to load inventory:', error);
-        toast.error('Error loading inventory. Please try again later.');
-        setPowerUps([]);
-        setInventoryItems([]);
-      } finally {
-        setIsLoadingInventory(false);
-      }
-    };
-
-    const fetchActivePowerUps = async () => {
-      try {
-        setIsLoadingActive(true);
-        const active = await getActivePowerUps();
-        setActivePowerUps(active || []);
-      } catch (error) {
-        console.error('Failed to load active power-ups:', error);
-        setActivePowerUps([]);
-      } finally {
-        setIsLoadingActive(false);
-      }
-    };
-
-    fetchInventory();
-    fetchActivePowerUps();
-  }, [user?.id]);
-
-  // Combine all items
-  const allItems = [...inventoryItems, ...powerUps];
-
-  // Filter items based on tab and search
-  const filteredItems = allItems.filter((item) => {
-    const matchesSearch =
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchQuery.toLowerCase());
-
-    if (!matchesSearch) return false;
-
-    if (activeTab === 'all') return true;
-    if (activeTab === 'cosmetics')
-      return 'category' in item && (item.category === 'cosmetics' || item.category === 'profile');
-    if (activeTab === 'powerups') return 'type' in item;
-    if (activeTab === 'active') return false; // Active power-ups shown separately
-
-    return true;
-  });
-
-  // Get rarity color
-  const getRarityColor = (rarity: ItemRarity) => {
-    const colors = {
-      common: 'from-gray-400 to-gray-500',
-      rare: 'from-blue-400 to-blue-600',
-      epic: 'from-purple-400 to-purple-600',
-      legendary: 'from-yellow-400 to-orange-500',
-    };
-    return colors[rarity];
-  };
-
-  // Check if item is a power-up
-  const isPowerUp = (item: ShopItem | PowerUp): item is PowerUp => {
-    return 'type' in item && 'effect' in item;
-  };
-
-  // Handle use power-up
-  const handleUsePowerUp = (powerup: PowerUp) => {
-    setSelectedItem(powerup);
-    setShowUsePowerUpModal(true);
-  };
-
-  const confirmUsePowerUp = async () => {
-    if (!selectedItem || !isPowerUp(selectedItem) || !user?.id) return;
-
-    try {
-      // Map power-up id to comodin_type (ARCH-015)
-      const comodinTypeMap: Record<string, string> = {
-        pistas: 'pistas',
-        hints: 'pistas',
-        vision_lectora: 'vision_lectora',
-        'reading-vision': 'vision_lectora',
-        segunda_oportunidad: 'segunda_oportunidad',
-        'second-chance': 'segunda_oportunidad',
-      };
-      const comodinType = comodinTypeMap[selectedItem.id] || selectedItem.id;
-
-      // Call real API to use power-up (ARCH-015: now passes userId and comodinType)
-      const activePowerUpResult = await activatePowerUp(user.id, comodinType);
-
-      // Add to active power-ups list
-      setActivePowerUps((prev) => [...prev, activePowerUpResult]);
-
-      // Decrement quantity in inventory
-      setPowerUps((prev) =>
-        prev.map((pu) =>
-          pu.id === selectedItem.id ? { ...pu, quantity: Math.max(0, (pu.quantity || 1) - 1) } : pu,
-        ),
-      );
-
-      setShowUsePowerUpModal(false);
-      setSelectedItem(null);
-
-      // Show success message
-      toast.success(`${selectedItem.name} activated!`, {
-        icon: '⚡',
-        duration: 4000,
-      });
-    } catch (error: unknown) {
-      console.error('Failed to use power-up:', error);
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to activate power-up. Please try again.';
-      toast.error(errorMessage);
+  const handleEquipToggle = async (item: ShopItem) => {
+    if (isActionLoading) return;
+    if (isEquipped(item.id)) {
+      await unequipItem({ itemId: item.id });
+    } else {
+      await equipItem({ itemId: item.id });
     }
   };
 
-  // Format time remaining
-  const formatTimeRemaining = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
+  const handleUsePowerUp = (powerUp: PowerUp) => setSelectedPowerUp(powerUp);
 
-    if (hours > 0) return `${hours}h ${minutes}m`;
-    return `${minutes}m`;
+  const confirmUsePowerUp = async () => {
+    if (!selectedPowerUp) return;
+    await activate(selectedPowerUp);
+    setSelectedPowerUp(null);
   };
-
-  // Calculate total inventory value
-  const totalValue = allItems.reduce((sum, item) => sum + item.price, 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
       <GamifiedHeader
         user={user ?? undefined}
         gamificationData={gamificationData}
-        onLogout={async () => {
-          await logout();
-          // No need to navigate - performLogout() handles redirect
-        }}
+        onLogout={logout}
       />
 
       <main className="detective-container py-8">
@@ -252,8 +122,6 @@ export default function InventoryPage() {
                 Manage your owned items and active power-ups
               </p>
             </div>
-
-            {/* Shop Link */}
             <button
               onClick={() => navigate('/shop')}
               className="flex items-center gap-2 rounded-lg bg-detective-orange px-6 py-3 font-semibold text-white transition-colors hover:bg-detective-orange-dark"
@@ -264,105 +132,25 @@ export default function InventoryPage() {
           </div>
         </div>
 
-        {/* Stats Overview */}
-        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-          <DetectiveCard hoverable={false}>
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-500/20">
-                <Package className="h-6 w-6 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-detective-text">{allItems.length}</p>
-                <p className="text-sm text-detective-text-secondary">Total Items</p>
-              </div>
-            </div>
-          </DetectiveCard>
+        <InventoryStatsGrid
+          totalItems={allItems.length}
+          totalValue={totalValue}
+          powerUpsCount={powerUps.length}
+          activeCount={activePowerUps.length}
+        />
 
-          <DetectiveCard hoverable={false}>
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-detective-gold/20">
-                <Coins className="h-6 w-6 text-detective-gold" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-detective-text">{totalValue}</p>
-                <p className="text-sm text-detective-text-secondary">Total Value</p>
-              </div>
-            </div>
-          </DetectiveCard>
-
-          <DetectiveCard hoverable={false}>
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-detective-orange/20">
-                <Zap className="h-6 w-6 text-detective-orange" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-detective-text">{powerUps.length}</p>
-                <p className="text-sm text-detective-text-secondary">Power-ups</p>
-              </div>
-            </div>
-          </DetectiveCard>
-
-          <DetectiveCard hoverable={false}>
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/20">
-                <Check className="h-6 w-6 text-green-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-detective-text">{activePowerUps.length}</p>
-                <p className="text-sm text-detective-text-secondary">Active Now</p>
-              </div>
-            </div>
-          </DetectiveCard>
-        </div>
-
-        {/* Active Power-ups Banner */}
-        {activePowerUps.length > 0 && (
-          <DetectiveCard
-            hoverable={false}
-            className="mb-6 bg-gradient-to-r from-detective-orange to-orange-600 text-white"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="mb-2 flex items-center gap-2 text-xl font-bold">
-                  <Sparkles className="h-5 w-5" />
-                  Active Power-ups
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {activePowerUps.map((powerup) => (
-                    <div
-                      key={powerup.powerUpId}
-                      className="flex items-center gap-2 rounded-lg bg-white/20 px-4 py-2 backdrop-blur-sm"
-                    >
-                      <span className="text-2xl">{powerup.icon}</span>
-                      <div>
-                        <p className="font-semibold">{powerup.name}</p>
-                        <p className="flex items-center gap-1 text-xs">
-                          <Clock className="h-3 w-3" />
-                          {formatTimeRemaining(powerup.remainingTime)} remaining
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </DetectiveCard>
-        )}
+        <ActivePowerUpsBanner activePowerUps={activePowerUps} />
 
         {/* Tabs */}
-        <div className="mb-6 flex items-center gap-2 overflow-x-auto">
-          {[
-            { id: 'all' as TabType, label: 'All Items', icon: Package },
-            { id: 'cosmetics' as TabType, label: 'Cosmetics', icon: Sparkles },
-            { id: 'powerups' as TabType, label: 'Power-ups', icon: Zap },
-            { id: 'active' as TabType, label: 'Active', icon: TrendingUp },
-          ].map((tab) => {
+        <div className="mb-6 flex items-center gap-2 overflow-x-auto" role="tablist">
+          {TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
-
             return (
               <motion.button
                 key={tab.id}
+                role="tab"
+                aria-selected={isActive}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActiveTab(tab.id)}
@@ -375,9 +163,9 @@ export default function InventoryPage() {
               >
                 <Icon className="h-5 w-5" />
                 <span>{tab.label}</span>
-                {tab.id === 'cosmetics' && (
+                {tab.badge && (
                   <span className="ml-1 rounded bg-yellow-500/20 px-2 py-0.5 text-xs text-yellow-700">
-                    Próximamente
+                    {tab.badge}
                   </span>
                 )}
               </motion.button>
@@ -385,12 +173,14 @@ export default function InventoryPage() {
           })}
         </div>
 
-        {/* Search */}
+        {/* Search (hidden on Active tab) */}
         {activeTab !== 'active' && (
           <DetectiveCard hoverable={false} className="mb-6">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-detective-text-secondary" />
+              <label htmlFor="inventory-search" className="sr-only">Buscar en inventario</label>
               <input
+                id="inventory-search"
                 type="text"
                 placeholder="Search your inventory..."
                 value={searchQuery}
@@ -404,180 +194,38 @@ export default function InventoryPage() {
         {/* Content */}
         <AnimatePresence mode="wait">
           {activeTab === 'active' ? (
-            <motion.div
-              key="active"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              {isLoadingActive ? (
-                <DetectiveCard hoverable={false}>
-                  <div className="py-12 text-center">
-                    <Loader className="mx-auto mb-4 h-16 w-16 animate-spin text-detective-orange" />
-                    <h3 className="mb-2 text-xl font-bold text-detective-text">
-                      Loading Active Power-ups...
-                    </h3>
-                    <p className="text-detective-text-secondary">
-                      Please wait while we fetch your active boosts
-                    </p>
-                  </div>
-                </DetectiveCard>
-              ) : activePowerUps.length > 0 ? (
-                <div className="space-y-4">
-                  {activePowerUps.map((powerup) => (
-                    <DetectiveCard key={powerup.powerUpId}>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-br from-detective-orange to-detective-gold text-3xl">
-                            {powerup.icon}
-                          </div>
-                          <div>
-                            <h3 className="text-xl font-bold text-detective-text">
-                              {powerup.name}
-                            </h3>
-                            <p className="text-detective-text-secondary">
-                              {powerup.effect.description}
-                            </p>
-                            <div className="mt-2 flex items-center gap-2">
-                              <Clock className="h-4 w-4 text-detective-orange" />
-                              <span className="text-sm font-medium text-detective-text">
-                                Expires in {formatTimeRemaining(powerup.remainingTime)}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Progress bar */}
-                        <div className="w-48">
-                          <div className="h-2 w-full overflow-hidden rounded-full bg-detective-bg">
-                            <motion.div
-                              initial={{ width: '100%' }}
-                              animate={{ width: `${(powerup.remainingTime / 86400) * 100}%` }}
-                              className="h-full rounded-full bg-gradient-to-r from-detective-orange to-detective-gold"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </DetectiveCard>
-                  ))}
-                </div>
-              ) : (
-                <DetectiveCard hoverable={false}>
-                  <div className="py-12 text-center">
-                    <Zap className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary/30" />
-                    <h3 className="mb-2 text-xl font-bold text-detective-text">
-                      No Active Power-ups
-                    </h3>
-                    <p className="mb-4 text-detective-text-secondary">
-                      Activate power-ups from your inventory to boost your performance
-                    </p>
-                    <button
-                      onClick={() => setActiveTab('powerups')}
-                      className="rounded-lg bg-detective-orange px-6 py-2 font-medium text-white transition-colors hover:bg-detective-orange-dark"
-                    >
-                      View Power-ups
-                    </button>
-                  </div>
-                </DetectiveCard>
-              )}
+            <motion.div key="active" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+              <ActivePowerUpsList
+                activePowerUps={activePowerUps}
+                isLoading={isLoadingActive}
+                onSwitchTab={() => setActiveTab('powerups')}
+              />
             </motion.div>
           ) : (
-            <motion.div
-              key="items"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              {isLoadingInventory ? (
+            <motion.div key="items" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+              {isLoading ? (
                 <DetectiveCard hoverable={false}>
                   <div className="py-12 text-center">
                     <Loader className="mx-auto mb-4 h-16 w-16 animate-spin text-detective-orange" />
-                    <h3 className="mb-2 text-xl font-bold text-detective-text">
-                      Loading Inventory...
-                    </h3>
-                    <p className="text-detective-text-secondary">
-                      Please wait while we fetch your items
-                    </p>
+                    <h3 className="mb-2 text-xl font-bold text-detective-text">Loading Inventory...</h3>
+                    <p className="text-detective-text-secondary">Please wait while we fetch your items</p>
                   </div>
                 </DetectiveCard>
               ) : filteredItems.length > 0 ? (
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {filteredItems.map((item, index) => (
-                    <motion.div
+                    <InventoryItemCard
                       key={item.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <DetectiveCard className="h-full">
-                        <div className="space-y-4">
-                          {/* Item Header */}
-                          <div className="flex items-start justify-between">
-                            <div
-                              className={cn(
-                                'flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-br text-3xl',
-                                'rarity' in item
-                                  ? getRarityColor(item.rarity)
-                                  : 'from-detective-orange to-detective-gold',
-                              )}
-                            >
-                              {item.icon}
-                            </div>
-                            {'rarity' in item && (
-                              <span
-                                className={cn(
-                                  'rounded-full px-2 py-1 text-xs font-bold text-white',
-                                  getRarityColor(item.rarity).replace('from-', 'bg-').split(' ')[0],
-                                )}
-                              >
-                                {item.rarity.toUpperCase()}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Item Info */}
-                          <div>
-                            <h3 className="mb-1 text-lg font-bold text-detective-text">
-                              {item.name}
-                            </h3>
-                            <p className="line-clamp-2 text-sm text-detective-text-secondary">
-                              {item.description}
-                            </p>
-                          </div>
-
-                          {/* Quantity for power-ups */}
-                          {isPowerUp(item) && (
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="text-detective-text-secondary">Quantity:</span>
-                              <span className="font-bold text-detective-text">
-                                {item.quantity}x
-                              </span>
-                            </div>
-                          )}
-
-                          {/* Actions */}
-                          <div className="space-y-2 border-t border-detective-bg pt-2">
-                            {isPowerUp(item) && item.status === 'available' && (
-                              <button
-                                onClick={() => handleUsePowerUp(item)}
-                                className="flex w-full items-center justify-center gap-2 rounded-lg bg-detective-orange px-4 py-2 font-medium text-white transition-colors hover:bg-detective-orange-dark"
-                              >
-                                <Zap className="h-4 w-4" />
-                                Use Power-up
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </DetectiveCard>
-                    </motion.div>
+                      item={item}
+                      index={index}
+                      isEquipped={'category' in item ? isEquipped(item.id) : false}
+                      isPowerUp={isPowerUp(item)}
+                      isActionLoading={isActionLoading}
+                      onEquipToggle={handleEquipToggle}
+                      onUsePowerUp={handleUsePowerUp}
+                    />
                   ))}
                 </div>
-              ) : activeTab === 'cosmetics' ? (
-                <UnderConstruction
-                  title="Inventario de Cosméticos"
-                  description="El sistema de items cosméticos estará disponible próximamente. Aquí podrás ver y gestionar tus avatares, bordes, efectos y otros elementos decorativos."
-                  variant="section"
-                />
               ) : (
                 <DetectiveCard hoverable={false}>
                   <div className="py-12 text-center">
@@ -600,69 +248,13 @@ export default function InventoryPage() {
           )}
         </AnimatePresence>
 
-        {/* Use Power-up Modal */}
-        <Modal
-          isOpen={showUsePowerUpModal}
-          onClose={() => setShowUsePowerUpModal(false)}
-          title="Use Power-up"
-        >
-          {selectedItem && isPowerUp(selectedItem) && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 rounded-lg bg-detective-bg p-4">
-                <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-detective-orange to-detective-gold text-3xl">
-                  {selectedItem.icon}
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-detective-text">{selectedItem.name}</h3>
-                  <p className="text-sm text-detective-text-secondary">
-                    {selectedItem.description}
-                  </p>
-                </div>
-              </div>
-
-              {/* Effect Details */}
-              <div className="space-y-2 rounded-lg bg-detective-bg p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-detective-text">Effect:</span>
-                  <span className="font-bold text-detective-text">
-                    {selectedItem.effect.description}
-                  </span>
-                </div>
-                {selectedItem.duration && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-detective-text">Duration:</span>
-                    <span className="font-bold text-detective-text">
-                      {selectedItem.duration / 60} hours
-                    </span>
-                  </div>
-                )}
-                <div className="flex items-center justify-between">
-                  <span className="text-detective-text">Remaining:</span>
-                  <span className="font-bold text-detective-text">{selectedItem.quantity}x</span>
-                </div>
-              </div>
-
-              <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
-                This power-up will be activated immediately and cannot be paused or stopped.
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  onClick={() => setShowUsePowerUpModal(false)}
-                  className="flex-1 rounded-lg bg-gray-200 px-4 py-2 font-medium text-detective-text transition-colors hover:bg-gray-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmUsePowerUp}
-                  className="flex-1 rounded-lg bg-detective-orange px-4 py-2 font-medium text-white transition-colors hover:bg-detective-orange-dark"
-                >
-                  Activate
-                </button>
-              </div>
-            </div>
-          )}
-        </Modal>
+        <PowerUpModal
+          powerUp={selectedPowerUp}
+          isOpen={!!selectedPowerUp}
+          onClose={() => setSelectedPowerUp(null)}
+          onConfirm={confirmUsePowerUp}
+          isActivating={isActivating}
+        />
       </main>
     </div>
   );

@@ -2,8 +2,8 @@
 # DATABASE INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "8.2.0"
-fecha: "2026-02-17"
+version: "8.7.0"
+fecha: "2026-02-18"
 proyecto: "gamilit"
 database: "gamilit_platform"
 engine: "PostgreSQL 15"
@@ -17,12 +17,12 @@ resumen:
   tablas: 169                 # 168 SQL files - 1 MV file + 2 multi-table files
   views: 22
   materialized_views: 7
-  funciones: 183               # DDL source count (249 runtime)
+  funciones: 183               # 183 = DDL source files, ~249 = PostgreSQL runtime functions (includes auto-generated trigger functions)
   triggers: 67                 # CREATE TRIGGER statements (not trigger functions)
-  rls_policies: 227            # 207 original + 20 Phase 2 FORCE RLS (5 high-risk tables)
-  foreign_keys: 298
+  rls_policies: 231            # 231 DDL source (CREATE POLICY statements). Runtime: 471 (includes global RLS files 07/07b/07c/07d). +4 user_purchases (FIX-P0-1, 2026-02-18)
+  foreign_keys: 299              # +1 missions_template_id_fkey (REC-009)
   enums: 42                     # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
-  index_statements: 978
+  index_statements: 979          # +1 implicit from UNIQUE constraint missions_user_template_type_date_unique (REC-001)
 
 # -------------------------------------------------------------------------------
 # SCHEMAS (Nombres fisicos DDL)
@@ -52,8 +52,8 @@ schemas:
       conceptual: "education (en docs)"
 
     - nombre: "gamification_system"
-      tablas: 21
-      descripcion: "XP, rangos maya, achievements, ML Coins, tienda, misiones, leaderboards"
+      tablas: 21                    # Verified 2026-02-18: 19 root + 2 _cross_schema (classroom_missions, comodin_uses). +1 user_equipped_items (21-user_equipped_items.sql)
+      descripcion: "XP, rangos maya, achievements, ML Coins, tienda, misiones, leaderboards, equipamiento"
       tipo: "domain"
       conceptual: "gamification + store + missions + leaderboard (en docs)"
 
@@ -230,7 +230,7 @@ enums:
 
 seguridad:
   rls_activo: true
-  total_policies: 227           # 207 original + 20 Phase 2 FORCE RLS (5 high-risk tables)
+  total_policies: 231           # 231 DDL source. Runtime: 471 (+4 user_purchases FIX-P0-1, 2026-02-18)
   tenant_column: "tenant_id"
   context_method: "SET LOCAL app.current_tenant_id"
 
@@ -244,6 +244,7 @@ coherencia:
   tablas_con_entity: 153
   tablas_sin_entity: 16          # All 16 in data_warehouse schema
   cobertura: "90.5%"             # 153/169
+  entity_registration: "100%"        # All 153 entities registered in forFeature() and barrel exports (FIX P2, 2026-02-17)
   gap_justificado: "16 data_warehouse (dim_*, fact_*, etl_*, ml_*) — intencional, sin ORM"
 
 # -------------------------------------------------------------------------------
@@ -281,7 +282,7 @@ scripts:
 
 seeds:
   ruta: "apps/database/seeds/dev/"
-  total: 66
+  total: 76                       # 76 seed files (was 66, +10 gamification_system store/equipped seeds)
   errores: 0                      # 0 errores post-CORR-05 (2026-02-17)
   schemas_con_seeds:
     - "auth (3 archivos: demo-users, production-users, demo-students)"

@@ -1,5 +1,7 @@
 # Schema 3: education (13 tablas, 42 RLS policies)
 
+> **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.
+
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT
 
 ---

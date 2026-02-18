@@ -56,7 +56,7 @@ CREATE POLICY user_reports_select_admin
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             WHERE p.id = current_setting('app.current_user_id', true)::uuid
-            AND p.role IN ('admin', 'super_admin')
+            AND p.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -77,7 +77,7 @@ CREATE POLICY user_reports_select_moderator
         AND EXISTS (
             SELECT 1 FROM auth_management.profiles p
             WHERE p.id = current_setting('app.current_user_id', true)::uuid
-            AND p.role IN ('moderator', 'teacher', 'admin', 'super_admin')
+            AND p.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -147,7 +147,7 @@ CREATE POLICY user_reports_update_moderator
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             WHERE p.id = current_setting('app.current_user_id', true)::uuid
-            AND p.role IN ('moderator', 'teacher', 'admin', 'super_admin')
+            AND p.role IN ('admin_teacher', 'super_admin')
         )
         AND (
             assigned_to = current_setting('app.current_user_id', true)::uuid
@@ -155,7 +155,7 @@ CREATE POLICY user_reports_update_moderator
             OR EXISTS (
                 SELECT 1 FROM auth_management.profiles p
                 WHERE p.id = current_setting('app.current_user_id', true)::uuid
-                AND p.role IN ('admin', 'super_admin')
+                AND p.role IN ('admin_teacher', 'super_admin')
             )
         )
     )
@@ -163,7 +163,7 @@ CREATE POLICY user_reports_update_moderator
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             WHERE p.id = current_setting('app.current_user_id', true)::uuid
-            AND p.role IN ('moderator', 'teacher', 'admin', 'super_admin')
+            AND p.role IN ('admin_teacher', 'super_admin')
         )
     );
 
@@ -183,7 +183,7 @@ CREATE POLICY user_reports_delete_admin
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             WHERE p.id = current_setting('app.current_user_id', true)::uuid
-            AND p.role IN ('admin', 'super_admin')
+            AND p.role IN ('admin_teacher', 'super_admin')
         )
     );
 

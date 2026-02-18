@@ -2,10 +2,15 @@
 cd /mnt/c/Empresas/ISEM/gamilit-workspace/apps/database
 DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
-DB_PASSWORD="gamilit_dev_2026"
+DB_PASSWORD="${DB_PASSWORD:-${GAMILIT_DB_PASSWORD:-}}"
 DB_HOST="localhost"
 DB_PORT="5432"
 export PGPASSWORD="$DB_PASSWORD"
+
+if [ -z "$DB_PASSWORD" ]; then
+  echo "ERROR: define DB_PASSWORD o GAMILIT_DB_PASSWORD"
+  exit 1
+fi
 
 execute_sql() {
     psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -f "$1" 2>&1

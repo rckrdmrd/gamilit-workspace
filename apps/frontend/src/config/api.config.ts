@@ -75,12 +75,11 @@ export const API_ENDPOINTS = {
     logout: '/auth/logout',
     refresh: '/auth/refresh',
     profile: '/auth/profile',
-    validateToken: '/auth/validate-token',
     resetPassword: '/auth/reset-password',
     changePassword: '/auth/change-password',
     verifyEmail: '/auth/verify-email',
-    requestPasswordReset: '/auth/request-password-reset',
-    getCurrentUser: '/auth/me',
+    requestPasswordReset: '/auth/reset-password/request',
+    getCurrentUser: '/auth/profile',
     updateProfile: '/auth/profile',
     getSessions: '/auth/sessions',
     revokeSession: (sessionId: string) => `/auth/sessions/${sessionId}`,
@@ -190,20 +189,18 @@ export const API_ENDPOINTS = {
   },
 
   /**
-   * Economy endpoints
+   * Economy endpoints (mapped to gamification backend controllers)
    */
   economy: {
-    balance: (userId: string) => `/economy/users/${userId}/balance`,
-    transactions: (userId: string) => `/economy/users/${userId}/transactions`,
-    shop: '/economy/shop',
-    purchase: '/economy/purchase',
-    earn: '/economy/earn',
-    spend: '/economy/spend',
-    shopItems: '/economy/shop/items',
-    shopItem: (itemId: string) => `/economy/shop/items/${itemId}`,
-    inventory: (userId: string) => `/economy/users/${userId}/inventory`,
+    balance: (userId: string) => `/gamification/users/${userId}/ml-coins`,
+    transactions: (userId: string) => `/gamification/users/${userId}/ml-coins/transactions`,
+    shop: '/gamification/shop',
+    purchase: '/gamification/shop/purchase',
+    shopItems: '/gamification/shop/items',
+    shopItem: (itemId: string) => `/gamification/shop/items/${itemId}`,
+    inventory: (userId: string) => `/gamification/users/${userId}/comodines`,
     inventoryItem: (userId: string, itemId: string) =>
-      `/economy/users/${userId}/inventory/${itemId}`,
+      `/gamification/users/${userId}/comodines/${itemId}`,
   },
 
   /**
@@ -321,7 +318,7 @@ export const API_ENDPOINTS = {
     classroomTeachersById: (classroomId: string) => `/admin/classrooms/${classroomId}/teachers`,
 
     // Gamification Configuration
-    gamificationConfig: '/admin/gamification/config',
+    gamificationConfig: '/admin/gamification',
     gamification: {
       settings: '/admin/gamification/settings',
       updateSettings: '/admin/gamification/settings',
@@ -417,8 +414,7 @@ export const API_ENDPOINTS = {
 
     // Alert Actions (P1: Centralized 2025-12-28)
     alertActions: {
-      dismiss: (alertId: string) => `/admin/alerts/${alertId}/dismiss`,
-      dismissAll: '/admin/alerts/dismiss-all',
+      suppress: (alertId: string) => `/admin/alerts/${alertId}/suppress`,
     },
 
     // Logs shorthand (P1: Centralized 2025-12-28)
@@ -600,18 +596,14 @@ export const API_ENDPOINTS = {
     multipliers: (userId: string) => `/gamification/ranks/users/${userId}/multipliers`,
   },
 
-  /**
-   * Streaks API endpoints (P1: Centralized 2025-12-28)
-   */
-  streaks: {
-    user: (userId: string) => `/gamification/streaks/${userId}`,
-  },
+  // NOTE: Streaks namespace removed — no dedicated /gamification/streaks endpoint.
+  // Streak data is included in user_stats via gamification.userStats(userId).
 
   /**
    * Leaderboard position endpoints (P1: Centralized 2025-12-28)
    */
   leaderboardPosition: {
-    user: (userId: string) => `/gamification/leaderboard/user/${userId}/position`,
+    user: '/gamification/leaderboards/user-rank',
   },
 
   /**
@@ -670,21 +662,24 @@ export const API_ENDPOINTS = {
   },
 
   /**
-   * Friends API endpoints
+   * Friends API endpoints (friends.controller.ts at /friends)
    */
   friends: {
-    list: '/gamification/friends',
-    request: '/gamification/friends/request',
-    requests: '/gamification/friends/requests',
-    accept: (requestId: string) => `/gamification/friends/requests/${requestId}/accept`,
-    decline: (requestId: string) => `/gamification/friends/requests/${requestId}/decline`,
-    remove: (userId: string) => `/gamification/friends/${userId}`,
-    recommendations: '/gamification/friends/recommendations',
-    activities: '/gamification/friends/activities',
+    list: '/friends',
+    request: '/friends/request',
+    requests: '/friends/requests',
+    accept: (requestId: string) => `/friends/requests/${requestId}/accept`,
+    decline: (requestId: string) => `/friends/requests/${requestId}/decline`,
+    remove: (userId: string) => `/friends/${userId}`,
+    recommendations: '/friends/recommendations',
+    activities: '/friends/activities',
   },
 
   /**
    * Mechanics API endpoints
+   * MOCK ONLY — no backend /mechanics controller exists.
+   * Real exercise data uses /educational/exercises endpoints.
+   * All consumers use FEATURE_FLAGS.USE_MOCK_DATA fallback.
    */
   mechanics: {
     list: '/mechanics',
@@ -697,6 +692,8 @@ export const API_ENDPOINTS = {
 
   /**
    * AI Service endpoints
+   * MOCK ONLY — no backend /ai controller exists.
+   * All consumers check FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI.
    */
   ai: {
     analyzeText: '/ai/analyze-text',
@@ -718,24 +715,17 @@ export const API_ENDPOINTS = {
     delete: (userId: string) => `/users/${userId}`,
   },
 
-  /**
-   * Student endpoints
-   */
-  student: {
-    dashboard: '/student/dashboard',
-    profile: (userId: string) => `/student/users/${userId}/profile`,
-    courses: '/student/courses',
-    assignments: '/student/assignments',
-    grades: '/student/grades',
-  },
+  // NOTE: Student namespace removed — no backend /student controller exists.
+  // Student features use /educational, /progress, /gamification endpoints.
 
   /**
-   * Health check
+   * Health check (health.controller.ts)
    */
   health: {
     check: '/health',
-    status: '/health/status',
-    detailed: '/health/detailed',
+    live: '/health/live',
+    ready: '/health/ready',
+    metrics: '/health/metrics',
   },
 } as const;
 

@@ -1,6 +1,6 @@
 # Cobertura Total de Procesos End-to-End
 
-**Version:** 1.3.2
+**Version:** 1.4.0
 **Fecha:** 2026-02-17
 **Estado:** Activo
 
@@ -24,8 +24,8 @@ Consolidar la cobertura total de procesos del sistema en una sola matriz trazabl
 | FL-STU-01 | Student | Resolucion de ejercicio autocalificable (M1-M2) | EPIC-GAM-F1-EXERCISES | `apps/student/pages/ExercisePage.tsx` | guardar/enviar respuesta | `/api/v1/progress/submissions/submit` | `progress_tracking.exercise_attempts`, `exercise_submissions`, `gamification_system.user_stats` | `student/FLUJO-EJERCICIO-COMPLETO.md` |
 | FL-STU-02 | Student | Resolucion de ejercicio con revision (M3-M5) | EPIC-GAM-F2-MODULES-M4M5 | `apps/student/pages/ExercisePage.tsx` | submit para revision docente | `/api/v1/progress/submissions/submit`, `teacher/reviews/*` | `progress_tracking.exercise_submissions`, `manual_reviews` | `student/FLUJO-EJERCICIO-M3-M5.md` |
 | FL-STU-03 | Student | Compra en tienda + asignacion | EPIC-GAM-F1-GAMIFICATION | `apps/student/pages/ShopPage.tsx` | boton comprar | `/api/v1/gamification/shop/purchase` | `gamification_system.shop_items`, `user_purchases`, `ml_coins_transactions`, `user_stats` | `student/FLUJO-TIENDA-COMPRA.md` |
-| FL-STU-04 | Student | Claim de logros y misiones | EPIC-GAM-F1-GAMIFICATION | `pages/AchievementsPage.tsx`, `apps/student/pages/MissionsPage.tsx` | boton claim reward | `/api/v1/gamification/achievements/:id/claim`, `/api/v1/gamification/missions/:id/claim` | `gamification_system.user_achievements`, `missions`, `ml_coins_transactions`, `user_stats` | `student/FLUJO-LOGROS-MISIONES-CLAIM.md` |
-| FL-STU-05 | Student | Perfil y ajustes del estudiante **(Compuesto)** | EPIC-GAM-F3-PROFILES | `apps/student/pages/SettingsPage.tsx` | editar perfil/preferencias | `/api/v1/profile/:userId`, `/api/auth/profile`, `/notifications/devices`, `/notifications/preferences` | `auth_management.profiles`, `auth.users`, `notifications.user_devices`, `notifications.notification_preferences` | `student/FLUJO-PERFIL-AJUSTES-ESTUDIANTE.md` (sub: FL-SHR-01, FL-STU-11, FL-STU-12) |
+| FL-STU-04 | Student | Claim de logros y misiones | EPIC-GAM-F1-GAMIFICATION | `apps/student/pages/AchievementsPage.tsx`, `apps/student/pages/MissionsPage.tsx` | boton claim reward | `/api/v1/gamification/achievements/:id/claim`, `/api/v1/gamification/missions/:id/claim` | `gamification_system.user_achievements`, `missions`, `ml_coins_transactions`, `user_stats` | `student/FLUJO-LOGROS-MISIONES-CLAIM.md` |
+| FL-STU-05 | Student | Perfil y ajustes del estudiante **(Compuesto)** | EPIC-GAM-F3-PROFILES | `apps/student/pages/SettingsPage.tsx` (orquestador + `settings/*.tsx`) | perfil, cuenta, notificaciones, privacidad | `PUT /users/profile`, `PUT /auth/change-password`, `GET/PATCH /notifications/preferences`, `PUT /users/preferences` | `auth_management.profiles`, `auth.users`, `notifications.notification_preferences` | `student/FLUJO-PERFIL-AJUSTES-ESTUDIANTE.md` v1.1.0 (sub: FL-SHR-01, FL-STU-11, FL-STU-12) |
 | FL-STU-06 | Student | Dashboard y progreso academico **(Compuesto)** | EPIC-GAM-F1-ANALYTICS | `apps/student/pages/DashboardComplete.tsx` | ciclo completo: dashboard, aprendizaje, ejercicio, rewards | `/api/v1/progress/*`, `/api/v1/gamification/*`, `/api/v1/educational/*` | `progress_tracking.*`, `gamification_system.*`, `educational_content.*` | `student/FLUJO-DASHBOARD-ACADEMICO.md` (sub: FL-STU-13, FL-STU-01, FL-STU-04, FL-STU-15) |
 | FL-STU-07 | Student | Tienda: overview y catalogo | EPIC-GAM-F1-GAMIFICATION | `apps/student/pages/ShopPage.tsx` | ver catalogo, filtros | `/gamification/shop/categories`, `/gamification/shop/items`, `/gamification/shop/purchases/:userId` | `gamification_system.shop_categories`, `shop_items`, `user_purchases` | `student/FLUJO-TIENDA-OVERVIEW.md` |
 | FL-STU-08 | Student | Inventario de items | EPIC-GAM-F1-GAMIFICATION | `apps/student/pages/InventoryPage.tsx` | ver inventario, usar power-up | `/gamification/comodines/users/:userId/inventory`, `/gamification/comodines/use` | `gamification_system.comodines_inventory`, `comodin_usage_log` | `student/FLUJO-INVENTARIO-ITEMS.md` |
@@ -33,10 +33,10 @@ Consolidar la cobertura total de procesos del sistema en una sola matriz trazabl
 | FL-STU-10 | Student | Gremios | EPIC-GAM-F3-SOCIAL-GAMIFICATION | `apps/student/pages/GuildsPage.tsx` | crear/gestionar gremio | `/social/teams`, `/social/teams/:teamId/members/:userId` | `social_features.guilds`, `guild_members` | `student/FLUJO-GREMIOS.md` |
 | FL-STU-11 | Student | Settings dispositivos | EPIC-GAM-F3-PROFILES | `apps/student/pages/DeviceManagementSection.tsx` | gestionar dispositivos | `/notifications/devices`, `/notifications/devices/:id` | `notifications.user_devices` | `student/FLUJO-SETTINGS-DISPOSITIVOS.md` |
 | FL-STU-12 | Student | Settings notificaciones | EPIC-GAM-F3-NOTIFICATIONS | `apps/student/pages/NotificationPreferencesPage.tsx` | preferencias notificaciones | `/notifications/preferences`, `/notifications/preferences/:type` | `notifications.notification_preferences` | `student/FLUJO-SETTINGS-NOTIFICACIONES.md` |
-| FL-TCH-01 | Teacher | Revision manual y cierre de calificacion M3-M5 | EPIC-GAM-F3-TEACHER-PORTAL | `apps/teacher/pages/TeacherReviewPanelPage.tsx` | revisar, calificar, completar | `/api/v1/teacher/reviews/*` | `progress_tracking.manual_reviews`, `exercise_submissions`, `gamification_system.user_stats` | `teacher/FLUJO-REVISION-MANUAL-M3-M5.md` |
+| FL-TCH-01 | Teacher | Revision manual y cierre de calificacion M3-M5 | EPIC-GAM-F3-TEACHER-PORTAL | `apps/teacher/pages/TeacherReviewPanel.tsx` | revisar, calificar, completar | `/api/v1/teacher/reviews/*` | `progress_tracking.manual_reviews`, `exercise_submissions`, `gamification_system.user_stats` | `teacher/FLUJO-REVISION-MANUAL-M3-M5.md` |
 | FL-TCH-02 | Teacher | Gestion de asignaciones | EPIC-GAM-F3-TEACHER-PORTAL | `apps/teacher/pages/TeacherAssignments.tsx` | crear/publicar asignacion | `/api/v1/teacher/assignments/*` | `educational_content.*`, `progress_tracking.*` | `teacher/FLUJO-ASIGNACIONES-CLASE.md` |
-| FL-TCH-03 | Teacher | Monitoreo y alertas docentes | EPIC-GAM-F3-NOTIFICATIONS | `apps/teacher/pages/TeacherAlertsPage.tsx` | ack/resolucion alerta | `/api/v1/teacher/alerts/*` | `notifications.*`, `analytics.*` | `teacher/FLUJO-MONITOREO-ALERTAS.md` |
-| FL-TCH-07 | Teacher | Configuracion docente y mensajeria | EPIC-GAM-F3-TEACHER-PORTAL | `apps/teacher/pages/TeacherSettingsPage.tsx` | actualizar preferencias/canales | `/api/v1/teacher/settings/*`, `/api/v1/messages/*` | `auth_management.profiles`, `communication.*` | `shared/FLUJO-PERFIL-CONFIGURACION.md` |
+| FL-TCH-03 | Teacher | Monitoreo y alertas docentes | EPIC-GAM-F3-NOTIFICATIONS | `apps/teacher/pages/TeacherAlerts.tsx` | ack/resolucion alerta | `/api/v1/teacher/alerts/*` | `notifications.*`, `analytics.*` | `teacher/FLUJO-MONITOREO-ALERTAS.md` |
+| FL-TCH-07 | Teacher | Configuracion docente y mensajeria | EPIC-GAM-F3-TEACHER-PORTAL | `apps/teacher/pages/TeacherSettings.tsx` | actualizar preferencias/canales | `/api/v1/teacher/settings/*`, `/api/v1/messages/*` | `auth_management.profiles`, `communication.*` | `shared/FLUJO-PERFIL-CONFIGURACION.md` |
 | FL-ADM-01 | Admin | Gestion de usuarios y roles | EPIC-GAM-F1-ADMIN | `apps/admin/pages/AdminUsersPage.tsx` | alta/edicion/rol de usuario | `/api/v1/admin/users/*`, `/api/v1/admin/roles/*` | `auth.users`, `auth_management.profiles`, `auth_management.user_roles` | `admin/FLUJO-GESTION-USUARIOS-ROLES.md` |
 | FL-ADM-02 | Admin | Configuracion global del sistema | EPIC-GAM-F1-CONFIG | `apps/admin/pages/AdminAdvancedPage.tsx` | guardar configuracion | `/api/v1/settings/*`, `/api/v1/admin/config/*` | `platform_settings.*` | `admin/FLUJO-CONFIGURACION-SISTEMA.md` |
 | FL-ADM-03 | Admin | Aprobacion de contenido | EPIC-GAM-F3-CONTENT | `apps/admin/components/content/ContentApprovalQueue.tsx` | aprobar/rechazar contenido | `/api/v1/admin/content/approvals/*` | `educational_content.content_approvals`, `content_tags` | `admin/FLUJO-APROBACION-CONTENIDO.md` |
@@ -55,7 +55,7 @@ Consolidar la cobertura total de procesos del sistema en una sola matriz trazabl
 | FL-STU-13 | Student | Dashboard y overview de progreso | EPIC-GAM-F1-ANALYTICS | `apps/student/pages/DashboardComplete.tsx` | consultas dashboard, filtros | `/api/v1/progress/*`, `/api/v1/gamification/user-stats/*` | `progress_tracking.module_progress`, `gamification_system.user_stats` | `student/FLUJO-DASHBOARD-PROGRESO.md` |
 | FL-STU-14 | Student | Leaderboards y rankings | EPIC-GAM-F3-SOCIAL-GAMIFICATION | `apps/student/pages/LeaderboardPage.tsx` | ver rankings, filtros | `/api/v1/social/leaderboards/*` | `social_features.leaderboard_entries`, `gamification_system.user_stats` | `student/FLUJO-LEADERBOARDS.md` |
 | FL-STU-15 | Student | Pagina de aprendizaje | EPIC-GAM-F1-EXERCISES | `apps/student/pages/LearningPage.tsx` | ver modulos, seleccionar ejercicio | `/api/v1/educational/modules/*`, `/api/v1/educational/exercises/*` | `educational_content.modules`, `educational_content.exercises` | `student/FLUJO-PAGINA-APRENDIZAJE.md` |
-| FL-TCH-04 | Teacher | Analytics y reportes docentes | EPIC-GAM-F1-ANALYTICS | `apps/teacher/pages/TeacherAnalytics.tsx`, `TeacherReportsPage.tsx` | ver metricas, generar reportes | `/api/v1/analytics/*`, `/api/v1/reports/*` | `analytics.*`, `data_warehouse.*` | `teacher/FLUJO-ANALYTICS-REPORTES.md` |
+| FL-TCH-04 | Teacher | Analytics y reportes docentes | EPIC-GAM-F1-ANALYTICS | `apps/teacher/pages/TeacherAnalytics.tsx`, `TeacherReports.tsx` | ver metricas, generar reportes | `/api/v1/analytics/*`, `/api/v1/reports/*` | `analytics.*`, `data_warehouse.*` | `teacher/FLUJO-ANALYTICS-REPORTES.md` |
 | FL-TCH-05 | Teacher | Gestion de contenido docente | EPIC-GAM-F3-CONTENT | `apps/teacher/pages/TeacherContentManagement.tsx` | crear/editar contenido | `/api/v1/content/*`, `/api/v1/teacher/content/*` | `educational_content.content_items`, `educational_content.content_templates` | `teacher/FLUJO-GESTION-CONTENIDO.md` |
 | FL-TCH-06 | Teacher | Login con redireccion por rol | EPIC-GAM-F1-AUTH | `apps/teacher/layouts/TeacherLayout.tsx` | autenticacion + redirect docente | `/auth/login`, role-based redirect | `auth.users`, `auth_management.profiles`, `auth_management.user_roles` | `teacher/FLUJO-LOGIN-DOCENTE.md` |
 | FL-ADM-07 | Admin | Constructor de ejercicios | EPIC-GAM-F1-EXERCISES | `apps/admin/pages/AdminExerciseCreatePage.tsx` | crear/configurar ejercicios | `/api/v1/educational/exercises`, `/api/v1/educational/exercises/:id` | `educational_content.exercises`, `educational_content.exercise_options` | `admin/FLUJO-CONSTRUCTOR-EJERCICIOS.md` |
@@ -66,14 +66,16 @@ Consolidar la cobertura total de procesos del sistema en una sola matriz trazabl
 
 ## Resumen de cobertura por portal
 
-| Portal | Procesos mapeados | Procesos con doc de flujo | Cobertura |
-|--------|-------------------|---------------------------|-----------|
-| Auth/Shared | 6 | 6 | 100% |
-| Student | 15 | 15 | 100% |
-| Teacher | 7 | 7 | 100% |
-| Admin | 8 | 8 | 100% |
-| Parents | 7 | 7 | 100% |
-| **Total** | **43** | **43** | **100%** |
+| Portal | Procesos en matriz | Flujos doc adicionales | Total docs flujo | Cobertura |
+|--------|--------------------|------------------------|------------------|-----------|
+| Auth/Shared | 6 | 0 | 6 | 100% |
+| Student | 15 | 6 | 21 | 100% |
+| Teacher | 7 | 2 | 9 | 100% |
+| Admin | 8 | 3 | 11 | 100% |
+| Parents | 7 | 1 | 8 | 100% |
+| **Total** | **43** | **12** | **50+** | **100%** |
+
+> **Nota v1.4.0:** Los 43 procesos en la matriz principal son los flujos core trazados end-to-end. Los 12 flujos adicionales corresponden a documentos de flujo creados en sesiones posteriores (equipamiento, personalizacion, dashboards, gestion de clases, etc.) que extienden la cobertura total a 50+ documentos de flujo. Ver `README.md` para el indice completo.
 
 ---
 

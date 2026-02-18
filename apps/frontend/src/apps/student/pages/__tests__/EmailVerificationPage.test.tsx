@@ -14,6 +14,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import EmailVerificationPage from '../EmailVerificationPage';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 // Mock react-router-dom
 const mockNavigate = vi.fn();
@@ -34,6 +35,8 @@ vi.mock('framer-motion', () => ({
 }));
 
 describe('EmailVerificationPage', () => {
+  const platformName = DEFAULT_BRANDING.platformName;
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -50,7 +53,7 @@ describe('EmailVerificationPage', () => {
     it('should render the page', () => {
       renderComponent();
 
-      expect(screen.getByText('GAMILIT')).toBeInTheDocument();
+      expect(screen.getByText(platformName)).toBeInTheDocument();
       expect(screen.getByText('Verificación No Requerida')).toBeInTheDocument();
     });
 

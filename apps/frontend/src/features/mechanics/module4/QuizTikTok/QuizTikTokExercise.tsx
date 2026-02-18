@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronUp, ChevronDown, Menu, X, Save, Award, Send, Loader2, CheckCircle } from 'lucide-react';
+import { ChevronUp, ChevronDown, Menu, X, Save, Award, Send, Loader2, CheckCircle, PlayCircle } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { TimerWidget } from '@shared/components/mechanics/TimerWidget';
 import { ProgressTracker } from '@shared/components/mechanics/ProgressTracker';
 import { ScoreDisplay } from '@shared/components/mechanics/ScoreDisplay';
@@ -34,6 +35,16 @@ interface ExerciseProps {
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
   exercise?: QuizTikTokData;
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+    specificActions?: Array<{
+      label: string;
+      icon?: React.ReactNode;
+      onClick: () => void;
+      variant?: 'primary' | 'secondary' | 'blue' | 'gold';
+    }>;
+  }>;
 }
 
 interface ExerciseState {
@@ -108,6 +119,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   initialData,
   difficulty = 'medium',
   exercise,
+  actionsRef,
 }) => {
   const defaultExercise = getDefaultExercise(exerciseId, difficulty);
   const currentExercise = exercise || defaultExercise;
@@ -119,6 +131,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [startTime] = useState(new Date());
+  const timerStartRef = useRef(Date.now());
   const [currentScore, setCurrentScore] = useState(0);
   const [timeSpent, setTimeSpent] = useState(0);
   const [showSidebar, setShowSidebar] = useState(false);
@@ -172,7 +185,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
     },
   });
 
-  const actionsRef = useRef<{
+  const localActionsRef = useRef<{
     handleReset?: () => void;
     handleCheck?: () => void;
     specificActions?: Array<{
@@ -182,6 +195,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
       variant?: 'primary' | 'secondary' | 'blue' | 'gold';
     }>;
   }>({});
+  const resolvedActionsRef = actionsRef || localActionsRef;
 
   // Calculate score with time penalty
   const calculateScoreWithTimePenalty = (baseScore: number, timeElapsed: number, totalTime: number) => {
@@ -191,12 +205,13 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
 
   // Calculate progress
   const calculateProgress = () => {
+    if (currentExercise.questions.length === 0) return 0;
     return (answers.length / currentExercise.questions.length) * 100;
   };
 
   // Calculate current score (with time penalties)
   const calculateCurrentScore = () => {
-    if (questionScores.length === 0) return 0;
+    if (questionScores.length === 0 || currentExercise.questions.length === 0) return 0;
     const totalScore = questionScores.reduce((sum, score) => sum + score, 0);
     return Math.floor(totalScore / currentExercise.questions.length);
   };
@@ -210,9 +225,12 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
     return () => clearInterval(interval);
   }, [currentIndex, answers, questionTimes, questionScores, exerciseId]);
 
-  // Reset question timer when changing questions
+  // Reset question timer and track visited nodes when changing questions
   useEffect(() => {
     setQuestionStartTime(new Date());
+    if (!visitedNodesRef.current.includes(currentIndex)) {
+      visitedNodesRef.current.push(currentIndex);
+    }
   }, [currentIndex]);
 
   // Update progress
@@ -396,13 +414,13 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   };
 
   // Track visited questions (nodes) for swipe history
-  const [visitedNodes] = useState<number[]>([]);
+  const visitedNodesRef = useRef<number[]>([0]);
 
   // Handle submit
   const handleSubmit = () => {
     if (!exerciseId || isSubmitting || isSubmitted) return;
 
-    const swipeHistory = visitedNodes || [];
+    const swipeHistory = visitedNodesRef.current;
     const score = calculateCurrentScore();
 
     submit({
@@ -415,7 +433,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   // Attach actions to ref
 
   useEffect(() => {
-    actionsRef.current = {
+    resolvedActionsRef.current = {
       handleReset,
       handleCheck: () => handleCheck(answers),
       specificActions: [
@@ -428,262 +446,291 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
       ],
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionsRef]);
+  }, [resolvedActionsRef, answers]);
+
+  if (currentExercise.questions.length === 0) {
+    return (
+      <UnifiedExerciseLayout
+        title={currentExercise.title}
+        description={currentExercise.description}
+        icon={<PlayCircle className="h-8 w-8" />}
+        cardPadding="lg"
+      >
+        <div className="flex items-center justify-center rounded-detective bg-detective-bg-secondary p-8 text-center">
+          <p className="text-detective-text-secondary">No hay preguntas disponibles para este ejercicio.</p>
+        </div>
+      </UnifiedExerciseLayout>
+    );
+  }
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-black">
-      {/* Main TikTok-style vertical content */}
-      <div className="relative mx-auto h-screen w-full max-w-md bg-black">
-        <AnimatePresence mode="wait">
-          <TikTokCard
-            key={currentIndex}
-            question={currentExercise.questions[currentIndex]}
-            onAnswer={handleAnswer}
-            selectedAnswer={answers[currentIndex]}
-            timeLimit={TIME_LIMIT_PER_QUESTION}
-            onTimeUp={handleTimeUp}
-          />
-        </AnimatePresence>
-
-        {/* Navigation Controls - Bottom */}
-        <div className="absolute bottom-24 left-0 right-0 z-20 flex justify-center gap-4">
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <DetectiveButton
-              variant="secondary"
-              onClick={() => handleSwipe('up')}
-              disabled={currentIndex === 0}
-              icon={<ChevronUp />}
-              className="border-white/30 bg-white/20 text-white backdrop-blur-md"
-            >
-              Anterior
-            </DetectiveButton>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <DetectiveButton
-              variant="secondary"
-              onClick={() => handleSwipe('down')}
-              disabled={currentIndex === currentExercise.questions.length - 1}
-              icon={<ChevronDown />}
-              className="border-white/30 bg-white/20 text-white backdrop-blur-md"
-            >
-              Siguiente
-            </DetectiveButton>
-          </motion.div>
-        </div>
-
-        {/* Progress Indicator - Bottom */}
-        <div className="absolute bottom-8 left-0 right-0 z-20 flex items-center justify-center gap-3 text-center text-sm font-medium text-white">
-          <span className="rounded-full bg-black/50 px-4 py-2 backdrop-blur-md">
-            Pregunta {currentIndex + 1} / {currentExercise.questions.length}
+    <>
+      <UnifiedExerciseLayout
+        title={currentExercise.title}
+        description={currentExercise.description}
+        icon={<PlayCircle className="h-8 w-8" />}
+        headerActions={
+          <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur-md">
+            {answers.length} / {currentExercise.questions.length} respondidas
           </span>
-          <span className="rounded-full bg-detective-orange/80 px-4 py-2 backdrop-blur-md">
-            {answers.length} respondidas
-          </span>
-        </div>
+        }
+        cardPadding="none"
+      >
+        <div className="relative h-[70vh] w-full overflow-hidden bg-black rounded-b-lg">
+          {/* Main TikTok-style vertical content */}
+          <div className="relative mx-auto h-full w-full max-w-md bg-black">
+            <AnimatePresence mode="wait">
+              <TikTokCard
+                key={currentIndex}
+                question={currentExercise.questions[currentIndex]}
+                onAnswer={handleAnswer}
+                selectedAnswer={answers[currentIndex]}
+                timeLimit={TIME_LIMIT_PER_QUESTION}
+                onTimeUp={handleTimeUp}
+              />
+            </AnimatePresence>
 
-        {/* Sidebar Toggle Button - Top Right */}
-        <div className="absolute right-4 top-4 z-30">
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <DetectiveButton
-              variant="gold"
-              onClick={() => setShowSidebar(!showSidebar)}
-              icon={showSidebar ? <X /> : <Menu />}
-              className="border-white/30 bg-white/20 text-white backdrop-blur-md"
-            >
-              {showSidebar ? 'Cerrar' : 'Menú'}
-            </DetectiveButton>
-          </motion.div>
-        </div>
-
-        {/* Exit Button - Top Left */}
-        <div className="absolute left-4 top-4 z-30">
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <DetectiveButton
-              variant="secondary"
-              onClick={onExit}
-              className="border-white/30 bg-white/20 text-white backdrop-blur-md"
-            >
-              Salir
-            </DetectiveButton>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Floating Sidebar (Bottom Sheet on mobile) */}
-      <AnimatePresence>
-        {showSidebar && (
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="absolute right-0 top-0 z-40 h-full w-80 overflow-y-auto bg-gradient-to-br from-orange-50 to-blue-50 shadow-lg"
-          >
-            <div className="space-y-4 p-6">
-              {/* Close Button */}
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-detective-2xl font-bold text-detective-text">
-                  Panel de Control
-                </h2>
+            {/* Navigation Controls - Bottom */}
+            <div className="absolute bottom-24 left-0 right-0 z-20 flex justify-center gap-4">
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                 <DetectiveButton
                   variant="secondary"
-                  onClick={() => setShowSidebar(false)}
-                  icon={<X />}
+                  onClick={() => handleSwipe('up')}
+                  disabled={currentIndex === 0}
+                  icon={<ChevronUp />}
+                  className="border-white/40 bg-white/90 text-detective-text backdrop-blur-md hover:bg-white"
                 >
-                  Cerrar
+                  Anterior
                 </DetectiveButton>
-              </div>
-
-              {/* Timer Widget */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-              >
-                <TimerWidget startTime={Date.now()} isPaused={false} showSeconds={true} />
               </motion.div>
-
-              {/* Progress Tracker */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <ProgressTracker
-                  currentStep={calculateProgress()}
-                  totalSteps={100}
-                  variant="circular"
-                />
-              </motion.div>
-
-              {/* Score Display */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <ScoreDisplay score={currentScore} maxScore={100} />
-              </motion.div>
-
-              {/* Question Status */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <DetectiveCard variant="default" padding="md">
-                  <h3 className="mb-3 flex items-center gap-2 font-bold text-detective-text">
-                    <Award className="h-5 w-5 text-detective-orange" />
-                    Estado de Preguntas
-                  </h3>
-                  <div className="space-y-2">
-                    {currentExercise.questions.map((_, idx) => {
-                      const isAnswered = answers[idx] !== undefined;
-                      const score = questionScores[idx] || 0;
-                      const time = questionTimes[idx] || 0;
-                      return (
-                        <div
-                          key={idx}
-                          className={`flex items-center justify-between rounded-detective p-2 transition-colors ${
-                            idx === currentIndex
-                              ? 'bg-detective-orange text-white'
-                              : isAnswered
-                                ? score > 0
-                                  ? 'bg-detective-success/10 text-detective-success'
-                                  : 'bg-detective-danger/10 text-detective-danger'
-                                : 'bg-detective-bg-secondary text-detective-text-secondary'
-                          }`}
-                        >
-                          <div className="flex-1">
-                            <span className="font-medium">Pregunta {idx + 1}</span>
-                            {isAnswered && (
-                              <div className="text-xs mt-1">
-                                <div>{score} pts ({time.toFixed(1)}s)</div>
-                              </div>
-                            )}
-                          </div>
-                          <span className="text-xs">
-                            {idx === currentIndex
-                              ? 'Actual'
-                              : isAnswered
-                                ? score > 0 ? '✓' : '✗'
-                                : 'Pendiente'}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </DetectiveCard>
-              </motion.div>
-
-              {/* Action Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <DetectiveCard variant="default" padding="md">
-                  <div className="space-y-3">
-                    <DetectiveButton
-                      variant="blue"
-                      icon={<Save />}
-                      onClick={handleSave}
-                      className="w-full"
-                    >
-                      Guardar Progreso
-                    </DetectiveButton>
-                    <DetectiveButton variant="gold" onClick={handleReset} className="w-full">
-                      Reiniciar Quiz
-                    </DetectiveButton>
-                    <DetectiveButton
-                      variant="primary"
-                      onClick={handleSubmit}
-                      disabled={answers.length < currentExercise.questions.length || isSubmitting || isSubmitted}
-                      className="w-full"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="h-5 w-5 animate-spin" />
-                          Enviando...
-                        </>
-                      ) : isSubmitted ? (
-                        <>
-                          <CheckCircle className="h-5 w-5" />
-                          Enviado
-                        </>
-                      ) : (
-                        <>
-                          <Send className="h-5 w-5" />
-                          Enviar Respuestas
-                        </>
-                      )}
-                    </DetectiveButton>
-                  </div>
-                </DetectiveCard>
-              </motion.div>
-
-              {/* Instructions */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-              >
-                <DetectiveCard variant="default" padding="md">
-                  <h3 className="mb-3 font-bold text-detective-text">Instrucciones</h3>
-                  <div className="space-y-2 text-detective-sm text-detective-text-secondary">
-                    <p>• Selecciona una respuesta para cada pregunta</p>
-                    <p>• Usa los botones para navegar entre preguntas</p>
-                    <p>• Responde todas las preguntas para verificar</p>
-                    <p>• ¡Responde rápido para obtener más puntos!</p>
-                    <p>• Tiempo límite: {TIME_LIMIT_PER_QUESTION}s por pregunta</p>
-                    <p>• Penalización máxima: 50% por tiempo</p>
-                  </div>
-                </DetectiveCard>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <DetectiveButton
+                  variant="secondary"
+                  onClick={() => handleSwipe('down')}
+                  disabled={currentIndex === currentExercise.questions.length - 1}
+                  icon={<ChevronDown />}
+                  className="border-white/40 bg-white/90 text-detective-text backdrop-blur-md hover:bg-white"
+                >
+                  Siguiente
+                </DetectiveButton>
               </motion.div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+            {/* Progress Indicator - Bottom */}
+            <div className="absolute bottom-8 left-0 right-0 z-20 flex items-center justify-center gap-3 text-center text-sm font-medium text-white">
+              <span className="rounded-full bg-black/50 px-4 py-2 backdrop-blur-md">
+                Pregunta {currentIndex + 1} / {currentExercise.questions.length}
+              </span>
+              <span className="rounded-full bg-detective-orange/80 px-4 py-2 backdrop-blur-md">
+                {answers.length} respondidas
+              </span>
+            </div>
+
+            {/* Sidebar Toggle Button - Top Right */}
+            <div className="absolute right-4 top-4 z-30">
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <DetectiveButton
+                  variant="gold"
+                  onClick={() => setShowSidebar(!showSidebar)}
+                  icon={showSidebar ? <X /> : <Menu />}
+                  className="border-white/40 bg-white/90 text-detective-text backdrop-blur-md hover:bg-white"
+                >
+                  {showSidebar ? 'Cerrar' : 'Menú'}
+                </DetectiveButton>
+              </motion.div>
+            </div>
+
+            {/* Exit Button - Top Left */}
+            <div className="absolute left-4 top-4 z-30">
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <DetectiveButton
+                  variant="secondary"
+                  onClick={onExit}
+                  className="border-white/40 bg-white/90 text-detective-text backdrop-blur-md hover:bg-white"
+                >
+                  Salir
+                </DetectiveButton>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Floating Sidebar (Bottom Sheet on mobile) */}
+          <AnimatePresence>
+            {showSidebar && (
+              <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="absolute right-0 top-0 z-40 h-full w-80 overflow-y-auto bg-gradient-to-br from-orange-50 to-blue-50 shadow-lg"
+              >
+                <div className="space-y-4 p-6">
+                  {/* Close Button */}
+                  <div className="mb-4 flex items-center justify-between">
+                    <h2 className="text-detective-2xl font-bold text-detective-text">
+                      Panel de Control
+                    </h2>
+                    <DetectiveButton
+                      variant="secondary"
+                      onClick={() => setShowSidebar(false)}
+                      icon={<X />}
+                    >
+                      Cerrar
+                    </DetectiveButton>
+                  </div>
+
+                  {/* Timer Widget */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    <TimerWidget startTime={timerStartRef.current} isPaused={false} showSeconds={true} />
+                  </motion.div>
+
+                  {/* Progress Tracker */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <ProgressTracker
+                      currentStep={calculateProgress()}
+                      totalSteps={100}
+                      variant="circular"
+                    />
+                  </motion.div>
+
+                  {/* Score Display */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <ScoreDisplay score={currentScore} maxScore={100} />
+                  </motion.div>
+
+                  {/* Question Status */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <DetectiveCard variant="default" padding="md">
+                      <h3 className="mb-3 flex items-center gap-2 font-bold text-detective-text">
+                        <Award className="h-5 w-5 text-detective-orange" />
+                        Estado de Preguntas
+                      </h3>
+                      <div className="space-y-2">
+                        {currentExercise.questions.map((_, idx) => {
+                          const isAnswered = answers[idx] !== undefined;
+                          const score = questionScores[idx] || 0;
+                          const time = questionTimes[idx] || 0;
+                          return (
+                            <div
+                              key={idx}
+                              className={`flex items-center justify-between rounded-detective p-2 transition-colors ${
+                                idx === currentIndex
+                                  ? 'bg-detective-orange text-white'
+                                  : isAnswered
+                                    ? score > 0
+                                      ? 'bg-detective-success/10 text-detective-success'
+                                      : 'bg-detective-danger/10 text-detective-danger'
+                                    : 'bg-detective-bg-secondary text-detective-text-secondary'
+                              }`}
+                            >
+                              <div className="flex-1">
+                                <span className="font-medium">Pregunta {idx + 1}</span>
+                                {isAnswered && (
+                                  <div className="text-xs mt-1">
+                                    <div>{score} pts ({time.toFixed(1)}s)</div>
+                                  </div>
+                                )}
+                              </div>
+                              <span className="text-xs">
+                                {idx === currentIndex
+                                  ? 'Actual'
+                                  : isAnswered
+                                    ? score > 0 ? '✓' : '✗'
+                                    : 'Pendiente'}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </DetectiveCard>
+                  </motion.div>
+
+                  {/* Action Buttons */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <DetectiveCard variant="default" padding="md">
+                      <div className="space-y-3">
+                        <DetectiveButton
+                          variant="blue"
+                          icon={<Save />}
+                          onClick={handleSave}
+                          className="w-full"
+                        >
+                          Guardar Progreso
+                        </DetectiveButton>
+                        <DetectiveButton variant="gold" onClick={handleReset} className="w-full">
+                          Reiniciar Quiz
+                        </DetectiveButton>
+                        <DetectiveButton
+                          variant="primary"
+                          onClick={handleSubmit}
+                          disabled={answers.length < currentExercise.questions.length || isSubmitting || isSubmitted}
+                          className="w-full"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                              Enviando...
+                            </>
+                          ) : isSubmitted ? (
+                            <>
+                              <CheckCircle className="h-5 w-5" />
+                              Enviado
+                            </>
+                          ) : (
+                            <>
+                              <Send className="h-5 w-5" />
+                              Enviar Respuestas
+                            </>
+                          )}
+                        </DetectiveButton>
+                      </div>
+                    </DetectiveCard>
+                  </motion.div>
+
+                  {/* Instructions */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <DetectiveCard variant="default" padding="md">
+                      <h3 className="mb-3 font-bold text-detective-text">Instrucciones</h3>
+                      <div className="space-y-2 text-detective-sm text-detective-text-secondary">
+                        <p>• Selecciona una respuesta para cada pregunta</p>
+                        <p>• Usa los botones para navegar entre preguntas</p>
+                        <p>• Responde todas las preguntas para verificar</p>
+                        <p>• ¡Responde rápido para obtener más puntos!</p>
+                        <p>• Tiempo límite: {TIME_LIMIT_PER_QUESTION}s por pregunta</p>
+                        <p>• Penalización máxima: 50% por tiempo</p>
+                      </div>
+                    </DetectiveCard>
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (
@@ -703,7 +750,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
           onRetry={handleReset}
         />
       )}
-    </div>
+    </>
   );
 };
 

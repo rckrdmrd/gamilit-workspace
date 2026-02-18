@@ -596,7 +596,7 @@ INSERT INTO auth_management.profiles (
     '2025-12-17 17:51:43.536295+00'::timestamptz
 )
 
-ON CONFLICT (id) DO UPDATE SET
+ON CONFLICT (email) DO UPDATE SET
     tenant_id = EXCLUDED.tenant_id,
     email = EXCLUDED.email,
     updated_at = NOW();

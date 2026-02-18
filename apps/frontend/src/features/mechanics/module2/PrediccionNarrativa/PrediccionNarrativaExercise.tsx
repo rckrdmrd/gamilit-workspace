@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, AlertCircle, Lightbulb } from 'lucide-react';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { RankUpModal } from '@/features/gamification/ranks/components/RankUpModal';
 import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import type {
@@ -284,39 +284,14 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
-        >
-          {/* Header - Detective Theme with Gradient */}
-          <div
-            className="rounded-detective p-6 shadow-detective-lg"
-            style={{
-              background: 'linear-gradient(to right, #1e3a8a, #f97316)',
-              color: 'white',
-            }}
-          >
-            <div className="mb-2 flex items-center gap-3">
-              <BookOpen className="h-8 w-8 text-white" />
-              <h1 className="text-detective-3xl font-bold text-white">{exercise.title}</h1>
-            </div>
-            {exercise.subtitle && (
-              <p className="mb-4 text-detective-base text-white" style={{ opacity: 0.9 }}>
-                {exercise.subtitle}
-              </p>
-            )}
-            {exercise.description && (
-              <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
-                <p className="text-detective-sm font-medium text-detective-text">Objetivo:</p>
-                <p className="text-detective-base text-detective-text">{exercise.description}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Progress Indicator */}
-          <div className="flex items-center justify-between text-detective-sm text-detective-text-secondary">
+      <UnifiedExerciseLayout
+        title={exercise.title}
+        description={exercise.subtitle || exercise.description}
+        icon={<BookOpen className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+        headerChildren={
+          <div className="mt-4 flex items-center justify-between text-sm">
             <span>
               Escenario {currentScenarioIndex + 1} de {exercise.scenarios.length}
             </span>
@@ -325,145 +300,153 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
               {exercise.scenarios.length} respondidos
             </span>
           </div>
-
-          {/* Scenario Content */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentScenario.id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
-            >
-              {/* Context */}
-              <div className="rounded-detective border-l-4 border-detective-blue bg-blue-50 p-4">
-                <h3 className="mb-2 text-detective-base font-semibold text-detective-blue">
-                  Contexto Histórico
-                </h3>
-                <p className="text-detective-sm text-detective-text">{currentScenario.context}</p>
-              </div>
-
-              {/* Beginning of narrative */}
-              <div className="rounded-detective border-2 border-purple-200 bg-purple-50 p-6">
-                <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
-                  Inicio de la Historia
-                </h3>
-                <p className="text-detective-base italic leading-relaxed text-detective-text">
-                  "{currentScenario.beginning}"
-                </p>
-              </div>
-
-              {/* Question */}
-              <div className="py-4 text-center">
-                <h3 className="text-detective-xl font-bold text-detective-orange">
-                  {currentScenario.question}
-                </h3>
-              </div>
-
-              {/* Prediction Options */}
-              <div className="space-y-4">
-                {currentScenario.predictions.map((prediction, index) => (
-                  <motion.button
-                    key={prediction.id}
-                    onClick={() => handleSelectPrediction(prediction.id)}
-                    disabled={showResults}
-                    whileHover={!showResults ? { scale: 1.02 } : {}}
-                    whileTap={!showResults ? { scale: 0.98 } : {}}
-                    className={`w-full rounded-detective border-2 p-4 text-left transition-all ${getOptionStyle(
-                      prediction,
-                    )} ${!showResults ? 'cursor-pointer' : 'cursor-default'}`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-detective-orange/20 text-detective-sm font-bold text-detective-orange">
-                        {String.fromCharCode(65 + index)}
-                      </span>
-                      <div className="flex-1">
-                        <p className="text-detective-base text-detective-text">{prediction.text}</p>
-                        {showResults && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            className="mt-3 border-t border-detective-border pt-3"
-                          >
-                            <p className="text-detective-sm text-detective-text-secondary">
-                              {prediction.explanation}
-                            </p>
-                          </motion.div>
-                        )}
-                      </div>
-                      {getOptionIcon(prediction)}
-                    </div>
-                  </motion.button>
-                ))}
-              </div>
-
-              {/* Contextual Hint */}
-              {currentScenario.contextualHint && (
-                <div className="mt-6">
-                  <DetectiveButton
-                    variant="secondary"
-                    size="sm"
-                    icon={<Lightbulb className="h-4 w-4" />}
-                    onClick={toggleHint}
-                  >
-                    {showHint ? 'Ocultar Pista' : 'Ver Pista Contextual'}
-                  </DetectiveButton>
-
-                  <AnimatePresence>
-                    {showHint && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="mt-3 rounded-detective border-l-4 border-detective-gold bg-yellow-50 p-4"
-                      >
-                        <div className="flex items-start gap-2">
-                          <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-600" />
-                          <p className="text-detective-sm text-yellow-800">
-                            {currentScenario.contextualHint}
-                          </p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Navigation & Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-detective-border pt-6">
-            <div className="flex gap-2">
-              <DetectiveButton
-                variant="secondary"
-                size="md"
-                onClick={handlePrevious}
-                disabled={currentScenarioIndex === 0}
-              >
-                ← Anterior
-              </DetectiveButton>
-              {currentScenarioIndex < exercise.scenarios.length - 1 && (
-                <DetectiveButton variant="secondary" size="md" onClick={handleNext}>
-                  Siguiente →
-                </DetectiveButton>
-              )}
-            </div>
-
-            <div className="flex gap-2">
-              {onExit && (
-                <DetectiveButton variant="secondary" size="md" onClick={onExit}>
-                  Salir
-                </DetectiveButton>
-              )}
-              {showResults && (
-                <DetectiveButton variant="blue" size="md" onClick={handleReset}>
-                  Intentar de Nuevo
-                </DetectiveButton>
-              )}
-            </div>
+        }
+      >
+        {/* Objective */}
+        {exercise.description && (
+          <div className="rounded-lg border border-detective-border bg-white/95 p-4 shadow-sm mb-6">
+            <p className="text-detective-sm font-medium text-detective-text">Objetivo:</p>
+            <p className="text-detective-base text-detective-text">{exercise.description}</p>
           </div>
-        </motion.div>
-      </DetectiveCard>
+        )}
+
+        {/* Scenario Content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentScenario.id}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
+          >
+            {/* Context */}
+            <div className="rounded-detective border-l-4 border-detective-blue bg-blue-50 p-4">
+              <h3 className="mb-2 text-detective-base font-semibold text-detective-blue">
+                Contexto Historico
+              </h3>
+              <p className="text-detective-sm text-detective-text">{currentScenario.context}</p>
+            </div>
+
+            {/* Beginning of narrative */}
+            <div className="rounded-detective border-2 border-purple-200 bg-purple-50 p-6">
+              <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
+                Inicio de la Historia
+              </h3>
+              <p className="text-detective-base italic leading-relaxed text-detective-text">
+                "{currentScenario.beginning}"
+              </p>
+            </div>
+
+            {/* Question */}
+            <div className="py-4 text-center">
+              <h3 className="text-detective-xl font-bold text-detective-orange">
+                {currentScenario.question}
+              </h3>
+            </div>
+
+            {/* Prediction Options */}
+            <div className="space-y-4">
+              {currentScenario.predictions.map((prediction, index) => (
+                <motion.button
+                  key={prediction.id}
+                  onClick={() => handleSelectPrediction(prediction.id)}
+                  disabled={showResults}
+                  whileHover={!showResults ? { scale: 1.02 } : {}}
+                  whileTap={!showResults ? { scale: 0.98 } : {}}
+                  className={`w-full rounded-detective border-2 p-4 text-left transition-all ${getOptionStyle(
+                    prediction,
+                  )} ${!showResults ? 'cursor-pointer' : 'cursor-default'}`}
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-detective-orange/20 text-detective-sm font-bold text-detective-orange">
+                      {String.fromCharCode(65 + index)}
+                    </span>
+                    <div className="flex-1">
+                      <p className="text-detective-base text-detective-text">{prediction.text}</p>
+                      {showResults && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          className="mt-3 border-t border-detective-border pt-3"
+                        >
+                          <p className="text-detective-sm text-detective-text-secondary">
+                            {prediction.explanation}
+                          </p>
+                        </motion.div>
+                      )}
+                    </div>
+                    {getOptionIcon(prediction)}
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+
+            {/* Contextual Hint */}
+            {currentScenario.contextualHint && (
+              <div className="mt-6">
+                <DetectiveButton
+                  variant="secondary"
+                  size="sm"
+                  icon={<Lightbulb className="h-4 w-4" />}
+                  onClick={toggleHint}
+                >
+                  {showHint ? 'Ocultar Pista' : 'Ver Pista Contextual'}
+                </DetectiveButton>
+
+                <AnimatePresence>
+                  {showHint && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mt-3 rounded-detective border-l-4 border-detective-gold bg-yellow-50 p-4"
+                    >
+                      <div className="flex items-start gap-2">
+                        <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-600" />
+                        <p className="text-detective-sm text-yellow-800">
+                          {currentScenario.contextualHint}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Navigation & Actions */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-detective-border pt-6 mt-6">
+          <div className="flex gap-2">
+            <DetectiveButton
+              variant="secondary"
+              size="md"
+              onClick={handlePrevious}
+              disabled={currentScenarioIndex === 0}
+            >
+              ← Anterior
+            </DetectiveButton>
+            {currentScenarioIndex < exercise.scenarios.length - 1 && (
+              <DetectiveButton variant="secondary" size="md" onClick={handleNext}>
+                Siguiente →
+              </DetectiveButton>
+            )}
+          </div>
+
+          <div className="flex gap-2">
+            {onExit && (
+              <DetectiveButton variant="secondary" size="md" onClick={onExit}>
+                Salir
+              </DetectiveButton>
+            )}
+            {showResults && (
+              <DetectiveButton variant="blue" size="md" onClick={handleReset}>
+                Intentar de Nuevo
+              </DetectiveButton>
+            )}
+          </div>
+        </div>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

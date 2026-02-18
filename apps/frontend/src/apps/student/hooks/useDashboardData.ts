@@ -15,6 +15,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { MAYA_RANKS, type MayaRank } from '@/shared/constants/ranks.constants';
 
 // ============================================================================
 // Query Keys Factory
@@ -34,20 +35,14 @@ export const dashboardKeys = {
 // ============================================================================
 
 function getRankIcon(rank: string): string {
-  const icons: Record<string, string> = {
-    Nacom: '🔍',
-    Ajaw: '🏹',
-    "Ah K'in": '🗡️',
-    'Halach Uinic': '⚔️',
-    "K'uk'ulkan": '👑',
-  };
-  return icons[rank] || '🔍';
+  return MAYA_RANKS[rank as MayaRank]?.icon || '🌱';
 }
 
 /**
- * Multiplicadores de rango Maya
- * SINCRONIZADO con backend (ranks.service.ts) y database (award_ml_coins.sql)
- * @see docs/01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-003-rangos-maya.md
+ * Multiplicadores de ML Coins por rango Maya
+ * SINCRONIZADO con backend rank-multiplier.service.ts (ML Coins multipliers)
+ * NOTA: Estos NO son los xp_multiplier de la DB (1.0-1.25), sino los multiplicadores
+ * de ML Coins del backend (1.0-2.0). Ver ranks.constants.ts para xpMultiplier.
  */
 function getRankMultiplier(rank: string): number {
   const multipliers: Record<string, number> = {
@@ -348,7 +343,7 @@ export function useDashboardData() {
     currentXP: 0,
     nextRankXP: 500,
     multiplier: 1.0,
-    rankIcon: '🏹',
+    rankIcon: '🌱',
     progress: 0,
   };
 

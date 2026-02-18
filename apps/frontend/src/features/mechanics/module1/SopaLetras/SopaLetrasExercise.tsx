@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Check, X } from 'lucide-react';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { Check, X, Search } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { SopaLetrasGrid } from './SopaLetrasGrid';
 import { WordList } from './WordList';
 import { SopaLetrasData, WordPosition } from './sopaLetrasTypes';
@@ -387,9 +387,35 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
       .toUpperCase();
   }, [selectedCells, exercise.content.grid]);
 
+  const foundWordsCount = words.filter((w) => w.found).length;
+  const totalWords = words.length;
+  const progress = totalWords > 0 ? (foundWordsCount / totalWords) * 100 : 0;
+
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Sopa de Letras'}
+        description="Encuentra las palabras ocultas en la sopa de letras. Toca las letras para formar una palabra."
+        icon={<Search className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+        headerChildren={
+          <div className="mt-4">
+            <div className="mb-2 flex justify-between text-sm">
+              <span>
+                Palabras: {foundWordsCount}/{totalWords}
+              </span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-white/30">
+              <div
+                className="h-full rounded-full bg-white transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        }
+      >
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <SopaLetrasGrid
@@ -435,11 +461,11 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
             {selectedCells.length === 0 && (
               <div className="mt-4 text-center text-sm text-detective-text-secondary">
                 <p>
-                  📱 Toca las letras para formar una palabra, luego presiona{' '}
+                  Toca las letras para formar una palabra, luego presiona{' '}
                   <strong>Validar Palabra</strong>
                 </p>
                 <p className="mt-1 text-xs">
-                  (En PC también puedes usar Enter para validar o Escape para cancelar)
+                  (En PC tambien puedes usar Enter para validar o Escape para cancelar)
                 </p>
               </div>
             )}
@@ -448,7 +474,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
             <WordList words={words} />
           </div>
         </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {feedback && (
         <FeedbackModal

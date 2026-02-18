@@ -22,9 +22,9 @@ CREATE TABLE gamification_system.classroom_missions (
     classroom_id UUID NOT NULL
         REFERENCES social_features.classrooms(id) ON DELETE CASCADE,
 
-    -- Mission template reference (not FK to missions table since that's per-user)
-    -- Instead, we reference the template_id that missions use
-    mission_template_id TEXT NOT NULL,
+    -- Mission template reference (FK to mission_templates — REC-009)
+    mission_template_id UUID NOT NULL
+        REFERENCES gamification_system.mission_templates(id),
 
     -- Assignment tracking
     assigned_by UUID NOT NULL

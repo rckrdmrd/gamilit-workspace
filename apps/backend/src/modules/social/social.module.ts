@@ -78,6 +78,15 @@ import * as controllers from './controllers';
         entities.GuildMember, // ✨ NUEVO - Sprint 5 (EAI-003-EXT - Guilds)
         entities.GuildJoinRequest, // ✨ NUEVO - Sprint 5 (EAI-003-EXT - Guilds)
         entities.GuildMission, // ✨ NUEVO - Sprint 5 (EAI-003-EXT - Guilds)
+        entities.DiscussionThread, // FIX P2: Missing forFeature (DB-100)
+        entities.TeacherClassroom, // FIX P2: Missing forFeature (BE-088)
+        entities.ChallengeResult, // FIX P2: Missing forFeature (P1-002)
+        entities.SocialInteraction, // FIX P2: Missing forFeature (TASK-022)
+        entities.TeamVsTeamChallenge, // FIX P2: Missing forFeature (H-039)
+        entities.GuildEmblem, // FIX P2: Missing forFeature (H-017)
+        entities.GuildMissionContribution, // FIX P2: Missing forFeature (H-017)
+        entities.UserBlock, // FIX P2: Missing forFeature (H-031)
+        entities.UserReport, // FIX P2: Missing forFeature (H-031)
       ],
       'social',
     ),

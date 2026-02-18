@@ -42,21 +42,21 @@ teacher/
 ├── layouts/
 │   └── TeacherLayout.tsx       # Layout principal con navegacion
 ├── pages/                      # Paginas del portal (19 paginas)
-│   ├── TeacherDashboardPage.tsx
-│   ├── TeacherClassesPage.tsx
-│   ├── TeacherStudentsPage.tsx
-│   ├── TeacherAssignmentsPage.tsx
-│   ├── TeacherAlertsPage.tsx
-│   ├── TeacherAnalyticsPage.tsx
-│   ├── TeacherGamificationPage.tsx
-│   ├── TeacherReportsPage.tsx
-│   ├── TeacherCommunicationPage.tsx
-│   ├── TeacherContentPage.tsx
-│   ├── TeacherProgressPage.tsx
-│   ├── TeacherMonitoringPage.tsx
-│   ├── TeacherExerciseResponsesPage.tsx
-│   ├── TeacherResourcesPage.tsx
-│   └── TeacherSettingsPage.tsx     # 🆕 Configuración del profesor
+│   ├── TeacherDashboard.tsx
+│   ├── TeacherClasses.tsx
+│   ├── TeacherStudents.tsx
+│   ├── TeacherAssignments.tsx
+│   ├── TeacherAlerts.tsx
+│   ├── TeacherAnalytics.tsx
+│   ├── TeacherGamification.tsx
+│   ├── TeacherReports.tsx
+│   ├── TeacherCommunication.tsx
+│   ├── TeacherContent.tsx
+│   ├── TeacherProgress.tsx
+│   ├── TeacherMonitoring.tsx
+│   ├── TeacherExerciseResponses.tsx
+│   ├── TeacherResources.tsx
+│   └── TeacherSettings.tsx     # 🆕 Configuración del profesor
 ├── components/                 # Componentes organizados por dominio
 │   ├── dashboard/              # Componentes del dashboard
 │   ├── assignments/            # Gestion de tareas
@@ -65,9 +65,17 @@ teacher/
 │   ├── progress/               # Progreso de estudiantes
 │   ├── monitoring/             # Monitoreo en tiempo real
 │   ├── reports/                # Generacion de reportes
+│   │   └── RecentReportsTable.tsx   # 🆕 Componente extraido Phase 7
 │   ├── responses/              # Respuestas de ejercicios
 │   ├── communication/          # Mensajes y anuncios
 │   ├── collaboration/          # Compartir recursos
+│   ├── settings/               # 🆕 Componentes de configuracion (Phase 7)
+│   │   ├── SaveButton.tsx
+│   │   ├── ProfileSettingsSection.tsx
+│   │   ├── TeachingPreferencesSection.tsx
+│   │   ├── NotificationsSettingsSection.tsx
+│   │   ├── PrivacySettingsSection.tsx
+│   │   └── index.ts
 │   └── index.ts
 ├── hooks/                      # Custom hooks (17 hooks)
 │   ├── useTeacherDashboard.ts
@@ -783,6 +791,7 @@ if (process.env.NODE_ENV === 'development') {
 
 | Version | Fecha | Cambios |
 |---------|-------|---------|
+| 1.3.0 | 2026-02-18 | ADR-030 implementation: Removed "Page" suffix from all page files (TeacherAlertsPage → TeacherAlerts, etc.). Phase 7 SRP component extractions: settings/ directory with 5 components (SaveButton, ProfileSettingsSection, TeachingPreferencesSection, NotificationsSettingsSection, PrivacySettingsSection); RecentReportsTable extracted to reports/ |
 | 1.2.0 | 2025-12-26 | Agregada carpeta constants/ (alertTypes.ts, manualReviewExercises.ts), referencias actualizadas |
 | 1.1.0 | 2025-11-29 | Agregada TeacherSettingsPage (/teacher/settings) |
 | 1.0.0 | 2025-11-29 | Creacion inicial |

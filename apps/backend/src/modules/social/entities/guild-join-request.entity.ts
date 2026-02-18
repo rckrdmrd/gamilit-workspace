@@ -19,7 +19,7 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 import { Guild } from './guild.entity';
 
 /**
@@ -32,7 +32,7 @@ export enum GuildJoinRequestStatus {
   CANCELLED = 'cancelled',
 }
 
-@Entity({ schema: DB_SCHEMAS.SOCIAL, name: 'guild_join_requests' })
+@Entity({ schema: DB_SCHEMAS.SOCIAL, name: DB_TABLES.SOCIAL.GUILD_JOIN_REQUESTS })
 @Index('idx_guild_join_requests_guild', ['guildId'])
 @Index('idx_guild_join_requests_requester', ['requesterId'])
 @Index('idx_guild_join_requests_status', ['status'])

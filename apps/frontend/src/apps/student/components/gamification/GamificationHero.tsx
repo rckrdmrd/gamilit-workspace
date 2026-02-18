@@ -8,6 +8,7 @@
 import React from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
 import { Coins, Zap, TrendingUp, Award, Star } from 'lucide-react';
+import { MAYA_RANKS as MAYA_RANKS_SSOT, type MayaRank } from '@/shared/constants/ranks.constants';
 import type { RankData } from '../../hooks/useDashboardData';
 
 interface GamificationHeroProps {
@@ -23,38 +24,27 @@ interface GamificationHeroProps {
   nextRankXP: number;
 }
 
-const MAYA_RANKS = {
-  Ajaw: {
-    name: 'Ajaw - Señor',
-    icon: '🏹',
-    color: 'from-gray-600 to-gray-800',
-    level: 1,
-  },
-  Nacom: {
-    name: 'Nacom - Capitán de Guerra',
-    icon: '🔍',
-    color: 'from-blue-600 to-blue-800',
-    level: 2,
-  },
-  "Ah K'in": {
-    name: "Ah K'in - Sacerdote del Sol",
-    icon: '🗡️',
-    color: 'from-purple-600 to-purple-800',
-    level: 3,
-  },
-  'Halach Uinic': {
-    name: 'Halach Uinic - Hombre Verdadero',
-    icon: '⚔️',
-    color: 'from-orange-600 to-red-700',
-    level: 4,
-  },
-  "K'uk'ulkan": {
-    name: "K'uk'ulkan - Serpiente Emplumada",
-    icon: '👑',
-    color: 'from-yellow-500 to-orange-600',
-    level: 5,
-  },
+/** Local gradient mapping per rank (Tailwind classes, not in SSOT) */
+const RANK_GRADIENT_MAP: Record<string, string> = {
+  '#8B4513': 'from-gray-600 to-gray-800',
+  '#CD7F32': 'from-blue-600 to-blue-800',
+  '#C0C0C0': 'from-purple-600 to-purple-800',
+  '#FFD700': 'from-orange-600 to-red-700',
+  '#9B59B6': 'from-yellow-500 to-orange-600',
 };
+
+function getRankDisplay(rankName: string) {
+  const ssot = MAYA_RANKS_SSOT[rankName as MayaRank];
+  if (!ssot) {
+    return { name: rankName, icon: '🌱', color: 'from-gray-600 to-gray-800', level: 1 };
+  }
+  return {
+    name: `${ssot.name} - ${ssot.description.split(' - ')[1] || ssot.description}`,
+    icon: ssot.icon,
+    color: RANK_GRADIENT_MAP[ssot.color] || 'from-gray-600 to-gray-800',
+    level: ssot.level,
+  };
+}
 
 export function GamificationHero({
   rankData,
@@ -62,7 +52,7 @@ export function GamificationHero({
   currentXP,
   nextRankXP,
 }: GamificationHeroProps) {
-  const rankInfo = MAYA_RANKS[rankData.currentRank as keyof typeof MAYA_RANKS] || MAYA_RANKS.Nacom;
+  const rankInfo = getRankDisplay(rankData.currentRank);
   const progressPercent = (currentXP / nextRankXP) * 100;
   const xpRemaining = nextRankXP - currentXP;
 

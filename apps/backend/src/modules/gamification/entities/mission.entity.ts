@@ -92,7 +92,7 @@ export class Mission {
   @Column({ type: 'uuid' })
     user_id!: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'uuid' })
     template_id!: string;
 
   @Column({ type: 'text' })

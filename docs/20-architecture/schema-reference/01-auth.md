@@ -1,5 +1,7 @@
 # Schema 1: auth (8 tablas, 24 RLS policies)
 
+> **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.
+
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT
 
 ---
@@ -27,6 +29,8 @@ Usuarios del sistema en todos los roles.
 **Indices:** `idx_users_email_tenant` UNIQUE (email, tenant_id), `idx_users_role`, `idx_users_active`
 **Entity:** `User`
 **RLS:** 4 policies (SELECT, INSERT, UPDATE, DELETE por tenant_id)
+
+> **Nota sobre auth.users:** La tabla `auth.users` en produccion contiene ~30+ columnas (incluyendo `encrypted_password`, `raw_app_meta_data`, `raw_user_meta_data`, `email_confirmed_at`, `last_sign_in_at`, entre otros) siguiendo la estructura Supabase/GoTrue. Este documento muestra solo las columnas mas relevantes para el dominio gamilit.
 
 ---
 

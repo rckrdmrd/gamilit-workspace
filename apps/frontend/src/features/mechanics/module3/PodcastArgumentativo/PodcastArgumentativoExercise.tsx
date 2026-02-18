@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mic, Square, FileAudio, AlertCircle } from 'lucide-react';
-import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@/shared/components/exercises/UnifiedExerciseLayout';
 import { fetchPodcastExercise, analyzeRecording } from './podcastArgumentativoAPI';
 import type { PodcastExercise, Recording } from './podcastArgumentativoTypes';
 import type { ArgumentAnalysis } from '../../shared/aiTypes';
+import type { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { uploadMedia } from '@/shared/api/mediaApi';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useInvalidateDashboard } from '@/shared/hooks';
@@ -103,6 +105,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
   });
   const [analyzing, setAnalyzing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [analysis, setAnalysis] = useState<ArgumentAnalysis | null>(null);
   const [currentScore, setCurrentScore] = useState(initialData?.currentScore || 0);
   const [startTime] = useState(new Date());
@@ -110,7 +113,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
   const [timeSpent, setTimeSpent] = useState(0);
   const [scriptText, setScriptText] = useState('');
   const [selectedTopic, setSelectedTopic] = useState<{ id: string; text: string } | null>(null);
-  const [feedback, setFeedback] = useState<any>(null);
+  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
 
   useEffect(() => {
     loadExercise();
@@ -223,10 +226,18 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       }
 
       if (!transcriptionText) {
-        // Ultimate fallback: mock transcription (for testing/demo only)
-        console.log('[PodcastArgumentativo] Using mock transcription (speech-to-text not available)');
-        transcriptionText =
-          'Marie Curie fue una cientifica extraordinaria que supero innumerables obstaculos. Su trabajo con elementos radiactivos revoluciono la fisica y la medicina. A pesar de enfrentar discriminacion de genero, persevero y gano dos Premios Nobel. Su legado inspira a cientificas de todo el mundo.';
+        // No transcription and no manual script — show validation error
+        transcriptionText = scriptText; // Try manual script as last resort
+      }
+
+      if (!transcriptionText) {
+        setFeedback({
+          type: 'error',
+          title: 'Sin texto para analizar',
+          message: 'No se pudo obtener la transcripcion del audio. Por favor escribe tu guion manualmente en el campo de texto antes de analizar.',
+        });
+        setShowFeedback(true);
+        return;
       }
 
       const result = await analyzeRecording(transcriptionText);
@@ -282,13 +293,44 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
     }
 
     setIsSubmitting(true);
+    setIsUploading(true);
 
     try {
+      // Upload audio blob to get a server URL (instead of sending blob: URL)
+      let serverAudioUrl: string | undefined = undefined;
+      if (audioBlob) {
+        try {
+          const audioFile = new File(
+            [audioBlob],
+            `podcast-${exerciseId}-${Date.now()}.webm`,
+            { type: audioBlob.type || 'audio/webm' },
+          );
+          const uploadResult = await uploadMedia(audioFile, {
+            type: 'audio',
+            exerciseId,
+          });
+          serverAudioUrl = uploadResult.url;
+        } catch (uploadError) {
+          console.error('[PodcastArgumentativo] Audio upload failed:', uploadError);
+          setFeedback({
+            type: 'error',
+            title: 'Error al Subir Audio',
+            message: 'No se pudo subir el archivo de audio. Por favor intenta nuevamente.',
+          });
+          setShowFeedback(true);
+          return;
+        } finally {
+          setIsUploading(false);
+        }
+      } else {
+        setIsUploading(false);
+      }
+
       // Preparar respuestas según el formato PodcastArgumentativoAnswers
       const answers = {
         topicId: selectedTopic?.id || 'topic-1',
         script: finalScript,
-        audioUrl: hookAudioUrl || undefined,
+        audioUrl: serverAudioUrl || undefined,
       };
 
       // Enviar al backend
@@ -400,20 +442,18 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-            <div className="mb-2 flex items-center gap-3">
-              <FileAudio className="h-8 w-8" />
-              <h2 className="text-detective-2xl font-bold">Podcast Argumentativo</h2>
-            </div>
-            <p className="mb-4 text-detective-base opacity-90">{exercise.topic}</p>
-            <div className="rounded-lg bg-white/20 p-3 backdrop-blur-sm">
-              <p>{exercise.prompt}</p>
-            </div>
+      <UnifiedExerciseLayout
+        title="Podcast Argumentativo"
+        description={exercise.topic}
+        icon={<FileAudio className="h-8 w-8" />}
+        headerChildren={
+          <div className="rounded-lg bg-white/20 p-3 backdrop-blur-sm mt-3">
+            <p>{exercise.prompt}</p>
           </div>
-
+        }
+        cardPadding="lg"
+      >
+        <div className="space-y-6">
           {/* Recording Controls */}
           <div className="mt-6 rounded-detective border-2 border-detective-border-light bg-white p-6">
             <div className="mb-6 text-center">
@@ -570,6 +610,25 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
               </div>
             )}
 
+            {/* Manual script textarea — prominent when Speech API is unavailable */}
+            {!isSpeechSupported && (
+              <div className="mt-4 rounded-lg border-2 border-detective-blue/30 bg-blue-50 p-4">
+                <h4 className="mb-2 font-semibold text-detective-blue">
+                  Tu navegador no soporta reconocimiento de voz. Escribe tu guion manualmente:
+                </h4>
+                <textarea
+                  value={scriptText}
+                  onChange={(e) => setScriptText(e.target.value)}
+                  placeholder="Escribe aqui el guion de tu podcast argumentativo (minimo 200 caracteres)..."
+                  className="w-full resize-none rounded-lg border-2 border-detective-border p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
+                  rows={6}
+                />
+                <p className="mt-1 text-right text-detective-xs text-detective-text-secondary">
+                  {scriptText.length}/200 caracteres minimo
+                </p>
+              </div>
+            )}
+
             {recording.audioBlob && (
               <div className="space-y-4">
                 <div className="flex items-center justify-center gap-4 rounded-lg bg-detective-bg p-4">
@@ -672,14 +731,14 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
             <DetectiveButton
               variant="primary"
               onClick={handleComplete}
-              disabled={!analysis || isSubmitting}
-              loading={isSubmitting}
+              disabled={!analysis || isSubmitting || isUploading}
+              loading={isSubmitting || isUploading}
             >
-              {isSubmitting ? 'Enviando...' : 'Completar Ejercicio'}
+              {isUploading ? 'Subiendo audio...' : isSubmitting ? 'Enviando...' : 'Completar Ejercicio'}
             </DetectiveButton>
           </div>
         </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

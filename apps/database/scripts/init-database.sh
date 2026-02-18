@@ -94,12 +94,20 @@ FORCE_MODE=false
 DB_PASSWORD=""
 USE_VAULT=false
 USE_EXPORTED_PASSWORD=false
+SUDO_PASS="${GAMILIT_SUDO_PASSWORD:-}"
 
 # Variables de ambiente (cargadas desde config/*.conf)
 ENV_DB_HOST=""
 ENV_DB_PORT=""
 ENV_SEEDS_DIR=""
 ENV_LOAD_DEMO_DATA=""
+ENV_LOAD_DEMO_USERS=""
+ENV_LOAD_DEMO_EXERCISES=""
+ENV_LOAD_DEMO_GAMIFICATION=""
+ENV_FAIL_ON_SEED_ERROR=""
+ENV_FAIL_ON_MISSING_SEED=""
+ENV_ENFORCE_BUSINESS_INVARIANTS=""
+ENV_ALLOW_MULTI_TENANT=""
 
 # ============================================================================
 # FUNCIONES AUXILIARES
@@ -329,13 +337,12 @@ check_prerequisites() {
 
     # Verificar conexión PostgreSQL
     if command -v sudo &> /dev/null; then
-        if printf '2320\n' | sudo -S -u postgres psql -c "SELECT 1" &> /dev/null 2>&1; then
+        if [ -n "$SUDO_PASS" ] && printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -c "SELECT 1" &> /dev/null 2>&1; then
             USE_SUDO=true
-            SUDO_PASS="2320"
             print_success "Conectado a PostgreSQL (sudo)"
             # Validar sudo una sola vez para evitar prompts en loops
             if [ -n "$SUDO_PASS" ]; then
-                printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
+                printf '%s\n' "$SUDO_PASS" | sudo -S -v > /dev/null 2>&1 || true
             fi
         elif sudo -n -u postgres psql -c "SELECT 1" &> /dev/null 2>&1; then
             USE_SUDO=true
@@ -363,7 +370,7 @@ execute_as_postgres() {
     local sql="$1"
     if [ "$USE_SUDO" = true ]; then
         if [ -n "$SUDO_PASS" ]; then
-            printf "$SUDO_PASS\n" | sudo -S -u postgres psql -c "$sql" 2>&1
+            printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -c "$sql" 2>&1
         else
             sudo -u postgres psql -c "$sql" 2>&1
         fi
@@ -376,7 +383,7 @@ query_as_postgres() {
     local sql="$1"
     if [ "$USE_SUDO" = true ]; then
         if [ -n "$SUDO_PASS" ]; then
-            printf "$SUDO_PASS\n" | sudo -S -u postgres psql -t -c "$sql" 2>/dev/null | xargs
+            printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -t -c "$sql" 2>/dev/null | xargs
         else
             sudo -u postgres psql -t -c "$sql" 2>/dev/null | xargs
         fi
@@ -542,7 +549,7 @@ execute_ddl_tables() {
     if [ $enum_count -gt 0 ]; then
         if [ "$USE_SUDO" = true ]; then
             if [ -n "$SUDO_PASS" ]; then
-                printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
+                printf '%s\n' "$SUDO_PASS" | sudo -S -v > /dev/null 2>&1 || true
             fi
             if cat "$temp_enums" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1; then
                 print_success "$enum_count ENUMs cargados"
@@ -589,7 +596,7 @@ execute_ddl_tables() {
     if [ "$USE_SUDO" = true ]; then
         # Refrescar credenciales sudo si tenemos password
         if [ -n "$SUDO_PASS" ]; then
-            printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
+            printf '%s\n' "$SUDO_PASS" | sudo -S -v > /dev/null 2>&1 || true
         fi
         # Ejecutar con cat | psql para evitar problemas de permisos de archivo
         if cat "$temp_batch" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1; then
@@ -630,7 +637,7 @@ execute_ddl_tables() {
     if [ $cross_count -gt 0 ]; then
         if [ "$USE_SUDO" = true ]; then
             if [ -n "$SUDO_PASS" ]; then
-                printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
+                printf '%s\n' "$SUDO_PASS" | sudo -S -v > /dev/null 2>&1 || true
             fi
             cat "$temp_cross" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1
         else
@@ -673,7 +680,7 @@ execute_ddl_tables() {
         if [ "$USE_SUDO" = true ]; then
             # Refrescar credenciales sudo si tenemos password
             if [ -n "$SUDO_PASS" ]; then
-                printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
+                printf '%s\n' "$SUDO_PASS" | sudo -S -v > /dev/null 2>&1 || true
             fi
             cat "$perms_file" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1
         else
@@ -994,6 +1001,7 @@ execute_rls_policies() {
         "$DDL_DIR/07-enable-rls.sql"
         "$DDL_DIR/07b-enable-rls-phase2.sql"
         "$DDL_DIR/07c-enable-rls-phase3.sql"
+        "$DDL_DIR/07d-rls-policies-pending-tables.sql"
     )
     local rls_global_count=0
     for rls_file in "${rls_enable_files[@]}"; do
@@ -1029,158 +1037,284 @@ load_seeds() {
 
     local loaded=0
     local failed=0
+    local missing=0
 
-    # Array con orden específico respetando dependencias
-    # ACTUALIZADO: 2025-12-26 - Correcciones P0+P1 (Análisis Requirements-Analyst)
-    # - Eliminados: 02-test-users.sql (conflicto UUIDs), 04-profiles-testing.sql, 05-profiles-demo.sql (no existen)
-    # - Agregados: 00-schools-default.sql, seeds gamification (05-13), educational_content (05-12), system_configuration adicionales
-    local seed_files=(
+    # path|scope|category
+    # scope: all|dev|prod
+    # category: core|demo_users|demo_exercises|demo_gamification|demo_data
+    local seed_entries=(
         # ==========================================
         # FASE 1: Auth Base
         # ==========================================
-        "$SEEDS_DIR/auth_management/01-tenants.sql"
-        "$SEEDS_DIR/auth_management/02-auth_providers.sql"
-        "$SEEDS_DIR/auth/01-demo-users.sql"
-        "$SEEDS_DIR/auth/01b-demo-students.sql"             # DEV: 4 demo users (@demo.glit.edu.mx)
-        "$SEEDS_DIR/auth/02-production-users.sql"           # PROD: Usuarios reales (13)
-        # ELIMINADO: auth/02-test-users.sql - Conflicto UUIDs con 01-demo-users.sql
+        "auth_management/01-tenants.sql|all|core"
+        "auth_management/02-tenants-production.sql|all|core"
+        "auth_management/02-auth_providers.sql|all|core"
+        "auth/01-demo-users.sql|all|demo_users"
+        "auth/01b-demo-students.sql|dev|demo_users"
+        "auth/02-production-users.sql|all|core"
 
         # ==========================================
         # FASE 2: Profiles
         # ==========================================
-        "$SEEDS_DIR/auth_management/03-profiles.sql"
-        "$SEEDS_DIR/auth_management/04-profiles-complete.sql"   # Reemplaza 04-profiles-testing y 05-profiles-demo
-        "$SEEDS_DIR/auth_management/06-profiles-production.sql"  # PROD: Profiles reales (13)
-        "$SEEDS_DIR/auth_management/04-user_roles.sql"
-        "$SEEDS_DIR/auth_management/05-user_preferences.sql"
-        "$SEEDS_DIR/auth_management/06-auth_attempts.sql"
-        "$SEEDS_DIR/auth_management/07-security_events.sql"
+        "auth_management/03-profiles.sql|dev|demo_data"
+        "auth_management/04-profiles-complete.sql|all|core"
+        "auth_management/06-profiles-production.sql|all|core"
+        "auth_management/07-profiles-production-additional.sql|all|core"
+        "auth_management/04-user_roles.sql|dev|demo_data"
+        "auth_management/07-user_roles.sql|all|core"
+        "auth_management/05-user_preferences.sql|dev|demo_data"
+        "auth_management/06-auth_attempts.sql|dev|demo_data"
+        "auth_management/07-security_events.sql|dev|demo_data"
 
         # ==========================================
-        # FASE 2.1: Notification Preferences (después de profiles) - EXT-003
+        # FASE 2.1: Notification Preferences
         # ==========================================
-        "$SEEDS_DIR/notifications/02-notification_preferences_defaults.sql"  # EXT-003: defaults por tipo (2026-01-04)
-        "$SEEDS_DIR/notifications/02-user_devices_dev.sql"  # EXT-003: dispositivos testing (solo dev, 2026-01-04)
+        "notifications/02-notification_preferences_defaults.sql|all|core"
+        "notifications/02-user_devices_dev.sql|dev|demo_data"
 
         # ==========================================
         # FASE 3: System Configuration & Notifications
         # ==========================================
-        "$SEEDS_DIR/system_configuration/01-system_settings.sql"
-        "$SEEDS_DIR/system_configuration/01-feature_flags_seeds.sql"
-        "$SEEDS_DIR/system_configuration/02-feature_flags.sql"
-        "$SEEDS_DIR/system_configuration/02-gamification_parameters_seeds.sql"
-        "$SEEDS_DIR/system_configuration/03-notification_settings_global.sql"
-        "$SEEDS_DIR/system_configuration/04-rate_limits.sql"
-        "$SEEDS_DIR/notifications/01-notification_templates.sql"  # EXT-003: 17 templates
-        # NOTA: notification_preferences y user_devices se cargan después de profiles (FASE 2.1)
+        "system_configuration/01-system_settings.sql|all|core"
+        "system_configuration/01-feature_flags_seeds.sql|all|core"
+        "system_configuration/02-feature_flags.sql|dev|demo_data"
+        "system_configuration/02-gamification_parameters_seeds.sql|all|core"
+        "system_configuration/03-notification_settings_global.sql|all|core"
+        "system_configuration/04-rate_limits.sql|all|core"
+        "notifications/01-notification_templates.sql|all|core"
 
         # ==========================================
         # FASE 4: Gamification Base
         # ==========================================
-        "$SEEDS_DIR/gamification_system/01-achievement_categories.sql"
-        "$SEEDS_DIR/gamification_system/02-leaderboard_metadata.sql"
-        "$SEEDS_DIR/gamification_system/03-maya_ranks.sql"
-        "$SEEDS_DIR/gamification_system/04-achievements.sql"
+        "gamification_system/01-achievement_categories.sql|all|core"
+        "gamification_system/02-leaderboard_metadata.sql|all|core"
+        "gamification_system/03-maya_ranks.sql|all|core"
+        "gamification_system/04-achievements.sql|all|core"
 
         # ==========================================
         # FASE 5: Gamification Avanzado
-        # NOTA: 04-initialize_user_gamification.sql DEPRECADO (2025-12-28)
-        #       El trigger initialize_user_stats hace esta función automáticamente
         # ==========================================
-        "$SEEDS_DIR/gamification_system/05-user_stats.sql"
-        "$SEEDS_DIR/gamification_system/06-user_ranks.sql"
-        "$SEEDS_DIR/gamification_system/07-ml_coins_transactions.sql"
-        "$SEEDS_DIR/gamification_system/08-user_achievements.sql"
-        "$SEEDS_DIR/gamification_system/09-comodines_inventory.sql"
-        "$SEEDS_DIR/gamification_system/10-mission_templates.sql"
-        "$SEEDS_DIR/gamification_system/12-shop_categories.sql"
-        "$SEEDS_DIR/gamification_system/13-shop_items.sql"
+        "gamification_system/05-user_stats.sql|all|core"
+        "gamification_system/06-user_ranks.sql|all|core"
+        "gamification_system/07-ml_coins_transactions.sql|all|core"
+        "gamification_system/08-user_achievements.sql|all|core"
+        "gamification_system/09-comodines_inventory.sql|all|core"
+        "gamification_system/10-mission_templates.sql|all|core"
+        "gamification_system/12-shop_categories.sql|all|core"
+        "gamification_system/13-shop_items.sql|all|core"
+        "gamification_system/14-achievements-m3-m5.sql|all|core"
+        "gamification_system/15-comodin_usage_tracking.sql|all|core"
+        "gamification_system/16-shop_items_expanded.sql|all|core"
+        "gamification_system/17-shop_items_metadata_normalization.sql|all|core"
+        "gamification_system/18-user_purchases-demo.sql|dev|demo_gamification"
+        "gamification_system/19-user_equipped_items-demo.sql|dev|demo_gamification"
+        "gamification_system/20-achievements-collection.sql|all|core"
 
         # ==========================================
         # FASE 6: Educational Content
         # ==========================================
-        "$SEEDS_DIR/educational_content/01-modules.sql"
-        "$SEEDS_DIR/educational_content/02-exercises-module1.sql"
-        "$SEEDS_DIR/educational_content/03-exercises-module2.sql"
-        "$SEEDS_DIR/educational_content/04-exercises-module3.sql"
-        "$SEEDS_DIR/educational_content/05-exercises-module4.sql"
-        "$SEEDS_DIR/educational_content/06-exercises-module5.sql"
-        "$SEEDS_DIR/educational_content/07-assessment-rubrics.sql"
-        "$SEEDS_DIR/educational_content/05-assignments.sql"
-        "$SEEDS_DIR/educational_content/08-difficulty_criteria.sql"
-        "$SEEDS_DIR/educational_content/09-exercise_mechanic_mapping.sql"
-        "$SEEDS_DIR/educational_content/10-exercise_validation_config.sql"
-        "$SEEDS_DIR/educational_content/11-module_dependencies.sql"
-        "$SEEDS_DIR/educational_content/12-taxonomies.sql"
+        "educational_content/01-modules.sql|all|core"
+        "educational_content/02-exercises-module1.sql|all|core"
+        "educational_content/03-exercises-module2.sql|all|core"
+        "educational_content/04-exercises-module3.sql|all|core"
+        "educational_content/05-exercises-module4.sql|all|core"
+        "educational_content/06-exercises-module5.sql|all|core"
+        "educational_content/07-assessment-rubrics.sql|all|core"
+        "educational_content/05-assignments.sql|all|core"
+        "educational_content/08-difficulty_criteria.sql|all|core"
+        "educational_content/09-exercise_mechanic_mapping.sql|all|core"
+        "educational_content/10-exercise_validation_config.sql|all|core"
+        "educational_content/11-exercise_validation_config_m4_m5.sql|all|core"
+        "educational_content/11-module_dependencies.sql|all|core"
+        "educational_content/12-taxonomies.sql|all|core"
+        "educational_content/13-exercise_type_rubrics.sql|all|core"
+        "educational_content/14-classroom_modules.sql|prod|core"
 
         # ==========================================
         # FASE 7: Content Management
         # ==========================================
-        "$SEEDS_DIR/content_management/01-marie-curie-bio.sql"
-        "$SEEDS_DIR/content_management/02-media-files.sql"
-        "$SEEDS_DIR/content_management/03-tags.sql"
+        "content_management/01-marie-curie-bio.sql|dev|demo_data"
+        "content_management/02-media-files.sql|dev|demo_data"
+        "content_management/03-tags.sql|all|core"
 
         # ==========================================
         # FASE 8: Social Features
         # ==========================================
-        "$SEEDS_DIR/social_features/00-schools-default.sql"    # CRITICO: Debe ir antes de 01-schools
-        "$SEEDS_DIR/social_features/01-schools.sql"
-        "$SEEDS_DIR/social_features/02-classrooms.sql"
-        "$SEEDS_DIR/social_features/03-classroom-members.sql"
-        "$SEEDS_DIR/social_features/04-teams.sql"
-        "$SEEDS_DIR/social_features/04-friendships.sql"
-        "$SEEDS_DIR/social_features/05-teacher-reports.sql"
+        "social_features/00-schools-default.sql|all|core"
+        "social_features/01-schools.sql|all|core"
+        "social_features/02-classrooms.sql|all|core"
+        "social_features/03-classroom-members.sql|all|core"
+        "social_features/04-teams.sql|all|core"
+        "social_features/04-friendships.sql|dev|demo_data"
+        "social_features/05-teacher-reports.sql|all|core"
+        "auth_management/08-assign-admin-schools.sql|all|core"
 
         # ==========================================
         # FASE 9: Progress & Audit
         # ==========================================
-        "$SEEDS_DIR/progress_tracking/01-demo-progress.sql"
-        "$SEEDS_DIR/progress_tracking/02-exercise-attempts.sql"
-        "$SEEDS_DIR/progress_tracking/03-manual-reviews.sql"
-        "$SEEDS_DIR/audit_logging/01-audit-logs.sql"
-        "$SEEDS_DIR/audit_logging/02-system-metrics.sql"
+        "progress_tracking/01-demo-progress.sql|dev|demo_exercises"
+        "progress_tracking/02-exercise-attempts.sql|dev|demo_exercises"
+        "progress_tracking/03-manual-reviews.sql|dev|demo_exercises"
+        "audit_logging/01-audit-logs.sql|dev|demo_data"
+        "audit_logging/02-system-metrics.sql|dev|demo_data"
 
         # ==========================================
         # FASE 10: Integraciones (Opcional)
         # ==========================================
-        "$SEEDS_DIR/lti_integration/01-lti_consumers.sql"
+        "lti_integration/01-lti_consumers.sql|all|core"
 
         # ==========================================
-        # FASE 11: Admin Dashboard (AUDIT-003)
+        # FASE 11: Admin Dashboard
         # ==========================================
-        "$SEEDS_DIR/admin_dashboard/01-bulk_operations.sql"
-        "$SEEDS_DIR/admin_dashboard/02-admin_reports.sql"
+        "admin_dashboard/01-bulk_operations.sql|all|core"
+        "admin_dashboard/02-admin_reports.sql|all|core"
 
         # ==========================================
-        # FASE 12: Communication (ISS-SYNC-002)
+        # FASE 12: Communication
         # ==========================================
-        "$SEEDS_DIR/communication/01-system-messages.sql"
-        "$SEEDS_DIR/communication/02-message_participants.sql"
+        "communication/01-system-messages.sql|all|core"
+        "communication/02-message_participants.sql|all|core"
     )
 
-    for seed_file in "${seed_files[@]}"; do
-        if [ -f "$seed_file" ]; then
-            local basename_file=$(basename "$seed_file")
-            if [ "$ENV_VERBOSE" = "true" ]; then
-                print_info "  $basename_file"
-            fi
+    should_load_seed_entry() {
+        local scope="$1"
+        local category="$2"
 
-            if execute_sql_file "$seed_file" 2>&1 | grep -E "^psql:.*ERROR:|^ERROR:" > /dev/null; then
-                failed=$((failed + 1))
-                print_warning "  ⚠️  Errores en $basename_file (continuando...)"
-            else
-                loaded=$((loaded + 1))
+        if [ "$scope" = "dev" ] && [ "$ENVIRONMENT" != "dev" ]; then
+            return 1
+        fi
+        if [ "$scope" = "prod" ] && [ "$ENVIRONMENT" != "prod" ]; then
+            return 1
+        fi
+
+        if [ "$category" = "demo_users" ] && [ "${ENV_LOAD_DEMO_USERS:-${ENV_LOAD_DEMO_DATA:-true}}" != "true" ]; then
+            return 1
+        fi
+        if [ "$category" = "demo_exercises" ] && [ "${ENV_LOAD_DEMO_EXERCISES:-${ENV_LOAD_DEMO_DATA:-true}}" != "true" ]; then
+            return 1
+        fi
+        if [ "$category" = "demo_gamification" ] && [ "${ENV_LOAD_DEMO_GAMIFICATION:-${ENV_LOAD_DEMO_DATA:-true}}" != "true" ]; then
+            return 1
+        fi
+        if [ "$category" = "demo_data" ] && [ "${ENV_LOAD_DEMO_DATA:-true}" != "true" ]; then
+            return 1
+        fi
+
+        return 0
+    }
+
+    for seed_entry in "${seed_entries[@]}"; do
+        IFS='|' read -r seed_rel_path seed_scope seed_category <<< "$seed_entry"
+
+        if ! should_load_seed_entry "$seed_scope" "$seed_category"; then
+            continue
+        fi
+
+        local seed_file="$SEEDS_DIR/$seed_rel_path"
+        if [ ! -f "$seed_file" ]; then
+            missing=$((missing + 1))
+            print_warning "  Seed esperado no encontrado: $seed_rel_path"
+            if [ "${ENV_FAIL_ON_MISSING_SEED:-false}" = "true" ]; then
+                print_error "Fallo por seed faltante (ENV_FAIL_ON_MISSING_SEED=true)"
+                exit 1
             fi
+            continue
+        fi
+
+        local basename_file
+        basename_file=$(basename "$seed_file")
+        if [ "$ENV_VERBOSE" = "true" ]; then
+            print_info "  $basename_file"
+        fi
+
+        if execute_sql_file "$seed_file" 2>&1 | grep -E "^psql:.*ERROR:|^ERROR:" > /dev/null; then
+            failed=$((failed + 1))
+            print_warning "  ⚠️  Errores en $basename_file"
+            if [ "${ENV_FAIL_ON_SEED_ERROR:-false}" = "true" ]; then
+                print_error "Fallo por errores de seed (ENV_FAIL_ON_SEED_ERROR=true)"
+                exit 1
+            fi
+        else
+            loaded=$((loaded + 1))
         fi
     done
 
-    if [ $failed -gt 0 ]; then
-        print_warning "$loaded seeds cargados, $failed con errores"
+    if [ $failed -gt 0 ] || [ $missing -gt 0 ]; then
+        print_warning "$loaded seeds cargados, $failed con errores, $missing faltantes"
     else
         print_success "$loaded seeds cargados exitosamente"
     fi
 
     unset PGPASSWORD
+}
+
+# ============================================================================
+# POST-SEEDS: VALIDACIONES DE INVARIANTES DE NEGOCIO
+# ============================================================================
+validate_business_invariants() {
+    if [ "${ENV_ENFORCE_BUSINESS_INVARIANTS:-true}" != "true" ]; then
+        print_warning "Validación de invariantes deshabilitada por config"
+        return
+    fi
+
+    print_step "Validando invariantes de negocio post-seed..."
+
+    local psql_cmd="sudo -u postgres psql -d $DB_NAME -tAc"
+    if [ "$USE_SUDO" != true ]; then
+        export PGPASSWORD="$DB_PASSWORD"
+        psql_cmd="psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -tAc"
+    fi
+
+    local main_tenant_count
+    local personal_tenant_count
+    local default_school_count
+    local default_classroom_count
+    local role_profile_mismatch_count
+
+    main_tenant_count=$($psql_cmd "SELECT COUNT(*) FROM auth_management.tenants WHERE slug = 'gamilit-platform' AND is_active = true;" 2>/dev/null | xargs)
+    personal_tenant_count=$($psql_cmd "SELECT COUNT(*) FROM auth_management.tenants WHERE metadata->>'personal_tenant' = 'true';" 2>/dev/null | xargs)
+    default_school_count=$($psql_cmd "SELECT COUNT(*) FROM social_features.schools WHERE code = 'GAMILIT-DEFAULT' AND is_active = true;" 2>/dev/null | xargs)
+    default_classroom_count=$($psql_cmd "SELECT COUNT(*) FROM social_features.classrooms WHERE code = 'DEFAULT' AND is_active = true;" 2>/dev/null | xargs)
+    role_profile_mismatch_count=$($psql_cmd "SELECT COUNT(*) FROM auth_management.user_roles ur JOIN auth_management.profiles p ON p.user_id = ur.user_id WHERE p.deleted_at IS NULL AND ur.tenant_id <> p.tenant_id;" 2>/dev/null | xargs)
+
+    print_info "Tenant principal activo (slug gamilit-platform): ${main_tenant_count:-0}"
+    print_info "Tenants personales activos: ${personal_tenant_count:-0}"
+    print_info "Escuela default activa (GAMILIT-DEFAULT): ${default_school_count:-0}"
+    print_info "Classroom default activo (DEFAULT): ${default_classroom_count:-0}"
+    print_info "Inconsistencias user_roles vs profiles.tenant_id: ${role_profile_mismatch_count:-0}"
+
+    local invariant_ok=true
+    if [ "${main_tenant_count:-0}" -ne 1 ]; then
+        print_error "Invariante incumplido: debe existir exactamente 1 tenant principal activo"
+        invariant_ok=false
+    fi
+    if [ "${ENV_ALLOW_MULTI_TENANT:-false}" != "true" ] && [ "${personal_tenant_count:-0}" -ne 0 ]; then
+        print_error "Invariante incumplido: no deben existir tenants personales activos"
+        invariant_ok=false
+    fi
+    if [ "${default_school_count:-0}" -ne 1 ]; then
+        print_error "Invariante incumplido: debe existir exactamente 1 escuela default activa"
+        invariant_ok=false
+    fi
+    if [ "${default_classroom_count:-0}" -ne 1 ]; then
+        print_error "Invariante incumplido: debe existir exactamente 1 classroom default activo"
+        invariant_ok=false
+    fi
+    if [ "${role_profile_mismatch_count:-0}" -ne 0 ]; then
+        print_error "Invariante incumplido: existen inconsistencias tenant_id entre user_roles y profiles"
+        invariant_ok=false
+    fi
+
+    if [ "$USE_SUDO" != true ]; then
+        unset PGPASSWORD
+    fi
+
+    if [ "$invariant_ok" = false ]; then
+        print_error "Validación de invariantes falló"
+        exit 1
+    fi
+
+    print_success "Invariantes de negocio validados correctamente"
 }
 
 # ============================================================================
@@ -1206,6 +1340,7 @@ BEGIN;
 ALTER TABLE auth_management.profiles DISABLE TRIGGER ALL;
 
 INSERT INTO auth_management.profiles (
+    id,
     user_id,
     tenant_id,
     email,
@@ -1216,6 +1351,7 @@ INSERT INTO auth_management.profiles (
     role
 )
 SELECT
+    u.id as id,
     u.id as user_id,
     (SELECT id FROM auth_management.tenants ORDER BY created_at ASC LIMIT 1) as tenant_id,
     u.email,
@@ -1236,7 +1372,7 @@ FROM auth.users u
 WHERE NOT EXISTS (
     SELECT 1 FROM auth_management.profiles p WHERE p.user_id = u.id
 )
-ON CONFLICT (user_id) DO NOTHING;
+ON CONFLICT (user_id) DO UPDATE SET id = EXCLUDED.id;
 
 ALTER TABLE auth_management.profiles ENABLE TRIGGER ALL;
 COMMIT;
@@ -1301,7 +1437,7 @@ COMMIT;
     # Ejecutar como superuser (postgres) para poder deshabilitar triggers del sistema
     if [ "$USE_SUDO" = true ]; then
         if [ -n "$SUDO_PASS" ]; then
-            printf "$SUDO_PASS\n" | sudo -S -v > /dev/null 2>&1 || true
+            printf '%s\n' "$SUDO_PASS" | sudo -S -v > /dev/null 2>&1 || true
         fi
 
         if echo "$fix_sql" | sudo -u postgres psql -d "$DB_NAME" > /dev/null 2>&1; then
@@ -1324,6 +1460,51 @@ COMMIT;
             print_warning "No se pudo sincronizar profiles (requiere permisos de superuser)"
         fi
     fi
+}
+
+# ============================================================================
+# POST-SEEDS SECURITY: Disable BYPASSRLS for application user
+# ============================================================================
+# DESHABILITADO (2026-02-17): NOBYPASSRLS requiere que el backend ejecute
+# SET LOCAL app.current_user_id en CADA conexion DB. Actualmente el
+# RlsInterceptor solo adjunta contexto a request.rlsContext pero NO ejecuta
+# SET LOCAL en la conexion de PostgreSQL. Solo TeacherReportsService lo hace
+# manualmente (4 metodos).
+#
+# SIN SET LOCAL: gamilit.get_current_user_id() retorna NULL, gamilit.is_admin()
+# retorna false, auth.uid() retorna NULL → TODAS las policies que dependen de
+# user context evaluan a DENY → ~85 de ~104 tablas RLS son inaccesibles.
+#
+# PREREQUISITOS para re-habilitar NOBYPASSRLS:
+#   1. RlsInterceptor debe ejecutar SET LOCAL app.current_user_id = '<uuid>'
+#      en la conexion DB de CADA request autenticado (via TypeORM transaction)
+#   2. Endpoints publicos (login, register, health) deben tener policies que
+#      permitan operaciones sin user context (WITH CHECK true + SELECT USING true)
+#   3. Todas las tablas con INSERT...RETURNING* deben tener SELECT policies
+#      que pasen sin user context O el ORM debe evitar RETURNING*
+#   4. Validar con la app corriendo que login, CRUD, y admin flujos funcionen
+#
+# Ver: CORR-F2-01b en plan de correcciones post-auditoria
+
+post_seeds_security() {
+    print_step "Post-seeds security check (NOBYPASSRLS deshabilitado)..."
+    print_warning "NOBYPASSRLS esta DESHABILITADO — RLS policies existen pero gamilit_user las bypasea"
+    print_info "Prerequisito: RlsInterceptor debe ejecutar SET LOCAL app.current_user_id en cada conexion DB"
+    print_info "Ver comentarios en init-database.sh para prerequisitos completos"
+
+    # CUANDO los prerequisitos se cumplan, descomentar:
+    # print_info "Setting NOBYPASSRLS for gamilit_user..."
+    # if [ "$USE_SUDO" = true ]; then
+    #     sudo -u postgres psql -d "$DB_NAME" -c "ALTER ROLE gamilit_user NOBYPASSRLS;" 2>&1
+    # else
+    #     PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "ALTER ROLE gamilit_user NOBYPASSRLS;" 2>&1
+    # fi
+    #
+    # if [ $? -eq 0 ]; then
+    #     print_success "gamilit_user ahora tiene NOBYPASSRLS — RLS enforced en runtime"
+    # else
+    #     print_warning "No se pudo aplicar NOBYPASSRLS — RLS podria no estar enforced"
+    # fi
 }
 
 # ============================================================================
@@ -1667,6 +1848,8 @@ main() {
     grant_all_permissions
     load_seeds
     fix_profiles_and_gamification
+    validate_business_invariants
+    post_seeds_security
     validate_installation
     show_summary
 }

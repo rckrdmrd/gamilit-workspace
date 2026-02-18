@@ -4,3 +4,8 @@ export type { ExercisePreviewModalProps } from './ExercisePreviewModal';
 export { MediaLibraryManager } from './MediaLibraryManager';
 export { ContentApprovalQueue } from './ContentApprovalQueue';
 export { ContentVersionControl } from './ContentVersionControl';
+export { PendingExercisesTab } from './PendingExercisesTab';
+export { MediaLibraryTab } from './MediaLibraryTab';
+export { ContentVersionsTab } from './ContentVersionsTab';
+export { ContentPreviewModal } from './ContentPreviewModal';
+export { RejectExerciseModal } from './RejectExerciseModal';

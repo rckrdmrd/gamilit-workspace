@@ -1,6 +1,6 @@
 # Flujos End-to-End - GAMILIT
 
-**Version:** 1.4.2
+**Version:** 1.5.0
 **Fecha:** 2026-02-17
 **Estado:** Activo
 
@@ -39,6 +39,11 @@ Centralizar la documentacion de flujos funcionales de toda la plataforma y su tr
 | FL-STU-13 | Student | Dashboard y overview de progreso | Documentado | [FLUJO-DASHBOARD-PROGRESO.md](./student/FLUJO-DASHBOARD-PROGRESO.md) |
 | FL-STU-14 | Student | Leaderboards y rankings | Documentado | [FLUJO-LEADERBOARDS.md](./student/FLUJO-LEADERBOARDS.md) |
 | FL-STU-15 | Student | Pagina de aprendizaje | Documentado (planificado) | [FLUJO-PAGINA-APRENDIZAJE.md](./student/FLUJO-PAGINA-APRENDIZAJE.md) |
+| FL-STU-16 | Student | Progreso academico detallado | Documentado | [FLUJO-PROGRESO-ACADEMICO.md](./student/FLUJO-PROGRESO-ACADEMICO.md) |
+| FL-STU-17 | Student | Asignaciones del estudiante | Documentado | [FLUJO-ASIGNACIONES-ESTUDIANTE.md](./student/FLUJO-ASIGNACIONES-ESTUDIANTE.md) |
+| FL-STU-18 | Student | Perfil y notificaciones | Documentado | [FLUJO-PERFIL-NOTIFICACIONES.md](./student/FLUJO-PERFIL-NOTIFICACIONES.md) |
+| FL-STU-19 | Student | Equipamiento de items cosmeticos | Documentado | [FLUJO-EQUIPAMIENTO-ITEMS-COSMETICOS.md](./student/FLUJO-EQUIPAMIENTO-ITEMS-COSMETICOS.md) |
+| FL-STU-20 | Student | Compra inventario equipar (compuesto) | Documentado | [FLUJO-COMPRA-INVENTARIO-EQUIPAR.md](./student/FLUJO-COMPRA-INVENTARIO-EQUIPAR.md) |
 | FL-SHR-01 | Shared | Perfil y configuracion mult-portal | Parcial | [FLUJO-PERFIL-CONFIGURACION.md](./shared/FLUJO-PERFIL-CONFIGURACION.md) |
 | FL-SHR-02 | Shared | Sesion/seguridad y recuperacion de acceso (compuesto) | Documentado | [FLUJO-SESION-SEGURIDAD.md](./shared/FLUJO-SESION-SEGURIDAD.md) |
 | FL-TCH-01 | Teacher | Revision manual y calificacion M3-M5 | Parcial | [FLUJO-REVISION-MANUAL-M3-M5.md](./teacher/FLUJO-REVISION-MANUAL-M3-M5.md) |
@@ -48,6 +53,8 @@ Centralizar la documentacion de flujos funcionales de toda la plataforma y su tr
 | FL-TCH-05 | Teacher | Gestion de contenido docente | Documentado | [FLUJO-GESTION-CONTENIDO.md](./teacher/FLUJO-GESTION-CONTENIDO.md) |
 | FL-TCH-06 | Teacher | Login con redireccion por rol | Documentado | [FLUJO-LOGIN-DOCENTE.md](./teacher/FLUJO-LOGIN-DOCENTE.md) |
 | FL-TCH-07 | Teacher | Configuracion docente y mensajeria | Documentado | [FLUJO-PERFIL-CONFIGURACION.md](./shared/FLUJO-PERFIL-CONFIGURACION.md) |
+| FL-TCH-08 | Teacher | Dashboard docente | Documentado | [FLUJO-DASHBOARD-DOCENTE.md](./teacher/FLUJO-DASHBOARD-DOCENTE.md) |
+| FL-TCH-09 | Teacher | Gestion de clases y estudiantes | Documentado | [FLUJO-GESTION-CLASES.md](./teacher/FLUJO-GESTION-CLASES.md) |
 | FL-ADM-01 | Admin | Gestion de usuarios y roles | Documentado | [FLUJO-GESTION-USUARIOS-ROLES.md](./admin/FLUJO-GESTION-USUARIOS-ROLES.md) |
 | FL-ADM-02 | Admin | Configuracion global del sistema | Documentado | [FLUJO-CONFIGURACION-SISTEMA.md](./admin/FLUJO-CONFIGURACION-SISTEMA.md) |
 | FL-ADM-03 | Admin | Aprobacion de contenido educativo | Documentado | [FLUJO-APROBACION-CONTENIDO.md](./admin/FLUJO-APROBACION-CONTENIDO.md) |
@@ -56,6 +63,9 @@ Centralizar la documentacion de flujos funcionales de toda la plataforma y su tr
 | FL-ADM-06 | Admin | Audit logs | Documentado | [FLUJO-AUDIT-LOGS.md](./admin/FLUJO-AUDIT-LOGS.md) |
 | FL-ADM-07 | Admin | Constructor de ejercicios | Documentado | [FLUJO-CONSTRUCTOR-EJERCICIOS.md](./admin/FLUJO-CONSTRUCTOR-EJERCICIOS.md) |
 | FL-ADM-08 | Admin | Gestion de gamificacion | Documentado | [FLUJO-GESTION-GAMIFICACION.md](./admin/FLUJO-GESTION-GAMIFICACION.md) |
+| FL-ADM-09 | Admin | Dashboard administrador | Documentado | [FLUJO-DASHBOARD-ADMIN.md](./admin/FLUJO-DASHBOARD-ADMIN.md) |
+| FL-ADM-10 | Admin | Instituciones y roles | Documentado | [FLUJO-INSTITUCIONES-ROLES.md](./admin/FLUJO-INSTITUCIONES-ROLES.md) |
+| FL-ADM-11 | Admin | Reportes y analytics admin | Documentado | [FLUJO-REPORTES-ANALYTICS-ADMIN.md](./admin/FLUJO-REPORTES-ANALYTICS-ADMIN.md) |
 | FL-PRN-01 | Parents | Vinculacion padre-estudiante | Documentado (planificado) | [FLUJO-VINCULACION-PADRE-ESTUDIANTE.md](./parents/FLUJO-VINCULACION-PADRE-ESTUDIANTE.md) |
 | FL-PRN-02 | Parents | Seguimiento de progreso academico | Documentado (planificado) | [FLUJO-SEGUIMIENTO-PROGRESO.md](./parents/FLUJO-SEGUIMIENTO-PROGRESO.md) |
 | FL-PRN-03 | Parents | Notificaciones escuela-familia | Documentado (planificado) | [FLUJO-NOTIFICACIONES-PADRES.md](./parents/FLUJO-NOTIFICACIONES-PADRES.md) |

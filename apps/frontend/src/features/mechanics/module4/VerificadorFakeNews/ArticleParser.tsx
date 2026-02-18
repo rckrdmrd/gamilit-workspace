@@ -128,23 +128,36 @@ export const ArticleParser: React.FC<ArticleParserProps> = ({
         {highlightedClaims.length > 0 ? renderHighlightedContent() : article.content}
       </div>
 
-      {selectedText && (
-        <div className="bg-blue-50 border-2 border-detective-blue rounded-detective p-4">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-detective-blue flex-shrink-0 mt-1" />
-            <div className="flex-1">
-              <p className="text-detective-text font-medium mb-2">Texto seleccionado:</p>
-              <p className="text-detective-text-secondary italic mb-3">"{selectedText}"</p>
-              <button
-                onClick={handleExtractClaim}
-                className="px-4 py-2 bg-detective-blue text-white rounded-detective hover:bg-detective-blue/90 transition-colors font-medium"
-              >
-                Extraer Afirmación
-              </button>
-            </div>
+      <div className={`border-2 rounded-detective p-4 transition-colors ${selectedText
+        ? 'bg-blue-50 border-detective-blue'
+        : 'bg-gray-50 border-gray-200'
+        }`}>
+        <div className="flex items-start gap-3">
+          <AlertTriangle className={`w-5 h-5 flex-shrink-0 mt-1 ${selectedText ? 'text-detective-blue' : 'text-gray-400'
+            }`} />
+          <div className="flex-1">
+            <p className={`font-medium mb-2 ${selectedText ? 'text-detective-text' : 'text-gray-500'
+              }`}>
+              {selectedText ? 'Texto seleccionado:' : 'Texto a extraer:'}
+            </p>
+            <p className={`italic mb-3 ${selectedText ? 'text-detective-text-secondary' : 'text-gray-400'
+              }`}>
+              "{selectedText || 'Selecciona un fragmento del texto para extraer una afirmación...'}"
+            </p>
+            <button
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={handleExtractClaim}
+              disabled={!selectedText}
+              className={`px-4 py-2 rounded-detective transition-all font-medium flex items-center gap-2 ${selectedText
+                  ? 'bg-gradient-to-r from-detective-blue to-detective-orange text-white shadow-detective hover:shadow-detective-lg hover:scale-105'
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+            >
+              Extraer Afirmación
+            </button>
           </div>
         </div>
-      )}
+      </div>
 
       <div className="flex items-center gap-2 text-detective-text-secondary text-sm">
         <div className="flex items-center gap-2">

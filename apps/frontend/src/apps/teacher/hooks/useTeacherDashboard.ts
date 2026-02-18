@@ -4,17 +4,17 @@
  * Custom React hook to fetch and manage teacher dashboard data including
  * statistics, recent activities, alerts, top performers, and module progress.
  *
- * Features:
- * - Automatic data fetching on mount
- * - Loading and error states
- * - Refresh mechanism for individual sections
- * - Global refresh for all data
- * - Error handling with console logging
+ * Migrated from useState+useEffect to React Query (TanStack Query v5)
+ * for automatic caching, deduplication, and background refetching.
+ * Uses separate queries per data type to enable individual refresh.
+ *
+ * Backward-compatible: return interface unchanged for 1 consumer (TeacherDashboard.tsx).
  *
  * @module apps/teacher/hooks/useTeacherDashboard
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { teacherApi } from '@services/api/teacher';
 import type { Activity } from '@services/api/teacher';
 import type {
@@ -23,6 +23,23 @@ import type {
   StudentPerformance,
   ModuleProgress,
 } from '../types';
+
+// ============================================================================
+// QUERY KEY FACTORY
+// ============================================================================
+
+/**
+ * Query key factory for teacher dashboard queries.
+ * Exported for external invalidation from other hooks or components.
+ */
+export const dashboardKeys = {
+  all: ['teacher-dashboard'] as const,
+  stats: () => [...dashboardKeys.all, 'stats'] as const,
+  activities: () => [...dashboardKeys.all, 'activities'] as const,
+  alerts: () => [...dashboardKeys.all, 'alerts'] as const,
+  performers: () => [...dashboardKeys.all, 'performers'] as const,
+  progress: () => [...dashboardKeys.all, 'progress'] as const,
+};
 
 // ============================================================================
 // TYPES
@@ -99,122 +116,112 @@ export interface UseTeacherDashboardReturn {
  * ```
  */
 export function useTeacherDashboard(): UseTeacherDashboardReturn {
-  // ============================================================================
-  // STATE
-  // ============================================================================
-
-  const [stats, setStats] = useState<TeacherDashboardStats | null>(null);
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [alerts, setAlerts] = useState<InterventionAlert[]>([]);
-  const [topPerformers, setTopPerformers] = useState<StudentPerformance[]>([]);
-  const [moduleProgress, setModuleProgress] = useState<ModuleProgress[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
 
   // ============================================================================
-  // FETCH FUNCTIONS
+  // QUERIES — one per data type for independent refresh
   // ============================================================================
 
-  /**
-   * Fetch all dashboard data
-   * Calls all dashboard endpoints in parallel for optimal performance
-   */
-  const fetchDashboardData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  const statsQuery = useQuery({
+    queryKey: dashboardKeys.stats(),
+    queryFn: () => teacherApi.getDashboardStats(),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+  });
 
-      // Fetch all data in parallel
-      const [statsData, activitiesData, alertsData, performersData, progressData] =
-        await Promise.all([
-          teacherApi.getDashboardStats(),
-          teacherApi.getRecentActivities(10),
-          teacherApi.getStudentAlerts(),
-          teacherApi.getTopPerformers(5),
-          teacherApi.getModuleProgressSummary(),
-        ]);
+  const activitiesQuery = useQuery({
+    queryKey: dashboardKeys.activities(),
+    queryFn: () => teacherApi.getRecentActivities(10),
+    staleTime: 2 * 60 * 1000,
+  });
 
-      // Update all states
-      setStats(statsData);
-      setActivities(activitiesData);
-      setAlerts(alertsData);
-      setTopPerformers(performersData);
-      setModuleProgress(progressData);
-    } catch (err) {
-      console.error('[useTeacherDashboard] Error fetching dashboard data:', err);
-      setError(err as Error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const alertsQuery = useQuery({
+    queryKey: dashboardKeys.alerts(),
+    queryFn: () => teacherApi.getStudentAlerts(),
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const performersQuery = useQuery({
+    queryKey: dashboardKeys.performers(),
+    queryFn: () => teacherApi.getTopPerformers(5),
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const progressQuery = useQuery({
+    queryKey: dashboardKeys.progress(),
+    queryFn: () => teacherApi.getModuleProgressSummary(),
+    staleTime: 2 * 60 * 1000,
+  });
+
+  // ============================================================================
+  // COMBINED STATE — backward-compatible loading/error
+  // ============================================================================
+
+  const loading =
+    statsQuery.isLoading ||
+    activitiesQuery.isLoading ||
+    alertsQuery.isLoading ||
+    performersQuery.isLoading ||
+    progressQuery.isLoading;
+
+  const error =
+    statsQuery.error ||
+    activitiesQuery.error ||
+    alertsQuery.error ||
+    performersQuery.error ||
+    progressQuery.error ||
+    null;
+
+  // ============================================================================
+  // ACTIONS — individual and global refresh
+  // ============================================================================
 
   /**
    * Refresh only dashboard statistics
-   * Useful for updating stats without refetching everything
    */
   const refreshStats = useCallback(async () => {
-    try {
-      const data = await teacherApi.getDashboardStats();
-      setStats(data);
-    } catch (err) {
-      console.error('[useTeacherDashboard] Error refreshing stats:', err);
-      // Don't update error state for individual refreshes
-    }
-  }, []);
+    await statsQuery.refetch();
+  }, [statsQuery]);
 
   /**
    * Refresh only recent activities
    */
   const refreshActivities = useCallback(async () => {
-    try {
-      const data = await teacherApi.getRecentActivities(10);
-      setActivities(data);
-    } catch (err) {
-      console.error('[useTeacherDashboard] Error refreshing activities:', err);
-    }
-  }, []);
+    await activitiesQuery.refetch();
+  }, [activitiesQuery]);
 
   /**
    * Refresh only student alerts
    */
   const refreshAlerts = useCallback(async () => {
-    try {
-      const data = await teacherApi.getStudentAlerts();
-      setAlerts(data);
-    } catch (err) {
-      console.error('[useTeacherDashboard] Error refreshing alerts:', err);
-    }
-  }, []);
-
-  // ============================================================================
-  // EFFECTS
-  // ============================================================================
+    await alertsQuery.refetch();
+  }, [alertsQuery]);
 
   /**
-   * Fetch data on component mount
+   * Refresh all dashboard data by invalidating every dashboard query.
+   * React Query will refetch all active queries automatically.
    */
-  useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
+  const refresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
+  }, [queryClient]);
 
   // ============================================================================
-  // RETURN
+  // RETURN — exact same interface as before
   // ============================================================================
 
   return {
     // Data
-    stats,
-    activities,
-    alerts,
-    topPerformers,
-    moduleProgress,
+    stats: statsQuery.data ?? null,
+    activities: activitiesQuery.data ?? [],
+    alerts: alertsQuery.data ?? [],
+    topPerformers: performersQuery.data ?? [],
+    moduleProgress: progressQuery.data ?? [],
 
     // State
     loading,
     error,
 
     // Actions
-    refresh: fetchDashboardData,
+    refresh,
     refreshStats,
     refreshActivities,
     refreshAlerts,

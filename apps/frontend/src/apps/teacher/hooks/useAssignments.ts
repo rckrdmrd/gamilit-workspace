@@ -4,9 +4,14 @@
  * UPDATED 2025-12-27: Added mapper to transform backend response to frontend interface
  * Backend returns: isPublished, dueDate, assignmentType
  * Frontend expects: status, end_date, module_id, module_name
+ *
+ * Migrated to React Query (@tanstack/react-query v5) for automatic caching,
+ * deduplication, and background refetching. CRUD mutations auto-invalidate
+ * the assignments list.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { assignmentsApi } from '@services/api/teacher';
 import type { Assignment, Submission, Exercise } from '@apps/teacher/types';
 import type {
@@ -15,6 +20,21 @@ import type {
   UpdateAssignmentDto,
   GradeSubmissionDto,
 } from '@services/api/teacher';
+
+// ---------------------------------------------------------------------------
+// Query Key Factory
+// ---------------------------------------------------------------------------
+
+const assignmentKeys = {
+  all: ['assignments'] as const,
+  lists: () => [...assignmentKeys.all, 'list'] as const,
+  list: (filters?: GetAssignmentsQueryDto) => [...assignmentKeys.lists(), filters] as const,
+  exercises: () => [...assignmentKeys.all, 'exercises'] as const,
+};
+
+// ---------------------------------------------------------------------------
+// Backend-to-Frontend Mapper (unchanged)
+// ---------------------------------------------------------------------------
 
 /**
  * Backend Assignment response structure
@@ -102,6 +122,10 @@ function mapBackendToAssignment(raw: BackendAssignment): Assignment {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Interfaces (unchanged -- backward compatible)
+// ---------------------------------------------------------------------------
+
 export interface SendReminderResult {
   notified: number;
   alreadySubmitted: number;
@@ -123,119 +147,108 @@ export interface UseAssignmentsReturn {
   refresh: () => Promise<void>;
 }
 
+// ---------------------------------------------------------------------------
+// useAssignments
+// ---------------------------------------------------------------------------
+
 export function useAssignments(filters?: GetAssignmentsQueryDto): UseAssignmentsReturn {
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
 
-  const fetchAssignments = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // --- Queries ---------------------------------------------------------------
 
-      const [assignmentsData, exercisesData] = await Promise.all([
-        assignmentsApi.getAssignments(filters),
-        assignmentsApi.getAvailableExercises(),
-      ]);
+  const assignmentsQuery = useQuery({
+    queryKey: assignmentKeys.list(filters),
+    queryFn: async () => {
+      const data = await assignmentsApi.getAssignments(filters);
+      return (data as unknown as BackendAssignment[]).map(mapBackendToAssignment);
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
-      // Map backend response to frontend interface for compatibility
-      const mappedAssignments = (assignmentsData as unknown as BackendAssignment[]).map(
-        mapBackendToAssignment
-      );
+  const exercisesQuery = useQuery({
+    queryKey: assignmentKeys.exercises(),
+    queryFn: () => assignmentsApi.getAvailableExercises(),
+    staleTime: 10 * 60 * 1000,
+  });
 
-      setAssignments(mappedAssignments);
-      setExercises(exercisesData);
-    } catch (err) {
-      console.error('[useAssignments] Error:', err);
-      setError(err as Error);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters]);
+  // --- Mutations -------------------------------------------------------------
 
-  useEffect(() => {
-    fetchAssignments();
-  }, [fetchAssignments]);
+  const createMutation = useMutation({
+    mutationFn: (data: CreateAssignmentDto) => assignmentsApi.createAssignment(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: assignmentKeys.all });
+    },
+  });
 
-  const getAssignmentById = useCallback(async (id: string) => {
-    return await assignmentsApi.getAssignmentById(id);
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateAssignmentDto }) =>
+      assignmentsApi.updateAssignment(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: assignmentKeys.all });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => assignmentsApi.deleteAssignment(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: assignmentKeys.all });
+    },
+  });
+
+  // --- Imperative actions (plain async, not reactive data) -------------------
+
+  const getAssignmentById = useCallback(async (id: string): Promise<Assignment> => {
+    return assignmentsApi.getAssignmentById(id);
   }, []);
 
   const createAssignment = useCallback(
-    async (data: CreateAssignmentDto) => {
-      try {
-        const newAssignment = await assignmentsApi.createAssignment(data);
-        await fetchAssignments(); // Refresh list
-        return newAssignment;
-      } catch (err) {
-        console.error('[useAssignments] Error creating assignment:', err);
-        throw err;
-      }
+    async (data: CreateAssignmentDto): Promise<Assignment> => {
+      return createMutation.mutateAsync(data);
     },
-    [fetchAssignments]
+    [createMutation],
   );
 
   const updateAssignment = useCallback(
-    async (id: string, data: UpdateAssignmentDto) => {
-      try {
-        const updatedAssignment = await assignmentsApi.updateAssignment(id, data);
-        await fetchAssignments(); // Refresh list
-        return updatedAssignment;
-      } catch (err) {
-        console.error('[useAssignments] Error updating assignment:', err);
-        throw err;
-      }
+    async (id: string, data: UpdateAssignmentDto): Promise<Assignment> => {
+      return updateMutation.mutateAsync({ id, data });
     },
-    [fetchAssignments]
+    [updateMutation],
   );
 
   const deleteAssignment = useCallback(
-    async (id: string) => {
-      try {
-        await assignmentsApi.deleteAssignment(id);
-        await fetchAssignments(); // Refresh list
-      } catch (err) {
-        console.error('[useAssignments] Error deleting assignment:', err);
-        throw err;
-      }
+    async (id: string): Promise<void> => {
+      await deleteMutation.mutateAsync(id);
     },
-    [fetchAssignments]
+    [deleteMutation],
   );
 
-  const getSubmissions = useCallback(async (assignmentId: string) => {
-    try {
-      return await assignmentsApi.getAssignmentSubmissions(assignmentId);
-    } catch (err) {
-      console.error('[useAssignments] Error fetching submissions:', err);
-      throw err;
-    }
+  const getSubmissions = useCallback(async (assignmentId: string): Promise<Submission[]> => {
+    return assignmentsApi.getAssignmentSubmissions(assignmentId);
   }, []);
 
   const gradeSubmission = useCallback(
-    async (submissionId: string, data: GradeSubmissionDto) => {
-      try {
-        return await assignmentsApi.gradeSubmission(submissionId, data);
-      } catch (err) {
-        console.error('[useAssignments] Error grading submission:', err);
-        throw err;
-      }
+    async (submissionId: string, data: GradeSubmissionDto): Promise<Submission> => {
+      return assignmentsApi.gradeSubmission(submissionId, data);
     },
-    []
+    [],
   );
 
-  const sendReminder = useCallback(async (assignmentId: string) => {
-    try {
-      return await assignmentsApi.sendReminder(assignmentId);
-    } catch (err) {
-      console.error('[useAssignments] Error sending reminder:', err);
-      throw err;
-    }
+  const sendReminder = useCallback(async (assignmentId: string): Promise<SendReminderResult> => {
+    return assignmentsApi.sendReminder(assignmentId);
   }, []);
 
+  const refresh = useCallback(async (): Promise<void> => {
+    await queryClient.invalidateQueries({ queryKey: assignmentKeys.all });
+  }, [queryClient]);
+
+  // --- Return (backward-compatible interface) --------------------------------
+
+  const loading = assignmentsQuery.isLoading || exercisesQuery.isLoading;
+  const error = assignmentsQuery.error ?? exercisesQuery.error ?? null;
+
   return {
-    assignments,
-    exercises,
+    assignments: assignmentsQuery.data ?? [],
+    exercises: exercisesQuery.data ?? [],
     loading,
     error,
     getAssignmentById,
@@ -245,6 +258,6 @@ export function useAssignments(filters?: GetAssignmentsQueryDto): UseAssignments
     getSubmissions,
     gradeSubmission,
     sendReminder,
-    refresh: fetchAssignments,
+    refresh,
   };
 }

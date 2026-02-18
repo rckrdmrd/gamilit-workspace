@@ -14,9 +14,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Users, GraduationCap } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
-import { AdminLayout } from '../layouts/AdminLayout';
+import { AdminPageShell } from '../components/shared';
 
 // Import tab components
 import { ClassroomTeachersTab } from '../components/classroom-teacher/ClassroomTeachersTab';
@@ -25,57 +23,35 @@ import { TeacherClassroomsTab } from '../components/classroom-teacher/TeacherCla
 type TabType = 'classroom' | 'teacher';
 
 export default function AdminClassroomTeacherPage() {
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
   const [currentTab, setCurrentTab] = useState<TabType>('classroom');
-
-  // Fallback gamification data
-  const displayGamificationData = gamificationData || {
-    userId: user?.id || '',
-    level: 1,
-    totalXP: 0,
-    mlCoins: 0,
-    rank: 'Novato',
-    achievements: [],
-  };
-
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
 
   const tabs = [
     {
       id: 'classroom' as TabType,
-      label: 'Por Classroom',
+      label: 'Por Aula',
       icon: GraduationCap,
       color: 'blue',
-      description: 'Ver y gestionar teachers asignados a cada classroom',
+      description: 'Ver y gestionar docentes asignados a cada aula',
     },
     {
       id: 'teacher' as TabType,
-      label: 'Por Teacher',
+      label: 'Por Docente',
       icon: Users,
       color: 'purple',
-      description: 'Ver y gestionar classrooms asignados a cada teacher',
+      description: 'Ver y gestionar aulas asignadas a cada docente',
     },
   ];
 
   return (
-    <AdminLayout
-      user={user || undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GAMILIT Platform Admin"
-      onLogout={handleLogout}
-    >
+    <AdminPageShell>
       <div className="space-y-6">
         {/* Header */}
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-bold text-detective-text">
-            Asignaciones Classroom-Teacher
+            Asignaciones Aula-Docente
           </h1>
           <p className="text-detective-text-secondary">
-            Gestiona las asignaciones entre classrooms y teachers
+            Gestiona las asignaciones entre aulas y docentes
           </p>
         </div>
 
@@ -138,7 +114,7 @@ export default function AdminClassroomTeacherPage() {
           {currentTab === 'teacher' && <TeacherClassroomsTab />}
         </motion.div>
       </div>
-    </AdminLayout>
+    </AdminPageShell>
   );
 }
 

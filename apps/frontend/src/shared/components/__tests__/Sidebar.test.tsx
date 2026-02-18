@@ -13,6 +13,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Sidebar } from '../Sidebar';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 // Helper to render with router
 const renderWithRouter = (
@@ -26,6 +27,7 @@ const renderWithRouter = (
 
 describe('Sidebar', () => {
   const mockOnClose = vi.fn();
+  const platformName = DEFAULT_BRANDING.platformName;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -39,12 +41,12 @@ describe('Sidebar', () => {
 
     it('should render brand/logo text', () => {
       renderWithRouter(<Sidebar isOpen={true} onClose={mockOnClose} />);
-      expect(screen.getByText('GAMILIT')).toBeInTheDocument();
+      expect(screen.getByText(platformName)).toBeInTheDocument();
     });
 
     it('should render version info', () => {
       renderWithRouter(<Sidebar isOpen={true} onClose={mockOnClose} />);
-      expect(screen.getByText('GAMILIT v1.0.0')).toBeInTheDocument();
+      expect(screen.getByText(`${platformName} v1.0.0`)).toBeInTheDocument();
     });
   });
 

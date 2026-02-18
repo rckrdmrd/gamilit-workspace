@@ -24,9 +24,10 @@ Trae es el **Planificador Atómico** (Fase 2) para GAMILIT:
 
 ## Herencia
 
-Trae en GAMILIT hereda reglas de:
-1. `workspace-v2/CLAUDE.md` (workspace)
-2. `projects/gamilit/.claude/CLAUDE.md` (proyecto)
+Trae en GAMILIT usa gobernanza local del repositorio:
+1. `CLAUDE.md` (reglas base)
+2. `orchestration/directivas/simco/` (directivas operativas)
+3. `orchestration/CONTEXT-MAP.yml` (variables resueltas)
 
 ## Referencias
 

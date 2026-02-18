@@ -1,5 +1,7 @@
 # FL-ADM-02 - Configuracion Global del Sistema
 
+**Version:** 1.1.0
+**Fecha:** 2026-02-18
 **Portal:** Admin
 **Prioridad:** Alta
 **Estado:** Documentado
@@ -15,7 +17,7 @@ Flujo para actualizar configuraciones globales (seguridad, parametros academicos
 - **Rol requerido:** `super_admin`. La configuracion del sistema es exclusiva para administradores de nivel superior.
 - **Sesion activa:** JWT valido emitido por `auth/login`, con token no expirado.
 - **Estado del sistema:** La plataforma debe estar operativa. Cambios de configuracion no requieren modo mantenimiento, pero la activacion de modo mantenimiento bloquea el acceso a usuarios no-admin.
-- **Datos previos:** Las categorias de configuracion (`general`, `email`, `notifications`, `security`, `maintenance`) deben estar inicializadas en `platform_settings.system_settings`.
+- **Datos previos:** Las categorias de configuracion (`general`, `email`, `notifications`, `security`, `maintenance`) deben estar inicializadas en `system_configuration.system_settings`.
 
 ## Diagrama Mermaid
 
@@ -31,8 +33,8 @@ flowchart TD
     apiCategory --> service
     apiValidate --> service
     apiFlags --> flagService[FeatureFlagsService]
-    service --> db[(platform_settings.system_settings)]
-    flagService --> dbFlags[(admin_dashboard.feature_flags)]
+    service --> db[(system_configuration.system_settings)]
+    flagService --> dbFlags[(system_configuration.feature_flags)]
     db --> audit[(audit_logging.system_logs)]
     audit --> ui[Toast + recarga de configuracion]
 ```
@@ -42,7 +44,7 @@ flowchart TD
 1. Admin navega a `AdminAdvancedPage.tsx` o `AdminSettingsPage.tsx` y edita formularios de configuracion (`GeneralSettings.tsx`, `SecuritySettings.tsx`).
 2. FE envia payload validado a endpoints de `admin/system/config` via `useSystemConfig` hook y `adminAPI.ts`.
 3. Backend valida formato con `ValidateConfigDto` y permisos de cambio con `AdminGuard`.
-4. Datos se persisten en `platform_settings.system_settings` y cambios se registran en `audit_logging.system_logs`.
+4. Datos se persisten en `system_configuration.system_settings` y cambios se registran en `audit_logging.system_logs`.
 5. FE invalida cache y refleja nuevo estado con toast de confirmacion.
 
 ## Componentes y artefactos implicados
@@ -53,8 +55,11 @@ flowchart TD
 |------|---------|
 | Pagina | `apps/frontend/src/apps/admin/pages/AdminAdvancedPage.tsx` |
 | Pagina | `apps/frontend/src/apps/admin/pages/AdminSettingsPage.tsx` |
+| Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` |
+| Tab Bar | `apps/frontend/src/apps/admin/components/shared/AdminTabBar.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/settings/GeneralSettings.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/settings/SecuritySettings.tsx` |
+| Componente | `apps/frontend/src/apps/admin/components/settings/ProfileSettings.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/advanced/FeatureFlagsPanel.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/advanced/FeatureFlagEditor.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/advanced/FeatureFlagControls.tsx` |
@@ -103,9 +108,9 @@ flowchart TD
 
 | Schema.Tabla | Entity |
 |--------------|--------|
-| `platform_settings.system_settings` | `apps/backend/src/modules/admin/entities/system-setting.entity.ts` |
-| `platform_settings.environment_configs` | `apps/backend/src/modules/admin/entities/environment-config.entity.ts` |
-| `admin_dashboard.feature_flags` | `apps/backend/src/modules/admin/entities/feature-flag.entity.ts` |
+| `system_configuration.system_settings` | `apps/backend/src/modules/admin/entities/system-setting.entity.ts` |
+| `system_configuration.environment_configs` | `apps/backend/src/modules/admin/entities/environment-config.entity.ts` |
+| `system_configuration.feature_flags` | `apps/backend/src/modules/admin/entities/feature-flag.entity.ts` |
 | `admin_dashboard.tenant_configurations` | `apps/backend/src/modules/admin/entities/tenant-configuration.entity.ts` |
 | `admin_dashboard.notification_settings` | `apps/backend/src/modules/admin/entities/notification-settings.entity.ts` |
 | `admin_dashboard.notification_settings_global` | `apps/backend/src/modules/admin/entities/notification-settings-global.entity.ts` |
@@ -140,8 +145,11 @@ flowchart TD
 |------|---------|-----------|
 | FE Page | `apps/frontend/src/apps/admin/pages/AdminAdvancedPage.tsx` | Pagina de configuracion avanzada |
 | FE Page | `apps/frontend/src/apps/admin/pages/AdminSettingsPage.tsx` | Pagina de configuracion general |
+| FE Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` | Wrapper comun de paginas admin |
+| FE Tab Bar | `apps/frontend/src/apps/admin/components/shared/AdminTabBar.tsx` | Tab bar reutilizable para paginas admin |
 | FE Component | `apps/frontend/src/apps/admin/components/settings/GeneralSettings.tsx` | Formulario de settings generales |
 | FE Component | `apps/frontend/src/apps/admin/components/settings/SecuritySettings.tsx` | Formulario de settings de seguridad |
+| FE Component | `apps/frontend/src/apps/admin/components/settings/ProfileSettings.tsx` | Formulario de perfil de admin |
 | FE Hook | `apps/frontend/src/apps/admin/hooks/useSystemConfig.ts` | Hook de configuracion por categoria |
 | FE Hook | `apps/frontend/src/apps/admin/hooks/useFeatureFlags.ts` | Hook de gestion de feature flags |
 | FE API | `apps/frontend/src/services/api/adminAPI.ts` | Cliente API secciones SETTINGS y SYSTEM |
@@ -149,7 +157,7 @@ flowchart TD
 | BE Controller | `apps/backend/src/modules/admin/controllers/feature-flags.controller.ts` | Controlador de feature flags con 8 endpoints |
 | BE Service | `apps/backend/src/modules/admin/services/admin-system.service.ts` | Logica de negocio de configuracion |
 | BE Service | `apps/backend/src/modules/admin/services/feature-flags.service.ts` | Logica de negocio de feature flags |
-| DB Schema | `apps/database/ddl/schemas/platform_settings/` | DDL de tablas de configuracion |
+| DB Schema | `apps/database/ddl/schemas/system_configuration/` | DDL de tablas de configuracion |
 
 ## Referencias
 

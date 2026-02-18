@@ -156,7 +156,7 @@ CREATE POLICY guild_missions_admin_all
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             WHERE p.id = gamilit.get_current_user_id()
-            AND p.role = 'SUPER_ADMIN'
+            AND p.role = 'super_admin'
         )
     );
 
@@ -238,7 +238,7 @@ CREATE POLICY guild_mission_contributions_admin_all
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             WHERE p.id = gamilit.get_current_user_id()
-            AND p.role = 'SUPER_ADMIN'
+            AND p.role = 'super_admin'
         )
     );
 

@@ -11,7 +11,7 @@
 
 ## 1. Resumen
 
-Flujo de analiticas y reportes del portal docente. El maestro accede a dos paginas complementarias: (1) **TeacherAnalytics** para visualizar metricas en tiempo real sobre rendimiento academico, tasas de completitud, engagement (DAU/WAU), y graficas por modulo; y (2) **TeacherReportsPage** para generar, descargar y gestionar reportes personalizados en formatos PDF, Excel y CSV.
+Flujo de analiticas y reportes del portal docente. El maestro accede a dos paginas complementarias: (1) **TeacherAnalytics** para visualizar metricas en tiempo real sobre rendimiento academico, tasas de completitud, engagement (DAU/WAU), y graficas por modulo; y (2) **TeacherReports** para generar, descargar y gestionar reportes personalizados en formatos PDF, Excel y CSV.
 
 El flujo utiliza filtros por aula y rango de fechas, con tres pestanas de vista (Overview, Performance, Engagement) en analiticas. Los reportes soportan 4 tipos (progreso, evaluacion, intervencion, personalizado) y se persisten en la base de datos para descarga posterior. Incluye analisis de riesgo basado en heuristicas y comparacion con periodos anteriores.
 
@@ -33,7 +33,7 @@ flowchart TD
     A[Maestro accede a /teacher/analytics o /teacher/reports] --> B{Pagina?}
 
     B -- Analytics --> C[TeacherAnalytics.tsx]
-    B -- Reports --> D[TeacherReportsPage.tsx]
+    B -- Reports --> D[TeacherReports.tsx]
 
     %% Analytics Flow
     C --> C1[useClassrooms: cargar aulas]
@@ -104,10 +104,10 @@ flowchart TD
 15. **Backend:** `POST /teacher/reports/generate` genera archivo y retorna `Report { status, file_url }`.
 16. **Frontend:** Si `status === 'completed'`, abre `file_url` en nueva pestana.
 
-### Flujo B: Reportes (TeacherReportsPage)
+### Flujo B: Reportes (TeacherReports)
 
 #### Paso 1: Carga inicial
-1. **Frontend:** `TeacherReportsPage.tsx` se monta en ruta `/teacher/reports`.
+1. **Frontend:** `TeacherReports.tsx` se monta en ruta `/teacher/reports`.
 2. **Frontend:** `loadInitialData()` ejecuta 3 llamadas secuenciales:
    - `GET /api/v1/teacher/classrooms` (aulas del maestro)
    - `GET /api/v1/teacher/reports/recent` (reportes recientes)
@@ -135,7 +135,7 @@ flowchart TD
 | Tipo | Ruta | Descripcion |
 |------|------|-------------|
 | Pagina | `apps/frontend/src/apps/teacher/pages/TeacherAnalytics.tsx` | Dashboard de analiticas con 3 tabs |
-| Pagina | `apps/frontend/src/apps/teacher/pages/TeacherReportsPage.tsx` | Generador y gestor de reportes |
+| Pagina | `apps/frontend/src/apps/teacher/pages/TeacherReports.tsx` | Generador y gestor de reportes |
 | Componente | `apps/frontend/src/apps/teacher/components/reports/ReportGenerator.tsx` | Formulario de generacion de reportes |
 | Componente | `apps/frontend/src/shared/components/base/DetectiveCard.tsx` | Card base del sistema de diseno |
 | Componente | `apps/frontend/src/shared/components/base/DetectiveButton.tsx` | Boton base del sistema de diseno |
@@ -184,6 +184,8 @@ flowchart TD
 | `social_features` | `classrooms` | Aulas del maestro |
 | `social_features` | `classroom_members` | Estudiantes en cada aula |
 | `educational_content` | `modules` | Catalogo de modulos educativos |
+> **Nota:** Las referencias a `data_warehouse.*` son aspiracionales. Actualmente, las metricas del docente se sirven desde `admin-analytics.controller.ts` y `teacher.controller.ts` usando datos de `progress_tracking.*`.
+
 | `data_warehouse` | `fact_daily_progress` | Progreso diario agregado |
 | `data_warehouse` | `fact_exercise_completions` | Completaciones de ejercicios agregadas |
 | `data_warehouse` | `fact_teacher_metrics` | Metricas de maestro agregadas |
@@ -201,7 +203,7 @@ flowchart TD
 - **Formatos de exportacion:** 3 formatos: PDF (presentacion), Excel (analisis), CSV (integracion).
 - **Comparacion con periodo anterior:** Se calcula automaticamente basado en la duracion del rango seleccionado.
 - **Estudiantes en riesgo:** Se clasifican por heuristicas (score < 60% = Bajo, 60-80% = Regular, >= 80% = Excelente).
-- **Mock data fallback:** Si el backend no responde, `TeacherReportsPage` activa `isUsingMockData` y muestra banner de advertencia.
+- **Mock data fallback:** Si el backend no responde, `TeacherReports` activa `isUsingMockData` y muestra banner de advertencia.
 - **Eliminacion de reportes:** Requiere confirmacion modal; operacion irreversible.
 
 ## 7. Manejo de errores
@@ -225,7 +227,7 @@ flowchart TD
 | Capa | Archivo | Evidencia |
 |------|---------|-----------|
 | Frontend (analytics) | `apps/frontend/src/apps/teacher/pages/TeacherAnalytics.tsx` | Ruta `/teacher/analytics`, 3 tabs, graficas Chart.js |
-| Frontend (reports) | `apps/frontend/src/apps/teacher/pages/TeacherReportsPage.tsx` | Ruta `/teacher/reports`, ReportGenerator, CRUD reportes |
+| Frontend (reports) | `apps/frontend/src/apps/teacher/pages/TeacherReports.tsx` | Ruta `/teacher/reports`, ReportGenerator, CRUD reportes |
 | Frontend (hook) | `apps/frontend/src/apps/teacher/hooks/useAnalytics.ts` | Promise.all de analytics + engagement |
 | Frontend (API analytics) | `apps/frontend/src/services/api/teacher/analyticsApi.ts` | 7 metodos: getClassroomAnalytics, getEngagementMetrics, generateReport, etc. |
 | Frontend (API reports) | `apps/frontend/src/services/api/teacher/reportsApi.ts` | 5 metodos: generateReport, getRecentReports, getReportStats, downloadReport, deleteReport |

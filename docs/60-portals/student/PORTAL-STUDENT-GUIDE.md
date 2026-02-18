@@ -1,8 +1,9 @@
 # Guía de Desarrollo - Portal Student
 
 **Fecha de creación:** 2025-11-29
-**Versión:** 1.0.0
+**Versión:** 2.0.0
 **Estado:** VIGENTE
+**Última actualización:** 2026-02-18 (Student Portal Refactoring Fases 0-4)
 **Aplica a:** apps/frontend/src/apps/student/ + apps/backend/src/modules/[progress, gamification, educational]
 
 ---
@@ -68,7 +69,7 @@ student/
 │   ├── PasswordRecoveryPage.tsx        # Recuperación contraseña
 │   └── ...
 ├── components/                         # Componentes organizados por dominio
-│   ├── dashboard/                      # 17 componentes del dashboard
+│   ├── dashboard/                      # Componentes del dashboard
 │   │   ├── BottomNavigation.tsx        # ⭐ Navegación móvil (6 tabs)
 │   │   ├── EnhancedStatsGrid.tsx       # Estadísticas detective
 │   │   ├── RankProgressWidget.tsx      # Widget de rango Maya
@@ -80,35 +81,62 @@ student/
 │   │   ├── AchievementMilestones.tsx   # Hitos de logros
 │   │   └── ...
 │   ├── exercise/                       # Componentes de ejercicios
-│   │   ├── ExerciseHeader.tsx          # Header con timer y score
-│   │   ├── CompletionModal.tsx         # Modal de finalización
-│   │   ├── HintModal.tsx               # Sistema de pistas
-│   │   ├── PowerUpEffects.tsx          # Efectos de power-ups
-│   │   └── ExerciseSidebar.tsx         # Sidebar con progreso
+│   │   ├── ExercisePageHeader.tsx      # Header con timer y score
+│   │   └── ...
 │   ├── gamification/                   # Componentes de gamificación
-│   │   ├── GamificationHero.tsx        # Hero section
-│   │   ├── RanksSection.tsx            # Sección de rangos
-│   │   ├── MLCoinsSection.tsx          # Sección de economía
 │   │   ├── AchievementsPreview.tsx     # Preview de logros
-│   │   ├── LeaderboardPreview.tsx      # Preview de ranking
-│   │   └── StreaksMissionsSection.tsx  # Rachas y misiones
-│   ├── achievements/                   # Sistema de logros
-│   │   ├── AchievementGrid.tsx         # Grid de achievements
-│   │   ├── AchievementDetailModal.tsx  # Modal de detalle
-│   │   ├── AchievementFilters.tsx      # Filtros (rarity, category)
-│   │   └── AchievementStatistics.tsx   # Estadísticas
+│   │   └── ...
+│   ├── shop/                           # Tienda (Phase 2)
+│   │   ├── ShopItemCard.tsx            # Card de item
+│   │   ├── PurchaseModal.tsx           # Modal de confirmación
+│   │   └── ShopIcon.tsx               # Iconos por categoría
+│   ├── inventory/                      # Inventario (Phase 2)
+│   │   ├── InventoryItemCard.tsx       # Card de item
+│   │   ├── PowerUpModal.tsx            # Modal de activación
+│   │   ├── EmptyInventory.tsx          # Estado vacío
+│   │   ├── InventoryHeader.tsx         # Header con stats
+│   │   └── InventoryFilters.tsx        # Filtros por categoría
+│   ├── module/                         # Módulo educativo (Phase 2)
+│   │   ├── ExerciseCard.tsx            # Card de ejercicio
+│   │   └── ModuleMetaSections.tsx      # Secciones de metadata
+│   ├── profile/                        # Perfil (Phase 2)
+│   │   ├── ProfileHero.tsx             # Hero section perfil
+│   │   ├── ProfileStatsTab.tsx         # Tab de estadísticas
+│   │   ├── ProfileAchievementsTab.tsx  # Tab de logros
+│   │   └── ProfileActivityTab.tsx      # Tab de actividad
+│   ├── leaderboard/                    # Leaderboard (Phase 3)
+│   │   ├── UserPositionCard.tsx        # Posición del usuario
+│   │   ├── LeaderboardStatsGrid.tsx    # Grid de stats
+│   │   ├── LeaderboardTable.tsx        # Tabla de ranking
+│   │   ├── CategoryBreakdownPanel.tsx  # Desglose por categoría
+│   │   └── PodiumDisplay.tsx           # Top 3 podio
+│   ├── friends/                        # Amigos (Phase 3)
+│   │   ├── FriendsListTab.tsx          # Lista de amigos
+│   │   ├── PendingRequestsTab.tsx      # Solicitudes pendientes
+│   │   ├── DiscoverTab.tsx             # Buscar amigos
+│   │   ├── BlockedUsersTab.tsx         # Usuarios bloqueados
+│   │   └── FriendCard.tsx              # Card de amigo
+│   ├── guilds/                         # Guilds (Phase 3)
+│   │   ├── MyGuildTab.tsx              # Mi guild
+│   │   ├── DiscoverGuildsTab.tsx       # Explorar guilds
+│   │   ├── GuildMissionsTab.tsx        # Misiones de guild
+│   │   ├── GuildCard.tsx               # Card de guild
+│   │   └── CreateGuildModal.tsx        # Modal de creación
+│   ├── learning/                       # Aprendizaje (Phase 4)
+│   │   └── ModuleCard.tsx              # Card de módulo educativo
 │   ├── notifications/                  # Notificaciones y celebraciones
 │   │   ├── AchievementToast.tsx        # Toast de logro desbloqueado
 │   │   └── CelebrationModal.tsx        # Modal de celebración
 │   ├── interactions/                   # Interacciones gestuales
 │   │   └── SwipeableContainer.tsx      # Swipe para móvil
 │   └── PowerUpBar.tsx                  # Barra de power-ups activos
-├── hooks/                              # 14 custom hooks
+├── hooks/                              # 13 custom hooks (student portal)
 │   ├── useDashboardData.ts             # ⭐ Dashboard data + React Query
 │   ├── useUserModules.ts               # Módulos del usuario
 │   ├── useRecentActivities.ts          # Actividades recientes
-│   ├── useGamificationData.ts          # Datos de gamificación
 │   ├── useAchievementsEnhanced.ts      # Achievements con filtros
+│   ├── useProfileData.ts              # ⭐ Agrega 4 stores (Phase 4)
+│   ├── useAvatarUpdate.ts             # ⭐ Optimistic avatar update (Phase 4)
 │   ├── useExerciseState.ts             # Estado de ejercicio
 │   ├── useExerciseAutoSave.ts          # Auto-save de progreso
 │   ├── useExercisePowerUps.ts          # Power-ups en ejercicios
@@ -1047,13 +1075,15 @@ POST /api/v1/gamification/comodines/use
 services/api/
 ├── educationalAPI.ts          # Módulos y ejercicios
 ├── progressAPI.ts             # Progreso y submissions
-├── gamificationAPI.ts         # Gamificación general
+├── gamificationAPI.ts         # Gamificación general (incluye misiones, REC-003)
 ├── ranksAPI.ts                # Sistema de ranks
 ├── achievementsAPI.ts         # Achievements
-├── missionsAPI.ts             # Misiones
 ├── economyAPI.ts              # ML Coins y shop
 ├── socialAPI.ts               # Amigos, guilds, leaderboard
 └── apiClient.ts               # Axios instance configurado
+
+> **Nota:** `missionsAPI.ts` fue eliminado en REC-003 (2026-02-18). Las misiones se consumen
+> ahora via `gamificationAPI.ts` y el hook `useMissions`.
 ```
 
 ---
@@ -1789,8 +1819,9 @@ async submitExercise(...) { ... }
 | Versión | Fecha | Cambios |
 |---------|-------|---------|
 | 1.0.0 | 2025-11-29 | Creación inicial - Documentación completa del Portal Student |
+| 2.0.0 | 2026-02-18 | Actualizado post Student Portal Refactoring Fases 0-4: nuevas carpetas de componentes (shop, inventory, module, profile, leaderboard, friends, guilds, learning), hooks actualizados (useProfileData, useAvatarUpdate), estructura de carpetas refleja extractiones Phase 2-4 |
 
 ---
 
 **Mantenido por:** Tech Lead - GAMILIT Project
-**Última revisión:** 2025-11-29
+**Última revisión:** 2026-02-18

@@ -11,10 +11,13 @@
 
 | Metrica | Valor |
 |---------|-------|
-| **Paginas** | 24 |
-| **Componentes** | 100+ |
-| **Hooks** | 14+ |
+| **Paginas** | 70 |
+| **Componentes** | 571 (production .tsx) |
+| **Hooks** | 119 |
+| **Zustand Stores** | 13 |
 | **Ubicacion** | `apps/frontend/src/apps/student/` |
+
+> **Nota:** Metricas verificadas 2026-02-18 (post Student Portal Refactoring Fases 0-4). Los counts incluyen todos los portales del frontend.
 
 ---
 

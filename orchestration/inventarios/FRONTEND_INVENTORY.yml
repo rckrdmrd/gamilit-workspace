@@ -2,8 +2,8 @@
 # FRONTEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "6.0.0"
-fecha: "2026-02-15"
+version: "10.0.0"
+fecha: "2026-02-18"
 proyecto: "gamilit"
 framework: "React 19.2"
 state: "Zustand 5.x + TanStack Query 5.x"
@@ -15,19 +15,19 @@ build: "Vite 6.x"                              # Verificado: package.json ^6.2.0
 # -------------------------------------------------------------------------------
 
 resumen:
-  componentes_tsx: 480                          # Verified 2026-02-15 broad count (excl test/spec/stories)
-  hooks: 102                                    # Verified 2026-02-15 (incl. useFocusTrap.ts)
-  paginas: 68                                   # 68 activas + 1 legacy
-  stores_zustand: 14                            # 14 archivos con create() de Zustand
-  api_service_files: 52                         # Verified 2026-02-15 post-consolidation
-  api_calls_total: 570                          # Verified 2026-02-15 post-deletion recount
-  type_definition_files: 47                     # 47 archivos, 415 tipos/interfaces/enums exportados
+  componentes_tsx: 571                          # Verified 2026-02-18: 570 + 1 Phase 4 (ModuleCard). AchievementsPage moved (not net new)
+  hooks: 119                                    # Verified 2026-02-18: 117 + 2 Phase 4 (useProfileData, useAvatarUpdate)
+  paginas: 70                                   # 70 activas + 1 legacy
+  stores_zustand: 13                            # 13 archivos con create() de Zustand (-1 missionsStore deleted REC-003)
+  api_service_files: 53                         # Verified 2026-02-18: 53 (+1 inventory.api.ts, -1 missionsAPI.ts deleted REC-003)
+  api_calls_total: 565                          # Verified 2026-02-18 (~-5 calls in deleted missionsAPI.ts)
+  type_definition_files: 49                     # 49 archivos (+1 profile/types.ts Student Portal Refactor), 430+ tipos/interfaces/enums exportados
   portales: 4
   mecanicas_ejercicio: 30                       # 30 mecanicas unicas en 59 archivos .tsx
-  routes: 72                                    # 72 <Route> definitions en App.tsx
-  contexts_providers: 3                         # AuthContext, BrandingProvider, barrel (AuthProvider feature removed CORR-FE-002)
-  config_files: 14                              # Archivos de configuracion (root level)
-  utility_files: 34                             # Archivos de utilidad/helpers
+  routes: 73                                    # 73 <Route path=> definitions en App.tsx (verified 2026-02-17)
+  contexts_providers: 4                         # AuthContext, BrandingProvider, ExerciseContext (Exercise Restructuring), barrel
+  config_files: 16                              # 14 root + exercise-registry.ts + registrations.ts
+  utility_files: 37                             # +1 downloadCSV.ts, +1 difficulty.ts, +1 inventory/utils.ts (Student Portal Refactor)
   constant_files: 7                             # Archivos de constantes
   dependencies_prod: 27
   dependencies_dev: 36
@@ -41,23 +41,53 @@ portales:
   - nombre: "Portal Estudiante"
     directorio: "apps/student/"
     completitud: "~100%"
-    paginas: 19                                 # Verificado: 19 paginas activas + 1 hook example
-    componentes_tsx: 63
+    paginas: 20                                 # Verificado 2026-02-18: 18 *Page.tsx + DashboardComplete + DeviceManagementSection
+    componentes_tsx: 100                         # 71 + 14 Phase 2 (shop:3, inventory:5, module:2, profile:4) + 15 Phase 3 (leaderboard:5, friends:5, guilds:5)
     descripcion: "Dashboard, ejercicios, gamificacion, leaderboards, tienda, misiones, amigos"
+    cambios_recientes: |
+      v10.0.0: Student Portal Refactor — 6 pages refactored following Thin Shell pattern:
+      ShopPage 632→235 (-63%), InventoryPage 732→258 (-65%), ModuleDetailPage 627→277 (-56%),
+      EnhancedProfilePage 635→240 (-62%), AchievementsPage 593→244 (-59%), LearningPage 357→322 (-10%).
+      14 new components extracted (shop:3, inventory:5, module:2, profile:4),
+      5 new React Query hooks (useAchievements, useShopData, useShopPurchase, useInventoryData, useActivatePowerUp),
+      2 new utility files (difficulty.ts, inventory/utils.ts), 1 new type file (profile/types.ts).
+      Total Phase 2: 3,576 → 1,576 lines (-56% average).
+      Phase 3: LeaderboardPage 546→210 (-62%), FriendsPage 591→150 (-75%), GuildsPage 684→165 (-76%).
+      15 new components (leaderboard:5, friends:5, guilds:5).
+      Grand total: 9 pages, 5,397 → 2,101 lines (-61%), 29 new components
 
   - nombre: "Portal Maestro"
     directorio: "apps/teacher/"
     completitud: "~95%"
-    paginas: 19                                 # Verificado: 19 paginas
-    componentes_tsx: 68
+    paginas: 19                                 # Verificado: 19 paginas (ADR-030: sin sufijo "Page")
+    componentes_tsx: 57                         # Verified 2026-02-18: 57 .tsx in components/ (+6 SRP split)
+    hooks: 25                                   # 24 hooks + index.ts barrel (4 migrated to React Query ADR-013)
     descripcion: "Gestion aulas, asignaciones, reportes, revision manual, monitoreo, comunicacion"
+    cambios_recientes: |
+      v7.0.0: 12 pages renamed (ADR-030), 8 migrated to withTeacherLayout HOC,
+      4 hooks migrated to React Query (ADR-013), TeacherSettings split into 5 section components,
+      TeacherReports extracted RecentReportsTable, 3 DRY extractions to shared utils,
+      6 pages migrated from useToast to react-hot-toast, 5 files TypeScript improved
 
   - nombre: "Portal Administrador"
     directorio: "apps/admin/"
-    completitud: "~90%"
-    paginas: 18                                 # Verificado: 18 paginas
-    componentes_tsx: 93
+    completitud: "~92%"
+    paginas: 19                                 # Verificado 2026-02-17: 19 paginas (incl. AdminExerciseCreatePage)
+    componentes_tsx: 121                        # 93 + 19 (Sprint 0+1) + 9 (Sprint 2: dashboard:4, notifications:3, institutions:1, exercise-builder:1)
+    hooks: 31                                   # 25 + 5 (Sprint 0+1) + 1 (Sprint 2: useInstitutionActions)
     descripcion: "Dashboard, usuarios, contenido, analytics, monitoreo, reportes, gamificacion config"
+    cambios_recientes: |
+      v9.0.0 (Sprint 2 Admin Portal Refactor):
+      - ALL 19 pages migrated to AdminPageShell (boilerplate eliminated)
+      - 11 simple pages: AdminPageShell + AdminTabBar migration (Batch A)
+      - 4 complex pages: component/hook extraction (Batch B)
+        Dashboard 397→89, Notifications 396→172, Institutions 574→108, ExerciseCreate 536→304
+      - 9 new extracted components (dashboard:4, notifications:3, institutions:1, exercise-builder:1)
+      - 1 new hook (useInstitutionActions: modal state + handlers for Institutions)
+      - Total page lines: 7,471 → 3,568 (52% reduction)
+      v8.0.0 (Sprint 0+1):
+      - 4 critical pages (Users 892→137, AuditLogs 762→204, Gamification 650→228, Content 586→137)
+      - 5 shared infrastructure, 19 extracted components, useContentQueries (React Query)
 
   - nombre: "Portal Padres"
     directorio: "apps/parent/"
@@ -67,7 +97,7 @@ portales:
     descripcion: "Dashboard, progreso hijo, login, registro"
 
 # Nota: Paginas compartidas (auth pages, feature-level pages) = 8 adicionales fuera de portales
-# Total paginas: 19+19+18+4+8 = 68
+# Total paginas: 20+19+19+4+8 = 70
 
 # -------------------------------------------------------------------------------
 # FEATURES (Verificado contra features/ directory)
@@ -78,11 +108,11 @@ features:
     componentes_tsx: 109                        # Mas grande: battles, economy, missions, ranks, social
     subdominios:
       - "battles (3 .tsx, 1 hook, 1 store)"
-      - "economy/Shop (5) + Wallet (4) + Inventory (2) + Analytics (2) = 13 components"
+      - "economy/Shop (5) + Wallet (4) + Inventory (2) + Analytics (2) = 13 components, 3 hooks (useShopData, useShopPurchase, index)"
       - "leaderboard (4 .tsx)"
       - "missions (6 .tsx, 1 hook, 1 store)"
       - "ranks (8 .tsx, 5 hooks, 1 store)"
-      - "social/Achievements (7) + Friends (7) + Guilds (9) + Leaderboards (14) + PowerUps (6) = 43 components"
+      - "social/Achievements (7) + Friends (7) + Guilds (9) + Leaderboards (14) + PowerUps (6) = 43 components, 8 hooks (+useInventoryData, +useActivatePowerUp)"
 
   - nombre: "auth"
     componentes_tsx: 18                         # LoginForm, RegisterForm, PasswordInput, PermissionMatrix, etc.
@@ -91,7 +121,7 @@ features:
     componentes_tsx: 13                         # branding (5) + components (3) + lti (5)
 
   - nombre: "exercises"
-    componentes_tsx: 4                          # ExerciseFeedback, ExerciseGuide, ExerciseHeader, UnderConstruction
+    componentes_tsx: 14                         # 4 original + 10 Exercise System Restructuring (ExerciseLayout, ExerciseLoader, ExerciseSidebar, ConsumablesPanel, ActionsPanel, ExerciseLoadingSkeleton, ExerciseErrorState, ExerciseCompletedState, MechanicCompatWrapper, ExerciseContext)
 
   - nombre: "notifications"
     componentes_tsx: 3                          # NotificationBell, NotificationDropdown, test
@@ -115,11 +145,11 @@ shared:
     timeline: 1                                 # ActivityTimeline
 
 # -------------------------------------------------------------------------------
-# STORES (ZUSTAND) — 14 archivos verificados con create()
+# STORES (ZUSTAND) — 13 archivos verificados con create()
 # -------------------------------------------------------------------------------
 
 stores:
-  total: 14
+  total: 13                                     # Was 14; missionsStore DELETED in REC-003
   lista:
     - nombre: "authStore"
       archivo: "features/auth/store/authStore.ts"
@@ -143,8 +173,7 @@ stores:
       archivo: "features/gamification/social/store/newLeaderboardsStore.ts"
     - nombre: "powerUpsStore"
       archivo: "features/gamification/social/store/powerUpsStore.ts"
-    - nombre: "missionsStore"
-      archivo: "features/missions/store/missionsStore.ts"
+    # missionsStore DELETED in REC-003 (migrated to useMissions React Query hook)
     - nombre: "notificationsStore"
       archivo: "features/notifications/store/notificationsStore.ts"
     - nombre: "parentStore"
@@ -159,19 +188,20 @@ stores:
 # -------------------------------------------------------------------------------
 
 hooks:
-  total: 102                                    # 101 + 1 (useFocusTrap.ts added)
+  total: 117                                    # 112 + 5 Student Portal Refactor (useAchievements, useShopData, useShopPurchase, useInventoryData, useActivatePowerUp)
   por_directorio:
     apps_admin_hooks: 25
     apps_teacher_hooks: 24
     apps_student_hooks: 10
     shared_hooks: 11
-    features_gamification_social_hooks: 6
+    features_gamification_social_hooks: 8        # +2 useInventoryData, useActivatePowerUp
     features_auth_hooks: 5
-    features_gamification_economy_hooks: 5
+    features_gamification_economy_hooks: 7       # +2 useShopData, useShopPurchase
     features_gamification_ranks_hooks: 5
     hooks_root: 2                               # useBranding, useFavicon (useAchievements deleted CORR-FE-003)
-    features_exercises_hooks: 2
+    features_exercises_hooks: 5                  # +3 Exercise System Restructuring
     features_notifications_hooks: 2
+    features_gamification_achievements_hooks: 1  # +1 useAchievements (Student Portal Refactor)
     features_gamification_battles_hooks: 1
     features_gamification_missions_hooks: 1
     features_mechanics_shared_hooks: 1
@@ -186,7 +216,7 @@ hooks:
 # -------------------------------------------------------------------------------
 
 api_services:
-  total_files: 52                               # Verified 2026-02-15 post-consolidation
+  total_files: 53                               # Verified 2026-02-17 (+1 inventory.api.ts)
   total_api_calls: 570                          # Verified 2026-02-15 post-deletion recount
   por_directorio:
     services_api_root: 14                       # adminAPI, educationalAPI, progressAPI, contentAPI, etc.
@@ -210,7 +240,7 @@ api_services:
   # api-types.ts, api-responses.ts
 
   cobertura_backend:
-    endpoints_backend_total: 899
+    endpoints_backend_total: 904
     endpoints_llamados_frontend: "350-400"      # ~40-45% cobertura global
     cobertura_por_portal:
       parent: "~90-100%"                        # 17 endpoints, API file dedicado
@@ -221,17 +251,18 @@ api_services:
   duplicados_identificados: 0                   # All 6 resolved: LTI, auth, manualReviews consolidated; content deleted; progress, achievements domain-split
 
 # -------------------------------------------------------------------------------
-# ROUTES (70 definiciones en App.tsx)
+# ROUTES (73 definiciones en App.tsx)
 # -------------------------------------------------------------------------------
 
 routes:
-  total: 72                                    # Updated 2026-02-14: 72 <Route> in App.tsx
+  total: 73                                    # Verified 2026-02-17: 73 <Route path=> in App.tsx
   desglose:
-    public: 10                                  # login, register, forgot-password, reset-password, etc.
-    student: 19                                 # role guard: student
-    teacher: 19                                 # role guard: teacher, admin_teacher
-    admin: 20                                   # role guard: super_admin
-    parent: 2                                   # role guard: parent
+    public: 7                                   # login, register, forgot-password, reset-password, verify-email, parent/login, parent/register
+    student: 22                                 # role guard: student (dashboard, learning, progress, achievements, etc.)
+    teacher: 19                                 # role guard: teacher, admin_teacher (incl. 1 redirect)
+    admin: 22                                   # role guard: super_admin (incl. exercises/create and exercises/:id/edit)
+    parent: 2                                   # role guard: parent (dashboard, child/:studentId)
+    redirect: 1                                 # / -> /dashboard
 
   # Nota: El inventario anterior de 24 routes probablemente contaba grupos de ruta
   # de primer nivel (prefijos), no definiciones individuales <Route>.
@@ -278,7 +309,7 @@ configuracion:
   configs: 14                                   # vite, tsconfig(3), tailwind, postcss, eslint, prettier, env(2), vitest, playwright, storybook(2)
   utilidades: 34                                # shared/utils(17) + utils/(5) + features utils(5) + lib/api(6) + test helpers(1)
   constantes: 7                                 # enums.constants(807 lines SSOT), colors, breakpoints, ranks, exerciseFeedback, alertTypes, barrel
-  contextos: 3                                  # AuthContext (392 lines), BrandingProvider (258 lines), barrel (AuthProvider feature deleted CORR-FE-002)
+  contextos: 4                                  # AuthContext (392 lines), BrandingProvider (258 lines), ExerciseContext (339 lines), barrel
   assets: 16                                    # Solo Storybook boilerplate (0 custom app assets)
 
 dependencias:
@@ -337,6 +368,27 @@ hallazgos:
     estado: "RESOLVED"
     resolucion: "21 comentarios removidos — todos endpoints implementados en backend (2026-02-14)"
 
+  - id: "HF-07"
+    tipo: "DEAD_CODE"
+    detalle: "NotificationService.ts (308 lineas) tiene 0 importers externos. Canonical path: notificationsAPI.ts"
+    prioridad: "P3"
+    estado: "DEPRECATED"
+    resolucion: "Added @deprecated JSDoc (P6, 2026-02-17). Safe to delete."
+
+  - id: "HF-08"
+    tipo: "MOCK_ONLY"
+    detalle: "mechanicsAPI.ts (9 mocks) y aiServiceAPI.ts (8 mocks) son MOCK-ONLY — no existen endpoints backend"
+    prioridad: "P2"
+    estado: "DOCUMENTED"
+    resolucion: "Documented in P4-FRONTEND-API-MAP.md (2026-02-17). mechanicsAPI provides client-side config, aiService is aspirational."
+
+  - id: "HF-09"
+    tipo: "MOCK_GATED"
+    detalle: "socialAPI.ts tiene 15+ funciones gated por FEATURE_FLAGS.USE_MOCK_DATA — 40 backend endpoints sin API calls reales"
+    prioridad: "P1"
+    estado: "DOCUMENTED"
+    resolucion: "Documented in P4-FRONTEND-API-MAP.md (2026-02-17). Flip USE_MOCK_DATA to false when social features ship."
+
 # ===============================================================================
-# FIN FRONTEND INVENTORY v5.0.0
+# FIN FRONTEND INVENTORY v10.0.0
 # ===============================================================================

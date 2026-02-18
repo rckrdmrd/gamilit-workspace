@@ -5,10 +5,15 @@ cd /mnt/c/Empresas/ISEM/gamilit-workspace/apps/database
 DDL_DIR="./ddl"
 DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
-DB_PASSWORD="gamilit_dev_2026"
+DB_PASSWORD="${DB_PASSWORD:-${GAMILIT_DB_PASSWORD:-}}"
 DB_HOST="localhost"
 DB_PORT="5432"
-SUDO_PASS="2320"
+SUDO_PASS="${GAMILIT_SUDO_PASSWORD:-}"
+
+if [ -z "$DB_PASSWORD" ]; then
+    echo "ERROR: define DB_PASSWORD o GAMILIT_DB_PASSWORD"
+    exit 1
+fi
 
 execute_sql_file() {
     local file="$1"
@@ -38,7 +43,11 @@ done
 
 echo "Found $enum_count ENUM files"
 if [ $enum_count -gt 0 ]; then
-    printf "$SUDO_PASS\n" | sudo -S -u postgres psql -d "$DB_NAME" < "$temp_enums" > /dev/null 2>&1
+    if [ -n "$SUDO_PASS" ]; then
+        printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -d "$DB_NAME" < "$temp_enums" > /dev/null 2>&1
+    else
+        sudo -u postgres psql -d "$DB_NAME" < "$temp_enums" > /dev/null 2>&1
+    fi
     echo "ENUMs cargados"
 fi
 rm -f "$temp_enums"
@@ -62,14 +71,22 @@ for schema in $schemas_all; do
 done
 
 echo "Found $table_count table files"
-printf "$SUDO_PASS\n" | sudo -S -u postgres psql -d "$DB_NAME" < "$temp_batch" 2>&1 | grep -ci "error" || echo "0 errors"
+if [ -n "$SUDO_PASS" ]; then
+    printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -d "$DB_NAME" < "$temp_batch" 2>&1 | grep -ci "error" || echo "0 errors"
+else
+    sudo -u postgres psql -d "$DB_NAME" < "$temp_batch" 2>&1 | grep -ci "error" || echo "0 errors"
+fi
 echo "Tablas procesadas"
 rm -f "$temp_batch"
 
 echo "=== PASO 2e: Post-DDL Permissions ==="
 perms_file="$DDL_DIR/99-post-ddl-permissions.sql"
 if [ -f "$perms_file" ]; then
-    printf "$SUDO_PASS\n" | sudo -S -u postgres psql -d "$DB_NAME" < "$perms_file" > /dev/null 2>&1
+    if [ -n "$SUDO_PASS" ]; then
+        printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -d "$DB_NAME" < "$perms_file" > /dev/null 2>&1
+    else
+        sudo -u postgres psql -d "$DB_NAME" < "$perms_file" > /dev/null 2>&1
+    fi
     echo "Permisos otorgados"
 fi
 

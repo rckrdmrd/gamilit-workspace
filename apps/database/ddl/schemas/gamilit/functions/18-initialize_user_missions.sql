@@ -47,11 +47,47 @@ DECLARE
     v_error_message TEXT;
     v_error_detail TEXT;
     v_error_code TEXT;
+    -- REC-009: Template UUID variables (looked up from mission_templates)
+    v_tpl_daily_exercises UUID;
+    v_tpl_daily_earn_xp UUID;
+    v_tpl_daily_use_comodin UUID;
+    v_tpl_weekly_complete_module UUID;
+    v_tpl_weekly_daily_streak UUID;
+    v_tpl_weekly_perfect_scores UUID;
+    v_tpl_weekly_explorer UUID;
+    v_tpl_weekly_master_learner UUID;
 BEGIN
     -- Calculate mission date ranges using Mexico timezone
     v_today_start := gamilit.now_mexico()::date;
     v_today_end := v_today_start + INTERVAL '23 hours 59 minutes';
     v_week_end := v_today_start + INTERVAL '7 days';
+
+    -- REC-009: Look up template UUIDs from mission_templates by type + target_type
+    SELECT id INTO v_tpl_daily_exercises FROM gamification_system.mission_templates
+        WHERE type = 'daily' AND target_type = 'complete_exercises' AND is_active = true LIMIT 1;
+    SELECT id INTO v_tpl_daily_earn_xp FROM gamification_system.mission_templates
+        WHERE type = 'daily' AND target_type = 'earn_xp' AND is_active = true LIMIT 1;
+    SELECT id INTO v_tpl_daily_use_comodin FROM gamification_system.mission_templates
+        WHERE type = 'daily' AND target_type = 'use_comodines' AND is_active = true LIMIT 1;
+    SELECT id INTO v_tpl_weekly_complete_module FROM gamification_system.mission_templates
+        WHERE type = 'weekly' AND target_type = 'complete_modules' AND is_active = true LIMIT 1;
+    SELECT id INTO v_tpl_weekly_daily_streak FROM gamification_system.mission_templates
+        WHERE type = 'weekly' AND target_type = 'daily_streak' AND is_active = true LIMIT 1;
+    SELECT id INTO v_tpl_weekly_perfect_scores FROM gamification_system.mission_templates
+        WHERE type = 'weekly' AND target_type = 'perfect_scores' AND is_active = true LIMIT 1;
+    SELECT id INTO v_tpl_weekly_explorer FROM gamification_system.mission_templates
+        WHERE type = 'weekly' AND target_type = 'explore_modules' AND is_active = true LIMIT 1;
+    SELECT id INTO v_tpl_weekly_master_learner FROM gamification_system.mission_templates
+        WHERE type = 'weekly' AND target_type = 'complete_exercises' AND is_active = true LIMIT 1;
+
+    -- Validate that all templates were found
+    IF v_tpl_daily_exercises IS NULL OR v_tpl_daily_earn_xp IS NULL OR v_tpl_daily_use_comodin IS NULL
+       OR v_tpl_weekly_complete_module IS NULL OR v_tpl_weekly_daily_streak IS NULL
+       OR v_tpl_weekly_perfect_scores IS NULL OR v_tpl_weekly_explorer IS NULL
+       OR v_tpl_weekly_master_learner IS NULL THEN
+        RAISE WARNING '[REC-009] Missing mission_templates — seed templates first. Skipping mission init for user %', p_user_id;
+        RETURN;
+    END IF;
 
     -- =====================================================
     -- DAILY MISSIONS (3)
@@ -72,7 +108,7 @@ BEGIN
         end_date
     ) VALUES (
         p_user_id,
-        'daily_complete_exercises',
+        v_tpl_daily_exercises,
         'Completar 3 ejercicios',
         'Completa 3 ejercicios hoy para ganar recompensas',
         'daily',
@@ -109,7 +145,7 @@ BEGIN
         end_date
     ) VALUES (
         p_user_id,
-        'daily_earn_xp',
+        v_tpl_daily_earn_xp,
         'Ganar 100 XP',
         'Acumula 100 puntos de experiencia hoy',
         'daily',
@@ -146,7 +182,7 @@ BEGIN
         end_date
     ) VALUES (
         p_user_id,
-        'daily_use_comodin',
+        v_tpl_daily_use_comodin,
         'Usar un comodín',
         'Usa al menos un comodín en un ejercicio',
         'daily',
@@ -187,7 +223,7 @@ BEGIN
         end_date
     ) VALUES (
         p_user_id,
-        'weekly_complete_module',
+        v_tpl_weekly_complete_module,
         'Completar un módulo',
         'Completa un módulo completo esta semana',
         'weekly',
@@ -224,7 +260,7 @@ BEGIN
         end_date
     ) VALUES (
         p_user_id,
-        'weekly_daily_streak',
+        v_tpl_weekly_daily_streak,
         'Racha de 5 días',
         'Completa al menos un ejercicio durante 5 días seguidos',
         'weekly',
@@ -261,7 +297,7 @@ BEGIN
         end_date
     ) VALUES (
         p_user_id,
-        'weekly_perfect_scores',
+        v_tpl_weekly_perfect_scores,
         'Perfección absoluta',
         'Obtén 3 puntajes perfectos (100%) en ejercicios',
         'weekly',
@@ -298,7 +334,7 @@ BEGIN
         end_date
     ) VALUES (
         p_user_id,
-        'weekly_explorer',
+        v_tpl_weekly_explorer,
         'Explorador curioso',
         'Completa ejercicios de 3 módulos diferentes',
         'weekly',
@@ -336,7 +372,7 @@ BEGIN
         end_date
     ) VALUES (
         p_user_id,
-        'weekly_master_learner',
+        v_tpl_weekly_master_learner,
         'Maestro del aprendizaje',
         'Completa 15 ejercicios esta semana',
         'weekly',

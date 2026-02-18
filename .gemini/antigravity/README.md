@@ -1,230 +1,138 @@
 # Gemini Configuration for Gamilit
 
-**Version:** 2.1.0
-**Updated:** 2026-01-20
+**Version:** 2.2.0  
+**Updated:** 2026-02-17
 
-## INHERITANCE
+## Inheritance
 
-This project inherits from **Workspace V2** configuration.
-Uses the **Dynamic Bootloader** pattern.
+This repository is **standalone** and governed locally by `CLAUDE.md` + `orchestration/`.
 
 ---
 
-## PROJECT CONTEXT (CRITICAL)
+## Project Context (Critical)
 
 | Aspect | Value |
 |--------|-------|
-| **Project** | Gamilit - Plataforma de Gamificación Educativa |
-| **Type** | STANDALONE + REFERENCE_SOURCE |
-| **Completeness** | 60% |
-| **Stack** | NestJS 11, React 18, PostgreSQL 15 |
-| **Monorepo** | Yes (apps/backend/, apps/frontend/, apps/database/) |
+| **Project** | Gamilit - Plataforma de Gamificacion Educativa |
+| **Type** | STANDALONE |
+| **Stack** | NestJS 11, React 19, PostgreSQL 15 |
+| **Monorepo** | Yes (`apps/backend`, `apps/frontend`, `apps/database`) |
 
 ### Portals
 
 | Portal | URL Local | Description |
 |--------|-----------|-------------|
-| Student | http://localhost:3000/student | Student-facing portal |
-| Teacher | http://localhost:3000/teacher | Teacher portal |
-| Admin | http://localhost:3000/admin | Administrative portal |
+| Student | http://localhost:3005/student | Student portal |
+| Teacher | http://localhost:3005/teacher | Teacher portal |
+| Admin | http://localhost:3005/admin | Admin portal |
+| Parent | http://localhost:3005/parent | Parent portal |
 
-### Key Metrics
+### Key Metrics (SSOT: `orchestration/inventarios/MASTER_INVENTORY.yml`)
 
-- **Backend:** 17 modules, 850 endpoints, 141 entities
-- **Frontend:** 327 components, 74 pages
-- **Database:** 18 schemas (16 active + 2 placeholder), 171 tables
-- **MVP:** 98% | **Coherence DDL-Backend:** 82.5%
+- **Backend:** 23 modules, 901 endpoints, 152 entities
+- **Frontend:** 488 components, 70 pages
+- **Database:** 18 schemas (16 active + 2 placeholder), 169 tables
+- **MVP:** 98% complete
 
 ---
 
-## CRITICAL: BOOT SEQUENCE
+## Critical Boot Sequence
 
-**Before any task, execute IN ORDER:**
+**Before any task, execute in order:**
 
-### Step 0: Platform Detection (CRITICAL)
+### Step 0: Platform Detection
 ```
-Working directory starts with C:\ or D:\ → WINDOWS
-Working directory starts with /home/ or /mnt/c/ → LINUX/WSL
+Working directory starts with C:\ or D:\ -> WINDOWS
+Working directory starts with /home/ or /mnt/c/ -> LINUX/WSL
 ```
-**On Windows:** Use `npm` commands, avoid bash syntax.
-**Reference:** `../../../../.gemini/antigravity/PLATFORM-CONFIG.yml`
+On Windows, prefer `npm` commands over bash-style inline env syntax.
 
 ### Step 1: Load Bootloader
-**Read:** `../../../../.gemini/antigravity/BOOTLOADER_PROTOCOL.md`
+Read: `.gemini/antigravity/BOOTLOADER_PROTOCOL.md`
 
 ### Step 2: Load Base Context
-**Read in order:**
-1. `../../../../CLAUDE.md` - Base workspace rules
-2. `../../../../.gemini/antigravity/AGENT-CAPABILITIES.yml` - Your limitations
+Read in order:
+1. `CLAUDE.md`
+2. `.gemini/antigravity/AGENT-CAPABILITIES.yml`
+3. `orchestration/CONTEXT-MAP.yml`
 
-### Step 3: Load Project Context
-**Read:** `orchestration/TAREAS-PENDIENTES-GAMILIT.yml` - Structured tasks for execution
+### Step 3: Load Current State
+Read: `orchestration/PROXIMA-ACCION.md`
 
 ### Step 4: Load Task-Specific Directive
-Based on task type, load from `../../../../orchestration/directivas/simco/`:
-- Analysis → `SIMCO-VALIDAR.md` + `MODE-ANALYSIS.md`
-- Backend → `SIMCO-BACKEND.md`
-- Frontend → `SIMCO-FRONTEND.md`
-- Database → `SIMCO-DDL.md`
-- Git → `SIMCO-GIT.md`
+Load from `orchestration/directivas/simco/`:
+- Analysis -> `SIMCO-VALIDAR.md`
+- Backend -> `SIMCO-BACKEND.md`
+- Frontend -> `SIMCO-FRONTEND.md`
+- Database -> `SIMCO-DDL.md`
+- Git -> `SIMCO-GIT.md`
 
 ### Step 5: Self-Persona Switch (if needed)
-Load profile from `../../../../orchestration/agents/perfiles/`:
-- Backend tasks → `PERFIL-BACKEND.md`
-- Frontend tasks → `PERFIL-FRONTEND.md`
-- Testing tasks → `PERFIL-TESTING.md`
-- QA tasks → `PERFIL-QA.md`
+Load profile from `orchestration/agents/perfiles/` according to task domain.
 
 ---
 
-## YOUR ROLE: QA/Testing Frontend
+## Role and Boundaries
 
-**Primary responsibility:** Testing frontend with browser capabilities.
+Primary role: QA/testing support with browser-centric validations.
 
-### When You Are Used
-
-- Test that a feature works in the browser
-- Verify UI changes don't break anything
-- Debug visual problems
-- Test complete user flows
-- Validate responsive design
-
-### Unique Capabilities
-
-- Browser integration (Playwright, Puppeteer)
-- Screenshot capture and visual comparison
-- Real DOM element interaction
-- Script execution in page context
-- Network inspection and monitoring
-
-### NOT Responsible For
-
-- Architecture definition (Claude Code does that)
-- Task execution without clear specs (Trae/Windsurf do that)
-- Design decisions without specification
+### No Subagents
+Gemini runs as a single agent session in this project.
+- Flatten delegation instructions into sequential steps.
+- Use Self-Persona Switch when directives mention specialist roles.
 
 ---
 
-## FILES TO LOAD FOR GAMILIT
+## Testing Workflow
 
-### Always Load
-| File | Purpose |
-|------|---------|
-| `orchestration/TAREAS-PENDIENTES-GAMILIT.yml` | Structured tasks |
-| `orchestration/PROXIMA-ACCION.md` | Current state |
-| `orchestration/CONTEXT-MAP.yml` | Automatic context |
-
-### For Testing
-| File | Purpose |
-|------|---------|
-| `orchestration/testing/` | Test cases and reports |
-| `docs/95-guias-desarrollo/student-portal/` | Student portal guide |
-| `apps/frontend/src/apps/` | Frontend code by portal |
-
-### For Backend Understanding
-| File | Purpose |
-|------|---------|
-| `orchestration/inventarios/BACKEND_INVENTORY.yml` | Backend inventory |
-| `docs/90-transversal/api/` | API documentation |
-
----
-
-## TESTING WORKFLOW
-
-### 1. Before Testing
+### Before Testing
 ```
-1. Verify backend is running: curl http://localhost:3100/health
-2. Verify frontend is running: curl http://localhost:3000
+1. Verify backend is running: curl http://localhost:3006/health
+2. Verify frontend is running: curl http://localhost:3005
 3. Check test credentials in orchestration/testing/CREDENTIALS.md
 ```
 
-### 2. During Testing
+### During Testing
 ```
-1. Follow test cases in TAREAS-PENDIENTES-GAMILIT.yml (tareas_testing section)
-2. Document results as you go
-3. Capture screenshots of failures
-4. Note any unexpected behaviors
-```
-
-### 3. After Testing
-```
-1. Create test report in orchestration/testing/reportes/
-2. Update task status in TAREAS-PENDIENTES-GAMILIT.yml
-3. Commit: git add . && git commit -m "[GAM-TEST-XXX] test: description"
-4. Push: git push origin master
+1. Follow assigned cases
+2. Document results
+3. Capture failure evidence
+4. Report unexpected behavior
 ```
 
----
-
-## IMPORTANT REMINDERS
-
-### No Subagents
-You operate as a single agent.
-- Flatten "Delegation" steps into sequential execution
-- Use Self-Persona Switch pattern
-
-### Before Completing Task
-- Run relevant validations
-- Follow `SIMCO-GIT.md` for commits
-- Execute `git fetch` before any git status check
-
-### Windows Commands
-```cmd
-npm test              # Tests (uses cross-env)
-npm run build         # Build
-npm run lint          # Lint
+### After Testing
 ```
-
-### Context Management
-- Load files ONLY when needed
-- If context > 50%, stop and ask to clean
-- Use checkpoints for long tasks
-
-### Checkpoint Template
-```markdown
-## Checkpoint - [TASK_ID]
-**Date:** YYYY-MM-DD HH:MM
-**Agent:** Gemini
-**Progress:** X of Y tests
-**Last completed:** [description]
-**Next step:** [description]
-**Issues found:** [list]
+1. Save report under orchestration/testing/reportes/
+2. Update task state/checkpoints
+3. Follow git protocol from SIMCO-GIT.md
 ```
 
 ---
 
-## QUICK REFERENCE
-
-### Test User Credentials
-```
-Student: student@test.com / test123
-Teacher: teacher@test.com / test123
-Admin: admin@test.com / admin123
-```
+## Quick Reference
 
 ### Common URLs
 ```
-Student Dashboard: http://localhost:3000/student/dashboard
-Teacher Dashboard: http://localhost:3000/teacher/dashboard
-Admin Dashboard: http://localhost:3000/admin/dashboard
-Login: http://localhost:3000/{portal}/login
+Student Dashboard: http://localhost:3005/student/dashboard
+Teacher Dashboard: http://localhost:3005/teacher/dashboard
+Admin Dashboard: http://localhost:3005/admin/dashboard
+Parent Dashboard: http://localhost:3005/parent/dashboard
+Login: http://localhost:3005/{portal}/login
 ```
 
 ### Validation Commands
 ```cmd
-cd apps/frontend && npm run build
-cd apps/frontend && npm run lint
-cd apps/backend && npm run build
-cd apps/backend && npm run lint
+cd apps/frontend && npm run build && npm run lint
+cd apps/backend && npm run build && npm run lint
 ```
 
 ---
 
-## REFERENCES
+## References
 
-- **Workspace Bootloader:** `../../../../.gemini/antigravity/BOOTLOADER_PROTOCOL.md`
-- **Agent Capabilities:** `../../../../.gemini/antigravity/AGENT-CAPABILITIES.yml`
-- **Platform Config:** `../../../../.gemini/antigravity/PLATFORM-CONFIG.yml`
-- **Tasks:** `orchestration/TAREAS-PENDIENTES-GAMILIT.yml`
-- **Documentation Map:** `orchestration/MAPA-DOCUMENTACION-GAMILIT.yml`
-- **Agent Roles:** `../../../../orchestration/agents/AGENT-ROLES.md`
+- `CLAUDE.md`
+- `.gemini/antigravity/BOOTLOADER_PROTOCOL.md`
+- `.gemini/antigravity/AGENT-CAPABILITIES.yml`
+- `orchestration/CONTEXT-MAP.yml`
+- `orchestration/PROXIMA-ACCION.md`
+- `orchestration/inventarios/MASTER_INVENTORY.yml`

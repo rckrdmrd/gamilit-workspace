@@ -19,10 +19,10 @@ import {
   OneToMany,
   Index,
 } from 'typeorm';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 import { GuildMember } from './guild-member.entity';
 
-@Entity({ schema: DB_SCHEMAS.SOCIAL, name: 'guilds' })
+@Entity({ schema: DB_SCHEMAS.SOCIAL, name: DB_TABLES.SOCIAL.GUILDS })
 @Index('idx_guilds_name', ['name'], { unique: true })
 @Index('idx_guilds_leader', ['leaderId'])
 @Index('idx_guilds_public_active', ['isPublic', 'isActive'])

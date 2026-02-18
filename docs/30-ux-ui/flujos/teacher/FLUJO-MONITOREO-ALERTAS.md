@@ -24,7 +24,7 @@ Flujo para visualizar alertas de riesgo academico generadas automaticamente por 
 
 ```mermaid
 flowchart TD
-    page[TeacherAlertsPage] --> panel[InterventionAlertsPanel]
+    page[TeacherAlerts] --> panel[InterventionAlertsPanel]
     panel --> card[AlertCard]
     card --> ack[PATCH /api/v1/teacher/alerts/:id/acknowledge]
     card --> resolve[PATCH /api/v1/teacher/alerts/:id/resolve]
@@ -42,7 +42,7 @@ flowchart TD
 
 ## 4. Secuencia FE -> BE -> DB
 
-1. Docente abre `TeacherAlertsPage`, hook `useInterventionAlerts` ejecuta `GET /api/v1/teacher/alerts` con filtros (classroom, tipo, severidad, estado, busqueda).
+1. Docente abre `TeacherAlerts`, hook `useInterventionAlerts` ejecuta `GET /api/v1/teacher/alerts` con filtros (classroom, tipo, severidad, estado, busqueda).
 2. Backend (`InterventionAlertsController`) valida permisos y filtra alertas de classrooms del docente.
 3. `InterventionAlertsService` consulta `progress_tracking.student_intervention_alerts` con paginacion.
 4. FE renderiza alertas en `InterventionAlertsPanel` con `AlertCard` para cada alerta.
@@ -59,7 +59,7 @@ flowchart TD
 
 | Capa | Archivo | Descripcion |
 |------|---------|-------------|
-| FE Page | `apps/frontend/src/apps/teacher/pages/TeacherAlertsPage.tsx` | Pagina principal de alertas |
+| FE Page | `apps/frontend/src/apps/teacher/pages/TeacherAlerts.tsx` | Pagina principal de alertas |
 | FE Page | `apps/frontend/src/apps/teacher/pages/TeacherAlertConfigPage.tsx` | Pagina de configuracion de alertas |
 | FE Page | `apps/frontend/src/apps/teacher/pages/TeacherMonitoringPage.tsx` | Pagina de monitoreo de estudiantes |
 | FE Component | `apps/frontend/src/apps/teacher/components/alerts/AlertCard.tsx` | Tarjeta individual de alerta |
@@ -115,7 +115,7 @@ flowchart TD
 | DDL | `apps/database/ddl/schemas/progress_tracking/tables/20-teacher_alert_configurations.sql` | CREATE TABLE progress_tracking.teacher_alert_configurations |
 | Controller | `apps/backend/src/modules/teacher/controllers/intervention-alerts.controller.ts` | @Controller('teacher/alerts') |
 | Controller | `apps/backend/src/modules/teacher/controllers/alert-config.controller.ts` | @Controller('teacher/alert-config') |
-| Frontend | `apps/frontend/src/apps/teacher/pages/TeacherAlertsPage.tsx` | Pagina de alertas |
+| Frontend | `apps/frontend/src/apps/teacher/pages/TeacherAlerts.tsx` | Pagina de alertas |
 | API Client | `apps/frontend/src/services/api/teacher/interventionAlertsApi.ts` | interventionAlertsApi |
 
 ## 9. Referencias

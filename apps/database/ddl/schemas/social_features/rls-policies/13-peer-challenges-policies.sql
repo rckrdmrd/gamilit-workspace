@@ -272,7 +272,7 @@ CREATE POLICY challenge_results_select_admin
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             WHERE p.id = current_setting('app.current_user_id', true)::uuid
-              AND p.role IN ('admin', 'superadmin')
+              AND p.role IN ('admin_teacher', 'super_admin')
         )
     );
 

@@ -16,10 +16,8 @@
  */
 
 import { useState } from 'react';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { AdminLayout } from '../layouts/AdminLayout';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { useAlerts } from '../hooks/useAlerts';
+import { AdminPageShell } from '../components/shared';
 
 // Components
 import { AlertsStats } from '../components/alerts/AlertsStats';
@@ -40,20 +38,6 @@ import type { SystemAlert } from '@/services/api/adminTypes';
  * AdminAlertsPage Component
  */
 export default function AdminAlertsPage() {
-  const { user, logout } = useAuth();
-
-  // Gamification data
-  const { gamificationData } = useUserGamification(user?.id);
-  const displayGamificationData = gamificationData || {
-    userId: user?.id || '',
-    level: 1,
-    totalXP: 0,
-    mlCoins: 0,
-    rank: 'Novato',
-    achievements: [],
-  };
-
-  // Alerts hook
   const {
     alerts,
     stats,
@@ -78,12 +62,6 @@ export default function AdminAlertsPage() {
     acknowledge: false,
     resolve: false,
   });
-
-  // Handlers
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
 
   const handleAlertClick = (alert: SystemAlert) => {
     setSelectedAlert(alert);
@@ -132,12 +110,7 @@ export default function AdminAlertsPage() {
   };
 
   return (
-    <AdminLayout
-      user={user || undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GAMILIT Platform Admin"
-      onLogout={handleLogout}
-    >
+    <AdminPageShell>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -210,6 +183,6 @@ export default function AdminAlertsPage() {
           onConfirm={handleResolveConfirm}
         />
       </div>
-    </AdminLayout>
+    </AdminPageShell>
   );
 }

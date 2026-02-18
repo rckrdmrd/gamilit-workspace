@@ -36,7 +36,7 @@ sequenceDiagram
 ## Trazabilidad
 
 ### Frontend
-- `apps/frontend/src/apps/teacher/pages/TeacherReviewPanelPage.tsx`
+- `apps/frontend/src/apps/teacher/pages/TeacherReviewPanel.tsx`
 - `apps/frontend/src/apps/teacher/components/review-panel/ReviewDetail.tsx`
 - `apps/frontend/src/apps/teacher/hooks/useManualReviews.ts`
 

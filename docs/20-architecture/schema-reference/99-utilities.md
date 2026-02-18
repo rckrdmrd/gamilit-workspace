@@ -42,7 +42,7 @@ Ranking global entre todas las escuelas (REFRESH: 15 min).
 
 ---
 
-## ENUMs (40)
+## ENUMs (42)
 
 | # | ENUM | Valores |
 |---|------|---------|
@@ -82,6 +82,8 @@ Ranking global entre todas las escuelas (REFRESH: 15 min).
 | 34 | powerup_status | available, active, used, expired |
 | 35 | media_type | image, audio, video, document |
 | 36 | classroom_status | active, inactive, archived |
+| 37 | alert_severity | info, warning, error, critical |
+| 38 | alert_status | active, acknowledged, resolved, ignored |
 
 ---
 
@@ -126,4 +128,4 @@ Ranking global entre todas las escuelas (REFRESH: 15 min).
 ---
 
 *GAMILIT - Schema Reference Utilities*
-*169 tablas | 18 schemas | 207 RLS policies | 40 ENUMs | PostgreSQL 15*
+*169 tablas | 18 schemas | 227 RLS policies | 42 ENUMs | PostgreSQL 15*

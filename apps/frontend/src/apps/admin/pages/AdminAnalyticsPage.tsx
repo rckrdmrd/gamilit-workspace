@@ -24,12 +24,11 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { AdminLayout } from '../layouts/AdminLayout';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { useAnalytics } from '../hooks/useAnalytics';
 
 // Components
+import { AdminPageShell } from '../components/shared';
+import { AdminTabBar, type AdminTab } from '../components/shared';
 import { OverviewTab } from '../components/analytics/OverviewTab';
 import { EngagementTab } from '../components/analytics/EngagementTab';
 import { GamificationTab } from '../components/analytics/GamificationTab';
@@ -43,38 +42,13 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 // Types
 type TabType = 'overview' | 'engagement' | 'gamification' | 'retention';
 
-interface TabConfig {
-  id: TabType;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  description: string;
-  badge?: string;
-  badgeTooltip?: string;
-}
-
 /**
  * AdminAnalyticsPage Component
  */
 export default function AdminAnalyticsPage() {
-  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [isExporting, setIsExporting] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-
-  // Gamification data
-  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
-  const displayGamificationData = gamificationData || {
-    userId: user?.id || '',
-    level: gamificationLoading ? 0 : 1,
-    totalXP: 0,
-    mlCoins: 0,
-    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
-    rankColor: '#9E9E9E',
-    progressToNextLevel: 0,
-    xpToNextLevel: 100,
-    achievements: [],
-    totalAchievements: 0,
-  };
 
   // Analytics hook
   const {
@@ -89,12 +63,6 @@ export default function AdminAnalyticsPage() {
     refresh,
     exportToCSV,
   } = useAnalytics();
-
-  // Handlers
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -119,15 +87,15 @@ export default function AdminAnalyticsPage() {
   }, [toast]);
 
   // Tab configuration
-  const tabs: TabConfig[] = [
+  const tabs: AdminTab<TabType>[] = [
     {
-      id: 'overview' as TabType,
+      id: 'overview',
       label: 'General',
       icon: BarChart3,
       description: 'Vista general y métricas principales',
     },
     {
-      id: 'engagement' as TabType,
+      id: 'engagement',
       label: 'Engagement',
       icon: Users,
       description: 'Análisis de participación por segmento',
@@ -136,13 +104,13 @@ export default function AdminAnalyticsPage() {
         'Este análisis está basado en datos históricos limitados. A medida que el sistema acumule más información, los resultados serán más precisos.',
     },
     {
-      id: 'gamification' as TabType,
+      id: 'gamification',
       label: 'Gamificación',
       icon: Award,
       description: 'XP, rangos y niveles',
     },
     {
-      id: 'retention' as TabType,
+      id: 'retention',
       label: 'Retención',
       icon: Target,
       description: 'Análisis de cohortes',
@@ -153,12 +121,7 @@ export default function AdminAnalyticsPage() {
   ];
 
   return (
-    <AdminLayout
-      user={user || undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GAMILIT Platform Admin"
-      onLogout={handleLogout}
-    >
+    <AdminPageShell>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -217,53 +180,7 @@ export default function AdminAnalyticsPage() {
         )}
 
         {/* Tabs Navigation */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`rounded-lg border-2 p-4 transition-all ${
-                  isActive
-                    ? 'border-detective-orange bg-detective-orange/10'
-                    : 'border-detective-border bg-detective-bg-secondary hover:border-detective-orange/50'
-                }`}
-              >
-                <div className="mb-2 flex items-center gap-3">
-                  <Icon
-                    className={`h-6 w-6 ${
-                      isActive ? 'text-detective-orange' : 'text-detective-text-secondary'
-                    }`}
-                  />
-                  <span
-                    className={`font-semibold ${
-                      isActive ? 'text-detective-orange' : 'text-detective-text'
-                    }`}
-                  >
-                    {tab.label}
-                  </span>
-                  {tab.badge && (
-                    <div className="group relative">
-                      <span className="ml-1 cursor-help rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
-                        {tab.badge}
-                      </span>
-                      {tab.badgeTooltip && (
-                        <div className="pointer-events-none absolute -top-2 left-full z-10 ml-2 hidden w-64 rounded-lg bg-gray-900 p-3 text-xs text-white shadow-lg group-hover:block">
-                          <div className="absolute -left-1 top-3 h-2 w-2 rotate-45 transform bg-gray-900"></div>
-                          {tab.badgeTooltip}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <p className="text-left text-sm text-detective-text-secondary">{tab.description}</p>
-              </button>
-            );
-          })}
-        </div>
+        <AdminTabBar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} variant="cards" />
 
         {/* Loading State */}
         {isLoading && (
@@ -294,6 +211,6 @@ export default function AdminAnalyticsPage() {
           </div>
         )}
       </div>
-    </AdminLayout>
+    </AdminPageShell>
   );
 }

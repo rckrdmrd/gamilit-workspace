@@ -1,14 +1,27 @@
-# Guía: Crear Base de Datos Gamilit
+# Guía: Crear Base de Datos Gamilit (Referencia Legacy)
 
 **Fecha**: 2025-11-08
 **Versión**: 1.0
-**Estado**: ✅ Listo para usar
+**Estado**: ⚠️ Legacy (no canónica)
 
 ---
 
 ## Descripción
 
-Este directorio contiene todos los archivos DDL (Data Definition Language) necesarios para crear la base de datos completa de Gamilit desde cero.
+Esta guía contiene contexto histórico. La operación vigente está regida por directivas SIMCO DDL-first y recreación limpia.
+
+## Uso canónico obligatorio
+
+- **Fuente de verdad operativa:** `apps/database/scripts/recreate-database.sh` y `apps/database/scripts/init-database.sh`.
+- **Prohibido:** ejecutar archivos DDL/seeds individualmente como flujo normal, o usar `migrations/`, `fix-*`, `patch-*` como mecanismo operativo.
+- **Documentos SSOT actuales:**
+  - `orchestration/directivas/simco/SIMCO-DDL.md`
+  - `orchestration/directivas/simco/SIMCO-RECREAR-BD.md`
+  - `docs/20-architecture/AMBIENTES-DEV-PROD.md`
+
+## Aviso importante sobre secciones históricas
+
+Las secciones de esta guía que describen “métodos manuales” o “aplicar migraciones” se consideran **obsoletas** para operación actual. Se mantienen solo por trazabilidad histórica.
 
 ---
 
@@ -126,7 +139,7 @@ Log completo disponible en: create-database-20251108_143022.log
 
 ---
 
-## Método 2: Paso a Paso Manual
+## Método 2: Paso a Paso Manual (OBSOLETO)
 
 ### 1. Ejecutar prerequisites
 
@@ -159,7 +172,7 @@ psql "$DATABASE_URL" -f ddl/schemas/educational_content/triggers/*.sql
 
 ---
 
-## Método 3: Aplicar Migraciones (Base de Datos Existente)
+## Método 3: Aplicar Migraciones (OBSOLETO / NO OPERATIVO)
 
 Si ya tienes una base de datos con el schema `public` legacy y quieres migrar a la nueva arquitectura:
 
@@ -368,7 +381,7 @@ Después de crear la base de datos:
 1. **Verificar integridad**: Ejecutar queries de verificación
 2. **Aplicar datos semilla** (si existen): `psql "$DATABASE_URL" -f seed-data.sql`
 3. **Configurar backend**: Actualizar `.env` con DATABASE_URL
-4. **Ejecutar migraciones**: Si hay migraciones pendientes
+4. **Recrear con scripts canónicos**: `apps/database/scripts/recreate-database.sh` o `reset-database.sh`
 5. **Testing**: Ejecutar tests de integración del backend
 
 ---
@@ -376,7 +389,7 @@ Después de crear la base de datos:
 ## Scripts Relacionados
 
 - `create-database.sh` - Script maestro de creación
-- `migrations/*.sql` - Migraciones individuales
+- `apps/database/scripts/recreate-database.sh` - Flujo canónico de recreación
 - `seed-data.sql` - Datos iniciales (si existe)
 - `backup-database.sh` - Backup de base de datos (si existe)
 - `reset-database.sh` - Resetear base de datos (si existe)

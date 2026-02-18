@@ -1,7 +1,7 @@
 #!/bin/bash
 # ============================================================================
 # Pre-Deploy Database Backup
-# @ref GUIA-PIPELINE-MIGRACIONES §3-4
+# @ref GUIA-PIPELINE-MIGRACIONES sections 3-4
 #
 # Creates a timestamped pg_dump backup before deployment.
 # Keeps last 7 backups (retention policy).
@@ -23,6 +23,16 @@ RETENTION_DAYS=7
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 BACKUP_FILE="${BACKUP_DIR}/gamilit_${TIMESTAMP}.sql.gz"
 
+if [ -z "${DB_PASSWORD:-}" ] && [ -z "${GAMILIT_DB_PASSWORD:-}" ]; then
+  echo "ERROR: Define DB_PASSWORD o GAMILIT_DB_PASSWORD antes de ejecutar."
+  exit 1
+fi
+
+BACKUP_PASSWORD="${DB_PASSWORD:-}"
+if [ -z "$BACKUP_PASSWORD" ]; then
+  BACKUP_PASSWORD="${GAMILIT_DB_PASSWORD:-}"
+fi
+
 echo "=== GAMILIT Pre-Deploy Backup ==="
 echo "Database: ${DB_NAME}"
 echo "Backup dir: ${BACKUP_DIR}"
@@ -33,15 +43,7 @@ mkdir -p "${BACKUP_DIR}"
 
 # Create compressed backup
 echo "Creating backup..."
-PGPASSWORD="${DB_PASSWORD:-gamilit_dev_2026}" pg_dump \
-  -h "${DB_HOST}" \
-  -p "${DB_PORT}" \
-  -U "${DB_USER}" \
-  -d "${DB_NAME}" \
-  --format=custom \
-  --compress=9 \
-  --verbose \
-  2>/dev/null | gzip > "${BACKUP_FILE}"
+PGPASSWORD="${BACKUP_PASSWORD}" pg_dump -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}" --format=custom --compress=9 --verbose 2>/dev/null | gzip > "${BACKUP_FILE}"
 
 # Verify backup
 BACKUP_SIZE=$(stat -c%s "${BACKUP_FILE}" 2>/dev/null || stat -f%z "${BACKUP_FILE}" 2>/dev/null || echo "0")

@@ -16,9 +16,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { AdminLayout } from '../layouts/AdminLayout';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { AdminPageShell } from '../components/shared';
 import { useProgress, useClassroomsList } from '../hooks';
 
 // Components
@@ -40,21 +38,8 @@ type ViewType = 'overview' | 'classrooms' | 'students';
  * AdminProgressPage Component
  */
 export default function AdminProgressPage() {
-  const { user, logout } = useAuth();
-
   // Fetch classrooms from API (replaces classrooms)
   const { classrooms, isLoading: _classroomsLoading } = useClassroomsList();
-
-  // Gamification data
-  const { gamificationData } = useUserGamification(user?.id);
-  const displayGamificationData = gamificationData || {
-    userId: user?.id || '',
-    level: 1,
-    totalXP: 0,
-    mlCoins: 0,
-    rank: 'Admin',
-    achievements: [],
-  };
 
   // Progress hook
   const {
@@ -94,11 +79,6 @@ export default function AdminProgressPage() {
   }, [classroomProgress]);
 
   // Handlers
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
-
   const handleViewChange = (view: ViewType) => {
     setActiveView(view);
     clearError();
@@ -172,12 +152,7 @@ export default function AdminProgressPage() {
   }, [activeView, selectedClassroomId, studentProgress]);
 
   return (
-    <AdminLayout
-      user={user || undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GAMILIT Platform Admin"
-      onLogout={handleLogout}
-    >
+    <AdminPageShell>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -310,6 +285,6 @@ export default function AdminProgressPage() {
           <StudentDetailView studentProgress={studentProgress} isLoading={isLoading} />
         )}
       </div>
-    </AdminLayout>
+    </AdminPageShell>
   );
 }

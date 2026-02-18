@@ -28,8 +28,8 @@ export class ClassroomMissionResponseDto {
     classroom_id!: string;
 
   @ApiProperty({
-    description: 'Mission template ID',
-    example: 'daily_complete_exercises',
+    description: 'Mission template UUID (FK to mission_templates)',
+    example: '20000001-0000-0000-0000-000000000001',
   })
     mission_template_id!: string;
 

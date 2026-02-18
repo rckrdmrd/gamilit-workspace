@@ -31,6 +31,8 @@ NC='\033[0m'
 # Configuración
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INIT_SCRIPT="$SCRIPT_DIR/init-database.sh"
+CONFIG_DIR="$SCRIPT_DIR/config"
+DATABASE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
@@ -41,6 +43,10 @@ POSTGRES_USER="postgres"
 ENVIRONMENT=""
 FORCE_MODE=false
 DB_PASSWORD_ARG=""
+ENV_DB_HOST=""
+ENV_DB_PORT=""
+ENV_CREATE_BACKUP_BEFORE_DROP="false"
+ENV_BACKUP_DIR="backups/pre-init"
 
 # ============================================================================
 # FUNCIONES AUXILIARES
@@ -74,6 +80,19 @@ print_info() {
     echo "  $1"
 }
 
+load_environment_config() {
+    local config_file="$CONFIG_DIR/${ENVIRONMENT}.conf"
+    if [ -f "$config_file" ]; then
+        source "$config_file"
+        if [ -n "$ENV_DB_HOST" ]; then
+            DB_HOST="$ENV_DB_HOST"
+        fi
+        if [ -n "$ENV_DB_PORT" ]; then
+            DB_PORT="$ENV_DB_PORT"
+        fi
+    fi
+}
+
 validate_environment_safety() {
     if [ "$ENVIRONMENT" = "prod" ]; then
         print_step "Aplicando controles de seguridad para PROD..."
@@ -93,6 +112,54 @@ validate_environment_safety() {
         fi
 
         print_warning "Asegura backup previo antes de continuar en PROD"
+    fi
+}
+
+create_pre_drop_backup() {
+    if [ "$ENVIRONMENT" != "prod" ]; then
+        return
+    fi
+
+    if [ "${ENV_CREATE_BACKUP_BEFORE_DROP:-false}" != "true" ]; then
+        print_warning "Backup pre-drop deshabilitado en config PROD"
+        return
+    fi
+
+    local db_exists
+    db_exists=$(query_as_postgres "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'")
+    if [ -z "$db_exists" ]; then
+        print_info "No existe BD previa, omitiendo backup pre-drop"
+        return
+    fi
+
+    local backup_dir="$DATABASE_ROOT/${ENV_BACKUP_DIR:-backups/pre-init}"
+    local backup_file="$backup_dir/${DB_NAME}_pre_recreate_$(date +%Y%m%d_%H%M%S).sql"
+
+    print_step "Generando backup pre-drop de PROD..."
+    mkdir -p "$backup_dir"
+
+    if [ "$USE_SUDO" = true ]; then
+        if sudo -u postgres pg_dump "$DB_NAME" > "$backup_file" 2>/dev/null; then
+            print_success "Backup creado: $backup_file"
+        else
+            print_error "No se pudo crear backup pre-drop con sudo"
+            exit 1
+        fi
+    else
+        local backup_password="$DB_PASSWORD_ARG"
+        if [ -z "$backup_password" ]; then
+            backup_password="${GAMILIT_DB_PASSWORD:-}"
+        fi
+        if [ -z "$backup_password" ]; then
+            print_error "No hay password disponible para backup TCP en PROD"
+            exit 1
+        fi
+        if PGPASSWORD="$backup_password" pg_dump -h "$DB_HOST" -p "$DB_PORT" -U "$POSTGRES_USER" "$DB_NAME" > "$backup_file" 2>/dev/null; then
+            print_success "Backup creado: $backup_file"
+        else
+            print_error "No se pudo crear backup pre-drop por TCP"
+            exit 1
+        fi
     fi
 }
 
@@ -349,9 +416,11 @@ main() {
         exit 1
     fi
 
+    load_environment_config
     validate_environment_safety
     confirm_deletion
     check_prerequisites
+    create_pre_drop_backup
     drop_database
     drop_user
     reinitialize

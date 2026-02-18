@@ -85,11 +85,12 @@ ALTER TABLE auth_management.tenants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE auth_management.tenants FORCE ROW LEVEL SECURITY;
 
 -- =====================================================
--- TABLE: auth_management.user_roles (si existe tabla física)
--- NOTE: Verificar si user_roles existe como tabla o es derivada
+-- TABLE: auth_management.user_roles
+-- NOTE: Tabla fisica confirmada (04-user_roles.sql). RLS habilitado con
+-- 3 policies: admin_all, read_own, system_insert (CORR-F2-03)
 -- =====================================================
--- ALTER TABLE auth_management.user_roles ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE auth_management.user_roles FORCE ROW LEVEL SECURITY;
+ALTER TABLE auth_management.user_roles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE auth_management.user_roles FORCE ROW LEVEL SECURITY;
 
 -- =====================================================
 -- SUMMARY

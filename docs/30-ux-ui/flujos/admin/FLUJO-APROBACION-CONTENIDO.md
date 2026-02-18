@@ -1,5 +1,7 @@
 # FL-ADM-03 - Aprobacion de Contenido Educativo
 
+**Version:** 1.1.0
+**Fecha:** 2026-02-18
 **Portal:** Admin
 **Prioridad:** Media-Alta
 **Estado:** Documentado
@@ -49,12 +51,20 @@ flowchart TD
 | Tipo | Archivo |
 |------|---------|
 | Pagina | `apps/frontend/src/apps/admin/pages/AdminContentPage.tsx` |
+| Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/content/ContentApprovalQueue.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/content/ExercisePreviewModal.tsx` |
+| Componente | `apps/frontend/src/apps/admin/components/content/ContentPreviewModal.tsx` |
+| Componente | `apps/frontend/src/apps/admin/components/content/RejectExerciseModal.tsx` |
+| Componente | `apps/frontend/src/apps/admin/components/content/PendingExercisesTab.tsx` |
+| Componente | `apps/frontend/src/apps/admin/components/content/ContentVersionsTab.tsx` |
+| Componente | `apps/frontend/src/apps/admin/components/content/MediaLibraryTab.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/content/ExerciseContentEditor.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/content/ContentVersionControl.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/content/MediaLibraryManager.tsx` |
 | Hook | `apps/frontend/src/apps/admin/hooks/useContentManagement.ts` |
+| Hook | `apps/frontend/src/apps/admin/hooks/useContentQueries.ts` |
+| Hook | `apps/frontend/src/apps/admin/hooks/useAdminPageSetup.ts` |
 | API Service | `apps/frontend/src/services/api/adminAPI.ts` (seccion CONTENT) |
 
 ### Backend
@@ -114,9 +124,16 @@ flowchart TD
 | Capa | Archivo | Evidencia |
 |------|---------|-----------|
 | FE Page | `apps/frontend/src/apps/admin/pages/AdminContentPage.tsx` | Pagina de gestion de contenido |
+| FE Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` | Wrapper comun de paginas admin |
 | FE Component | `apps/frontend/src/apps/admin/components/content/ContentApprovalQueue.tsx` | Cola de aprobacion de contenido |
 | FE Component | `apps/frontend/src/apps/admin/components/content/ExercisePreviewModal.tsx` | Modal de preview de ejercicio |
+| FE Component | `apps/frontend/src/apps/admin/components/content/ContentPreviewModal.tsx` | Modal de preview generico de contenido |
+| FE Component | `apps/frontend/src/apps/admin/components/content/RejectExerciseModal.tsx` | Modal de rechazo de ejercicio |
+| FE Component | `apps/frontend/src/apps/admin/components/content/PendingExercisesTab.tsx` | Tab de ejercicios pendientes |
+| FE Component | `apps/frontend/src/apps/admin/components/content/ContentVersionsTab.tsx` | Tab de versiones de contenido |
+| FE Component | `apps/frontend/src/apps/admin/components/content/MediaLibraryTab.tsx` | Tab de biblioteca de medios |
 | FE Hook | `apps/frontend/src/apps/admin/hooks/useContentManagement.ts` | Hook con operaciones de contenido |
+| FE Hook | `apps/frontend/src/apps/admin/hooks/useContentQueries.ts` | Hook de queries de contenido (Sprint 2) |
 | FE API | `apps/frontend/src/services/api/adminAPI.ts` | Cliente API seccion CONTENT |
 | BE Controller | `apps/backend/src/modules/admin/controllers/admin-content.controller.ts` | Controlador con 10 endpoints de contenido |
 | BE Service | `apps/backend/src/modules/admin/services/admin-content.service.ts` | Logica de negocio de aprobacion |

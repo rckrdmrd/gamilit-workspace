@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { safeFormatNumber } from '@shared/utils/format.util';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { SkeletonStats, SkeletonCard } from '@shared/components/loading';
@@ -46,24 +47,6 @@ type TabType =
   | 'communication'
   | 'resources';
 
-/**
- * Safely format a number to fixed decimals
- * @param value - Value to format
- * @param decimals - Number of decimal places
- * @param suffix - Optional suffix (e.g., '%')
- * @param fallback - Fallback value if invalid
- */
-const safeFormat = (
-  value: number | undefined | null,
-  decimals: number = 1,
-  suffix: string = '',
-  fallback: string = 'N/A',
-): string => {
-  if (typeof value !== 'number' || isNaN(value)) {
-    return fallback;
-  }
-  return `${value.toFixed(decimals)}${suffix}`;
-};
 
 export default function TeacherDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -188,7 +171,7 @@ export default function TeacherDashboard() {
                     onChange={(e) => setSelectedClassroomId(e.target.value)}
                     className="border-detective-border cursor-pointer appearance-none rounded-lg border bg-detective-bg-secondary px-4 py-2 pr-10 text-detective-text focus:border-detective-orange focus:outline-none"
                   >
-                    {classrooms.map((classroom: any) => (
+                    {classrooms.map((classroom) => (
                       <option key={classroom.id} value={classroom.id}>
                         {classroom.name || `Clase ${classroom.id}`}
                       </option>
@@ -315,7 +298,7 @@ export default function TeacherDashboard() {
                       <div>
                         <p className="mb-1 text-sm text-detective-text-secondary">Score Promedio</p>
                         <p className="text-3xl font-bold text-detective-gold">
-                          {safeFormat(stats?.average_score, 1, '%', 'N/A')}
+                          {safeFormatNumber(stats?.average_score, 1, '%', 'N/A')}
                         </p>
                         <p className="mt-1 text-xs text-green-500">
                           {/* Engagement calculated from active/total students */}
@@ -335,7 +318,7 @@ export default function TeacherDashboard() {
                           Tasa de Completitud
                         </p>
                         <p className="text-3xl font-bold text-detective-text">
-                          {safeFormat(stats?.average_completion, 0, '%', '0%')}
+                          {safeFormatNumber(stats?.average_completion, 0, '%', '0%')}
                         </p>
                         <p className="mt-1 text-xs text-detective-text-secondary">De ejercicios</p>
                       </div>

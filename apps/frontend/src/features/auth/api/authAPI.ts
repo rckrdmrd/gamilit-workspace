@@ -371,8 +371,14 @@ export const getCurrentUser = async (): Promise<User> => {
       API_ENDPOINTS.auth.getCurrentUser,
     );
 
+    // Guard against malformed response
+    const userData = response.data?.data?.user;
+    if (!userData) {
+      throw new Error('Invalid profile response: user data not found');
+    }
+
     // Extract and map user from backend format to frontend format
-    return mapBackendUserToFrontend(response.data.data.user);
+    return mapBackendUserToFrontend(userData);
   } catch (error) {
     throw handleAPIError(error);
   }

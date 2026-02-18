@@ -22,3 +22,15 @@ export { useConfigCategories } from './useConfigCategories';
 export { useAuditLogs } from './useAuditLogs';
 export { useSystemConfig } from './useSystemConfig';
 export { useLtiConsumers } from './useLtiConsumers';
+export { useAdminPageSetup } from './useAdminPageSetup';
+export { useModalBehavior } from './useModalBehavior';
+export { useUserActions } from './useUserActions';
+export { useCreateUserFlow } from './useCreateUserFlow';
+export { useInstitutionActions } from './useInstitutionActions';
+export {
+  usePendingExercisesQuery,
+  useMediaLibraryQuery,
+  useContentVersionsQuery,
+  useApprovalsQuery,
+  useLegacyExercises,
+} from './useContentQueries';

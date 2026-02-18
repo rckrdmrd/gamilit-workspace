@@ -11,8 +11,11 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Footer } from '../Footer';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 describe('Footer', () => {
+  const platformName = DEFAULT_BRANDING.platformName;
+
   describe('rendering', () => {
     it('should render footer element', () => {
       render(<Footer />);
@@ -29,7 +32,7 @@ describe('Footer', () => {
   describe('copyright text', () => {
     it('should show default copyright text', () => {
       render(<Footer />);
-      expect(screen.getByText(/GAMILIT/)).toBeInTheDocument();
+      expect(screen.getByText(new RegExp(platformName))).toBeInTheDocument();
       expect(screen.getByText(/Todos los derechos reservados/)).toBeInTheDocument();
     });
 
@@ -46,7 +49,7 @@ describe('Footer', () => {
 
     it('should not show default when custom text provided', () => {
       render(<Footer copyrightText="Custom text only" />);
-      expect(screen.queryByText(/GAMILIT/)).not.toBeInTheDocument();
+      expect(screen.queryByText(new RegExp(platformName))).not.toBeInTheDocument();
     });
   });
 
@@ -146,19 +149,19 @@ describe('Footer', () => {
   describe('copyright styling', () => {
     it('should have centered text', () => {
       render(<Footer />);
-      const copyrightContainer = screen.getByText(/GAMILIT/).closest('div');
+      const copyrightContainer = screen.getByText(new RegExp(platformName)).closest('div');
       expect(copyrightContainer?.className).toContain('text-center');
     });
 
     it('should have small text size', () => {
       render(<Footer />);
-      const copyrightContainer = screen.getByText(/GAMILIT/).closest('div');
+      const copyrightContainer = screen.getByText(new RegExp(platformName)).closest('div');
       expect(copyrightContainer?.className).toContain('text-sm');
     });
 
     it('should have gray-500 text color', () => {
       render(<Footer />);
-      const copyrightContainer = screen.getByText(/GAMILIT/).closest('div');
+      const copyrightContainer = screen.getByText(new RegExp(platformName)).closest('div');
       expect(copyrightContainer?.className).toContain('text-gray-500');
     });
   });
@@ -169,7 +172,7 @@ describe('Footer', () => {
       render(<Footer links={mockLinks} />);
 
       const link = screen.getByRole('link');
-      const copyright = screen.getByText(/GAMILIT/);
+      const copyright = screen.getByText(new RegExp(platformName));
 
       // Link should appear before copyright in DOM
       expect(link.compareDocumentPosition(copyright)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);

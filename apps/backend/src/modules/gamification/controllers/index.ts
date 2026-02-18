@@ -1,25 +1,11 @@
-/**
- * Controllers Index
- *
- * @description Exporta todos los controllers del módulo de gamificación
- *
- * @exports
- * - UserStatsController - Gestión de estadísticas y rango de usuarios
- * - AchievementsController - Gestión de achievements/logros
- * - MLCoinsController - Gestión de economía virtual (ML Coins)
- * - RanksController - Gestión de sistema de rangos maya
- * - LeaderboardController - Gestión de rankings y leaderboards
- * - MissionsController - Gestión de misiones gamificadas
- * - ComodinesController - Gestión de comodines/power-ups
- */
-
-export { UserStatsController } from './user-stats.controller';
-export { AchievementsController } from './achievements.controller';
-export { MLCoinsController } from './ml-coins.controller';
-export { RanksController } from './ranks.controller';
-export { LeaderboardController } from './leaderboard.controller';
-export { MissionsController } from './missions.controller';
-export { ClassroomMissionsController } from './classroom-missions.controller';
-export { ComodinesController } from './comodines.controller';
-export { ShopController } from './shop.controller';
-export { MissionTemplatesController } from './mission-templates.controller';
+export * from './user-stats.controller';
+export * from './achievements.controller';
+export * from './ml-coins.controller';
+export * from './ranks.controller';
+export * from './leaderboard.controller';
+export * from './missions.controller';
+export * from './mission-templates.controller';
+export * from './classroom-missions.controller';
+export * from './comodines.controller';
+export * from './shop.controller';
+export * from './inventory.controller';

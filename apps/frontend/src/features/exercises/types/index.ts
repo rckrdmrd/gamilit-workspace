@@ -21,3 +21,11 @@ export type {
   ExerciseComponentProps,
   ExerciseFeedback,
 } from './exercise.types';
+
+export type {
+  ExerciseComodinesContext,
+  ExerciseMechanicActions,
+  ExerciseMechanicProps,
+  ExerciseMechanicMeta,
+  ExerciseRegistryEntry,
+} from './exercise-mechanic.types';

@@ -1,586 +1,136 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { AdminLayout } from '../layouts/AdminLayout';
-import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { DataTable, Column } from '@shared/components/common';
-import { Modal } from '@shared/components/common/Modal';
-import { FormField } from '@shared/components/common/FormField';
-import { ExerciseContentRenderer } from '@shared/components/mechanics/ExerciseContentRenderer';
-import { CheckCircle, XCircle, Image, FileText, History, AlertCircle, Loader2 } from 'lucide-react';
-import { usePendingExercises } from '../hooks/useContentManagement';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
-import { adminAPI } from '@/services/api/adminAPI';
-import { getExercise } from '@/services/api/educationalAPI';
-import type { PendingExercise } from '../types';
-import type { MediaFile, ApprovalHistory } from '@/services/api/adminTypes';
-import type { Exercise } from '@shared/types/educational.types';
-
 /**
- * AdminContentPage - Gestión y moderación de contenido
- * Updated: 2025-11-28 - Integrated with useUserGamification hook for real gamification data
+ * AdminContentPage - Content management and moderation hub
+ *
+ * Provides three tabs: pending exercise review, media library, and approval history.
+ * Extracted tab components handle their own data fetching via React Query.
+ *
+ * Sprint 1 - Admin Portal Refactor
+ * Refactored: 2026-02-18 - Extracted tabs + modals, adopted AdminPageShell + AdminTabBar
  */
+
+import { useState, useCallback } from 'react';
+import { AdminPageShell } from '../components/shared/AdminPageShell';
+import { AdminTabBar } from '../components/shared/AdminTabBar';
+import type { AdminTab } from '../components/shared/AdminTabBar';
+import {
+  PendingExercisesTab,
+  MediaLibraryTab,
+  ContentVersionsTab,
+  ContentPreviewModal,
+  RejectExerciseModal,
+} from '../components/content';
+import { usePendingExercisesQuery } from '../hooks/useContentQueries';
+import { FileText, Image, History } from 'lucide-react';
+import type { PendingExercise } from '../types';
+
+// ---- Tab definitions ----
+
+type ContentTabId = 'pending' | 'media' | 'versions';
+
+function buildTabs(pendingCount: number): AdminTab<ContentTabId>[] {
+  return [
+    {
+      id: 'pending',
+      label: 'Pendientes',
+      icon: FileText,
+      badge: pendingCount > 0 ? String(pendingCount) : undefined,
+    },
+    { id: 'media', label: 'Multimedia', icon: Image },
+    { id: 'versions', label: 'Versiones', icon: History },
+  ];
+}
+
+// ---- Component ----
+
 export default function AdminContentPage() {
-  const { user, logout } = useAuth();
-
-  const [activeTab, setActiveTab] = useState<'pending' | 'media' | 'versions'>('pending');
-  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
-  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<ContentTabId>('pending');
   const [selectedExercise, setSelectedExercise] = useState<PendingExercise | null>(null);
-  const [rejectReason, setRejectReason] = useState('');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isRejectOpen, setIsRejectOpen] = useState(false);
 
-  // Exercise details for preview (TASK-027)
-  const [exerciseDetails, setExerciseDetails] = useState<Exercise | null>(null);
-  const [loadingExerciseDetails, setLoadingExerciseDetails] = useState(false);
-  const [exerciseDetailsError, setExerciseDetailsError] = useState<string | null>(null);
+  const { pendingExercises, approveExercise, rejectExercise } = usePendingExercisesQuery();
+  const tabs = buildTabs(pendingExercises.length);
 
-  // Media tab state
-  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
-  const [loadingMedia, setLoadingMedia] = useState(false);
-  const [errorMedia, setErrorMedia] = useState<string | null>(null);
+  // ---- Modal handlers ----
 
-  // Versions tab state
-  const [approvalHistory, setApprovalHistory] = useState<ApprovalHistory[]>([]);
-  const [loadingVersions, setLoadingVersions] = useState(false);
-  const [errorVersions, setErrorVersions] = useState<string | null>(null);
-
-  // Hooks for data management
-  const {
-    pendingExercises,
-    loading: loadingPending,
-    error: errorPending,
-    approveExercise,
-    rejectExercise,
-  } = usePendingExercises();
-
-  // Use useUserGamification hook with real API endpoint
-  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
-
-  // Fallback gamification data while loading or if data not available
-  const displayGamificationData = gamificationData || {
-    userId: user?.id || '',
-    level: gamificationLoading ? 0 : 1,
-    totalXP: 0,
-    mlCoins: 0,
-    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
-    rankColor: '#9E9E9E',
-    progressToNextLevel: 0,
-    xpToNextLevel: 100,
-    achievements: [],
-    totalAchievements: 0,
-  };
-
-  // Load media files when media tab is activated
-  useEffect(() => {
-    if (activeTab === 'media') {
-      const loadMediaFiles = async () => {
-        setLoadingMedia(true);
-        setErrorMedia(null);
-        try {
-          const response = await adminAPI.content.getMediaLibrary();
-          setMediaFiles(response.items);
-        } catch (err) {
-          setErrorMedia(err instanceof Error ? err.message : 'Error al cargar archivos multimedia');
-        } finally {
-          setLoadingMedia(false);
-        }
-      };
-      loadMediaFiles();
-    }
-  }, [activeTab]);
-
-  // Load approval history when versions tab is activated
-  useEffect(() => {
-    if (activeTab === 'versions') {
-      const loadApprovalHistory = async () => {
-        setLoadingVersions(true);
-        setErrorVersions(null);
-        try {
-          const response = await adminAPI.content.getApprovalHistory();
-          setApprovalHistory(response.items);
-        } catch (err) {
-          setErrorVersions(
-            err instanceof Error ? err.message : 'Error al cargar historial de aprobaciones',
-          );
-        } finally {
-          setLoadingVersions(false);
-        }
-      };
-      loadApprovalHistory();
-    }
-  }, [activeTab]);
-
-  // Fetch exercise details when preview modal opens (TASK-027)
-  const fetchExerciseDetails = useCallback(async (exerciseId: string) => {
-    setLoadingExerciseDetails(true);
-    setExerciseDetailsError(null);
-    setExerciseDetails(null);
-    try {
-      const details = await getExercise(exerciseId);
-      setExerciseDetails(details);
-    } catch (err) {
-      console.error('Failed to fetch exercise details:', err);
-      setExerciseDetailsError(
-        err instanceof Error ? err.message : 'Error al cargar detalles del ejercicio'
-      );
-    } finally {
-      setLoadingExerciseDetails(false);
-    }
-  }, []);
-
-  // Open preview modal and fetch exercise details (TASK-027)
   const handleOpenPreview = useCallback((exercise: PendingExercise) => {
     setSelectedExercise(exercise);
-    setIsPreviewModalOpen(true);
-    fetchExerciseDetails(exercise.id);
-  }, [fetchExerciseDetails]);
+    setIsPreviewOpen(true);
+  }, []);
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
+  const handleClosePreview = useCallback(() => {
+    setIsPreviewOpen(false);
+    setSelectedExercise(null);
+  }, []);
 
-  const handleApproveExercise = async (exerciseId: string) => {
-    try {
-      await approveExercise(exerciseId);
-    } catch (err) {
-      console.error('Failed to approve exercise:', err);
-    }
-  };
+  const handleOpenReject = useCallback((exercise: PendingExercise) => {
+    setSelectedExercise(exercise);
+    setIsRejectOpen(true);
+  }, []);
 
-  const handleRejectExercise = async () => {
-    if (!selectedExercise) return;
-    try {
-      await rejectExercise(selectedExercise.id, rejectReason);
-      setIsRejectModalOpen(false);
-      setSelectedExercise(null);
-      setRejectReason('');
-    } catch (err) {
-      console.error('Failed to reject exercise:', err);
-    }
-  };
+  const handleCloseReject = useCallback(() => {
+    setIsRejectOpen(false);
+    setSelectedExercise(null);
+  }, []);
 
-  // Map PendingContent to PendingExercise for table display
-  const mappedPendingExercises: PendingExercise[] = pendingExercises.map((content) => ({
-    id: content.id,
-    title: content.title,
-    type: content.type,
-    authorId: content.authorId,
-    authorName: content.author,
-    createdAt: content.submittedAt,
-    status: 'pending' as const,
-  }));
+  const handleApproveFromPreview = useCallback(
+    async (exerciseId: string) => {
+      try {
+        await approveExercise(exerciseId);
+      } catch (err) {
+        console.error('Failed to approve exercise:', err);
+      }
+    },
+    [approveExercise],
+  );
 
-  const pendingColumns: Column<PendingExercise>[] = [
-    {
-      key: 'title',
-      label: 'Título',
-      sortable: true,
-      render: (row) => (
-        <div>
-          <p className="font-medium text-detective-text">{row.title}</p>
-          <p className="text-xs text-gray-400">{row.type}</p>
-        </div>
-      ),
-    },
-    {
-      key: 'authorName',
-      label: 'Autor',
-      sortable: true,
-    },
-    {
-      key: 'createdAt',
-      label: 'Fecha',
-      sortable: true,
-      render: (row) => new Date(row.createdAt).toLocaleDateString('es-ES'),
-    },
-    {
-      key: 'actions',
-      label: 'Acciones',
-      render: (row) => (
-        <div className="flex gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleOpenPreview(row);
-            }}
-            className="rounded-lg bg-blue-500/20 px-3 py-1 text-sm text-blue-500 transition-colors hover:bg-blue-500/30"
-          >
-            Ver
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleApproveExercise(row.id);
-            }}
-            className="rounded-lg bg-green-500/20 px-3 py-1 text-sm text-green-500 transition-colors hover:bg-green-500/30"
-          >
-            <CheckCircle className="mr-1 inline h-4 w-4" />
-            Aprobar
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedExercise(row);
-              setIsRejectModalOpen(true);
-            }}
-            className="rounded-lg bg-red-500/20 px-3 py-1 text-sm text-red-500 transition-colors hover:bg-red-500/30"
-          >
-            <XCircle className="mr-1 inline h-4 w-4" />
-            Rechazar
-          </button>
-        </div>
-      ),
-    },
-  ];
+  const handleOpenRejectFromPreview = useCallback(() => {
+    setIsPreviewOpen(false);
+    setIsRejectOpen(true);
+  }, []);
 
-  // Columns for Media Library table
-  const mediaColumns: Column<MediaFile>[] = [
-    {
-      key: 'filename',
-      label: 'Nombre',
-      sortable: true,
-      render: (row) => (
-        <div>
-          <p className="font-medium text-detective-text">{row.filename}</p>
-          <p className="text-xs text-gray-400">{row.type}</p>
-        </div>
-      ),
+  const handleRejectExercise = useCallback(
+    async (exerciseId: string, reason: string) => {
+      await rejectExercise(exerciseId, reason);
     },
-    {
-      key: 'uploaderName',
-      label: 'Subido por',
-      sortable: true,
-    },
-    {
-      key: 'size',
-      label: 'Tamaño',
-      sortable: true,
-      render: (row) => {
-        const sizeInMB = (row.size / (1024 * 1024)).toFixed(2);
-        return `${sizeInMB} MB`;
-      },
-    },
-    {
-      key: 'uploadedAt',
-      label: 'Fecha',
-      sortable: true,
-      render: (row) => new Date(row.uploadedAt).toLocaleDateString('es-ES'),
-    },
-  ];
+    [rejectExercise],
+  );
 
-  // Columns for Approval History table
-  const versionsColumns: Column<ApprovalHistory>[] = [
-    {
-      key: 'contentType',
-      label: 'Tipo',
-      sortable: true,
-    },
-    {
-      key: 'action',
-      label: 'Acción',
-      sortable: true,
-      render: (row) => (
-        <span
-          className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-            row.action === 'approved'
-              ? 'bg-green-500/20 text-green-500'
-              : 'bg-red-500/20 text-red-500'
-          }`}
-        >
-          {row.action === 'approved' ? 'Aprobado' : 'Rechazado'}
-        </span>
-      ),
-    },
-    {
-      key: 'approvedByName',
-      label: 'Revisor',
-      sortable: true,
-    },
-    {
-      key: 'approvedAt',
-      label: 'Fecha',
-      sortable: true,
-      render: (row) => new Date(row.approvedAt).toLocaleDateString('es-ES'),
-    },
-    {
-      key: 'reason',
-      label: 'Razón',
-      render: (row) => row.reason || '-',
-    },
-  ];
+  // ---- Render ----
 
   return (
-    <AdminLayout
-      user={user || undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GAMILIT Platform Admin"
-      onLogout={handleLogout}
-    >
+    <AdminPageShell>
       <div className="space-y-6">
-        {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-detective-text">Gestión de Contenido</h1>
+          <h1 className="text-3xl font-bold text-detective-text">Gestion de Contenido</h1>
           <p className="mt-1 text-detective-text-secondary">
             Modera ejercicios, gestiona multimedia y controla versiones del sistema
           </p>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="mb-6 flex gap-2">
-          <button
-            onClick={() => setActiveTab('pending')}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors ${
-              activeTab === 'pending'
-                ? 'bg-detective-orange text-white'
-                : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
-            }`}
-          >
-            <FileText className="h-5 w-5" />
-            Pendientes ({pendingExercises.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('media')}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors ${
-              activeTab === 'media'
-                ? 'bg-detective-orange text-white'
-                : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
-            }`}
-          >
-            <Image className="h-5 w-5" />
-            Multimedia
-          </button>
-          <button
-            onClick={() => setActiveTab('versions')}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors ${
-              activeTab === 'versions'
-                ? 'bg-detective-orange text-white'
-                : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
-            }`}
-          >
-            <History className="h-5 w-5" />
-            Versiones
-          </button>
-        </div>
+        <AdminTabBar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {/* Content */}
         {activeTab === 'pending' && (
-          <div>
-            {/* Error Message */}
-            {errorPending && (
-              <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
-                <p className="font-semibold">Error:</p>
-                <p>{errorPending}</p>
-              </div>
-            )}
-
-            {/* Loading State */}
-            {loadingPending && !pendingExercises.length ? (
-              <div className="py-12 text-center">
-                <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange"></div>
-                <p className="mt-4 text-detective-text-secondary">
-                  Cargando ejercicios pendientes...
-                </p>
-              </div>
-            ) : (
-              <DataTable
-                data={mappedPendingExercises}
-                columns={pendingColumns}
-                searchPlaceholder="Buscar ejercicios..."
-              />
-            )}
-          </div>
+          <PendingExercisesTab onPreview={handleOpenPreview} onReject={handleOpenReject} />
         )}
-
-        {activeTab === 'media' && (
-          <div>
-            {/* Error Message */}
-            {errorMedia && (
-              <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
-                <p className="font-semibold">Error:</p>
-                <p>{errorMedia}</p>
-              </div>
-            )}
-
-            {/* Loading State */}
-            {loadingMedia && !mediaFiles.length ? (
-              <div className="py-12 text-center">
-                <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange"></div>
-                <p className="mt-4 text-detective-text-secondary">
-                  Cargando archivos multimedia...
-                </p>
-              </div>
-            ) : (
-              <DataTable
-                data={mediaFiles}
-                columns={mediaColumns}
-                searchPlaceholder="Buscar archivos..."
-              />
-            )}
-          </div>
-        )}
-
-        {activeTab === 'versions' && (
-          <div>
-            {/* Error Message */}
-            {errorVersions && (
-              <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
-                <p className="font-semibold">Error:</p>
-                <p>{errorVersions}</p>
-              </div>
-            )}
-
-            {/* Loading State */}
-            {loadingVersions && !approvalHistory.length ? (
-              <div className="py-12 text-center">
-                <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange"></div>
-                <p className="mt-4 text-detective-text-secondary">
-                  Cargando historial de aprobaciones...
-                </p>
-              </div>
-            ) : (
-              <DataTable
-                data={approvalHistory}
-                columns={versionsColumns}
-                searchPlaceholder="Buscar en historial..."
-              />
-            )}
-          </div>
-        )}
+        {activeTab === 'media' && <MediaLibraryTab />}
+        {activeTab === 'versions' && <ContentVersionsTab />}
       </div>
 
-      {/* Preview Modal */}
-      <Modal
-        isOpen={isPreviewModalOpen}
-        onClose={() => {
-          setIsPreviewModalOpen(false);
-          setSelectedExercise(null);
-          setExerciseDetails(null);
-          setExerciseDetailsError(null);
-        }}
-        title={`Vista Previa - ${selectedExercise?.title}`}
-      >
-        {selectedExercise && (
-          <div className="space-y-4">
-            <div className="rounded-lg bg-detective-bg-secondary p-4">
-              <p className="mb-2 text-sm text-gray-400">Tipo de Ejercicio</p>
-              <p className="font-medium text-detective-text">{selectedExercise.type}</p>
-            </div>
-            <div className="rounded-lg bg-detective-bg-secondary p-4">
-              <p className="mb-2 text-sm text-gray-400">Autor</p>
-              <p className="text-detective-text">{selectedExercise.authorName}</p>
-            </div>
-            {/* Exercise Description (TASK-027) */}
-            {exerciseDetails?.description && (
-              <div className="rounded-lg bg-detective-bg-secondary p-4">
-                <p className="mb-2 text-sm text-gray-400">Descripción</p>
-                <p className="text-detective-text">{exerciseDetails.description}</p>
-              </div>
-            )}
-            <div className="rounded-lg bg-detective-bg-secondary p-4">
-              <p className="mb-2 text-sm text-gray-400">Contenido del Ejercicio</p>
-              {loadingExerciseDetails ? (
-                <div className="flex items-center justify-center gap-2 py-4">
-                  <Loader2 className="h-5 w-5 animate-spin text-detective-orange" />
-                  <span className="text-detective-text-secondary">Cargando vista previa...</span>
-                </div>
-              ) : exerciseDetailsError ? (
-                <div className="flex items-center gap-2 text-red-400">
-                  <AlertCircle className="h-4 w-4" />
-                  <span>{exerciseDetailsError}</span>
-                </div>
-              ) : exerciseDetails?.content ? (
-                <ExerciseContentRenderer
-                  exerciseType={exerciseDetails.type}
-                  answerData={exerciseDetails.content as Record<string, unknown>}
-                  correctAnswer={exerciseDetails.rubric}
-                  showComparison={false}
-                />
-              ) : (
-                <div className="flex items-center gap-2 text-detective-text-secondary">
-                  <AlertCircle className="h-4 w-4" />
-                  <span>Vista previa no disponible - contenido no encontrado</span>
-                </div>
-              )}
-            </div>
-            {/* Instructions (TASK-027) */}
-            {exerciseDetails?.instructions && (
-              <div className="rounded-lg bg-detective-bg-secondary p-4">
-                <p className="mb-2 text-sm text-gray-400">Instrucciones</p>
-                <p className="text-detective-text text-sm">{exerciseDetails.instructions}</p>
-              </div>
-            )}
-            <div className="flex gap-3 pt-4">
-              <DetectiveButton
-                variant="primary"
-                onClick={() => {
-                  handleApproveExercise(selectedExercise.id);
-                  setIsPreviewModalOpen(false);
-                  setExerciseDetails(null);
-                }}
-                disabled={loadingExerciseDetails}
-              >
-                <CheckCircle className="h-5 w-5" />
-                Aprobar
-              </DetectiveButton>
-              <DetectiveButton
-                variant="secondary"
-                onClick={() => {
-                  setIsPreviewModalOpen(false);
-                  setIsRejectModalOpen(true);
-                }}
-                disabled={loadingExerciseDetails}
-              >
-                <XCircle className="h-5 w-5" />
-                Rechazar
-              </DetectiveButton>
-            </div>
-          </div>
-        )}
-      </Modal>
+      <ContentPreviewModal
+        isOpen={isPreviewOpen}
+        exercise={selectedExercise}
+        onClose={handleClosePreview}
+        onApprove={handleApproveFromPreview}
+        onReject={handleOpenRejectFromPreview}
+      />
 
-      {/* Reject Modal */}
-      <Modal
-        isOpen={isRejectModalOpen}
-        onClose={() => {
-          setIsRejectModalOpen(false);
-          setSelectedExercise(null);
-          setRejectReason('');
-        }}
-        title="Rechazar Ejercicio"
-      >
-        <div className="space-y-4">
-          <p className="text-detective-text">
-            ¿Por qué estás rechazando "{selectedExercise?.title}"?
-          </p>
-          <FormField
-            label="Razón de Rechazo"
-            name="reason"
-            type="textarea"
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            placeholder="Explica por qué se rechaza este ejercicio..."
-            required
-          />
-          <div className="flex justify-end gap-3 pt-4">
-            <DetectiveButton
-              variant="secondary"
-              onClick={() => {
-                setIsRejectModalOpen(false);
-                setRejectReason('');
-              }}
-            >
-              Cancelar
-            </DetectiveButton>
-            <DetectiveButton
-              variant="primary"
-              onClick={handleRejectExercise}
-              disabled={!rejectReason}
-            >
-              Rechazar Ejercicio
-            </DetectiveButton>
-          </div>
-        </div>
-      </Modal>
-    </AdminLayout>
+      <RejectExerciseModal
+        isOpen={isRejectOpen}
+        exercise={selectedExercise}
+        onClose={handleCloseReject}
+        onReject={handleRejectExercise}
+      />
+    </AdminPageShell>
   );
 }

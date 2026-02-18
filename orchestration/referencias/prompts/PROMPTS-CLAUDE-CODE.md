@@ -30,6 +30,18 @@
 
 ---
 
+## DIRECTIVA ALTERNATIVA - AHORRO DE TOKENS CON GEMINI CLI
+
+**Cuando el usuario solicite ahorrar tokens de Claude, Claude DEBE:**
+
+1. Activar `orchestration/directivas/simco/SIMCO-DELEGACION-GEMINI-CLI.md`.
+2. Delegar la mayor parte de ejecucion a Gemini CLI (subtareas pequenas y concisas).
+3. Mantener delegacion secuencial por defecto para evitar errores de contexto en Gemini.
+4. Validar todo resultado de Gemini y corregir/re-delegar si hay brechas.
+5. Mantener en Claude la decision arquitectonica final y control de calidad.
+
+---
+
 ## Prompt Nivel Workspace
 
 ```
@@ -55,6 +67,11 @@ Cuando usuario reporte tarea completada por Windsurf/Trae:
 - Comparar con especificaciones
 - Emitir veredicto fundamentado
 
+AHORRO DE TOKENS (si el usuario lo pide):
+- Activar: orchestration/directivas/simco/SIMCO-DELEGACION-GEMINI-CLI.md
+- Delegar carga operativa a Gemini CLI en subtareas cortas
+- Validar y corregir en Claude antes de cerrar tarea
+
 Listo para tarea.
 ```
 
@@ -66,7 +83,7 @@ Listo para tarea.
 Hola, vas a trabajar sobre el proyecto {NOMBRE_PROYECTO}.
 
 Tu rol: Arquitecto y orquestador principal.
-Carga contexto desde CLAUDE.md y projects/{proyecto}/.claude/README.md
+Carga contexto desde CLAUDE.md y .claude/README.md
 
 Puedes orquestar subagentes segun necesites.
 Listo para tarea.

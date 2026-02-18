@@ -21,8 +21,8 @@ export class MissionResponseDto {
     user_id!: string;
 
   @ApiProperty({
-    description: 'ID de la plantilla',
-    example: 'daily_exercise_streak_3',
+    description: 'ID de la plantilla (UUID FK to mission_templates)',
+    example: '20000001-0000-0000-0000-000000000001',
   })
     template_id!: string;
 

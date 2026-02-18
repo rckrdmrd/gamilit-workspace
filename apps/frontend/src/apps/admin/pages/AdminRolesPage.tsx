@@ -35,11 +35,9 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { AdminLayout } from '../layouts/AdminLayout';
+import { AdminPageShell } from '../components/shared';
 import { useRoles } from '../hooks/useRoles';
 import { useRolePermissions } from '../hooks/useRolePermissions';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { Card } from '@shared/components/Card';
 import { Button } from '@shared/components/Button';
 import { LoadingSpinner } from '@shared/components/LoadingSpinner';
@@ -47,8 +45,6 @@ import { RolesTable, RoleEditor, RoleActionsMenu } from '../components/roles';
 import type { Permission } from '@/services/api/adminTypes';
 
 export default function AdminRolesPage() {
-  const { user, logout } = useAuth();
-
   // Hooks
   const { roles, loading: rolesLoading, error: rolesError, refetch } = useRoles();
   const {
@@ -66,32 +62,10 @@ export default function AdminRolesPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Use useUserGamification hook with real API endpoint
-  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
-
   // Get the currently selected role object
   const selectedRole = selectedRoleId
     ? roles.find((role) => role.roleId === selectedRoleId) || null
     : null;
-
-  // Fallback gamification data while loading or if data not available
-  const displayGamificationData = gamificationData || {
-    userId: user?.id || '',
-    level: gamificationLoading ? 0 : 1,
-    totalXP: 0,
-    mlCoins: 0,
-    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
-    rankColor: '#9E9E9E',
-    progressToNextLevel: 0,
-    xpToNextLevel: 100,
-    achievements: [],
-    totalAchievements: 0,
-  };
-
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
 
   // ============================================================================
   // ROLE SELECTION
@@ -164,12 +138,7 @@ export default function AdminRolesPage() {
   // ============================================================================
 
   return (
-    <AdminLayout
-      user={user || undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GAMILIT Platform Admin"
-      onLogout={handleLogout}
-    >
+    <AdminPageShell>
       <div className="space-y-6 p-6">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -297,6 +266,6 @@ export default function AdminRolesPage() {
           </Card>
         )}
       </div>
-    </AdminLayout>
+    </AdminPageShell>
   );
 }

@@ -81,12 +81,12 @@ export class CreateTransactionDto {
 
   @ApiPropertyOptional({
     description: 'Tipo de entidad relacionada',
-    enum: ['exercise', 'module', 'achievement', 'powerup', 'admin', 'streak', 'rank'],
+    enum: ['exercise', 'module', 'achievement', 'powerup', 'admin', 'streak', 'rank', 'mission', 'rank_promotion'],
     example: 'exercise',
   })
   @IsOptional()
   @IsString()
-    reference_type?: 'exercise' | 'module' | 'achievement' | 'powerup' | 'admin' | 'streak' | 'rank';
+    reference_type?: 'exercise' | 'module' | 'achievement' | 'powerup' | 'admin' | 'streak' | 'rank' | 'mission' | 'rank_promotion';
 
   @ApiPropertyOptional({
     description: 'Multiplicador aplicado (ej: 1.5x por racha)',

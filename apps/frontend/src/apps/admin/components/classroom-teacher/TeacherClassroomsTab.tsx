@@ -63,7 +63,7 @@ export function TeacherClassroomsTab() {
     const trimmedId = teacherId.trim();
 
     if (!trimmedId) {
-      toast.error('Ingrese un Teacher ID');
+      toast.error('Ingrese un ID de Docente');
       return;
     }
 
@@ -77,7 +77,7 @@ export function TeacherClassroomsTab() {
 
   const handleAssignClassrooms = () => {
     if (!searchedId || !classroomIdsToAssign.trim()) {
-      toast.error('Ingrese al menos un Classroom ID');
+      toast.error('Ingrese al menos un ID de Aula');
       return;
     }
 
@@ -133,14 +133,14 @@ export function TeacherClassroomsTab() {
     <div className="space-y-6">
       {/* Search Form */}
       <div className="rounded-xl bg-white p-6 shadow-md">
-        <h2 className="mb-4 text-xl font-bold text-gray-900">Buscar Teacher</h2>
+        <h2 className="mb-4 text-xl font-bold text-gray-900">Buscar Docente</h2>
         <form onSubmit={handleSearch} className="flex gap-3">
           <div className="flex-1">
             <input
               type="text"
               value={teacherId}
               onChange={(e) => setTeacherId(e.target.value)}
-              placeholder="Ingrese Teacher ID (UUID)"
+              placeholder="Ingrese ID del Docente (UUID)"
               className={cn(
                 'w-full rounded-lg px-4 py-3',
                 'border-2 border-gray-200',
@@ -169,7 +169,7 @@ export function TeacherClassroomsTab() {
       {isLoading && (
         <div className="rounded-xl bg-white p-12 text-center shadow-md">
           <Loader2 className="mx-auto mb-3 h-8 w-8 animate-spin text-purple-500" />
-          <p className="text-gray-600">Cargando classrooms...</p>
+          <p className="text-gray-600">Cargando aulas...</p>
         </div>
       )}
 
@@ -179,9 +179,9 @@ export function TeacherClassroomsTab() {
           <div className="flex items-center gap-3 text-red-700">
             <AlertCircle className="h-6 w-6" />
             <div>
-              <p className="font-semibold">Error al cargar teacher</p>
+              <p className="font-semibold">Error al cargar docente</p>
               <p className="text-sm">
-                {(error as any)?.response?.data?.message || 'Teacher no encontrado'}
+                {(error as any)?.response?.data?.message || 'Docente no encontrado'}
               </p>
             </div>
           </div>
@@ -212,14 +212,14 @@ export function TeacherClassroomsTab() {
                 )}
               >
                 <Plus className="h-5 w-5" />
-                Asignar Classrooms
+                Asignar Aulas
               </button>
             </div>
 
             <div className="flex items-center gap-2 text-gray-600">
               <GraduationCap className="h-5 w-5" />
               <span className="font-semibold">
-                {teacherData.classroomsCount} classroom(s) asignado(s)
+                {teacherData.classroomsCount} aula(s) asignada(s)
               </span>
             </div>
           </div>
@@ -229,7 +229,7 @@ export function TeacherClassroomsTab() {
             <div className="rounded-xl bg-gray-50 p-12 text-center">
               <GraduationCap className="mx-auto mb-3 h-16 w-16 text-gray-300" />
               <p className="font-semibold text-gray-600">
-                No hay classrooms asignados a este teacher
+                No hay aulas asignadas a este docente
               </p>
             </div>
           ) : (
@@ -256,7 +256,7 @@ export function TeacherClassroomsTab() {
                           'text-gray-500 hover:bg-gray-50',
                           'transition-colors',
                         )}
-                        title="Copiar Classroom ID"
+                        title="Copiar ID del Aula"
                       >
                         {copiedId === classroom.id ? (
                           <Check className="h-5 w-5 text-green-500" />
@@ -271,7 +271,7 @@ export function TeacherClassroomsTab() {
                           'text-red-500 hover:bg-red-50',
                           'transition-colors',
                         )}
-                        title="Remover classroom"
+                        title="Remover aula"
                       >
                         <X className="h-5 w-5" />
                       </button>
@@ -300,11 +300,11 @@ export function TeacherClassroomsTab() {
             animate={{ opacity: 1, scale: 1 }}
             className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
           >
-            <h3 className="mb-4 text-xl font-bold text-gray-900">Asignar Classrooms</h3>
+            <h3 className="mb-4 text-xl font-bold text-gray-900">Asignar Aulas</h3>
             <div className="space-y-4">
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
-                  Classroom IDs (separados por comas)
+                  IDs de Aulas (separados por comas)
                 </label>
                 <textarea
                   value={classroomIdsToAssign}
@@ -319,7 +319,7 @@ export function TeacherClassroomsTab() {
                   )}
                 />
                 <p className="mt-1 text-xs text-gray-500">
-                  Ingrese uno o más Classroom IDs separados por comas
+                  Ingrese uno o más IDs de aulas separados por comas
                 </p>
               </div>
 
@@ -373,7 +373,7 @@ export function TeacherClassroomsTab() {
           >
             <h3 className="mb-4 text-xl font-bold text-gray-900">Confirmar Remoción</h3>
             <p className="mb-6 text-gray-600">
-              ¿Está seguro que desea remover este classroom del teacher?
+              ¿Está seguro que desea remover esta aula del docente?
             </p>
 
             <div className="flex gap-3">

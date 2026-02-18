@@ -362,7 +362,7 @@ export function useAdminDashboard(
         ),
       );
 
-      await apiClient.post(API_ENDPOINTS.admin.alertActions.dismiss(alertId));
+      await apiClient.patch(API_ENDPOINTS.admin.alertActions.suppress(alertId));
 
       // Remove dismissed alert after animation
       setTimeout(() => {

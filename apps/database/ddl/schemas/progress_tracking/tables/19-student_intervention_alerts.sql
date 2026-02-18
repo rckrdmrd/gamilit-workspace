@@ -72,7 +72,7 @@ CREATE POLICY admin_view_tenant_alerts ON progress_tracking.student_intervention
    FROM auth_management.profiles p
   WHERE (p.id = gamilit.get_current_user_id()))) AND (EXISTS ( SELECT 1
    FROM auth_management.profiles p
-  WHERE ((p.id = gamilit.get_current_user_id()) AND (p.role = ANY (ARRAY['SUPER_ADMIN'::auth_management.gamilit_role, 'ADMIN_TEACHER'::auth_management.gamilit_role])))))));
+  WHERE ((p.id = gamilit.get_current_user_id()) AND (p.role = ANY (ARRAY['super_admin'::auth_management.gamilit_role, 'admin_teacher'::auth_management.gamilit_role])))))));
 
 CREATE POLICY teacher_manage_classroom_alerts ON progress_tracking.student_intervention_alerts FOR UPDATE USING ((EXISTS ( SELECT 1
    FROM social_features.teacher_classrooms tc

@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Grid3X3 } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { CrucigramaGrid } from './CrucigramaGrid';
 import { CrucigramaClue } from './CrucigramaClue';
 import { CrucigramaData, CrucigramaCell } from './crucigramaTypes';
@@ -273,38 +275,59 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionsRef]);
 
+  const progress = exercise.clues.length > 0
+    ? (completedClues.size / exercise.clues.length) * 100
+    : 0;
+
   return (
     <>
-      {/* Instructions */}
-      <div className="mb-4 rounded-lg bg-detective-bg-secondary p-4">
-        <p className="text-sm text-detective-text-secondary">
-          Completa el crucigrama escribiendo las respuestas en las celdas. Haz clic en una celda para seleccionarla y escribe la letra correspondiente.
-        </p>
-      </div>
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Crucigrama'}
+        description="Completa el crucigrama escribiendo las respuestas en las celdas. Haz clic en una celda para seleccionarla y escribe la letra correspondiente."
+        icon={<Grid3X3 className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+        headerChildren={
+          <div className="mt-4">
+            <div className="mb-2 flex justify-between text-sm">
+              <span>
+                Progreso: {completedClues.size}/{exercise.clues.length}
+              </span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-white/30">
+              <div
+                className="h-full rounded-full bg-white transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        }
+      >
+        {/* Main Content */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Grid */}
+          <div className="flex justify-center lg:col-span-2">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <CrucigramaGrid
+                grid={grid}
+                selectedCell={selectedCell}
+                onCellClick={(row, col) => setSelectedCell({ row, col })}
+                onCellInput={handleCellInput}
+              />
+            </motion.div>
+          </div>
 
-      {/* Main Content */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Grid */}
-        <div className="flex justify-center lg:col-span-2">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <CrucigramaGrid
-              grid={grid}
-              selectedCell={selectedCell}
-              onCellClick={(row, col) => setSelectedCell({ row, col })}
-              onCellInput={handleCellInput}
-            />
-          </motion.div>
+          {/* Clues - Unified Display */}
+          <div>
+            <CrucigramaClue clues={exercise.clues} completedClues={completedClues} direction="all" />
+          </div>
         </div>
-
-        {/* Clues - Unified Display */}
-        <div>
-          <CrucigramaClue clues={exercise.clues} completedClues={completedClues} direction="all" />
-        </div>
-      </div>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

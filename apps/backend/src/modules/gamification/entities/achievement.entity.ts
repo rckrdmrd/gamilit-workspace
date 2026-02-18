@@ -107,14 +107,16 @@ export class Achievement {
     conditions!: Record<string, unknown>;
 
   /**
-   * Recompensas JSON otorgadas al desbloquear
-   * Ejemplo: {"xp": 100, "badge": null, "ml_coins": 50}
+   * Canonical rewards object (REC-012).
+   * Always contains: { xp: number, ml_coins: number, badge?: string }
+   * Consumers should use this as the primary source of reward values.
    */
   @Column({ type: 'jsonb', default: { xp: 100, badge: null, ml_coins: 50 } })
     rewards!: Record<string, unknown>;
 
   /**
-   * Recompensa de ML Coins (campo adicional para queries rápidas)
+   * @deprecated REC-012: Use rewards.ml_coins instead.
+   * Flat column kept for fast SQL queries/aggregations — secondary to rewards JSONB.
    */
   @Column({ type: 'integer', default: 0 })
     ml_coins_reward!: number;
@@ -152,7 +154,8 @@ export class Achievement {
     order_index!: number;
 
   /**
-   * Valor en puntos del logro
+   * @deprecated REC-012: Use rewards.xp instead.
+   * Flat column kept for fast SQL queries/aggregations — secondary to rewards JSONB.
    */
   @Column({ type: 'integer', default: 0 })
     points_value!: number;

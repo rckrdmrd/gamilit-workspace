@@ -34,3 +34,4 @@ export { TeacherAlertConfiguration, AlertType, ThresholdUnit } from './teacher-a
 export { UserCurrentLevel } from './user-current-level.entity'; // ✨ NUEVO - TASK-2026-01-27 (Coherencia DDL)
 export { UserDifficultyProgress } from './user-difficulty-progress.entity'; // ✨ NUEVO - TASK-2026-01-27 (Coherencia DDL)
 export { ModuleCompletionTracking } from './module-completion-tracking.entity'; // ✨ NUEVO - TASK-2026-01-27 (Coherencia DDL)
+export { LearningPathModule } from './learning-path-module.entity'; // FIX P2: Missing barrel export

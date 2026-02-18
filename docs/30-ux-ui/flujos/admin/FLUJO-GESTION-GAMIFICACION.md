@@ -1,8 +1,8 @@
 # FL-ADM-08 - Admin Gamification Management
 
 **ID:** FL-ADM-08
-**Version:** 1.0.0
-**Fecha:** 2026-02-17
+**Version:** 1.1.0
+**Fecha:** 2026-02-18
 **Estado:** Activo
 **Portal:** Admin
 **Prioridad:** P2
@@ -118,15 +118,20 @@ flowchart TD
 | Tipo | Archivo |
 |------|---------|
 | Pagina | `apps/frontend/src/apps/admin/pages/AdminGamificationPage.tsx` |
+| Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` |
 | Hook | `apps/frontend/src/apps/admin/hooks/useGamificationConfig.ts` |
+| Hook | `apps/frontend/src/apps/admin/hooks/useAdminPageSetup.ts` |
+| Tab Rangos | `apps/frontend/src/apps/admin/components/gamification/RanksTab.tsx` |
 | Tab Logros | `apps/frontend/src/apps/admin/components/gamification/AchievementsTab.tsx` |
+| Tab Economia | `apps/frontend/src/apps/admin/components/gamification/EconomyTab.tsx` |
+| Tab Estadisticas | `apps/frontend/src/apps/admin/components/gamification/StatsTab.tsx` |
 | Modal Parametro | `apps/frontend/src/apps/admin/components/gamification/ParameterEditModal.tsx` |
 | Modal Rango | `apps/frontend/src/apps/admin/components/gamification/MayaRankEditModal.tsx` |
 | Dialog Bulk | `apps/frontend/src/apps/admin/components/gamification/BulkUpdateDialog.tsx` |
 | Dialog Preview | `apps/frontend/src/apps/admin/components/gamification/PreviewImpactDialog.tsx` |
 | Dialog Defaults | `apps/frontend/src/apps/admin/components/gamification/RestoreDefaultsDialog.tsx` |
-| API Achievements | `apps/frontend/src/services/api/admin/achievementsApi.ts` |
-| API Gamification | `apps/frontend/src/lib/api/gamification.api.ts` |
+| API Achievements | `apps/frontend/src/features/gamification/social/api/achievementsAPI.ts` |
+| API Admin | `apps/frontend/src/services/api/adminAPI.ts` |
 | Layout | `apps/frontend/src/apps/admin/layouts/AdminLayout.tsx` |
 | Rutas | `apps/frontend/src/App.tsx` |
 
@@ -199,9 +204,13 @@ flowchart TD
 | Capa | Archivo | Evidencia |
 |------|---------|-----------|
 | Frontend Pagina | `apps/frontend/src/apps/admin/pages/AdminGamificationPage.tsx` | 4 tabs: ranks, achievements, economy, stats |
+| Frontend Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` | Wrapper comun de paginas admin |
 | Frontend Hook | `apps/frontend/src/apps/admin/hooks/useGamificationConfig.ts` | React Query hooks para parameters, maya-ranks, stats |
+| Frontend RanksTab | `apps/frontend/src/apps/admin/components/gamification/RanksTab.tsx` | Tab de rangos maya extraido |
 | Frontend AchievementsTab | `apps/frontend/src/apps/admin/components/gamification/AchievementsTab.tsx` | Filtros por categoria, toggle activo, lista con rewards |
-| Frontend API | `apps/frontend/src/services/api/admin/achievementsApi.ts` | Llamadas a achievements admin API |
+| Frontend EconomyTab | `apps/frontend/src/apps/admin/components/gamification/EconomyTab.tsx` | Tab de economia ML Coins extraido |
+| Frontend StatsTab | `apps/frontend/src/apps/admin/components/gamification/StatsTab.tsx` | Tab de estadisticas de gamificacion extraido |
+| Frontend API | `apps/frontend/src/features/gamification/social/api/achievementsAPI.ts` | Llamadas a achievements API |
 | Backend Controller | `apps/backend/src/modules/admin/controllers/admin-gamification-config.controller.ts` | Endpoints: GET/PUT parameters, maya-ranks, settings, preview, restore |
 | Backend Service | `apps/backend/src/modules/admin/services/gamification-config.service.ts` | Logica de negocio gamificacion config |
 | Backend Achievements | `apps/backend/src/modules/gamification/controllers/achievements.controller.ts` | CRUD achievements |

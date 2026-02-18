@@ -269,11 +269,26 @@ COMMENT ON POLICY tenants_read_own ON auth_management.tenants IS
 
 -- =====================================================
 -- TABLE: auth_management.user_roles
--- Description: User role assignments - self-service read access
--- Policies: 1 (SELECT: 1)
+-- Description: User role assignments - self-service read + admin full access
+-- Policies: 3 (SELECT: 2, ALL: 1)
+-- Updated: 2026-02-17 (CORR-F2-03: Added admin policy for RBAC guards)
 -- =====================================================
 
 DROP POLICY IF EXISTS user_roles_read_own ON auth_management.user_roles;
+DROP POLICY IF EXISTS user_roles_admin_all ON auth_management.user_roles;
+DROP POLICY IF EXISTS user_roles_system_insert ON auth_management.user_roles;
+
+-- Policy: user_roles_admin_all
+-- Purpose: Admins can manage all role assignments (REQUIRED for RBAC guards)
+CREATE POLICY user_roles_admin_all
+    ON auth_management.user_roles
+    AS PERMISSIVE
+    FOR ALL
+    TO public
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+COMMENT ON POLICY user_roles_admin_all ON auth_management.user_roles IS
+    'Admins pueden ver y gestionar todas las asignaciones de roles (requerido para RBAC)';
 
 -- Policy: user_roles_read_own
 -- Purpose: Users can read their own role assignments
@@ -282,10 +297,22 @@ CREATE POLICY user_roles_read_own
     AS PERMISSIVE
     FOR SELECT
     TO public
-    USING (user_id = current_setting('app.current_user_id', true)::uuid);
+    USING (user_id = gamilit.get_current_user_id());
 
 COMMENT ON POLICY user_roles_read_own ON auth_management.user_roles IS
     'Permite a los usuarios ver sus propios roles asignados';
+
+-- Policy: user_roles_system_insert
+-- Purpose: System can assign roles during user creation
+CREATE POLICY user_roles_system_insert
+    ON auth_management.user_roles
+    AS PERMISSIVE
+    FOR INSERT
+    TO public
+    WITH CHECK (true);
+
+COMMENT ON POLICY user_roles_system_insert ON auth_management.user_roles IS
+    'Sistema puede insertar roles durante creacion de usuarios';
 
 -- =====================================================
 -- TABLE: auth_management.user_suspensions

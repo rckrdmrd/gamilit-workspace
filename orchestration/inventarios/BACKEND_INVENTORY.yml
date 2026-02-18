@@ -2,8 +2,8 @@
 # BACKEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "4.1.0"
-fecha: "2026-02-14"
+version: "4.4.0"
+fecha: "2026-02-18"
 proyecto: "gamilit"
 framework: "NestJS 11"
 orm: "TypeORM 0.3.x"
@@ -15,11 +15,11 @@ auditoria: "TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION"
 
 resumen:
   modulos: 23             # 22 directorios + mail (transitivo)
-  entities: 152          # 152 archivos .entity.ts, 153 @Entity classes
+  entities: 155          # 155 archivos .entity.ts, 156 @Entity classes (+UserEquippedItem, +PendingUserInitialization)
   dtos: 399              # 399 archivos .dto.ts en modules/ (+ ~5 en shared/dto/)
-  services: 171
-  controllers: 107
-  endpoints: 901          # Verificado 2026-02-16 (+2 health endpoints)
+  services: 173           # +1 PendingInitializationsCronService (REC-007)
+  controllers: 108
+  endpoints: 904          # Verificado 2026-02-17 (+3 inventory endpoints)
   guards: 15
   decorators: 18          # 18 exported symbols en 9 archivos .decorator.ts
   interceptors: 6              # +1: tracing.interceptor.ts (new)
@@ -71,13 +71,13 @@ modulos:
   - nombre: "health"
     directorio: "modules/health"
     entities: 0
-    services: 2              # health.service.ts + metrics.service.ts (new)
+    services: 2              # health.service.ts + metrics.service.ts
     controllers: 1
-    endpoints: 1
+    endpoints: 4              # Verified 2026-02-17: GET /health (check), GET /health/live, GET /health/ready, GET /health/metrics
     dtos: 1
     tests: 2
     estado: "100%"
-    nota: "Health checks (Terminus)"
+    nota: "Health checks: check (comprehensive), live (liveness probe), ready (readiness probe), metrics (Prometheus)"
 
   - nombre: "profile"
     directorio: "modules/profile"
@@ -150,10 +150,10 @@ modulos:
   - nombre: "gamification"
     directorio: "modules/gamification"
     entities: 21
-    services: 17
-    controllers: 10
-    endpoints: 69
-    dtos: 38
+    services: 18              # +1 inventory.service.ts
+    controllers: 11           # +1 inventory.controller.ts
+    endpoints: 72             # +3 inventory endpoints
+    dtos: 39                  # +1 equip-item.dto.ts
     tests: 9
     estado: "95%"
     datasource: "gamification"
@@ -174,7 +174,7 @@ modulos:
     estado: "60%"
     datasource: "social"
     schema: "social_features"
-    nota: "Classrooms, schools, teams, guilds, friendships, challenges, user activities."
+    nota: "Classrooms, schools, teams, guilds, friendships, challenges, user activities. All 26 entities registered in forFeature() (FIX P2: +9 entities). ~40 endpoints unwired in frontend (team/peer challenges)."
     # Conceptos absorbidos: classrooms, students (parcial)
 
   # === Progress & Analytics ===
@@ -252,13 +252,13 @@ modulos:
   - nombre: "tasks"
     directorio: "modules/tasks"
     entities: 0
-    services: 4
+    services: 5               # +1 PendingInitializationsCronService (REC-007)
     controllers: 0
     endpoints: 0
     dtos: 0
     tests: 0
     estado: "100%"
-    nota: "CRON jobs: achievements reconciliation, materialized views, missions, notifications"
+    nota: "CRON jobs: achievements reconciliation, materialized views, missions (tz: America/Mexico_City, REC-002), notifications, pending user init retry (REC-007). Missions cleanup deletes expired >90 days (REC-010)."
 
   - nombre: "websocket"
     directorio: "modules/websocket"

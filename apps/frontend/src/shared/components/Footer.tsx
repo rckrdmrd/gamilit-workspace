@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { BrandingContext } from '@/app/providers/BrandingProvider';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 interface FooterLink {
   label: string;
@@ -12,8 +14,13 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({
   links = [],
-  copyrightText = `© ${new Date().getFullYear()} GAMILIT. Todos los derechos reservados.`,
+  copyrightText,
 }) => {
+  const branding = useContext(BrandingContext);
+  const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
+  const defaultCopyright = `© ${new Date().getFullYear()} ${platformName}. Todos los derechos reservados.`;
+  const resolvedCopyright = copyrightText ?? defaultCopyright;
+
   return (
     <footer className="border-t border-gray-200 bg-gray-100 py-8">
       <div className="container mx-auto px-4">
@@ -33,7 +40,7 @@ export const Footer: React.FC<FooterProps> = ({
         )}
 
         {/* Copyright */}
-        <div className="text-center text-sm text-gray-500">{copyrightText}</div>
+        <div className="text-center text-sm text-gray-500">{resolvedCopyright}</div>
       </div>
     </footer>
   );

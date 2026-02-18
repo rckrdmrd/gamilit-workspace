@@ -18,6 +18,16 @@ ALTER TABLE progress_tracking.certificates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE progress_tracking.certificates FORCE ROW LEVEL SECURITY;
 
 -- =====================================================
+-- DROP existing policies (idempotent)
+-- =====================================================
+DROP POLICY IF EXISTS certificates_select_own ON progress_tracking.certificates;
+DROP POLICY IF EXISTS certificates_select_teacher ON progress_tracking.certificates;
+DROP POLICY IF EXISTS certificates_select_admin ON progress_tracking.certificates;
+DROP POLICY IF EXISTS certificates_insert_system ON progress_tracking.certificates;
+DROP POLICY IF EXISTS certificates_update_admin ON progress_tracking.certificates;
+DROP POLICY IF EXISTS certificates_delete_admin ON progress_tracking.certificates;
+
+-- =====================================================
 -- SELECT Policies
 -- =====================================================
 

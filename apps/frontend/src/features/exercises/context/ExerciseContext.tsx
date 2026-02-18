@@ -1,0 +1,338 @@
+/**
+ * ExerciseContext + ExerciseProvider
+ *
+ * Composes all exercise hooks into a single context.
+ * Eliminates prop drilling between ExercisePage, sidebar, mechanic, etc.
+ *
+ * @version 1.0.0
+ * @since Phase 2 - Exercise System Restructuring
+ */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import React, { createContext, useContext, useCallback, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '@/app/providers/AuthContext';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { useExerciseData, type ExerciseData, type PedagogicalGuide } from '../hooks/useExerciseData';
+import { useExerciseComodines, type UseExerciseComodinesReturn } from '../hooks/useExerciseComodines';
+import { useExerciseProgress, type ExerciseProgress } from '../hooks/useExerciseProgress';
+import { useExercisePowerUps, type PowerUpEffects } from '@/apps/student/hooks/useExercisePowerUps';
+import { useInvalidateDashboard } from '@/shared/hooks/useInvalidateDashboard';
+import { submitExercise } from '@/services/api/educationalAPI';
+import type { ExerciseMechanicActions, ExerciseComodinesContext, ExerciseRegistryEntry } from '../types/exercise-mechanic.types';
+import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+
+// ============================================================================
+// CONTEXT TYPE
+// ============================================================================
+
+export interface ExerciseContextValue {
+  // === Auth & User ===
+  user: any;
+  logout: () => Promise<void>;
+  gamificationData: any;
+
+  // === Exercise Data ===
+  exercise: ExerciseData | null;
+  adaptedExercise: any;
+  mechanicEntry: ExerciseRegistryEntry | undefined;
+  MechanicComponent: React.ComponentType<any> | null;
+  isLoading: boolean;
+  loadError: string | null;
+  hints: string[];
+  pedagogicalGuide: PedagogicalGuide;
+  isInactive: boolean;
+
+  // === Progress ===
+  progress: ExerciseProgress;
+  userAnswers: any;
+  hasUnsavedChanges: boolean;
+  autoSaveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  lastSavedAt: Date | null;
+  startTime: Date;
+  handleProgressUpdate: (update: any) => void;
+  handleSaveProgress: () => Promise<void>;
+
+  // === Comodines (new — real API) ===
+  comodines: UseExerciseComodinesReturn;
+
+  // === Legacy Power-ups (existing hook) ===
+  powerUps: {
+    availablePowerUps: any[];
+    activePowerUps: any[];
+    activatePowerUp: (id: string) => Promise<boolean>;
+    getUsedPowerUps: () => string[];
+    effects: PowerUpEffects;
+    isLoading: boolean;
+    error: string | null;
+  };
+
+  // === Comodines context for mechanic components ===
+  comodinesContext: ExerciseComodinesContext;
+
+  // === Actions ===
+  handleSubmit: () => Promise<void>;
+  handleSkip: () => void;
+  handleComplete: () => void;
+  navigateBack: () => void;
+
+  // === Mechanic actions ref ===
+  mechanicActionsRef: React.MutableRefObject<ExerciseMechanicActions>;
+
+  // === Feedback ===
+  feedback: FeedbackData | null;
+  showFeedback: boolean;
+  setShowFeedback: (show: boolean) => void;
+  setFeedback: (feedback: FeedbackData | null) => void;
+
+  // === Coins ===
+  availableCoins: number;
+
+  // === Route params ===
+  exerciseId: string;
+  moduleId: string | undefined;
+}
+
+// ============================================================================
+// CONTEXT
+// ============================================================================
+
+const ExerciseContext = createContext<ExerciseContextValue | null>(null);
+
+/**
+ * Hook to access exercise context. Must be used within ExerciseProvider.
+ */
+export function useExerciseContext(): ExerciseContextValue {
+  const ctx = useContext(ExerciseContext);
+  if (!ctx) {
+    throw new Error('useExerciseContext must be used within an ExerciseProvider');
+  }
+  return ctx;
+}
+
+// ============================================================================
+// PROVIDER
+// ============================================================================
+
+interface ExerciseProviderProps {
+  exerciseId: string;
+  children: React.ReactNode;
+}
+
+export function ExerciseProvider({ exerciseId, children }: ExerciseProviderProps) {
+  const { moduleId } = useParams();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const { gamificationData } = useUserGamification(user?.id);
+  const { syncAndInvalidate } = useInvalidateDashboard();
+
+  // === Compose hooks ===
+  const exerciseData = useExerciseData(exerciseId);
+  const progressHook = useExerciseProgress(exerciseId);
+  const comodines = useExerciseComodines(
+    exerciseId,
+    user?.id,
+    (exerciseData.exercise?.mechanicData as any)?.comodines_allowed ?? null,
+  );
+
+  // Legacy power-ups hook
+  const powerUps = useExercisePowerUps({
+    exerciseId: exerciseId || '',
+    userId: user?.id,
+  });
+
+  // Feedback state
+  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [availableCoins, setAvailableCoins] = useState(350);
+
+  // Mechanic actions ref
+  const mechanicActionsRef = useRef<ExerciseMechanicActions>({});
+
+  // Set initial feedback from load error
+  React.useEffect(() => {
+    if (exerciseData.error && !feedback) {
+      setFeedback({
+        type: 'info',
+        title: 'Modo sin conexión',
+        message: exerciseData.error,
+      });
+    }
+  }, [exerciseData.error, feedback]);
+
+  // Set recovery feedback
+  React.useEffect(() => {
+    if (progressHook.autoSaveStatus === 'saved' && progressHook.lastSavedAt) {
+      // Recovery happened
+    }
+  }, [progressHook.autoSaveStatus, progressHook.lastSavedAt]);
+
+  // Merge comodines context from both new and legacy hooks
+  const comodinesContext: ExerciseComodinesContext = {
+    hintsRevealed: comodines.comodinesContext.hintsRevealed + powerUps.effects.hintsRevealed,
+    visionActive: comodines.comodinesContext.visionActive || powerUps.effects.visionActive,
+    hasSecondChance: comodines.comodinesContext.hasSecondChance || powerUps.effects.hasSecondChance,
+    timeExtension: comodines.comodinesContext.timeExtension + powerUps.effects.timeExtension,
+    multiplierActive: comodines.comodinesContext.multiplierActive || powerUps.effects.multiplierActive,
+  };
+
+  // === HANDLERS ===
+
+  const handleSubmit = useCallback(async () => {
+    if (!exerciseId) return;
+
+    if (!progressHook.userAnswers) {
+      setFeedback({
+        type: 'error',
+        title: 'Error',
+        message: 'No se pudieron obtener tus respuestas. Por favor, intenta nuevamente.',
+      });
+      setShowFeedback(true);
+      return;
+    }
+
+    try {
+      const usedPowerUpsList = powerUps.getUsedPowerUps();
+
+      const result = await submitExercise(exerciseId, {
+        answers: progressHook.userAnswers,
+        startedAt: progressHook.startTime.getTime(),
+        hintsUsed: progressHook.progress.hintsUsed || 0,
+        powerupsUsed: usedPowerUpsList || [],
+      });
+
+      await syncAndInvalidate();
+
+      const xpEarned = result.rewards?.xp ?? 0;
+      const mlCoinsEarned = result.rewards?.mlCoins ?? 0;
+      let feedbackMessage = `Has obtenido ${result.score} puntos. Ganaste ${xpEarned} XP y ${mlCoinsEarned} ML Coins.`;
+
+      if (result.rewards?.bonuses && result.rewards.bonuses.length > 0) {
+        const bonusDetails = result.rewards.bonuses.map((b: any) => `+${b.amount} ${b.type}`).join(', ');
+        feedbackMessage += ` Bonos: ${bonusDetails}`;
+      }
+
+      if (result.rankUp) {
+        feedbackMessage += `\n\n¡Felicidades! Has subido de rango: ${result.rankUp.previousRank} → ${result.rankUp.newRank}`;
+        if (result.rankUp.unlockedFeatures?.length > 0) {
+          feedbackMessage += `\nNuevas funciones desbloqueadas: ${result.rankUp.unlockedFeatures.join(', ')}`;
+        }
+      }
+
+      setFeedback({
+        type: 'success',
+        title: result.isPerfect ? '¡Perfecto!' : 'Ejercicio Completado',
+        message: feedbackMessage,
+        score: result.score,
+        xpEarned,
+        mlCoinsEarned,
+        showConfetti: result.isPerfect || result.score >= 80 || !!result.rankUp,
+      });
+      setShowFeedback(true);
+
+      if (mlCoinsEarned) {
+        setAvailableCoins((prev) => prev + mlCoinsEarned);
+      }
+    } catch (error) {
+      console.error('Error submitting exercise:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al enviar',
+        message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
+      });
+      setShowFeedback(true);
+    }
+  }, [exerciseId, progressHook, powerUps, syncAndInvalidate]);
+
+  const handleSkip = useCallback(() => {
+    if (window.confirm('¿Estás seguro de que deseas omitir este ejercicio?')) {
+      const targetModuleId = exerciseData.exercise?.module_id || moduleId;
+      if (targetModuleId && targetModuleId !== 'undefined') {
+        navigate(`/modules/${targetModuleId}`);
+      } else {
+        navigate('/dashboard');
+      }
+    }
+  }, [exerciseData.exercise, moduleId, navigate]);
+
+  const handleComplete = useCallback(() => {
+    setFeedback({
+      type: 'success',
+      title: '¡Ejercicio Completado!',
+      message: `¡Excelente trabajo! Has ganado ${exerciseData.exercise?.points} puntos.`,
+      showConfetti: true,
+    });
+    setShowFeedback(true);
+  }, [exerciseData.exercise]);
+
+  const navigateBack = useCallback(() => {
+    const targetModuleId = exerciseData.exercise?.module_id || moduleId;
+    if (targetModuleId && targetModuleId !== 'undefined') {
+      navigate(`/modules/${targetModuleId}`);
+    } else {
+      navigate('/dashboard');
+    }
+  }, [exerciseData.exercise, moduleId, navigate]);
+
+  // === CONTEXT VALUE ===
+
+  const value: ExerciseContextValue = {
+    user,
+    logout,
+    gamificationData,
+
+    exercise: exerciseData.exercise,
+    adaptedExercise: exerciseData.adaptedExercise,
+    mechanicEntry: exerciseData.mechanicEntry,
+    MechanicComponent: exerciseData.MechanicComponent,
+    isLoading: exerciseData.isLoading,
+    loadError: exerciseData.error,
+    hints: exerciseData.hints,
+    pedagogicalGuide: exerciseData.pedagogicalGuide,
+    isInactive: exerciseData.isInactive,
+
+    progress: progressHook.progress,
+    userAnswers: progressHook.userAnswers,
+    hasUnsavedChanges: progressHook.hasUnsavedChanges,
+    autoSaveStatus: progressHook.autoSaveStatus,
+    lastSavedAt: progressHook.lastSavedAt,
+    startTime: progressHook.startTime,
+    handleProgressUpdate: progressHook.handleProgressUpdate,
+    handleSaveProgress: progressHook.handleSaveProgress,
+
+    comodines,
+    powerUps: {
+      availablePowerUps: powerUps.availablePowerUps,
+      activePowerUps: powerUps.activePowerUps,
+      activatePowerUp: powerUps.activatePowerUp,
+      getUsedPowerUps: powerUps.getUsedPowerUps,
+      effects: powerUps.effects,
+      isLoading: powerUps.isLoading,
+      error: powerUps.error,
+    },
+    comodinesContext,
+
+    handleSubmit,
+    handleSkip,
+    handleComplete,
+    navigateBack,
+
+    mechanicActionsRef,
+
+    feedback,
+    showFeedback,
+    setShowFeedback,
+    setFeedback,
+
+    availableCoins,
+
+    exerciseId,
+    moduleId,
+  };
+
+  return (
+    <ExerciseContext.Provider value={value}>
+      {children}
+    </ExerciseContext.Provider>
+  );
+}

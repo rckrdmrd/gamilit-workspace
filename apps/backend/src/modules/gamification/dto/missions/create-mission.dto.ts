@@ -94,10 +94,10 @@ export class CreateMissionDto {
     user_id!: string;
 
   @ApiProperty({
-    description: 'ID de la plantilla de misión',
-    example: 'daily_exercise_streak_3',
+    description: 'ID de la plantilla de misión (UUID FK to mission_templates)',
+    example: '20000001-0000-0000-0000-000000000001',
   })
-  @IsString()
+  @IsUUID()
     template_id!: string;
 
   @ApiProperty({

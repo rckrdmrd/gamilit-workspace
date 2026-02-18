@@ -1,5 +1,7 @@
 # Schema 5: social (7 tablas, 22 RLS policies)
 
+> **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.
+
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT
 
 ---

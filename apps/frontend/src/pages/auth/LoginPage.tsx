@@ -15,15 +15,21 @@
  * ```
  */
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import LoginForm from '@/features/auth/components/LoginForm';
+import { BrandingContext } from '@/app/providers/BrandingProvider';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 /**
  * LoginPage Component
  */
 export const LoginPage: React.FC = () => {
+  const branding = useContext(BrandingContext);
+  const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
+  const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-100 flex items-center justify-center p-4">
       <motion.div
@@ -46,28 +52,13 @@ export const LoginPage: React.FC = () => {
               transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
               className="relative inline-block p-4 bg-white/10 backdrop-blur-sm rounded-full mb-4"
             >
-              <span className="text-5xl">🕵️‍♂️</span>
+              {logoUrl ? (
+                <img src={logoUrl} alt={platformName} className="h-60 w-60 object-contain" />
+              ) : (
+                <span className="text-9xl">🕵️‍♂️</span>
+              )}
             </motion.div>
 
-            {/* Title */}
-            <motion.h1
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-3xl font-bold text-white mb-2 relative"
-            >
-              GAMILIT Detective Platform
-            </motion.h1>
-
-            {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-orange-100 relative"
-            >
-              Resuelve misterios mientras aprendes
-            </motion.p>
           </div>
 
           {/* Form Container */}

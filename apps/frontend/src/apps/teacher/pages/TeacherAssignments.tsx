@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * TeacherAssignments - Enhanced page for managing assignments
  *
@@ -16,7 +15,7 @@ import { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Modal } from '@shared/components/common/Modal';
-import { ToastContainer, useToast } from '@shared/components/base/Toast';
+import toast from 'react-hot-toast';
 import {
   Plus,
   Clock,
@@ -36,8 +35,17 @@ import { SubmissionsModal } from '../components/assignments/SubmissionsModal';
 import { GradeSubmissionModal } from '../components/dashboard/GradeSubmissionModal';
 import type { Assignment, Submission, DashboardSubmission, GradeSubmissionData } from '../types';
 
+/** Data shape received from ImprovedAssignmentWizard onComplete callback */
+interface AssignmentWizardData {
+  title: string;
+  description: string;
+  type: 'practice' | 'quiz' | 'exam' | 'homework';
+  due_date: string;
+  classroom_id: string;
+  exercise_ids: string[];
+}
+
 export default function TeacherAssignments() {
-  const { toasts, showToast } = useToast();
   const {
     assignments,
     exercises,
@@ -70,7 +78,7 @@ export default function TeacherAssignments() {
   /**
    * Handle assignment creation
    */
-  const handleCreateAssignment = async (data: any) => {
+  const handleCreateAssignment = async (data: AssignmentWizardData) => {
     try {
       await createAssignmentAPI({
         title: data.title,
@@ -83,11 +91,7 @@ export default function TeacherAssignments() {
       setIsWizardOpen(false);
     } catch (err: unknown) {
       console.error('[TeacherAssignments] Error creating assignment:', err);
-      showToast({
-        type: 'error',
-        title: 'Error',
-        message: 'Error al crear la asignación. Por favor intenta nuevamente.',
-      });
+      toast.error('Error al crear la asignación. Por favor intenta nuevamente.');
     }
   };
 
@@ -103,11 +107,7 @@ export default function TeacherAssignments() {
       setIsSubmissionsModalOpen(true);
     } catch (err: unknown) {
       console.error('[TeacherAssignments] Error fetching submissions:', err);
-      showToast({
-        type: 'error',
-        title: 'Error',
-        message: 'Error al cargar las entregas. Por favor intenta nuevamente.',
-      });
+      toast.error('Error al cargar las entregas. Por favor intenta nuevamente.');
     } finally {
       setSubmissionsLoading(false);
     }
@@ -175,14 +175,10 @@ export default function TeacherAssignments() {
   const handleSendReminder = async (assignmentId: string) => {
     try {
       const result = await sendReminderAPI(assignmentId);
-      showToast({ type: 'success', title: 'Listo', message: result.message });
+      toast.success(result.message);
     } catch (err: unknown) {
       console.error('[TeacherAssignments] Error sending reminder:', err);
-      showToast({
-        type: 'error',
-        title: 'Error',
-        message: 'Error al enviar recordatorio. Por favor intenta nuevamente.',
-      });
+      toast.error('Error al enviar recordatorio. Por favor intenta nuevamente.');
     }
   };
 
@@ -196,7 +192,6 @@ export default function TeacherAssignments() {
 
   return (
     <>
-      <ToastContainer toasts={toasts} position="top-right" />
       <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
         <main className="detective-container py-8">
           {/* Header */}

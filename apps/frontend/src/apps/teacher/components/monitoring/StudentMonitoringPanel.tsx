@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { getPerformanceLevelFromScore } from '@shared/utils/format.util';
 import {
   Search,
   RefreshCw,
@@ -22,7 +22,7 @@ import { StudentPagination } from './StudentPagination';
 import { useStudentMonitoring } from '../../hooks/useStudentMonitoring';
 import { useStudentBlocking } from '../../hooks/useStudentBlocking';
 import { useToast } from '@shared/components/base/Toast';
-import type { StudentFilter, StudentMonitoring } from '../../types';
+import type { StudentFilter, StudentMonitoring, StudentStatus } from '../../types';
 
 interface StudentMonitoringPanelProps {
   classroomId: string;
@@ -121,26 +121,18 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
     setFilters((prev) => ({ ...prev, search: value }));
   };
 
-  const handleStatusFilter = (status: string) => {
+  const handleStatusFilter = (status: StudentStatus) => {
     setFilters((prev) => {
       const currentStatuses = prev.status || [];
-      const newStatuses = currentStatuses.includes(status as any)
+      const newStatuses = currentStatuses.includes(status)
         ? currentStatuses.filter((s) => s !== status)
-        : [...currentStatuses, status as any];
+        : [...currentStatuses, status];
 
       return {
         ...prev,
         status: newStatuses.length > 0 ? newStatuses : undefined,
       };
     });
-  };
-
-  // Calculate performance level based on score
-  const calculatePerformanceLevel = (student: StudentMonitoring): 'high' | 'medium' | 'low' => {
-    const score = student.score_average || 0;
-    if (score >= 80) return 'high';
-    if (score >= 60) return 'medium';
-    return 'low';
   };
 
   // Handle performance filter
@@ -176,7 +168,7 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
     const performanceLevels = filters.performanceLevel;
     if (performanceLevels && performanceLevels.length > 0) {
       filtered = filtered.filter((student) => {
-        const level = calculatePerformanceLevel(student);
+        const level = getPerformanceLevelFromScore(student.score_average || 0);
         return performanceLevels.includes(level);
       });
     }
@@ -248,9 +240,9 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
   const offlineCount = students.filter((s) => getStudentStatus(s) === 'offline').length;
 
   // Performance stats
-  const highPerformanceCount = students.filter((s) => calculatePerformanceLevel(s) === 'high').length;
-  const mediumPerformanceCount = students.filter((s) => calculatePerformanceLevel(s) === 'medium').length;
-  const lowPerformanceCount = students.filter((s) => calculatePerformanceLevel(s) === 'low').length;
+  const highPerformanceCount = students.filter((s) => getPerformanceLevelFromScore(s.score_average || 0) === 'high').length;
+  const mediumPerformanceCount = students.filter((s) => getPerformanceLevelFromScore(s.score_average || 0) === 'medium').length;
+  const lowPerformanceCount = students.filter((s) => getPerformanceLevelFromScore(s.score_average || 0) === 'low').length;
 
   // US-PM-006: Handlers for student blocking
   const handleSuspendSuccess = () => {
@@ -627,16 +619,16 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
                     <td className="px-4 py-3">
                       <span
                         className={`rounded px-2 py-1 text-xs font-medium ${
-                          calculatePerformanceLevel(student) === 'high'
+                          getPerformanceLevelFromScore(student.score_average || 0) === 'high'
                             ? 'bg-green-500/20 text-green-500'
-                            : calculatePerformanceLevel(student) === 'medium'
+                            : getPerformanceLevelFromScore(student.score_average || 0) === 'medium'
                               ? 'bg-yellow-500/20 text-yellow-500'
                               : 'bg-red-500/20 text-red-500'
                         }`}
                       >
-                        {calculatePerformanceLevel(student) === 'high' && 'Alto'}
-                        {calculatePerformanceLevel(student) === 'medium' && 'Medio'}
-                        {calculatePerformanceLevel(student) === 'low' && 'Bajo'}
+                        {getPerformanceLevelFromScore(student.score_average || 0) === 'high' && 'Alto'}
+                        {getPerformanceLevelFromScore(student.score_average || 0) === 'medium' && 'Medio'}
+                        {getPerformanceLevelFromScore(student.score_average || 0) === 'low' && 'Bajo'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-detective-text-secondary">

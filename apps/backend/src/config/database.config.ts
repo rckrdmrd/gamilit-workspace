@@ -4,7 +4,18 @@ import { registerAs } from '@nestjs/config';
 // registerAs() factories run AFTER ConfigModule loads .env files (dotenv).
 // Reading process.env at module scope captures stale values (before dotenv runs).
 export default registerAs('database', () => {
-  const dbHost = process.env.DB_HOST || '127.0.0.1';
+  const dbHostMode = (process.env.DB_HOST_MODE || 'auto').trim().toLowerCase();
+  const dbHost = (process.env.DB_HOST || '127.0.0.1').trim();
+
+  if (!dbHost) {
+    throw new Error('[database] DB_HOST is empty. Check .env.local/.env.dev/.env priority.');
+  }
+
+  if (!['auto', 'localhost', 'wsl-ip'].includes(dbHostMode)) {
+    throw new Error(
+      `[database] Invalid DB_HOST_MODE="${dbHostMode}". Allowed: auto | localhost | wsl-ip`,
+    );
+  }
 
   // Warn if using localhost on Windows — svchost.exe proxy saturates with 11+ datasources
   if (
@@ -16,6 +27,10 @@ export default registerAs('database', () => {
         'With 11 datasources, svchost.exe proxy may cause ECONNRESET. ' +
         'Run "npm run predev" to auto-detect WSL2 IP, or set DB_HOST to WSL2 IP manually.',
     );
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[database] DB_HOST_MODE=${dbHostMode}, DB_HOST=${dbHost}`);
   }
 
   return {

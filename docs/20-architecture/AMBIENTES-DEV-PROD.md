@@ -11,11 +11,11 @@
 |---------|-------------------|----------------------|
 | Backend URL | http://localhost:3006 | https://74.208.126.102 (via Nginx:443) |
 | Frontend URL | http://localhost:3005 | https://74.208.126.102 (via Nginx:443) |
-| DB Host | 127.0.0.1 (IPv4 forzado) | localhost |
+| DB Host | Deterministico via `DB_HOST_MODE` + `npm run predev` (`wsl-ip` o `localhost`) | localhost |
 | DB Port | 5432 | 5432 |
 | DB Pool Max | 2 (WSL2 limitado) | 2 |
 | DB Timeout | 15000ms | 15000ms |
-| Redis | localhost:6379 (sin auth) | localhost:6379 |
+| Redis | `REDIS_ENABLED=false` por defecto; si se habilita, `predev` alinea `REDIS_URL` al host resuelto | localhost:6379 |
 | WebSocket | ws://localhost:3006 | wss://74.208.126.102 |
 
 ## SSL/HTTPS
@@ -46,7 +46,8 @@ Identica en ambos ambientes:
 | Variable | Dev | Prod |
 |----------|-----|------|
 | NODE_ENV | development | production |
-| DB_HOST | 127.0.0.1 | localhost |
+| DB_HOST_MODE | `auto` (recomendado), `localhost`, `wsl-ip` | N/A |
+| DB_HOST | Gestionado por `predev` segun `DB_HOST_MODE` | localhost |
 | CORS_ORIGINS | http://localhost:3005 | https://domain.com |
 | SWAGGER_ENABLED | true | false |
 | JWT_SECRET | dev_secret | prod_secret (rotado) |
@@ -70,6 +71,17 @@ scripts/validate-deployment.sh
 # SSL setup
 scripts/setup-ssl-certbot.sh
 ```
+
+## Contrato de Conectividad Dev (Windows + WSL2)
+
+1. `npm run dev` (backend) ejecuta `predev` antes del boot NestJS.
+2. `predev` detecta distro WSL activa (o `WSL_DISTRO` si fue configurada).
+3. `DB_HOST_MODE` define la estrategia:
+   - `auto`: usa IP WSL2 solo si es alcanzable desde Windows; si no, fallback a `localhost`.
+   - `localhost`: no intenta usar IP WSL2.
+   - `wsl-ip`: exige IP WSL2 valida; falla rapido si no existe.
+4. `predev` valida PostgreSQL (`pg_isready`) y falla rapido si no queda listo.
+5. Resultado: el backend no arranca con host estancado o ambiguo.
 
 ## Recreacion de Base de Datos por Ambiente
 

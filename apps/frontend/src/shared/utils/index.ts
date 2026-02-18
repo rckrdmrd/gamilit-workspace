@@ -29,5 +29,15 @@ export {
 // Progress formatters (includes formatRelativeTime)
 export * from './formatters';
 
+// CSV download utilities
+export { downloadCSV, downloadBlobAsFile } from './downloadCSV';
+
 // LocalStorage migrations
 export * from './migrateLocalStorage';
+
+// Error handling utilities
+export { extractApiErrorMessage } from './error.util';
+export type { AxiosLikeError } from './error.util';
+
+// Rarity color utilities (shop/inventory items)
+export { getRarityGradient, getRarityBadgeClass, getRarityLabel } from './rarityColors';

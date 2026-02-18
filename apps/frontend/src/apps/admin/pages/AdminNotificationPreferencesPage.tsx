@@ -23,13 +23,11 @@ import {
 } from 'lucide-react';
 
 // Layout
-import AdminLayout from '../layouts/AdminLayout';
+import { AdminPageShell } from '../components/shared';
 
 // Store & Hooks
 import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
 import { usePushNotifications } from '@/features/notifications/hooks/usePushNotifications';
-import { useAuth } from '@/app/providers/AuthContext';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -45,10 +43,6 @@ const notificationTypes = [
 ];
 
 export default function AdminNotificationPreferencesPage() {
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
-
-  // Store
   const {
     preferences,
     devices,
@@ -129,11 +123,7 @@ export default function AdminNotificationPreferencesPage() {
   };
 
   return (
-    <AdminLayout
-      user={user || undefined}
-      gamificationData={gamificationData}
-      onLogout={logout}
-    >
+    <AdminPageShell>
       <div className="space-y-6 max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -305,6 +295,6 @@ export default function AdminNotificationPreferencesPage() {
           </motion.div>
         )}
       </div>
-    </AdminLayout>
+    </AdminPageShell>
   );
 }

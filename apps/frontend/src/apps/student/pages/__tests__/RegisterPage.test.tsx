@@ -14,6 +14,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import RegisterPage from '@/pages/auth/RegisterPage';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 // Mock react-router-dom
 const mockNavigate = vi.fn();
@@ -41,6 +42,8 @@ vi.mock('@features/auth/mocks/authMocks', () => ({
 import { mockRegister } from '@features/auth/mocks/authMocks';
 
 describe('RegisterPage', () => {
+  const platformName = DEFAULT_BRANDING.platformName;
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
@@ -78,8 +81,8 @@ describe('RegisterPage', () => {
     it('should render registration form', () => {
       renderComponent();
 
-      expect(screen.getByText('GAMILIT')).toBeInTheDocument();
-      expect(screen.getByText('Únete a la academia de detectives')).toBeInTheDocument();
+      expect(screen.getByText(platformName)).toBeInTheDocument();
+      expect(screen.getByText(new RegExp(`Únete a ${platformName}`))).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /crear cuenta/i })).toBeInTheDocument();
     });
 

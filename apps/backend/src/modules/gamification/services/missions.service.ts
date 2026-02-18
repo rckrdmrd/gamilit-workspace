@@ -587,7 +587,7 @@ export class MissionsService {
           description: `Mission reward: ${mission.title}`,
           reason: 'mission_claim_reward',
           reference_id: mission.id,
-          reference_type: 'mission' as any,
+          reference_type: 'mission',
           metadata: {
             mission_id: mission.id,
             mission_title: mission.title,

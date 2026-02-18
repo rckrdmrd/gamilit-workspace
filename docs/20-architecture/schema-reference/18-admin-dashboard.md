@@ -1,5 +1,7 @@
 # Schema: admin_dashboard (4 tablas, 7 views, 3 materialized views)
 
+> **Nota:** Este documento describe el modelo conceptual. Para definiciones DDL exactas, consultar `apps/database/ddl/schemas/`.
+
 > Parte de [Schema Reference](_INDEX.md) - GAMILIT
 > **Schema fisico DDL:** `admin_dashboard`
 > **Tipo:** support
@@ -15,9 +17,6 @@ Dashboard administrativo con operaciones bulk, reportes y metricas del sistema. 
 ---
 
 ## Tablas (4)
-
-### admin_dashboard.materialized_views_config
-Configuracion de materialized views (refresh intervals, estado).
 
 ### admin_dashboard.bulk_operations
 Operaciones masivas ejecutadas por administradores.
@@ -57,6 +56,17 @@ Reportes generados por administradores del sistema.
 | expires_at | TIMESTAMP | NULL | Limpieza automatica (+30 dias) |
 
 **Entity Backend:** `AdminReport` (via DB_TABLES.ADMIN.ADMIN_REPORTS)
+
+### admin_dashboard.materialized_views_config
+Configuracion de refresh para materialized views del dashboard.
+
+| Columna | Tipo | Nullable | Descripcion |
+|---------|------|----------|-------------|
+| id | UUID | NOT NULL | PK |
+| view_name | VARCHAR(100) | NOT NULL | Nombre de la materialized view |
+| refresh_interval | INTEGER | NOT NULL | Intervalo de refresh en minutos |
+| last_refresh_at | TIMESTAMP | NULL | Ultimo refresh exitoso |
+| is_active | BOOLEAN | NOT NULL | Si el refresh automatico esta habilitado |
 
 ### admin_dashboard.metrics_history
 Historial de metricas del sistema para tracking temporal.

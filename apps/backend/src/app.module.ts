@@ -241,6 +241,8 @@ import { TracingInterceptor } from './shared/interceptors/tracing.interceptor';
           // FIX-BE-012: Required for Classroom, ClassroomMember, TeacherClassroom @ManyToOne relations
           __dirname + '/modules/auth/entities/profile.entity{.ts,.js}',
           __dirname + '/modules/auth/entities/tenant.entity{.ts,.js}',
+          // FIX P2: UserSkillRating uses 'social' datasource via PeerChallengesModule
+          __dirname + '/modules/gamification/peer-challenges/entities/**/*.entity{.ts,.js}',
         ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),

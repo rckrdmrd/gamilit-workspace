@@ -21,7 +21,7 @@ DB_HOST="${DB_HOST:-localhost}"
 DB_PORT="${DB_PORT:-5432}"
 DB_NAME="${DB_NAME:-gamilit_platform}"
 DB_USER="${DB_USER:-gamilit_user}"
-DB_PASSWORD="${DB_PASSWORD:-ULwSaMu5uTNQYTaJTelPY3gGFMTKNOqo}"
+DB_PASSWORD="${DB_PASSWORD:-${GAMILIT_DB_PASSWORD:-}}"
 
 # Test configuration
 TEST_EMAIL="validation-test-$(date +%s)@gamilit.local"
@@ -31,6 +31,13 @@ echo "============================================================"
 echo "  GAMILIT Database Validation - Post-Reset"
 echo "============================================================"
 echo ""
+
+if [ -z "$DB_PASSWORD" ]; then
+    echo -e "${RED}❌ DB_PASSWORD no configurado${NC}"
+    echo "   Exporta DB_PASSWORD o GAMILIT_DB_PASSWORD antes de ejecutar."
+    echo "   Ejemplo: export GAMILIT_DB_PASSWORD='***'"
+    exit 1
+fi
 
 # Function to run SQL query
 run_query() {
@@ -129,7 +136,7 @@ if [ "$func_exists" -eq 1 ]; then
     else
         print_status 1 "Fix NOT applied: Still uses NEW.user_id for comodines_inventory"
         echo -e "${YELLOW}⚠️  This will cause 500 error on registration!${NC}"
-        echo -e "${YELLOW}⚠️  Run: psql -f apps/database/ddl/schemas/gamilit/functions/04-initialize_user_stats.sql${NC}"
+        echo -e "${YELLOW}⚠️  Recreate la BD con script canónico tras corregir DDL en repositorio.${NC}"
         ((FAILURES++))
     fi
 else
@@ -247,9 +254,8 @@ else
     echo "   Found $FAILURES issue(s) that need to be fixed"
     echo ""
     echo "Common fixes:"
-    echo "  1. Run database initialization: ./create-database.sh"
-    echo "  2. Apply function fix: psql -f ddl/schemas/gamilit/functions/04-initialize_user_stats.sql"
-    echo "  3. Load seed data: psql -f seeds/prod/00-master-tenant.sql"
-    echo "                     psql -f seeds/prod/gamification/01-maya-ranks.sql"
+    echo "  1. Corrige DDL/seeds en el repositorio"
+    echo "  2. Ejecuta recreate-database.sh o reset-database.sh (según corresponda)"
+    echo "  3. Repite esta validación"
     exit 1
 fi

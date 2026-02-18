@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, CheckCircle, XCircle } from 'lucide-react';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { calculateScore, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import type { LecturaInferencialExerciseProps, QuestionAnswer } from './lecturaInferencialTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
@@ -226,173 +226,156 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
-        >
-          {/* Header */}
-          <div
-            className="rounded-detective p-6 shadow-detective-lg"
-            style={{
-              background: 'linear-gradient(to right, #1e3a8a, #f97316)',
-              color: 'white',
-            }}
-          >
-            <div className="mb-2 flex items-center gap-3">
-              <BookOpen className="h-8 w-8 text-white" />
-              <h1 className="text-detective-3xl font-bold text-white">{exercise.title}</h1>
-            </div>
-            <p className="text-detective-base text-white" style={{ opacity: 0.9 }}>
-              Lee el pasaje cuidadosamente y responde las preguntas de inferencia
-            </p>
-          </div>
-
-          {/* Reading Passage */}
-          <div className="rounded-detective border-2 border-amber-200 bg-amber-50 p-6">
-            <h3 className="mb-4 text-detective-lg font-semibold text-detective-blue">
-              Pasaje de Lectura
-            </h3>
-            <p className="whitespace-pre-line text-detective-base leading-relaxed text-detective-text">
-              {exercise.content.passage}
-            </p>
-          </div>
-
-          {/* Progress Indicator */}
-          <div className="mb-4 flex items-center justify-between">
-            <div className="text-detective-sm text-detective-text-secondary">
+      <UnifiedExerciseLayout
+        title={exercise.title}
+        description="Lee el pasaje cuidadosamente y responde las preguntas de inferencia"
+        icon={<BookOpen className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+        headerChildren={
+          <div className="mt-4 flex items-center justify-between text-sm">
+            <span>
               Preguntas respondidas: {Object.keys(selectedAnswers).length} de {questions.length}
-            </div>
+            </span>
             {validated && (
-              <div className="text-detective-sm font-bold text-detective-blue">
+              <span className="font-bold">
                 Correctas: {answers.filter((a) => a.isCorrect).length} / {questions.length}
-              </div>
+              </span>
             )}
           </div>
+        }
+      >
+        {/* Reading Passage */}
+        <div className="rounded-detective border-2 border-amber-200 bg-amber-50 p-6 mb-6">
+          <h3 className="mb-4 text-detective-lg font-semibold text-detective-blue">
+            Pasaje de Lectura
+          </h3>
+          <p className="whitespace-pre-line text-detective-base leading-relaxed text-detective-text">
+            {exercise.content.passage}
+          </p>
+        </div>
 
-          {/* All Questions */}
-          <div className="space-y-6">
-            {questions.map((question, qIdx) => {
-              const selectedOption = selectedAnswers[question.id];
-              const answer = answers.find((a) => a.questionId === question.id);
+        {/* All Questions */}
+        <div className="space-y-6">
+          {questions.map((question, qIdx) => {
+            const selectedOption = selectedAnswers[question.id];
+            const answer = answers.find((a) => a.questionId === question.id);
 
-              return (
-                <motion.div
-                  key={question.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: qIdx * 0.1 }}
-                  className="rounded-detective border-2 border-detective-border-light bg-white p-6"
-                >
-                  {/* Question Header */}
-                  <div className="mb-4 flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="mb-2 flex items-center gap-2">
-                        <span className="text-detective-sm font-bold text-detective-orange">
-                          Pregunta {qIdx + 1}
-                        </span>
-                        <span className="rounded-lg bg-purple-100 px-3 py-1 text-detective-xs font-bold text-purple-800">
-                          {getInferenceTypeLabel(question.inference_type)}
-                        </span>
-                      </div>
-                      <h3 className="text-detective-base font-semibold text-detective-blue">
-                        {question.question}
-                      </h3>
+            return (
+              <motion.div
+                key={question.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: qIdx * 0.1 }}
+                className="rounded-detective border-2 border-detective-border-light bg-white p-6"
+              >
+                {/* Question Header */}
+                <div className="mb-4 flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="text-detective-sm font-bold text-detective-orange">
+                        Pregunta {qIdx + 1}
+                      </span>
+                      <span className="rounded-lg bg-purple-100 px-3 py-1 text-detective-xs font-bold text-purple-800">
+                        {getInferenceTypeLabel(question.inference_type)}
+                      </span>
                     </div>
+                    <h3 className="text-detective-base font-semibold text-detective-blue">
+                      {question.question}
+                    </h3>
                   </div>
+                </div>
 
-                  {/* Options in 2-column grid */}
-                  <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-                    {question.options.map((option, idx) => {
-                      const isSelected = selectedOption === idx;
-                      const isCorrect = idx === question.correctAnswer;
-                      const showCorrectness = validated;
+                {/* Options in 2-column grid */}
+                <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+                  {question.options.map((option, idx) => {
+                    const isSelected = selectedOption === idx;
+                    const isCorrect = idx === question.correctAnswer;
+                    const showCorrectness = validated;
 
-                      let optionClasses =
-                        'p-4 rounded-lg border-2 cursor-pointer transition-all text-left';
+                    let optionClasses =
+                      'p-4 rounded-lg border-2 cursor-pointer transition-all text-left';
 
-                      if (showCorrectness) {
-                        if (isCorrect) {
-                          optionClasses += ' bg-detective-success/10 border-detective-success text-green-900';
-                        } else if (isSelected && !isCorrect) {
-                          optionClasses += ' bg-detective-danger/10 border-detective-danger text-red-900';
-                        } else {
-                          optionClasses += ' bg-detective-bg border-detective-border text-detective-text-secondary';
-                        }
+                    if (showCorrectness) {
+                      if (isCorrect) {
+                        optionClasses += ' bg-detective-success/10 border-detective-success text-green-900';
+                      } else if (isSelected && !isCorrect) {
+                        optionClasses += ' bg-detective-danger/10 border-detective-danger text-red-900';
                       } else {
-                        if (isSelected) {
-                          optionClasses +=
-                            ' bg-detective-orange border-detective-orange text-white';
-                        } else {
-                          optionClasses +=
-                            ' bg-white border-detective-border text-detective-text hover:border-detective-orange';
-                        }
+                        optionClasses += ' bg-detective-bg border-detective-border text-detective-text-secondary';
                       }
+                    } else {
+                      if (isSelected) {
+                        optionClasses +=
+                          ' bg-detective-orange border-detective-orange text-white';
+                      } else {
+                        optionClasses +=
+                          ' bg-white border-detective-border text-detective-text hover:border-detective-orange';
+                      }
+                    }
 
-                      return (
-                        <motion.button
-                          key={idx}
-                          whileHover={!validated ? { scale: 1.02 } : {}}
-                          whileTap={!validated ? { scale: 0.98 } : {}}
-                          onClick={() => handleSelectOption(question.id, idx)}
-                          disabled={validated}
-                          className={optionClasses}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 ${
-                                showCorrectness && isCorrect
-                                  ? 'border-detective-success bg-green-500'
-                                  : showCorrectness && isSelected && !isCorrect
-                                    ? 'border-detective-danger bg-red-500'
-                                    : isSelected
-                                      ? 'border-white bg-white'
-                                      : 'border-current'
-                              }`}
-                            >
-                              {showCorrectness && isCorrect && (
-                                <CheckCircle className="h-4 w-4 text-white" />
-                              )}
-                              {showCorrectness && isSelected && !isCorrect && (
-                                <XCircle className="h-4 w-4 text-white" />
-                              )}
-                              {!showCorrectness && isSelected && (
-                                <div className="h-3 w-3 rounded-full bg-detective-orange" />
-                              )}
-                            </div>
-                            <span className="text-detective-sm">{option}</span>
+                    return (
+                      <motion.button
+                        key={idx}
+                        whileHover={!validated ? { scale: 1.02 } : {}}
+                        whileTap={!validated ? { scale: 0.98 } : {}}
+                        onClick={() => handleSelectOption(question.id, idx)}
+                        disabled={validated}
+                        className={optionClasses}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 ${
+                              showCorrectness && isCorrect
+                                ? 'border-detective-success bg-green-500'
+                                : showCorrectness && isSelected && !isCorrect
+                                  ? 'border-detective-danger bg-red-500'
+                                  : isSelected
+                                    ? 'border-white bg-white'
+                                    : 'border-current'
+                            }`}
+                          >
+                            {showCorrectness && isCorrect && (
+                              <CheckCircle className="h-4 w-4 text-white" />
+                            )}
+                            {showCorrectness && isSelected && !isCorrect && (
+                              <XCircle className="h-4 w-4 text-white" />
+                            )}
+                            {!showCorrectness && isSelected && (
+                              <div className="h-3 w-3 rounded-full bg-detective-orange" />
+                            )}
                           </div>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
+                          <span className="text-detective-sm">{option}</span>
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </div>
 
-                  {/* Explanation (shown after validation) */}
-                  {validated && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`rounded-lg border-2 p-4 ${
-                        answer?.isCorrect
-                          ? 'border-green-300 bg-detective-success/10'
-                          : 'border-blue-300 bg-blue-50'
-                      }`}
-                    >
-                      <p className="mb-2 text-detective-sm font-medium">
-                        {answer?.isCorrect ? '✓ Explicación:' : '📘 Explicación:'}
-                      </p>
-                      <p className="text-detective-sm text-detective-text">
-                        {question.explanation}
-                      </p>
-                    </motion.div>
-                  )}
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
-      </DetectiveCard>
+                {/* Explanation (shown after validation) */}
+                {validated && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`rounded-lg border-2 p-4 ${
+                      answer?.isCorrect
+                        ? 'border-green-300 bg-detective-success/10'
+                        : 'border-blue-300 bg-blue-50'
+                    }`}
+                  >
+                    <p className="mb-2 text-detective-sm font-medium">
+                      {answer?.isCorrect ? '✓ Explicación:' : '📘 Explicación:'}
+                    </p>
+                    <p className="text-detective-sm text-detective-text">
+                      {question.explanation}
+                    </p>
+                  </motion.div>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

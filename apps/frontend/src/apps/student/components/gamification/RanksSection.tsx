@@ -7,6 +7,7 @@
 
 import { motion } from 'framer-motion';
 import { Award, Zap, Check, Lock, TrendingUp, Star, Target, Clock, Trophy } from 'lucide-react';
+import { MAYA_RANKS_ORDERED } from '../../../../shared/constants/ranks.constants';
 import type { RankData } from '../../hooks/useDashboardData';
 
 interface RanksSectionProps {
@@ -24,58 +25,25 @@ interface RankInfo {
   description: string;
 }
 
-const ALL_RANKS: RankInfo[] = [
-  {
-    id: 'Nacom',
-    name: 'Detective Novato',
-    icon: '🔍',
-    color: 'from-gray-600 to-gray-800',
-    level: 1,
-    xpRequired: 0,
-    multiplier: 1.0,
-    description: 'Inicio de tu viaje como detective científico',
-  },
-  {
-    id: 'Ajaw',
-    name: 'Sargento',
-    icon: '🏹',
-    color: 'from-blue-600 to-blue-800',
-    level: 2,
-    xpRequired: 500,
-    multiplier: 1.5,
-    description: 'Ya dominas los conceptos básicos de investigación',
-  },
-  {
-    id: "Ah K'in",
-    name: 'Teniente',
-    icon: '🗡️',
-    color: 'from-purple-600 to-purple-800',
-    level: 3,
-    xpRequired: 1500,
-    multiplier: 2.0,
-    description: 'Tu habilidad analítica es notable',
-  },
-  {
-    id: 'Halach Uinic',
-    name: 'Capitán',
-    icon: '⚔️',
-    color: 'from-orange-600 to-red-700',
-    level: 4,
-    xpRequired: 3500,
-    multiplier: 2.5,
-    description: 'Eres un investigador experimentado y respetado',
-  },
-  {
-    id: "K'uk'ulkan",
-    name: 'Comisario',
-    icon: '👑',
-    color: 'from-yellow-500 to-orange-600',
-    level: 5,
-    xpRequired: 7500,
-    multiplier: 3.0,
-    description: 'El más alto honor: maestro de la investigación',
-  },
-];
+/** Map SSOT hex colors to Tailwind gradient classes for visual display */
+const RANK_GRADIENT_MAP: Record<string, string> = {
+  '#8B4513': 'from-amber-700 to-amber-900',
+  '#CD7F32': 'from-amber-600 to-amber-800',
+  '#C0C0C0': 'from-gray-400 to-gray-600',
+  '#FFD700': 'from-yellow-500 to-amber-600',
+  '#9B59B6': 'from-purple-600 to-purple-800',
+};
+
+const ALL_RANKS: RankInfo[] = MAYA_RANKS_ORDERED.map((config) => ({
+  id: config.id,
+  name: config.name,
+  icon: config.icon,
+  color: RANK_GRADIENT_MAP[config.color] || 'from-gray-600 to-gray-800',
+  level: config.level,
+  xpRequired: config.xpMin,
+  multiplier: config.xpMultiplier,
+  description: config.description,
+}));
 
 export function RanksSection({ data }: RanksSectionProps) {
   const currentRankIndex = ALL_RANKS.findIndex((r) => r.id === data.currentRank);

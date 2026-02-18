@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { GitBranch } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { ConceptNode } from './ConceptNode';
 import { ConnectionLine } from './ConnectionLine';
 import { MapaConceptualData } from './mapaConceptualTypes';
@@ -178,48 +180,73 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionsRef]);
 
+  const progress = correctConnections.length > 0
+    ? (connections.length / correctConnections.length) * 100
+    : 0;
+
   // If no nodes, show message
   if (nodes.length === 0) {
     return (
-      <DetectiveCard className="p-6">
-        <DetectiveCard variant="default" padding="lg">
-          <p className="text-center text-detective-text-secondary">
-            Este ejercicio aún no tiene contenido disponible. Por favor, contacta a tu profesor.
-          </p>
-        </DetectiveCard>
-      </DetectiveCard>
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Mapa Conceptual'}
+        description="Este ejercicio aun no tiene contenido disponible."
+        icon={<GitBranch className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+      >
+        <p className="text-center text-detective-text-secondary">
+          Este ejercicio aun no tiene contenido disponible. Por favor, contacta a tu profesor.
+        </p>
+      </UnifiedExerciseLayout>
     );
   }
 
   return (
-    <DetectiveCard className="p-6">
-      {/* Instructions */}
-      <div className="mb-4 rounded-lg bg-detective-bg-secondary p-4">
-        <p className="text-sm text-detective-text-secondary">
-          Conecta los conceptos relacionados haciendo clic en dos nodos consecutivos. Se creará una línea entre ellos mostrando la relación.
-        </p>
-      </div>
-
-      <DetectiveCard variant="default" padding="lg">
-        <div className="relative h-[600px] w-full rounded-lg bg-detective-bg">
-          <svg className="absolute inset-0 h-full w-full">
-            {connections.map((conn, i) => {
-              const [fromId, toId] = conn.split('-');
-              const from = nodes.find((n) => n.id === fromId);
-              const to = nodes.find((n) => n.id === toId);
-              return from && to ? <ConnectionLine key={i} from={from} to={to} /> : null;
-            })}
-          </svg>
-          {nodes.map((node) => (
-            <ConceptNode
-              key={node.id}
-              node={node}
-              isSelected={selectedNode === node.id}
-              onClick={() => handleNodeClick(node.id)}
-            />
-          ))}
-        </div>
-      </DetectiveCard>
+    <>
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Mapa Conceptual'}
+        description="Conecta los conceptos relacionados haciendo clic en dos nodos consecutivos. Se creara una linea entre ellos mostrando la relacion."
+        icon={<GitBranch className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+        headerChildren={
+          <div className="mt-4">
+            <div className="mb-2 flex justify-between text-sm">
+              <span>
+                Conexiones: {connections.length}/{correctConnections.length}
+              </span>
+              <span>{Math.round(Math.min(progress, 100))}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-white/30">
+              <div
+                className="h-full rounded-full bg-white transition-all duration-300"
+                style={{ width: `${Math.min(progress, 100)}%` }}
+              />
+            </div>
+          </div>
+        }
+      >
+        <DetectiveCard variant="default" padding="lg">
+          <div className="relative h-[600px] w-full rounded-lg bg-detective-bg">
+            <svg className="absolute inset-0 h-full w-full">
+              {connections.map((conn, i) => {
+                const [fromId, toId] = conn.split('-');
+                const from = nodes.find((n) => n.id === fromId);
+                const to = nodes.find((n) => n.id === toId);
+                return from && to ? <ConnectionLine key={i} from={from} to={to} /> : null;
+              })}
+            </svg>
+            {nodes.map((node) => (
+              <ConceptNode
+                key={node.id}
+                node={node}
+                isSelected={selectedNode === node.id}
+                onClick={() => handleNodeClick(node.id)}
+              />
+            ))}
+          </div>
+        </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (
@@ -238,7 +265,7 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
           }}
         />
       )}
-    </DetectiveCard>
+    </>
   );
 };
 

@@ -1,5 +1,7 @@
 # FL-ADM-04 - Monitoreo y Salud del Sistema
 
+**Version:** 1.1.0
+**Fecha:** 2026-02-18
 **Portal:** Admin
 **Prioridad:** Media
 **Estado:** Documentado
@@ -40,7 +42,7 @@ flowchart TD
     apiRecent --> monService
     apiTrends --> monService
     apiLogs --> sysService
-    monService --> db[(audit_logging.system_logs + admin_dashboard.performance_metrics)]
+    monService --> db[(audit_logging.system_logs + audit_logging.performance_metrics)]
     healthService --> dbCheck[(PostgreSQL connectivity + Redis check)]
     sysService --> db
     db --> ui[Dashboard con semaforizacion y graficos]
@@ -61,6 +63,9 @@ flowchart TD
 | Tipo | Archivo |
 |------|---------|
 | Pagina | `apps/frontend/src/apps/admin/pages/AdminMonitoringPage.tsx` |
+| Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` |
+| Tab Bar | `apps/frontend/src/apps/admin/components/shared/AdminTabBar.tsx` |
+| Hook | `apps/frontend/src/apps/admin/hooks/useAdminPageSetup.ts` |
 | Componente | `apps/frontend/src/apps/admin/components/monitoring/SystemHealthIndicators.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/monitoring/MetricsTab.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/monitoring/MetricsChart.tsx` |
@@ -111,9 +116,9 @@ flowchart TD
 | Schema.Tabla | Entity |
 |--------------|--------|
 | `audit_logging.system_logs` | `apps/backend/src/modules/admin/entities/system-log.entity.ts` |
-| `admin_dashboard.performance_metrics` | `apps/backend/src/modules/admin/entities/performance-metric.entity.ts` |
+| `audit_logging.performance_metrics` | `apps/backend/src/modules/admin/entities/performance-metric.entity.ts` |
 | `admin_dashboard.metrics_history` | `apps/backend/src/modules/admin/entities/metrics-history.entity.ts` |
-| `admin_dashboard.system_alerts` | `apps/backend/src/modules/admin/entities/system-alert.entity.ts` |
+| `audit_logging.system_alerts` | `apps/backend/src/modules/admin/entities/system-alert.entity.ts` |
 | `admin_dashboard.activity_logs` | `apps/backend/src/modules/admin/entities/activity-log.entity.ts` |
 
 ## Reglas y validaciones
@@ -143,6 +148,8 @@ flowchart TD
 | Capa | Archivo | Evidencia |
 |------|---------|-----------|
 | FE Page | `apps/frontend/src/apps/admin/pages/AdminMonitoringPage.tsx` | Pagina de monitoreo con tabs |
+| FE Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` | Wrapper comun de paginas admin |
+| FE Tab Bar | `apps/frontend/src/apps/admin/components/shared/AdminTabBar.tsx` | Tab bar reutilizable para paginas admin |
 | FE Component | `apps/frontend/src/apps/admin/components/monitoring/SystemHealthIndicators.tsx` | Indicadores de salud del sistema |
 | FE Component | `apps/frontend/src/apps/admin/components/monitoring/ErrorTrackingTab.tsx` | Tab de tracking de errores |
 | FE Hook | `apps/frontend/src/apps/admin/hooks/useMonitoring.ts` | Hook principal de monitoreo |

@@ -19,14 +19,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useAchievementsStore } from '../achievementsStore';
 import type { Achievement } from '../../types/achievementsTypes';
-import * as achievementsAPI from '../../api/achievementsAPI';
 
-// Mock the API module
-vi.mock('../../api/achievementsAPI', () => ({
+// REC-008: Mock canonical gamificationApi instead of achievementsAPI
+const mockGamificationApi = {
+  getAllAchievements: vi.fn(),
   getUserAchievements: vi.fn(),
-  mapAchievementsToFrontend: vi.fn(),
-  updateAchievementProgress: vi.fn(),
-  checkAchievements: vi.fn(),
+};
+vi.mock('@/lib/api/gamification.api', () => ({
+  gamificationApi: mockGamificationApi,
 }));
 
 // Mock data
@@ -417,11 +417,42 @@ describe('AchievementsStore', () => {
   // Fetch Achievements Tests (API)
   // ============================================================
 
+  // REC-008: Tests updated to use canonical gamificationApi mocks
   describe('Fetch Achievements (API)', () => {
+    // Mock SSOT Achievement format (from gamificationApi.getAllAchievements)
+    const mockSSOTAchievement = {
+      id: 'ach-1',
+      name: 'First Steps',
+      description: 'Complete your first exercise',
+      icon: 'trophy',
+      category: 'progress',
+      rarity: 'common',
+      isHidden: false,
+      rewards: { xp: 50, mlCoins: 10 },
+      conditions: { type: 'exercise_completion', requirements: { target: 1 } },
+    };
+
+    const mockSSOTUnlocked = {
+      ...mockSSOTAchievement,
+      id: 'ach-2',
+      name: 'Explorer',
+    };
+
+    // Mock UserAchievement format (from gamificationApi.getUserAchievements)
+    const mockUserAchievement = {
+      id: 'ua-2',
+      userId: 'user-123',
+      achievementId: 'ach-2',
+      progress: 100,
+      status: 'earned' as const,
+      earnedAt: '2025-01-01T00:00:00.000Z',
+    };
+
     it('should set loading state during fetch', async () => {
-      vi.mocked(achievementsAPI.getUserAchievements).mockImplementation(
+      mockGamificationApi.getAllAchievements.mockImplementation(
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
+      mockGamificationApi.getUserAchievements.mockResolvedValue([]);
 
       const { fetchAchievements } = useAchievementsStore.getState();
       const fetchPromise = fetchAchievements('user-123');
@@ -432,37 +463,42 @@ describe('AchievementsStore', () => {
       await fetchPromise;
     });
 
-    it('should fetch and update achievements from API', async () => {
-      const mockAPIAchievements = [mockAchievement, mockUnlockedAchievement];
-
-      vi.mocked(achievementsAPI.getUserAchievements).mockResolvedValue(mockAPIAchievements as any);
-      vi.mocked(achievementsAPI.mapAchievementsToFrontend).mockReturnValue(mockAPIAchievements);
+    it('should fetch from gamificationApi and merge results', async () => {
+      mockGamificationApi.getAllAchievements.mockResolvedValue(
+        [mockSSOTAchievement, mockSSOTUnlocked] as any,
+      );
+      mockGamificationApi.getUserAchievements.mockResolvedValue(
+        [mockUserAchievement] as any,
+      );
 
       const { fetchAchievements } = useAchievementsStore.getState();
       await fetchAchievements('user-123');
 
-      expect(achievementsAPI.getUserAchievements).toHaveBeenCalledWith('user-123');
-      expect(achievementsAPI.mapAchievementsToFrontend).toHaveBeenCalled();
+      expect(mockGamificationApi.getAllAchievements).toHaveBeenCalled();
+      expect(mockGamificationApi.getUserAchievements).toHaveBeenCalledWith('user-123');
     });
 
     it('should update state after successful fetch', async () => {
-      const mockAPIAchievements = [mockUnlockedAchievement];
-
-      vi.mocked(achievementsAPI.getUserAchievements).mockResolvedValue(mockAPIAchievements as any);
-      vi.mocked(achievementsAPI.mapAchievementsToFrontend).mockReturnValue(mockAPIAchievements);
+      mockGamificationApi.getAllAchievements.mockResolvedValue(
+        [mockSSOTUnlocked] as any,
+      );
+      mockGamificationApi.getUserAchievements.mockResolvedValue(
+        [mockUserAchievement] as any,
+      );
 
       const { fetchAchievements } = useAchievementsStore.getState();
       await fetchAchievements('user-123');
 
       const state = useAchievementsStore.getState();
-      expect(state.achievements).toEqual(mockAPIAchievements);
+      expect(state.achievements).toHaveLength(1);
+      expect(state.achievements[0].isUnlocked).toBe(true);
       expect(state.unlockedAchievements).toHaveLength(1);
       expect(state.isLoading).toBe(false);
       expect(state.error).toBeNull();
     });
 
     it('should handle API errors', async () => {
-      vi.mocked(achievementsAPI.getUserAchievements).mockRejectedValue(new Error('Network error'));
+      mockGamificationApi.getAllAchievements.mockRejectedValue(new Error('Network error'));
 
       const { fetchAchievements } = useAchievementsStore.getState();
       await fetchAchievements('user-123');
@@ -473,7 +509,7 @@ describe('AchievementsStore', () => {
     });
 
     it('should set generic error message for non-Error failures', async () => {
-      vi.mocked(achievementsAPI.getUserAchievements).mockRejectedValue('String error');
+      mockGamificationApi.getAllAchievements.mockRejectedValue('String error');
 
       const { fetchAchievements } = useAchievementsStore.getState();
       await fetchAchievements('user-123');
@@ -483,10 +519,12 @@ describe('AchievementsStore', () => {
     });
 
     it('should calculate stats after fetching', async () => {
-      const mockAPIAchievements = [mockUnlockedAchievement];
-
-      vi.mocked(achievementsAPI.getUserAchievements).mockResolvedValue(mockAPIAchievements as any);
-      vi.mocked(achievementsAPI.mapAchievementsToFrontend).mockReturnValue(mockAPIAchievements);
+      mockGamificationApi.getAllAchievements.mockResolvedValue(
+        [mockSSOTUnlocked] as any,
+      );
+      mockGamificationApi.getUserAchievements.mockResolvedValue(
+        [mockUserAchievement] as any,
+      );
 
       const { fetchAchievements } = useAchievementsStore.getState();
       await fetchAchievements('user-123');

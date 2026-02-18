@@ -165,36 +165,36 @@ COMMENT ON POLICY user_activity_logs_insert_own ON audit_logging.user_activity_l
     'Permite que el sistema registre la actividad del usuario autenticado';
 
 -- =====================================================
--- TABLE: audit_logging.user_activity
+-- TABLE: audit_logging.user_activity_logs
 -- Description: User activity tracking - admin access and system insert
 -- Policies: 2 (SELECT: 1, INSERT: 1)
 -- Added: 2025-11-09 (CRITICAL SECURITY FIX)
 -- Note: Logs are immutable (no UPDATE/DELETE policies)
 -- =====================================================
 
-DROP POLICY IF EXISTS user_activity_select_admin ON audit_logging.user_activity;
-DROP POLICY IF EXISTS user_activity_insert_system ON audit_logging.user_activity;
+DROP POLICY IF EXISTS user_activity_select_admin ON audit_logging.user_activity_logs;
+DROP POLICY IF EXISTS user_activity_insert_system ON audit_logging.user_activity_logs;
 
 -- Policy: user_activity_select_admin
 -- Purpose: Only admins can view activity logs
 CREATE POLICY user_activity_select_admin
-    ON audit_logging.user_activity
+    ON audit_logging.user_activity_logs
     AS PERMISSIVE
     FOR SELECT
     TO public
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
-COMMENT ON POLICY user_activity_select_admin ON audit_logging.user_activity IS
+COMMENT ON POLICY user_activity_select_admin ON audit_logging.user_activity_logs IS
     'Solo administradores pueden ver logs de actividad';
 
 -- Policy: user_activity_insert_system
 -- Purpose: System can insert logs automatically
 CREATE POLICY user_activity_insert_system
-    ON audit_logging.user_activity
+    ON audit_logging.user_activity_logs
     AS PERMISSIVE
     FOR INSERT
     TO public
     WITH CHECK (TRUE);
 
-COMMENT ON POLICY user_activity_insert_system ON audit_logging.user_activity IS
+COMMENT ON POLICY user_activity_insert_system ON audit_logging.user_activity_logs IS
     'Permite que el sistema inserte logs automáticamente';

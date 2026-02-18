@@ -216,8 +216,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                           Tu progreso ha sido actualizado
                         </h4>
                         <p className="text-sm text-blue-800 mb-3">
-                          Tu trabajo ha sido enviado exitosamente y esta en espera de validacion por tu maestro.
-                          La barra de progreso del modulo ya refleja este avance.
+                          Tus respuestas han sido enviadas al profesor para su evaluacion. Las recompensas seran asignadas una vez que el profesor complete la evaluacion.
                         </p>
                         <div className="p-3 bg-blue-100 rounded-lg">
                           <p className="text-xs text-blue-700">

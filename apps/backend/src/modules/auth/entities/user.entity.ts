@@ -7,7 +7,7 @@ import {
   Index,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { DB_TABLES, GamilityRoleEnum } from '@shared/constants';
+import { DB_SCHEMAS, DB_TABLES, GamilityRoleEnum } from '@shared/constants';
 
 /**
  * User Entity (auth.users)
@@ -23,7 +23,7 @@ import { DB_TABLES, GamilityRoleEnum } from '@shared/constants';
  *
  * @see DDL: apps/database/ddl/schemas/auth/tables/01-users.sql
  */
-@Entity({ schema: 'auth', name: DB_TABLES.AUTH.USERS })
+@Entity({ schema: DB_SCHEMAS.AUTH_BASE, name: DB_TABLES.AUTH.USERS })
 @Index('idx_auth_users_email', ['email'])
 @Index('idx_auth_users_gamilit_role', ['role']) // Índice correcto para gamilit_role
 export class User {

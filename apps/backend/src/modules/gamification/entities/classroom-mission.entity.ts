@@ -73,7 +73,7 @@ export class ClassroomMission {
   @Index()
     classroom_id!: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'uuid' })
   @Index()
     mission_template_id!: string;
 

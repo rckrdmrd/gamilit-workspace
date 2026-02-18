@@ -11,8 +11,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCw, Send, Book, CheckCircle2 } from 'lucide-react';
 import { WheelSpinner } from './WheelSpinner';
 import { CountdownTimer } from './CountdownTimer';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { RankUpModal } from '@/features/gamification/ranks/components/RankUpModal';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 
@@ -469,43 +469,43 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white shadow-lg">
-            <h2 className="mb-2 text-2xl font-bold">{exercise.title}</h2>
-            <p className="mb-4 opacity-90">{exercise.description}</p>
-            <div className="space-y-2">
-              <div className="flex items-center gap-4 text-sm">
-                <div>
-                  📊 Ronda {currentFragmentIndex + 1} de {exercise.content.fragments.length}
-                </div>
-                <div>
-                  ⏱️ Tiempo: {Math.floor(totalTimeSpent / 60)}:
-                  {String(totalTimeSpent % 60).padStart(2, '0')}
-                </div>
-                {score > 0 && <div>⭐ Puntuación: {score}/100</div>}
+      <UnifiedExerciseLayout
+        title={exercise.title}
+        description={exercise.description}
+        icon={<RotateCw className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+        gradientClassName="from-blue-600 to-purple-600"
+        headerChildren={
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center gap-4 text-sm">
+              <div>
+                Ronda {currentFragmentIndex + 1} de {exercise.content.fragments.length}
               </div>
-
-              {/* Barra de progreso visual */}
-              <div className="flex gap-2">
-                {exercise.content.fragments.map((_, idx) => (
-                  <div
-                    key={idx}
-                    className={`h-2 flex-1 rounded ${
-                      idx < currentFragmentIndex
-                        ? 'bg-green-500'
-                        : idx === currentFragmentIndex
-                          ? 'animate-pulse bg-blue-300'
-                          : 'bg-white bg-opacity-30'
-                    }`}
-                  />
-                ))}
+              <div>
+                Tiempo: {Math.floor(totalTimeSpent / 60)}:
+                {String(totalTimeSpent % 60).padStart(2, '0')}
               </div>
+              {score > 0 && <div>Puntuacion: {score}/100</div>}
+            </div>
+            <div className="flex gap-2">
+              {exercise.content.fragments.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`h-2 flex-1 rounded ${
+                    idx < currentFragmentIndex
+                      ? 'bg-green-500'
+                      : idx === currentFragmentIndex
+                        ? 'animate-pulse bg-blue-300'
+                        : 'bg-white bg-opacity-30'
+                  }`}
+                />
+              ))}
             </div>
           </div>
-
-          {/* Categorías usadas */}
+        }
+      >
+        {/* Categorias usadas */}
           {usedCategoryIds.length > 0 && (
             <div className="rounded-lg border bg-detective-bg p-4">
               <h4 className="mb-2 text-sm font-semibold text-detective-text">
@@ -783,8 +783,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
               </motion.div>
             </AnimatePresence>
           )}
-        </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

@@ -41,3 +41,7 @@ export type { LoadingOverlayProps, SkeletonProps } from './LoadingOverlay';
 // Toast
 export { Toast, ToastContainer, useToast } from './Toast';
 export type { ToastProps, ToastContainerProps, ToastType } from './Toast';
+
+// Tabs
+export { TabBar } from './TabBar';
+export type { TabDefinition } from './TabBar';

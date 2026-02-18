@@ -122,6 +122,25 @@ INSERT INTO gamification_system.mission_templates (
     '🌟',
     '#9C27B0',
     '{"description_es": "Puntuaciones perfectas", "reward_multiplier": 1.2}'::jsonb
+),
+-- REC-009: Misión diaria: Usar comodín (requerido por initialize_user_missions trigger)
+(
+    '20000001-0000-0000-0000-000000000005'::uuid,
+    'Estrategia del Día',
+    'Usa al menos un comodín estratégicamente en un ejercicio',
+    'daily',
+    'strategy',
+    'use_comodines',
+    1,
+    20,
+    10,
+    'easy',
+    true,
+    60,
+    1,
+    '🃏',
+    '#673AB7',
+    '{"description_es": "Comodines usados hoy", "reward_multiplier": 1.0}'::jsonb
 )
 ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
@@ -246,6 +265,25 @@ INSERT INTO gamification_system.mission_templates (
     '👑',
     '#FFD700',
     '{"description_es": "Puntuaciones perfectas semanales", "reward_multiplier": 2.0}'::jsonb
+),
+-- REC-009: Misión semanal: Completar módulo (requerido por initialize_user_missions trigger)
+(
+    '20000002-0000-0000-0000-000000000006'::uuid,
+    'Dominio Semanal',
+    'Completa un módulo completo durante la semana',
+    'weekly',
+    'completion',
+    'complete_modules',
+    1,
+    200,
+    100,
+    'hard',
+    true,
+    90,
+    1,
+    '🎓',
+    '#E91E63',
+    '{"description_es": "Módulos completados esta semana", "reward_multiplier": 1.5}'::jsonb
 )
 ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,

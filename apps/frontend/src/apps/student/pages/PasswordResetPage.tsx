@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,6 +10,8 @@ import { passwordResetSchema, PasswordResetFormData } from '@features/auth/schem
 import { passwordAPI } from '@/services/api/passwordAPI';
 import { Target, Lock, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { BrandingContext } from '@/app/providers/BrandingProvider';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 export default function PasswordResetPage() {
   const navigate = useNavigate();
@@ -18,6 +20,9 @@ export default function PasswordResetPage() {
   const [serverError, setServerError] = useState<string>('');
   const [resetSuccess, setResetSuccess] = useState(false);
   const [tokenValid, setTokenValid] = useState(true);
+  const branding = useContext(BrandingContext);
+  const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
+  const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;
 
   const token = searchParams.get('token');
 
@@ -139,8 +144,12 @@ export default function PasswordResetPage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="mb-4 flex items-center justify-center gap-2">
-            <Target className="h-12 w-12 text-detective-orange" />
-            <h1 className="text-4xl font-bold text-detective-orange">GAMILIT</h1>
+            {logoUrl ? (
+              <img src={logoUrl} alt={platformName} className="h-12 w-12 object-contain" />
+            ) : (
+              <Target className="h-12 w-12 text-detective-orange" />
+            )}
+            <h1 className="text-4xl font-bold text-detective-orange">{platformName}</h1>
           </div>
           <h2 className="text-detective-subtitle mb-2 text-detective-text">
             Restablecer Contraseña

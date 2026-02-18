@@ -15,9 +15,15 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { Target, CheckCircle2, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
+import { BrandingContext } from '@/app/providers/BrandingProvider';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 export default function EmailVerificationPage() {
   const navigate = useNavigate();
+  const branding = useContext(BrandingContext);
+  const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
+  const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-detective-bg to-detective-bg-secondary p-4">
@@ -25,8 +31,12 @@ export default function EmailVerificationPage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="mb-4 flex items-center justify-center gap-2">
-            <Target className="h-12 w-12 text-detective-orange" />
-            <h1 className="text-4xl font-bold text-detective-orange">GAMILIT</h1>
+            {logoUrl ? (
+              <img src={logoUrl} alt={platformName} className="h-12 w-12 object-contain" />
+            ) : (
+              <Target className="h-12 w-12 text-detective-orange" />
+            )}
+            <h1 className="text-4xl font-bold text-detective-orange">{platformName}</h1>
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 # SPEC-EXERCISES - Student Portal Exercises
 
-**Version:** 1.0.0
-**Fecha:** 2026-01-24
+**Version:** 1.1.0
+**Fecha:** 2026-02-18
 **Autor:** Claude Code (Auditoría Automatizada)
 **Estado:** COMPLETO
 
@@ -22,22 +22,30 @@ El sistema de ejercicios es el núcleo educativo del Student Portal, permitiendo
 
 | Página | Archivo | Descripción |
 |--------|---------|-------------|
-| Ejercicio Principal | `pages/ExercisePage.tsx` | Contenedor de ejecución de ejercicios |
+| Ejercicio Principal | `pages/ExercisePage.tsx` | Thin shell (~30 líneas): ExerciseProvider + ExerciseLayout |
 | Detalle de Módulo | `pages/ModuleDetailPage.tsx` | Lista de ejercicios de un módulo |
+| Legacy (backup) | `pages/LegacyExercisePage.tsx` | Monolito original preservado para rollback |
 
 ---
 
 ## 3. Componentes
 
-### 3.1 Componentes de Ejercicio
+### 3.1 Componentes de Ejercicio (Post-Restructuring v2.0)
 
 | Componente | Archivo | Descripción |
 |------------|---------|-------------|
-| ExerciseHeader | `components/exercise/ExerciseHeader.tsx` | Header con info del ejercicio |
-| ExerciseSidebar | `components/exercise/ExerciseSidebar.tsx` | Sidebar con acciones y timer |
-| CompletionModal | `components/exercise/CompletionModal.tsx` | Modal de feedback post-completación |
-| PowerUpEffects | `components/exercise/PowerUpEffects.tsx` | Efectos visuales de power-ups |
-| PowerUpBar | `components/PowerUpBar.tsx` | Barra de power-ups disponibles |
+| ExerciseLayout | `features/exercises/components/ExerciseLayout.tsx` | Composición principal: header + guide + loader + sidebar + feedback |
+| ExerciseLoader | `features/exercises/components/ExerciseLoader.tsx` | Carga dinámica de mecánica via Registry Pattern |
+| ExerciseSidebar | `features/exercises/components/ExerciseSidebar.tsx` | Sidebar: comodines + acciones + score + timer |
+| ConsumablesPanel | `features/exercises/components/ConsumablesPanel.tsx` | Inventario real de comodines (API backend) |
+| ActionsPanel | `features/exercises/components/ActionsPanel.tsx` | Acciones: guardar, enviar, reiniciar, verificar |
+| ExerciseCompletedState | `features/exercises/components/ExerciseCompletedState.tsx` | Vista de ejercicio ya completado |
+| ExerciseLoadingSkeleton | `features/exercises/components/ExerciseLoadingSkeleton.tsx` | Estado de carga |
+| ExerciseErrorState | `features/exercises/components/ExerciseErrorState.tsx` | Estado de error |
+| MechanicCompatWrapper | `features/exercises/components/MechanicCompatWrapper.tsx` | Compatibilidad con mecánicas legacy |
+| ExercisePageHeader | `apps/student/components/exercise/ExercisePageHeader.tsx` | Header con info del ejercicio (reutilizado) |
+| CompletionModal | `shared/components/mechanics/FeedbackModal.tsx` | Modal de feedback post-completación |
+| PowerUpBar | `apps/student/components/PowerUpBar.tsx` | Barra de power-ups (legacy fallback) |
 
 ### 3.2 Props de Componentes Principales
 
@@ -93,9 +101,19 @@ interface CompletionModalProps {
 
 | Hook | Archivo | Descripción |
 |------|---------|-------------|
-| useExerciseState | `hooks/useExerciseState.ts` | Estado completo del ejercicio (NO usado actualmente) |
-| useExerciseAutoSave | `hooks/useExerciseAutoSave.ts` | Auto-guardado con debounce |
-| useExercisePowerUps | `hooks/useExercisePowerUps.ts` | Gestión de power-ups |
+| useExerciseData | `features/exercises/hooks/useExerciseData.ts` | Fetch ejercicio + registry lookup + mechanic component loading |
+| useExerciseProgress | `features/exercises/hooks/useExerciseProgress.ts` | Estado de progreso + auto-save integrado |
+| useExerciseComodines | `features/exercises/hooks/useExerciseComodines.ts` | Inventario real de comodines via API backend |
+| useExerciseTimer | `features/exercises/hooks/useExerciseTimer.ts` | Timer del ejercicio |
+| useExerciseRewards | `features/exercises/hooks/useExerciseRewards.ts` | Cálculo de recompensas |
+| useExerciseAutoSave | `apps/student/hooks/useExerciseAutoSave.ts` | Auto-guardado con debounce (integrado en useExerciseProgress) |
+| useExercisePowerUps | `apps/student/hooks/useExercisePowerUps.ts` | Gestión de power-ups legacy |
+
+### 4.1 Context
+
+| Context | Archivo | Descripción |
+|---------|---------|-------------|
+| ExerciseContext | `features/exercises/context/ExerciseContext.tsx` | Compone todos los hooks en un solo React Context. Elimina prop drilling. |
 
 ---
 
@@ -266,13 +284,29 @@ LOADING → READY → IN_PROGRESS → SUBMITTING → FEEDBACK → COMPLETED
 - `framer-motion` - Animaciones
 - `lucide-react` - Iconos
 
-### 10.2 Mecánicas (Lazy Loading)
+### 10.2 Mecánicas (Registry Pattern + Lazy Loading)
+
 ```typescript
-// Dynamic import de mecánicas
-const loadMechanic = (type: string) => {
-  return import(`@/features/mechanics/${type}/component`);
-};
+// features/exercises/registry/exercise-registry.ts
+// Registro centralizado — agregar mecánica = 4 líneas
+registerExercise('crucigrama', {
+  loader: () => import('@/features/mechanics/module1/Crucigrama/CrucigramaExercise'),
+  adapter: adaptToCrucigramaData,
+  meta: { displayName: 'Crucigrama', module: 1, category: 'literal' },
+});
+
+// ExerciseLoader.tsx carga via getExerciseEntry(type).loader()
 ```
+
+### 10.3 Registry de Mecánicas
+
+30 mecánicas registradas en `features/exercises/registry/registrations.ts`:
+- Módulo 1 (7): crucigrama, timeline, sopa_letras, mapa_conceptual, emparejamiento, verdadero_falso, completar_espacios
+- Módulo 2 (6): detective_textual, lectura_inferencial, construccion_hipotesis, prediccion_narrativa, puzzle_contexto, rueda_inferencias
+- Módulo 3 (5): analisis_fuentes, debate_digital, matriz_perspectivas, podcast_argumentativo, tribunal_opiniones
+- Módulo 4 (5): verificador_fake_news, quiz_tiktok, navegacion_hipertextual, analisis_memes, infografia_interactiva
+- Módulo 5 (3): diario_multimedia, comic_digital, video_carta
+- Auxiliar (4): call_to_action, collage_prensa, comprension_auditiva, texto_movimiento
 
 ---
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Image, Type, Plus, Trash2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { CollagePrensaExerciseProps, CollageElement } from './collagePrensaTypes';
@@ -195,24 +196,16 @@ export const CollagePrensaExercise: React.FC<CollagePrensaExerciseProps> = ({
 
   return (
     <>
-      <div className="space-y-6">
-        <DetectiveCard variant="default" padding="lg">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Image className="h-8 w-8 text-detective-orange" />
-              <h1 className="text-2xl font-bold text-detective-text">
-                {exercise.title || 'Collage de Prensa'}
-              </h1>
-            </div>
-            <span className="rounded-full bg-detective-bg-secondary px-3 py-1 text-sm text-detective-text-secondary">
-              {elements.length}/{minElements} elementos mínimos
-            </span>
-          </div>
-          <p className="text-detective-text-secondary">
-            {exercise.instructions || `Crea un collage estilo periódico sobre ${exercise.topic || 'Marie Curie'}.`}
-          </p>
-        </DetectiveCard>
-
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Collage de Prensa'}
+        description={exercise.instructions || `Crea un collage estilo periódico sobre ${exercise.topic || 'Marie Curie'}.`}
+        icon={<Image className="h-8 w-8" />}
+        headerActions={
+          <span className="rounded-full bg-detective-bg-secondary px-3 py-1 text-sm text-detective-text-secondary">
+            {elements.length}/{minElements} elementos mínimos
+          </span>
+        }
+      >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
           <DetectiveCard variant="default" padding="lg" className="space-y-4">
             <h3 className="font-bold text-detective-text">Herramientas</h3>
@@ -325,7 +318,7 @@ export const CollagePrensaExercise: React.FC<CollagePrensaExerciseProps> = ({
             </div>
           </DetectiveCard>
         </div>
-      </div>
+      </UnifiedExerciseLayout>
 
       {feedback && (
         <FeedbackModal

@@ -52,11 +52,13 @@ export class EmailVerificationService {
 
   /**
    * Enviar email de verificación
+   * @param userAuthId - auth.users.id (NOT profile.id). Use req.user.user_id from controllers.
    */
-  async sendVerification(userId: string, email: string): Promise<{ message: string }> {
+  async sendVerification(userAuthId: string, email: string): Promise<{ message: string }> {
+    // E11-FIX: userAuthId must be auth.users.id for auth.users + email_verification_tokens lookups
     // 1. Buscar usuario
     const user = await this.userRepository.findOne({
-      where: { id: userId },
+      where: { id: userAuthId },
     });
 
     if (!user) {
@@ -70,7 +72,7 @@ export class EmailVerificationService {
     }
 
     // 3. Invalidar tokens anteriores
-    await this.invalidatePreviousTokens(userId);
+    await this.invalidatePreviousTokens(userAuthId);
 
     // 4. Generar token aleatorio
     const plainToken = this.generateSecureToken();
@@ -81,9 +83,9 @@ export class EmailVerificationService {
     // 6. Calcular expiración (24h)
     const expiresAt = new Date(Date.now() + this.TOKEN_EXPIRATION_HOURS * 60 * 60 * 1000);
 
-    // 7. Crear registro en DB
+    // 7. Crear registro en DB (email_verification_tokens.user_id FK → auth.users)
     const verificationToken = this.tokenRepository.create({
-      user_id: userId,
+      user_id: userAuthId,
       token: hashedToken,
       email: email,
       expires_at: expiresAt,
@@ -157,11 +159,13 @@ export class EmailVerificationService {
 
   /**
    * Reenviar email de verificación
+   * @param userAuthId - auth.users.id (NOT profile.id). Use req.user.user_id from controllers.
    */
-  async resendVerification(userId: string): Promise<{ message: string }> {
+  async resendVerification(userAuthId: string): Promise<{ message: string }> {
+    // E11-FIX: userAuthId must be auth.users.id for auth.users lookup
     // 1. Buscar usuario
     const user = await this.userRepository.findOne({
-      where: { id: userId },
+      where: { id: userAuthId },
     });
 
     if (!user) {
@@ -175,16 +179,17 @@ export class EmailVerificationService {
     }
 
     // 3. Enviar nuevo email
-    return this.sendVerification(userId, user.email);
+    return this.sendVerification(userAuthId, user.email);
   }
 
   /**
    * Verificar estado de verificación
+   * @param userAuthId - auth.users.id (NOT profile.id). Use req.user.user_id from controllers.
    */
-  async checkVerificationStatus(userId: string): Promise<{ verified: boolean }> {
+  async checkVerificationStatus(userAuthId: string): Promise<{ verified: boolean }> {
+    // E4-FIX: userAuthId must be auth.users.id for auth.users lookup
     const user = await this.userRepository.findOne({
-      where: { id: userId },
-      // Fix: Usar email_confirmed_at en lugar de email_verified
+      where: { id: userAuthId },
       select: ['id', 'email_confirmed_at'],
     });
 
@@ -192,7 +197,6 @@ export class EmailVerificationService {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    // Fix: Email verificado si email_confirmed_at tiene valor
     return { verified: !!user.email_confirmed_at };
   }
 

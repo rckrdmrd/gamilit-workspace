@@ -1,5 +1,24 @@
 -- Function: gamification_system.check_and_grant_achievements
 -- Description: Verifica y otorga achievements automaticamente basados en eventos del usuario
+--
+-- @DEPRECATED (2026-02-18, REC-005):
+--   Esta funcion NO evalua correctamente los achievements seeded.
+--   Los CASE statements (lineas 72-88) solo manejan 6 event types UPPERCASE:
+--     MISSIONS_COMPLETED, TOTAL_XP, STREAK_DAYS, ACHIEVEMENTS_EARNED, EXERCISES_COMPLETED, progress
+--   Pero los achievements seeded usan 14 condition types lowercase:
+--     exercise_completion, streak, module_completion, all_modules_completion, perfect_score,
+--     skill_mastery, exploration, social, special, module_first_exercise, exercise_score,
+--     exercise_repetition, exercise_speed, content_analysis, module_average_score
+--   Resultado: conditions->>'type' NUNCA coincide con p_event_type para 35/35 achievements.
+--
+--   La evaluacion de achievements se realiza exclusivamente via backend:
+--     AchievementsService.meetsConditions() (achievements.service.ts:472-778)
+--   Ver: TASK-2026-02-18-ANALISIS-MISIONES-LOGROS/02-DISCREPANCIAS.md#DISC-001
+--
+--   Esta funcion se mantiene por compatibilidad pero NO otorga achievements en produccion.
+--   Para restaurar funcionalidad DB-level, actualizar los CASE statements
+--   para coincidir con los 14 condition types de seeds.
+--
 -- Parameters:
 --   - p_user_id: UUID - ID del usuario
 --   - p_event_type: VARCHAR(100) - Tipo de evento (MISSIONS_COMPLETED, TOTAL_XP, STREAK_DAYS, etc)
@@ -10,6 +29,7 @@
 -- Dependencies: gamification_system.achievements, user_achievements, user_stats, ml_coins_transactions
 -- Created: 2025-10-28
 -- Modified: 2025-11-26 - Refactorizado para usar JSONB (conditions, rewards) en lugar de columnas individuales
+-- Modified: 2026-02-18 - Marcado como @DEPRECATED (REC-005)
 -- Fix: Columnas inexistentes condition_type, condition_value, xp_reward, earned_at, missions_completed
 
 CREATE OR REPLACE FUNCTION gamification_system.check_and_grant_achievements(

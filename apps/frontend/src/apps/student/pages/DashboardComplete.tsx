@@ -81,21 +81,23 @@ export default function DashboardComplete() {
   // Missions data from missions API - transform to match MissionsPanel interface
   const transformedMissions = (
     activeMissions.length > 0 ? activeMissions : allMissions.slice(0, 3)
-  ).map((mission) => ({
-    ...mission,
-    currentProgress: mission.currentValue,
-    targetProgress: mission.targetValue,
-    isCompleted: mission.status === 'completed' || mission.status === 'claimed',
-    isExpired: mission.expiresAt ? new Date(mission.expiresAt) < new Date() : false,
-    priority:
-      mission.difficulty === 'easy'
-        ? ('low' as const)
-        : mission.difficulty === 'medium'
-          ? ('medium' as const)
-          : ('high' as const),
-    timeLimit: mission.expiresAt,
-    mlReward: mission.mlCoinsReward,
-  }));
+  )
+    .filter((mission) => mission.status !== 'claimed')
+    .map((mission) => ({
+      ...mission,
+      currentProgress: mission.currentValue,
+      targetProgress: mission.targetValue,
+      isCompleted: mission.status === 'completed',
+      isExpired: mission.expiresAt ? new Date(mission.expiresAt) < new Date() : false,
+      priority:
+        mission.difficulty === 'easy'
+          ? ('low' as const)
+          : mission.difficulty === 'medium'
+            ? ('medium' as const)
+            : ('high' as const),
+      timeLimit: mission.expiresAt,
+      mlReward: mission.mlCoinsReward,
+    }));
   const missionsData = transformedMissions;
 
   // Modules data from modules API - transform to match ModulesSection interface

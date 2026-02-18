@@ -92,6 +92,7 @@ export const DB_TABLES = {
     USER_PURCHASES: 'user_purchases', // ✨ NUEVO - P1 (Sistema de Shop)
     CLASSROOM_MISSIONS: 'classroom_missions', // ✨ NUEVO - Audit 2026-01-04 (Misiones de aula)
     COMODIN_USES: 'comodin_uses', // FIX H-017: Missing entity (audit trail de consumo de comodines)
+    USER_EQUIPPED_ITEMS: 'user_equipped_items', // Equipamiento cosmético activo por usuario
   },
 
   /**
@@ -183,6 +184,9 @@ export const DB_TABLES = {
     TEAM_VS_TEAM_CHALLENGES: 'team_vs_team_challenges', // FIX H-039: Team vs team challenges
     USER_BLOCKS: 'user_blocks', // FIX H-031: Missing safety entity (bloqueos entre usuarios)
     USER_REPORTS: 'user_reports', // FIX H-031: Missing safety entity (reportes de moderación)
+    GUILDS: 'guilds', // ✨ NUEVO - Gremios (social_features.guilds)
+    GUILD_MEMBERS: 'guild_members', // ✨ NUEVO - Miembros de gremios
+    GUILD_JOIN_REQUESTS: 'guild_join_requests', // ✨ NUEVO - Solicitudes de ingreso a gremios
   },
 
   /**
@@ -311,6 +315,9 @@ export const DB_TABLES = {
     FACT_DAILY_PROGRESS: 'fact_daily_progress',
     FACT_GAMIFICATION_EVENTS: 'fact_gamification_events',
     FACT_TEACHER_METRICS: 'fact_teacher_metrics',
+    // ML tables (Sprint 2.1)
+    ML_MODEL_WEIGHTS: 'ml_model_weights',
+    ML_PREDICTION_LOGS: 'ml_prediction_logs',
   },
 
   /**

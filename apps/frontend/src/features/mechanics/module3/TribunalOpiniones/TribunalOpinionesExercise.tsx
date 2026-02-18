@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Scale, ChevronRight, ChevronLeft } from 'lucide-react';
 import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@/shared/components/exercises/UnifiedExerciseLayout';
 import { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 
@@ -35,7 +36,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   const [currentJustification, setCurrentJustification] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [_isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [startTime] = useState(new Date());
   const [hintsUsed] = useState(0);
 
@@ -385,25 +386,21 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-            <div className="mb-2 flex items-center gap-3">
-              <Scale className="h-8 w-8" />
-              <h2 className="text-detective-2xl font-bold">Tribunal de Opiniones</h2>
-            </div>
-            <p className="mb-4 text-detective-base opacity-90">
-              Clasifica cada afirmación y evalúa si está bien fundamentada
-            </p>
-            <div className="flex items-center gap-4">
-              <span className="rounded-full bg-white/20 px-3 py-1">
-                Afirmación {currentIndex + 1} de {totalStatements}
-              </span>
-              <span className="rounded-full bg-white/20 px-3 py-1">{evaluatedCount} evaluadas</span>
-            </div>
+      <UnifiedExerciseLayout
+        title="Tribunal de Opiniones"
+        description="Clasifica cada afirmación y evalúa si está bien fundamentada"
+        icon={<Scale className="h-8 w-8" />}
+        headerChildren={
+          <div className="flex items-center gap-4 mt-3">
+            <span className="rounded-full bg-white/20 px-3 py-1">
+              Afirmación {currentIndex + 1} de {totalStatements}
+            </span>
+            <span className="rounded-full bg-white/20 px-3 py-1">{evaluatedCount} evaluadas</span>
           </div>
-
+        }
+        cardPadding="lg"
+      >
+        <div className="space-y-6">
           {/* Current Statement */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -484,7 +481,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
               value={currentJustification}
               onChange={(e) => setCurrentJustification(e.target.value)}
               placeholder="Explica en 2-3 líneas por qué clasificaste así esta afirmación..."
-              className="w-full resize-none rounded-xl border-2 border-detective-border p-4 transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              className="w-full resize-none rounded-xl border-2 border-detective-border p-4 transition-all focus:border-detective-blue focus:ring-2 focus:ring-detective-blue/20"
               rows={3}
               maxLength={300}
             />
@@ -497,7 +494,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
           <div className="flex items-center justify-between border-t border-detective-border pt-4">
             <button
               onClick={handlePrevious}
-              disabled={currentIndex === 0}
+              disabled={currentIndex === 0 || isSubmitting}
               className="flex items-center gap-2 rounded-lg bg-detective-bg-secondary px-4 py-2 transition-all hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -508,8 +505,8 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
               {currentIndex < totalStatements - 1 && (
                 <button
                   onClick={handleNext}
-                  disabled={!isCurrentComplete}
-                  className="flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-2 text-white transition-all hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={!isCurrentComplete || isSubmitting}
+                  className="flex items-center gap-2 rounded-lg bg-detective-blue px-6 py-2 text-white transition-all hover:bg-detective-blue/90 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Siguiente
                   <ChevronRight className="h-5 w-5" />
@@ -534,7 +531,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
                   }}
                   className={`h-3 w-3 rounded-full transition-all ${
                     idx === currentIndex
-                      ? 'scale-125 bg-indigo-600'
+                      ? 'scale-125 bg-detective-blue'
                       : isEvaluated
                         ? 'bg-green-500'
                         : 'bg-gray-300'
@@ -545,7 +542,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
             })}
           </div>
         </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

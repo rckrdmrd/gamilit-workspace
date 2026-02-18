@@ -14,6 +14,24 @@ import { camelToSnake } from '@/utils/transformKeys';
 // CONFIGURATION
 // ============================================================================
 
+let isRedirectingToLogin = false;
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (token: string) => void;
+  reject: (error: any) => void;
+}> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token!);
+    }
+  });
+  failedQueue = [];
+};
+
 // ============================================================================
 // AXIOS INSTANCE
 // ============================================================================
@@ -119,10 +137,23 @@ apiClient.interceptors.response.use(
 
     // Handle 401 Unauthorized - token expired
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers['Authorization'] = 'Bearer ' + token;
+            return apiClient(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
-        // Attempt token refresh
         const refreshToken = localStorage.getItem('refresh-token');
 
         if (!refreshToken) {
@@ -133,28 +164,39 @@ apiClient.interceptors.response.use(
           refreshToken,
         });
 
-        // Save new token
-        localStorage.setItem('auth-token', data.token);
+        const newToken = data.token;
+        localStorage.setItem('auth-token', newToken);
 
-        // Update the authorization header
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${data.token}`;
-        }
+        // Update header for subsequent requests
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
 
-        // Retry original request with new token
+        processQueue(null, newToken);
+
+        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
-        // Refresh failed - clear tokens and redirect to login
+        processQueue(refreshError, null);
+
+        // Refresh failed - set logout flag
+        localStorage.setItem('is_logging_out', 'true');
+
+        // Clear tokens
         localStorage.removeItem('auth-token');
         localStorage.removeItem('refresh-token');
         localStorage.removeItem('auth-storage');
 
-        // Only redirect if not already on login page
-        if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+        if (
+          typeof window !== 'undefined' &&
+          !window.location.pathname.includes('/login') &&
+          !isRedirectingToLogin
+        ) {
+          isRedirectingToLogin = true;
           window.location.href = '/login';
         }
 
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 

@@ -11,21 +11,24 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GamificationModule } from '../gamification/gamification.module';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { UserAchievement } from '../gamification/entities';
+import { UserAchievement, Mission } from '../gamification/entities';
 import { MissionsCronService } from './services/missions-cron.service';
 import { NotificationsCronService } from './services/notifications-cron.service';
 import { AchievementReconciliationCronService } from './services/achievement-reconciliation-cron.service';
 import { MaterializedViewsCronService } from './services/materialized-views-cron.service';
+import { PendingInitializationsCronService } from './services/pending-initializations-cron.service';
+import { AuditModule } from '../audit/audit.module';
 
 const CRON_ENABLED = (process.env.CRON_ENABLED || 'true').toLowerCase() !== 'false';
 
 const cronProviders = CRON_ENABLED
   ? [
-      MissionsCronService,
-      NotificationsCronService,
-      AchievementReconciliationCronService,
-      MaterializedViewsCronService,
-    ]
+    MissionsCronService,
+    NotificationsCronService,
+    AchievementReconciliationCronService,
+    MaterializedViewsCronService,
+    PendingInitializationsCronService,
+  ]
   : [];
 
 @Module({
@@ -33,10 +36,11 @@ const cronProviders = CRON_ENABLED
     ...(CRON_ENABLED ? [ScheduleModule.forRoot()] : []),
     GamificationModule,
     NotificationsModule,
-    // Import UserAchievement for AchievementReconciliationCronService
-    TypeOrmModule.forFeature([UserAchievement], 'gamification'),
+    // Import entities for cron services (AchievementReconciliation + MissionsCron)
+    TypeOrmModule.forFeature([UserAchievement, Mission], 'gamification'),
+    AuditModule,
   ],
   providers: cronProviders,
   exports: cronProviders,
 })
-export class TasksModule {}
+export class TasksModule { }

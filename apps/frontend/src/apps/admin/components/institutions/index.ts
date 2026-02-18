@@ -16,3 +16,5 @@ export { InstitutionStats } from './InstitutionStats';
 export type { InstitutionStatsData } from './InstitutionStats';
 
 export { InstitutionDetailModal } from './InstitutionDetailModal';
+
+export { InstitutionFormModals } from './InstitutionFormModals';

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Grid3x3, Sparkles, Eye } from 'lucide-react';
-import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@/shared/components/exercises/UnifiedExerciseLayout';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -290,26 +290,24 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-            <div className="mb-2 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Grid3x3 className="h-8 w-8" />
-                <h2 className="text-detective-2xl font-bold">Matriz de Perspectivas</h2>
-              </div>
-              {/* Auto-save status indicator */}
-              <div className="text-sm">
-                {saveStatus === 'saving' && <span className="text-white/90">Guardando...</span>}
-                {saveStatus === 'saved' && <span className="text-green-200">✓ Guardado</span>}
-                {saveStatus === 'error' && <span className="text-red-200">Error al guardar</span>}
-              </div>
-            </div>
-            <p className="mb-4 text-detective-base opacity-90">{exercise.topic}</p>
-            <p className="text-detective-base opacity-90">{exercise.description}</p>
+      <UnifiedExerciseLayout
+        title="Matriz de Perspectivas"
+        description={exercise.description}
+        icon={<Grid3x3 className="h-6 w-6" />}
+        gradientClassName="from-detective-blue to-detective-orange"
+        headerActions={
+          <div className="text-sm">
+            {saveStatus === 'saving' && <span className="text-white/90">Guardando...</span>}
+            {saveStatus === 'saved' && <span className="text-green-200">✓ Guardado</span>}
+            {saveStatus === 'error' && <span className="text-red-200">Error al guardar</span>}
           </div>
-
+        }
+        headerChildren={
+          <p className="mt-2 text-detective-base opacity-90 font-medium text-blue-50">{exercise.topic}</p>
+        }
+        cardPadding="lg"
+      >
+        <div className="space-y-6">
           {/* Generate Button */}
           <div className="text-center">
             <DetectiveButton
@@ -545,7 +543,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
             </DetectiveButton>
           </div>
         </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

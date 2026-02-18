@@ -29,7 +29,7 @@ stateDiagram-v2
 
 ### Frontend
 - `apps/frontend/src/apps/student/pages/ExercisePage.tsx` (submit)
-- `apps/frontend/src/apps/teacher/pages/TeacherReviewPanelPage.tsx`
+- `apps/frontend/src/apps/teacher/pages/TeacherReviewPanel.tsx`
 - `apps/frontend/src/apps/teacher/components/review-panel/ReviewDetail.tsx`
 
 ### Backend

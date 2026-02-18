@@ -69,8 +69,9 @@ export interface UserProfile {
  * Authenticated User (stored in request object)
  */
 export interface AuthUser {
-  id: string;
-  sub?: string; // JWT subject (user ID)
+  id: string;            // profile.id (from auth_management.profiles)
+  user_id?: string;      // auth.users.id (for auth-specific lookups)
+  sub?: string;          // JWT subject (= profile.id)
   email: string;
   role: string;
   rank?: string;

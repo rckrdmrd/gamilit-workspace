@@ -90,7 +90,7 @@ CREATE POLICY admin_view_tenant_reviews ON progress_tracking.manual_reviews
       JOIN auth_management.profiles admin_profile ON admin_profile.id = gamilit.get_current_user_id()
       WHERE es.id = progress_tracking.manual_reviews.submission_id
         AND p.tenant_id = admin_profile.tenant_id
-        AND admin_profile.role IN ('ADMIN_TEACHER', 'SUPER_ADMIN')
+        AND admin_profile.role IN ('admin_teacher', 'super_admin')
     )
   );
 
@@ -110,7 +110,7 @@ CREATE POLICY super_admin_full_access_reviews ON progress_tracking.manual_review
       SELECT 1
       FROM auth_management.profiles p
       WHERE p.id = gamilit.get_current_user_id()
-        AND p.role = 'SUPER_ADMIN'
+        AND p.role = 'super_admin'
     )
   )
   WITH CHECK (
@@ -118,7 +118,7 @@ CREATE POLICY super_admin_full_access_reviews ON progress_tracking.manual_review
       SELECT 1
       FROM auth_management.profiles p
       WHERE p.id = gamilit.get_current_user_id()
-        AND p.role = 'SUPER_ADMIN'
+        AND p.role = 'super_admin'
     )
   );
 

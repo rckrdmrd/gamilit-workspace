@@ -29,7 +29,7 @@
 
 ### SOLO Mode
 - Desarrollo autónomo full-stack
-- Multi-agent support
+- Sin subagentes nativos
 - Para tareas complejas
 
 ---
@@ -144,8 +144,8 @@ git status      # Working tree clean
 
 ## REFERENCIAS
 
-- **Workspace:** `workspace-v2/CLAUDE.md`
-- **Proyecto:** `projects/gamilit/.claude/CLAUDE.md`
+- **Proyecto:** `CLAUDE.md`
+- **Directivas:** `orchestration/directivas/simco/`
 - **Configs:** `orchestration/agents/configs/`
 - **Checkpoints:** `orchestration/_definitions/protocols/CHECKPOINT-PROTOCOL.md`
 

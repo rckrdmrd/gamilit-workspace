@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { getPerformanceLevelFromScore } from '@shared/utils/format.util';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DataTable, Column } from '@shared/components/common/DataTable';
 import {
@@ -77,7 +78,7 @@ export default function TeacherStudents() {
               email: student.email || 'N/A',
               average_score: student.score_average,
               completion_rate: student.progress_percentage,
-              performance_level: calculatePerformanceLevel(student.score_average),
+              performance_level: getPerformanceLevelFromScore(student.score_average),
               classroom_name: classroom.name,
               classroom_id: classroom.id,
               last_active: student.last_activity,
@@ -103,17 +104,6 @@ export default function TeacherStudents() {
 
     fetchStudents();
   }, [classrooms]);
-
-  /**
-   * Calculate performance level based on average score
-   * @param score - Average score percentage
-   * @returns Performance level: high (>80), medium (60-80), low (<60)
-   */
-  const calculatePerformanceLevel = (score: number): 'high' | 'medium' | 'low' => {
-    if (score >= 80) return 'high';
-    if (score >= 60) return 'medium';
-    return 'low';
-  };
 
   const viewStudentDetail = (student: StudentExtended) => {
     setSelectedStudent(student);

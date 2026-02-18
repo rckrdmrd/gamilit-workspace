@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Send, Save, Image as ImageIcon, BookOpen, Loader2, Eye, CheckCircle } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { mediaApi } from '@/shared/api/mediaApi';
 
 interface UploadedFile {
@@ -48,7 +48,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
   exerciseId = 'diario-multimedia-default',
   onComplete,
   onProgressUpdate,
-  onExit
+  onExit: _onExit
 }) => {
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [currentTitle, setCurrentTitle] = useState('');
@@ -61,6 +61,8 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const diaryContentRef = useRef<HTMLTextAreaElement>(null);
 
   const {
     submit,
@@ -118,14 +120,10 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
     // Calculate word counts for DTO format
     const dtoEntries = entries.map((e) => {
       const wordCount = e.content.trim().split(/\s+/).filter(w => w.length > 0).length;
-      // Pad content to minimum 50 chars if needed
-      const paddedContent = e.content.length >= 50
-        ? e.content
-        : e.content + ' '.repeat(50 - e.content.length);
       return {
         id: e.id,
         date: e.date instanceof Date ? e.date.toISOString() : new Date().toISOString(),
-        content: paddedContent,
+        content: e.content,
         wordCount,
       };
     });
@@ -182,7 +180,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
   };
 
   const formatText = (command: string) => {
-    const textarea = document.getElementById('diary-content') as HTMLTextAreaElement;
+    const textarea = diaryContentRef.current;
     if (!textarea) return;
 
     const start = textarea.selectionStart;
@@ -219,16 +217,12 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
     // Calculate word count for each entry and total
     const dtoEntries = entries.map((entry) => {
       const wordCount = entry.content.split(/\s+/).filter((w) => w.length > 0).length;
-      // Ensure content is at least 50 characters
-      const paddedContent = entry.content.length >= 50
-        ? entry.content
-        : `${entry.content}. Reflexiones sobre el descubrimiento de Marie Curie.`.substring(0, Math.max(50, entry.content.length));
 
       return {
         id: entry.id,
-        date: entry.date.toISOString().split('T')[0], // Format as ISO date string (YYYY-MM-DD)
+        date: entry.date.toISOString().split('T')[0],
         title: entry.title || undefined,
-        content: paddedContent,
+        content: entry.content,
         mood: entry.isPrivate ? 'reflective' : 'excited',
         wordCount,
         multimedia: entry.media.length > 0 ? entry.media : undefined,
@@ -253,18 +247,13 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
   };
 
   return (
-    <DetectiveCard className="min-h-screen p-6">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-          <div className="mb-2 flex items-center gap-3">
-            <BookOpen className="h-8 w-8" />
-            <h2 className="text-2xl font-bold">Diario Multimedia</h2>
-          </div>
-          <p className="opacity-90">
-            Documenta tu aprendizaje sobre Marie Curie con texto, imágenes, videos y audio.
-          </p>
-        </div>
-
+    <>
+      <UnifiedExerciseLayout
+        title="Diario Multimedia"
+        description="Documenta tu aprendizaje sobre Marie Curie con texto, imágenes, videos y audio."
+        icon={<BookOpen className="h-8 w-8" />}
+        className="max-w-6xl"
+      >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
             <div className="space-y-4 rounded-detective bg-white p-6 shadow-card">
@@ -307,7 +296,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                   </button>
                 </div>
                 <textarea
-                  id="diary-content"
+                  ref={diaryContentRef}
                   value={currentContent}
                   onChange={(e) => setCurrentContent(e.target.value)}
                   rows={12}
@@ -360,8 +349,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
                         setCurrentMedia((prev) => [...prev, ...uploadedFiles]);
                       } catch (error) {
                         console.error('Error uploading media:', error);
-                        // Fallback opcional o notificación de error
-                        alert('Error al subir archivos multimedia. Intenta de nuevo.');
+                        setErrorMessage('Error al subir archivos multimedia. Intenta de nuevo.');
                       } finally {
                         setIsUploading(false);
                         // Limpiar input
@@ -539,7 +527,21 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
             </div>
           </div>
         </div>
-      </div>
+      </UnifiedExerciseLayout>
+
+      {/* Error Modal */}
+      {errorMessage && (
+        <FeedbackModal
+          isOpen={!!errorMessage}
+          onClose={() => setErrorMessage(null)}
+          feedback={{
+            type: 'error',
+            title: 'Error',
+            message: errorMessage,
+            score: 0,
+          }}
+        />
+      )}
 
       {/* Feedback Modal */}
       {feedback && (
@@ -547,14 +549,11 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
           isOpen={showFeedback}
           onClose={() => {
             setShowFeedback(false);
-            if (feedback.type === 'success') {
-              onExit?.();
-            }
           }}
           feedback={feedback}
         />
       )}
-    </DetectiveCard>
+    </>
   );
 };
 

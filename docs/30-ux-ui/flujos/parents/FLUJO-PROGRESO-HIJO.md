@@ -16,7 +16,7 @@ Flujo para consultar el progreso detallado de un estudiante vinculado.
 flowchart TD
     page[ChildProgressPage] --> api[/parent-portal/students/:id/progress]
     api --> service[ParentProgressService]
-    service --> db[(progress_tracking + analytics)]
+    service --> db[(progress_tracking + data_warehouse)]
     db --> ui[Detalle por modulo]
 ```
 

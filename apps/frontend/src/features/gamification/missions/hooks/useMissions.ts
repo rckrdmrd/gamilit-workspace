@@ -389,8 +389,9 @@ export function useMissions(_userId?: string): UseMissionsResult {
     const allDailyComplete = dailyMissions.every((m) => m.status === 'claimed');
     const allWeeklyComplete = weeklyMissions.every((m) => m.status === 'claimed');
 
-    const bonusXP = (allDailyComplete ? 500 : 0) + (allWeeklyComplete ? 2000 : 0);
-    const bonusMLCoins = (allDailyComplete ? 100 : 0) + (allWeeklyComplete ? 500 : 0);
+    // REC-006: Bonus removed — backend does not implement daily/weekly completion bonus.
+    // Previously showed fictional +500/+2000 XP and +100/+500 ML Coins that were never granted.
+    // Keeping allDailyComplete/allWeeklyComplete flags for UX indicators only.
 
     return {
       potential,
@@ -398,8 +399,8 @@ export function useMissions(_userId?: string): UseMissionsResult {
       bonus: {
         allDailyComplete,
         allWeeklyComplete,
-        bonusXP,
-        bonusMLCoins,
+        bonusXP: 0,
+        bonusMLCoins: 0,
       },
     };
   }, [dailyMissions, weeklyMissions, specialMissions, currentTab]);

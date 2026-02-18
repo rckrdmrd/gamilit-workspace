@@ -64,7 +64,7 @@ export function ClassroomTeachersTab() {
     const trimmedId = classroomId.trim();
 
     if (!trimmedId) {
-      toast.error('Ingrese un Classroom ID');
+      toast.error('Ingrese un ID de Aula');
       return;
     }
 
@@ -123,14 +123,14 @@ export function ClassroomTeachersTab() {
     <div className="space-y-6">
       {/* Search Form */}
       <div className="rounded-xl bg-white p-6 shadow-md">
-        <h2 className="mb-4 text-xl font-bold text-gray-900">Buscar Classroom</h2>
+        <h2 className="mb-4 text-xl font-bold text-gray-900">Buscar Aula</h2>
         <form onSubmit={handleSearch} className="flex gap-3">
           <div className="flex-1">
             <input
               type="text"
               value={classroomId}
               onChange={(e) => setClassroomId(e.target.value)}
-              placeholder="Ingrese Classroom ID (UUID)"
+              placeholder="Ingrese ID del Aula (UUID)"
               className={cn(
                 'w-full rounded-lg px-4 py-3',
                 'border-2 border-gray-200',
@@ -159,7 +159,7 @@ export function ClassroomTeachersTab() {
       {isLoading && (
         <div className="rounded-xl bg-white p-12 text-center shadow-md">
           <Loader2 className="mx-auto mb-3 h-8 w-8 animate-spin text-blue-500" />
-          <p className="text-gray-600">Cargando teachers...</p>
+          <p className="text-gray-600">Cargando docentes...</p>
         </div>
       )}
 
@@ -169,9 +169,9 @@ export function ClassroomTeachersTab() {
           <div className="flex items-center gap-3 text-red-700">
             <AlertCircle className="h-6 w-6" />
             <div>
-              <p className="font-semibold">Error al cargar classroom</p>
+              <p className="font-semibold">Error al cargar aula</p>
               <p className="text-sm">
-                {(error as any)?.response?.data?.message || 'Classroom no encontrado'}
+                {(error as any)?.response?.data?.message || 'Aula no encontrada'}
               </p>
             </div>
           </div>
@@ -199,14 +199,14 @@ export function ClassroomTeachersTab() {
                 )}
               >
                 <UserPlus className="h-5 w-5" />
-                Asignar Teacher
+                Asignar Docente
               </button>
             </div>
 
             <div className="flex items-center gap-2 text-gray-600">
               <Users className="h-5 w-5" />
               <span className="font-semibold">
-                {classroomData.teachersCount} teacher(s) asignado(s)
+                {classroomData.teachersCount} docente(s) asignado(s)
               </span>
             </div>
           </div>
@@ -216,7 +216,7 @@ export function ClassroomTeachersTab() {
             <div className="rounded-xl bg-gray-50 p-12 text-center">
               <Users className="mx-auto mb-3 h-16 w-16 text-gray-300" />
               <p className="font-semibold text-gray-600">
-                No hay teachers asignados a este classroom
+                No hay docentes asignados a esta aula
               </p>
             </div>
           ) : (
@@ -246,7 +246,7 @@ export function ClassroomTeachersTab() {
                           'text-gray-500 hover:bg-gray-50',
                           'transition-colors',
                         )}
-                        title="Copiar Teacher ID"
+                        title="Copiar ID del Docente"
                       >
                         {copiedId === teacher.id ? (
                           <Check className="h-5 w-5 text-green-500" />
@@ -261,7 +261,7 @@ export function ClassroomTeachersTab() {
                           'text-red-500 hover:bg-red-50',
                           'transition-colors',
                         )}
-                        title="Remover teacher"
+                        title="Remover docente"
                       >
                         <UserMinus className="h-5 w-5" />
                       </button>
@@ -290,17 +290,17 @@ export function ClassroomTeachersTab() {
             animate={{ opacity: 1, scale: 1 }}
             className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
           >
-            <h3 className="mb-4 text-xl font-bold text-gray-900">Asignar Teacher</h3>
+            <h3 className="mb-4 text-xl font-bold text-gray-900">Asignar Docente</h3>
             <div className="space-y-4">
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
-                  Teacher ID (UUID)
+                  ID del Docente (UUID)
                 </label>
                 <input
                   type="text"
                   value={teacherIdToAssign}
                   onChange={(e) => setTeacherIdToAssign(e.target.value)}
-                  placeholder="Ingrese Teacher ID"
+                  placeholder="Ingrese ID del Docente"
                   className={cn(
                     'w-full rounded-lg px-4 py-3',
                     'border-2 border-gray-200',
@@ -359,7 +359,7 @@ export function ClassroomTeachersTab() {
           >
             <h3 className="mb-4 text-xl font-bold text-gray-900">Confirmar Remoción</h3>
             <p className="mb-6 text-gray-600">
-              ¿Está seguro que desea remover este teacher del classroom?
+              ¿Está seguro que desea remover este docente del aula?
             </p>
 
             <div className="flex gap-3">

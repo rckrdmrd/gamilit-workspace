@@ -59,6 +59,7 @@ interface Section {
   content?: string;
   bgColor: string;
   iconColor: string;
+  borderColor: string;
 }
 
 export const ExerciseGuide: React.FC<ExerciseGuideProps> = ({
@@ -80,6 +81,7 @@ export const ExerciseGuide: React.FC<ExerciseGuideProps> = ({
       content: objective,
       bgColor: 'bg-blue-50 dark:bg-blue-900/20',
       iconColor: 'text-blue-600 dark:text-blue-400',
+      borderColor: 'border-blue-500',
     },
     {
       id: 'how_to_solve',
@@ -88,6 +90,7 @@ export const ExerciseGuide: React.FC<ExerciseGuideProps> = ({
       content: how_to_solve,
       bgColor: 'bg-green-50 dark:bg-green-900/20',
       iconColor: 'text-green-600 dark:text-green-400',
+      borderColor: 'border-green-500',
     },
     {
       id: 'recommended_strategy',
@@ -96,6 +99,7 @@ export const ExerciseGuide: React.FC<ExerciseGuideProps> = ({
       content: recommended_strategy,
       bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
       iconColor: 'text-yellow-600 dark:text-yellow-400',
+      borderColor: 'border-yellow-500',
     },
     {
       id: 'pedagogical_notes',
@@ -104,6 +108,7 @@ export const ExerciseGuide: React.FC<ExerciseGuideProps> = ({
       content: pedagogical_notes,
       bgColor: 'bg-purple-50 dark:bg-purple-900/20',
       iconColor: 'text-purple-600 dark:text-purple-400',
+      borderColor: 'border-purple-500',
     },
   ].filter(section => section.content); // Only show sections with content
 
@@ -154,7 +159,9 @@ export const ExerciseGuide: React.FC<ExerciseGuideProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <DetectiveCard className={`${section.bgColor} border-l-4 border-${section.iconColor.split('-')[1]}-500`}>
+                  <DetectiveCard
+                    className={`${section.bgColor} border-l-4 ${section.borderColor} text-detective-text`}
+                  >
                     <div className="flex items-start gap-4">
                       {/* Icon */}
                       <div className={`flex-shrink-0 p-3 rounded-lg bg-white dark:bg-gray-800 shadow-sm`}>
@@ -163,10 +170,10 @@ export const ExerciseGuide: React.FC<ExerciseGuideProps> = ({
 
                       {/* Content */}
                       <div className="flex-1">
-                        <h3 className="text-lg font-bold mb-3 text-gray-900 dark:text-white">
+                        <h3 className="text-lg font-bold mb-3 text-detective-text">
                           {section.title}
                         </h3>
-                        <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                        <div className="leading-relaxed whitespace-pre-line text-detective-text">
                           {section.content}
                         </div>
                       </div>

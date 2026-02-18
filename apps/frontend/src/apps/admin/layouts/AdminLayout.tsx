@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import GamilitSidebar from '@shared/components/layout/GamilitSidebar';
 import type { User as UserType, UserGamificationData } from '@shared/types';
 import type { User as AuthUser } from '@features/auth/types/auth.types';
+import { BrandingContext } from '@/app/providers/BrandingProvider';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -41,6 +43,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const branding = useContext(BrandingContext);
+  const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
+  const resolvedOrganizationName =
+    organizationName === 'GAMILIT Platform Admin' ? platformName : organizationName;
 
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -70,7 +76,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         <GamifiedHeader
           user={user}
           gamificationData={gamificationData}
-          organizationName={organizationName}
+          organizationName={resolvedOrganizationName}
           onLogout={handleLogout}
         />
       </header>

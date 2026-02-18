@@ -14,11 +14,11 @@ ALTER TABLE educational_content.modules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE educational_content.exercises ENABLE ROW LEVEL SECURITY;
 ALTER TABLE educational_content.assessment_rubrics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE educational_content.media_resources ENABLE ROW LEVEL SECURITY;
-ALTER TABLE educational_content.teacher_content ENABLE ROW LEVEL SECURITY;
+ALTER TABLE educational_content.teacher_contents ENABLE ROW LEVEL SECURITY;
 
 -- Comentarios
 COMMENT ON TABLE educational_content.modules IS 'RLS enabled: Módulos - publicados para estudiantes, todos para profesores/admin';
 COMMENT ON TABLE educational_content.exercises IS 'RLS enabled: Ejercicios - activos para estudiantes, todos para profesores/admin';
 COMMENT ON TABLE educational_content.assessment_rubrics IS 'RLS enabled: Rúbricas de evaluación';
 COMMENT ON TABLE educational_content.media_resources IS 'RLS enabled: Recursos multimedia educativos';
-COMMENT ON TABLE educational_content.teacher_content IS 'RLS enabled: Contenido educativo creado por teachers - control de acceso basado en visibilidad (2026-01-25)';
+COMMENT ON TABLE educational_content.teacher_contents IS 'RLS enabled: Contenido educativo creado por teachers - control de acceso basado en visibilidad (2026-01-25)';

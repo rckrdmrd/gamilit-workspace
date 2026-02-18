@@ -9,9 +9,9 @@ import {
   ArrowDown,
   Trophy,
 } from 'lucide-react';
-import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@/shared/components/exercises/UnifiedExerciseLayout';
 import { fetchSources, analyzeSource, checkClaim } from './analisisFuentesAPI';
 import type { Source, AnalisisFuentesAnswers } from './analisisFuentesTypes';
 import type { SourceCredibility, FactCheckResult } from '../../shared/aiTypes';
@@ -349,19 +349,13 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
+      <UnifiedExerciseLayout
+        title="Análisis de Fuentes"
+        description="Evalúa la credibilidad de fuentes sobre Marie Curie"
+        icon={<FileSearch className="h-8 w-8" />}
+        cardPadding="lg"
+      >
         <div className="space-y-6">
-          {/* Header */}
-          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-            <div className="mb-2 flex items-center gap-3">
-              <FileSearch className="h-8 w-8" />
-              <h2 className="text-detective-2xl font-bold">Análisis de Fuentes</h2>
-            </div>
-            <p className="mb-4 text-detective-base opacity-90">
-              Evalúa la credibilidad de fuentes sobre Marie Curie
-            </p>
-          </div>
-
           {/* Sources and Analysis Grid */}
           <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Available Sources */}
@@ -584,7 +578,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
             </DetectiveButton>
           </div>
         </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

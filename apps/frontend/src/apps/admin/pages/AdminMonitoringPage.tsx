@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { AdminLayout } from '../layouts/AdminLayout';
+import { useState } from 'react';
 import { LogsViewer } from '../components/monitoring/LogsViewer';
 import { MetricsTab } from '../components/monitoring/MetricsTab';
 import { ErrorTrackingTab } from '../components/monitoring/ErrorTrackingTab';
 import { AlertasTab } from '../components/monitoring/AlertasTab';
+import { AdminPageShell } from '../components/shared';
+import { AdminTabBar, type AdminTab } from '../components/shared';
 import { useMonitoring } from '../hooks/useMonitoring';
 import { useAlerts } from '../hooks/useAlerts';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { Activity, AlertTriangle, FileText, XCircle } from 'lucide-react';
 
 /**
@@ -21,9 +20,18 @@ import { Activity, AlertTriangle, FileText, XCircle } from 'lucide-react';
  *
  * Updated: 2025-11-24 - Completed all monitoring tabs (Plan 4)
  */
-const AdminMonitoringPage: React.FC = () => {
-  const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<'metrics' | 'logs' | 'errors' | 'alerts'>('logs');
+
+type MonitoringTabType = 'logs' | 'metrics' | 'errors' | 'alerts';
+
+const TABS: AdminTab<MonitoringTabType>[] = [
+  { id: 'logs', label: 'Logs', icon: FileText },
+  { id: 'metrics', label: 'Métricas', icon: Activity },
+  { id: 'errors', label: 'Error Tracking', icon: XCircle },
+  { id: 'alerts', label: 'Alertas', icon: AlertTriangle },
+];
+
+export default function AdminMonitoringPage() {
+  const [activeTab, setActiveTab] = useState<MonitoringTabType>('logs');
 
   // Monitoring hook for metrics and errors
   const {
@@ -45,35 +53,8 @@ const AdminMonitoringPage: React.FC = () => {
     resolveAlert,
   } = useAlerts();
 
-  // Use useUserGamification hook with real API endpoint
-  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
-
-  // Fallback gamification data while loading or if data not available
-  const displayGamificationData = gamificationData || {
-    userId: user?.id || '',
-    level: gamificationLoading ? 0 : 1,
-    totalXP: 0,
-    mlCoins: 0,
-    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
-    rankColor: '#9E9E9E',
-    progressToNextLevel: 0,
-    xpToNextLevel: 100,
-    achievements: [],
-    totalAchievements: 0,
-  };
-
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
-
   return (
-    <AdminLayout
-      user={user || undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GAMILIT Platform Admin"
-      onLogout={handleLogout}
-    >
+    <AdminPageShell>
       <div className="space-y-6">
         {/* Header */}
         <div>
@@ -87,60 +68,7 @@ const AdminMonitoringPage: React.FC = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 border-b border-gray-700">
-          <button
-            onClick={() => setActiveTab('logs')}
-            className={`border-b-2 px-4 py-3 font-medium transition-colors ${
-              activeTab === 'logs'
-                ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-gray-400 hover:text-gray-300'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Logs
-            </div>
-          </button>
-          <button
-            onClick={() => setActiveTab('metrics')}
-            className={`border-b-2 px-4 py-3 font-medium transition-colors ${
-              activeTab === 'metrics'
-                ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-gray-400 hover:text-gray-300'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <Activity className="h-4 w-4" />
-              Métricas
-            </div>
-          </button>
-          <button
-            onClick={() => setActiveTab('errors')}
-            className={`border-b-2 px-4 py-3 font-medium transition-colors ${
-              activeTab === 'errors'
-                ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-gray-400 hover:text-gray-300'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <XCircle className="h-4 w-4" />
-              Error Tracking
-            </div>
-          </button>
-          <button
-            onClick={() => setActiveTab('alerts')}
-            className={`border-b-2 px-4 py-3 font-medium transition-colors ${
-              activeTab === 'alerts'
-                ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-gray-400 hover:text-gray-300'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />
-              Alertas
-            </div>
-          </button>
-        </div>
+        <AdminTabBar tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} variant="underline" />
 
         {/* Tab Content */}
         <div className="mt-6">
@@ -176,8 +104,6 @@ const AdminMonitoringPage: React.FC = () => {
           )}
         </div>
       </div>
-    </AdminLayout>
+    </AdminPageShell>
   );
-};
-
-export default AdminMonitoringPage;
+}

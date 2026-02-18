@@ -1,7 +1,7 @@
 # Student Portal Hooks Specification
 
-**Version:** 1.0.0
-**Fecha:** 2026-01-20
+**Version:** 1.1.0
+**Fecha:** 2026-02-18 (v1.1.0: +2 hooks Phase 4)
 **Autor:** @PERFIL_FRONTEND + @PERFIL_DOCUMENTATION
 **Tarea:** P2-1 (TASK-2026-01-20-AUDITORIA-ANALISIS-PORTALES)
 
@@ -9,7 +9,7 @@
 
 ## Resumen
 
-Este documento especifica los 12 hooks custom del Student Portal ubicados en:
+Este documento especifica los 14 hooks custom del Student Portal ubicados en:
 ```
 apps/frontend/src/apps/student/hooks/
 ```
@@ -20,6 +20,7 @@ apps/frontend/src/apps/student/hooks/
 | State Management | 2 | Gestionan estado complejo de ejercicios |
 | UI/UX | 4 | Responsive, gestos, teclado |
 | Gamification | 2 | Achievements y Power-ups |
+| Profile (Phase 4) | 2 | Datos de perfil y avatar |
 
 ---
 
@@ -1057,6 +1058,69 @@ const comodinTypeMap: Record<string, string> = {
 
 ---
 
+## Categoria: Profile (Phase 4 — 2026-02-18)
+
+### useProfileData
+
+**Archivo:** `hooks/useProfileData.ts`
+**Proposito:** Agrega 4 Zustand stores en un solo hook para EnhancedProfilePage, eliminando prop drilling y reduciendo acoplamiento.
+
+#### Retorno
+
+```typescript
+interface UseProfileDataReturn {
+  user: User | null;
+  logout: () => void;
+  userProgress: UserRankProgress | null;
+  balance: number;
+  achievements: Achievement[];
+  achievementStats: AchievementStats | null;
+}
+```
+
+#### Dependencias
+
+- `useAuthStore` — user, logout
+- `useRanksStore` — userProgress, fetchUserProgress
+- `useEconomyStore` — balance, fetchBalance
+- `useAchievementsStore` — achievements, stats, fetchAchievements
+
+#### Notas
+
+- Auto-fetches on mount when `user?.id` exists
+- Candidato futuro para migracion a React Query (eliminar dependencia de Zustand stores)
+
+---
+
+### useAvatarUpdate
+
+**Archivo:** `hooks/useAvatarUpdate.ts`
+**Proposito:** Actualización optimista de avatar con persistencia via API.
+
+#### Retorno
+
+```typescript
+interface UseAvatarUpdateReturn {
+  updateAvatar: (avatarUrl: string) => Promise<boolean>;
+  isUpdating: boolean;
+}
+```
+
+#### Comportamiento
+
+1. Actualiza `authStore.user.avatar_url` inmediatamente (optimistic)
+2. Persiste via `profileAPI.updateProfile(userId, { avatar_url })`
+3. Muestra toast de éxito/error
+4. Retorna `boolean` para que el caller sepa si cerrar modal
+
+#### Dependencias
+
+- `useAuthStore` — user, setState
+- `profileAPI` — updateProfile
+- `react-hot-toast` — notificaciones
+
+---
+
 ## Hook Deprecado
 
 ### useGamificationData (DEPRECATED)
@@ -1151,6 +1215,8 @@ export { useUserModules, userModulesKeys, type UserModuleData } from './useUserM
 | useSwipeGesture | | | | | |
 | useAchievementsEnhanced | | X | X | | |
 | useExercisePowerUps | | X | | X | |
+| useProfileData | | X | | | |
+| useAvatarUpdate | | X | | X | |
 
 ---
 
@@ -1165,5 +1231,6 @@ export { useUserModules, userModulesKeys, type UserModuleData } from './useUserM
 ---
 
 **Documento generado:** 2026-01-20
-**Cobertura:** 12/12 hooks (100%)
-**Lineas de documentacion:** ~850
+**Actualizado:** 2026-02-18 (v1.1.0: +useProfileData, +useAvatarUpdate)
+**Cobertura:** 14/14 hooks (100%)
+**Lineas de documentacion:** ~920

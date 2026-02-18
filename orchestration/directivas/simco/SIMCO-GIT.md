@@ -31,7 +31,7 @@
 ║      → Si hay output = hay commits remotos que no tienes                 ║
 ║                                                                           ║
 ║   3. Si hay commits remotos:                                             ║
-║      git pull --no-recurse-submodules                                    ║
+║      git pull origin master                                              ║
 ║      → Sincronizar antes de continuar                                    ║
 ║                                                                           ║
 ║   4. AHORA SI: git status                                                 ║
@@ -51,7 +51,7 @@
 # SIEMPRE ejecutar en este orden:
 git fetch origin
 git log HEAD..origin/master --oneline  # Si hay output, hacer pull
-git pull --no-recurse-submodules     # Solo si paso anterior tiene output
+git pull origin master               # Solo si paso anterior tiene output
 git status                            # Ahora si verificar estado local
 ```
 
@@ -70,9 +70,9 @@ git status                            # Ahora si verificar estado local
 ║                                                                           ║
 ║   SIN PUSH = TAREA INCOMPLETA                                            ║
 ║                                                                           ║
-║   En workspace con SUBMODULES:                                           ║
-║   - Commitear y push en CADA submodule afectado                          ║
-║   - Luego commitear y push en workspace principal                        ║
+║   En este monorepo STANDALONE:                                           ║
+║   - Commitear y push en la rama activa del repo actual                   ║
+║   - NO usar flujo de submodules                                          ║
 ║                                                                           ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 ```
@@ -89,31 +89,21 @@ ANTES_de_reportar_tarea_completada:
   - [ ] Verificar: git status muestra "nothing to commit, working tree clean"
   - [ ] Verificar: git log origin/master..HEAD muestra vacio (todo pusheado)
 
-SI_hay_SUBMODULES:
-  - [ ] Repetir proceso en CADA submodule modificado
-  - [ ] Luego actualizar referencias en workspace principal
-  - [ ] Push final del workspace principal
+SI_hay_dudas_de_estructura:
+  - [ ] Confirmar que este repo es monorepo standalone (sin submodules)
 ```
 
-### Secuencia para Workspace con Submodules
+### Secuencia para Monorepo Standalone
 
 ```bash
-# 1. Commitear en cada submodule modificado
-cd projects/{submodule}
+# 1. Commitear cambios de la tarea
 git add .
 git commit -m "[TAREA-ID] tipo: descripcion"
-git push origin master
 
-# 2. Repetir para cada submodule afectado
-# ...
+# 2. Push a remoto de la rama actual
+git push origin {rama}
 
-# 3. Actualizar workspace principal
-cd /home/isem/workspace-v2
-git add projects/{submodule}  # Actualiza referencia del submodule
-git commit -m "[WORKSPACE] chore: Update submodule references"
-git push origin master
-
-# 4. Verificar todo sincronizado
+# 3. Verificar todo sincronizado
 git status  # Debe mostrar "clean"
 ```
 

@@ -1,5 +1,5 @@
 -- =============================================================================
--- RLS Policies for educational_content.teacher_content
+-- RLS Policies for educational_content.teacher_contents
 -- =============================================================================
 -- Created: 2026-01-25 (TASK-2026-01-25-VALIDACION-PORTAL-TEACHER)
 -- Updated: 2026-01-25 (TASK-010 - Consolidación y corrección)
@@ -25,16 +25,16 @@
 -- DROP EXISTING POLICIES (idempotent)
 -- =============================================================================
 
-DROP POLICY IF EXISTS teacher_content_view_own ON educational_content.teacher_content;
-DROP POLICY IF EXISTS teacher_content_view_public ON educational_content.teacher_content;
-DROP POLICY IF EXISTS teacher_content_view_school ON educational_content.teacher_content;
-DROP POLICY IF EXISTS teacher_content_view_shared ON educational_content.teacher_content;
-DROP POLICY IF EXISTS teacher_content_create_own ON educational_content.teacher_content;
-DROP POLICY IF EXISTS teacher_content_update_own ON educational_content.teacher_content;
-DROP POLICY IF EXISTS teacher_content_update_shared ON educational_content.teacher_content;
-DROP POLICY IF EXISTS teacher_content_delete_own ON educational_content.teacher_content;
-DROP POLICY IF EXISTS teacher_content_admin_manage_all ON educational_content.teacher_content;
-DROP POLICY IF EXISTS teacher_content_student_view_classroom ON educational_content.teacher_content;
+DROP POLICY IF EXISTS teacher_content_view_own ON educational_content.teacher_contents;
+DROP POLICY IF EXISTS teacher_content_view_public ON educational_content.teacher_contents;
+DROP POLICY IF EXISTS teacher_content_view_school ON educational_content.teacher_contents;
+DROP POLICY IF EXISTS teacher_content_view_shared ON educational_content.teacher_contents;
+DROP POLICY IF EXISTS teacher_content_create_own ON educational_content.teacher_contents;
+DROP POLICY IF EXISTS teacher_content_update_own ON educational_content.teacher_contents;
+DROP POLICY IF EXISTS teacher_content_update_shared ON educational_content.teacher_contents;
+DROP POLICY IF EXISTS teacher_content_delete_own ON educational_content.teacher_contents;
+DROP POLICY IF EXISTS teacher_content_admin_manage_all ON educational_content.teacher_contents;
+DROP POLICY IF EXISTS teacher_content_student_view_classroom ON educational_content.teacher_contents;
 
 -- =============================================================================
 -- 1. POLICIES FOR TEACHERS
@@ -42,19 +42,19 @@ DROP POLICY IF EXISTS teacher_content_student_view_classroom ON educational_cont
 
 -- Policy: Teachers view own content
 CREATE POLICY teacher_content_view_own
-    ON educational_content.teacher_content
+    ON educational_content.teacher_contents
     FOR SELECT
     USING (
         teacher_id = (current_setting('app.current_user_id', true))::UUID
         AND tenant_id = (current_setting('app.current_tenant_id', true))::UUID
     );
 
-COMMENT ON POLICY teacher_content_view_own ON educational_content.teacher_content IS
+COMMENT ON POLICY teacher_content_view_own ON educational_content.teacher_contents IS
 'Teachers can view all their own content regardless of status';
 
 -- Policy: Teachers view PUBLIC content
 CREATE POLICY teacher_content_view_public
-    ON educational_content.teacher_content
+    ON educational_content.teacher_contents
     FOR SELECT
     USING (
         visibility = 'public'
@@ -62,12 +62,12 @@ CREATE POLICY teacher_content_view_public
         AND is_active = TRUE
     );
 
-COMMENT ON POLICY teacher_content_view_public ON educational_content.teacher_content IS
+COMMENT ON POLICY teacher_content_view_public ON educational_content.teacher_contents IS
 'All users can view published public content';
 
 -- Policy: Teachers view SCHOOL content (same tenant)
 CREATE POLICY teacher_content_view_school
-    ON educational_content.teacher_content
+    ON educational_content.teacher_contents
     FOR SELECT
     USING (
         visibility IN ('school', 'classroom')
@@ -76,12 +76,12 @@ CREATE POLICY teacher_content_view_school
         AND is_active = TRUE
     );
 
-COMMENT ON POLICY teacher_content_view_school ON educational_content.teacher_content IS
+COMMENT ON POLICY teacher_content_view_school ON educational_content.teacher_contents IS
 'Teachers can view school/classroom content within their tenant';
 
 -- Policy: Teachers view SHARED content (explicitly shared with them)
 CREATE POLICY teacher_content_view_shared
-    ON educational_content.teacher_content
+    ON educational_content.teacher_contents
     FOR SELECT
     USING (
         is_shared = TRUE
@@ -90,12 +90,12 @@ CREATE POLICY teacher_content_view_shared
         AND is_active = TRUE
     );
 
-COMMENT ON POLICY teacher_content_view_shared ON educational_content.teacher_content IS
+COMMENT ON POLICY teacher_content_view_shared ON educational_content.teacher_contents IS
 'Teachers can view content explicitly shared with them';
 
 -- Policy: Teachers CREATE content (as owner in their tenant)
 CREATE POLICY teacher_content_create_own
-    ON educational_content.teacher_content
+    ON educational_content.teacher_contents
     FOR INSERT
     WITH CHECK (
         teacher_id = (current_setting('app.current_user_id', true))::UUID
@@ -107,12 +107,12 @@ CREATE POLICY teacher_content_create_own
         )
     );
 
-COMMENT ON POLICY teacher_content_create_own ON educational_content.teacher_content IS
+COMMENT ON POLICY teacher_content_create_own ON educational_content.teacher_contents IS
 'Teachers can create content as the owner in their tenant';
 
 -- Policy: Teachers UPDATE own content
 CREATE POLICY teacher_content_update_own
-    ON educational_content.teacher_content
+    ON educational_content.teacher_contents
     FOR UPDATE
     USING (
         teacher_id = (current_setting('app.current_user_id', true))::UUID
@@ -123,12 +123,12 @@ CREATE POLICY teacher_content_update_own
         AND tenant_id = (current_setting('app.current_tenant_id', true))::UUID
     );
 
-COMMENT ON POLICY teacher_content_update_own ON educational_content.teacher_content IS
+COMMENT ON POLICY teacher_content_update_own ON educational_content.teacher_contents IS
 'Teachers can update their own content';
 
 -- Policy: Teachers UPDATE shared content (if allow_modifications is true)
 CREATE POLICY teacher_content_update_shared
-    ON educational_content.teacher_content
+    ON educational_content.teacher_contents
     FOR UPDATE
     USING (
         is_shared = TRUE
@@ -138,23 +138,23 @@ CREATE POLICY teacher_content_update_shared
     )
     WITH CHECK (
         -- Cannot change ownership when updating shared content
-        teacher_id = (SELECT tc.teacher_id FROM educational_content.teacher_content tc WHERE tc.id = teacher_content.id)
-        AND tenant_id = (SELECT tc.tenant_id FROM educational_content.teacher_content tc WHERE tc.id = teacher_content.id)
+        teacher_id = (SELECT tc.teacher_id FROM educational_content.teacher_contents tc WHERE tc.id = teacher_contents.id)
+        AND tenant_id = (SELECT tc.tenant_id FROM educational_content.teacher_contents tc WHERE tc.id = teacher_contents.id)
     );
 
-COMMENT ON POLICY teacher_content_update_shared ON educational_content.teacher_content IS
+COMMENT ON POLICY teacher_content_update_shared ON educational_content.teacher_contents IS
 'Teachers can update shared content if modifications are allowed';
 
 -- Policy: Teachers DELETE own content
 CREATE POLICY teacher_content_delete_own
-    ON educational_content.teacher_content
+    ON educational_content.teacher_contents
     FOR DELETE
     USING (
         teacher_id = (current_setting('app.current_user_id', true))::UUID
         AND tenant_id = (current_setting('app.current_tenant_id', true))::UUID
     );
 
-COMMENT ON POLICY teacher_content_delete_own ON educational_content.teacher_content IS
+COMMENT ON POLICY teacher_content_delete_own ON educational_content.teacher_contents IS
 'Teachers can delete (soft-delete via is_active) their own content';
 
 -- =============================================================================
@@ -163,7 +163,7 @@ COMMENT ON POLICY teacher_content_delete_own ON educational_content.teacher_cont
 
 -- Policy: Admins manage ALL content in their tenant
 CREATE POLICY teacher_content_admin_manage_all
-    ON educational_content.teacher_content
+    ON educational_content.teacher_contents
     FOR ALL
     USING (
         tenant_id = (current_setting('app.current_tenant_id', true))::UUID
@@ -182,7 +182,7 @@ CREATE POLICY teacher_content_admin_manage_all
         )
     );
 
-COMMENT ON POLICY teacher_content_admin_manage_all ON educational_content.teacher_content IS
+COMMENT ON POLICY teacher_content_admin_manage_all ON educational_content.teacher_contents IS
 'Super admins can manage all content in their tenant';
 
 -- =============================================================================
@@ -191,7 +191,7 @@ COMMENT ON POLICY teacher_content_admin_manage_all ON educational_content.teache
 
 -- Policy: Students view content assigned to their classrooms
 CREATE POLICY teacher_content_student_view_classroom
-    ON educational_content.teacher_content
+    ON educational_content.teacher_contents
     FOR SELECT
     USING (
         status = 'published'
@@ -210,7 +210,7 @@ CREATE POLICY teacher_content_student_view_classroom
         )
     );
 
-COMMENT ON POLICY teacher_content_student_view_classroom ON educational_content.teacher_content IS
+COMMENT ON POLICY teacher_content_student_view_classroom ON educational_content.teacher_contents IS
 'Students can view published content in their classrooms or public content';
 
 -- =============================================================================

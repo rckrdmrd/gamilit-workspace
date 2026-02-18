@@ -84,6 +84,12 @@ import { WebSocketModule } from '../websocket/websocket.module';
         entities.SkillAssessment, // ✨ NUEVO - P2 (Evaluaciones de habilidades)
         entities.Certificate, // ✨ NUEVO - EPIC 10.2 (Certificados digitales)
         entities.TeacherAlertConfiguration, // ✨ NUEVO - US-PM-007 (Config alertas profesor)
+        entities.TeacherIntervention, // FIX P2: Missing forFeature (P1-002)
+        entities.UserCurrentLevel, // FIX P2: Missing forFeature (DDL coherence)
+        entities.UserDifficultyProgress, // FIX P2: Missing forFeature (DDL coherence)
+        entities.ModuleCompletionTracking, // FIX P2: Missing forFeature (DDL coherence)
+        entities.LearningPathModule, // FIX P2: Missing forFeature + barrel export
+        entities.ManualReview, // FIX P2: Missing forFeature in progress (exists in teacher)
       ],
       'progress',
     ),

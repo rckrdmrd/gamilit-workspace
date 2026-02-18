@@ -176,6 +176,13 @@ export class UserResponseDto {
   @Expose()
     tenant_id?: string;
 
+  /**
+   * Items cosméticos equipados actualmente (Skins)
+   * Mapa de categoría -> item metadata
+   */
+  @Expose()
+    equipped_items?: Record<string, unknown>;
+
   // =====================================================
   // Relaciones opcionales
   // =====================================================

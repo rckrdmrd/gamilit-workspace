@@ -1,6 +1,6 @@
 -- =====================================================
 -- GIN Index: idx_marie_content_grade_levels_gin
--- Table: content_management.marie_curie_content
+-- Table: content_management.marie_curie_contents
 -- Column: target_grade_levels (ARRAY)
 -- Description: Índice GIN para filtrado por niveles de grado (array)
 -- Priority: HIGH - Performance optimization
@@ -8,7 +8,7 @@
 -- =====================================================
 
 CREATE INDEX IF NOT EXISTS idx_marie_content_grade_levels_gin
-ON content_management.marie_curie_content
+ON content_management.marie_curie_contents
 USING GIN (target_grade_levels);
 
 COMMENT ON INDEX content_management.idx_marie_content_grade_levels_gin IS 'Índice GIN para filtrado por niveles de grado (array)';
@@ -20,6 +20,6 @@ COMMENT ON INDEX content_management.idx_marie_content_grade_levels_gin IS 'Índi
 /*
 -- Find content for specific grade level (now uses GIN index)
 SELECT *
-FROM content_management.marie_curie_content
+FROM content_management.marie_curie_contents
 WHERE target_grade_levels @> ARRAY[5];
 */

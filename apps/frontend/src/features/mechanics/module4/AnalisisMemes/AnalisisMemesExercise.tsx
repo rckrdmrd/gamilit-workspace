@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Image, Plus, Trash2, Save, Send, Loader2, CheckCircle } from 'lucide-react';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { MemeAnnotator } from './MemeAnnotator';
 import { AnalisisMemesData, MemeAnnotation } from './analisisMemesTypes';
 import {
@@ -33,6 +33,16 @@ interface ExerciseProps {
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
   exercise?: AnalisisMemesData;
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+    specificActions?: Array<{
+      label: string;
+      icon?: React.ReactNode;
+      onClick: () => void;
+      variant?: 'primary' | 'secondary' | 'blue' | 'gold';
+    }>;
+  }>;
 }
 
 interface ExerciseState {
@@ -47,7 +57,7 @@ const defaultExercise: AnalisisMemesData = {
   estimatedTime: 600,
   topic: 'Análisis de textos digitales',
   hints: [],
-  memeUrl: 'https://via.placeholder.com/600x400?text=Meme+Example',
+  memeUrl: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><rect fill="#e5e7eb" width="600" height="400"/><text x="300" y="200" text-anchor="middle" fill="#6b7280" font-size="16">Imagen del meme</text></svg>')}`,
   memeTitle: 'Meme sobre Marie Curie',
   expectedAnnotations: [],
 };
@@ -59,6 +69,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   onProgressUpdate,
   initialData,
   exercise = defaultExercise,
+  actionsRef,
 }) => {
   const [annotations, setAnnotations] = useState<MemeAnnotation[]>(initialData?.annotations || []);
   const [isAdding, setIsAdding] = useState(false);
@@ -80,9 +91,9 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
       // Verificar si está pendiente de revisión manual
       if (result.status === 'pending_review' || result.requiresManualReview) {
         setFeedback({
-            type: 'info',
-            title: 'Análisis Enviado',
-            message: 'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
+          type: 'info',
+          title: 'Análisis Enviado',
+          message: 'Tu análisis ha sido enviado para revisión del maestro. Recibirás tus recompensas cuando sea evaluado.',
           pendingReview: true,
           xpEarned: 0,
           mlCoinsEarned: 0,
@@ -115,7 +126,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
     },
   });
 
-  const actionsRef = useRef<{
+  const localActionsRef = useRef<{
     handleReset?: () => void;
     handleCheck?: () => void;
     specificActions?: Array<{
@@ -125,6 +136,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
       variant?: 'primary' | 'secondary' | 'blue' | 'gold';
     }>;
   }>({});
+  const resolvedActionsRef = actionsRef || localActionsRef;
 
   const categories: Array<'texto' | 'contexto' | 'humor' | 'critica'> = [
     'texto',
@@ -224,8 +236,8 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
     setAnnotations((prev) => prev.map((a) => (a.id === id ? { ...a, ...updates } : a)));
   };
 
-  // Handle check/verification
-  const handleCheck = async () => {
+  // Handle verify (preview/validation action — does NOT submit to backend)
+  const handleVerify = async () => {
     if (annotations.length < 3) {
       setFeedback({
         type: 'error',
@@ -245,7 +257,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
     setFeedback({
       type: 'success',
       title: '¡Análisis Completado!',
-      message: `Has identificado ${annotations.length} elementos en el meme. Buen trabajo analizando los diferentes aspectos.`,
+      message: `Has identificado ${annotations.length} elementos en el meme. Buen trabajo analizando los diferentes aspectos.\n\nEsta es una vista previa. Usa 'Enviar Respuestas' para enviar al profesor.`,
       score,
       showConfetti: true,
     });
@@ -312,9 +324,9 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   // Attach actions to ref
 
   useEffect(() => {
-    actionsRef.current = {
+    resolvedActionsRef.current = {
       handleReset,
-      handleCheck,
+      handleCheck: handleVerify,
       specificActions: [
         {
           label: 'Guardar',
@@ -325,18 +337,16 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
       ],
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionsRef]);
+  }, [resolvedActionsRef, annotations]);
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg" className="mb-6">
-        <div className="mb-6 rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-          <div className="mb-4 flex items-center gap-3">
-            <Image className="h-8 w-8" />
-            <h2 className="text-detective-2xl font-bold">{exercise.title}</h2>
-          </div>
-          <p className="mb-4 opacity-90">{exercise.description}</p>
-          <div className="flex flex-wrap gap-3">
+      <UnifiedExerciseLayout
+        title={exercise.title}
+        description={exercise.description}
+        icon={<Image className="h-6 w-6" />}
+        headerActions={
+          <>
             <DetectiveButton
               variant={isAdding ? 'secondary' : 'gold'}
               icon={<Plus />}
@@ -345,13 +355,14 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
               {isAdding ? 'Cancelar' : 'Añadir Anotación'}
             </DetectiveButton>
             {isAdding && (
-              <p className="flex items-center text-detective-text-secondary">
+              <p className="flex items-center text-detective-text-secondary text-sm ml-2">
                 Click en la imagen para agregar una anotación
               </p>
             )}
-          </div>
-        </div>
-
+          </>
+        }
+        cardPadding="lg"
+      >
         <MemeAnnotator
           memeUrl={exercise.memeUrl}
           annotations={annotations}
@@ -491,7 +502,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
             )}
           </DetectiveButton>
         </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

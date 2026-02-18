@@ -27,6 +27,7 @@ export interface UpdateProfileDto {
   last_name?: string;
   bio?: string;
   grade_level?: string;
+  avatar_url?: string; // Added for avatar selection from predefined list
 }
 
 /**

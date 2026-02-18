@@ -1,5 +1,5 @@
-version: "1.0.0"
-updated: "2026-02-17"
+version: "1.1.0"
+updated: "2026-02-18"
 owner: "orchestration"
 source_standard: "docs/40-standards/ESTANDAR-SKILLS.md"
 
@@ -104,6 +104,21 @@ skills:
       - simco-apply-standard
     internal: true
     last_updated: "2026-02-17"
+
+  - name: simco-apply-backend-standard
+    version: "1.0.0"
+    contract_version: "1.0.0"
+    category: domain
+    priority: P2
+    status: active
+    path: orchestration/skills/simco-apply-backend-standard/
+    simco_source: orchestration/directivas/simco/SIMCO-BACKEND.md
+    estimated_tokens: 950
+    dependencies:
+      - simco-apply-standard
+      - simco-safe-edit
+    internal: true
+    last_updated: "2026-02-18"
 
   - name: vercel-v0-dev
     version: "1.0.0"

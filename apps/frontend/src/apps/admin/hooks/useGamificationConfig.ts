@@ -2,7 +2,10 @@
  * useGamificationConfig Hook
  *
  * React Query hook for gamification configuration management (US-AE-005)
- * Provides queries and mutations for parameters, Maya ranks, and stats
+ * Provides queries and mutations for parameters, Maya ranks, and stats.
+ *
+ * Data transformations (snake_case -> camelCase, null guards, default values)
+ * are applied inside `select` so consumers receive validated, ready-to-use data.
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -10,6 +13,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { gamificationConfigApi } from '@/services/api/admin/gamificationConfigApi';
 import type {
   ListParametersQuery,
+  MayaRankConfig,
+  GamificationParameter,
   UpdateParameterDto,
   BulkUpdateParametersDto,
   UpdateMayaRankDto,
@@ -28,6 +33,69 @@ const QUERY_KEYS = {
   stats: () => ['gamification', 'stats'],
 };
 
+// ========================================
+// DATA TRANSFORMATIONS (BUG-ADMIN-008, BUG-ADMIN-009)
+// ========================================
+
+/**
+ * Normalize a raw Maya rank object from the backend.
+ *
+ * The backend may return snake_case fields (rank_name, min_xp, etc.) or
+ * camelCase fields. This function handles both and returns a validated
+ * MayaRankConfig, or null if the object is invalid.
+ */
+function normalizeRank(r: unknown): MayaRankConfig | null {
+  if (!r || typeof r !== 'object') return null;
+
+  const rank = r as Record<string, unknown>;
+
+  const hasId = rank.id || rank.rank_name;
+  const hasName = rank.name || rank.rank_name;
+  const hasLevel = typeof rank.level === 'number' || typeof rank.rank_order === 'number';
+
+  if (!hasId || !hasName || !hasLevel) return null;
+
+  const name = (rank.name as string) || (rank.rank_name as string) || 'Sin nombre';
+  if (!name || name === 'Sin nombre') return null;
+
+  return {
+    id:
+      (rank.id as string) ||
+      (rank.rank_name as string) ||
+      `rank-${(rank.level as number) || 0}`,
+    name,
+    level: (rank.level as number) ?? (rank.rank_order as number) ?? 0,
+    minXp: (rank.minXp as number) ?? (rank.min_xp as number) ?? 0,
+    maxXp: (rank.maxXp as number | null) ?? (rank.max_xp as number | null) ?? null,
+    multiplierXp: (rank.multiplierXp as number) ?? (rank.multiplier_xp as number) ?? 1,
+    multiplierMlCoins:
+      (rank.multiplierMlCoins as number) ?? (rank.multiplier_ml_coins as number) ?? 1,
+    bonusMlCoins: (rank.bonusMlCoins as number) ?? (rank.bonus_ml_coins as number) ?? 0,
+    color: (rank.color as string) || '#6B7280',
+    icon: (rank.icon as string | null) || null,
+    description: (rank.description as string) || '',
+    perks: Array.isArray(rank.perks) ? (rank.perks as string[]) : [],
+    isActive: (rank.isActive as boolean) ?? (rank.is_active as boolean) ?? true,
+    order: (rank.order as number) ?? (rank.rank_order as number) ?? 0,
+  };
+}
+
+/**
+ * Filter and validate raw parameters from the backend response.
+ * Returns only parameters with valid id and key fields.
+ */
+function selectSafeParameters(
+  response: { data: GamificationParameter[]; total: number; page: number; limit: number } | undefined,
+): GamificationParameter[] {
+  if (!response || typeof response !== 'object') return [];
+  if (!response.data || !Array.isArray(response.data)) return [];
+
+  return response.data.filter((param): param is GamificationParameter => {
+    if (!param || typeof param !== 'object') return false;
+    return Boolean(param.id && param.key);
+  });
+}
+
 /**
  * Hook for gamification configuration management
  *
@@ -44,8 +112,11 @@ export function useGamificationConfig() {
   // ========================================
 
   /**
-   * Query for listing all parameters
-   * Includes defensive validation for unexpected backend responses
+   * Query for listing all parameters.
+   *
+   * The raw response is validated in queryFn, then `select` applies
+   * defensive filtering so consumers receive GamificationParameter[]
+   * directly (not the paginated wrapper).
    *
    * @param query Optional filters (category, isActive, search, pagination)
    */
@@ -53,55 +124,31 @@ export function useGamificationConfig() {
     return useQuery({
       queryKey: QUERY_KEYS.parameters(query),
       queryFn: async () => {
-        try {
-          const response = await gamificationConfigApi.listParameters(query);
+        const response = await gamificationConfigApi.listParameters(query);
 
-          // Defensive: Validate response structure
-          if (!response || typeof response !== 'object') {
-            console.warn(
-              '[useGamificationConfig] listParameters returned invalid response:',
-              response,
-            );
-            return { data: [], total: 0, page: 1, limit: 10 };
-          }
-
-          // Defensive: Validate data array exists
-          if (!response.data || !Array.isArray(response.data)) {
-            console.warn('[useGamificationConfig] listParameters missing data array:', response);
-            return { ...response, data: [] };
-          }
-
-          // Defensive: Validate each parameter has required fields
-          const validatedData = response.data.filter((param) => {
-            if (!param || typeof param !== 'object') {
-              console.warn('[useGamificationConfig] Invalid parameter object:', param);
-              return false;
-            }
-
-            if (!param.id || !param.key) {
-              console.warn('[useGamificationConfig] Parameter missing id or key:', param);
-              return false;
-            }
-
-            if (param.value === undefined || param.value === null) {
-              console.warn('[useGamificationConfig] Parameter missing value:', param);
-              return false;
-            }
-
-            return true;
-          });
-
-          return {
-            ...response,
-            data: validatedData,
-            total: validatedData.length,
-          };
-        } catch (error) {
-          console.error('[useGamificationConfig] Error fetching parameters:', error);
+        // Validate response structure
+        if (!response || typeof response !== 'object') {
           return { data: [], total: 0, page: 1, limit: 10 };
         }
+
+        if (!response.data || !Array.isArray(response.data)) {
+          return { ...response, data: [] };
+        }
+
+        // Validate each parameter has required fields
+        const validatedData = response.data.filter((param) => {
+          return param && typeof param === 'object' && param.id && param.key && param.value !== undefined && param.value !== null;
+        });
+
+        return {
+          ...response,
+          data: validatedData,
+          total: validatedData.length,
+        };
       },
+      select: selectSafeParameters,
       staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
     });
   };
 
@@ -120,51 +167,27 @@ export function useGamificationConfig() {
   };
 
   /**
-   * Query for listing all Maya ranks
-   * Includes defensive validation for unexpected backend responses
+   * Query for listing all Maya ranks.
+   *
+   * The raw backend response may contain snake_case fields. The `select`
+   * transform normalizes every rank into camelCase MayaRankConfig objects,
+   * filtering out any invalid entries (BUG-ADMIN-008).
    */
   const useMayaRanks = () => {
     return useQuery({
       queryKey: QUERY_KEYS.mayaRanks(),
       queryFn: async () => {
-        try {
-          const data = await gamificationConfigApi.listMayaRanks();
-
-          // Defensive: Validate response is an array
-          if (!Array.isArray(data)) {
-            console.warn('[useGamificationConfig] listMayaRanks returned non-array:', data);
-            return [];
-          }
-
-          // Defensive: Validate each rank has required fields
-          // Cast to any to allow checking both camelCase and snake_case fields from backend
-          const validatedRanks = data.filter((rank) => {
-            if (!rank || typeof rank !== 'object') {
-              console.warn('[useGamificationConfig] Invalid rank object:', rank);
-              return false;
-            }
-
-            const rankAny = rank as any;
-            const hasId = rank.id || rankAny.rank_name;
-            const hasName = rank.name || rankAny.rank_name;
-            const hasLevel =
-              typeof rank.level === 'number' || typeof rankAny.rank_order === 'number';
-
-            if (!hasId || !hasName || !hasLevel) {
-              console.warn('[useGamificationConfig] Rank missing required fields:', rank);
-              return false;
-            }
-
-            return true;
-          });
-
-          return validatedRanks;
-        } catch (error) {
-          console.error('[useGamificationConfig] Error fetching Maya ranks:', error);
-          return [];
-        }
+        const data = await gamificationConfigApi.listMayaRanks();
+        return Array.isArray(data) ? data : [];
+      },
+      select: (rawRanks): MayaRankConfig[] => {
+        if (!rawRanks || !Array.isArray(rawRanks)) return [];
+        return rawRanks
+          .map(normalizeRank)
+          .filter((r): r is MayaRankConfig => r !== null);
       },
       staleTime: 1000 * 60 * 10, // 10 minutes
+      retry: 1,
     });
   };
 
@@ -190,39 +213,22 @@ export function useGamificationConfig() {
     return useQuery({
       queryKey: QUERY_KEYS.stats(),
       queryFn: async () => {
-        try {
-          const data = await gamificationConfigApi.getStats();
+        const data = await gamificationConfigApi.getStats();
 
-          // Defensive: Validate response structure
-          if (!data || typeof data !== 'object') {
-            console.warn('[useGamificationConfig] getStats returned invalid response:', data);
-            return {
-              totalParameters: 0,
-              activeParameters: 0,
-              totalRanks: 0,
-              activeRanks: 0,
-            };
-          }
-
-          // Defensive: Ensure numeric fields with fallbacks
-          return {
-            totalParameters: typeof data.totalParameters === 'number' ? data.totalParameters : 0,
-            activeParameters: typeof data.activeParameters === 'number' ? data.activeParameters : 0,
-            totalRanks: typeof data.totalRanks === 'number' ? data.totalRanks : 0,
-            activeRanks: typeof data.activeRanks === 'number' ? data.activeRanks : 0,
-            lastModified: data.lastModified || undefined,
-          };
-        } catch (error) {
-          console.error('[useGamificationConfig] Error fetching stats:', error);
-          return {
-            totalParameters: 0,
-            activeParameters: 0,
-            totalRanks: 0,
-            activeRanks: 0,
-          };
+        if (!data || typeof data !== 'object') {
+          return { totalParameters: 0, activeParameters: 0, totalRanks: 0, activeRanks: 0, lastModified: '' };
         }
+
+        return {
+          totalParameters: typeof data.totalParameters === 'number' ? data.totalParameters : 0,
+          activeParameters: typeof data.activeParameters === 'number' ? data.activeParameters : 0,
+          totalRanks: typeof data.totalRanks === 'number' ? data.totalRanks : 0,
+          activeRanks: typeof data.activeRanks === 'number' ? data.activeRanks : 0,
+          lastModified: data.lastModified || '',
+        };
       },
       staleTime: 1000 * 60 * 2, // 2 minutes
+      retry: 1,
     });
   };
 

@@ -5,7 +5,7 @@ import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExer
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mediaApi } from '@/shared/api/mediaApi';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 
 interface ProgressData {
   progress: {
@@ -52,7 +52,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
     error: recorderError,
     videoBlob,
     videoUrl,
-    previewUrl,
+    previewStream,
     duration,
     startRecording,
     stopRecording,
@@ -180,23 +180,14 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectionRecordings, currentSectionIndex, duration, allSectionsCompleted, videoBlob, startTime]);
 
-  // Update video preview source when previewUrl changes
+  // Assign the live preview stream from the hook to the video element (no extra getUserMedia call)
   useEffect(() => {
-    if (videoRef.current && previewUrl && isRecording) {
-      // For live preview during recording
-      const video = videoRef.current;
-      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then(stream => {
-          video.srcObject = stream;
-        })
-        .catch(err => {
-          console.error('Error setting preview:', err);
-        });
-    } else if (videoRef.current && videoUrl && !isRecording) {
-      // For playback after recording
+    if (videoRef.current && previewStream) {
+      videoRef.current.srcObject = previewStream;
+    } else if (videoRef.current && !previewStream) {
       videoRef.current.srcObject = null;
     }
-  }, [previewUrl, videoUrl, isRecording]);
+  }, [previewStream]);
 
   const handleSubmit = async () => {
     // FIX GAP-EX-004: Upload video to storage before submitting
@@ -285,64 +276,62 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
   const isTimerWarning = sectionTimeRemaining <= 10 && sectionTimeRemaining > 0;
 
   return (
-    <DetectiveCard className="min-h-screen p-6">
-      <div className="mx-auto max-w-5xl space-y-6">
-        <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-          <div className="mb-2 flex items-center gap-3">
-            <Video className="h-8 w-8" />
-            <h2 className="text-2xl font-bold">Video Carta a Marie Curie</h2>
-          </div>
-          <p className="opacity-90 mb-4">
-            Graba un video mensaje dividido en 4 secciones cronometradas. Duración total: 3 minutos.
-          </p>
-
-          {/* Progress Bar */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-white">Progreso Total</span>
-              <span className="text-white/80">
-                {Math.round(totalProgress)}%
-              </span>
+    <>
+      <UnifiedExerciseLayout
+        title="Video Carta a Marie Curie"
+        description="Graba un video mensaje dividido en 4 secciones cronometradas. Duración total: 3 minutos."
+        icon={<Video className="h-8 w-8" />}
+        className="max-w-5xl"
+        headerChildren={
+          <>
+            {/* Progress Bar */}
+            <div className="space-y-2 mt-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-white">Progreso Total</span>
+                <span className="text-white/80">
+                  {Math.round(totalProgress)}%
+                </span>
+              </div>
+              <div className="h-3 w-full rounded-full bg-white/30 overflow-hidden">
+                <div
+                  className="h-full bg-white transition-all duration-300"
+                  style={{ width: `${totalProgress}%` }}
+                />
+              </div>
             </div>
-            <div className="h-3 w-full rounded-full bg-white/30 overflow-hidden">
-              <div
-                className="h-full bg-white transition-all duration-300"
-                style={{ width: `${totalProgress}%` }}
-              />
+
+            {/* Sections Overview */}
+            <div className="mt-4 grid grid-cols-4 gap-2">
+              {sections.map((section, index) => {
+                const recording = sectionRecordings.get(section.id);
+                const isCurrent = index === currentSectionIndex;
+                const isCompleted = recording?.completed;
+
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => !isRecording && reRecordSection(section.id)}
+                    disabled={isRecording}
+                    className={`p-3 rounded-xl border-2 text-center transition-all ${
+                      isCurrent
+                        ? 'border-white bg-white text-blue-800'
+                        : isCompleted
+                        ? 'border-green-300 bg-detective-success/10 text-detective-success'
+                        : 'border-white/30 bg-white/10 text-white hover:bg-white/20'
+                    } ${isRecording ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                  >
+                    <div className="text-xs font-bold mb-1">{section.name}</div>
+                    <div className="text-xs">{section.duration}s</div>
+                    {isCompleted && !isCurrent && (
+                      <CheckCircle className="h-4 w-4 mx-auto mt-1" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
-          </div>
-
-          {/* Sections Overview */}
-          <div className="mt-4 grid grid-cols-4 gap-2">
-            {sections.map((section, index) => {
-              const recording = sectionRecordings.get(section.id);
-              const isCurrent = index === currentSectionIndex;
-              const isCompleted = recording?.completed;
-
-              return (
-                <button
-                  key={section.id}
-                  onClick={() => !isRecording && reRecordSection(section.id)}
-                  disabled={isRecording}
-                  className={`p-3 rounded-xl border-2 text-center transition-all ${
-                    isCurrent
-                      ? 'border-white bg-white text-blue-800'
-                      : isCompleted
-                      ? 'border-green-300 bg-detective-success/10 text-detective-success'
-                      : 'border-white/30 bg-white/10 text-white hover:bg-white/20'
-                  } ${isRecording ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
-                >
-                  <div className="text-xs font-bold mb-1">{section.name}</div>
-                  <div className="text-xs">{section.duration}s</div>
-                  {isCompleted && !isCurrent && (
-                    <CheckCircle className="h-4 w-4 mx-auto mt-1" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
+          </>
+        }
+      >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
             {!isSupported && (
@@ -400,7 +389,8 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                   className="relative overflow-hidden rounded-detective bg-black"
                   style={{ aspectRatio: '16/9' }}
                 >
-                  <video ref={videoRef} autoPlay muted className={`h-full w-full ${filter}`} />
+                  {/* CSS filters are visual-only and are not recorded in the video output */}
+                  <video ref={videoRef} autoPlay muted playsInline className={`h-full w-full ${filter}`} />
                   {!isRecording && !isPaused && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Camera className="h-20 w-20 text-white/50" />
@@ -508,7 +498,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
               </div>
             ) : (
               <div className="space-y-4 rounded-detective bg-white p-6 shadow-card">
-                <video src={videoUrl} controls className="w-full rounded-detective" />
+                <video src={videoUrl} controls playsInline className="w-full rounded-detective" />
 
                 {/* Recording Summary */}
                 <div className="bg-detective-bg-secondary rounded-detective p-4 space-y-3">
@@ -659,7 +649,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
             </div>
           </div>
         </div>
-      </div>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (
@@ -674,7 +664,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
           feedback={feedback}
         />
       )}
-    </DetectiveCard>
+    </>
   );
 };
 

@@ -214,27 +214,16 @@ BEGIN
             "informationSynthesis": true
         }'::jsonb,
         '{
-            "researchQuestion": "¿Qué experimentos realizó Marie Curie para aislar el radio?",
-            "mainArticle": {
-                "title": "Marie Curie: Pionera de la Radiactividad",
-                "paragraphs": [
-                    "Marie Curie revolucionó la ciencia con sus <link to=radiactividad>descubrimientos en radiactividad</link>...",
-                    "Trabajó intensamente en el <link to=aislamiento>aislamiento de elementos radiactivos</link>..."
-                ],
-                "links": [
-                    {
-                        "text": "radiactividad",
-                        "relevance": "high",
-                        "leadsTo": "Historia de la radiactividad"
-                    },
-                    {
-                        "text": "aislamiento",
-                        "relevance": "very high",
-                        "leadsTo": "Proceso de aislamiento del radio"
-                    }
-                ]
-            },
-            "optimalPath": ["mainArticle", "aislamiento", "proceso experimental"]
+            "researchQuestion": "Como influyeron los descubrimientos de Marie Curie en la ciencia moderna?",
+            "startNodeId": "marie-intro",
+            "targetNodeId": "marie-legado",
+            "nodes": [
+                {"id": "marie-intro", "title": "Marie Curie: Una Vida de Ciencia", "content": "Marie Curie (1867-1934) fue una fisica y quimica polaca nacionalizada francesa. Pionera en el campo de la radiactividad, fue la primera persona en recibir dos premios Nobel en distintas especialidades: Fisica y Quimica.", "links": [{"label": "Infancia y Educacion", "targetId": "marie-infancia"}, {"label": "Sus estudios en Paris", "targetId": "marie-paris"}]},
+                {"id": "marie-infancia", "title": "Infancia en Varsovia", "content": "Nacida como Maria Salomea Sklodowska en Varsovia, en lo que entonces era el Reino de Polonia. A pesar de las dificultades economicas y politicas, mostro una gran pasion por el aprendizaje desde joven.", "links": [{"label": "Volver al inicio", "targetId": "marie-intro"}, {"label": "Viaje a Paris", "targetId": "marie-paris"}]},
+                {"id": "marie-paris", "title": "Estudios en la Sorbona", "content": "En 1891, a los 24 anos, se matriculo en la Universidad de Paris donde obtuvo sus licenciaturas en Fisica y Matematicas. Fue en Paris donde conocio a Pierre Curie.", "links": [{"label": "Antecedentes", "targetId": "marie-infancia"}, {"label": "Investigacion sobre Radiactividad", "targetId": "marie-descubrimientos"}]},
+                {"id": "marie-descubrimientos", "title": "El Descubrimiento del Radio y el Polonio", "content": "Junto a Pierre Curie, Marie investigo materiales radiactivos. En 1898 anunciaron el descubrimiento de dos nuevos elementos: el polonio y el radio. Acuno el termino radiactividad.", "links": [{"label": "Regresar a sus estudios", "targetId": "marie-paris"}, {"label": "Reconocimientos y Premios", "targetId": "marie-legado"}]},
+                {"id": "marie-legado", "title": "Premios Nobel y Legado", "content": "En 1903 recibio el Premio Nobel de Fisica y en 1911 el de Quimica en solitario. Sus investigaciones sentaron las bases para los rayos X y la radioterapia.", "links": [{"label": "Inicio", "targetId": "marie-intro"}, {"label": "Repasar descubrimientos", "targetId": "marie-descubrimientos"}]}
+            ]
         }'::jsonb,
         '{"informationFound": true, "pathEfficiency": 0.8, "relevantLinks": 3}'::jsonb,
         'intermediate', 100, 70,

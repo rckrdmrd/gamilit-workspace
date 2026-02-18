@@ -188,9 +188,9 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   async getProfile(@Request() req: AuthRequest): Promise<UserResponseDto> {
-    // Extraer userId del token JWT
-    const userId = req.user!.id;
-    const user = await this.authService.validateUser(userId);
+    // E7-FIX: Use user_id (auth.users.id) for auth.users lookup, not id (profile.id)
+    const userAuthId = req.user!.user_id!;
+    const user = await this.authService.validateUser(userAuthId);
 
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');
@@ -220,11 +220,11 @@ export class AuthController {
     @Request() req: AuthRequest,
       @Body() dto: UpdateProfileDto,
   ): Promise<UserResponseDto> {
-    // Extraer userId del token JWT
-    const userId = req.user!.id;
+    // E9-FIX: Use user_id (auth.users.id) for updateUserProfile, not id (profile.id)
+    const userAuthId = req.user!.user_id!;
 
     // Actualizar perfil usando el servicio de auth
-    const updatedUser = await this.authService.updateUserProfile(userId, dto);
+    const updatedUser = await this.authService.updateUserProfile(userAuthId, dto);
 
     if (!updatedUser) {
       throw new UnauthorizedException('Usuario no encontrado');
@@ -337,8 +337,9 @@ export class AuthController {
     },
   })
   async get2FAStatus(@Request() req: AuthRequest): Promise<{ enabled: boolean; method: string | null }> {
-    const userId = req.user!.id;
-    return this.twoFactorAuthService.getStatus(userId);
+    // E10-FIX: Use user_id (auth.users.id) for 2FA table lookups (FK → auth.users)
+    const userAuthId = req.user!.user_id!;
+    return this.twoFactorAuthService.getStatus(userAuthId);
   }
 
   /**
@@ -370,8 +371,9 @@ export class AuthController {
     @Request() req: AuthRequest,
     @Body('method') method: 'email' | 'sms' | 'authenticator',
   ): Promise<{ message: string; expiresAt: Date }> {
-    const userId = req.user!.id;
-    return this.twoFactorAuthService.setup2FA(userId, method || 'email');
+    // E10-FIX: Use user_id (auth.users.id) for 2FA table lookups (FK → auth.users)
+    const userAuthId = req.user!.user_id!;
+    return this.twoFactorAuthService.setup2FA(userAuthId, method || 'email');
   }
 
   /**
@@ -403,8 +405,9 @@ export class AuthController {
     @Request() req: AuthRequest,
     @Body('code') code: string,
   ): Promise<{ message: string; backupCodes?: string[] }> {
-    const userId = req.user!.id;
-    return this.twoFactorAuthService.verifySetup(userId, code);
+    // E10-FIX: Use user_id (auth.users.id) for 2FA table lookups (FK → auth.users)
+    const userAuthId = req.user!.user_id!;
+    return this.twoFactorAuthService.verifySetup(userAuthId, code);
   }
 
   /**
@@ -465,9 +468,10 @@ export class AuthController {
     @Request() req: AuthRequest,
     @Body('password') password: string,
   ): Promise<{ message: string }> {
-    const userId = req.user!.id;
+    // E10-FIX: Use user_id (auth.users.id) for 2FA table lookups (FK → auth.users)
+    const userAuthId = req.user!.user_id!;
     // TODO: Validate password using AuthService before disabling
-    return this.twoFactorAuthService.disable2FA(userId, password);
+    return this.twoFactorAuthService.disable2FA(userAuthId, password);
   }
 
   /**

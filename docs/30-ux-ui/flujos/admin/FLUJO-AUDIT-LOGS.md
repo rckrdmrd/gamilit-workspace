@@ -1,5 +1,7 @@
 # FL-ADM-06 - Audit Logs
 
+**Version:** 1.1.0
+**Fecha:** 2026-02-18
 **Portal:** Admin
 **Prioridad:** Alta
 **Estado:** Documentado
@@ -14,7 +16,7 @@ Flujo para consultar logs de auditoria de autenticacion y logs del sistema con f
 
 - **Rol requerido:** `super_admin`. Los logs de auditoria contienen informacion sensible (IPs, emails, intentos de login) y solo son accesibles por administradores de nivel superior.
 - **Sesion activa:** JWT valido emitido por `auth/login`, con token no expirado y sesion no revocada.
-- **Estado del sistema:** La plataforma debe estar operativa. Los logs de auditoria se almacenan en `auth_management.login_attempts` (intentos de login) y `audit_logging.system_logs` (logs del sistema).
+- **Estado del sistema:** La plataforma debe estar operativa. Los logs de auditoria se almacenan en `auth_management.auth_attempts` (intentos de login) y `audit_logging.system_logs` (logs del sistema).
 - **Datos previos:** Deben existir registros de actividad en las tablas de auditoria. Los logs se generan automaticamente por el sistema conforme ocurren eventos.
 
 ## Diagrama Mermaid
@@ -28,7 +30,7 @@ flowchart TD
     apiAudit --> service[AdminSystemService]
     apiAlias --> service
     apiSysLogs --> service
-    service --> dbLogin[(auth_management.login_attempts)]
+    service --> dbLogin[(auth_management.auth_attempts)]
     service --> dbSysLog[(audit_logging.system_logs)]
     dbLogin --> ui[Tabla paginada + detalle por log]
     dbSysLog --> ui
@@ -49,10 +51,12 @@ flowchart TD
 | Tipo | Archivo |
 |------|---------|
 | Pagina | `apps/frontend/src/apps/admin/pages/AdminAuditLogsPage.tsx` |
+| Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/dashboard/SystemLogsViewer.tsx` |
 | Componente | `apps/frontend/src/apps/admin/components/monitoring/LogsViewer.tsx` |
 | Hook | `apps/frontend/src/apps/admin/hooks/useAuditLogs.ts` |
 | Hook | `apps/frontend/src/apps/admin/hooks/useSystemLogs.ts` |
+| Hook | `apps/frontend/src/apps/admin/hooks/useAdminPageSetup.ts` |
 | API Service | `apps/frontend/src/services/api/adminAPI.ts` (seccion AUDIT LOGS, MONITORING) |
 
 ### Backend
@@ -78,9 +82,9 @@ flowchart TD
 
 | Schema.Tabla | Entity |
 |--------------|--------|
-| `auth_management.login_attempts` | `apps/backend/src/modules/auth/entities/auth-attempt.entity.ts` |
+| `auth_management.auth_attempts` | `apps/backend/src/modules/auth/entities/auth-attempt.entity.ts` |
 | `audit_logging.system_logs` | `apps/backend/src/modules/admin/entities/system-log.entity.ts` |
-| `audit_logging.user_activity` | (consultada por cleanup-activity) |
+| `audit_logging.user_activity_logs` | (consultada por cleanup-activity) |
 | `admin_dashboard.activity_logs` | `apps/backend/src/modules/admin/entities/activity-log.entity.ts` |
 
 ## Reglas y validaciones
@@ -111,6 +115,7 @@ flowchart TD
 | Capa | Archivo | Evidencia |
 |------|---------|-----------|
 | FE Page | `apps/frontend/src/apps/admin/pages/AdminAuditLogsPage.tsx` | Pagina principal de visor de audit logs |
+| FE Wrapper | `apps/frontend/src/apps/admin/components/shared/AdminPageShell.tsx` | Wrapper comun de paginas admin |
 | FE Component | `apps/frontend/src/apps/admin/components/dashboard/SystemLogsViewer.tsx` | Visor de logs en dashboard |
 | FE Component | `apps/frontend/src/apps/admin/components/monitoring/LogsViewer.tsx` | Visor de logs en monitoring |
 | FE Hook | `apps/frontend/src/apps/admin/hooks/useAuditLogs.ts` | Hook con filtros y paginacion de audit logs |
@@ -119,7 +124,7 @@ flowchart TD
 | BE Controller | `apps/backend/src/modules/admin/controllers/admin-system.controller.ts` | Controlador canonic con endpoint audit-log y logs |
 | BE Controller | `apps/backend/src/modules/admin/controllers/admin-logs.controller.ts` | Controlador alias para /admin/logs |
 | BE Service | `apps/backend/src/modules/admin/services/admin-system.service.ts` | Logica de negocio de auditoria |
-| DB Table | `auth_management.login_attempts` | Tabla de intentos de autenticacion |
+| DB Table | `auth_management.auth_attempts` | Tabla de intentos de autenticacion |
 | DB Table | `audit_logging.system_logs` | Tabla de logs del sistema |
 
 ## Referencias

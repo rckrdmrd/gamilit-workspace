@@ -3,13 +3,22 @@ cd /mnt/c/Empresas/ISEM/gamilit-workspace/apps/database
 DDL_DIR="./ddl"
 DB_NAME="gamilit_platform"
 DB_USER="gamilit_user"
-DB_PASSWORD="gamilit_dev_2026"
+DB_PASSWORD="${DB_PASSWORD:-${GAMILIT_DB_PASSWORD:-}}"
 DB_HOST="localhost"
 DB_PORT="5432"
-SUDO_PASS="2320"
+SUDO_PASS="${GAMILIT_SUDO_PASSWORD:-}"
+
+if [ -z "$DB_PASSWORD" ]; then
+    echo "ERROR: define DB_PASSWORD o GAMILIT_DB_PASSWORD"
+    exit 1
+fi
 
 exec_as_postgres() {
-    printf "$SUDO_PASS\n" | sudo -S -u postgres psql -d "$DB_NAME" -f "$1" 2>&1
+    if [ -n "$SUDO_PASS" ]; then
+        printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -d "$DB_NAME" -f "$1" 2>&1
+    else
+        sudo -u postgres psql -d "$DB_NAME" -f "$1" 2>&1
+    fi
 }
 
 exec_as_user() {

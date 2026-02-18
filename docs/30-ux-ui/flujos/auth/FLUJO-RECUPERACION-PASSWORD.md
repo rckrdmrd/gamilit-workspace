@@ -21,7 +21,7 @@ sequenceDiagram
     participant EM as EmailService
 
     U->>FE: Solicita recuperar password
-    FE->>BE: POST /auth/forgot-password
+    FE->>BE: POST /auth/reset-password/request
     BE->>DB: Genera token de reset
     BE->>EM: Envia email con enlace
     U->>FE: Abre enlace de reset
@@ -39,7 +39,7 @@ sequenceDiagram
 
 ### Backend
 - `apps/backend/src/modules/auth/services/password-recovery.service.ts`
-- Endpoints: `/auth/forgot-password`, `/auth/reset-password`
+- Endpoints: `/auth/reset-password/request`, `/auth/reset-password`
 
 ### Datos
 - `auth_management.password_reset_tokens`

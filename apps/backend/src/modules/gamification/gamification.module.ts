@@ -23,6 +23,10 @@ import {
   ShopItem,
   UserPurchase,
   MayaRankEntity,
+  ComodinUsageLog,
+  ComodinUsageTracking,
+  ComodinUse,
+  UserEquippedItem,
 } from './entities';
 
 // External entities
@@ -42,6 +46,7 @@ import {
   ClassroomMissionsService,
   ComodinesService,
   ShopService,
+  InventoryService,
 } from './services';
 
 // Controllers
@@ -56,6 +61,7 @@ import {
   ClassroomMissionsController,
   ComodinesController,
   ShopController,
+  InventoryController,
 } from './controllers';
 
 // Constants
@@ -102,6 +108,10 @@ import {
         ShopItem,
         UserPurchase,
         MayaRankEntity,
+        ComodinUsageLog, // FIX P2: Missing forFeature
+        ComodinUsageTracking, // FIX P2: Missing forFeature
+        ComodinUse, // FIX P2: Missing forFeature
+        UserEquippedItem,
       ],
       'gamification',
     ),
@@ -124,6 +134,7 @@ import {
     ClassroomMissionsService,
     ComodinesService,
     ShopService,
+    InventoryService,
   ],
   controllers: [
     UserStatsController,
@@ -136,6 +147,7 @@ import {
     ClassroomMissionsController,
     ComodinesController,
     ShopController,
+    InventoryController,
   ],
   exports: [
     UserStatsService,
@@ -149,6 +161,7 @@ import {
     ClassroomMissionsService,
     ComodinesService,
     ShopService,
+    InventoryService,
   ],
 })
 export class GamificationModule {}

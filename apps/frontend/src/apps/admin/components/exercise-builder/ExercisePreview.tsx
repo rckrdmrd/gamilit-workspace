@@ -1,7 +1,7 @@
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { cn } from '@shared/utils/cn';
 import { Clock, Star, Coins, HelpCircle, BookOpen, AlertTriangle } from 'lucide-react';
-import type { ExerciseFormData } from '../../pages/AdminExerciseCreatePage';
+import type { ExerciseFormData } from '../../types/exercise-builder.types';
 
 const MODULE_NAMES: Record<string, string> = {
   'module-1': 'M1 - Comprension Literal',

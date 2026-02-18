@@ -13,10 +13,10 @@ import type {
   AchievementUnlockNotification,
   AchievementStats,
 } from '../types/achievementsTypes';
-// NOTA: Se mantiene achievementsAPI porque retorna AchievementAPIResponse[] (achievement + progress)
-// gamificationApi.getUserAchievements retorna UserAchievement[] (solo progress) - formato incompatible
-// TODO: Agregar método getUserAchievementsWithDetails a gamificationApi para poder consolidar
-import { getUserAchievements } from '../api/achievementsAPI';
+// REC-008: Consolidated to use canonical gamificationApi instead of achievementsAPI.
+// gamificationApi.getAllAchievements() + gamificationApi.getUserAchievements() are combined
+// locally in fetchAchievements() to produce the enriched format the store needs.
+import { gamificationApi } from '@/lib/api/gamification.api';
 
 // Empty stats for initial state
 const emptyStats: AchievementStats = {
@@ -156,39 +156,52 @@ export const useAchievementsStore = create<AchievementsStore>((set) => ({
 
   /**
    * Fetch achievements from backend for specific user
+   *
+   * REC-008: Uses canonical gamificationApi (getAllAchievements + getUserAchievements)
+   * and merges them locally, replacing the previous achievementsAPI dependency.
+   *
    * @param userId - User ID to fetch achievements for
    */
   fetchAchievements: async (userId: string) => {
-    console.log('[achievementsStore] fetchAchievements called for userId:', userId);
     set({ isLoading: true, error: null });
     try {
-      // Fetch user achievements with progress from backend
-      const achievementsWithProgress = await getUserAchievements(userId);
-      console.log('[achievementsStore] Raw achievements from API:', achievementsWithProgress.length);
+      // REC-008: Fetch all achievements and user progress via canonical gamificationApi
+      const [allAchievements, userAchievements] = await Promise.all([
+        gamificationApi.getAllAchievements(),
+        gamificationApi.getUserAchievements(userId),
+      ]);
 
-      // Map backend response to frontend Achievement type
-      // CORR-P2-001: Usar ?? (nullish coalescing) en lugar de || para respetar valores de 0
-      const achievements: Achievement[] = achievementsWithProgress.map((ach) => ({
-        id: ach.id,
-        title: ach.name,
-        description: ach.description,
-        category: ach.category as Achievement['category'],
-        rarity: ach.rarity,
-        icon: ach.icon,
-        // CORR-P2-001: ?? permite que 0 sea un valor válido (0 ML coins es válido)
-        mlCoinsReward: ach.rewards?.ml_coins ?? ach.ml_coins_reward ?? 0,
-        xpReward: ach.rewards?.xp ?? ach.points_value ?? 0,
-        isUnlocked: ach.isUnlocked ?? false,
-        unlockedAt: ach.unlockedAt,
-        progress: ach.progress,
-        requirements: ach.conditions?.requirements,
-        isHidden: ach.is_secret ?? (ach.category === 'hidden' || ach.category === 'special'),
-        rewardsClaimed: ach.rewardsClaimed ?? false,
-      }));
+      // Build a lookup map of user progress by achievementId
+      const userProgressMap = new Map(
+        userAchievements.map((ua) => [ua.achievementId, ua]),
+      );
+
+      // Merge achievement definitions (SSOT Achievement) with user progress (UserAchievement)
+      // to produce the AchievementWithProgress view model used by this store
+      const achievements: Achievement[] = allAchievements.map((ach) => {
+        const userProgress = userProgressMap.get(ach.id);
+        const isUnlocked = userProgress?.status === 'earned' || userProgress?.status === 'claimed';
+        return {
+          id: ach.id,
+          title: ach.name,
+          name: ach.name,
+          description: ach.description,
+          category: (ach.category ?? 'progress') as Achievement['category'],
+          rarity: ach.rarity ?? 'common',
+          icon: ach.icon,
+          mlCoinsReward: ach.rewards?.mlCoins ?? 0,
+          xpReward: ach.rewards?.xp ?? 0,
+          isUnlocked,
+          unlockedAt: userProgress?.earnedAt ? new Date(userProgress.earnedAt) : undefined,
+          progress: userProgress
+            ? { current: userProgress.progress ?? 0, required: 100 }
+            : undefined,
+          isHidden: ach.isHidden ?? false,
+          rewardsClaimed: userProgress?.status === 'claimed',
+        };
+      });
 
       const stats = calculateStats(achievements);
-      console.log('[achievementsStore] Mapped achievements:', achievements.length);
-      console.log('[achievementsStore] Stats calculated:', stats);
 
       set({
         achievements,

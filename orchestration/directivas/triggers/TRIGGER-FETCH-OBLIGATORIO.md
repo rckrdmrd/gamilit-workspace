@@ -16,7 +16,7 @@ Este trigger se activa AUTOMATICAMENTE cuando:
 2. Se va a verificar el estado de git (git status)
 3. Se va a realizar cualquier operacion git (commit, push, pull)
 4. Se retoma trabajo despues de una pausa
-5. Se cambia de contexto entre proyectos/submodulos
+5. Se cambia de contexto entre carpetas del monorepo
 
 ---
 
@@ -35,7 +35,7 @@ Este trigger se activa AUTOMATICAMENTE cuando:
 ║      → Si esta vacio = Estas sincronizado                               ║
 ║                                                                           ║
 ║   3. Si hay commits remotos:                                             ║
-║      git pull --no-recurse-submodules                                    ║
+║      git pull origin master                                              ║
 ║      → Sincroniza tu local con el remoto                                ║
 ║                                                                           ║
 ║   4. AHORA SI verificar estado:                                          ║
@@ -62,7 +62,7 @@ REMOTE_COMMITS=$(git log HEAD..origin/master --oneline)
 if [ -n "$REMOTE_COMMITS" ]; then
     echo "Commits remotos detectados:"
     echo "$REMOTE_COMMITS"
-    git pull --no-recurse-submodules
+    git pull origin master
 fi
 
 # PASO 4: Ahora verificar estado local
@@ -71,30 +71,14 @@ git status
 
 ---
 
-## PARA WORKSPACE CON SUBMODULOS
+## PARA MONOREPO STANDALONE
 
-En workspace-v2 con multiples niveles de submodulos:
+Gamilit se maneja como un solo repositorio git (sin submodules):
 
 ```bash
-# NIVEL 0: Workspace principal
-cd /home/isem/workspace-v2
 git fetch origin
 git log HEAD..origin/master --oneline
-# Si hay output: git pull --no-recurse-submodules
-git status
-
-# NIVEL 1: Proyectos (si vas a trabajar en uno)
-cd projects/{proyecto}
-git fetch origin
-git log HEAD..origin/master --oneline
-# Si hay output: git pull --no-recurse-submodules
-git status
-
-# NIVEL 2: Subrepositorios (si vas a trabajar en uno)
-cd {componente}  # backend, database, frontend
-git fetch origin
-git log HEAD..origin/master --oneline
-# Si hay output: git pull --no-recurse-submodules
+# Si hay output: git pull origin master
 git status
 ```
 
@@ -107,7 +91,7 @@ git status
 | Solo hacer git status | No detectar commits remotos | SIEMPRE fetch primero |
 | Reportar "clean" sin fetch | Usuario confundido | Seguir secuencia completa |
 | Asumir que no hay cambios | Desincronizacion | Verificar con log HEAD..origin |
-| Olvidar en submodulos | Referencias inconsistentes | Fetch en cada nivel |
+| Asumir estructura multi-repo | Flujo incorrecto | Usar solo flujo monorepo standalone |
 
 ---
 
@@ -158,7 +142,7 @@ Este trigger se ejecuta en:
 pre_tarea:
   primer_paso: "git fetch origin"
   verificar: "git log HEAD..origin/master"
-  sincronizar_si_necesario: "git pull --no-recurse-submodules"
+  sincronizar_si_necesario: "git pull origin master"
   luego: "Continuar con la tarea"
 ```
 

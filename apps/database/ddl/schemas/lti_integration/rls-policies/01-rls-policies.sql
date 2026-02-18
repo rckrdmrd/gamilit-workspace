@@ -219,50 +219,50 @@ COMMENT ON POLICY lti_sessions_update_service ON lti_integration.lti_sessions IS
     'Permite actualizar sesiones LTI (servicio, usuario propietario, o admin)';
 
 -- =====================================================
--- TABLE: lti_integration.lti_grade_passback
+-- TABLE: lti_integration.lti_grade_passbacks
 -- Description: Registro de envio de calificaciones a LMS via AGS
 -- Columns: session_id, user_id, consumer_id, passback_status
 -- Policies: 6 (SELECT: 3, INSERT: 1, UPDATE: 1, DELETE: 1)
 -- =====================================================
 
 -- Drop existing policies if any (including legacy ones from 07-enable-rls.sql)
-DROP POLICY IF EXISTS lti_grade_passback_admin_all ON lti_integration.lti_grade_passback;
-DROP POLICY IF EXISTS lti_grade_passback_user_read_own ON lti_integration.lti_grade_passback;
-DROP POLICY IF EXISTS lti_grade_passback_select_admin ON lti_integration.lti_grade_passback;
-DROP POLICY IF EXISTS lti_grade_passback_select_own ON lti_integration.lti_grade_passback;
-DROP POLICY IF EXISTS lti_grade_passback_select_service ON lti_integration.lti_grade_passback;
-DROP POLICY IF EXISTS lti_grade_passback_insert_service ON lti_integration.lti_grade_passback;
-DROP POLICY IF EXISTS lti_grade_passback_update_service ON lti_integration.lti_grade_passback;
-DROP POLICY IF EXISTS lti_grade_passback_delete_admin ON lti_integration.lti_grade_passback;
+DROP POLICY IF EXISTS lti_grade_passback_admin_all ON lti_integration.lti_grade_passbacks;
+DROP POLICY IF EXISTS lti_grade_passback_user_read_own ON lti_integration.lti_grade_passbacks;
+DROP POLICY IF EXISTS lti_grade_passback_select_admin ON lti_integration.lti_grade_passbacks;
+DROP POLICY IF EXISTS lti_grade_passback_select_own ON lti_integration.lti_grade_passbacks;
+DROP POLICY IF EXISTS lti_grade_passback_select_service ON lti_integration.lti_grade_passbacks;
+DROP POLICY IF EXISTS lti_grade_passback_insert_service ON lti_integration.lti_grade_passbacks;
+DROP POLICY IF EXISTS lti_grade_passback_update_service ON lti_integration.lti_grade_passbacks;
+DROP POLICY IF EXISTS lti_grade_passback_delete_admin ON lti_integration.lti_grade_passbacks;
 
 -- Policy: lti_grade_passback_select_admin
 -- Purpose: Admins can view all grade passback records
 CREATE POLICY lti_grade_passback_select_admin
-    ON lti_integration.lti_grade_passback
+    ON lti_integration.lti_grade_passbacks
     AS PERMISSIVE
     FOR SELECT
     TO public
     USING (gamilit.is_admin());
 
-COMMENT ON POLICY lti_grade_passback_select_admin ON lti_integration.lti_grade_passback IS
+COMMENT ON POLICY lti_grade_passback_select_admin ON lti_integration.lti_grade_passbacks IS
     'Permite a administradores ver todos los registros de passback de calificaciones';
 
 -- Policy: lti_grade_passback_select_own
 -- Purpose: Users can view their own grade passback records
 CREATE POLICY lti_grade_passback_select_own
-    ON lti_integration.lti_grade_passback
+    ON lti_integration.lti_grade_passbacks
     AS PERMISSIVE
     FOR SELECT
     TO public
     USING (user_id = gamilit.get_current_user_id());
 
-COMMENT ON POLICY lti_grade_passback_select_own ON lti_integration.lti_grade_passback IS
+COMMENT ON POLICY lti_grade_passback_select_own ON lti_integration.lti_grade_passbacks IS
     'Permite a usuarios ver sus propios registros de passback';
 
 -- Policy: lti_grade_passback_select_service
 -- Purpose: Service role bypass for grade sync processing
 CREATE POLICY lti_grade_passback_select_service
-    ON lti_integration.lti_grade_passback
+    ON lti_integration.lti_grade_passbacks
     AS PERMISSIVE
     FOR SELECT
     TO public
@@ -270,13 +270,13 @@ CREATE POLICY lti_grade_passback_select_service
         current_setting('app.service_role', true) = 'true'
     );
 
-COMMENT ON POLICY lti_grade_passback_select_service ON lti_integration.lti_grade_passback IS
+COMMENT ON POLICY lti_grade_passback_select_service ON lti_integration.lti_grade_passbacks IS
     'Permite acceso del servicio backend para procesamiento de sincronizacion de calificaciones';
 
 -- Policy: lti_grade_passback_insert_service
 -- Purpose: Only service role can create grade passback records
 CREATE POLICY lti_grade_passback_insert_service
-    ON lti_integration.lti_grade_passback
+    ON lti_integration.lti_grade_passbacks
     AS PERMISSIVE
     FOR INSERT
     TO public
@@ -285,13 +285,13 @@ CREATE POLICY lti_grade_passback_insert_service
         OR gamilit.is_admin()
     );
 
-COMMENT ON POLICY lti_grade_passback_insert_service ON lti_integration.lti_grade_passback IS
+COMMENT ON POLICY lti_grade_passback_insert_service ON lti_integration.lti_grade_passbacks IS
     'Solo el servicio backend o admins pueden crear registros de passback';
 
 -- Policy: lti_grade_passback_update_service
 -- Purpose: Service role can update passback status (retry logic)
 CREATE POLICY lti_grade_passback_update_service
-    ON lti_integration.lti_grade_passback
+    ON lti_integration.lti_grade_passbacks
     AS PERMISSIVE
     FOR UPDATE
     TO public
@@ -304,13 +304,13 @@ CREATE POLICY lti_grade_passback_update_service
         OR gamilit.is_admin()
     );
 
-COMMENT ON POLICY lti_grade_passback_update_service ON lti_integration.lti_grade_passback IS
+COMMENT ON POLICY lti_grade_passback_update_service ON lti_integration.lti_grade_passbacks IS
     'Permite actualizar registros de passback (servicio backend o admin)';
 
 -- Policy: lti_grade_passback_delete_admin
 -- Purpose: Only super_admin can delete passback records (audit trail)
 CREATE POLICY lti_grade_passback_delete_admin
-    ON lti_integration.lti_grade_passback
+    ON lti_integration.lti_grade_passbacks
     AS PERMISSIVE
     FOR DELETE
     TO public
@@ -324,7 +324,7 @@ CREATE POLICY lti_grade_passback_delete_admin
         )
     );
 
-COMMENT ON POLICY lti_grade_passback_delete_admin ON lti_integration.lti_grade_passback IS
+COMMENT ON POLICY lti_grade_passback_delete_admin ON lti_integration.lti_grade_passbacks IS
     'Solo super_admin puede eliminar registros de passback (pista de auditoria)';
 
 -- =====================================================

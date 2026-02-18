@@ -9,7 +9,7 @@ import {
   JoinColumn,
   Check,
 } from 'typeorm';
-import { DB_TABLES } from '@/shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 import { Classroom } from './classroom.entity';
 import { Team } from './team.entity';
 
@@ -27,7 +27,7 @@ import { Team } from './team.entity';
  * @created 2025-11-11 (DB-100 Ciclo B.3)
  * @version 1.0
  */
-@Entity({ name: DB_TABLES.SOCIAL.DISCUSSION_THREADS, schema: 'social_features' })
+@Entity({ name: DB_TABLES.SOCIAL.DISCUSSION_THREADS, schema: DB_SCHEMAS.SOCIAL })
 @Check('classroom_id IS NOT NULL OR team_id IS NOT NULL')
 export class DiscussionThread {
   /**

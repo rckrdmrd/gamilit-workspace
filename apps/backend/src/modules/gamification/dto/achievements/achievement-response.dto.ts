@@ -49,9 +49,18 @@ export class AchievementResponseDto {
   @Expose()
     conditions!: Record<string, unknown>;
 
+  /**
+   * Canonical rewards object (REC-012).
+   * Always contains: { xp: number, ml_coins: number, badge?: string }
+   * Frontend consumers should use this as the primary source of reward values.
+   */
   @Expose()
     rewards!: Record<string, unknown>;
 
+  /**
+   * @deprecated REC-012: Use rewards.ml_coins instead.
+   * Kept for backwards compatibility — will be removed in a future version.
+   */
   @Expose()
     ml_coins_reward!: number;
 
@@ -75,6 +84,10 @@ export class AchievementResponseDto {
   @Expose()
     order_index!: number;
 
+  /**
+   * @deprecated REC-012: Use rewards.xp instead.
+   * Kept for backwards compatibility — will be removed in a future version.
+   */
   @Expose()
     points_value!: number;
 

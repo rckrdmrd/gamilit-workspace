@@ -19,7 +19,9 @@ ALTER TABLE gamification_system.user_ranks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE gamification_system.missions ENABLE ROW LEVEL SECURITY;
 -- REMOVIDO (2026-01-07): notifications - tabla deprecated
 -- ALTER TABLE gamification_system.notifications ENABLE ROW LEVEL SECURITY;
-ALTER TABLE gamification_system.leaderboard_metadata ENABLE ROW LEVEL SECURITY;
+ALTER TABLE gamification_system.leaderboard_metadatas ENABLE ROW LEVEL SECURITY;
+-- Agregados 2026-02-18 (FIX-P0-1): user_purchases faltaba RLS
+ALTER TABLE gamification_system.user_purchases ENABLE ROW LEVEL SECURITY;
 
 -- Comentarios
 COMMENT ON TABLE gamification_system.ml_coins_transactions IS 'RLS enabled: Transacciones de ML coins - lectura propia + teacher + admin';
@@ -30,4 +32,5 @@ COMMENT ON TABLE gamification_system.user_stats IS 'RLS enabled: Estadisticas de
 COMMENT ON TABLE gamification_system.user_ranks IS 'RLS enabled: Rankings de usuarios - lectura publica';
 COMMENT ON TABLE gamification_system.missions IS 'RLS enabled: Misiones activas - lectura propia + admin';
 -- REMOVIDO: COMMENT ON TABLE gamification_system.notifications
-COMMENT ON TABLE gamification_system.leaderboard_metadata IS 'RLS enabled: Metadata de leaderboards - lectura publica';
+COMMENT ON TABLE gamification_system.leaderboard_metadatas IS 'RLS enabled: Metadata de leaderboards - lectura publica';
+COMMENT ON TABLE gamification_system.user_purchases IS 'RLS enabled: Compras de usuarios - lectura propia + admin';

@@ -162,6 +162,33 @@ jobs:
           path: apps/backend/dist/
           retention-days: 7
 
+  # Job 5a: Migration Detection (DBOPS-005)
+  # DDL-First enforcement: fails if any TypeORM migration patterns are found.
+  # gamilit manages schema via apps/database/ddl/ — migrations are forbidden.
+  migration-detection:
+    name: DDL-First Migration Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run migration detection check
+        run: |
+          chmod +x apps/database/scripts/check-no-migrations.sh
+          bash apps/database/scripts/check-no-migrations.sh --verbose
+
+      - name: Report architecture compliance
+        if: success()
+        run: |
+          echo "## DDL-First Architecture Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "No TypeORM migration patterns detected." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Schema changes are managed via:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`apps/database/ddl/schemas/\` (DDL source files)" >> $GITHUB_STEP_SUMMARY
+          echo "- \`apps/database/scripts/recreate-database.sh\` (apply DDL)" >> $GITHUB_STEP_SUMMARY
+
   # Job 5: Database Schema Validation
   database-validation:
     name: Database Schema Validation
@@ -295,7 +322,7 @@ jobs:
   ci-summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [lint, type-check, unit-tests, build, database-validation, api-docs-check, security-audit, cache-performance]
+    needs: [lint, type-check, unit-tests, build, migration-detection, database-validation, api-docs-check, security-audit, cache-performance]
     if: always()
 
     steps:
@@ -315,6 +342,7 @@ jobs:
           echo "| Type Check | ${{ needs.type-check.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Migration Detection | ${{ needs.migration-detection.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Database Validation | ${{ needs.database-validation.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| API Docs Check | ${{ needs.api-docs-check.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Security Audit | ${{ needs.security-audit.result }} |" >> $GITHUB_STEP_SUMMARY

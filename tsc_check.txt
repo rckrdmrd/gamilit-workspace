@@ -1,0 +1,38 @@
+src/apps/admin/components/shared/index.ts(2,15): error TS2724: '"./AdminPageShell"' has no exported member named 'AdminPageShellProps'. Did you mean 'AdminPageShell'?
+src/apps/admin/components/shared/index.ts(4,25): error TS2724: '"./AdminTabBar"' has no exported member named 'AdminTabBarProps'. Did you mean 'AdminTabBar'?
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(8,10): error TS2300: Duplicate identifier 'useExerciseAutoSave'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(9,10): error TS2300: Duplicate identifier 'useExerciseAutoSave'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(17,33): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(18,37): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(27,3): error TS2304: Cannot find name 'useEffect'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(36,3): error TS2304: Cannot find name 'useEffect'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(77,33): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(78,53): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(85,3): error TS2304: Cannot find name 'useEffect'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(137,33): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(143,3): error TS2304: Cannot find name 'useEffect'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(182,26): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(183,45): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(189,25): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(196,25): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(204,29): error TS7006: Parameter 'msg' implicitly has an 'any' type.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(204,34): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(231,33): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(232,37): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(239,3): error TS2304: Cannot find name 'useEffect'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(249,3): error TS2304: Cannot find name 'useEffect'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(286,33): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(287,33): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(294,3): error TS2304: Cannot find name 'useEffect'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(305,17): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(324,37): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(325,39): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(326,39): error TS2304: Cannot find name 'useState'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(340,3): error TS2304: Cannot find name 'useEffect'.
+src/apps/student/hooks/useExerciseAutoSave.example.tsx(350,3): error TS2304: Cannot find name 'useEffect'.
+src/apps/student/pages/LeaderboardPage.tsx(218,37): error TS2322: Type 'ProgressData | null' is not assignable to type '{ completedExercises?: number | undefined; completedModules?: number | undefined; currentStreak?: number | undefined; } | undefined'.
+  Type 'null' is not assignable to type '{ completedExercises?: number | undefined; completedModules?: number | undefined; currentStreak?: number | undefined; } | undefined'.
+src/apps/student/pages/LegacyExercisePage.tsx(632,9): error TS6133: '_getDifficultyColor' is declared but its value is never read.
+src/apps/student/pages/LegacyExercisePage.tsx(647,9): error TS6133: '_getDifficultyLabel' is declared but its value is never read.
+src/apps/student/pages/ModuleDetailPage.tsx(235,29): error TS2559: Type 'Module' has no properties in common with type 'ModuleMetaData'.
+src/apps/student/pages/settings/ProfileSection.tsx(35,7): error TS2578: Unused '@ts-expect-error' directive.

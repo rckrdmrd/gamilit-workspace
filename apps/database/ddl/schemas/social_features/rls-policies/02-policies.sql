@@ -123,7 +123,7 @@ CREATE POLICY teams_select_member
             FROM social_features.team_members tm
             WHERE tm.team_id = teams.id
             AND tm.user_id = gamilit.get_current_user_id()
-            AND tm.status = 'active'::text
+            AND tm.left_at IS NULL
         )
     );
 
@@ -144,7 +144,7 @@ CREATE POLICY teams_update_member
             WHERE tm.team_id = teams.id
             AND tm.user_id = gamilit.get_current_user_id()
             AND tm.role = 'leader'::text
-            AND tm.status = 'active'::text
+            AND tm.left_at IS NULL
         )
     );
 

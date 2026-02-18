@@ -45,6 +45,7 @@ nano apps/backend/.env
 
 ```env
 # Database
+DB_HOST_MODE=auto
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=gamilit_user
@@ -101,13 +102,20 @@ psql -h localhost -U gamilit_user -d gamilit_dev -c "SELECT 1"
 ### Modo Desarrollo (con hot-reload)
 
 ```bash
-# Desde raíz del monorepo
-npm run dev:backend
-
-# O desde apps/backend
+# Opcion recomendada desde apps/backend
 cd apps/backend
-npm run start:dev
+npm run dev
 ```
+
+### Resolucion de host de base de datos (Windows + WSL2)
+
+- `npm run dev` ejecuta `predev` automaticamente.
+- `predev` mantiene `DB_HOST` en `apps/backend/.env.dev` con estrategia `DB_HOST_MODE`.
+- Valores soportados:
+  - `auto` (default): usa IP WSL2 si es alcanzable; fallback a `localhost`.
+  - `localhost`: fuerza localhost.
+  - `wsl-ip`: exige IP WSL2 valida y falla rapido si no la encuentra.
+- Si usas mas de una distro WSL, define `WSL_DISTRO=<nombre>` en `.env.dev`.
 
 ### Modo Debug
 
@@ -235,11 +243,15 @@ grep ERROR logs/app.log
 ### Error: Cannot connect to database
 
 ```bash
-# Verificar PostgreSQL está corriendo
-pg_isready -h localhost -p 5432
+# 1) Ejecutar predev manual para diagnostico
+cd apps/backend
+npm run predev
 
-# Verificar credenciales
-psql -h localhost -U gamilit_user -d gamilit_dev
+# 2) Verificar host efectivo aplicado en .env.dev
+rg "^DB_HOST|^DB_HOST_MODE|^WSL_DISTRO" .env.dev
+
+# 3) Verificar PostgreSQL desde WSL
+wsl -d Ubuntu-24.04 -- pg_isready -h localhost -p 5432
 ```
 
 ### Error: Port 3000 already in use

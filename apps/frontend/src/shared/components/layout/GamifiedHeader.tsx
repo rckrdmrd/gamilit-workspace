@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { cn } from '@shared/utils';
@@ -20,6 +20,10 @@ import type { User, UserGamificationData } from '@shared/types';
 import type { User as AuthUser } from '@features/auth/types/auth.types';
 import { getUserFullName } from '@features/auth/types/auth.types';
 import { NotificationBell } from '../../../features/notifications/components/NotificationBell';
+import { BrandingContext } from '@/app/providers/BrandingProvider';
+import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
+import { AvatarDisplay } from '../AvatarDisplay';
+import { useEquipment } from '@/features/gamification/social/hooks/useEquipment';
 
 export interface GamifiedHeaderProps {
   user?: User | AuthUser;
@@ -50,6 +54,24 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
   organizationName,
 }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const branding = useContext(BrandingContext);
+  const platformName = branding?.config?.platformName ?? DEFAULT_BRANDING.platformName;
+  const logoUrl = branding?.config?.logoUrl ?? DEFAULT_BRANDING.logoUrl;
+
+  // Equipped cosmetics (avatar, frame)
+  const { equippedItems } = useEquipment();
+  const equippedAvatar = equippedItems.find(
+    (e) => e.item?.metadata?.type === 'avatar',
+  );
+  const equippedFrame = equippedItems.find(
+    (e) => e.item?.metadata?.type === 'profile_frame',
+  );
+  const avatarSrc =
+    equippedAvatar?.item?.metadata?.asset_url ||
+    (user && 'avatar_url' in user ? user.avatar_url : null) ||
+    null;
+  const frameColor =
+    equippedFrame?.item?.metadata?.border_color || null;
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -110,13 +132,18 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
               to="/dashboard"
               className="flex items-center space-x-2 transition-opacity hover:opacity-90"
             >
-              <span className="text-2xl" aria-hidden="true">
-                🕵️‍♂️
-              </span>
-              <div>
-                <h1 className="text-xl font-bold text-white">GAMILIT</h1>
-                <p className="text-xs text-orange-100">Detectives de la Lectura</p>
-              </div>
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={platformName}
+                  className="h-9 w-9 rounded-md object-cover object-left"
+                />
+              ) : (
+                <span className="text-2xl" aria-hidden="true">
+                  🕵️‍♂️
+                </span>
+              )}
+              <span className="sr-only">{platformName}</span>
             </Link>
 
             {/* Current Organization Display */}
@@ -132,52 +159,58 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
 
           {/* Sistema de Gamificación Central */}
           <div className="flex items-center space-x-6">
-            {/* XP y Nivel */}
-            <div className="hidden items-center space-x-3 lg:flex">
-              <div className="text-center">
-                <div className="flex items-center space-x-2">
-                  <Star className="h-5 w-5 text-yellow-400" aria-hidden="true" />
-                  <span className="text-lg font-bold text-white">Lvl {userStats.level}</span>
+            {/* XP y Nivel - Solo para estudiantes */}
+            {user?.role === 'student' && (
+              <div className="hidden items-center space-x-3 lg:flex">
+                <div className="text-center">
+                  <div className="flex items-center space-x-2">
+                    <Star className="h-5 w-5 text-yellow-400" aria-hidden="true" />
+                    <span className="text-lg font-bold text-white">Lvl {userStats.level}</span>
+                  </div>
+                  <div className="mt-1 h-2 w-24 overflow-hidden rounded-full bg-white/20">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${xpProgress}%` }}
+                      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+                      className="h-2 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500"
+                    />
+                  </div>
+                  <span className="text-xs text-orange-100">
+                    {userStats.xp} / {userStats.xpToNext} XP
+                  </span>
                 </div>
-                <div className="mt-1 h-2 w-24 overflow-hidden rounded-full bg-white/20">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${xpProgress}%` }}
-                    transition={{ type: 'spring', stiffness: 100, damping: 15 }}
-                    className="h-2 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500"
-                  />
-                </div>
-                <span className="text-xs text-orange-100">
-                  {userStats.xp} / {userStats.xpToNext} XP
-                </span>
               </div>
-            </div>
+            )}
 
-            {/* ML Counter */}
-            <div className="hidden items-center space-x-2 rounded-lg border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 px-3 py-2 shadow-sm md:flex">
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-emerald-500 shadow-sm"
+            {/* ML Counter - Solo para estudiantes */}
+            {user?.role === 'student' && (
+              <div className="hidden items-center space-x-2 rounded-lg border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 px-3 py-2 shadow-sm md:flex">
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                  className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-emerald-500 shadow-sm"
+                >
+                  <Coins className="h-4 w-4 text-white" />
+                </motion.div>
+                <span className="font-bold text-green-700">{userStats.ml.toLocaleString()}</span>
+              </div>
+            )}
+
+            {/* Rank Badge - Solo para estudiantes */}
+            {user?.role === 'student' && (
+              <div
+                className={cn(
+                  'hidden items-center space-x-1 rounded-full bg-gradient-to-r px-3 py-1 text-white shadow-md sm:flex',
+                  getRankColor(userStats.rank),
+                )}
               >
-                <Coins className="h-4 w-4 text-white" />
-              </motion.div>
-              <span className="font-bold text-green-700">{userStats.ml.toLocaleString()}</span>
-            </div>
+                <Crown className="h-4 w-4" aria-hidden="true" />
+                <span className="text-sm font-semibold">{userStats.rank}</span>
+              </div>
+            )}
 
-            {/* Rank Badge */}
-            <div
-              className={cn(
-                'hidden items-center space-x-1 rounded-full bg-gradient-to-r px-3 py-1 text-white shadow-md sm:flex',
-                getRankColor(userStats.rank),
-              )}
-            >
-              <Crown className="h-4 w-4" aria-hidden="true" />
-              <span className="text-sm font-semibold">{userStats.rank}</span>
-            </div>
-
-            {/* Achievement Badges */}
-            {userStats.badges.length > 0 && (
+            {/* Achievement Badges - Solo para estudiantes */}
+            {user?.role === 'student' && userStats.badges.length > 0 && (
               <div className="hidden items-center space-x-1 xl:flex">
                 {userStats.badges.slice(0, 3).map((badgeType, index) => {
                   const IconComponent = getBadgeIcon(badgeType);
@@ -223,11 +256,12 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
                 className="user-menu-button flex items-center space-x-2 rounded-lg bg-white/10 px-3 py-2 transition-colors hover:bg-white/20"
                 aria-label="Menú de usuario"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500">
-                  <span className="text-sm font-bold text-white">
-                    {user ? getUserFullName(user).charAt(0) : 'U'}
-                  </span>
-                </div>
+                <AvatarDisplay
+                  src={avatarSrc}
+                  name={user ? getUserFullName(user) : 'U'}
+                  frameColor={frameColor}
+                  size="sm"
+                />
                 <div className="hidden text-left sm:block">
                   <p className="text-sm font-medium text-white">
                     {user ? getUserFullName(user) : 'Detective'}
@@ -250,9 +284,12 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
                     {/* Header del menú */}
                     <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-4">
                       <div className="flex items-center space-x-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
-                          <UserIcon className="h-6 w-6 text-white" />
-                        </div>
+                        <AvatarDisplay
+                          src={avatarSrc}
+                          name={user ? getUserFullName(user) : 'U'}
+                          frameColor={frameColor}
+                          size="md"
+                        />
                         <div className="min-w-0 flex-1">
                           <p className="truncate font-bold text-white">
                             {user ? getUserFullName(user) : 'Detective'}

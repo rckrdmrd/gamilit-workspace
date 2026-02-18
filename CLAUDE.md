@@ -39,7 +39,7 @@ SIN FETCH = ESTADO INCOMPLETO
 ```
 TODA MODIFICACION DEBE MANTENER COHERENCIA:
   DDL -> Backend: Toda tabla DEBE tener entity (169 tablas = 153 entities, 16 DDL-only en data_warehouse)
-  Backend -> Frontend: Endpoints documentados (901 endpoints)
+  Backend -> Frontend: Endpoints documentados (904 endpoints)
   Inventarios: DATABASE/BACKEND/FRONTEND/MASTER = 100% sincronizados
 
 SI HAY GAPS: DOCUMENTAR + BLOQUEAR avance hasta resolver
@@ -161,7 +161,7 @@ NO usar workflow de submodules (no aplica a monorepo)
 | 21 | analytics | Learning analytics, reportes | 85% |
 | 22 | reports | Reportes de progreso, exportaciones | 75% |
 
-**Total:** 23 modulos, 152 entities, 171 services, 107 controllers, 901 endpoints
+**Total:** 23 modulos, 154 entities, 172 services, 108 controllers, 904 endpoints
 
 > **Nota:** Los nombres arriba son conceptuales; los directorios fisicos en `apps/backend/src/modules/` difieren (e.g., `educational`, `progress`, `admin`, `websocket`, `profile`).
 > Adicionalmente, 4 directorios de modulo existen pero NO estan importados en `app.module.ts`: `etl`, `ml`, `visualization` (evaluacion pendiente — requieren datasource `data_warehouse` no configurado), y `mail` (cargado transitivamente por `auth`, `notifications`, `teacher`, `parents`, `progress`).
@@ -334,7 +334,7 @@ gamilit/
 +-- _inheritance.yml             <- Redirect stub -> orchestration/_inheritance.yml
 +-- ecosystem.config.js          <- PM2 config (backend:3006, frontend:3005, fork mode)
 +-- apps/                        <- MONOREPO (tracked en mismo repo)
-|   +-- backend/                 <- NestJS 11 (23 modulos, 901 endpoints)
+|   +-- backend/                 <- NestJS 11 (23 modulos, 904 endpoints)
 |   +-- frontend/                <- React 19 + Zustand + TailwindCSS
 |   +-- database/                <- PostgreSQL 15 DDL (18 schemas, 169 tablas)
 |   +-- devops/                  <- Deployment scripts
@@ -444,11 +444,11 @@ proyecto:
 | Metrica | Valor |
 |---------|-------|
 | Modulos | 23 |
-| Entities | 152 |
+| Entities | 154 |
 | DTOs | 399 |
-| Services | 171 |
-| Controllers | 107 |
-| Endpoints | 901 |
+| Services | 172 |
+| Controllers | 108 |
+| Endpoints | 904 |
 | Guards | 15 |
 | Decorators | 18 |
 | Tests | 833 passing (60 spec files) |
@@ -456,15 +456,15 @@ proyecto:
 ### Frontend
 | Metrica | Valor |
 |---------|-------|
-| Componentes (.tsx prod) | 480 |
-| Hooks | 102 |
-| Paginas | 68 |
+| Componentes (.tsx prod) | 507 |
+| Hooks | 106 |
+| Paginas | 70 |
 | Stores Zustand | 14 |
-| API Service Files | 52 |
+| API Service Files | 53 |
 | API Calls Total | 570 |
 | Portales | 4 |
 | Mecanicas Ejercicio | 30 |
-| Routes | 72 |
+| Routes | 73 |
 | Type Files | 47 |
 
 > **SSOT:** `orchestration/inventarios/MASTER_INVENTORY.yml`

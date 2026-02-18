@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Send, Loader2, Bot, User } from 'lucide-react';
-import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@/shared/components/exercises/UnifiedExerciseLayout';
 import { sendDebateMessage } from './debateDigitalAPI';
 import { debateTopic } from './debateDigitalMockData';
 import type { DebateMessage, DebateDigitalAnswers } from './debateDigitalTypes';
@@ -288,20 +288,19 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="rounded-xl bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-            <div className="mb-2 flex items-center gap-3">
-              <MessageCircle className="h-8 w-8" />
-              <h2 className="text-detective-2xl font-bold">Debate Digital</h2>
-            </div>
-            <p className="mb-4 text-detective-base opacity-90">{debateTopic.title}</p>
-            <div className="rounded-lg bg-white/20 p-3 backdrop-blur-sm">
-              <p className="font-medium">{debateTopic.question}</p>
-            </div>
+      <UnifiedExerciseLayout
+        title="Debate Digital"
+        description={debateTopic.title}
+        icon={<MessageCircle className="h-6 w-6" />}
+        gradientClassName="from-detective-blue to-detective-orange"
+        headerChildren={
+          <div className="rounded-lg bg-white/20 p-3 backdrop-blur-sm mt-3">
+            <p className="font-medium text-white/95">{debateTopic.question}</p>
           </div>
-
+        }
+        cardPadding="lg"
+      >
+        <div className="space-y-6">
           {/* CORRECCION-005: Seleccion de posicion del usuario */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -357,11 +356,10 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
                       className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
-                        className={`max-w-[70%] rounded-lg p-4 ${
-                          msg.sender === 'user'
+                        className={`max-w-[70%] rounded-lg p-4 ${msg.sender === 'user'
                             ? 'bg-detective-orange text-white'
                             : 'bg-detective-bg-secondary text-detective-text'
-                        }`}
+                          }`}
                       >
                         <div className="mb-2 flex items-center gap-2">
                           {msg.sender === 'user' ? (
@@ -444,7 +442,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
             </DetectiveButton>
           </div>
         </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       <FeedbackModal

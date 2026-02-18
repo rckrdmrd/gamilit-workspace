@@ -14,6 +14,8 @@ import {
   GetEconomyAnalyticsDto,
 } from '@services/api/teacher/analyticsApi';
 
+import { FEATURE_FLAGS } from '@/config/api.config';
+
 interface UseStudentsEconomyReturn {
   /** Students economy data */
   students: StudentEconomy[];
@@ -26,6 +28,17 @@ interface UseStudentsEconomyReturn {
   /** Refetch data */
   refetch: () => Promise<void>;
 }
+
+const MOCK_STUDENTS: StudentEconomy[] = [
+  { id: '1', name: 'Ana Silva', balance: 1250, earned_this_week: 350, spent_this_week: 100, rank: 'Detective Novato', level: 3 },
+  { id: '2', name: 'Carlos Ruiz', balance: 980, earned_this_week: 200, spent_this_week: 50, rank: 'Detective Novato', level: 2 },
+  { id: '3', name: 'Maria Gonzalez', balance: 1540, earned_this_week: 450, spent_this_week: 200, rank: 'Detective Intermedio', level: 4 },
+  { id: '4', name: 'Juan Lopez', balance: 800, earned_this_week: 150, spent_this_week: 0, rank: 'Cadete', level: 1 },
+  { id: '5', name: 'Sofia Herrera', balance: 2100, earned_this_week: 600, spent_this_week: 300, rank: 'Detective Avanzado', level: 5 },
+  { id: '6', name: 'Miguel Angel', balance: 450, earned_this_week: 50, spent_this_week: 0, rank: 'Cadete', level: 1 },
+  { id: '7', name: 'Lucia Fernandez', balance: 1800, earned_this_week: 500, spent_this_week: 150, rank: 'Detective Intermedio', level: 4 },
+  { id: '8', name: 'Diego Torres', balance: 3200, earned_this_week: 800, spent_this_week: 50, rank: 'Detective Maestro', level: 7 },
+];
 
 /**
  * Hook to fetch students economy data
@@ -59,6 +72,16 @@ export function useStudentsEconomy(classroomId?: string): UseStudentsEconomyRetu
     setLoading(true);
     setError(null);
 
+    // Use mock data if enabled
+    if (FEATURE_FLAGS.USE_MOCK_DATA) {
+      setTimeout(() => {
+        setStudents(MOCK_STUDENTS);
+        setTotal(MOCK_STUDENTS.length);
+        setLoading(false);
+      }, 800);
+      return;
+    }
+
     try {
       const query: GetEconomyAnalyticsDto = {};
       if (classroomId) {
@@ -70,6 +93,14 @@ export function useStudentsEconomy(classroomId?: string): UseStudentsEconomyRetu
       setTotal(result.total);
     } catch (err: unknown) {
       console.error('[useStudentsEconomy] Error:', err);
+      // Fallback to mock data on error for demo purposes if enabled or distinct flag
+      if (FEATURE_FLAGS.USE_MOCK_DATA) {
+        setStudents(MOCK_STUDENTS);
+        setTotal(MOCK_STUDENTS.length);
+        setLoading(false);
+        return;
+      }
+
       const errorMessage =
         err instanceof Error ? err.message : 'Error al obtener datos de estudiantes';
       setError(new Error(errorMessage));

@@ -21,6 +21,9 @@
 -- Columnas clave: started_by (uuid)
 -- =====================================================
 
+-- Drop policies from 07b (replaced by more granular policies below)
+DROP POLICY IF EXISTS bulk_operations_admin_only ON admin_dashboard.bulk_operations;
+
 CREATE POLICY bulk_operations_admin_all
     ON admin_dashboard.bulk_operations
     FOR ALL
@@ -53,6 +56,11 @@ CREATE POLICY auth_attempts_system_insert
 -- Columnas clave: profile_id (uuid -> profiles.id)
 -- =====================================================
 
+-- Drop policies from 07 (same names, replaced with gamilit.* pattern)
+DROP POLICY IF EXISTS parent_accounts_admin_all ON auth_management.parent_accounts;
+DROP POLICY IF EXISTS parent_accounts_read_own ON auth_management.parent_accounts;
+DROP POLICY IF EXISTS parent_accounts_update_own ON auth_management.parent_accounts;
+
 CREATE POLICY parent_accounts_admin_all
     ON auth_management.parent_accounts
     FOR ALL
@@ -78,6 +86,10 @@ CREATE POLICY parent_accounts_insert_own
 -- Contexto: Notificaciones enviadas a padres sobre estudiantes
 -- Columnas clave: parent_account_id, student_id
 -- =====================================================
+
+-- Drop policies from 07 (same names, replaced with gamilit.* pattern)
+DROP POLICY IF EXISTS parent_notifications_admin_all ON auth_management.parent_notifications;
+DROP POLICY IF EXISTS parent_notifications_read_own ON auth_management.parent_notifications;
 
 CREATE POLICY parent_notifications_admin_all
     ON auth_management.parent_notifications
@@ -110,6 +122,10 @@ CREATE POLICY parent_notifications_system_insert
 -- Contexto: Vinculacion padre-estudiante
 -- Columnas clave: parent_account_id, student_id
 -- =====================================================
+
+-- Drop policies from 07 (same/similar names, replaced with gamilit.* pattern)
+DROP POLICY IF EXISTS parent_student_links_admin_all ON auth_management.parent_student_links;
+DROP POLICY IF EXISTS parent_student_links_read_own ON auth_management.parent_student_links;
 
 CREATE POLICY parent_student_links_admin_all
     ON auth_management.parent_student_links
@@ -245,6 +261,10 @@ CREATE POLICY media_resources_read_active
 -- Columnas clave: mission_id, classroom_id, scheduled_by, is_active
 -- =====================================================
 
+-- Drop policies from 07b (replaced by more granular policies below)
+DROP POLICY IF EXISTS scheduled_missions_admin_teacher ON progress_tracking.scheduled_missions;
+DROP POLICY IF EXISTS scheduled_missions_user_own ON progress_tracking.scheduled_missions;
+
 CREATE POLICY scheduled_missions_admin_all
     ON progress_tracking.scheduled_missions
     FOR ALL
@@ -271,6 +291,9 @@ CREATE POLICY scheduled_missions_student_read
 -- Contexto: Alertas de intervencion generadas para estudiantes
 -- Columnas clave: student_id, classroom_id, tenant_id
 -- =====================================================
+
+-- Drop policy from 07 (replaced by more granular policies below)
+DROP POLICY IF EXISTS intervention_alerts_admin_teacher ON progress_tracking.student_intervention_alerts;
 
 CREATE POLICY student_intervention_alerts_admin_all
     ON progress_tracking.student_intervention_alerts
@@ -319,6 +342,10 @@ CREATE POLICY teacher_alert_configs_teacher_own
 -- Columnas clave: user_id (PK component)
 -- =====================================================
 
+-- Drop policies from 07b (replaced by more granular policies below)
+DROP POLICY IF EXISTS user_difficulty_progress_admin_teacher ON progress_tracking.user_difficulty_progresses;
+DROP POLICY IF EXISTS user_difficulty_progress_user_own ON progress_tracking.user_difficulty_progresses;
+
 CREATE POLICY user_difficulty_progresses_admin_all
     ON progress_tracking.user_difficulty_progresses
     FOR ALL
@@ -345,6 +372,10 @@ CREATE POLICY user_difficulty_progresses_teacher_read
 -- Contexto: Relaciones de follow entre usuarios
 -- Columnas clave: follower_id, following_id
 -- =====================================================
+
+-- Drop policies from 07 (replaced by more granular policies below)
+DROP POLICY IF EXISTS user_follows_admin ON social_features.user_follows;
+DROP POLICY IF EXISTS user_follows_own ON social_features.user_follows;
 
 CREATE POLICY user_follows_read_own
     ON social_features.user_follows
@@ -603,11 +634,10 @@ CREATE POLICY guild_join_requests_guild_leader_update
     );
 
 -- =====================================================
--- NOBYPASSRLS: gamilit_user debe respetar RLS
--- Sin esto, TODAS las policies son ignoradas para gamilit_user.
+-- NOTA: NOBYPASSRLS esta DESHABILITADO hasta que el backend
+-- implemente SET LOCAL app.current_user_id en cada conexion DB.
+-- Ver: init-database.sh post_seeds_security() para prerequisitos.
 -- =====================================================
-
-ALTER ROLE gamilit_user NOBYPASSRLS;
 
 -- =====================================================
 -- FORCE ROW LEVEL SECURITY
@@ -617,12 +647,66 @@ ALTER ROLE gamilit_user NOBYPASSRLS;
 -- =====================================================
 
 ALTER TABLE auth_management.auth_attempts FORCE ROW LEVEL SECURITY;
+-- =====================================================
+-- 24. gamification_system.user_equipped_items
+-- Contexto: Equipamiento cosmético activo del usuario
+-- Columnas clave: user_id, category_id, item_id
+-- =====================================================
+
+ALTER TABLE gamification_system.user_equipped_items ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY user_equipped_items_admin_all
+    ON gamification_system.user_equipped_items
+    FOR ALL
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+CREATE POLICY user_equipped_items_user_own
+    ON gamification_system.user_equipped_items
+    FOR ALL
+    USING (user_id = gamilit.get_current_user_id())
+    WITH CHECK (user_id = gamilit.get_current_user_id());
+
 ALTER TABLE educational_content.assessment_rubrics FORCE ROW LEVEL SECURITY;
 ALTER TABLE educational_content.media_resources FORCE ROW LEVEL SECURITY;
 ALTER TABLE progress_tracking.scheduled_missions FORCE ROW LEVEL SECURITY;
 ALTER TABLE progress_tracking.student_intervention_alerts FORCE ROW LEVEL SECURITY;
 ALTER TABLE progress_tracking.teacher_alert_configurations FORCE ROW LEVEL SECURITY;
 ALTER TABLE system_configuration.notification_settings FORCE ROW LEVEL SECURITY;
+ALTER TABLE gamification_system.user_equipped_items FORCE ROW LEVEL SECURITY;
+
+-- =====================================================
+-- 25. gamification_system.user_purchases
+-- Contexto: Historial de compras en la tienda virtual
+-- Columnas clave: user_id, item_id, status, tenant_id
+-- =====================================================
+
+ALTER TABLE gamification_system.user_purchases ENABLE ROW LEVEL SECURITY;
+
+-- Admins: acceso total
+CREATE POLICY user_purchases_admin_all
+    ON gamification_system.user_purchases
+    FOR ALL
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+-- Usuarios: solo ven y crean sus propias compras
+CREATE POLICY user_purchases_user_select
+    ON gamification_system.user_purchases
+    FOR SELECT
+    USING (user_id = gamilit.get_current_user_id());
+
+CREATE POLICY user_purchases_user_insert
+    ON gamification_system.user_purchases
+    FOR INSERT
+    WITH CHECK (user_id = gamilit.get_current_user_id());
+
+-- Usuarios: pueden actualizar solo sus propias compras (consumed_at, is_active)
+CREATE POLICY user_purchases_user_update
+    ON gamification_system.user_purchases
+    FOR UPDATE
+    USING (user_id = gamilit.get_current_user_id())
+    WITH CHECK (user_id = gamilit.get_current_user_id());
+
+ALTER TABLE gamification_system.user_purchases FORCE ROW LEVEL SECURITY;
 
 -- FORCE RLS para 5 tablas HIGH-RISK agregadas (A-003-exec)
 ALTER TABLE progress_tracking.user_learning_paths FORCE ROW LEVEL SECURITY;
@@ -632,5 +716,5 @@ ALTER TABLE auth_management.two_factor_tokens FORCE ROW LEVEL SECURITY;
 ALTER TABLE social_features.guild_join_requests FORCE ROW LEVEL SECURITY;
 
 -- =====================================================
--- FIN - 23 tablas cubiertas con 73 policies + 12 FORCE RLS
+-- FIN - 25 tablas cubiertas con policies + FORCE RLS
 -- =====================================================

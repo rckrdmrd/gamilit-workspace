@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { VerdaderoFalsoStatement, VerdaderoFalsoExerciseProps } from './verdaderoFalsoTypes';
 import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, ToggleLeft } from 'lucide-react';
 // CORRECCION-004: Migrar a progressAPI (API unificada)
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 
@@ -191,104 +192,112 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
     }
   }, [actionsRef]);
 
+  const progress = statements.length > 0 ? (answeredCount / statements.length) * 100 : 0;
+
   return (
     <>
-      {/* Context Text */}
-      {exercise.contextText && (
-        <DetectiveCard variant="info" padding="md" className="mb-6">
-          <div className="flex items-start gap-3">
-            <div className="text-2xl">📖</div>
-            <div>
-              <h3 className="mb-2 text-lg font-bold">Contexto Histórico</h3>
-              <p className="text-detective-text">{exercise.contextText}</p>
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Verdadero o Falso'}
+        description={exercise.contextText || 'Determina si cada enunciado es verdadero o falso.'}
+        icon={<ToggleLeft className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+        headerChildren={
+          <div className="mt-4">
+            <div className="mb-2 flex justify-between text-sm">
+              <span>
+                Progreso: {answeredCount}/{statements.length}
+              </span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-white/30">
+              <div
+                className="h-full rounded-full bg-white transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
             </div>
           </div>
-        </DetectiveCard>
-      )}
+        }
+      >
+        {/* Statements */}
+        <div className="space-y-4">
+          <AnimatePresence>
+            {statements.map((statement, index) => {
+              // FE-059: Removed local validation - correctAnswer field no longer available
+              // Visual feedback disabled until backend integration
+              const isCorrect = false; // Will be determined by backend
+              const showResult = false; // Disabled for now
 
-      {/* Question Header */}
-      <div className="mb-6 text-center">
-        <h3 className="mb-2 text-xl font-bold text-detective-text">❓ {exercise.title}</h3>
-      </div>
-
-      {/* Statements */}
-      <div className="mx-auto max-w-4xl space-y-4">
-        <AnimatePresence>
-          {statements.map((statement, index) => {
-            // FE-059: Removed local validation - correctAnswer field no longer available
-            // Visual feedback disabled until backend integration
-            const isCorrect = false; // Will be determined by backend
-            const showResult = false; // Disabled for now
-
-            return (
-              <motion.div
-                key={statement.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <DetectiveCard
-                  variant={showResult ? (isCorrect ? 'success' : 'danger') : 'default'}
-                  padding="md"
-                  className="transition-all duration-300"
+              return (
+                <motion.div
+                  key={statement.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
                 >
-                  <div className="space-y-4">
-                    {/* Statement */}
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700">
-                        {index + 1}
-                      </div>
-                      <p className="flex-1 pt-1 text-lg text-detective-text">{statement.statement}</p>
-                    </div>
-
-                    {/* Answer Buttons */}
-                    <div className="ml-11 flex gap-4">
-                      <button
-                        onClick={() => handleAnswer(statement.id, true)}
-                        disabled={showResults}
-                        className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
-                          statement.userAnswer === true
-                            ? 'scale-105 bg-green-500 text-white shadow-lg'
-                            : 'bg-detective-bg-secondary text-detective-text hover:bg-green-100 hover:text-green-700'
-                        } ${showResults ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'} flex items-center justify-center gap-2`}
-                      >
-                        <CheckCircle className="h-5 w-5" />
-                        Verdadero
-                      </button>
-                      <button
-                        onClick={() => handleAnswer(statement.id, false)}
-                        disabled={showResults}
-                        className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
-                          statement.userAnswer === false
-                            ? 'scale-105 bg-red-500 text-white shadow-lg'
-                            : 'bg-detective-bg-secondary text-detective-text hover:bg-red-100 hover:text-red-700'
-                        } ${showResults ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'} flex items-center justify-center gap-2`}
-                      >
-                        <XCircle className="h-5 w-5" />
-                        Falso
-                      </button>
-                    </div>
-
-                    {/* Explanation (shown after verification) */}
-                    {showResult && statement.explanation && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="ml-11 mt-4 rounded-lg border-l-4 border-blue-500 bg-white bg-opacity-50 p-4"
-                      >
-                        <div className="flex items-start gap-2">
-                          <div className="flex-shrink-0 text-2xl">{isCorrect ? '✅' : '❌'}</div>
-                          <p className="text-detective-text">{statement.explanation}</p>
+                  <DetectiveCard
+                    variant={showResult ? (isCorrect ? 'success' : 'danger') : 'default'}
+                    padding="md"
+                    className="transition-all duration-300"
+                  >
+                    <div className="space-y-4">
+                      {/* Statement */}
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700">
+                          {index + 1}
                         </div>
-                      </motion.div>
-                    )}
-                  </div>
-                </DetectiveCard>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </div>
+                        <p className="flex-1 pt-1 text-lg text-detective-text">{statement.statement}</p>
+                      </div>
+
+                      {/* Answer Buttons */}
+                      <div className="ml-11 flex gap-4">
+                        <button
+                          onClick={() => handleAnswer(statement.id, true)}
+                          disabled={showResults}
+                          className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
+                            statement.userAnswer === true
+                              ? 'scale-105 bg-green-500 text-white shadow-lg'
+                              : 'bg-detective-bg-secondary text-detective-text hover:bg-green-100 hover:text-green-700'
+                          } ${showResults ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'} flex items-center justify-center gap-2`}
+                        >
+                          <CheckCircle className="h-5 w-5" />
+                          Verdadero
+                        </button>
+                        <button
+                          onClick={() => handleAnswer(statement.id, false)}
+                          disabled={showResults}
+                          className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
+                            statement.userAnswer === false
+                              ? 'scale-105 bg-red-500 text-white shadow-lg'
+                              : 'bg-detective-bg-secondary text-detective-text hover:bg-red-100 hover:text-red-700'
+                          } ${showResults ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'} flex items-center justify-center gap-2`}
+                        >
+                          <XCircle className="h-5 w-5" />
+                          Falso
+                        </button>
+                      </div>
+
+                      {/* Explanation (shown after verification) */}
+                      {showResult && statement.explanation && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          className="ml-11 mt-4 rounded-lg border-l-4 border-blue-500 bg-white bg-opacity-50 p-4"
+                        >
+                          <div className="flex items-start gap-2">
+                            <div className="flex-shrink-0 text-2xl">{isCorrect ? '✅' : '❌'}</div>
+                            <p className="text-detective-text">{statement.explanation}</p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </div>
+                  </DetectiveCard>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

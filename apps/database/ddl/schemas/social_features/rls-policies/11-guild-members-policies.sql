@@ -82,8 +82,9 @@ CREATE POLICY guild_members_insert_own
             EXISTS (
                 SELECT 1 FROM social_features.guilds g
                 WHERE g.id = guild_members.guild_id
-                AND g.is_recruiting = true
-                AND g.member_count < g.max_members
+                AND g.is_public = true
+                AND g.is_active = true
+                AND g.member_count < 20
             )
             -- OR has pending invitation (if guild_invitations table exists)
         )
@@ -166,7 +167,7 @@ CREATE POLICY guild_members_admin_all
         EXISTS (
             SELECT 1 FROM auth_management.profiles p
             WHERE p.id = gamilit.get_current_user_id()
-            AND p.role = 'SUPER_ADMIN'
+            AND p.role = 'super_admin'
         )
     );
 

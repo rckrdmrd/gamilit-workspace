@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsBoolean, IsInt, Min, IsDateString, IsArray, IsObject, ValidateNested } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsInt, Min, IsDateString, IsArray, IsObject, ValidateNested, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -74,10 +74,10 @@ class MissionRewardsDto {
  */
 export class AssignClassroomMissionDto {
   @ApiProperty({
-    description: 'Mission template ID to assign',
-    example: 'daily_complete_exercises',
+    description: 'Mission template UUID to assign (FK to mission_templates)',
+    example: '20000001-0000-0000-0000-000000000001',
   })
-  @IsString()
+  @IsUUID()
     mission_template_id!: string;
 
   @ApiProperty({

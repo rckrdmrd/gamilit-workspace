@@ -64,7 +64,7 @@ gamilit_context:
 
   portals:
     - name: "Student Portal"
-      url: "http://localhost:3000/student"
+      url: "http://localhost:3005/student"
       description: "Student-facing portal with gamification"
       key_features:
         - "Dashboard with points and achievements"
@@ -73,7 +73,7 @@ gamilit_context:
         - "Leaderboards"
 
     - name: "Teacher Portal"
-      url: "http://localhost:3000/teacher"
+      url: "http://localhost:3005/teacher"
       description: "Teacher management portal"
       key_features:
         - "Class management"
@@ -82,7 +82,7 @@ gamilit_context:
         - "Progress reports"
 
     - name: "Admin Portal"
-      url: "http://localhost:3000/admin"
+      url: "http://localhost:3005/admin"
       description: "Administrative portal"
       key_features:
         - "User management"
@@ -91,7 +91,7 @@ gamilit_context:
         - "Content management"
 
     - name: "Parent Portal"
-      url: "http://localhost:3000/parent"
+      url: "http://localhost:3005/parent"
       description: "Parent monitoring portal"
       key_features:
         - "Child progress view"
@@ -113,13 +113,13 @@ gamilit_context:
       password: "test123"
 
   metrics:
-    backend_modules: 17
-    endpoints: 850
-    frontend_components: 327
-    pages: 74
+    backend_modules: 23
+    endpoints: 901
+    frontend_components: 488
+    pages: 70
     database_schemas: 18
-    tables: 171
-    entities: 141
+    tables: 169
+    entities: 152
     mvp_completion: "98%"
     coherence_ddl_backend: "82.5%"
 
@@ -273,7 +273,7 @@ context_management:
   session_start:
     load:
       - ".gemini/antigravity/AGENT-CAPABILITIES.yml"
-      - ".claude/CLAUDE.md"
+      - "CLAUDE.md"
       - "orchestration/CONTEXT-MAP.yml"
     do_not_load: "All inventories (load when needed)"
 
@@ -291,7 +291,7 @@ context_management:
 references:
   bootloader: ".gemini/antigravity/BOOTLOADER_PROTOCOL.md"
   readme: ".gemini/antigravity/README.md"
-  local_claude: ".claude/CLAUDE.md"
+  local_claude: "CLAUDE.md"
   context_map: "orchestration/CONTEXT-MAP.yml"
   proxima_accion: "orchestration/PROXIMA-ACCION.md"
   inventarios: "orchestration/inventarios/"

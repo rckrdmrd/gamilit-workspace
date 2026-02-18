@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { Award, Trophy, Lock, CheckCircle, ArrowRight, Sparkles, Coins, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { AchievementData } from '../../hooks/useDashboardData';
+import { resolveLucideIcon } from '@shared/utils/iconResolver';
 
 interface AchievementsPreviewProps {
   achievements: AchievementData[];
@@ -102,6 +103,7 @@ export function AchievementsPreview({ achievements }: AchievementsPreviewProps) 
         {filteredAchievements.map((achievement, index) => {
           const isLocked = !achievement.unlocked;
           const rarity = rarityColors[achievement.rarity];
+          const AchievementIcon = resolveLucideIcon(achievement.icon, 'trophy');
 
           return (
             <motion.div
@@ -151,7 +153,7 @@ export function AchievementsPreview({ achievements }: AchievementsPreviewProps) 
                   {isLocked ? (
                     <Lock className="h-8 w-8 text-gray-500" />
                   ) : (
-                    <span>{achievement.icon}</span>
+                    <AchievementIcon className="h-8 w-8 text-white" />
                   )}
 
                   {/* Shimmer effect for unlocked */}

@@ -1,8 +1,12 @@
 /**
  * useAnalytics Hook - Fetch and manage classroom analytics and engagement metrics
+ *
+ * Migrated to React Query (@tanstack/react-query v5) for automatic caching,
+ * deduplication, and background refetching.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { analyticsApi } from '@services/api/teacher';
 import type { ClassroomAnalytics, EngagementMetrics } from '@apps/teacher/types';
 import type {
@@ -11,6 +15,21 @@ import type {
   GenerateReportsDto,
   Report,
 } from '@services/api/teacher/analyticsApi';
+
+// ---------------------------------------------------------------------------
+// Query Key Factories
+// ---------------------------------------------------------------------------
+
+const analyticsKeys = {
+  all: ['analytics'] as const,
+  classroom: (query?: GetAnalyticsQueryDto) => [...analyticsKeys.all, 'classroom', query] as const,
+  engagement: (query?: GetEngagementMetricsDto) => [...analyticsKeys.all, 'engagement', query] as const,
+  studentInsights: (studentId: string) => [...analyticsKeys.all, 'student-insights', studentId] as const,
+};
+
+// ---------------------------------------------------------------------------
+// Interfaces (unchanged — backward compatible)
+// ---------------------------------------------------------------------------
 
 /**
  * Student Insights Interface
@@ -49,57 +68,62 @@ export interface UseAnalyticsReturn {
   refresh: () => Promise<void>;
 }
 
+// ---------------------------------------------------------------------------
+// useAnalytics
+// ---------------------------------------------------------------------------
+
 export function useAnalytics(
   analyticsQuery?: GetAnalyticsQueryDto,
   engagementQuery?: GetEngagementMetricsDto,
 ): UseAnalyticsReturn {
-  const [analytics, setAnalytics] = useState<ClassroomAnalytics | null>(null);
-  const [engagement, setEngagement] = useState<EngagementMetrics | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
 
-  const fetchAnalytics = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  const analyticsResult = useQuery({
+    queryKey: analyticsKeys.classroom(analyticsQuery),
+    queryFn: () => analyticsApi.getClassroomAnalytics(analyticsQuery),
+    enabled: !!analyticsQuery,
+    staleTime: 5 * 60 * 1000,
+  });
 
-      const [analyticsData, engagementData] = await Promise.all([
-        analyticsApi.getClassroomAnalytics(analyticsQuery),
-        analyticsApi.getEngagementMetrics(engagementQuery),
-      ]);
+  const engagementResult = useQuery({
+    queryKey: analyticsKeys.engagement(engagementQuery),
+    queryFn: () => analyticsApi.getEngagementMetrics(engagementQuery),
+    enabled: !!engagementQuery,
+    staleTime: 5 * 60 * 1000,
+  });
 
-      setAnalytics(analyticsData);
-      setEngagement(engagementData);
-    } catch (err) {
-      console.error('[useAnalytics] Error:', err);
-      setError(err as Error);
-    } finally {
-      setLoading(false);
-    }
-  }, [analyticsQuery, engagementQuery]);
+  const reportMutation = useMutation({
+    mutationFn: (config: GenerateReportsDto) => analyticsApi.generateReport(config),
+  });
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [fetchAnalytics]);
+  const generateReport = useCallback(
+    async (config: GenerateReportsDto): Promise<Report> => {
+      return reportMutation.mutateAsync(config);
+    },
+    [reportMutation],
+  );
 
-  const generateReport = useCallback(async (config: GenerateReportsDto) => {
-    try {
-      return await analyticsApi.generateReport(config);
-    } catch (err) {
-      console.error('[useAnalytics] Error generating report:', err);
-      throw err;
-    }
-  }, []);
+  const refresh = useCallback(async (): Promise<void> => {
+    await queryClient.invalidateQueries({ queryKey: analyticsKeys.all });
+  }, [queryClient]);
+
+  // Combine loading/error states for backward compatibility
+  const loading = analyticsResult.isLoading || engagementResult.isLoading;
+  const error = analyticsResult.error ?? engagementResult.error ?? null;
 
   return {
-    analytics,
-    engagement,
+    analytics: analyticsResult.data ?? null,
+    engagement: engagementResult.data ?? null,
     loading,
     error,
     generateReport,
-    refresh: fetchAnalytics,
+    refresh,
   };
 }
+
+// ---------------------------------------------------------------------------
+// useStudentInsights
+// ---------------------------------------------------------------------------
 
 /**
  * useStudentInsights Hook
@@ -109,42 +133,25 @@ export function useAnalytics(
  * @returns Student insights data, loading state, error state, and refresh function
  */
 export function useStudentInsights(studentId: string): UseStudentInsightsReturn {
-  const [insights, setInsights] = useState<StudentInsights | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const queryClient = useQueryClient();
 
-  const fetchInsights = useCallback(async () => {
-    if (!studentId) {
-      setInsights(null);
-      return;
-    }
+  const insightsResult = useQuery({
+    queryKey: analyticsKeys.studentInsights(studentId),
+    queryFn: () => analyticsApi.getStudentInsights(studentId),
+    enabled: !!studentId,
+    staleTime: 5 * 60 * 1000,
+  });
 
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Fetch insights from backend API
-      const data = await analyticsApi.getStudentInsights(studentId);
-      setInsights(data);
-    } catch (err) {
-      console.error('[useStudentInsights] Error:', err);
-      setError(err as Error);
-
-      // Set null insights on error instead of empty data
-      setInsights(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [studentId]);
-
-  useEffect(() => {
-    fetchInsights();
-  }, [fetchInsights]);
+  const refresh = useCallback(async (): Promise<void> => {
+    await queryClient.invalidateQueries({
+      queryKey: analyticsKeys.studentInsights(studentId),
+    });
+  }, [queryClient, studentId]);
 
   return {
-    insights,
-    loading,
-    error,
-    refresh: fetchInsights,
+    insights: insightsResult.data ?? null,
+    loading: insightsResult.isLoading,
+    error: insightsResult.error ?? null,
+    refresh,
   };
 }

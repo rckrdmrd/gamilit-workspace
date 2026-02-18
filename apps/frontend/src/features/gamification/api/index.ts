@@ -22,7 +22,7 @@ export type { UserGamificationSummary } from '@/lib/api/gamification.api';
 
 // Re-export APIs específicas por dominio
 export * from '../ranks/api/ranksAPI';
-export * from '../social/api/achievementsAPI';
+// REC-008: achievementsAPI deprecated — use gamificationApi from @/lib/api/gamification.api.ts
 export * from '../economy/api/economyAPI';
 export * from '../economy/api/comodinesAPI';
 export {

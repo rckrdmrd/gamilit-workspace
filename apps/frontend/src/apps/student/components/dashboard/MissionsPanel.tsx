@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 import { EnhancedCard } from '@shared/components/base/EnhancedCard';
+import { resolveLucideIcon } from '@shared/utils/iconResolver';
 
 // Import mission helpers
 const getMissionProgress = (mission: Mission): { current: number; target: number } => {
@@ -61,20 +62,22 @@ interface MissionCardProps {
 }
 
 const MissionCard: React.FC<MissionCardProps> = ({ mission, index, onMissionClick }) => {
-  const getMissionIcon = () => {
-    if (mission.icon) return mission.icon;
+  const getMissionIcon = (): React.ElementType => {
+    if (mission.icon) {
+      return resolveLucideIcon(mission.icon, 'target');
+    }
 
     switch (mission.type) {
       case 'daily':
-        return '📅';
+        return Clock;
       case 'weekly':
-        return '📈';
+        return Star;
       case 'special':
-        return '⭐';
+        return Star;
       case 'achievement':
-        return '🏆';
+        return resolveLucideIcon('trophy', 'target');
       default:
-        return '🎯';
+        return Target;
     }
   };
 
@@ -135,6 +138,7 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, index, onMissionClic
   const timeRemaining = getTimeRemaining();
   const isUrgent =
     mission.timeLimit && new Date(mission.timeLimit).getTime() - Date.now() < 3600000; // Less than 1 hour
+  const MissionIcon = getMissionIcon();
 
   return (
     <motion.div
@@ -153,7 +157,9 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, index, onMissionClic
         {/* Mission Header */}
         <div className="mb-3 flex items-start justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-lg">{getMissionIcon()}</span>
+            <div className="rounded-lg bg-white/80 p-1.5">
+              <MissionIcon className="h-4 w-4 text-orange-600" />
+            </div>
             <div className="min-w-0 flex-1">
               <h4 className="text-sm font-semibold leading-tight text-gray-900">{mission.title}</h4>
               <p className="mt-1 line-clamp-2 text-xs text-gray-600">{mission.description}</p>

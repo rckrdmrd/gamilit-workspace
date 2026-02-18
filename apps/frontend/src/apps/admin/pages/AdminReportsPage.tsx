@@ -15,17 +15,16 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { AdminLayout } from '../layouts/AdminLayout';
 import { useReports } from '../hooks/useReports';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { AdminPageShell } from '../components/shared';
 import { ReportGenerationForm } from '../components/reports/ReportGenerationForm';
 import { ReportsList } from '../components/reports/ReportsList';
 import { BetaBanner } from '../components/reports/BetaBanner';
+import { CheckCircle, XCircle, X, AlertCircle } from 'lucide-react';
+import { cn } from '@shared/utils/cn';
 import type { GenerateReportParams } from '@/services/api/adminTypes';
 
 export default function AdminReportsPage() {
-  const { user, logout } = useAuth();
   const [isGenerating, setIsGenerating] = useState(false);
   const [toast, setToast] = useState<{
     type: 'success' | 'error';
@@ -47,28 +46,6 @@ export default function AdminReportsPage() {
     autoRefresh: true,
     refreshInterval: 5000,
   });
-
-  // Use useUserGamification hook with real API endpoint
-  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
-
-  // Fallback gamification data while loading or if data not available
-  const displayGamificationData = gamificationData || {
-    userId: user?.id || '',
-    level: gamificationLoading ? 0 : 1,
-    totalXP: 0,
-    mlCoins: 0,
-    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
-    rankColor: '#9E9E9E',
-    progressToNextLevel: 0,
-    xpToNextLevel: 100,
-    achievements: [],
-    totalAchievements: 0,
-  };
-
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
 
   /**
    * Handle report generation
@@ -147,12 +124,7 @@ export default function AdminReportsPage() {
   }, [toast]);
 
   return (
-    <AdminLayout
-      user={user || undefined}
-      gamificationData={displayGamificationData}
-      organizationName="GAMILIT Platform Admin"
-      onLogout={handleLogout}
-    >
+    <AdminPageShell>
       <div className="mx-auto max-w-7xl">
         {/* Page Header */}
         <div className="mb-6">
@@ -169,103 +141,23 @@ export default function AdminReportsPage() {
 
         {/* Toast Notifications */}
         {toast && (
-          <div
-            className={`mb-6 rounded-md p-4 ${
-              toast.type === 'success'
-                ? 'border border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
-                : 'border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20'
-            }`}
-          >
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                {toast.type === 'success' ? (
-                  <svg
-                    className="h-5 w-5 text-green-400"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="h-5 w-5 text-red-400"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
-              </div>
-              <div className="ml-3">
-                <p
-                  className={`text-sm font-medium ${
-                    toast.type === 'success'
-                      ? 'text-green-800 dark:text-green-300'
-                      : 'text-red-800 dark:text-red-300'
-                  }`}
-                >
-                  {toast.message}
-                </p>
-              </div>
-              <div className="ml-auto pl-3">
-                <button
-                  onClick={() => setToast(null)}
-                  className={`inline-flex rounded-md p-1.5 ${
-                    toast.type === 'success'
-                      ? 'text-green-500 hover:bg-green-100 dark:hover:bg-green-900/40'
-                      : 'text-red-500 hover:bg-red-100 dark:hover:bg-red-900/40'
-                  } transition-colors focus:outline-none focus:ring-2`}
-                >
-                  <svg
-                    className="h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
+          <div className={cn(
+            'mb-6 flex items-center gap-3 rounded-lg border p-4',
+            toast.type === 'success' ? 'border-green-500/50 bg-green-500/20 text-green-400' : 'border-red-500/50 bg-red-500/20 text-red-400'
+          )}>
+            {toast.type === 'success' ? <CheckCircle className="h-5 w-5 flex-shrink-0" /> : <XCircle className="h-5 w-5 flex-shrink-0" />}
+            <span className="flex-1 text-sm font-medium">{toast.message}</span>
+            <button onClick={() => setToast(null)} className="hover:opacity-70"><X className="h-4 w-4" /></button>
           </div>
         )}
 
         {/* Error Display */}
         {error && !toast && (
-          <div className="mb-6 rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg
-                  className="h-5 w-5 text-red-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">Error</h3>
-                <div className="mt-2 text-sm text-red-700 dark:text-red-200">{error}</div>
-              </div>
+          <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-400">
+            <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
+            <div>
+              <h3 className="text-sm font-medium">Error</h3>
+              <div className="mt-1 text-sm opacity-90">{error}</div>
             </div>
           </div>
         )}
@@ -297,6 +189,6 @@ export default function AdminReportsPage() {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </AdminPageShell>
   );
 }

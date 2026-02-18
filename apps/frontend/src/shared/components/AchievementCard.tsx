@@ -1,6 +1,7 @@
 import React from 'react';
 import { Trophy, Lock, CheckCircle, Gift } from 'lucide-react';
 import { cn } from '@shared/utils';
+import { resolveLucideIcon } from '@shared/utils/iconResolver';
 import { formatRelativeTime } from '@/shared/utils/format.util';
 import type {
   Achievement,
@@ -96,6 +97,7 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
   const isClaimed = status === 'claimed';
   const isInProgress = status === 'in_progress';
   const isHidden = achievement.isHidden && isLocked;
+  const IconComponent = resolveLucideIcon(achievement.icon, 'trophy');
 
   return (
     <div
@@ -145,7 +147,7 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
           ) : isLocked ? (
             <Lock className="h-8 w-8 text-gray-400" />
           ) : (
-            <span>{achievement.icon || '🏆'}</span>
+            <IconComponent className="h-8 w-8 text-gray-800" />
           )}
         </div>
       </div>

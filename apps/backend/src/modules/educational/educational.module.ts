@@ -10,6 +10,13 @@ import {
   ExerciseValidationConfig, // ✨ NUEVO - 2026-01-14 (Sistema Dual ADR-008)
   ExerciseTypeRubric, // ✨ NUEVO - 2026-01-14 (Rúbricas por tipo M4-M5)
   ExerciseValidationAudit, // ✨ NUEVO - 2026-01-14 (Auditoría de validaciones)
+  ClassroomModule, // FIX P2: Missing forFeature
+  ContentMetadata, // FIX P2: Missing forFeature
+  ContentTag, // FIX P2: Missing forFeature
+  DifficultyCriteria, // FIX P2: Missing forFeature
+  ExerciseMechanicMapping, // FIX P2: Missing forFeature
+  ModuleDependencies, // FIX P2: Missing forFeature
+  Taxonomy, // FIX P2: Missing forFeature
 } from './entities';
 import { Profile } from '../auth/entities/profile.entity';
 import { ClassroomMember } from '../social/entities/classroom-member.entity';
@@ -68,6 +75,13 @@ import { ProgressModule } from '../progress/progress.module';
         ExerciseValidationConfig, // ✨ NUEVO - 2026-01-14 (Sistema Dual ADR-008)
         ExerciseTypeRubric, // ✨ NUEVO - 2026-01-14 (Rúbricas por tipo M4-M5)
         ExerciseValidationAudit, // ✨ NUEVO - 2026-01-14 (Auditoría de validaciones)
+        ClassroomModule, // FIX P2: Missing forFeature (P1-002)
+        ContentMetadata, // FIX P2: Missing forFeature (DDL coherence)
+        ContentTag, // FIX P2: Missing forFeature (DDL coherence)
+        DifficultyCriteria, // FIX P2: Missing forFeature (P1-001)
+        ExerciseMechanicMapping, // FIX P2: Missing forFeature (DDL coherence)
+        ModuleDependencies, // FIX P2: Missing forFeature (DDL coherence)
+        Taxonomy, // FIX P2: Missing forFeature (DDL coherence)
       ],
       'educational',
     ),

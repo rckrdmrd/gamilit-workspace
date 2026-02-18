@@ -7,8 +7,8 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Search, CheckCircle2, Circle, Book } from 'lucide-react';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import type {
   DetectiveTextualExercise as DetectiveTextualExerciseData,
   InferenceQuestion,
@@ -71,27 +71,25 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
               key={index}
               onClick={() => !showFeedback && onSelectOption(index)}
               disabled={showFeedback}
-              className={`w-full rounded-lg border-2 p-4 text-left transition-all ${
-                isCorrectAnswer
-                  ? 'border-detective-success bg-detective-success/10'
-                  : isWrongSelection
-                    ? 'border-detective-danger bg-detective-danger/10'
-                    : isSelected
-                      ? 'border-detective-blue bg-detective-blue/5'
-                      : 'border-detective-border bg-white hover:border-detective-blue/50 hover:bg-gray-50'
-              } ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+              className={`w-full rounded-lg border-2 p-4 text-left transition-all ${isCorrectAnswer
+                ? 'border-detective-success bg-detective-success/10'
+                : isWrongSelection
+                  ? 'border-detective-danger bg-detective-danger/10'
+                  : isSelected
+                    ? 'border-detective-blue bg-detective-blue/5'
+                    : 'border-detective-border bg-white hover:border-detective-blue/50 hover:bg-gray-50'
+                } ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <div className="flex items-center gap-3">
                 <div className="flex-shrink-0">
                   {isSelected ? (
                     <CheckCircle2
-                      className={`h-5 w-5 ${
-                        isCorrectAnswer
-                          ? 'text-detective-success'
-                          : isWrongSelection
-                            ? 'text-detective-danger'
-                            : 'text-detective-blue'
-                      }`}
+                      className={`h-5 w-5 ${isCorrectAnswer
+                        ? 'text-detective-success'
+                        : isWrongSelection
+                          ? 'text-detective-danger'
+                          : 'text-detective-blue'
+                        }`}
                     />
                   ) : (
                     <Circle className="h-5 w-5 text-detective-text-secondary" />
@@ -111,11 +109,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       {/* Explanation (shown after feedback) */}
       {showFeedback && (
         <div
-          className={`mt-4 rounded-lg p-4 ${
-            isCorrect
-              ? 'border-l-4 border-detective-success bg-detective-success/10'
-              : 'border-l-4 border-blue-500 bg-blue-50'
-          }`}
+          className={`mt-4 rounded-lg p-4 ${isCorrect
+            ? 'border-l-4 border-detective-success bg-detective-success/10'
+            : 'border-l-4 border-blue-500 bg-blue-50'
+            }`}
         >
           <p className="mb-1 text-sm font-semibold text-detective-text">Explicación:</p>
           <p className="text-sm text-detective-text">{question.explanation}</p>
@@ -186,7 +183,8 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
   }, [exerciseFromPage, propExerciseId]);
 
   // Get actual exerciseId from props or exercise data
-  const exerciseId = propExerciseId || exerciseFromPage?.id || exerciseData.id;  const { submitAsync } = useExerciseSubmission(exerciseId);
+  const exerciseId = propExerciseId || exerciseFromPage?.id || exerciseData.id;
+  const { submitAsync } = useExerciseSubmission(exerciseId);
 
 
   const [answers, setAnswers] = useState<Record<string, number>>(initialData?.answers || {});
@@ -373,64 +371,59 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
   return (
     <>
       {/* Main Exercise Content */}
-      <DetectiveCard variant="default" padding="lg">
-        <div className="space-y-6">
-          {/* Exercise Header */}
-          <div className="rounded-lg bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-lg">
-            <div className="mb-2 flex items-center gap-3">
-              <Search className="h-8 w-8" />
-              <h2 className="text-2xl font-bold">{exerciseData.title}</h2>
+      <UnifiedExerciseLayout
+        title={exerciseData.title}
+        description={exerciseData.description}
+        icon={<Search className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+        headerChildren={
+          <div className="mt-4">
+            <div className="mb-2 flex justify-between text-sm">
+              <span>
+                Progreso: {answeredCount}/{totalQuestions}
+              </span>
+              <span>{Math.round(progress)}%</span>
             </div>
-            <p className="mb-4 opacity-90">{exerciseData.description}</p>
-
-            {/* Progress Bar */}
-            <div className="mt-4">
-              <div className="mb-2 flex justify-between text-sm">
-                <span>
-                  Progreso: {answeredCount}/{totalQuestions}
-                </span>
-                <span>{Math.round(progress)}%</span>
-              </div>
-              <div className="h-2 rounded-full bg-white/30">
-                <div
-                  className="h-full rounded-full bg-white transition-all duration-300"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+            <div className="h-2 rounded-full bg-white/30">
+              <div
+                className="h-full rounded-full bg-white transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
             </div>
           </div>
-
-          {/* Reading Passage */}
-          <div className="rounded-lg border-2 border-detective-blue/20 bg-gradient-to-br from-amber-50 to-orange-50 p-6">
-            <div className="mb-3 flex items-center gap-2 text-detective-blue">
-              <Book className="h-5 w-5" />
-              <h3 className="text-lg font-semibold">Pasaje de Lectura</h3>
-            </div>
-            <p className="text-base leading-relaxed text-detective-text">{exerciseData.passage}</p>
+        }
+      >
+        {/* Reading Passage */}
+        <div className="rounded-lg border-2 border-detective-blue/20 bg-gradient-to-br from-amber-50 to-orange-50 p-6 mb-6">
+          <div className="mb-3 flex items-center gap-2 text-detective-blue">
+            <Book className="h-5 w-5" />
+            <h3 className="text-lg font-semibold">Pasaje de Lectura</h3>
           </div>
+          <p className="text-base leading-relaxed text-detective-text">{exerciseData.passage}</p>
+        </div>
 
-          {/* Questions */}
+        {/* Questions */}
+        <div className="space-y-4">
+          <h3 className="flex items-center gap-2 text-xl font-semibold text-detective-text">
+            <Search className="h-5 w-5 text-detective-blue" />
+            Preguntas de Inferencia
+          </h3>
           <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-xl font-semibold text-detective-text">
-              <Search className="h-5 w-5 text-detective-blue" />
-              Preguntas de Inferencia
-            </h3>
-            <div className="space-y-4">
-              {exerciseData.questions.map((question, index) => (
-                <QuestionCard
-                  key={question.id}
-                  question={question}
-                  questionNumber={index + 1}
-                  selectedOption={answers[question.id] ?? null}
-                  onSelectOption={(optionIndex) => handleSelectOption(question.id, optionIndex)}
-                  showFeedback={submissionResult !== null}
-                  isCorrect={submissionResult?.correctAnswers[question.id] ?? false}
-                />
-              ))}
-            </div>
+            {exerciseData.questions.map((question, index) => (
+              <QuestionCard
+                key={question.id}
+                question={question}
+                questionNumber={index + 1}
+                selectedOption={answers[question.id] ?? null}
+                onSelectOption={(optionIndex) => handleSelectOption(question.id, optionIndex)}
+                showFeedback={submissionResult !== null}
+                isCorrect={submissionResult?.correctAnswers[question.id] ?? false}
+              />
+            ))}
           </div>
         </div>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {/* Feedback Modal */}
       {feedback && (

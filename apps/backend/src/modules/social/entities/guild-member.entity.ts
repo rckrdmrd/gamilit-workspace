@@ -19,7 +19,7 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
 import { Guild } from './guild.entity';
 
 /**
@@ -31,7 +31,7 @@ export enum GuildMemberRole {
   MEMBER = 'member',
 }
 
-@Entity({ schema: DB_SCHEMAS.SOCIAL, name: 'guild_members' })
+@Entity({ schema: DB_SCHEMAS.SOCIAL, name: DB_TABLES.SOCIAL.GUILD_MEMBERS })
 @Index('idx_guild_members_guild', ['guildId'])
 @Index('idx_guild_members_user', ['userId'], { unique: true })
 @Index('idx_guild_members_role', ['role'])

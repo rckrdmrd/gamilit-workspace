@@ -24,7 +24,7 @@ Implementar multi-tenancy mediante **Row-Level Security (RLS)** de PostgreSQL 15
 
 ### Arquitectura:
 1. **Todas las tablas multi-tenant** tienen columna `tenant_id UUID NOT NULL`
-2. **207 RLS policies** aplicadas (SELECT, INSERT, UPDATE, DELETE por tabla)
+2. **227 DDL source / 404 runtime RLS policies** aplicadas (SELECT, INSERT, UPDATE, DELETE por tabla)
 3. **Tenant context** se establece via `SET app.current_tenant_id` al inicio de cada request
 4. **NestJS middleware** establece el tenant context basado en el JWT del usuario
 5. **Tablas globales** (definiciones, catalogos) NO tienen RLS
@@ -55,7 +55,7 @@ CREATE POLICY "tenant_isolation" ON schema.table
 - **Transparente para el ORM:** TypeORM queries funcionan normal, RLS filtra
 - **Performance:** PostgreSQL optimiza RLS policies (no degradacion significativa)
 - **Compliance:** Cumple requisitos de privacidad de datos de menores
-- **207 policies:** Cobertura completa de todas las tablas multi-tenant
+- **227 DDL source / 404 runtime policies:** Cobertura completa de todas las tablas multi-tenant
 
 ### Negativas
 - **Complejidad DDL:** Cada tabla nueva requiere policies
@@ -91,11 +91,27 @@ CREATE POLICY "tenant_isolation" ON schema.table
 
 | Metrica | Valor |
 |---------|-------|
-| Total RLS policies | 207 |
+| Total RLS policies | 227 DDL source / 404 runtime |
 | Tablas con RLS | ~120 |
 | Tablas sin RLS (global) | ~51 |
 | Performance overhead | < 2% (medido) |
 | Tenant context method | SET LOCAL (transaction-scoped) |
+
+---
+
+## Excepciones Documentadas de RLS
+
+### 1. USING(true) intencionales
+
+Las tablas `challenge_participants`, `challenge_results`, `user_ranks` tienen policies con `USING(true)` de forma intencional -- son tablas de lectura publica para leaderboards y competencias. El patron permite que cualquier usuario autenticado pueda ver rankings y resultados de desafios sin restriccion de tenant, lo cual es necesario para funcionalidades cross-tenant como leaderboards globales.
+
+### 2. fact_exercise_completions (9 indexes)
+
+Excepcion justificada para tabla read-only de data_warehouse con patron star-schema que requiere multiples puntos de acceso para queries analiticos. Los 9 indexes cubren las distintas dimensiones (fecha, estudiante, ejercicio, modulo, tiempo) y combinaciones frecuentes en reportes. Al ser una tabla de solo lectura sin RLS (data_warehouse no tiene tenant_id), los indexes optimizan queries de agregacion sin riesgo de fuga de datos.
+
+### 3. BYPASSRLS de gamilit_user
+
+Historicamente activo para simplificar desarrollo. El rol `gamilit_user` tiene `BYPASSRLS` habilitado durante la inicializacion de la base de datos para permitir la carga de seeds sin conflictos con las policies RLS. Se desactiva post-seeds en `init-database.sh` (CORR-F2-01b) mediante `ALTER ROLE gamilit_user NOBYPASSRLS`, garantizando que en runtime la aplicacion respeta todas las policies.
 
 ---
 

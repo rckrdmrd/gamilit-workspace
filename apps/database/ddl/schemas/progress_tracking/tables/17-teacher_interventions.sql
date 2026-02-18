@@ -197,7 +197,7 @@ CREATE POLICY admin_view_tenant_interventions ON progress_tracking.teacher_inter
         AND EXISTS (
             SELECT 1 FROM auth_management.profiles p
             WHERE p.id = gamilit.get_current_user_id()
-            AND p.role IN ('SUPER_ADMIN', 'ADMIN_TEACHER')
+            AND p.role IN ('super_admin', 'admin_teacher')
         )
     );
 

@@ -63,7 +63,7 @@ CREATE POLICY admin_manage_tenant_config ON progress_tracking.teacher_alert_conf
    FROM auth_management.profiles p
   WHERE (p.id = gamilit.get_current_user_id()))) AND (EXISTS ( SELECT 1
    FROM auth_management.profiles p
-  WHERE ((p.id = gamilit.get_current_user_id()) AND (p.role = ANY (ARRAY['SUPER_ADMIN'::auth_management.gamilit_role, 'ADMIN_TEACHER'::auth_management.gamilit_role])))))));
+  WHERE ((p.id = gamilit.get_current_user_id()) AND (p.role = ANY (ARRAY['super_admin'::auth_management.gamilit_role, 'admin_teacher'::auth_management.gamilit_role])))))));
 
 -- Comments
 COMMENT ON TABLE progress_tracking.teacher_alert_configurations IS 'Configuraciones personalizadas de alertas por profesor. Permite definir umbrales y preferencias de notificacion.';

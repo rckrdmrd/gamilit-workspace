@@ -214,9 +214,17 @@ export class TeacherContentService {
     dto: CreateTeacherContentDto,
   ): Promise<TeacherContentResponseDto> {
     // Obtener tenant_id del teacher
-    const teacherProfile = await this.profileRepo.findOne({
-      where: { user_id: teacherId },
+    // DB-125: Try profile.id first (JWT sub = profiles.id)
+    let teacherProfile = await this.profileRepo.findOne({
+      where: { id: teacherId },
     });
+
+    if (!teacherProfile) {
+      // Fallback: teacherId might be auth.users.id
+      teacherProfile = await this.profileRepo.findOne({
+        where: { user_id: teacherId },
+      });
+    }
 
     if (!teacherProfile || !teacherProfile.tenant_id) {
       throw new BadRequestException('Teacher profile or tenant_id not found');

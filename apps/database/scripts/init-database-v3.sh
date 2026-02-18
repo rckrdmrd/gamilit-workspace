@@ -56,6 +56,7 @@ FORCE_MODE=false
 DB_PASSWORD=""
 USE_VAULT=false
 USE_EXPORTED_PASSWORD=false
+SUDO_PASS="${GAMILIT_SUDO_PASSWORD:-}"
 
 # Variables de ambiente (cargadas desde config/*.conf)
 ENV_DB_HOST=""
@@ -291,9 +292,8 @@ check_prerequisites() {
 
     # Verificar conexión PostgreSQL
     if command -v sudo &> /dev/null; then
-        if printf '2320\n' | sudo -S -u postgres psql -c "SELECT 1" &> /dev/null 2>&1; then
+        if [ -n "$SUDO_PASS" ] && printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -c "SELECT 1" &> /dev/null 2>&1; then
             USE_SUDO=true
-            SUDO_PASS="2320"
             print_success "Conectado a PostgreSQL (sudo)"
             # Validar sudo una sola vez para evitar prompts en loops
             sudo -v 2>/dev/null || true
@@ -323,7 +323,7 @@ execute_as_postgres() {
     local sql="$1"
     if [ "$USE_SUDO" = true ]; then
         if [ -n "$SUDO_PASS" ]; then
-            printf "$SUDO_PASS\n" | sudo -S -u postgres psql -c "$sql" 2>&1
+            printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -c "$sql" 2>&1
         else
             sudo -u postgres psql -c "$sql" 2>&1
         fi
@@ -336,7 +336,7 @@ query_as_postgres() {
     local sql="$1"
     if [ "$USE_SUDO" = true ]; then
         if [ -n "$SUDO_PASS" ]; then
-            printf "$SUDO_PASS\n" | sudo -S -u postgres psql -t -c "$sql" 2>/dev/null | xargs
+            printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -t -c "$sql" 2>/dev/null | xargs
         else
             sudo -u postgres psql -t -c "$sql" 2>/dev/null | xargs
         fi
@@ -472,7 +472,7 @@ execute_ddl_tables() {
     # Ejecutar batch UNA SOLA VEZ
     if [ "$USE_SUDO" = true ]; then
         if [ -n "$SUDO_PASS" ]; then
-            if printf "$SUDO_PASS\n" | sudo -S -u postgres psql -d "$DB_NAME" -f "$temp_batch" > /dev/null 2>&1; then
+            if printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -d "$DB_NAME" -f "$temp_batch" > /dev/null 2>&1; then
                 print_success "$table_count tablas creadas exitosamente"
             else
                 print_warning "Algunas tablas tuvieron errores (continuando...)"
@@ -501,7 +501,7 @@ execute_ddl_tables() {
     if [ -f "$perms_file" ]; then
         if [ "$USE_SUDO" = true ]; then
             if [ -n "$SUDO_PASS" ]; then
-                printf "$SUDO_PASS\n" | sudo -S -u postgres psql -d "$DB_NAME" -f "$perms_file" > /dev/null 2>&1
+                printf '%s\n' "$SUDO_PASS" | sudo -S -u postgres psql -d "$DB_NAME" -f "$perms_file" > /dev/null 2>&1
             else
                 sudo -u postgres psql -d "$DB_NAME" -f "$perms_file" > /dev/null 2>&1
             fi

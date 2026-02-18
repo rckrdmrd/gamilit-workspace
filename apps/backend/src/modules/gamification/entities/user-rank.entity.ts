@@ -38,7 +38,7 @@ export class UserRank {
     id!: string;
 
   /**
-   * ID del usuario (FK → auth.users)
+   * ID del usuario (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
     user_id!: string;

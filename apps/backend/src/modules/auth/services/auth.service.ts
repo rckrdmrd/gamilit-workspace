@@ -18,6 +18,7 @@ import { UserRank } from '@/modules/gamification/entities/user-rank.entity';
 import { UserAchievement } from '@/modules/gamification/entities/user-achievement.entity';
 import { Achievement } from '@/modules/gamification/entities/achievement.entity';
 import { MLCoinsTransaction } from '@/modules/gamification/entities/ml-coins-transaction.entity';
+import { InventoryService } from '@/modules/gamification/services/inventory.service';
 
 // Progress tracking entities
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
@@ -87,6 +88,7 @@ export class AuthService {
     @InjectRepository(ExerciseSubmission, 'progress')
     private readonly exerciseSubmissionsRepository: Repository<ExerciseSubmission>,
 
+    private readonly inventoryService: InventoryService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -211,8 +213,9 @@ export class AuthService {
     await this.userRepository.save(user);
 
     // 10. Retornar usuario con tokens (P1-003: incluir profile)
+    // Nuevo usuario no tiene items equipados
     return {
-      user: this.toUserResponse(user, profile, mainTenant),
+      user: this.toUserResponse(user, profile, mainTenant, {}),
       accessToken,
       refreshToken,
     };
@@ -302,9 +305,12 @@ export class AuthService {
     user.last_sign_in_at = new Date();
     await this.userRepository.save(user);
 
+    // Obtener items equipados (skins)
+    const equippedItems = await this.inventoryService.getEquippedItemsMap(profile.id);
+
     // 9. Retornar (P1-003: incluir profile con tenant_id)
     return {
-      user: this.toUserResponse(user, profile),
+      user: this.toUserResponse(user, profile, undefined, equippedItems),
       accessToken,
       refreshToken,
     };
@@ -312,10 +318,12 @@ export class AuthService {
 
   /**
    * Validar usuario por ID
+   * @param userAuthId - auth.users.id (NOT profile.id). Use req.user.user_id from controllers.
    */
-  async validateUser(userId: string): Promise<User | null> {
+  async validateUser(userAuthId: string): Promise<User | null> {
+    // E7-FIX: Parameter must be auth.users.id for auth.users table lookup
     const user = await this.userRepository.findOne({
-      where: { id: userId },
+      where: { id: userAuthId },
     });
     // Verificar que no esté eliminado
     if (user && user.deleted_at) {
@@ -414,7 +422,7 @@ export class AuthService {
    * Permite a un usuario autenticado cambiar su contraseña.
    * Requiere proporcionar la contraseña actual para validación de seguridad.
    *
-   * @param userId - UUID del usuario (extraído del JWT)
+   * @param userAuthId - auth.users.id (NOT profile.id). Use req.user.user_id from controllers.
    * @param currentPassword - Contraseña actual del usuario
    * @param newPassword - Nueva contraseña (mínimo 8 caracteres)
    *
@@ -434,12 +442,13 @@ export class AuthService {
    * @see ChangePasswordDto
    */
   async changePassword(
-    userId: string,
+    userAuthId: string,
     currentPassword: string,
     newPassword: string,
   ): Promise<{ message: string }> {
+    // E8-FIX: userAuthId must be auth.users.id for auth.users table lookup
     // 1. Obtener usuario
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({ where: { id: userAuthId } });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
@@ -466,7 +475,7 @@ export class AuthService {
 
     // 5. Actualizar contraseña
     await this.userRepository.update(
-      { id: userId },
+      { id: userAuthId },
       { encrypted_password: hashedPassword },
     );
 
@@ -479,20 +488,22 @@ export class AuthService {
 
   /**
    * Actualizar perfil del usuario
+   * @param userAuthId - auth.users.id (NOT profile.id). Use req.user.user_id from controllers.
    */
-  async updateUserProfile(userId: string, dto: UpdateProfileDto): Promise<User> {
+  async updateUserProfile(userAuthId: string, dto: UpdateProfileDto): Promise<User> {
+    // E9-FIX: userAuthId must be auth.users.id for auth.users + profiles.user_id lookups
     // 1. Buscar usuario
     const user = await this.userRepository.findOne({
-      where: { id: userId },
+      where: { id: userAuthId },
     });
 
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');
     }
 
-    // 2. Buscar perfil asociado
+    // 2. Buscar perfil asociado (profiles.user_id = auth.users.id)
     const profile = await this.profileRepository.findOne({
-      where: { user_id: userId },
+      where: { user_id: userAuthId },
     });
 
     if (!profile) {
@@ -525,7 +536,7 @@ export class AuthService {
         where: { email: dto.email },
       });
 
-      if (existingUser && existingUser.id !== userId) {
+      if (existingUser && existingUser.id !== userAuthId) {
         throw new ConflictException('Email ya está en uso');
       }
 
@@ -540,7 +551,7 @@ export class AuthService {
 
     // 6. Retornar usuario actualizado
     const updatedUser = await this.userRepository.findOne({
-      where: { id: userId },
+      where: { id: userAuthId },
     });
 
     if (!updatedUser) {
@@ -554,8 +565,9 @@ export class AuthService {
    * Obtener preferencias del usuario
    */
   async getUserPreferences(userId: string): Promise<Record<string, unknown>> {
+    // E3-FIX: userId is profile.id (from JWT sub), search by PK not user_id
     const profile = await this.profileRepository.findOne({
-      where: { user_id: userId },
+      where: { id: userId },
     });
 
     if (!profile) {
@@ -569,8 +581,9 @@ export class AuthService {
    * Actualizar preferencias del usuario
    */
   async updateUserPreferences(userId: string, preferences: Record<string, unknown>): Promise<Record<string, unknown>> {
+    // E3b-FIX: userId is profile.id (from JWT sub), search by PK not user_id
     const profile = await this.profileRepository.findOne({
-      where: { user_id: userId },
+      where: { id: userId },
     });
 
     if (!profile) {
@@ -591,9 +604,9 @@ export class AuthService {
     // Por ahora, retornamos una URL de ejemplo
     const avatarUrl = `/avatars/${userId}_${Date.now()}_${file.originalname}`;
 
-    // Actualizar perfil con nueva URL de avatar
+    // E3c-FIX: userId is profile.id (from JWT sub), search by PK not user_id
     const profile = await this.profileRepository.findOne({
-      where: { user_id: userId },
+      where: { id: userId },
     });
 
     if (!profile) {
@@ -747,9 +760,15 @@ export class AuthService {
    * @param user - User entity de la base de datos
    * @param profile - (Opcional) Profile entity para incluir campos adicionales
    * @param tenant - (Opcional) Tenant entity para incluir organization info
+   * @param equippedItems - (Opcional) Mapa de items equipados
    * @returns UserResponseDto con campos derivados calculados
    */
-  public toUserResponse(user: User, profile?: Profile, _tenant?: Tenant): UserResponseDto {
+  public toUserResponse(
+    user: User,
+    profile?: Profile,
+    _tenant?: Tenant,
+    equippedItems?: Record<string, unknown>,
+  ): UserResponseDto {
     const { encrypted_password: _encrypted_password, ...userWithoutPassword } = user;
 
     // Calcular campos derivados para coherencia Frontend-Backend
@@ -780,10 +799,12 @@ export class AuthService {
 
     return {
       ...userWithoutPassword,
+      id: profile?.id ?? user.id, // E1-FIX: Ensure response id is profile.id (consistent with JWT sub)
       emailVerified,
       isActive,
       ...profileFields,
       ...dateFields,
+      equipped_items: equippedItems || {},
     } as UserResponseDto;
   }
 

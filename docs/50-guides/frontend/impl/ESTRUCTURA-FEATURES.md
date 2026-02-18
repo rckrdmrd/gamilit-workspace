@@ -1,7 +1,7 @@
 # Estructura de Features Frontend
 
-**Versión:** 1.1.0
-**Última Actualización:** 2025-11-29
+**Versión:** 1.2.0
+**Última Actualización:** 2026-02-18
 **Aplica a:** apps/frontend/src/features/
 
 ---
@@ -117,30 +117,46 @@ features/gamification/
 └── index.ts
 ```
 
-### exercises/
+### exercises/ (Restructured v2.0 — 2026-02-18)
+
+Feature restructurada con Registry Pattern + React Context. ExercisePage monolito (~1058 líneas) descompuesto en ~20 archivos enfocados.
 
 ```
 features/exercises/
-├── components/
-│   ├── ExerciseRenderer.tsx     # Renderiza según tipo
-│   ├── ExerciseProgress.tsx
-│   ├── FeedbackDisplay.tsx
-│   └── mechanics/               # Componentes por mecánica
-│       ├── TimelineExercise.tsx
-│       ├── FillInBlankExercise.tsx
-│       ├── TrueFalseExercise.tsx
-│       ├── WordSearchExercise.tsx
-│       └── ... (23 tipos)
+├── types/
+│   ├── exercise.types.ts              # Types base (Exercise, ExerciseContent, etc.)
+│   ├── exercise-mechanic.types.ts     # Contrato estándar: ExerciseMechanicProps, ExerciseComodinesContext
+│   └── index.ts
+├── registry/
+│   ├── exercise-registry.ts           # Map<string, ExerciseRegistryEntry> + registerExercise()
+│   └── registrations.ts               # 30 mecánicas registradas con loader + adapter + meta
 ├── hooks/
-│   ├── useExercise.ts
-│   ├── useSubmitAnswer.ts
-│   └── useExerciseTimer.ts
-├── services/
-│   └── exercises.service.ts
-└── types/
-    ├── exercise.types.ts
-    └── answer.types.ts
+│   ├── useExerciseData.ts             # Fetch ejercicio + registry lookup + mechanic loading
+│   ├── useExerciseProgress.ts         # Progreso + auto-save integrado
+│   ├── useExerciseComodines.ts        # Inventario real comodines via API backend
+│   ├── useExerciseTimer.ts
+│   ├── useExerciseRewards.ts
+│   └── index.ts
+├── context/
+│   └── ExerciseContext.tsx            # Compone todos los hooks en React Context
+├── components/
+│   ├── ExerciseLayout.tsx             # Composición: header + guide + loader + sidebar
+│   ├── ExerciseLoader.tsx             # Carga dinámica via registry (Suspense + lazy)
+│   ├── ExerciseSidebar.tsx            # Panel lateral: comodines + acciones + stats
+│   ├── ConsumablesPanel.tsx           # Comodines reales del backend
+│   ├── ActionsPanel.tsx               # Guardar, enviar, reiniciar, verificar
+│   ├── ExerciseLoadingSkeleton.tsx    # Estado de carga
+│   ├── ExerciseErrorState.tsx         # Estado de error
+│   ├── ExerciseCompletedState.tsx     # Ejercicio ya completado
+│   ├── MechanicCompatWrapper.tsx      # Compatibilidad backward con mecánicas legacy
+│   ├── ExerciseGuide.tsx              # Guía pedagógica
+│   ├── ExerciseFeedback.tsx
+│   ├── ExerciseHeader.tsx
+│   └── index.ts
+└── index.ts                           # Barrel exports completos
 ```
+
+**Agregar nueva mecánica:** Crear componente + registrar en `registrations.ts` (4 líneas). Sin modificar ExercisePage ni routing.
 
 ### mechanics/ (NUEVO v1.1)
 
@@ -344,7 +360,7 @@ Las páginas de cada feature se registran en el router principal:
 // src/router/index.tsx
 import { DashboardPage } from '@/features/dashboard/pages/DashboardPage';
 import { ExercisePage } from '@/features/exercises/pages/ExercisePage';
-import { AchievementsPage } from '@/features/gamification/pages/AchievementsPage';
+import AchievementsPage from '@/apps/student/pages/AchievementsPage';
 
 const routes = [
   { path: '/dashboard', element: <DashboardPage /> },
@@ -380,5 +396,6 @@ const routes = [
 
 | Versión | Fecha | Cambios |
 |---------|-------|---------|
+| 1.2.0 | 2026-02-18 | exercises/ restructurada: Registry Pattern + Context + hooks descompuestos |
 | 1.1.0 | 2025-11-29 | Añadidas features: mechanics, missions, assignments |
 | 1.0.0 | 2025-11-28 | Versión inicial |

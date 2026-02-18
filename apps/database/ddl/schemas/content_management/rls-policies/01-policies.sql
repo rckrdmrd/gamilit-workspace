@@ -5,35 +5,35 @@
 -- =====================================================
 
 -- =====================================================
--- TABLE: content_management.marie_curie_content
+-- TABLE: content_management.marie_curie_contents
 -- =====================================================
 
 -- Drop existing policies
-DROP POLICY IF EXISTS marie_content_all_admin ON content_management.marie_curie_content;
-DROP POLICY IF EXISTS marie_content_select_all ON content_management.marie_curie_content;
+DROP POLICY IF EXISTS marie_content_all_admin ON content_management.marie_curie_contents;
+DROP POLICY IF EXISTS marie_content_select_all ON content_management.marie_curie_contents;
 
 -- Policy: marie_content_all_admin
 -- Description: Los administradores tienen acceso completo al contenido Marie Curie
 CREATE POLICY marie_content_all_admin
-    ON content_management.marie_curie_content
+    ON content_management.marie_curie_contents
     AS PERMISSIVE
     FOR ALL
     TO public
     USING (gamilit.is_admin());
 
-COMMENT ON POLICY marie_content_all_admin ON content_management.marie_curie_content IS
+COMMENT ON POLICY marie_content_all_admin ON content_management.marie_curie_contents IS
     'Permite a los administradores gestión completa del contenido Marie Curie';
 
 -- Policy: marie_content_select_all
 -- Description: Todos los usuarios pueden ver contenido publicado
 CREATE POLICY marie_content_select_all
-    ON content_management.marie_curie_content
+    ON content_management.marie_curie_contents
     AS PERMISSIVE
     FOR SELECT
     TO public
-    USING (status = 'published'::content_status);
+    USING (status = 'published'::content_management.content_status);
 
-COMMENT ON POLICY marie_content_select_all ON content_management.marie_curie_content IS
+COMMENT ON POLICY marie_content_select_all ON content_management.marie_curie_contents IS
     'Permite a todos los usuarios ver el contenido Marie Curie publicado';
 
 -- =====================================================
@@ -118,74 +118,74 @@ COMMENT ON POLICY media_files_insert_teacher ON content_management.media_files I
     'Permite a los profesores y administradores subir archivos multimedia';
 
 -- =====================================================
--- TABLE: content_management.flagged_content
+-- TABLE: content_management.flagged_contents
 -- Description: Content moderation reports - admin and reporter access
 -- Policies: 5 (SELECT: 2, INSERT: 1, UPDATE: 1, DELETE: 1)
 -- Added: 2025-11-09 (CRITICAL SECURITY FIX)
 -- =====================================================
 
-DROP POLICY IF EXISTS flagged_content_select_admin ON content_management.flagged_content;
-DROP POLICY IF EXISTS flagged_content_select_own ON content_management.flagged_content;
-DROP POLICY IF EXISTS flagged_content_insert_authenticated ON content_management.flagged_content;
-DROP POLICY IF EXISTS flagged_content_update_admin ON content_management.flagged_content;
-DROP POLICY IF EXISTS flagged_content_delete_admin ON content_management.flagged_content;
+DROP POLICY IF EXISTS flagged_content_select_admin ON content_management.flagged_contents;
+DROP POLICY IF EXISTS flagged_content_select_own ON content_management.flagged_contents;
+DROP POLICY IF EXISTS flagged_content_insert_authenticated ON content_management.flagged_contents;
+DROP POLICY IF EXISTS flagged_content_update_admin ON content_management.flagged_contents;
+DROP POLICY IF EXISTS flagged_content_delete_admin ON content_management.flagged_contents;
 
 -- Policy: flagged_content_select_admin
 -- Purpose: Admins and moderators can view all reports
 CREATE POLICY flagged_content_select_admin
-    ON content_management.flagged_content
+    ON content_management.flagged_contents
     AS PERMISSIVE
     FOR SELECT
     TO public
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
-COMMENT ON POLICY flagged_content_select_admin ON content_management.flagged_content IS
+COMMENT ON POLICY flagged_content_select_admin ON content_management.flagged_contents IS
     'Permite a los administradores y moderadores ver todos los reportes';
 
 -- Policy: flagged_content_select_own
 -- Purpose: Users can view their own reports
 CREATE POLICY flagged_content_select_own
-    ON content_management.flagged_content
+    ON content_management.flagged_contents
     AS PERMISSIVE
     FOR SELECT
     TO public
     USING (reported_by = gamilit.get_current_user_id());
 
-COMMENT ON POLICY flagged_content_select_own ON content_management.flagged_content IS
+COMMENT ON POLICY flagged_content_select_own ON content_management.flagged_contents IS
     'Permite a los usuarios ver sus propios reportes';
 
 -- Policy: flagged_content_insert_authenticated
 -- Purpose: Any authenticated user can report content
 CREATE POLICY flagged_content_insert_authenticated
-    ON content_management.flagged_content
+    ON content_management.flagged_contents
     AS PERMISSIVE
     FOR INSERT
     TO public
     WITH CHECK (gamilit.get_current_user_id() IS NOT NULL);
 
-COMMENT ON POLICY flagged_content_insert_authenticated ON content_management.flagged_content IS
+COMMENT ON POLICY flagged_content_insert_authenticated ON content_management.flagged_contents IS
     'Permite a cualquier usuario autenticado reportar contenido';
 
 -- Policy: flagged_content_update_admin
 -- Purpose: Only admins can update (approve/reject) reports
 CREATE POLICY flagged_content_update_admin
-    ON content_management.flagged_content
+    ON content_management.flagged_contents
     AS PERMISSIVE
     FOR UPDATE
     TO public
     USING (gamilit.is_admin() OR gamilit.is_super_admin());
 
-COMMENT ON POLICY flagged_content_update_admin ON content_management.flagged_content IS
+COMMENT ON POLICY flagged_content_update_admin ON content_management.flagged_contents IS
     'Solo administradores pueden revisar reportes';
 
 -- Policy: flagged_content_delete_admin
 -- Purpose: Only super_admins can delete reports
 CREATE POLICY flagged_content_delete_admin
-    ON content_management.flagged_content
+    ON content_management.flagged_contents
     AS PERMISSIVE
     FOR DELETE
     TO public
     USING (gamilit.is_super_admin());
 
-COMMENT ON POLICY flagged_content_delete_admin ON content_management.flagged_content IS
+COMMENT ON POLICY flagged_content_delete_admin ON content_management.flagged_contents IS
     'Solo super_admins pueden eliminar reportes';

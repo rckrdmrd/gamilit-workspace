@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Zap, TrendingUp, Award, Crown, Star, Sparkles } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
+import { MAYA_RANKS as MAYA_RANKS_SSOT, type MayaRank } from '@/shared/constants/ranks.constants';
 import type { RankData } from '../../hooks/useDashboardData';
 
 interface RankProgressWidgetProps {
@@ -8,52 +9,34 @@ interface RankProgressWidgetProps {
   loading?: boolean;
 }
 
-const MAYA_RANKS = {
-  Ajaw: {
-    name: 'Ajaw - Señor',
-    icon: '🏹',
-    color: 'from-green-500 to-emerald-500',
-    border: 'border-green-400',
-    shadow: 'shadow-green-200',
-  },
-  Nacom: {
-    name: 'Nacom - Capitán',
-    icon: '🔍',
-    color: 'from-blue-500 to-cyan-500',
-    border: 'border-blue-400',
-    shadow: 'shadow-blue-200',
-  },
-  "Ah K'in": {
-    name: "Ah K'in - Sacerdote",
-    icon: '🗡️',
-    color: 'from-purple-500 to-pink-500',
-    border: 'border-purple-400',
-    shadow: 'shadow-purple-200',
-  },
-  'Halach Uinic': {
-    name: 'Halach Uinic - Hombre Verdadero',
-    icon: '⚔️',
-    color: 'from-orange-500 to-amber-500',
-    border: 'border-orange-400',
-    shadow: 'shadow-orange-200',
-  },
-  "K'uk'ulkan": {
-    name: "K'uk'ulkan - Serpiente Emplumada",
-    icon: '👑',
-    color: 'from-yellow-400 to-amber-400',
-    border: 'border-yellow-400',
-    shadow: 'shadow-yellow-200',
-  },
+/** Local UI styling per rank (Tailwind gradient/border/shadow, not in SSOT) */
+const RANK_STYLE_MAP: Record<string, { color: string; border: string; shadow: string }> = {
+  '#8B4513': { color: 'from-green-500 to-emerald-500', border: 'border-green-400', shadow: 'shadow-green-200' },
+  '#CD7F32': { color: 'from-blue-500 to-cyan-500', border: 'border-blue-400', shadow: 'shadow-blue-200' },
+  '#C0C0C0': { color: 'from-purple-500 to-pink-500', border: 'border-purple-400', shadow: 'shadow-purple-200' },
+  '#FFD700': { color: 'from-orange-500 to-amber-500', border: 'border-orange-400', shadow: 'shadow-orange-200' },
+  '#9B59B6': { color: 'from-yellow-400 to-amber-400', border: 'border-yellow-400', shadow: 'shadow-yellow-200' },
 };
 
+const DEFAULT_STYLE = { color: 'from-blue-500 to-cyan-500', border: 'border-blue-400', shadow: 'shadow-blue-200' };
+
+function getRankDisplay(rankName: string) {
+  const ssot = MAYA_RANKS_SSOT[rankName as MayaRank];
+  if (!ssot) {
+    return { name: rankName, icon: '🌱', ...DEFAULT_STYLE };
+  }
+  const style = RANK_STYLE_MAP[ssot.color] || DEFAULT_STYLE;
+  return {
+    name: `${ssot.name} - ${ssot.description.split(' - ')[1] || ssot.description}`,
+    icon: ssot.icon,
+    ...style,
+  };
+}
+
 export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
-  console.log('🎨 [RankProgressWidget] Props received:', { data, loading });
-
   const rankInfo = data
-    ? MAYA_RANKS[data.currentRank as keyof typeof MAYA_RANKS] || MAYA_RANKS.Nacom
-    : MAYA_RANKS.Nacom;
-
-  console.log('🎨 [RankProgressWidget] Rank info:', { rankInfo, currentRank: data?.currentRank });
+    ? getRankDisplay(data.currentRank)
+    : getRankDisplay('Nacom');
 
   if (loading || !data) {
     return (

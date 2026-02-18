@@ -1,8 +1,8 @@
 # COHERENCE: Backend Entities vs DDL Tables
 
 **Proyecto:** GAMILIT
-**Version:** 2.0.0
-**Fecha:** 2026-02-12
+**Version:** 2.2.0
+**Fecha:** 2026-02-18
 **Tarea:** TASK-2026-02-12-ANALISIS-BD-VS-DOCS (Sprint R3)
 
 ---
@@ -15,13 +15,13 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 
 | Metrica | Valor |
 |---------|-------|
-| Total Entities Backend | 152 files (153 @Entity classes) |
+| Total Entities Backend | 153 files (154 @Entity classes) |
 | Total Tablas DDL | 169 |
-| Tablas con Entity | 151 |
-| Tablas sin Entity | 18 |
-| Cobertura | 89.3% |
+| Tablas con Entity | 153 |
+| Tablas sin Entity | 16 |
+| Cobertura | ~90.5% |
 
-**Nota:** Las 18 tablas sin entity directa son casos justificados: 16 data_warehouse (acceso via SQL raw), 1 auth.users (Supabase), 1 catalogo RBAC (auth_management.roles 03b). Ver seccion "Tablas DDL sin Entity" mas abajo.
+**Nota:** Las 16 tablas sin entity directa son casos justificados: 16 data_warehouse (acceso via SQL raw). Las anteriores excepciones auth.users y auth_management.roles (03b) ahora estan cubiertas indirectamente. Ver seccion "Tablas DDL sin Entity" mas abajo.
 
 **Auditoria:** Verificado en TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION (2026-02-12).
 
@@ -54,7 +54,7 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 
 ---
 
-## Modulo: gamification (21 Entities)
+## Modulo: gamification (22 Entities)
 
 | Entity | Tabla DDL | Schema | Estado |
 |--------|-----------|--------|--------|
@@ -78,9 +78,10 @@ Este documento valida la coherencia entre las entidades TypeORM del backend y la
 | user-purchase.entity.ts | 19-user_purchases.sql | gamification_system | MATCH |
 | user-rank.entity.ts | 02-user_ranks.sql | gamification_system | MATCH |
 | user-skill-rating.entity.ts | user_skill_ratings.sql | social_features | MATCH |
+| user-equipped-item.entity.ts | 21-user_equipped_items.sql | gamification_system | MATCH |
 | user-stats.entity.ts | 01-user_stats.sql | gamification_system | MATCH |
 
-**Cobertura gamification:** 100% (21/21)
+**Cobertura gamification:** 100% (22/22)
 
 ---
 
@@ -380,7 +381,7 @@ Para mejorar coherencia frontend:
 | Modulo | Entities | DDL Tables | Cobertura |
 |--------|----------|------------|-----------|
 | auth | 18 | 18 | 100% |
-| gamification | 21 | 21 | 100% |
+| gamification | 22 | 22 | 100% |
 | educational | 16 | 18 | 89% |
 | progress | 20 | 20 | 100% |
 | social | 26 | 27 | 96% |
@@ -405,7 +406,7 @@ Para mejorar coherencia frontend:
 | Communication datasource | PENDIENTE (conversation entities huerfanas) |
 | Frontend types incompletos | MEJORABLE |
 
-**Coherencia Global: 89.3%** (151/169 tablas con entity) - Nivel satisfactorio para produccion.
+**Coherencia Global: ~90.5%** (153/169 tablas con entity) - Nivel satisfactorio para produccion.
 
 ---
 
@@ -423,6 +424,15 @@ Verificacion de Sprint R3 (2026-02-12): de las 20 tablas mas criticas, 16 tenian
 Inconsistencias de estilo corregidas:
 - `user-suspension.entity.ts`: schema hardcoded -> `DB_SCHEMAS.AUTH` (R3-05)
 - `user-preferences.entity.ts`: schema hardcoded -> `DB_SCHEMAS.AUTH` (R3-05)
+
+### Correcciones Sprint REC (2026-02-18) — TASK-2026-02-18-ANALISIS-MISIONES-LOGROS
+
+| Tabla/Entity | Columna | Accion | Estado |
+|-------------|---------|--------|--------|
+| gamification_system.missions / mission.entity.ts | `template_id` | REC-009: TEXT → UUID + FK a mission_templates(id) | CORREGIDO |
+| gamification_system.classroom_missions / classroom-mission.entity.ts | `mission_template_id` | REC-009: TEXT → UUID + FK a mission_templates(id) | CORREGIDO |
+| gamification_system.missions | UNIQUE constraint | REC-001: (user_id, template_id, mission_type, end_date) anti-duplicacion | AGREGADO |
+| gamification_system.achievements / achievement.entity.ts | `ml_coins_reward`, `points_value` | REC-012: @deprecated, usar `rewards` JSONB como canonical | ANOTADO |
 
 ---
 
@@ -451,7 +461,7 @@ Inconsistencias de estilo corregidas:
 
 ## Conclusiones
 
-1. **Coherencia Backend-DDL es buena** (87%) con todos los gaps justificados
+1. **Coherencia Backend-DDL es buena** (~90.5%) con todos los gaps justificados
 2. **16 tablas data_warehouse sin entity** es intencional (acceso SQL raw)
 3. **4 columnas faltantes HIGH/MEDIUM** fueron corregidas en Sprint R3
 4. **2 schemas hardcoded** fueron corregidos a usar DB_SCHEMAS constants

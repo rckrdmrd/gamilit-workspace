@@ -28,3 +28,4 @@ export type {
   SpeechState,
   SpeechLanguage,
 } from './useSpeechToText';
+export { useBranding } from './useBranding';

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Reorder } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { UnifiedExerciseLayout } from '@shared/components/exercises/UnifiedExerciseLayout';
 import { TimelineEvent } from './TimelineEvent';
 import { TimelineEvent as TimelineEventType, TimelineExerciseProps } from './timelineTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { Shuffle } from 'lucide-react';
+import { Clock, Shuffle } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -153,10 +153,13 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
 
   return (
     <>
-      <DetectiveCard variant="default" padding="lg">
-        <h3 className="mb-4 text-lg font-bold">
-          Arrastra los eventos para ordenarlos cronológicamente
-        </h3>
+      <UnifiedExerciseLayout
+        title={exercise.title || 'Línea de Tiempo'}
+        description="Arrastra los eventos para ordenarlos cronológicamente"
+        icon={<Clock className="h-8 w-8" />}
+        cardVariant="default"
+        cardPadding="lg"
+      >
         <Reorder.Group axis="y" values={events} onReorder={setEvents} className="space-y-3">
           {events.map((event, index) => (
             <Reorder.Item key={event.id} value={event}>
@@ -164,7 +167,7 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
             </Reorder.Item>
           ))}
         </Reorder.Group>
-      </DetectiveCard>
+      </UnifiedExerciseLayout>
 
       {feedback && (
         <FeedbackModal
