@@ -1104,7 +1104,7 @@ load_seeds() {
         "gamification_system/13-shop_items.sql|all|core"
         "gamification_system/14-achievements-m3-m5.sql|all|core"
         "gamification_system/15-comodin_usage_tracking.sql|all|core"
-        "gamification_system/16-shop_items_expanded.sql|all|core"
+        "gamification_system/16-shop_items_expanded.sql|dev|core"
         "gamification_system/17-shop_items_metadata_normalization.sql|all|core"
         "gamification_system/18-user_purchases-demo.sql|dev|demo_gamification"
         "gamification_system/19-user_equipped_items-demo.sql|dev|demo_gamification"
@@ -1133,7 +1133,10 @@ load_seeds() {
         # ==========================================
         # FASE 7: Content Management
         # ==========================================
+        # NOTE: 01-default-templates.sql excluded — references nonexistent 'structure' column
+        # NOTE: 04-moderation_rules.sql excluded — FK violation on system user + ownership issue
         "content_management/01-marie-curie-bio.sql|dev|demo_data"
+        "content_management/02-marie_curie_content.sql|prod|core"
         "content_management/02-media-files.sql|dev|demo_data"
         "content_management/03-tags.sql|all|core"
 
@@ -1152,9 +1155,11 @@ load_seeds() {
         # ==========================================
         # FASE 9: Progress & Audit
         # ==========================================
+        "progress_tracking/01-module_progress.sql|all|core"
         "progress_tracking/01-demo-progress.sql|dev|demo_exercises"
         "progress_tracking/02-exercise-attempts.sql|dev|demo_exercises"
         "progress_tracking/03-manual-reviews.sql|dev|demo_exercises"
+        "audit_logging/01-default-config.sql|all|core"
         "audit_logging/01-audit-logs.sql|dev|demo_data"
         "audit_logging/02-system-metrics.sql|dev|demo_data"
 
