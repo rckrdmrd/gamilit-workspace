@@ -40,8 +40,8 @@ DECLARE
     missing_columns TEXT[];
     expected_columns TEXT[] := ARRAY[
         'id', 'platform_name', 'platform_id', 'client_id', 'deployment_id',
-        'public_keyset_url', 'access_token_url', 'oidc_auth_url',
-        'is_enabled', 'supports_deep_linking', 'supports_nrps', 'supports_ags',
+        'public_keyset_url', 'access_token_url', 'authorization_url',
+        'is_active', 'supports_deep_linking', 'supports_nrps', 'supports_ags',
         'custom_parameters', 'created_at', 'updated_at'
     ];
     col TEXT;
@@ -87,13 +87,12 @@ INSERT INTO lti_integration.lti_consumers (
     deployment_id,
     public_keyset_url,
     access_token_url,
-    oidc_auth_url,
-    is_enabled,
+    authorization_url,
+    is_active,
     supports_deep_linking,
     supports_nrps,
     supports_ags,
     custom_parameters,
-    metadata,
     created_at,
     updated_at
 ) VALUES
@@ -117,9 +116,7 @@ INSERT INTO lti_integration.lti_consumers (
     jsonb_build_object(
         'custom_context_id', '$Context.id',
         'custom_course_id', '$CourseSection.sourcedId',
-        'custom_user_id', '$User.id'
-    ),
-    jsonb_build_object(
+        'custom_user_id', '$User.id',
         'platform_type', 'moodle',
         'platform_version', '4.x',
         'configuration_status', 'pending',
@@ -148,9 +145,7 @@ INSERT INTO lti_integration.lti_consumers (
     jsonb_build_object(
         'custom_canvas_course_id', '$Canvas.course.id',
         'custom_canvas_user_id', '$Canvas.user.id',
-        'custom_canvas_enrollment_state', '$Canvas.enrollment.enrollmentState'
-    ),
-    jsonb_build_object(
+        'custom_canvas_enrollment_state', '$Canvas.enrollment.enrollmentState',
         'platform_type', 'canvas',
         'platform_version', 'cloud',
         'configuration_status', 'pending',
@@ -178,9 +173,7 @@ INSERT INTO lti_integration.lti_consumers (
     true,  -- Supports AGS
     jsonb_build_object(
         'custom_bb_course_id', '$Context.id',
-        'custom_bb_user_id', '$User.id'
-    ),
-    jsonb_build_object(
+        'custom_bb_user_id', '$User.id',
         'platform_type', 'blackboard',
         'platform_version', 'ultra',
         'configuration_status', 'pending',
@@ -190,18 +183,16 @@ INSERT INTO lti_integration.lti_consumers (
     gamilit.now_mexico()
 )
 
-ON CONFLICT (platform_id, client_id) DO UPDATE SET
+ON CONFLICT (platform_id, client_id, deployment_id) DO UPDATE SET
     platform_name = EXCLUDED.platform_name,
-    deployment_id = EXCLUDED.deployment_id,
     public_keyset_url = EXCLUDED.public_keyset_url,
     access_token_url = EXCLUDED.access_token_url,
-    oidc_auth_url = EXCLUDED.oidc_auth_url,
-    is_enabled = EXCLUDED.is_enabled,
+    authorization_url = EXCLUDED.authorization_url,
+    is_active = EXCLUDED.is_active,
     supports_deep_linking = EXCLUDED.supports_deep_linking,
     supports_nrps = EXCLUDED.supports_nrps,
     supports_ags = EXCLUDED.supports_ags,
     custom_parameters = EXCLUDED.custom_parameters,
-    metadata = EXCLUDED.metadata,
     updated_at = gamilit.now_mexico();
 
 -- =====================================================
@@ -214,7 +205,7 @@ DECLARE
     enabled_count INTEGER;
 BEGIN
     SELECT COUNT(*) INTO consumers_count FROM lti_integration.lti_consumers;
-    SELECT COUNT(*) INTO enabled_count FROM lti_integration.lti_consumers WHERE is_enabled = true;
+    SELECT COUNT(*) INTO enabled_count FROM lti_integration.lti_consumers WHERE is_active = true;
 
     RAISE NOTICE '════════════════════════════════════════════════════════';
     RAISE NOTICE '  SEED COMPLETADO: lti_consumers';
@@ -227,7 +218,7 @@ BEGIN
     RAISE NOTICE '  1. Configurar credenciales reales vía manage-secrets.sh';
     RAISE NOTICE '  2. Actualizar client_id con valores de cada plataforma';
     RAISE NOTICE '  3. Validar URLs y endpoints';
-    RAISE NOTICE '  4. Habilitar (is_enabled = true) después de configurar';
+    RAISE NOTICE '  4. Habilitar (is_active = true) después de configurar';
     RAISE NOTICE '════════════════════════════════════════════════════════';
 
     IF consumers_count = 0 THEN
@@ -258,14 +249,14 @@ PASOS PARA CONFIGURAR EN PRODUCCIÓN:
    ```sql
    UPDATE lti_integration.lti_consumers
    SET client_id = 'real-client-id',
-       is_enabled = true,
+       is_active = true,
        updated_at = gamilit.now_mexico()
    WHERE platform_name = 'Moodle LMS';
    ```
 
 4. Validar configuración:
    ```sql
-   SELECT platform_name, is_enabled, configuration_status
+   SELECT platform_name, is_active, configuration_status
    FROM lti_integration.lti_consumers;
    ```
 

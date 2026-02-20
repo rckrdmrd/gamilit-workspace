@@ -29,13 +29,15 @@ BEGIN
             title,
             description,
             order_index,
-            is_active
+            is_published,
+            status
         ) VALUES (
             'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
             'Módulo de Prueba - Validadores',
             'Módulo de prueba con ejercicios para testing de validadores',
             99,
-            true
+            true,
+            'published'
         ) RETURNING id INTO v_test_module_id;
 
         RAISE NOTICE 'Módulo de prueba creado: %', v_test_module_id;

@@ -14,17 +14,17 @@ SET search_path TO gamification_system, public;
 -- METADATA DE LEADERBOARDS
 -- =====================================================
 
-INSERT INTO gamification_system.leaderboard_metadata (
+INSERT INTO gamification_system.leaderboard_metadatas (
     view_name,
     last_refresh_at,
     total_users,
     refresh_duration_ms,
     created_at
 ) VALUES
-('leaderboard_xp', NOW(), 0, 0, NOW()),
-('leaderboard_coins', NOW(), 0, 0, NOW()),
-('leaderboard_streaks', NOW(), 0, 0, NOW()),
-('leaderboard_global', NOW(), 0, 0, NOW())
+('leaderboard_xp', gamilit.now_mexico(), 0, 0, gamilit.now_mexico()),
+('leaderboard_coins', gamilit.now_mexico(), 0, 0, gamilit.now_mexico()),
+('leaderboard_streaks', gamilit.now_mexico(), 0, 0, gamilit.now_mexico()),
+('leaderboard_global', gamilit.now_mexico(), 0, 0, gamilit.now_mexico())
 
 ON CONFLICT (view_name) DO UPDATE SET
     last_refresh_at = EXCLUDED.last_refresh_at,
@@ -38,7 +38,7 @@ ON CONFLICT (view_name) DO UPDATE SET
 SELECT
     'Leaderboard Metadata (Production)' AS seed_name,
     COUNT(*) AS records_inserted
-FROM gamification_system.leaderboard_metadata;
+FROM gamification_system.leaderboard_metadatas;
 
 -- =====================================================
 -- MIGRATION NOTES

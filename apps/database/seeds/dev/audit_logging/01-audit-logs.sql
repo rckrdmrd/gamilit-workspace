@@ -16,6 +16,12 @@ DECLARE
     student2_id UUID;
     student3_id UUID;
 BEGIN
+    -- Idempotency guard: skip if seed data already exists
+    IF EXISTS (SELECT 1 FROM audit_logging.audit_logs WHERE event_type = 'system_configuration' LIMIT 1) THEN
+        RAISE NOTICE 'audit_logs seed data already exists, skipping';
+        RETURN;
+    END IF;
+
     -- =====================================================
     -- OBTENER USER IDs — lookup profile IDs (FK actor_id targets auth_management.profiles(id))
     -- =====================================================

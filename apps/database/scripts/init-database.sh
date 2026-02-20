@@ -1049,7 +1049,7 @@ load_seeds() {
         "auth_management/01-tenants.sql|all|core"
         "auth_management/02-tenants-production.sql|all|core"
         "auth_management/02-auth_providers.sql|all|core"
-        "auth/01-demo-users.sql|all|demo_users"
+        "auth/01-demo-users.sql|all|core"
         "auth/01b-demo-students.sql|dev|demo_users"
         "auth/02-production-users.sql|all|core"
 
@@ -1104,7 +1104,7 @@ load_seeds() {
         "gamification_system/13-shop_items.sql|all|core"
         "gamification_system/14-achievements-m3-m5.sql|all|core"
         "gamification_system/15-comodin_usage_tracking.sql|all|core"
-        "gamification_system/16-shop_items_expanded.sql|dev|core"
+        "gamification_system/16-shop_items_expanded.sql|dev|demo_gamification"
         "gamification_system/17-shop_items_metadata_normalization.sql|all|core"
         "gamification_system/18-user_purchases-demo.sql|dev|demo_gamification"
         "gamification_system/19-user_equipped_items-demo.sql|dev|demo_gamification"
@@ -1133,12 +1133,12 @@ load_seeds() {
         # ==========================================
         # FASE 7: Content Management
         # ==========================================
-        # NOTE: 01-default-templates.sql excluded — references nonexistent 'structure' column
-        # NOTE: 04-moderation_rules.sql excluded — FK violation on system user + ownership issue
+        "content_management/01-default-templates.sql|all|core"
         "content_management/01-marie-curie-bio.sql|dev|demo_data"
         "content_management/02-marie_curie_content.sql|prod|core"
         "content_management/02-media-files.sql|dev|demo_data"
         "content_management/03-tags.sql|all|core"
+        "content_management/04-moderation_rules.sql|all|core"
 
         # ==========================================
         # FASE 8: Social Features
@@ -1177,8 +1177,8 @@ load_seeds() {
         # ==========================================
         # FASE 12: Communication
         # ==========================================
-        "communication/01-system-messages.sql|all|core"
-        "communication/02-message_participants.sql|all|core"
+        "communication/01-system-messages.sql|dev|demo_data"
+        "communication/02-message_participants.sql|dev|demo_data"
     )
 
     should_load_seed_entry() {

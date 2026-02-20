@@ -31,7 +31,13 @@ SET search_path TO auth, public;
 -- PASSWORDS ENCRYPTED WITH BCRYPT
 -- =====================================================
 -- Password: "Test1234" (todos los usuarios)
--- Se genera dinámicamente con: crypt('Test1234', gen_salt('bf', 10))
+-- Se genera dinamicamente con: crypt('Test1234', gen_salt('bf', 10))
+--
+-- NOTA IDEMPOTENCIA: gen_salt() produce un salt diferente en cada ejecucion,
+-- por lo que el hash bcrypt cambia en cada re-run del seed. Esto es COSMETICO:
+-- ON CONFLICT actualiza el hash y la password sigue siendo "Test1234".
+-- La funcionalidad no se ve afectada. No reemplazar con hash estatico
+-- porque bcrypt con salt dinamico es la practica correcta.
 -- =====================================================
 
 -- =====================================================

@@ -114,7 +114,7 @@ INSERT INTO educational_content.difficulty_criteria (
         0.80,
         100, 50,
         80.00, 30, 1.50,
-        'Nativo',
+        'NAT',
         'Nativo: dominio total del idioma, incluyendo modismos regionales y variantes dialectales'
     )
 ON CONFLICT (level) DO UPDATE SET

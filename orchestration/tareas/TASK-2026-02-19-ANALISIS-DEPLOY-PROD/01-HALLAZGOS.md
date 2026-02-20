@@ -18,7 +18,7 @@
 | F1-A03 | STAGING falta 8+ archivos `all\|core` (admin_dashboard, auth, auth_management) | ALTA | `seeds/staging/` |
 | F1-A04 | `17-shop_items_metadata_normalization.sql` tiene 3 versiones diferentes entre ambientes | MEDIA | `seeds/*/gamification_system/17-*.sql` |
 | F1-M01 | 27 archivos de seed no en pipeline init-database.sh | MEDIA | Ver FASE1-SEEDS.md seccion 3.3 |
-| F1-M02 | 2 seeds excluidos del pipeline existen en 3 ambientes (archivos muertos) | MEDIA | `content_management/01-default-templates.sql`, `04-moderation_rules.sql` |
+| F1-M02 | ~~2 seeds excluidos del pipeline existen en 3 ambientes (archivos muertos)~~ | ~~MEDIA~~ **RESUELTO** | `content_management/01-default-templates.sql`, `04-moderation_rules.sql` — Re-habilitados en pipeline (SEED-HOMOLOGATION 2026-02-20) |
 | F1-B01 | Directorios `_testing/` y `_backlog/` existen en PROD | BAJA | `seeds/prod/_testing/`, `seeds/prod/_backlog/` |
 | F1-B02 | Scope tags en seed_entries no incluyen `staging` — todo es `all\|dev\|prod` | BAJA | `init-database.sh:1045-1182` |
 

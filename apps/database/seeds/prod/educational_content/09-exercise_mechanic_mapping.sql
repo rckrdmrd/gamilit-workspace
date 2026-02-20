@@ -12,7 +12,7 @@
 -- ============================================================================
 
 -- crucigrama: vocabulario + recordar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -40,10 +40,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'bajo',
     ARRAY['lectura', 'individual']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- sopa_letras: vocabulario + recordar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -71,10 +79,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'bajo',
     ARRAY['velocidad', 'individual']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- linea_tiempo: lectura + comprender
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -102,10 +118,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'drag_drop',
     'medio',
     ARRAY['historia', 'contexto']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- mapa_conceptual: lectura + analizar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -133,10 +157,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'drag_drop',
     'alto',
     ARRAY['planificacion', 'organizacion']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- emparejamiento: vocabulario + comprender
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -155,7 +187,7 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
 ),
 (
     'lectura',
-    'matching',
+    'text_matching',
     'emparejamiento',
     'comprender',
     ARRAY['beginner']::educational_content.difficulty_level[],
@@ -164,10 +196,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'drag_drop',
     'bajo',
     ARRAY['comprension', 'relacion']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- completar_espacios: lectura + comprender
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -195,10 +235,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'medio',
     ARRAY['cloze', 'vocabulario']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- verdadero_falso: lectura + recordar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -214,14 +262,22 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'bajo',
     ARRAY['rapido', 'verificacion', 'beginner']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- ============================================================================
 -- MODULO 2: COMPRENSION INFERENCIAL (5 exercise_types)
 -- ============================================================================
 
 -- detective_textual: lectura + analizar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -249,10 +305,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'alto',
     ARRAY['argumentacion', 'evidencia']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- construccion_hipotesis: lectura + crear
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -280,10 +344,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'alto',
     ARRAY['redaccion', 'cientifica']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- prediccion_narrativa: lectura + evaluar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -311,10 +383,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'alto',
     ARRAY['creatividad', 'narrativa']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- puzzle_contexto: lectura + analizar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -342,10 +422,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'medio',
     ARRAY['vocabulario', 'contexto']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- rueda_inferencias: lectura + analizar (NUEVO - GAP-002)
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -373,14 +461,22 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'alto',
     ARRAY['justificacion', 'argumentacion']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- ============================================================================
 -- MODULO 3: COMPRENSION CRITICA (5 exercise_types)
 -- ============================================================================
 
 -- analisis_fuentes: lectura + evaluar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -408,10 +504,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'alto',
     ARRAY['cultura', 'historia', 'contexto']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- debate_digital: escritura + evaluar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -439,10 +543,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'alto',
     ARRAY['critico', 'evaluacion']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- matriz_perspectivas: lectura + analizar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -470,10 +582,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'alto',
     ARRAY['cultura', 'diversidad', 'perspectivas']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- podcast_argumentativo: escritura + crear
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -501,10 +621,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'audio_recording',
     'alto',
     ARRAY['audio', 'oral', 'presentacion']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- tribunal_opiniones: lectura + evaluar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -532,14 +660,22 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'alto',
     ARRAY['etica', 'cultura', 'valores']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- ============================================================================
 -- MODULO 4: LITERACIDADES DIGITALES (9 exercise_types)
 -- ============================================================================
 
 -- analisis_memes: cultura + analizar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -567,10 +703,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'medio',
     ARRAY['multimodal', 'visual', 'digital']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- chat_literario: escritura + aplicar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -598,10 +742,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'medio',
     ARRAY['literatura', 'discusion']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- email_formal: escritura + aplicar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -629,10 +781,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'medio',
     ARRAY['formal', 'estructura']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- ensayo_argumentativo: escritura + crear
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -660,10 +820,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'alto',
     ARRAY['revision', 'autoevaluacion']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- infografia_interactiva: lectura + comprender
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -691,10 +859,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'drag_drop',
     'alto',
     ARRAY['diseno', 'visual', 'creatividad']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- navegacion_hipertextual: lectura + aplicar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -722,10 +898,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'alto',
     ARRAY['hipertexto', 'diseno']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- quiz_tiktok: lectura + recordar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -753,10 +937,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'bajo',
     ARRAY['social_media', 'cultura_digital']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- resena_critica: escritura + evaluar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -784,10 +976,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'alto',
     ARRAY['critico', 'fundamentacion']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- verificador_fake_news: lectura + evaluar
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -815,14 +1015,22 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'medio',
     ARRAY['ciudadania', 'responsabilidad']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- ============================================================================
 -- MODULO 5: PRODUCCION INTEGRADA (3 exercise_types - NUEVOS GAP-002)
 -- ============================================================================
 
 -- comic_digital: escritura + crear (NUEVO - GAP-002)
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -850,10 +1058,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'medio',
     ARRAY['comic', 'secuencial', 'visual']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- diario_multimedia: escritura + crear (NUEVO - GAP-002)
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -881,10 +1097,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'audio_recording',
     'medio',
     ARRAY['audio', 'reflexion', 'diario']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- video_carta: audio + crear (NUEVO - GAP-002)
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -912,14 +1136,22 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'text_input',
     'medio',
     ARRAY['guion', 'planificacion', 'video']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- ============================================================================
 -- TIPOS AUXILIARES (4 exercise_types - NUEVOS/COMPLETADOS GAP-002)
 -- ============================================================================
 
 -- comprension_auditiva: audio + comprender (NUEVO - GAP-002)
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -947,10 +1179,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'medio',
     ARRAY['multimodal', 'audio', 'texto']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- collage_prensa: cultura + crear
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -978,10 +1218,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'medio',
     ARRAY['medios', 'analisis']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- texto_movimiento: lectura + comprender (NUEVO - GAP-002)
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -1009,10 +1257,18 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'bajo',
     ARRAY['vocabulario', 'animacion', 'rapido']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- call_to_action: escritura + aplicar (NUEVO - GAP-002)
-INSERT INTO educational_content.exercise_mechanic_mapping (
+INSERT INTO educational_content.exercise_mechanic_mappings (
     mechanic_category, mechanic_subcategory, exercise_type,
     bloom_level, cefr_level, pedagogical_purpose, learning_objectives,
     interaction_type, cognitive_load, tags
@@ -1040,7 +1296,15 @@ INSERT INTO educational_content.exercise_mechanic_mapping (
     'selection',
     'medio',
     ARRAY['persuasion', 'analisis', 'critico']
-);
+) ON CONFLICT (mechanic_subcategory, exercise_type) DO UPDATE SET
+    mechanic_category = EXCLUDED.mechanic_category,
+    bloom_level = EXCLUDED.bloom_level,
+    cefr_level = EXCLUDED.cefr_level,
+    pedagogical_purpose = EXCLUDED.pedagogical_purpose,
+    learning_objectives = EXCLUDED.learning_objectives,
+    interaction_type = EXCLUDED.interaction_type,
+    cognitive_load = EXCLUDED.cognitive_load,
+    tags = EXCLUDED.tags;
 
 -- ============================================================================
 -- ESTADISTICAS DEL SEED

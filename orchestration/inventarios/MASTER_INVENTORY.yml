@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "12.0.0"
-fecha: "2026-02-19"
+version: "12.1.0"
+fecha: "2026-02-20"
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -35,7 +35,7 @@ metricas:
     rls_policies: 231            # 231 DDL source (+4 user_purchases FIX-P0-1). Runtime: 471
     foreign_keys: 299            # +1 missions_template_id_fkey (REC-009)
     enums: 42                    # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
-    seeds: 77                    # 77 seed files, 0 errors (+1 achievements-collection REC-011)
+    seeds: 85                    # 85 pipeline entries, 0 errores, 0 excluidos (post SEED-HOMOLOGATION 2026-02-20)
     scripts:                     # Key database scripts
       - "recreate-database.sh"         # Main recreate (--env dev|prod --force)
       - "recreate-database-dev.sh"     # Wrapper DEV
@@ -130,7 +130,7 @@ gamificacion:
 # -------------------------------------------------------------------------------
 
 inventarios_detallados:
-  database: "DATABASE_INVENTORY.yml (v8.7.0)"
+  database: "DATABASE_INVENTORY.yml (v8.8.0)"
   backend: "BACKEND_INVENTORY.yml (v4.5.0)"
   frontend: "FRONTEND_INVENTORY.yml (v11.0.0)"
 

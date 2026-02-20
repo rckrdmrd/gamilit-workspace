@@ -5,7 +5,7 @@
 -- Dependencies: social_features.schools (00-schools-default.sql), auth_management.profiles
 -- Order: 02
 -- Created: 2025-01-11
--- Updated: 2026-01-08 - Renombrado a GAMILIT Aula General
+-- Updated: 2026-01-18 - FIX-UUID-002: Cambiar fallback UUID a formato v4 válido
 -- Version: 4.0
 -- =====================================================
 --
@@ -61,9 +61,9 @@ BEGIN
     LIMIT 1;
 
     IF v_teacher_id IS NULL THEN
-        -- Usar el UUID conocido como fallback
-        v_teacher_id := 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid;
-        RAISE WARNING 'Teacher default no encontrado, usando UUID: %', v_teacher_id;
+        -- FIX-UUID-002: Usar UUID v4 válido como fallback (formato RFC 4122)
+        v_teacher_id := 'b0000000-0000-4000-b000-000000000001'::uuid;
+        RAISE WARNING 'Teacher default no encontrado, usando UUID v4 fallback: %', v_teacher_id;
     END IF;
 
     RAISE NOTICE 'Usando tenant_id: %', v_tenant_id;
@@ -220,9 +220,8 @@ SELECT
 FROM social_features.classrooms c
 WHERE c.teacher_id IS NOT NULL
   AND c.code = 'DEFAULT'
-ON CONFLICT (id) DO UPDATE SET
-    role = EXCLUDED.role,
-    teacher_id = EXCLUDED.teacher_id;
+ON CONFLICT (teacher_id, classroom_id) DO UPDATE SET
+    role = EXCLUDED.role;
 
 -- 2. FIX-2026-01-18: Agregar a TODOS los teachers existentes al classroom DEFAULT
 -- Esto asegura que cualquier teacher pueda acceder al aula general

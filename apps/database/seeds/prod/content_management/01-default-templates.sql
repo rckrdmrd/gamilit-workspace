@@ -30,10 +30,9 @@ INSERT INTO content_management.content_templates (
     name,
     description,
     template_type,
-    structure,
-    is_active,
-    created_at,
-    updated_at
+    template_structure,
+    is_public,
+    is_system_template
 ) VALUES (
     'a1b2c3d4-0001-0000-0000-000000000001'::uuid,
     NULL,  -- Disponible para todos los tenants
@@ -49,8 +48,7 @@ INSERT INTO content_management.content_templates (
         "bloom_taxonomy": ["recordar", "comprender", "aplicar"]
     }'::jsonb,
     true,
-    gamilit.now_mexico(),
-    gamilit.now_mexico()
+    true
 ) ON CONFLICT (id) DO NOTHING;
 
 -- Template 2: Inferencia y análisis
@@ -60,10 +58,9 @@ INSERT INTO content_management.content_templates (
     name,
     description,
     template_type,
-    structure,
-    is_active,
-    created_at,
-    updated_at
+    template_structure,
+    is_public,
+    is_system_template
 ) VALUES (
     'a1b2c3d4-0002-0000-0000-000000000002'::uuid,
     NULL,
@@ -80,8 +77,7 @@ INSERT INTO content_management.content_templates (
         "bloom_taxonomy": ["analizar", "evaluar"]
     }'::jsonb,
     true,
-    gamilit.now_mexico(),
-    gamilit.now_mexico()
+    true
 ) ON CONFLICT (id) DO NOTHING;
 
 -- Template 3: Producción de textos
@@ -91,10 +87,9 @@ INSERT INTO content_management.content_templates (
     name,
     description,
     template_type,
-    structure,
-    is_active,
-    created_at,
-    updated_at
+    template_structure,
+    is_public,
+    is_system_template
 ) VALUES (
     'a1b2c3d4-0003-0000-0000-000000000003'::uuid,
     NULL,
@@ -111,8 +106,7 @@ INSERT INTO content_management.content_templates (
         "bloom_taxonomy": ["crear", "evaluar"]
     }'::jsonb,
     true,
-    gamilit.now_mexico(),
-    gamilit.now_mexico()
+    true
 ) ON CONFLICT (id) DO NOTHING;
 
 -- =====================================================

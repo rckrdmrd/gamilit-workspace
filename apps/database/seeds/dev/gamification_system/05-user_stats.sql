@@ -26,12 +26,12 @@
 --
 -- USUARIOS CON PROGRESO VARIADO:
 -- ==============================
--- - 5 estudiantes con diferentes niveles (1-4)
--- - 2 profesores con actividad alta
--- - 2 administradores con stats máximos
--- - 1 padre con actividad mínima
+-- - 3 estudiantes con diferentes niveles (1-3)
+-- - 1 profesor con actividad alta
+-- - 1 administrador con stats máximos
 --
--- TOTAL: 10 usuarios demo con progreso variado
+-- TOTAL: 5 usuarios demo con progreso variado
+-- NOTA: estudiante4/5, profesor2, directora, padre1 removidos (ghost emails)
 -- =====================================================
 
 SET search_path TO gamification_system, auth_management, public;
@@ -466,90 +466,8 @@ SET
     updated_at = gamilit.now_mexico()
 WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante3@demo.glit.edu.mx' LIMIT 1);
 
--- Estudiante 4: Luis Miguel - Nivel 2, Progreso Constante
-UPDATE gamification_system.user_stats
-SET
-    level = 2,
-    total_xp = 1400,
-    xp_to_next_level = 100,
-    current_rank = 'Ajaw'::gamification_system.maya_rank,
-    rank_progress = 52.00,
-    ml_coins = 300,
-    ml_coins_earned_total = 500,
-    ml_coins_spent_total = 200,
-    ml_coins_earned_today = 30,
-    last_ml_coins_reset = gamilit.now_mexico() - INTERVAL '4 hours',
-    current_streak = 4,
-    max_streak = 6,
-    streak_started_at = gamilit.now_mexico() - INTERVAL '4 days',
-    days_active_total = 15,
-    exercises_completed = 20,
-    modules_completed = 0,
-    total_score = 1500,
-    average_score = 75.00,
-    perfect_scores = 1,
-    achievements_earned = 4,
-    certificates_earned = 0,
-    total_time_spent = '04:00:00'::interval,
-    weekly_time_spent = '01:30:00'::interval,
-    sessions_count = 15,
-    weekly_xp = 550,
-    monthly_xp = 1400,
-    weekly_exercises = 10,
-    class_rank_position = 2,
-    last_activity_at = gamilit.now_mexico() - INTERVAL '3 hours',
-    last_login_at = gamilit.now_mexico() - INTERVAL '3 hours',
-    metadata = jsonb_build_object(
-        'demo_user', true,
-        'preferred_theme', 'detective',
-        'learning_pace', 'steady'
-    ),
-    updated_at = gamilit.now_mexico()
-WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante4@demo.glit.edu.mx' LIMIT 1);
-
--- Estudiante 5: Sofía Martínez - Nivel 4, Muy Avanzada
-UPDATE gamification_system.user_stats
-SET
-    level = 4,
-    total_xp = 6500,
-    xp_to_next_level = 500,
-    current_rank = 'Nacom'::gamification_system.maya_rank,
-    rank_progress = 82.50,
-    ml_coins = 650,
-    ml_coins_earned_total = 1200,
-    ml_coins_spent_total = 550,
-    ml_coins_earned_today = 75,
-    last_ml_coins_reset = gamilit.now_mexico() - INTERVAL '1 hour',
-    current_streak = 10,
-    max_streak = 12,
-    streak_started_at = gamilit.now_mexico() - INTERVAL '10 days',
-    days_active_total = 30,
-    exercises_completed = 55,
-    modules_completed = 2,
-    total_score = 4800,
-    average_score = 90.00,
-    perfect_scores = 10,
-    achievements_earned = 8,
-    certificates_earned = 2,
-    total_time_spent = '10:15:00'::interval,
-    weekly_time_spent = '03:00:00'::interval,
-    sessions_count = 30,
-    weekly_xp = 1500,
-    monthly_xp = 6500,
-    weekly_exercises = 25,
-    class_rank_position = 1,
-    last_activity_at = gamilit.now_mexico() - INTERVAL '30 minutes',
-    last_login_at = gamilit.now_mexico() - INTERVAL '30 minutes',
-    metadata = jsonb_build_object(
-        'demo_user', true,
-        'preferred_theme', 'galaxy',
-        'favorite_module', 'modulo-03-comprension-critica',
-        'learning_pace', 'very_fast',
-        'achievement_hunter', true,
-        'top_performer', true
-    ),
-    updated_at = gamilit.now_mexico()
-WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante5@demo.glit.edu.mx' LIMIT 1);
+-- NOTA: estudiante4@demo.glit.edu.mx y estudiante5@demo.glit.edu.mx removidos
+-- (ghost emails: no existen en ningun seed de auth)
 
 -- Profesor 1: Roberto Méndez - Nivel 5, Profesor Activo
 UPDATE gamification_system.user_stats
@@ -595,49 +513,7 @@ SET
     updated_at = gamilit.now_mexico()
 WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'instructor@demo.glit.edu.mx' LIMIT 1);
 
--- Profesor 2: Laura González - Nivel 5, Profesora Activa
-UPDATE gamification_system.user_stats
-SET
-    level = 5,
-    total_xp = 9500,
-    xp_to_next_level = 2500,
-    current_rank = 'Ah K''in'::gamification_system.maya_rank,
-    rank_progress = 25.00,
-    ml_coins = 950,
-    ml_coins_earned_total = 1900,
-    ml_coins_spent_total = 950,
-    ml_coins_earned_today = 0,
-    last_ml_coins_reset = gamilit.now_mexico() - INTERVAL '10 hours',
-    current_streak = 12,
-    max_streak = 18,
-    streak_started_at = gamilit.now_mexico() - INTERVAL '12 days',
-    days_active_total = 55,
-    exercises_completed = 90,
-    modules_completed = 5,
-    total_score = 8500,
-    average_score = 90.00,
-    perfect_scores = 20,
-    achievements_earned = 11,
-    certificates_earned = 5,
-    total_time_spent = '22:30:00'::interval,
-    weekly_time_spent = '04:30:00'::interval,
-    sessions_count = 55,
-    weekly_xp = 2300,
-    monthly_xp = 9500,
-    weekly_exercises = 28,
-    last_activity_at = gamilit.now_mexico() - INTERVAL '2 hours',
-    last_login_at = gamilit.now_mexico() - INTERVAL '2 hours',
-    metadata = jsonb_build_object(
-        'demo_user', true,
-        'role', 'teacher',
-        'teacher_stats', jsonb_build_object(
-            'students_count', 8,
-            'classrooms_count', 2,
-            'avg_student_score', 82.50
-        )
-    ),
-    updated_at = gamilit.now_mexico()
-WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'profesor2@demo.glit.edu.mx' LIMIT 1);
+-- NOTA: profesor2@demo.glit.edu.mx removido (ghost email: no existe en ningun seed de auth)
 
 -- Admin 1: Admin Sistema - Nivel 10, Super Admin
 UPDATE gamification_system.user_stats
@@ -679,85 +555,8 @@ SET
     updated_at = gamilit.now_mexico()
 WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'admin@gamilit.com' LIMIT 1);
 
--- Admin 2: Directora - Nivel 8, Director
-UPDATE gamification_system.user_stats
-SET
-    level = 8,
-    total_xp = 25000,
-    xp_to_next_level = 3000,
-    current_rank = 'Halach Uinic'::gamification_system.maya_rank,
-    rank_progress = 75.00,
-    ml_coins = 2500,
-    ml_coins_earned_total = 5000,
-    ml_coins_spent_total = 2500,
-    ml_coins_earned_today = 0,
-    last_ml_coins_reset = gamilit.now_mexico() - INTERVAL '14 hours',
-    current_streak = 20,
-    max_streak = 25,
-    streak_started_at = gamilit.now_mexico() - INTERVAL '20 days',
-    days_active_total = 80,
-    exercises_completed = 150,
-    modules_completed = 5,
-    total_score = 14000,
-    average_score = 94.00,
-    perfect_scores = 35,
-    achievements_earned = 15,
-    certificates_earned = 5,
-    total_time_spent = '35:00:00'::interval,
-    weekly_time_spent = '06:00:00'::interval,
-    sessions_count = 80,
-    weekly_xp = 3500,
-    monthly_xp = 25000,
-    weekly_exercises = 40,
-    last_activity_at = gamilit.now_mexico() - INTERVAL '1 hour',
-    last_login_at = gamilit.now_mexico() - INTERVAL '1 hour',
-    metadata = jsonb_build_object(
-        'demo_user', true,
-        'role', 'director',
-        'school_id', '50000000-0000-0000-0000-000000000001'
-    ),
-    updated_at = gamilit.now_mexico()
-WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'directora@demo.glit.edu.mx' LIMIT 1);
-
--- Padre 1: Jorge García - Nivel 1, Observador
-UPDATE gamification_system.user_stats
-SET
-    level = 1,
-    total_xp = 100,
-    xp_to_next_level = 900,
-    current_rank = 'Ajaw'::gamification_system.maya_rank,
-    rank_progress = 5.00,
-    ml_coins = 100,
-    ml_coins_earned_total = 100,
-    ml_coins_spent_total = 0,
-    ml_coins_earned_today = 0,
-    last_ml_coins_reset = gamilit.now_mexico() - INTERVAL '24 hours',
-    current_streak = 0,
-    max_streak = 1,
-    streak_started_at = NULL,
-    days_active_total = 3,
-    exercises_completed = 0,
-    modules_completed = 0,
-    total_score = 0,
-    average_score = NULL,
-    perfect_scores = 0,
-    achievements_earned = 1,
-    certificates_earned = 0,
-    total_time_spent = '00:30:00'::interval,
-    weekly_time_spent = '00:10:00'::interval,
-    sessions_count = 3,
-    weekly_xp = 50,
-    monthly_xp = 100,
-    weekly_exercises = 0,
-    last_activity_at = gamilit.now_mexico() - INTERVAL '1 day',
-    last_login_at = gamilit.now_mexico() - INTERVAL '1 day',
-    metadata = jsonb_build_object(
-        'demo_user', true,
-        'role', 'parent',
-        'children_ids', jsonb_build_array((SELECT p.id::text FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'estudiante1@demo.glit.edu.mx' LIMIT 1))
-    ),
-    updated_at = gamilit.now_mexico()
-WHERE user_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'padre1@demo.glit.edu.mx' LIMIT 1);
+-- NOTA: directora@demo.glit.edu.mx y padre1@demo.glit.edu.mx removidos
+-- (ghost emails: no existen en ningun seed de auth)
 
 -- =====================================================
 -- FASE 3: DESHABILITADA - Usuarios de Testing con valores iniciales
@@ -861,10 +660,10 @@ BEGIN
     RAISE NOTICE '  - ML Coins totales: %', total_ml_coins;
     RAISE NOTICE '========================================';
 
-    IF updated_count >= 10 THEN
+    IF updated_count >= 5 THEN
         RAISE NOTICE '✓ User stats demo fueron actualizados correctamente con progreso variado';
     ELSE
-        RAISE NOTICE '⚠ Se esperaban al menos 10 updates, se aplicaron % (normal si algunos usuarios demo no existen)', updated_count;
+        RAISE NOTICE '⚠ Se esperaban al menos 5 updates, se aplicaron % (normal si algunos usuarios demo no existen)', updated_count;
     END IF;
 
     RAISE NOTICE '';

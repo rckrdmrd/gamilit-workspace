@@ -27,6 +27,10 @@ SET search_path TO audit_logging, auth, public;
 -- =====================================================
 -- PERFORMANCE METRICS: Metricas historicas
 -- =====================================================
+-- Idempotency: delete previous seed data before re-inserting
+DELETE FROM audit_logging.performance_metrics
+WHERE module_name IN ('postgresql', 'api_server', 'websocket_server', 'application', 'gamification', 'system', 'redis');
+
 INSERT INTO audit_logging.performance_metrics (
     metric_name, metric_type, metric_value,
     unit, module_name, category,
@@ -353,6 +357,18 @@ ON CONFLICT DO NOTHING;
 -- =====================================================
 -- SYSTEM ALERTS: Alertas generadas
 -- =====================================================
+-- Idempotency: delete previous seed data before re-inserting
+DELETE FROM audit_logging.system_alerts
+WHERE title IN (
+    'High Memory Usage Detected',
+    'Multiple Failed Login Attempts',
+    'Automated Backup Completed',
+    'Slow API Response Time',
+    'High API Error Rate',
+    'SSL Certificate Expiring Soon',
+    'Disk Space Usage'
+);
+
 INSERT INTO audit_logging.system_alerts (
     alert_type, severity, title, description,
     source_system, source_module,
@@ -562,6 +578,12 @@ DECLARE
     activity_types TEXT[] := ARRAY['page_view', 'exercise_start', 'exercise_complete', 'module_access', 'button_click', 'search_query', 'page_view'];
     pages TEXT[] := ARRAY['/modules', '/missions', '/leaderboard', '/ml-store', '/profile', '/achievements'];
 BEGIN
+    -- Idempotency guard: skip if seed data already exists
+    IF EXISTS (SELECT 1 FROM audit_logging.user_activity_logs LIMIT 1) THEN
+        RAISE NOTICE 'user_activity_logs seed data already exists, skipping';
+        RETURN;
+    END IF;
+
     -- Generar activity logs para cada estudiante
     -- user_id FK references auth_management.profiles(id), not auth.users(id)
     FOR student_record IN

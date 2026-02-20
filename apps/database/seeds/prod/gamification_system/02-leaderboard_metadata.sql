@@ -14,7 +14,7 @@ SET search_path TO gamification_system, public;
 -- METADATA DE LEADERBOARDS
 -- =====================================================
 
-INSERT INTO gamification_system.leaderboard_metadata (
+INSERT INTO gamification_system.leaderboard_metadatas (
     view_name,
     last_refresh_at,
     total_users,
@@ -38,7 +38,7 @@ ON CONFLICT (view_name) DO UPDATE SET
 SELECT
     'Leaderboard Metadata (Production)' AS seed_name,
     COUNT(*) AS records_inserted
-FROM gamification_system.leaderboard_metadata;
+FROM gamification_system.leaderboard_metadatas;
 
 -- =====================================================
 -- MIGRATION NOTES

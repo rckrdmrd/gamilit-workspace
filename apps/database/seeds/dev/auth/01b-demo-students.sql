@@ -15,6 +15,11 @@
 --
 -- NOTA: Estos usuarios son referenciados por ~21 seed files
 -- en gamification, progress, social, audit, etc.
+--
+-- NOTA IDEMPOTENCIA: gen_salt() produce un salt diferente en cada ejecucion,
+-- por lo que el hash bcrypt cambia en cada re-run del seed. Esto es COSMETICO:
+-- ON CONFLICT actualiza el hash y la password sigue siendo "Test1234".
+-- La funcionalidad no se ve afectada.
 -- =====================================================
 
 SET search_path TO auth, public;

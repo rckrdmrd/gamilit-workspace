@@ -263,7 +263,7 @@ El script ejecuta en orden:
 1. DROP DATABASE (si existe)
 2. CREATE DATABASE
 3. Cargar DDL (16 fases - schemas, tablas, funciones, triggers)
-4. Cargar Seeds de produccion (57 archivos)
+4. Cargar Seeds de produccion (66 entries)
 
 ### 6.3 Verificar carga de datos
 

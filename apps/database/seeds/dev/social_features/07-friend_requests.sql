@@ -53,13 +53,13 @@ BEGIN
         SELECT id INTO v_student2_id FROM auth_management.profiles WHERE is_active = true AND id != v_student1_id LIMIT 1;
     END IF;
     IF v_student3_id IS NULL THEN
-        v_student3_id := gen_random_uuid();
+        v_student3_id := '00000000-0000-4000-a000-000000000003'::uuid;
     END IF;
     IF v_student4_id IS NULL THEN
-        v_student4_id := gen_random_uuid();
+        v_student4_id := '00000000-0000-4000-a000-000000000004'::uuid;
     END IF;
     IF v_student5_id IS NULL THEN
-        v_student5_id := gen_random_uuid();
+        v_student5_id := '00000000-0000-4000-a000-000000000005'::uuid;
     END IF;
 
     -- Skip if insufficient users

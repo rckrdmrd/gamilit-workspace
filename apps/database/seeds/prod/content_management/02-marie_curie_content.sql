@@ -1,5 +1,5 @@
 -- =====================================================
--- Seed: content_management.marie_curie_content
+-- Seed: content_management.marie_curie_contents
 -- Description: Contenido curado sobre Marie Curie - biografía, descubrimientos, legado
 -- Priority: P0 - CRÍTICO (Auditoría AUDIT-DB-001)
 -- Created: 2025-12-14
@@ -44,7 +44,7 @@ BEGIN
     -- =====================================================
     -- 1. BIOGRAFÍA - PRIMEROS AÑOS
     -- =====================================================
-    INSERT INTO content_management.marie_curie_content (
+    INSERT INTO content_management.marie_curie_contents (
         id,
         tenant_id,
         title,
@@ -113,7 +113,7 @@ BEGIN
     -- =====================================================
     -- 2. BIOGRAFÍA - LLEGADA A PARÍS
     -- =====================================================
-    INSERT INTO content_management.marie_curie_content (
+    INSERT INTO content_management.marie_curie_contents (
         id,
         tenant_id,
         title,
@@ -182,7 +182,7 @@ BEGIN
     -- =====================================================
     -- 3. DESCUBRIMIENTOS - RADIACTIVIDAD
     -- =====================================================
-    INSERT INTO content_management.marie_curie_content (
+    INSERT INTO content_management.marie_curie_contents (
         id,
         tenant_id,
         title,
@@ -252,7 +252,7 @@ BEGIN
     -- =====================================================
     -- 4. PREMIOS NOBEL
     -- =====================================================
-    INSERT INTO content_management.marie_curie_content (
+    INSERT INTO content_management.marie_curie_contents (
         id,
         tenant_id,
         title,
@@ -320,7 +320,7 @@ BEGIN
     -- =====================================================
     -- 5. MUJERES EN LA CIENCIA
     -- =====================================================
-    INSERT INTO content_management.marie_curie_content (
+    INSERT INTO content_management.marie_curie_contents (
         id,
         tenant_id,
         title,
@@ -388,7 +388,7 @@ BEGIN
     -- =====================================================
     -- 6. LEGADO
     -- =====================================================
-    INSERT INTO content_management.marie_curie_content (
+    INSERT INTO content_management.marie_curie_contents (
         id,
         tenant_id,
         title,
@@ -460,9 +460,9 @@ BEGIN
     -- =====================================================
     RAISE NOTICE '';
     RAISE NOTICE '=== CONTENIDO MARIE CURIE CREADO ===';
-    RAISE NOTICE 'Total artículos: %', (SELECT COUNT(*) FROM content_management.marie_curie_content);
-    RAISE NOTICE 'Publicados: %', (SELECT COUNT(*) FROM content_management.marie_curie_content WHERE status = 'published');
-    RAISE NOTICE 'Destacados: %', (SELECT COUNT(*) FROM content_management.marie_curie_content WHERE is_featured = true);
+    RAISE NOTICE 'Total artículos: %', (SELECT COUNT(*) FROM content_management.marie_curie_contents);
+    RAISE NOTICE 'Publicados: %', (SELECT COUNT(*) FROM content_management.marie_curie_contents WHERE status = 'published');
+    RAISE NOTICE 'Destacados: %', (SELECT COUNT(*) FROM content_management.marie_curie_contents WHERE is_featured = true);
 
 END $$;
 
@@ -473,11 +473,11 @@ DO $$
 DECLARE
     v_count INTEGER;
 BEGIN
-    SELECT COUNT(*) INTO v_count FROM content_management.marie_curie_content;
+    SELECT COUNT(*) INTO v_count FROM content_management.marie_curie_contents;
 
     IF v_count < 5 THEN
         RAISE WARNING '⚠️ Se esperaban al menos 5 artículos de Marie Curie';
     ELSE
-        RAISE NOTICE '✅ Seed de marie_curie_content completado exitosamente';
+        RAISE NOTICE '✅ Seed de marie_curie_contents completado exitosamente';
     END IF;
 END $$;

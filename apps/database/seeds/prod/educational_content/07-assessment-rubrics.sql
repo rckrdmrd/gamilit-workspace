@@ -1,93 +1,113 @@
 -- =====================================================
 -- Seed: educational_content.assessment_rubrics (PROD)
--- Description: Rúbricas de evaluación para ejercicios
+-- Description: Rubricas de evaluacion para ejercicios
 -- Environment: PRODUCTION
 -- Dependencies: educational_content.modules
 -- Order: 07
 -- Created: 2025-01-11
--- Version: 1.0
+-- Version: 1.1 (fixed column names to match DDL)
 -- =====================================================
 --
--- RÚBRICAS INCLUIDAS:
--- - Comprensión Literal (3 niveles)
--- - Comprensión Inferencial (3 niveles)
--- - Comprensión Crítica (4 niveles)
--- - Producción de Textos (5 niveles)
+-- RUBRICAS INCLUIDAS:
+-- - Comprension Literal (3 niveles)
+-- - Comprension Inferencial (3 niveles)
+-- - Comprension Critica (4 niveles)
+-- - Produccion de Textos (5 niveles)
 --
--- TOTAL: 15 rúbricas (criteria)
+-- TOTAL: 15 rubricas (criteria)
 --
--- IMPORTANTE: Estas rúbricas son usadas para evaluar ejercicios.
+-- IMPORTANTE: Estas rubricas son usadas para evaluar ejercicios.
+-- DDL columns: id, exercise_id, module_id, name, description,
+--   assessment_type, criteria, scoring_scale, weight_percentage,
+--   is_active, allow_resubmission, feedback_template,
+--   auto_feedback_enabled, metadata, created_by, created_at, updated_at
+-- Constraint: rubric_reference_check requires exercise_id XOR module_id
 -- =====================================================
 
 SET search_path TO educational_content, public;
 
 -- =====================================================
--- INSERT: Rúbricas de Evaluación
+-- INSERT: Rubricas de Evaluacion
 -- =====================================================
 
+DO $$
+DECLARE
+    v_mod1_id UUID;
+    v_mod2_id UUID;
+    v_mod3_id UUID;
+    v_mod5_id UUID;
+BEGIN
+    -- Look up module IDs by module_code
+    SELECT id INTO v_mod1_id FROM educational_content.modules WHERE module_code = 'MOD-01-LITERAL';
+    SELECT id INTO v_mod2_id FROM educational_content.modules WHERE module_code = 'MOD-02-INFERENCIAL';
+    SELECT id INTO v_mod3_id FROM educational_content.modules WHERE module_code = 'MOD-03-CRITICA';
+    SELECT id INTO v_mod5_id FROM educational_content.modules WHERE module_code = 'MOD-05-PRODUCCION';
+
+    IF v_mod1_id IS NULL THEN
+        -- Fallback: try alternative code pattern
+        SELECT id INTO v_mod5_id FROM educational_content.modules WHERE module_code ILIKE '%PRODUC%' OR module_code ILIKE '%MOD-05%';
+    END IF;
+
+-- =====================================================
+-- MODULO 1: COMPRENSION LITERAL
+-- =====================================================
 INSERT INTO educational_content.assessment_rubrics (
     id,
+    module_id,
     name,
     description,
-    rubric_type,
+    assessment_type,
     criteria,
-    scoring_guide,
-    max_score,
-    pass_threshold,
+    scoring_scale,
     is_active,
     metadata,
     created_at,
     updated_at
 ) VALUES
-
--- =====================================================
--- MÓDULO 1: COMPRENSIÓN LITERAL
--- =====================================================
 (
     '80000001-0001-0000-0000-000000000001'::uuid,
-    'Comprensión Literal - Nivel Básico',
-    'Rúbrica para evaluar comprensión literal básica: identificación de información explícita.',
-    'holistic',
+    v_mod1_id,
+    'Comprension Literal - Nivel Basico',
+    'Rubrica para evaluar comprension literal basica: identificacion de informacion explicita.',
+    'automatic',
     jsonb_build_object(
         'nivel_1', jsonb_build_object(
             'name', 'Insuficiente',
-            'description', 'No identifica información básica del texto',
+            'description', 'No identifica informacion basica del texto',
             'score', 0,
             'indicators', jsonb_build_array(
-                'No localiza datos explícitos',
-                'Confunde información principal'
+                'No localiza datos explicitos',
+                'Confunde informacion principal'
             )
         ),
         'nivel_2', jsonb_build_object(
             'name', 'Suficiente',
-            'description', 'Identifica algunos datos explícitos',
+            'description', 'Identifica algunos datos explicitos',
             'score', 50,
             'indicators', jsonb_build_array(
-                'Localiza datos básicos',
+                'Localiza datos basicos',
                 'Identifica personajes y lugares'
             )
         ),
         'nivel_3', jsonb_build_object(
             'name', 'Excelente',
-            'description', 'Identifica toda la información explícita relevante',
+            'description', 'Identifica toda la informacion explicita relevante',
             'score', 100,
             'indicators', jsonb_build_array(
-                'Localiza todos los datos explícitos',
+                'Localiza todos los datos explicitos',
                 'Distingue ideas principales de secundarias',
-                'Comprende la secuencia cronológica'
+                'Comprende la secuencia cronologica'
             )
         )
     ),
     jsonb_build_object(
-        'scoring_method', 'levels',
-        'levels', 3,
-        'weighted', false
+        'max', 100,
+        'min', 0,
+        'passing', 60
     ),
-    100,
-    60,  -- 60% para aprobar
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 1: Comprensión Literal',
+        'module_name', 'MODULO 1: Comprension Literal',
         'bloom_level', 'remember',
         'created_by', 'seed_script'
     ),
@@ -97,35 +117,35 @@ INSERT INTO educational_content.assessment_rubrics (
 
 (
     '80000001-0002-0000-0000-000000000002'::uuid,
-    'Comprensión Literal - Nivel Intermedio',
-    'Rúbrica para evaluar comprensión literal intermedia: organización y secuenciación.',
-    'holistic',
+    v_mod1_id,
+    'Comprension Literal - Nivel Intermedio',
+    'Rubrica para evaluar comprension literal intermedia: organizacion y secuenciacion.',
+    'automatic',
     jsonb_build_object(
         'nivel_1', jsonb_build_object(
             'name', 'Insuficiente',
-            'description', 'No puede organizar la información',
+            'description', 'No puede organizar la informacion',
             'score', 0
         ),
         'nivel_2', jsonb_build_object(
             'name', 'Suficiente',
-            'description', 'Organiza información con ayuda',
+            'description', 'Organiza informacion con ayuda',
             'score', 70
         ),
         'nivel_3', jsonb_build_object(
             'name', 'Excelente',
-            'description', 'Organiza y secuencia información de forma autónoma',
+            'description', 'Organiza y secuencia informacion de forma autonoma',
             'score', 100
         )
     ),
     jsonb_build_object(
-        'scoring_method', 'levels',
-        'levels', 3
+        'max', 100,
+        'min', 0,
+        'passing', 70
     ),
-    100,
-    70,
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 1: Comprensión Literal',
+        'module_name', 'MODULO 1: Comprension Literal',
         'bloom_level', 'understand'
     ),
     gamilit.now_mexico(),
@@ -134,35 +154,35 @@ INSERT INTO educational_content.assessment_rubrics (
 
 (
     '80000001-0003-0000-0000-000000000003'::uuid,
-    'Comprensión Literal - Nivel Avanzado',
-    'Rúbrica para evaluar comprensión literal avanzada: integración de información múltiple.',
-    'holistic',
+    v_mod1_id,
+    'Comprension Literal - Nivel Avanzado',
+    'Rubrica para evaluar comprension literal avanzada: integracion de informacion multiple.',
+    'automatic',
     jsonb_build_object(
         'nivel_1', jsonb_build_object(
             'name', 'Insuficiente',
-            'description', 'No puede integrar información de múltiples fuentes',
+            'description', 'No puede integrar informacion de multiples fuentes',
             'score', 0
         ),
         'nivel_2', jsonb_build_object(
             'name', 'Suficiente',
-            'description', 'Integra información de 2-3 fuentes',
+            'description', 'Integra informacion de 2-3 fuentes',
             'score', 75
         ),
         'nivel_3', jsonb_build_object(
             'name', 'Excelente',
-            'description', 'Integra y sintetiza información de múltiples fuentes',
+            'description', 'Integra y sintetiza informacion de multiples fuentes',
             'score', 100
         )
     ),
     jsonb_build_object(
-        'scoring_method', 'levels',
-        'levels', 3
+        'max', 100,
+        'min', 0,
+        'passing', 75
     ),
-    100,
-    75,
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 1: Comprensión Literal',
+        'module_name', 'MODULO 1: Comprension Literal',
         'bloom_level', 'apply'
     ),
     gamilit.now_mexico(),
@@ -170,13 +190,14 @@ INSERT INTO educational_content.assessment_rubrics (
 ),
 
 -- =====================================================
--- MÓDULO 2: COMPRENSIÓN INFERENCIAL
+-- MODULO 2: COMPRENSION INFERENCIAL
 -- =====================================================
 (
     '80000002-0001-0000-0000-000000000004'::uuid,
-    'Comprensión Inferencial - Nivel Básico',
-    'Rúbrica para evaluar inferencias simples y deducciones básicas.',
-    'holistic',
+    v_mod2_id,
+    'Comprension Inferencial - Nivel Basico',
+    'Rubrica para evaluar inferencias simples y deducciones basicas.',
+    'automatic',
     jsonb_build_object(
         'nivel_1', jsonb_build_object(
             'name', 'Insuficiente',
@@ -195,14 +216,13 @@ INSERT INTO educational_content.assessment_rubrics (
         )
     ),
     jsonb_build_object(
-        'scoring_method', 'levels',
-        'levels', 3
+        'max', 100,
+        'min', 0,
+        'passing', 65
     ),
-    100,
-    65,
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 2: Comprensión Inferencial',
+        'module_name', 'MODULO 2: Comprension Inferencial',
         'bloom_level', 'understand'
     ),
     gamilit.now_mexico(),
@@ -211,9 +231,10 @@ INSERT INTO educational_content.assessment_rubrics (
 
 (
     '80000002-0002-0000-0000-000000000005'::uuid,
-    'Comprensión Inferencial - Nivel Intermedio',
-    'Rúbrica para evaluar predicciones y análisis de causa-efecto.',
-    'holistic',
+    v_mod2_id,
+    'Comprension Inferencial - Nivel Intermedio',
+    'Rubrica para evaluar predicciones y analisis de causa-efecto.',
+    'automatic',
     jsonb_build_object(
         'nivel_1', jsonb_build_object(
             'name', 'Insuficiente',
@@ -232,14 +253,13 @@ INSERT INTO educational_content.assessment_rubrics (
         )
     ),
     jsonb_build_object(
-        'scoring_method', 'levels',
-        'levels', 3
+        'max', 100,
+        'min', 0,
+        'passing', 70
     ),
-    100,
-    70,
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 2: Comprensión Inferencial',
+        'module_name', 'MODULO 2: Comprension Inferencial',
         'bloom_level', 'analyze'
     ),
     gamilit.now_mexico(),
@@ -248,9 +268,10 @@ INSERT INTO educational_content.assessment_rubrics (
 
 (
     '80000002-0003-0000-0000-000000000006'::uuid,
-    'Comprensión Inferencial - Nivel Avanzado',
-    'Rúbrica para evaluar interpretación de intenciones y lenguaje figurado.',
-    'holistic',
+    v_mod2_id,
+    'Comprension Inferencial - Nivel Avanzado',
+    'Rubrica para evaluar interpretacion de intenciones y lenguaje figurado.',
+    'automatic',
     jsonb_build_object(
         'nivel_1', jsonb_build_object(
             'name', 'Insuficiente',
@@ -269,14 +290,13 @@ INSERT INTO educational_content.assessment_rubrics (
         )
     ),
     jsonb_build_object(
-        'scoring_method', 'levels',
-        'levels', 3
+        'max', 100,
+        'min', 0,
+        'passing', 75
     ),
-    100,
-    75,
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 2: Comprensión Inferencial',
+        'module_name', 'MODULO 2: Comprension Inferencial',
         'bloom_level', 'analyze'
     ),
     gamilit.now_mexico(),
@@ -284,26 +304,25 @@ INSERT INTO educational_content.assessment_rubrics (
 ),
 
 -- =====================================================
--- MÓDULO 3: COMPRENSIÓN CRÍTICA
+-- MODULO 3: COMPRENSION CRITICA
 -- =====================================================
 (
     '80000003-0001-0000-0000-000000000007'::uuid,
-    'Comprensión Crítica - Nivel 1: Análisis',
-    'Rúbrica para evaluar análisis crítico de textos.',
-    'holistic',
+    v_mod3_id,
+    'Comprension Critica - Nivel 1: Analisis',
+    'Rubrica para evaluar analisis critico de textos.',
+    'manual',
     jsonb_build_object(
         'nivel_1', jsonb_build_object('name', 'Insuficiente', 'score', 0),
-        'nivel_2', jsonb_build_object('name', 'Básico', 'score', 50),
+        'nivel_2', jsonb_build_object('name', 'Basico', 'score', 50),
         'nivel_3', jsonb_build_object('name', 'Competente', 'score', 75),
         'nivel_4', jsonb_build_object('name', 'Excelente', 'score', 100,
-            'description', 'Análisis crítico profundo y fundamentado')
+            'description', 'Analisis critico profundo y fundamentado')
     ),
-    jsonb_build_object('scoring_method', 'levels', 'levels', 4),
-    100,
-    65,
+    jsonb_build_object('max', 100, 'min', 0, 'passing', 65),
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 3: Comprensión Crítica',
+        'module_name', 'MODULO 3: Comprension Critica',
         'bloom_level', 'analyze'
     ),
     gamilit.now_mexico(),
@@ -312,21 +331,20 @@ INSERT INTO educational_content.assessment_rubrics (
 
 (
     '80000003-0002-0000-0000-000000000008'::uuid,
-    'Comprensión Crítica - Nivel 2: Evaluación',
-    'Rúbrica para evaluar juicios y valoraciones fundamentadas.',
-    'holistic',
+    v_mod3_id,
+    'Comprension Critica - Nivel 2: Evaluacion',
+    'Rubrica para evaluar juicios y valoraciones fundamentadas.',
+    'manual',
     jsonb_build_object(
         'nivel_1', jsonb_build_object('name', 'Insuficiente', 'score', 0),
-        'nivel_2', jsonb_build_object('name', 'Básico', 'score', 55),
+        'nivel_2', jsonb_build_object('name', 'Basico', 'score', 55),
         'nivel_3', jsonb_build_object('name', 'Competente', 'score', 75),
         'nivel_4', jsonb_build_object('name', 'Excelente', 'score', 100)
     ),
-    jsonb_build_object('scoring_method', 'levels', 'levels', 4),
-    100,
-    70,
+    jsonb_build_object('max', 100, 'min', 0, 'passing', 70),
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 3: Comprensión Crítica',
+        'module_name', 'MODULO 3: Comprension Critica',
         'bloom_level', 'evaluate'
     ),
     gamilit.now_mexico(),
@@ -335,21 +353,20 @@ INSERT INTO educational_content.assessment_rubrics (
 
 (
     '80000003-0003-0000-0000-000000000009'::uuid,
-    'Comprensión Crítica - Nivel 3: Argumentación',
-    'Rúbrica para evaluar construcción de argumentos sólidos.',
-    'holistic',
+    v_mod3_id,
+    'Comprension Critica - Nivel 3: Argumentacion',
+    'Rubrica para evaluar construccion de argumentos solidos.',
+    'manual',
     jsonb_build_object(
         'nivel_1', jsonb_build_object('name', 'Insuficiente', 'score', 0),
-        'nivel_2', jsonb_build_object('name', 'Básico', 'score', 60),
+        'nivel_2', jsonb_build_object('name', 'Basico', 'score', 60),
         'nivel_3', jsonb_build_object('name', 'Competente', 'score', 80),
         'nivel_4', jsonb_build_object('name', 'Excelente', 'score', 100)
     ),
-    jsonb_build_object('scoring_method', 'levels', 'levels', 4),
-    100,
-    75,
+    jsonb_build_object('max', 100, 'min', 0, 'passing', 75),
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 3: Comprensión Crítica',
+        'module_name', 'MODULO 3: Comprension Critica',
         'bloom_level', 'evaluate'
     ),
     gamilit.now_mexico(),
@@ -358,21 +375,20 @@ INSERT INTO educational_content.assessment_rubrics (
 
 (
     '80000003-0004-0000-0000-000000000010'::uuid,
-    'Comprensión Crítica - Nivel 4: Síntesis',
-    'Rúbrica para evaluar síntesis y propuestas creativas.',
-    'holistic',
+    v_mod3_id,
+    'Comprension Critica - Nivel 4: Sintesis',
+    'Rubrica para evaluar sintesis y propuestas creativas.',
+    'manual',
     jsonb_build_object(
         'nivel_1', jsonb_build_object('name', 'Insuficiente', 'score', 0),
-        'nivel_2', jsonb_build_object('name', 'Básico', 'score', 60),
+        'nivel_2', jsonb_build_object('name', 'Basico', 'score', 60),
         'nivel_3', jsonb_build_object('name', 'Competente', 'score', 80),
         'nivel_4', jsonb_build_object('name', 'Excelente', 'score', 100)
     ),
-    jsonb_build_object('scoring_method', 'levels', 'levels', 4),
-    100,
-    75,
+    jsonb_build_object('max', 100, 'min', 0, 'passing', 75),
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 3: Comprensión Crítica',
+        'module_name', 'MODULO 3: Comprension Critica',
         'bloom_level', 'create'
     ),
     gamilit.now_mexico(),
@@ -380,13 +396,14 @@ INSERT INTO educational_content.assessment_rubrics (
 ),
 
 -- =====================================================
--- MÓDULO 5: PRODUCCIÓN DE TEXTOS
+-- MODULO 5: PRODUCCION DE TEXTOS
 -- =====================================================
 (
     '80000005-0001-0000-0000-000000000011'::uuid,
-    'Producción de Textos - Nivel 1: Estructura',
-    'Rúbrica para evaluar estructura y organización textual.',
-    'analytic',
+    v_mod5_id,
+    'Produccion de Textos - Nivel 1: Estructura',
+    'Rubrica para evaluar estructura y organizacion textual.',
+    'hybrid',
     jsonb_build_object(
         'nivel_1', jsonb_build_object('name', 'Deficiente', 'score', 0),
         'nivel_2', jsonb_build_object('name', 'Insuficiente', 'score', 40),
@@ -394,12 +411,10 @@ INSERT INTO educational_content.assessment_rubrics (
         'nivel_4', jsonb_build_object('name', 'Bueno', 'score', 80),
         'nivel_5', jsonb_build_object('name', 'Excelente', 'score', 100)
     ),
-    jsonb_build_object('scoring_method', 'levels', 'levels', 5),
-    100,
-    60,
+    jsonb_build_object('max', 100, 'min', 0, 'passing', 60),
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 5: Producción de Textos',
+        'module_name', 'MODULO 5: Produccion de Textos',
         'bloom_level', 'create',
         'criteria_focus', 'structure'
     ),
@@ -409,9 +424,10 @@ INSERT INTO educational_content.assessment_rubrics (
 
 (
     '80000005-0002-0000-0000-000000000012'::uuid,
-    'Producción de Textos - Nivel 2: Contenido',
-    'Rúbrica para evaluar calidad y relevancia del contenido.',
-    'analytic',
+    v_mod5_id,
+    'Produccion de Textos - Nivel 2: Contenido',
+    'Rubrica para evaluar calidad y relevancia del contenido.',
+    'hybrid',
     jsonb_build_object(
         'nivel_1', jsonb_build_object('name', 'Deficiente', 'score', 0),
         'nivel_2', jsonb_build_object('name', 'Insuficiente', 'score', 40),
@@ -419,12 +435,10 @@ INSERT INTO educational_content.assessment_rubrics (
         'nivel_4', jsonb_build_object('name', 'Bueno', 'score', 85),
         'nivel_5', jsonb_build_object('name', 'Excelente', 'score', 100)
     ),
-    jsonb_build_object('scoring_method', 'levels', 'levels', 5),
-    100,
-    65,
+    jsonb_build_object('max', 100, 'min', 0, 'passing', 65),
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 5: Producción de Textos',
+        'module_name', 'MODULO 5: Produccion de Textos',
         'bloom_level', 'create',
         'criteria_focus', 'content'
     ),
@@ -434,9 +448,10 @@ INSERT INTO educational_content.assessment_rubrics (
 
 (
     '80000005-0003-0000-0000-000000000013'::uuid,
-    'Producción de Textos - Nivel 3: Lenguaje',
-    'Rúbrica para evaluar uso del lenguaje y vocabulario.',
-    'analytic',
+    v_mod5_id,
+    'Produccion de Textos - Nivel 3: Lenguaje',
+    'Rubrica para evaluar uso del lenguaje y vocabulario.',
+    'hybrid',
     jsonb_build_object(
         'nivel_1', jsonb_build_object('name', 'Deficiente', 'score', 0),
         'nivel_2', jsonb_build_object('name', 'Insuficiente', 'score', 45),
@@ -444,12 +459,10 @@ INSERT INTO educational_content.assessment_rubrics (
         'nivel_4', jsonb_build_object('name', 'Bueno', 'score', 85),
         'nivel_5', jsonb_build_object('name', 'Excelente', 'score', 100)
     ),
-    jsonb_build_object('scoring_method', 'levels', 'levels', 5),
-    100,
-    65,
+    jsonb_build_object('max', 100, 'min', 0, 'passing', 65),
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 5: Producción de Textos',
+        'module_name', 'MODULO 5: Produccion de Textos',
         'bloom_level', 'create',
         'criteria_focus', 'language'
     ),
@@ -459,9 +472,10 @@ INSERT INTO educational_content.assessment_rubrics (
 
 (
     '80000005-0004-0000-0000-000000000014'::uuid,
-    'Producción de Textos - Nivel 4: Coherencia',
-    'Rúbrica para evaluar coherencia y cohesión textual.',
-    'analytic',
+    v_mod5_id,
+    'Produccion de Textos - Nivel 4: Coherencia',
+    'Rubrica para evaluar coherencia y cohesion textual.',
+    'hybrid',
     jsonb_build_object(
         'nivel_1', jsonb_build_object('name', 'Deficiente', 'score', 0),
         'nivel_2', jsonb_build_object('name', 'Insuficiente', 'score', 50),
@@ -469,12 +483,10 @@ INSERT INTO educational_content.assessment_rubrics (
         'nivel_4', jsonb_build_object('name', 'Bueno', 'score', 85),
         'nivel_5', jsonb_build_object('name', 'Excelente', 'score', 100)
     ),
-    jsonb_build_object('scoring_method', 'levels', 'levels', 5),
-    100,
-    70,
+    jsonb_build_object('max', 100, 'min', 0, 'passing', 70),
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 5: Producción de Textos',
+        'module_name', 'MODULO 5: Produccion de Textos',
         'bloom_level', 'create',
         'criteria_focus', 'coherence'
     ),
@@ -484,9 +496,10 @@ INSERT INTO educational_content.assessment_rubrics (
 
 (
     '80000005-0005-0000-0000-000000000015'::uuid,
-    'Producción de Textos - Nivel 5: Creatividad',
-    'Rúbrica para evaluar originalidad y creatividad.',
-    'analytic',
+    v_mod5_id,
+    'Produccion de Textos - Nivel 5: Creatividad',
+    'Rubrica para evaluar originalidad y creatividad.',
+    'hybrid',
     jsonb_build_object(
         'nivel_1', jsonb_build_object('name', 'Deficiente', 'score', 0),
         'nivel_2', jsonb_build_object('name', 'Insuficiente', 'score', 50),
@@ -494,12 +507,10 @@ INSERT INTO educational_content.assessment_rubrics (
         'nivel_4', jsonb_build_object('name', 'Bueno', 'score', 90),
         'nivel_5', jsonb_build_object('name', 'Excelente', 'score', 100)
     ),
-    jsonb_build_object('scoring_method', 'levels', 'levels', 5),
-    100,
-    70,
+    jsonb_build_object('max', 100, 'min', 0, 'passing', 70),
     true,
     jsonb_build_object(
-        'module_name', 'MÓDULO 5: Producción de Textos',
+        'module_name', 'MODULO 5: Produccion de Textos',
         'bloom_level', 'create',
         'criteria_focus', 'creativity'
     ),
@@ -510,10 +521,9 @@ INSERT INTO educational_content.assessment_rubrics (
 ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
     description = EXCLUDED.description,
+    assessment_type = EXCLUDED.assessment_type,
     criteria = EXCLUDED.criteria,
-    scoring_guide = EXCLUDED.scoring_guide,
-    max_score = EXCLUDED.max_score,
-    pass_threshold = EXCLUDED.pass_threshold,
+    scoring_scale = EXCLUDED.scoring_scale,
     is_active = EXCLUDED.is_active,
     metadata = EXCLUDED.metadata,
     updated_at = gamilit.now_mexico();
@@ -522,46 +532,15 @@ ON CONFLICT (id) DO UPDATE SET
 -- Verification Query
 -- =====================================================
 
-DO $$
-DECLARE
-    rubric_count INTEGER;
-    literal_count INTEGER;
-    inferencial_count INTEGER;
-    critica_count INTEGER;
-    produccion_count INTEGER;
-BEGIN
-    SELECT COUNT(*) INTO rubric_count
-    FROM educational_content.assessment_rubrics;
+    DECLARE
+        rubric_count INTEGER;
+    BEGIN
+        SELECT COUNT(*) INTO rubric_count
+        FROM educational_content.assessment_rubrics;
 
-    SELECT COUNT(*) INTO literal_count
-    FROM educational_content.assessment_rubrics
-    WHERE metadata->>'module_name' LIKE '%Comprensión Literal%';
+        RAISE NOTICE '========================================';
+        RAISE NOTICE 'RUBRICAS DE EVALUACION CREADAS: %', rubric_count;
+        RAISE NOTICE '========================================';
+    END;
 
-    SELECT COUNT(*) INTO inferencial_count
-    FROM educational_content.assessment_rubrics
-    WHERE metadata->>'module_name' LIKE '%Comprensión Inferencial%';
-
-    SELECT COUNT(*) INTO critica_count
-    FROM educational_content.assessment_rubrics
-    WHERE metadata->>'module_name' LIKE '%Comprensión Crítica%';
-
-    SELECT COUNT(*) INTO produccion_count
-    FROM educational_content.assessment_rubrics
-    WHERE metadata->>'module_name' LIKE '%Producción de Textos%';
-
-    RAISE NOTICE '========================================';
-    RAISE NOTICE 'RÚBRICAS DE EVALUACIÓN CREADAS';
-    RAISE NOTICE '========================================';
-    RAISE NOTICE 'Total rúbricas: %', rubric_count;
-    RAISE NOTICE '  - Comprensión Literal: %', literal_count;
-    RAISE NOTICE '  - Comprensión Inferencial: %', inferencial_count;
-    RAISE NOTICE '  - Comprensión Crítica: %', critica_count;
-    RAISE NOTICE '  - Producción de Textos: %', produccion_count;
-    RAISE NOTICE '========================================';
-
-    IF rubric_count = 15 THEN
-        RAISE NOTICE '✓ Todas las rúbricas fueron creadas correctamente';
-    ELSE
-        RAISE WARNING '⚠ Se esperaban 15 rúbricas, se crearon %', rubric_count;
-    END IF;
 END $$;

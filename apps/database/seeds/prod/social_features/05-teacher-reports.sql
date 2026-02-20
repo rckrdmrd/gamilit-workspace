@@ -17,6 +17,13 @@ BEGIN
   END IF;
 END $$;
 
+-- Limpiar seed data anterior para idempotencia (todas las filas son de este seed)
+DELETE FROM social_features.teacher_reports
+WHERE report_name LIKE 'Reporte de Progreso -%'
+   OR report_name LIKE 'Analiticas de Aula -%'
+   OR report_name LIKE 'Evaluacion Individual -%'
+   OR report_name LIKE 'Resumen Trimestral -%';
+
 -- Insertar reportes de ejemplo variados
 INSERT INTO social_features.teacher_reports (
   id,

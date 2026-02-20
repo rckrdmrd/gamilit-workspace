@@ -83,7 +83,7 @@ Existen en disco pero no declarados en `seed_entries[]` de init-database.sh:
 - 5 en `social_features/` (06-10)
 - 2 en `lti_integration/` (02, 03)
 - 2 en `audit_logging/` (01-sample, 03-pending)
-- 2 excluidos (default-templates, moderation_rules)
+- ~~2 excluidos (default-templates, moderation_rules)~~ **RESUELTO** — Re-habilitados en pipeline (SEED-HOMOLOGATION 2026-02-20)
 - 1 raiz (00-dev-testing-student.sql)
 
 ---

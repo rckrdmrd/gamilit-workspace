@@ -5,6 +5,12 @@
 -- Dependencies: teams, peer_challenges
 -- Created: 2026-01-27
 -- Task: TASK-P1-SEEDS-SOCIAL-2026-01-27
+--
+-- PIPELINE STATUS: NOT IN init-database.sh pipeline.
+-- Este archivo NO se ejecuta automaticamente durante init-database.sh.
+-- Sera agregado al pipeline cuando el modulo social de Team Challenges
+-- tenga integracion frontend completa (actualmente backend-only, 9 endpoints).
+-- Ver: TASK-2026-02-20-UUID-AUDIT P3-4
 -- =====================================================================================
 
 SET search_path TO social_features, public;

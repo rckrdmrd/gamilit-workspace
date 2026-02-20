@@ -1,13 +1,13 @@
 # PROXIMA ACCION - GAMILIT
 
-**Ultima Actualizacion:** 2026-02-19
+**Ultima Actualizacion:** 2026-02-20
 **Estado del Proyecto:** MVP 98% completado | **SPRINT 1 COMPLETADO (6/6 items)** | **Estandarizacion Portales (5 Fases) COMPLETADA** | **Admin Portal Refactor Sprint 0+1+2 COMPLETADO** | **Student Portal Refactor Fases 0-4 COMPLETADO** | **Settings Fixes + Registro/Avatar/Inventario COMPLETADO**
 **Sprint Actual:** Sprint 1 — Calidad y Estabilizacion (2026-02-17 a 2026-03-03) — **100% COMPLETADO**
-**Ultima Tarea:** Analisis de Preparacion para Deploy a Produccion (TASK-2026-02-19-ANALISIS-DEPLOY-PROD) — **7/7 FASES COMPLETADAS**
+**Ultima Tarea:** UUID Audit + Ejecucion Fixes (TASK-2026-02-20-UUID-AUDIT) — **CERRADA: 4/4 P0 + 8/8 P1 + 5/5 P2 + 5/5 P3 ejecutados, ~27 archivos modificados**
 **Tareas Pendientes:** MQ-005 (Repository pattern — DEFERRED per ADR-045), MQ-007 (911 no-explicit-any — DOCUMENTED, XL sprint needed)
 **BLOQUEANTES DEPLOY (10 items):** Ver `orchestration/tareas/TASK-2026-02-19-ANALISIS-DEPLOY-PROD/03-CHECKLIST-PRODUCCION.md`
 **Backlog Resuelto (2026-02-18):** MQ-008 (skill created), MQ-009 (XP sync FIXED), TRZ-006 (plan created), DBOPS-005 (CI script + job created)
-**CORR-03/04/05:** Todos **COMPLETADOS** — BD recrea con 0 errores (indices, RLS, seeds). Runtime: 404 RLS, 76 seeds, 169 tablas.
+**CORR-03/04/05:** Todos **COMPLETADOS** — BD recrea con 0 errores (indices, RLS, seeds). Runtime: 404 RLS, 85 pipeline entries, 169 tablas.
 **Normalizacion Documental (Fase 2/3):** **CERRADA** (Lotes 1-3 + Olas 1-8 completadas, `BROKEN_GLOBAL_TOTAL=0`)
 
 > Desacople documental:
@@ -18,6 +18,67 @@
 ---
 
 ## Estado Actual
+
+### TASK-2026-02-20-UUID-AUDIT — Auditoria + Ejecucion Fixes (2026-02-20) - **TODO COMPLETADO**
+
+**Fase 1 (Audit):** 5 agentes paralelos escanearon 2,014 UUIDs en 111 archivos seeds.
+**Fase 2 (Ejecucion):** 5 agentes paralelos ejecutaron 4 P0 + 8 P1 + 5 P2 = **17 fixes totales**.
+
+#### Resumen de Ejecucion
+
+| Prioridad | Items | Estado | Archivos Impactados |
+|-----------|-------|--------|---------------------|
+| P0 | 4/4 | **COMPLETADO** | ml_coins NULL guards, LTI sync, comodin deterministic UUIDs, friend_requests fallback |
+| P1 | 8/8 | **COMPLETADO** | 5 prod syncs, pipeline scope fix, teacher-reports DELETE, audit guards, ghost cleanup |
+| P2 | 5/5 | **COMPLETADO** | 9 staging files created, 2 deleted, 12 overwritten, 2 dirs created |
+| P3 | 5/5 | **COMPLETADO** | UUID catalog, reference_id docs, scope label, pipeline status, gen_salt() |
+
+#### Metricas
+
+| Metrica | Valor |
+|---------|-------|
+| Archivos modificados | ~20 |
+| Archivos creados (staging) | 11 |
+| Archivos eliminados (staging) | 2 |
+| Syncs dev→prod | 5 |
+| Syncs dev→staging | 21 |
+| `gen_random_uuid()` eliminados | 13 |
+| Ghost email blocks eliminados | 5 |
+| Pipeline entries cambiados | 2 |
+
+**Output:** `orchestration/tareas/TASK-2026-02-20-UUID-AUDIT/` (01-HALLAZGOS, 02-DISCREPANCIAS, 03-RECOMENDACIONES v2.0)
+
+---
+
+### TASK-2026-02-20-SEED-HOMOLOGATION — Homologacion Seeds Dev/Prod (2026-02-20) - 8/8 ERRORES CORREGIDOS
+
+**Correccion de 8 errores reales en seeds (de 18 reportados, 10 falsos positivos). Pipeline seeds: 85 entries, 0 errores, 0 excluidos.**
+
+#### Errores Corregidos
+
+| ID | Descripcion | Archivos | Estado |
+|----|-------------|----------|--------|
+| A1 | content_templates: `structure`→`template_structure`, `is_active`→`is_public`+`is_system_template` | dev+prod content_management/01-default-templates.sql | **RESUELTO** |
+| A2 | marie_curie_content: singular→plural table name | prod content_management/02-marie_curie_content.sql | **RESUELTO** |
+| A11 | modules: `is_active`→`is_published`+`status='published'` | dev+prod _testing/01-test-exercises-validation.sql | **RESUELTO** |
+| B1 | 01-demo-users.sql scope `demo_users`→`core` (essential FK chain) | init-database.sh | **RESUELTO** |
+| B2 | moderation_rules: dynamic profile lookup, removed auth.users INSERT | dev+prod content_management/04-moderation_rules.sql | **RESUELTO** |
+| B4/B5 | Deleted prod demo seeds (user_purchases-demo, user_equipped_items-demo) | prod gamification_system/ | **RESUELTO** |
+| C2 | admin_reports: dynamic tenant/profile lookups | dev+prod admin_dashboard/02-admin_reports.sql | **RESUELTO** |
+| Pipeline | Re-enabled default-templates + moderation_rules (was excluded) | init-database.sh | **RESUELTO** |
+
+#### Conteos Finales
+
+| Metrica | Antes | Despues |
+|---------|-------|---------|
+| Pipeline entries | 83 | **85** (+2 re-enabled) |
+| Prod seed files | 75 | **73** (-2 demo eliminados) |
+| Excluded seeds | 2 | **0** |
+| Seed errores | varies | **0** |
+
+**Output:** `orchestration/tareas/TASK-2026-02-20-SEED-HOMOLOGATION/`
+
+---
 
 ### TASK-2026-02-19-ANALISIS-DEPLOY-PROD — Analisis de Preparacion para Deploy (2026-02-19) - 7/7 FASES COMPLETADAS
 

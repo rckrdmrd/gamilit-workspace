@@ -5,7 +5,7 @@
 -- Dependencias: 02-classrooms.sql, 03-classroom-members.sql
 -- Autor: SA-SEEDS-SOCIAL
 -- Fecha: 2025-11-02
--- Version: 1.1 (fixed column names to match DDL)
+-- Version: 1.2 (NULL guards for demo students — graceful skip in prod)
 -- =====================================================================
 -- DDL columns for teams: id, classroom_id, tenant_id, name, description,
 --   motto, color_primary, color_secondary, avatar_url, banner_url, badges,
@@ -88,161 +88,191 @@ BEGIN
         RETURN;
     END IF;
 
-    IF student1_id IS NULL THEN
+    IF student1_id IS NULL AND student2_id IS NULL AND student3_id IS NULL THEN
         RAISE NOTICE 'No se encontraron estudiantes demo. Saltando seeds de teams.';
         RETURN;
     END IF;
 
     -- =====================================================================
-    -- EQUIPO 1: Los Cientificos (Aula 2 A)
+    -- EQUIPO 1: Los Cientificos (Aula 2 A) — requiere student1
     -- =====================================================================
-    INSERT INTO social_features.teams (
-        classroom_id, tenant_id, name, team_code, description,
-        max_members, current_members_count,
-        is_active, creator_id,
-        metadata, created_at, updated_at
-    ) VALUES
-    (
-        classroom_2a,
-        v_tenant_id,
-        'Los Cientificos',
-        'TEAM-CIENT-2A',
-        'Equipo enfocado en explorar biografias de cientificos famosos.',
-        5,
-        0,
-        true,
-        student1_id,
-        '{
-            "color": "#3498db",
-            "icon": "flask",
-            "motto": "Explorando la ciencia juntos",
-            "current_project": "Biografias de Mujeres Cientificas"
-        }'::jsonb,
-        NOW(),
-        NOW()
-    )
-    RETURNING id INTO team_cientificos;
+    IF student1_id IS NOT NULL THEN
+        INSERT INTO social_features.teams (
+            classroom_id, tenant_id, name, team_code, description,
+            max_members, current_members_count,
+            is_active, creator_id,
+            metadata, created_at, updated_at
+        ) VALUES
+        (
+            classroom_2a,
+            v_tenant_id,
+            'Los Cientificos',
+            'TEAM-CIENT-2A',
+            'Equipo enfocado en explorar biografias de cientificos famosos.',
+            5,
+            0,
+            true,
+            student1_id,
+            '{
+                "color": "#3498db",
+                "icon": "flask",
+                "motto": "Explorando la ciencia juntos",
+                "current_project": "Biografias de Mujeres Cientificas"
+            }'::jsonb,
+            NOW(),
+            NOW()
+        )
+        RETURNING id INTO team_cientificos;
+    END IF;
 
     -- =====================================================================
-    -- EQUIPO 2: Exploradores Digitales (Aula 3 B)
+    -- EQUIPO 2: Exploradores Digitales (Aula 3 B) — requiere student2
     -- =====================================================================
-    INSERT INTO social_features.teams (
-        classroom_id, tenant_id, name, team_code, description,
-        max_members, current_members_count,
-        is_active, creator_id,
-        metadata, created_at, updated_at
-    ) VALUES
-    (
-        classroom_3b,
-        v_tenant_id,
-        'Exploradores Digitales',
-        'TEAM-EXPLO-3B',
-        'Equipo dedicado a dominar la lectura digital y fact-checking.',
-        5,
-        0,
-        true,
-        student2_id,
-        '{
-            "color": "#2ecc71",
-            "icon": "compass",
-            "motto": "Navegando el mundo digital con criterio",
-            "current_project": "Cazadores de Fake News"
-        }'::jsonb,
-        NOW(),
-        NOW()
-    )
-    RETURNING id INTO team_exploradores;
+    IF student2_id IS NOT NULL AND classroom_3b IS NOT NULL THEN
+        INSERT INTO social_features.teams (
+            classroom_id, tenant_id, name, team_code, description,
+            max_members, current_members_count,
+            is_active, creator_id,
+            metadata, created_at, updated_at
+        ) VALUES
+        (
+            classroom_3b,
+            v_tenant_id,
+            'Exploradores Digitales',
+            'TEAM-EXPLO-3B',
+            'Equipo dedicado a dominar la lectura digital y fact-checking.',
+            5,
+            0,
+            true,
+            student2_id,
+            '{
+                "color": "#2ecc71",
+                "icon": "compass",
+                "motto": "Navegando el mundo digital con criterio",
+                "current_project": "Cazadores de Fake News"
+            }'::jsonb,
+            NOW(),
+            NOW()
+        )
+        RETURNING id INTO team_exploradores;
+    END IF;
 
     -- =====================================================================
-    -- EQUIPO 3: Pioneros Tecnicos (Aula 1 A)
+    -- EQUIPO 3: Pioneros Tecnicos (Aula 1 A) — requiere student3
     -- =====================================================================
-    INSERT INTO social_features.teams (
-        classroom_id, tenant_id, name, team_code, description,
-        max_members, current_members_count,
-        is_active, creator_id,
-        metadata, created_at, updated_at
-    ) VALUES
-    (
-        classroom_1a,
-        v_tenant_id,
-        'Pioneros Tecnicos',
-        'TEAM-PION-1A',
-        'Equipo enfocado en comprension de manuales tecnicos.',
-        6,
-        0,
-        true,
-        student3_id,
-        '{
-            "color": "#e74c3c",
-            "icon": "wrench",
-            "motto": "Leyendo el futuro tecnico"
-        }'::jsonb,
-        NOW(),
-        NOW()
-    )
-    RETURNING id INTO team_pioneros;
+    IF student3_id IS NOT NULL AND classroom_1a IS NOT NULL THEN
+        INSERT INTO social_features.teams (
+            classroom_id, tenant_id, name, team_code, description,
+            max_members, current_members_count,
+            is_active, creator_id,
+            metadata, created_at, updated_at
+        ) VALUES
+        (
+            classroom_1a,
+            v_tenant_id,
+            'Pioneros Tecnicos',
+            'TEAM-PION-1A',
+            'Equipo enfocado en comprension de manuales tecnicos.',
+            6,
+            0,
+            true,
+            student3_id,
+            '{
+                "color": "#e74c3c",
+                "icon": "wrench",
+                "motto": "Leyendo el futuro tecnico"
+            }'::jsonb,
+            NOW(),
+            NOW()
+        )
+        RETURNING id INTO team_pioneros;
+    END IF;
 
     -- =====================================================================
-    -- EQUIPO 4: Innovadores STEAM (Aula 2 STEAM)
+    -- EQUIPO 4: Innovadores STEAM (Aula 2 STEAM) — requiere student1
     -- =====================================================================
-    INSERT INTO social_features.teams (
-        classroom_id, tenant_id, name, team_code, description,
-        max_members, current_members_count,
-        is_active, creator_id,
-        metadata, created_at, updated_at
-    ) VALUES
-    (
-        classroom_2st,
-        v_tenant_id,
-        'Innovadores STEAM',
-        'TEAM-INNOV-2ST',
-        'Equipo bilingue enfocado en integrar literatura cientifica con proyectos STEAM.',
-        4,
-        0,
-        true,
-        student1_id,
-        '{
-            "color": "#9b59b6",
-            "icon": "lightbulb",
-            "motto": "Innovation through knowledge",
-            "bilingual": true
-        }'::jsonb,
-        NOW(),
-        NOW()
-    )
-    RETURNING id INTO team_innovadores;
+    IF student1_id IS NOT NULL AND classroom_2st IS NOT NULL THEN
+        INSERT INTO social_features.teams (
+            classroom_id, tenant_id, name, team_code, description,
+            max_members, current_members_count,
+            is_active, creator_id,
+            metadata, created_at, updated_at
+        ) VALUES
+        (
+            classroom_2st,
+            v_tenant_id,
+            'Innovadores STEAM',
+            'TEAM-INNOV-2ST',
+            'Equipo bilingue enfocado en integrar literatura cientifica con proyectos STEAM.',
+            4,
+            0,
+            true,
+            student1_id,
+            '{
+                "color": "#9b59b6",
+                "icon": "lightbulb",
+                "motto": "Innovation through knowledge",
+                "bilingual": true
+            }'::jsonb,
+            NOW(),
+            NOW()
+        )
+        RETURNING id INTO team_innovadores;
+    END IF;
 
     -- =====================================================================
-    -- MEMBRESIAS DE EQUIPOS
+    -- MEMBRESIAS DE EQUIPOS (guarded per student/team)
     -- =====================================================================
 
-    INSERT INTO social_features.team_members (
-        team_id, user_id, role,
-        joined_at, is_active,
-        metadata, created_at, updated_at
-    ) VALUES
     -- Equipo 1: Los Cientificos
-    (team_cientificos, student1_id, 'owner', NOW(), true,
-     '{"responsibilities": ["Coordinar reuniones"], "contribution_score": 95}'::jsonb, NOW(), NOW()),
-    (team_cientificos, student3_id, 'member', NOW(), true,
-     '{"responsibilities": ["Investigar biografias"], "contribution_score": 88}'::jsonb, NOW(), NOW()),
+    IF team_cientificos IS NOT NULL AND student1_id IS NOT NULL THEN
+        INSERT INTO social_features.team_members (team_id, user_id, role, joined_at, is_active, metadata, created_at, updated_at)
+        VALUES (team_cientificos, student1_id, 'owner', NOW(), true,
+            '{"responsibilities": ["Coordinar reuniones"], "contribution_score": 95}'::jsonb, NOW(), NOW())
+        ON CONFLICT (team_id, user_id) DO UPDATE SET role = EXCLUDED.role, metadata = EXCLUDED.metadata, updated_at = NOW();
+    END IF;
+    IF team_cientificos IS NOT NULL AND student3_id IS NOT NULL THEN
+        INSERT INTO social_features.team_members (team_id, user_id, role, joined_at, is_active, metadata, created_at, updated_at)
+        VALUES (team_cientificos, student3_id, 'member', NOW(), true,
+            '{"responsibilities": ["Investigar biografias"], "contribution_score": 88}'::jsonb, NOW(), NOW())
+        ON CONFLICT (team_id, user_id) DO UPDATE SET role = EXCLUDED.role, metadata = EXCLUDED.metadata, updated_at = NOW();
+    END IF;
+
     -- Equipo 2: Exploradores Digitales
-    (team_exploradores, student2_id, 'owner', NOW(), true,
-     '{"responsibilities": ["Coordinar verificaciones"], "contribution_score": 92}'::jsonb, NOW(), NOW()),
-    (team_exploradores, student1_id, 'member', NOW(), true,
-     '{"responsibilities": ["Verificar noticias"], "contribution_score": 90}'::jsonb, NOW(), NOW()),
+    IF team_exploradores IS NOT NULL AND student2_id IS NOT NULL THEN
+        INSERT INTO social_features.team_members (team_id, user_id, role, joined_at, is_active, metadata, created_at, updated_at)
+        VALUES (team_exploradores, student2_id, 'owner', NOW(), true,
+            '{"responsibilities": ["Coordinar verificaciones"], "contribution_score": 92}'::jsonb, NOW(), NOW())
+        ON CONFLICT (team_id, user_id) DO UPDATE SET role = EXCLUDED.role, metadata = EXCLUDED.metadata, updated_at = NOW();
+    END IF;
+    IF team_exploradores IS NOT NULL AND student1_id IS NOT NULL THEN
+        INSERT INTO social_features.team_members (team_id, user_id, role, joined_at, is_active, metadata, created_at, updated_at)
+        VALUES (team_exploradores, student1_id, 'member', NOW(), true,
+            '{"responsibilities": ["Verificar noticias"], "contribution_score": 90}'::jsonb, NOW(), NOW())
+        ON CONFLICT (team_id, user_id) DO UPDATE SET role = EXCLUDED.role, metadata = EXCLUDED.metadata, updated_at = NOW();
+    END IF;
+
     -- Equipo 3: Pioneros Tecnicos
-    (team_pioneros, student3_id, 'owner', NOW(), true,
-     '{"responsibilities": ["Coordinar proyectos tecnicos"], "contribution_score": 85}'::jsonb, NOW(), NOW()),
+    IF team_pioneros IS NOT NULL AND student3_id IS NOT NULL THEN
+        INSERT INTO social_features.team_members (team_id, user_id, role, joined_at, is_active, metadata, created_at, updated_at)
+        VALUES (team_pioneros, student3_id, 'owner', NOW(), true,
+            '{"responsibilities": ["Coordinar proyectos tecnicos"], "contribution_score": 85}'::jsonb, NOW(), NOW())
+        ON CONFLICT (team_id, user_id) DO UPDATE SET role = EXCLUDED.role, metadata = EXCLUDED.metadata, updated_at = NOW();
+    END IF;
+
     -- Equipo 4: Innovadores STEAM
-    (team_innovadores, student1_id, 'admin', NOW(), true,
-     '{"responsibilities": ["Traduccion bilingue"], "contribution_score": 94}'::jsonb, NOW(), NOW()),
-    (team_innovadores, student2_id, 'member', NOW(), true,
-     '{"responsibilities": ["Investigacion cientifica"], "contribution_score": 89}'::jsonb, NOW(), NOW())
-    ON CONFLICT (team_id, user_id) DO UPDATE SET
-        role = EXCLUDED.role,
-        metadata = EXCLUDED.metadata,
-        updated_at = NOW();
+    IF team_innovadores IS NOT NULL AND student1_id IS NOT NULL THEN
+        INSERT INTO social_features.team_members (team_id, user_id, role, joined_at, is_active, metadata, created_at, updated_at)
+        VALUES (team_innovadores, student1_id, 'admin', NOW(), true,
+            '{"responsibilities": ["Traduccion bilingue"], "contribution_score": 94}'::jsonb, NOW(), NOW())
+        ON CONFLICT (team_id, user_id) DO UPDATE SET role = EXCLUDED.role, metadata = EXCLUDED.metadata, updated_at = NOW();
+    END IF;
+    IF team_innovadores IS NOT NULL AND student2_id IS NOT NULL THEN
+        INSERT INTO social_features.team_members (team_id, user_id, role, joined_at, is_active, metadata, created_at, updated_at)
+        VALUES (team_innovadores, student2_id, 'member', NOW(), true,
+            '{"responsibilities": ["Investigacion cientifica"], "contribution_score": 89}'::jsonb, NOW(), NOW())
+        ON CONFLICT (team_id, user_id) DO UPDATE SET role = EXCLUDED.role, metadata = EXCLUDED.metadata, updated_at = NOW();
+    END IF;
 
     -- =====================================================================
     -- Actualizar member counts en teams
@@ -257,7 +287,8 @@ BEGIN
     WHERE id IN (
         team_cientificos, team_exploradores,
         team_pioneros, team_innovadores
-    );
+    )
+    AND id IS NOT NULL;
 
     -- =====================================================================
     -- Verificacion de insercion

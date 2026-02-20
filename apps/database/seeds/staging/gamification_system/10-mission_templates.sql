@@ -376,8 +376,8 @@ BEGIN
     RAISE NOTICE 'Weekly missions: %', (SELECT COUNT(*) FROM gamification_system.mission_templates WHERE type = 'weekly');
     RAISE NOTICE 'Special missions: %', (SELECT COUNT(*) FROM gamification_system.mission_templates WHERE type = 'special');
 
-    IF v_count < 10 THEN
-        RAISE WARNING '⚠️ Se esperaban al menos 10 mission_templates';
+    IF v_count < 12 THEN
+        RAISE WARNING '⚠️ Se esperaban al menos 12 mission_templates';
     ELSE
         RAISE NOTICE '✅ Seed de mission_templates completado exitosamente';
     END IF;

@@ -198,9 +198,9 @@ El script `create-database.sh` ejecuta **16 fases** en orden:
 | 10.5 | Communication | Mensajeria |
 | 11 | Audit Logging | Logs auditoria |
 | 12-15 | Otros | Config, Admin, LTI |
-| 16 | **Seeds PROD** | **57 archivos de datos iniciales** |
+| 16 | **Seeds PROD** | **66 entries de datos iniciales** |
 
-### 4.5 Seeds de Produccion (57 archivos)
+### 4.5 Seeds de Produccion (66 entries)
 
 Los seeds de produccion cargan:
 

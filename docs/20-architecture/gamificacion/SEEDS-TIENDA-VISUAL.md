@@ -20,9 +20,9 @@ Garantizar datos semilla para validar de forma reproducible el flujo:
 ## 2. Seeds agregados por ambiente
 
 ### Producción
-- `apps/database/seeds/prod/gamification_system/16-shop_items_metadata_normalization.sql`
-- `apps/database/seeds/prod/gamification_system/17-user_purchases-demo.sql`
-- `apps/database/seeds/prod/gamification_system/18-user_equipped_items-demo.sql`
+- `apps/database/seeds/prod/gamification_system/17-shop_items_metadata_normalization.sql`
+
+> **Nota (2026-02-20):** Seeds demo `17-user_purchases-demo.sql` y `18-user_equipped_items-demo.sql` fueron **eliminados de prod/** (SEED-HOMOLOGATION B4/B5). Solo existen en dev/ con scope `dev|demo_gamification`.
 
 ### Desarrollo
 - `apps/database/seeds/dev/gamification_system/17-shop_items_metadata_normalization.sql`

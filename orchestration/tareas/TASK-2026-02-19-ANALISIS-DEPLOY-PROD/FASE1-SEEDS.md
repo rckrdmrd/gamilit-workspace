@@ -110,15 +110,15 @@
 
 | # | Archivo | DEV | PROD | STAGING | Scope (init-db.sh) | Content Match |
 |---|---------|-----|------|---------|---------------------|---------------|
-| 1 | 01-default-templates.sql | SI | SI | SI | **EXCLUIDO** del pipeline | IDENTICO (3 envs) |
+| 1 | 01-default-templates.sql | SI | SI | SI | `all\|core` **(RE-HABILITADO 2026-02-20)** | IDENTICO (3 envs) |
 | 2 | 01-marie-curie-bio.sql | SI | NO | NO | `dev\|demo_data` | N/A |
 | 3 | 02-marie_curie_content.sql | SI | SI | SI | `prod\|core` | IDENTICO (3 envs) |
 | 4 | 02-media-files.sql | SI | NO | NO | `dev\|demo_data` | N/A |
 | 5 | 03-tags.sql | SI | SI | SI | `all\|core` | IDENTICO (3 envs) |
-| 6 | 04-moderation_rules.sql | SI | SI | SI | **EXCLUIDO** del pipeline | IDENTICO (3 envs) |
+| 6 | 04-moderation_rules.sql | SI | SI | SI | `all\|core` **(RE-HABILITADO 2026-02-20)** | IDENTICO (3 envs) |
 
 **Discrepancias:**
-- `01-default-templates.sql` y `04-moderation_rules.sql` existen en los 3 envs pero estan EXCLUIDOS del pipeline (comentarios en init-database.sh: "references nonexistent 'structure' column" y "FK violation on system user")
+- ~~`01-default-templates.sql` y `04-moderation_rules.sql` existen en los 3 envs pero estan EXCLUIDOS del pipeline~~ **RESUELTO** (SEED-HOMOLOGATION 2026-02-20: A1 fixed structure→template_structure, B2 fixed FK violation with dynamic lookup)
 - `02-marie_curie_content.sql` tiene scope `prod|core` — pero existe en DEV y STAGING. Cuando se ejecuta en DEV con --env dev, este seed sera OMITIDO
 
 ---
@@ -325,8 +325,8 @@ Estos archivos existen en el directorio pero NO estan declarados en `seed_entrie
 |---------|----------|-------|
 | `audit_logging/01-activity_log_sample.sql` | DEV | No registrado |
 | `audit_logging/03-pending_user_initialization.sql` | DEV | No registrado |
-| `content_management/01-default-templates.sql` | 3 envs | EXCLUIDO: nonexistent 'structure' column |
-| `content_management/04-moderation_rules.sql` | 3 envs | EXCLUIDO: FK violation |
+| `content_management/01-default-templates.sql` | 3 envs | ~~EXCLUIDO~~ **RE-HABILITADO** (SEED-HOMOLOGATION A1) |
+| `content_management/04-moderation_rules.sql` | 3 envs | ~~EXCLUIDO~~ **RE-HABILITADO** (SEED-HOMOLOGATION B2) |
 | `lti_integration/02-lti_sessions.sql` | DEV | No registrado |
 | `lti_integration/03-lti_grade_passback.sql` | DEV | No registrado |
 | `notifications/02-notification_templates_i18n.sql` | DEV | No registrado |
@@ -447,7 +447,7 @@ En general, PROD y STAGING comparten contenido identico para la gran mayoria de 
 | ID | Descripcion | Detalle |
 |----|-------------|---------|
 | M-01 | **27 archivos no en pipeline** | Existen en disco pero no se cargan via init-database.sh. Algunos son demos (ok), otros parecen seeds funcionales olvidados |
-| M-02 | **2 seeds excluidos existen en 3 envs** | `01-default-templates.sql` y `04-moderation_rules.sql` — archivos muertos en prod/staging |
+| M-02 | ~~**2 seeds excluidos existen en 3 envs**~~ | ~~`01-default-templates.sql` y `04-moderation_rules.sql` — archivos muertos~~ **RESUELTO** (SEED-HOMOLOGATION 2026-02-20) |
 | M-03 | **social_features seeds en PROD no en pipeline** | `08-peer_challenges.sql` y `10-team_challenges.sql` existen en PROD pero no se cargan |
 | M-04 | **04-friendships.sql en prod/staging innecesario** | Existe en los 3 envs pero scope=`dev\|demo_data`, nunca se carga en prod |
 | M-05 | **Numeracion interna vs nombre archivo** | En PROD, `17-shop_items_metadata_normalization` tiene `Order: 16` en header. En STAGING tiene `Order: 15`. La numeracion interna no coincide con el nombre del archivo |

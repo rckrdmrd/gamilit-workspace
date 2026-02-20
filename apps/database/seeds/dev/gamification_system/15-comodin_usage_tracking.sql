@@ -120,10 +120,10 @@ BEGIN
     WHERE user_id = v_student3_id
     LIMIT 1;
 
-    -- Generate UUIDs if no attempts exist
-    IF v_attempt1_id IS NULL THEN v_attempt1_id := gen_random_uuid(); END IF;
-    IF v_attempt2_id IS NULL THEN v_attempt2_id := gen_random_uuid(); END IF;
-    IF v_attempt3_id IS NULL THEN v_attempt3_id := gen_random_uuid(); END IF;
+    -- Deterministic fallback UUIDs if no attempts exist (idempotency: gen_random_uuid() would break ON CONFLICT on re-run)
+    IF v_attempt1_id IS NULL THEN v_attempt1_id := '81111111-bbbb-1111-1111-111111111001'::uuid; END IF;
+    IF v_attempt2_id IS NULL THEN v_attempt2_id := '81111111-bbbb-1111-1111-111111111002'::uuid; END IF;
+    IF v_attempt3_id IS NULL THEN v_attempt3_id := '81111111-bbbb-1111-1111-111111111003'::uuid; END IF;
 
     RAISE NOTICE '  Students: %, %, %', v_student1_id, v_student2_id, v_student3_id;
     RAISE NOTICE '  Exercises: %, %, %', v_exercise1_id, v_exercise2_id, v_exercise3_id;
@@ -167,7 +167,7 @@ BEGIN
         '81111111-1111-1111-1111-111111111002'::uuid,
         v_student1_id,
         v_exercise2_id,
-        gen_random_uuid(),
+        '81111111-aaaa-1111-1111-111111111002'::uuid,
         3,    -- pistas_used (LIMIT REACHED)
         0,    -- vision_lectora_used
         0,    -- segunda_oportunidad_used
@@ -199,7 +199,7 @@ BEGIN
         '81111111-1111-1111-1111-111111111004'::uuid,
         v_student2_id,
         v_exercise3_id,
-        gen_random_uuid(),
+        '81111111-aaaa-1111-1111-111111111004'::uuid,
         0,    -- pistas_used
         0,    -- vision_lectora_used
         1,    -- segunda_oportunidad_used (LIMIT REACHED)
@@ -231,7 +231,7 @@ BEGIN
         '81111111-1111-1111-1111-111111111006'::uuid,
         v_student3_id,
         v_exercise2_id,
-        gen_random_uuid(),
+        '81111111-aaaa-1111-1111-111111111006'::uuid,
         0,    -- pistas_used
         0,    -- vision_lectora_used
         0,    -- segunda_oportunidad_used
@@ -247,7 +247,7 @@ BEGIN
         '81111111-1111-1111-1111-111111111007'::uuid,
         v_student1_id,
         v_exercise3_id,
-        gen_random_uuid(),
+        '81111111-aaaa-1111-1111-111111111007'::uuid,
         3,    -- pistas_used (LIMIT)
         1,    -- vision_lectora_used (LIMIT)
         0,    -- segunda_oportunidad_used
@@ -263,7 +263,7 @@ BEGIN
         '81111111-1111-1111-1111-111111111008'::uuid,
         v_student2_id,
         v_exercise2_id,
-        gen_random_uuid(),
+        '81111111-aaaa-1111-1111-111111111008'::uuid,
         1,    -- pistas_used
         0,    -- vision_lectora_used
         0,    -- segunda_oportunidad_used
@@ -279,7 +279,7 @@ BEGIN
         '81111111-1111-1111-1111-111111111009'::uuid,
         v_student3_id,
         v_exercise3_id,
-        gen_random_uuid(),
+        '81111111-aaaa-1111-1111-111111111009'::uuid,
         3,    -- pistas_used (LIMIT)
         1,    -- vision_lectora_used (LIMIT)
         1,    -- segunda_oportunidad_used (LIMIT)
@@ -295,7 +295,7 @@ BEGIN
         '81111111-1111-1111-1111-111111111010'::uuid,
         v_student1_id,
         v_exercise1_id,
-        gen_random_uuid(),
+        '81111111-aaaa-1111-1111-111111111010'::uuid,
         1,    -- pistas_used
         1,    -- vision_lectora_used (LIMIT)
         0,    -- segunda_oportunidad_used

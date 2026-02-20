@@ -76,5 +76,5 @@ BEGIN
     RAISE NOTICE 'Preferencias de notificacion creadas para usuarios existentes';
 END $$;
 
--- Comentario
-COMMENT ON TABLE notifications.notification_preferences IS 'Preferencias de notificaciones por usuario - EXT-003 (Actualizado 2026-01-04)';
+-- Comentario omitido: COMMENT ON TABLE requiere ownership (seeds corren como gamilit_user, no postgres)
+-- El comentario ya esta definido en el DDL: apps/database/ddl/schemas/notifications/tables/02-notification_preferences.sql

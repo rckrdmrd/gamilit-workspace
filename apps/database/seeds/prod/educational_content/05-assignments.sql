@@ -32,7 +32,7 @@ SET search_path TO educational_content, auth, public;
 -- =====================================================
 -- Eliminar assignments del teacher demo si existen
 DELETE FROM educational_content.assignments
-WHERE teacher_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
+WHERE teacher_id = (SELECT p.id FROM auth.users u JOIN auth_management.profiles p ON p.user_id = u.id WHERE u.email = 'teacher@gamilit.com');
 
 -- =====================================================
 -- Obtener IDs necesarios y validar dependencias
@@ -42,14 +42,15 @@ DO $$
 DECLARE
     v_teacher_id UUID;
 BEGIN
-    -- Obtener el ID del profesor de testing
-    SELECT id INTO v_teacher_id
-    FROM auth.users
-    WHERE email = 'teacher@gamilit.com'
+    -- Obtener el profile ID del profesor de testing (FK apunta a auth_management.profiles(id))
+    SELECT p.id INTO v_teacher_id
+    FROM auth.users u
+    JOIN auth_management.profiles p ON p.user_id = u.id
+    WHERE u.email = 'teacher@gamilit.com'
     LIMIT 1;
 
     IF v_teacher_id IS NULL THEN
-        RAISE EXCEPTION 'Teacher "teacher@gamilit.com" no encontrado. Ejecutar primero seed de auth/users.';
+        RAISE EXCEPTION 'Teacher "teacher@gamilit.com" no encontrado en auth_management.profiles. Ejecutar primero seeds de auth/users y auth_management/profiles.';
     END IF;
 
     RAISE NOTICE 'Usando teacher_id: %', v_teacher_id;

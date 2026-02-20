@@ -1,6 +1,6 @@
 seeds_inventory:
-  version: 3.1.0
-  fecha: '2026-02-18'
+  version: 3.2.0
+  fecha: '2026-02-20'
   metadata:
     proyecto: GAMILIT - Plataforma de Aprendizaje Gamificada
     proposito: Inventario completo de seeds (datos iniciales) DEV, STAGING y PROD
@@ -11,7 +11,7 @@ seeds_inventory:
 
   resumen_ejecutivo:
     total_seeds_prod: 101    # ✅ ACTUALIZADO 2026-01-16 (validación integral)
-    total_seeds_dev: 77      # ✅ ACTUALIZADO 2026-02-18 (+1 achievements-collection REC-011)
+    total_seeds_dev: 85      # ✅ ACTUALIZADO 2026-02-20 (85 pipeline entries, +2 re-enabled: default-templates, moderation_rules)
     total_seeds_staging: 56  # ✅ ACTUALIZADO 2026-01-16 (55% de prod - intencional)
     ejercicios_prod: 23
     ejercicios_dev: 24
@@ -309,6 +309,7 @@ seeds_inventory:
               - Experimentos
             dependencias: []
             estado: activo
+            pipeline: "all|core"   # Re-habilitado 2026-02-20 (SEED-HOMOLOGATION A1: structure→template_structure)
 
           - nombre: 02-marie_curie_content.sql
             descripcion: Contenido biográfico de Marie Curie (P0 AUDIT-DB-001)
@@ -356,6 +357,7 @@ seeds_inventory:
             registros_estimados: 10
             dependencias: []
             estado: activo
+            pipeline: "all|core"   # Re-habilitado 2026-02-20 (SEED-HOMOLOGATION B2: dynamic profile lookup)
 
       # ===========================================================================
       # COMMUNICATION (NUEVO - AUDIT 2026-01-04)
@@ -850,24 +852,11 @@ seeds_inventory:
               - gamification_system/13-shop_items.sql
             estado: activo
 
-          - nombre: 17-user_purchases-demo.sql
-            descripcion: Compras demo para validar ownership y flujo E2E
-            tablas:
-              - user_purchases
-            registros_estimados: 2+
-            dependencias:
-              - gamification_system/13-shop_items.sql
-              - auth_management/04-profiles-complete.sql
-            estado: activo
+          # 17-user_purchases-demo.sql — ELIMINADO de prod/ (2026-02-20, SEED-HOMOLOGATION B4)
+          # Solo existe en dev/ (scope: dev|demo_gamification)
 
-          - nombre: 18-user_equipped_items-demo.sql
-            descripcion: Equipamiento demo aplicado desde compras para pruebas E2E
-            tablas:
-              - user_equipped_items
-            registros_estimados: 2+
-            dependencias:
-              - gamification_system/17-user_purchases-demo.sql
-            estado: activo
+          # 18-user_equipped_items-demo.sql — ELIMINADO de prod/ (2026-02-20, SEED-HOMOLOGATION B5)
+          # Solo existe en dev/ (scope: dev|demo_gamification)
 
       # ===========================================================================
       # LTI INTEGRATION
@@ -1240,6 +1229,22 @@ seeds_inventory:
   # CHANGELOG
   # =============================================================================
   changelog:
+    - fecha: '2026-02-20'
+      version: 3.2.0
+      fase: SEED-HOMOLOGATION — Homologacion Dev/Prod
+      cambios:
+        - "8 errores reales corregidos (de 18 reportados, 10 falsos positivos)"
+        - "A1: content_templates — structure→template_structure, is_active→is_public+is_system_template"
+        - "A2: marie_curie_content prod — singular→plural table name"
+        - "A11: test-exercises-validation — is_active→is_published+status"
+        - "B1: 01-demo-users.sql scope demo_users→core (essential for FK chain)"
+        - "B2: moderation_rules — dynamic profile lookup, removed direct auth.users INSERT"
+        - "B4/B5: Deleted prod demo seeds (17-user_purchases-demo, 18-user_equipped_items-demo)"
+        - "C2: admin_reports — dynamic tenant/profile lookups"
+        - "Pipeline: Re-enabled default-templates (all|core) and moderation_rules (all|core)"
+        - "All |all| seeds synced dev→prod (14 files verified identical)"
+      impacto: "85 pipeline entries, 0 errores, 0 excluidos"
+
     - fecha: '2025-12-15'
       version: 3.0.0
       fase: Simplificación Estructura - Solo Defaults

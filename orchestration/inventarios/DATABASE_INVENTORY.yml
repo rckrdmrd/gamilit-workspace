@@ -2,8 +2,8 @@
 # DATABASE INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "8.7.0"
-fecha: "2026-02-18"
+version: "8.8.0"
+fecha: "2026-02-20"
 proyecto: "gamilit"
 database: "gamilit_platform"
 engine: "PostgreSQL 15"
@@ -282,8 +282,8 @@ scripts:
 
 seeds:
   ruta: "apps/database/seeds/dev/"
-  total: 76                       # 76 seed files (was 66, +10 gamification_system store/equipped seeds)
-  errores: 0                      # 0 errores post-CORR-05 (2026-02-17)
+  total: 85                       # 85 pipeline entries (was 83, +2 re-enabled: default-templates, moderation_rules). 0 excluidos
+  errores: 0                      # 0 errores post-SEED-HOMOLOGATION (2026-02-20)
   schemas_con_seeds:
     - "auth (3 archivos: demo-users, production-users, demo-students)"
     - "auth_management (9 archivos)"

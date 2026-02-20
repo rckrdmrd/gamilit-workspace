@@ -12,7 +12,7 @@
 -- ============================================================================
 
 -- Configuración de tipos de notificaciones
-INSERT INTO system_configuration.notification_settings_global (
+INSERT INTO system_configuration.notification_settings_globals (
     notification_type,
     channel,
     is_enabled,
@@ -315,7 +315,7 @@ SELECT
     throttle_minutes,
     batch_enabled,
     batch_window_minutes
-FROM system_configuration.notification_settings_global
+FROM system_configuration.notification_settings_globals
 ORDER BY
     CASE priority
         WHEN 'urgent' THEN 1
