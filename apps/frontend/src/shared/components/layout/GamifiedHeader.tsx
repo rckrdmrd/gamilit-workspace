@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { cn } from '@shared/utils';
+import { cn } from '@shared/utils/cn';
 import {
   Settings,
   LogOut,

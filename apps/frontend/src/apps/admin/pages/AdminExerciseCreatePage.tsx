@@ -15,6 +15,7 @@ import {
   Check,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { AdminPageShell } from '../components/shared/AdminPageShell';
 import { ExerciseTypeSelector } from '../components/exercise-builder/ExerciseTypeSelector';
 import { ExercisePreview } from '../components/exercise-builder/ExercisePreview';
 import { StepBasicInfo } from '../components/exercise-builder/StepBasicInfo';
@@ -37,6 +38,10 @@ import {
   PodcastArgumentativoConfig,
   TribunalOpinionesConfig,
 } from '../components/exercise-builder/type-configs';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
+import { CONTENT_QUERY_KEYS } from '../hooks/useContentQueries';
 import type { ExerciseFormData } from '../types/exercise-builder.types';
 
 export type { ExerciseFormData } from '../types/exercise-builder.types';
@@ -85,10 +90,63 @@ const initialFormData: ExerciseFormData = {
   hintsAllowed: 3,
 };
 
+/**
+ * Maps frontend difficulty values to backend DifficultyLevelEnum values.
+ * The form uses 'expert' which is not in the backend enum; mapped to 'proficient'.
+ */
+const DIFFICULTY_MAP: Record<ExerciseFormData['difficulty'], string> = {
+  beginner: 'beginner',
+  intermediate: 'intermediate',
+  advanced: 'advanced',
+  expert: 'proficient',
+};
+
+/**
+ * Converts camelCase ExerciseFormData to snake_case backend payload
+ * matching the educational_content.exercises table schema.
+ *
+ * @see Backend: POST /api/v1/educational/exercises (ExercisesController.create)
+ * @see Entity: apps/backend/src/modules/educational/entities/exercise.entity.ts
+ */
+function buildExercisePayload(formData: ExerciseFormData, isActive: boolean) {
+  return {
+    title: formData.title,
+    description: formData.description,
+    instructions: formData.instructions,
+    module_id: formData.moduleId,
+    exercise_type: formData.exerciseType,
+    difficulty_level: DIFFICULTY_MAP[formData.difficulty] || formData.difficulty,
+    estimated_time_minutes: formData.estimatedTime,
+    how_to_solve: formData.howToSolve || undefined,
+    recommended_strategy: formData.recommendedStrategy || undefined,
+    pedagogical_notes: formData.pedagogicalNotes || undefined,
+    config: formData.typeConfig,
+    content: formData.typeConfig,
+    xp_reward: formData.xpReward,
+    ml_coins_reward: formData.mlCoinsReward,
+    enable_hints: formData.hintsAllowed > 0,
+    is_active: isActive,
+    order_index: 0,
+  };
+}
+
 export default function AdminExerciseCreatePage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<ExerciseFormData>(initialFormData);
-  const [saving, setSaving] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Mutation for creating exercises via POST /api/v1/educational/exercises
+  const createExerciseMutation = useMutation({
+    mutationFn: async (payload: Record<string, unknown>) => {
+      const response = await apiClient.post(API_ENDPOINTS.educational.exercises, payload);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CONTENT_QUERY_KEYS.exercises() });
+    },
+  });
+
+  const saving = createExerciseMutation.isPending;
 
   const updateField = <K extends keyof ExerciseFormData>(key: K, value: ExerciseFormData[K]) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -122,32 +180,35 @@ export default function AdminExerciseCreatePage() {
   };
 
   const handleSaveDraft = async () => {
-    setSaving(true);
     try {
-      await new Promise((r) => setTimeout(r, 800));
+      const payload = buildExercisePayload(formData, false);
+      await createExerciseMutation.mutateAsync(payload);
       toast.success('Borrador guardado exitosamente');
-    } catch {
-      toast.error('Error al guardar el borrador');
-    } finally {
-      setSaving(false);
+    } catch (error: unknown) {
+      const message =
+        (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+        || 'Error al guardar el borrador';
+      toast.error(message);
     }
   };
 
   const handleSubmitForReview = async () => {
-    setSaving(true);
     try {
-      await new Promise((r) => setTimeout(r, 800));
+      const payload = buildExercisePayload(formData, true);
+      await createExerciseMutation.mutateAsync(payload);
       toast.success('Ejercicio enviado para revision');
-    } catch {
-      toast.error('Error al enviar para revision');
-    } finally {
-      setSaving(false);
+    } catch (error: unknown) {
+      const message =
+        (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+        || 'Error al enviar para revision';
+      toast.error(message);
     }
   };
 
   const TypeConfigComponent = TYPE_CONFIG_MAP[formData.exerciseType];
 
   return (
+    <AdminPageShell>
     <div className="space-y-6">
       {/* Header */}
       <div>
@@ -299,5 +360,6 @@ export default function AdminExerciseCreatePage() {
         </div>
       </DetectiveCard>
     </div>
+    </AdminPageShell>
   );
 }

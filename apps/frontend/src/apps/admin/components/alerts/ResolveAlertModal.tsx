@@ -7,7 +7,7 @@
  */
 
 import React, { useState } from 'react';
-import { X, CheckCircle } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { SystemAlert } from '@/services/api/adminTypes';
 
@@ -27,8 +27,6 @@ export const ResolveAlertModal: React.FC<ResolveAlertModalProps> = ({
   const [note, setNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  if (!isOpen || !alert) return null;
 
   const isNoteValid = note.trim().length >= 10;
 
@@ -63,26 +61,17 @@ export const ResolveAlertModal: React.FC<ResolveAlertModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-lg border border-gray-700 bg-detective-bg-secondary">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-700 p-6">
-          <div className="flex items-center gap-3">
-            <CheckCircle className="h-6 w-6 text-green-500" />
-            <h2 className="text-xl font-bold text-detective-text">Resolver Alerta</h2>
-          </div>
-          <button
-            onClick={handleClose}
-            disabled={isSubmitting}
-            className="rounded-lg p-2 transition-colors hover:bg-detective-bg disabled:opacity-50"
-          >
-            <X className="h-6 w-6 text-detective-text-secondary" />
-          </button>
-        </div>
-
-        {/* Content */}
+    <Modal
+      isOpen={isOpen && !!alert}
+      onClose={handleClose}
+      title="Resolver Alerta"
+      size="lg"
+      closeOnOverlayClick={!isSubmitting}
+      closeOnEscape={!isSubmitting}
+    >
+      {alert && (
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4 p-6">
+          <div className="space-y-4">
             {/* Alert Title */}
             <div className="rounded-lg border border-gray-700 bg-detective-bg p-4">
               <p className="mb-1 text-sm text-detective-text-secondary">Alerta:</p>
@@ -92,7 +81,7 @@ export const ResolveAlertModal: React.FC<ResolveAlertModalProps> = ({
             {/* Resolution Note Input */}
             <div>
               <label className="mb-2 block text-sm font-medium text-detective-text-secondary">
-                Nota de Resolución <span className="text-red-500">*</span>
+                Nota de Resolucion <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={note}
@@ -100,7 +89,7 @@ export const ResolveAlertModal: React.FC<ResolveAlertModalProps> = ({
                   setNote(e.target.value);
                   setError(null);
                 }}
-                placeholder="Describe cómo se resolvió la alerta (mínimo 10 caracteres)..."
+                placeholder="Describe como se resolvio la alerta (minimo 10 caracteres)..."
                 rows={5}
                 className={`w-full resize-none rounded-lg border bg-detective-bg px-4 py-2 text-detective-text placeholder-gray-400 focus:outline-none focus:ring-2 ${
                   error
@@ -112,7 +101,7 @@ export const ResolveAlertModal: React.FC<ResolveAlertModalProps> = ({
               />
               <div className="mt-1 flex items-center justify-between">
                 <p className="text-xs text-detective-text-secondary">
-                  Mínimo 10 caracteres requeridos
+                  Minimo 10 caracteres requeridos
                 </p>
                 <p
                   className={`text-xs font-medium ${
@@ -133,27 +122,27 @@ export const ResolveAlertModal: React.FC<ResolveAlertModalProps> = ({
 
             {/* Info */}
             <div className="rounded-lg border border-green-500/50 bg-green-500/20 p-3 text-sm text-green-400">
-              Al resolver esta alerta, cambiarás su estado a "Resuelto", indicando que el problema
-              ha sido solucionado. Esta acción quedará registrada en el sistema.
+              Al resolver esta alerta, cambiaras su estado a "Resuelto", indicando que el problema
+              ha sido solucionado. Esta accion quedara registrada en el sistema.
+            </div>
+
+            {/* Footer */}
+            <div className="flex justify-end gap-2 border-t border-gray-200 pt-4">
+              <DetectiveButton variant="secondary" onClick={handleClose} disabled={isSubmitting}>
+                Cancelar
+              </DetectiveButton>
+              <DetectiveButton
+                variant="primary"
+                type="submit"
+                disabled={isSubmitting || !isNoteValid}
+              >
+                {isSubmitting ? 'Resolviendo...' : 'Resolver Alerta'}
+              </DetectiveButton>
             </div>
           </div>
-
-          {/* Footer */}
-          <div className="flex justify-end gap-2 border-t border-gray-700 p-6">
-            <DetectiveButton variant="secondary" onClick={handleClose} disabled={isSubmitting}>
-              Cancelar
-            </DetectiveButton>
-            <DetectiveButton
-              variant="primary"
-              type="submit"
-              disabled={isSubmitting || !isNoteValid}
-            >
-              {isSubmitting ? 'Resolviendo...' : 'Resolver Alerta'}
-            </DetectiveButton>
-          </div>
         </form>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 };
 

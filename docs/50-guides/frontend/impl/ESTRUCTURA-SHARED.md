@@ -193,7 +193,7 @@ export const Header: React.FC = () => {
 ### components/feedback/
 
 ```typescript
-// shared/components/feedback/LoadingSpinner.tsx
+// shared/components/loading/LoadingSpinner.tsx
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;

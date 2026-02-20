@@ -86,6 +86,6 @@ if (isLoading) return <UserListSkeleton count={5} />;
 
 ## Componentes Reutilizables
 
-- `shared/components/ui/LoadingSpinner.tsx`
-- `shared/components/ui/ErrorMessage.tsx`
-- `shared/components/ui/EmptyState.tsx`
+- `shared/components/loading/LoadingSpinner.tsx`
+- `shared/components/feedback/ErrorMessage.tsx`
+- `shared/components/feedback/EmptyState.tsx`

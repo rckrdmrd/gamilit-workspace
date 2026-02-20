@@ -10,7 +10,7 @@
  */
 
 import { useRef, useCallback } from 'react';
-import { cn } from '@/shared/utils/cn';
+import { cn } from '@shared/utils/cn';
 
 export interface TabDefinition<T extends string = string> {
   id: T;

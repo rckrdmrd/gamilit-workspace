@@ -394,7 +394,7 @@ export const transformUserAchievement = (api: ApiUserAchievementResponse): UserA
 | `services/api/teamsAPI.ts` | `mapTeamDTO`, `mapTeamMemberDTO` | Team, TeamMember |
 | `services/api/adminAPI.ts` | `transformUser`, `safeToISOString` | User (admin), AuditLogEntry |
 | `features/auth/api/authAPI.ts` | `mapBackendUserToFrontend`, `mapBackendAuthResponse` | User, AuthResponse |
-| `lib/api/gamification.api.ts` | Usa `transformUserAchievements`, `transformAchievements`, `transformAchievement` | Reutiliza transformers de achievements |
+| `services/api/gamification/gamificationAPI.ts` | Usa `transformUserAchievements`, `transformAchievements`, `transformAchievement` | Reutiliza transformers de achievements |
 
 ### 4.3 Transformacion en apiClient
 

@@ -3,8 +3,8 @@
 # Version: 2.0.0
 # Sistema: SIMCO v4.0.0
 
-version: "2.1.0"
-updated: "2026-02-18"
+version: "2.2.0"
+updated: "2026-02-19"
 
 # ============================================
 # EPICAS ACTIVAS
@@ -237,6 +237,36 @@ epicas:
         estado: "completado"
         fecha_completado: "2026-02-17"
 
+  - id: "EPIC-WS-008"
+    titulo: "Estandarizacion Cross-Portal y Deuda Tecnica Frontend"
+    descripcion: "Items diferidos de la estandarizacion de portales Teacher/Admin/Student (TASK-2026-02-19). Incluye React Query migration, modals, TabBar unification y Pagination."
+    estado: "en_progreso"
+    prioridad: "P1"
+    tarea_origen: "TASK-2026-02-19-ESTANDARIZACION-PORTALES"
+    items:
+      - id: "STD-001"
+        titulo: "Migrar 25 admin hooks de useState+useEffect a React Query"
+        prioridad: "P1"
+        esfuerzo: "XL"
+        estado: "diferido"
+        nota: "Guia creada en docs/50-guides/REACT-QUERY-MIGRATION-GUIDE.md. Requiere sprint dedicado."
+      - id: "STD-002"
+        titulo: "Migrar 34 inline modals restantes a shared Modal"
+        prioridad: "P2"
+        esfuerzo: "L"
+        estado: "pendiente"
+        nota: "8/42 migrados en Fase 4. Gradual adoption."
+      - id: "STD-003"
+        titulo: "Promover Pagination de teacher a shared"
+        prioridad: "P2"
+        esfuerzo: "M"
+        estado: "pendiente"
+      - id: "STD-004"
+        titulo: "Unificar 3 implementaciones TabBar (shared + AdminTabBar + teacher inline)"
+        prioridad: "P2"
+        esfuerzo: "M"
+        estado: "pendiente"
+
 # ============================================
 # HISTORIAS EN BACKLOG
 # ============================================
@@ -345,6 +375,9 @@ metricas:
   items_dbops_total: 6
   items_dbops_completados: 5
   items_dbops_pendientes: 1
+  items_estandarizacion_total: 4
+  items_estandarizacion_completados: 0
+  items_estandarizacion_pendientes: 4    # STD-001 diferido, STD-002/003/004 pendiente
 
 # ============================================
 # REFERENCIAS
@@ -358,9 +391,10 @@ referencias:
   tarea_trazabilidad: "orchestration/tareas/TASK-2026-02-17-AUDITORIA-TRAZABILIDAD-PLANEACION/"
   tarea_dbops: "orchestration/tareas/TASK-2026-02-17-PROCEDIMIENTOS-DB-DEV-PROD-AGENTES/"
   backlog_mapping: "orchestration/scrum/BACKLOG-MAPPING.yml"
+  tarea_estandarizacion: "orchestration/tareas/TASK-2026-02-19-ESTANDARIZACION-PORTALES/"
 
 metadata:
   created_by: "Claude Code"
   created_at: "2026-01-29"
   updated_by: "Claude Code"
-  updated_at: "2026-02-17T23:00:00"
+  updated_at: "2026-02-19"

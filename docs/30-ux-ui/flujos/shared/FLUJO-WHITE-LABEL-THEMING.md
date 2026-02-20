@@ -127,7 +127,7 @@ flowchart TD
 |------|---------|
 | Pagina Branding | `apps/frontend/src/features/admin/branding/BrandingSettingsPage.tsx` |
 | Provider global | `apps/frontend/src/app/providers/BrandingProvider.tsx` |
-| API Branding | `apps/frontend/src/lib/api/branding.api.ts` |
+| API Branding | `apps/frontend/src/services/api/branding/brandingAPI.ts` |
 | Color Picker | `apps/frontend/src/features/admin/branding/components/ColorPicker.tsx` |
 | Logo Uploader | `apps/frontend/src/features/admin/branding/components/LogoUploader.tsx` |
 | Favicon Uploader | `apps/frontend/src/features/admin/branding/components/FaviconUploader.tsx` |
@@ -200,7 +200,7 @@ flowchart TD
 |------|---------|-----------|
 | Frontend Pagina | `apps/frontend/src/features/admin/branding/BrandingSettingsPage.tsx` | Formulario con react-hook-form, preview en tiempo real |
 | Frontend Provider | `apps/frontend/src/app/providers/BrandingProvider.tsx` | Context global que inyecta CSS variables |
-| Frontend API | `apps/frontend/src/lib/api/branding.api.ts` | getBranding, updateBranding, uploadLogo, uploadFavicon, deleteLogo, deleteFavicon |
+| Frontend API | `apps/frontend/src/services/api/branding/brandingAPI.ts` | getBranding, updateBranding, uploadLogo, uploadFavicon, deleteLogo, deleteFavicon |
 | Frontend Components | `apps/frontend/src/features/admin/branding/components/` | ColorPicker, LogoUploader, FaviconUploader, ThemePreview |
 | Frontend CSS | `apps/frontend/src/utils/cssVariables.ts` | Utilidad para manipular CSS variables |
 | Backend Controller | `apps/backend/src/modules/admin/controllers/branding.controller.ts` | 6 endpoints: GET, PATCH, POST logo, POST favicon, GET css, DELETE assets |

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { TrendingUp, ClipboardCheck, MessageSquare } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { SaveButton } from './SaveButton';
+import { SaveButton, type SaveStatus } from '@shared/components/feedback/SaveButton';
 
 interface NotificationsState {
   studentRiskAlerts: boolean;
@@ -23,7 +23,7 @@ interface NotificationsState {
 interface NotificationsSettingsSectionProps {
   notifications: NotificationsState;
   setNotifications: React.Dispatch<React.SetStateAction<NotificationsState>>;
-  saveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  saveStatus: SaveStatus;
   handleSave: () => void;
   navigate: (path: string) => void;
 }
@@ -298,7 +298,7 @@ export function NotificationsSettingsSection({
             </Link>
           </div>
 
-          <SaveButton saveStatus={saveStatus} onClick={handleSave} label="Guardar Notificaciones" />
+          <SaveButton status={saveStatus} onClick={handleSave} idleLabel="Guardar Notificaciones" />
         </div>
       </DetectiveCard>
     </motion.div>

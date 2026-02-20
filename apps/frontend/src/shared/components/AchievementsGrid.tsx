@@ -1,7 +1,7 @@
 import React from 'react';
 import { Trophy, Award, Medal, Star, Lock } from 'lucide-react';
-import { cn } from '@/shared/utils/cn';
-import { SkeletonAchievement } from './Skeleton';
+import { cn } from '@shared/utils/cn';
+import { SkeletonAchievement } from '@shared/components/loading';
 import type { UserAchievement } from '@/shared/types/achievement.types';
 import { AchievementStatusEnum } from '@/shared/types/achievement.types';
 

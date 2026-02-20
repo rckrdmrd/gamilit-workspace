@@ -3,6 +3,8 @@ import { safeFormatNumber } from '@shared/utils/format.util';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { SkeletonStats, SkeletonCard } from '@shared/components/loading';
+import { EmptyState } from '@shared/components/feedback';
+import { useApiError } from '@shared/hooks';
 import {
   Users,
   TrendingUp,
@@ -34,6 +36,7 @@ import { useClassrooms } from '../hooks/useClassrooms';
 import { classroomsApi, assignmentsApi } from '@services/api/teacher';
 import type { UpcomingAssignment } from '@services/api/teacher/assignmentsApi';
 import type { StudentMonitoring } from '../types';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 type TabType =
   | 'overview'
@@ -54,6 +57,7 @@ export default function TeacherDashboard() {
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');
   const [upcomingDeadlines, setUpcomingDeadlines] = useState<UpcomingAssignment[]>([]);
   const [upcomingLoading, setUpcomingLoading] = useState(false);
+  const handleError = useApiError();
 
   // Fetch real classrooms from backend
   const { classrooms, loading: classroomsLoading } = useClassrooms();
@@ -90,8 +94,8 @@ export default function TeacherDashboard() {
         if (isMounted) {
           setAllStudents(students);
         }
-      } catch (error) {
-        console.error('[TeacherDashboard] Error fetching students:', error);
+      } catch (err) {
+        handleError(err as Parameters<typeof handleError>[0], 'Error al cargar estudiantes');
         if (isMounted) {
           setAllStudents([]);
         }
@@ -116,8 +120,8 @@ export default function TeacherDashboard() {
         if (isMounted) {
           setUpcomingDeadlines(upcoming);
         }
-      } catch (error) {
-        console.error('[TeacherDashboard] Error fetching upcoming deadlines:', error);
+      } catch (err) {
+        handleError(err as Parameters<typeof handleError>[0], 'Error al cargar fechas limite');
         if (isMounted) {
           setUpcomingDeadlines([]);
         }
@@ -149,6 +153,7 @@ export default function TeacherDashboard() {
   ];
 
   return (
+    <TeacherPageShell>
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
       <main className="detective-container py-8">
         {/* Welcome Section */}
@@ -197,16 +202,11 @@ export default function TeacherDashboard() {
         {/* Empty Classrooms State — H-02 FIX */}
         {!classroomsLoading && (!classrooms || classrooms.length === 0) && (
           <DetectiveCard>
-            <div className="py-12 text-center">
-              <AlertCircle className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary opacity-50" />
-              <h3 className="mb-2 text-lg font-bold text-detective-text">
-                No hay aulas asignadas
-              </h3>
-              <p className="mb-4 text-detective-text-secondary">
-                No tienes aulas asignadas actualmente. Contacta al administrador para que te asigne
-                un aula, o crea una nueva desde el panel de administración.
-              </p>
-            </div>
+            <EmptyState
+              icon={AlertCircle}
+              title="No hay aulas asignadas"
+              description="No tienes aulas asignadas actualmente. Contacta al administrador para que te asigne un aula, o crea una nueva desde el panel de administracion."
+            />
           </DetectiveCard>
         )}
 
@@ -429,10 +429,11 @@ export default function TeacherDashboard() {
                           })}
                       </div>
                     ) : (
-                      <div className="py-8 text-center">
-                        <Calendar className="mx-auto mb-2 h-12 w-12 text-detective-text-secondary opacity-50" />
-                        <p className="text-detective-text-secondary">No hay actividad reciente</p>
-                      </div>
+                      <EmptyState
+                        icon={Calendar}
+                        title="No hay actividad reciente"
+                        className="py-8"
+                      />
                     )}
                   </DetectiveCard>
 
@@ -473,12 +474,11 @@ export default function TeacherDashboard() {
                         ))}
                       </div>
                     ) : (
-                      <div className="py-8 text-center">
-                        <Calendar className="mx-auto mb-2 h-12 w-12 text-detective-text-secondary opacity-50" />
-                        <p className="text-detective-text-secondary">
-                          No hay fechas límite próximas
-                        </p>
-                      </div>
+                      <EmptyState
+                        icon={Calendar}
+                        title="No hay fechas limite proximas"
+                        className="py-8"
+                      />
                     )}
                   </DetectiveCard>
                 </div>
@@ -520,15 +520,11 @@ export default function TeacherDashboard() {
             {/* No Classroom Selected State */}
             {!selectedClassroomId && activeTab !== 'overview' && activeTab !== 'resources' && (
               <DetectiveCard>
-                <div className="py-12 text-center">
-                  <Users className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary opacity-50" />
-                  <h3 className="mb-2 text-lg font-bold text-detective-text">
-                    Selecciona una Clase
-                  </h3>
-                  <p className="text-detective-text-secondary">
-                    Por favor, selecciona una clase del menú superior para ver esta sección
-                  </p>
-                </div>
+                <EmptyState
+                  icon={Users}
+                  title="Selecciona una Clase"
+                  description="Por favor, selecciona una clase del menu superior para ver esta seccion"
+                />
               </DetectiveCard>
             )}
 
@@ -537,5 +533,6 @@ export default function TeacherDashboard() {
         )}
       </main>
     </div>
+    </TeacherPageShell>
   );
 }

@@ -24,6 +24,7 @@ import {
   Download,
   TrendingUp,
 } from 'lucide-react';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 /**
  * TeacherProgressPage - Página de seguimiento de progreso académico
@@ -168,7 +169,7 @@ export default function TeacherProgressPage() {
   }, [aggregateStats]);
 
   return (
-    <>
+    <TeacherPageShell>
       <div className="space-y-6">
         {/* Header Section */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -732,6 +733,6 @@ export default function TeacherProgressPage() {
       {showClassroomDropdown && (
         <div className="fixed inset-0 z-40" onClick={() => setShowClassroomDropdown(false)} />
       )}
-    </>
+    </TeacherPageShell>
   );
 }

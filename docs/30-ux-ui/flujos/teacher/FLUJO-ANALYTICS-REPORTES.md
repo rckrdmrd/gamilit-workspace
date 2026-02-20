@@ -1,8 +1,8 @@
 # FL-TCH-04 - Teacher Analytics / Reports
 
 **ID:** FL-TCH-04
-**Version:** 1.0.0
-**Fecha:** 2026-02-17
+**Version:** 1.1.0
+**Fecha:** 2026-02-19
 **Estado:** Activo
 **Portal:** Teacher
 **Prioridad:** P1
@@ -15,7 +15,9 @@ Flujo de analiticas y reportes del portal docente. El maestro accede a dos pagin
 
 El flujo utiliza filtros por aula y rango de fechas, con tres pestanas de vista (Overview, Performance, Engagement) en analiticas. Los reportes soportan 4 tipos (progreso, evaluacion, intervencion, personalizado) y se persisten en la base de datos para descarga posterior. Incluye analisis de riesgo basado en heuristicas y comparacion con periodos anteriores.
 
-Impacto funcional: Permite al maestro tomar decisiones pedagogicas basadas en datos, identificar estudiantes en riesgo, y generar evidencia documental del progreso de sus aulas.
+**TeacherReports** implementa un **TabBar con 3 pestanas**: (1) **Generador** — flujo original de generacion de reportes, (2) **Programados** — gestion de reportes programados con frecuencia configurable, y (3) **Compartidos** — reportes compartidos entre maestros con control de permisos y expiracion.
+
+Impacto funcional: Permite al maestro tomar decisiones pedagogicas basadas en datos, identificar estudiantes en riesgo, generar evidencia documental del progreso de sus aulas, programar reportes recurrentes y compartir reportes con otros docentes.
 
 ## 2. Precondiciones
 
@@ -54,8 +56,13 @@ flowchart TD
     C11 --> C12[POST /teacher/reports/generate]
     C12 --> C13[Descargar archivo]
 
-    %% Reports Flow
-    D --> D1[loadInitialData: aulas + reportes + stats]
+    %% Reports Flow — TabBar con 3 pestanas
+    D --> DT{TabBar}
+    DT -- Generador --> D1[loadInitialData: aulas + reportes + stats]
+    DT -- Programados --> SR[ScheduledReportsTab.tsx]
+    DT -- Compartidos --> SH[SharedReportsTab.tsx]
+
+    %% Tab Generador (flujo original)
     D1 --> D2[GET /teacher/classrooms]
     D1 --> D3[GET /teacher/reports/recent]
     D1 --> D4[GET /teacher/reports/stats]
@@ -72,6 +79,34 @@ flowchart TD
     D13 -- Descargar --> D14[GET /teacher/reports/:id/download]
     D13 -- Eliminar --> D15[DELETE /teacher/reports/:id]
     D13 -- Filtrar --> D16[Filtrar por tipo]
+
+    %% Tab Programados
+    SR --> SR1[useScheduledReports hook]
+    SR1 --> SR2[GET /teacher/reports/scheduled]
+    SR2 --> SR3[Lista de reportes programados]
+    SR3 --> SR4{Accion?}
+    SR4 -- Crear --> SR5[Formulario: nombre, tipo, formato, aula, frecuencia, dia/hora, email]
+    SR5 --> SR6[POST /teacher/reports/scheduled]
+    SR4 -- Pausar/Reanudar --> SR7[PATCH /teacher/reports/scheduled/:id]
+    SR4 -- Eliminar --> SR8[DELETE /teacher/reports/scheduled/:id]
+    SR6 --> SR9[DB: social_features.scheduled_reports]
+    SR7 --> SR9
+    SR8 --> SR9
+
+    %% Tab Compartidos
+    SH --> SH1[useSharedReports hook]
+    SH1 --> SH2[GET /teacher/reports/shared/by-me]
+    SH1 --> SH3[GET /teacher/reports/shared/with-me]
+    SH2 --> SH4[Seccion: Compartidos por mi]
+    SH3 --> SH5[Seccion: Compartidos conmigo]
+    SH4 --> SH6{Accion?}
+    SH6 -- Compartir nuevo --> SH7[Modal: selector reporte, teacher ID, permiso, expiracion, mensaje]
+    SH7 --> SH8[POST /teacher/reports/share]
+    SH6 -- Revocar --> SH9[DELETE /teacher/reports/shared/:id]
+    SH5 --> SH10{Accion?}
+    SH10 -- Descargar --> SH11[GET /teacher/reports/:id/download]
+    SH8 --> SH12[DB: social_features.shared_reports]
+    SH9 --> SH12
 ```
 
 ## 4. Secuencia FE -> BE -> DB
@@ -128,6 +163,77 @@ flowchart TD
 12. **Frontend:** Acciones por reporte: Descargar (`GET /teacher/reports/:id/download`) o Eliminar (`DELETE /teacher/reports/:id`).
 13. **Frontend:** Confirmacion modal antes de eliminar (TASK-2026-01-18-015 Sprint 4.2).
 
+### Flujo C: Reportes Programados (Tab Programados)
+
+#### Paso 1: Carga de reportes programados
+1. **Frontend:** `ScheduledReportsTab.tsx` se renderiza al seleccionar la pestana "Programados" en el TabBar de TeacherReports.
+2. **Frontend:** `useScheduledReports()` hook ejecuta `GET /api/v1/teacher/reports/scheduled` via `scheduledReportsApi`.
+3. **Backend:** `TeacherController` consulta `social_features.scheduled_reports` filtrado por maestro.
+4. **Frontend:** Lista de reportes programados con estado (activo, pausado), proxima ejecucion y frecuencia.
+
+#### Paso 2: Crear reporte programado
+5. **Frontend:** Formulario de creacion con campos: nombre, tipo de reporte, formato (PDF/Excel/CSV), aula, frecuencia (diaria/semanal/mensual), dia y hora de ejecucion, notificacion por email (toggle).
+6. **Frontend:** `POST /api/v1/teacher/reports/scheduled` con `CreateScheduledReportDto`.
+7. **Backend:** Valida configuracion, inserta en `social_features.scheduled_reports`.
+8. **Frontend:** Toast de confirmacion, lista actualizada.
+
+#### Paso 3: Gestionar reportes programados
+9. **Frontend:** Acciones por reporte programado:
+   - **Pausar/Reanudar:** `PATCH /api/v1/teacher/reports/scheduled/:id` con `{ is_active: false/true }`.
+   - **Eliminar:** `DELETE /api/v1/teacher/reports/scheduled/:id` con confirmacion modal.
+   - **Editar:** Abre formulario prellenado, actualiza via `PATCH`.
+10. **Frontend:** `useScheduledReports.refresh()` tras cada accion.
+
+#### Endpoints de scheduledReportsApi (7 metodos)
+| Metodo | Endpoint | Descripcion |
+|--------|----------|-------------|
+| `getScheduledReports` | `GET /teacher/reports/scheduled` | Listar reportes programados del maestro |
+| `getScheduledReport` | `GET /teacher/reports/scheduled/:id` | Detalle de reporte programado |
+| `createScheduledReport` | `POST /teacher/reports/scheduled` | Crear nuevo reporte programado |
+| `updateScheduledReport` | `PATCH /teacher/reports/scheduled/:id` | Actualizar configuracion/estado |
+| `deleteScheduledReport` | `DELETE /teacher/reports/scheduled/:id` | Eliminar reporte programado |
+| `pauseScheduledReport` | `PATCH /teacher/reports/scheduled/:id/pause` | Pausar ejecucion programada |
+| `resumeScheduledReport` | `PATCH /teacher/reports/scheduled/:id/resume` | Reanudar ejecucion programada |
+
+### Flujo D: Reportes Compartidos (Tab Compartidos)
+
+#### Paso 1: Carga de reportes compartidos
+1. **Frontend:** `SharedReportsTab.tsx` se renderiza al seleccionar la pestana "Compartidos" en el TabBar de TeacherReports.
+2. **Frontend:** `useSharedReports()` hook ejecuta dos llamadas paralelas via `sharedReportsApi`:
+   - `GET /api/v1/teacher/reports/shared/by-me` — reportes compartidos por el maestro.
+   - `GET /api/v1/teacher/reports/shared/with-me` — reportes compartidos con el maestro por otros.
+3. **Backend:** Consulta `social_features.shared_reports` con JOIN a `teacher_reports` y `auth_management.profiles`.
+4. **Frontend:** Dos secciones: "Compartidos por mi" y "Compartidos conmigo", cada una con lista de reportes, destinatario/remitente, nivel de permiso y fecha de expiracion.
+
+#### Paso 2: Compartir un reporte
+5. **Frontend:** Boton "Compartir reporte" abre modal con:
+   - Selector de reporte existente (de los reportes generados del maestro).
+   - ID del maestro destinatario (teacher ID).
+   - Nivel de permiso: `view` (solo lectura) o `download` (descarga permitida).
+   - Fecha de expiracion (opcional).
+   - Mensaje opcional para el destinatario.
+6. **Frontend:** `POST /api/v1/teacher/reports/share` con `ShareReportDto`.
+7. **Backend:** Valida que el reporte pertenezca al maestro, inserta en `social_features.shared_reports`.
+8. **Frontend:** Toast de confirmacion, lista "Compartidos por mi" actualizada.
+
+#### Paso 3: Gestionar reportes compartidos
+9. **Frontend:** Acciones en seccion "Compartidos por mi":
+   - **Revocar acceso:** `DELETE /api/v1/teacher/reports/shared/:id` — elimina el compartido.
+   - **Modificar permisos:** `PATCH /api/v1/teacher/reports/shared/:id` — actualiza nivel de permiso o expiracion.
+10. **Frontend:** Acciones en seccion "Compartidos conmigo":
+    - **Descargar:** `GET /api/v1/teacher/reports/:id/download` (si permiso = `download`).
+    - **Ver:** Renderiza preview del reporte en modal (si permiso = `view` o `download`).
+
+#### Endpoints de sharedReportsApi (6 metodos)
+| Metodo | Endpoint | Descripcion |
+|--------|----------|-------------|
+| `getSharedByMe` | `GET /teacher/reports/shared/by-me` | Reportes que el maestro ha compartido |
+| `getSharedWithMe` | `GET /teacher/reports/shared/with-me` | Reportes compartidos con el maestro |
+| `shareReport` | `POST /teacher/reports/share` | Compartir un reporte con otro maestro |
+| `updateSharedReport` | `PATCH /teacher/reports/shared/:id` | Actualizar permisos/expiracion |
+| `revokeSharedReport` | `DELETE /teacher/reports/shared/:id` | Revocar acceso a reporte compartido |
+| `getSharedReport` | `GET /teacher/reports/shared/:id` | Detalle de reporte compartido |
+
 ## 5. Componentes y artefactos implicados
 
 ### Frontend
@@ -139,12 +245,19 @@ flowchart TD
 | Componente | `apps/frontend/src/apps/teacher/components/reports/ReportGenerator.tsx` | Formulario de generacion de reportes |
 | Componente | `apps/frontend/src/shared/components/base/DetectiveCard.tsx` | Card base del sistema de diseno |
 | Componente | `apps/frontend/src/shared/components/base/DetectiveButton.tsx` | Boton base del sistema de diseno |
+| Componente | `apps/frontend/src/apps/teacher/components/reports/ScheduledReportsTab.tsx` | Tab de reportes programados (crear, pausar, reanudar, eliminar) |
+| Componente | `apps/frontend/src/apps/teacher/components/reports/SharedReportsTab.tsx` | Tab de reportes compartidos (compartir, revocar, secciones por-mi/conmigo) |
 | Componente | `apps/frontend/src/shared/components/common/FormField.tsx` | Campo de formulario reutilizable |
 | Componente | `apps/frontend/src/shared/components/base/Toast.tsx` | Sistema de notificaciones toast |
+| Componente | `apps/frontend/src/shared/components/base/TabBar.tsx` | TabBar con 3 pestanas: Generador, Programados, Compartidos |
 | Hook | `apps/frontend/src/apps/teacher/hooks/useAnalytics.ts` | Fetch de analiticas y engagement (Promise.all) |
 | Hook | `apps/frontend/src/apps/teacher/hooks/useClassrooms.ts` | Lista de aulas del maestro |
+| Hook | `apps/frontend/src/apps/teacher/hooks/useScheduledReports.ts` | CRUD de reportes programados (7 operaciones) |
+| Hook | `apps/frontend/src/apps/teacher/hooks/useSharedReports.ts` | Gestion de reportes compartidos (6 operaciones) |
 | API Service | `apps/frontend/src/services/api/teacher/analyticsApi.ts` | API de analiticas (7 metodos) |
 | API Service | `apps/frontend/src/services/api/teacher/reportsApi.ts` | API de reportes (5 metodos) |
+| API Service | `apps/frontend/src/services/api/teacher/scheduledReportsApi.ts` | API de reportes programados (7 metodos) |
+| API Service | `apps/frontend/src/services/api/teacher/sharedReportsApi.ts` | API de reportes compartidos (6 metodos) |
 | Layout | `apps/frontend/src/apps/teacher/layouts/TeacherLayout.tsx` | Layout del portal docente |
 | Config | `apps/frontend/src/config/api.config.ts` | Endpoints configurados |
 
@@ -164,9 +277,19 @@ flowchart TD
 | Endpoint | `GET /teacher/reports/stats` | Estadisticas de reportes |
 | Endpoint | `GET /teacher/reports/:id/download` | Descargar reporte |
 | Endpoint | `GET /teacher/reports/:id/status` | Estado de generacion de reporte |
-| Endpoint | `GET /teacher/reports/scheduled` | Reportes programados |
-| Endpoint | `POST /teacher/reports/scheduled` | Crear reporte programado |
-| Endpoint | `POST /teacher/reports/share` | Compartir reporte |
+| Endpoint | `GET /teacher/reports/scheduled` | Listar reportes programados del maestro |
+| Endpoint | `GET /teacher/reports/scheduled/:id` | Detalle de reporte programado |
+| Endpoint | `POST /teacher/reports/scheduled` | Crear nuevo reporte programado |
+| Endpoint | `PATCH /teacher/reports/scheduled/:id` | Actualizar configuracion/estado del programado |
+| Endpoint | `PATCH /teacher/reports/scheduled/:id/pause` | Pausar reporte programado |
+| Endpoint | `PATCH /teacher/reports/scheduled/:id/resume` | Reanudar reporte programado |
+| Endpoint | `DELETE /teacher/reports/scheduled/:id` | Eliminar reporte programado |
+| Endpoint | `GET /teacher/reports/shared/by-me` | Reportes compartidos por el maestro |
+| Endpoint | `GET /teacher/reports/shared/with-me` | Reportes compartidos con el maestro |
+| Endpoint | `GET /teacher/reports/shared/:id` | Detalle de reporte compartido |
+| Endpoint | `POST /teacher/reports/share` | Compartir un reporte con otro maestro |
+| Endpoint | `PATCH /teacher/reports/shared/:id` | Actualizar permisos/expiracion de compartido |
+| Endpoint | `DELETE /teacher/reports/shared/:id` | Revocar acceso a reporte compartido |
 | Controller | `apps/backend/src/modules/teacher/controllers/teacher-classrooms.controller.ts` | Gestion de aulas del maestro |
 
 ### Datos (Base de Datos)
@@ -221,6 +344,12 @@ flowchart TD
 | Backend no disponible | FE | Network Error | `isUsingMockData=true`, banner amarillo, datos de ejemplo |
 | Datos de estudiante invalidos | FE | - | Filtros `.filter()` descartan registros con campos null/undefined |
 | Sin datos de modulos | BE | 200 (vacio) | Graficas muestran ejes vacios, tabla vacia |
+| Error al crear reporte programado | BE | 400/500 | Toast error "Error al crear reporte programado" |
+| Error al pausar/reanudar programado | BE | 400/500 | Toast error, estado del reporte no cambia |
+| Error al compartir reporte | BE | 400/500 | Toast error "Error al compartir el reporte" |
+| Maestro destinatario no encontrado | BE | 404 | Error en modal "Maestro no encontrado" |
+| Reporte compartido expirado | BE | 403 | Toast info "El acceso a este reporte ha expirado" |
+| Sin permisos de descarga | FE | - | Boton de descarga deshabilitado (permiso = `view`) |
 
 ## 8. Trazabilidad cruzada
 
@@ -231,6 +360,12 @@ flowchart TD
 | Frontend (hook) | `apps/frontend/src/apps/teacher/hooks/useAnalytics.ts` | Promise.all de analytics + engagement |
 | Frontend (API analytics) | `apps/frontend/src/services/api/teacher/analyticsApi.ts` | 7 metodos: getClassroomAnalytics, getEngagementMetrics, generateReport, etc. |
 | Frontend (API reports) | `apps/frontend/src/services/api/teacher/reportsApi.ts` | 5 metodos: generateReport, getRecentReports, getReportStats, downloadReport, deleteReport |
+| Frontend (tab programados) | `apps/frontend/src/apps/teacher/components/reports/ScheduledReportsTab.tsx` | Tab de gestion de reportes programados |
+| Frontend (tab compartidos) | `apps/frontend/src/apps/teacher/components/reports/SharedReportsTab.tsx` | Tab de gestion de reportes compartidos |
+| Frontend (hook scheduled) | `apps/frontend/src/apps/teacher/hooks/useScheduledReports.ts` | CRUD de reportes programados |
+| Frontend (hook shared) | `apps/frontend/src/apps/teacher/hooks/useSharedReports.ts` | Gestion de reportes compartidos |
+| Frontend (API scheduled) | `apps/frontend/src/services/api/teacher/scheduledReportsApi.ts` | 7 metodos para reportes programados |
+| Frontend (API shared) | `apps/frontend/src/services/api/teacher/sharedReportsApi.ts` | 6 metodos para reportes compartidos |
 | Frontend (rutas) | `apps/frontend/src/App.tsx` lineas 238-241, 294-297 | Routes `/teacher/analytics`, `/teacher/reports` |
 | Backend (controller) | `apps/backend/src/modules/teacher/controllers/teacher.controller.ts` | 30+ endpoints teacher/* (analytics linea 257, reports linea 384) |
 | Backend (classrooms) | `apps/backend/src/modules/teacher/controllers/teacher-classrooms.controller.ts` | GET classrooms del maestro |

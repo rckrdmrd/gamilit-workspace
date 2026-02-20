@@ -25,7 +25,7 @@ import React, {
   type PropsWithChildren,
 } from 'react';
 import { useAuth } from '@/app/providers/AuthContext';
-import { brandingApi } from '@/lib/api/branding.api';
+import { brandingApi } from '@/services/api/branding/brandingAPI';
 import {
   applyBranding,
   resetBranding,

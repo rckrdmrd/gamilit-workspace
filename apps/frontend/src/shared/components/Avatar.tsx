@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { cn } from '@shared/utils';
+import { cn } from '@shared/utils/cn';
 
 interface AvatarProps {
   src?: string;

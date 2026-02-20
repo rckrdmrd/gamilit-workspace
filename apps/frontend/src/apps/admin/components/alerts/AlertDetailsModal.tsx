@@ -11,7 +11,8 @@
  */
 
 import React from 'react';
-import { X, AlertTriangle, Calendar, Users } from 'lucide-react';
+import { Calendar, Users } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type {
   SystemAlert,
@@ -73,24 +74,14 @@ export const AlertDetailsModal: React.FC<AlertDetailsModalProps> = ({ alert, isO
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-      <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg border border-gray-700 bg-detective-bg-secondary">
-        {/* Header */}
-        <div className="sticky top-0 flex items-center justify-between border-b border-gray-700 bg-detective-bg-secondary p-6">
-          <div className="flex items-center gap-3">
-            <AlertTriangle className="h-6 w-6 text-detective-orange" />
-            <h2 className="text-2xl font-bold text-detective-text">Detalles de Alerta</h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-2 transition-colors hover:bg-detective-bg"
-          >
-            <X className="h-6 w-6 text-detective-text-secondary" />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="space-y-6 p-6">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Detalles de Alerta"
+      size="xl"
+    >
+      {alert && (
+        <div className="space-y-6">
           {/* Badges */}
           <div className="flex flex-wrap items-center gap-2">
             <span
@@ -142,7 +133,7 @@ export const AlertDetailsModal: React.FC<AlertDetailsModalProps> = ({ alert, isO
 
             <div>
               <label className="text-sm font-medium text-detective-text-secondary">
-                Nivel de Escalación
+                Nivel de Escalacion
               </label>
               <p className="mt-1 text-detective-text">{alert.escalation_level}</p>
             </div>
@@ -152,7 +143,7 @@ export const AlertDetailsModal: React.FC<AlertDetailsModalProps> = ({ alert, isO
           {(alert.source_system || alert.source_module || alert.error_code) && (
             <div className="border-t border-gray-700 pt-4">
               <h4 className="mb-3 text-sm font-semibold text-detective-text">
-                Información del Sistema
+                Informacion del Sistema
               </h4>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {alert.source_system && (
@@ -166,7 +157,7 @@ export const AlertDetailsModal: React.FC<AlertDetailsModalProps> = ({ alert, isO
                 {alert.source_module && (
                   <div>
                     <label className="text-sm font-medium text-detective-text-secondary">
-                      Módulo
+                      Modulo
                     </label>
                     <p className="mt-1 text-detective-text">{alert.source_module}</p>
                   </div>
@@ -174,7 +165,7 @@ export const AlertDetailsModal: React.FC<AlertDetailsModalProps> = ({ alert, isO
                 {alert.error_code && (
                   <div>
                     <label className="text-sm font-medium text-detective-text-secondary">
-                      Código de Error
+                      Codigo de Error
                     </label>
                     <p className="mt-1 text-detective-text">{alert.error_code}</p>
                   </div>
@@ -186,7 +177,7 @@ export const AlertDetailsModal: React.FC<AlertDetailsModalProps> = ({ alert, isO
           {/* Management Information */}
           {(alert.acknowledged_by_name || alert.resolved_by_name) && (
             <div className="border-t border-gray-700 pt-4">
-              <h4 className="mb-3 text-sm font-semibold text-detective-text">Gestión</h4>
+              <h4 className="mb-3 text-sm font-semibold text-detective-text">Gestion</h4>
               <div className="space-y-3">
                 {alert.acknowledged_by_name && (
                   <div>
@@ -228,17 +219,17 @@ export const AlertDetailsModal: React.FC<AlertDetailsModalProps> = ({ alert, isO
           {renderJsonData(alert.context_data, 'Datos de Contexto')}
 
           {/* Metrics */}
-          {renderJsonData(alert.metrics, 'Métricas')}
-        </div>
+          {renderJsonData(alert.metrics, 'Metricas')}
 
-        {/* Footer */}
-        <div className="sticky bottom-0 flex justify-end border-t border-gray-700 bg-detective-bg-secondary p-6">
-          <DetectiveButton variant="secondary" onClick={onClose}>
-            Cerrar
-          </DetectiveButton>
+          {/* Footer */}
+          <div className="flex justify-end border-t border-gray-200 pt-4">
+            <DetectiveButton variant="secondary" onClick={onClose}>
+              Cerrar
+            </DetectiveButton>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 };
 

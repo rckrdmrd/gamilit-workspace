@@ -25,3 +25,4 @@ export type {
 } from './useExerciseAutoSave';
 export { useUserClassroom } from './useUserClassroom';
 export { useUserModules, userModulesKeys, type UserModuleData } from './useUserModules';
+export { useStudentPageSetup } from './useStudentPageSetup';

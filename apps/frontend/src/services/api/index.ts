@@ -167,7 +167,7 @@ export type {
   TemplateFilters,
 } from './contentAPI';
 
-// ltiAPI removed — canonical is @/lib/api/lti.api (P1-001 deprecated)
+// ltiAPI: canonical location is @/services/api/admin/ltiAPI.ts
 
 // ============================================================================
 // DEFAULT EXPORT

@@ -30,7 +30,7 @@ import type {
 // ============================================================================
 // ACHIEVEMENTS API
 // ============================================================================
-// NOTE: getAchievements and getAchievement removed — canonical is @/lib/api/gamification.api.ts
+// NOTE: getAchievements and getAchievement removed — canonical is @/services/api/gamification/gamificationAPI.ts
 // (getAllAchievements, getAchievementById)
 
 /**
@@ -1067,7 +1067,7 @@ export const getFriendActivities = async (limit?: number): Promise<FriendActivit
 // ============================================================================
 
 export default {
-  // Achievements (getAchievements/getAchievement removed — use @/lib/api/gamification.api)
+  // Achievements (getAchievements/getAchievement removed — use @/services/api/gamification/gamificationAPI)
   unlockAchievement,
   updateAchievementProgress,
   getAchievementStats,

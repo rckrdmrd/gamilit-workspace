@@ -12,7 +12,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Coins, Zap, Flame, Activity, BarChart3, TrendingUp } from 'lucide-react';
+import { Trophy, Coins, Zap, Flame, Activity, BarChart3, TrendingUp, Backpack } from 'lucide-react';
 
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -20,6 +20,7 @@ import { AvatarSelectionModal } from '@shared/components/profile/AvatarSelection
 
 import { useProfileData } from '@/apps/student/hooks/useProfileData';
 import { useAvatarUpdate } from '@/apps/student/hooks/useAvatarUpdate';
+import { useEquipment } from '@/features/gamification/social/hooks/useEquipment';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { cn } from '@shared/utils/cn';
 import type { RankType } from '@shared/components/base/RankBadge';
@@ -29,15 +30,17 @@ import { ProfileHero } from '@/apps/student/components/profile/ProfileHero';
 import { ProfileStatsTab } from '@/apps/student/components/profile/ProfileStatsTab';
 import { ProfileRankHistoryTab } from '@/apps/student/components/profile/ProfileRankHistoryTab';
 import { ProfileAchievementsTab } from '@/apps/student/components/profile/ProfileAchievementsTab';
+import { ProfileInventoryTab } from '@/apps/student/components/profile/ProfileInventoryTab';
 import type { ProfileStat } from '@/apps/student/components/profile/types';
 
-type TabId = 'overview' | 'stats' | 'history' | 'achievements';
+type TabId = 'overview' | 'stats' | 'history' | 'achievements' | 'inventory';
 
 const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: 'overview', label: 'Vista General', icon: Activity },
   { id: 'stats', label: 'Estadisticas', icon: BarChart3 },
   { id: 'history', label: 'Historial de Rangos', icon: TrendingUp },
   { id: 'achievements', label: 'Logros', icon: Trophy },
+  { id: 'inventory', label: 'Inventario', icon: Backpack },
 ];
 
 const MAYA_RANK_MAP: Record<MayaRank, RankType> = {
@@ -51,6 +54,7 @@ const MAYA_RANK_MAP: Record<MayaRank, RankType> = {
 export default function EnhancedProfilePage() {
   const { user, logout, userProgress, balance, achievements, achievementStats } = useProfileData();
   const { updateAvatar } = useAvatarUpdate();
+  const { equippedItems } = useEquipment();
   const { gamificationData } = useUserGamification(user?.id);
 
   const [selectedTab, setSelectedTab] = useState<TabId>('overview');
@@ -97,6 +101,9 @@ export default function EnhancedProfilePage() {
           user={user}
           rankType={rankType}
           stats={stats}
+          equippedFrameColor={
+            equippedItems.find((e) => e.category?.name === 'frame')?.item?.metadata?.color as string | undefined
+          }
           onAvatarClick={() => setShowAvatarModal(true)}
         />
 
@@ -196,6 +203,17 @@ export default function EnhancedProfilePage() {
               exit={{ opacity: 0, y: -20 }}
             >
               <ProfileAchievementsTab achievements={recentAchievements} />
+            </motion.div>
+          )}
+
+          {selectedTab === 'inventory' && (
+            <motion.div
+              key="inventory"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <ProfileInventoryTab userId={user?.id || ''} equippedItems={equippedItems} />
             </motion.div>
           )}
         </AnimatePresence>

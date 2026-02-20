@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { gamificationApi, type UserGamificationSummary } from '@/lib/api/gamification.api';
+import { gamificationApi, type UserGamificationSummary } from '@/services/api/gamification/gamificationAPI';
 
 /**
  * useUserGamification Hook

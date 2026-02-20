@@ -81,7 +81,7 @@ flowchart TD
 |------|---------|
 | Pagina progreso global | `apps/frontend/src/apps/student/pages/MyProgressPage.tsx` |
 | Pagina detalle modulo | `apps/frontend/src/apps/student/pages/ModuleDetailsPage.tsx` |
-| API progress | `apps/frontend/src/lib/api/progress.api.ts` |
+| API progress | `apps/frontend/src/services/api/progress/progressAPI.ts` |
 | Rutas | `apps/frontend/src/App.tsx` (rutas: `/progress`, `/progress/modules/:moduleId`) |
 
 ### Backend

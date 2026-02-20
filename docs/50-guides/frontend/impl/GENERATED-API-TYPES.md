@@ -166,7 +166,7 @@ async function login(credentials: LoginRequest): Promise<void> {
 **ANTES (tipos manuales):**
 
 ```typescript
-// apps/frontend/src/lib/api/gamification.api.ts
+// apps/frontend/src/services/api/gamification/gamificationAPI.ts
 import apiClient from '@/services/api/apiClient';
 
 // ❌ Tipos definidos manualmente - pueden desincronizarse
@@ -188,7 +188,7 @@ export const gamificationApi = {
 **DESPUÉS (tipos generados):**
 
 ```typescript
-// apps/frontend/src/lib/api/gamification.api.ts
+// apps/frontend/src/services/api/gamification/gamificationAPI.ts
 import apiClient from '@/services/api/apiClient';
 import type { components } from '@/generated/api-types';
 
@@ -210,7 +210,7 @@ export const gamificationApi = {
 ```typescript
 // apps/frontend/src/hooks/useUserStats.ts
 import { useState, useEffect } from 'react';
-import { gamificationApi } from '@/lib/api/gamification.api';
+import { gamificationApi } from '@/services/api/gamification/gamificationAPI';
 import type { components } from '@/generated/api-types';
 
 type UserStats = components['schemas']['UserStatsDto'];

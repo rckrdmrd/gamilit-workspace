@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Bell, ClipboardCheck, MessageSquare } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { SaveButton } from './SaveButton';
+import { SaveButton, type SaveStatus } from '@shared/components/feedback/SaveButton';
 
 interface TeachingPreferencesState {
   newSubmissions: boolean;
@@ -22,7 +22,7 @@ interface TeachingPreferencesState {
 interface TeachingPreferencesSectionProps {
   teachingPreferences: TeachingPreferencesState;
   setTeachingPreferences: React.Dispatch<React.SetStateAction<TeachingPreferencesState>>;
-  saveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  saveStatus: SaveStatus;
   handleSave: () => void;
 }
 
@@ -289,7 +289,7 @@ export function TeachingPreferencesSection({
             </div>
           </div>
 
-          <SaveButton saveStatus={saveStatus} onClick={handleSave} label="Guardar Preferencias" />
+          <SaveButton status={saveStatus} onClick={handleSave} idleLabel="Guardar Preferencias" />
         </div>
       </DetectiveCard>
     </motion.div>

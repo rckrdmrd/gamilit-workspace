@@ -1,8 +1,8 @@
 # FL-STU-05 - Perfil y Ajustes del Estudiante
 
 **ID:** FL-STU-05
-**Version:** 1.1.0
-**Fecha:** 2026-02-18
+**Version:** 1.2.0
+**Fecha:** 2026-02-19
 **Estado:** Activo
 **Portal:** Student
 **Prioridad:** P1
@@ -27,12 +27,14 @@ Flujo compuesto que agrupa todas las acciones de configuracion personal del estu
 
 | Seccion | Componente | Sub-flujo | Descripcion |
 |---------|-----------|-----------|-------------|
-| Perfil | `settings/ProfileSection.tsx` | FL-SHR-01 | Avatar DiceBear, nombre, biografia |
+| Perfil | `settings/ProfileSection.tsx` | FL-SHR-01 | Avatar DiceBear, nombre de usuario, nombre, apellido, grado escolar, biografia |
 | Cuenta | `settings/AccountSection.tsx` | FL-SHR-01 | Email (verificacion), cambio de contrasena |
 | Notificaciones | `settings/NotificationsSection.tsx` | FL-STU-12 | 5 toggles conectados a `notificationsAPI` real |
-| Privacidad | `settings/PrivacySection.tsx` | — | Visibilidad, estado en linea, solicitudes |
+| Privacidad | `settings/PrivacySection.tsx` | — | Visibilidad, estado en linea, solicitudes (carga de backend on mount) |
 
 **Eliminado en v1.1.0:** Tab "Connected Accounts" (sin backend OAuth), selectores theme/language (sin i18n/dark mode implementado), file upload de avatar (backend retorna placeholder).
+
+**Actualizado en v1.2.0:** ProfileSection ampliado con campos `first_name`, `last_name`, `grade_level` (backend `toUserResponse` ahora los incluye). PrivacySection carga preferencias de backend al montar. Botones de subpaginas avanzadas eliminados de NotificationsSection (rutas no existen). `refreshUser()` sincroniza AuthContext tras cada save.
 
 Impacto funcional: Permite al estudiante personalizar su experiencia en la plataforma, gestionar su identidad y controlar como recibe comunicaciones.
 
@@ -56,7 +58,7 @@ flowchart TD
 
     D --> D1["ProfileSection.tsx"]
     D1 --> D2["FL-SHR-01: Avatar DiceBear + datos perfil"]
-    D2 --> D3["PUT /users/profile { avatar_url, display_name, bio }"]
+    D2 --> D3["PUT /users/profile { avatar_url, display_name, first_name, last_name, bio, grade_level }"]
 
     E --> E1["AccountSection.tsx"]
     E1 --> E2["Email verificacion + cambio contrasena"]
@@ -78,15 +80,7 @@ flowchart TD
 
 ### Subpaginas avanzadas (rutas dedicadas)
 
-```mermaid
-flowchart LR
-    F1[NotificationsSection] --> P[Boton: Preferencias detalladas]
-    F1 --> Q[Boton: Gestionar dispositivos]
-    P --> R[/settings/notifications -> NotificationPreferencesPage.tsx]
-    Q --> S[/settings/devices -> DeviceManagementSection.tsx]
-    R --> T["FL-STU-12"]
-    S --> U["FL-STU-11"]
-```
+> **Nota v1.2.0:** Los botones "Preferencias detalladas" y "Gestionar dispositivos" fueron eliminados de `NotificationsSection` porque las rutas `/settings/notifications` y `/settings/devices` no existen como rutas registradas en App.tsx. La funcionalidad completa de notificaciones se maneja dentro de la seccion inline con 5 toggles. FL-STU-11 y FL-STU-12 quedan como flujos futuros si se implementan subpaginas dedicadas.
 
 ## 4. Secuencia FE -> BE -> DB
 
@@ -104,6 +98,27 @@ Este flujo delega a sus sub-flujos. Consultar cada uno para la secuencia detalla
 2. Toggle cambio → estado local
 3. Guardar → PATCH /notifications/preferences → notificationsAPI.updateMultiplePreferences()
    → Batch update de 5 tipos: achievement_unlocked, assignment_created, mission_completed, friend_request, system_announcement
+```
+
+### Secuencia interna de PrivacySection (nueva en v1.2.0)
+
+```
+1. Mount → GET /users/preferences → profileAPI.getPreferences()
+   → Leer prefs.privacy (soporta camelCase y snake_case)
+   → Spinner mientras carga
+2. Toggle/select cambio → estado local
+3. Guardar → GET /users/preferences (fetch current) → merge privacy → PUT /users/preferences
+   → profileAPI.updatePreferences() con merge para no sobreescribir otras prefs
+```
+
+### Secuencia interna de ProfileSection (actualizada en v1.2.0)
+
+```
+1. Init → Cargar campos del user prop (displayName, firstName, lastName, bio, gradeLevel)
+2. Edicion → estado local (5 campos InputDetective + 1 textarea)
+3. Avatar → AvatarSelectionModal → profileAPI.updateProfile({avatar_url}) → refreshUser()
+4. Guardar → PUT /users/profile {display_name, first_name, last_name, bio, grade_level}
+   → profileAPI.updateProfile() → refreshUser() → sync AuthContext + authStore
 ```
 
 ## 5. Componentes y artefactos implicados
@@ -141,8 +156,10 @@ Este flujo delega a sus sub-flujos. Consultar cada uno para la secuencia detalla
 - El acceso a `/settings` requiere autenticacion con rol `student`.
 - RLS aplica en todas las tablas: el estudiante solo puede modificar sus propios datos.
 - **Contrasena:** minimo 8 caracteres, indicador de fuerza visual, show/hide en 3 campos, estado independiente del save de perfil.
-- **Avatar:** seleccion de catalogo DiceBear (12 opciones), default basado en displayName. No file upload.
+- **Avatar:** seleccion de catalogo DiceBear (12 opciones), default basado en displayName. File upload soportado en backend (base64 data URI).
 - **Notificaciones:** 5 toggles mapeados a tipos backend reales, guardados via `notificationsAPI.updateMultiplePreferences()`.
+- **Privacidad:** Carga preferencias de backend al montar. Save hace merge (no sobreescribe). Soporta campos camelCase y snake_case del backend.
+- **Componentes UI:** `InputDetective` para inputs, `DetectiveCard` para cards, `SaveButton` con estados idle/saving/saved/error (text-white en saving).
 
 ## 7. Manejo de errores
 

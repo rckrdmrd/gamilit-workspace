@@ -6,7 +6,7 @@ import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
 import { ProgressCard } from '@/shared/components/ProgressCard';
 import { ProgressFilter, ProgressFilterState } from '@/shared/components/ProgressFilter';
 import { StatsOverview } from '@/shared/components/StatsOverview';
-import { progressApi } from '@/lib/api/progress.api';
+import { progressApi } from '@/services/api/progress/progressAPI';
 import { getModules } from '@/services/api/educationalAPI';
 import type { Module } from '@/shared/types/educational.types';
 import type { ModuleProgress, ProgressSummary } from '@/shared/types/progress.types';

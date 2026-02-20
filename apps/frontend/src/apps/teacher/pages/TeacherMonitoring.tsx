@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { StudentMonitoringPanel } from '../components/monitoring/StudentMonitoringPanel';
 import { useClassrooms } from '../hooks/useClassrooms';
+import { useClassroomRealtime } from '../hooks/useClassroomRealtime';
+import type { RealtimeEvent } from '../hooks/useClassroomRealtime';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { Users, BookOpen, RefreshCw, Filter, AlertCircle, Loader2 } from 'lucide-react';
+import { Users, BookOpen, RefreshCw, Filter, AlertCircle, Loader2, Wifi, WifiOff, Activity, Bell } from 'lucide-react';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 /**
  * TeacherMonitoringPage - Pagina de monitoreo en tiempo real
@@ -22,6 +25,34 @@ export default function TeacherMonitoringPage() {
     useClassrooms();
   const [showFilters, setShowFilters] = useState(false);
 
+  // Build classroomIds array for real-time hook (stable reference via useMemo)
+  const classroomIds = useMemo(
+    () => (selectedClassroom ? [selectedClassroom.id] : []),
+    [selectedClassroom],
+  );
+
+  // Real-time classroom monitoring via WebSocket
+  const {
+    isConnected: realtimeConnected,
+    isConnecting: realtimeConnecting,
+    events: realtimeEvents,
+    onlineStudents,
+    clearEvents,
+    reconnect: realtimeReconnect,
+  } = useClassroomRealtime({
+    classroomIds,
+    enabled: classroomIds.length > 0,
+  });
+
+  // Derive counts from real-time data
+  const onlineCount = onlineStudents.size;
+  const recentAlerts = realtimeEvents.filter(
+    (e: RealtimeEvent) => e.type === 'alert',
+  ).length;
+  const recentSubmissions = realtimeEvents.filter(
+    (e: RealtimeEvent) => e.type === 'submission',
+  ).length;
+
   // Auto-seleccionar la primera clase cuando carguen los datos
   useEffect(() => {
     if (!selectedClassroom && classrooms.length > 0) {
@@ -29,7 +60,13 @@ export default function TeacherMonitoringPage() {
     }
   }, [classrooms, selectedClassroom, selectClassroom]);
 
+  // Clear real-time events when switching classrooms
+  useEffect(() => {
+    clearEvents();
+  }, [selectedClassroom?.id, clearEvents]);
+
   return (
+    <TeacherPageShell>
     <div className="space-y-6">
           {/* Header */}
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -41,6 +78,31 @@ export default function TeacherMonitoringPage() {
             </div>
 
             <div className="flex items-center gap-3">
+              {/* Real-time connection status indicator */}
+              {classroomIds.length > 0 && (
+                <div className="flex items-center gap-2">
+                  {realtimeConnected ? (
+                    <span className="flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                      <Wifi className="h-3 w-3" />
+                      En vivo
+                    </span>
+                  ) : realtimeConnecting ? (
+                    <span className="flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      Conectando...
+                    </span>
+                  ) : (
+                    <button
+                      onClick={realtimeReconnect}
+                      className="flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-200"
+                      title="Haz clic para reconectar"
+                    >
+                      <WifiOff className="h-3 w-3" />
+                      Desconectado
+                    </button>
+                  )}
+                </div>
+              )}
               {!loading && !error && (
                 <DetectiveButton variant="secondary" onClick={refresh}>
                   <RefreshCw className="mr-2 h-4 w-4" />
@@ -161,10 +223,101 @@ export default function TeacherMonitoringPage() {
                     </p>
                     <p className="text-detective-text-secondary">Estudiantes</p>
                   </div>
+                  {realtimeConnected && (
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-green-600">
+                        {onlineCount}
+                      </p>
+                      <p className="text-detective-text-secondary">En linea</p>
+                    </div>
+                  )}
                   <div className="text-center">
                     <p className="text-detective-accent text-2xl font-bold">{students.length}</p>
                     <p className="text-detective-text-secondary">Cargados</p>
                   </div>
+                </div>
+              </div>
+            </DetectiveCard>
+          )}
+
+          {/* Real-time Activity Summary */}
+          {selectedClassroom && realtimeConnected && !loading && !error && realtimeEvents.length > 0 && (
+            <DetectiveCard>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-detective-orange" />
+                    <h3 className="text-lg font-semibold text-detective-text">
+                      Actividad en Tiempo Real
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {recentSubmissions > 0 && (
+                      <span className="flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                        <BookOpen className="h-3 w-3" />
+                        {recentSubmissions} entrega{recentSubmissions !== 1 ? 's' : ''}
+                      </span>
+                    )}
+                    {recentAlerts > 0 && (
+                      <span className="flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+                        <Bell className="h-3 w-3" />
+                        {recentAlerts} alerta{recentAlerts !== 1 ? 's' : ''}
+                      </span>
+                    )}
+                    <button
+                      onClick={clearEvents}
+                      className="text-xs text-detective-text-secondary hover:text-detective-text"
+                    >
+                      Limpiar
+                    </button>
+                  </div>
+                </div>
+                <div className="max-h-40 space-y-1 overflow-y-auto">
+                  {realtimeEvents.slice(0, 10).map((event, idx) => {
+                    let icon = '';
+                    let text = '';
+                    const ts = 'timestamp' in event.data
+                      ? new Date(event.data.timestamp).toLocaleTimeString()
+                      : '';
+
+                    switch (event.type) {
+                      case 'activity':
+                        icon = '📝';
+                        text = `${event.data.studentName}: ${event.data.activityType.replace(/_/g, ' ')}${event.data.exerciseTitle ? ` — ${event.data.exerciseTitle}` : ''}`;
+                        break;
+                      case 'submission':
+                        icon = '✅';
+                        text = `${event.data.studentName} entrego ${event.data.exerciseTitle} (${event.data.score}/${event.data.maxScore})`;
+                        break;
+                      case 'alert':
+                        icon = '⚠️';
+                        text = `${event.data.studentName}: ${event.data.title}`;
+                        break;
+                      case 'online_status':
+                        icon = event.data.isOnline ? '🟢' : '🔴';
+                        text = `${event.data.studentName} ${event.data.isOnline ? 'se conecto' : 'se desconecto'}`;
+                        break;
+                      case 'progress':
+                        icon = '🏆';
+                        text = `${event.data.studentName}: ${event.data.progressType.replace(/_/g, ' ')}`;
+                        break;
+                      case 'classroom_update':
+                        icon = '📢';
+                        text = `${event.data.classroomName}: ${event.data.updateType.replace(/_/g, ' ')}`;
+                        break;
+                    }
+
+                    return (
+                      <div
+                        key={`${event.type}-${idx}`}
+                        className="flex items-center gap-2 rounded px-2 py-1 text-sm text-detective-text-secondary hover:bg-detective-surface"
+                      >
+                        <span className="flex-shrink-0">{icon}</span>
+                        <span className="flex-1 truncate">{text}</span>
+                        <span className="flex-shrink-0 text-xs opacity-60">{ts}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </DetectiveCard>
@@ -193,5 +346,6 @@ export default function TeacherMonitoringPage() {
             </DetectiveCard>
           ) : null}
     </div>
+    </TeacherPageShell>
   );
 }

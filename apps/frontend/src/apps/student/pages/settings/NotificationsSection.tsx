@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Mail, Smartphone, Trophy, BookOpen, Flame } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   notificationsAPI,
@@ -10,7 +9,7 @@ import {
 } from '@/services/api/notificationsAPI';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { ToggleSwitch } from './ToggleSwitch';
-import { SaveButton, type SaveStatus } from './SaveButton';
+import { SaveButton, type SaveStatus } from '@shared/components/feedback/SaveButton';
 
 /**
  * Notification toggles mapped to backend notification types.
@@ -74,7 +73,6 @@ const TOGGLES: NotifToggle[] = [
 ];
 
 export const NotificationsSection: React.FC = () => {
-  const navigate = useNavigate();
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [loading, setLoading] = useState(true);
   const [toggles, setToggles] = useState<Record<string, boolean>>({
@@ -208,28 +206,12 @@ export const NotificationsSection: React.FC = () => {
               ))}
             </div>
 
-            {/* Advanced links */}
+            {/* Info note */}
             <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
-              <h4 className="mb-2 text-sm font-bold text-orange-800">
-                Configuracion avanzada
-              </h4>
-              <p className="mb-3 text-xs text-orange-700">
-                Configura preferencias detalladas por tipo de notificacion y gestiona dispositivos push
+              <p className="text-xs text-orange-700">
+                Las notificaciones por correo se envian a tu email registrado.
+                Las notificaciones push funcionan en navegadores compatibles.
               </p>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => navigate('/settings/notifications')}
-                  className="rounded-lg bg-detective-orange px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-detective-orange-dark"
-                >
-                  Preferencias detalladas
-                </button>
-                <button
-                  onClick={() => navigate('/settings/devices')}
-                  className="rounded-lg bg-detective-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-detective-blue-dark"
-                >
-                  Gestionar dispositivos
-                </button>
-              </div>
             </div>
 
             <SaveButton

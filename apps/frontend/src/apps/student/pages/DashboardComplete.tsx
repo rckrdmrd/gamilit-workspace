@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 import { EnhancedStatsGrid } from '../components/dashboard/EnhancedStatsGrid';
 import { MissionsPanel } from '../components/dashboard/MissionsPanel';
 import { ModulesSection } from '../components/dashboard/ModulesSection';
@@ -12,19 +12,15 @@ import { useDashboardData } from '../hooks/useDashboardData';
 import { useMissions } from '@/features/gamification/missions/hooks/useMissions';
 import { useUserModules } from '../hooks/useUserModules';
 import { useRecentActivities } from '../hooks/useRecentActivities';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { useUserClassroom } from '../hooks/useUserClassroom';
 
 export default function DashboardComplete() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   // Get user's primary classroom (type-safe approach)
   // Note: Users can be in multiple classrooms. This returns the primary/active one.
   const { classroomId: userClassroomId } = useUserClassroom(user?.id);
-
-  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
-  const { gamificationData } = useUserGamification(user?.id);
 
   // Real data from backend
   const { rank, progress, loading, error, refresh } = useDashboardData();
@@ -124,28 +120,18 @@ export default function DashboardComplete() {
   // Activities data from activities API
   const activitiesData = userActivities || [];
 
-  const handleLogout = async () => {
-    await logout();
-    // No need to navigate - performLogout() handles redirect
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader
-        user={user || undefined}
-        gamificationData={gamificationData}
-        onLogout={handleLogout}
-      />
-
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <StudentPageShell>
+      <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Welcome Message */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">¡Bienvenido, Detective! 🕵️</h1>
-          <p className="text-gray-600">
+          <h1 className="mb-2 text-3xl font-bold text-detective-text">¡Bienvenido, Detective! 🕵️</h1>
+          <p className="text-detective-text-secondary">
             Explora la plataforma educativa de investigación y desarrolla tus habilidades
             detectivescas.
           </p>
@@ -235,6 +221,7 @@ export default function DashboardComplete() {
 
       {/* Bottom Spacing */}
       <div className="h-16" />
-    </div>
+      </div>
+    </StudentPageShell>
   );
 }

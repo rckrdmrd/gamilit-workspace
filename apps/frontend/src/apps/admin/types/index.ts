@@ -1,4 +1,51 @@
 // Admin Dashboard Types
+//
+// This file is the canonical location for admin portal types.
+// Types from `src/types/admin/` are re-exported here so that
+// `@apps/admin/types` is a single import point for all admin types.
+
+// =====================================================
+// RE-EXPORTS FROM src/types/admin/ (consolidated here)
+// =====================================================
+
+// Gamification configuration types (admin panel)
+export type {
+  GamificationParameter,
+  GamificationStats,
+  UpdateParameterDto,
+  BulkUpdateParametersDto,
+  UpdateMayaRankDto,
+  PreviewImpactDto,
+  ImpactPreview,
+  ListParametersQuery,
+  MayaRankConfig,
+} from '@/types/admin/gamification.types';
+
+// Achievement management types (admin panel)
+export type {
+  AdminAchievement,
+  ListAchievementsQuery,
+  AchievementCategoryStats,
+  AchievementStats,
+  UpdateAchievementDto,
+} from '@/types/admin/achievements.types';
+
+// Classroom-teacher assignment types
+export type {
+  ClassroomTeacherAssignment,
+  AssignTeacherToClassroomDto,
+  AssignClassroomsToTeacherDto,
+  BulkAssignDto,
+  ClassroomWithTeachers,
+  TeacherWithClassrooms,
+} from '@/types/admin/classroom-teacher.types';
+
+// Exercise builder types
+export type { ExerciseFormData } from './exercise-builder.types';
+
+// =====================================================
+// ADMIN DASHBOARD TYPES (defined in this file)
+// =====================================================
 
 // System Health & Monitoring
 export interface SystemHealth {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Trophy, Lock, CheckCircle, Gift } from 'lucide-react';
-import { cn } from '@shared/utils';
+import { cn } from '@shared/utils/cn';
 import { resolveLucideIcon } from '@shared/utils/iconResolver';
 import { formatRelativeTime } from '@/shared/utils/format.util';
 import type {

@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@shared/utils';
+import { cn } from '@shared/utils/cn';
 
 export interface EnhancedCardProps {
   children: React.ReactNode;

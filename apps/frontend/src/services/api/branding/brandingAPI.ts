@@ -4,7 +4,7 @@
  * Provides HTTP client methods for branding-related endpoints.
  * Handles fetching, updating, and asset upload for tenant branding.
  *
- * @module lib/api/branding.api
+ * @module services/api/branding/brandingAPI
  * @see ET-WL-001-theming.md
  */
 

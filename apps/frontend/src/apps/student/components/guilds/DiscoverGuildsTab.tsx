@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { Search, Shield, Users, Star, Target, Trophy, Lock, UserPlus } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { StatusBadge } from '@shared/components/base/StatusBadge';
+import type { StatusType } from '@shared/components/base/StatusBadge';
 import type { Guild } from '@/features/gamification/social/types/guildsTypes';
 
 interface DiscoverGuildsTabProps {
@@ -11,18 +13,24 @@ interface DiscoverGuildsTabProps {
   onJoinGuild: (guildId: string) => void;
 }
 
-function getStatusBadge(status: Guild['status']) {
-  const badges = {
-    active: { color: 'bg-green-500', text: 'Active' },
-    recruiting: { color: 'bg-blue-500', text: 'Recruiting' },
-    full: { color: 'bg-yellow-500', text: 'Full' },
-    inactive: { color: 'bg-gray-500', text: 'Inactive' },
-  };
-  const badge = badges[status];
+const GUILD_STATUS_LABELS: Record<string, string> = {
+  active: 'Active',
+  recruiting: 'Recruiting',
+  full: 'Full',
+  inactive: 'Inactive',
+};
+
+function renderGuildStatusBadge(status: Guild['status']) {
+  const validStatuses: StatusType[] = ['active', 'recruiting', 'full', 'inactive'];
+  const statusType = validStatuses.includes(status as StatusType)
+    ? (status as StatusType)
+    : 'inactive';
   return (
-    <span className={`${badge.color} rounded-full px-2 py-1 text-xs font-bold text-white`}>
-      {badge.text}
-    </span>
+    <StatusBadge
+      status={statusType}
+      label={GUILD_STATUS_LABELS[status] || status}
+      size="sm"
+    />
   );
 }
 
@@ -73,7 +81,7 @@ export function DiscoverGuildsTab({
                       </p>
                     </div>
                   </div>
-                  {getStatusBadge(guild.status)}
+                  {renderGuildStatusBadge(guild.status)}
                 </div>
 
                 <p className="line-clamp-2 text-sm text-detective-text-secondary">

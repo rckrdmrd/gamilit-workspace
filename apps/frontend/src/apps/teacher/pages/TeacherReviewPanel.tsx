@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 import { ClipboardList, Search, Filter, Clock, CheckCircle, List, AlertCircle } from 'lucide-react';
 import { ManualReview, ReviewStatus } from '@/shared/api/manualReviewApi';
 // TASK-2026-01-18-012: Usar useMyReviews con soporte de status
@@ -166,6 +167,7 @@ export default function TeacherReviewPanelPage() {
   }, [reviews, filters.searchQuery]);
 
   return (
+    <TeacherPageShell>
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-6">
@@ -312,5 +314,6 @@ export default function TeacherReviewPanelPage() {
           </>
         )}
       </div>
+    </TeacherPageShell>
   );
 }

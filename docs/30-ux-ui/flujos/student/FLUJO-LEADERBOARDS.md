@@ -70,7 +70,7 @@ flowchart TD
 3. FE: useUserClassroom(user.id) → classroomId para filtro de aula
 4. FE: useDashboardData() → progress y achievements para paneles laterales
 5. Store: Leaderboards store dispara fetch del leaderboard seleccionado (default: global, all_time)
-6. FE: socialAPI o gamification.api → GET /api/v1/gamification/leaderboard/global?limit=100&offset=0
+6. FE: socialAPI o gamificationAPI → GET /api/v1/gamification/leaderboard/global?limit=100&offset=0
 7. BE: LeaderboardController.getGlobal() → LeaderboardService.getGlobalLeaderboard()
 8. DB: SELECT con JOIN gamification_system.user_stats + auth_management.profiles ORDER BY total_xp DESC (RLS)
 9. BE: Retorna { type, entries[], totalEntries, lastUpdated, timePeriod }
@@ -112,7 +112,7 @@ flowchart TD
 | Hook Leaderboards | `apps/frontend/src/features/gamification/social/hooks/useLeaderboards.ts` |
 | Store Leaderboards | `apps/frontend/src/features/gamification/social/store/leaderboardsStore.ts` |
 | API Social | `apps/frontend/src/features/gamification/social/api/socialAPI.ts` |
-| API Gamification | `apps/frontend/src/lib/api/gamification.api.ts` |
+| API Gamification | `apps/frontend/src/services/api/gamification/gamificationAPI.ts` |
 | Layout Leaderboard | `apps/frontend/src/features/gamification/social/components/Leaderboards/LeaderboardLayout.tsx` |
 | Tabs | `apps/frontend/src/features/gamification/social/components/Leaderboards/LeaderboardTabs.tsx` |
 | Podio | `apps/frontend/src/features/gamification/social/components/Leaderboards/LeaderboardPodium.tsx` |

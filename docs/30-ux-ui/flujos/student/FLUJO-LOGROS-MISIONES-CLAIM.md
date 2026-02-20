@@ -158,7 +158,7 @@ El cron `reconcile-pending-achievement-claims` (cada 5 min) busca achievements c
 - `apps/frontend/src/apps/student/pages/AchievementsPage.tsx`
 - `apps/frontend/src/apps/student/pages/MissionsPage.tsx`
 - `apps/frontend/src/features/gamification/missions/hooks/useMissions.ts`
-- `apps/frontend/src/lib/api/gamification.api.ts` (canonical, REC-008)
+- `apps/frontend/src/services/api/gamification/gamificationAPI.ts` (canonical)
 
 ### Backend
 - `apps/backend/src/modules/gamification/services/achievements.service.ts` — deteccion + claim

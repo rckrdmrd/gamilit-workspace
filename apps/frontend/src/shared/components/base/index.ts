@@ -34,9 +34,10 @@ export type { InputDetectiveProps } from './InputDetective';
 export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps } from './ProgressBar';
 
-// Loading
-export { LoadingOverlay, Skeleton } from './LoadingOverlay';
-export type { LoadingOverlayProps, SkeletonProps } from './LoadingOverlay';
+// Loading — canonical location: shared/components/loading/
+// LoadingOverlay and Skeleton moved to shared/components/loading/
+export { LoadingOverlay, type LoadingOverlayProps } from '../loading';
+export { Skeleton, type SkeletonProps } from '../loading';
 
 // Toast
 export { Toast, ToastContainer, useToast } from './Toast';

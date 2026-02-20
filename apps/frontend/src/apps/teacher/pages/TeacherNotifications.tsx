@@ -36,12 +36,10 @@ import {
 } from 'lucide-react';
 
 // Layout
-import TeacherLayout from '../layouts/TeacherLayout';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 // Store & Hooks
 import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -80,9 +78,6 @@ const notificationLabels: Record<string, string> = {
 type StatusFilter = 'all' | 'unread' | 'read';
 
 export default function TeacherNotificationsPage() {
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
-
   // Store
   const {
     notifications,
@@ -177,11 +172,7 @@ export default function TeacherNotificationsPage() {
   };
 
   return (
-    <TeacherLayout
-      user={user || undefined}
-      gamificationData={gamificationData}
-      onLogout={logout}
-    >
+    <TeacherPageShell>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -418,6 +409,6 @@ export default function TeacherNotificationsPage() {
           </div>
         )}
       </div>
-    </TeacherLayout>
+    </TeacherPageShell>
   );
 }

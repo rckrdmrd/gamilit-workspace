@@ -54,13 +54,16 @@ apps/frontend/src/
 │       ├── apiInterceptors.ts     # Interceptors adicionales
 │       └── apiTypes.ts            # Types comunes
 │
-└── lib/
-    └── api/
-        ├── auth.api.ts            # 🔵 Módulo API: Autenticación
-        ├── gamification.api.ts    # 🔵 Módulo API: Gamificación
-        ├── progress.api.ts        # 🔵 Módulo API: Progreso
-        ├── educational.api.ts     # 🔵 Módulo API: Contenido Educativo
-        └── index.ts               # Re-exportación
+├── services/api/
+│   ├── gamification/
+│   │   └── gamificationAPI.ts     # 🔵 Módulo API: Gamificación
+│   ├── progress/
+│   │   └── progressAPI.ts         # 🔵 Módulo API: Progreso
+│   └── ...
+│
+└── features/
+    └── auth/api/
+        └── authAPI.ts             # 🔵 Módulo API: Autenticación
 ```
 
 ### División de Responsabilidades
@@ -68,7 +71,7 @@ apps/frontend/src/
 | Capa | Responsabilidad | Ejemplo |
 |------|----------------|---------|
 | **services/api/apiClient.ts** | Cliente Axios base, interceptors, config | `apiClient.get()` |
-| **lib/api/*.api.ts** | Métodos API por dominio | `gamificationApi.getUserStats()` |
+| **services/api/{domain}/{domain}API.ts** | Métodos API por dominio | `gamificationApi.getUserStats()` |
 | **hooks/** | Lógica de UI + state management | `useUserGamification()` |
 | **components/** | Presentación de datos | `<GamifiedHeader />` |
 
@@ -205,21 +208,21 @@ export default apiClient;
 ## 🔵 Módulos API Específicos
 
 ### Ubicación
-`apps/frontend/src/lib/api/`
+`apps/frontend/src/services/api/` (por dominio) y `apps/frontend/src/features/*/api/` (por feature)
 
 ### Responsabilidad
 
 Los módulos API específicos definen métodos para cada dominio del backend:
 
-- **auth.api.ts** → Autenticación (login, register, logout, profile)
-- **gamification.api.ts** → Gamificación (stats, achievements, leaderboard, ML coins)
-- **progress.api.ts** → Progreso (módulos, sesiones, intentos, actividades)
-- **educational.api.ts** → Contenido educativo (módulos, ejercicios)
+- **features/auth/api/authAPI.ts** → Autenticación (login, register, logout, profile)
+- **services/api/gamification/gamificationAPI.ts** → Gamificación (stats, achievements, leaderboard, ML coins)
+- **services/api/progress/progressAPI.ts** → Progreso (módulos, sesiones, intentos, actividades)
+- **services/api/educationalAPI.ts** → Contenido educativo (módulos, ejercicios)
 
 ### Patrón de Implementación
 
 ```typescript
-// apps/frontend/src/lib/api/gamification.api.ts
+// apps/frontend/src/services/api/gamification/gamificationAPI.ts
 import apiClient from '@/services/api/apiClient';
 import type {
   UserStats,
@@ -284,7 +287,7 @@ export default gamificationApi;
 ### Convenciones
 
 1. **Nombre del módulo:** `{dominio}Api` (camelCase)
-2. **Nombre del archivo:** `{dominio}.api.ts` (kebab-case)
+2. **Nombre del archivo:** `{dominio}API.ts` (camelCase con API suffix)
 3. **Export named + default:** Ambos exports disponibles
 4. **JSDoc comments:** Documentar cada método
 5. **TypeScript types:** Tipado completo en params y returns
@@ -299,7 +302,7 @@ export default gamificationApi;
 ```typescript
 // apps/frontend/src/hooks/useUserGamification.ts
 import { useState, useEffect } from 'react';
-import { gamificationApi } from '@/lib/api/gamification.api';
+import { gamificationApi } from '@/services/api/gamification/gamificationAPI';
 import type { UserStats, Achievement } from '@/shared/types';
 
 export function useUserGamification(userId: string) {
@@ -387,7 +390,7 @@ app.setGlobalPrefix('api');  // Global prefix: /api
 // apps/frontend/src/services/api/apiClient.ts
 const API_BASE_URL = 'http://localhost:3006/api';  // baseURL incluye /api
 
-// apps/frontend/src/lib/api/gamification.api.ts
+// apps/frontend/src/services/api/gamification/gamificationAPI.ts
 apiClient.get(`/gamification/users/${userId}/stats`)
 //           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //           Ruta sin /api (ya está en baseURL)
@@ -425,7 +428,7 @@ apiClient.get(`/gamification/users/${userId}/stats`)
 ### Ejemplo 1: Auth API Module
 
 ```typescript
-// apps/frontend/src/lib/api/auth.api.ts
+// apps/frontend/src/features/auth/api/authAPI.ts
 import apiClient from '@/services/api/apiClient';
 
 export interface LoginCredentials {
@@ -475,7 +478,7 @@ export default authApi;
 ```typescript
 // apps/frontend/src/hooks/useAuth.ts
 import { useState } from 'react';
-import { authApi, LoginCredentials, AuthResponse } from '@/lib/api/auth.api';
+import { authApi, LoginCredentials, AuthResponse } from '@/features/auth/api/authAPI';
 
 export function useAuth() {
   const [user, setUser] = useState<AuthResponse['user'] | null>(null);
@@ -698,7 +701,7 @@ const getUserStats = async (userId: string): Promise<UserStats> => {
 ### Mockear Módulos API
 
 ```typescript
-// apps/frontend/src/lib/api/__mocks__/gamification.api.ts
+// apps/frontend/src/services/api/gamification/__mocks__/gamificationAPI.ts
 export const gamificationApi = {
   getUserStats: jest.fn().mockResolvedValue({
     user_id: 'test-user-id',
@@ -728,7 +731,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { useUserGamification } from '../useUserGamification';
 
 // Mock el módulo API
-jest.mock('@/lib/api/gamification.api');
+jest.mock('@/services/api/gamification/gamificationAPI');
 
 describe('useUserGamification', () => {
   it('should fetch user stats and achievements', async () => {

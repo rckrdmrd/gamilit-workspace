@@ -5,6 +5,22 @@ import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { TeacherLayout } from '../layouts/TeacherLayout';
 
 /**
+ * @deprecated Use TeacherPageShell instead. This HOC is being replaced with the PageShell pattern.
+ * Import from `../../components/shared/TeacherPageShell` and wrap page content directly:
+ *
+ * ```tsx
+ * // Before (HOC in App.tsx):
+ * const TeacherPage = lazy(() =>
+ *   import('./pages/TeacherPage').then(m => ({ default: withTeacherLayout(m.default) }))
+ * );
+ *
+ * // After (PageShell inside the page):
+ * import { TeacherPageShell } from '../components/shared/TeacherPageShell';
+ * export default function TeacherPage() {
+ *   return <TeacherPageShell>{content}</TeacherPageShell>;
+ * }
+ * ```
+ *
  * Higher-Order Component that wraps a component with TeacherLayout
  *
  * This HOC eliminates the need for separate *Page.tsx wrapper files by:

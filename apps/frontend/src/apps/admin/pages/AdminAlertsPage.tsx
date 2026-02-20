@@ -30,6 +30,7 @@ import { ResolveAlertModal } from '../components/alerts/ResolveAlertModal';
 // Icons
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { useApiError } from '@shared/hooks';
 
 // Types
 import type { SystemAlert } from '@/services/api/adminTypes';
@@ -38,6 +39,7 @@ import type { SystemAlert } from '@/services/api/adminTypes';
  * AdminAlertsPage Component
  */
 export default function AdminAlertsPage() {
+  const handleError = useApiError();
   const {
     alerts,
     stats,
@@ -87,7 +89,7 @@ export default function AdminAlertsPage() {
       try {
         await suppressAlert(alert.id);
       } catch (err) {
-        console.error('Error suppressing alert:', err);
+        handleError(err as Parameters<typeof handleError>[0], 'Error al suprimir alerta');
       }
     }
   };

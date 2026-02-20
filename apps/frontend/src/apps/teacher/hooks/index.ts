@@ -2,6 +2,9 @@
  * Teacher Hooks - Central export point
  */
 
+// Page setup (Phase 3B standardization)
+export { useTeacherPageSetup } from './useTeacherPageSetup';
+
 // New hooks (FE-052 Quick Wins + CICLO 9)
 export { useTeacherDashboard, dashboardKeys } from './useTeacherDashboard';
 export { useStudentProgress } from './useStudentProgress';
@@ -18,6 +21,8 @@ export { useGrantBonus } from './useGrantBonus';
 export { useEconomyAnalytics } from './useEconomyAnalytics'; // GAP-ST-005
 export { useStudentsEconomy } from './useStudentsEconomy'; // GAP-ST-006
 export { useAchievementsStats } from './useAchievementsStats'; // GAP-ST-007
+export { useScheduledReports, scheduledReportKeys } from './useScheduledReports'; // Scheduled Reports
+export { useSharedReports, sharedReportsKeys } from './useSharedReports'; // Shared Reports between teachers
 
 // Legacy hooks (kept for backward compatibility)
 export { useClassroomData } from './useClassroomData';
@@ -50,6 +55,8 @@ export type {
 } from './useAlertConfig'; // US-PM-007
 export type { UseTeacherMessagesReturn, MessageFilters } from './useTeacherMessages';
 export type { UseGrantBonusReturn } from './useGrantBonus';
+export type { UseScheduledReportsReturn } from './useScheduledReports'; // Scheduled Reports
+export type { UseSharedReportsReturn } from './useSharedReports'; // Shared Reports between teachers
 
 // P1-06/P1-07: Mission and Mastery tracking hooks (2025-12-18)
 export { useMissionStats, useMissionStatsMultiple } from './useMissionStats';

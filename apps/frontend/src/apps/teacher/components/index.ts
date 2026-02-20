@@ -1,4 +1,8 @@
-// HOC
+// PageShell (preferred — replaces withTeacherLayout HOC)
+export { TeacherPageShell } from './shared/TeacherPageShell';
+export type { TeacherPageShellProps } from './shared/TeacherPageShell';
+
+// HOC (deprecated — use TeacherPageShell instead)
 export { withTeacherLayout } from './withTeacherLayout';
 
 // Monitoring Components

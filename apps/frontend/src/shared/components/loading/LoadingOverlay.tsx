@@ -1,4 +1,12 @@
-import React from 'react';
+/**
+ * LoadingOverlay Component
+ *
+ * Full-screen or inline loading overlay with animated spinner.
+ * Uses detective-theme classes and framer-motion for transitions.
+ *
+ * @module shared/components/loading
+ */
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 
@@ -8,11 +16,11 @@ export interface LoadingOverlayProps {
   variant?: 'full' | 'inline';
 }
 
-export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
+export function LoadingOverlay({
   isVisible,
   message = 'Cargando...',
   variant = 'full',
-}) => {
+}: LoadingOverlayProps) {
   if (variant === 'inline') {
     return (
       <AnimatePresence>
@@ -26,7 +34,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
             aria-live="polite"
           >
             <div className="flex flex-col items-center gap-4">
-              <Loader2 className="w-8 h-8 animate-spin text-detective-orange" aria-hidden="true" />
+              <Loader2 className="h-8 w-8 animate-spin text-detective-orange" aria-hidden="true" />
               <p className="text-detective-text-secondary text-detective-sm">{message}</p>
             </div>
           </motion.div>
@@ -56,60 +64,13 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
             className="loading-modal" // Uses detective-theme.css
           >
             <Loader2
-              className="w-12 h-12 animate-spin text-detective-orange mx-auto mb-4"
+              className="mx-auto mb-4 h-12 w-12 animate-spin text-detective-orange"
               aria-hidden="true"
             />
-            <p className="text-detective-text font-medium">{message}</p>
+            <p className="font-medium text-detective-text">{message}</p>
           </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
   );
-};
-
-// Skeleton loader for cards and content
-export interface SkeletonProps {
-  variant?: 'text' | 'card' | 'circle' | 'rectangle';
-  width?: string;
-  height?: string;
-  className?: string;
-  count?: number;
 }
-
-export const Skeleton: React.FC<SkeletonProps> = ({
-  variant = 'text',
-  width,
-  height,
-  className = '',
-  count = 1,
-}) => {
-  const variantStyles = {
-    text: 'h-4 rounded',
-    card: 'h-32 rounded-lg',
-    circle: 'rounded-full',
-    rectangle: 'rounded-md',
-  };
-
-  if (count > 1) {
-    return (
-      <>
-        {Array.from({ length: count }).map((_, i) => (
-          <div
-            key={i}
-            className={`skeleton ${variantStyles[variant]} ${className} mb-2`}
-            style={{ width, height }}
-            aria-hidden="true"
-          />
-        ))}
-      </>
-    );
-  }
-
-  return (
-    <div
-      className={`skeleton ${variantStyles[variant]} ${className}`}
-      style={{ width, height }}
-      aria-hidden="true"
-    />
-  );
-};

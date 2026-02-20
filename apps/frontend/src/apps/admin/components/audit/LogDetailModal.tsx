@@ -2,15 +2,14 @@
  * LogDetailModal - Displays full details of a single audit log entry.
  *
  * Extracted from AdminAuditLogsPage to comply with SRP.
- * Uses useModalBehavior for Escape-close and body scroll lock.
+ * Uses shared Modal component for Escape-close, body scroll lock, and focus trap.
  *
  * @see US-AE-011 - Visor de Audit Logs
  */
 
-import { motion } from 'framer-motion';
-import { useModalBehavior } from '../../hooks/useModalBehavior';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { Shield, X, CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle } from 'lucide-react';
 import type { AuditLogEntry } from '@/services/api/adminTypes';
 
 interface LogDetailModalProps {
@@ -35,33 +34,14 @@ function formatDetailDate(dateString: string): string {
 }
 
 export const LogDetailModal: React.FC<LogDetailModalProps> = ({ log, onClose }) => {
-  useModalBehavior(!!log, onClose);
-
-  if (!log) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full max-w-2xl rounded-xl bg-detective-bg-secondary p-6 shadow-2xl"
-      >
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Shield className="h-6 w-6 text-blue-500" />
-            <h2 className="text-xl font-bold text-detective-text">Detalle del Log</h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-detective-bg hover:text-gray-200"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        {/* Content */}
+    <Modal
+      isOpen={!!log}
+      onClose={onClose}
+      title="Detalle del Log"
+      size="lg"
+    >
+      {log && (
         <div className="space-y-4">
           {/* Status */}
           <div className="rounded-lg bg-detective-bg p-4">
@@ -117,15 +97,15 @@ export const LogDetailModal: React.FC<LogDetailModalProps> = ({ log, onClose }) 
               <div className="text-sm text-red-300">{log.failureReason}</div>
             </div>
           )}
-        </div>
 
-        {/* Footer */}
-        <div className="mt-6 flex justify-end">
-          <DetectiveButton variant="secondary" onClick={onClose}>
-            Cerrar
-          </DetectiveButton>
+          {/* Footer */}
+          <div className="flex justify-end pt-4">
+            <DetectiveButton variant="secondary" onClick={onClose}>
+              Cerrar
+            </DetectiveButton>
+          </div>
         </div>
-      </motion.div>
-    </div>
+      )}
+    </Modal>
   );
 };

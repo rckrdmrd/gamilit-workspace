@@ -25,7 +25,7 @@ const mockGamificationApi = {
   getAllAchievements: vi.fn(),
   getUserAchievements: vi.fn(),
 };
-vi.mock('@/lib/api/gamification.api', () => ({
+vi.mock('@/services/api/gamification/gamificationAPI', () => ({
   gamificationApi: mockGamificationApi,
 }));
 

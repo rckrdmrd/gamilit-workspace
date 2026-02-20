@@ -17,7 +17,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { RolePermissions, Permission } from '@/services/api/adminTypes';
 import { Button } from '@shared/components/Button';
-import { LoadingSpinner } from '@shared/components/LoadingSpinner';
+import { LoadingSpinner } from '@shared/components/loading';
 import { PermissionMatrix } from './PermissionMatrix';
 
 interface RoleEditorProps {

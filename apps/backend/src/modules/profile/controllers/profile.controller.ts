@@ -284,9 +284,10 @@ export class ProfileController {
       throw new BadRequestException('File size exceeds 5MB limit');
     }
 
-    // TODO: Implement actual file upload to cloud storage (S3, GCS, etc.)
-    // For now, we'll use a placeholder URL
-    const avatarUrl = `https://storage.example.com/avatars/${userId}.jpg`;
+    // Store avatar as base64 data URI in the database (MVP approach)
+    // For production, migrate to cloud storage (S3, GCS, etc.)
+    const base64 = file.buffer.toString('base64');
+    const avatarUrl = `data:${file.mimetype};base64,${base64}`;
 
     return this.profileService.uploadAvatar(userId, avatarUrl);
   }

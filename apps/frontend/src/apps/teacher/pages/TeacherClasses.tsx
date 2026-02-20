@@ -5,7 +5,8 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
 import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
-import toast from 'react-hot-toast';
+import { EmptyState } from '@shared/components/feedback';
+import { useApiError } from '@shared/hooks';
 import {
   Users,
   Plus,
@@ -20,9 +21,11 @@ import {
 } from 'lucide-react';
 import { useClassrooms } from '../hooks/useClassrooms';
 import type { Classroom } from '../types';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 export default function TeacherClasses() {
   const navigate = useNavigate();
+  const handleError = useApiError();
   const {
     classrooms,
     loading,
@@ -62,8 +65,7 @@ export default function TeacherClasses() {
       setIsCreateModalOpen(false);
       setFormData({ name: '', subject: '', grade_level: '' });
     } catch (err: unknown) {
-      console.error('[TeacherClasses] Error creating classroom:', err);
-      toast.error('Error al crear la clase. Por favor intenta nuevamente.');
+      handleError(err as Parameters<typeof handleError>[0], 'Error al crear la clase');
     }
   };
 
@@ -76,8 +78,7 @@ export default function TeacherClasses() {
       setSelectedClassroom(null);
       setFormData({ name: '', subject: '', grade_level: '' });
     } catch (err: unknown) {
-      console.error('[TeacherClasses] Error updating classroom:', err);
-      toast.error('Error al actualizar la clase. Por favor intenta nuevamente.');
+      handleError(err as Parameters<typeof handleError>[0], 'Error al actualizar la clase');
     }
   };
 
@@ -89,8 +90,7 @@ export default function TeacherClasses() {
       setIsDeleteDialogOpen(false);
       setSelectedClassroom(null);
     } catch (err: unknown) {
-      console.error('[TeacherClasses] Error deleting classroom:', err);
-      toast.error('Error al eliminar la clase. Por favor intenta nuevamente.');
+      handleError(err as Parameters<typeof handleError>[0], 'Error al eliminar la clase');
     }
   };
 
@@ -110,7 +110,7 @@ export default function TeacherClasses() {
   };
 
   return (
-    <>
+    <TeacherPageShell>
       <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
         <main className="detective-container py-8">
         {/* Header */}
@@ -235,12 +235,12 @@ export default function TeacherClasses() {
         )}
 
         {!loading && filteredClassrooms.length === 0 && (
-          <div className="py-12 text-center">
-            <BookOpen className="mx-auto mb-4 h-16 w-16 text-gray-600" />
-            <p className="text-lg text-gray-400">
-              {searchTerm ? 'No se encontraron clases' : 'No tienes clases creadas aún'}
-            </p>
-          </div>
+          <EmptyState
+            icon={BookOpen}
+            title={searchTerm ? 'No se encontraron clases' : 'No tienes clases creadas aun'}
+            description={searchTerm ? 'Intenta con otros terminos de busqueda' : 'Crea tu primera clase para comenzar'}
+            action={!searchTerm ? { label: 'Crear Nueva Clase', onClick: () => setIsCreateModalOpen(true) } : undefined}
+          />
         )}
       </main>
 
@@ -381,6 +381,6 @@ export default function TeacherClasses() {
         variant="danger"
       />
       </div>
-    </>
+    </TeacherPageShell>
   );
 }

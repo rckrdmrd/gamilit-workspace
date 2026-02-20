@@ -15,7 +15,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { ltiApi } from '@/lib/api/lti.api';
+import { ltiApi } from '@/services/api/admin/ltiAPI';
 import type {
   LtiConsumer,
   CreateLtiConsumerDto,

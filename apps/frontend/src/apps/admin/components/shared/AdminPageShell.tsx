@@ -1,9 +1,9 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { AdminLayout } from '../../layouts/AdminLayout';
 import { useAdminPageSetup } from '../../hooks/useAdminPageSetup';
 
-interface AdminPageShellProps {
-  children: React.ReactNode;
+export interface AdminPageShellProps {
+  children: ReactNode;
 }
 
 /**
@@ -24,7 +24,7 @@ interface AdminPageShellProps {
  * }
  * ```
  */
-export const AdminPageShell: React.FC<AdminPageShellProps> = ({ children }) => {
+export function AdminPageShell({ children }: AdminPageShellProps) {
   const { user, displayGamificationData, handleLogout } = useAdminPageSetup();
 
   return (
@@ -37,4 +37,4 @@ export const AdminPageShell: React.FC<AdminPageShellProps> = ({ children }) => {
       {children}
     </AdminLayout>
   );
-};
+}

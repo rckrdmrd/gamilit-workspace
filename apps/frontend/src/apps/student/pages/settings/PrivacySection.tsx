@@ -1,31 +1,69 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Shield } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { profileAPI } from '@/services/api/profileAPI';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { ToggleSwitch } from './ToggleSwitch';
-import { SaveButton, type SaveStatus } from './SaveButton';
+import {
+  PrivacySettingsForm,
+  type PrivacyToggleItem,
+} from '@shared/components/settings';
+import type { SaveStatus } from '@shared/components/feedback/SaveButton';
 import type { User } from '@/shared/types/auth.types';
 
 interface PrivacySectionProps {
   user: User;
 }
 
+interface PrivacySettings {
+  profileVisibility: string;
+  showOnlineStatus: boolean;
+  allowFriendRequests: boolean;
+  showActivity: boolean;
+}
+
+const DEFAULT_PRIVACY: PrivacySettings = {
+  profileVisibility: 'public',
+  showOnlineStatus: true,
+  allowFriendRequests: true,
+  showActivity: true,
+};
+
 export const PrivacySection: React.FC<PrivacySectionProps> = ({ user }) => {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
-  const [privacy, setPrivacy] = useState({
-    profileVisibility: 'public',
-    showOnlineStatus: true,
-    allowFriendRequests: true,
-    showActivity: true,
-  });
+  const [loading, setLoading] = useState(true);
+  const [privacy, setPrivacy] = useState<PrivacySettings>(DEFAULT_PRIVACY);
+
+  // Load saved privacy preferences from backend on mount
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await profileAPI.getPreferences();
+        const prefs = res.preferences as Record<string, any>;
+        if (prefs?.privacy) {
+          setPrivacy({
+            profileVisibility: prefs.privacy.profileVisibility ?? prefs.privacy.profile_visibility ?? DEFAULT_PRIVACY.profileVisibility,
+            showOnlineStatus: prefs.privacy.showOnlineStatus ?? prefs.privacy.show_online_status ?? DEFAULT_PRIVACY.showOnlineStatus,
+            allowFriendRequests: prefs.privacy.allowFriendRequests ?? prefs.privacy.allow_friend_requests ?? DEFAULT_PRIVACY.allowFriendRequests,
+            showActivity: prefs.privacy.showActivity ?? prefs.privacy.show_activity ?? DEFAULT_PRIVACY.showActivity,
+          });
+        }
+      } catch {
+        // Keep defaults on error
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
 
   const handleSave = async () => {
     setSaveStatus('saving');
     try {
+      // Load current preferences first, then merge privacy into them
+      const currentRes = await profileAPI.getPreferences();
+      const currentPrefs = (currentRes.preferences || {}) as Record<string, any>;
+
       await profileAPI.updatePreferences(user.id, {
+        ...currentPrefs,
         privacy: {
           profileVisibility: privacy.profileVisibility,
           showOnlineStatus: privacy.showOnlineStatus,
@@ -47,66 +85,42 @@ export const PrivacySection: React.FC<PrivacySectionProps> = ({ user }) => {
     }
   };
 
+  // Build toggle items from student privacy state
+  const toggles: PrivacyToggleItem[] = [
+    {
+      key: 'showOnlineStatus',
+      label: 'Mostrar estado en linea',
+      description: 'Tus amigos pueden ver cuando estas conectado',
+      value: privacy.showOnlineStatus,
+    },
+    {
+      key: 'allowFriendRequests',
+      label: 'Permitir solicitudes de amistad',
+      description: 'Cualquiera puede enviarte solicitudes de amistad',
+      value: privacy.allowFriendRequests,
+    },
+    {
+      key: 'showActivity',
+      label: 'Mostrar actividad reciente',
+      description: 'Tus amigos pueden ver tus actividades recientes',
+      value: privacy.showActivity,
+    },
+  ];
+
+  const handleToggleChange = (key: string, value: boolean) => {
+    setPrivacy((prev) => ({ ...prev, [key]: value }));
+  };
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
-    >
-      <DetectiveCard>
-        <h2 className="mb-2 flex items-center gap-2 text-2xl font-bold text-detective-text">
-          <Shield className="h-6 w-6 text-detective-orange" />
-          Privacidad
-        </h2>
-        <div className="mb-6 h-1 w-16 rounded-full bg-gradient-to-r from-detective-orange to-transparent" />
-
-        <div className="space-y-8">
-          {/* Profile Visibility */}
-          <div>
-            <label className="mb-2 block text-sm font-medium text-detective-text">
-              Visibilidad del perfil
-            </label>
-            <select
-              value={privacy.profileVisibility}
-              onChange={(e) => setPrivacy({ ...privacy, profileVisibility: e.target.value })}
-              className="w-full cursor-pointer rounded-lg border-2 border-detective-orange/40 bg-white px-4 py-3 transition-all duration-200 focus:border-detective-orange focus:outline-none focus:ring-2 focus:ring-detective-orange/20"
-            >
-              <option value="public">Publico (Todos)</option>
-              <option value="friends">Solo amigos</option>
-              <option value="private">Privado</option>
-            </select>
-          </div>
-
-          {/* Privacy Toggles */}
-          <div className="space-y-3">
-            <ToggleSwitch
-              checked={privacy.showOnlineStatus}
-              onChange={(val) => setPrivacy({ ...privacy, showOnlineStatus: val })}
-              label="Mostrar estado en linea"
-              description="Tus amigos pueden ver cuando estas conectado"
-            />
-            <ToggleSwitch
-              checked={privacy.allowFriendRequests}
-              onChange={(val) => setPrivacy({ ...privacy, allowFriendRequests: val })}
-              label="Permitir solicitudes de amistad"
-              description="Cualquiera puede enviarte solicitudes de amistad"
-            />
-            <ToggleSwitch
-              checked={privacy.showActivity}
-              onChange={(val) => setPrivacy({ ...privacy, showActivity: val })}
-              label="Mostrar actividad reciente"
-              description="Tus amigos pueden ver tus actividades recientes"
-            />
-          </div>
-
-          <SaveButton
-            status={saveStatus}
-            onClick={handleSave}
-            idleLabel="Guardar Privacidad"
-            idleIcon={<Shield className="h-4 w-4" />}
-          />
-        </div>
-      </DetectiveCard>
-    </motion.div>
+    <PrivacySettingsForm
+      subtitle="Controla quien puede ver tu perfil y actividad en la plataforma"
+      profileVisibility={privacy.profileVisibility}
+      onVisibilityChange={(val) => setPrivacy((prev) => ({ ...prev, profileVisibility: val }))}
+      toggles={toggles}
+      onToggleChange={handleToggleChange}
+      saveStatus={saveStatus}
+      onSave={handleSave}
+      loading={loading}
+    />
   );
 };

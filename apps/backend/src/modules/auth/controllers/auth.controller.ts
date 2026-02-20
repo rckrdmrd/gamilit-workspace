@@ -190,14 +190,7 @@ export class AuthController {
   async getProfile(@Request() req: AuthRequest): Promise<UserResponseDto> {
     // E7-FIX: Use user_id (auth.users.id) for auth.users lookup, not id (profile.id)
     const userAuthId = req.user!.user_id!;
-    const user = await this.authService.validateUser(userAuthId);
-
-    if (!user) {
-      throw new UnauthorizedException('Usuario no encontrado');
-    }
-
-    // FIX BUG-005: Usar toUserResponse para incluir campos derivados (emailVerified, isActive)
-    return this.authService.toUserResponse(user);
+    return this.authService.getFullProfile(userAuthId);
   }
 
   /**
@@ -224,14 +217,10 @@ export class AuthController {
     const userAuthId = req.user!.user_id!;
 
     // Actualizar perfil usando el servicio de auth
-    const updatedUser = await this.authService.updateUserProfile(userAuthId, dto);
+    await this.authService.updateUserProfile(userAuthId, dto);
 
-    if (!updatedUser) {
-      throw new UnauthorizedException('Usuario no encontrado');
-    }
-
-    // FIX BUG-005: Usar toUserResponse para incluir campos derivados (emailVerified, isActive)
-    return this.authService.toUserResponse(updatedUser);
+    // Return full profile with all fields (avatar_url, display_name, etc.)
+    return this.authService.getFullProfile(userAuthId);
   }
 
   // FIX H-035: verify-email, forgot-password, reset-password, change-password

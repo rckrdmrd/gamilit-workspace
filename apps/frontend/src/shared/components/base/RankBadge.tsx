@@ -1,6 +1,6 @@
 import React from 'react';
 import { Crown } from 'lucide-react';
-import { cn } from '@shared/utils';
+import { cn } from '@shared/utils/cn';
 
 // Maya rank system based on actual GAMILIT platform
 export type RankType =

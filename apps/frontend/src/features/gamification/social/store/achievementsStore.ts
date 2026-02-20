@@ -16,7 +16,7 @@ import type {
 // REC-008: Consolidated to use canonical gamificationApi instead of achievementsAPI.
 // gamificationApi.getAllAchievements() + gamificationApi.getUserAchievements() are combined
 // locally in fetchAchievements() to produce the enriched format the store needs.
-import { gamificationApi } from '@/lib/api/gamification.api';
+import { gamificationApi } from '@/services/api/gamification/gamificationAPI';
 
 // Empty stats for initial state
 const emptyStats: AchievementStats = {

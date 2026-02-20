@@ -11,6 +11,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { User, Bell, Shield, GraduationCap } from 'lucide-react';
@@ -405,6 +406,7 @@ export default function TeacherSettingsPage() {
   ];
 
   return (
+    <TeacherPageShell>
     <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
           {/* Sidebar Navigation */}
@@ -487,5 +489,6 @@ export default function TeacherSettingsPage() {
         {/* Bottom Spacing */}
         <div className="h-16" />
       </div>
+    </TeacherPageShell>
   );
 }

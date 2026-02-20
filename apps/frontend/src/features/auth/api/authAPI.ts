@@ -31,12 +31,19 @@ import type { ApiResponse } from '@/services/api/apiTypes';
  */
 const mapBackendUserToFrontend = (backendUser: any): User => {
   return {
+    // Spread all backend fields first (snake_case pass-through)
+    ...backendUser,
+    // Then map the camelCase aliases the frontend expects
     id: backendUser.id,
     email: backendUser.email,
     role: backendUser.role,
-    firstName: backendUser.firstName,
-    lastName: backendUser.lastName,
-    displayName: backendUser.displayName,
+    firstName: backendUser.first_name || backendUser.firstName || '',
+    lastName: backendUser.last_name || backendUser.lastName || '',
+    displayName: backendUser.display_name || backendUser.displayName || backendUser.email,
+    // Ensure avatar_url is preserved (backend sends snake_case)
+    avatar_url: backendUser.avatar_url || undefined,
+    // Equipped items for cosmetics display
+    equipped_items: backendUser.equipped_items || {},
   };
 };
 
@@ -174,18 +181,23 @@ export const register = async (registerData: RegisterData): Promise<AuthResponse
     }
 
     // Map frontend register data to backend format
-    // Backend expects firstName and lastName separately
-    const nameParts = registerData.fullName.trim().split(' ');
-    const firstName = nameParts[0] || registerData.fullName;
-    const lastName = nameParts.slice(1).join(' ') || registerData.fullName;
+    // RegisterForm may send first_name/last_name directly or fullName to split
+    const regData = registerData as any;
+    let firstName = regData.first_name || '';
+    let lastName = regData.last_name || '';
+
+    if (!firstName && registerData.fullName) {
+      const nameParts = registerData.fullName.trim().split(' ');
+      firstName = nameParts[0] || '';
+      lastName = nameParts.slice(1).join(' ') || '';
+    }
 
     const backendRegisterData = {
       email: registerData.email,
       password: registerData.password,
       first_name: firstName,
       last_name: lastName,
-      school_id: registerData.schoolId, // Optional school ID
-      // role removed - Backend assigns 'student' automatically
+      school_id: registerData.schoolId || regData.school_id,
     };
 
     // Real API call
@@ -367,17 +379,15 @@ export const getCurrentUser = async (): Promise<User> => {
     }
 
     // Real API call - backend returns { success: true, data: { user: {...} } }
-    const response = await apiClient.get<ApiResponse<{ user: any }>>(
-      API_ENDPOINTS.auth.getCurrentUser,
-    );
+    // After apiClient interceptor unwraps { success, data }, response.data = inner data
+    const response = await apiClient.get<any>(API_ENDPOINTS.auth.getCurrentUser);
 
-    // Guard against malformed response
-    const userData = response.data?.data?.user;
-    if (!userData) {
+    // After interceptor unwrap, response.data is the inner object (may have .user or be the user directly)
+    const userData = response.data?.user || response.data;
+    if (!userData || !userData.id) {
       throw new Error('Invalid profile response: user data not found');
     }
 
-    // Extract and map user from backend format to frontend format
     return mapBackendUserToFrontend(userData);
   } catch (error) {
     throw handleAPIError(error);

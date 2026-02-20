@@ -1,8 +1,8 @@
 # FL-ADM-07 - Exercise Builder (Admin)
 
 **ID:** FL-ADM-07
-**Version:** 1.1.0
-**Fecha:** 2026-02-18
+**Version:** 1.2.0
+**Fecha:** 2026-02-19
 **Estado:** Activo
 **Portal:** Admin
 **Prioridad:** P1
@@ -144,7 +144,7 @@ flowchart TD
 13. **Frontend:** Dos acciones disponibles:
     - **Guardar Borrador:** Persiste con `status=draft`.
     - **Enviar a Revision:** Persiste con `status=pending_review`.
-14. **Frontend:** Actualmente usa simulacion (`setTimeout`); integracion completa con `POST /educational/exercises` pendiente.
+14. **Frontend:** La integracion real utiliza `useMutation` de React Query con `apiClient.post(API_ENDPOINTS.educational.exercises)` para persistir el ejercicio en el backend.
 15. **Backend:** `ExercisesController.create()` (linea 462 de exercises.controller.ts) recibe el DTO.
 16. **Backend:** Endpoint `POST /api/v1/educational/exercises` con body de creacion.
 17. **DB:** `INSERT INTO educational_content.exercises` con campos: title, description, instructions, module_id, difficulty, exercise_type, type_config (JSONB), xp_reward, ml_coins_reward, hints_allowed, estimated_time, status.

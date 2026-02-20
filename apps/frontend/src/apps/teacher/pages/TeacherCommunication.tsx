@@ -16,7 +16,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@features/auth/hooks/useAuth';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 import { useTeacherMessages } from '../hooks/useTeacherMessages';
 import { useWebSocket } from '@/features/notifications/hooks/useWebSocket';
 import { useClassrooms } from '../hooks/useClassrooms';
@@ -28,7 +28,7 @@ import { FeedbackForm } from '../components/communication/FeedbackForm';
 import { MessageFilters } from '../components/communication/MessageFilters';
 import { DetectiveCard } from '../../../shared/components/base/DetectiveCard';
 import { DetectiveButton } from '../../../shared/components/base/DetectiveButton';
-import { TeacherLayout } from '../layouts/TeacherLayout';
+import { Modal } from '@shared/components/common/Modal';
 import { UnderConstruction } from '@shared/components/UnderConstruction';
 import { Message } from '../../../services/api/teacher/teacherMessagesApi';
 import { classroomsApi } from '../../../services/api/teacher/classroomsApi';
@@ -69,7 +69,6 @@ const TABS: Tab[] = [
  * Route: /teacher/communication
  */
 export default function TeacherCommunicationPage() {
-  const { user, logout } = useAuth();
 
   // ============================================================================
   // HOOKS
@@ -127,11 +126,6 @@ export default function TeacherCommunicationPage() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
-
   /**
    * Handler para obtener estudiantes de una clase (usado en FeedbackForm)
    */
@@ -146,12 +140,12 @@ export default function TeacherCommunicationPage() {
 
   if (loading && messages.length === 0) {
     return (
-      <TeacherLayout user={user ?? undefined} onLogout={handleLogout}>
+      <TeacherPageShell>
         <div className="flex items-center justify-center py-8">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-detective-orange"></div>
           <span className="ml-3">Cargando mensajes...</span>
         </div>
-      </TeacherLayout>
+      </TeacherPageShell>
     );
   }
 
@@ -161,7 +155,7 @@ export default function TeacherCommunicationPage() {
 
   if (error) {
     return (
-      <TeacherLayout user={user ?? undefined} onLogout={handleLogout}>
+      <TeacherPageShell>
         <DetectiveCard>
           <div className="p-4 text-red-600">
             <p>Error al cargar mensajes: {error.message}</p>
@@ -170,7 +164,7 @@ export default function TeacherCommunicationPage() {
             </DetectiveButton>
           </div>
         </DetectiveCard>
-      </TeacherLayout>
+      </TeacherPageShell>
     );
   }
 
@@ -184,7 +178,7 @@ export default function TeacherCommunicationPage() {
 
   if (SHOW_UNDER_CONSTRUCTION) {
     return (
-      <TeacherLayout user={user ?? undefined} onLogout={handleLogout}>
+      <TeacherPageShell>
         <UnderConstruction
           title="Comunicación"
           description="El módulo de comunicación está en desarrollo. Pronto podrás enviar mensajes, anuncios y feedback a tus estudiantes."
@@ -197,7 +191,7 @@ export default function TeacherCommunicationPage() {
             'Historial de comunicaciones',
           ]}
         />
-      </TeacherLayout>
+      </TeacherPageShell>
     );
   }
 
@@ -206,7 +200,7 @@ export default function TeacherCommunicationPage() {
   // ============================================================================
 
   return (
-    <TeacherLayout user={user ?? undefined} onLogout={handleLogout}>
+    <TeacherPageShell>
       <div className="space-y-6">
         {/* HEADER */}
         <div className="flex items-center justify-between">
@@ -370,59 +364,51 @@ export default function TeacherCommunicationPage() {
         </div>
 
         {/* MODAL DE DETALLE DE MENSAJE */}
-        {selectedMessage && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <DetectiveCard className="max-h-[80vh] w-full max-w-2xl overflow-y-auto">
-              <div className="p-6">
-                {/* Header */}
-                <div className="mb-4 flex items-start justify-between">
-                  <h3 className="text-xl font-bold">{selectedMessage.subject}</h3>
-                  <button
-                    onClick={() => setSelectedMessage(null)}
-                    className="text-2xl leading-none text-gray-400 hover:text-gray-600"
-                  >
-                    ✕
-                  </button>
-                </div>
+        <Modal
+          isOpen={!!selectedMessage}
+          onClose={() => setSelectedMessage(null)}
+          title={selectedMessage?.subject || ''}
+          size="lg"
+        >
+          {selectedMessage && (
+            <div>
+              {/* Metadata */}
+              <p className="mb-4 text-sm text-gray-600">
+                De: {selectedMessage.sender_name} |{' '}
+                {new Date(selectedMessage.created_at).toLocaleString()}
+              </p>
 
-                {/* Metadata */}
-                <p className="mb-4 text-sm text-gray-600">
-                  De: {selectedMessage.sender_name} |{' '}
-                  {new Date(selectedMessage.created_at).toLocaleString()}
-                </p>
-
-                {/* Contenido */}
-                <div className="prose max-w-none">
-                  <p className="whitespace-pre-wrap">{selectedMessage.content}</p>
-                </div>
-
-                {/* Destinatarios */}
-                {selectedMessage.recipients.length > 0 && (
-                  <div className="mt-4 border-t pt-4">
-                    <p className="mb-2 text-sm font-medium">Destinatarios:</p>
-                    <ul className="text-sm text-gray-600">
-                      {selectedMessage.recipients.map((r) => (
-                        <li key={r.user_id}>
-                          {r.user_name} {r.is_read && '(leído)'}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Metadata adicional */}
-                {selectedMessage.classroom_name && (
-                  <div className="mt-4 border-t pt-4">
-                    <p className="text-sm text-gray-600">
-                      Clase: <strong>{selectedMessage.classroom_name}</strong>
-                    </p>
-                  </div>
-                )}
+              {/* Contenido */}
+              <div className="prose max-w-none">
+                <p className="whitespace-pre-wrap">{selectedMessage.content}</p>
               </div>
-            </DetectiveCard>
-          </div>
-        )}
+
+              {/* Destinatarios */}
+              {selectedMessage.recipients.length > 0 && (
+                <div className="mt-4 border-t pt-4">
+                  <p className="mb-2 text-sm font-medium">Destinatarios:</p>
+                  <ul className="text-sm text-gray-600">
+                    {selectedMessage.recipients.map((r) => (
+                      <li key={r.user_id}>
+                        {r.user_name} {r.is_read && '(leido)'}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Metadata adicional */}
+              {selectedMessage.classroom_name && (
+                <div className="mt-4 border-t pt-4">
+                  <p className="text-sm text-gray-600">
+                    Clase: <strong>{selectedMessage.classroom_name}</strong>
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </Modal>
       </div>
-    </TeacherLayout>
+    </TeacherPageShell>
   );
 }

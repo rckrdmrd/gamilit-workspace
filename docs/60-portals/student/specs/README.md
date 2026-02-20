@@ -622,7 +622,7 @@ docs/student-portal/
 **Hooks Criticos a Testear:**
 - `useDashboardData` - Hook principal del dashboard
 - `useExerciseAutoSave` - Auto-guardado de progreso
-- `gamification.api.ts` - 12 metodos principales
+- `gamificationAPI.ts` - 12 metodos principales
 
 ---
 

@@ -25,7 +25,7 @@ export const SaveButton: React.FC<SaveButtonProps> = ({
     whileTap={status === 'idle' ? { scale: 0.98 } : {}}
     className={cn(
       'flex items-center gap-2 rounded-lg px-6 py-3 font-medium shadow-md transition-all',
-      status === 'saving' && 'cursor-not-allowed bg-gray-400',
+      status === 'saving' && 'cursor-not-allowed bg-gray-400 text-white',
       status === 'saved' && 'bg-green-500 text-white',
       status === 'error' && 'bg-red-500 text-white',
       status === 'idle' &&

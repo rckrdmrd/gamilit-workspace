@@ -8,6 +8,8 @@
 
 import { useState } from 'react';
 import { Eye, Calendar, Users, CheckCircle, Clock } from 'lucide-react';
+import { StatusBadge } from '@shared/components/base/StatusBadge';
+import type { StatusType } from '@shared/components/base/StatusBadge';
 import type { AdminAssignment } from '../../hooks/useAdminAssignments';
 
 interface AssignmentsTableProps {
@@ -48,22 +50,23 @@ export function AssignmentsTable({ assignments, loading, onRowClick }: Assignmen
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig: Record<string, { label: string; className: string }> = {
-      active: { label: 'Activa', className: 'bg-green-100 text-green-700' },
-      closed: { label: 'Cerrada', className: 'bg-gray-100 text-gray-700' },
-      draft: { label: 'Borrador', className: 'bg-yellow-100 text-yellow-700' },
-    };
+  const STATUS_LABELS: Record<string, string> = {
+    active: 'Activa',
+    closed: 'Cerrada',
+    draft: 'Borrador',
+  };
 
-    const config = statusConfig[status] || {
-      label: status,
-      className: 'bg-gray-100 text-gray-700',
-    };
-
+  const renderStatusBadge = (status: string) => {
+    const validStatuses: StatusType[] = ['active', 'closed', 'draft'];
+    const statusType = validStatuses.includes(status as StatusType)
+      ? (status as StatusType)
+      : 'pending';
     return (
-      <span className={`rounded-full px-2 py-1 text-xs font-medium ${config.className}`}>
-        {config.label}
-      </span>
+      <StatusBadge
+        status={statusType}
+        label={STATUS_LABELS[status] || status}
+        size="sm"
+      />
     );
   };
 
@@ -170,7 +173,7 @@ export function AssignmentsTable({ assignments, loading, onRowClick }: Assignmen
                 <td className="px-4 py-3 text-sm text-detective-text-secondary">
                   {assignment.teacher_name}
                 </td>
-                <td className="px-4 py-3">{getStatusBadge(assignment.status)}</td>
+                <td className="px-4 py-3">{renderStatusBadge(assignment.status)}</td>
                 <td className="px-4 py-3 text-sm text-detective-text-secondary">
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4" />

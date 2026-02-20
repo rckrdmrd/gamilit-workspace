@@ -9,6 +9,8 @@ import { motion } from 'framer-motion';
 import { Search, Building, Eye, Edit, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { StatusBadge } from '@shared/components/base/StatusBadge';
+import type { StatusType } from '@shared/components/base/StatusBadge';
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import type { Organization } from '../../types';
@@ -59,13 +61,12 @@ export const OrganizationsTable: React.FC = () => {
     return emojis[plan as keyof typeof emojis] || '🔍';
   };
 
-  const getStatusBadge = (status: string) => {
-    const colors = {
-      active: 'bg-green-500/20 text-green-500',
-      inactive: 'bg-gray-500/20 text-gray-500',
-      suspended: 'bg-red-500/20 text-red-500',
-    };
-    return colors[status as keyof typeof colors] || colors.inactive;
+  const renderStatusBadge = (status: string) => {
+    const validStatuses: StatusType[] = ['active', 'inactive', 'suspended'];
+    const statusType = validStatuses.includes(status as StatusType)
+      ? (status as StatusType)
+      : 'inactive';
+    return <StatusBadge status={statusType} size="sm" showIcon={false} />;
   };
 
   return (
@@ -134,11 +135,7 @@ export const OrganizationsTable: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`rounded-md px-2 py-1 text-xs capitalize ${getStatusBadge(org.status)}`}
-                    >
-                      {org.status === 'active' ? '✅' : '❌'} {org.status}
-                    </span>
+                    {renderStatusBadge(org.status)}
                   </td>
                   <td className="text-detective-small px-4 py-3">{org.userCount}</td>
                   <td className="text-detective-small px-4 py-3 text-gray-400">

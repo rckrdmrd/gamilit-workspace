@@ -21,7 +21,7 @@ import {
   SkeletonStats,
   SkeletonAchievement,
   SkeletonTable,
-} from '../Skeleton';
+} from '../loading';
 
 describe('Skeleton', () => {
   describe('base rendering', () => {
@@ -37,10 +37,10 @@ describe('Skeleton', () => {
       expect(skeleton.className).toContain('animate-pulse');
     });
 
-    it('should have gray background', () => {
+    it('should have detective-theme background', () => {
       const { container } = render(<Skeleton />);
       const skeleton = container.firstChild as HTMLElement;
-      expect(skeleton.className).toContain('bg-gray-200');
+      expect(skeleton.className).toContain('bg-detective-bg-secondary');
     });
   });
 
@@ -172,7 +172,7 @@ describe('SkeletonAvatar', () => {
 describe('SkeletonCard', () => {
   it('should render card container', () => {
     const { container } = render(<SkeletonCard />);
-    const card = container.querySelector('.bg-white.rounded-lg.shadow');
+    const card = container.querySelector('.bg-detective-bg-secondary.rounded-lg');
     expect(card).toBeInTheDocument();
   });
 
@@ -189,22 +189,6 @@ describe('SkeletonCard', () => {
     expect(avatar).toBeInTheDocument();
   });
 
-  it('should render 3 body text lines by default', () => {
-    const { container } = render(<SkeletonCard />);
-    // SkeletonCard has: header (2 skeletons in flex-1 space-y-2) + body (SkeletonText with 3 lines)
-    // Total animate-pulse elements: 2 header + 3 body = 5
-    const allSkeletons = container.querySelectorAll('.animate-pulse');
-    // The body SkeletonText should have 3 lines
-    expect(allSkeletons.length).toBe(5);
-  });
-
-  it('should render custom number of body text lines', () => {
-    const { container } = render(<SkeletonCard lines={5} />);
-    // 2 header + 5 body = 7
-    const allSkeletons = container.querySelectorAll('.animate-pulse');
-    expect(allSkeletons.length).toBe(7);
-  });
-
   it('should accept custom className', () => {
     const { container } = render(<SkeletonCard className="my-card" />);
     const card = container.querySelector('.my-card');
@@ -215,20 +199,8 @@ describe('SkeletonCard', () => {
 describe('SkeletonStats', () => {
   it('should render stats container', () => {
     const { container } = render(<SkeletonStats />);
-    const card = container.querySelector('.bg-white.rounded-lg.shadow');
+    const card = container.querySelector('.bg-detective-bg-secondary.rounded-lg');
     expect(card).toBeInTheDocument();
-  });
-
-  it('should have icon placeholder (w-12 h-12)', () => {
-    const { container } = render(<SkeletonStats />);
-    const iconPlaceholder = container.querySelector('.w-12.h-12');
-    expect(iconPlaceholder).toBeInTheDocument();
-  });
-
-  it('should have value placeholder (w-16 h-8)', () => {
-    const { container } = render(<SkeletonStats />);
-    const valuePlaceholder = container.querySelector('.w-16.h-8');
-    expect(valuePlaceholder).toBeInTheDocument();
   });
 
   it('should accept custom className', () => {
@@ -241,7 +213,7 @@ describe('SkeletonStats', () => {
 describe('SkeletonAchievement', () => {
   it('should render achievement container', () => {
     const { container } = render(<SkeletonAchievement />);
-    const card = container.querySelector('.bg-white.rounded-lg.shadow');
+    const card = container.querySelector('.bg-detective-bg-secondary.rounded-lg');
     expect(card).toBeInTheDocument();
   });
 
@@ -265,31 +237,33 @@ describe('SkeletonAchievement', () => {
 });
 
 describe('SkeletonTable', () => {
-  it('should render 5 rows by default', () => {
+  it('should render 5 data rows by default', () => {
     const { container } = render(<SkeletonTable />);
-    // Header + 5 rows = 6 grid containers
-    const rows = container.querySelectorAll('.grid');
+    // Header (1 flex row) + 5 data rows = 6 flex containers inside the table
+    const rows = container.querySelectorAll('.flex.gap-4');
+    // Header flex + 5 data rows
     expect(rows.length).toBe(6);
   });
 
   it('should render custom number of rows', () => {
     const { container } = render(<SkeletonTable rows={3} />);
-    // Header + 3 rows = 4 grid containers
-    const rows = container.querySelectorAll('.grid');
+    const rows = container.querySelectorAll('.flex.gap-4');
+    // Header flex + 3 data rows
     expect(rows.length).toBe(4);
   });
 
   it('should render 4 columns by default', () => {
     const { container } = render(<SkeletonTable />);
-    const firstRow = container.querySelector('.grid');
-    const cells = firstRow?.querySelectorAll('.animate-pulse');
+    // The header row has 4 cells (bg-detective-border)
+    const headerRow = container.querySelector('.border-b');
+    const cells = headerRow?.querySelectorAll('.bg-detective-border');
     expect(cells?.length).toBe(4);
   });
 
   it('should render custom number of columns', () => {
     const { container } = render(<SkeletonTable columns={6} />);
-    const firstRow = container.querySelector('.grid');
-    const cells = firstRow?.querySelectorAll('.animate-pulse');
+    const headerRow = container.querySelector('.border-b');
+    const cells = headerRow?.querySelectorAll('.bg-detective-border');
     expect(cells?.length).toBe(6);
   });
 

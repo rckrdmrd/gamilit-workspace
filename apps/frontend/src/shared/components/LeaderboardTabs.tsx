@@ -1,6 +1,6 @@
 import React from 'react';
 import { Globe, School, Users } from 'lucide-react';
-import { cn } from '@shared/utils';
+import { cn } from '@shared/utils/cn';
 import type { LeaderboardType } from '@/shared/types/leaderboard.types';
 
 /**

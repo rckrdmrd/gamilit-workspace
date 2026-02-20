@@ -1,7 +1,11 @@
 # ERR-FE-005: API Service Duplicado entre lib/ y services/
 
+## Estado: RESUELTO (2026-02-19)
+
+La migracion de `lib/api/` a `services/api/` fue completada. Los 4 archivos restantes en `lib/api/` (`gamification.api.ts`, `progress.api.ts`, `branding.api.ts`, `lti.api.ts`) fueron migrados a sus ubicaciones canonicas en `services/api/`. Ver STANDARD-API.md para la estructura actual.
+
 ## Descripcion
-El frontend tiene servicios API duplicados en dos ubicaciones: `src/lib/api/` (version inicial) y `src/services/api/` (version estandar). Ambos archivos hacen las mismas llamadas HTTP pero con patrones de error handling, tipado, y transformacion diferentes, causando inconsistencias en la aplicacion. Se han identificado 6 pares duplicados.
+El frontend tenia servicios API duplicados en dos ubicaciones: `src/lib/api/` (version inicial) y `src/services/api/` (version estandar). Ambos archivos hacian las mismas llamadas HTTP pero con patrones de error handling, tipado, y transformacion diferentes, causando inconsistencias en la aplicacion. Se identificaron 6 pares duplicados.
 
 ## Sintomas
 - Un componente usa `lib/api/achievements.api.ts` y otro usa `services/api/achievements.service.ts` para la misma operacion
@@ -147,7 +151,7 @@ done
 
 ---
 
-**Severidad:** Alta
-**Frecuencia:** 6 pares identificados
+**Severidad:** Alta (historica)
+**Frecuencia:** 6 pares identificados (todos resueltos)
 **Tiempo de resolucion:** 20-30 min por par
-**Ultimo update:** 2026-02-13
+**Ultimo update:** 2026-02-19 (RESUELTO)

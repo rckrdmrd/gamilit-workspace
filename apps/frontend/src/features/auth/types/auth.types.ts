@@ -101,6 +101,24 @@ export interface User {
    */
   tenant_id?: string;
 
+  /**
+   * User biography (snake_case from backend Profile)
+   * Direct mapping from UserResponseDto.bio
+   */
+  bio?: string;
+
+  /**
+   * Student grade level (snake_case from backend Profile)
+   * Direct mapping from UserResponseDto.grade_level
+   */
+  grade_level?: string;
+
+  /**
+   * Equipped cosmetic items map { category: itemData }
+   * Returned by getFullProfile with inventory data
+   */
+  equipped_items?: Record<string, unknown>;
+
   // =====================================================
   // ADMINISTRATION FIELDS (UPDATED 2025-11-26)
   // =====================================================

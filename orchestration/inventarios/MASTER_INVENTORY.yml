@@ -2,8 +2,8 @@
 # MASTER INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "11.0.0"
-fecha: "2026-02-18"
+version: "12.0.0"
+fecha: "2026-02-19"
 proyecto: "gamilit"
 estado: "PRODUCCION_ACTIVA"
 completitud: "98%"
@@ -33,7 +33,7 @@ metricas:
     funciones: 183               # 183 DDL source / 249 runtime (incl. trigger functions)
     triggers: 67                 # 67 CREATE TRIGGER statements (not 126 trigger functions)
     rls_policies: 231            # 231 DDL source (+4 user_purchases FIX-P0-1). Runtime: 471
-    foreign_keys: 299              # +1 missions_template_id_fkey (REC-009)
+    foreign_keys: 299            # +1 missions_template_id_fkey (REC-009)
     enums: 42                    # 42 CREATE TYPE AS ENUM (incl. alert_severity, alert_status in audit_logging)
     seeds: 77                    # 77 seed files, 0 errors (+1 achievements-collection REC-011)
     scripts:                     # Key database scripts
@@ -44,29 +44,29 @@ metricas:
 
   backend:
     modulos: 23                  # 22 directorios + mail (transitivo)
-    entities: 155              # 155 archivos, 156 @Entity classes (+UserEquippedItem, +PendingUserInitialization)
-    dtos: 399                  # 399 en modules/ (+ ~5 en shared/)
-    services: 173               # +1 PendingInitializationsCronService (REC-007)
+    entities: 155                # 155 archivos, 156 @Entity classes (+UserEquippedItem, +PendingUserInitialization)
+    dtos: 399                    # 399 en modules/ (+ ~5 en shared/)
+    services: 173                # +1 PendingInitializationsCronService (REC-007)
     controllers: 108
-    endpoints: 904             # Verificado 2026-02-17 (+3 inventory endpoints)
+    endpoints: 905               # Verified 2026-02-19: +1 from auth controller updates
     guards: 15
-    decorators: 18             # 18 symbols en 9 archivos
+    decorators: 18               # 18 symbols en 9 archivos
     interceptors: 6
     pipes: 6
     filters: 2
-    tests_backend: 620         # est. 620 backend-specific test cases
+    tests_backend: 620           # est. 620 backend-specific test cases
 
   frontend:
-    componentes_tsx: 571            # Verified 2026-02-18: +30 Student Portal Refactor Phase 2-4 (14+15+1 ModuleCard)
-    hooks: 119                      # Verified 2026-02-18: +7 Student Portal Refactor (5 Phase 2 + 2 Phase 4: useProfileData, useAvatarUpdate)
-    paginas: 70                     # 70 activas + 1 legacy
-    stores_zustand: 13              # 13 archivos Zustand con create() (-1 missionsStore REC-003)
-    api_service_files: 53           # 53 (+1 inventory.api.ts, -1 missionsAPI.ts REC-003)
-    api_calls_total: 565            # ~565 post-REC-003 (~-5 calls in deleted missionsAPI.ts)
+    componentes_tsx: 590              # Verified 2026-02-19: find *.tsx excluding tests/stories/examples
+    hooks: 127                        # Verified 2026-02-19: admin(31)+teacher(27)+student(13)+shared(15)+features(39)+root(2)
+    paginas: 70                       # 70 activas + 1 legacy
+    stores_zustand: 13                # 13 archivos Zustand con create() (-1 missionsStore REC-003)
+    api_service_files: 67             # Verified 2026-02-19: 66 *API/*Api files + 1 NotificationService
+    api_calls_total: 575              # Verified 2026-02-19: apiClient calls in production code
     portales: 4
-    mecanicas_ejercicio: 30         # 30 mecanicas unicas de ejercicio
-    routes: 73                      # 73 <Route path=> definitions en App.tsx (verified 2026-02-17)
-    type_files: 49                  # 49 archivos (+1 profile/types.ts Student Portal Refactor)
+    mecanicas_ejercicio: 30           # 30 mecanicas unicas de ejercicio
+    routes: 73                        # 73 <Route path=> definitions en App.tsx
+    type_files: 49                    # 49 archivos type definition
     tests_frontend: 213
 
   calidad:
@@ -74,7 +74,7 @@ metricas:
     coherencia_ddl_backend: "90.5%"  # 153 entity classes / 169 tables (100% bidirectional, 16 DDL-only in data_warehouse)
     entity_registration: "100%"     # All 153 entities registered in forFeature() (FIX P2, 37 were missing)
     cobertura_target: "80%"
-    mock_only_services: 2           # mechanicsAPI, aiServiceAPI — no backend
+    mock_only_services: 8           # mechanicsAPI, aiServiceAPI + 6 module-specific mechanics APIs (all MOCK-ONLY)
     dead_code_services: 1           # NotificationService.ts — 0 importers (deprecated P6)
 
 # -------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ portales:
   - nombre: "Maestro"
     completitud: "~95%"
   - nombre: "Administrador"
-    completitud: "~90%"
+    completitud: "~92%"
   - nombre: "Padres"
     completitud: "100% backend, 57% pages (4 of 7 flujos)"
 
@@ -131,8 +131,8 @@ gamificacion:
 
 inventarios_detallados:
   database: "DATABASE_INVENTORY.yml (v8.7.0)"
-  backend: "BACKEND_INVENTORY.yml (v4.4.0)"
-  frontend: "FRONTEND_INVENTORY.yml (v10.0.0)"
+  backend: "BACKEND_INVENTORY.yml (v4.5.0)"
+  frontend: "FRONTEND_INVENTORY.yml (v11.0.0)"
 
 # -------------------------------------------------------------------------------
 # ESTADO DE FEATURES
@@ -142,11 +142,12 @@ features:
   completados:
     - "23 modulos backend operativos"
     - "5 modulos educativos (23 tipos ejercicios)"
-    - "4 portales diferenciados"
+    - "4 portales diferenciados (estandarizados con PageShell pattern)"
     - "Sistema gamificacion maya completo"
     - "RLS multi-tenancy (231 DDL source, 471 runtime policies)"
     - "Real-time via Socket.IO"
     - "833 tests pasando"
+    - "Admin API modularized (16 sub-APIs from monolith)"
 
   parciales:
     - "social (60%): DDL+entities completos, all registered in forFeature() (FIX P2), ~40 endpoints unwired in frontend"
@@ -177,5 +178,5 @@ credenciales:
   redis_db: 0
 
 # ===============================================================================
-# FIN MASTER INVENTORY
+# FIN MASTER INVENTORY v12.0.0
 # ===============================================================================

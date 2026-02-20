@@ -17,7 +17,7 @@ Este documento muestra ejemplos prácticos de cómo migrar código existente que
 ### Antes (Tipos Manuales)
 
 ```typescript
-// apps/frontend/src/services/api/gamification.api.ts
+// apps/frontend/src/services/api/gamification/gamificationAPI.ts
 
 import apiClient from '@/services/api/apiClient';
 
@@ -83,7 +83,7 @@ export const gamificationApi = {
 ### Después (Tipos Generados)
 
 ```typescript
-// apps/frontend/src/services/api/gamification.api.ts
+// apps/frontend/src/services/api/gamification/gamificationAPI.ts
 
 import apiClient from '@/services/api/apiClient';
 import type { paths, components } from '@/generated/api-types';
@@ -227,7 +227,7 @@ export const getUserStats = async (userId: string): Promise<UserStats> => {
 // apps/frontend/src/hooks/useUserStats.ts
 
 import { useState, useEffect } from 'react';
-import { gamificationApi } from '@/services/api/gamification.api';
+import { gamificationApi } from '@/services/api/gamification/gamificationAPI';
 import type { components } from '@/generated/api-types';
 
 type UserStats = components['schemas']['UserStatsDto'];

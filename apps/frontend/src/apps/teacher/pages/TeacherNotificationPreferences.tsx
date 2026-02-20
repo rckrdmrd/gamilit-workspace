@@ -25,13 +25,11 @@ import {
 } from 'lucide-react';
 
 // Layout
-import TeacherLayout from '../layouts/TeacherLayout';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 // Store & Hooks
 import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
 import { usePushNotifications } from '@/features/notifications/hooks/usePushNotifications';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -48,9 +46,6 @@ const notificationTypes = [
 ];
 
 export default function TeacherNotificationPreferencesPage() {
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
-
   // Store
   const {
     preferences,
@@ -138,11 +133,7 @@ export default function TeacherNotificationPreferencesPage() {
   };
 
   return (
-    <TeacherLayout
-      user={user || undefined}
-      gamificationData={gamificationData}
-      onLogout={logout}
-    >
+    <TeacherPageShell>
       <div className="space-y-6 max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -387,6 +378,6 @@ export default function TeacherNotificationPreferencesPage() {
           </div>
         </motion.div>
       </div>
-    </TeacherLayout>
+    </TeacherPageShell>
   );
 }

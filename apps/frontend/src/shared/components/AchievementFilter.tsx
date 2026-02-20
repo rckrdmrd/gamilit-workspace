@@ -1,6 +1,6 @@
 import React from 'react';
 import { Search, X, SlidersHorizontal } from 'lucide-react';
-import { cn } from '@shared/utils';
+import { cn } from '@shared/utils/cn';
 import type {
   AchievementFilter as AchievementFilterType,
   AchievementCategory,

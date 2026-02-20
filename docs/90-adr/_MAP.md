@@ -67,7 +67,7 @@ Los ADRs NO se renumeran para mantener estabilidad de referencias.
 | ADR-020 | Multiples Alternativas en Completar Espacios | Accepted | Database |
 | ADR-021 | Estandarizacion de Recompensas XP | Accepted | Gamification |
 | ADR-029 | Consolidacion de TeacherResourcesPage | Accepted | Frontend |
-| ADR-030 | Convencion de Nombres de Paginas | Accepted | Frontend |
+| ADR-030 | Convencion de Nombres de Paginas — Sufijo "Page" | Amended | Frontend |
 
 #### Portales (017, 028, 031-032)
 

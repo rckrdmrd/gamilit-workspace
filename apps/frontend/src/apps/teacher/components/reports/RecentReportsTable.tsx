@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { Modal } from '@shared/components/common/Modal';
 import {
   FileText,
   Download,
@@ -111,46 +112,50 @@ export function RecentReportsTable({
   return (
     <>
       {/* TASK-2026-01-18-015 Sprint 4.2: Delete confirmation modal */}
-      {deleteConfirm.show && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="rounded-full bg-red-100 p-3">
-                <Trash2 className="h-6 w-6 text-red-600" />
-              </div>
-              <h3 className="text-lg font-bold text-detective-text">¿Eliminar reporte?</h3>
-            </div>
-            <p className="mb-2 text-detective-text-secondary">
-              Esta acción no se puede deshacer. Se eliminará permanentemente:
-            </p>
-            <p className="mb-6 truncate rounded bg-detective-bg-secondary p-2 font-medium text-detective-text">
-              {deleteConfirm.reportName}
-            </p>
-            <div className="flex justify-end gap-3">
-              <DetectiveButton variant="secondary" onClick={onCancelDelete} disabled={isDeleting}>
-                Cancelar
-              </DetectiveButton>
-              <button
-                onClick={onConfirmDelete}
-                disabled={isDeleting}
-                className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 font-semibold text-white transition-colors hover:bg-red-600 disabled:opacity-50"
-              >
-                {isDeleting ? (
-                  <>
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                    Eliminando...
-                  </>
-                ) : (
-                  <>
-                    <Trash2 className="h-4 w-4" />
-                    Eliminar
-                  </>
-                )}
-              </button>
+      <Modal
+        isOpen={deleteConfirm.show}
+        onClose={onCancelDelete}
+        title="Eliminar reporte?"
+        size="sm"
+        closeOnOverlayClick={!isDeleting}
+        closeOnEscape={!isDeleting}
+      >
+        <div>
+          <div className="mb-4 flex items-center gap-3">
+            <div className="rounded-full bg-red-100 p-3">
+              <Trash2 className="h-6 w-6 text-red-600" />
             </div>
           </div>
+          <p className="mb-2 text-detective-text-secondary">
+            Esta accion no se puede deshacer. Se eliminara permanentemente:
+          </p>
+          <p className="mb-6 truncate rounded bg-detective-bg-secondary p-2 font-medium text-detective-text">
+            {deleteConfirm.reportName}
+          </p>
+          <div className="flex justify-end gap-3">
+            <DetectiveButton variant="secondary" onClick={onCancelDelete} disabled={isDeleting}>
+              Cancelar
+            </DetectiveButton>
+            <button
+              onClick={onConfirmDelete}
+              disabled={isDeleting}
+              className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 font-semibold text-white transition-colors hover:bg-red-600 disabled:opacity-50"
+            >
+              {isDeleting ? (
+                <>
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                  Eliminando...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4" />
+                  Eliminar
+                </>
+              )}
+            </button>
+          </div>
         </div>
-      )}
+      </Modal>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">

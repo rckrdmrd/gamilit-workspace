@@ -10,7 +10,6 @@
 
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/app/providers/AuthContext';
 import {
   ShoppingBag,
   Search,
@@ -24,22 +23,19 @@ import {
   Loader,
 } from 'lucide-react';
 
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { UnderConstruction } from '@/shared/components/UnderConstruction';
 import { ShopItemCard } from '@/apps/student/components/shop/ShopItemCard';
 import { PurchaseModal } from '@/apps/student/components/shop/PurchaseModal';
 
 import { useCoins } from '@/features/gamification/economy/hooks/useCoins';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { useShopData } from '@/features/gamification/economy/hooks/useShopData';
 import { useShopPurchase } from '@/features/gamification/economy/hooks/useShopPurchase';
 import { cn } from '@shared/utils/cn';
 import type { ShopItem, ShopCategory } from '@/features/gamification/economy/types/economyTypes';
 
 export default function ShopPage() {
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
   const { balance } = useCoins();
 
   // State
@@ -85,7 +81,7 @@ export default function ShopPage() {
 
   // Filter and sort
   const filteredItems = useMemo(() => {
-    let items = shopItems.filter((item) => {
+    const items = shopItems.filter((item) => {
       const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
       const matchesSearch =
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -118,14 +114,9 @@ export default function ShopPage() {
   const isDisabledCategory = categories.find((c) => c.value === selectedCategory)?.disabled;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader
-        user={user ?? undefined}
-        gamificationData={gamificationData}
-        onLogout={logout}
-      />
-
-      <main className="detective-container py-8">
+    <StudentPageShell>
+      <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
+        <main className="detective-container py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -268,7 +259,8 @@ export default function ShopPage() {
           isPurchasing={isPurchasing}
           userBalance={balance.current}
         />
-      </main>
-    </div>
+        </main>
+      </div>
+    </StudentPageShell>
   );
 }

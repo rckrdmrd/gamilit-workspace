@@ -7,7 +7,7 @@
  */
 
 import React, { useState } from 'react';
-import { X, Check } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { SystemAlert } from '@/services/api/adminTypes';
 
@@ -27,8 +27,6 @@ export const AcknowledgeAlertModal: React.FC<AcknowledgeAlertModalProps> = ({
   const [note, setNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  if (!isOpen || !alert) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,26 +53,17 @@ export const AcknowledgeAlertModal: React.FC<AcknowledgeAlertModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-lg border border-gray-700 bg-detective-bg-secondary">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-700 p-6">
-          <div className="flex items-center gap-3">
-            <Check className="h-6 w-6 text-orange-500" />
-            <h2 className="text-xl font-bold text-detective-text">Reconocer Alerta</h2>
-          </div>
-          <button
-            onClick={handleClose}
-            disabled={isSubmitting}
-            className="rounded-lg p-2 transition-colors hover:bg-detective-bg disabled:opacity-50"
-          >
-            <X className="h-6 w-6 text-detective-text-secondary" />
-          </button>
-        </div>
-
-        {/* Content */}
+    <Modal
+      isOpen={isOpen && !!alert}
+      onClose={handleClose}
+      title="Reconocer Alerta"
+      size="lg"
+      closeOnOverlayClick={!isSubmitting}
+      closeOnEscape={!isSubmitting}
+    >
+      {alert && (
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4 p-6">
+          <div className="space-y-4">
             {/* Alert Title */}
             <div className="rounded-lg border border-gray-700 bg-detective-bg p-4">
               <p className="mb-1 text-sm text-detective-text-secondary">Alerta:</p>
@@ -108,23 +97,23 @@ export const AcknowledgeAlertModal: React.FC<AcknowledgeAlertModalProps> = ({
 
             {/* Info */}
             <div className="rounded-lg border border-blue-500/50 bg-blue-500/20 p-3 text-sm text-blue-400">
-              Al reconocer esta alerta, cambiarás su estado a "Reconocido", indicando que estás al
+              Al reconocer esta alerta, cambiaras su estado a "Reconocido", indicando que estas al
               tanto y trabajando en ella.
             </div>
-          </div>
 
-          {/* Footer */}
-          <div className="flex justify-end gap-2 border-t border-gray-700 p-6">
-            <DetectiveButton variant="secondary" onClick={handleClose} disabled={isSubmitting}>
-              Cancelar
-            </DetectiveButton>
-            <DetectiveButton variant="primary" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Reconociendo...' : 'Reconocer Alerta'}
-            </DetectiveButton>
+            {/* Footer */}
+            <div className="flex justify-end gap-2 border-t border-gray-200 pt-4">
+              <DetectiveButton variant="secondary" onClick={handleClose} disabled={isSubmitting}>
+                Cancelar
+              </DetectiveButton>
+              <DetectiveButton variant="primary" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Reconociendo...' : 'Reconocer Alerta'}
+              </DetectiveButton>
+            </div>
           </div>
         </form>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 };
 

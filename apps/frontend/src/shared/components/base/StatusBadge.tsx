@@ -1,8 +1,46 @@
 import React from 'react';
-import { cn } from '@shared/utils';
-import { CheckCircle2, XCircle, AlertCircle, Clock } from 'lucide-react';
+import { cn } from '@shared/utils/cn';
+import {
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  Clock,
+  Ban,
+  RotateCcw,
+  Circle,
+  Eye,
+  Star,
+  Archive,
+  FileEdit,
+  TimerOff,
+  UserPlus,
+  UserX,
+  PlayCircle,
+} from 'lucide-react';
 
-export type StatusType = 'active' | 'inactive' | 'suspended' | 'pending' | 'completed' | 'in_progress';
+export type StatusType =
+  // Core statuses
+  | 'active'
+  | 'inactive'
+  | 'suspended'
+  | 'pending'
+  | 'completed'
+  | 'in_progress'
+  // User / account statuses
+  | 'banned'
+  // Review / submission statuses
+  | 'returned'
+  | 'reviewed'
+  // Progress statuses
+  | 'not_started'
+  | 'mastered'
+  // Assignment / content statuses
+  | 'closed'
+  | 'draft'
+  | 'expired'
+  // Guild / group statuses
+  | 'recruiting'
+  | 'full';
 
 export interface StatusBadgeProps {
   status: StatusType;
@@ -22,6 +60,7 @@ const statusConfig: Record<
     defaultLabel: string;
   }
 > = {
+  // Core statuses
   active: {
     bg: 'bg-green-100',
     text: 'text-green-800',
@@ -61,8 +100,83 @@ const statusConfig: Record<
     bg: 'bg-purple-100',
     text: 'text-purple-800',
     border: 'border-purple-200',
-    icon: Clock,
+    icon: PlayCircle,
     defaultLabel: 'En Progreso',
+  },
+  // User / account statuses
+  banned: {
+    bg: 'bg-red-200',
+    text: 'text-red-900',
+    border: 'border-red-300',
+    icon: Ban,
+    defaultLabel: 'Baneado',
+  },
+  // Review / submission statuses
+  returned: {
+    bg: 'bg-red-100',
+    text: 'text-red-800',
+    border: 'border-red-200',
+    icon: RotateCcw,
+    defaultLabel: 'Devuelta',
+  },
+  reviewed: {
+    bg: 'bg-purple-100',
+    text: 'text-purple-800',
+    border: 'border-purple-200',
+    icon: Eye,
+    defaultLabel: 'Revisado',
+  },
+  // Progress statuses
+  not_started: {
+    bg: 'bg-gray-100',
+    text: 'text-gray-600',
+    border: 'border-gray-200',
+    icon: Circle,
+    defaultLabel: 'No iniciado',
+  },
+  mastered: {
+    bg: 'bg-orange-100',
+    text: 'text-orange-800',
+    border: 'border-orange-200',
+    icon: Star,
+    defaultLabel: 'Dominado',
+  },
+  // Assignment / content statuses
+  closed: {
+    bg: 'bg-gray-100',
+    text: 'text-gray-700',
+    border: 'border-gray-200',
+    icon: Archive,
+    defaultLabel: 'Cerrada',
+  },
+  draft: {
+    bg: 'bg-yellow-100',
+    text: 'text-yellow-700',
+    border: 'border-yellow-200',
+    icon: FileEdit,
+    defaultLabel: 'Borrador',
+  },
+  expired: {
+    bg: 'bg-red-100',
+    text: 'text-red-700',
+    border: 'border-red-200',
+    icon: TimerOff,
+    defaultLabel: 'Expirada',
+  },
+  // Guild / group statuses
+  recruiting: {
+    bg: 'bg-blue-100',
+    text: 'text-blue-800',
+    border: 'border-blue-200',
+    icon: UserPlus,
+    defaultLabel: 'Reclutando',
+  },
+  full: {
+    bg: 'bg-yellow-100',
+    text: 'text-yellow-800',
+    border: 'border-yellow-200',
+    icon: UserX,
+    defaultLabel: 'Lleno',
   },
 };
 

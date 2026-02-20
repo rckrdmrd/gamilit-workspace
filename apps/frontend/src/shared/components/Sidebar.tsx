@@ -11,7 +11,7 @@ import {
   BookOpen,
   Settings,
 } from 'lucide-react';
-import { cn } from '@/shared/utils/cn';
+import { cn } from '@shared/utils/cn';
 import { BrandingContext } from '@/app/providers/BrandingProvider';
 import { DEFAULT_BRANDING } from '@/shared/types/branding.types';
 

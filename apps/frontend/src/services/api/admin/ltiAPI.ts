@@ -4,7 +4,7 @@
  * Provides HTTP client methods for LTI consumer management endpoints.
  * Handles CRUD operations, connection testing, and credential management.
  *
- * @module lib/api/lti.api
+ * @module services/api/admin/ltiAPI
  * @see ET-LTI-001-integration.md
  */
 
@@ -20,7 +20,7 @@ import type {
 } from '@/shared/types/lti.types';
 
 // ============================================================================
-// TYPES (merged from services/api/ltiAPI.ts)
+// TYPES
 // ============================================================================
 
 export interface LTIGradePassback {
@@ -191,7 +191,7 @@ export async function getLaunchUrls(): Promise<LtiLaunchUrl> {
 }
 
 // ============================================================================
-// GRADE PASSBACKS (merged from services/api/ltiAPI.ts)
+// GRADE PASSBACKS
 // ============================================================================
 
 export async function sendGradePassback(data: {
@@ -224,7 +224,7 @@ export async function retryGradePassback(id: string): Promise<LTIGradePassback> 
 }
 
 // ============================================================================
-// LTI SESSIONS (merged from services/api/ltiAPI.ts)
+// LTI SESSIONS
 // ============================================================================
 
 export async function createSession(data: {

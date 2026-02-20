@@ -35,15 +35,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50">
-          <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-            <h2 className="mb-4 text-2xl font-bold text-red-600">Oops! Algo salió mal</h2>
-            <p className="mb-4 text-gray-700">
+        <div className="flex min-h-screen items-center justify-center bg-detective-bg">
+          <div className="w-full max-w-md rounded-xl bg-detective-bg-secondary p-8 shadow-lg">
+            <h2 className="mb-4 text-2xl font-bold text-red-600">Oops! Algo salio mal</h2>
+            <p className="mb-4 text-detective-text-secondary">
               {this.state.error?.message || 'Ha ocurrido un error inesperado.'}
             </p>
             <button
               onClick={this.handleReset}
-              className="w-full rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+              className="w-full rounded-lg bg-detective-orange px-4 py-2 text-white transition-colors hover:bg-detective-orange/90"
             >
               Intentar de nuevo
             </button>

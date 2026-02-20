@@ -9,6 +9,7 @@
  */
 
 import { useState } from 'react';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 import {
   Bell,
   Settings,
@@ -305,32 +306,37 @@ export default function TeacherAlertConfigPage() {
   // Loading state
   if (loading && configurations.length === 0) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-center">
-          <RefreshCw className="mx-auto h-8 w-8 animate-spin text-detective-orange" />
-          <p className="mt-4 text-detective-text-secondary">Cargando configuraciones...</p>
+      <TeacherPageShell>
+        <div className="flex min-h-[400px] items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="mx-auto h-8 w-8 animate-spin text-detective-orange" />
+            <p className="mt-4 text-detective-text-secondary">Cargando configuraciones...</p>
+          </div>
         </div>
-      </div>
+      </TeacherPageShell>
     );
   }
 
   // Error state
   if (error && configurations.length === 0) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <DetectiveCard className="max-w-md text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
-          <h3 className="mt-4 text-lg font-semibold text-detective-text">Error</h3>
-          <p className="mt-2 text-detective-text-secondary">{error.message}</p>
-          <DetectiveButton variant="primary" onClick={refresh} className="mt-4">
-            Reintentar
-          </DetectiveButton>
-        </DetectiveCard>
-      </div>
+      <TeacherPageShell>
+        <div className="flex min-h-[400px] items-center justify-center">
+          <DetectiveCard className="max-w-md text-center">
+            <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
+            <h3 className="mt-4 text-lg font-semibold text-detective-text">Error</h3>
+            <p className="mt-2 text-detective-text-secondary">{error.message}</p>
+            <DetectiveButton variant="primary" onClick={refresh} className="mt-4">
+              Reintentar
+            </DetectiveButton>
+          </DetectiveCard>
+        </div>
+      </TeacherPageShell>
     );
   }
 
   return (
+    <TeacherPageShell>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -417,5 +423,6 @@ export default function TeacherAlertConfigPage() {
         </DetectiveCard>
       )}
     </div>
+    </TeacherPageShell>
   );
 }

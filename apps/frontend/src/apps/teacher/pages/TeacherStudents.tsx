@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { getPerformanceLevelFromScore } from '@shared/utils/format.util';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DataTable, Column } from '@shared/components/common/DataTable';
+import { EmptyState } from '@shared/components/feedback';
+import { useApiError } from '@shared/hooks';
 import {
   Users,
   TrendingUp,
@@ -16,6 +18,7 @@ import { useClassrooms } from '../hooks/useClassrooms';
 import { classroomsApi } from '@services/api/teacher';
 import { StudentDetailModal } from '../components/monitoring/StudentDetailModal';
 import type { StudentMonitoring } from '../types';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 interface StudentExtended {
   student_id: string;
@@ -47,6 +50,7 @@ export default function TeacherStudents() {
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const handleApiError = useApiError();
 
   // Fetch classrooms using custom hook
   const { classrooms, loading: classroomsLoading } = useClassrooms();
@@ -85,7 +89,7 @@ export default function TeacherStudents() {
               score_average: student.score_average,
             }));
           } catch (err) {
-            console.error(`Error fetching students for classroom ${classroom.id}:`, err);
+            handleApiError(err as Parameters<typeof handleApiError>[0], `Error al cargar estudiantes del aula ${classroom.name}`);
             return [];
           }
         });
@@ -95,8 +99,8 @@ export default function TeacherStudents() {
 
         setStudents(allStudents);
         setLoading(false);
-      } catch (error) {
-        console.error('Error fetching students:', error);
+      } catch (err) {
+        handleApiError(err as Parameters<typeof handleApiError>[0], 'Error al cargar estudiantes');
         setError('Error al cargar estudiantes');
         setLoading(false);
       }
@@ -345,6 +349,7 @@ export default function TeacherStudents() {
   };
 
   return (
+    <TeacherPageShell>
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
       <main className="detective-container py-8">
         {/* Header */}
@@ -479,9 +484,11 @@ export default function TeacherStudents() {
 
         {/* Empty State */}
         {!loading && !classroomsLoading && !error && students.length === 0 && (
-          <div className="py-8 text-center text-detective-text-secondary">
-            No se encontraron estudiantes
-          </div>
+          <EmptyState
+            icon={Users}
+            title="No se encontraron estudiantes"
+            description="No hay estudiantes registrados en tus clases actualmente"
+          />
         )}
 
         {/* Students Table */}
@@ -508,5 +515,6 @@ export default function TeacherStudents() {
         />
       )}
     </div>
+    </TeacherPageShell>
   );
 }

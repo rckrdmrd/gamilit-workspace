@@ -4,7 +4,7 @@ import { ArrowLeft, AlertCircle, BookOpen, Clock, TrendingUp, Target } from 'luc
 import { useAuth } from '@/app/providers/AuthContext';
 import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
 import { ExerciseAttemptCard } from '@/shared/components/ExerciseAttemptCard';
-import { progressApi } from '@/lib/api/progress.api';
+import { progressApi } from '@/services/api/progress/progressAPI';
 import { getModule, getModuleExercises } from '@/services/api/educationalAPI';
 import type { Module, Exercise } from '@/shared/types/educational.types';
 import type { ModuleProgress, ExerciseAttempt } from '@/shared/types/progress.types';

@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, FileText, Loader, CheckCircle, AlertCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { CreateAssignmentData, DashboardClassroom } from '../../types';
+import { assignmentsApi } from '@/services/api/teacher';
 
 interface CreateAssignmentModalProps {
   isOpen: boolean;
@@ -30,14 +31,11 @@ const assignmentSchema = z.object({
 
 type AssignmentFormData = z.infer<typeof assignmentSchema>;
 
-// Mock exercises - in real app, fetch from API
-const MOCK_EXERCISES = [
-  { id: 'ex1', title: 'Introduction to Variables', difficulty: 'easy' },
-  { id: 'ex2', title: 'Loops and Iteration', difficulty: 'medium' },
-  { id: 'ex3', title: 'Functions and Parameters', difficulty: 'medium' },
-  { id: 'ex4', title: 'Object-Oriented Programming', difficulty: 'hard' },
-  { id: 'ex5', title: 'Data Structures', difficulty: 'hard' },
-];
+interface ExerciseOption {
+  id: string;
+  title: string;
+  difficulty: string;
+}
 
 export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
   isOpen,
@@ -49,6 +47,47 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedExercises, setSelectedExercises] = useState<string[]>([]);
+  const [exercises, setExercises] = useState<ExerciseOption[]>([]);
+  const [exercisesLoading, setExercisesLoading] = useState(false);
+  const [exercisesError, setExercisesError] = useState<string | null>(null);
+
+  // Fetch available exercises from API when modal opens
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let cancelled = false;
+    setExercisesLoading(true);
+    setExercisesError(null);
+
+    assignmentsApi
+      .getAvailableExercises()
+      .then((data) => {
+        if (!cancelled) {
+          setExercises(
+            data.map((ex) => ({
+              id: ex.id,
+              title: ex.title,
+              difficulty: ex.difficulty ?? 'medium',
+            })),
+          );
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error('[CreateAssignmentModal] Failed to load exercises:', err);
+          setExercisesError('No se pudieron cargar los ejercicios. Intenta de nuevo.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setExercisesLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen]);
 
   const {
     register,
@@ -268,29 +307,47 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
                       Select Exercises <span className="text-red-500">*</span>
                     </label>
                     <div className="max-h-60 space-y-2 overflow-y-auto rounded-lg border border-gray-200 p-3">
-                      {MOCK_EXERCISES.map((exercise) => (
-                        <label
-                          key={exercise.id}
-                          className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-3 transition-all ${
-                            selectedExercises.includes(exercise.id)
-                              ? 'border-green-500 bg-green-50'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedExercises.includes(exercise.id)}
-                            onChange={() => toggleExercise(exercise.id)}
-                            className="h-4 w-4 rounded text-green-600 focus:ring-2 focus:ring-green-500"
-                          />
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-800">{exercise.title}</p>
-                            <p className="text-xs capitalize text-gray-500">
-                              {exercise.difficulty}
-                            </p>
-                          </div>
-                        </label>
-                      ))}
+                      {exercisesLoading && (
+                        <div className="flex items-center justify-center py-6">
+                          <Loader className="h-5 w-5 animate-spin text-gray-400" />
+                          <span className="ml-2 text-sm text-gray-500">Loading exercises...</span>
+                        </div>
+                      )}
+                      {exercisesError && (
+                        <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3">
+                          <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
+                          <p className="text-sm text-red-700">{exercisesError}</p>
+                        </div>
+                      )}
+                      {!exercisesLoading && !exercisesError && exercises.length === 0 && (
+                        <p className="py-6 text-center text-sm text-gray-500">
+                          No exercises available.
+                        </p>
+                      )}
+                      {!exercisesLoading &&
+                        exercises.map((exercise) => (
+                          <label
+                            key={exercise.id}
+                            className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-3 transition-all ${
+                              selectedExercises.includes(exercise.id)
+                                ? 'border-green-500 bg-green-50'
+                                : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedExercises.includes(exercise.id)}
+                              onChange={() => toggleExercise(exercise.id)}
+                              className="h-4 w-4 rounded text-green-600 focus:ring-2 focus:ring-green-500"
+                            />
+                            <div className="flex-1">
+                              <p className="font-medium text-gray-800">{exercise.title}</p>
+                              <p className="text-xs capitalize text-gray-500">
+                                {exercise.difficulty}
+                              </p>
+                            </div>
+                          </label>
+                        ))}
                     </div>
                     {errors.exerciseIds && (
                       <p className="mt-2 flex items-center gap-1 text-sm text-red-600">

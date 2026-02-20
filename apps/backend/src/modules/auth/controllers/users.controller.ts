@@ -128,15 +128,11 @@ export class UsersController {
     @Request() req: AuthRequest,
       @Body() dto: UpdateProfileDto,
   ): Promise<UserResponseDto> {
-    const userId = req.user!.id;
-    const updatedUser = await this.authService.updateUserProfile(userId, dto);
+    const userAuthId = req.user!.user_id || req.user!.id;
+    await this.authService.updateUserProfile(userAuthId, dto);
 
-    if (!updatedUser) {
-      throw new UnauthorizedException('Usuario no encontrado');
-    }
-
-    // FIX BUG-005: Usar toUserResponse para incluir campos derivados (emailVerified, isActive)
-    return this.authService.toUserResponse(updatedUser);
+    // Return full profile with all fields (avatar_url, display_name, etc.)
+    return this.authService.getFullProfile(userAuthId);
   }
 
   /**
@@ -234,13 +230,13 @@ export class UsersController {
     @Request() req: AuthRequest,
       @UploadedFile() file: any,
   ): Promise<{ avatar_url: string }> {
-    const userId = req.user!.id;
+    const userAuthId = req.user!.user_id || req.user!.id;
 
     if (!file) {
       throw new UnauthorizedException('No se proporcionó archivo');
     }
 
-    const avatarUrl = await this.authService.uploadUserAvatar(userId, file);
+    const avatarUrl = await this.authService.uploadUserAvatar(userAuthId, file);
     return { avatar_url: avatarUrl };
   }
 

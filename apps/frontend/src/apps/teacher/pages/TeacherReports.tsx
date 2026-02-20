@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 import { ReportGenerator } from '../components/reports/ReportGenerator';
 import { RecentReportsTable, formatDate } from '../components/reports/RecentReportsTable';
 import type { RecentReport } from '../components/reports/RecentReportsTable';
+import { ScheduledReportsTab } from '../components/reports/ScheduledReportsTab';
+import { SharedReportsTab } from '../components/reports/SharedReportsTab';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { TabBar, type TabDefinition } from '@shared/components/base/TabBar';
+import { useApiError } from '@shared/hooks';
 import toast from 'react-hot-toast';
 import {
   FileText,
@@ -13,10 +18,12 @@ import {
   RefreshCw,
   Lock,
   Info,
+  Clock,
+  Share2,
 } from 'lucide-react';
 import type { ReportType, ReportFormat } from '../types';
-import { apiClient } from '@services/api/apiClient';
-import { API_ENDPOINTS } from '@/config/api.config';
+import { reportsApi, type TeacherReport, type ReportStats as ApiReportStats } from '@services/api/teacher/reportsApi';
+import { classroomsApi } from '@services/api/teacher/classroomsApi';
 
 interface ReportStats {
   totalReportsGenerated: number;
@@ -25,23 +32,10 @@ interface ReportStats {
   averageStudentsPerReport: number;
 }
 
-// API response interfaces (snake_case from backend)
-interface ApiReportMetadata {
-  id: string;
-  report_name: string;
-  report_type: string;
-  report_format: string;
-  student_count: number;
-  period_start: string | null;
-  period_end: string | null;
-  generated_at: string;
-  file_size_bytes?: number; // TASK-2026-01-18-015 Sprint 4.1: File size from backend
-}
-
 /**
  * TASK-2026-01-18-015 Sprint 4.1: Format file size in human-readable format
  */
-const formatFileSize = (bytes?: number): string => {
+const formatFileSize = (bytes?: number | null): string => {
   if (!bytes || bytes === 0) return 'N/A';
   const units = ['B', 'KB', 'MB', 'GB'];
   let size = bytes;
@@ -53,15 +47,8 @@ const formatFileSize = (bytes?: number): string => {
   return `${size.toFixed(1)} ${units[unitIndex]}`;
 };
 
-interface ApiReportStats {
-  total_reports_generated: number;
-  last_generated_date: string | null;
-  most_used_format: string | null;
-  avg_students_per_report: number;
-}
-
-// Transform API response to frontend format
-const transformReportMetadata = (data: ApiReportMetadata): RecentReport => {
+// Transform API response (TeacherReport from reportsApi) to frontend format
+const transformReportMetadata = (data: TeacherReport): RecentReport => {
   // Format period from dates
   let period = '';
   if (data.period_start && data.period_end) {
@@ -89,14 +76,37 @@ const transformReportStats = (data: ApiReportStats): ReportStats => ({
   averageStudentsPerReport: data.avg_students_per_report,
 });
 
+// ============================================================================
+// TAB DEFINITIONS
+// ============================================================================
+
+type ReportsTab = 'generator' | 'scheduled' | 'shared';
+
+const reportsTabs: TabDefinition<ReportsTab>[] = [
+  { id: 'generator', label: 'Generador', icon: <FileText className="h-4 w-4" /> },
+  { id: 'scheduled', label: 'Programados', icon: <Clock className="h-4 w-4" /> },
+  { id: 'shared', label: 'Compartidos', icon: <Share2 className="h-4 w-4" /> },
+];
+
+// ============================================================================
+// MAIN PAGE COMPONENT
+// ============================================================================
+
 /**
  * TeacherReportsPage - Página de reportes y estadísticas
  *
  * Permite generar reportes personalizados con diferentes plantillas,
  * configurar rangos de fechas, seleccionar estudiantes y exportar
  * en múltiples formatos (PDF, Excel, CSV).
+ *
+ * Includes three tabs:
+ * - Generador: Generate and view recent reports (original functionality)
+ * - Programados: Create and manage scheduled/recurring reports
+ * - Compartidos: Share reports with other teachers
  */
 export default function TeacherReportsPage() {
+  const handleError = useApiError();
+  const [activeTab, setActiveTab] = useState<ReportsTab>('generator');
   const [selectedClassroom, setSelectedClassroom] = useState<string>('');
   const [classrooms, setClassrooms] = useState<Array<{ id: string; name: string }>>([]);
   const [students, setStudents] = useState<Array<{ id: string; full_name: string }>>([]);
@@ -104,7 +114,7 @@ export default function TeacherReportsPage() {
   const [reportStats, setReportStats] = useState<ReportStats | null>(null);
   const [filterType, setFilterType] = useState<ReportType | 'all'>('all');
   const [loading, setLoading] = useState(true);
-  const [isUsingMockData, setIsUsingMockData] = useState(false);
+  const [hasError, setHasError] = useState(false);
   // TASK-2026-01-18-015 Sprint 4.2: Delete confirmation state
   const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; reportId: string | null; reportName: string }>({
     show: false,
@@ -129,12 +139,13 @@ export default function TeacherReportsPage() {
   const loadInitialData = async () => {
     try {
       setLoading(true);
+      setHasError(false);
 
-      // Cargar aulas usando API configurada
-      const classroomsResponse = await apiClient.get(API_ENDPOINTS.teacher.classrooms);
+      // Cargar aulas usando classroomsApi service layer
+      const classroomsResponse = await classroomsApi.getClassrooms();
 
       if (classroomsResponse.data) {
-        const classroomsData = classroomsResponse.data;
+        const classroomsData = classroomsResponse.data.map((c) => ({ id: c.id, name: c.name }));
         setClassrooms(classroomsData);
         if (classroomsData.length > 0) {
           setSelectedClassroom(classroomsData[0].id);
@@ -147,7 +158,8 @@ export default function TeacherReportsPage() {
       // Cargar estadísticas
       await loadReportStats();
     } catch (error) {
-      console.error('Error loading initial data:', error);
+      handleError(error as Parameters<typeof handleError>[0], 'Error al cargar los datos iniciales');
+      setHasError(true);
     } finally {
       setLoading(false);
     }
@@ -155,100 +167,48 @@ export default function TeacherReportsPage() {
 
   const loadStudents = async (classroomId: string) => {
     try {
-      const response = await apiClient.get(
-        API_ENDPOINTS.teacher.classroomStudents(classroomId),
-      );
+      const response = await classroomsApi.getClassroomStudents(classroomId);
 
       if (response.data) {
-        setStudents(response.data);
+        setStudents(response.data.map((s) => ({ id: s.id, full_name: s.full_name })));
       }
     } catch (error) {
-      console.error('Error loading students:', error);
-      // Fallback con datos mock - indicar al usuario
-      setIsUsingMockData(true);
-      setStudents([
-        { id: '1', full_name: 'Ana García Pérez' },
-        { id: '2', full_name: 'Carlos Rodríguez López' },
-        { id: '3', full_name: 'María Fernández Sánchez' },
-        { id: '4', full_name: 'Juan Martínez González' },
-        { id: '5', full_name: 'Laura Torres Ruiz' },
-      ]);
+      handleError(error as Parameters<typeof handleError>[0], 'Error al cargar la lista de estudiantes');
+      setHasError(true);
+      setStudents([]);
     }
   };
 
   const loadRecentReports = async () => {
     try {
-      const response = await apiClient.get<ApiReportMetadata[]>(
-        API_ENDPOINTS.teacher.reports.recent,
-      );
+      const reports = await reportsApi.getRecentReports();
       // Transform snake_case API response to camelCase frontend format
-      const transformedReports = response.data.map(transformReportMetadata);
+      const transformedReports = reports.map(transformReportMetadata);
       setRecentReports(transformedReports);
     } catch (error) {
-      console.error('Error loading recent reports:', error);
-      // Fallback con datos mock - indicar al usuario
-      setIsUsingMockData(true);
-      setRecentReports([
-        {
-          id: '1',
-          name: 'Reporte de Progreso Mensual - Octubre 2024',
-          type: 'progress',
-          format: 'pdf',
-          generatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-          studentCount: 25,
-          period: '01 Oct - 31 Oct 2024',
-          size: '2.4 MB',
-        },
-        {
-          id: '2',
-          name: 'Evaluación Final - Grupo A',
-          type: 'evaluation',
-          format: 'excel',
-          generatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-          studentCount: 30,
-          period: '01 Sep - 30 Sep 2024',
-          size: '1.8 MB',
-        },
-        {
-          id: '3',
-          name: 'Reporte de Intervención - Estudiantes en Riesgo',
-          type: 'intervention',
-          format: 'pdf',
-          generatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-          studentCount: 8,
-          period: '15 Oct - 22 Oct 2024',
-          size: '890 KB',
-        },
-      ]);
+      handleError(error as Parameters<typeof handleError>[0], 'Error al cargar los reportes recientes');
+      setHasError(true);
+      setRecentReports([]);
     }
   };
 
   const loadReportStats = async () => {
     try {
-      const response = await apiClient.get<ApiReportStats>(API_ENDPOINTS.teacher.reports.stats);
+      const stats = await reportsApi.getReportStats();
       // Transform snake_case API response to camelCase frontend format
-      const transformedStats = transformReportStats(response.data);
+      const transformedStats = transformReportStats(stats);
       setReportStats(transformedStats);
     } catch (error) {
-      console.error('Error loading report stats:', error);
-      // Fallback con datos mock - indicar al usuario
-      setIsUsingMockData(true);
-      setReportStats({
-        totalReportsGenerated: 47,
-        lastGeneratedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        mostUsedFormat: 'pdf',
-        averageStudentsPerReport: 22,
-      });
+      handleError(error as Parameters<typeof handleError>[0], 'Error al cargar las estadisticas de reportes');
+      setHasError(true);
+      setReportStats(null);
     }
   };
 
   const downloadReport = async (reportId: string) => {
     try {
-      const response = await apiClient.get(API_ENDPOINTS.teacher.reports.download(reportId), {
-        responseType: 'blob',
-      });
+      const { blob } = await reportsApi.downloadReport(reportId);
 
-      const blob = response.data;
       const report = recentReports.find((r) => r.id === reportId);
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -257,8 +217,7 @@ export default function TeacherReportsPage() {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading report:', error);
-      toast.error('Error al descargar el reporte. Por favor, intenta nuevamente.');
+      handleError(error as Parameters<typeof handleError>[0], 'Error al descargar el reporte');
     }
   };
 
@@ -272,7 +231,7 @@ export default function TeacherReportsPage() {
 
     setIsDeleting(true);
     try {
-      await apiClient.delete(API_ENDPOINTS.teacher.reports.delete(deleteConfirm.reportId));
+      await reportsApi.deleteReport(deleteConfirm.reportId);
 
       // Remove from local state
       setRecentReports((prev) => prev.filter((r) => r.id !== deleteConfirm.reportId));
@@ -282,8 +241,7 @@ export default function TeacherReportsPage() {
 
       toast.success('Reporte eliminado correctamente.');
     } catch (error) {
-      console.error('Error deleting report:', error);
-      toast.error('Error al eliminar el reporte. Por favor, intenta nuevamente.');
+      handleError(error as Parameters<typeof handleError>[0], 'Error al eliminar el reporte');
     } finally {
       setIsDeleting(false);
       setDeleteConfirm({ show: false, reportId: null, reportName: '' });
@@ -300,26 +258,29 @@ export default function TeacherReportsPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <RefreshCw className="mx-auto mb-4 h-12 w-12 animate-spin text-detective-orange" />
-          <p className="text-detective-text-secondary">Cargando datos...</p>
+      <TeacherPageShell>
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="mx-auto mb-4 h-12 w-12 animate-spin text-detective-orange" />
+            <p className="text-detective-text-secondary">Cargando datos...</p>
+          </div>
         </div>
-      </div>
+      </TeacherPageShell>
     );
   }
 
   return (
+    <TeacherPageShell>
     <div className="space-y-6 p-6">
-      {/* Mock Data Warning Banner */}
-        {isUsingMockData && (
-          <div className="rounded-lg border-l-4 border-yellow-500 bg-yellow-50 p-4">
+      {/* Error Banner */}
+        {hasError && (
+          <div className="rounded-lg border-l-4 border-red-500 bg-red-50 p-4">
             <div className="flex items-center gap-3">
-              <Info className="h-5 w-5 text-yellow-600" />
+              <Info className="h-5 w-5 text-red-600" />
               <div>
-                <p className="font-semibold text-yellow-800">Datos de Demostración</p>
-                <p className="text-sm text-yellow-700">
-                  No se pudo conectar al servidor. Mostrando datos de ejemplo que no reflejan información real.
+                <p className="font-semibold text-red-800">Error de Conexión</p>
+                <p className="text-sm text-red-700">
+                  No se pudieron cargar algunos datos del servidor. Verifica tu conexión e intenta nuevamente.
                 </p>
               </div>
             </div>
@@ -334,17 +295,30 @@ export default function TeacherReportsPage() {
               Genera reportes personalizados y analiza el desempeño de tus estudiantes
             </p>
           </div>
-          <DetectiveButton
-            variant="secondary"
-            onClick={() => {
-              loadRecentReports();
-              loadReportStats();
-            }}
-          >
-            <RefreshCw className="h-4 w-4" />
-            Actualizar
-          </DetectiveButton>
+          {activeTab === 'generator' && (
+            <DetectiveButton
+              variant="secondary"
+              onClick={() => {
+                loadRecentReports();
+                loadReportStats();
+              }}
+            >
+              <RefreshCw className="h-4 w-4" />
+              Actualizar
+            </DetectiveButton>
+          )}
         </div>
+
+        {/* Tab Bar */}
+        <TabBar<ReportsTab>
+          tabs={reportsTabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+
+        {/* Tab: Generador (existing content) */}
+        {activeTab === 'generator' && (
+          <div className="space-y-6">
 
         {/* Stats Cards */}
         {reportStats && (
@@ -560,6 +534,19 @@ export default function TeacherReportsPage() {
             </div>
           </DetectiveCard>
         </div>
+          </div>
+        )}
+
+        {/* Tab: Programados (scheduled reports) */}
+        {activeTab === 'scheduled' && (
+          <ScheduledReportsTab classrooms={classrooms} />
+        )}
+
+        {/* Tab: Compartidos (shared reports) */}
+        {activeTab === 'shared' && (
+          <SharedReportsTab recentReports={recentReports} />
+        )}
       </div>
+    </TeacherPageShell>
   );
 }

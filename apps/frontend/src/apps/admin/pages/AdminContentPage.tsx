@@ -20,6 +20,7 @@ import {
   RejectExerciseModal,
 } from '../components/content';
 import { usePendingExercisesQuery } from '../hooks/useContentQueries';
+import { useApiError } from '@shared/hooks';
 import { FileText, Image, History } from 'lucide-react';
 import type { PendingExercise } from '../types';
 
@@ -47,6 +48,7 @@ export default function AdminContentPage() {
   const [selectedExercise, setSelectedExercise] = useState<PendingExercise | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isRejectOpen, setIsRejectOpen] = useState(false);
+  const handleError = useApiError();
 
   const { pendingExercises, approveExercise, rejectExercise } = usePendingExercisesQuery();
   const tabs = buildTabs(pendingExercises.length);
@@ -78,7 +80,7 @@ export default function AdminContentPage() {
       try {
         await approveExercise(exerciseId);
       } catch (err) {
-        console.error('Failed to approve exercise:', err);
+        handleError(err as Parameters<typeof handleError>[0], 'Error al aprobar ejercicio');
       }
     },
     [approveExercise],

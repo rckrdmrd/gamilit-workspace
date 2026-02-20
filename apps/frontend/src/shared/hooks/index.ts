@@ -29,3 +29,5 @@ export type {
   SpeechLanguage,
 } from './useSpeechToText';
 export { useBranding } from './useBranding';
+export { useApiError } from './useApiError';
+export { usePageTitle } from './usePageTitle';

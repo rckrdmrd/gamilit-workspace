@@ -40,7 +40,7 @@ import { useRoles } from '../hooks/useRoles';
 import { useRolePermissions } from '../hooks/useRolePermissions';
 import { Card } from '@shared/components/Card';
 import { Button } from '@shared/components/Button';
-import { LoadingSpinner } from '@shared/components/LoadingSpinner';
+import { LoadingSpinner } from '@shared/components/loading';
 import { RolesTable, RoleEditor, RoleActionsMenu } from '../components/roles';
 import type { Permission } from '@/services/api/adminTypes';
 

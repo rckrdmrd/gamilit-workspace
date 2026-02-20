@@ -8,7 +8,6 @@ import type {
 /**
  * User Gamification Summary
  * Consolidated gamification data for Admin/Teacher portals
- * @see services/api/gamificationAPI.ts (original location - consolidated here)
  */
 export interface UserGamificationSummary {
   userId: string;
@@ -299,7 +298,7 @@ export const gamificationApi = {
   },
 
   // ===========================
-  // USER SUMMARY ENDPOINT (Consolidated from services/api/gamificationAPI.ts)
+  // USER SUMMARY ENDPOINT
   // ===========================
 
   /**

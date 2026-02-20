@@ -476,6 +476,27 @@ export const API_ENDPOINTS = {
       download: (reportId: string) => `/teacher/reports/${reportId}/download`,
       generate: '/teacher/reports/generate',
       delete: (reportId: string) => `/teacher/reports/${reportId}`, // TASK-2026-01-18-015 Sprint 4.2
+
+      // Scheduled Reports
+      scheduled: {
+        list: '/teacher/reports/scheduled',
+        create: '/teacher/reports/scheduled',
+        get: (id: string) => `/teacher/reports/scheduled/${id}`,
+        update: (id: string) => `/teacher/reports/scheduled/${id}`,
+        delete: (id: string) => `/teacher/reports/scheduled/${id}`,
+        pause: (id: string) => `/teacher/reports/scheduled/${id}/pause`,
+        resume: (id: string) => `/teacher/reports/scheduled/${id}/resume`,
+      },
+
+      // Shared Reports
+      shared: {
+        share: '/teacher/reports/share',
+        byMe: '/teacher/reports/shared/by-me',
+        withMe: '/teacher/reports/shared/with-me',
+        view: (shareId: string) => `/teacher/reports/shared/${shareId}/view`,
+        revoke: (shareId: string) => `/teacher/reports/shared/${shareId}`,
+        updatePermission: (shareId: string) => `/teacher/reports/shared/${shareId}/permission`,
+      },
     },
 
     // Communications

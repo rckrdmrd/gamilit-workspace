@@ -41,7 +41,7 @@ import { useAuth } from '@features/auth/hooks';
 
 // 3. Imports de componentes
 import { Button, Card } from '@shared/components/ui';
-import { LoadingSpinner } from '@shared/components/feedback';
+import { LoadingSpinner } from '@shared/components/loading';
 
 // 4. Constantes locales (si son pocas)
 const DEFAULT_PAGE_SIZE = 10;

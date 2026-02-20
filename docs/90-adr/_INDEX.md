@@ -5,7 +5,7 @@
 
 ---
 
-## Indice Completo (40 ADRs)
+## Indice Completo (43 ADRs)
 
 ### Fundamentos y Arquitectura (001-005)
 
@@ -31,7 +31,7 @@
 | [ADR-033](./ADR-033-expansion-schemas-8-to-18.md) | Expansion de Schemas de 8 a 18 | Accepted |
 | [ADR-043](./ADR-043-consolidacion-bd.md) | Consolidacion de Base de Datos GAMILIT | Accepted |
 
-### Frontend (011, 013-015, 019-021, 029-030)
+### Frontend (011, 013-015, 019-021, 029-030, 046)
 
 | ADR | Titulo | Estado |
 |-----|--------|--------|
@@ -43,7 +43,8 @@
 | [ADR-020](./ADR-020-validacion-alternativas-ejercicio-completar-espacios.md) | Multiples Alternativas en Completar Espacios | Accepted |
 | [ADR-021](./ADR-021-estandarizacion-recompensas-xp-ejercicios.md) | Estandarizacion de Recompensas XP | Accepted |
 | [ADR-029](./ADR-029-consolidacion-teacher-resources.md) | Consolidacion de TeacherResourcesPage | Accepted |
-| [ADR-030](./ADR-030-convencion-nombres-paginas.md) | Convencion de Nombres de Paginas | Accepted |
+| [ADR-030](./ADR-030-convencion-nombres-paginas.md) | Convencion de Nombres de Paginas — Sufijo "Page" | Amended |
+| [ADR-046](./ADR-046-pageshell-pattern.md) | PageShell Pattern Replaces HOC Layout Wrappers | Accepted |
 
 ### Portales (017, 028, 031-032)
 
@@ -77,6 +78,13 @@
 | [ADR-041](./ADR-041-simco-system.md) | Implementacion del Sistema SIMCO | Accepted |
 | [ADR-042](./ADR-042-team-vs-guild.md) | Team vs Guild Terminology | Accepted |
 
+### Calidad y Arquitectura (044-046)
+
+| ADR | Titulo | Estado |
+|-----|--------|--------|
+| [ADR-044](./ADR-044-test-coverage-strategy.md) | Estrategia de Test Coverage | Accepted |
+| [ADR-045](./ADR-045-clean-architecture-pragmatica.md) | Clean Architecture Pragmatica | Accepted |
+
 ---
 
-**Total:** 40 ADRs | **Numeros libres:** 006, 024, 025
+**Total:** 43 ADRs | **Numeros libres:** 006, 024, 025

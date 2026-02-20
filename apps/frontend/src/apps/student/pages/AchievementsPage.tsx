@@ -15,9 +15,7 @@
 
 import { useState } from 'react';
 import { Trophy, AlertCircle, Loader } from 'lucide-react';
-import { useAuth } from '@/app/providers/AuthContext';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
-import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
+import { StudentPageShell } from '../components/shared/StudentPageShell';
 import { AchievementCard } from '@/shared/components/AchievementCard';
 import { AchievementFilter } from '@/shared/components/AchievementFilter';
 import { AchievementModal } from '@/shared/components/AchievementModal';
@@ -32,9 +30,6 @@ import type {
 } from '@/shared/types/achievement.types';
 
 export default function AchievementsPage() {
-  const { user, logout } = useAuth();
-  const { gamificationData } = useUserGamification(user?.id);
-
   // Data from React Query hooks
   const {
     combinedAchievements,
@@ -83,17 +78,16 @@ export default function AchievementsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader user={user || undefined} gamificationData={gamificationData} onLogout={logout} />
-
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <StudentPageShell>
+      <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="flex items-center text-3xl font-bold text-gray-900">
+          <h1 className="flex items-center text-3xl font-bold text-detective-text">
             <Trophy className="mr-3 h-8 w-8 text-yellow-600" />
             Logros
           </h1>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-detective-text-secondary">
             Desbloquea logros completando desafios y alcanzando metas. Reclama tus recompensas!
           </p>
         </div>
@@ -119,25 +113,25 @@ export default function AchievementsPage() {
         {!isLoading && (
           <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
             <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <p className="text-sm text-gray-600">Total</p>
-              <p className="text-3xl font-bold text-gray-900">{displaySummary.total}</p>
+              <p className="text-sm text-detective-text-secondary">Total</p>
+              <p className="text-3xl font-bold text-detective-text">{displaySummary.total}</p>
             </div>
             <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <p className="text-sm text-gray-600">Ganados</p>
+              <p className="text-sm text-detective-text-secondary">Ganados</p>
               <p className="text-3xl font-bold text-green-600">{displaySummary.earned}</p>
             </div>
             <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <p className="text-sm text-gray-600">Completado</p>
+              <p className="text-sm text-detective-text-secondary">Completado</p>
               <p className="text-3xl font-bold text-purple-600">
                 {Math.round(displaySummary.completionPercentage)}%
               </p>
             </div>
             <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <p className="text-sm text-gray-600">En Progreso</p>
+              <p className="text-sm text-detective-text-secondary">En Progreso</p>
               <p className="text-3xl font-bold text-blue-600">{displaySummary.inProgress}</p>
             </div>
             <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <p className="text-sm text-gray-600">Bloqueados</p>
+              <p className="text-sm text-detective-text-secondary">Bloqueados</p>
               <p className="text-3xl font-bold text-gray-400">{displaySummary.locked}</p>
             </div>
           </div>
@@ -147,7 +141,7 @@ export default function AchievementsPage() {
         {isLoading && (
           <div className="flex items-center justify-center py-12">
             <Loader className="h-8 w-8 animate-spin text-orange-600" />
-            <span className="ml-3 text-gray-600">Cargando logros...</span>
+            <span className="ml-3 text-detective-text-secondary">Cargando logros...</span>
           </div>
         )}
 
@@ -155,14 +149,14 @@ export default function AchievementsPage() {
         {!isLoading && earnedAchievements.length > 0 && (
           <div className="mb-10">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-detective-text">
                 Logros Obtenidos ({earnedAchievements.length})
               </h2>
               <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
                 {Math.round(displaySummary.completionPercentage)}% completado
               </span>
             </div>
-            <p className="mb-4 text-gray-600">
+            <p className="mb-4 text-detective-text-secondary">
               Estos son los logros que has desbloqueado.
             </p>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -182,7 +176,7 @@ export default function AchievementsPage() {
         {!isLoading && (
           <div className="mb-8">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-detective-text">
                 Logros Pendientes ({pendingAchievements.length})
               </h2>
               {displaySummary.inProgress > 0 && (
@@ -191,7 +185,7 @@ export default function AchievementsPage() {
                 </span>
               )}
             </div>
-            <p className="mb-4 text-gray-600">
+            <p className="mb-4 text-detective-text-secondary">
               Completa desafios y alcanza metas para desbloquear estos logros.
             </p>
 
@@ -217,8 +211,8 @@ export default function AchievementsPage() {
             {pendingAchievements.length === 0 && earnedAchievements.length === 0 && (
               <div className="rounded-lg border border-gray-200 bg-white p-12 text-center">
                 <Trophy className="mx-auto mb-4 h-16 w-16 text-gray-300" />
-                <h3 className="mb-2 text-lg font-semibold text-gray-900">No se encontraron logros</h3>
-                <p className="text-gray-600">Intenta ajustar tus filtros para ver mas logros.</p>
+                <h3 className="mb-2 text-lg font-semibold text-detective-text">No se encontraron logros</h3>
+                <p className="text-detective-text-secondary">Intenta ajustar tus filtros para ver mas logros.</p>
               </div>
             )}
 
@@ -241,10 +235,10 @@ export default function AchievementsPage() {
         {/* Hidden Achievements Section */}
         {!isLoading && hiddenAchievements.length > 0 && (
           <div className="mb-8">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">
+            <h2 className="mb-4 text-2xl font-bold text-detective-text">
               Logros Ocultos ({hiddenAchievements.length})
             </h2>
-            <p className="mb-4 text-gray-600">
+            <p className="mb-4 text-detective-text-secondary">
               Estos logros estan ocultos hasta que los desbloquees.
             </p>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -270,10 +264,11 @@ export default function AchievementsPage() {
             onClaimRewards={handleClaimRewards}
           />
         )}
-      </div>
+        </div>
 
-      {/* Bottom Spacing */}
-      <div className="h-16" />
-    </div>
+        {/* Bottom Spacing */}
+        <div className="h-16" />
+      </div>
+    </StudentPageShell>
   );
 }

@@ -2,8 +2,8 @@
 # BACKEND INVENTORY - GAMILIT
 # ===============================================================================
 
-version: "4.4.0"
-fecha: "2026-02-18"
+version: "4.5.0"
+fecha: "2026-02-19"
 proyecto: "gamilit"
 framework: "NestJS 11"
 orm: "TypeORM 0.3.x"
@@ -19,7 +19,7 @@ resumen:
   dtos: 399              # 399 archivos .dto.ts en modules/ (+ ~5 en shared/dto/)
   services: 173           # +1 PendingInitializationsCronService (REC-007)
   controllers: 108
-  endpoints: 904          # Verificado 2026-02-17 (+3 inventory endpoints)
+  endpoints: 905          # Verified 2026-02-19: +1 from auth controller updates (was 904)
   guards: 15
   decorators: 18          # 18 exported symbols en 9 archivos .decorator.ts
   interceptors: 6              # +1: tracing.interceptor.ts (new)

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@shared/utils';
+import { cn } from '@shared/utils/cn';
 
 export interface DetectiveCardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'gold' | 'exercise' | 'mystery' | 'info' | 'success' | 'danger';

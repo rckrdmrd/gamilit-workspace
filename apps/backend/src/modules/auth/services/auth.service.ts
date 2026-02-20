@@ -333,6 +333,27 @@ export class AuthService {
   }
 
   /**
+   * Get full profile response with profile fields and equipped items
+   * @param userAuthId - auth.users.id (from req.user.user_id)
+   */
+  async getFullProfile(userAuthId: string): Promise<UserResponseDto> {
+    const user = await this.validateUser(userAuthId);
+    if (!user) {
+      throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    const profile = await this.profileRepository.findOne({
+      where: { user_id: userAuthId },
+    });
+
+    const equippedItems = profile
+      ? await this.inventoryService.getEquippedItemsMap(profile.id)
+      : {};
+
+    return this.toUserResponse(user, profile ?? undefined, undefined, equippedItems);
+  }
+
+  /**
    * Logout de usuario
    */
   async logout(userId: string, sessionId: string): Promise<void> {
@@ -599,15 +620,23 @@ export class AuthService {
   /**
    * Subir avatar del usuario
    */
-  async uploadUserAvatar(userId: string, file: { originalname: string }): Promise<string> {
-    // TODO: Implementar lógica de almacenamiento de archivos (S3, local storage, etc.)
-    // Por ahora, retornamos una URL de ejemplo
-    const avatarUrl = `/avatars/${userId}_${Date.now()}_${file.originalname}`;
+  async uploadUserAvatar(userId: string, file: { originalname: string; mimetype: string; buffer: Buffer }): Promise<string> {
+    // Store avatar as base64 data URI in the database (MVP approach)
+    // For production, migrate to cloud storage (S3, GCS, etc.)
+    const base64 = file.buffer.toString('base64');
+    const avatarUrl = `data:${file.mimetype};base64,${base64}`;
 
-    // E3c-FIX: userId is profile.id (from JWT sub), search by PK not user_id
-    const profile = await this.profileRepository.findOne({
-      where: { id: userId },
+    // userId may be auth.users.id — find profile by user_id
+    let profile = await this.profileRepository.findOne({
+      where: { user_id: userId },
     });
+
+    // Fallback: try as profile.id directly
+    if (!profile) {
+      profile = await this.profileRepository.findOne({
+        where: { id: userId },
+      });
+    }
 
     if (!profile) {
       throw new UnauthorizedException('Perfil no encontrado');
@@ -783,6 +812,8 @@ export class AuthService {
       last_name: profile.last_name,
       display_name: profile.display_name,
       avatar_url: profile.avatar_url,
+      bio: profile.bio,
+      grade_level: profile.grade_level,
       status: profile.status,
       tenant_id: profile.tenant_id,
     } : {};

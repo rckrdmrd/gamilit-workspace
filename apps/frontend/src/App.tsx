@@ -52,87 +52,26 @@ const AssignmentDetailPage = lazy(() => import('@/apps/student/pages/AssignmentD
 const LearningPage = lazy(() => import('@/apps/student/pages/LearningPage'));
 
 // =====================================================
-// TEACHER PORTAL PAGES (Lazy loaded with HOC)
+// TEACHER PORTAL PAGES (Lazy loaded with PageShell)
 // =====================================================
-import { withTeacherLayout } from '@/apps/teacher/components/withTeacherLayout';
-
-// Pages using withTeacherLayout HOC (consolidated from *Page.tsx wrappers)
-const TeacherDashboardPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherDashboard').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
-const TeacherAnalyticsPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherAnalytics').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
-const TeacherAssignmentsPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherAssignments').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
-const TeacherClassesPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherClasses').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
-const TeacherGamificationPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherGamification').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
-const TeacherStudentsPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherStudents').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
-
-// Pages using withTeacherLayout HOC (migrated from separate wrapper files)
-const TeacherAlertsPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherAlerts').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
+const TeacherDashboardPage = lazy(() => import('@/apps/teacher/pages/TeacherDashboard'));
+const TeacherAnalyticsPage = lazy(() => import('@/apps/teacher/pages/TeacherAnalytics'));
+const TeacherAssignmentsPage = lazy(() => import('@/apps/teacher/pages/TeacherAssignments'));
+const TeacherClassesPage = lazy(() => import('@/apps/teacher/pages/TeacherClasses'));
+const TeacherGamificationPage = lazy(() => import('@/apps/teacher/pages/TeacherGamification'));
+const TeacherStudentsPage = lazy(() => import('@/apps/teacher/pages/TeacherStudents'));
+const TeacherAlertsPage = lazy(() => import('@/apps/teacher/pages/TeacherAlerts'));
 // TeacherCommunication — removed from navigation (Obs #18), code preserved
 // TeacherContent — removed from navigation (Obs #5), code preserved
-const TeacherMonitoringPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherMonitoring').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
-const TeacherProgressPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherProgress').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
-const TeacherReportsPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherReports').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
-const TeacherExerciseResponsesPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherExerciseResponses').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
-const TeacherSettingsPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherSettings').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
+const TeacherMonitoringPage = lazy(() => import('@/apps/teacher/pages/TeacherMonitoring'));
+const TeacherProgressPage = lazy(() => import('@/apps/teacher/pages/TeacherProgress'));
+const TeacherReportsPage = lazy(() => import('@/apps/teacher/pages/TeacherReports'));
+const TeacherExerciseResponsesPage = lazy(() => import('@/apps/teacher/pages/TeacherExerciseResponses'));
+const TeacherSettingsPage = lazy(() => import('@/apps/teacher/pages/TeacherSettings'));
 // TeacherNotifications — removed from navigation (Obs #19), code preserved
 // TeacherNotificationPreferences — removed from navigation (Obs #19), code preserved
-const TeacherAlertConfigPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherAlertConfig').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-); // US-PM-007
-const ReviewPanelPage = lazy(() =>
-  import('@/apps/teacher/pages/TeacherReviewPanel').then(m => ({
-    default: withTeacherLayout(m.default)
-  }))
-);
+const TeacherAlertConfigPage = lazy(() => import('@/apps/teacher/pages/TeacherAlertConfig')); // US-PM-007
+const ReviewPanelPage = lazy(() => import('@/apps/teacher/pages/TeacherReviewPanel'));
 
 // =====================================================
 // ADMIN PORTAL PAGES (Lazy loaded)

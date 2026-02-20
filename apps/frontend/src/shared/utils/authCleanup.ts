@@ -25,6 +25,9 @@
  * ```
  */
 export const clearAllAuthData = (): void => {
+  // Clear logout flag to prevent stale state on next login/register
+  localStorage.removeItem('is_logging_out');
+
   // Clear auth tokens
   localStorage.removeItem('auth-token');
   localStorage.removeItem('refresh-token');

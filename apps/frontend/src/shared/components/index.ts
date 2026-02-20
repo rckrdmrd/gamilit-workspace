@@ -9,7 +9,6 @@ export * from './Button';
 export * from './Input';
 export * from './Card';
 export * from './Modal';
-export * from './LoadingSpinner';
 export * from './ErrorBoundary';
 
 // Layout Components
@@ -43,5 +42,11 @@ export * from './AchievementModal';
 export * from './LeaderboardTable';
 export * from './LeaderboardTabs';
 
-// Loading Components
-export * from './Skeleton';
+// Loading Components (canonical: shared/components/loading/)
+export * from './loading';
+
+// Feedback Components
+export * from './feedback';
+
+// Settings Components (shared forms for profile/privacy across portals)
+export * from './settings';

@@ -10,7 +10,8 @@
  * Created: 2025-11-29 - US-AE-009
  */
 
-import { X, Users, Calendar, BookOpen, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Users, Calendar, BookOpen, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { useAssignmentDetail } from '../../hooks/useAdminAssignments';
 import type { AdminAssignment } from '../../hooks/useAdminAssignments';
 
@@ -22,8 +23,6 @@ interface AssignmentDetailModalProps {
 
 export function AssignmentDetailModal({ assignment, isOpen, onClose }: AssignmentDetailModalProps) {
   const { data: detail, isLoading } = useAssignmentDetail(assignment?.id || null);
-
-  if (!isOpen || !assignment) return null;
 
   const getSubmissionStatusBadge = (status: string) => {
     const statusConfig: Record<
@@ -75,40 +74,35 @@ export function AssignmentDetailModal({ assignment, isOpen, onClose }: Assignmen
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="relative max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-lg border border-gray-700 bg-detective-bg shadow-xl">
-        {/* Header */}
-        <div className="border-b border-gray-700 bg-detective-bg-secondary px-6 py-4">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold text-detective-text">{assignment.title}</h2>
-              <p className="mt-1 text-sm text-detective-text-secondary">{assignment.description}</p>
-              <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-detective-text-secondary">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>{assignment.classroom_name}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <BookOpen className="h-4 w-4" />
-                  <span>Profesor: {assignment.teacher_name}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>Vence: {formatDate(assignment.due_date)}</span>
-                </div>
+    <Modal
+      isOpen={isOpen && !!assignment}
+      onClose={onClose}
+      title={assignment?.title || ''}
+      size="full"
+      className="max-w-5xl"
+    >
+      {assignment && (
+        <div>
+          {/* Assignment metadata */}
+          <div className="mb-4">
+            <p className="text-sm text-detective-text-secondary">{assignment.description}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-detective-text-secondary">
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                <span>{assignment.classroom_name}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                <span>Profesor: {assignment.teacher_name}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                <span>Vence: {formatDate(assignment.due_date)}</span>
               </div>
             </div>
-            <button
-              onClick={onClose}
-              className="ml-4 rounded p-1 text-detective-text-secondary hover:bg-detective-bg hover:text-detective-text"
-            >
-              <X className="h-6 w-6" />
-            </button>
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="overflow-y-auto p-6" style={{ maxHeight: 'calc(90vh - 120px)' }}>
+          {/* Content */}
           {isLoading ? (
             <div className="py-12 text-center">
               <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange"></div>
@@ -279,7 +273,7 @@ export function AssignmentDetailModal({ assignment, isOpen, onClose }: Assignmen
             </div>
           )}
         </div>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 }

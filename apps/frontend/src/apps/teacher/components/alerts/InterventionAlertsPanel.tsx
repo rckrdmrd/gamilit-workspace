@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AlertCircle, CheckCircle, XCircle, Clock, AlertTriangle, Filter } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { Modal } from '@shared/components/common/Modal';
 import { useInterventionAlerts } from '../../hooks/useInterventionAlerts';
 import {
   InterventionAlertSeverity,
@@ -355,39 +356,45 @@ export function InterventionAlertsPanel({
         </DetectiveCard>
       )}
 
-      {/* Modal de Resolución */}
-      {showResolveModal && selectedAlert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <DetectiveCard className="w-full max-w-md">
-            <div className="p-6">
-              <h3 className="mb-4 text-xl font-bold">Resolver Alerta</h3>
-              <p className="mb-4 text-gray-600">{selectedAlert.title}</p>
-              <textarea
-                className="mb-4 w-full rounded border p-3"
-                rows={4}
-                placeholder="Describe las acciones tomadas para resolver esta alerta..."
-                value={resolutionNotes}
-                onChange={(e) => setResolutionNotes(e.target.value)}
-              />
-              <div className="flex justify-end gap-2">
-                <DetectiveButton
-                  variant="outline"
-                  onClick={() => {
-                    setShowResolveModal(false);
-                    setResolutionNotes('');
-                    setSelectedAlert(null);
-                  }}
-                >
-                  Cancelar
-                </DetectiveButton>
-                <DetectiveButton onClick={handleResolve} disabled={!resolutionNotes.trim()}>
-                  Resolver
-                </DetectiveButton>
-              </div>
+      {/* Modal de Resolucion */}
+      <Modal
+        isOpen={showResolveModal && !!selectedAlert}
+        onClose={() => {
+          setShowResolveModal(false);
+          setResolutionNotes('');
+          setSelectedAlert(null);
+        }}
+        title="Resolver Alerta"
+        size="md"
+      >
+        {selectedAlert && (
+          <div>
+            <p className="mb-4 text-gray-600">{selectedAlert.title}</p>
+            <textarea
+              className="mb-4 w-full rounded border p-3"
+              rows={4}
+              placeholder="Describe las acciones tomadas para resolver esta alerta..."
+              value={resolutionNotes}
+              onChange={(e) => setResolutionNotes(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <DetectiveButton
+                variant="outline"
+                onClick={() => {
+                  setShowResolveModal(false);
+                  setResolutionNotes('');
+                  setSelectedAlert(null);
+                }}
+              >
+                Cancelar
+              </DetectiveButton>
+              <DetectiveButton onClick={handleResolve} disabled={!resolutionNotes.trim()}>
+                Resolver
+              </DetectiveButton>
             </div>
-          </DetectiveCard>
-        </div>
-      )}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

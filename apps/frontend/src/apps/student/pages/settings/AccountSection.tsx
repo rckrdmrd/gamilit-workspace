@@ -5,7 +5,7 @@ import { Shield, Eye, EyeOff, Key, Check, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { profileAPI } from '@/services/api/profileAPI';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { SaveButton, type SaveStatus } from './SaveButton';
+import { SaveButton, type SaveStatus } from '@shared/components/feedback/SaveButton';
 import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
 import type { User } from '@/shared/types/auth.types';
 

@@ -22,6 +22,7 @@ import {
   Loader2,
   RefreshCw,
 } from 'lucide-react';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 interface StudentEconomyData {
   id: string;
@@ -248,6 +249,7 @@ export default function TeacherGamification() {
   const selectedStudentData = students.find((s) => s.id === selectedStudent);
 
   return (
+    <TeacherPageShell>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -913,5 +915,6 @@ export default function TeacherGamification() {
         </div>
       </Modal>
     </div>
+    </TeacherPageShell>
   );
 }

@@ -32,6 +32,7 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 export default function TeacherAnalytics() {
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');
@@ -195,6 +196,7 @@ export default function TeacherAnalytics() {
   };
 
   return (
+      <TeacherPageShell>
       <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
         <main className="detective-container py-8">
         {/* Header */}
@@ -714,5 +716,6 @@ export default function TeacherAnalytics() {
           )}
         </main>
       </div>
+      </TeacherPageShell>
   );
 }

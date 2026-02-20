@@ -1,5 +1,13 @@
-import React from 'react';
-import { cn } from '@shared/utils';
+/**
+ * LoadingSpinner Component
+ *
+ * Animated spinner indicator for loading states.
+ * Uses SVG-based animation for smooth rendering.
+ *
+ * @module shared/components/loading
+ */
+
+import { cn } from '@shared/utils/cn';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
@@ -7,11 +15,11 @@ interface LoadingSpinnerProps {
   className?: string;
 }
 
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+export function LoadingSpinner({
   size = 'md',
   color = 'blue',
-  className
-}) => {
+  className,
+}: LoadingSpinnerProps) {
   const sizeStyles = {
     sm: 'w-4 h-4',
     md: 'w-8 h-8',
@@ -42,4 +50,4 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       </svg>
     </div>
   );
-};
+}

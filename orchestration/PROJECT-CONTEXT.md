@@ -1,6 +1,6 @@
 # PROJECT-CONTEXT - GAMILIT
 
-**Sistema:** NEXUS v4.1 (L1 Context) | **Version:** 4.0.0 | **Fecha:** 2026-02-17
+**Sistema:** NEXUS v4.1 (L1 Context) | **Version:** 4.1.0 | **Fecha:** 2026-02-19
 
 ---
 
@@ -121,16 +121,16 @@ teachers, parents, analytics, reports
 
 ## METRICAS ACTUALES
 
-**Fuente:** orchestration/inventarios/MASTER_INVENTORY.yml (v10.0.0)
+**Fuente:** orchestration/inventarios/MASTER_INVENTORY.yml (v11.0.0+)
 
 ### Base de Datos
 18 schemas | 169 tablas | 22 views | 7 MVs | 183 funciones (DDL) | 67 triggers | 227 RLS policies | 42 ENUMs
 
 ### Backend
-23 modulos | 152 entities | 399 DTOs | 171 services | 107 controllers | 901 endpoints | 15 guards | 18 decorators
+23 modulos | 155 entities | 399 DTOs | 173 services | 108 controllers | 904 endpoints | 15 guards | 18 decorators
 
 ### Frontend
-480 componentes | 102 hooks | 68 paginas | 14 stores | 52 API services | 4 portales | 30 mecanicas
+~580 componentes | ~125 hooks | 70 paginas | 13 stores | ~64 API services | 4 portales | 30 mecanicas
 
 ### Testing
 833 tests pasando (620 backend + 213 frontend) | Target 80% cobertura | Coherencia DDL-Backend: 90.5%

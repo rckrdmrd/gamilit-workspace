@@ -34,6 +34,7 @@ import { AssignmentCard } from '../components/assignments/AssignmentCard';
 import { SubmissionsModal } from '../components/assignments/SubmissionsModal';
 import { GradeSubmissionModal } from '../components/dashboard/GradeSubmissionModal';
 import type { Assignment, Submission, DashboardSubmission, GradeSubmissionData } from '../types';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 /** Data shape received from ImprovedAssignmentWizard onComplete callback */
 interface AssignmentWizardData {
@@ -191,7 +192,7 @@ export default function TeacherAssignments() {
   };
 
   return (
-    <>
+    <TeacherPageShell>
       <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
         <main className="detective-container py-8">
           {/* Header */}
@@ -378,6 +379,6 @@ export default function TeacherAssignments() {
         onSubmit={handleSubmitGrade}
       />
       </div>
-    </>
+    </TeacherPageShell>
   );
 }

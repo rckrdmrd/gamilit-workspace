@@ -59,7 +59,7 @@ flowchart TD
 | Componente | `apps/frontend/src/features/admin/lti/components/LtiCredentialsDisplay.tsx` |
 | Componente | `apps/frontend/src/features/admin/lti/components/ConnectionTestModal.tsx` |
 | Hook | `apps/frontend/src/apps/admin/hooks/useLtiConsumers.ts` |
-| API Service | `apps/frontend/src/lib/api/lti.api.ts` |
+| API Service | `apps/frontend/src/services/api/admin/ltiAPI.ts` |
 
 ### Backend
 
@@ -122,7 +122,7 @@ flowchart TD
 | FE Component | `apps/frontend/src/features/admin/lti/components/LtiCredentialsDisplay.tsx` | Visualizacion de credenciales |
 | FE Component | `apps/frontend/src/features/admin/lti/components/ConnectionTestModal.tsx` | Modal de prueba de conexion |
 | FE Hook | `apps/frontend/src/apps/admin/hooks/useLtiConsumers.ts` | Hook con operaciones CRUD y test |
-| FE API | `apps/frontend/src/lib/api/lti.api.ts` | Cliente API para LTI |
+| FE API | `apps/frontend/src/services/api/admin/ltiAPI.ts` | Cliente API para LTI |
 | BE Controller | `apps/backend/src/modules/lti/controllers/lti-consumers.controller.ts` | Controlador con 9 endpoints de consumers |
 | BE Service | `apps/backend/src/modules/lti/services/lti-consumers.service.ts` | Logica de negocio de consumers |
 | DB Entity | `apps/backend/src/modules/lti/entities/lti-consumer.entity.ts` | Entity de LTI consumer |

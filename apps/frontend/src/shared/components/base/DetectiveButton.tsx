@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@shared/utils';
+import { cn } from '@shared/utils/cn';
 
 export interface DetectiveButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'gold' | 'blue' | 'green' | 'purple' | 'danger' | 'outline' | 'ghost';

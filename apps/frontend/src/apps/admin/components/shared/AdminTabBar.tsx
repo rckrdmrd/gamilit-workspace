@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ElementType } from 'react';
 import { cn } from '@shared/utils/cn';
 
 /**
@@ -7,7 +7,7 @@ import { cn } from '@shared/utils/cn';
 export interface AdminTab<T extends string = string> {
   id: T;
   label: string;
-  icon?: React.ElementType;
+  icon?: ElementType;
   description?: string;
   badge?: string;
   badgeTooltip?: string;
@@ -21,7 +21,7 @@ export interface AdminTab<T extends string = string> {
  */
 type AdminTabVariant = 'underline' | 'cards';
 
-interface AdminTabBarProps<T extends string> {
+export interface AdminTabBarProps<T extends string> {
   tabs: AdminTab<T>[];
   activeTab: T;
   onTabChange: (tab: T) => void;

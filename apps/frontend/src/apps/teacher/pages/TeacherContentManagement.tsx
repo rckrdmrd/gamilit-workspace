@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 import { toast } from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -14,6 +15,7 @@ import {
   AlertCircle,
   X,
 } from 'lucide-react';
+import { Modal } from '@shared/components/common/Modal';
 import { useTeacherContent } from '../hooks/useTeacherContent';
 import {
   TeacherContent,
@@ -280,6 +282,7 @@ export default function TeacherContentManagement() {
   // ============================================================================
 
   return (
+    <TeacherPageShell>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -512,215 +515,211 @@ export default function TeacherContentManagement() {
       </div>
 
       {/* Create/Edit Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-detective-bg shadow-xl">
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-700 bg-detective-bg p-6">
-              <h2 className="text-2xl font-bold text-detective-text">
-                {modalMode === 'create' ? 'Crear Contenido' : 'Editar Contenido'}
-              </h2>
-              <button
-                onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-white"
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={modalMode === 'create' ? 'Crear Contenido' : 'Editar Contenido'}
+        size="lg"
+      >
+        <div className="space-y-4">
+          {/* Title */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-detective-text">
+              Titulo *
+            </label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
+              placeholder="Ej: Ejercicio de Numeros Mayas"
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-detective-text">
+              Descripcion
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              rows={3}
+              className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
+              placeholder="Describe el contenido..."
+            />
+          </div>
+
+          {/* Type and Visibility */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-detective-text">
+                Tipo *
+              </label>
+              <select
+                value={formData.contentType}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    contentType: e.target.value as TeacherContentType,
+                  })
+                }
+                className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
               >
-                <X className="h-6 w-6" />
-              </button>
+                {Object.values(TeacherContentType).map((type) => (
+                  <option key={type} value={type}>
+                    {getTypeLabel(type)}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <div className="space-y-4 p-6">
-              {/* Title */}
-              <div>
-                <label className="mb-2 block text-sm font-medium text-detective-text">
-                  Título *
-                </label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
-                  placeholder="Ej: Ejercicio de Números Mayas"
-                />
-              </div>
-
-              {/* Description */}
-              <div>
-                <label className="mb-2 block text-sm font-medium text-detective-text">
-                  Descripción
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
-                  className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
-                  placeholder="Describe el contenido..."
-                />
-              </div>
-
-              {/* Type and Visibility */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-detective-text">
-                    Tipo *
-                  </label>
-                  <select
-                    value={formData.contentType}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        contentType: e.target.value as TeacherContentType,
-                      })
-                    }
-                    className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
-                  >
-                    {Object.values(TeacherContentType).map((type) => (
-                      <option key={type} value={type}>
-                        {getTypeLabel(type)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-detective-text">
-                    Visibilidad *
-                  </label>
-                  <select
-                    value={formData.visibility}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        visibility: e.target.value as TeacherContentVisibility,
-                      })
-                    }
-                    className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
-                  >
-                    <option value={TeacherContentVisibility.PRIVATE}>Privado</option>
-                    <option value={TeacherContentVisibility.CLASSROOM}>Clase</option>
-                    <option value={TeacherContentVisibility.SCHOOL}>Escuela</option>
-                    <option value={TeacherContentVisibility.PUBLIC}>Público</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Difficulty and Duration */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-detective-text">
-                    Dificultad
-                  </label>
-                  <select
-                    value={formData.difficultyLevel}
-                    onChange={(e) => setFormData({ ...formData, difficultyLevel: e.target.value })}
-                    className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
-                  >
-                    <option value="beginner">Principiante</option>
-                    <option value="intermediate">Intermedio</option>
-                    <option value="advanced">Avanzado</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-detective-text">
-                    Duración (minutos)
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.estimatedDurationMinutes}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        estimatedDurationMinutes: parseInt(e.target.value),
-                      })
-                    }
-                    className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Points and Rewards */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-detective-text">
-                    Puntos (XP)
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.pointsValue}
-                    onChange={(e) =>
-                      setFormData({ ...formData, pointsValue: parseInt(e.target.value) })
-                    }
-                    className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-detective-text">
-                    ML Coins
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.mlCoinsReward}
-                    onChange={(e) =>
-                      setFormData({ ...formData, mlCoinsReward: parseInt(e.target.value) })
-                    }
-                    className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Instructions */}
-              <div>
-                <label className="mb-2 block text-sm font-medium text-detective-text">
-                  Instrucciones
-                </label>
-                <textarea
-                  value={formData.instructions}
-                  onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
-                  rows={4}
-                  className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
-                  placeholder="Instrucciones para el estudiante..."
-                />
-              </div>
-            </div>
-
-            <div className="sticky bottom-0 flex justify-end gap-3 border-t border-gray-700 bg-detective-bg p-6">
-              <DetectiveButton onClick={() => setShowModal(false)} variant="secondary">
-                Cancelar
-              </DetectiveButton>
-              <DetectiveButton onClick={handleSave} variant="primary" disabled={!formData.title}>
-                {modalMode === 'create' ? 'Crear' : 'Guardar'}
-              </DetectiveButton>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-detective-text">
+                Visibilidad *
+              </label>
+              <select
+                value={formData.visibility}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    visibility: e.target.value as TeacherContentVisibility,
+                  })
+                }
+                className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
+              >
+                <option value={TeacherContentVisibility.PRIVATE}>Privado</option>
+                <option value={TeacherContentVisibility.CLASSROOM}>Clase</option>
+                <option value={TeacherContentVisibility.SCHOOL}>Escuela</option>
+                <option value={TeacherContentVisibility.PUBLIC}>Publico</option>
+              </select>
             </div>
           </div>
+
+          {/* Difficulty and Duration */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-detective-text">
+                Dificultad
+              </label>
+              <select
+                value={formData.difficultyLevel}
+                onChange={(e) => setFormData({ ...formData, difficultyLevel: e.target.value })}
+                className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
+              >
+                <option value="beginner">Principiante</option>
+                <option value="intermediate">Intermedio</option>
+                <option value="advanced">Avanzado</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-detective-text">
+                Duracion (minutos)
+              </label>
+              <input
+                type="number"
+                value={formData.estimatedDurationMinutes}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    estimatedDurationMinutes: parseInt(e.target.value),
+                  })
+                }
+                className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Points and Rewards */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-detective-text">
+                Puntos (XP)
+              </label>
+              <input
+                type="number"
+                value={formData.pointsValue}
+                onChange={(e) =>
+                  setFormData({ ...formData, pointsValue: parseInt(e.target.value) })
+                }
+                className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-detective-text">
+                ML Coins
+              </label>
+              <input
+                type="number"
+                value={formData.mlCoinsReward}
+                onChange={(e) =>
+                  setFormData({ ...formData, mlCoinsReward: parseInt(e.target.value) })
+                }
+                className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Instructions */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-detective-text">
+              Instrucciones
+            </label>
+            <textarea
+              value={formData.instructions}
+              onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
+              rows={4}
+              className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
+              placeholder="Instrucciones para el estudiante..."
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3 border-t border-gray-700 pt-4">
+            <DetectiveButton onClick={() => setShowModal(false)} variant="secondary">
+              Cancelar
+            </DetectiveButton>
+            <DetectiveButton onClick={handleSave} variant="primary" disabled={!formData.title}>
+              {modalMode === 'create' ? 'Crear' : 'Guardar'}
+            </DetectiveButton>
+          </div>
         </div>
-      )}
+      </Modal>
 
       {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && contentToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="w-full max-w-md rounded-lg bg-detective-bg p-6 shadow-xl">
-            <h2 className="mb-4 text-xl font-bold text-detective-text">Confirmar Eliminación</h2>
-            <p className="mb-6 text-detective-text-secondary">
-              ¿Estás seguro de que deseas eliminar el contenido "{contentToDelete.title}"? Esta
-              acción no se puede deshacer.
-            </p>
-            <div className="flex justify-end gap-3">
-              <DetectiveButton
-                onClick={() => {
-                  setShowDeleteConfirm(false);
-                  setContentToDelete(null);
-                }}
-                variant="secondary"
-              >
-                Cancelar
-              </DetectiveButton>
-              <DetectiveButton onClick={handleDelete} variant="danger">
-                Eliminar
-              </DetectiveButton>
-            </div>
+      <Modal
+        isOpen={showDeleteConfirm && !!contentToDelete}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setContentToDelete(null);
+        }}
+        title="Confirmar Eliminacion"
+        size="sm"
+      >
+        <div>
+          <p className="mb-6 text-detective-text-secondary">
+            Estas seguro de que deseas eliminar el contenido "{contentToDelete?.title}"? Esta
+            accion no se puede deshacer.
+          </p>
+          <div className="flex justify-end gap-3">
+            <DetectiveButton
+              onClick={() => {
+                setShowDeleteConfirm(false);
+                setContentToDelete(null);
+              }}
+              variant="secondary"
+            >
+              Cancelar
+            </DetectiveButton>
+            <DetectiveButton onClick={handleDelete} variant="danger">
+              Eliminar
+            </DetectiveButton>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
+    </TeacherPageShell>
   );
 }

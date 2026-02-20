@@ -7,10 +7,12 @@ import {
 } from '@/services/api/teacher/interventionAlertsApi';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { EmptyState } from '@shared/components/feedback';
 import { AlertTriangle, Bell, Filter, X, TrendingUp, Activity, AlertCircle, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ALERT_TYPES, ALERT_PRIORITIES } from '../constants/alertTypes';
 import type { AlertPriority, AlertType } from '../types';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 
 /**
  * TeacherAlertsPage - Sistema de Alertas
@@ -47,6 +49,7 @@ export default function TeacherAlertsPage() {
   const hasActiveFilters = filterPriority !== 'all' || filterType !== 'all';
 
   return (
+    <TeacherPageShell>
     <div className="space-y-6">
         {/* Header con título y descripción */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -255,16 +258,11 @@ export default function TeacherAlertsPage() {
           />
         ) : (
           <DetectiveCard variant="info">
-            <div className="py-16 text-center">
-              <AlertCircle className="mx-auto mb-4 h-20 w-20 text-yellow-500 opacity-50" />
-              <h3 className="mb-2 text-xl font-bold text-detective-text">
-                No hay clases disponibles
-              </h3>
-              <p className="mb-6 text-detective-text-secondary">
-                Necesitas tener al menos una clase asignada para ver las alertas de intervención.
-                Por favor, contacta con el administrador para que te asigne una clase.
-              </p>
-            </div>
+            <EmptyState
+              icon={AlertCircle}
+              title="No hay clases disponibles"
+              description="Necesitas tener al menos una clase asignada para ver las alertas de intervencion. Por favor, contacta con el administrador para que te asigne una clase."
+            />
           </DetectiveCard>
         )}
 
@@ -310,5 +308,6 @@ export default function TeacherAlertsPage() {
           </div>
         </DetectiveCard>
     </div>
+    </TeacherPageShell>
   );
 }

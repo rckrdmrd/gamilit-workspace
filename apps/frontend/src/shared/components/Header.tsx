@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Menu, User, LogOut, Settings, Bell, ChevronDown } from 'lucide-react';
-import { cn } from '@/shared/utils/cn';
+import { cn } from '@shared/utils/cn';
 import type { User as UserType } from '@/shared/types/auth.types';
 
 interface HeaderProps {

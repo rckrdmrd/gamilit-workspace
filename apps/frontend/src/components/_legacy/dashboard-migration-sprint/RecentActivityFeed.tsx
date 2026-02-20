@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Clock, BookOpen, Award, TrendingUp, Coins, Play } from 'lucide-react';
-import type { RecentActivity } from '@/lib/api/progress.api';
-import { ActivityAction } from '@/lib/api/progress.api';
+import type { RecentActivity } from '@/services/api/progress/progressAPI';
+import { ActivityAction } from '@/services/api/progress/progressAPI';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Trophy, Gift, Lock, CheckCircle, Loader } from 'lucide-react';
 import { Modal } from './Modal';
-import { cn } from '@shared/utils';
+import { cn } from '@shared/utils/cn';
 import { formatRelativeTime } from '@/shared/utils/format.util';
 import type { Achievement, UserAchievement, AchievementStatus } from '@/shared/types/achievement.types';
 

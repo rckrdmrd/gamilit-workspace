@@ -10,7 +10,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useAuth } from '@/app/providers/AuthContext';
-import { gamificationApi } from '@/lib/api/gamification.api';
+import { gamificationApi } from '@/services/api/gamification/gamificationAPI';
 import { useInvalidateDashboard } from '@/shared/hooks/useInvalidateDashboard';
 import type {
   Achievement,

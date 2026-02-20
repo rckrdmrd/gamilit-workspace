@@ -18,3 +18,6 @@ export * from './enums.constants';
 
 // Exercise Feedback Messages
 export * from './exerciseFeedback.constants';
+
+// React Query cache constants
+export { STALE_TIMES } from './queryKeys';

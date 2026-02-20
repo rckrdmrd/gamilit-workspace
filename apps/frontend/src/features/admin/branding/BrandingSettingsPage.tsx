@@ -21,7 +21,7 @@ import { useBranding } from '@/app/providers/BrandingProvider';
 import { AdminLayout } from '@/apps/admin/layouts/AdminLayout';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
-import { brandingApi } from '@/lib/api/branding.api';
+import { brandingApi } from '@/services/api/branding/brandingAPI';
 import {
   ColorPicker,
   LogoUploader,

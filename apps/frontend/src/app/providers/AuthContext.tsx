@@ -150,6 +150,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       setError(null);
 
+      // Clear stale logout flag BEFORE saving new auth data
+      localStorage.removeItem('is_logging_out');
+
       const response = await authAPI.login(credentials);
 
       // Determine user data
@@ -229,6 +232,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       setError(null);
+
+      // Clear stale logout flag BEFORE saving new auth data
+      localStorage.removeItem('is_logging_out');
 
       const response = await authAPI.register(userData);
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Trophy, Crown, Loader } from 'lucide-react';
 import { Avatar } from './Avatar';
-import { cn } from '@shared/utils';
+import { cn } from '@shared/utils/cn';
 import { formatXP, formatStreak } from '@/shared/utils/format.util';
 import type { LeaderboardEntry } from '@/shared/types/leaderboard.types';
 import { MayaRank } from '@/shared/constants/ranks.constants';

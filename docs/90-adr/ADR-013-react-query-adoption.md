@@ -196,7 +196,7 @@ function App() {
 ```typescript
 // apps/frontend/src/hooks/useUserGamification.ts
 import { useQuery } from '@tanstack/react-query';
-import { gamificationApi } from '@/lib/api/gamification.api';
+import { gamificationApi } from '@/services/api/gamification/gamificationAPI';
 
 export function useUserGamification(userId: string) {
   return useQuery({
@@ -420,7 +420,7 @@ return { gamificationData, isLoading, error };
 ```typescript
 // ~15 líneas por hook (70% menos código)
 import { useQuery } from '@tanstack/react-query';
-import { gamificationApi } from '@/lib/api/gamification.api';
+import { gamificationApi } from '@/services/api/gamification/gamificationAPI';
 
 export function useUserGamification(userId: string) {
   return useQuery({
@@ -630,7 +630,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 ### Para Crear un Nuevo Query Hook
 
 ```typescript
-// 1. Definir API function en lib/api/
+// 1. Definir API function en services/api/
 export const myApi = {
   getItem: (id: string) => apiClient.get(`/items/${id}`),
 };

@@ -279,7 +279,7 @@ toast.promise(saveData(), {
 ### LoadingSpinner
 
 ```typescript
-import { LoadingSpinner } from '@/shared/components/ui';
+import { LoadingSpinner } from '@shared/components/loading';
 
 // Básico
 <LoadingSpinner />

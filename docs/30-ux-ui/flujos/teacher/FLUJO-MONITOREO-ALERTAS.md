@@ -2,13 +2,17 @@
 
 **Portal:** Teacher
 **Prioridad:** Alta
-**Estado:** Documentado
+**Version:** 1.1.0
+**Fecha:** 2026-02-19
+**Estado:** Activo
 
 ---
 
 ## 1. Resumen
 
 Flujo para visualizar alertas de riesgo academico generadas automaticamente por el sistema de monitoreo, confirmarlas (acknowledge), resolverlas con notas de intervencion o descartarlas. Incluye tambien la configuracion de umbrales y preferencias de alertas por classroom.
+
+Adicionalmente, la pagina `TeacherMonitoringPage` integra el hook `useClassroomRealtime` para recibir eventos en tiempo real via WebSocket (Socket.IO), incluyendo un indicador de estado de conexion y un feed de actividad en vivo con los 10 eventos mas recientes. Cuando WebSocket no esta disponible, el sistema degrada graciosamente a polling periodico.
 
 ## 2. Precondiciones
 
@@ -38,6 +42,22 @@ flowchart TD
     configPage --> configApi[GET/POST/PUT /api/v1/teacher/alert-config]
     configApi --> configService[AlertConfigService]
     configService --> configDb[(progress_tracking.teacher_alert_configurations)]
+
+    %% WebSocket Realtime Integration
+    page --> monPage[TeacherMonitoringPage]
+    monPage --> wsHook[useClassroomRealtime hook]
+    wsHook --> wsConn{WebSocket disponible?}
+    wsConn -- Si --> wsEvents[Socket.IO: 7 eventos en tiempo real]
+    wsConn -- No --> wsFallback[Degradacion graciosa: polling periodico]
+    wsEvents --> wsIndicator[Indicador conexion: verde/amarillo/rojo]
+    wsEvents --> wsFeed[Live Activity Feed: 10 eventos recientes]
+    wsEvents --> wsE1[exercise_started]
+    wsEvents --> wsE2[exercise_completed]
+    wsEvents --> wsE3[achievement_unlocked]
+    wsEvents --> wsE4[level_up]
+    wsEvents --> wsE5[student_online]
+    wsEvents --> wsE6[student_offline]
+    wsEvents --> wsE7[help_requested]
 ```
 
 ## 4. Secuencia FE -> BE -> DB
@@ -55,6 +75,40 @@ flowchart TD
 8. Configuracion de umbrales en `TeacherAlertConfigPage` via `GET/POST/PUT/DELETE /api/v1/teacher/alert-config`.
 9. FE aplica actualizaciones optimistas y refresca con `useInterventionAlerts.refresh()`.
 
+### Flujo WebSocket: Monitoreo en Tiempo Real (TeacherMonitoringPage)
+
+#### Paso 1: Conexion WebSocket
+10. **Frontend:** `TeacherMonitoringPage.tsx` monta el hook `useClassroomRealtime(classroomId)`.
+11. **Frontend:** `useClassroomRealtime` establece conexion Socket.IO al namespace `/classroom` con token JWT.
+12. **Frontend:** Indicador de estado de conexion se muestra en la UI:
+    - **Verde:** Conexion activa y recibiendo eventos.
+    - **Amarillo:** Reconectando (intentos automaticos).
+    - **Rojo:** Desconectado / WebSocket no disponible.
+
+#### Paso 2: Recepcion de eventos en tiempo real
+13. **Frontend:** El hook escucha 7 tipos de eventos WebSocket:
+
+| Evento | Descripcion | Datos |
+|--------|-------------|-------|
+| `exercise_started` | Estudiante inicio un ejercicio | `{ studentId, exerciseId, exerciseType, timestamp }` |
+| `exercise_completed` | Estudiante completo un ejercicio | `{ studentId, exerciseId, score, xpEarned, timestamp }` |
+| `achievement_unlocked` | Estudiante desbloqueo un logro | `{ studentId, achievementId, achievementName, timestamp }` |
+| `level_up` | Estudiante subio de nivel/rango | `{ studentId, newLevel, newRank, timestamp }` |
+| `student_online` | Estudiante se conecto a la plataforma | `{ studentId, timestamp }` |
+| `student_offline` | Estudiante se desconecto | `{ studentId, timestamp }` |
+| `help_requested` | Estudiante solicito ayuda | `{ studentId, exerciseId, message, timestamp }` |
+
+#### Paso 3: Live Activity Feed
+14. **Frontend:** Los eventos se acumulan en un feed de actividad en vivo que muestra los **10 eventos mas recientes**.
+15. **Frontend:** Cada evento se renderiza con icono, nombre del estudiante, descripcion de la accion y timestamp relativo.
+16. **Frontend:** Los eventos de `help_requested` se destacan visualmente con badge de urgencia.
+
+#### Paso 4: Degradacion graciosa
+17. **Frontend:** Si WebSocket no esta disponible (error de conexion, servidor sin soporte, red inestable):
+    - El indicador cambia a rojo con mensaje "Modo offline — datos pueden no estar actualizados".
+    - El sistema cae a polling periodico (cada 30 segundos) via REST para mantener datos actualizados.
+    - No se muestran errores disruptivos al usuario; la funcionalidad REST sigue operativa.
+
 ## 5. Componentes y artefactos implicados
 
 | Capa | Archivo | Descripcion |
@@ -71,6 +125,7 @@ flowchart TD
 | FE Hook | `apps/frontend/src/apps/teacher/hooks/useInterventionAlerts.ts` | Hook gestion de alertas |
 | FE Hook | `apps/frontend/src/apps/teacher/hooks/useAlertConfig.ts` | Hook configuracion de alertas |
 | FE Hook | `apps/frontend/src/apps/teacher/hooks/useStudentMonitoring.ts` | Hook monitoreo estudiantes |
+| FE Hook | `apps/frontend/src/apps/teacher/hooks/useClassroomRealtime.ts` | Hook WebSocket para eventos en tiempo real del classroom (7 eventos) |
 | FE API | `apps/frontend/src/services/api/teacher/interventionAlertsApi.ts` | Cliente API alertas |
 | BE Controller | `apps/backend/src/modules/teacher/controllers/intervention-alerts.controller.ts` | 7 endpoints REST alertas |
 | BE Controller | `apps/backend/src/modules/teacher/controllers/alert-config.controller.ts` | 7 endpoints REST configuracion |
@@ -94,6 +149,10 @@ flowchart TD
 | Alertas dismissed ocultas | Por defecto las consultas excluyen alertas en estado `dismissed` (flag `include_dismissed`) |
 | Generacion automatica | Las alertas se generan via funcion SQL `generate_student_alerts()` ejecutada por cron o manualmente |
 | Configuracion por classroom | Los umbrales pueden ser globales o especificos por classroom |
+| WebSocket autenticado | La conexion Socket.IO requiere JWT valido como query param o header |
+| WebSocket scoped | El hook `useClassroomRealtime` solo suscribe a eventos del classroom activo del docente |
+| Feed limitado | El Live Activity Feed muestra maximo 10 eventos; los anteriores se descartan del buffer |
+| Degradacion graciosa | Si WebSocket falla, el sistema cae a polling REST cada 30s sin notificar error al usuario |
 
 ## 7. Manejo de errores
 
@@ -105,6 +164,9 @@ flowchart TD
 | Alerta ya resuelta (doble resolve) | BE Service | 400 Bad Request | FE muestra toast "Esta alerta ya esta resuelta" |
 | Solo se puede acknowledge alerta activa | BE Service | 400 Bad Request | FE muestra toast "Solo se pueden reconocer alertas activas" |
 | Error de red / timeout | FE Hook | - | `useInterventionAlerts` establece `error` state, UI muestra banner con boton de reintento |
+| WebSocket conexion rechazada | FE Hook | - | Indicador rojo, degradacion a polling REST cada 30s |
+| WebSocket desconexion inesperada | FE Hook | - | Indicador amarillo, reconexion automatica (3 reintentos con backoff), luego rojo si falla |
+| WebSocket JWT expirado | FE Hook | - | Desconexion automatica, indicador rojo, polling REST como fallback |
 
 ## 8. Trazabilidad cruzada
 
@@ -117,6 +179,9 @@ flowchart TD
 | Controller | `apps/backend/src/modules/teacher/controllers/alert-config.controller.ts` | @Controller('teacher/alert-config') |
 | Frontend | `apps/frontend/src/apps/teacher/pages/TeacherAlerts.tsx` | Pagina de alertas |
 | API Client | `apps/frontend/src/services/api/teacher/interventionAlertsApi.ts` | interventionAlertsApi |
+| FE Hook (WebSocket) | `apps/frontend/src/apps/teacher/hooks/useClassroomRealtime.ts` | Hook Socket.IO para 7 eventos en tiempo real |
+| FE Page (Monitoring) | `apps/frontend/src/apps/teacher/pages/TeacherMonitoringPage.tsx` | Pagina de monitoreo con WebSocket + indicador + feed |
+| BE Gateway | `apps/backend/src/modules/websocket/gateways/` | WebSocket gateways para eventos de classroom |
 
 ## 9. Referencias
 

@@ -41,7 +41,7 @@ Registro de decisiones arquitectonicas del proyecto.
 | [ADR-027](ADR-027-missions-triggers-mapping.md) | Missions Triggers Mapping | Aceptada |
 | [ADR-028](ADR-028-roles-system-hybrid-design.md) | Roles System Hybrid Design | Aceptada |
 | [ADR-029](ADR-029-consolidacion-teacher-resources.md) | Consolidacion Teacher Resources | Aceptada |
-| [ADR-030](ADR-030-convencion-nombres-paginas.md) | Convencion Nombres Paginas | Aceptada |
+| [ADR-030](ADR-030-convencion-nombres-paginas.md) | Convencion Nombres Paginas — Sufijo "Page" | Enmendada |
 | [ADR-031](ADR-031-portal-parent.md) | Portal Parent | Aceptada |
 | [ADR-032](ADR-032-parent-notifications-integration.md) | Parent Notifications Integration | Aceptada |
 | [ADR-033](ADR-033-expansion-schemas-8-to-18.md) | Expansion Schemas 8→18 | Aceptada |

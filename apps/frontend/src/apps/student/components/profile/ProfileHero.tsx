@@ -21,10 +21,11 @@ interface ProfileHeroProps {
   } | null;
   rankType: RankType;
   stats: ProfileStat[];
+  equippedFrameColor?: string;
   onAvatarClick: () => void;
 }
 
-export function ProfileHero({ user, rankType, stats, onAvatarClick }: ProfileHeroProps) {
+export function ProfileHero({ user, rankType, stats, equippedFrameColor, onAvatarClick }: ProfileHeroProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
       <div className="rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 p-8 text-white shadow-xl">
@@ -35,7 +36,11 @@ export function ProfileHero({ user, rankType, stats, onAvatarClick }: ProfileHer
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-              className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-white/30 bg-white/20 backdrop-blur-sm"
+              className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-white/20 backdrop-blur-sm"
+              style={equippedFrameColor
+                ? { borderWidth: 4, borderStyle: 'solid', borderColor: equippedFrameColor }
+                : { borderWidth: 4, borderStyle: 'solid', borderColor: 'rgba(255,255,255,0.3)' }
+              }
             >
               {user?.avatar_url ? (
                 <img src={user.avatar_url} alt="Avatar" className="h-full w-full object-cover" />

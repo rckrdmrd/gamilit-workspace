@@ -24,6 +24,8 @@ export { bonusCoinsApi, BonusCoinsAPI } from './bonusCoinsApi';
 export { exerciseResponsesApi } from './exerciseResponsesApi';
 export type { ExerciseResponsesAPI } from './exerciseResponsesApi';
 export { reportsApi } from './reportsApi'; // P1-003: Teacher Reports services
+export { scheduledReportsApi } from './scheduledReportsApi'; // Scheduled Reports CRUD + pause/resume
+export { sharedReportsApi } from './sharedReportsApi'; // Shared Reports between teachers
 export { alertConfigApi, AlertConfigAPI } from './alertConfigApi'; // US-PM-007: Alert configuration
 
 // Re-export shared profile API for consistency (ISS-FE-002)
@@ -149,6 +151,23 @@ export type {
   TeacherReport,
   ReportStats,
 } from './reportsApi';
+
+// Scheduled Reports types
+export type {
+  ScheduledReportFrequency,
+  ScheduledReportStatus,
+  ScheduledReportResponse,
+  CreateScheduledReportDto,
+  UpdateScheduledReportDto,
+} from './scheduledReportsApi';
+
+// Shared Reports types
+export type {
+  SharePermission,
+  ShareReportDto,
+  SharedReportResponseDto,
+  SharedWithMeResponseDto,
+} from './sharedReportsApi';
 
 // Manual Review types — canonical location is @/shared/api/manualReviewApi
 

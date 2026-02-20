@@ -1,9 +1,9 @@
 # PROXIMA ACCION - GAMILIT
 
-**Ultima Actualizacion:** 2026-02-18
-**Estado del Proyecto:** MVP 98% completado | **SPRINT 1 COMPLETADO (6/6 items)** | **Admin Portal Refactor Sprint 0+1+2 COMPLETADO** | **Student Portal Refactor Fases 0-4 COMPLETADO**
+**Ultima Actualizacion:** 2026-02-19
+**Estado del Proyecto:** MVP 98% completado | **SPRINT 1 COMPLETADO (6/6 items)** | **Estandarizacion Portales (5 Fases) COMPLETADA** | **Admin Portal Refactor Sprint 0+1+2 COMPLETADO** | **Student Portal Refactor Fases 0-4 COMPLETADO** | **Settings Fixes + Registro/Avatar/Inventario COMPLETADO**
 **Sprint Actual:** Sprint 1 — Calidad y Estabilizacion (2026-02-17 a 2026-03-03) — **100% COMPLETADO**
-**Ultima Tarea:** Student Portal Refactoring Fases 0-4 — 10 paginas, 5,719→2,307 lineas (-60%), 94% compliance, 43 archivos nuevos (**COMPLETADA**)
+**Ultima Tarea:** Estandarizacion Cross-Portal Teacher/Admin/Student (TASK-2026-02-19-ESTANDARIZACION-PORTALES) — **5/5 FASES COMPLETADAS**
 **Tareas Pendientes:** MQ-005 (Repository pattern — DEFERRED per ADR-045), MQ-007 (911 no-explicit-any — DOCUMENTED, XL sprint needed)
 **Backlog Resuelto (2026-02-18):** MQ-008 (skill created), MQ-009 (XP sync FIXED), TRZ-006 (plan created), DBOPS-005 (CI script + job created)
 **CORR-03/04/05:** Todos **COMPLETADOS** — BD recrea con 0 errores (indices, RLS, seeds). Runtime: 404 RLS, 76 seeds, 169 tablas.
@@ -17,6 +17,164 @@
 ---
 
 ## Estado Actual
+
+### TASK-2026-02-19-ESTANDARIZACION-PORTALES — Cross-Portal Standardization (2026-02-19) - 5/5 FASES COMPLETADAS
+
+**Estandarizacion cross-portal de Teacher, Admin y Student: 6 tracks de analisis paralelo + 5 fases de implementacion. 66 hallazgos (12 P0, 28 P1, 26 P2).**
+
+#### Analisis (6 Tracks Paralelos)
+
+| Track | Foco | Hallazgos |
+|-------|------|-----------|
+| A: Teacher Pages | 19 paginas x 10 criterios | 10 (2 P0, 6 P1, 2 P2) |
+| B: Admin Pages | 19 paginas x 10 criterios | 12 (2 P0, 5 P1, 5 P2) |
+| C: Shared Components | 312 componentes, duplicaciones | 8 (2 P0, 5 P1, 1 P2) |
+| D: Integration Gaps | ~87 endpoints backend-frontend | 12 (3 P0, 4 P1, 5 P2) |
+| E: Styles/UX | 15 criterios UX x 3 portales | 10 (2 P0, 3 P1, 5 P2) |
+| F: Documentation | 87 archivos doc evaluados | 14 (1 P0, 5 P1, 8 P2) |
+
+#### Fase 1: Quick Wins (COMPLETADA)
+
+| Fix | Descripcion | Estado |
+|-----|-------------|--------|
+| 19 teacher pages migradas a TeacherPageShell | Elimina withTeacherLayout HOC deprecated | **COMPLETADO** |
+| AdminExerciseCreatePage layout fix | Ahora usa AdminPageShell | **COMPLETADO** |
+| SaveButton consolidado en shared | Teacher + Student unificados | **COMPLETADO** |
+| Modal re-export unificado | shared raiz + common unificados | **COMPLETADO** |
+| 5 STANDARD-*.md movidos a docs/40-standards/ | Standards descubribles | **COMPLETADO** |
+
+#### Fase 2: Integration Fixes (COMPLETADA)
+
+| Fix | Descripcion | Estado |
+|-----|-------------|--------|
+| TeacherReports mock data eliminado | Wired a reportsApi real | **COMPLETADO** |
+| CreateAssignmentModal mock eliminado | Wired a exercisesApi | **COMPLETADO** |
+| useClassroomRealtime activado | En TeacherMonitoring | **COMPLETADO** |
+| AdminExerciseCreatePage stub calls | Backend API wired | **COMPLETADO** |
+
+#### Fase 3: Standardization (COMPLETADA)
+
+| Fix | Descripcion | Estado |
+|-----|-------------|--------|
+| adminAPI.ts splitting | 1,818 lineas monolito → 12 sub-APIs + barrel index | **COMPLETADO** |
+| EmptyState adoptado | 4+ teacher pages | **COMPLETADO** |
+| useApiError adoptado | 7 pages teacher+admin | **COMPLETADO** |
+| ProfileSettingsForm compartido | Teacher + Admin consolidados | **COMPLETADO** |
+| PrivacySettingsForm compartido | Teacher + Student consolidados | **COMPLETADO** |
+| React Query migration (25 admin hooks) | **DIFERIDO** — scope reducido, requiere sprint dedicado | PENDIENTE |
+
+#### Fase 4: Polish & Docs (COMPLETADA)
+
+| Fix | Descripcion | Estado |
+|-----|-------------|--------|
+| PORTAL-TEACHER-GUIDE.md v2.0 | Actualizado a 19 paginas | **COMPLETADO** |
+| ADR-046 creado | PageShell pattern documentado | **COMPLETADO** |
+| React Query Migration Guide | Guia creada en docs/50-guides/ | **COMPLETADO** |
+| Student detective-theme tokens | 3 pages migradas a tokens | **COMPLETADO** |
+| StatusBadge extendido | 6 → 16 status types + 3 inline migrados | **COMPLETADO** |
+| 8 inline modals migrados | A shared Modal | **COMPLETADO** |
+
+#### Fase 5: Features Pendientes (COMPLETADA)
+
+| Fix | Descripcion | Estado |
+|-----|-------------|--------|
+| Scheduled Reports UI | 7 endpoints → API + hook + tab "Programados" | **COMPLETADO** |
+| Shared Reports UI | 6 endpoints → API + hook + tab "Compartidos" | **COMPLETADO** |
+| ADR-030 v2.0.0 | Naming conflict resuelto, sufijo "Page" canonico | **COMPLETADO** |
+
+#### Nuevos Archivos Creados
+
+| Categoria | Archivos | Cantidad |
+|-----------|----------|----------|
+| Admin sub-APIs | services/api/admin/{alerts,analytics,content,dashboard,gamification,monitoring,organizations,progress,reports,roles,settings,users}Api.ts + index.ts | 13 |
+| Teacher APIs | services/api/teacher/{scheduledReports,sharedReports}Api.ts | 2 |
+| Teacher hooks | hooks/useTeacherPageSetup.ts, useScheduledReports.ts, useSharedReports.ts | 3 |
+| Student hooks | hooks/useStudentPageSetup.ts | 1 |
+| Shared components | components/feedback/, components/settings/, components/loading/{LoadingOverlay,LoadingSpinner}.tsx | ~6 |
+| Shared hooks | hooks/useApiError.ts, usePageTitle.ts | 2 |
+| Shared constants | constants/queryKeys.ts | 1 |
+| Standards (docs) | STANDARD-{API,COMPONENT,IMPORTS,TYPES,UX-PATTERNS}.md | 5 |
+| ADR | ADR-046-pageshell-pattern.md | 1 |
+| Guide | REACT-QUERY-MIGRATION-GUIDE.md | 1 |
+
+#### Items Diferidos para Futuros Sprints
+
+| Item | Prioridad | Esfuerzo | Detalle |
+|------|-----------|----------|---------|
+| React Query migration de 25 admin hooks | P1 | XL | useState+useEffect → React Query. Requiere sprint dedicado |
+| 34 inline modals restantes | P2 | L | 8/42 migrados, 34 pendientes (gradual) |
+| Pagination promover a shared | P2 | M | Solo existe en teacher, admin reimplementa inline |
+| TabBar unificacion (3 implementaciones) | P2 | M | shared + AdminTabBar + inline teacher |
+
+#### Inventarios Actualizados
+
+| Inventario | Version | Cambio |
+|-----------|---------|--------|
+| FRONTEND_INVENTORY.yml | v11.0.0 | componentes 571→575, hooks 119→123, constants 7→8, loading/feedback/shared sections updated, lib_api 5→1 (4 migrated to services/api/) |
+| MASTER_INVENTORY.yml | v12.0.0 | componentes 571→575, hooks 119→123, api note updated |
+
+**Output:** `orchestration/tareas/TASK-2026-02-19-ESTANDARIZACION-PORTALES/` (6 tracks analisis + 5 STANDARD-*.md + validacion)
+
+---
+
+### TASK-2026-02-19-ESTANDARIZACION-PORTALES — Registro, Perfil, Avatar, Inventario y Settings (2026-02-19) - COMPLETADA
+
+**Correccion integral del flujo de registro, persistencia de avatar, integracion inventario-perfil, y estandarizacion UI de Settings.**
+
+#### Fase 1: Correccion de Registro y Autenticacion (CRITICA)
+
+| Fix | Archivo | Descripcion | Estado |
+|-----|---------|-------------|--------|
+| 1.1 | `features/auth/api/authAPI.ts` | Fix `getCurrentUser` double-unwrap (`response.data.data.user` → `response.data`) | **COMPLETADO** |
+| 1.2 | `features/auth/api/authAPI.ts` | Fix `mapBackendUserToFrontend` snake_case fields (`first_name`, `last_name`, etc.) | **COMPLETADO** |
+| 1.3 | `shared/utils/authCleanup.ts` + `AuthContext.tsx` | Fix `is_logging_out` race condition (clear en login/register) | **COMPLETADO** |
+| 1.4 | `features/auth/components/RegisterForm.tsx` | Alinear field names con Zod schema (`fullName`, `acceptTerms`) | **COMPLETADO** |
+
+#### Fase 2: Persistencia de Avatar
+
+| Fix | Archivo | Descripcion | Estado |
+|-----|---------|-------------|--------|
+| 2.1 | `profile/controllers/profile.controller.ts` | Almacenamiento real base64 data URI (era placeholder URL) | **COMPLETADO** |
+| 2.2 | `auth/services/auth.service.ts` | Verificar `toUserResponse` incluye `avatar_url` con Profile | **COMPLETADO** |
+
+#### Fase 3: Integracion Inventario-Perfil
+
+| Fix | Archivo | Descripcion | Estado |
+|-----|---------|-------------|--------|
+| 3.2 | `apps/student/pages/EnhancedProfilePage.tsx` | Tab de Inventario agregado al perfil | **COMPLETADO** |
+| 3.2b | `apps/student/components/profile/ProfileInventoryTab.tsx` | Componente de inventario nuevo | **COMPLETADO** |
+| 3.3 | `apps/student/components/profile/ProfileHero.tsx` | Frame color de item equipado en avatar | **COMPLETADO** |
+
+#### Fase 4: Settings UI + Estandarizacion
+
+| Fix | Archivo | Descripcion | Estado |
+|-----|---------|-------------|--------|
+| 4.1 | `apps/student/pages/SettingsPage.tsx` | Migrado a `StudentPageShell` | **COMPLETADO** |
+| 4.2 | `apps/student/pages/settings/SaveButton.tsx` | Fix `text-white` en estado saving | **COMPLETADO** |
+| 4.3a | `apps/student/pages/settings/ProfileSection.tsx` | Reescrito: +firstName/lastName/gradeLevel, InputDetective, refreshUser() | **COMPLETADO** |
+| 4.3b | `apps/student/pages/settings/PrivacySection.tsx` | Reescrito: carga de backend on mount, merge-save, loading spinner | **COMPLETADO** |
+| 4.3c | `apps/student/pages/settings/NotificationsSection.tsx` | Botones subpaginas eliminados (rutas inexistentes) | **COMPLETADO** |
+
+#### Fase 5: Type Safety + Validacion
+
+| Fix | Archivo | Descripcion | Estado |
+|-----|---------|-------------|--------|
+| 5.1 | `features/auth/types/auth.types.ts` | Agregados `bio`, `grade_level`, `equipped_items` a User interface | **COMPLETADO** |
+| 5.2 | `auth/services/auth.service.ts` | Agregados `bio` y `grade_level` a `toUserResponse` profileFields | **COMPLETADO** |
+| 5.3 | `settings/ProfileSection.tsx` | Eliminados `(user as any).bio` casts | **COMPLETADO** |
+
+#### Validacion
+
+| Aspecto | Resultado |
+|---------|-----------|
+| Backend TypeScript | **PASS** (0 errors) |
+| Frontend Vite Build | **PASS** (15.45s) |
+| Frontend TypeCheck | Pre-existing errors only (.example.tsx) |
+| Standards Compliance | ProfileSection: InputDetective, DetectiveCard, refreshUser pattern |
+| Flow Alignment | FL-STU-05 v1.2.0 actualizado |
+| TRACEABILITY-MATRIX | v1.6.1 — FL-STU-05 version bump |
+
+---
 
 ### TASK-2026-02-18-STUDENT-PORTAL-ANALYSIS (2026-02-18) - FASES 0-4 COMPLETADAS
 
@@ -61,7 +219,7 @@
 | SOLID | 100% | SRP + OCP + DIP |
 | Clean Architecture | 100% | Entities/UseCases/Adapters/Framework |
 | Accessibility | 75% | ARIA tabs + search labels (focus trapping pendiente) |
-| Naming (ADR-030) | 83% | Sufijo "Page" codebase-wide (deuda tecnica) |
+| Naming (ADR-030) | 95% | ADR-030 enmendado: sufijo "Page" ahora canonico. Teacher 19 pages pendientes de alinear (oportunista) |
 | Error Handling | 89% | 1 WARN (EnhancedProfilePage sin loading) |
 | TypeScript Strict | 100% | 0 any, 0 @ts-ignore, 0 eslint-disable |
 | Performance | 100% | Lazy loading, useMemo, AnimatePresence |
@@ -781,6 +939,10 @@
 
 | # | Accion | Prioridad | Esfuerzo | Dependencia | Estado |
 |---|--------|-----------|----------|-------------|--------|
+| 31 | React Query migration de 25 admin hooks (useState+useEffect → RQ) | P1 | XL | Ninguna | **DIFERIDO** (requiere sprint dedicado, guia en docs/50-guides/) |
+| 32 | Migrar 34 inline modals restantes a shared Modal | P2 | L | Ninguna | Pendiente (8/42 migrados en Fase 4) |
+| 33 | Promover Pagination de teacher a shared | P2 | M | Ninguna | Pendiente |
+| 34 | Unificar 3 implementaciones TabBar (shared + AdminTabBar + teacher inline) | P2 | M | Ninguna | Pendiente |
 | 26 | ~~Fix env.validation.ts (`: number` en PORT/DB_PORT)~~ | **P0** | 5 min | Ninguna | **COMPLETADO** (CORR-01 — ya estaba resuelto) |
 | 27 | ~~Fix 7 backend lint errors (ml + visualization modules)~~ | P2 | 10 min | Ninguna | **COMPLETADO** (CORR-02 — ya estaba resuelto, 0 errors) |
 | 28 | ~~Corregir 14 errores indices + 16 errores RLS~~ | P1 | 2-4 horas | Ninguna | **COMPLETADO** (CORR-03: 14→0 index errors, 5 files fixed) |
@@ -816,6 +978,9 @@
 | Tarea BD-vs-Docs | `orchestration/tareas/TASK-2026-02-12-ANALISIS-BD-VS-DOCS/` |
 | Tarea Backend Integration | `orchestration/tareas/TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION/` |
 | Tarea Frontend Integration | `orchestration/tareas/TASK-2026-02-12-ANALISIS-FRONTEND-INTEGRACION/` |
+| Estandarizacion Portales | `orchestration/tareas/TASK-2026-02-19-ESTANDARIZACION-PORTALES/` (6 tracks + 5 standards + validacion) |
+| ADR-046 PageShell | `docs/90-adr/ADR-046-pageshell-pattern.md` |
+| React Query Migration Guide | `docs/50-guides/REACT-QUERY-MIGRATION-GUIDE.md` |
 | Inventario Frontend | `orchestration/inventarios/FRONTEND_INVENTORY.yml` (v10.0.0) |
 | Resultados R4+R5 | `orchestration/tareas/TASK-2026-02-12-ANALISIS-BD-VS-DOCS/06-SPRINT-R4-R5-RESULTADOS.md` |
 | Plan Remediacion | `orchestration/tareas/TASK-2026-02-12-ANALISIS-BD-VS-DOCS/05-PLAN-REMEDIACION.md` |

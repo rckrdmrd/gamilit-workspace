@@ -16,6 +16,7 @@
  */
 
 import { useState } from 'react';
+import { TeacherPageShell } from '../components/shared/TeacherPageShell';
 import { motion } from 'framer-motion';
 import { FileText, TrendingUp, CheckCircle, XCircle } from 'lucide-react';
 import { ResponsesTable } from '../components/responses/ResponsesTable';
@@ -171,6 +172,7 @@ export default function TeacherExerciseResponsesPage() {
   };
 
   return (
+    <TeacherPageShell>
     <div className="space-y-6">
         {/* Page Header */}
         <PageHeader />
@@ -225,5 +227,6 @@ export default function TeacherExerciseResponsesPage() {
           onClose={handleCloseModal}
         />
     </div>
+    </TeacherPageShell>
   );
 }
