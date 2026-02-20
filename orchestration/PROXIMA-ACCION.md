@@ -3,8 +3,9 @@
 **Ultima Actualizacion:** 2026-02-19
 **Estado del Proyecto:** MVP 98% completado | **SPRINT 1 COMPLETADO (6/6 items)** | **Estandarizacion Portales (5 Fases) COMPLETADA** | **Admin Portal Refactor Sprint 0+1+2 COMPLETADO** | **Student Portal Refactor Fases 0-4 COMPLETADO** | **Settings Fixes + Registro/Avatar/Inventario COMPLETADO**
 **Sprint Actual:** Sprint 1 — Calidad y Estabilizacion (2026-02-17 a 2026-03-03) — **100% COMPLETADO**
-**Ultima Tarea:** Estandarizacion Cross-Portal Teacher/Admin/Student (TASK-2026-02-19-ESTANDARIZACION-PORTALES) — **5/5 FASES COMPLETADAS**
+**Ultima Tarea:** Analisis de Preparacion para Deploy a Produccion (TASK-2026-02-19-ANALISIS-DEPLOY-PROD) — **7/7 FASES COMPLETADAS**
 **Tareas Pendientes:** MQ-005 (Repository pattern — DEFERRED per ADR-045), MQ-007 (911 no-explicit-any — DOCUMENTED, XL sprint needed)
+**BLOQUEANTES DEPLOY (10 items):** Ver `orchestration/tareas/TASK-2026-02-19-ANALISIS-DEPLOY-PROD/03-CHECKLIST-PRODUCCION.md`
 **Backlog Resuelto (2026-02-18):** MQ-008 (skill created), MQ-009 (XP sync FIXED), TRZ-006 (plan created), DBOPS-005 (CI script + job created)
 **CORR-03/04/05:** Todos **COMPLETADOS** — BD recrea con 0 errores (indices, RLS, seeds). Runtime: 404 RLS, 76 seeds, 169 tablas.
 **Normalizacion Documental (Fase 2/3):** **CERRADA** (Lotes 1-3 + Olas 1-8 completadas, `BROKEN_GLOBAL_TOTAL=0`)
@@ -17,6 +18,56 @@
 ---
 
 ## Estado Actual
+
+### TASK-2026-02-19-ANALISIS-DEPLOY-PROD — Analisis de Preparacion para Deploy (2026-02-19) - 7/7 FASES COMPLETADAS
+
+**Analisis integral de 6 dominios para validar preparacion de deploy a produccion (74.208.126.102). 56 hallazgos, 10 bloqueantes.**
+
+#### Fases Completadas
+
+| Fase | Dominio | Archivos Analizados | Hallazgos |
+|------|---------|:-------------------:|:---------:|
+| F1 | Seeds (dev/prod/staging) | ~250 SQL files | 12 (2 BLOQ, 5 ALTA, 3 MEDIA, 2 BAJA) |
+| F2 | Usuarios y Datos Sensibles | 16 auth/tenant files | 7 (2 BLOQ, 3 ALTA, 2 MEDIA) |
+| F3 | Shell Scripts y Pipeline DDL | 11 scripts + 5 SQL | 14 (1 BLOQ, 7 ALTA, 4 MEDIA, 2 BAJA) |
+| F4 | Configuracion, CORS, SSL, PM2 | 15+ config files | 14 (2 BLOQ, 6 ALTA, 4 MEDIA, 1 BAJA) |
+| F5 | RLS y BYPASSRLS | 6 key files | 10 (1 BLOQ, 4 ALTA, 3 MEDIA, 1 INFO) |
+| F6 | Pipeline de Deploy E2E | 19 files in 6 categories | 25 (1 BLOQ, 5 ALTA, 5 MEDIA, 3 BAJA) |
+| F7 | Consolidacion e Informe | — | 4 documentos entregables |
+
+#### Items BLOQUEANTES para Deploy (10)
+
+| # | Item | Fase |
+|---|------|:----:|
+| BLQ-01 | Reemplazar 3x CHANGE_ME_IN_PRODUCTION en .env.production del servidor | F4 |
+| BLQ-02 | Agregar JWT_REFRESH_SECRET (app no arranca sin el) | F4 |
+| BLQ-03 | Crear apps/frontend/.env.production en servidor | F4 |
+| BLQ-04 | Cambiar password de admin@gamilit.com en BD produccion | F2 |
+| BLQ-05 | Eliminar sudo password de database-master.sh + limpiar historial git | F3 |
+| BLQ-06 | Corregir URL health check /api/health → /api/v1/health | F6 |
+| BLQ-07 | Renumerar seeds gamification (eliminar prefijo duplicado 17-) en prod/staging | F1 |
+| BLQ-08 | Sincronizar 05-user_stats.sql DEV v2.2 → PROD/STAGING | F1 |
+| BLQ-09 | Eliminar .env.database y .env.dev del tracking git | F3 |
+| BLQ-10 | Corregir branch deploy-production.yml de main a master | F6 |
+
+#### Entregables
+
+| Archivo | Contenido | Lineas |
+|---------|-----------|:------:|
+| 04-RESUMEN-EJECUTIVO.md | 1 pagina para stakeholders | ~75 |
+| 01-HALLAZGOS.md | 56 hallazgos por fase con severidad | ~250 |
+| 02-DISCREPANCIAS.md | Discrepancias seeds/usuarios/config detalladas | ~275 |
+| 03-CHECKLIST-PRODUCCION.md | 41 items accionables (10 BLQ + 14 ALT + 12 MED + 5 BAJ) | ~210 |
+| FASE1-SEEDS.md | Comparativo completo 3 ambientes | ~505 |
+| FASE2-USUARIOS.md | Auditoria usuarios + seguridad PII | ~408 |
+| FASE3-SCRIPTS.md | Auditoria scripts + credenciales | ~467 |
+| FASE4-CONFIG.md | Configuracion + CORS + PM2 | ~407 |
+| FASE5-RLS.md | Estado RLS + plan migracion NOBYPASSRLS | ~468 |
+| FASE6-DEPLOY.md | Pipeline deploy + rollback + CI/CD | ~670 |
+
+**Output:** `orchestration/tareas/TASK-2026-02-19-ANALISIS-DEPLOY-PROD/` (10 archivos, ~3,700 lineas)
+
+---
 
 ### TASK-2026-02-19-ESTANDARIZACION-PORTALES — Cross-Portal Standardization (2026-02-19) - 5/5 FASES COMPLETADAS
 
@@ -978,6 +1029,7 @@
 | Tarea BD-vs-Docs | `orchestration/tareas/TASK-2026-02-12-ANALISIS-BD-VS-DOCS/` |
 | Tarea Backend Integration | `orchestration/tareas/TASK-2026-02-12-ANALISIS-BACKEND-INTEGRACION/` |
 | Tarea Frontend Integration | `orchestration/tareas/TASK-2026-02-12-ANALISIS-FRONTEND-INTEGRACION/` |
+| Analisis Deploy Prod | `orchestration/tareas/TASK-2026-02-19-ANALISIS-DEPLOY-PROD/` (10 archivos, checklist 41 items) |
 | Estandarizacion Portales | `orchestration/tareas/TASK-2026-02-19-ESTANDARIZACION-PORTALES/` (6 tracks + 5 standards + validacion) |
 | ADR-046 PageShell | `docs/90-adr/ADR-046-pageshell-pattern.md` |
 | React Query Migration Guide | `docs/50-guides/REACT-QUERY-MIGRATION-GUIDE.md` |
