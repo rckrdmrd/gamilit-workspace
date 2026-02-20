@@ -39,7 +39,7 @@ INSERT INTO content_management.content_templates (
     NULL,  -- Disponible para todos los tenants
     'Comprensión Lectora Básica',
     'Template para generar ejercicios de comprensión lectora con texto, preguntas y opciones múltiples',
-    'reading_comprehension',
+    'exercise',
     '{
         "sections": [
             {"type": "text", "label": "Texto principal", "required": true},
@@ -69,7 +69,7 @@ INSERT INTO content_management.content_templates (
     NULL,
     'Comprensión Inferencial',
     'Template para ejercicios que requieren inferencia y análisis de información implícita',
-    'inferential_reading',
+    'exercise',
     '{
         "sections": [
             {"type": "text", "label": "Texto con información implícita", "required": true},
@@ -100,7 +100,7 @@ INSERT INTO content_management.content_templates (
     NULL,
     'Producción de Textos',
     'Template para ejercicios de escritura y producción textual',
-    'text_production',
+    'exercise',
     '{
         "sections": [
             {"type": "prompt", "label": "Indicaciones", "required": true},
