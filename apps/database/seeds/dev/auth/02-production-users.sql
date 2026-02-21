@@ -1,20 +1,22 @@
 -- =====================================================
 -- Seed: auth.users - Production Registered Users
--- Description: Usuarios reales registrados en producción
--- Environment: PRODUCTION
+-- Description: Usuarios reales registrados en produccion
+-- Environment: ALL (dev + prod)
 -- Dependencies: 01-demo-users.sql
 -- Order: 02
 -- Created: 2025-11-19
--- Updated: 2026-01-25
--- Version: 2.1 (Backup y verificación 2026-01-25)
+-- Updated: 2026-02-21
+-- Version: 3.0 (+ Lote 5 desde backup produccion 2026-02-21)
 -- =====================================================
 --
 -- USUARIOS REALES REGISTRADOS:
 -- - Lote 1 (2025-11-18): 13 usuarios con nombres completos
--- - Lote 2 (2025-11-24/25): 29 usuarios (algunos sin nombres)
--- - Lote 3 (2025-12-08 y 2025-12-17): 2 usuarios
+-- - Lote 2 (2025-11-24): 23 usuarios (algunos sin nombres)
+-- - Lote 3 (2025-11-25): 7 usuarios
+-- - Lote 4 (2025-12-08 y 2025-12-17): 2 usuarios
+-- - Lote 5 (2026-02-20): 5 usuarios con nombres completos
 --
--- TOTAL: 45 usuarios estudiantes
+-- TOTAL: 50 usuarios estudiantes
 --
 -- POLÍTICA DE CARGA LIMPIA:
 -- ✅ UUIDs originales del servidor preservados
@@ -761,6 +763,86 @@ INSERT INTO auth.users (
     false, '2025-12-17 17:51:43.530434+00'::timestamptz, '2025-12-17 23:51:43.55475+00'::timestamptz,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, false, NULL,
     'student'::auth_management.gamilit_role, 'active'::auth_management.user_status
+),
+
+-- =====================================================
+-- LOTE 5: USUARIOS 2026-02-20 (5 usuarios)
+-- Fuente: Backup produccion 2026-02-21
+-- =====================================================
+
+-- USUARIO 46: Ana Ofelia Arizabalo (Flicka) (2026-02-20)
+(
+    'fa14c733-d9fa-46e5-86fc-9d852e7f4383'::uuid,
+    gen_random_uuid(),
+    'authenticated', NULL,
+    'arizabalo21@hotmail.com',
+    '$2b$10$GiufEXKYsBwL25eST7Mw1er.5JfMJlhCalSzpLENjPeAwpUlbllVy',
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-21 14:14:14.38+00'::timestamptz,
+    '{"provider": "email", "providers": ["email"]}'::jsonb,
+    '{"first_name": "Ana Ofelia", "last_name": "Arizabalo"}'::jsonb,
+    false, '2026-02-20 09:29:01.082603+00'::timestamptz, '2026-02-21 14:14:14.382048+00'::timestamptz,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, false, NULL,
+    'student'::auth_management.gamilit_role, 'active'::auth_management.user_status
+),
+
+-- USUARIO 47: Daniela Jaqueline Castilleros Lopez (2026-02-20)
+(
+    '9f709cba-5f49-4c80-b58d-a424af57ffc6'::uuid,
+    gen_random_uuid(),
+    'authenticated', NULL,
+    'dl7231217@gmail.com',
+    '$2b$10$TI8TV64ip645KblrKX9DDOLm0sYCFYVFQKb63tYuYfEvcqhOjqcYW',
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-20 20:17:49.727+00'::timestamptz,
+    '{"provider": "email", "providers": ["email"]}'::jsonb,
+    '{"first_name": "Daniela Jaqueline", "last_name": "Castilleros Lopez"}'::jsonb,
+    false, '2026-02-20 14:17:49.695004+00'::timestamptz, '2026-02-20 20:17:49.728848+00'::timestamptz,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, false, NULL,
+    'student'::auth_management.gamilit_role, 'active'::auth_management.user_status
+),
+
+-- USUARIO 48: Maritza Morales Deloya (2026-02-20)
+(
+    'e2bb31c0-0949-430e-8dd7-02e8b3ca91c2'::uuid,
+    gen_random_uuid(),
+    'authenticated', NULL,
+    'maritzamoralesdeloya@gmail.com',
+    '$2b$10$jyMrprH72CzyvcQ3FBvFre852Iqa6LqlwYaEEdKnB3OSv2OGuWXNW',
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-20 20:20:38.654+00'::timestamptz,
+    '{"provider": "email", "providers": ["email"]}'::jsonb,
+    '{"first_name": "Maritza", "last_name": "Morales Deloya"}'::jsonb,
+    false, '2026-02-20 14:20:38.625213+00'::timestamptz, '2026-02-20 20:20:38.656019+00'::timestamptz,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, false, NULL,
+    'student'::auth_management.gamilit_role, 'active'::auth_management.user_status
+),
+
+-- USUARIO 49: Mauricio Ramirez Gama (2026-02-20)
+(
+    'aadf1eca-7e5c-4767-a3c7-80b47fdee782'::uuid,
+    gen_random_uuid(),
+    'authenticated', NULL,
+    'gamam130727@gmail.com',
+    '$2b$10$G5XzkCXB8xle8cZLxJC8UeDl93P23FJvbh1SVwYKJ986/KYrjLxxG',
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-20 20:25:42.064+00'::timestamptz,
+    '{"provider": "email", "providers": ["email"]}'::jsonb,
+    '{"first_name": "Mauricio", "last_name": "Ramirez Gama"}'::jsonb,
+    false, '2026-02-20 14:25:42.033427+00'::timestamptz, '2026-02-20 20:25:42.065437+00'::timestamptz,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, false, NULL,
+    'student'::auth_management.gamilit_role, 'active'::auth_management.user_status
+),
+
+-- USUARIO 50: Diana Abigail Sotelo Isidro (2026-02-20)
+(
+    '71252b1c-c643-4228-aadc-d8ecaafd9356'::uuid,
+    gen_random_uuid(),
+    'authenticated', NULL,
+    'abigailisidro08@gmail.com',
+    '$2b$10$2LV05LJjSpa4Le8loCW2YeMbUR3/IvRUT7EluobihLH7Y5fmDjXay',
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-20 20:28:11.826+00'::timestamptz,
+    '{"provider": "email", "providers": ["email"]}'::jsonb,
+    '{"first_name": "Diana Abigail", "last_name": "Sotelo Isidro"}'::jsonb,
+    false, '2026-02-20 14:28:11.796406+00'::timestamptz, '2026-02-20 20:28:11.827917+00'::timestamptz,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, false, NULL,
+    'student'::auth_management.gamilit_role, 'active'::auth_management.user_status
 )
 
 ON CONFLICT (id) DO UPDATE SET
@@ -781,17 +863,15 @@ DECLARE
     lote2_count INTEGER;
     lote3_count INTEGER;
     lote4_count INTEGER;
+    lote5_count INTEGER;
 BEGIN
-    -- Contar usuarios de producción (excluyendo @gamilit.com)
     SELECT COUNT(*) INTO production_user_count
     FROM auth.users
     WHERE email NOT LIKE '%@gamilit.com';
 
-    -- Contar todos los usuarios
     SELECT COUNT(*) INTO total_user_count
     FROM auth.users;
 
-    -- Contar por lotes
     SELECT COUNT(*) INTO lote1_count
     FROM auth.users
     WHERE created_at::date = '2025-11-18'
@@ -810,12 +890,18 @@ BEGIN
     SELECT COUNT(*) INTO lote4_count
     FROM auth.users
     WHERE created_at::date >= '2025-12-01'
+    AND created_at::date < '2026-02-01'
+    AND email NOT LIKE '%@gamilit.com';
+
+    SELECT COUNT(*) INTO lote5_count
+    FROM auth.users
+    WHERE created_at::date >= '2026-02-01'
     AND email NOT LIKE '%@gamilit.com';
 
     RAISE NOTICE '========================================';
-    RAISE NOTICE 'USUARIOS DE PRODUCCIÓN REGISTRADOS';
+    RAISE NOTICE 'USUARIOS DE PRODUCCION REGISTRADOS';
     RAISE NOTICE '========================================';
-    RAISE NOTICE 'Total usuarios producción: %', production_user_count;
+    RAISE NOTICE 'Total usuarios produccion: %', production_user_count;
     RAISE NOTICE 'Total usuarios (con testing): %', total_user_count;
     RAISE NOTICE '----------------------------------------';
     RAISE NOTICE 'Por lotes:';
@@ -823,12 +909,13 @@ BEGIN
     RAISE NOTICE '  - Lote 2 (2025-11-24): %', lote2_count;
     RAISE NOTICE '  - Lote 3 (2025-11-25): %', lote3_count;
     RAISE NOTICE '  - Lote 4 (2025-12+): %', lote4_count;
+    RAISE NOTICE '  - Lote 5 (2026-02-20): %', lote5_count;
     RAISE NOTICE '========================================';
 
-    IF production_user_count >= 45 THEN
-        RAISE NOTICE '✓ Los usuarios de producción fueron creados correctamente';
+    IF production_user_count >= 50 THEN
+        RAISE NOTICE 'Los 50 usuarios de produccion fueron creados correctamente';
     ELSE
-        RAISE WARNING '⚠ Se esperaban 45+ usuarios de producción, se crearon %', production_user_count;
+        RAISE WARNING 'Se esperaban 50+ usuarios de produccion, se crearon %', production_user_count;
     END IF;
 
     RAISE NOTICE '========================================';
@@ -850,19 +937,26 @@ END $$;
 -- =====================================================
 -- CHANGELOG
 -- =====================================================
--- v2.1 (2026-01-25): Backup y verificación de usuarios
+-- v3.0 (2026-02-21): + Lote 5 desde backup produccion
+--   - 5 usuarios nuevos (2026-02-20): arizabalo21, dl7231217,
+--     maritzamoralesdeloya, gamam130727, abigailisidro08
+--   - Excluido: rckrdmrd@gmail.com (usuario dev)
+--   - Total: 50 usuarios de produccion
+--   - Nombres completos desde profiles del backup
+--
+-- v2.1 (2026-01-25): Backup y verificacion de usuarios
 --   - 45 usuarios totales (sin cambios)
 --   - Backup de BD realizado para preservar datos
 --   - Usuarios de prueba 2026-01 excluidos del seed
 --
--- v2.0 (2025-12-18): Actualización completa desde backup producción
+-- v2.0 (2025-12-18): Actualizacion completa desde backup produccion
 --   - 45 usuarios totales
 --   - Lote 1: 13 usuarios (2025-11-18)
 --   - Lote 2: 23 usuarios (2025-11-24)
---   - Lote 3: 6 usuarios (2025-11-25)
+--   - Lote 3: 7 usuarios (2025-11-25)
 --   - Lote 4: 2 usuarios (2025-12-08, 2025-12-17)
 --   - UUIDs y passwords originales preservados
 --
--- v1.0 (2025-11-19): Primera versión
+-- v1.0 (2025-11-19): Primera version
 --   - 13 usuarios del lote inicial
 -- =====================================================

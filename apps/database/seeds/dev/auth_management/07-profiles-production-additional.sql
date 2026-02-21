@@ -5,10 +5,10 @@
 -- Dependencies: auth/02-production-users.sql, auth_management/01-tenants.sql
 -- Order: 07 (despues de 06-profiles-production.sql)
 -- Created: 2025-12-19
--- Version: 1.0
+-- Version: 2.0 (+ 5 perfiles Lote 5 desde backup 2026-02-21)
 -- =====================================================
 --
--- USUARIOS ADICIONALES: 32 perfiles
+-- USUARIOS ADICIONALES: 37 perfiles (32 originales + 5 Lote 5)
 -- Estos usuarios se registraron despues del lote inicial y no tienen
 -- first_name/last_name en su metadata. Se crean con datos minimos.
 --
@@ -594,11 +594,103 @@ INSERT INTO auth_management.profiles (
     '{}'::jsonb,
     '2025-12-17 17:51:43.536295+00'::timestamptz,
     '2025-12-17 17:51:43.536295+00'::timestamptz
+),
+
+-- =====================================================
+-- LOTE 5: Usuarios registrados 2026-02-20 (backup 2026-02-21)
+-- =====================================================
+
+-- Perfil 33: arizabalo21@hotmail.com (Ana Ofelia Arizabalo - "Flicka")
+(
+    'fa14c733-d9fa-46e5-86fc-9d852e7f4383'::uuid,
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
+    'fa14c733-d9fa-46e5-86fc-9d852e7f4383'::uuid,
+    'arizabalo21@hotmail.com',
+    'Flicka', 'Ana Ofelia Arizabalo', 'Ana Ofelia', 'Arizabalo',
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    'student'::auth_management.gamilit_role,
+    'active'::auth_management.user_status,
+    false, false,
+    '{"theme": "detective", "language": "es", "timezone": "America/Mexico_City", "sound_enabled": true, "notifications_enabled": true}'::jsonb,
+    '{}'::jsonb,
+    '2026-02-20 09:29:01.089708+00'::timestamptz,
+    '2026-02-20 09:31:10.444233+00'::timestamptz
+),
+
+-- Perfil 34: dl7231217@gmail.com (Daniela Jaqueline Castilleros Lopez)
+(
+    '9f709cba-5f49-4c80-b58d-a424af57ffc6'::uuid,
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
+    '9f709cba-5f49-4c80-b58d-a424af57ffc6'::uuid,
+    'dl7231217@gmail.com',
+    NULL, 'Daniela Jaqueline Castilleros Lopez', 'Daniela Jaqueline', 'Castilleros Lopez',
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    'student'::auth_management.gamilit_role,
+    'active'::auth_management.user_status,
+    false, false,
+    '{"theme": "detective", "language": "es", "timezone": "America/Mexico_City", "sound_enabled": true, "notifications_enabled": true}'::jsonb,
+    '{}'::jsonb,
+    '2026-02-20 14:17:49.700933+00'::timestamptz,
+    '2026-02-20 14:17:49.700933+00'::timestamptz
+),
+
+-- Perfil 35: maritzamoralesdeloya@gmail.com (Maritza Morales Deloya)
+(
+    'e2bb31c0-0949-430e-8dd7-02e8b3ca91c2'::uuid,
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
+    'e2bb31c0-0949-430e-8dd7-02e8b3ca91c2'::uuid,
+    'maritzamoralesdeloya@gmail.com',
+    NULL, 'Maritza Morales Deloya', 'Maritza', 'Morales Deloya',
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    'student'::auth_management.gamilit_role,
+    'active'::auth_management.user_status,
+    false, false,
+    '{"theme": "detective", "language": "es", "timezone": "America/Mexico_City", "sound_enabled": true, "notifications_enabled": true}'::jsonb,
+    '{}'::jsonb,
+    '2026-02-20 14:20:38.630609+00'::timestamptz,
+    '2026-02-20 14:20:38.630609+00'::timestamptz
+),
+
+-- Perfil 36: gamam130727@gmail.com (Mauricio Ramirez Gama)
+(
+    'aadf1eca-7e5c-4767-a3c7-80b47fdee782'::uuid,
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
+    'aadf1eca-7e5c-4767-a3c7-80b47fdee782'::uuid,
+    'gamam130727@gmail.com',
+    NULL, 'Mauricio Ramirez Gama', 'Mauricio', 'Ramirez Gama',
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    'student'::auth_management.gamilit_role,
+    'active'::auth_management.user_status,
+    false, false,
+    '{"theme": "detective", "language": "es", "timezone": "America/Mexico_City", "sound_enabled": true, "notifications_enabled": true}'::jsonb,
+    '{}'::jsonb,
+    '2026-02-20 14:25:42.039569+00'::timestamptz,
+    '2026-02-20 14:25:42.039569+00'::timestamptz
+),
+
+-- Perfil 37: abigailisidro08@gmail.com (Diana Abigail Sotelo Isidro)
+(
+    '71252b1c-c643-4228-aadc-d8ecaafd9356'::uuid,
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
+    '71252b1c-c643-4228-aadc-d8ecaafd9356'::uuid,
+    'abigailisidro08@gmail.com',
+    NULL, 'Diana Abigail Sotelo Isidro', 'Diana Abigail', 'Sotelo Isidro',
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    'student'::auth_management.gamilit_role,
+    'active'::auth_management.user_status,
+    false, false,
+    '{"theme": "detective", "language": "es", "timezone": "America/Mexico_City", "sound_enabled": true, "notifications_enabled": true}'::jsonb,
+    '{}'::jsonb,
+    '2026-02-20 14:28:11.80192+00'::timestamptz,
+    '2026-02-20 14:28:11.80192+00'::timestamptz
 )
 
 ON CONFLICT (email) DO UPDATE SET
     tenant_id = EXCLUDED.tenant_id,
-    email = EXCLUDED.email,
+    display_name = COALESCE(NULLIF(EXCLUDED.display_name, ''), auth_management.profiles.display_name),
+    full_name = COALESCE(NULLIF(EXCLUDED.full_name, ''), auth_management.profiles.full_name),
+    first_name = COALESCE(NULLIF(EXCLUDED.first_name, ''), auth_management.profiles.first_name),
+    last_name = COALESCE(NULLIF(EXCLUDED.last_name, ''), auth_management.profiles.last_name),
     updated_at = NOW();
 
 -- =====================================================
@@ -634,10 +726,10 @@ BEGIN
     RAISE NOTICE 'Perfiles adicionales creados: %', additional_count;
     RAISE NOTICE '========================================';
 
-    IF additional_count >= 30 THEN
-        RAISE NOTICE 'OK: Se crearon los 32 perfiles adicionales';
+    IF additional_count >= 35 THEN
+        RAISE NOTICE 'OK: Se crearon los 37 perfiles adicionales (32 + 5 Lote 5)';
     ELSE
-        RAISE WARNING 'ATENCION: Se esperaban 32 perfiles adicionales';
+        RAISE WARNING 'ATENCION: Se esperaban 37 perfiles adicionales, se encontraron %', additional_count;
     END IF;
 END $$;
 

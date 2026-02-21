@@ -1,19 +1,20 @@
 -- =====================================================
 -- Seed: auth.users - Test Users (PRODUCTION CLEAN)
--- Description: Solo usuarios de testing con dominio @gamilit.com
+-- Description: Usuarios de testing y sistema con dominio @gamilit.com
 -- Environment: ALL
 -- Dependencies: None (auth schema base)
 -- Order: 01
 -- Created: 2025-11-17
--- Version: 3.0 (gen_random_uuid() - no placeholder UUIDs)
+-- Version: 4.0 (+ system@gamilit.com from backup 2026-02-21)
 -- =====================================================
 --
--- USUARIOS DE TESTING (3):
+-- USUARIOS DE TESTING Y SISTEMA (4):
+-- - system@gamilit.com / n/a (super_admin, sistema - no login)
 -- - admin@gamilit.com / Test1234 (super_admin)
 -- - teacher@gamilit.com / Test1234 (admin_teacher)
 -- - student@gamilit.com / Test1234 (student)
 --
--- TOTAL: 3 usuarios
+-- TOTAL: 4 usuarios
 --
 -- POLITICA DE CARGA LIMPIA:
 -- - Solo usuarios @gamilit.com
@@ -39,6 +40,48 @@ SET search_path TO auth, public;
 -- La funcionalidad no se ve afectada. No reemplazar con hash estatico
 -- porque bcrypt con salt dinamico es la practica correcta.
 -- =====================================================
+
+-- =====================================================
+-- INSERT: System + Test Users (4 usuarios @gamilit.com)
+-- =====================================================
+
+-- =====================================================
+-- USUARIO 0: SYSTEM (cuenta de sistema, no para login)
+-- =====================================================
+INSERT INTO auth.users (
+    id,
+    instance_id,
+    aud,
+    email,
+    encrypted_password,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    is_super_admin,
+    created_at,
+    updated_at,
+    email_change_confirm_status,
+    is_sso_user,
+    gamilit_role,
+    status
+) VALUES (
+    '00000000-0000-0000-0000-000000000001'::uuid,
+    NULL,
+    'authenticated',
+    'system@gamilit.com',
+    'n/a',
+    NULL,
+    '{}'::jsonb,
+    false,
+    '2026-02-20 06:46:12.231248+00'::timestamptz,
+    '2026-02-20 06:46:12.231248+00'::timestamptz,
+    0,
+    false,
+    'super_admin'::auth_management.gamilit_role,
+    'active'::auth_management.user_status
+)
+ON CONFLICT (email) DO UPDATE SET
+    gamilit_role = EXCLUDED.gamilit_role,
+    updated_at = gamilit.now_mexico();
 
 -- =====================================================
 -- INSERT: Test Users (3 usuarios @gamilit.com)
@@ -193,10 +236,10 @@ BEGIN
     RAISE NOTICE '  student@gamilit.com  | Test1234 | student';
     RAISE NOTICE '========================================';
 
-    IF user_count = 3 THEN
-        RAISE NOTICE 'Los 3 usuarios de testing fueron creados correctamente';
+    IF user_count >= 3 THEN
+        RAISE NOTICE 'Los usuarios de testing fueron creados correctamente';
     ELSE
-        RAISE WARNING 'Se esperaban 3 usuarios, se crearon %', user_count;
+        RAISE WARNING 'Se esperaban 3+ usuarios @gamilit.com, se crearon %', user_count;
     END IF;
 END $$;
 
@@ -214,6 +257,11 @@ END $$;
 -- =====================================================
 -- CHANGELOG
 -- =====================================================
+-- v4.0 (2026-02-21): + system@gamilit.com desde backup produccion
+--   - Agregado usuario de sistema (UUID fijo 00000000-...-000001)
+--   - Password 'n/a' (no para login)
+--   - Total: 4 usuarios @gamilit.com
+--
 -- v3.0 (2026-02-21): ELIMINACION DE UUIDs PLACEHOLDER
 --   - Reemplazados UUIDs mnemotecnicos (aaaa, bbbb, cccc) con gen_random_uuid()
 --   - Reemplazados instance_id 00000000 con gen_random_uuid()
